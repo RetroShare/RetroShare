@@ -158,7 +158,7 @@ void RsFriendListModel::postMods()
 {
 	endResetModel();
 
-    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1,columnCount()-1,(void*)NULL));
 }
 
 int RsFriendListModel::rowCount(const QModelIndex& parent) const
@@ -1236,7 +1236,7 @@ void RsFriendListModel::collapseItem(const QModelIndex& index)
 		mExpandedProfiles.erase(s);
 
     // apparently we cannot be subtle here.
-	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mTopLevel.size()-1,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mTopLevel.size()-1,columnCount()-1,(void*)NULL));
 }
 
 void RsFriendListModel::expandItem(const QModelIndex& index)
@@ -1258,10 +1258,10 @@ void RsFriendListModel::expandItem(const QModelIndex& index)
     if(hp) s += hp->profile_info.gpg_id.toStdString();
 
     if(!s.empty())
-		mExpandedProfiles.insert(s);
+        mExpandedProfiles.insert(s);
 
     // apparently we cannot be subtle here.
-	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mTopLevel.size()-1,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mTopLevel.size()-1,columnCount()-1,(void*)NULL));
 }
 
 bool RsFriendListModel::isProfileExpanded(const EntryIndex& e) const

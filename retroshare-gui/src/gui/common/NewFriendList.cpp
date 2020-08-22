@@ -1096,7 +1096,13 @@ void NewFriendList::applyWhileKeepingTree(std::function<void()> predicate)
     saveExpandedPathsAndSelection(expanded_indexes, selected_indexes);
 
     // This is a hack to avoid crashes on windows while calling endInsertRows(). I'm not sure wether these crashes are
-    // due to a Qt bug, or a misuse of the proxy model on my side. Anyway, this soves them for good.
+    // due to a Qt bug, or a misuse of the proxy model on my side. Anyway, this solves them for good.
+
+    // save hidden columns
+    std::list<int> hidden_columns;
+    for(int i=0;i<RsFriendListModel::COLUMN_THREAD_NB_COLUMNS;++i)
+        if(ui->peerTreeWidget->isColumnHidden(i))
+            hidden_columns.push_back(i);
 
     mProxyModel->setSourceModel(nullptr);
 
@@ -1104,6 +1110,10 @@ void NewFriendList::applyWhileKeepingTree(std::function<void()> predicate)
 
     mProxyModel->setSourceModel(mModel);
     restoreExpandedPathsAndSelection(expanded_indexes, selected_indexes);
+
+    // restore hidden columns
+    for(auto c: hidden_columns)
+        ui->peerTreeWidget->setColumnHidden(c,true);
 }
 
 void NewFriendList::checkInternalData(bool force)
