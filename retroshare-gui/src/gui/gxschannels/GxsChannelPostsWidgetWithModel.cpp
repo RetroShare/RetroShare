@@ -262,7 +262,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     ui->postTime_LB->hide();
     ui->postLogo_LB->hide();
 
-	ui->postDetails_TE->setPlaceholderText(tr("No post selected"));
+    ui->postDetails_TE->setPlaceholderText(tr("No text to display"));
 
 	// Set initial size of the splitter
 	ui->splitter->setStretchFactor(0, 1);

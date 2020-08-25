@@ -161,7 +161,7 @@
    <item>
     <widget class="QTabWidget" name="channel_TW">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -526,7 +526,7 @@ p, li { white-space: pre-wrap; }
      </widget>
      <widget class="QWidget" name="tab_5">
       <attribute name="title">
-       <string>Files</string>
+       <string>All files</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>

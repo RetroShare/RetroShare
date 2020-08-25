@@ -98,7 +98,7 @@ public:
         lb->setFixedSize(W,H);
 		lb->setPixmap(thumbnail);
 
-        lt->setText(msg);
+        setText(msg);
 
         QFont font = lt->font();
 
@@ -116,7 +116,16 @@ public:
     }
 
     void setPixmap(const QPixmap& p) { lb->setPixmap(p); }
-    void setText(const QString& s) { lt->setText(s); }
+    void setText(const QString& s)
+    {
+        QString ss;
+        if(s.length() > 30)
+            ss = s.left(30)+"...";
+        else
+            ss =s;
+
+        lt->setText(ss);
+    }
 
 private:
     QLabel *lb;
