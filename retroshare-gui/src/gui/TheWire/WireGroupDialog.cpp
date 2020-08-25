@@ -19,6 +19,8 @@
  *******************************************************************************/
 #include <QBuffer>
 
+#include "WireGroupExtra.h"
+
 #include "WireGroupDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
 
@@ -27,7 +29,7 @@
 const uint32_t WireCreateEnabledFlags = ( 
 							GXS_GROUP_FLAGS_NAME          |
 							GXS_GROUP_FLAGS_ICON          |
-							GXS_GROUP_FLAGS_DESCRIPTION   |
+							// GXS_GROUP_FLAGS_DESCRIPTION   |
 							GXS_GROUP_FLAGS_DISTRIBUTION  |
 							// GXS_GROUP_FLAGS_PUBLISHSIGN   |
 							// GXS_GROUP_FLAGS_SHAREKEYS     |	// disabled because the UI doesn't handle it yet.
@@ -85,6 +87,9 @@ void WireGroupDialog::initUi()
 
 	setUiText(UITYPE_ADD_ADMINS_CHECKBOX, tr("Add Wire Admins"));
 	setUiText(UITYPE_CONTACTS_DOCK, tr("Select Wire Admins"));
+
+	mExtra = new WireGroupExtra(this);
+	injectExtraWidget(mExtra);
 }
 
 QPixmap WireGroupDialog::serviceImage()
@@ -95,9 +100,6 @@ QPixmap WireGroupDialog::serviceImage()
 void WireGroupDialog::prepareWireGroup(RsWireGroup &group, const RsGroupMetaData &meta)
 {
 	group.mMeta = meta;
-	group.mDescription = getDescription().toUtf8().constData();
-
-#if 0
 	QPixmap pixmap = getLogo();
 
 	if (!pixmap.isNull()) {
@@ -107,12 +109,27 @@ void WireGroupDialog::prepareWireGroup(RsWireGroup &group, const RsGroupMetaData
 		buffer.open(QIODevice::WriteOnly);
 		pixmap.save(&buffer, "PNG"); // writes image into ba in PNG format
 
-		group.mThumbnail.copy((uint8_t *) ba.data(), ba.size());
+		group.mHeadshot.copy((uint8_t *) ba.data(), ba.size());
 	} else {
-		group.mThumbnail.clear();
+		group.mHeadshot.clear();
 	}
-#endif
 
+	// from Extra Widget.
+	group.mTagline = mExtra->getTagline();
+	group.mLocation = mExtra->getLocation();
+	pixmap = mExtra->getMasthead();
+
+	if (!pixmap.isNull()) {
+		QByteArray ba;
+		QBuffer buffer(&ba);
+
+		buffer.open(QIODevice::WriteOnly);
+		pixmap.save(&buffer, "JPG");
+
+		group.mMasthead.copy((uint8_t *) ba.data(), ba.size());
+	} else {
+		group.mMasthead.clear();
+	}
 }
 
 bool WireGroupDialog::service_createGroup(RsGroupMetaData &meta)
@@ -152,7 +169,7 @@ bool WireGroupDialog::service_loadGroup(const RsGxsGenericGroupData *data, Mode 
 	}
 
 	const RsWireGroup &group = *pgroup;
-	description = QString::fromUtf8(group.mDescription.c_str());
+	// description = QString::fromUtf8(group.mDescription.c_str());
 
 #if 0
 	if (group.mThumbnail.mData) {

@@ -42,6 +42,7 @@
 #include "gui/statusbar/SoundStatus.h"
 #include "gui/statusbar/ToasterDisable.h"
 #include "gui/statusbar/SysTrayStatus.h"
+#include "gui/common/FilesDefs.h"
 
 /** Constructor */
 AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
@@ -69,7 +70,7 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 
 	/* Populate combo boxes */
 	foreach (QString code, LanguageSupport::languageCodes()) {
-		ui.cmboLanguage->addItem(QIcon(":/images/flags/" + code + ".png"), LanguageSupport::languageName(code), code);
+        ui.cmboLanguage->addItem(FilesDefs::getIconFromQtResourcePath(":/images/flags/" + code + ".png"), LanguageSupport::languageName(code), code);
 	}
 	foreach (QString style, QStyleFactory::keys()) {
 		ui.cmboStyle->addItem(style, style.toLower());

@@ -24,9 +24,16 @@
 #include "ui_PulseAddDialog.h"
 
 #include <retroshare/rswire.h>
-#include "util/TokenQueue.h"
 
-class PulseAddDialog : public QWidget, public TokenResponse
+
+QT_BEGIN_NAMESPACE
+class QDragEnterEvent;
+class QDropEvent;
+class QMouseEvent;
+QT_END_NAMESPACE
+
+
+class PulseAddDialog : public QWidget
 {
   Q_OBJECT
 
@@ -34,8 +41,9 @@ public:
 	PulseAddDialog(QWidget *parent = 0);
 
 	void cleanup();
-	void setGroup(RsWireGroup &group);
-	void setReplyTo(RsWirePulse &pulse, std::string &groupName);
+
+	void setReplyTo(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, uint32_t replyType);
+	void setGroup(const RsGxsGroupId &grpId);
 
 private slots:
 	void addURL();
@@ -46,28 +54,37 @@ private slots:
 	void pulseTextChanged();
 
 private:
+	// OLD VERSIONs, private now.
+	void setGroup(RsWireGroup &group);
+	void setReplyTo(RsWirePulse &pulse, RsWirePulseSPtr pPulse, std::string &groupName, uint32_t replyType);
+
 	void postOriginalPulse();
 	void postReplyPulse();
-	void postRefPulse(RsWirePulse &pulse);
 
-	void acknowledgeMessage(const uint32_t &token);
-	void loadPulseData(const uint32_t &token);
-	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 	uint32_t toPulseSentiment(int index);
 
 protected:
+	void dragEnterEvent(QDragEnterEvent *event);
+	void dragLeaveEvent(QDragLeaveEvent *event);
+	void dragMoveEvent(QDragMoveEvent *event);
+	void dropEvent(QDropEvent *event);
 
-	RsWireGroup mGroup; // where we want to post from.
+	void addImage(const QString &path);
+
+	RsWireGroup mGroup; // replyWith.
 
 	// if this is a reply
 	bool mIsReply;
-	std::string mReplyGroupName;
 	RsWirePulse mReplyToPulse;
-	bool mWaitingRefMsg;
+	uint32_t mReplyType;
 
-	TokenQueue* mWireQueue;
+	// images
+	RsGxsImage mImage1;
+	RsGxsImage mImage2;
+	RsGxsImage mImage3;
+	RsGxsImage mImage4;
+
 	Ui::PulseAddDialog ui;
-
 };
 
 #endif

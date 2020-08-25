@@ -127,7 +127,9 @@ public:
 	void setTextColorMissing       (QColor color) { mTextColorMissing        = color;}
 #endif
 
-	void setMsgReadStatus(const QModelIndex &i, bool read_status, bool with_children);
+    void setMsgReadStatus(const QModelIndex &i, bool read_status);
+    void setAllMsgReadStatus(bool read_status);
+
     void setFilter(const QStringList &strings, uint32_t &count) ;
 
 #ifdef TODO

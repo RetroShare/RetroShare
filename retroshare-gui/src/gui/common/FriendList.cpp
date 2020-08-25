@@ -352,25 +352,25 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
              {
                  bool standard = c->data(COLUMN_DATA, ROLE_STANDARD).toBool();
 #ifdef RS_DIRECT_CHAT
-                 contextMenu->addAction(QIcon(IMAGE_MSG), tr("Send message to whole group"), this, SLOT(msgfriend()));
+                 contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MSG), tr("Send message to whole group"), this, SLOT(msgfriend()));
                  contextMenu->addSeparator();
 #endif // RS_DIRECT_CHAT
-                 contextMenu->addAction(QIcon(IMAGE_EDIT), tr("Edit Group"), this, SLOT(editGroup()));
+                 contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EDIT), tr("Edit Group"), this, SLOT(editGroup()));
 
-                 QAction *action = contextMenu->addAction(QIcon(IMAGE_REMOVE), tr("Remove Group"), this, SLOT(removeGroup()));
+                 QAction *action = contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_REMOVE), tr("Remove Group"), this, SLOT(removeGroup()));
                  action->setDisabled(standard);
              }
              break;
          case TYPE_GPG:
         {
 #ifdef RS_DIRECT_CHAT
-             contextMenu->addAction(QIcon(IMAGE_CHAT), tr("Chat"), this, SLOT(chatfriendproxy()));
-             contextMenu->addAction(QIcon(IMAGE_MSG), tr("Send message"), this, SLOT(msgfriend()));
+             contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_CHAT), tr("Chat"), this, SLOT(chatfriendproxy()));
+             contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MSG), tr("Send message"), this, SLOT(msgfriend()));
              contextMenu->addSeparator();
 #endif // RS_DIRECT_CHAT
 
-             contextMenu->addAction(QIcon(IMAGE_FRIENDINFO), tr("Profile details"), this, SLOT(configurefriend()));
-             contextMenu->addAction(QIcon(IMAGE_DENYFRIEND), tr("Deny connections"), this, SLOT(removefriend()));
+             contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_FRIENDINFO), tr("Profile details"), this, SLOT(configurefriend()));
+             contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_DENYFRIEND), tr("Deny connections"), this, SLOT(removefriend()));
 
              if(mShowGroups)
              {
@@ -412,8 +412,8 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
                      }
                  }
 
-                 QMenu *groupsMenu = contextMenu->addMenu(QIcon(IMAGE_GROUP16), tr("Groups"));
-                 groupsMenu->addAction(QIcon(IMAGE_EXPAND), tr("Create new group"), this, SLOT(createNewGroup()));
+                 QMenu *groupsMenu = contextMenu->addMenu(FilesDefs::getIconFromQtResourcePath(IMAGE_GROUP16), tr("Groups"));
+                 groupsMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EXPAND), tr("Create new group"), this, SLOT(createNewGroup()));
 
                  if (addToGroupMenu || moveToGroupMenu || foundGroup) {
                      if (addToGroupMenu) {
@@ -445,24 +445,24 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
          case TYPE_SSL:
              {
 #ifdef RS_DIRECT_CHAT
-                 contextMenu->addAction(QIcon(IMAGE_CHAT), tr("Chat"), this, SLOT(chatfriendproxy()));
-                 contextMenu->addAction(QIcon(IMAGE_MSG), tr("Send message to this node"), this, SLOT(msgfriend()));
+                 contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_CHAT), tr("Chat"), this, SLOT(chatfriendproxy()));
+                 contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MSG), tr("Send message to this node"), this, SLOT(msgfriend()));
                  contextMenu->addSeparator();
 #endif // RS_DIRECT_CHAT
 
-                 contextMenu->addAction(QIcon(IMAGE_FRIENDINFO), tr("Node details"), this, SLOT(configurefriend()));
+                 contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_FRIENDINFO), tr("Node details"), this, SLOT(configurefriend()));
 
                  if (type == TYPE_GPG || type == TYPE_SSL) {
-                     contextMenu->addAction(QIcon(IMAGE_EXPORTFRIEND), tr("Recommend this node to..."), this, SLOT(recommendfriend()));
+                     contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EXPORTFRIEND), tr("Recommend this node to..."), this, SLOT(recommendfriend()));
                  }
 
 				 if(!rsPeers->isHiddenNode(rsPeers->getOwnId()) || rsPeers->isHiddenNode( RsPeerId(getRsId(c)) ))
-					 contextMenu->addAction(QIcon(IMAGE_CONNECT), tr("Attempt to connect"), this, SLOT(connectfriend()));
+                     contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_CONNECT), tr("Attempt to connect"), this, SLOT(connectfriend()));
 
-                 contextMenu->addAction(QIcon(IMAGE_COPYLINK), tr("Copy certificate link"), this, SLOT(copyFullCertificate()));
+                 contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy certificate link"), this, SLOT(copyFullCertificate()));
 
                  //this is a SSL key
-                 contextMenu->addAction(QIcon(IMAGE_REMOVEFRIEND), tr("Remove Friend Node"), this, SLOT(removefriend()));
+                 contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_REMOVEFRIEND), tr("Remove Friend Node"), this, SLOT(removefriend()));
 
              }
          }
@@ -471,12 +471,12 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
 
     contextMenu->addSeparator();
 
-    QAction *action = contextMenu->addAction(QIcon(IMAGE_PASTELINK), tr("Paste certificate link"), this, SLOT(pastePerson()));
+    QAction *action = contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PASTELINK), tr("Paste certificate link"), this, SLOT(pastePerson()));
     if (RSLinkClipboard::empty(RetroShareLink::TYPE_CERTIFICATE))
         action->setDisabled(true);
 
-    contextMenu->addAction(QIcon(IMAGE_EXPAND), tr("Expand all"), ui->peerTreeWidget, SLOT(expandAll()));
-    contextMenu->addAction(QIcon(IMAGE_COLLAPSE), tr("Collapse all"), ui->peerTreeWidget, SLOT(collapseAll()));
+    contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EXPAND), tr("Expand all"), ui->peerTreeWidget, SLOT(expandAll()));
+    contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COLLAPSE), tr("Collapse all"), ui->peerTreeWidget, SLOT(collapseAll()));
 
     contextMenu = ui->peerTreeWidget->createStandardContextMenu(contextMenu);
 
@@ -716,7 +716,7 @@ void FriendList::insertPeers()
 
                 groupItem->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
                 groupItem->setTextAlignment(COLUMN_NAME, Qt::AlignLeft | Qt::AlignVCenter);
-                groupItem->setIcon(COLUMN_NAME, QIcon(IMAGE_GROUP24));
+                groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(IMAGE_GROUP24));
                 groupItem->setData(COLUMN_NAME, Qt::ForegroundRole, textColorGroup());
 
                 /* used to find back the item */

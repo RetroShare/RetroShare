@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                             *
- * libretroshare base64 encoding utilities                                     *
+ * libretroshare endiannes utilities                                           *
  *                                                                             *
  * Copyright (C) 2020  Gioacchino Mazzurco <gio@eigenlab.org>                  *
  * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>       *
@@ -26,7 +26,7 @@
  * This file provide convenient integer endiannes conversion utilities.
  * Instead of providing them with different names for each type (a la C htonl,
  * htons, ntohl, ntohs ), which make them uncomfortable to use, expose a
- * templated function `rs_endian_fix` to reorder integers representation byets
+ * templated function `rs_endian_fix` to reorder integers bytes representation
  * when sending or receiving from the network. */
 
 /* enforce LITTLE_ENDIAN on Windows */
@@ -46,7 +46,7 @@ template<typename INTTYPE> inline INTTYPE rs_endian_fix(INTTYPE val)
 		swapped |= (val >> (8*(sizeof(INTTYPE)-i-1)) & 0xFF) << (8*i);
 	return swapped;
 #else
-	return hostI;
+	return val;
 #endif
 };
 

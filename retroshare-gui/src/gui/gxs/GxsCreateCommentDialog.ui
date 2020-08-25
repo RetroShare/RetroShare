@@ -112,6 +112,12 @@ p, li { white-space: pre-wrap; }
         <property name="wordWrap">
          <bool>true</bool>
         </property>
+        <property name="openExternalLinks">
+         <bool>true</bool>
+        </property>
+        <property name="textInteractionFlags">
+         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+        </property>
        </widget>
       </item>
       <item row="2" column="0">

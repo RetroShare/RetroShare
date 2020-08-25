@@ -122,9 +122,9 @@ void CreateGxsChannelMsg::contextMenu(QPoint /*point*/)
 
 	QAction *action ;
 	if(n_file > 1)
-		action = contextMnu.addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Links"), this, SLOT(pasteLink()));
+        action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/pasterslink.png"), tr("Paste RetroShare Links"), this, SLOT(pasteLink()));
 	else
-		action = contextMnu.addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
+        action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
 
 	action->setDisabled(n_file < 1) ;
 	contextMnu.exec(QCursor::pos());

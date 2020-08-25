@@ -4,7 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2012-2014  Robert Fernie <retroshare@lunamutt.com>            *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2020  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -20,16 +21,20 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
+
+#include <cstdio>
+#include <memory>
+
 #include "services/p3gxsforums.h"
 #include "rsitems/rsgxsforumitems.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsidentity.h"
-
+#include "util/rsdebug.h"
 #include "rsserver/p3face.h"
 #include "retroshare/rsnotify.h"
-
+#include "util/rsdebuglevel2.h"
 #include "retroshare/rsgxsflags.h"
-#include <stdio.h>
+
 
 // For Dummy Msgs.
 #include "util/rsrandom.h"
@@ -422,46 +427,6 @@ bool p3GxsForums::getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &
 	return ok;
 }
 
-//Not currently used
-/*bool p3GxsForums::getRelatedMessages(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs)
-{
-	GxsMsgRelatedDataMap msgData;
-	bool ok = RsGenExchange::getMsgRelatedData(token, msgData);
-			
-	if(ok)
-	{
-		GxsMsgRelatedDataMap::iterator mit = msgData.begin();
-		
-		for(; mit != msgData.end();  ++mit)
-		{
-			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
-			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
-			
-			for(; vit != msgItems.end(); ++vit)
-			{
-				RsGxsForumMsgItem* item = dynamic_cast<RsGxsForumMsgItem*>(*vit);
-		
-				if(item)
-				{
-					RsGxsForumMsg msg = item->mMsg;
-					msg.mMeta = item->meta;
-					msgs.push_back(msg);
-					delete item;
-				}
-				else
-				{
-					std::cerr << "Not a GxsForumMsgItem, deleting!" << std::endl;
-					delete *vit;
-				}
-			}
-		}
-	}
-			
-	return ok;
-}*/
-
-/********************************************************************************************/
-
 bool p3GxsForums::createForumV2(
         const std::string& name, const std::string& description,
         const RsGxsId& authorId, const std::set<RsGxsId>& moderatorsIds,
@@ -824,6 +789,51 @@ bool p3GxsForums::importForumLink(
 		return failure(errMsg);
 
 	return true;
+}
+
+std::error_condition p3GxsForums::getChildPosts(
+        const RsGxsGroupId& forumId, const RsGxsMessageId& parentId,
+        std::vector<RsGxsForumMsg>& childPosts )
+{
+	RS_DBG3("forumId: ", forumId, " parentId: ", parentId);
+
+	if(forumId.isNull() || parentId.isNull())
+		return std::errc::invalid_argument;
+
+	std::vector<RsGxsGrpMsgIdPair> msgIds;
+	msgIds.push_back(RsGxsGrpMsgIdPair(forumId, parentId));
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
+	opts.mOptions = RS_TOKREQOPT_MSG_PARENT | RS_TOKREQOPT_MSG_LATEST;
+
+	uint32_t token;
+	if( !requestMsgRelatedInfo(token, opts, msgIds) ||
+	        waitToken(token) != RsTokenService::COMPLETE )
+		return std::errc::timed_out;
+
+	GxsMsgRelatedDataMap msgData;
+	if(!getMsgRelatedData(token, msgData))
+		return std::errc::no_message_available;
+
+	for(auto& mit: msgData)
+	{
+		for(auto& vit: mit.second)
+		{
+			auto msgItem = dynamic_cast<RsGxsForumMsgItem*>(vit);
+			if(msgItem)
+			{
+				RsGxsForumMsg post = msgItem->mMsg;
+				post.mMeta = msgItem->meta;
+				childPosts.push_back(post);
+			}
+			else RS_WARN("Got item of unexpected type: ", vit);
+
+			delete vit;
+		}
+	}
+
+	return std::error_condition();
 }
 
 bool p3GxsForums::createGroup(uint32_t &token, RsGxsForumGroup &group)

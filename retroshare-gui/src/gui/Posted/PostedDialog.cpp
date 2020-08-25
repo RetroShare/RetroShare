@@ -255,7 +255,7 @@ void PostedDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupDa
 	groupItemInfo.icon        = image;
     }
     else
-	groupItemInfo.icon        = QIcon(":icons/png/postedlinks.png");
+    groupItemInfo.icon        = FilesDefs::getIconFromQtResourcePath(":icons/png/postedlinks.png");
 
 	groupItemInfo.description = QString::fromUtf8(postedGroupData->mDescription.c_str());
 }

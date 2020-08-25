@@ -25,7 +25,7 @@
 
 #include <retroshare/rstypes.h>
 
-#include "RsAutoUpdatePage.h"
+#include <retroshare-gui/RsAutoUpdatePage.h>
 #include "ui_NetworkView.h"
 
 

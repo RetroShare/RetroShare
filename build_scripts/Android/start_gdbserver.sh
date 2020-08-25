@@ -41,41 +41,56 @@ function define_default_value()
 
 define_default_value ANDROID_APK_PACKAGE "org.retroshare.service"
 define_default_value ANDROID_PROCESS_NAME "org.retroshare.service:rs"
+define_default_value ANDROID_INSTALL_PATH ""
+define_default_value LIB_GDB_SERVER_PATH ""
 define_default_value ANDROID_SERIAL "$(adb devices | head -n 2 | tail -n 1 | awk '{print $1}')"
 define_default_value GDB_SERVER_PORT 5039
 
-adb_shell()
+adb_ushell()
 {
 	adb shell run-as ${ANDROID_APK_PACKAGE} $@
 }
 
+[ -z "${ANDROID_INSTALL_PATH}" ] &&
+{
+	ANDROID_INSTALL_PATH="$(adb_ushell pm path "${ANDROID_APK_PACKAGE}")"
+	ANDROID_INSTALL_PATH="$(dirname ${ANDROID_INSTALL_PATH#"package:"})"
+	[ -z "${ANDROID_INSTALL_PATH}" ] &&
+		cat <<EOF
+Cannot find install path for ${ANDROID_APK_PACKAGE} make sure it is installed,
+or manually specify ANDROID_INSTALL_PATH
+
+
+EOF
+}
+
 ## If not passed as environement variable try to determine gdbserver path
-## shipped withing Android package
+## shipped withing APK
 [ -z "${LIB_GDB_SERVER_PATH}" ] &&
 {
+	
 	for mUsualPath in \
-		"/data/data/${ANDROID_APK_PACKAGE}/lib/libgdbserver.so" \
-		"/data/app/${ANDROID_APK_PACKAGE}"*"/lib/arm64/libgdbserver.so"
+		"${ANDROID_INSTALL_PATH}/lib/libgdbserver.so" \
+		"${ANDROID_INSTALL_PATH}/lib/arm64/libgdbserver.so"
 	do
-		adb_shell ls "${mUsualPath}" &&
+		adb_ushell ls "${mUsualPath}" &&
 			export LIB_GDB_SERVER_PATH="${mUsualPath}" && break
 	done
 }
-
 
 [ -z "${LIB_GDB_SERVER_PATH}" ] &&
 {
 	cat <<EOF
 libgdbserver.so not found in any of the usual path attempting to look for it
-with find, it will take a bunch of time. Take note of the discovered path and
+with find, it will take a little more time. Take note of the discovered path and
 define LIB_GDB_SERVER_PATH on your commandline at next run to avoid waiting
 again.
 
 
 EOF
 	tFile="$(mktemp)"
-	adb_shell find -type f -name 'libgdbserver.so' / | \
-		grep ${ANDROID_APK_PACKAGE} | tee "${tFile}"
+	adb_ushell find ${ANDROID_INSTALL_PATH} -type f -name 'libgdbserver.so' | \
+		tee "${tFile}"
 
 	LIB_GDB_SERVER_PATH="$(head -n 1 "${tFile}")"
 	rm "${tFile}"
@@ -87,7 +102,7 @@ EOF
 	exit -1
 }
 
-mPid="$(adb_shell ps | grep ${ANDROID_PROCESS_NAME} | awk '{print $2}')"
+mPid="$(adb_ushell ps | grep ${ANDROID_PROCESS_NAME} | awk '{print $2}')"
 [ -z "${mPid}" ] &&
 {
 	echo "Failed ${ANDROID_PROCESS_NAME} PID retrival are you sure it is running?"
@@ -98,4 +113,4 @@ mPid="$(adb_shell ps | grep ${ANDROID_PROCESS_NAME} | awk '{print $2}')"
 ## Establish port forwarding so we can connect to gdbserver with gdb
 adb forward tcp:${GDB_SERVER_PORT} tcp:${GDB_SERVER_PORT}
 
-((adb_shell ${LIB_GDB_SERVER_PATH} 127.0.0.1:${GDB_SERVER_PORT} --attach ${mPid})&)
+((adb_ushell ${LIB_GDB_SERVER_PATH} 127.0.0.1:${GDB_SERVER_PORT} --attach ${mPid})&)

@@ -238,7 +238,7 @@ win32-x-g++ {
 }
 ################################# Windows ##########################################
 
-win32-g++ {
+win32-g++|win32-clang-g++ {
 	QMAKE_CC = $${QMAKE_CXX}
 	OBJECTS_DIR = temp/obj
 	MOC_DIR = temp/moc
@@ -852,23 +852,41 @@ rs_jsonapi {
     no_rs_cross_compiling {
         DUMMYRESTBEDINPUT = FORCE
         CMAKE_GENERATOR_OVERRIDE=""
-        win32-g++:CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
+        win32-g++|win32-clang-g++ {
+            isEmpty(QMAKE_SH) {
+                CMAKE_GENERATOR_OVERRIDE="-G \"MinGW Makefiles\""
+            } else {
+                CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
+            }
+        }
         genrestbedlib.name = Generating librestbed.
         genrestbedlib.input = DUMMYRESTBEDINPUT
         genrestbedlib.output = $$clean_path($${RESTBED_BUILD_PATH}/librestbed.a)
         genrestbedlib.CONFIG += target_predeps combine
         genrestbedlib.variable_out = PRE_TARGETDEPS
-        genrestbedlib.commands = \
-            cd $${RS_SRC_PATH} && ( \
-            git submodule update --init supportlibs/restbed ; \
-            cd $${RESTBED_SRC_PATH} ; \
-            git submodule update --init dependency/asio ; \
-            git submodule update --init dependency/catch ; \
-            git submodule update --init dependency/kashmir ; \
-            true ) && \
-            mkdir -p $${RESTBED_BUILD_PATH} && cd $${RESTBED_BUILD_PATH} && \
+        win32-g++:isEmpty(QMAKE_SH) {
+            genrestbedlib.commands = \
+                cd $$shell_path($${RS_SRC_PATH}) && git submodule update --init supportlibs/restbed || cd . $$escape_expand(\\n\\t) \
+                cd $$shell_path($${RESTBED_SRC_PATH}) && git submodule update --init dependency/asio || cd . $$escape_expand(\\n\\t) \
+                cd $$shell_path($${RESTBED_SRC_PATH}) && git submodule update --init dependency/catch || cd . $$escape_expand(\\n\\t )\
+                cd $$shell_path($${RESTBED_SRC_PATH}) && git submodule update --init dependency/kashmir || cd . $$escape_expand(\\n\\t) \
+                $(CHK_DIR_EXISTS) $$shell_path($$UDP_DISCOVERY_BUILD_PATH) $(MKDIR) $$shell_path($${UDP_DISCOVERY_BUILD_PATH}) $$escape_expand(\\n\\t)
+        } else {
+            genrestbedlib.commands = \
+                cd $${RS_SRC_PATH} && ( \
+                git submodule update --init supportlibs/restbed ; \
+                cd $${RESTBED_SRC_PATH} ; \
+                git submodule update --init dependency/asio ; \
+                git submodule update --init dependency/catch ; \
+                git submodule update --init dependency/kashmir ; \
+                true ) && \
+                mkdir -p $${RESTBED_BUILD_PATH} &&
+        }
+        genrestbedlib.commands += \
+            cd $$shell_path($${RESTBED_BUILD_PATH}) && \
             cmake \
                 -DCMAKE_CXX_COMPILER=$$QMAKE_CXX \
+                \"-DCMAKE_CXX_FLAGS=$${QMAKE_CXXFLAGS}\" \
                 $${CMAKE_GENERATOR_OVERRIDE} -DBUILD_SSL=OFF \
                 -DCMAKE_INSTALL_PREFIX=. -B. \
                 -H$$shell_path($${RESTBED_SRC_PATH}) && \
@@ -881,7 +899,7 @@ rs_jsonapi {
         genrestbedheader.output = $${RESTBED_HEADER_FILE}
         genrestbedheader.CONFIG += target_predeps no_link
         genrestbedheader.variable_out = HEADERS
-        genrestbedheader.commands = cd $${RESTBED_BUILD_PATH} && $(MAKE) install
+        genrestbedheader.commands = cd $$shell_path($${RESTBED_BUILD_PATH}) && $(MAKE) install
         QMAKE_EXTRA_COMPILERS += genrestbedheader
     }
 
@@ -897,13 +915,19 @@ rs_jsonapi {
     genjsonapi.clean = $${WRAPPERS_INCL_FILE} $${WRAPPERS_REG_FILE}
     genjsonapi.CONFIG += target_predeps combine no_link
     genjsonapi.variable_out = HEADERS
-    genjsonapi.commands = \
-        mkdir -p $${JSONAPI_GENERATOR_OUT} && \
-        cp $${DOXIGEN_CONFIG_SRC} $${DOXIGEN_CONFIG_OUT} && \
-        echo OUTPUT_DIRECTORY=$${JSONAPI_GENERATOR_OUT} >> $${DOXIGEN_CONFIG_OUT} && \
-        echo INPUT=$${DOXIGEN_INPUT_DIRECTORY} >> $${DOXIGEN_CONFIG_OUT} && \
-        doxygen $${DOXIGEN_CONFIG_OUT} && \
-        $${JSONAPI_GENERATOR_EXE} $${JSONAPI_GENERATOR_SRC} $${JSONAPI_GENERATOR_OUT};
+    win32-g++:isEmpty(QMAKE_SH) {
+        genjsonapi.commands = \
+            $(CHK_DIR_EXISTS) $$shell_path($$JSONAPI_GENERATOR_OUT) $(MKDIR) $$shell_path($${JSONAPI_GENERATOR_OUT}) $$escape_expand(\\n\\t)
+    } else {
+        genjsonapi.commands = \
+            mkdir -p $${JSONAPI_GENERATOR_OUT} && \
+            cp $${DOXIGEN_CONFIG_SRC} $${DOXIGEN_CONFIG_OUT} && \
+            echo OUTPUT_DIRECTORY=$${JSONAPI_GENERATOR_OUT} >> $${DOXIGEN_CONFIG_OUT} && \
+            echo INPUT=$${DOXIGEN_INPUT_DIRECTORY} >> $${DOXIGEN_CONFIG_OUT} && \
+            doxygen $${DOXIGEN_CONFIG_OUT} &&
+    }
+    genjsonapi.commands += \
+        $${JSONAPI_GENERATOR_EXE} $${JSONAPI_GENERATOR_SRC} $${JSONAPI_GENERATOR_OUT}
     QMAKE_EXTRA_COMPILERS += genjsonapi
 
     # Force recalculation of libretroshare dependencies see https://stackoverflow.com/a/47884045
@@ -949,20 +973,34 @@ rs_broadcast_discovery {
     no_rs_cross_compiling {
         DUMMYQMAKECOMPILERINPUT = FORCE
         CMAKE_GENERATOR_OVERRIDE=""
-        win32-g++:CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
+        win32-g++|win32-clang-g++ {
+            isEmpty(QMAKE_SH) {
+                CMAKE_GENERATOR_OVERRIDE="-G \"MinGW Makefiles\""
+            } else {
+                CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
+            }
+        }
         udpdiscoverycpplib.name = Generating libudp-discovery.a.
         udpdiscoverycpplib.input = DUMMYQMAKECOMPILERINPUT
         udpdiscoverycpplib.output = $$clean_path($${UDP_DISCOVERY_BUILD_PATH}/libudp-discovery.a)
         udpdiscoverycpplib.CONFIG += target_predeps combine
         udpdiscoverycpplib.variable_out = PRE_TARGETDEPS
-        udpdiscoverycpplib.commands = \
-            cd $${RS_SRC_PATH} && ( \
-            git submodule update --init supportlibs/udp-discovery-cpp || \
-            true ) && \
-            mkdir -p $${UDP_DISCOVERY_BUILD_PATH} && \
-            cd $${UDP_DISCOVERY_BUILD_PATH} && \
+        win32-g++:isEmpty(QMAKE_SH) {
+            udpdiscoverycpplib.commands = \
+                cd $$shell_path($${RS_SRC_PATH}) && git submodule update --init supportlibs/udp-discovery-cpp || cd . $$escape_expand(\\n\\t) \
+                $(CHK_DIR_EXISTS) $$shell_path($$UDP_DISCOVERY_BUILD_PATH) $(MKDIR) $$shell_path($${UDP_DISCOVERY_BUILD_PATH}) $$escape_expand(\\n\\t)
+        } else {
+            udpdiscoverycpplib.commands = \
+                cd $${RS_SRC_PATH} && ( \
+                git submodule update --init supportlibs/udp-discovery-cpp || \
+                true ) && \
+                mkdir -p $${UDP_DISCOVERY_BUILD_PATH} &&
+        }
+        udpdiscoverycpplib.commands += \
+            cd $$shell_path($${UDP_DISCOVERY_BUILD_PATH}) && \
             cmake -DCMAKE_C_COMPILER=$$fixQmakeCC($$QMAKE_CC) \
                 -DCMAKE_CXX_COMPILER=$$QMAKE_CXX \
+                \"-DCMAKE_CXX_FLAGS=$${QMAKE_CXXFLAGS}\" \
                 $${CMAKE_GENERATOR_OVERRIDE} \
                 -DBUILD_EXAMPLE=OFF -DBUILD_TOOL=OFF \
                 -DCMAKE_INSTALL_PREFIX=. -B. \

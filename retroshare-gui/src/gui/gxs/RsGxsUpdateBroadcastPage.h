@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "mainpage.h"
+#include <retroshare-gui/mainpage.h>
 #include <retroshare/rsgxsifacetypes.h>
 
 // This class implement a basic RS functionality which is that widgets displaying info

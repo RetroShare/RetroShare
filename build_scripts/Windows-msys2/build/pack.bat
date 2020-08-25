@@ -17,8 +17,15 @@ call "%~dp0env.bat" %*
 if errorlevel 2 exit /B 2
 if errorlevel 1 goto error_env
 
-:: Install ntldd
-%EnvMSYS2Cmd% "pacman --noconfirm --needed -S make git mingw-w64-%RsMSYS2Architecture%-ntldd-git"
+if not "%ParamNoupdate%"=="1" (
+	:: Install ntldd
+	%EnvMSYS2Cmd% "pacman --noconfirm --needed -S mingw-w64-%RsMSYS2Architecture%-ntldd-git"
+	
+	:: Install tor
+	if "%ParamTor%"=="1" (
+		%EnvMSYS2Cmd% "pacman --noconfirm --needed -S mingw-w64-%RsMSYS2Architecture%-tor"
+	)
+)
 
 :: Remove deploy path
 if exist "%RsDeployPath%" rmdir /S /Q "%RsDeployPath%"
@@ -53,14 +60,6 @@ set RsDate=
 for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /format:list') do set RsDate=%%I
 set RsDate=%RsDate:~0,4%%RsDate:~4,2%%RsDate:~6,2%
 
-if "%ParamTor%"=="1" (
-	:: Check for tor executable
-	if not exist "%EnvDownloadPath%\tor\Tor\tor.exe" (
-		%cecho% error "Tor binary not found. Please download Tor Expert Bundle from\nhttps://www.torproject.org/download/download.html.en\nand unpack to\n%EnvDownloadPath:\=\\%\\tor"
-		goto error
-	)
-)
-
 set QtMainVersion=%QtVersion:~0,1%
 set QtSharePath=%RsMinGWPath%\share\qt%QtMainVersion%\
 
@@ -72,9 +71,9 @@ if "%QtMainVersion%"=="4" set QtMainVersion2=4
 if "%QtMainVersion%"=="5" set QtMainVersion1=5
 
 if "%RsBuildConfig%" NEQ "release" (
-	set Archive=%RsPackPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsVersion.Extra%-Qt-%QtVersion%-msys2%RsType%%RsArchiveAdd%-%RsBuildConfig%.7z
+	set Archive=%RsPackPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsVersion.Extra%-%RsArchitecture%-msys2%RsType%%RsArchiveAdd%-%RsBuildConfig%.7z
 ) else (
-	set Archive=%RsPackPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsVersion.Extra%-Qt-%QtVersion%-msys2%RsType%%RsArchiveAdd%.7z
+	set Archive=%RsPackPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsVersion.Extra%-%RsArchitecture%-msys2%RsType%%RsArchiveAdd%.7z
 )
 
 if exist "%Archive%" del /Q "%Archive%"
@@ -96,6 +95,7 @@ mkdir "%RsDeployPath%\qss"
 mkdir "%RsDeployPath%\stylesheets"
 mkdir "%RsDeployPath%\sounds"
 mkdir "%RsDeployPath%\translations"
+mkdir "%RsDeployPath%\license"
 
 copy nul "%RsDeployPath%\portable" %Quite%
 
@@ -121,13 +121,19 @@ if "%QtMainVersion%"=="5" (
 )
 
 if exist "%QtSharePath%\plugins\styles\qwindowsvistastyle.dll" (
-	echo Copy styles
+	echo copy styles
 	mkdir "%RsDeployPath%\styles" %Quite%
 	copy "%QtSharePath%\plugins\styles\qwindowsvistastyle.dll" "%RsDeployPath%\styles" %Quite%
 )
 
 copy "%QtSharePath%\plugins\imageformats\*.dll" "%RsDeployPath%\imageformats" %Quite%
 del /Q "%RsDeployPath%\imageformats\*d?.dll" %Quite%
+
+if "%ParamTor%"=="1" (
+	echo copy tor
+	copy "%RsMinGWPath%\bin\tor.exe" "%RsDeployPath%" %Quite%
+	copy "%RsMinGWPath%\bin\tor-gencert.exe" "%RsDeployPath%" %Quite%
+)
 
 echo copy dependencies
 for /R "%RsDeployPath%" %%D in (*.dll, *.exe) do (
@@ -146,6 +152,9 @@ rmdir /S /Q "%RsDeployPath%\stylesheets\__MACOSX__Bubble" %Quite%
 echo copy sounds
 xcopy /S "%SourcePath%\retroshare-gui\src\sounds" "%RsDeployPath%\sounds" %Quite%
 
+echo copy license
+xcopy /S "%SourcePath%\retroshare-gui\src\license" "%RsDeployPath%\license" %Quite%
+
 echo copy translation
 copy "%SourcePath%\retroshare-gui\src\translations\qt_tr.qm" "%RsDeployPath%\translations" %Quite%
 copy "%QtSharePath%\translations\qt_*.qm" "%RsDeployPath%\translations" %Quite%
@@ -160,8 +169,8 @@ if "%QtMainVersion%"=="5" (
 echo copy bdboot.txt
 copy "%SourcePath%\libbitdht\src\bitdht\bdboot.txt" "%RsDeployPath%" %Quite%
 
-echo copy changelog.txt
-copy "%SourcePath%\retroshare-gui\src\changelog.txt" "%RsDeployPath%" %Quite%
+echo generate changelog.txt
+call call "%~dp0\git-log.bat" "%SourcePath%" "%RsDeployPath%\changelog.txt"
 
 echo copy buildinfo.txt
 copy "%RsBuildPath%\buildinfo.txt" "%RsDeployPath%" %Quite%
@@ -175,11 +184,6 @@ if "%ParamWebui%"=="1" (
 		%cecho% error "Webui is enabled, but no webui data found at %RsWebuiPath%\webui"
 		goto error
 	)
-)
-
-if "%ParamTor%"=="1" (
-	echo copy tor
-	echo n | copy /-y "%EnvDownloadPath%\tor\Tor\*.*" "%RsDeployPath%" %Quite%
 )
 
 rem pack files

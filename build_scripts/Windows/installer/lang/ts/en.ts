@@ -9,6 +9,20 @@
   </message> 
 </context> 
 <context> 
+  <name>Section_Tor</name> 
+  <message> 
+    <source>Tor</source> 
+    <translation type="unfinished"></translation> 
+  </message> 
+</context> 
+<context> 
+  <name>Section_Tor_Desc</name> 
+  <message> 
+    <source>Installs Tor.</source> 
+    <translation type="unfinished"></translation> 
+  </message> 
+</context> 
+<context> 
   <name>Section_Data</name> 
   <message> 
     <source>Skins</source> 

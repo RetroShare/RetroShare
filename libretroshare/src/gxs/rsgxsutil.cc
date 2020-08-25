@@ -215,7 +215,8 @@ bool RsGxsIntegrityCheck::check()
 						        rsReputations->overallReputationLevel(
 						            grp->metaData->mAuthorId ) >
 						        RsReputationLevel::LOCALLY_NEGATIVE )
-							used_gxs_ids.insert(std::make_pair(grp->metaData->mAuthorId, RsIdentityUsage(mGenExchangeClient->serviceType(), RsIdentityUsage::GROUP_AUTHOR_KEEP_ALIVE,grp->grpId)));
+							used_gxs_ids.insert(std::make_pair(grp->metaData->mAuthorId, RsIdentityUsage(RsServiceType(mGenExchangeClient->serviceType()),
+                                                                                                         RsIdentityUsage::GROUP_AUTHOR_KEEP_ALIVE,grp->grpId)));
 					}
 				}
 			}
@@ -404,7 +405,12 @@ bool RsGxsIntegrityCheck::check()
 					        rsReputations->overallReputationLevel(
 					            msg->metaData->mAuthorId ) >
 					        RsReputationLevel::LOCALLY_NEGATIVE )
-						used_gxs_ids.insert(std::make_pair(msg->metaData->mAuthorId,RsIdentityUsage(mGenExchangeClient->serviceType(),RsIdentityUsage::MESSAGE_AUTHOR_KEEP_ALIVE,msg->metaData->mGroupId,msg->metaData->mMsgId))) ;
+						used_gxs_ids.insert(std::make_pair(msg->metaData->mAuthorId,RsIdentityUsage(RsServiceType(mGenExchangeClient->serviceType()),
+                                                                                                    RsIdentityUsage::MESSAGE_AUTHOR_KEEP_ALIVE,
+                                                                                                    msg->metaData->mGroupId,
+                                                                                                    msg->metaData->mMsgId,
+                                                                                                    msg->metaData->mParentId,
+                                                                                                    msg->metaData->mThreadId))) ;
 				}
 			}
 
