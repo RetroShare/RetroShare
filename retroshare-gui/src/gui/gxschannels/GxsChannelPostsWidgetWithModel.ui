@@ -10,10 +10,7 @@
     <height>628</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
-   <property name="spacing">
-    <number>4</number>
-   </property>
+  <layout class="QGridLayout" name="gridLayout_3">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -26,7 +23,7 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <item>
+   <item row="0" column="0">
     <widget class="QFrame" name="toolBarFrame">
      <property name="frameShape">
       <enum>QFrame::Box</enum>
@@ -158,7 +155,7 @@
      </layout>
     </widget>
    </item>
-   <item>
+   <item row="1" column="0">
     <widget class="QTabWidget" name="channel_TW">
      <property name="currentIndex">
       <number>0</number>
@@ -411,11 +408,8 @@ p, li { white-space: pre-wrap; }
            <attribute name="title">
             <string>Details</string>
            </attribute>
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <property name="bottomMargin">
-             <number>3</number>
-            </property>
-            <item>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="0" column="0" rowspan="2">
              <layout class="QVBoxLayout" name="verticalLayout_3">
               <item>
                <widget class="QLabel" name="postLogo_LB">
@@ -427,16 +421,6 @@ p, li { white-space: pre-wrap; }
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-                </property>
-                <property name="wordWrap">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="postName_LB">
-                <property name="text">
-                 <string>TextLabel</string>
                 </property>
                 <property name="wordWrap">
                  <bool>true</bool>
@@ -465,7 +449,20 @@ p, li { white-space: pre-wrap; }
               </item>
              </layout>
             </item>
-            <item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="postName_LB">
+              <property name="text">
+               <string>TextLabel</string>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
              <widget class="QTextBrowser" name="postDetails_TE">
               <property name="openExternalLinks">
                <bool>true</bool>
