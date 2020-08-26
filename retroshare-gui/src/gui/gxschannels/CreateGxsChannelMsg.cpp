@@ -688,7 +688,7 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
 			// send chan image
 
 			buffer.open(QIODevice::WriteOnly);
-			picture.save(&buffer, "PNG"); // writes image into ba in PNG format
+            preview_W->getCroppedScaledPicture().save(&buffer, "PNG"); // writes image into ba in PNG format
 			post.mThumbnail.copy((uint8_t *) ba.data(), ba.size());
 		}
 
@@ -723,7 +723,7 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
 
 void CreateGxsChannelMsg::addThumbnail()
 {
-	QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load thumbnail picture"), 107,156);	// these absolute sizes are terrible
+    QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load thumbnail picture"), 0,0);	// 0,0 means: no scale.
 
 	if (img.isNull())
 		return;
