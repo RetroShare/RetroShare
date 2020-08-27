@@ -44,7 +44,7 @@ Q_DECLARE_METATYPE(RsGxsChannelPost)
 std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsewhere
 
 RsGxsChannelPostsModel::RsGxsChannelPostsModel(QObject *parent)
-    : QAbstractItemModel(parent), mTreeMode(TREE_MODE_PLAIN), mColumns(6)
+    : QAbstractItemModel(parent), mTreeMode(RsGxsChannelPostsModel::TREE_MODE_GRID), mColumns(6)
 {
 	initEmptyHierarchy();
 
@@ -62,6 +62,15 @@ RsGxsChannelPostsModel::~RsGxsChannelPostsModel()
     rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
 
+void RsGxsChannelPostsModel::setMode(TreeMode mode)
+{
+    mTreeMode = mode;
+
+    if(mode == TREE_MODE_LIST)
+        setNumColumns(1);
+
+    // needs some update here
+}
 void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 {
 	const RsGxsChannelEvent *e = dynamic_cast<const RsGxsChannelEvent*>(event.get());
@@ -124,18 +133,12 @@ void RsGxsChannelPostsModel::initEmptyHierarchy()
 
     mPosts.clear();
     mFilteredPosts.clear();
-//    mPosts.resize(1);	// adds a sentinel item
-//    mPosts[0].mMeta.mMsgName = "Root sentinel post" ;
-//    mFilteredPosts.resize(1);
-//    mFilteredPosts[0] = 1;
 
     postMods();
 }
 
 void RsGxsChannelPostsModel::preMods()
 {
-	//emit layoutAboutToBeChanged(); //Generate SIGSEGV when click on button move next/prev.
-
 	beginResetModel();
 }
 void RsGxsChannelPostsModel::postMods()

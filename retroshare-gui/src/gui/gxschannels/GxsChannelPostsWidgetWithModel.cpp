@@ -74,10 +74,15 @@ static const int CHANNEL_TABS_FILES  = 2;
 
 #define STAR_OVERLAY_IMAGE ":icons/star_overlay_128.png"
 #define IMAGE_COPYLINK     ":/images/copyrslink.png"
+#define IMAGE_GRID_VIEW    ":icons/png/menu.png"
 
 Q_DECLARE_METATYPE(ChannelPostFileInfo)
 
 // Delegate used to paint into the table of thumbnails
+
+//===============================================================================================================================================//
+//===                                                      ChannelPostDelegate                                                                ===//
+//===============================================================================================================================================//
 
 int ChannelPostDelegate::cellSize(const QFont& font) const
 {
@@ -126,16 +131,6 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
         p.drawPixmap(mZoom*QPoint(6.2*fm.height(),6.9*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(mZoom*7*fm.height(),mZoom*7*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
 	}
 
-    // debug
- 	// if(index.row()==0 && index.column()==0)
-	// {
-	// 	QFile file("yourFile.png");
-	// 	file.open(QIODevice::WriteOnly);
-	// 	pixmap.save(&file, "PNG");
- 	//  std::cerr << "Saved pxmap to png" << std::endl;
-	// }
-    //std::cerr << "option.rect = " << option.rect.width() << "x" << option.rect.height() << ". fm.height()=" << QFontMetricsF(option.font).height() << std::endl;
-
 	painter->drawPixmap(option.rect.topLeft(),
                         pixmap.scaled(option.rect.width(),option.rect.width()*w.height()/(float)w.width(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
 }
@@ -146,8 +141,20 @@ QSize ChannelPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QM
 
     QFontMetricsF fm(option.font);
 
-    return QSize(mZoom*COLUMN_SIZE_FONT_FACTOR_W*fm.height(),mZoom*COLUMN_SIZE_FONT_FACTOR_H*fm.height());
+    if(mUseGrid)
+        return QSize(mZoom*COLUMN_SIZE_FONT_FACTOR_W*fm.height(),mZoom*COLUMN_SIZE_FONT_FACTOR_H*fm.height());
+    else
+        return QSize(option.rect.width(),mZoom*COLUMN_SIZE_FONT_FACTOR_H*fm.height());
 }
+
+void ChannelPostDelegate::setWidgetGrid(bool use_grid)
+{
+    mUseGrid = use_grid;
+}
+
+//===============================================================================================================================================//
+//===                                                  ChannelPostFilesDelegate                                                               ===//
+//===============================================================================================================================================//
 
 QWidget *ChannelPostFilesDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex& index) const
 {
@@ -221,6 +228,10 @@ QSize ChannelPostFilesDelegate::sizeHint(const QStyleOptionViewItem& option, con
     case RsGxsChannelPostFilesModel::COLUMN_FILES_FILE: return QSize(option.rect.width(),GxsChannelFilesStatusWidget(file).height());
     }
 }
+
+//===============================================================================================================================================//
+//===                                               GxsChannelPostWidgetWithModel                                                            ===//
+//===============================================================================================================================================//
 
 /** Constructor */
 GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupId &channelId, QWidget *parent) :
@@ -366,7 +377,13 @@ void GxsChannelPostsWidgetWithModel::postContextMenu(const QPoint&)
 {
     QMenu menu(this);
 
-	menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()));
+    if(mChannelPostsModel->getMode() == RsGxsChannelPostsModel::TREE_MODE_GRID)
+        menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_GRID_VIEW), tr("Switch to list view"), this, SLOT(switchView()));
+    else
+        menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_GRID_VIEW), tr("Switch to grid view"), this, SLOT(switchView()));
+
+    menu.addSeparator();
+    menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()));
 
 	if(IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
 		menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/edit_16.png"), tr("Edit"), this, SLOT(editPost()));
@@ -374,6 +391,19 @@ void GxsChannelPostsWidgetWithModel::postContextMenu(const QPoint&)
 	menu.exec(QCursor::pos());
 }
 
+void GxsChannelPostsWidgetWithModel::switchView()
+{
+    if(mChannelPostsModel->getMode() == RsGxsChannelPostsModel::TREE_MODE_GRID)
+    {
+        mChannelPostsDelegate->setWidgetGrid(false);
+        mChannelPostsModel->setMode(RsGxsChannelPostsModel::TREE_MODE_LIST);
+    }
+    else
+    {
+        mChannelPostsDelegate->setWidgetGrid(true);
+        mChannelPostsModel->setMode(RsGxsChannelPostsModel::TREE_MODE_GRID);
+    }
+}
 void GxsChannelPostsWidgetWithModel::copyMessageLink()
 {
     try

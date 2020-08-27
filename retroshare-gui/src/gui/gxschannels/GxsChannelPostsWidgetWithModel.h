@@ -68,13 +68,16 @@ class ChannelPostDelegate: public QAbstractItemDelegate
 
         int cellSize(const QFont& font) const;
         void zoom(bool zoom_or_unzoom) ;
-	private:
+        void setWidgetGrid(bool use_grid) ;
+
+    private:
  		static constexpr float IMAGE_MARGIN_FACTOR = 1.0;
  		static constexpr float IMAGE_SIZE_FACTOR_W = 4.0 ;
  		static constexpr float IMAGE_SIZE_FACTOR_H = 6.0 ;
  		static constexpr float IMAGE_ZOOM_FACTOR   = 1.0;
 
         float mZoom;	// zoom factor for the whole thumbnail
+        bool mUseGrid;  // wether we use the grid widget or the list widget
 };
 
 class GxsChannelPostsWidgetWithModel: public GxsMessageFrameWidget
@@ -147,6 +150,7 @@ private slots:
 	void postContextMenu(const QPoint&);
 	void copyMessageLink();
 	void updateZoomFactor(bool zoom_or_unzoom);
+    void switchView();
 
 public slots:
  	void sortColumnFiles(int col,Qt::SortOrder so);

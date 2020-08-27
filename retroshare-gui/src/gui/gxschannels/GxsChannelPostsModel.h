@@ -92,8 +92,8 @@ public:
 #endif
 
     enum TreeMode{ TREE_MODE_UNKWN  = 0x00,
-                   TREE_MODE_PLAIN  = 0x01,
-                   TREE_MODE_FILES  = 0x02,
+                   TREE_MODE_GRID   = 0x01,
+                   TREE_MODE_LIST   = 0x02,
     };
 
 #ifdef TODO
@@ -112,6 +112,8 @@ public:
     const RsGxsGroupId& currentGroupId() const;
 
     void setNumColumns(int n);
+    void setMode(TreeMode mode);
+    TreeMode getMode() const { return mTreeMode; }
 
     // Retrieve the full list of files for all posts.
 
