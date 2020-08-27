@@ -84,9 +84,12 @@ Q_DECLARE_METATYPE(ChannelPostFileInfo)
 //===                                                      ChannelPostDelegate                                                                ===//
 //===============================================================================================================================================//
 
-int ChannelPostDelegate::cellSize(const QFont& font) const
+int ChannelPostDelegate::cellSize(const QFont& font,uint32_t parent_width) const
 {
-    return mZoom*COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font).height();
+    if(mUseGrid)
+        return mZoom*COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font).height();
+    else
+        return parent_width;
 }
 
 void ChannelPostDelegate::zoom(bool zoom_or_unzoom)
@@ -110,7 +113,8 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
     painter->fillRect( option.rect, option.backgroundBrush);
     painter->restore();
 
-	ChannelPostThumbnailView w(post);
+    uint32_t flags = (mUseGrid)?0:(ChannelPostThumbnailView::FLAG_SHOW_TEXT);
+    ChannelPostThumbnailView w(post,flags);
 
 	QPixmap pixmap(w.size());
 
@@ -282,7 +286,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     QFontMetricsF fm(font());
 
     for(int i=0;i<mChannelPostsModel->columnCount();++i)
-		ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(font()));
+        ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(font(),ui->postsTree->width()));
 
 	/* Setup UI helper */
 
@@ -350,11 +354,11 @@ void GxsChannelPostsWidgetWithModel::updateZoomFactor(bool zoom_or_unzoom)
     mChannelPostsDelegate->zoom(zoom_or_unzoom);
 
     for(int i=0;i<mChannelPostsModel->columnCount();++i)
-		ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(font()));
+        ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(font(),ui->postsTree->width()));
 
     QSize s = ui->postsTree->size();
 
-	int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(font()))));
+    int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(font(),s.width()))));
     std::cerr << "nb columns: " << n_columns << std::endl;
 
 	mChannelPostsModel->setNumColumns(n_columns);	// forces the update
@@ -402,6 +406,8 @@ void GxsChannelPostsWidgetWithModel::switchView()
     {
         mChannelPostsDelegate->setWidgetGrid(true);
         mChannelPostsModel->setMode(RsGxsChannelPostsModel::TREE_MODE_GRID);
+
+        handlePostsTreeSizeChange(ui->postsTree->size());
     }
 }
 void GxsChannelPostsWidgetWithModel::copyMessageLink()
@@ -447,7 +453,7 @@ void GxsChannelPostsWidgetWithModel::editPost()
 
 void GxsChannelPostsWidgetWithModel::handlePostsTreeSizeChange(QSize s)
 {
-    int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(font()))));
+    int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(font(),ui->postsTree->width()))));
     std::cerr << "nb columns: " << n_columns << std::endl;
 
     if(n_columns != mChannelPostsModel->columnCount())

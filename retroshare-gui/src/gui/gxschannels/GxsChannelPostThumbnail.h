@@ -38,9 +38,10 @@
 class ZoomableLabel: public QLabel
 {
 public:
-    ZoomableLabel(QWidget *parent): QLabel(parent),mZoomFactor(1.0),mCenterX(0.0),mCenterY(0.0) {}
+    ZoomableLabel(QWidget *parent): QLabel(parent),mZoomFactor(1.0),mCenterX(0.0),mCenterY(0.0),mZoomEnabled(true) {}
 
     void setPicture(const QPixmap& pix);
+    void setEnableZoom(bool b) { mZoomEnabled = b; }
     QPixmap extractCroppedScaledPicture() const;
 
 protected:
@@ -57,8 +58,9 @@ protected:
     float mCenterX;
     float mCenterY;
     float mZoomFactor;
-    int mLastX,mLastY;
+    int   mLastX,mLastY;
     bool  mMoving;
+    bool  mZoomEnabled;
 };
 
 // Class to paint the thumbnails with title
@@ -71,6 +73,10 @@ public:
 	// This variable determines the zoom factor on the text below thumbnails. 2.0 is mostly correct for all screen.
 	static constexpr float THUMBNAIL_OVERSAMPLE_FACTOR = 2.0;
 
+    static constexpr uint32_t FLAG_NONE      = 0x00;
+    static constexpr uint32_t FLAG_SHOW_TEXT = 0x01;
+    static constexpr uint32_t FLAG_ALLOW_PAN = 0x02;
+
 	// Size of thumbnails as a function of the height of the font. An aspect ratio of 3/4 is good.
 
 	static const int THUMBNAIL_W  = 4;
@@ -79,13 +85,13 @@ public:
     static constexpr char *CHAN_DEFAULT_IMAGE = ":images/thumb-default-video.png";
 
     virtual ~ChannelPostThumbnailView();
-    ChannelPostThumbnailView(QWidget *parent=NULL);
-    ChannelPostThumbnailView(const RsGxsChannelPost& post,QWidget *parent=NULL);
+    ChannelPostThumbnailView(QWidget *parent=NULL,uint32_t flags=FLAG_ALLOW_PAN);
+    ChannelPostThumbnailView(const RsGxsChannelPost& post,uint32_t flags,QWidget *parent=NULL);
 
-    void init(const QPixmap& thumbnail,const QString& msg,bool is_msg_new);
+    void init(const RsGxsChannelPost& post);
 
-    void setPixmap(const QPixmap& p) { lb->setPicture(p); }
-    QPixmap getCroppedScaledPicture() const { return lb->extractCroppedScaledPicture() ; }
+    void setPixmap(const QPixmap& p) { mPostImage->setPicture(p); }
+    QPixmap getCroppedScaledPicture() const { return mPostImage->extractCroppedScaledPicture() ; }
 
     void setText(const QString& s)
     {
@@ -95,11 +101,12 @@ public:
         else
             ss =s;
 
-        lt->setText(ss);
+        mPostTitle->setText(ss);
     }
 
 private:
-    ZoomableLabel *lb;
-    QLabel *lt;
+    ZoomableLabel *mPostImage;
+    QLabel *mPostTitle;
+    uint32_t mFlags;
 };
 

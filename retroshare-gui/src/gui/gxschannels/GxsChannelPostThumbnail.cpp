@@ -19,49 +19,77 @@
  *******************************************************************************/
 
 #include <QWheelEvent>
+#include <QDateTime>
 
 #include "gui/common/FilesDefs.h"
 #include "gui/gxschannels/GxsChannelPostThumbnail.h"
 
-ChannelPostThumbnailView::ChannelPostThumbnailView(const RsGxsChannelPost& post,QWidget *parent)
-        : QWidget(parent)
+ChannelPostThumbnailView::ChannelPostThumbnailView(const RsGxsChannelPost& post,uint32_t flags,QWidget *parent)
+        : QWidget(parent),mFlags(flags)
 {
         // now fill the data
 
-        QPixmap thumbnail;
-
-        if(post.mThumbnail.mSize > 0)
-                GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData, post.mThumbnail.mSize, thumbnail,GxsIdDetails::ORIGINAL);
-        else if(post.mMeta.mPublishTs > 0)	// this is for testing that the post is not an empty post (happens at the end of the last row)
-                thumbnail = FilesDefs::getPixmapFromQtResourcePath(CHAN_DEFAULT_IMAGE);
-
-        init(thumbnail, QString::fromUtf8(post.mMeta.mMsgName.c_str()), IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus) );
+        init(post);
 }
 
-ChannelPostThumbnailView::ChannelPostThumbnailView(QWidget *parent)
-    : QWidget(parent)
+ChannelPostThumbnailView::ChannelPostThumbnailView(QWidget *parent,uint32_t flags)
+    : QWidget(parent),mFlags(flags)
 {
-        init(FilesDefs::getPixmapFromQtResourcePath(CHAN_DEFAULT_IMAGE), QString("New post"),false);
+    init(RsGxsChannelPost());
 }
 
 ChannelPostThumbnailView::~ChannelPostThumbnailView()
 {
-    delete lb;
-    delete lt;
+    delete mPostImage;
 }
 
-void ChannelPostThumbnailView::init(const QPixmap& thumbnail,const QString& msg,bool is_msg_new)
+void ChannelPostThumbnailView::init(const RsGxsChannelPost& post)
 {
+    QString msg = QString::fromUtf8(post.mMeta.mMsgName.c_str());
+    bool is_msg_new = IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus);
+
+    QPixmap thumbnail;
+
+    if(post.mThumbnail.mSize > 0)
+        GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData, post.mThumbnail.mSize, thumbnail,GxsIdDetails::ORIGINAL);
+    else if(post.mMeta.mPublishTs > 0)	// this is for testing that the post is not an empty post (happens at the end of the last row)
+        thumbnail = FilesDefs::getPixmapFromQtResourcePath(CHAN_DEFAULT_IMAGE);
+
+    mPostImage = new ZoomableLabel(this);
+    mPostImage->setEnableZoom(mFlags & FLAG_ALLOW_PAN);
+    mPostImage->setScaledContents(true);
+    mPostImage->setPicture(thumbnail);
+
+    if(mFlags & FLAG_ALLOW_PAN)
+        mPostImage->setToolTip(tr("Use mouse to center and zoom into the image"));
+
+    mPostTitle = new QLabel(this);
+
+    if(mFlags & FLAG_SHOW_TEXT)
+    {
+        QBoxLayout *layout = new QHBoxLayout(this);
+
+        layout->addWidget(mPostImage);
+
+        QVBoxLayout *vlayout = new QVBoxLayout(this);
+
+        mPostTitle->setText(msg);
+        vlayout->addWidget(mPostTitle);
+
+        QLabel *date_label = new QLabel(this);
+        date_label->setText(QDateTime::fromSecsSinceEpoch(post.mMeta.mPublishTs).toString());
+        vlayout->addWidget(date_label);
+
+        vlayout->addStretch();
+        layout->addLayout(vlayout);
+        setLayout(layout);
+    }
+    else
+    {
         QVBoxLayout *layout = new QVBoxLayout(this);
 
-        lb = new ZoomableLabel(this);
-        lb->setScaledContents(true);
-        lb->setToolTip(tr("Use mouse to center and zoom into the image"));
-        layout->addWidget(lb);
-
-        lt = new QLabel(this);
-        layout->addWidget(lt);
-
+        layout->addWidget(mPostImage);
+        layout->addWidget(mPostTitle);
         setLayout(layout);
 
         setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum);
@@ -70,28 +98,33 @@ void ChannelPostThumbnailView::init(const QPixmap& thumbnail,const QString& msg,
         int W = THUMBNAIL_OVERSAMPLE_FACTOR * THUMBNAIL_W * fm.height() ;
         int H = THUMBNAIL_OVERSAMPLE_FACTOR * THUMBNAIL_H * fm.height() ;
 
-        lb->setFixedSize(W,H);
-        lb->setPicture(thumbnail);
+        mPostImage->setFixedSize(W,H);
 
-        setText(msg);
+        QString ss = (msg.length() > 30)? (msg.left(30)+"..."):msg;
 
-        QFont font = lt->font();
+        mPostTitle->setText(ss);
+
+        QFont font = mPostTitle->font();
 
         if(is_msg_new)
         {
-                font.setBold(true);
-                lt->setFont(font);
+            font.setBold(true);
+            mPostTitle->setFont(font);
         }
 
-        lt->setMaximumWidth(W);
-        lt->setWordWrap(true);
+        mPostTitle->setMaximumWidth(W);
+        mPostTitle->setWordWrap(true);
+    }
 
-        adjustSize();
-        update();
+    adjustSize();
+    update();
 }
 
 void ZoomableLabel::mouseMoveEvent(QMouseEvent *me)
 {
+    if(!mZoomEnabled)
+        return;
+
     float new_center_x = mCenterX - (me->x() - mLastX);
     float new_center_y = mCenterY - (me->y() - mLastY);
 
@@ -121,6 +154,9 @@ void ZoomableLabel::mouseReleaseEvent(QMouseEvent *)
 }
 void ZoomableLabel::wheelEvent(QWheelEvent *me)
 {
+    if(!mZoomEnabled)
+        return;
+
     float new_zoom_factor = (me->delta() > 0)?(mZoomFactor*1.05):(mZoomFactor/1.05);
     float new_center_x = mCenterX;
     float new_center_y = mCenterY;

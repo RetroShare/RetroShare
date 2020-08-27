@@ -66,7 +66,7 @@ class ChannelPostDelegate: public QAbstractItemDelegate
 		void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const override;
         QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
-        int cellSize(const QFont& font) const;
+        int cellSize(const QFont& font,uint32_t parent_width) const;
         void zoom(bool zoom_or_unzoom) ;
         void setWidgetGrid(bool use_grid) ;
 
