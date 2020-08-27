@@ -159,10 +159,10 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
             font.setBold(true);
             painter->setFont(font);
         }
-        painter->drawText(QPoint(p.x(),y),QString::fromUtf8(post.mMeta.mMsgName.c_str()));
+        painter->drawText(QPoint(p.x()+0.5*font_height,y),QString::fromUtf8(post.mMeta.mMsgName.c_str()));
         y += font_height;
 
-        painter->drawText(QPoint(p.x(),y),QDateTime::fromSecsSinceEpoch(post.mMeta.mPublishTs).toString());
+        painter->drawText(QPoint(p.x()+0.5*font_height,y),QDateTime::fromSecsSinceEpoch(post.mMeta.mPublishTs).toString());
         y += font_height;
 
         painter->restore();
