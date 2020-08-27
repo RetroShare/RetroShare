@@ -116,27 +116,49 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
     uint32_t flags = (mUseGrid)?0:(ChannelPostThumbnailView::FLAG_SHOW_TEXT);
     ChannelPostThumbnailView w(post,flags);
 
-	QPixmap pixmap(w.size());
+    if(mUseGrid)
+    {
+        QPixmap pixmap(w.size());
 
-    if((option.state & QStyle::State_Selected) && post.mMeta.mPublishTs > 0) // check if post is selected and is not empty (end of last row)
-		pixmap.fill(QRgb(0xff308dc7));	// I dont know how to grab the backgroud color for selected objects automatically.
-	else
-		pixmap.fill(QRgb(0x00ffffff));	// choose a fully transparent background
+        if((option.state & QStyle::State_Selected) && post.mMeta.mPublishTs > 0) // check if post is selected and is not empty (end of last row)
+            pixmap.fill(QRgb(0xff308dc7));	// I dont know how to grab the backgroud color for selected objects automatically.
+        else
+            pixmap.fill(QRgb(0x00ffffff));	// choose a fully transparent background
 
-	w.render(&pixmap,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
+        w.render(&pixmap,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
 
-    if(mZoom != 1.0)
-		pixmap = pixmap.scaled(mZoom*pixmap.size(),Qt::KeepAspectRatio,Qt::SmoothTransformation);
+        if(mUseGrid)
+        {
+            if(mZoom != 1.0)
+                pixmap = pixmap.scaled(mZoom*pixmap.size(),Qt::KeepAspectRatio,Qt::SmoothTransformation);
 
-	if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
-	{
-        QPainter p(&pixmap);
-        QFontMetricsF fm(option.font);
-        p.drawPixmap(mZoom*QPoint(6.2*fm.height(),6.9*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(mZoom*7*fm.height(),mZoom*7*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
-	}
+            if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
+            {
+                QPainter p(&pixmap);
+                QFontMetricsF fm(option.font);
+                p.drawPixmap(mZoom*QPoint(6.2*fm.height(),6.9*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(mZoom*7*fm.height(),mZoom*7*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
+            }
+        }
 
-	painter->drawPixmap(option.rect.topLeft(),
-                        pixmap.scaled(option.rect.width(),option.rect.width()*w.height()/(float)w.width(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+        painter->drawPixmap(option.rect.topLeft(),
+                            pixmap.scaled(option.rect.width(),option.rect.width()*w.height()/(float)w.width(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+    }
+    else
+    {
+        QPixmap pixmap(option.rect.size());
+
+        if((option.state & QStyle::State_Selected) && post.mMeta.mPublishTs > 0) // check if post is selected and is not empty (end of last row)
+            pixmap.fill(QRgb(0xff308dc7));	// I dont know how to grab the backgroud color for selected objects automatically.
+        else
+            pixmap.fill(QRgb(0x00ffffff));	// choose a fully transparent background
+
+        w.setFixedSize(option.rect.size());
+        w.update();
+
+        w.render(&pixmap,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
+
+        painter->drawPixmap(option.rect.topLeft(), pixmap) ;
+    }
 }
 
 QSize ChannelPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
@@ -148,7 +170,12 @@ QSize ChannelPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QM
     if(mUseGrid)
         return QSize(mZoom*COLUMN_SIZE_FONT_FACTOR_W*fm.height(),mZoom*COLUMN_SIZE_FONT_FACTOR_H*fm.height());
     else
-        return QSize(option.rect.width(),mZoom*COLUMN_SIZE_FONT_FACTOR_H*fm.height());
+    {
+        RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
+        uint32_t flags = (mUseGrid)?0:(ChannelPostThumbnailView::FLAG_SHOW_TEXT);
+
+        return QSize(option.rect.width(),ChannelPostThumbnailView(post,flags).height());
+    }
 }
 
 void ChannelPostDelegate::setWidgetGrid(bool use_grid)
@@ -285,8 +312,11 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 
     QFontMetricsF fm(font());
 
-    for(int i=0;i<mChannelPostsModel->columnCount();++i)
-        ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(font(),ui->postsTree->width()));
+    if(mChannelPostsModel->getMode() == RsGxsChannelPostsModel::TREE_MODE_GRID)
+        for(int i=0;i<mChannelPostsModel->columnCount();++i)
+            ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(font(),ui->postsTree->width()));
+    else
+            ui->postsTree->setColumnWidth(0,ui->postsTree->width());
 
 	/* Setup UI helper */
 
@@ -351,6 +381,9 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 
 void GxsChannelPostsWidgetWithModel::updateZoomFactor(bool zoom_or_unzoom)
 {
+    if(mChannelPostsModel->getMode() == RsGxsChannelPostsModel::TREE_MODE_LIST)
+        return;
+
     mChannelPostsDelegate->zoom(zoom_or_unzoom);
 
     for(int i=0;i<mChannelPostsModel->columnCount();++i)
@@ -401,11 +434,19 @@ void GxsChannelPostsWidgetWithModel::switchView()
     {
         mChannelPostsDelegate->setWidgetGrid(false);
         mChannelPostsModel->setMode(RsGxsChannelPostsModel::TREE_MODE_LIST);
+
+        ui->postsTree->setColumnWidth(0,ui->postsTree->width());
+        ui->postsTree->setUniformRowHeights(true);
     }
     else
     {
         mChannelPostsDelegate->setWidgetGrid(true);
         mChannelPostsModel->setMode(RsGxsChannelPostsModel::TREE_MODE_GRID);
+
+        for(int i=0;i<mChannelPostsModel->columnCount();++i)
+            ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(font(),ui->postsTree->width()));
+
+        ui->postsTree->setUniformRowHeights(false);
 
         handlePostsTreeSizeChange(ui->postsTree->size());
     }

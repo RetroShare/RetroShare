@@ -82,6 +82,7 @@ void ChannelPostThumbnailView::init(const RsGxsChannelPost& post)
 
         vlayout->addStretch();
         layout->addLayout(vlayout);
+        layout->addSpacing(Qt::Horizontal);
         setLayout(layout);
     }
     else
