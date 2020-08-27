@@ -63,43 +63,22 @@ void ChannelPostThumbnailView::init(const RsGxsChannelPost& post)
     if(mFlags & FLAG_ALLOW_PAN)
         mPostImage->setToolTip(tr("Use mouse to center and zoom into the image"));
 
-    mPostTitle = new QLabel(this);
+    QVBoxLayout *layout = new QVBoxLayout(this);
+
+    layout->addWidget(mPostImage);
+
+    setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum);
+
+    QFontMetricsF fm(font());
+    int W = THUMBNAIL_OVERSAMPLE_FACTOR * THUMBNAIL_W * fm.height() ;
+    int H = THUMBNAIL_OVERSAMPLE_FACTOR * THUMBNAIL_H * fm.height() ;
+
+    mPostImage->setFixedSize(W,H);
 
     if(mFlags & FLAG_SHOW_TEXT)
     {
-        QBoxLayout *layout = new QHBoxLayout(this);
-
-        layout->addWidget(mPostImage);
-
-        QVBoxLayout *vlayout = new QVBoxLayout(this);
-
-        mPostTitle->setText(msg);
-        vlayout->addWidget(mPostTitle);
-
-        QLabel *date_label = new QLabel(this);
-        date_label->setText(QDateTime::fromSecsSinceEpoch(post.mMeta.mPublishTs).toString());
-        vlayout->addWidget(date_label);
-
-        vlayout->addStretch();
-        layout->addLayout(vlayout);
-        layout->addSpacing(Qt::Horizontal);
-        setLayout(layout);
-    }
-    else
-    {
-        QVBoxLayout *layout = new QVBoxLayout(this);
-
-        layout->addWidget(mPostImage);
+        mPostTitle = new QLabel(this);
         layout->addWidget(mPostTitle);
-        setLayout(layout);
-
-        setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum);
-
-        QFontMetricsF fm(font());
-        int W = THUMBNAIL_OVERSAMPLE_FACTOR * THUMBNAIL_W * fm.height() ;
-        int H = THUMBNAIL_OVERSAMPLE_FACTOR * THUMBNAIL_H * fm.height() ;
-
-        mPostImage->setFixedSize(W,H);
 
         QString ss = (msg.length() > 30)? (msg.left(30)+"..."):msg;
 
@@ -117,6 +96,7 @@ void ChannelPostThumbnailView::init(const RsGxsChannelPost& post)
         mPostTitle->setWordWrap(true);
     }
 
+    setLayout(layout);
     adjustSize();
     update();
 }

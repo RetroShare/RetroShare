@@ -67,7 +67,7 @@ void RsGxsChannelPostsModel::setMode(TreeMode mode)
     mTreeMode = mode;
 
     if(mode == TREE_MODE_LIST)
-        setNumColumns(1);
+        setNumColumns(2);
 
     // needs some update here
 }
@@ -212,7 +212,10 @@ int RsGxsChannelPostsModel::rowCount(const QModelIndex& parent) const
         return 0;
 
     if(!parent.isValid())
-		return (mFilteredPosts.size() + mColumns-1)/mColumns; // mFilteredPosts always has an item at 0, so size()>=1, and mColumn>=1
+        if(mTreeMode == TREE_MODE_GRID)
+            return (mFilteredPosts.size() + mColumns-1)/mColumns; // mFilteredPosts always has an item at 0, so size()>=1, and mColumn>=1
+        else
+            return mFilteredPosts.size();
 
     RsErr() << __PRETTY_FUNCTION__ << " rowCount cannot figure out the porper number of rows." << std::endl;
     return 0;
@@ -220,7 +223,10 @@ int RsGxsChannelPostsModel::rowCount(const QModelIndex& parent) const
 
 int RsGxsChannelPostsModel::columnCount(const QModelIndex &/*parent*/) const
 {
-	return std::min((int)mFilteredPosts.size(),(int)mColumns) ;
+    if(mTreeMode == TREE_MODE_GRID)
+        return std::min((int)mFilteredPosts.size(),(int)mColumns) ;
+    else
+        return 2;
 }
 
 bool RsGxsChannelPostsModel::getPostData(const QModelIndex& i,RsGxsChannelPost& fmpe) const
@@ -287,7 +293,7 @@ QModelIndex RsGxsChannelPostsModel::index(int row, int column, const QModelIndex
     if(row < 0 || column < 0 || column >= (int)mColumns)
 		return QModelIndex();
 
-    quintptr ref = getChildRef(parent.internalId(),column + row*mColumns);
+    quintptr ref = getChildRef(parent.internalId(),(mTreeMode == TREE_MODE_GRID)?(column + row*mColumns):row);
 
 #ifdef DEBUG_CHANNEL_MODEL
 	std::cerr << "index-3(" << row << "," << column << " parent=" << parent << ") : " << createIndex(row,column,ref) << std::endl;
@@ -723,15 +729,18 @@ QModelIndex RsGxsChannelPostsModel::getIndexOfMessage(const RsGxsMessageId& mid)
 
     for(uint32_t i=0;i<mFilteredPosts.size();++i)
     {
-		// First look into msg versions, in case the msg is a version of an existing message
+        // First look into msg versions, in case the msg is a version of an existing message
 
         for(auto& msg_id:mPosts[mFilteredPosts[i]].mOlderVersions)
             if(msg_id == postId)
             {
-				quintptr ref ;
-				convertTabEntryToRefPointer(i,ref);	// we dont use i+1 here because i is not a row, but an index in the mPosts tab
+                quintptr ref ;
+                convertTabEntryToRefPointer(i,ref);	// we dont use i+1 here because i is not a row, but an index in the mPosts tab
 
-				return createIndex(i/mColumns,i%mColumns, ref);
+                if(mTreeMode == TREE_MODE_GRID)
+                    return createIndex(i/mColumns,i%mColumns, ref);
+                else
+                    return createIndex(i,0, ref);
             }
 
         if(mPosts[mFilteredPosts[i]].mMeta.mMsgId == postId)
@@ -739,7 +748,10 @@ QModelIndex RsGxsChannelPostsModel::getIndexOfMessage(const RsGxsMessageId& mid)
             quintptr ref ;
             convertTabEntryToRefPointer(i,ref);	// we dont use i+1 here because i is not a row, but an index in the mPosts tab
 
-			return createIndex(i/mColumns,i%mColumns, ref);
+            if(mTreeMode == TREE_MODE_GRID)
+                return createIndex(i/mColumns,i%mColumns, ref);
+            else
+                return createIndex(i,0, ref);
         }
     }
 

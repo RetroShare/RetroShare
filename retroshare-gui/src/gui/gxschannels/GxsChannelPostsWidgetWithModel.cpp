@@ -84,12 +84,12 @@ Q_DECLARE_METATYPE(ChannelPostFileInfo)
 //===                                                      ChannelPostDelegate                                                                ===//
 //===============================================================================================================================================//
 
-int ChannelPostDelegate::cellSize(const QFont& font,uint32_t parent_width) const
+int ChannelPostDelegate::cellSize(int col,const QFont& font,uint32_t parent_width) const
 {
-    if(mUseGrid)
+    if(mUseGrid || col==0)
         return mZoom*COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font).height();
     else
-        return parent_width;
+        return parent_width - mZoom*COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font).height();
 }
 
 void ChannelPostDelegate::zoom(bool zoom_or_unzoom)
@@ -104,20 +104,20 @@ void ChannelPostDelegate::zoom(bool zoom_or_unzoom)
 
 void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
-	// prepare
-	painter->save();
-	painter->setClipRect(option.rect);
+    // prepare
+    painter->save();
+    painter->setClipRect(option.rect);
 
-	RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
+    RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
 
     painter->fillRect( option.rect, option.backgroundBrush);
     painter->restore();
 
-    uint32_t flags = (mUseGrid)?0:(ChannelPostThumbnailView::FLAG_SHOW_TEXT);
-    ChannelPostThumbnailView w(post,flags);
-
-    if(mUseGrid)
+    if(mUseGrid || index.column()==0)
     {
+        uint32_t flags = (mUseGrid)?(ChannelPostThumbnailView::FLAG_SHOW_TEXT):0;
+        ChannelPostThumbnailView w(post,flags);
+
         QPixmap pixmap(w.size());
 
         if((option.state & QStyle::State_Selected) && post.mMeta.mPublishTs > 0) // check if post is selected and is not empty (end of last row)
@@ -127,7 +127,7 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 
         w.render(&pixmap,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
 
-        if(mUseGrid)
+        if(mUseGrid || index.column()==0)
         {
             if(mZoom != 1.0)
                 pixmap = pixmap.scaled(mZoom*pixmap.size(),Qt::KeepAspectRatio,Qt::SmoothTransformation);
@@ -145,19 +145,27 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
     }
     else
     {
-        QPixmap pixmap(option.rect.size());
+        // We're drawing the text on the second column
 
-        if((option.state & QStyle::State_Selected) && post.mMeta.mPublishTs > 0) // check if post is selected and is not empty (end of last row)
-            pixmap.fill(QRgb(0xff308dc7));	// I dont know how to grab the backgroud color for selected objects automatically.
-        else
-            pixmap.fill(QRgb(0x00ffffff));	// choose a fully transparent background
+        uint32_t font_height = QFontMetricsF(option.font).height();
+        QPoint p = option.rect.topLeft();
+        float y = p.y() + font_height;
 
-        w.setFixedSize(option.rect.size());
-        w.update();
+        painter->save();
 
-        w.render(&pixmap,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
+        if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
+        {
+            QFont font(option.font);
+            font.setBold(true);
+            painter->setFont(font);
+        }
+        painter->drawText(QPoint(p.x(),y),QString::fromUtf8(post.mMeta.mMsgName.c_str()));
+        y += font_height;
 
-        painter->drawPixmap(option.rect.topLeft(), pixmap) ;
+        painter->drawText(QPoint(p.x(),y),QDateTime::fromSecsSinceEpoch(post.mMeta.mPublishTs).toString());
+        y += font_height;
+
+        painter->restore();
     }
 }
 
@@ -167,15 +175,10 @@ QSize ChannelPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QM
 
     QFontMetricsF fm(option.font);
 
-    if(mUseGrid)
+    if(mUseGrid || index.column()==0)
         return QSize(mZoom*COLUMN_SIZE_FONT_FACTOR_W*fm.height(),mZoom*COLUMN_SIZE_FONT_FACTOR_H*fm.height());
     else
-    {
-        RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
-        uint32_t flags = (mUseGrid)?0:(ChannelPostThumbnailView::FLAG_SHOW_TEXT);
-
-        return QSize(option.rect.width(),ChannelPostThumbnailView(post,flags).height());
-    }
+        return QSize(option.rect.width()-mZoom*COLUMN_SIZE_FONT_FACTOR_W*fm.height(),mZoom*COLUMN_SIZE_FONT_FACTOR_H*fm.height());
 }
 
 void ChannelPostDelegate::setWidgetGrid(bool use_grid)
@@ -314,9 +317,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 
     if(mChannelPostsModel->getMode() == RsGxsChannelPostsModel::TREE_MODE_GRID)
         for(int i=0;i<mChannelPostsModel->columnCount();++i)
-            ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(font(),ui->postsTree->width()));
-    else
-            ui->postsTree->setColumnWidth(0,ui->postsTree->width());
+            ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(i,font(),ui->postsTree->width()));
 
 	/* Setup UI helper */
 
@@ -381,17 +382,14 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 
 void GxsChannelPostsWidgetWithModel::updateZoomFactor(bool zoom_or_unzoom)
 {
-    if(mChannelPostsModel->getMode() == RsGxsChannelPostsModel::TREE_MODE_LIST)
-        return;
-
     mChannelPostsDelegate->zoom(zoom_or_unzoom);
 
     for(int i=0;i<mChannelPostsModel->columnCount();++i)
-        ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(font(),ui->postsTree->width()));
+        ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(i,font(),ui->postsTree->width()));
 
     QSize s = ui->postsTree->size();
 
-    int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(font(),s.width()))));
+    int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(0,font(),s.width()))));
     std::cerr << "nb columns: " << n_columns << std::endl;
 
 	mChannelPostsModel->setNumColumns(n_columns);	// forces the update
@@ -436,7 +434,7 @@ void GxsChannelPostsWidgetWithModel::switchView()
         mChannelPostsModel->setMode(RsGxsChannelPostsModel::TREE_MODE_LIST);
 
         ui->postsTree->setColumnWidth(0,ui->postsTree->width());
-        ui->postsTree->setUniformRowHeights(true);
+        //ui->postsTree->setUniformRowHeights(true);
     }
     else
     {
@@ -444,9 +442,9 @@ void GxsChannelPostsWidgetWithModel::switchView()
         mChannelPostsModel->setMode(RsGxsChannelPostsModel::TREE_MODE_GRID);
 
         for(int i=0;i<mChannelPostsModel->columnCount();++i)
-            ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(font(),ui->postsTree->width()));
+            ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(i,font(),ui->postsTree->width()));
 
-        ui->postsTree->setUniformRowHeights(false);
+        //ui->postsTree->setUniformRowHeights(false);
 
         handlePostsTreeSizeChange(ui->postsTree->size());
     }
@@ -494,7 +492,7 @@ void GxsChannelPostsWidgetWithModel::editPost()
 
 void GxsChannelPostsWidgetWithModel::handlePostsTreeSizeChange(QSize s)
 {
-    int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(font(),ui->postsTree->width()))));
+    int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(0,font(),ui->postsTree->width()))));
     std::cerr << "nb columns: " << n_columns << std::endl;
 
     if(n_columns != mChannelPostsModel->columnCount())
