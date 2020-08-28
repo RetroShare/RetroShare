@@ -1295,7 +1295,9 @@ PostedCardView > QFrame#mainFrame[new=true] {
 	background-color: #005000;
 }
 
-WireGroupItem QFrame#frame{
+WireGroupItem QFrame#wire_frame
+{
+	border: 1px solid #38444d;
 	background: transparent;
 }
 
@@ -1307,5 +1309,10 @@ RSTextBrowser, MimeTextEdit
 
 ChatWidget QFrame#pluginTitleFrame
 {
-		background: transparent;
+	background: transparent;
+}
+
+PulseTopLevel QFrame#frame, PulseViewGroup QFrame#frame, PulseReply QFrame#frame {
+	border: 2px solid #38444d;
+	border-radius: 6px;
 }

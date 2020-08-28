@@ -2143,8 +2143,8 @@ PostedCardView > QFrame#mainFrame[new=true] {
 	background-color: #005000;
 }
 
-WireGroupItem QFrame#frame{
-		background: transparent;
+WireGroupItem QFrame#wire_frame{
+	background: transparent;
 }
 
 GxsChannelDialog GroupTreeWidget QTreeWidget#treeWidget::item{
@@ -2156,4 +2156,9 @@ RSTextBrowser, MimeTextEdit
 {
 	/*qproperty-textColorQuote: rgb(125, 125, 255);*/
 	qproperty-textColorQuotes: ColorList(#789922 #039bd5 #800000 #800080 #008080 #b10dc9 #85144b #3d9970);
+}
+
+PulseTopLevel QFrame#frame, PulseViewGroup QFrame#frame, PulseReply QFrame#frame {
+	border: 2px solid #38444d;
+	border-radius: 6px;
 }
