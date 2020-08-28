@@ -89,7 +89,7 @@ int ChannelPostDelegate::cellSize(int col,const QFont& font,uint32_t parent_widt
     if(mUseGrid || col==0)
         return mZoom*COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font).height();
     else
-        return parent_width - mZoom*COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font).height();
+        return 0.8*parent_width - mZoom*COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font).height();
 }
 
 void ChannelPostDelegate::zoom(bool zoom_or_unzoom)
@@ -432,23 +432,21 @@ void GxsChannelPostsWidgetWithModel::switchView()
     {
         mChannelPostsDelegate->setWidgetGrid(false);
         mChannelPostsModel->setMode(RsGxsChannelPostsModel::TREE_MODE_LIST);
-
-        ui->postsTree->setColumnWidth(0,ui->postsTree->width());
-        //ui->postsTree->setUniformRowHeights(true);
     }
     else
     {
         mChannelPostsDelegate->setWidgetGrid(true);
         mChannelPostsModel->setMode(RsGxsChannelPostsModel::TREE_MODE_GRID);
 
-        for(int i=0;i<mChannelPostsModel->columnCount();++i)
-            ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(i,font(),ui->postsTree->width()));
-
-        //ui->postsTree->setUniformRowHeights(false);
-
-        handlePostsTreeSizeChange(ui->postsTree->size());
+        handlePostsTreeSizeChange(ui->postsTree->size(),true);
     }
+
+    for(int i=0;i<mChannelPostsModel->columnCount();++i)
+        ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(i,font(),ui->postsTree->width()));
+
+    ui->postsTree->dataChanged(QModelIndex(),QModelIndex());	// forces update of the whole tree
 }
+
 void GxsChannelPostsWidgetWithModel::copyMessageLink()
 {
     try
@@ -490,10 +488,10 @@ void GxsChannelPostsWidgetWithModel::editPost()
     msgDialog->show();
 }
 
-void GxsChannelPostsWidgetWithModel::handlePostsTreeSizeChange(QSize s)
+void GxsChannelPostsWidgetWithModel::handlePostsTreeSizeChange(QSize s,bool force)
 {
     int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(0,font(),ui->postsTree->width()))));
-    std::cerr << "nb columns: " << n_columns << std::endl;
+    std::cerr << "nb columns: " << n_columns << " current count=" << mChannelPostsModel->columnCount() << std::endl;
 
     if(n_columns != mChannelPostsModel->columnCount())
 		mChannelPostsModel->setNumColumns(n_columns);

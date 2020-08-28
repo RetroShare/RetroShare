@@ -69,8 +69,9 @@ void RsGxsChannelPostsModel::setMode(TreeMode mode)
     if(mode == TREE_MODE_LIST)
         setNumColumns(2);
 
-    // needs some update here
+    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1,mColumns-1,(void*)NULL));
 }
+
 void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 {
 	const RsGxsChannelEvent *e = dynamic_cast<const RsGxsChannelEvent*>(event.get());
@@ -115,7 +116,7 @@ void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEve
 							{
 								mPosts[j] = posts[i];
 
-								emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFilteredPosts.size(),mColumns-1,(void*)NULL));
+                                emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1,mColumns-1,(void*)NULL));
 							}
 					}
 				},this);
@@ -145,7 +146,7 @@ void RsGxsChannelPostsModel::postMods()
 {
 	endResetModel();
 
-	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFilteredPosts.size(),mColumns-1,(void*)NULL));
+    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1,mColumns-1,(void*)NULL));
 }
 
 void RsGxsChannelPostsModel::getFilesList(std::list<ChannelPostFileInfo>& files)

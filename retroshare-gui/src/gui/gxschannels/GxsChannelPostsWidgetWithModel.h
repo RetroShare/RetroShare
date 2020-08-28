@@ -144,7 +144,7 @@ private slots:
 	void filterChanged(QString);
 	void setViewMode(int viewMode);
 	void settingsChanged();
-	void handlePostsTreeSizeChange(QSize s);
+    void handlePostsTreeSizeChange(QSize s, bool force=false);
 	void postChannelPostLoad();
 	void editPost();
 	void postContextMenu(const QPoint&);
