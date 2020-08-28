@@ -75,6 +75,7 @@ static const int CHANNEL_TABS_FILES  = 2;
 #define STAR_OVERLAY_IMAGE ":icons/star_overlay_128.png"
 #define IMAGE_COPYLINK     ":/images/copyrslink.png"
 #define IMAGE_GRID_VIEW    ":icons/png/menu.png"
+#define IMAGE_DOWNLOAD     ":icons/png/download.png"
 
 Q_DECLARE_METATYPE(ChannelPostFileInfo)
 
@@ -99,6 +100,11 @@ void ChannelPostDelegate::zoom(bool zoom_or_unzoom)
     else
 		mZoom /= 1.02;
 
+    if(mZoom < 0.5)
+        mZoom = 0.5;
+    if(mZoom > 2.0)
+        mZoom = 2.0;
+
     std::cerr << "zoom factor: " << mZoom << std::endl;
 }
 
@@ -115,6 +121,8 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 
     if(mUseGrid || index.column()==0)
     {
+        // Draw a thumnail
+
         uint32_t flags = (mUseGrid)?(ChannelPostThumbnailView::FLAG_SHOW_TEXT):0;
         ChannelPostThumbnailView w(post,flags);
 
@@ -136,7 +144,11 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
             {
                 QPainter p(&pixmap);
                 QFontMetricsF fm(option.font);
-                p.drawPixmap(mZoom*QPoint(6.2*fm.height(),6.9*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(mZoom*7*fm.height(),mZoom*7*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
+
+                if(mUseGrid)
+                    p.drawPixmap(mZoom*QPoint(6.2*fm.height(),6.9*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(mZoom*7*fm.height(),mZoom*7*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
+                else
+                    p.drawPixmap(mZoom*QPoint(6.2*fm.height(),6.5*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(mZoom*7*fm.height(),mZoom*7*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
             }
         }
 
@@ -162,7 +174,10 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
         painter->drawText(QPoint(p.x()+0.5*font_height,y),QString::fromUtf8(post.mMeta.mMsgName.c_str()));
         y += font_height;
 
-        painter->drawText(QPoint(p.x()+0.5*font_height,y),QDateTime::fromSecsSinceEpoch(post.mMeta.mPublishTs).toString());
+        painter->drawText(QPoint(p.x()+0.5*font_height,y),QDateTime::fromSecsSinceEpoch(post.mMeta.mPublishTs).toString(Qt::DefaultLocaleShortDate));
+        y += font_height;
+
+        painter->drawText(QPoint(p.x()+0.5*font_height,y),QString::number(post.mCount)+ " " +((post.mCount>1)?tr("files"):tr("file")) + " (" + QString::number(post.mSize) + " " + tr("bytes") + ")" );
         y += font_height;
 
         painter->restore();
@@ -418,6 +433,16 @@ void GxsChannelPostsWidgetWithModel::postContextMenu(const QPoint&)
         menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_GRID_VIEW), tr("Switch to grid view"), this, SLOT(switchView()));
 
     menu.addSeparator();
+
+    QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
+
+    if(index.isValid())
+    {
+        RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
+
+        if(!post.mFiles.empty())
+            menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_DOWNLOAD), tr("Download files"), this, SLOT(download()));
+    }
     menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()));
 
 	if(IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
@@ -476,6 +501,30 @@ void GxsChannelPostsWidgetWithModel::copyMessageLink()
     catch(std::exception& e)
     {
         QMessageBox::critical(NULL,tr("Link creation error"),tr("Link could not be created: ")+e.what());
+    }
+}
+void GxsChannelPostsWidgetWithModel::download()
+{
+    QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
+    RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
+
+    std::string destination;
+    rsGxsChannels->getChannelDownloadDirectory(mGroup.mMeta.mGroupId,destination);
+
+    for(auto file:post.mFiles)
+    {
+        std::list<RsPeerId> sources;
+        std::string destination;
+
+        // Add possible direct sources.
+        FileInfo fileInfo;
+        rsFiles->FileDetails(file.mHash, RS_FILE_HINTS_REMOTE, fileInfo);
+
+        for(std::vector<TransferInfo>::const_iterator it = fileInfo.peers.begin(); it != fileInfo.peers.end(); ++it) {
+            sources.push_back((*it).peerId);
+        }
+
+        rsFiles->FileRequest(file.mName, file.mHash, file.mSize, destination, RS_FILE_REQ_ANONYMOUS_ROUTING, sources);
     }
 }
 

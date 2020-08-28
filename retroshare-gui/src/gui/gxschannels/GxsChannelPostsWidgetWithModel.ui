@@ -87,7 +87,7 @@
          <string>Add new post</string>
         </property>
         <property name="icon">
-         <iconset resource="../icons.qrc">
+         <iconset>
           <normaloff>:/icons/png/add.png</normaloff>:/icons/png/add.png</iconset>
         </property>
         <property name="iconSize">
@@ -594,8 +594,6 @@ p, li { white-space: pre-wrap; }
    <header>gui/common/LineEditClear.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../icons.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

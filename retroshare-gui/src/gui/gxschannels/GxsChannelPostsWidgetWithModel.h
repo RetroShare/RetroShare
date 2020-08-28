@@ -138,7 +138,8 @@ protected:
 private slots:
 	void showPostDetails();
 	void updateGroupData();
-	void createMsg();
+    void download();
+    void createMsg();
 	void toggleAutoDownload();
 	void subscribeGroup(bool subscribe);
 	void filterChanged(QString);
