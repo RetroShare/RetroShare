@@ -290,8 +290,9 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
 
-    ui->list_TB->setIcon(FilesDefs::getIconFromQtResourcePath(":Posted/images/classic.png"));
+    ui->list_TB->setIcon(FilesDefs::getIconFromQtResourcePath(":icons/svg/listlayout.svg"));
     ui->grid_TB->setIcon(FilesDefs::getIconFromQtResourcePath(":icons/svg/gridlayout.svg"));
+    whileBlocking(ui->grid_TB)->setChecked(true);
 
     connect(ui->list_TB,SIGNAL(clicked()),this,SLOT(switchView()));
     connect(ui->grid_TB,SIGNAL(clicked()),this,SLOT(switchView()));
@@ -433,12 +434,14 @@ void GxsChannelPostsWidgetWithModel::postContextMenu(const QPoint&)
 {
     QMenu menu(this);
 
+#ifdef TO_REMOVE
     if(mChannelPostsModel->getMode() == RsGxsChannelPostsModel::TREE_MODE_GRID)
         menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_GRID_VIEW), tr("Switch to list view"), this, SLOT(switchView()));
     else
         menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_GRID_VIEW), tr("Switch to grid view"), this, SLOT(switchView()));
 
     menu.addSeparator();
+#endif
 
     QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
 
