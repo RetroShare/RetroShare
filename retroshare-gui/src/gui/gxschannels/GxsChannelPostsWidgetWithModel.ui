@@ -121,6 +121,26 @@
        </spacer>
       </item>
       <item>
+       <widget class="QToolButton" name="grid_TB">
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="list_TB">
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <layout class="QHBoxLayout" name="viewModeLayout">
         <property name="spacing">
          <number>0</number>

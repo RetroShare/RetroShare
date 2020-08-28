@@ -290,7 +290,13 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
 
-	ui->postsTree->setModel(mChannelPostsModel = new RsGxsChannelPostsModel());
+    ui->list_TB->setIcon(FilesDefs::getIconFromQtResourcePath(":Posted/images/classic.png"));
+    ui->grid_TB->setIcon(FilesDefs::getIconFromQtResourcePath(":icons/svg/gridlayout.svg"));
+
+    connect(ui->list_TB,SIGNAL(clicked()),this,SLOT(switchView()));
+    connect(ui->grid_TB,SIGNAL(clicked()),this,SLOT(switchView()));
+
+    ui->postsTree->setModel(mChannelPostsModel = new RsGxsChannelPostsModel());
     ui->postsTree->setItemDelegate(mChannelPostsDelegate = new ChannelPostDelegate());
     ui->postsTree->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);	// prevents bug on w10, since row size depends on widget width
     ui->postsTree->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);// more beautiful if we scroll at pixel level
@@ -455,11 +461,17 @@ void GxsChannelPostsWidgetWithModel::switchView()
 {
     if(mChannelPostsModel->getMode() == RsGxsChannelPostsModel::TREE_MODE_GRID)
     {
+        whileBlocking(ui->list_TB)->setChecked(true);
+        whileBlocking(ui->grid_TB)->setChecked(false);
+
         mChannelPostsDelegate->setWidgetGrid(false);
         mChannelPostsModel->setMode(RsGxsChannelPostsModel::TREE_MODE_LIST);
     }
     else
     {
+        whileBlocking(ui->list_TB)->setChecked(false);
+        whileBlocking(ui->grid_TB)->setChecked(true);
+
         mChannelPostsDelegate->setWidgetGrid(true);
         mChannelPostsModel->setMode(RsGxsChannelPostsModel::TREE_MODE_GRID);
 
