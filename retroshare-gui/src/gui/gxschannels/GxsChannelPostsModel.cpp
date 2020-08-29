@@ -701,7 +701,12 @@ void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
     RsThread::async([this, read_status]()
     {
         for(uint32_t i=0;i<mPosts.size();++i)
-            rsGxsChannels->markRead(RsGxsGrpMsgIdPair(mPosts[i].mMeta.mGroupId,mPosts[i].mMeta.mMsgId),read_status);
+        {
+            bool post_status = (IS_MSG_UNREAD(mPosts[i].mMeta.mMsgStatus) || IS_MSG_NEW(mPosts[i].mMeta.mMsgStatus));
+
+            if(post_status != read_status)
+                rsGxsChannels->markRead(RsGxsGrpMsgIdPair(mPosts[i].mMeta.mGroupId,mPosts[i].mMeta.mMsgId),read_status);
+        }
     });
 }
 
