@@ -69,7 +69,7 @@ void RsGxsChannelPostsModel::setMode(TreeMode mode)
     if(mode == TREE_MODE_LIST)
         setNumColumns(2);
 
-    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1,mColumns-1,(void*)NULL));
+    triggerViewUpdate();
 }
 
 void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
@@ -116,7 +116,7 @@ void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEve
 							{
 								mPosts[j] = posts[i];
 
-                                emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1,mColumns-1,(void*)NULL));
+                                triggerViewUpdate();
 							}
 					}
 				},this);
@@ -146,6 +146,10 @@ void RsGxsChannelPostsModel::postMods()
 {
 	endResetModel();
 
+    triggerViewUpdate();
+}
+void RsGxsChannelPostsModel::triggerViewUpdate()
+{
     emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1,mColumns-1,(void*)NULL));
 }
 

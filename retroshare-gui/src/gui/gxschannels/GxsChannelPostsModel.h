@@ -111,6 +111,8 @@ public:
 	void updateChannel(const RsGxsGroupId& channel_group_id);
     const RsGxsGroupId& currentGroupId() const;
 
+    void triggerViewUpdate();
+
     void setNumColumns(int n);
     void setMode(TreeMode mode);
     TreeMode getMode() const { return mTreeMode; }

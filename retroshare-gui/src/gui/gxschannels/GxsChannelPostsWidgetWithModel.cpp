@@ -508,7 +508,9 @@ void GxsChannelPostsWidgetWithModel::switchView()
     selectItem(msg_id);
     ui->postsTree->setFocus();
 
-    ui->postsTree->dataChanged(QModelIndex(),QModelIndex());	// forces update of the whole tree
+    mChannelPostsModel->triggerViewUpdate();	// This is already called by setMode(), but the model cannot know how many
+                                                // columns is actually has until we call handlePostsTreeSizeChange(), so
+                                                // we have to call it again here.
 }
 
 void GxsChannelPostsWidgetWithModel::copyMessageLink()
@@ -581,7 +583,7 @@ void GxsChannelPostsWidgetWithModel::handlePostsTreeSizeChange(QSize s,bool forc
     int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(0,font(),ui->postsTree->width()))));
     std::cerr << "nb columns: " << n_columns << " current count=" << mChannelPostsModel->columnCount() << std::endl;
 
-    if(n_columns != mChannelPostsModel->columnCount())
+    if(force || (n_columns != mChannelPostsModel->columnCount()))
 		mChannelPostsModel->setNumColumns(n_columns);
 }
 
@@ -714,6 +716,7 @@ void GxsChannelPostsWidgetWithModel::updateGroupData()
         {
             mGroup = group;
 			mChannelPostsModel->updateChannel(groupId());
+            ui->filterLineEdit->clear();
 
             insertChannelDetails(mGroup);
 
