@@ -134,7 +134,7 @@ public:
     void setMsgReadStatus(const QModelIndex &i, bool read_status);
     void setAllMsgReadStatus(bool read_status);
 
-    void setFilter(const QStringList &strings, uint32_t &count) ;
+    void setFilter(const QStringList &strings, bool only_unread,uint32_t &count) ;
 
 #ifdef TODO
 	void setAuthorOpinion(const QModelIndex& indx,RsOpinion op);
@@ -231,8 +231,6 @@ private:
 
     std::vector<int> mFilteredPosts;		// stores the list of displayes indices due to filtering.
     std::vector<RsGxsChannelPost> mPosts ;  // store the list of posts updated from rsForums.
-
-	//std::map<RsGxsMessageId,std::vector<std::pair<time_t,RsGxsMessageId> > > mPostVersions; // stores versions of posts
 
     QColor mTextColorRead          ;
     QColor mTextColorUnread        ;

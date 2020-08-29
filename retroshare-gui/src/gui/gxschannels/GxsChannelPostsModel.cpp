@@ -169,35 +169,30 @@ void RsGxsChannelPostsModel::getFilesList(std::list<ChannelPostFileInfo>& files)
         files.push_back(it.second);
 }
 
-void RsGxsChannelPostsModel::setFilter(const QStringList& strings, uint32_t& count)
+void RsGxsChannelPostsModel::setFilter(const QStringList& strings,bool only_unread, uint32_t& count)
 {
     preMods();
 
 	beginRemoveRows(QModelIndex(),0,rowCount()-1);
     endRemoveRows();
 
-	if(strings.empty())
+    mFilteredPosts.clear();
+    //mFilteredPosts.push_back(0);
+
+    for(size_t i=0;i<mPosts.size();++i)
     {
-        mFilteredPosts.clear();
-        for(size_t i=0;i<mPosts.size();++i)
+        bool passes_strings = true;
+
+        for(auto& s:strings)
+            passes_strings = passes_strings && QString::fromStdString(mPosts[i].mMeta.mMsgName).contains(s,Qt::CaseInsensitive);
+
+        if(strings.empty())
+            passes_strings = true;
+
+        if(passes_strings && (!only_unread || (IS_MSG_UNREAD(mPosts[i].mMeta.mMsgStatus) || IS_MSG_NEW(mPosts[i].mMeta.mMsgStatus))))
             mFilteredPosts.push_back(i);
     }
-	else
-    {
-        mFilteredPosts.clear();
-        //mFilteredPosts.push_back(0);
 
-        for(size_t i=0;i<mPosts.size();++i)
-        {
-            bool passes_strings = true;
-
-			for(auto& s:strings)
-				passes_strings = passes_strings && QString::fromStdString(mPosts[i].mMeta.mMsgName).contains(s,Qt::CaseInsensitive);
-
-            if(passes_strings)
-                mFilteredPosts.push_back(i);
-        }
-    }
     count = mFilteredPosts.size();
 
     std::cerr << "After filtering: " << count << " posts remain." << std::endl;

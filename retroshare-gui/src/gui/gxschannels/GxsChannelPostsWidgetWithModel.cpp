@@ -290,12 +290,14 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
 
-    ui->list_TB->setIcon(FilesDefs::getIconFromQtResourcePath(":icons/svg/listlayout.svg"));
-    ui->grid_TB->setIcon(FilesDefs::getIconFromQtResourcePath(":icons/svg/gridlayout.svg"));
-    whileBlocking(ui->grid_TB)->setChecked(true);
+    ui->viewType_TB->setIcon(FilesDefs::getIconFromQtResourcePath(":icons/svg/gridlayout.svg"));
+    ui->viewType_TB->setToolTip(tr("Click to switch to list view"));
+    connect(ui->viewType_TB,SIGNAL(clicked()),this,SLOT(switchView()));
 
-    connect(ui->list_TB,SIGNAL(clicked()),this,SLOT(switchView()));
-    connect(ui->grid_TB,SIGNAL(clicked()),this,SLOT(switchView()));
+    ui->showUnread_TB->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
+    ui->showUnread_TB->setChecked(false);
+    ui->showUnread_TB->setToolTip(tr("Show unread posts only"));
+    connect(ui->showUnread_TB,SIGNAL(toggled(bool)),this,SLOT(switchOnlyUnread(bool)));
 
     ui->postsTree->setModel(mChannelPostsModel = new RsGxsChannelPostsModel());
     ui->postsTree->setItemDelegate(mChannelPostsDelegate = new ChannelPostDelegate());
@@ -485,16 +487,16 @@ void GxsChannelPostsWidgetWithModel::switchView()
 
     if(mChannelPostsModel->getMode() == RsGxsChannelPostsModel::TREE_MODE_GRID)
     {
-        whileBlocking(ui->list_TB)->setChecked(true);
-        whileBlocking(ui->grid_TB)->setChecked(false);
+        ui->viewType_TB->setIcon(FilesDefs::getIconFromQtResourcePath(":icons/svg/listlayout.svg"));
+        ui->viewType_TB->setToolTip(tr("Click to switch to grid view"));
 
         mChannelPostsDelegate->setWidgetGrid(false);
         mChannelPostsModel->setMode(RsGxsChannelPostsModel::TREE_MODE_LIST);
     }
     else
     {
-        whileBlocking(ui->list_TB)->setChecked(false);
-        whileBlocking(ui->grid_TB)->setChecked(true);
+        ui->viewType_TB->setIcon(FilesDefs::getIconFromQtResourcePath(":icons/svg/gridlayout.svg"));
+        ui->viewType_TB->setToolTip(tr("Click to switch to list view"));
 
         mChannelPostsDelegate->setWidgetGrid(true);
         mChannelPostsModel->setMode(RsGxsChannelPostsModel::TREE_MODE_GRID);
@@ -749,10 +751,8 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
     mChannelPostsModel->getFilesList(files);
     mChannelFilesModel->setFiles(files);
 
-    //ui->channelFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_FILE);
-    //ui->channelFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE);
     ui->channelFiles_TV->setAutoSelect(true);
-
+    ui->channelFiles_TV->sortByColumn(0, Qt::AscendingOrder);
 }
 
 void GxsChannelPostsWidgetWithModel::updateDisplay(bool complete)
@@ -1057,15 +1057,17 @@ void GxsChannelPostsWidgetWithModel::setViewMode(int viewMode)
 #endif
 }
 
+void GxsChannelPostsWidgetWithModel::switchOnlyUnread(bool)
+{
+    filterChanged(ui->filterLineEdit->text());
+    std::cerr << "Switched to unread/read"<< std::endl;
+}
 void GxsChannelPostsWidgetWithModel::filterChanged(QString s)
 {
     QStringList ql = s.split(' ',QString::SkipEmptyParts);
     uint32_t count;
-    mChannelPostsModel->setFilter(ql,count);
+    mChannelPostsModel->setFilter(ql,ui->showUnread_TB->isChecked(),count);
 	mChannelFilesModel->setFilter(ql,count);
-
-	//mChannelPostFilesProxyModel->setFilterKeyColumn(RsGxsChannelPostFilesModel::COLUMN_FILES_NAME);
-	//mChannelPostFilesProxyModel->setFilterRegExp(s) ;// triggers a re-display. s is actually not used.
 }
 
 #ifdef TODO

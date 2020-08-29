@@ -306,7 +306,7 @@ void RsGxsChannelPostFilesModel::setFilter(const QStringList& strings, uint32_t&
 	if(strings.empty())
     {
         mFilteredFiles.clear();
-        for(int i=0;i<mFiles.size();++i)
+        for(uint32_t i=0;i<mFiles.size();++i)
             mFilteredFiles.push_back(i);
     }
 	else
@@ -314,7 +314,7 @@ void RsGxsChannelPostFilesModel::setFilter(const QStringList& strings, uint32_t&
         mFilteredFiles.clear();
         //mFilteredPosts.push_back(0);
 
-        for(int i=0;i<mFiles.size();++i)
+        for(uint32_t i=0;i<mFiles.size();++i)
         {
             bool passes_strings = true;
 
