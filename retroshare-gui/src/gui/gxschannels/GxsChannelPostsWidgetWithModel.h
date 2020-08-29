@@ -159,6 +159,8 @@ public slots:
 
 private:
 	void processSettings(bool load);
+    RsGxsMessageId getCurrentItemId() const;
+    void selectItem(const RsGxsMessageId& msg_id);
 
 	void setAutoDownload(bool autoDl);
 	static bool filterItem(FeedItem *feedItem, const QString &text, int filter);

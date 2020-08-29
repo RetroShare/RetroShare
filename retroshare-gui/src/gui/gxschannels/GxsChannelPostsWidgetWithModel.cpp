@@ -460,8 +460,29 @@ void GxsChannelPostsWidgetWithModel::postContextMenu(const QPoint&)
 	menu.exec(QCursor::pos());
 }
 
+RsGxsMessageId GxsChannelPostsWidgetWithModel::getCurrentItemId() const
+{
+    RsGxsMessageId selected_msg_id ;
+    QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
+
+    if(index.isValid())
+        selected_msg_id = index.data(Qt::UserRole).value<RsGxsChannelPost>().mMeta.mMsgId ;
+
+    return selected_msg_id;
+}
+
+void GxsChannelPostsWidgetWithModel::selectItem(const RsGxsMessageId& msg_id)
+{
+    auto index = mChannelPostsModel->getIndexOfMessage(msg_id);
+
+    ui->postsTree->selectionModel()->setCurrentIndex(index,QItemSelectionModel::ClearAndSelect);
+    ui->postsTree->scrollTo(index);//May change if model reloaded
+}
+
 void GxsChannelPostsWidgetWithModel::switchView()
 {
+   auto msg_id = getCurrentItemId();
+
     if(mChannelPostsModel->getMode() == RsGxsChannelPostsModel::TREE_MODE_GRID)
     {
         whileBlocking(ui->list_TB)->setChecked(true);
@@ -483,6 +504,9 @@ void GxsChannelPostsWidgetWithModel::switchView()
 
     for(int i=0;i<mChannelPostsModel->columnCount();++i)
         ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(i,font(),ui->postsTree->width()));
+
+    selectItem(msg_id);
+    ui->postsTree->setFocus();
 
     ui->postsTree->dataChanged(QModelIndex(),QModelIndex());	// forces update of the whole tree
 }
