@@ -718,7 +718,8 @@ void GxsChannelPostsWidgetWithModel::updateGroupData()
         {
             mGroup = group;
 			mChannelPostsModel->updateChannel(groupId());
-            ui->filterLineEdit->clear();
+            whileBlocking(ui->filterLineEdit)->clear();
+            whileBlocking(ui->showUnread_TB)->setChecked(false);
 
             insertChannelDetails(mGroup);
 
