@@ -104,8 +104,6 @@ void ChannelPostDelegate::zoom(bool zoom_or_unzoom)
         mZoom = 0.5;
     if(mZoom > 2.0)
         mZoom = 2.0;
-
-    std::cerr << "zoom factor: " << mZoom << std::endl;
 }
 
 void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
@@ -148,7 +146,7 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
                 if(mUseGrid)
                     p.drawPixmap(mZoom*QPoint(6.2*fm.height(),6.9*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(mZoom*7*fm.height(),mZoom*7*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
                 else
-                    p.drawPixmap(mZoom*QPoint(6.2*fm.height(),6.5*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(mZoom*7*fm.height(),mZoom*7*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
+                    p.drawPixmap(mZoom*QPoint(6.3*fm.height(),-3.7*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(mZoom*7*fm.height(),mZoom*7*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
             }
         }
 
@@ -190,10 +188,12 @@ QSize ChannelPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QM
 
     QFontMetricsF fm(option.font);
 
+    uint32_t size_diff = mUseGrid?0:(2*fm.height());
+
     if(mUseGrid || index.column()==0)
-        return QSize(mZoom*COLUMN_SIZE_FONT_FACTOR_W*fm.height(),mZoom*COLUMN_SIZE_FONT_FACTOR_H*fm.height());
+        return QSize(mZoom*COLUMN_SIZE_FONT_FACTOR_W*fm.height(),mZoom*COLUMN_SIZE_FONT_FACTOR_H*fm.height()-size_diff);
     else
-        return QSize(option.rect.width()-mZoom*COLUMN_SIZE_FONT_FACTOR_W*fm.height(),mZoom*COLUMN_SIZE_FONT_FACTOR_H*fm.height());
+        return QSize(option.rect.width()-mZoom*COLUMN_SIZE_FONT_FACTOR_W*fm.height(),mZoom*COLUMN_SIZE_FONT_FACTOR_H*fm.height()-size_diff);
 }
 
 void ChannelPostDelegate::setWidgetGrid(bool use_grid)
@@ -414,7 +414,6 @@ void GxsChannelPostsWidgetWithModel::updateZoomFactor(bool zoom_or_unzoom)
     QSize s = ui->postsTree->size();
 
     int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(0,font(),s.width()))));
-    std::cerr << "nb columns: " << n_columns << std::endl;
 
 	mChannelPostsModel->setNumColumns(n_columns);	// forces the update
 
