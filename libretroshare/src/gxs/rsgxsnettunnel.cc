@@ -167,7 +167,12 @@ public:
 class RsGxsNetTunnelTurtleSearchGroupDataItem: public RsGxsNetTunnelItem
 {
 public:
-    explicit RsGxsNetTunnelTurtleSearchGroupDataItem(): RsGxsNetTunnelItem(RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_GROUP_DATA) {}
+    explicit RsGxsNetTunnelTurtleSearchGroupDataItem()
+        : RsGxsNetTunnelItem(RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_GROUP_DATA),
+          encrypted_group_data(NULL),
+          encrypted_group_data_len(0)
+    {}
+
     virtual ~RsGxsNetTunnelTurtleSearchGroupDataItem() {}
 
     uint16_t service ;
