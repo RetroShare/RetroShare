@@ -98,6 +98,7 @@ protected:
 
 	void updateMessageSummaryList(RsGxsGroupId groupId);
 	void updateGroupStatistics(const RsGxsGroupId &groupId);
+    void markDataAsReceived(const RsGxsGroupId& grpId);
 
     virtual const std::set<TurtleRequestId> getSearchRequests() const { return std::set<TurtleRequestId>(); } // overload this for subclasses that provide distant search
 
@@ -164,7 +165,7 @@ private:
 	virtual QWidget *createCommentHeaderWidget(const RsGxsGroupId &/*grpId*/, const RsGxsMessageId &/*msgId*/) { return NULL; }
     virtual bool getDistantSearchResults(TurtleRequestId /* id */, std::map<RsGxsGroupId,RsGxsGroupSearchResults>& /* group_infos */){ return false ;}
     virtual void clearDistantSearchResults(TurtleRequestId /* id */) {}
-    virtual RsGxsGenericGroupData *getDistantSearchResultGroupData(const RsGxsGroupId& group_id){ return nullptr ;}
+    virtual RsGxsGenericGroupData *getDistantSearchResultGroupData(const RsGxsGroupId& /* group_id */){ return nullptr ;}
 
 	void initUi();
 

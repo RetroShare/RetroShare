@@ -112,7 +112,8 @@ enum class RsChannelEventCode: uint8_t
 	SUBSCRIBE_STATUS_CHANGED        = 0x06, // subscription for channel mChannelGroupId changed.
 	READ_STATUS_CHANGED             = 0x07, // existing message has been read or set to unread
 	RECEIVED_DISTANT_SEARCH_RESULT  = 0x08, // result for the given group id available for the given turtle request id
-	STATISTICS_CHANGED              = 0x09, // stats (nb of supplier friends, how many msgs they have etc) has changed
+	RECEIVED_DISTANT_GROUP_DATA     = 0x09, // result for the given group id available 
+	STATISTICS_CHANGED              = 0x0a, // stats (nb of supplier friends, how many msgs they have etc) has changed
 };
 
 struct RsGxsChannelEvent: RsEvent

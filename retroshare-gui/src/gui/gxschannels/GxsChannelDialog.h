@@ -35,9 +35,9 @@ public:
 	/** Default Destructor */
 	~GxsChannelDialog();
 
-	virtual QIcon iconPixmap() const { return QIcon(IMAGE_GXSCHANNELS) ; } //MainPage
-	virtual QString pageName() const { return tr("Channels") ; } //MainPage
-	virtual QString helpText() const { return ""; } //MainPage
+    virtual QIcon iconPixmap() const override { return QIcon(IMAGE_GXSCHANNELS) ; } //MainPage
+    virtual QString pageName() const override { return tr("Channels") ; } //MainPage
+    virtual QString helpText() const override { return ""; } //MainPage
 
 	void shareOnChannel(const RsGxsGroupId& channel_id, const QList<RetroShareLink>& file_link) ;
 
@@ -69,17 +69,17 @@ private slots:
 
 private:
 	/* GxsGroupFrameDialog */
-	virtual QString text(TextType type);
-	virtual QString icon(IconType type);
-	virtual QString settingsGroupName() { return "ChannelDialog"; }
-	virtual GxsGroupDialog *createNewGroupDialog();
-	virtual GxsGroupDialog *createGroupDialog(GxsGroupDialog::Mode mode, RsGxsGroupId groupId);
-	virtual int shareKeyType();
-	virtual GxsMessageFrameWidget *createMessageFrameWidget(const RsGxsGroupId &groupId);
-	virtual void groupTreeCustomActions(RsGxsGroupId grpId, int subscribeFlags, QList<QAction*> &actions);
-	virtual RsGxsCommentService *getCommentService();
-	virtual QWidget *createCommentHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId);
-	virtual uint32_t requestGroupSummaryType() { return GXS_REQUEST_TYPE_GROUP_DATA; } // request complete group data
+    virtual QString text(TextType type)override ;
+    virtual QString icon(IconType type)override ;
+    virtual QString settingsGroupName() override { return "ChannelDialog"; }
+    virtual GxsGroupDialog *createNewGroupDialog()override ;
+    virtual GxsGroupDialog *createGroupDialog(GxsGroupDialog::Mode mode, RsGxsGroupId groupId)override ;
+    virtual int shareKeyType()override ;
+    virtual GxsMessageFrameWidget *createMessageFrameWidget(const RsGxsGroupId &groupId)override ;
+    virtual void groupTreeCustomActions(RsGxsGroupId grpId, int subscribeFlags, QList<QAction*> &actions)override ;
+    virtual RsGxsCommentService *getCommentService()override ;
+    virtual QWidget *createCommentHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId)override ;
+    virtual uint32_t requestGroupSummaryType() override { return GXS_REQUEST_TYPE_GROUP_DATA; } // request complete group data
 
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 

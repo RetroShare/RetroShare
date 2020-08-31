@@ -300,6 +300,13 @@ void GxsGroupFrameDialog::updateSearchResults()
         updateSearchResults(it.first);
 }
 
+void GxsGroupFrameDialog::markDataAsReceived(const RsGxsGroupId& grpId)
+{
+    std::cerr << "Received data for group ID grpId. Updating flags and icon..." << std::endl;
+
+    ui->groupTreeWidget->setSubscribeFlags(QString::fromStdString(grpId.toStdString()),GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED);
+}
+
 void GxsGroupFrameDialog::updateSearchResults(const TurtleRequestId& sid)
 {
 	std::cerr << "updating search ID " << std::hex << sid << std::dec << std::endl;
@@ -374,7 +381,7 @@ void GxsGroupFrameDialog::removeAllSearches()
 {
     for(auto it(mSearchGroupsItems.begin());it!=mSearchGroupsItems.end();++it)
     {
-        QString group_id;
+        RsGxsGroupId group_id;
         TurtleRequestId search_request_id;
 
         if(ui->groupTreeWidget->isSearchRequestResultItem(it->second,group_id,search_request_id))
@@ -424,13 +431,20 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 
     // Then check whether we have a searched item, or a normal group
 
-    QString group_id_s ;
+    RsGxsGroupId group_id_s ;
+    uint32_t data_status;
 
-	if(ui->groupTreeWidget->isSearchRequestResult(point,group_id_s,search_request_id))
+    if(ui->groupTreeWidget->isSearchRequestResult(point,group_id_s,search_request_id,data_status))
     {
 		QMenu contextMnu(this);
 
-        contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_RETRIEVE), tr("Request data"), this, SLOT(distantRequestGroupData()))->setData(group_id_s);
+        if(data_status == SEARCH_RESULT_STATUS_NO_DATA)
+            contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_RETRIEVE), tr("Request data"), this, SLOT(distantRequestGroupData()))->setData(QString::fromStdString(group_id_s.toStdString()));
+        else if(data_status == SEARCH_RESULT_STATUS_DATA_REQUESTED)
+            ;
+        else if(data_status == SEARCH_RESULT_STATUS_HAS_DATA)
+            contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_SUBSCRIBE), tr("Subscribe"), this, SLOT(subscribeGroup()));
+
 		contextMnu.exec(QCursor::pos());
 		return ;
     }
@@ -1065,11 +1079,13 @@ void GxsGroupFrameDialog::updateMessageSummaryListReal(RsGxsGroupId groupId)
 			int childCount = items[item]->childCount();
 			for (child = 0; child < childCount; ++child) {
 				QTreeWidgetItem *childItem = items[item]->child(child);
-				QString childId = ui->groupTreeWidget->itemId(childItem);
-				if (childId.isEmpty())
+
+                RsGxsGroupId childId = ui->groupTreeWidget->itemId(childItem);
+
+                if (childId.isNull())
 					continue;
 
-				updateGroupStatistics(RsGxsGroupId(childId.toLatin1().constData()));
+                updateGroupStatistics(childId);
 			}
 		}
 	}

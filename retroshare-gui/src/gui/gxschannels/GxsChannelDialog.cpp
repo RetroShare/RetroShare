@@ -86,9 +86,25 @@ void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> ev
 
     const RsGxsChannelSearchResultEvent*f = dynamic_cast<const RsGxsChannelSearchResultEvent*>(event.get());
 
-	if(nullptr != f)
+    if(f)
+    switch(f->mChannelEventCode)
+    {
+    case RsChannelEventCode::RECEIVED_DISTANT_SEARCH_RESULT:
         for(auto it:f->mSearchResultsMap)
-			updateSearchResults(it.first);
+            updateSearchResults(it.first);
+        break;
+
+    case RsChannelEventCode::RECEIVED_DISTANT_GROUP_DATA:
+        // We got information that the group data has been received. So we mark it as unsubscribed and upgade its status,
+        // so that it can be subscribed.
+
+        for(auto it:f->mSearchResultsMap)
+            for(auto grpId:it.second)
+                markDataAsReceived(grpId);
+
+    default:
+        break;
+    }
 }
 
 GxsChannelDialog::~GxsChannelDialog()

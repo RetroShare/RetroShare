@@ -23,6 +23,8 @@
 
 #include<set>
 
+#include "retroshare/rsgxsiface.h"
+
 #include <QTreeWidgetItem>
 #include <QDateTime>
 
@@ -35,6 +37,10 @@ class RSTreeWidget;
 #define GROUPTREEWIDGET_COLOR_CATEGORY   0
 #define GROUPTREEWIDGET_COLOR_PRIVATEKEY 1
 #define GROUPTREEWIDGET_COLOR_COUNT      2
+
+#define SEARCH_RESULT_STATUS_NO_DATA        0
+#define SEARCH_RESULT_STATUS_DATA_REQUESTED 1
+#define SEARCH_RESULT_STATUS_HAS_DATA       2
 
 namespace Ui {
 	class GroupTreeWidget;
@@ -88,7 +94,7 @@ public:
 	void removeSearchItem(QTreeWidgetItem *item);
 
 	// Get id of item
-	QString itemId(QTreeWidgetItem *item);
+    RsGxsGroupId itemId(QTreeWidgetItem *item);
 	QString itemIdAt(QPoint &point);
 	// Fill items of a group
 	void fillGroupItems(QTreeWidgetItem *categoryItem, const QList<GroupItemInfo> &itemList);
@@ -96,8 +102,8 @@ public:
 	void setUnreadCount(QTreeWidgetItem *item, int unreadCount);
 
 	bool isSearchRequestItem(QPoint &point,uint32_t& search_req_id);
-	bool isSearchRequestResult(QPoint &point, QString &group_id, uint32_t& search_req_id);
-	bool isSearchRequestResultItem(QTreeWidgetItem *item,QString& group_id,uint32_t& search_req_id);
+    bool isSearchRequestResult(QPoint &point, RsGxsGroupId &group_id, uint32_t& search_req_id, uint32_t& data_status);
+    bool isSearchRequestResultItem(QTreeWidgetItem *item,RsGxsGroupId& group_id,uint32_t& search_req_id);
 
 	QTreeWidgetItem *getItemFromId(const QString &id);
 	QTreeWidgetItem *activateId(const QString &id, bool focus);
@@ -115,6 +121,7 @@ public:
 	bool getGroupName(QString id, QString& name);
 
 	int subscribeFlags(const QString &id);
+    void setSubscribeFlags(const QString& id,uint32_t flags);
 
 signals:
 	void treeCustomContextMenuRequested(const QPoint &pos);

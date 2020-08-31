@@ -42,19 +42,20 @@
 #define COLUMN_COUNT       4
 #define COLUMN_DATA        COLUMN_NAME
 
-#define ROLE_ID              Qt::UserRole
-#define ROLE_NAME            Qt::UserRole + 1
-#define ROLE_DESCRIPTION     Qt::UserRole + 2
-#define ROLE_POPULARITY      Qt::UserRole + 3
-#define ROLE_LASTPOST        Qt::UserRole + 4
-#define ROLE_POSTS           Qt::UserRole + 5
-#define ROLE_UNREAD          Qt::UserRole + 6
-#define ROLE_SEARCH_SCORE    Qt::UserRole + 7
-#define ROLE_SUBSCRIBE_FLAGS Qt::UserRole + 8
-#define ROLE_COLOR           Qt::UserRole + 9
-#define ROLE_SAVED_ICON      Qt::UserRole + 10
-#define ROLE_SEARCH_STRING   Qt::UserRole + 11
-#define ROLE_REQUEST_ID      Qt::UserRole + 12
+#define ROLE_ID                   Qt::UserRole
+#define ROLE_NAME                 Qt::UserRole + 1
+#define ROLE_DESCRIPTION          Qt::UserRole + 2
+#define ROLE_POPULARITY           Qt::UserRole + 3
+#define ROLE_LASTPOST             Qt::UserRole + 4
+#define ROLE_POSTS                Qt::UserRole + 5
+#define ROLE_UNREAD               Qt::UserRole + 6
+#define ROLE_SEARCH_SCORE         Qt::UserRole + 7
+#define ROLE_SUBSCRIBE_FLAGS      Qt::UserRole + 8
+#define ROLE_COLOR                Qt::UserRole + 9
+#define ROLE_SAVED_ICON           Qt::UserRole + 10
+#define ROLE_SEARCH_STRING        Qt::UserRole + 11
+#define ROLE_REQUEST_ID           Qt::UserRole + 12
+#define ROLE_SEARCH_RESULT_STATUS Qt::UserRole + 13
 
 #define FILTER_NAME_INDEX  0
 #define FILTER_DESC_INDEX  1
@@ -381,7 +382,7 @@ void GroupTreeWidget::setDistSearchVisible(bool visible)
     ui->distantSearchLineEdit->setVisible(visible);
 }
 
-bool GroupTreeWidget::isSearchRequestResult(QPoint &point,QString& group_id,uint32_t& search_req_id)
+bool GroupTreeWidget::isSearchRequestResult(QPoint &point,RsGxsGroupId& group_id,uint32_t& search_req_id,uint32_t& data_status)
 {
 	QTreeWidgetItem *item = ui->treeWidget->itemAt(point);
 	if (item == NULL)
@@ -393,12 +394,13 @@ bool GroupTreeWidget::isSearchRequestResult(QPoint &point,QString& group_id,uint
 		return false ;
 
 	search_req_id = parent->data(COLUMN_DATA, ROLE_REQUEST_ID).toUInt();
-	group_id = itemId(item) ;
+    data_status = item->data(COLUMN_DATA, ROLE_SEARCH_RESULT_STATUS).toUInt() ;
+    group_id = itemId(item) ;
 
 	return search_req_id > 0;
 }
 
-bool GroupTreeWidget::isSearchRequestResultItem(QTreeWidgetItem *item,QString& group_id,uint32_t& search_req_id)
+bool GroupTreeWidget::isSearchRequestResultItem(QTreeWidgetItem *item,RsGxsGroupId& group_id,uint32_t& search_req_id)
 {
 	QTreeWidgetItem *parent = item->parent();
 
@@ -422,13 +424,12 @@ bool GroupTreeWidget::isSearchRequestItem(QPoint &point,uint32_t& search_req_id)
     return search_req_id > 0;
 }
 
-QString GroupTreeWidget::itemId(QTreeWidgetItem *item)
+RsGxsGroupId GroupTreeWidget::itemId(QTreeWidgetItem *item)
 {
-	if (item == NULL) {
-		return "";
-	}
+    if (item == NULL)
+        return RsGxsGroupId();
 
-	return item->data(COLUMN_DATA, ROLE_ID).toString();
+    return RsGxsGroupId(item->data(COLUMN_DATA, ROLE_ID).toString().toStdString());
 }
 
 QString GroupTreeWidget::itemIdAt(QPoint &point)
@@ -652,6 +653,16 @@ bool GroupTreeWidget::getGroupName(QString id, QString& name)
 	name = item->data(COLUMN_DATA, ROLE_NAME).toString();
 
 	return true;
+}
+
+void GroupTreeWidget::setSubscribeFlags(const QString& id,uint32_t flags)
+{
+    QTreeWidgetItem *item = getItemFromId(id);
+
+    if (item == NULL)
+        return;
+
+    item->setData(COLUMN_DATA, ROLE_SUBSCRIBE_FLAGS,flags);
 }
 
 int GroupTreeWidget::subscribeFlags(const QString &id)
