@@ -99,8 +99,6 @@ public:
     void clear();
     void operator =(const RsMsgMetaData& rMeta);
 
-    static int refcount;
-
     //Sort data in same order than serialiser and deserializer
     RsGxsGroupId mGroupId;
     RsGxsMessageId mMsgId;
