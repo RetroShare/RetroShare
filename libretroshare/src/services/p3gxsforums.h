@@ -137,6 +137,11 @@ public:
 	        const RsGxsGroupId& forumId, const RsGxsMessageId& parentId,
 	        std::vector<RsGxsForumMsg>& childPosts ) override;
 
+	/// @see RsGxsForums
+	std::error_condition setPostKeepForever(
+	        const RsGxsGroupId& forumId, const RsGxsMessageId& postId,
+	        bool keepForever );
+
     /// implementation of rsGxsGorums
     ///
 	bool getGroupData(const uint32_t &token, std::vector<RsGxsForumGroup> &groups) override;
