@@ -87,7 +87,7 @@
          <string>Add new post</string>
         </property>
         <property name="icon">
-         <iconset>
+         <iconset resource="../icons.qrc">
           <normaloff>:/icons/png/add.png</normaloff>:/icons/png/add.png</iconset>
         </property>
         <property name="iconSize">
@@ -181,7 +181,7 @@
    <item>
     <widget class="QTabWidget" name="channel_TW">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -219,26 +219,6 @@
          </item>
          <item>
           <layout class="QGridLayout" name="gridLayout">
-           <item row="1" column="3">
-            <widget class="QLabel" name="infoLastPost">
-             <property name="text">
-              <string notr="true">unknown</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1" colspan="2">
-            <widget class="QLabel" name="label_2">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Created:</string>
-             </property>
-            </widget>
-           </item>
            <item row="2" column="3">
             <widget class="GxsIdLabel" name="infoAdministrator">
              <property name="text">
@@ -246,26 +226,6 @@
              </property>
              <property name="openExternalLinks">
               <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1" colspan="2">
-            <widget class="QLabel" name="label_3">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Distribution:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="3">
-            <widget class="QLabel" name="infoPosts">
-             <property name="text">
-              <string notr="true">0</string>
              </property>
             </widget>
            </item>
@@ -288,8 +248,8 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="3">
-            <widget class="QLabel" name="infoDistribution">
+           <item row="4" column="3">
+            <widget class="QLabel" name="infoCreated">
              <property name="text">
               <string>unknown</string>
              </property>
@@ -308,8 +268,48 @@
              </property>
             </widget>
            </item>
-           <item row="4" column="3">
-            <widget class="QLabel" name="infoCreated">
+           <item row="1" column="3">
+            <widget class="QLabel" name="infoLastPost">
+             <property name="text">
+              <string notr="true">unknown</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1" colspan="2">
+            <widget class="QLabel" name="label_3">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Distribution:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1" colspan="2">
+            <widget class="QLabel" name="label_2">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Created:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="3">
+            <widget class="QLabel" name="infoPosts">
+             <property name="text">
+              <string notr="true">0</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="3">
+            <widget class="QLabel" name="infoDistribution">
              <property name="text">
               <string>unknown</string>
              </property>
@@ -329,8 +329,11 @@
                <bold>true</bold>
               </font>
              </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;The number of posts at friends is progressively updated.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;The new numbers will show next time you load this channel.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;The two numbers differ depending on your friends synchronization&lt;/p&gt;&lt;p&gt;time limits as well as yours.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
-              <string>Posts:</string>
+              <string>Posts (locally / at friends):</string>
              </property>
             </widget>
            </item>
@@ -614,6 +617,8 @@ p, li { white-space: pre-wrap; }
    <header>gui/common/LineEditClear.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../icons.qrc"/>
+ </resources>
  <connections/>
 </ui>

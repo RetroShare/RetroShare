@@ -753,6 +753,8 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
 
     ui->channelFiles_TV->setAutoSelect(true);
     ui->channelFiles_TV->sortByColumn(0, Qt::AscendingOrder);
+
+    ui->infoPosts->setText(QString::number(mChannelPostsModel->getNumberOfPosts()) + " / " + QString::number(mGroup.mMeta.mVisibleMsgCount));
 }
 
 void GxsChannelPostsWidgetWithModel::updateDisplay(bool complete)
@@ -953,6 +955,7 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 
 
 	ui->infoPosts->setText(QString::number(group.mMeta.mVisibleMsgCount));
+
 	if(group.mMeta.mLastPost==0)
 		ui->infoLastPost->setText(tr("Never"));
 	else
