@@ -28,6 +28,8 @@
 #include "gui/gxs/GxsMessageFramePostWidget.h"
 #include "gui/feeds/FeedHolder.h"
 
+#include "GxsChannelPostThumbnail.h"
+
 namespace Ui {
 class GxsChannelPostsWidgetWithModel;
 }
@@ -69,6 +71,7 @@ class ChannelPostDelegate: public QAbstractItemDelegate
         int cellSize(int col, const QFont& font, uint32_t parent_width) const;
         void zoom(bool zoom_or_unzoom) ;
         void setWidgetGrid(bool use_grid) ;
+        void setAspectRatio(ChannelPostThumbnailView::AspectRatio r) ;
 
     private:
  		static constexpr float IMAGE_MARGIN_FACTOR = 1.0;
@@ -78,6 +81,7 @@ class ChannelPostDelegate: public QAbstractItemDelegate
 
         float mZoom;	// zoom factor for the whole thumbnail
         bool mUseGrid;  // wether we use the grid widget or the list widget
+        ChannelPostThumbnailView::AspectRatio mAspectRatio;
 };
 
 class GxsChannelPostsWidgetWithModel: public GxsMessageFrameWidget

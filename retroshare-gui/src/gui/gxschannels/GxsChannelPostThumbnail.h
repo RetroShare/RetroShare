@@ -78,7 +78,7 @@ public:
     } AspectRatio;
 
 	// This variable determines the zoom factor on the text below thumbnails. 2.0 is mostly correct for all screen.
-	static constexpr float THUMBNAIL_OVERSAMPLE_FACTOR = 2.0;
+    static constexpr float THUMBNAIL_OVERSAMPLE_FACTOR = 2.0;
 
     static constexpr uint32_t FLAG_NONE      = 0x00;
     static constexpr uint32_t FLAG_SHOW_TEXT = 0x01;
@@ -102,7 +102,15 @@ public:
     QPixmap getCroppedScaledPicture() const { return mPostImage->extractCroppedScaledPicture() ; }
 
     void setText(const QString& s);
+
+    // This is used to allow to render the widget into a pixmap without the white space that Qt adds vertically. There is *no way* apparently
+    // to get rid of that bloody space. It depends on the aspect ratio of the image and it only shows up when the text label is shown.
+    // The label however has a correct size. It seems that Qt doesn't like widgets with horizontal aspect ratio and forces the size accordingly.
+
+    QSize actualSize() const ;
 private:
+    static const float DEFAULT_SIZE_IN_FONT_HEIGHT ;
+
     float thumbnail_w() const;
     float thumbnail_h() const;
 

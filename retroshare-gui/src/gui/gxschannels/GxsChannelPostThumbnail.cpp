@@ -24,6 +24,8 @@
 #include "gui/common/FilesDefs.h"
 #include "gui/gxschannels/GxsChannelPostThumbnail.h"
 
+const float ChannelPostThumbnailView::DEFAULT_SIZE_IN_FONT_HEIGHT = 5.0;
+
 ChannelPostThumbnailView::ChannelPostThumbnailView(const RsGxsChannelPost& post,uint32_t flags,QWidget *parent)
         : QWidget(parent),mPostTitle(nullptr),mFlags(flags), mAspectRatio(ASPECT_RATIO_2_3)
 {
@@ -115,8 +117,6 @@ void ChannelPostThumbnailView::init(const RsGxsChannelPost& post)
 
     layout->addWidget(mPostImage);
 
-    setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum);
-
     QFontMetricsF fm(font());
     int W = THUMBNAIL_OVERSAMPLE_FACTOR * thumbnail_w() * fm.height() ;
     int H = THUMBNAIL_OVERSAMPLE_FACTOR * thumbnail_h() * fm.height() ;
@@ -134,19 +134,44 @@ void ChannelPostThumbnailView::init(const RsGxsChannelPost& post)
 
         QFont font = mPostTitle->font();
 
+        font.setPointSizeF(DEFAULT_SIZE_IN_FONT_HEIGHT / 5.0 * font.pointSizeF());
+
         if(is_msg_new)
-        {
             font.setBold(true);
-            mPostTitle->setFont(font);
-        }
+
+        mPostTitle->setFont(font);
 
         mPostTitle->setMaximumWidth(W);
+        mPostTitle->setMaximumHeight(3*fm.height());
         mPostTitle->setWordWrap(true);
+        mPostTitle->adjustSize();
+
+        setMinimumHeight(H + mPostTitle->height() + 0.5*fm.height());
+        setMaximumHeight(H + mPostTitle->height() + 0.5*fm.height());
     }
+    setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
+
+    layout->addStretch();
 
     setLayout(layout);
     adjustSize();
     update();
+}
+
+QSize ChannelPostThumbnailView::actualSize() const
+{
+    QFontMetricsF fm(font());
+
+    if(mPostTitle != nullptr)
+    {
+        QMargins cm = layout()->contentsMargins();
+
+        return QSize(width(),
+                     mPostTitle->height() + mPostImage->height() + 0.5*fm.height()
+                     + cm.top() + cm.bottom() + layout()->spacing());
+    }
+    else
+        return size();
 }
 
 float ChannelPostThumbnailView::thumbnail_w() const
@@ -155,10 +180,10 @@ float ChannelPostThumbnailView::thumbnail_w() const
     {
         default:
     case ASPECT_RATIO_1_1:
-    case ASPECT_RATIO_UNKNOWN: return 5;
+    case ASPECT_RATIO_UNKNOWN: return DEFAULT_SIZE_IN_FONT_HEIGHT;
 
-    case ASPECT_RATIO_2_3:     return 4;
-    case ASPECT_RATIO_16_9:    return 5 * 16.0/9.0;
+    case ASPECT_RATIO_2_3:     return DEFAULT_SIZE_IN_FONT_HEIGHT;
+    case ASPECT_RATIO_16_9:    return DEFAULT_SIZE_IN_FONT_HEIGHT;
     }
 }
 float ChannelPostThumbnailView::thumbnail_h() const
@@ -167,17 +192,17 @@ float ChannelPostThumbnailView::thumbnail_h() const
     {
     default:
     case ASPECT_RATIO_1_1:
-    case ASPECT_RATIO_UNKNOWN: return 5;
+    case ASPECT_RATIO_UNKNOWN: return DEFAULT_SIZE_IN_FONT_HEIGHT;
 
-    case ASPECT_RATIO_2_3:     return 6;
-    case ASPECT_RATIO_16_9:    return 5;
+    case ASPECT_RATIO_2_3:     return DEFAULT_SIZE_IN_FONT_HEIGHT * 3.0/2.0;
+    case ASPECT_RATIO_16_9:    return DEFAULT_SIZE_IN_FONT_HEIGHT * 9.0/16.0;
     }
 }
 
 void ZoomableLabel::reset()
 {
     mCenterX = mFullImage.width()/2.0;
-    mCenterX = mFullImage.height()/2.0;
+    mCenterY = mFullImage.height()/2.0;
     mZoomFactor = 1.0/std::max(width() / (float)mFullImage.width(), height()/(float)mFullImage.height());
 
     updateView();
@@ -257,9 +282,7 @@ void ZoomableLabel::setPicture(const QPixmap& pix)
 {
     mFullImage = pix;
 
-    mCenterX = pix.width()/2.0;
-    mCenterY = pix.height()/2.0;
-
+    reset();
     updateView();
 }
 void ZoomableLabel::resizeEvent(QResizeEvent *e)

@@ -106,6 +106,10 @@ void ChannelPostDelegate::zoom(bool zoom_or_unzoom)
         mZoom = 2.0;
 }
 
+void ChannelPostDelegate::setAspectRatio(ChannelPostThumbnailView::AspectRatio r)
+{
+    mAspectRatio = r;
+}
 void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
     // prepare
@@ -119,10 +123,13 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 
     if(mUseGrid || index.column()==0)
     {
-        // Draw a thumnail
+        // Draw a thumbnail
 
         uint32_t flags = (mUseGrid)?(ChannelPostThumbnailView::FLAG_SHOW_TEXT):0;
         ChannelPostThumbnailView w(post,flags);
+        w.setAspectRatio(mAspectRatio);
+        w.updateGeometry();
+        w.adjustSize();
 
         QPixmap pixmap(w.size());
 
@@ -132,6 +139,19 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
             pixmap.fill(QRgb(0x00ffffff));	// choose a fully transparent background
 
         w.render(&pixmap,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
+
+        // We extract from the pixmap the part of the widget that we want. Saddly enough, Qt adds some white space
+        // below the widget and there is no way to control that.
+
+        pixmap = pixmap.copy(QRect(0,0,w.actualSize().width(),w.actualSize().height()));
+
+        if(index.row()==0 && index.column()==0)
+    {
+        QFile file("yourFile.png");
+        file.open(QIODevice::WriteOnly);
+        pixmap.save(&file, "PNG");
+                file.close();
+    }
 
         if(mUseGrid || index.column()==0)
         {
@@ -143,15 +163,12 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
                 QPainter p(&pixmap);
                 QFontMetricsF fm(option.font);
 
-                if(mUseGrid)
-                    p.drawPixmap(mZoom*QPoint(6.2*fm.height(),6.9*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(mZoom*7*fm.height(),mZoom*7*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
-                else
-                    p.drawPixmap(mZoom*QPoint(6.3*fm.height(),-3.7*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(mZoom*7*fm.height(),mZoom*7*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
+                p.drawPixmap(mZoom*QPoint(0.1*fm.height(),-3.6*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(mZoom*7*fm.height(),mZoom*7*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
             }
         }
 
         painter->drawPixmap(option.rect.topLeft(),
-                            pixmap.scaled(option.rect.width(),option.rect.width()*w.height()/(float)w.width(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+                            pixmap.scaled(option.rect.width(),option.rect.width()*pixmap.height()/(float)pixmap.width(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
     }
     else
     {
@@ -188,12 +205,25 @@ QSize ChannelPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QM
 
     QFontMetricsF fm(option.font);
 
-    uint32_t size_diff = mUseGrid?0:(2*fm.height());
+    RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
+    uint32_t flags = (mUseGrid)?(ChannelPostThumbnailView::FLAG_SHOW_TEXT):0;
+
+    ChannelPostThumbnailView w(post,flags);
+    w.setAspectRatio(mAspectRatio);
+    w.updateGeometry();
+    w.adjustSize();
+
+    //std::cerr << "w.size(): " << w.width() << " x " << w.height() << ". Actual size: " << w.actualSize().width() << " x " << w.actualSize().height() << std::endl;
+
+    float aspect_ratio = w.actualSize().height()/(float)w.actualSize().width();
+
+    float cell_width  = mZoom*COLUMN_SIZE_FONT_FACTOR_W*fm.height();
+    float cell_height = mZoom*COLUMN_SIZE_FONT_FACTOR_W*fm.height()*aspect_ratio;
 
     if(mUseGrid || index.column()==0)
-        return QSize(mZoom*COLUMN_SIZE_FONT_FACTOR_W*fm.height(),mZoom*COLUMN_SIZE_FONT_FACTOR_H*fm.height()-size_diff);
+        return QSize(cell_width,cell_height);
     else
-        return QSize(option.rect.width()-mZoom*COLUMN_SIZE_FONT_FACTOR_W*fm.height(),mZoom*COLUMN_SIZE_FONT_FACTOR_H*fm.height()-size_diff);
+        return QSize(option.rect.width()-cell_width,cell_height);
 }
 
 void ChannelPostDelegate::setWidgetGrid(bool use_grid)
@@ -304,6 +334,8 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     ui->postsTree->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);	// prevents bug on w10, since row size depends on widget width
     ui->postsTree->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);// more beautiful if we scroll at pixel level
     ui->postsTree->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+
+    mChannelPostsDelegate->setAspectRatio(ChannelPostThumbnailView::ASPECT_RATIO_16_9);
 
     connect(ui->postsTree,SIGNAL(zoomRequested(bool)),this,SLOT(updateZoomFactor(bool)));
 
