@@ -78,10 +78,11 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 	connect(thumbNailCb, SIGNAL(toggled(bool)), this, SLOT(allowAutoMediaThumbNail(bool)));
 	connect(stackedWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenu(QPoint)));
 	connect(generateCheckBox, SIGNAL(toggled(bool)), generateSpinBox, SLOT(setEnabled(bool)));
+    connect(aspectRatio_CB,SIGNAL(currentIndexChanged(int)),this,SLOT(changeAspectRatio(int)));
 
 	generateSpinBox->setEnabled(false);
 
-    preview_W->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ChannelPostThumbnailView::CHAN_DEFAULT_IMAGE));
+    preview_W->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ChannelPostThumbnailView::CHAN_DEFAULT_IMAGE),true);
     preview_W->setText("[Text preview]");
 
     thumbNailCb->setVisible(false);
@@ -110,6 +111,19 @@ CreateGxsChannelMsg::~CreateGxsChannelMsg()
 #endif
 }
 
+void CreateGxsChannelMsg::changeAspectRatio(int s)
+{
+    switch(s)
+    {
+    case 0: break;
+    case 1: preview_W->setAspectRatio(ChannelPostThumbnailView::ASPECT_RATIO_1_1);
+        break;
+    case 2: preview_W->setAspectRatio(ChannelPostThumbnailView::ASPECT_RATIO_2_3);
+        break;
+    case 3: preview_W->setAspectRatio(ChannelPostThumbnailView::ASPECT_RATIO_16_9);
+        break;
+    }
+}
 void CreateGxsChannelMsg::contextMenu(QPoint /*point*/)
 {
 	QList<RetroShareLink> links ;
@@ -734,7 +748,8 @@ void CreateGxsChannelMsg::addThumbnail()
 	picture = img;
 
 	// to show the selected
-	preview_W->setPixmap(picture);
+    preview_W->setPixmap(picture, aspectRatio_CB->currentIndex()==0);
+
 }
 
 void CreateGxsChannelMsg::loadOriginalChannelPostInfo()
@@ -778,7 +793,7 @@ void CreateGxsChannelMsg::loadOriginalChannelPostInfo()
 			if(post.mThumbnail.mData != NULL)
 			{
 				GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData,post.mThumbnail.mSize,picture,GxsIdDetails::ORIGINAL);
-				preview_W->setPixmap(picture);
+                preview_W->setPixmap(picture,true);
 			}
 
 

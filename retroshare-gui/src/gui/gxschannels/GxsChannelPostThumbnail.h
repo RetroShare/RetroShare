@@ -42,7 +42,9 @@ public:
 
     void setPicture(const QPixmap& pix);
     void setEnableZoom(bool b) { mZoomEnabled = b; }
+    void reset();
     QPixmap extractCroppedScaledPicture() const;
+    void updateView();
 
 protected:
     void mousePressEvent(QMouseEvent *ev) override;
@@ -50,8 +52,6 @@ protected:
     void mouseMoveEvent(QMouseEvent *ev) override;
     void resizeEvent(QResizeEvent *ev) override;
     void wheelEvent(QWheelEvent *me) override;
-
-    void updateView();
 
     QPixmap mFullImage;
 
@@ -70,6 +70,13 @@ class ChannelPostThumbnailView: public QWidget
 	Q_OBJECT
 
 public:
+    typedef enum {
+        ASPECT_RATIO_UNKNOWN = 0x00,
+        ASPECT_RATIO_2_3     = 0x01,
+        ASPECT_RATIO_1_1     = 0x02,
+        ASPECT_RATIO_16_9    = 0x03,
+    } AspectRatio;
+
 	// This variable determines the zoom factor on the text below thumbnails. 2.0 is mostly correct for all screen.
 	static constexpr float THUMBNAIL_OVERSAMPLE_FACTOR = 2.0;
 
@@ -90,24 +97,18 @@ public:
 
     void init(const RsGxsChannelPost& post);
 
-    void setPixmap(const QPixmap& p) { mPostImage->setPicture(p); }
+    void setAspectRatio(AspectRatio r);
+    void setPixmap(const QPixmap& p,bool guess_aspect_ratio) ;
     QPixmap getCroppedScaledPicture() const { return mPostImage->extractCroppedScaledPicture() ; }
 
-    void setText(const QString& s)
-    {
-        QString ss;
-        if(s.length() > 30)
-            ss = s.left(30)+"...";
-        else
-            ss =s;
-
-        if(mPostTitle != NULL)
-            mPostTitle->setText(ss);
-    }
-
+    void setText(const QString& s);
 private:
+    float thumbnail_w() const;
+    float thumbnail_h() const;
+
     ZoomableLabel *mPostImage;
     QLabel *mPostTitle;
     uint32_t mFlags;
+    AspectRatio mAspectRatio;
 };
 

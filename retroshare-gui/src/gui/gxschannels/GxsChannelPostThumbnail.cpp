@@ -25,7 +25,7 @@
 #include "gui/gxschannels/GxsChannelPostThumbnail.h"
 
 ChannelPostThumbnailView::ChannelPostThumbnailView(const RsGxsChannelPost& post,uint32_t flags,QWidget *parent)
-        : QWidget(parent),mFlags(flags),mPostTitle(nullptr)
+        : QWidget(parent),mPostTitle(nullptr),mFlags(flags), mAspectRatio(ASPECT_RATIO_2_3)
 {
         // now fill the data
 
@@ -33,7 +33,7 @@ ChannelPostThumbnailView::ChannelPostThumbnailView(const RsGxsChannelPost& post,
 }
 
 ChannelPostThumbnailView::ChannelPostThumbnailView(QWidget *parent,uint32_t flags)
-    : QWidget(parent),mFlags(flags)
+    : QWidget(parent),mFlags(flags), mAspectRatio(ASPECT_RATIO_2_3)
 {
     init(RsGxsChannelPost());
 }
@@ -41,6 +41,54 @@ ChannelPostThumbnailView::ChannelPostThumbnailView(QWidget *parent,uint32_t flag
 ChannelPostThumbnailView::~ChannelPostThumbnailView()
 {
     delete mPostImage;
+}
+
+void ChannelPostThumbnailView::setText(const QString& s)
+{
+    if(mPostTitle == NULL)
+    {
+        std::cerr << "(EE) calling setText on a ChannelPostThumbnailView without SHOW_TEXT flag!"<< std::endl;
+        return;
+    }
+
+    QString ss;
+    if(s.length() > 30)
+        ss = s.left(30)+"...";
+    else
+        ss =s;
+
+        mPostTitle->setText(ss);
+}
+
+void ChannelPostThumbnailView::setPixmap(const QPixmap& p, bool guess_aspect_ratio)
+{
+    mPostImage->setPicture(p);
+
+    if(guess_aspect_ratio)// aspect ratio is automatically guessed.
+    {
+        // compute closest aspect ratio
+        float r = p.width()/(float)p.height();
+
+        if(r < 0.8)
+            setAspectRatio(ChannelPostThumbnailView::ASPECT_RATIO_2_3);
+        else if(r < 1.15)
+            setAspectRatio(ChannelPostThumbnailView::ASPECT_RATIO_1_1);
+        else
+            setAspectRatio(ChannelPostThumbnailView::ASPECT_RATIO_16_9);
+    }
+}
+
+void ChannelPostThumbnailView::setAspectRatio(AspectRatio r)
+{
+    mAspectRatio = r;
+
+    QFontMetricsF fm(font());
+    int W = THUMBNAIL_OVERSAMPLE_FACTOR * thumbnail_w() * fm.height() ;
+    int H = THUMBNAIL_OVERSAMPLE_FACTOR * thumbnail_h() * fm.height() ;
+
+    mPostImage->setFixedSize(W,H);
+    mPostImage->reset();
+    mPostImage->updateView();
 }
 
 void ChannelPostThumbnailView::init(const RsGxsChannelPost& post)
@@ -70,8 +118,8 @@ void ChannelPostThumbnailView::init(const RsGxsChannelPost& post)
     setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum);
 
     QFontMetricsF fm(font());
-    int W = THUMBNAIL_OVERSAMPLE_FACTOR * THUMBNAIL_W * fm.height() ;
-    int H = THUMBNAIL_OVERSAMPLE_FACTOR * THUMBNAIL_H * fm.height() ;
+    int W = THUMBNAIL_OVERSAMPLE_FACTOR * thumbnail_w() * fm.height() ;
+    int H = THUMBNAIL_OVERSAMPLE_FACTOR * thumbnail_h() * fm.height() ;
 
     mPostImage->setFixedSize(W,H);
 
@@ -101,6 +149,39 @@ void ChannelPostThumbnailView::init(const RsGxsChannelPost& post)
     update();
 }
 
+float ChannelPostThumbnailView::thumbnail_w() const
+{
+    switch(mAspectRatio)
+    {
+        default:
+    case ASPECT_RATIO_1_1:
+    case ASPECT_RATIO_UNKNOWN: return 5;
+
+    case ASPECT_RATIO_2_3:     return 4;
+    case ASPECT_RATIO_16_9:    return 5 * 16.0/9.0;
+    }
+}
+float ChannelPostThumbnailView::thumbnail_h() const
+{
+    switch(mAspectRatio)
+    {
+    default:
+    case ASPECT_RATIO_1_1:
+    case ASPECT_RATIO_UNKNOWN: return 5;
+
+    case ASPECT_RATIO_2_3:     return 6;
+    case ASPECT_RATIO_16_9:    return 5;
+    }
+}
+
+void ZoomableLabel::reset()
+{
+    mCenterX = mFullImage.width()/2.0;
+    mCenterX = mFullImage.height()/2.0;
+    mZoomFactor = 1.0/std::max(width() / (float)mFullImage.width(), height()/(float)mFullImage.height());
+
+    updateView();
+}
 void ZoomableLabel::mouseMoveEvent(QMouseEvent *me)
 {
     if(!mZoomEnabled)
@@ -199,6 +280,8 @@ void ZoomableLabel::updateView()
     QRect rect(mCenterX - 0.5 * width()*mZoomFactor, mCenterY - 0.5 * height()*mZoomFactor, width()*mZoomFactor, height()*mZoomFactor);
     QLabel::setPixmap(mFullImage.copy(rect));
 }
+
+
 
 
 
