@@ -25,7 +25,7 @@
 #include "gui/gxschannels/GxsChannelPostThumbnail.h"
 
 ChannelPostThumbnailView::ChannelPostThumbnailView(const RsGxsChannelPost& post,uint32_t flags,QWidget *parent)
-        : QWidget(parent),mFlags(flags)
+        : QWidget(parent),mFlags(flags),mPostTitle(nullptr)
 {
         // now fill the data
 

@@ -81,7 +81,10 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 
 	generateSpinBox->setEnabled(false);
 
-	thumbNailCb->setVisible(false);
+    preview_W->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ChannelPostThumbnailView::CHAN_DEFAULT_IMAGE));
+    preview_W->setText("[Text preview]");
+
+    thumbNailCb->setVisible(false);
 	thumbNailCb->setEnabled(false);
 #ifdef CHANNELS_FRAME_CATCHER
 	fCatcher = new framecatcher();

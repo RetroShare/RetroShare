@@ -85,7 +85,7 @@ public:
     static constexpr char *CHAN_DEFAULT_IMAGE = ":images/thumb-default-video.png";
 
     virtual ~ChannelPostThumbnailView();
-    ChannelPostThumbnailView(QWidget *parent=NULL,uint32_t flags=FLAG_ALLOW_PAN);
+    ChannelPostThumbnailView(QWidget *parent=NULL,uint32_t flags=FLAG_ALLOW_PAN | FLAG_SHOW_TEXT);
     ChannelPostThumbnailView(const RsGxsChannelPost& post,uint32_t flags,QWidget *parent=NULL);
 
     void init(const RsGxsChannelPost& post);
@@ -101,7 +101,8 @@ public:
         else
             ss =s;
 
-        mPostTitle->setText(ss);
+        if(mPostTitle != NULL)
+            mPostTitle->setText(ss);
     }
 
 private:
