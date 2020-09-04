@@ -935,8 +935,6 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 	rsGxsChannels->getChannelAutoDownload(group.mMeta.mGroupId,autoDownload);
 	setAutoDownload(autoDownload);
 
-	RetroShareLink link;
-
 	if (IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
     {
 		ui->subscribeToolButton->setText(tr("Subscribed") + " " + QString::number(group.mMeta.mPop) );
@@ -975,8 +973,11 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 
 	ui->infoAdministrator->setId(group.mMeta.mAuthorId) ;
 
-	link = RetroShareLink::createMessage(group.mMeta.mAuthorId, "");
-	ui->infoAdministrator->setText(link.toHtml());
+    if(!group.mMeta.mAuthorId.isNull())
+    {
+        RetroShareLink link = RetroShareLink::createMessage(group.mMeta.mAuthorId, "");
+        ui->infoAdministrator->setText(link.toHtml());
+    }
 
 	ui->infoCreated->setText(DateTime::formatLongDateTime(group.mMeta.mPublishTs));
 
