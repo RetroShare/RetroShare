@@ -1354,7 +1354,7 @@ void ChatWidget::eraseBannedMessages(RsGxsId id)
 
 void ChatWidget::updateReputationChange(RsGxsId id)
 {
-	if(rsReputations->overallReputationLevel(id) == RsReputations::REPUTATION_REMOTELY_NEGATIVE)
+	if(rsReputations->overallReputationLevel(id) == RsReputationLevel::REMOTELY_NEGATIVE)
 		eraseBannedMessages(id);
 }
 
