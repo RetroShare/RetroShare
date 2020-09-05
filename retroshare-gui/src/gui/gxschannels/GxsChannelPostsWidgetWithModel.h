@@ -174,6 +174,7 @@ private:
     RsGxsChannelPostFilesModel *mChannelPostFilesModel;
     RsGxsChannelPostFilesModel *mChannelFilesModel;
     ChannelPostDelegate        *mChannelPostsDelegate;
+    ChannelPostFilesDelegate   *mFilesDelegate;
 
     RsGxsMessageId mSelectedPost;
 

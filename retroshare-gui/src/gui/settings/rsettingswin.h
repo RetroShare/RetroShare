@@ -21,10 +21,12 @@
 #ifndef RSETTINGSWIN_HPP_
 #define RSETTINGSWIN_HPP_
 
+#include "gui/common/FilesDefs.h"
 #include <QDialog>
 #include <retroshare-gui/configpage.h>
+#include <retroshare-gui/mainpage.h>
+
 #include "ui_settingsw.h"
-#include "mainpage.h"
 
 class FloatingHelpBrowser;
 
@@ -44,7 +46,7 @@ public:
 
 	void postModDirectories(bool update_local);
 
-	virtual QIcon iconPixmap() const { return QIcon(IMAGE_PREFERENCES) ; } //MainPage
+    virtual QIcon iconPixmap() const { return FilesDefs::getIconFromQtResourcePath(IMAGE_PREFERENCES) ; } //MainPage
 	virtual QString pageName() const { return tr("Preferences") ; } //MainPage
 
 protected:

@@ -23,6 +23,7 @@
 #include "PopupChatDialog.h"
 #include "PopupChatWindow.h"
 
+#include "gui/common/FilesDefs.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/settings/RsharePeerSettings.h"
 #include "gui/notifyqt.h"
@@ -149,10 +150,10 @@ void PopupChatDialog::showAvatarFrame(bool show)
 
 	if (show) {
 		ui.avatarFrameButton->setToolTip(tr("Hide Avatar"));
-		ui.avatarFrameButton->setIcon(QIcon(":images/hide_toolbox_frame.png"));
+        ui.avatarFrameButton->setIcon(FilesDefs::getIconFromQtResourcePath(":images/hide_toolbox_frame.png"));
 	} else {
 		ui.avatarFrameButton->setToolTip(tr("Show Avatar"));
-		ui.avatarFrameButton->setIcon(QIcon(":images/show_toolbox_frame.png"));
+        ui.avatarFrameButton->setIcon(FilesDefs::getIconFromQtResourcePath(":images/show_toolbox_frame.png"));
 	}
 
     PeerSettings->setShowAvatarFrame(mChatId, show);

@@ -919,6 +919,9 @@ void p3GxsForums::setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair&
 
 	setMsgStatusFlags(token, msgId, status, mask);
 
+	/* WARNING: The event may be received before the operation is completed!
+	 * TODO: move notification to blocking method markRead(...) which wait the
+	 * operation to complete */
 	if (rsEvents)
 	{
 		auto ev = std::make_shared<RsGxsForumEvent>();
@@ -932,6 +935,37 @@ void p3GxsForums::setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair&
 
 /********************************************************************************************/
 /********************************************************************************************/
+
+std::error_condition p3GxsForums::setPostKeepForever(
+        const RsGxsGroupId& forumId, const RsGxsMessageId& postId,
+        bool keepForever )
+{
+	if(forumId.isNull() || postId.isNull()) return std::errc::invalid_argument;
+
+	uint32_t mask = GXS_SERV::GXS_MSG_STATUS_KEEP_FOREVER;
+	uint32_t status = keepForever ? GXS_SERV::GXS_MSG_STATUS_KEEP_FOREVER : 0;
+
+	uint32_t token;
+	setMsgStatusFlags(token, RsGxsGrpMsgIdPair(forumId, postId), status, mask);
+
+	switch(waitToken(token))
+	{
+	case RsTokenService::PENDING: // [[fallthrough]];
+	case RsTokenService::PARTIAL: return std::errc::timed_out;
+	case RsTokenService::COMPLETE: // [[fallthrough]];
+	case RsTokenService::DONE:
+	{
+		auto ev = std::make_shared<RsGxsForumEvent>();
+		ev->mForumGroupId = forumId;
+		ev->mForumMsgId = postId;
+		ev->mForumEventCode = RsForumEventCode::UPDATED_MESSAGE;
+		rsEvents->postEvent(ev);
+		return std::error_condition();
+	}
+	case RsTokenService::CANCELLED: return std::errc::operation_canceled;
+	default: return std::errc::bad_message;
+	}
+}
 
 /* so we need the same tick idea as wiki for generating dummy forums
  */

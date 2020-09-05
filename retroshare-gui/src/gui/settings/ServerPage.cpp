@@ -1352,7 +1352,7 @@ void ServerPage::updateInProxyIndicator()
         return ;
 
     //ui.iconlabel_tor_incoming->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
-    //ui.testIncomingTor_PB->setIcon(QIcon(":/loader/circleball-16.gif")) ;
+    //ui.testIncomingTor_PB->setIcon(FilesDefs::getIconFromQtResourcePath(":/loader/circleball-16.gif")) ;
     QMovie *movie = new QMovie(":/images/loader/circleball-16.gif");
     ui.iconlabel_service_incoming->setMovie(movie);
     movie->start();
@@ -1846,11 +1846,11 @@ void ServerPage::updateInProxyIndicatorResult(bool success)
 
         ui.iconlabel_service_incoming->setPixmap(QPixmap(ICON_STATUS_OK)) ;
         ui.iconlabel_service_incoming->setToolTip(tr("You are reachable through the hidden service.")) ;
-        //ui.testIncomingTor_PB->setIcon(QIcon(ICON_STATUS_OK)) ;
+        //ui.testIncomingTor_PB->setIcon(FilesDefs::getIconFromQtResourcePath(ICON_STATUS_OK)) ;
     } else {
         std::cerr <<"Failed!" << std::endl;
 
-        //ui.testIncomingTor_PB->setIcon(QIcon(ICON_STATUS_UNKNOWN)) ;
+        //ui.testIncomingTor_PB->setIcon(FilesDefs::getIconFromQtResourcePath(ICON_STATUS_UNKNOWN)) ;
         ui.iconlabel_service_incoming->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
         ui.iconlabel_service_incoming->setToolTip(tr("The proxy is not enabled or broken.\nAre all services up and running fine??\nAlso check your ports!")) ;
     }

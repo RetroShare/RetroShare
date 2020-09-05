@@ -20,7 +20,8 @@
 
 #include "RemoteDirModel.h"
 
-#include "RsAutoUpdatePage.h"
+#include <retroshare-gui/RsAutoUpdatePage.h>
+
 #include "gui/common/FilesDefs.h"
 #include "gui/common/GroupDefs.h"
 #include "gui/common/RsCollection.h"
@@ -1138,15 +1139,9 @@ Qt::ItemFlags RetroshareDirModel::flags( const QModelIndex & index ) const
 /* Callback from Core*/
 void RetroshareDirModel::preMods()
 {
-    emit layoutAboutToBeChanged();
     mUpdating = true ;
-#if QT_VERSION < 0x050000
-	reset();
-#else
-	beginResetModel();
-	endResetModel();
-#endif
 
+	beginResetModel();
 #ifdef RDM_DEBUG
 	std::cerr << "RetroshareDirModel::preMods()" << std::endl;
 #endif
@@ -1155,20 +1150,14 @@ void RetroshareDirModel::preMods()
 /* Callback from Core*/
 void RetroshareDirModel::postMods()
 {
-//	emit layoutAboutToBeChanged();
     mUpdating = false ;
-#if QT_VERSION >= 0x040600
-	beginResetModel();
-#endif
-
 #ifdef RDM_DEBUG
 	std::cerr << "RetroshareDirModel::postMods()" << std::endl;
 #endif
 
-#if QT_VERSION >= 0x040600
 	endResetModel();
-#endif
-	emit layoutChanged();
+
+    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1,COLUMN_COUNT-1,(void*)NULL));
 }
 
 void FlatStyle_RDM::postMods()

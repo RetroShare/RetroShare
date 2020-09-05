@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "gui/common/FilesDefs.h"
 #include <QDialogButtonBox>
 #include <QMenu>
 #include "FriendSelectionWidget.h"
@@ -219,7 +220,7 @@ static void initSslItem(QTreeWidgetItem *item, const RsPeerDetails &detail, cons
 		item->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline);
 	}
 
-	item->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(state)));
+    item->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(StatusDefs::imageUser(state)));
 	item->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.id.toStdString()));
 
 	item->setData(COLUMN_NAME, ROLE_SORT_GROUP, 1);
@@ -381,7 +382,7 @@ void FriendSelectionWidget::secured_fillList()
 			groupItem->setFlags(Qt::ItemIsUserCheckable | groupItem->flags());
 			groupItem->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
 			groupItem->setTextAlignment(COLUMN_NAME, Qt::AlignLeft | Qt::AlignVCenter);
-			groupItem->setIcon(COLUMN_NAME, QIcon(IMAGE_GROUP16));
+            groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(IMAGE_GROUP16));
 
             groupItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(groupInfo->id.toStdString()));
 
@@ -454,7 +455,7 @@ void FriendSelectionWidget::secured_fillList()
 				}
 
 				gpgItem->setFlags(Qt::ItemIsUserCheckable | gpgItem->flags());
-				gpgItem->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(state)));
+                gpgItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(StatusDefs::imageUser(state)));
 				gpgItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.gpg_id.toStdString()));
 
 				gpgItem->setData(COLUMN_NAME, ROLE_SORT_GROUP, 1);
@@ -773,7 +774,7 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 						item->setData(COLUMN_NAME, Qt::ForegroundRole, QVariant());
 					}
 
-					item->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(gpgStatus)));
+                    item->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(StatusDefs::imageUser(gpgStatus)));
 
 					item->setData(COLUMN_NAME, ROLE_SORT_STATE, gpgStatus);
 
@@ -790,7 +791,7 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 						item->setData(COLUMN_NAME, Qt::ForegroundRole, QVariant());
 					}
 
-					item->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(status)));
+                    item->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(StatusDefs::imageUser(status)));
 
 					item->setData(COLUMN_NAME, ROLE_SORT_STATE, status);
 

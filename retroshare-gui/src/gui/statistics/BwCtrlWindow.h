@@ -24,7 +24,7 @@
 
 #include <QAbstractItemDelegate>
 
-#include "RsAutoUpdatePage.h"
+#include <retroshare-gui/RsAutoUpdatePage.h>
 #include "gui/common/RSGraphWidget.h"
 #include "ui_BwCtrlWindow.h"
 

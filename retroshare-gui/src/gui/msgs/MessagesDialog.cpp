@@ -422,7 +422,7 @@ void MessagesDialog::fillQuickView()
 
 	// add static items
 	item = new QListWidgetItem(tr("Starred"), ui.quickViewWidget);
-	item->setIcon(QIcon(IMAGE_STAR_ON));
+    item->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_STAR_ON));
 	item->setData(ROLE_QUICKVIEW_TYPE, QUICKVIEW_TYPE_STATIC);
 	item->setData(ROLE_QUICKVIEW_ID, QUICKVIEW_STATIC_ID_STARRED);
 	item->setData(ROLE_QUICKVIEW_TEXT, item->text()); // for updateMessageSummaryList
@@ -432,7 +432,7 @@ void MessagesDialog::fillQuickView()
 	}
 
 	item = new QListWidgetItem(tr("System"), ui.quickViewWidget);
-	item->setIcon(QIcon(IMAGE_NOTFICATION));
+    item->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_NOTFICATION));
 	item->setData(ROLE_QUICKVIEW_TYPE, QUICKVIEW_TYPE_STATIC);
 	item->setData(ROLE_QUICKVIEW_ID, QUICKVIEW_STATIC_ID_SYSTEM);
 	item->setData(ROLE_QUICKVIEW_TEXT, item->text()); // for updateMessageSummaryList
@@ -442,7 +442,7 @@ void MessagesDialog::fillQuickView()
 	}
 
 	item = new QListWidgetItem(tr("Spam"), ui.quickViewWidget);
-	item->setIcon(QIcon(IMAGE_SPAM_ON));
+    item->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_SPAM_ON));
 	item->setData(ROLE_QUICKVIEW_TYPE, QUICKVIEW_TYPE_STATIC);
 	item->setData(ROLE_QUICKVIEW_ID, QUICKVIEW_STATIC_ID_SPAM);
 	item->setData(ROLE_QUICKVIEW_TEXT, item->text()); // for updateMessageSummaryList
@@ -452,7 +452,7 @@ void MessagesDialog::fillQuickView()
 	}
 
 	item = new QListWidgetItem(tr("Attachment"), ui.quickViewWidget);
-	item->setIcon(QIcon(IMAGE_ATTACHMENT));
+    item->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_ATTACHMENT));
 	item->setData(ROLE_QUICKVIEW_TYPE, QUICKVIEW_TYPE_STATIC);
 	item->setData(ROLE_QUICKVIEW_ID, QUICKVIEW_STATIC_ID_ATTACHMENT);
 	item->setData(ROLE_QUICKVIEW_TEXT, item->text()); // for updateMessageSummaryList
@@ -584,13 +584,13 @@ void MessagesDialog::messageTreeWidgetCustomPopupMenu(QPoint /*point*/)
 
     QMenu contextMnu( this );
 
-    QAction *action = contextMnu.addAction(QIcon(":/images/view_split_top_bottom.png"), tr("Open in a new window"), this, SLOT(openAsWindow()));
+    QAction *action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/view_split_top_bottom.png"), tr("Open in a new window"), this, SLOT(openAsWindow()));
 
     if (nCount != 1) {
         action->setDisabled(true);
     }
 
-    action = contextMnu.addAction(QIcon(":/images/tab-dock.png"), tr("Open in a new tab"), this, SLOT(openAsTab()));
+    action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/tab-dock.png"), tr("Open in a new tab"), this, SLOT(openAsTab()));
     if (nCount != 1) {
         action->setDisabled(true);
     }
@@ -608,12 +608,12 @@ void MessagesDialog::messageTreeWidgetCustomPopupMenu(QPoint /*point*/)
 
     contextMnu.addSeparator();
 
-    action = contextMnu.addAction(QIcon(":/images/message-mail-read.png"), tr("Mark as read"), this, SLOT(markAsRead()));
+    action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/message-mail-read.png"), tr("Mark as read"), this, SLOT(markAsRead()));
     if (itemsUnread.isEmpty()) {
         action->setDisabled(true);
     }
 
-    action = contextMnu.addAction(QIcon(":/images/message-mail.png"), tr("Mark as unread"), this, SLOT(markAsUnread()));
+    action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/message-mail.png"), tr("Mark as unread"), this, SLOT(markAsUnread()));
 
     if (itemsRead.isEmpty()) {
         action->setDisabled(true);
@@ -647,7 +647,7 @@ void MessagesDialog::messageTreeWidgetCustomPopupMenu(QPoint /*point*/)
         action->setDisabled(true);
     }
 
-    action = contextMnu.addAction(QIcon(IMAGE_MESSAGEREMOVE), (nCount > 1) ? tr("Remove Messages") : tr("Remove Message"), this, SLOT(removemessage()));
+    action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MESSAGEREMOVE), (nCount > 1) ? tr("Remove Messages") : tr("Remove Message"), this, SLOT(removemessage()));
     if (nCount == 0) {
         action->setDisabled(true);
     }
@@ -674,11 +674,11 @@ void MessagesDialog::messageTreeWidgetCustomPopupMenu(QPoint /*point*/)
 	{
         std::cerr << "Src ID = " << msgInfo.rsgxsid_srcId << std::endl;
 
-		contextMnu.addAction(QIcon(IMAGE_AUTHOR_INFO),tr("Show author in People"),this,SLOT(showAuthorInPeopleTab()));
+        contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_AUTHOR_INFO),tr("Show author in People"),this,SLOT(showAuthorInPeopleTab()));
 		contextMnu.addSeparator();
 	}
 
-    contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("New Message"), this, SLOT(newmessage()));
+    contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MESSAGE), tr("New Message"), this, SLOT(newmessage()));
 
     contextMnu.exec(QCursor::pos());
 }
@@ -767,7 +767,7 @@ void MessagesDialog::openAsTab()
         return;
     }
 
-    ui.tabWidget->addTab(msgWidget,QIcon(IMAGE_MAIL), msgWidget->subject(true));
+    ui.tabWidget->addTab(msgWidget,FilesDefs::getIconFromQtResourcePath(IMAGE_MAIL), msgWidget->subject(true));
     ui.tabWidget->setCurrentWidget(msgWidget);
 	connect(msgWidget, SIGNAL(messageRemoved()), this, SLOT(messageRemoved()));
 
@@ -1284,7 +1284,7 @@ void MessagesDialog::updateMessageSummaryList()
         QFont qf = item->font();
         qf.setBold(true);
         item->setFont(qf);
-        item->setIcon(QIcon(":/images/folder-inbox-new.png"));
+        item->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/folder-inbox-new.png"));
         item->setData(Qt::ForegroundRole, mTextColorInbox);
     }
     else
@@ -1294,7 +1294,7 @@ void MessagesDialog::updateMessageSummaryList()
         QFont qf = item->font();
         qf.setBold(false);
         item->setFont(qf);
-        item->setIcon(QIcon(":/images/folder-inbox.png"));
+        item->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/folder-inbox.png"));
         item->setData(Qt::ForegroundRole, QVariant());
     }
 
@@ -1553,6 +1553,6 @@ void MessagesDialog::updateInterface()
 	else
 	{
 		ui.tabWidget->setTabText(0, tr("No Box selected."));
-		ui.tabWidget->setTabIcon(0, QIcon(":/icons/warning_yellow_128.png"));
+        ui.tabWidget->setTabIcon(0, FilesDefs::getIconFromQtResourcePath(":/icons/warning_yellow_128.png"));
 	}
 }
