@@ -480,7 +480,7 @@ void RemoteSharedFilesDialog::showProperColumns()
 #endif
     }
     else
-    
+    {
         ui.dirTreeView->setColumnHidden(COLUMN_FILENB, true) ;
         ui.dirTreeView->setColumnHidden(COLUMN_FRIEND_ACCESS, false) ;
         ui.dirTreeView->setColumnHidden(COLUMN_WN_VISU_DIR, false) ;
