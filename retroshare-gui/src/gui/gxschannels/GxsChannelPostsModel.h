@@ -108,6 +108,7 @@ public:
 	std::vector<std::pair<time_t,RsGxsMessageId> > getPostVersions(const RsGxsMessageId& mid) const;
 
     uint32_t getNumberOfPosts() { return mPosts.size() ; }
+    const RsGxsChannelPost& post(uint32_t i) const { return mPosts[i]; }
 
     // This method will asynchroneously update the data
 	void updateChannel(const RsGxsGroupId& channel_group_id);

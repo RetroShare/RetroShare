@@ -158,6 +158,20 @@ void ChannelPostThumbnailView::init(const RsGxsChannelPost& post)
     update();
 }
 
+ChannelPostThumbnailView::AspectRatio ChannelPostThumbnailView::bestAspectRatio()
+{
+    if(mPostImage->originalImage().isNull())
+        return ASPECT_RATIO_1_1;
+
+    float as = mPostImage->originalImage().height() / (float)mPostImage->originalImage().width() ;
+
+    if(as < 0.8)
+        return ASPECT_RATIO_16_9;
+    else if(as < 1.15)
+        return ASPECT_RATIO_1_1;
+    else
+        return ASPECT_RATIO_2_3;
+}
 QSize ChannelPostThumbnailView::actualSize() const
 {
     QFontMetricsF fm(font());

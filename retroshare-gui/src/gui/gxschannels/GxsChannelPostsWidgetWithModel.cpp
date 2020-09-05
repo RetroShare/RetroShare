@@ -145,13 +145,13 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 
         pixmap = pixmap.copy(QRect(0,0,w.actualSize().width(),w.actualSize().height()));
 
-        if(index.row()==0 && index.column()==0)
-    {
-        QFile file("yourFile.png");
-        file.open(QIODevice::WriteOnly);
-        pixmap.save(&file, "PNG");
-                file.close();
-    }
+//		if(index.row()==0 && index.column()==0)
+//		{
+//			QFile file("yourFile.png");
+//			file.open(QIODevice::WriteOnly);
+//			pixmap.save(&file, "PNG");
+//			file.close();
+//		}
 
         if(mUseGrid || index.column()==0)
         {
@@ -787,6 +787,25 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
     ui->channelFiles_TV->sortByColumn(0, Qt::AscendingOrder);
 
     ui->infoPosts->setText(QString::number(mChannelPostsModel->getNumberOfPosts()) + " / " + QString::number(mGroup.mMeta.mVisibleMsgCount));
+
+    // now compute aspect ratio for posts. We do that by looking at the 5 latest posts and compute the best aspect ratio for them.
+
+    std::vector<uint32_t> ar_votes(3,0);
+
+    for(uint32_t i=0;i<std::min(mChannelPostsModel->getNumberOfPosts(),5u);++i)
+    {
+        const RsGxsChannelPost& post = mChannelPostsModel->post(i);
+        ChannelPostThumbnailView v(post,ChannelPostThumbnailView::FLAG_SHOW_TEXT);
+
+        ++ar_votes[ static_cast<uint32_t>( v.bestAspectRatio() )];
+    }
+    int best=0;
+    for(uint32_t i=0;i<3;++i)
+        if(ar_votes[i] > ar_votes[best])
+            best = i;
+
+    mChannelPostsDelegate->setAspectRatio(static_cast<ChannelPostThumbnailView::AspectRatio>(best));
+    mChannelPostsModel->triggerViewUpdate();
 }
 
 void GxsChannelPostsWidgetWithModel::updateDisplay(bool complete)

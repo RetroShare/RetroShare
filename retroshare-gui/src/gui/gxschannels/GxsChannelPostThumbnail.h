@@ -46,6 +46,8 @@ public:
     QPixmap extractCroppedScaledPicture() const;
     void updateView();
 
+    const QPixmap& originalImage() const { return mFullImage ; }
+
 protected:
     void mousePressEvent(QMouseEvent *ev) override;
     void mouseReleaseEvent(QMouseEvent *ev) override;
@@ -108,6 +110,13 @@ public:
     // The label however has a correct size. It seems that Qt doesn't like widgets with horizontal aspect ratio and forces the size accordingly.
 
     QSize actualSize() const ;
+
+    /*!
+     * \brief bestAspectRatio
+     * 			Computes the preferred aspect ratio for the image in the post. The default is 1:1.
+     * \return the prefered aspect ratio
+     */
+    AspectRatio bestAspectRatio() ;
 private:
     static const float DEFAULT_SIZE_IN_FONT_HEIGHT ;
 
