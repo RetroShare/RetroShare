@@ -40,10 +40,7 @@
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">QFrame#frame{border: 2px solid #CCCCCC;
-background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                     stop: 0 #EEEEEE, stop: 1 #CCCCCC);
-border-radius: 10px}</string>
+      <string notr="true"/>
      </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>

@@ -928,3 +928,9 @@ MessagesDialog QWidget#messageTreeWidget::item:hover {
 GxsForumThreadWidget QWidget#threadTreeWidget::item {
 	padding: 2px;
 }
+
+PulseTopLevel QFrame#frame, PulseViewGroup QFrame#frame, PulseReply QFrame#frame {
+	border: 2px solid #7ecbfb;
+	border-radius: 6px;
+	background: white;
+}

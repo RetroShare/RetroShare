@@ -220,11 +220,11 @@ void GxsChannelPostsWidget::groupNameChanged(const QString &name)
 QIcon GxsChannelPostsWidget::groupIcon()
 {
 	if (mStateHelper->isLoading(mTokenTypeGroupData) || mStateHelper->isLoading(mTokenTypeAllPosts)) {
-		return QIcon(":/images/kalarm.png");
+        return FilesDefs::getIconFromQtResourcePath(":/images/kalarm.png");
 	}
 
 //	if (mNewCount) {
-//		return QIcon(":/images/message-state-new.png");
+//		return FilesDefs::getIconFromQtResourcePath(":/images/message-state-new.png");
 //	}
 
 	return QIcon();

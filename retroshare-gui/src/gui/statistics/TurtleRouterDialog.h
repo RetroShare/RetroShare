@@ -22,9 +22,11 @@
 
 #include <retroshare/rsturtle.h>
 #include <retroshare/rstypes.h>
+
+#include <retroshare-gui/RsAutoUpdatePage.h>
+
 #include "ui_TurtleRouterDialog.h"
 #include "ui_TurtleRouterStatistics.h"
-#include "RsAutoUpdatePage.h"
 
 
 class TurtleRouterDialog: public RsAutoUpdatePage, public Ui::TurtleRouterDialogForm

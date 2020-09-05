@@ -74,7 +74,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WindowFlags flags)
 
     //StatisticDialog *statisticDialog = NULL;
     //ui.stackPages->add(statisticDialog = new StatisticDialog(ui.stackPages),
-    //                   createPageAction(QIcon(IMAGE_STATISTIC), tr("Statistics"), grp));
+    //                   createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_STATISTIC), tr("Statistics"), grp));
 
     //GamesDialog *gamesDialog = NULL;
     //ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
@@ -91,7 +91,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WindowFlags flags)
 #ifdef RS_USE_CIRCLES
     CirclesDialog *circlesDialog = NULL;
     ui.stackPages->add(circlesDialog = new CirclesDialog(ui.stackPages),
-                      action = createPageAction(QIcon(IMAGE_CIRCLES ), tr("Circles"), grp));
+                      action = createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_CIRCLES ), tr("Circles"), grp));
     mNotify.push_back(QPair<MainPage*, QAction*>(circlesDialog, action));
 #endif
 #endif
@@ -105,13 +105,13 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WindowFlags flags)
 
     /*PostedDialog *postedDialog = NULL;
     ui.stackPages->add(postedDialog = new PostedDialog(ui.stackPages),
-                      action = createPageAction(QIcon(IMAGE_POSTED), tr("Posted Links"), grp));
+                      action = createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_POSTED), tr("Posted Links"), grp));
     postedDialog->setup();
     mNotify.push_back(QPair<MainPage*, QAction*>(postedDialog, action));
 
     WikiDialog *wikiDialog = NULL;
     ui.stackPages->add(wikiDialog = new WikiDialog(ui.stackPages),
-                      action = createPageAction(QIcon(IMAGE_WIKI), tr("Wiki Pages"), grp));
+                      action = createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_WIKI), tr("Wiki Pages"), grp));
     mNotify.push_back(QPair<MainPage*, QAction*>(wikiDialog, action));*/
 
 // THESE HAVE TO BE CONVERTED TO VEG FORMAT

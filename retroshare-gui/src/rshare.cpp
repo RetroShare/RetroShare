@@ -42,6 +42,7 @@
 #include <iostream>
 #include <stdlib.h>
 
+#include "gui/common/FilesDefs.h"
 #include <gui/common/rshtml.h>
 #include <gui/common/vmessagebox.h>
 #include <gui/gxs/GxsIdDetails.h>
@@ -258,7 +259,7 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, const QString &dir)
 #ifndef __APPLE__
 
   /* set default window icon */
-  setWindowIcon(QIcon(":/icons/logo_128.png"));
+  setWindowIcon(FilesDefs::getIconFromQtResourcePath(":/icons/logo_128.png"));
 
 #endif
 

@@ -108,6 +108,7 @@ QString GxsChannelDialog::getHelpString() const
 	 <p>Channels can be made anonymous, or attached to a Retroshare identity so that readers can contact you if needed.\
 	 Enable \"Allow Comments\" if you want to let users comment on your posts.</p>\
     <p>Channel posts are kept for %1 days, and sync-ed over the last %2 days, unless you change this.</p>\
+    <p>UI Tip: use Control + mouse wheel to control image size in the thumbnail view.</p>\
                 ").arg(QString::number(rsGxsChannels->getDefaultStoragePeriod()/86400)).arg(QString::number(rsGxsChannels->getDefaultSyncPeriod()/86400));
 
 	return hlp_str ;
@@ -251,8 +252,8 @@ void GxsChannelDialog::groupTreeCustomActions(RsGxsGroupId grpId, int subscribeF
 
     if (isSubscribed)
     {
-        QAction *action = autoDownload ? (new QAction(QIcon(":/images/redled.png"), tr("Disable Auto-Download"), this))
-                                       : (new QAction(QIcon(":/images/start.png"),tr("Enable Auto-Download"), this));
+        QAction *action = autoDownload ? (new QAction(FilesDefs::getIconFromQtResourcePath(":/images/redled.png"), tr("Disable Auto-Download"), this))
+                                       : (new QAction(FilesDefs::getIconFromQtResourcePath(":/images/start.png"),tr("Enable Auto-Download"), this));
 
         connect(action, SIGNAL(triggered()), this, SLOT(toggleAutoDownload()));
         actions.append(action);
@@ -263,7 +264,7 @@ void GxsChannelDialog::groupTreeCustomActions(RsGxsGroupId grpId, int subscribeF
         QMenu *mnu = new QMenu(tr("Set download directory")) ;
 
         if(dl_directory.empty())
-            mnu->addAction(QIcon(":/images/start.png"),tr("[Default directory]"), this, SLOT(setDefaultDirectory())) ;
+            mnu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/start.png"),tr("[Default directory]"), this, SLOT(setDefaultDirectory())) ;
         else
             mnu->addAction(tr("[Default directory]"), this, SLOT(setDefaultDirectory())) ;
 
@@ -277,7 +278,7 @@ void GxsChannelDialog::groupTreeCustomActions(RsGxsGroupId grpId, int subscribeF
 
             if(dl_directory == it->filename)
             {
-                action = new QAction(QIcon(":/images/start.png"),QString::fromUtf8(it->filename.c_str()),NULL) ;
+                action = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/start.png"),QString::fromUtf8(it->filename.c_str()),NULL) ;
                 found = true ;
             }
             else
@@ -291,7 +292,7 @@ void GxsChannelDialog::groupTreeCustomActions(RsGxsGroupId grpId, int subscribeF
 
         if(!found && !dl_directory.empty())
         {
-            QAction *action = new QAction(QIcon(":/images/start.png"),QString::fromUtf8(dl_directory.c_str()),NULL) ;
+            QAction *action = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/start.png"),QString::fromUtf8(dl_directory.c_str()),NULL) ;
             connect(action,SIGNAL(triggered()),this,SLOT(setDownloadDirectory())) ;
             action->setData(QString::fromUtf8(dl_directory.c_str())) ;
 
@@ -391,7 +392,7 @@ void GxsChannelDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *gro
 		groupItemInfo.icon = image;
 	}
 	else
-		groupItemInfo.icon = QIcon(":icons/png/channel.png");
+        groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/channel.png");
 
 	groupItemInfo.description = QString::fromUtf8(channelGroupData->mDescription.c_str());
 }

@@ -363,11 +363,24 @@ public:
 	 * @param[in] parentId id of the post of which child posts (aka replies)
 	 *	are requested.
 	 * @param[out] childPosts storage for the child posts
-	 * @return false if something failed, true otherwhise
+	 * @return Success or error details
 	 */
 	virtual std::error_condition getChildPosts(
 	        const RsGxsGroupId& forumId, const RsGxsMessageId& parentId,
 	        std::vector<RsGxsForumMsg>& childPosts ) = 0;
+
+	/**
+	 * @brief Set keep forever flag on a post so it is not deleted even if older
+	 * then group maximum storage time
+	 * @jsonapi{development}
+	 * @param[in] forumId id of the forum of which the post pertain
+	 * @param[in] postId id of the post on which to set the flag
+	 * @param[in] keepForever true to set the flag, false to unset it
+	 * @return Success or error details
+	 */
+	virtual std::error_condition setPostKeepForever(
+	        const RsGxsGroupId& forumId, const RsGxsMessageId& postId,
+	        bool keepForever ) = 0;
 
 	/**
 	 * @brief Create forum. Blocking API.

@@ -21,6 +21,7 @@
 #include "GroupTreeWidget.h"
 #include "ui_GroupTreeWidget.h"
 
+#include "gui/common/FilesDefs.h"
 #include "retroshare/rsgxsflags.h"
 
 #include "PopularityDefs.h"
@@ -250,11 +251,11 @@ void GroupTreeWidget::initDisplayMenu(QToolButton *toolButton)
 	displayMenu = new QMenu();
 	QActionGroup *actionGroupAsc = new QActionGroup(displayMenu);
 
-	actionSortDescending = displayMenu->addAction(QIcon(":/images/sort_decrease.png"), tr("Sort Descending Order"), this, SLOT(sort()));
+    actionSortDescending = displayMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/sort_decrease.png"), tr("Sort Descending Order"), this, SLOT(sort()));
 	actionSortDescending->setCheckable(true);
 	actionSortDescending->setActionGroup(actionGroupAsc);
 
-	actionSortAscending = displayMenu->addAction(QIcon(":/images/sort_incr.png"), tr("Sort Ascending Order"), this, SLOT(sort()));
+    actionSortAscending = displayMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/sort_incr.png"), tr("Sort Ascending Order"), this, SLOT(sort()));
 	actionSortAscending->setCheckable(true);
 	actionSortAscending->setActionGroup(actionGroupAsc);
 

@@ -67,7 +67,7 @@ static void fillGxsIdRSTreeWidgetItemCallback(GxsIdDetailsType type, const RsIde
 		break;
         
     	case GXS_ID_DETAILS_TYPE_BANNED:
-        	icons.push_back(QIcon("BANNED_IMAGE")) ;
+            icons.push_back(FilesDefs::getIconFromQtResourcePath("BANNED_IMAGE")) ;
             	break ;
 	}
 

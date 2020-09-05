@@ -24,7 +24,8 @@
 #include <QWidget>
 #include <QPainter>
 #include <QBitmap>
-#include "RsAutoUpdatePage.h"
+
+#include <retroshare-gui/RsAutoUpdatePage.h>
 #include <retroshare/rstypes.h>
 
 struct FileChunksInfo ;
