@@ -4,7 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2012-2014  Robert Fernie <retroshare@lunamutt.com>            *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2020  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -25,6 +26,7 @@
 #include <cstdint>
 #include <string>
 #include <list>
+#include <system_error>
 
 #include "retroshare/rstokenservice.h"
 #include "retroshare/rsgxsifacehelper.h"
@@ -353,6 +355,32 @@ public:
 	        RsGxsGroupId& forumId = RS_DEFAULT_STORAGE_PARAM(RsGxsGroupId),
 	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string) ) = 0;
 
+	/**
+	 * @brief Get posts related to the given post.
+	 * If the set is empty, nothing is returned.
+	 * @jsonapi{development}
+	 * @param[in] forumId id of the forum of which the content is requested
+	 * @param[in] parentId id of the post of which child posts (aka replies)
+	 *	are requested.
+	 * @param[out] childPosts storage for the child posts
+	 * @return Success or error details
+	 */
+	virtual std::error_condition getChildPosts(
+	        const RsGxsGroupId& forumId, const RsGxsMessageId& parentId,
+	        std::vector<RsGxsForumMsg>& childPosts ) = 0;
+
+	/**
+	 * @brief Set keep forever flag on a post so it is not deleted even if older
+	 * then group maximum storage time
+	 * @jsonapi{development}
+	 * @param[in] forumId id of the forum of which the post pertain
+	 * @param[in] postId id of the post on which to set the flag
+	 * @param[in] keepForever true to set the flag, false to unset it
+	 * @return Success or error details
+	 */
+	virtual std::error_condition setPostKeepForever(
+	        const RsGxsGroupId& forumId, const RsGxsMessageId& postId,
+	        bool keepForever ) = 0;
 
 	/**
 	 * @brief Create forum. Blocking API.

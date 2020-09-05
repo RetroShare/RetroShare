@@ -33,6 +33,7 @@
 #include "serialiser/rsserializable.h"
 #include "serialiser/rstypeserializer.h"
 #include "util/rstime.h"
+#include "util/rsdebug.h"
 
 class RsEvents;
 
@@ -126,8 +127,7 @@ struct RsEventsErrorCategory: std::error_category
 		case RsEventsErrorNum::INVALID_HANDLER_ID:
 			return "Invalid handler id";
 		default:
-			return "Error message for error: " + std::to_string(ev) +
-			        " not available in category: " + name();
+			return rsErrorNotInCategory(ev, name());
 		}
 	}
 
@@ -195,8 +195,6 @@ public:
 	/**
 	 * @brief Post event to the event queue.
 	 * @param[in] event
-	 * @param[out] errorMessage Optional storage for error messsage, meaningful
-	 *                          only on failure.
 	 * @return Success or error details.
 	 */
 	virtual std::error_condition postEvent(
@@ -206,8 +204,6 @@ public:
 	 * @brief Send event directly to handlers. Blocking API
 	 * The handlers get exectuded on the caller thread.
 	 * @param[in] event
-	 * @param[out] errorMessage Optional storage for error messsage, meaningful
-	 *                          only on failure.
 	 * @return Success or error details.
 	 */
 	virtual std::error_condition sendEvent(

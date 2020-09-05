@@ -72,7 +72,8 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 
 	connect(addFileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
 	connect(addfilepushButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
-	
+    connect(subjectEdit,SIGNAL(textChanged(const QString&)),this,SLOT(updatePreviewText(const QString&)));
+
 	connect(addThumbnailButton, SIGNAL(clicked() ), this , SLOT(addThumbnail()));
 	connect(thumbNailCb, SIGNAL(toggled(bool)), this, SLOT(allowAutoMediaThumbNail(bool)));
 	connect(stackedWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenu(QPoint)));
@@ -121,9 +122,9 @@ void CreateGxsChannelMsg::contextMenu(QPoint /*point*/)
 
 	QAction *action ;
 	if(n_file > 1)
-		action = contextMnu.addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Links"), this, SLOT(pasteLink()));
+        action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/pasterslink.png"), tr("Paste RetroShare Links"), this, SLOT(pasteLink()));
 	else
-		action = contextMnu.addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
+        action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
 
 	action->setDisabled(n_file < 1) ;
 	contextMnu.exec(QCursor::pos());
@@ -605,6 +606,11 @@ void CreateGxsChannelMsg::saveChannelInfo(const RsGroupMetaData &meta)
 	subjectEdit->setFocus();
 }
 
+void CreateGxsChannelMsg::updatePreviewText(const QString& s)
+{
+	preview_W->setText(s);
+}
+
 void CreateGxsChannelMsg::sendMsg()
 {
 #ifdef DEBUG_CREATE_GXS_MSG
@@ -717,7 +723,7 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
 
 void CreateGxsChannelMsg::addThumbnail()
 {
-	QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load thumbnail picture"), 156, 107);
+	QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load thumbnail picture"), 107,156);	// these absolute sizes are terrible
 
 	if (img.isNull())
 		return;
@@ -725,7 +731,7 @@ void CreateGxsChannelMsg::addThumbnail()
 	picture = img;
 
 	// to show the selected
-	thumbnail_label->setPixmap(picture);
+	preview_W->setPixmap(picture);
 }
 
 void CreateGxsChannelMsg::loadOriginalChannelPostInfo()
@@ -769,7 +775,7 @@ void CreateGxsChannelMsg::loadOriginalChannelPostInfo()
 			if(post.mThumbnail.mData != NULL)
 			{
 				GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData,post.mThumbnail.mSize,picture,GxsIdDetails::ORIGINAL);
-				thumbnail_label->setPixmap(picture);
+				preview_W->setPixmap(picture);
 			}
 
 

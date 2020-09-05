@@ -33,6 +33,7 @@
 #include <QUrlQuery>
 #endif
 
+#include "gui/common/FilesDefs.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/misc.h"
 #include "ConnectFriendWizard.h"
@@ -145,11 +146,11 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	switch (rsFiles->filePermDirectDL())
 	{
 		case RS_FILE_PERM_DIRECT_DL_YES:
-			ui->_direct_transfer_CB_2->setIcon(QIcon(":/icons/warning_yellow_128.png"));
+            ui->_direct_transfer_CB_2->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/warning_yellow_128.png"));
 			ui->_direct_transfer_CB_2->setToolTip(ui->_direct_transfer_CB_2->toolTip().append(tr("\nWarning: In your File-Transfer option, you select allow direct download to Yes.")));
 			break ;
 		case RS_FILE_PERM_DIRECT_DL_NO:
-			ui->_direct_transfer_CB_2->setIcon(QIcon(":/icons/warning_yellow_128.png"));
+            ui->_direct_transfer_CB_2->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/warning_yellow_128.png"));
 			ui->_direct_transfer_CB_2->setToolTip(ui->_direct_transfer_CB_2->toolTip().append(tr("\nWarning: In your File-Transfer option, you select allow direct download to No.")));
 			break ;
 

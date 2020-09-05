@@ -161,7 +161,9 @@ public:
 		p3ChatService *chatSrv;
 		p3StatusService *mStatusSrv;
 		p3GxsTunnelService *mGxsTunnels;
+#ifdef RS_USE_I2P_BOB
 		p3I2pBob *mI2pBob;
+#endif
 
         // This list contains all threaded services. It will be used to shut them down properly.
 

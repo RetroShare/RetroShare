@@ -34,10 +34,12 @@
 #include <retroshare/rsplugin.h>
 
 #include <gui/settings/rsharesettings.h>
+#include "gui/common/FilesDefs.h"
 
 #include <gui/MainWindow.h>
 #include <gui/statistics/TurtleRouterStatistics.h>
 #include <gui/statistics/GlobalRouterStatistics.h>
+#include <gui/statistics/GxsIdStatistics.h>
 #include <gui/statistics/GxsTransportStatistics.h>
 #include <gui/statistics/BwCtrlWindow.h>
 #include <gui/statistics/DhtWindow.h>
@@ -53,6 +55,7 @@
 
 #define IMAGE_DHT           ":/icons/DHT128.png"
 #define IMAGE_TURTLE        ":/icons/turtle128.png"
+#define IMAGE_IDENTITIES    ":/icons/avatar_128.png"
 #define IMAGE_BWGRAPH       ":/icons/bandwidth128.png"
 #define IMAGE_GLOBALROUTER  ":/icons/GRouter128.png"
 #define IMAGE_GXSTRANSPORT  ":/icons/transport128.png"
@@ -140,19 +143,22 @@ void StatisticsWindow::initStackedPage()
   QAction *action;
   
   ui->stackPages->add(bwdlg = new BwCtrlWindow(ui->stackPages),
-                   action = createPageAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth"), grp));
+                   action = createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_BWGRAPH), tr("Bandwidth"), grp));
                    
   ui->stackPages->add(trsdlg = new TurtleRouterStatistics(ui->stackPages),
-                   action = createPageAction(QIcon(IMAGE_TURTLE), tr("Turtle Router"), grp));
+                   action = createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_TURTLE), tr("Turtle Router"), grp));
                    
+  ui->stackPages->add(gxsiddlg = new GxsIdStatistics(ui->stackPages),
+                   action = createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_IDENTITIES), tr("Identities"), grp));
+
   ui->stackPages->add(grsdlg = new GlobalRouterStatistics(ui->stackPages),
-                   action = createPageAction(QIcon(IMAGE_GLOBALROUTER), tr("Global Router"), grp)); 
+                   action = createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_GLOBALROUTER), tr("Global Router"), grp));
                    
   ui->stackPages->add(gxsdlg = new GxsTransportStatistics(ui->stackPages),
-                   action = createPageAction(QIcon(IMAGE_GXSTRANSPORT), tr("Gxs Transport"), grp));
+                   action = createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_GXSTRANSPORT), tr("Gxs Transport"), grp));
 
   ui->stackPages->add(rttdlg = new RttStatistics(ui->stackPages),
-                      action = createPageAction(QIcon(IMAGE_RTT), tr("RTT Statistics"), grp));
+                   action = createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_RTT), tr("RTT Statistics"), grp));
                    
 	bool showdht = true;
 	RsPeerDetails detail;
@@ -164,7 +170,7 @@ void StatisticsWindow::initStackedPage()
 	if(showdht)
 	{
 	ui->stackPages->add(dhtw = new DhtWindow(ui->stackPages),
-                   action = createPageAction(QIcon(IMAGE_DHT), tr("DHT"), grp));
+                   action = createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_DHT), tr("DHT"), grp));
 	}
 	
    /*std::cerr << "Looking for interfaces in existing plugins:" << std::endl;
@@ -177,7 +183,7 @@ void StatisticsWindow::initStackedPage()
 			 if(rsPlugins->plugin(i)->qt_icon() != NULL)
 				 icon = *rsPlugins->plugin(i)->qt_icon() ;
 			 else
-				 icon = QIcon(":images/extension_48.png") ;
+                 icon = FilesDefs::getIconFromQtResourcePath(":images/extension_48.png") ;
 
 			 std::cerr << "  Addign widget page for plugin " << rsPlugins->plugin(i)->getPluginName() << std::endl;
 			 MainPage *pluginPage = rsPlugins->plugin(i)->qt_page();

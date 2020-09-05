@@ -30,9 +30,10 @@
 	#include <sys/socket.h>
 #endif
 
+#include "pqi/p3cfgmgr.h"
 #include "services/autoproxy/rsautoproxymonitor.h"
 #include "util/rsthreads.h"
-#include "pqi/p3cfgmgr.h"
+#include "util/i2pcommon.h"
 
 /*
  * This class implements I2P BOB (BASIC OPEN BRIDGE) communication to allow RS
@@ -49,7 +50,7 @@
  *
  * Note 3:
  *	BOB needs a unique name as an ID for each tunnel.
- *	We use 'RetroShare-' + 8 base32 characters.
+ *	We use 'RetroShare-' + 8 random base32 characters.
  *
  * Design:
  *	The service uses three state machines to manage its task:
@@ -72,7 +73,7 @@
  *		mCommands[bobState::quit]     = {quit,    bobState::cleared};
  *
  * stateMachineController:
- *	This state machone manages the high level tasks.
+ *	This state machine manages the high level tasks.
  *	It is controlled by mState and mTask.
  *
  *		mTast:
@@ -162,19 +163,7 @@ struct bobStateInfo {
 	bobState    nextState;
 };
 
-struct bobSettings {
-	bool enableBob;		///< This field is used by the pqi subsystem to determinine whether SOCKS proxy or BOB is used for I2P connections
-	std::string keys;	///< (optional) server keys
-	std::string addr;	///< (optional) hidden service addr. in base32 form
-
-	int8_t inLength;
-	int8_t inQuantity;
-	int8_t inVariance;
-
-	int8_t outLength;
-	int8_t outQuantity;
-	int8_t outVariance;
-};
+struct bobSettings : i2p::settings {};
 
 ///
 /// \brief The bobStates struct
@@ -202,8 +191,6 @@ public:
 	bool initialSetup(std::string &addr, uint16_t &);
 	void processTaskAsync(taskTicket *ticket);
 	void processTaskSync(taskTicket *ticket);
-
-	static std::string keyToBase32Addr(const std::string &key);
 
 	void threadTick() override; /// @see RsTickingThread
 

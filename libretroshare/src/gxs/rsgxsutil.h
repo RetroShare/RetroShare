@@ -111,27 +111,6 @@ typedef t_RsGxsGenericDataTemporaryMapVector<RsNxsMsg>                RsNxsMsgDa
 typedef t_RsGxsGenericDataTemporaryList<RsNxsGrp>                     RsNxsGrpDataTemporaryList ;
 typedef t_RsGxsGenericDataTemporaryList<RsNxsMsg>                     RsNxsMsgDataTemporaryList ;
 
-#ifdef UNUSED
-template<class T>
-class RsGxsMetaDataTemporaryMapVector: public std::vector<T*>
-{
-public:
-    virtual ~RsGxsMetaDataTemporaryMapVector()
-    {
-        clear() ;
-    }
-
-    virtual void clear()
-    {
-        for(typename RsGxsMetaDataTemporaryMapVector<T>::iterator it = this->begin();it!=this->end();++it)
-            if(it->second != NULL)
-		    delete it->second ;
-        std::vector<T*>::clear() ;
-    }
-};
-#endif
-
-
 inline RsGxsGrpMsgIdPair getMsgIdPair(RsNxsMsg& msg)
 {
 	return RsGxsGrpMsgIdPair(std::make_pair(msg.grpId, msg.msgId));
@@ -146,7 +125,7 @@ inline RsGxsGrpMsgIdPair getMsgIdPair(RsGxsMsgItem& msg)
  * Does message clean up based on individual group expirations first
  * if avialable. If not then deletion s
  */
-class RsGxsMessageCleanUp //: public RsThread
+class RsGxsMessageCleanUp
 {
 public:
 
@@ -165,11 +144,6 @@ public:
 	 * @return true if no more messages to delete, false otherwise
 	 */
 	bool clean();
-
-	/*!
-	 * TODO: Rather than manual progressions consider running through a thread
-	 */
-    //virtual void data_tick(){}
 
 private:
 

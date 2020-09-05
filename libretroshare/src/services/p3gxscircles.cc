@@ -1463,12 +1463,14 @@ bool p3GxsCircles::locked_processLoadingCacheEntry(RsGxsCircleCache& cache)
 				}
 				else
 				{
+#ifdef DEBUG_CIRCLES
 					std::cerr << "    (WW) cache entry for circle " << cache.mCircleId << " has empty originator. Asking info for GXS id " << pit->first << " to all connected friends." << std::endl;
+#endif
 
 					rsPeers->getOnlineList(peers) ;
 				}
 
-				mIdentities->requestKey(pit->first, peers,RsIdentityUsage(serviceType(),RsIdentityUsage::CIRCLE_MEMBERSHIP_CHECK,RsGxsGroupId(cache.mCircleId)));
+				mIdentities->requestKey(pit->first, peers,RsIdentityUsage(RsServiceType::GXSCIRCLE,RsIdentityUsage::CIRCLE_MEMBERSHIP_CHECK,RsGxsGroupId(cache.mCircleId)));
 
 				all_ids_here = false;
 			}
@@ -1997,7 +1999,9 @@ bool p3GxsCircles::processMembershipRequests(uint32_t token)
 
         // now do another sweep and remove all msgs that are older than the latest
 
+#ifdef DEBUG_CIRCLES
 		std::cerr << "    Cleaning old messages..." << std::endl;
+#endif
 
 		for(uint32_t i=0;i<it->second.size();++i)
         {

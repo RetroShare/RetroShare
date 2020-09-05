@@ -61,7 +61,55 @@ public:
 	virtual bool updateGroup(const RsWireGroup &group) override;
 	virtual bool getGroups(const std::list<RsGxsGroupId> grpIds, std::vector<RsWireGroup> &groups) override;
 
+	// New Interfaces.
+	// Blocking, request structures for display.
+	virtual bool createOriginalPulse(const RsGxsGroupId &grpId, RsWirePulseSPtr pPulse) override;
+	virtual bool createReplyPulse(RsGxsGroupId grpId, RsGxsMessageId msgId,
+		RsGxsGroupId replyWith, uint32_t reply_type,
+		RsWirePulseSPtr pPulse) override;
+
+#if 0
+	virtual bool createReplyPulse(uint32_t &token, RsWirePulse &pulse) override;
+	virtual bool createRepublishPulse(uint32_t &token, RsWirePulse &pulse) override;
+	virtual bool createLikePulse(uint32_t &token, RsWirePulse &pulse) override;
+#endif
+
+	virtual bool getWireGroup(const RsGxsGroupId &groupId, RsWireGroupSPtr &grp) override;
+	virtual bool getWirePulse(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, RsWirePulseSPtr &pPulse) override;
+
+	virtual bool getPulsesForGroups(const std::list<RsGxsGroupId> &groupIds, std::list<RsWirePulseSPtr> &pulsePtrs) override;
+
+	virtual bool getPulseFocus(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, int type, RsWirePulseSPtr &pPulse) override;
+
 private:
+	// Internal Service Data.
+	// They should eventually all be here.
+	bool getRelatedPulseData(const uint32_t &token, std::vector<RsWirePulse> &pulses);
+	bool getGroupPtrData(const uint32_t &token,
+		std::map<RsGxsGroupId, RsWireGroupSPtr> &groups);
+	bool getPulsePtrData(const uint32_t &token, std::list<RsWirePulseSPtr> &pulses);
+
+	// util functions fetching data.
+	bool fetchPulse(RsGxsGroupId grpId, RsGxsMessageId msgId, RsWirePulseSPtr &pPulse);
+	bool updatePulse(RsWirePulseSPtr pPulse, int levels);
+	bool updatePulseChildren(RsWirePulseSPtr pParent,  uint32_t token);
+
+	// update GroupPtrs
+	bool updateGroups(std::list<RsWirePulseSPtr> &pulsePtrs);
+
+	// sub utility functions used by updateGroups.
+	bool extractGroupIds(RsWirePulseConstSPtr pPulse, std::set<RsGxsGroupId> &groupIds);
+
+	bool updateGroupPtrs(RsWirePulseSPtr pPulse,
+			const std::map<RsGxsGroupId, RsWireGroupSPtr> &groups);
+
+	bool trimToAvailGroupIds(const std::set<RsGxsGroupId> &pulseGroupIds,
+		std::list<RsGxsGroupId> &availGroupIds);
+
+	bool fetchGroupPtrs(const std::list<RsGxsGroupId> &groupIds,
+			std::map<RsGxsGroupId, RsWireGroupSPtr> &groups);
+
+
 	virtual void generateDummyData();
 	std::string genRandomId();
 

@@ -651,6 +651,9 @@ bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, u
 
 	try
 	{
+        if(keys.empty())
+			throw std::runtime_error("EVP_SealInit will not be called with 0 keys. GxsSecurity::encrypt() was called with an empty set of destination keys!") ;
+
 		for(uint32_t i=0;i<keys.size();++i)
 		{
 			RSA *tmpkey = ::extractPublicKey(keys[i]) ;

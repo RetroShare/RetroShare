@@ -2108,7 +2108,7 @@ bool p3GRouter::verifySignedDataItem(const RsGRouterAbstractMsgItem *item,const 
 		if(!signature_serializer.serialise(const_cast<RsGRouterAbstractMsgItem*>(item),data,&data_size))
 			throw std::runtime_error("Cannot serialise signed data.");
 
-		RsIdentityUsage use(RS_SERVICE_TYPE_GROUTER,info);
+		RsIdentityUsage use(RsServiceType::GROUTER,info);
 
 		if(!mGixs->validateData( data, data_size, item->signature, true, use, error_status ))
 		{

@@ -47,6 +47,7 @@
 #include "util/misc.h"
 #include "util/QtVersion.h"
 #include "util/rstime.h"
+#include "util/rsdebug.h"
 
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsmsgs.h" 
@@ -55,6 +56,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <memory>
 
 /******
  * #define ID_DEBUG 1
@@ -319,10 +321,10 @@ IdDialog::IdDialog(QWidget *parent) : MainPage(parent), ui(new Ui::IdDialog)
 	connect(idTWHAction, SIGNAL(toggled(bool)), this, SLOT(filterToggled(bool)));
 	idTWHMenu->addAction(idTWHAction);
 	
-	QAction *CreateIDAction = new QAction(QIcon(":/icons/png/person.png"),tr("Create new Identity"), this);
+    QAction *CreateIDAction = new QAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/person.png"),tr("Create new Identity"), this);
 	connect(CreateIDAction, SIGNAL(triggered()), this, SLOT(addIdentity()));
 	
-	QAction *CreateCircleAction = new QAction(QIcon(":/icons/png/circles.png"),tr("Create new circle"), this);
+    QAction *CreateCircleAction = new QAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/circles.png"),tr("Create new circle"), this);
 	connect(CreateCircleAction, SIGNAL(triggered()), this, SLOT(createExternalCircle()));
 	
 	QMenu *menu = new QMenu();
@@ -506,21 +508,24 @@ void IdDialog::updateCircles()
         std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
 #endif
 
-        std::list<RsGroupMetaData> circle_metas ;
+		/* This can be big so use a smart pointer to just copy the pointer
+		 * instead of copying the whole list accross the lambdas */
+		auto circle_metas = std::make_unique<std::list<RsGroupMetaData>>();
 
-		if(!rsGxsCircles->getCirclesSummaries(circle_metas))
+		if(!rsGxsCircles->getCirclesSummaries(*circle_metas))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve circles group info list" << std::endl;
+			RS_ERR("failed to retrieve circles group info list");
 			return;
-        }
+		}
 
-        RsQThreadUtils::postToObject( [circle_metas,this]()
+		RsQThreadUtils::postToObject(
+		            [circle_metas = std::move(circle_metas), this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-            loadCircles(circle_metas);
+			loadCircles(*circle_metas);
 
 		}, this );
 
@@ -1012,11 +1017,11 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 #endif
 		    if(group_flags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
 		    {
-			    contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Circle"), this, SLOT(showEditExistingCircle()));
+                contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EDIT), tr("Edit Circle"), this, SLOT(showEditExistingCircle()));
 			    am_I_circle_admin = true ;
 		    }
 		    else
-			    contextMnu.addAction(QIcon(IMAGE_INFO), tr("See details"), this, SLOT(showEditExistingCircle()));
+                contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_INFO), tr("See details"), this, SLOT(showEditExistingCircle()));
 #ifdef CIRCLE_MEMBERSHIP_CATEGORIES
 	}
 #endif
@@ -1104,9 +1109,9 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 		    QAction *action ;
 
 		    if(is_circle)
-			    action = new QAction(QIcon(image_names[i]), menu_titles[i] + " " + id_name,this) ;
+                action = new QAction(FilesDefs::getIconFromQtResourcePath(image_names[i]), menu_titles[i] + " " + id_name,this) ;
 		    else
-			    action = new QAction(QIcon(image_names[i]), menu_titles[i],this) ;
+                action = new QAction(FilesDefs::getIconFromQtResourcePath(image_names[i]), menu_titles[i],this) ;
 
 		    if(i <2)
 			    QObject::connect(action,SIGNAL(triggered()), this, SLOT(acceptCircleSubscription()));
@@ -1129,7 +1134,7 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 			    else
 				    id_name = tr("for identity ")+QString::fromStdString(ids[i][j].toStdString()) ;
 
-			    QAction *action = new QAction(QIcon(image_names[i]), id_name,this) ;
+                QAction *action = new QAction(FilesDefs::getIconFromQtResourcePath(image_names[i]), id_name,this) ;
 
 			    if(i <2)
 				    QObject::connect(action,SIGNAL(triggered()), this, SLOT(acceptCircleSubscription()));
@@ -1305,19 +1310,17 @@ void IdDialog::updateIdList()
 			return;
 		}
 
-		std::map<RsGxsGroupId,RsGxsIdGroup> ids_set;
+		auto ids_set = std::make_unique<std::map<RsGxsGroupId,RsGxsIdGroup>>();
+		for(auto it(groups.begin()); it!=groups.end(); ++it)
+			(*ids_set)[(*it).mMeta.mGroupId] = *it;
 
-        for(auto it(groups.begin());it!=groups.end();++it)
-            ids_set[(*it).mMeta.mGroupId] = *it;
-
-        RsQThreadUtils::postToObject( [ids_set,this]()
+		RsQThreadUtils::postToObject(
+		            [ids_set = std::move(ids_set), this] ()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
-
-            loadIdentities(ids_set);
-
+			loadIdentities(*ids_set);
 		}, this );
 
     });
@@ -1576,6 +1579,14 @@ void IdDialog::loadIdentities(const std::map<RsGxsGroupId,RsGxsIdGroup>& ids_set
 	/* count items */
 	int itemCount = contactsItem->childCount() + allItem->childCount() + ownItem->childCount();
 	ui->label_count->setText( "(" + QString::number( itemCount ) + ")" );
+	
+	int contactsCount = contactsItem->childCount() ;
+	int allCount = allItem->childCount() ;
+	int ownCount = ownItem->childCount();
+
+	contactsItem->setText(0, tr("My contacts") + " (" + QString::number( contactsCount ) + ")" );
+	allItem->setText(0, tr("All") + " (" + QString::number( allCount ) + ")" );
+	ownItem->setText(0, tr("My own identities") + " (" +  QString::number( ownCount ) + ")" );
 
 	navigate(RsGxsId(oldCurrentId));
 	filterIds();
@@ -1852,10 +1863,17 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
 	{
 	case RsServiceType::CHANNELS:  service_name = tr("Channels") ;service_type = RetroShareLink::TYPE_CHANNEL   ; break ;
 	case RsServiceType::FORUMS:    service_name = tr("Forums") ;  service_type = RetroShareLink::TYPE_FORUM     ; break ;
-	case RsServiceType::POSTED:    service_name = tr("Posted") ;  service_type = RetroShareLink::TYPE_POSTED    ; break ;
+	case RsServiceType::POSTED:    service_name = tr("Boards") ;  service_type = RetroShareLink::TYPE_POSTED    ; break ;
 	case RsServiceType::CHAT:      service_name = tr("Chat")   ;  service_type = RetroShareLink::TYPE_CHAT_ROOM ; break ;
+
+	case RsServiceType::GXS_TRANS: return tr("GxsMail author ");
+#ifdef TODO
+    // We need a RS link for circles if we want to do that.
+    //
+	case RsServiceType::GXSCIRCLE: service_name = tr("GxsCircles");  service_type = RetroShareLink::TYPE_CIRCLES; break ;
+#endif
     default:
-        service_name = tr("Unknown"); service_type = RetroShareLink::TYPE_UNKNOWN ;
+        service_name = tr("Unknown (service=")+QString::number((int)u.mServiceId,16)+")"; service_type = RetroShareLink::TYPE_UNKNOWN ;
     }
 
     switch(u.mUsageCode)
@@ -1875,10 +1893,25 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
         	return tr("Group author for group %1 in service %2").arg(QString::fromStdString(u.mGrpId.toStdString())).arg(service_name);
         break ;
     case RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_VALIDATION:
-    case RsIdentityUsage::MESSAGE_AUTHOR_KEEP_ALIVE:             // Identities are stamped regularly by crawlign the set of messages for all groups. That helps keepign the useful identities in hand.
+    case RsIdentityUsage::MESSAGE_AUTHOR_KEEP_ALIVE:             // Identities are stamped regularly by crawling the set of messages for all groups. That helps keepign the useful identities in hand.
 	{
-		RetroShareLink l = RetroShareLink::createGxsMessageLink(service_type,u.mGrpId,u.mMsgId,tr("Message/vote/comment"));
-		return tr("%1 in %2 tab").arg(l.toHtml()).arg(service_name) ;
+        RetroShareLink l;
+
+        std::cerr << "Signature validation/keep alive signature:" << std::endl;
+        std::cerr << "   service ID  = " << std::hex << (uint16_t)u.mServiceId << std::dec << std::endl;
+        std::cerr << "   u.mGrpId    = " << u.mGrpId << std::endl;
+        std::cerr << "   u.mMsgId    = " << u.mMsgId << std::endl;
+        std::cerr << "   u.mParentId = " << u.mParentId << std::endl;
+        std::cerr << "   u.mThreadId = " << u.mThreadId << std::endl;
+
+		if(service_type == RetroShareLink::TYPE_CHANNEL && !u.mThreadId.isNull())
+			l = RetroShareLink::createGxsMessageLink(service_type,u.mGrpId,u.mThreadId,tr("Vote/comment"));
+		else if(service_type == RetroShareLink::TYPE_POSTED && !u.mThreadId.isNull())
+			l = RetroShareLink::createGxsMessageLink(service_type,u.mGrpId,u.mThreadId,tr("Vote"));
+		else
+			l = RetroShareLink::createGxsMessageLink(service_type,u.mGrpId,u.mMsgId,tr("Message"));
+
+		return tr("%1 in %2 service").arg(l.toHtml()).arg(service_name) ;
 	}
     case RsIdentityUsage::CHAT_LOBBY_MSG_VALIDATION:             // Chat lobby msgs are signed, so each time one comes, or a chat lobby event comes, a signature verificaiton happens.
     {
@@ -1904,9 +1937,13 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
     {
 		return tr("Signature in distant tunnel system.");
     }
-    case RsIdentityUsage::IDENTITY_DATA_UPDATE:                  // Group update on that identity data. Can be avatar, name, etc.
+    case RsIdentityUsage::IDENTITY_NEW_FROM_GXS_SYNC:            // Group update on that identity data. Can be avatar, name, etc.
     {
-		return tr("Update of identity data.");
+		return tr("Received from GXS sync.");
+    }
+    case RsIdentityUsage::IDENTITY_NEW_FROM_DISCOVERY:           // Own friend sended his own ids
+    {
+		return tr("Friend node identity received through discovery.");
     }
     case RsIdentityUsage::IDENTITY_GENERIC_SIGNATURE_CHECK:      // Any signature verified for that identity
     {
@@ -1914,11 +1951,18 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
     }
     case RsIdentityUsage::IDENTITY_GENERIC_SIGNATURE_CREATION:   // Any signature made by that identity
     {
-		return tr("Generic signature.");
+		return tr("Generic signature creation (e.g. chat room message, global router,...).");
     }
 	case RsIdentityUsage::IDENTITY_GENERIC_ENCRYPTION: return tr("Generic encryption.");
 	case RsIdentityUsage::IDENTITY_GENERIC_DECRYPTION: return tr("Generic decryption.");
-	case RsIdentityUsage::CIRCLE_MEMBERSHIP_CHECK:     return tr("Membership verification in circle %1.").arg(QString::fromStdString(u.mGrpId.toStdString()));
+	case RsIdentityUsage::CIRCLE_MEMBERSHIP_CHECK:
+    {
+        RsGxsCircleDetails det;
+        if(rsGxsCircles->getCircleDetails(RsGxsCircleId(u.mGrpId),det))
+			return tr("Membership verification in circle \"%1\" (%2).").arg(QString::fromUtf8(det.mCircleName.c_str())).arg(QString::fromStdString(u.mGrpId.toStdString()));
+        else
+			return tr("Membership verification in circle (ID=%1).").arg(QString::fromStdString(u.mGrpId.toStdString()));
+    }
 
 #warning TODO! csoler 2017-01-03: Add the different strings and translations here.
 	default:
@@ -2152,7 +2196,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 			{
 				if(own_identities.size() <= 1)
 				{
-					QAction *action = contextMenu->addAction(QIcon(":/icons/png/chats.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
+                    QAction *action = contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/chats.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
 
 					if(own_identities.empty())
 						action->setEnabled(false) ;
@@ -2161,7 +2205,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 				}
 				else
 				{
-					QMenu *mnu = contextMenu->addMenu(QIcon(":/icons/png/chats.png"),tr("Chat with this person as...")) ;
+                    QMenu *mnu = contextMenu->addMenu(FilesDefs::getIconFromQtResourcePath(":/icons/png/chats.png"),tr("Chat with this person as...")) ;
 
 					for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
 					{
@@ -2179,7 +2223,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 				}
 			}
 			// always allow to send messages
-			contextMenu->addAction(QIcon(":/icons/mail/write-mail.png"), tr("Send message"), this, SLOT(sendMsg()));
+            contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/mail/write-mail.png"), tr("Send message"), this, SLOT(sendMsg()));
 
 			contextMenu->addSeparator();
 
@@ -2190,18 +2234,18 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 				contextMenu->addAction(QIcon(""),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
 
 			if(n_is_not_a_contact == 0)
-				contextMenu->addAction(QIcon(":/images/cancel.png"), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
+                contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/cancel.png"), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
 
 			contextMenu->addSeparator();
 
 			if(n_positive_reputations == 0)	// only unban when all items are banned
-				contextMenu->addAction(QIcon(":/icons/png/thumbs-up.png"), tr("Set positive opinion"), this, SLOT(positivePerson()));
+                contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-up.png"), tr("Set positive opinion"), this, SLOT(positivePerson()));
 
 			if(n_neutral_reputations == 0)	// only unban when all items are banned
-				contextMenu->addAction(QIcon(":/icons/png/thumbs-neutral.png"), tr("Set neutral opinion"), this, SLOT(neutralPerson()));
+                contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-neutral.png"), tr("Set neutral opinion"), this, SLOT(neutralPerson()));
 
 			if(n_negative_reputations == 0)
-				contextMenu->addAction(QIcon(":/icons/png/thumbs-down.png"), tr("Set negative opinion"), this, SLOT(negativePerson()));
+                contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-down.png"), tr("Set negative opinion"), this, SLOT(negativePerson()));
 		}
 
 		if(one_item_owned_by_you && n_selected_items==1)

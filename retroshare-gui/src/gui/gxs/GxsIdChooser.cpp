@@ -22,6 +22,7 @@
 #include "GxsIdDetails.h"
 #include "RsGxsUpdateBroadcastBase.h"
 #include "gui/Identity/IdEditDialog.h"
+#include "gui/common/FilesDefs.h"
 #include "util/misc.h"
 
 #include <retroshare/rspeers.h>
@@ -162,7 +163,7 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
 		break;
         
 	case GXS_ID_DETAILS_TYPE_BANNED:
-		icons.push_back(QIcon(BANNED_ICON)) ;
+        icons.push_back(FilesDefs::getIconFromQtResourcePath(BANNED_ICON)) ;
 		break;
 	}
 
@@ -285,7 +286,7 @@ void GxsIdChooser::loadPrivateIds()
 			QString str = tr("Create new Identity");
 			QString id = "";
 
-			addItem(QIcon(":/icons/png/add-identity.png"), str, id);
+            addItem(FilesDefs::getIconFromQtResourcePath(":/icons/png/add-identity.png"), str, id);
 			setItemData(count() - 1, QString("%1_%2").arg(TYPE_CREATE_ID).arg(str), ROLE_SORT);
 			setItemData(count() - 1, TYPE_CREATE_ID, ROLE_TYPE);
             

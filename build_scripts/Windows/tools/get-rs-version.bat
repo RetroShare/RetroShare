@@ -27,7 +27,7 @@ set VersionMinor=
 set VersionMini=
 set VersionExtra=
 
-for /F "tokens=1,2,3,* delims=.-" %%A in ('%EnvToolsPath%\sigcheck.exe -nobanner -n %Executable%') do (
+for /F "USEBACKQ tokens=1,2,3,* delims=.-" %%A in (`powershell -NoLogo -NoProfile -Command ^(Get-Item "%Executable%"^).VersionInfo.FileVersion`) do (
 	set VersionMajor=%%A
 	set VersionMinor=%%B
 	set VersionMini=%%C

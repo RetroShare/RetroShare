@@ -18,21 +18,24 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <QApplication>
-#include <QThread>
-#include <QTimerEvent>
-#include <QMutexLocker>
-
-#include <math.h>
-#include <util/rsdir.h>
-#include "gui/common/AvatarDialog.h"
 #include "GxsIdDetails.h"
+
+#include "gui/common/AvatarDialog.h"
+#include "gui/common/FilesDefs.h"
 #include "retroshare-gui/RsAutoUpdatePage.h"
 
 #include <retroshare/rspeers.h>
+#include <util/rsdir.h>
+
+#include <QApplication>
+#include <QMutexLocker>
+#include <QPainter>
+#include <QPainterPath>
+#include <QThread>
+#include <QTimerEvent>
 
 #include <iostream>
-#include <QPainter>
+#include <cmath>
 
 /* Images for tag icons */
 #define IMAGE_LOADING     ":/images/folder-draft.png"
@@ -377,10 +380,10 @@ static bool findTagIcon(int tag_class, int /*tag_type*/, QIcon &icon)
 	{
 		default:
 		case 0:
-			icon = QIcon(IMAGE_DEV_AMBASSADOR);
+            icon = FilesDefs::getIconFromQtResourcePath(IMAGE_DEV_AMBASSADOR);
 			break;
 		case 1:
-			icon = QIcon(IMAGE_DEV_CONTRIBUTOR);
+            icon = FilesDefs::getIconFromQtResourcePath(IMAGE_DEV_CONTRIBUTOR);
 			break;
 	}
 	return true;
@@ -976,7 +979,7 @@ QString GxsIdDetails::getNameForType(GxsIdDetailsType type, const RsIdentityDeta
 
 QIcon GxsIdDetails::getLoadingIcon(const RsGxsId &/*id*/)
 {
-	return QIcon(IMAGE_LOADING);
+    return FilesDefs::getIconFromQtResourcePath(IMAGE_LOADING);
 }
 
 bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, QList<QIcon> &icons, QString& comment,uint32_t icon_types)
@@ -1007,9 +1010,9 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, QLi
 
 //	Cyril: I disabled these three which I believe to have been put for testing purposes.
 //
-//	icons.push_back(QIcon(IMAGE_ANON));
-//	icons.push_back(QIcon(IMAGE_ANON));
-//	icons.push_back(QIcon(IMAGE_ANON));
+//	icons.push_back(FilesDefs::getIconFromQtResourcePath(IMAGE_ANON));
+//	icons.push_back(FilesDefs::getIconFromQtResourcePath(IMAGE_ANON));
+//	icons.push_back(FilesDefs::getIconFromQtResourcePath(IMAGE_ANON));
 
 //	std::cerr << "GxsIdTreeWidget::MakeIdDesc() ID Ok. Comment: " << comment.toStdString() ;
 //	std::cerr << std::endl;
@@ -1085,30 +1088,30 @@ QIcon GxsIdDetails::getReputationIcon(
         RsReputationLevel icon_index, uint32_t min_reputation,bool has_downvotes )
 {
 	if( static_cast<uint32_t>(icon_index) >= min_reputation )
-		return QIcon(REPUTATION_VOID);
+        return FilesDefs::getIconFromQtResourcePath(REPUTATION_VOID);
 
 	switch(icon_index)
 	{
 	case RsReputationLevel::LOCALLY_NEGATIVE:
-		return QIcon(REPUTATION_LOCALLY_NEGATIVE_ICON);
+        return FilesDefs::getIconFromQtResourcePath(REPUTATION_LOCALLY_NEGATIVE_ICON);
 	case RsReputationLevel::LOCALLY_POSITIVE:
-		return QIcon(REPUTATION_LOCALLY_POSITIVE_ICON);
+        return FilesDefs::getIconFromQtResourcePath(REPUTATION_LOCALLY_POSITIVE_ICON);
 	case RsReputationLevel::REMOTELY_POSITIVE:
-	{
-		if(has_downvotes)
-			return QIcon(REPUTATION_HAS_DOWNVOTES);
-		else
-			return QIcon(REPUTATION_REMOTELY_POSITIVE_ICON);
-	}
+    {
+    if(has_downvotes)
+        return FilesDefs::getIconFromQtResourcePath(REPUTATION_HAS_DOWNVOTES);
+	    else
+        return FilesDefs::getIconFromQtResourcePath(REPUTATION_REMOTELY_POSITIVE_ICON);
+    }
 	case RsReputationLevel::REMOTELY_NEGATIVE:
-		return QIcon(REPUTATION_REMOTELY_NEGATIVE_ICON);
+        return FilesDefs::getIconFromQtResourcePath(REPUTATION_REMOTELY_NEGATIVE_ICON);
 	case RsReputationLevel::NEUTRAL:
-	{
-		if(has_downvotes)
-			return QIcon(REPUTATION_HAS_DOWNVOTES_NEUTRAL);
-		else
-			return QIcon(REPUTATION_NEUTRAL_ICON);
-	}
+    {
+    if(has_downvotes)
+        return FilesDefs::getIconFromQtResourcePath(REPUTATION_HAS_DOWNVOTES_NEUTRAL);
+    else
+        return FilesDefs::getIconFromQtResourcePath(REPUTATION_NEUTRAL_ICON);
+    }
 	default:
 		std::cerr << "Asked for unidentified icon index "
 		          << static_cast<uint32_t>(icon_index) << std::endl;
@@ -1124,7 +1127,7 @@ void GxsIdDetails::getIcons(const RsIdentityDetails &details, QList<QIcon> &icon
 	         RsReputationLevel::LOCALLY_NEGATIVE )
     {
         icons.clear() ;
-        icons.push_back(QIcon(IMAGE_BANNED)) ;
+        icons.push_back(FilesDefs::getIconFromQtResourcePath(IMAGE_BANNED)) ;
         return ;
     }
 
@@ -1153,12 +1156,12 @@ void GxsIdDetails::getIcons(const RsIdentityDetails &details, QList<QIcon> &icon
         if (details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED)
         {
 		if (details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN)
-                baseIcon = QIcon(IMAGE_PGPKNOWN);
+                baseIcon = FilesDefs::getIconFromQtResourcePath(IMAGE_PGPKNOWN);
             else
-                baseIcon = QIcon(IMAGE_PGPUNKNOWN);
+                baseIcon = FilesDefs::getIconFromQtResourcePath(IMAGE_PGPUNKNOWN);
         }
         else
-            baseIcon = QIcon(IMAGE_ANON);
+            baseIcon = FilesDefs::getIconFromQtResourcePath(IMAGE_ANON);
 
         icons.push_back(baseIcon);
     }

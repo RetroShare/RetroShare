@@ -18,6 +18,14 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "GxsCommentTreeWidget.h"
+
+#include "gui/common/FilesDefs.h"
+#include "gui/common/RSElidedItemDelegate.h"
+#include "gui/common/RSTreeWidgetItem.h"
+#include "gui/gxs/GxsCreateCommentDialog.h"
+#include "gui/gxs/GxsIdTreeWidgetItem.h"
+
 #include <QAbstractTextDocumentLayout>
 #include <QApplication>
 #include <QClipboard>
@@ -25,14 +33,8 @@
 #include <QMenu>
 #include <QMimeData>
 #include <QPainter>
+#include <QPainterPath>
 #include <QTextDocument>
-
-#include "gui/common/RSElidedItemDelegate.h"
-#include "gui/common/FilesDefs.h"
-#include "gui/gxs/GxsCommentTreeWidget.h"
-#include "gui/gxs/GxsCreateCommentDialog.h"
-#include "gui/gxs/GxsIdTreeWidgetItem.h"
-#include "gui/common/RSTreeWidgetItem.h"
 
 #include <iostream>
 
@@ -209,14 +211,14 @@ void GxsCommentTreeWidget::customPopUpMenu(const QPoint& /*point*/)
 		contextMnu.addSeparator();
 		QMenu *rep_menu = contextMnu.addMenu(tr("Reputation"));
 
-		action = rep_menu->addAction(QIcon(IMAGE_MESSAGE), tr("Show Reputation"), this, SLOT(showReputation()));
+        action = rep_menu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MESSAGE), tr("Show Reputation"), this, SLOT(showReputation()));
 		contextMnu.addSeparator();
 
-		action = rep_menu->addAction(QIcon(IMAGE_MESSAGE), tr("Interesting User"), this, SLOT(markInteresting()));
+        action = rep_menu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MESSAGE), tr("Interesting User"), this, SLOT(markInteresting()));
 		contextMnu.addSeparator();
 
-		action = rep_menu->addAction(QIcon(IMAGE_MESSAGE), tr("Mark Spammy"), this, SLOT(markSpammer()));
-		action = rep_menu->addAction(QIcon(IMAGE_MESSAGE), tr("Ban User"), this, SLOT(banUser()));
+        action = rep_menu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MESSAGE), tr("Mark Spammy"), this, SLOT(markSpammer()));
+        action = rep_menu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MESSAGE), tr("Ban User"), this, SLOT(banUser()));
         */
 	}
 
