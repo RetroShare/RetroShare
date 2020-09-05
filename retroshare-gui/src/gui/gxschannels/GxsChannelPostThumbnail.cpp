@@ -165,7 +165,7 @@ ChannelPostThumbnailView::AspectRatio ChannelPostThumbnailView::bestAspectRatio(
 
     float as = mPostImage->originalImage().height() / (float)mPostImage->originalImage().width() ;
 
-    if(as < 0.8)
+    if(as <= 0.8)
         return ASPECT_RATIO_16_9;
     else if(as < 1.15)
         return ASPECT_RATIO_1_1;

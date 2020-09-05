@@ -790,7 +790,7 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
 
     // now compute aspect ratio for posts. We do that by looking at the 5 latest posts and compute the best aspect ratio for them.
 
-    std::vector<uint32_t> ar_votes(3,0);
+    std::vector<uint32_t> ar_votes(4,0);
 
     for(uint32_t i=0;i<std::min(mChannelPostsModel->getNumberOfPosts(),5u);++i)
     {
@@ -800,12 +800,13 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
         ++ar_votes[ static_cast<uint32_t>( v.bestAspectRatio() )];
     }
     int best=0;
-    for(uint32_t i=0;i<3;++i)
+    for(uint32_t i=0;i<4;++i)
         if(ar_votes[i] > ar_votes[best])
             best = i;
 
     mChannelPostsDelegate->setAspectRatio(static_cast<ChannelPostThumbnailView::AspectRatio>(best));
     mChannelPostsModel->triggerViewUpdate();
+    handlePostsTreeSizeChange(ui->postsTree->size(),true); // force the update
 }
 
 void GxsChannelPostsWidgetWithModel::updateDisplay(bool complete)
