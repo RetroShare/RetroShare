@@ -29,6 +29,7 @@
 #include "util/DateTime.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/common/RsBanListDefs.h"
+#include "gui/common/FilesDefs.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsbanlist.h>
@@ -199,13 +200,13 @@ void SecurityIpItem::doExpand(bool open)
 	if (open)
 	{
 		ui->expandFrame->show();
-		ui->expandButton->setIcon(QIcon(":/icons/png/up-arrow.png"));
+        ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/up-arrow.png"));
 		ui->expandButton->setToolTip(tr("Hide"));
 	}
 	else
 	{
 		ui->expandFrame->hide();
-		ui->expandButton->setIcon(QIcon(":/icons/png/down-arrow.png"));
+        ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/down-arrow.png"));
 		ui->expandButton->setToolTip(tr("Expand"));
 	}
 

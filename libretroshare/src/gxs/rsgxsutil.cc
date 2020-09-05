@@ -85,7 +85,7 @@ bool RsGxsMessageCleanUp::clean()
 
 		for(; mit != result.end(); ++mit)
 		{
-			std::vector<RsGxsMsgMetaData*>& metaV = mit->second;
+			std::vector<const RsGxsMsgMetaData*>& metaV = mit->second;
 
             // First, make a map of which message have a child message. This allows to only delete messages that dont have child messages.
             // A more accurate way to go would be to compute the time of the oldest message and possibly delete all the branch, but in the
@@ -99,7 +99,7 @@ bool RsGxsMessageCleanUp::clean()
 
 			for( uint32_t i=0;i<metaV.size();++i)
 			{
-				RsGxsMsgMetaData* meta = metaV[i];
+				const RsGxsMsgMetaData* meta = metaV[i];
 
 				bool have_kids = (messages_with_kids.find(meta->mMsgId)!=messages_with_kids.end());
 
@@ -107,7 +107,7 @@ bool RsGxsMessageCleanUp::clean()
 				bool remove = store_period > 0 && ((meta->mPublishTs + store_period) < now) && !have_kids;
 
 				// check client does not want the message kept regardless of age
-				remove &= !(meta->mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP);
+				remove &= !(meta->mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP_FOREVER);
 
 				// if not subscribed remove messages (can optimise this really)
 				remove = remove ||  (grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED);
@@ -132,7 +132,7 @@ bool RsGxsMessageCleanUp::clean()
 					std::cerr << std::endl;
 #endif
 
-				delete meta;
+				//delete meta;
 			}
 		}
 
@@ -215,7 +215,8 @@ bool RsGxsIntegrityCheck::check()
 						        rsReputations->overallReputationLevel(
 						            grp->metaData->mAuthorId ) >
 						        RsReputationLevel::LOCALLY_NEGATIVE )
-							used_gxs_ids.insert(std::make_pair(grp->metaData->mAuthorId, RsIdentityUsage(mGenExchangeClient->serviceType(), RsIdentityUsage::GROUP_AUTHOR_KEEP_ALIVE,grp->grpId)));
+							used_gxs_ids.insert(std::make_pair(grp->metaData->mAuthorId, RsIdentityUsage(RsServiceType(mGenExchangeClient->serviceType()),
+                                                                                                         RsIdentityUsage::GROUP_AUTHOR_KEEP_ALIVE,grp->grpId)));
 					}
 				}
 			}
@@ -404,7 +405,12 @@ bool RsGxsIntegrityCheck::check()
 					        rsReputations->overallReputationLevel(
 					            msg->metaData->mAuthorId ) >
 					        RsReputationLevel::LOCALLY_NEGATIVE )
-						used_gxs_ids.insert(std::make_pair(msg->metaData->mAuthorId,RsIdentityUsage(mGenExchangeClient->serviceType(),RsIdentityUsage::MESSAGE_AUTHOR_KEEP_ALIVE,msg->metaData->mGroupId,msg->metaData->mMsgId))) ;
+						used_gxs_ids.insert(std::make_pair(msg->metaData->mAuthorId,RsIdentityUsage(RsServiceType(mGenExchangeClient->serviceType()),
+                                                                                                    RsIdentityUsage::MESSAGE_AUTHOR_KEEP_ALIVE,
+                                                                                                    msg->metaData->mGroupId,
+                                                                                                    msg->metaData->mMsgId,
+                                                                                                    msg->metaData->mParentId,
+                                                                                                    msg->metaData->mThreadId))) ;
 				}
 			}
 

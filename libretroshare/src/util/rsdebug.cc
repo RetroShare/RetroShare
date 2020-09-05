@@ -30,6 +30,12 @@ std::ostream &operator<<(std::ostream& out, const std::error_condition& err)
 	           << " category: " << err.category().name();
 }
 
+std::string rsErrorNotInCategory(int errNum, const std::string& categoryName)
+{
+	return "Error message for error: " + std::to_string(errNum) +
+	        " not available in category: " + categoryName;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////

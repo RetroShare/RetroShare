@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 
+#include "gui/common/FilesDefs.h"
 #include <rshare.h>
 #include <util/rsrandom.h>
 #include <retroshare/rsinit.h>
@@ -67,7 +68,7 @@ void ProfileManager::identityTreeWidgetCostumPopupMenu(QPoint)
 
 	QMenu contextMnu(this);
 
-	QAction *action = contextMnu.addAction(QIcon(IMAGE_EXPORT), tr("Export Identity"), this, SLOT(exportIdentity()));
+    QAction *action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EXPORT), tr("Export Identity"), this, SLOT(exportIdentity()));
 	action->setEnabled(item != NULL);
 
 	contextMnu.exec(QCursor::pos());

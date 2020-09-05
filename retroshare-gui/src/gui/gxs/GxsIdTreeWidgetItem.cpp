@@ -68,11 +68,10 @@ static void fillGxsIdRSTreeWidgetItemCallback(GxsIdDetailsType type, const RsIde
 		item->processResult(true);
 		break;
         
-    	case GXS_ID_DETAILS_TYPE_BANNED:
-        	//icons.push_back(QIcon("BANNED_IMAGE")) ;
-			GxsIdDetails::getIcons(details, icons, item->iconTypeMask());
-			item->processResult(true);
-            	break ;
+	case GXS_ID_DETAILS_TYPE_BANNED:
+		GxsIdDetails::getIcons(details, icons, item->iconTypeMask());
+		item->processResult(true);
+		break ;
 	}
 
 	int column = item->idColumn();

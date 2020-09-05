@@ -219,7 +219,13 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
 
     // network pre-request key to allow message authentication.
 
-    mGixs->requestKey(obj->signature.keyId,peer_list,RsIdentityUsage(RS_SERVICE_TYPE_CHAT,RsIdentityUsage::CHAT_LOBBY_MSG_VALIDATION,RsGxsGroupId(),RsGxsMessageId(),obj->lobby_id));
+    mGixs->requestKey(obj->signature.keyId,peer_list,RsIdentityUsage(RsServiceType::CHAT,
+                                                                     RsIdentityUsage::CHAT_LOBBY_MSG_VALIDATION,
+                                                                     RsGxsGroupId(),
+                                                                     RsGxsMessageId(),
+                                                                     RsGxsMessageId(),
+                                                                     RsGxsMessageId(),
+                                                                     obj->lobby_id));
 
     uint32_t size = RsChatSerialiser(RsSerializationFlags::SIGNATURE)
             .size(dynamic_cast<RsItem*>(obj));
@@ -238,7 +244,13 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
     }
 
     uint32_t error_status ;
-    RsIdentityUsage use_info(RS_SERVICE_TYPE_CHAT,RsIdentityUsage::CHAT_LOBBY_MSG_VALIDATION,RsGxsGroupId(),RsGxsMessageId(),obj->lobby_id) ;
+    RsIdentityUsage use_info(RsServiceType::CHAT,
+                             RsIdentityUsage::CHAT_LOBBY_MSG_VALIDATION,
+                             RsGxsGroupId(),
+                             RsGxsMessageId(),
+                             RsGxsMessageId(),
+                             RsGxsMessageId(),
+                             obj->lobby_id) ;
 
     if(!mGixs->validateData(memory,size,obj->signature,false,use_info,error_status))
     {

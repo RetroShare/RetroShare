@@ -20,6 +20,7 @@
 
 // This code is inspired from http://doc.qt.io/qt-5/qtwidgets-graphicsview-elasticnodes-node-cpp.html
 
+#include "gui/common/FilesDefs.h"
 #include <math.h>
 
 #include <QApplication>
@@ -366,11 +367,11 @@ void Node::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 	QMenu contextMnu ;
 
 	if(_type == GraphWidget::ELASTIC_NODE_TYPE_FRIEND)
-		contextMnu.addAction(QIcon(IMAGE_DENIED), QObject::tr( "Deny friend" ), this, SLOT(denyFriend()) );
+        contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_DENIED), QObject::tr( "Deny friend" ), this, SLOT(denyFriend()) );
 	else if(_type != GraphWidget::ELASTIC_NODE_TYPE_OWN)
-		contextMnu.addAction(QIcon(IMAGE_MAKEFRIEND), QObject::tr( "Make friend" ), this, SLOT(makeFriend()) );
+        contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MAKEFRIEND), QObject::tr( "Make friend" ), this, SLOT(makeFriend()) );
 
-	contextMnu.addAction(QIcon(IMAGE_MAKEFRIEND), QObject::tr( "Peer details" ), this, SLOT(peerDetails()) );
+    contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MAKEFRIEND), QObject::tr( "Peer details" ), this, SLOT(peerDetails()) );
 
 	contextMnu.exec(event->screenPos());
 }

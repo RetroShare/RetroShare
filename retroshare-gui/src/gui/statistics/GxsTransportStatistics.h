@@ -27,7 +27,8 @@
 #include <retroshare/rstypes.h>
 #include <retroshare/rsgxstrans.h>
 
-#include "RsAutoUpdatePage.h"
+#include <retroshare-gui/RsAutoUpdatePage.h>
+
 #include "ui_GxsTransportStatistics.h"
 #include "gui/gxs/RsGxsUpdateBroadcastPage.h"
 #include "util/rstime.h"
@@ -51,7 +52,10 @@ public:
 private slots:
 	/** Create the context popup menu and it's submenus */
 	void CustomPopupMenu( QPoint point );
+	void CustomPopupMenuGroups( QPoint point ) ;
+
 	void personDetails();
+	void showAuthorInPeople();
 
 private:
 	void updateDisplay(bool complete) ;

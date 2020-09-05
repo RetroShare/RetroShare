@@ -55,6 +55,7 @@ private slots:
 	void readAndClearItem();
 	void copyMessageLink();
 	void viewPicture();
+	void showAuthorInPeople();
 
 signals:
 	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);

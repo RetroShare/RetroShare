@@ -210,8 +210,8 @@ void IdEditDialog::setupExistingId(const RsGxsGroupId& keyId)
 	RsThread::async([this,keyId]()
 	{
 		std::vector<RsGxsIdGroup> datavector;
-
-        bool res = rsIdentity->getIdentitiesInfo(std::set<RsGxsId>({(RsGxsId)keyId}),datavector);
+		bool res = rsIdentity->getIdentitiesInfo(
+		            std::set<RsGxsId>({(RsGxsId)keyId}), datavector );
 
 		RsQThreadUtils::postToObject( [this,keyId,res,datavector]()
 		{

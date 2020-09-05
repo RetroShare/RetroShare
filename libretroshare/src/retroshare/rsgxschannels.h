@@ -117,14 +117,11 @@ enum class RsChannelEventCode: uint8_t
 
 struct RsGxsChannelEvent: RsEvent
 {
-	RsGxsChannelEvent():
-	    RsEvent(RsEventType::GXS_CHANNELS),
-	    mChannelEventCode(RsChannelEventCode::UNKNOWN) {}
+	RsGxsChannelEvent(): RsEvent(RsEventType::GXS_CHANNELS), mChannelEventCode(RsChannelEventCode::UNKNOWN) {}
 
 	RsChannelEventCode mChannelEventCode;
 	RsGxsGroupId mChannelGroupId;
 	RsGxsMessageId mChannelMsgId;
-	TurtleRequestId mDistantSearchRequestId;
 
 	///* @see RsEvent @see RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override
@@ -134,8 +131,28 @@ struct RsGxsChannelEvent: RsEvent
 		RS_SERIAL_PROCESS(mChannelEventCode);
 		RS_SERIAL_PROCESS(mChannelGroupId);
 		RS_SERIAL_PROCESS(mChannelMsgId);
-		RS_SERIAL_PROCESS(mDistantSearchRequestId);
-    }
+	}
+};
+
+// This event is used to factor multiple search results notifications in a single event.
+
+struct RsGxsChannelSearchResultEvent: RsEvent
+{
+	RsGxsChannelSearchResultEvent():
+	    RsEvent(RsEventType::GXS_CHANNELS),
+	    mChannelEventCode(RsChannelEventCode::RECEIVED_DISTANT_SEARCH_RESULT) {}
+
+	RsChannelEventCode mChannelEventCode;
+	std::map<TurtleRequestId,std::set<RsGxsGroupId> > mSearchResultsMap;
+
+	///* @see RsEvent @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override
+	{
+		RsEvent::serial_process(j, ctx);
+
+		RS_SERIAL_PROCESS(mChannelEventCode);
+		RS_SERIAL_PROCESS(mSearchResultsMap);
+	}
 };
 
 class RsGxsChannels: public RsGxsIfaceHelper, public RsGxsCommentService
@@ -407,48 +424,6 @@ public:
      */
     virtual bool getChannelStatistics(const RsGxsGroupId& channelId,GxsGroupStatistic& stat) =0;
 
-
-	/**
-	 * @brief Request remote channels search
-	 * @jsonapi{development}
-	 * @param[in] matchString string to look for in the search
-	 * @param multiCallback function that will be called each time a search
-	 * result is received
-	 * @param[in] maxWait maximum wait time in seconds for search results
-	 * @return false on error, true otherwise
-	 */
-	virtual bool turtleSearchRequest(
-	        const std::string& matchString,
-	        const std::function<void (const RsGxsGroupSummary& result)>& multiCallback,
-	        rstime_t maxWait = 300 ) = 0;
-
-	/**
-	 * @brief Request remote channel
-	 * @jsonapi{development}
-	 * @param[in] channelId id of the channel to request to distants peers
-	 * @param multiCallback function that will be called each time a result is
-	 *	received
-	 * @param[in] maxWait maximum wait time in seconds for search results
-	 * @return false on error, true otherwise
-	 */
-	virtual bool turtleChannelRequest(
-	        const RsGxsGroupId& channelId,
-	        const std::function<void (const RsGxsChannelGroup& result)>& multiCallback,
-	        rstime_t maxWait = 300 ) = 0;
-
-	/**
-	 * @brief Search local channels
-	 * @jsonapi{development}
-	 * @param[in] matchString string to look for in the search
-	 * @param multiCallback function that will be called for each result
-	 * @param[in] maxWait maximum wait time in seconds for search results
-	 * @return false on error, true otherwise
-	 */
-	virtual bool localSearchRequest(
-	        const std::string& matchString,
-	        const std::function<void (const RsGxsGroupSummary& result)>& multiCallback,
-	        rstime_t maxWait = 30 ) = 0;
-
 	/// default base URL used for channels links @see exportChannelLink
 	static const std::string DEFAULT_CHANNEL_BASE_URL;
 
@@ -493,6 +468,7 @@ public:
 
 	/**
 	 * @brief Import channel from full link
+	 * @jsonapi{development}
 	 * @param[in] link channel link either in radix or link format
 	 * @param[out] chanId optional storage for parsed channel id
 	 * @param[out] errMsg optional storage for error message, meaningful only in
@@ -504,7 +480,58 @@ public:
 	        RsGxsGroupId& chanId = RS_DEFAULT_STORAGE_PARAM(RsGxsGroupId),
 	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string) ) = 0;
 
+	/**
+	 * @brief Search the turtle reachable network for matching channels
+	 * @jsonapi{development}
+	 * An @see RsGxsChannelSearchResultEvent is emitted when matching channels
+	 * arrives from the network
+	 * @param[in] matchString string to search into the channels
+	 * @return search id
+	 */
+	virtual TurtleRequestId turtleSearchRequest(const std::string& matchString)=0;
 
+	/**
+	 * @brief Retrieve available search results
+	 * @jsonapi{development}
+	 * @param[in] searchId search id
+	 * @param[out] results storage for search results
+	 * @return false on error, true otherwise
+	 */
+	virtual bool retrieveDistantSearchResults(
+	        TurtleRequestId searchId,
+	        std::map<RsGxsGroupId, RsGxsGroupSearchResults>& results ) = 0;
+
+	/**
+	 * @brief Request distant channel details
+	 * @jsonapi{development}
+	 * An @see RsGxsChannelSearchResultEvent is emitted once details are
+	 * retrieved from the network
+	 * @param[in] groupId if of the group to request to the network
+	 * @return search id
+	 */
+	virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& groupId) = 0;
+
+	/**
+	 * @brief Retrieve previously requested distant group
+	 * @jsonapi{development}
+	 * @param[in] groupId if of teh group
+	 * @param[out] distantGroup storage for group data
+	 * @return false on error, true otherwise
+	 */
+	virtual bool getDistantSearchResultGroupData(
+	        const RsGxsGroupId& groupId, RsGxsChannelGroup& distantGroup ) = 0;
+
+	/**
+	 * @brief Clear accumulated search results
+	 * @jsonapi{development}
+	 * @param[in] reqId search id
+	 * @return false on error, true otherwise
+	 */
+	virtual bool clearDistantSearchResults(TurtleRequestId reqId) = 0;
+
+	~RsGxsChannels() override;
+
+	////////////////////////////////////////////////////////////////////////////
 	/* Following functions are deprecated and should not be considered a safe to
 	 * use API */
 
@@ -690,22 +717,4 @@ public:
 	 */
 	RS_DEPRECATED_FOR(editChannel)
 	virtual bool updateGroup(uint32_t& token, RsGxsChannelGroup& group) = 0;
-
-	//////////////////////////////////////////////////////////////////////////////
-    ///                     Distant synchronisation methods                    ///
-    //////////////////////////////////////////////////////////////////////////////
-    ///
-	RS_DEPRECATED_FOR(turtleChannelRequest)
-	virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id)=0;
-	RS_DEPRECATED
-	virtual TurtleRequestId turtleSearchRequest(const std::string& match_string)=0;
-	RS_DEPRECATED_FOR(turtleSearchRequest)
-	virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSummary> &results) =0;
-	RS_DEPRECATED
-	virtual bool clearDistantSearchResults(TurtleRequestId req)=0;
-	RS_DEPRECATED_FOR(turtleChannelRequest)
-	virtual bool retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group)=0;
-	//////////////////////////////////////////////////////////////////////////////
-
-	~RsGxsChannels() override;
 };

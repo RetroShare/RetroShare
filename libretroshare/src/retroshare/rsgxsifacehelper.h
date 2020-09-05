@@ -50,12 +50,13 @@ enum class TokenRequestType: uint8_t
 	__NONE              = 0x00, /// Used to detect uninitialized
     GROUP_DATA          = 0x01,
     GROUP_META          = 0x02,
-    POSTS               = 0x03,
-    ALL_POSTS           = 0x04,
-    MSG_RELATED_INFO    = 0x05,
-    GROUP_STATISTICS    = 0x06,
-    SERVICE_STATISTICS  = 0x07,
-    NO_KILL_TYPE        = 0x08,
+    GROUP_IDS           = 0x03,
+    POSTS               = 0x04,
+    ALL_POSTS           = 0x05,
+    MSG_RELATED_INFO    = 0x06,
+    GROUP_STATISTICS    = 0x07,
+    SERVICE_STATISTICS  = 0x08,
+    NO_KILL_TYPE        = 0x09,
 	__MAX                       /// Used to detect out of range
 };
 
@@ -263,6 +264,7 @@ public:
         {
         case GXS_REQUEST_TYPE_GROUP_DATA: token_request_type = TokenRequestType::GROUP_DATA; break;
         case GXS_REQUEST_TYPE_GROUP_META: token_request_type = TokenRequestType::GROUP_META; break;
+        case GXS_REQUEST_TYPE_GROUP_IDS: token_request_type = TokenRequestType::GROUP_IDS; break;
         default:
             RsErr() << __PRETTY_FUNCTION__ << "(EE) Unexpected request type " << opts.mReqType << "!!" << std::endl;
             return false;
@@ -292,6 +294,7 @@ public:
         {
         case GXS_REQUEST_TYPE_GROUP_DATA: token_request_type = TokenRequestType::GROUP_DATA; break;
         case GXS_REQUEST_TYPE_GROUP_META: token_request_type = TokenRequestType::GROUP_META; break;
+        case GXS_REQUEST_TYPE_GROUP_IDS: token_request_type = TokenRequestType::GROUP_IDS; break;
         default:
             RsErr() << __PRETTY_FUNCTION__ << "(EE) Unexpected request type " << opts.mReqType << "!!" << std::endl;
             return false;
@@ -507,25 +510,27 @@ private:
 
 	std::map<uint32_t,TokenRequestType> mActiveTokens;
 
+#ifdef DEBUG_GXSIFACEHELPER
 	void locked_dumpTokens()
 	{
 		const uint16_t service_id =  mGxs.serviceType();
 		const auto countSize = static_cast<size_t>(TokenRequestType::__MAX);
 		uint32_t count[countSize] = {0};
 
-		RsDbg() << __PRETTY_FUNCTION__ << "Service 0x" << std::hex << service_id
-		        << " (" << rsServiceControl->getServiceName(
-		               RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(service_id) )
-		        << ") this=0x" << static_cast<void*>(this)
-		        << ") Active tokens (per type): ";
+		RsDbg rsdbg;
+		rsdbg << __PRETTY_FUNCTION__ << " Service 0x" << std::hex << service_id
+		      << " (" << rsServiceControl->getServiceName(
+		             RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(service_id) )
+		      << ") this=0x" << static_cast<void*>(this)
+		      << ") Active tokens (per type): ";
 
 		// let's count how many token of each type we've got.
 		for(auto& it: mActiveTokens) ++count[static_cast<size_t>(it.second)];
 
 		for(uint32_t i=0; i < countSize; ++i)
-			RsDbg().uStream() /* << i << ":" */ << count[i] << " ";
-		RsDbg().uStream() << std::endl;
+			rsdbg /* << i << ":" */ << count[i] << " ";
 	}
+#endif // def DEBUG_GXSIFACEHELPER
 
 	RS_SET_CONTEXT_DEBUG_LEVEL(1)
 };

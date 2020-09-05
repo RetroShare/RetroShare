@@ -340,6 +340,10 @@ void GenCertDialog::setupState()
 	ui.hiddenport_spinBox->setVisible(hidden_state && !tor_auto);
 
 	ui.cbUseBob->setVisible(hidden_state && !tor_auto);
+#ifndef RS_USE_I2P_BOB
+	ui.cbUseBob->setDisabled(true);
+	ui.cbUseBob->setToolTip(tr("BOB support is not available"));
+#endif
 
 	if(!mAllFieldsOk)
 	{

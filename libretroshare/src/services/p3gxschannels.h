@@ -68,9 +68,9 @@ protected:
 
     virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id);
     virtual TurtleRequestId turtleSearchRequest(const std::string& match_string);
-    virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSummary> &results) ;
+    virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSearchResults> &results) ;
     virtual bool clearDistantSearchResults(TurtleRequestId req);
-    virtual bool retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group);
+    virtual bool getDistantSearchResultGroupData(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group);
 
 	// Overloaded to cache new groups.
 virtual RsGenExchange::ServiceCreate_Return service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet);
@@ -109,6 +109,7 @@ virtual	bool getChannelAutoDownload(const RsGxsGroupId &groupid, bool& enabled);
 virtual bool setChannelDownloadDirectory(const RsGxsGroupId &groupId, const std::string& directory);
 virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::string& directory);
 
+#ifdef TO_REMOVE
 	/// @see RsGxsChannels::turtleSearchRequest
 	virtual bool turtleSearchRequest(const std::string& matchString,
 	        const std::function<void (const RsGxsGroupSummary&)>& multiCallback,
@@ -124,6 +125,7 @@ virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::strin
 	virtual bool localSearchRequest(const std::string& matchString,
 	        const std::function<void (const RsGxsGroupSummary& result)>& multiCallback,
 	        rstime_t maxWait = 30 ) override;
+#endif
 
 	/**
 	 * Receive results from turtle search @see RsGenExchange @see RsNxsObserver
@@ -374,6 +376,9 @@ bool generateGroup(uint32_t &token, std::string groupName);
 	std::map<RsGxsGroupId,rstime_t> mKnownChannels;
 	RsMutex mKnownChannelsMutex;
 
+    rstime_t mLastDistantSearchNotificationTS;
+    std::map<TurtleRequestId,std::set<RsGxsGroupId> > mSearchResultsToNotify;
+#ifdef TO_REMOVE
 	/** Store search callbacks with timeout*/
 	std::map<
 	    TurtleRequestId,
@@ -394,4 +399,5 @@ bool generateGroup(uint32_t &token, std::string groupName);
 
 	/// Cleanup mSearchCallbacksMap and mDistantChannelsCallbacksMap
 	void cleanTimedOutCallbacks();
+#endif
 };

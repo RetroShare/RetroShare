@@ -220,11 +220,11 @@ void GxsChannelPostsWidget::groupNameChanged(const QString &name)
 QIcon GxsChannelPostsWidget::groupIcon()
 {
 	if (mStateHelper->isLoading(mTokenTypeGroupData) || mStateHelper->isLoading(mTokenTypeAllPosts)) {
-		return QIcon(":/images/kalarm.png");
+        return FilesDefs::getIconFromQtResourcePath(":/images/kalarm.png");
 	}
 
 //	if (mNewCount) {
-//		return QIcon(":/images/message-state-new.png");
+//		return FilesDefs::getIconFromQtResourcePath(":/images/message-state-new.png");
 //	}
 
 	return QIcon();
@@ -551,12 +551,8 @@ void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost& post, bool re
 		ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
 	}
 
-#ifdef TODO
 	ui->fileWidget->addFiles(post, related);
-#endif
 }
-
-
 
 void GxsChannelPostsWidget::fillThreadCreatePost(const QVariant &post, bool related, int current, int count)
 {
@@ -862,11 +858,12 @@ bool GxsChannelPostsWidget::getGroupData(RsGxsGenericGroupData *& data)
     {
         RsGxsChannelGroup distant_group;
 
-        if(rsGxsChannels->retrieveDistantGroup(groupId(),distant_group))
+        if(rsGxsChannels->getDistantSearchResultGroupData(groupId(),distant_group))
         {
 			insertChannelDetails(distant_group);
-			data = new RsGxsChannelGroup(distant_group);
+            data = new RsGxsChannelGroup(distant_group);
 			mGroup = distant_group;	// make a local copy to pass on to items
+
             return true ;
         }
     }

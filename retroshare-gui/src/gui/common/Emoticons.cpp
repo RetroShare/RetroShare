@@ -37,6 +37,7 @@
 #include "Emoticons.h"
 #include "util/HandleRichText.h"
 #include "retroshare/rsinit.h"
+#include "gui/common/FilesDefs.h"
 
 #define ICONNAME "groupicon.png"
 
@@ -210,7 +211,7 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 			smTab->setStyleSheet("QTabBar::tab { height: 44px; width: 44px; }");
 
 			if (groupName.right(4).toLower() == ".png")
-				smTab->addTab( tabGrpWidget, QIcon(groupName), "");
+                smTab->addTab( tabGrpWidget, FilesDefs::getIconFromQtResourcePath(groupName), "");
 			else
 				smTab->addTab( tabGrpWidget, groupName);
 		} else {
@@ -371,9 +372,9 @@ void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *
 
 			int index;
 			if (groupDir.exists(ICONNAME)) //use groupicon.png if exists, else the first png as a group icon
-				index = smTab->addTab( tabGrpWidget, QIcon(groupDir.absoluteFilePath(ICONNAME)), "");
+                index = smTab->addTab( tabGrpWidget, FilesDefs::getIconFromQtResourcePath(groupDir.absoluteFilePath(ICONNAME)), "");
 			else
-				index = smTab->addTab( tabGrpWidget, QIcon(groupDir.entryInfoList(QDir::Files)[0].canonicalFilePath()), "");
+                index = smTab->addTab( tabGrpWidget, FilesDefs::getIconFromQtResourcePath(groupDir.entryInfoList(QDir::Files)[0].canonicalFilePath()), "");
 			smTab->setTabToolTip(index, groupName);
 		} else {
 			tabGrpWidget = smWidget;
