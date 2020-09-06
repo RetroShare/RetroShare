@@ -140,14 +140,8 @@ void ChannelPostThumbnailView::init(const RsGxsChannelPost& post)
             font.setBold(true);
 
         mPostTitle->setFont(font);
-
         mPostTitle->setMaximumWidth(W);
-        mPostTitle->setMaximumHeight(3*fm.height());
         mPostTitle->setWordWrap(true);
-        mPostTitle->adjustSize();
-
-        setMinimumHeight(H + mPostTitle->height() + 0.5*fm.height());
-        setMaximumHeight(H + mPostTitle->height() + 0.5*fm.height());
     }
     setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
 

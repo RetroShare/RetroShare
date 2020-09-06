@@ -145,13 +145,13 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 
         pixmap = pixmap.copy(QRect(0,0,w.actualSize().width(),w.actualSize().height()));
 
-//		if(index.row()==0 && index.column()==0)
-//		{
-//			QFile file("yourFile.png");
-//			file.open(QIODevice::WriteOnly);
-//			pixmap.save(&file, "PNG");
-//			file.close();
-//		}
+//        if(index.row()==0 && index.column()==0)
+//        {
+//            QFile file("yourFile.png");
+//            file.open(QIODevice::WriteOnly);
+//            pixmap.save(&file, "PNG");
+//            file.close();
+//        }
 
         if(mUseGrid || index.column()==0)
         {
