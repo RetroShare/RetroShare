@@ -25,6 +25,7 @@
 #include "gui/gxschannels/GxsChannelPostThumbnail.h"
 
 const float ChannelPostThumbnailView::DEFAULT_SIZE_IN_FONT_HEIGHT = 5.0;
+const float ChannelPostThumbnailView::FONT_SCALE_FACTOR = 2.0;
 
 ChannelPostThumbnailView::ChannelPostThumbnailView(const RsGxsChannelPost& post,uint32_t flags,QWidget *parent)
         : QWidget(parent),mPostTitle(nullptr),mFlags(flags), mAspectRatio(ASPECT_RATIO_2_3)
@@ -134,7 +135,10 @@ void ChannelPostThumbnailView::init(const RsGxsChannelPost& post)
 
         QFont font = mPostTitle->font();
 
-        font.setPointSizeF(DEFAULT_SIZE_IN_FONT_HEIGHT / 5.0 * font.pointSizeF());
+        if(mFlags & ChannelPostThumbnailView::FLAG_SCALE_FONT)
+            font.setPointSizeF(FONT_SCALE_FACTOR * DEFAULT_SIZE_IN_FONT_HEIGHT / 5.0 * font.pointSizeF());
+        else
+            font.setPointSizeF(FONT_SCALE_FACTOR * DEFAULT_SIZE_IN_FONT_HEIGHT / 5.0 * font.pointSizeF());
 
         if(is_msg_new)
             font.setBold(true);

@@ -85,6 +85,7 @@ public:
     static constexpr uint32_t FLAG_NONE      = 0x00;
     static constexpr uint32_t FLAG_SHOW_TEXT = 0x01;
     static constexpr uint32_t FLAG_ALLOW_PAN = 0x02;
+    static constexpr uint32_t FLAG_SCALE_FONT= 0x04;
 
 	// Size of thumbnails as a function of the height of the font. An aspect ratio of 3/4 is good.
 
@@ -119,6 +120,7 @@ public:
     AspectRatio bestAspectRatio() ;
 private:
     static const float DEFAULT_SIZE_IN_FONT_HEIGHT ;
+    static const float FONT_SCALE_FACTOR ;
 
     float thumbnail_w() const;
     float thumbnail_h() const;

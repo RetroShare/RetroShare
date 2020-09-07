@@ -125,7 +125,7 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
     {
         // Draw a thumbnail
 
-        uint32_t flags = (mUseGrid)?(ChannelPostThumbnailView::FLAG_SHOW_TEXT):0;
+        uint32_t flags = (mUseGrid)?(ChannelPostThumbnailView::FLAG_SHOW_TEXT | ChannelPostThumbnailView::FLAG_SCALE_FONT):0;
         ChannelPostThumbnailView w(post,flags);
         w.setAspectRatio(mAspectRatio);
         w.updateGeometry();
@@ -206,7 +206,7 @@ QSize ChannelPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QM
     QFontMetricsF fm(option.font);
 
     RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
-    uint32_t flags = (mUseGrid)?(ChannelPostThumbnailView::FLAG_SHOW_TEXT):0;
+    uint32_t flags = (mUseGrid)?(ChannelPostThumbnailView::FLAG_SHOW_TEXT | ChannelPostThumbnailView::FLAG_SCALE_FONT):0;
 
     ChannelPostThumbnailView w(post,flags);
     w.setAspectRatio(mAspectRatio);
@@ -798,7 +798,7 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
     for(uint32_t i=0;i<std::min(mChannelPostsModel->getNumberOfPosts(),5u);++i)
     {
         const RsGxsChannelPost& post = mChannelPostsModel->post(i);
-        ChannelPostThumbnailView v(post,ChannelPostThumbnailView::FLAG_SHOW_TEXT);
+        ChannelPostThumbnailView v(post,ChannelPostThumbnailView::FLAG_SHOW_TEXT | ChannelPostThumbnailView::FLAG_SCALE_FONT);
 
         ++ar_votes[ static_cast<uint32_t>( v.bestAspectRatio() )];
     }
