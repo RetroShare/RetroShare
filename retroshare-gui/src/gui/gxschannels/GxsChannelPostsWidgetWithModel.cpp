@@ -613,6 +613,9 @@ void GxsChannelPostsWidgetWithModel::editPost()
 
 void GxsChannelPostsWidgetWithModel::handlePostsTreeSizeChange(QSize s,bool force)
 {
+    if(mChannelPostsModel->getMode() != RsGxsChannelPostsModel::TREE_MODE_GRID)
+        return;
+
     int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(0,font(),ui->postsTree->width()))));
     std::cerr << "nb columns: " << n_columns << " current count=" << mChannelPostsModel->columnCount() << std::endl;
 
