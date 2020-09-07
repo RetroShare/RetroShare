@@ -95,7 +95,7 @@ public:
     static constexpr char *CHAN_DEFAULT_IMAGE = ":images/thumb-default-video.png";
 
     virtual ~ChannelPostThumbnailView();
-    ChannelPostThumbnailView(QWidget *parent=NULL,uint32_t flags=FLAG_ALLOW_PAN | FLAG_SHOW_TEXT);
+    ChannelPostThumbnailView(QWidget *parent=NULL,uint32_t flags=FLAG_ALLOW_PAN | FLAG_SHOW_TEXT | FLAG_SCALE_FONT);
     ChannelPostThumbnailView(const RsGxsChannelPost& post,uint32_t flags,QWidget *parent=NULL);
 
     void init(const RsGxsChannelPost& post);
