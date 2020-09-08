@@ -435,9 +435,6 @@ p, li { white-space: pre-wrap; }
             <string>Details</string>
            </attribute>
            <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <property name="bottomMargin">
-             <number>3</number>
-            </property>
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_3">
               <item>
@@ -450,16 +447,6 @@ p, li { white-space: pre-wrap; }
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-                </property>
-                <property name="wordWrap">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="postName_LB">
-                <property name="text">
-                 <string>TextLabel</string>
                 </property>
                 <property name="wordWrap">
                  <bool>true</bool>
@@ -489,11 +476,22 @@ p, li { white-space: pre-wrap; }
              </layout>
             </item>
             <item>
-             <widget class="QTextBrowser" name="postDetails_TE">
-              <property name="openExternalLinks">
-               <bool>true</bool>
-              </property>
-             </widget>
+             <layout class="QVBoxLayout" name="verticalLayout_6">
+              <item>
+               <widget class="QLabel" name="postName_LB">
+                <property name="text">
+                 <string>TextLabel</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QTextBrowser" name="postDetails_TE">
+                <property name="openExternalLinks">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
           </widget>

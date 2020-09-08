@@ -705,7 +705,7 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 	ui->postLogo_LB->setFixedSize(W,postImage.height()/(float)postImage.width()*W);
 
 	ui->postName_LB->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str()));
-	ui->postName_LB->setFixedWidth(W);
+
 	ui->postTime_LB->setText(QDateTime::fromMSecsSinceEpoch(post.mMeta.mPublishTs*1000).toString("MM/dd/yyyy, hh:mm"));
 	ui->postTime_LB->setFixedWidth(W);
 
