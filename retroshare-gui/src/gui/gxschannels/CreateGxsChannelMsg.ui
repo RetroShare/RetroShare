@@ -85,7 +85,14 @@
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_2">
               <item>
-               <widget class="ChannelPostThumbnailView" name="preview_W" native="true"/>
+               <widget class="ChannelPostThumbnailView" name="preview_W" native="true">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
               </item>
               <item>
                <spacer name="verticalSpacer_2">
@@ -329,7 +336,7 @@ p, li { white-space: pre-wrap; }
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>84</width>
+               <width>98</width>
                <height>24</height>
               </rect>
              </property>
