@@ -705,7 +705,8 @@ void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
             bool post_status = (IS_MSG_UNREAD(mPosts[i].mMeta.mMsgStatus) || IS_MSG_NEW(mPosts[i].mMeta.mMsgStatus));
 
             if(post_status != read_status)
-                rsGxsChannels->markRead(RsGxsGrpMsgIdPair(mPosts[i].mMeta.mGroupId,mPosts[i].mMeta.mMsgId),read_status);
+                if(!rsGxsChannels->markRead(RsGxsGrpMsgIdPair(mPosts[i].mMeta.mGroupId,mPosts[i].mMeta.mMsgId),read_status))
+                    RsErr() << "setAllMsgReadStatus: failed to change status of msg " << mPosts[i].mMeta.mMsgId << " in group " << mPosts[i].mMeta.mGroupId << " to status " << read_status << std::endl;
         }
     });
 }

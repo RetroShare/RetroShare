@@ -61,6 +61,8 @@ static const int CHANNEL_TABS_DETAILS= 0;
 static const int CHANNEL_TABS_POSTS  = 1;
 static const int CHANNEL_TABS_FILES  = 2;
 
+QColor SelectedColor = QRgb(0xff308dc7);
+
 /* View mode */
 #define VIEW_MODE_FEEDS  1
 #define VIEW_MODE_FILES  2
@@ -134,7 +136,7 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
         QPixmap pixmap(w.size());
 
         if((option.state & QStyle::State_Selected) && post.mMeta.mPublishTs > 0) // check if post is selected and is not empty (end of last row)
-            pixmap.fill(QRgb(0xff308dc7));	// I dont know how to grab the backgroud color for selected objects automatically.
+            pixmap.fill(SelectedColor);	// I dont know how to grab the backgroud color for selected objects automatically.
         else
             pixmap.fill(QRgb(0x00ffffff));	// choose a fully transparent background
 
@@ -179,6 +181,9 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
         float y = p.y() + font_height;
 
         painter->save();
+
+        if((option.state & QStyle::State_Selected) && post.mMeta.mPublishTs > 0) // check if post is selected and is not empty (end of last row)
+            painter->setPen(SelectedColor);
 
         if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
         {
@@ -521,6 +526,8 @@ void GxsChannelPostsWidgetWithModel::switchView()
         ui->viewType_TB->setIcon(FilesDefs::getIconFromQtResourcePath(":icons/svg/listlayout.svg"));
         ui->viewType_TB->setToolTip(tr("Click to switch to grid view"));
 
+        ui->postsTree->setSelectionBehavior(QAbstractItemView::SelectRows);
+
         mChannelPostsDelegate->setWidgetGrid(false);
         mChannelPostsModel->setMode(RsGxsChannelPostsModel::TREE_MODE_LIST);
     }
@@ -528,6 +535,8 @@ void GxsChannelPostsWidgetWithModel::switchView()
     {
         ui->viewType_TB->setIcon(FilesDefs::getIconFromQtResourcePath(":icons/svg/gridlayout.svg"));
         ui->viewType_TB->setToolTip(tr("Click to switch to list view"));
+
+        ui->postsTree->setSelectionBehavior(QAbstractItemView::SelectItems);
 
         mChannelPostsDelegate->setWidgetGrid(true);
         mChannelPostsModel->setMode(RsGxsChannelPostsModel::TREE_MODE_GRID);
