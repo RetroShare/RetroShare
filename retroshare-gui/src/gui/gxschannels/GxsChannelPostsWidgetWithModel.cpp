@@ -670,10 +670,12 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
         ui->postLogo_LB->hide();
 		ui->postName_LB->hide();
 		ui->postTime_LB->hide();
-		mChannelPostFilesModel->clear();
+        mChannelPostFilesModel->clear();
+        ui->details_TW->setEnabled(false);
 
         return;
     }
+    ui->details_TW->setEnabled(true);
 
 	ui->postLogo_LB->show();
 	ui->postName_LB->show();
@@ -1090,6 +1092,7 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 #endif
 	ui->subscribeToolButton->setText(tr("Subscribe ") + " " + QString::number(group.mMeta.mPop) );
 
+    showPostDetails();
 }
 
 #ifdef TODO
