@@ -171,7 +171,7 @@ p, li { white-space: pre-wrap; }
                    <string>Add Channel Thumbnail</string>
                   </property>
                   <property name="icon">
-                   <iconset resource="../icons.qrc">
+                   <iconset>
                     <normaloff>:/icons/png/add-image.png</normaloff>:/icons/png/add-image.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -184,6 +184,12 @@ p, li { white-space: pre-wrap; }
                 </item>
                 <item>
                  <widget class="QComboBox" name="aspectRatio_CB">
+                  <property name="iconSize">
+                   <size>
+                    <width>24</width>
+                    <height>24</height>
+                   </size>
+                  </property>
                   <item>
                    <property name="text">
                     <string>Auto</string>
@@ -212,7 +218,7 @@ p, li { white-space: pre-wrap; }
                    <string>Add File to Attach</string>
                   </property>
                   <property name="icon">
-                   <iconset resource="../icons.qrc">
+                   <iconset>
                     <normaloff>:/icons/png/add-file.png</normaloff>:/icons/png/add-file.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -312,7 +318,7 @@ p, li { white-space: pre-wrap; }
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../icons.qrc">
+             <iconset>
               <normaloff>:/icons/png/add-file.png</normaloff>:/icons/png/add-file.png</iconset>
             </property>
             <property name="iconSize">
@@ -336,7 +342,7 @@ p, li { white-space: pre-wrap; }
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>98</width>
+               <width>84</width>
                <height>24</height>
               </rect>
              </property>
@@ -416,7 +422,7 @@ p, li { white-space: pre-wrap; }
          <string>Channel Post</string>
         </property>
         <property name="icon">
-         <iconset resource="../icons.qrc">
+         <iconset>
           <normaloff>:/icons/png/comment.png</normaloff>:/icons/png/comment.png</iconset>
         </property>
         <property name="iconSize">
@@ -446,7 +452,7 @@ p, li { white-space: pre-wrap; }
          <string>Attachments</string>
         </property>
         <property name="icon">
-         <iconset resource="../icons.qrc">
+         <iconset>
           <normaloff>:/icons/png/attachements.png</normaloff>:/icons/png/attachements.png</iconset>
         </property>
         <property name="iconSize">
@@ -518,7 +524,6 @@ p, li { white-space: pre-wrap; }
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
-  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

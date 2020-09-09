@@ -80,6 +80,11 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 	connect(generateCheckBox, SIGNAL(toggled(bool)), generateSpinBox, SLOT(setEnabled(bool)));
     connect(aspectRatio_CB,SIGNAL(currentIndexChanged(int)),this,SLOT(changeAspectRatio(int)));
 
+    aspectRatio_CB->setItemIcon(0,FilesDefs::getIconFromQtResourcePath(":/icons/svg/ratio-auto.svg"));
+    aspectRatio_CB->setItemIcon(1,FilesDefs::getIconFromQtResourcePath(":/icons/svg/ratio-1-1.svg"));
+    aspectRatio_CB->setItemIcon(2,FilesDefs::getIconFromQtResourcePath(":/icons/svg/ratio-3-4.svg"));
+    aspectRatio_CB->setItemIcon(3,FilesDefs::getIconFromQtResourcePath(":/icons/svg/ratio-16-9.svg"));
+
 	generateSpinBox->setEnabled(false);
 
     preview_W->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ChannelPostThumbnailView::CHAN_DEFAULT_IMAGE),true);
