@@ -489,6 +489,30 @@ void GxsCommentTreeWidget::addItem(RsGxsMessageId itemId, RsGxsMessageId parentI
 	}
 }
 
+int treeCount(QTreeWidget *tree, QTreeWidgetItem *parent = 0)
+{
+    int count = 0;
+    if (parent == 0) {
+        int topCount = tree->topLevelItemCount();
+        for (int i = 0; i < topCount; i++) {
+            QTreeWidgetItem *item = tree->topLevelItem(i);
+            if (item->isExpanded()) {
+                count += treeCount(tree, item);
+            }
+        }
+        count += topCount;
+    } else {
+        int childCount = parent->childCount();
+        for (int i = 0; i < childCount; i++) {
+            QTreeWidgetItem *item = parent->child(i);
+            if (item->isExpanded()) {
+                count += treeCount(tree, item);
+            }
+        }
+        count += childCount;
+    }
+    return count;
+}
 void GxsCommentTreeWidget::loadThread(const uint32_t &token)
 {
 	clearItems();
@@ -496,6 +520,8 @@ void GxsCommentTreeWidget::loadThread(const uint32_t &token)
 	service_loadThread(token);
 
 	completeItems();
+
+    emit commentsLoaded(treeCount(this));
 }
 
 void GxsCommentTreeWidget::acknowledgeComment(const uint32_t &token)

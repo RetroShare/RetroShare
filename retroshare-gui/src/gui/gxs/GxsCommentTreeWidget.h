@@ -80,6 +80,9 @@ public slots:
     void markSpammer();
     void banUser();
 
+signals:
+    void commentsLoaded(int);
+
 protected:
 
 	void vote(const RsGxsGroupId &groupId, const RsGxsMessageId &threadId,

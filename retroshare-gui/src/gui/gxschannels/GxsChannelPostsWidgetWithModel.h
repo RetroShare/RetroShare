@@ -161,6 +161,7 @@ private slots:
 public slots:
  	void sortColumnFiles(int col,Qt::SortOrder so);
  	void sortColumnPostFiles(int col,Qt::SortOrder so);
+    void updateCommentsCount(int n);
 
 private:
 	void processSettings(bool load);

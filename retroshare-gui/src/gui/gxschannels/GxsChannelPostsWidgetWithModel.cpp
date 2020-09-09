@@ -343,6 +343,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     mChannelPostsDelegate->setAspectRatio(ChannelPostThumbnailView::ASPECT_RATIO_16_9);
 
     connect(ui->postsTree,SIGNAL(zoomRequested(bool)),this,SLOT(updateZoomFactor(bool)));
+    connect(ui->commentsDialog,SIGNAL(commentsLoaded(int)),this,SLOT(updateCommentsCount(int)));
 
     ui->channelPostFiles_TV->setModel(mChannelPostFilesModel = new RsGxsChannelPostFilesModel(this));
     ui->channelPostFiles_TV->setItemDelegate(new ChannelPostFilesDelegate());
@@ -734,6 +735,13 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 	}
 }
 
+void GxsChannelPostsWidgetWithModel::updateCommentsCount(int n)
+{
+    if(n > 0)
+        ui->details_TW->setTabText(2,tr("Comments (%1)").arg(n));
+    else
+        ui->details_TW->setTabText(2,tr("Comments"));
+}
 void GxsChannelPostsWidgetWithModel::updateGroupData()
 {
 	if(groupId().isNull())
