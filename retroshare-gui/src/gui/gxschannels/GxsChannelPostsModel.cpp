@@ -212,10 +212,12 @@ int RsGxsChannelPostsModel::rowCount(const QModelIndex& parent) const
         return 0;
 
     if(!parent.isValid())
+    {
         if(mTreeMode == TREE_MODE_GRID)
             return (mFilteredPosts.size() + mColumns-1)/mColumns; // mFilteredPosts always has an item at 0, so size()>=1, and mColumn>=1
         else
             return mFilteredPosts.size();
+    }
 
     RsErr() << __PRETTY_FUNCTION__ << " rowCount cannot figure out the porper number of rows." << std::endl;
     return 0;
@@ -372,8 +374,6 @@ quintptr RsGxsChannelPostsModel::getParentRow(quintptr ref,int& row) const
 
 int RsGxsChannelPostsModel::getChildrenCount(quintptr ref) const
 {
-	uint32_t entry = 0 ;
-
     if(ref == quintptr(0))
         return rowCount()-1;
 
@@ -430,7 +430,7 @@ QVariant RsGxsChannelPostsModel::data(const QModelIndex &index, int role) const
 	}
 }
 
-QVariant RsGxsChannelPostsModel::sizeHintRole(int col) const
+QVariant RsGxsChannelPostsModel::sizeHintRole(int /* col */) const
 {
 	float factor = QFontMetricsF(QApplication::font()).height()/14.0f ;
 
@@ -502,7 +502,7 @@ void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vecto
     std::sort(mPosts.begin(),mPosts.end());
 
     mFilteredPosts.clear();
-    for(int i=0;i<mPosts.size();++i)
+    for(uint32_t i=0;i<mPosts.size();++i)
         mFilteredPosts.push_back(i);
 
 #ifdef DEBUG_CHANNEL_MODEL
@@ -572,8 +572,6 @@ void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
 
     });
 }
-
-static bool decreasing_time_comp(const std::pair<time_t,RsGxsMessageId>& e1,const std::pair<time_t,RsGxsMessageId>& e2) { return e2.first < e1.first ; }
 
 void RsGxsChannelPostsModel::createPostsArray(std::vector<RsGxsChannelPost>& posts)
 {
@@ -705,12 +703,8 @@ void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
             bool post_status = !((IS_MSG_UNREAD(mPosts[i].mMeta.mMsgStatus) || IS_MSG_NEW(mPosts[i].mMeta.mMsgStatus)));
 
             if(post_status != read_status)
-            {
-                std::cerr << "Switch read status of post " << mPosts[i].mMeta.mMsgId << std::endl;
-
                 if(!rsGxsChannels->markRead(RsGxsGrpMsgIdPair(mPosts[i].mMeta.mGroupId,mPosts[i].mMeta.mMsgId),read_status))
                     RsErr() << "setAllMsgReadStatus: failed to change status of msg " << mPosts[i].mMeta.mMsgId << " in group " << mPosts[i].mMeta.mGroupId << " to status " << read_status << std::endl;
-            }
         }
     });
 }
