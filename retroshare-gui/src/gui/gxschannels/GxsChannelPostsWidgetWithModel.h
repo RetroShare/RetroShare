@@ -157,6 +157,7 @@ private slots:
 	void updateZoomFactor(bool zoom_or_unzoom);
     void switchView();
     void switchOnlyUnread(bool b);
+    void markMessageUnread();
 
 public slots:
  	void sortColumnFiles(int col,Qt::SortOrder so);

@@ -490,6 +490,9 @@ void GxsChannelPostsWidgetWithModel::postContextMenu(const QPoint&)
 
         if(!post.mFiles.empty())
             menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_DOWNLOAD), tr("Download files"), this, SLOT(download()));
+
+        if(!IS_MSG_UNREAD(post.mMeta.mMsgStatus) && !IS_MSG_NEW(post.mMeta.mMsgStatus))
+            menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Mark as unread"), this, SLOT(markMessageUnread()));
     }
     menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()));
 
@@ -497,6 +500,13 @@ void GxsChannelPostsWidgetWithModel::postContextMenu(const QPoint&)
 		menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/edit_16.png"), tr("Edit"), this, SLOT(editPost()));
 
 	menu.exec(QCursor::pos());
+}
+
+void GxsChannelPostsWidgetWithModel::markMessageUnread()
+{
+    QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
+
+    mChannelPostsModel->setMsgReadStatus(index,false);
 }
 
 RsGxsMessageId GxsChannelPostsWidgetWithModel::getCurrentItemId() const
@@ -1392,25 +1402,6 @@ public:
 	bool mRead;
 	uint32_t mLastToken;
 };
-
-#ifdef TO_REMOVE
-static void setAllMessagesReadCallback(FeedItem *feedItem, void *data)
-{
-	GxsChannelPostItem *channelPostItem = dynamic_cast<GxsChannelPostItem*>(feedItem);
-	if (!channelPostItem) {
-		return;
-	}
-
-	GxsChannelPostsReadData *readData = (GxsChannelPostsReadData*) data;
-	bool isRead = !channelPostItem->isUnread() ;
-
-	if(channelPostItem->isLoaded() && (isRead == readData->mRead))
-		return ;
-
-	RsGxsGrpMsgIdPair msgPair = std::make_pair(channelPostItem->groupId(), channelPostItem->messageId());
-	rsGxsChannels->setMessageReadStatus(readData->mLastToken, msgPair, readData->mRead);
-}
-#endif
 
 void GxsChannelPostsWidgetWithModel::setAllMessagesReadDo(bool read, uint32_t& /*token*/)
 {
