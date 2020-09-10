@@ -696,16 +696,25 @@ void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
     // No need to call preMods()/postMods() here because we're not changing the model
     // All operations below are done async
 
-    RsThread::async([this, read_status]()
-    {
-        for(uint32_t i=0;i<mPosts.size();++i)
-        {
-            bool post_status = !((IS_MSG_UNREAD(mPosts[i].mMeta.mMsgStatus) || IS_MSG_NEW(mPosts[i].mMeta.mMsgStatus)));
+    // 1 - copy all msg/grp id groups, so that changing the mPosts list while calling the async method will not break the work
 
-            if(post_status != read_status)
-                if(!rsGxsChannels->markRead(RsGxsGrpMsgIdPair(mPosts[i].mMeta.mGroupId,mPosts[i].mMeta.mMsgId),read_status))
-                    RsErr() << "setAllMsgReadStatus: failed to change status of msg " << mPosts[i].mMeta.mMsgId << " in group " << mPosts[i].mMeta.mGroupId << " to status " << read_status << std::endl;
-        }
+    std::vector<RsGxsGrpMsgIdPair> pairs;
+
+    for(uint32_t i=0;i<mPosts.size();++i)
+    {
+        bool post_status = !((IS_MSG_UNREAD(mPosts[i].mMeta.mMsgStatus) || IS_MSG_NEW(mPosts[i].mMeta.mMsgStatus)));
+
+        if(post_status != read_status)
+            pairs.push_back(RsGxsGrpMsgIdPair(mPosts[i].mMeta.mGroupId,mPosts[i].mMeta.mMsgId));
+     }
+
+    // 2 - then call the async methods
+
+    RsThread::async([pairs, read_status]()
+    {
+        for(uint32_t i=0;i<pairs.size();++i)
+            if(!rsGxsChannels->markRead(pairs[i],read_status))
+                 RsErr() << "setAllMsgReadStatus: failed to change status of msg " << pairs[i].first << " in group " << pairs[i].second << " to status " << read_status << std::endl;
     });
 }
 
