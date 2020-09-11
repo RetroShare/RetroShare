@@ -61,6 +61,8 @@ static const int CHANNEL_TABS_DETAILS= 0;
 static const int CHANNEL_TABS_POSTS  = 1;
 static const int CHANNEL_TABS_FILES  = 2;
 
+QColor SelectedColor = QRgb(0xff308dc7);
+
 /* View mode */
 #define VIEW_MODE_FEEDS  1
 #define VIEW_MODE_FILES  2
@@ -74,14 +76,23 @@ static const int CHANNEL_TABS_FILES  = 2;
 
 #define STAR_OVERLAY_IMAGE ":icons/star_overlay_128.png"
 #define IMAGE_COPYLINK     ":/images/copyrslink.png"
+#define IMAGE_GRID_VIEW    ":icons/png/menu.png"
+#define IMAGE_DOWNLOAD     ":icons/png/download.png"
 
 Q_DECLARE_METATYPE(ChannelPostFileInfo)
 
 // Delegate used to paint into the table of thumbnails
 
-int ChannelPostDelegate::cellSize(const QFont& font) const
+//===============================================================================================================================================//
+//===                                                      ChannelPostDelegate                                                                ===//
+//===============================================================================================================================================//
+
+int ChannelPostDelegate::cellSize(int col,const QFont& font,uint32_t parent_width) const
 {
-    return mZoom*COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font).height();
+    if(mUseGrid || col==0)
+        return mZoom*COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font).height();
+    else
+        return 0.8*parent_width - mZoom*COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font).height();
 }
 
 void ChannelPostDelegate::zoom(bool zoom_or_unzoom)
@@ -91,53 +102,106 @@ void ChannelPostDelegate::zoom(bool zoom_or_unzoom)
     else
 		mZoom /= 1.02;
 
-    std::cerr << "zoom factor: " << mZoom << std::endl;
+    if(mZoom < 0.5)
+        mZoom = 0.5;
+    if(mZoom > 2.0)
+        mZoom = 2.0;
 }
 
+void ChannelPostDelegate::setAspectRatio(ChannelPostThumbnailView::AspectRatio r)
+{
+    mAspectRatio = r;
+}
 void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
-	// prepare
-	painter->save();
-	painter->setClipRect(option.rect);
+    // prepare
+    painter->save();
+    painter->setClipRect(option.rect);
 
-	RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
+    RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
 
     painter->fillRect( option.rect, option.backgroundBrush);
     painter->restore();
 
-	ChannelPostThumbnailView w(post);
+    if(mUseGrid || index.column()==0)
+    {
+        // Draw a thumbnail
 
-	QPixmap pixmap(w.size());
+        uint32_t flags = (mUseGrid)?(ChannelPostThumbnailView::FLAG_SHOW_TEXT | ChannelPostThumbnailView::FLAG_SCALE_FONT):0;
+        ChannelPostThumbnailView w(post,flags);
+        w.setAspectRatio(mAspectRatio);
+        w.updateGeometry();
+        w.adjustSize();
 
-    if((option.state & QStyle::State_Selected) && post.mMeta.mPublishTs > 0) // check if post is selected and is not empty (end of last row)
-		pixmap.fill(QRgb(0xff308dc7));	// I dont know how to grab the backgroud color for selected objects automatically.
-	else
-		pixmap.fill(QRgb(0x00ffffff));	// choose a fully transparent background
+        QPixmap pixmap(w.size());
 
-	w.render(&pixmap,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
+        if((option.state & QStyle::State_Selected) && post.mMeta.mPublishTs > 0) // check if post is selected and is not empty (end of last row)
+            pixmap.fill(SelectedColor);	// I dont know how to grab the backgroud color for selected objects automatically.
+        else
+            pixmap.fill(QRgb(0x00ffffff));	// choose a fully transparent background
 
-    if(mZoom != 1.0)
-		pixmap = pixmap.scaled(mZoom*pixmap.size(),Qt::KeepAspectRatio,Qt::SmoothTransformation);
+        w.render(&pixmap,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
 
-	if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
-	{
-        QPainter p(&pixmap);
-        QFontMetricsF fm(option.font);
-        p.drawPixmap(mZoom*QPoint(6.2*fm.height(),6.9*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(mZoom*7*fm.height(),mZoom*7*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
-	}
+        // We extract from the pixmap the part of the widget that we want. Saddly enough, Qt adds some white space
+        // below the widget and there is no way to control that.
 
-    // debug
- 	// if(index.row()==0 && index.column()==0)
-	// {
-	// 	QFile file("yourFile.png");
-	// 	file.open(QIODevice::WriteOnly);
-	// 	pixmap.save(&file, "PNG");
- 	//  std::cerr << "Saved pxmap to png" << std::endl;
-	// }
-    //std::cerr << "option.rect = " << option.rect.width() << "x" << option.rect.height() << ". fm.height()=" << QFontMetricsF(option.font).height() << std::endl;
+        pixmap = pixmap.copy(QRect(0,0,w.actualSize().width(),w.actualSize().height()));
 
-	painter->drawPixmap(option.rect.topLeft(),
-                        pixmap.scaled(option.rect.width(),option.rect.width()*w.height()/(float)w.width(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+//        if(index.row()==0 && index.column()==0)
+//        {
+//            QFile file("yourFile.png");
+//            file.open(QIODevice::WriteOnly);
+//            pixmap.save(&file, "PNG");
+//            file.close();
+//        }
+
+        if(mUseGrid || index.column()==0)
+        {
+            if(mZoom != 1.0)
+                pixmap = pixmap.scaled(mZoom*pixmap.size(),Qt::KeepAspectRatio,Qt::SmoothTransformation);
+
+            if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
+            {
+                QPainter p(&pixmap);
+                QFontMetricsF fm(option.font);
+
+                p.drawPixmap(mZoom*QPoint(0.1*fm.height(),-3.6*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(mZoom*7*fm.height(),mZoom*7*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
+            }
+        }
+
+        painter->drawPixmap(option.rect.topLeft(),
+                            pixmap.scaled(option.rect.width(),option.rect.width()*pixmap.height()/(float)pixmap.width(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+    }
+    else
+    {
+        // We're drawing the text on the second column
+
+        uint32_t font_height = QFontMetricsF(option.font).height();
+        QPoint p = option.rect.topLeft();
+        float y = p.y() + font_height;
+
+        painter->save();
+
+        if((option.state & QStyle::State_Selected) && post.mMeta.mPublishTs > 0) // check if post is selected and is not empty (end of last row)
+            painter->setPen(SelectedColor);
+
+        if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
+        {
+            QFont font(option.font);
+            font.setBold(true);
+            painter->setFont(font);
+        }
+        painter->drawText(QPoint(p.x()+0.5*font_height,y),QString::fromUtf8(post.mMeta.mMsgName.c_str()));
+        y += font_height;
+
+        painter->drawText(QPoint(p.x()+0.5*font_height,y),QDateTime::fromSecsSinceEpoch(post.mMeta.mPublishTs).toString(Qt::DefaultLocaleShortDate));
+        y += font_height;
+
+        painter->drawText(QPoint(p.x()+0.5*font_height,y),QString::number(post.mCount)+ " " +((post.mCount>1)?tr("files"):tr("file")) + " (" + QString::number(post.mSize) + " " + tr("bytes") + ")" );
+        y += font_height;
+
+        painter->restore();
+    }
 }
 
 QSize ChannelPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
@@ -146,8 +210,35 @@ QSize ChannelPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QM
 
     QFontMetricsF fm(option.font);
 
-    return QSize(mZoom*COLUMN_SIZE_FONT_FACTOR_W*fm.height(),mZoom*COLUMN_SIZE_FONT_FACTOR_H*fm.height());
+    RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
+    uint32_t flags = (mUseGrid)?(ChannelPostThumbnailView::FLAG_SHOW_TEXT | ChannelPostThumbnailView::FLAG_SCALE_FONT):0;
+
+    ChannelPostThumbnailView w(post,flags);
+    w.setAspectRatio(mAspectRatio);
+    w.updateGeometry();
+    w.adjustSize();
+
+    //std::cerr << "w.size(): " << w.width() << " x " << w.height() << ". Actual size: " << w.actualSize().width() << " x " << w.actualSize().height() << std::endl;
+
+    float aspect_ratio = w.actualSize().height()/(float)w.actualSize().width();
+
+    float cell_width  = mZoom*COLUMN_SIZE_FONT_FACTOR_W*fm.height();
+    float cell_height = mZoom*COLUMN_SIZE_FONT_FACTOR_W*fm.height()*aspect_ratio;
+
+    if(mUseGrid || index.column()==0)
+        return QSize(cell_width,cell_height);
+    else
+        return QSize(option.rect.width()-cell_width,cell_height);
 }
+
+void ChannelPostDelegate::setWidgetGrid(bool use_grid)
+{
+    mUseGrid = use_grid;
+}
+
+//===============================================================================================================================================//
+//===                                                  ChannelPostFilesDelegate                                                               ===//
+//===============================================================================================================================================//
 
 QWidget *ChannelPostFilesDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex& index) const
 {
@@ -222,6 +313,10 @@ QSize ChannelPostFilesDelegate::sizeHint(const QStyleOptionViewItem& option, con
     }
 }
 
+//===============================================================================================================================================//
+//===                                               GxsChannelPostWidgetWithModel                                                            ===//
+//===============================================================================================================================================//
+
 /** Constructor */
 GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupId &channelId, QWidget *parent) :
 	GxsMessageFrameWidget(rsGxsChannels, parent),
@@ -230,13 +325,25 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
 
-	ui->postsTree->setModel(mChannelPostsModel = new RsGxsChannelPostsModel());
+    ui->viewType_TB->setIcon(FilesDefs::getIconFromQtResourcePath(":icons/svg/gridlayout.svg"));
+    ui->viewType_TB->setToolTip(tr("Click to switch to list view"));
+    connect(ui->viewType_TB,SIGNAL(clicked()),this,SLOT(switchView()));
+
+    ui->showUnread_TB->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
+    ui->showUnread_TB->setChecked(false);
+    ui->showUnread_TB->setToolTip(tr("Show unread posts only"));
+    connect(ui->showUnread_TB,SIGNAL(toggled(bool)),this,SLOT(switchOnlyUnread(bool)));
+
+    ui->postsTree->setModel(mChannelPostsModel = new RsGxsChannelPostsModel());
     ui->postsTree->setItemDelegate(mChannelPostsDelegate = new ChannelPostDelegate());
     ui->postsTree->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);	// prevents bug on w10, since row size depends on widget width
     ui->postsTree->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);// more beautiful if we scroll at pixel level
     ui->postsTree->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 
+    mChannelPostsDelegate->setAspectRatio(ChannelPostThumbnailView::ASPECT_RATIO_16_9);
+
     connect(ui->postsTree,SIGNAL(zoomRequested(bool)),this,SLOT(updateZoomFactor(bool)));
+    connect(ui->commentsDialog,SIGNAL(commentsLoaded(int)),this,SLOT(updateCommentsCount(int)));
 
     ui->channelPostFiles_TV->setModel(mChannelPostFilesModel = new RsGxsChannelPostFilesModel(this));
     ui->channelPostFiles_TV->setItemDelegate(new ChannelPostFilesDelegate());
@@ -262,7 +369,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     ui->postTime_LB->hide();
     ui->postLogo_LB->hide();
 
-	ui->postDetails_TE->setPlaceholderText(tr("No post selected"));
+    ui->postDetails_TE->setPlaceholderText(tr("No text to display"));
 
 	// Set initial size of the splitter
 	ui->splitter->setStretchFactor(0, 1);
@@ -270,8 +377,9 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 
     QFontMetricsF fm(font());
 
-    for(int i=0;i<mChannelPostsModel->columnCount();++i)
-		ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(font()));
+    if(mChannelPostsModel->getMode() == RsGxsChannelPostsModel::TREE_MODE_GRID)
+        for(int i=0;i<mChannelPostsModel->columnCount();++i)
+            ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(i,font(),ui->postsTree->width()));
 
 	/* Setup UI helper */
 
@@ -339,12 +447,11 @@ void GxsChannelPostsWidgetWithModel::updateZoomFactor(bool zoom_or_unzoom)
     mChannelPostsDelegate->zoom(zoom_or_unzoom);
 
     for(int i=0;i<mChannelPostsModel->columnCount();++i)
-		ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(font()));
+        ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(i,font(),ui->postsTree->width()));
 
     QSize s = ui->postsTree->size();
 
-	int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(font()))));
-    std::cerr << "nb columns: " << n_columns << std::endl;
+    int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(0,font(),s.width()))));
 
 	mChannelPostsModel->setNumColumns(n_columns);	// forces the update
 
@@ -366,12 +473,97 @@ void GxsChannelPostsWidgetWithModel::postContextMenu(const QPoint&)
 {
     QMenu menu(this);
 
-	menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()));
+#ifdef TO_REMOVE
+    if(mChannelPostsModel->getMode() == RsGxsChannelPostsModel::TREE_MODE_GRID)
+        menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_GRID_VIEW), tr("Switch to list view"), this, SLOT(switchView()));
+    else
+        menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_GRID_VIEW), tr("Switch to grid view"), this, SLOT(switchView()));
+
+    menu.addSeparator();
+#endif
+
+    QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
+
+    if(index.isValid())
+    {
+        RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
+
+        if(!post.mFiles.empty())
+            menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_DOWNLOAD), tr("Download files"), this, SLOT(download()));
+
+        if(!IS_MSG_UNREAD(post.mMeta.mMsgStatus) && !IS_MSG_NEW(post.mMeta.mMsgStatus))
+            menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Mark as unread"), this, SLOT(markMessageUnread()));
+    }
+    menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()));
 
 	if(IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
 		menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/edit_16.png"), tr("Edit"), this, SLOT(editPost()));
 
 	menu.exec(QCursor::pos());
+}
+
+void GxsChannelPostsWidgetWithModel::markMessageUnread()
+{
+    QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
+
+    mChannelPostsModel->setMsgReadStatus(index,false);
+}
+
+RsGxsMessageId GxsChannelPostsWidgetWithModel::getCurrentItemId() const
+{
+    RsGxsMessageId selected_msg_id ;
+    QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
+
+    if(index.isValid())
+        selected_msg_id = index.data(Qt::UserRole).value<RsGxsChannelPost>().mMeta.mMsgId ;
+
+    return selected_msg_id;
+}
+
+void GxsChannelPostsWidgetWithModel::selectItem(const RsGxsMessageId& msg_id)
+{
+    auto index = mChannelPostsModel->getIndexOfMessage(msg_id);
+
+    ui->postsTree->selectionModel()->setCurrentIndex(index,QItemSelectionModel::ClearAndSelect);
+    ui->postsTree->scrollTo(index);//May change if model reloaded
+}
+
+void GxsChannelPostsWidgetWithModel::switchView()
+{
+   auto msg_id = getCurrentItemId();
+
+    if(mChannelPostsModel->getMode() == RsGxsChannelPostsModel::TREE_MODE_GRID)
+    {
+        ui->viewType_TB->setIcon(FilesDefs::getIconFromQtResourcePath(":icons/svg/listlayout.svg"));
+        ui->viewType_TB->setToolTip(tr("Click to switch to grid view"));
+
+        ui->postsTree->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+        mChannelPostsDelegate->setWidgetGrid(false);
+        mChannelPostsModel->setMode(RsGxsChannelPostsModel::TREE_MODE_LIST);
+    }
+    else
+    {
+        ui->viewType_TB->setIcon(FilesDefs::getIconFromQtResourcePath(":icons/svg/gridlayout.svg"));
+        ui->viewType_TB->setToolTip(tr("Click to switch to list view"));
+
+        ui->postsTree->setSelectionBehavior(QAbstractItemView::SelectItems);
+
+        mChannelPostsDelegate->setWidgetGrid(true);
+        mChannelPostsModel->setMode(RsGxsChannelPostsModel::TREE_MODE_GRID);
+
+        handlePostsTreeSizeChange(ui->postsTree->size(),true);
+    }
+
+    for(int i=0;i<mChannelPostsModel->columnCount();++i)
+        ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(i,font(),ui->postsTree->width()));
+
+    selectItem(msg_id);
+    ui->postsTree->setFocus();
+
+    mChannelPostsModel->triggerViewUpdate();	// This is already called by setMode(), but the model cannot know how many
+                                                // columns is actually has until we call handlePostsTreeSizeChange(), so
+                                                // we have to call it again here.
 }
 
 void GxsChannelPostsWidgetWithModel::copyMessageLink()
@@ -405,6 +597,30 @@ void GxsChannelPostsWidgetWithModel::copyMessageLink()
         QMessageBox::critical(NULL,tr("Link creation error"),tr("Link could not be created: ")+e.what());
     }
 }
+void GxsChannelPostsWidgetWithModel::download()
+{
+    QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
+    RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
+
+    std::string destination;
+    rsGxsChannels->getChannelDownloadDirectory(mGroup.mMeta.mGroupId,destination);
+
+    for(auto file:post.mFiles)
+    {
+        std::list<RsPeerId> sources;
+        std::string destination;
+
+        // Add possible direct sources.
+        FileInfo fileInfo;
+        rsFiles->FileDetails(file.mHash, RS_FILE_HINTS_REMOTE, fileInfo);
+
+        for(std::vector<TransferInfo>::const_iterator it = fileInfo.peers.begin(); it != fileInfo.peers.end(); ++it) {
+            sources.push_back((*it).peerId);
+        }
+
+        rsFiles->FileRequest(file.mName, file.mHash, file.mSize, destination, RS_FILE_REQ_ANONYMOUS_ROUTING, sources);
+    }
+}
 
 void GxsChannelPostsWidgetWithModel::editPost()
 {
@@ -415,12 +631,15 @@ void GxsChannelPostsWidgetWithModel::editPost()
     msgDialog->show();
 }
 
-void GxsChannelPostsWidgetWithModel::handlePostsTreeSizeChange(QSize s)
+void GxsChannelPostsWidgetWithModel::handlePostsTreeSizeChange(QSize s,bool force)
 {
-    int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(font()))));
-    std::cerr << "nb columns: " << n_columns << std::endl;
+    if(mChannelPostsModel->getMode() != RsGxsChannelPostsModel::TREE_MODE_GRID)
+        return;
 
-    if(n_columns != mChannelPostsModel->columnCount())
+    int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(0,font(),ui->postsTree->width()))));
+    std::cerr << "nb columns: " << n_columns << " current count=" << mChannelPostsModel->columnCount() << std::endl;
+
+    if(force || (n_columns != mChannelPostsModel->columnCount()))
 		mChannelPostsModel->setNumColumns(n_columns);
 }
 
@@ -461,10 +680,12 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
         ui->postLogo_LB->hide();
 		ui->postName_LB->hide();
 		ui->postTime_LB->hide();
-		mChannelPostFilesModel->clear();
+        mChannelPostFilesModel->clear();
+        ui->details_TW->setEnabled(false);
 
         return;
     }
+    ui->details_TW->setEnabled(true);
 
 	ui->postLogo_LB->show();
 	ui->postName_LB->show();
@@ -506,7 +727,7 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 	ui->postLogo_LB->setFixedSize(W,postImage.height()/(float)postImage.width()*W);
 
 	ui->postName_LB->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str()));
-	ui->postName_LB->setFixedWidth(W);
+
 	ui->postTime_LB->setText(QDateTime::fromMSecsSinceEpoch(post.mMeta.mPublishTs*1000).toString("MM/dd/yyyy, hh:mm"));
 	ui->postTime_LB->setFixedWidth(W);
 
@@ -526,6 +747,13 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 	}
 }
 
+void GxsChannelPostsWidgetWithModel::updateCommentsCount(int n)
+{
+    if(n > 0)
+        ui->details_TW->setTabText(2,tr("Comments (%1)").arg(n));
+    else
+        ui->details_TW->setTabText(2,tr("Comments"));
+}
 void GxsChannelPostsWidgetWithModel::updateGroupData()
 {
 	if(groupId().isNull())
@@ -553,6 +781,8 @@ void GxsChannelPostsWidgetWithModel::updateGroupData()
         {
             mGroup = group;
 			mChannelPostsModel->updateChannel(groupId());
+            whileBlocking(ui->filterLineEdit)->clear();
+            whileBlocking(ui->showUnread_TB)->setChecked(false);
 
             insertChannelDetails(mGroup);
 
@@ -585,10 +815,30 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
     mChannelPostsModel->getFilesList(files);
     mChannelFilesModel->setFiles(files);
 
-    //ui->channelFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_FILE);
-    //ui->channelFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE);
     ui->channelFiles_TV->setAutoSelect(true);
+    ui->channelFiles_TV->sortByColumn(0, Qt::AscendingOrder);
 
+    ui->infoPosts->setText(QString::number(mChannelPostsModel->getNumberOfPosts()) + " / " + QString::number(mGroup.mMeta.mVisibleMsgCount));
+
+    // now compute aspect ratio for posts. We do that by looking at the 5 latest posts and compute the best aspect ratio for them.
+
+    std::vector<uint32_t> ar_votes(4,0);
+
+    for(uint32_t i=0;i<std::min(mChannelPostsModel->getNumberOfPosts(),5u);++i)
+    {
+        const RsGxsChannelPost& post = mChannelPostsModel->post(i);
+        ChannelPostThumbnailView v(post,ChannelPostThumbnailView::FLAG_SHOW_TEXT | ChannelPostThumbnailView::FLAG_SCALE_FONT);
+
+        ++ar_votes[ static_cast<uint32_t>( v.bestAspectRatio() )];
+    }
+    int best=0;
+    for(uint32_t i=0;i<4;++i)
+        if(ar_votes[i] > ar_votes[best])
+            best = i;
+
+    mChannelPostsDelegate->setAspectRatio(static_cast<ChannelPostThumbnailView::AspectRatio>(best));
+    mChannelPostsModel->triggerViewUpdate();
+    handlePostsTreeSizeChange(ui->postsTree->size(),true); // force the update
 }
 
 void GxsChannelPostsWidgetWithModel::updateDisplay(bool complete)
@@ -769,8 +1019,6 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 	rsGxsChannels->getChannelAutoDownload(group.mMeta.mGroupId,autoDownload);
 	setAutoDownload(autoDownload);
 
-	RetroShareLink link;
-
 	if (IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
     {
 		ui->subscribeToolButton->setText(tr("Subscribed") + " " + QString::number(group.mMeta.mPop) );
@@ -789,6 +1037,7 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 
 
 	ui->infoPosts->setText(QString::number(group.mMeta.mVisibleMsgCount));
+
 	if(group.mMeta.mLastPost==0)
 		ui->infoLastPost->setText(tr("Never"));
 	else
@@ -808,8 +1057,11 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 
 	ui->infoAdministrator->setId(group.mMeta.mAuthorId) ;
 
-	link = RetroShareLink::createMessage(group.mMeta.mAuthorId, "");
-	ui->infoAdministrator->setText(link.toHtml());
+    if(!group.mMeta.mAuthorId.isNull())
+    {
+        RetroShareLink link = RetroShareLink::createMessage(group.mMeta.mAuthorId, "");
+        ui->infoAdministrator->setText(link.toHtml());
+    }
 
 	ui->infoCreated->setText(DateTime::formatLongDateTime(group.mMeta.mPublishTs));
 
@@ -850,6 +1102,7 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 #endif
 	ui->subscribeToolButton->setText(tr("Subscribe ") + " " + QString::number(group.mMeta.mPop) );
 
+    showPostDetails();
 }
 
 #ifdef TODO
@@ -893,15 +1146,17 @@ void GxsChannelPostsWidgetWithModel::setViewMode(int viewMode)
 #endif
 }
 
+void GxsChannelPostsWidgetWithModel::switchOnlyUnread(bool)
+{
+    filterChanged(ui->filterLineEdit->text());
+    std::cerr << "Switched to unread/read"<< std::endl;
+}
 void GxsChannelPostsWidgetWithModel::filterChanged(QString s)
 {
     QStringList ql = s.split(' ',QString::SkipEmptyParts);
     uint32_t count;
-    mChannelPostsModel->setFilter(ql,count);
+    mChannelPostsModel->setFilter(ql,ui->showUnread_TB->isChecked(),count);
 	mChannelFilesModel->setFilter(ql,count);
-
-	//mChannelPostFilesProxyModel->setFilterKeyColumn(RsGxsChannelPostFilesModel::COLUMN_FILES_NAME);
-	//mChannelPostFilesProxyModel->setFilterRegExp(s) ;// triggers a re-display. s is actually not used.
 }
 
 #ifdef TODO
@@ -1147,25 +1402,6 @@ public:
 	bool mRead;
 	uint32_t mLastToken;
 };
-
-#ifdef TO_REMOVE
-static void setAllMessagesReadCallback(FeedItem *feedItem, void *data)
-{
-	GxsChannelPostItem *channelPostItem = dynamic_cast<GxsChannelPostItem*>(feedItem);
-	if (!channelPostItem) {
-		return;
-	}
-
-	GxsChannelPostsReadData *readData = (GxsChannelPostsReadData*) data;
-	bool isRead = !channelPostItem->isUnread() ;
-
-	if(channelPostItem->isLoaded() && (isRead == readData->mRead))
-		return ;
-
-	RsGxsGrpMsgIdPair msgPair = std::make_pair(channelPostItem->groupId(), channelPostItem->messageId());
-	rsGxsChannels->setMessageReadStatus(readData->mLastToken, msgPair, readData->mRead);
-}
-#endif
 
 void GxsChannelPostsWidgetWithModel::setAllMessagesReadDo(bool read, uint32_t& /*token*/)
 {

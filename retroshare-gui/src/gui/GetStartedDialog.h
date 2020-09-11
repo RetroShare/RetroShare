@@ -21,9 +21,9 @@
 #ifndef _GETTING_STARTED_DIALOG_H
 #define _GETTING_STARTED_DIALOG_H
 
-//#include <retroshare/rstypes.h>
+#include <retroshare-gui/mainpage.h>
+
 #include "ui_GetStartedDialog.h"
-#include "mainpage.h"
 
 #include <QTimer>
 

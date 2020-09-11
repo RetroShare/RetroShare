@@ -33,6 +33,8 @@
 #include <retroshare/rsdisc.h>
 #include <retroshare/rsmsgs.h>
 
+#include <retroshare-gui/mainpage.h>
+
 #include "gui/help/browser/helpbrowser.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/common/StatusDefs.h"
@@ -40,7 +42,6 @@
 #include "gui/notifyqt.h"
 #include "gui/common/AvatarDefs.h"
 #include "gui/MainWindow.h"
-#include "mainpage.h"
 #include "util/DateTime.h"
 #include "util/misc.h"
 

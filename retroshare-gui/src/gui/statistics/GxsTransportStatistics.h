@@ -27,7 +27,8 @@
 #include <retroshare/rstypes.h>
 #include <retroshare/rsgxstrans.h>
 
-#include "RsAutoUpdatePage.h"
+#include <retroshare-gui/RsAutoUpdatePage.h>
+
 #include "ui_GxsTransportStatistics.h"
 #include "gui/gxs/RsGxsUpdateBroadcastPage.h"
 #include "util/rstime.h"

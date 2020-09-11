@@ -107,7 +107,7 @@ bool RsGxsMessageCleanUp::clean()
 				bool remove = store_period > 0 && ((meta->mPublishTs + store_period) < now) && !have_kids;
 
 				// check client does not want the message kept regardless of age
-				remove &= !(meta->mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP);
+				remove &= !(meta->mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP_FOREVER);
 
 				// if not subscribed remove messages (can optimise this really)
 				remove = remove ||  (grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED);

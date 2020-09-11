@@ -308,8 +308,10 @@ QPixmap misc::getOpenThumbnailedPicture(QWidget *parent, const QString &caption,
 	if (!getOpenFileName(parent, RshareSettings::LASTDIR_IMAGES, caption, tr("Pictures (*.png *.jpeg *.xpm *.jpg *.tiff *.gif)"), fileName))
 		return QPixmap();
 
-    return FilesDefs::getPixmapFromQtResourcePath(fileName).scaledToHeight(height, Qt::SmoothTransformation).copy( 0, 0, width, height);
-    //return FilesDefs::getPixmapFromQtResourcePath(fileName).scaledToHeight(width, height, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+    if(width > 0 && height > 0)
+        return FilesDefs::getPixmapFromQtResourcePath(fileName).scaledToHeight(height, Qt::SmoothTransformation).copy( 0, 0, width, height);
+    else
+        return FilesDefs::getPixmapFromQtResourcePath(fileName);
 }
 
 bool misc::getOpenFileName(QWidget *parent, RshareSettings::enumLastDir type

@@ -44,7 +44,7 @@ Q_DECLARE_METATYPE(RsGxsChannelPost)
 std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsewhere
 
 RsGxsChannelPostsModel::RsGxsChannelPostsModel(QObject *parent)
-    : QAbstractItemModel(parent), mTreeMode(TREE_MODE_PLAIN), mColumns(6)
+    : QAbstractItemModel(parent), mTreeMode(RsGxsChannelPostsModel::TREE_MODE_GRID), mColumns(6)
 {
 	initEmptyHierarchy();
 
@@ -60,6 +60,16 @@ RsGxsChannelPostsModel::RsGxsChannelPostsModel(QObject *parent)
 RsGxsChannelPostsModel::~RsGxsChannelPostsModel()
 {
     rsEvents->unregisterEventsHandler(mEventHandlerId);
+}
+
+void RsGxsChannelPostsModel::setMode(TreeMode mode)
+{
+    mTreeMode = mode;
+
+    if(mode == TREE_MODE_LIST)
+        setNumColumns(2);
+
+    triggerViewUpdate();
 }
 
 void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
@@ -106,7 +116,7 @@ void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEve
 							{
 								mPosts[j] = posts[i];
 
-								emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFilteredPosts.size(),mColumns-1,(void*)NULL));
+                                triggerViewUpdate();
 							}
 					}
 				},this);
@@ -124,25 +134,23 @@ void RsGxsChannelPostsModel::initEmptyHierarchy()
 
     mPosts.clear();
     mFilteredPosts.clear();
-//    mPosts.resize(1);	// adds a sentinel item
-//    mPosts[0].mMeta.mMsgName = "Root sentinel post" ;
-//    mFilteredPosts.resize(1);
-//    mFilteredPosts[0] = 1;
 
     postMods();
 }
 
 void RsGxsChannelPostsModel::preMods()
 {
-	//emit layoutAboutToBeChanged(); //Generate SIGSEGV when click on button move next/prev.
-
 	beginResetModel();
 }
 void RsGxsChannelPostsModel::postMods()
 {
 	endResetModel();
 
-	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFilteredPosts.size(),mColumns-1,(void*)NULL));
+    triggerViewUpdate();
+}
+void RsGxsChannelPostsModel::triggerViewUpdate()
+{
+    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1,mColumns-1,(void*)NULL));
 }
 
 void RsGxsChannelPostsModel::getFilesList(std::list<ChannelPostFileInfo>& files)
@@ -161,35 +169,30 @@ void RsGxsChannelPostsModel::getFilesList(std::list<ChannelPostFileInfo>& files)
         files.push_back(it.second);
 }
 
-void RsGxsChannelPostsModel::setFilter(const QStringList& strings, uint32_t& count)
+void RsGxsChannelPostsModel::setFilter(const QStringList& strings,bool only_unread, uint32_t& count)
 {
     preMods();
 
 	beginRemoveRows(QModelIndex(),0,rowCount()-1);
     endRemoveRows();
 
-	if(strings.empty())
+    mFilteredPosts.clear();
+    //mFilteredPosts.push_back(0);
+
+    for(size_t i=0;i<mPosts.size();++i)
     {
-        mFilteredPosts.clear();
-        for(size_t i=0;i<mPosts.size();++i)
+        bool passes_strings = true;
+
+        for(auto& s:strings)
+            passes_strings = passes_strings && QString::fromStdString(mPosts[i].mMeta.mMsgName).contains(s,Qt::CaseInsensitive);
+
+        if(strings.empty())
+            passes_strings = true;
+
+        if(passes_strings && (!only_unread || (IS_MSG_UNREAD(mPosts[i].mMeta.mMsgStatus) || IS_MSG_NEW(mPosts[i].mMeta.mMsgStatus))))
             mFilteredPosts.push_back(i);
     }
-	else
-    {
-        mFilteredPosts.clear();
-        //mFilteredPosts.push_back(0);
 
-        for(size_t i=0;i<mPosts.size();++i)
-        {
-            bool passes_strings = true;
-
-			for(auto& s:strings)
-				passes_strings = passes_strings && QString::fromStdString(mPosts[i].mMeta.mMsgName).contains(s,Qt::CaseInsensitive);
-
-            if(passes_strings)
-                mFilteredPosts.push_back(i);
-        }
-    }
     count = mFilteredPosts.size();
 
     std::cerr << "After filtering: " << count << " posts remain." << std::endl;
@@ -209,7 +212,12 @@ int RsGxsChannelPostsModel::rowCount(const QModelIndex& parent) const
         return 0;
 
     if(!parent.isValid())
-		return (mFilteredPosts.size() + mColumns-1)/mColumns; // mFilteredPosts always has an item at 0, so size()>=1, and mColumn>=1
+    {
+        if(mTreeMode == TREE_MODE_GRID)
+            return (mFilteredPosts.size() + mColumns-1)/mColumns; // mFilteredPosts always has an item at 0, so size()>=1, and mColumn>=1
+        else
+            return mFilteredPosts.size();
+    }
 
     RsErr() << __PRETTY_FUNCTION__ << " rowCount cannot figure out the porper number of rows." << std::endl;
     return 0;
@@ -217,7 +225,10 @@ int RsGxsChannelPostsModel::rowCount(const QModelIndex& parent) const
 
 int RsGxsChannelPostsModel::columnCount(const QModelIndex &/*parent*/) const
 {
-	return std::min((int)mFilteredPosts.size(),(int)mColumns) ;
+    if(mTreeMode == TREE_MODE_GRID)
+        return std::min((int)mFilteredPosts.size(),(int)mColumns) ;
+    else
+        return 2;
 }
 
 bool RsGxsChannelPostsModel::getPostData(const QModelIndex& i,RsGxsChannelPost& fmpe) const
@@ -284,7 +295,7 @@ QModelIndex RsGxsChannelPostsModel::index(int row, int column, const QModelIndex
     if(row < 0 || column < 0 || column >= (int)mColumns)
 		return QModelIndex();
 
-    quintptr ref = getChildRef(parent.internalId(),column + row*mColumns);
+    quintptr ref = getChildRef(parent.internalId(),(mTreeMode == TREE_MODE_GRID)?(column + row*mColumns):row);
 
 #ifdef DEBUG_CHANNEL_MODEL
 	std::cerr << "index-3(" << row << "," << column << " parent=" << parent << ") : " << createIndex(row,column,ref) << std::endl;
@@ -363,8 +374,6 @@ quintptr RsGxsChannelPostsModel::getParentRow(quintptr ref,int& row) const
 
 int RsGxsChannelPostsModel::getChildrenCount(quintptr ref) const
 {
-	uint32_t entry = 0 ;
-
     if(ref == quintptr(0))
         return rowCount()-1;
 
@@ -421,7 +430,7 @@ QVariant RsGxsChannelPostsModel::data(const QModelIndex &index, int role) const
 	}
 }
 
-QVariant RsGxsChannelPostsModel::sizeHintRole(int col) const
+QVariant RsGxsChannelPostsModel::sizeHintRole(int /* col */) const
 {
 	float factor = QFontMetricsF(QApplication::font()).height()/14.0f ;
 
@@ -493,7 +502,7 @@ void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vecto
     std::sort(mPosts.begin(),mPosts.end());
 
     mFilteredPosts.clear();
-    for(int i=0;i<mPosts.size();++i)
+    for(uint32_t i=0;i<mPosts.size();++i)
         mFilteredPosts.push_back(i);
 
 #ifdef DEBUG_CHANNEL_MODEL
@@ -563,8 +572,6 @@ void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
 
     });
 }
-
-static bool decreasing_time_comp(const std::pair<time_t,RsGxsMessageId>& e1,const std::pair<time_t,RsGxsMessageId>& e2) { return e2.first < e1.first ; }
 
 void RsGxsChannelPostsModel::createPostsArray(std::vector<RsGxsChannelPost>& posts)
 {
@@ -689,10 +696,25 @@ void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
     // No need to call preMods()/postMods() here because we're not changing the model
     // All operations below are done async
 
-    RsThread::async([this, read_status]()
+    // 1 - copy all msg/grp id groups, so that changing the mPosts list while calling the async method will not break the work
+
+    std::vector<RsGxsGrpMsgIdPair> pairs;
+
+    for(uint32_t i=0;i<mPosts.size();++i)
     {
-        for(uint32_t i=0;i<mPosts.size();++i)
-            rsGxsChannels->markRead(RsGxsGrpMsgIdPair(mPosts[i].mMeta.mGroupId,mPosts[i].mMeta.mMsgId),read_status);
+        bool post_status = !((IS_MSG_UNREAD(mPosts[i].mMeta.mMsgStatus) || IS_MSG_NEW(mPosts[i].mMeta.mMsgStatus)));
+
+        if(post_status != read_status)
+            pairs.push_back(RsGxsGrpMsgIdPair(mPosts[i].mMeta.mGroupId,mPosts[i].mMeta.mMsgId));
+     }
+
+    // 2 - then call the async methods
+
+    RsThread::async([pairs, read_status]()
+    {
+        for(uint32_t i=0;i<pairs.size();++i)
+            if(!rsGxsChannels->markRead(pairs[i],read_status))
+                 RsErr() << "setAllMsgReadStatus: failed to change status of msg " << pairs[i].first << " in group " << pairs[i].second << " to status " << read_status << std::endl;
     });
 }
 
@@ -720,15 +742,18 @@ QModelIndex RsGxsChannelPostsModel::getIndexOfMessage(const RsGxsMessageId& mid)
 
     for(uint32_t i=0;i<mFilteredPosts.size();++i)
     {
-		// First look into msg versions, in case the msg is a version of an existing message
+        // First look into msg versions, in case the msg is a version of an existing message
 
         for(auto& msg_id:mPosts[mFilteredPosts[i]].mOlderVersions)
             if(msg_id == postId)
             {
-				quintptr ref ;
-				convertTabEntryToRefPointer(i,ref);	// we dont use i+1 here because i is not a row, but an index in the mPosts tab
+                quintptr ref ;
+                convertTabEntryToRefPointer(i,ref);	// we dont use i+1 here because i is not a row, but an index in the mPosts tab
 
-				return createIndex(i/mColumns,i%mColumns, ref);
+                if(mTreeMode == TREE_MODE_GRID)
+                    return createIndex(i/mColumns,i%mColumns, ref);
+                else
+                    return createIndex(i,0, ref);
             }
 
         if(mPosts[mFilteredPosts[i]].mMeta.mMsgId == postId)
@@ -736,7 +761,10 @@ QModelIndex RsGxsChannelPostsModel::getIndexOfMessage(const RsGxsMessageId& mid)
             quintptr ref ;
             convertTabEntryToRefPointer(i,ref);	// we dont use i+1 here because i is not a row, but an index in the mPosts tab
 
-			return createIndex(i/mColumns,i%mColumns, ref);
+            if(mTreeMode == TREE_MODE_GRID)
+                return createIndex(i/mColumns,i%mColumns, ref);
+            else
+                return createIndex(i,0, ref);
         }
     }
 

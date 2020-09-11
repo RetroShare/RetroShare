@@ -19,9 +19,10 @@
  *******************************************************************************/
 #pragma once
 
+#include <retroshare-gui/RsAutoUpdatePage.h>
+
 #include "ui_ChatLobbyWidget.h"
 
-#include "RsAutoUpdatePage.h"
 #include "chat/ChatLobbyUserNotify.h"
 #include "gui/gxs/GxsIdChooser.h"
 

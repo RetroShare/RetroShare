@@ -454,6 +454,7 @@ void NewFriendList::processSettings(bool load)
 
     if (load) // load settings
     {
+        std::cerr <<"Re-loading settings..." << std::endl;
         // states
         setShowUnconnected(!Settings->value("hideUnconnected", !mProxyModel->showOfflineNodes()).toBool());
         setShowState(Settings->value("showState", mModel->getDisplayStatusString()).toBool());
@@ -1088,16 +1089,46 @@ void NewFriendList::removeGroup()
     checkInternalData(true);
 }
 
-void NewFriendList::checkInternalData(bool force)
+void NewFriendList::applyWhileKeepingTree(std::function<void()> predicate)
 {
     std::set<QString> expanded_indexes;
-	std::set<QString> selected_indexes;
+    std::set<QString> selected_indexes;
 
-	saveExpandedPathsAndSelection(expanded_indexes, selected_indexes);
+    saveExpandedPathsAndSelection(expanded_indexes, selected_indexes);
 
-    mModel->checkInternalData(force);
+    // This is a hack to avoid crashes on windows while calling endInsertRows(). I'm not sure wether these crashes are
+    // due to a Qt bug, or a misuse of the proxy model on my side. Anyway, this solves them for good.
+    // As a side effect we need to save/restore hidden columns because setSourceModel() resets this setting.
 
-	restoreExpandedPathsAndSelection(expanded_indexes, selected_indexes);
+    // save hidden columns and sizes
+    std::vector<bool> col_visible(RsFriendListModel::COLUMN_THREAD_NB_COLUMNS);
+    std::vector<int> col_sizes(RsFriendListModel::COLUMN_THREAD_NB_COLUMNS);
+
+    for(int i=0;i<RsFriendListModel::COLUMN_THREAD_NB_COLUMNS;++i)
+    {
+        col_visible[i] = !ui->peerTreeWidget->isColumnHidden(i);
+        col_sizes[i] = ui->peerTreeWidget->columnWidth(i);
+    }
+
+
+    mProxyModel->setSourceModel(nullptr);
+
+    predicate();
+
+    mProxyModel->setSourceModel(mModel);
+    restoreExpandedPathsAndSelection(expanded_indexes, selected_indexes);
+
+    // restore hidden columns
+    for(uint32_t i=0;i<RsFriendListModel::COLUMN_THREAD_NB_COLUMNS;++i)
+    {
+        ui->peerTreeWidget->setColumnHidden(i,!col_visible[i]);
+        ui->peerTreeWidget->setColumnWidth(i,col_sizes[i]);
+    }
+}
+
+void NewFriendList::checkInternalData(bool force)
+{
+    applyWhileKeepingTree([force,this]() { mModel->checkInternalData(force) ; });
 }
 
 void NewFriendList::exportFriendlistClicked()
@@ -1485,6 +1516,7 @@ bool NewFriendList::isColumnVisible(int col) const
 }
 void NewFriendList::setColumnVisible(int col,bool visible)
 {
+    std::cerr << "Setting column " << col << " to be visible: " << visible << std::endl;
     ui->peerTreeWidget->setColumnHidden(col, !visible);
 }
 void NewFriendList::toggleColumnVisible()
@@ -1502,12 +1534,12 @@ void NewFriendList::toggleColumnVisible()
 
 void NewFriendList::setShowState(bool show)
 {
-    mModel->setDisplayStatusString(show);
+    applyWhileKeepingTree([show,this]() { mModel->setDisplayStatusString(show) ; });
 }
 
 void NewFriendList::setShowGroups(bool show)
 {
-    mModel->setDisplayGroups(show);
+    applyWhileKeepingTree([show,this]() { mModel->setDisplayGroups(show) ; });
 }
 
 /**

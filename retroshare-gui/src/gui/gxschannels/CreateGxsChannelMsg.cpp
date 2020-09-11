@@ -78,10 +78,19 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 	connect(thumbNailCb, SIGNAL(toggled(bool)), this, SLOT(allowAutoMediaThumbNail(bool)));
 	connect(stackedWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenu(QPoint)));
 	connect(generateCheckBox, SIGNAL(toggled(bool)), generateSpinBox, SLOT(setEnabled(bool)));
+    connect(aspectRatio_CB,SIGNAL(currentIndexChanged(int)),this,SLOT(changeAspectRatio(int)));
+
+    aspectRatio_CB->setItemIcon(0,FilesDefs::getIconFromQtResourcePath(":/icons/svg/ratio-auto.svg"));
+    aspectRatio_CB->setItemIcon(1,FilesDefs::getIconFromQtResourcePath(":/icons/svg/ratio-1-1.svg"));
+    aspectRatio_CB->setItemIcon(2,FilesDefs::getIconFromQtResourcePath(":/icons/svg/ratio-3-4.svg"));
+    aspectRatio_CB->setItemIcon(3,FilesDefs::getIconFromQtResourcePath(":/icons/svg/ratio-16-9.svg"));
 
 	generateSpinBox->setEnabled(false);
 
-	thumbNailCb->setVisible(false);
+    preview_W->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ChannelPostThumbnailView::CHAN_DEFAULT_IMAGE),true);
+    preview_W->setText("[Text preview]");
+
+    thumbNailCb->setVisible(false);
 	thumbNailCb->setEnabled(false);
 #ifdef CHANNELS_FRAME_CATCHER
 	fCatcher = new framecatcher();
@@ -107,6 +116,19 @@ CreateGxsChannelMsg::~CreateGxsChannelMsg()
 #endif
 }
 
+void CreateGxsChannelMsg::changeAspectRatio(int s)
+{
+    switch(s)
+    {
+    case 0: break;
+    case 1: preview_W->setAspectRatio(ChannelPostThumbnailView::ASPECT_RATIO_1_1);
+        break;
+    case 2: preview_W->setAspectRatio(ChannelPostThumbnailView::ASPECT_RATIO_2_3);
+        break;
+    case 3: preview_W->setAspectRatio(ChannelPostThumbnailView::ASPECT_RATIO_16_9);
+        break;
+    }
+}
 void CreateGxsChannelMsg::contextMenu(QPoint /*point*/)
 {
 	QList<RetroShareLink> links ;
@@ -688,7 +710,7 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
 			// send chan image
 
 			buffer.open(QIODevice::WriteOnly);
-			picture.save(&buffer, "PNG"); // writes image into ba in PNG format
+            preview_W->getCroppedScaledPicture().save(&buffer, "PNG"); // writes image into ba in PNG format
 			post.mThumbnail.copy((uint8_t *) ba.data(), ba.size());
 		}
 
@@ -723,7 +745,7 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
 
 void CreateGxsChannelMsg::addThumbnail()
 {
-	QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load thumbnail picture"), 107,156);	// these absolute sizes are terrible
+    QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load thumbnail picture"), 0,0);	// 0,0 means: no scale.
 
 	if (img.isNull())
 		return;
@@ -731,7 +753,8 @@ void CreateGxsChannelMsg::addThumbnail()
 	picture = img;
 
 	// to show the selected
-	preview_W->setPixmap(picture);
+    preview_W->setPixmap(picture, aspectRatio_CB->currentIndex()==0);
+
 }
 
 void CreateGxsChannelMsg::loadOriginalChannelPostInfo()
@@ -775,7 +798,7 @@ void CreateGxsChannelMsg::loadOriginalChannelPostInfo()
 			if(post.mThumbnail.mData != NULL)
 			{
 				GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData,post.mThumbnail.mSize,picture,GxsIdDetails::ORIGINAL);
-				preview_W->setPixmap(picture);
+                preview_W->setPixmap(picture,true);
 			}
 
 

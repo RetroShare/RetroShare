@@ -312,6 +312,12 @@ void GxsGroupFrameDialog::updateSearchResults(const TurtleRequestId& sid)
 
 	auto it2 = mSearchGroupsItems.find(sid);
 
+    if(it2 == mSearchGroupsItems.end())
+    {
+        std::cerr << "(EE) received a channel group turtle search result with ID " << sid << " but no item is known for this search" << std::endl;
+        return;
+    }
+
 	QList<GroupItemInfo> group_items ;
 
 	for(auto it3(group_infos.begin());it3!=group_infos.end();++it3)

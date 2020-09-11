@@ -43,9 +43,6 @@ public:
 private slots:
 	void updateEmotes();
   
-protected slots:
-	void updateLoadThread() ;
-
 private:
 	Ui::ChannelPage ui;
 };
