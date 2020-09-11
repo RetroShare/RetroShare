@@ -1377,6 +1377,8 @@ gxschannels {
 		gui/gxschannels/GxsChannelPostsWidgetWithModel.cpp \
 		gui/gxschannels/GxsChannelPostFilesModel.cpp \
 		gui/gxschannels/GxsChannelFilesStatusWidget.cpp \
+		gui/gxschannels/GxsChannelFilesWidget.cpp \
+                gui/gxschannels/GxsChannelPostThumbnail.cpp \
 		gui/gxschannels/GxsChannelGroupDialog.cpp \
 		gui/gxschannels/CreateGxsChannelMsg.cpp \
 		gui/feeds/GxsChannelGroupItem.cpp \

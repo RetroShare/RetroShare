@@ -195,8 +195,6 @@ public:
 	/**
 	 * @brief Post event to the event queue.
 	 * @param[in] event
-	 * @param[out] errorMessage Optional storage for error messsage, meaningful
-	 *                          only on failure.
 	 * @return Success or error details.
 	 */
 	virtual std::error_condition postEvent(
@@ -206,8 +204,6 @@ public:
 	 * @brief Send event directly to handlers. Blocking API
 	 * The handlers get exectuded on the caller thread.
 	 * @param[in] event
-	 * @param[out] errorMessage Optional storage for error messsage, meaningful
-	 *                          only on failure.
 	 * @return Success or error details.
 	 */
 	virtual std::error_condition sendEvent(

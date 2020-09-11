@@ -196,7 +196,6 @@ bool RsGxsGrpMetaData::deserialise(void *data, uint32_t &pktsize)
 
     return ok;
 }
-int RsGxsMsgMetaData::refcount = 0;
 
 RsGxsMsgMetaData::RsGxsMsgMetaData(){
 	clear();

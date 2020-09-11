@@ -237,11 +237,10 @@ RsGenExchange::ServiceCreate_Return p3GxsChannels::service_CreateGroup(RsGxsGrpI
 
 void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 {
-#ifdef GXSCHANNELS_DEBUG
-	std::cerr << "p3GxsChannels::notifyChanges() : " << changes.size() << "changes to notify" << std::endl;
+#ifdef GXSCHANNEL_DEBUG
+    RsDbg() << " Processing " << changes.size() << " channel changes..." << std::endl;
 #endif
-
-	/* iterate through and grab any new messages */
+    /* iterate through and grab any new messages */
 	std::set<RsGxsGroupId> unprocessedGroups;
 
 	std::vector<RsGxsNotify *>::iterator it;
@@ -295,6 +294,10 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 		if (grpChange && rsEvents)
 		{
+#ifdef GXSCHANNEL_DEBUG
+            RsDbg() << " Grp Change Event or type " << grpChange->getType() << ":" << std::endl;
+#endif
+
 			switch (grpChange->getType())
 			{
 			case RsGxsNotify::TYPE_PROCESSED:	// happens when the group is subscribed
@@ -322,18 +325,27 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 				RS_STACK_MUTEX(mKnownChannelsMutex);
 
-				if(mKnownChannels.find(grpChange->mGroupId) == mKnownChannels.end())
+#ifdef GXSCHANNEL_DEBUG
+                RsDbg() << "    Type = Published/New " << std::endl;
+#endif
+                if(mKnownChannels.find(grpChange->mGroupId) == mKnownChannels.end())
 				{
-					mKnownChannels.insert(std::make_pair(grpChange->mGroupId,time(NULL))) ;
+#ifdef GXSCHANNEL_DEBUG
+                    RsDbg() << "    Status: unknown. Sending notification event." << std::endl;
+#endif
+
+                    mKnownChannels.insert(std::make_pair(grpChange->mGroupId,time(NULL))) ;
 					IndicateConfigChanged();
 
 					auto ev = std::make_shared<RsGxsChannelEvent>();
 					ev->mChannelGroupId = grpChange->mGroupId;
 					ev->mChannelEventCode = RsChannelEventCode::NEW_CHANNEL;
 					rsEvents->postEvent(ev);
-				}
+                }
+#ifdef GXSCHANNEL_DEBUG
 				else
-					std::cerr << "(II) Not notifying already known channel " << grpChange->mGroupId << std::endl;
+                    RsDbg() << "    Not notifying already known channel " << grpChange->mGroupId << std::endl;
+#endif
 			}
 				break;
 

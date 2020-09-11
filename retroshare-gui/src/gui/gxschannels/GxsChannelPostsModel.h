@@ -92,8 +92,8 @@ public:
 #endif
 
     enum TreeMode{ TREE_MODE_UNKWN  = 0x00,
-                   TREE_MODE_PLAIN  = 0x01,
-                   TREE_MODE_FILES  = 0x02,
+                   TREE_MODE_GRID   = 0x01,
+                   TREE_MODE_LIST   = 0x02,
     };
 
 #ifdef TODO
@@ -107,11 +107,18 @@ public:
 
 	std::vector<std::pair<time_t,RsGxsMessageId> > getPostVersions(const RsGxsMessageId& mid) const;
 
+    uint32_t getNumberOfPosts() { return mPosts.size() ; }
+    const RsGxsChannelPost& post(uint32_t i) const { return mPosts[i]; }
+
     // This method will asynchroneously update the data
 	void updateChannel(const RsGxsGroupId& channel_group_id);
     const RsGxsGroupId& currentGroupId() const;
 
+    void triggerViewUpdate();
+
     void setNumColumns(int n);
+    void setMode(TreeMode mode);
+    TreeMode getMode() const { return mTreeMode; }
 
     // Retrieve the full list of files for all posts.
 
@@ -130,7 +137,7 @@ public:
     void setMsgReadStatus(const QModelIndex &i, bool read_status);
     void setAllMsgReadStatus(bool read_status);
 
-    void setFilter(const QStringList &strings, uint32_t &count) ;
+    void setFilter(const QStringList &strings, bool only_unread,uint32_t &count) ;
 
 #ifdef TODO
 	void setAuthorOpinion(const QModelIndex& indx,RsOpinion op);
@@ -227,8 +234,6 @@ private:
 
     std::vector<int> mFilteredPosts;		// stores the list of displayes indices due to filtering.
     std::vector<RsGxsChannelPost> mPosts ;  // store the list of posts updated from rsForums.
-
-	//std::map<RsGxsMessageId,std::vector<std::pair<time_t,RsGxsMessageId> > > mPostVersions; // stores versions of posts
 
     QColor mTextColorRead          ;
     QColor mTextColorUnread        ;
