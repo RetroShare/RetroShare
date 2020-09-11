@@ -230,6 +230,11 @@ void GxsForumThreadWidget::setTextColorUnread        (QColor color) { mTextColor
 void GxsForumThreadWidget::setTextColorUnreadChildren(QColor color) { mTextColorUnreadChildren = color; mThreadModel->setTextColorUnreadChildren(color);}
 void GxsForumThreadWidget::setTextColorNotSubscribed (QColor color) { mTextColorNotSubscribed  = color; mThreadModel->setTextColorNotSubscribed (color);}
 void GxsForumThreadWidget::setTextColorMissing       (QColor color) { mTextColorMissing        = color; mThreadModel->setTextColorMissing       (color);}
+// Suppose to be different from unread one
+void GxsForumThreadWidget::setTextColorPinned        (QColor color) { mTextColorPinned         = color; mThreadModel->setTextColorPinned        (color);}
+
+void GxsForumThreadWidget::setBackgroundColorPinned  (QColor color) { mBackgroundColorPinned   = color; mThreadModel->setBackgroundColorPinned   (color);}
+void GxsForumThreadWidget::setBackgroundColorFiltered(QColor color) { mBackgroundColorFiltered = color; mThreadModel->setBackgroundColorFiltered (color);}
 
 GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget *parent) :
 	GxsMessageFrameWidget(rsGxsForums, parent),
@@ -331,6 +336,9 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	ttheader->hideSection (RsGxsForumModel::COLUMN_THREAD_MSGID);
 	ttheader->hideSection (RsGxsForumModel::COLUMN_THREAD_DATA);
 
+	ttheader->setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(ttheader, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(headerContextMenuRequested(QPoint)));
+
 	ui->progressBar->hide();
 	ui->progressText->hide();
 
@@ -342,6 +350,8 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 	// load settings
 	processSettings(true);
+
+	mDisplayBannedText = false;
 
 	blankPost();
 
@@ -611,6 +621,11 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	QAction* expandAll = new QAction(tr("Expand all"), &contextMnu);
 	connect(expandAll, SIGNAL(triggered()), ui->threadTreeWidget, SLOT(expandAll()));
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+	QAction* expandSubtree = new QAction(tr("Expand subtree"), &contextMnu);
+	connect(expandSubtree, SIGNAL(triggered()), this, SLOT(expandSubtree()));
+#endif
+
 	QAction* collapseAll = new QAction(tr( "Collapse all"), &contextMnu);
 	connect(collapseAll, SIGNAL(triggered()), ui->threadTreeWidget, SLOT(collapseAll()));
 
@@ -629,11 +644,19 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	QAction *showinpeopleAct = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/info16.png"), tr("Show author in people tab"), &contextMnu);
 	connect(showinpeopleAct, SIGNAL(triggered()), this, SLOT(showInPeopleTab()));
 
+	bool has_children = false;
+	if (has_current_post) {
+		has_children = !current_post.mChildren.empty();
+	}
+
 	if (IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags))
     {
 		markMsgAsReadChildren->setEnabled(current_post.mPostFlags & ForumModelPostEntry::FLAG_POST_HAS_UNREAD_CHILDREN);
 		markMsgAsUnreadChildren->setEnabled(current_post.mPostFlags & ForumModelPostEntry::FLAG_POST_HAS_READ_CHILDREN);
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+		expandSubtree->setEnabled(has_children);
+#endif
 		replyAct->setEnabled (true);
 		replyauthorAct->setEnabled (true);
 	}
@@ -645,6 +668,22 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 		markMsgAsUnreadChildren->setDisabled(true);
 		replyAct->setDisabled (true);
         replyauthorAct->setDisabled (true);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+		expandSubtree->setDisabled(true);
+		expandSubtree->setVisible(false);
+#endif
+	}
+
+	// disable visibility for childless
+	if (has_current_post) {
+		// still no setEnabled
+		markMsgAsRead->setVisible(IS_MSG_UNREAD(current_post.mMsgStatus));
+		markMsgAsUnread->setVisible(!IS_MSG_UNREAD(current_post.mMsgStatus));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+		expandSubtree->setVisible(has_children);
+#endif
+		markMsgAsReadChildren->setVisible(has_children);
+		markMsgAsUnreadChildren->setVisible(has_children);
 	}
 
 	if(has_current_post)
@@ -678,7 +717,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	}
 
 	contextMnu.addAction(replyAct);
-  contextMnu.addAction(newthreadAct);
+	contextMnu.addAction(newthreadAct);
     QAction* action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()));
 	action->setEnabled(!groupId().isNull() && !mThreadId.isNull());
 	contextMnu.addSeparator();
@@ -688,6 +727,9 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	contextMnu.addAction(markMsgAsUnreadChildren);
     contextMnu.addSeparator();
     contextMnu.addAction(expandAll);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+	contextMnu.addAction(expandSubtree);
+#endif
 	contextMnu.addAction(collapseAll);
 
     if(has_current_post)
@@ -737,6 +779,64 @@ void GxsForumThreadWidget::contextMenuTextBrowser(QPoint point)
 
 	contextMnu->exec(ui->postText->viewport()->mapToGlobal(point));
 	delete(contextMnu);
+}
+
+void GxsForumThreadWidget::headerContextMenuRequested(const QPoint &pos)
+{
+	QMenu* header_context_menu = new QMenu(tr("Show column"), this);
+
+	QAction* title = header_context_menu->addAction(QIcon(), tr("Title"));
+	title->setCheckable(true);
+	title->setChecked(!ui->threadTreeWidget->isColumnHidden(RsGxsForumModel::COLUMN_THREAD_TITLE));
+	title->setData(RsGxsForumModel::COLUMN_THREAD_TITLE);
+	connect(title, SIGNAL(toggled(bool)), this, SLOT(changeHeaderColumnVisibility(bool)));
+
+	QAction* read = header_context_menu->addAction(QIcon(), tr("Read"));
+	read->setCheckable(true);
+	read->setChecked(!ui->threadTreeWidget->isColumnHidden(RsGxsForumModel::COLUMN_THREAD_READ));
+	read->setData(RsGxsForumModel::COLUMN_THREAD_READ);
+	connect(read, SIGNAL(toggled(bool)), this, SLOT(changeHeaderColumnVisibility(bool)));
+
+	QAction* date = header_context_menu->addAction(QIcon(), tr("Date"));
+	date->setCheckable(true);
+	date->setChecked(!ui->threadTreeWidget->isColumnHidden(RsGxsForumModel::COLUMN_THREAD_DATE));
+	date->setData(RsGxsForumModel::COLUMN_THREAD_DATE);
+	connect(date, SIGNAL(toggled(bool)), this, SLOT(changeHeaderColumnVisibility(bool)));
+
+	QAction* distribution = header_context_menu->addAction(QIcon(), tr("Distribution"));
+	distribution->setCheckable(true);
+	distribution->setChecked(!ui->threadTreeWidget->isColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION));
+	distribution->setData(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION);
+	connect(distribution, SIGNAL(toggled(bool)), this, SLOT(changeHeaderColumnVisibility(bool)));
+
+	// QAction* author = header_context_menu->addAction(QIcon(), tr("Author"));
+	// author->setCheckable(true);
+	// author->setChecked(!ui->threadTreeWidget->isColumnHidden(RsGxsForumModel::COLUMN_THREAD_AUTHOR));
+	// author->setData(RsGxsForumModel::COLUMN_THREAD_AUTHOR);
+	// connect(author, SIGNAL(toggled(bool)), this, SLOT(changeHeaderColumnVisibility(bool)));
+
+	QAction* show_text_from_banned = header_context_menu->addAction(QIcon(), tr("Show text from banned persons"));
+	show_text_from_banned->setCheckable(true);
+	show_text_from_banned->setChecked(mDisplayBannedText);
+	connect(show_text_from_banned, SIGNAL(toggled(bool)), this, SLOT(showBannedText(bool)));
+	
+	header_context_menu->exec(mapToGlobal(pos));
+	delete(header_context_menu);
+}
+
+void GxsForumThreadWidget::changeHeaderColumnVisibility(bool visibility) {
+	QAction* the_action = qobject_cast<QAction*>(sender());
+	if ( !the_action ) {
+		return;
+	}
+	ui->threadTreeWidget->setColumnHidden(the_action->data().toInt(), !visibility);
+}
+
+void GxsForumThreadWidget::showBannedText(bool display) {
+	mDisplayBannedText = display;
+	if (!mThreadId.isNull()) {
+		updateMessageData(mThreadId);
+	}
 }
 
 #ifdef TODO
@@ -916,6 +1016,9 @@ void GxsForumThreadWidget::updateForumDescription(bool success)
     if (!mThreadId.isNull())
         return;
 
+	// still call it to not left leftovers from previous post if any
+	blankPost();
+
     RsIdentityDetails details;
 
     rsIdentity->getIdDetails(mForumGroup.mMeta.mAuthorId,details);
@@ -1042,6 +1145,7 @@ void GxsForumThreadWidget::insertMessage()
 
 	/* blank text, incase we get nothing */
 	blankPost();
+	ui->nextUnreadButton->setEnabled(true);
 
     // We use this instead of getCurrentIndex() because right here the currentIndex() is not set yet.
 
@@ -1157,7 +1261,8 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 	        rsReputations->overallReputationLevel(msg.mMeta.mAuthorId);
 	bool redacted =
 	        (overall_reputation == RsReputationLevel::LOCALLY_NEGATIVE);
-    
+
+	// TODO enabled even when there are no new message
 	ui->nextUnreadButton->setEnabled(true);
 	ui->lineLeft->show();
 	ui->time_label->setText(DateTime::formatLongDateTime(msg.mMeta.mPublishTs));
@@ -1167,31 +1272,45 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 	ui->by_label->show();
 	ui->threadTreeWidget->setFocus();
 
+	QString banned_text_info = "";
 	if(redacted) {
-		QString extraTxt = tr( "<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(msg.mMeta.mAuthorId.toStdString())) ;
-		extraTxt +=        tr( "<UL><li><b><font color=\"#ff0000\">Messages from this author are not forwarded. </font></b></li>") ;
-		extraTxt +=        tr( "<li><b><font color=\"#ff0000\">Messages from this author are replaced by this text. </font></b></li></ul>") ;
-		extraTxt +=        tr( "<p><b><font color=\"#ff0000\">You can force the visibility and forwarding of messages by setting a different opinion for that Id in People's tab.</font></b></p>") ;
+		ui->downloadButton->setDisabled(true);
+		if (!mDisplayBannedText) {
+			QString extraTxt = tr( "<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(msg.mMeta.mAuthorId.toStdString())) ;
+			extraTxt +=        tr( "<UL><li><b><font color=\"#ff0000\">Messages from this author are not forwarded. </font></b></li>") ;
+			extraTxt +=        tr( "<li><b><font color=\"#ff0000\">Messages from this author are replaced by this text. </font></b></li></ul>") ;
+			extraTxt +=        tr( "<p><b><font color=\"#ff0000\">You can force the visibility and forwarding of messages by setting a different opinion for that Id in People's tab.</font></b></p>") ;
 
-		ui->postText->setHtml(extraTxt) ;
-	} else {
-		uint32_t flags = RSHTML_FORMATTEXT_EMBED_LINKS;
-		if(Settings->getForumLoadEmoticons())
-			flags |= RSHTML_FORMATTEXT_EMBED_SMILEYS ;
-		flags |= RSHTML_OPTIMIZEHTML_MASK;
+			ui->postText->setHtml(extraTxt) ;
+			return;
+		}
+		else {
+			RsIdentityDetails details;
+			rsIdentity->getIdDetails(msg.mMeta.mAuthorId, details);
+			QString name = GxsIdDetails::getName(details);
 
-		QColor backgroundColor = ui->postText->palette().base().color();
-		qreal desiredContrast = Settings->valueFromGroup("Forum",
-			"MinimumContrast", 4.5).toDouble();
-		int desiredMinimumFontSize = Settings->valueFromGroup("Forum",
-			"MinimumFontSize", 10).toInt();
-
-		QString extraTxt = RsHtml().formatText(ui->postText->document(),
-			QString::fromUtf8(msg.mMsg.c_str()), flags
-				, backgroundColor, desiredContrast, desiredMinimumFontSize
-			);
-		ui->postText->setHtml(extraTxt);
+			banned_text_info += "<p><font color=\"#e00000\"><b>" + tr( "The author of this message (with ID %1) is banned. And named by name ( %2 )").arg(QString::fromStdString(msg.mMeta.mAuthorId.toStdString()), name) + "</b>";
+			banned_text_info += "<ul><li><b><font color=\"#e00000\">" + tr( "Messages from this author are not forwarded.") + "</font></b></li></ul>";
+			banned_text_info += "<p><b><font color=\"#e00000\">" + tr( "You can force the visibility and forwarding of messages by setting a different opinion for that Id in People's tab.") + "</font></b></p><hr>";
+		}
 	}
+
+	uint32_t flags = RSHTML_FORMATTEXT_EMBED_LINKS;
+	if(Settings->getForumLoadEmoticons())
+		flags |= RSHTML_FORMATTEXT_EMBED_SMILEYS ;
+	flags |= RSHTML_OPTIMIZEHTML_MASK;
+
+	QColor backgroundColor = ui->postText->palette().base().color();
+	qreal desiredContrast = Settings->valueFromGroup("Forum",
+		"MinimumContrast", 4.5).toDouble();
+	int desiredMinimumFontSize = Settings->valueFromGroup("Forum",
+		"MinimumFontSize", 10).toInt();
+
+	QString extraTxt = banned_text_info + RsHtml().formatText(ui->postText->document(),
+		QString::fromUtf8(msg.mMsg.c_str()), flags
+			, backgroundColor, desiredContrast, desiredMinimumFontSize
+		);
+	ui->postText->setHtml(extraTxt);
 
 	QStringList urls;
 	RsHtml::findAnchors(ui->postText->toHtml(), urls);
@@ -1339,6 +1458,20 @@ void GxsForumThreadWidget::setAllMessagesReadDo(bool read, uint32_t &/*token*/)
 {
 	markMsgAsReadUnread(read, true, true);
 }
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+void GxsForumThreadWidget::expandSubtree() {
+	QAction* the_action = qobject_cast<QAction*>(sender());
+	if (!the_action) {
+		return;
+	}
+	const QModelIndex current_index = ui->threadTreeWidget->currentIndex();
+	if (!current_index.isValid()) {
+		return;
+	}
+	ui->threadTreeWidget->expandRecursively(current_index);
+}
+#endif
 
 bool GxsForumThreadWidget::navigate(const RsGxsMessageId &msgId)
 {
@@ -1683,10 +1816,26 @@ void GxsForumThreadWidget::filterItems(const QString& text)
     // We do this in order to trigger a new filtering action in the proxy model.
 	mThreadProxyModel->setFilterRegExp(QRegExp(QString(RsGxsForumModel::FilterString))) ;
 
-    if(!lst.empty())
+	if(!lst.empty())
 		ui->threadTreeWidget->expandAll();
-    else
+	else {
+		// currentIndex() not on the clicked message, so not this way
+		// if (!mThreadId.isNull()) {
+		// 	an_index = mThreadProxyModel->mapToSource(ui->threadTreeWidget->currentIndex());
+		// }
 		ui->threadTreeWidget->collapseAll();
+		if (!mThreadId.isNull()) {
+			// ...but this one
+			QModelIndex an_index = mThreadModel->getIndexOfMessage(mThreadId);
+			if (an_index.isValid()) {
+				QModelIndex the_index = mThreadProxyModel->mapFromSource(an_index);
+				ui->threadTreeWidget->setCurrentIndex(the_index);
+				ui->threadTreeWidget->scrollTo(the_index);
+				// don't change focus
+				// ui->threadTreeWidget->setFocus();
+			}
+		}
+    }
 
 	if(count > 0)
 		ui->filterLineEdit->setToolTip(tr("No result.")) ;
