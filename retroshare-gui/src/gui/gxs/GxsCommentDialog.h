@@ -48,6 +48,10 @@ private slots:
     void idChooserReady();
 	void voterSelectionChanged( int index );
 	void sortComments(int);
+    void notifyCommentsLoaded(int n);
+
+signals:
+    void commentsLoaded(int);
 
 private:
     void init();

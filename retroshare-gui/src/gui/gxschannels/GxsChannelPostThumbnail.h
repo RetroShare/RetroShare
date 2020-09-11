@@ -32,6 +32,39 @@
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
 
+// Class to provide a label in which the image can be zoomed/moved. The widget size is fixed by the GUI and the user can move/zoom the image
+// inside the window formed by the widget. When happy, the view-able part of the image can be extracted.
+
+class ZoomableLabel: public QLabel
+{
+public:
+    ZoomableLabel(QWidget *parent): QLabel(parent),mZoomFactor(1.0),mCenterX(0.0),mCenterY(0.0),mZoomEnabled(true) {}
+
+    void setPicture(const QPixmap& pix);
+    void setEnableZoom(bool b) { mZoomEnabled = b; }
+    void reset();
+    QPixmap extractCroppedScaledPicture() const;
+    void updateView();
+
+    const QPixmap& originalImage() const { return mFullImage ; }
+
+protected:
+    void mousePressEvent(QMouseEvent *ev) override;
+    void mouseReleaseEvent(QMouseEvent *ev) override;
+    void mouseMoveEvent(QMouseEvent *ev) override;
+    void resizeEvent(QResizeEvent *ev) override;
+    void wheelEvent(QWheelEvent *me) override;
+
+    QPixmap mFullImage;
+
+    float mCenterX;
+    float mCenterY;
+    float mZoomFactor;
+    int   mLastX,mLastY;
+    bool  mMoving;
+    bool  mZoomEnabled;
+};
+
 // Class to paint the thumbnails with title
 
 class ChannelPostThumbnailView: public QWidget
@@ -39,8 +72,20 @@ class ChannelPostThumbnailView: public QWidget
 	Q_OBJECT
 
 public:
+    typedef enum {
+        ASPECT_RATIO_UNKNOWN = 0x00,
+        ASPECT_RATIO_2_3     = 0x01,
+        ASPECT_RATIO_1_1     = 0x02,
+        ASPECT_RATIO_16_9    = 0x03,
+    } AspectRatio;
+
 	// This variable determines the zoom factor on the text below thumbnails. 2.0 is mostly correct for all screen.
-	static constexpr float THUMBNAIL_OVERSAMPLE_FACTOR = 2.0;
+    static constexpr float THUMBNAIL_OVERSAMPLE_FACTOR = 2.0;
+
+    static constexpr uint32_t FLAG_NONE      = 0x00;
+    static constexpr uint32_t FLAG_SHOW_TEXT = 0x01;
+    static constexpr uint32_t FLAG_ALLOW_PAN = 0x02;
+    static constexpr uint32_t FLAG_SCALE_FONT= 0x04;
 
 	// Size of thumbnails as a function of the height of the font. An aspect ratio of 3/4 is good.
 
@@ -49,77 +94,40 @@ public:
 
     static constexpr char *CHAN_DEFAULT_IMAGE = ":images/thumb-default-video.png";
 
-    virtual ~ChannelPostThumbnailView()
-    {
-     	delete lb;
-     	delete lt;
-    }
+    virtual ~ChannelPostThumbnailView();
+    ChannelPostThumbnailView(QWidget *parent=NULL,uint32_t flags=FLAG_ALLOW_PAN | FLAG_SHOW_TEXT | FLAG_SCALE_FONT);
+    ChannelPostThumbnailView(const RsGxsChannelPost& post,uint32_t flags,QWidget *parent=NULL);
 
-    ChannelPostThumbnailView(QWidget *parent=NULL): QWidget(parent)
-    {
-        init(FilesDefs::getPixmapFromQtResourcePath(CHAN_DEFAULT_IMAGE), QString("New post"),false);
-    }
+    void init(const RsGxsChannelPost& post);
 
-    ChannelPostThumbnailView(const RsGxsChannelPost& post,QWidget *parent=NULL)
-        : QWidget(parent)
-    {
-        // now fill the data
+    void setAspectRatio(AspectRatio r);
+    void setPixmap(const QPixmap& p,bool guess_aspect_ratio) ;
+    QPixmap getCroppedScaledPicture() const { return mPostImage->extractCroppedScaledPicture() ; }
 
-		QPixmap thumbnail;
+    void setText(const QString& s);
 
-        if(post.mThumbnail.mSize > 0)
-			GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData, post.mThumbnail.mSize, thumbnail,GxsIdDetails::ORIGINAL);
-        else if(post.mMeta.mPublishTs > 0)	// this is for testing that the post is not an empty post (happens at the end of the last row)
-			thumbnail = FilesDefs::getPixmapFromQtResourcePath(CHAN_DEFAULT_IMAGE);
+    // This is used to allow to render the widget into a pixmap without the white space that Qt adds vertically. There is *no way* apparently
+    // to get rid of that bloody space. It depends on the aspect ratio of the image and it only shows up when the text label is shown.
+    // The label however has a correct size. It seems that Qt doesn't like widgets with horizontal aspect ratio and forces the size accordingly.
 
-        init(thumbnail, QString::fromUtf8(post.mMeta.mMsgName.c_str()), IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus) );
+    QSize actualSize() const ;
 
-    }
-
-	void init(const QPixmap& thumbnail,const QString& msg,bool is_msg_new)
-    {
-		QVBoxLayout *layout = new QVBoxLayout(this);
-
-        lb = new QLabel(this);
-        lb->setScaledContents(true);
-        layout->addWidget(lb);
-
-        lt = new QLabel(this);
-        layout->addWidget(lt);
-
-		setLayout(layout);
-
-		setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum);
-
-		QFontMetricsF fm(font());
-		int W = THUMBNAIL_OVERSAMPLE_FACTOR * THUMBNAIL_W * fm.height() ;
-		int H = THUMBNAIL_OVERSAMPLE_FACTOR * THUMBNAIL_H * fm.height() ;
-
-        lb->setFixedSize(W,H);
-		lb->setPixmap(thumbnail);
-
-        lt->setText(msg);
-
-        QFont font = lt->font();
-
-		if(is_msg_new)
-        {
-            font.setBold(true);
-            lt->setFont(font);
-        }
-
-        lt->setMaximumWidth(W);
-        lt->setWordWrap(true);
-
-        adjustSize();
-        update();
-    }
-
-    void setPixmap(const QPixmap& p) { lb->setPixmap(p); }
-    void setText(const QString& s) { lt->setText(s); }
-
+    /*!
+     * \brief bestAspectRatio
+     * 			Computes the preferred aspect ratio for the image in the post. The default is 1:1.
+     * \return the prefered aspect ratio
+     */
+    AspectRatio bestAspectRatio() ;
 private:
-    QLabel *lb;
-    QLabel *lt;
+    static const float DEFAULT_SIZE_IN_FONT_HEIGHT ;
+    static const float FONT_SCALE_FACTOR ;
+
+    float thumbnail_w() const;
+    float thumbnail_h() const;
+
+    ZoomableLabel *mPostImage;
+    QLabel *mPostTitle;
+    uint32_t mFlags;
+    AspectRatio mAspectRatio;
 };
 

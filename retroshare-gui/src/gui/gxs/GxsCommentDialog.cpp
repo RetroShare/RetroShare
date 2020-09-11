@@ -52,6 +52,7 @@ void GxsCommentDialog::init()
 	connect(ui->refreshButton, SIGNAL(clicked()), this, SLOT(refresh()));
 	connect(ui->idChooser, SIGNAL(currentIndexChanged( int )), this, SLOT(voterSelectionChanged( int )));
     connect(ui->idChooser, SIGNAL(idsLoaded()), this, SLOT(idChooserReady()));
+    connect(ui->treeWidget,SIGNAL(commentsLoaded(int)),this,SLOT(notifyCommentsLoaded(int)));
 	
 	connect(ui->commentButton, SIGNAL(clicked()), ui->treeWidget, SLOT(makeComment()));
 	connect(ui->sortBox, SIGNAL(currentIndexChanged(int)), this, SLOT(sortComments(int)));
@@ -93,6 +94,11 @@ void GxsCommentDialog::commentLoad(const RsGxsGroupId &grpId, const std::set<RsG
     mMsgVersions = msg_versions;
 
 	ui->treeWidget->requestComments(mGrpId,msg_versions,most_recent_msgId);
+}
+
+void GxsCommentDialog::notifyCommentsLoaded(int n)
+{
+    emit commentsLoaded(n);
 }
 
 void GxsCommentDialog::refresh()

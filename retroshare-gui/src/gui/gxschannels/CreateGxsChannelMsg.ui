@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>736</width>
-    <height>271</height>
+    <width>881</width>
+    <height>383</height>
    </rect>
   </property>
   <property name="acceptDrops">
@@ -79,32 +79,35 @@
          <number>0</number>
         </property>
         <widget class="QWidget" name="stackedWidgetPage1">
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <property name="spacing">
-           <number>6</number>
-          </property>
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_2">
-            <property name="spacing">
-             <number>6</number>
-            </property>
-            <property name="sizeConstraint">
-             <enum>QLayout::SetFixedSize</enum>
-            </property>
             <item>
-             <widget class="ChannelPostThumbnailView" name="preview_W" native="true"/>
+             <layout class="QVBoxLayout" name="verticalLayout_2">
+              <item>
+               <widget class="ChannelPostThumbnailView" name="preview_W" native="true">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
             </item>
             <item>
              <layout class="QVBoxLayout" name="verticalLayout">
@@ -168,7 +171,7 @@ p, li { white-space: pre-wrap; }
                    <string>Add Channel Thumbnail</string>
                   </property>
                   <property name="icon">
-                   <iconset resource="../icons.qrc">
+                   <iconset>
                     <normaloff>:/icons/png/add-image.png</normaloff>:/icons/png/add-image.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -180,12 +183,42 @@ p, li { white-space: pre-wrap; }
                  </widget>
                 </item>
                 <item>
+                 <widget class="QComboBox" name="aspectRatio_CB">
+                  <property name="iconSize">
+                   <size>
+                    <width>24</width>
+                    <height>24</height>
+                   </size>
+                  </property>
+                  <item>
+                   <property name="text">
+                    <string>Auto</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>1:1</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>3:4</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>16:9</string>
+                   </property>
+                  </item>
+                 </widget>
+                </item>
+                <item>
                  <widget class="QPushButton" name="addfilepushButton">
                   <property name="text">
                    <string>Add File to Attach</string>
                   </property>
                   <property name="icon">
-                   <iconset resource="../icons.qrc">
+                   <iconset>
                     <normaloff>:/icons/png/add-file.png</normaloff>:/icons/png/add-file.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -285,7 +318,7 @@ p, li { white-space: pre-wrap; }
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../icons.qrc">
+             <iconset>
               <normaloff>:/icons/png/add-file.png</normaloff>:/icons/png/add-file.png</iconset>
             </property>
             <property name="iconSize">
@@ -309,7 +342,7 @@ p, li { white-space: pre-wrap; }
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>81</width>
+               <width>84</width>
                <height>24</height>
               </rect>
              </property>
@@ -389,7 +422,7 @@ p, li { white-space: pre-wrap; }
          <string>Channel Post</string>
         </property>
         <property name="icon">
-         <iconset resource="../icons.qrc">
+         <iconset>
           <normaloff>:/icons/png/comment.png</normaloff>:/icons/png/comment.png</iconset>
         </property>
         <property name="iconSize">
@@ -419,7 +452,7 @@ p, li { white-space: pre-wrap; }
          <string>Attachments</string>
         </property>
         <property name="icon">
-         <iconset resource="../icons.qrc">
+         <iconset>
           <normaloff>:/icons/png/attachements.png</normaloff>:/icons/png/attachements.png</iconset>
         </property>
         <property name="iconSize">
@@ -491,7 +524,6 @@ p, li { white-space: pre-wrap; }
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
-  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

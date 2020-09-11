@@ -28,6 +28,8 @@
 #include "gui/gxs/GxsMessageFramePostWidget.h"
 #include "gui/feeds/FeedHolder.h"
 
+#include "GxsChannelPostThumbnail.h"
+
 namespace Ui {
 class GxsChannelPostsWidgetWithModel;
 }
@@ -60,21 +62,26 @@ class ChannelPostDelegate: public QAbstractItemDelegate
 	Q_OBJECT
 
 	public:
-		ChannelPostDelegate(QObject *parent=0) : QAbstractItemDelegate(parent), mZoom(1.0){}
+        ChannelPostDelegate(QObject *parent=0) : QAbstractItemDelegate(parent), mZoom(1.0), mUseGrid(true){}
         virtual ~ChannelPostDelegate(){}
 
 		void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const override;
         QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
-        int cellSize(const QFont& font) const;
+        int cellSize(int col, const QFont& font, uint32_t parent_width) const;
         void zoom(bool zoom_or_unzoom) ;
-	private:
+        void setWidgetGrid(bool use_grid) ;
+        void setAspectRatio(ChannelPostThumbnailView::AspectRatio r) ;
+
+    private:
  		static constexpr float IMAGE_MARGIN_FACTOR = 1.0;
  		static constexpr float IMAGE_SIZE_FACTOR_W = 4.0 ;
  		static constexpr float IMAGE_SIZE_FACTOR_H = 6.0 ;
  		static constexpr float IMAGE_ZOOM_FACTOR   = 1.0;
 
         float mZoom;	// zoom factor for the whole thumbnail
+        bool mUseGrid;  // wether we use the grid widget or the list widget
+        ChannelPostThumbnailView::AspectRatio mAspectRatio;
 };
 
 class GxsChannelPostsWidgetWithModel: public GxsMessageFrameWidget
@@ -135,25 +142,32 @@ protected:
 private slots:
 	void showPostDetails();
 	void updateGroupData();
-	void createMsg();
+    void download();
+    void createMsg();
 	void toggleAutoDownload();
 	void subscribeGroup(bool subscribe);
 	void filterChanged(QString);
 	void setViewMode(int viewMode);
 	void settingsChanged();
-	void handlePostsTreeSizeChange(QSize s);
+    void handlePostsTreeSizeChange(QSize s, bool force=false);
 	void postChannelPostLoad();
 	void editPost();
 	void postContextMenu(const QPoint&);
 	void copyMessageLink();
 	void updateZoomFactor(bool zoom_or_unzoom);
+    void switchView();
+    void switchOnlyUnread(bool b);
+    void markMessageUnread();
 
 public slots:
  	void sortColumnFiles(int col,Qt::SortOrder so);
  	void sortColumnPostFiles(int col,Qt::SortOrder so);
+    void updateCommentsCount(int n);
 
 private:
 	void processSettings(bool load);
+    RsGxsMessageId getCurrentItemId() const;
+    void selectItem(const RsGxsMessageId& msg_id);
 
 	void setAutoDownload(bool autoDl);
 	static bool filterItem(FeedItem *feedItem, const QString &text, int filter);
