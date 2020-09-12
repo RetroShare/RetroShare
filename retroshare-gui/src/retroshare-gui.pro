@@ -1373,11 +1373,10 @@ gxschannels {
 		gui/feeds/GxsChannelPostItem.ui
 	
 	SOURCES += gui/gxschannels/GxsChannelDialog.cpp \
-		gui/gxschannels/GxsChannelPostsModel.cpp \
 		gui/gxschannels/GxsChannelPostsWidgetWithModel.cpp \
+		gui/gxschannels/GxsChannelPostsModel.cpp \
 		gui/gxschannels/GxsChannelPostFilesModel.cpp \
 		gui/gxschannels/GxsChannelFilesStatusWidget.cpp \
-		gui/gxschannels/GxsChannelFilesWidget.cpp \
                 gui/gxschannels/GxsChannelPostThumbnail.cpp \
 		gui/gxschannels/GxsChannelGroupDialog.cpp \
 		gui/gxschannels/CreateGxsChannelMsg.cpp \
