@@ -1367,7 +1367,6 @@ gxschannels {
 	
 	FORMS += \
 		gui/gxschannels/GxsChannelPostsWidgetWithModel.ui \
-		gui/gxschannels/GxsChannelFilesWidget.ui \
 		gui/gxschannels/GxsChannelFilesStatusWidget.ui \
 		gui/gxschannels/CreateGxsChannelMsg.ui \
 		gui/feeds/GxsChannelGroupItem.ui \
