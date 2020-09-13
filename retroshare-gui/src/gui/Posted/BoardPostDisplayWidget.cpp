@@ -31,6 +31,8 @@
 #include "gui/common/FilesDefs.h"
 #include "util/qtthreadsutils.h"
 #include "util/HandleRichText.h"
+#include "gui/Identity/IdDialog.h"
+#include "gui/MainWindow.h"
 
 #include "ui_BoardPostDisplayWidget.h"
 
@@ -431,4 +433,22 @@ void BoardPostDisplayWidget::doExpand(bool e)
 void BoardPostDisplayWidget::loadComments(bool e)
 {
     emit commentsRequested(mPost.mMeta.mMsgId,e);
+}
+
+void BoardPostDisplayWidget::showAuthorInPeople()
+{
+    if(mPost.mMeta.mAuthorId.isNull())
+    {
+        std::cerr << "(EE) GxsForumThreadWidget::loadMsgData_showAuthorInPeople() ERROR Missing Message Data...";
+        std::cerr << std::endl;
+    }
+
+    /* window will destroy itself! */
+    IdDialog *idDialog = dynamic_cast<IdDialog*>(MainWindow::getPage(MainWindow::People));
+
+    if (!idDialog)
+        return ;
+
+    MainWindow::showWindow(MainWindow::People);
+    idDialog->navigate(RsGxsId(mPost.mMeta.mAuthorId));
 }

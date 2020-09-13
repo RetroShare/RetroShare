@@ -71,6 +71,7 @@ protected slots:
     void makeUpVote() ;
     void makeDownVote() ;
 	void toggleNotes() ;
+    void showAuthorInPeople();
 
 signals:
 	void vote(const RsGxsGrpMsgIdPair& msgId, bool up_or_down);
