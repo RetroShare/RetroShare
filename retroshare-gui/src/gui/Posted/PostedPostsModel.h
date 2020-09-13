@@ -141,6 +141,9 @@ public:
     // Triggers a preMod, begin/end remove rows and data update. Could be useful if update is not enough to reset cell sizes.
     void deepUpdate();
 
+    // same without data update, which is far less costly
+    void triggerRedraw();
+
 #ifdef TODO
     void setSortMode(SortMode mode) ;
 

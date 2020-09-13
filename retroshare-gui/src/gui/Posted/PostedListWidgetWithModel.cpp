@@ -292,7 +292,9 @@ void PostedListWidgetWithModel::updateSorting(int s)
 
 void PostedListWidgetWithModel::handlePostsTreeSizeChange(QSize size)
 {
+    std::cerr << "resizing!"<< std::endl;
     mPostedPostsDelegate->setCellWidth(size.width());
+    mPostedPostsModel->triggerRedraw();
 }
 
 void PostedListWidgetWithModel::filterItems(QString text)

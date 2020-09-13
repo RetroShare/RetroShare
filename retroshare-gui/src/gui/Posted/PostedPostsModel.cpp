@@ -143,6 +143,11 @@ void RsPostedPostsModel::update()
 {
     emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mDisplayedNbPosts,0,(void*)NULL));
 }
+void RsPostedPostsModel::triggerRedraw()
+{
+    preMods();
+    postMods();
+}
 
 void RsPostedPostsModel::setFilter(const QStringList& strings, uint32_t& count)
 {
