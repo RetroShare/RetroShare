@@ -75,9 +75,10 @@ QColor SelectedColor = QRgb(0xff308dc7);
 #define COLUMN_SIZE_FONT_FACTOR_H  10
 
 #define STAR_OVERLAY_IMAGE ":icons/star_overlay_128.png"
-#define IMAGE_COPYLINK     ":/images/copyrslink.png"
+#define IMAGE_COPYLINK     ":icons/png/copy.png"
 #define IMAGE_GRID_VIEW    ":icons/png/menu.png"
 #define IMAGE_DOWNLOAD     ":icons/png/download.png"
+#define IMAGE_UNREAD       ":icons/png/message.png"
 
 Q_DECLARE_METATYPE(ChannelPostFileInfo)
 
@@ -492,12 +493,12 @@ void GxsChannelPostsWidgetWithModel::postContextMenu(const QPoint&)
             menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_DOWNLOAD), tr("Download files"), this, SLOT(download()));
 
         if(!IS_MSG_UNREAD(post.mMeta.mMsgStatus) && !IS_MSG_NEW(post.mMeta.mMsgStatus))
-            menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Mark as unread"), this, SLOT(markMessageUnread()));
+            menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_UNREAD), tr("Mark as unread"), this, SLOT(markMessageUnread()));
     }
     menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()));
 
 	if(IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
-		menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/edit_16.png"), tr("Edit"), this, SLOT(editPost()));
+		menu.addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/pencil-edit-button.png"), tr("Edit"), this, SLOT(editPost()));
 
 	menu.exec(QCursor::pos());
 }

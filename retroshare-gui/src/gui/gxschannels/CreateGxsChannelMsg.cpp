@@ -72,13 +72,18 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 
 	connect(addFileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
 	connect(addfilepushButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
-    connect(subjectEdit,SIGNAL(textChanged(const QString&)),this,SLOT(updatePreviewText(const QString&)));
+	connect(subjectEdit,SIGNAL(textChanged(const QString&)),this,SLOT(updatePreviewText(const QString&)));
 
 	connect(addThumbnailButton, SIGNAL(clicked() ), this , SLOT(addThumbnail()));
 	connect(thumbNailCb, SIGNAL(toggled(bool)), this, SLOT(allowAutoMediaThumbNail(bool)));
 	connect(stackedWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenu(QPoint)));
 	connect(generateCheckBox, SIGNAL(toggled(bool)), generateSpinBox, SLOT(setEnabled(bool)));
-    connect(aspectRatio_CB,SIGNAL(currentIndexChanged(int)),this,SLOT(changeAspectRatio(int)));
+	connect(aspectRatio_CB,SIGNAL(currentIndexChanged(int)),this,SLOT(changeAspectRatio(int)));
+
+	channelpostButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/comment.png"));
+	attachmentsButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/attachements.png"));
+	addThumbnailButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/add-image.png"));
+	addfilepushButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/add-file.png"));
 
     aspectRatio_CB->setItemIcon(0,FilesDefs::getIconFromQtResourcePath(":/icons/svg/ratio-auto.svg"));
     aspectRatio_CB->setItemIcon(1,FilesDefs::getIconFromQtResourcePath(":/icons/svg/ratio-1-1.svg"));
@@ -106,6 +111,9 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 	generateCheckBox->hide();
 	generateSpinBox->hide();
 #endif
+
+	/* load settings */
+	processSettings(true);
 }
 	
 CreateGxsChannelMsg::~CreateGxsChannelMsg()
@@ -114,6 +122,29 @@ CreateGxsChannelMsg::~CreateGxsChannelMsg()
 #ifdef CHANNELS_FRAME_CATCHER
 	delete fCatcher;
 #endif
+
+	// save settings
+	processSettings(false);
+}
+
+void CreateGxsChannelMsg::processSettings(bool load)
+{
+	Settings->beginGroup(QString("CreateGxsChannelMsg"));
+
+	if (load) {
+		// load settings
+		
+		// state of Ratio combobox
+		int index = Settings->value("aspectRatio_CB", 0).toInt();
+		aspectRatio_CB->setCurrentIndex(index);
+	} else {
+		// save settings
+
+		// state of Ratio combobox
+		Settings->setValue("aspectRatio_CB", aspectRatio_CB->currentIndex());
+	}
+
+	Settings->endGroup();
 }
 
 void CreateGxsChannelMsg::changeAspectRatio(int s)
