@@ -350,6 +350,9 @@ p, li { white-space: pre-wrap; }
             <property name="styleSheet">
              <string notr="true"/>
             </property>
+            <property name="currentIndex">
+             <number>1</number>
+            </property>
             <property name="iconSize">
              <size>
               <width>24</width>
@@ -411,7 +414,7 @@ p, li { white-space: pre-wrap; }
              <number>0</number>
             </property>
             <item>
-             <widget class="QPushButton" name="classicViewButton">
+             <widget class="QPushButton" name="viewModeButton">
               <property name="font">
                <font>
                 <kerning>true</kerning>
@@ -423,29 +426,6 @@ p, li { white-space: pre-wrap; }
               <property name="icon">
                <iconset resource="Posted_images.qrc">
                 <normaloff>:/images/classic.png</normaloff>:/images/classic.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>24</width>
-                <height>24</height>
-               </size>
-              </property>
-              <property name="checkable">
-               <bool>true</bool>
-              </property>
-              <property name="flat">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="cardViewButton">
-              <property name="toolTip">
-               <string>Card View</string>
-              </property>
-              <property name="icon">
-               <iconset resource="Posted_images.qrc">
-                <normaloff>:/images/card.png</normaloff>:/images/card.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -561,8 +541,8 @@ p, li { white-space: pre-wrap; }
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../icons.qrc"/>
   <include location="Posted_images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

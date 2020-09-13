@@ -55,6 +55,7 @@ public:
 
     void setCellWidth(int pix) { mCellWidthPix = pix; }
     void setDisplayMode(BoardPostDisplayWidget::DisplayMode dm) { mDisplayMode = dm; }
+    BoardPostDisplayWidget::DisplayMode getDisplayMode() const { return mDisplayMode; }
 
 public slots:
     void expandItem(RsGxsMessageId msgId,bool expanded);

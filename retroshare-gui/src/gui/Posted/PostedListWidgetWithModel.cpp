@@ -67,6 +67,10 @@ Q_DECLARE_METATYPE(RsPostedPost);
 
 // Delegate used to paint into the table of thumbnails
 
+//===================================================================================================================================
+//==                                                     PostedPostDelegate                                                        ==
+//===================================================================================================================================
+
 std::ostream& operator<<(std::ostream& o,const QSize& s) { return o << s.width() << " x " << s.height() ; }
 
 void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
@@ -189,6 +193,10 @@ void PostedPostDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptio
 	editor->setGeometry(option.rect);
 }
 
+//===================================================================================================================================
+//==                                                 PostedListWidgetWithModel                                                     ==
+//===================================================================================================================================
+
 /** Constructor */
 PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedId, QWidget *parent) :
 	GxsMessageFrameWidget(rsPosted, parent),
@@ -214,8 +222,7 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
     connect(ui->prevButton,SIGNAL(clicked()),this,SLOT(prev10Posts()));
 
     connect(ui->postsTree,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(postContextMenu(const QPoint&)));
-    connect(ui->cardViewButton,SIGNAL(clicked()),this,SLOT(switchDisplayMode()));
-    connect(ui->classicViewButton,SIGNAL(clicked()),this,SLOT(switchDisplayMode()));
+    connect(ui->viewModeButton,SIGNAL(clicked()),this,SLOT(switchDisplayMode()));
 
     connect(mPostedPostsModel,SIGNAL(boardPostsLoaded()),this,SLOT(postPostLoad()));
 
@@ -251,9 +258,8 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
 	settingsChanged();
     setGroupId(postedId);
 
-    ui->classicViewButton->setChecked(true); // inits both button checking consistency and delegate display mode variables.
-
-    mPostedPostsModel->updateBoard(postedId);
+    mPostedPostsDelegate->setDisplayMode(BoardPostDisplayWidget::DISPLAY_MODE_CARD_VIEW);
+    switchDisplayMode();	// makes everything consistent and chooses classic view as default
 
 	mEventHandlerId = 0;
 	// Needs to be asynced because this function is called by another thread!
@@ -265,18 +271,21 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
 
 void PostedListWidgetWithModel::switchDisplayMode()
 {
-    if(sender() == ui->classicViewButton)
+    if(mPostedPostsDelegate->getDisplayMode() == BoardPostDisplayWidget::DISPLAY_MODE_CARD_VIEW)
     {
-        whileBlocking(ui->cardViewButton)->setChecked(false);
+        ui->viewModeButton->setIcon(FilesDefs::getIconFromQtResourcePath(":images/classic.png"));
+        ui->viewModeButton->setToolTip(tr("Click to switch to card view"));
+
         mPostedPostsDelegate->setDisplayMode(BoardPostDisplayWidget::DISPLAY_MODE_COMPACT);
     }
     else
     {
-        whileBlocking(ui->classicViewButton)->setChecked(false);
+        ui->viewModeButton->setIcon(FilesDefs::getIconFromQtResourcePath(":images/card.png"));
+        ui->viewModeButton->setToolTip(tr("Click to switch to compact view"));
+
         mPostedPostsDelegate->setDisplayMode(BoardPostDisplayWidget::DISPLAY_MODE_CARD_VIEW);
     }
-
-    forceRedraw();
+    mPostedPostsModel->triggerRedraw();
 }
 
 void PostedListWidgetWithModel::updateSorting(int s)
