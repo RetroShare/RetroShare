@@ -166,7 +166,8 @@ void BoardPostDisplayWidget::setup()
     if(dmode == DISPLAY_MODE_COMPACT)
     {
         ui->pictureLabel_compact->show();
-        ui->expandButton->show();
+        ui->expandButton->hide();
+        //ui->expandButton->show();	// always hide, since we have the photoview already
 
         ui->pictureLabel->hide();
         ui->notes->hide();
