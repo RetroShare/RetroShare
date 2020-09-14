@@ -261,7 +261,6 @@
     <file>images/preview.png</file>
     <file>images/player_play.png</file>
     <file>images/quick_restart24.png</file>
-    <file>images/quote_24.png</file>
     <file>images/redled.png</file>
     <file>images/greenled.png</file>
     <file>images/grayled.png</file>
@@ -436,8 +435,6 @@
     <file>images/share-icon-16.png</file>
     <file>images/toasterEnable.png</file>
     <file>images/toasterDisable.png</file>
-    <file>images/view-feeds.png</file>
-    <file>images/view-files.png</file>
     <file>images/emblem-web.png</file>
     <file>images/rsmessenger48.png</file>
     <file>images/SmileyText.png</file>
