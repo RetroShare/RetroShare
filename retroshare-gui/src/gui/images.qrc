@@ -77,9 +77,7 @@
     <file>images/avatarstatus-bg-away-70.png</file>
     <file>images/avatarstatus-bg-busy-70.png</file>
     <file>images/avatarstatus-bg-offline-70.png</file>
-    <file>images/configure.png</file>
     <file>images/copyrslink.png</file>
-    <file>images/connection.png</file>
     <file>images/Client0.png</file>
     <file>images/Client1.png</file>
     <file>images/Client2.png</file>
@@ -98,7 +96,6 @@
     <file>images/FileTypePicture.png</file>
     <file>images/FileTypeProgram.png</file>
     <file>images/FileTypeVideo.png</file>
-    <file>images/fonts.png</file>
     <file>images/foldermail.png</file>
     <file>images/folderopen.png</file>
     <file>images/fileopen.png</file>
@@ -110,7 +107,6 @@
     <file>images/avatar_background.png</file>
     <file>images/button_cancel.png</file>
     <file>images/chat.png</file>
-    <file>images/chat_24.png</file>
     <file>images/cancel.png</file>
     <file>images/close-down.png</file>
     <file>images/close_normal.png</file>
@@ -123,7 +119,6 @@
     <file>images/diskSave.png</file>
     <file>images/document_save.png</file>
     <file>images/down.png</file>
-    <file>images/down_24x24.png</file>
     <file>images/download.png</file>
     <file>images/download16.png</file>
     <file>images/edit_add24.png</file>
@@ -252,7 +247,6 @@
     <file>images/mute-off-16.png</file>
     <file>images/mute-on-16.png</file>
     <file>images/new-mail-alert.png</file>
-    <file>images/newmsg.png</file>
     <file>images/no_avatar_70.png</file>
     <file>images/no_avatar_background.png</file>
     <file>images/openimage.png</file>
@@ -261,7 +255,6 @@
     <file>images/pasterslink.png</file>
     <file>images/package_games1.png</file>
     <file>images/pin32.png</file>
-    <file>images/print24.png</file>
     <file>images/priorityauto.png</file>
     <file>images/priorityhigh.png</file>
     <file>images/prioritylow.png</file>
@@ -312,7 +305,6 @@
     <file>images/tab-dock.png</file>
     <file>images/tab-undock.png</file>
     <file>images/tab-new.png</file>
-    <file>images/tag24.png</file>
     <file>images/transferupdown.png</file>
     <file>images/tools_wizard.png</file>
     <file>images/uploads.png</file>

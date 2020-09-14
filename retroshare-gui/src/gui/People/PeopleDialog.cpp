@@ -459,7 +459,7 @@ void PeopleDialog::iw_AddButtonClickedExt()
       
       if(own_identities.size() <= 1)
 			{
-				QAction *action = contextMnu.addAction(QIcon(":/images/chat_24.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
+				QAction *action = contextMnu.addAction(QIcon(":/icons/png/chats.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
 
 				if(own_identities.empty())
 					action->setEnabled(false) ;
