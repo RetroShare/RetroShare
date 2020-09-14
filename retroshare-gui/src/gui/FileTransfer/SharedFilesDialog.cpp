@@ -72,7 +72,7 @@
 #define IMAGE_COLLMODIF      ":/icons/png/pencil-edit-button.png"
 #define IMAGE_COLLVIEW       ":/images/find.png"
 #define IMAGE_COLLOPEN       ":/icons/collections.png"
-#define IMAGE_EDITSHARE      ":/images/edit_16.png"
+#define IMAGE_EDITSHARE      ":/icons/png/pencil-edit-button.png"
 #define IMAGE_MYFILES        ":/icons/svg/folders1.svg"
 
 /*define viewType_CB value */

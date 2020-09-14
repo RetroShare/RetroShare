@@ -17,7 +17,6 @@
     <file>images/inbox_22.png</file>
     <file>images/blue_lock.png</file>
     <file>images/blue_lock_open.png</file>
-    <file>images/edit_24.png</file>
     <file>images/streaming.png</file>
     <file>images/white-bubble-64.png</file>
     <file>images/orange-bubble-64.png</file>
@@ -49,7 +48,6 @@
     <file>images/dht16.png</file>
     <file>images/dht32.png</file>
     <file>images/edit-clear-history.png</file>
-    <file>images/edit_16.png</file>
     <file>images/feedback_arrow.png</file>
     <file>images/feedback_arrow_hover.png</file>
     <file>images/firewall_24.png</file>
@@ -81,8 +79,6 @@
     <file>images/avatarstatus-bg-offline-70.png</file>
     <file>images/configure.png</file>
     <file>images/copyrslink.png</file>
-    <file>images/contacts24.png</file>
-    <file>images/contactsclosed24.png</file>
     <file>images/connection.png</file>
     <file>images/Client0.png</file>
     <file>images/Client1.png</file>
@@ -111,7 +107,6 @@
     <file>images/graph-notdownload.png</file>
     <file>images/graph-checking.png</file>
     <file>images/graph-blue.png</file>
-    <file>images/add-share24.png</file>
     <file>images/avatar_background.png</file>
     <file>images/button_cancel.png</file>
     <file>images/chat.png</file>
@@ -132,9 +127,6 @@
     <file>images/download.png</file>
     <file>images/download16.png</file>
     <file>images/edit_add24.png</file>
-    <file>images/edit-bold.png</file>
-    <file>images/edit-italic.png</file>
-    <file>images/edit-underline.png</file>
     <file>images/edit_remove24.png</file>
     <file>images/disabled_plugin_48.png</file>
     <file>images/expand_frame.png</file>
