@@ -42,7 +42,6 @@
 #include <QLabel>
 
 /* Images for context menu icons */
-#define IMAGE_DOWNLOAD       ":/images/download16.png"
 #define IMAGE_PLAY           ":/images/start.png"
 #define IMAGE_HASH_BUSY      ":/images/settings.png"
 #define IMAGE_MSG            ":/images/message-mail.png"

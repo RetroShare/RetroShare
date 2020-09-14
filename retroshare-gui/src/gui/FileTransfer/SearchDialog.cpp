@@ -43,7 +43,7 @@
 #include <retroshare/rsexpr.h>
 
 /* Images for context menu icons */
-#define IMAGE_START  		    ":/images/download.png"
+#define IMAGE_START  		    ":/icons/png/download.png"
 #define IMAGE_REMOVE  		  ":/images/delete.png"
 #define IMAGE_REMOVEALL            ":/images/deleteall.png"
 #define IMAGE_DIRECTORY            ":/images/folder16.png"

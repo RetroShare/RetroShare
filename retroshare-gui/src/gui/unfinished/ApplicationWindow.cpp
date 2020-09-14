@@ -49,7 +49,6 @@
 /* Images for toolbar icons */
 #define IMAGE_RETROSHARE        ":/images/RetroShare16.png"
 #define IMAGE_ABOUT             ":/images/informations_24x24.png"
-#define IMAGE_CLOSE             ":/images/close_normal.png"
 #define IMAGE_LIBRARY           ":/icons/collections.png"
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
 #define IMAGE_WIKI              ":/images/wikibook_32.png"

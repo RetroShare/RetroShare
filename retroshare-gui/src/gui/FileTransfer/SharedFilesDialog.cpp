@@ -55,7 +55,7 @@
 #include <set>
 
 /* Images for context menu icons */
-#define IMAGE_DOWNLOAD       ":/images/download16.png"
+#define IMAGE_DOWNLOAD       ":/icons/png/download.png"
 #define IMAGE_PLAY           ":/images/start.png"
 #define IMAGE_HASH_BUSY      ":/images/settings.png"
 #define IMAGE_HASH_DONE      ":/images/accepted16.png"

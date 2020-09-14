@@ -120,7 +120,6 @@
     <file>images/document_save.png</file>
     <file>images/down.png</file>
     <file>images/download.png</file>
-    <file>images/download16.png</file>
     <file>images/edit_add24.png</file>
     <file>images/edit_remove24.png</file>
     <file>images/disabled_plugin_48.png</file>
@@ -211,7 +210,6 @@
     <file>images/ledoff1.png</file>
     <file>images/ledon1.png</file>
     <file>images/locale.png</file>
-    <file>images/looknfeel.png</file>
     <file>images/logo/logo_16.png</file>
     <file>images/logo/logo_24.png</file>
     <file>images/logo/logo_24_0.png</file>
