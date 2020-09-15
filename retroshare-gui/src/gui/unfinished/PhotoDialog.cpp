@@ -181,7 +181,6 @@ void PhotoDialog::photoTreeWidgetCustomPopupMenu( QPoint point )
       connect(rateUnratedAct, SIGNAL(triggered()), this, SLOT(rateUnrated()));
       
       QMenu *ratingMenu = new QMenu(tr("Rating"), this);
-      ratingMenu->setIcon(QIcon(":/images/rating.png"));
       ratingMenu->addAction(rateExcellenAct);
       ratingMenu->addAction(rateGoodAct);
       ratingMenu->addAction(rateAverageAct);

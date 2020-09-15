@@ -146,8 +146,8 @@
 #define IMAGE_ADDSHARE          ":/images/directoryadd_24x24_shadow.png"
 #define IMAGE_OPTIONS           ":/images/settings.png"
 #define IMAGE_UNFINISHED        ":/images/underconstruction.png"
-#define IMAGE_MINIMIZE          ":/images/window_nofullscreen.png"
-#define IMAGE_MAXIMIZE          ":/images/window_fullscreen.png"
+#define IMAGE_MINIMIZE          ":/icons/fullscreen.png"
+#define IMAGE_MAXIMIZE          ":/icons/fullscreen-exit.png"
 
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
 

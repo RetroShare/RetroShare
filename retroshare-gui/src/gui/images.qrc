@@ -264,12 +264,6 @@
     <file>images/greenled.png</file>
     <file>images/grayled.png</file>
     <file>images/yellowled.png</file>
-    <file>images/rate-1.png</file>
-    <file>images/rate-2.png</file>
-    <file>images/rate-3.png</file>
-    <file>images/rate-4.png</file>
-    <file>images/rate-5.png</file>
-    <file>images/rating.png</file>
     <file>images/records.png</file>
     <file>images/replymail-pressed.png</file>
     <file>images/replymail24.png</file>
@@ -364,8 +358,6 @@
     <file>images/view_calendar_month.png</file>
     <file>images/view_calendar_list.png</file>
     <file>images/view_split_top_bottom.png</file>
-    <file>images/window_fullscreen.png</file>
-    <file>images/window_nofullscreen.png</file>
     <file>qss/chat/standard/private/info.xml</file>
     <file>qss/chat/standard/private/incoming.htm</file>
     <file>qss/chat/standard/private/outgoing.htm</file>
