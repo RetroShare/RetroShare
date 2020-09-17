@@ -115,6 +115,7 @@ enum class RsPostedEventCode: uint8_t
 	UPDATED_MESSAGE          = 0x05,
 	READ_STATUS_CHANGED      = 0x06,
 	STATISTICS_CHANGED       = 0x07,
+    MESSAGE_VOTES_UPDATED    = 0x08,
 };
 
 
@@ -127,6 +128,7 @@ struct RsGxsPostedEvent: RsEvent
 	RsPostedEventCode mPostedEventCode;
 	RsGxsGroupId mPostedGroupId;
 	RsGxsMessageId mPostedMsgId;
+    RsGxsMessageId mPostedThreadId;
 
 	///* @see RsEvent @see RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override

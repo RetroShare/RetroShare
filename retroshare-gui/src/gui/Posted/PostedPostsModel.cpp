@@ -53,7 +53,7 @@ RsPostedPostsModel::RsPostedPostsModel(QObject *parent)
 	rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
     {
         RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this );
-    }, mEventHandlerId, RsEventType::GXS_CHANNELS );
+    }, mEventHandlerId, RsEventType::GXS_POSTED);
 }
 
 RsPostedPostsModel::~RsPostedPostsModel()
@@ -71,7 +71,9 @@ void RsPostedPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEvent> 
 	switch(e->mPostedEventCode)
 	{
 	case RsPostedEventCode::UPDATED_MESSAGE:
-	case RsPostedEventCode::READ_STATUS_CHANGED:
+    case RsPostedEventCode::READ_STATUS_CHANGED:
+    case RsPostedEventCode::MESSAGE_VOTES_UPDATED:
+    case RsPostedEventCode::NEW_MESSAGE:
 	{
 		// Normally we should just emit dataChanged() on the index of the data that has changed:
 		//
@@ -105,7 +107,10 @@ void RsPostedPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEvent> 
 							{
 								mPosts[j] = posts[i];
 
-								emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFilteredPosts.size(),0,(void*)NULL));
+                                //emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFilteredPosts.size(),0,(void*)NULL));
+
+                                preMods();
+                                postMods();
 							}
 					}
 				},this);
