@@ -245,7 +245,7 @@ private:
     std::vector<int> mFilteredPosts;
     uint32_t mDisplayedStartIndex;
     uint32_t mDisplayedNbPosts;
-
+    SortingStrategy mSortingStrategy;
 
 	RsEventsHandlerId_t mEventHandlerId ;
 };

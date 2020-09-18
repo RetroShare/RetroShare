@@ -351,7 +351,7 @@ p, li { white-space: pre-wrap; }
              <string notr="true"/>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <property name="iconSize">
              <size>
@@ -359,15 +359,6 @@ p, li { white-space: pre-wrap; }
               <height>24</height>
              </size>
             </property>
-            <item>
-             <property name="text">
-              <string>Hot</string>
-             </property>
-             <property name="icon">
-              <iconset resource="../icons.qrc">
-               <normaloff>:/icons/png/flame.png</normaloff>:/icons/png/flame.png</iconset>
-             </property>
-            </item>
             <item>
              <property name="text">
               <string>New</string>
@@ -384,6 +375,15 @@ p, li { white-space: pre-wrap; }
              <property name="icon">
               <iconset resource="../icons.qrc">
                <normaloff>:/icons/png/top.png</normaloff>:/icons/png/top.png</iconset>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Hot</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../icons.qrc">
+               <normaloff>:/icons/png/flame.png</normaloff>:/icons/png/flame.png</iconset>
              </property>
             </item>
            </widget>

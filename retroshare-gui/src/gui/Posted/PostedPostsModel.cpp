@@ -48,6 +48,8 @@ RsPostedPostsModel::RsPostedPostsModel(QObject *parent)
 	initEmptyHierarchy();
 
 	mEventHandlerId = 0;
+    mSortingStrategy = SORT_NEW_SCORE;
+
 	// Needs to be asynced because this function is called by another thread!
 
 	rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
@@ -473,6 +475,7 @@ void RsPostedPostsModel::setSortingStrategy(RsPostedPostsModel::SortingStrategy 
 {
     preMods();
 
+    mSortingStrategy = s;
     std::sort(mPosts.begin(),mPosts.end(), PostSorter(s));
 
 	postMods();
@@ -517,7 +520,7 @@ void RsPostedPostsModel::setPosts(const RsPostedGroup& group, std::vector<RsPost
 
     createPostsArray(posts);
 
-    std::sort(mPosts.begin(),mPosts.end(), PostSorter(SORT_NEW_SCORE));
+    std::sort(mPosts.begin(),mPosts.end(), PostSorter(mSortingStrategy));
 
     uint32_t tmpval;
     setFilter(QStringList(),tmpval);

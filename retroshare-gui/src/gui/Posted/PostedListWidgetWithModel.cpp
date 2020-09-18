@@ -260,6 +260,7 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
 
     mPostedPostsDelegate->setDisplayMode(BoardPostDisplayWidget::DISPLAY_MODE_CARD_VIEW);
     switchDisplayMode();	// makes everything consistent and chooses classic view as default
+    updateSorting(ui->sortStrategy_CB->currentIndex());
 
 	mEventHandlerId = 0;
 	// Needs to be asynced because this function is called by another thread!
@@ -293,9 +294,9 @@ void PostedListWidgetWithModel::updateSorting(int s)
     switch(s)
     {
     default:
-    case 0:   mPostedPostsModel->setSortingStrategy(RsPostedPostsModel::SORT_HOT_SCORE); break;
-    case 1:   mPostedPostsModel->setSortingStrategy(RsPostedPostsModel::SORT_NEW_SCORE); break;
-    case 2:   mPostedPostsModel->setSortingStrategy(RsPostedPostsModel::SORT_TOP_SCORE); break;
+    case 0:   mPostedPostsModel->setSortingStrategy(RsPostedPostsModel::SORT_NEW_SCORE); break;
+    case 1:   mPostedPostsModel->setSortingStrategy(RsPostedPostsModel::SORT_TOP_SCORE); break;
+    case 2:   mPostedPostsModel->setSortingStrategy(RsPostedPostsModel::SORT_HOT_SCORE); break;
     }
 }
 
