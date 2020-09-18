@@ -68,7 +68,7 @@ BoardPostDisplayWidget::BoardPostDisplayWidget(const RsPostedPost& post, Display
         std::set<RsGxsMessageId> post_versions ;
         post_versions.insert(post.mMeta.mMsgId) ;
 
-        ui->commentsWidget->commentLoad(post.mMeta.mGroupId, post_versions,mPost.mMeta.mMsgId);
+        ui->commentsWidget->commentLoad(post.mMeta.mGroupId, post_versions,mPost.mMeta.mMsgId,true);
     }
 }
 

@@ -38,7 +38,7 @@ public:
 
     void setTokenService(RsTokenService *token_service, RsGxsCommentService *comment_service);
 	void setCommentHeader(QWidget *header);
-	void commentLoad(const RsGxsGroupId &grpId, const std::set<RsGxsMessageId> &msg_versions, const RsGxsMessageId &most_recent_msgId);
+    void commentLoad(const RsGxsGroupId &grpId, const std::set<RsGxsMessageId> &msg_versions, const RsGxsMessageId &most_recent_msgId, bool use_cache=false);
 
 	RsGxsGroupId groupId() { return mGrpId; }
 	RsGxsMessageId messageId() { return mMostRecentMsgId; }

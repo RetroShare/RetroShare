@@ -64,6 +64,9 @@
 #define IMAGE_VOTEUP        ":/images/vote_up.png"
 #define IMAGE_VOTEDOWN      ":/images/vote_down.png"
 
+std::map<RsGxsMessageId, std::vector<RsGxsComment> > GxsCommentTreeWidget::mCommentsCache;
+QMutex GxsCommentTreeWidget::mCacheMutex;
+
 // This class allows to draw the item using an appropriate size
 
 class MultiLinesCommentDelegate: public QStyledItemDelegate
@@ -147,6 +150,8 @@ GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
 	
 	commentsRole = new RSTreeWidgetItemCompareRole;
     commentsRole->setRole(PCITEM_COLUMN_DATE, ROLE_SORT);
+
+    mUseCache = false;
 
 //	QFont font = QFont("ARIAL", 10);
 //	font.setBold(true);
@@ -362,6 +367,19 @@ void GxsCommentTreeWidget::requestComments(const RsGxsGroupId& group, const std:
 	mMsgVersions = message_versions ;
     mLatestMsgId = most_recent_message;
 
+    if(mUseCache)
+    {
+        QMutexLocker lock(&mCacheMutex);
+
+        auto it = mCommentsCache.find(most_recent_message);
+
+        if(it != mCommentsCache.end())
+        {
+            std::cerr << "Got " << it->second.size() << " comments from cache." << std::endl;
+            insertComments(it->second);
+            completeItems();
+        }
+    }
 	service_requestComments(group,message_versions);
 }
 
@@ -581,11 +599,28 @@ void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
 	std::vector<RsGxsComment> comments;
 	mCommentService->getRelatedComments(token, comments);
 
-	std::vector<RsGxsComment>::iterator vit;
+    // This is inconsistent since we cannot know here that all comments are for the same thread. However they are only
+    // requested in requestComments() where a single MsgId is used.
 
-	for(vit = comments.begin(); vit != comments.end(); ++vit)
+    if(mUseCache)
+    {
+        QMutexLocker lock(&mCacheMutex);
+
+        if(!comments.empty())
+        {
+            std::cerr << "Updating cache with " << comments.size() << " for thread " << comments[0].mMeta.mThreadId << std::endl;
+            mCommentsCache[comments[0].mMeta.mThreadId] = comments;
+        }
+    }
+
+    insertComments(comments);
+}
+
+void GxsCommentTreeWidget::insertComments(const std::vector<RsGxsComment>& comments)
+{
+    for(auto vit = comments.begin(); vit != comments.end(); ++vit)
 	{
-		RsGxsComment &comment = *vit;
+        const RsGxsComment &comment = *vit;
 		/* convert to a QTreeWidgetItem */
 		std::cerr << "GxsCommentTreeWidget::service_loadThread() Got Comment: " << comment.mMeta.mMsgId;
 		std::cerr << std::endl;
@@ -636,8 +671,6 @@ void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
 
 		addItem(comment.mMeta.mMsgId, comment.mMeta.mParentId, item);
 	}
-
-	return;
 }
 
 QTreeWidgetItem *GxsCommentTreeWidget::service_createMissingItem(const RsGxsMessageId& parent)

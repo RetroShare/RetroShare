@@ -84,7 +84,7 @@ GxsCommentDialog::~GxsCommentDialog()
 	delete(ui);
 }
 
-void GxsCommentDialog::commentLoad(const RsGxsGroupId &grpId, const std::set<RsGxsMessageId>& msg_versions,const RsGxsMessageId& most_recent_msgId)
+void GxsCommentDialog::commentLoad(const RsGxsGroupId &grpId, const std::set<RsGxsMessageId>& msg_versions,const RsGxsMessageId& most_recent_msgId,bool use_cache)
 {
 	std::cerr << "GxsCommentDialog::commentLoad(" << grpId << ", most recent msg version: " << most_recent_msgId << ")";
 	std::cerr << std::endl;
@@ -93,7 +93,8 @@ void GxsCommentDialog::commentLoad(const RsGxsGroupId &grpId, const std::set<RsG
 	mMostRecentMsgId = most_recent_msgId;
     mMsgVersions = msg_versions;
 
-	ui->treeWidget->requestComments(mGrpId,msg_versions,most_recent_msgId);
+    ui->treeWidget->setUseCache(use_cache);
+    ui->treeWidget->requestComments(mGrpId,msg_versions,most_recent_msgId);
 }
 
 void GxsCommentDialog::notifyCommentsLoaded(int n)
