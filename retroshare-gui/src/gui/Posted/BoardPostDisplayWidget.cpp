@@ -55,11 +55,16 @@ BoardPostDisplayWidget::BoardPostDisplayWidget(const RsPostedPost& post, Display
     ui->setupUi(this);
     setup();
 
-    ui->verticalLayout->addStretch();
+    if(mode != DISPLAY_MODE_COMMENTS)
+        ui->verticalLayout->addStretch();
+    else
+        ui->commentsWidget->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
+
     ui->verticalLayout->setAlignment(Qt::AlignTop);
     ui->topLayout->setAlignment(Qt::AlignTop);
     ui->arrowsLayout->addStretch();
     ui->arrowsLayout->setAlignment(Qt::AlignTop);
+    ui->verticalLayout_2->addStretch();
 
     if(display_flags & SHOW_COMMENTS)
     {
@@ -165,7 +170,10 @@ void BoardPostDisplayWidget::setup()
 {
     // show/hide things based on the view type
 
-    if(dmode == DISPLAY_MODE_COMPACT)
+    switch(dmode)
+    {
+    default:
+    case  DISPLAY_MODE_COMPACT:
     {
         ui->pictureLabel_compact->show();
         ui->expandButton->hide();
@@ -175,12 +183,34 @@ void BoardPostDisplayWidget::setup()
         ui->notes->hide();
         ui->siteLabel->hide();
     }
-    else
+        break;
+    case DISPLAY_MODE_COMMENTS:
+    {
+        ui->pictureLabel_compact->show();
+        ui->expandButton->hide();
+        ui->pictureLabel->hide();
+        ui->notes->hide();
+        ui->scoreLabel->hide();
+        ui->voteDownButton->hide();
+        ui->voteUpButton->hide();
+        ui->siteLabel->hide();
+        ui->newLabel->hide();
+        ui->commentButton->hide();
+        ui->expandButton->hide();
+        ui->shareButton->hide();
+        ui->readButton->hide();
+        ui->newLabel->hide();
+    }
+        break;
+    case DISPLAY_MODE_CARD_VIEW:
     {
         ui->frame_picture->hide();
         ui->pictureLabel_compact->hide();
         ui->expandButton->hide();
     }
+        break;
+    }
+
 
     if(mDisplayFlags & SHOW_NOTES)
     {
@@ -311,7 +341,7 @@ void BoardPostDisplayWidget::setup()
 
         ui->siteLabel->setText(sitestr);
 
-        if(dmode == DISPLAY_MODE_COMPACT)
+        if(dmode == DISPLAY_MODE_COMPACT || dmode == DISPLAY_MODE_COMMENTS)
         {
             if(mPost.mImage.mData != NULL)
             {
@@ -373,7 +403,8 @@ void BoardPostDisplayWidget::setup()
 
     // feed.
     //frame_comment->show();
-    ui->commentButton->show();
+    if(dmode != DISPLAY_MODE_COMMENTS)
+        ui->commentButton->show();
 
     if (mPost.mComments)
     {

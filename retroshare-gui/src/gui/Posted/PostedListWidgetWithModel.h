@@ -59,7 +59,7 @@ public:
 
 public slots:
     void expandItem(RsGxsMessageId msgId,bool expanded);
-    void commentItem(RsGxsMessageId msgId,bool comment);
+    //void commentItem(RsGxsMessageId msgId,bool comment);
 
 private:
     // The class keeps a list of expanded items. Because items are constantly re-created, it is not possible
@@ -107,7 +107,8 @@ public:
 	virtual void deleteFeedItem(FeedItem *feedItem, uint32_t type);
 	virtual void openChat(const RsPeerId& peerId);
 #endif
-	virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const QVector<RsGxsMessageId> &msg_versions, const RsGxsMessageId &msgId, const QString &title);
+public slots:
+    virtual void openComments(const RsGxsMessageId &msgId);
 
 protected:
 	/* GxsMessageFramePostWidget */
@@ -130,6 +131,7 @@ protected:
 	virtual void setAllMessagesReadDo(bool read, uint32_t &token) override;
 
 private slots:
+    void tabCloseRequested(int index);
     void updateSorting(int);
     void switchDisplayMode();
     void updateGroupData();

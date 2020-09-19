@@ -15,9 +15,12 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <widget class="QTabWidget" name="tabWidget">
+    <widget class="RSTabWidget" name="tabWidget">
      <property name="currentIndex">
       <number>1</number>
+     </property>
+     <property name="tabsClosable">
+      <bool>true</bool>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -538,6 +541,12 @@ p, li { white-space: pre-wrap; }
    <class>GxsIdChooser</class>
    <extends>QComboBox</extends>
    <header>gui/gxs/GxsIdChooser.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>gui/common/RSTabWidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

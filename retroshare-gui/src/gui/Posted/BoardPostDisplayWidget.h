@@ -39,13 +39,14 @@ public:
     enum DisplayMode {
         DISPLAY_MODE_UNKNOWN   = 0x00,
         DISPLAY_MODE_CARD_VIEW = 0x01,
-        DISPLAY_MODE_COMPACT   = 0x02
+        DISPLAY_MODE_COMPACT   = 0x02,
+        DISPLAY_MODE_COMMENTS  = 0x03,
     };
 
     enum DisplayFlags: uint8_t {
-        SHOW_NONE     = 0x00,
-        SHOW_COMMENTS = 0x01,
-        SHOW_NOTES    = 0x02,
+        SHOW_NONE                  = 0x00,
+        SHOW_COMMENTS              = 0x01,
+        SHOW_NOTES                 = 0x02,
     };
 
     BoardPostDisplayWidget(const RsPostedPost& post,DisplayMode display_mode,uint8_t display_flags,QWidget *parent=nullptr);
@@ -76,7 +77,7 @@ protected slots:
 signals:
 	void vote(const RsGxsGrpMsgIdPair& msgId, bool up_or_down);
     void expand(RsGxsMessageId,bool);
-    void commentsRequested(RsGxsMessageId,bool);
+    void commentsRequested(const RsGxsMessageId&,bool);
 
 protected:
 	RsPostedPost mPost;

@@ -32,6 +32,7 @@
 #include "util/misc.h"
 #include "gui/Posted/PostedCreatePostDialog.h"
 #include "gui/common/UIStateHelper.h"
+#include "gui/common/RSTabWidget.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/feeds/SubFileItem.h"
 #include "gui/notifyqt.h"
@@ -91,8 +92,8 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
 
     BoardPostDisplayWidget w(post,mDisplayMode,displayFlags(post.mMeta.mMsgId));
 
-	w.adjustSize();
     w.setFixedSize(option.rect.size());
+    w.adjustSize();
 
 	QPixmap pixmap(option.rect.size());
 
@@ -145,16 +146,16 @@ void PostedPostDelegate::expandItem(RsGxsMessageId msgId,bool expanded)
 
     mPostListWidget->forceRedraw();
 }
-void PostedPostDelegate::commentItem(RsGxsMessageId msgId,bool comment)
-{
-    std::cerr << __PRETTY_FUNCTION__ << ": received commentItem signal. b="  << comment << std::endl;
-    if(comment)
-        mShowCommentItems.insert(msgId);
-    else
-        mShowCommentItems.erase(msgId);
-
-    mPostListWidget->forceRedraw();
-}
+// void PostedPostDelegate::commentItem(RsGxsMessageId msgId,bool comment)
+// {
+//     std::cerr << __PRETTY_FUNCTION__ << ": received commentItem signal. b="  << comment << std::endl;
+//     if(comment)
+//         mShowCommentItems.insert(msgId);
+//     else
+//         mShowCommentItems.erase(msgId);
+//
+//     mPostListWidget->forceRedraw();
+// }
 uint8_t PostedPostDelegate::displayFlags(const RsGxsMessageId &id) const
 {
     uint8_t flags=0;
@@ -178,10 +179,10 @@ QWidget *PostedPostDelegate::createEditor(QWidget *parent, const QStyleOptionVie
 
         QObject::connect(w,SIGNAL(vote(RsGxsGrpMsgIdPair,bool)),mPostListWidget,SLOT(voteMsg(RsGxsGrpMsgIdPair,bool)));
         QObject::connect(w,SIGNAL(expand(RsGxsMessageId,bool)),this,SLOT(expandItem(RsGxsMessageId,bool)));
-        QObject::connect(w,SIGNAL(commentsRequested(RsGxsMessageId,bool)),this,SLOT(commentItem(RsGxsMessageId,bool)));
+        QObject::connect(w,SIGNAL(commentsRequested(const RsGxsMessageId&,bool)),mPostListWidget,SLOT(openComments(const RsGxsMessageId&)));
 
-        w->adjustSize();
         w->setFixedSize(option.rect.size());
+        w->adjustSize();
 
         return w;
     }
@@ -216,6 +217,10 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
     ui->postsTree->setAutoSelect(true);
 
     ui->idChooser->setFlags(IDCHOOSER_ID_REQUIRED);
+
+    connect(ui->tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(tabCloseRequested(int)));
+    ui->tabWidget->hideCloseButton(0);
+    ui->tabWidget->hideCloseButton(1);
 
     connect(ui->sortStrategy_CB,SIGNAL(currentIndexChanged(int)),this,SLOT(updateSorting(int)));
     connect(ui->nextButton,SIGNAL(clicked()),this,SLOT(next10Posts()));
@@ -522,6 +527,9 @@ void PostedListWidgetWithModel::updateGroupData()
 
             insertBoardDetails(mGroup);
 
+            while(ui->tabWidget->widget(2) != nullptr)
+                tabCloseRequested(2);
+
             emit groupDataLoaded();
             emit groupChanged(this);		// signals the parent widget to e.g. update the group tab name
         } );
@@ -637,9 +645,40 @@ void PostedListWidgetWithModel::setAllMessagesReadDo(bool read, uint32_t &token)
     std::cerr << __PRETTY_FUNCTION__ << ": not implemented" << std::endl;
 }
 
-void PostedListWidgetWithModel::openComments(uint32_t /*type*/, const RsGxsGroupId &groupId, const QVector<RsGxsMessageId>& msg_versions,const RsGxsMessageId &msgId, const QString &title)
+void PostedListWidgetWithModel::openComments(const RsGxsMessageId& msgId)
 {
-	emit loadComment(groupId, msg_versions,msgId, title);
+    QModelIndex index = mPostedPostsModel->getIndexOfMessage(msgId);
+
+    if(!index.isValid())
+        return;
+
+    RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
+    BoardPostDisplayWidget *w = new BoardPostDisplayWidget(post,BoardPostDisplayWidget::DISPLAY_MODE_COMMENTS,BoardPostDisplayWidget::SHOW_COMMENTS);
+
+    QString title = QString::fromUtf8(post.mMeta.mMsgName.c_str());
+    if(title.length() > 30)
+        title = title.left(27) + "...";
+
+    ui->tabWidget->addTab(w,title);
+    ui->tabWidget->layout();
+}
+
+void PostedListWidgetWithModel::tabCloseRequested(int index)
+{
+    std::cerr << "GxsCommentContainer::tabCloseRequested(" << index << ")";
+    std::cerr << std::endl;
+
+    if (index != 0)
+    {
+        QWidget *comments = ui->tabWidget->widget(index);
+        ui->tabWidget->removeTab(index);
+        delete comments;
+    }
+    else
+    {
+        std::cerr << "GxsCommentContainer::tabCloseRequested() Not closing First Tab";
+        std::cerr << std::endl;
+    }
 }
 
 void PostedListWidgetWithModel::createMsg()
