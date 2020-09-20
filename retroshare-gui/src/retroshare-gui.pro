@@ -1409,7 +1409,7 @@ posted {
 		gui/Posted/PostedItem.ui \
 		gui/Posted/PostedCardView.ui \
 		gui/Posted/PostedCreatePostDialog.ui \
-		gui/Posted/PhotoView.ui 
+		gui/Posted/PhotoView.ui \
 		#gui/Posted/PostedDialog.ui \
 		#gui/Posted/PostedComments.ui \
 		#gui/Posted/PostedCreateCommentDialog.ui

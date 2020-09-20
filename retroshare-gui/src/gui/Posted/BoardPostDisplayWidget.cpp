@@ -55,11 +55,7 @@ BoardPostDisplayWidget::BoardPostDisplayWidget(const RsPostedPost& post, Display
     ui->setupUi(this);
     setup();
 
-    if(mode != DISPLAY_MODE_COMMENTS)
-        ui->verticalLayout->addStretch();
-    else
-        ui->commentsWidget->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
-
+    ui->verticalLayout->addStretch();
     ui->verticalLayout->setAlignment(Qt::AlignTop);
     ui->topLayout->setAlignment(Qt::AlignTop);
     ui->arrowsLayout->addStretch();
@@ -182,24 +178,6 @@ void BoardPostDisplayWidget::setup()
         ui->pictureLabel->hide();
         ui->notes->hide();
         ui->siteLabel->hide();
-    }
-        break;
-    case DISPLAY_MODE_COMMENTS:
-    {
-        ui->pictureLabel_compact->show();
-        ui->expandButton->hide();
-        ui->pictureLabel->hide();
-        ui->notes->hide();
-        ui->scoreLabel->hide();
-        ui->voteDownButton->hide();
-        ui->voteUpButton->hide();
-        ui->siteLabel->hide();
-        ui->newLabel->hide();
-        ui->commentButton->hide();
-        ui->expandButton->hide();
-        ui->shareButton->hide();
-        ui->readButton->hide();
-        ui->newLabel->hide();
     }
         break;
     case DISPLAY_MODE_CARD_VIEW:
@@ -341,7 +319,7 @@ void BoardPostDisplayWidget::setup()
 
         ui->siteLabel->setText(sitestr);
 
-        if(dmode == DISPLAY_MODE_COMPACT || dmode == DISPLAY_MODE_COMMENTS)
+        if(dmode == DISPLAY_MODE_COMPACT)
         {
             if(mPost.mImage.mData != NULL)
             {
@@ -403,8 +381,7 @@ void BoardPostDisplayWidget::setup()
 
     // feed.
     //frame_comment->show();
-    if(dmode != DISPLAY_MODE_COMMENTS)
-        ui->commentButton->show();
+    ui->commentButton->show();
 
     if (mPost.mComments)
     {

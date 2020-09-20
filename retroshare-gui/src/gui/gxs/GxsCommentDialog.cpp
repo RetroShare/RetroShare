@@ -152,10 +152,10 @@ void GxsCommentDialog::setCommentHeader(QWidget *header)
 	//header->setParent(ui->postFrame);
 	//ui->postFrame->setVisible(true);
 
-	QLayout *alayout = ui->postFrame->layout();
+#if 0
+    QLayout *alayout = ui->postFrame->layout();
 	alayout->addWidget(header);
 
-#if 0
 	ui->postFrame->setVisible(true);
 
 	QDateTime qtime;

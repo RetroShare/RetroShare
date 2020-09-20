@@ -428,7 +428,7 @@ p, li { white-space: pre-wrap; }
            </font>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -594,14 +594,14 @@ p, li { white-space: pre-wrap; }
    <header>gui/common/SubscribeToolButton.h</header>
   </customwidget>
   <customwidget>
-   <class>StyledElidedLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledElidedLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>RSTreeView</class>
    <extends>QTreeView</extends>
    <header>gui/common/RSTreeView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header>gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
    <class>GxsCommentDialog</class>
@@ -610,9 +610,9 @@ p, li { white-space: pre-wrap; }
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
+   <class>StyledElidedLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledElidedLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

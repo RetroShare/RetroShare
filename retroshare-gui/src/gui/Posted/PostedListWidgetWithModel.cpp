@@ -29,6 +29,7 @@
 #include "ui_PostedListWidgetWithModel.h"
 #include "gui/feeds/GxsChannelPostItem.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/gxs/GxsCommentDialog.h"
 #include "util/misc.h"
 #include "gui/Posted/PostedCreatePostDialog.h"
 #include "gui/common/UIStateHelper.h"
@@ -653,14 +654,16 @@ void PostedListWidgetWithModel::openComments(const RsGxsMessageId& msgId)
         return;
 
     RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
-    BoardPostDisplayWidget *w = new BoardPostDisplayWidget(post,BoardPostDisplayWidget::DISPLAY_MODE_COMMENTS,BoardPostDisplayWidget::SHOW_COMMENTS);
+    auto *commentDialog = new GxsCommentDialog(this,rsPosted->getTokenService(),rsPosted);
+
+    std::set<RsGxsMessageId> msg_versions({post.mMeta.mMsgId});
+    commentDialog->commentLoad(post.mMeta.mGroupId, msg_versions, post.mMeta.mMsgId);
 
     QString title = QString::fromUtf8(post.mMeta.mMsgName.c_str());
     if(title.length() > 30)
         title = title.left(27) + "...";
 
-    ui->tabWidget->addTab(w,title);
-    ui->tabWidget->layout();
+    ui->tabWidget->addTab(commentDialog,title);
 }
 
 void PostedListWidgetWithModel::tabCloseRequested(int index)
