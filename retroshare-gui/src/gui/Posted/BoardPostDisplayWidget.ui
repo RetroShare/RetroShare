@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>758</width>
-    <height>205</height>
+    <height>211</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -41,7 +41,7 @@
    <item>
     <widget class="QFrame" name="frame">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -133,6 +133,12 @@
           </item>
           <item>
            <widget class="ClickableLabel" name="pictureLabel_compact">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>PictureLabel_compact</string>
             </property>
@@ -444,7 +450,14 @@
          </widget>
         </item>
         <item>
-         <widget class="GxsCommentDialog" name="commentsWidget" native="true"/>
+         <widget class="GxsCommentDialog" name="commentsWidget" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+            <horstretch>0</horstretch>
+            <verstretch>1</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -477,8 +490,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
   <include location="Posted_images.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>
