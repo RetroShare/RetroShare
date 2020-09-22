@@ -181,6 +181,7 @@ QWidget *PostedPostDelegate::createEditor(QWidget *parent, const QStyleOptionVie
         QObject::connect(w,SIGNAL(vote(RsGxsGrpMsgIdPair,bool)),mPostListWidget,SLOT(voteMsg(RsGxsGrpMsgIdPair,bool)));
         QObject::connect(w,SIGNAL(expand(RsGxsMessageId,bool)),this,SLOT(expandItem(RsGxsMessageId,bool)));
         QObject::connect(w,SIGNAL(commentsRequested(const RsGxsMessageId&,bool)),mPostListWidget,SLOT(openComments(const RsGxsMessageId&)));
+        QObject::connect(w,SIGNAL(changeReadStatusRequested(const RsGxsMessageId&,bool)),mPostListWidget,SLOT(changeReadStatus(const RsGxsMessageId&,bool)));
 
         w->setFixedSize(option.rect.size());
         w->adjustSize();
@@ -666,6 +667,11 @@ void PostedListWidgetWithModel::openComments(const RsGxsMessageId& msgId)
     ui->tabWidget->addTab(commentDialog,title);
 }
 
+void PostedListWidgetWithModel::changeReadStatus(const RsGxsMessageId& msgId,bool b)
+{
+    QModelIndex index=mPostedPostsModel->getIndexOfMessage(msgId);
+    mPostedPostsModel->setMsgReadStatus(index, b);
+}
 void PostedListWidgetWithModel::tabCloseRequested(int index)
 {
     std::cerr << "GxsCommentContainer::tabCloseRequested(" << index << ")";

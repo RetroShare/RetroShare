@@ -480,6 +480,19 @@ bool p3Posted::voteForPost(bool up,const RsGxsGroupId& postGrpId,const RsGxsMess
     return true;
 }
 
+bool p3Posted::setPostReadStatus(const RsGxsGrpMsgIdPair& msgId, bool read)
+{
+    uint32_t token;
+
+    setMessageReadStatus(token,msgId,read);
+
+    if(waitToken(token) != RsTokenService::COMPLETE)
+    {
+        std::cerr << __PRETTY_FUNCTION__ << " Error! GXS operation failed." << std::endl;
+        return false;
+    }
+    return true;
+}
 bool p3Posted::editBoard(RsPostedGroup& board)
 {
 	uint32_t token;

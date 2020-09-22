@@ -715,7 +715,7 @@ void RsPostedPostsModel::createPostsArray(std::vector<RsPostedPost>& posts)
     }
 }
 
-void RsPostedPostsModel::setMsgReadStatus(const QModelIndex& i,bool read_status,bool with_children)
+void RsPostedPostsModel::setMsgReadStatus(const QModelIndex& i,bool read_status)
 {
 	if(!i.isValid())
 		return ;
@@ -728,10 +728,16 @@ void RsPostedPostsModel::setMsgReadStatus(const QModelIndex& i,bool read_status,
 	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mFilteredPosts.size())
 		return ;
 
-#warning TODO
-//	bool has_unread_below, has_read_below;
-//	recursSetMsgReadStatus(entry,read_status,with_children) ;
-//	recursUpdateReadStatusAndTimes(0,has_unread_below,has_read_below);
+    RsGxsGroupId grpId = mPosts[entry].mMeta.mGroupId;
+    RsGxsMessageId msgId = mPosts[entry].mMeta.mMsgId;
+
+    RsThread::async([msgId,grpId,read_status]()
+    {
+        // Call blocking API
+
+        rsPosted->setPostReadStatus(RsGxsGrpMsgIdPair(grpId,msgId),read_status);
+    } );
+
 }
 
 QModelIndex RsPostedPostsModel::getIndexOfMessage(const RsGxsMessageId& mid) const

@@ -109,6 +109,7 @@ public:
 #endif
 public slots:
     virtual void openComments(const RsGxsMessageId &msgId);
+    virtual void changeReadStatus(const RsGxsMessageId& msgId,bool b);
 
 protected:
 	/* GxsMessageFramePostWidget */

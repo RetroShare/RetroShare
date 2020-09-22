@@ -72,9 +72,11 @@ protected slots:
     void makeDownVote() ;
 	void toggleNotes() ;
     void showAuthorInPeople();
+    void readToggled(bool);
 
 signals:
-	void vote(const RsGxsGrpMsgIdPair& msgId, bool up_or_down);
+    void changeReadStatusRequested(const RsGxsMessageId&,bool);
+    void vote(const RsGxsGrpMsgIdPair& msgId, bool up_or_down);
     void expand(RsGxsMessageId,bool);
     void commentsRequested(const RsGxsMessageId&,bool);
 

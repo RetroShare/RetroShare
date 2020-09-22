@@ -458,6 +458,10 @@ void BoardPostDisplayWidget::loadComments(bool e)
     emit commentsRequested(mPost.mMeta.mMsgId,e);
 }
 
+void BoardPostDisplayWidget::readToggled(bool s)
+{
+    emit changeReadStatusRequested(mPost.mMeta.mMsgId,s);
+}
 void BoardPostDisplayWidget::showAuthorInPeople()
 {
     if(mPost.mMeta.mAuthorId.isNull())
