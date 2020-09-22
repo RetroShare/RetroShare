@@ -61,16 +61,20 @@ BoardPostDisplayWidget::BoardPostDisplayWidget(const RsPostedPost& post, Display
     ui->arrowsLayout->addStretch();
     ui->arrowsLayout->setAlignment(Qt::AlignTop);
     ui->verticalLayout_2->addStretch();
+//    ui->verticalLayout_3->addStretch();
+//    ui->verticalLayout_3->setAlignment(Qt::AlignTop);
 
-    if(display_flags & SHOW_COMMENTS)
-    {
-        ui->commentsWidget->setTokenService(rsPosted->getTokenService(),rsPosted);
+    adjustSize();
 
-        std::set<RsGxsMessageId> post_versions ;
-        post_versions.insert(post.mMeta.mMsgId) ;
-
-        ui->commentsWidget->commentLoad(post.mMeta.mGroupId, post_versions,mPost.mMeta.mMsgId,true);
-    }
+//    if(display_flags & SHOW_COMMENTS)
+//    {
+//        ui->commentsWidget->setTokenService(rsPosted->getTokenService(),rsPosted);
+//
+//        std::set<RsGxsMessageId> post_versions ;
+//        post_versions.insert(post.mMeta.mMsgId) ;
+//
+//        ui->commentsWidget->commentLoad(post.mMeta.mGroupId, post_versions,mPost.mMeta.mMsgId,true);
+//    }
 }
 
 void BoardPostDisplayWidget::setCommentsSize(int comNb)
@@ -172,8 +176,8 @@ void BoardPostDisplayWidget::setup()
     case  DISPLAY_MODE_COMPACT:
     {
         ui->pictureLabel_compact->show();
-        ui->expandButton->hide();
-        //ui->expandButton->show();	// always hide, since we have the photoview already
+        //ui->expandButton->hide();
+        ui->expandButton->show();	// always hide, since we have the photoview already
 
         ui->pictureLabel->hide();
         ui->notes->hide();
@@ -207,7 +211,7 @@ void BoardPostDisplayWidget::setup()
 
     if(!(mDisplayFlags & SHOW_COMMENTS))
     {
-        ui->commentsWidget->hide();
+        //ui->commentsWidget->hide();
         ui->commentButton->setChecked(false);
     }
     else
@@ -269,7 +273,7 @@ void BoardPostDisplayWidget::setup()
         QDateTime qtime;
         qtime.setTime_t(mPost.mMeta.mPublishTs);
         QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
-        QString timestamp2 = misc::timeRelativeToNow(mPost.mMeta.mPublishTs);
+        QString timestamp2 = misc::timeRelativeToNow(mPost.mMeta.mPublishTs) + " " + tr("ago");
         ui->dateLabel->setText(timestamp2);
         ui->dateLabel->setToolTip(timestamp);
 
@@ -377,7 +381,10 @@ void BoardPostDisplayWidget::setup()
     doc.setHtml(ui->notes->text());
 
     if(doc.toPlainText().trimmed().isEmpty())
+    {
         ui->notes->hide();
+        ui->expandButton->hide();
+    }
 
     // feed.
     //frame_comment->show();
@@ -385,9 +392,7 @@ void BoardPostDisplayWidget::setup()
 
     if (mPost.mComments)
     {
-        QString commentText = QString::number(mPost.mComments);
-        commentText += " ";
-        commentText += tr("Comments");
+        QString commentText = tr("Comments (%1)").arg(QString::number(mPost.mComments));
         ui->commentButton->setText(commentText);
     }
     else
@@ -434,7 +439,17 @@ void BoardPostDisplayWidget::setup()
 
 void BoardPostDisplayWidget::doExpand(bool e)
 {
-    std::cerr << "Expanding" << std::endl;
+     std::cerr << "Expanding" << std::endl;
+     if(e)
+     {
+         //ui->notes->show();
+         ui->pictureLabel_2->show();
+     }
+     else
+         {
+         //ui->notes->hide();
+         ui->pictureLabel_2->hide();
+     }
     emit expand(mPost.mMeta.mMsgId,e);
 }
 
