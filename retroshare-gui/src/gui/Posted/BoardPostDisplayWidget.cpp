@@ -22,6 +22,7 @@
 #include <QMenu>
 #include <QStyle>
 #include <QTextDocument>
+#include <QToolButton>
 
 #include "rshare.h"
 #include "BoardPostDisplayWidget.h"
@@ -34,7 +35,8 @@
 #include "gui/Identity/IdDialog.h"
 #include "gui/MainWindow.h"
 
-#include "ui_BoardPostDisplayWidget.h"
+#include "ui_BoardPostDisplayWidget_compact.h"
+#include "ui_BoardPostDisplayWidget_card.h"
 
 #include <retroshare/rsposted.h>
 #include <iostream>
@@ -46,38 +48,15 @@
 const char *BoardPostDisplayWidget::DEFAULT_BOARD_IMAGE = ":/icons/png/newsfeed2.png";
 
 //===================================================================================================================================
-//==                                                 Base class BoardPostDisplayWidget                                             ==
+//==                                             Base class BoardPostDisplayWidgetBase                                             ==
 //===================================================================================================================================
 
-BoardPostDisplayWidget::BoardPostDisplayWidget(const RsPostedPost& post, DisplayMode mode, uint8_t display_flags, QWidget *parent)
-    : QWidget(parent),mPost(post),dmode(mode),mDisplayFlags(display_flags),ui(new Ui::BoardPostDisplayWidget())
+BoardPostDisplayWidgetBase::BoardPostDisplayWidgetBase(const RsPostedPost& post,uint8_t display_flags,QWidget *parent)
+    : QWidget(parent), mPost(post),mDisplayFlags(display_flags)
 {
-    ui->setupUi(this);
-    setup();
-
-    ui->verticalLayout->addStretch();
-    ui->verticalLayout->setAlignment(Qt::AlignTop);
-    ui->topLayout->setAlignment(Qt::AlignTop);
-    ui->arrowsLayout->addStretch();
-    ui->arrowsLayout->setAlignment(Qt::AlignTop);
-    ui->verticalLayout_2->addStretch();
-//    ui->verticalLayout_3->addStretch();
-//    ui->verticalLayout_3->setAlignment(Qt::AlignTop);
-
-    adjustSize();
-
-//    if(display_flags & SHOW_COMMENTS)
-//    {
-//        ui->commentsWidget->setTokenService(rsPosted->getTokenService(),rsPosted);
-//
-//        std::set<RsGxsMessageId> post_versions ;
-//        post_versions.insert(post.mMeta.mMsgId) ;
-//
-//        ui->commentsWidget->commentLoad(post.mMeta.mGroupId, post_versions,mPost.mMeta.mMsgId,true);
-//    }
 }
 
-void BoardPostDisplayWidget::setCommentsSize(int comNb)
+void BoardPostDisplayWidgetBase::setCommentsSize(int comNb)
 {
 	QString sComButText = tr("Comment");
 	if (comNb == 1)
@@ -85,151 +64,106 @@ void BoardPostDisplayWidget::setCommentsSize(int comNb)
 	else if(comNb > 1)
 		sComButText = tr("Comments ").append("(%1)").arg(comNb);
 
-	ui->commentButton->setText(sComButText);
+    commentButton()->setText(sComButText);
 }
 
-void BoardPostDisplayWidget::makeDownVote()
+void BoardPostDisplayWidgetBase::makeDownVote()
 {
 	RsGxsGrpMsgIdPair msgId;
 	msgId.first = mPost.mMeta.mGroupId;
 	msgId.second = mPost.mMeta.mMsgId;
 
-	ui->voteUpButton->setEnabled(false);
-	ui->voteDownButton->setEnabled(false);
+    voteUpButton()->setEnabled(false);
+    voteDownButton()->setEnabled(false);
 
 	emit vote(msgId, false);
 }
 
-void BoardPostDisplayWidget::makeUpVote()
+void BoardPostDisplayWidgetBase::makeUpVote()
 {
 	RsGxsGrpMsgIdPair msgId;
 	msgId.first = mPost.mMeta.mGroupId;
 	msgId.second = mPost.mMeta.mMsgId;
 
-	ui->voteUpButton->setEnabled(false);
-	ui->voteDownButton->setEnabled(false);
+    voteUpButton()->setEnabled(false);
+    voteDownButton()->setEnabled(false);
 
 	emit vote(msgId, true);
 }
 
-void BoardPostDisplayWidget::setReadStatus(bool isNew, bool isUnread)
+void BoardPostDisplayWidgetBase::setReadStatus(bool isNew, bool isUnread)
 {
 	if (isUnread)
 	{
-		ui->readButton->setChecked(true);
-		ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
+        readButton()->setChecked(true);
+        readButton()->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
 	}
 	else
 	{
-		ui->readButton->setChecked(false);
-		ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png"));
+        readButton()->setChecked(false);
+        readButton()->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png"));
 	}
 
-	ui->newLabel->setVisible(isNew);
-
-//	ui->mainFrame->setProperty("new", isNew);
-//	ui->mainFrame->style()->unpolish(ui->mainFrame);
-//	ui->mainFrame->style()->polish(  ui->mainFrame);
+    newLabel()->setVisible(isNew);
 }
 
-void BoardPostDisplayWidget::setComment(const RsGxsComment& cmt) {}
-
-BoardPostDisplayWidget::~BoardPostDisplayWidget()
+void BoardPostDisplayWidget::doExpand(bool e)
 {
-	delete(ui);
+     std::cerr << "Expanding" << std::endl;
+     if(e)
+         ui->notes->show();
+     else
+         ui->notes->hide();
+
+    emit expand(mPost.mMeta.mMsgId,e);
 }
 
-
-void BoardPostDisplayWidget::viewPicture()
+void BoardPostDisplayWidgetBase::loadComments(bool e)
 {
-    if(mPost.mImage.mData == NULL)
-        return;
+    emit commentsRequested(mPost.mMeta.mMsgId,e);
+}
 
-    QString timestamp = misc::timeRelativeToNow(mPost.mMeta.mPublishTs);
-    QPixmap pixmap;
-    GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
-    RsGxsId authorID = mPost.mMeta.mAuthorId;
-
-    PhotoView *PView = new PhotoView(this);
-
-    PView->setPixmap(pixmap);
-    PView->setTitle(QString::fromUtf8(mPost.mMeta.mMsgName.c_str()));
-    PView->setName(authorID);
-    PView->setTime(timestamp);
-    PView->setGroupId(mPost.mMeta.mGroupId);
-    PView->setMessageId(mPost.mMeta.mMsgId);
-
-    PView->show();
+void BoardPostDisplayWidgetBase::readToggled(bool s)
+{
+    emit changeReadStatusRequested(mPost.mMeta.mMsgId,s);
+}
+void BoardPostDisplayWidgetBase::showAuthorInPeople()
+{
+    if(mPost.mMeta.mAuthorId.isNull())
+    {
+        std::cerr << "(EE) GxsForumThreadWidget::loadMsgData_showAuthorInPeople() ERROR Missing Message Data...";
+        std::cerr << std::endl;
+    }
 
     /* window will destroy itself! */
+    IdDialog *idDialog = dynamic_cast<IdDialog*>(MainWindow::getPage(MainWindow::People));
+
+    if (!idDialog)
+        return ;
+
+    MainWindow::showWindow(MainWindow::People);
+    idDialog->navigate(RsGxsId(mPost.mMeta.mAuthorId));
 }
 
-void BoardPostDisplayWidget::toggleNotes() {}
-
-void BoardPostDisplayWidget::setup()
+void BoardPostDisplayWidgetBase::setup()
 {
     // show/hide things based on the view type
 
-    switch(dmode)
-    {
-    default:
-    case  DISPLAY_MODE_COMPACT:
-    {
-        ui->pictureLabel_compact->show();
-        //ui->expandButton->hide();
-        ui->expandButton->show();	// always hide, since we have the photoview already
-
-        ui->pictureLabel->hide();
-        ui->notes->hide();
-        ui->siteLabel->hide();
-    }
-        break;
-    case DISPLAY_MODE_CARD_VIEW:
-    {
-        ui->frame_picture->hide();
-        ui->pictureLabel_compact->hide();
-        ui->expandButton->hide();
-    }
-        break;
-    }
-
-
-    if(mDisplayFlags & SHOW_NOTES)
-    {
-        ui->frame_picture->show();
-        ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/images/decrease.png")));
-        ui->expandButton->setToolTip(tr("Hide"));
-        ui->expandButton->setChecked(true);
-    }
-    else
-    {
-        ui->frame_picture->hide();
-        ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/images/expand.png")));
-        ui->expandButton->setToolTip(tr("Expand"));
-        ui->expandButton->setChecked(false);
-    }
-
     if(!(mDisplayFlags & SHOW_COMMENTS))
-    {
-        //ui->commentsWidget->hide();
-        ui->commentButton->setChecked(false);
-    }
+        commentButton()->setChecked(false);
     else
-        ui->commentButton->setChecked(true);
-
-    setAttribute(Qt::WA_DeleteOnClose, true);
+        commentButton()->setChecked(true);
 
     /* clear ui */
-    ui->titleLabel->setText(tr("Loading"));
-    ui->dateLabel->clear();
-    ui->fromLabel->clear();
-    ui->siteLabel->clear();
+    titleLabel()->setText(tr("Loading"));
+    dateLabel()->clear();
+    fromLabel()->clear();
+    siteLabel()->clear();
 
-    connect(ui->expandButton, SIGNAL(toggled(bool)), this, SLOT(doExpand(bool)));
-    connect(ui->commentButton, SIGNAL(toggled(bool)), this, SLOT(loadComments(bool)));
-    connect(ui->voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
-    connect(ui->voteDownButton, SIGNAL(clicked()), this, SLOT(makeDownVote()));
-    connect(ui->readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
+    QObject::connect(commentButton(), SIGNAL(toggled(bool)), this, SLOT(loadComments(bool)));
+    QObject::connect(voteUpButton(), SIGNAL(clicked()), this, SLOT(makeUpVote()));
+    QObject::connect(voteDownButton(), SIGNAL(clicked()), this, SLOT(makeDownVote()));
+    QObject::connect(readButton(), SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
 
     QAction *CopyLinkAction = new QAction(QIcon(""),tr("Copy RetroShare Link"), this);
     connect(CopyLinkAction, SIGNAL(triggered()), this, SLOT(copyMessageLink()));
@@ -239,32 +173,32 @@ void BoardPostDisplayWidget::setup()
 
     int S = QFontMetricsF(font()).height() ;
 
-    ui->voteUpButton->setIconSize(QSize(S*1.5,S*1.5));
-    ui->voteDownButton->setIconSize(QSize(S*1.5,S*1.5));
-    ui->commentButton->setIconSize(QSize(S*1.5,S*1.5));
-    ui->readButton->setIconSize(QSize(S*1.5,S*1.5));
-    ui->shareButton->setIconSize(QSize(S*1.5,S*1.5));
+    voteUpButton()->setIconSize(QSize(S*1.5,S*1.5));
+    voteDownButton()->setIconSize(QSize(S*1.5,S*1.5));
+    commentButton()->setIconSize(QSize(S*1.5,S*1.5));
+    readButton()->setIconSize(QSize(S*1.5,S*1.5));
+    shareButton()->setIconSize(QSize(S*1.5,S*1.5));
 
     QMenu *menu = new QMenu();
     menu->addAction(CopyLinkAction);
     menu->addSeparator();
     menu->addAction(showInPeopleAct);
-    ui->shareButton->setMenu(menu);
+    shareButton()->setMenu(menu);
 
     RsReputationLevel overall_reputation = rsReputations->overallReputationLevel(mPost.mMeta.mAuthorId);
     bool redacted = (overall_reputation == RsReputationLevel::LOCALLY_NEGATIVE);
 
     if(redacted)
     {
-        ui->commentButton->setDisabled(true);
-        ui->voteUpButton->setDisabled(true);
-        ui->voteDownButton->setDisabled(true);
-        ui->fromLabel->setId(mPost.mMeta.mAuthorId);
-        ui->titleLabel->setText(tr( "<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(mPost.mMeta.mAuthorId.toStdString()))) ;
+        commentButton()->setDisabled(true);
+        voteUpButton()->setDisabled(true);
+        voteDownButton()->setDisabled(true);
+        fromLabel()->setId(mPost.mMeta.mAuthorId);
+        titleLabel()->setText(tr( "<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(mPost.mMeta.mAuthorId.toStdString()))) ;
         QDateTime qtime;
         qtime.setTime_t(mPost.mMeta.mPublishTs);
         QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
-        ui->dateLabel->setText(timestamp);
+        dateLabel()->setText(timestamp);
     }
     else
     {
@@ -274,10 +208,10 @@ void BoardPostDisplayWidget::setup()
         qtime.setTime_t(mPost.mMeta.mPublishTs);
         QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
         QString timestamp2 = misc::timeRelativeToNow(mPost.mMeta.mPublishTs) + " " + tr("ago");
-        ui->dateLabel->setText(timestamp2);
-        ui->dateLabel->setToolTip(timestamp);
+        dateLabel()->setText(timestamp2);
+        dateLabel()->setToolTip(timestamp);
 
-        ui->fromLabel->setId(mPost.mMeta.mAuthorId);
+        fromLabel()->setId(mPost.mMeta.mAuthorId);
 
         // Use QUrl to check/parse our URL
         // The only combination that seems to work: load as EncodedUrl, extract toEncoded().
@@ -311,20 +245,97 @@ void BoardPostDisplayWidget::setup()
             QString siteurl = url.toEncoded();
             sitestr = QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#0079d3;\"> %2 </span></a>").arg(siteurl).arg(siteurl);
 
-            ui->titleLabel->setText(urlstr);
+            titleLabel()->setText(urlstr);
         }
         else
-            ui->titleLabel->setText( QString::fromUtf8(mPost.mMeta.mMsgName.c_str()) );
+            titleLabel()->setText( QString::fromUtf8(mPost.mMeta.mMsgName.c_str()) );
 
         if (urlarray.isEmpty())
-        {
-            ui->siteLabel->hide();
-        }
+            siteLabel()->hide();
 
-        ui->siteLabel->setText(sitestr);
+        siteLabel()->setText(sitestr);
+    }
 
-        if(dmode == DISPLAY_MODE_COMPACT)
-        {
+    //QString score = "Hot" + QString::number(post.mHotScore);
+    //score += " Top" + QString::number(post.mTopScore);
+    //score += " New" + QString::number(post.mNewScore);
+
+    QString score = QString::number(mPost.mTopScore);
+
+    scoreLabel()->setText(score);
+
+    // FIX THIS UP LATER.
+    notes()->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+    pictureLabel()->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+
+    // feed.
+    //frame_comment->show();
+    commentButton()->show();
+
+    if (mPost.mComments)
+    {
+        QString commentText = tr("Comments (%1)").arg(QString::number(mPost.mComments));
+        commentButton()->setText(commentText);
+    }
+    else
+        commentButton()->setText(tr("Comment"));
+
+    setReadStatus(IS_MSG_NEW(mPost.mMeta.mMsgStatus), IS_MSG_UNREAD(mPost.mMeta.mMsgStatus) || IS_MSG_NEW(mPost.mMeta.mMsgStatus));
+
+    // disable voting buttons - if they have already voted.
+    if (mPost.mMeta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK)
+    {
+        voteUpButton()->setEnabled(false);
+        voteDownButton()->setEnabled(false);
+    }
+
+    connect(pictureLabel(), SIGNAL(clicked()), this, SLOT(viewPicture()));
+
+#ifdef TODO
+    emit sizeChanged(this);
+#endif
+}
+//===================================================================================================================================
+//==                                                 class BoardPostDisplayWidget                                                  ==
+//===================================================================================================================================
+
+BoardPostDisplayWidget::BoardPostDisplayWidget(const RsPostedPost& post, uint8_t display_flags,QWidget *parent=nullptr)
+    : BoardPostDisplayWidgetBase(post,display_flags,parent), ui(new Ui::BoardPostDisplayWidget_compact())
+{
+    ui->setupUi(this);
+    setup();
+
+    ui->verticalLayout->addStretch();
+    ui->verticalLayout->setAlignment(Qt::AlignTop);
+    ui->topLayout->setAlignment(Qt::AlignTop);
+    ui->arrowsLayout->addStretch();
+    ui->arrowsLayout->setAlignment(Qt::AlignTop);
+    ui->verticalLayout_2->addStretch();
+
+    adjustSize();
+}
+
+BoardPostDisplayWidget::~BoardPostDisplayWidget()
+{
+    delete ui;
+}
+
+void BoardPostDisplayWidget::setup()
+{
+    BoardPostDisplayWidgetBase::setup();
+
+    // show/hide things based on the view type
+
+    setAttribute(Qt::WA_DeleteOnClose, true);
+
+    RsReputationLevel overall_reputation = rsReputations->overallReputationLevel(mPost.mMeta.mAuthorId);
+    bool redacted = (overall_reputation == RsReputationLevel::LOCALLY_NEGATIVE);
+
+    if(redacted)
+    {
+    }
+    else
+    {
             if(mPost.mImage.mData != NULL)
             {
                 QPixmap pixmap;
@@ -334,102 +345,38 @@ void BoardPostDisplayWidget::setup()
                 int desired_height = QFontMetricsF(font()).height() * 5;
 
                 QPixmap scaledpixmap = pixmap.scaledToHeight(desired_height, Qt::SmoothTransformation);
-                ui->pictureLabel_compact->setPixmap(scaledpixmap);
-            }
-            else if (mPost.mImage.mData == NULL)
-                ui->pictureLabel_compact->hide();
-            else
-                ui->pictureLabel_compact->show();
-        }
-        else
-        {
-            if(mPost.mImage.mData != NULL)
-            {
-                QPixmap pixmap;
-                GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
-                // Wiping data - as its been passed to thumbnail.
-
-
-                QPixmap scaledpixmap;
-                if(pixmap.width() > 800){
-                    QPixmap scaledpixmap = pixmap.scaledToWidth(800, Qt::SmoothTransformation);
-                    ui->pictureLabel->setPixmap(scaledpixmap);
-                }else{
-                    ui->pictureLabel->setPixmap(pixmap);
-                }
+                ui->pictureLabel->setPixmap(scaledpixmap);
             }
             else if (mPost.mImage.mData == NULL)
                 ui->pictureLabel->hide();
             else
                 ui->pictureLabel->show();
+
         }
-    }
 
-    //QString score = "Hot" + QString::number(post.mHotScore);
-    //score += " Top" + QString::number(post.mTopScore);
-    //score += " New" + QString::number(post.mNewScore);
-
-    QString score = QString::number(mPost.mTopScore);
-
-    ui->scoreLabel->setText(score);
-
-    // FIX THIS UP LATER.
     ui->notes->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
-    ui->pictureLabel_2->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+
+    QObject::connect(ui->expandButton, SIGNAL(toggled(bool)), this, SLOT(doExpand(bool)));
 
     QTextDocument doc;
-    doc.setHtml(ui->notes->text());
+    doc.setHtml(notes()->text());
+
+    if(mDisplayFlags & SHOW_NOTES)
+    {
+        notes()->show();
+        ui->expandButton->setChecked(true);
+    }
+    else
+    {
+        notes()->hide();
+        ui->expandButton->setChecked(false);
+    }
 
     if(doc.toPlainText().trimmed().isEmpty())
     {
-        ui->notes->hide();
+        notes()->hide();
         ui->expandButton->hide();
     }
-
-    // feed.
-    //frame_comment->show();
-    ui->commentButton->show();
-
-    if (mPost.mComments)
-    {
-        QString commentText = tr("Comments (%1)").arg(QString::number(mPost.mComments));
-        ui->commentButton->setText(commentText);
-    }
-    else
-        ui->commentButton->setText(tr("Comment"));
-
-    setReadStatus(IS_MSG_NEW(mPost.mMeta.mMsgStatus), IS_MSG_UNREAD(mPost.mMeta.mMsgStatus) || IS_MSG_NEW(mPost.mMeta.mMsgStatus));
-
-    // disable voting buttons - if they have already voted.
-    if (mPost.mMeta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK)
-    {
-        ui->voteUpButton->setEnabled(false);
-        ui->voteDownButton->setEnabled(false);
-    }
-
-#if 0
-    uint32_t up, down, nComments;
-
-    bool ok = rsPosted->retrieveScores(mPost.mMeta.mServiceString, up, down, nComments);
-
-    if(ok)
-    {
-        int32_t vote = up - down;
-        scoreLabel->setText(QString::number(vote));
-
-        numCommentsLabel->setText("<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px;"
-                                  "margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span"
-                                  "style=\" font-size:10pt; font-weight:600;\">#</span><span "
-                                  "style=\" font-size:8pt; font-weight:600;\"> Comments:  "
-                                  + QString::number(nComments) + "</span></p>");
-    }
-
-    mInFill = false;
-#endif
-
-    ui->pictureLabel_compact->setUseStyleSheet(false);	// If not this, causes dilation of the image.
-    connect(ui->pictureLabel_compact, SIGNAL(clicked()), this, SLOT(viewPicture()));
-
     updateGeometry();
 
 #ifdef TODO
@@ -437,45 +384,111 @@ void BoardPostDisplayWidget::setup()
 #endif
 }
 
-void BoardPostDisplayWidget::doExpand(bool e)
+void BoardPostDisplayWidget::viewPicture()
 {
-     std::cerr << "Expanding" << std::endl;
-     if(e)
-     {
-         //ui->notes->show();
-         ui->pictureLabel_2->show();
-     }
-     else
-         {
-         //ui->notes->hide();
-         ui->pictureLabel_2->hide();
-     }
-    emit expand(mPost.mMeta.mMsgId,e);
-}
+    if(mPost.mImage.mData == NULL)
+        return;
 
-void BoardPostDisplayWidget::loadComments(bool e)
-{
-    emit commentsRequested(mPost.mMeta.mMsgId,e);
-}
+    QString timestamp = misc::timeRelativeToNow(mPost.mMeta.mPublishTs);
+    QPixmap pixmap;
+    GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
+    RsGxsId authorID = mPost.mMeta.mAuthorId;
 
-void BoardPostDisplayWidget::readToggled(bool s)
-{
-    emit changeReadStatusRequested(mPost.mMeta.mMsgId,s);
-}
-void BoardPostDisplayWidget::showAuthorInPeople()
-{
-    if(mPost.mMeta.mAuthorId.isNull())
-    {
-        std::cerr << "(EE) GxsForumThreadWidget::loadMsgData_showAuthorInPeople() ERROR Missing Message Data...";
-        std::cerr << std::endl;
-    }
+    PhotoView *PView = new PhotoView();
+
+    PView->setPixmap(pixmap);
+    PView->setTitle(QString::fromUtf8(mPost.mMeta.mMsgName.c_str()));
+    PView->setName(authorID);
+    PView->setTime(timestamp);
+    PView->setGroupId(mPost.mMeta.mGroupId);
+    PView->setMessageId(mPost.mMeta.mMsgId);
+
+    PView->show();
 
     /* window will destroy itself! */
-    IdDialog *idDialog = dynamic_cast<IdDialog*>(MainWindow::getPage(MainWindow::People));
-
-    if (!idDialog)
-        return ;
-
-    MainWindow::showWindow(MainWindow::People);
-    idDialog->navigate(RsGxsId(mPost.mMeta.mAuthorId));
 }
+
+QToolButton    *BoardPostDisplayWidget::voteUpButton()   { return ui->voteUpButton; }
+QToolButton    *BoardPostDisplayWidget::commentButton()  { return ui->commentButton; }
+QToolButton    *BoardPostDisplayWidget::voteDownButton() { return ui->voteDownButton; }
+QLabel         *BoardPostDisplayWidget::newLabel()       { return ui->newLabel; }
+QToolButton    *BoardPostDisplayWidget::readButton()     { return ui->readButton; }
+QLabel         *BoardPostDisplayWidget::siteLabel()      { return ui->siteLabel; }
+GxsIdLabel     *BoardPostDisplayWidget::fromLabel()      { return ui->fromLabel; }
+QLabel         *BoardPostDisplayWidget::dateLabel()      { return ui->dateLabel; }
+QLabel         *BoardPostDisplayWidget::titleLabel()     { return ui->titleLabel; }
+QLabel         *BoardPostDisplayWidget::scoreLabel()     { return ui->scoreLabel; }
+QLabel         *BoardPostDisplayWidget::notes()          { return ui->notes; }
+QPushButton    *BoardPostDisplayWidget::shareButton()    { return ui->shareButton; }
+QLabel         *BoardPostDisplayWidget::pictureLabel()   { return ui->pictureLabel; }
+
+//===================================================================================================================================
+//==                                                 class BoardPostDisplayWidget_card                                             ==
+//===================================================================================================================================
+
+BoardPostDisplayWidget_card::BoardPostDisplayWidget_card(const RsPostedPost& post, uint8_t display_flags, QWidget *parent)
+    : BoardPostDisplayWidgetBase(post,display_flags,parent), ui(new Ui::BoardPostDisplayWidget_card())
+{
+    ui->setupUi(this);
+    setup();
+
+    ui->verticalLayout->addStretch();
+    ui->verticalLayout->setAlignment(Qt::AlignTop);
+    ui->topLayout->setAlignment(Qt::AlignTop);
+    ui->arrowsLayout->addStretch();
+    ui->arrowsLayout->setAlignment(Qt::AlignTop);
+    ui->verticalLayout_2->addStretch();
+
+    adjustSize();
+}
+
+BoardPostDisplayWidget_card::~BoardPostDisplayWidget_card()
+{
+    delete ui;
+}
+
+void BoardPostDisplayWidget_card::setup()
+{
+    BoardPostDisplayWidgetBase::setup();
+
+    if(mPost.mImage.mData != NULL)
+    {
+        QPixmap pixmap;
+        GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
+        // Wiping data - as its been passed to thumbnail.
+
+
+        QPixmap scaledpixmap;
+        if(pixmap.width() > 800){
+            QPixmap scaledpixmap = pixmap.scaledToWidth(800, Qt::SmoothTransformation);
+            pictureLabel()->setPixmap(scaledpixmap);
+        }else{
+            pictureLabel()->setPixmap(pixmap);
+        }
+    }
+    else if (mPost.mImage.mData == NULL)
+        pictureLabel()->hide();
+    else
+        pictureLabel()->show();
+
+    QTextDocument doc;
+    doc.setHtml(notes()->text());
+
+    if(doc.toPlainText().trimmed().isEmpty())
+        notes()->hide();
+}
+
+QToolButton    *BoardPostDisplayWidget_card::voteUpButton()   { return ui->voteUpButton; }
+QToolButton    *BoardPostDisplayWidget_card::commentButton()  { return ui->commentButton; }
+QToolButton    *BoardPostDisplayWidget_card::voteDownButton() { return ui->voteDownButton; }
+QLabel         *BoardPostDisplayWidget_card::newLabel()       { return ui->newLabel; }
+QToolButton    *BoardPostDisplayWidget_card::readButton()     { return ui->readButton; }
+QLabel         *BoardPostDisplayWidget_card::siteLabel()      { return ui->siteLabel; }
+GxsIdLabel     *BoardPostDisplayWidget_card::fromLabel()      { return ui->fromLabel; }
+QLabel         *BoardPostDisplayWidget_card::dateLabel()      { return ui->dateLabel; }
+QLabel         *BoardPostDisplayWidget_card::titleLabel()     { return ui->titleLabel; }
+QLabel         *BoardPostDisplayWidget_card::scoreLabel()     { return ui->scoreLabel; }
+QLabel         *BoardPostDisplayWidget_card::notes()          { return ui->notes; }
+QPushButton    *BoardPostDisplayWidget_card::shareButton()    { return ui->shareButton; }
+QLabel         *BoardPostDisplayWidget_card::pictureLabel()   { return ui->pictureLabel; }
+

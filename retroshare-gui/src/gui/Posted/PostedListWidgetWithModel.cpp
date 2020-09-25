@@ -91,16 +91,25 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
 	painter->fillRect( option.rect, option.backgroundBrush);
 	painter->restore();
 
-    BoardPostDisplayWidget w(post,mDisplayMode,displayFlags(post.mMeta.mMsgId));
-
-    w.setFixedSize(option.rect.size());
-    w.adjustSize();
-
-	QPixmap pixmap(option.rect.size());
-
+    QPixmap pixmap(option.rect.size());
     pixmap.fill(QRgb(0x00f0f0f0));	// choose a fully transparent background
 
-	w.render(&pixmap,QPoint(0,0),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
+    if(mDisplayMode == BoardPostDisplayWidget::DISPLAY_MODE_COMPACT)
+    {
+        BoardPostDisplayWidget w(post,displayFlags(post.mMeta.mMsgId),nullptr);
+
+        w.setFixedSize(option.rect.size());
+        w.adjustSize();
+        w.render(&pixmap,QPoint(0,0),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
+    }
+    else
+    {
+        BoardPostDisplayWidget_card w(post,displayFlags(post.mMeta.mMsgId),nullptr);
+
+        w.setFixedSize(option.rect.size());
+        w.adjustSize();
+        w.render(&pixmap,QPoint(0,0),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
+    }
 
 #ifdef TODO
 	if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
@@ -131,11 +140,19 @@ QSize PostedPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QMo
     // This is the only place where we actually set the size of cells
 
 	RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
-    BoardPostDisplayWidget w(post,mDisplayMode,displayFlags(post.mMeta.mMsgId));
 
-    w.adjustSize();
-
-    return w.size();
+    if(mDisplayMode == BoardPostDisplayWidget::DISPLAY_MODE_COMPACT)
+    {
+        BoardPostDisplayWidget w(post,displayFlags(post.mMeta.mMsgId),nullptr);
+        w.adjustSize();
+        return w.size();
+    }
+    else
+    {
+        BoardPostDisplayWidget_card w(post,displayFlags(post.mMeta.mMsgId),nullptr);
+        w.adjustSize();
+        return w.size();
+    }
 }
 void PostedPostDelegate::expandItem(RsGxsMessageId msgId,bool expanded)
 {
@@ -147,16 +164,7 @@ void PostedPostDelegate::expandItem(RsGxsMessageId msgId,bool expanded)
 
     mPostListWidget->forceRedraw();
 }
-// void PostedPostDelegate::commentItem(RsGxsMessageId msgId,bool comment)
-// {
-//     std::cerr << __PRETTY_FUNCTION__ << ": received commentItem signal. b="  << comment << std::endl;
-//     if(comment)
-//         mShowCommentItems.insert(msgId);
-//     else
-//         mShowCommentItems.erase(msgId);
-//
-//     mPostListWidget->forceRedraw();
-// }
+
 uint8_t PostedPostDelegate::displayFlags(const RsGxsMessageId &id) const
 {
     uint8_t flags=0;
@@ -176,7 +184,12 @@ QWidget *PostedPostDelegate::createEditor(QWidget *parent, const QStyleOptionVie
 
     if(index.column() == RsPostedPostsModel::COLUMN_POSTS)
     {
-        QWidget *w = new BoardPostDisplayWidget(post,mDisplayMode,displayFlags(post.mMeta.mMsgId),parent);
+        QWidget *w ;
+
+        if(mDisplayMode==BoardPostDisplayWidget::DISPLAY_MODE_COMPACT)
+            w = new BoardPostDisplayWidget(post,displayFlags(post.mMeta.mMsgId),parent);
+        else
+            w = new BoardPostDisplayWidget_card(post,displayFlags(post.mMeta.mMsgId),parent);
 
         QObject::connect(w,SIGNAL(vote(RsGxsGrpMsgIdPair,bool)),mPostListWidget,SLOT(voteMsg(RsGxsGrpMsgIdPair,bool)));
         QObject::connect(w,SIGNAL(expand(RsGxsMessageId,bool)),this,SLOT(expandItem(RsGxsMessageId,bool)));
@@ -265,7 +278,8 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
 	settingsChanged();
     setGroupId(postedId);
 
-    mPostedPostsDelegate->setDisplayMode(BoardPostDisplayWidget::DISPLAY_MODE_CARD_VIEW);
+    mPostedPostsDelegate->setDisplayMode(BoardPostDisplayWidget::DISPLAY_MODE_CARD);
+
     switchDisplayMode();	// makes everything consistent and chooses classic view as default
     updateSorting(ui->sortStrategy_CB->currentIndex());
 
@@ -279,7 +293,7 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
 
 void PostedListWidgetWithModel::switchDisplayMode()
 {
-    if(mPostedPostsDelegate->getDisplayMode() == BoardPostDisplayWidget::DISPLAY_MODE_CARD_VIEW)
+    if(mPostedPostsDelegate->getDisplayMode() == BoardPostDisplayWidget::DISPLAY_MODE_CARD)
     {
         ui->viewModeButton->setIcon(FilesDefs::getIconFromQtResourcePath(":images/classic.png"));
         ui->viewModeButton->setToolTip(tr("Click to switch to card view"));
@@ -291,7 +305,7 @@ void PostedListWidgetWithModel::switchDisplayMode()
         ui->viewModeButton->setIcon(FilesDefs::getIconFromQtResourcePath(":images/card.png"));
         ui->viewModeButton->setToolTip(tr("Click to switch to compact view"));
 
-        mPostedPostsDelegate->setDisplayMode(BoardPostDisplayWidget::DISPLAY_MODE_CARD_VIEW);
+        mPostedPostsDelegate->setDisplayMode(BoardPostDisplayWidget::DISPLAY_MODE_CARD);
     }
     mPostedPostsModel->triggerRedraw();
 }

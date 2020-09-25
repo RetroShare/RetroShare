@@ -26,53 +26,67 @@
 #include <retroshare/rsposted.h>
 
 namespace Ui {
-class BoardPostDisplayWidget;
+class BoardPostDisplayWidget_card;
+class BoardPostDisplayWidget_compact;
 }
+
+class QPushButton;
+class QLabel;
+class QToolButton;
+class QTextEdit;
+class ClickableLabel;
+class GxsIdLabel;
 
 struct RsPostedPost;
 
-class BoardPostDisplayWidget : public QWidget
+class BoardPostDisplayWidgetBase: public QWidget
 {
 	Q_OBJECT
 
 public:
-    enum DisplayMode {
-        DISPLAY_MODE_UNKNOWN   = 0x00,
-        DISPLAY_MODE_CARD_VIEW = 0x01,
-        DISPLAY_MODE_COMPACT   = 0x02,
-    };
-
     enum DisplayFlags: uint8_t {
         SHOW_NONE                  = 0x00,
         SHOW_COMMENTS              = 0x01,
         SHOW_NOTES                 = 0x02,
     };
 
-    BoardPostDisplayWidget(const RsPostedPost& post,DisplayMode display_mode,uint8_t display_flags,QWidget *parent=nullptr);
-	virtual ~BoardPostDisplayWidget();
+    enum DisplayMode: uint8_t {
+        DISPLAY_MODE_UNKNOWN       = 0x00,
+        DISPLAY_MODE_COMPACT       = 0x01,
+        DISPLAY_MODE_CARD          = 0x02,
+    };
+
+    BoardPostDisplayWidgetBase(const RsPostedPost& post,uint8_t display_flags,QWidget *parent);
+    virtual ~BoardPostDisplayWidgetBase() {}
 
 	static const char *DEFAULT_BOARD_IMAGE;
-
-public slots:
-    void viewPicture() ;
 
 protected slots:
 	/* GxsGroupFeedItem */
 
     virtual void setup();    // to be overloaded by the different views
 
-    void doExpand(bool) ;
-	void setComment(const RsGxsComment&) ;
-	void setReadStatus(bool isNew, bool isUnread) ;
+    virtual QToolButton *voteUpButton() =0;
+    virtual QToolButton *commentButton() =0;
+    virtual QToolButton *voteDownButton() =0;
+    virtual QLabel      *newLabel() =0;
+    virtual QLabel      *titleLabel()=0;
+    virtual QLabel      *siteLabel()=0;
+    virtual GxsIdLabel  *fromLabel()=0;
+    virtual QLabel      *dateLabel()=0;
+    virtual QLabel      *scoreLabel() =0;
+    virtual QLabel      *notes() =0;
+    virtual QLabel      *pictureLabel()=0;
+    virtual QToolButton *readButton() =0;
+    virtual QPushButton *shareButton() =0;
 
-    void toggle() {}
-	void setCommentsSize(int comNb) ;
     void loadComments(bool e);
-    void makeUpVote() ;
-    void makeDownVote() ;
-	void toggleNotes() ;
     void showAuthorInPeople();
     void readToggled(bool);
+    void setReadStatus(bool isNew, bool isUnread) ;
+    void makeUpVote() ;
+    void makeDownVote() ;
+	void setCommentsSize(int comNb) ;
 
 signals:
     void changeReadStatusRequested(const RsGxsMessageId&,bool);
@@ -82,12 +96,79 @@ signals:
 
 protected:
 	RsPostedPost mPost;
+    uint8_t      mDisplayFlags;
+};
 
-    DisplayMode dmode;
-    uint8_t mDisplayFlags;
+class BoardPostDisplayWidget : public BoardPostDisplayWidgetBase
+{
+    Q_OBJECT
+
+public:
+    BoardPostDisplayWidget(const RsPostedPost& post, uint8_t display_flags, QWidget *parent);
+    virtual ~BoardPostDisplayWidget();
+
+    static const char *DEFAULT_BOARD_IMAGE;
+
+    QToolButton *voteUpButton()   override;
+    QToolButton *commentButton()  override;
+    QToolButton *voteDownButton() override;
+    QLabel      *newLabel()       override;
+    QLabel      *siteLabel()      override;
+    GxsIdLabel  *fromLabel()      override;
+    QLabel      *dateLabel()      override;
+    QLabel      *titleLabel()     override;
+    QLabel      *scoreLabel()     override;
+    QLabel      *notes()          override;
+    QLabel      *pictureLabel()   override;
+    QToolButton *readButton()     override;
+    QPushButton *shareButton()    override;
+
+public slots:
+    void viewPicture() ;
+
+protected slots:
+    /* GxsGroupFeedItem */
+    void doExpand(bool) ;
+
+protected:
+    void setup() override;    // to be overloaded by the different views
 
 private:
     /** Qt Designer generated object */
-    Ui::BoardPostDisplayWidget *ui;
+    Ui::BoardPostDisplayWidget_compact *ui;
 };
 
+class BoardPostDisplayWidget_card : public BoardPostDisplayWidgetBase
+{
+    Q_OBJECT
+
+public:
+    BoardPostDisplayWidget_card(const RsPostedPost& post,uint8_t display_flags,QWidget *parent=nullptr);
+    virtual ~BoardPostDisplayWidget_card();
+
+    static const char *DEFAULT_BOARD_IMAGE;
+
+    QToolButton *voteUpButton()   override;
+    QToolButton *commentButton()  override;
+    QToolButton *voteDownButton() override;
+    QLabel      *newLabel()       override;
+    QLabel      *siteLabel()      override;
+    GxsIdLabel  *fromLabel()      override;
+    QLabel      *dateLabel()      override;
+    QLabel      *titleLabel()     override;
+    QLabel      *scoreLabel()     override;
+    QLabel      *notes()          override;
+    QToolButton *readButton()     override;
+    QPushButton *shareButton()    override;
+    QLabel      *pictureLabel()   override;
+
+protected slots:
+    /* GxsGroupFeedItem */
+
+protected:
+    void setup() override;    // to be overloaded by the different views
+
+private:
+    /** Qt Designer generated object */
+    Ui::BoardPostDisplayWidget_card *ui;
+};
