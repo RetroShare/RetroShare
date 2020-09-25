@@ -99,13 +99,13 @@ protected:
     uint8_t      mDisplayFlags;
 };
 
-class BoardPostDisplayWidget : public BoardPostDisplayWidgetBase
+class BoardPostDisplayWidget_compact : public BoardPostDisplayWidgetBase
 {
     Q_OBJECT
 
 public:
-    BoardPostDisplayWidget(const RsPostedPost& post, uint8_t display_flags, QWidget *parent);
-    virtual ~BoardPostDisplayWidget();
+    BoardPostDisplayWidget_compact(const RsPostedPost& post, uint8_t display_flags, QWidget *parent);
+    virtual ~BoardPostDisplayWidget_compact();
 
     static const char *DEFAULT_BOARD_IMAGE;
 

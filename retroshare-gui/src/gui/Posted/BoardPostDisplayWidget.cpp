@@ -45,7 +45,7 @@
 
 /** Constructor */
 
-const char *BoardPostDisplayWidget::DEFAULT_BOARD_IMAGE = ":/icons/png/newsfeed2.png";
+const char *BoardPostDisplayWidget_compact::DEFAULT_BOARD_IMAGE = ":/icons/png/newsfeed2.png";
 
 //===================================================================================================================================
 //==                                             Base class BoardPostDisplayWidgetBase                                             ==
@@ -107,7 +107,7 @@ void BoardPostDisplayWidgetBase::setReadStatus(bool isNew, bool isUnread)
     newLabel()->setVisible(isNew);
 }
 
-void BoardPostDisplayWidget::doExpand(bool e)
+void BoardPostDisplayWidget_compact::doExpand(bool e)
 {
      std::cerr << "Expanding" << std::endl;
      if(e)
@@ -299,7 +299,7 @@ void BoardPostDisplayWidgetBase::setup()
 //==                                                 class BoardPostDisplayWidget                                                  ==
 //===================================================================================================================================
 
-BoardPostDisplayWidget::BoardPostDisplayWidget(const RsPostedPost& post, uint8_t display_flags,QWidget *parent=nullptr)
+BoardPostDisplayWidget_compact::BoardPostDisplayWidget_compact(const RsPostedPost& post, uint8_t display_flags,QWidget *parent=nullptr)
     : BoardPostDisplayWidgetBase(post,display_flags,parent), ui(new Ui::BoardPostDisplayWidget_compact())
 {
     ui->setupUi(this);
@@ -315,12 +315,12 @@ BoardPostDisplayWidget::BoardPostDisplayWidget(const RsPostedPost& post, uint8_t
     adjustSize();
 }
 
-BoardPostDisplayWidget::~BoardPostDisplayWidget()
+BoardPostDisplayWidget_compact::~BoardPostDisplayWidget_compact()
 {
     delete ui;
 }
 
-void BoardPostDisplayWidget::setup()
+void BoardPostDisplayWidget_compact::setup()
 {
     BoardPostDisplayWidgetBase::setup();
 
@@ -384,7 +384,7 @@ void BoardPostDisplayWidget::setup()
 #endif
 }
 
-void BoardPostDisplayWidget::viewPicture()
+void BoardPostDisplayWidget_compact::viewPicture()
 {
     if(mPost.mImage.mData == NULL)
         return;
@@ -408,19 +408,19 @@ void BoardPostDisplayWidget::viewPicture()
     /* window will destroy itself! */
 }
 
-QToolButton    *BoardPostDisplayWidget::voteUpButton()   { return ui->voteUpButton; }
-QToolButton    *BoardPostDisplayWidget::commentButton()  { return ui->commentButton; }
-QToolButton    *BoardPostDisplayWidget::voteDownButton() { return ui->voteDownButton; }
-QLabel         *BoardPostDisplayWidget::newLabel()       { return ui->newLabel; }
-QToolButton    *BoardPostDisplayWidget::readButton()     { return ui->readButton; }
-QLabel         *BoardPostDisplayWidget::siteLabel()      { return ui->siteLabel; }
-GxsIdLabel     *BoardPostDisplayWidget::fromLabel()      { return ui->fromLabel; }
-QLabel         *BoardPostDisplayWidget::dateLabel()      { return ui->dateLabel; }
-QLabel         *BoardPostDisplayWidget::titleLabel()     { return ui->titleLabel; }
-QLabel         *BoardPostDisplayWidget::scoreLabel()     { return ui->scoreLabel; }
-QLabel         *BoardPostDisplayWidget::notes()          { return ui->notes; }
-QPushButton    *BoardPostDisplayWidget::shareButton()    { return ui->shareButton; }
-QLabel         *BoardPostDisplayWidget::pictureLabel()   { return ui->pictureLabel; }
+QToolButton    *BoardPostDisplayWidget_compact::voteUpButton()   { return ui->voteUpButton; }
+QToolButton    *BoardPostDisplayWidget_compact::commentButton()  { return ui->commentButton; }
+QToolButton    *BoardPostDisplayWidget_compact::voteDownButton() { return ui->voteDownButton; }
+QLabel         *BoardPostDisplayWidget_compact::newLabel()       { return ui->newLabel; }
+QToolButton    *BoardPostDisplayWidget_compact::readButton()     { return ui->readButton; }
+QLabel         *BoardPostDisplayWidget_compact::siteLabel()      { return ui->siteLabel; }
+GxsIdLabel     *BoardPostDisplayWidget_compact::fromLabel()      { return ui->fromLabel; }
+QLabel         *BoardPostDisplayWidget_compact::dateLabel()      { return ui->dateLabel; }
+QLabel         *BoardPostDisplayWidget_compact::titleLabel()     { return ui->titleLabel; }
+QLabel         *BoardPostDisplayWidget_compact::scoreLabel()     { return ui->scoreLabel; }
+QLabel         *BoardPostDisplayWidget_compact::notes()          { return ui->notes; }
+QPushButton    *BoardPostDisplayWidget_compact::shareButton()    { return ui->shareButton; }
+QLabel         *BoardPostDisplayWidget_compact::pictureLabel()   { return ui->pictureLabel; }
 
 //===================================================================================================================================
 //==                                                 class BoardPostDisplayWidget_card                                             ==

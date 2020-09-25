@@ -94,9 +94,9 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
     QPixmap pixmap(option.rect.size());
     pixmap.fill(QRgb(0x00f0f0f0));	// choose a fully transparent background
 
-    if(mDisplayMode == BoardPostDisplayWidget::DISPLAY_MODE_COMPACT)
+    if(mDisplayMode == BoardPostDisplayWidget_compact::DISPLAY_MODE_COMPACT)
     {
-        BoardPostDisplayWidget w(post,displayFlags(post.mMeta.mMsgId),nullptr);
+        BoardPostDisplayWidget_compact w(post,displayFlags(post.mMeta.mMsgId),nullptr);
 
         w.setFixedSize(option.rect.size());
         w.adjustSize();
@@ -141,9 +141,9 @@ QSize PostedPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QMo
 
 	RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
 
-    if(mDisplayMode == BoardPostDisplayWidget::DISPLAY_MODE_COMPACT)
+    if(mDisplayMode == BoardPostDisplayWidget_compact::DISPLAY_MODE_COMPACT)
     {
-        BoardPostDisplayWidget w(post,displayFlags(post.mMeta.mMsgId),nullptr);
+        BoardPostDisplayWidget_compact w(post,displayFlags(post.mMeta.mMsgId),nullptr);
         w.adjustSize();
         return w.size();
     }
@@ -170,10 +170,10 @@ uint8_t PostedPostDelegate::displayFlags(const RsGxsMessageId &id) const
     uint8_t flags=0;
 
     if(mExpandedItems.find(id) != mExpandedItems.end())
-        flags |= BoardPostDisplayWidget::SHOW_NOTES;
+        flags |= BoardPostDisplayWidget_compact::SHOW_NOTES;
 
     if(mShowCommentItems.find(id) != mShowCommentItems.end())
-        flags |= BoardPostDisplayWidget::SHOW_COMMENTS;
+        flags |= BoardPostDisplayWidget_compact::SHOW_COMMENTS;
 
     return flags;
 }
@@ -186,8 +186,8 @@ QWidget *PostedPostDelegate::createEditor(QWidget *parent, const QStyleOptionVie
     {
         QWidget *w ;
 
-        if(mDisplayMode==BoardPostDisplayWidget::DISPLAY_MODE_COMPACT)
-            w = new BoardPostDisplayWidget(post,displayFlags(post.mMeta.mMsgId),parent);
+        if(mDisplayMode==BoardPostDisplayWidget_compact::DISPLAY_MODE_COMPACT)
+            w = new BoardPostDisplayWidget_compact(post,displayFlags(post.mMeta.mMsgId),parent);
         else
             w = new BoardPostDisplayWidget_card(post,displayFlags(post.mMeta.mMsgId),parent);
 
@@ -278,7 +278,7 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
 	settingsChanged();
     setGroupId(postedId);
 
-    mPostedPostsDelegate->setDisplayMode(BoardPostDisplayWidget::DISPLAY_MODE_CARD);
+    mPostedPostsDelegate->setDisplayMode(BoardPostDisplayWidget_compact::DISPLAY_MODE_CARD);
 
     switchDisplayMode();	// makes everything consistent and chooses classic view as default
     updateSorting(ui->sortStrategy_CB->currentIndex());
@@ -293,19 +293,19 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
 
 void PostedListWidgetWithModel::switchDisplayMode()
 {
-    if(mPostedPostsDelegate->getDisplayMode() == BoardPostDisplayWidget::DISPLAY_MODE_CARD)
+    if(mPostedPostsDelegate->getDisplayMode() == BoardPostDisplayWidget_compact::DISPLAY_MODE_CARD)
     {
         ui->viewModeButton->setIcon(FilesDefs::getIconFromQtResourcePath(":images/classic.png"));
         ui->viewModeButton->setToolTip(tr("Click to switch to card view"));
 
-        mPostedPostsDelegate->setDisplayMode(BoardPostDisplayWidget::DISPLAY_MODE_COMPACT);
+        mPostedPostsDelegate->setDisplayMode(BoardPostDisplayWidget_compact::DISPLAY_MODE_COMPACT);
     }
     else
     {
         ui->viewModeButton->setIcon(FilesDefs::getIconFromQtResourcePath(":images/card.png"));
         ui->viewModeButton->setToolTip(tr("Click to switch to compact view"));
 
-        mPostedPostsDelegate->setDisplayMode(BoardPostDisplayWidget::DISPLAY_MODE_CARD);
+        mPostedPostsDelegate->setDisplayMode(BoardPostDisplayWidget_compact::DISPLAY_MODE_CARD);
     }
     mPostedPostsModel->triggerRedraw();
 }
@@ -651,7 +651,7 @@ QIcon PostedListWidgetWithModel::groupIcon()
 	if (mGroup.mGroupImage.mData != NULL)
 		GxsIdDetails::loadPixmapFromData(mGroup.mGroupImage.mData, mGroup.mGroupImage.mSize, postedImage,GxsIdDetails::ORIGINAL);
 	else
-		postedImage = FilesDefs::getPixmapFromQtResourcePath(BoardPostDisplayWidget::DEFAULT_BOARD_IMAGE);
+        postedImage = FilesDefs::getPixmapFromQtResourcePath(BoardPostDisplayWidget_compact::DEFAULT_BOARD_IMAGE);
 
 	return QIcon(postedImage);
 }
@@ -729,7 +729,7 @@ void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
 	if (group.mGroupImage.mData != NULL) {
 		GxsIdDetails::loadPixmapFromData(group.mGroupImage.mData, group.mGroupImage.mSize, chanImage,GxsIdDetails::ORIGINAL);
 	} else {
-		chanImage = QPixmap(BoardPostDisplayWidget::DEFAULT_BOARD_IMAGE);
+        chanImage = QPixmap(BoardPostDisplayWidget_compact::DEFAULT_BOARD_IMAGE);
 	}
     if(group.mMeta.mGroupName.empty())
 		ui->namelabel->setText(tr("[No name]"));

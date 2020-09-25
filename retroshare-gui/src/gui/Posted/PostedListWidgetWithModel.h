@@ -45,7 +45,7 @@ class PostedPostDelegate: public QAbstractItemDelegate
     Q_OBJECT
 
 public:
-    PostedPostDelegate(PostedListWidgetWithModel *p,QObject *parent=0) : QAbstractItemDelegate(parent),mCellWidthPix(100),mPostListWidget(p),mDisplayMode(BoardPostDisplayWidget::DISPLAY_MODE_COMPACT){}
+    PostedPostDelegate(PostedListWidgetWithModel *p,QObject *parent=0) : QAbstractItemDelegate(parent),mCellWidthPix(100),mPostListWidget(p),mDisplayMode(BoardPostDisplayWidget_compact::DISPLAY_MODE_COMPACT){}
     virtual ~PostedPostDelegate(){}
 
     void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const override;
@@ -54,8 +54,8 @@ public:
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
     void setCellWidth(int pix) { mCellWidthPix = pix; }
-    void setDisplayMode(BoardPostDisplayWidget::DisplayMode dm) { mDisplayMode = dm; }
-    BoardPostDisplayWidget::DisplayMode getDisplayMode() const { return mDisplayMode; }
+    void setDisplayMode(BoardPostDisplayWidget_compact::DisplayMode dm) { mDisplayMode = dm; }
+    BoardPostDisplayWidget_compact::DisplayMode getDisplayMode() const { return mDisplayMode; }
 
 public slots:
     void expandItem(RsGxsMessageId msgId,bool expanded);
@@ -69,7 +69,7 @@ private:
 
     int mCellWidthPix;
     PostedListWidgetWithModel *mPostListWidget;			// used for sending vote signals and so on.
-    BoardPostDisplayWidget::DisplayMode mDisplayMode;
+    BoardPostDisplayWidget_compact::DisplayMode mDisplayMode;
     std::set<RsGxsMessageId> mExpandedItems;
     std::set<RsGxsMessageId> mShowCommentItems;
 };
