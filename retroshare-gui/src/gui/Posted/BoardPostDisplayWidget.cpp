@@ -94,15 +94,9 @@ void BoardPostDisplayWidgetBase::makeUpVote()
 void BoardPostDisplayWidgetBase::setReadStatus(bool isNew, bool isUnread)
 {
 	if (isUnread)
-	{
-        readButton()->setChecked(true);
         readButton()->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
-	}
 	else
-	{
-        readButton()->setChecked(false);
         readButton()->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png"));
-	}
 
     newLabel()->setVisible(isNew);
 }
@@ -123,8 +117,10 @@ void BoardPostDisplayWidgetBase::loadComments(bool e)
     emit commentsRequested(mPost.mMeta.mMsgId,e);
 }
 
-void BoardPostDisplayWidgetBase::readToggled(bool s)
+void BoardPostDisplayWidgetBase::readToggled()
 {
+    bool s = IS_MSG_UNREAD(mPost.mMeta.mMsgStatus);
+
     emit changeReadStatusRequested(mPost.mMeta.mMsgId,s);
 }
 void BoardPostDisplayWidgetBase::showAuthorInPeople()
@@ -163,7 +159,7 @@ void BoardPostDisplayWidgetBase::setup()
     QObject::connect(commentButton(), SIGNAL(toggled(bool)), this, SLOT(loadComments(bool)));
     QObject::connect(voteUpButton(), SIGNAL(clicked()), this, SLOT(makeUpVote()));
     QObject::connect(voteDownButton(), SIGNAL(clicked()), this, SLOT(makeDownVote()));
-    QObject::connect(readButton(), SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
+    QObject::connect(readButton(), SIGNAL(clicked()), this, SLOT(readToggled()));
 
     QAction *CopyLinkAction = new QAction(QIcon(""),tr("Copy RetroShare Link"), this);
     connect(CopyLinkAction, SIGNAL(triggered()), this, SLOT(copyMessageLink()));
@@ -172,6 +168,8 @@ void BoardPostDisplayWidgetBase::setup()
     connect(showInPeopleAct, SIGNAL(triggered()), this, SLOT(showAuthorInPeople()));
 
     int S = QFontMetricsF(font()).height() ;
+
+    readButton()->setChecked(false);
 
     voteUpButton()->setIconSize(QSize(S*1.5,S*1.5));
     voteDownButton()->setIconSize(QSize(S*1.5,S*1.5));

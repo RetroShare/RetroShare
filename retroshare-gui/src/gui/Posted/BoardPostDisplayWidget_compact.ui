@@ -330,7 +330,7 @@
                 <normaloff>:/images/message-state-unread.png</normaloff>:/images/message-state-unread.png</iconset>
               </property>
               <property name="checkable">
-               <bool>true</bool>
+               <bool>false</bool>
               </property>
               <property name="checked">
                <bool>false</bool>

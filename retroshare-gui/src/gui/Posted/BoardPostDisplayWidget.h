@@ -82,7 +82,7 @@ protected slots:
 
     void loadComments(bool e);
     void showAuthorInPeople();
-    void readToggled(bool);
+    void readToggled();
     void setReadStatus(bool isNew, bool isUnread) ;
     void makeUpVote() ;
     void makeDownVote() ;
