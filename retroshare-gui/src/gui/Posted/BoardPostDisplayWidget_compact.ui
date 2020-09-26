@@ -421,7 +421,7 @@
        </layout>
       </item>
       <item>
-       <widget class="QFrame" name="frame_picture">
+       <widget class="QFrame" name="frame_notes">
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
         </property>

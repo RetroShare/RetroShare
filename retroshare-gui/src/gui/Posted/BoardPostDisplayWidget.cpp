@@ -111,9 +111,9 @@ void BoardPostDisplayWidget_compact::doExpand(bool e)
 {
      std::cerr << "Expanding" << std::endl;
      if(e)
-         ui->notes->show();
+         ui->frame_notes->show();
      else
-         ui->notes->hide();
+         ui->frame_notes->hide();
 
     emit expand(mPost.mMeta.mMsgId,e);
 }
@@ -363,18 +363,18 @@ void BoardPostDisplayWidget_compact::setup()
 
     if(mDisplayFlags & SHOW_NOTES)
     {
-        notes()->show();
+        ui->frame_notes->show();
         ui->expandButton->setChecked(true);
     }
     else
     {
-        notes()->hide();
+        ui->frame_notes->hide();
         ui->expandButton->setChecked(false);
     }
 
     if(doc.toPlainText().trimmed().isEmpty())
     {
-        notes()->hide();
+        ui->frame_notes->hide();
         ui->expandButton->hide();
     }
     updateGeometry();
