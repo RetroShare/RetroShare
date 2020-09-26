@@ -130,6 +130,7 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 
         uint32_t flags = (mUseGrid)?(ChannelPostThumbnailView::FLAG_SHOW_TEXT | ChannelPostThumbnailView::FLAG_SCALE_FONT):0;
         ChannelPostThumbnailView w(post,flags);
+        w.setBackgroundRole(QPalette::AlternateBase);
         w.setAspectRatio(mAspectRatio);
         w.updateGeometry();
         w.adjustSize();
@@ -198,8 +199,11 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
         painter->drawText(QPoint(p.x()+0.5*font_height,y),QDateTime::fromSecsSinceEpoch(post.mMeta.mPublishTs).toString(Qt::DefaultLocaleShortDate));
         y += font_height;
 
-        painter->drawText(QPoint(p.x()+0.5*font_height,y),QString::number(post.mCount)+ " " +((post.mCount>1)?tr("files"):tr("file")) + " (" + QString::number(post.mSize) + " " + tr("bytes") + ")" );
-        y += font_height;
+        if(post.mCount > 0)
+        {
+            painter->drawText(QPoint(p.x()+0.5*font_height,y),QString::number(post.mCount)+ " " +((post.mCount>1)?tr("files"):tr("file")) + " (" + QString::number(post.mSize) + " " + tr("bytes") + ")" );
+            y += font_height;
+        }
 
         painter->restore();
     }
@@ -285,7 +289,7 @@ void ChannelPostFilesDelegate::paint(QPainter * painter, const QStyleOptionViewI
 		w.setFixedHeight(option.rect.height());
 
 		QPixmap pixmap(w.size());
-		pixmap.fill(QRgb(0x00ffffff));	// choose a fully transparent background
+        pixmap.fill(QRgb(0x00ffffff));	// choose a fully transparent background
 		w.render(&pixmap,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
 
         painter->drawPixmap(option.rect.topLeft(),pixmap);
@@ -335,6 +339,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     ui->showUnread_TB->setToolTip(tr("Show unread posts only"));
     connect(ui->showUnread_TB,SIGNAL(toggled(bool)),this,SLOT(switchOnlyUnread(bool)));
 
+    ui->postsTree->setAlternatingRowColors(true);
     ui->postsTree->setModel(mChannelPostsModel = new RsGxsChannelPostsModel());
     ui->postsTree->setItemDelegate(mChannelPostsDelegate = new ChannelPostDelegate());
     ui->postsTree->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);	// prevents bug on w10, since row size depends on widget width
