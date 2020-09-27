@@ -88,11 +88,11 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
 
 	painter->save();
 
-	painter->fillRect( option.rect, option.backgroundBrush);
+    painter->fillRect( option.rect, option.palette.background());
 	painter->restore();
 
     QPixmap pixmap(option.rect.size());
-    pixmap.fill(QRgb(0x00f0f0f0));	// choose a fully transparent background
+    pixmap.fill(option.palette.alternateBase().color()); // use base() instead to have all widgets the same background
 
     if(mDisplayMode == BoardPostDisplayWidget_compact::DISPLAY_MODE_COMPACT)
     {
