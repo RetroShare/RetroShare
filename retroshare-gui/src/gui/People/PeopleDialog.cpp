@@ -29,6 +29,7 @@
 #include "gui/Identity/IdDetailsDialog.h"
 #include "gui/Identity/IdDialog.h"
 #include "gui/MainWindow.h"
+#include "gui/common/FilesDefs.h"
 
 #include "retroshare/rspeers.h"
 #include "retroshare/rsidentity.h"
@@ -440,7 +441,7 @@ void PeopleDialog::iw_AddButtonClickedExt()
     {
 		QMenu contextMnu( this );
 		
-		QMenu *mnu = contextMnu.addMenu(QIcon(":/icons/png/circles.png"),tr("Invite to Circle")) ;
+		QMenu *mnu = contextMnu.addMenu(FilesDefs::getIconFromQtResourcePath(":/icons/png/circles.png"),tr("Invite to Circle")) ;
 
 		std::map<RsGxsGroupId, CircleWidget*>::iterator itCurs;
 		for( itCurs =_ext_circles_widgets.begin(); itCurs != _ext_circles_widgets.end(); ++itCurs)
@@ -459,7 +460,7 @@ void PeopleDialog::iw_AddButtonClickedExt()
       
       if(own_identities.size() <= 1)
 			{
-				QAction *action = contextMnu.addAction(QIcon(":/icons/png/chats.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
+				QAction *action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/chats.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
 
 				if(own_identities.empty())
 					action->setEnabled(false) ;
@@ -468,7 +469,7 @@ void PeopleDialog::iw_AddButtonClickedExt()
 			}
 			else
 			{
-				QMenu *mnu = contextMnu.addMenu(QIcon(":/icons/png/chats.png"),tr("Chat with this person as...")) ;
+				QMenu *mnu = contextMnu.addMenu(FilesDefs::getIconFromQtResourcePath(":/icons/png/chats.png"),tr("Chat with this person as...")) ;
 
 				for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
 				{
@@ -485,20 +486,20 @@ void PeopleDialog::iw_AddButtonClickedExt()
 				}
 			}
 			
-			QAction *actionsendmsg = contextMnu.addAction(QIcon(":/icons/mail/write-mail.png"), tr("Send message"), this, SLOT(sendMessage()));
+			QAction *actionsendmsg = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/icons/mail/write-mail.png"), tr("Send message"), this, SLOT(sendMessage()));
 			actionsendmsg->setData( QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString()));
 			
-			QAction *actionsendinvite = contextMnu.addAction(QIcon(":/icons/mail/write-mail.png"), tr("Send invite"), this, SLOT(sendInvite()));
+			QAction *actionsendinvite = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/icons/mail/write-mail.png"), tr("Send invite"), this, SLOT(sendInvite()));
 			actionsendinvite->setData( QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString()));
 			
 			contextMnu.addSeparator();
 			
-			QAction *actionaddcontact = contextMnu.addAction(QIcon(""), tr("Add to Contacts"), this, SLOT(addtoContacts()));
+			QAction *actionaddcontact = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(""), tr("Add to Contacts"), this, SLOT(addtoContacts()));
 			actionaddcontact->setData( QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString()));
 			
 			contextMnu.addSeparator();
 			
-			QAction *actionDetails = contextMnu.addAction(QIcon(":/images/info16.png"), tr("Person details"), this, SLOT(personDetails()));
+			QAction *actionDetails = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/info16.png"), tr("Person details"), this, SLOT(personDetails()));
 			actionDetails->setData( QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString()));
 
 		contextMnu.exec(QCursor::pos());

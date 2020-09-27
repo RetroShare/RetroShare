@@ -671,14 +671,14 @@ void SearchDialog::searchSummaryWidgetCustomPopupMenu( QPoint /*point*/ )
     QMenu contextMnu(this);
 
     QTreeWidgetItem* ci = ui.searchSummaryWidget->currentItem();
-    QAction* action = contextMnu.addAction(QIcon(IMAGE_SEARCHAGAIN),tr("Search again"), this, SLOT(searchAgain()));
+    QAction* action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_SEARCHAGAIN),tr("Search again"), this, SLOT(searchAgain()));
     if (!ci || ci->data(SS_DATA_COL, ROLE_KEYWORDS).toString().isEmpty()) {
         action->setDisabled(true);
     }
-    contextMnu.addAction(QIcon(IMAGE_REMOVE), tr("Remove"), this, SLOT(searchRemove()));
-    contextMnu.addAction(QIcon(IMAGE_REMOVEALL), tr("Remove All"), this, SLOT(searchRemoveAll()));
+    contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_REMOVE), tr("Remove"), this, SLOT(searchRemove()));
+    contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_REMOVEALL), tr("Remove All"), this, SLOT(searchRemoveAll()));
     contextMnu.addSeparator();
-    action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copySearchLink()));
+    action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copySearchLink()));
     if (!ci || ci->data(SS_DATA_COL, ROLE_KEYWORDS).toString().isEmpty()) {
         action->setDisabled(true);
     }
