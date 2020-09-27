@@ -527,6 +527,8 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 
 		tooltip += "\n" + tr("Description") + ": " + itemInfo.description;
 
+		tooltip += "\n" + tr("Id") + ": " + itemInfo.id;
+
 		item->setToolTip(COLUMN_NAME, tooltip);
 		item->setToolTip(COLUMN_UNREAD, tooltip);
 		item->setToolTip(COLUMN_POPULARITY, tooltip);
