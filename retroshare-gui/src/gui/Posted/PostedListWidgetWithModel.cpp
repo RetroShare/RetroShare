@@ -658,7 +658,13 @@ QIcon PostedListWidgetWithModel::groupIcon()
 
 void PostedListWidgetWithModel::setAllMessagesReadDo(bool read, uint32_t &token)
 {
-    std::cerr << __PRETTY_FUNCTION__ << ": not implemented" << std::endl;
+    if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags))
+        return;
+
+    QModelIndex src_index;
+
+    mPostedPostsModel->setAllMsgReadStatus(read);
+
 }
 
 void PostedListWidgetWithModel::openComments(const RsGxsMessageId& msgId)

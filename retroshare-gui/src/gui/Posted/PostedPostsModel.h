@@ -154,6 +154,7 @@ public:
 	void setTextColorMissing       (QColor color) { mTextColorMissing        = color;}
 #endif
 
+    void setAllMsgReadStatus(bool read);
     void setMsgReadStatus(const QModelIndex &i, bool read_status);
     void setFilter(const QStringList &strings, uint32_t &count) ;
 	void setSortingStrategy(SortingStrategy s);

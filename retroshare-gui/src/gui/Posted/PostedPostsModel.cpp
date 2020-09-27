@@ -715,6 +715,23 @@ void RsPostedPostsModel::createPostsArray(std::vector<RsPostedPost>& posts)
     }
 }
 
+void RsPostedPostsModel::setAllMsgReadStatus(bool read)
+{
+    // make a temporary listof pairs
+
+    std::list<RsGxsGrpMsgIdPair> pairs;
+
+    for(uint32_t i=0;i<mPosts.size();++i)
+        pairs.push_back(RsGxsGrpMsgIdPair(mPosts[i].mMeta.mGroupId,mPosts[i].mMeta.mMsgId));
+
+    RsThread::async([read,pairs]()
+    {
+        // Call blocking API
+
+        for(auto& p:pairs)
+            rsPosted->setPostReadStatus(p,read);
+    } );
+}
 void RsPostedPostsModel::setMsgReadStatus(const QModelIndex& i,bool read_status)
 {
 	if(!i.isValid())
