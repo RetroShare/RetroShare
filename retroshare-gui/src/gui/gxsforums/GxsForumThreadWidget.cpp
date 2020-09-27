@@ -62,7 +62,7 @@
 #define IMAGE_MESSAGE          ":/icons/mail/compose.png"
 #define IMAGE_REPLY            ":/icons/mail/reply.png"
 #define IMAGE_MESSAGEREPLY     ":/icons/mail/write-mail.png"
-#define IMAGE_MESSAGEEDIT      ":/images/edit_16.png"
+#define IMAGE_MESSAGEEDIT      ":/icons/png/pencil-edit-button.png"
 #define IMAGE_MESSAGEREMOVE    ":/images/mail_delete.png"
 #define IMAGE_DOWNLOAD         ":/images/start.png"
 #define IMAGE_DOWNLOADALL      ":/images/startall.png"

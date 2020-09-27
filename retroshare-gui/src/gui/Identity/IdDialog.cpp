@@ -110,7 +110,7 @@
 #define RSID_FILTER_BANNED       0x0020
 #define RSID_FILTER_ALL          0xffff
 
-#define IMAGE_EDIT                 ":/images/edit_16.png"
+#define IMAGE_EDIT                 ":/icons/png/pencil-edit-button.png"
 #define IMAGE_CREATE               ":/icons/circle_new_128.png"
 #define IMAGE_INVITED              ":/icons/bullet_yellow_128.png"
 #define IMAGE_MEMBER               ":/icons/bullet_green_128.png"

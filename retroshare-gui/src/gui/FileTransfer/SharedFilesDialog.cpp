@@ -56,7 +56,7 @@
 #include <set>
 
 /* Images for context menu icons */
-#define IMAGE_DOWNLOAD       ":/images/download16.png"
+#define IMAGE_DOWNLOAD       ":/icons/png/download.png"
 #define IMAGE_PLAY           ":/images/start.png"
 #define IMAGE_HASH_BUSY      ":/images/settings.png"
 #define IMAGE_HASH_DONE      ":/images/accepted16.png"
@@ -73,7 +73,7 @@
 #define IMAGE_COLLMODIF      ":/icons/png/pencil-edit-button.png"
 #define IMAGE_COLLVIEW       ":/images/find.png"
 #define IMAGE_COLLOPEN       ":/icons/collections.png"
-#define IMAGE_EDITSHARE      ":/images/edit_16.png"
+#define IMAGE_EDITSHARE      ":/icons/png/pencil-edit-button.png"
 #define IMAGE_MYFILES        ":/icons/svg/folders1.svg"
 #define IMAGE_UNSHAREEXTRA   ":/images/button_cancel.png"
 

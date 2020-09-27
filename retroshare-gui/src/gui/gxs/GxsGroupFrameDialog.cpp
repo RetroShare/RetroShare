@@ -46,7 +46,7 @@
 #define IMAGE_INFO           ":/images/info16.png"
 //#define IMAGE_GROUPAUTHD     ":/images/konv_message2.png"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
-#define IMAGE_EDIT           ":/images/edit_16.png"
+#define IMAGE_EDIT           ":/icons/png/pencil-edit-button.png"
 #define IMAGE_SHARE          ":/images/share-icon-16.png"
 #define IMAGE_TABNEW         ":/images/tab-new.png"
 #define IMAGE_DELETE         ":/images/delete.png"

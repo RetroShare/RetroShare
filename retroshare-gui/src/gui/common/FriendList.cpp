@@ -70,7 +70,7 @@
 #define IMAGE_CONNECT            ":/images/connect_friend.png"
 #define IMAGE_COPYLINK           ":/images/copyrslink.png"
 #define IMAGE_GROUP16            ":/images/user/group16.png"
-#define IMAGE_EDIT               ":/images/edit_16.png"
+#define IMAGE_EDIT               ":/icons/png/pencil-edit-button.png"
 #define IMAGE_REMOVE             ":/images/delete.png"
 #define IMAGE_EXPAND             ":/images/edit_add24.png"
 #define IMAGE_COLLAPSE           ":/images/edit_remove24.png"
