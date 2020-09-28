@@ -66,7 +66,7 @@ void WireGroupItem::setup()
 	else
 	{
 		// default.
-		QPixmap pixmap = QPixmap(":/icons/wire.png").scaled(32,32);
+        QPixmap pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png").scaled(32,32);
 		label_headshot->setPixmap(pixmap);
 	}
 	

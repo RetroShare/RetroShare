@@ -21,8 +21,9 @@
 #ifndef PEOPLEPAGE_H
 #define PEOPLEPAGE_H
 
-#include <retroshare-gui/configpage.h>
+#include "retroshare-gui/configpage.h"
 #include "ui_PeoplePage.h"
+#include "gui/common/FilesDefs.h"
 
 class PeoplePage : public ConfigPage
 {
@@ -35,7 +36,7 @@ public:
 	/** Loads the settings for this page */
 	virtual void load();
 
-	virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/people.svg") ; }
+    virtual QPixmap iconPixmap() const { return FilesDefs::getPixmapFromQtResourcePath(":/icons/settings/people.svg") ; }
 	virtual QString pageName() const { return tr("People") ; }
 	virtual QString helpText() const { return ""; }
 

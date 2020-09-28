@@ -33,6 +33,7 @@
 #include "gui/common/PeerDefs.h"
 #include "ChatDialog.h"
 #include "gui/ChatLobbyWidget.h"
+#include "gui/common/FilesDefs.h"
 
 CreateLobbyDialog::CreateLobbyDialog(const std::set<RsPeerId>& peer_list, int privacyLevel, QWidget *parent) :
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
@@ -40,7 +41,7 @@ CreateLobbyDialog::CreateLobbyDialog(const std::set<RsPeerId>& peer_list, int pr
 	ui = new Ui::CreateLobbyDialog() ;
 	ui->setupUi(this);
 
-	ui->headerFrame->setHeaderImage(QPixmap(":/icons/png/chat-lobbies.png"));
+    ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/chat-lobbies.png"));
 	ui->headerFrame->setHeaderText(tr("Create Chat Room"));
 
     RsGxsId default_identity ;

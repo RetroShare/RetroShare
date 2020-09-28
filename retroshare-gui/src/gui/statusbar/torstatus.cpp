@@ -31,6 +31,7 @@
 
 #include "TorControl/TorManager.h"
 #include "TorControl/TorControl.h"
+#include "gui/common/FilesDefs.h"
 
 #include <iomanip>
 
@@ -46,7 +47,7 @@ TorStatus::TorStatus(QWidget *parent)
     hbox->addWidget(statusTor);
     
     torstatusLabel = new QLabel( this );
-    torstatusLabel->setPixmap(QPixmap(":/icons/no-tor.png"));
+    torstatusLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/no-tor.png"));
     hbox->addWidget(torstatusLabel);
     
     _compactMode = false;
@@ -117,24 +118,24 @@ void TorStatus::getTorStatus()
 		if(torstatus == Tor::TorControl::TorOffline || !online || !tor_control_ok)
 		{
 			// RED - some issue.
-			torstatusLabel->setPixmap(QPixmap(":/icons/tor-stopping.png").scaledToHeight(1.5*S,Qt::SmoothTransformation));
+            torstatusLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/tor-stopping.png").scaledToHeight(1.5*S,Qt::SmoothTransformation));
 			torstatusLabel->setToolTip( text + tr("Tor is currently offline"));
 		}
 		else if(torstatus == Tor::TorControl::TorReady && online && tor_control_ok)
 		{
-			torstatusLabel->setPixmap(QPixmap(":/icons/tor-on.png").scaledToHeight(1.5*S,Qt::SmoothTransformation));
+            torstatusLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/tor-on.png").scaledToHeight(1.5*S,Qt::SmoothTransformation));
 			torstatusLabel->setToolTip( text + tr("Tor is OK"));
 		}
 		else // torstatus == Tor::TorControl::TorUnknown
 		{
 			// GRAY.
-			torstatusLabel->setPixmap(QPixmap(":/icons/no-tor.png").scaledToHeight(1.5*S,Qt::SmoothTransformation));
+            torstatusLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/no-tor.png").scaledToHeight(1.5*S,Qt::SmoothTransformation));
 			torstatusLabel->setToolTip( text + tr("No tor configuration"));
 		}
 	}
 	else
 	{
-		torstatusLabel->setPixmap(QPixmap(":/icons/tor-stopping.png").scaledToHeight(S,Qt::SmoothTransformation));
+        torstatusLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/tor-stopping.png").scaledToHeight(S,Qt::SmoothTransformation));
 		torstatusLabel->setToolTip( text + tr("Tor is currently offline"));
 	}
 }

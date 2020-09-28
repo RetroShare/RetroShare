@@ -35,6 +35,7 @@
 #include "gui/common/Emoticons.h"
 #include "gui/common/UIStateHelper.h"
 #include "gui/Identity/IdEditDialog.h"
+#include "gui/common/FilesDefs.h"
 
 #include "util/HandleRichText.h"
 #include "util/misc.h"
@@ -89,7 +90,7 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 	
 	ui.forumMessage->setPlaceholderText(tr ("Text"));
 
-	ui.headerFrame->setHeaderImage(QPixmap(":/icons/png/forums.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums.png"));
 	ui.headerFrame->setHeaderText(text);
 
 	ui.generateSpinBox->setEnabled(false);

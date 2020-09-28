@@ -22,8 +22,9 @@
 #ifndef _GENERALPAGE_H
 #define _GENERALPAGE_H
 
-#include <retroshare-gui/configpage.h>
+#include "retroshare-gui/configpage.h"
 #include "ui_GeneralPage.h"
+#include "gui/common/FilesDefs.h"
 
 class GeneralPage : public ConfigPage
 {
@@ -39,7 +40,7 @@ public:
 	/** Loads the settings for this page */
 	virtual void load();
 
-	virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/general.svg") ; }
+    virtual QPixmap iconPixmap() const { return FilesDefs::getPixmapFromQtResourcePath(":/icons/settings/general.svg") ; }
 	virtual QString pageName() const { return tr("General") ; }
 	virtual QString helpText() const { return ""; }
 

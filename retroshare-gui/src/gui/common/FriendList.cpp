@@ -306,7 +306,7 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
     hbox->setSpacing(6);
 
     QLabel *iconLabel = new QLabel(widget);
-    QPixmap pix = QPixmap(":/images/user/friends24.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
+    QPixmap pix = FilesDefs::getPixmapFromQtResourcePath(":/images/user/friends24.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
     iconLabel->setPixmap(pix);
     iconLabel->setMaximumSize(iconLabel->frameSize().height() + pix.height(), pix.width());
     hbox->addWidget(iconLabel);
@@ -1006,7 +1006,7 @@ void FriendList::insertPeers()
                     sslItem->setHidden(false);
                     gpg_connected = true;
 
-                    sslOverlayIcon = QPixmap(StatusDefs::imageStatus(bestRSState));
+                    sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(bestRSState));
 
                     connectStateString = StatusDefs::name(rsState);
 
@@ -1024,9 +1024,9 @@ void FriendList::insertPeers()
                     peerState = PEER_STATE_AVAILABLE;
 
                     if (sslDetail.connectState) {
-                        sslOverlayIcon = QPixmap(":/images/connect_creating.png");
+                        sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(":/images/connect_creating.png");
                     } else {
-                        sslOverlayIcon = QPixmap(StatusDefs::imageStatus(RS_STATUS_ONLINE));
+                        sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(RS_STATUS_ONLINE));
                     }
 
                     connectStateString = StatusDefs::name(RS_STATUS_ONLINE);
@@ -1037,9 +1037,9 @@ void FriendList::insertPeers()
                     peerState = PEER_STATE_OFFLINE;
                     sslItem->setHidden(mHideUnconnected);
                     if (sslDetail.connectState) {
-                        sslOverlayIcon = QPixmap(":/images/connect_creating.png");
+                        sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(":/images/connect_creating.png");
                     } else {
-                        sslOverlayIcon = QPixmap(StatusDefs::imageStatus(RS_STATUS_OFFLINE));
+                        sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(RS_STATUS_OFFLINE));
                     }
 
                     connectStateString = StatusDefs::connectStateWithoutTransportTypeString(sslDetail);
@@ -1099,7 +1099,7 @@ void FriendList::insertPeers()
 
                 if (std::find(privateChatIds.begin(), privateChatIds.end(), sslDetail.id) != privateChatIds.end()) {
                     // private chat is available
-                    sslOverlayIcon = QPixmap(":/images/chat.png");
+                    sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(":/images/chat.png");
                     gpg_hasPrivateChat = true;
                 }
                 sslItem->setIcon(COLUMN_NAME, createAvatar(sslAvatar, sslOverlayIcon));
@@ -1138,7 +1138,7 @@ void FriendList::insertPeers()
                 gpgFont = StatusDefs::font(bestRSState);
 
                 if (showInfoAtGpgItem) {
-                    gpgOverlayIcon = QPixmap(StatusDefs::imageStatus(bestRSState));
+                    gpgOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(bestRSState));
 
                     if (mShowState) {
                         gpgText = StatusDefs::name(bestRSState);
@@ -1164,7 +1164,7 @@ void FriendList::insertPeers()
                         gpgText += tr("Available");
                     }
 
-                    gpgOverlayIcon = QPixmap(IMAGE_AVAILABLE);
+                    gpgOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(IMAGE_AVAILABLE);
                 }
             } else {
                 bestPeerState = PEER_STATE_OFFLINE;
@@ -1178,15 +1178,15 @@ void FriendList::insertPeers()
                         gpgText += StatusDefs::name(RS_STATUS_OFFLINE);
                     }
 
-                    gpgOverlayIcon = QPixmap(StatusDefs::imageStatus(RS_STATUS_OFFLINE));
+                    gpgOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(RS_STATUS_OFFLINE));
                 }
             }
 
             if (gpg_hasPrivateChat) {
-                gpgOverlayIcon = QPixmap(":/images/chat.png");
+                gpgOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(":/images/chat.png");
             }
 
-            gpgItem->setIcon(COLUMN_NAME, createAvatar(bestAvatar.isNull() ? QPixmap(AVATAR_DEFAULT_IMAGE) : bestAvatar, gpgOverlayIcon));
+            gpgItem->setIcon(COLUMN_NAME, createAvatar(bestAvatar.isNull() ? FilesDefs::getPixmapFromQtResourcePath(AVATAR_DEFAULT_IMAGE) : bestAvatar, gpgOverlayIcon));
 
             /* Create or get gpg label */
             ElidedLabel *gpgNameLabel = NULL;

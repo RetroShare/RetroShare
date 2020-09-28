@@ -51,7 +51,7 @@ void AlbumItem::setUp()
     else
     {
         // display a default Album icon when album has no Thumbnail
-        ui->label_Thumbnail->setPixmap(QPixmap(":/images/album_default_128.png"));
+        ui->label_Thumbnail->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/album_default_128.png"));
     }
 }
 

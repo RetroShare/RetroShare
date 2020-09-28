@@ -56,7 +56,7 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 	setupUi(this);
 	Settings->loadWidgetInformation(this);
 
-	headerFrame->setHeaderImage(QPixmap(":/icons/png/channel.png"));
+    headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/channel.png"));
 
     if(!existing_post.isNull())
 		headerFrame->setHeaderText(tr("Edit Channel Post"));

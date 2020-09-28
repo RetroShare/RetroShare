@@ -29,6 +29,7 @@
 
 #include "misc.h"
 #include "util/rsdebug.h"
+#include "gui/common/FilesDefs.h"
 
 // return best userfriendly storage unit (B, KiB, MiB, GiB, TiB)
 // use Binary prefix standards from IEC 60027-2
@@ -308,11 +309,9 @@ QPixmap misc::getOpenThumbnailedPicture(QWidget *parent, const QString &caption,
 		return QPixmap();
 
     if(width > 0 && height > 0)
-        return QPixmap(fileName).scaledToHeight(height, Qt::SmoothTransformation).copy( 0, 0, width, height);
+        return FilesDefs::getPixmapFromQtResourcePath(fileName).scaledToHeight(height, Qt::SmoothTransformation).copy( 0, 0, width, height);
     else
-        return QPixmap(fileName);
-
-	//return QPixmap(fileName).scaledToHeight(width, height, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+        return FilesDefs::getPixmapFromQtResourcePath(fileName);
 }
 
 bool misc::getOpenFileName(QWidget *parent, RshareSettings::enumLastDir type

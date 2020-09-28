@@ -32,6 +32,7 @@
 
 #include <retroshare/rsidentity.h>
 #include <retroshare/rspeers.h>
+#include "gui/common/FilesDefs.h"
 
 #include <iostream>
 
@@ -47,7 +48,7 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
 
 	ui->setupUi(this);
 
-	ui->headerFrame->setHeaderImage(QPixmap(":/icons/png/person.png"));
+    ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/person.png"));
 	ui->headerFrame->setHeaderText(tr("Create New Identity"));
 
 	/* Setup UI helper */
@@ -199,7 +200,7 @@ void IdEditDialog::setAvatar(const QPixmap &avatar)
 void IdEditDialog::setupExistingId(const RsGxsGroupId& keyId)
 {
 	setWindowTitle(tr("Edit identity"));
-	ui->headerFrame->setHeaderImage(QPixmap(":/icons/png/person.png"));
+    ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/person.png"));
 	ui->headerFrame->setHeaderText(tr("Edit identity"));
 
 	mStateHelper->setLoading(IDEDITDIALOG_LOADID, true);

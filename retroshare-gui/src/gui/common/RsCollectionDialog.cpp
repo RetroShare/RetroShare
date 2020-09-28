@@ -143,7 +143,7 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName
 	setWindowTitle(QString("%1 - %2").arg(windowTitle()).arg(QFileInfo(_fileName).completeBaseName()));
 	
 	
-	ui.headerFrame->setHeaderImage(QPixmap(":/icons/collections.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/collections.png"));
 
 	if(creation)
 	{

@@ -21,9 +21,10 @@
 #ifndef _APPERARANCEPAGE_H
 #define _APPERARANCEPAGE_H
 
-#include <retroshare-gui/configpage.h>
+#include "retroshare-gui/configpage.h"
 #include "gui/MainWindow.h"
 #include "ui_AppearancePage.h"
+#include "gui/common/FilesDefs.h"
 
 class AppearancePage : public ConfigPage
 {
@@ -36,7 +37,7 @@ public:
 	/** Loads the settings for this page */
 	virtual void load();
 
-	virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/appearance.svg") ; }
+    virtual QPixmap iconPixmap() const { return FilesDefs::getPixmapFromQtResourcePath(":/icons/settings/appearance.svg") ; }
 	virtual QString pageName() const { return tr("Appearance") ; }
 	virtual QString helpText() const { return ""; }
 

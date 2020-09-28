@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include "GxsForumGroupDialog.h"
+#include "gui/common/FilesDefs.h"
 
 #include <retroshare/rsgxsforums.h>
 #include <iostream>
@@ -96,7 +97,7 @@ void GxsForumGroupDialog::initUi()
 
 QPixmap GxsForumGroupDialog::serviceImage()
 {
-	return QPixmap(":/icons/png/forums.png");
+    return FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums.png");
 }
 
 bool GxsForumGroupDialog::service_createGroup(RsGroupMetaData& meta)
