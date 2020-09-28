@@ -312,6 +312,26 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="newLabel">
+              <property name="text">
+               <string>New</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QToolButton" name="readButton">
               <property name="maximumSize">
                <size>
@@ -341,9 +361,22 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="newLabel">
+             <widget class="QToolButton" name="commentButton">
               <property name="text">
-               <string>New</string>
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="Posted_images.qrc">
+                <normaloff>:/images/comments.png</normaloff>:/images/comments.png</iconset>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextBesideIcon</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -368,26 +401,6 @@
              </widget>
             </item>
             <item>
-             <widget class="QToolButton" name="commentButton">
-              <property name="text">
-               <string>Comments</string>
-              </property>
-              <property name="icon">
-               <iconset resource="Posted_images.qrc">
-                <normaloff>:/images/comments.png</normaloff>:/images/comments.png</iconset>
-              </property>
-              <property name="checkable">
-               <bool>true</bool>
-              </property>
-              <property name="toolButtonStyle">
-               <enum>Qt::ToolButtonTextBesideIcon</enum>
-              </property>
-              <property name="autoRaise">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
              <widget class="QPushButton" name="shareButton">
               <property name="text">
                <string>Share</string>
@@ -400,19 +413,6 @@
                <bool>true</bool>
               </property>
              </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
             </item>
            </layout>
           </item>

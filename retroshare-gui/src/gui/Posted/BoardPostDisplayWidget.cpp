@@ -58,13 +58,29 @@ BoardPostDisplayWidgetBase::BoardPostDisplayWidgetBase(const RsPostedPost& post,
 
 void BoardPostDisplayWidgetBase::setCommentsSize(int comNb)
 {
-	QString sComButText = tr("Comment");
-	if (comNb == 1)
-		sComButText = sComButText.append("(1)");
-	else if(comNb > 1)
-		sComButText = tr("Comments ").append("(%1)").arg(comNb);
+    QString sComButText ;
 
-    commentButton()->setText(sComButText);
+    if (comNb == 1)
+        sComButText = tr("1 comment");
+    else if(comNb > 1)
+        sComButText = tr("%1 comments").arg(comNb);
+    else
+        sComButText = tr("No comments yet. Click to add one.");
+
+    commentButton()->setToolTip(sComButText);
+
+    if(comNb > 0)
+        commentButton()->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/comments_blue.png"));
+    else
+        commentButton()->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/comments.png"));
+
+//	QString sComButText = tr("Comment");
+//	if (comNb == 1)
+//		sComButText = sComButText.append("(1)");
+//	else if(comNb > 1)
+//		sComButText = tr("Comments ").append("(%1)").arg(comNb);
+//
+//    commentButton()->setText(sComButText);
 }
 
 void BoardPostDisplayWidgetBase::makeDownVote()
@@ -270,13 +286,7 @@ void BoardPostDisplayWidgetBase::setup()
     //frame_comment->show();
     commentButton()->show();
 
-    if (mPost.mComments)
-    {
-        QString commentText = tr("Comments (%1)").arg(QString::number(mPost.mComments));
-        commentButton()->setText(commentText);
-    }
-    else
-        commentButton()->setText(tr("Comment"));
+    setCommentsSize(mPost.mComments);
 
     setReadStatus(IS_MSG_NEW(mPost.mMeta.mMsgStatus), IS_MSG_UNREAD(mPost.mMeta.mMsgStatus) || IS_MSG_NEW(mPost.mMeta.mMsgStatus));
 
