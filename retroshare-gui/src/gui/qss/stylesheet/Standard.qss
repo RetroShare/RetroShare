@@ -699,16 +699,16 @@ GenCertDialog QFrame#profileframe{
   border-width: 0px;
 }
 
-PostedListWidget QComboBox#comboBox {
+PostedListWidgetWithModel QComboBox#sortStrategy_CB {
 	font: bold;
 	color: #0099cc;
 }
 
-PostedListWidget QToolButton#submitPostButton {
+PostedListWidgetWithModel QToolButton#submitPostButton {
 	font: bold;
 }
 
-PostedListWidget QToolButton#subscribeToolButton {
+PostedListWidgetWithModel QToolButton#subscribeToolButton {
 	font: bold;
 	font-size: 15px;
 	color: white;
@@ -717,12 +717,12 @@ PostedListWidget QToolButton#subscribeToolButton {
 	max-height: 27px;
 }
 
-PostedListWidget QToolButton#subscribeToolButton:hover {
+PostedListWidgetWithModel QToolButton#subscribeToolButton:hover {
 	background: #03b1f3;
 	border-radius: 4px;
 }
 
-PostedListWidget QFrame#headerFrame {
+PostedListWidgetWithModel QFrame#headerFrame {
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
 	border: 1px solid #CCCCCC;
 }
@@ -866,7 +866,7 @@ GxsCommentDialog QComboBox#sortBox {
 	color: #0099cc;
 }
 
-PostedListWidget QTextBrowser#infoDescription {
+PostedListWidgetWithModel QTextBrowser#infoDescription {
 	background: transparent;
 	border: none;
 }
