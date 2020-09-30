@@ -191,11 +191,11 @@ void BoardPostDisplayWidgetBase::setup()
 
     readButton()->setChecked(false);
 
-    voteUpButton()->setIconSize(QSize(S*1.5,S*1.5));
-    voteDownButton()->setIconSize(QSize(S*1.5,S*1.5));
-    commentButton()->setIconSize(QSize(S*1.5,S*1.5));
-    readButton()->setIconSize(QSize(S*1.5,S*1.5));
-    shareButton()->setIconSize(QSize(S*1.5,S*1.5));
+//    voteUpButton()->setIconSize(QSize(S*1.5,S*1.5));
+//    voteDownButton()->setIconSize(QSize(S*1.5,S*1.5));
+//    commentButton()->setIconSize(QSize(S*1.5,S*1.5));
+//    readButton()->setIconSize(QSize(S*1.5,S*1.5));
+//    shareButton()->setIconSize(QSize(S*1.5,S*1.5));
 
     QMenu *menu = new QMenu();
     menu->addAction(CopyLinkAction);

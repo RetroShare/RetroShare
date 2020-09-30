@@ -324,7 +324,7 @@
                <bool>true</bool>
               </property>
               <property name="toolButtonStyle">
-               <enum>Qt::ToolButtonTextBesideIcon</enum>
+               <enum>Qt::ToolButtonIconOnly</enum>
               </property>
               <property name="autoRaise">
                <bool>true</bool>
