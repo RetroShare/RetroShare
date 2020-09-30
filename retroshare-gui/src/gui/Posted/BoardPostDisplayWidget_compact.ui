@@ -170,6 +170,9 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="toolTip">
+           <string>Click to view picture</string>
+          </property>
           <property name="text">
            <string>PictureLabel_compact</string>
           </property>
