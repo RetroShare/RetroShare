@@ -37,6 +37,8 @@
 
 class ZoomableLabel: public QLabel
 {
+    Q_OBJECT
+
 public:
     ZoomableLabel(QWidget *parent): QLabel(parent),mZoomFactor(1.0),mCenterX(0.0),mCenterY(0.0),mZoomEnabled(true) {}
 
@@ -48,6 +50,9 @@ public:
 
     const QPixmap& originalImage() const { return mFullImage ; }
 
+signals:
+    void clicked();
+
 protected:
     void mousePressEvent(QMouseEvent *ev) override;
     void mouseReleaseEvent(QMouseEvent *ev) override;
@@ -57,9 +62,9 @@ protected:
 
     QPixmap mFullImage;
 
+    float mZoomFactor;
     float mCenterX;
     float mCenterY;
-    float mZoomFactor;
     int   mLastX,mLastY;
     bool  mMoving;
     bool  mZoomEnabled;

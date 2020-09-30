@@ -43,6 +43,8 @@
 
 #define LINK_IMAGE ":/images/thumb-link.png"
 
+// #ifdef DEBUG_BOARDPOSTDISPLAYWIDGET 1
+
 /** Constructor */
 
 const char *BoardPostDisplayWidget_compact::DEFAULT_BOARD_IMAGE = ":/icons/png/newsfeed2.png";
@@ -119,7 +121,9 @@ void BoardPostDisplayWidgetBase::setReadStatus(bool isNew, bool isUnread)
 
 void BoardPostDisplayWidget_compact::doExpand(bool e)
 {
+#ifdef DEBUG_BOARDPOSTDISPLAYWIDGET
      std::cerr << "Expanding" << std::endl;
+#endif
      if(e)
          ui->frame_notes->show();
      else
@@ -335,6 +339,7 @@ void BoardPostDisplayWidget_compact::setup()
     // show/hide things based on the view type
 
     setAttribute(Qt::WA_DeleteOnClose, true);
+    ui->pictureLabel->setEnableZoom(false);
 
     RsReputationLevel overall_reputation = rsReputations->overallReputationLevel(mPost.mMeta.mAuthorId);
     bool redacted = (overall_reputation == RsReputationLevel::LOCALLY_NEGATIVE);
@@ -350,10 +355,15 @@ void BoardPostDisplayWidget_compact::setup()
                 GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
                 // Wiping data - as its been passed to thumbnail.
 
-                int desired_height = QFontMetricsF(font()).height() * 5;
+#ifdef DEBUG_BOARDPOSTDISPLAYWIDGET
+                std::cerr << "Got pixmap of size " << pixmap.width() << " x " << pixmap.height() << std::endl;
+                std::cerr << "Saving to pix.png" << std::endl;
+                pixmap.save("pix.png","PNG");
+#endif
 
-                QPixmap scaledpixmap = pixmap.scaledToHeight(desired_height, Qt::SmoothTransformation);
-                ui->pictureLabel->setPixmap(scaledpixmap);
+                int desired_height = QFontMetricsF(font()).height() * 5;
+                ui->pictureLabel->setFixedSize(16/9.0*desired_height,desired_height);
+                ui->pictureLabel->setPicture(pixmap);
             }
             else if (mPost.mImage.mData == NULL)
                 ui->pictureLabel->hide();
@@ -465,13 +475,12 @@ void BoardPostDisplayWidget_card::setup()
         GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
         // Wiping data - as its been passed to thumbnail.
 
-
         QPixmap scaledpixmap;
         if(pixmap.width() > 800){
             QPixmap scaledpixmap = pixmap.scaledToWidth(800, Qt::SmoothTransformation);
-            pictureLabel()->setPixmap(scaledpixmap);
+            ui->pictureLabel->setPixmap(scaledpixmap);
         }else{
-            pictureLabel()->setPixmap(pixmap);
+            ui->pictureLabel->setPixmap(pixmap);
         }
     }
     else if (mPost.mImage.mData == NULL)

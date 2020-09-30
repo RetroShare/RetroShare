@@ -99,6 +99,8 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
         BoardPostDisplayWidget_compact w(post,displayFlags(post.mMeta.mMsgId),nullptr);
 
         w.setFixedSize(option.rect.size());
+
+        w.updateGeometry();
         w.adjustSize();
         w.render(&pixmap,QPoint(0,0),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
     }
@@ -107,6 +109,7 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
         BoardPostDisplayWidget_card w(post,displayFlags(post.mMeta.mMsgId),nullptr);
 
         w.setFixedSize(option.rect.size());
+        w.updateGeometry();
         w.adjustSize();
         w.render(&pixmap,QPoint(0,0),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
     }
@@ -197,6 +200,8 @@ QWidget *PostedPostDelegate::createEditor(QWidget *parent, const QStyleOptionVie
         QObject::connect(w,SIGNAL(changeReadStatusRequested(const RsGxsMessageId&,bool)),mPostListWidget,SLOT(changeReadStatus(const RsGxsMessageId&,bool)));
 
         w->setFixedSize(option.rect.size());
+        w->adjustSize();
+        w->updateGeometry();
         w->adjustSize();
 
         return w;
