@@ -87,12 +87,15 @@ protected slots:
     void makeUpVote() ;
     void makeDownVote() ;
 	void setCommentsSize(int comNb) ;
+    void handleShareButtonClicked() ;
 
 signals:
     void changeReadStatusRequested(const RsGxsMessageId&,bool);
     void vote(const RsGxsGrpMsgIdPair& msgId, bool up_or_down);
     void expand(RsGxsMessageId,bool);
     void commentsRequested(const RsGxsMessageId&,bool);
+    void thumbnailOpenned();
+    void shareButtonClicked();
 
 protected:
 	RsPostedPost mPost;

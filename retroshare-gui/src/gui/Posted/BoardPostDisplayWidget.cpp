@@ -191,17 +191,13 @@ void BoardPostDisplayWidgetBase::setup()
 
     readButton()->setChecked(false);
 
-//    voteUpButton()->setIconSize(QSize(S*1.5,S*1.5));
-//    voteDownButton()->setIconSize(QSize(S*1.5,S*1.5));
-//    commentButton()->setIconSize(QSize(S*1.5,S*1.5));
-//    readButton()->setIconSize(QSize(S*1.5,S*1.5));
-//    shareButton()->setIconSize(QSize(S*1.5,S*1.5));
-
     QMenu *menu = new QMenu();
     menu->addAction(CopyLinkAction);
     menu->addSeparator();
     menu->addAction(showInPeopleAct);
     shareButton()->setMenu(menu);
+
+    connect(shareButton(),SIGNAL(pressed()),this,SLOT(handleShareButtonClicked()));
 
     RsReputationLevel overall_reputation = rsReputations->overallReputationLevel(mPost.mMeta.mAuthorId);
     bool redacted = (overall_reputation == RsReputationLevel::LOCALLY_NEGATIVE);
@@ -306,6 +302,10 @@ void BoardPostDisplayWidgetBase::setup()
 #ifdef TODO
     emit sizeChanged(this);
 #endif
+}
+void BoardPostDisplayWidgetBase::handleShareButtonClicked()
+{
+    emit shareButtonClicked();
 }
 //===================================================================================================================================
 //==                                                 class BoardPostDisplayWidget                                                  ==
@@ -423,7 +423,7 @@ void BoardPostDisplayWidget_compact::viewPicture()
 
     PView->show();
 
-    /* window will destroy itself! */
+    emit thumbnailOpenned();
 }
 
 QToolButton    *BoardPostDisplayWidget_compact::voteUpButton()   { return ui->voteUpButton; }

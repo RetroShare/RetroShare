@@ -149,6 +149,7 @@ private slots:
 public slots:
 	void handlePostsTreeSizeChange(QSize size);
     void voteMsg(RsGxsGrpMsgIdPair msg,bool up_or_down);
+    void markCurrentPostAsRead();
 
 private:
 	void processSettings(bool load);

@@ -748,13 +748,15 @@ void RsPostedPostsModel::setMsgReadStatus(const QModelIndex& i,bool read_status)
     RsGxsGroupId grpId = mPosts[entry].mMeta.mGroupId;
     RsGxsMessageId msgId = mPosts[entry].mMeta.mMsgId;
 
-    RsThread::async([msgId,grpId,read_status]()
-    {
-        // Call blocking API
+    bool current_read_status = !(IS_MSG_UNREAD(mPosts[entry].mMeta.mMsgStatus) || IS_MSG_NEW(mPosts[entry].mMeta.mMsgStatus));
 
-        rsPosted->setPostReadStatus(RsGxsGrpMsgIdPair(grpId,msgId),read_status);
-    } );
+    if(current_read_status != read_status)
+        RsThread::async([msgId,grpId,read_status]()
+        {
+            // Call blocking API
 
+            rsPosted->setPostReadStatus(RsGxsGrpMsgIdPair(grpId,msgId),read_status);
+        } );
 }
 
 QModelIndex RsPostedPostsModel::getIndexOfMessage(const RsGxsMessageId& mid) const

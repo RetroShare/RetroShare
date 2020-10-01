@@ -199,6 +199,13 @@ QWidget *PostedPostDelegate::createEditor(QWidget *parent, const QStyleOptionVie
         QObject::connect(w,SIGNAL(commentsRequested(const RsGxsMessageId&,bool)),mPostListWidget,SLOT(openComments(const RsGxsMessageId&)));
         QObject::connect(w,SIGNAL(changeReadStatusRequested(const RsGxsMessageId&,bool)),mPostListWidget,SLOT(changeReadStatus(const RsGxsMessageId&,bool)));
 
+        // All other interactions with the widget should cause the msg to be set as read.
+        QObject::connect(w,SIGNAL(thumbnailOpenned()),mPostListWidget,SLOT(markCurrentPostAsRead()));
+        QObject::connect(w,SIGNAL(vote(RsGxsGrpMsgIdPair,bool)),mPostListWidget,SLOT(markCurrentPostAsRead()));
+        QObject::connect(w,SIGNAL(expand(RsGxsMessageId,bool)),this,SLOT(markCurrentPostAsRead()));
+        QObject::connect(w,SIGNAL(commentsRequested(const RsGxsMessageId&,bool)),mPostListWidget,SLOT(markCurrentPostAsRead()));
+        QObject::connect(w,SIGNAL(shareButtonClicked()),mPostListWidget,SLOT(markCurrentPostAsRead()));
+
         w->setFixedSize(option.rect.size());
         w->adjustSize();
         w->updateGeometry();
@@ -690,6 +697,16 @@ void PostedListWidgetWithModel::openComments(const RsGxsMessageId& msgId)
         title = title.left(27) + "...";
 
     ui->tabWidget->addTab(commentDialog,title);
+}
+
+void PostedListWidgetWithModel::markCurrentPostAsRead()
+{
+    QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
+
+    if(!index.isValid())
+        throw std::runtime_error("No post under mouse!");
+
+    mPostedPostsModel->setMsgReadStatus(index,true);
 }
 
 void PostedListWidgetWithModel::changeReadStatus(const RsGxsMessageId& msgId,bool b)
