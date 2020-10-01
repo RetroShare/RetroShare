@@ -82,7 +82,7 @@ void BoardPostDisplayWidgetBase::setCommentsSize(int comNb)
 //	else if(comNb > 1)
 //		sComButText = tr("Comments ").append("(%1)").arg(comNb);
 //
-//    commentButton()->setText(sComButText);
+    commentButton()->setText(tr("Comments"));
 }
 
 void BoardPostDisplayWidgetBase::makeDownVote()
