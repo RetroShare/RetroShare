@@ -32,8 +32,8 @@ class GxsCommentDialog: public QWidget
 	Q_OBJECT
 
 public:
-	GxsCommentDialog(QWidget *parent);
-	GxsCommentDialog(QWidget *parent, RsTokenService *token_service, RsGxsCommentService *comment_service);
+    GxsCommentDialog(QWidget *parent=nullptr,const RsGxsId& default_author=RsGxsId());
+    GxsCommentDialog(QWidget *parent,const RsGxsId& default_author, RsTokenService *token_service, RsGxsCommentService *comment_service);
 	virtual ~GxsCommentDialog();
 
     void setTokenService(RsTokenService *token_service, RsGxsCommentService *comment_service);
@@ -54,7 +54,7 @@ signals:
     void commentsLoaded(int);
 
 private:
-    void init();
+    void init(const RsGxsId &default_author);
 
 	RsGxsGroupId   mGrpId;
 	RsGxsMessageId mMostRecentMsgId;

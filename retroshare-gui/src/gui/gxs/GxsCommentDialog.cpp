@@ -30,24 +30,24 @@
 #include <QDateTime>
 
 /** Constructor */
-GxsCommentDialog::GxsCommentDialog(QWidget *parent, RsTokenService *token_service, RsGxsCommentService *comment_service)
+GxsCommentDialog::GxsCommentDialog(QWidget *parent, const RsGxsId &default_author, RsTokenService *token_service, RsGxsCommentService *comment_service)
 	: QWidget(parent), ui(new Ui::GxsCommentDialog)
 {
 	/* Invoke the Qt Designer generated QObject setup routine */
 	ui->setupUi(this);
 
     setTokenService(token_service,comment_service);
-    init();
+    init(default_author);
 }
 	
-void GxsCommentDialog::init()
+void GxsCommentDialog::init(const RsGxsId& default_author)
 {
 	/* Set header resize modes and initial section sizes */
 	QHeaderView * ttheader = ui->treeWidget->header () ;
 	ttheader->resizeSection (0, 440);
 
 	/* fill in the available OwnIds for signing */
-	ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
+    ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, default_author);
 
 	connect(ui->refreshButton, SIGNAL(clicked()), this, SLOT(refresh()));
 	connect(ui->idChooser, SIGNAL(currentIndexChanged( int )), this, SLOT(voterSelectionChanged( int )));
@@ -70,13 +70,13 @@ void GxsCommentDialog::setTokenService(RsTokenService *token_service, RsGxsComme
 	ui->treeWidget->setup(token_service, comment_service);
 }
 
-GxsCommentDialog::GxsCommentDialog(QWidget *parent)
+GxsCommentDialog::GxsCommentDialog(QWidget *parent,const RsGxsId &default_author)
 	: QWidget(parent), ui(new Ui::GxsCommentDialog)
 {
 	/* Invoke the Qt Designer generated QObject setup routine */
 	ui->setupUi(this);
 
-    init();
+    init(default_author);
 }
 
 GxsCommentDialog::~GxsCommentDialog()

@@ -731,7 +731,7 @@ void GxsGroupFrameDialog::loadComment(const RsGxsGroupId &grpId, const QVector<R
 			comments += "...";
 		}
 
-		commentDialog = new GxsCommentDialog(this, mInterface->getTokenService(), commentService);
+        commentDialog = new GxsCommentDialog(this,RsGxsId(), mInterface->getTokenService(), commentService);
 
 		QWidget *commentHeader = createCommentHeaderWidget(grpId, most_recent_msgId);
 		if (commentHeader) {

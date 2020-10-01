@@ -323,7 +323,7 @@ void GxsCommentTreeWidget::banUser()
 
 void GxsCommentTreeWidget::makeComment()
 {
-	GxsCreateCommentDialog pcc(mCommentService, std::make_pair(mGroupId,mLatestMsgId), mLatestMsgId, this);
+    GxsCreateCommentDialog pcc(mCommentService, std::make_pair(mGroupId,mLatestMsgId), mLatestMsgId, mVoterId,this);
 	pcc.exec();
 }
 
@@ -332,7 +332,7 @@ void GxsCommentTreeWidget::replyToComment()
 	RsGxsGrpMsgIdPair msgId;
 	msgId.first = mGroupId;
 	msgId.second = mCurrentCommentMsgId;
-	GxsCreateCommentDialog pcc(mCommentService, msgId, mLatestMsgId, this);
+    GxsCreateCommentDialog pcc(mCommentService, msgId, mLatestMsgId, mVoterId,this);
 
 	pcc.loadComment(mCurrentCommentText, mCurrentCommentAuthor, mCurrentCommentAuthorId);
 	pcc.exec();
