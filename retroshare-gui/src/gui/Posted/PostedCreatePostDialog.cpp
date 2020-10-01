@@ -44,7 +44,7 @@
 #define VIEW_IMAGE  2
 #define VIEW_LINK  3
 
-PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGroupId& grpId, QWidget *parent):
+PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGroupId& grpId, const RsGxsId& default_author, QWidget *parent):
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint),
 	mPosted(posted), mGrpId(grpId),
 	ui(new Ui::PostedCreatePostDialog)
@@ -69,8 +69,8 @@ PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGrou
 	ui->sizeWarningLabel->setText(QString("Post size is limited to %1 KB, pictures will be downscaled.").arg(MAXMESSAGESIZE / 1024));
 	
 	/* fill in the available OwnIds for signing */
-	ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
-	
+    ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, default_author);
+
 	QSignalMapper *signalMapper = new QSignalMapper(this);
 	connect(ui->postButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
 	connect(ui->imageButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
@@ -85,6 +85,15 @@ PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGrou
 
 	/* load settings */
 	processSettings(true);
+
+    // Override the default ID, if supplied, since it is changed by processSettings
+
+    if(!default_author.isNull())
+    {
+        ui->idChooser->setChosenId(default_author);
+
+        // should we save the ID in the settings here? I'm not sure we want this.
+    }
 }
 
 PostedCreatePostDialog::~PostedCreatePostDialog()

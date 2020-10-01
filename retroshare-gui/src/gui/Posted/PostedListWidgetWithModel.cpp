@@ -741,8 +741,10 @@ void PostedListWidgetWithModel::createMsg()
 	if (!IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags)) {
 		return;
 	}
-
-	PostedCreatePostDialog *msgDialog = new PostedCreatePostDialog(rsPosted,groupId());
+    RsGxsId author_id;
+    ui->idChooser->getChosenId(author_id);
+std::cerr << "Chosing default ID " << author_id<< std::endl;
+    PostedCreatePostDialog *msgDialog = new PostedCreatePostDialog(rsPosted,groupId(),author_id);
 	msgDialog->show();
 
 	/* window will destroy itself! */
