@@ -121,9 +121,9 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 
     RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
 
-    if(index.row() & 0x01)
-        painter->fillRect( option.rect, option.palette.alternateBase().color());
-    else
+    // if(index.row() & 0x01)
+    //     painter->fillRect( option.rect, option.palette.alternateBase().color());
+    // else
         painter->fillRect( option.rect, option.palette.base().color());
 
     painter->restore();
@@ -147,9 +147,9 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
         {
                 // we need to do the alternate color manually
 
-            if(index.row() & 0x01)
-                pixmap.fill(option.palette.alternateBase().color());
-            else
+            //if(index.row() & 0x01)
+            //    pixmap.fill(option.palette.alternateBase().color());
+            //else
                 pixmap.fill(option.palette.base().color());
         }
 
@@ -302,9 +302,9 @@ void ChannelPostFilesDelegate::paint(QPainter * painter, const QStyleOptionViewI
 		QPixmap pixmap(w.size());
 
                 // apparently we need to do the alternate colors manually
-        if(index.row() & 0x01)
-            pixmap.fill(option.palette.alternateBase().color());
-        else
+        //if(index.row() & 0x01)
+        //    pixmap.fill(option.palette.alternateBase().color());
+        //else
             pixmap.fill(option.palette.base().color());
 
         w.render(&pixmap,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
@@ -356,7 +356,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     ui->showUnread_TB->setToolTip(tr("Show unread posts only"));
     connect(ui->showUnread_TB,SIGNAL(toggled(bool)),this,SLOT(switchOnlyUnread(bool)));
 
-    ui->postsTree->setAlternatingRowColors(true);
+    ui->postsTree->setAlternatingRowColors(false);
     ui->postsTree->setModel(mChannelPostsModel = new RsGxsChannelPostsModel());
     ui->postsTree->setItemDelegate(mChannelPostsDelegate = new ChannelPostDelegate());
     ui->postsTree->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);	// prevents bug on w10, since row size depends on widget width
@@ -373,7 +373,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     ui->channelPostFiles_TV->setPlaceholderText(tr("No files in this post, or no post selected"));
     ui->channelPostFiles_TV->setSortingEnabled(true);
     ui->channelPostFiles_TV->sortByColumn(0, Qt::AscendingOrder);
-    ui->channelPostFiles_TV->setAlternatingRowColors(true);
+    ui->channelPostFiles_TV->setAlternatingRowColors(false);
 
     ui->channelFiles_TV->setModel(mChannelFilesModel = new RsGxsChannelPostFilesModel());
     ui->channelFiles_TV->setItemDelegate(mFilesDelegate = new ChannelPostFilesDelegate());
