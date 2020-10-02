@@ -808,7 +808,7 @@ GxsGroupDialog QLabel#groupLogo{
 }
 
 
-BoardPostDisplayWidget_compact QFrame#frame {
+BoardPostDisplayWidget_compact QFrame#mainFrame {
 	background-color: white;
 }
 
@@ -816,11 +816,11 @@ PostedItem QFrame#voteFrame {
 	background: #f8f9fa;
 }
 
-BoardPostDisplayWidget_compact QFrame#frame [new=false]{
+BoardPostDisplayWidget_compact > QFrame#mainFrame [new=false]{
 	background: white;
 }
 
-BoardPostDisplayWidget_compact QFrame#frame[new=true] {
+BoardPostDisplayWidget_compact > QFrame#mainFrame[new=true] {
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #F0F8FD, stop:0.8 #E6F2FD, stop: 0.81 #E6F2FD, stop: 1 #D2E7FD);
 }
 
@@ -849,15 +849,15 @@ PostedCardView QFrame#voteFrame {
 	background: #f8f9fa;
 }
 
-BoardPostDisplayWidget_card QFrame#frame{
+BoardPostDisplayWidget_card QFrame#mainFrame{
 	background: white;
 }
 
-BoardPostDisplayWidget_card QFrame#frame [new=false]{
+BoardPostDisplayWidget_card > QFrame#mainFrame [new=false]{
 	background: white;
 }
 
-BoardPostDisplayWidget_card > QFrame#frame[new=true] {
+BoardPostDisplayWidget_card > QFrame#mainFrame[new=true] {
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #F0F8FD, stop:0.8 #E6F2FD, stop: 0.81 #E6F2FD, stop: 1 #D2E7FD);
 }
 

@@ -2078,28 +2078,26 @@ BoardPostDisplayWidget_compact QFrame#mainFrame {
     border-radius: 4px;
     border: 1px solid #32414B;
     background-color: #19232D;
+}
 
+BoardPostDisplayWidget_compact  QFrame#mainFrame [new=false]{
+	background: #19232D;
+}
+
+BoardPostDisplayWidget_compact  QFrame#mainFrame[new=true] {
+    background-color: #1464a0;
 }
 
 GxsChannelPostItem QFrame#mainFrame {
     border-radius: 4px;
     border: 1px solid #32414B;
     background-color: #19232D;
-
 }
 
-BoardPostDisplayWidget_compact QPushButton#shareButton
-{
+BoardPostDisplayWidget_compact QPushButton#shareButton {
     background-color: transparent;
 	min-width: 80px;
 	max-height: 22px;
-
-}
-
-BoardPostDisplayWidget_compact QLabel#scoreLabel
-{
-    background-color: transparent;
-
 }
 
 BoardPostDisplayWidget_compact QFrame#voteFrame {
@@ -2117,12 +2115,23 @@ BoardPostDisplayWidget_compact QLabel#pictureLabel{
 	border-radius: 3px;
 }
 
-BoardPostDisplayWidget_card QPushButton#shareButton
-{
-    background-color: transparent;
+BoardPostDisplayWidget_compact QLabel#scoreLabel, QLabel#titleLabel, QLabel#fromBoldLabel , QLabel#fromLabel, QLabel#dateLabel,
+BoardPostDisplayWidget_card QLabel#scoreLabel, QLabel#titleLabel{
+	background-color: transparent;
+}
+
+BoardPostDisplayWidget_compact QLabel#newLabel,
+BoardPostDisplayWidget_card QLabel#newLabel {
+	border: 1px solid #00B712;
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #5AFF15, stop: 1 #00B712);
+	border-radius: 3px;
+	color: black;
+}
+
+BoardPostDisplayWidget_card QPushButton#shareButton{
+	background-color: transparent;
 	min-width: 80px;
 	max-height: 22px;
-
 }
 
 BoardPostDisplayWidget_card QFrame#voteFrame {
@@ -2130,17 +2139,15 @@ BoardPostDisplayWidget_card QFrame#voteFrame {
 }
 
 BoardPostDisplayWidget_card QFrame#mainFrame {
-
-    background-color: #19232D;
-
+	background-color: #19232D;
 }
 
-BoardPostDisplayWidget_card QFrame#mainFrame [new=false]{
+BoardPostDisplayWidget_card  QFrame#mainFrame [new=false]{
 	background: #19232D;
 }
 
-BoardPostDisplayWidget_card > QFrame#mainFrame[new=true] {
-	background-color: #005000;
+BoardPostDisplayWidget_card  QFrame#mainFrame[new=true] {
+    background-color: #1464a0;
 }
 
 WireGroupItem QFrame#wire_frame{
@@ -2162,3 +2169,5 @@ PulseTopLevel QFrame#frame, PulseViewGroup QFrame#frame, PulseReply QFrame#frame
 	border: 2px solid #38444d;
 	border-radius: 6px;
 }
+
+
