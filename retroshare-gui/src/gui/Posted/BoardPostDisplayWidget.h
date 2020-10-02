@@ -31,6 +31,7 @@ class BoardPostDisplayWidget_compact;
 }
 
 class QPushButton;
+class QFrame;
 class QLabel;
 class QToolButton;
 class QTextEdit;
@@ -79,6 +80,7 @@ protected slots:
     virtual QLabel      *pictureLabel()=0;
     virtual QToolButton *readButton() =0;
     virtual QPushButton *shareButton() =0;
+    virtual QFrame      *mainFrame() =0;
 
     void loadComments(bool e);
     void showAuthorInPeople();
@@ -125,6 +127,7 @@ public:
     QLabel      *pictureLabel()   override;
     QToolButton *readButton()     override;
     QPushButton *shareButton()    override;
+    QFrame      *mainFrame()      override;
 
 public slots:
     void viewPicture() ;
@@ -164,6 +167,7 @@ public:
     QToolButton *readButton()     override;
     QPushButton *shareButton()    override;
     QLabel      *pictureLabel()   override;
+    QFrame      *mainFrame()      override;
 
 protected slots:
     /* GxsGroupFeedItem */

@@ -117,6 +117,10 @@ void BoardPostDisplayWidgetBase::setReadStatus(bool isNew, bool isUnread)
         readButton()->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png"));
 
     newLabel()->setVisible(isNew);
+
+    mainFrame()->setProperty("new", isNew);
+    mainFrame()->style()->unpolish(mainFrame());
+    mainFrame()->style()->polish(mainFrame());
 }
 
 void BoardPostDisplayWidget_compact::doExpand(bool e)
@@ -439,6 +443,7 @@ QLabel         *BoardPostDisplayWidget_compact::scoreLabel()     { return ui->sc
 QLabel         *BoardPostDisplayWidget_compact::notes()          { return ui->notes; }
 QPushButton    *BoardPostDisplayWidget_compact::shareButton()    { return ui->shareButton; }
 QLabel         *BoardPostDisplayWidget_compact::pictureLabel()   { return ui->pictureLabel; }
+QFrame         *BoardPostDisplayWidget_compact::mainFrame()      { return ui->mainFrame; }
 
 //===================================================================================================================================
 //==                                                 class BoardPostDisplayWidget_card                                             ==
@@ -508,4 +513,5 @@ QLabel         *BoardPostDisplayWidget_card::scoreLabel()     { return ui->score
 QLabel         *BoardPostDisplayWidget_card::notes()          { return ui->notes; }
 QPushButton    *BoardPostDisplayWidget_card::shareButton()    { return ui->shareButton; }
 QLabel         *BoardPostDisplayWidget_card::pictureLabel()   { return ui->pictureLabel; }
+QFrame         *BoardPostDisplayWidget_card::mainFrame()      { return ui->mainFrame; }
 
