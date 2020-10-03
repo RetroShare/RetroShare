@@ -432,9 +432,20 @@ void PostedListWidgetWithModel::handleEvent_main_thread(std::shared_ptr<const Rs
 
 	switch(e->mPostedEventCode)
 	{
-		case RsPostedEventCode::NEW_POSTED_GROUP:     // [[fallthrough]];
+        case RsPostedEventCode::NEW_MESSAGE:     // [[fallthrough]];
+        {
+            // special treatment here because the message might be a comment, so we need to refresh the comment tab if openned
+
+            for(int i=2;i<ui->tabWidget->count();++i)
+            {
+                auto *t = dynamic_cast<GxsCommentDialog*>(ui->tabWidget->widget(i));
+
+                if(t->groupId() == e->mPostedGroupId)
+                    t->refresh();
+            }
+        }
+        case RsPostedEventCode::NEW_POSTED_GROUP:     // [[fallthrough]];
 		case RsPostedEventCode::UPDATED_POSTED_GROUP: // [[fallthrough]];
-		case RsPostedEventCode::NEW_MESSAGE:     // [[fallthrough]];
 		case RsPostedEventCode::UPDATED_MESSAGE:
 		{
 			if(e->mPostedGroupId == groupId())
@@ -550,13 +561,16 @@ void PostedListWidgetWithModel::updateGroupData()
 
 		RsQThreadUtils::postToObject( [this,groups]()
         {
+            bool group_changed = (groups[0].mMeta.mGroupId!=mGroup.mMeta.mGroupId);
+
             mGroup = groups[0];
 			mPostedPostsModel->updateBoard(groupId());
 
             insertBoardDetails(mGroup);
 
-            while(ui->tabWidget->widget(2) != nullptr)
-                tabCloseRequested(2);
+            if(group_changed)
+                while(ui->tabWidget->widget(2) != nullptr)
+                    tabCloseRequested(2);
 
             emit groupDataLoaded();
             emit groupChanged(this);		// signals the parent widget to e.g. update the group tab name
