@@ -353,28 +353,26 @@ void BoardPostDisplayWidget_compact::setup()
     }
     else
     {
-            if(mPost.mImage.mData != NULL)
-            {
-                QPixmap pixmap;
-                GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
-                // Wiping data - as its been passed to thumbnail.
+        if(mPost.mImage.mData != NULL)
+        {
+            QPixmap pixmap;
+            GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
+            // Wiping data - as its been passed to thumbnail.
 
 #ifdef DEBUG_BOARDPOSTDISPLAYWIDGET
-                std::cerr << "Got pixmap of size " << pixmap.width() << " x " << pixmap.height() << std::endl;
-                std::cerr << "Saving to pix.png" << std::endl;
-                pixmap.save("pix.png","PNG");
+            std::cerr << "Got pixmap of size " << pixmap.width() << " x " << pixmap.height() << std::endl;
+            std::cerr << "Saving to pix.png" << std::endl;
+            pixmap.save("pix.png","PNG");
 #endif
 
-                int desired_height = QFontMetricsF(font()).height() * 5;
-                ui->pictureLabel->setFixedSize(16/9.0*desired_height,desired_height);
-                ui->pictureLabel->setPicture(pixmap);
-            }
-            else if (mPost.mImage.mData == NULL)
-                ui->pictureLabel->hide();
-            else
-                ui->pictureLabel->show();
-
+            int desired_height = QFontMetricsF(font()).height() * 5;
+            ui->pictureLabel->setFixedSize(16/9.0*desired_height,desired_height);
+            ui->pictureLabel->setPicture(pixmap);
         }
+        else
+            ui->pictureLabel->setPicture( FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default.png") );
+
+    }
 
     ui->notes->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 
@@ -487,11 +485,11 @@ void BoardPostDisplayWidget_card::setup()
         }else{
             ui->pictureLabel->setPixmap(pixmap);
         }
+
+        ui->pictureLabel->show();
     }
-    else if (mPost.mImage.mData == NULL)
-        pictureLabel()->hide();
     else
-        pictureLabel()->show();
+        ui->pictureLabel->hide();
 
     QTextDocument doc;
     doc.setHtml(notes()->text());
