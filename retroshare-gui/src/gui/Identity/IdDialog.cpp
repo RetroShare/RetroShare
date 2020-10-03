@@ -110,7 +110,7 @@
 #define RSID_FILTER_BANNED       0x0020
 #define RSID_FILTER_ALL          0xffff
 
-#define IMAGE_EDIT                 ":/images/edit_16.png"
+#define IMAGE_EDIT                 ":/icons/png/pencil-edit-button.png"
 #define IMAGE_CREATE               ":/icons/circle_new_128.png"
 #define IMAGE_INVITED              ":/icons/bullet_yellow_128.png"
 #define IMAGE_MEMBER               ":/icons/bullet_green_128.png"
@@ -255,7 +255,7 @@ IdDialog::IdDialog(QWidget *parent) : MainPage(parent), ui(new Ui::IdDialog)
 	         this, &IdDialog::chatIdentityItem );
 
 
-	ui->avlabel_Circles->setPixmap(QPixmap(":/icons/png/circles.png"));
+    ui->avlabel_Circles->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/circles.png"));
 
 	ui->headerTextLabel_Circles->setText(tr("Circles"));
 
@@ -459,7 +459,7 @@ void IdDialog::clearPerson()
 {
 	QFontMetricsF f(ui->avLabel_Person->font()) ;
 
-	ui->avLabel_Person->setPixmap(QPixmap(":/icons/png/people.png").scaled(f.height()*4,f.height()*4,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+    ui->avLabel_Person->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/people.png").scaled(f.height()*4,f.height()*4,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
 	ui->headerTextLabel_Person->setText(tr("People"));
 
 	ui->inviteFrame->hide();
@@ -2174,7 +2174,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 			hbox->setSpacing(6);
 
 			QLabel *iconLabel = new QLabel(widget);
-			QPixmap pix = QPixmap(":/images/user/friends24.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
+            QPixmap pix = FilesDefs::getPixmapFromQtResourcePath(":/images/user/friends24.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
 			iconLabel->setPixmap(pix);
 			iconLabel->setMaximumSize(iconLabel->frameSize().height() + pix.height(), pix.width());
 			hbox->addWidget(iconLabel);

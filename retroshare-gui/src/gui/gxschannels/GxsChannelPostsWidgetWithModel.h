@@ -147,7 +147,6 @@ private slots:
 	void toggleAutoDownload();
 	void subscribeGroup(bool subscribe);
 	void filterChanged(QString);
-	void setViewMode(int viewMode);
 	void settingsChanged();
     void handlePostsTreeSizeChange(QSize s, bool force=false);
 	void postChannelPostLoad();
@@ -171,8 +170,6 @@ private:
 
 	void setAutoDownload(bool autoDl);
 	static bool filterItem(FeedItem *feedItem, const QString &text, int filter);
-
-	int viewMode();
 
 	void insertChannelDetails(const RsGxsChannelGroup &group);
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);

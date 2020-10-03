@@ -21,8 +21,9 @@
 #ifndef FORUMPAGE_H
 #define FORUMPAGE_H
 
-#include <retroshare-gui/configpage.h>
+#include "retroshare-gui/configpage.h"
 #include "ui_ForumPage.h"
+#include "gui/common/FilesDefs.h"
 
 class ForumPage : public ConfigPage
 {
@@ -35,7 +36,7 @@ public:
 	/** Loads the settings for this page */
 	virtual void load();
 
-	virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/forums.svg") ; }
+    virtual QPixmap iconPixmap() const { return FilesDefs::getPixmapFromQtResourcePath(":/icons/settings/forums.svg") ; }
 	virtual QString pageName() const { return tr("Forums") ; }
 	virtual QString helpText() const { return ""; }
 

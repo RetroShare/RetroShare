@@ -157,15 +157,15 @@ void PostedGroupItem::fill()
 		GxsIdDetails::loadPixmapFromData(mGroup.mGroupImage.mData, mGroup.mGroupImage.mSize, postedImage,GxsIdDetails::ORIGINAL);
 		ui->logoLabel->setPixmap(QPixmap(postedImage));
 	} else {
-		ui->logoLabel->setPixmap(QPixmap(":/icons/png/posted.png"));
+        ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/posted.png"));
 	}
 
 
 	//TODO - nice icon for subscribed group
 //	if (IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags)) {
-//		ui->logoLabel->setPixmap(QPixmap(":/icons/png/posted.png"));
+//		ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/posted.png"));
 //	} else {
-//		ui->logoLabel->setPixmap(QPixmap(":/icons/png/posted.png"));
+//		ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/posted.png"));
 //	}
 
 	if (IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags)) {

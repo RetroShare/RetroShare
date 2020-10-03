@@ -281,7 +281,7 @@ void PulseDataItem::showPulse()
 		if (!headshotOkay)
 		{
 			// default.
-			QPixmap pixmap = QPixmap(":/icons/png/posted.png").scaled(50,50);
+            QPixmap pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/png/posted.png").scaled(50,50);
 			setHeadshot(pixmap);
 		}
 
@@ -346,7 +346,7 @@ void PulseDataItem::showPulse()
 		if (!headshotOkay) 
 		{
 			// default.
-			QPixmap pixmap = QPixmap(":/icons/png/posted.png").scaled(50,50);
+            QPixmap pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/png/posted.png").scaled(50,50);
 			setHeadshot(pixmap); // QPixmap(":/icons/png/posted.png"));
 		}
 

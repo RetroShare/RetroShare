@@ -238,7 +238,7 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 			QPushButton *button = new QPushButton("", tabGrpWidget);
 			button->setIconSize(QSize(buttonWidth, buttonHeight));
 			button->setFixedSize(QSize(buttonWidth, buttonHeight));
-			button->setIcon(QPixmap(group.value(key)));
+            button->setIcon(FilesDefs::getIconFromQtResourcePath(group.value(key)));
 			button->setToolTip(key);
 			button->setStyleSheet("QPushButton:hover {border: 3px solid #0099cc; border-radius: 3px;}");
 			button->setFlat(true);
@@ -402,7 +402,7 @@ void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *
 			button->setFixedSize(QSize(buttonWidth, buttonHeight));
 			if(!iconcache.contains(fi.absoluteFilePath()))
 			{
-				iconcache.insert(fi.absoluteFilePath(), QPixmap(fi.absoluteFilePath()).scaled(buttonWidth, buttonHeight, Qt::KeepAspectRatio));
+                iconcache.insert(fi.absoluteFilePath(), FilesDefs::getPixmapFromQtResourcePath(fi.absoluteFilePath()).scaled(buttonWidth, buttonHeight, Qt::KeepAspectRatio));
 			}
 			button->setIcon(iconcache[fi.absoluteFilePath()]);
 			button->setToolTip(fi.fileName());

@@ -27,6 +27,7 @@
 
 #include "RSTextBrowser.h"
 #include "RSImageBlockWidget.h"
+#include "gui/common/FilesDefs.h"
 
 #include <retroshare/rsinit.h> //To get RsAccounts
 
@@ -149,7 +150,7 @@ QVariant RSTextBrowser::loadResource(int type, const QUrl &name)
 
 QPixmap RSTextBrowser::getBlockedImage()
 {
-	return QPixmap(":/images/imageblocked_24.png");
+    return FilesDefs::getPixmapFromQtResourcePath(":/images/imageblocked_24.png");
 }
 
 void RSTextBrowser::setImageBlockWidget(RSImageBlockWidget *widget)

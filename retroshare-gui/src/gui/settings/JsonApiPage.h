@@ -35,7 +35,7 @@ public:
 	/** Loads the settings for this page */
 
 	virtual QPixmap iconPixmap() const
-	{ return QPixmap(":/icons/svg/empty-circle.svg"); }
+    { return FilesDefs::getPixmapFromQtResourcePath(":/icons/svg/empty-circle.svg"); }
 	virtual QString pageName() const { return tr("JSON API"); }
 	virtual QString helpText() const;
 

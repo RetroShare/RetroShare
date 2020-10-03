@@ -69,7 +69,7 @@
 #define IMAGE_CONNECT            ":/images/connect_friend.png"
 #define IMAGE_COPYLINK           ":/images/copyrslink.png"
 #define IMAGE_GROUP16            ":/images/user/group16.png"
-#define IMAGE_EDIT               ":/images/edit_16.png"
+#define IMAGE_EDIT               ":/icons/png/pencil-edit-button.png"
 #define IMAGE_REMOVE             ":/images/delete.png"
 #define IMAGE_EXPAND             ":/images/edit_add24.png"
 #define IMAGE_COLLAPSE           ":/images/edit_remove24.png"
@@ -307,7 +307,7 @@ void NewFriendList::headerContextMenuRequested(QPoint p)
     hbox->setSpacing(6);
 
     QLabel *iconLabel = new QLabel(widget);
-    QPixmap pix = QPixmap(":/images/user/friends24.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
+    QPixmap pix = FilesDefs::getPixmapFromQtResourcePath(":/images/user/friends24.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
     iconLabel->setPixmap(pix);
     iconLabel->setMaximumSize(iconLabel->frameSize().height() + pix.height(), pix.width());
     hbox->addWidget(iconLabel);
@@ -534,7 +534,7 @@ void NewFriendList::peerTreeWidgetCustomPopupMenu()
     hbox->setSpacing(6);
 
     QLabel *iconLabel = new QLabel(widget);
-    QPixmap pix = QPixmap(":/images/user/friends24.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
+    QPixmap pix = FilesDefs::getPixmapFromQtResourcePath(":/images/user/friends24.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
     iconLabel->setPixmap(pix);
     iconLabel->setMaximumSize(iconLabel->frameSize().height() + pix.height(), pix.width());
     hbox->addWidget(iconLabel);

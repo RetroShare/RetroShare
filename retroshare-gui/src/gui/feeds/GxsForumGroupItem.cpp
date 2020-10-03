@@ -159,9 +159,9 @@ void GxsForumGroupItem::fill()
 	ui->descLabel->setText(QString::fromUtf8(mGroup.mDescription.c_str()));
 
 	if (IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags)) {
-		ui->forumlogo_label->setPixmap(QPixmap(":/icons/png/forums.png"));
+        ui->forumlogo_label->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums.png"));
 	} else {
-		ui->forumlogo_label->setPixmap(QPixmap(":/icons/png/forums-default.png"));
+        ui->forumlogo_label->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums-default.png"));
 	}
 
 	if (IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags)) {

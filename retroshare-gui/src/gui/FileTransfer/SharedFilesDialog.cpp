@@ -37,6 +37,7 @@
 #include "util/RsAction.h"
 #include "util/misc.h"
 #include "util/rstime.h"
+#include "util/rsdir.h"
 
 #include <retroshare/rsexpr.h>
 #include <retroshare/rsfiles.h>
@@ -55,7 +56,7 @@
 #include <set>
 
 /* Images for context menu icons */
-#define IMAGE_DOWNLOAD       ":/images/download16.png"
+#define IMAGE_DOWNLOAD       ":/icons/png/download.png"
 #define IMAGE_PLAY           ":/images/start.png"
 #define IMAGE_HASH_BUSY      ":/images/settings.png"
 #define IMAGE_HASH_DONE      ":/images/accepted16.png"
@@ -72,8 +73,9 @@
 #define IMAGE_COLLMODIF      ":/icons/png/pencil-edit-button.png"
 #define IMAGE_COLLVIEW       ":/images/find.png"
 #define IMAGE_COLLOPEN       ":/icons/collections.png"
-#define IMAGE_EDITSHARE      ":/images/edit_16.png"
+#define IMAGE_EDITSHARE      ":/icons/png/pencil-edit-button.png"
 #define IMAGE_MYFILES        ":/icons/svg/folders1.svg"
+#define IMAGE_UNSHAREEXTRA   ":/images/button_cancel.png"
 
 /*define viewType_CB value */
 #define VIEW_TYPE_TREE       0
@@ -232,7 +234,7 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
   sendlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links" ), this );
   connect( sendlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( ) ) );
 
-  removeExtraFileAct = new QAction(QIcon(), tr( "Stop sharing this file" ), this );
+  removeExtraFileAct = new QAction(QIcon(IMAGE_UNSHAREEXTRA), tr( "Stop sharing this file" ), this );
   connect( removeExtraFileAct , SIGNAL( triggered() ), this, SLOT( removeExtraFile() ) );
 
     collCreateAct= new QAction(QIcon(IMAGE_COLLCREATE), tr("Create Collection..."), this) ;
@@ -266,7 +268,7 @@ LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
     openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this) ;
     connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openfolder())) ;
 
-    ui.titleBarPixmap->setPixmap(QPixmap(IMAGE_MYFILES)) ;
+    ui.titleBarPixmap->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_MYFILES)) ;
 
     ui.dirTreeView->setItemDelegateForColumn(COLUMN_FRIEND_ACCESS,new ShareFlagsItemDelegate()) ;
 }
@@ -498,7 +500,7 @@ void LocalSharedFilesDialog::checkUpdate()
     else
     {
         ui.checkButton->setText(tr("Check files"));
-        ui.hashLabel->setPixmap(QPixmap(IMAGE_HASH_DONE));
+        ui.hashLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_HASH_DONE));
         ui.hashLabel->setToolTip("") ;
     }
 
@@ -634,22 +636,31 @@ void SharedFilesDialog::copyLinks(const QModelIndexList& lst, bool remote,QList<
 
             RetroShareLink link = RetroShareLink::createFileTree(dir_name,ft->mTotalSize,ft->mTotalFiles,QString::fromStdString(ft->toRadix64())) ;
 
-            if(link.valid())
-                urls.push_back(link) ;
-        }
-        else
-        {
-            if(details.hash.isNull())
-            {
-                has_unhashed_files = true;
-                continue;
-            }
-            RetroShareLink link = RetroShareLink::createFile(QString::fromUtf8(details.name.c_str()), details.count, details.hash.toStdString().c_str());
-            if (link.valid()) {
-                urls.push_back(link) ;
-            }
-        }
-    }
+			if(link.valid())
+				urls.push_back(link) ;
+		}
+		else
+		{
+			if(details.hash.isNull())
+			{
+				has_unhashed_files = true;
+				continue;
+			}
+			QString name;
+			if(details.type == DIR_TYPE_EXTRA_FILE)
+			{
+				std::string dir,file;
+				RsDirUtil::splitDirFromFile(details.name,dir,file) ;
+				name = QString::fromStdString(file);
+			}
+			else
+				name = QString::fromUtf8(details.name.c_str());
+			RetroShareLink link = RetroShareLink::createFile(name, details.count, details.hash.toStdString().c_str());
+			if (link.valid()) {
+				urls.push_back(link) ;
+			}
+		}
+	}
 }
 
 void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
@@ -875,8 +886,8 @@ void LocalSharedFilesDialog::openfolder()
 {
     std::cerr << "SharedFilesDialog::openfolder" << std::endl;
 
-    QModelIndexList qmil = getSelected();
-    model->openSelected(qmil);
+	QModelIndexList qmil = getSelected();
+	model->openSelected(qmil, true);
 }
 
 void  SharedFilesDialog::preModDirectories(bool local)
@@ -1143,11 +1154,12 @@ void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
         break;
 
         case DIR_TYPE_EXTRA_FILE:
-            contextMnu.addAction(openfileAct) ;
-            contextMnu.addSeparator() ;//------------------------------------
-            contextMnu.addAction(copylinkAct) ;
-            contextMnu.addAction(sendlinkAct) ;
-            contextMnu.addAction(removeExtraFileAct) ;
+        	contextMnu.addAction(openfileAct) ;
+			contextMnu.addAction(openfolderAct) ;
+			contextMnu.addSeparator() ;//------------------------------------
+			contextMnu.addAction(copylinkAct) ;
+			contextMnu.addAction(sendlinkAct) ;
+			contextMnu.addAction(removeExtraFileAct) ;
 
         break ;
 

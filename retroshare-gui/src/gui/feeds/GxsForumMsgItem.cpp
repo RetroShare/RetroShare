@@ -335,9 +335,9 @@ void GxsForumMsgItem::fill()
 	}
 
 	if (IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags)) {
-		ui->iconLabel->setPixmap(QPixmap(":/icons/png/forums.png"));
+        ui->iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums.png"));
 	} else {
-		ui->iconLabel->setPixmap(QPixmap(":/icons/png/forums-default.png"));
+        ui->iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums-default.png"));
 	}
 
 	if (!mIsHome) {

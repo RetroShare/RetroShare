@@ -30,6 +30,7 @@
 #include <retroshare/rsidentity.h>
 
 #include "gui/common/AvatarDefs.h"
+#include "gui/common/FilesDefs.h"
 #include "util/qtthreadsutils.h"
 #include "gui/Circles/CreateCircleDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
@@ -53,7 +54,7 @@ CreateCircleDialog::CreateCircleDialog()
 	ui.setupUi(this);
 
 	/* Setup Queue */
-	ui.headerFrame->setHeaderImage(QPixmap(":/icons/png/circles.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/circles.png"));
 
 	// connect up the buttons.
 	connect(ui.addButton, SIGNAL(clicked()), this, SLOT(addMember()));
