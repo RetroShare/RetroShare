@@ -353,6 +353,9 @@ void BoardPostDisplayWidget_compact::setup()
     }
     else
     {
+        int desired_height = QFontMetricsF(font()).height() * 5;
+        ui->pictureLabel->setFixedSize(16/9.0*desired_height,desired_height);
+
         if(mPost.mImage.mData != NULL)
         {
             QPixmap pixmap;
@@ -365,13 +368,10 @@ void BoardPostDisplayWidget_compact::setup()
             pixmap.save("pix.png","PNG");
 #endif
 
-            int desired_height = QFontMetricsF(font()).height() * 5;
-            ui->pictureLabel->setFixedSize(16/9.0*desired_height,desired_height);
             ui->pictureLabel->setPicture(pixmap);
         }
         else
             ui->pictureLabel->setPicture( FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default.png") );
-
     }
 
     ui->notes->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
