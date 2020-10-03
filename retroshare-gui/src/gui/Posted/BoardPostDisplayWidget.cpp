@@ -350,6 +350,7 @@ void BoardPostDisplayWidget_compact::setup()
 
     if(redacted)
     {
+        ui->pictureLabel->setPicture( FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default.png") );
     }
     else
     {
