@@ -19,10 +19,46 @@
  *******************************************************************************/
 
 #include <QPainter>
+#include <QResizeEvent>
 #include "RSTreeView.h"
 
 RSTreeView::RSTreeView(QWidget *parent) : QTreeView(parent)
 {
+    setMouseTracking(false); // normally the default, but who knows if it's not goign to change in the future.
+}
+
+void RSTreeView::wheelEvent(QWheelEvent *e)
+{
+    if(e->modifiers() == Qt::ControlModifier)
+    {
+		emit zoomRequested(e->delta() > 0);
+        return;
+    }
+    else
+        QTreeView::wheelEvent(e);
+}
+
+void RSTreeView::mouseMoveEvent(QMouseEvent *e)
+{
+    QModelIndex idx = indexAt(e->pos());
+
+    if(idx != selectionModel()->currentIndex())
+        selectionModel()->setCurrentIndex(idx,QItemSelectionModel::ClearAndSelect);
+
+    QTreeView::mouseMoveEvent(e);
+}
+
+void RSTreeView::setAutoSelect(bool b)
+{
+    if(b)
+		setMouseTracking(true);
+    else
+		setMouseTracking(false);
+}
+
+void RSTreeView::resizeEvent(QResizeEvent *e)
+{
+    emit sizeChanged(e->size());
 }
 
 void RSTreeView::setPlaceholderText(const QString &text)

@@ -61,7 +61,7 @@ static const uint32_t INDEX_AUTHEN_ADMIN        = 0x00000040; // admin key
 
 #define GXS_MASK "GXS_MASK_HACK"
 
-//#define GEN_EXCH_DEBUG	1
+#define GEN_EXCH_DEBUG	1
 
 static const uint32_t MSG_CLEANUP_PERIOD     = 60*59; // 59 minutes
 static const uint32_t INTEGRITY_CHECK_PERIOD = 60*31; // 31 minutes
@@ -236,14 +236,17 @@ void RsGenExchange::tick()
 
 			if (!grpIds.empty())
 			{
-				RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PROCESSED, false);
-				gc->mGrpIdList = grpIds;
+                for(auto& groupId:grpIds)
+				{
+					RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_GROUP_DELETED,groupId, false);
+
 #ifdef GEN_EXCH_DEBUG
-				std::cerr << "  adding the following grp ids to notification: " << std::endl;
-				for(std::list<RsGxsGroupId>::const_iterator it(grpIds.begin());it!=grpIds.end();++it)
-					std::cerr << "    " << *it << std::endl;
+					std::cerr << "  adding the following grp ids to notification: " << std::endl;
+					for(std::list<RsGxsGroupId>::const_iterator it(grpIds.begin());it!=grpIds.end();++it)
+						std::cerr << "    " << *it << std::endl;
 #endif
-				mNotifications.push_back(gc);
+					mNotifications.push_back(gc);
+				}
 
 				// also notify the network exchange service that these groups no longer exist.
 
@@ -251,12 +254,12 @@ void RsGenExchange::tick()
 					mNetService->removeGroups(grpIds) ;
 			}
 
-			if (!msgIds.empty())
-			{
-				RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_PROCESSED, false);
-				c->msgChangeMap = msgIds;
-				mNotifications.push_back(c);
-			}
+            for(auto it(msgIds.begin());it!=msgIds.end();++it)
+                for(auto& msgId:it->second)
+				{
+					RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_MESSAGE_DELETED,it->first, msgId, false);
+					mNotifications.push_back(c);
+				}
 
 			delete mIntegrityCheck;
 			mIntegrityCheck = NULL;
@@ -279,7 +282,7 @@ bool RsGenExchange::messagePublicationTest(const RsGxsMsgMetaData& meta)
 
 	rstime_t storageTimeLimit = meta.mPublishTs + st;
 
-	return meta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP || st == 0 || storageTimeLimit >= time(NULL);
+	return meta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP_FOREVER || st == 0 || storageTimeLimit >= time(NULL);
 }
 
 bool RsGenExchange::acknowledgeTokenMsg(const uint32_t& token,
@@ -509,7 +512,7 @@ int RsGenExchange::createGroupSignatures(RsTlvKeySignatureSet& signSet, RsTlvBin
                 if(GxsSecurity::getSignature((char*)grpData.bin_data, grpData.bin_len, authorKey, sign))
                 {
                 	id_ret = SIGN_SUCCESS;
-					mGixs->timeStampKey(grpMeta.mAuthorId,RsIdentityUsage(mServType,RsIdentityUsage::GROUP_AUTHOR_SIGNATURE_CREATION,grpMeta.mGroupId)) ;
+					mGixs->timeStampKey(grpMeta.mAuthorId,RsIdentityUsage(RsServiceType(mServType),RsIdentityUsage::GROUP_AUTHOR_SIGNATURE_CREATION,grpMeta.mGroupId)) ;
 					signSet.keySignSet[INDEX_AUTHEN_IDENTITY] = sign;
                 }
                 else
@@ -677,7 +680,7 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
 		    if(GxsSecurity::getSignature((char*)msgData.bin_data, msgData.bin_len, authorKey, sign))
 		    {
 			    id_ret = SIGN_SUCCESS;
-			    mGixs->timeStampKey(msgMeta.mAuthorId,RsIdentityUsage(mServType,RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_CREATION,msgMeta.mGroupId,msgMeta.mMsgId)) ;
+			    mGixs->timeStampKey(msgMeta.mAuthorId,RsIdentityUsage(RsServiceType(mServType),RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_CREATION,msgMeta.mGroupId,msgMeta.mMsgId,msgMeta.mParentId,msgMeta.mThreadId)) ;
 			    signSet.keySignSet[INDEX_AUTHEN_IDENTITY] = sign;
 		    }
 		    else
@@ -770,7 +773,7 @@ int RsGenExchange::createMessage(RsNxsMsg* msg)
 		hash.addData(allMsgData, allMsgDataLen);
 		RsFileHash hashId;
 		hash.Complete(hashId);
-		msg->msgId = hashId;
+		msg->msgId = RsGxsMessageId(hashId);
 
 		// assign msg id to msg meta
 		msg->metaData->mMsgId = msg->msgId;
@@ -902,7 +905,11 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
 		    {
 			    RsTlvKeySignature sign = metaData.signSet.keySignSet[INDEX_AUTHEN_IDENTITY];
 			    idValidate &= GxsSecurity::validateNxsMsg(*msg, sign, authorKey);
-			    mGixs->timeStampKey(metaData.mAuthorId,RsIdentityUsage(mServType,RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_VALIDATION,metaData.mGroupId,metaData.mMsgId)) ;
+			    mGixs->timeStampKey(metaData.mAuthorId,RsIdentityUsage(RsServiceType(mServType),RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_VALIDATION,
+                                                                       metaData.mGroupId,
+                                                                       metaData.mMsgId,
+                                                                       metaData.mParentId,
+                                                                       metaData.mThreadId)) ;
 		    }
 		    else
 		    {
@@ -934,7 +941,7 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
 				        RsReputationLevel::LOCALLY_NEGATIVE )
 				{
 #ifdef GEN_EXCH_DEBUG	
-					std::cerr << "RsGenExchange::validateMsg(): message from " << metaData.mAuthorId << ", rejected because reputation level (" << details.mReputation.mOverallReputationLevel <<") indicate that you banned this ID." << std::endl;
+					std::cerr << "RsGenExchange::validateMsg(): message from " << metaData.mAuthorId << ", rejected because reputation level (" << static_cast<int>(details.mReputation.mOverallReputationLevel) <<") indicate that you banned this ID." << std::endl;
 #endif
 					idValidate = false ;
 				}
@@ -946,7 +953,12 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
             {
                 std::list<RsPeerId> peers;
                 peers.push_back(msg->PeerId());
-                mGixs->requestKey(metaData.mAuthorId, peers, RsIdentityUsage(serviceType(),RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_VALIDATION,metaData.mGroupId,metaData.mMsgId));
+                mGixs->requestKey(metaData.mAuthorId, peers, RsIdentityUsage((RsServiceType)serviceType(),
+                                                                             RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_VALIDATION,
+                                                                             metaData.mGroupId,
+                                                                             metaData.mMsgId,
+                                                                             metaData.mParentId,
+                                                                             metaData.mThreadId));
                 
 #ifdef GEN_EXCH_DEBUG
                 std::cerr << ", Key missing. Retry later." << std::endl;
@@ -1023,7 +1035,7 @@ int RsGenExchange::validateGrp(RsNxsGrp* grp)
 #ifdef GEN_EXCH_DEBUG
 				    std::cerr << "  key ID validation result: " << idValidate << std::endl;
 #endif
-					mGixs->timeStampKey(metaData.mAuthorId,RsIdentityUsage(mServType,RsIdentityUsage::GROUP_AUTHOR_SIGNATURE_VALIDATION,metaData.mGroupId));
+					mGixs->timeStampKey(metaData.mAuthorId,RsIdentityUsage(RsServiceType(mServType),RsIdentityUsage::GROUP_AUTHOR_SIGNATURE_VALIDATION,metaData.mGroupId));
 			    }
 			    else
 			    {
@@ -1041,7 +1053,7 @@ int RsGenExchange::validateGrp(RsNxsGrp* grp)
 #endif
 			    std::list<RsPeerId> peers;
 			    peers.push_back(grp->PeerId());
-			    mGixs->requestKey(metaData.mAuthorId, peers,RsIdentityUsage(mServType,RsIdentityUsage::GROUP_AUTHOR_SIGNATURE_VALIDATION,metaData.mGroupId));
+			    mGixs->requestKey(metaData.mAuthorId, peers,RsIdentityUsage(RsServiceType(mServType),RsIdentityUsage::GROUP_AUTHOR_SIGNATURE_VALIDATION,metaData.mGroupId));
 			    return VALIDATE_FAIL_TRY_LATER;
 		    }
 	    }
@@ -1110,8 +1122,10 @@ static void addMessageChanged(std::map<RsGxsGroupId, std::set<RsGxsMessageId> > 
     }
 }
 
+#ifdef TO_REMOVE
 void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
 {
+    std::cerr << "***********************************  RsGenExchange::receiveChanges()" << std::endl;
 #ifdef GEN_EXCH_DEBUG
     std::cerr << "RsGenExchange::receiveChanges()" << std::endl;
 #endif
@@ -1154,6 +1168,7 @@ void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
 
 	if(rsEvents) rsEvents->postEvent(std::move(evt));
 }
+#endif
 
 bool RsGenExchange::subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe)
 {
@@ -1192,7 +1207,7 @@ bool RsGenExchange::getGroupList(const uint32_t &token, std::list<RsGxsGroupId> 
 bool RsGenExchange::getMsgList(const uint32_t &token,
                                GxsMsgIdResult &msgIds)
 {
-	return mDataAccess->getMsgList(token, msgIds);
+	return mDataAccess->getMsgIdList(token, msgIds);
 }
 
 bool RsGenExchange::getMsgRelatedList(const uint32_t &token, MsgRelatedIdResult &msgIds)
@@ -1268,18 +1283,18 @@ bool RsGenExchange::getMsgMeta(const uint32_t &token,
 
 	for(; mit != result.end(); ++mit)
 	{
-		std::vector<RsGxsMsgMetaData*>& metaV = mit->second;
+		std::vector<const RsGxsMsgMetaData*>& metaV = mit->second;
 
 		std::vector<RsMsgMetaData>& msgInfoV = msgInfo[mit->first];
 
-		std::vector<RsGxsMsgMetaData*>::iterator vit = metaV.begin();
+		std::vector<const RsGxsMsgMetaData*>::iterator vit = metaV.begin();
 		RsMsgMetaData meta;
 		for(; vit != metaV.end(); ++vit)
 		{
-			RsGxsMsgMetaData& m = *(*vit);
+			const RsGxsMsgMetaData& m = *(*vit);
 			meta = m;
 			msgInfoV.push_back(meta);
-			delete *vit;
+			//delete *vit;
 		}
 		metaV.clear();
 	}
@@ -1296,18 +1311,18 @@ bool RsGenExchange::getMsgRelatedMeta(const uint32_t &token, GxsMsgRelatedMetaMa
 
         for(; mit != result.end(); ++mit)
         {
-                std::vector<RsGxsMsgMetaData*>& metaV = mit->second;
+                std::vector<const RsGxsMsgMetaData*>& metaV = mit->second;
 
                 std::vector<RsMsgMetaData>& msgInfoV = msgMeta[mit->first];
 
-                std::vector<RsGxsMsgMetaData*>::iterator vit = metaV.begin();
+                std::vector<const RsGxsMsgMetaData*>::iterator vit = metaV.begin();
                 RsMsgMetaData meta;
                 for(; vit != metaV.end(); ++vit)
                 {
-                        RsGxsMsgMetaData& m = *(*vit);
+                        const RsGxsMsgMetaData& m = *(*vit);
                         meta = m;
                         msgInfoV.push_back(meta);
-                        delete *vit;
+                        //delete *vit;
                 }
                 metaV.clear();
         }
@@ -1669,21 +1684,14 @@ void RsGenExchange::receiveNewMessages(std::vector<RsNxsMsg *>& messages)
 
 void RsGenExchange::receiveDistantSearchResults(TurtleRequestId id,const RsGxsGroupId &grpId)
 {
-	std::cerr << __PRETTY_FUNCTION__ << " received result for request "
-	          << std::hex << id << std::dec << std::endl;
-
-	RS_STACK_MUTEX(mGenMtx);
-
-	RsGxsDistantSearchResultChange* gc = new RsGxsDistantSearchResultChange(id,grpId);
-	mNotifications.push_back(gc);
+	std::cerr << __PRETTY_FUNCTION__ << " received result for request " << std::hex << id << std::dec << ": this method should be overloaded in the client service, but it is not. This is a bug!" << std::endl;
 }
 
 void RsGenExchange::notifyReceivePublishKey(const RsGxsGroupId &grpId)
 {
 	RS_STACK_MUTEX(mGenMtx);
 
-	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVED_PUBLISHKEY, true);
-	gc->mGrpIdList.push_back(grpId);
+	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVED_PUBLISHKEY,grpId, true);
 	mNotifications.push_back(gc);
 }
 
@@ -1691,8 +1699,8 @@ void RsGenExchange::notifyChangedGroupStats(const RsGxsGroupId &grpId)
 {
 	RS_STACK_MUTEX(mGenMtx);
 
-	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PROCESSED, false);
-	gc->mGrpIdList.push_back(grpId);
+	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_STATISTICS_CHANGED,grpId, false);
+
 	mNotifications.push_back(gc);
 }
 
@@ -1789,19 +1797,20 @@ void RsGenExchange::publishGroup(uint32_t& token, RsGxsGrpItem *grpItem)
 
 void RsGenExchange::updateGroup(uint32_t& token, RsGxsGrpItem* grpItem)
 {
-    if(!checkGroupMetaConsistency(grpItem->meta))
-    {
-        std::cerr << "(EE) Cannot update group. Some information was not supplied." << std::endl;
-       return ;
-    }
+	if(!checkGroupMetaConsistency(grpItem->meta))
+	{
+		std::cerr << "(EE) Cannot update group. Some information was not supplied." << std::endl;
+		delete grpItem;
+		return ;
+	}
 
-					RS_STACK_MUTEX(mGenMtx) ;
+	RS_STACK_MUTEX(mGenMtx) ;
 	token = mDataAccess->generatePublicToken();
-        mGroupUpdatePublish.push_back(GroupUpdatePublish(grpItem, token));
+	mGroupUpdatePublish.push_back(GroupUpdatePublish(grpItem, token));
 
 #ifdef GEN_EXCH_DEBUG
-    std::cerr << "RsGenExchange::updateGroup() token: " << token;
-    std::cerr << std::endl;
+	std::cerr << "RsGenExchange::updateGroup() token: " << token;
+	std::cerr << std::endl;
 #endif
 }
 
@@ -2010,15 +2019,15 @@ void RsGenExchange::processMsgMetaChanges()
 
                 if(mit != result.end())
                 {
-                    std::vector<RsGxsMsgMetaData*>& msgMetaV = mit->second;
+                    std::vector<const RsGxsMsgMetaData*>& msgMetaV = mit->second;
 
                     if(!msgMetaV.empty())
                     {
-                        RsGxsMsgMetaData* meta = *(msgMetaV.begin());
+                        const RsGxsMsgMetaData* meta = *(msgMetaV.begin());
                         value = (meta->mMsgStatus & ~mask) | (mask & value);
 						changed = (static_cast<int64_t>(meta->mMsgStatus) != value);
                         m.val.put(RsGeneralDataService::MSG_META_STATUS, value);
-                        delete meta;
+                        //delete meta;
                         ok = true;
                     }
                 }
@@ -2048,11 +2057,13 @@ void RsGenExchange::processMsgMetaChanges()
         }
     }
 
-    if (!msgIds.empty()) {
+    if (!msgIds.empty())
+    {
         RS_STACK_MUTEX(mGenMtx);
-        RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_PROCESSED, false);
-        c->msgChangeMap = msgIds;
-        mNotifications.push_back(c);
+
+        for(auto it(msgIds.begin());it!=msgIds.end();++it)
+            for(auto& msg_id:it->second)
+				mNotifications.push_back(new RsGxsMsgChange(RsGxsNotify::TYPE_PROCESSED, it->first, msg_id, false));
     }
 }
 
@@ -2098,17 +2109,11 @@ void RsGenExchange::processGrpMetaChanges()
         }
     }
 
-    if(!grpChanged.empty())
+    for(auto& groupId:grpChanged)
     {
         RS_STACK_MUTEX(mGenMtx);
-        RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PROCESSED, true);
-        gc->mGrpIdList = grpChanged;
-        mNotifications.push_back(gc);
-#ifdef GEN_EXCH_DEBUG
-                    			std::cerr << "  adding the following grp ids to notification: " << std::endl;
-                                	for(std::list<RsGxsGroupId>::const_iterator it(grpChanged.begin());it!=grpChanged.end();++it)
-                                        	std::cerr << "    " << *it << std::endl;
-#endif
+
+        mNotifications.push_back(new RsGxsGroupChange(RsGxsNotify::TYPE_PROCESSED,groupId, true));
     }
 }
 
@@ -2185,7 +2190,7 @@ void RsGenExchange::publishMsgs()
 		mMsgsToPublish.insert(std::make_pair(sign_it->first, item.mItem));
 	}
 
-	std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgChangeMap;
+	std::map<RsGxsGroupId, std::list<RsGxsMsgItem*> > msgChangeMap;
 	std::map<uint32_t, RsGxsMsgItem*>::iterator mit = mMsgsToPublish.begin();
 
 	for(; mit != mMsgsToPublish.end(); ++mit)
@@ -2314,9 +2319,12 @@ void RsGenExchange::publishMsgs()
 
                 mPublishedMsgs[token] = *msg->metaData;
 
+                RsGxsMsgItem *msg_item = dynamic_cast<RsGxsMsgItem*>(mSerialiser->deserialise(msg->msg.bin_data,&msg->msg.bin_len)) ;
+                msg_item->meta = *msg->metaData;
+
 				delete msg ;
 
-				msgChangeMap[grpId].insert(msgId);
+				msgChangeMap[grpId].push_back(msg_item);
 
 				delete[] metaDataBuff;
 
@@ -2355,13 +2363,14 @@ void RsGenExchange::publishMsgs()
 	// entries are invalid
 	mMsgsToPublish.clear();
 
-	if(!msgChangeMap.empty())
-	{
-		RsGxsMsgChange* ch = new RsGxsMsgChange(RsGxsNotify::TYPE_PUBLISHED, false);
-		ch->msgChangeMap = msgChangeMap;
-		mNotifications.push_back(ch);
-	}
+    for(auto it(msgChangeMap.begin());it!=msgChangeMap.end();++it)
+        for(auto& msg_item: it->second)
+		{
+			RsGxsMsgChange* ch = new RsGxsMsgChange(RsGxsNotify::TYPE_PUBLISHED,msg_item->meta.mGroupId, msg_item->meta.mMsgId, false);
+			ch->mNewMsgItem = msg_item;
 
+			mNotifications.push_back(ch);
+		}
 }
 
 RsGenExchange::ServiceCreate_Return RsGenExchange::service_CreateGroup(RsGxsGrpItem* /* grpItem */,
@@ -2380,15 +2389,14 @@ RsGenExchange::ServiceCreate_Return RsGenExchange::service_CreateGroup(RsGxsGrpI
 
 void RsGenExchange::processGroupUpdatePublish()
 {
-					RS_STACK_MUTEX(mGenMtx) ;
+	RS_STACK_MUTEX(mGenMtx) ;
 
 	// get keys for group update publish
 
 	// first build meta request map for groups to be updated
 	RsGxsGrpMetaTemporaryMap grpMeta;
-	std::vector<GroupUpdatePublish>::iterator vit = mGroupUpdatePublish.begin();
 
-	for(; vit != mGroupUpdatePublish.end(); ++vit)
+	for(auto vit = mGroupUpdatePublish.begin(); vit != mGroupUpdatePublish.end(); ++vit)
 	{
 		GroupUpdatePublish& gup = *vit;
 		const RsGxsGroupId& groupId = gup.grpItem->meta.mGroupId;
@@ -2401,8 +2409,7 @@ void RsGenExchange::processGroupUpdatePublish()
 	mDataStore->retrieveGxsGrpMetaData(grpMeta);
 
 	// now
-	vit = mGroupUpdatePublish.begin();
-	for(; vit != mGroupUpdatePublish.end(); ++vit)
+	for(auto vit = mGroupUpdatePublish.begin(); vit != mGroupUpdatePublish.end(); ++vit)
 	{
 		GroupUpdatePublish& gup = *vit;
 		const RsGxsGroupId& groupId = gup.grpItem->meta.mGroupId;
@@ -2420,14 +2427,14 @@ void RsGenExchange::processGroupUpdatePublish()
 			meta = mit->second;
 
 		//gup.grpItem->meta = *meta;
-        GxsGrpPendingSign ggps(gup.grpItem, gup.mToken);
+		GxsGrpPendingSign ggps(gup.grpItem, gup.mToken);
 
 		if(checkKeys(meta->keys))
 		{
 			ggps.mKeys = meta->keys;
-            
-            		GxsSecurity::createPublicKeysFromPrivateKeys(ggps.mKeys) ;
-                    
+
+			GxsSecurity::createPublicKeysFromPrivateKeys(ggps.mKeys) ;
+
 			ggps.mHaveKeys = true;
 			ggps.mStartTS = time(NULL);
 			ggps.mLastAttemptTS = 0;
@@ -2437,8 +2444,8 @@ void RsGenExchange::processGroupUpdatePublish()
 		}
 		else
 		{
-            		std::cerr << "(EE) publish group fails because RS cannot find the private publish and author keys" << std::endl;
-                    
+			std::cerr << "(EE) publish group fails because RS cannot find the private publish and author keys" << std::endl;
+
 			delete gup.grpItem;
 			mDataAccess->updatePublicRequestStatus(gup.mToken, RsTokenService::FAILED);
 		}
@@ -2493,15 +2500,15 @@ void RsGenExchange::processGroupDelete()
 			grpDeleted.push_back(note.second);
 	}
 
-	if(!grpDeleted.empty())
+    for(auto& groupId:grpDeleted)
 	{
-		RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISHED, false);
-		gc->mGrpIdList = grpDeleted;
+		RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_GROUP_DELETED, groupId,false);
 		mNotifications.push_back(gc);
 	}
 
 	mGroupDeletePublish.clear();
 }
+
 void RsGenExchange::processMessageDelete()
 {
     RS_STACK_MUTEX(mGenMtx) ;
@@ -2520,31 +2527,24 @@ void RsGenExchange::processMessageDelete()
 		mDataStore->removeMsgs( (*vit).mMsgs );
 	}
 
+//	std::list<RsGxsGroupId> grpDeleted;
+//	std::map<uint32_t, GrpNote>::iterator mit = toNotify.begin();
+//	for(; mit != toNotify.end(); ++mit)
+//	{
+//		GrpNote& note = mit->second;
+//		uint8_t status = note.first ? RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE
+//		                            : RsTokenService::GXS_REQUEST_V2_STATUS_FAILED;
+//
+//		mGrpNotify.insert(std::make_pair(mit->first, note.second));
+//		mDataAccess->updatePublicRequestStatus(mit->first, status);
+//
+//		if(note.first)
+//			grpDeleted.push_back(note.second);
+//	}
 
-#warning csoler: TODO: notify for deleted messages
-#ifdef SUSPENDED
-	std::list<RsGxsGroupId> grpDeleted;
-	std::map<uint32_t, GrpNote>::iterator mit = toNotify.begin();
-	for(; mit != toNotify.end(); ++mit)
-	{
-		GrpNote& note = mit->second;
-		uint8_t status = note.first ? RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE
-		                            : RsTokenService::GXS_REQUEST_V2_STATUS_FAILED;
-
-		mGrpNotify.insert(std::make_pair(mit->first, note.second));
-		mDataAccess->updatePublicRequestStatus(mit->first, status);
-
-		if(note.first)
-			grpDeleted.push_back(note.second);
-	}
-
-	if(!grpDeleted.empty())
-	{
-		RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISH, false);
-		gc->mGrpIdList = grpDeleted;
-		mNotifications.push_back(gc);
-	}
-#endif
+    for(uint32_t i=0;i<mMsgDeletePublish.size();++i)
+        for(auto it(mMsgDeletePublish[i].mMsgs.begin());it!=mMsgDeletePublish[i].mMsgs.end();++it)
+			mNotifications.push_back(new RsGxsGroupChange(RsGxsNotify::TYPE_MESSAGE_DELETED,it->first, false));
 
 	mMsgDeletePublish.clear();
 }
@@ -2804,17 +2804,8 @@ void RsGenExchange::publishGrps()
 			    grpChanged.push_back(note.second);
 	    }
 
-	    if(!grpChanged.empty())
-	    {
-		    RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVED_NEW, true);
-		    gc->mGrpIdList = grpChanged;
-		    mNotifications.push_back(gc);
-#ifdef GEN_EXCH_DEBUG
-		    std::cerr << "  adding the following grp ids to notification: " << std::endl;
-		    for(std::list<RsGxsGroupId>::const_iterator it(grpChanged.begin());it!=grpChanged.end();++it)
-			    std::cerr << "    " << *it << std::endl;
-#endif
-	    }
+        for(auto& groupId:grpChanged)
+		    mNotifications.push_back(new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVED_NEW,groupId, true));
     }
 
     // This is done off-mutex to avoid possible cross deadlocks with the net service.
@@ -3071,11 +3062,19 @@ void RsGenExchange::processRecvdMessages()
 #ifdef GEN_EXCH_DEBUG
 		    std::cerr << "  storing remaining messages" << std::endl;
 #endif
-		    mDataStore->storeMessage(msgs_to_store);
 
-		    RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_RECEIVED_NEW, false);
-		    c->msgChangeMap = msgIds;
-		    mNotifications.push_back(c);
+            for(auto& nxs_msg: msgs_to_store)
+            {
+                RsGxsMsgItem *item = dynamic_cast<RsGxsMsgItem*>(mSerialiser->deserialise(nxs_msg->msg.bin_data,&nxs_msg->msg.bin_len));
+                item->meta = *nxs_msg->metaData;
+
+				RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_RECEIVED_NEW, item->meta.mGroupId, item->meta.mMsgId,false);
+                c->mNewMsgItem = item;
+
+				mNotifications.push_back(c);
+			}
+
+		    mDataStore->storeMessage(msgs_to_store);	// we do that late because it destroys the items in msgs_to_store
 	    }
     }
 
@@ -3204,11 +3203,17 @@ void RsGenExchange::processRecvdGroups()
 		vit = tmp ;
 	}
 
-	if(!grpIds.empty())
+	if(!grps_to_store.empty())
 	{
-		RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVED_NEW, false);
-		c->mGrpIdList = grpIds;
-		mNotifications.push_back(c);
+        for(auto Grp:grps_to_store)
+		{
+			RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVED_NEW, Grp->grpId, false);
+
+            c->mNewGroupItem = dynamic_cast<RsGxsGrpItem*>(mSerialiser->deserialise(Grp->grp.bin_data,&Grp->grp.bin_len));
+
+			mNotifications.push_back(c);
+		}
+
 		mDataStore->storeGroup(grps_to_store);
 #ifdef GEN_EXCH_DEBUG
                     			std::cerr << "  adding the following grp ids to notification: " << std::endl;
@@ -3229,39 +3234,42 @@ void RsGenExchange::performUpdateValidation()
 	std::cerr << "RsGenExchange::performUpdateValidation() " << std::endl;
 #endif
 
-	RsGxsGrpMetaTemporaryMap grpMetas;
+	RsNxsGrpDataTemporaryMap grpDatas;
 
-	std::vector<GroupUpdate>::iterator vit = mGroupUpdates.begin();
-	for(; vit != mGroupUpdates.end(); ++vit)
-		grpMetas.insert(std::make_pair(vit->newGrp->grpId, (RsGxsGrpMetaData*)NULL));
+	for(auto vit(mGroupUpdates.begin()); vit != mGroupUpdates.end(); ++vit)
+		grpDatas.insert(std::make_pair(vit->newGrp->grpId, (RsNxsGrp*)NULL));
 
-	if(!grpMetas.empty())
-		mDataStore->retrieveGxsGrpMetaData(grpMetas);
-	else
+	if(grpDatas.empty() || !mDataStore->retrieveNxsGrps(grpDatas,true,false))
+    {
+        if(grpDatas.empty())
+			RsErr() << __PRETTY_FUNCTION__ << " Validation of multiple group updates failed: no group in list!" << std::endl;
+        else
+            RsErr() << __PRETTY_FUNCTION__ << " Validation of multiple group updates failed: cannot retrieve froup data for these groups!" << std::endl;
+
 		return;
-
-	vit = mGroupUpdates.begin();
-	for(; vit != mGroupUpdates.end(); ++vit)
-	{
-		GroupUpdate& gu = *vit;
-		std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMetas.find(gu.newGrp->grpId);
-		gu.oldGrpMeta = mit->second;
-		gu.validUpdate = updateValid(*(gu.oldGrpMeta), *(gu.newGrp));
-	}
+    }
 
 #ifdef GEN_EXCH_DEBUG
 	std::cerr << "RsGenExchange::performUpdateValidation() " << std::endl;
 #endif
 
-	vit = mGroupUpdates.begin();
-
 	RsNxsGrpDataTemporaryList grps ;
 
-	for(; vit != mGroupUpdates.end(); ++vit)
+	for(auto vit(mGroupUpdates.begin()); vit != mGroupUpdates.end(); ++vit)
 	{
 		GroupUpdate& gu = *vit;
 
-		if(gu.validUpdate)
+		auto mit = grpDatas.find(gu.newGrp->grpId);
+
+        if(mit == grpDatas.end())
+        {
+            RsErr() << __PRETTY_FUNCTION__ << " Validation of group update failed for group " << gu.newGrp->grpId << " because previous grp version cannot be found." << std::endl;
+            continue;
+        }
+        RsGxsGrpMetaData *oldGrpMeta(mit->second->metaData);
+        RsNxsGrp *oldGrp(mit->second);
+
+		if(updateValid(*oldGrpMeta, *gu.newGrp))
 		{
 			if(gu.newGrp->metaData->mCircleType == GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY)
 				gu.newGrp->metaData->mOriginator = gu.newGrp->PeerId();
@@ -3269,42 +3277,39 @@ void RsGenExchange::performUpdateValidation()
 			// Keep subscriptionflag to what it was. This avoids clearing off the flag when updates to group meta information
 			// is received.
 
-			gu.newGrp->metaData->mSubscribeFlags = gu.oldGrpMeta->mSubscribeFlags ;
+			gu.newGrp->metaData->mSubscribeFlags = oldGrpMeta->mSubscribeFlags ;
 
 			// Also keep private keys if present
 
 			if(!gu.newGrp->metaData->keys.private_keys.empty())
 				std::cerr << "(EE) performUpdateValidation() group " <<gu.newGrp->metaData->mGroupId << " has been received with private keys. This is very unexpected!" << std::endl;
 			else
-				gu.newGrp->metaData->keys.private_keys = gu.oldGrpMeta->keys.private_keys ;
+				gu.newGrp->metaData->keys.private_keys = oldGrpMeta->keys.private_keys ;
+
+            // Now prepare notification of the client
+
+			RsGxsGroupChange *c = new RsGxsGroupChange(RsGxsNotify::TYPE_UPDATED,gu.newGrp->metaData->mGroupId,false);
+
+            c->mNewGroupItem = dynamic_cast<RsGxsGrpItem*>(mSerialiser->deserialise(gu.newGrp->grp.bin_data,&gu.newGrp->grp.bin_len));
+            c->mNewGroupItem->meta = *gu.newGrp->metaData;		// gu.newGrp will be deleted because mDataStore will destroy it on update
+
+            c->mOldGroupItem = dynamic_cast<RsGxsGrpItem*>(mSerialiser->deserialise(oldGrp->grp.bin_data,&oldGrp->grp.bin_len));
+            c->mOldGroupItem->meta = *oldGrpMeta;				// no need to delete mit->second, as it will be deleted automatically in the temporary map
+
+			mNotifications.push_back(c);
+
+			// finally, add the group to the list to send to mDataStore
 
 			grps.push_back(gu.newGrp);
 		}
 		else
 		{
-			delete gu.newGrp;
+			delete gu.newGrp;    // delete here because mDataStore will not take care of this one.  no need to delete mit->second, as it will be deleted automatically in the temporary map
 			gu.newGrp = NULL ;
 		}
-
-		gu.oldGrpMeta = NULL ;
 	}
-	// notify the client
-
-	RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVED_NEW, true);
-
-	for(uint32_t i=0;i<mGroupUpdates.size();++i)
-		if(mGroupUpdates[i].newGrp != NULL)
-		{
-			c->mGrpIdList.push_back(mGroupUpdates[i].newGrp->grpId) ;
-#ifdef GEN_EXCH_DEBUG
-			std::cerr << "    " << mGroupUpdates[i].newGrp->grpId << std::endl;
-#endif
-		}
-
-	mNotifications.push_back(c);
 
 	// Warning: updateGroup will destroy the objects in grps. Dont use it afterwards!
-
 	mDataStore->updateGroup(grps);
 
 #ifdef GEN_EXCH_DEBUG
@@ -3350,7 +3355,7 @@ bool RsGenExchange::updateValid(const RsGxsGrpMetaData& oldGrpMeta, const RsNxsG
 	// also check this is the latest published group
 	bool latest = newGrp.metaData->mPublishTs > oldGrpMeta.mPublishTs;
 
-    mGixs->timeStampKey(newGrp.metaData->mAuthorId, RsIdentityUsage(mServType,RsIdentityUsage::GROUP_ADMIN_SIGNATURE_CREATION, oldGrpMeta.mGroupId)) ;
+    mGixs->timeStampKey(newGrp.metaData->mAuthorId, RsIdentityUsage(RsServiceType(mServType),RsIdentityUsage::GROUP_ADMIN_SIGNATURE_CREATION, oldGrpMeta.mGroupId)) ;
 
     return GxsSecurity::validateNxsGrp(newGrp, adminSign, keyMit->second) && latest;
 }
@@ -3460,20 +3465,32 @@ bool RsGenExchange::exportGroupBase64(
 
 	if(groupId.isNull()) return failure("groupId cannot be null");
 
+    // We have no blocking API here, so we need to make a blocking request manually.
 	const std::list<RsGxsGroupId> groupIds({groupId});
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 	uint32_t token;
-	mDataAccess->requestGroupInfo(
-	            token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds);
-	RsTokenService::GxsRequestStatus wtStatus = mDataAccess->waitToken(token);
-	if(wtStatus != RsTokenService::COMPLETE)
-		return failure( "waitToken(...) failed with: " +
-		                std::to_string(wtStatus) );
+	mDataAccess->requestGroupInfo( token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds);
+
+    // provide a sync response: actually wait for the token.
+    std::chrono::milliseconds maxWait = std::chrono::milliseconds(10000);
+    std::chrono::milliseconds checkEvery = std::chrono::milliseconds(100);
+
+	auto timeout = std::chrono::steady_clock::now() + maxWait;	// wait for 10 secs at most
+	auto st = mDataAccess->requestStatus(token);
+
+	while( !(st == RsTokenService::FAILED || st >= RsTokenService::COMPLETE) && std::chrono::steady_clock::now() < timeout )
+	{
+		std::this_thread::sleep_for(checkEvery);
+		st = mDataAccess->requestStatus(token);
+	}
+	if(st != RsTokenService::COMPLETE)
+		return failure( "waitToken(...) failed with: " + std::to_string(st) );
 
 	uint8_t* buf = nullptr;
 	uint32_t size;
 	RsGxsGroupId grpId;
+
 	if(!getSerializedGroupData(token, grpId, buf, size))
 		return failure("failed retrieving GXS data");
 

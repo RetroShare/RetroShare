@@ -31,66 +31,94 @@ class PostedItem;
 }
 
 class FeedHolder;
-class RsPostedPost;
+struct RsPostedPost;
 
-class PostedItem : public GxsFeedItem
+class BasePostedItem : public GxsFeedItem
 {
 	Q_OBJECT
 
 public:
-	PostedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate);
-	PostedItem(FeedHolder *parent, uint32_t feedId, const RsPostedGroup &group, const RsPostedPost &post, bool isHome, bool autoUpdate);
-	PostedItem(FeedHolder *parent, uint32_t feedId, const RsPostedPost &post, bool isHome, bool autoUpdate);
-	virtual ~PostedItem();
+	BasePostedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId& groupId, const RsGxsMessageId& messageId, bool isHome, bool autoUpdate);
+	BasePostedItem(FeedHolder *parent, uint32_t feedId, const RsGroupMetaData& group_meta, const RsGxsMessageId& post_id, bool isHome, bool autoUpdate);
+	virtual ~BasePostedItem();
 
-	bool setGroup(const RsPostedGroup& group, bool doFill = true);
 	bool setPost(const RsPostedPost& post, bool doFill = true);
 
-	const RsPostedPost &getPost() const;
-	RsPostedPost &post();
+    const RsPostedPost& getPost() const { return mPost ; }
+    RsPostedPost& getPost() { return mPost ; }
 
 	uint64_t uniqueIdentifier() const override { return hash_64bits("PostedItem " + messageId().toStdString()); }
-protected:
-	/* FeedItem */
-	virtual void doExpand(bool open);
 
 private slots:
 	void loadComments();
-	void makeUpVote();
-	void makeDownVote();
 	void readToggled(bool checked);
 	void readAndClearItem();
-	void toggle() override;
 	void copyMessageLink();
-	void toggleNotes();
 	void viewPicture();
+	void showAuthorInPeople();
 
 signals:
 	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);
 
 protected:
+	/* FeedItem */
+    virtual void paintEvent(QPaintEvent *) override;
+
 	/* GxsGroupFeedItem */
-	virtual QString groupName();
-	virtual void loadGroup(const uint32_t &token);
-	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_UNKNOWN; }
+	virtual QString groupName() override;
+	virtual void loadGroup() override;
+	virtual RetroShareLink::enumType getLinkType() override { return RetroShareLink::TYPE_UNKNOWN; }
 
 	/* GxsFeedItem */
-	virtual QString messageName();
-	virtual void loadMessage(const uint32_t &token);
-	virtual void loadComment(const uint32_t &token);
+	virtual QString messageName() override;
 
-private:
-	void setup();
-	void fill();
-	void setReadStatus(bool isNew, bool isUnread);
+	virtual void loadMessage() override;
+	virtual void loadComment() override;
 
-private:
 	bool mInFill;
-
-	RsPostedGroup mGroup;
+	RsGroupMetaData mGroupMeta;
 	RsPostedPost mPost;
-	RsGxsMessageId mMessageId;
 
+	virtual void setup()=0;
+	virtual void fill()=0;
+	virtual void doExpand(bool open) override =0;
+	virtual void setComment(const RsGxsComment&)=0;
+	virtual void setReadStatus(bool isNew, bool isUnread)=0;
+	virtual void setCommentsSize(int comNb)=0;
+    virtual void makeUpVote()=0;
+    virtual void makeDownVote()=0;
+	virtual void toggleNotes()=0;
+
+private:
+	bool mLoaded;
+	bool mIsLoadingGroup;
+	bool mIsLoadingMessage;
+	bool mIsLoadingComment;
+};
+
+class PostedItem: public BasePostedItem
+{
+	Q_OBJECT
+
+public:
+	PostedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId& groupId, const RsGxsMessageId& messageId, bool isHome, bool autoUpdate);
+	PostedItem(FeedHolder *parent, uint32_t feedId, const RsGroupMetaData& group_meta, const RsGxsMessageId& post_id, bool isHome, bool autoUpdate);
+
+protected:
+	void setup() override;
+	void fill() override;
+	void setComment(const RsGxsComment&) override;
+	void setReadStatus(bool isNew, bool isUnread) override;
+	void setCommentsSize(int comNb) override;
+
+private slots:
+	void doExpand(bool open);
+	void toggle();
+	void makeUpVote();
+	void makeDownVote();
+	void toggleNotes() ;
+
+private:
 	/** Qt Designer generated object */
 	Ui::PostedItem *ui;
 };

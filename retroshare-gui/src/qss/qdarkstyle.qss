@@ -60,6 +60,9 @@ QWidget
     border-image: none;
     outline: 0;
 }
+QTreeView::item, QTreeWidget::item, QListWidget::item{
+	color: silver;
+}
 
 QWidget:item:hover
 {
@@ -90,6 +93,10 @@ ForumsDialog, GxsForumThreadWidget
 	qproperty-textColorUnreadChildren: red;
 	qproperty-textColorNotSubscribed: white;
 	qproperty-textColorMissing: darkred;
+	qproperty-textColorPinned: #D07000;
+
+	qproperty-backgroundColorPinned: #202020;
+	qproperty-backgroundColorFiltered: darkGreen;
 }
 
 QMenuBar
@@ -833,7 +840,7 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
     background: rgba(255, 255, 255, 10);
 }
 
-FriendList {
+NewFriendList {
     qproperty-textColorStatusAway: lightgray;
     qproperty-textColorStatusBusy: lightgray;
     qproperty-textColorStatusOnline: green;
@@ -1290,4 +1297,26 @@ PostedCardView QFrame#mainFrame [new=false]{
 
 PostedCardView > QFrame#mainFrame[new=true] {
 	background-color: #005000;
+}
+
+WireGroupItem QFrame#wire_frame
+{
+	border: 1px solid #38444d;
+	background: transparent;
+}
+
+RSTextBrowser, MimeTextEdit
+{
+	/*qproperty-textColorQuote: rgb(125, 125, 255);*/
+	qproperty-textColorQuotes: ColorList(#789922 #039bd5 #800000 #800080 #008080 #b10dc9 #85144b #3d9970);
+}
+
+ChatWidget QFrame#pluginTitleFrame
+{
+	background: transparent;
+}
+
+PulseTopLevel QFrame#frame, PulseViewGroup QFrame#frame, PulseReply QFrame#frame {
+	border: 2px solid #38444d;
+	border-radius: 6px;
 }

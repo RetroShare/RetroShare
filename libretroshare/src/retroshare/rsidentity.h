@@ -37,7 +37,7 @@
 #include "serialiser/rstypeserializer.h"
 #include "util/rsdeprecate.h"
 
-struct RsIdentity;
+class RsIdentity;
 
 /**
  * Pointer to global instance of RsIdentity service implementation
@@ -234,31 +234,30 @@ struct RsIdentityUsage : RsSerializable
 		GXS_TUNNEL_DH_SIGNATURE_CHECK        = 0x0c,
 		GXS_TUNNEL_DH_SIGNATURE_CREATION     = 0x0d,
 
+		/// Identity received through GXS sync
+		IDENTITY_NEW_FROM_GXS_SYNC           = 0x0e,
 		/// Group update on that identity data. Can be avatar, name, etc.
-		IDENTITY_DATA_UPDATE                 = 0x0e,
+		IDENTITY_NEW_FROM_DISCOVERY          = 0x0f,
+		/// Explicit request to friend
+		IDENTITY_NEW_FROM_EXPLICIT_REQUEST   = 0x10,
 
 		/// Any signature verified for that identity
-		IDENTITY_GENERIC_SIGNATURE_CHECK     = 0x0f,
+		IDENTITY_GENERIC_SIGNATURE_CHECK     = 0x11,
 
 		/// Any signature made by that identity
-		IDENTITY_GENERIC_SIGNATURE_CREATION  = 0x10,
+		IDENTITY_GENERIC_SIGNATURE_CREATION  = 0x12,
 
-		IDENTITY_GENERIC_ENCRYPTION          = 0x11,
-		IDENTITY_GENERIC_DECRYPTION          = 0x12,
-		CIRCLE_MEMBERSHIP_CHECK              = 0x13
+		IDENTITY_GENERIC_ENCRYPTION          = 0x13,
+		IDENTITY_GENERIC_DECRYPTION          = 0x14,
+		CIRCLE_MEMBERSHIP_CHECK              = 0x15
 	} ;
-
-	RS_DEPRECATED
-	RsIdentityUsage( uint16_t service, const RsIdentityUsage::UsageCode& code,
-	                 const RsGxsGroupId& gid = RsGxsGroupId(),
-	                 const RsGxsMessageId& mid = RsGxsMessageId(),
-	                 uint64_t additional_id=0,
-	                 const std::string& comment = std::string() );
 
 	RsIdentityUsage( RsServiceType service,
 	                 RsIdentityUsage::UsageCode code,
 	                 const RsGxsGroupId& gid = RsGxsGroupId(),
-	                 const RsGxsMessageId& mid = RsGxsMessageId(),
+	                 const RsGxsMessageId& message_id = RsGxsMessageId(),
+                     const RsGxsMessageId& parent_id = RsGxsMessageId(),
+                     const RsGxsMessageId& thread_id = RsGxsMessageId(),
 	                 uint64_t additional_id=0,
 	                 const std::string& comment = std::string() );
 
@@ -274,6 +273,12 @@ struct RsIdentityUsage : RsSerializable
 
 	/// Message ID using the identity
 	RsGxsMessageId mMsgId;
+
+	/// Reference message ID. Useful for votes/comments
+	RsGxsMessageId mParentId;
+
+	/// Reference message ID. Useful for votes/comments
+	RsGxsMessageId mThreadId;
 
 	/// Some additional ID. Can be used for e.g. chat lobbies.
 	uint64_t mAdditionalId;
@@ -309,6 +314,7 @@ enum class RsGxsIdentityEventCode: uint8_t
     UNKNOWN                    = 0x00,
     NEW_IDENTITY               = 0x01,
     DELETED_IDENTITY           = 0x02,
+    UPDATED_IDENTITY           = 0x03,
 };
 
 struct RsGxsIdentityEvent: public RsEvent
@@ -382,8 +388,9 @@ struct RsIdentityDetails : RsSerializable
 
 
 /** The Main Interface Class for GXS people identities */
-struct RsIdentity : RsGxsIfaceHelper
+class RsIdentity: public RsGxsIfaceHelper
 {
+public:
 	explicit RsIdentity(RsGxsIface& gxs) : RsGxsIfaceHelper(gxs) {}
 
 	/**

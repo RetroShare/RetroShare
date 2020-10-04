@@ -19,9 +19,10 @@
  *******************************************************************************/
 #pragma once
 
+#include <retroshare-gui/RsAutoUpdatePage.h>
+
 #include "ui_ChatLobbyWidget.h"
 
-#include "RsAutoUpdatePage.h"
 #include "chat/ChatLobbyUserNotify.h"
 #include "gui/gxs/GxsIdChooser.h"
 
@@ -38,6 +39,7 @@
 
 class RSTreeWidgetItemCompareRole;
 class ChatTabWidget ;
+class ChatDialog ;
 class ChatLobbyDialog ;
 class QTextBrowser ;
 
@@ -69,6 +71,7 @@ public:
 
 	void setCurrentChatPage(ChatLobbyDialog *) ;	// used by ChatLobbyDialog to raise.
 	void addChatPage(ChatLobbyDialog *) ;
+	void removeChatPage(ChatLobbyDialog *) ;
 	bool showLobbyAnchor(ChatLobbyId id, QString anchor) ;
 
 	uint unreadCount();
@@ -77,6 +80,7 @@ signals:
 	void unreadCountChanged(uint unreadCount);
 
 protected slots:
+	void dialogClose(ChatDialog*);
 	void lobbyChanged();
 	void lobbyTreeWidgetCustomPopupMenu(QPoint);
 	void createChatLobby();
@@ -87,7 +91,7 @@ protected slots:
     void displayChatLobbyEvent(qulonglong lobby_id, int event_type, const RsGxsId& gxs_id, const QString& str);
 	void readChatLobbyInvites();
 	void showLobby(QTreeWidgetItem *lobby_item) ;
-	void showBlankPage(ChatLobbyId id) ;
+	void showBlankPage(ChatLobbyId id, bool subscribed = false) ;
     void unsubscribeChatLobby(ChatLobbyId id) ;
     void createIdentityAndSubscribe();
     void subscribeChatLobbyAs() ;

@@ -75,7 +75,7 @@
             <item>
              <widget class="QCheckBox" name="notify_Posted">
               <property name="text">
-               <string>Links</string>
+               <string>Boards</string>
               </property>
              </widget>
             </item>
@@ -103,7 +103,7 @@
             <item>
              <widget class="QCheckBox" name="notify_Security">
               <property name="text">
-               <string>Security</string>
+               <string>Friend Requests</string>
               </property>
              </widget>
             </item>
@@ -155,7 +155,7 @@
           <item>
            <widget class="QCheckBox" name="message_ConnectAttempt">
             <property name="text">
-             <string>Connect attempt</string>
+             <string>Friend Requests</string>
             </property>
            </widget>
           </item>
@@ -256,7 +256,7 @@
               <item>
                <widget class="QCheckBox" name="popup_ConnectAttempt">
                 <property name="text">
-                 <string>Connect attempt</string>
+                 <string>Friend Requests</string>
                 </property>
                </widget>
               </item>

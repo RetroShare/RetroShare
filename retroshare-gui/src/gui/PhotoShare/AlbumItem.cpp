@@ -41,17 +41,17 @@ void AlbumItem::setUp()
 {
     ui->label_AlbumTitle->setText(QString::fromStdString(mAlbum.mMeta.mGroupName));
     ui->label_Photographer->setText(QString::fromStdString(mAlbum.mPhotographer));
-    QPixmap qtn;
-    qtn.loadFromData(mAlbum.mThumbnail.data, mAlbum.mThumbnail.size, mAlbum.mThumbnail.type.c_str());
     
-    if(mAlbum.mThumbnail.size != 0)
+    if(mAlbum.mThumbnail.mSize != 0)
     {
-		ui->label_Thumbnail->setPixmap(qtn);
+        QPixmap qtn;
+        qtn.loadFromData(mAlbum.mThumbnail.mData, mAlbum.mThumbnail.mSize, "PNG");
+        ui->label_Thumbnail->setPixmap(qtn);
     }
     else
     {
-		// display a default Album icon when album has no Thumbnail
-		ui->label_Thumbnail->setPixmap(QPixmap(":/images/album_default_128.png"));
+        // display a default Album icon when album has no Thumbnail
+        ui->label_Thumbnail->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/album_default_128.png"));
     }
 }
 

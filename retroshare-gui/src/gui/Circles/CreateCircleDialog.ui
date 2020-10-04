@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>500</height>
+    <width>721</width>
+    <height>561</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -106,8 +106,8 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/back.png</normaloff>:/images/back.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/png/arrow-left.png</normaloff>:/icons/png/arrow-left.png</iconset>
             </property>
            </widget>
           </item>
@@ -120,8 +120,8 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/forward.png</normaloff>:/images/forward.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/png/arrow-right.png</normaloff>:/icons/png/arrow-right.png</iconset>
             </property>
            </widget>
           </item>
@@ -161,12 +161,7 @@
              </column>
              <column>
               <property name="text">
-               <string>ID</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Type</string>
+               <string>Profile</string>
               </property>
              </column>
             </widget>
@@ -210,9 +205,9 @@
                </widget>
               </item>
               <item>
-               <widget class="QRadioButton" name="radioButton_ListKnownPGP">
+               <widget class="QRadioButton" name="radioButton_ListFriendPGP">
                 <property name="text">
-                 <string>Signed by known nodes</string>
+                 <string>Signed by friend node</string>
                 </property>
                </widget>
               </item>
@@ -411,7 +406,7 @@
                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Circles can be restricted to the members of another circle. Only the members of that second circle will be allowed to see the new circle and its content (list of members, etc).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="text">
-                 <string>Only visible to members of:</string>
+                 <string>Only &amp;visible to members of:</string>
                 </property>
                 <property name="icon">
                  <iconset resource="../icons.qrc">
@@ -456,6 +451,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>GxsIdChooser</class>
+   <extends>QComboBox</extends>
+   <header>gui/gxs/GxsIdChooser.h</header>
+  </customwidget>
+  <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
    <header location="global">gui/common/LineEditClear.h</header>
@@ -470,11 +470,6 @@
    <extends>QFrame</extends>
    <header>gui/common/HeaderFrame.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>GxsIdChooser</class>
-   <extends>QComboBox</extends>
-   <header>gui/gxs/GxsIdChooser.h</header>
   </customwidget>
   <customwidget>
    <class>GxsCircleChooser</class>

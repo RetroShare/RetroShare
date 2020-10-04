@@ -20,8 +20,7 @@
  *******************************************************************************/
 #pragma once
 
-/// RetroShare initialization and login API
-
+/// @file RetroShare initialization and login API
 
 // Initialize ok, result >= 0
 #define RS_INIT_OK              0 // Initialize ok
@@ -32,11 +31,15 @@
 #define RS_INIT_NO_KEYRING     -3 // Keyring is empty. Need to import it.
 #define RS_INIT_NO_EXECUTABLE  -4 // executable path hasn't been set in config options
 
-#include <stdint.h>
 #include <list>
 #include <map>
 #include <vector>
-#include <retroshare/rstypes.h>
+#include <cstdint>
+#include <system_error>
+
+#include "retroshare/rstypes.h"
+#include "retroshare/rsversion.h"
+
 
 class RsLoginHelper;
 
@@ -45,6 +48,71 @@ class RsLoginHelper;
  * @jsonapi{development}
  */
 extern RsLoginHelper* rsLoginHelper;
+
+
+enum class RsInitErrorNum : int32_t
+{
+	ALREADY_LOGGED_IN         = 6000,
+	CANT_ACQUIRE_LOCK         = 6001,
+	INVALID_LOCATION_NAME     = 6002,
+	PGP_NAME_OR_ID_NEEDED     = 6003,
+	PGP_KEY_CREATION_FAILED   = 6004,
+	SSL_KEY_CREATION_FAILED   = 6005,
+	INVALID_SSL_ID            = 6006,
+	LOGIN_FAILED              = 6007
+};
+
+struct RsInitErrorCategory: std::error_category
+{
+	const char* name() const noexcept override
+	{ return "RetroShare init"; }
+
+	std::string message(int ev) const override
+	{
+		switch (static_cast<RsInitErrorNum>(ev))
+		{
+		case RsInitErrorNum::ALREADY_LOGGED_IN:
+			return "Already logged in";
+		case RsInitErrorNum::CANT_ACQUIRE_LOCK:
+			return "Cannot aquire lock on location data. Another instance is "
+			        "already running with this profile?";
+		case RsInitErrorNum::INVALID_LOCATION_NAME:
+			return "Invalid location name";
+		case RsInitErrorNum::PGP_NAME_OR_ID_NEEDED:
+			return "Either PGP name or PGP id is needed";
+		case RsInitErrorNum::PGP_KEY_CREATION_FAILED:
+			return "Failure creating PGP key";
+		case RsInitErrorNum::SSL_KEY_CREATION_FAILED:
+			return "Failure creating SSL key";
+		case RsInitErrorNum::INVALID_SSL_ID:
+			return "Invalid SSL id";
+		case RsInitErrorNum::LOGIN_FAILED:
+			return "Generic login failure";
+		default:
+			return rsErrorNotInCategory(ev, name());
+		}
+	}
+
+	const static RsInitErrorCategory instance;
+};
+
+
+namespace std
+{
+/** Register RsJsonApiErrorNum as an error condition enum, must be in std
+ * namespace */
+template<> struct is_error_condition_enum<RsInitErrorNum> : true_type {};
+}
+
+/** Provide RsInitErrorNum conversion to std::error_condition, must be in
+ * same namespace of RsInitErrorNum */
+inline std::error_condition make_error_condition(RsInitErrorNum e) noexcept
+{
+	return std::error_condition(
+	            static_cast<int>(e), RsInitErrorCategory::instance );
+};
+
+
 
 /**
  * @brief The RsInitConfig struct
@@ -85,7 +153,7 @@ struct RsConfigOptions
 class RsInit
 {
 public:
-	enum LoadCertificateStatus : uint8_t
+	enum RS_DEPRECATED_FOR(RsInitErrorNum) LoadCertificateStatus : uint8_t
 	{
 		OK,                     /// Everything go as expected, no error occurred
 		ERR_ALREADY_RUNNING,    /// Another istance is running already
@@ -313,10 +381,11 @@ extern RsAccounts* rsAccounts;
 class RsLoginHelper
 {
 public:
-    RsLoginHelper() {}
+	RsLoginHelper() = default;
+
 	/**
 	 * @brief Normal way to attempt login
-	 * @jsonapi{development,manualwrapper}
+	 * @jsonapi{development,unauthenticated}
 	 * @param[in] account Id of the account to which attempt login
 	 * @param[in] password Password for the given account
 	 * @return RsInit::OK if login attempt success, error code otherwhise
@@ -354,6 +423,44 @@ public:
 	/**
 	 * @brief Creates a new RetroShare location, and log in once is created
 	 * @jsonapi{development,manualwrapper}
+	 * @param[out] locationId storage for generated location SSL id
+	 * @param[inout] pgpId specify PGP id to use to sign the location, if a null
+	 *	id is passed the PGP key is created too and this param is used as
+	 *	storage for its id.
+	 * @param[in] password to protect and unlock the associated PGP key
+	 * param[in] apiUser (JSON API only) string containing username for JSON API
+	 *	so it can be later used to authenticate JSON API calls. It is passed
+	 *	down to @see RsJsonApi::authorizeUser under the hood.
+	 * param[in] apiPass (JSON API only) string containing password for JSON API
+	 *	so it can be later used to authenticate JSON API calls. It is passed
+	 *	down to @see RsJsonApi::authorizeUser under the hood.
+	 *	To improve security we strongly advise to not use the same as the
+	 *	password used for the PGP key.
+	 * @return Success or error information
+	 */
+	std::error_condition createLocationV2(
+	        RsPeerId& locationId,
+	        RsPgpId& pgpId,
+	        const std::string& locationName,
+	        const std::string& pgpName,
+	        const std::string& password
+	        /* JSON API only
+	         * const std::string& apiUser
+	         * const std::string& apiPass */ );
+
+	/**
+	 * @brief Check if RetroShare is already logged in, this usually return true
+	 *	after a successfull attemptLogin() and before closeSession()
+	 * @jsonapi{development,unauthenticated}
+	 * @return true if already logged in, false otherwise
+	 */
+	bool isLoggedIn();
+
+#if !RS_VERSION_AT_LEAST(0,6,6)
+	/**
+	 * @deprecated Use @see createLocationV2 instead
+	 * @brief Creates a new RetroShare location, and log in once is created
+	 * @jsonapi{development,manualwrapper}
 	 * @param[inout] location provide input information to generate the location
 	 *	and storage to output the data of the generated location
 	 * @param[in] password to protect and unlock the associated PGP key
@@ -364,15 +471,9 @@ public:
 	 *	Tor hidden location. UNTESTED!
 	 * @return true if success, false otherwise
 	 */
+	RS_DEPRECATED_FOR(createLocationV2)
 	bool createLocation( RsLoginHelper::Location& location,
 	                     const std::string& password, std::string& errorMessage,
 	                     bool makeHidden = false, bool makeAutoTor = false );
-
-	/**
-	 * @brief Check if RetroShare is already logged in, this usually return true
-	 *	after a successfull attemptLogin() and before closeSession()
-	 * @jsonapi{development,unauthenticated}
-	 * @return true if already logged in, false otherwise
-	 */
-	bool isLoggedIn();
+#endif // !RS_VERSION_AT_LEAST(0,6,6)
 };

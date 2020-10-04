@@ -26,8 +26,8 @@
 #define BANNED_IMAGE ":/icons/yellow_biohazard64.png"
 
 /** Constructor */
-GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, uint32_t icon_mask,QTreeWidget *parent)
-    : QObject(NULL), RSTreeWidgetItem(compareRole, parent), mColumn(0), mIconTypeMask(icon_mask)
+GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, uint32_t icon_mask,bool auto_tooltip,QTreeWidget *parent)
+    : QObject(NULL), RSTreeWidgetItem(compareRole, parent), mColumn(0), mAutoTooltip(auto_tooltip), mIconTypeMask(icon_mask)
 {
 	init();
 }
@@ -35,8 +35,8 @@ GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *
 void GxsIdRSTreeWidgetItem::init()
 {
 	mIdFound = false;
+	mBannedState = false ;
 	mRetryWhenFailed = false;
-    	mBannedState = false ;
 }
 
 static void fillGxsIdRSTreeWidgetItemCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &/*data*/)
@@ -67,12 +67,14 @@ static void fillGxsIdRSTreeWidgetItemCallback(GxsIdDetailsType type, const RsIde
 		break;
         
     	case GXS_ID_DETAILS_TYPE_BANNED:
-        	icons.push_back(QIcon("BANNED_IMAGE")) ;
+            icons.push_back(FilesDefs::getIconFromQtResourcePath("BANNED_IMAGE")) ;
             	break ;
 	}
 
 	int column = item->idColumn();
-	item->setToolTip(column, GxsIdDetails::getComment(details));
+
+    if(item->autoTooltip())
+		item->setToolTip(column, GxsIdDetails::getComment(details));
 
 	item->setText(column, GxsIdDetails::getNameForType(type, details));
 	item->setData(column, Qt::UserRole, QString::fromStdString(details.mId.toStdString()));
@@ -159,7 +161,7 @@ QVariant GxsIdRSTreeWidgetItem::data(int column, int role) const
 			if(mId.isNull())
                 return RSTreeWidgetItem::data(column, role);
 			else if( rsReputations->overallReputationLevel(mId) == RsReputationLevel::LOCALLY_NEGATIVE )
-				pix = QPixmap(BANNED_IMAGE);
+                pix = FilesDefs::getPixmapFromQtResourcePath(BANNED_IMAGE);
 			else if ( mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(mAvatar.mData, mAvatar.mSize, pix,GxsIdDetails::LARGE) )
 				pix = GxsIdDetails::makeDefaultIcon(mId,GxsIdDetails::LARGE);
 
@@ -175,4 +177,43 @@ QVariant GxsIdRSTreeWidgetItem::data(int column, int role) const
 	}
 
 	return RSTreeWidgetItem::data(column, role);
+}
+
+void GxsIdTreeItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex& index) const
+{
+	if(!index.isValid())
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " attempt to draw an invalid index." << std::endl;
+		return ;
+	}
+
+	QStyleOptionViewItem ownOption (option);
+	initStyleOption(&ownOption, index);
+
+	RsGxsId id(index.data(Qt::UserRole).toString().toStdString());
+	QString cmt;
+
+	if(id.isNull())
+	{
+		if (ownOption.icon.isNull())
+			ownOption.icon = FilesDefs::getIconFromQtResourcePath(":/icons/notification.png");
+	}
+	else
+	{
+		if(! computeNameIconAndComment(id,ownOption.text,ownOption.icon,cmt))
+		{
+			if(mReloadPeriod > 3)
+			{
+				ownOption.text = tr("[Unknown]");
+				ownOption.icon = FilesDefs::getIconFromQtResourcePath(":/icons/png/anonymous.png");
+			}
+			else
+			{
+				ownOption.icon = GxsIdDetails::getLoadingIcon(id);
+				launchAsyncLoading();
+			}
+		}
+	}
+
+	RSElidedItemDelegate::paint(painter,ownOption,index);
 }

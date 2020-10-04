@@ -38,8 +38,8 @@
 #include <retroshare/rsmsgs.h>
 
 #define VARIANT_STANDARD    "Standard"
-#define IMAGE_CHAT_CREATE   ":/images/add_24x24.png"
-#define IMAGE_CHAT_OPEN     ":/images/typing.png"
+#define IMAGE_CHAT_CREATE   ":/icons/png/add.png"
+#define IMAGE_CHAT_OPEN     ":/icons/png/typing.png"
 #define IMAGE_CHAT_DELETE   ":/images/deletemail24.png"
 #define IMAGE_CHAT_COPY     ":/images/copyrslink.png"
 

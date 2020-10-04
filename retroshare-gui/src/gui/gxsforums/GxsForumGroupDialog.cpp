@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include "GxsForumGroupDialog.h"
+#include "gui/common/FilesDefs.h"
 
 #include <retroshare/rsgxsforums.h>
 #include <iostream>
@@ -58,15 +59,15 @@ const uint32_t ForumCreateDefaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC   
 const uint32_t ForumEditEnabledFlags = ForumCreateEnabledFlags;
 const uint32_t ForumEditDefaultsFlags = ForumCreateDefaultsFlags;
 
-GxsForumGroupDialog::GxsForumGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
-    : GxsGroupDialog(tokenQueue, ForumCreateEnabledFlags, ForumCreateDefaultsFlags, parent)
+GxsForumGroupDialog::GxsForumGroupDialog(QWidget *parent)
+    : GxsGroupDialog(ForumCreateEnabledFlags, ForumCreateDefaultsFlags, parent)
 {
     ui.pubKeyShare_cb->setEnabled(true) ;
     ui.label_2->setToolTip(tr("<p>Put one of your identities here to allow others to send feedback and also have moderator rights on the forum. You may as well leave that field blank and keep the forum anonymously administrated.</p>"));
 }
 
-GxsForumGroupDialog::GxsForumGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, QWidget *parent)
-    : GxsGroupDialog(tokenExternalQueue, tokenService, mode, groupId, ForumEditEnabledFlags, ForumEditDefaultsFlags, parent)
+GxsForumGroupDialog::GxsForumGroupDialog(Mode mode, RsGxsGroupId groupId, QWidget *parent)
+    : GxsGroupDialog(mode, groupId, ForumEditEnabledFlags, ForumEditDefaultsFlags, parent)
 {
     ui.pubKeyShare_cb->setEnabled(true) ;
 }
@@ -96,10 +97,10 @@ void GxsForumGroupDialog::initUi()
 
 QPixmap GxsForumGroupDialog::serviceImage()
 {
-	return QPixmap(":/icons/png/forums.png");
+    return FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums.png");
 }
 
-bool GxsForumGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta)
+bool GxsForumGroupDialog::service_createGroup(RsGroupMetaData& meta)
 {
 	// Specific Function.
 	RsGxsForumGroup grp;
@@ -107,11 +108,16 @@ bool GxsForumGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMeta
 	grp.mDescription = getDescription().toUtf8().constData();
 	getSelectedModerators(grp.mAdminList.ids);
 
-	rsGxsForums->createGroup(token, grp);
-	return true;
+	if(rsGxsForums->createForum(grp))
+    {
+        meta = grp.mMeta;
+        return true;
+    }
+    else
+		return false;
 }
 
-bool GxsForumGroupDialog::service_EditGroup(uint32_t &token, RsGroupMetaData &editedMeta)
+bool GxsForumGroupDialog::service_updateGroup(const RsGroupMetaData& editedMeta)
 {
 	RsGxsForumGroup grp(mGroupData);	// start again from cached information. That allows to keep the pinned posts for instance.
 
@@ -125,44 +131,45 @@ bool GxsForumGroupDialog::service_EditGroup(uint32_t &token, RsGroupMetaData &ed
 	std::cerr << "GxsForumGroupDialog::service_EditGroup() submitting changes";
 	std::cerr << std::endl;
 
-	rsGxsForums->updateGroup(token, grp);
-	return true;
+    return rsGxsForums->editForum(grp);
 }
 
-bool GxsForumGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsGroupMetaData& groupMetaData, QString &description)
+bool GxsForumGroupDialog::service_loadGroup(const RsGxsGenericGroupData *data, Mode /*mode*/, QString &description)
 {
-	std::cerr << "GxsForumGroupDialog::service_loadGroup(" << token << ")";
-	std::cerr << std::endl;
+	const RsGxsForumGroup *pgroup = dynamic_cast<const RsGxsForumGroup*>(data);
 
-	std::vector<RsGxsForumGroup> groups;
-
-	if (!rsGxsForums->getGroupData(token, groups))
+	if (!pgroup)
 	{
-		std::cerr << "GxsForumGroupDialog::service_loadGroup() Error getting GroupData";
-		std::cerr << std::endl;
+		RsErr() << "GxsForumGroupDialog::service_loadGroup() supplied generic group is not a RsGxsForumGroup"<< std::endl;
 		return false;
 	}
-
-	if (groups.size() != 1)
-	{
-		std::cerr << "GxsForumGroupDialog::service_loadGroup() Error Group.size() != 1";
-		std::cerr << std::endl;
-		return false;
-	}
-
-	std::cerr << "GxsForumsGroupDialog::service_loadGroup() Unfinished Loading";
-	std::cerr << std::endl;
 
     // Information handled by GxsGroupDialog. description should rather be handled here in the service part!
 
-	groupMetaData = groups[0].mMeta;
-	description = QString::fromUtf8(groups[0].mDescription.c_str());
+	description = QString::fromUtf8(pgroup->mDescription.c_str());
 
     // Local information. Description should be handled here.
 
-    setSelectedModerators(groups[0].mAdminList.ids);
+    setSelectedModerators(pgroup->mAdminList.ids);
 
-    mGroupData = groups[0]; // keeps the private information
+    mGroupData = *pgroup; // keeps the private information
 
 	return true;
 }
+
+bool GxsForumGroupDialog::service_getGroupData(const RsGxsGroupId& grpId,RsGxsGenericGroupData *& data)
+{
+	std::vector<RsGxsForumGroup> forumsInfo ;
+
+    if( rsGxsForums->getForumsInfo(std::list<RsGxsGroupId>({grpId}),forumsInfo) && forumsInfo.size() == 1)
+    {
+        data = new RsGxsForumGroup(forumsInfo[0]);
+        return true;
+    }
+    else
+        return false;
+
+}
+
+
+

@@ -23,235 +23,177 @@
 #include "PhotoDialog.h"
 #include "ui_PhotoDialog.h"
 #include "retroshare/rsidentity.h"
-#include "AddCommentDialog.h"
+#include "gui/gxs/GxsCommentDialog.h"
+
+#define IMAGE_FULLSCREEN          ":/icons/fullscreen.png"
+#define IMAGE_FULLSCREENEXIT      ":/icons/fullscreen-exit.png"
+#define IMAGE_SHOW                ":/icons/png/down-arrow.png"
+#define IMAGE_HIDE                ":/icons/png/up-arrow.png"
 
 PhotoDialog::PhotoDialog(RsPhoto *rs_photo, const RsPhotoPhoto &photo, QWidget *parent) :
-    QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint),
-    ui(new Ui::PhotoDialog), mRsPhoto(rs_photo), mPhotoQueue(new TokenQueue(mRsPhoto->getTokenService(), this)),
-    mPhotoDetails(photo)
+	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint),
+	ui(new Ui::PhotoDialog), mRsPhoto(rs_photo), mPhotoQueue(new TokenQueue(mRsPhoto->getTokenService(), this)),
+	mPhotoDetails(photo),
+	mCommentsCreated(false)
 {
-    ui->setupUi(this);
-    setAttribute ( Qt::WA_DeleteOnClose, true );
+	ui->setupUi(this);
+	setAttribute ( Qt::WA_DeleteOnClose, true );
 
-    connect(ui->pushButton_AddComment, SIGNAL(clicked()), this, SLOT(createComment()));
-    connect(ui->pushButton_AddCommentDlg, SIGNAL(clicked()), this, SLOT(addComment()));
-    connect(ui->fullscreenButton, SIGNAL(clicked()),this, SLOT(setFullScreen()));
+	connect(ui->fullscreenButton, SIGNAL(clicked()),this, SLOT(setFullScreen()));
+	connect(ui->commentsButton, SIGNAL(clicked()),this, SLOT(toggleComments()));
+	connect(ui->detailsButton, SIGNAL(clicked()),this, SLOT(toggleDetails()));
 
-#if QT_VERSION >= 0x040700
-    ui->lineEdit->setPlaceholderText(tr("Write a comment...")) ;
-#endif
-
-    setUp();
+	setUp();
 }
 
 PhotoDialog::~PhotoDialog()
 {
-    delete ui;
-    delete mPhotoQueue;
+	delete ui;
+	delete mPhotoQueue;
 }
 
 void PhotoDialog::setUp()
 {
-    QPixmap qtn;
-    qtn.loadFromData(mPhotoDetails.mThumbnail.data, mPhotoDetails.mThumbnail.size, mPhotoDetails.mThumbnail.type.c_str());
-    ui->label_Photo->setPixmap(qtn);
-    ui->lineEdit_Title->setText(QString::fromStdString(mPhotoDetails.mMeta.mMsgName));
+	QPixmap qtn;
+	qtn.loadFromData(mPhotoDetails.mLowResImage.mData, mPhotoDetails.mLowResImage.mSize);
+	ui->label_Photo->setPixmap(qtn);
+	ui->label_Photo->setVisible(true);
 
-    requestComments();
+	// set size of label to match image.
+	ui->label_Photo->setMinimumSize(ui->label_Photo->sizeHint());
+	// alternative is to scale contents.
+	// ui->label_Photo->setScaledContents(true);
+	// Neither are ideal. sizeHint is potentially too large.
+	// scaled contents - doesn't respect Aspect Ratio...
+	//
+	// Ideal soln: 
+	// Allow both, depending on Zoom Factor.
+	// Auto: use Scale, with correct aspect ratio.
+	// answer here:  https://stackoverflow.com/questions/8211982/qt-resizing-a-qlabel-containing-a-qpixmap-while-keeping-its-aspect-ratio
+	// Fixed %, then manually scale to that, with scroll area.
+
+	ui->lineEdit_Title->setText(QString::fromStdString(mPhotoDetails.mMeta.mMsgName));
+	ui->frame_comments->setVisible(false);
+	ui->frame_details->setVisible(false);
 }
 
-void PhotoDialog::addComment()
+void PhotoDialog::toggleDetails()
 {
-    AddCommentDialog dlg(this);
-    if (dlg.exec() == QDialog::Accepted) {
-        RsPhotoComment comment;
-        comment.mComment = dlg.getComment().toUtf8().constData();
-
-        uint32_t token;
-        comment.mMeta.mGroupId = mPhotoDetails.mMeta.mGroupId;
-        comment.mMeta.mParentId = mPhotoDetails.mMeta.mOrigMsgId;
-        mRsPhoto->submitComment(token, comment);
-        mPhotoQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, 0);
-    }
+	if (ui->frame_details->isVisible()) {
+		ui->frame_details->setVisible(false);
+		ui->detailsButton->setIcon(QIcon(IMAGE_SHOW));
+	} else {
+		ui->frame_details->setVisible(true);
+		ui->detailsButton->setIcon(QIcon(IMAGE_HIDE));
+	}
 }
 
-void PhotoDialog::clearComments()
+void PhotoDialog::toggleComments()
 {
-    //QLayout* l = ui->scrollAreaWidgetContents->layout();
-    QSetIterator<PhotoCommentItem*> sit(mComments);
-    while(sit.hasNext())
-    {
-        PhotoCommentItem* item = sit.next();
-        ui->verticalLayout->removeWidget(item);
-        item->setParent(NULL);
-        delete item;
-    }
+	if (ui->frame_comments->isVisible()) {
+		ui->frame_comments->setVisible(false);
+	} else {
+		if (mCommentsCreated) {
+			ui->frame_comments->setVisible(true);
+		} else {
+			// create CommentDialog.
+			RsGxsCommentService *commentService = dynamic_cast<RsGxsCommentService *>(mRsPhoto);
+			GxsCommentDialog *commentDialog = new GxsCommentDialog(this, mRsPhoto->getTokenService(), commentService);
 
-    mComments.clear();
+			// TODO: Need to fetch all msg versions, otherwise - won't get all the comments.
+			// For the moment - use current msgid.
+			// Needs to be passed to PhotoDialog, or fetched here.
+
+			RsGxsGroupId grpId = mPhotoDetails.mMeta.mGroupId;
+			RsGxsMessageId msgId = mPhotoDetails.mMeta.mMsgId;
+
+			std::set<RsGxsMessageId> msgv;
+			msgv.insert(msgId);
+			msgv.insert(mPhotoDetails.mMeta.mOrigMsgId); // if duplicate will be ignored.
+
+			commentDialog->commentLoad(grpId, msgv,msgId);
+
+			// insert into frame.
+			QVBoxLayout *vbox = new QVBoxLayout();
+
+			vbox->addWidget(commentDialog);
+			ui->frame_comments->setLayout(vbox);
+
+			ui->frame_comments->setVisible(true);
+			mCommentsCreated = true;
+		}
+	}
 }
-
-void PhotoDialog::resetComments()
-{
-    QSetIterator<PhotoCommentItem*> sit(mComments);
-    //QLayout* l = ui->scrollAreaWidgetContents->layout();
-    while(sit.hasNext())
-    {
-        PhotoCommentItem* item = sit.next();
-        ui->verticalLayout->insertWidget(0,item);
-    }
-}
-
-void PhotoDialog::requestComments()
-{
-    RsTokReqOptions opts;
-    opts.mMsgFlagMask = RsPhoto::FLAG_MSG_TYPE_MASK;
-    opts.mMsgFlagFilter = RsPhoto::FLAG_MSG_TYPE_PHOTO_COMMENT;
-
-    opts.mReqType = GXS_REQUEST_TYPE_MSG_IDS;
-    opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
-    opts.mOptions = RS_TOKREQOPT_MSG_PARENT | RS_TOKREQOPT_MSG_LATEST;
-    RsGxsGrpMsgIdPair msgId;
-    uint32_t token;
-    msgId.first = mPhotoDetails.mMeta.mGroupId;
-    msgId.second = mPhotoDetails.mMeta.mMsgId;
-    std::vector<RsGxsGrpMsgIdPair> msgIdV;
-    msgIdV.push_back(msgId);
-    mPhotoQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIdV, 0);
-}
-
-void PhotoDialog::createComment()
-{
-    RsPhotoComment comment;
-    QString commentString = ui->lineEdit->text();
-
-    comment.mComment = commentString.toUtf8().constData();
-
-    uint32_t token;
-    comment.mMeta.mGroupId = mPhotoDetails.mMeta.mGroupId;
-    comment.mMeta.mParentId = mPhotoDetails.mMeta.mOrigMsgId;
-    mRsPhoto->submitComment(token, comment);
-    mPhotoQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, 0);
-
-    ui->lineEdit->clear();
-}
-
 
 /*************** message loading **********************/
 
 void PhotoDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
-    std::cerr << "PhotoShare::loadRequest()";
-    std::cerr << std::endl;
+	std::cerr << "PhotoShare::loadRequest()";
+	std::cerr << std::endl;
 
-    if (queue == mPhotoQueue)
-    {
-        /* now switch on req */
-        switch(req.mType)
-        {
-            case TOKENREQ_MSGINFO:
-            {
-                switch(req.mAnsType)
-                {
-                    case RS_TOKREQ_ANSTYPE_DATA:
-                        loadComment(req.mToken);
-                        break;
-                    case RS_TOKREQ_ANSTYPE_LIST:
-                        loadList(req.mToken);
-                        break;
-                    case RS_TOKREQ_ANSTYPE_ACK:
-                        acknowledgeComment(req.mToken);
-                        break;
-                    default:
-                        std::cerr << "PhotoShare::loadRequest() ERROR: MSG INVALID TYPE";
-                        std::cerr << std::endl;
-                        break;
-                }
-                break;
-            }
+	if (queue == mPhotoQueue)
+	{
+		/* now switch on req */
+		switch(req.mType)
+		{
+			case TOKENREQ_MSGINFO:
+			{
+				switch(req.mAnsType)
+				{
+					case RS_TOKREQ_ANSTYPE_LIST:
+						loadList(req.mToken);
+						break;
+					default:
+						std::cerr << "PhotoShare::loadRequest() ERROR: MSG INVALID TYPE";
+						std::cerr << std::endl;
+						break;
+				}
+				break;
+			}
 
-            default:
-            {
-                std::cerr << "PhotoShare::loadRequest() ERROR: INVALID TYPE";
-                std::cerr << std::endl;
-                break;
-            }
-        }
-    }
+			default:
+			{
+				std::cerr << "PhotoShare::loadRequest() ERROR: INVALID TYPE";
+				std::cerr << std::endl;
+				break;
+			}
+		}
+	}
 
-}
-
-void PhotoDialog::loadComment(uint32_t token)
-{
-
-    clearComments();
-
-    PhotoRelatedCommentResult results;
-    mRsPhoto->getPhotoRelatedComment(token, results);
-
-    PhotoRelatedCommentResult::iterator mit = results.begin();
-
-    for(; mit != results.end(); ++mit)
-    {
-        const std::vector<RsPhotoComment>& commentV = mit->second;
-        std::vector<RsPhotoComment>::const_iterator vit = commentV.begin();
-
-        for(; vit != commentV.end(); ++vit)
-        {
-            addComment(*vit);
-        }
-    }
-
-    resetComments();
 }
 
 void PhotoDialog::loadList(uint32_t token)
 {
-    GxsMsgReq msgIds;
-    mRsPhoto->getMsgList(token, msgIds);
-    RsTokReqOptions opts;
+	GxsMsgReq msgIds;
+	mRsPhoto->getMsgList(token, msgIds);
+	RsTokReqOptions opts;
 
-    // just use data as no need to worry about getting comments
-    opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-    uint32_t reqToken;
-    mPhotoQueue->requestMsgInfo(reqToken, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, 0);
-}
-
-void PhotoDialog::addComment(const RsPhotoComment &comment)
-{
-    PhotoCommentItem* item = new PhotoCommentItem(comment);
-    mComments.insert(item);
-}
-
-void PhotoDialog::acknowledgeComment(uint32_t token)
-{
-    RsGxsGrpMsgIdPair msgId;
-    mRsPhoto->acknowledgeMsg(token, msgId);
-
-    if(msgId.first.isNull() || msgId.second.isNull()){
-
-    }else
-    {
-        requestComments();
-    }
+	// just use data as no need to worry about getting comments
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+	uint32_t reqToken;
+	mPhotoQueue->requestMsgInfo(reqToken, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, 0);
 }
 
 void PhotoDialog::setFullScreen()
 {
   if (!isFullScreen()) {
-    // hide menu & toolbars
+	// hide menu & toolbars
 
 #ifdef Q_OS_LINUX
-    show();
-    raise();
-    setWindowState( windowState() | Qt::WindowFullScreen );
+	show();
+	raise();
+	setWindowState( windowState() | Qt::WindowFullScreen );
 #else
-    setWindowState( windowState() | Qt::WindowFullScreen );
-    show();
-    raise();
+	setWindowState( windowState() | Qt::WindowFullScreen );
+	show();
+	raise();
 #endif
+	ui->fullscreenButton->setIcon(QIcon(IMAGE_FULLSCREENEXIT));
   } else {
 
-    setWindowState( windowState() ^ Qt::WindowFullScreen );
-    show();
+	setWindowState( windowState() ^ Qt::WindowFullScreen );
+	show();
+	ui->fullscreenButton->setIcon(QIcon(IMAGE_FULLSCREEN));
   }
 }

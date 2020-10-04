@@ -40,12 +40,15 @@ public:
 	/* GxsMessageFrameWidget */
 	virtual void groupIdChanged();
 	virtual QString groupName(bool withUnreadCount);
-//	virtual QIcon groupIcon() = 0;
 	virtual bool navigate(const RsGxsMessageId& msgId);
 	virtual bool isLoading();
 
+    // These should be derived in subclasses
+	virtual bool getGroupData(RsGxsGenericGroupData *& data) =0;
+    virtual void getMsgData(const std::set<RsGxsMessageId>& msgIds,std::vector<RsGxsGenericMsgData*>& posts) =0;
+    virtual void getAllMsgData(std::vector<RsGxsGenericMsgData*>& posts) =0;
+
 	/* GXS functions */
-	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 	int subscribeFlags() { return mSubscribeFlags; }
 
@@ -64,17 +67,15 @@ protected:
 	virtual void fillThreadCreatePost(const QVariant &/*post*/, bool /*related*/, int /*current*/, int /*count*/) {}
 
 	/* GXS functions */
-	void requestGroupData();
-	void loadGroupData(const uint32_t &token);
-	virtual bool insertGroupData(const uint32_t &token, RsGroupMetaData &metaData) = 0;
+	void loadGroupData();
+	void loadAllPosts();
+	void loadPosts(const std::set<RsGxsMessageId>& msgIds);
 
-	void requestAllPosts();
-	void loadAllPosts(const uint32_t &token);
-	virtual void insertAllPosts(const uint32_t &token, GxsMessageFramePostThread *thread) = 0;
+    // In the following 3 methods, the memory ownership is kept by GxsMessageFramePostWidget
 
-	void requestPosts(const std::set<RsGxsMessageId> &msgIds);
-	void loadPosts(const uint32_t &token);
-	virtual void insertPosts(const uint32_t &token) = 0;
+	virtual bool insertGroupData(const RsGxsGenericGroupData *data) =0;
+	virtual void insertPosts(const std::vector<RsGxsGenericMsgData*>& posts) =0;
+	virtual void insertAllPosts(const std::vector<RsGxsGenericMsgData*>& posts, GxsMessageFramePostThread *thread) =0;
 
 private slots:
 	void fillThreadFinished();
@@ -97,7 +98,7 @@ class GxsMessageFramePostThread : public QThread
 	Q_OBJECT
 
 public:
-	GxsMessageFramePostThread(uint32_t token, GxsMessageFramePostWidget *parent);
+	GxsMessageFramePostThread(const std::vector<RsGxsGenericMsgData*>& posts,GxsMessageFramePostWidget *parent);
 	~GxsMessageFramePostThread();
 
 	void run();
@@ -110,7 +111,7 @@ signals:
 	void addPost(const QVariant &post, bool related, int current, int count);
 
 private:
-	uint32_t mToken;
+    std::vector<RsGxsGenericMsgData*> mPosts;
 	GxsMessageFramePostWidget *mParent;
 	volatile bool mStopped;
 };

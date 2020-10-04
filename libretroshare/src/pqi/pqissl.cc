@@ -372,9 +372,11 @@ int 	pqissl::status()
 	// tick......
 int	pqissl::tick()
 {
-	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+	// there is no reason to lock pqissl mutex now 
+	// we will lock the mutex later if we actually need to call to ConnectAttempt
+	// RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
 
-	//pqistreamer::tick();
+	// pqistreamer::tick();
 
 	// continue existing connection attempt.
 	if (!active)
@@ -385,7 +387,8 @@ int	pqissl::tick()
 #ifdef PQISSL_LOG_DEBUG 
 			rslog(RSL_DEBUG_BASIC, pqisslzone, "pqissl::tick() Continuing Connection Attempt!");
 #endif
-
+			// now lock pqissl mutex, that will take up to 10 ms
+			RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
 			ConnectAttempt();
 			return 1;
 		}
@@ -1110,10 +1113,16 @@ int pqissl::SSL_Connection_Complete()
 		if(rsEvents)
 		{
 			X509 *x509 = SSL_get_peer_certificate(ssl_connection);
-			auto ev = std::make_shared<RsAuthSslConnectionAutenticationEvent>();
-			ev->mSslId = RsX509Cert::getCertSslId(*x509);
-			ev->mErrorCode = RsAuthSslError::PEER_REFUSED_CONNECTION;
-			rsEvents->postEvent(ev);
+
+            if(x509)
+			{
+				auto ev = std::make_shared<RsAuthSslConnectionAutenticationEvent>();
+				ev->mSslId = RsX509Cert::getCertSslId(*x509);
+				ev->mErrorCode = RsAuthSslError::PEER_REFUSED_CONNECTION;
+
+				if(!ev->mSslId.isNull())
+					rsEvents->postEvent(ev);
+			}
 		}
 
 		std::string out;

@@ -19,6 +19,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "gui/common/FilesDefs.h"
 #include "FileAssociationsPage.h"
 #include "AddFileAssociationDialog.h"
 //#include "rshare.h" // for Rshare::dataDirectory() method
@@ -60,19 +61,19 @@ FileAssociationsPage::FileAssociationsPage(QWidget * parent, Qt::WindowFlags fla
     QVBoxLayout* pageLay = new QVBoxLayout(this);
 
     toolBar = new QToolBar("actions", this);
-    newAction = new QAction(QIcon(":/images/add_24x24.png"), tr("&New"), this);
+    newAction = new QAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/add.png"), tr("&New"), this);
     //newAction->setShortcut(tr("Ctrl+N"));
     newAction->setStatusTip(tr("Add new Association"));
     connect(newAction, SIGNAL(triggered()), this, SLOT(addnew()));
     toolBar->addAction(newAction);
 
-    editAction = new QAction(QIcon(":/images/kcmsystem24.png"),
+    editAction = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/kcmsystem24.png"),
                              tr("&Edit"), this);
     editAction->setStatusTip(tr("Edit this Association"));
     connect(editAction, SIGNAL(triggered()), this, SLOT(edit()));
     toolBar->addAction(editAction);
 
-    removeAction = new QAction(QIcon(":/images/edit_remove24.png"),
+    removeAction = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/edit_remove24.png"),
                                tr("&Remove"), this);
     removeAction->setStatusTip(tr("Remove this Association"));
     connect(removeAction, SIGNAL(triggered()), this, SLOT(remove()));

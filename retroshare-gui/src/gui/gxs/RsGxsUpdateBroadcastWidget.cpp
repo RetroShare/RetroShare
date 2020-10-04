@@ -49,10 +49,6 @@ const std::set<RsGxsGroupId> &RsGxsUpdateBroadcastWidget::getGrpIds()
     return mBase->getGrpIds();
 }
 
-const std::set<TurtleRequestId>& RsGxsUpdateBroadcastWidget::getSearchResults()
-{
-    return mBase->getSearchResults();
-}
 const std::set<RsGxsGroupId> &RsGxsUpdateBroadcastWidget::getGrpIdsMeta()
 {
     return mBase->getGrpIdsMeta();

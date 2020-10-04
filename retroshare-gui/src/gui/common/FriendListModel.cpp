@@ -27,6 +27,7 @@
 #include <QIcon>
 
 #include "gui/common/StatusDefs.h"
+#include "gui/common/FilesDefs.h"
 #include "gui/common/AvatarDefs.h"
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
@@ -151,15 +152,13 @@ void RsFriendListModel::setDisplayGroups(bool b)
 }
 void RsFriendListModel::preMods()
 {
- 	emit layoutAboutToBeChanged();
-
 	beginResetModel();
 }
 void RsFriendListModel::postMods()
 {
 	endResetModel();
- 	emit layoutChanged();
-	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mTopLevel.size()-1,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+
+    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1,columnCount()-1,(void*)NULL));
 }
 
 int RsFriendListModel::rowCount(const QModelIndex& parent) const
@@ -616,100 +615,104 @@ public:
 QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 {
 #ifdef DEBUG_MODEL_INDEX
-    std::cerr << "  Display role " << e.type << ", (" << (int)e.group_index << ","<< (int)e.profile_index << ","<< (int)e.node_index << ") col="<< col<<": ";
-    AutoEndel x;
+	std::cerr << "  Display role " << e.type << ", (" << (int)e.group_index << ","<< (int)e.profile_index << ","<< (int)e.node_index << ") col="<< col<<": ";
+	AutoEndel x;
 #endif
 
-    switch(e.type)
+	switch(e.type)
 	{
-	case ENTRY_TYPE_GROUP:
-        {
-  	      const HierarchicalGroupInformation *group = getGroupInfo(e);
+		case ENTRY_TYPE_GROUP:
+		{
+			const HierarchicalGroupInformation *group = getGroupInfo(e);
 
-  	      if(!group)
-  	          return QVariant();
+			if(!group)
+				return QVariant();
 
-          uint32_t nb_online = 0;
+			uint32_t nb_online = 0;
 
-          for(uint32_t i=0;i<group->child_profile_indices.size();++i)
-              for(uint32_t j=0;j<mProfiles[group->child_profile_indices[i]].child_node_indices.size();++j)
-                  if(mLocations[mProfiles[group->child_profile_indices[i]].child_node_indices[j]].node_info.state & RS_PEER_STATE_CONNECTED)
-                  {
-                      nb_online++;
-                      break;// only breaks the inner loop, on purpose.
-                  }
+			for(uint32_t i=0;i<group->child_profile_indices.size();++i)
+				for(uint32_t j=0;j<mProfiles[group->child_profile_indices[i]].child_node_indices.size();++j)
+					if(mLocations[mProfiles[group->child_profile_indices[i]].child_node_indices[j]].node_info.state & RS_PEER_STATE_CONNECTED)
+					{
+						nb_online++;
+						break;// only breaks the inner loop, on purpose.
+					}
 
 			switch(col)
 			{
-			case COLUMN_THREAD_NAME:
+				case COLUMN_THREAD_NAME:
 #ifdef DEBUG_MODEL_INDEX
-              	std::cerr <<   group->group_info.name.c_str() ;
+					std::cerr <<   group->group_info.name.c_str() ;
 #endif
 
-                if(!group->child_profile_indices.empty())
-					return QVariant(QString::fromUtf8(group->group_info.name.c_str())+" (" + QString::number(nb_online) + "/" + QString::number(group->child_profile_indices.size()) + ")");
-                else
-					return QVariant(QString::fromUtf8(group->group_info.name.c_str()));
+					if(!group->child_profile_indices.empty())
+						return QVariant(QString::fromUtf8(group->group_info.name.c_str())+" (" + QString::number(nb_online) + "/" + QString::number(group->child_profile_indices.size()) + ")");
+					else
+						return QVariant(QString::fromUtf8(group->group_info.name.c_str()));
 
-			case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(group->group_info.id.toStdString()));
-			default:
+				case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(group->group_info.id.toStdString()));
+				default:
 				return QVariant();
 			}
-    	}
-        break;
+		}
+		break;
 
-	case ENTRY_TYPE_PROFILE:
+		case ENTRY_TYPE_PROFILE:
 		{
- 	       const HierarchicalProfileInformation *profile = getProfileInfo(e);
+			const HierarchicalProfileInformation *profile = getProfileInfo(e);
 
- 	       if(!profile)
- 	           return QVariant();
+			if(!profile)
+				return QVariant();
 
 #ifdef DEBUG_MODEL_INDEX
-		   std::cerr << profile->profile_info.name.c_str() ;
+			std::cerr << profile->profile_info.name.c_str() ;
 #endif
 			switch(col)
 			{
-			case COLUMN_THREAD_NAME:           return QVariant(QString::fromUtf8(profile->profile_info.name.c_str()));
-			case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(profile->profile_info.gpg_id.toStdString()) );
+				case COLUMN_THREAD_NAME:           return QVariant(QString::fromUtf8(profile->profile_info.name.c_str()));
+				case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(profile->profile_info.gpg_id.toStdString()) );
 
-			default:
+				default:
 				return QVariant();
 			}
-       }
-        break;
+		}
+		break;
 
-	case ENTRY_TYPE_NODE:
-        const HierarchicalNodeInformation *node = getNodeInfo(e);
+		case ENTRY_TYPE_NODE:
+		{
+			const HierarchicalNodeInformation *node = getNodeInfo(e);
 
-        if(!node)
-            return QVariant();
+			if(!node)
+				return QVariant();
 
 #ifdef DEBUG_MODEL_INDEX
-		   std::cerr << node->node_info.location.c_str() ;
+			std::cerr << node->node_info.location.c_str() ;
 #endif
-		switch(col)
-		{
-		case COLUMN_THREAD_NAME:           if(node->node_info.location.empty())
-												return QVariant(QString::fromStdString(node->node_info.id.toStdString()));
+			switch(col)
+			{
+				case COLUMN_THREAD_NAME:           if(node->node_info.location.empty())
+						return QVariant(QString::fromStdString(node->node_info.id.toStdString()));
 
-										{
-											std::string css = rsMsgs->getCustomStateString(node->node_info.id);
+				{
+					std::string css = rsMsgs->getCustomStateString(node->node_info.id);
 
-											if(!css.empty() && mDisplayStatusString)
-												return QVariant(QString::fromUtf8(node->node_info.location.c_str())+"\n"+QString::fromUtf8(css.c_str()));
-											else
-												return QVariant(QString::fromUtf8(node->node_info.location.c_str()));
-										}
+					if(!css.empty() && mDisplayStatusString)
+						return QVariant(QString::fromUtf8(node->node_info.location.c_str())+"\n"+QString::fromUtf8(css.c_str()));
+					else
+						return QVariant(QString::fromUtf8(node->node_info.location.c_str()));
+				}
 
-		case COLUMN_THREAD_LAST_CONTACT:   return QVariant(QDateTime::fromTime_t(node->node_info.lastConnect).toString());
-		case COLUMN_THREAD_IP:             return QVariant(  (node->node_info.state & RS_PEER_STATE_CONNECTED) ? StatusDefs::connectStateIpString(node->node_info) : QString("---"));
-		case COLUMN_THREAD_ID:             return QVariant(  QString::fromStdString(node->node_info.id.toStdString()) );
+				case COLUMN_THREAD_LAST_CONTACT:   return QVariant(QDateTime::fromTime_t(node->node_info.lastConnect).toString());
+				case COLUMN_THREAD_IP:             return QVariant(  (node->node_info.state & RS_PEER_STATE_CONNECTED) ? StatusDefs::connectStateIpString(node->node_info) : QString("---"));
+				case COLUMN_THREAD_ID:             return QVariant(  QString::fromStdString(node->node_info.id.toStdString()) );
 
-		default:
-			return QVariant();
-		} break;
+				default:
+				return QVariant();
+			} break;
+		}
+		break;
 
+		default: //ENTRY_TYPE
 		return QVariant();
 	}
 }
@@ -815,13 +818,13 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
 
     switch(entry.type)
     {
-    case ENTRY_TYPE_GROUP: return QVariant(QIcon(IMAGE_GROUP24));
+    case ENTRY_TYPE_GROUP: return QVariant(FilesDefs::getIconFromQtResourcePath(IMAGE_GROUP24));
 
     case ENTRY_TYPE_PROFILE:
     {
         if(!isProfileExpanded(entry))
 		{
-			QPixmap sslAvatar(AVATAR_DEFAULT_IMAGE);
+			QPixmap sslAvatar = FilesDefs::getPixmapFromQtResourcePath(AVATAR_DEFAULT_IMAGE);
 
         	const HierarchicalProfileInformation *hn = getProfileInfo(entry);
 
@@ -1055,13 +1058,15 @@ void RsFriendListModel::updateInternalData()
     preMods();
 
     beginRemoveRows(QModelIndex(),0,mTopLevel.size()-1);
-    endRemoveRows();
 
     mGroups.clear();
     mProfiles.clear();
     mLocations.clear();
-
     mTopLevel.clear();
+
+    endRemoveRows();
+
+    auto TL = mTopLevel ; // This allows to fill TL without touching mTopLevel outside of [begin/end]InsertRows().
 
     // create a map of profiles and groups
     std::map<RsPgpId,uint32_t> pgp_indices;
@@ -1150,7 +1155,6 @@ void RsFriendListModel::updateInternalData()
     RsDbg() << "Creating top level list" << std::endl;
 #endif
 
-    mTopLevel.clear();
     std::set<RsPgpId> already_in_a_group;
 
     if(mDisplayGroups)	// in this case, we list all groups at the top level followed by the profiles without parent group
@@ -1165,7 +1169,7 @@ void RsFriendListModel::updateInternalData()
             e.type = ENTRY_TYPE_GROUP;
             e.group_index = i;
 
-            mTopLevel.push_back(e);
+            TL.push_back(e);
 
             for(uint32_t j=0;j<mGroups[i].child_profile_indices.size();++j)
                 already_in_a_group.insert(mProfiles[mGroups[i].child_profile_indices[j]].profile_info.gpg_id);
@@ -1184,12 +1188,15 @@ void RsFriendListModel::updateInternalData()
 			e.profile_index = i;
             e.group_index = UNDEFINED_GROUP_INDEX_VALUE;
 
-			mTopLevel.push_back(e);
+            TL.push_back(e);
 		}
 
     // finally, tell the model client that layout has changed.
 
-    beginInsertRows(QModelIndex(),0,mTopLevel.size()-1);
+    beginInsertRows(QModelIndex(),0,TL.size()-1);
+
+    mTopLevel = TL;
+
     endInsertRows();
 
     postMods();
@@ -1229,7 +1236,7 @@ void RsFriendListModel::collapseItem(const QModelIndex& index)
 		mExpandedProfiles.erase(s);
 
     // apparently we cannot be subtle here.
-	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mTopLevel.size()-1,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mTopLevel.size()-1,columnCount()-1,(void*)NULL));
 }
 
 void RsFriendListModel::expandItem(const QModelIndex& index)
@@ -1251,10 +1258,10 @@ void RsFriendListModel::expandItem(const QModelIndex& index)
     if(hp) s += hp->profile_info.gpg_id.toStdString();
 
     if(!s.empty())
-		mExpandedProfiles.insert(s);
+        mExpandedProfiles.insert(s);
 
     // apparently we cannot be subtle here.
-	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mTopLevel.size()-1,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mTopLevel.size()-1,columnCount()-1,(void*)NULL));
 }
 
 bool RsFriendListModel::isProfileExpanded(const EntryIndex& e) const

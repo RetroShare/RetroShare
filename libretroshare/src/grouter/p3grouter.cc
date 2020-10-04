@@ -1658,7 +1658,9 @@ void p3GRouter::handleIncomingReceiptItem(const RsGRouterSignedReceiptItem *rece
 
 Sha1CheckSum p3GRouter::computeDataItemHash(const RsGRouterGenericDataItem *data_item)
 {
-	RsGRouterSerialiser signature_serializer(RsGenericSerializer::SERIALIZATION_FLAG_SIGNATURE | RsGenericSerializer::SERIALIZATION_FLAG_SKIP_HEADER);
+	RsGRouterSerialiser signature_serializer(
+	            RsSerializationFlags::SIGNATURE |
+	            RsSerializationFlags::SKIP_HEADER );
 
     uint32_t signed_data_size = signature_serializer.size(const_cast<RsGRouterGenericDataItem*>(data_item));
     uint32_t total_size = signed_data_size + data_item->signature.TlvSize() ;
@@ -2034,7 +2036,9 @@ bool p3GRouter::signDataItem(RsGRouterAbstractMsgItem *item,const RsGxsId& signi
         std::cerr << "     Key ID = " << signing_id << std::endl;
         std::cerr << "     Getting key material..." << std::endl;
 //#endif
-        RsGRouterSerialiser signature_serializer(RsGenericSerializer::SERIALIZATION_FLAG_SIGNATURE | RsGenericSerializer::SERIALIZATION_FLAG_SKIP_HEADER) ;
+		RsGRouterSerialiser signature_serializer(
+		            RsSerializationFlags::SIGNATURE |
+		            RsSerializationFlags::SKIP_HEADER );
 		uint32_t data_size = signature_serializer.size(item) ;
 		RsTemporaryMemory data(data_size) ;
 
@@ -2092,8 +2096,8 @@ bool p3GRouter::verifySignedDataItem(const RsGRouterAbstractMsgItem *item,const 
 		}
 
 		RsGRouterSerialiser signature_serializer(
-		            RsGenericSerializer::SERIALIZATION_FLAG_SIGNATURE |
-		            RsGenericSerializer::SERIALIZATION_FLAG_SKIP_HEADER );
+		            RsSerializationFlags::SIGNATURE |
+		            RsSerializationFlags::SKIP_HEADER );
 
 		uint32_t data_size = signature_serializer.size(const_cast<RsGRouterAbstractMsgItem*>(item));	// the const cast shouldn't be necessary if size() took a const.
 		RsTemporaryMemory data(data_size);
@@ -2104,7 +2108,7 @@ bool p3GRouter::verifySignedDataItem(const RsGRouterAbstractMsgItem *item,const 
 		if(!signature_serializer.serialise(const_cast<RsGRouterAbstractMsgItem*>(item),data,&data_size))
 			throw std::runtime_error("Cannot serialise signed data.");
 
-		RsIdentityUsage use(RS_SERVICE_TYPE_GROUTER,info);
+		RsIdentityUsage use(RsServiceType::GROUTER,info);
 
 		if(!mGixs->validateData( data, data_size, item->signature, true, use, error_status ))
 		{

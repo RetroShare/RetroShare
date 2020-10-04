@@ -20,7 +20,8 @@
 
 #include "RemoteDirModel.h"
 
-#include "RsAutoUpdatePage.h"
+#include <retroshare-gui/RsAutoUpdatePage.h>
+
 #include "gui/common/FilesDefs.h"
 #include "gui/common/GroupDefs.h"
 #include "gui/common/RsCollection.h"
@@ -100,11 +101,9 @@ static bool isNewerThanEpoque(uint32_t ts)
 
 void RetroshareDirModel::treeStyle()
 {
-	categoryIcon.addPixmap(QPixmap(":/images/folder16.png"),
-	                     QIcon::Normal, QIcon::Off);
-	categoryIcon.addPixmap(QPixmap(":/images/folder_video.png"),
-	                     QIcon::Normal, QIcon::On);
-	peerIcon = QIcon(":/images/user/identity16.png");
+	categoryIcon.addPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/folder.png"), QIcon::Normal, QIcon::Off);
+	categoryIcon.addPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/folderopen.png"), QIcon::Normal, QIcon::On);
+	peerIcon = FilesDefs::getIconFromQtResourcePath(":/images/user/identity16.png");
 }
 void TreeStyle_RDM::update()
 {
@@ -337,31 +336,32 @@ QString RetroshareDirModel::getAgeIndicatorString(const DirDetails &details) con
 const QIcon& RetroshareDirModel::getFlagsIcon(FileStorageFlags flags)
 {
     static QIcon *static_icons[8] = {NULL};
+    if(static_icons[0] == NULL)
+        static_icons[0] = new QIcon();
 
     int n=0;
     if(flags & DIR_FLAGS_ANONYMOUS_DOWNLOAD) n += 1 ;
     if(flags & DIR_FLAGS_ANONYMOUS_SEARCH  ) n += 2 ;
     if(flags & DIR_FLAGS_BROWSABLE         ) n += 4 ;
-    n-= 1;
 
     if(static_icons[n] == NULL)
     {
         QList<QIcon> icons ;
 
         if(flags & DIR_FLAGS_ANONYMOUS_SEARCH)
-            icons.push_back(QIcon(":icons/search_red_128.png")) ;
+            icons.push_back(FilesDefs::getIconFromQtResourcePath(":icons/search_red_128.png")) ;
         else
-            icons.push_back(QIcon(":icons/void_128.png")) ;
+            icons.push_back(FilesDefs::getIconFromQtResourcePath(":icons/void_128.png")) ;
 
         if(flags & DIR_FLAGS_ANONYMOUS_DOWNLOAD)
-            icons.push_back(QIcon(":icons/anonymous_blue_128.png")) ;
+            icons.push_back(FilesDefs::getIconFromQtResourcePath(":icons/anonymous_blue_128.png")) ;
         else
-            icons.push_back(QIcon(":icons/void_128.png")) ;
+            icons.push_back(FilesDefs::getIconFromQtResourcePath(":icons/void_128.png")) ;
 
         if(flags & DIR_FLAGS_BROWSABLE)
-            icons.push_back(QIcon(":icons/browsable_green_128.png")) ;
+            icons.push_back(FilesDefs::getIconFromQtResourcePath(":icons/browsable_green_128.png")) ;
         else
-            icons.push_back(QIcon(":icons/void_128.png")) ;
+            icons.push_back(FilesDefs::getIconFromQtResourcePath(":icons/void_128.png")) ;
 
         QPixmap pix ;
         GxsIdDetails::GenerateCombinedPixmap(pix, icons, 128);
@@ -399,13 +399,13 @@ QVariant RetroshareDirModel::decorationRole(const DirDetails& details,int coln) 
         time_t now = time(NULL) ;
 
 		if(ageIndicator != IND_ALWAYS && now > details.max_mtime + ageIndicator)
-			return QIcon(":/images/folder_grey.png");
+			return FilesDefs::getIconFromQtResourcePath(":/images/folder_grey.png");
 		else if (ageIndicator == IND_LAST_DAY )
-			return QIcon(":/images/folder_green.png");
+			return FilesDefs::getIconFromQtResourcePath(":/images/folder_green.png");
 		else if (ageIndicator == IND_LAST_WEEK )
-			return QIcon(":/images/folder_yellow.png");
+			return FilesDefs::getIconFromQtResourcePath(":/images/folder_yellow.png");
 		else if (ageIndicator == IND_LAST_MONTH )
-			return QIcon(":/images/folder_red.png");
+			return FilesDefs::getIconFromQtResourcePath(":/images/folder_red.png");
 		else
 			return (QIcon(peerIcon));
 	}
@@ -414,13 +414,13 @@ QVariant RetroshareDirModel::decorationRole(const DirDetails& details,int coln) 
         time_t now = time(NULL) ;
 
 		if(ageIndicator != IND_ALWAYS && now > details.max_mtime + ageIndicator)
-			return QIcon(":/images/folder_grey.png");
+			return FilesDefs::getIconFromQtResourcePath(":/images/folder_grey.png");
 		else if (ageIndicator == IND_LAST_DAY )
-			return QIcon(":/images/folder_green.png");
+			return FilesDefs::getIconFromQtResourcePath(":/images/folder_green.png");
 		else if (ageIndicator == IND_LAST_WEEK )
-			return QIcon(":/images/folder_yellow.png");
+			return FilesDefs::getIconFromQtResourcePath(":/images/folder_yellow.png");
 		else if (ageIndicator == IND_LAST_MONTH )
-			return QIcon(":/images/folder_red.png");
+			return FilesDefs::getIconFromQtResourcePath(":/images/folder_red.png");
 		else
 			return QIcon(categoryIcon);
 	}
@@ -428,9 +428,9 @@ QVariant RetroshareDirModel::decorationRole(const DirDetails& details,int coln) 
 	{
 		// extensions predefined
         if(details.hash.isNull())
-            return QIcon(":/images/reset.png") ; // file is being hashed
+            return FilesDefs::getIconFromQtResourcePath(":/images/reset.png") ; // file is being hashed
         else
-            return FilesDefs::getIconFromFilename(QString::fromUtf8(details.name.c_str()));
+            return FilesDefs::getIconFromFileType(QString::fromUtf8(details.name.c_str()));
 	}
 	else
 		return QVariant();
@@ -521,7 +521,19 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 			case COLUMN_SIZE:
 				return  misc::friendlyUnit(details.count);
 			case COLUMN_AGE:
-				return  (details.type == DIR_TYPE_FILE)?(misc::timeRelativeToNow(details.max_mtime)):QString();
+			{
+				if(details.type == DIR_TYPE_FILE)
+					return misc::timeRelativeToNow(details.max_mtime);
+				else if(details.type == DIR_TYPE_EXTRA_FILE)
+				{
+					FileInfo fi;
+					if (rsFiles->FileDetails(details.hash, RS_FILE_HINTS_EXTRA , fi))
+						return misc::timeRelativeToNow((rstime_t)fi.age-(30 * 3600 * 24)); // AFI_DEFAULT_PERIOD
+					return QString();
+				}
+				else
+					return QString();
+			}
 			case COLUMN_FRIEND_ACCESS:
 				return QVariant();
 			case COLUMN_WN_VISU_DIR:
@@ -1104,15 +1116,9 @@ Qt::ItemFlags RetroshareDirModel::flags( const QModelIndex & index ) const
 /* Callback from Core*/
 void RetroshareDirModel::preMods()
 {
-    emit layoutAboutToBeChanged();
     mUpdating = true ;
-#if QT_VERSION < 0x050000
-	reset();
-#else
-	beginResetModel();
-	endResetModel();
-#endif
 
+	beginResetModel();
 #ifdef RDM_DEBUG
 	std::cerr << "RetroshareDirModel::preMods()" << std::endl;
 #endif
@@ -1121,20 +1127,14 @@ void RetroshareDirModel::preMods()
 /* Callback from Core*/
 void RetroshareDirModel::postMods()
 {
-//	emit layoutAboutToBeChanged();
     mUpdating = false ;
-#if QT_VERSION >= 0x040600
-	beginResetModel();
-#endif
-
 #ifdef RDM_DEBUG
 	std::cerr << "RetroshareDirModel::postMods()" << std::endl;
 #endif
 
-#if QT_VERSION >= 0x040600
 	endResetModel();
-#endif
-	emit layoutChanged();
+
+    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1,COLUMN_COUNT-1,(void*)NULL));
 }
 
 void FlatStyle_RDM::postMods()
@@ -1382,7 +1382,7 @@ void RetroshareDirModel::getFileInfoFromIndexList(const QModelIndexList& list, s
  * OLD RECOMMEND SYSTEM - DISABLED
  ******/
 
-void RetroshareDirModel::openSelected(const QModelIndexList &qmil)
+void RetroshareDirModel::openSelected(const QModelIndexList &qmil, bool openDir)
 {
 #ifdef RDM_DEBUG
 	std::cerr << "RetroshareDirModel::openSelected()" << std::endl;
@@ -1405,12 +1405,15 @@ void RetroshareDirModel::openSelected(const QModelIndexList &qmil)
 
 		QDir dir(QString::fromUtf8((*it).path.c_str()));
 		QString dest;
-		if ((*it).type & DIR_TYPE_FILE || (*it).type & DIR_TYPE_EXTRA_FILE) {
+		if ((*it).type & DIR_TYPE_FILE || (!openDir && (*it).type & DIR_TYPE_EXTRA_FILE)) {
 			dest = dir.absoluteFilePath(QString::fromUtf8(it->name.c_str()));
 		} else if ((*it).type & DIR_TYPE_DIR) {
 			dest = dir.absolutePath();
+		} else if (openDir) // extra
+		{
+			QDir d = QFileInfo(it->name.c_str()).absoluteDir();
+			dest = d.absolutePath();
 		}
-
 		std::cerr << "Opening this file: " << dest.toStdString() << std::endl ;
 
 		RsUrlHandler::openUrl(QUrl::fromLocalFile(dest));

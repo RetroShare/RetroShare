@@ -78,10 +78,10 @@ JsonApiServer::corsOptionsHeaders =
 #define INITIALIZE_API_CALL_JSON_CONTEXT \
 	RsGenericSerializer::SerializeContext cReq( \
 	            nullptr, 0, \
-	            RsGenericSerializer::SERIALIZATION_FLAG_YIELDING ); \
+	            RsSerializationFlags::YIELDING ); \
 	RsJson& jReq(cReq.mJson); \
 	if(session->get_request()->get_method() == "GET") \
-    { \
+	{ \
 	    const std::string jrqp(session->get_request()->get_query_parameter("jsonData")); \
 	    jReq.Parse(jrqp.c_str(), jrqp.size()); \
 	} \
@@ -165,6 +165,7 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 	RsThread::setStopTimeout(10);
 #endif
 
+#if !RS_VERSION_AT_LEAST(0,6,6)
 	registerHandler("/rsLoginHelper/createLocation",
 	                [this](const std::shared_ptr<rb::Session> session)
 	{
@@ -180,6 +181,7 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 			std::string errorMessage;
 			bool makeHidden = false;
 			bool makeAutoTor = false;
+			std::string createToken;
 
 			// deserialize input parameters from JSON
 			{
@@ -189,6 +191,7 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 				RS_SERIAL_PROCESS(password);
 				RS_SERIAL_PROCESS(makeHidden);
 				RS_SERIAL_PROCESS(makeAutoTor);
+				RS_SERIAL_PROCESS(createToken);
 			}
 
 			// call retroshare C++ API
@@ -196,8 +199,9 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 			            location, password, errorMessage, makeHidden,
 			            makeAutoTor );
 
-			if(retval)
-				authorizeUser(location.mLocationId.toStdString(),password);
+			std::string tokenUser, tokenPw;
+			if(retval && parseToken(createToken, tokenUser, tokenPw))
+				authorizeUser(tokenUser,tokenPw);
 
 			// serialize out parameters and return value to JSON
 			{
@@ -212,8 +216,9 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 			DEFAULT_API_CALL_JSON_RETURN(rb::OK);
 		} );
 	}, false);
+#endif // !RS_VERSION_AT_LEAST(0,6,6)
 
-	registerHandler("/rsLoginHelper/attemptLogin",
+	registerHandler("/rsLoginHelper/createLocationV2",
 	                [this](const std::shared_ptr<rb::Session> session)
 	{
 		auto reqSize = session->get_request()->get_header("Content-Length", 0);
@@ -223,28 +228,51 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 		{
 			INITIALIZE_API_CALL_JSON_CONTEXT;
 
-			RsPeerId account;
+			RsPeerId locationId;
+			RsPgpId pgpId;
+			std::string locationName;
+			std::string pgpName;
 			std::string password;
+
+			// JSON API only
+			std::string apiUser;
+			std::string apiPass;
 
 			// deserialize input parameters from JSON
 			{
 				RsGenericSerializer::SerializeContext& ctx(cReq);
 				RsGenericSerializer::SerializeJob j(RsGenericSerializer::FROM_JSON);
-				RS_SERIAL_PROCESS(account);
+				RS_SERIAL_PROCESS(locationId);
+				RS_SERIAL_PROCESS(pgpId);
+				RS_SERIAL_PROCESS(locationName);
+				RS_SERIAL_PROCESS(pgpName);
 				RS_SERIAL_PROCESS(password);
+
+				// JSON API only
+				RS_SERIAL_PROCESS(apiUser);
+				RS_SERIAL_PROCESS(apiPass);
 			}
 
-			// call retroshare C++ API
-			RsInit::LoadCertificateStatus retval =
-			        rsLoginHelper->attemptLogin(account, password);
+			std::error_condition retval;
 
-			if( retval == RsInit::OK )
-				authorizeUser(account.toStdString(), password);
+			if(apiUser.empty())
+				retval = RsJsonApiErrorNum::TOKEN_FORMAT_INVALID;
+
+			if(!retval)
+				retval = badApiCredientalsFormat(apiUser, apiPass);
+
+			if(!retval) // call retroshare C++ API
+				retval = rsLoginHelper->createLocationV2(
+				            locationId, pgpId, locationName, pgpName, password );
+
+			if(!retval) retval = authorizeUser(apiUser, apiPass);
 
 			// serialize out parameters and return value to JSON
 			{
 				RsGenericSerializer::SerializeContext& ctx(cAns);
 				RsGenericSerializer::SerializeJob j(RsGenericSerializer::TO_JSON);
+				RS_SERIAL_PROCESS(locationId);
+				RS_SERIAL_PROCESS(pgpId);
 				RS_SERIAL_PROCESS(retval);
 			}
 
@@ -352,7 +380,7 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 						rsEvents, "rsEvents", cAns, session ) )
 				return;
 
-			RsEventType eventType = RsEventType::NONE;
+			RsEventType eventType = RsEventType::__NONE;
 
 			// deserialize input parameters from JSON
 			{
@@ -395,7 +423,8 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 				} );
 			};
 
-			bool retval = rsEvents->registerEventsHandler(eventType,multiCallback, hId);
+			std::error_condition retval = rsEvents->registerEventsHandler(
+			            multiCallback, hId, eventType );
 
 			{
 				RsGenericSerializer::SerializeContext& ctx(cAns);
@@ -465,16 +494,19 @@ void JsonApiServer::registerHandler(
 		                const std::shared_ptr<rb::Session> session,
 		                const std::function<void (const std::shared_ptr<rb::Session>)>& callback )
 		{
+			/* Declare outside the lambda to avoid returning a dangling
+			 * reference */
+			RsWarn tWarn;
 			const auto authFail =
-			        [&path, &session](int status) -> RsWarn::stream_type&
+			        [&](int status) -> std::ostream&
 			{
 				/* Capture session by reference as it is cheaper then copying
 				 * shared_ptr by value which is not needed in this case */
 
 				session->close(status, corsOptionsHeaders);
-				return RsWarn() << "JsonApiServer authentication handler "
-				                   "blocked an attempt to call JSON API "
-				                   "authenticated method: " << path;
+				return tWarn << "JsonApiServer authentication handler "
+				                "blocked an attempt to call JSON API "
+				                "authenticated method: " << path;
 			};
 
 			if(session->get_request()->get_method() == "OPTIONS")

@@ -59,9 +59,10 @@
 //#define DEBUG_FORUMS
 
 /* Images for context menu icons */
-#define IMAGE_MESSAGE          ":/images/mail_new.png"
-#define IMAGE_MESSAGEREPLY     ":/images/mail_reply.png"
-#define IMAGE_MESSAGEEDIT      ":/images/edit_16.png"
+#define IMAGE_MESSAGE          ":/icons/mail/compose.png"
+#define IMAGE_REPLY            ":/icons/mail/reply.png"
+#define IMAGE_MESSAGEREPLY     ":/icons/mail/write-mail.png"
+#define IMAGE_MESSAGEEDIT      ":/icons/png/pencil-edit-button.png"
 #define IMAGE_MESSAGEREMOVE    ":/images/mail_delete.png"
 #define IMAGE_DOWNLOAD         ":/images/start.png"
 #define IMAGE_DOWNLOADALL      ":/images/startall.png"
@@ -122,9 +123,9 @@ public:
         {
         default:
         case 3:
-        case 0: icon = QIcon(IMAGE_VOID); break;
-        case 1: icon = QIcon(IMAGE_WARNING_YELLOW); break;
-        case 2: icon = QIcon(IMAGE_WARNING_RED); break;
+        case 0: icon = FilesDefs::getIconFromQtResourcePath(IMAGE_VOID); break;
+        case 1: icon = FilesDefs::getIconFromQtResourcePath(IMAGE_WARNING_YELLOW); break;
+        case 2: icon = FilesDefs::getIconFromQtResourcePath(IMAGE_WARNING_RED); break;
         }
 
 		QPixmap pix = icon.pixmap(r.size());
@@ -132,6 +133,13 @@ public:
 		// draw pixmap at center of item
 		const QPoint p = QPoint((r.width() - pix.width())/2, (r.height() - pix.height())/2);
 		painter->drawPixmap(r.topLeft() + p, pix);
+	}
+
+    virtual QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override
+	{
+        static auto img(FilesDefs::getPixmapFromQtResourcePath(IMAGE_WARNING_YELLOW));
+
+		return QSize(img.width()*1.2,option.rect.height());
 	}
 };
 
@@ -171,9 +179,9 @@ public:
 		else
 		{
 			if (unread)
-				icon = QIcon(":/images/message-state-unread.png");
+				icon = FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png");
 			else
-				icon = QIcon(":/images/message-state-read.png");
+				icon = FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png");
 		}
 
 		QPixmap pix = icon.pixmap(r.size());
@@ -182,94 +190,12 @@ public:
 		const QPoint p = QPoint((r.width() - pix.width())/2, (r.height() - pix.height())/2);
 		painter->drawPixmap(r.topLeft() + p, pix);
 	}
-};
 
-class AuthorItemDelegate: public QStyledItemDelegate
-{
-public:
-    AuthorItemDelegate() {}
-
-    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override
-    {
-		QStyleOptionViewItemV4 opt = option;
-		initStyleOption(&opt, index);
-
-		// disable default icon
-		opt.icon = QIcon();
-		const QRect r = option.rect;
-
-        RsGxsId id(index.data(Qt::UserRole).toString().toStdString());
-        QString str;
-        QList<QIcon> icons;
-        QString comment;
-
-        QFontMetricsF fm(option.font);
-        float f = fm.height();
-
-		QIcon icon ;
-
-		if(!GxsIdDetails::MakeIdDesc(id, true, str, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
-			icon = GxsIdDetails::getLoadingIcon(id);
-		else
-			icon = *icons.begin();
-
-		QPixmap pix = icon.pixmap(r.size());
-
-        return QSize(1.2*(pix.width() + fm.width(str)),std::max(1.1*pix.height(),1.4*fm.height()));
-    }
-
-    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex& index) const override
+	virtual QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override
 	{
-		if(!index.isValid())
-        {
-            std::cerr << "(EE) attempt to draw an invalid index." << std::endl;
-            return ;
-        }
+        static auto img(FilesDefs::getPixmapFromQtResourcePath(":/images/message-state-unread.png"));
 
-		QStyleOptionViewItemV4 opt = option;
-		initStyleOption(&opt, index);
-
-		// disable default icon
-		opt.icon = QIcon();
-		// draw default item
-		QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, 0);
-
-		const QRect r = option.rect;
-
-        RsGxsId id(index.data(Qt::UserRole).toString().toStdString());
-        QString str;
-        QList<QIcon> icons;
-        QString comment;
-
-        QFontMetricsF fm(painter->font());
-        float f = fm.height();
-
-		QIcon icon ;
-
-		if(!GxsIdDetails::MakeIdDesc(id, true, str, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
-			icon = GxsIdDetails::getLoadingIcon(id);
-		else
-			icon = *icons.begin();
-
-		unsigned int warning_level = qvariant_cast<unsigned int>(index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION).data(Qt::DecorationRole));
-
-        if(warning_level == 2)
-        {
-			str = tr("[Banned]");
-            icon = QIcon(IMAGE_BIOHAZARD);
-        }
-
-        if(index.data(RsGxsForumModel::MissingRole).toBool())
-			painter->drawText(r.topLeft() + QPoint(f/2.0,f*1.0), tr("[None]"));
-        else
-		{
-			QPixmap pix = icon.pixmap(r.size());
-			const QPoint p = QPoint(r.height()/2.0, (r.height() - pix.height())/2);
-
-			// draw pixmap at center of item
-			painter->drawPixmap(r.topLeft() + p, pix);
-			painter->drawText(r.topLeft() + QPoint(r.height()+ f/2.0 + f/2.0,f*1.0), str);
-		}
+		return QSize(img.width()*1.2,option.rect.height());
 	}
 };
 
@@ -304,6 +230,11 @@ void GxsForumThreadWidget::setTextColorUnread        (QColor color) { mTextColor
 void GxsForumThreadWidget::setTextColorUnreadChildren(QColor color) { mTextColorUnreadChildren = color; mThreadModel->setTextColorUnreadChildren(color);}
 void GxsForumThreadWidget::setTextColorNotSubscribed (QColor color) { mTextColorNotSubscribed  = color; mThreadModel->setTextColorNotSubscribed (color);}
 void GxsForumThreadWidget::setTextColorMissing       (QColor color) { mTextColorMissing        = color; mThreadModel->setTextColorMissing       (color);}
+// Suppose to be different from unread one
+void GxsForumThreadWidget::setTextColorPinned        (QColor color) { mTextColorPinned         = color; mThreadModel->setTextColorPinned        (color);}
+
+void GxsForumThreadWidget::setBackgroundColorPinned  (QColor color) { mBackgroundColorPinned   = color; mThreadModel->setBackgroundColorPinned   (color);}
+void GxsForumThreadWidget::setBackgroundColorFiltered(QColor color) { mBackgroundColorFiltered = color; mThreadModel->setBackgroundColorFiltered (color);}
 
 GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget *parent) :
 	GxsMessageFrameWidget(rsGxsForums, parent),
@@ -311,7 +242,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 {
 	ui->setupUi(this);
 
-	setUpdateWhenInvisible(true);
+	//setUpdateWhenInvisible(true);
 
     //mUpdating = false;
 	mUnreadCount = 0;
@@ -331,7 +262,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	ui->threadTreeWidget->setSortingEnabled(true);
 
     ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION,new DistributionItemDelegate()) ;
-    ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_AUTHOR,new AuthorItemDelegate()) ;
+    ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_AUTHOR,new GxsIdTreeItemDelegate()) ;
     ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_READ,new ReadStatusItemDelegate()) ;
 
     ui->threadTreeWidget->header()->setSortIndicatorShown(true);
@@ -380,9 +311,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 	mLastViewType = -1;
 
-	// load settings
-	processSettings(true);
-
     float f = QFontMetricsF(font()).height()/14.0f ;
 
 	/* Set header resize modes and initial section sizes */
@@ -390,9 +318,10 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	QHeaderView * ttheader = ui->threadTreeWidget->header () ;
 	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_DATE,  140*f);
 	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_TITLE, 440*f);
-	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, 24*f);
 	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_AUTHOR, 150*f);
-	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_READ,  24*f);
+
+    ui->threadTreeWidget->resizeColumnToContents(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION);
+    ui->threadTreeWidget->resizeColumnToContents(RsGxsForumModel::COLUMN_THREAD_READ);
 
 	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_TITLE,        QHeaderView::Interactive);
 	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_DATE,         QHeaderView::Interactive);
@@ -407,6 +336,9 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	ttheader->hideSection (RsGxsForumModel::COLUMN_THREAD_MSGID);
 	ttheader->hideSection (RsGxsForumModel::COLUMN_THREAD_DATA);
 
+	ttheader->setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(ttheader, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(headerContextMenuRequested(QPoint)));
+
 	ui->progressBar->hide();
 	ui->progressText->hide();
 
@@ -416,15 +348,12 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 	//ui->threadTreeWidget->installEventFilter(this) ;
 
-	ui->postText->clear() ;
-	ui->by_label->setId(RsGxsId()) ;
-	ui->time_label->clear();
-	ui->lineRight->hide();
-	ui->lineLeft->hide();
-	ui->by_text_label->hide();
-	ui->by_label->hide();
-	ui->postText->setImageBlockWidget(ui->imageBlockWidget) ;
-	ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages());
+	// load settings
+	processSettings(true);
+
+	mDisplayBannedText = false;
+
+	blankPost();
 
 	ui->subscribeToolButton->setToolTip(tr( "<p>Subscribing to the forum will gather \
 	                                        available posts from your subscribed friends, and make the \
@@ -433,10 +362,12 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	ui->threadTreeWidget->enableColumnCustomize(true);
 #endif
 
-    mEventHandlerId = 0;
-    // Needs to be asynced because this function is likely to be called by another thread!
-
-	rsEvents->registerEventsHandler(RsEventType::GXS_FORUMS, [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId );
+	mEventHandlerId = 0;
+	// Needs to be asynced because this function is called by another thread!
+	rsEvents->registerEventsHandler(
+	            [this](std::shared_ptr<const RsEvent> event)
+	{ RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this ); },
+	            mEventHandlerId, RsEventType::GXS_FORUMS );
 }
 
 void GxsForumThreadWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
@@ -462,30 +393,17 @@ void GxsForumThreadWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent
 
 void GxsForumThreadWidget::blank()
 {
-	ui->progressBar->hide();
-	ui->progressText->hide();
-	ui->postText->clear() ;
-	ui->by_label->setId(RsGxsId()) ;
-	ui->time_label->clear();
-	ui->lineRight->hide();
-	ui->lineLeft->hide();
-	ui->by_text_label->hide();
-	ui->by_label->hide();
-	ui->postText->setImageBlockWidget(ui->imageBlockWidget) ;
-	ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages());
-#ifdef SUSPENDED_CODE
-    ui->threadTreeWidget->clear();
-#endif
+	ui->subscribeToolButton->hide();
+	ui->newthreadButton->hide();
 	ui->forumName->setText("");
+	ui->progressText->hide();
+	ui->progressBar->hide();
+	ui->viewBox->setEnabled(false);
+	ui->filterLineEdit->setEnabled(false);
 
-    //mThreadModel->clear();
+	mThreadModel->clear();
 
-#ifdef SUSPENDED_CODE
-    mStateHelper->setWidgetEnabled(ui->newthreadButton, false);
-	mStateHelper->setWidgetEnabled(ui->previousButton, false);
-	mStateHelper->setWidgetEnabled(ui->nextButton, false);
-#endif
-	ui->versions_CB->hide();
+	blankPost();
 }
 
 GxsForumThreadWidget::~GxsForumThreadWidget()
@@ -535,9 +453,14 @@ void GxsForumThreadWidget::processSettings(bool load)
 	Settings->endGroup();
 }
 
-void GxsForumThreadWidget::changedSelection(const QModelIndex& current,const QModelIndex&)
+void GxsForumThreadWidget::changedSelection(const QModelIndex& current,const QModelIndex& last)
 {
-	changedThread(current);
+	if (current!=last
+	    && ( ( last.row()>=0 && last.column()>=0) //Double call when retrieve focus.
+	        || mThreadId.isNull() //For first click
+	       )
+	   )
+		changedThread(current);
 }
 
 void GxsForumThreadWidget::groupIdChanged()
@@ -564,60 +487,11 @@ QString GxsForumThreadWidget::groupName(bool withUnreadCount)
 QIcon GxsForumThreadWidget::groupIcon()
 {
 	if (mNewCount) {
-		return QIcon(":/images/message-state-new.png");
+		return FilesDefs::getIconFromQtResourcePath(":/images/message-state-new.png");
 	}
 
 	return QIcon();
 }
-
-#ifdef TO_REMOVE
-void GxsForumThreadWidget::changeEvent(QEvent *e)
-{
-	RsGxsUpdateBroadcastWidget::changeEvent(e);
-	switch (e->type()) {
-	case QEvent::StyleChange:
-		//calculateIconsAndFonts();
-		break;
-	default:
-		// remove compiler warnings
-		break;
-	}
-}
-
-static void removeMessages(std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgIds, QList<RsGxsMessageId> &removeMsgId)
-{
-	QList<RsGxsMessageId> removedMsgId;
-
-	for (auto grpIt = msgIds.begin(); grpIt != msgIds.end(); )
-    {
-		std::set<RsGxsMessageId> &msgs = grpIt->second;
-
-		QList<RsGxsMessageId>::const_iterator removeMsgIt;
-		for (removeMsgIt = removeMsgId.begin(); removeMsgIt != removeMsgId.end(); ++removeMsgIt) {
-			if(msgs.find(*removeMsgIt) != msgs.end())
-            {
-				removedMsgId.push_back(*removeMsgIt);
-				msgs.erase(*removeMsgIt);
-			}
-		}
-
-		if (msgs.empty()) {
-			std::map<RsGxsGroupId, std::set<RsGxsMessageId> >::iterator grpItErase = grpIt++;
-			msgIds.erase(grpItErase);
-		} else {
-			++grpIt;
-		}
-	}
-
-	if (!removedMsgId.isEmpty()) {
-		QList<RsGxsMessageId>::const_iterator removedMsgIt;
-		for (removedMsgIt = removedMsgId.begin(); removedMsgIt != removedMsgId.end(); ++removedMsgIt) {
-			// remove first message id
-			removeMsgId.removeOne(*removedMsgIt);
-		}
-	}
-}
-#endif
 
 void GxsForumThreadWidget::saveExpandedItems(QList<RsGxsMessageId>& expanded_items) const
 {
@@ -643,27 +517,18 @@ void GxsForumThreadWidget::recursSaveExpandedItems(const QModelIndex& index, QLi
 	}
 }
 
-void GxsForumThreadWidget::recursRestoreExpandedItems(const QModelIndex& index, const QList<RsGxsMessageId>& expanded_items)
+void GxsForumThreadWidget::recursRestoreExpandedItems(const QModelIndex& /*index*/, const QList<RsGxsMessageId>& expanded_items)
 {
  	for(auto it(expanded_items.begin());it!=expanded_items.end();++it)
         ui->threadTreeWidget->setExpanded( mThreadProxyModel->mapFromSource(mThreadModel->getIndexOfMessage(*it)) ,true) ;
 }
+
 
 void GxsForumThreadWidget::updateDisplay(bool complete)
 {
 #ifdef DEBUG_FORUMS
     std::cerr << "udateDisplay: groupId()=" << groupId()<< std::endl;
 #endif
-#ifdef TO_REMOVE
-	if(mUpdating)
-    {
-#ifdef DEBUG_FORUMS
-        std::cerr << "  Already updating. Return!"<< std::endl;
-#endif
-		return;
-    }
-#endif
-
 	if(groupId().isNull())
     {
 #ifdef DEBUG_FORUMS
@@ -679,53 +544,6 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 #endif
 		complete = true;
     }
-
-	if(!complete)
-	{
-#ifdef DEBUG_FORUMS
-        std::cerr << "  checking changed group data and msgs"<< std::endl;
-#endif
-
-		const std::set<RsGxsGroupId> &grpIdsMeta = getGrpIdsMeta();
-
-		if(grpIdsMeta.find(groupId())!=grpIdsMeta.end())
-        {
-#ifdef DEBUG_FORUMS
-			std::cerr << "    grpMeta change. reloading!" << std::endl;
-#endif
-			complete = true;
-        }
-
-		const std::set<RsGxsGroupId> &grpIds = getGrpIds();
-
-		if (grpIds.find(groupId())!=grpIds.end())
-        {
-#ifdef DEBUG_FORUMS
-			std::cerr << "    grp data change. reloading!" << std::endl;
-#endif
-			complete = true;
-        }
-		else
-		{
-			// retrieve the list of modified msg ids
-			// if current group is listed in the map, reload the whole hierarchy
-
-			std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgIds;
-			getAllMsgIds(msgIds);
-
-			//			if (!mIgnoredMsgId.empty())  /* Filter ignored messages */
-			//			removeMessages(msgIds, mIgnoredMsgId);
-
-			if (msgIds.find(groupId()) != msgIds.end())
-            {
-#ifdef DEBUG_FORUMS
-				std::cerr << "    msg data change. reloading!" << std::endl;
-#endif
-				complete=true;
-            }
-		}
-	}
-
 	if(complete) 	// need to update the group data, reload the messages etc.
 	{
 		saveExpandedItems(mSavedExpandedMessages);
@@ -768,64 +586,77 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 #ifdef DEBUG_FORUMS
     std::cerr << "Clicked on msg " << current_post.mMsgId << std::endl;
 #endif
-	QAction *editAct = new QAction(QIcon(IMAGE_MESSAGEEDIT), tr("Edit"), &contextMnu);
+	QAction *editAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MESSAGEEDIT), tr("Edit"), &contextMnu);
 	connect(editAct, SIGNAL(triggered()), this, SLOT(editforummessage()));
 
 	bool is_pinned = mForumGroup.mPinnedPosts.ids.find(mThreadId) != mForumGroup.mPinnedPosts.ids.end();
-	QAction *pinUpPostAct = new QAction(QIcon(IMAGE_PINPOST), (is_pinned?tr("Un-pin this post"):tr("Pin this post up")), &contextMnu);
+	QAction *pinUpPostAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PINPOST), (is_pinned?tr("Un-pin this post"):tr("Pin this post up")), &contextMnu);
 	connect(pinUpPostAct , SIGNAL(triggered()), this, SLOT(togglePinUpPost()));
 
-	QAction *replyAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply"), &contextMnu);
+	QAction *replyAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_REPLY), tr("Reply"), &contextMnu);
 	connect(replyAct, SIGNAL(triggered()), this, SLOT(replytoforummessage()));
 
-    QAction *replyauthorAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply to author with private message"), &contextMnu);
+    QAction *replyauthorAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MESSAGEREPLY), tr("Reply to author with private message"), &contextMnu);
     connect(replyauthorAct, SIGNAL(triggered()), this, SLOT(reply_with_private_message()));
 
-    QAction *flagaspositiveAct = new QAction(QIcon(IMAGE_POSITIVE_OPINION), tr("Give positive opinion"), &contextMnu);
+    QAction *flagaspositiveAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_POSITIVE_OPINION), tr("Give positive opinion"), &contextMnu);
     flagaspositiveAct->setToolTip(tr("This will block/hide messages from this person, and notify friend nodes.")) ;
 	flagaspositiveAct->setData(static_cast<uint32_t>(RsOpinion::POSITIVE));
     connect(flagaspositiveAct, SIGNAL(triggered()), this, SLOT(flagperson()));
 
-    QAction *flagasneutralAct = new QAction(QIcon(IMAGE_NEUTRAL_OPINION), tr("Give neutral opinion"), &contextMnu);
+    QAction *flagasneutralAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_NEUTRAL_OPINION), tr("Give neutral opinion"), &contextMnu);
     flagasneutralAct->setToolTip(tr("Doing this, you trust your friends to decide to forward this message or not.")) ;
 	flagasneutralAct->setData(static_cast<uint32_t>(RsOpinion::NEUTRAL));
     connect(flagasneutralAct, SIGNAL(triggered()), this, SLOT(flagperson()));
 
-    QAction *flagasnegativeAct = new QAction(QIcon(IMAGE_NEGATIVE_OPINION), tr("Give negative opinion"), &contextMnu);
+    QAction *flagasnegativeAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_NEGATIVE_OPINION), tr("Give negative opinion"), &contextMnu);
     flagasnegativeAct->setToolTip(tr("This will block/hide messages from this person, and notify friend nodes.")) ;
 	flagasnegativeAct->setData(static_cast<uint32_t>(RsOpinion::NEGATIVE));
     connect(flagasnegativeAct, SIGNAL(triggered()), this, SLOT(flagperson()));
 
-    QAction *newthreadAct = new QAction(QIcon(IMAGE_MESSAGE), tr("Start New Thread"), &contextMnu);
+    QAction *newthreadAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MESSAGE), tr("Start New Thread"), &contextMnu);
 	newthreadAct->setEnabled (IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags));
 	connect(newthreadAct , SIGNAL(triggered()), this, SLOT(createthread()));
 
 	QAction* expandAll = new QAction(tr("Expand all"), &contextMnu);
 	connect(expandAll, SIGNAL(triggered()), ui->threadTreeWidget, SLOT(expandAll()));
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+	QAction* expandSubtree = new QAction(tr("Expand subtree"), &contextMnu);
+	connect(expandSubtree, SIGNAL(triggered()), this, SLOT(expandSubtree()));
+#endif
+
 	QAction* collapseAll = new QAction(tr( "Collapse all"), &contextMnu);
 	connect(collapseAll, SIGNAL(triggered()), ui->threadTreeWidget, SLOT(collapseAll()));
 
-	QAction *markMsgAsRead = new QAction(QIcon(":/images/message-mail-read.png"), tr("Mark as read"), &contextMnu);
+	QAction *markMsgAsRead = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/message-mail-read.png"), tr("Mark as read"), &contextMnu);
 	connect(markMsgAsRead, SIGNAL(triggered()), this, SLOT(markMsgAsRead()));
 
-	QAction *markMsgAsReadChildren = new QAction(QIcon(":/images/message-mail-read.png"), tr("Mark as read") + " (" + tr ("with children") + ")", &contextMnu);
+	QAction *markMsgAsReadChildren = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/message-mail-read.png"), tr("Mark as read") + " (" + tr ("with children") + ")", &contextMnu);
 	connect(markMsgAsReadChildren, SIGNAL(triggered()), this, SLOT(markMsgAsReadChildren()));
 
-	QAction *markMsgAsUnread = new QAction(QIcon(":/images/message-mail.png"), tr("Mark as unread"), &contextMnu);
+	QAction *markMsgAsUnread = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/message-mail.png"), tr("Mark as unread"), &contextMnu);
 	connect(markMsgAsUnread, SIGNAL(triggered()), this, SLOT(markMsgAsUnread()));
 
-	QAction *markMsgAsUnreadChildren = new QAction(QIcon(":/images/message-mail.png"), tr("Mark as unread") + " (" + tr ("with children") + ")", &contextMnu);
+	QAction *markMsgAsUnreadChildren = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/message-mail.png"), tr("Mark as unread") + " (" + tr ("with children") + ")", &contextMnu);
 	connect(markMsgAsUnreadChildren, SIGNAL(triggered()), this, SLOT(markMsgAsUnreadChildren()));
 
-	QAction *showinpeopleAct = new QAction(QIcon(":/images/info16.png"), tr("Show author in people tab"), &contextMnu);
+	QAction *showinpeopleAct = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/info16.png"), tr("Show author in people tab"), &contextMnu);
 	connect(showinpeopleAct, SIGNAL(triggered()), this, SLOT(showInPeopleTab()));
+
+	bool has_children = false;
+	if (has_current_post) {
+		has_children = !current_post.mChildren.empty();
+	}
 
 	if (IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags))
     {
 		markMsgAsReadChildren->setEnabled(current_post.mPostFlags & ForumModelPostEntry::FLAG_POST_HAS_UNREAD_CHILDREN);
 		markMsgAsUnreadChildren->setEnabled(current_post.mPostFlags & ForumModelPostEntry::FLAG_POST_HAS_READ_CHILDREN);
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+		expandSubtree->setEnabled(has_children);
+#endif
 		replyAct->setEnabled (true);
 		replyauthorAct->setEnabled (true);
 	}
@@ -837,6 +668,22 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 		markMsgAsUnreadChildren->setDisabled(true);
 		replyAct->setDisabled (true);
         replyauthorAct->setDisabled (true);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+		expandSubtree->setDisabled(true);
+		expandSubtree->setVisible(false);
+#endif
+	}
+
+	// disable visibility for childless
+	if (has_current_post) {
+		// still no setEnabled
+		markMsgAsRead->setVisible(IS_MSG_UNREAD(current_post.mMsgStatus));
+		markMsgAsUnread->setVisible(!IS_MSG_UNREAD(current_post.mMsgStatus));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+		expandSubtree->setVisible(has_children);
+#endif
+		markMsgAsReadChildren->setVisible(has_children);
+		markMsgAsUnreadChildren->setVisible(has_children);
 	}
 
 	if(has_current_post)
@@ -870,8 +717,8 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	}
 
 	contextMnu.addAction(replyAct);
-  contextMnu.addAction(newthreadAct);
-    QAction* action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()));
+	contextMnu.addAction(newthreadAct);
+    QAction* action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()));
 	action->setEnabled(!groupId().isNull() && !mThreadId.isNull());
 	contextMnu.addSeparator();
 	contextMnu.addAction(markMsgAsRead);
@@ -880,6 +727,9 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	contextMnu.addAction(markMsgAsUnreadChildren);
     contextMnu.addSeparator();
     contextMnu.addAction(expandAll);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+	contextMnu.addAction(expandSubtree);
+#endif
 	contextMnu.addAction(collapseAll);
 
     if(has_current_post)
@@ -931,6 +781,64 @@ void GxsForumThreadWidget::contextMenuTextBrowser(QPoint point)
 	delete(contextMnu);
 }
 
+void GxsForumThreadWidget::headerContextMenuRequested(const QPoint &pos)
+{
+	QMenu* header_context_menu = new QMenu(tr("Show column"), this);
+
+	QAction* title = header_context_menu->addAction(QIcon(), tr("Title"));
+	title->setCheckable(true);
+	title->setChecked(!ui->threadTreeWidget->isColumnHidden(RsGxsForumModel::COLUMN_THREAD_TITLE));
+	title->setData(RsGxsForumModel::COLUMN_THREAD_TITLE);
+	connect(title, SIGNAL(toggled(bool)), this, SLOT(changeHeaderColumnVisibility(bool)));
+
+	QAction* read = header_context_menu->addAction(QIcon(), tr("Read"));
+	read->setCheckable(true);
+	read->setChecked(!ui->threadTreeWidget->isColumnHidden(RsGxsForumModel::COLUMN_THREAD_READ));
+	read->setData(RsGxsForumModel::COLUMN_THREAD_READ);
+	connect(read, SIGNAL(toggled(bool)), this, SLOT(changeHeaderColumnVisibility(bool)));
+
+	QAction* date = header_context_menu->addAction(QIcon(), tr("Date"));
+	date->setCheckable(true);
+	date->setChecked(!ui->threadTreeWidget->isColumnHidden(RsGxsForumModel::COLUMN_THREAD_DATE));
+	date->setData(RsGxsForumModel::COLUMN_THREAD_DATE);
+	connect(date, SIGNAL(toggled(bool)), this, SLOT(changeHeaderColumnVisibility(bool)));
+
+	QAction* distribution = header_context_menu->addAction(QIcon(), tr("Distribution"));
+	distribution->setCheckable(true);
+	distribution->setChecked(!ui->threadTreeWidget->isColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION));
+	distribution->setData(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION);
+	connect(distribution, SIGNAL(toggled(bool)), this, SLOT(changeHeaderColumnVisibility(bool)));
+
+	// QAction* author = header_context_menu->addAction(QIcon(), tr("Author"));
+	// author->setCheckable(true);
+	// author->setChecked(!ui->threadTreeWidget->isColumnHidden(RsGxsForumModel::COLUMN_THREAD_AUTHOR));
+	// author->setData(RsGxsForumModel::COLUMN_THREAD_AUTHOR);
+	// connect(author, SIGNAL(toggled(bool)), this, SLOT(changeHeaderColumnVisibility(bool)));
+
+	QAction* show_text_from_banned = header_context_menu->addAction(QIcon(), tr("Show text from banned persons"));
+	show_text_from_banned->setCheckable(true);
+	show_text_from_banned->setChecked(mDisplayBannedText);
+	connect(show_text_from_banned, SIGNAL(toggled(bool)), this, SLOT(showBannedText(bool)));
+	
+	header_context_menu->exec(mapToGlobal(pos));
+	delete(header_context_menu);
+}
+
+void GxsForumThreadWidget::changeHeaderColumnVisibility(bool visibility) {
+	QAction* the_action = qobject_cast<QAction*>(sender());
+	if ( !the_action ) {
+		return;
+	}
+	ui->threadTreeWidget->setColumnHidden(the_action->data().toInt(), !visibility);
+}
+
+void GxsForumThreadWidget::showBannedText(bool display) {
+	mDisplayBannedText = display;
+	if (!mThreadId.isNull()) {
+		updateMessageData(mThreadId);
+	}
+}
+
 #ifdef TODO
 bool GxsForumThreadWidget::eventFilter(QObject *obj, QEvent *event)
 {
@@ -963,11 +871,11 @@ void GxsForumThreadWidget::togglethreadview_internal()
 {
 //	if (ui->expandButton->isChecked()) {
 		ui->postText->setVisible(true);
-		ui->expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
+		ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/images/edit_remove24.png")));
 		ui->expandButton->setToolTip(tr("Hide"));
 //	} else  {
 //		ui->postText->setVisible(false);
-//		ui->expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+//		ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/images/edit_add24.png")));
 //		ui->expandButton->setToolTip(tr("Expand"));
 //	}
 }
@@ -985,66 +893,63 @@ void GxsForumThreadWidget::changedVersion()
 
 void GxsForumThreadWidget::changedThread(QModelIndex index)
 {
-    //if(mUpdating)
-    //    return;
+	if(!index.isValid())
+		return;
 
-    if(!index.isValid())
-        return;
+	RsGxsMessageId new_id(index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_MSGID).data(Qt::UserRole).toString().toStdString());
 
-    RsGxsMessageId new_id(index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_MSGID).data(Qt::UserRole).toString().toStdString());
-
-    if(new_id == mThreadId)
-        return;
+	if(new_id == mThreadId)
+		return;
 
 	mThreadId = mOrigThreadId = new_id;
 
 #ifdef DEBUG_FORUMS
-    std::cerr << "Switched to new thread ID " << mThreadId << std::endl;
+	std::cerr << "Switched to new thread ID " << mThreadId << std::endl;
 #endif
-	//ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages()) ;
 
 	insertMessage();
 
-    QModelIndex src_index = mThreadProxyModel->mapToSource(index);
+	if(Settings->getForumMsgSetToReadOnActivate())
+	{
 #ifdef DEBUG_FORUMS
-    std::cerr << "Setting message read status to true" << std::endl;
+		std::cerr << "Setting message read status to true" << std::endl;
 #endif
-	bool setToReadOnActive = Settings->getForumMsgSetToReadOnActivate();
-
-    if(setToReadOnActive)
-		mThreadModel->setMsgReadStatus(src_index, true,false);
+		markMsgAsReadUnread(true, false, false);
+	}
 }
 
 void GxsForumThreadWidget::clickedThread(QModelIndex index)
 {
 #ifdef DEBUG_FORUMS
-    std::cerr << "Clicked on message ID " << mThreadId << ", index=" << index << std::endl;
+	std::cerr << "Clicked on message ID " << mThreadId << ", index=" << index << std::endl;
 #endif
 
-    if(!index.isValid())
-    {
+	if(!index.isValid())
+	{
 #ifdef DEBUG_FORUMS
 		std::cerr << "  early return because index is invalid" << std::endl;
 #endif
 		return;
-    }
+	}
 
 
 	if (index.column() == RsGxsForumModel::COLUMN_THREAD_READ)
-    {
-        ForumModelPostEntry fmpe;
-
+	{
 		QModelIndex src_index = mThreadProxyModel->mapToSource(index);
 
-        mThreadModel->getPostData(src_index,fmpe);
+		ForumModelPostEntry fmpe;
+		mThreadModel->getPostData(src_index,fmpe);
 #ifdef DEBUG_FORUMS
 		std::cerr << "Setting message read status to false" << std::endl;
 #endif
-		mThreadModel->setMsgReadStatus(src_index, IS_MSG_UNREAD(fmpe.mMsgStatus),false);
+		// First Load Message (may change read status) to not recall it after index change.
+		changedThread(index);
+		// Now index is invalid as model was reloaded, Selection isn't updated.
+		markMsgAsReadUnread(IS_MSG_UNREAD(static_cast<uint32_t>(fmpe.mMsgStatus)), false, false, mThreadId);
 	}
 #ifdef DEBUG_FORUMS
-    else
-        std::cerr << "  doing nothing" << std::endl;
+	else
+		std::cerr << "  doing nothing" << std::endl;
 #endif
 }
 
@@ -1064,10 +969,55 @@ static QString getDurationString(uint32_t days)
     }
 }
 
-void GxsForumThreadWidget::updateForumDescription()
+void GxsForumThreadWidget::setForumDescriptionLoading()
 {
+    ui->postText->setText(tr("<b>Loading...<b>"));
+}
+
+void GxsForumThreadWidget::clearForumDescription()
+{
+    ui->postText->clear();
+}
+
+void GxsForumThreadWidget::blankPost()
+{
+	ui->newmessageButton->setEnabled(false);
+	ui->previousButton->setEnabled(false);
+	ui->nextButton->setEnabled(false);
+	ui->nextUnreadButton->setEnabled(false);
+	ui->downloadButton->setEnabled(false);
+	ui->lineLeft->hide();
+	ui->time_label->clear();
+	ui->versions_CB->hide();
+	ui->lineRight->hide();
+	ui->by_text_label->hide();
+	ui->by_label->setId(RsGxsId()) ;
+	ui->by_label->hide();
+	ui->expandButton->hide();
+
+	ui->postText->clear() ;
+	ui->postText->setImageBlockWidget(ui->imageBlockWidget) ;
+	ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages());
+
+}
+
+void GxsForumThreadWidget::updateForumDescription(bool success)
+{
+	if(!success)
+	{
+		blank();
+		QString forum_description = QString("<b>ERROR:</b> Forum could not be loaded. Database might be in heavy use. Please try later.");
+		ui->postText->setText(forum_description);
+		mStateHelper->setWidgetEnabled(ui->newthreadButton, false);
+		return;
+	}
+
+    std::cerr << "Updating forum description" << std::endl;
     if (!mThreadId.isNull())
         return;
+
+	// still call it to not left leftovers from previous post if any
+	blankPost();
 
     RsIdentityDetails details;
 
@@ -1077,7 +1027,10 @@ void GxsForumThreadWidget::updateForumDescription()
 
     const RsGxsForumGroup& group = mForumGroup;
 
-    ui->forumName->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
+	ui->newthreadButton->show();
+	ui->forumName->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
+	ui->viewBox->setEnabled(true);
+	ui->filterLineEdit->setEnabled(true);
 
     QString anti_spam_features1 ;
     QString forum_description;
@@ -1190,6 +1143,10 @@ void GxsForumThreadWidget::insertMessage()
 		return;
 	}
 
+	/* blank text, incase we get nothing */
+	blankPost();
+	ui->nextUnreadButton->setEnabled(true);
+
     // We use this instead of getCurrentIndex() because right here the currentIndex() is not set yet.
 
 	QModelIndex index = mThreadProxyModel->mapFromSource(mThreadModel->getIndexOfMessage(mOrigThreadId));
@@ -1214,16 +1171,7 @@ void GxsForumThreadWidget::insertMessage()
 		return;
 	}
 
-	mStateHelper->setWidgetEnabled(ui->newmessageButton, (IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags) && mThreadId.isNull() == false));
-
-	/* blank text, incase we get nothing */
-	ui->postText->clear();
-	ui->by_label->setId(RsGxsId()) ;
-	ui->time_label->clear();
-	ui->lineRight->hide();
-	ui->lineLeft->hide();
-	ui->by_text_label->hide();
-	ui->by_label->hide();
+	ui->newmessageButton->setEnabled(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags) && mThreadId.isNull() == false);
 
     // add/show combobox for versions, if applicable, and enable it. If no older versions of the post available, hide the combobox.
 
@@ -1277,6 +1225,19 @@ void GxsForumThreadWidget::insertMessage()
 //    markMsgAsRead();
 }
 
+void GxsForumThreadWidget::setMessageLoadingError(const QString& error)
+{
+	ui->time_label->setText(QString(""));
+	ui->by_label->setId(RsGxsId());
+	ui->lineRight->show();
+	ui->lineLeft->show();
+	ui->by_text_label->show();
+	ui->by_label->show();
+	ui->threadTreeWidget->setFocus();
+
+    ui->postText->setText(error);
+}
+
 void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 {
 	/* As some time has elapsed since request - check that this is still the current msg.
@@ -1300,54 +1261,60 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 	        rsReputations->overallReputationLevel(msg.mMeta.mAuthorId);
 	bool redacted =
 	        (overall_reputation == RsReputationLevel::LOCALLY_NEGATIVE);
-    
-#ifdef TO_REMOVE
-	bool setToReadOnActive = Settings->getForumMsgSetToReadOnActivate();
-	uint32_t status = msg.mMeta.mMsgStatus ;//item->data(RsGxsForumModel::COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
 
-    QModelIndex index = getCurrentIndex();
-	if (IS_MSG_NEW(status)) {
-		if (setToReadOnActive) {
-			/* set to read */
-			mThreadModel->setMsgReadStatus(mThreadProxyModel->mapToSource(index),true,false);
-		} else {
-			/* set to unread by user */
-			mThreadModel->setMsgReadStatus(mThreadProxyModel->mapToSource(index),false,false);
-		}
-	} else {
-		if (setToReadOnActive && IS_MSG_UNREAD(status)) {
-			/* set to read */
-			mThreadModel->setMsgReadStatus(mThreadProxyModel->mapToSource(index), true,false);
-		}
-	}
-#endif
-
-	ui->time_label->setText(DateTime::formatLongDateTime(msg.mMeta.mPublishTs));
-	ui->by_label->setId(msg.mMeta.mAuthorId);
-	ui->lineRight->show();
+	// TODO enabled even when there are no new message
+	ui->nextUnreadButton->setEnabled(true);
 	ui->lineLeft->show();
+	ui->time_label->setText(DateTime::formatLongDateTime(msg.mMeta.mPublishTs));
+	ui->lineRight->show();
 	ui->by_text_label->show();
+	ui->by_label->setId(msg.mMeta.mAuthorId);
 	ui->by_label->show();
 	ui->threadTreeWidget->setFocus();
 
-	if(redacted)
-	{
-		QString extraTxt = tr( "<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(msg.mMeta.mAuthorId.toStdString())) ;
-		extraTxt +=        tr( "<UL><li><b><font color=\"#ff0000\">Messages from this author are not forwarded. </font></b></li>") ;
-		extraTxt +=        tr( "<li><b><font color=\"#ff0000\">Messages from this author are replaced by this text. </font></b></li></ul>") ;
-		extraTxt +=        tr( "<p><b><font color=\"#ff0000\">You can force the visibility and forwarding of messages by setting a different opinion for that Id in People's tab.</font></b></p>") ;
+	QString banned_text_info = "";
+	if(redacted) {
+		ui->downloadButton->setDisabled(true);
+		if (!mDisplayBannedText) {
+			QString extraTxt = tr( "<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(msg.mMeta.mAuthorId.toStdString())) ;
+			extraTxt +=        tr( "<UL><li><b><font color=\"#ff0000\">Messages from this author are not forwarded. </font></b></li>") ;
+			extraTxt +=        tr( "<li><b><font color=\"#ff0000\">Messages from this author are replaced by this text. </font></b></li></ul>") ;
+			extraTxt +=        tr( "<p><b><font color=\"#ff0000\">You can force the visibility and forwarding of messages by setting a different opinion for that Id in People's tab.</font></b></p>") ;
 
-		ui->postText->setHtml(extraTxt) ;
-	}
-	else
-	{
-        uint32_t flags = RSHTML_FORMATTEXT_EMBED_LINKS;
-        if(Settings->getForumLoadEmoticons())
-            flags |= RSHTML_FORMATTEXT_EMBED_SMILEYS ;
+			ui->postText->setHtml(extraTxt) ;
+			return;
+		}
+		else {
+			RsIdentityDetails details;
+			rsIdentity->getIdDetails(msg.mMeta.mAuthorId, details);
+			QString name = GxsIdDetails::getName(details);
 
-		QString extraTxt = RsHtml().formatText(ui->postText->document(), QString::fromUtf8(msg.mMsg.c_str()),flags);
-		ui->postText->setHtml(extraTxt);
+			banned_text_info += "<p><font color=\"#e00000\"><b>" + tr( "The author of this message (with ID %1) is banned. And named by name ( %2 )").arg(QString::fromStdString(msg.mMeta.mAuthorId.toStdString()), name) + "</b>";
+			banned_text_info += "<ul><li><b><font color=\"#e00000\">" + tr( "Messages from this author are not forwarded.") + "</font></b></li></ul>";
+			banned_text_info += "<p><b><font color=\"#e00000\">" + tr( "You can force the visibility and forwarding of messages by setting a different opinion for that Id in People's tab.") + "</font></b></p><hr>";
+		}
 	}
+
+	uint32_t flags = RSHTML_FORMATTEXT_EMBED_LINKS;
+	if(Settings->getForumLoadEmoticons())
+		flags |= RSHTML_FORMATTEXT_EMBED_SMILEYS ;
+	flags |= RSHTML_OPTIMIZEHTML_MASK;
+
+	QColor backgroundColor = ui->postText->palette().base().color();
+	qreal desiredContrast = Settings->valueFromGroup("Forum",
+		"MinimumContrast", 4.5).toDouble();
+	int desiredMinimumFontSize = Settings->valueFromGroup("Forum",
+		"MinimumFontSize", 10).toInt();
+
+	QString extraTxt = banned_text_info + RsHtml().formatText(ui->postText->document(),
+		QString::fromUtf8(msg.mMsg.c_str()), flags
+			, backgroundColor, desiredContrast, desiredMinimumFontSize
+		);
+	ui->postText->setHtml(extraTxt);
+
+	QStringList urls;
+	RsHtml::findAnchors(ui->postText->toHtml(), urls);
+	ui->downloadButton->setEnabled(urls.count() > 0);
 }
 
 void GxsForumThreadWidget::previousMessage()
@@ -1368,8 +1335,8 @@ void GxsForumThreadWidget::previousMessage()
 
 		if (prevItem.isValid()) {
 			ui->threadTreeWidget->setCurrentIndex(prevItem);
+			ui->threadTreeWidget->scrollTo(ui->threadTreeWidget->currentIndex());//May change if model reloaded
 			ui->threadTreeWidget->setFocus();
-			changedThread(prevItem);
 		}
 	}
 	ui->previousButton->setEnabled(index-1 > 0);
@@ -1395,8 +1362,8 @@ void GxsForumThreadWidget::nextMessage()
 
 		if (nextItem.isValid()) {
 			ui->threadTreeWidget->setCurrentIndex(nextItem);
+			ui->threadTreeWidget->scrollTo(ui->threadTreeWidget->currentIndex()); //May change if model reloaded
 			ui->threadTreeWidget->setFocus();
-			changedThread(nextItem);
 		}
 	}
 	ui->previousButton->setEnabled(true);
@@ -1440,29 +1407,31 @@ void GxsForumThreadWidget::nextUnreadMessage()
 	}
 
 	ui->threadTreeWidget->setCurrentIndex(index);
-	ui->threadTreeWidget->scrollTo(index);
-	changedThread(index);
+	ui->threadTreeWidget->scrollTo(ui->threadTreeWidget->currentIndex());//May change if model reloaded
 }
 
-void GxsForumThreadWidget::markMsgAsReadUnread (bool read, bool children, bool forum)
+void GxsForumThreadWidget::markMsgAsReadUnread (bool read, bool children, bool forum, RsGxsMessageId msgId /*= RsGxsMessageId()*/)
 {
 	if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) {
 		return;
 	}
+	saveExpandedItems(mSavedExpandedMessages);
 
-    if(forum)
-		mThreadModel->setMsgReadStatus(mThreadModel->root(),read,children);
-    else
+	QModelIndex src_index;
+	if(forum)
+		src_index = mThreadModel->root();
+	else
 	{
-		QModelIndexList selectedIndexes = ui->threadTreeWidget->selectionModel()->selectedIndexes();
-
-		if(selectedIndexes.size() != RsGxsForumModel::COLUMN_THREAD_NB_COLUMNS)	// check that a single row is selected
-			return ;
-
-		QModelIndex index = *selectedIndexes.begin();
-
-		mThreadModel->setMsgReadStatus(mThreadProxyModel->mapToSource(index),read,children);
+		if (!msgId.isNull())
+			src_index = mThreadProxyModel->mapToSource(getCurrentIndex());
+		else
+			src_index = mThreadModel->getIndexOfMessage(mThreadId);
 	}
+	mThreadModel->setMsgReadStatus(src_index,read,children);
+
+	//Restore Selection
+	whileBlocking(ui->threadTreeWidget)->setCurrentIndex(mThreadProxyModel->mapFromSource(mThreadModel->getIndexOfMessage(mThreadId)));
+	recursRestoreExpandedItems(QModelIndex(),mSavedExpandedMessages);
 }
 
 void GxsForumThreadWidget::markMsgAsRead()
@@ -1490,6 +1459,20 @@ void GxsForumThreadWidget::setAllMessagesReadDo(bool read, uint32_t &/*token*/)
 	markMsgAsReadUnread(read, true, true);
 }
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+void GxsForumThreadWidget::expandSubtree() {
+	QAction* the_action = qobject_cast<QAction*>(sender());
+	if (!the_action) {
+		return;
+	}
+	const QModelIndex current_index = ui->threadTreeWidget->currentIndex();
+	if (!current_index.isValid()) {
+		return;
+	}
+	ui->threadTreeWidget->expandRecursively(current_index);
+}
+#endif
+
 bool GxsForumThreadWidget::navigate(const RsGxsMessageId &msgId)
 {
     QModelIndex source_index = mThreadModel->getIndexOfMessage(msgId);
@@ -1505,9 +1488,8 @@ bool GxsForumThreadWidget::navigate(const RsGxsMessageId &msgId)
     QModelIndex indx = mThreadProxyModel->mapFromSource(source_index);
 
 	ui->threadTreeWidget->setCurrentIndex(indx);
-	ui->threadTreeWidget->scrollTo(indx);
+	ui->threadTreeWidget->scrollTo(ui->threadTreeWidget->currentIndex());//May change if model reloaded
 	ui->threadTreeWidget->setFocus();
-    changedThread(indx);
 	return true;
 }
 
@@ -1660,7 +1642,7 @@ void GxsForumThreadWidget::async_msg_action(const MsgMethod &action)
 
 		if(!rsGxsForums->getForumContent(groupId(),msgs_to_request,msgs))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum group info for forum " << groupId() << std::endl;
+			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum message info for forum " << groupId() << " and thread " << mThreadId << std::endl;
 			return;
         }
 
@@ -1834,10 +1816,26 @@ void GxsForumThreadWidget::filterItems(const QString& text)
     // We do this in order to trigger a new filtering action in the proxy model.
 	mThreadProxyModel->setFilterRegExp(QRegExp(QString(RsGxsForumModel::FilterString))) ;
 
-    if(!lst.empty())
+	if(!lst.empty())
 		ui->threadTreeWidget->expandAll();
-    else
+	else {
+		// currentIndex() not on the clicked message, so not this way
+		// if (!mThreadId.isNull()) {
+		// 	an_index = mThreadProxyModel->mapToSource(ui->threadTreeWidget->currentIndex());
+		// }
 		ui->threadTreeWidget->collapseAll();
+		if (!mThreadId.isNull()) {
+			// ...but this one
+			QModelIndex an_index = mThreadModel->getIndexOfMessage(mThreadId);
+			if (an_index.isValid()) {
+				QModelIndex the_index = mThreadProxyModel->mapFromSource(an_index);
+				ui->threadTreeWidget->setCurrentIndex(the_index);
+				ui->threadTreeWidget->scrollTo(the_index);
+				// don't change focus
+				// ui->threadTreeWidget->setFocus();
+			}
+		}
+    }
 
 	if(count > 0)
 		ui->filterLineEdit->setToolTip(tr("No result.")) ;
@@ -1851,25 +1849,27 @@ void GxsForumThreadWidget::filterItems(const QString& text)
 
 void GxsForumThreadWidget::postForumLoading()
 {
+	if(groupId().isNull())
+		return;
+
 #ifdef DEBUG_FORUMS
-    std::cerr << "Post forum loading..." << std::endl;
+	std::cerr << "Post forum loading..." << std::endl;
 #endif
-    if(!mNavigatePendingMsgId.isNull() && mThreadModel->getIndexOfMessage(mNavigatePendingMsgId).isValid())
-    {
+	if(!mNavigatePendingMsgId.isNull() && mThreadModel->getIndexOfMessage(mNavigatePendingMsgId).isValid())
+	{
 #ifdef DEBUG_FORUMS
-        std::cerr << "Pending msg navigation: " << mNavigatePendingMsgId << ". Using it as new thread Id" << std::endl;
+		std::cerr << "Pending msg navigation: " << mNavigatePendingMsgId << ". Using it as new thread Id" << std::endl;
 #endif
 
-        QModelIndex source_index = mThreadModel->getIndexOfMessage(mNavigatePendingMsgId);
-        QModelIndex index = mThreadProxyModel->mapFromSource(source_index);
+		QModelIndex source_index = mThreadModel->getIndexOfMessage(mNavigatePendingMsgId);
+		QModelIndex index = mThreadProxyModel->mapFromSource(source_index);
 
 		ui->threadTreeWidget->selectionModel()->setCurrentIndex(index,QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
-		ui->threadTreeWidget->scrollTo(index);
+		ui->threadTreeWidget->scrollTo(ui->threadTreeWidget->currentIndex());//May change if model reloaded
 
-        changedThread(index);
-        mNavigatePendingMsgId.clear();
-    }
-    else
+		mNavigatePendingMsgId.clear();
+	}
+	else
 	{
 
 		QModelIndex source_index = mThreadModel->getIndexOfMessage(mThreadId);
@@ -1878,7 +1878,7 @@ void GxsForumThreadWidget::postForumLoading()
 		{
 			QModelIndex index = mThreadProxyModel->mapFromSource(source_index);
 			ui->threadTreeWidget->selectionModel()->setCurrentIndex(index,QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
-			ui->threadTreeWidget->scrollTo(index);
+			ui->threadTreeWidget->scrollTo(ui->threadTreeWidget->currentIndex());//May change if model reloaded
 #ifdef DEBUG_FORUMS
 			std::cerr << "  re-selecting index of message " << mThreadId << " to " << source_index.row() << "," << source_index.column() << " " << (void*)source_index.internalPointer() << std::endl;
 #endif
@@ -1896,13 +1896,17 @@ void GxsForumThreadWidget::postForumLoading()
 		// we also need to restore expanded threads
 	}
 
+	ui->newthreadButton->show();
 	ui->forumName->setText(QString::fromUtf8(mForumGroup.mMeta.mGroupName.c_str()));
 	ui->threadTreeWidget->sortByColumn(RsGxsForumModel::COLUMN_THREAD_DATE, Qt::DescendingOrder);
-    ui->threadTreeWidget->update();
+	ui->threadTreeWidget->update();
+	ui->viewBox->setEnabled(true);
+	ui->filterLineEdit->setEnabled(true);
 
-    recursRestoreExpandedItems(mThreadProxyModel->mapFromSource(mThreadModel->root()),mSavedExpandedMessages);
-    //mUpdating = false;
+	recursRestoreExpandedItems(mThreadProxyModel->mapFromSource(mThreadModel->root()),mSavedExpandedMessages);
+	//mUpdating = false;
 }
+
 void GxsForumThreadWidget::updateGroupData()
 {
     if(groupId().isNull())
@@ -1912,6 +1916,8 @@ void GxsForumThreadWidget::updateGroupData()
     // ui->threadTreeWidget->selectionModel()->reset();
     // mThreadProxyModel->clear();
 
+	setForumDescriptionLoading();
+
 	RsThread::async([this]()
 	{
         // 1 - get message data from p3GxsForums
@@ -1920,41 +1926,41 @@ void GxsForumThreadWidget::updateGroupData()
 		std::vector<RsGxsForumGroup> groups;
 
         forumIds.push_back(groupId());
+        bool success = false;
 
 		if(!rsGxsForums->getForumsInfo(forumIds,groups))
-		{
 			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum group info for forum " << groupId() << std::endl;
-			return;
-        }
-
-        if(groups.size() != 1)
-        {
+		else if(groups.size() != 1)
 			std::cerr << __PRETTY_FUNCTION__ << " obtained more than one group info for forum " << groupId() << std::endl;
-			return;
-        }
+        else
+            success = true;
 
-        // 2 - sort the messages into a proper hierarchy
-
-        RsGxsForumGroup *group = new RsGxsForumGroup(groups[0]);	// we use a pointer in order to avoid group deletion while we're in the thread.
-
-        // 3 - update the model in the UI thread.
-
-        RsQThreadUtils::postToObject( [group,this]()
+		if(success)
 		{
-			/* Here it goes any code you want to be executed on the Qt Gui
+			// 2 - sort the messages into a proper hierarchy
+
+			RsGxsForumGroup group(groups[0]);	// we use a copy to share the object in order to avoid group deletion while we're in the thread.
+
+			// 3 - update the model in the UI thread.
+
+			RsQThreadUtils::postToObject( [group,this]()
+			{
+				/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-			mForumGroup = *group;
-            delete group;
+				mForumGroup = group;
+				mThreadId.clear();
 
-			ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
-			ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) ;
+				ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
+				ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) ;
 
-            updateForumDescription();
+				updateForumDescription(true);
 
-		}, this );
-
+			}, this );
+		}
+		else
+			RsQThreadUtils::postToObject( [this]() { updateForumDescription(false); },this);
     });
 }
 
@@ -1972,17 +1978,18 @@ void GxsForumThreadWidget::updateMessageData(const RsGxsMessageId& msgId)
         std::vector<RsGxsForumMsg> msgs;
 
         msgs_to_request.insert(msgId);
+        QString error_string;
 
 		if(!rsGxsForums->getForumContent(groupId(),msgs_to_request,msgs))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum group info for forum " << groupId() << std::endl;
-			return;
+			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve message info for forum " << groupId() << " and MsgId " << msgId << std::endl;
+            error_string = tr("Failed to retrieve this message. Is the database currently overloaded?");
         }
 
         if(msgs.empty())
         {
 			std::cerr << __PRETTY_FUNCTION__ << " no posts for msgId " << msgId << ". Database corruption?" << std::endl;
-            return;
+            error_string = tr("No data for this message. Is the database corrupted?");
         }
         if(msgs.size() > 1)
         {
@@ -1990,26 +1997,32 @@ void GxsForumThreadWidget::updateMessageData(const RsGxsMessageId& msgId)
             std::cerr << "Messages are:" << std::endl;
             for(auto it(msgs.begin());it!=msgs.end();++it)
                 std::cerr << (*it).mMeta << std::endl;
+
+            error_string = tr("More than one entry for this message. Is the database corrupted?");
         }
 
-        // 2 - sort the messages into a proper hierarchy
-
-        RsGxsForumMsg *msg = new RsGxsForumMsg(msgs[0]);
-
-        // 3 - update the model in the UI thread.
-
-        RsQThreadUtils::postToObject( [msg,this]()
+        if(error_string.isNull())
 		{
-			/* Here it goes any code you want to be executed on the Qt Gui
+			// 2 - sort the messages into a proper hierarchy
+
+			RsGxsForumMsg msg(msgs[0]);
+
+			// 3 - update the model in the UI thread.
+
+			RsQThreadUtils::postToObject( [msg,this]()
+			{
+				/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-			insertMessageData(*msg);
+				insertMessageData(msg);
 
-            delete msg;
-			ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
-			ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) ;
-		}, this );
+				ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
+				ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) ;
+			}, this );
+		}
+        else
+            RsQThreadUtils::postToObject( [error_string,this](){ setMessageLoadingError(error_string); } );
     });
 }
 

@@ -23,6 +23,10 @@
 #ifndef ELNODE_H
 #define ELNODE_H
 
+#include "graphwidget.h"
+
+#include <retroshare/rstypes.h>
+
 #include <QApplication>
 #if QT_VERSION >= 0x040600
 #include <QGraphicsObject>
@@ -30,9 +34,7 @@
 #include <QGraphicsItem>
 #endif
 #include <QList>
-
-#include <retroshare/rstypes.h>
-#include "graphwidget.h"
+#include <QPainterPath>
 
 class Edge;
 QT_BEGIN_NAMESPACE

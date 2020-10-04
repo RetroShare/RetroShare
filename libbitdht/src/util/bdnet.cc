@@ -285,12 +285,6 @@ int sleep(unsigned int sec)
 }
 #endif
 
-int usleep(unsigned int usec)
-{ 
-	Sleep(usec / 1000); 
-	return 0;
-}
-
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #else // UNIX
 

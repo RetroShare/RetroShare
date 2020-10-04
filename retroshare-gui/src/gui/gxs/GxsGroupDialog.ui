@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>563</height>
+    <width>1231</width>
+    <height>967</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -59,159 +59,113 @@
          <property name="title">
           <string/>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <property name="leftMargin">
-           <number>4</number>
-          </property>
+         <layout class="QGridLayout" name="gridLayout">
           <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>4</number>
+           <number>3</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>3</number>
           </property>
-          <item>
-           <layout class="QGridLayout" name="gridLayout_4">
-            <property name="horizontalSpacing">
+          <item row="0" column="0" rowspan="2">
+           <widget class="ClickableLabel" name="groupLogo">
+            <property name="minimumSize">
+             <size>
+              <width>64</width>
+              <height>64</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>64</width>
+              <height>64</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click to add a Logo&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <property name="pixmap">
+             <pixmap resource="../icons.qrc">:/icons/png/add-image.png</pixmap>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" colspan="5">
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <property name="spacing">
              <number>6</number>
             </property>
-            <property name="verticalSpacing">
-             <number>0</number>
+            <property name="leftMargin">
+             <number>6</number>
             </property>
-            <item row="0" column="0" rowspan="2">
-             <widget class="QLabel" name="groupLogo">
-              <property name="minimumSize">
-               <size>
-                <width>64</width>
-                <height>64</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>64</width>
-                <height>64</height>
-               </size>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-              <property name="pixmap">
-               <pixmap resource="../images.qrc">:/images/channels.png</pixmap>
-              </property>
-              <property name="scaledContents">
-               <bool>true</bool>
+            <item>
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>Name</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
-             <layout class="QHBoxLayout" name="horizontalLayout">
-              <property name="spacing">
-               <number>6</number>
-              </property>
-              <property name="leftMargin">
-               <number>6</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="label">
-                <property name="text">
-                 <string>Name</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="groupName"/>
-              </item>
-             </layout>
-            </item>
-            <item row="1" column="1">
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
-              <property name="spacing">
-               <number>9</number>
-              </property>
-              <property name="leftMargin">
-               <number>3</number>
-              </property>
-              <property name="topMargin">
-               <number>3</number>
-              </property>
-              <property name="rightMargin">
-               <number>3</number>
-              </property>
-              <property name="bottomMargin">
-               <number>3</number>
-              </property>
-              <item>
-               <widget class="QPushButton" name="addLogoButton">
-                <property name="text">
-                 <string>Add Icon</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="../images.qrc">
-                  <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_2">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_2">
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The identity here can be used to send feedback.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>Owner:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="GxsIdChooser" name="idChooser"/>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="addAdmins_cb">
-                <property name="toolTip">
-                 <string/>
-                </property>
-                <property name="text">
-                 <string>Add moderators</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="../icons.qrc">
-                  <normaloff>:/icons/settings/permissions.svg</normaloff>:/icons/settings/permissions.svg</iconset>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="pubKeyShare_cb">
-                <property name="toolTip">
-                 <string>Key recipients can publish to restricted-type group and can view and publish for private-type channels</string>
-                </property>
-                <property name="text">
-                 <string>Share Publish Key</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
+            <item>
+             <widget class="QLineEdit" name="groupName"/>
             </item>
            </layout>
+          </item>
+          <item row="1" column="1">
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>132</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLabel" name="label_2">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The identity here can be used to send feedback.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Owner:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="GxsIdChooser" name="idChooser"/>
+          </item>
+          <item row="1" column="4">
+           <widget class="QCheckBox" name="addAdmins_cb">
+            <property name="toolTip">
+             <string/>
+            </property>
+            <property name="text">
+             <string>Add moderators</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/settings/permissions.svg</normaloff>:/icons/settings/permissions.svg</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="5">
+           <widget class="QCheckBox" name="pubKeyShare_cb">
+            <property name="toolTip">
+             <string>Key recipients can publish to restricted-type group and can view and publish for private-type channels</string>
+            </property>
+            <property name="text">
+             <string>Share Publish Key</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -269,14 +223,14 @@
           <item>
            <widget class="QRadioButton" name="publish_required">
             <property name="text">
-             <string>Required</string>
+             <string>Re&amp;quired</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QRadioButton" name="publish_encrypt">
             <property name="text">
-             <string>Encrypted Msgs</string>
+             <string>Encrypted &amp;Msgs</string>
             </property>
            </widget>
           </item>
@@ -894,10 +848,14 @@
    <extends>QComboBox</extends>
    <header>gui/common/GroupChooser.h</header>
   </customwidget>
+  <customwidget>
+   <class>ClickableLabel</class>
+   <extends>QLabel</extends>
+   <header>util/ClickableLabel.h</header>
+  </customwidget>
  </customwidgets>
  <resources>
   <include location="../icons.qrc"/>
-  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

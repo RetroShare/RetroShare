@@ -115,11 +115,13 @@ const uint32_t RS_FEED_ITEM_CHAT_NEW         = RS_FEED_TYPE_CHAT  | 0x0001;
 const uint32_t RS_FEED_ITEM_MESSAGE          = RS_FEED_TYPE_MSG   | 0x0001;
 const uint32_t RS_FEED_ITEM_FILES_NEW        = RS_FEED_TYPE_FILES | 0x0001;
 
-const uint32_t RS_FEED_ITEM_CIRCLE_MEMB_REQ      = RS_FEED_TYPE_CIRCLE  | 0x0001;
-const uint32_t RS_FEED_ITEM_CIRCLE_INVIT_REC     = RS_FEED_TYPE_CIRCLE  | 0x0002;
-const uint32_t RS_FEED_ITEM_CIRCLE_MEMB_LEAVE    = RS_FEED_TYPE_CIRCLE  | 0x0003;
-const uint32_t RS_FEED_ITEM_CIRCLE_MEMB_JOIN     = RS_FEED_TYPE_CIRCLE  | 0x0004;
-const uint32_t RS_FEED_ITEM_CIRCLE_MEMB_REVOQUED = RS_FEED_TYPE_CIRCLE  | 0x0005;
+const uint32_t RS_FEED_ITEM_CIRCLE_MEMB_REQ        = RS_FEED_TYPE_CIRCLE  | 0x0001;
+const uint32_t RS_FEED_ITEM_CIRCLE_INVITE_REC      = RS_FEED_TYPE_CIRCLE  | 0x0002;
+const uint32_t RS_FEED_ITEM_CIRCLE_MEMB_LEAVE      = RS_FEED_TYPE_CIRCLE  | 0x0003;
+const uint32_t RS_FEED_ITEM_CIRCLE_MEMB_JOIN       = RS_FEED_TYPE_CIRCLE  | 0x0004;
+const uint32_t RS_FEED_ITEM_CIRCLE_MEMB_ACCEPTED   = RS_FEED_TYPE_CIRCLE  | 0x0005;
+const uint32_t RS_FEED_ITEM_CIRCLE_MEMB_REVOKED    = RS_FEED_TYPE_CIRCLE  | 0x0006;
+const uint32_t RS_FEED_ITEM_CIRCLE_INVITE_CANCELLED= RS_FEED_TYPE_CIRCLE  | 0x0007;
 
 const uint32_t RS_MESSAGE_CONNECT_ATTEMPT    = 0x0001;
 
@@ -237,7 +239,6 @@ public:
 	virtual void notifyPeerStatusChangedSummary   () {}
 	virtual void notifyDiscInfoChanged            () {}
 
-	virtual bool askForDeferredSelfSignature      (const void *       /* data      */, const uint32_t     /* len   */, unsigned char * /* sign */, unsigned int * /* signlen */,int& signature_result , std::string /*reason = ""*/) { signature_result = false ;return true; }
 	virtual void notifyDownloadComplete           (const std::string& /* fileHash  */) {}
 	virtual void notifyDownloadCompleteCount      (uint32_t           /* count     */) {}
 	virtual void notifyHistoryChanged             (uint32_t           /* msgId     */, int /* type */) {}

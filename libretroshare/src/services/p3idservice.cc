@@ -55,7 +55,7 @@
 #define ID_REQUEST_REPUTATION	0x0003
 #define ID_REQUEST_OPINION	    0x0004
 
-#define GXSID_MAX_CACHE_SIZE 5000
+#define GXSID_MAX_CACHE_SIZE 15000
 
 // unused keys are deleted according to some heuristic that should favor known keys, signed keys etc. 
 
@@ -606,67 +606,72 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
         RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(changes[i]);
 
         if (msgChange && !msgChange->metaChange())
-        {
-#ifdef DEBUG_IDS
-            std::cerr << "p3IdService::notifyChanges() Found Message Change Notification";
-            std::cerr << std::endl;
-#endif
-
-            std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
-
-            for(auto mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
-            {
-#ifdef DEBUG_IDS
-                std::cerr << "p3IdService::notifyChanges() Msgs for Group: " << mit->first;
-                std::cerr << std::endl;
-#endif
-            }
-        }
+            RsWarn() << __PRETTY_FUNCTION__ << " Found a Msg data change in p3IdService. This is quite unexpected." << std::endl;
 
         RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(changes[i]);
 
-        if (groupChange && !groupChange->metaChange())
+        if (groupChange)
         {
 #ifdef DEBUG_IDS
             std::cerr << "p3IdService::notifyChanges() Found Group Change Notification";
             std::cerr << std::endl;
 #endif
-            std::list<RsGxsGroupId> &groupList = groupChange->mGrpIdList;
-
-            for(auto git = groupList.begin(); git != groupList.end();++git)
-            {
+                const RsGxsGroupId& gid(groupChange->mGroupId);
 #ifdef DEBUG_IDS
-                std::cerr << "p3IdService::notifyChanges() Auto Subscribe to Incoming Groups: " << *git;
+                std::cerr << "p3IdService::notifyChanges() Auto Subscribe to Incoming Groups: " << gid;
                 std::cerr << std::endl;
 #endif
-                if(!rsReputations->isIdentityBanned(RsGxsId(*git)))
+
+                if(!rsReputations->isIdentityBanned(RsGxsId(gid)))
                 {
-                    uint32_t token;
-                    RsGenExchange::subscribeToGroup(token, *git, true);
-
-                    // also time_stamp the key that this group represents
-
-                    timeStampKey(RsGxsId(*git),RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_DATA_UPDATE)) ;
-
                     // notify that a new identity is received, if needed
+
+                    bool should_subscribe = false;
 
                     switch(groupChange->getType())
                     {
+					case RsGxsNotify::TYPE_PROCESSED:	break ; // Happens when the group is subscribed. This is triggered by RsGenExchange::subscribeToGroup, so better not
+                        										// call it again from here!!
+
                     case RsGxsNotify::TYPE_PUBLISHED:
+                    {
+                        auto ev = std::make_shared<RsGxsIdentityEvent>();
+                        ev->mIdentityId = gid;
+                        ev->mIdentityEventCode = RsGxsIdentityEventCode::UPDATED_IDENTITY;
+                        rsEvents->postEvent(ev);
+
+						// also time_stamp the key that this group represents
+						timeStampKey(RsGxsId(gid),RsIdentityUsage(RsServiceType(serviceType()),RsIdentityUsage::IDENTITY_NEW_FROM_GXS_SYNC)) ;
+                        should_subscribe = true;
+                    }
+						break;
+
                     case RsGxsNotify::TYPE_RECEIVED_NEW:
                     {
                         auto ev = std::make_shared<RsGxsIdentityEvent>();
-                        ev->mIdentityId = *git;
+                        ev->mIdentityId = gid;
                         ev->mIdentityEventCode = RsGxsIdentityEventCode::NEW_IDENTITY;
                         rsEvents->postEvent(ev);
+
+						// also time_stamp the key that this group represents
+						timeStampKey(RsGxsId(gid),RsIdentityUsage(RsServiceType(serviceType()),RsIdentityUsage::IDENTITY_NEW_FROM_GXS_SYNC)) ;
+                        should_subscribe = true;
+
+                        std::cerr << "Received new identity " << gid << " and subscribing to it" << std::endl;
                     }
                         break;
 
                     default:
                         break;
                     }
+
+                    if(should_subscribe)
+					{
+						uint32_t token;
+						RsGenExchange::subscribeToGroup(token, gid, true);
+					}
+
                 }
-            }
         }
 
         delete changes[i];
@@ -1211,8 +1216,7 @@ bool p3IdService::requestIdentity(
 		return false;
 	}
 
-	RsIdentityUsage usageInfo( RsServiceType::GXSID,
-	                           RsIdentityUsage::IDENTITY_DATA_UPDATE );
+	RsIdentityUsage usageInfo( RsServiceType::GXSID, RsIdentityUsage::IDENTITY_NEW_FROM_EXPLICIT_REQUEST );
 
 	return requestKey(id, askPeersList, usageInfo);
 }
@@ -1247,8 +1251,9 @@ bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers
 
 	if( info.mOverallReputationLevel == RsReputationLevel::LOCALLY_NEGATIVE )
 	{
-		RsInfo() << __PRETTY_FUNCTION__ << " not requesting Key " << id
-		         << " because it has been banned." << std::endl;
+#ifdef DEBUG_IDS
+		RsInfo() << __PRETTY_FUNCTION__ << " not requesting Key " << id << " because it has been banned." << std::endl;
+#endif
 
 		RS_STACK_MUTEX(mIdMtx);
 		mIdsNotPresent.erase(id);
@@ -1357,7 +1362,7 @@ bool p3IdService::signData(const uint8_t *data,uint32_t data_size,const RsGxsId&
         return false ;
     }
     error_status = RS_GIXS_ERROR_NO_ERROR ;
-    timeStampKey(own_gxs_id,RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_GENERIC_SIGNATURE_CREATION)) ;
+    timeStampKey(own_gxs_id,RsIdentityUsage(RsServiceType(serviceType()),RsIdentityUsage::IDENTITY_GENERIC_SIGNATURE_CREATION)) ;
 
     return true ;
 }
@@ -1430,7 +1435,7 @@ bool p3IdService::encryptData( const uint8_t *decrypted_data,
         return false ;
     }
     error_status = RS_GIXS_ERROR_NO_ERROR ;
-    timeStampKey(encryption_key_id,RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_GENERIC_ENCRYPTION)) ;
+    timeStampKey(encryption_key_id,RsIdentityUsage(RsServiceType::GXSID,RsIdentityUsage::IDENTITY_GENERIC_ENCRYPTION)) ;
 
     return true ;
 }
@@ -1519,7 +1524,7 @@ bool p3IdService::encryptData( const uint8_t* decrypted_data,
 	{
 		timeStampKey( *it,
 		              RsIdentityUsage(
-		                  serviceType(),
+		                  RsServiceType::GXSID,
 		                  RsIdentityUsage::IDENTITY_GENERIC_ENCRYPTION ) );
 	}
 
@@ -1560,7 +1565,7 @@ bool p3IdService::decryptData( const uint8_t *encrypted_data,
 	error_status = RS_GIXS_ERROR_NO_ERROR;
 	timeStampKey( key_id,
 	              RsIdentityUsage(
-	                  serviceType(),
+	                  RsServiceType::GXSID,
 	                  RsIdentityUsage::IDENTITY_GENERIC_DECRYPTION) );
 
     return true ;
@@ -1653,7 +1658,7 @@ bool p3IdService::decryptData( const uint8_t* encrypted_data,
 	{
 		timeStampKey( *it,
 		              RsIdentityUsage(
-		                  serviceType(),
+		                  RsServiceType::GXSID,
 		                  RsIdentityUsage::IDENTITY_GENERIC_DECRYPTION ) );
 	}
 
@@ -2289,7 +2294,7 @@ bool SSGxsIdGroup::load(const std::string &input)
     char scorestr[RSGXSID_MAX_SERVICE_STRING];
 
     // split into parts.
-    if (3 != sscanf(input.c_str(), "v2 {P:%[^}]} {T:%[^}]} {R:%[^}]}", pgpstr, recognstr, scorestr))
+    if (3 != sscanf(input.c_str(), "v2 {P:%[^}]}{T:%[^}]}{R:%[^}]}", pgpstr, recognstr, scorestr))
     {
 #ifdef DEBUG_IDS
         std::cerr << "SSGxsIdGroup::load() Failed to extract 4 Parts";
@@ -2950,8 +2955,22 @@ void p3IdService::requestIdsFromNet()
 
 	for(cit = mIdsNotPresent.begin(); cit != mIdsNotPresent.end();)
 	{
-		Dbg2() << __PRETTY_FUNCTION__ << " Processing missing key RsGxsId: "
-		       << cit->first << std::endl;
+#ifdef DEBUG_IDS
+		Dbg2() << __PRETTY_FUNCTION__ << " Processing missing key RsGxsId: " << cit->first << std::endl;
+#endif
+        RsGxsIdCache data;
+
+		if(mKeyCache.fetch(cit->first,data))
+        {
+#ifdef DEBUG_IDS
+			std::cerr << __PRETTY_FUNCTION__ << ". Dropping request for ID " << cit->first << " at last minute, because it was found in cache"<< std::endl;
+#endif
+            auto tmp(cit);
+            ++tmp;
+            mIdsNotPresent.erase(cit);
+            cit = tmp;
+            continue;
+        }
 
 		const RsGxsId& gxsId = cit->first;
 		const std::list<RsPeerId>& peers = cit->second;
@@ -2970,9 +2989,11 @@ void p3IdService::requestIdsFromNet()
 				requests[peer].push_back(cit->first);
 				request_can_proceed = true ;
 
+#ifdef DEBUG_IDS
 				Dbg2() << __PRETTY_FUNCTION__ << " Moving missing key RsGxsId:"
 				       << gxsId << " to peer: " << peer << " requests queue"
 				       << std::endl;
+#endif
 			}
 		}
 
@@ -2990,9 +3011,11 @@ void p3IdService::requestIdsFromNet()
 		}
 		else
 		{
+#ifdef DEBUG_IDS
 			RsInfo() << __PRETTY_FUNCTION__ << " no online peers among supplied"
 			         << " list in request for RsGxsId: " << gxsId
 			         << ". Keeping it until peers show up."<< std::endl;
+#endif
 			++cit;
 		}
 	}
@@ -3002,12 +3025,13 @@ void p3IdService::requestIdsFromNet()
 	{
 		const RsPeerId& peer = cit2->first;
 		std::list<RsGxsGroupId> grpIds;
-		for( std::list<RsGxsId>::const_iterator gxs_id_it = cit2->second.begin();
-		     gxs_id_it != cit2->second.end(); ++gxs_id_it )
+		for( std::list<RsGxsId>::const_iterator gxs_id_it = cit2->second.begin(); gxs_id_it != cit2->second.end(); ++gxs_id_it )
 		{
+#ifdef DEBUG_IDS
 			Dbg2() << __PRETTY_FUNCTION__ << " passing RsGxsId: " << *gxs_id_it
 			       << " request for peer: " << peer
 			       << " to RsNetworkExchangeService " << std::endl;
+#endif
 			grpIds.push_back(RsGxsGroupId(*gxs_id_it));
 		}
 
@@ -3212,7 +3236,7 @@ bool p3IdService::cachetest_handlerequest(uint32_t token)
 				if (!haveKey(*vit))
 				{
                     std::list<RsPeerId> nullpeers;
-					requestKey(*vit, nullpeers,RsIdentityUsage(serviceType(),RsIdentityUsage::UNKNOWN_USAGE));
+					requestKey(*vit, nullpeers,RsIdentityUsage(RsServiceType::GXSID,RsIdentityUsage::UNKNOWN_USAGE));
 
 #ifdef DEBUG_IDS
 					std::cerr << "p3IdService::cachetest_request() Requested Key Id: " << *vit;
@@ -3492,25 +3516,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(
 		unsigned int sign_size = MAX_SIGN_SIZE;
         memset(signarray,0,MAX_SIGN_SIZE) ;	// just in case.
 
-		/* -10 is never returned by askForDeferredSelfSignature therefore we can
-		 * use it to properly detect and handle the case libretroshare is being
-		 * used outside retroshare-gui */
-		int result = -10;
-
-		/* This method is DEPRECATED we call it only for retrocompatibility with
-		 * retroshare-gui, when called from something different then
-		 * retroshare-gui for example retroshare-service it miserably fail! */
-		mPgpUtils->askForDeferredSelfSignature(
-		            static_cast<const void*>(hash.toByteArray()),
-		            hash.SIZE_IN_BYTES, signarray, &sign_size, result,
-		            __PRETTY_FUNCTION__ );
-
-		/* If askForDeferredSelfSignature left result untouched it means
-		 * libretroshare is being used by something different then
-		 * retroshare-gui so try calling AuthGPG::getAuthGPG()->SignDataBin
-		 * directly */
-		if( result == -10 )
-			result = AuthGPG::getAuthGPG()->SignDataBin(
+		int	result = AuthGPG::getAuthGPG()->SignDataBin(
 			            static_cast<const void*>(hash.toByteArray()),
 			            hash.SIZE_IN_BYTES, signarray, &sign_size,
 			            __PRETTY_FUNCTION__ )
@@ -3572,7 +3578,9 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(
         }
     }
 
+#ifdef DEBUG_IDS
 	Dbg2() << __PRETTY_FUNCTION__ << " returns: " << createStatus << std::endl;
+#endif
 	return createStatus;
 }
 
@@ -4724,6 +4732,8 @@ void p3IdService::handle_event(uint32_t event_type, const std::string &/*elabel*
 		case GXSID_EVENT_REQUEST_IDS:
 			requestIdsFromNet();
 		    break;
+	    case GXSID_EVENT_REPUTATION:
+		    break;
 	default:
 		RsErr() << __PRETTY_FUNCTION__ << " Unknown Event Type: "
 		        << event_type << std::endl;
@@ -4822,11 +4832,10 @@ void RsGxsIdGroup::serial_process(
 	RS_SERIAL_PROCESS(mReputation);
 }
 
-RsIdentityUsage::RsIdentityUsage(
-        RsServiceType service, RsIdentityUsage::UsageCode code,
-        const RsGxsGroupId& gid, const RsGxsMessageId& mid,
+RsIdentityUsage::RsIdentityUsage(RsServiceType service, RsIdentityUsage::UsageCode code,
+        const RsGxsGroupId& gid, const RsGxsMessageId& mid, const RsGxsMessageId &pid, const RsGxsMessageId &tid,
         uint64_t additional_id, const std::string& comment ) :
-    mServiceId(service), mUsageCode(code), mGrpId(gid), mMsgId(mid),
+    mServiceId(service), mUsageCode(code), mGrpId(gid), mMsgId(mid),mParentId(pid),mThreadId(tid),
     mAdditionalId(additional_id), mComment(comment)
 {
 	/* This is a hack, since it will hash also mHash, but because it is
@@ -4842,42 +4851,6 @@ RsIdentityUsage::RsIdentityUsage(
 	hs << comment;
 
 	mHash = hs.hash();
-}
-
-RsIdentityUsage::RsIdentityUsage(
-        uint16_t service, const RsIdentityUsage::UsageCode& code,
-        const RsGxsGroupId& gid, const RsGxsMessageId& mid,
-        uint64_t additional_id,const std::string& comment ) :
-    mServiceId(static_cast<RsServiceType>(service)), mUsageCode(code),
-    mGrpId(gid), mMsgId(mid), mAdditionalId(additional_id), mComment(comment)
-{
-#ifdef DEBUG_IDS
-    std::cerr << "New identity usage: " << std::endl;
-    std::cerr << "  service=" << std::hex << service << std::endl;
-    std::cerr << "  code   =" << std::hex << code << std::endl;
-    std::cerr << "  grpId  =" << std::hex << gid << std::endl;
-    std::cerr << "  msgId  =" << std::hex << mid << std::endl;
-    std::cerr << "  add id =" << std::hex << additional_id << std::endl;
-    std::cerr << "  commnt =\"" << std::hex << comment << "\"" << std::endl;
-#endif
-
-	/* This is a hack, since it will hash also mHash, but because it is
-	 * initialized to 0, and only computed in the constructor here, it should
-	 * be ok. */
-    librs::crypto::HashStream hs(librs::crypto::HashStream::SHA1) ;
-
-	hs << (uint32_t)service ; // G10h4ck: Why uint32 if it's 16 bits?
-    hs << (uint8_t)code ;
-    hs << gid ;
-    hs << mid ;
-    hs << (uint64_t)additional_id ;
-    hs << comment ;
-
-	mHash = hs.hash();
-
-#ifdef DEBUG_IDS
-    std::cerr << "  hash   =\"" << std::hex << mHash << "\"" << std::endl;
-#endif
 }
 
 RsIdentityUsage::RsIdentityUsage() :

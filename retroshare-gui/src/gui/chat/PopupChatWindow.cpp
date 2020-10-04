@@ -24,6 +24,7 @@
 #include <QCloseEvent>
 #include <QMenu>
 
+#include "gui/common/FilesDefs.h"
 #include "PopupChatWindow.h"
 #include "ChatDialog.h"
 #include "gui/settings/rsharesettings.h"
@@ -64,15 +65,13 @@ static PopupChatWindow *instance = NULL;
 }
 
 /** Default constructor */
-PopupChatWindow::PopupChatWindow(bool tabbed, QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
+PopupChatWindow::PopupChatWindow(bool tabbed, QWidget *parent, Qt::WindowFlags flags)
+  : QMainWindow(parent, flags),tabbedWindow(tabbed),firstShow(true)
+  , chatDialog(nullptr),mEmptyIcon(nullptr)
 {
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
-
-	tabbedWindow = tabbed;
-	firstShow = true;
-	chatDialog = NULL;
-	mEmptyIcon = NULL;
+	setAttribute(Qt::WA_DeleteOnClose);
 
 	ui.tabWidget->setVisible(tabbedWindow);
 
@@ -115,14 +114,14 @@ PopupChatWindow::PopupChatWindow(bool tabbed, QWidget *parent, Qt::WindowFlags f
 void PopupChatWindow::showContextMenu(QPoint)
 {
 	QMenu contextMnu(this);
-    contextMnu.addAction(QIcon(":/images/highlight.png"),tr("Choose window color..."),this,SLOT(setStyle()));
+    contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/highlight.png"),tr("Choose window color..."),this,SLOT(setStyle()));
 
 	if (Settings->getChatFlags() & RS_CHAT_TABBED_WINDOW)
     {
         if(tabbedWindow)
-			contextMnu.addAction(QIcon(":/images/tab-dock.png"),tr("Dock window"),this,SLOT(docTab()));
+            contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/tab-dock.png"),tr("Dock window"),this,SLOT(docTab()));
 
-		contextMnu.addAction(QIcon(":/images/tab-undock.png"),tr("Dock window"),this,SLOT(undockTab()));
+        contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/tab-undock.png"),tr("Dock window"),this,SLOT(undockTab()));
     }
     contextMnu.exec(QCursor::pos());
 }
@@ -204,15 +203,16 @@ void PopupChatWindow::addDialog(ChatDialog *dialog)
 	if (tabbedWindow) {
 		ui.tabWidget->addDialog(dialog);
 	} else {
-		ui.horizontalLayout->addWidget(dialog);
+		ui.chatcentralLayout->addWidget(dialog);
 		dialog->addToParent(this);
-		ui.horizontalLayout->setContentsMargins(0, 0, 0, 0);
-        chatId = dialog->getChatId();
+		ui.chatcentralLayout->setContentsMargins(0, 0, 0, 0);
+		chatId = dialog->getChatId();
 		chatDialog = dialog;
 		calculateStyle(dialog);
+		calculateTitle(dialog);
 
 		/* signal toggled is called */
-        ui.actionSetOnTop->setChecked(PeerSettings->getPrivateChatOnTop(chatId));
+		ui.actionSetOnTop->setChecked(PeerSettings->getPrivateChatOnTop(chatId));
 
 		QObject::connect(dialog, SIGNAL(dialogClose(ChatDialog*)), this, SLOT(dialogClose(ChatDialog*)));
 	}
@@ -233,14 +233,15 @@ void PopupChatWindow::removeDialog(ChatDialog *dialog)
 			deleteLater();
 		}
 	} else {
-		QObject::disconnect(dialog, SIGNAL(dialogClose(ChatDialog*)), this, SLOT(dialogClose(ChatDialog*)));
 
 		if (chatDialog == dialog) {
+			QObject::disconnect(dialog, SIGNAL(dialogClose(ChatDialog*)), this, SLOT(dialogClose(ChatDialog*)));
 			saveSettings();
 			dialog->removeFromParent(this);
-			ui.horizontalLayout->removeWidget(dialog);
-			chatDialog = NULL;
-            chatId = ChatId();
+			ui.chatcentralLayout->removeWidget(dialog);
+			chatDialog = nullptr;
+			chatId = ChatId();
+			close();
 			deleteLater();
 		}
 	}
@@ -295,9 +296,9 @@ void PopupChatWindow::calculateTitle(ChatDialog *dialog)
 	QIcon icon;
 	if (isTyping) {
 		mBlinkIcon = QIcon();
-		icon = QIcon(IMAGE_TYPING);
+        icon = FilesDefs::getIconFromQtResourcePath(IMAGE_TYPING);
 	} else if (hasNewMessages) {
-		icon = QIcon(IMAGE_CHAT);
+        icon = FilesDefs::getIconFromQtResourcePath(IMAGE_CHAT);
 		if (Settings->getChatFlags() & RS_CHAT_BLINK) {
 			mBlinkIcon = icon;
 		} else {

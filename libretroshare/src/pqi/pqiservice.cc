@@ -1,5 +1,5 @@
 /*******************************************************************************
- * libretroshare/src/pqi: pqiservice.h                                         *
+ * libretroshare/src/pqi: pqiservice.cc                                         *
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
@@ -23,6 +23,22 @@
 #include "util/rsdebug.h"
 #include "util/rsstring.h"
 
+#include <sstream>
+#include <sys/time.h>
+static double getCurrentTS()
+{
+#ifndef WINDOWS_SYS
+        struct timeval cts_tmp;
+        gettimeofday(&cts_tmp, NULL);
+        double cts =  (cts_tmp.tv_sec) + ((double) cts_tmp.tv_usec) / 1000000.0;
+#else
+        struct _timeb timebuf;
+        _ftime( &timebuf);
+        double cts =  (timebuf.time) + ((double) timebuf.millitm) / 1000.0;
+#endif
+        return cts;
+}
+
 #ifdef  SERVICE_DEBUG
 const int pqiservicezone = 60478;
 #endif
@@ -44,7 +60,7 @@ bool pqiService::send(RsRawItem *item)
 
 p3ServiceServer::p3ServiceServer(pqiPublisher *pub, p3ServiceControl *ctrl) : mPublisher(pub), mServiceControl(ctrl), srvMtx("p3ServiceServer") 
 {
-	RsStackMutex stack(srvMtx); /********* LOCKED *********/
+	RS_STACK_MUTEX(srvMtx); /********* LOCKED *********/
 
 #ifdef  SERVICE_DEBUG
 	pqioutput(PQL_DEBUG_BASIC, pqiservicezone, 
@@ -56,7 +72,7 @@ p3ServiceServer::p3ServiceServer(pqiPublisher *pub, p3ServiceControl *ctrl) : mP
 
 int	p3ServiceServer::addService(pqiService *ts, bool defaultOn)
 {
-	RsStackMutex stack(srvMtx); /********* LOCKED *********/
+	RS_STACK_MUTEX(srvMtx); /********* LOCKED *********/
 
 #ifdef  SERVICE_DEBUG
 	pqioutput(PQL_DEBUG_BASIC, pqiservicezone, 
@@ -84,7 +100,7 @@ int	p3ServiceServer::addService(pqiService *ts, bool defaultOn)
 
 bool p3ServiceServer::getServiceItemNames(uint32_t service_type,std::map<uint8_t,std::string>& names)
 {
-	RsStackMutex stack(srvMtx); /********* LOCKED *********/
+	RS_STACK_MUTEX(srvMtx); /********* LOCKED *********/
 
  	std::map<uint32_t, pqiService *>::iterator it=services.find(service_type) ;
 
@@ -99,7 +115,7 @@ bool p3ServiceServer::getServiceItemNames(uint32_t service_type,std::map<uint8_t
 
 int p3ServiceServer::removeService(pqiService *ts)
 {
-	RsStackMutex stack(srvMtx); /********* LOCKED *********/
+	RS_STACK_MUTEX(srvMtx); /********* LOCKED *********/
 
 #ifdef SERVICE_DEBUG
 	pqioutput(PQL_DEBUG_BASIC, pqiservicezone, "p3ServiceServer::removeService()");
@@ -124,59 +140,32 @@ int p3ServiceServer::removeService(pqiService *ts)
 
 bool	p3ServiceServer::recvItem(RsRawItem *item)
 {
-	RsStackMutex stack(srvMtx); /********* LOCKED *********/
-
-#ifdef  SERVICE_DEBUG
-	std::cerr << "p3ServiceServer::incoming()";
-	std::cerr << std::endl;
-
-	{
-		std::string out;
-		rs_sprintf(out, "p3ServiceServer::incoming() PacketId: %x\nLooking for Service: %x\nItem:\n", item -> PacketId(), (item -> PacketId() & 0xffffff00));
-		item -> print_string(out);
-		std::cerr << out;
-		std::cerr << std::endl;
-	}
-#endif
-
 	// Packet Filtering.
 	// This doesn't need to be in Mutex.
 	if (!mServiceControl->checkFilter(item->PacketId() & 0xffffff00, item->PeerId()))
 	{
-#ifdef  SERVICE_DEBUG
-        std::cerr << "p3ServiceServer::recvItem() Fails Filtering " << std::endl;
-#endif
 		delete item;
 		return false;
 	}
 
+	pqiService *s = NULL;
 
-	std::map<uint32_t, pqiService *>::iterator it;
-	it = services.find(item -> PacketId() & 0xffffff00);
-	if (it == services.end())
+	// access the service map under mutex lock
 	{
-#ifdef  SERVICE_DEBUG
-		std::cerr << "p3ServiceServer::incoming() Service: No Service - deleting";
-		std::cerr << std::endl;
-#endif
-		delete item;
-		return false;
+		RS_STACK_MUTEX(srvMtx);
+		auto it = services.find(item -> PacketId() & 0xffffff00);
+		if (it == services.end())
+		{
+			delete item;
+			return false;
+		}
+		s = it->second;
 	}
 
-	{
-#ifdef  SERVICE_DEBUG
-		std::cerr << "p3ServiceServer::incoming() Sending to : " << (void *) it -> second;
-		std::cerr << std::endl;
-#endif
-
-		return (it->second) -> recv(item);
-	}
-
-	delete item;
-	return false;
+	// then call recv off mutex
+	bool result = s->recv(item);
+	return result;
 }
-
-
 
 bool p3ServiceServer::sendItem(RsRawItem *item)
 {
@@ -196,46 +185,35 @@ bool p3ServiceServer::sendItem(RsRawItem *item)
 	// Packet Filtering.
 	if (!mServiceControl->checkFilter(item->PacketId() & 0xffffff00, item->PeerId()))
 	{
+#ifdef  SERVICE_DEBUG
 		std::cerr << "p3ServiceServer::sendItem() Fails Filtering for packet id=" << std::hex << item->PacketId() << std::dec << ", and peer " << item->PeerId() << std::endl;
+#endif
 		delete item;
 		return false;
 	}
 
 	mPublisher->sendItem(item);
+
 	return true;
 }
 
-
-
 int	p3ServiceServer::tick()
 {
-
 	mServiceControl->tick();
 
-	RsStackMutex stack(srvMtx); /********* LOCKED *********/
-
-#ifdef  SERVICE_DEBUG
-	pqioutput(PQL_DEBUG_ALL, pqiservicezone, 
-		"p3ServiceServer::tick()");
-#endif
-
-	std::map<uint32_t, pqiService *>::iterator it;
-
-	// from the beginning to where we started.
-	for(it = services.begin();it != services.end(); ++it)
-	{
-
-#ifdef  SERVICE_DEBUG
-		std::string out;
-		rs_sprintf(out, "p3ServiceServer::service id: %u -> Service: %p", it -> first, it -> second);
-		pqioutput(PQL_DEBUG_ALL, pqiservicezone, out);
-#endif
-
-		// now we should actually tick the service.
-		(it -> second) -> tick();
+	// make a copy of the service map
+	std::map<uint32_t,pqiService *> local_map;
+	{	
+		RS_STACK_MUTEX(srvMtx);
+		local_map=services;
 	}
+
+	// tick all services off mutex
+	for(auto it(local_map.begin());it!=local_map.end();++it)
+	{
+		(it->second)->tick();
+	}
+
 	return 1;
+
 }
-
-
-

@@ -21,7 +21,7 @@
 #ifndef _PLUGINS_PAGE_H_
 #define _PLUGINS_PAGE_H_
 
-#include "mainpage.h"
+#include <retroshare-gui/mainpage.h>
 
 #include <QGroupBox>
 #include <QString>

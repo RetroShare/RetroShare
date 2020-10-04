@@ -84,9 +84,12 @@ public:
 #define GXS_GROUP_DEFAULTS_PERSONAL_PGP               0x00000100
 #define GXS_GROUP_DEFAULTS_PERSONAL_REQUIRED          0x00000200
 #define GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB           0x00000400
+// independent from other PERSONAL FLAGS. If Group requires a AuthorId.
+#define GXS_GROUP_DEFAULTS_PERSONAL_GROUP             0x00000800
 
 #define GXS_GROUP_DEFAULTS_COMMENTS_YES               0x00001000
 #define GXS_GROUP_DEFAULTS_COMMENTS_NO                0x00002000
+
 
 #define GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP         0x00100000
 #define GXS_GROUP_DEFAULTS_ANTISPAM_TRACK             0x00200000
@@ -105,7 +108,7 @@ public:
  * The long term plan is perhap logic structure (i.e. code) will be moved into each GXS \n
  * service for better customisation of group creation, or perhaps not!
  */
-class GxsGroupDialog : public QDialog, public TokenResponse
+class GxsGroupDialog : public QDialog
 {
 	Q_OBJECT
 
@@ -128,15 +131,12 @@ public:
 
 	/*!
 	 * Constructs a GxsGroupDialog for creating group
-	 * @param tokenQueue This should be the TokenQueue of the (parent) service
-	 *        in order to receive acknowledgement of group creation, if set to NULL with create mode \n
-	 *        creation will not happen
 	 * @param enableFlags This determines what options are enabled such as Icon, Description, publish type and key sharing
 	 * @param defaultFlags This deter
 	 * @param parent The parent dialog
 	 * @param mode
 	 */
-	GxsGroupDialog(TokenQueue* tokenQueue, uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent = NULL);
+	GxsGroupDialog(uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent = NULL);
 
 	/*!
 	 * Contructs a GxsGroupDialog for display a group or editing
@@ -144,14 +144,11 @@ public:
 	 * @param mode This determines whether the dialog starts in show or edit mode (Edit not supported yet)
 	 * @param parent
 	 */
-	GxsGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent = NULL);
+	GxsGroupDialog(Mode mode, RsGxsGroupId groupId, uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent = NULL);
 
 	~GxsGroupDialog();
 
 	uint32_t mode() { return mMode; }
-
-	// overloaded from TokenResponse
-	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private:
 	void newGroup();
@@ -172,6 +169,13 @@ protected:
 	virtual QPixmap serviceImage() = 0;
 	virtual QIcon serviceWindowIcon();
 
+	/*!
+	 * Inject Extra Widget for additional Group configuration options.
+	 * NB: These are only inserted for createMode currently.
+	 * @param widget Addtional widget which is added to extraFrame.
+	 */
+        void injectExtraWidget(QWidget *widget);
+
     /*!
      * \brief setUiToolTip/setUiText
      * 		Sets the text and tooltip of some parts of the UI
@@ -181,24 +185,37 @@ protected:
 	void setUiToolTip(UiType uiType, const QString &text);
 	void setUiText   (UiType uiType, const QString &text);
 
+    /*!
+     * It is up to the service to retrieve its own group data, which derives from RsGxsGenericGroupData. That data will be passed down
+     * to the service itself for specific tasks.
+     * \param grpId  Id of the group to retrieve
+     * \param data   Generic group data for this group. /!\ The pointer should be deleted by the client when released.
+     * \return       True if everything does fine.
+     */
+    virtual bool service_getGroupData(const RsGxsGroupId& grpId,RsGxsGenericGroupData *& data) = 0;
+
 	/*!
 	 * It is up to the service to do the actual group creation
 	 * Service can also modify initial meta going into group
-	 * @param token This should be set to the token retrieved
 	 * @param meta The deriving GXS service should set their grp meta to this value
 	 */
-	virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta) = 0;
+	virtual bool service_createGroup(RsGroupMetaData& meta) = 0;
 
 	/*!
 	 * It is up to the service to do the actual group editing
-	 * @param token This should be set to the token retrieved
 	 * @param meta The deriving GXS service should set their grp meta to this value
 	 */
-	virtual bool service_EditGroup(uint32_t &token, RsGroupMetaData &editedMeta) = 0;
+	virtual bool service_updateGroup(const RsGroupMetaData& editedMeta) = 0;
 
-	// To be overloaded by users.
-	// use Token to retrieve from service, fill in metaData.
-	virtual bool service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData, QString &description) = 0;
+    /*!
+     * Should be overloaded by the service in order to extract meaningful information from the group data (that is usually group-specific).
+     * One of them however, common to all groups is the description. So it is returned by this method so that the GxsGroupDialog updates it.
+     * \param data            Generic group data, to be dynamic_cast by the client to specific service-level group data
+     * \param mode            Editing mode (?)
+     * \param description     Description string for the group. Common to all services, but still present in the service-specific data part.
+     * \return
+     */
+	virtual bool service_loadGroup(const RsGxsGenericGroupData *data, Mode mode, QString &description) = 0;
 
 	/*!
 	 * This returns a group logo from the ui \n
@@ -260,11 +277,10 @@ private:
 	void loadNewGroupId(const uint32_t &token);
 
 	// loading existing Groups.
-	void requestGroup(const RsGxsGroupId &groupId);
-	void loadGroup(uint32_t token);
+	void loadGroup(const RsGxsGroupId &groupId);
 	void updateFromExistingMeta(const QString &description);
 
-	bool prepareGroupMetaData(RsGroupMetaData &meta);
+	bool prepareGroupMetaData(RsGroupMetaData &meta, QString &reason);
 
 	std::list<std::string> mShareList;
 	QPixmap mPicture;

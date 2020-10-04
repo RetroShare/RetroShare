@@ -84,7 +84,7 @@ ConfCertDialog QLabel#servicePermissionsLabel
 	qproperty-fontSizeFactor: 125;
 }
 
-GxsChannelPostsWidget QLabel#nameLabel
+GxsChannelPostsWidgetWithModel QLabel#channelName_LB
 {
 	qproperty-fontSizeFactor: 250;
 }
@@ -138,6 +138,10 @@ ForumsDialog, GxsForumThreadWidget
 	qproperty-textColorUnreadChildren: darkgray;
 	qproperty-textColorNotSubscribed: black;
 	qproperty-textColorMissing: darkRed;
+	qproperty-textColorPinned: darkOrange;
+
+	qproperty-backgroundColorPinned: rgb(255, 200, 180);
+	qproperty-backgroundColorFiltered: rgb(255, 240, 210);
 }
 
 GroupTreeWidget
@@ -186,7 +190,8 @@ NetworkDialog
 
 RSTextBrowser, MimeTextEdit
 {
-	qproperty-textColorQuote: rgb(120, 153, 34);
+	/*qproperty-textColorQuote: rgb(120, 153, 34);*/
+	qproperty-textColorQuotes: ColorList(#789922 #039bd5 #800000 #800080 #008080 #b10dc9 #85144b #3d9970);
 }
 
 QLabel#headerTextLabel_Person

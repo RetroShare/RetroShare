@@ -4,7 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2012-2014  Robert Fernie <retroshare@lunamutt.com>            *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2020  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -20,16 +21,20 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
+
+#include <cstdio>
+#include <memory>
+
 #include "services/p3gxsforums.h"
 #include "rsitems/rsgxsforumitems.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsidentity.h"
-
+#include "util/rsdebug.h"
 #include "rsserver/p3face.h"
 #include "retroshare/rsnotify.h"
-
+#include "util/rsdebuglevel2.h"
 #include "retroshare/rsgxsflags.h"
-#include <stdio.h>
+
 
 // For Dummy Msgs.
 #include "util/rsrandom.h"
@@ -96,14 +101,14 @@ uint32_t p3GxsForums::forumsAuthenPolicy()
 static const uint32_t GXS_FORUMS_CONFIG_MAX_TIME_NOTIFY_STORAGE = 86400*30*2 ; // ignore notifications for 2 months
 static const uint8_t  GXS_FORUMS_CONFIG_SUBTYPE_NOTIFY_RECORD   = 0x01 ;
 
-struct RsGxsGroupNotifyRecordsItem: public RsItem
+struct RsGxsForumNotifyRecordsItem: public RsItem
 {
 
-	RsGxsGroupNotifyRecordsItem()
+	RsGxsForumNotifyRecordsItem()
 	    : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_GXS_TYPE_FORUMS_CONFIG,GXS_FORUMS_CONFIG_SUBTYPE_NOTIFY_RECORD)
 	{}
 
-    virtual ~RsGxsGroupNotifyRecordsItem() {}
+    virtual ~RsGxsForumNotifyRecordsItem() {}
 
 	void serial_process( RsGenericSerializer::SerializeJob j,
 	                     RsGenericSerializer::SerializeContext& ctx )
@@ -127,7 +132,7 @@ public:
 
 		switch(item_sub_id)
 		{
-		case GXS_FORUMS_CONFIG_SUBTYPE_NOTIFY_RECORD: return new RsGxsGroupNotifyRecordsItem();
+		case GXS_FORUMS_CONFIG_SUBTYPE_NOTIFY_RECORD: return new RsGxsForumNotifyRecordsItem();
 		default:
 			return NULL;
 		}
@@ -138,7 +143,7 @@ bool p3GxsForums::saveList(bool &cleanup, std::list<RsItem *>&saveList)
 {
 	cleanup = true ;
 
-	RsGxsGroupNotifyRecordsItem *item = new RsGxsGroupNotifyRecordsItem ;
+	RsGxsForumNotifyRecordsItem *item = new RsGxsForumNotifyRecordsItem ;
 
 	item->records = mKnownForums ;
 
@@ -155,14 +160,14 @@ bool p3GxsForums::loadList(std::list<RsItem *>& loadList)
 
 		rstime_t now = time(NULL);
 
-		RsGxsGroupNotifyRecordsItem *fnr = dynamic_cast<RsGxsGroupNotifyRecordsItem*>(item) ;
+		RsGxsForumNotifyRecordsItem *fnr = dynamic_cast<RsGxsForumNotifyRecordsItem*>(item) ;
 
 		if(fnr != NULL)
 		{
 			mKnownForums.clear();
 
 			for(auto it(fnr->records.begin());it!=fnr->records.end();++it)
-				if( it->second + GXS_FORUMS_CONFIG_MAX_TIME_NOTIFY_STORAGE < now)
+				if( now < it->second + GXS_FORUMS_CONFIG_MAX_TIME_NOTIFY_STORAGE)
 					mKnownForums.insert(*it) ;
 		}
 
@@ -189,21 +194,17 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	for(it = changes.begin(); it != changes.end(); ++it)
 	{
 		RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
+
 		if (msgChange)
 		{
 			if (msgChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW || msgChange->getType() == RsGxsNotify::TYPE_PUBLISHED) /* message received */
 				if (rsEvents)
 				{
-					std::map<RsGxsGroupId, std::set<RsGxsMessageId> >& msgChangeMap = msgChange->msgChangeMap;
-					for (auto mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
-						for (auto mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
-						{
-							auto ev = std::make_shared<RsGxsForumEvent>();
-							ev->mForumMsgId = *mit1;
-							ev->mForumGroupId = mit->first;
-							ev->mForumEventCode = RsForumEventCode::NEW_MESSAGE;
-							rsEvents->postEvent(ev);
-						}
+					auto ev = std::make_shared<RsGxsForumEvent>();
+					ev->mForumMsgId = msgChange->mMsgId;
+					ev->mForumGroupId = msgChange->mGroupId;
+					ev->mForumEventCode = RsForumEventCode::NEW_MESSAGE;
+					rsEvents->postEvent(ev);
 				}
 
 #ifdef NOT_USED_YET
@@ -246,69 +247,92 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				{
 					switch (grpChange->getType())
 					{
-					default:
 					case RsGxsNotify::TYPE_PROCESSED:	// happens when the group is subscribed
 					{
-						std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
-						std::list<RsGxsGroupId>::iterator git;
-						for (git = grpList.begin(); git != grpList.end(); ++git)
-						{
 							auto ev = std::make_shared<RsGxsForumEvent>();
-							ev->mForumGroupId = *git;
+							ev->mForumGroupId = grpChange->mGroupId;
 							ev->mForumEventCode = RsForumEventCode::SUBSCRIBE_STATUS_CHANGED;
 							rsEvents->postEvent(ev);
-						}
-
 					}
-						break;
+                        break;
 
 					case RsGxsNotify::TYPE_PUBLISHED:
 					case RsGxsNotify::TYPE_RECEIVED_NEW:
 					{
 						/* group received */
-						std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
-						std::list<RsGxsGroupId>::iterator git;
 
 						RS_STACK_MUTEX(mKnownForumsMutex);
-						for (git = grpList.begin(); git != grpList.end(); ++git)
-						{
-							if(mKnownForums.find(*git) == mKnownForums.end())
-							{
-								mKnownForums.insert(
-								            std::make_pair(*git, time(nullptr)));
-								IndicateConfigChanged();
 
-								auto ev = std::make_shared<RsGxsForumEvent>();
-								ev->mForumGroupId = *git;
-								ev->mForumEventCode = RsForumEventCode::NEW_FORUM;
-								rsEvents->postEvent(ev);
-							}
-							else
-								RsInfo() << __PRETTY_FUNCTION__
-								         << " Not notifying already known forum "
-								         << *git << std::endl;
+						if(mKnownForums.find(grpChange->mGroupId) == mKnownForums.end())
+						{
+							mKnownForums.insert( std::make_pair(grpChange->mGroupId, time(nullptr)));
+							IndicateConfigChanged();
+
+							auto ev = std::make_shared<RsGxsForumEvent>();
+							ev->mForumGroupId = grpChange->mGroupId;
+							ev->mForumEventCode = RsForumEventCode::NEW_FORUM;
+							rsEvents->postEvent(ev);
 						}
+						else
+							RsInfo() << __PRETTY_FUNCTION__
+							         << " Not notifying already known forum "
+							         << grpChange->mGroupId << std::endl;
+					}
 						break;
-					}
 
-#ifdef NOT_USED_YET
-					case RsGxsNotify::TYPE_RECEIVED_PUBLISHKEY:
+					case RsGxsNotify::TYPE_STATISTICS_CHANGED:
 					{
-						/* group received */
-						std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
-						std::list<RsGxsGroupId>::iterator git;
-						for (git = grpList.begin(); git != grpList.end(); ++git)
+						auto ev = std::make_shared<RsGxsForumEvent>();
+						ev->mForumGroupId = grpChange->mGroupId;
+						ev->mForumEventCode = RsForumEventCode::STATISTICS_CHANGED;
+						rsEvents->postEvent(ev);
+					}
+						break;
+
+                    case RsGxsNotify::TYPE_UPDATED:
+					{
+						// Happens when the group data has changed. In this case we need to analyse the old and new group in order to detect possible notifications for clients
+
+						RsGxsForumGroupItem *old_forum_grp_item = dynamic_cast<RsGxsForumGroupItem*>(grpChange->mOldGroupItem);
+						RsGxsForumGroupItem *new_forum_grp_item = dynamic_cast<RsGxsForumGroupItem*>(grpChange->mNewGroupItem);
+
+						if(old_forum_grp_item == nullptr || new_forum_grp_item == nullptr)
 						{
-							auto ev = std::make_shared<RsGxsChannelEvent>();
+							RsErr() << __PRETTY_FUNCTION__ << " received GxsGroupUpdate item with mOldGroup and mNewGroup not of type RsGxsForumGroupItem. This is inconsistent!" << std::endl;
+							delete grpChange;
+							continue;
+						}
 
-							ev->mChannelGroupId = *git;
-							ev->mChannelEventCode = RsGxsChannelEvent::RECEIVED_PUBLISH_KEY;
+						// First of all, we check if there is a difference between the old and new list of moderators
 
-							rsEvents->sendEvent(ev);
+						std::list<RsGxsId> added_mods, removed_mods;
+
+						for(auto& gxs_id: new_forum_grp_item->mGroup.mAdminList.ids)
+							if(old_forum_grp_item->mGroup.mAdminList.ids.find(gxs_id) == old_forum_grp_item->mGroup.mAdminList.ids.end())
+								added_mods.push_back(gxs_id);
+
+						for(auto& gxs_id: old_forum_grp_item->mGroup.mAdminList.ids)
+							if(new_forum_grp_item->mGroup.mAdminList.ids.find(gxs_id) == new_forum_grp_item->mGroup.mAdminList.ids.end())
+								removed_mods.push_back(gxs_id);
+
+						if(!added_mods.empty() || !removed_mods.empty())
+						{
+							auto ev = std::make_shared<RsGxsForumEvent>();
+
+							ev->mForumGroupId = new_forum_grp_item->meta.mGroupId;
+							ev->mModeratorsAdded = added_mods;
+							ev->mModeratorsRemoved = removed_mods;
+							ev->mForumEventCode = RsForumEventCode::MODERATOR_LIST_CHANGED;
+
+							rsEvents->postEvent(ev);
 						}
 					}
-					break;
-#endif
+                        break;
+
+
+					default:
+                        RsErr() << " Got a GXS event of type " << grpChange->getType() << " Currently not handled." << std::endl;
+						break;
 					}
                 }
 			}
@@ -402,46 +426,6 @@ bool p3GxsForums::getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &
 
 	return ok;
 }
-
-//Not currently used
-/*bool p3GxsForums::getRelatedMessages(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs)
-{
-	GxsMsgRelatedDataMap msgData;
-	bool ok = RsGenExchange::getMsgRelatedData(token, msgData);
-			
-	if(ok)
-	{
-		GxsMsgRelatedDataMap::iterator mit = msgData.begin();
-		
-		for(; mit != msgData.end();  ++mit)
-		{
-			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
-			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
-			
-			for(; vit != msgItems.end(); ++vit)
-			{
-				RsGxsForumMsgItem* item = dynamic_cast<RsGxsForumMsgItem*>(*vit);
-		
-				if(item)
-				{
-					RsGxsForumMsg msg = item->mMsg;
-					msg.mMeta = item->meta;
-					msgs.push_back(msg);
-					delete item;
-				}
-				else
-				{
-					std::cerr << "Not a GxsForumMsgItem, deleting!" << std::endl;
-					delete *vit;
-				}
-			}
-		}
-	}
-			
-	return ok;
-}*/
-
-/********************************************************************************************/
 
 bool p3GxsForums::createForumV2(
         const std::string& name, const std::string& description,
@@ -666,15 +650,22 @@ bool p3GxsForums::getForumsSummaries( std::list<RsGroupMetaData>& forums )
 	return getGroupSummary(token, forums);
 }
 
-bool p3GxsForums::getForumsInfo(
-        const std::list<RsGxsGroupId>& forumIds,
-        std::vector<RsGxsForumGroup>& forumsInfo )
+bool p3GxsForums::getForumsInfo( const std::list<RsGxsGroupId>& forumIds, std::vector<RsGxsForumGroup>& forumsInfo )
 {
 	uint32_t token;
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-	if( !requestGroupInfo(token, opts, forumIds)
-	        || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE ) return false;
+
+    if(forumIds.empty())
+    {
+		if( !requestGroupInfo(token, opts) || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE )
+            return false;
+    }
+	else
+    {
+		if( !requestGroupInfo(token, opts, forumIds, forumIds.size()==1) || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE )
+            return false;
+    }
 	return getGroupData(token, forumsInfo);
 }
 
@@ -800,6 +791,51 @@ bool p3GxsForums::importForumLink(
 	return true;
 }
 
+std::error_condition p3GxsForums::getChildPosts(
+        const RsGxsGroupId& forumId, const RsGxsMessageId& parentId,
+        std::vector<RsGxsForumMsg>& childPosts )
+{
+	RS_DBG3("forumId: ", forumId, " parentId: ", parentId);
+
+	if(forumId.isNull() || parentId.isNull())
+		return std::errc::invalid_argument;
+
+	std::vector<RsGxsGrpMsgIdPair> msgIds;
+	msgIds.push_back(RsGxsGrpMsgIdPair(forumId, parentId));
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
+	opts.mOptions = RS_TOKREQOPT_MSG_PARENT | RS_TOKREQOPT_MSG_LATEST;
+
+	uint32_t token;
+	if( !requestMsgRelatedInfo(token, opts, msgIds) ||
+	        waitToken(token) != RsTokenService::COMPLETE )
+		return std::errc::timed_out;
+
+	GxsMsgRelatedDataMap msgData;
+	if(!getMsgRelatedData(token, msgData))
+		return std::errc::no_message_available;
+
+	for(auto& mit: msgData)
+	{
+		for(auto& vit: mit.second)
+		{
+			auto msgItem = dynamic_cast<RsGxsForumMsgItem*>(vit);
+			if(msgItem)
+			{
+				RsGxsForumMsg post = msgItem->mMsg;
+				post.mMeta = msgItem->meta;
+				childPosts.push_back(post);
+			}
+			else RS_WARN("Got item of unexpected type: ", vit);
+
+			delete vit;
+		}
+	}
+
+	return std::error_condition();
+}
+
 bool p3GxsForums::createGroup(uint32_t &token, RsGxsForumGroup &group)
 {
 	std::cerr << "p3GxsForums::createGroup()" << std::endl;
@@ -812,7 +848,25 @@ bool p3GxsForums::createGroup(uint32_t &token, RsGxsForumGroup &group)
 	return true;
 }
 
-bool p3GxsForums::updateGroup(uint32_t &token, RsGxsForumGroup &group)
+bool p3GxsForums::getForumServiceStatistics(GxsServiceStatistic& stat)
+{
+    uint32_t token;
+	if(!RsGxsIfaceHelper::requestServiceStatistic(token) || waitToken(token) != RsTokenService::COMPLETE)
+        return false;
+
+    return RsGenExchange::getServiceStatistic(token,stat);
+}
+
+bool p3GxsForums::getForumStatistics(const RsGxsGroupId& ForumId,GxsGroupStatistic& stat)
+{
+	uint32_t token;
+	if(!RsGxsIfaceHelper::requestGroupStatistic(token, ForumId) || waitToken(token) != RsTokenService::COMPLETE)
+        return false;
+
+    return RsGenExchange::getGroupStatistic(token,stat);
+}
+
+bool p3GxsForums::updateGroup(uint32_t &token, const RsGxsForumGroup &group)
 {
 	std::cerr << "p3GxsForums::updateGroup()" << std::endl;
 
@@ -865,6 +919,9 @@ void p3GxsForums::setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair&
 
 	setMsgStatusFlags(token, msgId, status, mask);
 
+	/* WARNING: The event may be received before the operation is completed!
+	 * TODO: move notification to blocking method markRead(...) which wait the
+	 * operation to complete */
 	if (rsEvents)
 	{
 		auto ev = std::make_shared<RsGxsForumEvent>();
@@ -878,6 +935,37 @@ void p3GxsForums::setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair&
 
 /********************************************************************************************/
 /********************************************************************************************/
+
+std::error_condition p3GxsForums::setPostKeepForever(
+        const RsGxsGroupId& forumId, const RsGxsMessageId& postId,
+        bool keepForever )
+{
+	if(forumId.isNull() || postId.isNull()) return std::errc::invalid_argument;
+
+	uint32_t mask = GXS_SERV::GXS_MSG_STATUS_KEEP_FOREVER;
+	uint32_t status = keepForever ? GXS_SERV::GXS_MSG_STATUS_KEEP_FOREVER : 0;
+
+	uint32_t token;
+	setMsgStatusFlags(token, RsGxsGrpMsgIdPair(forumId, postId), status, mask);
+
+	switch(waitToken(token))
+	{
+	case RsTokenService::PENDING: // [[fallthrough]];
+	case RsTokenService::PARTIAL: return std::errc::timed_out;
+	case RsTokenService::COMPLETE: // [[fallthrough]];
+	case RsTokenService::DONE:
+	{
+		auto ev = std::make_shared<RsGxsForumEvent>();
+		ev->mForumGroupId = forumId;
+		ev->mForumMsgId = postId;
+		ev->mForumEventCode = RsForumEventCode::UPDATED_MESSAGE;
+		rsEvents->postEvent(ev);
+		return std::error_condition();
+	}
+	case RsTokenService::CANCELLED: return std::errc::operation_canceled;
+	default: return std::errc::bad_message;
+	}
+}
 
 /* so we need the same tick idea as wiki for generating dummy forums
  */

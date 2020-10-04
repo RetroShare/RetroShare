@@ -4,7 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2012  Robert Fernie <retroshare@lunamutt.com>                 *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2020  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -45,11 +46,10 @@ class RsGxsChannels;
 extern RsGxsChannels* rsGxsChannels;
 
 
-struct RsGxsChannelGroup : RsSerializable
+struct RsGxsChannelGroup : RsSerializable, RsGxsGenericGroupData
 {
 	RsGxsChannelGroup() : mAutoDownload(false) {}
 
-	RsGroupMetaData mMeta;
 	std::string mDescription;
 	RsGxsImage mImage;
 
@@ -69,11 +69,9 @@ struct RsGxsChannelGroup : RsSerializable
 	~RsGxsChannelGroup() override;
 };
 
-struct RsGxsChannelPost : RsSerializable
+struct RsGxsChannelPost : RsSerializable, RsGxsGenericMsgData
 {
 	RsGxsChannelPost() : mCount(0), mSize(0) {}
-
-	RsMsgMetaData mMeta;
 
 	std::set<RsGxsMessageId> mOlderVersions;
 	std::string mMsg;  // UTF8 encoded.
@@ -114,18 +112,16 @@ enum class RsChannelEventCode: uint8_t
 	SUBSCRIBE_STATUS_CHANGED        = 0x06, // subscription for channel mChannelGroupId changed.
 	READ_STATUS_CHANGED             = 0x07, // existing message has been read or set to unread
 	RECEIVED_DISTANT_SEARCH_RESULT  = 0x08, // result for the given group id available for the given turtle request id
+	STATISTICS_CHANGED              = 0x09, // stats (nb of supplier friends, how many msgs they have etc) has changed
 };
 
 struct RsGxsChannelEvent: RsEvent
 {
-	RsGxsChannelEvent():
-	    RsEvent(RsEventType::GXS_CHANNELS),
-	    mChannelEventCode(RsChannelEventCode::UNKNOWN) {}
+	RsGxsChannelEvent(): RsEvent(RsEventType::GXS_CHANNELS), mChannelEventCode(RsChannelEventCode::UNKNOWN) {}
 
 	RsChannelEventCode mChannelEventCode;
 	RsGxsGroupId mChannelGroupId;
 	RsGxsMessageId mChannelMsgId;
-	TurtleRequestId mDistantSearchRequestId;
 
 	///* @see RsEvent @see RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override
@@ -135,8 +131,28 @@ struct RsGxsChannelEvent: RsEvent
 		RS_SERIAL_PROCESS(mChannelEventCode);
 		RS_SERIAL_PROCESS(mChannelGroupId);
 		RS_SERIAL_PROCESS(mChannelMsgId);
-		RS_SERIAL_PROCESS(mDistantSearchRequestId);
-    }
+	}
+};
+
+// This event is used to factor multiple search results notifications in a single event.
+
+struct RsGxsChannelSearchResultEvent: RsEvent
+{
+	RsGxsChannelSearchResultEvent():
+	    RsEvent(RsEventType::GXS_CHANNELS),
+	    mChannelEventCode(RsChannelEventCode::RECEIVED_DISTANT_SEARCH_RESULT) {}
+
+	RsChannelEventCode mChannelEventCode;
+	std::map<TurtleRequestId,std::set<RsGxsGroupId> > mSearchResultsMap;
+
+	///* @see RsEvent @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override
+	{
+		RsEvent::serial_process(j, ctx);
+
+		RS_SERIAL_PROCESS(mChannelEventCode);
+		RS_SERIAL_PROCESS(mSearchResultsMap);
+	}
 };
 
 class RsGxsChannels: public RsGxsIfaceHelper, public RsGxsCommentService
@@ -286,26 +302,6 @@ public:
 	virtual bool ExtraFileRemove(const RsFileHash& hash) = 0;
 
 	/**
-	 * @brief Get auto-download option value for given channel
-	 * @jsonapi{development}
-	 * @param[in] channelId channel id
-	 * @param[out] enabled storage for the auto-download option value
-	 * @return false if something failed, true otherwhise
-	 */
-	virtual bool getChannelAutoDownload(
-	        const RsGxsGroupId& channelId, bool& enabled ) = 0;
-
-	/**
-	 * @brief Get download directory for the given channel
-	 * @jsonapi{development}
-	 * @param[in] channelId id of the channel
-	 * @param[out] directory reference to string where to store the path
-	 * @return false on error, true otherwise
-	 */
-	virtual bool getChannelDownloadDirectory( const RsGxsGroupId& channelId,
-	                                          std::string& directory ) = 0;
-
-	/**
 	 * @brief Get channels summaries list. Blocking API.
 	 * @jsonapi{development}
 	 * @param[out] channels list where to store the channels
@@ -326,18 +322,50 @@ public:
 	        std::vector<RsGxsChannelGroup>& channelsInfo ) = 0;
 
 	/**
-	 * @brief Get channel contents
+	 * @brief Get all channel messages and comments in a given channel
+	 * @jsonapi{development}
+	 * @param[in] channelId id of the channel of which the content is requested
+	 * @param[out] posts storage for posts
+	 * @param[out] comments storage for the comments
+	 * @param[out] votes storage for votes
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool getChannelAllContent( const RsGxsGroupId& channelId,
+	                                   std::vector<RsGxsChannelPost>& posts,
+	                                   std::vector<RsGxsComment>& comments,
+	                                   std::vector<RsGxsVote>& votes ) = 0;
+
+	/**
+	 * @brief Get channel messages and comments corresponding to the given IDs.
+	 * If the set is empty, nothing is returned.
+	 * @note Since comments are internally themselves messages, it is possible
+	 * to get comments only by supplying their IDs.
 	 * @jsonapi{development}
 	 * @param[in] channelId id of the channel of which the content is requested
 	 * @param[in] contentsIds ids of requested contents
 	 * @param[out] posts storage for posts
 	 * @param[out] comments storage for the comments
+	 * @param[out] votes storage for the votes
 	 * @return false if something failed, true otherwhise
 	 */
 	virtual bool getChannelContent( const RsGxsGroupId& channelId,
-	                       const std::set<RsGxsMessageId>& contentsIds,
-	                       std::vector<RsGxsChannelPost>& posts,
-	                       std::vector<RsGxsComment>& comments ) = 0;
+	                                const std::set<RsGxsMessageId>& contentsIds,
+	                                std::vector<RsGxsChannelPost>& posts,
+	                                std::vector<RsGxsComment>& comments,
+	                                std::vector<RsGxsVote>& votes ) = 0;
+
+	/**
+	 * @brief Get channel comments corresponding to the given IDs.
+	 * If the set is empty, nothing is returned.
+	 * @jsonapi{development}
+	 * @param[in] channelId id of the channel of which the content is requested
+	 * @param[in] contentIds ids of requested contents
+	 * @param[out] comments storage for the comments
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool getChannelComments(const RsGxsGroupId &channelId,
+	                                const std::set<RsGxsMessageId> &contentIds,
+	                                std::vector<RsGxsComment> &comments) = 0;
 
 	/**
 	 * @brief Get channel content summaries
@@ -359,16 +387,6 @@ public:
 	virtual bool markRead(const RsGxsGrpMsgIdPair& postId, bool read) = 0;
 
 	/**
-	 * @brief Enable or disable auto-download for given channel. Blocking API
-	 * @jsonapi{development}
-	 * @param[in] channelId channel id
-	 * @param[in] enable true to enable, false to disable
-	 * @return false if something failed, true otherwhise
-	 */
-	virtual bool setChannelAutoDownload(
-	        const RsGxsGroupId& channelId, bool enable ) = 0;
-
-	/**
 	 * @brief Share channel publishing key
 	 * This can be used to authorize other peers to post on the channel
 	 * @jsonapi{development}
@@ -380,16 +398,6 @@ public:
 	        const RsGxsGroupId& channelId, const std::set<RsPeerId>& peers ) = 0;
 
 	/**
-	 * @brief Set download directory for the given channel. Blocking API.
-	 * @jsonapi{development}
-	 * @param[in] channelId id of the channel
-	 * @param[in] directory path
-	 * @return false on error, true otherwise
-	 */
-	virtual bool setChannelDownloadDirectory(
-	        const RsGxsGroupId& channelId, const std::string& directory) = 0;
-
-	/**
 	 * @brief Subscrbe to a channel. Blocking API
 	 * @jsonapi{development}
 	 * @param[in] channelId Channel id
@@ -399,46 +407,22 @@ public:
 	virtual bool subscribeToChannel( const RsGxsGroupId& channelId,
 	                                 bool subscribe ) = 0;
 
-	/**
-	 * @brief Request remote channels search
+    /**
+     * \brief Retrieve statistics about the channel service
 	 * @jsonapi{development}
-	 * @param[in] matchString string to look for in the search
-	 * @param multiCallback function that will be called each time a search
-	 * result is received
-	 * @param[in] maxWait maximum wait time in seconds for search results
-	 * @return false on error, true otherwise
-	 */
-	virtual bool turtleSearchRequest(
-	        const std::string& matchString,
-	        const std::function<void (const RsGxsGroupSummary& result)>& multiCallback,
-	        rstime_t maxWait = 300 ) = 0;
+     * \param[out] stat       Statistics structure
+     * \return
+     */
+    virtual bool getChannelServiceStatistics(GxsServiceStatistic& stat) =0;
 
-	/**
-	 * @brief Request remote channel
+    /**
+     * \brief Retrieve statistics about the given channel
 	 * @jsonapi{development}
-	 * @param[in] channelId id of the channel to request to distants peers
-	 * @param multiCallback function that will be called each time a result is
-	 *	received
-	 * @param[in] maxWait maximum wait time in seconds for search results
-	 * @return false on error, true otherwise
-	 */
-	virtual bool turtleChannelRequest(
-	        const RsGxsGroupId& channelId,
-	        const std::function<void (const RsGxsChannelGroup& result)>& multiCallback,
-	        rstime_t maxWait = 300 ) = 0;
-
-	/**
-	 * @brief Search local channels
-	 * @jsonapi{development}
-	 * @param[in] matchString string to look for in the search
-	 * @param multiCallback function that will be called for each result
-	 * @param[in] maxWait maximum wait time in seconds for search results
-	 * @return false on error, true otherwise
-	 */
-	virtual bool localSearchRequest(
-	        const std::string& matchString,
-	        const std::function<void (const RsGxsGroupSummary& result)>& multiCallback,
-	        rstime_t maxWait = 30 ) = 0;
+     * \param[in]  channelId  Id of the channel group
+     * \param[out] stat       Statistics structure
+     * \return
+     */
+    virtual bool getChannelStatistics(const RsGxsGroupId& channelId,GxsGroupStatistic& stat) =0;
 
 	/// default base URL used for channels links @see exportChannelLink
 	static const std::string DEFAULT_CHANNEL_BASE_URL;
@@ -484,6 +468,7 @@ public:
 
 	/**
 	 * @brief Import channel from full link
+	 * @jsonapi{development}
 	 * @param[in] link channel link either in radix or link format
 	 * @param[out] chanId optional storage for parsed channel id
 	 * @param[out] errMsg optional storage for error message, meaningful only in
@@ -495,9 +480,114 @@ public:
 	        RsGxsGroupId& chanId = RS_DEFAULT_STORAGE_PARAM(RsGxsGroupId),
 	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string) ) = 0;
 
+	/**
+	 * @brief Search the turtle reachable network for matching channels
+	 * @jsonapi{development}
+	 * An @see RsGxsChannelSearchResultEvent is emitted when matching channels
+	 * arrives from the network
+	 * @param[in] matchString string to search into the channels
+	 * @return search id
+	 */
+	virtual TurtleRequestId turtleSearchRequest(const std::string& matchString)=0;
 
-	/* Following functions are deprecated as they expose internal functioning
-	 * semantic, instead of a safe to use API */
+	/**
+	 * @brief Retrieve available search results
+	 * @jsonapi{development}
+	 * @param[in] searchId search id
+	 * @param[out] results storage for search results
+	 * @return false on error, true otherwise
+	 */
+	virtual bool retrieveDistantSearchResults(
+	        TurtleRequestId searchId,
+	        std::map<RsGxsGroupId, RsGxsGroupSearchResults>& results ) = 0;
+
+	/**
+	 * @brief Request distant channel details
+	 * @jsonapi{development}
+	 * An @see RsGxsChannelSearchResultEvent is emitted once details are
+	 * retrieved from the network
+	 * @param[in] groupId if of the group to request to the network
+	 * @return search id
+	 */
+	virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& groupId) = 0;
+
+	/**
+	 * @brief Retrieve previously requested distant group
+	 * @jsonapi{development}
+	 * @param[in] groupId if of teh group
+	 * @param[out] distantGroup storage for group data
+	 * @return false on error, true otherwise
+	 */
+	virtual bool getDistantSearchResultGroupData(
+	        const RsGxsGroupId& groupId, RsGxsChannelGroup& distantGroup ) = 0;
+
+	/**
+	 * @brief Clear accumulated search results
+	 * @jsonapi{development}
+	 * @param[in] reqId search id
+	 * @return false on error, true otherwise
+	 */
+	virtual bool clearDistantSearchResults(TurtleRequestId reqId) = 0;
+
+	~RsGxsChannels() override;
+
+	////////////////////////////////////////////////////////////////////////////
+	/* Following functions are deprecated and should not be considered a safe to
+	 * use API */
+
+	/**
+	 * @brief Get auto-download option value for given channel
+	 * @jsonapi{development}
+	 * @deprecated This feature rely on very buggy code, the returned value is
+	 *	not reliable @see setChannelAutoDownload().
+	 * @param[in] channelId channel id
+	 * @param[out] enabled storage for the auto-download option value
+	 * @return false if something failed, true otherwhise
+	 */
+	RS_DEPRECATED
+	virtual bool getChannelAutoDownload(
+	        const RsGxsGroupId& channelId, bool& enabled ) = 0;
+
+	/**
+	 * @brief Enable or disable auto-download for given channel. Blocking API
+	 * @jsonapi{development}
+	 * @deprecated This feature rely on very buggy code, when enabled the
+	 *	channel service start flooding erratically log with error messages,
+	 *	apparently without more dangerous consequences. Still those messages
+	 *	hints that something out of control is happening under the hood, use at
+	 *	your own risk. A safe alternative to this method can easly implemented
+	 *	at API client level instead.
+	 * @param[in] channelId channel id
+	 * @param[in] enable true to enable, false to disable
+	 * @return false if something failed, true otherwhise
+	 */
+	RS_DEPRECATED
+	virtual bool setChannelAutoDownload(
+	        const RsGxsGroupId& channelId, bool enable ) = 0;
+
+	/**
+	 * @brief Get download directory for the given channel
+	 * @jsonapi{development}
+	 * @deprecated @see setChannelAutoDownload()
+	 * @param[in] channelId id of the channel
+	 * @param[out] directory reference to string where to store the path
+	 * @return false on error, true otherwise
+	 */
+	RS_DEPRECATED
+	virtual bool getChannelDownloadDirectory( const RsGxsGroupId& channelId,
+	                                          std::string& directory ) = 0;
+
+	/**
+	 * @brief Set download directory for the given channel. Blocking API.
+	 * @jsonapi{development}
+	 * @deprecated @see setChannelAutoDownload()
+	 * @param[in] channelId id of the channel
+	 * @param[in] directory path
+	 * @return false on error, true otherwise
+	 */
+	RS_DEPRECATED
+	virtual bool setChannelDownloadDirectory(
+	        const RsGxsGroupId& channelId, const std::string& directory) = 0;
 
 	/**
 	 * @brief Create channel. Blocking API.
@@ -512,10 +602,13 @@ public:
 	RS_DEPRECATED_FOR(getChannelsInfo)
 	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsChannelGroup> &groups) = 0;
 
-	RS_DEPRECATED_FOR(getChannelsContent)
+	RS_DEPRECATED_FOR(getChannelContent)
+	virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts, std::vector<RsGxsComment> &cmts, std::vector<RsGxsVote> &votes) = 0;
+
+	RS_DEPRECATED_FOR(getChannelContent)
 	virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts, std::vector<RsGxsComment> &cmts) = 0;
 
-	RS_DEPRECATED_FOR(getChannelsContent)
+	RS_DEPRECATED_FOR(getChannelContent)
 	virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts) = 0;
 
 	/**
@@ -624,22 +717,4 @@ public:
 	 */
 	RS_DEPRECATED_FOR(editChannel)
 	virtual bool updateGroup(uint32_t& token, RsGxsChannelGroup& group) = 0;
-
-	//////////////////////////////////////////////////////////////////////////////
-    ///                     Distant synchronisation methods                    ///
-    //////////////////////////////////////////////////////////////////////////////
-    ///
-	RS_DEPRECATED_FOR(turtleChannelRequest)
-	virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id)=0;
-	RS_DEPRECATED
-	virtual TurtleRequestId turtleSearchRequest(const std::string& match_string)=0;
-	RS_DEPRECATED_FOR(turtleSearchRequest)
-	virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSummary> &results) =0;
-	RS_DEPRECATED
-	virtual bool clearDistantSearchResults(TurtleRequestId req)=0;
-	RS_DEPRECATED_FOR(turtleChannelRequest)
-	virtual bool retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group)=0;
-	//////////////////////////////////////////////////////////////////////////////
-
-	~RsGxsChannels() override;
 };

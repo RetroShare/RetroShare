@@ -115,6 +115,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 	//ui->sendButton->setFixedHeight(iconHeight);
 	ui->sendButton->setIconSize(iconSize);
 	ui->typingLabel->setMaximumHeight(QFontMetricsF(font()).height()*1.2);
+	ui->fontcolorButton->setIconSize(iconSize);
 
 	//Initialize search
 	iCharToStartSearch=Settings->getChatSearchCharToStartSearch();
@@ -189,7 +190,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 	ui->hashBox->setDropWidget(this);
 	ui->hashBox->setAutoHide(true);
 
-	QMenu *fontmenu = new QMenu(tr("Set text font & color"));
+	QMenu *fontmenu = new QMenu();
 	fontmenu->addAction(ui->actionChooseFont);
 	fontmenu->addAction(ui->actionChooseColor);
 	fontmenu->addAction(ui->actionResetFont);
@@ -198,14 +199,16 @@ ChatWidget::ChatWidget(QWidget *parent)
 	#ifdef USE_CMARK
 	fontmenu->addAction(ui->actionSend_as_CommonMark);
 	#endif
+	ui->fontcolorButton->setMenu(fontmenu);
 
 	QMenu *menu = new QMenu();
+	menu->addAction(ui->actionMessageHistory);
+	menu->addSeparator();
+	menu->addAction(ui->actionSaveChatHistory);
 	menu->addAction(ui->actionClearChatHistory);
 	menu->addAction(ui->actionDeleteChatHistory);
-	menu->addAction(ui->actionSaveChatHistory);
-	menu->addAction(ui->actionMessageHistory);
+
 	ui->pushtoolsButton->setMenu(menu);
-	menu->addMenu(fontmenu);
 
 	ui->actionSendAsPlainText->setChecked(Settings->getChatSendAsPlainTextByDef());
 	ui->chatTextEdit->setOnlyPlainText(ui->actionSendAsPlainText->isChecked());
@@ -242,7 +245,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 
 //#ifdef ENABLE_DISTANT_CHAT_AND_MSGS
 //	contextMnu->addSeparator();
-//    QAction *action = new QAction(QIcon(":/images/pasterslink.png"), tr("Paste/Create private chat or Message link..."), this);
+//    QAction *action = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/pasterslink.png"), tr("Paste/Create private chat or Message link..."), this);
 //    connect(action, SIGNAL(triggered()), this, SLOT(pasteCreateMsgLink()));
 //    ui->chatTextEdit->addContextMenuAction(action);
 //#endif
@@ -1064,7 +1067,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 		rsIdentity->getIdDetails(gxsId, details);
 		bool isUnsigned = !(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED);
 		if(isUnsigned && ui->textBrowser->getShowImages()) {
-			QIcon icon = QIcon(":/icons/anonymous_blue_128.png");
+            QIcon icon = FilesDefs::getIconFromQtResourcePath(":/icons/anonymous_blue_128.png");
 			int height = ui->textBrowser->fontMetrics().height()*0.8;
 			QImage image(icon.pixmap(height,height).toImage());
 			QByteArray byteArray;
@@ -1860,7 +1863,7 @@ void ChatWidget::updatePeersCustomStateString(const QString& /*peer_id*/, const 
 void ChatWidget::updateStatusString(const QString &statusMask, const QString &statusString, bool permanent)
 {
 	ui->typingLabel->setText(QString(statusMask).arg(trUtf8(statusString.toUtf8()))); // displays info for 5 secs.
-	ui->typingPixmapLabel->setPixmap(QPixmap(":images/typing.png") );
+    ui->typingPixmapLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":icons/png/typing.png") );
 
 	if (statusString == "is typing...") {
 		typing = true;
@@ -1906,11 +1909,8 @@ void ChatWidget::updateCMPreview()
 
 void ChatWidget::quote()
 {
-	QString text = ui->textBrowser->textCursor().selection().toPlainText();
-	QStringList sl = text.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
-	text = sl.join("\n> ");
-	text.replace(QChar(-4), " "); // Char used when image on text.
-	emit ui->chatTextEdit->append(QString("> ") + text);
+	QString text = RsHtml::makeQuotedText(ui->textBrowser);
+	emit ui->chatTextEdit->append(text);
 }
 
 void ChatWidget::dropPlacemark()

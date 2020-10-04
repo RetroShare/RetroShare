@@ -1,7 +1,7 @@
 /*
  * RetroShare JSON API public header
  *
- * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio.eigenlab.org>
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>
  * Copyright (C) 2019  Cyril Soler <csoler@users.sourceforge.net>
  * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>
  *
@@ -29,6 +29,7 @@
 #include <cstdint>
 #include <system_error>
 
+#include "util/rsdebug.h"
 #include "util/rsmemory.h"
 
 class RsJsonApi;
@@ -74,8 +75,7 @@ struct RsJsonApiErrorCategory: std::error_category
 		case RsJsonApiErrorNum::NOT_A_MACHINE_GUN:
 			return "Method must not be called in burst";
 		default:
-			return "Error message for error: " + std::to_string(ev) +
-			        " not available in category: " + name();
+			return rsErrorNotInCategory(ev, name());
 		}
 	}
 

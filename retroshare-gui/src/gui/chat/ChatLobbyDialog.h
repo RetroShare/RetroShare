@@ -25,6 +25,7 @@
 #include "ui_ChatLobbyDialog.h"
 #include "gui/common/RSTreeWidgetItem.h"
 #include "ChatDialog.h"
+#include "PopupChatWindow.h"
 
 Q_DECLARE_METATYPE(RsGxsId)
 Q_DECLARE_METATYPE(QList<RsGxsId>)
@@ -51,16 +52,20 @@ public:
 	ChatLobbyId id() const { return lobbyId ;}
 	void sortParcipants();
 
+	inline bool isWindowed() const { return dynamic_cast<PopupChatWindow*>(this->window()) != nullptr; }
+
+public slots:
+	void leaveLobby() ;
 private slots:
 	void participantsTreeWidgetCustomPopupMenu( QPoint point );
 	void textBrowserAskContextMenu(QMenu* contextMnu, QString anchorForPosition, const QPoint point);
 	void inviteFriends() ;
-	void leaveLobby() ;
 	void filterChanged(const QString &text);
-    void showInPeopleTab();
+	void showInPeopleTab();
+	void toggleWindowed(){setWindowed(!isWindowed());}
+	void setWindowed(bool windowed);
 
 signals:
-	void lobbyLeave(ChatLobbyId) ;
 	void typingEventReceived(ChatLobbyId) ;
 	void messageReceived(bool incoming, ChatLobbyId lobby_id, QDateTime time, QString senderName, QString msg) ;
 	void peerJoined(ChatLobbyId) ;
@@ -103,8 +108,12 @@ private:
 
         RSTreeWidgetItemCompareRole *mParticipantCompareRole ;
 
-    QToolButton *inviteFriendsButton ;
+	QToolButton *undockButton ;
+	QToolButton *inviteFriendsButton ;
 	QToolButton *unsubscribeButton ;
+
+	bool mWindowedSetted;
+	PopupChatWindow* mPCWindow;
 
 	/** Qt Designer generated object */
 	Ui::ChatLobbyDialog ui;
@@ -125,7 +134,7 @@ private:
 
     GxsIdChooser *ownIdChooser ;
     //icons cache
-    QIcon bullet_red_128, bullet_grey_128, bullet_green_128, bullet_yellow_128;
+    QIcon bullet_red_128, bullet_grey_128, bullet_green_128, bullet_yellow_128, bullet_blue_128;
 };
 
 #endif

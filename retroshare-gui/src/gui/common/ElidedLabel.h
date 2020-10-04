@@ -48,6 +48,24 @@ public:
 	QColor textColor() const { return mTextColor; }
 	void setTextColor(const QColor &color);
 
+	/**
+	 * @brief paintElidedLine: Draw elided(…) line to a painter.
+	 * @param painter: wher to paint line. If null, only calculate rectElision.
+	 * painter pen have to be setted before. This doesn't paint background.
+	 * @param plainText: Plain text to paint.
+	 * @param cr: Area where to paint. If too close, text is elided.
+	 * @param font: Font to use to pain text.
+	 * @param alignment: Which alignement to use for text.
+	 * @param wordWrap: If it elide by char or by word.
+	 * @param drawRoundRect: If rounded rect around … is need. To notice user he can click on it.
+	 * @param rectElision: Where elision occurs. To manage click. Can be omitted.
+	 * @return If text need to be elided.
+	 */
+	static bool paintElidedLine( QPainter* painter, QString plainText
+	                           , const QRect& cr,  QFont font
+	                           , Qt::Alignment alignment,bool wordWrap
+	                           , bool drawRoundedRect,QRect* rectElision = nullptr);
+
 public slots:
 	void setText(const QString &text);
 	void setOnlyPlainText(const bool &value);

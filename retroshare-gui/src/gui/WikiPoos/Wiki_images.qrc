@@ -1,17 +1,7 @@
 <RCC>
-	<qresource prefix="/" >
-		<file>images/appointment-new.png</file>
-		<file>images/appointment-new_64.png</file>
-		<file>images/arrow-left.png</file>
-		<file>images/arrow-right.png</file>
-		<file>images/book2_32.png</file>
-		<file>images/story-editor.png</file>
-		<file>images/story-editor_48.png</file>
-		<file>images/republish.png</file>
-		<file>images/resource-group-new.png</file>
-		<file>images/resource-group_64.png</file>
-		<file>images/resource-group-new_48.png</file>
-		<file>images/resource-group-new_64.png</file>
-		<file>images/wikibook_32.png</file>
-	</qresource>
+    <qresource prefix="/">
+        <file>images/addpage.png</file>
+        <file>images/editpage.png</file>
+        <file>images/reload.png</file>
+    </qresource>
 </RCC>

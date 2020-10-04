@@ -19,8 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef RS_MSG_ITEMS_H
-#define RS_MSG_ITEMS_H
+#pragma once
 
 #include <map>
 
@@ -33,10 +32,6 @@
 #include "serialiser/rstlvfileitem.h"
 #include "grouter/grouteritems.h"
 
-#if 0
-#include "serialiser/rstlvtypes.h"
-#include "serialiser/rstlvfileitem.h"
-#endif
 
 /**************************************************************************/
 
@@ -73,6 +68,7 @@ const uint32_t RS_MSG_FLAGS_LOAD_EMBEDDED_IMAGES  = 0x00040000;
 const uint32_t RS_MSG_FLAGS_DECRYPTED             = 0x00080000;
 const uint32_t RS_MSG_FLAGS_ROUTED                = 0x00100000;
 const uint32_t RS_MSG_FLAGS_PUBLISH_KEY           = 0x00200000;
+const uint32_t RS_MSG_FLAGS_SPAM                  = 0x00400000;
 
 const uint32_t RS_MSG_FLAGS_SYSTEM                = RS_MSG_FLAGS_USER_REQUEST | RS_MSG_FLAGS_FRIEND_RECOMMENDATION | RS_MSG_FLAGS_PUBLISH_KEY;
 
@@ -218,17 +214,12 @@ class RsMsgParentId : public RsMessageItem
 
 class RsMsgSerialiser: public RsServiceSerializer
 {
-	public:
-		RsMsgSerialiser(SerializationFlags flags = RsServiceSerializer::SERIALIZATION_FLAG_NONE)
-			:RsServiceSerializer(RS_SERVICE_TYPE_MSG,RsGenericSerializer::FORMAT_BINARY,flags){}
+public:
+	RsMsgSerialiser(
+	        RsSerializationFlags flags = RsSerializationFlags::NONE ):
+	    RsServiceSerializer(RS_SERVICE_TYPE_MSG, flags){}
 
-		virtual     ~RsMsgSerialiser() {}
+	RsItem* create_item(uint16_t service,uint8_t type) const override;
 
-        virtual RsItem *create_item(uint16_t service,uint8_t type) const ;
+	~RsMsgSerialiser() override = default;
 };
-
-/**************************************************************************/
-
-#endif /* RS_MSG_ITEMS_H */
-
-

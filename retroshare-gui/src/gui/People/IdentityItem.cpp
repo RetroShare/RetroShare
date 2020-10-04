@@ -14,7 +14,7 @@
 #include "IdentityItem.h"
 
 #define IMAGE_MAKEFRIEND ":/images/user/add_user16.png"
-#define IMAGE_CHAT       ":/images/chat_24.png"
+#define IMAGE_CHAT       ":/icons/png/chats.png"
 
 IdentityItem *IdentityItem::_selected_node = NULL ;
 

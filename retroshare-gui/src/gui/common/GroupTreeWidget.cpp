@@ -18,27 +18,20 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <iostream>
-
 #include "GroupTreeWidget.h"
 #include "ui_GroupTreeWidget.h"
 
-#include <QHBoxLayout>
-#include <QHeaderView>
-#include <QLabel>
-#include <QMenu>
-#include <QMovie>
-#include <QToolButton>
-
+#include "gui/common/FilesDefs.h"
 #include "retroshare/rsgxsflags.h"
 
 #include "PopularityDefs.h"
 #include "RSElidedItemDelegate.h"
 #include "RSTreeWidgetItem.h"
-#include "gui/common/ElidedLabel.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/QtVersion.h"
 #include "util/DateTime.h"
+
+#include <QMenu>
 
 #include <stdint.h>
 
@@ -65,9 +58,6 @@
 
 #define FILTER_NAME_INDEX  0
 #define FILTER_DESC_INDEX  1
-
-Q_DECLARE_METATYPE(ElidedLabel*)
-Q_DECLARE_METATYPE(QLabel*)
 
 GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 		QWidget(parent), ui(new Ui::GroupTreeWidget)
@@ -143,44 +133,12 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	/* Initialize display button */
 	initDisplayMenu(ui->displayButton);
 
-	ui->treeWidget->setIconSize(QSize(S*1.8,S*1.8));	
+	ui->treeWidget->setIconSize(QSize(S*1.8,S*1.8));
 }
 
 GroupTreeWidget::~GroupTreeWidget()
 {
 	delete ui;
-}
-
-static void getNameWidget(QTreeWidget *treeWidget, QTreeWidgetItem *item, ElidedLabel *&nameLabel, QLabel *&waitLabel)
-{
-	QWidget *widget = treeWidget->itemWidget(item, COLUMN_NAME);
-
-	if (!widget) {
-		widget = new QWidget;
-		widget->setAttribute(Qt::WA_TranslucentBackground);
-		nameLabel = new ElidedLabel(widget);
-		waitLabel = new QLabel(widget);
-		QMovie *movie = new QMovie(":/images/loader/circleball-16.gif");
-		waitLabel->setMovie(movie);
-		waitLabel->setHidden(true);
-
-		widget->setProperty("nameLabel", qVariantFromValue(nameLabel));
-		widget->setProperty("waitLabel", qVariantFromValue(waitLabel));
-
-		QHBoxLayout *layout = new QHBoxLayout;
-		layout->setSpacing(0);
-		layout->setContentsMargins(0, 0, 0, 0);
-
-		layout->addWidget(nameLabel);
-		layout->addWidget(waitLabel);
-
-		widget->setLayout(layout);
-
-		treeWidget->setItemWidget(item, COLUMN_NAME, widget);
-	} else {
-		nameLabel = widget->property("nameLabel").value<ElidedLabel*>();
-		waitLabel = widget->property("waitLabel").value<QLabel*>();
-	}
 }
 
 void GroupTreeWidget::changeEvent(QEvent *e)
@@ -293,11 +251,11 @@ void GroupTreeWidget::initDisplayMenu(QToolButton *toolButton)
 	displayMenu = new QMenu();
 	QActionGroup *actionGroupAsc = new QActionGroup(displayMenu);
 
-	actionSortDescending = displayMenu->addAction(QIcon(":/images/sort_decrease.png"), tr("Sort Descending Order"), this, SLOT(sort()));
+    actionSortDescending = displayMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/sort_decrease.png"), tr("Sort Descending Order"), this, SLOT(sort()));
 	actionSortDescending->setCheckable(true);
 	actionSortDescending->setActionGroup(actionGroupAsc);
 
-	actionSortAscending = displayMenu->addAction(QIcon(":/images/sort_incr.png"), tr("Sort Ascending Order"), this, SLOT(sort()));
+    actionSortAscending = displayMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/sort_incr.png"), tr("Sort Ascending Order"), this, SLOT(sort()));
 	actionSortAscending->setCheckable(true);
 	actionSortAscending->setActionGroup(actionGroupAsc);
 
@@ -330,9 +288,6 @@ void GroupTreeWidget::initDisplayMenu(QToolButton *toolButton)
 
 void GroupTreeWidget::updateColors()
 {
-	QBrush brush;
-	QBrush standardBrush = ui->treeWidget->palette().color(QPalette::Text);
-
 	QTreeWidgetItemIterator itemIterator(ui->treeWidget);
 	QTreeWidgetItem *item;
 	while ((item = *itemIterator) != NULL) {
@@ -340,17 +295,11 @@ void GroupTreeWidget::updateColors()
 
 		int color = item->data(COLUMN_DATA, ROLE_COLOR).toInt();
 		if (color >= 0) {
-			brush = QBrush(mTextColor[color]);
+			item->setData(COLUMN_NAME, Qt::TextColorRole, mTextColor[color]);
 		} else {
-			brush = standardBrush;
+			item->setData(COLUMN_NAME, Qt::TextColorRole, QVariant());
 		}
 
-		item->setForeground(COLUMN_NAME, brush);
-
-		ElidedLabel *nameLabel = NULL;
-		QLabel *waitLabel = NULL;
-		getNameWidget(ui->treeWidget, item, nameLabel, waitLabel);
-		nameLabel->setTextColor(brush.color());
 	}
 }
 
@@ -390,24 +339,21 @@ QTreeWidgetItem *GroupTreeWidget::addCategoryItem(const QString &name, const QIc
 	QFont font;
 	QTreeWidgetItem *item = new QTreeWidgetItem();
 	ui->treeWidget->addTopLevelItem(item);
+	// To get StyleSheet for Items
+	ui->treeWidget->style()->unpolish(ui->treeWidget);
+	ui->treeWidget->style()->polish(ui->treeWidget);
 
-	ElidedLabel *nameLabel = NULL;
-	QLabel *waitLabel = NULL;
-	getNameWidget(ui->treeWidget, item, nameLabel, waitLabel);
-
-	nameLabel->setText(name);
+	item->setText(COLUMN_NAME, name);
 	item->setData(COLUMN_DATA, ROLE_NAME, name);
 	font = item->font(COLUMN_NAME);
 	font.setBold(true);
 	item->setFont(COLUMN_NAME, font);
-	nameLabel->setFont(font);
 	item->setIcon(COLUMN_NAME, icon);
 
 	int S = QFontMetricsF(font).height();
 
 	item->setSizeHint(COLUMN_NAME, QSize(S*1.9, S*1.9));
-	item->setForeground(COLUMN_NAME, QBrush(textColorCategory()));
-	nameLabel->setTextColor(textColorCategory());
+	item->setData(COLUMN_NAME, Qt::TextColorRole, textColorCategory());
 	item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_CATEGORY);
 
 	item->setExpanded(expand);
@@ -437,19 +383,32 @@ void GroupTreeWidget::setDistSearchVisible(bool visible)
 
 bool GroupTreeWidget::isSearchRequestResult(QPoint &point,QString& group_id,uint32_t& search_req_id)
 {
-    QTreeWidgetItem *item = ui->treeWidget->itemAt(point);
+	QTreeWidgetItem *item = ui->treeWidget->itemAt(point);
 	if (item == NULL)
 		return false;
 
-    QTreeWidgetItem *parent = item->parent();
+	QTreeWidgetItem *parent = item->parent();
 
-    if(parent == NULL)
-        return false ;
+	if(parent == NULL)
+		return false ;
 
 	search_req_id = parent->data(COLUMN_DATA, ROLE_REQUEST_ID).toUInt();
-    group_id = itemId(item) ;
+	group_id = itemId(item) ;
 
-    return search_req_id > 0;
+	return search_req_id > 0;
+}
+
+bool GroupTreeWidget::isSearchRequestResultItem(QTreeWidgetItem *item,QString& group_id,uint32_t& search_req_id)
+{
+	QTreeWidgetItem *parent = item->parent();
+
+	if(parent == NULL)
+		return false ;
+
+	search_req_id = parent->data(COLUMN_DATA, ROLE_REQUEST_ID).toUInt();
+	group_id = itemId(item) ;
+
+	return search_req_id > 0;
 }
 
 bool GroupTreeWidget::isSearchRequestItem(QPoint &point,uint32_t& search_req_id)
@@ -514,13 +473,20 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 			categoryItem->addChild(item);
 		}
 
-		ElidedLabel *nameLabel = NULL;
-		QLabel *waitLabel = NULL;
-		getNameWidget(ui->treeWidget, item, nameLabel, waitLabel);
-
-		nameLabel->setText(itemInfo.name);
+		item->setText(COLUMN_NAME, itemInfo.name);
 		item->setData(COLUMN_DATA, ROLE_NAME, itemInfo.name);
 		item->setData(COLUMN_DATA, ROLE_DESCRIPTION, itemInfo.description);
+
+        // Add children for context strings. This happens in the search.
+        while(nullptr != item->takeChild(0));
+
+        for(auto str:itemInfo.context_strings)
+            if(!str.empty())
+            {
+                QTreeWidgetItem *it = new QTreeWidgetItem(QStringList(QString::fromUtf8(str.c_str())));
+                it->setData(COLUMN_DATA,ROLE_ID,itemInfo.id);
+				item->addChild(it);
+            }
 
 		/* Set last post */
 		qlonglong lastPost = itemInfo.lastpost.toTime_t();
@@ -535,12 +501,7 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		item->setData(COLUMN_DATA, ROLE_POSTS, -itemInfo.max_visible_posts);// negative for correct sorting
 
 		/* Set icon */
-		if (waitLabel->isVisible()) {
-			/* Item is waiting, save icon in role */
-			item->setData(COLUMN_DATA, ROLE_SAVED_ICON, itemInfo.icon);
-		} else {
-			item->setIcon(COLUMN_NAME, itemInfo.icon);
-		}
+		item->setIcon(COLUMN_NAME, itemInfo.icon);
 
 		/* Set popularity */
 		QString tooltip = PopularityDefs::tooltip(itemInfo.popularity);
@@ -566,6 +527,8 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 
 		tooltip += "\n" + tr("Description") + ": " + itemInfo.description;
 
+		tooltip += "\n" + tr("Id") + ": " + itemInfo.id;
+
 		item->setToolTip(COLUMN_NAME, tooltip);
 		item->setToolTip(COLUMN_UNREAD, tooltip);
 		item->setToolTip(COLUMN_POPULARITY, tooltip);
@@ -573,16 +536,14 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		item->setData(COLUMN_DATA, ROLE_SUBSCRIBE_FLAGS, itemInfo.subscribeFlags);
 
 		/* Set color */
-		QBrush brush;
 		if (itemInfo.publishKey) {
-			brush = QBrush(textColorPrivateKey());
 			item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_PRIVATEKEY);
+			item->setData(COLUMN_NAME, Qt::ForegroundRole, QBrush(textColorPrivateKey()));
 		} else {
-			brush = ui->treeWidget->palette().color(QPalette::Text);
+			// Let StyleSheet color
 			item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_STANDARD);
+			item->setData(COLUMN_NAME, Qt::BackgroundRole, QVariant());
 		}
-		item->setForeground(COLUMN_NAME, brush);
-		nameLabel->setTextColor(brush.color());
 
 		/* Calculate score */
 		calculateScore(item, filterText);
@@ -616,11 +577,8 @@ void GroupTreeWidget::setUnreadCount(QTreeWidgetItem *item, int unreadCount)
 	if (item == NULL) {
 		return;
 	}
-	ElidedLabel *nameLabel = NULL;
-	QLabel *waitLabel = NULL;
-	getNameWidget(ui->treeWidget, item, nameLabel, waitLabel);
 
-	QFont font = nameLabel->font();
+	QFont font = item->font(COLUMN_NAME);
 
 	if (unreadCount) {
 		item->setData(COLUMN_DATA, ROLE_UNREAD, unreadCount);
@@ -631,7 +589,7 @@ void GroupTreeWidget::setUnreadCount(QTreeWidgetItem *item, int unreadCount)
 		font.setBold(false);
 	}
 
-	nameLabel->setFont(font);
+	item->setFont(COLUMN_NAME, font);
 }
 
 QTreeWidgetItem *GroupTreeWidget::getItemFromId(const QString &id)
@@ -677,40 +635,7 @@ bool GroupTreeWidget::setWaiting(const QString &id, bool wait)
 		return false;
 	}
 
-	ElidedLabel *nameLabel = NULL;
-	QLabel *waitLabel = NULL;
-	getNameWidget(ui->treeWidget, item, nameLabel, waitLabel);
-	if (wait) {
-		if (waitLabel->isVisible()) {
-			/* Allready waiting */
-		} else {
-			/* Save icon in role */
-			QIcon icon = item->icon(COLUMN_NAME);
-			item->setData(COLUMN_DATA, ROLE_SAVED_ICON, icon);
-
-			/* Create empty icon of the same size */
-			QPixmap pixmap(ui->treeWidget->iconSize());
-			pixmap.fill(Qt::transparent);
-			item->setIcon(COLUMN_NAME, QIcon(pixmap));
-
-			/* Show waitLabel and hide nameLabel */
-			nameLabel->setHidden(true);
-			waitLabel->setVisible(true);
-			waitLabel->movie()->start();
-		}
-	} else {
-		if (waitLabel->isVisible()) {
-			/* Show nameLabel and hide waitLabel */
-			waitLabel->movie()->stop();
-			waitLabel->setHidden(true);
-			nameLabel->setVisible(true);
-
-			/* Set icon saved in role */
-			item->setIcon(COLUMN_NAME, item->data(COLUMN_DATA, ROLE_SAVED_ICON).value<QIcon>());
-			item->setData(COLUMN_DATA, ROLE_SAVED_ICON, QIcon());
-		}
-	}
-
+	item->setData(COLUMN_NAME, Qt::StatusTipRole, wait ? "waiting" : "");
 	return true;
 }
 

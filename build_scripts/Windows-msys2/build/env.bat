@@ -16,10 +16,11 @@ if "%QtVersion%"=="" %cecho% error "Cannot get Qt version." & exit /B 1
 
 set RsMinGWPath=%EnvMSYS2BasePath%\mingw%RsBit%
 
-set RsBuildPath=%BuildPath%\Qt-%QtVersion%-%RsArchitecture%-%RsBuildConfig%
-set RsDeployPath=%DeployPath%\Qt-%QtVersion%%RsType%-%RsArchitecture%-%RsBuildConfig%
+set RsBuildPath=%BuildPath%\Qt-%QtVersion%-%RsArchitecture%-%RsCompiler%-%RsBuildConfig%
+set RsDeployPath=%DeployPath%\Qt-%QtVersion%%RsType%-%RsArchitecture%-%RsCompiler%-%RsBuildConfig%
 set RsPackPath=%DeployPath%
 set RsArchiveAdd=
+set RsWebuiPath=%RootPath%\%SourceName%-webui
 
 if not exist "%~dp0env-mod.bat" goto no_mod
 call "%~dp0env-mod.bat"

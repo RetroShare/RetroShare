@@ -37,6 +37,7 @@ class GxsForumGroupItem : public GxsGroupFeedItem
 public:
 	/** Default Constructor */
 	GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, bool autoUpdate);
+	GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const std::list<RsGxsId>& added_moderators,const std::list<RsGxsId>& removed_moderators,bool isHome, bool autoUpdate);
 	GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsForumGroup &group, bool isHome, bool autoUpdate);
 	~GxsForumGroupItem();
 
@@ -50,7 +51,7 @@ protected:
 
 	/* GxsGroupFeedItem */
 	virtual QString groupName();
-	virtual void loadGroup(const uint32_t &token);
+	virtual void loadGroup() override;
 	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_FORUM; }
 
 private slots:
@@ -65,6 +66,9 @@ private:
 
 	/** Qt Designer generated object */
 	Ui::GxsForumGroupItem *ui;
+
+    std::list<RsGxsId> mAddedModerators;
+    std::list<RsGxsId> mRemovedModerators;
 };
 
 #endif

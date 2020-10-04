@@ -43,7 +43,7 @@ public:
   /** Loads the settings for this page */
   virtual void load();
 
-  virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/webinterface.svg") ; }
+  virtual QPixmap iconPixmap() const { return FilesDefs::getPixmapFromQtResourcePath(":/icons/settings/webinterface.svg") ; }
   virtual QString pageName() const { return tr("Webinterface") ; }
   virtual QString helpText() const;
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1433</width>
-    <height>541</height>
+    <width>1092</width>
+    <height>231</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gxsChannelPostItem_GLayout">
@@ -62,9 +62,6 @@
             <property name="text">
              <string/>
             </property>
-            <property name="pixmap">
-             <pixmap resource="../images.qrc">:/images/thumb-default-video.png</pixmap>
-            </property>
             <property name="scaledContents">
              <bool>false</bool>
             </property>
@@ -80,7 +77,7 @@
           <item>
            <layout class="QHBoxLayout" name="tilteHLayout">
             <item>
-             <widget class="StyledLabel" name="titleLabel">
+             <widget class="StyledElidedLabel" name="titleLabel">
               <property name="sizePolicy">
                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                 <horstretch>0</horstretch>
@@ -128,34 +125,27 @@
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="subjectHLayout"/>
+           <widget class="QLabel" name="subjectLabel">
+            <property name="text">
+             <string notr="true">TextLabel</string>
+            </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="warningHLayout">
-            <item>
-             <widget class="QLabel" name="warn_image_label">
-              <property name="maximumSize">
-               <size>
-                <width>24</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="pixmap">
-               <pixmap resource="../images.qrc">:/images/status_unknown.png</pixmap>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="warning_label">
-              <property name="text">
-               <string notr="true">TextLabel</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <spacer name="verticalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
           </item>
           <item>
            <layout class="QHBoxLayout" name="newCommHLayout">
@@ -200,10 +190,6 @@
               <property name="toolTip">
                <string>Toggle Message Read Status</string>
               </property>
-              <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/message-state-unread.png</normaloff>:/images/message-state-unread.png</iconset>
-              </property>
               <property name="checkable">
                <bool>true</bool>
               </property>
@@ -236,10 +222,6 @@
               <property name="text">
                <string/>
               </property>
-              <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/vote_up.png</normaloff>:/images/vote_up.png</iconset>
-              </property>
              </widget>
             </item>
             <item>
@@ -250,10 +232,6 @@
               <property name="text">
                <string/>
               </property>
-              <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/vote_down.png</normaloff>:/images/vote_down.png</iconset>
-              </property>
              </widget>
             </item>
             <item>
@@ -263,10 +241,6 @@
               </property>
               <property name="text">
                <string>Download</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../icons.qrc">
-                <normaloff>:/icons/png/download.png</normaloff>:/icons/png/download.png</iconset>
               </property>
               <property name="autoExclusive">
                <bool>false</bool>
@@ -281,10 +255,6 @@
               <property name="text">
                <string>Play</string>
               </property>
-              <property name="icon">
-               <iconset resource="../icons.qrc">
-                <normaloff>:/icons/png/play.png</normaloff>:/icons/png/play.png</iconset>
-              </property>
              </widget>
             </item>
             <item>
@@ -292,20 +262,12 @@
               <property name="text">
                <string>Comments</string>
               </property>
-              <property name="icon">
-               <iconset resource="../icons.qrc">
-                <normaloff>:/icons/png/comment.png</normaloff>:/icons/png/comment.png</iconset>
-              </property>
              </widget>
             </item>
             <item>
              <widget class="QPushButton" name="editButton">
               <property name="text">
                <string>Edit</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../icons.qrc">
-                <normaloff>:/icons/png/pencil-edit-button.png</normaloff>:/icons/png/pencil-edit-button.png</iconset>
               </property>
              </widget>
             </item>
@@ -322,10 +284,6 @@
               </property>
               <property name="toolTip">
                <string>Copy RetroShare Link</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../icons.qrc">
-                <normaloff>:/icons/png/copy.png</normaloff>:/icons/png/copy.png</iconset>
               </property>
              </widget>
             </item>
@@ -385,10 +343,6 @@
               <property name="toolTip">
                <string>Expand</string>
               </property>
-              <property name="icon">
-               <iconset resource="../icons.qrc">
-                <normaloff>:/icons/png/down-arrow.png</normaloff>:/icons/png/down-arrow.png</iconset>
-              </property>
              </widget>
             </item>
             <item>
@@ -405,10 +359,6 @@
               <property name="toolTip">
                <string>Set as read and remove item</string>
               </property>
-              <property name="icon">
-               <iconset resource="../icons.qrc">
-                <normaloff>:/icons/png/correct.png</normaloff>:/icons/png/correct.png</iconset>
-              </property>
              </widget>
             </item>
             <item>
@@ -424,10 +374,6 @@
               </property>
               <property name="toolTip">
                <string>Remove Item</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../icons.qrc">
-                <normaloff>:/icons/png/exit2.png</normaloff>:/icons/png/exit2.png</iconset>
               </property>
              </widget>
             </item>
@@ -524,9 +470,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>StyledLabel</class>
+   <class>StyledElidedLabel</class>
    <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
+   <header>gui/common/StyledElidedLabel.h</header>
   </customwidget>
   <customwidget>
    <class>ElidedLabel</class>
@@ -535,9 +481,6 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../icons.qrc"/>
-  <include location="../images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

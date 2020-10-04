@@ -21,7 +21,8 @@
 #ifndef POSTEDPAGE_H
 #define POSTEDPAGE_H
 
-#include <retroshare-gui/configpage.h>
+#include "retroshare-gui/configpage.h"
+#include "gui/common/FilesDefs.h"
 
 namespace Ui {
 class PostedPage;
@@ -38,8 +39,8 @@ public:
 	/** Loads the settings for this page */
 	virtual void load();
 
-	virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/posted.svg") ; }
-	virtual QString pageName() const { return tr("Links") ; }
+    virtual QPixmap iconPixmap() const { return FilesDefs::getPixmapFromQtResourcePath(":/icons/settings/posted.svg") ; }
+	virtual QString pageName() const { return tr("Boards") ; }
 	virtual QString helpText() const { return ""; }
 
 private:

@@ -26,7 +26,7 @@
 
 #include "GxsChannelDialog.h"
 #include "GxsChannelGroupDialog.h"
-#include "GxsChannelPostsWidget.h"
+#include "GxsChannelPostsWidgetWithModel.h"
 #include "CreateGxsChannelMsg.h"
 #include "GxsChannelUserNotify.h"
 #include "gui/gxs/GxsGroupShareKey.h"
@@ -36,49 +36,38 @@
 #include "gui/common/GroupTreeWidget.h"
 #include "util/qtthreadsutils.h"
 
-class GxsChannelGroupInfoData : public RsUserdata
-{
-public:
-	GxsChannelGroupInfoData() : RsUserdata() {}
-
-public:
-	QMap<RsGxsGroupId, QIcon> mIcon;
-	QMap<RsGxsGroupId, QString> mDescription;
-};
+// class GxsChannelGroupInfoData : public RsUserdata
+// {
+// public:
+// 	GxsChannelGroupInfoData() : RsUserdata() {}
+//
+// public:
+// 	QMap<RsGxsGroupId, QIcon> mIcon;
+// 	QMap<RsGxsGroupId, QString> mDescription;
+// };
 
 /** Constructor */
-GxsChannelDialog::GxsChannelDialog(QWidget *parent)
-	: GxsGroupFrameDialog(rsGxsChannels, parent,true)
+GxsChannelDialog::GxsChannelDialog(QWidget *parent):
+    GxsGroupFrameDialog(rsGxsChannels, parent, true), mEventHandlerId(0)
 {
-    mEventHandlerId = 0;
-    // Needs to be asynced because this function is likely to be called by another thread!
-	rsEvents->registerEventsHandler(RsEventType::GXS_CHANNELS, [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId );
+	// Needs to be asynced because this function is called by another thread!
+	rsEvents->registerEventsHandler(
+	            [this](std::shared_ptr<const RsEvent> event)
+	{ RsQThreadUtils::postToObject([=]() { handleEvent_main_thread(event); }, this ); },
+	            mEventHandlerId, RsEventType::GXS_CHANNELS );
 }
 
 void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 {
 	const RsGxsChannelEvent *e = dynamic_cast<const RsGxsChannelEvent*>(event.get());
 
-	if(!e)
-		return;
-
+	if(e)
         switch(e->mChannelEventCode)
         {
-		case RsChannelEventCode::NEW_MESSAGE:
-			updateMessageSummaryList(e->mChannelGroupId);
-            break;
-
-		case RsChannelEventCode::UPDATED_MESSAGE:        // [[fallthrough]];
-			updateDisplay(false);
-            break;
-
-		case RsChannelEventCode::READ_STATUS_CHANGED:
-			updateMessageSummaryList(e->mChannelGroupId);
-            break;
-
-        case RsChannelEventCode::RECEIVED_DISTANT_SEARCH_RESULT:
-            mSearchResults.insert(e->mDistantSearchRequestId);
-            updateSearchResults();
+		case RsChannelEventCode::NEW_MESSAGE:             // [[fallthrough]];
+		case RsChannelEventCode::UPDATED_MESSAGE:         // [[fallthrough]];
+		case RsChannelEventCode::READ_STATUS_CHANGED:     // [[fallthrough]];
+			updateGroupStatisticsReal(e->mChannelGroupId); // update the list immediately
             break;
 
 		case RsChannelEventCode::NEW_CHANNEL:       // [[fallthrough]];
@@ -86,9 +75,20 @@ void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> ev
             updateDisplay(true);
             break;
 
+        case RsChannelEventCode::STATISTICS_CHANGED:
+            updateGroupStatistics(e->mChannelGroupId);
+            break;
+
         default:
             break;
         }
+
+
+    const RsGxsChannelSearchResultEvent*f = dynamic_cast<const RsGxsChannelSearchResultEvent*>(event.get());
+
+	if(nullptr != f)
+        for(auto it:f->mSearchResultsMap)
+			updateSearchResults(it.first);
 }
 
 GxsChannelDialog::~GxsChannelDialog()
@@ -108,6 +108,7 @@ QString GxsChannelDialog::getHelpString() const
 	 <p>Channels can be made anonymous, or attached to a Retroshare identity so that readers can contact you if needed.\
 	 Enable \"Allow Comments\" if you want to let users comment on your posts.</p>\
     <p>Channel posts are kept for %1 days, and sync-ed over the last %2 days, unless you change this.</p>\
+    <p>UI Tip: use Control + mouse wheel to control image size in the thumbnail view.</p>\
                 ").arg(QString::number(rsGxsChannels->getDefaultStoragePeriod()/86400)).arg(QString::number(rsGxsChannels->getDefaultSyncPeriod()/86400));
 
 	return hlp_str ;
@@ -115,7 +116,7 @@ QString GxsChannelDialog::getHelpString() const
 
 UserNotify *GxsChannelDialog::createUserNotify(QObject *parent)
 {
-	return new GxsChannelUserNotify(rsGxsChannels, parent);
+	return new GxsChannelUserNotify(rsGxsChannels,this, parent);
 }
 
 void GxsChannelDialog::shareOnChannel(const RsGxsGroupId& channel_id,const QList<RetroShareLink>& file_links)
@@ -171,30 +172,30 @@ QString GxsChannelDialog::icon(IconType type)
 	case ICON_NEW:
 		return ":/icons/png/add.png";
 	case ICON_YOUR_GROUP:
-		return ":/icons/png/channel.png";
+		return "";
 	case ICON_SUBSCRIBED_GROUP:
-		return ":/icons/png/channel-subscribed.png";
+		return "";
 	case ICON_POPULAR_GROUP:
-		return ":/icons/png/channel-popular.png";
+		return "";
 	case ICON_OTHER_GROUP:
-		return ":/icons/png/channel-other.png";
+		return "";
     case ICON_SEARCH:
         return ":/images/find.png";
 	case ICON_DEFAULT:
-		return ":/images/channels.png";
+		return ":/icons/png/channels.png";
 	}
 
 	return "";
 }
 
-GxsGroupDialog *GxsChannelDialog::createNewGroupDialog(TokenQueue *tokenQueue)
+GxsGroupDialog *GxsChannelDialog::createNewGroupDialog()
 {
-	return new GxsChannelGroupDialog(tokenQueue, this);
+	return new GxsChannelGroupDialog(this);
 }
 
-GxsGroupDialog *GxsChannelDialog::createGroupDialog(TokenQueue *tokenQueue, RsTokenService *tokenService, GxsGroupDialog::Mode mode, RsGxsGroupId groupId)
+GxsGroupDialog *GxsChannelDialog::createGroupDialog(GxsGroupDialog::Mode mode, RsGxsGroupId groupId)
 {
-	return new GxsChannelGroupDialog(tokenQueue, tokenService, mode, groupId, this);
+	return new GxsChannelGroupDialog(mode, groupId, this);
 }
 
 int GxsChannelDialog::shareKeyType()
@@ -204,7 +205,7 @@ int GxsChannelDialog::shareKeyType()
 
 GxsMessageFrameWidget *GxsChannelDialog::createMessageFrameWidget(const RsGxsGroupId &groupId)
 {
-	return new GxsChannelPostsWidget(groupId);
+	return new GxsChannelPostsWidgetWithModel(groupId,this);
 }
 
 void GxsChannelDialog::setDefaultDirectory()
@@ -251,8 +252,8 @@ void GxsChannelDialog::groupTreeCustomActions(RsGxsGroupId grpId, int subscribeF
 
     if (isSubscribed)
     {
-        QAction *action = autoDownload ? (new QAction(QIcon(":/images/redled.png"), tr("Disable Auto-Download"), this))
-                                       : (new QAction(QIcon(":/images/start.png"),tr("Enable Auto-Download"), this));
+        QAction *action = autoDownload ? (new QAction(FilesDefs::getIconFromQtResourcePath(":/images/redled.png"), tr("Disable Auto-Download"), this))
+                                       : (new QAction(FilesDefs::getIconFromQtResourcePath(":/images/start.png"),tr("Enable Auto-Download"), this));
 
         connect(action, SIGNAL(triggered()), this, SLOT(toggleAutoDownload()));
         actions.append(action);
@@ -263,7 +264,7 @@ void GxsChannelDialog::groupTreeCustomActions(RsGxsGroupId grpId, int subscribeF
         QMenu *mnu = new QMenu(tr("Set download directory")) ;
 
         if(dl_directory.empty())
-            mnu->addAction(QIcon(":/images/start.png"),tr("[Default directory]"), this, SLOT(setDefaultDirectory())) ;
+            mnu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/start.png"),tr("[Default directory]"), this, SLOT(setDefaultDirectory())) ;
         else
             mnu->addAction(tr("[Default directory]"), this, SLOT(setDefaultDirectory())) ;
 
@@ -277,7 +278,7 @@ void GxsChannelDialog::groupTreeCustomActions(RsGxsGroupId grpId, int subscribeF
 
             if(dl_directory == it->filename)
             {
-                action = new QAction(QIcon(":/images/start.png"),QString::fromUtf8(it->filename.c_str()),NULL) ;
+                action = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/start.png"),QString::fromUtf8(it->filename.c_str()),NULL) ;
                 found = true ;
             }
             else
@@ -291,7 +292,7 @@ void GxsChannelDialog::groupTreeCustomActions(RsGxsGroupId grpId, int subscribeF
 
         if(!found && !dl_directory.empty())
         {
-            QAction *action = new QAction(QIcon(":/images/start.png"),QString::fromUtf8(dl_directory.c_str()),NULL) ;
+            QAction *action = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/start.png"),QString::fromUtf8(dl_directory.c_str()),NULL) ;
             connect(action,SIGNAL(triggered()),this,SLOT(setDownloadDirectory())) ;
             action->setData(QString::fromUtf8(dl_directory.c_str())) ;
 
@@ -350,52 +351,55 @@ void GxsChannelDialog::toggleAutoDownload()
 	});
 }
 
-void GxsChannelDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata *&userdata)
+bool GxsChannelDialog::getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat)
 {
-	std::vector<RsGxsChannelGroup> groups;
-	rsGxsChannels->getGroupData(token, groups);
-
-	/* Save groups to fill icons and description */
-	GxsChannelGroupInfoData *channelData = new GxsChannelGroupInfoData;
-	userdata = channelData;
-
-	std::vector<RsGxsChannelGroup>::iterator groupIt;
-	for (groupIt = groups.begin(); groupIt != groups.end(); ++groupIt) {
-		RsGxsChannelGroup &group = *groupIt;
-		groupInfo.push_back(group.mMeta);
-
-		if (group.mImage.mData != NULL) {
-			QPixmap image;
-			GxsIdDetails::loadPixmapFromData(group.mImage.mData, group.mImage.mSize, image,GxsIdDetails::ORIGINAL);
-			channelData->mIcon[group.mMeta.mGroupId] = image;
-		}
-
-		if (!group.mDescription.empty()) {
-			channelData->mDescription[group.mMeta.mGroupId] = QString::fromUtf8(group.mDescription.c_str());
-		}
-	}
+    return rsGxsChannels->getChannelStatistics(groupId,stat);
 }
 
-void GxsChannelDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata)
+bool GxsChannelDialog::getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo)
 {
-	GxsGroupFrameDialog::groupInfoToGroupItemInfo(groupInfo, groupItemInfo, userdata);
+	std::vector<RsGxsChannelGroup> groups;
 
-	const GxsChannelGroupInfoData *channelData = dynamic_cast<const GxsChannelGroupInfoData*>(userdata);
-	if (!channelData) {
-		std::cerr << "GxsChannelDialog::groupInfoToGroupItemInfo() Failed to cast data to GxsChannelGroupInfoData";
-		std::cerr << std::endl;
+    // request all group infos at once
+
+    if(! rsGxsChannels->getChannelsInfo(std::list<RsGxsGroupId>(),groups))
+        return false;
+
+ 	/* Save groups to fill icons and description */
+
+	for (auto& group: groups)
+       groupInfo.push_back(new RsGxsChannelGroup(group));
+
+    return true;
+}
+
+void GxsChannelDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupData, GroupItemInfo &groupItemInfo)
+{
+	GxsGroupFrameDialog::groupInfoToGroupItemInfo(groupData, groupItemInfo);
+
+	const RsGxsChannelGroup *channelGroupData = dynamic_cast<const RsGxsChannelGroup*>(groupData);
+
+	if (!channelGroupData)
+    {
+		std::cerr << "GxsChannelDialog::groupInfoToGroupItemInfo() Failed to cast data to GxsChannelGroupInfoData"<< std::endl;
 		return;
 	}
 
-	QMap<RsGxsGroupId, QString>::const_iterator descriptionIt = channelData->mDescription.find(groupInfo.mGroupId);
-	if (descriptionIt != channelData->mDescription.end()) {
-		groupItemInfo.description = descriptionIt.value();
+	if(channelGroupData->mImage.mSize > 0)
+	{
+		QPixmap image;
+		GxsIdDetails::loadPixmapFromData(channelGroupData->mImage.mData, channelGroupData->mImage.mSize, image,GxsIdDetails::ORIGINAL);
+		groupItemInfo.icon = image;
 	}
+	else
+        groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/channel.png");
 
-	QMap<RsGxsGroupId, QIcon>::const_iterator iconIt = channelData->mIcon.find(groupInfo.mGroupId);
-	if (iconIt != channelData->mIcon.end()) {
-		groupItemInfo.icon = iconIt.value();
-	}
+	groupItemInfo.description = QString::fromUtf8(channelGroupData->mDescription.c_str());
+}
+
+void GxsChannelDialog::clearDistantSearchResults(TurtleRequestId id)
+{
+    rsGxsChannels->clearDistantSearchResults(id);
 }
 
 TurtleRequestId GxsChannelDialog::distantSearch(const QString& search_string)
@@ -403,16 +407,26 @@ TurtleRequestId GxsChannelDialog::distantSearch(const QString& search_string)
     return rsGxsChannels->turtleSearchRequest(search_string.toStdString()) ;
 }
 
-bool GxsChannelDialog::getDistantSearchResults(TurtleRequestId id, std::map<RsGxsGroupId,RsGxsGroupSummary>& group_infos)
+bool GxsChannelDialog::getDistantSearchResults(TurtleRequestId id, std::map<RsGxsGroupId,RsGxsGroupSearchResults>& group_infos)
 {
     return rsGxsChannels->retrieveDistantSearchResults(id,group_infos);
+}
+
+RsGxsGenericGroupData *GxsChannelDialog::getDistantSearchResultGroupData(const RsGxsGroupId& group_id)
+{
+    RsGxsChannelGroup channel_group;
+
+    if(rsGxsChannels->getDistantSearchResultGroupData(group_id,channel_group))
+        return new RsGxsGenericGroupData(channel_group);
+	else
+        return nullptr;
 }
 
 void GxsChannelDialog::checkRequestGroup(const RsGxsGroupId& grpId)
 {
     RsGxsChannelGroup distant_group;
 
-	if( rsGxsChannels->retrieveDistantGroup(grpId,distant_group)) // normally we should also check that the group meta is not already here.
+	if( rsGxsChannels->getDistantSearchResultGroupData(grpId,distant_group)) // normally we should also check that the group meta is not already here.
     {
         std::cerr << "GxsChannelDialog::checkRequestGroup() sending turtle request for group data for group " << grpId << std::endl;
         rsGxsChannels->turtleGroupRequest(grpId);

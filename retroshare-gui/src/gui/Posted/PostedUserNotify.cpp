@@ -18,30 +18,32 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "retroshare/rsposted.h"
 #include "PostedUserNotify.h"
 #include "gui/MainWindow.h"
+#include "gui/common/FilesDefs.h"
 
-PostedUserNotify::PostedUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent) :
-    GxsUserNotify(ifaceImpl, parent)
+PostedUserNotify::PostedUserNotify(RsGxsIfaceHelper *ifaceImpl, const GxsGroupFrameDialog *g, QObject *parent) :
+    GxsUserNotify(ifaceImpl, g, parent)
 {
 }
 
 bool PostedUserNotify::hasSetting(QString *name, QString *group)
 {
-	if (name) *name = tr("Posted");
-	if (group) *group = "Posted";
+	if (name) *name = tr("Board Post");
+	if (group) *group = "Board";
 
 	return true;
 }
 
 QIcon PostedUserNotify::getIcon()
 {
-    return QIcon(":/icons/png/posted.png");
+    return FilesDefs::getIconFromQtResourcePath(":/icons/png/posted.png");
 }
 
 QIcon PostedUserNotify::getMainIcon(bool hasNew)
 {
-    return hasNew ? QIcon(":/icons/png/posted-notify.png") : QIcon(":/icons/png/posted.png");
+    return hasNew ? FilesDefs::getIconFromQtResourcePath(":/icons/png/posted-notify.png") : FilesDefs::getIconFromQtResourcePath(":/icons/png/posted.png");
 }
 
 void PostedUserNotify::iconClicked()

@@ -27,7 +27,7 @@
 struct RsGxsIfaceHelper;
 class UIStateHelper;
 
-class GxsMessageFrameWidget : public RsGxsUpdateBroadcastWidget, public TokenResponse
+class GxsMessageFrameWidget : public QWidget, public TokenResponse
 {
 	Q_OBJECT
 
@@ -55,6 +55,7 @@ signals:
 	void groupChanged(QWidget *widget);
 	void waitingChanged(QWidget *widget);
 	void loadComment(const RsGxsGroupId &groupId, const QVector<RsGxsMessageId>& msg_versions,const RsGxsMessageId &msgId, const QString &title);
+    void groupDataLoaded();
 
 protected:
 	virtual void setAllMessagesReadDo(bool read, uint32_t &token) = 0;

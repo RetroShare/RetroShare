@@ -20,6 +20,11 @@
  *                                                                             *
  *******************************************************************************/
 
+#include <algorithm>
+#include <iostream>
+#include <limits>
+#include <system_error>
+
 #include "crypto/chacha20.h"
 //const int ftserverzone = 29539;
 
@@ -40,18 +45,16 @@
 #include "retroshare/rstypes.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsinit.h"
-
+#include "util/cxx17retrocompat.h"
 #include "rsitems/rsfiletransferitems.h"
 #include "rsitems/rsserviceids.h"
-
+#include "util/rsmemory.h"
 #include "rsserver/p3face.h"
 #include "turtle/p3turtle.h"
-
+#include "util/rsurl.h"
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
 #include "util/rsprint.h"
-
-#include <iostream>
 #include "util/rstime.h"
 
 #ifdef RS_DEEP_FILES_INDEX
@@ -65,6 +68,18 @@
 
 #define FTSERVER_DEBUG() std::cerr << time(NULL) << " : FILE_SERVER : " << __FUNCTION__ << " : "
 #define FTSERVER_ERROR() std::cerr << "(EE) FILE_SERVER ERROR : "
+
+/*static*/ const RsFilesErrorCategory RsFilesErrorCategory::instance;
+
+/*static*/ const std::string RsFiles::DEFAULT_FILES_BASE_URL =
+        "retroshare:///files";
+/*static*/ const std::string RsFiles::FILES_URL_COUNT_FIELD = "filesCount";
+/*static*/ const std::string RsFiles::FILES_URL_DATA_FIELD = "filesData";
+// Use a 5 character word so there is no mistake it isn't base64 as 5%4=1
+/*static*/ const std::string RsFiles::FILES_URL_FAGMENT_FORWARD = "fragm";
+/*static*/ const std::string RsFiles::FILES_URL_NAME_FIELD = "filesName";
+/*static*/ const std::string RsFiles::FILES_URL_SIZE_FIELD = "filesSize";
+
 
 static const rstime_t FILE_TRANSFER_LOW_PRIORITY_TASKS_PERIOD = 5 ;           // low priority tasks handling every 5 seconds
 static const rstime_t FILE_TRANSFER_MAX_DELAY_BEFORE_DROP_USAGE_RECORD = 10 ; // keep usage records for 10 secs at most.
@@ -280,10 +295,14 @@ bool ftServer::getFileData(const RsFileHash& hash, uint64_t offset, uint32_t& re
 
 bool ftServer::alreadyHaveFile(const RsFileHash& hash, FileInfo &info)
 {
-	return mFileDatabase->search(hash, RS_FILE_HINTS_LOCAL, info);
+	return mFileDatabase->search(
+	            hash, RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL, info );
 }
 
-bool ftServer::FileRequest(const std::string& fname, const RsFileHash& hash, uint64_t size, const std::string& dest, TransferRequestFlags flags, const std::list<RsPeerId>& srcIds)
+bool ftServer::FileRequest(
+        const std::string& fname, const RsFileHash& hash, uint64_t size,
+        const std::string& dest, TransferRequestFlags flags,
+        const std::list<RsPeerId>& srcIds )
 {
 #ifdef SERVER_DEBUG
 	FTSERVER_DEBUG() << "Requesting " << fname << std::endl ;
@@ -293,6 +312,93 @@ bool ftServer::FileRequest(const std::string& fname, const RsFileHash& hash, uin
 		return false ;
 
 	return true ;
+}
+
+std::error_condition ftServer::requestFiles(
+        const RsFileTree& collection, const std::string& destPath,
+        const std::vector<RsPeerId>& srcIds, FileRequestFlags flags )
+{
+	constexpr auto fname = __PRETTY_FUNCTION__;
+	const auto dirsCount = collection.mDirs.size();
+	const auto filesCount = collection.mFiles.size();
+
+	Dbg2() << fname << " dirsCount: " << dirsCount
+	       << " filesCount: " << filesCount << std::endl;
+
+	if(!dirsCount)
+	{
+		RsErr() << fname << " Directories list empty in collection "
+		        << std::endl;
+		return std::errc::not_a_directory;
+	}
+
+	if(!filesCount)
+	{
+		RsErr() << fname << " Files list empty in collection " << std::endl;
+		return std::errc::invalid_argument;
+	}
+
+	if(filesCount != collection.mTotalFiles)
+	{
+		RsErr() << fname << " Files count mismatch" << std::endl;
+		return std::errc::invalid_argument;
+	}
+
+	std::string basePath = destPath.empty() ? getDownloadDirectory() : destPath;
+	// Track how many time a directory have been explored
+	std::vector<uint32_t> dirsSeenCnt(dirsCount, 0);
+	//                          <directory handle, parent path>
+	using StackEntry = std::tuple<uint64_t, std::string>;
+	std::deque<StackEntry> dStack = { std::make_tuple(0, basePath) };
+
+	const auto exploreDir = [&](const StackEntry& se)-> std::error_condition
+	{
+		uint64_t dirHandle; std::string parentPath;
+		std::tie(dirHandle, parentPath) = se;
+
+		const auto& dirData = collection.mDirs[dirHandle];
+		auto& seenTimes = dirsSeenCnt[dirHandle];
+		std::string dirPath = RsDirUtil::makePath(parentPath, dirData.name);
+
+		/* This check is not perfect but is cheap and interrupt loop exploration
+		 * before it becomes pathological */
+		if(seenTimes++ > dirsCount)
+		{
+			RsErr() << fname << " loop detected! dir: "
+			        << dirHandle << " \"" << dirPath
+			        << "\" explored too many times" << std::endl;
+			return std::errc::too_many_symbolic_link_levels;
+		}
+
+		for(auto fHandle: dirData.subfiles)
+		{
+			if(fHandle >= filesCount) return std::errc::argument_out_of_domain;
+
+			const RsFileTree::FileData& fData = collection.mFiles[fHandle];
+
+			bool fr =
+			FileRequest( fData.name, fData.hash, fData.size,
+			             dirPath,
+			             TransferRequestFlags::fromEFT<FileRequestFlags>(flags),
+			             std::list<RsPeerId>(srcIds.begin(), srcIds.end()) );
+
+			Dbg2() << fname << " requested: " << fr << " "
+			       << fData.hash << " -> " << dirPath << std::endl;
+		}
+
+		for(auto dHandle: dirData.subdirs)
+			dStack.push_back(std::make_tuple(dHandle, dirPath));
+
+		return std::error_condition();
+	};
+
+	while(!dStack.empty())
+	{
+		if(std::error_condition ec = exploreDir(dStack.front())) return ec;
+		dStack.pop_front();
+	}
+
+	return std::error_condition();
 }
 
 bool ftServer::activateTunnels(const RsFileHash& hash,uint32_t encryption_policy,TransferRequestFlags flags,bool onoff)
@@ -716,6 +822,14 @@ bool ftServer::ExtraFileRemove(const RsFileHash& hash)
 bool ftServer::ExtraFileHash(
         std::string localpath, rstime_t period, TransferRequestFlags flags )
 {
+	constexpr rstime_t uintmax = std::numeric_limits<uint32_t>::max();
+	if(period > uintmax)
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " period: " << period << " > "
+		        << uintmax << std::errc::value_too_large << std::endl;
+		return false;
+	}
+
 	return mFtExtra->hashExtraFile(
 	            localpath, static_cast<uint32_t>(period), flags );
 }
@@ -740,7 +854,7 @@ bool ftServer::findChildPointer(void *ref, int row, void *& result, FileSearchFl
 }
 
 bool ftServer::requestDirDetails(
-        DirDetails &details, std::uintptr_t handle, FileSearchFlags flags )
+        DirDetails &details, uint64_t handle, FileSearchFlags flags )
 { return RequestDirDetails(reinterpret_cast<void*>(handle), details, flags); }
 
 int ftServer::RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags)
@@ -1872,15 +1986,16 @@ void ftServer::ftReceiveSearchResult(RsTurtleFTSearchResultItem *item)
 			hasCallback = true;
 
 			std::vector<TurtleFileInfoV2> cRes;
-			for( const auto& tfiold : item->result)
-				cRes.push_back(tfiold);
+			for(auto& res: std::as_const(item->result))
+				cRes.push_back(TurtleFileInfoV2(res));
 
 			cbpt->second.first(cRes);
 		}
 	} // end RS_STACK_MUTEX(mSearchCallbacksMapMutex);
 
 	if(!hasCallback)
-		RsServer::notify()->notifyTurtleSearchResult(item->PeerId(),item->request_id, item->result );
+		RsServer::notify()->notifyTurtleSearchResult(
+		            item->PeerId(), item->request_id, item->result );
 }
 
 bool ftServer::receiveSearchRequest(
@@ -2101,3 +2216,144 @@ RsFileItem::RsFileItem(RsFileItemType subtype) :
 void RsFileSearchRequestItem::clear() { queryString.clear(); }
 
 void RsFileSearchResultItem::clear() { mResults.clear(); }
+
+
+std::error_condition RsFilesErrorCategory::default_error_condition(int ev)
+const noexcept
+{
+	switch(static_cast<RsFilesErrorNum>(ev))
+	{
+	case RsFilesErrorNum::FILES_HANDLE_NOT_FOUND:
+		return std::errc::invalid_argument;
+	default:
+		return std::error_condition(ev, *this);
+	}
+}
+
+std::error_condition ftServer::dirDetailsToLink(
+        std::string& link,
+        const DirDetails& dirDetails, bool fragSneak, const std::string& baseUrl )
+{
+	std::unique_ptr<RsFileTree> tFileTree =
+	        RsFileTree::fromDirDetails(dirDetails, false);
+	if(!tFileTree) return std::errc::invalid_argument;
+
+	link = tFileTree->toBase64();
+
+	if(!baseUrl.empty())
+	{
+		RsUrl tUrl(baseUrl);
+		tUrl.setQueryKV(FILES_URL_COUNT_FIELD,
+		                std::to_string(tFileTree->mTotalFiles) )
+		    .setQueryKV(FILES_URL_NAME_FIELD, dirDetails.name)
+		    .setQueryKV( FILES_URL_SIZE_FIELD,
+		                 std::to_string(tFileTree->mTotalSize) );
+		if(fragSneak)
+			tUrl.setQueryKV(FILES_URL_DATA_FIELD, FILES_URL_FAGMENT_FORWARD)
+			        .setFragment(link);
+		else tUrl.setQueryKV(FILES_URL_DATA_FIELD, link);
+		link = tUrl.toString();
+	}
+
+	return std::error_condition();
+}
+
+std::error_condition ftServer::exportCollectionLink(
+        std::string& link, uint64_t handle, bool fragSneak,
+        const std::string& baseUrl )
+{
+	DirDetails tDirDet;
+	if(!requestDirDetails(tDirDet, handle))
+		return RsFilesErrorNum::FILES_HANDLE_NOT_FOUND;
+
+	return dirDetailsToLink(link, tDirDet, fragSneak, baseUrl);
+}
+
+/// @see RsFiles
+std::error_condition ftServer::exportFileLink(
+        std::string& link, const RsFileHash& fileHash, uint64_t fileSize,
+        const std::string& fileName, bool fragSneak, const std::string& baseUrl )
+{
+	if(fileHash.isNull() || !fileSize || fileName.empty())
+		return std::errc::invalid_argument;
+
+	DirDetails tDirDet;
+	tDirDet.type = DIR_TYPE_FILE;
+	tDirDet.name = fileName;
+	tDirDet.hash = fileHash;
+	tDirDet.count = fileSize;
+
+	return dirDetailsToLink(link, tDirDet, fragSneak, baseUrl);
+}
+
+std::error_condition ftServer::parseFilesLink(
+        const std::string& link, RsFileTree& collection )
+{
+	RsUrl tUrl(link);
+
+	{
+		/* Handle retrocompatibility with old stile single file links
+		 * retroshare://file?name=$FILE_NAME&size=$FILE_SIZE&hash=$FILE_HASH
+		 */
+		if( tUrl.scheme() == "retroshare" && tUrl.host() == "file"
+		        && tUrl.hasQueryK("name") && !tUrl.getQueryV("name")->empty()
+		        && tUrl.hasQueryK("size") && !tUrl.getQueryV("size")->empty()
+		        && tUrl.hasQueryK("hash") && !tUrl.getQueryV("hash")->empty() )
+		{
+			DirDetails dt;
+			dt.type = DIR_TYPE_FILE;
+			dt.hash = RsFileHash(*tUrl.getQueryV("hash"));
+			dt.name = *tUrl.getQueryV("name");
+			try
+			{
+				dt.count = std::stoull(*tUrl.getQueryV("size"));
+				std::unique_ptr<RsFileTree> ft;
+				if( !dt.hash.isNull() &&
+				        (ft = RsFileTree::fromDirDetails(dt, true)) )
+				{
+					collection = *ft;
+					return std::error_condition();
+				}
+			}
+			catch (...) {}
+		}
+	}
+
+	{
+		/* Handle retrocompatibility with old stile collection links
+		 * retroshare://collection?name=$NAME&size=$SIZE&radix=$RADIX&files=$COUNT
+		 */
+		if( tUrl.scheme() == "retroshare" && tUrl.host() == "collection"
+		        && tUrl.hasQueryK("name") && !tUrl.getQueryV("name")->empty()
+		        && tUrl.hasQueryK("size") && !tUrl.getQueryV("size")->empty()
+		        && tUrl.hasQueryK("radix") && !tUrl.getQueryV("radix")->empty()
+		        && tUrl.hasQueryK("files") && !tUrl.getQueryV("files")->empty() )
+		{
+			try
+			{
+				// Don't need the values just check they are valid numbers
+				std::stoull(*tUrl.getQueryV("size"));
+				std::stoull(*tUrl.getQueryV("files"));
+
+				auto ft = RsFileTree::fromRadix64(*tUrl.getQueryV("radix"));
+				if(ft)
+				{
+					collection = *ft;
+					return std::error_condition();
+				}
+			}
+			catch (...) {}
+		}
+	}
+
+	// Finaly handle the new files link format
+	rs_view_ptr<const std::string> radixPtr =
+	        tUrl.getQueryV(FILES_URL_DATA_FIELD);
+	if(!radixPtr) radixPtr = &link;
+	else if(*radixPtr == FILES_URL_FAGMENT_FORWARD) radixPtr = &tUrl.fragment();
+
+	std::unique_ptr<RsFileTree> tft; std::error_condition ec;
+	std::tie(tft, ec) = RsFileTree::fromBase64(*radixPtr);
+	if(tft) collection = *tft;
+	return ec;
+}

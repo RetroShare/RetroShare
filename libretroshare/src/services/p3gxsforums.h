@@ -4,7 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2012-2014  Robert Fernie <retroshare@lunamutt.com>            *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2020  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -94,6 +95,12 @@ public:
 	        const std::list<RsGxsGroupId>& forumIds,
 	        std::vector<RsGxsForumGroup>& forumsInfo );
 
+    /// Implementation of @see RsGxsForums::getForumStatistics
+    bool getForumStatistics(const RsGxsGroupId& ForumId,GxsGroupStatistic& stat) override;
+
+    /// Implementation of @see RsGxsForums::getForumServiceStatistics
+	bool getForumServiceStatistics(GxsServiceStatistic& stat) override;
+
 	/// @see RsGxsForums::getForumMsgMetaData
 	virtual bool getForumMsgMetaData(const RsGxsGroupId& forumId, std::vector<RsMsgMetaData>& msg_metas) ;
 
@@ -125,13 +132,26 @@ public:
 	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
 	        ) override;
 
-	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsForumGroup> &groups);
-	virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs);
-	virtual bool getMsgMetaData(const uint32_t &token, GxsMsgMetaMap& msg_metas);
-	virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read);
-	virtual bool createGroup(uint32_t &token, RsGxsForumGroup &group);
-	virtual bool createMsg(uint32_t &token, RsGxsForumMsg &msg);
-	virtual bool updateGroup(uint32_t &token, RsGxsForumGroup &group);
+	/// @see RsGxsForums
+	std::error_condition getChildPosts(
+	        const RsGxsGroupId& forumId, const RsGxsMessageId& parentId,
+	        std::vector<RsGxsForumMsg>& childPosts ) override;
+
+	/// @see RsGxsForums
+	std::error_condition setPostKeepForever(
+	        const RsGxsGroupId& forumId, const RsGxsMessageId& postId,
+	        bool keepForever );
+
+    /// implementation of rsGxsGorums
+    ///
+	bool getGroupData(const uint32_t &token, std::vector<RsGxsForumGroup> &groups) override;
+	bool getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs) override;
+	void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) override;
+	bool createGroup(uint32_t &token, RsGxsForumGroup &group) override;
+	bool createMsg(uint32_t &token, RsGxsForumMsg &msg) override;
+	bool updateGroup(uint32_t &token, const RsGxsForumGroup &group) override;
+
+	bool getMsgMetaData(const uint32_t &token, GxsMsgMetaMap& msg_metas) ;
 
 private:
 

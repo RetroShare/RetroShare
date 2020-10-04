@@ -33,13 +33,14 @@
 #include <retroshare/rstypes.h>
 #include "settings/rsharesettings.h"
 #include "util/QtVersion.h"
+#include "gui/common/FilesDefs.h"
 
 QuickStartWizard::QuickStartWizard(QWidget *parent) :
     QDialog(parent)
 {
     ui.setupUi(this);
 
-    ui.headerFrame->setHeaderImage(QPixmap(":/images/rs_wizard.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/rs_wizard.png"));
     ui.headerFrame->setHeaderText("RetroShare");
 
 	  ui.pagesWizard->setCurrentIndex(0);

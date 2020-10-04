@@ -42,12 +42,11 @@
 
 /* Images for context menu icons */
 #define IMAGE_REMOVEFRIEND       ":/images/removefriend16.png"
-#define IMAGE_EXPIORTFRIEND      ":/images/exportpeers_16x16.png"
 #define IMAGE_REMOVE             ":/images/cancel.png"
 #define IMAGE_CHAT               ":/images/chat.png"
 /* Images for Status icons */
 #define IMAGE_PEER               ":/images/user/identity16.png"
-#define IMAGE_PHOTOS              ":/images/image16.png"
+#define IMAGE_PHOTOS             ":/icons/png/photo.png"
 
 
 #define PHOTO_ICON_SIZE		90
@@ -135,7 +134,7 @@ void PhotoDialog::peerTreeWidgetCustomPopupMenu( QPoint point )
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
-      QAction *ins = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Insert Show Lists" ), this );
+      QAction *ins = new QAction(QIcon(), tr( "Insert Show Lists" ), this );
       connect( ins , SIGNAL( triggered() ), this, SLOT( insertShowLists() ) );
 
       contextMnu.clear();
@@ -182,7 +181,6 @@ void PhotoDialog::photoTreeWidgetCustomPopupMenu( QPoint point )
       connect(rateUnratedAct, SIGNAL(triggered()), this, SLOT(rateUnrated()));
       
       QMenu *ratingMenu = new QMenu(tr("Rating"), this);
-      ratingMenu->setIcon(QIcon(":/images/rating.png"));
       ratingMenu->addAction(rateExcellenAct);
       ratingMenu->addAction(rateGoodAct);
       ratingMenu->addAction(rateAverageAct);

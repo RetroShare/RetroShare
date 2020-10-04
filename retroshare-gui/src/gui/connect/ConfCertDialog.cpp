@@ -32,14 +32,16 @@
 #include <retroshare/rsdisc.h>
 #include <retroshare/rsmsgs.h>
 
+#include <retroshare-gui/mainpage.h>
+
 #include "gui/help/browser/helpbrowser.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/common/StatusDefs.h"
 #include "gui/RetroShareLink.h"
 #include "gui/notifyqt.h"
 #include "gui/common/AvatarDefs.h"
+#include "gui/common/FilesDefs.h"
 #include "gui/MainWindow.h"
-#include "mainpage.h"
 #include "util/DateTime.h"
 #include "util/misc.h"
 
@@ -83,7 +85,7 @@ ConfCertDialog::ConfCertDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidge
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
 	Settings->loadWidgetInformation(this);
-    ui.headerFrame->setHeaderImage(QPixmap(":/images/user/identityinfo64.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/user/identityinfo64.png"));
     //ui.headerFrame->setHeaderText(tr("Friend node details"));
 
     //ui._chat_CB->hide() ;

@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "gui/common/FilesDefs.h"
 #include "NewsFeedUserNotify.h"
 #include "gui/NewsFeed.h"
 
@@ -37,7 +38,7 @@ void NewsFeedUserNotify::newsFeedChanged(int count)
 
 QIcon NewsFeedUserNotify::getMainIcon(bool hasNew)
 {
-    return hasNew ? QIcon(":/icons/png/newsfeed-notify.png") : QIcon(":/icons/png/newsfeed.png");
+    return hasNew ? FilesDefs::getIconFromQtResourcePath(":/icons/png/newsfeed-notify.png") : FilesDefs::getIconFromQtResourcePath(":/icons/png/newsfeed.png");
 }
 
 unsigned int NewsFeedUserNotify::getNewCount()

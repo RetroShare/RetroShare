@@ -1424,9 +1424,15 @@ int p3FileDatabase::SearchBoolExp(RsRegularExpression::Expression *exp, std::lis
     return !results.empty() ;
 
 }
-bool p3FileDatabase::search(const RsFileHash &hash, FileSearchFlags hintflags, FileInfo &info) const
+
+bool p3FileDatabase::search(
+        const RsFileHash &hash, FileSearchFlags hintflags, FileInfo &info) const
 {
-    RS_STACK_MUTEX(mFLSMtx) ;
+	RS_STACK_MUTEX(mFLSMtx);
+
+	if( (hintflags & RS_FILE_HINTS_EXTRA) &&
+	        mExtraFiles->search(hash, hintflags, info) )
+		return true;
 
     if(hintflags & RS_FILE_HINTS_LOCAL)
     {

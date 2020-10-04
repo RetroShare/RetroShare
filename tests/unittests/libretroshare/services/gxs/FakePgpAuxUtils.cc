@@ -101,13 +101,4 @@ bool FakePgpAuxUtils::getGPGAllList(std::list<RsPgpId> &ids)
 	return true;
 }
 
-bool FakePgpAuxUtils::askForDeferredSelfSignature(const void* /*data*/, const uint32_t /*len*/, unsigned char *sign, unsigned int *signlen,int& signature_result, std::string /*reason = ""*/ )
-{
-	for(unsigned int i = 0; i < *signlen; i++)
-	{
-		sign[i] = 0;
-	}
-	signature_result = 1;
-	return true;
-}
 

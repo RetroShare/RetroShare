@@ -4,7 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2012-2014  Robert Fernie <retroshare@lunamutt.com>            *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2020  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -25,6 +26,7 @@
 #include <cstdint>
 #include <string>
 #include <list>
+#include <system_error>
 
 #include "retroshare/rstokenservice.h"
 #include "retroshare/rsgxsifacehelper.h"
@@ -54,11 +56,8 @@ static const uint32_t RS_GXS_FORUM_MSG_FLAGS_MODERATED = 0x00000001;
 #define IS_FORUM_MSG_MODERATION(flags) (flags & RS_GXS_FORUM_MSG_FLAGS_MODERATED)
 
 
-struct RsGxsForumGroup : RsSerializable
+struct RsGxsForumGroup : RsSerializable, RsGxsGenericGroupData
 {
-	/** Forum GXS metadata */
-	RsGroupMetaData mMeta;
-
 	/** @brief Forum desciption */
 	std::string mDescription;
 
@@ -114,6 +113,8 @@ enum class RsForumEventCode: uint8_t
 	UPDATED_MESSAGE          = 0x04, /// existing message has been updated in a particular forum
 	SUBSCRIBE_STATUS_CHANGED = 0x05, /// forum was subscribed or unsubscribed
 	READ_STATUS_CHANGED      = 0x06, /// msg was read or marked unread
+	STATISTICS_CHANGED       = 0x07, /// suppliers and how many messages they have changed
+	MODERATOR_LIST_CHANGED   = 0x08, /// forum moderation list has changed.
 };
 
 struct RsGxsForumEvent: RsEvent
@@ -125,6 +126,8 @@ struct RsGxsForumEvent: RsEvent
 	RsForumEventCode mForumEventCode;
 	RsGxsGroupId mForumGroupId;
 	RsGxsMessageId mForumMsgId;
+    std::list<RsGxsId> mModeratorsAdded;
+    std::list<RsGxsId> mModeratorsRemoved;
 
 	///* @see RsEvent @see RsSerializable
 	void serial_process(
@@ -135,6 +138,9 @@ struct RsGxsForumEvent: RsEvent
 		RS_SERIAL_PROCESS(mForumEventCode);
 		RS_SERIAL_PROCESS(mForumGroupId);
 		RS_SERIAL_PROCESS(mForumMsgId);
+		RS_SERIAL_PROCESS(mForumMsgId);
+		RS_SERIAL_PROCESS(mModeratorsAdded);
+		RS_SERIAL_PROCESS(mModeratorsRemoved);
 	}
 
 	~RsGxsForumEvent() override;
@@ -222,6 +228,24 @@ public:
 	 */
 	virtual bool getForumsSummaries(std::list<RsGroupMetaData>& forums) = 0;
 
+    /**
+     * @brief returns statistics for the forum service
+	 * @jsonapi{development}
+     * @param[out] stat     statistics struct
+     * @return              false if the call fails
+     */
+	virtual bool getForumServiceStatistics(GxsServiceStatistic& stat) =0;
+
+    /**
+     * @brief returns statistics about a particular forum
+	 * @jsonapi{development}
+     * @param[in]  forumId  Id of the forum
+     * @param[out] stat     statistics struct
+     * @return              false when the object doesn't exist or when the timeout is reached requesting the data
+     */
+	virtual bool getForumStatistics(const RsGxsGroupId& forumId,GxsGroupStatistic& stat)=0;
+
+
 	/**
 	 * @brief Get forums information (description, thumbnail...).
 	 * Blocking API.
@@ -245,7 +269,7 @@ public:
 	                                  std::vector<RsMsgMetaData>& msgMetas) = 0;
 
 	/**
-	 * @brief Get specific list of messages from a single forums. Blocking API
+	 * @brief Get specific list of messages from a single forum. Blocking API
 	 * @jsonapi{development}
 	 * @param[in] forumId id of the forum of which the content is requested
 	 * @param[in] msgsIds list of message ids to request
@@ -289,10 +313,10 @@ public:
 	static const std::string FORUM_URL_DATA_FIELD;
 
 	/** Link query field used to store forum message title
-	 * @see exportChannelLink */
+	 * @see exportForumLink */
 	static const std::string FORUM_URL_MSG_TITLE_FIELD;
 
-	/// Link query field used to store forum message id @see exportChannelLink
+	/// Link query field used to store forum message id @see exportForumLink
 	static const std::string FORUM_URL_MSG_ID_FIELD;
 
 	/**
@@ -331,6 +355,32 @@ public:
 	        RsGxsGroupId& forumId = RS_DEFAULT_STORAGE_PARAM(RsGxsGroupId),
 	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string) ) = 0;
 
+	/**
+	 * @brief Get posts related to the given post.
+	 * If the set is empty, nothing is returned.
+	 * @jsonapi{development}
+	 * @param[in] forumId id of the forum of which the content is requested
+	 * @param[in] parentId id of the post of which child posts (aka replies)
+	 *	are requested.
+	 * @param[out] childPosts storage for the child posts
+	 * @return Success or error details
+	 */
+	virtual std::error_condition getChildPosts(
+	        const RsGxsGroupId& forumId, const RsGxsMessageId& parentId,
+	        std::vector<RsGxsForumMsg>& childPosts ) = 0;
+
+	/**
+	 * @brief Set keep forever flag on a post so it is not deleted even if older
+	 * then group maximum storage time
+	 * @jsonapi{development}
+	 * @param[in] forumId id of the forum of which the post pertain
+	 * @param[in] postId id of the post on which to set the flag
+	 * @param[in] keepForever true to set the flag, false to unset it
+	 * @return Success or error details
+	 */
+	virtual std::error_condition setPostKeepForever(
+	        const RsGxsGroupId& forumId, const RsGxsMessageId& postId,
+	        bool keepForever ) = 0;
 
 	/**
 	 * @brief Create forum. Blocking API.
@@ -364,5 +414,5 @@ public:
 	RS_DEPRECATED_FOR(createMessage)
 	virtual bool createMsg(uint32_t &token, RsGxsForumMsg &msg) = 0;
 	RS_DEPRECATED_FOR(editForum)
-	virtual bool updateGroup(uint32_t &token, RsGxsForumGroup &group) = 0;
+	virtual bool updateGroup(uint32_t &token, const RsGxsForumGroup &group) = 0;
 };

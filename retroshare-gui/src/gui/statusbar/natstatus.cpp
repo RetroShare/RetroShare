@@ -25,6 +25,7 @@
 
 #include "retroshare/rsiface.h"
 #include "retroshare/rsconfig.h"
+#include "gui/common/FilesDefs.h"
 
 NATStatus::NATStatus(QWidget *parent)
  : QWidget(parent)
@@ -38,7 +39,7 @@ NATStatus::NATStatus(QWidget *parent)
     hbox->addWidget(statusNAT);
     
     iconLabel = new QLabel(this);
-    iconLabel->setPixmap(QPixmap(":/images/grayled.png"));
+    iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/grayled.png"));
     // iconLabel doesn't change over time, so we didn't need a minimum size
     hbox->addWidget(iconLabel);
 
@@ -62,14 +63,14 @@ void NATStatus::getNATStatus()
 		default:
 	    case RsNetState::BAD_UNKNOWN:
 		{
-            iconLabel->setPixmap(QPixmap(":/icons/bullet_yellow_128.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
+            iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/bullet_yellow_128.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
             iconLabel->setToolTip( text + tr("Network Status Unknown")) ;
 		}
 		break ;
 
 	    case RsNetState::BAD_OFFLINE:
 		{
-            iconLabel->setPixmap(QPixmap(":/icons/bullet_grey_129.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
+            iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/bullet_grey_129.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
             iconLabel->setToolTip( text + tr("Offline")) ;
 		}
 		break ;
@@ -77,14 +78,14 @@ void NATStatus::getNATStatus()
 // BAD. (RED)
 	    case RsNetState::BAD_NATSYM:
 		{
-            iconLabel->setPixmap(QPixmap(":/icons/bullet_red_128.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
+            iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/bullet_red_128.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
             iconLabel->setToolTip( text + tr("Nasty Firewall")) ;
 		}
 		break ;
 
 	    case RsNetState::BAD_NODHT_NAT:
 		{
-            iconLabel->setPixmap(QPixmap(":/icons/bullet_red_128.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
+            iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/bullet_red_128.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
             iconLabel->setToolTip( text + tr("DHT Disabled and Firewalled")) ;
 		}
 		break ;
@@ -92,21 +93,21 @@ void NATStatus::getNATStatus()
 // CAUTION. (ORANGE)
 	    case RsNetState::WARNING_RESTART:
 		{
-            iconLabel->setPixmap(QPixmap(":/icons/bullet_yellow_128.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
+            iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/bullet_yellow_128.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
             iconLabel->setToolTip( text + tr("Network Restarting")) ;
 		}
 		break ;
 
 	    case RsNetState::WARNING_NATTED:
 		{
-            iconLabel->setPixmap(QPixmap(":/icons/bullet_yellow_128.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
+            iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/bullet_yellow_128.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
             iconLabel->setToolTip( text + tr("Behind Firewall")) ;
 		}
 		break ;
 
 	    case RsNetState::WARNING_NODHT:
 		{
-            iconLabel->setPixmap(QPixmap(":/icons/bullet_yellow_128.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
+            iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/bullet_yellow_128.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
 			iconLabel->setToolTip( text + tr("DHT Disabled")) ;
 		}
 		break ;
@@ -114,14 +115,14 @@ void NATStatus::getNATStatus()
 // GOOD (GREEN)
 	    case RsNetState::GOOD:
 		{
-            iconLabel->setPixmap(QPixmap(":/icons/bullet_green_128.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
+            iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/bullet_green_128.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
 			iconLabel->setToolTip( text + tr("RetroShare Server")) ;
 		}
 		break ;
 
 	    case RsNetState::ADV_FORWARD:
 		{
-            iconLabel->setPixmap(QPixmap(":/icons/bullet_green_128.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
+            iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/bullet_green_128.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
 			iconLabel->setToolTip( text + tr("Forwarded Port")) ;
 		}
 		break ;

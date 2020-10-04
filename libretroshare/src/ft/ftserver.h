@@ -207,13 +207,38 @@ public:
 	virtual uint32_t filePermDirectDL() ;
 
 	/// @see RsFiles
-	virtual bool turtleSearchRequest(
+	std::error_condition requestFiles(
+	        const RsFileTree& collection,
+	        const std::string& destPath = "",
+	        const std::vector<RsPeerId>& srcIds = std::vector<RsPeerId>(),
+	        FileRequestFlags flags = FileRequestFlags::ANONYMOUS_ROUTING
+	        ) override;
+
+	/// @see RsFiles
+	bool turtleSearchRequest(
 	        const std::string& matchString,
 	        const std::function<void (const std::vector<TurtleFileInfoV2>& results)>& multiCallback,
-	        rstime_t maxWait = 300 );
+	        rstime_t maxWait = 300 ) override;
 
 	virtual TurtleSearchRequestId turtleSearch(const std::string& string_to_match) ;
 	virtual TurtleSearchRequestId turtleSearch(const RsRegularExpression::LinearizedExpression& expr) ;
+
+	/// @see RsFiles
+	std::error_condition exportCollectionLink(
+	        std::string& link, uint64_t handle, bool fragSneak = false,
+	        const std::string& baseUrl = RsFiles::DEFAULT_FILES_BASE_URL
+	        ) override;
+
+	/// @see RsFiles
+	std::error_condition exportFileLink(
+	        std::string& link, const RsFileHash& fileHash, uint64_t fileSize,
+	        const std::string& fileName, bool fragSneak = false,
+	        const std::string& baseUrl = RsFiles::DEFAULT_FILES_BASE_URL
+	        ) override;
+
+	/// @see RsFiles
+	std::error_condition parseFilesLink(
+	        const std::string& link, RsFileTree& collection ) override;
 
     /***
          * Control of Downloads Priority.
@@ -254,7 +279,7 @@ public:
 
 	/// @see RsFiles::RequestDirDetails
 	virtual bool requestDirDetails(
-	        DirDetails &details, std::uintptr_t handle = 0,
+	        DirDetails &details, uint64_t handle = 0,
 	        FileSearchFlags flags = RS_FILE_HINTS_LOCAL );
 
     virtual bool findChildPointer(void *ref, int row, void *& result, FileSearchFlags flags) ;
@@ -365,11 +390,11 @@ protected:
     bool findEncryptedHash(const RsPeerId& virtual_peer_id, RsFileHash& encrypted_hash);
 
 	bool checkUploadLimit(const RsPeerId& pid,const RsFileHash& hash);
-private:
 
-    /**** INTERNAL FUNCTIONS ***/
-    //virtual int 	reScanDirs();
-    //virtual int 	check_dBUpdate();
+	std::error_condition dirDetailsToLink(
+	        std::string& link,
+	        const DirDetails& dirDetails, bool fragSneak,
+	        const std::string& baseUrl );
 
 private:
 

@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include "RSItemDelegate.h"
+#include "util/rsdebug.h"
 
 RSItemDelegate::RSItemDelegate(QObject *parent) : QItemDelegate(parent)
 {
@@ -58,6 +59,51 @@ void RSItemDelegate::removeFocusRect(int column)
 }
 
 void RSItemDelegate::setSpacing(const QSize &spacing)
+{
+    m_spacing = spacing;
+}
+
+
+/** RSStyledItemDelegate **/
+
+RSStyledItemDelegate::RSStyledItemDelegate(QObject *parent) : QStyledItemDelegate(parent)
+{
+}
+
+void RSStyledItemDelegate::paint (QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+	QStyleOptionViewItem ownOption (option);
+
+	if (m_noFocusRect.indexOf(index.column()) >= 0) {
+		ownOption.state &= ~QStyle::State_HasFocus; // don't show text and focus rectangle
+	}
+
+	QStyledItemDelegate::paint (painter, ownOption, index);
+}
+
+QSize RSStyledItemDelegate::sizeHint (const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+	QStyleOptionViewItem ownOption (option);
+
+	if (m_noFocusRect.indexOf(index.column()) >= 0) {
+		ownOption.state &= ~QStyle::State_HasFocus; // don't show text and focus rectangle
+	}
+
+	QSize size = QStyledItemDelegate::sizeHint(ownOption, index);
+
+	size += m_spacing;
+
+	return size;
+}
+
+void RSStyledItemDelegate::removeFocusRect(int column)
+{
+    if (m_noFocusRect.indexOf(column) == -1) {
+        m_noFocusRect.push_back(column);
+    }
+}
+
+void RSStyledItemDelegate::setSpacing(const QSize &spacing)
 {
     m_spacing = spacing;
 }

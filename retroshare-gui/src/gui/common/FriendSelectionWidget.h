@@ -25,7 +25,6 @@
 #include <QDialog>
 
 #include <gui/gxs/RsGxsUpdateBroadcastPage.h>
-#include "util/TokenQueue.h"
 
 namespace Ui {
 class FriendSelectionWidget;
@@ -34,7 +33,7 @@ class FriendSelectionWidget;
 class QTreeWidgetItem;
 class RSTreeWidgetItemCompareRole;
 
-class FriendSelectionWidget : public RsGxsUpdateBroadcastPage, public TokenResponse
+class FriendSelectionWidget : public QWidget
 {
 	Q_OBJECT
 
@@ -82,13 +81,16 @@ public:
 	bool isSortByState();
 	bool isFilterConnected();
 
+	void loadIdentities();
 	int selectedItemCount();
     std::string selectedId(IdType &idType);
+
+    void setSelectedIdsFromString(IdType type,const std::set<std::string>& ids,bool add);
 
     template<class ID_CLASS,FriendSelectionWidget::IdType TYPE> void selectedIds(std::set<ID_CLASS>& ids, bool onlyDirectSelected)
     {
         std::set<std::string> tmpids ;
-        selectedIds(TYPE, tmpids, onlyDirectSelected);
+        selectedIds_internal(TYPE, tmpids, onlyDirectSelected);
         ids.clear() ;
         for(std::set<std::string>::const_iterator it(tmpids.begin());it!=tmpids.end();++it)
             ids.insert(ID_CLASS(*it)) ;
@@ -98,7 +100,7 @@ public:
         std::set<std::string> tmpids ;
         for(typename std::set<ID_CLASS>::const_iterator it(ids.begin());it!=ids.end();++it)
             tmpids.insert((*it).toStdString()) ;
-        setSelectedIds(TYPE, tmpids, add);
+        setSelectedIds_internal(TYPE, tmpids, add);
     }
 
 	void itemsFromId(IdType idType, const std::string &id, QList<QTreeWidgetItem*> &items);
@@ -115,9 +117,9 @@ public:
 	void addContextMenuAction(QAction *action);
 
 protected:
+	void showEvent(QShowEvent *e) override;
 	void changeEvent(QEvent *e);
 
-	virtual void loadRequest(const TokenQueue *queue,const TokenRequest& req);
 	virtual void updateDisplay(bool complete);
 
 signals:
@@ -145,10 +147,8 @@ private:
 	void fillList();
 	void secured_fillList();
 
-    void selectedIds(IdType idType, std::set<std::string> &ids, bool onlyDirectSelected);
-    void setSelectedIds(IdType idType, const std::set<std::string> &ids, bool add);
-
-	void requestGXSIdList() ;
+    void selectedIds_internal(IdType idType, std::set<std::string> &ids, bool onlyDirectSelected);
+    void setSelectedIds_internal(IdType idType, const std::set<std::string> &ids, bool add);
 
 private:
 	bool mStarted;
@@ -170,10 +170,9 @@ private:
 	friend class FriendSelectionDialog ;
 
 	std::vector<RsGxsGroupId> gxsIds ;
-	TokenQueue *mIdQueue ;
 	QList<QAction*> mContextMenuActions;
 
-    std::set<RsGxsId> mPreSelectedGxsIds; // because loading of GxsIds is asynchroneous we keep selected Ids from the client in a list here and use it to initialize after loading them.
+    std::set<std::string> mPreSelectedIds; // because loading of GxsIds is asynchroneous we keep selected Ids from the client in a list here and use it to initialize after loading them.
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(FriendSelectionWidget::ShowTypes)

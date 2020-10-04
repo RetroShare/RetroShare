@@ -1,7 +1,7 @@
 /*******************************************************************************
  * gui/TheWire/PulseAddDialog.h                                                *
  *                                                                             *
- * Copyright (c) 2012 Robert Fernie   <retroshare.project@gmail.com>           *
+ * Copyright (c) 2012-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -23,9 +23,15 @@
 
 #include "ui_PulseAddDialog.h"
 
-#include <inttypes.h>
+#include <retroshare/rswire.h>
 
-class PhotoDetailsDialog;
+
+QT_BEGIN_NAMESPACE
+class QDragEnterEvent;
+class QDropEvent;
+class QMouseEvent;
+QT_END_NAMESPACE
+
 
 class PulseAddDialog : public QWidget
 {
@@ -34,21 +40,51 @@ class PulseAddDialog : public QWidget
 public:
 	PulseAddDialog(QWidget *parent = 0);
 
-private slots:
-	void showPhotoDetails();
-	void updateMoveButtons(uint32_t status);
+	void cleanup();
 
+	void setReplyTo(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, uint32_t replyType);
+	void setGroup(const RsGxsGroupId &grpId);
+
+private slots:
 	void addURL();
-	void addTo();
+	void clearDisplayAs();
 	void postPulse();
 	void cancelPulse();
 	void clearDialog();
+	void pulseTextChanged();
+
+private:
+	// OLD VERSIONs, private now.
+	void setGroup(RsWireGroup &group);
+	void setReplyTo(RsWirePulse &pulse, RsWirePulseSPtr pPulse, std::string &groupName, uint32_t replyType);
+
+	void postOriginalPulse();
+	void postReplyPulse();
+
+	uint32_t toPulseSentiment(int index);
 
 protected:
+	void dragEnterEvent(QDragEnterEvent *event);
+	void dragLeaveEvent(QDragLeaveEvent *event);
+	void dragMoveEvent(QDragMoveEvent *event);
+	void dropEvent(QDropEvent *event);
 
-	PhotoDetailsDialog *mPhotoDetails;
+	void addImage(const QString &path);
+
+	RsWireGroup mGroup; // replyWith.
+
+	// if this is a reply
+	bool mIsReply;
+	RsWirePulse mReplyToPulse;
+	uint32_t mReplyType;
+
+	// images
+	RsGxsImage mImage1;
+	RsGxsImage mImage2;
+	RsGxsImage mImage3;
+	RsGxsImage mImage4;
+
 	Ui::PulseAddDialog ui;
-
 };
 
 #endif

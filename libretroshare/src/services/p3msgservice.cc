@@ -80,7 +80,9 @@ p3MsgService::p3MsgService( p3ServiceControl *sc, p3IdService *id_serv,
       recentlyReceivedMutex("p3MsgService recently received hash mutex"),
       mGxsTransServ(gxsMS)
 {
-	_serialiser = new RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_NONE);	// this serialiser is used for services. It's not the same than the one returned by setupSerialiser(). We need both!!
+	/* this serialiser is used for services. It's not the same than the one
+	 * returned by setupSerialiser(). We need both!! */
+	_serialiser = new RsMsgSerialiser();
 	addSerialType(_serialiser);
 
 	/* MsgIds are not transmitted, but only used locally as a storage index.
@@ -509,7 +511,7 @@ RsSerialiser* p3MsgService::setupSerialiser()	// this serialiser is used for con
 {
 	RsSerialiser *rss = new RsSerialiser ;
 
-	rss->addSerialType(new RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_CONFIG));
+	rss->addSerialType(new RsMsgSerialiser(RsSerializationFlags::CONFIG));
 	rss->addSerialType(new RsGeneralConfigSerialiser());
 
 	return rss;
@@ -1185,10 +1187,14 @@ bool 	p3MsgService::MessageSend(MessageInfo &info)
 		/* use processMsg to get the new msgId */
 		msg->recvTime = time(NULL);
 		msg->msgId = getNewUniqueMsgId();
-                
+
 		msg->msgFlags |= RS_MSG_OUTGOING;
 
 		imsg[msg->msgId] = msg;
+
+		// Update info for caller
+		info.msgId = std::to_string(msg->msgId);
+		info .msgflags = msg->msgFlags;
 
 		RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_ADD);
 	}
@@ -1735,6 +1741,7 @@ void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 	if (msg->msgFlags & RS_MSG_FLAGS_REPLIED)                 mi.msgflags |= RS_MSG_REPLIED;
 	if (msg->msgFlags & RS_MSG_FLAGS_FORWARDED)               mi.msgflags |= RS_MSG_FORWARDED;
 	if (msg->msgFlags & RS_MSG_FLAGS_STAR)                    mi.msgflags |= RS_MSG_STAR;
+	if (msg->msgFlags & RS_MSG_FLAGS_SPAM)                    mi.msgflags |= RS_MSG_SPAM;
 	if (msg->msgFlags & RS_MSG_FLAGS_USER_REQUEST)            mi.msgflags |= RS_MSG_USER_REQUEST;
 	if (msg->msgFlags & RS_MSG_FLAGS_FRIEND_RECOMMENDATION)   mi.msgflags |= RS_MSG_FRIEND_RECOMMENDATION;
 	if (msg->msgFlags & RS_MSG_FLAGS_PUBLISH_KEY)             mi.msgflags |= RS_MSG_PUBLISH_KEY;
@@ -1828,6 +1835,10 @@ void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
 	if (msg->msgFlags & RS_MSG_FLAGS_STAR)
 	{
 		mis.msgflags |= RS_MSG_STAR;
+	}
+	if (msg->msgFlags & RS_MSG_FLAGS_SPAM)
+	{
+		mis.msgflags |= RS_MSG_SPAM;
 	}
 	if (msg->msgFlags & RS_MSG_FLAGS_USER_REQUEST)
 	{
@@ -2386,10 +2397,11 @@ void p3MsgService::sendDistantMsgItem(RsMsgItem *msgitem)
 	/* The item is serialized and turned into a generic turtle item. Use use the
 	 * explicit serialiser to make sure that the msgId is not included */
 
-    uint32_t msg_serialized_rssize = RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_NONE).size(msgitem) ;
+    uint32_t msg_serialized_rssize = RsMsgSerialiser().size(msgitem);
     RsTemporaryMemory msg_serialized_data(msg_serialized_rssize) ;
 
-    if(!RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_NONE).serialise(msgitem,msg_serialized_data,&msg_serialized_rssize))
+	if( !RsMsgSerialiser().
+	        serialise(msgitem,msg_serialized_data,&msg_serialized_rssize) )
     {
         std::cerr << "(EE) p3MsgService::sendTurtleData(): Serialization error." << std::endl;
         return ;

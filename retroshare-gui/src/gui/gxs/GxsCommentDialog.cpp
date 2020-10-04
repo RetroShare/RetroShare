@@ -36,10 +36,12 @@ GxsCommentDialog::GxsCommentDialog(QWidget *parent, RsTokenService *token_servic
 	/* Invoke the Qt Designer generated QObject setup routine */
 	ui->setupUi(this);
 
-	//ui->postFrame->setVisible(false);
-
-	ui->treeWidget->setup(token_service, comment_service);
+    setTokenService(token_service,comment_service);
+    init();
+}
 	
+void GxsCommentDialog::init()
+{
 	/* Set header resize modes and initial section sizes */
 	QHeaderView * ttheader = ui->treeWidget->header () ;
 	ttheader->resizeSection (0, 440);
@@ -50,6 +52,7 @@ GxsCommentDialog::GxsCommentDialog(QWidget *parent, RsTokenService *token_servic
 	connect(ui->refreshButton, SIGNAL(clicked()), this, SLOT(refresh()));
 	connect(ui->idChooser, SIGNAL(currentIndexChanged( int )), this, SLOT(voterSelectionChanged( int )));
     connect(ui->idChooser, SIGNAL(idsLoaded()), this, SLOT(idChooserReady()));
+    connect(ui->treeWidget,SIGNAL(commentsLoaded(int)),this,SLOT(notifyCommentsLoaded(int)));
 	
 	connect(ui->commentButton, SIGNAL(clicked()), ui->treeWidget, SLOT(makeComment()));
 	connect(ui->sortBox, SIGNAL(currentIndexChanged(int)), this, SLOT(sortComments(int)));
@@ -60,6 +63,20 @@ GxsCommentDialog::GxsCommentDialog(QWidget *parent, RsTokenService *token_servic
 	int S = QFontMetricsF(font()).height() ;
 	
 	ui->sortBox->setIconSize(QSize(S*1.5,S*1.5));
+}
+
+void GxsCommentDialog::setTokenService(RsTokenService *token_service, RsGxsCommentService *comment_service)
+{
+	ui->treeWidget->setup(token_service, comment_service);
+}
+
+GxsCommentDialog::GxsCommentDialog(QWidget *parent)
+	: QWidget(parent), ui(new Ui::GxsCommentDialog)
+{
+	/* Invoke the Qt Designer generated QObject setup routine */
+	ui->setupUi(this);
+
+    init();
 }
 
 GxsCommentDialog::~GxsCommentDialog()
@@ -77,6 +94,11 @@ void GxsCommentDialog::commentLoad(const RsGxsGroupId &grpId, const std::set<RsG
     mMsgVersions = msg_versions;
 
 	ui->treeWidget->requestComments(mGrpId,msg_versions,most_recent_msgId);
+}
+
+void GxsCommentDialog::notifyCommentsLoaded(int n)
+{
+    emit commentsLoaded(n);
 }
 
 void GxsCommentDialog::refresh()

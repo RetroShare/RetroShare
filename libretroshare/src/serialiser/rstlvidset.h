@@ -92,11 +92,15 @@ template<class ID_CLASS,uint32_t TLV_TYPE> class RS_DEPRECATED_FOR(std::set<>) t
                 ids.insert(id) ;
 			}
 			if(*offset != tlvend)
+            {
 				std::cerr << "(EE) deserialisaiton error in " << __PRETTY_FUNCTION__ << std::endl;
-			else if(!ok)
+                ok = false;
+            }
+
+			if(!ok)
 				std::cerr << "(WW) something wrong in ID_CLASS.deserialise in " << __PRETTY_FUNCTION__ << std::endl;
 
-			return *offset == tlvend ;
+			return ok;
 		}
 		virtual std::ostream &print(std::ostream &out, uint16_t /* indent */) const
 		{

@@ -108,14 +108,6 @@ p3discovery2::p3discovery2(
 
 	// Add self into PGP FriendList.
 	mFriendList[AuthGPG::getAuthGPG()->getGPGOwnId()] = DiscPgpInfo();
-
-	if(rsEvents)
-		rsEvents->registerEventsHandler(
-                    RsEventType::GOSSIP_DISCOVERY,
-		            [this](std::shared_ptr<const RsEvent> event)
-		{
-			rsEventsHandler(*event);
-		}, mRsEventsHandle ); // mRsEventsHandle is zeroed in initializer list
 }
 
 
@@ -260,6 +252,7 @@ int p3discovery2::handleIncoming()
 	{
 		RsDiscPgpListItem*      pgplist  = nullptr;
 		RsDiscPgpKeyItem*       pgpkey   = nullptr;
+		RsDiscPgpCertItem*      pgpcert	 = nullptr;	 // deprecated, hanlde for retro compability
 		RsDiscContactItem*      contact  = nullptr;
 		RsDiscIdentityListItem* gxsidlst = nullptr;
 
@@ -282,6 +275,9 @@ int p3discovery2::handleIncoming()
 		}
 		else if((pgpkey = dynamic_cast<RsDiscPgpKeyItem *>(item)) != nullptr)
 			recvPGPCertificate(item->PeerId(), pgpkey);
+		else if((pgpcert = dynamic_cast<RsDiscPgpCertItem *>(item)) != nullptr)
+			// sink
+			delete pgpcert;
 		else if((pgplist = dynamic_cast<RsDiscPgpListItem *>(item)) != nullptr)
 		{
 			if (pgplist->mode == RsGossipDiscoveryPgpListMode::FRIENDS)
@@ -392,7 +388,12 @@ void p3discovery2::recvOwnContactInfo(const RsPeerId &fromId, const RsDiscContac
 
 	setPeerVersion(fromId, item->version);
 
-	updatePeerAddresses(item);
+    // Hidden nodes do not need IP information. So that information is dropped.
+    // However, that doesn't mean hidden nodes do not know that information. Normally
+    // normal nodes should not send it, but old nodes still do.
+
+    if(!mPeerMgr->isHiddenNode(rsPeers->getOwnId()))
+        updatePeerAddresses(item);
 
     // if the peer is not validated, we stop the exchange here
 
@@ -454,7 +455,7 @@ void p3discovery2::recvIdentityList(const RsPeerId& pid,const std::list<RsGxsId>
     std::cerr << "p3discovery2::recvIdentityList(): from peer " << pid << ": " << ids.size() << " identities" << std::endl;
 #endif
 
-    RsIdentityUsage use_info(RS_SERVICE_TYPE_DISC,RsIdentityUsage::IDENTITY_DATA_UPDATE);
+    RsIdentityUsage use_info(RsServiceType::GOSSIP_DISCOVERY,RsIdentityUsage::IDENTITY_NEW_FROM_DISCOVERY);
 
 	for(auto it(ids.begin());it!=ids.end();++it)
     {
@@ -1278,11 +1279,6 @@ bool p3discovery2::setPeerVersion(const RsPeerId &peerId, const std::string &ver
 
 	it->second.mVersion = version;
 	return true;
-}
-
-void p3discovery2::rsEventsHandler(const RsEvent& event)
-{
-	Dbg3() << __PRETTY_FUNCTION__ << " " << static_cast<uint32_t>(event.mType) << std::endl;
 }
 
 

@@ -23,7 +23,8 @@
 
 #include <QSortFilterProxyModel>
 
-#include "mainpage.h"
+#include <retroshare-gui/mainpage.h>
+
 #include "ui_MessagesDialog.h"
 
 #define IMAGE_MESSAGES          ":/icons/png/message.png"
@@ -57,10 +58,6 @@ public:
 
   void setTextColorInbox(QColor color) { mTextColorInbox = color; }
 
-signals:
-  void messagesAboutToLoad();
-  void messagesLoaded();
-
 protected:
   virtual UserNotify *createUserNotify(QObject *parent) override;
   bool eventFilter(QObject *obj, QEvent *ev);
@@ -69,6 +66,7 @@ protected:
 public slots:
   //void insertMessages();
   void messagesTagsChanged();
+  void messageRemoved();
   void preModelUpdate();
   void postModelUpdate();
 
@@ -97,11 +95,10 @@ private slots:
   void markAsRead();
   void markAsUnread();
   void markWithStar(bool checked);
+  void markWithJunk(bool checked);
 
   void emptyTrash();
 
-  void buttonStyle();
-  
   void filterChanged(const QString &text);
   void filterColumnChanged(int column);
   
@@ -123,13 +120,13 @@ private:
   bool getCurrentMsg(std::string &cid, std::string &mid);
   void setMsgAsReadUnread(const QList<QTreeWidgetItem *> &items, bool read);
 
-  int getSelectedMsgCount (QList<QModelIndex> *items, QList<QModelIndex> *itemsRead, QList<QModelIndex> *itemsUnread, QList<QModelIndex> *itemsStar);
+  int getSelectedMsgCount (QList<QModelIndex> *items, QList<QModelIndex> *itemsRead, QList<QModelIndex> *itemsUnread, QList<QModelIndex> *itemsStar, QList<QModelIndex> *itemsJunk);
   bool isMessageRead(const QModelIndex &real_index);
   bool hasMessageStar(const QModelIndex &index);
+  bool hasMessageSpam(const QModelIndex &index);
 
   void processSettings(bool load);
 
-  void setToolbarButtonStyle(Qt::ToolButtonStyle style);
   void fillQuickView();
 
   void closeTab(const std::string &msgId);
@@ -159,6 +156,7 @@ private:
   Ui::MessagesDialog ui;
 
   QList<QString> mTmpSavedSelectedIds;
+  QModelIndex lastSelectedIndex;
 };
 
 #endif

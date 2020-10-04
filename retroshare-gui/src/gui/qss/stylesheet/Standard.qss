@@ -225,9 +225,8 @@ ChatWidget QFrame#infoFrame {
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
 }
 
-ChatWidget QFrame#titleBarFrame {
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
-	border: 1px solid #CCCCCC;
+ChatWidget QFrame#titleBarFrame, QFrame#toolBarFrameTop {
+
 }
 
 PopupChatWindow QToolBar#chattoolBar{
@@ -238,13 +237,12 @@ PopupChatWindow QToolBar#chattoolBar{
 /* Messages */
 
 MessageComposer QToolBar#toolBar  {
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
-	border: 0px;
+
 }
 
 MessagesDialog QFrame#folderFrame, MessagesDialog QFrame#quickViewFrame {
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
-	border: 1px solid #CCCCCC;
+	background: transparent; 
+
 }
 
 /* Profile */
@@ -269,39 +267,6 @@ PluginItem > QFrame#frame {
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 lightgray, stop:1 darkgray);
 }
 */
-
-/* SearchDialog */
-
-SearchDialog QFrame#searchLineFrame[valid=false] {
-	border: 2px solid #079E00;
-	background-color: #DBDBDB;
-}
-
-SearchDialog QFrame#searchLineFrame[valid=true] {
-	border: 2px solid #079E00;
-	background-color: white;
-}
-
-SearchDialog QPushButton#pushButtonSearch { 
-	border-image: url(:/images/btn1.png) 4;
-	border-width: 4;
-	padding: 0px 6px;
-	font-size: 12px;
-	color: black;
-}
-
-SearchDialog QPushButton#pushButtonSearch:hover {
-	border-image: url(:/images/btn2.png) 4;
-}
-
-SearchDialog QPushButton#pushButtonSearch:pressed {
-	border-image: url(:/images/btn3.png) 4;
-}
-
-SearchDialog QFrame#searchLineFrame > QLineEdit {
-	background: transparent;
-	border: none;
-}
 
 /* GetStartedDialog */
 
@@ -606,54 +571,63 @@ IdEditDialog QLabel#info_label
 	background: #FFFFD7;
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
 }
+
 GenCertDialog QComboBox#genPGPuser { 
   border: 2px solid #0099cc;
   border-radius: 6px;
   background: white;
 	font: bold;
 }
+
 GenCertDialog QSpinBox#hiddenport_spinBox { 
   border: 2px solid #0099cc;
   border-radius: 6px;
   background: white;
 	font: bold;
 }
+
 GenCertDialog QLineEdit#hiddenaddr_input { 
   border: 2px solid #0099cc;
   border-radius: 6px;
   background: white;
 	font: bold;
 }
+
 GenCertDialog QLineEdit#password2_input {
   border: 2px solid #0099cc;
   border-radius: 6px;
   background: white;
 	font: bold;
 }
+
 GenCertDialog QLineEdit#password_input { 
   border: 2px solid #0099cc;
   border-radius: 6px;
   background: white;
 	font: bold;
 }
+
 GenCertDialog QLineEdit#nickname_input { 
   border: 2px solid #0099cc;
   border-radius: 6px;
   background: white;
 	font: bold;
 }
+
 GenCertDialog QLineEdit#node_input { 
   border: 2px solid #0099cc;
   border-radius: 6px;
   background: white;
 	font: bold;
 }
+
 GenCertDialog QLineEdit#name_input { 
   border: 2px solid #0099cc;
   border-radius: 6px;
   background: white;
 	font: bold;
 }
+
 GenCertDialog QPushButton#genButton { 
 	border-image: url(:/images/btn_blue.png) 4;
 	border-width: 4;
@@ -767,12 +741,11 @@ GxsForumThreadWidget QToolButton#subscribeToolButton:hover {
 	border-radius: 4px;
 }
 
-GxsChannelPostsWidget QFrame#infoFrame
-{ 
-
+GxsForumMsgItem QFrame#frame{
+	background-color: white;
 }
 
-GxsChannelPostsWidget QToolButton#subscribeToolButton {
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton {
 	font: bold;
 	font-size: 14px;
 	color: white;
@@ -781,18 +754,18 @@ GxsChannelPostsWidget QToolButton#subscribeToolButton {
 	max-height: 27px;
 }
 
-GxsChannelPostsWidget QToolButton#subscribeToolButton:hover {
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton:hover {
 	background: #03b1f3;
 	border-radius: 4px;
 }
 
-GxsChannelPostsWidget QToolButton#subscribeToolButton:pressed {
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton:pressed {
 	background: #03b1f3;
 	border-radius: 4px;
 	border: 1px solid gray;
 }
 
-GxsChannelPostsWidget QToolButton#subscribeToolButton:disabled {
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton:disabled {
 	background: gray;
 	border-radius: 4px;
 	border: 1px solid gray;
@@ -800,21 +773,46 @@ GxsChannelPostsWidget QToolButton#subscribeToolButton:disabled {
 }
 
 /* only for MenuButtonPopup */
-GxsChannelPostsWidget QToolButton#subscribeToolButton[popupMode="1"] { 
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton[popupMode="1"] { 
     padding-right: 0px; 
 }
 
-GxsChannelPostsWidget QToolButton#subscribeToolButton::menu-arrow {
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton::menu-arrow {
     image: none;
 }
 
-GxsChannelPostsWidget QToolButton#subscribeToolButton::menu-button {
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton::menu-button {
     image: none;
 
+}
+
+GxsChannelFilesStatusWidget QToolButton#openFolderToolButton::menu-indicator {
+    image: none;
+}
+
+GxsChannelFilesStatusWidget QToolButton#openFolderToolButton[popupMode="0"] { 
+    padding-right: 0px; 
+}
+
+GxsChannelFilesStatusWidget QToolButton#openFolderToolButton::menu-indicator {
+    image: none;
+}
+
+GxsChannelFilesStatusWidget QToolButton#openFolderToolButton[popupMode="0"] { 
+    padding-right: 0px; 
+}
+
+GxsGroupDialog QLabel#groupLogo{
+	border: 2px solid #CCCCCC;
+	border-radius: 3px;
 }
 
 PostedItem QFrame#frame_notes {
 	background: white;
+}
+
+PostedItem QFrame#mainFrame {
+	background-color: white;
 }
 
 PostedItem QLabel#notes {
@@ -862,6 +860,11 @@ PostedCardView QFrame#voteFrame {
 	background: #f8f9fa;
 }
 
+PostedCardView QFrame#mainFrame {
+	background: white;
+}
+
+
 GxsCommentDialog QComboBox#sortBox {
 	font: bold;
 	color: #0099cc;
@@ -880,12 +883,54 @@ PostedCreatePostDialog QPushButton#submitButton {
 	border-radius: 4px;
 	max-height: 27px;
 	min-width: 4em;
-    padding: 2px;
+	padding: 2px;
 }
 
 PostedCreatePostDialog QPushButton#submitButton:hover {
 	background: #03b1f3;
 	border-radius: 4px;
 	min-width: 4em;
-    padding: 2px;
+	padding: 2px;
+}
+
+MessageWidget QTextBrowser#toText , QTextBrowser#ccText , QTextBrowser#bccText {
+	background: transparent;
+	border: none;
+}
+
+WireGroupItem QWidget:hover
+{
+	background-color: #7ecbfb;
+}
+
+WireDialog QFrame#frame{
+	background-color: white;
+}
+
+WireDialog QWidget#scrollAreaWidgetContents_groups{
+	background-color: white;
+}
+
+MessagesDialog QWidget#messageTreeWidget::item {
+	padding: 2px;
+}
+
+MessagesDialog QWidget#messageTreeWidget::item:selected {
+	background-color: #cde8ff;
+	color: black;
+}
+
+MessagesDialog QWidget#messageTreeWidget::item:hover {
+	background-color: #e5f3ff;
+	color: black;
+}
+
+GxsForumThreadWidget QWidget#threadTreeWidget::item {
+	padding: 2px;
+}
+
+PulseTopLevel QFrame#frame, PulseViewGroup QFrame#frame, PulseReply QFrame#frame {
+	border: 2px solid #7ecbfb;
+	border-radius: 6px;
+	background: white;
 }

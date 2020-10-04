@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "gui/common/FilesDefs.h"
 #include "MessageWindow.h"
 #include "MessageWidget.h"
 #include "MessageComposer.h"
@@ -55,19 +56,13 @@ MessageWindow::MessageWindow(QWidget *parent, Qt::WindowFlags flags)
 
 	msgWidget = NULL;
 	
-    // create tag menu
+	// create tag menu
 	TagsMenu *menu = new TagsMenu (tr("Tags"), this);
 	connect(menu, SIGNAL(aboutToShow()), this, SLOT(tagAboutToShow()));
 	connect(menu, SIGNAL(tagSet(int, bool)), this, SLOT(tagSet(int, bool)));
 	connect(menu, SIGNAL(tagRemoveAll()), this, SLOT(tagRemoveAll()));
 
 	ui.tagButton->setMenu(menu);
-    
-    // create print menu
-	QMenu *printmenu = new QMenu();
-	printmenu->addAction(ui.actionPrint);
-	printmenu->addAction(ui.actionPrint_Preview);
-	ui.printButton->setMenu(printmenu);
 
 	// create view menu
 	QMenu *viewmenu = new QMenu();
@@ -92,7 +87,7 @@ void MessageWindow::processSettings(bool load)
 		// load settings
 
 		/* toolbar button style */
-		Qt::ToolButtonStyle style = (Qt::ToolButtonStyle) Settings->value("ToolButon_Stlye", Qt::ToolButtonIconOnly).toInt();
+		Qt::ToolButtonStyle style = (Qt::ToolButtonStyle) Settings->value("ToolButon_Stlye", Qt::ToolButtonTextBesideIcon).toInt();
 		setToolbarButtonStyle(style);
 	} else {
 		// save settings
@@ -115,11 +110,6 @@ void MessageWindow::addWidget(MessageWidget *widget)
 		ui.msgLayout->addWidget(msgWidget);
 		setWindowTitle(msgWidget->subject(true));
 
-		msgWidget->connectAction(MessageWidget::ACTION_REMOVE, ui.removemessageButton);
-		msgWidget->connectAction(MessageWidget::ACTION_REPLY, ui.replymessageButton);
-		msgWidget->connectAction(MessageWidget::ACTION_REPLY_ALL, ui.replyallmessageButton);
-		msgWidget->connectAction(MessageWidget::ACTION_FORWARD, ui.forwardmessageButton);
-		msgWidget->connectAction(MessageWidget::ACTION_PRINT, ui.printButton);
 		msgWidget->connectAction(MessageWidget::ACTION_PRINT, ui.actionPrint);
 		msgWidget->connectAction(MessageWidget::ACTION_PRINT, actionPrint);
 		msgWidget->connectAction(MessageWidget::ACTION_PRINT_PREVIEW, ui.actionPrint_Preview);
@@ -191,12 +181,12 @@ void MessageWindow::setupFileActions()
 	menuBar()->addMenu(menu);
 
 	actionSaveAs = menu->addAction(tr("Save &As File"));
-	actionPrint = menu->addAction(QIcon(":/images/textedit/fileprint.png"), tr("&Print..."));
+    actionPrint = menu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/textedit/fileprint.png"), tr("&Print..."));
 	actionPrint->setShortcut(QKeySequence::Print);
 
-	actionPrintPreview = menu->addAction(QIcon(":/images/textedit/fileprint.png"), tr("Print Preview..."));
+    actionPrintPreview = menu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/textedit/fileprint.png"), tr("Print Preview..."));
 
-//	a = new QAction(QIcon(":/images/textedit/exportpdf.png"), tr("&Export PDF..."), this);
+//	a = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/textedit/exportpdf.png"), tr("&Export PDF..."), this);
 //	a->setShortcut(Qt::CTRL + Qt::Key_D);
 //	connect(a, SIGNAL(triggered()), this, SLOT(filePrintPdf()));
 //	menu->addAction(a);
@@ -210,13 +200,7 @@ void MessageWindow::setupFileActions()
 void MessageWindow::setToolbarButtonStyle(Qt::ToolButtonStyle style)
 {
 	ui.newmessageButton->setToolButtonStyle(style);
-	ui.removemessageButton->setToolButtonStyle(style);
-	ui.replymessageButton->setToolButtonStyle(style);
-	ui.replyallmessageButton->setToolButtonStyle(style);
-	ui.forwardmessageButton->setToolButtonStyle(style);
 	ui.tagButton->setToolButtonStyle(style);
-	ui.printButton->setToolButtonStyle(style);
-	ui.viewtoolButton->setToolButtonStyle(style);
 }
 
 void MessageWindow::buttonStyle()

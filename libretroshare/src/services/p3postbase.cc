@@ -98,27 +98,22 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 			std::cerr << std::endl;
 #endif
 
-			std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
-			for(auto mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
-			{
 #ifdef POSTBASE_DEBUG
-				std::cerr << "p3PostBase::notifyChanges() Msgs for Group: " << mit->first;
-				std::cerr << std::endl;
+			std::cerr << "p3PostBase::notifyChanges() Msgs for Group: " << mit->first;
+			std::cerr << std::endl;
 #endif
-				// To start with we are just going to trigger updates on these groups.
-				// FUTURE OPTIMISATION.
-				// It could be taken a step further and directly request these msgs for an update.
-				addGroupForProcessing(mit->first);
+			// To start with we are just going to trigger updates on these groups.
+			// FUTURE OPTIMISATION.
+			// It could be taken a step further and directly request these msgs for an update.
+			addGroupForProcessing(msgChange->mGroupId);
 
-				if (rsEvents && (msgChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW || msgChange->getType() == RsGxsNotify::TYPE_PUBLISHED))
-					for (auto mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
-					{
-						auto ev = std::make_shared<RsGxsPostedEvent>();
-						ev->mPostedMsgId = *mit1;
-						ev->mPostedGroupId = mit->first;
-						ev->mPostedEventCode = RsPostedEventCode::NEW_MESSAGE;
-						rsEvents->postEvent(ev);
-					}
+			if (rsEvents && (msgChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW || msgChange->getType() == RsGxsNotify::TYPE_PUBLISHED))
+			{
+				auto ev = std::make_shared<RsGxsPostedEvent>();
+				ev->mPostedMsgId = msgChange->mMsgId;
+				ev->mPostedGroupId = msgChange->mGroupId;
+				ev->mPostedEventCode = RsPostedEventCode::NEW_MESSAGE;
+				rsEvents->postEvent(ev);
 			}
 		}
 
@@ -131,54 +126,63 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 			std::cerr << "p3PostBase::notifyChanges() Found Group Change Notification";
 			std::cerr << std::endl;
 #endif
+            const RsGxsGroupId& group_id(grpChange->mGroupId);
 
             switch(grpChange->getType())
-            {
-            default:
+			{
 			case RsGxsNotify::TYPE_PROCESSED:	// happens when the group is subscribed
 			{
-				std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
-				std::list<RsGxsGroupId>::iterator git;
-				for (git = grpList.begin(); git != grpList.end(); ++git)
-				{
-					auto ev = std::make_shared<RsGxsPostedEvent>();
-					ev->mPostedGroupId = *git;
-					ev->mPostedEventCode = RsPostedEventCode::SUBSCRIBE_STATUS_CHANGED;
-					rsEvents->postEvent(ev);
-				}
-
+				auto ev = std::make_shared<RsGxsPostedEvent>();
+				ev->mPostedGroupId = group_id;
+				ev->mPostedEventCode = RsPostedEventCode::SUBSCRIBE_STATUS_CHANGED;
+				rsEvents->postEvent(ev);
 			}
-                break;
+				break;
 
-            case RsGxsNotify::TYPE_PUBLISHED:
-            case RsGxsNotify::TYPE_RECEIVED_NEW:
-            {
-                /* group received */
-                const std::list<RsGxsGroupId>& grpList = grpChange->mGrpIdList;
+			case RsGxsNotify::TYPE_STATISTICS_CHANGED:
+			{
+				auto ev = std::make_shared<RsGxsPostedEvent>();
+				ev->mPostedGroupId = group_id;
+				ev->mPostedEventCode = RsPostedEventCode::STATISTICS_CHANGED;
+				rsEvents->postEvent(ev);
+			}
+				break;
 
-                for (auto git = grpList.begin(); git != grpList.end(); ++git)
-                {
-#ifdef POSTBASE_DEBUG
-					std::cerr << "p3PostBase::notifyChanges() Incoming Group: " << *git;
-					std::cerr << std::endl;
-#endif
+			case RsGxsNotify::TYPE_PUBLISHED:
+			case RsGxsNotify::TYPE_RECEIVED_NEW:
+			{
+				/* group received */
+
+				if(mKnownPosted.find(group_id) == mKnownPosted.end())
+				{
+					mKnownPosted.insert(std::make_pair(group_id, time(nullptr)));
+					IndicateConfigChanged();
+
 					auto ev = std::make_shared<RsGxsPostedEvent>();
-					ev->mPostedGroupId = *git;
+					ev->mPostedGroupId = group_id;
 					ev->mPostedEventCode = RsPostedEventCode::NEW_POSTED_GROUP;
 					rsEvents->postEvent(ev);
+
+#ifdef POSTBASE_DEBUG
+					std::cerr << "p3PostBase::notifyChanges() Incoming Group: " << group_id;
+					std::cerr << std::endl;
+#endif
 				}
-            }
+				else
+					RsInfo() << __PRETTY_FUNCTION__
+					         << " Not notifying already known forum "
+					         << group_id << std::endl;
+			}
 				break;
-            }
+
+			default:
+				RsErr() << " Got a GXS event of type " << grpChange->getType() << " Currently not handled." << std::endl;
+				break;
+			}
 		}
 
         delete *it;
 	}
-
-#ifdef POSTBASE_DEBUG
-	std::cerr << "p3PostBase::notifyChanges() -> receiveChanges()";
-	std::cerr << std::endl;
-#endif
 }
 
 void	p3PostBase::service_tick()
@@ -327,11 +331,7 @@ void p3PostBase::addGroupForProcessing(RsGxsGroupId grpId)
 	{
 		RsStackMutex stack(mPostBaseMtx); /********** STACK LOCKED MTX ******/
 		// no point having multiple lookups queued.
-		if (mBgGroupList.end() == std::find(mBgGroupList.begin(), 
-						mBgGroupList.end(), grpId))
-		{
-			mBgGroupList.push_back(grpId);
-		}
+		mBgGroupList.insert(grpId);
 	}
 }
 
@@ -364,8 +364,8 @@ void p3PostBase::background_requestUnprocessedGroup()
 			return;
 		}
 
-		grpId = mBgGroupList.front();
-		mBgGroupList.pop_front();
+		grpId = *mBgGroupList.begin();
+		mBgGroupList.erase(grpId);
 		mBgProcessing = true;
 	}
 
@@ -459,8 +459,6 @@ void p3PostBase::background_loadMsgs(const uint32_t &token, bool unprocessed)
 
 	// generate vector of changes to push to the GUI.
 	std::vector<RsGxsNotify *> changes;
-	RsGxsMsgChange *msgChanges = new RsGxsMsgChange(RsGxsNotify::TYPE_PROCESSED, false);
-
 
 	RsGxsGroupId groupId;
 	std::map<RsGxsGroupId, std::vector<RsGxsMsgItem*> >::iterator mit;
@@ -511,7 +509,7 @@ void p3PostBase::background_loadMsgs(const uint32_t &token, bool unprocessed)
 #endif
 
 				/* but we need to notify GUI about them */	
-				msgChanges->msgChangeMap[mit->first].insert((*vit)->meta.mMsgId);
+				changes.push_back(new RsGxsMsgChange(RsGxsNotify::TYPE_PROCESSED, mit->first,(*vit)->meta.mMsgId, false));
 			}
 			else if (NULL != (commentItem = dynamic_cast<RsGxsCommentItem *>(*vit)))
 			{
@@ -607,20 +605,7 @@ void p3PostBase::background_loadMsgs(const uint32_t &token, bool unprocessed)
 	}
 
 	/* push updates of new Posts */
-	if (msgChanges->msgChangeMap.size() > 0)
-	{
-#ifdef POSTBASE_DEBUG
-        std::cerr << "p3PostBase::background_processNewMessages() -> receiveChanges()";
-        std::cerr << std::endl;
-#endif
-
-		changes.push_back(msgChanges);
-	 	receiveHelperChanges(changes);
-	}
-	else
-	{
-		delete(msgChanges);
-	}
+	notifyChanges(changes);
 
 	/* request the summary info from the parents */
 	uint32_t token_b;
@@ -685,7 +670,6 @@ void p3PostBase::background_updateVoteCounts(const uint32_t &token)
 
 	// generate vector of changes to push to the GUI.
 	std::vector<RsGxsNotify *> changes;
-	RsGxsMsgChange *msgChanges = new RsGxsMsgChange(RsGxsNotify::TYPE_PROCESSED, false);
 
 	for(mit = parentMsgList.begin(); mit != parentMsgList.end(); ++mit)
 	{
@@ -728,7 +712,8 @@ void p3PostBase::background_updateVoteCounts(const uint32_t &token)
 #endif
 
 				stats.increment(it->second);
-				msgChanges->msgChangeMap[mit->first].insert(vit->mMsgId);
+
+	            changes.push_back(new RsGxsMsgChange(RsGxsNotify::TYPE_PROCESSED,mit->first,vit->mMsgId, false));
 			}
 			else
 			{
@@ -760,20 +745,7 @@ void p3PostBase::background_updateVoteCounts(const uint32_t &token)
 		}
 	}
 
-	if (msgChanges->msgChangeMap.size() > 0)
-	{
-#ifdef POSTBASE_DEBUG
-        std::cerr << "p3PostBase::background_updateVoteCounts() -> receiveChanges()";
-        std::cerr << std::endl;
-#endif
-
-		changes.push_back(msgChanges);
-	 	receiveHelperChanges(changes);
-	}
-	else
-	{
-		delete(msgChanges);
-	}
+	notifyChanges(changes);
 
 	// DONE!.
 	background_cleanup();
@@ -828,5 +800,91 @@ void p3PostBase::handleResponse(uint32_t token, uint32_t req_type)
 			std::cerr << std::endl;
 			break;
 	}
+}
+
+static const uint32_t GXS_POSTED_CONFIG_MAX_TIME_NOTIFY_STORAGE = 86400*30*2 ; // ignore notifications for 2 months
+static const uint8_t  GXS_POSTED_CONFIG_SUBTYPE_NOTIFY_RECORD   = 0x01 ;
+
+struct RsGxsPostedNotifyRecordsItem: public RsItem
+{
+
+	RsGxsPostedNotifyRecordsItem()
+	    : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_GXS_TYPE_POSTED_CONFIG,GXS_POSTED_CONFIG_SUBTYPE_NOTIFY_RECORD)
+	{}
+
+    virtual ~RsGxsPostedNotifyRecordsItem() {}
+
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx )
+	{ RS_SERIAL_PROCESS(records); }
+
+	void clear() {}
+
+	std::map<RsGxsGroupId,rstime_t> records;
+};
+
+class GxsPostedConfigSerializer : public RsServiceSerializer
+{
+public:
+	GxsPostedConfigSerializer() : RsServiceSerializer(RS_SERVICE_GXS_TYPE_POSTED_CONFIG) {}
+	virtual ~GxsPostedConfigSerializer() {}
+
+	RsItem* create_item(uint16_t service_id, uint8_t item_sub_id) const
+	{
+		if(service_id != RS_SERVICE_GXS_TYPE_POSTED_CONFIG)
+			return NULL;
+
+		switch(item_sub_id)
+		{
+		case GXS_POSTED_CONFIG_SUBTYPE_NOTIFY_RECORD: return new RsGxsPostedNotifyRecordsItem();
+		default:
+			return NULL;
+		}
+	}
+};
+
+bool p3PostBase::saveList(bool &cleanup, std::list<RsItem *>&saveList)
+{
+	cleanup = true ;
+
+	RsGxsPostedNotifyRecordsItem *item = new RsGxsPostedNotifyRecordsItem ;
+
+	item->records = mKnownPosted ;
+
+	saveList.push_back(item) ;
+	return true;
+}
+
+bool p3PostBase::loadList(std::list<RsItem *>& loadList)
+{
+	while(!loadList.empty())
+	{
+		RsItem *item = loadList.front();
+		loadList.pop_front();
+
+		rstime_t now = time(NULL);
+
+		RsGxsPostedNotifyRecordsItem *fnr = dynamic_cast<RsGxsPostedNotifyRecordsItem*>(item) ;
+
+		if(fnr != NULL)
+		{
+			mKnownPosted.clear();
+
+			for(auto it(fnr->records.begin());it!=fnr->records.end();++it)
+				if( now < it->second + GXS_POSTED_CONFIG_MAX_TIME_NOTIFY_STORAGE)
+					mKnownPosted.insert(*it) ;
+		}
+
+		delete item ;
+	}
+	return true;
+}
+
+RsSerialiser* p3PostBase::setupSerialiser()
+{
+	RsSerialiser* rss = new RsSerialiser;
+	rss->addSerialType(new GxsPostedConfigSerializer());
+
+	return rss;
 }
 

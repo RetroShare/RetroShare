@@ -289,7 +289,7 @@ bool GxsSecurity::generateKeyPair(RsTlvPublicRSAKey& public_key,RsTlvPrivateRSAK
     if(!(private_key.checkKey() && public_key.checkKey()))
     {
         std::cerr << "(EE) ERROR while generating keys. Something inconsistent in flags. This is probably a bad sign!" << std::endl;
-	return false ;
+		return false ;
     }
                      
     return true ;
@@ -418,13 +418,11 @@ bool GxsSecurity::validateNxsMsg(const RsNxsMsg& msg, const RsTlvKeySignature& s
 
             /* check signature timeperiod */
             if ((msgMeta.mPublishTs < key.startTS) || (key.endTS != 0 && msgMeta.mPublishTs > key.endTS))
-            {
-    #ifdef GXS_SECURITY_DEBUG
-                    std::cerr << " GxsSecurity::validateNxsMsg() TS out of range";
-                    std::cerr << std::endl;
-    #endif
-                    return false;
-            }
+			{
+				RsWarn() << __PRETTY_FUNCTION__ << " GxsSecurity::validateNxsMsg() TS out of range for key " << msgMeta.mAuthorId
+				         << " usage is limited to TS=[" << key.startTS << "," << key.endTS << "] and msg publish time is " << msgMeta.mPublishTs << std::endl;
+				return false;
+			}
 
             /* decode key */
             const unsigned char *keyptr = (const unsigned char *) key.keyData.bin_data;
@@ -653,6 +651,9 @@ bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, u
 
 	try
 	{
+        if(keys.empty())
+			throw std::runtime_error("EVP_SealInit will not be called with 0 keys. GxsSecurity::encrypt() was called with an empty set of destination keys!") ;
+
 		for(uint32_t i=0;i<keys.size();++i)
 		{
 			RSA *tmpkey = ::extractPublicKey(keys[i]) ;

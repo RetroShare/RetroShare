@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>565</width>
+    <width>643</width>
     <height>209</height>
    </rect>
   </property>
@@ -171,8 +171,8 @@
             <string>Write a quick Message</string>
            </property>
            <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/message-mail.png</normaloff>:/images/message-mail.png</iconset>
+            <iconset resource="../icons.qrc">
+             <normaloff>:/icons/mail/write-mail.png</normaloff>:/icons/mail/write-mail.png</iconset>
            </property>
            <property name="checkable">
             <bool>false</bool>
@@ -203,8 +203,8 @@
             <string>Write Message</string>
            </property>
            <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/mail_send.png</normaloff>:/images/mail_send.png</iconset>
+            <iconset resource="../icons.qrc">
+             <normaloff>:/icons/mail/write-mail.png</normaloff>:/icons/mail/write-mail.png</iconset>
            </property>
            <property name="toolButtonStyle">
             <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -235,8 +235,8 @@
             <string>Start Chat</string>
            </property>
            <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/chat.png</normaloff>:/images/chat.png</iconset>
+            <iconset resource="../icons.qrc">
+             <normaloff>:/icons/png/chats.png</normaloff>:/icons/png/chats.png</iconset>
            </property>
            <property name="toolButtonStyle">
             <enum>Qt::ToolButtonTextBesideIcon</enum>

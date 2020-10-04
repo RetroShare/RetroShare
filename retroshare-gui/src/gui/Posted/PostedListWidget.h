@@ -23,6 +23,7 @@
 
 #include <QMap>
 
+#include "retroshare/rsposted.h"
 #include "gui/gxs/GxsMessageFramePostWidget.h"
 #include "gui/feeds/FeedHolder.h"
 
@@ -57,13 +58,22 @@ public:
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 protected:
+	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+	void insertAllPostedPosts(const std::vector<RsPostedPost>& posts, GxsMessageFramePostThread *thread) ;
+	void insertPostedPosts(const std::vector<RsPostedPost>& posts);
+
 	/* GxsMessageFramePostWidget */
-	virtual bool insertGroupData(const uint32_t &token, RsGroupMetaData &metaData);
-	virtual void insertAllPosts(const uint32_t &token, GxsMessageFramePostThread *thread);
-	virtual void insertPosts(const uint32_t &token);
 	virtual void clearPosts();
 	virtual void blank();
 	virtual bool navigatePostItem(const RsGxsMessageId& msgId);
+
+    virtual void getMsgData(const std::set<RsGxsMessageId>& msgIds,std::vector<RsGxsGenericMsgData*>& posts) override;
+    virtual void getAllMsgData(std::vector<RsGxsGenericMsgData*>& posts) override;
+    virtual bool getGroupData(RsGxsGenericGroupData*& data) override;
+
+	virtual bool insertGroupData(const RsGxsGenericGroupData *data) override;
+	virtual void insertPosts(const std::vector<RsGxsGenericMsgData*>& posts) override;
+	virtual void insertAllPosts(const std::vector<RsGxsGenericMsgData*>& posts, GxsMessageFramePostThread *thread) override;
 
 	/* GxsMessageFrameWidget */
 	virtual void setAllMessagesReadDo(bool read, uint32_t &token);
@@ -118,6 +128,7 @@ private:
 
 	uint32_t mTokenTypeVote;
 
+    RsPostedGroup mGroup;
 	QMap<RsGxsMessageId, PostedItem*> mPosts;
 	QList<PostedItem*> mPostItems;
 
@@ -126,6 +137,7 @@ private:
 	
 	/* UI - from Designer */
 	Ui::PostedListWidget *ui;
+    RsEventsHandlerId_t mEventHandlerId ;
 };
 
 #endif

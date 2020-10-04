@@ -25,14 +25,14 @@
 
 #include <retroshare/rstypes.h>
 #include <retroshare/rsevents.h>
-#include "RsAutoUpdatePage.h"
+#include <retroshare-gui/RsAutoUpdatePage.h>
 
 #include "ui_TransfersDialog.h"
 
 #include <QItemSelectionModel>
 #include <QSortFilterProxyModel>
 
-#define IMAGE_TRANSFERS      	":/icons/ktorrent_128.png"
+#define IMAGE_TRANSFERS      	":/icons/png/fileshare.png"
 
 class QShortcut;
 class DLListDelegate;

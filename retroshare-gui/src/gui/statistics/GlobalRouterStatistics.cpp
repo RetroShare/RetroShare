@@ -126,7 +126,7 @@ void GlobalRouterStatistics::CustomPopupMenu( QPoint )
 	
 	QTreeWidgetItem *item = treeWidget->currentItem();
 	if (item) {
-	contextMnu.addAction(QIcon(":/images/info16.png"), tr("Details"), this, SLOT(personDetails()));
+    contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/info16.png"), tr("Details"), this, SLOT(personDetails()));
 
   }
 

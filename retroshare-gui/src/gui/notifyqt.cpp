@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "gui/common/FilesDefs.h"
 #include <retroshare/rsgxsifacehelper.h>
 
 #include <QInputDialog>
@@ -32,7 +33,7 @@
 #include <retroshare/rsidentity.h>
 #include <util/rsdir.h>
 
-#include "RsAutoUpdatePage.h"
+#include <retroshare-gui/RsAutoUpdatePage.h>
 
 #include "MainWindow.h"
 #include "toaster/OnlineToaster.h"
@@ -199,51 +200,6 @@ class SignatureEventData
 		std::string reason ;
 };
 
-bool NotifyQt::askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result, std::string reason /*=""*/)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-
-		std::cerr << "NotifyQt:: deferred signature event requeted. " << std::endl;
-
-		// Look into the queue
-
-		Sha1CheckSum chksum = RsDirUtil::sha1sum((uint8_t*)data,len) ;
-
-        std::map<std::string,SignatureEventData*>::iterator it = _deferred_signature_queue.find(chksum.toStdString()) ;
-        signature_result = SELF_SIGNATURE_RESULT_PENDING ;
-
-		if(it != _deferred_signature_queue.end())
-        {
-            signature_result = it->second->signature_result ;
-
-            if(it->second->signature_result != SELF_SIGNATURE_RESULT_PENDING)	// found it. Copy the result, and remove from the queue.
-            {
-                // We should check for the exact data match, for the sake of being totally secure.
-                //
-                std::cerr << "Found into queue: returning it" << std::endl;
-
-                memcpy(sign,it->second->sign,*it->second->signlen) ;
-                *signlen = *(it->second->signlen) ;
-
-                delete it->second ;
-                _deferred_signature_queue.erase(it) ;
-            }
-            return true ;		// already registered, but not done yet.
-        }
-
-		// Not found. Store in the queue and emit a signal.
-		//
-		std::cerr << "NotifyQt:: deferred signature event requeted. Pushing into queue" << std::endl;
-
-		SignatureEventData *edta = new SignatureEventData(data,len,*signlen, reason) ;
-
-		_deferred_signature_queue[chksum.toStdString()] = edta ;
-	}
-	emit deferredSignatureHandlingRequested() ;
-    return true;
-}
-
 void NotifyQt::handleSignatureEvent()
 {
 	std::cerr << "NotifyQt:: performing a deferred signature in the main GUI thread." << std::endl;
@@ -321,7 +277,7 @@ bool NotifyQt::askForPluginConfirmation(const std::string& plugin_file_name, con
 	text += "</UL>" ;
 
 	dialog.setText(text) ;
-    dialog.setWindowIcon(QIcon(":/icons/logo_128.png"));
+    dialog.setWindowIcon(FilesDefs::getIconFromQtResourcePath(":/icons/logo_128.png"));
 	dialog.setStandardButtons(QMessageBox::Yes | QMessageBox::No) ;
 
 	int ret = dialog.exec();
@@ -348,36 +304,6 @@ void NotifyQt::notifyDiscInfoChanged()
 
 	emit discInfoChanged() ;
 }
-
-#ifdef TO_REMOVE
-void NotifyQt::notifyDownloadComplete(const std::string& fileHash)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-#ifdef NOTIFY_DEBUG
-	std::cerr << "Notifyqt::notifyDownloadComplete notified that a download is completed" << std::endl;
-#endif
-
-	emit downloadComplete(QString::fromStdString(fileHash));
-}
-
-void NotifyQt::notifyDownloadCompleteCount(uint32_t count)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-	std::cerr << "Notifyqt::notifyDownloadCompleteCount " << count << std::endl;
-
-	emit downloadCompleteCountChanged(count);
-}
-#endif
 
 void NotifyQt::notifyDiskFull(uint32_t loc,uint32_t size_in_mb)
 {
@@ -423,23 +349,6 @@ void NotifyQt::notifyPeerStatusChangedSummary()
 
 	emit peerStatusChangedSummary();
 }
-
-#ifdef TO_REMOVE
-void NotifyQt::notifyGxsChange(const RsGxsChanges& changes)
-{
-    {
-        QMutexLocker m(&_mutex) ;
-        if(!_enabled)
-            return ;
-    }
-
-#ifdef NOTIFY_DEBUG
-    std::cerr << "Notifyqt:: notified that gxs has changes" << std::endl;
-#endif
-
-    emit gxsChange(changes);
-}
-#endif
 
 void NotifyQt::notifyOwnStatusMessageChanged()
 {
@@ -583,35 +492,6 @@ void NotifyQt::notifyTurtleSearchResult(const RsPeerId& pid,uint32_t search_id,c
 		emit gotTurtleSearchResult(search_id,det) ;
 	}
 }
-
-#ifdef TO_REMOVE
-void NotifyQt::notifyHashingInfo(uint32_t type, const std::string& fileinfo)
-{
-	QString info;
-
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-	switch (type) {
-	case NOTIFY_HASHTYPE_EXAMINING_FILES:
-		info = tr("Examining shared files...");
-		break;
-	case NOTIFY_HASHTYPE_FINISH:
-		break;
-	case NOTIFY_HASHTYPE_HASH_FILE:
-		info = tr("Hashing file") + " " + QString::fromUtf8(fileinfo.c_str());
-		break;
-	case NOTIFY_HASHTYPE_SAVE_FILE_INDEX:
-		info = tr("Saving file index...");
-		break;
-	}
-
-	emit hashingInfoChanged(info);
-}
-#endif
 
 void NotifyQt::notifyHistoryChanged(uint32_t msgId, int type)
 {
@@ -778,19 +658,6 @@ void NotifyQt::notifyListPreChange(int list, int /*type*/)
 			break;
 	}
 	return;
-}
-
-	/* New Timer Based Update scheme ...
-	 * means correct thread seperation
-	 *
-	 * uses Flags, to detect changes
-	 */
-
-void NotifyQt::resetCachedPassphrases()
-{
-	std::cerr << "Clearing PGP passphrase." << std::endl;
-
-	rsNotify->clearPgpPassphrase() ;
 }
 
 void NotifyQt::enable()

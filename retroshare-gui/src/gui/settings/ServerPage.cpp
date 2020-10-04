@@ -23,6 +23,7 @@
 #include <gui/notifyqt.h>
 #include "rshare.h"
 #include "rsharesettings.h"
+#include "util/i2pcommon.h"
 #include "util/RsNetUtil.h"
 #include "util/misc.h"
 
@@ -82,6 +83,10 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
   manager = NULL ;
   mOngoingConnectivityCheck = -1;
 
+#ifndef RS_USE_I2P_BOB
+  ui.hiddenServiceTab->removeTab(TAB_HIDDEN_SERVICE_I2P_BOB);	// warning: the order of operation here is very important.
+#endif
+
   if(RsAccounts::isHiddenNode())
   {
 	  if(RsAccounts::isTorAuto())
@@ -90,8 +95,6 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
 		  ui.tabWidget->removeTab(TAB_RELAYS) ;		// remove relays. Not useful in Tor mode.
 		  ui.tabWidget->removeTab(TAB_IP_FILTERS) ;	// remove IP filters. Not useful in Tor mode.
-
-		  ui.hiddenServiceTab->removeTab(TAB_HIDDEN_SERVICE_I2P_BOB) ; // remove the Automatic I2P/BOB tab
 
 		  ui.hiddenpage_proxyAddress_i2p->hide() ;
 		  ui.hiddenpage_proxyLabel_i2p->hide() ;
@@ -109,8 +112,7 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
   }
   else
   {
-      ui.hiddenServiceTab->removeTab(TAB_HIDDEN_SERVICE_I2P_BOB);	// warning: the order of operation here is very important.
-      ui.hiddenServiceTab->removeTab(TAB_HIDDEN_SERVICE_INCOMING);
+	  ui.hiddenServiceTab->removeTab(TAB_HIDDEN_SERVICE_INCOMING);	// warning: the order of operation here is very important.
   }
 
     ui.filteredIpsTable->setHorizontalHeaderItem(COLUMN_RANGE,new QTableWidgetItem(tr("IP Range"))) ;
@@ -882,19 +884,19 @@ void ServerPage::updateStatus()
     /******* Network Status Tab *******/
 
     if(net_status.netUpnpOk)
-        ui.iconlabel_upnp->setPixmap(QPixmap(":/images/ledon1.png"));
+        ui.iconlabel_upnp->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/ledon1.png"));
     else
-        ui.iconlabel_upnp->setPixmap(QPixmap(":/images/ledoff1.png"));
+        ui.iconlabel_upnp->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/ledoff1.png"));
 
     if (net_status.netLocalOk)
-        ui.iconlabel_netLimited->setPixmap(QPixmap(":/images/ledon1.png"));
+        ui.iconlabel_netLimited->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/ledon1.png"));
     else
-        ui.iconlabel_netLimited->setPixmap(QPixmap(":/images/ledoff1.png"));
+        ui.iconlabel_netLimited->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/ledoff1.png"));
 
     if (net_status.netExtAddressOk)
-        ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledon1.png"));
+        ui.iconlabel_ext->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/ledon1.png"));
     else
-        ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledoff1.png"));
+        ui.iconlabel_ext->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/ledoff1.png"));
 
 }
 
@@ -1078,7 +1080,7 @@ void ServerPage::loadHiddenNode()
 	
     ui.textlabel_hiddenMode->show();
     ui.iconlabel_hiddenMode->show() ;
-    ui.iconlabel_hiddenMode->setPixmap(QPixmap(":/images/ledon1.png"));
+    ui.iconlabel_hiddenMode->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/ledon1.png"));
     
     // CHANGE OPTIONS ON
     whileBlocking(ui.discComboBox)->removeItem(3);
@@ -1127,9 +1129,9 @@ void ServerPage::loadHiddenNode()
     for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
         whileBlocking(ui.ipAddressList)->addItem(QString::fromStdString(*it));
 
-    ui.iconlabel_upnp->setPixmap(QPixmap(":/images/ledoff1.png"));
-    ui.iconlabel_netLimited->setPixmap(QPixmap(":/images/ledoff1.png"));
-    ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledoff1.png"));
+    ui.iconlabel_upnp->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/ledoff1.png"));
+    ui.iconlabel_netLimited->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/ledoff1.png"));
+    ui.iconlabel_ext->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/ledoff1.png"));
 
     whileBlocking(ui.allowIpDeterminationCB)->setChecked(false);
     whileBlocking(ui.allowIpDeterminationCB)->setEnabled(false);
@@ -1233,19 +1235,19 @@ void ServerPage::updateStatusHiddenNode()
     /******* Network Status Tab *******/
 
     if(net_status.netUpnpOk)
-        ui.iconlabel_upnp->setPixmap(QPixmap(":/images/ledon1.png"));
+        ui.iconlabel_upnp->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/ledon1.png"));
     else
-        ui.iconlabel_upnp->setPixmap(QPixmap(":/images/ledoff1.png"));
+        ui.iconlabel_upnp->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/ledoff1.png"));
 
     if (net_status.netLocalOk)
-        ui.iconlabel_netLimited->setPixmap(QPixmap(":/images/ledon1.png"));
+        ui.iconlabel_netLimited->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/ledon1.png"));
     else
-        ui.iconlabel_netLimited->setPixmap(QPixmap(":/images/ledoff1.png"));
+        ui.iconlabel_netLimited->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/ledoff1.png"));
 
     if (net_status.netExtAddressOk)
-        ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledon1.png"));
+        ui.iconlabel_ext->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/ledon1.png"));
     else
-        ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledoff1.png"));
+        ui.iconlabel_ext->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/ledoff1.png"));
 
 #endif
 }
@@ -1304,12 +1306,12 @@ void ServerPage::updateOutProxyIndicator()
     if(socket.waitForConnected(500))
     {
         socket.disconnectFromHost();
-        ui.iconlabel_tor_outgoing->setPixmap(QPixmap(ICON_STATUS_OK)) ;
+        ui.iconlabel_tor_outgoing->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_OK)) ;
         ui.iconlabel_tor_outgoing->setToolTip(tr("Proxy seems to work.")) ;
     }
     else
     {
-        ui.iconlabel_tor_outgoing->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
+        ui.iconlabel_tor_outgoing->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_UNKNOWN)) ;
         ui.iconlabel_tor_outgoing->setToolTip(tr("Tor proxy is not enabled")) ;
     }
 
@@ -1318,12 +1320,12 @@ void ServerPage::updateOutProxyIndicator()
     if(socket.waitForConnected(500))
     {
         socket.disconnectFromHost();
-        ui.iconlabel_i2p_outgoing->setPixmap(QPixmap(ICON_STATUS_OK)) ;
+        ui.iconlabel_i2p_outgoing->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_OK)) ;
         ui.iconlabel_i2p_outgoing->setToolTip(tr("Proxy seems to work.")) ;
     }
     else
     {
-        ui.iconlabel_i2p_outgoing->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
+        ui.iconlabel_i2p_outgoing->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_UNKNOWN)) ;
         ui.iconlabel_i2p_outgoing->setToolTip(tr("I2P proxy is not enabled")) ;
     }
 
@@ -1332,12 +1334,12 @@ void ServerPage::updateOutProxyIndicator()
     if(true == (mBobAccessible = socket.waitForConnected(500)))
     {
         socket.disconnectFromHost();
-        ui.iconlabel_i2p_outgoing_2->setPixmap(QPixmap(ICON_STATUS_OK)) ;
+        ui.iconlabel_i2p_outgoing_2->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_OK)) ;
         ui.iconlabel_i2p_outgoing_2->setToolTip(tr("BOB is running and accessible")) ;
     }
     else
     {
-        ui.iconlabel_i2p_outgoing_2->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
+        ui.iconlabel_i2p_outgoing_2->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_UNKNOWN)) ;
         ui.iconlabel_i2p_outgoing_2->setToolTip(tr("BOB is not accessible! Is it running?")) ;
     }
 }
@@ -1349,13 +1351,13 @@ void ServerPage::updateInProxyIndicator()
     if(!mIsHiddenNode)
         return ;
 
-    //ui.iconlabel_tor_incoming->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
-    //ui.testIncomingTor_PB->setIcon(QIcon(":/loader/circleball-16.gif")) ;
+    //ui.iconlabel_tor_incoming->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_UNKNOWN)) ;
+    //ui.testIncomingTor_PB->setIcon(FilesDefs::getIconFromQtResourcePath(":/loader/circleball-16.gif")) ;
     QMovie *movie = new QMovie(":/images/loader/circleball-16.gif");
     ui.iconlabel_service_incoming->setMovie(movie);
     movie->start();
 
-    if (mHiddenType == RS_HIDDEN_TYPE_I2P && mBobSettings.enableBob) {
+    if (mHiddenType == RS_HIDDEN_TYPE_I2P && mBobSettings.enable) {
 
         QTcpSocket tcpSocket;
 
@@ -1442,15 +1444,16 @@ void ServerPage::getNewKey()
 
 void ServerPage::loadKey()
 {
-    mBobSettings.keys = ui.pteBobServerKey->toPlainText().toStdString();
-    mBobSettings.addr = p3I2pBob::keyToBase32Addr(mBobSettings.keys);
+	mBobSettings.address.privateKey = ui.pteBobServerKey->toPlainText().toStdString();
+	mBobSettings.address.publicKey = i2p::publicKeyFromPrivate(mBobSettings.address.privateKey);
+	mBobSettings.address.base32 = i2p::keyToBase32Addr(mBobSettings.address.publicKey);
 
     rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::setSettings, &mBobSettings);
 }
 
 void ServerPage::enableBob(bool checked)
 {
-    mBobSettings.enableBob = checked;
+    mBobSettings.enable = checked;
 
     rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::setSettings, &mBobSettings);
 
@@ -1490,7 +1493,7 @@ void ServerPage::toggleBobAdvancedSettings(bool checked)
 {
     ui.swBobAdvanced->setCurrentIndex(checked ? 1 : 0);
 
-    if (!mBobSettings.keys.empty()) {
+	if (!mBobSettings.address.privateKey.empty()) {
         if (checked) {
             ui.pbBobGenAddr->show();
         } else {
@@ -1581,9 +1584,9 @@ void ServerPage::loadCommon()
     whileBlocking(ui.hiddenpage_proxyPort_i2p_2)->setValue(proxyport); // this one is for bob tab
 
     // don't use whileBlocking here
-    ui.cb_enableBob->setChecked(mBobSettings.enableBob);
+    ui.cb_enableBob->setChecked(mBobSettings.enable);
 
-    if (!mBobSettings.keys.empty()) {
+	if (!mBobSettings.address.privateKey.empty()) {
         ui.lBobB32Addr->show();
         ui.leBobB32Addr->show();
     }
@@ -1626,13 +1629,13 @@ void ServerPage::saveBob()
 
 void ServerPage::updateStatusBob()
 {
-    QString addr = QString::fromStdString(mBobSettings.addr);
+	QString addr = QString::fromStdString(mBobSettings.address.base32);
     if (ui.leBobB32Addr->text() != addr) {
         ui.leBobB32Addr->setText(addr);
         ui.hiddenpage_serviceAddress->setText(addr);
-        ui.pteBobServerKey->setPlainText(QString::fromStdString(mBobSettings.keys));
+		ui.pteBobServerKey->setPlainText(QString::fromStdString(mBobSettings.address.privateKey));
 
-        if (!mBobSettings.keys.empty()) {
+		if (!mBobSettings.address.privateKey.empty()) {
             // we have an addr -> show fields
             ui.lBobB32Addr->show();
             ui.leBobB32Addr->show();
@@ -1658,7 +1661,7 @@ void ServerPage::updateStatusBob()
     QString bobSimpleText = QString();
     bobSimpleText.append(tr("RetroShare uses BOB to set up a %1 tunnel at %2:%3 (named %4)\n\n"
                             "When changing options (e.g. port) use the buttons at the bottom to restart BOB.\n\n").
-                         arg(mBobSettings.keys.empty() ? tr("client") : tr("server"),
+	                     arg(mBobSettings.address.privateKey.empty() ? tr("client") : tr("server"),
                              ui.hiddenpage_proxyAddress_i2p_2->text(),
                              ui.hiddenpage_proxyPort_i2p_2->text(),
                              bs.tunnelName.empty() ? tr("unknown") :
@@ -1671,7 +1674,7 @@ void ServerPage::updateStatusBob()
     case csConnected:
     case csDoDisconnect:
     case csWaitForBob:
-        ui.iconlabel_i2p_bob->setPixmap(QPixmap(ICON_STATUS_WORKING));
+        ui.iconlabel_i2p_bob->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_WORKING));
         ui.iconlabel_i2p_bob->setToolTip(tr("BOB is processing a request"));
 
         enableBobElements(false);
@@ -1704,7 +1707,7 @@ void ServerPage::updateStatusBob()
         // get error msg from bob
         rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::getErrorInfo, &errorString);
 
-        ui.iconlabel_i2p_bob->setPixmap(QPixmap(ICON_STATUS_ERROR));
+        ui.iconlabel_i2p_bob->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_ERROR));
         ui.iconlabel_i2p_bob->setToolTip(tr("BOB is broken\n") + QString::fromStdString(errorString));
 
         enableBobElements(false);
@@ -1720,7 +1723,7 @@ void ServerPage::updateStatusBob()
     case csIdel:
         switch (bs.ct) {
         case ctRunSetUp:
-            ui.iconlabel_i2p_bob->setPixmap(QPixmap(ICON_STATUS_OK));
+            ui.iconlabel_i2p_bob->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_OK));
             ui.iconlabel_i2p_bob->setToolTip(tr("BOB tunnel is running"));
 
             enableBobElements(false);
@@ -1733,7 +1736,7 @@ void ServerPage::updateStatusBob()
             break;
         case ctRunCheck:
         case ctRunGetKeys:
-			ui.iconlabel_i2p_bob->setPixmap(QPixmap(ICON_STATUS_WORKING));
+            ui.iconlabel_i2p_bob->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_WORKING));
 			ui.iconlabel_i2p_bob->setToolTip(tr("BOB is processing a request"));
 
 			enableBobElements(false);
@@ -1746,7 +1749,7 @@ void ServerPage::updateStatusBob()
 			break;
 		case ctRunShutDown:
         case ctIdle:
-            ui.iconlabel_i2p_bob->setPixmap(QPixmap(ICON_STATUS_UNKNOWN));
+            ui.iconlabel_i2p_bob->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_UNKNOWN));
             ui.iconlabel_i2p_bob->setToolTip(tr("BOB tunnel is not running"));
 
             enableBobElements(true);
@@ -1780,15 +1783,15 @@ void ServerPage::updateStatusBob()
 
 void ServerPage::setUpBobElements()
 {
-    ui.gbBob->setEnabled(mBobSettings.enableBob);
-    if (mBobSettings.enableBob) {
+    ui.gbBob->setEnabled(mBobSettings.enable);
+    if (mBobSettings.enable) {
         ui.hiddenpage_proxyAddress_i2p->setEnabled(false);
         ui.hiddenpage_proxyAddress_i2p->setToolTip("Use I2P/BOB settings to change this value");
         ui.hiddenpage_proxyPort_i2p->setEnabled(false);
         ui.hiddenpage_proxyPort_i2p->setToolTip("Use I2P/BOB settings to change this value");
 
-        ui.leBobB32Addr->setText(QString::fromStdString(mBobSettings.addr));
-        ui.pteBobServerKey->setPlainText(QString::fromStdString(mBobSettings.keys));
+		ui.leBobB32Addr->setText(QString::fromStdString(mBobSettings.address.base32));
+		ui.pteBobServerKey->setPlainText(QString::fromStdString(mBobSettings.address.privateKey));
 
         // cast to int to avoid problems
         int li, lo, qi, qo, vi, vo;
@@ -1841,14 +1844,14 @@ void ServerPage::updateInProxyIndicatorResult(bool success)
     if (success) {
         std::cerr <<"Connected!" << std::endl;
 
-        ui.iconlabel_service_incoming->setPixmap(QPixmap(ICON_STATUS_OK)) ;
+        ui.iconlabel_service_incoming->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_OK)) ;
         ui.iconlabel_service_incoming->setToolTip(tr("You are reachable through the hidden service.")) ;
-        //ui.testIncomingTor_PB->setIcon(QIcon(ICON_STATUS_OK)) ;
+        //ui.testIncomingTor_PB->setIcon(FilesDefs::getIconFromQtResourcePath(ICON_STATUS_OK)) ;
     } else {
         std::cerr <<"Failed!" << std::endl;
 
-        //ui.testIncomingTor_PB->setIcon(QIcon(ICON_STATUS_UNKNOWN)) ;
-        ui.iconlabel_service_incoming->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
+        //ui.testIncomingTor_PB->setIcon(FilesDefs::getIconFromQtResourcePath(ICON_STATUS_UNKNOWN)) ;
+        ui.iconlabel_service_incoming->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_UNKNOWN)) ;
         ui.iconlabel_service_incoming->setToolTip(tr("The proxy is not enabled or broken.\nAre all services up and running fine??\nAlso check your ports!")) ;
     }
     // delete movie

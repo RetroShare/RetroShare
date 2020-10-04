@@ -29,31 +29,69 @@
 
 RsItem *RsGxsWireSerialiser::create_item(uint16_t service,uint8_t item_subtype) const
 {
-    if(service != RS_SERVICE_GXS_TYPE_WIRE)
-        return NULL ;
+	if(service != RS_SERVICE_GXS_TYPE_WIRE)
+		return NULL ;
 
-    switch(item_subtype)
-    {
-    case RS_PKT_SUBTYPE_WIRE_GROUP_ITEM: return new RsGxsWireGroupItem();
-    case RS_PKT_SUBTYPE_WIRE_PULSE_ITEM: return new RsGxsWirePulseItem();
-    default:
-        return NULL ;
-    }
+	switch(item_subtype)
+	{
+	case RS_PKT_SUBTYPE_WIRE_GROUP_ITEM: return new RsGxsWireGroupItem();
+	case RS_PKT_SUBTYPE_WIRE_PULSE_ITEM: return new RsGxsWirePulseItem();
+	default:
+		return NULL ;
+	}
 }
 
 void RsGxsWireGroupItem::clear()
 {
-	group.mDescription.clear();
+	group.mTagline.clear();
+	group.mLocation.clear();
+	group.mHeadshot.clear();
+	group.mMasthead.clear();
 }
 
 void RsGxsWireGroupItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
-    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_DESCR,group.mDescription,"group.mDescription") ;
+	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_DESCR,group.mTagline,"group.mTagline") ;
+	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_LOCATION,group.mLocation,"group.mLocation") ;
+	group.mHeadshot.serial_process(j, ctx);
+	group.mMasthead.serial_process(j, ctx);
+}
+
+void RsGxsWirePulseItem::clear()
+{
+	pulse.mPulseText.clear();
+	pulse.mPulseType = 0;
+	pulse.mSentiment = 0;
+	pulse.mRefGroupId.clear();
+	pulse.mRefGroupName.clear();
+	pulse.mRefOrigMsgId.clear();
+	pulse.mRefAuthorId.clear();
+	pulse.mRefPublishTs = 0;
+	pulse.mRefPulseText.clear();
+	pulse.mRefImageCount = 0;
+
+	pulse.mImage1.clear();
+	pulse.mImage2.clear();
+	pulse.mImage3.clear();
+	pulse.mImage4.clear();
 }
 
 void RsGxsWirePulseItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
-    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_MSG,pulse.mPulseText,"pulse.mPulseText") ;
-    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_HASH_TAG,pulse.mHashTags,"pulse.mHashTags") ;
+	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_MSG,pulse.mPulseText,"pulse.mPulseText") ;
+	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_UINT32_PARAM,pulse.mPulseType,"pulse.mPulseType") ;
+	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_UINT32_PARAM,pulse.mSentiment,"pulse.mSentiment") ;
+	RsTypeSerializer::serial_process(j,ctx,pulse.mRefGroupId,"pulse.mRefGroupId") ;
+	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_NAME,pulse.mRefGroupName,"pulse.mRefGroupName") ;
+	RsTypeSerializer::serial_process(j,ctx,pulse.mRefOrigMsgId,"pulse.mRefOrigMsgId") ;
+	RsTypeSerializer::serial_process(j,ctx,pulse.mRefAuthorId,"pulse.mRefAuthorId") ;
+	RsTypeSerializer::serial_process(j,ctx,pulse.mRefPublishTs,"pulse.mRefPublishTs") ;
+	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_MSG,pulse.mRefPulseText,"pulse.mRefPulseText") ;
+	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_UINT32_PARAM,pulse.mRefImageCount,"pulse.mRefImageCount") ;
+
+	pulse.mImage1.serial_process(j, ctx);
+	pulse.mImage2.serial_process(j, ctx);
+	pulse.mImage3.serial_process(j, ctx);
+	pulse.mImage4.serial_process(j, ctx);
 }
 

@@ -22,13 +22,14 @@
 
 #include <QTabBar>
 
+#include "gui/common/FilesDefs.h"
 #include "ChatTabWidget.h"
 #include "ui_ChatTabWidget.h"
 #include "ChatDialog.h"
 #include "gui/common/StatusDefs.h"
 #include "rshare.h"
 
-#define IMAGE_TYPING         ":/images/typing.png"
+#define IMAGE_TYPING         ":/icons/png/typing.png"
 #define IMAGE_CHAT           ":/images/chat.png"
 
 ChatTabWidget::ChatTabWidget(QWidget *parent) :
@@ -102,9 +103,9 @@ void ChatTabWidget::tabInfoChanged(ChatDialog *dialog)
 	if (tab >= 0) {
 		if (dialog->isTyping()) {
 			setBlinking(tab, false);
-			setTabIcon(tab, QIcon(IMAGE_TYPING));
+            setTabIcon(tab, FilesDefs::getIconFromQtResourcePath(IMAGE_TYPING));
 		} else if (dialog->hasNewMessages()) {
-			setTabIcon(tab, QIcon(IMAGE_CHAT));
+            setTabIcon(tab, FilesDefs::getIconFromQtResourcePath(IMAGE_CHAT));
 			if (dialog->notifyBlink()) {
 				setBlinking(tab, true);
 			} else {
@@ -148,9 +149,9 @@ void ChatTabWidget::getInfo(bool &isTyping, bool &hasNewMessage, QIcon *icon)
 
 	if (icon) {
 		if (isTyping) {
-			*icon = QIcon(IMAGE_TYPING);
+            *icon = FilesDefs::getIconFromQtResourcePath(IMAGE_TYPING);
 		} else if (hasNewMessage) {
-			*icon = QIcon(IMAGE_CHAT);
+            *icon = FilesDefs::getIconFromQtResourcePath(IMAGE_CHAT);
 		} else {
 			cd = dynamic_cast<ChatDialog*>(currentWidget());
 			if (cd && cd->hasPeerStatus()) {

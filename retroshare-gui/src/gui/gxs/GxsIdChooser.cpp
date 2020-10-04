@@ -22,6 +22,7 @@
 #include "GxsIdDetails.h"
 #include "RsGxsUpdateBroadcastBase.h"
 #include "gui/Identity/IdEditDialog.h"
+#include "gui/common/FilesDefs.h"
 #include "util/misc.h"
 
 #include <retroshare/rspeers.h>
@@ -51,8 +52,8 @@
 GxsIdChooser::GxsIdChooser(QWidget *parent)
     : QComboBox(parent), mFlags(IDCHOOSER_ANON_DEFAULT)
 {
-	mBase = new RsGxsUpdateBroadcastBase(rsIdentity, this);
-	connect(mBase, SIGNAL(fillDisplay(bool)), this, SLOT(fillDisplay(bool)));
+//	mBase = new RsGxsUpdateBroadcastBase(rsIdentity, this);
+//	connect(mBase, SIGNAL(fillDisplay(bool)), this, SLOT(fillDisplay(bool)));
 
 	/* Initialize ui */
 	setSizeAdjustPolicy(QComboBox::AdjustToContents);
@@ -94,7 +95,8 @@ void GxsIdChooser::fillDisplay(bool complete)
 
 void GxsIdChooser::showEvent(QShowEvent *event)
 {
-	mBase->showEvent(event);
+//	mBase->showEvent(event);
+    updateDisplay(true);
 	QComboBox::showEvent(event);
 }
 
@@ -161,7 +163,7 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
 		break;
         
 	case GXS_ID_DETAILS_TYPE_BANNED:
-		icons.push_back(QIcon(BANNED_ICON)) ;
+        icons.push_back(FilesDefs::getIconFromQtResourcePath(BANNED_ICON)) ;
 		break;
 	}
 
@@ -220,50 +222,11 @@ bool GxsIdChooser::isInConstraintSet(const RsGxsId& id) const
 void GxsIdChooser::setEntryEnabled(int indx,bool /*enabled*/)
 {
     removeItem(indx) ;
-    
-#ifdef TO_REMOVE
-//    bool disable = !enabled ;
-//    
-//    QSortFilterProxyModel* model = qobject_cast<QSortFilterProxyModel*>(QComboBox::model());
-//    //QStandardItem* item = model->item(index);
-//    
-//    QModelIndex ii = model->index(indx,0);
-//    
-//    // visually disable by greying out - works only if combobox has been painted already and palette returns the wanted color
-//    //model->setFlags(ii,disable ? (model->flags(ii) & ~(Qt::ItemIsSelectable|Qt::ItemIsEnabled)) : (Qt::ItemIsSelectable|Qt::ItemIsEnabled));
-//    
-//    uint32_t v = enabled?(1|32):(0);
-//    
-//    std::cerr << "GxsIdChooser::setEnabledEntry: i=" << indx << ", v=" << v << std::endl;
-//    
-//    // clear item data in order to use default color
-//    //model->setData(ii,disable ? (QComboBox::palette().color(QPalette::Disabled, QPalette::Text)) : QVariant(),  Qt::TextColorRole);
-//    model->setData(ii,QVariant(v),Qt::UserRole-1) ;
-//    
-//    std::cerr << "model data after operation: " <<  model->data(ii,Qt::UserRole-1).toUInt() << std::endl;
-#endif
 }
 
 uint32_t GxsIdChooser::countEnabledEntries() const
 {
     return count() ;
-    
-#ifdef TO_REMOVE
-//    uint32_t res = 0 ;
-//    QSortFilterProxyModel* model = qobject_cast<QSortFilterProxyModel*>(QComboBox::model());
-//
-//    for(uint32_t i=0;i<model->rowCount();++i)
-//    {
-//	    QModelIndex ii = model->index(i,0);
-//	    uint32_t v = model->data(ii,Qt::UserRole-1).toUInt() ;
-//        
-//        	std::cerr << "GxsIdChooser::countEnabledEntries(): i=" << i << ", v=" << v << std::endl;
-//	    if(v > 0)
-//		    ++res ;
-//    }
-//
-//    return res ;
-#endif
 }
 
 void GxsIdChooser::loadPrivateIds()
@@ -323,7 +286,7 @@ void GxsIdChooser::loadPrivateIds()
 			QString str = tr("Create new Identity");
 			QString id = "";
 
-			addItem(QIcon(":/images/identity/identity_create_32.png"), str, id);
+            addItem(FilesDefs::getIconFromQtResourcePath(":/icons/png/add-identity.png"), str, id);
 			setItemData(count() - 1, QString("%1_%2").arg(TYPE_CREATE_ID).arg(str), ROLE_SORT);
 			setItemData(count() - 1, TYPE_CREATE_ID, ROLE_TYPE);
             

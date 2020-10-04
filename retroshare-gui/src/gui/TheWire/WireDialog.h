@@ -1,7 +1,7 @@
 /*******************************************************************************
  * gui/TheWire/WireDialog.h                                                    *
  *                                                                             *
- * Copyright (c) 2012 Robert Fernie   <retroshare.project@gmail.com>           *
+ * Copyright (c) 2012-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -24,60 +24,145 @@
 #include "retroshare-gui/mainpage.h"
 #include "ui_WireDialog.h"
 
-#include <retroshare/rsphoto.h>
+#include <retroshare/rswire.h>
 
 #include <map>
 
-#include "gui/TheWire/PulseItem.h"
+#include "gui/TheWire/WireGroupItem.h"
 #include "gui/TheWire/PulseAddDialog.h"
 
-class WireDialog : public MainPage, public PulseHolder 
+#include "gui/TheWire/PulseViewItem.h"
+#include "gui/TheWire/PulseTopLevel.h"
+#include "gui/TheWire/PulseReply.h"
+
+
+#include "util/TokenQueue.h"
+
+#define IMAGE_WIRE              ":/icons/wire.png"
+
+//--------------------------- Classes for Wire View History
+enum class WireViewType
+{
+    GROUPS,
+    GROUP_FOCUS,
+    PULSE_FOCUS,
+};
+
+enum class WireViewTimeRange
+{
+    FOREVER,
+    LAST_DAY,   // last 24 hours.
+    LAST_WEEK,  // actually last 7 days.
+    LAST_MONTH  // actually last 30 days.
+};
+
+class WireViewHistory
+{
+public:
+    WireViewType viewType;
+    WireViewTimeRange viewTimeRange;
+
+    RsGxsGroupId  groupId;
+    RsGxsMessageId msgId;
+    std::list<RsGxsGroupId> groupIds;
+};
+//---------------------------------------------------------
+
+class WireDialog : public MainPage, public TokenResponse, public WireGroupHolder, public PulseViewHolder
 {
   Q_OBJECT
 
 public:
 	WireDialog(QWidget *parent = 0);
 
-virtual void deletePulseItem(PulseItem *, uint32_t type);
-virtual void notifySelection(PulseItem *item, int ptype);
+	virtual QIcon iconPixmap() const { return QIcon(IMAGE_WIRE) ; }
+	virtual QString pageName() const { return tr("The Wire") ; }
+	virtual QString helpText() const { return ""; }
 
-	void notifyPulseSelection(PulseItem *item);
+	// WireGroupHolder interface.
+	virtual void subscribe(RsGxsGroupId &groupId) override;
+	virtual void unsubscribe(RsGxsGroupId &groupId) override;
+	virtual void notifyGroupSelection(WireGroupItem *item) override;
+
+	// PulseViewItem interface
+	virtual void PVHreply(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId) override;
+	virtual void PVHrepublish(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId) override;
+	virtual void PVHlike(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId) override;
+
+	virtual void PVHviewGroup(const RsGxsGroupId &groupId) override;
+	virtual void PVHviewPulse(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId) override;
+	virtual void PVHviewReply(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId) override;
+
+	virtual void PVHfollow(const RsGxsGroupId &groupId) override;
+	virtual void PVHrate(const RsGxsId &authorId) override;
+
+	// New TwitterView
+	void postTestTwitterView();
+	void clearTwitterView();
+	void addTwitterView(PulseViewItem *item);
+
+	// TwitterView History
+	void AddToHistory(const WireViewHistory &view);
+	void LoadHistory(uint32_t index);
+
+	void requestPulseFocus(const RsGxsGroupId groupId, const RsGxsMessageId msgId);
+	void showPulseFocus(const RsGxsGroupId groupId, const RsGxsMessageId msgId);
+	void postPulseFocus(RsWirePulseSPtr pulse);
+
+	void requestGroupFocus(const RsGxsGroupId groupId);
+	void showGroupFocus(const RsGxsGroupId groupId);
+	void postGroupFocus(RsWireGroupSPtr group, std::list<RsWirePulseSPtr> pulses);
+
+	void requestGroupsPulses(const std::list<RsGxsGroupId> groupIds);
+	void showGroupsPulses(const std::list<RsGxsGroupId> groupIds);
+	void postGroupsPulses(std::list<RsWirePulseSPtr> pulses);
 
 private slots:
 
+	void createGroup();
+	void createPulse();
 	void checkUpdate();
-	void OpenOrShowPulseAddDialog();
+	void refreshGroups();
+	void selectGroupSet(int index);
+	void selectFilterTime(int index);
+
+	// history navigation.
+	void back();
+	void forward();
 
 private:
 
+	bool setupPulseAddDialog();
 
+	void addGroup(QWidget *item);
+	void addGroup(const RsWireGroup &group);
 
-	/* TODO: These functions must be filled in for proper filtering to work 
-	 * and tied to the GUI input
-	 */
+	void deleteGroups();
+	void showGroups();
+	void showSelectedGroups();
+	void updateGroups(std::vector<RsWireGroup> &groups);
 
-	bool matchesAlbumFilter(const RsPhotoAlbum &album);
-	double AlbumScore(const RsPhotoAlbum &album);
-	bool matchesPhotoFilter(const RsPhotoPhoto &photo);
-	double PhotoScore(const RsPhotoPhoto &photo);
+	// utils.
+	rstime_t getFilterTimestamp();
 
-	/* Grunt work of setting up the GUI */
+	// Loading Data.
+	void requestGroupData();
+	bool loadGroupData(const uint32_t &token);
+	void acknowledgeGroup(const uint32_t &token, const uint32_t &userType);
 
-	bool FilterNSortAlbums(const std::list<std::string> &albumIds, std::list<std::string> &filteredAlbumIds, int count);
-	bool FilterNSortPhotos(const std::list<std::string> &photoIds, std::list<std::string> &filteredPhotoIds, int count);
-	void insertAlbums();
-	void insertPhotosForAlbum(const std::list<std::string> &albumIds);
-	void insertPhotosForSelectedAlbum();
+	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
-	void addAlbum(const std::string &id);
-	void addPhoto(const std::string &id);
-
-	void clearAlbums();
-	void clearPhotos();
+	int mGroupSet;
 
 	PulseAddDialog *mAddDialog;
+	WireGroupItem *mGroupSelected;
+	TokenQueue *mWireQueue;
 
-	PulseItem *mPulseSelected;
+	std::map<RsGxsGroupId, RsWireGroup> mAllGroups;
+	std::vector<RsWireGroup> mOwnGroups;
+
+	int32_t mHistoryIndex;
+	std::vector<WireViewHistory> mHistory;
 
 	/* UI - from Designer */
 	Ui::WireDialog ui;

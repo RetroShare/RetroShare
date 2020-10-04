@@ -12,13 +12,14 @@ DESTDIR = lib
 
 !include("use_libretroshare.pri"):error("Including")
 
-# the dht stunner is used to obtain RS external ip addr. when it is natted
-# this system is unreliable and rs supports a newer and better one (asking connected peers)
-# CONFIG += useDhtStunner
-
 # treat warnings as error for better removing
 #QMAKE_CFLAGS += -Werror
 #QMAKE_CXXFLAGS += -Werror
+
+## Uncomment to enable Unfinished Services.
+#CONFIG += wikipoos
+#CONFIG += gxsthewire
+#CONFIG += gxsphotoshare
 
 debug {
 #	DEFINES *= DEBUG
@@ -44,7 +45,6 @@ file_lists {
 			file_sharing/directory_updater.h \
 			file_sharing/rsfilelistitems.h \
 			file_sharing/dir_hierarchy.h \
-			file_sharing/file_tree.h \
 			file_sharing/file_sharing_defaults.h
 
 	SOURCES *= file_sharing/p3filelists.cc \
@@ -154,6 +154,7 @@ rs_webui {
 HEADERS += plugins/pluginmanager.h \
 		plugins/dlfcn_win32.h \
 		rsitems/rspluginitems.h \
+    util/i2pcommon.h \
     util/rsinitedptr.h
 
 HEADERS += $$PUBLIC_HEADERS
@@ -237,7 +238,7 @@ win32-x-g++ {
 }
 ################################# Windows ##########################################
 
-win32-g++ {
+win32-g++|win32-clang-g++ {
 	QMAKE_CC = $${QMAKE_CXX}
 	OBJECTS_DIR = temp/obj
 	MOC_DIR = temp/moc
@@ -326,6 +327,8 @@ DEPENDPATH *= $${OPENPGPSDK_DIR}
 INCLUDEPATH *= $${OPENPGPSDK_DIR}
 PRE_TARGETDEPS *= $${OPENPGPSDK_DIR}/lib/libops.a
 LIBS *= $${OPENPGPSDK_DIR}/lib/libops.a -lbz2
+
+################################### HEADERS & SOURCES #############################
 
 HEADERS +=	ft/ftchunkmap.h \
 			ft/ftcontroller.h \
@@ -468,7 +471,12 @@ HEADERS +=	turtle/p3turtle.h \
 			turtle/turtleclientservice.h
 
 HEADERS +=	util/folderiterator.h \
-			util/rsdebug.h \
+    util/rsdebug.h \
+    util/rsdebuglevel0.h \
+    util/rsdebuglevel1.h \
+    util/rsdebuglevel2.h \
+    util/rsdebuglevel3.h \
+    util/rsdebuglevel4.h \
 			util/rskbdinput.h \
 			util/rsmemory.h \
 			util/smallobject.h \
@@ -480,6 +488,8 @@ HEADERS +=	util/folderiterator.h \
 			util/dnsresolver.h \
                         util/radix32.h \
                         util/radix64.h \
+                        util/rsbase64.h \
+                        util/rsendian.h \
                         util/rsinitedptr.h \
 			util/rsprint.h \
 			util/rsstring.h \
@@ -493,7 +503,8 @@ HEADERS +=	util/folderiterator.h \
 			util/rstime.h \
             util/stacktrace.h \
             util/rsdeprecate.h \
-            util/cxx11retrocompat.h \
+    util/cxx11retrocompat.h \
+    util/cxx14retrocompat.h \
     util/cxx17retrocompat.h \
             util/rsurl.h \
     util/rserrno.h
@@ -507,7 +518,8 @@ SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftfilesearch.cc \
 			ft/ftserver.cc \
 			ft/fttransfermodule.cc \
-            ft/ftturtlefiletransferitem.cc
+            ft/ftturtlefiletransferitem.cc \
+    util/i2pcommon.cpp
 
 SOURCES += crypto/chacha20.cpp \
            crypto/hashstream.cc\
@@ -636,6 +648,7 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsrecogn.cc \
             util/rstime.cc \
             util/rsurl.cc \
+            util/rsbase64.cc \
     util/rserrno.cc
 
 equals(RS_UPNP_LIB, miniupnpc) {
@@ -668,6 +681,7 @@ HEADERS += rsitems/rsnxsitems.h \
 	util/rsdbbind.h \
 	util/contentvalue.h \
 	gxs/rsgxsutil.h \
+	gxs/rsgxsnotify.h \
 	gxs/gxssecurity.h \
 	gxs/rsgds.h \
 	gxs/rsgxs.h \
@@ -763,6 +777,8 @@ SOURCES += services/p3gxschannels.cc \
 	rsitems/rsgxschannelitems.cc \
 
 wikipoos {
+	DEFINES *= RS_USE_WIKI
+
 	# Wiki Service
 	HEADERS += retroshare/rswiki.h \
 		services/p3wiki.h \
@@ -773,6 +789,8 @@ wikipoos {
 }
 
 gxsthewire {
+	DEFINES *= RS_USE_WIRE
+
 	# Wire Service
 	HEADERS += retroshare/rswire.h \
 		services/p3wire.h \
@@ -793,6 +811,8 @@ SOURCES +=  services/p3postbase.cc \
 	rsitems/rsposteditems.cc
 
 gxsphotoshare {
+	DEFINES *= RS_USE_PHOTO
+
 	#Photo Service
 	HEADERS += services/p3photoservice.h \
 		retroshare/rsphoto.h \
@@ -832,23 +852,41 @@ rs_jsonapi {
     no_rs_cross_compiling {
         DUMMYRESTBEDINPUT = FORCE
         CMAKE_GENERATOR_OVERRIDE=""
-        win32-g++:CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
+        win32-g++|win32-clang-g++ {
+            isEmpty(QMAKE_SH) {
+                CMAKE_GENERATOR_OVERRIDE="-G \"MinGW Makefiles\""
+            } else {
+                CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
+            }
+        }
         genrestbedlib.name = Generating librestbed.
         genrestbedlib.input = DUMMYRESTBEDINPUT
         genrestbedlib.output = $$clean_path($${RESTBED_BUILD_PATH}/librestbed.a)
         genrestbedlib.CONFIG += target_predeps combine
         genrestbedlib.variable_out = PRE_TARGETDEPS
-        genrestbedlib.commands = \
-            cd $${RS_SRC_PATH} && ( \
-            git submodule update --init supportlibs/restbed ; \
-            cd $${RESTBED_SRC_PATH} ; \
-            git submodule update --init dependency/asio ; \
-            git submodule update --init dependency/catch ; \
-            git submodule update --init dependency/kashmir ; \
-            true ) && \
-            mkdir -p $${RESTBED_BUILD_PATH} && cd $${RESTBED_BUILD_PATH} && \
+        win32-g++:isEmpty(QMAKE_SH) {
+            genrestbedlib.commands = \
+                cd $$shell_path($${RS_SRC_PATH}) && git submodule update --init supportlibs/restbed || cd . $$escape_expand(\\n\\t) \
+                cd $$shell_path($${RESTBED_SRC_PATH}) && git submodule update --init dependency/asio || cd . $$escape_expand(\\n\\t) \
+                cd $$shell_path($${RESTBED_SRC_PATH}) && git submodule update --init dependency/catch || cd . $$escape_expand(\\n\\t )\
+                cd $$shell_path($${RESTBED_SRC_PATH}) && git submodule update --init dependency/kashmir || cd . $$escape_expand(\\n\\t) \
+                $(CHK_DIR_EXISTS) $$shell_path($$UDP_DISCOVERY_BUILD_PATH) $(MKDIR) $$shell_path($${UDP_DISCOVERY_BUILD_PATH}) $$escape_expand(\\n\\t)
+        } else {
+            genrestbedlib.commands = \
+                cd $${RS_SRC_PATH} && ( \
+                git submodule update --init supportlibs/restbed ; \
+                cd $${RESTBED_SRC_PATH} ; \
+                git submodule update --init dependency/asio ; \
+                git submodule update --init dependency/catch ; \
+                git submodule update --init dependency/kashmir ; \
+                true ) && \
+                mkdir -p $${RESTBED_BUILD_PATH} &&
+        }
+        genrestbedlib.commands += \
+            cd $$shell_path($${RESTBED_BUILD_PATH}) && \
             cmake \
                 -DCMAKE_CXX_COMPILER=$$QMAKE_CXX \
+                \"-DCMAKE_CXX_FLAGS=$${QMAKE_CXXFLAGS}\" \
                 $${CMAKE_GENERATOR_OVERRIDE} -DBUILD_SSL=OFF \
                 -DCMAKE_INSTALL_PREFIX=. -B. \
                 -H$$shell_path($${RESTBED_SRC_PATH}) && \
@@ -859,9 +897,9 @@ rs_jsonapi {
         genrestbedheader.name = Generating restbed header.
         genrestbedheader.input = genrestbedlib.output
         genrestbedheader.output = $${RESTBED_HEADER_FILE}
-        genrestbedheader.CONFIG += target_predeps combine no_link
+        genrestbedheader.CONFIG += target_predeps no_link
         genrestbedheader.variable_out = HEADERS
-        genrestbedheader.commands = cd $${RESTBED_BUILD_PATH} && $(MAKE) install
+        genrestbedheader.commands = cd $$shell_path($${RESTBED_BUILD_PATH}) && $(MAKE) install
         QMAKE_EXTRA_COMPILERS += genrestbedheader
     }
 
@@ -877,13 +915,19 @@ rs_jsonapi {
     genjsonapi.clean = $${WRAPPERS_INCL_FILE} $${WRAPPERS_REG_FILE}
     genjsonapi.CONFIG += target_predeps combine no_link
     genjsonapi.variable_out = HEADERS
-    genjsonapi.commands = \
-        mkdir -p $${JSONAPI_GENERATOR_OUT} && \
-        cp $${DOXIGEN_CONFIG_SRC} $${DOXIGEN_CONFIG_OUT} && \
-        echo OUTPUT_DIRECTORY=$${JSONAPI_GENERATOR_OUT} >> $${DOXIGEN_CONFIG_OUT} && \
-        echo INPUT=$${DOXIGEN_INPUT_DIRECTORY} >> $${DOXIGEN_CONFIG_OUT} && \
-        doxygen $${DOXIGEN_CONFIG_OUT} && \
-        $${JSONAPI_GENERATOR_EXE} $${JSONAPI_GENERATOR_SRC} $${JSONAPI_GENERATOR_OUT};
+    win32-g++:isEmpty(QMAKE_SH) {
+        genjsonapi.commands = \
+            $(CHK_DIR_EXISTS) $$shell_path($$JSONAPI_GENERATOR_OUT) $(MKDIR) $$shell_path($${JSONAPI_GENERATOR_OUT}) $$escape_expand(\\n\\t)
+    } else {
+        genjsonapi.commands = \
+            mkdir -p $${JSONAPI_GENERATOR_OUT} && \
+            cp $${DOXIGEN_CONFIG_SRC} $${DOXIGEN_CONFIG_OUT} && \
+            echo OUTPUT_DIRECTORY=$${JSONAPI_GENERATOR_OUT} >> $${DOXIGEN_CONFIG_OUT} && \
+            echo INPUT=$${DOXIGEN_INPUT_DIRECTORY} >> $${DOXIGEN_CONFIG_OUT} && \
+            doxygen $${DOXIGEN_CONFIG_OUT} &&
+    }
+    genjsonapi.commands += \
+        $${JSONAPI_GENERATOR_EXE} $${JSONAPI_GENERATOR_SRC} $${JSONAPI_GENERATOR_OUT}
     QMAKE_EXTRA_COMPILERS += genjsonapi
 
     # Force recalculation of libretroshare dependencies see https://stackoverflow.com/a/47884045
@@ -929,20 +973,34 @@ rs_broadcast_discovery {
     no_rs_cross_compiling {
         DUMMYQMAKECOMPILERINPUT = FORCE
         CMAKE_GENERATOR_OVERRIDE=""
-        win32-g++:CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
+        win32-g++|win32-clang-g++ {
+            isEmpty(QMAKE_SH) {
+                CMAKE_GENERATOR_OVERRIDE="-G \"MinGW Makefiles\""
+            } else {
+                CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
+            }
+        }
         udpdiscoverycpplib.name = Generating libudp-discovery.a.
         udpdiscoverycpplib.input = DUMMYQMAKECOMPILERINPUT
         udpdiscoverycpplib.output = $$clean_path($${UDP_DISCOVERY_BUILD_PATH}/libudp-discovery.a)
         udpdiscoverycpplib.CONFIG += target_predeps combine
         udpdiscoverycpplib.variable_out = PRE_TARGETDEPS
-        udpdiscoverycpplib.commands = \
-            cd $${RS_SRC_PATH} && ( \
-            git submodule update --init supportlibs/udp-discovery-cpp || \
-            true ) && \
-            mkdir -p $${UDP_DISCOVERY_BUILD_PATH} && \
-            cd $${UDP_DISCOVERY_BUILD_PATH} && \
+        win32-g++:isEmpty(QMAKE_SH) {
+            udpdiscoverycpplib.commands = \
+                cd $$shell_path($${RS_SRC_PATH}) && git submodule update --init supportlibs/udp-discovery-cpp || cd . $$escape_expand(\\n\\t) \
+                $(CHK_DIR_EXISTS) $$shell_path($$UDP_DISCOVERY_BUILD_PATH) $(MKDIR) $$shell_path($${UDP_DISCOVERY_BUILD_PATH}) $$escape_expand(\\n\\t)
+        } else {
+            udpdiscoverycpplib.commands = \
+                cd $${RS_SRC_PATH} && ( \
+                git submodule update --init supportlibs/udp-discovery-cpp || \
+                true ) && \
+                mkdir -p $${UDP_DISCOVERY_BUILD_PATH} &&
+        }
+        udpdiscoverycpplib.commands += \
+            cd $$shell_path($${UDP_DISCOVERY_BUILD_PATH}) && \
             cmake -DCMAKE_C_COMPILER=$$fixQmakeCC($$QMAKE_CC) \
                 -DCMAKE_CXX_COMPILER=$$QMAKE_CXX \
+                \"-DCMAKE_CXX_FLAGS=$${QMAKE_CXXFLAGS}\" \
                 $${CMAKE_GENERATOR_OVERRIDE} \
                 -DBUILD_EXAMPLE=OFF -DBUILD_TOOL=OFF \
                 -DCMAKE_INSTALL_PREFIX=. -B. \

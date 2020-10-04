@@ -21,8 +21,8 @@
 #ifndef GROUPTREEWIDGET_H
 #define GROUPTREEWIDGET_H
 
-#include <QWidget>
-#include <QIcon>
+#include<set>
+
 #include <QTreeWidgetItem>
 #include <QDateTime>
 
@@ -49,16 +49,17 @@ public:
 	{}
 
 public:
-	QString   id;
-	QString   name;
-	QString   description;
-	int       popularity;
-	QDateTime lastpost;
-	QIcon     icon;
-	bool      publishKey;
-	bool      adminKey;
-    quint32  subscribeFlags;
-    quint32  max_visible_posts ;
+	QString               id;
+	QString               name;
+	QString               description;
+	int                   popularity;
+	QDateTime             lastpost;
+	QIcon                 icon;
+	bool                  publishKey;
+	bool                  adminKey;
+    quint32               subscribeFlags;
+    quint32               max_visible_posts ;
+    std::set<std::string> context_strings;
 };
 
 //cppcheck-suppress noConstructor
@@ -96,6 +97,7 @@ public:
 
 	bool isSearchRequestItem(QPoint &point,uint32_t& search_req_id);
 	bool isSearchRequestResult(QPoint &point, QString &group_id, uint32_t& search_req_id);
+	bool isSearchRequestResultItem(QTreeWidgetItem *item,QString& group_id,uint32_t& search_req_id);
 
 	QTreeWidgetItem *getItemFromId(const QString &id);
 	QTreeWidgetItem *activateId(const QString &id, bool focus);
@@ -109,7 +111,8 @@ public:
 
 	void setTextColorCategory(QColor color) { mTextColor[GROUPTREEWIDGET_COLOR_CATEGORY] = color; }
 	void setTextColorPrivateKey(QColor color) { mTextColor[GROUPTREEWIDGET_COLOR_PRIVATEKEY] = color; }
-        bool getGroupName(QString id, QString& name);
+
+	bool getGroupName(QString id, QString& name);
 
 	int subscribeFlags(const QString &id);
 

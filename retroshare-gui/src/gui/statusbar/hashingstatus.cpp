@@ -27,6 +27,7 @@
 #include "hashingstatus.h"
 #include "gui/common/ElidedLabel.h"
 #include "gui/notifyqt.h"
+#include "gui/common/FilesDefs.h"
 
 HashingStatus::HashingStatus(QWidget *parent)
  : QWidget(parent)
@@ -52,8 +53,10 @@ HashingStatus::HashingStatus(QWidget *parent)
     hashloader->hide();
     statusHashing->hide();
 
-    mEventHandlerId=0;
-    rsEvents->registerEventsHandler(RsEventType::SHARED_DIRECTORIES, [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); }, mEventHandlerId );
+	mEventHandlerId=0;
+	rsEvents->registerEventsHandler(
+	            [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); },
+	            mEventHandlerId, RsEventType::SHARED_DIRECTORIES );
 }
 
 void HashingStatus::handleEvent(std::shared_ptr<const RsEvent> event)
@@ -122,7 +125,7 @@ void HashingStatus::mousePressEvent(QMouseEvent *)
 	if(rsFiles->hashingProcessPaused())
 	{
 		movie->stop() ;
-		hashloader->setPixmap(QPixmap(":/images/resume.png")) ;
+        hashloader->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/resume.png")) ;
 
 		mLastText = statusHashing->text();
 		statusHashing->setText(QObject::tr("[Hashing is paused]"));

@@ -18,11 +18,13 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "retroshare/rsgxsforums.h"
+#include "gui/common/FilesDefs.h"
 #include "GxsForumUserNotify.h"
 #include "gui/MainWindow.h"
 
-GxsForumUserNotify::GxsForumUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent) :
-    GxsUserNotify(ifaceImpl, parent)
+GxsForumUserNotify::GxsForumUserNotify(RsGxsIfaceHelper *ifaceImpl, const GxsGroupFrameDialog *g, QObject *parent) :
+    GxsUserNotify(ifaceImpl, g, parent)
 {
 	mCountChildMsgs = true;
 }
@@ -37,12 +39,12 @@ bool GxsForumUserNotify::hasSetting(QString *name, QString *group)
 
 QIcon GxsForumUserNotify::getIcon()
 {
-    return QIcon(":/icons/png/forums.png");
+    return FilesDefs::getIconFromQtResourcePath(":/icons/png/forums.png");
 }
 
 QIcon GxsForumUserNotify::getMainIcon(bool hasNew)
 {
-    return hasNew ? QIcon(":/icons/png/forums-notify.png") : QIcon(":/icons/png/forums.png");
+    return hasNew ? FilesDefs::getIconFromQtResourcePath(":/icons/png/forums-notify.png") : FilesDefs::getIconFromQtResourcePath(":/icons/png/forums.png");
 }
 
 void GxsForumUserNotify::iconClicked()

@@ -23,6 +23,8 @@
 #include "ui_GxsChannelGroupItem.h"
 
 #include "FeedHolder.h"
+#include "util/qtthreadsutils.h"
+#include "gui/common/FilesDefs.h"
 #include "gui/NewsFeed.h"
 #include "gui/RetroShareLink.h"
 
@@ -89,29 +91,39 @@ bool GxsChannelGroupItem::setGroup(const RsGxsChannelGroup &group)
 	return true;
 }
 
-void GxsChannelGroupItem::loadGroup(const uint32_t &token)
+void GxsChannelGroupItem::loadGroup()
 {
-#ifdef DEBUG_ITEM
-	std::cerr << "GxsChannelGroupItem::loadGroup()";
-	std::cerr << std::endl;
-#endif
-
-	std::vector<RsGxsChannelGroup> groups;
-	if (!rsGxsChannels->getGroupData(token, groups))
+	RsThread::async([this]()
 	{
-		std::cerr << "GxsChannelGroupItem::loadGroup() ERROR getting data";
-		std::cerr << std::endl;
-		return;
-	}
+		// 1 - get group data
 
-	if (groups.size() != 1)
-	{
-		std::cerr << "GxsChannelGroupItem::loadGroup() Wrong number of Items";
-		std::cerr << std::endl;
-		return;
-	}
+		std::vector<RsGxsChannelGroup> groups;
+		const std::list<RsGxsGroupId> groupIds = { groupId() };
 
-	setGroup(groups[0]);
+		if(!rsGxsChannels->getChannelsInfo(groupIds,groups))
+		{
+			RsErr() << "PostedItem::loadGroup() ERROR getting data" << std::endl;
+			return;
+		}
+
+		if (groups.size() != 1)
+		{
+			std::cerr << "GxsGxsChannelGroupItem::loadGroup() Wrong number of Items";
+			std::cerr << std::endl;
+			return;
+		}
+		RsGxsChannelGroup group(groups[0]);
+
+		RsQThreadUtils::postToObject( [group,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
+
+			setGroup(group);
+
+		}, this );
+	});
 }
 
 QString GxsChannelGroupItem::groupName()
@@ -136,7 +148,7 @@ void GxsChannelGroupItem::fill()
 	if (mGroup.mImage.mData != NULL) {
 		QPixmap chanImage;
 		GxsIdDetails::loadPixmapFromData(mGroup.mImage.mData, mGroup.mImage.mSize, chanImage,GxsIdDetails::ORIGINAL);
-		ui->logoLabel->setPixmap(QPixmap(chanImage));
+        ui->logoLabel->setPixmap(chanImage);
 	}
 
 	if (IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags)) {
@@ -176,13 +188,13 @@ void GxsChannelGroupItem::doExpand(bool open)
 	if (open)
 	{
 		ui->expandFrame->show();
-		ui->expandButton->setIcon(QIcon(QString(":/icons/png/up-arrow.png")));
+        ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/up-arrow.png")));
 		ui->expandButton->setToolTip(tr("Hide"));
 	}
 	else
 	{
 		ui->expandFrame->hide();
-		ui->expandButton->setIcon(QIcon(QString(":/icons/png/down-arrow.png")));
+        ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/down-arrow.png")));
 		ui->expandButton->setToolTip(tr("Expand"));
 	}
 

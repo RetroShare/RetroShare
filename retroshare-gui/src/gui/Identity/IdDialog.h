@@ -25,8 +25,6 @@
 
 #include <retroshare/rsidentity.h>
 
-#include "util/TokenQueue.h"
-
 #define IMAGE_IDDIALOG          ":/icons/png/people.png"
 
 namespace Ui {
@@ -45,7 +43,7 @@ struct CircleUpdateOrder
     uint32_t action ;
 };
 
-class IdDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
+class IdDialog : public MainPage
 {
 	Q_OBJECT
 
@@ -57,17 +55,19 @@ public:
 	virtual QString pageName() const { return tr("People") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 
-	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
-
     void navigate(const RsGxsId& gxs_id) ; // shows the info about this particular ID
 protected:
 	virtual void updateDisplay(bool complete);
 
-	void loadCircleGroupMeta(const uint32_t &token);
-	void loadCircleGroupData(const uint32_t &token);
-	void updateCircleGroup(const uint32_t& token);
+	void updateIdList();
+	void loadIdentities(const std::map<RsGxsGroupId, RsGxsIdGroup> &ids_set);
 
-	void requestCircleGroupMeta();
+	void updateIdentity();
+	void loadIdentity(RsGxsIdGroup id_data);
+
+	void updateCircles();
+	void loadCircles(const std::list<RsGroupMetaData>& circle_metas);
+
 	//void requestCircleGroupData(const RsGxsCircleId& circle_id);
 	bool getItemCircleId(QTreeWidgetItem *item,RsGxsCircleId& id) ;
 
@@ -120,10 +120,6 @@ private:
 	void processSettings(bool load);
 	QString createUsageString(const RsIdentityUsage& u) const;
 
-	void requestIdDetails();
-	void insertIdDetails(uint32_t token);
-
-	void requestIdList();
 	void requestIdData(std::list<RsGxsGroupId> &ids);
 	bool fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, const RsPgpId &ownPgpId, int accept);
 	void insertIdList(uint32_t token);
@@ -139,9 +135,6 @@ private:
 	void clearPerson();
 
 private:
-	TokenQueue *mIdQueue;
-	TokenQueue *mCircleQueue;
-
 	UIStateHelper *mStateHelper;
 
 	QTreeWidgetItem *contactsItem;
@@ -151,6 +144,9 @@ private:
 	QTreeWidgetItem *mExternalOtherCircleItem;
 	QTreeWidgetItem *mMyCircleItem;
 	RsGxsUpdateBroadcastBase *mCirclesBroadcastBase ;
+
+	void saveExpandedCircleItems(std::vector<bool> &expanded_root_items, std::set<RsGxsCircleId>& expanded_circle_items) const;
+	void restoreExpandedCircleItems(const std::vector<bool>& expanded_root_items,const std::set<RsGxsCircleId>& expanded_circle_items);
 
 	std::map<uint32_t, CircleUpdateOrder> mCircleUpdates ;
 

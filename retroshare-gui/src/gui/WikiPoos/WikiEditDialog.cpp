@@ -414,7 +414,7 @@ void WikiEditDialog::setNewPage()
 	ui.groupBox_History->hide();
 	ui.pushButton_History->setText(tr("Show Edit History"));
 
-	ui.headerFrame->setHeaderImage(QPixmap(":/images/appointment-new_64.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/addpage.png"));
 	ui.headerFrame->setHeaderText(tr("Create New Wiki Page"));
 	setWindowTitle(tr("Create New Wiki Page"));
 
@@ -569,7 +569,7 @@ void WikiEditDialog::setupData(const RsGxsGroupId &groupId, const RsGxsMessageId
 		requestPage(msgId);
 	}
 
-	ui.headerFrame->setHeaderImage(QPixmap(":/images/story-editor_48.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/editpage.png"));
 	ui.headerFrame->setHeaderText(tr("Edit Wiki Page"));
 	setWindowTitle(tr("Edit Wiki Page"));
 
@@ -622,8 +622,8 @@ void WikiEditDialog::requestPage(const RsGxsGrpMsgIdPair &msgId)
         opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
         GxsMsgReq msgIds;
-        std::vector<RsGxsMessageId> &vect_msgIds = msgIds[msgId.first];
-        vect_msgIds.push_back(msgId.second);
+        std::set<RsGxsMessageId> &set_msgIds = msgIds[msgId.first];
+        set_msgIds.insert(msgId.second);
 
 	uint32_t token;
         mWikiQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, WIKIEDITDIALOG_PAGE);

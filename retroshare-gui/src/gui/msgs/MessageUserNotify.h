@@ -31,6 +31,7 @@ public:
 	MessageUserNotify(QObject *parent = 0);
 
 	virtual bool hasSetting(QString *name, QString *group);
+    virtual QString textInfo() const override { return tr("new mail(s)"); }
 
 private:
 	virtual QIcon getIcon();

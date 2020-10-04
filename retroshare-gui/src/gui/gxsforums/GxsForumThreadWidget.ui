@@ -95,7 +95,7 @@
             </property>
             <property name="icon">
              <iconset resource="../icons.qrc">
-              <normaloff>:/icons/png/add.png</normaloff>:/icons/png/add.png</iconset>
+              <normaloff>:/icons/mail/compose.png</normaloff>:/icons/mail/compose.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -245,32 +245,6 @@
        </item>
        <item>
         <layout class="QGridLayout" name="postLayout">
-         <item row="0" column="6">
-          <widget class="QToolButton" name="downloadButton">
-           <property name="maximumSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="toolTip">
-            <string>Download all files</string>
-           </property>
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-           <property name="icon">
-            <iconset resource="../icons.qrc">
-             <normaloff>:/icons/global_switch_on_128.png</normaloff>:/icons/global_switch_on_128.png</iconset>
-           </property>
-           <property name="autoRaise">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="1">
           <widget class="QToolButton" name="newmessageButton">
            <property name="maximumSize">
@@ -289,8 +263,8 @@
             <string notr="true"/>
            </property>
            <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/replymailall24-hover.png</normaloff>:/images/replymailall24-hover.png</iconset>
+            <iconset resource="../icons.qrc">
+             <normaloff>:/icons/mail/reply.png</normaloff>:/icons/mail/reply.png</iconset>
            </property>
            <property name="toolButtonStyle">
             <enum>Qt::ToolButtonIconOnly</enum>
@@ -300,53 +274,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="16">
-          <widget class="QPushButton" name="expandButton">
-           <property name="maximumSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/edit_remove24.png</normaloff>:/images/edit_remove24.png</iconset>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="10">
-          <widget class="Line" name="lineRight">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="13">
-          <spacer name="postHSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="0" column="3">
+         <item row="0" column="2">
           <widget class="QToolButton" name="previousButton">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -376,15 +304,15 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/back.png</normaloff>:/images/back.png</iconset>
+            <iconset resource="../icons.qrc">
+             <normaloff>:/icons/png/arrow-left.png</normaloff>:/icons/png/arrow-left.png</iconset>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
            </property>
           </widget>
          </item>
-         <item row="0" column="4">
+         <item row="0" column="3">
           <widget class="QToolButton" name="nextButton">
            <property name="enabled">
             <bool>false</bool>
@@ -417,46 +345,15 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/forward.png</normaloff>:/images/forward.png</iconset>
+            <iconset resource="../icons.qrc">
+             <normaloff>:/icons/png/arrow-right.png</normaloff>:/icons/png/arrow-right.png</iconset>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
            </property>
           </widget>
          </item>
-         <item row="0" column="12">
-          <widget class="GxsIdLabel" name="by_label">
-           <property name="text">
-            <string notr="true"/>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="7">
-          <widget class="Line" name="lineLeft">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="9">
-          <widget class="QComboBox" name="versions_CB"/>
-         </item>
-         <item row="0" column="8">
-          <widget class="QLabel" name="time_label">
-           <property name="text">
-            <string notr="true"/>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="11">
-          <widget class="QLabel" name="by_text_label">
-           <property name="text">
-            <string>By </string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="5">
+         <item row="0" column="4">
           <widget class="QToolButton" name="nextUnreadButton">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -471,8 +368,114 @@
             <string notr="true"/>
            </property>
            <property name="icon">
+            <iconset resource="../icons.qrc">
+             <normaloff>:/icons/png/next-unread.png</normaloff>:/icons/png/next-unread.png</iconset>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="5">
+          <widget class="QToolButton" name="downloadButton">
+           <property name="maximumSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="toolTip">
+            <string>Download all files</string>
+           </property>
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="icon">
+            <iconset resource="../icons.qrc">
+             <normaloff>:/icons/png/download.png</normaloff>:/icons/png/download.png</iconset>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="6">
+          <widget class="Line" name="lineLeft">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="7">
+          <widget class="QLabel" name="time_label">
+           <property name="text">
+            <string notr="true"/>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="8">
+          <widget class="QComboBox" name="versions_CB"/>
+         </item>
+         <item row="0" column="9">
+          <widget class="Line" name="lineRight">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="10">
+          <widget class="QLabel" name="by_text_label">
+           <property name="text">
+            <string>By </string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="11">
+          <widget class="GxsIdLabel" name="by_label">
+           <property name="text">
+            <string notr="true"/>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="12">
+          <spacer name="postHSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="13">
+          <widget class="QPushButton" name="expandButton">
+           <property name="maximumSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
             <iconset resource="../images.qrc">
-             <normaloff>:/images/start.png</normaloff>:/images/start.png</iconset>
+             <normaloff>:/images/edit_remove24.png</normaloff>:/images/edit_remove24.png</iconset>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -503,6 +506,11 @@
            <verstretch>10</verstretch>
           </sizepolicy>
          </property>
+         <property name="font">
+          <font>
+           <family>MS Sans Serif</family>
+          </font>
+         </property>
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -525,6 +533,16 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header>gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>gui/common/RSTextBrowser.h</header>
+  </customwidget>
+  <customwidget>
    <class>SubscribeToolButton</class>
    <extends>QToolButton</extends>
    <header>gui/common/SubscribeToolButton.h</header>
@@ -533,16 +551,6 @@
    <class>GxsIdLabel</class>
    <extends>QLabel</extends>
    <header>gui/gxs/GxsIdLabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header location="global">gui/common/LineEditClear.h</header>
-  </customwidget>
-  <customwidget>
-   <class>RSTextBrowser</class>
-   <extends>QTextBrowser</extends>
-   <header>gui/common/RSTextBrowser.h</header>
   </customwidget>
   <customwidget>
    <class>ElidedLabel</class>

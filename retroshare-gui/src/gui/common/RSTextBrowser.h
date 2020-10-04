@@ -34,6 +34,7 @@ class RSTextBrowser : public QTextBrowser
 	Q_OBJECT
 
 	Q_PROPERTY(QColor textColorQuote READ textColorQuote WRITE setTextColorQuote)
+	Q_PROPERTY(QVariant textColorQuotes READ textColorQuotes WRITE setTextColorQuotes)
 
 public:
 	explicit RSTextBrowser(QWidget *parent = 0);
@@ -52,11 +53,13 @@ public:
 	virtual QVariant loadResource(int type, const QUrl &name);
 
 	QColor textColorQuote() const { return highlighter->textColorQuote();}
+	QVariant textColorQuotes() const { return highlighter->textColorQuotes();}
 	bool getShowImages() const { return mShowImages; }
 
 public slots:
 	void showImages();
 	void setTextColorQuote(QColor textColorQuote) { highlighter->setTextColorQuote(textColorQuote);}
+	void setTextColorQuotes(QVariant textColorQuotes) { highlighter->setTextColorQuotes(textColorQuotes);}
 
 private slots:
 	void linkClicked(const QUrl &url);

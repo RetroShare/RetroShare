@@ -26,7 +26,10 @@
 #include <vector>
 #include <stdint.h>
 
-class Radix64
+#include "util/rsdeprecate.h"
+
+/** @deprecated use RsBase64 instead which supports also URL safe encoding */
+class RS_DEPRECATED_FOR(RsBase64) Radix64
 {
 public:
 	static std::vector<uint8_t> decode(const std::string& buffer)
@@ -195,5 +198,3 @@ again:
 			return true ;
 		}
 };
-
-

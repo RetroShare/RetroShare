@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2004-2007 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2004-2007  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2020  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -20,8 +22,7 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef RSUTIL_DIRFNS_H
-#define RSUTIL_DIRFNS_H
+#pragma once
 
 #include <string>
 #include <list>
@@ -84,7 +85,10 @@ int     	breakupDirList(const std::string& path, std::list<std::string> &subdirs
 bool        splitDirFromFile(const std::string& full_path,std::string& dir, std::string& file);
 
 bool 		copyFile(const std::string& source,const std::string& dest);
-bool 		moveFile(const std::string& source,const std::string& dest);
+
+/** Move file. If destination directory doesn't exists create it. */
+bool moveFile(const std::string& source, const std::string& dest);
+
 bool 		removeFile(const std::string& file);
 bool 		fileExists(const std::string& file);
 bool    	checkFile(const std::string& filename,uint64_t& file_size,bool disallow_empty_file = false);
@@ -141,8 +145,20 @@ bool 		getWideFileHash(std::wstring filepath,                RsFileHash &hash, u
 FILE		*rs_fopen(const char* filename, const char* mode);
 
 std::string convertPathToUnix(std::string path);
+
+/** Concatenate two path pieces putting '/' separator between them only if
+ * needed */
 std::string makePath(const std::string &path1, const std::string &path2);
+
+RS_SET_CONTEXT_DEBUG_LEVEL(1);
 }
 
-	
-#endif
+#if __cplusplus < 201703L
+namespace std
+{
+namespace filesystem
+{
+bool create_directories(const std::string& path);
+}
+}
+#endif // __cplusplus < 201703L

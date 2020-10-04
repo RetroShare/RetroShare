@@ -23,10 +23,11 @@
 
 #include <stdint.h>
 
-#include <retroshare-gui/configpage.h>
+#include "retroshare-gui/configpage.h"
 #include "ui_MessagePage.h"
 
 #include "gui/msgs/MessageInterface.h"
+#include "gui/common/FilesDefs.h"
 
 class MessagePage : public ConfigPage
 {
@@ -39,7 +40,7 @@ public:
     /** Loads the settings for this page */
     virtual void load();
 
-	 virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/messages.svg") ; }
+     virtual QPixmap iconPixmap() const { return FilesDefs::getPixmapFromQtResourcePath(":/icons/settings/messages.svg") ; }
 	 virtual QString pageName() const { return tr("Mail") ; }
 	 virtual QString helpText() const { return ""; }
 
@@ -58,6 +59,7 @@ private slots:
 	void updateMsgOpen()                 ;
 	void updateDistantMsgs()             ;
 	void updateMsgTags()    ;
+	void updateLoadEmoticons();
 
 private:
     void fillTags();

@@ -52,6 +52,10 @@ class GxsForumThreadWidget : public GxsMessageFrameWidget
 	Q_PROPERTY(QColor textColorUnreadChildren READ textColorUnreadChildren WRITE setTextColorUnreadChildren)
 	Q_PROPERTY(QColor textColorNotSubscribed READ textColorNotSubscribed WRITE setTextColorNotSubscribed)
 	Q_PROPERTY(QColor textColorMissing READ textColorMissing WRITE setTextColorMissing)
+	Q_PROPERTY(QColor textColorPinned READ textColorPinned WRITE setTextColorPinned)
+
+	Q_PROPERTY(QColor backgroundColorPinned READ backgroundColorPinned WRITE setBackgroundColorPinned)
+	Q_PROPERTY(QColor backgroundColorFiltered READ backgroundColorFiltered WRITE setBackgroundColorFiltered)
 
 public:
 	explicit GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget *parent = NULL);
@@ -62,12 +66,20 @@ public:
 	QColor textColorUnreadChildren() const { return mTextColorUnreadChildren; }
 	QColor textColorNotSubscribed() const { return mTextColorNotSubscribed; }
 	QColor textColorMissing() const { return mTextColorMissing; }
+	QColor textColorPinned() const { return mTextColorPinned; }
+
+	QColor backgroundColorPinned() const { return mBackgroundColorPinned; }
+	QColor backgroundColorFiltered() const { return mBackgroundColorFiltered; }
 
 	void setTextColorRead          (QColor color) ;
 	void setTextColorUnread        (QColor color) ;
 	void setTextColorUnreadChildren(QColor color) ;
 	void setTextColorNotSubscribed (QColor color) ;
 	void setTextColorMissing       (QColor color) ;
+	void setTextColorPinned        (QColor color) ;
+
+	void setBackgroundColorPinned   (QColor color);
+	void setBackgroundColorFiltered (QColor color);
 
 	/* GxsMessageFrameWidget */
 	virtual void groupIdChanged();
@@ -92,16 +104,18 @@ protected:
 	/* GxsMessageFrameWidget */
 	virtual void setAllMessagesReadDo(bool read, uint32_t &token);
     
+	void setMessageLoadingError(const QString& error);
 private slots:
 	/** Create the context popup menu and it's submenus */
 	void threadListCustomPopupMenu(QPoint point);
 	void contextMenuTextBrowser(QPoint point);
+	void headerContextMenuRequested(const QPoint& pos);
 
 	void changedSelection(const QModelIndex &, const QModelIndex &);
 	void changedThread(QModelIndex index);
 	void changedVersion();
 	void clickedThread (QModelIndex index);
-    void postForumLoading();
+	void postForumLoading();
 
 	void reply_with_private_message();
 	void replytoforummessage();
@@ -143,6 +157,12 @@ private slots:
 
 	void filterColumnChanged(int column);
 	void filterItems(const QString &text);
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+	void expandSubtree();
+#endif
+	void changeHeaderColumnVisibility(bool visibility);
+	void showBannedText(bool display);
 private:
 	void insertMessageData(const RsGxsForumMsg &msg);
 	bool getCurrentPost(ForumModelPostEntry& fmpe) const ;
@@ -157,7 +177,7 @@ private:
 
 	int getSelectedMsgCount(QList<QTreeWidgetItem*> *pRows, QList<QTreeWidgetItem*> *pRowsRead, QList<QTreeWidgetItem*> *pRowsUnread);
 	void setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool read);
-	void markMsgAsReadUnread(bool read, bool children, bool forum);
+	void markMsgAsReadUnread(bool read, bool children, bool forum, RsGxsMessageId msgId = RsGxsMessageId());
 	void calculateUnreadCount();
 
 	void togglethreadview_internal();
@@ -170,11 +190,15 @@ private:
     static void loadAuthorIdCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &/*data*/);
 
 	void updateMessageData(const RsGxsMessageId& msgId);
-	void updateForumDescription();
+	void updateForumDescription(bool success);
 
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
 private:
+	void setForumDescriptionLoading();
+	void clearForumDescription();
+	void blankPost();
+
 	RsGxsGroupId mLastForumID;
 	RsGxsMessageId mThreadId;
 	RsGxsMessageId mOrigThreadId;
@@ -187,6 +211,7 @@ private:
 	GxsForumsFillThread *mFillThread;
 	unsigned int mUnreadCount;
 	unsigned int mNewCount;
+	bool mDisplayBannedText;
 
 	/* Color definitions (for standard see qss.default) */
 	QColor mTextColorRead;
@@ -194,6 +219,10 @@ private:
 	QColor mTextColorUnreadChildren;
 	QColor mTextColorNotSubscribed;
 	QColor mTextColorMissing;
+	QColor mTextColorPinned;
+
+	QColor mBackgroundColorPinned;
+	QColor mBackgroundColorFiltered;
 
 	RsGxsMessageId mNavigatePendingMsgId;
 	QList<RsGxsMessageId> mIgnoredMsgId;

@@ -33,6 +33,7 @@
 #include "util/HandleRichText.h"
 #include "util/misc.h"
 #include "util/rsdir.h"
+#include "util/qtthreadsutils.h"
 #include "util/RichTextEdit.h"
 
 #include <retroshare/rsfiles.h>
@@ -54,9 +55,8 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 	/* Invoke the Qt Designer generated object setup routine */
 	setupUi(this);
 	Settings->loadWidgetInformation(this);
-	mChannelQueue = new TokenQueue(rsGxsChannels->getTokenService(), this);
 
-	headerFrame->setHeaderImage(QPixmap(":/icons/png/channel.png"));
+    headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/channel.png"));
 
     if(!existing_post.isNull())
 		headerFrame->setHeaderText(tr("Edit Channel Post"));
@@ -72,15 +72,30 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 
 	connect(addFileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
 	connect(addfilepushButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
-	
+	connect(subjectEdit,SIGNAL(textChanged(const QString&)),this,SLOT(updatePreviewText(const QString&)));
+
 	connect(addThumbnailButton, SIGNAL(clicked() ), this , SLOT(addThumbnail()));
 	connect(thumbNailCb, SIGNAL(toggled(bool)), this, SLOT(allowAutoMediaThumbNail(bool)));
 	connect(stackedWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenu(QPoint)));
 	connect(generateCheckBox, SIGNAL(toggled(bool)), generateSpinBox, SLOT(setEnabled(bool)));
+	connect(aspectRatio_CB,SIGNAL(currentIndexChanged(int)),this,SLOT(changeAspectRatio(int)));
+
+	channelpostButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/comment.png"));
+	attachmentsButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/attachements.png"));
+	addThumbnailButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/add-image.png"));
+	addfilepushButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/add-file.png"));
+
+    aspectRatio_CB->setItemIcon(0,FilesDefs::getIconFromQtResourcePath(":/icons/svg/ratio-auto.svg"));
+    aspectRatio_CB->setItemIcon(1,FilesDefs::getIconFromQtResourcePath(":/icons/svg/ratio-1-1.svg"));
+    aspectRatio_CB->setItemIcon(2,FilesDefs::getIconFromQtResourcePath(":/icons/svg/ratio-3-4.svg"));
+    aspectRatio_CB->setItemIcon(3,FilesDefs::getIconFromQtResourcePath(":/icons/svg/ratio-16-9.svg"));
 
 	generateSpinBox->setEnabled(false);
 
-	thumbNailCb->setVisible(false);
+    preview_W->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ChannelPostThumbnailView::CHAN_DEFAULT_IMAGE),true);
+    preview_W->setText("[Text preview]");
+
+    thumbNailCb->setVisible(false);
 	thumbNailCb->setEnabled(false);
 #ifdef CHANNELS_FRAME_CATCHER
 	fCatcher = new framecatcher();
@@ -96,6 +111,9 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 	generateCheckBox->hide();
 	generateSpinBox->hide();
 #endif
+
+	/* load settings */
+	processSettings(true);
 }
 	
 CreateGxsChannelMsg::~CreateGxsChannelMsg()
@@ -105,9 +123,43 @@ CreateGxsChannelMsg::~CreateGxsChannelMsg()
 	delete fCatcher;
 #endif
 
-	delete(mChannelQueue);
+	// save settings
+	processSettings(false);
 }
 
+void CreateGxsChannelMsg::processSettings(bool load)
+{
+	Settings->beginGroup(QString("CreateGxsChannelMsg"));
+
+	if (load) {
+		// load settings
+		
+		// state of Ratio combobox
+		int index = Settings->value("aspectRatio_CB", 0).toInt();
+		aspectRatio_CB->setCurrentIndex(index);
+	} else {
+		// save settings
+
+		// state of Ratio combobox
+		Settings->setValue("aspectRatio_CB", aspectRatio_CB->currentIndex());
+	}
+
+	Settings->endGroup();
+}
+
+void CreateGxsChannelMsg::changeAspectRatio(int s)
+{
+    switch(s)
+    {
+    case 0: break;
+    case 1: preview_W->setAspectRatio(ChannelPostThumbnailView::ASPECT_RATIO_1_1);
+        break;
+    case 2: preview_W->setAspectRatio(ChannelPostThumbnailView::ASPECT_RATIO_2_3);
+        break;
+    case 3: preview_W->setAspectRatio(ChannelPostThumbnailView::ASPECT_RATIO_16_9);
+        break;
+    }
+}
 void CreateGxsChannelMsg::contextMenu(QPoint /*point*/)
 {
 	QList<RetroShareLink> links ;
@@ -123,9 +175,9 @@ void CreateGxsChannelMsg::contextMenu(QPoint /*point*/)
 
 	QAction *action ;
 	if(n_file > 1)
-		action = contextMnu.addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Links"), this, SLOT(pasteLink()));
+        action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/pasterslink.png"), tr("Paste RetroShare Links"), this, SLOT(pasteLink()));
 	else
-		action = contextMnu.addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
+        action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
 
 	action->setDisabled(n_file < 1) ;
 	contextMnu.exec(QCursor::pos());
@@ -591,26 +643,10 @@ void CreateGxsChannelMsg::newChannelMsg()
 
 	/* request Data */
 	{
-		RsTokReqOptions opts;
-		opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
-
-        std::list<RsGxsGroupId> groupIds;
-		groupIds.push_back(mChannelId);
-
-		std::cerr << "CreateGxsChannelMsg::newChannelMsg() Req Group Summary(" << mChannelId << ")";
-		std::cerr << std::endl;
-
-		uint32_t token;
-		mChannelQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, groupIds, CREATEMSG_CHANNELINFO);
+        loadChannelInfo();
 
         if(!mOrigPostId.isNull())
-        {
-			GxsMsgReq message_ids;
-
-			opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-            message_ids[mChannelId].insert(mOrigPostId);
-			mChannelQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, message_ids, CREATEMSG_CHANNEL_POST_INFO);
-        }
+            loadOriginalChannelPostInfo();
 	}
 }
 
@@ -621,6 +657,11 @@ void CreateGxsChannelMsg::saveChannelInfo(const RsGroupMetaData &meta)
 
 	channelName->setText(QString::fromUtf8(mChannelMeta.mGroupName.c_str()));
 	subjectEdit->setFocus();
+}
+
+void CreateGxsChannelMsg::updatePreviewText(const QString& s)
+{
+	preview_W->setText(s);
 }
 
 void CreateGxsChannelMsg::sendMsg()
@@ -700,7 +741,7 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
 			// send chan image
 
 			buffer.open(QIODevice::WriteOnly);
-			picture.save(&buffer, "PNG"); // writes image into ba in PNG format
+            preview_W->getCroppedScaledPicture().save(&buffer, "PNG"); // writes image into ba in PNG format
 			post.mThumbnail.copy((uint8_t *) ba.data(), ba.size());
 		}
 
@@ -735,7 +776,7 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
 
 void CreateGxsChannelMsg::addThumbnail()
 {
-	QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load thumbnail picture"), 156, 107);
+    QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load thumbnail picture"), 0,0);	// 0,0 means: no scale.
 
 	if (img.isNull())
 		return;
@@ -743,92 +784,97 @@ void CreateGxsChannelMsg::addThumbnail()
 	picture = img;
 
 	// to show the selected
-	thumbnail_label->setPixmap(picture);
+    preview_W->setPixmap(picture, aspectRatio_CB->currentIndex()==0);
+
 }
 
-void CreateGxsChannelMsg::loadChannelPostInfo(const uint32_t &token)
+void CreateGxsChannelMsg::loadOriginalChannelPostInfo()
 {
 #ifdef DEBUG_CREATE_GXS_MSG
 	std::cerr << "CreateGxsChannelMsg::loadChannelPostInfo()";
 	std::cerr << std::endl;
 #endif
-
-	std::vector<RsGxsChannelPost> posts;
-	rsGxsChannels->getPostData(token, posts);
-
-	if (posts.size() != 1)
+	RsThread::async([this]()
 	{
-		std::cerr << "CreateGxsChannelMsg::loadChannelPostInfo() ERROR INVALID Number of posts in request" << std::endl;
-        return ;
-    }
+		std::vector<RsGxsChannelPost> posts;
+		std::vector<RsGxsComment> comments;
+		std::vector<RsGxsVote> votes;
 
-    // now populate the widget with the channel post data.
-	const RsGxsChannelPost& post = posts[0];
+		if( !rsGxsChannels->getChannelContent(mChannelId,std::set<RsGxsMessageId>({mOrigPostId}),posts,comments,votes) || posts.size() != 1)
+		{
+			std::cerr << "Cannot get channel post data for channel " << mChannelId << " and post " << mOrigPostId << std::endl;
+			return;
+		}
 
-    if(post.mMeta.mGroupId != mChannelId || post.mMeta.mMsgId != mOrigPostId)
-    {
-		std::cerr << "CreateGxsChannelMsg::loadChannelPostInfo() ERROR INVALID post ID or channel ID" << std::endl;
-        return ;
-    }
+		RsQThreadUtils::postToObject( [posts,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
 
-	subjectEdit->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str())) ;
-	RichTextEditWidget->setText(QString::fromUtf8(post.mMsg.c_str()));
+            const RsGxsChannelPost& post(posts[0]);
 
-    for(std::list<RsGxsFile>::const_iterator it(post.mFiles.begin());it!=post.mFiles.end();++it)
-        addAttachment(it->mHash,it->mName,it->mSize,true,RsPeerId(),true);
+			if(post.mMeta.mGroupId != mChannelId || post.mMeta.mMsgId != mOrigPostId)
+			{
+				std::cerr << "CreateGxsChannelMsg::loadChannelPostInfo() ERROR INVALID post ID or channel ID" << std::endl;
+				return ;
+			}
 
-	if(post.mThumbnail.mData != NULL)
-	{
-		GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData,post.mThumbnail.mSize,picture,GxsIdDetails::ORIGINAL);
-		thumbnail_label->setPixmap(picture);
-	}
+			subjectEdit->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str())) ;
+			RichTextEditWidget->setText(QString::fromUtf8(post.mMsg.c_str()));
+
+			for(std::list<RsGxsFile>::const_iterator it(post.mFiles.begin());it!=post.mFiles.end();++it)
+				addAttachment(it->mHash,it->mName,it->mSize,true,RsPeerId(),true);
+
+			if(post.mThumbnail.mData != NULL)
+			{
+				GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData,post.mThumbnail.mSize,picture,GxsIdDetails::ORIGINAL);
+                preview_W->setPixmap(picture,true);
+			}
+
+
+		}, this );
+	});
+
 }
 
-void CreateGxsChannelMsg::loadChannelInfo(const uint32_t &token)
+void CreateGxsChannelMsg::loadChannelInfo()
 {
 #ifdef DEBUG_CREATE_GXS_MSG
 	std::cerr << "CreateGxsChannelMsg::loadChannelInfo()";
 	std::cerr << std::endl;
 #endif
 
-	std::list<RsGroupMetaData> groupInfo;
-	rsGxsChannels->getGroupSummary(token, groupInfo);
 
-	if (groupInfo.size() == 1)
+	RsThread::async([this]()
 	{
-		RsGroupMetaData fi = groupInfo.front();
-		saveChannelInfo(fi);
-	}
-	else
-	{
-		std::cerr << "CreateGxsChannelMsg::loadForumInfo() ERROR INVALID Number of Forums";
-		std::cerr << std::endl;
-	}
-}
+		std::vector<RsGxsChannelGroup> groups;
 
-void CreateGxsChannelMsg::loadRequest(const TokenQueue *queue, const TokenRequest &req)
-{
-#ifdef DEBUG_CREATE_GXS_MSG
-	std::cerr << "CreateGxsChannelMsg::loadRequest() UserType: " << req.mUserType;
-	std::cerr << std::endl;
-#endif
+        if( !rsGxsChannels->getChannelsInfo(std::list<RsGxsGroupId>({mChannelId}),groups) || groups.size() != 1)
+        {
+            std::cerr << "Cannot get channel group data for channel " << mChannelId << std::endl;
+            return;
+        }
 
-	if (queue == mChannelQueue)
-	{
-		/* now switch on req */
-		switch(req.mUserType)
+        RsQThreadUtils::postToObject( [groups,this]()
 		{
-			case CREATEMSG_CHANNELINFO:
-				loadChannelInfo(req.mToken);
-				break;
-			case CREATEMSG_CHANNEL_POST_INFO:
-				loadChannelPostInfo(req.mToken);
-				break;
-			default:
-				std::cerr << "CreateGxsChannelMsg::loadRequest() UNKNOWN UserType ";
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
+
+			if (groups.size() == 1)
+			{
+				const RsGroupMetaData& fi = groups.front().mMeta;
+				saveChannelInfo(fi);
+			}
+			else
+			{
+				std::cerr << "CreateGxsChannelMsg::loadForumInfo() ERROR INVALID Number of Forums";
 				std::cerr << std::endl;
-		}
-	}
+			}
+
+		}, this );
+	});
 }
 
 void CreateGxsChannelMsg::on_channelpostButton_clicked()

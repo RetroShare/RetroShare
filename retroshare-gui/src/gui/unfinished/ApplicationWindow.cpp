@@ -49,19 +49,10 @@
 /* Images for toolbar icons */
 #define IMAGE_RETROSHARE        ":/images/RetroShare16.png"
 #define IMAGE_ABOUT             ":/images/informations_24x24.png"
-#define IMAGE_STATISTIC         ":/images/ksysguard32.png"
-#define IMAGE_GAMES             ":/images/kgames.png"
-#define IMAGE_PHOTO             ":/images/lphoto.png"
-#define IMAGE_BWGRAPH           ":/images/ksysguard.png"
-#define IMAGE_CLOSE             ":/images/close_normal.png"
-#define IMAGE_CALENDAR          ":/images/calendar.png"
-#define IMAGE_LIBRARY           ":/images/library.png"
+#define IMAGE_LIBRARY           ":/icons/collections.png"
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
-#define IMAGE_GXSFORUMS         ":/images/konversation.png"
 #define IMAGE_WIKI              ":/images/wikibook_32.png"
 #define IMAGE_POSTED            ":/images/posted_32.png"
-#define IMAGE_GXSCHANNELS       ":/images/channels.png"
-#define IMAGE_IDENTITY          ":/images/identity/identities_32.png"
 #define IMAGE_CIRCLES           ":/images/user/agt_forum24.png"
 
 
@@ -82,24 +73,24 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WindowFlags flags)
 
     //StatisticDialog *statisticDialog = NULL;
     //ui.stackPages->add(statisticDialog = new StatisticDialog(ui.stackPages),
-    //                   createPageAction(QIcon(IMAGE_STATISTIC), tr("Statistics"), grp));
+    //                   createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_STATISTIC), tr("Statistics"), grp));
 
     //GamesDialog *gamesDialog = NULL;
     //ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
-    //                   createPageAction(QIcon(IMAGE_GAMES), tr("Games Launcher"), grp));
+    //                   createPageAction(QIcon(), tr("Games Launcher"), grp));
 
     //CalDialog *calDialog = NULL;
     //ui.stackPages->add(calDialog = new CalDialog(ui.stackPages),
-    //                  createPageAction(QIcon(IMAGE_CALENDAR), tr("Shared Calendars"), grp));
+    //                  createPageAction(QIcon(), tr("Shared Calendars"), grp));
 #if 0
     IdDialog *idDialog = NULL;
     ui.stackPages->add(idDialog = new IdDialog(ui.stackPages),
-                      action = createPageAction(QIcon(IMAGE_IDENTITY), tr("Identities"), grp));
+                      action = createPageAction(QIcon(), tr("Identities"), grp));
 
 #ifdef RS_USE_CIRCLES
     CirclesDialog *circlesDialog = NULL;
     ui.stackPages->add(circlesDialog = new CirclesDialog(ui.stackPages),
-                      action = createPageAction(QIcon(IMAGE_CIRCLES ), tr("Circles"), grp));
+                      action = createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_CIRCLES ), tr("Circles"), grp));
     mNotify.push_back(QPair<MainPage*, QAction*>(circlesDialog, action));
 #endif
 #endif
@@ -107,37 +98,26 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WindowFlags flags)
 #ifdef RS_USE_PHOTOSHARE
     PhotoShare *photoShare = NULL;
     ui.stackPages->add(photoShare = new PhotoShare(ui.stackPages),
-                     action = createPageAction(QIcon(IMAGE_PHOTO), tr("Photos"), grp));
+                     action = createPageAction(QIcon(), tr("Photos"), grp));
     mNotify.push_back(QPair<MainPage*, QAction*>(photoShare, action));
 #endif
 
     /*PostedDialog *postedDialog = NULL;
     ui.stackPages->add(postedDialog = new PostedDialog(ui.stackPages),
-                      action = createPageAction(QIcon(IMAGE_POSTED), tr("Posted Links"), grp));
+                      action = createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_POSTED), tr("Posted Links"), grp));
     postedDialog->setup();
     mNotify.push_back(QPair<MainPage*, QAction*>(postedDialog, action));
 
     WikiDialog *wikiDialog = NULL;
     ui.stackPages->add(wikiDialog = new WikiDialog(ui.stackPages),
-                      action = createPageAction(QIcon(IMAGE_WIKI), tr("Wiki Pages"), grp));
+                      action = createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_WIKI), tr("Wiki Pages"), grp));
     mNotify.push_back(QPair<MainPage*, QAction*>(wikiDialog, action));*/
-#if 0
-    GxsForumsDialog *gxsforumsDialog = NULL;
-    ui.stackPages->add(gxsforumsDialog = new GxsForumsDialog(ui.stackPages),
-                      action = createPageAction(QIcon(IMAGE_GXSFORUMS), tr("GxsForums"), grp));
-    mNotify.push_back(QPair<MainPage*, QAction*>(gxsforumsDialog, action));
-
-    ChannelDialog *gxschannelDialog = NULL;
-    ui.stackPages->add(gxschannelDialog = new ChannelDialog(ui.stackPages),
-                      action = createPageAction(QIcon(IMAGE_GXSCHANNELS), tr("GxsChannels"), grp));
-    gxschannelDialog->setup();
-#endif
 
 // THESE HAVE TO BE CONVERTED TO VEG FORMAT
 #if USE_VEG_SERVICE
     WireDialog *wireDialog = NULL;
     ui.stackPages->add(wireDialog = new WireDialog(ui.stackPages),
-                      action = createPageAction(QIcon(IMAGE_BWGRAPH), tr("The Wire"), grp));
+                      action = createPageAction(QIcon(), tr("The Wire"), grp));
     mNotify.push_back(QPair<MainPage*, QAction*>(wireDialog, action));
 #endif
 
