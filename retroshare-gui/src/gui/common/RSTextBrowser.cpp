@@ -284,14 +284,14 @@ QString RSTextBrowser::anchorForPosition(const QPoint &pos) const
 		// std::cout << "RSTextBrowser::AnchorForPosition selection: " << selection.toStdString() << std::endl;
 		QRegExp name_regexp("<a name=\"(.*)\"", Qt::CaseSensitive, QRegExp::RegExp2);
 		name_regexp.setMinimal(true);
-		// XXX may[be] get changed with time. Skip:
-		// 95 - DOCTYPE stuff
-		// 73 - <html><head...
-		// 33 - p, li...
-		// 22 - <body>...
-		// 119 - <p style...
-		                        /* for click to get what we seeking for */
-		int max_allowed_position = 95 + 73 + 33 + 22 + 119; // =342
+		// XXX may[be] get changed with time. Will skip:
+		static const int doctype_stuff = strlen("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"); // 95
+		static const int html_head = strlen("<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"); // 73
+		static const int p_li_wrap = strlen("p, li { white-space: pre-wrap; }\n"); // 33
+		static const int start_body_html = strlen("</style></head><body>\n"); // 22
+		static const int p_style = strlen("<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\""); // 119
+		// for click to get what we seeking for ( =342 )
+		int max_allowed_position = doctype_stuff + html_head + p_li_wrap + start_body_html + p_style;
 		// get last match [of] (time, personid, .*)
 		while (name_regexp.indexIn(selection, max_allowed_position) != -1) {
 			anchor = name_regexp.cap(1);
@@ -310,8 +310,9 @@ QString RSTextBrowser::anchorForPosition(const QPoint &pos) const
 				}
 			}
 			// total length of start_of_line..position_of_click(htmled) for 'personid:'.
-			// do not count '<!--EndFragment--></p></body></html>'. It will be not checked.
-			int position_of_click = selection.length() - 36;
+			// do not count unneeded part.
+			static const int endfragment_html_part_length = strlen("<!--EndFragment--></p></body></html>");
+			int position_of_click = selection.length() - endfragment_html_part_length;
 			if( position_of_click <= max_allowed_position ) {
 				// std::cout << "RSTextBrowser::AnchorForPosition it works" << std::endl;
 			} else {
