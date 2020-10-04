@@ -61,24 +61,24 @@ void TorStatus::getTorStatus()
 	QString text = _compactMode?statusTor->text():"";
 
 	/* check local network state. We cannot make sure that Tor is running yet. */
-	uint32_t netState = rsConfig -> getNetState();
+	RsNetState netState = rsConfig -> getNetState();
 	bool online ;
 
 	switch(netState)
 	{
 		default:
-		case RSNET_NETSTATE_BAD_UNKNOWN:
-		case RSNET_NETSTATE_BAD_OFFLINE: online = false ;
+	    case RsNetState::BAD_UNKNOWN:
+	    case RsNetState::BAD_OFFLINE: online = false ;
 										 break ;
 
-		case RSNET_NETSTATE_WARNING_RESTART:
+	    case RsNetState::WARNING_RESTART:
 
-		case RSNET_NETSTATE_BAD_NATSYM:
-		case RSNET_NETSTATE_BAD_NODHT_NAT:
-		case RSNET_NETSTATE_WARNING_NATTED:
-		case RSNET_NETSTATE_WARNING_NODHT:
-		case RSNET_NETSTATE_GOOD:
-		case RSNET_NETSTATE_ADV_FORWARD: online = true ;
+	    case RsNetState::BAD_NATSYM:
+	    case RsNetState::BAD_NODHT_NAT:
+	    case RsNetState::WARNING_NATTED:
+	    case RsNetState::WARNING_NODHT:
+	    case RsNetState::GOOD:
+	    case RsNetState::ADV_FORWARD: online = true ;
 										 break ;
 	}
 
