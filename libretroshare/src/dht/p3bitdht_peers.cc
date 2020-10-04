@@ -242,7 +242,7 @@ int p3BitDht::addKnownPeer( const RsPeerId &pid,
 	addrv4.sin_addr = ap->sin_addr;
 	addrv4.sin_port = ap->sin_port;
 
-	RsDhtPeerType p3type = static_cast<RsDhtPeerType>(0);
+	RsDhtPeerType p3type = RsDhtPeerType::ANY;
 	int bdflags = 0;
 	bdId id;
 	bool isOwnId = false;
@@ -469,7 +469,7 @@ DhtPeerDetails *p3BitDht::findInternalDhtPeer_locked(const bdNodeId *id, RsDhtPe
 	{
 		return NULL;
 	}
-	if (type != static_cast<RsDhtPeerType>(0))
+	if (type != RsDhtPeerType::ANY)
 	{
 		if (it->second.mPeerType != type)
 		{

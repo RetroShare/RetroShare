@@ -166,7 +166,7 @@ int p3BitDht::setRelayMode(RsDhtRelayMode mode)
 int p3BitDht::getRelayAllowance(RsDhtRelayClass classIdx, uint32_t &count, uint32_t &bandwidth)
 {
 	std::cerr << "p3BitDht::getRelayAllowance(" << static_cast<typename std::underlying_type<RsDhtRelayClass>::type>(classIdx) << "): ";
-	if ((classIdx >= static_cast<RsDhtRelayClass>(0)) && (classIdx < RsDhtRelayClass::NUM_CLASS))
+	if ((classIdx >= RsDhtRelayClass::ALL) && (classIdx < RsDhtRelayClass::NUM_CLASS))
 	{
 		count = mRelay->getRelayClassMax(static_cast<typename std::underlying_type<RsDhtRelayClass>::type>(classIdx));
 		bandwidth = mRelay->getRelayClassBandwidth(static_cast<typename std::underlying_type<RsDhtRelayClass>::type>(classIdx));
@@ -306,7 +306,7 @@ bool    p3BitDht::loadList(std::list<RsItem *>& load)
 	int bandwidth[static_cast<typename std::underlying_type<RsDhtRelayClass>::type>(RsDhtRelayClass::NUM_CLASS)] = {0};
 
 	bool haveMode = false;
-	RsDhtRelayMode mode = static_cast<RsDhtRelayMode>(0);
+	RsDhtRelayMode mode = RsDhtRelayMode::DISABLED;
 
 	std::list<RsTlvKeyValue>::iterator it;
 	for(it = config->tlvkvs.pairs.begin(); it != config->tlvkvs.pairs.end(); ++it)

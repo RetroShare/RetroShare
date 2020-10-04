@@ -87,6 +87,7 @@ enum class RsDhtRelayClass : uint8_t
 
 enum class RsDhtRelayMode : uint16_t
 {
+	DISABLED= 0x0000,
 	ENABLED	= 0x0001,
 
 	MASK	= 0x00f0,
