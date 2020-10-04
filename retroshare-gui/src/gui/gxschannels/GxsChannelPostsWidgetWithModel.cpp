@@ -1069,6 +1069,8 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
         RetroShareLink link = RetroShareLink::createMessage(group.mMeta.mAuthorId, "");
         ui->infoAdministrator->setText(link.toHtml());
     }
+    else
+        ui->infoAdministrator->setText("[No contact author]");
 
 	ui->infoCreated->setText(DateTime::formatLongDateTime(group.mMeta.mPublishTs));
 
@@ -1164,6 +1166,9 @@ bool GxsChannelPostsWidgetWithModel::navigate(const RsGxsMessageId& msgId)
 	ui->postsTree->selectionModel()->setCurrentIndex(index,QItemSelectionModel::ClearAndSelect);
 	ui->postsTree->scrollTo(index);//May change if model reloaded
 	ui->postsTree->setFocus();
+
+    ui->channel_TW->setCurrentIndex(CHANNEL_TABS_POSTS);
+    ui->details_TW->setCurrentIndex(CHANNEL_TABS_DETAILS);
 
 	return true;
 }
