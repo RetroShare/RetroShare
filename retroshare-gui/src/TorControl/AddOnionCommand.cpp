@@ -53,10 +53,10 @@ QByteArray AddOnionCommand::build()
     QByteArray out("ADD_ONION");
 
     if (m_service->privateKey().isLoaded()) {
-        out += " RSA1024:";
-        out += m_service->privateKey().encodedPrivateKey(CryptoKey::DER).toBase64();
+        out += " ";
+        out += m_service->privateKey().bytes();
     } else {
-        out += " NEW:RSA1024";
+        out += " NEW:RSA1024";	// this is v2. For v3, use NEW:BEST, or NEW:ED25519-V3
     }
 
     foreach (const HiddenService::Target &target, m_service->targets()) {
@@ -80,12 +80,21 @@ void AddOnionCommand::onReply(int statusCode, const QByteArray &data)
         return;
     }
 
-    const QByteArray keyPrefix("PrivateKey=RSA1024:");
+    const QByteArray keyPrefix("PrivateKey=");
+    const QByteArray sidPrefix("ServiceID=");
+
+    if(data.startsWith("ServiceID=")){
+        QByteArray service_id = data.mid(sidPrefix.size());
+        m_service->setServiceId(service_id);
+    }
+
     if (data.startsWith(keyPrefix)) {
-        QByteArray keyData(QByteArray::fromBase64(data.mid(keyPrefix.size())));
+
+        QByteArray keyData(data.mid(keyPrefix.size()));
         CryptoKey key;
-        if (!key.loadFromData(keyData, CryptoKey::PrivateKey, CryptoKey::DER)) {
-            m_errorMessage = QStringLiteral("Key decoding failed");
+
+        if (!key.loadFromTorMessage(keyData)) {
+            m_errorMessage = QStringLiteral("Key structure check failed");
             return;
         }
 
