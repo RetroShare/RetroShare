@@ -155,11 +155,11 @@ bool CryptoKey::loadFromTorMessage(const QByteArray& b)
 
     if(b.startsWith("RSA1024"))
         std::cerr << "  type: RSA-1024 (Tor v2)" << std::endl;
-    else if(b.startsWith("ED25529-V3"))
+    else if(b.startsWith("ED25519-V3"))
         std::cerr << "  type: ED25519-V3 (Tor v3)" << std::endl;
-    else
+    else if(b.indexOf(':'))
     {
-        std::cerr << "  unknown type \"" << b.left(b.indexOf(':')).toStdString() << "\"" << std::endl;
+        std::cerr << "  unknown type, or bad syntax in key: \"" << b.left(b.indexOf(':')).toStdString() << "\". Not accepted." << std::endl;
         return false;
     }
 

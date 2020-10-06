@@ -56,7 +56,9 @@ QByteArray AddOnionCommand::build()
         out += " ";
         out += m_service->privateKey().bytes();
     } else {
-        out += " NEW:RSA1024";	// this is v2. For v3, use NEW:BEST, or NEW:ED25519-V3
+        //out += " NEW:RSA1024";	// this is v2. For v3, use NEW:BEST, or NEW:ED25519-V3
+        //out += " NEW:ED25519-V3";	// this is v3.
+        out += " NEW:BEST";		// this is v3, but without control of key type. Generates a RSA1024 key on older Tor versions.
     }
 
     foreach (const HiddenService::Target &target, m_service->targets()) {
