@@ -20,7 +20,6 @@
 
 #include <QDateTime>
 #include <QMenu>
-#include <QMessageBox>
 #include <QStyle>
 #include <QTextDocument>
 #include <QToolButton>
@@ -28,7 +27,6 @@
 #include "rshare.h"
 #include "BoardPostDisplayWidget.h"
 #include "PhotoView.h"
-#include "gui/RetroShareLink.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/misc.h"
 #include "gui/common/FilesDefs.h"
@@ -165,22 +163,6 @@ void BoardPostDisplayWidgetBase::showAuthorInPeople()
 
     MainWindow::showWindow(MainWindow::People);
     idDialog->navigate(RsGxsId(mPost.mMeta.mAuthorId));
-}
-
-void BoardPostDisplayWidgetBase::copyMessageLink()
-{
-	if (mPost.mMeta.mGroupId.isNull() || mPost.mMeta.mMsgId.isNull()) {
-		return;
-	}
-
-	RetroShareLink link = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_POSTED, mPost.mMeta.mGroupId, mPost.mMeta.mMsgId, QString::fromUtf8(mPost.mMeta.mMsgName.c_str()));
-
-	if (link.valid()) {
-		QList<RetroShareLink> urls;
-		urls.push_back(link);
-		RSLinkClipboard::copyLinks(urls);
-		QMessageBox::information(NULL,tr("information"),tr("The Retrohare link was copied to your clipboard.")) ;
-	}
 }
 
 void BoardPostDisplayWidgetBase::setup()
