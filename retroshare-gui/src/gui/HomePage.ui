@@ -174,7 +174,7 @@ private and secure decentralized communication platform.
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="images.qrc">
+        <iconset resource="icons.qrc">
          <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
        </property>
        <property name="checkable">
@@ -231,6 +231,9 @@ private and secure decentralized communication platform.
        </property>
        <property name="text">
         <string/>
+       </property>
+       <property name="wordWrap">
+        <bool>false</bool>
        </property>
        <property name="textInteractionFlags">
         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
@@ -338,8 +341,8 @@ private and secure decentralized communication platform.
   </layout>
  </widget>
  <resources>
-  <include location="images.qrc"/>
   <include location="icons.qrc"/>
+  <include location="images.qrc"/>
  </resources>
  <connections/>
 </ui>

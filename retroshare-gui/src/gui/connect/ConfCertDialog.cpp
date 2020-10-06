@@ -277,7 +277,7 @@ void ConfCertDialog::loadInvitePage()
 
     if(ui._shortFormat_CB->isChecked())
 	{
-		rsPeers->getShortInvite(invite,detail.id,true,!ui._includeIPHistory_CB->isChecked() );
+        rsPeers->getShortInvite(invite,detail.id,true,!(ui._includeIPHistory_CB->isChecked()|| detail.isHiddenNode) );
 		ui.stabWidget->setTabText(1, tr("Retroshare ID"));
 	}
 	else

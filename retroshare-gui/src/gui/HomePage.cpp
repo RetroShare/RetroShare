@@ -189,8 +189,6 @@ void HomePage::updateOwnCert()
 
 void HomePage::updateOwnId()
 {
-    bool include_extra_locators = mIncludeAllIPs;
-
     RsPeerDetails detail;
 
     if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
@@ -199,9 +197,10 @@ void HomePage::updateOwnId()
         return ;
     }
 
-	std::string invite ;
+    bool include_extra_locators = mIncludeAllIPs || detail.isHiddenNode;
+    std::string invite ;
 
-	rsPeers->getShortInvite(invite,rsPeers->getOwnId(),true,!mIncludeAllIPs);
+    rsPeers->getShortInvite(invite,rsPeers->getOwnId(),true,!include_extra_locators);
 
 	ui->retroshareid->setText(QString::fromUtf8(invite.c_str()));
 }
