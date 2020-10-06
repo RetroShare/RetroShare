@@ -493,6 +493,9 @@ p, li { white-space: pre-wrap; }
        </item>
        <item>
         <widget class="RSTreeView" name="postsTree">
+         <property name="contextMenuPolicy">
+          <enum>Qt::CustomContextMenu</enum>
+         </property>
          <property name="editTriggers">
           <set>QAbstractItemView::CurrentChanged|QAbstractItemView::SelectedClicked</set>
          </property>
