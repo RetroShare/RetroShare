@@ -1317,6 +1317,13 @@ BoardPostDisplayWidget_card QLabel#newLabel {
 	color: black;
 }
 
+BoardPostDisplayWidget_compact QLabel#titleLabel,
+BoardPostDisplayWidget_card QLabel#titleLabel{
+	font-size: 14px;
+	font: bold;
+}
+
+
 WireGroupItem QFrame#wire_frame
 {
 	border: 1px solid #38444d;
