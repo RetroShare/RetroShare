@@ -132,12 +132,18 @@ bool CryptoKey::loadFromFile(const QString& path)
     QByteArray data = file.readAll();
     file.close();
 
-    if(data.startsWith("-----"))
+    if(data.contains("-----BEGIN RSA PRIVATE KEY-----"))
+    {
         std::cerr << "Note: Reading/converting Tor v2 key format." << std::endl;
 
-    // This to be compliant with old format. New format is oblivious to the type of key so we dont need a header
-    data = data.replace("-----BEGIN RSA PRIVATE KEY-----",nullptr);
-    data = data.replace("-----END RSA PRIVATE KEY-----",nullptr);
+        // This to be compliant with old format. New format is oblivious to the type of key so we dont need a header
+        data = data.replace("-----BEGIN RSA PRIVATE KEY-----",nullptr);
+        data = data.replace("-----END RSA PRIVATE KEY-----",nullptr);
+        data = data.replace("\n",nullptr);
+        data = data.replace("\t",nullptr);
+
+        data = "RSA1024:"+data;
+    }
 
     std::cerr << "Have read the following key: " << std::endl;
     std::cerr << QString(data).toStdString() << std::endl;
