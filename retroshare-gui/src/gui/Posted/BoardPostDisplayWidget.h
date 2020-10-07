@@ -90,6 +90,8 @@ protected slots:
     void makeDownVote() ;
 	void setCommentsSize(int comNb) ;
     void handleShareButtonClicked() ;
+    void handleCopyLinkClicked() ;
+
 
 signals:
     void changeReadStatusRequested(const RsGxsMessageId&,bool);
@@ -98,6 +100,7 @@ signals:
     void commentsRequested(const RsGxsMessageId&,bool);
     void thumbnailOpenned();
     void shareButtonClicked();
+    void copylinkClicked();
 
 protected:
 	RsPostedPost mPost;

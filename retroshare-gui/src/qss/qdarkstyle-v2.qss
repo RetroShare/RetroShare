@@ -2150,6 +2150,12 @@ BoardPostDisplayWidget_card  QFrame#mainFrame[new=true] {
     background-color: #1464a0;
 }
 
+BoardPostDisplayWidget_compact QLabel#titleLabel,
+BoardPostDisplayWidget_card QLabel#titleLabel{
+	font-size: 14px;
+	font: bold;
+}
+
 WireGroupItem QFrame#wire_frame{
 	background: transparent;
 }

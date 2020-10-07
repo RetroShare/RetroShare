@@ -186,7 +186,7 @@ void BoardPostDisplayWidgetBase::setup()
     QObject::connect(readButton(), SIGNAL(clicked()), this, SLOT(readToggled()));
 
     QAction *CopyLinkAction = new QAction(QIcon(""),tr("Copy RetroShare Link"), this);
-    connect(CopyLinkAction, SIGNAL(triggered()), this, SLOT(copyMessageLink()));
+    connect(CopyLinkAction, SIGNAL(triggered()), this, SLOT(handleCopyLinkClicked()));
 
     QAction *showInPeopleAct = new QAction(QIcon(), tr("Show author in people tab"), this);
     connect(showInPeopleAct, SIGNAL(triggered()), this, SLOT(showAuthorInPeople()));
@@ -217,6 +217,7 @@ void BoardPostDisplayWidgetBase::setup()
         qtime.setTime_t(mPost.mMeta.mPublishTs);
         QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
         dateLabel()->setText(timestamp);
+		pictureLabel()->setDisabled(true);
     }
     else
     {
@@ -311,6 +312,11 @@ void BoardPostDisplayWidgetBase::handleShareButtonClicked()
 {
     emit shareButtonClicked();
 }
+
+void BoardPostDisplayWidgetBase::handleCopyLinkClicked()
+{
+    emit copylinkClicked();
+}
 //===================================================================================================================================
 //==                                                 class BoardPostDisplayWidget                                                  ==
 //===================================================================================================================================
@@ -348,15 +354,15 @@ void BoardPostDisplayWidget_compact::setup()
     RsReputationLevel overall_reputation = rsReputations->overallReputationLevel(mPost.mMeta.mAuthorId);
     bool redacted = (overall_reputation == RsReputationLevel::LOCALLY_NEGATIVE);
 
+	int desired_height = QFontMetricsF(font()).height() * 5;
+	ui->pictureLabel->setFixedSize(16/9.0*desired_height,desired_height);
+
     if(redacted)
     {
-        ui->pictureLabel->setPicture( FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default.png") );
+        ui->pictureLabel->setPicture( FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-blocked.png") );
     }
     else
     {
-        int desired_height = QFontMetricsF(font()).height() * 5;
-        ui->pictureLabel->setFixedSize(16/9.0*desired_height,desired_height);
-
         if(mPost.mImage.mData != NULL)
         {
             QPixmap pixmap;

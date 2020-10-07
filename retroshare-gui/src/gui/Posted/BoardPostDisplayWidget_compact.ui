@@ -183,6 +183,9 @@
         </item>
         <item>
          <layout class="QVBoxLayout" name="verticalLayout">
+          <property name="leftMargin">
+           <number>3</number>
+          </property>
           <item>
            <widget class="StyledLabel" name="titleLabel">
             <property name="sizePolicy">
@@ -219,10 +222,13 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <property name="spacing">
-             <number>5</number>
+             <number>6</number>
             </property>
             <property name="leftMargin">
-             <number>0</number>
+             <number>2</number>
+            </property>
+            <property name="topMargin">
+             <number>2</number>
             </property>
             <property name="rightMargin">
              <number>6</number>
