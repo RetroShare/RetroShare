@@ -186,7 +186,7 @@ void BoardPostDisplayWidgetBase::setup()
     QObject::connect(readButton(), SIGNAL(clicked()), this, SLOT(readToggled()));
 
     QAction *CopyLinkAction = new QAction(QIcon(""),tr("Copy RetroShare Link"), this);
-    connect(CopyLinkAction, SIGNAL(triggered()), this, SLOT(copyMessageLink()));
+    connect(CopyLinkAction, SIGNAL(triggered()), this, SLOT(handleCopyLinkClicked()));
 
     QAction *showInPeopleAct = new QAction(QIcon(), tr("Show author in people tab"), this);
     connect(showInPeopleAct, SIGNAL(triggered()), this, SLOT(showAuthorInPeople()));
@@ -310,6 +310,11 @@ void BoardPostDisplayWidgetBase::setup()
 void BoardPostDisplayWidgetBase::handleShareButtonClicked()
 {
     emit shareButtonClicked();
+}
+
+void BoardPostDisplayWidgetBase::handleCopyLinkClicked()
+{
+    emit copylinkClicked();
 }
 //===================================================================================================================================
 //==                                                 class BoardPostDisplayWidget                                                  ==

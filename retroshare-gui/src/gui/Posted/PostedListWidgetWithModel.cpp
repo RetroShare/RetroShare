@@ -205,6 +205,7 @@ QWidget *PostedPostDelegate::createEditor(QWidget *parent, const QStyleOptionVie
         QObject::connect(w,SIGNAL(expand(RsGxsMessageId,bool)),this,SLOT(markCurrentPostAsRead()));
         QObject::connect(w,SIGNAL(commentsRequested(const RsGxsMessageId&,bool)),mPostListWidget,SLOT(markCurrentPostAsRead()));
         QObject::connect(w,SIGNAL(shareButtonClicked()),mPostListWidget,SLOT(markCurrentPostAsRead()));
+        QObject::connect(w,SIGNAL(copylinkClicked()),mPostListWidget,SLOT(copyMessageLink()));
 
         w->setFixedSize(option.rect.size());
         w->adjustSize();
@@ -405,6 +406,7 @@ void PostedListWidgetWithModel::copyMessageLink()
 		QList<RetroShareLink> urls;
 		urls.push_back(link);
 		RSLinkClipboard::copyLinks(urls);
+		QMessageBox::information(NULL,tr("information"),tr("The Retrohare link was copied to your clipboard.")) ;
 	}
     catch(std::exception& e)
     {
