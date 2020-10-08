@@ -217,7 +217,7 @@ void BoardPostDisplayWidgetBase::setup()
         qtime.setTime_t(mPost.mMeta.mPublishTs);
         QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
         dateLabel()->setText(timestamp);
-		pictureLabel()->setDisabled(true);
+        pictureLabel()->setDisabled(true);
     }
     else
     {
@@ -479,24 +479,34 @@ void BoardPostDisplayWidget_card::setup()
 {
     BoardPostDisplayWidgetBase::setup();
 
-    if(mPost.mImage.mData != NULL)
+    RsReputationLevel overall_reputation = rsReputations->overallReputationLevel(mPost.mMeta.mAuthorId);
+    bool redacted = (overall_reputation == RsReputationLevel::LOCALLY_NEGATIVE);
+
+    if(redacted)
     {
-        QPixmap pixmap;
-        GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
-        // Wiping data - as its been passed to thumbnail.
-
-        QPixmap scaledpixmap;
-        if(pixmap.width() > 800){
-            QPixmap scaledpixmap = pixmap.scaledToWidth(800, Qt::SmoothTransformation);
-            ui->pictureLabel->setPixmap(scaledpixmap);
-        }else{
-            ui->pictureLabel->setPixmap(pixmap);
-        }
-
-        ui->pictureLabel->show();
+        ui->pictureLabel->setPixmap( FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-blocked.png") );
     }
     else
-        ui->pictureLabel->hide();
+    {
+		if(mPost.mImage.mData != NULL)
+		{
+			QPixmap pixmap;
+			GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
+			// Wiping data - as its been passed to thumbnail.
+
+			QPixmap scaledpixmap;
+			if(pixmap.width() > 800){
+				QPixmap scaledpixmap = pixmap.scaledToWidth(800, Qt::SmoothTransformation);
+				ui->pictureLabel->setPixmap(scaledpixmap);
+			}else{
+				ui->pictureLabel->setPixmap(pixmap);
+			}
+
+			ui->pictureLabel->show();
+		}
+		else
+			ui->pictureLabel->hide();
+	}
 
     QTextDocument doc;
     doc.setHtml(notes()->text());
