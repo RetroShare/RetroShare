@@ -147,23 +147,6 @@ void BoardPostDisplayWidgetBase::readToggled()
 
     emit changeReadStatusRequested(mPost.mMeta.mMsgId,s);
 }
-void BoardPostDisplayWidgetBase::showAuthorInPeople()
-{
-    if(mPost.mMeta.mAuthorId.isNull())
-    {
-        std::cerr << "(EE) GxsForumThreadWidget::loadMsgData_showAuthorInPeople() ERROR Missing Message Data...";
-        std::cerr << std::endl;
-    }
-
-    /* window will destroy itself! */
-    IdDialog *idDialog = dynamic_cast<IdDialog*>(MainWindow::getPage(MainWindow::People));
-
-    if (!idDialog)
-        return ;
-
-    MainWindow::showWindow(MainWindow::People);
-    idDialog->navigate(RsGxsId(mPost.mMeta.mAuthorId));
-}
 
 void BoardPostDisplayWidgetBase::setup()
 {
@@ -188,9 +171,6 @@ void BoardPostDisplayWidgetBase::setup()
     QAction *CopyLinkAction = new QAction(QIcon(""),tr("Copy RetroShare Link"), this);
     connect(CopyLinkAction, SIGNAL(triggered()), this, SLOT(handleCopyLinkClicked()));
 
-    QAction *showInPeopleAct = new QAction(QIcon(), tr("Show author in people tab"), this);
-    connect(showInPeopleAct, SIGNAL(triggered()), this, SLOT(showAuthorInPeople()));
-
     int S = QFontMetricsF(font()).height() ;
 
     readButton()->setChecked(false);
@@ -198,7 +178,6 @@ void BoardPostDisplayWidgetBase::setup()
     QMenu *menu = new QMenu();
     menu->addAction(CopyLinkAction);
     menu->addSeparator();
-    menu->addAction(showInPeopleAct);
     shareButton()->setMenu(menu);
 
     connect(shareButton(),SIGNAL(pressed()),this,SLOT(handleShareButtonClicked()));

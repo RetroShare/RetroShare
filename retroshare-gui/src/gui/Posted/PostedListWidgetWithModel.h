@@ -132,6 +132,7 @@ protected:
 	virtual void setAllMessagesReadDo(bool read, uint32_t &token) override;
 
 private slots:
+    void showAuthorInPeople();
     void tabCloseRequested(int index);
     void updateSorting(int);
     void switchDisplayMode();

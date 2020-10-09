@@ -83,7 +83,6 @@ protected slots:
     virtual QFrame      *mainFrame() =0;
 
     void loadComments(bool e);
-    void showAuthorInPeople();
     void readToggled();
     void setReadStatus(bool isNew, bool isUnread) ;
     void makeUpVote() ;

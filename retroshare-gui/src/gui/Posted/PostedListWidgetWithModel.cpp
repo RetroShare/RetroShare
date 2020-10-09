@@ -37,11 +37,14 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/feeds/SubFileItem.h"
 #include "gui/notifyqt.h"
+#include "gui/Identity/IdDialog.h"
 #include "gui/RetroShareLink.h"
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
 #include "util/qtthreadsutils.h"
 #include "gui/common/FilesDefs.h"
+
+#include "gui/MainWindow.h"
 
 #include "PostedListWidgetWithModel.h"
 #include "PostedPostsModel.h"
@@ -64,6 +67,7 @@
 //
 //
 #define IMAGE_COPYLINK     ":/images/copyrslink.png"
+#define IMAGE_AUTHOR       ":/images/user/personal64.png"
 
 Q_DECLARE_METATYPE(RsPostedPost);
 
@@ -369,14 +373,46 @@ void PostedListWidgetWithModel::prev10Posts()
     }
 }
 
+void PostedListWidgetWithModel::showAuthorInPeople()
+{
+    QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
+
+    if(!index.isValid())
+        throw std::runtime_error("No post under mouse!");
+
+    RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
+
+    if(post.mMeta.mMsgId.isNull())
+        throw std::runtime_error("Post has empty MsgId!");
+
+    if(post.mMeta.mAuthorId.isNull())
+    {
+        std::cerr << "(EE) GxsForumThreadWidget::loadMsgData_showAuthorInPeople() ERROR Missing Message Data...";
+        std::cerr << std::endl;
+    }
+
+    /* window will destroy itself! */
+    IdDialog *idDialog = dynamic_cast<IdDialog*>(MainWindow::getPage(MainWindow::People));
+
+    if (!idDialog)
+        return ;
+
+    MainWindow::showWindow(MainWindow::People);
+    idDialog->navigate(RsGxsId(post.mMeta.mAuthorId));
+}
 void PostedListWidgetWithModel::postContextMenu(const QPoint&)
 {
     QMenu menu(this);
 
 	menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()));
+    menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_AUTHOR), tr("Show author in People tab"), this, SLOT(showAuthorInPeople()));
+
+#ifdef TODO
+    // This feature is not implemented yet in libretroshare.
 
 	if(IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
 		menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/edit_16.png"), tr("Edit"), this, SLOT(editPost()));
+#endif
 
 	menu.exec(QCursor::pos());
 }
