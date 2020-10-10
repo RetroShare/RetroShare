@@ -52,7 +52,7 @@ NATStatus::NATStatus(QWidget *parent)
 
 void NATStatus::getNATStatus()
 {
-	uint32_t netState = rsConfig -> getNetState();
+	RsNetState netState = rsConfig -> getNetState();
 
 	statusNAT->setVisible(!_compactMode);
 	QString text = _compactMode?statusNAT->text():"";
@@ -61,14 +61,14 @@ void NATStatus::getNATStatus()
 	switch(netState)
 	{
 		default:
-		case RSNET_NETSTATE_BAD_UNKNOWN:
+	    case RsNetState::BAD_UNKNOWN:
 		{
             iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/bullet_yellow_128.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
             iconLabel->setToolTip( text + tr("Network Status Unknown")) ;
 		}
 		break ;
 
-		case RSNET_NETSTATE_BAD_OFFLINE:
+	    case RsNetState::BAD_OFFLINE:
 		{
             iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/bullet_grey_129.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
             iconLabel->setToolTip( text + tr("Offline")) ;
@@ -76,14 +76,14 @@ void NATStatus::getNATStatus()
 		break ;
 
 // BAD. (RED)
-		case RSNET_NETSTATE_BAD_NATSYM:
+	    case RsNetState::BAD_NATSYM:
 		{
             iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/bullet_red_128.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
             iconLabel->setToolTip( text + tr("Nasty Firewall")) ;
 		}
 		break ;
 
-		case RSNET_NETSTATE_BAD_NODHT_NAT:
+	    case RsNetState::BAD_NODHT_NAT:
 		{
             iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/bullet_red_128.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
             iconLabel->setToolTip( text + tr("DHT Disabled and Firewalled")) ;
@@ -91,21 +91,21 @@ void NATStatus::getNATStatus()
 		break ;
 
 // CAUTION. (ORANGE)
-		case RSNET_NETSTATE_WARNING_RESTART:
+	    case RsNetState::WARNING_RESTART:
 		{
             iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/bullet_yellow_128.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
             iconLabel->setToolTip( text + tr("Network Restarting")) ;
 		}
 		break ;
 
-		case RSNET_NETSTATE_WARNING_NATTED:
+	    case RsNetState::WARNING_NATTED:
 		{
             iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/bullet_yellow_128.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
             iconLabel->setToolTip( text + tr("Behind Firewall")) ;
 		}
 		break ;
 
-		case RSNET_NETSTATE_WARNING_NODHT:
+	    case RsNetState::WARNING_NODHT:
 		{
             iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/bullet_yellow_128.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
 			iconLabel->setToolTip( text + tr("DHT Disabled")) ;
@@ -113,14 +113,14 @@ void NATStatus::getNATStatus()
 		break ;
 
 // GOOD (GREEN)
-		case RSNET_NETSTATE_GOOD:
+	    case RsNetState::GOOD:
 		{
             iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/bullet_green_128.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
 			iconLabel->setToolTip( text + tr("RetroShare Server")) ;
 		}
 		break ;
 
-		case RSNET_NETSTATE_ADV_FORWARD:
+	    case RsNetState::ADV_FORWARD:
 		{
             iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/bullet_green_128.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
 			iconLabel->setToolTip( text + tr("Forwarded Port")) ;

@@ -38,7 +38,7 @@
 class RsGxsForums;
 
 /**
- * Pointer to global instance of RsGxsChannels service implementation
+ * Pointer to global instance of RsGxsForums service implementation
  * @jsonapi{development}
  */
 extern RsGxsForums* rsGxsForums;

@@ -137,52 +137,55 @@ void DhtWindow::updateNetStatus()
 		ui.peerAddressLabel->setText(status);
 	}
 
-	uint32_t netMode = rsConfig->getNetworkMode();
+	RsNetworkMode netMode = rsConfig->getNetworkMode();
 
 	QLabel *label = ui.networkLabel;
 	switch(netMode)
 	{
-		case RSNET_NETWORK_UNKNOWN:
+	    case RsNetworkMode::UNKNOWN:
 			label->setText(tr("Unknown NetState"));
 			break;
-		case RSNET_NETWORK_OFFLINE:
+	    case RsNetworkMode::RESTARTING:
+		    label->setText(tr("Restarting"));
+		    break;
+	    case RsNetworkMode::OFFLINE:
 			label->setText(tr("Offline"));
 			break;
-		case RSNET_NETWORK_LOCALNET:
+	    case RsNetworkMode::LOCALNET:
 			label->setText(tr("Local Net"));
 			break;
-		case RSNET_NETWORK_BEHINDNAT:
+	    case RsNetworkMode::BEHINDNAT:
 			label->setText(tr("Behind NAT"));
 			break;
-		case RSNET_NETWORK_EXTERNALIP:
+	    case RsNetworkMode::EXTERNALIP:
 			label->setText(tr("External IP"));
 			break;
 	}
 
 	label = ui.natTypeLabel;
 
-	uint32_t natType = rsConfig->getNatTypeMode();
+	RsNatTypeMode natType = rsConfig->getNatTypeMode();
 	switch(natType)
 	{
-		case RSNET_NATTYPE_UNKNOWN:
+	    case RsNatTypeMode::UNKNOWN:
 			label->setText(tr("UNKNOWN NAT STATE"));
 			break;
-		case RSNET_NATTYPE_SYMMETRIC:
+	    case RsNatTypeMode::SYMMETRIC:
 			label->setText(tr("SYMMETRIC NAT"));
 			break;
-		case RSNET_NATTYPE_DETERM_SYM:
+	    case RsNatTypeMode::DETERM_SYM:
 			label->setText(tr("DETERMINISTIC SYM NAT"));
 			break;
-		case RSNET_NATTYPE_RESTRICTED_CONE:
+	    case RsNatTypeMode::RESTRICTED_CONE:
 			label->setText(tr("RESTRICTED CONE NAT"));
 			break;
-		case RSNET_NATTYPE_FULL_CONE:
+	    case RsNatTypeMode::FULL_CONE:
 			label->setText(tr("FULL CONE NAT"));
 			break;
-		case RSNET_NATTYPE_OTHER:
+	    case RsNatTypeMode::OTHER:
 			label->setText(tr("OTHER NAT"));
 			break;
-		case RSNET_NATTYPE_NONE:
+	    case RsNatTypeMode::NONE:
 			label->setText(tr("NO NAT"));
 			break;
 	}
@@ -190,87 +193,87 @@ void DhtWindow::updateNetStatus()
 
 
 	label = ui.natHoleLabel;
-	uint32_t natHole = rsConfig->getNatHoleMode();
+	RsNatHoleMode natHole = rsConfig->getNatHoleMode();
 
 	switch(natHole)
 	{
-		case RSNET_NATHOLE_UNKNOWN:
+	    case RsNatHoleMode::UNKNOWN:
 			label->setText(tr("UNKNOWN NAT HOLE STATUS"));
 			break;
-		case RSNET_NATHOLE_NONE:
+	    case RsNatHoleMode::NONE:
 			label->setText(tr("NO NAT HOLE"));
 			break;
-		case RSNET_NATHOLE_UPNP:
+	    case RsNatHoleMode::UPNP:
 			label->setText(tr("UPNP FORWARD"));
 			break;
-		case RSNET_NATHOLE_NATPMP:
+	    case RsNatHoleMode::NATPMP:
 			label->setText(tr("NATPMP FORWARD"));
 			break;
-		case RSNET_NATHOLE_FORWARDED:
+	    case RsNatHoleMode::FORWARDED:
 			label->setText(tr("MANUAL FORWARD"));
 			break;
 	}
 
-	uint32_t connect = rsConfig->getConnectModes();
+	RsConnectModes connect = rsConfig->getConnectModes();
 
 	label = ui.connectLabel;
 	QString connOut;
-	if (connect & RSNET_CONNECT_OUTGOING_TCP)
+	if (!!(connect & RsConnectModes::OUTGOING_TCP))
 	{
 		connOut += "TCP_OUT ";
 	}
-	if (connect & RSNET_CONNECT_ACCEPT_TCP)
+	if (!!(connect & RsConnectModes::ACCEPT_TCP))
 	{
 		connOut += "TCP_IN ";
 	}
-	if (connect & RSNET_CONNECT_DIRECT_UDP)
+	if (!!(connect & RsConnectModes::DIRECT_UDP))
 	{
 		connOut += "DIRECT_UDP ";
 	}
-	if (connect & RSNET_CONNECT_PROXY_UDP)
+	if (!!(connect & RsConnectModes::PROXY_UDP))
 	{
 		connOut += "PROXY_UDP ";
 	}
-	if (connect & RSNET_CONNECT_RELAY_UDP)
+	if (!!(connect & RsConnectModes::RELAY_UDP))
 	{
 		connOut += "RELAY_UDP ";
 	}
 
 	label->setText(connOut);
 
-	uint32_t netState = rsConfig->getNetState();
+	RsNetState netState = rsConfig->getNetState();
 
 	label = ui.netStatusLabel;
 	switch(netState)
 	{
-		case RSNET_NETSTATE_BAD_UNKNOWN:
+	    case RsNetState::BAD_UNKNOWN:
 			label->setText(tr("NET BAD: Unknown State"));
 			break;
-		case RSNET_NETSTATE_BAD_OFFLINE:
+	    case RsNetState::BAD_OFFLINE:
 			label->setText(tr("NET BAD: Offline"));
 			break;
-		case RSNET_NETSTATE_BAD_NATSYM:
+	    case RsNetState::BAD_NATSYM:
 			label->setText(tr("NET BAD: Behind Symmetric NAT"));
 			break;
-		case RSNET_NETSTATE_BAD_NODHT_NAT:
+	    case RsNetState::BAD_NODHT_NAT:
 			label->setText(tr("NET BAD: Behind NAT & No DHT"));
 			break;
-		case RSNET_NETSTATE_WARNING_RESTART:
+	    case RsNetState::WARNING_RESTART:
 			label->setText(tr("NET WARNING: NET Restart"));
 			break;
-		case RSNET_NETSTATE_WARNING_NATTED:
+	    case RsNetState::WARNING_NATTED:
 			label->setText(tr("NET WARNING: Behind NAT"));
 			break;
-		case RSNET_NETSTATE_WARNING_NODHT:
+	    case RsNetState::WARNING_NODHT:
 			label->setText(tr("NET WARNING: No DHT"));
 			break;
-		case RSNET_NETSTATE_GOOD:
+	    case RsNetState::GOOD:
 			label->setText(tr("NET STATE GOOD!"));
 			break;
-		case RSNET_NETSTATE_ADV_FORWARD:
+	    case RsNetState::ADV_FORWARD:
 			label->setText(tr("CAUTION: UNVERIFIABLE FORWARD!"));
 			break;
-		case RSNET_NETSTATE_ADV_DARK_FORWARD:
+	    case RsNetState::ADV_DARK_FORWARD:
 			label->setText(tr("CAUTION: UNVERIFIABLE FORWARD & NO DHT"));
 			break;
 	}
@@ -378,24 +381,24 @@ void DhtWindow::updateNetPeers()
 		switch(status.mDhtState)
 		{
 			default:
-			case RSDHT_PEERDHT_NOT_ACTIVE:
+		    case RsDhtPeerDht::NOT_ACTIVE:
 				dhtstate = tr("Not Active (Maybe Connected!)");
 				break;
-			case RSDHT_PEERDHT_SEARCHING:
+		    case RsDhtPeerDht::SEARCHING:
 				dhtstate = tr("Searching");
 				break;
-			case RSDHT_PEERDHT_FAILURE:
+		    case RsDhtPeerDht::FAILURE:
 				dhtstate = tr("Failed");
 				break;
-			case RSDHT_PEERDHT_OFFLINE:
+		    case RsDhtPeerDht::OFFLINE:
 				dhtstate = tr("offline");
 				++nOfflinePeers;
 				break;
-			case RSDHT_PEERDHT_UNREACHABLE:
+		    case RsDhtPeerDht::UNREACHABLE:
 				dhtstate = tr("Unreachable");
 				++nUnreachablePeers;
 				break;
-			case RSDHT_PEERDHT_ONLINE:
+		    case RsDhtPeerDht::ONLINE:
 				dhtstate = tr("ONLINE");
 				++nOnlinePeers;
 				break;
@@ -407,17 +410,17 @@ void DhtWindow::updateNetPeers()
 		QString cpmstr;
 		switch(status.mPeerConnectMode)
 		{
-			case RSDHT_TOU_MODE_DIRECT:
+		    case RsDhtTouMode::DIRECT:
 				cpmstr = tr("Direct");
 				break;
-			case RSDHT_TOU_MODE_PROXY:
+		    case RsDhtTouMode::PROXY:
 				cpmstr = tr("Proxy VIA")+" " + QString::fromStdString(status.mPeerConnectProxyId);
 				break;
-			case RSDHT_TOU_MODE_RELAY:
+		    case RsDhtTouMode::RELAY:
 				cpmstr = tr("Relay VIA")+" " + QString::fromStdString(status.mPeerConnectProxyId);
 				break;
 			default:
-			case RSDHT_TOU_MODE_NONE:
+		    case RsDhtTouMode::NONE:
 				cpmstr = tr("None");
 				break;
 		}
@@ -427,27 +430,27 @@ void DhtWindow::updateNetPeers()
 		switch(status.mPeerConnectState)
 		{
 			default:
-			case RSDHT_PEERCONN_DISCONNECTED:
+		    case RsDhtPeerConnectState::DISCONNECTED:
 				cpsstr = tr("Disconnected");
 				++nDisconnPeers;
 				break;
-			case RSDHT_PEERCONN_UDP_STARTED:
+		    case RsDhtPeerConnectState::UDP_STARTED:
 				cpsstr = tr("Udp Started");
 				break;
-			case RSDHT_PEERCONN_CONNECTED:
+		    case RsDhtPeerConnectState::CONNECTED:
 			{
 				cpsstr = tr("Connected");
 
 				switch(status.mPeerConnectMode)
 				{
 					default:
-					case RSDHT_TOU_MODE_DIRECT:
+				    case RsDhtTouMode::DIRECT:
 						++nDirectPeers;
 						break;
-					case RSDHT_TOU_MODE_PROXY:
+				    case RsDhtTouMode::PROXY:
 						++nProxyPeers;
 						break;
-					case RSDHT_TOU_MODE_RELAY:
+				    case RsDhtTouMode::RELAY:
 						++nRelayPeers;
 						break;
 				}
@@ -457,7 +460,7 @@ void DhtWindow::updateNetPeers()
 
 		peer_item -> setData(PTW_COL_PEER_CONNECT_STATUS, Qt::DisplayRole, cpsstr);
 		
-		if (status.mPeerConnectState == RSDHT_PEERCONN_DISCONNECTED)
+		if (status.mPeerConnectState == RsDhtPeerConnectState::DISCONNECTED)
 		{
 			peer_item -> setData(PTW_COL_PEER_CONNECT_MODE, Qt::DisplayRole, "");
 		}
@@ -474,10 +477,10 @@ void DhtWindow::updateNetPeers()
 		}
 		switch(status.mPeerReqState)
 		{
-			case RSDHT_PEERREQ_RUNNING:
+		    case RsDhtPeerRequest::RUNNING:
 				reqstr += tr("Request Active");
 				break;
-			case RSDHT_PEERREQ_STOPPED:
+		    case RsDhtPeerRequest::STOPPED:
 				reqstr += tr("No Request");
 				break;
 			default:
