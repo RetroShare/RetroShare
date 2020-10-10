@@ -24,6 +24,7 @@
 
 #include "StyleDialog.h"
 #include "gui/style/RSStyle.h"
+#include "gui/common/FilesDefs.h"
 
 /** Default constructor */
 StyleDialog::StyleDialog(RSStyle &style, QWidget *parent)
@@ -32,7 +33,7 @@ StyleDialog::StyleDialog(RSStyle &style, QWidget *parent)
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
 
-	ui.headerFrame->setHeaderImage(QPixmap(":/icons/collections.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/collections.png"));
 	ui.headerFrame->setHeaderText(tr("Define Style"));
 
 	/* Load window postion */

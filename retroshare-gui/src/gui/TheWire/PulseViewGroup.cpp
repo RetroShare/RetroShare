@@ -67,7 +67,7 @@ void PulseViewGroup::setup()
 		else
 		{
             // default.
-            QPixmap pixmap = QPixmap(":/icons/png/posted.png").scaled(50,50);
+            QPixmap pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/png/posted.png").scaled(50,50);
 			label_headshot->setPixmap(pixmap);
 		}
 

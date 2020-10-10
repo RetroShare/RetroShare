@@ -94,7 +94,7 @@ void WireGroupDialog::initUi()
 
 QPixmap WireGroupDialog::serviceImage()
 {
-	return QPixmap(":/icons/wire-circle.png");
+    return FilesDefs::getPixmapFromQtResourcePath(":/icons/wire-circle.png");
 }
 
 void WireGroupDialog::prepareWireGroup(RsWireGroup &group, const RsGroupMetaData &meta)
@@ -178,7 +178,7 @@ bool WireGroupDialog::service_loadGroup(const RsGxsGenericGroupData *data, Mode 
 			setLogo(pixmap);
 		}
 	} else {
-			setLogo(QPixmap(":/images/album_create_64.png"));
+            setLogo(FilesDefs::getPixmapFromQtResourcePath(":/images/album_create_64.png"));
 	}
 #endif
 

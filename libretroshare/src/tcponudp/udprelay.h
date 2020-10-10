@@ -101,12 +101,14 @@ std::ostream &operator<<(std::ostream &out, const UdpRelayEnd &ure);
 
 
 /**** DEFINED IN EXTERNAL HEADER FILE ***/
-#define UDP_RELAY_NUM_CLASS		RSDHT_RELAY_NUM_CLASS
+// sehraf: this is a bit ugly but since the int is used as an integer i'lll stick to this hack for now
+/// TODO fix me!
+#define UDP_RELAY_NUM_CLASS		static_cast<typename std::underlying_type<RsDhtRelayClass>::type>(RsDhtRelayClass::NUM_CLASS)
 
-#define UDP_RELAY_CLASS_ALL		RSDHT_RELAY_CLASS_ALL		
-#define UDP_RELAY_CLASS_GENERAL		RSDHT_RELAY_CLASS_GENERAL		
-#define UDP_RELAY_CLASS_FOF		RSDHT_RELAY_CLASS_FOF		
-#define UDP_RELAY_CLASS_FRIENDS		RSDHT_RELAY_CLASS_FRIENDS		
+#define UDP_RELAY_CLASS_ALL		static_cast<typename std::underlying_type<RsDhtRelayClass>::type>(RsDhtRelayClass::ALL)
+#define UDP_RELAY_CLASS_GENERAL	static_cast<typename std::underlying_type<RsDhtRelayClass>::type>(RsDhtRelayClass::GENERAL)
+#define UDP_RELAY_CLASS_FOF		static_cast<typename std::underlying_type<RsDhtRelayClass>::type>(RsDhtRelayClass::FOF)
+#define UDP_RELAY_CLASS_FRIENDS	static_cast<typename std::underlying_type<RsDhtRelayClass>::type>(RsDhtRelayClass::FRIENDS)
 
 // Just for some testing fun!
 //#define UDP_RELAY_LIFETIME_GENERAL	180	// 3 minutes

@@ -121,7 +121,11 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 
     RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
 
-    painter->fillRect( option.rect, option.backgroundBrush);
+    // if(index.row() & 0x01)
+    //     painter->fillRect( option.rect, option.palette.alternateBase().color());
+    // else
+        painter->fillRect( option.rect, option.palette.base().color());
+
     painter->restore();
 
     if(mUseGrid || index.column()==0)
@@ -130,6 +134,7 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 
         uint32_t flags = (mUseGrid)?(ChannelPostThumbnailView::FLAG_SHOW_TEXT | ChannelPostThumbnailView::FLAG_SCALE_FONT):0;
         ChannelPostThumbnailView w(post,flags);
+        w.setBackgroundRole(QPalette::AlternateBase);
         w.setAspectRatio(mAspectRatio);
         w.updateGeometry();
         w.adjustSize();
@@ -139,7 +144,14 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
         if((option.state & QStyle::State_Selected) && post.mMeta.mPublishTs > 0) // check if post is selected and is not empty (end of last row)
             pixmap.fill(SelectedColor);	// I dont know how to grab the backgroud color for selected objects automatically.
         else
-            pixmap.fill(QRgb(0x00ffffff));	// choose a fully transparent background
+        {
+                // we need to do the alternate color manually
+
+            //if(index.row() & 0x01)
+            //    pixmap.fill(option.palette.alternateBase().color());
+            //else
+                pixmap.fill(option.palette.base().color());
+        }
 
         w.render(&pixmap,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
 
@@ -198,8 +210,11 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
         painter->drawText(QPoint(p.x()+0.5*font_height,y),QDateTime::fromSecsSinceEpoch(post.mMeta.mPublishTs).toString(Qt::DefaultLocaleShortDate));
         y += font_height;
 
-        painter->drawText(QPoint(p.x()+0.5*font_height,y),QString::number(post.mCount)+ " " +((post.mCount>1)?tr("files"):tr("file")) + " (" + QString::number(post.mSize) + " " + tr("bytes") + ")" );
-        y += font_height;
+        if(post.mCount > 0)
+        {
+            painter->drawText(QPoint(p.x()+0.5*font_height,y),QString::number(post.mCount)+ " " +((post.mCount>1)?tr("files"):tr("file")) + " (" + QString::number(post.mSize) + " " + tr("bytes") + ")" );
+            y += font_height;
+        }
 
         painter->restore();
     }
@@ -285,8 +300,14 @@ void ChannelPostFilesDelegate::paint(QPainter * painter, const QStyleOptionViewI
 		w.setFixedHeight(option.rect.height());
 
 		QPixmap pixmap(w.size());
-		pixmap.fill(QRgb(0x00ffffff));	// choose a fully transparent background
-		w.render(&pixmap,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
+
+                // apparently we need to do the alternate colors manually
+        //if(index.row() & 0x01)
+        //    pixmap.fill(option.palette.alternateBase().color());
+        //else
+            pixmap.fill(option.palette.base().color());
+
+        w.render(&pixmap,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
 
         painter->drawPixmap(option.rect.topLeft(),pixmap);
     }
@@ -335,6 +356,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     ui->showUnread_TB->setToolTip(tr("Show unread posts only"));
     connect(ui->showUnread_TB,SIGNAL(toggled(bool)),this,SLOT(switchOnlyUnread(bool)));
 
+    ui->postsTree->setAlternatingRowColors(false);
     ui->postsTree->setModel(mChannelPostsModel = new RsGxsChannelPostsModel());
     ui->postsTree->setItemDelegate(mChannelPostsDelegate = new ChannelPostDelegate());
     ui->postsTree->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);	// prevents bug on w10, since row size depends on widget width
@@ -351,6 +373,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     ui->channelPostFiles_TV->setPlaceholderText(tr("No files in this post, or no post selected"));
     ui->channelPostFiles_TV->setSortingEnabled(true);
     ui->channelPostFiles_TV->sortByColumn(0, Qt::AscendingOrder);
+    ui->channelPostFiles_TV->setAlternatingRowColors(false);
 
     ui->channelFiles_TV->setModel(mChannelFilesModel = new RsGxsChannelPostFilesModel());
     ui->channelFiles_TV->setItemDelegate(mFilesDelegate = new ChannelPostFilesDelegate());
@@ -418,8 +441,8 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 
 	/* Initialize subscribe button */
 	QIcon icon;
-	icon.addPixmap(QPixmap(":/images/redled.png"), QIcon::Normal, QIcon::On);
-	icon.addPixmap(QPixmap(":/images/start.png"), QIcon::Normal, QIcon::Off);
+    icon.addPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/redled.png"), QIcon::Normal, QIcon::On);
+    icon.addPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/start.png"), QIcon::Normal, QIcon::Off);
 	mAutoDownloadAction = new QAction(icon, "", this);
 	mAutoDownloadAction->setCheckable(true);
 	connect(mAutoDownloadAction, SIGNAL(triggered()), this, SLOT(toggleAutoDownload()));
@@ -894,15 +917,7 @@ void GxsChannelPostsWidgetWithModel::processSettings(bool load)
 	Settings->beginGroup(QString("ChannelPostsWidget"));
 
 	if (load) {
-#ifdef TO_REMOVE
-		// load settings
 
-		/* Filter */
-		//ui->filterLineEdit->setCurrentFilter(Settings->value("filter", FILTER_TITLE).toInt());
-
-		/* View mode */
-		//setViewMode(Settings->value("viewMode", VIEW_MODE_FEEDS).toInt());
-#endif
 		// state of files tree
 		channelpostfilesheader->restoreState(Settings->value("PostFilesTree").toByteArray());
 		channelfilesheader->restoreState(Settings->value("FilesTree").toByteArray());
@@ -910,15 +925,6 @@ void GxsChannelPostsWidgetWithModel::processSettings(bool load)
 		// state of splitter
 		ui->splitter->restoreState(Settings->value("SplitterChannelPosts").toByteArray());
 	} else {
-#ifdef TO_REMOVE
-		// save settings
-
-		/* Filter */
-		//Settings->setValue("filter", ui->filterLineEdit->currentFilter());
-
-		/* View mode */
-		//Settings->setValue("viewMode", viewMode());
-#endif
 		// state of files tree
 		Settings->setValue("PostFilesTree", channelpostfilesheader->saveState());
 		Settings->setValue("FilesTree", channelfilesheader->saveState());
@@ -946,7 +952,7 @@ void GxsChannelPostsWidgetWithModel::groupNameChanged(const QString &name)
 {
 //	if (groupId().isNull()) {
 //		ui->nameLabel->setText(tr("No Channel Selected"));
-//		ui->logoLabel->setPixmap(QPixmap(":/icons/png/channels.png"));
+//		ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/channels.png"));
 //	} else {
 //		ui->nameLabel->setText(name);
 //	}
@@ -1000,7 +1006,7 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 	if (group.mImage.mData != NULL) {
 		GxsIdDetails::loadPixmapFromData(group.mImage.mData, group.mImage.mSize, chanImage,GxsIdDetails::ORIGINAL);
 	} else {
-		chanImage = QPixmap(ChannelPostThumbnailView::CHAN_DEFAULT_IMAGE);
+        chanImage = FilesDefs::getPixmapFromQtResourcePath(ChannelPostThumbnailView::CHAN_DEFAULT_IMAGE);
 	}
     if(group.mMeta.mGroupName.empty())
 		ui->channelName_LB->setText(tr("[No name]"));
@@ -1106,47 +1112,6 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
     showPostDetails();
 }
 
-#ifdef TODO
-int GxsChannelPostsWidgetWithModel::viewMode()
-{
-	if (ui->feedToolButton->isChecked()) {
-		return VIEW_MODE_FEEDS;
-	} else if (ui->fileToolButton->isChecked()) {
-		return VIEW_MODE_FILES;
-	}
-
-	/* Default */
-	return VIEW_MODE_FEEDS;
-}
-#endif
-
-void GxsChannelPostsWidgetWithModel::setViewMode(int viewMode)
-{
-#ifdef TODO
-	switch (viewMode) {
-	case VIEW_MODE_FEEDS:
-		ui->feedWidget->show();
-		ui->fileWidget->hide();
-
-		ui->feedToolButton->setChecked(true);
-		ui->fileToolButton->setChecked(false);
-
-		break;
-	case VIEW_MODE_FILES:
-		ui->feedWidget->hide();
-		ui->fileWidget->show();
-
-		ui->feedToolButton->setChecked(false);
-		ui->fileToolButton->setChecked(true);
-
-		break;
-	default:
-		setViewMode(VIEW_MODE_FEEDS);
-		return;
-	}
-#endif
-}
-
 void GxsChannelPostsWidgetWithModel::switchOnlyUnread(bool)
 {
     filterChanged(ui->filterLineEdit->text());
@@ -1159,150 +1124,6 @@ void GxsChannelPostsWidgetWithModel::filterChanged(QString s)
     mChannelPostsModel->setFilter(ql,ui->showUnread_TB->isChecked(),count);
 	mChannelFilesModel->setFilter(ql,count);
 }
-
-#ifdef TODO
-/*static*/ bool GxsChannelPostsWidgetWithModel::filterItem(FeedItem *feedItem, const QString &text, int filter)
-{
-	GxsChannelPostItem *item = dynamic_cast<GxsChannelPostItem*>(feedItem);
-	if (!item) {
-		return true;
-	}
-
-	bool bVisible = text.isEmpty();
-
-	if (!bVisible)
-	{
-		switch(filter)
-		{
-			case FILTER_TITLE:
-				bVisible = item->getTitleLabel().contains(text,Qt::CaseInsensitive);
-			break;
-			case FILTER_MSG:
-				bVisible = item->getMsgLabel().contains(text,Qt::CaseInsensitive);
-			break;
-			case FILTER_FILE_NAME:
-			{
-				std::list<SubFileItem *> fileItems = item->getFileItems();
-				std::list<SubFileItem *>::iterator lit;
-				for(lit = fileItems.begin(); lit != fileItems.end(); ++lit)
-				{
-					SubFileItem *fi = *lit;
-					QString fileName = QString::fromUtf8(fi->FileName().c_str());
-					bVisible = (bVisible || fileName.contains(text,Qt::CaseInsensitive));
-				}
-				break;
-			}
-			default:
-				bVisible = true;
-			break;
-		}
-	}
-
-	return bVisible;
-}
-
-void GxsChannelPostsWidget::createPostItemFromMetaData(const RsGxsMsgMetaData& meta,bool related)
-{
-	GxsChannelPostItem *item = NULL;
-    RsGxsChannelPost post;
-
-    if(!meta.mOrigMsgId.isNull())
-    {
-		FeedItem *feedItem = ui->feedWidget->findFeedItem(GxsChannelPostItem::computeIdentifier(meta.mOrigMsgId)) ;
-		item = dynamic_cast<GxsChannelPostItem*>(feedItem);
-
-        if(item)
-		{
-            post = feedItem->post();
-			ui->feedWidget->removeFeedItem(item) ;
-
-            post.mOlderVersions.insert(post.mMeta.mMsgId);
-
-			GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, post, true, false,post.mOlderVersions);
-			ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
-
-			return ;
-		}
-    }
-
-	if (related)
-    {
-		FeedItem *feedItem = ui->feedWidget->findFeedItem(GxsChannelPostItem::computeIdentifier(meta.mMsgId)) ;
-		item = dynamic_cast<GxsChannelPostItem*>(feedItem);
-	}
-	if (item)
-    {
-		item->setPost(post);
-		ui->feedWidget->setSort(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
-	}
-    else
-    {
-		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, meta.mGroupId,meta.mMsgId, true, true);
-		ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
-	}
-#ifdef TODO
-	ui->fileWidget->addFiles(post, related);
-#endif
-}
-
-void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost& post, bool related)
-{
-	GxsChannelPostItem *item = NULL;
-
-    const RsMsgMetaData& meta(post.mMeta);
-
-    if(!meta.mOrigMsgId.isNull())
-    {
-		FeedItem *feedItem = ui->feedWidget->findFeedItem(GxsChannelPostItem::computeIdentifier(meta.mOrigMsgId)) ;
-		item = dynamic_cast<GxsChannelPostItem*>(feedItem);
-
-        if(item)
-		{
-            std::set<RsGxsMessageId> older_versions(item->olderVersions()); // we make a copy because the item will be deleted
-			ui->feedWidget->removeFeedItem(item) ;
-
-            older_versions.insert(meta.mMsgId);
-
-			GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, mGroup.mMeta,meta.mMsgId, true, false,older_versions);
-			ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
-
-			return ;
-		}
-    }
-
-	if (related)
-    {
-		FeedItem *feedItem = ui->feedWidget->findFeedItem(GxsChannelPostItem::computeIdentifier(meta.mMsgId)) ;
-		item = dynamic_cast<GxsChannelPostItem*>(feedItem);
-	}
-	if (item)
-    {
-		item->setPost(post);
-		ui->feedWidget->setSort(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
-	}
-    else
-    {
-		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, mGroup.mMeta,meta.mMsgId, true, true);
-		ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
-	}
-
-	ui->fileWidget->addFiles(post, related);
-}
-
-void GxsChannelPostsWidget::fillThreadCreatePost(const QVariant &post, bool related, int current, int count)
-{
-	/* show fill progress */
-	if (count) {
-		ui->progressBar->setValue(current * ui->progressBar->maximum() / count);
-	}
-
-	if (!post.canConvert<RsGxsChannelPost>()) {
-		return;
-	}
-
-	createPostItem(post.value<RsGxsChannelPost>(), related);
-}
-#endif
 
 void GxsChannelPostsWidgetWithModel::blank()
 {

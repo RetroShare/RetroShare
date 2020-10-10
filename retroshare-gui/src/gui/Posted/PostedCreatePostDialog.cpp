@@ -38,6 +38,7 @@
 #include <iostream>
 #include <gui/RetroShareLink.h>
 #include <util/imageutil.h>
+#include "gui/common/FilesDefs.h"
 
 /* View Page */
 #define VIEW_POST  1
@@ -56,7 +57,7 @@ PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGrou
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 	connect(ui->addPicButton, SIGNAL(clicked() ), this , SLOT(addPicture()));
 	
-	ui->headerFrame->setHeaderImage(QPixmap(":/icons/png/postedlinks.png"));
+    ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/postedlinks.png"));
 	ui->headerFrame->setHeaderText(tr("Create a new Post"));
 
 	setAttribute ( Qt::WA_DeleteOnClose, true );

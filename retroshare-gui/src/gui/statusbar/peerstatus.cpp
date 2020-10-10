@@ -22,6 +22,7 @@
 #include <QLabel>
 
 #include "peerstatus.h"
+#include "gui/common/FilesDefs.h"
 
 PeerStatus::PeerStatus(QWidget *parent)
  : QWidget(parent)
@@ -33,7 +34,7 @@ PeerStatus::PeerStatus(QWidget *parent)
 
     iconLabel = new QLabel( this );
     int S = QFontMetricsF(iconLabel->font()).height();
-	 iconLabel->setPixmap(QPixmap(":/icons/avatar_grey_128.png").scaledToHeight(S,Qt::SmoothTransformation));
+     iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/avatar_grey_128.png").scaledToHeight(S,Qt::SmoothTransformation));
     hbox->addWidget(iconLabel);
     
     statusPeers = new QLabel( tr("Friends: 0/0"), this );
@@ -59,7 +60,7 @@ void PeerStatus::getPeerStatus(unsigned int nFriendCount, unsigned int nOnlineCo
 	int S = QFontMetricsF(iconLabel->font()).height();
 
 	if (nOnlineCount > 0)
-		iconLabel->setPixmap(QPixmap(":/icons/avatar_128.png").scaledToHeight(S,Qt::SmoothTransformation));
+        iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/avatar_128.png").scaledToHeight(S,Qt::SmoothTransformation));
 	else
-		iconLabel->setPixmap(QPixmap(":/icons/avatar_grey_128.png").scaledToHeight(S,Qt::SmoothTransformation));
+        iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/avatar_grey_128.png").scaledToHeight(S,Qt::SmoothTransformation));
 }

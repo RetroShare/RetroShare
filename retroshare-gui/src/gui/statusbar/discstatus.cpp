@@ -23,6 +23,7 @@
 
 #include "discstatus.h"
 #include "gui/settings/rsharesettings.h"
+#include "gui/common/FilesDefs.h"
 
 #include <retroshare/rsdisc.h>
 
@@ -36,7 +37,7 @@ DiscStatus::DiscStatus(QWidget *parent)
 	hbox->setSpacing(6);
 
 	QLabel *iconLabel = new QLabel(this);
-	iconLabel->setPixmap(QPixmap(":/images/uploads.png"));
+    iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/uploads.png"));
 	iconLabel->setToolTip(tr("Waiting outgoing discovery operations"));
 	hbox->addWidget(iconLabel);
 
@@ -45,7 +46,7 @@ DiscStatus::DiscStatus(QWidget *parent)
 	hbox->addWidget(sendLabel);
 
 	iconLabel = new QLabel(this);
-	iconLabel->setPixmap(QPixmap(":/images/download.png"));
+    iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/download.png"));
 	iconLabel->setToolTip(tr("Waiting incoming discovery operations"));
 	hbox->addWidget(iconLabel);
 

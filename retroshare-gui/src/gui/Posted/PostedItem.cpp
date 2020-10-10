@@ -490,7 +490,7 @@ void PostedItem::fill()
 		ui->voteUpButton->setDisabled(true);
 		ui->voteDownButton->setDisabled(true);
 
-		ui->thumbnailLabel->setPixmap( QPixmap(":/images/thumb-default.png"));
+        ui->thumbnailLabel->setPixmap( FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default.png"));
 		ui->fromLabel->setId(mPost.mMeta.mAuthorId);
 		ui->titleLabel->setText(tr( "<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(mPost.mMeta.mAuthorId.toStdString()))) ;
 		QDateTime qtime;

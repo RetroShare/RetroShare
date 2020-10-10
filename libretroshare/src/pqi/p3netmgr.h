@@ -103,11 +103,11 @@ virtual bool netAssistBadPeer(const struct sockaddr_storage &addr, uint32_t reas
 virtual bool netAssistStatusUpdate(const RsPeerId &id, int mode) = 0;
 
 	/* Get Network State */
-virtual uint32_t getNetStateMode() = 0;
-virtual uint32_t getNetworkMode() = 0;
-virtual uint32_t getNatTypeMode() = 0;
-virtual uint32_t getNatHoleMode() = 0;
-virtual uint32_t getConnectModes() = 0;
+virtual RsNetState getNetStateMode() = 0;
+virtual RsNetworkMode getNetworkMode() = 0;
+virtual RsNatTypeMode getNatTypeMode() = 0;
+virtual RsNatHoleMode getNatHoleMode() = 0;
+virtual RsConnectModes getConnectModes() = 0;
 
 	/* Shut It Down! */
 virtual bool	shutdown() = 0; /* blocking shutdown call */
@@ -154,11 +154,11 @@ virtual bool netAssistBadPeer(const struct sockaddr_storage &addr, uint32_t reas
 virtual bool netAssistStatusUpdate(const RsPeerId &id, int mode);
 
 	/* Get Network State */
-virtual uint32_t getNetStateMode();
-virtual uint32_t getNetworkMode();
-virtual uint32_t getNatTypeMode();
-virtual uint32_t getNatHoleMode();
-virtual uint32_t getConnectModes();
+virtual RsNetState getNetStateMode();
+virtual RsNetworkMode getNetworkMode();
+virtual RsNatTypeMode getNatTypeMode();
+virtual RsNatHoleMode getNatHoleMode();
+virtual RsConnectModes getConnectModes();
 
 	/* Shut It Down! */
 virtual bool	shutdown(); /* blocking shutdown call */
@@ -323,8 +323,8 @@ void 	netStatusReset_locked();
 	pqiNetStateBox mNetStateBox;
 
 	rstime_t mDoNotNetCheckUntilTs;
-	uint32_t mOldNatType;
-	uint32_t mOldNatHole;
+	RsNatTypeMode mOldNatType;
+	RsNatHoleMode mOldNatHole;
 
 	RS_SET_CONTEXT_DEBUG_LEVEL(2)
 };

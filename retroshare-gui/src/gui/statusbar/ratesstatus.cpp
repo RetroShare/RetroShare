@@ -24,6 +24,7 @@
 #include "ratesstatus.h"
 #include <retroshare/rsiface.h>
 #include "util/misc.h"
+#include "gui/common/FilesDefs.h"
 
 #include <iomanip>
 
@@ -35,7 +36,7 @@ RatesStatus::RatesStatus(QWidget *parent)
     hbox->setSpacing(6);
     
     iconLabel = new QLabel( this );
-    iconLabel->setPixmap(QPixmap(":/images/up0down0.png"));
+    iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/up0down0.png"));
     // iconLabel doesn't change over time, so we didn't need a minimum size
     hbox->addWidget(iconLabel);
     
@@ -64,7 +65,7 @@ void RatesStatus::getRatesStatus(float downKb, uint64_t down, float upKb, uint64
 
     QString up = (upKb   > 0)?"1":"0";
     QString dw = (downKb > 0)?"1":"0";
-    iconLabel->setPixmap(QPixmap(QString(":/images/")
+    iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(QString(":/images/")
                                  + "up"   + up
                                  + "down" + dw
                                  + ".png"));
