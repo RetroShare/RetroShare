@@ -186,22 +186,16 @@ private and secure decentralized communication platform.
       </widget>
      </item>
      <item row="1" column="4">
-      <widget class="QToolButton" name="shareButton">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
+      <widget class="QToolButton" name="expandButton">
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Share your RetroShare ID&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>Show full certificate (old format)</string>
+       </property>
+       <property name="text">
+        <string>...</string>
        </property>
        <property name="icon">
         <iconset resource="icons.qrc">
-         <normaloff>:/icons/svg/share.svg</normaloff>:/icons/svg/share.svg</iconset>
+         <normaloff>:/icons/png/cert.png</normaloff>:/icons/png/cert.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -209,8 +203,8 @@ private and secure decentralized communication platform.
          <height>24</height>
         </size>
        </property>
-       <property name="popupMode">
-        <enum>QToolButton::InstantPopup</enum>
+       <property name="checkable">
+        <bool>true</bool>
        </property>
        <property name="autoRaise">
         <bool>true</bool>
@@ -218,7 +212,7 @@ private and secure decentralized communication platform.
       </widget>
      </item>
      <item row="1" column="2">
-      <widget class="QLabel" name="retroshareid">
+      <widget class="ElidedLabel" name="retroshareid">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -240,7 +234,28 @@ private and secure decentralized communication platform.
        </property>
       </widget>
      </item>
-     <item row="3" column="0" colspan="5">
+     <item row="0" column="2">
+      <widget class="QLabel" name="userCertLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>This is your Retroshare ID. Copy and share with your friends!</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" colspan="6">
       <widget class="QPlainTextEdit" name="userCertEdit">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -276,38 +291,23 @@ private and secure decentralized communication platform.
        </property>
       </widget>
      </item>
-     <item row="0" column="2">
-      <widget class="QLabel" name="userCertLabel">
+     <item row="1" column="3">
+      <widget class="QToolButton" name="shareButton">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="font">
-        <font>
-         <pointsize>11</pointsize>
-        </font>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
        </property>
-       <property name="text">
-        <string>This is your Retroshare ID. Copy and share with your friends!</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="3">
-      <widget class="QToolButton" name="expandButton">
        <property name="toolTip">
-        <string>Show full certificate (old format)</string>
-       </property>
-       <property name="text">
-        <string>...</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Share your RetroShare ID&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="icon">
         <iconset resource="icons.qrc">
-         <normaloff>:/icons/png/cert.png</normaloff>:/icons/png/cert.png</iconset>
+         <normaloff>:/icons/svg/share.svg</normaloff>:/icons/svg/share.svg</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -315,8 +315,8 @@ private and secure decentralized communication platform.
          <height>24</height>
         </size>
        </property>
-       <property name="checkable">
-        <bool>true</bool>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
        </property>
        <property name="autoRaise">
         <bool>true</bool>
@@ -340,6 +340,14 @@ private and secure decentralized communication platform.
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ElidedLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">gui/common/ElidedLabel.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="icons.qrc"/>
   <include location="images.qrc"/>
