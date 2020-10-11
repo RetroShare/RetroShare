@@ -829,7 +829,13 @@ BoardPostDisplayWidget_compact QLabel#pictureLabel{
 	border-radius: 3px;
 }
 
-BoardPostDisplayWidget_compact QLabel#fromBoldLabel, QLabel#fromLabel, QLabel#dateLabel, QLabel#siteBoldLabel {
+BoardPostDisplayWidget_compact QLabel#fromBoldLabel ,
+BoardPostDisplayWidget_card QLabel#fromBoldLabel {
+	font: bold;
+}
+
+BoardPostDisplayWidget_compact QLabel#fromBoldLabel, QLabel#fromLabel, QLabel#dateLabel, QLabel#siteBoldLabel ,
+BoardPostDisplayWidget_card QLabel#fromBoldLabel, QLabel#fromLabel, QLabel#dateLabel, QLabel#siteBoldLabel{
 	color: #787c7e;
 }
 
@@ -859,6 +865,12 @@ BoardPostDisplayWidget_card > QFrame#mainFrame [new=false]{
 
 BoardPostDisplayWidget_card > QFrame#mainFrame[new=true] {
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #F0F8FD, stop:0.8 #E6F2FD, stop: 0.81 #E6F2FD, stop: 1 #D2E7FD);
+}
+
+BoardPostDisplayWidget_compact QLabel#titleLabel,
+BoardPostDisplayWidget_card QLabel#titleLabel{
+	font-size: 14px;
+	font: bold;
 }
 
 GxsCommentDialog QComboBox#sortBox {
