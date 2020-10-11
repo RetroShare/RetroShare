@@ -1217,6 +1217,24 @@ GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton::menu-button {
 
 }
 
+CreateGxsChannelMsg QPushButton#postButton {
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #0099cc;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+CreateGxsChannelMsg QPushButton#postButton:hover {
+	background: #03b1f3;
+	border-radius: 4px;
+	min-width: 4em;
+	padding: 2px;
+}
+
 QTabBar#smTab::tab{
  height: 32px; 
  width: 32px;
@@ -1284,6 +1302,14 @@ QToolButton#commentButton, QToolButton#notesButton
 BoardPostDisplayWidget_compact QLabel#pictureLabel{
 	border: 2px solid #CCCCCC;
 	border-radius: 3px;
+}
+
+BoardPostDisplayWidget_compact > QFrame#frame [new=false]{
+	background: #302F2F;
+}
+
+BoardPostDisplayWidget_compact > QFrame#frame[new=true] {
+	background-color: #005000;
 }
 
 BoardPostDisplayWidget_card QToolButton#voteDownButton, QToolButton#voteUpButton
