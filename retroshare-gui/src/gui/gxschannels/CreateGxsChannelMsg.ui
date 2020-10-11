@@ -329,7 +329,7 @@ p, li { white-space: pre-wrap; }
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>842</width>
+               <width>81</width>
                <height>24</height>
               </rect>
              </property>
@@ -431,6 +431,9 @@ p, li { white-space: pre-wrap; }
       </item>
       <item row="2" column="0" colspan="3">
        <layout class="QHBoxLayout" name="buttonHLayout">
+        <property name="spacing">
+         <number>9</number>
+        </property>
         <item>
          <widget class="QCheckBox" name="generateCheckBox">
           <property name="text">
@@ -449,15 +452,29 @@ p, li { white-space: pre-wrap; }
          </widget>
         </item>
         <item>
-         <widget class="QDialogButtonBox" name="buttonBox">
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
+         <spacer name="horizontalSpacer_3">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="standardButtons">
-           <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="postButton">
+          <property name="text">
+           <string>Post</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="cancelButton">
+          <property name="text">
+           <string>Cancel</string>
           </property>
          </widget>
         </item>
