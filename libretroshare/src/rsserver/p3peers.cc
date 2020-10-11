@@ -1392,7 +1392,7 @@ bool p3Peers::parseShortInvite(const std::string& inviteStrUrl, RsPeerDetails& d
   		case RsShortInviteFieldType::HIDDEN_LOCATOR:
 			details.hiddenType = (((uint32_t)buf[0]) << 24)+(((uint32_t)buf[1])<<16)+(((uint32_t)buf[2])<<8) + (uint32_t)buf[3];
 			details.hiddenNodePort = (((uint32_t)buf[4]) << 8)+ (uint32_t)buf[5];
-
+            details.isHiddenNode = true;
 			details.hiddenNodeAddress = std::string((char*)&buf[6],s-6);
 			break;
 
@@ -1538,7 +1538,7 @@ std::string p3Peers::GetRetroshareInvite(
 
 	if (getPeerDetails(ssl_id, detail))
 	{
-		if(!includeExtraLocators) detail.ipAddressList.clear();
+        if(!includeExtraLocators && !detail.isHiddenNode) detail.ipAddressList.clear();
 
 		unsigned char *mem_block = nullptr;
 		size_t mem_block_size = 0;

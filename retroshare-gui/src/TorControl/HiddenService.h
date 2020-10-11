@@ -70,11 +70,13 @@ public:
 
     Status status() const { return m_status; }
 
-    const QString &hostname() const { return m_hostname; }
-    const QString &dataPath() const { return m_dataPath; }
+    const QString& hostname() const { return m_hostname; }
+    const QString  serviceId() const { return QString(m_service_id); }
+    const QString& dataPath() const { return m_dataPath; }
 
     CryptoKey privateKey() { return m_privateKey; }
     void setPrivateKey(const CryptoKey &privateKey);
+    void setServiceId(const QByteArray& sid);
 
     const QList<Target> &targets() const { return m_targets; }
     void addTarget(const Target &target);
@@ -84,6 +86,7 @@ signals:
     void statusChanged(int newStatus, int oldStatus);
     void serviceOnline();
     void privateKeyChanged();
+    void hostnameChanged();
 
 private slots:
     void servicePublished();
@@ -94,6 +97,7 @@ private:
     QString m_hostname;
     Status m_status;
     CryptoKey m_privateKey;
+    QByteArray m_service_id;
 
     void loadPrivateKey();
     void setStatus(Status newStatus);
