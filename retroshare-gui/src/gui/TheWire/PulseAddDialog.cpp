@@ -22,6 +22,7 @@
 #include <QtGui>
 
 #include "PulseReply.h"
+#include "gui/common/FilesDefs.h"
 
 #include "PulseAddDialog.h"
 
