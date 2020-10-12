@@ -75,8 +75,8 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
 	/* Connect signals */
 	connect(ui->radioButton_GpgId, SIGNAL(toggled(bool)), this, SLOT(idTypeToggled(bool)));
 	connect(ui->radioButton_Pseudo, SIGNAL(toggled(bool)), this, SLOT(idTypeToggled(bool)));
-	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(submit()));
-	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	connect(ui->createButton, SIGNAL(clicked()), this, SLOT(submit()));
+	connect(ui->cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
 
 	connect(ui->plainTextEdit_Tag, SIGNAL(textChanged()), this, SLOT(checkNewTag()));
 	connect(ui->pushButton_Tag, SIGNAL(clicked(bool)), this, SLOT(addRecognTag()));
@@ -202,6 +202,7 @@ void IdEditDialog::setupExistingId(const RsGxsGroupId& keyId)
 	setWindowTitle(tr("Edit identity"));
     ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/person.png"));
 	ui->headerFrame->setHeaderText(tr("Edit identity"));
+	ui->createButton->setText(tr("Update"));
 
 	mStateHelper->setLoading(IDEDITDIALOG_LOADID, true);
 
@@ -561,7 +562,7 @@ void IdEditDialog::createId()
 
     if(rsIdentity->createIdentity(keyId,params.nickname,params.mImage,!params.isPgpLinked,gpg_password))
     {
-		ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+		ui->createButton->setEnabled(false);
 
         RsIdentityDetails det;
 
