@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>922</width>
-    <height>187</height>
+    <width>1092</width>
+    <height>231</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gxsChannelPostItem_GLayout">
@@ -125,6 +125,16 @@
            </layout>
           </item>
           <item>
+           <widget class="QLabel" name="subjectLabel">
+            <property name="text">
+             <string notr="true">TextLabel</string>
+            </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer name="verticalSpacer_2">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
@@ -136,33 +146,6 @@
              </size>
             </property>
            </spacer>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="subjectHLayout"/>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="warningHLayout">
-            <item>
-             <widget class="QLabel" name="warn_image_label">
-              <property name="maximumSize">
-               <size>
-                <width>24</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="warning_label">
-              <property name="text">
-               <string notr="true">TextLabel</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
           </item>
           <item>
            <layout class="QHBoxLayout" name="newCommHLayout">
@@ -487,20 +470,17 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>StyledElidedLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledElidedLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>ElidedLabel</class>
    <extends>QLabel</extends>
    <header location="global">gui/common/ElidedLabel.h</header>
    <container>1</container>
   </customwidget>
-  <customwidget>
-   <class>StyledElidedLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledElidedLabel.h</header>
-  </customwidget>
  </customwidgets>
- <resources>
-  <include location="../icons.qrc"/>
-  <include location="../images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

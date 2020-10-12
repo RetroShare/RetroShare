@@ -105,7 +105,7 @@ void GetStartedDialog::showEvent ( QShowEvent * /*event*/ )
 
 void GetStartedDialog::updateFromUserLevel()
 {
-	uint32_t userLevel = RSCONFIG_USER_LEVEL_NEW;
+	RsConfigUserLvl userLevel = RsConfigUserLvl::NEW;
 	userLevel = rsConfig->getUserLevel();
 
 	ui.inviteCheckBox->setChecked(false);
@@ -116,19 +116,19 @@ void GetStartedDialog::updateFromUserLevel()
 	switch(userLevel)
 	{
 		// FALLS THROUGH EVERYWHERE.
-		case RSCONFIG_USER_LEVEL_POWER:
-		case RSCONFIG_USER_LEVEL_OVERRIDE:
+	    case RsConfigUserLvl::POWER:
+	    case RsConfigUserLvl::OVERRIDE:
 			ui.firewallCheckBox->setChecked(true);
 			/* fallthrough */
-		case RSCONFIG_USER_LEVEL_CASUAL:
+	    case RsConfigUserLvl::CASUAL:
 			ui.connectCheckBox->setChecked(true);
 			/* fallthrough */
-		case RSCONFIG_USER_LEVEL_BASIC:
+	    case RsConfigUserLvl::BASIC:
 			ui.addCheckBox->setChecked(true);
 			ui.inviteCheckBox->setChecked(true);
 
 		default:
-		case RSCONFIG_USER_LEVEL_NEW:
+	    case RsConfigUserLvl::NEW:
 
 			break;
 	}
@@ -325,7 +325,7 @@ void GetStartedDialog::emailSupport()
 		return;
 	}
 
-	uint32_t    userLevel;
+	RsConfigUserLvl    userLevel;
 	{
 		RsAutoUpdatePage::lockAllEvents();
 
@@ -427,7 +427,7 @@ void GetStartedDialog::emailSupport()
 	sysVersion = "Linux";
   #endif
 #endif
-    text += QString("My RetroShare Configuration is: (%1, %2, 0x60%3)").arg(Rshare::retroshareVersion(true)).arg(sysVersion).arg(userLevel) + "\n";
+	text += QString("My RetroShare Configuration is: (%1, %2, %3)").arg(Rshare::retroshareVersion(true)).arg(sysVersion).arg(static_cast<typename std::underlying_type<RsConfigUserLvl>::type>(userLevel)) + "\n";
     text += "\n";
 
 	text += QString("I am having trouble with RetroShare.");

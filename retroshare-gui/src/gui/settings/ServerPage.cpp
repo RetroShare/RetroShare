@@ -448,26 +448,26 @@ void ServerPage::load()
 	//Relay Tab
 	uint32_t count;
 	uint32_t bandwidth;
-	rsDht->getRelayAllowance(RSDHT_RELAY_CLASS_FRIENDS, count, bandwidth);
+	rsDht->getRelayAllowance(RsDhtRelayClass::FRIENDS, count, bandwidth);
 	whileBlocking(ui.noFriendSpinBox)->setValue(count);
 	whileBlocking(ui.bandFriendSpinBox)->setValue(bandwidth / 1024);
 
-	rsDht->getRelayAllowance(RSDHT_RELAY_CLASS_FOF, count, bandwidth);
+	rsDht->getRelayAllowance(RsDhtRelayClass::FOF, count, bandwidth);
 	whileBlocking(ui.noFOFSpinBox)->setValue(count);
 	whileBlocking(ui.bandFOFSpinBox)->setValue(bandwidth / 1024);
 
-	rsDht->getRelayAllowance(RSDHT_RELAY_CLASS_GENERAL, count, bandwidth);
+	rsDht->getRelayAllowance(RsDhtRelayClass::GENERAL, count, bandwidth);
 	whileBlocking(ui.noGeneralSpinBox)->setValue(count);
 	whileBlocking(ui.bandGeneralSpinBox)->setValue(bandwidth / 1024);
 
 	updateTotals();
 
 
-	uint32_t relayMode = rsDht->getRelayMode();
-	if (relayMode & RSDHT_RELAY_ENABLED)
+	RsDhtRelayMode relayMode = rsDht->getRelayMode();
+	if (!!(relayMode & RsDhtRelayMode::ENABLED))
 	{
 		whileBlocking(ui.enableCheckBox)->setCheckState(Qt::Checked);
-		if ((relayMode & RSDHT_RELAY_MODE_MASK) == RSDHT_RELAY_MODE_OFF)
+		if ((relayMode & RsDhtRelayMode::MASK) == RsDhtRelayMode::OFF)
 		{
 			whileBlocking(ui.serverCheckBox)->setCheckState(Qt::Unchecked);
 		}
@@ -1887,33 +1887,33 @@ void ServerPage::updateTotals()
 
 	int total = nFriends + nFOF + nGeneral;
 
-	rsDht->setRelayAllowance(RSDHT_RELAY_CLASS_ALL, total, 0);
-	rsDht->setRelayAllowance(RSDHT_RELAY_CLASS_FRIENDS, nFriends, 1024 * friendBandwidth);
-	rsDht->setRelayAllowance(RSDHT_RELAY_CLASS_FOF, nFOF, 1024 * fofBandwidth);
-	rsDht->setRelayAllowance(RSDHT_RELAY_CLASS_GENERAL, nGeneral, 1024 * genBandwidth);
+	rsDht->setRelayAllowance(RsDhtRelayClass::ALL, total, 0);
+	rsDht->setRelayAllowance(RsDhtRelayClass::FRIENDS, nFriends, 1024 * friendBandwidth);
+	rsDht->setRelayAllowance(RsDhtRelayClass::FOF, nFOF, 1024 * fofBandwidth);
+	rsDht->setRelayAllowance(RsDhtRelayClass::GENERAL, nGeneral, 1024 * genBandwidth);
 }
 
 /** Saves the changes on this page */
 
 void ServerPage::updateRelayMode()
 {
-	uint32_t relayMode = 0;
+	RsDhtRelayMode relayMode = static_cast<RsDhtRelayMode>(0);
 	if (ui.enableCheckBox->isChecked())
 	{
-		relayMode |= RSDHT_RELAY_ENABLED;
+		relayMode |= RsDhtRelayMode::ENABLED;
 
 		if (ui.serverCheckBox->isChecked())
 		{
-			relayMode |= RSDHT_RELAY_MODE_ON;
+			relayMode |= RsDhtRelayMode::ON;
 		}
 		else
 		{
-			relayMode |= RSDHT_RELAY_MODE_OFF;
+			relayMode |= RsDhtRelayMode::OFF;
 		}
 	}
 	else
 	{
-		relayMode |= RSDHT_RELAY_MODE_OFF;
+		relayMode |= RsDhtRelayMode::OFF;
 	}
 
 	rsDht->setRelayMode(relayMode);

@@ -24,6 +24,7 @@
 #include <QBuffer>
 
 #include "PulseTopLevel.h"
+#include "gui/common/FilesDefs.h"
 
 #include <algorithm>
 #include <iostream>

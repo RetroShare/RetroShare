@@ -20,7 +20,8 @@
 
 #pragma once
 
-#include <retroshare-gui/configpage.h>
+#include "retroshare-gui/configpage.h"
+#include "gui/common/FilesDefs.h"
 #include "ui_WebuiPage.h"
 
 namespace resource_api{

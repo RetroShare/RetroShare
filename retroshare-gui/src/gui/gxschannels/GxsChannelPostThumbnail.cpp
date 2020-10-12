@@ -18,11 +18,15 @@
  *                                                                             *
  *******************************************************************************/
 
+#include <math.h>
+
 #include <QWheelEvent>
 #include <QDateTime>
 
 #include "gui/common/FilesDefs.h"
 #include "gui/gxschannels/GxsChannelPostThumbnail.h"
+
+// #define DEBUG_GXSCHANNELPOSTTHUMBNAIL 1
 
 const float ChannelPostThumbnailView::DEFAULT_SIZE_IN_FONT_HEIGHT = 5.0;
 const float ChannelPostThumbnailView::FONT_SCALE_FACTOR = 1.5;
@@ -50,7 +54,9 @@ void ChannelPostThumbnailView::setText(const QString& s)
 {
     if(mPostTitle == NULL)
     {
+#ifdef DEBUG_GXSCHANNELPOSTTHUMBNAIL
         std::cerr << "(EE) calling setText on a ChannelPostThumbnailView without SHOW_TEXT flag!"<< std::endl;
+#endif
         return;
     }
 
@@ -246,6 +252,8 @@ void ZoomableLabel::mousePressEvent(QMouseEvent *me)
     mMoving = true;
     mLastX = me->x();
     mLastY = me->y();
+
+    emit clicked();
 }
 void ZoomableLabel::mouseReleaseEvent(QMouseEvent *)
 {
@@ -292,7 +300,11 @@ QPixmap ZoomableLabel::extractCroppedScaledPicture() const
 
 void ZoomableLabel::setPicture(const QPixmap& pix)
 {
+#ifdef DEBUG_GXSCHANNELPOSTTHUMBNAIL
+    std::cerr << "Setting new picture of size " << pix.width() << " x " << pix.height() << std::endl;
+#endif
     mFullImage = pix;
+    setScaledContents(true);
 
     reset();
     updateView();
@@ -312,7 +324,15 @@ void ZoomableLabel::updateView()
     //		- the original center is preferred
     //		- if the crop overlaps the image border, the center is moved.
 
-    QRect rect(mCenterX - 0.5 * width()*mZoomFactor, mCenterY - 0.5 * height()*mZoomFactor, width()*mZoomFactor, height()*mZoomFactor);
+    QRect rect(mCenterX - 0.5 * width()*mZoomFactor, mCenterY - 0.5 * height()*mZoomFactor, floor(width()*mZoomFactor), floor(height()*mZoomFactor));
+
+#ifdef DEBUG_GXSCHANNELPOSTTHUMBNAIL
+    std::cerr << "Updating view: mCenterX=" << mCenterX << ", mCenterY=" << mCenterY << ", mZoomFactor=" << mZoomFactor << std::endl;
+    std::cerr << "               Image size: " << mFullImage.width() << " x " << mFullImage.height() << ", window size: " << width() << " x " << height() << std::endl;
+    std::cerr << "               cropped image: " << rect.left() << "," << rect.top() << "+" << rect.width() << "+" << rect.height() << std::endl;
+    std::cerr << "               saving crop to pix2.png" << std::endl;
+    mFullImage.copy(rect).save("pix2.png","PNG");
+#endif
     QLabel::setPixmap(mFullImage.copy(rect));
 }
 

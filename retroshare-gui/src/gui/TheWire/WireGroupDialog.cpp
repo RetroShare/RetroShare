@@ -22,6 +22,7 @@
 #include "WireGroupExtra.h"
 
 #include "WireGroupDialog.h"
+#include "gui/common/FilesDefs.h"
 #include "gui/gxs/GxsIdDetails.h"
 
 #include <iostream>

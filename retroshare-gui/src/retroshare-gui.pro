@@ -1376,8 +1376,8 @@ gxschannels {
 		gui/gxschannels/GxsChannelPostsWidgetWithModel.cpp \
 		gui/gxschannels/GxsChannelPostsModel.cpp \
 		gui/gxschannels/GxsChannelPostFilesModel.cpp \
+		gui/gxschannels/GxsChannelFilesStatusWidget.cpp \
                 gui/gxschannels/GxsChannelPostThumbnail.cpp \
-                gui/gxschannels/GxsChannelFilesStatusWidget.cpp \
 		gui/gxschannels/GxsChannelGroupDialog.cpp \
 		gui/gxschannels/CreateGxsChannelMsg.cpp \
 		gui/feeds/GxsChannelGroupItem.cpp \
@@ -1389,7 +1389,9 @@ gxschannels {
 posted {
 	
 	HEADERS += gui/Posted/PostedDialog.h \
-		gui/Posted/PostedListWidget.h \
+		gui/Posted/PostedListWidgetWithModel.h \
+		gui/Posted/PostedPostsModel.h \
+		gui/Posted/BoardPostDisplayWidget.h \
 		gui/Posted/PostedItem.h \
 		gui/Posted/PostedCardView.h \
 		gui/Posted/PostedGroupDialog.h \
@@ -1401,18 +1403,22 @@ posted {
 		#gui/Posted/PostedCreateCommentDialog.h \
 		#gui/Posted/PostedComments.h \
 	
-	FORMS += gui/Posted/PostedListWidget.ui \
+	FORMS += gui/Posted/PostedListWidgetWithModel.ui \
 		gui/feeds/PostedGroupItem.ui \
+		gui/Posted/BoardPostDisplayWidget_compact.ui \
+		gui/Posted/BoardPostDisplayWidget_card.ui \
 		gui/Posted/PostedItem.ui \
 		gui/Posted/PostedCardView.ui \
 		gui/Posted/PostedCreatePostDialog.ui \
-		gui/Posted/PhotoView.ui 
+		gui/Posted/PhotoView.ui \
 		#gui/Posted/PostedDialog.ui \
 		#gui/Posted/PostedComments.ui \
 		#gui/Posted/PostedCreateCommentDialog.ui
 	
 	SOURCES += gui/Posted/PostedDialog.cpp \
-		gui/Posted/PostedListWidget.cpp \
+		gui/Posted/PostedListWidgetWithModel.cpp \
+		gui/Posted/BoardPostDisplayWidget.cpp \
+		gui/Posted/PostedPostsModel.cpp \
 		gui/feeds/PostedGroupItem.cpp \
 		gui/Posted/PostedItem.cpp \
 		gui/Posted/PostedCardView.cpp \

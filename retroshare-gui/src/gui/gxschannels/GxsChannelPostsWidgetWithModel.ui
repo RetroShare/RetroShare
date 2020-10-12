@@ -393,6 +393,9 @@ p, li { white-space: pre-wrap; }
           <property name="contextMenuPolicy">
            <enum>Qt::CustomContextMenu</enum>
           </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click to view post. &lt;/p&gt;&lt;p&gt;Use Ctrl+mouse wheel &lt;/p&gt;&lt;p&gt;to zoom/unzoom.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
           <property name="sizeAdjustPolicy">
            <enum>QAbstractScrollArea::AdjustToContents</enum>
           </property>
@@ -594,14 +597,14 @@ p, li { white-space: pre-wrap; }
    <header>gui/common/SubscribeToolButton.h</header>
   </customwidget>
   <customwidget>
-   <class>StyledElidedLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledElidedLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>RSTreeView</class>
    <extends>QTreeView</extends>
    <header>gui/common/RSTreeView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header>gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
    <class>GxsCommentDialog</class>
@@ -610,9 +613,9 @@ p, li { white-space: pre-wrap; }
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
+   <class>StyledElidedLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledElidedLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>
