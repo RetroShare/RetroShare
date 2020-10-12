@@ -48,7 +48,7 @@ public:
         TYPE_UPDATED                           = 0x07,
         TYPE_MESSAGE_DELETED                   = 0x08,
         TYPE_GROUP_DELETED                     = 0x09,
-	};
+    };
 
 	virtual NotifyType getType() = 0;
 

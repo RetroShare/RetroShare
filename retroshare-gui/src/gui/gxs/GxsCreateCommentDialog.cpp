@@ -26,7 +26,7 @@
 #include <QMessageBox>
 #include <iostream>
 
-GxsCreateCommentDialog::GxsCreateCommentDialog(RsGxsCommentService *service,  const RsGxsGrpMsgIdPair &parentId, const RsGxsMessageId& threadId, QWidget *parent) :
+GxsCreateCommentDialog::GxsCreateCommentDialog(RsGxsCommentService *service,  const RsGxsGrpMsgIdPair &parentId, const RsGxsMessageId& threadId, const RsGxsId& default_author,QWidget *parent) :
 	QDialog(parent),
 	ui(new Ui::GxsCreateCommentDialog), mCommentService(service), mParentId(parentId), mThreadId(threadId)
 {
@@ -35,7 +35,7 @@ GxsCreateCommentDialog::GxsCreateCommentDialog(RsGxsCommentService *service,  co
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 
 	/* fill in the available OwnIds for signing */
-    ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
+    ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, default_author);
 }
 
 void GxsCreateCommentDialog::loadComment(const QString &msgText, const QString &msgAuthor, const RsGxsId &msgAuthorId)

@@ -65,10 +65,8 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
-	buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Post"));
-
-	connect(buttonBox, SIGNAL(accepted()), this, SLOT(sendMsg()));
-	connect(buttonBox, SIGNAL(rejected()), this, SLOT(cancelMsg()));
+	connect(postButton, SIGNAL(clicked()), this, SLOT(sendMsg()));
+	connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelMsg()));
 
 	connect(addFileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
 	connect(addfilepushButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
@@ -599,8 +597,8 @@ void CreateGxsChannelMsg::checkAttachmentReady()
 				 * recognized by librs but not correctly by gui (can't
 				 * formally remove it)
 				 */
-				buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
-				buttonBox->button(QDialogButtonBox::Cancel)->setEnabled(false);
+				postButton->setEnabled(false);
+				cancelButton->setEnabled(false);
 				break;
 			}
 		}
@@ -608,8 +606,8 @@ void CreateGxsChannelMsg::checkAttachmentReady()
 
 	if (fit == mAttachments.end())
 	{
-		buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
-		buttonBox->button(QDialogButtonBox::Cancel)->setEnabled(true);
+		postButton->setEnabled(true);
+		cancelButton->setEnabled(true);
 	}
 
 	/* repeat... */

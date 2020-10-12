@@ -26,6 +26,7 @@
 #include "PulseViewGroup.h"
 
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/common/FilesDefs.h"
 #include "util/DateTime.h"
 
 /** Constructor */

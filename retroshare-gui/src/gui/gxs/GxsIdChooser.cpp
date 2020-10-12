@@ -313,7 +313,7 @@ void GxsIdChooser::setDefaultItem()
 	}
 
 	if (def >= 0) {
-		setCurrentIndex(def);
+        whileBlocking(this)->setCurrentIndex(def);
 #ifdef IDCHOOSER_DEBUG
         std::cerr << "GxsIdChooser-002" << (void*)this << " setting current index to " << def << std::endl;
 #endif

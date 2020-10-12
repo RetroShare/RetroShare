@@ -36,7 +36,7 @@ class GxsCreateCommentDialog : public QDialog
 	Q_OBJECT
 
 public:
-	explicit GxsCreateCommentDialog(RsGxsCommentService *service, const RsGxsGrpMsgIdPair& parentId, const RsGxsMessageId& threadId, QWidget *parent = 0);
+    explicit GxsCreateCommentDialog(RsGxsCommentService *service, const RsGxsGrpMsgIdPair& parentId, const RsGxsMessageId& threadId, const RsGxsId& default_author=RsGxsId(),QWidget *parent = 0);
 	~GxsCreateCommentDialog();
 
 	void loadComment(const QString &msgText, const QString &msgAuthor, const RsGxsId &msgAuthorId);	

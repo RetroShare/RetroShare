@@ -25,6 +25,7 @@
 
 #include "WireGroupItem.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/common/FilesDefs.h"
 
 #include <algorithm>
 #include <iostream>
