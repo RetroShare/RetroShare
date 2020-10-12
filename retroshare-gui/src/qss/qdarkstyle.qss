@@ -1255,6 +1255,17 @@ IdEditDialog QPushButton#createButton:hover, CreateGxsForumMsg QPushButton#postB
 	padding: 2px;
 }
 
+CreateGxsForumMsg QPushButton#postButton:disabled {
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #d40000;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+}
+
 QTabBar#smTab::tab{
  height: 32px; 
  width: 32px;
