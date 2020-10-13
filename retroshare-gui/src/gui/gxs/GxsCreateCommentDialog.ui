@@ -138,20 +138,11 @@ p, li { white-space: pre-wrap; }
    </item>
    <item row="1" column="0">
     <widget class="QFrame" name="messageframe">
-     <layout class="QVBoxLayout" name="mainVLayout">
-      <property name="leftMargin">
-       <number>9</number>
-      </property>
+     <layout class="QGridLayout" name="gridLayout_3">
       <property name="topMargin">
        <number>6</number>
       </property>
-      <property name="rightMargin">
-       <number>9</number>
-      </property>
-      <property name="bottomMargin">
-       <number>9</number>
-      </property>
-      <item>
+      <item row="0" column="0">
        <widget class="GxsIdLabel" name="replaytolabel">
         <property name="styleSheet">
          <string notr="true"/>
@@ -161,7 +152,7 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item>
+      <item row="1" column="0" colspan="3">
        <widget class="MimeTextEdit" name="commentTextEdit">
         <property name="styleSheet">
          <string notr="true"/>
@@ -171,7 +162,7 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item>
+      <item row="2" column="0" colspan="3">
        <layout class="QHBoxLayout" name="signedHLayout">
         <item>
          <widget class="QLabel" name="signedLabel">
@@ -195,13 +186,30 @@ p, li { white-space: pre-wrap; }
         </item>
        </layout>
       </item>
-      <item>
-       <widget class="QDialogButtonBox" name="buttonBox">
+      <item row="3" column="0">
+       <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
-        <property name="standardButtons">
-         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>276</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="3" column="1">
+       <widget class="QPushButton" name="postButton">
+        <property name="text">
+         <string>Post</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QPushButton" name="cancelButton">
+        <property name="text">
+         <string>Cancel</string>
         </property>
        </widget>
       </item>

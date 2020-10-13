@@ -31,8 +31,8 @@ GxsCreateCommentDialog::GxsCreateCommentDialog(RsGxsCommentService *service,  co
 	ui(new Ui::GxsCreateCommentDialog), mCommentService(service), mParentId(parentId), mThreadId(threadId)
 {
 	ui->setupUi(this);
-	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(createComment()));
-	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
+	connect(ui->postButton, SIGNAL(clicked()), this, SLOT(createComment()));
+	connect(ui->cancelButton, SIGNAL(clicked()), this, SLOT(close()));
 
 	/* fill in the available OwnIds for signing */
     ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, default_author);
@@ -52,7 +52,7 @@ void GxsCreateCommentDialog::loadComment(const QString &msgText, const QString &
 	ui->replaytolabel->setText( tr("Replying to") + " @" + msgAuthor);
 	
 	ui->commentTextEdit->setPlaceholderText( tr("Type your reply"));
-	ui->buttonBox->button(QDialogButtonBox::Ok)->setText("Reply");
+	ui->postButton->setText("Reply");
 	ui->signedLabel->setText("Reply as");
 }
 
