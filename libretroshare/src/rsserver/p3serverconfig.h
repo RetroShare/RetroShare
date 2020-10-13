@@ -72,20 +72,20 @@ virtual std::string getRetroshareDataDirectory();
 
 	/* New Stuff */
 
-virtual uint32_t getUserLevel();
+virtual RsConfigUserLvl getUserLevel();
 
-virtual uint32_t getNetState();
-virtual uint32_t getNetworkMode();
-virtual uint32_t getNatTypeMode();
-virtual uint32_t getNatHoleMode();
-virtual uint32_t getConnectModes();
+virtual RsNetState getNetState();
+virtual RsNetworkMode getNetworkMode();
+virtual RsNatTypeMode getNatTypeMode();
+virtual RsNatHoleMode getNatHoleMode();
+virtual RsConnectModes getConnectModes();
 
 virtual bool getConfigurationOption(uint32_t key, std::string &opt);
 virtual bool setConfigurationOption(uint32_t key, const std::string &opt);
 
 	/* Operating Mode */
-virtual uint32_t getOperatingMode();
-virtual bool     setOperatingMode(uint32_t opMode);
+virtual RsOpMode getOperatingMode();
+virtual bool     setOperatingMode(RsOpMode opMode);
 virtual bool     setOperatingMode(const std::string &opModeStr);
 
 virtual int SetMaxDataRates( int downKb, int upKb );
@@ -97,7 +97,7 @@ virtual int GetTrafficSum( uint64_t &inb, uint64_t &outb );
 
 	private:
 
-bool switchToOperatingMode(uint32_t opMode);
+bool switchToOperatingMode(RsOpMode opMode);
 
 bool findConfigurationOption(uint32_t key, std::string &keystr);
 
@@ -108,11 +108,11 @@ bool findConfigurationOption(uint32_t key, std::string &keystr);
 	p3GeneralConfig *mGeneralConfig;
 
 	RsMutex configMtx;
-	uint32_t mUserLevel; // store last one... will later be a config Item too.
+        RsConfigUserLvl mUserLevel; // store last one... will later be a config Item too.
 	float mRateDownload;
 	float mRateUpload;
 
-	uint32_t mOpMode;
+        RsOpMode mOpMode;
 };
 
 #endif

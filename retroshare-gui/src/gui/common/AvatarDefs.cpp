@@ -26,6 +26,7 @@
 #include <gui/gxs/GxsIdDetails.h>
 
 #include "AvatarDefs.h"
+#include "gui/common/FilesDefs.h"
 
 void AvatarDefs::getOwnAvatar(QPixmap &avatar, const QString& defaultImage)
 {
@@ -36,7 +37,7 @@ void AvatarDefs::getOwnAvatar(QPixmap &avatar, const QString& defaultImage)
 	rsMsgs->getOwnAvatarData(data, size);
 
 	if (size == 0) {
-		avatar = QPixmap(defaultImage);
+        avatar = FilesDefs::getPixmapFromQtResourcePath(defaultImage);
 		return;
 	}
 
@@ -53,7 +54,7 @@ bool AvatarDefs::getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, cons
     /* get avatar */
     rsMsgs->getAvatarData(RsPeerId(sslId), data, size);
     if (size == 0) {
-        avatar = QPixmap(defaultImage);
+        avatar = FilesDefs::getPixmapFromQtResourcePath(defaultImage);
         return false;
     }
 
@@ -72,7 +73,7 @@ bool AvatarDefs::getAvatarFromGxsId(const RsGxsId& gxsId, QPixmap &avatar, const
 
     if(!rsIdentity->getIdDetails(gxsId, details))
     {
-        avatar = QPixmap(defaultImage);
+        avatar = FilesDefs::getPixmapFromQtResourcePath(defaultImage);
         return false;
     }
 
@@ -107,7 +108,7 @@ bool AvatarDefs::getAvatarFromGpgId(const RsPgpId& gpgId, QPixmap &avatar, const
 	}
 
 	if (size == 0) {
-		avatar = QPixmap(defaultImage);
+        avatar = FilesDefs::getPixmapFromQtResourcePath(defaultImage);
 		return false;
 	}
 

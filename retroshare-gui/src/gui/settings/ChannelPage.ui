@@ -30,13 +30,6 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QCheckBox" name="loadThreadCheckBox">
-        <property name="text">
-         <string>Load posts in background (Thread)</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QCheckBox" name="emoteicon_checkBox">
         <property name="text">
          <string>Load Emoticons</string>

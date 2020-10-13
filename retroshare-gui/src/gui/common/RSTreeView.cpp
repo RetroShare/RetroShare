@@ -30,7 +30,10 @@ RSTreeView::RSTreeView(QWidget *parent) : QTreeView(parent)
 void RSTreeView::wheelEvent(QWheelEvent *e)
 {
     if(e->modifiers() == Qt::ControlModifier)
+    {
 		emit zoomRequested(e->delta() > 0);
+        return;
+    }
     else
         QTreeView::wheelEvent(e);
 }

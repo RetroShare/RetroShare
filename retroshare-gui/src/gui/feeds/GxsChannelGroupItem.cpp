@@ -148,7 +148,7 @@ void GxsChannelGroupItem::fill()
 	if (mGroup.mImage.mData != NULL) {
 		QPixmap chanImage;
 		GxsIdDetails::loadPixmapFromData(mGroup.mImage.mData, mGroup.mImage.mSize, chanImage,GxsIdDetails::ORIGINAL);
-		ui->logoLabel->setPixmap(QPixmap(chanImage));
+        ui->logoLabel->setPixmap(chanImage);
 	}
 
 	if (IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags)) {

@@ -189,8 +189,6 @@ void HomePage::updateOwnCert()
 
 void HomePage::updateOwnId()
 {
-    bool include_extra_locators = mIncludeAllIPs;
-
     RsPeerDetails detail;
 
     if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
@@ -199,11 +197,30 @@ void HomePage::updateOwnId()
         return ;
     }
 
-	std::string invite ;
+    bool include_extra_locators = mIncludeAllIPs || detail.isHiddenNode;
+    std::string invite ;
 
-	rsPeers->getShortInvite(invite,rsPeers->getOwnId(),true,!mIncludeAllIPs);
+    rsPeers->getShortInvite(invite,rsPeers->getOwnId(),true,!include_extra_locators);
 
-	ui->retroshareid->setText(QString::fromUtf8(invite.c_str()));
+#ifdef TODO
+    QString S;
+    QString txt;
+    int i=0;
+
+    for(uint32_t i=0;i<invite.size();)
+        if(QFontMetricsF(font()).width(S) < ui->retroshareid->width())
+            S += invite[i++];
+        else
+        {
+            txt += S + "\n";
+            S.clear();
+        }
+
+    txt += S;
+
+    ui->retroshareid->setText(txt);
+#endif
+    ui->retroshareid->setText(QString::fromUtf8(invite.c_str()));
 }
 static void sendMail(QString sAddress, QString sSubject, QString sBody)
 {

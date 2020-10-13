@@ -1983,7 +1983,7 @@ QTreeView [new=true]{
 
 /* changes for the subscribe Button */
 
-PostedListWidget QToolButton#subscribeToolButton {
+PostedListWidgetWithModel QToolButton#subscribeToolButton {
 	font: bold;
 	font-size: 15px;
 	color: white;
@@ -1992,7 +1992,7 @@ PostedListWidget QToolButton#subscribeToolButton {
 	max-height: 27px;
 }
 
-PostedListWidget QToolButton#subscribeToolButton:hover {
+PostedListWidgetWithModel QToolButton#subscribeToolButton:hover {
 	background: #03b1f3;
 	border-radius: 4px;
 }
@@ -2011,7 +2011,7 @@ GxsForumThreadWidget QToolButton#subscribeToolButton:hover {
 	border-radius: 4px;
 }
 
-GxsChannelPostsWidget QToolButton#subscribeToolButton {
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton {
 	font: bold;
 	font-size: 14px;
 	color: white;
@@ -2020,18 +2020,18 @@ GxsChannelPostsWidget QToolButton#subscribeToolButton {
 	max-height: 27px;
 }
 
-GxsChannelPostsWidget QToolButton#subscribeToolButton:hover {
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton:hover {
 	background: #03b1f3;
 	border-radius: 4px;
 }
 
-GxsChannelPostsWidget QToolButton#subscribeToolButton:pressed {
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton:pressed {
 	background: #03b1f3;
 	border-radius: 4px;
 	border: 1px solid gray;
 }
 
-GxsChannelPostsWidget QToolButton#subscribeToolButton:disabled {
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton:disabled {
 	background: gray;
 	border-radius: 4px;
 	border: 1px solid gray;
@@ -2039,17 +2039,35 @@ GxsChannelPostsWidget QToolButton#subscribeToolButton:disabled {
 }
 
 /* only for MenuButtonPopup */
-GxsChannelPostsWidget QToolButton#subscribeToolButton[popupMode="1"] { 
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton[popupMode="1"] { 
     padding-right: 0px; 
 }
 
-GxsChannelPostsWidget QToolButton#subscribeToolButton::menu-arrow {
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton::menu-arrow {
     image: none;
 }
 
-GxsChannelPostsWidget QToolButton#subscribeToolButton::menu-button {
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton::menu-button {
     image: none;
 
+}
+
+CreateGxsChannelMsg QPushButton#postButton {
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #0099cc;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+CreateGxsChannelMsg QPushButton#postButton:hover {
+	background: #03b1f3;
+	border-radius: 4px;
+	min-width: 4em;
+	padding: 2px;
 }
 
 QTabBar#smTab::tab{
@@ -2074,73 +2092,86 @@ PostedCreatePostDialog QPushButton#submitButton:hover {
 
 }
 
-PostedItem QFrame#mainFrame {
+BoardPostDisplayWidget_compact QFrame#mainFrame {
     border-radius: 4px;
     border: 1px solid #32414B;
     background-color: #19232D;
+}
 
+BoardPostDisplayWidget_compact  QFrame#mainFrame [new=false]{
+	background: #19232D;
+}
+
+BoardPostDisplayWidget_compact  QFrame#mainFrame[new=true] {
+    background-color: #1464a0;
 }
 
 GxsChannelPostItem QFrame#mainFrame {
     border-radius: 4px;
     border: 1px solid #32414B;
     background-color: #19232D;
-
 }
 
-PostedItem QPushButton#shareButton
-{
+BoardPostDisplayWidget_compact QPushButton#shareButton {
     background-color: transparent;
 	min-width: 80px;
 	max-height: 22px;
-
 }
 
-PostedItem QLabel#scoreLabel
-{
-    background-color: transparent;
-
-}
-
-PostedItem QFrame#voteFrame {
+BoardPostDisplayWidget_compact QFrame#voteFrame {
 	background: #141415;
 }
 
-PostedItem QToolButton#voteDownButton, QToolButton#voteUpButton
+BoardPostDisplayWidget_compact QToolButton#voteDownButton, QToolButton#voteUpButton, 
+BoardPostDisplayWidget_card QToolButton#voteDownButton, QToolButton#voteUpButton
 {
 	border: none;
-
 }
 
-PostedItem QLabel#thumbnailLabel{
+BoardPostDisplayWidget_compact QLabel#pictureLabel{
 	border: 2px solid #CCCCCC;
 	border-radius: 3px;
 }
 
-PostedCardView QPushButton#shareButton
-{
-    background-color: transparent;
-	min-width: 80px;
-	max-height: 22px;
-
+BoardPostDisplayWidget_compact QLabel#scoreLabel, QLabel#titleLabel, QLabel#fromBoldLabel , QLabel#fromLabel, QLabel#dateLabel,
+BoardPostDisplayWidget_card QLabel#scoreLabel, QLabel#titleLabel{
+	background-color: transparent;
 }
 
-PostedCardView QFrame#voteFrame {
+BoardPostDisplayWidget_compact QLabel#newLabel,
+BoardPostDisplayWidget_card QLabel#newLabel {
+	border: 1px solid #00B712;
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #5AFF15, stop: 1 #00B712);
+	border-radius: 3px;
+	color: black;
+}
+
+BoardPostDisplayWidget_card QPushButton#shareButton{
+	background-color: transparent;
+	min-width: 80px;
+	max-height: 22px;
+}
+
+BoardPostDisplayWidget_card QFrame#voteFrame {
 	background: #141415;
 }
 
-PostedCardView QFrame#mainFrame {
-
-    background-color: #19232D;
-
+BoardPostDisplayWidget_card QFrame#mainFrame {
+	background-color: #19232D;
 }
 
-PostedCardView QFrame#mainFrame [new=false]{
+BoardPostDisplayWidget_card  QFrame#mainFrame [new=false]{
 	background: #19232D;
 }
 
-PostedCardView > QFrame#mainFrame[new=true] {
-	background-color: #005000;
+BoardPostDisplayWidget_card  QFrame#mainFrame[new=true] {
+    background-color: #1464a0;
+}
+
+BoardPostDisplayWidget_compact QLabel#titleLabel,
+BoardPostDisplayWidget_card QLabel#titleLabel{
+	font-size: 14px;
+	font: bold;
 }
 
 WireGroupItem QFrame#wire_frame{
@@ -2162,3 +2193,5 @@ PulseTopLevel QFrame#frame, PulseViewGroup QFrame#frame, PulseReply QFrame#frame
 	border: 2px solid #38444d;
 	border-radius: 6px;
 }
+
+

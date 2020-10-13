@@ -46,7 +46,7 @@
 #define IMAGE_INFO           ":/images/info16.png"
 //#define IMAGE_GROUPAUTHD     ":/images/konv_message2.png"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
-#define IMAGE_EDIT           ":/images/edit_16.png"
+#define IMAGE_EDIT           ":/icons/png/pencil-edit-button.png"
 #define IMAGE_SHARE          ":/images/share-icon-16.png"
 #define IMAGE_TABNEW         ":/images/tab-new.png"
 #define IMAGE_DELETE         ":/images/delete.png"
@@ -146,7 +146,7 @@ void GxsGroupFrameDialog::initUi()
 {
 	registerHelpButton(ui->helpButton, getHelpString(),pageName()) ;
 
-	ui->titleBarPixmap->setPixmap(QPixmap(icon(ICON_NAME)));
+    ui->titleBarPixmap->setPixmap(FilesDefs::getPixmapFromQtResourcePath(icon(ICON_NAME)));
 	ui->titleBarLabel->setText(text(TEXT_NAME));
 
 	/* Initialize group tree */
@@ -731,7 +731,7 @@ void GxsGroupFrameDialog::loadComment(const RsGxsGroupId &grpId, const QVector<R
 			comments += "...";
 		}
 
-		commentDialog = new GxsCommentDialog(this, mInterface->getTokenService(), commentService);
+        commentDialog = new GxsCommentDialog(this,RsGxsId(), mInterface->getTokenService(), commentService);
 
 		QWidget *commentHeader = createCommentHeaderWidget(grpId, most_recent_msgId);
 		if (commentHeader) {

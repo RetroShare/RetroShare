@@ -56,7 +56,7 @@ public:
 	bool setGroup(const RsGxsChannelGroup& group, bool doFill = true);
 	bool setPost(const RsGxsChannelPost& post, bool doFill = true);
 
-	void setFileCleanUpWarning(uint32_t time_left);
+    //void setFileCleanUpWarning(uint32_t time_left);
 
 	QString getTitleLabel();
 	QString getMsgLabel();

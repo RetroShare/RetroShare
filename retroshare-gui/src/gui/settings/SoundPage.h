@@ -23,8 +23,9 @@
 
 #include <QFileDialog>
 
-#include <retroshare-gui/configpage.h>
+#include "retroshare-gui/configpage.h"
 #include "ui_SoundPage.h"
+#include "gui/common/FilesDefs.h"
 
 class SoundPage : public ConfigPage
 {
@@ -39,7 +40,7 @@ public:
 	/** Loads the settings for this page */
 	virtual void load();
 
-	virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/sound.svg") ; }
+    virtual QPixmap iconPixmap() const { return FilesDefs::getPixmapFromQtResourcePath(":/icons/settings/sound.svg") ; }
 	virtual QString pageName() const { return tr("Sound") ; }
 	virtual QString helpText() const { return ""; }
 

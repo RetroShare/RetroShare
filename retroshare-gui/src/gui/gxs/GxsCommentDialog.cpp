@@ -30,28 +30,29 @@
 #include <QDateTime>
 
 /** Constructor */
-GxsCommentDialog::GxsCommentDialog(QWidget *parent, RsTokenService *token_service, RsGxsCommentService *comment_service)
+GxsCommentDialog::GxsCommentDialog(QWidget *parent, const RsGxsId &default_author, RsTokenService *token_service, RsGxsCommentService *comment_service)
 	: QWidget(parent), ui(new Ui::GxsCommentDialog)
 {
 	/* Invoke the Qt Designer generated QObject setup routine */
 	ui->setupUi(this);
 
     setTokenService(token_service,comment_service);
-    init();
+    init(default_author);
 }
 	
-void GxsCommentDialog::init()
+void GxsCommentDialog::init(const RsGxsId& default_author)
 {
 	/* Set header resize modes and initial section sizes */
 	QHeaderView * ttheader = ui->treeWidget->header () ;
 	ttheader->resizeSection (0, 440);
 
 	/* fill in the available OwnIds for signing */
-	ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
+    ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, default_author);
 
 	connect(ui->refreshButton, SIGNAL(clicked()), this, SLOT(refresh()));
 	connect(ui->idChooser, SIGNAL(currentIndexChanged( int )), this, SLOT(voterSelectionChanged( int )));
     connect(ui->idChooser, SIGNAL(idsLoaded()), this, SLOT(idChooserReady()));
+    connect(ui->treeWidget,SIGNAL(commentsLoaded(int)),this,SLOT(notifyCommentsLoaded(int)));
 	
 	connect(ui->commentButton, SIGNAL(clicked()), ui->treeWidget, SLOT(makeComment()));
 	connect(ui->sortBox, SIGNAL(currentIndexChanged(int)), this, SLOT(sortComments(int)));
@@ -69,13 +70,13 @@ void GxsCommentDialog::setTokenService(RsTokenService *token_service, RsGxsComme
 	ui->treeWidget->setup(token_service, comment_service);
 }
 
-GxsCommentDialog::GxsCommentDialog(QWidget *parent)
+GxsCommentDialog::GxsCommentDialog(QWidget *parent,const RsGxsId &default_author)
 	: QWidget(parent), ui(new Ui::GxsCommentDialog)
 {
 	/* Invoke the Qt Designer generated QObject setup routine */
 	ui->setupUi(this);
 
-    init();
+    init(default_author);
 }
 
 GxsCommentDialog::~GxsCommentDialog()
@@ -83,7 +84,7 @@ GxsCommentDialog::~GxsCommentDialog()
 	delete(ui);
 }
 
-void GxsCommentDialog::commentLoad(const RsGxsGroupId &grpId, const std::set<RsGxsMessageId>& msg_versions,const RsGxsMessageId& most_recent_msgId)
+void GxsCommentDialog::commentLoad(const RsGxsGroupId &grpId, const std::set<RsGxsMessageId>& msg_versions,const RsGxsMessageId& most_recent_msgId,bool use_cache)
 {
 	std::cerr << "GxsCommentDialog::commentLoad(" << grpId << ", most recent msg version: " << most_recent_msgId << ")";
 	std::cerr << std::endl;
@@ -92,7 +93,13 @@ void GxsCommentDialog::commentLoad(const RsGxsGroupId &grpId, const std::set<RsG
 	mMostRecentMsgId = most_recent_msgId;
     mMsgVersions = msg_versions;
 
-	ui->treeWidget->requestComments(mGrpId,msg_versions,most_recent_msgId);
+    ui->treeWidget->setUseCache(use_cache);
+    ui->treeWidget->requestComments(mGrpId,msg_versions,most_recent_msgId);
+}
+
+void GxsCommentDialog::notifyCommentsLoaded(int n)
+{
+    emit commentsLoaded(n);
 }
 
 void GxsCommentDialog::refresh()
@@ -145,10 +152,10 @@ void GxsCommentDialog::setCommentHeader(QWidget *header)
 	//header->setParent(ui->postFrame);
 	//ui->postFrame->setVisible(true);
 
-	QLayout *alayout = ui->postFrame->layout();
+#if 0
+    QLayout *alayout = ui->postFrame->layout();
 	alayout->addWidget(header);
 
-#if 0
 	ui->postFrame->setVisible(true);
 
 	QDateTime qtime;

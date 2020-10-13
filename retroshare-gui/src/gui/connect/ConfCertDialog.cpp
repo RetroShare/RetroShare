@@ -40,6 +40,7 @@
 #include "gui/RetroShareLink.h"
 #include "gui/notifyqt.h"
 #include "gui/common/AvatarDefs.h"
+#include "gui/common/FilesDefs.h"
 #include "gui/MainWindow.h"
 #include "util/DateTime.h"
 #include "util/misc.h"
@@ -84,7 +85,7 @@ ConfCertDialog::ConfCertDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidge
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
 	Settings->loadWidgetInformation(this);
-    ui.headerFrame->setHeaderImage(QPixmap(":/images/user/identityinfo64.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/user/identityinfo64.png"));
     //ui.headerFrame->setHeaderText(tr("Friend node details"));
 
     //ui._chat_CB->hide() ;
@@ -277,7 +278,7 @@ void ConfCertDialog::loadInvitePage()
 
     if(ui._shortFormat_CB->isChecked())
 	{
-		rsPeers->getShortInvite(invite,detail.id,true,!ui._includeIPHistory_CB->isChecked() );
+        rsPeers->getShortInvite(invite,detail.id,true,!(ui._includeIPHistory_CB->isChecked()|| detail.isHiddenNode) );
 		ui.stabWidget->setTabText(1, tr("Retroshare ID"));
 	}
 	else

@@ -298,13 +298,13 @@ int UdpRelayReceiver::checkRelays()
 			switch(rit->second.mRelayClass)
 			{
 				default:
-				case UDP_RELAY_CLASS_GENERAL:
+			    case UDP_RELAY_CLASS_GENERAL:
 					lifetime = UDP_RELAY_LIFETIME_GENERAL;
 					break;
-				case UDP_RELAY_CLASS_FOF:
+			    case UDP_RELAY_CLASS_FOF:
 					lifetime = UDP_RELAY_LIFETIME_FOF;
 					break;
-				case UDP_RELAY_CLASS_FRIENDS:
+			    case UDP_RELAY_CLASS_FRIENDS:
 					lifetime = UDP_RELAY_LIFETIME_FRIENDS;
 					break;
 			}
@@ -1048,13 +1048,13 @@ UdpRelayProxy::UdpRelayProxy(UdpRelayAddrSet *addrSet, int relayClass, uint32_t 
 		switch(relayClass)
 		{
 			default:
-			case UDP_RELAY_CLASS_GENERAL:
+		    case UDP_RELAY_CLASS_GENERAL:
 	        		mBandwidthLimit = RELAY_MAX_BANDWIDTH;
 				break;
-			case UDP_RELAY_CLASS_FOF:
+		    case UDP_RELAY_CLASS_FOF:
 	        		mBandwidthLimit = RELAY_MAX_BANDWIDTH;
 				break;
-			case UDP_RELAY_CLASS_FRIENDS:
+		    case UDP_RELAY_CLASS_FRIENDS:
 	        		mBandwidthLimit = RELAY_MAX_BANDWIDTH;
 				break;
 		}

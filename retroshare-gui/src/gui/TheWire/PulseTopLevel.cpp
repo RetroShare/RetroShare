@@ -24,6 +24,7 @@
 #include <QBuffer>
 
 #include "PulseTopLevel.h"
+#include "gui/common/FilesDefs.h"
 
 #include <algorithm>
 #include <iostream>
@@ -126,9 +127,9 @@ void PulseTopLevel::setReferenceString(QString ref)
 
 		// set ref icon
 		if (mPulse->mPulseType & WIRE_PULSE_TYPE_REPUBLISH) {
-			label_reficon->setPixmap(QPixmap(":/images/retweet.png"));
+            label_reficon->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/retweet.png"));
 		} else {
-			label_reficon->setPixmap(QPixmap(":/images/reply.png"));
+            label_reficon->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/reply.png"));
 		}
 	}
 

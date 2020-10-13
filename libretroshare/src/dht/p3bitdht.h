@@ -45,20 +45,20 @@ class DhtPeerDetails
 
 	DhtPeerDetails();
 
-	uint32_t mPeerType;
+	RsDhtPeerType mPeerType;
 
 	bdId    mDhtId;
 	RsPeerId mRsId;
 
 	/* direct from the DHT! */
-	uint32_t mDhtState; // One of RSDHT_PEERDHT_[...]
+	RsDhtPeerDht mDhtState;
 	rstime_t   mDhtUpdateTS;
 
 	/* internal state */
 	PeerConnectStateBox mConnectLogic;
 	
 	/* Actual Connection Status */
-	uint32_t  		mPeerConnectState; // One of RSDHT_PEERCONN_
+	RsDhtPeerConnectState	mPeerConnectState;
 	std::string 		mPeerConnectMsg;
 	uint32_t 		mPeerConnectMode;
 	bdId 			mPeerConnectPeerId;
@@ -77,7 +77,7 @@ class DhtPeerDetails
 
         /* Connection Request Status */
 	std::string		mPeerReqStatusMsg;
-	uint32_t		mPeerReqState;
+	RsDhtPeerRequest	mPeerReqState;
 	uint32_t		mPeerReqMode;
 	bdId			mPeerReqProxyId;
 	rstime_t			mPeerReqTS;
@@ -294,11 +294,11 @@ public:
     virtual int     addRelayServer(std::string ids);
     virtual int     removeRelayServer(std::string ids);
 
-    virtual uint32_t getRelayMode();
-    virtual int      setRelayMode(uint32_t mode);
+	virtual RsDhtRelayMode getRelayMode();
+	virtual int      setRelayMode(RsDhtRelayMode mode);
 
-    virtual int     getRelayAllowance(int  classIdx, uint32_t &count, uint32_t &bandwidth);
-    virtual int     setRelayAllowance(int classIdx, uint32_t  count, uint32_t  bandwidth);
+	virtual int     getRelayAllowance(RsDhtRelayClass classIdx, uint32_t &count, uint32_t &bandwidth);
+	virtual int     setRelayAllowance(RsDhtRelayClass classIdx, uint32_t  count, uint32_t  bandwidth);
 
 private:
 
@@ -307,7 +307,7 @@ private:
     int     pushRelayServers();
 
     std::list<std::string> mRelayServerList;
-    uint32_t mRelayMode;
+	RsDhtRelayMode mRelayMode;
 
 protected:
     /*****************************************************************/
@@ -348,9 +348,9 @@ public:
 
 private:
 
-    DhtPeerDetails *addInternalPeer_locked(const RsPeerId& pid, uint32_t type);
+	DhtPeerDetails *addInternalPeer_locked(const RsPeerId& pid, RsDhtPeerType type);
     int 	removeInternalPeer_locked(const RsPeerId& pid);
-    DhtPeerDetails *findInternalDhtPeer_locked(const bdNodeId *id, uint32_t type);
+	DhtPeerDetails *findInternalDhtPeer_locked(const bdNodeId *id, RsDhtPeerType type);
     DhtPeerDetails *findInternalRsPeer_locked(const RsPeerId &pid);
 
     bool 	havePeerTranslation_locked(const RsPeerId &pid);

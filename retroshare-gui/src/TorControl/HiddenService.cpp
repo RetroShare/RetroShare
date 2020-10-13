@@ -90,6 +90,13 @@ void HiddenService::addTarget(quint16 servicePort, QHostAddress targetAddress, q
     m_targets.append(t);
 }
 
+void HiddenService::setServiceId(const QByteArray& sid)
+{
+    m_service_id = sid;
+    m_hostname = sid + ".onion";
+
+    emit hostnameChanged();
+}
 void HiddenService::setPrivateKey(const CryptoKey &key)
 {
     if (m_privateKey.isLoaded()) {
@@ -97,13 +104,15 @@ void HiddenService::setPrivateKey(const CryptoKey &key)
         return;
     }
 
+#ifdef TO_REMOVE
     if (!key.isPrivate()) {
         BUG() << "Cannot create a hidden service with a public key";
         return;
     }
+#endif
 
     m_privateKey = key;
-    m_hostname = m_privateKey.torServiceID() + QStringLiteral(".onion");
+
     emit privateKeyChanged();
 }
 
@@ -112,13 +121,13 @@ void HiddenService::loadPrivateKey()
     if (m_privateKey.isLoaded() || m_dataPath.isEmpty())
         return;
 
-    bool ok = m_privateKey.loadFromFile(m_dataPath + QLatin1String("/private_key"), CryptoKey::PrivateKey);
+    bool ok = m_privateKey.loadFromFile(m_dataPath + QLatin1String("/private_key"));
+
     if (!ok) {
         qWarning() << "Failed to load hidden service key";
         return;
     }
 
-    m_hostname = m_privateKey.torServiceID();
     emit privateKeyChanged();
 }
 
