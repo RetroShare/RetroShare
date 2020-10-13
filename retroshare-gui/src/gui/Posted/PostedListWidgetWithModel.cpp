@@ -824,7 +824,7 @@ void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
 	ui->logoLabel->setPixmap(chanImage);
     ui->logoLabel->setFixedSize(QSize(ui->logoLabel->height()*chanImage.width()/(float)chanImage.height(),ui->logoLabel->height())); // make the logo have the same aspect ratio than the original image
 
-    //ui->submitPostButton->setEnabled(bool(group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH));
+    ui->submitPostButton->setEnabled(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
 
 	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
 	ui->subscribeToolButton->setEnabled(true);
