@@ -525,7 +525,14 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		if(!IS_GROUP_SUBSCRIBED(itemInfo.subscribeFlags))
 			tooltip += "\n" + tr("Subscribe to download and read messages") ;
 
-		tooltip += "\n" + tr("Description") + ": " + itemInfo.description;
+        QString desc = itemInfo.description.left(30);
+        desc.replace("\n"," ");
+        desc.replace("\t"," ");
+
+        if(itemInfo.description.length() > 30)
+            desc += "...";
+
+        tooltip += "\n" + tr("Description") + ": " + desc;
 
 		tooltip += "\n" + tr("Id") + ": " + itemInfo.id;
 
