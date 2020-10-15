@@ -1976,6 +1976,23 @@ GxsForumThreadWidget QLabel#forumName
 	font: bold;
 }
 
+GxsForumThreadWidget QWidget#threadTreeWidget::item {
+	padding: 2px;
+}
+
+ForumsDialog, GxsForumThreadWidget
+{
+	qproperty-textColorRead: darkgray;
+	qproperty-textColorUnread: white;
+	qproperty-textColorUnreadChildren: red;
+	qproperty-textColorNotSubscribed: white;
+	qproperty-textColorMissing: darkred;
+	qproperty-textColorPinned: #D07000;
+
+	qproperty-backgroundColorPinned: #19232D;
+	qproperty-backgroundColorFiltered: darkGreen;
+}
+
 QTreeView [new=true]{
     color: #0099cc;
 
@@ -2218,7 +2235,7 @@ WireGroupItem QFrame#wire_frame{
 
 GxsChannelDialog GroupTreeWidget QTreeWidget#treeWidget::item{
 	/*background-color: #F00000;*/
-	/*padding: 20px;*/
+	/*padding: 2px;*/
 }
 
 RSTextBrowser, MimeTextEdit
@@ -2232,4 +2249,6 @@ PulseTopLevel QFrame#frame, PulseViewGroup QFrame#frame, PulseReply QFrame#frame
 	border-radius: 6px;
 }
 
-
+MainWindow QListWidget {
+	font-size: 12pt;
+}

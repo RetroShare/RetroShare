@@ -856,7 +856,6 @@ GxsGroupDialog QLabel#groupLogo{
 	border-radius: 3px;
 }
 
-
 BoardPostDisplayWidget_compact QFrame#mainFrame {
 	background-color: white;
 }
@@ -984,6 +983,15 @@ MessagesDialog QWidget#messageTreeWidget::item:hover {
 
 GxsForumThreadWidget QWidget#threadTreeWidget::item {
 	padding: 2px;
+}
+
+GxsChannelDialog GroupTreeWidget QTreeWidget#treeWidget::item{
+	/*background-color: #F00000;*/
+	/*padding: 2px*/
+}
+
+MainWindow QListWidget {
+	font-size: 12pt;
 }
 
 PulseTopLevel QFrame#frame, PulseViewGroup QFrame#frame, PulseReply QFrame#frame {

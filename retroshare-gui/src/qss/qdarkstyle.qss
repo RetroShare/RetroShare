@@ -1176,6 +1176,10 @@ GxsForumThreadWidget QToolButton#subscribeToolButton:hover {
 	border-radius: 4px;
 }
 
+GxsForumThreadWidget QWidget#threadTreeWidget::item {
+	padding: 2px;
+}
+
 GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton {
 	font: bold;
 	font-size: 14px;
@@ -1407,4 +1411,8 @@ ChatWidget QFrame#pluginTitleFrame
 PulseTopLevel QFrame#frame, PulseViewGroup QFrame#frame, PulseReply QFrame#frame {
 	border: 2px solid #38444d;
 	border-radius: 6px;
+}
+
+MainWindow QListWidget {
+	font-size: 12pt;
 }
