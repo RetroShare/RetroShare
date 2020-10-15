@@ -31,7 +31,7 @@
 #define COLUMN_FILE_TIME 3
 
 BannedFilesDialog::BannedFilesDialog(QWidget *parent)
-    : QDialog(parent)
+    : QDialog(parent, Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint)
 {
     ui.setupUi(this);
 
