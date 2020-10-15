@@ -135,7 +135,7 @@ CreateGxsChannelMsg QPushButton#postButton:hover {
 
 CreateCircleDialog QPushButton#createButton, CreateLobbyDialog QPushButton#createButton,
 IdEditDialog QPushButton#createButton, CreateGxsForumMsg QPushButton#postButton,
-GxsCreateCommentDialog QPushButton#postButton {
+GxsCreateCommentDialog QPushButton#postButton, GxsGroupDialog QPushButton#createButton {
 	font: bold;
 	font-size: 15px;
 	color: white;
@@ -148,7 +148,7 @@ GxsCreateCommentDialog QPushButton#postButton {
 
 CreateCircleDialog QPushButton#createButton:hover, CreateLobbyDialog QPushButton#createButton:hover,
 IdEditDialog QPushButton#createButton:hover, CreateGxsForumMsg QPushButton#postButton:hover,
-GxsCreateCommentDialog QPushButton#postButton:hover {
+GxsCreateCommentDialog QPushButton#postButton:hover, GxsGroupDialog QPushButton#createButton:hover {
 	background: #03b1f3;
 	border-radius: 4px;
 	min-width: 4em;
