@@ -687,10 +687,20 @@ void PostedListWidgetWithModel::processSettings(bool load)
 
 	if (load)
 	{
+        // state of ID Chooser combobox
+        RsGxsId gxs_id(Settings->value("IDChooser", QString::fromStdString(RsGxsId().toStdString())).toString().toStdString());
+
+        if(!gxs_id.isNull() && rsIdentity->isOwnId(gxs_id))
+            ui->idChooser->setChosenId(gxs_id);
 	}
 	else
 	{
-	}
+        // state of ID Chooser combobox
+        RsGxsId id;
+
+        if(ui->idChooser->getChosenId(id))
+            Settings->setValue("IDChooser", QString::fromStdString(id.toStdString()));
+    }
 
 	Settings->endGroup();
 }

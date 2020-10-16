@@ -112,20 +112,11 @@ void PostedCreatePostDialog::processSettings(bool load)
 	Settings->beginGroup(QString("PostedCreatePostDialog"));
 
 	if (load) {
-		// load settings
-		
-		// state of ID Chooser combobox
-		int index = Settings->value("IDChooser", 0).toInt();
-		ui->idChooser->setCurrentIndex(index);
-		
 		// load last used Stacked Page
 		setPage(Settings->value("viewPage", VIEW_POST).toInt());
 	} else {
 		// save settings
 
-		// state of ID Chooser combobox
-		Settings->setValue("IDChooser", ui->idChooser->currentIndex());
-		
 		// store last used Page
 		Settings->setValue("viewPage", viewMode());
 	}
