@@ -212,7 +212,7 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 
         if(post.mCount > 0)
         {
-            painter->drawText(QPoint(p.x()+0.5*font_height,y),QString::number(post.mCount)+ " " +((post.mCount>1)?tr("files"):tr("file")) + " (" + QString::number(post.mSize) + " " + tr("bytes") + ")" );
+            painter->drawText(QPoint(p.x()+0.5*font_height,y),QString::number(post.mCount)+ " " +((post.mCount>1)?tr("files"):tr("file")) + " (" + misc::friendlyUnit(qulonglong(post.mSize)) + ")" );
             y += font_height;
         }
 
