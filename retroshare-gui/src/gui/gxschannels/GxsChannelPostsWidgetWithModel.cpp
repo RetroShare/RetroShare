@@ -204,17 +204,28 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
             font.setBold(true);
             painter->setFont(font);
         }
-        painter->drawText(QPoint(p.x()+0.5*font_height,y),QString::fromUtf8(post.mMeta.mMsgName.c_str()));
-        y += font_height;
 
-        painter->drawText(QPoint(p.x()+0.5*font_height,y),QDateTime::fromSecsSinceEpoch(post.mMeta.mPublishTs).toString(Qt::DefaultLocaleShortDate));
+        {
+            painter->save();
+
+            QFont font(painter->font());
+            font.setUnderline(true);
+            painter->setFont(font);
+            painter->drawText(QPoint(p.x()+0.5*font_height,y),QString::fromUtf8(post.mMeta.mMsgName.c_str()));
+
+            painter->restore();
+        }
+
         y += font_height;
+        y += font_height/2.0;
+
+        QString info_text = QDateTime::fromSecsSinceEpoch(post.mMeta.mPublishTs).toString(Qt::DefaultLocaleShortDate);
 
         if(post.mCount > 0)
-        {
-            painter->drawText(QPoint(p.x()+0.5*font_height,y),QString::number(post.mCount)+ " " +((post.mCount>1)?tr("files"):tr("file")) + " (" + misc::friendlyUnit(qulonglong(post.mSize)) + ")" );
-            y += font_height;
-        }
+            info_text += ", " + QString::number(post.mCount)+ " " +((post.mCount>1)?tr("files"):tr("file")) + " (" + misc::friendlyUnit(qulonglong(post.mSize)) + ")" ;
+
+        painter->drawText(QPoint(p.x()+0.5*font_height,y),info_text);
+        y += font_height;
 
         painter->restore();
     }
