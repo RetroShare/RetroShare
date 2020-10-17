@@ -205,8 +205,8 @@ void BoardPostDisplayWidgetBase::setup()
         qtime.setTime_t(mPost.mMeta.mPublishTs);
         QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
         QString timestamp2 = misc::timeRelativeToNow(mPost.mMeta.mPublishTs) + " " + tr("ago");
-        dateLabel()->setText(timestamp2);
-        dateLabel()->setToolTip(timestamp);
+        dateLabel()->setText(timestamp);
+        dateLabel()->setToolTip(timestamp2);
 
         fromLabel()->setId(mPost.mMeta.mAuthorId);
 
