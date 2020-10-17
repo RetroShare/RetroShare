@@ -88,6 +88,9 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 	QString text = mOId.isNull()?(pId.isNull() ? tr("Start New Thread") : tr("Post Forum Message")):tr("Edit Message");
 	setWindowTitle(text);
 	
+	if (!mOId.isNull())
+	ui.postButton->setText(tr ("Update"));
+
 	ui.forumMessage->setPlaceholderText(tr ("Text"));
 
     ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums.png"));
