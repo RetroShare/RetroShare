@@ -1008,7 +1008,7 @@ void GxsForumThreadWidget::updateForumDescription(bool success)
 		blank();
 		QString forum_description = QString("<b>ERROR:</b> Forum could not be loaded. Database might be in heavy use. Please try later.");
 		ui->postText->setText(forum_description);
-		mStateHelper->setWidgetEnabled(ui->newthreadButton, false);
+        ui->newthreadButton->setEnabled(false);
 		return;
 	}
 
@@ -1094,7 +1094,7 @@ void GxsForumThreadWidget::updateForumDescription(bool success)
     		forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Anti-spam")).arg(anti_spam_features1);
 
     ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags));
-    mStateHelper->setWidgetEnabled(ui->newthreadButton, (IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)));
+    ui->newthreadButton->setEnabled(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags));
 
     if(!group.mAdminList.ids.empty())
     {
