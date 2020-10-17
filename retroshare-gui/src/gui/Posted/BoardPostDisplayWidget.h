@@ -72,7 +72,6 @@ protected slots:
     virtual QToolButton *voteDownButton() =0;
     virtual QLabel      *newLabel() =0;
     virtual QLabel      *titleLabel()=0;
-    virtual QLabel      *siteLabel()=0;
     virtual GxsIdLabel  *fromLabel()=0;
     virtual QLabel      *dateLabel()=0;
     virtual QLabel      *scoreLabel() =0;
@@ -120,7 +119,6 @@ public:
     QToolButton *commentButton()  override;
     QToolButton *voteDownButton() override;
     QLabel      *newLabel()       override;
-    QLabel      *siteLabel()      override;
     GxsIdLabel  *fromLabel()      override;
     QLabel      *dateLabel()      override;
     QLabel      *titleLabel()     override;
@@ -160,7 +158,6 @@ public:
     QToolButton *commentButton()  override;
     QToolButton *voteDownButton() override;
     QLabel      *newLabel()       override;
-    QLabel      *siteLabel()      override;
     GxsIdLabel  *fromLabel()      override;
     QLabel      *dateLabel()      override;
     QLabel      *titleLabel()     override;
