@@ -42,7 +42,9 @@ GxsCommentDialog::GxsCommentDialog(QWidget *parent, const RsGxsId &default_autho
 	
 void GxsCommentDialog::init(const RsGxsId& default_author)
 {
-	/* Set header resize modes and initial section sizes */
+    ui->refreshButton->hide();	// this is not needed anymore. Let's keep this piece of code for some time just in case.
+
+    /* Set header resize modes and initial section sizes */
 	QHeaderView * ttheader = ui->treeWidget->header () ;
 	ttheader->resizeSection (0, 440);
 
