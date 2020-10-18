@@ -219,7 +219,7 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
         y += font_height;
         y += font_height/2.0;
 
-        QString info_text = QDateTime::fromSecsSinceEpoch(post.mMeta.mPublishTs).toString(Qt::DefaultLocaleShortDate);
+        QString info_text = QDateTime::fromMSecsSinceEpoch(qint64(1000)*post.mMeta.mPublishTs).toString(Qt::DefaultLocaleShortDate);
 
         if(post.mCount > 0)
             info_text += ", " + QString::number(post.mCount)+ " " +((post.mCount>1)?tr("files"):tr("file")) + " (" + misc::friendlyUnit(qulonglong(post.mSize)) + ")" ;

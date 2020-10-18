@@ -62,7 +62,7 @@ class ChannelPostDelegate: public QAbstractItemDelegate
 	Q_OBJECT
 
 	public:
-        ChannelPostDelegate(QObject *parent=0) : QAbstractItemDelegate(parent), mZoom(1.0), mUseGrid(true){}
+        ChannelPostDelegate(QObject *parent=0) : QAbstractItemDelegate(parent), mZoom(1.2), mUseGrid(true){}
         virtual ~ChannelPostDelegate(){}
 
 		void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const override;
