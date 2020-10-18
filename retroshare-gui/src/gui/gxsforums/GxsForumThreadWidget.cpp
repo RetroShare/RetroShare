@@ -1957,6 +1957,8 @@ void GxsForumThreadWidget::updateGroupData()
 
 				updateForumDescription(true);
 
+                emit groupChanged(this);		// signals the parent widget to e.g. update the group tab name
+
 			}, this );
 		}
 		else

@@ -161,7 +161,6 @@ void BoardPostDisplayWidgetBase::setup()
     titleLabel()->setText(tr("Loading"));
     dateLabel()->clear();
     fromLabel()->clear();
-    siteLabel()->clear();
 
     QObject::connect(commentButton(), SIGNAL(toggled(bool)), this, SLOT(loadComments(bool)));
     QObject::connect(voteUpButton(), SIGNAL(clicked()), this, SLOT(makeUpVote()));
@@ -206,8 +205,8 @@ void BoardPostDisplayWidgetBase::setup()
         qtime.setTime_t(mPost.mMeta.mPublishTs);
         QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
         QString timestamp2 = misc::timeRelativeToNow(mPost.mMeta.mPublishTs) + " " + tr("ago");
-        dateLabel()->setText(timestamp2);
-        dateLabel()->setToolTip(timestamp);
+        dateLabel()->setText(timestamp);
+        dateLabel()->setToolTip(timestamp2);
 
         fromLabel()->setId(mPost.mMeta.mAuthorId);
 
@@ -241,17 +240,12 @@ void BoardPostDisplayWidgetBase::setup()
             urlstr += QString(" </span></a>");
 
             QString siteurl = url.toEncoded();
-            sitestr = QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#0079d3;\"> %2 </span></a>").arg(siteurl).arg(siteurl);
 
             titleLabel()->setText(urlstr);
+            titleLabel()->setToolTip(siteurl);
         }
         else
             titleLabel()->setText( QString::fromUtf8(mPost.mMeta.mMsgName.c_str()) );
-
-        if (urlarray.isEmpty())
-            siteLabel()->hide();
-
-        siteLabel()->setText(sitestr);
     }
 
     //QString score = "Hot" + QString::number(post.mHotScore);
@@ -419,7 +413,6 @@ QToolButton    *BoardPostDisplayWidget_compact::commentButton()  { return ui->co
 QToolButton    *BoardPostDisplayWidget_compact::voteDownButton() { return ui->voteDownButton; }
 QLabel         *BoardPostDisplayWidget_compact::newLabel()       { return ui->newLabel; }
 QToolButton    *BoardPostDisplayWidget_compact::readButton()     { return ui->readButton; }
-QLabel         *BoardPostDisplayWidget_compact::siteLabel()      { return ui->siteLabel; }
 GxsIdLabel     *BoardPostDisplayWidget_compact::fromLabel()      { return ui->fromLabel; }
 QLabel         *BoardPostDisplayWidget_compact::dateLabel()      { return ui->dateLabel; }
 QLabel         *BoardPostDisplayWidget_compact::titleLabel()     { return ui->titleLabel; }
@@ -499,7 +492,6 @@ QToolButton    *BoardPostDisplayWidget_card::commentButton()  { return ui->comme
 QToolButton    *BoardPostDisplayWidget_card::voteDownButton() { return ui->voteDownButton; }
 QLabel         *BoardPostDisplayWidget_card::newLabel()       { return ui->newLabel; }
 QToolButton    *BoardPostDisplayWidget_card::readButton()     { return ui->readButton; }
-QLabel         *BoardPostDisplayWidget_card::siteLabel()      { return ui->siteLabel; }
 GxsIdLabel     *BoardPostDisplayWidget_card::fromLabel()      { return ui->fromLabel; }
 QLabel         *BoardPostDisplayWidget_card::dateLabel()      { return ui->dateLabel; }
 QLabel         *BoardPostDisplayWidget_card::titleLabel()     { return ui->titleLabel; }

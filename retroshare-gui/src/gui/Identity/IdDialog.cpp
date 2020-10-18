@@ -188,7 +188,7 @@ IdDialog::IdDialog(QWidget *parent) : MainPage(parent), ui(new Ui::IdDialog)
 	mMyCircleItem = NULL ;
 
 	/* Setup UI helper */
-	mStateHelper = new UIStateHelper(this);
+    mStateHelper = new UIStateHelper(this);
 //	mStateHelper->addWidget(IDDIALOG_IDLIST, ui->idTreeWidget);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDLIST, ui->idTreeWidget, false);
 	mStateHelper->addClear(IDDIALOG_IDLIST, ui->idTreeWidget);
@@ -235,7 +235,7 @@ IdDialog::IdDialog(QWidget *parent) : MainPage(parent), ui(new Ui::IdDialog)
 
 	//mStateHelper->addWidget(IDDIALOG_REPLIST, ui->treeWidget_RepList);
 	//mStateHelper->addLoadPlaceholder(IDDIALOG_REPLIST, ui->treeWidget_RepList);
-	//mStateHelper->addClear(IDDIALOG_REPLIST, ui->treeWidget_RepList);
+    //mStateHelper->addClear(IDDIALOG_REPLIST, ui->treeWidget_RepList);
 
 	/* Connect signals */
 
@@ -374,7 +374,7 @@ IdDialog::IdDialog(QWidget *parent) : MainPage(parent), ui(new Ui::IdDialog)
 	QHeaderView_setSectionResizeModeColumn(idheader, RSID_COL_VOTES, QHeaderView::ResizeToContents);
 
 	mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
-	mStateHelper->setActive(IDDIALOG_REPLIST, false);
+    mStateHelper->setActive(IDDIALOG_REPLIST, false);
 
 	QString hlp_str = tr(
 			" <h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Identities</h1>    \
@@ -601,7 +601,7 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 	std::cerr << std::endl;
 #endif
 
-	mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, true);
+    mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, true);
 
     std::vector<bool> expanded_top_level_items;
     std::set<RsGxsCircleId> expanded_circle_items;
@@ -1276,9 +1276,6 @@ void IdDialog::updateSelection()
 
 void IdDialog::updateIdList()
 {
-	//Disable by default, will be enable by insertIdDetails()
-	ui->removeIdentity->setEnabled(false);
-	ui->editIdentity->setEnabled(false);
 
 	//int accept = filter;
 
@@ -1505,7 +1502,7 @@ void IdDialog::loadIdentities(const std::map<RsGxsGroupId,RsGxsIdGroup>& ids_set
 	}
     int accept = filter;
 
-	mStateHelper->setActive(IDDIALOG_IDLIST, true);
+    mStateHelper->setActive(IDDIALOG_IDLIST, true);
 
 	RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
 
@@ -1596,15 +1593,15 @@ void IdDialog::updateIdentity()
 {
 	if (mId.isNull())
 	{
-		mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
+        mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
 		mStateHelper->setLoading(IDDIALOG_IDDETAILS, false);
-		mStateHelper->clear(IDDIALOG_IDDETAILS);
+        mStateHelper->clear(IDDIALOG_IDDETAILS);
 		clearPerson();
 
 		return;
 	}
 
-	mStateHelper->setLoading(IDDIALOG_IDDETAILS, true);
+    mStateHelper->setLoading(IDDIALOG_IDDETAILS, true);
 
 	RsThread::async([this]()
 	{
@@ -1642,11 +1639,11 @@ void IdDialog::updateIdentity()
 
 void IdDialog::loadIdentity(RsGxsIdGroup data)
 {
-	mStateHelper->setLoading(IDDIALOG_IDDETAILS, false);
+    mStateHelper->setLoading(IDDIALOG_IDDETAILS, false);
 
 	/* get details from libretroshare */
 
-	mStateHelper->setActive(IDDIALOG_IDDETAILS, true);
+    mStateHelper->setActive(IDDIALOG_IDDETAILS, true);
 
 	/* get GPG Details from rsPeers */
 	RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
@@ -1749,20 +1746,20 @@ void IdDialog::loadIdentity(RsGxsIdGroup data)
 
 	if (isOwnId)
 	{
-		mStateHelper->setWidgetEnabled(ui->ownOpinion_CB, false);
-		mStateHelper->setWidgetEnabled(ui->autoBanIdentities_CB, false);
-		ui->editIdentity->setEnabled(true);
-		ui->removeIdentity->setEnabled(true);
+        mStateHelper->setWidgetEnabled(ui->ownOpinion_CB, false);
+        mStateHelper->setWidgetEnabled(ui->autoBanIdentities_CB, false);
+        // ui->editIdentity->setEnabled(true);
+        // ui->removeIdentity->setEnabled(true);
 		ui->chatIdentity->setEnabled(false);
 		ui->inviteButton->setEnabled(false);
 	}
 	else
 	{
 		// No Reputation yet!
-		mStateHelper->setWidgetEnabled(ui->ownOpinion_CB, true);
-		mStateHelper->setWidgetEnabled(ui->autoBanIdentities_CB, true);
-		ui->editIdentity->setEnabled(false);
-		ui->removeIdentity->setEnabled(false);
+        mStateHelper->setWidgetEnabled(ui->ownOpinion_CB, true);
+        mStateHelper->setWidgetEnabled(ui->autoBanIdentities_CB, true);
+        // ui->editIdentity->setEnabled(false);
+        // ui->removeIdentity->setEnabled(false);
 		ui->chatIdentity->setEnabled(true);
 		ui->inviteButton->setEnabled(true);
 	}
