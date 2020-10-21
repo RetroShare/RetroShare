@@ -49,7 +49,8 @@ public:
 private slots:
 	void certContextMenu(QPoint);
 	void updateOwnCert();
-	void updateOwnId();
+    void updateCertificate();
+    void updateOwnId();
 	void runEmailClient();
 	void copyCert();
 	void copyId();
@@ -58,16 +59,17 @@ private slots:
 	void webMail();
 	//void loadCert();
 	void openWebHelp() ;
-	void recommendFriends();
+    void toggleUseOldFormat() ;
+    void recommendFriends();
 	void toggleIncludeAllIPs();
 	void toggleUseShortFormat();
-	void doExpand();
 
 private:
 	Ui::HomePage *ui;
 
 	bool mIncludeAllIPs;
 	bool mUseShortFormat;
+    bool mUseBackwardCompatibleCert;
 
 };
 
