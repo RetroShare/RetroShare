@@ -674,8 +674,19 @@ void GxsChannelPostsWidgetWithModel::handlePostsTreeSizeChange(QSize s,bool forc
     int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(0,font(),ui->postsTree->width()))));
     std::cerr << "nb columns: " << n_columns << " current count=" << mChannelPostsModel->columnCount() << std::endl;
 
-    if(force || (n_columns != mChannelPostsModel->columnCount()))
-		mChannelPostsModel->setNumColumns(n_columns);
+    // save current post. The setNumColumns() indeed loses selection
+
+    QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
+    RsGxsMessageId current_mid;
+
+    if(index.isValid())
+        current_mid = index.data(Qt::UserRole).value<RsGxsChannelPost>().mMeta.mMsgId ;
+
+    if((force || (n_columns != mChannelPostsModel->columnCount())) && mChannelPostsModel->setNumColumns(n_columns))
+    {
+        // Restore current post. The setNumColumns() indeed loses selection
+        ui->postsTree->selectionModel()->setCurrentIndex(mChannelPostsModel->getIndexOfMessage(current_mid),QItemSelectionModel::ClearAndSelect);
+    }
 }
 
 void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
@@ -706,7 +717,7 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
     QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
 	RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
 	
-	QTextDocument doc;
+    QTextDocument doc;
 	doc.setHtml(post.mMsg.c_str());
 
     if(post.mMeta.mPublishTs == 0)
@@ -717,6 +728,7 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 		ui->postTime_LB->hide();
         mChannelPostFilesModel->clear();
         ui->details_TW->setEnabled(false);
+//        mSelectedPost.clear();
 
         return;
     }
@@ -725,9 +737,6 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 	ui->postLogo_LB->show();
 	ui->postName_LB->show();
 	ui->postTime_LB->show();
-
-    if(index.row()==0 && index.column()==0)
-        std::cerr << "here" << std::endl;
 
 	std::cerr << "showPostDetails: setting mSelectedPost to current post Id " << post.mMeta.mMsgId << ". Previous value: " << mSelectedPost << std::endl;
     mSelectedPost = post.mMeta.mMsgId;
@@ -741,7 +750,7 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
     auto all_msgs_versions(post.mOlderVersions);
     all_msgs_versions.insert(post.mMeta.mMsgId);
 
-    ui->commentsDialog->commentLoad(post.mMeta.mGroupId, all_msgs_versions, post.mMeta.mMsgId);
+    ui->commentsDialog->commentLoad(post.mMeta.mGroupId, all_msgs_versions, post.mMeta.mMsgId,true);
 
     std::cerr << "Showing details about selected index : "<< index.row() << "," << index.column() << std::endl;
 
