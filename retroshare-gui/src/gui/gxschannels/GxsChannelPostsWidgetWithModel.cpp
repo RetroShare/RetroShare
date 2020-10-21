@@ -728,7 +728,6 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 		ui->postTime_LB->hide();
         mChannelPostFilesModel->clear();
         ui->details_TW->setEnabled(false);
-//        mSelectedPost.clear();
 
         return;
     }
@@ -1040,7 +1039,6 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 
 	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
 	ui->subscribeToolButton->setEnabled(true);
-
 
 	bool autoDownload ;
 	rsGxsChannels->getChannelAutoDownload(group.mMeta.mGroupId,autoDownload);
