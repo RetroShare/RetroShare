@@ -311,7 +311,7 @@ void IdEditDialog::loadExistingId(const RsGxsIdGroup& id_group)
 	}
 
 	// RecognTags.
-	ui->frame_Tags->setHidden(false);
+	ui->frame_Tags->setHidden(true);
 
 	loadRecognTags();
 }
