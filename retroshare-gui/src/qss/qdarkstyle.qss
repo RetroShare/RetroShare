@@ -1254,7 +1254,8 @@ GxsCreateCommentDialog QPushButton#postButton, GxsGroupDialog QPushButton#create
 
 CreateCircleDialog QPushButton#createButton:hover, CreateLobbyDialog QPushButton#createButton:hover,
 IdEditDialog QPushButton#createButton:hover, CreateGxsForumMsg QPushButton#postButton:hover,
-GxsCreateCommentDialog QPushButton#postButton:hover, GxsGroupDialog QPushButton#createButton:hover {
+GxsCreateCommentDialog QPushButton#postButton:hover, GxsGroupDialog QPushButton#createButton:hover,
+ShareManager QPushButton#closeButton {
 	background: #03b1f3;
 	border-radius: 4px;
 	min-width: 4em;
@@ -1270,6 +1271,37 @@ CreateGxsForumMsg QPushButton#postButton:disabled {
 	max-height: 27px;
 	min-width: 4em;
 	padding: 2px;
+}
+
+ShareManager QPushButton#closeButton {
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #0099cc;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+ShareManager QPushButton#addButton {
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #32CD32;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 4px;
+}
+
+ShareManager QPushButton#addButton:hover {
+	background: #5AD75A;
+	border-radius: 4px;
+	min-width: 4em;
+	padding: 4px;
 }
 
 QTabBar#smTab::tab{
