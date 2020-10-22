@@ -1976,6 +1976,23 @@ GxsForumThreadWidget QLabel#forumName
 	font: bold;
 }
 
+GxsForumThreadWidget QWidget#threadTreeWidget::item {
+	padding: 2px;
+}
+
+ForumsDialog, GxsForumThreadWidget
+{
+	qproperty-textColorRead: darkgray;
+	qproperty-textColorUnread: white;
+	qproperty-textColorUnreadChildren: red;
+	qproperty-textColorNotSubscribed: white;
+	qproperty-textColorMissing: darkred;
+	qproperty-textColorPinned: #D07000;
+
+	qproperty-backgroundColorPinned: #19232D;
+	qproperty-backgroundColorFiltered: darkGreen;
+}
+
 QTreeView [new=true]{
     color: #0099cc;
 
@@ -2070,9 +2087,47 @@ CreateGxsChannelMsg QPushButton#postButton:hover {
 	padding: 2px;
 }
 
+CreateCircleDialog QPushButton#createButton, CreateLobbyDialog QPushButton#createButton,
+IdEditDialog QPushButton#createButton, CreateGxsForumMsg QPushButton#postButton,
+GxsCreateCommentDialog QPushButton#postButton, GxsGroupDialog QPushButton#createButton {
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #0099cc;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+CreateCircleDialog QPushButton#createButton:hover, CreateLobbyDialog QPushButton#createButton:hover,
+IdEditDialog QPushButton#createButton:hover, CreateGxsForumMsg QPushButton#postButton:hover,
+GxsCreateCommentDialog QPushButton#postButton:hover, , GxsGroupDialog QPushButton#createButton:hover {
+	background: #03b1f3;
+	border-radius: 4px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+CreateGxsForumMsg QPushButton#postButton:disabled {
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #d40000;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+}
+
 QTabBar#smTab::tab{
 	height: 32px; 
 	width: 32px;
+}
+
+QLabel#avatarLabel{
+ border: 2px solid #CCCCCC; 
+ border-radius: 4px;
 }
 
 PostedCreatePostDialog QPushButton#submitButton {
@@ -2180,7 +2235,7 @@ WireGroupItem QFrame#wire_frame{
 
 GxsChannelDialog GroupTreeWidget QTreeWidget#treeWidget::item{
 	/*background-color: #F00000;*/
-	/*padding: 20px;*/
+	/*padding: 2px;*/
 }
 
 RSTextBrowser, MimeTextEdit
@@ -2194,4 +2249,6 @@ PulseTopLevel QFrame#frame, PulseViewGroup QFrame#frame, PulseReply QFrame#frame
 	border-radius: 6px;
 }
 
-
+MainWindow QListWidget {
+	font-size: 12pt;
+}

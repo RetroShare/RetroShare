@@ -133,6 +133,71 @@ CreateGxsChannelMsg QPushButton#postButton:hover {
 	padding: 2px;
 }
 
+CreateCircleDialog QPushButton#createButton, CreateLobbyDialog QPushButton#createButton,
+IdEditDialog QPushButton#createButton, CreateGxsForumMsg QPushButton#postButton,
+GxsCreateCommentDialog QPushButton#postButton, GxsGroupDialog QPushButton#createButton{
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #0099cc;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+CreateCircleDialog QPushButton#createButton:hover, CreateLobbyDialog QPushButton#createButton:hover,
+IdEditDialog QPushButton#createButton:hover, CreateGxsForumMsg QPushButton#postButton:hover,
+GxsCreateCommentDialog QPushButton#postButton:hover, GxsGroupDialog QPushButton#createButton:hover,
+ShareManager QPushButton#closeButton:hover {
+	background: #03b1f3;
+	border-radius: 4px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+ShareManager QPushButton#closeButton {
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #0099cc;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+ShareManager QPushButton#addButton {
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #32CD32;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 4px;
+}
+
+ShareManager QPushButton#addButton:hover {
+	background: #5AD75A;
+	border-radius: 4px;
+	min-width: 4em;
+	padding: 4px;
+}
+
+CreateGxsForumMsg QPushButton#postButton:disabled, PostedCreatePostDialog QPushButton#postButton:disabled {
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #d40000;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+}
+
 /* Forums */
 
 GxsForumThreadWidget QLabel#forumName
@@ -789,17 +854,20 @@ GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton:disabled {
 }
 
 /* only for MenuButtonPopup */
-GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton[popupMode="1"] { 
+
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton[popupMode="1"],
+PostedListWidgetWithModel QToolButton#subscribeToolButton[popupMode="1"]{ 
     padding-right: 0px; 
 }
 
-GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton::menu-arrow {
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton::menu-arrow,
+PostedListWidgetWithModel QToolButton#subscribeToolButton::menu-arrow{
     image: none;
 }
 
-GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton::menu-button {
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton::menu-button,
+PostedListWidgetWithModel QToolButton#subscribeToolButton::menu-button{
     image: none;
-
 }
 
 GxsChannelFilesStatusWidget QToolButton#openFolderToolButton::menu-indicator {
@@ -822,7 +890,6 @@ GxsGroupDialog QLabel#groupLogo{
 	border: 2px solid #CCCCCC;
 	border-radius: 3px;
 }
-
 
 BoardPostDisplayWidget_compact QFrame#mainFrame {
 	background-color: white;
@@ -951,6 +1018,15 @@ MessagesDialog QWidget#messageTreeWidget::item:hover {
 
 GxsForumThreadWidget QWidget#threadTreeWidget::item {
 	padding: 2px;
+}
+
+GxsChannelDialog GroupTreeWidget QTreeWidget#treeWidget::item{
+	/*background-color: #F00000;*/
+	/*padding: 2px*/
+}
+
+MainWindow QListWidget {
+	font-size: 12pt;
 }
 
 PulseTopLevel QFrame#frame, PulseViewGroup QFrame#frame, PulseReply QFrame#frame {

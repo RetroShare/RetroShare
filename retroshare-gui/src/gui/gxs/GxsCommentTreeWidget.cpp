@@ -59,7 +59,8 @@
 #define POST_COLOR_ROLE     (Qt::UserRole+2)
 
 /* Images for context menu icons */
-#define IMAGE_MESSAGE       ":/images/folder-draft.png"
+#define IMAGE_MESSAGE       ":/icons/mail/compose.png"
+#define IMAGE_REPLY         ":/icons/mail/reply.png"
 #define IMAGE_COPY          ":/images/copy.png"
 #define IMAGE_VOTEUP        ":/images/vote_up.png"
 #define IMAGE_VOTEDOWN      ":/images/vote_down.png"
@@ -194,7 +195,7 @@ void GxsCommentTreeWidget::setCurrentCommentMsgId(QTreeWidgetItem *current, QTre
 void GxsCommentTreeWidget::customPopUpMenu(const QPoint& /*point*/)
 {
 	QMenu contextMnu( this );
-	QAction* action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MESSAGE), tr("Reply to Comment"), this, SLOT(replyToComment()));
+	QAction* action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_REPLY), tr("Reply to Comment"), this, SLOT(replyToComment()));
 	action->setDisabled(mCurrentCommentMsgId.isNull());
 	action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MESSAGE), tr("Submit Comment"), this, SLOT(makeComment()));
 	action->setDisabled(mMsgVersions.empty());

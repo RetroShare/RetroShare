@@ -54,8 +54,8 @@ CreateLobbyDialog::CreateLobbyDialog(const std::set<RsPeerId>& peer_list, int pr
 	ui->lobbyTopic_LE->setPlaceholderText(tr("Set a descriptive topic here"));
 #endif
 
-	connect( ui->buttonBox, SIGNAL(accepted()), this, SLOT(createLobby()));
-	connect( ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
+	connect( ui->createButton, SIGNAL(clicked()), this, SLOT(createLobby()));
+	connect( ui->cancelButton, SIGNAL(clicked()), this, SLOT(close()));
 	connect( ui->lobbyName_LE, SIGNAL( textChanged ( QString ) ), this, SLOT( checkTextFields( ) ) );
 	connect( ui->lobbyTopic_LE, SIGNAL( textChanged ( QString ) ), this, SLOT( checkTextFields( ) ) );
     connect( ui->idChooser_CB, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( checkTextFields( ) ) );
@@ -101,10 +101,10 @@ void CreateLobbyDialog::checkTextFields()
     switch(ui->idChooser_CB->getChosenId(id))
     {
         case GxsIdChooser::NoId:
-        case GxsIdChooser::None: ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false) ;
+        case GxsIdChooser::None: ui->createButton->setEnabled(false) ;
                     break ;
         default:
-                    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true) ;
+                    ui->createButton->setEnabled(true) ;
                     break ;
     }
     
@@ -113,7 +113,7 @@ void CreateLobbyDialog::checkTextFields()
     rsIdentity->getIdDetails(id,idd) ;
     
     if( (!(idd.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN)) && ui->pgp_signed_CB->isChecked())
-                    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false) ;
+                    ui->createButton->setEnabled(false) ;
 }
 
 void CreateLobbyDialog::createLobby()
