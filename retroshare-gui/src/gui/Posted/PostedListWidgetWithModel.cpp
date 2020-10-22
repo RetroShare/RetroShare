@@ -54,6 +54,9 @@
 
 #define ROLE_PUBLISH FEED_TREEWIDGET_SORTROLE
 
+// number of posts to show at once.
+#define POSTS_CHUNK_SIZE 25
+
 /****
  * #define DEBUG_POSTED
  ***/
@@ -255,8 +258,8 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
     ui->tabWidget->hideCloseButton(1);
 
     connect(ui->sortStrategy_CB,SIGNAL(currentIndexChanged(int)),this,SLOT(updateSorting(int)));
-    connect(ui->nextButton,SIGNAL(clicked()),this,SLOT(next10Posts()));
-    connect(ui->prevButton,SIGNAL(clicked()),this,SLOT(prev10Posts()));
+    connect(ui->nextButton,SIGNAL(clicked()),this,SLOT(nextPosts()));
+    connect(ui->prevButton,SIGNAL(clicked()),this,SLOT(prevPosts()));
 
     connect(ui->postsTree,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(postContextMenu(const QPoint&)));
     connect(ui->viewModeButton,SIGNAL(clicked()),this,SLOT(switchDisplayMode()));
@@ -352,24 +355,24 @@ void PostedListWidgetWithModel::filterItems(QString text)
     uint32_t count;
 	mPostedPostsModel->setFilter(lst,count) ;
 
-	ui->showLabel->setText(QString::number(mPostedPostsModel->displayedStartPostIndex()+1)+" - "+QString::number(std::min(mPostedPostsModel->filteredPostsCount(),mPostedPostsModel->displayedStartPostIndex()+10+1)));
+    ui->showLabel->setText(QString::number(mPostedPostsModel->displayedStartPostIndex()+1)+" - "+QString::number(std::min(mPostedPostsModel->filteredPostsCount(),mPostedPostsModel->displayedStartPostIndex()+POSTS_CHUNK_SIZE+1)));
 }
 
-void PostedListWidgetWithModel::next10Posts()
+void PostedListWidgetWithModel::nextPosts()
 {
-    if(mPostedPostsModel->displayedStartPostIndex() + 10 < mPostedPostsModel->filteredPostsCount())
+    if(mPostedPostsModel->displayedStartPostIndex() + POSTS_CHUNK_SIZE < mPostedPostsModel->filteredPostsCount())
     {
-        mPostedPostsModel->setPostsInterval(10+mPostedPostsModel->displayedStartPostIndex(),10);
-        ui->showLabel->setText(QString::number(mPostedPostsModel->displayedStartPostIndex()+1)+" - "+QString::number(std::min(mPostedPostsModel->filteredPostsCount(),mPostedPostsModel->displayedStartPostIndex()+10+1)));
+        mPostedPostsModel->setPostsInterval(POSTS_CHUNK_SIZE+mPostedPostsModel->displayedStartPostIndex(),POSTS_CHUNK_SIZE);
+        ui->showLabel->setText(QString::number(mPostedPostsModel->displayedStartPostIndex()+1)+" - "+QString::number(std::min(mPostedPostsModel->filteredPostsCount(),mPostedPostsModel->displayedStartPostIndex()+POSTS_CHUNK_SIZE+1)));
     }
 }
 
-void PostedListWidgetWithModel::prev10Posts()
+void PostedListWidgetWithModel::prevPosts()
 {
-	if((int)mPostedPostsModel->displayedStartPostIndex() - 10 >= 0)
+    if((int)mPostedPostsModel->displayedStartPostIndex() - POSTS_CHUNK_SIZE >= 0)
     {
-        mPostedPostsModel->setPostsInterval(mPostedPostsModel->displayedStartPostIndex()-10,10);
-        ui->showLabel->setText(QString::number(mPostedPostsModel->displayedStartPostIndex()+1)+" - "+QString::number(std::min(mPostedPostsModel->filteredPostsCount(),mPostedPostsModel->displayedStartPostIndex()+10+1)));
+        mPostedPostsModel->setPostsInterval(mPostedPostsModel->displayedStartPostIndex()-POSTS_CHUNK_SIZE,POSTS_CHUNK_SIZE);
+        ui->showLabel->setText(QString::number(mPostedPostsModel->displayedStartPostIndex()+1)+" - "+QString::number(std::min(mPostedPostsModel->filteredPostsCount(),mPostedPostsModel->displayedStartPostIndex()+POSTS_CHUNK_SIZE+1)));
     }
 }
 
@@ -634,7 +637,7 @@ void PostedListWidgetWithModel::postPostLoad()
     else
         std::cerr << "No pre-selected channel post." << std::endl;
 
-	whileBlocking(ui->showLabel)->setText(QString::number(mPostedPostsModel->displayedStartPostIndex()+1)+" - "+QString::number(std::min(mPostedPostsModel->filteredPostsCount(),mPostedPostsModel->displayedStartPostIndex()+10+1)));
+    whileBlocking(ui->showLabel)->setText(QString::number(mPostedPostsModel->displayedStartPostIndex()+1)+" - "+QString::number(std::min(mPostedPostsModel->filteredPostsCount(),mPostedPostsModel->displayedStartPostIndex()+POSTS_CHUNK_SIZE+1)));
 	whileBlocking(ui->filter_LE)->setText(QString());
 }
 
