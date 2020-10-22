@@ -27,6 +27,7 @@
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
 #include "ChatPage.h"
+#include "gui/MainWindow.h"
 #include <gui/RetroShareLink.h>
 #include "gui/chat/ChatDialog.h"
 #include "gui/notifyqt.h"
@@ -224,7 +225,14 @@ ChatPage::ChatPage(QWidget * parent, Qt::WindowFlags flags)
     ui.minimumContrastLabel->hide();
     ui.minimumContrast->hide();
 #endif
-	connect(ui.distantChatComboBox,        SIGNAL(currentIndexChanged(int)), this, SLOT(distantChatComboBoxChanged(int)));
+    connect(ui.chatLobbies_CountFollowingText, SIGNAL(toggled(bool)),ui.chatLobbies_TextToNotify,SLOT(setEnabled(bool)));
+    connect(ui.chatLobbies_CountUnRead,        SIGNAL(toggled(bool)),this, SLOT(updateChatLobbyUserNotify())) ;
+    connect(ui.chatLobbies_CheckNickName,      SIGNAL(toggled(bool)),this, SLOT(updateChatLobbyUserNotify())) ;
+    connect(ui.chatLobbies_CountFollowingText, SIGNAL(toggled(bool)),this, SLOT(updateChatLobbyUserNotify())) ;
+    connect(ui.chatLobbies_TextToNotify,       SIGNAL(textChanged(QString)),this, SLOT(updateChatLobbyUserNotify()));
+    connect(ui.chatLobbies_TextCaseSensitive,  SIGNAL(toggled(bool)),this, SLOT(updateChatLobbyUserNotify())) ;
+
+    connect(ui.distantChatComboBox,        SIGNAL(currentIndexChanged(int)), this, SLOT(distantChatComboBoxChanged(int)));
 
 	connect(ui.checkBox_emoteprivchat,     SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
 	connect(ui.checkBox_emotegroupchat,    SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
@@ -286,7 +294,37 @@ ChatPage::ChatPage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.publicStyle,                SIGNAL(currentIndexChanged(int)), this,SLOT(on_publicList_currentRowChanged(int)));
 	connect(ui.privateStyle,               SIGNAL(currentIndexChanged(int)), this,SLOT(on_privateList_currentRowChanged(int)));
 	connect(ui.historyStyle,               SIGNAL(currentIndexChanged(int)), this,SLOT(on_historyList_currentRowChanged(int)));
+
+    /* Add user notify */
+    const QList<UserNotify*> &userNotifyList = MainWindow::getInstance()->getUserNotifyList() ;
+    QList<UserNotify*>::const_iterator it;
+
+    mChatLobbyUserNotify = nullptr;
+
+    for (it = userNotifyList.begin(); it != userNotifyList.end(); ++it)
+    {
+        UserNotify *userNotify = *it;
+
+        //To get ChatLobbyUserNotify Settings
+
+        if(!mChatLobbyUserNotify)
+            mChatLobbyUserNotify = dynamic_cast<ChatLobbyUserNotify*>(*it);
+    }
 }
+
+void ChatPage::updateChatLobbyUserNotify()
+{
+    if(!mChatLobbyUserNotify)
+        return ;
+
+    mChatLobbyUserNotify->setCountUnRead(ui.chatLobbies_CountUnRead->isChecked()) ;
+    mChatLobbyUserNotify->setCheckForNickName(ui.chatLobbies_CheckNickName->isChecked()) ;
+    mChatLobbyUserNotify->setCountSpecificText(ui.chatLobbies_CountFollowingText->isChecked()) ;
+    mChatLobbyUserNotify->setTextToNotify(ui.chatLobbies_TextToNotify->document()->toPlainText());
+    mChatLobbyUserNotify->setTextCaseSensitive(ui.chatLobbies_TextCaseSensitive->isChecked());
+}
+
+
 void ChatPage::updateChatFlags()
 {
 	uint chatflags   = 0;
@@ -423,6 +461,15 @@ ChatPage::load()
 		 ui._collected_contacts_LW->insertItem(0,item) ;
 	 }
 #endif
+
+    if (mChatLobbyUserNotify){
+        whileBlocking(ui.chatLobbies_CountUnRead)->setChecked(mChatLobbyUserNotify->isCountUnRead());
+        whileBlocking(ui.chatLobbies_CheckNickName)->setChecked(mChatLobbyUserNotify->isCheckForNickName());
+        whileBlocking(ui.chatLobbies_CountFollowingText)->setChecked(mChatLobbyUserNotify->isCountSpecificText()) ;
+        whileBlocking(ui.chatLobbies_TextToNotify)->setEnabled(mChatLobbyUserNotify->isCountSpecificText()) ;
+        whileBlocking(ui.chatLobbies_TextToNotify)->setPlainText(mChatLobbyUserNotify->textToNotify());
+        whileBlocking(ui.chatLobbies_TextCaseSensitive)->setChecked(mChatLobbyUserNotify->isTextCaseSensitive());
+    }
 }
 
 void ChatPage::on_pushButtonChangeChatFont_clicked()

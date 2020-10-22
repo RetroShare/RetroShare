@@ -14,7 +14,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="general">
       <attribute name="title">
@@ -420,9 +420,19 @@
       <attribute name="title">
        <string>Chat rooms</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_5">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QCheckBox" name="chatLobbies_TextCaseSensitive">
+           <property name="toolTip">
+            <string>Checked, if the identity and the text above occurrences must be in the same case to trigger count.</string>
+           </property>
+           <property name="text">
+            <string>Case sensitive search</string>
+           </property>
+          </widget>
+         </item>
          <item>
           <widget class="QLabel" name="defIDLabel">
            <property name="text">
@@ -436,18 +446,50 @@
         </layout>
        </item>
        <item>
-        <widget class="QCheckBox" name="DontSendTyping">
+        <layout class="QHBoxLayout" name="horizontalLayout_14">
+         <item>
+          <widget class="QCheckBox" name="DontSendTyping">
+           <property name="text">
+            <string>Do not send typing notifications</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="chatLobby_Blink">
+           <property name="text">
+            <string>Blink tab icon</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_15">
+         <item>
+          <widget class="QCheckBox" name="chatLobbies_CountUnRead">
+           <property name="text">
+            <string>Count all unread messages</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="chatLobbies_CheckNickName">
+           <property name="text">
+            <string>Count occurrences of my current identity</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="chatLobbies_CountFollowingText">
          <property name="text">
-          <string>Do not send typing notifications</string>
+          <string>Count occurrences of any of the following texts (separate by newlines):</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="chatLobby_Blink">
-         <property name="text">
-          <string>Blink tab icon</string>
-         </property>
-        </widget>
+        <widget class="QPlainTextEdit" name="chatLobbies_TextToNotify"/>
        </item>
        <item>
         <widget class="Line" name="line">
@@ -560,6 +602,19 @@
           </sizepolicy>
          </property>
         </widget>
+       </item>
+       <item>
+        <spacer name="tabChatLobbiesVSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>8</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>

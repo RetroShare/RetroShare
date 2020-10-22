@@ -100,12 +100,10 @@ private slots:
 	void updateToasterMargin();
 
 	void updateToasterPosition();
-	void updateChatLobbyUserNotify();
 
 private:
 	uint getNewsFlags();
 	uint getNotifyFlags();
-	ChatLobbyUserNotify* mChatLobbyUserNotify;
 
     QList<FeedNotifySetting> mFeedNotifySettingList;
     QList<ToasterNotifySetting> mToasterNotifySettingList;

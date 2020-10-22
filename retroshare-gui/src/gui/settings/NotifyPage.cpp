@@ -44,7 +44,6 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.testToasterButton, SIGNAL(clicked()), this, SLOT(testToaster()));
 	connect(ui.pushButtonDisableAll,SIGNAL(toggled(bool)), NotifyQt::getInstance(), SLOT(SetDisableAll(bool)));
 	connect(NotifyQt::getInstance(),SIGNAL(disableAllChanged(bool)), ui.pushButtonDisableAll, SLOT(setChecked(bool)));
-	connect(ui.chatLobbies_CountFollowingText,SIGNAL(toggled(bool)),ui.chatLobbies_TextToNotify,SLOT(setEnabled(bool)));
 
 	ui.notify_Blogs->hide();
 
@@ -114,41 +113,37 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 
 	}
 
-	/* Add user notify */
-	const QList<UserNotify*> &userNotifyList = MainWindow::getInstance()->getUserNotifyList() ;
-	QList<UserNotify*>::const_iterator it;
-	rowFeed = 0;
-	mChatLobbyUserNotify = 0;
-	for (it = userNotifyList.begin(); it != userNotifyList.end(); ++it) {
-		UserNotify *userNotify = *it;
+    /* Add user notify */
+    const QList<UserNotify*> &userNotifyList = MainWindow::getInstance()->getUserNotifyList() ;
+    QList<UserNotify*>::const_iterator it;
+    rowFeed = 0;
+    for (it = userNotifyList.begin(); it != userNotifyList.end(); ++it) {
+        UserNotify *userNotify = *it;
 
-		QString name;
-		if (!userNotify->hasSetting(&name, NULL)) {
-			continue;
-		}
+        QString name;
+        if (!userNotify->hasSetting(&name, NULL)) {
+            continue;
+        }
 
-		QCheckBox *enabledCheckBox = new QCheckBox(name, this);
-		enabledCheckBox->setFont(font);
-		ui.notifyLayout->addWidget(enabledCheckBox, rowFeed, 0, 0);
-		connect(enabledCheckBox, SIGNAL(toggled(bool)), this, SLOT(notifyToggled()));
+        QCheckBox *enabledCheckBox = new QCheckBox(name, this);
+        enabledCheckBox->setFont(font);
+        ui.notifyLayout->addWidget(enabledCheckBox, rowFeed, 0, 0);
+        connect(enabledCheckBox, SIGNAL(toggled(bool)), this, SLOT(notifyToggled()));
 
-		QCheckBox *combinedCheckBox = new QCheckBox(tr("Combined"), this);
-		combinedCheckBox->setFont(font);
-		ui.notifyLayout->addWidget(combinedCheckBox, rowFeed, 1);
+        QCheckBox *combinedCheckBox = new QCheckBox(tr("Combined"), this);
+        combinedCheckBox->setFont(font);
+        ui.notifyLayout->addWidget(combinedCheckBox, rowFeed, 1);
 
-		QCheckBox *blinkCheckBox = new QCheckBox(tr("Blink"), this);
-		blinkCheckBox->setFont(font);
-		ui.notifyLayout->addWidget(blinkCheckBox, rowFeed++, 2);
+        QCheckBox *blinkCheckBox = new QCheckBox(tr("Blink"), this);
+        blinkCheckBox->setFont(font);
+        ui.notifyLayout->addWidget(blinkCheckBox, rowFeed++, 2);
 
-		mUserNotifySettingList.push_back(UserNotifySetting(userNotify, enabledCheckBox, combinedCheckBox, blinkCheckBox));
+        mUserNotifySettingList.push_back(UserNotifySetting(userNotify, enabledCheckBox, combinedCheckBox, blinkCheckBox));
 
-		connect(enabledCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateUserNotifySettings())) ;
-		connect(blinkCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateUserNotifySettings())) ;
-		connect(combinedCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateUserNotifySettings())) ;
-
-		//To get ChatLobbyUserNotify Settings
-		if (!mChatLobbyUserNotify) mChatLobbyUserNotify = dynamic_cast<ChatLobbyUserNotify*>(*it);
-	}
+        connect(enabledCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateUserNotifySettings())) ;
+        connect(blinkCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateUserNotifySettings())) ;
+        connect(combinedCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateUserNotifySettings())) ;
+    }
 
 	connect(ui.popup_Connect,           SIGNAL(toggled(bool)), this, SLOT(updateNotifyFlags())) ;
 	connect(ui.popup_NewMsg,            SIGNAL(toggled(bool)), this, SLOT(updateNotifyFlags())) ;
@@ -177,12 +172,6 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.spinBoxToasterYMargin, SIGNAL(valueChanged(int)), this, SLOT(updateToasterMargin()));
 
 	connect(ui.comboBoxToasterPosition,  SIGNAL(currentIndexChanged(int)),this, SLOT(updateToasterPosition())) ;
-
-	connect(ui.chatLobbies_CountUnRead,        SIGNAL(toggled(bool)),this, SLOT(updateChatLobbyUserNotify())) ;
-	connect(ui.chatLobbies_CheckNickName,      SIGNAL(toggled(bool)),this, SLOT(updateChatLobbyUserNotify())) ;
-	connect(ui.chatLobbies_CountFollowingText, SIGNAL(toggled(bool)),this, SLOT(updateChatLobbyUserNotify())) ;
-	connect(ui.chatLobbies_TextToNotify,       SIGNAL(textChanged(QString)),this, SLOT(updateChatLobbyUserNotify()));
-	connect(ui.chatLobbies_TextCaseSensitive,  SIGNAL(toggled(bool)),this, SLOT(updateChatLobbyUserNotify())) ;
 }
 
 NotifyPage::~NotifyPage()
@@ -297,18 +286,6 @@ void NotifyPage::updateToasterPosition()
         Settings->setToasterPosition((RshareSettings::enumToasterPosition) ui.comboBoxToasterPosition->itemData(index).toInt());
 }
 
-void NotifyPage::updateChatLobbyUserNotify()
-{
-	if(!mChatLobbyUserNotify)
-		return ;
-
-	mChatLobbyUserNotify->setCountUnRead(ui.chatLobbies_CountUnRead->isChecked()) ;
-	mChatLobbyUserNotify->setCheckForNickName(ui.chatLobbies_CheckNickName->isChecked()) ;
-	mChatLobbyUserNotify->setCountSpecificText(ui.chatLobbies_CountFollowingText->isChecked()) ;
-	mChatLobbyUserNotify->setTextToNotify(ui.chatLobbies_TextToNotify->document()->toPlainText());
-	mChatLobbyUserNotify->setTextCaseSensitive(ui.chatLobbies_TextCaseSensitive->isChecked());
-}
-
 /** Loads the settings for this page */
 void NotifyPage::load()
 {
@@ -397,14 +374,6 @@ void NotifyPage::load()
 
 	notifyToggled() ;
 
-	if (mChatLobbyUserNotify){
-		whileBlocking(ui.chatLobbies_CountUnRead)->setChecked(mChatLobbyUserNotify->isCountUnRead());
-		whileBlocking(ui.chatLobbies_CheckNickName)->setChecked(mChatLobbyUserNotify->isCheckForNickName());
-		whileBlocking(ui.chatLobbies_CountFollowingText)->setChecked(mChatLobbyUserNotify->isCountSpecificText()) ;
-		whileBlocking(ui.chatLobbies_TextToNotify)->setEnabled(mChatLobbyUserNotify->isCountSpecificText()) ;
-		whileBlocking(ui.chatLobbies_TextToNotify)->setPlainText(mChatLobbyUserNotify->textToNotify());
-		whileBlocking(ui.chatLobbies_TextCaseSensitive)->setChecked(mChatLobbyUserNotify->isTextCaseSensitive());
-	}
 }
 
 void NotifyPage::notifyToggled()
