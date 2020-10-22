@@ -534,7 +534,8 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 #ifdef DEBUG_FORUMS
         std::cerr << "  group_id=0. Return!"<< std::endl;
 #endif
-		return;
+        ui->nextUnreadButton->setEnabled(false);
+        return;
     }
 
 	if(mForumGroup.mMeta.mGroupId.isNull() && !groupId().isNull())
@@ -984,7 +985,6 @@ void GxsForumThreadWidget::blankPost()
 	ui->newmessageButton->setEnabled(false);
 	ui->previousButton->setEnabled(false);
 	ui->nextButton->setEnabled(false);
-	ui->nextUnreadButton->setEnabled(false);
 	ui->downloadButton->setEnabled(false);
 	ui->lineLeft->hide();
 	ui->time_label->clear();
@@ -1850,7 +1850,10 @@ void GxsForumThreadWidget::filterItems(const QString& text)
 void GxsForumThreadWidget::postForumLoading()
 {
 	if(groupId().isNull())
-		return;
+    {
+        ui->nextUnreadButton->setEnabled(false);
+        return;
+    }
 
 #ifdef DEBUG_FORUMS
 	std::cerr << "Post forum loading..." << std::endl;
@@ -1905,6 +1908,8 @@ void GxsForumThreadWidget::postForumLoading()
 
 	recursRestoreExpandedItems(mThreadProxyModel->mapFromSource(mThreadModel->root()),mSavedExpandedMessages);
 	//mUpdating = false;
+
+    ui->nextUnreadButton->setEnabled(true);
 }
 
 void GxsForumThreadWidget::updateGroupData()
