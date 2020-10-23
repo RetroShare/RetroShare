@@ -891,12 +891,25 @@ GxsGroupDialog QLabel#groupLogo{
 	border-radius: 3px;
 }
 
-BoardPostDisplayWidget_compact QFrame#mainFrame {
+GxsChannelGroupItem QFrame#frame, GxsForumGroupItem QFrame#frame,
+PostedGroupItem QFrame#frame {
 	background-color: white;
+}
+
+PostedItem QFrame#mainFrame {
+	background-color: white;
+}
+
+PostedItem > QFrame#mainFrame [new=false]{
+	background: white;
 }
 
 PostedItem QFrame#voteFrame {
 	background: #f8f9fa;
+}
+
+BoardPostDisplayWidget_compact QFrame#mainFrame {
+	background-color: white;
 }
 
 BoardPostDisplayWidget_compact > QFrame#mainFrame [new=false]{
