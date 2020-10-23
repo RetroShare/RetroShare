@@ -59,6 +59,7 @@ private slots:
 	void checkAttachmentReady();
 	void deleteAttachment();
 	void updatePreviewText(const QString &);
+    void clearAllAttachments();
 
 	void cancelMsg();
 	void sendMsg();
@@ -76,6 +77,7 @@ private:
 	void loadChannelInfo();
 	void loadOriginalChannelPostInfo();
 	void saveChannelInfo(const RsGroupMetaData &group);
+    void updateAttachmentCount();
 
 	void parseRsFileListAttachments(const std::string &attachList);
 	void sendMessage(const std::string &subject, const std::string &msg, const std::list<RsGxsFile> &files);
