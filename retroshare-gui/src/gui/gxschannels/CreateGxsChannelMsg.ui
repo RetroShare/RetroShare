@@ -185,6 +185,9 @@ p, li { white-space: pre-wrap; }
             </item>
             <item>
              <widget class="QComboBox" name="aspectRatio_CB">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose aspect ratio policy.&lt;/p&gt;&lt;p&gt;In 'Auto' mode, the most suitable &lt;/p&gt;&lt;p&gt;aspect ratio is chosen for you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="iconSize">
                <size>
                 <width>24</width>
@@ -211,19 +214,6 @@ p, li { white-space: pre-wrap; }
                 <string>16:9</string>
                </property>
               </item>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="addfilepushButton">
-              <property name="text">
-               <string>Add File to Attach</string>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>24</width>
-                <height>24</height>
-               </size>
-              </property>
              </widget>
             </item>
             <item>
@@ -305,7 +295,7 @@ p, li { white-space: pre-wrap; }
              <string/>
             </property>
             <property name="icon">
-             <iconset>
+             <iconset resource="../icons.qrc">
               <normaloff>:/icons/png/add-file.png</normaloff>:/icons/png/add-file.png</iconset>
             </property>
             <property name="iconSize">
@@ -329,7 +319,7 @@ p, li { white-space: pre-wrap; }
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>81</width>
+               <width>84</width>
                <height>24</height>
               </rect>
              </property>
@@ -514,6 +504,7 @@ p, li { white-space: pre-wrap; }
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>
