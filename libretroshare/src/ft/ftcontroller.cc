@@ -735,8 +735,7 @@ bool ftController::completeFile(const RsFileHash& hash)
 		RsDirUtil::splitDirFromFile(fc->mDestination,dst_dir,dst_file) ;
 
 		// We use this intermediate file in case the destination directory is not available, so as to not keep the partial file name.
-
-		std::string intermediate_file_name = src_dir+'/'+dst_file ;
+		std::string intermediate_file_name = RsDirUtil::makePath(src_dir, dst_file);
 
 		// I don't know how the size can be zero, but believe me, this happens,
 		// and it causes an error on linux because then the file may not even exist.
