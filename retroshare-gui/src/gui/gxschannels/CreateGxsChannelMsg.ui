@@ -82,7 +82,7 @@
          <bool>false</bool>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="stackedWidgetPage1">
          <layout class="QGridLayout" name="gridLayout_2">
@@ -246,6 +246,19 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
+            <item>
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
            </layout>
           </item>
           <item row="4" column="0" colspan="2">
@@ -288,12 +301,6 @@ p, li { white-space: pre-wrap; }
                <iconset resource="../icons.qrc">
                 <normaloff>:/icons/png/add-file.png</normaloff>:/icons/png/add-file.png</iconset>
               </property>
-              <property name="iconSize">
-               <size>
-                <width>24</width>
-                <height>24</height>
-               </size>
-              </property>
              </widget>
             </item>
             <item>
@@ -320,12 +327,6 @@ p, li { white-space: pre-wrap; }
                <iconset resource="../icons.qrc">
                 <normaloff>:/icons/png/copy.png</normaloff>:/icons/png/copy.png</iconset>
               </property>
-              <property name="iconSize">
-               <size>
-                <width>24</width>
-                <height>24</height>
-               </size>
-              </property>
              </widget>
             </item>
             <item>
@@ -351,12 +352,6 @@ p, li { white-space: pre-wrap; }
               <property name="icon">
                <iconset resource="../icons.qrc">
                 <normaloff>:/icons/png/cancel.png</normaloff>:/icons/png/cancel.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>24</width>
-                <height>24</height>
-               </size>
               </property>
              </widget>
             </item>

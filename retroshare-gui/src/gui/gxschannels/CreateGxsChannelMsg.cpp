@@ -83,7 +83,6 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 	channelpostButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/comment.png"));
 	attachmentsButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/attachements.png"));
 	addThumbnailButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/add-image.png"));
-    //addfilepushButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/add-file.png"));
 
     aspectRatio_CB->setItemIcon(0,FilesDefs::getIconFromQtResourcePath(":/icons/svg/ratio-auto.svg"));
     aspectRatio_CB->setItemIcon(1,FilesDefs::getIconFromQtResourcePath(":/icons/svg/ratio-1-1.svg"));
@@ -160,13 +159,15 @@ void CreateGxsChannelMsg::changeAspectRatio(int s)
         break;
     }
 }
+
 void CreateGxsChannelMsg::reject()
 {
-    if(QMessageBox::warning(nullptr,tr("Close this window?"),tr("Do you really want to discard your post?"),QMessageBox::Ok,QMessageBox::Cancel) == QMessageBox::Cancel)
+    if(QMessageBox::warning(nullptr,tr("Close this window?"),tr("Do you really want to discard your post?"),QMessageBox::Yes,QMessageBox::No) == QMessageBox::No)
         return;
 
     QDialog::reject();
 }
+
 void CreateGxsChannelMsg::contextMenu(QPoint /*point*/)
 {
 	QList<RetroShareLink> links ;
