@@ -384,17 +384,17 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     ui->channelPostFiles_TV->setItemDelegate(new ChannelPostFilesDelegate());
     ui->channelPostFiles_TV->setPlaceholderText(tr("No files in this post, or no post selected"));
     ui->channelPostFiles_TV->setSortingEnabled(true);
-    ui->channelPostFiles_TV->sortByColumn(0, Qt::AscendingOrder);
+    ui->channelPostFiles_TV->sortByColumn(3, Qt::AscendingOrder);	// sort by time
     ui->channelPostFiles_TV->setAlternatingRowColors(false);
+
+    connect(ui->channelPostFiles_TV->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumnPostFiles(int,Qt::SortOrder)));
+    connect(ui->channelFiles_TV->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumnFiles(int,Qt::SortOrder)));
 
     ui->channelFiles_TV->setModel(mChannelFilesModel = new RsGxsChannelPostFilesModel());
     ui->channelFiles_TV->setItemDelegate(mFilesDelegate = new ChannelPostFilesDelegate());
     ui->channelFiles_TV->setPlaceholderText(tr("No files in the channel, or no channel selected"));
     ui->channelFiles_TV->setSortingEnabled(true);
-    ui->channelFiles_TV->sortByColumn(0, Qt::AscendingOrder);
-
-	connect(ui->channelPostFiles_TV->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumnPostFiles(int,Qt::SortOrder)));
-	connect(ui->channelFiles_TV->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumnFiles(int,Qt::SortOrder)));
+    ui->channelFiles_TV->sortByColumn(3, Qt::AscendingOrder);	// sort by time
 
     connect(ui->postsTree->selectionModel(),SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),this,SLOT(showPostDetails()));
     connect(ui->postsTree,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(postContextMenu(const QPoint&)));
@@ -1054,12 +1054,18 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
         ui->channel_TW->setTabEnabled(CHANNEL_TABS_POSTS,true);
         ui->channel_TW->setTabEnabled(CHANNEL_TABS_FILES,true);
         ui->details_TW->setEnabled(true);
-	}
+
+        ui->infoSyncTimeLabel->show();
+        ui->syncPeriodTitleLabel->show();
+    }
     else
     {
         ui->details_TW->setEnabled(false);
         ui->channel_TW->setTabEnabled(CHANNEL_TABS_POSTS,false);
         ui->channel_TW->setTabEnabled(CHANNEL_TABS_FILES,false);
+
+        ui->infoSyncTimeLabel->hide();
+        ui->syncPeriodTitleLabel->hide();
     }
 
 

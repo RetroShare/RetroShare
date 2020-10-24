@@ -1049,8 +1049,11 @@ void GxsForumThreadWidget::updateForumDescription(bool success)
     else
         forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Last post")).arg(DateTime::formatLongDateTime(group.mMeta.mLastPost));
 
-    forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Synchronization")).arg(getDurationString( rsGxsForums->getSyncPeriod(group.mMeta.mGroupId)/86400 )) ;
-    forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Storage")).arg(getDurationString( rsGxsForums->getStoragePeriod(group.mMeta.mGroupId)/86400));
+    if(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
+    {
+        forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Synchronization")).arg(getDurationString( rsGxsForums->getSyncPeriod(group.mMeta.mGroupId)/86400 )) ;
+        forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Storage")).arg(getDurationString( rsGxsForums->getStoragePeriod(group.mMeta.mGroupId)/86400));
+    }
 
     QString distrib_string = tr("[unknown]");
     switch(group.mMeta.mCircleType)

@@ -844,7 +844,10 @@ void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
 	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
 	ui->subscribeToolButton->setEnabled(true);
 
-	RetroShareLink link;
+    ui->syncPeriodLabel->setVisible(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
+    ui->syncPeriodTitleLabel->setVisible(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
+
+    RetroShareLink link;
 
 	if (IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
 		ui->subscribeToolButton->setText(tr("Subscribed") + " " + QString::number(group.mMeta.mPop) );

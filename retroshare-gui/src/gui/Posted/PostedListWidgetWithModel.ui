@@ -310,7 +310,7 @@
              </widget>
             </item>
             <item row="4" column="0">
-             <widget class="QLabel" name="label_2">
+             <widget class="QLabel" name="syncPeriodTitleLabel">
               <property name="font">
                <font>
                 <weight>75</weight>
@@ -622,8 +622,8 @@ p, li { white-space: pre-wrap; }
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="Posted_images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="Posted_images.qrc"/>
  </resources>
  <connections/>
 </ui>
