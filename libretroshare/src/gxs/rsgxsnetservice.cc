@@ -446,6 +446,7 @@ int RsGxsNetService::tick()
 	    should_notify = should_notify || !mNewMessagesToNotify.empty() ;
 	    should_notify = should_notify || !mNewPublishKeysToNotify.empty() ;
 	    should_notify = should_notify || !mNewStatsToNotify.empty() ;
+        should_notify = should_notify || !mNewGrpSyncParamsToNotify.empty() ;
     }
 
     if(should_notify)
@@ -490,7 +491,7 @@ void RsGxsNetService::processObserverNotifications()
     std::vector<RsNxsGrp*> grps_copy ;
     std::vector<RsNxsMsg*> msgs_copy ;
     std::set<RsGxsGroupId> stat_copy ;
-    std::set<RsGxsGroupId> keys_copy ;
+    std::set<RsGxsGroupId> keys_copy,grpss_copy ;
 
     {
 	    RS_STACK_MUTEX(mNxsMutex) ;
@@ -499,11 +500,13 @@ void RsGxsNetService::processObserverNotifications()
 	    msgs_copy = mNewMessagesToNotify ;
 	    stat_copy = mNewStatsToNotify ;
 	    keys_copy = mNewPublishKeysToNotify ;
+        grpss_copy = mNewGrpSyncParamsToNotify ;
 
 	    mNewGroupsToNotify.clear() ;
 	    mNewMessagesToNotify.clear() ;
 	    mNewStatsToNotify.clear() ;
 	    mNewPublishKeysToNotify.clear() ;
+        mNewGrpSyncParamsToNotify.clear() ;
     }
 
     if(!grps_copy.empty()) mObserver->receiveNewGroups  (grps_copy);
@@ -514,6 +517,9 @@ void RsGxsNetService::processObserverNotifications()
 
     for(std::set<RsGxsGroupId>::const_iterator it(stat_copy.begin());it!=stat_copy.end();++it)
 		mObserver->notifyChangedGroupStats(*it);
+
+    for(std::set<RsGxsGroupId>::const_iterator it(grpss_copy.begin());it!=grpss_copy.end();++it)
+        mObserver->notifyChangedGroupSyncParams(*it);
 }
 
 void RsGxsNetService::rejectMessage(const RsGxsMessageId& msg_id)
@@ -4740,6 +4746,10 @@ void RsGxsNetService::setSyncAge(const RsGxsGroupId &grpId, uint32_t age_in_secs
 		locked_resetClientTS(grpId);
 
         IndicateConfigChanged();
+
+        // also send an event so that UI is updated
+
+        mNewGrpSyncParamsToNotify.insert(grpId);
     }
 }
 void RsGxsNetService::setKeepAge(const RsGxsGroupId &grpId, uint32_t age_in_secs)

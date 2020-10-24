@@ -388,7 +388,7 @@ void GxsGroupFrameDialog::removeAllSearches()
 
 // Same function than the one in rsgxsnetservice.cc, so that all times are automatically consistent
 
-static uint32_t checkDelay(uint32_t time_in_secs)
+uint32_t GxsGroupFrameDialog::checkDelay(uint32_t time_in_secs)
 {
     if(time_in_secs <    1 * 86400)
         return 0        ;

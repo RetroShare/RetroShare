@@ -383,7 +383,8 @@ void GxsForumThreadWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent
 		case RsForumEventCode::NEW_FORUM:       // [[fallthrough]];
 		case RsForumEventCode::UPDATED_MESSAGE: // [[fallthrough]];
 		case RsForumEventCode::NEW_MESSAGE:
-			if(e->mForumGroupId == mForumGroup.mMeta.mGroupId)
+        case RsForumEventCode::SYNC_PARAMETERS_UPDATED:
+            if(e->mForumGroupId == mForumGroup.mMeta.mGroupId)
 				updateDisplay(true);
 			break;
 		default: break;

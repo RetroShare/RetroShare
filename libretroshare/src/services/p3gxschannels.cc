@@ -309,6 +309,15 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 			}
 				break;
 
+        case RsGxsNotify::TYPE_GROUP_SYNC_PARAMETERS_UPDATED:
+        {
+            auto ev = std::make_shared<RsGxsChannelEvent>();
+            ev->mChannelGroupId = grpChange->mGroupId;
+            ev->mChannelEventCode = RsChannelEventCode::SYNC_PARAMETERS_UPDATED;
+            rsEvents->postEvent(ev);
+        }
+            break;
+
 			case RsGxsNotify::TYPE_STATISTICS_CHANGED:
 			{
 				auto ev = std::make_shared<RsGxsChannelEvent>();

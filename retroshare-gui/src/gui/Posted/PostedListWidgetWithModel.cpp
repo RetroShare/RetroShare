@@ -29,6 +29,7 @@
 #include "ui_PostedListWidgetWithModel.h"
 #include "gui/feeds/GxsChannelPostItem.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/gxs/GxsGroupFrameDialog.h"
 #include "gui/gxs/GxsCommentDialog.h"
 #include "util/misc.h"
 #include "gui/Posted/PostedCreatePostDialog.h"
@@ -277,7 +278,7 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
 	connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()),this, SLOT(settingsChanged()));
 
 	/* add filter actions */
-    ui->postsTree->setPlaceholderText(tr("Thumbnails"));
+    ui->postsTree->setPlaceholderText(tr("No posts available in this board"));
     //ui->postsTree->setMinimumWidth(COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font()).height()+1);
 
     connect(ui->postsTree,SIGNAL(sizeChanged(QSize)),this,SLOT(handlePostsTreeSizeChange(QSize)));
@@ -488,7 +489,8 @@ void PostedListWidgetWithModel::handleEvent_main_thread(std::shared_ptr<const Rs
         case RsPostedEventCode::NEW_POSTED_GROUP:     // [[fallthrough]];
 		case RsPostedEventCode::UPDATED_POSTED_GROUP: // [[fallthrough]];
 		case RsPostedEventCode::UPDATED_MESSAGE:
-		{
+        case RsPostedEventCode::SYNC_PARAMETERS_UPDATED:
+        {
 			if(e->mPostedGroupId == groupId())
 				updateDisplay(true);
     	}
@@ -851,11 +853,33 @@ void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
 
 	ui->infoPosts->setText(QString::number(group.mMeta.mVisibleMsgCount));
 
-	if(group.mMeta.mLastPost==0)
-		ui->infoLastPost->setText(tr("Never"));
-	else
-		ui->infoLastPost->setText(DateTime::formatLongDateTime(group.mMeta.mLastPost));
-	QString formatDescription = QString::fromUtf8(group.mDescription.c_str());
+    if(group.mMeta.mLastPost==0)
+        ui->infoLastPost->setText(tr("Never"));
+    else
+        ui->infoLastPost->setText(DateTime::formatLongDateTime(group.mMeta.mLastPost));
+
+    uint32_t current_sync_time  = GxsGroupFrameDialog::checkDelay(rsPosted->getSyncPeriod(group.mMeta.mGroupId))/86400 ;
+
+    QString sync_string;
+    switch(current_sync_time)
+    {
+    case 5: sync_string = tr("5 days");  break;
+    case 15: sync_string = tr("2 weeks");  break;
+    case 30: sync_string = tr("1 month");  break;
+    case 90: sync_string = tr("3 months");  break;
+    case 180: sync_string = tr("6 months");  break;
+    case 365: sync_string = tr("1 year");  break;
+    case   0: sync_string = tr("indefinitly");  break;
+    default:
+        sync_string = tr("Unknown");
+    }
+
+    if(group.mMeta.mLastPost + rsPosted->getSyncPeriod(group.mMeta.mGroupId) < time(NULL) && IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
+        sync_string += " (Warning: will not allow latest posts to sync)";
+
+    ui->syncPeriodLabel->setText(sync_string);
+
+    QString formatDescription = QString::fromUtf8(group.mDescription.c_str());
 
 	unsigned int formatFlag = RSHTML_FORMATTEXT_EMBED_LINKS;
 

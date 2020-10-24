@@ -133,28 +133,29 @@ public:
     /*!
      * @param messages messages are deleted after function returns
      */
-    virtual void receiveNewMessages(std::vector<RsNxsMsg*>& messages);
+    virtual void receiveNewMessages(std::vector<RsNxsMsg*>& messages) override;
 
     /*!
      * @param groups groups are deleted after function returns
      */
-    virtual void receiveNewGroups(std::vector<RsNxsGrp*>& groups);
+    virtual void receiveNewGroups(std::vector<RsNxsGrp*>& groups) override;
 
     /*!
      * @param grpId group id
      */
-    virtual void notifyReceivePublishKey(const RsGxsGroupId &grpId);
+    virtual void notifyReceivePublishKey(const RsGxsGroupId &grpId) override;
 
+    virtual void notifyChangedGroupSyncParams(const RsGxsGroupId &grpId) override;
     /*!
      * \brief notifyReceiveDistantSearchResults
      * 				Should be called when new search results arrive.
      * \param grpId
      */
-	virtual void receiveDistantSearchResults(TurtleRequestId id,const RsGxsGroupId &grpId);
+    virtual void receiveDistantSearchResults(TurtleRequestId id,const RsGxsGroupId &grpId) override;
     /*!
      * @param grpId group id
      */
-    virtual void notifyChangedGroupStats(const RsGxsGroupId &grpId);
+    virtual void notifyChangedGroupStats(const RsGxsGroupId &grpId) override;
 
     /** E: Observer implementation **/
 

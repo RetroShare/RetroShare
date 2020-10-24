@@ -82,6 +82,8 @@ public:
 
     void getServiceStatistics(GxsServiceStatistic& stats) const ;
 
+    static uint32_t checkDelay(uint32_t time_in_secs);
+
 protected:
 	virtual void showEvent(QShowEvent *event) override;
 	virtual void paintEvent(QPaintEvent *pe) override;

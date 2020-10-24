@@ -608,6 +608,7 @@ private:
     std::vector<RsNxsMsg*> mNewMessagesToNotify ;
     std::set<RsGxsGroupId> mNewStatsToNotify ;
     std::set<RsGxsGroupId> mNewPublishKeysToNotify ;
+    std::set<RsGxsGroupId> mNewGrpSyncParamsToNotify ;
 
     // Distant search result map
     std::map<TurtleRequestId,std::map<RsGxsGroupId,RsGxsGroupSearchResults> > mDistantSearchResults ;
