@@ -67,6 +67,7 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 
 	connect(postButton, SIGNAL(clicked()), this, SLOT(sendMsg()));
 	connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelMsg()));
+    connect(pasteFromClipboardButton, SIGNAL(clicked()), this, SLOT(pasteLink()));
 
 	connect(addFileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
     connect(removeAllFilesButton, SIGNAL(clicked() ), this , SLOT(clearAllAttachments()));
@@ -158,6 +159,13 @@ void CreateGxsChannelMsg::changeAspectRatio(int s)
     case 3: preview_W->setAspectRatio(ChannelPostThumbnailView::ASPECT_RATIO_16_9);
         break;
     }
+}
+void CreateGxsChannelMsg::reject()
+{
+    if(QMessageBox::warning(nullptr,tr("Close this window?"),tr("Do you really want to discard your post?"),QMessageBox::Ok,QMessageBox::Cancel) == QMessageBox::Cancel)
+        return;
+
+    QDialog::reject();
 }
 void CreateGxsChannelMsg::contextMenu(QPoint /*point*/)
 {

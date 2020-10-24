@@ -41,7 +41,9 @@ public:
 	/** Default Destructor */
 	~CreateGxsChannelMsg();
 
-	void addHtmlText(const QString& text) ;
+    void reject() override;
+
+    void addHtmlText(const QString& text) ;
 	void addSubject(const QString& text) ;
 	void addAttachment(const std::string &path);
     void addAttachment(const RsFileHash &hash, const std::string &fname, uint64_t size, bool local, const RsPeerId &srcId,bool assume_file_ready = false);
