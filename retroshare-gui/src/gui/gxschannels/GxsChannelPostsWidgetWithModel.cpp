@@ -1158,7 +1158,28 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 	//ui->feedToolButton->setEnabled(false);
 	//ui->fileToolButton->setEnabled(false);
 #endif
-	ui->subscribeToolButton->setText(tr("Subscribe ") + " " + QString::number(group.mMeta.mPop) );
+
+    if(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
+        ui->subscribeToolButton->setText(tr("Unsubscribe"));
+    else
+    {
+        switch(rsGxsChannels->getDistantSearchStatus(group.mMeta.mGroupId))
+        {
+        case DistantSearchGroupStatus::UNKNOWN:  	// means no search ongoing. This is not a distant search
+        case DistantSearchGroupStatus::HAVE_GROUP_DATA:	// fallthrough
+            ui->subscribeToolButton->setText(tr("Subscribe"));
+            ui->subscribeToolButton->setToolTip("");
+            break;
+        case DistantSearchGroupStatus::CAN_BE_REQUESTED:  	// means no search ongoing. This is not a distant search
+            ui->subscribeToolButton->setText(tr("Request data"));
+            ui->subscribeToolButton->setToolTip(tr("Hit this button to retrieve the data you need to subscribe to this channel") );
+            break;
+        case DistantSearchGroupStatus::ONGOING_REQUEST:
+            ui->subscribeToolButton->setText(tr("Ongoing request..."));
+            ui->subscribeToolButton->setToolTip("");
+            break;
+        }
+    }
 
     showPostDetails();
 }

@@ -519,10 +519,16 @@ public:
 	 * @param[out] distantGroup storage for group data
 	 * @return false on error, true otherwise
 	 */
-	virtual bool getDistantSearchResultGroupData(
-	        const RsGxsGroupId& groupId, RsGxsChannelGroup& distantGroup ) = 0;
+    virtual bool getDistantSearchResultGroupData(const RsGxsGroupId& groupId, RsGxsChannelGroup& distantGroup ) = 0;
 
-	/**
+    /**
+     * @brief getDistantSearchStatus
+     * 			Returns the status of ongoing search: unknown (probably not even searched), known as a search result,
+     *          data request ongoing and data available
+     */
+    virtual DistantSearchGroupStatus getDistantSearchStatus(const RsGxsGroupId& group_id) =0;
+
+    /**
 	 * @brief Clear accumulated search results
 	 * @jsonapi{development}
 	 * @param[in] reqId search id

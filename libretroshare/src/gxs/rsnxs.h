@@ -142,6 +142,14 @@ public:
 	virtual bool search(const Sha1CheckSum& hashed_group_id,unsigned char *& encrypted_group_data,uint32_t& encrypted_group_data_len)=0;
 
     /*!
+     * \brief getDistantSearchStatus
+     * 			Request status of a possibly ongoing/finished search. If UNKNOWN is returned, it means that no
+     * 			such group is under request
+     * \return
+     */
+    virtual DistantSearchGroupStatus getDistantSearchStatus(const RsGxsGroupId&) =0;
+
+    /*!
      * Initiates a search through the network
      * This returns messages which contains the search terms set in RsGxsSearch
      * @param search contains search terms of requested from service

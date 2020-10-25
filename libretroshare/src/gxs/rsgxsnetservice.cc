@@ -5158,6 +5158,20 @@ bool RsGxsNetService::locked_stampMsgServerUpdateTS(const RsGxsGroupId& gid)
     return true;
 }
 
+DistantSearchGroupStatus RsGxsNetService::getDistantSearchStatus(const RsGxsGroupId& group_id)
+{
+    auto it = mSearchedGroups.find(group_id);
+
+    if(it != mSearchedGroups.end())
+        return it->second.status;
+
+    for(auto it2:mDistantSearchResults)
+        if(it2.second.find(group_id) != it2.second.end())
+            return DistantSearchGroupStatus::CAN_BE_REQUESTED;
+
+    return DistantSearchGroupStatus::UNKNOWN;
+}
+
 TurtleRequestId RsGxsNetService::turtleGroupRequest(const RsGxsGroupId& group_id)
 {
 	RS_STACK_MUTEX(mNxsMutex) ;
@@ -5180,6 +5194,7 @@ TurtleRequestId RsGxsNetService::turtleGroupRequest(const RsGxsGroupId& group_id
 
 	rec.request_id = req;
 	rec.ts         = now;
+    rec.status     = DistantSearchGroupStatus::ONGOING_REQUEST;
 
     mSearchRequests[req] = group_id;
 
@@ -5363,6 +5378,9 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req,const unsig
         return ;
     }
     std::vector<RsNxsGrp*> new_grps(1,nxs_grp);
+
+    GroupRequestRecord& rec(mSearchedGroups[nxs_grp->grpId]) ;
+    rec.status = DistantSearchGroupStatus::HAVE_GROUP_DATA;
 
 #ifdef NXS_NET_DEBUG_8
 	GXSNETDEBUG___ << " passing the grp data to observer." << std::endl;

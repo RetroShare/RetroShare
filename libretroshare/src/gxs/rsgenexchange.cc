@@ -3445,6 +3445,10 @@ void RsGenExchange::removeDeleteExistingMessages( std::list<RsNxsMsg*>& msgs, Gx
 	}
 }
 
+DistantSearchGroupStatus RsGenExchange::getDistantSearchStatus(const RsGxsGroupId& group_id)
+{
+    return mNetService->getDistantSearchStatus(group_id) ;
+}
 void RsGenExchange::turtleGroupRequest(const RsGxsGroupId& group_id)
 {
     mNetService->turtleGroupRequest(group_id) ;

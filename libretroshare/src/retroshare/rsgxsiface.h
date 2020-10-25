@@ -145,6 +145,14 @@ struct RsGxsChanges : RsEvent
 	RsTokenService* mService; /// Weak pointer, not serialized
 };
 
+enum class DistantSearchGroupStatus:uint8_t
+{
+    UNKNOWN            = 0x00,	// no search ongoing for this group
+    CAN_BE_REQUESTED   = 0x01,	// a search result mentions this group, so the group data can be requested
+    ONGOING_REQUEST    = 0x02,	// the group data has been requested and the request is pending
+    HAVE_GROUP_DATA    = 0x03,	// group data has been received. Group can be subscribed.
+};
+
 /*!
  * All implementations must offer thread safety
  */

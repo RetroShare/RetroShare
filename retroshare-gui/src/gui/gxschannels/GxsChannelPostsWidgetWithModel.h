@@ -103,8 +103,8 @@ public:
 	~GxsChannelPostsWidgetWithModel();
 
 	/* GxsMessageFrameWidget */
-	virtual QIcon groupIcon();
-    virtual void groupIdChanged() { updateDisplay(true); }
+    virtual QIcon groupIcon() override;
+    virtual void groupIdChanged() override { updateDisplay(true); }
     virtual QString groupName(bool) override;
     virtual bool navigate(const RsGxsMessageId&) override;
 
@@ -126,7 +126,7 @@ protected:
 	virtual bool insertGroupData(const RsGxsGenericGroupData *data) override;
 #endif
 	virtual bool useThread() { return mUseThread; }
-    virtual void blank() ;
+    virtual void blank() override ;
 
 #ifdef TODO
 	virtual bool getGroupData(RsGxsGenericGroupData *& data) override;
@@ -137,7 +137,7 @@ protected:
 #endif
 
 	/* GxsMessageFrameWidget */
-	virtual void setAllMessagesReadDo(bool read, uint32_t &token);
+    virtual void setAllMessagesReadDo(bool read, uint32_t &token) override;
 
 private slots:
 	void showPostDetails();

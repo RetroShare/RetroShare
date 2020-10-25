@@ -222,7 +222,7 @@ public:
      * @param msgIds a map of RsGxsGrpMsgIdPair -> msgList (vector)
      * @return false if could not redeem token
      */
-    bool getMsgRelatedList(const uint32_t &token, MsgRelatedIdResult& msgIds);
+    bool getMsgRelatedList(const uint32_t &token, MsgRelatedIdResult& msgIds)override;
 
 
     /*!
@@ -231,14 +231,14 @@ public:
      * @param groupInfo
      * @return false if could not redeem token
      */
-    bool getGroupMeta(const uint32_t &token, std::list<RsGroupMetaData>& groupInfo);
+    bool getGroupMeta(const uint32_t &token, std::list<RsGroupMetaData>& groupInfo)override;
 
     /*!
      * retrieves message meta data associated to a request token
      * @param token token to be redeemed
      * @param msgInfo the meta data to be retrieved for token store here
      */
-    bool getMsgMeta(const uint32_t &token, GxsMsgMetaMap &msgInfo);
+    bool getMsgMeta(const uint32_t &token, GxsMsgMetaMap &msgInfo)override;
 
     /*!
      * Retrieve msg meta for a given token for message related info
@@ -246,7 +246,7 @@ public:
      * @param msgIds a map of RsGxsGrpMsgIdPair -> msgList (vector)
      * @return false if could not redeem token
      */
-    bool getMsgRelatedMeta(const uint32_t &token, GxsMsgRelatedMetaMap& msgMeta);
+    bool getMsgRelatedMeta(const uint32_t &token, GxsMsgRelatedMetaMap& msgMeta)override;
 
     /*!
      * Retrieves the meta data of a newly created group. The meta is kept in cache for the current session.
@@ -294,7 +294,7 @@ public:
      */
 	virtual bool acceptNewMessage(const RsGxsMsgMetaData *msgMeta, uint32_t size) ;
 
-    bool subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe);
+    bool subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe) override;
 
 	/*!
 	 * Gets service statistic for a given services
@@ -302,7 +302,7 @@ public:
 	 * @param stats the status
 	 * @return true if token exists false otherwise
 	 */
-	bool getServiceStatistic(const uint32_t& token, GxsServiceStatistic& stats);
+    bool getServiceStatistic(const uint32_t& token, GxsServiceStatistic& stats) override;
 
 	/*!
 	 * Get group statistic
@@ -310,7 +310,7 @@ public:
 	 * @param stats the stats associated to token requ
 	 * @return true if token is false otherwise
 	 */
-	bool getGroupStatistic(const uint32_t& token, GxsGroupStatistic& stats);
+    bool getGroupStatistic(const uint32_t& token, GxsGroupStatistic& stats) override;
 
     /*!
      * \brief turtleGroupRequest
@@ -321,7 +321,14 @@ public:
     void turtleGroupRequest(const RsGxsGroupId& group_id);
     void turtleSearchRequest(const std::string& match_string);
 
-	/**
+    /*!
+     * \brief getDistantSearchStatus
+     * 			Returns the status of ongoing search: unknown (probably not even searched), known as a search result,
+     *          data request ongoing and data available
+     */
+    DistantSearchGroupStatus getDistantSearchStatus(const RsGxsGroupId& group_id) ;
+
+    /**
 	 * @brief Search local groups. Blocking API.
 	 * @param matchString string to look for in the search
 	 * @param results storage for results
@@ -720,21 +727,21 @@ public:
      * \brief getDefaultStoragePeriod. All times in seconds.
      * \return
      */
-	virtual uint32_t getDefaultStoragePeriod() { return mNetService->getDefaultKeepAge() ; }
+    virtual uint32_t getDefaultStoragePeriod() override{ return mNetService->getDefaultKeepAge() ; }
 
-    virtual uint32_t getStoragePeriod(const RsGxsGroupId& grpId) ;
-    virtual void     setStoragePeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) ;
+    virtual uint32_t getStoragePeriod(const RsGxsGroupId& grpId) override;
+    virtual void     setStoragePeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) override;
 
-    virtual uint32_t getDefaultSyncPeriod();
-    virtual uint32_t getSyncPeriod(const RsGxsGroupId& grpId) ;
-    virtual void     setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) ;
-	virtual bool     getGroupNetworkStats(const RsGxsGroupId& grpId,RsGroupNetworkStats& stats);
+    virtual uint32_t getDefaultSyncPeriod()override;
+    virtual uint32_t getSyncPeriod(const RsGxsGroupId& grpId) override;
+    virtual void     setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) override;
+    virtual bool     getGroupNetworkStats(const RsGxsGroupId& grpId,RsGroupNetworkStats& stats);
 
     uint16_t serviceType() const override { return mServType ; }
     uint32_t serviceFullType() const { return RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(mServType); }
 
 	virtual RsReputationLevel minReputationForForwardingMessages(
-	        uint32_t group_sign_flags, uint32_t identity_flags );
+            uint32_t group_sign_flags, uint32_t identity_flags )override;
 protected:
 
     /** Notifications **/

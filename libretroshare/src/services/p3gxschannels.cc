@@ -2423,6 +2423,10 @@ bool p3GxsChannels::retrieveDistantSearchResults(TurtleRequestId req,std::map<Rs
     return netService()->retrieveDistantSearchResults(req,results);
 }
 
+DistantSearchGroupStatus p3GxsChannels::getDistantSearchStatus(const RsGxsGroupId& group_id)
+{
+    return netService()->getDistantSearchStatus(group_id);
+}
 bool p3GxsChannels::getDistantSearchResultGroupData(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group)
 {
 	RsGxsGroupSearchResults gs;
