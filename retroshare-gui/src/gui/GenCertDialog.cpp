@@ -539,12 +539,12 @@ void GenCertDialog::genPerson()
 		std::string hl = ui.hiddenaddr_input->text().toStdString();
 		uint16_t port  = ui.hiddenport_spinBox->value();
 
-		bool useBob    = ui.cbUseBob->isChecked();
+		bool useI2p    = ui.cbUseBob->isChecked();
 
-		if (useBob && hl.empty())
+		if (useI2p && hl.empty())
 			hl = "127.0.0.1";
 
-		RsInit::SetHiddenLocation(hl, port, useBob);	/* parses it */
+		RsInit::SetHiddenLocation(hl, port, useI2p);	/* parses it */
 	}
 
 

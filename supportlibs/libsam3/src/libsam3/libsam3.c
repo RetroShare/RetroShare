@@ -26,6 +26,10 @@
 #include <sys/sysinfo.h>
 #include <sys/types.h>
 
+#ifdef WINDOWS_SYS
+#include <winsock.h>
+#endif // WINDOWS_SYS
+
 ////////////////////////////////////////////////////////////////////////////////
 int libsam3_debug = 0;
 
@@ -100,6 +104,11 @@ int sam3tcpConnectIP(uint32_t ip, int port) {
     }
   }
   //
+  // Set this for all outgoing SAM connections. Most SAM commands should be answered rather fast except CREATE SESSION maybe.
+  // This should be enough to let SAM establish a session.
+  sam3tcpSetTimeoutSend(fd, 5 * 60 * 1000);
+  sam3tcpSetTimeoutReceive(fd, 5 * 60 * 1000);
+  //
   setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &val, sizeof(val));
   //
   if (connect(fd, (struct sockaddr *)&addr, sizeof(struct sockaddr_in)) < 0) {
@@ -152,8 +161,13 @@ int sam3tcpConnect(const char *hostname, int port, uint32_t *ip) {
 // <0: error; 0: ok
 int sam3tcpDisconnect(int fd) {
   if (fd >= 0) {
-    shutdown(fd, SHUT_RDWR);
-    return close(fd);
+#ifndef WINDOWS_SYS // ie UNIX
+      shutdown(fd, SHUT_RDWR);
+      return close(fd);
+#else
+    return closesocket(fd);
+#endif
+
   }
   //
   return -1;

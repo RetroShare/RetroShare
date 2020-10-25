@@ -210,7 +210,7 @@ std::string  publicKeyFromPrivate(const std::string &priv);
 
 /**
  * @brief getKeyTypes returns the name of the utilized algorithms used by the key
- * @param key public key (private works, too)
+ * @param key public key
  * @param signingKey name of the signing key, e.g. DSA_SHA1
  * @param cryptoKey name of the crpyto key, e.g. ElGamal
  * @return true on success, false otherwise

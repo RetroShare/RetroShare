@@ -1742,6 +1742,7 @@ bool 	pqissl::moretoread(uint32_t usec)
 	{
 		rslog(RSL_ALERT, pqisslzone, 
 			"pqissl::moretoread() Select ERROR!");
+		RS_WARN(errno);
 		return 0;
 	}
 

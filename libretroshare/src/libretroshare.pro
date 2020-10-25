@@ -157,7 +157,7 @@ rs_webui {
 
 HEADERS += plugins/pluginmanager.h \
 		plugins/dlfcn_win32.h \
-		rsitems/rspluginitems.h \
+    rsitems/rspluginitems.h \
     util/i2pcommon.h \
     util/rsinitedptr.h
 
@@ -1012,6 +1012,31 @@ rs_broadcast_discovery {
             $(MAKE)
         QMAKE_EXTRA_COMPILERS += udpdiscoverycpplib
     }
+}
+
+rs_sam3 {
+    SOURCES += \
+        services/autoproxy/p3i2psam3.cpp \
+        pqi/pqissli2psam3.cpp \
+
+    HEADERS += \
+        services/autoproxy/p3i2psam3.h \
+        pqi/pqissli2psam3.h \
+}
+
+rs_sam3_libsam3 {
+    DUMMYQMAKECOMPILERINPUT = FORCE
+    libsam3.name = Generating libsam3.
+    libsam3.input = DUMMYQMAKECOMPILERINPUT
+    libsam3.output = $$clean_path($${LIBSAM3_BUILD_PATH}/libsam3.a)
+    libsam3.CONFIG += target_predeps combine
+    libsam3.variable_out = PRE_TARGETDEPS
+    libsam3.commands = \
+        cd $${RS_SRC_PATH} && \
+        cp -r $${LIBSAM3_SRC_PATH}/* $${LIBSAM3_BUILD_PATH} && \
+        cd $${LIBSAM3_BUILD_PATH} && \
+        $(MAKE) build
+    QMAKE_EXTRA_COMPILERS += libsam3
 }
 
 ###########################################################################################################

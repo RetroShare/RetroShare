@@ -50,7 +50,7 @@ std::string publicKeyFromPrivate(std::string const &priv)
 	 * https://geti2p.net/spec/common-structures#keysandcert
 	 * https://geti2p.net/spec/common-structures#certificate
 	 */
-	if (priv.length() < 884) // base64 ( = 663 bytes = KeyCert + priv Keys)
+	if (priv.empty() || priv.length() < 884) // base64 ( = 663 bytes = KeyCert + priv Keys)
 		return std::string();
 
 	// creat a copy to work on, need to convert it to standard base64
@@ -163,6 +163,9 @@ std::string publicKeyFromPrivate(std::string const &priv)
 
 bool getKeyTypes(const std::string &key, std::string &signingKey, std::string &cryptoKey)
 {
+	if (key.length() < 522) // base64 (391 bytes = 384 bytes + 7 bytes = KeysAndCert + Certificate)
+		return false;
+
 	// creat a copy to work on, need to convert it to standard base64
 	auto key_copy(key);
 	std::replace(key_copy.begin(), key_copy.end(), '~', '/');
@@ -225,7 +228,7 @@ bool getKeyTypes(const std::string &key, std::string &signingKey, std::string &c
 	// now convert to string (this would be easier with c++17)
 #define HELPER(a, b, c) \
 	case static_cast<typename std::underlying_type<a>::type>(a::c): \
-	    b = "c"; \
+	    b = #c; \
 	    break;
 
 	switch (signingKeyType) {

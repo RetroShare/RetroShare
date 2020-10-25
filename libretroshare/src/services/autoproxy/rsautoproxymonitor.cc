@@ -329,14 +329,22 @@ autoProxyService *rsAutoProxyMonitor::lookUpService(autoProxyType::autoProxyType
 
 bool rsAutoProxyMonitor::isAsyncTask(autoProxyTask::autoProxyTask_enum t)
 {
+	// Explicit list all values, so that missing ones will be detected by the compiler.
 	switch (t) {
-	case autoProxyTask::start:
-	case autoProxyTask::stop:
-	case autoProxyTask::receiveKey:
+	case autoProxyTask::start:      [[fallthrough]];
+	case autoProxyTask::stop:       [[fallthrough]];
+	case autoProxyTask::receiveKey: [[fallthrough]];
+	case autoProxyTask::lookupKey:  [[fallthrough]];
+	case autoProxyTask::establishConnection: [[fallthrough]];
+	case autoProxyTask::closeConnection:
 		return true;
-		break;
-	default:
-		break;
+	case autoProxyTask::status:           [[fallthrough]];
+	case autoProxyTask::getSettings:      [[fallthrough]];
+	case autoProxyTask::setSettings:      [[fallthrough]];
+	case autoProxyTask::getErrorInfo:     [[fallthrough]];
+	case autoProxyTask::reloadConfig:     [[fallthrough]];
+	case autoProxyTask::proxyStatusCheck:
+		return false;
 	}
 	return false;
 }
