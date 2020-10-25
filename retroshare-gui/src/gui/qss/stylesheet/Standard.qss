@@ -202,7 +202,8 @@ CreateGxsForumMsg QPushButton#postButton:disabled, PostedCreatePostDialog QPushB
 
 GxsForumThreadWidget QLabel#forumName
 {
-  font: bold;
+	font: bold;
+	font-size: 14px;
 }
 
 CreateForumMsg > QToolBar#toolBar, CreateForumV2Msg > QToolBar#toolBar {
@@ -239,6 +240,12 @@ ChatLobbyWidget QLabel#lobbyinfo_label
 	border-radius: 6px;
 	background: #FFFFD7;
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
+}
+
+ChatLobbyWidget QLabel#lobbyname_lineEdit
+{
+	font: bold;
+	font-size: 16px;
 }
 
 ChatLobbyWidget QGroupBox#lobbyinfo_groupBox
@@ -785,7 +792,8 @@ PostedListWidgetWithModel QComboBox#sortStrategy_CB {
 	color: #0099cc;
 }
 
-PostedListWidgetWithModel QToolButton#submitPostButton {
+PostedListWidgetWithModel QToolButton#submitPostButton, GxsChannelPostsWidgetWithModel QToolButton#postButton,
+GxsForumThreadWidget QToolButton#newthreadButton {
 	font: bold;
 }
 
