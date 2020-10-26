@@ -455,16 +455,19 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 	QIcon icon;
     icon.addPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/redled.png"), QIcon::Normal, QIcon::On);
     icon.addPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/start.png"), QIcon::Normal, QIcon::Off);
+
+#ifdef TO_REMOVE
 	mAutoDownloadAction = new QAction(icon, "", this);
 	mAutoDownloadAction->setCheckable(true);
 	connect(mAutoDownloadAction, SIGNAL(triggered()), this, SLOT(toggleAutoDownload()));
 
 	ui->subscribeToolButton->addSubscribedAction(mAutoDownloadAction);
+    setAutoDownload(false);
+#endif
 
     ui->commentsDialog->setTokenService(rsGxsChannels->getTokenService(),rsGxsChannels);
 
 	/* Initialize GUI */
-	setAutoDownload(false);
 	settingsChanged();
 
     setGroupId(channelId);
@@ -925,7 +928,7 @@ GxsChannelPostsWidgetWithModel::~GxsChannelPostsWidgetWithModel()
 	// save settings
 	processSettings(false);
 
-	delete(mAutoDownloadAction);
+    //delete(mAutoDownloadAction);
     delete mFilesDelegate;
 	delete ui;
 }
@@ -1039,18 +1042,16 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 
 	ui->postButton->setEnabled(bool(group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH));
 
-	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
-	ui->subscribeToolButton->setEnabled(true);
-
+#ifdef TO_REMOVE
 	bool autoDownload ;
 	rsGxsChannels->getChannelAutoDownload(group.mMeta.mGroupId,autoDownload);
 	setAutoDownload(autoDownload);
+#endif
 
-	if (IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
+    setSubscribeButtonText(group.mMeta.mGroupId,group.mMeta.mSubscribeFlags);
+
+    if (IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
     {
-		ui->subscribeToolButton->setText(tr("Subscribed") + " " + QString::number(group.mMeta.mPop) );
-		//ui->feedToolButton->setEnabled(true);
-		//ui->fileToolButton->setEnabled(true);
         ui->channel_TW->setTabEnabled(CHANNEL_TABS_POSTS,true);
         ui->channel_TW->setTabEnabled(CHANNEL_TABS_FILES,true);
         ui->details_TW->setEnabled(true);
@@ -1159,29 +1160,44 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 	//ui->fileToolButton->setEnabled(false);
 #endif
 
-    if(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
+    setSubscribeButtonText(group.mMeta.mGroupId,group.mMeta.mSubscribeFlags);
+
+    showPostDetails();
+}
+
+void GxsChannelPostsWidgetWithModel::setSubscribeButtonText(const RsGxsGroupId& group_id,uint32_t flags)
+{
+    if(IS_GROUP_SUBSCRIBED(flags))
+    {
         ui->subscribeToolButton->setText(tr("Unsubscribe"));
+        ui->subscribeToolButton->setSubscribed(true);
+        ui->subscribeToolButton->setEnabled(true);
+    }
     else
     {
-        switch(rsGxsChannels->getDistantSearchStatus(group.mMeta.mGroupId))
+        switch(rsGxsChannels->getDistantSearchStatus(group_id))
         {
         case DistantSearchGroupStatus::UNKNOWN:  	// means no search ongoing. This is not a distant search
         case DistantSearchGroupStatus::HAVE_GROUP_DATA:	// fallthrough
             ui->subscribeToolButton->setText(tr("Subscribe"));
             ui->subscribeToolButton->setToolTip("");
+            ui->subscribeToolButton->setSubscribed(false);
+            ui->subscribeToolButton->setEnabled(true);
             break;
         case DistantSearchGroupStatus::CAN_BE_REQUESTED:  	// means no search ongoing. This is not a distant search
             ui->subscribeToolButton->setText(tr("Request data"));
             ui->subscribeToolButton->setToolTip(tr("Hit this button to retrieve the data you need to subscribe to this channel") );
+            ui->subscribeToolButton->setSubscribed(false);
+            ui->subscribeToolButton->setEnabled(false);
             break;
         case DistantSearchGroupStatus::ONGOING_REQUEST:
             ui->subscribeToolButton->setText(tr("Ongoing request..."));
             ui->subscribeToolButton->setToolTip("");
+            ui->subscribeToolButton->setSubscribed(true);
+            ui->subscribeToolButton->setEnabled(false);
             break;
         }
     }
-
-    showPostDetails();
 }
 
 void GxsChannelPostsWidgetWithModel::switchOnlyUnread(bool)
@@ -1254,10 +1270,11 @@ void GxsChannelPostsWidgetWithModel::subscribeGroup(bool subscribe)
 	} );
 }
 
+#ifdef TO_REMOVE
 void GxsChannelPostsWidgetWithModel::setAutoDownload(bool autoDl)
 {
-	mAutoDownloadAction->setChecked(autoDl);
-	mAutoDownloadAction->setText(autoDl ? tr("Disable Auto-Download") : tr("Enable Auto-Download"));
+    mAutoDownloadAction->setChecked(autoDl);
+    mAutoDownloadAction->setText(autoDl ? tr("Disable Auto-Download") : tr("Enable Auto-Download"));
 }
 
 void GxsChannelPostsWidgetWithModel::toggleAutoDownload()
@@ -1285,6 +1302,7 @@ void GxsChannelPostsWidgetWithModel::toggleAutoDownload()
 		}
 	});
 }
+#endif
 
 class GxsChannelPostsReadData
 {
