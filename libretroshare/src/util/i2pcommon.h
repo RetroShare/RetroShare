@@ -208,6 +208,15 @@ std::string keyToBase32Addr(const std::string &key);
  */
 std::string  publicKeyFromPrivate(const std::string &priv);
 
+/**
+ * @brief getKeyTypes returns the name of the utilized algorithms used by the key
+ * @param key public key (private works, too)
+ * @param signingKey name of the signing key, e.g. DSA_SHA1
+ * @param cryptoKey name of the crpyto key, e.g. ElGamal
+ * @return true on success, false otherwise
+ */
+bool getKeyTypes(const std::string &key, std::string &signingKey, std::string &cryptoKey);
+
 } // namespace i2p
 
 #endif // I2PCOMMON_H

@@ -70,13 +70,14 @@ std::string publicKeyFromPrivate(std::string const &priv)
 	uint8_t certType = 0;
 	uint16_t len = 0;
 	uint16_t signingKeyType = 0;
-	uint16_t cryptKey = 0;
+	uint16_t cryptKeyType = 0;
 
 	// only used for easy break
 	do {
 		try {
 			// jump to certificate
 			p += publicKeyLen;
+
 			// try to read type and length
 			certType = *p++;
 			len = readTwoBytesBE(p);
@@ -87,7 +88,7 @@ std::string publicKeyFromPrivate(std::string const &priv)
 				/*
 				 * CertType.Null
 				 * type null is followed by 0x00 0x00 <END>
-				 * so has to be 0!
+				 * so len has to be 0!
 				 */
 				RS_DBG("cert is CertType.Null");
 				publicKeyLen += 3; // add 0x00 0x00 0x00
@@ -119,7 +120,7 @@ std::string publicKeyFromPrivate(std::string const &priv)
 			// likely 7
 			signingKeyType = readTwoBytesBE(p);
 
-			RS_DBG("signing pubkey type ", certType);
+			RS_DBG("signing pubkey type ", signingKeyType);
 			if (signingKeyType >= 3 && signingKeyType <= 6) {
 				RS_DBG("signing pubkey type ", certType, " has oversize");
 				// calculate oversize
@@ -137,18 +138,18 @@ std::string publicKeyFromPrivate(std::string const &priv)
 					return std::string();
 				}
 
-				publicKeyLen += values.first - 128; // 128 = default DSA key length = the space than can be used before the key must be splitted
+				publicKeyLen += values.first - 128; // 128 = default DSA key length = the space that can be used before the key must be splitted
 			}
 
 			// Crypto Public Key
 			// likely 0
-			cryptKey = readTwoBytesBE(p);
-			RS_DBG("crypto pubkey type ", cryptKey);
+			cryptKeyType = readTwoBytesBE(p);
+			RS_DBG("crypto pubkey type ", cryptKeyType);
 			// info: these are all smaller than the default 256 bytes, so no oversize calculation is needed
 
 			break;
 		}  catch (const std::out_of_range &e) {
-			RS_DBG("hit exception! ", e.what());
+			RS_DBG("hit an exception! ", e.what());
 			return std::string();
 		}
 	} while(false);
@@ -158,6 +159,104 @@ std::string publicKeyFromPrivate(std::string const &priv)
 	RsBase64::encode(data2.data(), data2.size(), pub, false, false);
 
 	return pub;
+}
+
+bool getKeyTypes(const std::string &key, std::string &signingKey, std::string &cryptoKey)
+{
+	// creat a copy to work on, need to convert it to standard base64
+	auto key_copy(key);
+	std::replace(key_copy.begin(), key_copy.end(), '~', '/');
+	// replacing the - with a + is not necessary, as RsBase64 can handle base64url encoding, too
+	// std::replace(copy.begin(), copy.end(), '-', '+');
+
+	// get raw data
+	std::vector<uint8_t> data;
+	RsBase64::decode(key_copy, data);
+
+	auto p = data.cbegin();
+
+	constexpr size_t publicKeyLen = 256 + 128; // default length (bytes)
+	uint8_t certType = 0;
+	uint16_t signingKeyType = 0;
+	uint16_t cryptKeyType = 0;
+
+	// try to read types
+	try {
+		// jump to certificate
+		p += publicKeyLen;
+
+		// try to read type and skip length
+		certType = *p++;
+		p += 2;
+
+		// only 0 and 5 are used / valid at this point
+		// check for == 0
+		if (certType == static_cast<typename std::underlying_type<CertType>::type>(CertType::Null)) {
+			RS_DBG("cert is CertType.Null");
+
+			signingKey = "DSA_SHA1";
+			cryptoKey = "ElGamal";
+			return true;
+		}
+
+		// check for != 5
+		if (certType != static_cast<typename std::underlying_type<CertType>::type>(CertType::Key)) {
+			// unsupported
+			RS_DBG("cert type ", certType, " is unsupported");
+			return false;
+		}
+
+		RS_DBG("cert is CertType.Key");
+
+		// Signing Public Key
+		// likely 7
+		signingKeyType = readTwoBytesBE(p);
+		RS_DBG("signing pubkey type ", signingKeyType);
+
+		// Crypto Public Key
+		// likely 0
+		cryptKeyType = readTwoBytesBE(p);
+		RS_DBG("crypto pubkey type ", cryptKeyType);
+	}  catch (const std::out_of_range &e) {
+		RS_DBG("hit an exception! ", e.what());
+		return false;
+	}
+
+	// now convert to string (this would be easier with c++17)
+#define HELPER(a, b, c) \
+	case static_cast<typename std::underlying_type<a>::type>(a::c): \
+	    b = "c"; \
+	    break;
+
+	switch (signingKeyType) {
+	HELPER(SigningKeyType, signingKey, DSA_SHA1)
+	HELPER(SigningKeyType, signingKey, ECDSA_SHA256_P256)
+	HELPER(SigningKeyType, signingKey, ECDSA_SHA384_P384)
+	HELPER(SigningKeyType, signingKey, ECDSA_SHA512_P521)
+	HELPER(SigningKeyType, signingKey, RSA_SHA256_2048)
+	HELPER(SigningKeyType, signingKey, RSA_SHA384_3072)
+	HELPER(SigningKeyType, signingKey, RSA_SHA512_4096)
+	HELPER(SigningKeyType, signingKey, EdDSA_SHA512_Ed25519)
+	HELPER(SigningKeyType, signingKey, EdDSA_SHA512_Ed25519ph)
+	HELPER(SigningKeyType, signingKey, RedDSA_SHA512_Ed25519)
+	default:
+	    RsWarn("unkown signing key type:", signingKeyType);
+	    return false;
+	}
+
+	switch (cryptKeyType) {
+	HELPER(CryptoKeyType, cryptoKey, ElGamal)
+	HELPER(CryptoKeyType, cryptoKey, P256)
+	HELPER(CryptoKeyType, cryptoKey, P384)
+	HELPER(CryptoKeyType, cryptoKey, P521)
+	HELPER(CryptoKeyType, cryptoKey, X25519)
+	default:
+	    RsWarn("unkown crypto key type:", cryptKeyType);
+	    return false;
+	}
+#undef HELPER
+
+	return true;
 }
 
 } // namespace i2p
