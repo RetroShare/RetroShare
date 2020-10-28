@@ -187,7 +187,8 @@ ShareManager QPushButton#addButton:hover {
 	padding: 4px;
 }
 
-CreateGxsForumMsg QPushButton#postButton:disabled, PostedCreatePostDialog QPushButton#postButton:disabled {
+CreateGxsForumMsg QPushButton#postButton:disabled, PostedCreatePostDialog QPushButton#submitButton:disabled,
+CreateGxsChannelMsg QPushButton#postButton:disabled {
 	font: bold;
 	font-size: 15px;
 	color: white;

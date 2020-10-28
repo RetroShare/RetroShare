@@ -58,10 +58,12 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 
     headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/channel.png"));
 
-    if(!existing_post.isNull())
+    if(!existing_post.isNull()){
 		headerFrame->setHeaderText(tr("Edit Channel Post"));
-	else
+		postButton->setText(tr("Update"));
+	}else{
 		headerFrame->setHeaderText(tr("New Channel Post"));
+	}
 
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
@@ -77,6 +79,7 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 	connect(stackedWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenu(QPoint)));
 	connect(generateCheckBox, SIGNAL(toggled(bool)), generateSpinBox, SLOT(setEnabled(bool)));
 	connect(aspectRatio_CB,SIGNAL(currentIndexChanged(int)),this,SLOT(changeAspectRatio(int)));
+	connect(RichTextEditWidget, SIGNAL(textSizeOk(bool)),postButton, SLOT(setEnabled(bool)));
 
 	channelpostButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/comment.png"));
 	attachmentsButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/attachements.png"));

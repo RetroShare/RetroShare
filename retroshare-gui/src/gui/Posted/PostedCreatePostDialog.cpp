@@ -56,8 +56,9 @@ PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGrou
 	connect(ui->submitButton, SIGNAL(clicked()), this, SLOT(createPost()));
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 	connect(ui->addPicButton, SIGNAL(clicked() ), this , SLOT(addPicture()));
-	
-    ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/postedlinks.png"));
+	connect(ui->RichTextEditWidget, SIGNAL(textSizeOk(bool)),ui->submitButton, SLOT(setEnabled(bool)));
+
+	ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/postedlinks.png"));
 	ui->headerFrame->setHeaderText(tr("Create a new Post"));
 
 	setAttribute ( Qt::WA_DeleteOnClose, true );
