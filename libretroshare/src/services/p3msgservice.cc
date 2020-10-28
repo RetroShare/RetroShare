@@ -1122,7 +1122,7 @@ uint32_t p3MsgService::sendMessage(RsMsgItem* item)
 
     IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
-    RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST, NOTIFY_TYPE_ADD);
+    RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST, NOTIFY_TYPE_ADD);	// deprecated
 
     return item->msgId;
 }
@@ -1196,10 +1196,15 @@ bool 	p3MsgService::MessageSend(MessageInfo &info)
 		info.msgId = std::to_string(msg->msgId);
 		info .msgflags = msg->msgFlags;
 
-		RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_ADD);
+        RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_ADD);// deprecated. Should be removed. Oct. 28, 2020
 	}
 
-	return true;
+    auto pEvent = std::make_shared<RsMailStatusEvent>();
+    pEvent->mMailStatusEventCode = RsMailStatusEventCode::MESSAGE_SENT;
+    pEvent->mChangedMsgIds.insert(std::to_string(msg->msgId));
+    rsEvents->postEvent(pEvent);
+
+    return true;
 }
 
 uint32_t p3MsgService::sendMail(
@@ -1399,7 +1404,11 @@ bool p3MsgService::MessageToDraft(MessageInfo &info, const std::string &msgParen
 
         IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
-		  RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
+    //	  RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
+
+    auto pEvent = std::make_shared<RsMailStatusEvent>();
+    pEvent->mMailStatusEventCode = RsMailStatusEventCode::MESSAGE_SENT;
+    rsEvents->postEvent(pEvent);
 
         return true;
     }

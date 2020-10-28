@@ -1093,7 +1093,7 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
         sync_string = tr("Unknown");
     }
 
-    if(group.mMeta.mLastPost + rsGxsChannels->getSyncPeriod(group.mMeta.mGroupId) < time(NULL) && IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
+    if(group.mMeta.mLastPost > 0 && group.mMeta.mLastPost + rsGxsChannels->getSyncPeriod(group.mMeta.mGroupId) < time(NULL) && IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
         sync_string += " (Warning: will not allow latest posts to sync)";
 
     ui->infoSyncTimeLabel->setText(sync_string);
@@ -1185,13 +1185,13 @@ void GxsChannelPostsWidgetWithModel::setSubscribeButtonText(const RsGxsGroupId& 
             ui->subscribeToolButton->setEnabled(true);
             break;
         case DistantSearchGroupStatus::CAN_BE_REQUESTED:  	// means no search ongoing. This is not a distant search
-            ui->subscribeToolButton->setText(tr("Request data"));
+            ui->subscribeToolButton->setText(tr("Subscribe"));
             ui->subscribeToolButton->setToolTip(tr("Hit this button to retrieve the data you need to subscribe to this channel") );
             ui->subscribeToolButton->setSubscribed(false);
             ui->subscribeToolButton->setEnabled(false);
             break;
         case DistantSearchGroupStatus::ONGOING_REQUEST:
-            ui->subscribeToolButton->setText(tr("Ongoing request..."));
+            ui->subscribeToolButton->setText(tr("Subscribe"));
             ui->subscribeToolButton->setToolTip("");
             ui->subscribeToolButton->setSubscribed(true);
             ui->subscribeToolButton->setEnabled(false);

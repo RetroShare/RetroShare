@@ -1427,7 +1427,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
             break ;
 
         default:
-            std::cerr << __PRETTY_FUNCTION__ << ": Unhandled desitnation type " << dtype << std::endl;
+            std::cerr << __PRETTY_FUNCTION__ << ": Unhandled destination type " << dtype << std::endl;
             break ;
         }
     }
