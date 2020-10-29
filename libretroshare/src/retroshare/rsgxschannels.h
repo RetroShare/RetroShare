@@ -113,6 +113,7 @@ enum class RsChannelEventCode: uint8_t
 	READ_STATUS_CHANGED             = 0x07, // existing message has been read or set to unread
 	RECEIVED_DISTANT_SEARCH_RESULT  = 0x08, // result for the given group id available for the given turtle request id
 	STATISTICS_CHANGED              = 0x09, // stats (nb of supplier friends, how many msgs they have etc) has changed
+    SYNC_PARAMETERS_UPDATED         = 0x0a, // sync and storage times have changed
 };
 
 struct RsGxsChannelEvent: RsEvent
@@ -518,10 +519,16 @@ public:
 	 * @param[out] distantGroup storage for group data
 	 * @return false on error, true otherwise
 	 */
-	virtual bool getDistantSearchResultGroupData(
-	        const RsGxsGroupId& groupId, RsGxsChannelGroup& distantGroup ) = 0;
+    virtual bool getDistantSearchResultGroupData(const RsGxsGroupId& groupId, RsGxsChannelGroup& distantGroup ) = 0;
 
-	/**
+    /**
+     * @brief getDistantSearchStatus
+     * 			Returns the status of ongoing search: unknown (probably not even searched), known as a search result,
+     *          data request ongoing and data available
+     */
+    virtual DistantSearchGroupStatus getDistantSearchStatus(const RsGxsGroupId& group_id) =0;
+
+    /**
 	 * @brief Clear accumulated search results
 	 * @jsonapi{development}
 	 * @param[in] reqId search id

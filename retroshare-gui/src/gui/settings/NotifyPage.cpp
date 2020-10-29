@@ -40,6 +40,8 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
 
+    ui.testFeedButton->hide();	// do not show in release
+
 	connect(ui.testFeedButton, SIGNAL(clicked()), this, SLOT(testFeed()));
 	connect(ui.testToasterButton, SIGNAL(clicked()), this, SLOT(testToaster()));
 	connect(ui.pushButtonDisableAll,SIGNAL(toggled(bool)), NotifyQt::getInstance(), SLOT(SetDisableAll(bool)));

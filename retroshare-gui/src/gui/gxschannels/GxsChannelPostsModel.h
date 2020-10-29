@@ -116,7 +116,9 @@ public:
 
     void triggerViewUpdate();
 
-    void setNumColumns(int n);
+    // sets the number of columns. Returns 0 if nothing changes.
+    bool setNumColumns(int n);
+
     void setMode(TreeMode mode);
     TreeMode getMode() const { return mTreeMode; }
 

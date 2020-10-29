@@ -319,13 +319,16 @@ Qt::ItemFlags RsGxsChannelPostsModel::flags(const QModelIndex& index) const
     return QAbstractItemModel::flags(index);
 }
 
-void RsGxsChannelPostsModel::setNumColumns(int n)
+bool RsGxsChannelPostsModel::setNumColumns(int n)
 {
     if(n < 1)
     {
         RsErr() << __PRETTY_FUNCTION__ << " Attempt to set a number of column of 0. This is wrong." << std::endl;
-        return;
+        return false;
     }
+    if(mColumns == n)
+        return false;
+
 	preMods();
 
 	beginRemoveRows(QModelIndex(),0,rowCount()-1);
@@ -337,6 +340,8 @@ void RsGxsChannelPostsModel::setNumColumns(int n)
     endInsertRows();
 
 	postMods();
+
+    return true;
 }
 
 quintptr RsGxsChannelPostsModel::getChildRef(quintptr ref,int index) const

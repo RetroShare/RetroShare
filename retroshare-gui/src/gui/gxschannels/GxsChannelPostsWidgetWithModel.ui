@@ -181,7 +181,7 @@
    <item>
     <widget class="QTabWidget" name="channel_TW">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -219,13 +219,47 @@
          </item>
          <item>
           <layout class="QGridLayout" name="gridLayout">
-           <item row="2" column="3">
+           <item row="4" column="1" colspan="2">
+            <widget class="QLabel" name="label_3">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Distribution:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="3">
+            <widget class="QLabel" name="infoPosts">
+             <property name="text">
+              <string notr="true">0</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="3">
             <widget class="GxsIdLabel" name="infoAdministrator">
              <property name="text">
               <string>unknown</string>
              </property>
              <property name="openExternalLinks">
               <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3">
+            <widget class="QLabel" name="infoLastPost">
+             <property name="text">
+              <string notr="true">unknown</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="3">
+            <widget class="QLabel" name="infoDistribution">
+             <property name="text">
+              <string>unknown</string>
              </property>
             </widget>
            </item>
@@ -248,14 +282,7 @@
              </property>
             </widget>
            </item>
-           <item row="4" column="3">
-            <widget class="QLabel" name="infoCreated">
-             <property name="text">
-              <string>unknown</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1" colspan="2">
+           <item row="3" column="1" colspan="2">
             <widget class="QLabel" name="label">
              <property name="font">
               <font>
@@ -265,53 +292,6 @@
              </property>
              <property name="text">
               <string>Administrator:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="3">
-            <widget class="QLabel" name="infoLastPost">
-             <property name="text">
-              <string notr="true">unknown</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1" colspan="2">
-            <widget class="QLabel" name="label_3">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Distribution:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1" colspan="2">
-            <widget class="QLabel" name="label_2">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Created:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="3">
-            <widget class="QLabel" name="infoPosts">
-             <property name="text">
-              <string notr="true">0</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="3">
-            <widget class="QLabel" name="infoDistribution">
-             <property name="text">
-              <string>unknown</string>
              </property>
             </widget>
            </item>
@@ -334,6 +314,46 @@
              </property>
              <property name="text">
               <string>Posts (locally / at friends):</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="3">
+            <widget class="QLabel" name="infoCreated">
+             <property name="text">
+              <string>unknown</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1" colspan="2">
+            <widget class="QLabel" name="label_2">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Created:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLabel" name="syncPeriodTitleLabel">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Sync period:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="3">
+            <widget class="QLabel" name="infoSyncTimeLabel">
+             <property name="text">
+              <string>unknown</string>
              </property>
             </widget>
            </item>

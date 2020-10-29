@@ -143,8 +143,8 @@ private slots:
 	void postPostLoad();
 	void postContextMenu(const QPoint&);
 	void copyMessageLink();
-	void next10Posts();
-	void prev10Posts();
+    void nextPosts();
+    void prevPosts();
 	void filterItems(QString s);
 
 public slots:

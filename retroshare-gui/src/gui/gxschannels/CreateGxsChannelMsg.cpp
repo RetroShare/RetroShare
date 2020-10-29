@@ -67,9 +67,11 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 
 	connect(postButton, SIGNAL(clicked()), this, SLOT(sendMsg()));
 	connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelMsg()));
+    connect(pasteFromClipboardButton, SIGNAL(clicked()), this, SLOT(pasteLink()));
 
 	connect(addFileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
-	connect(addfilepushButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
+    connect(removeAllFilesButton, SIGNAL(clicked() ), this , SLOT(clearAllAttachments()));
+    //connect(addfilepushButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
 	connect(subjectEdit,SIGNAL(textChanged(const QString&)),this,SLOT(updatePreviewText(const QString&)));
 
 	connect(addThumbnailButton, SIGNAL(clicked() ), this , SLOT(addThumbnail()));
@@ -81,7 +83,6 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 	channelpostButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/comment.png"));
 	attachmentsButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/attachements.png"));
 	addThumbnailButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/add-image.png"));
-	addfilepushButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/add-file.png"));
 
     aspectRatio_CB->setItemIcon(0,FilesDefs::getIconFromQtResourcePath(":/icons/svg/ratio-auto.svg"));
     aspectRatio_CB->setItemIcon(1,FilesDefs::getIconFromQtResourcePath(":/icons/svg/ratio-1-1.svg"));
@@ -158,6 +159,15 @@ void CreateGxsChannelMsg::changeAspectRatio(int s)
         break;
     }
 }
+
+void CreateGxsChannelMsg::reject()
+{
+    if(QMessageBox::warning(nullptr,tr("Close this window?"),tr("Do you really want to discard your post?"),QMessageBox::Yes,QMessageBox::No) == QMessageBox::No)
+        return;
+
+    QDialog::reject();
+}
+
 void CreateGxsChannelMsg::contextMenu(QPoint /*point*/)
 {
 	QList<RetroShareLink> links ;
@@ -431,6 +441,16 @@ void CreateGxsChannelMsg::addAttachment(const RsFileHash &hash, const std::strin
 
 	if (mCheckAttachment)
 		checkAttachmentReady();
+
+    updateAttachmentCount();
+}
+
+void CreateGxsChannelMsg::updateAttachmentCount()
+{
+    if(mAttachments.size() > 0)
+        attachmentsButton->setText(tr("Attachments (%1)").arg(mAttachments.size()));
+    else
+        attachmentsButton->setText(tr("Attachments"));
 }
 
 void CreateGxsChannelMsg::deleteAttachment()
@@ -449,6 +469,21 @@ void CreateGxsChannelMsg::deleteAttachment()
         }
 		else
             ++it;
+
+    updateAttachmentCount();
+}
+
+void CreateGxsChannelMsg::clearAllAttachments()
+{
+    QLayoutItem* item;
+    while ( ( item = fileFrame->layout()->takeAt( 0 ) ) != NULL )
+    {
+        delete item->widget();
+        delete item;
+    }
+
+    mAttachments.clear();
+    attachmentsButton->setText(tr("Attachments"));
 }
 
 void CreateGxsChannelMsg::addExtraFile()
@@ -489,7 +524,7 @@ void CreateGxsChannelMsg::addAttachment(const std::string &path)
 	setThumbNail(path, 2000);
 
 	/* add widget in for new destination */
-	uint32_t flags =  SFI_TYPE_CHANNEL | SFI_STATE_EXTRA | SFI_FLAG_CREATE;
+    uint32_t flags =  SFI_TYPE_CHANNEL | SFI_STATE_EXTRA | SFI_FLAG_CREATE;
 
 	// check attachment if hash exists already
 	std::list<SubFileItem* >::iterator  it;
@@ -516,16 +551,18 @@ void CreateGxsChannelMsg::addAttachment(const std::string &path)
 	//SubFileItem *file = new SubFileItem(hash, filename, path, size, flags, mChannelId); 
 	SubFileItem *file = new SubFileItem(hash, filename, path, size, flags, RsPeerId()); 
 
-	mAttachments.push_back(file);
+    connect(file,SIGNAL(wantsToBeDeleted()),this,SLOT(deleteAttachment())) ;
+
+    mAttachments.push_back(file);
 	QLayout *layout = fileFrame->layout();
 	layout->addWidget(file);
 
 	if (mCheckAttachment)
-	{
 		checkAttachmentReady();
-	}
 
-	return;
+    updateAttachmentCount();
+
+    return;
 }
 
 bool CreateGxsChannelMsg::setThumbNail(const std::string& path, int frame){
@@ -610,7 +647,9 @@ void CreateGxsChannelMsg::checkAttachmentReady()
 		cancelButton->setEnabled(true);
 	}
 
-	/* repeat... */
+    updateAttachmentCount();
+
+    /* repeat... */
 	int msec_rate = 1000;
 	QTimer::singleShot( msec_rate, this, SLOT(checkAttachmentReady(void)));
 }

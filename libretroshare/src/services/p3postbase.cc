@@ -162,6 +162,15 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
             }
                 break;
 
+            case RsGxsNotify::TYPE_GROUP_SYNC_PARAMETERS_UPDATED:
+            {
+                auto ev = std::make_shared<RsGxsPostedEvent>();
+                ev->mPostedGroupId = group_id;
+                ev->mPostedEventCode = RsPostedEventCode::SYNC_PARAMETERS_UPDATED;
+                rsEvents->postEvent(ev);
+            }
+                break;
+
             case RsGxsNotify::TYPE_STATISTICS_CHANGED:
             {
                 auto ev = std::make_shared<RsGxsPostedEvent>();

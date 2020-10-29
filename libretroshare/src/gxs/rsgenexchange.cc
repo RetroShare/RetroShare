@@ -1695,6 +1695,14 @@ void RsGenExchange::notifyReceivePublishKey(const RsGxsGroupId &grpId)
 	mNotifications.push_back(gc);
 }
 
+void RsGenExchange::notifyChangedGroupSyncParams(const RsGxsGroupId &grpId)
+{
+    RS_STACK_MUTEX(mGenMtx);
+
+    RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_GROUP_SYNC_PARAMETERS_UPDATED,grpId, false);
+
+    mNotifications.push_back(gc);
+}
 void RsGenExchange::notifyChangedGroupStats(const RsGxsGroupId &grpId)
 {
 	RS_STACK_MUTEX(mGenMtx);
@@ -3437,6 +3445,10 @@ void RsGenExchange::removeDeleteExistingMessages( std::list<RsNxsMsg*>& msgs, Gx
 	}
 }
 
+DistantSearchGroupStatus RsGenExchange::getDistantSearchStatus(const RsGxsGroupId& group_id)
+{
+    return mNetService->getDistantSearchStatus(group_id) ;
+}
 void RsGenExchange::turtleGroupRequest(const RsGxsGroupId& group_id)
 {
     mNetService->turtleGroupRequest(group_id) ;

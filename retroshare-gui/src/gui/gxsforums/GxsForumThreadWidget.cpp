@@ -383,7 +383,8 @@ void GxsForumThreadWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent
 		case RsForumEventCode::NEW_FORUM:       // [[fallthrough]];
 		case RsForumEventCode::UPDATED_MESSAGE: // [[fallthrough]];
 		case RsForumEventCode::NEW_MESSAGE:
-			if(e->mForumGroupId == mForumGroup.mMeta.mGroupId)
+        case RsForumEventCode::SYNC_PARAMETERS_UPDATED:
+            if(e->mForumGroupId == mForumGroup.mMeta.mGroupId)
 				updateDisplay(true);
 			break;
 		default: break;
@@ -534,7 +535,8 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 #ifdef DEBUG_FORUMS
         std::cerr << "  group_id=0. Return!"<< std::endl;
 #endif
-		return;
+        ui->nextUnreadButton->setEnabled(false);
+        return;
     }
 
 	if(mForumGroup.mMeta.mGroupId.isNull() && !groupId().isNull())
@@ -984,7 +986,6 @@ void GxsForumThreadWidget::blankPost()
 	ui->newmessageButton->setEnabled(false);
 	ui->previousButton->setEnabled(false);
 	ui->nextButton->setEnabled(false);
-	ui->nextUnreadButton->setEnabled(false);
 	ui->downloadButton->setEnabled(false);
 	ui->lineLeft->hide();
 	ui->time_label->clear();
@@ -1048,8 +1049,11 @@ void GxsForumThreadWidget::updateForumDescription(bool success)
     else
         forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Last post")).arg(DateTime::formatLongDateTime(group.mMeta.mLastPost));
 
-    forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Synchronization")).arg(getDurationString( rsGxsForums->getSyncPeriod(group.mMeta.mGroupId)/86400 )) ;
-    forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Storage")).arg(getDurationString( rsGxsForums->getStoragePeriod(group.mMeta.mGroupId)/86400));
+    if(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
+    {
+        forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Synchronization")).arg(getDurationString( rsGxsForums->getSyncPeriod(group.mMeta.mGroupId)/86400 )) ;
+        forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Storage")).arg(getDurationString( rsGxsForums->getStoragePeriod(group.mMeta.mGroupId)/86400));
+    }
 
     QString distrib_string = tr("[unknown]");
     switch(group.mMeta.mCircleType)
@@ -1850,7 +1854,10 @@ void GxsForumThreadWidget::filterItems(const QString& text)
 void GxsForumThreadWidget::postForumLoading()
 {
 	if(groupId().isNull())
-		return;
+    {
+        ui->nextUnreadButton->setEnabled(false);
+        return;
+    }
 
 #ifdef DEBUG_FORUMS
 	std::cerr << "Post forum loading..." << std::endl;
@@ -1905,6 +1912,8 @@ void GxsForumThreadWidget::postForumLoading()
 
 	recursRestoreExpandedItems(mThreadProxyModel->mapFromSource(mThreadModel->root()),mSavedExpandedMessages);
 	//mUpdating = false;
+
+    ui->nextUnreadButton->setEnabled(true);
 }
 
 void GxsForumThreadWidget::updateGroupData()

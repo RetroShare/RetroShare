@@ -71,6 +71,7 @@ protected:
     virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSearchResults> &results) ;
     virtual bool clearDistantSearchResults(TurtleRequestId req);
     virtual bool getDistantSearchResultGroupData(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group);
+    virtual DistantSearchGroupStatus getDistantSearchStatus(const RsGxsGroupId& group_id) ;
 
 	// Overloaded to cache new groups.
 virtual RsGenExchange::ServiceCreate_Return service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet);

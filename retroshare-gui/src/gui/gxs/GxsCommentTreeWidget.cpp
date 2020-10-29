@@ -141,6 +141,7 @@ GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
 {
 //	QTreeWidget* widget = this;
 
+    setVerticalScrollMode(ScrollPerPixel);
 	setContextMenuPolicy(Qt::CustomContextMenu);
 	RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
 	itemDelegate->setSpacing(QSize(0, 2));

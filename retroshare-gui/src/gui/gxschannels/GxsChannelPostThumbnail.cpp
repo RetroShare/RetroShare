@@ -118,7 +118,7 @@ void ChannelPostThumbnailView::init(const RsGxsChannelPost& post)
     mPostImage->setPicture(thumbnail);
 
     if(mFlags & FLAG_ALLOW_PAN)
-        mPostImage->setToolTip(tr("Use mouse to center and zoom into the image"));
+        mPostImage->setToolTip(tr("Use mouse to center and zoom\ninto the image, so as to\n crop it for your post."));
 
     QVBoxLayout *layout = new QVBoxLayout(this);
 
