@@ -613,6 +613,17 @@ p, li { white-space: pre-wrap; }
  </widget>
  <customwidgets>
   <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header location="global">gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSTreeView</class>
+   <extends>QTreeView</extends>
+   <header>gui/common/RSTreeView.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>GxsIdLabel</class>
    <extends>QLabel</extends>
    <header>gui/gxs/GxsIdLabel.h</header>
@@ -621,16 +632,6 @@ p, li { white-space: pre-wrap; }
    <class>SubscribeToolButton</class>
    <extends>QToolButton</extends>
    <header>gui/common/SubscribeToolButton.h</header>
-  </customwidget>
-  <customwidget>
-   <class>RSTreeView</class>
-   <extends>QTreeView</extends>
-   <header>gui/common/RSTreeView.h</header>
-  </customwidget>
-  <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
    <class>GxsCommentDialog</class>
