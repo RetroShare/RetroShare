@@ -43,7 +43,8 @@ public:
 	
 private slots:
 	void createComment();
-	
+	void checkLength();
+
 private:
 	Ui::GxsCreateCommentDialog *ui;
 	RsGxsCommentService *mCommentService;
