@@ -16,7 +16,7 @@
 
 # version format
 version: RetroShare-git-{branch}-{build}
-
+image: Visual Studio 2019
 # you can use {branch} name in version format too
 # version: 1.0.{build}-{branch}
 
@@ -93,12 +93,6 @@ install:
   # Configuring MSys2
   - set PATH=C:\msys64\usr\bin;%PATH%
   - set PATH=C:\msys64\mingw32\bin;%PATH%
-  - pacman --noconfirm -U http://repo.msys2.org/msys/x86_64/pacman-5.2.2-4-x86_64.pkg.tar.xz http://repo.msys2.org/msys/x86_64/zstd-1.4.5-2-x86_64.pkg.tar.xz
-  - curl -O http://repo.msys2.org/msys/x86_64/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz
-  - curl -O http://repo.msys2.org/msys/x86_64/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz.sig
-  - pacman-key --verify msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz.sig msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz
-  - pacman-key --populate
-  - pacman --noconfirm -U msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz
   - >
     pacman --noconfirm -Sy
     mingw-w64-i686-qt5 mingw-w64-i686-miniupnpc mingw-w64-i686-rapidjson
