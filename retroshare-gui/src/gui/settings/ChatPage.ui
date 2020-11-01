@@ -7,412 +7,423 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>649</height>
+    <height>592</height>
    </rect>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_6">
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="general">
       <attribute name="title">
        <string>General</string>
       </attribute>
-      <layout class="QGridLayout" name="generalGLayout">
-       <item row="1" column="0">
-        <layout class="QVBoxLayout" name="leftVLayout">
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_16">
          <item>
-          <widget class="QGroupBox" name="chatSettingsGBox">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="title">
-            <string>General settings</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout">
-            <item>
-             <layout class="QHBoxLayout" name="minimumContrastHLayout">
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="QGroupBox" name="chatSettingsGBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="title">
+              <string>General settings</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout">
               <item>
-               <widget class="QLabel" name="minimumContrastLabel">
+               <layout class="QHBoxLayout" name="minimumContrastHLayout">
+                <item>
+                 <widget class="QLabel" name="minimumContrastLabel">
+                  <property name="text">
+                   <string>Minimum text contrast</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="minimumContrastHSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QDoubleSpinBox" name="minimumContrast">
+                  <property name="minimum">
+                   <double>1.000000000000000</double>
+                  </property>
+                  <property name="maximum">
+                   <double>21.000000000000000</double>
+                  </property>
+                  <property name="singleStep">
+                   <double>0.500000000000000</double>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="sendMessageWithCtrlReturn">
                 <property name="text">
-                 <string>Minimum text contrast</string>
+                 <string>Send message with Ctrl+Return</string>
                 </property>
                </widget>
               </item>
               <item>
-               <spacer name="minimumContrastHSpacer">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+               <widget class="QCheckBox" name="sendAsPlainTextByDef">
+                <property name="text">
+                 <string>Send as plain text by default</string>
                 </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
+               </widget>
               </item>
               <item>
-               <widget class="QDoubleSpinBox" name="minimumContrast">
-                <property name="minimum">
-                 <double>1.000000000000000</double>
-                </property>
-                <property name="maximum">
-                 <double>21.000000000000000</double>
-                </property>
-                <property name="singleStep">
-                 <double>0.500000000000000</double>
+               <widget class="QCheckBox" name="loadEmbeddedImages">
+                <property name="text">
+                 <string>Load embedded images</string>
                 </property>
                </widget>
               </item>
              </layout>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="sendMessageWithCtrlReturn">
-              <property name="text">
-               <string>Send message with Ctrl+Return</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="sendAsPlainTextByDef">
-              <property name="text">
-               <string>Send as plain text by default</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="loadEmbeddedImages">
-              <property name="text">
-               <string>Load embedded images</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="verticalSpacer">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="1" column="1">
-        <layout class="QVBoxLayout" name="rightVLayout">
-         <item>
-          <widget class="QGroupBox" name="chatFontGBox">
-           <property name="title">
-            <string>Fonts</string>
-           </property>
-           <layout class="QVBoxLayout" name="chatFontGBoxVLayout">
-            <property name="spacing">
-             <number>2</number>
-            </property>
-            <property name="leftMargin">
-             <number>2</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QPushButton" name="pushButtonChangeChatFont">
-              <property name="text">
-               <string>Change Chat Font</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="labelChatFont">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>Chat Font:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="labelChatFontPreview">
-              <property name="text">
-               <string notr="true">Font Preview</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="checkBox_enableCustomFonts">
-           <property name="text">
-            <string>Enable custom fonts</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="checkBox_enableCustomFontSize">
-           <property name="text">
-            <string>Enable custom font size</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="checkBox_enableBold">
-           <property name="text">
-            <string>Enable bold</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="checkBox_enableItalics">
-           <property name="text">
-            <string>Enable italics</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="minimumFontSizeHLayout">
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="minimumFontSizeLabel">
-             <property name="text">
-              <string>Minimum displayed font size</string>
-             </property>
             </widget>
            </item>
            <item>
-            <spacer name="minimumFontSizeHSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+            <widget class="QGroupBox" name="searchGBox">
+             <property name="title">
+              <string>Search</string>
              </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="minimumFontSize">
-             <property name="minimum">
-              <number>1</number>
-             </property>
-             <property name="maximum">
-              <number>64</number>
-             </property>
+             <layout class="QVBoxLayout" name="vlSearch">
+              <property name="spacing">
+               <number>2</number>
+              </property>
+              <property name="leftMargin">
+               <number>2</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QCheckBox" name="cbSearch_ShowBar">
+                <property name="text">
+                 <string>Show Bar by default</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="hlSearch_CharToStart">
+                <item>
+                 <widget class="QLabel" name="lSearch_CharToStart">
+                  <property name="text">
+                   <string>Threshold for automatic search</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="hsSearch_CharToStart">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="sbSearch_CharToStart">
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbSearch_CaseSensitively">
+                <property name="text">
+                 <string>Case sensitive</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbSearch_WholeWords">
+                <property name="text">
+                 <string>Whole Words</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbSearch_MoveToCursor">
+                <property name="text">
+                 <string>Move to cursor</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbSearch_WithoutLimit">
+                <property name="text">
+                 <string>Color All Text Found</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="hlSearch_MaxLimitColor">
+                <item>
+                 <widget class="QLabel" name="lSearch_MaxLimitColor">
+                  <property name="text">
+                   <string>Maximum count for coloring matching text</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="hsSearch_MaxLimitColor">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="sbSearch_MaxLimitColor">
+                  <property name="maximum">
+                   <number>1000</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="hlSearch_FoundColor">
+                <item>
+                 <widget class="QLabel" name="lSearch_FoundColor">
+                  <property name="text">
+                   <string>Color of found text</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="hsSearch_FoundColor">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="btSearch_FoundColor">
+                  <property name="minimumSize">
+                   <size>
+                    <width>24</width>
+                    <height>24</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>24</width>
+                    <height>24</height>
+                   </size>
+                  </property>
+                  <property name="toolTip">
+                   <string>Choose color of found text</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
             </widget>
            </item>
           </layout>
          </item>
          <item>
-          <widget class="QGroupBox" name="searchGBox">
-           <property name="title">
-            <string>Search</string>
-           </property>
-           <layout class="QVBoxLayout" name="vlSearch">
-            <property name="spacing">
-             <number>2</number>
-            </property>
-            <property name="leftMargin">
-             <number>2</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QCheckBox" name="cbSearch_ShowBar">
-              <property name="text">
-               <string>Show Bar by default</string>
+          <layout class="QVBoxLayout" name="rightVLayout">
+           <item>
+            <widget class="QGroupBox" name="chatFontGBox">
+             <property name="title">
+              <string>Fonts</string>
+             </property>
+             <layout class="QVBoxLayout" name="chatFontGBoxVLayout">
+              <property name="spacing">
+               <number>2</number>
               </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="hlSearch_CharToStart">
+              <property name="leftMargin">
+               <number>2</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
-               <widget class="QLabel" name="lSearch_CharToStart">
+               <widget class="QPushButton" name="pushButtonChangeChatFont">
                 <property name="text">
-                 <string>Threshold for automatic search</string>
+                 <string>Change Chat Font</string>
                 </property>
                </widget>
               </item>
               <item>
-               <spacer name="hsSearch_CharToStart">
+               <widget class="QLabel" name="labelChatFont">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Chat Font:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="labelChatFontPreview">
+                <property name="text">
+                 <string notr="true">Font Preview</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="Line" name="line_4">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="sbSearch_CharToStart">
-                <property name="maximum">
-                 <number>100</number>
-                </property>
                </widget>
               </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cbSearch_CaseSensitively">
-              <property name="text">
-               <string>Case sensitive</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cbSearch_WholeWords">
-              <property name="text">
-               <string>Whole Words</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cbSearch_MoveToCursor">
-              <property name="text">
-               <string>Move to cursor</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cbSearch_WithoutLimit">
-              <property name="text">
-               <string>Color All Text Found</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="hlSearch_MaxLimitColor">
               <item>
-               <widget class="QLabel" name="lSearch_MaxLimitColor">
+               <widget class="QCheckBox" name="checkBox_enableItalics">
                 <property name="text">
-                 <string>Maximum count for coloring matching text</string>
+                 <string>Enable italics</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
               <item>
-               <spacer name="hsSearch_MaxLimitColor">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="sbSearch_MaxLimitColor">
-                <property name="maximum">
-                 <number>1000</number>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="hlSearch_FoundColor">
-              <item>
-               <widget class="QLabel" name="lSearch_FoundColor">
+               <widget class="QCheckBox" name="checkBox_enableCustomFonts">
                 <property name="text">
-                 <string>Color of found text</string>
+                 <string>Enable custom fonts</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
               <item>
-               <spacer name="hsSearch_FoundColor">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+               <widget class="QCheckBox" name="checkBox_enableBold">
+                <property name="text">
+                 <string>Enable bold</string>
                 </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QPushButton" name="btSearch_FoundColor">
-                <property name="minimumSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
-                </property>
-                <property name="toolTip">
-                 <string>Choose color of found text</string>
+                <property name="checked">
+                 <bool>true</bool>
                 </property>
                </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="checkBox_enableCustomFontSize">
+                <property name="text">
+                 <string>Enable custom font size</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="minimumFontSizeHLayout">
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="minimumFontSizeLabel">
+                  <property name="text">
+                   <string>Minimum displayed font size</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="minimumFontSizeHSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="minimumFontSize">
+                  <property name="minimum">
+                   <number>1</number>
+                  </property>
+                  <property name="maximum">
+                   <number>64</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
              </layout>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <spacer name="rightVSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
+            </widget>
+           </item>
+           <item>
+            <spacer name="rightVSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </item>
         </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>120</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>

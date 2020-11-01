@@ -310,6 +310,9 @@ ChatPage::ChatPage(QWidget * parent, Qt::WindowFlags flags)
         if(!mChatLobbyUserNotify)
             mChatLobbyUserNotify = dynamic_cast<ChatLobbyUserNotify*>(*it);
     }
+
+    // hide the broadcast page: it only shows "show/hide emoticons, which is really not much for an entire page
+    ui.tabWidget->removeTab(3);
 }
 
 void ChatPage::updateChatLobbyUserNotify()
