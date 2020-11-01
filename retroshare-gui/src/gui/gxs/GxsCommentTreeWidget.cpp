@@ -29,6 +29,7 @@
 #include <QAbstractTextDocumentLayout>
 #include <QApplication>
 #include <QTextEdit>
+#include <QHeaderView>
 #include <QClipboard>
 #include <QDateTime>
 #include <QMenu>
@@ -69,6 +70,8 @@
 std::map<RsGxsMessageId, std::vector<RsGxsComment> > GxsCommentTreeWidget::mCommentsCache;
 QMutex GxsCommentTreeWidget::mCacheMutex;
 
+//#define USE_NEW_DELEGATE 1
+
 // This class allows to draw the item using an appropriate size
 
 class MultiLinesCommentDelegate: public QStyledItemDelegate
@@ -78,6 +81,7 @@ public:
 
     QSize sizeHint(const QStyleOptionViewItem &/*option*/, const QModelIndex &index) const
     {
+        std::cerr << "SizeHint called with size=" << index.data(POST_CELL_SIZE_ROLE).toSize().width() << " x " <<index.data(POST_CELL_SIZE_ROLE).toSize().height() << std::endl;
         return index.data(POST_CELL_SIZE_ROLE).toSize() ;
     }
 
@@ -108,7 +112,6 @@ public:
         QSizeF s = td.documentLayout()->documentSize();
 
         int m = QFontMetricsF(QFont()).height();
-
         QSize full_area(std::min(r.width(),(int)s.width())+m,std::min(r.height(),(int)s.height())+m);
 
         QPixmap px(full_area.width(),full_area.height());
@@ -116,17 +119,19 @@ public:
         QPainter p(&px) ;
         p.setRenderHint(QPainter::Antialiasing);
 
-        QPainterPath path ;
-        path.addRoundedRect(QRectF(m/4.0,m/4.0,s.width()+m/2.0,s.height()+m/2.0),m,m) ;
-        QPen pen(Qt::gray,m/7.0f);
-        p.setPen(pen);
-        p.fillPath(path,QColor::fromHsv( index.data(POST_COLOR_ROLE).toInt()/255.0*360,40,220));	// varies the color according to the post author
-        p.drawPath(path);
+        {
+            QPainterPath path ;
+            path.addRoundedRect(QRectF(m/4.0,m/4.0,s.width()+m/2.0,s.height()+m/2.0),m,m) ;
+            QPen pen(Qt::gray,m/7.0f);
+            p.setPen(pen);
+            p.fillPath(path,QColor::fromHsv( index.data(POST_COLOR_ROLE).toInt()/255.0*360,40,220));	// varies the color according to the post author
+            p.drawPath(path);
 
-        QAbstractTextDocumentLayout::PaintContext ctx;
-        ctx.clip = QRectF(0,0,s.width(),s.height());
-        p.translate(QPointF(m/2.0,m/2.0));
-        td.documentLayout()->draw( &p, ctx );
+            QAbstractTextDocumentLayout::PaintContext ctx;
+            ctx.clip = QRectF(0,0,s.width(),s.height());
+            p.translate(QPointF(m/2.0,m/2.0));
+            td.documentLayout()->draw( &p, ctx );
+        }
 
         painter->drawPixmap(r.topLeft(),px);
 
@@ -137,19 +142,33 @@ private:
 	QFontMetricsF qf;
 };
 
+class NoEditDelegate: public QStyledItemDelegate
+{
+public:
+    NoEditDelegate(QObject* parent=0): QStyledItemDelegate(parent) {}
+    virtual QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+    {
+        return nullptr;
+    }
+};
+
 class GxsCommentDelegate: public QStyledItemDelegate
 {
 public:
     GxsCommentDelegate(QFontMetricsF f) : qf(f){}
 
-    QSize sizeHint(const QStyleOptionViewItem &/*option*/, const QModelIndex &index) const override
+    QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex &index) const override
     {
+        QSize s = QStyledItemDelegate::sizeHint(option,index);
+
+        std::cerr << "SizeHint called with size=" << index.data(POST_CELL_SIZE_ROLE).toSize().width() << " x " <<index.data(POST_CELL_SIZE_ROLE).toSize().height() << std::endl;
         return index.data(POST_CELL_SIZE_ROLE).toSize() ;
     }
 
-    void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &) const override
+    void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex& index) const override
     {
-        editor->setGeometry(option.rect);
+        if(index.column() == PCITEM_COLUMN_COMMENT)
+            editor->setGeometry(option.rect);
     }
 
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override
@@ -158,12 +177,13 @@ public:
         {
             QTextEdit *b = new QTextEdit(parent);
 
+            b->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
             b->setFixedSize(option.rect.size());
             b->setAcceptRichText(true);
             b->setTextInteractionFlags(Qt::TextSelectableByMouse|Qt::LinksAccessibleByMouse);
             b->document()->setHtml("<html>"+index.data(Qt::DisplayRole).toString()+"</html>");
+            b->adjustSize();
 
-            std::cerr << "Creating QTextEdit of size " << option.rect.size().width() << " x " << option.rect.size().height() << std::endl;
             return b;
         }
         else
@@ -183,15 +203,6 @@ public:
         opt.icon = QIcon();
         opt.text = QString();
 
-        // draw default item background
-        if (option.state & QStyle::State_Selected) {
-            painter->fillRect(option.rect, option.palette.highlight());
-        } else {
-            const QWidget *widget = opt.widget;
-            QStyle *style = widget ? widget->style() : QApplication::style();
-            style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, widget);
-        }
-
         const QRect r = option.rect.adjusted(0,0,-option.decorationSize.width(),0);
 
         QTextDocument td ;
@@ -199,7 +210,8 @@ public:
         td.setTextWidth(r.width());
         QSizeF s = td.documentLayout()->documentSize();
 
-        int m = QFontMetricsF(QFont()).height();
+        int m = QFontMetricsF(QFont()).height() ;
+        //int m = 2;
 
         QSize full_area(std::min(r.width(),(int)s.width())+m,std::min(r.height(),(int)s.height())+m);
 
@@ -208,19 +220,18 @@ public:
         QPainter p(&px) ;
         p.setRenderHint(QPainter::Antialiasing);
 
-        QPainterPath path ;
-        path.addRoundedRect(QRectF(m/4.0,m/4.0,s.width()+m/2.0,s.height()+m/2.0),m,m) ;
-        QPen pen(Qt::gray,m/7.0f);
-        p.setPen(pen);
-        p.fillPath(path,QColor::fromHsv( index.data(POST_COLOR_ROLE).toInt()/255.0*360,40,220));	// varies the color according to the post author
-        p.drawPath(path);
+        {
+            QTextEdit b;
+            b.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+            b.setFixedSize(full_area);
+            b.setAcceptRichText(true);
+            b.setTextInteractionFlags(Qt::TextSelectableByMouse|Qt::LinksAccessibleByMouse);
+            b.document()->setHtml("<html>"+index.data(Qt::DisplayRole).toString()+"</html>");
+            b.adjustSize();
+            b.render(&p,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
+        }
 
-        QAbstractTextDocumentLayout::PaintContext ctx;
-        ctx.clip = QRectF(0,0,s.width(),s.height());
-        p.translate(QPointF(m/2.0,m/2.0));
-        td.documentLayout()->draw( &p, ctx );
-
-        painter->drawPixmap(r.topLeft(),px);
+        painter->drawPixmap(opt.rect.topLeft(),px);
 
         const_cast<QAbstractItemModel*>(index.model())->setData(index,px.size(),POST_CELL_SIZE_ROLE);
     }
@@ -252,8 +263,21 @@ GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
     setMouseTracking(true); // for auto selection
     setSelectionBehavior(QAbstractItemView::SelectRows);
 
-    //setItemDelegateForColumn(PCITEM_COLUMN_COMMENT,new MultiLinesCommentDelegate(QFontMetricsF(font()))) ;
+#ifdef USE_NEW_DELEGATE
     setItemDelegateForColumn(PCITEM_COLUMN_COMMENT,new GxsCommentDelegate(QFontMetricsF(font()))) ;
+
+    // Apparently the following below is needed, since there is no way to set item flags for a single column
+    // so after setting flags Qt will believe that all columns are editable.
+
+    setItemDelegateForColumn(PCITEM_COLUMN_AUTHOR,   new NoEditDelegate(this));
+    setItemDelegateForColumn(PCITEM_COLUMN_DATE,     new NoEditDelegate(this));
+    setItemDelegateForColumn(PCITEM_COLUMN_SCORE,    new NoEditDelegate(this));
+    setItemDelegateForColumn(PCITEM_COLUMN_UPVOTES,  new NoEditDelegate(this));
+    setItemDelegateForColumn(PCITEM_COLUMN_DOWNVOTES,new NoEditDelegate(this));
+    setItemDelegateForColumn(PCITEM_COLUMN_OWNVOTE,  new NoEditDelegate(this));
+#else
+    setItemDelegateForColumn(PCITEM_COLUMN_COMMENT,new MultiLinesCommentDelegate(QFontMetricsF(font()))) ;
+#endif
 
 	commentsRole = new RSTreeWidgetItemCompareRole;
     commentsRole->setRole(PCITEM_COLUMN_DATE, ROLE_SORT);
@@ -262,22 +286,19 @@ GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
 
     mUseCache = false;
 
-//	QFont font = QFont("ARIAL", 10);
-//	font.setBold(true);
+    QObject::connect(header(),SIGNAL(geometriesChanged()),this,SLOT(updateContent()));
+    QObject::connect(header(),SIGNAL(sectionResized(int,int,int)),this,SLOT(updateContent()));
 
-//	QString name("test");
-//	QTreeWidgetItem *item = new QTreeWidgetItem();
-//	item->setText(0, name);
-//	item->setFont(0, font);
-//	item->setSizeHint(0, QSize(18, 18));
-//	item->setForeground(0, QBrush(QColor(79, 79, 79)));
-
-//	addTopLevelItem(item);
-//	item->setExpanded(true);
-
-	return;
+    //header()->setSectionResizeMode(PCITEM_COLUMN_COMMENT,QHeaderView::ResizeToContents);
+    return;
 }
 
+void GxsCommentTreeWidget::updateContent()
+{
+    model()->dataChanged(QModelIndex(),QModelIndex());
+
+    std::cerr << "Updating content" << std::endl;
+}
 GxsCommentTreeWidget::~GxsCommentTreeWidget()
 {
 	if (mTokenQueue) {
@@ -777,7 +798,11 @@ void GxsCommentTreeWidget::insertComments(const std::vector<RsGxsComment>& comme
 		text = QString::fromUtf8(comment.mMeta.mAuthorId.toStdString().c_str());
 		item->setText(PCITEM_COLUMN_AUTHORID, text);
 
-        item->setFlags(Qt::ItemIsEditable | item->flags());// allows to call createEditor() in the delegate
+#ifdef USE_NEW_DELEGATE
+        // Allows to call createEditor() in the delegate. Without this, createEditor() is never called in
+        // the styled item delegate.
+        item->setFlags(Qt::ItemIsEditable | item->flags());
+#endif
 
 		addItem(comment.mMeta.mMsgId, comment.mMeta.mParentId, item);
 	}

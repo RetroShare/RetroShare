@@ -146,7 +146,7 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
 	painter->restore();
 }
 
-QSize PostedPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
+QSize PostedPostDelegate::sizeHint(const QStyleOptionViewItem&, const QModelIndex& index) const
 {
     // This is the only place where we actually set the size of cells
 
