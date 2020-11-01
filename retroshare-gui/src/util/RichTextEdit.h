@@ -43,7 +43,7 @@ signals:
 
   public slots:
     void setText(const QString &text);
-	void setPlaceHolderTextPosted();
+    void setPlaceHolderTextPosted();
 
   protected slots:
     void setPlainText(const QString &text) { f_textedit->setPlainText(text); }
