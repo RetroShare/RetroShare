@@ -175,7 +175,7 @@ private:
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
 private:
-    void setSubscribeButtonText(const RsGxsGroupId& group_id,uint32_t flags);
+    void setSubscribeButtonText(const RsGxsGroupId& group_id,uint32_t flags, uint32_t mPop);
 
 //    QAction *mAutoDownloadAction;
 
