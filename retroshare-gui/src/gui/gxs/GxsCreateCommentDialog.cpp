@@ -60,8 +60,8 @@ void GxsCreateCommentDialog::createComment()
 {
 	RsGxsComment comment;
 
-	QString text = ui->commentTextEdit->toHtml();
-	RsHtml::optimizeHtml(text);
+    QString text = ui->commentTextEdit->toPlainText();
+    // RsHtml::optimizeHtml(text);
 	std::string msg = text.toUtf8().constData();
 
 	comment.mComment = msg;
