@@ -81,7 +81,6 @@ public:
 
     QSize sizeHint(const QStyleOptionViewItem &/*option*/, const QModelIndex &index) const
     {
-        std::cerr << "SizeHint called with size=" << index.data(POST_CELL_SIZE_ROLE).toSize().width() << " x " <<index.data(POST_CELL_SIZE_ROLE).toSize().height() << std::endl;
         return index.data(POST_CELL_SIZE_ROLE).toSize() ;
     }
 
@@ -119,19 +118,19 @@ public:
         QPainter p(&px) ;
         p.setRenderHint(QPainter::Antialiasing);
 
-        {
-            QPainterPath path ;
-            path.addRoundedRect(QRectF(m/4.0,m/4.0,s.width()+m/2.0,s.height()+m/2.0),m,m) ;
-            QPen pen(Qt::gray,m/7.0f);
-            p.setPen(pen);
-            p.fillPath(path,QColor::fromHsv( index.data(POST_COLOR_ROLE).toInt()/255.0*360,40,220));	// varies the color according to the post author
-            p.drawPath(path);
 
-            QAbstractTextDocumentLayout::PaintContext ctx;
-            ctx.clip = QRectF(0,0,s.width(),s.height());
-            p.translate(QPointF(m/2.0,m/2.0));
-            td.documentLayout()->draw( &p, ctx );
-        }
+        QPainterPath path ;
+        path.addRoundedRect(QRectF(m/4.0,m/4.0,s.width()+m/2.0,s.height()+m/2.0),m,m) ;
+        QPen pen(Qt::gray,m/7.0f);
+        p.setPen(pen);
+        p.fillPath(path,QColor::fromHsv( index.data(POST_COLOR_ROLE).toInt()/255.0*360,40,220));	// varies the color according to the post author
+        p.drawPath(path);
+
+        QAbstractTextDocumentLayout::PaintContext ctx;
+        ctx.clip = QRectF(0,0,s.width(),s.height());
+        p.translate(QPointF(m/2.0,m/2.0));
+        td.documentLayout()->draw( &p, ctx );
+
 
         painter->drawPixmap(r.topLeft(),px);
 
@@ -142,6 +141,7 @@ private:
 	QFontMetricsF qf;
 };
 
+#ifdef USE_NEW_DELEGATE
 class NoEditDelegate: public QStyledItemDelegate
 {
 public:
@@ -159,9 +159,6 @@ public:
 
     QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex &index) const override
     {
-        QSize s = QStyledItemDelegate::sizeHint(option,index);
-
-        std::cerr << "SizeHint called with size=" << index.data(POST_CELL_SIZE_ROLE).toSize().width() << " x " <<index.data(POST_CELL_SIZE_ROLE).toSize().height() << std::endl;
         return index.data(POST_CELL_SIZE_ROLE).toSize() ;
     }
 
@@ -220,16 +217,14 @@ public:
         QPainter p(&px) ;
         p.setRenderHint(QPainter::Antialiasing);
 
-        {
-            QTextEdit b;
-            b.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-            b.setFixedSize(full_area);
-            b.setAcceptRichText(true);
-            b.setTextInteractionFlags(Qt::TextSelectableByMouse|Qt::LinksAccessibleByMouse);
-            b.document()->setHtml("<html>"+index.data(Qt::DisplayRole).toString()+"</html>");
-            b.adjustSize();
-            b.render(&p,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
-        }
+        QTextEdit b;
+        b.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        b.setFixedSize(full_area);
+        b.setAcceptRichText(true);
+        b.setTextInteractionFlags(Qt::TextSelectableByMouse|Qt::LinksAccessibleByMouse);
+        b.document()->setHtml("<html>"+index.data(Qt::DisplayRole).toString()+"</html>");
+        b.adjustSize();
+        b.render(&p,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
 
         painter->drawPixmap(opt.rect.topLeft(),px);
 
@@ -239,6 +234,7 @@ public:
 private:
     QFontMetricsF qf;
 };
+#endif
 
 void GxsCommentTreeWidget::mouseMoveEvent(QMouseEvent *e)
 {
@@ -260,10 +256,10 @@ GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
 	setItemDelegate(itemDelegate);
 	setWordWrap(true);
 
-    setMouseTracking(true); // for auto selection
     setSelectionBehavior(QAbstractItemView::SelectRows);
 
 #ifdef USE_NEW_DELEGATE
+    setMouseTracking(true); // for auto selection
     setItemDelegateForColumn(PCITEM_COLUMN_COMMENT,new GxsCommentDelegate(QFontMetricsF(font()))) ;
 
     // Apparently the following below is needed, since there is no way to set item flags for a single column
@@ -275,6 +271,11 @@ GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
     setItemDelegateForColumn(PCITEM_COLUMN_UPVOTES,  new NoEditDelegate(this));
     setItemDelegateForColumn(PCITEM_COLUMN_DOWNVOTES,new NoEditDelegate(this));
     setItemDelegateForColumn(PCITEM_COLUMN_OWNVOTE,  new NoEditDelegate(this));
+
+    QObject::connect(header(),SIGNAL(geometriesChanged()),this,SLOT(updateContent()));
+    QObject::connect(header(),SIGNAL(sectionResized(int,int,int)),this,SLOT(updateContent()));
+
+    setEditTriggers(QAbstractItemView::CurrentChanged | QAbstractItemView::SelectedClicked);
 #else
     setItemDelegateForColumn(PCITEM_COLUMN_COMMENT,new MultiLinesCommentDelegate(QFontMetricsF(font()))) ;
 #endif
@@ -282,12 +283,7 @@ GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
 	commentsRole = new RSTreeWidgetItemCompareRole;
     commentsRole->setRole(PCITEM_COLUMN_DATE, ROLE_SORT);
 
-    setEditTriggers(QAbstractItemView::CurrentChanged | QAbstractItemView::SelectedClicked);
-
     mUseCache = false;
-
-    QObject::connect(header(),SIGNAL(geometriesChanged()),this,SLOT(updateContent()));
-    QObject::connect(header(),SIGNAL(sectionResized(int,int,int)),this,SLOT(updateContent()));
 
     //header()->setSectionResizeMode(PCITEM_COLUMN_COMMENT,QHeaderView::ResizeToContents);
     return;
@@ -321,15 +317,18 @@ void GxsCommentTreeWidget::setCurrentCommentMsgId(QTreeWidgetItem *current, QTre
 	}
 }
 
-void GxsCommentTreeWidget::customPopUpMenu(const QPoint& /*point*/)
+void GxsCommentTreeWidget::customPopUpMenu(const QPoint& point)
 {
+    QTreeWidgetItem *item = itemAt(point);
+
 	QMenu contextMnu( this );
 	QAction* action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_REPLY), tr("Reply to Comment"), this, SLOT(replyToComment()));
 	action->setDisabled(mCurrentCommentMsgId.isNull());
 	action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MESSAGE), tr("Submit Comment"), this, SLOT(makeComment()));
 	action->setDisabled(mMsgVersions.empty());
 	action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPY), tr("Copy Comment"), this, SLOT(copyComment()));
-	action->setDisabled(mCurrentCommentMsgId.isNull());
+    action->setData( item->data(PCITEM_COLUMN_COMMENT,Qt::DisplayRole) );
+    action->setDisabled(mCurrentCommentMsgId.isNull());
 
 	contextMnu.addSeparator();
 
@@ -470,8 +469,10 @@ void GxsCommentTreeWidget::replyToComment()
 
 void GxsCommentTreeWidget::copyComment()
 {
+    QString txt = dynamic_cast<QAction*>(sender())->data().toString();
+
 	QMimeData *mimeData = new QMimeData();
-	mimeData->setHtml("<html>"+mCurrentCommentText+"</html>");
+    mimeData->setHtml("<html>"+txt+"</html>");
 	QClipboard *clipboard = QApplication::clipboard();
 	clipboard->setMimeData(mimeData, QClipboard::Clipboard);
 }
