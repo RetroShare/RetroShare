@@ -2109,7 +2109,8 @@ GxsCreateCommentDialog QPushButton#postButton:hover, , GxsGroupDialog QPushButto
 	padding: 2px;
 }
 
-CreateGxsForumMsg QPushButton#postButton:disabled {
+CreateGxsForumMsg QPushButton#postButton:disabled, PostedCreatePostDialog QPushButton#submitButton:disabled,
+CreateGxsChannelMsg QPushButton#postButton:disabled, GxsCreateCommentDialog QPushButton#postButton:disabled {
 	font: bold;
 	font-size: 15px;
 	color: white;
