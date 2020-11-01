@@ -1048,7 +1048,7 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 	setAutoDownload(autoDownload);
 #endif
 
-    setSubscribeButtonText(group.mMeta.mGroupId,group.mMeta.mSubscribeFlags);
+    setSubscribeButtonText(group.mMeta.mGroupId,group.mMeta.mSubscribeFlags, group.mMeta.mPop);
 
     if (IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
     {
@@ -1160,16 +1160,16 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 	//ui->fileToolButton->setEnabled(false);
 #endif
 
-    setSubscribeButtonText(group.mMeta.mGroupId,group.mMeta.mSubscribeFlags);
+    setSubscribeButtonText(group.mMeta.mGroupId,group.mMeta.mSubscribeFlags, group.mMeta.mPop);
 
     showPostDetails();
 }
 
-void GxsChannelPostsWidgetWithModel::setSubscribeButtonText(const RsGxsGroupId& group_id,uint32_t flags)
+void GxsChannelPostsWidgetWithModel::setSubscribeButtonText(const RsGxsGroupId& group_id,uint32_t flags, uint32_t mPop)
 {
     if(IS_GROUP_SUBSCRIBED(flags))
     {
-        ui->subscribeToolButton->setText(tr("Unsubscribe"));
+        ui->subscribeToolButton->setText(tr("Subscribed")+ " " + QString::number(mPop));
         ui->subscribeToolButton->setSubscribed(true);
         ui->subscribeToolButton->setEnabled(true);
     }
