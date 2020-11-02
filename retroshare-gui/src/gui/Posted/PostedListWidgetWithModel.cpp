@@ -877,8 +877,10 @@ void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
         sync_string = tr("Unknown");
     }
 
-    if(group.mMeta.mLastPost > 0 && group.mMeta.mLastPost + rsPosted->getSyncPeriod(group.mMeta.mGroupId) < time(NULL) && IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
-        sync_string += " (Warning: will not allow latest posts to sync)";
+    auto sync_period = rsPosted->getSyncPeriod(group.mMeta.mGroupId) ;
+
+    if(sync_period > 0 && group.mMeta.mLastPost > 0 && group.mMeta.mLastPost + sync_period < time(NULL) && IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
+        sync_string += " (Warning: will not allow posts to sync)";
 
     ui->syncPeriodLabel->setText(sync_string);
 
