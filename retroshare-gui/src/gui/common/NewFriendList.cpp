@@ -578,10 +578,7 @@ void NewFriendList::peerTreeWidgetCustomPopupMenu()
             mModel->getGroupData(index,group_info);
 
 			bool standard = group_info.flag & RS_GROUP_FLAG_STANDARD;
-#ifdef RS_DIRECT_CHAT
-            contextMenu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MSG), tr("Send message to whole group"), this, SLOT(msgGroup()));
-			contextMenu.addSeparator();
-#endif // RS_DIRECT_CHAT
+
             contextMenu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EDIT), tr("Edit Group"), this, SLOT(editGroup()));
 
             QAction *action = contextMenu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_REMOVE), tr("Remove Group"), this, SLOT(removeGroup()));
