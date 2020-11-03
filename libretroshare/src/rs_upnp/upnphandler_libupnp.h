@@ -41,10 +41,11 @@
 
 class upnphandler: public pqiNetAssistFirewall
 {
-	public:
-
-	    upnphandler();
-	    virtual	~upnphandler();
+public:
+	upnphandler():
+	    upnpState(RS_UPNP_S_UNINITIALISED), dataMtx("upupState"),
+	    cUPnPControlPoint(nullptr), toEnable(false), toStart(false),
+	    toStop(false), iport(0),eport(0), eport_curr(0) {}
 
 	    /* External Interface (pqiNetAssistFirewall) */
 	    virtual void    enable(bool active);
@@ -95,6 +96,3 @@ class upnphandler: public pqiNetAssistFirewall
 	    struct sockaddr_in upnp_iaddr;
 	    struct sockaddr_in upnp_eaddr;
 };
-
-/* info from upnp */
-int CtrlPointCallbackEventHandler(Upnp_EventType ,void* , void*);

@@ -345,8 +345,7 @@ bool upnphandler::start_upnp()
 	uPnPConfigData *config = upnpConfig;
 	if (!((upnpState >= RS_UPNP_S_READY) && (config)))
 	{
-		std::cerr << "upnphandler::start_upnp() Not Ready";
-		std::cerr << std::endl;
+		RsInfo() << __PRETTY_FUNCTION__ << " Not Ready" << std::endl;
 		return false;
 	}
 
@@ -356,18 +355,17 @@ bool upnphandler::start_upnp()
 	/* if we're to load -> load */
 	/* select external ports */
 	eport_curr = eport;
-	if (!eport_curr)
+	if(!eport_curr)
 	{
 		/* use local port if eport is zero */
 		eport_curr = iport;
-		std::cerr << "Using LocalPort for extPort!";
-		std::cerr << std::endl;
+		RsInfo() << __PRETTY_FUNCTION__ << " Using LocalPort for extPort"
+		         << std::endl;
 	}
 
 	if (!eport_curr)
 	{
-		std::cerr << "Invalid eport ... ";
-		std::cerr << std::endl;
+		RsErr() << __PRETTY_FUNCTION__ << " Invalid eport" << std::endl;
 		return false;
 	}
 
