@@ -29,6 +29,7 @@
 #include "ui_PostedListWidgetWithModel.h"
 #include "gui/feeds/GxsChannelPostItem.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/gxs/GxsGroupFrameDialog.h"
 #include "gui/gxs/GxsCommentDialog.h"
 #include "util/misc.h"
 #include "gui/Posted/PostedCreatePostDialog.h"
@@ -53,6 +54,9 @@
 #include <algorithm>
 
 #define ROLE_PUBLISH FEED_TREEWIDGET_SORTROLE
+
+// number of posts to show at once.
+#define POSTS_CHUNK_SIZE 25
 
 /****
  * #define DEBUG_POSTED
@@ -255,8 +259,8 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
     ui->tabWidget->hideCloseButton(1);
 
     connect(ui->sortStrategy_CB,SIGNAL(currentIndexChanged(int)),this,SLOT(updateSorting(int)));
-    connect(ui->nextButton,SIGNAL(clicked()),this,SLOT(next10Posts()));
-    connect(ui->prevButton,SIGNAL(clicked()),this,SLOT(prev10Posts()));
+    connect(ui->nextButton,SIGNAL(clicked()),this,SLOT(nextPosts()));
+    connect(ui->prevButton,SIGNAL(clicked()),this,SLOT(prevPosts()));
 
     connect(ui->postsTree,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(postContextMenu(const QPoint&)));
     connect(ui->viewModeButton,SIGNAL(clicked()),this,SLOT(switchDisplayMode()));
@@ -274,7 +278,7 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
 	connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()),this, SLOT(settingsChanged()));
 
 	/* add filter actions */
-    ui->postsTree->setPlaceholderText(tr("Thumbnails"));
+    ui->postsTree->setPlaceholderText(tr("No posts available in this board"));
     //ui->postsTree->setMinimumWidth(COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font()).height()+1);
 
     connect(ui->postsTree,SIGNAL(sizeChanged(QSize)),this,SLOT(handlePostsTreeSizeChange(QSize)));
@@ -352,24 +356,24 @@ void PostedListWidgetWithModel::filterItems(QString text)
     uint32_t count;
 	mPostedPostsModel->setFilter(lst,count) ;
 
-	ui->showLabel->setText(QString::number(mPostedPostsModel->displayedStartPostIndex()+1)+" - "+QString::number(std::min(mPostedPostsModel->filteredPostsCount(),mPostedPostsModel->displayedStartPostIndex()+10+1)));
+    ui->showLabel->setText(QString::number(mPostedPostsModel->displayedStartPostIndex()+1)+" - "+QString::number(std::min(mPostedPostsModel->filteredPostsCount(),mPostedPostsModel->displayedStartPostIndex()+POSTS_CHUNK_SIZE+1)));
 }
 
-void PostedListWidgetWithModel::next10Posts()
+void PostedListWidgetWithModel::nextPosts()
 {
-    if(mPostedPostsModel->displayedStartPostIndex() + 10 < mPostedPostsModel->filteredPostsCount())
+    if(mPostedPostsModel->displayedStartPostIndex() + POSTS_CHUNK_SIZE < mPostedPostsModel->filteredPostsCount())
     {
-        mPostedPostsModel->setPostsInterval(10+mPostedPostsModel->displayedStartPostIndex(),10);
-        ui->showLabel->setText(QString::number(mPostedPostsModel->displayedStartPostIndex()+1)+" - "+QString::number(std::min(mPostedPostsModel->filteredPostsCount(),mPostedPostsModel->displayedStartPostIndex()+10+1)));
+        mPostedPostsModel->setPostsInterval(POSTS_CHUNK_SIZE+mPostedPostsModel->displayedStartPostIndex(),POSTS_CHUNK_SIZE);
+        ui->showLabel->setText(QString::number(mPostedPostsModel->displayedStartPostIndex()+1)+" - "+QString::number(std::min(mPostedPostsModel->filteredPostsCount(),mPostedPostsModel->displayedStartPostIndex()+POSTS_CHUNK_SIZE+1)));
     }
 }
 
-void PostedListWidgetWithModel::prev10Posts()
+void PostedListWidgetWithModel::prevPosts()
 {
-	if((int)mPostedPostsModel->displayedStartPostIndex() - 10 >= 0)
+    if((int)mPostedPostsModel->displayedStartPostIndex() - POSTS_CHUNK_SIZE >= 0)
     {
-        mPostedPostsModel->setPostsInterval(mPostedPostsModel->displayedStartPostIndex()-10,10);
-        ui->showLabel->setText(QString::number(mPostedPostsModel->displayedStartPostIndex()+1)+" - "+QString::number(std::min(mPostedPostsModel->filteredPostsCount(),mPostedPostsModel->displayedStartPostIndex()+10+1)));
+        mPostedPostsModel->setPostsInterval(mPostedPostsModel->displayedStartPostIndex()-POSTS_CHUNK_SIZE,POSTS_CHUNK_SIZE);
+        ui->showLabel->setText(QString::number(mPostedPostsModel->displayedStartPostIndex()+1)+" - "+QString::number(std::min(mPostedPostsModel->filteredPostsCount(),mPostedPostsModel->displayedStartPostIndex()+POSTS_CHUNK_SIZE+1)));
     }
 }
 
@@ -485,7 +489,8 @@ void PostedListWidgetWithModel::handleEvent_main_thread(std::shared_ptr<const Rs
         case RsPostedEventCode::NEW_POSTED_GROUP:     // [[fallthrough]];
 		case RsPostedEventCode::UPDATED_POSTED_GROUP: // [[fallthrough]];
 		case RsPostedEventCode::UPDATED_MESSAGE:
-		{
+        case RsPostedEventCode::SYNC_PARAMETERS_UPDATED:
+        {
 			if(e->mPostedGroupId == groupId())
 				updateDisplay(true);
     	}
@@ -634,7 +639,7 @@ void PostedListWidgetWithModel::postPostLoad()
     else
         std::cerr << "No pre-selected channel post." << std::endl;
 
-	whileBlocking(ui->showLabel)->setText(QString::number(mPostedPostsModel->displayedStartPostIndex()+1)+" - "+QString::number(std::min(mPostedPostsModel->filteredPostsCount(),mPostedPostsModel->displayedStartPostIndex()+10+1)));
+    whileBlocking(ui->showLabel)->setText(QString::number(mPostedPostsModel->displayedStartPostIndex()+1)+" - "+QString::number(std::min(mPostedPostsModel->filteredPostsCount(),mPostedPostsModel->displayedStartPostIndex()+POSTS_CHUNK_SIZE+1)));
 	whileBlocking(ui->filter_LE)->setText(QString());
 }
 
@@ -687,10 +692,20 @@ void PostedListWidgetWithModel::processSettings(bool load)
 
 	if (load)
 	{
+        // state of ID Chooser combobox
+        RsGxsId gxs_id(Settings->value("IDChooser", QString::fromStdString(RsGxsId().toStdString())).toString().toStdString());
+
+        if(!gxs_id.isNull() && rsIdentity->isOwnId(gxs_id))
+            ui->idChooser->setChosenId(gxs_id);
 	}
 	else
 	{
-	}
+        // state of ID Chooser combobox
+        RsGxsId id;
+
+        if(ui->idChooser->getChosenId(id))
+            Settings->setValue("IDChooser", QString::fromStdString(id.toStdString()));
+    }
 
 	Settings->endGroup();
 }
@@ -829,7 +844,10 @@ void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
 	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
 	ui->subscribeToolButton->setEnabled(true);
 
-	RetroShareLink link;
+    ui->syncPeriodLabel->setVisible(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
+    ui->syncPeriodTitleLabel->setVisible(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
+
+    RetroShareLink link;
 
 	if (IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
 		ui->subscribeToolButton->setText(tr("Subscribed") + " " + QString::number(group.mMeta.mPop) );
@@ -838,11 +856,33 @@ void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
 
 	ui->infoPosts->setText(QString::number(group.mMeta.mVisibleMsgCount));
 
-	if(group.mMeta.mLastPost==0)
-		ui->infoLastPost->setText(tr("Never"));
-	else
-		ui->infoLastPost->setText(DateTime::formatLongDateTime(group.mMeta.mLastPost));
-	QString formatDescription = QString::fromUtf8(group.mDescription.c_str());
+    if(group.mMeta.mLastPost==0)
+        ui->infoLastPost->setText(tr("Never"));
+    else
+        ui->infoLastPost->setText(DateTime::formatLongDateTime(group.mMeta.mLastPost));
+
+    uint32_t current_sync_time  = GxsGroupFrameDialog::checkDelay(rsPosted->getSyncPeriod(group.mMeta.mGroupId))/86400 ;
+
+    QString sync_string;
+    switch(current_sync_time)
+    {
+    case 5: sync_string = tr("5 days");  break;
+    case 15: sync_string = tr("2 weeks");  break;
+    case 30: sync_string = tr("1 month");  break;
+    case 90: sync_string = tr("3 months");  break;
+    case 180: sync_string = tr("6 months");  break;
+    case 365: sync_string = tr("1 year");  break;
+    case   0: sync_string = tr("indefinitly");  break;
+    default:
+        sync_string = tr("Unknown");
+    }
+
+    if(group.mMeta.mLastPost > 0 && group.mMeta.mLastPost + rsPosted->getSyncPeriod(group.mMeta.mGroupId) < time(NULL) && IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
+        sync_string += " (Warning: will not allow latest posts to sync)";
+
+    ui->syncPeriodLabel->setText(sync_string);
+
+    QString formatDescription = QString::fromUtf8(group.mDescription.c_str());
 
 	unsigned int formatFlag = RSHTML_FORMATTEXT_EMBED_LINKS;
 

@@ -46,68 +46,74 @@
 #include <QTextCodec>
 
 HomePage::HomePage(QWidget *parent) :
-	MainPage(parent),
-	ui(new Ui::HomePage),
+    MainPage(parent),
+    ui(new Ui::HomePage),
     mIncludeAllIPs(false),
-    mUseShortFormat(false)
+    mUseShortFormat(false),
+    mUseBackwardCompatibleCert(false)
 {
     ui->setupUi(this);
 
-	updateOwnCert();
-	updateOwnId();
-		
-	connect(ui->addButton, SIGNAL(clicked()), this, SLOT(addFriend()));
-	connect(ui->expandButton, SIGNAL(clicked()), this, SLOT(doExpand()));
-	
+    updateCertificate();
+
+    connect(ui->addButton, SIGNAL(clicked()), this, SLOT(addFriend()));
+
     QAction *WebMailAction = new QAction(QIcon(),tr("Invite via WebMail"), this);
     connect(WebMailAction, SIGNAL(triggered()), this, SLOT(webMail()));
-	
+
     QAction *RecAction = new QAction(QIcon(),tr("Recommend friends to each others"), this);
     connect(RecAction, SIGNAL(triggered()), this, SLOT(recommendFriends()));
 
     QAction *SendAction = new QAction(QIcon(),tr("Send via Email"), this);
     connect(SendAction, SIGNAL(triggered()), this, SLOT(runEmailClient()));
-	
-	QAction *CopyIdAction = new QAction(QIcon(),tr("Copy your Retroshare ID to Clipboard"), this);
+
+    QAction *CopyIdAction = new QAction(QIcon(),tr("Copy your Retroshare ID to Clipboard"), this);
     connect(CopyIdAction, SIGNAL(triggered()), this, SLOT(copyId()));
 
-		QMenu *menu = new QMenu();
-	menu->addAction(CopyIdAction);
-	
-	if(!RsAccounts::isHiddenNode())
-	{
-		QAction *includeIPsAct = new QAction(QIcon(), tr("Include all your known IPs"),this);
-		connect(includeIPsAct, SIGNAL(triggered()), this, SLOT(toggleIncludeAllIPs()));
-		includeIPsAct->setCheckable(true);
-		includeIPsAct->setChecked(mIncludeAllIPs);
+        QMenu *menu = new QMenu();
+    menu->addAction(CopyIdAction);
 
-		menu->addAction(includeIPsAct);
-	}
-	menu->addSeparator();
-	menu->addAction(SendAction);
-	menu->addAction(WebMailAction);
+    if(!RsAccounts::isHiddenNode())
+    {
+        QAction *includeIPsAct = new QAction(QIcon(), tr("Include all your known IPs"),this);
+        connect(includeIPsAct, SIGNAL(triggered()), this, SLOT(toggleIncludeAllIPs()));
+        includeIPsAct->setCheckable(true);
+        includeIPsAct->setChecked(mIncludeAllIPs);
+
+        menu->addAction(includeIPsAct);
+    }
+    QAction *useOldFormatAct = new QAction(QIcon(), tr("Use old certificate format"),this);
+    useOldFormatAct->setToolTip(tr("Displays the certificate format used up to version 0.6.5\nOld Retroshare nodes will not understand the\nnew short format"));
+    connect(useOldFormatAct, SIGNAL(triggered()), this, SLOT(toggleUseOldFormat()));
+    useOldFormatAct->setCheckable(true);
+    useOldFormatAct->setChecked(mUseBackwardCompatibleCert);
+    menu->addAction(useOldFormatAct);
+
+    menu->addSeparator();
+    menu->addAction(SendAction);
+    menu->addAction(WebMailAction);
     menu->addAction(RecAction);
 
     ui->shareButton->setMenu(menu);
 
     QObject::connect(ui->userCertEdit,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(certContextMenu(QPoint)));
 
-	connect(ui->openwebhelp,SIGNAL(clicked()), this,SLOT(openWebHelp())) ;
+    connect(ui->openwebhelp,SIGNAL(clicked()), this,SLOT(openWebHelp())) ;
 
-	ui->userCertEdit->hide();
+    ui->userCertEdit->hide();
 
     int S = QFontMetricsF(font()).height();
  QString help_str = tr(
  " <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Welcome to Retroshare!</h1>\
    <p>You need to <b>make friends</b>! After you create a network of friends or join an existing network,\
-	  you'll be able to exchange files, chat, talk in forums, etc. </p>\
-	<div align=center>\
-	<IMG align=\"center\" width=\"%2\" src=\":/images/network_map.png\"/> \
+      you'll be able to exchange files, chat, talk in forums, etc. </p>\
+    <div align=center>\
+    <IMG align=\"center\" width=\"%2\" src=\":/images/network_map.png\"/> \
     </div>\
    <p>To do so, copy your certificate on this page and send it to friends, and add your friends' certificate.</p> \
    <p>Another option is to search the internet for \"Retroshare chat servers\" (independently administrated). These servers allow you to exchange \
-	certificates with a dedicated Retroshare node, through which\
-	  you will be able to anonymously meet other people.</p> ").arg(QString::number(2*S)).arg(width()*0.5);
+    certificates with a dedicated Retroshare node, through which\
+      you will be able to anonymously meet other people.</p> ").arg(QString::number(2*S)).arg(width()*0.5);
              registerHelpButton(ui->helpButton,help_str,"HomePage") ;
 }
 
@@ -115,7 +121,7 @@ void HomePage::certContextMenu(QPoint point)
 {
     QMenu menu(this) ;
 
-	QAction *CopyAction = new QAction(QIcon(),tr("Copy your Cert to Clipboard"), this);
+    QAction *CopyAction = new QAction(QIcon(),tr("Copy your Cert to Clipboard"), this);
     connect(CopyAction, SIGNAL(triggered()), this, SLOT(copyCert()));
 
     QAction *SaveAction = new QAction(QIcon(),tr("Save your Cert into a File"), this);
@@ -124,22 +130,22 @@ void HomePage::certContextMenu(QPoint point)
     menu.addAction(CopyAction);
     menu.addAction(SaveAction);
 
-	QAction *shortFormatAct = new QAction(QIcon(), tr("Use new (short) certificate format"),this);
-	connect(shortFormatAct, SIGNAL(triggered()), this, SLOT(toggleUseShortFormat()));
-	shortFormatAct->setCheckable(true);
-	shortFormatAct->setChecked(mUseShortFormat);
+    QAction *shortFormatAct = new QAction(QIcon(), tr("Use new (short) certificate format"),this);
+    connect(shortFormatAct, SIGNAL(triggered()), this, SLOT(toggleUseShortFormat()));
+    shortFormatAct->setCheckable(true);
+    shortFormatAct->setChecked(mUseShortFormat);
 
-	menu.addAction(shortFormatAct);
+    menu.addAction(shortFormatAct);
 
     if(!RsAccounts::isHiddenNode())
-	{
-		QAction *includeIPsAct = new QAction(QIcon(), tr("Include all your known IPs"),this);
-		connect(includeIPsAct, SIGNAL(triggered()), this, SLOT(toggleIncludeAllIPs()));
-		includeIPsAct->setCheckable(true);
-		includeIPsAct->setChecked(mIncludeAllIPs);
+    {
+        QAction *includeIPsAct = new QAction(QIcon(), tr("Include all your known IPs"),this);
+        connect(includeIPsAct, SIGNAL(triggered()), this, SLOT(toggleIncludeAllIPs()));
+        includeIPsAct->setCheckable(true);
+        includeIPsAct->setChecked(mIncludeAllIPs);
 
-		menu.addAction(includeIPsAct);
-	}
+        menu.addAction(includeIPsAct);
+    }
 
     menu.exec(QCursor::pos());
 }
@@ -147,18 +153,25 @@ void HomePage::certContextMenu(QPoint point)
 void HomePage::toggleUseShortFormat()
 {
     mUseShortFormat = !mUseShortFormat;
-    updateOwnCert();
+    updateCertificate();
 }
 void HomePage::toggleIncludeAllIPs()
 {
     mIncludeAllIPs = !mIncludeAllIPs;
-    updateOwnCert();
-	updateOwnId();	
+    updateCertificate();
 }
 
 HomePage::~HomePage()
 {
-	delete ui;
+    delete ui;
+}
+
+void HomePage::updateCertificate()
+{
+    if(mUseBackwardCompatibleCert)
+        updateOwnCert();
+    else
+        updateOwnId();
 }
 
 void HomePage::updateOwnCert()
@@ -173,18 +186,18 @@ void HomePage::updateOwnCert()
         return ;
     }
 
-	std::string invite ;
+    std::string invite ;
 
     if(mUseShortFormat)
-		rsPeers->getShortInvite(invite,rsPeers->getOwnId(),true,!mIncludeAllIPs);
-	else
-		invite = rsPeers->GetRetroshareInvite(detail.id,false,include_extra_locators);
+        rsPeers->getShortInvite(invite,rsPeers->getOwnId(),true,!mIncludeAllIPs);
+    else
+        invite = rsPeers->GetRetroshareInvite(detail.id,false,include_extra_locators);
 
-	ui->userCertEdit->setPlainText(QString::fromUtf8(invite.c_str()));
+    ui->retroshareid->setText("\n"+QString::fromUtf8(invite.c_str())+"\n");
 
     QString description = ConfCertDialog::getCertificateDescription(detail,false,mUseShortFormat,include_extra_locators);
 
-	ui->userCertEdit->setToolTip(description);
+    ui->retroshareid->setToolTip(description);
 }
 
 void HomePage::updateOwnId()
@@ -202,13 +215,12 @@ void HomePage::updateOwnId()
 
     rsPeers->getShortInvite(invite,rsPeers->getOwnId(),true,!include_extra_locators);
 
-#ifdef TODO
     QString S;
     QString txt;
     int i=0;
 
     for(uint32_t i=0;i<invite.size();)
-        if(QFontMetricsF(font()).width(S) < ui->retroshareid->width())
+        if(S.length() < 100)
             S += invite[i++];
         else
         {
@@ -218,36 +230,36 @@ void HomePage::updateOwnId()
 
     txt += S;
 
-    ui->retroshareid->setText(txt);
-#endif
-    ui->retroshareid->setText(QString::fromUtf8(invite.c_str()));
+    ui->retroshareid->setText("\n"+txt+"\n");	// the "\n" is here to make some space
+//#endif
+//    ui->retroshareid->setText(QString::fromUtf8(invite.c_str()));
 }
 static void sendMail(QString sAddress, QString sSubject, QString sBody)
 {
 #ifdef Q_OS_WIN
-	/* search and replace the end of lines with: "%0D%0A" */
-	sBody.replace("\n", "%0D%0A");
+    /* search and replace the end of lines with: "%0D%0A" */
+    sBody.replace("\n", "%0D%0A");
 #endif
 
-	QUrl url = QUrl("mailto:" + sAddress);
+    QUrl url = QUrl("mailto:" + sAddress);
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
-	QUrlQuery urlQuery;
+    QUrlQuery urlQuery;
 #else
-	QUrl &urlQuery(url);
+    QUrl &urlQuery(url);
 #endif
 
-	urlQuery.addQueryItem("subject", sSubject);
-	urlQuery.addQueryItem("body", sBody);
+    urlQuery.addQueryItem("subject", sSubject);
+    urlQuery.addQueryItem("body", sBody);
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
-	url.setQuery(urlQuery);
+    url.setQuery(urlQuery);
 #endif
 
-	std::cerr << "MAIL STRING:" << (std::string)url.toEncoded().constData() << std::endl;
+    std::cerr << "MAIL STRING:" << (std::string)url.toEncoded().constData() << std::endl;
 
-	/* pass the url directly to QDesktopServices::openUrl */
-	QDesktopServices::openUrl (url);
+    /* pass the url directly to QDesktopServices::openUrl */
+    QDesktopServices::openUrl (url);
 }
 
 void HomePage::recommendFriends()
@@ -257,38 +269,38 @@ void HomePage::recommendFriends()
 
 void HomePage::runEmailClient()
 {
-	sendMail("", tr("RetroShare Invite"), ui->userCertEdit->toPlainText());
+    sendMail("", tr("RetroShare Invite"), ui->retroshareid->text());
 }
 
 void HomePage::copyCert()
 {
-	QClipboard *clipboard = QApplication::clipboard();
-	clipboard->setText(ui->userCertEdit->toPlainText());
-	QMessageBox::information(this, "RetroShare", tr("Your Retroshare certificate is copied to Clipboard, paste and send it to your friend via email or some other way"));
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText(ui->retroshareid->text());
+    QMessageBox::information(this, "RetroShare", tr("Your Retroshare certificate is copied to Clipboard, paste and send it to your friend via email or some other way"));
 }
 
 void HomePage::copyId()
 {
-	QClipboard *clipboard = QApplication::clipboard();
-	clipboard->setText(ui->retroshareid->text());
-	QMessageBox::information(this, "RetroShare", tr("Your Retroshare ID is copied to Clipboard, paste and send it to your friend via email or some other way"));
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText(ui->retroshareid->text());
+    QMessageBox::information(this, "RetroShare", tr("Your Retroshare ID is copied to Clipboard, paste and send it to your friend via email or some other way"));
 }
 
 void HomePage::saveCert()
 {
-	QString fileName = QFileDialog::getSaveFileName(this, tr("Save as..."), "", tr("RetroShare Certificate (*.rsc );;All Files (*)"));
-	if (fileName.isEmpty())
-		return;
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save as..."), "", tr("RetroShare Certificate (*.rsc );;All Files (*)"));
+    if (fileName.isEmpty())
+        return;
 
-	QFile file(fileName);
-	if (!file.open(QFile::WriteOnly))
-		return;
+    QFile file(fileName);
+    if (!file.open(QFile::WriteOnly))
+        return;
 
-	//Todo: move save to file to p3Peers::SaveCertificateToFile
+    //Todo: move save to file to p3Peers::SaveCertificateToFile
 
-	QTextStream ts(&file);
-	ts.setCodec(QTextCodec::codecForName("UTF-8"));
-	ts << ui->userCertEdit->document()->toPlainText();
+    QTextStream ts(&file);
+    ts.setCodec(QTextCodec::codecForName("UTF-8"));
+    ts << ui->retroshareid->text();
 }
 
 /** Add a Friends Text Certificate */
@@ -321,18 +333,20 @@ void HomePage::openWebHelp()
     QDesktopServices::openUrl(QUrl(QString("https://retroshare.readthedocs.io")));
 }
 
-void HomePage::doExpand()
+void HomePage::toggleUseOldFormat()
 {
+    mUseBackwardCompatibleCert = !mUseBackwardCompatibleCert;
+    updateCertificate();
 
-	if (ui->expandButton->isChecked())
-	{
-		ui->userCertEdit->show();
-		ui->expandButton->setToolTip(tr("Hide"));
-	}
-	else
-	{
-		ui->userCertEdit->hide();
-		ui->expandButton->setToolTip(tr("Show full certificate (old format)"));
-	}
+    if (mUseBackwardCompatibleCert)
+    {
+        //ui->userCertEdit->show();
+        //ui->expandButton->setToolTip(tr("Revert to normal Retroshare ID"));
+    }
+    else
+    {
+        //ui->userCertEdit->hide();
+        //ui->expandButton->setToolTip(tr("Show full certificate (old format for backward compatibility)"));
+    }
 
 }

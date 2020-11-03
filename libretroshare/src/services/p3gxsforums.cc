@@ -256,7 +256,16 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 					}
                         break;
 
-					case RsGxsNotify::TYPE_PUBLISHED:
+                    case RsGxsNotify::TYPE_GROUP_SYNC_PARAMETERS_UPDATED:
+                    {
+                            auto ev = std::make_shared<RsGxsForumEvent>();
+                            ev->mForumGroupId = grpChange->mGroupId;
+                            ev->mForumEventCode = RsForumEventCode::SYNC_PARAMETERS_UPDATED;
+                            rsEvents->postEvent(ev);
+                    }
+                        break;
+
+                    case RsGxsNotify::TYPE_PUBLISHED:
 					case RsGxsNotify::TYPE_RECEIVED_NEW:
 					{
 						/* group received */

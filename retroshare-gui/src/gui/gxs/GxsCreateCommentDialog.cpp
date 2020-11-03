@@ -26,16 +26,19 @@
 #include <QMessageBox>
 #include <iostream>
 
+static const uint32_t MAX_ALLOWED_GXS_MESSAGE_SIZE = 199000;
+
 GxsCreateCommentDialog::GxsCreateCommentDialog(RsGxsCommentService *service,  const RsGxsGrpMsgIdPair &parentId, const RsGxsMessageId& threadId, const RsGxsId& default_author,QWidget *parent) :
 	QDialog(parent),
 	ui(new Ui::GxsCreateCommentDialog), mCommentService(service), mParentId(parentId), mThreadId(threadId)
 {
 	ui->setupUi(this);
-	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(createComment()));
-	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
+	connect(ui->postButton, SIGNAL(clicked()), this, SLOT(createComment()));
+	connect(ui->cancelButton, SIGNAL(clicked()), this, SLOT(close()));
+	connect(ui->commentTextEdit, SIGNAL(textChanged()), this, SLOT(checkLength()));
 
 	/* fill in the available OwnIds for signing */
-    ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, default_author);
+	ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, default_author);
 }
 
 void GxsCreateCommentDialog::loadComment(const QString &msgText, const QString &msgAuthor, const RsGxsId &msgAuthorId)
@@ -52,7 +55,7 @@ void GxsCreateCommentDialog::loadComment(const QString &msgText, const QString &
 	ui->replaytolabel->setText( tr("Replying to") + " @" + msgAuthor);
 	
 	ui->commentTextEdit->setPlaceholderText( tr("Type your reply"));
-	ui->buttonBox->button(QDialogButtonBox::Ok)->setText("Reply");
+	ui->postButton->setText("Reply");
 	ui->signedLabel->setText("Reply as");
 }
 
@@ -104,4 +107,20 @@ void GxsCreateCommentDialog::createComment()
 GxsCreateCommentDialog::~GxsCreateCommentDialog()
 {
 	delete ui;
+}
+
+void GxsCreateCommentDialog::checkLength(){
+	QString text;
+	RsHtml::optimizeHtml(ui->commentTextEdit, text);
+	std::wstring msg = text.toStdWString();
+	int charRemains = MAX_ALLOWED_GXS_MESSAGE_SIZE - msg.length();
+	if(charRemains >= 0) {
+		text = tr("It remains %1 characters after HTML conversion.").arg(charRemains);
+		ui->infoLabel->setStyleSheet("QLabel#infoLabel { }");
+	}else{
+		text = tr("Warning: This message is too big of %1 characters after HTML conversion.").arg((0-charRemains));
+		ui->infoLabel->setStyleSheet("QLabel#infoLabel {color: red; font: bold; }");
+	}
+	ui->postButton->setEnabled(charRemains>=0);
+	ui->infoLabel->setText(text);
 }

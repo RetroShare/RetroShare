@@ -56,8 +56,9 @@ PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGrou
 	connect(ui->submitButton, SIGNAL(clicked()), this, SLOT(createPost()));
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 	connect(ui->addPicButton, SIGNAL(clicked() ), this , SLOT(addPicture()));
-	
-    ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/postedlinks.png"));
+	connect(ui->RichTextEditWidget, SIGNAL(textSizeOk(bool)),ui->submitButton, SLOT(setEnabled(bool)));
+
+	ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/postedlinks.png"));
 	ui->headerFrame->setHeaderText(tr("Create a new Post"));
 
 	setAttribute ( Qt::WA_DeleteOnClose, true );
@@ -112,20 +113,11 @@ void PostedCreatePostDialog::processSettings(bool load)
 	Settings->beginGroup(QString("PostedCreatePostDialog"));
 
 	if (load) {
-		// load settings
-		
-		// state of ID Chooser combobox
-		int index = Settings->value("IDChooser", 0).toInt();
-		ui->idChooser->setCurrentIndex(index);
-		
 		// load last used Stacked Page
 		setPage(Settings->value("viewPage", VIEW_POST).toInt());
 	} else {
 		// save settings
 
-		// state of ID Chooser combobox
-		Settings->setValue("IDChooser", ui->idChooser->currentIndex());
-		
 		// store last used Page
 		Settings->setValue("viewPage", viewMode());
 	}

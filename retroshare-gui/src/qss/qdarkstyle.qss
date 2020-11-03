@@ -1176,6 +1176,10 @@ GxsForumThreadWidget QToolButton#subscribeToolButton:hover {
 	border-radius: 4px;
 }
 
+GxsForumThreadWidget QWidget#threadTreeWidget::item {
+	padding: 2px;
+}
+
 GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton {
 	font: bold;
 	font-size: 14px;
@@ -1235,9 +1239,80 @@ CreateGxsChannelMsg QPushButton#postButton:hover {
 	padding: 2px;
 }
 
+CreateCircleDialog QPushButton#createButton, CreateLobbyDialog QPushButton#createButton,
+IdEditDialog QPushButton#createButton, CreateGxsForumMsg QPushButton#postButton,
+GxsCreateCommentDialog QPushButton#postButton, GxsGroupDialog QPushButton#createButton {
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #0099cc;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+CreateCircleDialog QPushButton#createButton:hover, CreateLobbyDialog QPushButton#createButton:hover,
+IdEditDialog QPushButton#createButton:hover, CreateGxsForumMsg QPushButton#postButton:hover,
+GxsCreateCommentDialog QPushButton#postButton:hover, GxsGroupDialog QPushButton#createButton:hover,
+ShareManager QPushButton#closeButton {
+	background: #03b1f3;
+	border-radius: 4px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+CreateGxsForumMsg QPushButton#postButton:disabled, PostedCreatePostDialog QPushButton#submitButton:disabled,
+CreateGxsChannelMsg QPushButton#postButton:disabled, GxsCreateCommentDialog QPushButton#postButton:disabled {
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #d40000;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+ShareManager QPushButton#closeButton {
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #0099cc;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+ShareManager QPushButton#addButton {
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #32CD32;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 4px;
+}
+
+ShareManager QPushButton#addButton:hover {
+	background: #5AD75A;
+	border-radius: 4px;
+	min-width: 4em;
+	padding: 4px;
+}
+
 QTabBar#smTab::tab{
  height: 32px; 
  width: 32px;
+}
+
+QLabel#avatarLabel{
+ border: 2px solid #CCCCCC; 
+ border-radius: 4px;
 }
 
 PostedCreatePostDialog QPushButton#submitButton {
@@ -1349,7 +1424,6 @@ BoardPostDisplayWidget_card QLabel#titleLabel{
 	font: bold;
 }
 
-
 WireGroupItem QFrame#wire_frame
 {
 	border: 1px solid #38444d;
@@ -1370,4 +1444,8 @@ ChatWidget QFrame#pluginTitleFrame
 PulseTopLevel QFrame#frame, PulseViewGroup QFrame#frame, PulseReply QFrame#frame {
 	border: 2px solid #38444d;
 	border-radius: 6px;
+}
+
+MainWindow QListWidget {
+	font-size: 12pt;
 }

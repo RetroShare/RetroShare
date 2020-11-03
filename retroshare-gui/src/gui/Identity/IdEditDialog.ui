@@ -504,9 +504,16 @@
        </spacer>
       </item>
       <item>
-       <widget class="QDialogButtonBox" name="buttonBox">
-        <property name="standardButtons">
-         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       <widget class="QPushButton" name="createButton">
+        <property name="text">
+         <string>Create</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="cancelButton">
+        <property name="text">
+         <string>Cancel</string>
         </property>
        </widget>
       </item>
@@ -523,9 +530,6 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <tabstops>
-  <tabstop>buttonBox</tabstop>
- </tabstops>
  <resources>
   <include location="../images.qrc"/>
   <include location="../icons.qrc"/>

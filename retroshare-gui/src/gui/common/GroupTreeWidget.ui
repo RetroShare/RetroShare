@@ -66,7 +66,7 @@
         </property>
         <property name="icon">
          <iconset resource="../icons.qrc">
-          <normaloff>:/icons/svg/design.svg</normaloff>:/icons/svg/design.svg</iconset>
+          <normaloff>:/icons/svg/display_options.svg</normaloff>:/icons/svg/display_options.svg</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -137,7 +137,7 @@
   <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
-   <header location="global">gui/common/LineEditClear.h</header>
+   <header>gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
    <class>RSTreeWidget</class>
@@ -146,7 +146,6 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
  </resources>
  <connections/>

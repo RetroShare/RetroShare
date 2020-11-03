@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>558</width>
-    <height>202</height>
+    <width>426</width>
+    <height>176</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -324,22 +324,6 @@
             </property>
             <property name="textInteractionFlags">
              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="siteLabel">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string notr="true">site</string>
-            </property>
-            <property name="openExternalLinks">
-             <bool>true</bool>
             </property>
            </widget>
           </item>

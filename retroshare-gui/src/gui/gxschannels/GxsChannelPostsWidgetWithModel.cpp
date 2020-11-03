@@ -29,6 +29,7 @@
 #include "ui_GxsChannelPostsWidgetWithModel.h"
 #include "gui/feeds/GxsChannelPostItem.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/gxs/GxsGroupFrameDialog.h"
 #include "util/misc.h"
 #include "gui/gxschannels/CreateGxsChannelMsg.h"
 #include "gui/common/UIStateHelper.h"
@@ -204,17 +205,28 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
             font.setBold(true);
             painter->setFont(font);
         }
-        painter->drawText(QPoint(p.x()+0.5*font_height,y),QString::fromUtf8(post.mMeta.mMsgName.c_str()));
-        y += font_height;
 
-        painter->drawText(QPoint(p.x()+0.5*font_height,y),QDateTime::fromSecsSinceEpoch(post.mMeta.mPublishTs).toString(Qt::DefaultLocaleShortDate));
+        {
+            painter->save();
+
+            QFont font(painter->font());
+            font.setUnderline(true);
+            painter->setFont(font);
+            painter->drawText(QPoint(p.x()+0.5*font_height,y),QString::fromUtf8(post.mMeta.mMsgName.c_str()));
+
+            painter->restore();
+        }
+
         y += font_height;
+        y += font_height/2.0;
+
+        QString info_text = QDateTime::fromMSecsSinceEpoch(qint64(1000)*post.mMeta.mPublishTs).toString(Qt::DefaultLocaleShortDate);
 
         if(post.mCount > 0)
-        {
-            painter->drawText(QPoint(p.x()+0.5*font_height,y),QString::number(post.mCount)+ " " +((post.mCount>1)?tr("files"):tr("file")) + " (" + QString::number(post.mSize) + " " + tr("bytes") + ")" );
-            y += font_height;
-        }
+            info_text += ", " + QString::number(post.mCount)+ " " +((post.mCount>1)?tr("files"):tr("file")) + " (" + misc::friendlyUnit(qulonglong(post.mSize)) + ")" ;
+
+        painter->drawText(QPoint(p.x()+0.5*font_height,y),info_text);
+        y += font_height;
 
         painter->restore();
     }
@@ -372,17 +384,17 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     ui->channelPostFiles_TV->setItemDelegate(new ChannelPostFilesDelegate());
     ui->channelPostFiles_TV->setPlaceholderText(tr("No files in this post, or no post selected"));
     ui->channelPostFiles_TV->setSortingEnabled(true);
-    ui->channelPostFiles_TV->sortByColumn(0, Qt::AscendingOrder);
+    ui->channelPostFiles_TV->sortByColumn(3, Qt::AscendingOrder);	// sort by time
     ui->channelPostFiles_TV->setAlternatingRowColors(false);
+
+    connect(ui->channelPostFiles_TV->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumnPostFiles(int,Qt::SortOrder)));
+    connect(ui->channelFiles_TV->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumnFiles(int,Qt::SortOrder)));
 
     ui->channelFiles_TV->setModel(mChannelFilesModel = new RsGxsChannelPostFilesModel());
     ui->channelFiles_TV->setItemDelegate(mFilesDelegate = new ChannelPostFilesDelegate());
     ui->channelFiles_TV->setPlaceholderText(tr("No files in the channel, or no channel selected"));
     ui->channelFiles_TV->setSortingEnabled(true);
-    ui->channelFiles_TV->sortByColumn(0, Qt::AscendingOrder);
-
-	connect(ui->channelPostFiles_TV->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumnPostFiles(int,Qt::SortOrder)));
-	connect(ui->channelFiles_TV->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumnFiles(int,Qt::SortOrder)));
+    ui->channelFiles_TV->sortByColumn(3, Qt::AscendingOrder);	// sort by time
 
     connect(ui->postsTree->selectionModel(),SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),this,SLOT(showPostDetails()));
     connect(ui->postsTree,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(postContextMenu(const QPoint&)));
@@ -418,7 +430,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     ui->filterLineEdit->setPlaceholderText(tr("Search..."));
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 
-    ui->postsTree->setPlaceholderText(tr("Thumbnails"));
+    ui->postsTree->setPlaceholderText(tr("No posts available in this channel"));
     ui->postsTree->setMinimumWidth(COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font()).height()+1);
 
     connect(ui->postsTree,SIGNAL(sizeChanged(QSize)),this,SLOT(handlePostsTreeSizeChange(QSize)));
@@ -443,16 +455,19 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 	QIcon icon;
     icon.addPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/redled.png"), QIcon::Normal, QIcon::On);
     icon.addPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/start.png"), QIcon::Normal, QIcon::Off);
+
+#ifdef TO_REMOVE
 	mAutoDownloadAction = new QAction(icon, "", this);
 	mAutoDownloadAction->setCheckable(true);
 	connect(mAutoDownloadAction, SIGNAL(triggered()), this, SLOT(toggleAutoDownload()));
 
 	ui->subscribeToolButton->addSubscribedAction(mAutoDownloadAction);
+    setAutoDownload(false);
+#endif
 
     ui->commentsDialog->setTokenService(rsGxsChannels->getTokenService(),rsGxsChannels);
 
 	/* Initialize GUI */
-	setAutoDownload(false);
 	settingsChanged();
 
     setGroupId(channelId);
@@ -663,8 +678,19 @@ void GxsChannelPostsWidgetWithModel::handlePostsTreeSizeChange(QSize s,bool forc
     int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(0,font(),ui->postsTree->width()))));
     std::cerr << "nb columns: " << n_columns << " current count=" << mChannelPostsModel->columnCount() << std::endl;
 
-    if(force || (n_columns != mChannelPostsModel->columnCount()))
-		mChannelPostsModel->setNumColumns(n_columns);
+    // save current post. The setNumColumns() indeed loses selection
+
+    QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
+    RsGxsMessageId current_mid;
+
+    if(index.isValid())
+        current_mid = index.data(Qt::UserRole).value<RsGxsChannelPost>().mMeta.mMsgId ;
+
+    if((force || (n_columns != mChannelPostsModel->columnCount())) && mChannelPostsModel->setNumColumns(n_columns))
+    {
+        // Restore current post. The setNumColumns() indeed loses selection
+        ui->postsTree->selectionModel()->setCurrentIndex(mChannelPostsModel->getIndexOfMessage(current_mid),QItemSelectionModel::ClearAndSelect);
+    }
 }
 
 void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
@@ -680,7 +706,8 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
 		case RsChannelEventCode::UPDATED_CHANNEL: // [[fallthrough]];
 		case RsChannelEventCode::NEW_MESSAGE:     // [[fallthrough]];
 		case RsChannelEventCode::UPDATED_MESSAGE:
-		{
+        case RsChannelEventCode::SYNC_PARAMETERS_UPDATED:
+        {
 			if(e->mChannelGroupId == groupId())
 				updateDisplay(true);
     	}
@@ -695,7 +722,7 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
     QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
 	RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
 	
-	QTextDocument doc;
+    QTextDocument doc;
 	doc.setHtml(post.mMsg.c_str());
 
     if(post.mMeta.mPublishTs == 0)
@@ -715,9 +742,6 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 	ui->postName_LB->show();
 	ui->postTime_LB->show();
 
-    if(index.row()==0 && index.column()==0)
-        std::cerr << "here" << std::endl;
-
 	std::cerr << "showPostDetails: setting mSelectedPost to current post Id " << post.mMeta.mMsgId << ". Previous value: " << mSelectedPost << std::endl;
     mSelectedPost = post.mMeta.mMsgId;
 
@@ -730,7 +754,7 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
     auto all_msgs_versions(post.mOlderVersions);
     all_msgs_versions.insert(post.mMeta.mMsgId);
 
-    ui->commentsDialog->commentLoad(post.mMeta.mGroupId, all_msgs_versions, post.mMeta.mMsgId);
+    ui->commentsDialog->commentLoad(post.mMeta.mGroupId, all_msgs_versions, post.mMeta.mMsgId,true);
 
     std::cerr << "Showing details about selected index : "<< index.row() << "," << index.column() << std::endl;
 
@@ -904,7 +928,7 @@ GxsChannelPostsWidgetWithModel::~GxsChannelPostsWidgetWithModel()
 	// save settings
 	processSettings(false);
 
-	delete(mAutoDownloadAction);
+    //delete(mAutoDownloadAction);
     delete mFilesDelegate;
 	delete ui;
 }
@@ -1018,28 +1042,31 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 
 	ui->postButton->setEnabled(bool(group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH));
 
-	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
-	ui->subscribeToolButton->setEnabled(true);
-
-
+#ifdef TO_REMOVE
 	bool autoDownload ;
 	rsGxsChannels->getChannelAutoDownload(group.mMeta.mGroupId,autoDownload);
 	setAutoDownload(autoDownload);
+#endif
 
-	if (IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
+    setSubscribeButtonText(group.mMeta.mGroupId,group.mMeta.mSubscribeFlags, group.mMeta.mPop);
+
+    if (IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
     {
-		ui->subscribeToolButton->setText(tr("Subscribed") + " " + QString::number(group.mMeta.mPop) );
-		//ui->feedToolButton->setEnabled(true);
-		//ui->fileToolButton->setEnabled(true);
         ui->channel_TW->setTabEnabled(CHANNEL_TABS_POSTS,true);
         ui->channel_TW->setTabEnabled(CHANNEL_TABS_FILES,true);
         ui->details_TW->setEnabled(true);
-	}
+
+        ui->infoSyncTimeLabel->show();
+        ui->syncPeriodTitleLabel->show();
+    }
     else
     {
         ui->details_TW->setEnabled(false);
         ui->channel_TW->setTabEnabled(CHANNEL_TABS_POSTS,false);
         ui->channel_TW->setTabEnabled(CHANNEL_TABS_FILES,false);
+
+        ui->infoSyncTimeLabel->hide();
+        ui->syncPeriodTitleLabel->hide();
     }
 
 
@@ -1049,6 +1076,29 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 		ui->infoLastPost->setText(tr("Never"));
 	else
 		ui->infoLastPost->setText(DateTime::formatLongDateTime(group.mMeta.mLastPost));
+
+    uint32_t current_sync_time  = GxsGroupFrameDialog::checkDelay(rsGxsChannels->getSyncPeriod(group.mMeta.mGroupId))/86400 ;
+
+    QString sync_string;
+    switch(current_sync_time)
+    {
+    case 5: sync_string = tr("5 days");  break;
+    case 15: sync_string = tr("2 weeks");  break;
+    case 30: sync_string = tr("1 month");  break;
+    case 90: sync_string = tr("3 months");  break;
+    case 180: sync_string = tr("6 months");  break;
+    case 365: sync_string = tr("1 year");  break;
+    case   0: sync_string = tr("indefinitly");  break;
+    default:
+        sync_string = tr("Unknown");
+    }
+
+    if(group.mMeta.mLastPost > 0 && group.mMeta.mLastPost + rsGxsChannels->getSyncPeriod(group.mMeta.mGroupId) < time(NULL) && IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
+        sync_string += " (Warning: will not allow latest posts to sync)";
+
+    ui->infoSyncTimeLabel->setText(sync_string);
+
+
 	QString formatDescription = QString::fromUtf8(group.mDescription.c_str());
 
 	unsigned int formatFlag = RSHTML_FORMATTEXT_EMBED_LINKS;
@@ -1109,9 +1159,45 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 	//ui->feedToolButton->setEnabled(false);
 	//ui->fileToolButton->setEnabled(false);
 #endif
-	ui->subscribeToolButton->setText(tr("Subscribe ") + " " + QString::number(group.mMeta.mPop) );
+
+    setSubscribeButtonText(group.mMeta.mGroupId,group.mMeta.mSubscribeFlags, group.mMeta.mPop);
 
     showPostDetails();
+}
+
+void GxsChannelPostsWidgetWithModel::setSubscribeButtonText(const RsGxsGroupId& group_id,uint32_t flags, uint32_t mPop)
+{
+    if(IS_GROUP_SUBSCRIBED(flags))
+    {
+        ui->subscribeToolButton->setText(tr("Subscribed")+ " " + QString::number(mPop));
+        ui->subscribeToolButton->setSubscribed(true);
+        ui->subscribeToolButton->setEnabled(true);
+    }
+    else
+    {
+        switch(rsGxsChannels->getDistantSearchStatus(group_id))
+        {
+        case DistantSearchGroupStatus::UNKNOWN:  	// means no search ongoing. This is not a distant search
+        case DistantSearchGroupStatus::HAVE_GROUP_DATA:	// fallthrough
+            ui->subscribeToolButton->setText(tr("Subscribe"));
+            ui->subscribeToolButton->setToolTip("");
+            ui->subscribeToolButton->setSubscribed(false);
+            ui->subscribeToolButton->setEnabled(true);
+            break;
+        case DistantSearchGroupStatus::CAN_BE_REQUESTED:  	// means no search ongoing. This is not a distant search
+            ui->subscribeToolButton->setText(tr("Subscribe"));
+            ui->subscribeToolButton->setToolTip(tr("Hit this button to retrieve the data you need to subscribe to this channel") );
+            ui->subscribeToolButton->setSubscribed(false);
+            ui->subscribeToolButton->setEnabled(false);
+            break;
+        case DistantSearchGroupStatus::ONGOING_REQUEST:
+            ui->subscribeToolButton->setText(tr("Subscribe"));
+            ui->subscribeToolButton->setToolTip("");
+            ui->subscribeToolButton->setSubscribed(true);
+            ui->subscribeToolButton->setEnabled(false);
+            break;
+        }
+    }
 }
 
 void GxsChannelPostsWidgetWithModel::switchOnlyUnread(bool)
@@ -1184,10 +1270,11 @@ void GxsChannelPostsWidgetWithModel::subscribeGroup(bool subscribe)
 	} );
 }
 
+#ifdef TO_REMOVE
 void GxsChannelPostsWidgetWithModel::setAutoDownload(bool autoDl)
 {
-	mAutoDownloadAction->setChecked(autoDl);
-	mAutoDownloadAction->setText(autoDl ? tr("Disable Auto-Download") : tr("Enable Auto-Download"));
+    mAutoDownloadAction->setChecked(autoDl);
+    mAutoDownloadAction->setText(autoDl ? tr("Disable Auto-Download") : tr("Enable Auto-Download"));
 }
 
 void GxsChannelPostsWidgetWithModel::toggleAutoDownload()
@@ -1215,6 +1302,7 @@ void GxsChannelPostsWidgetWithModel::toggleAutoDownload()
 		}
 	});
 }
+#endif
 
 class GxsChannelPostsReadData
 {

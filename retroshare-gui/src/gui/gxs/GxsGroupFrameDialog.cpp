@@ -388,7 +388,7 @@ void GxsGroupFrameDialog::removeAllSearches()
 
 // Same function than the one in rsgxsnetservice.cc, so that all times are automatically consistent
 
-static uint32_t checkDelay(uint32_t time_in_secs)
+uint32_t GxsGroupFrameDialog::checkDelay(uint32_t time_in_secs)
 {
     if(time_in_secs <    1 * 86400)
         return 0        ;
@@ -485,6 +485,7 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
     actnn = ctxMenu2->addAction(tr(" 6 months"   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(180)) ; if(current_sync_time ==180) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
     actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(365)) ; if(current_sync_time ==365) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
     actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_sync_time ==  0) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+    ctxMenu2->setEnabled(isSubscribed);
 
 	ctxMenu2 = contextMnu.addMenu(tr("Store posts for at most...")) ;
     actnn = ctxMenu2->addAction(tr(" 5 days"     ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  5)) ; if(current_store_time ==  5) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
@@ -494,6 +495,7 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
     actnn = ctxMenu2->addAction(tr(" 6 months"   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(180)) ; if(current_store_time ==180) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
     actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(365)) ; if(current_store_time ==365) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
     actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_store_time ==  0) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+    ctxMenu2->setEnabled(isSubscribed);
 
 	if (shareKeyType()) {
         action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_SHARE), tr("Share publish permissions..."), this, SLOT(sharePublishKey()));

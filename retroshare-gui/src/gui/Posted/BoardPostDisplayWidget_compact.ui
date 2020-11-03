@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>540</width>
-    <height>172</height>
+    <width>542</width>
+    <height>150</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -301,22 +301,6 @@
              </spacer>
             </item>
            </layout>
-          </item>
-          <item>
-           <widget class="QLabel" name="siteLabel">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string notr="true">site</string>
-            </property>
-            <property name="openExternalLinks">
-             <bool>true</bool>
-            </property>
-           </widget>
           </item>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout">
