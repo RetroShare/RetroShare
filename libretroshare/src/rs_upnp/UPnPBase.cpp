@@ -6,7 +6,7 @@
  * Copyright (c) 2004-2009 Marcelo Roberto Jimenez ( phoenix@amule.org )       *
  * Copyright (c) 2006-2009 aMule Team ( admin@amule.org / http://www.amule.org)*
  * Copyright (c) 2009-2010 Retroshare Team                                     *
- * Copyright (C) 2019  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2019-2020 Gioacchino Mazzurco <gio@eigenlab.org>              *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -35,6 +35,7 @@
 #include "util/rsstring.h"
 #include "rs_upnp/upnp18_retrocompat.h"
 #include "util/rstime.h"
+#include "util/rsdebug.h"
 
 #ifdef __GNUC__
 	#if __GNUC__ >= 4
@@ -923,16 +924,18 @@ m_WanService(NULL)
 #endif
 	// Pointer to self
 	s_CtrlPoint = this;
-	
-	// Start UPnP
-	int ret;
-	char *ipAddress = NULL;
-	unsigned short port = 0;
+
 #ifdef UPNP_DEBUG
 	int resLog = UpnpInitLog();
 	std::cerr << "UPnPControlPoint::CUPnPControlPoint() Init log : " << resLog << std::endl;
 #endif
-	ret = UpnpInit(ipAddress, udpPort);
+
+#if UPNP_VERSION < 11400
+	int ret = UpnpInit(nullptr, udpPort);
+#else
+	int ret = UpnpInit2(nullptr, udpPort);
+#endif
+
 #ifdef UPNP_DEBUG
 	std::cerr << "CUPnPControlPoint Constructor UpnpInit finished" << std::endl;
 #endif
@@ -942,15 +945,8 @@ m_WanService(NULL)
 #endif
 		goto error;
 	}
-	port = UpnpGetServerPort();
-	ipAddress = UpnpGetServerIpAddress();
-#ifdef UPNP_DEBUG
-	std::cerr << "UPnPControlPoint::CUPnPControlPoint() bound to " << ipAddress << ":" <<
-		port << "." << std::endl;
-#else
-	// unused variable
-	(void)port;
-#endif
+
+	RS_INFO("bound to ", UpnpGetServerIpAddress(), ":", UpnpGetServerPort());
 
 	ret = UpnpRegisterClient(
 	    reinterpret_cast<Upnp_FunPtr>(&CUPnPControlPoint::Callback),
@@ -1022,7 +1018,6 @@ error:
 #ifdef UPNP_DEBUG
 	std::cerr << "UPnPControlPoint::CUPnPControlPoint() UpnpFinish called within CUPnPControlPoint constructor." << std::endl;
 #endif
-	return;
 }
 
 
