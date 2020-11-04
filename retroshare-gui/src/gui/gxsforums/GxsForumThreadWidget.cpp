@@ -386,6 +386,7 @@ void GxsForumThreadWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent
         case RsForumEventCode::NEW_FORUM:       // [[fallthrough]];
         case RsForumEventCode::UPDATED_MESSAGE: // [[fallthrough]];
         case RsForumEventCode::NEW_MESSAGE:
+        case RsForumEventCode::PINNED_POSTS_CHANGED:
         case RsForumEventCode::SYNC_PARAMETERS_UPDATED:
             if(e->mForumGroupId == mForumGroup.mMeta.mGroupId)
                 updateDisplay(true);
@@ -1571,8 +1572,10 @@ void GxsForumThreadWidget::togglePinUpPost()
     uint32_t token;
     rsGxsForums->updateGroup(token,mForumGroup);
 
-    groupIdChanged();		// reloads all posts. We could also update the model directly, but the cost is so small now ;-)
-    updateDisplay(true) ;
+    // We dont call this from here anymore. The update will be called by libretroshare using the rsEvent system when
+    // the data is actually updated.
+    //       groupIdChanged();		// reloads all posts. We could also update the model directly, but the cost is so small now ;-)
+    //       updateDisplay(true) ;
 }
 
 void GxsForumThreadWidget::createthread()

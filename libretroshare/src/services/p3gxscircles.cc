@@ -683,8 +683,6 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 					RsGxsCircleGroupItem *old_circle_grp_item = dynamic_cast<RsGxsCircleGroupItem*>(groupChange->mOldGroupItem);
 					RsGxsCircleGroupItem *new_circle_grp_item = dynamic_cast<RsGxsCircleGroupItem*>(groupChange->mNewGroupItem);
 
-					const RsGxsCircleId circle_id ( old_circle_grp_item->meta.mGroupId );
-
 					if(old_circle_grp_item == nullptr || new_circle_grp_item == nullptr)
 					{
 						RsErr() << __PRETTY_FUNCTION__ << " received GxsGroupUpdate item with mOldGroup and mNewGroup not of type RsGxsCircleGroupItem. This is inconsistent!" << std::endl;
@@ -692,7 +690,9 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 						continue;
 					}
 
-					// First of all, we check if there is a difference between the old and new list of invited members
+                    const RsGxsCircleId circle_id ( old_circle_grp_item->meta.mGroupId );
+
+                    // First of all, we check if there is a difference between the old and new list of invited members
 
 					for(auto& gxs_id: new_circle_grp_item->gxsIdSet.ids)
 						if(old_circle_grp_item->gxsIdSet.ids.find(gxs_id) == old_circle_grp_item->gxsIdSet.ids.end())
