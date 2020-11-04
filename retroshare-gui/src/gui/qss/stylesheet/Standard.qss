@@ -1038,8 +1038,18 @@ MessagesDialog QWidget#messageTreeWidget::item:hover {
 	color: black;
 }
 
+GxsForumThreadWidget QWidget#threadTreeWidget {
+	selection-background-color: #cde8ff;
+	show-decoration-selected: 1;
+}
+
 GxsForumThreadWidget QWidget#threadTreeWidget::item {
 	padding: 2px;
+}
+
+GxsForumThreadWidget QWidget#threadTreeWidget::item:selected:active ,
+GxsForumThreadWidget QWidget#threadTreeWidget::item:selected:!active {
+	background-color: #cde8ff;
 }
 
 GxsChannelDialog GroupTreeWidget QTreeWidget#treeWidget::item{
