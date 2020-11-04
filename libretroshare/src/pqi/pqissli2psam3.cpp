@@ -1,11 +1,6 @@
 #include "pqissli2psam3.h"
 
-#ifdef RS_USE_I2P_SAM3_I2PSAM
-#include "util/i2psam.h"
-#endif
-#ifdef RS_USE_I2P_SAM3_LIBSAM3
 #include <libsam3.h>
-#endif
 
 RS_SET_CONTEXT_DEBUG_LEVEL(2)
 
@@ -51,12 +46,7 @@ int pqissli2psam3::Initiate_Connection()
 	{
 		if(mConn) {
 			// how did we end up here?
-#ifdef RS_USE_I2P_SAM3_I2PSAM
-			unix_close(mConn);
-#endif
-#ifdef RS_USE_I2P_SAM3_LIBSAM3
-			sam3CloseConnection(mConn);
-#endif
+			RS_ERR("state is NONE but a connection is existing?!");
 		}
 		mConn = 0;
 		// get SAM session
@@ -65,12 +55,7 @@ int pqissli2psam3::Initiate_Connection()
 		ss.session = nullptr;
 		rsAutoProxyMonitor::taskSync(autoProxyType::I2PSAM3, autoProxyTask::getSettings, static_cast<void*>(&ss));
 
-#ifdef RS_USE_I2P_SAM3_I2PSAM
-		if (!!ss.session && !ss.session->isSick()) {
-#endif
-#ifdef RS_USE_I2P_SAM3_LIBSAM3
 		if (!!ss.session) {
-#endif
 			RS_DBG3("NONE->DO_LOOKUP");
 			mState = pqisslSam3State::DO_LOOKUP;
 		} else {
@@ -102,12 +87,8 @@ int pqissli2psam3::Initiate_Connection()
 		auto wrapper = new samEstablishConnectionWrapper();
 		wrapper->address.clear();
 		wrapper->address.publicKey = mI2pAddrLong;
-#ifdef RS_USE_I2P_SAM3_I2PSAM
-		wrapper->socket = 0;
-#endif
-#ifdef RS_USE_I2P_SAM3_LIBSAM3
 		wrapper->connection = nullptr;
-#endif
+
 		rsAutoProxyMonitor::taskAsync(autoProxyType::I2PSAM3, autoProxyTask::establishConnection, this, static_cast<void*>(wrapper));
 	}
 		mState = pqisslSam3State::WAIT_CONNECT;
@@ -135,29 +116,14 @@ int pqissli2psam3::net_internal_close(int fd)
 	RS_DBG4();
 
 	// sanity check
-#ifdef RS_USE_I2P_SAM3_I2PSAM
-	if (mConn && fd != mConn) {
-#endif
-#ifdef RS_USE_I2P_SAM3_LIBSAM3
 	if (mConn && fd != mConn->fd) {
-#endif
 		// this should never happen!
-//#ifdef RS_USE_I2P_SAM3_I2PSAM
-//		unix_close(mConn);
-//#endif
-//#ifdef RS_USE_I2P_SAM3_LIBSAM3
 		RS_ERR("fd != mConn");
 //		sam3CloseConnection(mConn);
-//#endif
 	}
 
 	// now to the actuall closing
-	int ret =  pqissl::net_internal_close(fd);
-//	int ret = 0;
-//#ifdef RS_USE_I2P_SAM3_LIBSAM3
-//	if (mConn)
-//		ret = sam3CloseConnection(mConn);
-//#endif
+	int ret = pqissl::net_internal_close(fd);
 	rsAutoProxyMonitor::taskAsync(autoProxyType::I2PSAM3, autoProxyTask::closeConnection, this, mConn),
 
 	// finally cleanup
@@ -195,12 +161,7 @@ void pqissli2psam3::taskFinished(taskTicket *&ticket)
 
 		RS_STACK_MUTEX(mSslMtx);
 		if (ticket->result == autoProxyStatus::ok) {
-#ifdef RS_USE_I2P_SAM3_I2PSAM
-			mConn = wrapper->socket;
-#endif
-#ifdef RS_USE_I2P_SAM3_LIBSAM3
 			mConn = wrapper->connection;
-#endif
 			mState = pqisslSam3State::DONE;
 		} else {
 			waiting = WAITING_FAIL_INTERFACE;
@@ -229,12 +190,7 @@ bool pqissli2psam3::setupSocket()
 	 * This function contains the generis part from pqissl::Initiate_Connection()
 	 */
 	int err;
-#ifdef RS_USE_I2P_SAM3_I2PSAM
-	int osock = mConn;
-#endif
-#ifdef RS_USE_I2P_SAM3_LIBSAM3
 	int osock = mConn->fd;
-#endif
 
 	err = unix_fcntl_nonblock(osock);
 	if (err < 0)

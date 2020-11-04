@@ -30,21 +30,10 @@
 
 class p3PeerMgr;
 
-// typedef samSession is used to unify access to the session independent of the underlying library
-#ifdef RS_USE_I2P_SAM3_I2PSAM
-namespace SAM {
-class StreamSession;
-class I2pSocket;
-}
-
-typedef SAM::StreamSession samSession;
-#endif
-#ifdef RS_USE_I2P_SAM3_LIBSAM3
 class Sam3Session;
 class Sam3Connection;
 
 typedef Sam3Session samSession;
-#endif
 
 struct samSettings : i2p::settings {
 	samSession *session;
@@ -52,12 +41,7 @@ struct samSettings : i2p::settings {
 
 struct samEstablishConnectionWrapper {
 	i2p::address address;
-#ifdef RS_USE_I2P_SAM3_I2PSAM
-	int socket;
-#endif
-#ifdef RS_USE_I2P_SAM3_LIBSAM3
 	Sam3Connection *connection;
-#endif
 };
 
 struct samStatus {
@@ -120,9 +104,7 @@ private:
 
 	// mutex
 	RsMutex mLock;
-#ifdef RS_USE_I2P_SAM3_LIBSAM3
 	RsMutex mLockSam3Access; // libsam3 is not thread safe! (except for key lookup)
-#endif
 };
 
 #endif // P3I2PSAM3_H

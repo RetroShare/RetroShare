@@ -41,13 +41,7 @@ private:
 	std::string mI2pAddrB32;
 	std::string mI2pAddrLong;
 
-//	samSession *mSs;
-#ifdef RS_USE_I2P_SAM3_I2PSAM
-	int mConn;
-#endif
-#ifdef RS_USE_I2P_SAM3_LIBSAM3
 	Sam3Connection *mConn;
-#endif
 };
 
 #endif // PQISSLI2PSAM3_H

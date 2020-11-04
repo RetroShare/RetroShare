@@ -206,7 +206,6 @@ retroshare_plugins:win32:CONFIG *= libretroshare_shared
 
 CONFIG+=rs_sam3
 CONFIG+=rs_sam3_libsam3
-#CONFIG+=rs_sam3_i2psam
 
 # Specify host precompiled jsonapi-generator path, appending the following
 # assignation to qmake command line
@@ -577,7 +576,6 @@ rs_sam3: {
     DEFINES *= RS_I2P_SAM3_BOB_COMPAT
 }
 rs_sam3_libsam3: DEFINES *= RS_USE_I2P_SAM3_LIBSAM3
-rs_sam3_i2psam:  DEFINES *= RS_USE_I2P_SAM3_I2PSAM
 
 debug {
     rs_mutex_debug:DEFINES *= RS_MUTEX_DEBUG

@@ -1,11 +1,6 @@
 #include "p3i2psam3.h"
 
-#ifdef RS_USE_I2P_SAM3_LIBSAM3
 #include <libsam3.h>
-#endif
-#ifdef RS_USE_I2P_SAM3_I2PSAM
-#include "util/i2psam.h"
-#endif
 
 #include "pqi/p3peermgr.h"
 #include "rsitems/rsconfigitems.h"
@@ -35,9 +30,6 @@ static const std::string kConfigKeyBOBAddr     = "BOB_ADDR";
 static constexpr bool   kDefaultSAM3Enable = false;
 
 RS_SET_CONTEXT_DEBUG_LEVEL(4)
-
-// copy from i2psam.cpp
-//#define I2P_DESTINATION_SIZE 516
 
 static void inline doSleep(std::chrono::duration<long, std::ratio<1,1000>> timeToSleepMS) {
 	std::this_thread::sleep_for(timeToSleepMS);
@@ -176,12 +168,8 @@ void p3I2pSam3::processTaskSync(taskTicket *ticket)
 		rsAutoProxyMonitor::taskDone(ticket, autoProxyStatus::ok);
 		break;
 	case autoProxyTask::getErrorInfo:
-#ifdef RS_USE_I2P_SAM3_LIBSAM3
 		*static_cast<std::string *>(ticket->data) = mSetting.session->error;
 		rsAutoProxyMonitor::taskDone(ticket, autoProxyStatus::ok);
-#else
-		rsAutoProxyMonitor::taskError(ticket);
-#endif
 		break;
 	case autoProxyTask::reloadConfig:
 	    {
@@ -298,23 +286,14 @@ void p3I2pSam3::threadTick()
 
 	case autoProxyTask::lookupKey:
 		lookupKey(tt);
-#ifdef RS_USE_I2P_SAM3_I2PSAM
-		// artificially delay following operations as i2psam uses time(null) as rng seed
-		doSleep(std::chrono::seconds(1));
-#endif
 		break;
 
 	case autoProxyTask::proxyStatusCheck:
 	{
 		// TODO better detection of status
 		bool ok;
-#ifdef RS_USE_I2P_SAM3_I2PSAM
-		ok = !mSetting.session->isSick();
-#endif
-#ifdef RS_USE_I2P_SAM3_LIBSAM3
 		ok = !!mSetting.session->fd;
 		ok &= !!mSetting.session->fwd_fd;
-#endif // RS_USE_I2P_SAM3_LIBSAM3
 		*static_cast<bool*>(tt->data) = ok;
 		rsAutoProxyMonitor::taskDone(tt, ok ? autoProxyStatus::ok : autoProxyStatus::error);
 	}
@@ -497,70 +476,6 @@ bool p3I2pSam3::startSession()
 		paramsStr.append(p + " ");
 	// keep trailing space for easier extending when necessary
 
-#ifdef RS_USE_I2P_SAM3_I2PSAM
-	if(mSetting.session) {
-		RS_STACK_MUTEX(mLock);
-
-		delete mSetting.session; // stopForwardingAll(); is called in destructor
-		mSetting.session = nullptr;
-	}
-
-	SAM::StreamSession *session;
-
-	if(!mSetting.address.privateKey.empty()) {
-		Dbg3() << __PRETTY_FUNCTION__ << " with destination" << std::endl;
-		session = new SAM::StreamSession(nick, SAM_DEFAULT_ADDRESS, SAM_DEFAULT_PORT, mSetting.address.privateKey, paramsStr);
-	} else {
-		Dbg3() << __PRETTY_FUNCTION__ << " without destination" << std::endl;
-		session = new SAM::StreamSession(nick, SAM_DEFAULT_ADDRESS, SAM_DEFAULT_PORT, SAM_GENERATE_MY_DESTINATION, paramsStr, "DSA_SHA1");
-	}
-
-	if (!session || session->isSick()) {
-		return false;
-	}
-
-	/*
-	 * i2psam is sometimes unable to reliable read the public key, which is crucial to base32 address generation
-	 * (due to the fact that is assumes it's length wrongly)
-	 *
-	 * The following are attempts to reliable receive our public key
-	 */
-
-	const auto dest = session->getMyDestination();
-//	auto copy = dest;
-	std::string pubKey1 = dest.pub;
-	std::string pubKey2(dest.pub);
-	i2p::validatePubkeyFromPrivKey(pubKey2, dest.priv);
-
-	/*
-	 * pubkeys:
-	 * 1: from initial call (== dest.pub)
-	 * 2: from parsing (was == dest.pub
-	 */
-	Dbg3() << __PRETTY_FUNCTION__ << " figuring out our pubKey: p1 " << pubKey1 << std::endl;
-	Dbg3() << __PRETTY_FUNCTION__ << " figuring out our pubKey: p2 " << pubKey2 << std::endl;
-	if (pubKey1 == pubKey2) {
-		//  unchanged
-		Dbg3() << __PRETTY_FUNCTION__ << " figuring out our pubKey: p1 == p2" << std::endl;
-	} else {
-		// parsed pub key is different, prefer parsed one
-		pubKey1 = pubKey2;
-		Dbg3() << __PRETTY_FUNCTION__ << " figuring out our pubKey: p1 != p2" << std::endl;
-	}
-	SAM::FullDestination dest2(pubKey1, dest.priv, true);
-
-	// populate settings
-	RS_STACK_MUTEX(mLock);
-	mSetting.session = session;
-	if (!mSetting.address.publicKey.empty() && mSetting.address.publicKey != dest2.pub)
-		// This should be ok for non hidden locations. This should be a problem for hidden i2p locations...
-		RsDbg() << __PRETTY_FUNCTION__ << " public key changed! Yet unsure if this is ok or a problem" << std::endl;
-	mSetting.address.publicKey = dest2.pub;
-	mSetting.address.base32 = i2p::keyToBase32Addr(dest2.pub);
-	// do not overwrite the private key, if any!!
-
-#endif
-#ifdef RS_USE_I2P_SAM3_LIBSAM3
 	int ret;
 
 	if (mSetting.session) {
@@ -604,7 +519,6 @@ bool p3I2pSam3::startSession()
 	mSetting.address.publicKey = session->pubkey;
 	mSetting.address.base32 = i2p::keyToBase32Addr(session->pubkey);
 	// do not overwrite the private key, if any!!
-#endif
 
 	RS_DBG1("nick:", nick, "address:", mSetting.address.base32);
 	RS_DBG2("  myDestination.pub ", mSetting.address.publicKey);
@@ -631,16 +545,6 @@ bool p3I2pSam3::startForwarding()
 	peerState ps;
 	mPeerMgr->getOwnNetStatus(ps);
 
-#ifdef RS_USE_I2P_SAM3_I2PSAM
-	auto ret = mSetting.session->forward(sockaddr_storage_iptostring(ps.localaddr).c_str(), sockaddr_storage_port(ps.localaddr), true);
-	if (!ret.isOk)
-		RsDbg() << __PRETTY_FUNCTION__ << " forward failed" << std::endl;
-	else
-		Dbg2()  << __PRETTY_FUNCTION__ << " forward successfull" << std::endl;
-
-	return ret.isOk;
-#endif
-#ifdef RS_USE_I2P_SAM3_LIBSAM3
 	RS_STACK_MUTEX(mLockSam3Access);
 
 	int ret = sam3StreamForward(mSetting.session, sockaddr_storage_iptostring(ps.localaddr).c_str(), sockaddr_storage_port(ps.localaddr));
@@ -649,7 +553,7 @@ bool p3I2pSam3::startForwarding()
 		RS_DBG("forward failed, due to", mSetting.session->error);
 		return false;
 	}
-#endif
+
 	return true;
 }
 
@@ -661,11 +565,7 @@ void p3I2pSam3::stopSession()
 		RS_STACK_MUTEX(mLock);
 		if (!mSetting.session)
 			return;
-#ifdef RS_USE_I2P_SAM3_I2PSAM
-		// TODO cleanup sockets
-		delete mSetting.session; // will stop forwarding, too
-#endif
-#ifdef RS_USE_I2P_SAM3_LIBSAM3
+
 		// swap connections
 		mInvalidConnections = mValidConnections;
 		mValidConnections.clear();
@@ -673,7 +573,6 @@ void p3I2pSam3::stopSession()
 		RS_STACK_MUTEX(mLockSam3Access);
 		sam3CloseSession(mSetting.session);
 		delete mSetting.session;
-#endif
 
 		mSetting.session = nullptr;
 		mState = samStatus::samState::offline;
@@ -697,18 +596,6 @@ bool p3I2pSam3::generateKey(std::string &pub, std::string &priv)
 	pub.clear();
 	priv.clear();
 
-#ifdef RS_USE_I2P_SAM3_I2PSAM
-	auto ss = new SAM::StreamSession("RS-destgen");
-	auto ret = ss->destGenerate();
-	if (!ret.isOk)
-		return false;
-
-	auto dest = ret.value;
-	pub = std::string(dest.pub);
-	priv = std::string(dest.priv);
-
-#endif
-#ifdef RS_USE_I2P_SAM3_LIBSAM3
 	// The session is only usef for transporting the data
 	Sam3Session ss;
 
@@ -718,7 +605,6 @@ bool p3I2pSam3::generateKey(std::string &pub, std::string &priv)
 	}
 	pub = std::string(ss.pubkey);
 	priv = std::string(ss.privkey);
-#endif
 
 	RS_DBG2("publuc key / address", pub);
 	RS_DBG2("private key", priv);
@@ -736,30 +622,11 @@ void p3I2pSam3::lookupKey(taskTicket *ticket)
 		rsAutoProxyMonitor::taskError(ticket);
 		return;
 	}
-#ifdef RS_USE_I2P_SAM3_I2PSAM
-	auto sam = mSetting.session;
-	RsThread::async([ticket, sam]()
-#endif
-#ifdef RS_USE_I2P_SAM3_LIBSAM3
+
 	RsThread::async([ticket]()
-#endif
 	{
 		auto addr = static_cast<i2p::address*>(ticket->data);
 
-#ifdef RS_USE_I2P_SAM3_I2PSAM
-		auto r = sam->namingLookup(addr->base32);
-		if (!r.isOk) {
-			// get error
-			RsDbg() << __PRETTY_FUNCTION__ << " key: " << addr->base32 << std::endl;
-			RsDbg() << __PRETTY_FUNCTION__ << " got error!" << std::endl;
-			rsAutoProxyMonitor::taskError(ticket);
-		} else {
-			addr->publicKey = r.value;
-			rsAutoProxyMonitor::taskDone(ticket, autoProxyStatus::ok);
-			Dbg1() << __PRETTY_FUNCTION__ << " success " << std::endl;
-		}
-#endif
-#ifdef RS_USE_I2P_SAM3_LIBSAM3
 		// The session is only usef for transporting the data
 		Sam3Session ss;
 		int ret = sam3NameLookup(&ss, SAM3_HOST_DEFAULT, SAM3_PORT_DEFAULT, addr->base32.c_str());
@@ -773,7 +640,6 @@ void p3I2pSam3::lookupKey(taskTicket *ticket)
 			rsAutoProxyMonitor::taskDone(ticket, autoProxyStatus::ok);
 			RS_DBG1("success");
 		}
-#endif
 	});
 }
 
@@ -794,20 +660,7 @@ void p3I2pSam3::establishConnection(taskTicket *ticket)
 
 	RsThread::async([ticket, this]() {
 		auto wrapper = static_cast<samEstablishConnectionWrapper*>(ticket->data);
-#ifdef RS_USE_I2P_SAM3_I2PSAM
-		auto r = this->mSetting.session->connect(wrapper->address.publicKey.c_str(), false); // silent=true is broken!
-		if (!r.isOk) {
-			// get error
-			RsDbg() << __PRETTY_FUNCTION__ << " got error!" << std::endl;
-			rsAutoProxyMonitor::taskError(ticket);
-		} else {
-			// extract socket
-			wrapper->socket = r.value.get()->release();
-			Dbg1() << __PRETTY_FUNCTION__ << " success " << std::endl;
-			rsAutoProxyMonitor::taskDone(ticket, autoProxyStatus::ok);
-		}
-#endif
-#ifdef RS_USE_I2P_SAM3_LIBSAM3
+
 		struct Sam3Connection *connection;
 		{
 			auto l = this->mLockSam3Access;
@@ -829,7 +682,6 @@ void p3I2pSam3::establishConnection(taskTicket *ticket)
 			RS_DBG1("success");
 			rsAutoProxyMonitor::taskDone(ticket, autoProxyStatus::ok);
 		}
-#endif
 	});
 }
 
