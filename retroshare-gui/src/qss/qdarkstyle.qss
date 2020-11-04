@@ -557,6 +557,14 @@ QComboBox:on
     selection-background-color: #4a4a4a;
 }
 
+/* Needed to remove indicator - fix #132 */
+QComboBox::indicator {
+    background-color:transparent;
+    selection-background-color:transparent;
+    color:transparent;
+    selection-color:transparent;
+}
+
 QComboBox QAbstractItemView
 {
     background-color: #201F1F;
@@ -1176,8 +1184,18 @@ GxsForumThreadWidget QToolButton#subscribeToolButton:hover {
 	border-radius: 4px;
 }
 
+GxsForumThreadWidget QWidget#threadTreeWidget {
+	selection-background-color: #445566;
+	show-decoration-selected: 1;
+}
+
 GxsForumThreadWidget QWidget#threadTreeWidget::item {
 	padding: 2px;
+}
+
+GxsForumThreadWidget QWidget#threadTreeWidget::item:selected:active ,
+GxsForumThreadWidget QWidget#threadTreeWidget::item:selected:!active {
+	background-color: #445566;
 }
 
 GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton {
