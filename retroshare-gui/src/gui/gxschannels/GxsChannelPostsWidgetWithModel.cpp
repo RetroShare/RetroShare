@@ -721,7 +721,10 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 {
     QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
 	RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
-	
+#ifdef DEBUG_CHANNEL_POSTS_WIDGET
+    std::cerr << "showPostDetails: current index is " << index.row() << "," << index.column() << std::endl;
+#endif
+
     QTextDocument doc;
 	doc.setHtml(post.mMsg.c_str());
 
@@ -733,6 +736,7 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 		ui->postTime_LB->hide();
         mChannelPostFilesModel->clear();
         ui->details_TW->setEnabled(false);
+        mSelectedPost.clear();
 
         return;
     }
@@ -742,7 +746,9 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 	ui->postName_LB->show();
 	ui->postTime_LB->show();
 
-	std::cerr << "showPostDetails: setting mSelectedPost to current post Id " << post.mMeta.mMsgId << ". Previous value: " << mSelectedPost << std::endl;
+#ifdef DEBUG_CHANNEL_POSTS_WIDGET
+    std::cerr << "showPostDetails: setting mSelectedPost to current post Id " << post.mMeta.mMsgId << ". Previous value: " << mSelectedPost << std::endl;
+#endif
     mSelectedPost = post.mMeta.mMsgId;
 
     std::list<ChannelPostFileInfo> files;
@@ -756,7 +762,9 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 
     ui->commentsDialog->commentLoad(post.mMeta.mGroupId, all_msgs_versions, post.mMeta.mMsgId,true);
 
+#ifdef DEBUG_CHANNEL_POSTS_WIDGET
     std::cerr << "Showing details about selected index : "<< index.row() << "," << index.column() << std::endl;
+#endif
 
     ui->postDetails_TE->setText(RsHtml().formatText(NULL, QString::fromUtf8(post.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 
@@ -827,6 +835,14 @@ void GxsChannelPostsWidgetWithModel::updateGroupData()
 
 		RsQThreadUtils::postToObject( [this,group]()
         {
+            if(mGroup.mMeta.mGroupId != group.mMeta.mGroupId) // this prevents any attempt to display the wrong index. Navigate() if needed will use mSelectedPost
+            {
+#ifdef DEBUG_CHANNEL_POSTS_WIDGET
+                std::cerr << "Old group: " << mGroup.mMeta.mGroupId << ", new group: " << group.mMeta.mGroupId << ". Celaring selection" << std::endl;
+#endif
+                whileBlocking(ui->postsTree->selectionModel())->clear();
+            }
+
             mGroup = group;
 			mChannelPostsModel->updateChannel(groupId());
             whileBlocking(ui->filterLineEdit)->clear();
