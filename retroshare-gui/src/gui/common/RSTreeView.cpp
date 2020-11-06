@@ -58,7 +58,8 @@ void RSTreeView::setAutoSelect(bool b)
 
 void RSTreeView::resizeEvent(QResizeEvent *e)
 {
-    emit sizeChanged(e->size());
+	QTreeView::resizeEvent(e);
+	emit sizeChanged(e->size());
 }
 
 void RSTreeView::setPlaceholderText(const QString &text)
