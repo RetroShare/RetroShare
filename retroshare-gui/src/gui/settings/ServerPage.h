@@ -108,9 +108,6 @@ private slots:
 
 	void toggleSamAdvancedSettings(bool checked);
 
-	void syncI2PProxyPortNormal(int i);
-	void syncI2PProxyPortSam(int i);
-
 	void syncI2PProxyAddrNormal(QString);
 	void syncI2PProxyAddrSam(QString);
 

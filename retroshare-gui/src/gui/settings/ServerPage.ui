@@ -982,27 +982,17 @@ If you have issues connecting over Tor check the Tor logs too.</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="i2pProxyPortLabel">
-                  <property name="text">
-                   <string>I2P proxy port</string>
+                 <spacer name="horizontalSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
                   </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="hiddenpage_proxyPort_i2p_2">
-                  <property name="enabled">
-                   <bool>false</bool>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
                   </property>
-                  <property name="toolTip">
-                   <string>Not required for SAMv3</string>
-                  </property>
-                  <property name="minimum">
-                   <number>10</number>
-                  </property>
-                  <property name="maximum">
-                   <number>65535</number>
-                  </property>
-                 </widget>
+                 </spacer>
                 </item>
                 <item>
                  <layout class="QHBoxLayout" name="bobAccHLayout">

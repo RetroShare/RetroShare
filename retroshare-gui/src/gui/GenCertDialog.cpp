@@ -150,7 +150,7 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	connect(ui.node_input,       SIGNAL(textChanged(QString)), this, SLOT(updateCheckLabels()));
 	connect(ui.reuse_existing_node_CB, SIGNAL(toggled(bool)), this, SLOT(updateCheckLabels()));
 
-	connect(ui.cbUseBob, SIGNAL(clicked(bool)), this, SLOT(useBobChecked(bool)));;
+	connect(ui.cbUseBob, SIGNAL(clicked(bool)), this, SLOT(useI2pChecked(bool)));;
 
 	entropy_timer = new QTimer ;
 	entropy_timer->start(20) ;
@@ -341,9 +341,9 @@ void GenCertDialog::setupState()
 	ui.hiddenport_spinBox->setVisible(hidden_state && !tor_auto);
 
 	ui.cbUseBob->setVisible(hidden_state && !tor_auto);
-#ifndef RS_USE_I2P_BOB
+#ifndef RS_USE_I2P_SAM3
 	ui.cbUseBob->setDisabled(true);
-	ui.cbUseBob->setToolTip(tr("BOB support is not available"));
+	ui.cbUseBob->setToolTip(tr("SAMv3 support is not available"));
 #endif
 
 	if(!mAllFieldsOk)
@@ -440,10 +440,10 @@ void GenCertDialog::updateCheckLabels()
 	setupState();
 }
 
-void GenCertDialog::useBobChecked(bool checked)
+void GenCertDialog::useI2pChecked(bool checked)
 {
 	if (checked) {
-		ui.hiddenaddr_input->setPlaceholderText(tr("I2P instance address with BOB enabled"));
+		ui.hiddenaddr_input->setPlaceholderText(tr("I2P instance address with SAMv3 enabled"));
 		ui.hiddenaddr_label->setText(tr("I2P instance address"));
 
 		ui.hiddenport_spinBox->setEnabled(false);

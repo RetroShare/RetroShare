@@ -184,10 +184,6 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     QObject::connect(ui.sbBobVarianceIn,  SIGNAL(valueChanged(int)), this, SLOT(tunnelSettingsChanged(int)));
     QObject::connect(ui.sbBobVarianceOut, SIGNAL(valueChanged(int)), this, SLOT(tunnelSettingsChanged(int)));
 
-    // These two spin boxes are used for the same thing - keep them in sync!
-    QObject::connect(ui.hiddenpage_proxyPort_i2p,   SIGNAL(valueChanged(int)), this, SLOT(syncI2PProxyPortNormal(int)));
-	QObject::connect(ui.hiddenpage_proxyPort_i2p_2, SIGNAL(valueChanged(int)), this, SLOT(syncI2PProxyPortSam(int)));
-
     // These two line edits are used for the same thing - keep them in sync!
     QObject::connect(ui.hiddenpage_proxyAddress_i2p,   SIGNAL(textChanged(QString)), this, SLOT(syncI2PProxyAddrNormal(QString)));
 	QObject::connect(ui.hiddenpage_proxyAddress_i2p_2, SIGNAL(textChanged(QString)), this, SLOT(syncI2PProxyAddrSam(QString)));
@@ -1528,20 +1524,6 @@ void ServerPage::toggleSamAdvancedSettings(bool checked)
     }
 }
 
-void ServerPage::syncI2PProxyPortNormal(int i)
-{
-    ui.hiddenpage_proxyPort_i2p_2->setValue(i);
-}
-
-void ServerPage::syncI2PProxyPortSam(int i)
-{
-    ui.hiddenpage_proxyPort_i2p->setValue(i);
-
-	// update port, not necessary for same, we just want to keep it consistent
-	saveSam();
-	rsAutoProxyMonitor::taskSync(autoProxyType::I2PSAM3, autoProxyTask::reloadConfig);
-}
-
 void ServerPage::syncI2PProxyAddrNormal(QString t)
 {
     ui.hiddenpage_proxyAddress_i2p_2->setText(t);
@@ -1639,7 +1621,6 @@ void ServerPage::loadCommon()
     whileBlocking(ui.hiddenpage_proxyAddress_i2p) -> setText(QString::fromStdString(proxyaddr));
 	whileBlocking(ui.hiddenpage_proxyAddress_i2p_2)->setText(QString::fromStdString(proxyaddr)); // this one is for sam tab
     whileBlocking(ui.hiddenpage_proxyPort_i2p) -> setValue(proxyport);
-	whileBlocking(ui.hiddenpage_proxyPort_i2p_2)->setValue(proxyport); // this one is for sam tab
 
     // don't use whileBlocking here
 	ui.cb_enableBob->setChecked(mSamSettings.enable);
@@ -1727,7 +1708,7 @@ void ServerPage::updateStatusSam()
 
     QString bobSimpleText = QString();
 	bobSimpleText.append(tr("RetroShare uses SAMv3 to set up a %1 tunnel at %2:%3\n(id: %4)\n\n"
-	                        "When changing options (e.g. port) use the buttons at the bottom to restart SAMv3.\n\n").
+	                        "When changing options use the buttons at the bottom to restart SAMv3.\n\n").
 	                     arg(mSamSettings.address.privateKey.empty() ? tr("client") : tr("server"),
                              ui.hiddenpage_proxyAddress_i2p_2->text(),
 	                         "7656",
