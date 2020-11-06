@@ -675,7 +675,7 @@ bool p3GxsChannels::setChannelDownloadDirectory(
 	}
 
     /* extract from ServiceString */
-    SSGxsChannelGroup ss;
+    GxsChannelGroupInfo ss;
     ss.load(it->second.mServiceString);
 
 	if (directory == ss.mDownloadDirectory)
@@ -728,7 +728,7 @@ bool p3GxsChannels::getChannelDownloadDirectory(const RsGxsGroupId & groupId,std
 	}
 
     /* extract from ServiceString */
-    SSGxsChannelGroup ss;
+    GxsChannelGroupInfo ss;
     ss.load(it->second.mServiceString);
     directory = ss.mDownloadDirectory;
 
@@ -1729,14 +1729,14 @@ bool p3GxsChannels::autoDownloadEnabled(const RsGxsGroupId &groupId,bool& enable
 	}
 
 	/* extract from ServiceString */
-	SSGxsChannelGroup ss;
+    GxsChannelGroupInfo ss;
 	ss.load(it->second.mServiceString);
 	enabled = ss.mAutoDownload;
 
 	return true;
 }
 
-bool SSGxsChannelGroup::load(const std::string &input)
+bool GxsChannelGroupInfo::load(const std::string &input)
 {
     if(input.empty())
     {
@@ -1785,7 +1785,7 @@ bool SSGxsChannelGroup::load(const std::string &input)
     return true;
 }
 
-std::string SSGxsChannelGroup::save() const
+std::string GxsChannelGroupInfo::save() const
 {
     std::string output = "v2 ";
 
@@ -1827,7 +1827,7 @@ bool p3GxsChannels::setAutoDownload(const RsGxsGroupId& groupId, bool enabled)
 	}
 
 	/* extract from ServiceString */
-	SSGxsChannelGroup ss;
+    GxsChannelGroupInfo ss;
 	ss.load(it->second.mServiceString);
 	if (enabled == ss.mAutoDownload)
 	{

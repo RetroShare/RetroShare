@@ -573,9 +573,9 @@ void GxsChannelPostItem::fill()
 
 	ui->datetimelabel->setText(DateTime::formatLongDateTime(mPost.mMeta.mPublishTs));
 
-	if ( (mPost.mCount != 0) || (mPost.mSize != 0) ) {
+	if ( (mPost.mAttachmentCount != 0) || (mPost.mSize != 0) ) {
 		ui->filelabel->setVisible(true);
-		ui->filelabel->setText(QString("(%1 %2) %3").arg(mPost.mCount).arg(  (mPost.mCount > 1)?tr("Files"):tr("File")).arg(misc::friendlyUnit(mPost.mSize)));
+		ui->filelabel->setText(QString("(%1 %2) %3").arg(mPost.mAttachmentCount).arg(  (mPost.mAttachmentCount > 1)?tr("Files"):tr("File")).arg(misc::friendlyUnit(mPost.mSize)));
 	} else {
 		ui->filelabel->setVisible(false);
 	}
