@@ -76,6 +76,7 @@ QColor SelectedColor = QRgb(0xff308dc7);
 #define COLUMN_SIZE_FONT_FACTOR_H  10
 
 #define STAR_OVERLAY_IMAGE ":icons/star_overlay_128.png"
+#define COMMENT_OVERLAY_IMAGE ":images/white-bubble-64.png"
 #define IMAGE_COPYLINK     ":icons/png/copy.png"
 #define IMAGE_GRID_VIEW    ":icons/png/menu.png"
 #define IMAGE_DOWNLOAD     ":icons/png/download.png"
@@ -179,8 +180,20 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
                 QPainter p(&pixmap);
                 QFontMetricsF fm(option.font);
 
-                p.drawPixmap(mZoom*QPoint(0.1*fm.height(),-3.6*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(mZoom*7*fm.height(),mZoom*7*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
+                p.drawPixmap(mZoom*QPoint(0.1*fm.height(),-3.4*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(mZoom*6*fm.height(),mZoom*6*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
             }
+
+            std::cerr << "mCommentCount=" << post.mCommentCount << std::endl;
+            if(post.mCommentCount)
+            {
+                QPainter p(&pixmap);
+                QFontMetricsF fm(option.font);
+
+                p.drawPixmap(QPoint(pixmap.width(),0.0)+mZoom*QPoint(-2.9*fm.height(),0.4*fm.height()),
+                             FilesDefs::getPixmapFromQtResourcePath(COMMENT_OVERLAY_IMAGE).scaled(mZoom*3*fm.height(),mZoom*3*fm.height(),
+                                                                                                  Qt::KeepAspectRatio,Qt::SmoothTransformation));
+            }
+
         }
 
         painter->drawPixmap(option.rect.topLeft(),
@@ -703,7 +716,9 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
 	switch(e->mChannelEventCode)
 	{
 		case RsChannelEventCode::NEW_CHANNEL:     // [[fallthrough]];
-		case RsChannelEventCode::UPDATED_CHANNEL: // [[fallthrough]];
+        case RsChannelEventCode::NEW_COMMENT:     // [[fallthrough]];
+        case RsChannelEventCode::NEW_VOTE:        // [[fallthrough]];
+        case RsChannelEventCode::UPDATED_CHANNEL: // [[fallthrough]];
 		case RsChannelEventCode::NEW_MESSAGE:     // [[fallthrough]];
 		case RsChannelEventCode::UPDATED_MESSAGE:
         case RsChannelEventCode::SYNC_PARAMETERS_UPDATED:

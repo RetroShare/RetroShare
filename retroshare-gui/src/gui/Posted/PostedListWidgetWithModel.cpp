@@ -474,7 +474,8 @@ void PostedListWidgetWithModel::handleEvent_main_thread(std::shared_ptr<const Rs
 
 	switch(e->mPostedEventCode)
 	{
-        case RsPostedEventCode::NEW_MESSAGE:     // [[fallthrough]];
+        case RsPostedEventCode::NEW_COMMENT:     // [[fallthrough]];
+        case RsPostedEventCode::NEW_VOTE:        // [[fallthrough]];
         {
             // special treatment here because the message might be a comment, so we need to refresh the comment tab if openned
 
@@ -486,6 +487,7 @@ void PostedListWidgetWithModel::handleEvent_main_thread(std::shared_ptr<const Rs
                     t->refresh();
             }
         }
+        case RsPostedEventCode::NEW_MESSAGE:          // [[fallthrough]];
         case RsPostedEventCode::NEW_POSTED_GROUP:     // [[fallthrough]];
 		case RsPostedEventCode::UPDATED_POSTED_GROUP: // [[fallthrough]];
 		case RsPostedEventCode::UPDATED_MESSAGE:
