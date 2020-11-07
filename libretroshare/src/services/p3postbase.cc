@@ -107,10 +107,18 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
                 case RsGxsNotify::TYPE_PUBLISHED:
                 {
                     auto ev = std::make_shared<RsGxsPostedEvent>();
-                    ev->mPostedMsgId = msgChange->mMsgId;
+                    ev->mPostedMsgId    = msgChange->mMsgId;
                     ev->mPostedThreadId = msgChange->mNewMsgItem->meta.mThreadId;
-                    ev->mPostedGroupId = msgChange->mGroupId;
-                    ev->mPostedEventCode = RsPostedEventCode::NEW_MESSAGE;
+                    ev->mPostedGroupId  = msgChange->mGroupId;
+
+                    if(nullptr != dynamic_cast<RsGxsCommentItem*>(msgChange->mNewMsgItem))
+                        ev->mPostedEventCode = RsPostedEventCode::NEW_COMMENT;
+                    else
+                        if(nullptr != dynamic_cast<RsGxsVoteItem*>(msgChange->mNewMsgItem))
+                            ev->mPostedEventCode = RsPostedEventCode::NEW_VOTE;
+                        else
+                            ev->mPostedEventCode = RsPostedEventCode::NEW_MESSAGE;
+
                     rsEvents->postEvent(ev);
 #ifdef POSTBASE_DEBUG
                     std::cerr << "p3PostBase::notifyChanges() Found Message Change Notification: NEW/PUBLISHED ID=" << msgChange->mMsgId << " in group " << msgChange->mGroupId << ", thread ID = " << msgChange->mNewMsgItem->meta.mThreadId << std::endl;

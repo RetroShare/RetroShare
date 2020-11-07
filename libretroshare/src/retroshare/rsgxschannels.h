@@ -116,6 +116,8 @@ enum class RsChannelEventCode: uint8_t
 	RECEIVED_DISTANT_SEARCH_RESULT  = 0x08, // result for the given group id available for the given turtle request id
 	STATISTICS_CHANGED              = 0x09, // stats (nb of supplier friends, how many msgs they have etc) has changed
     SYNC_PARAMETERS_UPDATED         = 0x0a, // sync and storage times have changed
+    NEW_COMMENT                     = 0x0b, // new comment arrived/published. mChannelThreadId gives the ID of the commented message
+    NEW_VOTE                        = 0x0c, // new vote arrived/published. mChannelThreadId gives the ID of the votes message comment
 };
 
 struct RsGxsChannelEvent: RsEvent
@@ -125,6 +127,7 @@ struct RsGxsChannelEvent: RsEvent
 	RsChannelEventCode mChannelEventCode;
 	RsGxsGroupId mChannelGroupId;
 	RsGxsMessageId mChannelMsgId;
+    RsGxsMessageId mChannelThreadId;
 
 	///* @see RsEvent @see RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override

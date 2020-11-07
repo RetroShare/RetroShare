@@ -259,7 +259,15 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 					ev->mChannelMsgId = msgChange->mMsgId;
 					ev->mChannelGroupId = msgChange->mGroupId;
-					ev->mChannelEventCode = RsChannelEventCode::NEW_MESSAGE;
+
+                    if(nullptr != dynamic_cast<RsGxsCommentItem*>(msgChange->mNewMsgItem))
+                        ev->mChannelEventCode = RsChannelEventCode::NEW_COMMENT;
+                    else
+                        if(nullptr != dynamic_cast<RsGxsVoteItem*>(msgChange->mNewMsgItem))
+                            ev->mChannelEventCode = RsChannelEventCode::NEW_VOTE;
+                        else
+                            ev->mChannelEventCode = RsChannelEventCode::NEW_MESSAGE;
+
 					rsEvents->postEvent(ev);
 				}
 			}
