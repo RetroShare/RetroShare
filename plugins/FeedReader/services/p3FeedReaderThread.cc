@@ -49,7 +49,7 @@ p3FeedReaderThread::~p3FeedReaderThread()
 /****************************** Thread *************************************/
 /***************************************************************************/
 
-void p3FeedReaderThread::data_tick()
+void p3FeedReaderThread::threadTick()
 {
 		rstime::rs_usleep(1000000);
 

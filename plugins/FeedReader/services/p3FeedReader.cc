@@ -321,7 +321,7 @@ void p3FeedReader::stop()
 		/* stop threads */
 		std::list<p3FeedReaderThread*>::iterator it;
 		for (it = mThreads.begin(); it != mThreads.end(); ++it) {
-			(*it)->join();
+			(*it)->fullstop();
 			delete(*it);
 		}
 		mThreads.clear();
@@ -331,12 +331,12 @@ void p3FeedReader::stop()
 void p3FeedReader::stopPreviewThreads_locked()
 {
 	if (mPreviewDownloadThread) {
-		mPreviewDownloadThread->join();
+		mPreviewDownloadThread->fullstop();
 		delete mPreviewDownloadThread;
 		mPreviewDownloadThread = NULL;
 	}
 	if (mPreviewProcessThread) {
-		mPreviewProcessThread->join();
+		mPreviewProcessThread->fullstop();
 		delete mPreviewProcessThread;
 		mPreviewProcessThread = NULL;
 	}
