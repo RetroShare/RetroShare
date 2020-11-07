@@ -1742,7 +1742,13 @@ bool 	pqissl::moretoread(uint32_t usec)
 	{
 		rslog(RSL_ALERT, pqisslzone, 
 			"pqissl::moretoread() Select ERROR!");
-		RS_WARN(errno);
+		RS_WARN(strerror(errno));
+
+		if (errno == EBADF) {
+			// happens when SAM is shut down
+			rslog(RSL_ALERT, pqisslzone, "pqissl::moretoread() -> calling reset()");
+			reset_locked();
+		}
 		return 0;
 	}
 
