@@ -41,7 +41,7 @@ class ImHistoryBrowser : public QDialog
 
 public:
     /** Default constructor */
-    ImHistoryBrowser(const ChatId &chatId, QTextEdit *edit, QWidget *parent = 0);
+    ImHistoryBrowser(const ChatId &chatId, QTextEdit *edit,const QString &chatTitle, QWidget *parent = 0);
     /** Default destructor */
     virtual ~ImHistoryBrowser();
 

@@ -37,16 +37,21 @@ public:
 	p3History(p3HistoryMgr* historyMgr);
 	virtual ~p3History();
 
-    virtual bool getMessages(const ChatId &chatPeerId, std::list<HistoryMsg> &msgs, uint32_t loadCount);
+	virtual bool chatIdToVirtualPeerId(const ChatId &chat_id, RsPeerId &peer_id);
+	virtual bool getMessages(const ChatId &chatPeerId, std::list<HistoryMsg> &msgs, uint32_t loadCount);
 	virtual bool getMessage(uint32_t msgId, HistoryMsg &msg);
 	virtual void removeMessages(const std::list<uint32_t> &msgIds);
-    virtual void clear(const ChatId &chatPeerId);
+	virtual void clear(const ChatId &chatPeerId);
+
 	virtual bool getEnable(uint32_t chat_type);
 	virtual void setEnable(uint32_t chat_type, bool enable);
+
+	virtual uint32_t getMaxStorageDuration();
+	virtual void     setMaxStorageDuration(uint32_t seconds);
+
+	// 0 = no limit, >0 count of saved messages
 	virtual uint32_t getSaveCount(uint32_t chat_type);
-	virtual void setSaveCount(uint32_t chat_type, uint32_t count);
-	virtual void setMaxStorageDuration(uint32_t seconds) ;
-	virtual uint32_t getMaxStorageDuration() ;
+	virtual void     setSaveCount(uint32_t chat_type, uint32_t count);
 
 private:
 	p3HistoryMgr* mHistoryMgr;
