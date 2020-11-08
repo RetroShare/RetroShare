@@ -669,23 +669,20 @@ void GxsCommentTreeWidget::addItem(RsGxsMessageId itemId, RsGxsMessageId parentI
 int treeCount(QTreeWidget *tree, QTreeWidgetItem *parent = 0)
 {
     int count = 0;
-    if (parent == 0) {
+    if (parent == 0)
+    {
         int topCount = tree->topLevelItemCount();
-        for (int i = 0; i < topCount; i++) {
-            QTreeWidgetItem *item = tree->topLevelItem(i);
-            if (item->isExpanded()) {
-                count += treeCount(tree, item);
-            }
-        }
+        for (int i = 0; i < topCount; i++)
+            count += treeCount(tree, tree->topLevelItem(i));
+
         count += topCount;
-    } else {
+    }
+    else
+    {
         int childCount = parent->childCount();
-        for (int i = 0; i < childCount; i++) {
-            QTreeWidgetItem *item = parent->child(i);
-            if (item->isExpanded()) {
-                count += treeCount(tree, item);
-            }
-        }
+        for (int i = 0; i < childCount; i++)
+            count += treeCount(tree, parent->child(i));
+
         count += childCount;
     }
     return count;
