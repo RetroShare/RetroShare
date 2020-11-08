@@ -414,8 +414,8 @@
              <string>Directory</string>
             </property>
             <property name="icon">
-             <iconset>
-              <normaloff>:/images/folder16.png</normaloff>:/images/folder16.png</iconset>
+             <iconset resource="../images.qrc">
+              <normaloff>:/images/foldermail.png</normaloff>:/images/foldermail.png</iconset>
             </property>
            </item>
           </widget>
@@ -441,8 +441,8 @@
             <string>Download selected</string>
            </property>
            <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/download16.png</normaloff>:/images/download16.png</iconset>
+            <iconset resource="../icons.qrc">
+             <normaloff>:/icons/png/download.png</normaloff>:/icons/png/download.png</iconset>
            </property>
           </widget>
          </item>
