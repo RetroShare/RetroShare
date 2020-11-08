@@ -41,8 +41,8 @@ public:
 	AddFeedDialog(RsFeedReader *feedReader, FeedReaderNotify *notify, QWidget *parent);
 	~AddFeedDialog();
 
-	void setParent(const std::string &parentId);
-	bool fillFeed(const std::string &feedId);
+	void setParent(uint32_t parentId);
+	bool fillFeed(uint32_t feedId);
 
 	/* TokenResponse */
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
@@ -70,8 +70,8 @@ private:
 private:
 	RsFeedReader *mFeedReader;
 	FeedReaderNotify *mNotify;
-	std::string mFeedId;
-	std::string mParentId;
+	uint32_t mFeedId;
+	uint32_t mParentId;
 	std::string mFillForumId;
 
 	RsFeedTransformationType mTransformationType;

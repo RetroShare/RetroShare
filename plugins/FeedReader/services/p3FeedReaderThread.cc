@@ -36,7 +36,7 @@ enum FeedFormat { FORMAT_RSS, FORMAT_RDF, FORMAT_ATOM };
  * #define FEEDREADER_DEBUG
  *********/
 
-p3FeedReaderThread::p3FeedReaderThread(p3FeedReader *feedReader, Type type, const std::string &feedId) :
+p3FeedReaderThread::p3FeedReaderThread(p3FeedReader *feedReader, Type type, uint32_t feedId) :
     RsTickingThread(), mFeedReader(feedReader), mType(type), mFeedId(feedId)
 {
 }
@@ -49,7 +49,7 @@ p3FeedReaderThread::~p3FeedReaderThread()
 /****************************** Thread *************************************/
 /***************************************************************************/
 
-void p3FeedReaderThread::data_tick()
+void p3FeedReaderThread::threadTick()
 {
 		rstime::rs_usleep(1000000);
 

@@ -143,6 +143,8 @@ PreviewFeedDialog::PreviewFeedDialog(RsFeedReader *feedReader, FeedReaderNotify 
 {
 	ui->setupUi(this);
 
+	mFeedId = 0;
+
 	ui->feedNameLabel->clear();
 
 	/* connect signals */
@@ -155,8 +157,8 @@ PreviewFeedDialog::PreviewFeedDialog(RsFeedReader *feedReader, FeedReaderNotify 
 	connect(ui->xpathRemoveListWidget->itemDelegate(), SIGNAL(closeEditor(QWidget*,QAbstractItemDelegate::EndEditHint)), this, SLOT(xpathCloseEditor(QWidget*,QAbstractItemDelegate::EndEditHint)));
 	connect(ui->transformationTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(transformationTypeChanged()));
 
-	connect(mNotify, SIGNAL(feedChanged(QString,int)), this, SLOT(feedChanged(QString,int)));
-	connect(mNotify, SIGNAL(msgChanged(QString,QString,int)), this, SLOT(msgChanged(QString,QString,int)));
+	connect(mNotify, &FeedReaderNotify::feedChanged, this, &PreviewFeedDialog::feedChanged, Qt::QueuedConnection);
+	connect(mNotify, &FeedReaderNotify::msgChanged, this, &PreviewFeedDialog::msgChanged, Qt::QueuedConnection);
 
 	ui->transformationTypeComboBox->addItem(FeedReaderStringDefs::transforationTypeString(RS_FEED_TRANSFORMATION_TYPE_NONE), RS_FEED_TRANSFORMATION_TYPE_NONE);
 	ui->transformationTypeComboBox->addItem(FeedReaderStringDefs::transforationTypeString(RS_FEED_TRANSFORMATION_TYPE_XPATH), RS_FEED_TRANSFORMATION_TYPE_XPATH);
@@ -217,7 +219,7 @@ PreviewFeedDialog::~PreviewFeedDialog()
 	disconnect(mNotify);
 	disconnect(mNotify);
 
-	if (!mFeedId.empty()) {
+	if (mFeedId) {
 		mFeedReader->removeFeed(mFeedId);
 	}
 
@@ -282,19 +284,19 @@ bool PreviewFeedDialog::eventFilter(QObject *obj, QEvent *event)
 	return QDialog::eventFilter(obj, event);
 }
 
-void PreviewFeedDialog::feedChanged(const QString &feedId, int type)
+void PreviewFeedDialog::feedChanged(uint32_t feedId, int type)
 {
-	if (feedId.isEmpty()) {
+	if (feedId == 0) {
 		return;
 	}
 
-	if (feedId.toStdString() != mFeedId) {
+	if (feedId != mFeedId) {
 		return;
 	}
 
 	if (type == NOTIFY_TYPE_DEL) {
 		/* feed deleted */
-		mFeedId.clear();
+		mFeedId = 0;
 		return;
 	}
 
@@ -307,13 +309,13 @@ void PreviewFeedDialog::feedChanged(const QString &feedId, int type)
 	}
 }
 
-void PreviewFeedDialog::msgChanged(const QString &feedId, const QString &msgId, int type)
+void PreviewFeedDialog::msgChanged(uint32_t feedId, const QString &msgId, int type)
 {
-	if (feedId.isEmpty() || msgId.isEmpty()) {
+	if (feedId == 0 || msgId.isEmpty()) {
 		return;
 	}
 
-	if (feedId.toStdString() != mFeedId) {
+	if (feedId != mFeedId) {
 		return;
 	}
 

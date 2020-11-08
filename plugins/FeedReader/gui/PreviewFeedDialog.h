@@ -77,8 +77,8 @@ private slots:
 	void transformationTypeChanged();
 
 	/* FeedReaderNotify */
-	void feedChanged(const QString &feedId, int type);
-	void msgChanged(const QString &feedId, const QString &msgId, int type);
+	void feedChanged(uint32_t feedId, int type);
+	void msgChanged(uint32_t feedId, const QString &msgId, int type);
 
 private:
 	void processSettings(bool load);
@@ -93,7 +93,7 @@ private:
 
 	RsFeedReader *mFeedReader;
 	FeedReaderNotify *mNotify;
-	std::string mFeedId;
+	uint32_t mFeedId;
 	std::string mMsgId;
 	std::list<std::string> mMsgIds;
 	std::string mDescription;
