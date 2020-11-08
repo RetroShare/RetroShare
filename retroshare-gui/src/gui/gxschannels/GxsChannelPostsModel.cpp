@@ -76,24 +76,18 @@ void updateCommentCounts( std::vector<RsGxsChannelPost>& posts, std::vector<RsGx
 {
     // Store posts IDs in a std::map to avoid a quadratic cost
 
-    std::cerr << "Updating comment counts for " << posts.size() << " posts." << std::endl;
     std::map<RsGxsMessageId,uint32_t> post_indices;
 
     for(uint32_t i=0;i<posts.size();++i)
     {
         post_indices[posts[i].mMeta.mMsgId] = i;
         posts[i].mCommentCount = 0;	// should be 0 already, but we secure that value.
-
-        std::cerr << "  Zeroing comments for post " << posts[i].mMeta.mMsgId << std::endl;
     }
 
     // now look into comments and increase the count
 
     for(uint32_t i=0;i<comments.size();++i)
-    {
-        std::cerr << "  Found new comment " << comments[i].mMeta.mMsgId << " for post" << comments[i].mMeta.mThreadId << std::endl;
         ++posts[post_indices[comments[i].mMeta.mThreadId]].mCommentCount;
-    }
 }
 
 
@@ -127,6 +121,9 @@ void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEve
 					std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel message data for channel/msg " << e->mChannelGroupId << "/" << e->mChannelMsgId << std::endl;
 					return;
 				}
+
+                // Need to call this in order to get the actuall comment count. The previous call only retrieves the message, since we supplied the message ID.
+                // another way to go would be to save the comment ids of the existing message and re-insert them before calling getChannelContent.
 
                 if(!rsGxsChannels->getChannelComments(mChannelGroup.mMeta.mGroupId,std::set<RsGxsMessageId>{ e->mChannelMsgId },comments))
                 {
@@ -227,8 +224,6 @@ void RsGxsChannelPostsModel::setFilter(const QStringList& strings,bool only_unre
     }
 
     count = mFilteredPosts.size();
-
-    std::cerr << "After filtering: " << count << " posts remain." << std::endl;
 
 	beginInsertRows(QModelIndex(),0,rowCount()-1);
     endInsertRows();

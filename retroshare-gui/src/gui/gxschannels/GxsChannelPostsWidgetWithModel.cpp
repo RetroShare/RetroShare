@@ -183,7 +183,6 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
                 p.drawPixmap(mZoom*QPoint(0.1*fm.height(),-3.4*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(mZoom*6*fm.height(),mZoom*6*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
             }
 
-            std::cerr << "mCommentCount=" << post.mCommentCount << std::endl;
             if(post.mCommentCount)
             {
                 QPainter p(&pixmap);
@@ -856,6 +855,8 @@ void GxsChannelPostsWidgetWithModel::updateGroupData()
                 std::cerr << "Old group: " << mGroup.mMeta.mGroupId << ", new group: " << group.mMeta.mGroupId << ". Celaring selection" << std::endl;
 #endif
                 whileBlocking(ui->postsTree->selectionModel())->clear();
+                whileBlocking(ui->commentsDialog)->commentClear();
+                updateCommentsCount(0);
             }
 
             mGroup = group;
