@@ -187,24 +187,6 @@ ShareManager QPushButton#addButton:hover{
 	padding: 4px;
 }
 
-SearchDialog QPushButton#pushButtonSearch {
-	font: bold;
-	font-size: 15px;
-	color: white;
-	background: #32CD32;
-	border-radius: 4px;
-	max-height: 25px;
-	min-width: 4em;
-	padding: 4px;
-}
-
-SearchDialog QPushButton#pushButtonSearch:hover{
-	background: #5AD75A;
-	border-radius: 4px;
-	min-width: 4em;
-	padding: 4px;
-}
-
 CreateGxsForumMsg QPushButton#postButton:disabled, PostedCreatePostDialog QPushButton#submitButton:disabled,
 CreateGxsChannelMsg QPushButton#postButton:disabled, GxsCreateCommentDialog QPushButton#postButton:disabled {
 	font: bold;
