@@ -86,6 +86,13 @@ GxsCommentDialog::~GxsCommentDialog()
 	delete(ui);
 }
 
+void GxsCommentDialog::commentClear()
+{
+    ui->treeWidget->clear();
+    mGrpId.clear();
+    mMostRecentMsgId.clear();
+    mMsgVersions.clear();
+}
 void GxsCommentDialog::commentLoad(const RsGxsGroupId &grpId, const std::set<RsGxsMessageId>& msg_versions,const RsGxsMessageId& most_recent_msgId,bool use_cache)
 {
 	std::cerr << "GxsCommentDialog::commentLoad(" << grpId << ", most recent msg version: " << most_recent_msgId << ")";

@@ -307,7 +307,7 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 						if(old_forum_grp_item == nullptr || new_forum_grp_item == nullptr)
 						{
-							RsErr() << __PRETTY_FUNCTION__ << " received GxsGroupUpdate item with mOldGroup and mNewGroup not of type RsGxsForumGroupItem. This is inconsistent!" << std::endl;
+                            RsErr() << __PRETTY_FUNCTION__ << " received GxsGroupUpdate item with mOldGroup and mNewGroup not of type RsGxsForumGroupItem or NULL. This is inconsistent!" << std::endl;
 							delete grpChange;
 							continue;
 						}
@@ -335,6 +335,29 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 							rsEvents->postEvent(ev);
 						}
+
+                        // check the list of pinned posts
+
+                        std::list<RsGxsMessageId> added_pins, removed_pins;
+
+                        for(auto& msg_id: new_forum_grp_item->mGroup.mPinnedPosts.ids)
+                            if(old_forum_grp_item->mGroup.mPinnedPosts.ids.find(msg_id) == old_forum_grp_item->mGroup.mPinnedPosts.ids.end())
+                                added_pins.push_back(msg_id);
+
+                        for(auto& msg_id: old_forum_grp_item->mGroup.mPinnedPosts.ids)
+                            if(new_forum_grp_item->mGroup.mPinnedPosts.ids.find(msg_id) == new_forum_grp_item->mGroup.mPinnedPosts.ids.end())
+                                removed_pins.push_back(msg_id);
+
+                        if(!added_pins.empty() || !removed_pins.empty())
+                        {
+                            auto ev = std::make_shared<RsGxsForumEvent>();
+
+                            ev->mForumGroupId = new_forum_grp_item->meta.mGroupId;
+                            ev->mForumEventCode = RsForumEventCode::PINNED_POSTS_CHANGED;
+
+                            rsEvents->postEvent(ev);
+                        }
+
 					}
                         break;
 

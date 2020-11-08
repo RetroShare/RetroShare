@@ -160,8 +160,11 @@ p, li { white-space: pre-wrap; }
         <property name="styleSheet">
          <string notr="true"/>
         </property>
+        <property name="acceptRichText">
+         <bool>false</bool>
+        </property>
         <property name="placeholderText">
-         <string>Type your comment</string>
+         <string>Type in your comment</string>
         </property>
        </widget>
       </item>
@@ -254,9 +257,6 @@ p, li { white-space: pre-wrap; }
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../icons.qrc"/>
-  <include location="../images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

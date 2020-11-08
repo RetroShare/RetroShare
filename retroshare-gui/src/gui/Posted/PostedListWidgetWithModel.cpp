@@ -146,7 +146,7 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
 	painter->restore();
 }
 
-QSize PostedPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
+QSize PostedPostDelegate::sizeHint(const QStyleOptionViewItem&, const QModelIndex& index) const
 {
     // This is the only place where we actually set the size of cells
 
@@ -474,7 +474,8 @@ void PostedListWidgetWithModel::handleEvent_main_thread(std::shared_ptr<const Rs
 
 	switch(e->mPostedEventCode)
 	{
-        case RsPostedEventCode::NEW_MESSAGE:     // [[fallthrough]];
+        case RsPostedEventCode::NEW_COMMENT:     // [[fallthrough]];
+        case RsPostedEventCode::NEW_VOTE:        // [[fallthrough]];
         {
             // special treatment here because the message might be a comment, so we need to refresh the comment tab if openned
 
@@ -486,6 +487,7 @@ void PostedListWidgetWithModel::handleEvent_main_thread(std::shared_ptr<const Rs
                     t->refresh();
             }
         }
+        case RsPostedEventCode::NEW_MESSAGE:          // [[fallthrough]];
         case RsPostedEventCode::NEW_POSTED_GROUP:     // [[fallthrough]];
 		case RsPostedEventCode::UPDATED_POSTED_GROUP: // [[fallthrough]];
 		case RsPostedEventCode::UPDATED_MESSAGE:
@@ -877,8 +879,10 @@ void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
         sync_string = tr("Unknown");
     }
 
-    if(group.mMeta.mLastPost > 0 && group.mMeta.mLastPost + rsPosted->getSyncPeriod(group.mMeta.mGroupId) < time(NULL) && IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
-        sync_string += " (Warning: will not allow latest posts to sync)";
+    auto sync_period = rsPosted->getSyncPeriod(group.mMeta.mGroupId) ;
+
+    if(sync_period > 0 && group.mMeta.mLastPost > 0 && group.mMeta.mLastPost + sync_period < time(NULL) && IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
+        sync_string += " (Warning: will not allow posts to sync)";
 
     ui->syncPeriodLabel->setText(sync_string);
 

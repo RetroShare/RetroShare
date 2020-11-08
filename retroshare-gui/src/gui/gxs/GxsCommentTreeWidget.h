@@ -47,7 +47,12 @@ public:
     void setVoteId(const RsGxsId &voterId);
 
     void setUseCache(bool b) { mUseCache = b ;}
+
+protected slots:
+    void updateContent();
+
 protected:
+    void mouseMoveEvent(QMouseEvent *e) override;
 
     /* to be overloaded */
     virtual void service_requestComments(const RsGxsGroupId &group_id, const std::set<RsGxsMessageId> &msgIds);

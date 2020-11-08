@@ -76,6 +76,7 @@ QColor SelectedColor = QRgb(0xff308dc7);
 #define COLUMN_SIZE_FONT_FACTOR_H  10
 
 #define STAR_OVERLAY_IMAGE ":icons/star_overlay_128.png"
+#define COMMENT_OVERLAY_IMAGE ":images/white-bubble-64.png"
 #define IMAGE_COPYLINK     ":icons/png/copy.png"
 #define IMAGE_GRID_VIEW    ":icons/png/menu.png"
 #define IMAGE_DOWNLOAD     ":icons/png/download.png"
@@ -179,8 +180,19 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
                 QPainter p(&pixmap);
                 QFontMetricsF fm(option.font);
 
-                p.drawPixmap(mZoom*QPoint(0.1*fm.height(),-3.6*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(mZoom*7*fm.height(),mZoom*7*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
+                p.drawPixmap(mZoom*QPoint(0.1*fm.height(),-3.4*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(mZoom*6*fm.height(),mZoom*6*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
             }
+
+            if(post.mCommentCount)
+            {
+                QPainter p(&pixmap);
+                QFontMetricsF fm(option.font);
+
+                p.drawPixmap(QPoint(pixmap.width(),0.0)+mZoom*QPoint(-2.9*fm.height(),0.4*fm.height()),
+                             FilesDefs::getPixmapFromQtResourcePath(COMMENT_OVERLAY_IMAGE).scaled(mZoom*3*fm.height(),mZoom*3*fm.height(),
+                                                                                                  Qt::KeepAspectRatio,Qt::SmoothTransformation));
+            }
+
         }
 
         painter->drawPixmap(option.rect.topLeft(),
@@ -222,8 +234,8 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 
         QString info_text = QDateTime::fromMSecsSinceEpoch(qint64(1000)*post.mMeta.mPublishTs).toString(Qt::DefaultLocaleShortDate);
 
-        if(post.mCount > 0)
-            info_text += ", " + QString::number(post.mCount)+ " " +((post.mCount>1)?tr("files"):tr("file")) + " (" + misc::friendlyUnit(qulonglong(post.mSize)) + ")" ;
+        if(post.mAttachmentCount > 0)
+            info_text += ", " + QString::number(post.mAttachmentCount)+ " " +((post.mAttachmentCount>1)?tr("files"):tr("file")) + " (" + misc::friendlyUnit(qulonglong(post.mSize)) + ")" ;
 
         painter->drawText(QPoint(p.x()+0.5*font_height,y),info_text);
         y += font_height;
@@ -738,7 +750,9 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
 	switch(e->mChannelEventCode)
 	{
 		case RsChannelEventCode::NEW_CHANNEL:     // [[fallthrough]];
-		case RsChannelEventCode::UPDATED_CHANNEL: // [[fallthrough]];
+        case RsChannelEventCode::NEW_COMMENT:     // [[fallthrough]];
+        case RsChannelEventCode::NEW_VOTE:        // [[fallthrough]];
+        case RsChannelEventCode::UPDATED_CHANNEL: // [[fallthrough]];
 		case RsChannelEventCode::NEW_MESSAGE:     // [[fallthrough]];
 		case RsChannelEventCode::UPDATED_MESSAGE:
         case RsChannelEventCode::SYNC_PARAMETERS_UPDATED:
@@ -756,7 +770,10 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 {
     QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
 	RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
-	
+#ifdef DEBUG_CHANNEL_POSTS_WIDGET
+    std::cerr << "showPostDetails: current index is " << index.row() << "," << index.column() << std::endl;
+#endif
+
     QTextDocument doc;
 	doc.setHtml(post.mMsg.c_str());
 
@@ -768,6 +785,7 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 		ui->postTime_LB->hide();
         mChannelPostFilesModel->clear();
         ui->details_TW->setEnabled(false);
+        mSelectedPost.clear();
 
         return;
     }
@@ -777,7 +795,9 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 	ui->postName_LB->show();
 	ui->postTime_LB->show();
 
-	std::cerr << "showPostDetails: setting mSelectedPost to current post Id " << post.mMeta.mMsgId << ". Previous value: " << mSelectedPost << std::endl;
+#ifdef DEBUG_CHANNEL_POSTS_WIDGET
+    std::cerr << "showPostDetails: setting mSelectedPost to current post Id " << post.mMeta.mMsgId << ". Previous value: " << mSelectedPost << std::endl;
+#endif
     mSelectedPost = post.mMeta.mMsgId;
 
 	std::list<ChannelPostFileInfo> files;
@@ -791,7 +811,9 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 
     ui->commentsDialog->commentLoad(post.mMeta.mGroupId, all_msgs_versions, post.mMeta.mMsgId,true);
 
+#ifdef DEBUG_CHANNEL_POSTS_WIDGET
     std::cerr << "Showing details about selected index : "<< index.row() << "," << index.column() << std::endl;
+#endif
 
     ui->postDetails_TE->setText(RsHtml().formatText(NULL, QString::fromUtf8(post.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 
@@ -864,6 +886,16 @@ void GxsChannelPostsWidgetWithModel::updateGroupData()
 
 		RsQThreadUtils::postToObject( [this,group]()
         {
+            if(mGroup.mMeta.mGroupId != group.mMeta.mGroupId) // this prevents any attempt to display the wrong index. Navigate() if needed will use mSelectedPost
+            {
+#ifdef DEBUG_CHANNEL_POSTS_WIDGET
+                std::cerr << "Old group: " << mGroup.mMeta.mGroupId << ", new group: " << group.mMeta.mGroupId << ". Celaring selection" << std::endl;
+#endif
+                whileBlocking(ui->postsTree->selectionModel())->clear();
+                whileBlocking(ui->commentsDialog)->commentClear();
+                updateCommentsCount(0);
+            }
+
             mGroup = group;
 			mChannelPostsModel->updateChannel(groupId());
             whileBlocking(ui->filterLineEdit)->clear();
@@ -1132,8 +1164,10 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
         sync_string = tr("Unknown");
     }
 
-    if(group.mMeta.mLastPost > 0 && group.mMeta.mLastPost + rsGxsChannels->getSyncPeriod(group.mMeta.mGroupId) < time(NULL) && IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
-        sync_string += " (Warning: will not allow latest posts to sync)";
+    auto sync_period = rsGxsChannels->getSyncPeriod(group.mMeta.mGroupId) ;
+
+    if(sync_period > 0 && group.mMeta.mLastPost > 0 && group.mMeta.mLastPost + rsGxsChannels->getSyncPeriod(group.mMeta.mGroupId) < time(NULL) && IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
+        sync_string += " (Warning: will not allow posts to sync)";
 
     ui->infoSyncTimeLabel->setText(sync_string);
 

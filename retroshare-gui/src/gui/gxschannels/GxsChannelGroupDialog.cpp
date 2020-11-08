@@ -37,7 +37,7 @@ const uint32_t ChannelCreateEnabledFlags = (
 			// GXS_GROUP_FLAGS_PUBLISHSIGN   |
 			// GXS_GROUP_FLAGS_SHAREKEYS     |	// disabled because the UI doesn't handle it, so no need to show the disabled button. The user can do it in a second step from the channel menu.
 			// GXS_GROUP_FLAGS_PERSONALSIGN  |
-			GXS_GROUP_FLAGS_COMMENTS      |
+            // GXS_GROUP_FLAGS_COMMENTS      |  // disabled because the UI doesn't handle it yet. Better to hide it then.
 			0);
 			
 const uint32_t ChannelCreateDefaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC    |

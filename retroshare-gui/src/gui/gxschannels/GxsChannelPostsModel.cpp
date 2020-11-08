@@ -72,6 +72,25 @@ void RsGxsChannelPostsModel::setMode(TreeMode mode)
     triggerViewUpdate();
 }
 
+void updateCommentCounts( std::vector<RsGxsChannelPost>& posts, std::vector<RsGxsComment>& comments)
+{
+    // Store posts IDs in a std::map to avoid a quadratic cost
+
+    std::map<RsGxsMessageId,uint32_t> post_indices;
+
+    for(uint32_t i=0;i<posts.size();++i)
+    {
+        post_indices[posts[i].mMeta.mMsgId] = i;
+        posts[i].mCommentCount = 0;	// should be 0 already, but we secure that value.
+    }
+
+    // now look into comments and increase the count
+
+    for(uint32_t i=0;i<comments.size();++i)
+        ++posts[post_indices[comments[i].mMeta.mThreadId]].mCommentCount;
+}
+
+
 void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 {
 	const RsGxsChannelEvent *e = dynamic_cast<const RsGxsChannelEvent*>(event.get());
@@ -88,24 +107,44 @@ void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEve
 		//
 		// We need to update the data!
 
-		if(e->mChannelGroupId == mChannelGroup.mMeta.mGroupId)
-			RsThread::async([this, e]()
+        // make a copy of e, so as to avoid destruction of the shared pointer during async thread execution, since [e] doesn't actually tell
+        // the shared_ptr that it is copied! So no counter is updated.
+        RsGxsChannelEvent E(*e);
+
+        if(E.mChannelGroupId == mChannelGroup.mMeta.mGroupId)
+            RsThread::async([this, E]()
 			{
-				// 1 - get message data from p3GxsChannels
+                // 1 - get message data from p3GxsChannels. No need for pointers here, because we send only a single post to postToObject()
 
 				std::vector<RsGxsChannelPost> posts;
 				std::vector<RsGxsComment>     comments;
 				std::vector<RsGxsVote>        votes;
 
-                if(!rsGxsChannels->getChannelContent(mChannelGroup.mMeta.mGroupId,std::set<RsGxsMessageId>{ e->mChannelMsgId }, posts,comments,votes))
+                std::cerr << "display of e 1: " << E << std::endl;
+
+                if(!rsGxsChannels->getChannelContent(E.mChannelGroupId,std::set<RsGxsMessageId>{ E.mChannelMsgId }, posts,comments,votes))
 				{
-					std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel message data for channel/msg " << e->mChannelGroupId << "/" << e->mChannelMsgId << std::endl;
+                    std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel message data for channel/msg " << E.mChannelGroupId << "/" << E.mChannelMsgId << std::endl;
 					return;
 				}
 
-				// 2 - update the model in the UI thread.
+                // Need to call this in order to get the actuall comment count. The previous call only retrieves the message, since we supplied the message ID.
+                // another way to go would be to save the comment ids of the existing message and re-insert them before calling getChannelContent.
 
-				RsQThreadUtils::postToObject( [posts,comments,votes,this]()
+                std::cerr << "display of e 2: " << E << std::endl;
+                std::cerr << "Before call : IS_MSG_READ=" << IS_MSG_NEW(posts[0].mMeta.mMsgFlags) <<  " for message id " << E.mChannelMsgId << std::endl;
+                if(!rsGxsChannels->getChannelComments(E.mChannelGroupId,std::set<RsGxsMessageId>{ E.mChannelMsgId },comments))
+                {
+                    std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve message comment data for channel/msg " << E.mChannelGroupId << "/" << E.mChannelMsgId << std::endl;
+                    return;
+                }
+
+                updateCommentCounts(posts,comments);
+
+                std::cerr << "After  call : IS_MSG_READ=" << IS_MSG_NEW(posts[0].mMeta.mMsgFlags) << std::endl;
+                // 2 - update the model in the UI thread.
+
+                RsQThreadUtils::postToObject( [posts,this]()
 				{
 					for(uint32_t i=0;i<posts.size();++i)
 					{
@@ -113,7 +152,7 @@ void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEve
 
 						for(uint32_t j=0;j<mPosts.size();++j)
 							if(mPosts[j].mMeta.mMsgId == posts[i].mMeta.mMsgId)
-							{
+                            {
 								mPosts[j] = posts[i];
 
                                 triggerViewUpdate();
@@ -121,10 +160,10 @@ void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEve
 					}
 				},this);
             });
+        }
 
 	default:
 			break;
-		}
 	}
 }
 
@@ -195,9 +234,7 @@ void RsGxsChannelPostsModel::setFilter(const QStringList& strings,bool only_unre
 
     count = mFilteredPosts.size();
 
-    std::cerr << "After filtering: " << count << " posts remain." << std::endl;
-
-	beginInsertRows(QModelIndex(),0,rowCount()-1);
+    beginInsertRows(QModelIndex(),0,rowCount()-1);
     endInsertRows();
 
 	postMods();
@@ -326,7 +363,7 @@ bool RsGxsChannelPostsModel::setNumColumns(int n)
         RsErr() << __PRETTY_FUNCTION__ << " Attempt to set a number of column of 0. This is wrong." << std::endl;
         return false;
     }
-    if(mColumns == n)
+    if((int)mColumns == n)
         return false;
 
 	preMods();
@@ -556,6 +593,15 @@ void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
 			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel messages for channel " << group_id << std::endl;
 			return;
 		}
+        std::cerr << "Got channel all content for channel " << group_id << std::endl;
+        std::cerr << "  posts   : " << posts->size() << std::endl;
+        std::cerr << "  comments: " << comments->size() << std::endl;
+        std::cerr << "  votes   : " << votes->size() << std::endl;
+
+        // This shouldn't be needed normally. We need it until a background process computes the number of comments per
+        // post and stores it in the service string. Since we request all data, this process isn't costing much anyway.
+
+        updateCommentCounts(*posts,*comments);
 
         // 2 - update the model in the UI thread.
 
