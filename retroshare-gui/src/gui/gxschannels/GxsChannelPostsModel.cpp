@@ -72,6 +72,31 @@ void RsGxsChannelPostsModel::setMode(TreeMode mode)
     triggerViewUpdate();
 }
 
+void updateCommentCounts( std::vector<RsGxsChannelPost>& posts, std::vector<RsGxsComment>& comments)
+{
+    // Store posts IDs in a std::map to avoid a quadratic cost
+
+    std::cerr << "Updating comment counts for " << posts.size() << " posts." << std::endl;
+    std::map<RsGxsMessageId,uint32_t> post_indices;
+
+    for(uint32_t i=0;i<posts.size();++i)
+    {
+        post_indices[posts[i].mMeta.mMsgId] = i;
+        posts[i].mCommentCount = 0;	// should be 0 already, but we secure that value.
+
+        std::cerr << "  Zeroing comments for post " << posts[i].mMeta.mMsgId << std::endl;
+    }
+
+    // now look into comments and increase the count
+
+    for(uint32_t i=0;i<comments.size();++i)
+    {
+        std::cerr << "  Found new comment " << comments[i].mMeta.mMsgId << " for post" << comments[i].mMeta.mThreadId << std::endl;
+        ++posts[post_indices[comments[i].mMeta.mThreadId]].mCommentCount;
+    }
+}
+
+
 void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 {
 	const RsGxsChannelEvent *e = dynamic_cast<const RsGxsChannelEvent*>(event.get());
@@ -91,7 +116,7 @@ void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEve
 		if(e->mChannelGroupId == mChannelGroup.mMeta.mGroupId)
 			RsThread::async([this, e]()
 			{
-				// 1 - get message data from p3GxsChannels
+                // 1 - get message data from p3GxsChannels. No need for pointers here, because we send only a single post to postToObject()
 
 				std::vector<RsGxsChannelPost> posts;
 				std::vector<RsGxsComment>     comments;
@@ -103,9 +128,17 @@ void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEve
 					return;
 				}
 
+                if(!rsGxsChannels->getChannelComments(mChannelGroup.mMeta.mGroupId,std::set<RsGxsMessageId>{ e->mChannelMsgId },comments))
+                {
+                    std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve message comment data for channel/msg " << e->mChannelGroupId << "/" << e->mChannelMsgId << std::endl;
+                    return;
+                }
+
+                updateCommentCounts(posts,comments);
+
 				// 2 - update the model in the UI thread.
 
-				RsQThreadUtils::postToObject( [posts,comments,votes,this]()
+                RsQThreadUtils::postToObject( [posts,this]()
 				{
 					for(uint32_t i=0;i<posts.size();++i)
 					{
@@ -326,7 +359,7 @@ bool RsGxsChannelPostsModel::setNumColumns(int n)
         RsErr() << __PRETTY_FUNCTION__ << " Attempt to set a number of column of 0. This is wrong." << std::endl;
         return false;
     }
-    if(mColumns == n)
+    if((int)mColumns == n)
         return false;
 
 	preMods();
@@ -522,29 +555,6 @@ void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vecto
 	emit channelPostsLoaded();
 }
 
-static void updateCommentCounts( std::vector<RsGxsChannelPost>& posts, std::vector<RsGxsComment>& comments)
-{
-    // Store posts IDs in a std::map to avoid a quadratic cost
-
-    std::map<RsGxsMessageId,uint32_t> post_indices;
-
-    for(uint32_t i=0;i<posts.size();++i)
-    {
-        post_indices[posts[i].mMeta.mMsgId] = i;
-        posts[i].mCommentCount = 0;	// should be 0 already, but we secure that value.
-
-        std::cerr << "Zeroing comments for post " << posts[i].mMeta.mMsgId << std::endl;
-    }
-
-    // now look into comments and increase the count
-
-    for(uint32_t i=0;i<comments.size();++i)
-    {
-        std::cerr << "Found new comment " << comments[i].mMeta.mMsgId << " for post" << comments[i].mMeta.mThreadId << std::endl;
-        ++posts[post_indices[comments[i].mMeta.mThreadId]].mCommentCount;
-    }
-}
-
 void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
 {
     if(group_id.isNull())
@@ -579,6 +589,10 @@ void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
 			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel messages for channel " << group_id << std::endl;
 			return;
 		}
+        std::cerr << "Got channel all content for channel " << group_id << std::endl;
+        std::cerr << "  posts   : " << posts->size() << std::endl;
+        std::cerr << "  comments: " << comments->size() << std::endl;
+        std::cerr << "  votes   : " << votes->size() << std::endl;
 
         // This shouldn't be needed normally. We need it until a background process computes the number of comments per
         // post and stores it in the service string. Since we request all data, this process isn't costing much anyway.

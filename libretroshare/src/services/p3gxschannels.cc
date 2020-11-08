@@ -485,10 +485,9 @@ bool p3GxsChannels::groupShareKeys(
  * at the moment - fix it up later
  */
 
-bool p3GxsChannels::getPostData(
-        const uint32_t &token, std::vector<RsGxsChannelPost> &msgs,
-        std::vector<RsGxsComment> &cmts,
-        std::vector<RsGxsVote> &vots)
+bool p3GxsChannels::getPostData( const uint32_t& token, std::vector<RsGxsChannelPost>& msgs,
+                                 std::vector<RsGxsComment>& cmts,
+                                 std::vector<RsGxsVote>& vots)
 {
 #ifdef GXSCHANNELS_DEBUG
 	RsDbg() << __PRETTY_FUNCTION__ << std::endl;

@@ -328,8 +328,11 @@ public:
 	        std::vector<RsGxsChannelGroup>& channelsInfo ) = 0;
 
 	/**
-	 * @brief Get all channel messages and comments in a given channel
-	 * @jsonapi{development}
+     * @brief Get all channel messages, comments and votes in a given channel
+     * @note It's the client's responsibility to figure out which message (resp. comment)
+     * a comment (resp. vote) refers to.
+     *
+     * @jsonapi{development}
 	 * @param[in] channelId id of the channel of which the content is requested
 	 * @param[out] posts storage for posts
 	 * @param[out] comments storage for the comments
@@ -342,11 +345,13 @@ public:
 	                                   std::vector<RsGxsVote>& votes ) = 0;
 
 	/**
-	 * @brief Get channel messages and comments corresponding to the given IDs.
-	 * If the set is empty, nothing is returned.
-	 * @note Since comments are internally themselves messages, it is possible
-	 * to get comments only by supplying their IDs.
-	 * @jsonapi{development}
+     * @brief Get channel messages, comments and votes corresponding to the given IDs.
+     * @note Since comments are internally themselves messages, this function actually
+     * returns the data for messages, comments or votes that have the given ID.
+     * It *does not* automatically retrieve the comments or votes for a given message
+     * which Id you supplied.
+     *
+     * @jsonapi{development}
 	 * @param[in] channelId id of the channel of which the content is requested
 	 * @param[in] contentsIds ids of requested contents
 	 * @param[out] posts storage for posts
@@ -361,8 +366,9 @@ public:
 	                                std::vector<RsGxsVote>& votes ) = 0;
 
 	/**
-	 * @brief Get channel comments corresponding to the given IDs.
+     * @brief Get channel comments corresponding to the given message IDs.
 	 * If the set is empty, nothing is returned.
+     *
 	 * @jsonapi{development}
 	 * @param[in] channelId id of the channel of which the content is requested
 	 * @param[in] contentIds ids of requested contents
