@@ -68,9 +68,9 @@ public:
 	virtual void saveDone();
 	virtual bool loadList(std::list<RsItem*>& load);
 
-private:
-    static bool chatIdToVirtualPeerId(ChatId chat_id, RsPeerId& peer_id);
+	static bool chatIdToVirtualPeerId(const ChatId& chat_id, RsPeerId& peer_id);
 
+private:
 	uint32_t nextMsgId;
 	std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> > mMessages;
 

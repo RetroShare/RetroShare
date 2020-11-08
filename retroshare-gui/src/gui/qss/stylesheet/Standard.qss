@@ -187,7 +187,8 @@ ShareManager QPushButton#addButton:hover {
 	padding: 4px;
 }
 
-CreateGxsForumMsg QPushButton#postButton:disabled, PostedCreatePostDialog QPushButton#postButton:disabled {
+CreateGxsForumMsg QPushButton#postButton:disabled, PostedCreatePostDialog QPushButton#submitButton:disabled,
+CreateGxsChannelMsg QPushButton#postButton:disabled, GxsCreateCommentDialog QPushButton#postButton:disabled {
 	font: bold;
 	font-size: 15px;
 	color: white;
@@ -202,7 +203,8 @@ CreateGxsForumMsg QPushButton#postButton:disabled, PostedCreatePostDialog QPushB
 
 GxsForumThreadWidget QLabel#forumName
 {
-  font: bold;
+	font: bold;
+	font-size: 14px;
 }
 
 CreateForumMsg > QToolBar#toolBar, CreateForumV2Msg > QToolBar#toolBar {
@@ -239,6 +241,12 @@ ChatLobbyWidget QLabel#lobbyinfo_label
 	border-radius: 6px;
 	background: #FFFFD7;
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
+}
+
+ChatLobbyWidget QLabel#lobbyname_lineEdit
+{
+	font: bold;
+	font-size: 16px;
 }
 
 ChatLobbyWidget QGroupBox#lobbyinfo_groupBox
@@ -785,7 +793,8 @@ PostedListWidgetWithModel QComboBox#sortStrategy_CB {
 	color: #0099cc;
 }
 
-PostedListWidgetWithModel QToolButton#submitPostButton {
+PostedListWidgetWithModel QToolButton#submitPostButton, GxsChannelPostsWidgetWithModel QToolButton#postButton,
+GxsForumThreadWidget QToolButton#newthreadButton {
 	font: bold;
 }
 
@@ -891,12 +900,25 @@ GxsGroupDialog QLabel#groupLogo{
 	border-radius: 3px;
 }
 
-BoardPostDisplayWidget_compact QFrame#mainFrame {
+GxsChannelGroupItem QFrame#frame, GxsForumGroupItem QFrame#frame,
+PostedGroupItem QFrame#frame {
 	background-color: white;
+}
+
+PostedItem QFrame#mainFrame {
+	background-color: white;
+}
+
+PostedItem > QFrame#mainFrame [new=false]{
+	background: white;
 }
 
 PostedItem QFrame#voteFrame {
 	background: #f8f9fa;
+}
+
+BoardPostDisplayWidget_compact QFrame#mainFrame {
+	background-color: white;
 }
 
 BoardPostDisplayWidget_compact > QFrame#mainFrame [new=false]{
@@ -1016,8 +1038,18 @@ MessagesDialog QWidget#messageTreeWidget::item:hover {
 	color: black;
 }
 
+GxsForumThreadWidget QWidget#threadTreeWidget {
+	selection-background-color: #cde8ff;
+	show-decoration-selected: 1;
+}
+
 GxsForumThreadWidget QWidget#threadTreeWidget::item {
 	padding: 2px;
+}
+
+GxsForumThreadWidget QWidget#threadTreeWidget::item:selected:active ,
+GxsForumThreadWidget QWidget#threadTreeWidget::item:selected:!active {
+	background-color: #cde8ff;
 }
 
 GxsChannelDialog GroupTreeWidget QTreeWidget#treeWidget::item{

@@ -37,6 +37,10 @@ public:
 	explicit GxsChannelFilesStatusWidget(const RsGxsFile &file, QWidget *parent = 0);
 	~GxsChannelFilesStatusWidget();
 
+signals:
+
+	void onButtonClick();
+
 private slots:
 	void check();
 	void download();

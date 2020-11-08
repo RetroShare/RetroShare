@@ -416,7 +416,7 @@ bool p3HistoryMgr::loadList(std::list<RsItem*>& load)
 }
 
 // have to convert to virtual peer id, to be able to use existing serialiser and file format
-bool p3HistoryMgr::chatIdToVirtualPeerId(ChatId chat_id, RsPeerId &peer_id)
+bool p3HistoryMgr::chatIdToVirtualPeerId(const ChatId& chat_id, RsPeerId &peer_id)
 {
     if (chat_id.isBroadcast()) {
         peer_id = RsPeerId();
