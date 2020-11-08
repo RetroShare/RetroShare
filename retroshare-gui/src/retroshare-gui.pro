@@ -623,6 +623,7 @@ HEADERS +=  rshare.h \
             gui/elastic/arrow.h \
             gui/elastic/elnode.h \
             gui/NewsFeed.h \
+            gui/feeds/BoardsCommentsItem.h \
             gui/feeds/FeedItem.h \
             gui/feeds/FeedHolder.h \
             gui/feeds/GxsCircleItem.h \
@@ -734,6 +735,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/advsearch/AdvancedSearchDialog.ui \
             gui/advsearch/expressionwidget.ui \
             gui/NewsFeed.ui \
+            gui/feeds/BoardsCommentsItem.ui \
             gui/feeds/GxsCircleItem.ui \
             gui/feeds/GxsCommentsItem.ui \
             gui/feeds/PeerItem.ui \
@@ -982,6 +984,7 @@ SOURCES +=  main.cpp \
             gui/elastic/arrow.cpp \
             gui/elastic/elnode.cpp \
             gui/NewsFeed.cpp \
+            gui/feeds/BoardsCommentsItem.cpp \
             gui/feeds/FeedItem.cpp \
             gui/feeds/FeedHolder.cpp \
             gui/feeds/GxsCircleItem.cpp \

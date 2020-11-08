@@ -37,6 +37,8 @@
 #include "util/DateTime.h"
 #include "util/stringutil.h"
 #include "gui/gxschannels/CreateGxsChannelMsg.h"
+#include "gui/gxschannels/GxsChannelDialog.h"
+#include "gui/MainWindow.h"
 
 #include <retroshare/rsidentity.h>
 
@@ -166,13 +168,16 @@ void GxsCommentsItem::setup()
 
 	connect(ui->readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
 
-    // hide voting buttons, backend is not implemented yet
-    ui->voteUpButton->hide();
-    ui->voteDownButton->hide();
+	// hide voting buttons, backend is not implemented yet
+	ui->voteUpButton->hide();
+	ui->voteDownButton->hide();
 	//connect(ui-> voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
 	//connect(ui->voteDownButton, SIGNAL(clicked()), this, SLOT(makeDownVote()));
 
 	ui->scoreLabel->hide();
+
+	// hide expand button, replies is not implemented yet
+	ui->expandButton->hide();
 
 	ui->titleLabel->setMinimumWidth(100);
 	//ui->subjectLabel->setMinimumWidth(100);
@@ -221,8 +226,14 @@ QString GxsCommentsItem::groupName()
 
 void GxsCommentsItem::loadComments()
 {
-	QString title = QString::fromUtf8(mPost.mMeta.mMsgName.c_str());
-	comments(title);
+	/* window will destroy itself! */
+	GxsChannelDialog *channelDialog = dynamic_cast<GxsChannelDialog*>(MainWindow::getPage(MainWindow::Channels));
+
+	if (!channelDialog)
+		return ;
+
+	MainWindow::showWindow(MainWindow::Channels);
+	channelDialog->navigate(mPost.mMeta.mGroupId, mPost.mMeta.mMsgId) ;
 }
 
 void GxsCommentsItem::loadGroup()
@@ -418,7 +429,6 @@ void GxsCommentsItem::fill()
 		}
 		ui->readButton->hide();
 		ui->newLabel->hide();
-		ui->copyLinkButton->hide();
 
 		if (IS_MSG_NEW(mPost.mMeta.mMsgStatus)) {
 			mCloseOnRead = true;
@@ -465,18 +475,12 @@ void GxsCommentsItem::fill()
 	// differences between Feed or Top of Comment.
 	if (mFeedHolder)
 	{
-		if (mIsHome) {
-			ui->commentButton->show();
-		} else if (ui->commentButton->icon().isNull()){
-			//Icon is seted if a comment received.
-			ui->commentButton->hide();
-		}
+		ui->commentButton->show();
 
-// THIS CODE IS doesn't compile - disabling until fixed.
-#if 0
-		if (post.mComments)
+		// Not yet functional
+		/*if (mPost.mCommentCount)
 		{
-			QString commentText = QString::number(post.mComments);
+			QString commentText = QString::number(mPost.mCommentCount);
 			commentText += " ";
 			commentText += tr("Comments");
 			ui->commentButton->setText(commentText);
@@ -484,8 +488,7 @@ void GxsCommentsItem::fill()
 		else
 		{
 			ui->commentButton->setText(tr("Comment"));
-		}
-#endif
+		}*/
 
 	}
 	else

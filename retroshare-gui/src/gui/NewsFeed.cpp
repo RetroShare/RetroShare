@@ -33,6 +33,7 @@
 #include <retroshare/rsposted.h>
 
 #include "util/qtthreadsutils.h"
+#include "feeds/BoardsCommentsItem.h"
 #include "feeds/ChatMsgItem.h"
 #include "feeds/GxsCircleItem.h"
 #include "feeds/GxsCommentsItem.h"
@@ -240,6 +241,9 @@ void NewsFeed::handlePostedEvent(std::shared_ptr<const RsEvent> event)
 		break;
 	case RsPostedEventCode::NEW_MESSAGE:
 		addFeedItem( new PostedItem(this, NEWSFEED_POSTEDMSGLIST, pe->mPostedGroupId, pe->mPostedMsgId, false, true));
+		break;
+	case RsPostedEventCode::NEW_COMMENT:
+		addFeedItem( new BoardsCommentsItem(this, NEWSFEED_POSTEDMSGLIST, pe->mPostedGroupId, pe->mPostedMsgId, false, true));
 		break;
 	default: break;
 	}
