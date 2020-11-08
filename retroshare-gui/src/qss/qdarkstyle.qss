@@ -1442,6 +1442,21 @@ BoardPostDisplayWidget_card QLabel#titleLabel{
 	font: bold;
 }
 
+GxsCommentsItem QLabel#newCommentLabel, BoardsCommentsItem QLabel#newCommentLabel{
+	font: 14px;
+	font: bold;
+}
+
+GxsCommentsItem QLabel#subjectLabel, GxsCommentsItem QLabel#titleLabel , QLabel#nameLabel{
+	font: 14px;
+	font: bold;
+}
+
+BoardsCommentsItem QLabel#titleLabel , QLabel#nameLabel, QLabel#nicknameLabel{
+	font: 14px;
+	font: bold;
+}
+
 WireGroupItem QFrame#wire_frame
 {
 	border: 1px solid #38444d;
