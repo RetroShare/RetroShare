@@ -1471,7 +1471,7 @@ bool p3PeerMgrIMPL::UpdateOwnAddress( const sockaddr_storage& pLocalAddr,
 		}
 
 		sockaddr_storage_copy(localAddr, mOwnState.localaddr);
-	}
+    }
 
 
 	{
@@ -1646,7 +1646,7 @@ bool p3PeerMgrIMPL::setExtAddress( const RsPeerId &id,
 			{
 				mOwnState.serveraddr = addr;
 				changed = true;
-			}
+            }
 		}
 
 		mNetMgr->setExtAddress(addr);
@@ -1660,7 +1660,7 @@ bool p3PeerMgrIMPL::setExtAddress( const RsPeerId &id,
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
 #ifdef PEER_DEBUG
-			std::cerr << "p3PeerMgrIMPL::setLocalAddress() cannot add addres " << "info : peer id not found in friend list  id: " << id << std::endl;
+            std::cerr << "p3PeerMgrIMPL::setExtAddress() cannot add addres " << "info : peer id not found in friend list  id: " << id << std::endl;
 #endif
 			return false;
 	}

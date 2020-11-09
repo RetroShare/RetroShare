@@ -299,6 +299,32 @@ struct RsConnectionEvent : RsEvent
 	~RsConnectionEvent() override;
 };
 
+enum class RsNetworkEventCode: uint8_t {
+    UNKNOWN                 = 0x00,
+    LOCAL_IP_UPDATED        = 0x01,
+    EXTERNAL_IP_UPDATED     = 0x02,
+};
+
+struct RsNetworkEvent : RsEvent
+{
+    RsNetworkEvent()
+        : RsEvent(RsEventType::NETWORK),
+          mNetworkEventCode(RsNetworkEventCode::UNKNOWN){}
+
+    RsNetworkEventCode mNetworkEventCode;
+    std::string mIPAddress;   // local or external IP depending on the event type
+
+    ///* @see RsEvent @see RsSerializable
+    void serial_process(
+            RsGenericSerializer::SerializeJob j,
+            RsGenericSerializer::SerializeContext& ctx ) override
+    {
+        RsEvent::serial_process(j, ctx);
+        RS_SERIAL_PROCESS(mNetworkEventCode);
+        RS_SERIAL_PROCESS(mIPAddress);
+    }
+};
+
 //===================================================================================================//
 //                                         Peer Details                                              //
 //===================================================================================================//
@@ -483,6 +509,16 @@ struct RsPeerStateChangedEvent : RsEvent
 	}
 };
 
+enum class RetroshareInviteFlags:uint32_t {
+    NOTHING           = 0x00,
+    CURRENT_IP        = 0x01,
+    FULL_IP_HISTORY   = 0x02,
+    DNS               = 0x04,
+    RADIX_FORMAT      = 0x08,
+    PGP_SIGNATURES    = 0x10,
+};
+RS_REGISTER_ENUM_FLAGS_TYPE(RetroshareInviteFlags)
+
 /** The Main Interface Class - for information about your Peers
  * A peer is another RS instance, means associated with an SSL certificate
  * A same GPG person can have multiple peer running with different SSL certs
@@ -492,6 +528,7 @@ struct RsPeerStateChangedEvent : RsEvent
 class RsPeers
 {
 public:
+
 	/**
 	 * @brief Get own SSL peer id
 	 * @return own peer id
@@ -766,8 +803,7 @@ public:
 	 */
 	virtual std::string GetRetroshareInvite(
 	        const RsPeerId& sslId = RsPeerId(),
-	        bool includeSignatures = false,
-	        bool includeExtraLocators = true ) = 0;
+            RetroshareInviteFlags = RetroshareInviteFlags::DNS | RetroshareInviteFlags::CURRENT_IP ) = 0;
 
 	/**
 	 * @brief Get RetroShare short invite of the given peer
@@ -785,9 +821,8 @@ public:
 	 *	"normal" looking web link. Used only if formatRadix is false.
 	 * @return false if error occurred, true otherwise
 	 */
-	virtual bool getShortInvite(
-	        std::string& invite, const RsPeerId& sslId = RsPeerId(),
-	        bool formatRadix = false, bool bareBones = false,
+    virtual bool getShortInvite(std::string& invite, const RsPeerId& sslId = RsPeerId(),
+            RetroshareInviteFlags locator_flags = RetroshareInviteFlags::CURRENT_IP | RetroshareInviteFlags::DNS,
 	        const std::string& baseUrl = "https://retroshare.me/" ) = 0;
 
 	/**

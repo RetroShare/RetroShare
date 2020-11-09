@@ -104,11 +104,12 @@ void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEve
 	case RsChannelEventCode::READ_STATUS_CHANGED:
 	{
 		// Normally we should just emit dataChanged() on the index of the data that has changed:
-		//
 		// We need to update the data!
 
         // make a copy of e, so as to avoid destruction of the shared pointer during async thread execution, since [e] doesn't actually tell
-        // the shared_ptr that it is copied! So no counter is updated.
+        // the original shared_ptr that it is copied! So no counter is updated in event, which will be destroyed (as e will be) during or even before
+        // the execution of the lambda.
+
         RsGxsChannelEvent E(*e);
 
         if(E.mChannelGroupId == mChannelGroup.mMeta.mGroupId)
@@ -120,8 +121,6 @@ void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEve
 				std::vector<RsGxsComment>     comments;
 				std::vector<RsGxsVote>        votes;
 
-                std::cerr << "display of e 1: " << E << std::endl;
-
                 if(!rsGxsChannels->getChannelContent(E.mChannelGroupId,std::set<RsGxsMessageId>{ E.mChannelMsgId }, posts,comments,votes))
 				{
                     std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel message data for channel/msg " << E.mChannelGroupId << "/" << E.mChannelMsgId << std::endl;
@@ -131,8 +130,6 @@ void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEve
                 // Need to call this in order to get the actuall comment count. The previous call only retrieves the message, since we supplied the message ID.
                 // another way to go would be to save the comment ids of the existing message and re-insert them before calling getChannelContent.
 
-                std::cerr << "display of e 2: " << E << std::endl;
-                std::cerr << "Before call : IS_MSG_READ=" << IS_MSG_NEW(posts[0].mMeta.mMsgFlags) <<  " for message id " << E.mChannelMsgId << std::endl;
                 if(!rsGxsChannels->getChannelComments(E.mChannelGroupId,std::set<RsGxsMessageId>{ E.mChannelMsgId },comments))
                 {
                     std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve message comment data for channel/msg " << E.mChannelGroupId << "/" << E.mChannelMsgId << std::endl;
@@ -141,7 +138,6 @@ void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEve
 
                 updateCommentCounts(posts,comments);
 
-                std::cerr << "After  call : IS_MSG_READ=" << IS_MSG_NEW(posts[0].mMeta.mMsgFlags) << std::endl;
                 // 2 - update the model in the UI thread.
 
                 RsQThreadUtils::postToObject( [posts,this]()
