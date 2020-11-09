@@ -232,7 +232,7 @@ win32-g++|win32-clang-g++ {
 
     # Fix linking error (ld.exe: Error: export ordinal too large) due to too
     # many exported symbols.
-    QMAKE_LFLAGS+=-Wl,--exclude-libs,ALL
+    !libretroshare_shared:QMAKE_LFLAGS+=-Wl,--exclude-libs,ALL
 
 	# Switch off optimization for release version
 	QMAKE_CXXFLAGS_RELEASE -= -O2

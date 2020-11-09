@@ -4,7 +4,11 @@
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = lib
-CONFIG += staticlib
+libretroshare_shared {
+	CONFIG += shared
+} else {
+	CONFIG += staticlib
+}
 CONFIG -= qt
 TARGET = retroshare
 TARGET_PRL = libretroshare
@@ -242,7 +246,7 @@ win32-g++|win32-clang-g++ {
 	QMAKE_CC = $${QMAKE_CXX}
 	OBJECTS_DIR = temp/obj
 	MOC_DIR = temp/moc
-    DEFINES *= STATICLIB
+    !libretroshare_shared:DEFINES *= STATICLIB
 
 	# Switch on extra warnings
 	QMAKE_CFLAGS += -Wextra
