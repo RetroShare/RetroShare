@@ -297,8 +297,6 @@ QString RSTextBrowser::anchorForPosition(const QPoint &pos) const
 	return anchor;
 }
 
-
-#ifndef QT_NO_CONTEXTMENU
 QMenu *RSTextBrowser::createStandardContextMenu()
 {
 	return createStandardContextMenu(QPoint());
@@ -313,7 +311,6 @@ QMenu *RSTextBrowser::createStandardContextMenu(const QPoint &position)
 
 	return menu;
 }
-#endif // QT_NO_CONTEXTMENU
 
 void RSTextBrowser::viewSource()
 {

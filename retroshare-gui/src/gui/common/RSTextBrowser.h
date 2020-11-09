@@ -56,10 +56,8 @@ public:
 	QVariant textColorQuotes() const { return highlighter->textColorQuotes();}
 	bool getShowImages() const { return mShowImages; }
 
-#ifndef QT_NO_CONTEXTMENU
 	QMenu *createStandardContextMenu();
 	QMenu *createStandardContextMenu(const QPoint &position);
-#endif
 
 public slots:
 	void showImages();
