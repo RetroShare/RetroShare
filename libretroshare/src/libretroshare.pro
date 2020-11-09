@@ -866,10 +866,10 @@ rs_jsonapi {
         genrestbedlib.variable_out = PRE_TARGETDEPS
         win32-g++:isEmpty(QMAKE_SH) {
             genrestbedlib.commands = \
-                cd $$shell_path($${RS_SRC_PATH}) && git submodule update --init supportlibs/restbed || cd . $$escape_expand(\\n\\t) \
-                cd $$shell_path($${RESTBED_SRC_PATH}) && git submodule update --init dependency/asio || cd . $$escape_expand(\\n\\t) \
-                cd $$shell_path($${RESTBED_SRC_PATH}) && git submodule update --init dependency/catch || cd . $$escape_expand(\\n\\t )\
-                cd $$shell_path($${RESTBED_SRC_PATH}) && git submodule update --init dependency/kashmir || cd . $$escape_expand(\\n\\t) \
+                cd /D $$shell_path($${RS_SRC_PATH}) && git submodule update --init supportlibs/restbed || cd . $$escape_expand(\\n\\t) \
+                cd /D $$shell_path($${RESTBED_SRC_PATH}) && git submodule update --init dependency/asio || cd . $$escape_expand(\\n\\t) \
+                cd /D $$shell_path($${RESTBED_SRC_PATH}) && git submodule update --init dependency/catch || cd . $$escape_expand(\\n\\t )\
+                cd /D $$shell_path($${RESTBED_SRC_PATH}) && git submodule update --init dependency/kashmir || cd . $$escape_expand(\\n\\t) \
                 $(CHK_DIR_EXISTS) $$shell_path($$UDP_DISCOVERY_BUILD_PATH) $(MKDIR) $$shell_path($${UDP_DISCOVERY_BUILD_PATH}) $$escape_expand(\\n\\t)
         } else {
             genrestbedlib.commands = \
@@ -987,7 +987,7 @@ rs_broadcast_discovery {
         udpdiscoverycpplib.variable_out = PRE_TARGETDEPS
         win32-g++:isEmpty(QMAKE_SH) {
             udpdiscoverycpplib.commands = \
-                cd $$shell_path($${RS_SRC_PATH}) && git submodule update --init supportlibs/udp-discovery-cpp || cd . $$escape_expand(\\n\\t) \
+                cd /D $$shell_path($${RS_SRC_PATH}) && git submodule update --init supportlibs/udp-discovery-cpp || cd . $$escape_expand(\\n\\t) \
                 $(CHK_DIR_EXISTS) $$shell_path($$UDP_DISCOVERY_BUILD_PATH) $(MKDIR) $$shell_path($${UDP_DISCOVERY_BUILD_PATH}) $$escape_expand(\\n\\t)
         } else {
             udpdiscoverycpplib.commands = \
