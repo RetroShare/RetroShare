@@ -97,7 +97,7 @@ class DistributionItemDelegate: public QStyledItemDelegate
 public:
     DistributionItemDelegate() {}
 
-    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override
     {
         if(!index.isValid())
         {
@@ -105,7 +105,7 @@ public:
             return ;
         }
 
-        QStyleOptionViewItemV4 opt = option;
+        QStyleOptionViewItem opt = option;
         initStyleOption(&opt, index);
         // disable default icon
         opt.icon = QIcon();
@@ -135,7 +135,7 @@ public:
         painter->drawPixmap(r.topLeft() + p, pix);
     }
 
-    virtual QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override
+    virtual QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& /*index*/) const override
     {
         static auto img(FilesDefs::getPixmapFromQtResourcePath(IMAGE_WARNING_YELLOW));
 
@@ -148,7 +148,7 @@ class ReadStatusItemDelegate: public QStyledItemDelegate
 public:
     ReadStatusItemDelegate() {}
 
-    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override
     {
         if(!index.isValid())
         {
@@ -156,7 +156,7 @@ public:
             return ;
         }
 
-        QStyleOptionViewItemV4 opt = option;
+        QStyleOptionViewItem opt = option;
         initStyleOption(&opt, index);
         // disable default icon
         opt.icon = QIcon();
@@ -194,7 +194,7 @@ public:
         painter->drawPixmap(r.topLeft() + p, pix);
     }
 
-    virtual QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override
+    virtual QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& /*index*/) const override
     {
         static auto img(FilesDefs::getPixmapFromQtResourcePath(":/images/message-state-unread.png"));
 
@@ -1204,7 +1204,7 @@ void GxsForumThreadWidget::insertMessage()
 
         int current_index = 0 ;
 
-        for(int i=0;i<post_versions.size();++i)
+        for(int i=0;i<static_cast<int>(post_versions.size());++i)
         {
             ui->versions_CB->insertItem(i, ((i==0)?tr("(Latest) "):tr("(Old) "))+" "+DateTime::formatLongDateTime( post_versions[i].first));
             ui->versions_CB->setItemData(i,QString::fromStdString(post_versions[i].second.toStdString()));
@@ -1227,8 +1227,17 @@ void GxsForumThreadWidget::insertMessage()
 
     ui->versions_CB->blockSignals(false) ;
 
-    /* request Post */
-    updateMessageData(mThreadId);
+	/* request Post */
+	bool missing = index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_DATA).data(RsGxsForumModel::MissingRole).toBool();
+	if (missing)
+	{
+		// Don't update data for missing message else get multiple entry.
+		setMessageLoadingError(tr("Missing Message:\nThis message is missing. You should receive it later."));
+	}
+	else
+	{
+		updateMessageData(mThreadId);
+	}
 
 //    markMsgAsRead();
 }
@@ -1335,7 +1344,7 @@ void GxsForumThreadWidget::previousMessage()
     QModelIndex parentIndex = current_index.parent();
 
     int index = current_index.row();
-    int count = mThreadModel->rowCount(parentIndex) ;
+    //int count = mThreadModel->rowCount(parentIndex) ;
 
     if (index > 0)
     {
