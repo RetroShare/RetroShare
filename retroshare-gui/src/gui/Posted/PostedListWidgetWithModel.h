@@ -132,6 +132,9 @@ protected:
 	virtual void setAllMessagesReadDo(bool read, uint32_t &token) override;
 
 private slots:
+#ifdef TO_REMOVE
+	void showPostDetails();
+#endif
     void showAuthorInPeople();
     void tabCloseRequested(int index);
     void updateSorting(int);
@@ -166,7 +169,10 @@ private:
     RsPostedPostsModel *mPostedPostsModel;
     PostedPostDelegate *mPostedPostsDelegate;
 
-    RsGxsMessageId mSelectedPost;
+#ifdef TO_REMOVE
+	std::map<RsGxsGroupId,RsGxsMessageId> mLastSelectedPosts;
+#endif
+	RsGxsMessageId mNavigatePendingMsgId;
 
 	/* UI - from Designer */
 	Ui::PostedListWidgetWithModel *ui;
