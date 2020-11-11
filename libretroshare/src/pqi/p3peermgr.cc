@@ -317,7 +317,7 @@ void p3PeerMgrIMPL::tick()
 
 const RsPeerId& p3PeerMgrIMPL::getOwnId()
 {
-                return AuthSSL::getAuthSSL()->OwnId();
+    return AuthSSL::getAuthSSL()->OwnId();
 }
 
 

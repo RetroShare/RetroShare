@@ -126,7 +126,7 @@ void HomePage::handleEvent(std::shared_ptr<const RsEvent> e)
 
     const RsNetworkEvent *ne = dynamic_cast<const RsNetworkEvent*>(e.get());
 
-    if(ne)
+    if(!ne)
         return;
 
     // in any case we update the IPs
