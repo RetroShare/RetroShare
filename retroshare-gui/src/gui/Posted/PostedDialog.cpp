@@ -162,8 +162,8 @@ bool PostedDialog::getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo)
 
     // request all group infos at once
 
-    if(! rsPosted->getBoardsInfo(std::list<RsGxsGroupId>(),groups))
-        return false;
+	if(! rsPosted->getBoardsInfo(std::list<RsGxsGroupId>(),groups))
+		return false;
 
  	/* Save groups to fill icons and description */
 
