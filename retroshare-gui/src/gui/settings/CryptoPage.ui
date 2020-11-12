@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>644</width>
-    <height>459</height>
+    <width>869</width>
+    <height>487</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
@@ -246,6 +246,9 @@
           </item>
           <item row="14" column="1">
            <widget class="QPushButton" name="exportprofile">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this to export your profile key. You can then import it in a different computer and make a new node with the same profile. Doing so, existing friends that you also add to the new node will automatically recognise that new node as friend.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="text">
              <string>Export</string>
             </property>

@@ -29,6 +29,7 @@
 #include "CryptoPage.h"
 #include "util/misc.h"
 #include "util/DateTime.h"
+#include "retroshare/rsinit.h"
 #include <gui/RetroShareLink.h>
 #include <gui/connect/ConfCertDialog.h>
 #include <gui/profile/ProfileManager.h>
@@ -57,16 +58,38 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WindowFlags flags)
 	// hide profile manager as it causes bugs when generating a new profile.
 	//ui.profile_Button->hide() ;
 
-	connect(ui.exportprofile,SIGNAL(clicked()), this, SLOT(profilemanager()));
+    //connect(ui.exportprofile,SIGNAL(clicked()), this, SLOT(profilemanager()));
+    connect(ui.exportprofile,SIGNAL(clicked()), this, SLOT(exportProfile()));
 
 
 	ui.onlinesince->setText(DateTime::formatLongDateTime(Rshare::startupTime()));
 }
 
+#ifdef UNUSED_CODE
 void CryptoPage::profilemanager()
 {
     ProfileManager().exec();
 }
+#endif
+
+void CryptoPage::exportProfile()
+{
+    RsPgpId gpgId(rsPeers->getGPGOwnId());
+
+    QString fname = QFileDialog::getSaveFileName(this, tr("Export Identity"), "", tr("RetroShare Identity files (*.asc)"));
+
+    if (fname.isNull())
+        return;
+
+    if (fname.right(4).toUpper() != ".ASC") fname += ".asc";
+
+    if (RsAccounts::ExportIdentity(fname.toUtf8().constData(), gpgId))
+        QMessageBox::information(this, tr("Identity saved"), tr("Your identity was successfully saved\nIt is encrypted\n\nYou can now copy it to another computer\nand use the import button to load it"));
+    else
+        QMessageBox::information(this, tr("Identity not saved"), tr("Your identity was not saved. An error occurred."));
+}
+
+
 void CryptoPage::showEvent ( QShowEvent * /*event*/ )
 {
     RsPeerDetails detail;
