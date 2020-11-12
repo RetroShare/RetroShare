@@ -36,10 +36,13 @@ protected:
 	class FeedItemData
 	{
 	public:
-		FeedItemData() {}
+		FeedItemData()
+		{
+			mFeedId = 0;
+		}
 
 	public:
-		QString mFeedId;
+		uint32_t mFeedId;
 		QString mMsgId;
 	};
 
@@ -54,7 +57,7 @@ public:
 	virtual FeedItem *testFeedItem(FeedHolder *parent);
 
 private slots:
-	void msgChanged(const QString &feedId, const QString &msgId, int type);
+	void msgChanged(uint32_t feedId, const QString &msgId, int type);
 
 private:
 	RsFeedReader *mFeedReader;

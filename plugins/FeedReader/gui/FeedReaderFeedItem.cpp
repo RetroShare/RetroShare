@@ -34,8 +34,8 @@
 #include "gui/feeds/FeedHolder.h"
 
 /** Constructor */
-FeedReaderFeedItem::FeedReaderFeedItem(RsFeedReader *feedReader, FeedReaderNotify *notify, FeedHolder *parent, const FeedInfo &feedInfo, const FeedMsgInfo &msgInfo)
-    : FeedItem(NULL), mFeedReader(feedReader), mNotify(notify), mParent(parent), ui(new Ui::FeedReaderFeedItem)
+FeedReaderFeedItem::FeedReaderFeedItem(RsFeedReader *feedReader, FeedReaderNotify *notify, const FeedInfo &feedInfo, const FeedMsgInfo &msgInfo)
+    : FeedItem(NULL, feedInfo.feedId), mFeedReader(feedReader), mNotify(notify), ui(new Ui::FeedReaderFeedItem)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
@@ -51,7 +51,6 @@ FeedReaderFeedItem::FeedReaderFeedItem(RsFeedReader *feedReader, FeedReaderNotif
 
 	ui->expandFrame->hide();
 
-	mFeedId = feedInfo.feedId;
 	mMsgId = msgInfo.msgId;
 
 	if (feedInfo.icon.empty()) {
@@ -101,8 +100,8 @@ void FeedReaderFeedItem::toggle()
 
 void FeedReaderFeedItem::doExpand(bool open)
 {
-	if (mParent) {
-		mParent->lockLayout(this, true);
+	if (mFeedHolder) {
+		mFeedHolder->lockLayout(this, true);
 	}
 
 	if (open) {
@@ -119,19 +118,8 @@ void FeedReaderFeedItem::doExpand(bool open)
 
 	emit sizeChanged(this);
 
-	if (mParent) {
-		mParent->lockLayout(this, false);
-	}
-}
-
-void FeedReaderFeedItem::removeItem()
-{
-	mParent->lockLayout(this, true);
-	hide();
-	mParent->lockLayout(this, false);
-
-	if (mParent) {
-		mParent->deleteFeedItem(this, 0);
+	if (mFeedHolder) {
+		mFeedHolder->lockLayout(this, false);
 	}
 }
 
@@ -150,9 +138,9 @@ void FeedReaderFeedItem::setMsgRead()
 	connect(mNotify, SIGNAL(msgChanged(QString,QString,int)), this, SLOT(msgChanged(QString,QString,int)), Qt::QueuedConnection);
 }
 
-void FeedReaderFeedItem::msgChanged(const QString &feedId, const QString &msgId, int /*type*/)
+void FeedReaderFeedItem::msgChanged(uint32_t feedId, const QString &msgId, int /*type*/)
 {
-	if (feedId.toStdString() != mFeedId) {
+	if (feedId != mFeedId) {
 		return;
 	}
 

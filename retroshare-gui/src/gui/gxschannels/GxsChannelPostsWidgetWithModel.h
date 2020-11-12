@@ -190,7 +190,8 @@ private:
     ChannelPostDelegate        *mChannelPostsDelegate;
     ChannelPostFilesDelegate   *mFilesDelegate;
 
-    RsGxsMessageId mSelectedPost;
+	std::map<RsGxsGroupId,RsGxsMessageId> mLastSelectedPosts;
+	RsGxsMessageId mNavigatePendingMsgId;
 
 	/* UI - from Designer */
 	Ui::GxsChannelPostsWidgetWithModel *ui;

@@ -192,8 +192,9 @@ Section $(Section_Main) Section_Main
 
   ; Main binaries
   SetOutPath "$INSTDIR"
-  File /oname=retroshare.exe "${RELEASEDIR}\retroshare-gui\src\release\retroshare.exe"
-  File /oname=retroshare-service.exe "${RELEASEDIR}\retroshare-service\src\release\retroshare-service.exe"
+  File "${RELEASEDIR}\retroshare-gui\src\release\retroshare.exe"
+  File "${RELEASEDIR}\retroshare-service\src\release\retroshare-service.exe"
+  File /nonfatal "${RELEASEDIR}\libretroshare\src\lib\retroshare.dll"
 
   ; Qt binaries
   File "${QTDIR}\bin\Qt5Core.dll"
@@ -290,8 +291,8 @@ SectionEnd
 !endif
 
 # Plugins
-${!defineifexist} PLUGIN_FEEDREADER_EXISTS "${RELEASEDIR}\plugins\FeedReader\release\FeedReader.dll"
-${!defineifexist} PLUGIN_VOIP_EXISTS "${RELEASEDIR}\plugins\VOIP\release\VOIP.dll"
+${!defineifexist} PLUGIN_FEEDREADER_EXISTS "${RELEASEDIR}\plugins\FeedReader\lib\FeedReader.dll"
+${!defineifexist} PLUGIN_VOIP_EXISTS "${RELEASEDIR}\plugins\VOIP\lib\VOIP.dll"
 
 !ifdef PLUGIN_FEEDREADER_EXISTS
 !define /ifndef PLUGIN_EXISTS
@@ -305,14 +306,14 @@ ${!defineifexist} PLUGIN_VOIP_EXISTS "${RELEASEDIR}\plugins\VOIP\release\VOIP.dl
   !ifdef PLUGIN_FEEDREADER_EXISTS
     Section $(Section_Plugin_FeedReader) Section_Plugin_FeedReader
       SetOutPath "$DataDir\extensions6"
-      File "${RELEASEDIR}\plugins\FeedReader\release\FeedReader.dll"
+      File "${RELEASEDIR}\plugins\FeedReader\lib\FeedReader.dll"
     SectionEnd
   !endif
 
   !ifdef PLUGIN_VOIP_EXISTS
     Section $(Section_Plugin_VOIP) Section_Plugin_VOIP
       SetOutPath "$DataDir\extensions6"
-      File "${RELEASEDIR}\plugins\VOIP\release\VOIP.dll"
+      File "${RELEASEDIR}\plugins\VOIP\lib\VOIP.dll"
     SectionEnd
   !endif
   SectionGroupEnd

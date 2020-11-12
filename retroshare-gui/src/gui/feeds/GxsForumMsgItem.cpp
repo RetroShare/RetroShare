@@ -99,7 +99,11 @@ void GxsForumMsgItem::setup()
 
 	/* clear ui */
 	ui->titleLabel->setText(tr("Loading..."));
+	ui->titleLabel->setOpenExternalLinks(false); //To get linkActivated working
+	connect(ui->titleLabel, SIGNAL(linkActivated(QString)), this, SLOT(on_linkActivated(QString)));
 	ui->subjectLabel->clear();
+	ui->subjectLabel->setOpenExternalLinks(false); //To get linkActivated working
+	connect(ui->subjectLabel, SIGNAL(linkActivated(QString)), this, SLOT(on_linkActivated(QString)));
 	ui->timestamplabel->clear();
 	ui->parentNameLabel->clear();
 	ui->nameLabel->clear();
@@ -505,4 +509,17 @@ void GxsForumMsgItem::setAsRead()
 	rsGxsForums->setMessageReadStatus(token, msgPair, true);
 
 	setReadStatus(false, false);
+}
+
+void GxsForumMsgItem::on_linkActivated(QString link)
+{
+	RetroShareLink rsLink(link);
+
+	if (rsLink.valid() ) {
+		QList<RetroShareLink> rsLinks;
+		rsLinks.append(rsLink);
+		RetroShareLink::process(rsLinks);
+		removeItem();
+		return;
+	}
 }

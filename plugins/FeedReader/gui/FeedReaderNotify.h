@@ -32,12 +32,12 @@ public:
 	FeedReaderNotify();
 
 	/* RsFeedReaderNotify */
-	virtual void notifyFeedChanged(const std::string &feedId, int type);
-	virtual void notifyMsgChanged(const std::string &feedId, const std::string &msgId, int type);
+	virtual void notifyFeedChanged(uint32_t feedId, int type);
+	virtual void notifyMsgChanged(uint32_t feedId, const std::string &msgId, int type);
 
 signals:
-	void feedChanged(const QString &feedId, int type);
-	void msgChanged(const QString &feedId, const QString &msgId, int type);
+	void feedChanged(uint32_t feedId, int type);
+	void msgChanged(uint32_t feedId, const QString &msgId, int type);
 };
 
 #endif

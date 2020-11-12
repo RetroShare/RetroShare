@@ -52,6 +52,7 @@
 #include "gui/chat/ChatUserNotify.h"//For BradCast
 #include "util/DateTime.h"
 #include "util/imageutil.h"
+#include "gui/im_history/ImHistoryBrowser.h"
 
 #include <retroshare/rsstatus.h>
 #include <retroshare/rsidentity.h>

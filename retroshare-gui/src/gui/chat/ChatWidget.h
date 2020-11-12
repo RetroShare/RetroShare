@@ -27,7 +27,6 @@
 #include "ChatStyle.h"
 #include "gui/common/HashBox.h"
 #include "gui/common/RsButtonOnText.h"
-#include "gui/im_history/ImHistoryBrowser.h"
 #include "gui/style/RSStyle.h"
 
 #include <retroshare/rsmsgs.h>
@@ -47,6 +46,7 @@ class QTextEdit;
 class QPushButton;
 class ChatWidget;
 class QMenu;
+class ImHistoryBrowser;
 
 namespace Ui {
 class ChatWidget;

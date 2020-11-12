@@ -196,6 +196,8 @@ $(BUILD_PATH)/opencv-$(OPENCV_VERSION): $(DOWNLOAD_PATH)/opencv-$(OPENCV_VERSION
 	# prepare
 	rm -r -f $(BUILD_PATH)/opencv-*
 	tar xvf $(DOWNLOAD_PATH)/opencv-$(OPENCV_VERSION).tar.gz
+	# Remove version numbers from libraries. Is there a switch?
+	sed -i -e's/\(ocv_update(OPENCV_DLLVERSION \).*$$/\1"")/' opencv-$(OPENCV_VERSION)/CMakeLists.txt
 	# build
 	mkdir -p opencv-$(OPENCV_VERSION)/build
 	#cd opencv-$(OPENCV_VERSION)/build && cmake .. -G"MSYS Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="`pwd`/../../build"

@@ -774,31 +774,31 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
     std::cerr << "showPostDetails: current index is " << index.row() << "," << index.column() << std::endl;
 #endif
 
-    QTextDocument doc;
-	doc.setHtml(post.mMsg.c_str());
+	//QTextDocument doc;
+	//doc.setHtml(post.mMsg.c_str());
 
-    if(post.mMeta.mPublishTs == 0)
-    {
-        ui->postDetails_TE->clear();
-        ui->postLogo_LB->hide();
+	if(post.mMeta.mPublishTs == 0)
+	{
+		ui->postDetails_TE->clear();
+		ui->postLogo_LB->hide();
 		ui->postName_LB->hide();
 		ui->postTime_LB->hide();
-        mChannelPostFilesModel->clear();
-        ui->details_TW->setEnabled(false);
-        mSelectedPost.clear();
+		mChannelPostFilesModel->clear();
+		ui->details_TW->setEnabled(false);
+		//mLastSelectedPosts[groupId()].clear();
 
-        return;
-    }
-    ui->details_TW->setEnabled(true);
+		return;
+	}
+	ui->details_TW->setEnabled(true);
 
 	ui->postLogo_LB->show();
 	ui->postName_LB->show();
 	ui->postTime_LB->show();
 
 #ifdef DEBUG_CHANNEL_POSTS_WIDGET
-    std::cerr << "showPostDetails: setting mSelectedPost to current post Id " << post.mMeta.mMsgId << ". Previous value: " << mSelectedPost << std::endl;
+	std::cerr << "showPostDetails: setting mLastSelectedPosts[groupId()] to current post Id " << post.mMeta.mMsgId << ". Previous value: " << mLastSelectedPosts[groupId()] << std::endl;
 #endif
-    mSelectedPost = post.mMeta.mMsgId;
+	mLastSelectedPosts[groupId()] = post.mMeta.mMsgId;
 
 	std::list<ChannelPostFileInfo> files;
 	for(auto& file:post.mFiles)
@@ -886,7 +886,7 @@ void GxsChannelPostsWidgetWithModel::updateGroupData()
 
 		RsQThreadUtils::postToObject( [this,group]()
         {
-            if(mGroup.mMeta.mGroupId != group.mMeta.mGroupId) // this prevents any attempt to display the wrong index. Navigate() if needed will use mSelectedPost
+            if(mGroup.mMeta.mGroupId != group.mMeta.mGroupId) // this prevents any attempt to display the wrong index. Navigate() if needed will use mNavigatePendingMsgId
             {
 #ifdef DEBUG_CHANNEL_POSTS_WIDGET
                 std::cerr << "Old group: " << mGroup.mMeta.mGroupId << ", new group: " << group.mMeta.mGroupId << ". Celaring selection" << std::endl;
@@ -913,12 +913,16 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
 {
 	std::cerr << "Post channel load..." << std::endl;
 
-	if(!mSelectedPost.isNull())
+	if (!mNavigatePendingMsgId.isNull())
+		navigate(mNavigatePendingMsgId);
+
+	else if( (mLastSelectedPosts.count(groupId()) > 0)
+	         && !mLastSelectedPosts[groupId()].isNull())
 	{
-		QModelIndex index = mChannelPostsModel->getIndexOfMessage(mSelectedPost);
+		QModelIndex index = mChannelPostsModel->getIndexOfMessage(mLastSelectedPosts[groupId()]);
 
 		std::cerr << "Setting current index to " << index.row() << ","<< index.column() << " for current post "
-		          << mSelectedPost.toStdString() << std::endl;
+		          << mLastSelectedPosts[groupId()].toStdString() << std::endl;
 
 		ui->postsTree->selectionModel()->setCurrentIndex(index,QItemSelectionModel::ClearAndSelect);
 		ui->postsTree->scrollTo(index);//May change if model reloaded
@@ -1315,20 +1319,22 @@ bool GxsChannelPostsWidgetWithModel::navigate(const RsGxsMessageId& msgId)
 {
 	QModelIndex index = mChannelPostsModel->getIndexOfMessage(msgId);
 
-    if(!index.isValid())
-    {
-        std::cerr << "(EE) Cannot navigate to msg " << msgId << " in channel " << mGroup.mMeta.mGroupId << ": index unknown. Setting mNavigatePendingMsgId." << std::endl;
+	if(!index.isValid())
+	{
+		std::cerr << "(EE) Cannot navigate to msg " << msgId << " in channel " << mGroup.mMeta.mGroupId << ": index unknown. Setting mNavigatePendingMsgId." << std::endl;
 
-        mSelectedPost = msgId;		// not found. That means the forum may not be loaded yet. So we keep that post in mind, for after loading.
-		return true;						// we have to return true here, otherwise the caller will intepret the async loading as an error.
-    }
+		mNavigatePendingMsgId = msgId;    // not found. That means the forum may not be loaded yet. So we keep that post in mind, for after loading.
+		return true;                      // we have to return true here, otherwise the caller will intepret the async loading as an error.
+	}
 
 	ui->postsTree->selectionModel()->setCurrentIndex(index,QItemSelectionModel::ClearAndSelect);
 	ui->postsTree->scrollTo(index);//May change if model reloaded
 	ui->postsTree->setFocus();
 
-    ui->channel_TW->setCurrentIndex(CHANNEL_TABS_POSTS);
-    ui->details_TW->setCurrentIndex(CHANNEL_TABS_DETAILS);
+	ui->channel_TW->setCurrentIndex(CHANNEL_TABS_POSTS);
+	ui->details_TW->setCurrentIndex(CHANNEL_TABS_DETAILS);
+
+	mNavigatePendingMsgId.clear();
 
 	return true;
 }

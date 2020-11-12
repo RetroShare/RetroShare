@@ -158,42 +158,47 @@ void RsPostedPostsModel::triggerRedraw()
 
 void RsPostedPostsModel::setFilter(const QStringList& strings, uint32_t& count)
 {
-    preMods();
+	preMods();
 
 	beginRemoveRows(QModelIndex(),0,rowCount()-1);
-    endRemoveRows();
+	endRemoveRows();
 
 	if(strings.empty())
-    {
-        mFilteredPosts.clear();
-        for(int i=0;i<mPosts.size();++i)
-            mFilteredPosts.push_back(i);
-    }
+	{
+		mFilteredPosts.clear();
+		for(int i=0;i<(int)(mPosts.size());++i)
+			mFilteredPosts.push_back(i);
+	}
 	else
-    {
-        mFilteredPosts.clear();
-        //mFilteredPosts.push_back(0);
+	{
+		mFilteredPosts.clear();
+		//mFilteredPosts.push_back(0);
 
-        for(int i=0;i<mPosts.size();++i)
-        {
-            bool passes_strings = true;
+		for(int i=0;i<static_cast<int>(mPosts.size());++i)
+		{
+			bool passes_strings = true;
 
 			for(auto& s:strings)
-				passes_strings = passes_strings && QString::fromStdString(mPosts[i].mMeta.mMsgName).contains(s,Qt::CaseInsensitive);
+			{
+				if (s.startsWith("ID:",Qt::CaseInsensitive))
+					passes_strings = passes_strings && mPosts[i].mMeta.mMsgId == RsGxsMessageId(s.right(s.length() - 3).toStdString());
+				else
+					passes_strings = passes_strings && QString::fromStdString(mPosts[i].mMeta.mMsgName).contains(s,Qt::CaseInsensitive);
+			}
 
-            if(passes_strings)
-                mFilteredPosts.push_back(i);
-        }
-    }
-    count = mFilteredPosts.size();
+			if(passes_strings)
+				mFilteredPosts.push_back(i);
+		}
+	}
+	count = mFilteredPosts.size();
 
-    mDisplayedStartIndex = 0;
+	mDisplayedStartIndex = 0;
 	mDisplayedNbPosts = std::min(count,DEFAULT_DISPLAYED_NB_POSTS) ;
 
-    std::cerr << "After filtering: " << count << " posts remain." << std::endl;
+	std::cerr << "After filtering: " << count << " posts remain." << std::endl;
 
 	beginInsertRows(QModelIndex(),0,rowCount()-1);
-    endInsertRows();
+	endInsertRows();
 
 	postMods();
 }
@@ -237,8 +242,8 @@ bool RsPostedPostsModel::getPostData(const QModelIndex& i,RsPostedPost& fmpe) co
 
 bool RsPostedPostsModel::hasChildren(const QModelIndex &parent) const
 {
-    if(!parent.isValid())
-        return true;
+	if(!parent.isValid())
+		return true;
 
 	return false;	// by default, no post has children
 }
@@ -292,8 +297,8 @@ QModelIndex RsPostedPostsModel::index(int row, int column, const QModelIndex & p
 
 QModelIndex RsPostedPostsModel::parent(const QModelIndex& index) const
 {
-    if(!index.isValid())
-        return QModelIndex();
+	if(!index.isValid())
+		return QModelIndex();
 
 	return QModelIndex();	// there's no hierarchy here. So nothing to do!
 }
@@ -333,10 +338,10 @@ quintptr RsPostedPostsModel::getParentRow(quintptr ref,int& row) const
 
 int RsPostedPostsModel::getChildrenCount(quintptr ref) const
 {
-	uint32_t entry = 0 ;
+	//uint32_t entry = 0 ;
 
-    if(ref == quintptr(0))
-        return rowCount()-1;
+	if(ref == quintptr(0))
+		return rowCount()-1;
 
 	return 0;
 }
@@ -391,7 +396,7 @@ QVariant RsPostedPostsModel::data(const QModelIndex& index, int role) const
 	}
 }
 
-QVariant RsPostedPostsModel::sizeHintRole(int col) const
+QVariant RsPostedPostsModel::sizeHintRole(int /*col*/) const
 {
 	float factor = QFontMetricsF(QApplication::font()).height()/14.0f ;
 
@@ -483,8 +488,8 @@ void RsPostedPostsModel::setSortingStrategy(RsPostedPostsModel::SortingStrategy 
 
 void RsPostedPostsModel::setPostsInterval(int start,int nb_posts)
 {
-    if(start >= mFilteredPosts.size())
-        return;
+	if(start >= (int)mFilteredPosts.size())
+		return;
 
 	preMods();
 
@@ -538,8 +543,8 @@ void RsPostedPostsModel::setPosts(const RsPostedGroup& group, std::vector<RsPost
 
 void RsPostedPostsModel::update_posts(const RsGxsGroupId& group_id)
 {
-    if(group_id.isNull())
-        return;
+	if(group_id.isNull())
+		return;
 
 	RsThread::async([this, group_id]()
 	{
@@ -592,7 +597,7 @@ void RsPostedPostsModel::update_posts(const RsGxsGroupId& group_id)
     });
 }
 
-static bool decreasing_time_comp(const std::pair<time_t,RsGxsMessageId>& e1,const std::pair<time_t,RsGxsMessageId>& e2) { return e2.first < e1.first ; }
+//static bool decreasing_time_comp(const std::pair<time_t,RsGxsMessageId>& e1,const std::pair<time_t,RsGxsMessageId>& e2) { return e2.first < e1.first ; }
 
 void RsPostedPostsModel::createPostsArray(std::vector<RsPostedPost>& posts)
 {
@@ -761,34 +766,35 @@ void RsPostedPostsModel::setMsgReadStatus(const QModelIndex& i,bool read_status)
 
 QModelIndex RsPostedPostsModel::getIndexOfMessage(const RsGxsMessageId& mid) const
 {
-    // Brutal search. This is not so nice, so dont call that in a loop! If too costly, we'll use a map.
+	// Brutal search. This is not so nice, so dont call that in a loop! If too costly, we'll use a map.
 
-    RsGxsMessageId postId = mid;
+	RsGxsMessageId postId = mid;
 
-    for(uint32_t i=mDisplayedStartIndex;i<mDisplayedStartIndex+mDisplayedNbPosts;++i)
-    {
+	for(uint32_t i=mDisplayedStartIndex;i<mDisplayedStartIndex+mDisplayedNbPosts;++i)
+	{
 		// First look into msg versions, in case the msg is a version of an existing message
 
 #ifdef TODO
-        for(auto& msg_id:mPosts[mFilteredPosts[i]].mOlderVersions)
-            if(msg_id == postId)
-            {
+		for(auto& msg_id:mPosts[mFilteredPosts[i]].mOlderVersions)
+			if(msg_id == postId)
+			{
 				quintptr ref ;
 				convertTabEntryToRefPointer(i,ref);	// we dont use i+1 here because i is not a row, but an index in the mPosts tab
 
 				return createIndex(i,0, ref);
-            }
+			}
 #endif
 
-        if(mPosts[mFilteredPosts[i]].mMeta.mMsgId == postId)
-        {
-            quintptr ref ;
-            convertTabEntryToRefPointer(i,ref);	// we dont use i+1 here because i is not a row, but an index in the mPosts tab
+		if(   mFilteredPosts.size() > (size_t)(i)
+		   && mPosts[mFilteredPosts[i]].mMeta.mMsgId == postId )
+		{
+			quintptr ref ;
+			convertTabEntryToRefPointer(i,ref);	// we dont use i+1 here because i is not a row, but an index in the mPosts tab
 
 			return createIndex(i,0, ref);
-        }
-    }
+		}
+	}
 
-    return QModelIndex();
+	return QModelIndex();
 }
 
