@@ -1034,9 +1034,10 @@ static void styleCreate(QDomDocument& doc
 		it.next();
 		const QStringList& classUsingIt ( it.value()) ;
 		bool first = true;
+		QString classNames = "";
 		foreach(QString className, classUsingIt) {
 			if (!className.trimmed().isEmpty()) {
-				style += QString(first?".":",.") + className;// + " ";
+				classNames += QString(first?".":",.") + className;// + " ";
 				first = false;
 			}
 		}
@@ -1059,13 +1060,11 @@ static void styleCreate(QDomDocument& doc
 				(flag & RSHTML_FORMATTEXT_REMOVE_FONT_SIZE && key == "font-size") ||
 				(flag & RSHTML_FORMATTEXT_REMOVE_FONT_WEIGHT && key == "font-weight") ||
 				(flag & RSHTML_FORMATTEXT_REMOVE_FONT_STYLE && key == "font-style")) {
-				style += "{}";
 				continue;
 			}
 
 			if (flag & RSHTML_FORMATTEXT_REMOVE_COLOR) {
 				if (key == "color") {
-					style += "{}";
 					continue;
 				}
 			} else if (flag & RSHTML_FORMATTEXT_FIX_COLORS) {
@@ -1080,15 +1079,14 @@ static void styleCreate(QDomDocument& doc
 					// it can become unreadable on the original background.
 					// Also, FIX_COLORS is intended to display text on the default
 					// background color of the operating system.
-					style += "{}";
 					continue;
 				}
 			}
 
 			//.S1 .S2 .S4 {font-family:'Sans';}
-			style += "{" + key + ":" + val + ";}";
+			style += classNames + "{" + key + ":" + val + ";}";
 		} else {
-			style += "{" + it.key() + ";}\n";
+			style += classNames + "{" + it.key() + ";}\n";
 		}
 	}
 
