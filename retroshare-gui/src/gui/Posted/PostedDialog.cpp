@@ -62,6 +62,7 @@ void PostedDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 		{
 		case RsPostedEventCode::NEW_MESSAGE:
 		case RsPostedEventCode::UPDATED_MESSAGE:        // [[fallthrough]];
+		case RsPostedEventCode::NEW_COMMENT:        // [[fallthrough]];
 		case RsPostedEventCode::READ_STATUS_CHANGED:   // [[fallthrough]];
 			updateGroupStatisticsReal(e->mPostedGroupId); // update the list immediately
             break;
@@ -162,8 +163,8 @@ bool PostedDialog::getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo)
 
     // request all group infos at once
 
-	if(! rsPosted->getBoardsInfo(std::list<RsGxsGroupId>(),groups))
-		return false;
+    if(! rsPosted->getBoardsInfo(std::list<RsGxsGroupId>(),groups))
+        return false;
 
  	/* Save groups to fill icons and description */
 
