@@ -87,7 +87,20 @@ void updateCommentCounts( std::vector<RsGxsChannelPost>& posts, std::vector<RsGx
     // now look into comments and increase the count
 
     for(uint32_t i=0;i<comments.size();++i)
-        ++posts[post_indices[comments[i].mMeta.mThreadId]].mCommentCount;
+    {
+        auto it = post_indices.find(comments[i].mMeta.mThreadId);
+
+        // This happens when because of sync periods, we receive
+        // the comments for a post, but not the post itself.
+        // In this case, the post the comment refers to is just not here.
+        // it->second>=posts.size() is impossible by construction, since post_indices
+        // is previously filled using posts ids.
+
+        if(it == post_indices.end())
+            continue;
+
+        ++posts[it->second].mCommentCount;
+    }
 }
 
 
