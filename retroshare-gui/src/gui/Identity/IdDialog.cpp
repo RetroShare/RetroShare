@@ -2387,6 +2387,10 @@ void IdDialog::sendMsg()
     if(selected_items.empty())
 	    return ;
 
+    if(selected_items.size() > 20)
+        if(QMessageBox::warning(nullptr,tr("Too many identities"),tr("<p>It is not recommended to send a message to more than 20 persons at once. Large scale diffusion of data (including friend invitations) are much more efficiently handled by forums. Click ok to proceed anyway.</p>"),QMessageBox::Ok|QMessageBox::Cancel,QMessageBox::Cancel)==QMessageBox::Cancel)
+            return;
+
     MessageComposer *nMsgDialog = MessageComposer::newMsg();
     if (nMsgDialog == NULL)
 	    return;
