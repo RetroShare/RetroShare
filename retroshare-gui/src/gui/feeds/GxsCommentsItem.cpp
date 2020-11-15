@@ -311,7 +311,8 @@ void GxsCommentsItem::loadMessage()
 
 			RsQThreadUtils::postToObject( [cmt,this]()
 			{
-				ui->commLabel->setText(QString::fromUtf8(cmt.mComment.c_str()));
+				ui->commLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(cmt.mComment.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+
 				ui->nameLabel->setId(cmt.mMeta.mAuthorId);
 				ui->datetimelabel->setText(DateTime::formatLongDateTime(cmt.mMeta.mPublishTs));
 

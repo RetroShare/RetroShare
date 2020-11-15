@@ -423,7 +423,7 @@ void BoardsCommentsItem::makeUpVote()
 
 void BoardsCommentsItem::setComment(const RsGxsComment& cmt)
 {
-	ui->commLabel->setText(QString::fromUtf8(cmt.mComment.c_str()));
+	ui->commLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(cmt.mComment.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 	ui->nicknameLabel->setId(cmt.mMeta.mAuthorId);
 	ui->datetimeLabel->setText(DateTime::formatLongDateTime(cmt.mMeta.mPublishTs));
 
