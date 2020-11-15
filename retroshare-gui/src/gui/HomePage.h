@@ -50,7 +50,6 @@ private slots:
 	void certContextMenu(QPoint);
 	void updateOwnCert();
     void updateCertificate();
-    void updateOwnId();
 	void runEmailClient();
 	void copyCert();
 	void copyId();
@@ -69,8 +68,10 @@ private:
 
 	bool mIncludeAllIPs;
 	bool mUseShortFormat;
-    bool mUseBackwardCompatibleCert;
 
+    RsEventsHandlerId_t mEventHandlerId;
+
+    void handleEvent(std::shared_ptr<const RsEvent> event);
 };
 
 #endif // HomePage_H

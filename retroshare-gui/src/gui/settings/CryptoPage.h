@@ -42,11 +42,12 @@ class CryptoPage : public ConfigPage
 		virtual QString helpText() const { return ""; }
 
   private slots:
+      void exportProfile();
       virtual void load();
       void copyPublicKey();
 	  void copyRSLink() ;
 	  virtual void showEvent ( QShowEvent * event );
-	  void profilemanager();
+//	  void profilemanager();
       bool fileSave();
       bool fileSaveAs();
       void showStats();

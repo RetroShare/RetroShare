@@ -26,6 +26,7 @@
 #include "retroshare/rsfiles.h"
 #include "hashingstatus.h"
 #include "gui/common/ElidedLabel.h"
+#include "util/qtthreadsutils.h"
 #include "gui/notifyqt.h"
 #include "gui/common/FilesDefs.h"
 
@@ -54,13 +55,13 @@ HashingStatus::HashingStatus(QWidget *parent)
     statusHashing->hide();
 
 	mEventHandlerId=0;
-	rsEvents->registerEventsHandler(
-	            [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); },
-	            mEventHandlerId, RsEventType::SHARED_DIRECTORIES );
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }) ;}, mEventHandlerId, RsEventType::SHARED_DIRECTORIES );
 }
 
-void HashingStatus::handleEvent(std::shared_ptr<const RsEvent> event)
+void HashingStatus::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 {
+    // Warning: no GUI calls should happen here!
+
     if(event->mType != RsEventType::SHARED_DIRECTORIES)
         return;
 
@@ -72,7 +73,8 @@ void HashingStatus::handleEvent(std::shared_ptr<const RsEvent> event)
 
  	switch (fe->mEventCode)
     {
-	case RsSharedDirectoriesEventCode::STARTING_DIRECTORY_SWEEP:
+    default:
+    case RsSharedDirectoriesEventCode::STARTING_DIRECTORY_SWEEP:
 		info = tr("Examining shared files...");
 		break;
     case RsSharedDirectoriesEventCode::DIRECTORY_SWEEP_ENDED:
@@ -85,7 +87,9 @@ void HashingStatus::handleEvent(std::shared_ptr<const RsEvent> event)
 		break;
 	}
 
-	updateHashingInfo(info);
+    // GUI calls should only happen in the GUI thread, which is achieved by postToObject().
+
+    updateHashingInfo(info);
 }
 
 HashingStatus::~HashingStatus()

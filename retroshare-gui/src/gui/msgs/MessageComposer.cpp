@@ -134,6 +134,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     m_completer = NULL;
     
     ui.distantFrame->hide();
+    ui.sizeLimitFrame->hide();
     ui.respond_to_CB->hide();
     ui.fromLabel->hide();
 
@@ -395,6 +396,11 @@ void MessageComposer::updateCells(int,int)
         ui.distantFrame->hide() ;
         ui.fromLabel->hide();
     }
+
+    if(rowCount > 20)
+        ui.sizeLimitFrame->show();
+    else
+        ui.sizeLimitFrame->hide();
 }
 
 void MessageComposer::processSettings(bool bLoad)
@@ -2770,7 +2776,10 @@ void MessageComposer::showTagLabels()
 		ui.tagLayout->addStretch();
 	}
 }
-
+void MessageComposer::on_closeSizeLimitFrameButton_clicked()
+{
+    ui.sizeLimitFrame->setVisible(false);
+}
 void MessageComposer::on_closeInfoFrameButton_clicked()
 {
 	ui.distantFrame->setVisible(false);

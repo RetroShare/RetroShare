@@ -235,7 +235,7 @@ void GetStartedDialog::inviteFriends()
 	{
 		RsAutoUpdatePage::lockAllEvents();
 
-		cert = rsPeers->GetRetroshareInvite(RsPeerId(),false,false);
+        cert = rsPeers->GetRetroshareInvite(RsPeerId(),RetroshareInviteFlags::DNS | RetroshareInviteFlags::CURRENT_IP | RetroshareInviteFlags::FULL_IP_HISTORY);
 
 		RsAutoUpdatePage::unlockAllEvents() ;
 	}

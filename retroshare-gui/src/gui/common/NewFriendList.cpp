@@ -292,6 +292,9 @@ void NewFriendList::sortColumn(int col,Qt::SortOrder so)
     mProxyModel->sort(col,so);
     mProxyModel->setSortingEnabled(false);
 	restoreExpandedPathsAndSelection(expanded_indexes, selected_indexes);
+
+    mLastSortColumn = col;
+    mLastSortOrder = so;
 }
 
 void NewFriendList::headerContextMenuRequested(QPoint /*p*/)
@@ -1133,6 +1136,9 @@ void NewFriendList::applyWhileKeepingTree(std::function<void()> predicate)
         ui->peerTreeWidget->setColumnHidden(i,!col_visible[i]);
         ui->peerTreeWidget->setColumnWidth(i,col_sizes[i]);
     }
+
+    // restore sorting
+    sortColumn(mLastSortColumn,mLastSortOrder);
 }
 
 void NewFriendList::checkInternalData(bool force)
@@ -1267,7 +1273,8 @@ bool NewFriendList::exportFriendlist(QString &fileName)
             if (!rsPeers->getPeerDetails(*list_iter, detailSSL))
                 continue;
 
-            std::string certificate = rsPeers->GetRetroshareInvite(detailSSL.id, true,true);
+            std::string certificate = rsPeers->GetRetroshareInvite(detailSSL.id, RetroshareInviteFlags::CURRENT_IP | RetroshareInviteFlags::DNS | RetroshareInviteFlags::RADIX_FORMAT);
+
             // remove \n from certificate
             certificate.erase(std::remove(certificate.begin(), certificate.end(), '\n'), certificate.end());
 

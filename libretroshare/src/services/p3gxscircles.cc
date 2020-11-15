@@ -1400,6 +1400,7 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 		    std::cerr << "  Unprocessed peers. Requesting reload..." << std::endl;
 #endif
             cache.mAllIdsHere = false;
+            cache.mStatus = CircleEntryCacheStatus::UPDATING;
 
 		    /* schedule event to try reload gxsIds */
 		    RsTickEvent::schedule_in(CIRCLE_EVENT_RELOADIDS, GXSID_LOAD_CYCLE, id.toStdString());
