@@ -60,29 +60,25 @@ BoardPostDisplayWidgetBase::BoardPostDisplayWidgetBase(const RsPostedPost& post,
 
 void BoardPostDisplayWidgetBase::setCommentsSize(int comNb)
 {
-    QString sComButText ;
+    QString sComButText = tr("Comment");
+    QString sComButTooltip ;
 
     if (comNb == 1)
         sComButText = tr("1 comment");
     else if(comNb > 1)
         sComButText = tr("%1 comments").arg(comNb);
-    else
-        sComButText = tr("No comments yet. Click to add one.");
 
-    commentButton()->setToolTip(sComButText);
+    if (comNb == 0)
+        sComButTooltip  = tr("No comments yet. Click to add one.");
+
+    commentButton()->setToolTip(sComButTooltip);
+    commentButton()->setText(sComButText);
 
     if(comNb > 0)
         commentButton()->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/comments_blue.png"));
     else
         commentButton()->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/comments.png"));
 
-//	QString sComButText = tr("Comment");
-//	if (comNb == 1)
-//		sComButText = sComButText.append("(1)");
-//	else if(comNb > 1)
-//		sComButText = tr("Comments ").append("(%1)").arg(comNb);
-//
-    commentButton()->setText(tr("Comments"));
 }
 
 void BoardPostDisplayWidgetBase::makeDownVote()
