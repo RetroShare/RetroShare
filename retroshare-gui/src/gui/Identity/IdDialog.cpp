@@ -153,16 +153,10 @@ IdDialog::IdDialog(QWidget *parent) : MainPage(parent), ui(new Ui::IdDialog)
 	ui->setupUi(this);
 
 	mEventHandlerId_identity = 0;
-	rsEvents->registerEventsHandler(
-	            [this](std::shared_ptr<const RsEvent> event)
-	{ RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this); },
-	            mEventHandlerId_identity, RsEventType::GXS_IDENTITY );
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this); }, mEventHandlerId_identity, RsEventType::GXS_IDENTITY );
 
 	mEventHandlerId_circles = 0;
-	rsEvents->registerEventsHandler(
-	            [this](std::shared_ptr<const RsEvent> event)
-	{ RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this); },
-	            mEventHandlerId_circles, RsEventType::GXS_CIRCLES );
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this); }, mEventHandlerId_circles, RsEventType::GXS_CIRCLES );
 
 	// This is used to grab the broadcast of changes from p3GxsCircles, which is discarded by the current dialog, since it expects data for p3Identity only.
 	//mCirclesBroadcastBase = new RsGxsUpdateBroadcastBase(rsGxsCircles, this);

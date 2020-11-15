@@ -46,6 +46,7 @@
 #include "util/DateTime.h"
 #include "util/RsProtectedTimer.h"
 #include "util/QtVersion.h"
+#include "util/qtthreadsutils.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmsgs.h>
@@ -286,10 +287,10 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     connect(ui.messageTreeWidget->selectionModel(), SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&)), this, SLOT(currentChanged(const QModelIndex&,const QModelIndex&)));
 
     mEventHandlerId=0;
-    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); }, mEventHandlerId, RsEventType::MAIL_STATUS );
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }); }, mEventHandlerId, RsEventType::MAIL_STATUS );
 }
 
-void MessagesDialog::handleEvent(std::shared_ptr<const RsEvent> event)
+void MessagesDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 {
     if(event->mType != RsEventType::MAIL_STATUS)
         return;
