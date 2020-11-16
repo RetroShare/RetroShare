@@ -57,6 +57,7 @@ protected:
 	virtual void dropEvent(QDropEvent *event);
 
 private slots:
+	void toggle() ;
 	void addExtraFile();
 	void checkAttachmentReady();
 	void deleteAttachment();
