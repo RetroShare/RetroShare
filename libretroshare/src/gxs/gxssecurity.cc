@@ -417,11 +417,22 @@ bool GxsSecurity::validateNxsMsg(const RsNxsMsg& msg, const RsTlvKeySignature& s
     //        /********************* check signature *******************/
 
             /* check signature timeperiod */
-            if ((msgMeta.mPublishTs < key.startTS) || (key.endTS != 0 && msgMeta.mPublishTs > key.endTS))
+            if(msgMeta.mPublishTs < key.startTS)
+            {
+                RsWarn() << __PRETTY_FUNCTION__ << " GxsSecurity::validateNxsMsg() TS out of range for key " << msgMeta.mAuthorId
+                         << " The signed message has an inconsistent msg publish time of " << msgMeta.mPublishTs
+                         << " whereas the signing key was created later at TS " << key.startTS
+                         << ". Validation rejected for security. If you see this, something irregular is going on." << std::endl;
+                return false;
+            }
+
+            if(key.endTS != 0 && msgMeta.mPublishTs > key.endTS)
 			{
 				RsWarn() << __PRETTY_FUNCTION__ << " GxsSecurity::validateNxsMsg() TS out of range for key " << msgMeta.mAuthorId
-				         << " usage is limited to TS=[" << key.startTS << "," << key.endTS << "] and msg publish time is " << msgMeta.mPublishTs << std::endl;
-				return false;
+                         << " usage is limited to TS=[" << key.startTS << "," << key.endTS << "] and msg publish time is " << msgMeta.mPublishTs
+                         << " The validation still passes, but that key should be renewed." << std::endl;
+
+                // no return here. We still proceed checking the signature.
 			}
 
             /* decode key */
@@ -1053,14 +1064,22 @@ bool GxsSecurity::validateNxsGrp(const RsNxsGrp& grp, const RsTlvKeySignature& s
 	/********************* check signature *******************/
 
 	/* check signature timeperiod */
-	if ((grpMeta.mPublishTs < key.startTS) || (key.endTS != 0 && grpMeta.mPublishTs > key.endTS))
+    if (grpMeta.mPublishTs < key.startTS)
 	{
-#ifdef GXS_SECURITY_DEBUG
-		std::cerr << " GxsSecurity::validateNxsMsg() TS out of range";
-		std::cerr << std::endl;
-#endif
-		return false;
+        RsWarn() << __PRETTY_FUNCTION__ << " GxsSecurity::validateNxsGrp() TS out of range for admin/publish key of group " << grpMeta.mGroupId
+                 << " The signed group has an inconsistent creation/modification time of " << grpMeta.mPublishTs
+                 << " whereas the key was created later at TS " << key.startTS
+                 << ". Validation rejected for security. If you see this, something irregular is going on." << std::endl;
+        return false;
 	}
+    if (key.endTS != 0 && grpMeta.mPublishTs > key.endTS)
+    {
+        RsWarn() << __PRETTY_FUNCTION__ << " GxsSecurity::validateNxsMsg() TS out of range for admin/publish key for group " << grpMeta.mGroupId
+                 << " usage is limited to TS=[" << key.startTS << "," << key.endTS << "] and msg publish time is " << grpMeta.mPublishTs
+                 << " The validation still passes, but that key should be renewed." << std::endl;
+
+        // no return. Still proceed checking signature.
+    }
 
 	/* decode key */
 	const unsigned char *keyptr = (const unsigned char *) key.keyData.bin_data;
