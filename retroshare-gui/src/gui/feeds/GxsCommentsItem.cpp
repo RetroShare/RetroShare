@@ -178,6 +178,7 @@ void GxsCommentsItem::setup()
 
 	// hide expand button, replies is not implemented yet
 	ui->expandButton->hide();
+	ui->unsubscribeButton->hide();
 
 	ui->titleLabel->setMinimumWidth(100);
 
@@ -311,7 +312,9 @@ void GxsCommentsItem::loadMessage()
 
 			RsQThreadUtils::postToObject( [cmt,this]()
 			{
-				ui->commLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(cmt.mComment.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+				uint32_t autorized_lines = (int)floor((ui->logoLabel->height() - ui->titleLabel->height() - ui->buttonHLayout->sizeHint().height())/QFontMetricsF(ui->subjectLabel->font()).height());
+
+				ui->commLabel->setText(RsHtml().formatText(NULL, RsStringUtil::CopyLines(QString::fromUtf8(cmt.mComment.c_str()), autorized_lines), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 
 				ui->nameLabel->setId(cmt.mMeta.mAuthorId);
 				ui->datetimelabel->setText(DateTime::formatLongDateTime(cmt.mMeta.mPublishTs));
@@ -425,7 +428,6 @@ void GxsCommentsItem::fill()
 			ui->unsubscribeButton->setEnabled(false);
 		}
 		ui->readButton->hide();
-		ui->newLabel->hide();
 
 		if (IS_MSG_NEW(mPost.mMeta.mMsgStatus)) {
 			mCloseOnRead = true;
@@ -463,7 +465,6 @@ void GxsCommentsItem::fill()
 		else 
 		{
 			ui->readButton->setVisible(false);
-			ui->newLabel->setVisible(false);
 		}
 
 		mCloseOnRead = false;
@@ -537,8 +538,6 @@ void GxsCommentsItem::setReadStatus(bool isNew, bool isUnread)
 		whileBlocking(ui->readButton)->setChecked(false);
 		ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png"));
 	}
-
-	ui->newLabel->setVisible(isNew);
 
 	ui->mainFrame->setProperty("new", isNew);
 	ui->mainFrame->style()->unpolish(ui->mainFrame);

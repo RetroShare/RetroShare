@@ -30,6 +30,7 @@
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/DateTime.h"
 #include "util/misc.h"
+#include "util/stringutil.h"
 #include "gui/common/FilesDefs.h"
 #include "util/qtthreadsutils.h"
 #include "util/HandleRichText.h"
@@ -368,6 +369,7 @@ void BoardsCommentsItem::setup()
 	ui->datetimeLabel->clear();
 	ui->replyFrame->hide();
 
+	ui->commentButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/comment.png"));
 	ui->copyLinkButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/copy.png"));
 	ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/down-arrow.png"));
 	ui->readAndClearButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/correct.png"));
@@ -392,6 +394,7 @@ void BoardsCommentsItem::setup()
 
 	// hide expand button, replies is not implemented yet
 	ui->expandButton->hide();
+	ui->unsubscribeButton->hide();
 
 	ui->clearButton->hide();
 	ui->readAndClearButton->hide();
@@ -424,7 +427,8 @@ void BoardsCommentsItem::makeUpVote()
 void BoardsCommentsItem::setComment(const RsGxsComment& cmt)
 {
 	ui->commLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(cmt.mComment.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
-	ui->nicknameLabel->setId(cmt.mMeta.mAuthorId);
+
+	ui->nameLabel->setId(cmt.mMeta.mAuthorId);
 	ui->datetimeLabel->setText(DateTime::formatLongDateTime(cmt.mMeta.mPublishTs));
 
 	RsIdentityDetails idDetails ;
@@ -450,13 +454,13 @@ void BoardsCommentsItem::setCommentsSize(int comNb)
 void BoardsCommentsItem::fill()
 {
 
-	ui->thumbnailLabel->setPixmap( FilesDefs::getPixmapFromQtResourcePath(":/icons/png/comment.png"));
+	ui->logoLabel->setPixmap( FilesDefs::getPixmapFromQtResourcePath(":/icons/png/comment.png"));
 
 	RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_POSTED, mGroupMeta.mGroupId, groupName());
-	ui->nameLabel->setText(link.toHtml());
+	ui->titleLabel->setText(link.toHtml());
 
 	RetroShareLink msgLink = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_POSTED, mPost.mMeta.mGroupId, mPost.mMeta.mMsgId, messageName());
-	ui->titleLabel->setText(msgLink.toHtml());
+	ui->subjectLabel->setText(msgLink.toHtml());
 
 	mInFill = true;
 
