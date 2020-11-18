@@ -496,7 +496,7 @@ GxsCommentsItem QLabel#subjectLabel, GxsCommentsItem QLabel#titleLabel , QLabel#
 	font: bold;
 }
 
-BoardsCommentsItem QLabel#titleLabel , QLabel#nameLabel, QLabel#nicknameLabel {
+BoardsCommentsItem QLabel#subjectLabel, QLabel#titleLabel , QLabel#nameLabel {
 	font: 14px;
 	font: bold;
 }

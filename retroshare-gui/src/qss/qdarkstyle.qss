@@ -1442,17 +1442,21 @@ BoardPostDisplayWidget_card QLabel#titleLabel{
 	font: bold;
 }
 
+GxsCommentsItem QFrame#mainFrame, BoardsCommentsItem QFrame#mainFrame {
+	background: #302F2F;
+}
+
 GxsCommentsItem QLabel#newCommentLabel, BoardsCommentsItem QLabel#newCommentLabel{
 	font: 14px;
 	font: bold;
 }
 
-GxsCommentsItem QLabel#subjectLabel, GxsCommentsItem QLabel#titleLabel , QLabel#nameLabel{
+GxsCommentsItem QLabel#subjectLabel, GxsCommentsItem QLabel#titleLabel , QLabel#nameLabel {
 	font: 14px;
 	font: bold;
 }
 
-BoardsCommentsItem QLabel#titleLabel , QLabel#nameLabel, QLabel#nicknameLabel{
+BoardsCommentsItem QLabel#titleLabel , QLabel#nameLabel, QLabel#subjectLabel{
 	font: 14px;
 	font: bold;
 }
