@@ -61,7 +61,9 @@ static const uint32_t INDEX_AUTHEN_ADMIN        = 0x00000040; // admin key
 
 #define GXS_MASK "GXS_MASK_HACK"
 
-#define GEN_EXCH_DEBUG	1
+/*
+ *  #define GEN_EXCH_DEBUG	1
+ */
 
 // Data flow in RsGenExchange
 //
