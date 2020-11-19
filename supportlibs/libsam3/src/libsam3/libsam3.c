@@ -11,7 +11,6 @@
 
 #include <ctype.h>
 #include <errno.h>
-#include <netdb.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -20,16 +19,27 @@
 #include <time.h>
 #include <unistd.h>
 
+#ifdef __MINGW32__
+//#include <winsock.h>
+#include <windows.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#ifndef MSG_NOSIGNAL
+#define MSG_NOSIGNAL 0
+#endif
+#ifndef SHUT_RDWR
+#define SHUT_RDWR 2
+#endif
+#endif
+
+#ifdef __unix__
 #include <arpa/inet.h>
+#include <netdb.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/sysinfo.h>
 #include <sys/types.h>
-
-#ifdef WINDOWS_SYS
-#include <winsock.h>
-#endif // WINDOWS_SYS
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 int libsam3_debug = 0;
 
@@ -104,11 +114,6 @@ int sam3tcpConnectIP(uint32_t ip, int port) {
     }
   }
   //
-  // Set this for all outgoing SAM connections. Most SAM commands should be answered rather fast except CREATE SESSION maybe.
-  // This should be enough to let SAM establish a session.
-  sam3tcpSetTimeoutSend(fd, 5 * 60 * 1000);
-  sam3tcpSetTimeoutReceive(fd, 5 * 60 * 1000);
-  //
   setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &val, sizeof(val));
   //
   if (connect(fd, (struct sockaddr *)&addr, sizeof(struct sockaddr_in)) < 0) {
@@ -161,13 +166,8 @@ int sam3tcpConnect(const char *hostname, int port, uint32_t *ip) {
 // <0: error; 0: ok
 int sam3tcpDisconnect(int fd) {
   if (fd >= 0) {
-#ifndef WINDOWS_SYS // ie UNIX
-      shutdown(fd, SHUT_RDWR);
-      return close(fd);
-#else
-    return closesocket(fd);
-#endif
-
+    shutdown(fd, SHUT_RDWR);
+    return close(fd);
   }
   //
   return -1;
@@ -823,6 +823,18 @@ int sam3CloseSession(Sam3Session *ses) {
   return -1;
 }
 
+int sam3CreateSilentSession(Sam3Session *ses, const char *hostname, int port,
+                            const char *privkey, Sam3SessionType type,
+                            Sam3SigType sigType, const char *params) {
+  int r =
+      sam3CreateSession(ses, hostname, port, privkey, type, sigType, params);
+  if (r != 0) {
+    return r;
+  }
+  ses->silent = true;
+  return 0;
+}
+
 int sam3CreateSession(Sam3Session *ses, const char *hostname, int port,
                       const char *privkey, Sam3SessionType type,
                       Sam3SigType sigType, const char *params) {
@@ -840,6 +852,7 @@ int sam3CreateSession(Sam3Session *ses, const char *hostname, int port,
     memset(ses, 0, sizeof(Sam3Session));
     ses->fd = -1;
     ses->fwd_fd = -1;
+    ses->silent = false;
     //
     if (privkey != NULL && strlen(privkey) < SAM3_PRIVKEY_MIN_SIZE)
       goto error;
@@ -936,8 +949,9 @@ Sam3Connection *sam3StreamConnect(Sam3Session *ses, const char *destkey) {
       strcpyerr(ses, "IO_ERROR_SK");
       goto error;
     }
-    if (sam3tcpPrintf(conn->fd, "STREAM CONNECT ID=%s DESTINATION=%s\n",
-                      ses->channel, destkey) < 0) {
+    if (sam3tcpPrintf(conn->fd,
+                      "STREAM CONNECT ID=%s DESTINATION=%s SILENT=%s\n",
+                      ses->channel, destkey, checkIsSilent(ses)) < 0) {
       strcpyerr(ses, "IO_ERROR");
       goto error;
     }
@@ -945,16 +959,18 @@ Sam3Connection *sam3StreamConnect(Sam3Session *ses, const char *destkey) {
       strcpyerr(ses, "IO_ERROR");
       goto error;
     }
-    if (!sam3IsGoodReply(rep, "STREAM", "STATUS", "RESULT", "OK")) {
-      const char *v = sam3FindField(rep, "RESULT");
-      //
-      strcpyerr(ses, (v != NULL && v[0] ? v : "I2P_ERROR"));
-      sam3CloseConnectionInternal(conn);
-      free(conn);
-      conn = NULL;
-    } else {
-      // no error
-      strcpyerr(ses, NULL);
+    if (!ses->silent) {
+      if (!sam3IsGoodReply(rep, "STREAM", "STATUS", "RESULT", "OK")) {
+        const char *v = sam3FindField(rep, "RESULT");
+        //
+        strcpyerr(ses, (v != NULL && v[0] ? v : "I2P_ERROR"));
+        sam3CloseConnectionInternal(conn);
+        free(conn);
+        conn = NULL;
+      } else {
+        // no error
+        strcpyerr(ses, NULL);
+      }
     }
     sam3FreeFieldList(rep);
     if (conn != NULL) {
@@ -1002,11 +1018,13 @@ Sam3Connection *sam3StreamAccept(Sam3Session *ses) {
       strcpyerr(ses, "IO_ERROR_RP");
       goto error;
     }
-    if (!sam3IsGoodReply(rep, "STREAM", "STATUS", "RESULT", "OK")) {
-      const char *v = sam3FindField(rep, "RESULT");
-      //
-      strcpyerr(ses, (v != NULL && v[0] ? v : "I2P_ERROR_RES"));
-      goto error;
+    if (!ses->silent) {
+      if (!sam3IsGoodReply(rep, "STREAM", "STATUS", "RESULT", "OK")) {
+        const char *v = sam3FindField(rep, "RESULT");
+        //
+        strcpyerr(ses, (v != NULL && v[0] ? v : "I2P_ERROR_RES"));
+        goto error;
+      }
     }
     if (sam3tcpReceiveStr(conn->fd, repstr, sizeof(repstr)) < 0) {
       strcpyerr(ses, "IO_ERROR_RP1");
@@ -1040,6 +1058,14 @@ Sam3Connection *sam3StreamAccept(Sam3Session *ses) {
   return NULL;
 }
 
+const char *checkIsSilent(Sam3Session *ses) {
+  if (ses->silent == true) {
+    return "true";
+  } else {
+    return "false";
+  }
+}
+
 int sam3StreamForward(Sam3Session *ses, const char *hostname, int port) {
   if (ses != NULL) {
     SAMFieldList *rep = NULL;
@@ -1060,8 +1086,9 @@ int sam3StreamForward(Sam3Session *ses, const char *hostname, int port) {
       strcpyerr(ses, "IO_ERROR_SK");
       goto error;
     }
-    if (sam3tcpPrintf(ses->fwd_fd, "STREAM FORWARD ID=%s PORT=%d HOST=%s SILENT=true\n",
-                      ses->channel, port, hostname) < 0) {
+    if (sam3tcpPrintf(ses->fwd_fd,
+                      "STREAM FORWARD ID=%s PORT=%d HOST=%s SILENT=%s\n",
+                      ses->channel, port, hostname, checkIsSilent(ses)) < 0) {
       strcpyerr(ses, "IO_ERROR_PF");
       goto error;
     }

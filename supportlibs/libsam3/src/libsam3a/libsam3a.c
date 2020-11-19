@@ -13,7 +13,6 @@
 
 #include <ctype.h>
 #include <errno.h>
-#include <netdb.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -22,13 +21,28 @@
 #include <time.h>
 #include <unistd.h>
 
+#ifdef __MINGW32__
+//#include <winsock.h>
+#include <windows.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#ifndef MSG_NOSIGNAL
+#define MSG_NOSIGNAL 0
+#endif
+#ifndef SHUT_RDWR
+#define SHUT_RDWR 2
+#endif
+#endif
+
+#ifdef __unix__
 #include <arpa/inet.h>
+#include <netdb.h>
 #include <netinet/in.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <sys/sysinfo.h>
 #include <sys/types.h>
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 int libsam3a_debug = 0;
 

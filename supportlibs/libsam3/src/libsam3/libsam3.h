@@ -10,8 +10,18 @@
 #ifndef LIBSAM3_H
 #define LIBSAM3_H
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
+
+#ifndef _SSIZE_T_DEFINED
+#define _SSIZE_T_DEFINED
+#undef ssize_t
+#ifdef _WIN64
+typedef signed int64 ssize_t;
+typedef int ssize_t;
+#endif /* _WIN64 */
+#endif /* _SSIZE_T_DEFINED */
 
 #ifdef __cplusplus
 extern "C" {
@@ -138,6 +148,7 @@ typedef struct Sam3Session {
   int port; // this will be changed to UDP port for DRAM/RAW (can be 0)
   struct Sam3Connection *connlist; // list of opened connections
   int fwd_fd;
+  bool silent;
 } Sam3Session;
 
 typedef struct Sam3Connection {
@@ -167,11 +178,34 @@ extern int sam3CreateSession(Sam3Session *ses, const char *hostname, int port,
                              Sam3SigType sigType, const char *params);
 
 /*
+ * create SAM session with SILENT=True
+ * pass NULL as hostname for 'localhost' and 0 as port for 7656
+ * pass NULL as privkey to create TRANSIENT session
+ * 'params' can be NULL
+ * see http://www.i2p2.i2p/i2cp.html#options for common options,
+ * and http://www.i2p2.i2p/streaming.html#options for STREAM options
+ * if result<0: error, 'ses' fields are undefined, no need to call
+ * sam3CloseSession() if result==0: ok, all 'ses' fields are filled
+ * TODO: don't clear 'error' field on error (and set it to something meaningful)
+ */
+extern int sam3CreateSilentSession(Sam3Session *ses, const char *hostname,
+                                   int port, const char *privkey,
+                                   Sam3SessionType type, Sam3SigType sigType,
+                                   const char *params);
+
+/*
  * close SAM session (and all it's connections)
  * returns <0 on error, 0 on ok
  * 'ses' must be properly initialized
  */
 extern int sam3CloseSession(Sam3Session *ses);
+
+/*
+ * check to see if a SAM session is silent and output
+ * characters for use with sam3tcpPrintf() checkIsSilent
+ */
+
+const char *checkIsSilent(Sam3Session *ses);
 
 /*
  * Check to make sure that the destination in use is of a valid length, returns
