@@ -209,6 +209,9 @@ void GxsChannelPostItem::setup()
 
 	ui->scoreLabel->hide();
 
+	// hide unsubscribe button not necessary
+	ui->unsubscribeButton->hide();
+
 	ui->downloadButton->hide();
 	ui->playButton->hide();
     //ui->warn_image_label->hide();
@@ -426,7 +429,7 @@ void GxsChannelPostItem::fill()
 	mInFill = true;
 
 	QString title;
-	
+	QString msgText;
 	//float f = QFontMetricsF(font()).height()/14.0 ;
 
 	if(mPost.mThumbnail.mData != NULL)
@@ -465,8 +468,10 @@ void GxsChannelPostItem::fill()
 		title += link.toHtml();
 		ui->titleLabel->setText(title);
 
+		msgText = tr("Post") + ": ";
 		RetroShareLink msgLink = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_CHANNEL, mPost.mMeta.mGroupId, mPost.mMeta.mMsgId, messageName());
-        ui->subjectLabel->setText(msgLink.toHtml());
+		msgText += msgLink.toHtml();
+		ui->subjectLabel->setText(msgText);
 
 		if (IS_GROUP_SUBSCRIBED(mGroupMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroupMeta.mSubscribeFlags))
 		{

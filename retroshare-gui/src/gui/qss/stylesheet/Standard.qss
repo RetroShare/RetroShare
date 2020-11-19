@@ -169,7 +169,7 @@ ShareManager QPushButton#closeButton {
     padding-right: 6px;
 }
 
-ShareManager QPushButton#addButton {
+ShareManager QPushButton#addButton{
 	font: bold;
 	font-size: 15px;
 	color: white;
@@ -180,7 +180,25 @@ ShareManager QPushButton#addButton {
 	padding: 4px;
 }
 
-ShareManager QPushButton#addButton:hover {
+ShareManager QPushButton#addButton:hover{
+	background: #5AD75A;
+	border-radius: 4px;
+	min-width: 4em;
+	padding: 4px;
+}
+
+SearchDialog QPushButton#pushButtonSearch {
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #32CD32;
+	border-radius: 4px;
+	max-height: 25px;
+	min-width: 4em;
+	padding: 4px;
+}
+
+SearchDialog QPushButton#pushButtonSearch:hover{
 	background: #5AD75A;
 	border-radius: 4px;
 	min-width: 4em;
@@ -444,10 +462,16 @@ GxsChannelPostItem > QFrame#mainFrame[new=true] {
 	border-radius: 10px;
 }
 
-GxsChannelPostItem QLabel#newLabel {
+GxsChannelPostItem QLabel#newLabel{
 	border: 1px solid #167BE7;
 	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #2291E0, stop: 1 #3EB3FF);
 	border-radius: 3px;
+	color: white;
+}
+
+GxsChannelPostItem QLabel#subjectLabel, GxsChannelPostItem QLabel#titleLabel {
+	font: 11pt;
+	font: bold italic;
 }
 
 GxsChannelPostItem QLabel#logoLabel {
