@@ -167,7 +167,7 @@ public:
 	bool	      mIsExternal;
 	RsGxsCircleId mRestrictedCircleId ;	// circle ID that circle is restricted to.
 
-    bool      mHasOwnMembershipMessage;  // Do I have a subscribe/unsubscribe message in the circle group? Will be used to determine if we subscribe to the group or not
+    bool      mDoIAuthorAMembershipMsg;  // Do I have a subscribe/unsubscribe message in the circle group? Will be used to determine if we subscribe to the group or not
     uint32_t  mGroupStatus;              // Copy of the group status from the GXS group.
     uint32_t  mGroupSubscribeFlags;		 // Subscribe flags of the group.
 

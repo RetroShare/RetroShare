@@ -68,7 +68,7 @@ RsGxsCircleEvent::~RsGxsCircleEvent() = default;
  * and GXS asks this service before forwarding any data.
  *
  * The CircleGroup contains:
- *      list of GxsId's
+ *      list of invited GxsId's
  *      list of GxsCircleId's (subcircles also allowed).
  *
  * This service runs a background task to transform the CircleGroups
@@ -76,14 +76,30 @@ RsGxsCircleEvent::~RsGxsCircleEvent() = default;
  * These results are cached to provide GXS with quick access to the information. 
  * This involves:
  *      - fetching the GroupData via GXS.
- *      - querying the list of GxsId to see if they are known.
- *		(NB: this will cause caching of GxsId in p3IdService.
+ *      - querying the list of GxsId to see if they are known (NB: this will cause caching of GxsId in p3IdService.
  *      - recursively loading subcircles to complete Circle definition.
  *      - saving the result into Cache.
  *
  * For Phase 1, we will only use the list of GxsIds. No subcircles will be allowed.
  * Recursively determining membership via sub-circles is complex and needs more thought.
  * The data-types for the full system, however, will be in-place.
+ *
+ * Circle Membership
+ *     - Actual members of the circle are computed by intersecting the set of invited IDs with the set of IDs actually requesting membership.
+ *     - To be a member, one therefore has to publish a membership message. To leave the circle, a new message is published accordingly.
+ *
+ * Circle Subscription system
+ *     - Circles are subscribed only when we need to dispatch information about our own membership, or when we are admin of the circle.
+ *     - Circle (group) membership is decided automatically. Not to be mixed up with whether or not to be a member of the circle, which is GUI based.
+ *
+ * Handling of old/dead circles
+ *     - auto-subscription based on own membership requests should limit the spread of unwanted circles (such as when one adds all visible IDs into
+ *       the invited list of a new circle. Such a circle would not be visible beyond friend nodes of the node creating that circle.
+ *
+ *     - since this feature is new (in 0.6.6), there is already a bunch of unwanted circles. How we can get rid of them is not entirely clear.
+ *       Indeed, once a node requests membership (and even later on denies it), it will have to remain subscribed to the circle group in order
+ *       to ensure that this unsubscribe request keeps spreading from its actual source. A some point however, the circle msgs disappear, and
+ *       therefore the circle will switch to unsubscribe automatically.
  */
 
 #define CIRCLEREQ_CACHELOAD	     0x0001
@@ -1075,7 +1091,7 @@ RsGxsCircleCache::RsGxsCircleCache()
 	mLastUpdatedMembershipTS = 0 ;
     mStatus = CircleEntryCacheStatus::NO_DATA_YET;
     mAllIdsHere = false;
-    mHasOwnMembershipMessage = false;
+    mDoIAuthorAMembershipMsg = false;
 
 	return; 
 }
@@ -1625,7 +1641,7 @@ bool p3GxsCircles::locked_checkCircleCacheForAutoSubscribe(RsGxsCircleCache& cac
 	}
                                 
     bool am_I_admin( cache.mGroupSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) ;
-    bool do_I_have_a_msg( cache.mHasOwnMembershipMessage );
+    bool do_I_have_a_msg( cache.mDoIAuthorAMembershipMsg );
 
 #ifdef DEBUG_CIRCLES
     std::cerr << "  own ID invited in circle: " << am_I_invited << ", membership msg author: " << do_I_have_a_msg << ", admin: " << am_I_admin << std::endl;
@@ -1926,7 +1942,7 @@ bool p3GxsCircles::locked_processMembershipMessages(RsGxsCircleCache& cache, con
         std::cerr << "    Circle found in cache!" << std::endl;
         std::cerr << "    Retrieving messages..." << std::endl;
 #endif
-        cache.mHasOwnMembershipMessage = false;	// default
+        cache.mDoIAuthorAMembershipMsg = false;	// default
 
         for(uint32_t i=0;i<items.size();++i)
         {
@@ -1966,7 +1982,7 @@ bool p3GxsCircles::locked_processMembershipMessages(RsGxsCircleCache& cache, con
 #endif
 
                 if(own_ids.end() != own_ids.find(item->meta.mAuthorId))	// we have at least one subscribe/unsubscribe message. So we update the flag accordingly.
-                    cache.mHasOwnMembershipMessage = true;
+                    cache.mDoIAuthorAMembershipMsg = true;
             }
             else if(info.last_subscription_TS > item->time_stamp)
                 std::cerr << " Too old: item->TS=" << item->time_stamp << ", last_subscription_TS=" << info.last_subscription_TS << ". IGNORING." << std::endl;
@@ -1991,6 +2007,10 @@ bool p3GxsCircles::locked_processMembershipMessages(RsGxsCircleCache& cache, con
                 messages_to_delete[RsGxsGroupId(cache.mCircleId)].insert(item->meta.mMsgId) ;
             }
         }
+
+#ifdef DEBUG_CIRCLES
+        std::cerr << "    Cleaning older messages..." << std::endl;
+#endif
 
         cache.mLastUpdatedMembershipTS = time(NULL) ;
         cache.mStatus = CircleEntryCacheStatus::UP_TO_DATE;
@@ -2066,7 +2086,7 @@ bool p3GxsCircles::debug_dumpCacheEntry(RsGxsCircleCache& cache)
               << " MembershipTS: " << cache.mLastUpdatedMembershipTS
               << " UpdateTS: " << cache.mLastUpdateTime
               << " All Ids here: " << cache.mAllIdsHere
-              << " Has own msg: " << cache.mHasOwnMembershipMessage << std::endl;
+              << " Has own msg: " << cache.mDoIAuthorAMembershipMsg << std::endl;
 
     return true;
 }
