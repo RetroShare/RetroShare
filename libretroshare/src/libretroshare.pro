@@ -394,7 +394,6 @@ HEADERS +=	pqi/authssl.h \
 			pqi/pqissl.h \
 			pqi/pqissllistener.h \
 			pqi/pqisslpersongrp.h \
-                        pqi/pqissli2pbob.h \
 			pqi/pqisslproxy.h \
 			pqi/pqistore.h \
 			pqi/pqistreamer.h \
@@ -456,7 +455,7 @@ HEADERS +=	rsitems/rsitem.h \
 			rsitems/rsgxsupdateitems.h \
 			rsitems/rsserviceinfoitems.h \
 
-HEADERS +=  services/autoproxy/p3i2pbob.h \
+HEADERS +=  \
             services/rseventsservice.h \
             services/autoproxy/rsautoproxymonitor.h \
             services/p3msgservice.h \
@@ -560,7 +559,6 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/pqissl.cc \
 			pqi/pqissllistener.cc \
 			pqi/pqisslpersongrp.cc \
-                        pqi/pqissli2pbob.cpp \
 			pqi/pqisslproxy.cc \
 			pqi/pqistore.cc \
 			pqi/pqistreamer.cc \
@@ -618,7 +616,6 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 
 SOURCES +=  services/autoproxy/rsautoproxymonitor.cc \
     services/rseventsservice.cc \
-            services/autoproxy/p3i2pbob.cc \
             services/p3msgservice.cc \
 			services/p3service.cc \
 			services/p3statusservice.cc \

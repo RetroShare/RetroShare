@@ -717,7 +717,6 @@ RsGRouter *rsGRouter = NULL ;
 #	include "rs_upnp/upnphandler_miniupnp.h"
 #endif // def RS_USE_LIBUPNP
 
-#include "services/autoproxy/p3i2pbob.h"
 #include "services/autoproxy/p3i2psam3.h"
 #include "services/autoproxy/rsautoproxymonitor.h"
 
