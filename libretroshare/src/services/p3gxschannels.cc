@@ -64,11 +64,13 @@
 
 #define CHANNEL_PROCESS	 		0x0001
 #define CHANNEL_TESTEVENT_DUMMYDATA	0x0002
-#define DUMMYDATA_PERIOD		60	// long enough for some RsIdentities to be generated.
+#define DUMMYDATA_PERIOD		60	// Long enough for some RsIdentities to be generated.
 
-#define CHANNEL_DOWNLOAD_PERIOD 	(3600 * 24 * 7)
-#define CHANNEL_MAX_AUTO_DL		(8 * 1024 * 1024 * 1024ull)	// 8 GB. Just a security ;-)
-	
+#define CHANNEL_DOWNLOAD_PERIOD 	                        (3600 * 24 * 7)
+#define CHANNEL_MAX_AUTO_DL		                            (8 * 1024 * 1024 * 1024ull)	// 8 GB. Just a security ;-)
+#define	CHANNEL_UNUSED_BY_FRIENDS_DELAY                     (3600*24*60)                // Two months. Will be used to delete a channel if too old
+#define CHANNEL_DELAY_FOR_CHECKING_AND_DELETING_OLD_GROUPS   300                       // check for old channels every 30 mins. Far too often than above delay by RS needs to run it at least once per session
+
 /********************************************************************************/
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
@@ -209,7 +211,7 @@ bool p3GxsChannels::loadList(std::list<RsItem *>& loadList)
 			mKnownChannels.clear();
 
 			for(auto it(fnr->records.begin());it!=fnr->records.end();++it)
-				if( now < it->second + GXS_CHANNELS_CONFIG_MAX_TIME_NOTIFY_STORAGE)
+                if(now < it->second + GXS_CHANNELS_CONFIG_MAX_TIME_NOTIFY_STORAGE)
 					mKnownChannels.insert(*it) ;
 		}
 
@@ -332,28 +334,36 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				ev->mChannelGroupId = grpChange->mGroupId;
 				ev->mChannelEventCode = RsChannelEventCode::STATISTICS_CHANGED;
 				rsEvents->postEvent(ev);
-			}
+
+                // also update channel usage. Statistics are updated when a friend sends some sync packets
+                RS_STACK_MUTEX(mKnownChannelsMutex);
+                mKnownChannels[grpChange->mGroupId] = time(NULL);
+                IndicateConfigChanged();
+            }
                 break;
 
 			case RsGxsNotify::TYPE_PUBLISHED:
 			case RsGxsNotify::TYPE_RECEIVED_NEW:
 			{
-				/* group received */
+                /* group received or updated */
 
-				RS_STACK_MUTEX(mKnownChannelsMutex);
+                bool unknown ;
+                {
+                    RS_STACK_MUTEX(mKnownChannelsMutex);
+
+                    unknown = (mKnownChannels.find(grpChange->mGroupId) == mKnownChannels.end());
+                    mKnownChannels[grpChange->mGroupId] = time(NULL);
+                    IndicateConfigChanged();
+                }
 
 #ifdef GXSCHANNEL_DEBUG
                 RsDbg() << "    Type = Published/New " << std::endl;
 #endif
-                if(mKnownChannels.find(grpChange->mGroupId) == mKnownChannels.end())
+                if(unknown)
 				{
 #ifdef GXSCHANNEL_DEBUG
                     RsDbg() << "    Status: unknown. Sending notification event." << std::endl;
 #endif
-
-                    mKnownChannels.insert(std::make_pair(grpChange->mGroupId,time(NULL))) ;
-					IndicateConfigChanged();
-
 					auto ev = std::make_shared<RsGxsChannelEvent>();
 					ev->mChannelGroupId = grpChange->mGroupId;
 					ev->mChannelEventCode = RsChannelEventCode::NEW_CHANNEL;
@@ -429,6 +439,52 @@ void	p3GxsChannels::service_tick()
 
 		rsEvents->postEvent(ev);
 	}
+}
+
+bool p3GxsChannels::service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta)
+{
+    std::cerr << "p3gxsChannels: Checking unused channel: called by GxsCleaning." << std::endl;
+
+    // request all group infos at once
+
+    rstime_t now = time(nullptr);
+
+    RS_STACK_MUTEX(mKnownChannelsMutex);
+
+    auto it = mKnownChannels.find(meta.mGroupId);
+    bool unknown_channel = it == mKnownChannels.end();
+
+    std::cerr << "  Channel " << meta.mGroupId ;
+
+    if(unknown_channel)
+    {
+        // This case should normally not happen. It does because this channel was never registered since it may
+        // arrived before this code was here
+
+        std::cerr << ". Not known yet. Adding current time as new TS." << std::endl;
+        mKnownChannels[meta.mGroupId] = now;
+        IndicateConfigChanged();
+
+        return true;
+    }
+    else
+    {
+        bool used_by_friends = (now < it->second + CHANNEL_UNUSED_BY_FRIENDS_DELAY);
+        bool subscribed = static_cast<bool>(meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
+
+        std::cerr << ". subscribed: " << subscribed << ", used_by_friends: " << used_by_friends << " last TS: " << now - it->second << " secs ago (" << (now-it->second)/86400 << " days)";
+
+        if(!subscribed && !used_by_friends)
+        {
+            std::cerr << ". Scheduling for deletion" << std::endl;
+            return false;
+        }
+        else
+        {
+            std::cerr << ". Keeping!" << std::endl;
+            return true;
+        }
+    }
 }
 
 bool p3GxsChannels::getGroupData(const uint32_t &token, std::vector<RsGxsChannelGroup> &groups)

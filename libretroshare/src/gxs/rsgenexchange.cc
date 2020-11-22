@@ -131,7 +131,8 @@ static const uint32_t INDEX_AUTHEN_ADMIN        = 0x00000040; // admin key
 //       |
 //       +--- processRoutingClues() ;
 //
-static const uint32_t MSG_CLEANUP_PERIOD     = 60*59; // 59 minutes
+//static const uint32_t MSG_CLEANUP_PERIOD     = 60*59; // 59 minutes
+static const uint32_t MSG_CLEANUP_PERIOD     = 60*5; // 59 minutes
 static const uint32_t INTEGRITY_CHECK_PERIOD = 60*31; // 31 minutes
 
 RsGenExchange::RsGenExchange(
@@ -257,10 +258,16 @@ void RsGenExchange::tick()
 
 	rstime_t now = time(NULL);
     
-	if((mLastClean + MSG_CLEANUP_PERIOD < now) || mCleaning)
+    // Cleanup unused data. This is only needed when auto-synchronization is needed, which is not the case
+    // of identities. This is why idendities do their own cleaning.
+
+    if((mNetService->msgAutoSync() || mNetService->grpAutoSync())
+            && ((mLastClean + MSG_CLEANUP_PERIOD < now) || mCleaning))
 	{
 		if(mMsgCleanUp)
 		{
+            RS_STACK_MUTEX(mGenMtx);
+
 			if(mMsgCleanUp->clean())
 			{
 				mCleaning = false;
@@ -268,11 +275,10 @@ void RsGenExchange::tick()
 				mMsgCleanUp = NULL;
 				mLastClean = time(NULL);
 			}
-
 		}
         else
 		{
-			mMsgCleanUp = new RsGxsMessageCleanUp(mDataStore, this, 1);
+            mMsgCleanUp = new RsGxsCleanUp(mDataStore, this, 1);
 			mCleaning = true;
 		}
 	}

@@ -48,6 +48,7 @@ RsGxsForums *rsGxsForums = NULL;
 
 #define FORUM_TESTEVENT_DUMMYDATA	0x0001
 #define DUMMYDATA_PERIOD		60	// long enough for some RsIdentities to be generated.
+#define FORUM_UNUSED_BY_FRIENDS_DELAY (2*30*86400) 		// unused forums are deleted after 2 months
 
 /********************************************************************************/
 /******************* Startup / Tick    ******************************************/
@@ -145,7 +146,10 @@ bool p3GxsForums::saveList(bool &cleanup, std::list<RsItem *>&saveList)
 
 	RsGxsForumNotifyRecordsItem *item = new RsGxsForumNotifyRecordsItem ;
 
-	item->records = mKnownForums ;
+    {
+        RS_STACK_MUTEX(mKnownForumsMutex);
+        item->records = mKnownForums ;
+    }
 
 	saveList.push_back(item) ;
 	return true;
@@ -164,6 +168,8 @@ bool p3GxsForums::loadList(std::list<RsItem *>& loadList)
 
 		if(fnr != NULL)
 		{
+            RS_STACK_MUTEX(mKnownForumsMutex);
+
 			mKnownForums.clear();
 
 			for(auto it(fnr->records.begin());it!=fnr->records.end();++it)
@@ -270,13 +276,16 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 					{
 						/* group received */
 
-						RS_STACK_MUTEX(mKnownForumsMutex);
+                        bool unknown;
+                        {
+                            RS_STACK_MUTEX(mKnownForumsMutex);
+                            unknown = (mKnownForums.find(grpChange->mGroupId)==mKnownForums.end());
+                            mKnownForums[grpChange->mGroupId] = time(nullptr);
+                            IndicateConfigChanged();
+                        }
 
-						if(mKnownForums.find(grpChange->mGroupId) == mKnownForums.end())
+                        if(unknown)
 						{
-							mKnownForums.insert( std::make_pair(grpChange->mGroupId, time(nullptr)));
-							IndicateConfigChanged();
-
 							auto ev = std::make_shared<RsGxsForumEvent>();
 							ev->mForumGroupId = grpChange->mGroupId;
 							ev->mForumEventCode = RsForumEventCode::NEW_FORUM;
@@ -295,7 +304,11 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 						ev->mForumGroupId = grpChange->mGroupId;
 						ev->mForumEventCode = RsForumEventCode::STATISTICS_CHANGED;
 						rsEvents->postEvent(ev);
-					}
+
+                        RS_STACK_MUTEX(mKnownForumsMutex);
+                        mKnownForums[grpChange->mGroupId] = time(nullptr);
+                        IndicateConfigChanged();
+                    }
 						break;
 
                     case RsGxsNotify::TYPE_UPDATED:
@@ -383,6 +396,51 @@ void	p3GxsForums::service_tick()
 	return;
 }
 
+bool p3GxsForums::service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta)
+{
+    std::cerr << "p3gxsForums: Checking unused forums: called by GxsCleaning." << std::endl;
+
+    // request all group infos at once
+
+    rstime_t now = time(nullptr);
+
+    RS_STACK_MUTEX(mKnownForumsMutex);
+
+    auto it = mKnownForums.find(meta.mGroupId);
+    bool unknown_forum = it == mKnownForums.end();
+
+    std::cerr << "  Forum " << meta.mGroupId ;
+
+    if(unknown_forum)
+    {
+        // This case should normally not happen. It does because this forum was never registered since it may
+        // arrived before this code was here
+
+        std::cerr << ". Not known yet. Adding current time as new TS." << std::endl;
+        mKnownForums[meta.mGroupId] = now;
+        IndicateConfigChanged();
+
+        return true;
+    }
+    else
+    {
+        bool used_by_friends = (now < it->second + FORUM_UNUSED_BY_FRIENDS_DELAY);
+        bool subscribed = static_cast<bool>(meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
+
+        std::cerr << ". subscribed: " << subscribed << ", used_by_friends: " << used_by_friends << " last TS: " << now - it->second << " secs ago (" << (now-it->second)/86400 << " days)";
+
+        if(!subscribed && !used_by_friends)
+        {
+            std::cerr << ". Scheduling for deletion" << std::endl;
+            return false;
+        }
+        else
+        {
+            std::cerr << ". Keeping!" << std::endl;
+            return true;
+        }
+    }
+}
 bool p3GxsForums::getGroupData(const uint32_t &token, std::vector<RsGxsForumGroup> &groups)
 {
 	std::vector<RsGxsGrpItem*> grpData;

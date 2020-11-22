@@ -125,7 +125,7 @@ inline RsGxsGrpMsgIdPair getMsgIdPair(RsGxsMsgItem& msg)
  * Does message clean up based on individual group expirations first
  * if avialable. If not then deletion s
  */
-class RsGxsMessageCleanUp
+class RsGxsCleanUp
 {
 public:
 
@@ -136,7 +136,7 @@ public:
 	 * @param chunkSize
 	 * @param sleepPeriod
 	 */
-	RsGxsMessageCleanUp(RsGeneralDataService* const dataService, RsGenExchange *genex, uint32_t chunkSize);
+    RsGxsCleanUp(RsGeneralDataService* const dataService, RsGenExchange *genex, uint32_t chunkSize);
 
 	/*!
 	 * On construction this should be called to progress deletions
