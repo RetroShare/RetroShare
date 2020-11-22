@@ -124,7 +124,8 @@ int pqissli2psam3::net_internal_close(int fd)
 
 	// now to the actuall closing
 	int ret = pqissl::net_internal_close(fd);
-	rsAutoProxyMonitor::taskAsync(autoProxyType::I2PSAM3, autoProxyTask::closeConnection, this, mConn),
+
+	rsAutoProxyMonitor::taskAsync(autoProxyType::I2PSAM3, autoProxyTask::closeConnection, this, mConn);
 
 	// finally cleanup
 	mConn = 0;

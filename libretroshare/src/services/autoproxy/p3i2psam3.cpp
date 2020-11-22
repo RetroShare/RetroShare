@@ -76,6 +76,13 @@ bool p3I2pSam3::initialSetup(std::string &addr, uint16_t &/*port*/)
 		i2p::getKeyTypes(mSetting.address.publicKey, s, c);
 		RS_INFO("received key", s, c);
 
+		// sanity check
+		auto pub = i2p::publicKeyFromPrivate(mSetting.address.privateKey);
+		if (pub != mSetting.address.publicKey) {
+			RS_WARN("public key does not match private key! fixing ...");
+			mSetting.address.privateKey = pub;
+		}
+
 		IndicateConfigChanged();
 	}
 
@@ -482,7 +489,7 @@ bool p3I2pSam3::startSession()
 		stopSession();
 	}
 
-	auto session = new Sam3Session();
+	auto session = (Sam3Session*)rs_malloc(sizeof (Sam3Session));
 
 	// add nick
 	paramsStr.append("inbound.nickname=" + nick); // leading space is already there
@@ -572,7 +579,7 @@ void p3I2pSam3::stopSession()
 
 		RS_STACK_MUTEX(mLockSam3Access);
 		sam3CloseSession(mSetting.session);
-		delete mSetting.session;
+		free(mSetting.session);
 
 		mSetting.session = nullptr;
 		mState = samStatus::samState::offline;
@@ -687,46 +694,75 @@ void p3I2pSam3::establishConnection(taskTicket *ticket)
 
 void p3I2pSam3::closeConnection(taskTicket *ticket)
 {
-	Sam3Connection *con = static_cast<Sam3Connection*>(ticket->data);
+	Sam3Connection *conn = static_cast<Sam3Connection*>(ticket->data);
 
 	if (mState == samStatus::samState::offline || !mSetting.session) {
-		// no session found, sam was likel stopped
+		// no session found, sam was likely stopped
+		RS_DBG2("no session found");
+
+		auto it = std::find(mInvalidConnections.begin(), mInvalidConnections.end(), conn);
+		if (it != mInvalidConnections.end()) {
+			// this is the expected case
+			mInvalidConnections.erase(it);
+		} else {
+			// this is unexpected but not a big deal, just warn
+			RS_WARN("cannot find connection in mInvalidConnections");
+
+			it = std::find(mValidConnections.begin(), mValidConnections.end(), conn);
+			if (it != mValidConnections.end()) {
+				mValidConnections.erase(it);
+
+				// now it is getting even weirder, still not a big deal, just warn
+				RS_WARN("found connection in mValidConnections");
+			}
+		}
+
+		// when libsam3 has already handled closing of the connection - which should be the case here - the memory has been freed already (-> pointer is invalid)
+		conn = nullptr;
 	} else {
 		RS_STACK_MUTEX(mLock);
 
 		bool callClose = true;
 		// search in current connections
-		auto it = std::find(mValidConnections.begin(), mValidConnections.end(), con);
+		auto it = std::find(mValidConnections.begin(), mValidConnections.end(), conn);
 		if (it != mValidConnections.end()) {
+			RS_DBG2("found valid connection");
 			mValidConnections.erase(it);
 		} else {
 			// search in old connections
-			it = std::find(mInvalidConnections.begin(), mInvalidConnections.end(), con);
+			it = std::find(mInvalidConnections.begin(), mInvalidConnections.end(), conn);
 			if (it != mInvalidConnections.end()) {
 				// old connection, just ignore. *should* be freed already
+				mInvalidConnections.erase(it);
+
+				RS_DBG2("found old (invalid) connection");
+
 				callClose = false;
-				con = nullptr;
+				conn = nullptr;
 			} else {
 				// weird
 				RS_WARN("could'n find connection!");
 
 				// best thing we can do here
 				callClose = false;
-				con = nullptr;
+				conn = nullptr;
 			}
 		}
 
 		if (callClose) {
+			RS_DBG2("closing connection");
+
 			RS_STACK_MUTEX(mLockSam3Access);
-			sam3CloseConnection(con);
-			con = nullptr; // freed by above call
+			sam3CloseConnection(conn);
+			conn = nullptr; // freed by above call
 		}
 	}
 
-	if (con) {
-		delete con;
-		con = nullptr;
+	if (conn) {
+		free(conn);
+		conn = nullptr;
 	}
+
 	ticket->data = nullptr;
 	rsAutoProxyMonitor::taskDone(ticket, autoProxyStatus::ok);
 	return;
