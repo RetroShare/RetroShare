@@ -28,6 +28,7 @@
 
 #include "FeedHolder.h"
 #include "gui/RetroShareLink.h"
+#include "gui/common/FilesDefs.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/HandleRichText.h"
 #include "util/qtthreadsutils.h"
@@ -98,7 +99,11 @@ void GxsForumMsgItem::setup()
 
 	/* clear ui */
 	ui->titleLabel->setText(tr("Loading..."));
+	ui->titleLabel->setOpenExternalLinks(false); //To get linkActivated working
+	connect(ui->titleLabel, SIGNAL(linkActivated(QString)), this, SLOT(on_linkActivated(QString)));
 	ui->subjectLabel->clear();
+	ui->subjectLabel->setOpenExternalLinks(false); //To get linkActivated working
+	connect(ui->subjectLabel, SIGNAL(linkActivated(QString)), this, SLOT(on_linkActivated(QString)));
 	ui->timestamplabel->clear();
 	ui->parentNameLabel->clear();
 	ui->nameLabel->clear();
@@ -334,9 +339,9 @@ void GxsForumMsgItem::fill()
 	}
 
 	if (IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags)) {
-		ui->iconLabel->setPixmap(QPixmap(":/icons/png/forums.png"));
+        ui->iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums.png"));
 	} else {
-		ui->iconLabel->setPixmap(QPixmap(":/icons/png/forums-default.png"));
+        ui->iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums-default.png"));
 	}
 
 	if (!mIsHome) {
@@ -421,7 +426,7 @@ void GxsForumMsgItem::doExpand(bool open)
 	if (open)
 	{
 		ui->expandFrame->show();
-		ui->expandButton->setIcon(QIcon(QString(":/icons/png/up-arrow.png")));
+        ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/up-arrow.png")));
 		ui->expandButton->setToolTip(tr("Hide"));
 
 		if (!mParentMessage.mMeta.mMsgId.isNull()) {
@@ -434,7 +439,7 @@ void GxsForumMsgItem::doExpand(bool open)
 	{
 		ui->expandFrame->hide();
 		ui->parentFrame->hide();
-		ui->expandButton->setIcon(QIcon(QString(":/icons/png/down-arrow.png")));
+        ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/down-arrow.png")));
 		ui->expandButton->setToolTip(tr("Expand"));
 	}
 
@@ -504,4 +509,17 @@ void GxsForumMsgItem::setAsRead()
 	rsGxsForums->setMessageReadStatus(token, msgPair, true);
 
 	setReadStatus(false, false);
+}
+
+void GxsForumMsgItem::on_linkActivated(QString link)
+{
+	RetroShareLink rsLink(link);
+
+	if (rsLink.valid() ) {
+		QList<RetroShareLink> rsLinks;
+		rsLinks.append(rsLink);
+		RetroShareLink::process(rsLinks);
+		removeItem();
+		return;
+	}
 }

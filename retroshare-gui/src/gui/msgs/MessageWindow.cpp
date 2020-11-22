@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "gui/common/FilesDefs.h"
 #include "MessageWindow.h"
 #include "MessageWidget.h"
 #include "MessageComposer.h"
@@ -180,12 +181,12 @@ void MessageWindow::setupFileActions()
 	menuBar()->addMenu(menu);
 
 	actionSaveAs = menu->addAction(tr("Save &As File"));
-	actionPrint = menu->addAction(QIcon(":/images/textedit/fileprint.png"), tr("&Print..."));
+    actionPrint = menu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/textedit/fileprint.png"), tr("&Print..."));
 	actionPrint->setShortcut(QKeySequence::Print);
 
-	actionPrintPreview = menu->addAction(QIcon(":/images/textedit/fileprint.png"), tr("Print Preview..."));
+    actionPrintPreview = menu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/textedit/fileprint.png"), tr("Print Preview..."));
 
-//	a = new QAction(QIcon(":/images/textedit/exportpdf.png"), tr("&Export PDF..."), this);
+//	a = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/textedit/exportpdf.png"), tr("&Export PDF..."), this);
 //	a->setShortcut(Qt::CTRL + Qt::Key_D);
 //	connect(a, SIGNAL(triggered()), this, SLOT(filePrintPdf()));
 //	menu->addAction(a);

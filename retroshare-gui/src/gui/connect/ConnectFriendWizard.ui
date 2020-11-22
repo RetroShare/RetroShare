@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>654</width>
+    <height>677</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -284,7 +284,7 @@
          <string>Email</string>
         </property>
         <property name="icon">
-         <iconset resource="../icons.qrc">
+         <iconset>
           <normaloff>:/icons/mail_128.png</normaloff>:/icons/mail_128.png</iconset>
         </property>
         <property name="iconSize">

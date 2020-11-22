@@ -602,14 +602,14 @@ void RichTextEdit::checkLength(){
 	if(charRemains >= 0) {
 		text = tr("It remains %1 characters after HTML conversion.").arg(charRemains);
 		f_info->setStyleSheet("QLabel#f_info { }");
+		emit textSizeOk(true);
 	}else{
 		text = tr("Warning: This message is too big of %1 characters after HTML conversion.").arg((0-charRemains));
-	    f_info->setStyleSheet("QLabel#f_info {color: red; font: bold; }");
+		f_info->setStyleSheet("QLabel#f_info {color: red; font: bold; }");
+		emit textSizeOk(false);
 	}
-	//buttonBox->button(QDialogButtonBox::Ok)->setEnabled(charRemains>=0);
 	f_info->setText(text);
 }
-
 
 void RichTextEdit::setPlaceHolderTextPosted() {
 	f_textedit->setPlaceholderText(tr("Text (optional)"));

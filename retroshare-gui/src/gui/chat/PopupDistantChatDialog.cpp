@@ -26,11 +26,13 @@
 
 #include <unistd.h>
 
+#include "gui/common/FilesDefs.h"
 #include <retroshare/rsstatus.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
 
-#include "RsAutoUpdatePage.h"
+#include <retroshare-gui/RsAutoUpdatePage.h>
+
 #include "PopupDistantChatDialog.h"
 
 #define IMAGE_RED_LED ":/icons/bullet_red_128.png"
@@ -112,7 +114,7 @@ void PopupDistantChatDialog::updateDisplay()
 	{
 	case RS_DISTANT_CHAT_STATUS_UNKNOWN:
 
-		_status_label->setIcon(QIcon(IMAGE_GRY_LED));
+        _status_label->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_GRY_LED));
 		msg = tr("Remote status unknown.");
 		_status_label->setToolTip(msg);
 		getChatWidget()->updateStatusString("%1", msg, true);
@@ -123,7 +125,7 @@ void PopupDistantChatDialog::updateDisplay()
 		break ;
 	case RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED:
 		std::cerr << "Chat remotely closed. " << std::endl;
-		_status_label->setIcon(QIcon(IMAGE_RED_LED));
+        _status_label->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_RED_LED));
 		_status_label->setToolTip( QObject::tr("Distant peer has closed the chat") );
 
 		getChatWidget()->updateStatusString("%1", tr( "Your partner closed the conversation." ), true );
@@ -134,7 +136,7 @@ void PopupDistantChatDialog::updateDisplay()
 
 	case RS_DISTANT_CHAT_STATUS_TUNNEL_DN:
 
-		_status_label->setIcon(QIcon(IMAGE_YEL_LED));
+        _status_label->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_YEL_LED));
 		msg = QObject::tr( "Tunnel is pending");
 
         if(tinfo.pending_items > 0)
@@ -147,7 +149,7 @@ void PopupDistantChatDialog::updateDisplay()
 		break;
 	case RS_DISTANT_CHAT_STATUS_CAN_TALK:
 
-		_status_label->setIcon(QIcon(IMAGE_GRN_LED));
+        _status_label->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_GRN_LED));
 		msg = QObject::tr( "End-to-end encrypted conversation established");
 		_status_label->setToolTip(msg);
 		getChatWidget()->unblockSending();

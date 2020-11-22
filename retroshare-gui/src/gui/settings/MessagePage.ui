@@ -65,14 +65,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QCheckBox" name="loadEmbeddedImages">
-        <property name="text">
-         <string>Load embedded images</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
+      <item row="3" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <widget class="QLabel" name="openLabel">
@@ -85,6 +78,20 @@
          <widget class="QComboBox" name="openComboBox"/>
         </item>
        </layout>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="loadEmbeddedImages">
+        <property name="text">
+         <string>Load embedded images</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="emoticonscheckBox">
+        <property name="text">
+         <string>Load Emoticons</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

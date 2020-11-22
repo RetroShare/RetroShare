@@ -108,8 +108,8 @@ public:
 		transformationType = RS_FEED_TRANSFORMATION_TYPE_NONE;
 	}
 
-	std::string              feedId;
-	std::string              parentId;
+	uint32_t                 feedId;
+	uint32_t                 parentId;
 	std::string              url;
 	std::string              name;
 	std::string              description;
@@ -159,7 +159,7 @@ public:
 	}
 
 	std::string msgId;
-	std::string feedId;
+	uint32_t    feedId;
 	std::string title;
 	std::string link;
 	std::string author;
@@ -179,8 +179,8 @@ class RsFeedReaderNotify
 public:
 	RsFeedReaderNotify() {}
 
-	virtual void notifyFeedChanged(const std::string &/*feedId*/, int /*type*/) {}
-	virtual void notifyMsgChanged(const std::string &/*feedId*/, const std::string &/*msgId*/, int /*type*/) {}
+	virtual void notifyFeedChanged(uint32_t /*feedId*/, int /*type*/) {}
+	virtual void notifyMsgChanged(uint32_t /*feedId*/, const std::string &/*msgId*/, int /*type*/) {}
 };
 
 class RsFeedReader
@@ -201,24 +201,24 @@ public:
 	virtual bool     getSaveInBackground() = 0;
 	virtual void     setSaveInBackground(bool saveInBackground) = 0;
 
-	virtual RsFeedAddResult addFolder(const std::string parentId, const std::string &name, std::string &feedId) = 0;
-	virtual RsFeedAddResult setFolder(const std::string &feedId, const std::string &name) = 0;
-	virtual RsFeedAddResult addFeed(const FeedInfo &feedInfo, std::string &feedId) = 0;
-	virtual RsFeedAddResult setFeed(const std::string &feedId, const FeedInfo &feedInfo) = 0;
-	virtual bool            removeFeed(const std::string &feedId) = 0;
-	virtual bool            addPreviewFeed(const FeedInfo &feedInfo, std::string &feedId) = 0;
-	virtual void            getFeedList(const std::string &parentId, std::list<FeedInfo> &feedInfos) = 0;
-	virtual bool            getFeedInfo(const std::string &feedId, FeedInfo &feedInfo) = 0;
-	virtual bool            getMsgInfo(const std::string &feedId, const std::string &msgId, FeedMsgInfo &msgInfo) = 0;
-	virtual bool            removeMsg(const std::string &feedId, const std::string &msgId) = 0;
-	virtual bool            removeMsgs(const std::string &feedId, const std::list<std::string> &msgIds) = 0;
-	virtual bool            getMessageCount(const std::string &feedId, uint32_t *msgCount, uint32_t *newCount, uint32_t *unreadCount) = 0;
-	virtual bool            getFeedMsgList(const std::string &feedId, std::list<FeedMsgInfo> &msgInfos) = 0;
-	virtual bool            getFeedMsgIdList(const std::string &feedId, std::list<std::string> &msgIds) = 0;
-	virtual bool            processFeed(const std::string &feedId) = 0;
-	virtual bool            setMessageRead(const std::string &feedId, const std::string &msgId, bool read) = 0;
-	virtual bool            retransformMsg(const std::string &feedId, const std::string &msgId) = 0;
-	virtual bool            clearMessageCache(const std::string &feedId) = 0;
+	virtual RsFeedAddResult addFolder(uint32_t parentId, const std::string &name, uint32_t &feedId) = 0;
+	virtual RsFeedAddResult setFolder(uint32_t feedId, const std::string &name) = 0;
+	virtual RsFeedAddResult addFeed(const FeedInfo &feedInfo, uint32_t &feedId) = 0;
+	virtual RsFeedAddResult setFeed(uint32_t feedId, const FeedInfo &feedInfo) = 0;
+	virtual bool            removeFeed(uint32_t feedId) = 0;
+	virtual bool            addPreviewFeed(const FeedInfo &feedInfo, uint32_t &feedId) = 0;
+	virtual void            getFeedList(uint32_t parentId, std::list<FeedInfo> &feedInfos) = 0;
+	virtual bool            getFeedInfo(uint32_t feedId, FeedInfo &feedInfo) = 0;
+	virtual bool            getMsgInfo(uint32_t feedId, const std::string &msgId, FeedMsgInfo &msgInfo) = 0;
+	virtual bool            removeMsg(uint32_t feedId, const std::string &msgId) = 0;
+	virtual bool            removeMsgs(uint32_t feedId, const std::list<std::string> &msgIds) = 0;
+	virtual bool            getMessageCount(uint32_t feedId, uint32_t *msgCount, uint32_t *newCount, uint32_t *unreadCount) = 0;
+	virtual bool            getFeedMsgList(uint32_t feedId, std::list<FeedMsgInfo> &msgInfos) = 0;
+	virtual bool            getFeedMsgIdList(uint32_t feedId, std::list<std::string> &msgIds) = 0;
+	virtual bool            processFeed(uint32_t feedId) = 0;
+	virtual bool            setMessageRead(uint32_t feedId, const std::string &msgId, bool read) = 0;
+	virtual bool            retransformMsg(uint32_t feedId, const std::string &msgId) = 0;
+	virtual bool            clearMessageCache(uint32_t feedId) = 0;
 
 	virtual RsFeedReaderErrorState processXPath(const std::list<std::string> &xpathsToUse, const std::list<std::string> &xpathsToRemove, std::string &description, std::string &errorString) = 0;
 	virtual RsFeedReaderErrorState processXslt(const std::string &xslt, std::string &description, std::string &errorString) = 0;

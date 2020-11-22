@@ -102,7 +102,7 @@ QPixmap FilesDefs::getPixmapFromQtResourcePath(const QString& resource_path)
 #ifdef DEBUG_FILESDEFS
         std::cerr << "  Not in cache. Creating new one." << std::endl;
 #endif
-		pixmap = QPixmap(resource_path);
+        pixmap = QPixmap(resource_path);
 		mPixmapCache[resource_path] = pixmap;
 	}
 	else

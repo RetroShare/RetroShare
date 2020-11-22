@@ -38,10 +38,12 @@ class RichTextEdit : public QWidget, protected Ui::RichTextEdit {
     QTextCursor    textCursor() const { return f_textedit->textCursor(); }
     void           setTextCursor(const QTextCursor& cursor) { f_textedit->setTextCursor(cursor); }
 
+signals:
+    void textSizeOk(bool);
+
   public slots:
     void setText(const QString &text);
-	void setPlaceHolderTextPosted();
-
+    void setPlaceHolderTextPosted();
 
   protected slots:
     void setPlainText(const QString &text) { f_textedit->setPlainText(text); }

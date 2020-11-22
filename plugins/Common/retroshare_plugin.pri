@@ -42,6 +42,11 @@ win32 {
 		QMAKE_LFLAGS = -Wl,-enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc
 	}
 
+	libretroshare_shared {
+		PRE_TARGETDEPS += $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
+		LIBS += -L"$$OUT_PWD/../../libretroshare/src/lib" -lretroshare
+	}
+
 	# Switch on extra warnings
 	QMAKE_CFLAGS += -Wextra
 	QMAKE_CXXFLAGS += -Wextra

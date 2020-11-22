@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include <QMenu>
 #include <QTimer>
 #include <QMessageBox>
 #include <QFileInfo>
@@ -27,11 +28,13 @@
 #include "GxsChannelFilesStatusWidget.h"
 #include "ui_GxsChannelFilesStatusWidget.h"
 #include "gui/common/RsUrlHandler.h"
+#include "gui/common/FilesDefs.h"
+#include "util/misc.h"
 
 #include "retroshare/rsfiles.h"
 
-GxsChannelFilesStatusWidget::GxsChannelFilesStatusWidget(const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, const RsGxsFile &file, QWidget *parent) :
-    QWidget(parent), mGroupId(groupId), mMessageId(messageId), mFile(file), ui(new Ui::GxsChannelFilesStatusWidget)
+GxsChannelFilesStatusWidget::GxsChannelFilesStatusWidget(const RsGxsFile &file, QWidget *parent) :
+    QWidget(parent), mFile(file), ui(new Ui::GxsChannelFilesStatusWidget)
 {
 	ui->setupUi(this);
 
@@ -40,11 +43,21 @@ GxsChannelFilesStatusWidget::GxsChannelFilesStatusWidget(const RsGxsGroupId &gro
 	setSize(mFile.mSize);
 
 	/* Connect signals */
-	connect(ui->downloadToolButton, SIGNAL(clicked()), this, SLOT(download()));
+	connect(ui->downloadPushButton, SIGNAL(clicked()), this, SLOT(download()));
 	connect(ui->resumeToolButton, SIGNAL(clicked()), this, SLOT(resume()));
 	connect(ui->pauseToolButton, SIGNAL(clicked()), this, SLOT(pause()));
 	connect(ui->cancelToolButton, SIGNAL(clicked()), this, SLOT(cancel()));
-	connect(ui->openFolderToolButton, SIGNAL(clicked()), this, SLOT(openFolder()));
+	connect(ui->openFilePushButton, SIGNAL(clicked()), this, SLOT(openFile()));
+
+	ui->downloadPushButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/download.png"));
+	ui->openFolderToolButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/arrow.png"));
+
+	QAction *openfolder = new QAction(tr("Open folder"), this);
+	connect(openfolder, SIGNAL(triggered()), this, SLOT(openFolder()));
+	
+	QMenu *menu = new QMenu();
+	menu->addAction(openfolder);
+	ui->openFolderToolButton->setMenu(menu);
 
 	check();
 }
@@ -80,6 +93,17 @@ void GxsChannelFilesStatusWidget::check()
 	if (rsFiles->alreadyHaveFile(mFile.mHash, fileInfo)) {
 		mState = STATE_LOCAL;
 		setSize(fileInfo.size);
+		
+		/* check if the file is a media file */
+		if (!misc::isPreviewable(QFileInfo(QString::fromUtf8(fileInfo.path.c_str())).suffix()))
+		{ 
+			/* check if the file is not a media file and change text */
+			ui->openFilePushButton->setText(tr("Open file"));
+		} else {
+			ui->openFilePushButton->setText(tr("Play"));
+			ui->openFilePushButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/play.png"));
+		}
+		
 	} else {
 		FileInfo fileInfo;
 		bool detailsOk = rsFiles->FileDetails(mFile.mHash, RS_FILE_HINTS_DOWNLOAD | RS_FILE_HINTS_SPEC_ONLY, fileInfo);
@@ -126,11 +150,12 @@ void GxsChannelFilesStatusWidget::check()
 	case STATE_ERROR:
 		repeat = 0;
 
-		ui->downloadToolButton->hide();
+		ui->downloadPushButton->hide();
 		ui->resumeToolButton->hide();
 		ui->pauseToolButton->hide();
 		ui->cancelToolButton->hide();
 		ui->progressBar->hide();
+		ui->openFilePushButton->hide();
 		ui->openFolderToolButton->hide();
 
 		statusText = tr("Error");
@@ -140,11 +165,12 @@ void GxsChannelFilesStatusWidget::check()
 	case STATE_REMOTE:
 		repeat = 30000;
 
-		ui->downloadToolButton->show();
+		ui->downloadPushButton->show();
 		ui->resumeToolButton->hide();
 		ui->pauseToolButton->hide();
 		ui->cancelToolButton->hide();
 		ui->progressBar->hide();
+		ui->openFilePushButton->hide();
 		ui->openFolderToolButton->hide();
 
 		break;
@@ -152,11 +178,12 @@ void GxsChannelFilesStatusWidget::check()
 	case STATE_DOWNLOAD:
 		repeat = 1000;
 
-		ui->downloadToolButton->hide();
+		ui->downloadPushButton->hide();
 		ui->resumeToolButton->hide();
 		ui->pauseToolButton->show();
 		ui->cancelToolButton->show();
 		ui->progressBar->show();
+		ui->openFilePushButton->hide();
 		ui->openFolderToolButton->hide();
 
 		break;
@@ -164,11 +191,12 @@ void GxsChannelFilesStatusWidget::check()
 	case STATE_PAUSED:
 		repeat = 1000;
 
-		ui->downloadToolButton->hide();
+		ui->downloadPushButton->hide();
 		ui->resumeToolButton->show();
 		ui->pauseToolButton->hide();
 		ui->cancelToolButton->show();
 		ui->progressBar->hide();
+		ui->openFilePushButton->hide();
 		ui->openFolderToolButton->hide();
 
 		statusText = tr("Paused");
@@ -178,11 +206,12 @@ void GxsChannelFilesStatusWidget::check()
 	case STATE_WAITING:
 		repeat = 1000;
 
-		ui->downloadToolButton->hide();
+		ui->downloadPushButton->hide();
 		ui->resumeToolButton->hide();
 		ui->pauseToolButton->show();
 		ui->cancelToolButton->show();
 		ui->progressBar->hide();
+		ui->openFilePushButton->hide();
 		ui->openFolderToolButton->hide();
 
 		statusText = tr("Waiting");
@@ -192,11 +221,12 @@ void GxsChannelFilesStatusWidget::check()
 	case STATE_CHECKING:
 		repeat = 1000;
 
-		ui->downloadToolButton->hide();
+		ui->downloadPushButton->hide();
 		ui->resumeToolButton->hide();
 		ui->pauseToolButton->hide();
 		ui->cancelToolButton->show();
 		ui->progressBar->hide();
+		ui->openFilePushButton->hide();
 		ui->openFolderToolButton->hide();
 
 		statusText = tr("Checking");
@@ -206,11 +236,12 @@ void GxsChannelFilesStatusWidget::check()
 	case STATE_LOCAL:
 		repeat = 60000;
 
-		ui->downloadToolButton->hide();
+		ui->downloadPushButton->hide();
 		ui->resumeToolButton->hide();
 		ui->pauseToolButton->hide();
 		ui->cancelToolButton->hide();
 		ui->progressBar->hide();
+		ui->openFilePushButton->show();
 		ui->openFolderToolButton->show();
 
 		break;
@@ -253,6 +284,7 @@ void GxsChannelFilesStatusWidget::download()
 
 	rsFiles->FileRequest(mFile.mName, mFile.mHash, mFile.mSize, destination, RS_FILE_REQ_ANONYMOUS_ROUTING, sources);
 
+	emit onButtonClick();// Signals the parent widget to e.g. update the downloadable file count
 	check();
 }
 
@@ -260,6 +292,7 @@ void GxsChannelFilesStatusWidget::pause()
 {
 	rsFiles->FileControl(mFile.mHash, RS_FILE_CTRL_PAUSE);
 
+	emit onButtonClick();// Signals the parent widget to e.g. update the downloadable file count
 	check();
 }
 
@@ -267,6 +300,7 @@ void GxsChannelFilesStatusWidget::resume()
 {
 	rsFiles->FileControl(mFile.mHash, RS_FILE_CTRL_START);
 
+	emit onButtonClick();// Signals the parent widget to e.g. update the downloadable file count
 	check();
 }
 
@@ -278,6 +312,7 @@ void GxsChannelFilesStatusWidget::cancel()
 
 	rsFiles->FileCancel(mFile.mHash);
 
+	emit onButtonClick();// Signals the parent widget to e.g. update the downloadable file count
 	check();
 }
 
@@ -294,5 +329,26 @@ void GxsChannelFilesStatusWidget::openFolder()
 		if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(dir.absolutePath()))) {
 			QMessageBox::warning(this, "", QString("%1 %2").arg(tr("Can't open folder"), dir.absolutePath()));
 		}
+	}
+}
+
+void GxsChannelFilesStatusWidget::openFile()
+{
+	FileInfo fileInfo;
+	if (!rsFiles->alreadyHaveFile(mFile.mHash, fileInfo)) {
+		return;
+	}
+
+	/* open file with a suitable application */
+	QFileInfo qinfo;
+	qinfo.setFile(QString::fromUtf8(fileInfo.path.c_str()));
+	if (qinfo.exists()) {
+		if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
+			std::cerr << "GxsChannelFilesStatusWidget(): can't open file " << fileInfo.path << std::endl;
+		}
+	}else{
+		QMessageBox::information(this, tr("Play File"),
+				tr("File %1 does not exist at location.").arg(fileInfo.path.c_str()));
+		return;
 	}
 }

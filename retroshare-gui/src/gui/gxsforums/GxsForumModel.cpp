@@ -410,7 +410,7 @@ QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
     if(role == Qt::FontRole)
     {
         QFont font ;
-		font.setBold( (fmpe.mPostFlags & (ForumModelPostEntry::FLAG_POST_HAS_UNREAD_CHILDREN | ForumModelPostEntry::FLAG_POST_IS_PINNED)) || IS_MSG_UNREAD(fmpe.mMsgStatus));
+        font.setBold( (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_HAS_UNREAD_CHILDREN) || IS_MSG_UNREAD(fmpe.mMsgStatus));
         return QVariant(font);
     }
 
@@ -445,12 +445,15 @@ QVariant RsGxsForumModel::textColorRole(const ForumModelPostEntry& fmpe,int /*co
     if( (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_MISSING))
         return QVariant(mTextColorMissing);
 
-    if(IS_MSG_UNREAD(fmpe.mMsgStatus) || (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED))
+    if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED)
+        return QVariant(mTextColorPinned);
+
+    if(IS_MSG_UNREAD(fmpe.mMsgStatus))
         return QVariant(mTextColorUnread);
     else
         return QVariant(mTextColorRead);
 
-	return QVariant();
+    return QVariant();
 }
 
 QVariant RsGxsForumModel::statusRole(const ForumModelPostEntry& fmpe,int column) const
@@ -592,11 +595,11 @@ QVariant RsGxsForumModel::pinnedRole(const ForumModelPostEntry& fmpe,int /*colum
 
 QVariant RsGxsForumModel::backgroundRole(const ForumModelPostEntry& fmpe,int /*column*/) const
 {
-    if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED)
-        return QVariant(QBrush(QColor(255,200,180)));
+//    if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED)
+//        return QVariant(QBrush(mBackgroundColorPinned));
 
     if(mFilteringEnabled && (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_PASSES_FILTER))
-        return QVariant(QBrush(QColor(255,240,210)));
+        return QVariant(QBrush(mBackgroundColorFiltered));
 
     return QVariant();
 }
@@ -653,12 +656,13 @@ QVariant RsGxsForumModel::displayRole(const ForumModelPostEntry& fmpe,int col) c
 	{
 		case COLUMN_THREAD_TITLE:  if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_REDACTED)
 									return QVariant(tr("[ ... Redacted message ... ]"));
-								else if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED)
-									return QVariant(tr("[PINNED] ") + QString::fromUtf8(fmpe.mTitle.c_str()));
-								else
+//                                else if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED)
+//                                    return QVariant( QString("<img src=\":/icons/pinned_64.png\" height=%1/>").arg(QFontMetricsF(QFont()).height())
+//                                                     + QString::fromUtf8(fmpe.mTitle.c_str()));
+                                else
 									return QVariant(QString::fromUtf8(fmpe.mTitle.c_str()));
 
-		case COLUMN_THREAD_READ:return QVariant();
+        case COLUMN_THREAD_READ:return QVariant();
     	case COLUMN_THREAD_DATE:{
         							if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_MISSING)
                                         return QVariant(QString());
@@ -669,8 +673,11 @@ QVariant RsGxsForumModel::displayRole(const ForumModelPostEntry& fmpe,int col) c
 									return QVariant(DateTime::formatDateTime(qtime));
     							}
 
-		case COLUMN_THREAD_DISTRIBUTION:
-		case COLUMN_THREAD_AUTHOR:{
+		case COLUMN_THREAD_DISTRIBUTION:	// passthrough // handled by delegate.
+		case COLUMN_THREAD_MSGID:
+        								return QVariant();
+		case COLUMN_THREAD_AUTHOR:
+    	{
 			QString name;
 			RsGxsId id = RsGxsId(fmpe.mAuthorId.toStdString());
 
@@ -680,7 +687,6 @@ QVariant RsGxsForumModel::displayRole(const ForumModelPostEntry& fmpe,int col) c
 				return name;
 			return QVariant(tr("[Unknown]"));
 		}
-		case COLUMN_THREAD_MSGID: return QVariant();
 #ifdef TODO
 	if (filterColumn == COLUMN_THREAD_CONTENT) {
 		// need content for filter
@@ -1225,7 +1231,7 @@ void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,boo
 	if(!i.isValid())
 		return ;
 
-    // no need to call preMods()/postMods() here because we'renot changing the model
+	// no need to call preMods()/postMods() here because we'renot changing the model
 
 	void *ref = i.internalPointer();
 	uint32_t entry = 0;
@@ -1233,17 +1239,9 @@ void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,boo
 	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mPosts.size())
 		return ;
 
-    bool has_unread_below,has_read_below;
-    recursSetMsgReadStatus(entry,read_status,with_children) ;
+	bool has_unread_below, has_read_below;
+	recursSetMsgReadStatus(entry,read_status,with_children) ;
 	recursUpdateReadStatusAndTimes(0,has_unread_below,has_read_below);
-
-    // Normally we should only update the parents up to the top of the tree, but it's complicated and the update here doesn't really cost,
-    // so we blindly update the whole widget.
-
-	if(mTreeMode == TREE_MODE_FLAT)
-		emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mPosts.size(),COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
-    else
-		emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mPosts[0].mChildren.size(),COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
 
 }
 
@@ -1270,6 +1268,9 @@ void RsGxsForumModel::recursSetMsgReadStatus(ForumModelIndex i,bool read_status,
 			}
 		else
 			rsGxsForums->setMessageReadStatus(token,std::make_pair( mForumGroup.mMeta.mGroupId, mPosts[i].mMsgId ), read_status);
+
+		QModelIndex itemIndex = createIndex(i - 1, 0, &mPosts[i]);
+		emit dataChanged(itemIndex, itemIndex);
 	}
 
 	if(!with_children)

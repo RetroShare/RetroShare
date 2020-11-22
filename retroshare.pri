@@ -140,13 +140,18 @@ rs_macos10.15:CONFIG -= rs_macos10.11
 CONFIG *= no_rs_jsonapi
 rs_jsonapi:CONFIG -= no_rs_jsonapi
 
+# Disable i2p BOB support for automatically setting up an i2p tunnel for RS
+# "CONFIG+=no_rs_bob"
+CONFIG *= rs_bob
+no_rs_bob:CONFIG -= rs_bob
+
 # To enable channel indexing append the following assignation to qmake command
-# line "CONFIG+=rs_deep_channel_index"
-CONFIG *= no_rs_deep_channel_index
-rs_deep_channel_index:CONFIG -= no_rs_deep_channel_index
+# line "CONFIG+=rs_deep_channels_index"
+CONFIG *= no_rs_deep_channels_index
+rs_deep_channels_index:CONFIG -= no_rs_deep_channels_index
 
 # To enable deep files indexing append the following assignation to qmake
-# command line "CONFIG+=rs_files_index"
+# command line "CONFIG+=rs_deep_files_index"
 CONFIG *= no_rs_deep_files_index
 rs_deep_files_index:CONFIG -= no_rs_deep_files_index
 
@@ -199,6 +204,10 @@ no_rs_service_terminal_login:CONFIG -= rs_service_terminal_login
 CONFIG+=rs_dh_init_check
 no_rs_dh_init_check:CONFIG -= rs_dh_init_check
 
+# To export all symbols for the plugins on Windows build we need to build libretroshare as
+# shared library. Fix linking error (ld.exe: Error: export ordinal too large) due to too
+# many exported symbols.
+retroshare_plugins:win32:CONFIG *= libretroshare_shared
 
 # Specify host precompiled jsonapi-generator path, appending the following
 # assignation to qmake command line
@@ -425,7 +434,7 @@ defined in command line")
     DEFINES += RS_MINI_VERSION=$${RS_MINI_VERSION}
     DEFINES += RS_EXTRA_VERSION=\\\"$${RS_EXTRA_VERSION}\\\"
 } else {
-    RS_GIT_DESCRIBE = $$system(git describe)
+    RS_GIT_DESCRIBE = $$system(git describe --long --match v*.*.*)
     contains(RS_GIT_DESCRIBE, ^v\d+\.\d+\.\d+.*) {
         RS_GIT_DESCRIBE_SPLIT = $$split(RS_GIT_DESCRIBE, v)
         RS_GIT_DESCRIBE_SPLIT = $$split(RS_GIT_DESCRIBE_SPLIT, .)
@@ -550,6 +559,10 @@ rs_webui {
     DEFINES *= RS_WEBUI
 }
 
+rs_bob {
+    DEFINES *= RS_USE_I2P_BOB
+}
+
 rs_deep_channels_index:DEFINES *= RS_DEEP_CHANNEL_INDEX
 
 rs_deep_files_index:DEFINES *= RS_DEEP_FILES_INDEX
@@ -631,7 +644,7 @@ android-* {
     RS_THREAD_LIB =
 }
 
-win32-g++ {
+win32-g++|win32-clang-g++ {
     !isEmpty(EXTERNAL_LIB_DIR) {
         message(Use pre-compiled libraries in $${EXTERNAL_LIB_DIR}.)
         PREFIX = $$system_path($$EXTERNAL_LIB_DIR)
@@ -681,6 +694,10 @@ win32-g++ {
     DEFINES *= WINVER=0x0501
 
     message(***retroshare.pri:Win32 PREFIX $$PREFIX INCLUDEPATH $$INCLUDEPATH QMAKE_LIBDIR $$QMAKE_LIBDIR DEFINES $$DEFINES)
+}
+
+win32-clang-g++ {
+    QMAKE_CXXFLAGS += -femulated-tls
 }
 
 macx-* {

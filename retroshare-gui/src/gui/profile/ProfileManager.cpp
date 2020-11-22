@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 
+#include "gui/common/FilesDefs.h"
 #include <rshare.h>
 #include <util/rsrandom.h>
 #include <retroshare/rsinit.h>
@@ -50,7 +51,7 @@ ProfileManager::ProfileManager(QWidget *parent)
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
 
-	ui.headerFrame->setHeaderImage(QPixmap(":/icons/png/profile.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/profile.png"));
 	ui.headerFrame->setHeaderText(tr("Profile Manager"));
 
 	connect(ui.identityTreeWidget, SIGNAL( customContextMenuRequested(QPoint)), this, SLOT( identityTreeWidgetCostumPopupMenu(QPoint)));
@@ -67,7 +68,7 @@ void ProfileManager::identityTreeWidgetCostumPopupMenu(QPoint)
 
 	QMenu contextMnu(this);
 
-	QAction *action = contextMnu.addAction(QIcon(IMAGE_EXPORT), tr("Export Identity"), this, SLOT(exportIdentity()));
+    QAction *action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EXPORT), tr("Export Identity"), this, SLOT(exportIdentity()));
 	action->setEnabled(item != NULL);
 
 	contextMnu.exec(QCursor::pos());

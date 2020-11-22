@@ -27,12 +27,14 @@
 #include "chat/ChatTabWidget.h"
 #include "chat/CreateLobbyDialog.h"
 #include "common/RSTreeWidgetItem.h"
+#include "common/RSElidedItemDelegate.h"
 #include "gui/RetroShareLink.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/Identity/IdEditDialog.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/HandleRichText.h"
 #include "util/QtVersion.h"
+#include "gui/common/FilesDefs.h"
 
 #include "retroshare/rsmsgs.h"
 #include "retroshare/rspeers.h"
@@ -157,6 +159,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	ui.lobbyTreeWidget->setColumnHidden(COLUMN_USER_COUNT,true) ;
 	ui.lobbyTreeWidget->setColumnHidden(COLUMN_TOPIC,true) ;
 	ui.lobbyTreeWidget->setSortingEnabled(true) ;
+	ui.lobbyTreeWidget->setItemDelegateForColumn(COLUMN_NAME, new RSElidedItemDelegate());
 
     	float fact = QFontMetricsF(font()).height()/14.0f;
         
@@ -279,7 +282,7 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
 	QMenu contextMnu(this);
 
 	if (item && item->type() == TYPE_FOLDER) {
-		QAction *action = contextMnu.addAction(QIcon(IMAGE_CREATE), tr("Create chat room"), this, SLOT(createChatLobby()));
+        QAction *action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_CREATE), tr("Create chat room"), this, SLOT(createChatLobby()));
 		action->setData(item->data(COLUMN_DATA, ROLE_PRIVACYLEVEL).toInt());
 	}
 
@@ -289,7 +292,7 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
         rsIdentity->getOwnIds(own_identities) ;
 
         if (item->data(COLUMN_DATA, ROLE_SUBSCRIBED).toBool())
-            contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Leave this room"), this, SLOT(unsubscribeItem()));
+            contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_UNSUBSCRIBE), tr("Leave this room"), this, SLOT(unsubscribeItem()));
         else
         {
             QTreeWidgetItem *item = ui.lobbyTreeWidget->currentItem();
@@ -304,18 +307,18 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
             if(own_identities.empty())
             {
                 if(removed)
-                contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Create a non anonymous identity and enter this room"), this, SLOT(createIdentityAndSubscribe()));
+                contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_SUBSCRIBE), tr("Create a non anonymous identity and enter this room"), this, SLOT(createIdentityAndSubscribe()));
                     else
-                contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Create an identity and enter this chat room"), this, SLOT(createIdentityAndSubscribe()));
+                contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_SUBSCRIBE), tr("Create an identity and enter this chat room"), this, SLOT(createIdentityAndSubscribe()));
             }
             else if(own_identities.size() == 1)
             {
-                QAction *action = contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Enter this chat room"), this, SLOT(subscribeChatLobbyAs()));
+                QAction *action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_SUBSCRIBE), tr("Enter this chat room"), this, SLOT(subscribeChatLobbyAs()));
                 action->setData(QString::fromStdString((own_identities.front()).toStdString())) ;
             }
             else
             {
-                QMenu *mnu = contextMnu.addMenu(QIcon(IMAGE_SUBSCRIBE),tr("Enter this chat room as...")) ;
+                QMenu *mnu = contextMnu.addMenu(FilesDefs::getIconFromQtResourcePath(IMAGE_SUBSCRIBE),tr("Enter this chat room as...")) ;
 
                 for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
                 {
@@ -342,7 +345,7 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
             contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Add Auto Subscribe"), this, SLOT(autoSubscribeItem()));
 #endif
 
-        contextMnu.addAction(QIcon(IMAGE_COPYRSLINK), tr("Copy RetroShare Link"), this, SLOT(copyItemLink()));
+        contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYRSLINK), tr("Copy RetroShare Link"), this, SLOT(copyItemLink()));
     }
 
         contextMnu.addSeparator();//-------------------------------------------------------------------
@@ -386,6 +389,8 @@ static void updateItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, ChatLobby
 	item->setData(COLUMN_DATA, ROLE_FLAGS, lobby_flags.toUInt32());
     item->setData(COLUMN_DATA, ROLE_AUTOSUBSCRIBE, autoSubscribe);
 
+	//TODO (Phenom): Add qproperty for these text colors in stylesheets
+	// As palette is not updated by stylesheet
 	QColor color = treeWidget->palette().color(QPalette::Active, QPalette::Text);
     
 	if (!subscribed) {
@@ -395,7 +400,7 @@ static void updateItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, ChatLobby
 	}
 
 	for (int column = 0; column < COLUMN_COUNT; ++column) {
-		item->setTextColor(column, color);
+		item->setData(column, Qt::ForegroundRole, color);
 	}
     QString tooltipstr = QObject::tr("Subject:")+" "+item->text(COLUMN_TOPIC)+"\n"
                      +QObject::tr("Participants:")+" "+QString::number(count)+"\n"
@@ -407,7 +412,7 @@ static void updateItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, ChatLobby
         tooltipstr += QObject::tr("\nSecurity: no anonymous IDs") ;
 		QColor foreground = QColor(0, 128, 0); // green
 		for (int column = 0; column < COLUMN_COUNT; ++column)
-			item->setTextColor(column, foreground);
+			item->setData(column, Qt::ForegroundRole, foreground);
 	}
     item->setToolTip(0,tooltipstr) ;
 }
@@ -431,7 +436,7 @@ void ChatLobbyWidget::addChatPage(ChatLobbyDialog *d)
 
 		ChatLobbyInfo linfo ;
 		if(rsMsgs->getChatLobbyInfo(id,linfo))
-			_lobby_infos[id].default_icon = (linfo.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC):QIcon(IMAGE_PRIVATE) ;
+            _lobby_infos[id].default_icon = (linfo.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? FilesDefs::getIconFromQtResourcePath(IMAGE_PUBLIC):FilesDefs::getIconFromQtResourcePath(IMAGE_PRIVATE) ;
 		else
 			std::cerr << "(EE) cannot find info for room " << std::hex << id << std::dec << std::endl;
 	}
@@ -611,7 +616,7 @@ void ChatLobbyWidget::updateDisplay()
 		if (item == NULL) 
 		{
 			item = new RSTreeWidgetItem(compareRole, TYPE_LOBBY);
-            icon = (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
+            icon = (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? FilesDefs::getIconFromQtResourcePath(IMAGE_PUBLIC) : FilesDefs::getIconFromQtResourcePath(IMAGE_PRIVATE);
 			lobby_item->addChild(item);
             
 		} 
@@ -619,7 +624,7 @@ void ChatLobbyWidget::updateDisplay()
 		{
 			if (item->data(COLUMN_DATA, ROLE_SUBSCRIBED).toBool() != subscribed) {
 				// Replace icon
-                icon = (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
+                icon = (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? FilesDefs::getIconFromQtResourcePath(IMAGE_PUBLIC) : FilesDefs::getIconFromQtResourcePath(IMAGE_PRIVATE);
 			}
 		}
 		if (!icon.isNull()) {
@@ -679,12 +684,12 @@ void ChatLobbyWidget::updateDisplay()
         if (item == NULL) 
         {
             item = new RSTreeWidgetItem(compareRole, TYPE_LOBBY);
-            icon = (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
+            icon = (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? FilesDefs::getIconFromQtResourcePath(IMAGE_PUBLIC) : FilesDefs::getIconFromQtResourcePath(IMAGE_PRIVATE);
             itemParent->addChild(item);
         } else {
             if (!item->data(COLUMN_DATA, ROLE_SUBSCRIBED).toBool()) {
                 // Replace icon
-                icon = (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
+                icon = (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? FilesDefs::getIconFromQtResourcePath(IMAGE_PUBLIC) : FilesDefs::getIconFromQtResourcePath(IMAGE_PRIVATE);
             }
         }
 		if (!icon.isNull()) {
@@ -992,7 +997,7 @@ void ChatLobbyWidget::updateTypingStatus(ChatLobbyId id)
 	
 	if(item != NULL)
 	{
-		item->setIcon(COLUMN_NAME,QIcon(IMAGE_TYPING)) ;
+        item->setIcon(COLUMN_NAME,FilesDefs::getIconFromQtResourcePath(IMAGE_TYPING)) ;
 		_lobby_infos[id].last_typing_event = time(NULL) ;
 
 		QTimer::singleShot(5000,this,SLOT(resetLobbyTreeIcons())) ;
@@ -1004,7 +1009,7 @@ void ChatLobbyWidget::updatePeerLeaving(ChatLobbyId id)
 	
 	if(item != NULL)
 	{
-		item->setIcon(COLUMN_NAME,QIcon(IMAGE_PEER_LEAVING)) ;
+        item->setIcon(COLUMN_NAME,FilesDefs::getIconFromQtResourcePath(IMAGE_PEER_LEAVING)) ;
 		_lobby_infos[id].last_typing_event = time(NULL) ;
 
 		QTimer::singleShot(5000,this,SLOT(resetLobbyTreeIcons())) ;
@@ -1016,7 +1021,7 @@ void ChatLobbyWidget::updatePeerEntering(ChatLobbyId id)
 	
 	if(item != NULL)
 	{
-		item->setIcon(COLUMN_NAME,QIcon(IMAGE_PEER_ENTERING)) ;
+        item->setIcon(COLUMN_NAME,FilesDefs::getIconFromQtResourcePath(IMAGE_PEER_ENTERING)) ;
 		_lobby_infos[id].last_typing_event = time(NULL) ;
 
 		QTimer::singleShot(5000,this,SLOT(resetLobbyTreeIcons())) ;
@@ -1101,7 +1106,7 @@ void ChatLobbyWidget::updateCurrentLobby()
 
 		if(_lobby_infos.find(id) != _lobby_infos.end()) {
             int iPrivacyLevel= item->parent()->data(COLUMN_DATA, ROLE_PRIVACYLEVEL).toInt();
-            QIcon icon = (iPrivacyLevel==CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
+            QIcon icon = (iPrivacyLevel==CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC) ? FilesDefs::getIconFromQtResourcePath(IMAGE_PUBLIC) : FilesDefs::getIconFromQtResourcePath(IMAGE_PRIVATE);
 			_lobby_infos[id].default_icon = icon ;
 			item->setIcon(COLUMN_NAME, icon) ;
 		}
@@ -1125,7 +1130,7 @@ void ChatLobbyWidget::updateMessageChanged(bool incoming, ChatLobbyId id, QDateT
 	if(bIsCurrentItem)
 		return ;
 
-	_lobby_infos[id].default_icon = QIcon(IMAGE_MESSAGE) ;
+    _lobby_infos[id].default_icon = FilesDefs::getIconFromQtResourcePath(IMAGE_MESSAGE) ;
 
 	QTreeWidgetItem *item = getTreeWidgetItem(id) ;
 

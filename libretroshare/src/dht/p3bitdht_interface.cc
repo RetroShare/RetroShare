@@ -302,16 +302,16 @@ void	convertDhtPeerDetailsToRsDhtNetPeer(RsDhtNetPeer &status, const DhtPeerDeta
 	switch(details.mPeerConnectMode)
 	{
 		default:
-			status.mPeerConnectMode = RSDHT_TOU_MODE_NONE;
+		    status.mPeerConnectMode = RsDhtTouMode::NONE;
 			break;
 		case BITDHT_CONNECT_MODE_DIRECT:
-			status.mPeerConnectMode = RSDHT_TOU_MODE_DIRECT;
+		    status.mPeerConnectMode = RsDhtTouMode::DIRECT;
 			break;
 		case BITDHT_CONNECT_MODE_PROXY:
-			status.mPeerConnectMode = RSDHT_TOU_MODE_PROXY;
+		    status.mPeerConnectMode = RsDhtTouMode::PROXY;
 			break;
 		case BITDHT_CONNECT_MODE_RELAY:
-			status.mPeerConnectMode = RSDHT_TOU_MODE_RELAY;
+		    status.mPeerConnectMode = RsDhtTouMode::RELAY;
 			break;
 	}
 

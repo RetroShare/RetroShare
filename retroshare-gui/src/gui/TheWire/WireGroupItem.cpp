@@ -25,6 +25,7 @@
 
 #include "WireGroupItem.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/common/FilesDefs.h"
 
 #include <algorithm>
 #include <iostream>
@@ -51,6 +52,25 @@ void WireGroupItem::setup()
 	label_authorId->setId(mGroup.mMeta.mAuthorId);
 	frame_details->setVisible(false);
 	
+	if (mGroup.mHeadshot.mData )
+	{
+		QPixmap pixmap;
+		if (GxsIdDetails::loadPixmapFromData(
+				mGroup.mHeadshot.mData,
+				mGroup.mHeadshot.mSize,
+				pixmap,GxsIdDetails::ORIGINAL))
+		{
+				pixmap = pixmap.scaled(32,32);
+				label_headshot->setPixmap(pixmap);
+		}
+	}
+	else
+	{
+		// default.
+        QPixmap pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png").scaled(32,32);
+		label_headshot->setPixmap(pixmap);
+	}
+	
 	RsIdentityDetails idDetails ;
 	rsIdentity->getIdDetails(mGroup.mMeta.mAuthorId,idDetails);
 
@@ -59,6 +79,7 @@ void WireGroupItem::setup()
 	if(idDetails.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idDetails.mAvatar.mData, idDetails.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
 				pixmap = GxsIdDetails::makeDefaultIcon(mGroup.mMeta.mAuthorId,GxsIdDetails::SMALL);
 
+	pixmap = pixmap.scaled(24,24);
 	label_avatar->setPixmap(pixmap);
 
 	connect(toolButton_show, SIGNAL(clicked()), this, SLOT(show()));

@@ -174,17 +174,16 @@ bool TorManager::setupHiddenService()
         std::cerr << "Attempting to load key from legacy filesystem format in " << legacyDir.toStdString() << std::endl;
 
         CryptoKey key;
-        if (!key.loadFromFile(legacyDir + QLatin1String("/private_key"), CryptoKey::PrivateKey))
+        if (!key.loadFromFile(legacyDir + QLatin1String("/private_key")))
         {
             qWarning() << "Cannot load legacy format key from" << legacyDir << "for conversion";
             return false;
         }
 
-		keyData = QString::fromLatin1(key.encodedPrivateKey(CryptoKey::DER).toBase64());
 		d->hiddenService = new Tor::HiddenService(key, legacyDir, this);
 
 		std::cerr << "Got key from legacy dir: " << std::endl;
-		std::cerr << keyData.toStdString() << std::endl;
+        std::cerr << key.bytes().toStdString() << std::endl;
     }
     else
     {
@@ -193,6 +192,7 @@ bool TorManager::setupHiddenService()
 		std::cerr << "Creating new hidden service." << std::endl;
 
         connect(d->hiddenService, SIGNAL(privateKeyChanged()), this, SLOT(hiddenServicePrivateKeyChanged())) ;
+        connect(d->hiddenService, SIGNAL(hostnameChanged()), this, SLOT(hiddenServiceHostnameChanged())) ;
     }
 
     Q_ASSERT(d->hiddenService);
@@ -230,31 +230,40 @@ void TorManager::hiddenServiceStatusChanged(int old_status,int new_status)
 
 void TorManager::hiddenServicePrivateKeyChanged()
 {
-	QString key = QString::fromLatin1(d->hiddenService->privateKey().encodedPrivateKey(CryptoKey::DER).toBase64());
+    QString key = QString::fromLatin1(d->hiddenService->privateKey().bytes());
 
 	QFile outfile(d->hiddenServiceDir + QLatin1String("/private_key")) ;
     outfile.open( QIODevice::WriteOnly | QIODevice::Text );
     QTextStream s(&outfile);
 
+#ifdef TO_REMOVE
 	s << "-----BEGIN RSA PRIVATE KEY-----" << endl;
 
-	for(uint32_t i=0;i<key.length();i+=64)
+    for(int i=0;i<key.length();i+=64)
 	    s << key.mid(i,64) << endl ;
 
 	s << "-----END RSA PRIVATE KEY-----" << endl;
+#endif
+    s << key ;
 
     outfile.close();
 
 	std::cerr << "Hidden service private key changed!" << std::endl;
 	std::cerr << key.toStdString() << std::endl;
+}
 
-	QFile outfile2(d->hiddenServiceDir + QLatin1String("/hostname")) ;
+void TorManager::hiddenServiceHostnameChanged()
+{
+    QFile outfile2(d->hiddenServiceDir + QLatin1String("/hostname")) ;
     outfile2.open( QIODevice::WriteOnly | QIODevice::Text );
     QTextStream t(&outfile2);
 
-	t << d->hiddenService->hostname() << endl;
+    QString hostname(d->hiddenService->hostname());
 
-	outfile2.close();
+    t << hostname << endl;
+    outfile2.close();
+
+    std::cerr << "Hidden service hostname changed: " << hostname.toStdString() << std::endl;
 }
 
 bool TorManager::configurationNeeded() const
@@ -381,7 +390,7 @@ bool TorManager::getHiddenServiceInfo(QString& service_id,QString& service_onion
 	for(auto it(hidden_services.begin());it!=hidden_services.end();++it)
 	{
 		service_onion_address = (*it)->hostname();
-		service_id = (*it)->privateKey().torServiceID();
+        service_id = (*it)->serviceId();
 
 		for(auto it2((*it)->targets().begin());it2!=(*it)->targets().end();++it2)
 		{

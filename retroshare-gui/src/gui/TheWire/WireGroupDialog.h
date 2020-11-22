@@ -22,7 +22,10 @@
 #define _WIRE_GROUP_DIALOG_H
 
 #include "gui/gxs/GxsGroupDialog.h"
+
 #include <retroshare/rswire.h>
+
+class WireGroupExtra;
 
 class WireGroupDialog : public GxsGroupDialog
 {
@@ -42,6 +45,8 @@ protected:
 
 private:
 	void prepareWireGroup(RsWireGroup &group, const RsGroupMetaData &meta);
+
+	WireGroupExtra *mExtra;
 };
 
 #endif

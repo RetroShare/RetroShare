@@ -43,8 +43,9 @@
 #include <retroshare/rsexpr.h>
 
 /* Images for context menu icons */
-#define IMAGE_START  		    ":/images/download.png"
-#define IMAGE_REMOVE  		  ":/images/delete.png"
+#define IMAGE_START                ":/icons/png/download.png"
+#define IMAGE_SEARCHAGAIN          ":/images/update.png"
+#define IMAGE_REMOVE               ":/images/delete.png"
 #define IMAGE_REMOVEALL            ":/images/deleteall.png"
 #define IMAGE_DIRECTORY            ":/images/folder16.png"
 #define IMAGE_OPENFOLDER           ":/images/folderopen.png"
@@ -415,9 +416,8 @@ void SearchDialog::download()
 					std::cout << *it << "-" << std::endl;
 
 				QColor foreground = textColorDownloading();
-				QBrush brush(foreground);
 				for (int i = 0; i < item->columnCount(); ++i)
-					item->setForeground(i, brush);
+					item->setData(i, Qt::ForegroundRole, foreground );
 			}
 		}
 	}
@@ -671,14 +671,14 @@ void SearchDialog::searchSummaryWidgetCustomPopupMenu( QPoint /*point*/ )
     QMenu contextMnu(this);
 
     QTreeWidgetItem* ci = ui.searchSummaryWidget->currentItem();
-    QAction* action = contextMnu.addAction(tr("Search again"), this, SLOT(searchAgain()));
+    QAction* action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_SEARCHAGAIN),tr("Search again"), this, SLOT(searchAgain()));
     if (!ci || ci->data(SS_DATA_COL, ROLE_KEYWORDS).toString().isEmpty()) {
         action->setDisabled(true);
     }
-    contextMnu.addAction(QIcon(IMAGE_REMOVE), tr("Remove"), this, SLOT(searchRemove()));
-    contextMnu.addAction(QIcon(IMAGE_REMOVE), tr("Remove All"), this, SLOT(searchRemoveAll()));
+    contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_REMOVE), tr("Remove"), this, SLOT(searchRemove()));
+    contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_REMOVEALL), tr("Remove All"), this, SLOT(searchRemoveAll()));
     contextMnu.addSeparator();
-    action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copySearchLink()));
+    action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copySearchLink()));
     if (!ci || ci->data(SS_DATA_COL, ROLE_KEYWORDS).toString().isEmpty()) {
         action->setDisabled(true);
     }
@@ -1269,10 +1269,9 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 					foreground = textColorHighSources();
 				}
 
-				QBrush brush(foreground);
 				for (int i = 0; i < item->columnCount(); ++i)
 				{
-					item->setForeground(i, brush);
+					item->setData(i, Qt::ForegroundRole, foreground);
 				}
 			}
 
@@ -1355,10 +1354,9 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 		}
 
 		if (setForeground) {
-			QBrush brush(foreground);
 			for (int i = 0; i < item->columnCount(); ++i)
 			{
-				item->setForeground(i, brush);
+				item->setData(i, Qt::ForegroundRole, foreground);
 			}
 		}
 

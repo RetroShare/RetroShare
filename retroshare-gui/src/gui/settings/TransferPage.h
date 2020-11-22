@@ -23,8 +23,9 @@
 
 # include <QWidget>
 
-#include <retroshare-gui/configpage.h>
+#include "retroshare-gui/configpage.h"
 #include "ui_TransferPage.h"
+#include "gui/common/FilesDefs.h"
 
 class TransferPage: public ConfigPage
 {
@@ -37,7 +38,7 @@ class TransferPage: public ConfigPage
 		/** Loads the settings for this page */
 		virtual void load() ;
 
-		virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/filesharing.svg") ; }
+        virtual QPixmap iconPixmap() const { return FilesDefs::getPixmapFromQtResourcePath(":/icons/settings/filesharing.svg") ; }
         virtual QString pageName() const { return tr("Files") ; }
 		virtual QString helpText() const { return ""; }
 

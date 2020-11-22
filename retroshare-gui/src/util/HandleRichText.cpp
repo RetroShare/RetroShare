@@ -31,6 +31,8 @@
 #include "gui/RetroShareLink.h"
 #include "util/ObjectPainter.h"
 #include "util/imageutil.h"
+
+#include "util/rsdebug.h"
 #include "util/rstime.h"
 
 #ifdef USE_CMARK
@@ -39,6 +41,8 @@
 #endif
 
 #include <iostream>
+
+//#define DEBUG_SAVESPACE 1
 
 /**
  * The type of embedding we'd like to do
@@ -554,18 +558,24 @@ static QString saveSpace(const QString text)
 		if(cursChar==QLatin1Char('>'))         {
 			if(!echapChar && i>0) {outBrackets=true; firstOutBracket=true;}
  		} else if(cursChar==QLatin1Char('\t')) {
-			if(outBrackets && firstOutBracket && (keyName!="style")) savedSpaceText.replace(i, 1, "&nbsp;&nbsp;");
+			if(outBrackets && firstOutBracket && (keyName!="style")) { savedSpaceText.replace(i, 1, "&nbsp;&nbsp;"); i+= 11; }
 		} else if(cursChar==QLatin1Char(' '))  {
-			if(outBrackets && firstOutBracket && (keyName!="style")) savedSpaceText.replace(i, 1, "&nbsp;");
+			if(outBrackets && firstOutBracket && (keyName!="style")) { savedSpaceText.replace(i, 1, "&nbsp;"); i+= 5; }
 		} else if(cursChar==QChar(0xA0))  {
-			if(outBrackets && firstOutBracket && (keyName!="style")) savedSpaceText.replace(i, 1, "&nbsp;");
+			if(outBrackets && firstOutBracket && (keyName!="style")) { savedSpaceText.replace(i, 1, "&nbsp;"); i+= 5; }
 		} else if(cursChar==QLatin1Char('<'))  {
 			if(!echapChar) {outBrackets=false; getKeyName=true; keyName.clear();}
 		} else firstOutBracket=false;
 		echapChar=(cursChar==QLatin1Char('\\'));
 
 	}
-	
+#ifdef DEBUG_SAVESPACE
+	RsDbg() << __PRETTY_FUNCTION__ << "Text to save:" << std::endl
+	        << text.toStdString() << std::endl
+	        << "---------------------- Saved Text:" << std::endl
+	        << savedSpaceText.toStdString() << std::endl;
+#endif
+
 	return savedSpaceText;
 }
 
@@ -1024,9 +1034,10 @@ static void styleCreate(QDomDocument& doc
 		it.next();
 		const QStringList& classUsingIt ( it.value()) ;
 		bool first = true;
+		QString classNames = "";
 		foreach(QString className, classUsingIt) {
 			if (!className.trimmed().isEmpty()) {
-				style += QString(first?".":",.") + className;// + " ";
+				classNames += QString(first?".":",.") + className;// + " ";
 				first = false;
 			}
 		}
@@ -1073,9 +1084,9 @@ static void styleCreate(QDomDocument& doc
 			}
 
 			//.S1 .S2 .S4 {font-family:'Sans';}
-			style += "{" + key + ":" + val + ";}";
+			style += classNames + "{" + key + ":" + val + ";}";
 		} else {
-			style += "{" + it.key() + ";}\n";
+			style += classNames + "{" + it.key() + ";}\n";
 		}
 	}
 

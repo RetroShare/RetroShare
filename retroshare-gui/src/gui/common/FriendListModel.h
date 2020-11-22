@@ -39,8 +39,16 @@ public:
 	explicit RsFriendListModel(QObject *parent = NULL);
 	~RsFriendListModel(){}
 
-    class RsNodeDetails: public RsPeerDetails {};// in the near future, there will be a specific class for Profile/Node details in replacement of RsPeerDetails
-    class RsProfileDetails: public RsPeerDetails {};
+    class RsNodeDetails: public RsPeerDetails
+    {
+    public:
+        virtual ~RsNodeDetails() {}
+    };// in the near future, there will be a specific class for Profile/Node details in replacement of RsPeerDetails
+    class RsProfileDetails: public RsPeerDetails
+    {
+    public:
+        virtual ~RsProfileDetails() {}
+    };
 
 	struct HierarchicalGroupInformation
 	{
@@ -55,6 +63,7 @@ public:
 	struct HierarchicalNodeInformation
 	{
         HierarchicalNodeInformation() : last_update_ts(0) {}
+        virtual ~HierarchicalNodeInformation() {}
 
         rstime_t last_update_ts;
         RsNodeDetails node_info;

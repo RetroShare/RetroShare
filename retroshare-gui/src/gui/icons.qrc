@@ -1,9 +1,17 @@
 <RCC>
     <qresource prefix="/">
         <file>icons/onion.png</file>
+        <file>icons/svg/design.svg</file>
         <file>icons/svg/hidden.svg</file>
+        <file>icons/svg/ratio-auto.svg</file>
+        <file>icons/svg/ratio-1-1.svg</file>
+        <file>icons/svg/ratio-3-4.svg</file>
+        <file>icons/svg/ratio-16-9.svg</file>
         <file>icons/svg/randomness.svg</file>
         <file>icons/svg/password.svg</file>
+        <file>icons/svg/display_options.svg</file>
+        <file>icons/svg/listlayout.svg</file>
+        <file>icons/svg/gridlayout.svg</file>
         <file>icons/stars/star0.png</file>
         <file>icons/stars/star1.png</file>
         <file>icons/stars/star2.png</file>
@@ -60,6 +68,7 @@
         <file>icons/png/anonymous.png</file>
         <file>icons/png/attach-image.png</file>
         <file>icons/png/attach.png</file>
+        <file>icons/png/arrow.png</file>
         <file>icons/png/cert.png</file>
         <file>icons/png/channels-notify.png</file>
         <file>icons/png/channels.png</file>
@@ -301,6 +310,7 @@
         <file>icons/png/arrow-left.png</file>
         <file>icons/png/next-unread.png</file>
         <file>icons/mail/compose.png</file>
+        <file>icons/mail/downloadall.png</file>
         <file>icons/mail/delete.png</file>
         <file>icons/mail/tags.png</file>
         <file>icons/mail/quote.png</file>
@@ -311,6 +321,7 @@
         <file>icons/mail/foward.png</file>
         <file>icons/mail/reply.png</file>
         <file>icons/mail/reply-all.png</file>
+        <file>icons/mail/attach16.png</file>
         <file>icons/mail/attach24.png</file>
         <file>icons/mail/write-mail.png</file>
         <file>icons/textedit/align.png</file>

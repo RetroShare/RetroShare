@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "gui/common/FilesDefs.h"
 #include <QDialogButtonBox>
 #include <QMenu>
 #include "FriendSelectionWidget.h"
@@ -36,6 +37,7 @@
 #include <retroshare/rsstatus.h>
 
 #include <algorithm>
+#include <memory>
 
 #define COLUMN_NAME   0
 #define COLUMN_CHECK  0
@@ -215,10 +217,10 @@ static void initSslItem(QTreeWidgetItem *item, const RsPeerDetails &detail, cons
 	}
 
 	if (state != (int) RS_STATUS_OFFLINE) {
-		item->setTextColor(COLUMN_NAME, textColorOnline);
+		item->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline);
 	}
 
-	item->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(state)));
+    item->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(StatusDefs::imageUser(state)));
 	item->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.id.toStdString()));
 
 	item->setData(COLUMN_NAME, ROLE_SORT_GROUP, 1);
@@ -250,24 +252,21 @@ void FriendSelectionWidget::loadIdentities()
 
 		if(!rsIdentity->getIdentitiesSummaries(ids_meta))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve identities group info for all identities" << std::endl;
+			RS_ERR("failed to retrieve identities group info for all identities");
 			return;
-        }
-        std::vector<RsGxsGroupId> ids;
+		}
 
-		for(auto& meta:ids_meta)
-			ids.push_back(meta.mGroupId) ;
+		auto ids = std::make_unique<std::vector<RsGxsGroupId>>();
+		for(auto& meta: ids_meta) ids->push_back(meta.mGroupId);
 
-        RsQThreadUtils::postToObject( [ids,this]()
+		RsQThreadUtils::postToObject(
+		            [ids = std::move(ids), this]()
 		{
-			/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete */
-
-			gxsIds = ids; // we do that is the GUI thread. Dont try it on another thread!
-
-			fillList() ;
-
+			// We do that is the GUI thread. Dont try it on another thread!
+			gxsIds = *ids;
+			/* TODO: To furter optimize away a copy gxsIds could be a unique_ptr
+			 * too */
+			fillList();
 		}, this );
 	});
 }
@@ -383,7 +382,7 @@ void FriendSelectionWidget::secured_fillList()
 			groupItem->setFlags(Qt::ItemIsUserCheckable | groupItem->flags());
 			groupItem->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
 			groupItem->setTextAlignment(COLUMN_NAME, Qt::AlignLeft | Qt::AlignVCenter);
-			groupItem->setIcon(COLUMN_NAME, QIcon(IMAGE_GROUP16));
+            groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(IMAGE_GROUP16));
 
             groupItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(groupInfo->id.toStdString()));
 
@@ -452,11 +451,11 @@ void FriendSelectionWidget::secured_fillList()
 				}
 
 				if (state != (int) RS_STATUS_OFFLINE) {
-					gpgItem->setTextColor(COLUMN_NAME, textColorOnline());
+					gpgItem->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
 				}
 
 				gpgItem->setFlags(Qt::ItemIsUserCheckable | gpgItem->flags());
-				gpgItem->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(state)));
+                gpgItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(StatusDefs::imageUser(state)));
 				gpgItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.gpg_id.toStdString()));
 
 				gpgItem->setData(COLUMN_NAME, ROLE_SORT_GROUP, 1);
@@ -589,7 +588,7 @@ void FriendSelectionWidget::secured_fillList()
 				QString name = QString::fromUtf8(detail.mNickname.c_str());
 				gxsItem->setText(COLUMN_NAME, name + " ("+QString::fromStdString( (*gxsIt).toStdString() )+")");
 
-				//gxsItem->setTextColor(COLUMN_NAME, textColorOnline());
+				//gxsItem->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
 				gxsItem->setFlags(Qt::ItemIsUserCheckable | gxsItem->flags());
                 gxsItem->setIcon(COLUMN_NAME, identicon);
 				gxsItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.mId.toStdString()));
@@ -643,7 +642,7 @@ void FriendSelectionWidget::secured_fillList()
           QString name = QString::fromUtf8(detail.mNickname.c_str());
           gxsItem->setText(COLUMN_NAME, name + " ("+QString::fromStdString( (*gxsIt).toStdString() )+")");
 
-          //gxsItem->setTextColor(COLUMN_NAME, textColorOnline());
+          //gxsItem->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
           gxsItem->setFlags(Qt::ItemIsUserCheckable | gxsItem->flags());
                   gxsItem->setIcon(COLUMN_NAME, identicon);
           gxsItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.mId.toStdString()));
@@ -769,15 +768,13 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 		case IDTYPE_GPG:
 			{
 				if (item->data(COLUMN_DATA, ROLE_ID).toString() == gpgId) {
-					QColor color;
 					if (status != (int) RS_STATUS_OFFLINE) {
-						color = textColorOnline();
+						item->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
 					} else {
-						color = ui->friendList->palette().color(QPalette::Text);
+						item->setData(COLUMN_NAME, Qt::ForegroundRole, QVariant());
 					}
 
-					item->setTextColor(COLUMN_NAME, color);
-					item->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(gpgStatus)));
+                    item->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(StatusDefs::imageUser(gpgStatus)));
 
 					item->setData(COLUMN_NAME, ROLE_SORT_STATE, gpgStatus);
 
@@ -788,15 +785,13 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 		case IDTYPE_SSL:
 			{
 				if (item->data(COLUMN_DATA, ROLE_ID).toString() == peerId) {
-					QColor color;
 					if (status != (int) RS_STATUS_OFFLINE) {
-						color = textColorOnline();
+						item->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
 					} else {
-						color = ui->friendList->palette().color(QPalette::Text);
+						item->setData(COLUMN_NAME, Qt::ForegroundRole, QVariant());
 					}
 
-					item->setTextColor(COLUMN_NAME, color);
-					item->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(status)));
+                    item->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(StatusDefs::imageUser(status)));
 
 					item->setData(COLUMN_NAME, ROLE_SORT_STATE, status);
 

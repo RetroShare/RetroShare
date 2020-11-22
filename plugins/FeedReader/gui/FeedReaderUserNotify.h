@@ -37,7 +37,7 @@ public:
 	virtual bool hasSetting(QString *name, QString *group);
 
 private slots:
-	void feedChanged(const QString &feedId, int type);
+	void feedChanged(uint32_t feedId, int type);
 
 private:
 	virtual QIcon getIcon();

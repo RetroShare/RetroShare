@@ -38,8 +38,8 @@ class RsSerialiser;
 
 struct PartialPacketRecord
 {
-    void *mem ;
-    uint32_t size ;
+	void *mem ;
+	uint32_t size ;
 };
 
 /**
@@ -65,18 +65,23 @@ class pqistreamer: public PQInterface
 		virtual RsItem *GetItem();
 		virtual int     status();
 
-		rstime_t  getLastIncomingTS(); 	// Time of last data packet, for checking a connection is alive.
+		rstime_t	getLastIncomingTS(); 	// Time of last data packet, for checking a connection is alive.
 		virtual void    getRates(RsBwRates &rates);
 		virtual int     getQueueSize(bool in); // extracting data.
+		virtual int     getQueueSize_bytes(bool in); // size of incoming queue in bytes
 		virtual int     gatherStatistics(std::list<RSTrafficClue>& outqueue_stats,std::list<RSTrafficClue>& inqueue_stats); // extracting data.
         
             	// mutex protected versions of RateInterface calls.
             	virtual void setRate(bool b,float f) ;
             	virtual void setMaxRate(bool b,float f) ;
-            	virtual float getRate(bool b) ;
+		virtual void setMaxRate_locked(bool b,float f) ;
 
-    protected:
-        		virtual int reset() ;
+            	virtual float getRate(bool b) ;
+		virtual float getMaxRate(bool b) ;
+		virtual float getMaxRate_locked(bool b);
+
+	protected:
+       		virtual int reset() ;
 
 		int tick_bio();
 		int tick_send(uint32_t timeout);
@@ -104,12 +109,12 @@ class pqistreamer: public PQInterface
 
 	private:
 		int queue_outpqi_locked(RsItem *i,uint32_t& serialized_size);
-		int handleincomingitem_locked(RsItem *i, int len);
+		int handleincomingitem(RsItem *i, int len);
 
 		// ticked regularly (manages out queues and sending
 		// via above interfaces.
 		virtual int	handleoutgoing_locked();
-		virtual int	handleincoming_locked();
+		virtual int	handleincoming();
 
 		// Bandwidth/Streaming Management.
 		float	outTimeSlice_locked();
@@ -117,11 +122,11 @@ class pqistreamer: public PQInterface
 		int	outAllowedBytes_locked();
 		void	outSentBytes_locked(uint32_t );
 
-		int	inAllowedBytes_locked();
-		void	inReadBytes_locked(uint32_t );
+		int	inAllowedBytes();
+		void	inReadBytes(uint32_t );
 
         		// cleans up everything that's pending / half finished.
-		void free_pend_locked();
+		void free_pend();
 
 		// RsSerialiser - determines which packets can be serialised.
 		RsSerialiser *mRsSerialiser;
@@ -129,13 +134,12 @@ class pqistreamer: public PQInterface
 		void *mPkt_wpending; // storage for pending packet to write.
         	uint32_t mPkt_wpending_size; // ... and its size.
 
-        void allocate_rpend_locked(); // use these two functions to allocate/free the buffer below
+		void allocate_rpend(); // use these two functions to allocate/free the buffer below
         
 		int   mPkt_rpend_size; // size of pkt_rpending.
 		void *mPkt_rpending; // storage for read in pending packets.
 
-		enum {reading_state_packet_started=1,
-			reading_state_initial=0 } ;
+		enum {reading_state_packet_started=1, reading_state_initial=0 } ;
 
 		int   mReading_state ;
 		int   mFailed_read_attempts ;
@@ -144,7 +148,8 @@ class pqistreamer: public PQInterface
 		std::list<void *> mOutPkts; // Cntrl / Search / Results queue
 		std::list<RsItem *> mIncoming;
 
-        uint32_t mIncomingSize; // size of mIncoming. To avoid calling linear cost std::list::size()
+		uint32_t mIncomingSize; // size of mIncoming. To avoid calling linear cost std::list::size()
+		uint32_t mIncomingSize_bytes; // size of Incoming in btyes
 
 		// data for network stats.
 		int mTotalRead;
@@ -154,8 +159,8 @@ class pqistreamer: public PQInterface
 		int mCurrRead;
 		int mCurrSent;
         
-        double mCurrReadTS; // TS from which these are measured.
-        double mCurrSentTS;
+		double mCurrReadTS; // TS from which these are measured.
+		double mCurrSentTS;
 
 		double mAvgLastUpdate; // TS from which these are measured.
 		uint32_t mAvgReadCount;
@@ -174,12 +179,12 @@ class pqistreamer: public PQInterface
         	std::list<RSTrafficClue> mCurrentStatsChunk_Out ;
 		rstime_t mStatisticsTimeStamp ;
 
-        bool mAcceptsPacketSlicing ;
-        rstime_t mLastSentPacketSlicingProbe ;
-        void locked_addTrafficClue(const RsItem *pqi, uint32_t pktsize, std::list<RSTrafficClue> &lst);
-        RsItem *addPartialPacket_locked(const void *block, uint32_t len, uint32_t slice_packet_id,bool packet_starting,bool packet_ending,uint32_t& total_len);
+		bool mAcceptsPacketSlicing ;
+		rstime_t mLastSentPacketSlicingProbe ;
+		void locked_addTrafficClue(const RsItem *pqi, uint32_t pktsize, std::list<RSTrafficClue> &lst);
+		RsItem *addPartialPacket(const void *block, uint32_t len, uint32_t slice_packet_id,bool packet_starting,bool packet_ending,uint32_t& total_len);
         
-        std::map<uint32_t,PartialPacketRecord> mPartialPackets ;
+		std::map<uint32_t,PartialPacketRecord> mPartialPackets ;
 };
 
 #endif //MRK_PQI_STREAMER_HEADER

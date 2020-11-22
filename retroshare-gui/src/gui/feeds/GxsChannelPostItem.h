@@ -56,16 +56,19 @@ public:
 	bool setGroup(const RsGxsChannelGroup& group, bool doFill = true);
 	bool setPost(const RsGxsChannelPost& post, bool doFill = true);
 
-	void setFileCleanUpWarning(uint32_t time_left);
+    //void setFileCleanUpWarning(uint32_t time_left);
 
 	QString getTitleLabel();
 	QString getMsgLabel();
 	const std::list<SubFileItem *> &getFileItems() {return mFileItems; }
 
-    bool isUnread() const ;
-    const std::set<RsGxsMessageId>& olderVersions() const { return mPost.mOlderVersions; }
+	bool isLoaded() const {return mLoaded;};
+	bool isUnread() const ;
+	void setReadStatus(bool isNew, bool isUnread);
 
-    static uint64_t computeIdentifier(const RsGxsMessageId& msgid) { return hash64("GxsChannelPostItem " + msgid.toStdString()) ; }
+	const std::set<RsGxsMessageId>& olderVersions() const { return mPost.mOlderVersions; }
+
+	static uint64_t computeIdentifier(const RsGxsMessageId& msgid) { return hash64("GxsChannelPostItem " + msgid.toStdString()) ; }
 protected:
 	//void init(const RsGxsMessageId& messageId,const std::set<RsGxsMessageId>& older_versions);
 
@@ -112,7 +115,6 @@ private:
 	void setup();
 	void fill();
 	void fillExpandFrame();
-	void setReadStatus(bool isNew, bool isUnread);
 
 private:
 	bool mInFill;

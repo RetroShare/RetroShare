@@ -94,55 +94,75 @@ bool p3Posted::getGroupData(const uint32_t &token, std::vector<RsPostedGroup> &g
 	return ok;
 }
 
-bool p3Posted::getPostData(const uint32_t &token, std::vector<RsPostedPost> &msgs, std::vector<RsGxsComment> &cmts)
+bool p3Posted::getPostData(
+        const uint32_t &token, std::vector<RsPostedPost> &msgs,
+        std::vector<RsGxsComment> &cmts,
+        std::vector<RsGxsVote> &vots)
 {
 #ifdef POSTED_DEBUG
-	std::cerr << "p3Posted::getPostData()";
-	std::cerr << std::endl;
+	RsDbg() << __PRETTY_FUNCTION__ << std::endl;
 #endif
 
 	GxsMsgDataMap msgData;
-	bool ok = RsGenExchange::getMsgData(token, msgData);
 	rstime_t now = time(NULL);
-
-	if(ok)
+	if(!RsGenExchange::getMsgData(token, msgData))
 	{
-		GxsMsgDataMap::iterator mit = msgData.begin();
-		
-		for(; mit != msgData.end(); ++mit)
+		RsErr() << __PRETTY_FUNCTION__ << " ERROR in request" << std::endl;
+		return false;
+	}
+
+	GxsMsgDataMap::iterator mit = msgData.begin();
+
+	for(; mit != msgData.end(); ++mit)
+	{
+		std::vector<RsGxsMsgItem*>& msgItems = mit->second;
+		std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
+
+		for(; vit != msgItems.end(); ++vit)
 		{
-			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
-			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
-		
-			for(; vit != msgItems.end(); ++vit)
+			RsGxsPostedPostItem* postItem =
+			        dynamic_cast<RsGxsPostedPostItem*>(*vit);
+
+			if(postItem)
 			{
-				RsGxsPostedPostItem* postItem = dynamic_cast<RsGxsPostedPostItem*>(*vit);
+				// TODO Really needed all of these lines?
+				RsPostedPost msg = postItem->mPost;
+				msg.mMeta = postItem->meta;
+				postItem->toPostedPost(msg, true);
+				msg.calculateScores(now);
 
-				if(postItem)
+				msgs.push_back(msg);
+				delete postItem;
+			}
+			else
+			{
+				RsGxsCommentItem* cmtItem =
+				        dynamic_cast<RsGxsCommentItem*>(*vit);
+				if(cmtItem)
 				{
-					RsPostedPost msg = postItem->mPost;
-					msg.mMeta = postItem->meta;
-					postItem->toPostedPost(msg, true);
-					msg.calculateScores(now);
-
-					msgs.push_back(msg);
-					delete postItem;
+					RsGxsComment cmt;
+					RsGxsMsgItem *mi = (*vit);
+					cmt = cmtItem->mMsg;
+					cmt.mMeta = mi->meta;
+#ifdef GXSCOMMENT_DEBUG
+					RsDbg() << __PRETTY_FUNCTION__ << " Found Comment:" << std::endl;
+					cmt.print(std::cerr,"  ", "cmt");
+#endif
+					cmts.push_back(cmt);
+					delete cmtItem;
 				}
 				else
 				{
-					RsGxsCommentItem* cmtItem = dynamic_cast<RsGxsCommentItem*>(*vit);
-					if(cmtItem)
+					RsGxsVoteItem* votItem =
+					        dynamic_cast<RsGxsVoteItem*>(*vit);
+					if(votItem)
 					{
-						RsGxsComment cmt;
+						RsGxsVote vot;
 						RsGxsMsgItem *mi = (*vit);
-						cmt = cmtItem->mMsg;
-						cmt.mMeta = mi->meta;
-#ifdef GXSCOMMENT_DEBUG
-						std::cerr << "p3Posted::getPostData Found Comment:" << std::endl;
-						cmt.print(std::cerr,"  ", "cmt");
-#endif
-						cmts.push_back(cmt);
-						delete cmtItem;
+						vot = votItem->mMsg;
+						vot.mMeta = mi->meta;
+						vots.push_back(vot);
+						delete votItem;
 					}
 					else
 					{
@@ -150,24 +170,37 @@ bool p3Posted::getPostData(const uint32_t &token, std::vector<RsPostedPost> &msg
 						//const uint16_t RS_SERVICE_GXS_TYPE_CHANNELS    = 0x0217;
 						//const uint8_t RS_PKT_SUBTYPE_GXSCHANNEL_POST_ITEM = 0x03;
 						//const uint8_t RS_PKT_SUBTYPE_GXSCOMMENT_COMMENT_ITEM = 0xf1;
-						std::cerr << "Not a PostedPostItem neither a RsGxsCommentItem"
-											<< " PacketService=" << std::hex << (int)msg->PacketService() << std::dec
-											<< " PacketSubType=" << std::hex << (int)msg->PacketSubType() << std::dec
-                                            << " type name    =" << typeid(*msg).name()
-											<< " , deleting!" << std::endl;
+						//const uint8_t RS_PKT_SUBTYPE_GXSCOMMENT_VOTE_ITEM = 0xf2;
+						RsErr() << __PRETTY_FUNCTION__
+						        << "Not a PostedPostItem neither a "
+						        << "RsGxsCommentItem neither a RsGxsVoteItem"
+						        << " PacketService=" << std::hex << (int)msg->PacketService() << std::dec
+						        << " PacketSubType=" << std::hex << (int)msg->PacketSubType() << std::dec
+						        << " type name    =" << typeid(*msg).name()
+						        << " , deleting!" << std::endl;
 						delete *vit;
 					}
 				}
 			}
 		}
 	}
-	else
-	{
-		std::cerr << "p3GxsChannels::getPostData() ERROR in request";
-		std::cerr << std::endl;
-	}
 
-	return ok;
+	return true;
+}
+
+bool p3Posted::getPostData(
+        const uint32_t &token, std::vector<RsPostedPost> &posts, std::vector<RsGxsComment> &cmts)
+{
+	std::vector<RsGxsVote> vots;
+	return getPostData( token, posts, cmts, vots);
+}
+
+bool p3Posted::getPostData(
+        const uint32_t &token, std::vector<RsPostedPost> &posts)
+{
+	std::vector<RsGxsComment> cmts;
+	std::vector<RsGxsVote> vots;
+	return getPostData( token, posts, cmts, vots);
 }
 
 //Not currently used
@@ -323,23 +356,25 @@ bool p3Posted::getBoardsInfo(
 }
 
 bool p3Posted::getBoardAllContent( const RsGxsGroupId& groupId,
-                       std::vector<RsPostedPost>& posts,
-                       std::vector<RsGxsComment>& comments )
+                                   std::vector<RsPostedPost>& posts,
+                                   std::vector<RsGxsComment>& comments,
+                                   std::vector<RsGxsVote>& votes )
 {
 	uint32_t token;
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
-    if( !requestMsgInfo(token, opts, std::list<RsGxsGroupId>({groupId})) || waitToken(token) != RsTokenService::COMPLETE )
-        return false;
+	if( !requestMsgInfo(token, opts, std::list<RsGxsGroupId>({groupId})) || waitToken(token) != RsTokenService::COMPLETE )
+		return false;
 
-	return getPostData(token, posts, comments);
+	return getPostData(token, posts, comments, votes);
 }
 
 bool p3Posted::getBoardContent( const RsGxsGroupId& groupId,
-                       const std::set<RsGxsMessageId>& contentsIds,
-                       std::vector<RsPostedPost>& posts,
-                       std::vector<RsGxsComment>& comments )
+                                const std::set<RsGxsMessageId>& contentsIds,
+                                std::vector<RsPostedPost>& posts,
+                                std::vector<RsGxsComment>& comments,
+                                std::vector<RsGxsVote>& votes )
 {
 	uint32_t token;
 	RsTokReqOptions opts;
@@ -351,7 +386,7 @@ bool p3Posted::getBoardContent( const RsGxsGroupId& groupId,
 	if( !requestMsgInfo(token, opts, msgIds) ||
 	        waitToken(token) != RsTokenService::COMPLETE ) return false;
 
-	return getPostData(token, posts, comments);
+	return getPostData(token, posts, comments, votes);
 }
 
 bool p3Posted::getBoardsSummaries(std::list<RsGroupMetaData>& boards )
@@ -407,6 +442,57 @@ bool p3Posted::createBoard(RsPostedGroup& board)
 	return true;
 }
 
+bool p3Posted::voteForPost(bool up,const RsGxsGroupId& postGrpId,const RsGxsMessageId& postMsgId,const RsGxsId& authorId)
+{
+    // Do some basic tests
+
+    if(!rsIdentity->isOwnId(authorId))	// This is ruled out before waitToken complains. Not sure it's needed.
+    {
+        std::cerr << __PRETTY_FUNCTION__ << ": vote submitted with an ID that is not yours! This cannot work." << std::endl;
+        return false;
+    }
+
+    RsGxsVote vote;
+
+    vote.mMeta.mGroupId = postGrpId;
+    vote.mMeta.mThreadId = postMsgId;
+    vote.mMeta.mParentId = postMsgId;
+    vote.mMeta.mAuthorId = authorId;
+
+    if (up)
+            vote.mVoteType = GXS_VOTE_UP;
+    else
+            vote.mVoteType = GXS_VOTE_DOWN;
+
+    uint32_t token;
+
+    if(!createNewVote(token, vote))
+    {
+        std::cerr << __PRETTY_FUNCTION__ << " Error! Failed submitting vote to (group,msg) " << postGrpId << "," << postMsgId << " from author " << authorId << std::endl;
+        return false;
+    }
+
+    if(waitToken(token) != RsTokenService::COMPLETE)
+    {
+        std::cerr << __PRETTY_FUNCTION__ << " Error! GXS operation failed." << std::endl;
+        return false;
+    }
+    return true;
+}
+
+bool p3Posted::setPostReadStatus(const RsGxsGrpMsgIdPair& msgId, bool read)
+{
+    uint32_t token;
+
+    setMessageReadStatus(token,msgId,read);
+
+    if(waitToken(token) != RsTokenService::COMPLETE)
+    {
+        std::cerr << __PRETTY_FUNCTION__ << " Error! GXS operation failed." << std::endl;
+        return false;
+    }
+    return true;
+}
 bool p3Posted::editBoard(RsPostedGroup& board)
 {
 	uint32_t token;

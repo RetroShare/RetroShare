@@ -3,7 +3,10 @@ set ParamRelease=0
 set ParamDebug=0
 set ParamAutologin=0
 set ParamPlugins=0
+set ParamJsonApi=0
 set ParamTor=0
+set NonInteractive=0
+set CoreCount=%NUMBER_OF_PROCESSORS%
 
 :parameter_loop
 if "%~1" NEQ "" (
@@ -14,10 +17,16 @@ if "%~1" NEQ "" (
 			set ParamDebug=1
 		) else if "%%~a"=="autologin" (
 			set ParamAutologin=1
+		) else if "%%~a"=="jsonapi" (
+			set ParamJsonApi=1
 		) else if "%%~a"=="plugins" (
 			set ParamPlugins=1
 		) else if "%%~a"=="tor" (
 			set ParamTor=1
+		) else if "%%~a"=="non-interactive" (
+			set NonInteractive=1
+		) else if "%%~a"=="singlethread" (
+			set CoreCount=1
 		) else (
 			echo.
 			echo Unknown parameter %1
@@ -67,13 +76,14 @@ call "%ToolsPath%\get-qt-version.bat" QtVersion
 if "%QtVersion%"=="" %cecho% error "Cannot get Qt version." & exit /B 1
 
 :: Get gcc versions
-call "%ToolsPath%\get-gcc-version.bat" GCCVersion
+call "%ToolsPath%\get-gcc-version.bat" GCCVersion GCCArchitecture
 if "%GCCVersion%"=="" %cecho% error "Cannot get gcc version." & exit /B 1
+if "%GCCArchitecture%"=="" %cecho% error "Cannot get gcc architecture." & exit /B 1
 
-set BuildLibsPath=%EnvRootPath%\build-libs\gcc-%GCCVersion%
+set BuildLibsPath=%EnvRootPath%\build-libs\gcc-%GCCVersion%\%GCCArchitecture%
 
-set RsBuildPath=%BuildPath%\Qt-%QtVersion%-%RsBuildConfig%
-set RsDeployPath=%DeployPath%\Qt-%QtVersion%%RsType%-%RsBuildConfig%
+set RsBuildPath=%BuildPath%\Qt-%QtVersion%-%GCCArchitecture%-%RsBuildConfig%
+set RsDeployPath=%DeployPath%\Qt-%QtVersion%-%GCCArchitecture%%RsType%-%RsBuildConfig%
 set RsPackPath=%DeployPath%
 set RsArchiveAdd=
 
@@ -93,9 +103,16 @@ echo release^|debug      Build release or debug version
 echo.
 echo Optional parameter (need clean when changed)
 echo autologin          Build with autologin
+echo jsonapi            Build with jsonapi
 echo plugins            Build plugins
+echo.
+echo Optional parameter
+echo singlethread       Use only 1 thread for building
 echo.
 echo Parameter for pack
 echo tor                Pack tor version
+echo.
+echo Parameter for git-log
+echo non-interactive    Non-interactive mode
 echo.
 exit /B 2

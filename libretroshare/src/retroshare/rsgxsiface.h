@@ -72,6 +72,46 @@ struct RsGxsGroupSummary : RsSerializable
 	~RsGxsGroupSummary();
 };
 
+/*!
+ * This structure is used to locally store group search results for a given service.
+ * It contains the group information as well as a context
+ * strings to tell where the information was found. It is more compact than a
+ * GroupMeta object, so as to make search responses as light as possible.
+ */
+struct RsGxsGroupSearchResults : RsSerializable
+{
+	RsGxsGroupSearchResults()
+        : mPublishTs(0), mNumberOfMessages(0),mLastMessageTs(0), mSignFlags(0),mPopularity(0)
+    {}
+
+	RsGxsGroupId mGroupId;
+	std::string  mGroupName;
+	RsGxsId      mAuthorId;
+	rstime_t     mPublishTs;
+	uint32_t     mNumberOfMessages;
+	rstime_t     mLastMessageTs;
+	uint32_t     mSignFlags;
+	uint32_t     mPopularity;
+
+    std::set<std::string> mSearchContexts;
+
+	/// @see RsSerializable::serial_process
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_SERIAL_PROCESS(mGroupId);
+		RS_SERIAL_PROCESS(mGroupName);
+		RS_SERIAL_PROCESS(mAuthorId);
+		RS_SERIAL_PROCESS(mPublishTs);
+		RS_SERIAL_PROCESS(mNumberOfMessages);
+		RS_SERIAL_PROCESS(mLastMessageTs);
+		RS_SERIAL_PROCESS(mSignFlags);
+		RS_SERIAL_PROCESS(mPopularity);
+		RS_SERIAL_PROCESS(mSearchContexts);
+	}
+
+	virtual ~RsGxsGroupSearchResults() = default;
+};
 
 /*!
  * Stores ids of changed gxs groups and messages.
@@ -103,6 +143,14 @@ struct RsGxsChanges : RsEvent
 	}
 
 	RsTokenService* mService; /// Weak pointer, not serialized
+};
+
+enum class DistantSearchGroupStatus:uint8_t
+{
+    UNKNOWN            = 0x00,	// no search ongoing for this group
+    CAN_BE_REQUESTED   = 0x01,	// a search result mentions this group, so the group data can be requested
+    ONGOING_REQUEST    = 0x02,	// the group data has been requested and the request is pending
+    HAVE_GROUP_DATA    = 0x03,	// group data has been received. Group can be subscribed.
 };
 
 /*!

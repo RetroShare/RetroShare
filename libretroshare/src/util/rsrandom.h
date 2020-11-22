@@ -46,8 +46,18 @@ public:
 
 	static bool     seed(uint32_t s);
 
-	static std::string random_alphaNumericString(uint32_t length);
 	static void        random_bytes(uint8_t* data, uint32_t length);
+
+	/// Return a random alphanumeric *[0-9,A-Z,a-z] string of the given lenght
+	static std::string alphaNumeric(uint32_t length);
+
+	/** Return a random printable string of the given lenght */
+	static std::string printable(uint32_t length);
+
+	/** This return a printable string not an alphanumeric one @deprecated */
+	RS_DEPRECATED_FOR("RsRandom::printable")
+	static inline std::string random_alphaNumericString(uint32_t length)
+	{ return printable(length); }
 
 private:
 	static RsMutex rndMtx;

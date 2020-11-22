@@ -39,7 +39,7 @@ public:
 	 * @param tokenQ parent callee token
 	 * @param posted
 	 */
-	explicit PostedCreatePostDialog(RsPosted* posted, const RsGxsGroupId& grpId, QWidget *parent = 0);
+    explicit PostedCreatePostDialog(RsPosted* posted, const RsGxsGroupId& grpId, const RsGxsId& default_author=RsGxsId(),QWidget *parent = 0);
 	~PostedCreatePostDialog();
 
 private:

@@ -59,6 +59,7 @@ class RSPermissionMatrixWidget: public QFrame
 public:
     RSPermissionMatrixWidget(QWidget *parent=NULL);
     virtual ~RSPermissionMatrixWidget() ;
+    QString ServiceDescription(uint16_t serviceid);
 
 public slots:
     void setHideOffline(bool hide);

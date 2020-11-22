@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "gui/common/FilesDefs.h"
 #include "RsCollectionDialog.h"
 
 #include "RsCollection.h"
@@ -142,7 +143,7 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName
 	setWindowTitle(QString("%1 - %2").arg(windowTitle()).arg(QFileInfo(_fileName).completeBaseName()));
 	
 	
-	ui.headerFrame->setHeaderImage(QPixmap(":/icons/collections.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/collections.png"));
 
 	if(creation)
 	{
@@ -254,7 +255,7 @@ void RsCollectionDialog::openDestinationDirectoryMenu()
 		contextMnu.addAction(QString::fromUtf8((*it).filename.c_str()), this, SLOT(setDestinationDirectory()))->setData(QString::fromUtf8( (*it).filename.c_str() ) ) ;
 	}
 
-	contextMnu.addAction( QIcon(IMAGE_SEARCH),tr("Specify..."),this,SLOT(chooseDestinationDirectory()));
+    contextMnu.addAction( FilesDefs::getIconFromQtResourcePath(IMAGE_SEARCH),tr("Specify..."),this,SLOT(chooseDestinationDirectory()));
 
 	contextMnu.exec(QCursor::pos()) ;
 }
@@ -537,8 +538,9 @@ bool RsCollectionDialog::addChild(QTreeWidgetItem* parent, const std::vector<Col
 
 			if (colFileInfo.filename_has_wrong_characters)
 			{
+				//TODO (Phenom): Add qproperty for these text colors in stylesheets
 				wrong_chars = true ;
-				item->setTextColor(COLUMN_FILE, QColor(255,80,120)) ;
+				item->setData(COLUMN_FILE, Qt::ForegroundRole, QColor(255,80,120)) ;
 			}
 
 			if (parentsFounds.empty()) {

@@ -29,7 +29,7 @@
 typedef rapidjson::Document RsJson;
 
 /**
- * Print out RsJson to a stream, use std::stringstream to get the string
+ * Print out RsJson to a stream, use std::ostringstream to get the string
  * @param[out] out output stream
  * @param[in] jDoc JSON document to print
  * @return same output stream passed as out parameter

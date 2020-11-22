@@ -17,7 +17,6 @@
     <file>images/inbox_22.png</file>
     <file>images/blue_lock.png</file>
     <file>images/blue_lock_open.png</file>
-    <file>images/edit_24.png</file>
     <file>images/streaming.png</file>
     <file>images/white-bubble-64.png</file>
     <file>images/orange-bubble-64.png</file>
@@ -49,7 +48,6 @@
     <file>images/dht16.png</file>
     <file>images/dht32.png</file>
     <file>images/edit-clear-history.png</file>
-    <file>images/edit_16.png</file>
     <file>images/feedback_arrow.png</file>
     <file>images/feedback_arrow_hover.png</file>
     <file>images/firewall_24.png</file>
@@ -79,11 +77,7 @@
     <file>images/avatarstatus-bg-away-70.png</file>
     <file>images/avatarstatus-bg-busy-70.png</file>
     <file>images/avatarstatus-bg-offline-70.png</file>
-    <file>images/configure.png</file>
     <file>images/copyrslink.png</file>
-    <file>images/contacts24.png</file>
-    <file>images/contactsclosed24.png</file>
-    <file>images/connection.png</file>
     <file>images/Client0.png</file>
     <file>images/Client1.png</file>
     <file>images/Client2.png</file>
@@ -102,7 +96,6 @@
     <file>images/FileTypePicture.png</file>
     <file>images/FileTypeProgram.png</file>
     <file>images/FileTypeVideo.png</file>
-    <file>images/fonts.png</file>
     <file>images/foldermail.png</file>
     <file>images/folderopen.png</file>
     <file>images/fileopen.png</file>
@@ -111,14 +104,11 @@
     <file>images/graph-notdownload.png</file>
     <file>images/graph-checking.png</file>
     <file>images/graph-blue.png</file>
-    <file>images/add-share24.png</file>
     <file>images/avatar_background.png</file>
     <file>images/button_cancel.png</file>
     <file>images/chat.png</file>
-    <file>images/chat_24.png</file>
     <file>images/cancel.png</file>
     <file>images/close-down.png</file>
-    <file>images/close_normal.png</file>
     <file>images/copy.png</file>
     <file>images/delete.png</file>
     <file>images/deleteall.png</file>
@@ -128,13 +118,8 @@
     <file>images/diskSave.png</file>
     <file>images/document_save.png</file>
     <file>images/down.png</file>
-    <file>images/down_24x24.png</file>
     <file>images/download.png</file>
-    <file>images/download16.png</file>
     <file>images/edit_add24.png</file>
-    <file>images/edit-bold.png</file>
-    <file>images/edit-italic.png</file>
-    <file>images/edit-underline.png</file>
     <file>images/edit_remove24.png</file>
     <file>images/disabled_plugin_48.png</file>
     <file>images/expand_frame.png</file>
@@ -224,7 +209,6 @@
     <file>images/ledoff1.png</file>
     <file>images/ledon1.png</file>
     <file>images/locale.png</file>
-    <file>images/looknfeel.png</file>
     <file>images/logo/logo_16.png</file>
     <file>images/logo/logo_24.png</file>
     <file>images/logo/logo_24_0.png</file>
@@ -260,7 +244,6 @@
     <file>images/mute-off-16.png</file>
     <file>images/mute-on-16.png</file>
     <file>images/new-mail-alert.png</file>
-    <file>images/newmsg.png</file>
     <file>images/no_avatar_70.png</file>
     <file>images/no_avatar_background.png</file>
     <file>images/openimage.png</file>
@@ -269,7 +252,6 @@
     <file>images/pasterslink.png</file>
     <file>images/package_games1.png</file>
     <file>images/pin32.png</file>
-    <file>images/print24.png</file>
     <file>images/priorityauto.png</file>
     <file>images/priorityhigh.png</file>
     <file>images/prioritylow.png</file>
@@ -278,17 +260,10 @@
     <file>images/preview.png</file>
     <file>images/player_play.png</file>
     <file>images/quick_restart24.png</file>
-    <file>images/quote_24.png</file>
     <file>images/redled.png</file>
     <file>images/greenled.png</file>
     <file>images/grayled.png</file>
     <file>images/yellowled.png</file>
-    <file>images/rate-1.png</file>
-    <file>images/rate-2.png</file>
-    <file>images/rate-3.png</file>
-    <file>images/rate-4.png</file>
-    <file>images/rate-5.png</file>
-    <file>images/rating.png</file>
     <file>images/records.png</file>
     <file>images/replymail-pressed.png</file>
     <file>images/replymail24.png</file>
@@ -320,7 +295,6 @@
     <file>images/tab-dock.png</file>
     <file>images/tab-undock.png</file>
     <file>images/tab-new.png</file>
-    <file>images/tag24.png</file>
     <file>images/transferupdown.png</file>
     <file>images/tools_wizard.png</file>
     <file>images/uploads.png</file>
@@ -384,8 +358,6 @@
     <file>images/view_calendar_month.png</file>
     <file>images/view_calendar_list.png</file>
     <file>images/view_split_top_bottom.png</file>
-    <file>images/window_fullscreen.png</file>
-    <file>images/window_nofullscreen.png</file>
     <file>qss/chat/standard/private/info.xml</file>
     <file>qss/chat/standard/private/incoming.htm</file>
     <file>qss/chat/standard/private/outgoing.htm</file>
@@ -454,8 +426,6 @@
     <file>images/share-icon-16.png</file>
     <file>images/toasterEnable.png</file>
     <file>images/toasterDisable.png</file>
-    <file>images/view-feeds.png</file>
-    <file>images/view-files.png</file>
     <file>images/emblem-web.png</file>
     <file>images/rsmessenger48.png</file>
     <file>images/SmileyText.png</file>

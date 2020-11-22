@@ -17,6 +17,16 @@ call "%~dp0env.bat" %*
 if errorlevel 2 exit /B 2
 if errorlevel 1 goto error_env
 
+if not "%ParamNoupdate%"=="1" (
+	:: Install ntldd
+	%EnvMSYS2Cmd% "pacman --noconfirm --needed -S mingw-w64-%RsMSYS2Architecture%-ntldd-git"
+	
+	:: Install tor
+	if "%ParamTor%"=="1" (
+		%EnvMSYS2Cmd% "pacman --noconfirm --needed -S mingw-w64-%RsMSYS2Architecture%-tor"
+	)
+)
+
 :: Remove deploy path
 if exist "%RsDeployPath%" rmdir /S /Q "%RsDeployPath%"
 
@@ -24,7 +34,7 @@ if exist "%RsDeployPath%" rmdir /S /Q "%RsDeployPath%"
 if not exist "%RsBuildPath%\Makefile" echo Project is not compiled.& goto error
 
 :: Get compiled revision
-set GetRsVersion=%SourcePath%\build_scripts\Windows\tools\get-rs-version.bat
+set GetRsVersion=%SourcePath%\build_scripts\Windows-msys2\tools\get-rs-version.bat
 if not exist "%GetRsVersion%" (
 	%cecho% error "File not found"
 	echo %GetRsVersion%
@@ -50,14 +60,6 @@ set RsDate=
 for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /format:list') do set RsDate=%%I
 set RsDate=%RsDate:~0,4%%RsDate:~4,2%%RsDate:~6,2%
 
-if "%ParamTor%"=="1" (
-	:: Check for tor executable
-	if not exist "%EnvDownloadPath%\tor\Tor\tor.exe" (
-		%cecho% error "Tor binary not found. Please download Tor Expert Bundle from\nhttps://www.torproject.org/download/download.html.en\nand unpack to\n%EnvDownloadPath:\=\\%\\tor"
-		goto error
-	)
-)
-
 set QtMainVersion=%QtVersion:~0,1%
 set QtSharePath=%RsMinGWPath%\share\qt%QtMainVersion%\
 
@@ -69,9 +71,9 @@ if "%QtMainVersion%"=="4" set QtMainVersion2=4
 if "%QtMainVersion%"=="5" set QtMainVersion1=5
 
 if "%RsBuildConfig%" NEQ "release" (
-	set Archive=%RsPackPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsVersion.Extra%-Qt-%QtVersion%-msys2%RsType%%RsArchiveAdd%-%RsBuildConfig%.7z
+	set Archive=%RsPackPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsVersion.Extra%-%RsArchitecture%-msys2%RsType%%RsArchiveAdd%-%RsBuildConfig%.7z
 ) else (
-	set Archive=%RsPackPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsVersion.Extra%-Qt-%QtVersion%-msys2%RsType%%RsArchiveAdd%.7z
+	set Archive=%RsPackPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsVersion.Extra%-%RsArchitecture%-msys2%RsType%%RsArchiveAdd%.7z
 )
 
 if exist "%Archive%" del /Q "%Archive%"
@@ -93,6 +95,7 @@ mkdir "%RsDeployPath%\qss"
 mkdir "%RsDeployPath%\stylesheets"
 mkdir "%RsDeployPath%\sounds"
 mkdir "%RsDeployPath%\translations"
+mkdir "%RsDeployPath%\license"
 
 copy nul "%RsDeployPath%\portable" %Quite%
 
@@ -100,15 +103,12 @@ echo copy binaries
 copy "%RsBuildPath%\retroshare-gui\src\%RsBuildConfig%\RetroShare*.exe" "%RsDeployPath%" %Quite%
 copy "%RsBuildPath%\retroshare-nogui\src\%RsBuildConfig%\retroshare*-nogui.exe" "%RsDeployPath%" %Quite%
 copy "%RsBuildPath%\retroshare-service\src\%RsBuildConfig%\retroshare*-service.exe" "%RsDeployPath%" %Quite%
+copy "%RsBuildPath%\supportlibs\cmark\build\src\libcmark.dll" "%RsDeployPath%" %Quite%
 
 echo copy extensions
 for /D %%D in ("%RsBuildPath%\plugins\*") do (
 	call :copy_extension "%%D" "%RsDeployPath%\Data\%Extensions%"
-	call :copy_dependencies "%RsDeployPath%\Data\%Extensions%\%%~nxD.dll" "%RsDeployPath%"
 )
-
-echo copy dependencies
-call :copy_dependencies "%RsDeployPath%\retroshare.exe" "%RsDeployPath%"
 
 echo copy Qt DLL's
 copy "%RsMinGWPath%\bin\Qt%QtMainVersion1%Svg%QtMainVersion2%.dll" "%RsDeployPath%" %Quite%
@@ -121,14 +121,22 @@ if "%QtMainVersion%"=="5" (
 )
 
 if exist "%QtSharePath%\plugins\styles\qwindowsvistastyle.dll" (
-	echo Copy styles
+	echo copy styles
 	mkdir "%RsDeployPath%\styles" %Quite%
 	copy "%QtSharePath%\plugins\styles\qwindowsvistastyle.dll" "%RsDeployPath%\styles" %Quite%
 )
 
 copy "%QtSharePath%\plugins\imageformats\*.dll" "%RsDeployPath%\imageformats" %Quite%
 del /Q "%RsDeployPath%\imageformats\*d?.dll" %Quite%
-for %%D in ("%RsDeployPath%\imageformats\*.dll") do (
+
+if "%ParamTor%"=="1" (
+	echo copy tor
+	copy "%RsMinGWPath%\bin\tor.exe" "%RsDeployPath%" %Quite%
+	copy "%RsMinGWPath%\bin\tor-gencert.exe" "%RsDeployPath%" %Quite%
+)
+
+echo copy dependencies
+for /R "%RsDeployPath%" %%D in (*.dll, *.exe) do (
 	call :copy_dependencies "%%D" "%RsDeployPath%"
 )
 
@@ -144,6 +152,9 @@ rmdir /S /Q "%RsDeployPath%\stylesheets\__MACOSX__Bubble" %Quite%
 echo copy sounds
 xcopy /S "%SourcePath%\retroshare-gui\src\sounds" "%RsDeployPath%\sounds" %Quite%
 
+echo copy license
+xcopy /S "%SourcePath%\retroshare-gui\src\license" "%RsDeployPath%\license" %Quite%
+
 echo copy translation
 copy "%SourcePath%\retroshare-gui\src\translations\qt_tr.qm" "%RsDeployPath%\translations" %Quite%
 copy "%QtSharePath%\translations\qt_*.qm" "%RsDeployPath%\translations" %Quite%
@@ -158,18 +169,21 @@ if "%QtMainVersion%"=="5" (
 echo copy bdboot.txt
 copy "%SourcePath%\libbitdht\src\bitdht\bdboot.txt" "%RsDeployPath%" %Quite%
 
-echo copy changelog.txt
-copy "%SourcePath%\retroshare-gui\src\changelog.txt" "%RsDeployPath%" %Quite%
+echo generate changelog.txt
+call call "%~dp0\git-log.bat" "%SourcePath%" "%RsDeployPath%\changelog.txt"
 
-if exist "%SourcePath%\libresapi\src\webui" (
-	echo copy webui
-	mkdir "%RsDeployPath%\webui"
-	xcopy /S "%SourcePath%\libresapi\src\webui" "%RsDeployPath%\webui" %Quite%
-)
+echo copy buildinfo.txt
+copy "%RsBuildPath%\buildinfo.txt" "%RsDeployPath%" %Quite%
 
-if "%ParamTor%"=="1" (
-	echo copy tor
-	echo n | copy /-y "%EnvDownloadPath%\tor\Tor\*.*" "%RsDeployPath%" %Quite%
+if "%ParamWebui%"=="1" (
+	if exist "%RsWebuiPath%\webui" (
+		echo copy webui
+		mkdir "%RsDeployPath%\webui"
+		xcopy /S "%RsWebuiPath%\webui" "%RsDeployPath%\webui" %Quite%
+	) else (
+		%cecho% error "Webui is enabled, but no webui data found at %RsWebuiPath%\webui"
+		goto error
+	)
 )
 
 rem pack files
@@ -204,14 +218,11 @@ if exist "%~1\%RsBuildConfig%\%~n1.dll" (
 goto :EOF
 
 :copy_dependencies
-set CopyDependenciesCopiedSomething=0
-for /F "usebackq" %%A in (`%ToolsPath%\depends.bat list %1`) do (
+for /F "usebackq" %%A in (`%ToolsPath%\depends.bat %1`) do (
 	if not exist "%~2\%%A" (
 		if exist "%RsMinGWPath%\bin\%%A" (
-			set CopyDependenciesCopiedSomething=1
 			copy "%RsMinGWPath%\bin\%%A" %2 %Quite%
 		)
 	)
 )
-if "%CopyDependenciesCopiedSomething%"=="1" goto copy_dependencies
 goto :EOF

@@ -342,7 +342,8 @@ bool RsMessageModel::passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int colum
             || (std::find(fmpe.msgtags.begin(),fmpe.msgtags.end(),mQuickViewFilter) != fmpe.msgtags.end())
             || (mQuickViewFilter==QUICK_VIEW_STARRED && (fmpe.msgflags & RS_MSG_STAR))
             || (mQuickViewFilter==QUICK_VIEW_SYSTEM && (fmpe.msgflags & RS_MSG_SYSTEM))
-            || (mQuickViewFilter==QUICK_VIEW_SPAM && (fmpe.msgflags & RS_MSG_SPAM));
+            || (mQuickViewFilter==QUICK_VIEW_SPAM && (fmpe.msgflags & RS_MSG_SPAM))
+            || (mQuickViewFilter==QUICK_VIEW_ATTACHMENT && (fmpe.count >= 1));
 #ifdef DEBUG_MESSAGE_MODEL
     std::cerr << "Passes filter: type=" << mFilterType << " s=\"" << s.toStdString() << "MsgFlags=" << fmpe.msgflags << " msgtags=" ;
     foreach(uint32_t i,fmpe.msgtags) std::cerr << i << " " ;

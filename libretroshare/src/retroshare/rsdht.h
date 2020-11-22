@@ -27,6 +27,7 @@
 #include <list>
 #include <retroshare/rstypes.h>
 #include "util/rsnet.h"
+#include "retroshare/rsflags.h"
 
 /* The Main Interface Class - for information about your Peers */
 class RsDht;
@@ -35,55 +36,66 @@ extern RsDht *rsDht;
 //std::ostream &operator<<(std::ostream &out, const RsPhotoShowDetails &detail);
 //std::ostream &operator<<(std::ostream &out, const RsPhotoDetails &detail);
 
-#define RSDHT_NETSTART_NETWORKMODE	0x0001
-#define RSDHT_NETSTART_NATTYPE		0x0002
-#define RSDHT_NETSTART_NATHOLE		0x0003
-#define RSDHT_NETSTART_CONNECTMODES	0x0004
-#define RSDHT_NETSTART_NETSTATE		0x0005
+enum class RsDhtPeerType : uint8_t
+{
+	ANY		= 0,
+	OTHER	= 1,
+	FOF		= 2,
+	FRIEND	= 3
+};
 
+enum class RsDhtPeerDht : uint8_t
+{
+	NOT_ACTIVE	= 0,
+	SEARCHING	= 1,
+	FAILURE		= 2,
+	OFFLINE		= 3,
+	UNREACHABLE	= 4,
+	ONLINE		= 5
+};
 
+enum class RsDhtPeerConnectState : uint8_t
+{
+	DISCONNECTED	= 1,
+	UDP_STARTED		= 2,
+	CONNECTED		= 3
+};
 
-#define RSDHT_PEERTYPE_ANY		0x0000
-#define RSDHT_PEERTYPE_OTHER		0x0001
-#define RSDHT_PEERTYPE_FOF		0x0002
-#define RSDHT_PEERTYPE_FRIEND		0x0003
+enum class RsDhtPeerRequest : uint8_t
+{
+	STOPPED	= 1,
+	RUNNING = 2
+};
 
-#define RSDHT_PEERDHT_NOT_ACTIVE	0x0000
-#define RSDHT_PEERDHT_SEARCHING		0x0001
-#define RSDHT_PEERDHT_FAILURE		0x0002
-#define RSDHT_PEERDHT_OFFLINE		0x0003
-#define RSDHT_PEERDHT_UNREACHABLE	0x0004
-#define RSDHT_PEERDHT_ONLINE		0x0005
+enum class RsDhtTouMode : uint8_t
+{
+	NONE	= 0,
+	DIRECT	= 1,
+	PROXY	= 2,
+	RELAY	= 3
+};
 
-#define RSDHT_PEERCONN_DISCONNECTED               1
-#define RSDHT_PEERCONN_UDP_STARTED                2
-#define RSDHT_PEERCONN_CONNECTED                  3
+enum class RsDhtRelayClass : uint8_t
+{
+	ALL			= 0,
+	GENERAL		= 1,
+	FOF			= 2,
+	FRIENDS		= 3,
 
-#define RSDHT_PEERREQ_STOPPED                     1
-#define RSDHT_PEERREQ_RUNNING                     2
+	NUM_CLASS	= 4
+};
 
-#define RSDHT_TOU_MODE_NONE		0
-#define RSDHT_TOU_MODE_DIRECT		1
-#define RSDHT_TOU_MODE_PROXY		2
-#define RSDHT_TOU_MODE_RELAY		3
+enum class RsDhtRelayMode : uint16_t
+{
+	DISABLED= 0x0000,
+	ENABLED	= 0x0001,
 
-
-#define RSDHT_RELAY_NUM_CLASS             4
-
-#define RSDHT_RELAY_CLASS_ALL             0
-#define RSDHT_RELAY_CLASS_GENERAL         1
-#define RSDHT_RELAY_CLASS_FOF             2
-#define RSDHT_RELAY_CLASS_FRIENDS         3
-
-
-#define RSDHT_RELAY_MODE_MASK		0x00f0
-
-#define RSDHT_RELAY_ENABLED		0x0001
-
-#define RSDHT_RELAY_MODE_OFF		0x0010
-#define RSDHT_RELAY_MODE_ON		0x0020
-#define RSDHT_RELAY_MODE_SERVER		0x0040
-
+	MASK	= 0x00f0,
+	OFF		= 0x0010,
+	ON		= 0x0020,
+	SERVER	= 0x0040
+};
+RS_REGISTER_ENUM_FLAGS_TYPE(RsDhtRelayMode)
 
 class RsDhtPeer
 {
@@ -108,18 +120,18 @@ class RsDhtNetPeer
         std::string mDhtId;
         RsPeerId mRsId;
 
-        uint32_t mPeerType;
-	uint32_t mDhtState;
+	RsDhtPeerType mPeerType;
+	RsDhtPeerDht mDhtState;
 
 	std::string mConnectState; 	// connectLogic.
 
-	uint32_t mPeerConnectState; 	// connect Status
-	uint32_t mPeerConnectMode; 	// connect mode
+	RsDhtPeerConnectState mPeerConnectState;
+	RsDhtTouMode mPeerConnectMode;
 	bool  mExclusiveProxyLock;
 
 	std::string mPeerConnectProxyId;
 
-	uint32_t mPeerReqState; 	// Req Status.
+	RsDhtPeerRequest mPeerReqState;
 	std::string mCbPeerMsg; 	// Peer Cb Mgs.
 
 };
@@ -188,11 +200,11 @@ virtual int 	getRelayServerList(std::list<std::string> &ids) = 0;
 virtual int 	addRelayServer(std::string ids) = 0;
 virtual int 	removeRelayServer(std::string ids) = 0;
 
-virtual	uint32_t getRelayMode() = 0;
-virtual	int	 setRelayMode(uint32_t mode) = 0;
+virtual	RsDhtRelayMode getRelayMode() = 0;
+virtual	int	 setRelayMode(RsDhtRelayMode mode) = 0;
 
-virtual int	getRelayAllowance(int  classIdx, uint32_t &count, uint32_t &bandwidth) = 0;
-virtual int	setRelayAllowance(int classIdx, uint32_t  count, uint32_t  bandwidth) = 0;
+virtual int	getRelayAllowance(RsDhtRelayClass classIdx, uint32_t &count, uint32_t &bandwidth) = 0;
+virtual int	setRelayAllowance(RsDhtRelayClass classIdx, uint32_t  count, uint32_t  bandwidth) = 0;
 
 	// So we can provide to clients.
 virtual bool    getOwnDhtId(std::string &ownDhtId) = 0;

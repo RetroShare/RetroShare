@@ -158,7 +158,7 @@ private:
     RsEventsHandlerId_t mEventHandlerId_identity;
     RsEventsHandlerId_t mEventHandlerId_circles;
 
-	/* UI -  Designer */
+    /* UI -  Designer */
 	Ui::IdDialog *ui;
 };
 

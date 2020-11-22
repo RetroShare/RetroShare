@@ -65,8 +65,7 @@ FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, FeedReaderNotify *n
 	mOpenFeedIds = NULL;
 	mMessageWidget = NULL;
 
-	connect(mNotify, SIGNAL(feedChanged(QString,int)), this, SLOT(feedChanged(QString,int)));
-	connect(mNotify, SIGNAL(msgChanged(QString,QString,int)), this, SLOT(msgChanged(QString,QString,int)));
+	connect(mNotify, &FeedReaderNotify::feedChanged, this, &FeedReaderDialog::feedChanged, Qt::QueuedConnection);
 
 	connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
 
@@ -153,7 +152,7 @@ void FeedReaderDialog::processSettings(bool load)
 		int arrayIndex = Settings->beginReadArray("Feeds");
 		for (int index = 0; index < arrayIndex; index++) {
 			Settings->setArrayIndex(index);
-			addFeedToExpand(Settings->value("open").toString().toStdString());
+			addFeedToExpand(Settings->value("open").toUInt());
 		}
 		Settings->endArray();
 	} else {
@@ -165,11 +164,11 @@ void FeedReaderDialog::processSettings(bool load)
 		// open groups
 		Settings->beginWriteArray("Feeds");
 		int arrayIndex = 0;
-		QList<std::string> expandedFeedIds;
+		QList<uint32_t> expandedFeedIds;
 		getExpandedFeedIds(expandedFeedIds);
-		foreach (std::string feedId, expandedFeedIds) {
+		foreach (uint32_t feedId, expandedFeedIds) {
 			Settings->setArrayIndex(arrayIndex++);
-			Settings->setValue("open", QString::fromStdString(feedId));
+			Settings->setValue("open", feedId);
 		}
 		Settings->endArray();
 	}
@@ -187,17 +186,17 @@ void FeedReaderDialog::settingsChanged()
 		}
 	} else {
 		if (!mMessageWidget) {
-			mMessageWidget = createMessageWidget("");
+			mMessageWidget = createMessageWidget(0);
 			// remove close button of the the first tab
 			ui->messageTabWidget->hideCloseButton(ui->messageTabWidget->indexOf(mMessageWidget));
 		}
 	}
 }
 
-void FeedReaderDialog::addFeedToExpand(const std::string &feedId)
+void FeedReaderDialog::addFeedToExpand(uint32_t feedId)
 {
 	if (mOpenFeedIds == NULL) {
-		mOpenFeedIds = new QList<std::string>;
+		mOpenFeedIds = new QList<uint32_t>;
 	}
 	if (mOpenFeedIds->contains(feedId)) {
 		return;
@@ -205,7 +204,7 @@ void FeedReaderDialog::addFeedToExpand(const std::string &feedId)
 	mOpenFeedIds->push_back(feedId);
 }
 
-void FeedReaderDialog::getExpandedFeedIds(QList<std::string> &feedIds)
+void FeedReaderDialog::getExpandedFeedIds(QList<uint32_t> &feedIds)
 {
 	QTreeWidgetItemIterator it(ui->feedTreeWidget);
 	QTreeWidgetItem *item;
@@ -217,8 +216,8 @@ void FeedReaderDialog::getExpandedFeedIds(QList<std::string> &feedIds)
 		if (!item->data(COLUMN_FEED_DATA, ROLE_FEED_FOLDER).toBool()) {
 			continue;
 		}
-		std::string feedId = item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toString().toStdString();
-		if (feedId.empty()) {
+		uint32_t feedId = item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toUInt();
+		if (feedId == 0) {
 			continue;
 		}
 		feedIds.push_back(feedId);
@@ -227,7 +226,7 @@ void FeedReaderDialog::getExpandedFeedIds(QList<std::string> &feedIds)
 
 void FeedReaderDialog::showEvent(QShowEvent */*event*/)
 {
-	updateFeeds("", mRootItem);
+	updateFeeds(0, mRootItem);
 }
 
 bool FeedReaderDialog::eventFilter(QObject *obj, QEvent *event)
@@ -248,26 +247,26 @@ bool FeedReaderDialog::eventFilter(QObject *obj, QEvent *event)
 	return MainPage::eventFilter(obj, event);
 }
 
-std::string FeedReaderDialog::currentFeedId()
+uint32_t FeedReaderDialog::currentFeedId()
 {
 	QTreeWidgetItem *item = ui->feedTreeWidget->currentItem();
 	if (!item) {
-		return "";
+		return 0;
 	}
 
-	return item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toString().toStdString();
+	return item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toUInt();
 }
 
-void FeedReaderDialog::setCurrentFeedId(const std::string &feedId)
+void FeedReaderDialog::setCurrentFeedId(uint32_t feedId)
 {
-	if (feedId.empty()) {
+	if (feedId == 0) {
 		return;
 	}
 
 	QTreeWidgetItemIterator it(ui->feedTreeWidget);
 	QTreeWidgetItem *item;
 	while ((item = *it) != NULL) {
-		if (item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toString().toStdString() == feedId) {
+		if (item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toUInt() == feedId) {
 			ui->feedTreeWidget->setCurrentItem(item);
 			break;
 		}
@@ -280,11 +279,11 @@ void FeedReaderDialog::feedTreeCustomPopupMenu(QPoint /*point*/)
 	QMenu contextMnu(this);
 
 	bool folder = false;
-	std::string feedId;
+	uint32_t feedId;
 	QTreeWidgetItem *item = ui->feedTreeWidget->currentItem();
 	if (item) {
 		folder = item->data(COLUMN_FEED_DATA, ROLE_FEED_FOLDER).toBool();
-		feedId = item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toString().toStdString();
+		feedId = item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toUInt();
 	}
 
 	QMenu *menu = contextMnu.addMenu(QIcon(""), tr("New"));
@@ -336,7 +335,7 @@ void FeedReaderDialog::feedTreeCustomPopupMenu(QPoint /*point*/)
 	contextMnu.exec(QCursor::pos());
 }
 
-void FeedReaderDialog::updateFeeds(const std::string &parentId, QTreeWidgetItem *parentItem)
+void FeedReaderDialog::updateFeeds(uint32_t parentId, QTreeWidgetItem *parentItem)
 {
 	if (!parentItem) {
 		return;
@@ -353,7 +352,7 @@ void FeedReaderDialog::updateFeeds(const std::string &parentId, QTreeWidgetItem 
 	/* update existing and delete not existing feeds */
 	while (index < parentItem->childCount()) {
 		item = parentItem->child(index);
-		std::string feedId = item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toString().toStdString();
+		uint32_t feedId = item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toUInt();
 
 		/* search existing feed */
 		int found = -1;
@@ -452,7 +451,7 @@ void FeedReaderDialog::calculateFeedItem(QTreeWidgetItem *item, uint32_t &unread
 		font.setBold(unreadCountItem != 0);
 		item->setFont(i, font);
 
-		item->setTextColor(COLUMN_FEED_NAME, deactivated ? colorDeactivated : colorActivated);
+		item->setData(COLUMN_FEED_NAME, Qt::ForegroundRole, deactivated ? colorDeactivated : colorActivated);
 	}
 
 	QIcon icon = item->data(COLUMN_FEED_DATA, ROLE_FEED_ICON).value<QIcon>();
@@ -534,27 +533,27 @@ void FeedReaderDialog::updateFeedItem(QTreeWidgetItem *item, const FeedInfo &fee
 	item->setData(COLUMN_FEED_DATA, ROLE_FEED_UNREAD, unreadCount);
 	item->setData(COLUMN_FEED_DATA, ROLE_FEED_NEW, newCount);
 	item->setData(COLUMN_FEED_DATA, ROLE_FEED_LOADING, feedInfo.workstate != FeedInfo::WAITING);
-	item->setData(COLUMN_FEED_DATA, ROLE_FEED_ID, QString::fromStdString(feedInfo.feedId));
+	item->setData(COLUMN_FEED_DATA, ROLE_FEED_ID, feedInfo.feedId);
 	item->setData(COLUMN_FEED_DATA, ROLE_FEED_FOLDER, feedInfo.flag.folder);
 	item->setData(COLUMN_FEED_DATA, ROLE_FEED_DEACTIVATED, feedInfo.flag.deactivated);
 	item->setData(COLUMN_FEED_DATA, ROLE_FEED_ERROR, (bool) (feedInfo.errorState != RS_FEED_ERRORSTATE_OK));
 	item->setToolTip(COLUMN_FEED_NAME, (feedInfo.errorState != RS_FEED_ERRORSTATE_OK) ? FeedReaderStringDefs::errorString(feedInfo) : "");
 }
 
-void FeedReaderDialog::feedChanged(const QString &feedId, int type)
+void FeedReaderDialog::feedChanged(uint32_t feedId, int type)
 {
 	if (!isVisible()) {
 		/* complete update in showEvent */
 		return;
 	}
 
-	if (feedId.isEmpty()) {
+	if (feedId == 0) {
 		return;
 	}
 
 	FeedInfo feedInfo;
 	if (type != NOTIFY_TYPE_DEL) {
-		if (!mFeedReader->getFeedInfo(feedId.toStdString(), feedInfo)) {
+		if (!mFeedReader->getFeedInfo(feedId, feedInfo)) {
 			return;
 		}
 
@@ -567,7 +566,7 @@ void FeedReaderDialog::feedChanged(const QString &feedId, int type)
 		QTreeWidgetItemIterator it(ui->feedTreeWidget);
 		QTreeWidgetItem *item;
 		while ((item = *it) != NULL) {
-			if (item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toString() == feedId) {
+			if (item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toUInt() == feedId) {
 				if (type == NOTIFY_TYPE_MOD) {
 					updateFeedItem(item, feedInfo);
 				} else {
@@ -580,12 +579,10 @@ void FeedReaderDialog::feedChanged(const QString &feedId, int type)
 	}
 
 	if (type == NOTIFY_TYPE_ADD) {
-		QString id = QString::fromStdString(feedInfo.parentId);
-
 		QTreeWidgetItemIterator it(ui->feedTreeWidget);
 		QTreeWidgetItem *itemParent;
 		while ((itemParent = *it) != NULL) {
-			if (itemParent->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toString() == id) {
+			if (itemParent->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toUInt() == feedInfo.parentId) {
 				QTreeWidgetItem *item = new RSTreeWidgetItem(mFeedCompareRole);
 				itemParent->addChild(item);
 				updateFeedItem(item, feedInfo);
@@ -597,7 +594,7 @@ void FeedReaderDialog::feedChanged(const QString &feedId, int type)
 	calculateFeedItems();
 }
 
-FeedReaderMessageWidget *FeedReaderDialog::feedMessageWidget(const std::string &id)
+FeedReaderMessageWidget *FeedReaderDialog::feedMessageWidget(uint32_t id)
 {
 	int tabCount = ui->messageTabWidget->count();
 	for (int index = 0; index < tabCount; ++index) {
@@ -613,7 +610,7 @@ FeedReaderMessageWidget *FeedReaderDialog::feedMessageWidget(const std::string &
 	return NULL;
 }
 
-FeedReaderMessageWidget *FeedReaderDialog::createMessageWidget(const std::string &feedId)
+FeedReaderMessageWidget *FeedReaderDialog::createMessageWidget(uint32_t feedId)
 {
 	FeedReaderMessageWidget *messageWidget = new FeedReaderMessageWidget(feedId, mFeedReader, mNotify);
 	int index = ui->messageTabWidget->addTab(messageWidget, messageWidget->feedName(true));
@@ -640,7 +637,7 @@ void FeedReaderDialog::feedTreeItemActivated(QTreeWidgetItem *item)
 
 	ui->feedAddButton->setEnabled(false);
 
-	std::string feedId = item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toString().toStdString();
+	uint32_t feedId = item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toUInt();
 	/* search exisiting tab */
 	FeedReaderMessageWidget *messageWidget = feedMessageWidget(feedId);
 	if (!messageWidget) {
@@ -663,7 +660,7 @@ void FeedReaderDialog::feedTreeMiddleButtonClicked(QTreeWidgetItem *item)
 		return;
 	}
 
-	openFeedInNewTab(item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toString().toStdString());
+	openFeedInNewTab(item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toUInt());
 }
 
 void FeedReaderDialog::openInNewTab()
@@ -671,9 +668,9 @@ void FeedReaderDialog::openInNewTab()
 	openFeedInNewTab(currentFeedId());
 }
 
-void FeedReaderDialog::openFeedInNewTab(const std::string &feedId)
+void FeedReaderDialog::openFeedInNewTab(uint32_t feedId)
 {
-	if (feedId.empty()) {
+	if (feedId == 0) {
 		return;
 	}
 
@@ -723,7 +720,7 @@ void FeedReaderDialog::messageTabInfoChanged(QWidget *widget)
 		return;
 	}
 
-	if (messageWidget != mMessageWidget && messageWidget->feedId().empty()) {
+	if (messageWidget != mMessageWidget && messageWidget->feedId() == 0) {
 		messageWidget->deleteLater();
 		return;
 	}
@@ -740,7 +737,7 @@ void FeedReaderDialog::newFolder()
 	dialog.setWindowIcon(QIcon(":/images/FeedReader.png"));
 
 	if (dialog.exec() == QDialog::Accepted && !dialog.textValue().isEmpty()) {
-		std::string feedId;
+		uint32_t feedId;
 		RsFeedAddResult result = mFeedReader->addFolder(currentFeedId(), dialog.textValue().toUtf8().constData(), feedId);
 		FeedReaderStringDefs::showError(this, result, tr("Create folder"), tr("Cannot create folder."));
 	}
@@ -755,8 +752,8 @@ void FeedReaderDialog::newFeed()
 
 void FeedReaderDialog::removeFeed()
 {
-	std::string feedId = currentFeedId();
-	if (feedId.empty()) {
+	uint32_t feedId = currentFeedId();
+	if (feedId == 0) {
 		return;
 	}
 
@@ -775,8 +772,8 @@ void FeedReaderDialog::removeFeed()
 
 void FeedReaderDialog::editFeed()
 {
-	std::string feedId = currentFeedId();
-	if (feedId.empty()) {
+	uint32_t feedId = currentFeedId();
+	if (feedId == 0) {
 		return;
 	}
 
@@ -809,8 +806,8 @@ void FeedReaderDialog::editFeed()
 
 void FeedReaderDialog::activateFeed()
 {
-	std::string feedId = currentFeedId();
-	if (feedId.empty()) {
+	uint32_t feedId = currentFeedId();
+	if (feedId == 0) {
 		return;
 	}
 
@@ -830,7 +827,7 @@ void FeedReaderDialog::activateFeed()
 
 void FeedReaderDialog::processFeed()
 {
-	std::string feedId = currentFeedId();
+	uint32_t feedId = currentFeedId();
 	/* empty feed id process all feeds */
 
 	mFeedReader->processFeed(feedId);

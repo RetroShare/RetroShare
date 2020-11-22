@@ -34,8 +34,12 @@ class GxsChannelFilesStatusWidget : public QWidget
 	Q_OBJECT
 
 public:
-	explicit GxsChannelFilesStatusWidget(const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, const RsGxsFile &file, QWidget *parent = 0);
+	explicit GxsChannelFilesStatusWidget(const RsGxsFile &file, QWidget *parent = 0);
 	~GxsChannelFilesStatusWidget();
+
+signals:
+
+	void onButtonClick();
 
 private slots:
 	void check();
@@ -44,6 +48,7 @@ private slots:
 	void pause();
 	void resume();
 	void openFolder();
+	void openFile();
 
 private:
 	void setSize(uint64_t size);

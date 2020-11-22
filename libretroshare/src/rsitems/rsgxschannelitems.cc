@@ -137,7 +137,7 @@ bool RsGxsChannelPostItem::toChannelPost(RsGxsChannelPost &post, bool moveImage)
 		post.mThumbnail.copy((uint8_t *) mThumbnail.binData.bin_data, mThumbnail.binData.bin_len);
 	}
 
-	post.mCount = 0;
+    post.mAttachmentCount = 0;
 	post.mSize = 0;
 	std::list<RsTlvFileItem>::iterator fit;
 	for(fit = mAttachment.items.begin(); fit != mAttachment.items.end(); ++fit)
@@ -148,7 +148,7 @@ bool RsGxsChannelPostItem::toChannelPost(RsGxsChannelPost &post, bool moveImage)
 		fi.mHash  = fit->hash;
 
 		post.mFiles.push_back(fi);
-		post.mCount++;
+        post.mAttachmentCount++;
 		post.mSize += fi.mSize;
 	}
 	return true;
