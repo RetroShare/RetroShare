@@ -560,9 +560,10 @@ void SubFileItem::cancel()
 	/* Only occurs - if it is downloading */
 	if (((mType == SFI_TYPE_ATTACH) || (mType == SFI_TYPE_CHANNEL)) && (mFlag & SFI_FLAG_CREATE))
 	{
-		hide();
 		rsFiles->ExtraFileRemove(FileHash());//, RS_FILE_REQ_ANONYMOUS_ROUTING | RS_FILE_REQ_EXTRA);
 		mPath = "";
+        del();
+        return;	// do not update!
 	}
 	else
 	{

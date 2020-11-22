@@ -442,6 +442,57 @@ bool p3Posted::createBoard(RsPostedGroup& board)
 	return true;
 }
 
+bool p3Posted::voteForPost(bool up,const RsGxsGroupId& postGrpId,const RsGxsMessageId& postMsgId,const RsGxsId& authorId)
+{
+    // Do some basic tests
+
+    if(!rsIdentity->isOwnId(authorId))	// This is ruled out before waitToken complains. Not sure it's needed.
+    {
+        std::cerr << __PRETTY_FUNCTION__ << ": vote submitted with an ID that is not yours! This cannot work." << std::endl;
+        return false;
+    }
+
+    RsGxsVote vote;
+
+    vote.mMeta.mGroupId = postGrpId;
+    vote.mMeta.mThreadId = postMsgId;
+    vote.mMeta.mParentId = postMsgId;
+    vote.mMeta.mAuthorId = authorId;
+
+    if (up)
+            vote.mVoteType = GXS_VOTE_UP;
+    else
+            vote.mVoteType = GXS_VOTE_DOWN;
+
+    uint32_t token;
+
+    if(!createNewVote(token, vote))
+    {
+        std::cerr << __PRETTY_FUNCTION__ << " Error! Failed submitting vote to (group,msg) " << postGrpId << "," << postMsgId << " from author " << authorId << std::endl;
+        return false;
+    }
+
+    if(waitToken(token) != RsTokenService::COMPLETE)
+    {
+        std::cerr << __PRETTY_FUNCTION__ << " Error! GXS operation failed." << std::endl;
+        return false;
+    }
+    return true;
+}
+
+bool p3Posted::setPostReadStatus(const RsGxsGrpMsgIdPair& msgId, bool read)
+{
+    uint32_t token;
+
+    setMessageReadStatus(token,msgId,read);
+
+    if(waitToken(token) != RsTokenService::COMPLETE)
+    {
+        std::cerr << __PRETTY_FUNCTION__ << " Error! GXS operation failed." << std::endl;
+        return false;
+    }
+    return true;
+}
 bool p3Posted::editBoard(RsPostedGroup& board)
 {
 	uint32_t token;

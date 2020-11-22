@@ -93,6 +93,10 @@ ForumsDialog, GxsForumThreadWidget
 	qproperty-textColorUnreadChildren: red;
 	qproperty-textColorNotSubscribed: white;
 	qproperty-textColorMissing: darkred;
+	qproperty-textColorPinned: #D07000;
+
+	qproperty-backgroundColorPinned: #202020;
+	qproperty-backgroundColorFiltered: darkGreen;
 }
 
 QMenuBar
@@ -551,6 +555,14 @@ QComboBox:on
     padding-top: 3px;
     padding-left: 4px;
     selection-background-color: #4a4a4a;
+}
+
+/* Needed to remove indicator - fix #132 */
+QComboBox::indicator {
+    background-color:transparent;
+    selection-background-color:transparent;
+    color:transparent;
+    selection-color:transparent;
 }
 
 QComboBox QAbstractItemView
@@ -1144,7 +1156,7 @@ OpModeStatus[opMode="Minimal"] {
 
 /* changes for the subscribe Button */
 
-PostedListWidget QToolButton#subscribeToolButton {
+PostedListWidgetWithModel QToolButton#subscribeToolButton {
 	font: bold;
 	font-size: 15px;
 	color: white;
@@ -1153,7 +1165,7 @@ PostedListWidget QToolButton#subscribeToolButton {
 	max-height: 27px;
 }
 
-PostedListWidget QToolButton#subscribeToolButton:hover {
+PostedListWidgetWithModel QToolButton#subscribeToolButton:hover {
 	background: #03b1f3;
 	border-radius: 4px;
 }
@@ -1172,7 +1184,21 @@ GxsForumThreadWidget QToolButton#subscribeToolButton:hover {
 	border-radius: 4px;
 }
 
-GxsChannelPostsWidget QToolButton#subscribeToolButton {
+GxsForumThreadWidget QWidget#threadTreeWidget {
+	selection-background-color: #445566;
+	show-decoration-selected: 1;
+}
+
+GxsForumThreadWidget QWidget#threadTreeWidget::item {
+	padding: 2px;
+}
+
+GxsForumThreadWidget QWidget#threadTreeWidget::item:selected:active ,
+GxsForumThreadWidget QWidget#threadTreeWidget::item:selected:!active {
+	background-color: #445566;
+}
+
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton {
 	font: bold;
 	font-size: 14px;
 	color: white;
@@ -1181,18 +1207,18 @@ GxsChannelPostsWidget QToolButton#subscribeToolButton {
 	max-height: 27px;
 }
 
-GxsChannelPostsWidget QToolButton#subscribeToolButton:hover {
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton:hover {
 	background: #03b1f3;
 	border-radius: 4px;
 }
 
-GxsChannelPostsWidget QToolButton#subscribeToolButton:pressed {
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton:pressed {
 	background: #03b1f3;
 	border-radius: 4px;
 	border: 1px solid gray;
 }
 
-GxsChannelPostsWidget QToolButton#subscribeToolButton:disabled {
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton:disabled {
 	background: gray;
 	border-radius: 4px;
 	border: 1px solid gray;
@@ -1200,22 +1226,111 @@ GxsChannelPostsWidget QToolButton#subscribeToolButton:disabled {
 }
 
 /* only for MenuButtonPopup */
-GxsChannelPostsWidget QToolButton#subscribeToolButton[popupMode="1"] { 
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton[popupMode="1"] { 
     padding-right: 0px; 
 }
 
-GxsChannelPostsWidget QToolButton#subscribeToolButton::menu-arrow {
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton::menu-arrow {
     image: none;
 }
 
-GxsChannelPostsWidget QToolButton#subscribeToolButton::menu-button {
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton::menu-button {
     image: none;
 
+}
+
+CreateGxsChannelMsg QPushButton#postButton {
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #0099cc;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+CreateGxsChannelMsg QPushButton#postButton:hover {
+	background: #03b1f3;
+	border-radius: 4px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+CreateCircleDialog QPushButton#createButton, CreateLobbyDialog QPushButton#createButton,
+IdEditDialog QPushButton#createButton, CreateGxsForumMsg QPushButton#postButton,
+GxsCreateCommentDialog QPushButton#postButton, GxsGroupDialog QPushButton#createButton {
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #0099cc;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+CreateCircleDialog QPushButton#createButton:hover, CreateLobbyDialog QPushButton#createButton:hover,
+IdEditDialog QPushButton#createButton:hover, CreateGxsForumMsg QPushButton#postButton:hover,
+GxsCreateCommentDialog QPushButton#postButton:hover, GxsGroupDialog QPushButton#createButton:hover,
+ShareManager QPushButton#closeButton {
+	background: #03b1f3;
+	border-radius: 4px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+CreateGxsForumMsg QPushButton#postButton:disabled, PostedCreatePostDialog QPushButton#submitButton:disabled,
+CreateGxsChannelMsg QPushButton#postButton:disabled, GxsCreateCommentDialog QPushButton#postButton:disabled {
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #d40000;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+ShareManager QPushButton#closeButton {
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #0099cc;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+ShareManager QPushButton#addButton {
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #32CD32;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 4px;
+}
+
+ShareManager QPushButton#addButton:hover {
+	background: #5AD75A;
+	border-radius: 4px;
+	min-width: 4em;
+	padding: 4px;
 }
 
 QTabBar#smTab::tab{
  height: 32px; 
  width: 32px;
+}
+
+QLabel#avatarLabel{
+ border: 2px solid #CCCCCC; 
+ border-radius: 4px;
 }
 
 PostedCreatePostDialog QPushButton#submitButton {
@@ -1243,26 +1358,26 @@ GxsForumThreadWidget QLabel#forumName
 	font: bold;
 }
 
-PostedItem QPushButton#shareButton
+BoardPostDisplayWidget_compact QPushButton#shareButton
 {
-    background-color: transparent;
+	background-color: transparent;
 	border: none;
 	min-width: 75px;
 	max-height: 22px;
 }
 
-PostedCardView QPushButton#shareButton
+BoardPostDisplayWidget_card QPushButton#shareButton
 {
-    background-color: transparent;
+	background-color: transparent;
 	border: none;
 	min-width: 75px;
 }
 
-PostedItem QFrame#voteFrame {
+BoardPostDisplayWidget_compact QFrame#voteFrame {
 	background: #141415;
 }
 
-PostedCardView QFrame#voteFrame {
+BoardPostDisplayWidget_card QFrame#voteFrame {
 	background: #141415;
 }
 
@@ -1271,31 +1386,65 @@ QPushButton#shareButton:hover, QPushButton#shareButton::menu-button:hover {
     border: 1px solid gray;
 }
 
-PostedItem QToolButton#voteDownButton, QToolButton#voteUpButton, QToolButton#expandButton, QToolButton#readButton,
+BoardPostDisplayWidget_compact QToolButton#voteDownButton, QToolButton#voteUpButton, QToolButton#expandButton, QToolButton#readButton,
 QToolButton#commentButton, QToolButton#notesButton
 {
 	border: none;
 }
 
-PostedItem QLabel#thumbnailLabel{
+BoardPostDisplayWidget_compact QLabel#pictureLabel{
 	border: 2px solid #CCCCCC;
 	border-radius: 3px;
 }
 
-PostedCardView QToolButton#voteDownButton, QToolButton#voteUpButton
+BoardPostDisplayWidget_compact > QFrame#frame [new=false]{
+	background: #302F2F;
+}
+
+BoardPostDisplayWidget_compact > QFrame#frame[new=true] {
+	background-color: #005000;
+}
+
+BoardPostDisplayWidget_card QToolButton#voteDownButton, QToolButton#voteUpButton
 {
 	border: none;
 }
 
-PostedCardView QFrame#mainFrame [new=false]{
+BoardPostDisplayWidget_card QFrame#frame{
 	background: #302F2F;
 }
 
-PostedCardView > QFrame#mainFrame[new=true] {
+BoardPostDisplayWidget_card > QFrame#frame [new=false]{
+	background: #302F2F;
+}
+
+BoardPostDisplayWidget_card > QFrame#frame[new=true] {
 	background-color: #005000;
 }
 
-WireGroupItem QFrame#frame{
+BoardPostDisplayWidget_compact QLabel#newLabel {
+	border: 1px solid #00B712;
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #5AFF15, stop: 1 #00B712);
+	border-radius: 3px;
+	color: black;
+}
+
+BoardPostDisplayWidget_card QLabel#newLabel {
+	border: 1px solid #00B712;
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #5AFF15, stop: 1 #00B712);
+	border-radius: 3px;
+	color: black;
+}
+
+BoardPostDisplayWidget_compact QLabel#titleLabel,
+BoardPostDisplayWidget_card QLabel#titleLabel{
+	font-size: 14px;
+	font: bold;
+}
+
+WireGroupItem QFrame#wire_frame
+{
+	border: 1px solid #38444d;
 	background: transparent;
 }
 
@@ -1307,5 +1456,14 @@ RSTextBrowser, MimeTextEdit
 
 ChatWidget QFrame#pluginTitleFrame
 {
-		background: transparent;
+	background: transparent;
+}
+
+PulseTopLevel QFrame#frame, PulseViewGroup QFrame#frame, PulseReply QFrame#frame {
+	border: 2px solid #38444d;
+	border-radius: 6px;
+}
+
+MainWindow QListWidget {
+	font-size: 12pt;
 }

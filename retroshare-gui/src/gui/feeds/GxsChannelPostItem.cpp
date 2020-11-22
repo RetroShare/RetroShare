@@ -156,7 +156,7 @@ void GxsChannelPostItem::setup()
     // memory.
 
     ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default-video.png"));
-    ui->warn_image_label->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/status_unknown.png"));
+    //ui->warn_image_label->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/status_unknown.png"));
     ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
     ui->voteUpButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/vote_up.png"));
     ui->voteDownButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/vote_down.png"));
@@ -211,12 +211,12 @@ void GxsChannelPostItem::setup()
 
 	ui->downloadButton->hide();
 	ui->playButton->hide();
-	ui->warn_image_label->hide();
-	ui->warning_label->hide();
+    //ui->warn_image_label->hide();
+    //ui->warning_label->hide();
 
 	ui->titleLabel->setMinimumWidth(100);
 	//ui->subjectLabel->setMinimumWidth(100);
-	ui->warning_label->setMinimumWidth(100);
+    //ui->warning_label->setMinimumWidth(100);
 
 	ui->mainFrame->setProperty("new", false);
 	ui->mainFrame->style()->unpolish(ui->mainFrame);
@@ -466,7 +466,7 @@ void GxsChannelPostItem::fill()
 		ui->titleLabel->setText(title);
 
 		RetroShareLink msgLink = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_CHANNEL, mPost.mMeta.mGroupId, mPost.mMeta.mMsgId, messageName());
-		//ui->subjectLabel->setText(msgLink.toHtml());
+        ui->subjectLabel->setText(msgLink.toHtml());
 
 		if (IS_GROUP_SUBSCRIBED(mGroupMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroupMeta.mSubscribeFlags))
 		{
@@ -489,12 +489,12 @@ void GxsChannelPostItem::fill()
 		/* subject */
 		ui->titleLabel->setText(QString::fromUtf8(mPost.mMeta.mMsgName.c_str()));
 
-		//uint32_t autorized_lines = (int)floor((ui->logoLabel->height() - ui->titleLabel->height() - ui->buttonHLayout->sizeHint().height())/QFontMetricsF(ui->subjectLabel->font()).height());
+        uint32_t autorized_lines = (int)floor((ui->logoLabel->height() - ui->titleLabel->height() - ui->buttonHLayout->sizeHint().height())/QFontMetricsF(ui->subjectLabel->font()).height());
 
 		// fill first 4 lines of message. (csoler) Disabled the replacement of smileys and links, because the cost is too crazy
 		//ui->subjectLabel->setText(RsHtml().formatText(NULL, RsStringUtil::CopyLines(QString::fromUtf8(mPost.mMsg.c_str()), autorized_lines), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 
-		//ui->subjectLabel->setText(RsStringUtil::CopyLines(QString::fromUtf8(mPost.mMsg.c_str()), 2)) ;
+        ui->subjectLabel->setText(RsStringUtil::CopyLines(QString::fromUtf8(mPost.mMsg.c_str()), 2)) ;
 
 		//QString score = QString::number(post.mTopScore);
 		// scoreLabel->setText(score); 
@@ -573,9 +573,9 @@ void GxsChannelPostItem::fill()
 
 	ui->datetimelabel->setText(DateTime::formatLongDateTime(mPost.mMeta.mPublishTs));
 
-	if ( (mPost.mCount != 0) || (mPost.mSize != 0) ) {
+	if ( (mPost.mAttachmentCount != 0) || (mPost.mSize != 0) ) {
 		ui->filelabel->setVisible(true);
-		ui->filelabel->setText(QString("(%1 %2) %3").arg(mPost.mCount).arg(  (mPost.mCount > 1)?tr("Files"):tr("File")).arg(misc::friendlyUnit(mPost.mSize)));
+		ui->filelabel->setText(QString("(%1 %2) %3").arg(mPost.mAttachmentCount).arg(  (mPost.mAttachmentCount > 1)?tr("Files"):tr("File")).arg(misc::friendlyUnit(mPost.mSize)));
 	} else {
 		ui->filelabel->setVisible(false);
 	}
@@ -659,21 +659,21 @@ void GxsChannelPostItem::setReadStatus(bool isNew, bool isUnread)
 	ui->mainFrame->style()->polish(  ui->mainFrame);
 }
 
-void GxsChannelPostItem::setFileCleanUpWarning(uint32_t time_left)
-{
-	int hours = (int)time_left/3600;
-	int minutes = (time_left - hours*3600)%60;
-
-	ui->warning_label->setText(tr("Warning! You have less than %1 hours and %2 minute before this file is deleted Consider saving it.").arg(
-			QString::number(hours)).arg(QString::number(minutes)));
-
-	QFont warnFont = ui->warning_label->font();
-	warnFont.setBold(true);
-	ui->warning_label->setFont(warnFont);
-
-	ui->warn_image_label->setVisible(true);
-	ui->warning_label->setVisible(true);
-}
+// void GxsChannelPostItem::setFileCleanUpWarning(uint32_t time_left)
+// {
+// 	int hours = (int)time_left/3600;
+// 	int minutes = (time_left - hours*3600)%60;
+//
+// 	ui->warning_label->setText(tr("Warning! You have less than %1 hours and %2 minute before this file is deleted Consider saving it.").arg(
+// 			QString::number(hours)).arg(QString::number(minutes)));
+//
+// 	QFont warnFont = ui->warning_label->font();
+// 	warnFont.setBold(true);
+// 	ui->warning_label->setFont(warnFont);
+//
+// 	ui->warn_image_label->setVisible(true);
+// 	ui->warning_label->setVisible(true);
+// }
 
 void GxsChannelPostItem::updateItem()
 {

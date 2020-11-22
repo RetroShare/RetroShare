@@ -32,6 +32,7 @@
 
 #include <retroshare/rsidentity.h>
 #include <retroshare/rspeers.h>
+#include "gui/common/FilesDefs.h"
 
 #include <iostream>
 
@@ -47,7 +48,7 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
 
 	ui->setupUi(this);
 
-	ui->headerFrame->setHeaderImage(QPixmap(":/icons/png/person.png"));
+    ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/person.png"));
 	ui->headerFrame->setHeaderText(tr("Create New Identity"));
 
 	/* Setup UI helper */
@@ -74,8 +75,8 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
 	/* Connect signals */
 	connect(ui->radioButton_GpgId, SIGNAL(toggled(bool)), this, SLOT(idTypeToggled(bool)));
 	connect(ui->radioButton_Pseudo, SIGNAL(toggled(bool)), this, SLOT(idTypeToggled(bool)));
-	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(submit()));
-	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	connect(ui->createButton, SIGNAL(clicked()), this, SLOT(submit()));
+	connect(ui->cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
 
 	connect(ui->plainTextEdit_Tag, SIGNAL(textChanged()), this, SLOT(checkNewTag()));
 	connect(ui->pushButton_Tag, SIGNAL(clicked(bool)), this, SLOT(addRecognTag()));
@@ -199,8 +200,9 @@ void IdEditDialog::setAvatar(const QPixmap &avatar)
 void IdEditDialog::setupExistingId(const RsGxsGroupId& keyId)
 {
 	setWindowTitle(tr("Edit identity"));
-	ui->headerFrame->setHeaderImage(QPixmap(":/icons/png/person.png"));
+    ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/person.png"));
 	ui->headerFrame->setHeaderText(tr("Edit identity"));
+	ui->createButton->setText(tr("Update"));
 
 	mStateHelper->setLoading(IDEDITDIALOG_LOADID, true);
 
@@ -210,8 +212,8 @@ void IdEditDialog::setupExistingId(const RsGxsGroupId& keyId)
 	RsThread::async([this,keyId]()
 	{
 		std::vector<RsGxsIdGroup> datavector;
-
-        bool res = rsIdentity->getIdentitiesInfo(std::set<RsGxsId>({(RsGxsId)keyId}),datavector);
+		bool res = rsIdentity->getIdentitiesInfo(
+		            std::set<RsGxsId>({(RsGxsId)keyId}), datavector );
 
 		RsQThreadUtils::postToObject( [this,keyId,res,datavector]()
 		{
@@ -309,7 +311,7 @@ void IdEditDialog::loadExistingId(const RsGxsIdGroup& id_group)
 	}
 
 	// RecognTags.
-	ui->frame_Tags->setHidden(false);
+	ui->frame_Tags->setHidden(true);
 
 	loadRecognTags();
 }
@@ -560,7 +562,7 @@ void IdEditDialog::createId()
 
     if(rsIdentity->createIdentity(keyId,params.nickname,params.mImage,!params.isPgpLinked,gpg_password))
     {
-		ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+		ui->createButton->setEnabled(false);
 
         RsIdentityDetails det;
 

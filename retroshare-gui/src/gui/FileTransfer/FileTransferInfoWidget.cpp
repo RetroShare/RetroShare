@@ -23,11 +23,12 @@
 #include <math.h>
 #include <QStylePainter>
 #include <QDebug>
-#include <retroshare/rsfiles.h>
-#include <retroshare/rstypes.h>
+#include "retroshare/rsfiles.h"
+#include "retroshare/rstypes.h"
 #include "util/misc.h"
 #include "FileTransferInfoWidget.h"
-#include <gui/RetroShareLink.h>
+#include "gui/RetroShareLink.h"
+#include "gui/common/FilesDefs.h"
 
 // Variables to decide of display behaviour. All variables are expressed as a factor of font height
 //
@@ -49,10 +50,10 @@ FileTransferInfoWidget::FileTransferInfoWidget(QWidget * /*parent*/, Qt::WindowF
 
         int S = 0.9*QFontMetricsF(font()).height();
 
-    downloadedPixmap = QPixmap(":/icons/tile_downloaded_48.png").scaledToHeight(S,Qt::SmoothTransformation);
-    downloadingPixmap = QPixmap(":/icons/tile_downloading_48.png").scaledToHeight(S,Qt::SmoothTransformation);
-    notDownloadPixmap = QPixmap(":/icons/tile_inactive_48.png").scaledToHeight(S,Qt::SmoothTransformation);
-    checkingPixmap = QPixmap(":/icons/tile_checking_48.png").scaledToHeight(S,Qt::SmoothTransformation);
+    downloadedPixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/tile_downloaded_48.png").scaledToHeight(S,Qt::SmoothTransformation);
+    downloadingPixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/tile_downloading_48.png").scaledToHeight(S,Qt::SmoothTransformation);
+    notDownloadPixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/tile_inactive_48.png").scaledToHeight(S,Qt::SmoothTransformation);
+    checkingPixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/tile_checking_48.png").scaledToHeight(S,Qt::SmoothTransformation);
 
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 }

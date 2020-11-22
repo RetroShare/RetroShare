@@ -35,6 +35,7 @@
 #include "gui/common/Emoticons.h"
 #include "gui/common/UIStateHelper.h"
 #include "gui/Identity/IdEditDialog.h"
+#include "gui/common/FilesDefs.h"
 
 #include "util/HandleRichText.h"
 #include "util/misc.h"
@@ -65,19 +66,19 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 
 	/* Setup UI helper */
 	mStateHelper = new UIStateHelper(this);
-	mStateHelper->addWidget(CREATEGXSFORUMMSG_FORUMINFO, ui.buttonBox->button(QDialogButtonBox::Ok));
+	mStateHelper->addWidget(CREATEGXSFORUMMSG_FORUMINFO, ui.postButton);
 	mStateHelper->addWidget(CREATEGXSFORUMMSG_FORUMINFO, ui.innerFrame);
 	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_FORUMINFO, ui.forumName);
 	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_FORUMINFO, ui.forumSubject);
 	mStateHelper->addClear(CREATEGXSFORUMMSG_FORUMINFO, ui.forumName);
 
-	mStateHelper->addWidget(CREATEGXSFORUMMSG_PARENTMSG, ui.buttonBox->button(QDialogButtonBox::Ok));
+	mStateHelper->addWidget(CREATEGXSFORUMMSG_PARENTMSG, ui.postButton);
 	mStateHelper->addWidget(CREATEGXSFORUMMSG_PARENTMSG, ui.innerFrame);
 	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_PARENTMSG, ui.forumName);
 	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_PARENTMSG, ui.forumSubject);
 	mStateHelper->addClear(CREATEGXSFORUMMSG_PARENTMSG, ui.forumName);
 
-	mStateHelper->addWidget(CREATEGXSFORUMMSG_ORIGMSG, ui.buttonBox->button(QDialogButtonBox::Ok));
+	mStateHelper->addWidget(CREATEGXSFORUMMSG_ORIGMSG, ui.postButton);
 	mStateHelper->addWidget(CREATEGXSFORUMMSG_ORIGMSG, ui.innerFrame);
 	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_ORIGMSG, ui.forumName);
 	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_ORIGMSG, ui.forumSubject);
@@ -87,9 +88,12 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 	QString text = mOId.isNull()?(pId.isNull() ? tr("Start New Thread") : tr("Post Forum Message")):tr("Edit Message");
 	setWindowTitle(text);
 	
+	if (!mOId.isNull())
+	ui.postButton->setText(tr ("Update"));
+
 	ui.forumMessage->setPlaceholderText(tr ("Text"));
 
-	ui.headerFrame->setHeaderImage(QPixmap(":/icons/png/forums.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums.png"));
 	ui.headerFrame->setHeaderText(text);
 
 	ui.generateSpinBox->setEnabled(false);
@@ -98,12 +102,9 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 
 	connect(ui.hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
 
-	/* Rename Ok button */
-	ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Send"));
-
 	// connect up the buttons.
-	connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(createMsg()));
-	connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	connect(ui.postButton, SIGNAL(clicked()), this, SLOT(createMsg()));
+	connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
 	connect(ui.emoticonButton, SIGNAL(clicked()), this, SLOT(smileyWidgetForums()));
 	connect(ui.attachFileButton, SIGNAL(clicked()), this, SLOT(addFile()));
 	connect(ui.attachPictureButton, SIGNAL(clicked()), this, SLOT(addPicture()));
@@ -362,8 +363,8 @@ void CreateGxsForumMsg::checkLength()
 		text = tr("Warning: This message is too big of %1 characters after HTML conversion.").arg((0-charRemains));
 	    ui.infoLabel->setStyleSheet("QLabel#infoLabel {color: red; font: bold; }");
 	}
-	ui.buttonBox->button(QDialogButtonBox::Ok)->setToolTip(text);
-	ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(charRemains>=0);
+	ui.postButton->setToolTip(text);
+	ui.postButton->setEnabled(charRemains>=0);
 	ui.infoLabel->setText(text);
 }
 

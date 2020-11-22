@@ -55,7 +55,7 @@ class GroupFlagsWidget: public QWidget
 		QPushButton *_buttons[4] ;
 
 		QLayout *_layout ;
-		QIcon *_icons[6] ;
+        QIcon _icons[6] ;
 		FileStorageFlags _flags[4] ;
 
 		static QString _tooltips_on[4] ;

@@ -159,7 +159,6 @@ int     bdnet_w2u_errno(int error);
 #ifndef __MINGW64_VERSION_MAJOR
 int sleep(unsigned int sec);
 #endif
-int usleep(unsigned int usec);
 
 #endif // END of WINDOWS defines.
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/

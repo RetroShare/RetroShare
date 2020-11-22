@@ -31,6 +31,11 @@ p3History::~p3History()
 {
 }
 
+bool p3History::chatIdToVirtualPeerId(const ChatId &chat_id, RsPeerId &peer_id)
+{
+	return mHistoryMgr->chatIdToVirtualPeerId(chat_id, peer_id);
+}
+
 void p3History::setMaxStorageDuration(uint32_t seconds)
 {
 	mHistoryMgr->setMaxStorageDuration(seconds) ;

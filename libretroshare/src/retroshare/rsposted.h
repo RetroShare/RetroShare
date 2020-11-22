@@ -115,6 +115,10 @@ enum class RsPostedEventCode: uint8_t
 	UPDATED_MESSAGE          = 0x05,
 	READ_STATUS_CHANGED      = 0x06,
 	STATISTICS_CHANGED       = 0x07,
+    MESSAGE_VOTES_UPDATED    = 0x08,
+    SYNC_PARAMETERS_UPDATED  = 0x09,
+    NEW_COMMENT              = 0x0a,
+    NEW_VOTE                 = 0x0b,
 };
 
 
@@ -127,6 +131,7 @@ struct RsGxsPostedEvent: RsEvent
 	RsPostedEventCode mPostedEventCode;
 	RsGxsGroupId mPostedGroupId;
 	RsGxsMessageId mPostedMsgId;
+    RsGxsMessageId mPostedThreadId;
 
 	///* @see RsEvent @see RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override
@@ -172,7 +177,11 @@ public:
 
 	virtual bool getBoardsServiceStatistics(GxsServiceStatistic& stat) =0;
 
-	enum RS_DEPRECATED RankType {TopRankType, HotRankType, NewRankType };
+    virtual bool voteForPost(bool up,const RsGxsGroupId& postGrpId,const RsGxsMessageId& postMsgId,const RsGxsId& voterId) =0;
+
+    virtual bool setPostReadStatus(const RsGxsGrpMsgIdPair& msgId, bool read) = 0;
+
+    enum RS_DEPRECATED RankType {TopRankType, HotRankType, NewRankType };
 
 	RS_DEPRECATED_FOR(getBoardsInfo)
 	virtual bool getGroupData( const uint32_t& token,
@@ -201,8 +210,9 @@ public:
 //virtual bool createNewComment(uint32_t &token, RsGxsComment &comment) = 0;
 //virtual bool createNewVote(uint32_t &token, RsGxsVote &vote) = 0;
 
+    RS_DEPRECATED_FOR(setPostReadStatus)
+    virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) = 0;
         //////////////////////////////////////////////////////////////////////////////
-virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) = 0;
 
 virtual bool createGroup(uint32_t &token, RsPostedGroup &group) = 0;
 virtual bool createPost(uint32_t &token, RsPostedPost &post) = 0;

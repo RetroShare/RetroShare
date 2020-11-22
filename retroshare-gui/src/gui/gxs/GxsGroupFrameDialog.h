@@ -21,8 +21,9 @@
 #ifndef _GXSGROUPFRAMEDIALOG_H
 #define _GXSGROUPFRAMEDIALOG_H
 
+#include <retroshare-gui/RsAutoUpdatePage.h>
+
 #include "gui/gxs/RsGxsUpdateBroadcastPage.h"
-#include "RsAutoUpdatePage.h"
 #include "gui/RetroShareLink.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/RsUserdata.h"
@@ -80,6 +81,8 @@ public:
 	virtual void getGroupList(std::map<RsGxsGroupId,RsGroupMetaData> &groups) ;
 
     void getServiceStatistics(GxsServiceStatistic& stats) const ;
+
+    static uint32_t checkDelay(uint32_t time_in_secs);
 
 protected:
 	virtual void showEvent(QShowEvent *event) override;
@@ -161,7 +164,9 @@ private:
 	virtual void groupTreeCustomActions(RsGxsGroupId /*grpId*/, int /*subscribeFlags*/, QList<QAction*> &/*actions*/) {}
 	virtual RsGxsCommentService *getCommentService() { return NULL; }
 	virtual QWidget *createCommentHeaderWidget(const RsGxsGroupId &/*grpId*/, const RsGxsMessageId &/*msgId*/) { return NULL; }
-    virtual bool getDistantSearchResults(TurtleRequestId /* id */, std::map<RsGxsGroupId,RsGxsGroupSummary>& /* group_infos */){ return false ;}
+    virtual bool getDistantSearchResults(TurtleRequestId /* id */, std::map<RsGxsGroupId,RsGxsGroupSearchResults>& /* group_infos */){ return false ;}
+    virtual void clearDistantSearchResults(TurtleRequestId /* id */) {}
+    virtual RsGxsGenericGroupData *getDistantSearchResultGroupData(const RsGxsGroupId& /*group_id*/){ return nullptr ;}
 
 	void initUi();
 
@@ -181,24 +186,27 @@ private:
 
 	// subscribe/unsubscribe ack.
 
-	GxsMessageFrameWidget *messageWidget(const RsGxsGroupId &groupId, bool ownTab);
+	GxsMessageFrameWidget *messageWidget(const RsGxsGroupId &groupId);
 	GxsMessageFrameWidget *createMessageWidget(const RsGxsGroupId &groupId);
 
 	GxsCommentDialog *commentWidget(const RsGxsMessageId &msgId);
 
 protected:
-	void updateSearchResults();
+	void updateSearchResults(const TurtleRequestId &sid);
+	void updateSearchResults();	// update all searches
 
 	bool mCountChildMsgs; // Count unread child messages?
 
 private:
+	GxsMessageFrameWidget *currentWidget() const;
+	bool useTabs();
+
 	bool mInitialized;
 	bool mInFill;
     bool mDistSyncAllowed;
 	QString mSettingsName;
 	RsGxsGroupId mGroupId;
 	RsGxsIfaceHelper *mInterface;
-	GxsMessageFrameWidget *mMessageWidget;
 
 	QTreeWidgetItem *mYourGroups;
 	QTreeWidgetItem *mSubscribedGroups;

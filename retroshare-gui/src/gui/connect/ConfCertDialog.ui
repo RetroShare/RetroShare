@@ -446,6 +446,27 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>stabWidget</tabstop>
+  <tabstop>pgpfingerprint</tabstop>
+  <tabstop>peerid</tabstop>
+  <tabstop>loc</tabstop>
+  <tabstop>statusline</tabstop>
+  <tabstop>crypto_info</tabstop>
+  <tabstop>lastcontact</tabstop>
+  <tabstop>version</tabstop>
+  <tabstop>statusmessage</tabstop>
+  <tabstop>localAddress</tabstop>
+  <tabstop>localPort</tabstop>
+  <tabstop>extAddress</tabstop>
+  <tabstop>extPort</tabstop>
+  <tabstop>dynDNS</tabstop>
+  <tabstop>ipAddressList</tabstop>
+  <tabstop>userCertificateText</tabstop>
+  <tabstop>_shouldAddSignatures_CB</tabstop>
+  <tabstop>_shortFormat_CB</tabstop>
+  <tabstop>_includeIPHistory_CB</tabstop>
+ </tabstops>
  <resources>
   <include location="../images.qrc"/>
  </resources>

@@ -57,10 +57,11 @@ class RsGroupNetworkStatsRecord
 
 struct GroupRequestRecord
 {
-    GroupRequestRecord(): ts(0), request_id(0) {}
+    GroupRequestRecord(): ts(0),request_id(0),status(DistantSearchGroupStatus::UNKNOWN) {}
 
     rstime_t ts ;
     TurtleRequestId request_id;
+    DistantSearchGroupStatus status;
 };
 
 /*!
@@ -102,47 +103,48 @@ public:
 
     virtual ~RsGxsNetService();
 
-    virtual RsServiceInfo getServiceInfo() { return mServiceInfo; }
+    virtual RsServiceInfo getServiceInfo() override { return mServiceInfo; }
 
-    virtual void getItemNames(std::map<uint8_t,std::string>& names) const ;
+    virtual void getItemNames(std::map<uint8_t,std::string>& names) const override ;
 
 public:
 
 
-	virtual uint16_t serviceType() const { return mServType ; }
+    virtual uint16_t serviceType() const override { return mServType ; }
 
     /*!
      * Use this to set how far back synchronisation and storage of messages should take place
      * @param age the max age a sync/storage item can to be allowed in a synchronisation
      */
-    virtual void setSyncAge(const RsGxsGroupId& grpId,uint32_t age_in_secs);
-    virtual void setKeepAge(const RsGxsGroupId& grpId,uint32_t age_in_secs);
+    virtual void setSyncAge(const RsGxsGroupId& grpId,uint32_t age_in_secs)override ;
+    virtual void setKeepAge(const RsGxsGroupId& grpId,uint32_t age_in_secs)override ;
 
-    virtual uint32_t getSyncAge(const RsGxsGroupId& id);
-    virtual uint32_t getKeepAge(const RsGxsGroupId& id);
+    virtual uint32_t getSyncAge(const RsGxsGroupId& id)override ;
+    virtual uint32_t getKeepAge(const RsGxsGroupId& id)override ;
 
-    virtual uint32_t getDefaultSyncAge() { return mDefaultMsgSyncPeriod ; }
-    virtual uint32_t getDefaultKeepAge() { return mDefaultMsgStorePeriod ; }
+    virtual uint32_t getDefaultSyncAge() override { return mDefaultMsgSyncPeriod ; }
+    virtual uint32_t getDefaultKeepAge() override { return mDefaultMsgStorePeriod ; }
 
-	virtual void setDefaultKeepAge(uint32_t t) { mDefaultMsgStorePeriod = t ; }
-	virtual void setDefaultSyncAge(uint32_t t) { mDefaultMsgSyncPeriod = t ; }
+    virtual void setDefaultKeepAge(uint32_t t) override { mDefaultMsgStorePeriod = t ; }
+    virtual void setDefaultSyncAge(uint32_t t) override { mDefaultMsgSyncPeriod = t ; }
 
     /*!
      * \brief Search methods.
      * 			These four methods are used to request distant search and receive the results.
      * \param group_id
      */
-    virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id);
-    virtual TurtleRequestId turtleSearchRequest(const std::string& match_string);
+    virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id)override ;
+    virtual TurtleRequestId turtleSearchRequest(const std::string& match_string)override ;
 
-    virtual bool search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos) ;
-	virtual bool search(const Sha1CheckSum& hashed_group_id,unsigned char *& encrypted_group_data,uint32_t& encrypted_group_data_len);
-	virtual void receiveTurtleSearchResults(TurtleRequestId req,const std::list<RsGxsGroupSummary>& group_infos);
-	virtual void receiveTurtleSearchResults(TurtleRequestId req,const unsigned char *encrypted_group_data,uint32_t encrypted_group_data_len);
+    virtual bool search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos) override ;
+    virtual bool search(const Sha1CheckSum& hashed_group_id,unsigned char *& encrypted_group_data,uint32_t& encrypted_group_data_len)override ;
+    virtual void receiveTurtleSearchResults(TurtleRequestId req,const std::list<RsGxsGroupSummary>& group_infos)override ;
+    virtual void receiveTurtleSearchResults(TurtleRequestId req,const unsigned char *encrypted_group_data,uint32_t encrypted_group_data_len)override ;
 
-	virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSummary> &group_infos);
-	virtual bool clearDistantSearchResults(const TurtleRequestId& id);
-    virtual bool retrieveDistantGroupSummary(const RsGxsGroupId&,RsGxsGroupSummary&);
+    virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSearchResults> &group_infos)override ;
+    virtual bool clearDistantSearchResults(const TurtleRequestId& id)override ;
+    virtual bool retrieveDistantGroupSummary(const RsGxsGroupId&, RsGxsGroupSearchResults &)override ;
+    virtual DistantSearchGroupStatus getDistantSearchStatus(const RsGxsGroupId&) override ;
 
     /*!
      * pauses synchronisation of subscribed groups and request for group id
@@ -150,7 +152,7 @@ public:
      * @param enabled set to false to disable pause, and true otherwise
      */
     // NOT IMPLEMENTED
-    virtual void pauseSynchronisation(bool enabled);
+    virtual void pauseSynchronisation(bool enabled)override ;
 
 
     /*!
@@ -159,7 +161,7 @@ public:
      * @param msgId the messages to retrieve
      * @return request token to be redeemed
      */
-    virtual int requestMsg(const RsGxsGrpMsgIdPair& /* msgId */){ return 0;}
+    virtual int requestMsg(const RsGxsGrpMsgIdPair& /* msgId */)override { return 0;}
 
     /*!
      * Request for this group is sent through to peers on your network
@@ -167,46 +169,46 @@ public:
      * @param enabled set to false to disable pause, and true otherwise
      * @return request token to be redeemed
      */
-    virtual int requestGrp(const std::list<RsGxsGroupId>& grpId, const RsPeerId& peerId);
+    virtual int requestGrp(const std::list<RsGxsGroupId>& grpId, const RsPeerId& peerId)override ;
 
     /*!
      * share publish keys for the specified group with the peers in the specified list.
      */
 
-    virtual int sharePublishKey(const RsGxsGroupId& grpId,const std::set<RsPeerId>& peers) ;
+    virtual int sharePublishKey(const RsGxsGroupId& grpId,const std::set<RsPeerId>& peers) override ;
 
     /*!
      * Returns statistics for the group networking activity: popularity (number of friends subscribers) and max_visible_msg_count,
      * that is the max nnumber of messages reported by a friend.
      */
-    virtual bool getGroupNetworkStats(const RsGxsGroupId& id,RsGroupNetworkStats& stats) ;
+    virtual bool getGroupNetworkStats(const RsGxsGroupId& id,RsGroupNetworkStats& stats) override ;
 
     /*!
      * Used to inform the net service that we changed subscription status. That helps
      * optimising data transfer when e.g. unsubsribed groups are updated less often, etc
      */
-    virtual void subscribeStatusChanged(const RsGxsGroupId& id,bool subscribed) ;
+    virtual void subscribeStatusChanged(const RsGxsGroupId& id,bool subscribed) override ;
 
-    virtual void rejectMessage(const RsGxsMessageId& msg_id) ;
+    virtual void rejectMessage(const RsGxsMessageId& msg_id) override ;
     
-    virtual bool getGroupServerUpdateTS(const RsGxsGroupId& gid,rstime_t& grp_server_update_TS,rstime_t& msg_server_update_TS) ;
-    virtual bool stampMsgServerUpdateTS(const RsGxsGroupId& gid) ;
-    virtual bool removeGroups(const std::list<RsGxsGroupId>& groups);
-    virtual bool isDistantPeer(const RsPeerId& pid);
+    virtual bool getGroupServerUpdateTS(const RsGxsGroupId& gid,rstime_t& grp_server_update_TS,rstime_t& msg_server_update_TS) override ;
+    virtual bool stampMsgServerUpdateTS(const RsGxsGroupId& gid) override ;
+    virtual bool removeGroups(const std::list<RsGxsGroupId>& groups)override ;
+    virtual bool isDistantPeer(const RsPeerId& pid)override ;
 
     /* p3Config methods */
 public:
 
-    bool	loadList(std::list<RsItem *>& load);
-    bool saveList(bool &cleanup, std::list<RsItem *>&);
-    RsSerialiser *setupSerialiser();
+    bool	loadList(std::list<RsItem *>& load)override ;
+    bool saveList(bool &cleanup, std::list<RsItem *>&)override ;
+    RsSerialiser *setupSerialiser()override ;
 
 public:
 
     /*!
      * initiates synchronisation
      */
-    int tick();
+    int tick()override ;
 
 	void threadTick() override; /// @see RsTickingThread
 
@@ -395,7 +397,7 @@ private:
      * @return false, if you cannot send to this peer, true otherwise
      */
     bool canSendGrpId(const RsPeerId& sslId, const RsGxsGrpMetaData& grpMeta, std::vector<GrpIdCircleVet>& toVet, bool &should_encrypt);
-    bool canSendMsgIds(std::vector<RsGxsMsgMetaData*>& msgMetas, const RsGxsGrpMetaData&, const RsPeerId& sslId, RsGxsCircleId &should_encrypt_id);
+    bool canSendMsgIds(std::vector<const RsGxsMsgMetaData*>& msgMetas, const RsGxsGrpMetaData&, const RsPeerId& sslId, RsGxsCircleId &should_encrypt_id);
 
     /*!
      * \brief checkPermissionsForFriendGroup
@@ -439,6 +441,7 @@ private:
     bool locked_CanReceiveUpdate(const RsNxsSyncGrpReqItem *item);
     bool locked_CanReceiveUpdate(RsNxsSyncMsgReqItem *item, bool &grp_is_known);
 	void locked_resetClientTS(const RsGxsGroupId& grpId);
+	bool locked_checkResendingOfUpdates(const RsPeerId& pid, const RsGxsGroupId &grpId, rstime_t incoming_ts, RsPeerUpdateTsRecord& rec);
 
     static RsGxsGroupId hashGrpId(const RsGxsGroupId& gid,const RsPeerId& pid) ;
     
@@ -607,9 +610,10 @@ private:
     std::vector<RsNxsMsg*> mNewMessagesToNotify ;
     std::set<RsGxsGroupId> mNewStatsToNotify ;
     std::set<RsGxsGroupId> mNewPublishKeysToNotify ;
+    std::set<RsGxsGroupId> mNewGrpSyncParamsToNotify ;
 
     // Distant search result map
-    std::map<TurtleRequestId,std::map<RsGxsGroupId,RsGxsGroupSummary> > mDistantSearchResults ;
+    std::map<TurtleRequestId,std::map<RsGxsGroupId,RsGxsGroupSearchResults> > mDistantSearchResults ;
 
     void debugDump();
 

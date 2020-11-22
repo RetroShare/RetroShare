@@ -29,6 +29,7 @@
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
 #include "gui/common/AvatarDefs.h"
+#include "gui/common/FilesDefs.h"
 #include "gui/notifyqt.h"
 
 #include <retroshare/rsmsgs.h>
@@ -231,7 +232,7 @@ void MsgItem::doExpand(bool open)
 	if (open)
 	{
 		expandFrame->show();
-		expandButton->setIcon(QIcon(QString(":/icons/png/up-arrow.png")));
+        expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/up-arrow.png")));
 		expandButton->setToolTip(tr("Hide"));
 
 		mCloseOnRead = false;
@@ -241,7 +242,7 @@ void MsgItem::doExpand(bool open)
 	else
 	{
 		expandFrame->hide();
-		expandButton->setIcon(QIcon(QString(":/icons/png/down-arrow.png")));
+        expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/down-arrow.png")));
 		expandButton->setToolTip(tr("Expand"));
 	}
 

@@ -40,8 +40,6 @@ public:
 	/** Default Destructor */
 	virtual ~FeedReaderConfig();
 
-	/** Saves the changes on this page */
-	virtual bool save(QString &errmsg);
 	/** Loads the settings for this page */
 	virtual void load();
 
@@ -51,10 +49,10 @@ public:
 
 private slots:
 	void useProxyToggled();
+	void updateProxy();
 
 private:
 	Ui::FeedReaderConfig *ui;
-	bool loaded;
 };
 
 #endif

@@ -24,6 +24,7 @@
 
 #include "FeedHolder.h"
 #include "util/qtthreadsutils.h"
+#include "gui/common/FilesDefs.h"
 #include "gui/NewsFeed.h"
 #include "gui/RetroShareLink.h"
 
@@ -147,7 +148,7 @@ void GxsChannelGroupItem::fill()
 	if (mGroup.mImage.mData != NULL) {
 		QPixmap chanImage;
 		GxsIdDetails::loadPixmapFromData(mGroup.mImage.mData, mGroup.mImage.mSize, chanImage,GxsIdDetails::ORIGINAL);
-		ui->logoLabel->setPixmap(QPixmap(chanImage));
+        ui->logoLabel->setPixmap(chanImage);
 	}
 
 	if (IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags)) {
@@ -187,13 +188,13 @@ void GxsChannelGroupItem::doExpand(bool open)
 	if (open)
 	{
 		ui->expandFrame->show();
-		ui->expandButton->setIcon(QIcon(QString(":/icons/png/up-arrow.png")));
+        ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/up-arrow.png")));
 		ui->expandButton->setToolTip(tr("Hide"));
 	}
 	else
 	{
 		ui->expandFrame->hide();
-		ui->expandButton->setIcon(QIcon(QString(":/icons/png/down-arrow.png")));
+        ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/down-arrow.png")));
 		ui->expandButton->setToolTip(tr("Expand"));
 	}
 

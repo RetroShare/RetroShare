@@ -30,6 +30,7 @@
 #include "gui/settings/rsharesettings.h"
 #include "PostedItem.h"
 #include "PostedCardView.h"
+#include "gui/common/FilesDefs.h"
 #include "gui/common/UIStateHelper.h"
 #include "gui/RetroShareLink.h"
 #include "util/HandleRichText.h"
@@ -406,7 +407,7 @@ void PostedListWidget::insertPostedDetails(const RsPostedGroup &group)
 	if (group.mGroupImage.mData != NULL) {
 		GxsIdDetails::loadPixmapFromData(group.mGroupImage.mData, group.mGroupImage.mSize, boardImage,GxsIdDetails::ORIGINAL);
 	} else {
-		boardImage = QPixmap(BOARD_DEFAULT_IMAGE);
+        boardImage = FilesDefs::getPixmapFromQtResourcePath(BOARD_DEFAULT_IMAGE);
 	}
 	ui->logoLabel->setPixmap(boardImage);
 	ui->namelabel->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));

@@ -21,7 +21,7 @@
 #ifndef _NEWS_FEED_DIALOG_H
 #define _NEWS_FEED_DIALOG_H
 
-#include "mainpage.h"
+#include <retroshare-gui/mainpage.h>
 
 #include "gui/feeds/FeedHolder.h"
 #include "util/TokenQueue.h"

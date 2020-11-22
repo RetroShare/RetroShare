@@ -14,11 +14,11 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabFeed">
       <attribute name="title">
-       <string>Feed</string>
+       <string>Log</string>
       </attribute>
       <layout class="QVBoxLayout" name="tabFeedVLayout">
        <item>
@@ -443,60 +443,6 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabChatLobbies">
-      <attribute name="title">
-       <string>Chat Rooms</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="tabChatLobbiesVLayout">
-       <item>
-        <widget class="QCheckBox" name="chatLobbies_CountUnRead">
-         <property name="text">
-          <string>Count all unread messages</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="chatLobbies_CheckNickName">
-         <property name="text">
-          <string>Count occurrences of my current identity</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="chatLobbies_CountFollowingText">
-         <property name="text">
-          <string>Count occurrences of any of the following texts (separate by newlines):</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPlainTextEdit" name="chatLobbies_TextToNotify"/>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="chatLobbies_TextCaseSensitive">
-         <property name="toolTip">
-          <string>Checked, if the identity and the text above occurrences must be in the same case to trigger count.</string>
-         </property>
-         <property name="text">
-          <string>Case sensitive</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="tabChatLobbiesVSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
     </widget>
    </item>
   </layout>
@@ -527,10 +473,6 @@
   <tabstop>spinBoxToasterYMargin</tabstop>
   <tabstop>systray_GroupChat</tabstop>
   <tabstop>systray_ChatLobby</tabstop>
-  <tabstop>chatLobbies_CountUnRead</tabstop>
-  <tabstop>chatLobbies_CheckNickName</tabstop>
-  <tabstop>chatLobbies_CountFollowingText</tabstop>
-  <tabstop>chatLobbies_TextToNotify</tabstop>
   <tabstop>pushButtonDisableAll</tabstop>
  </tabstops>
  <resources/>

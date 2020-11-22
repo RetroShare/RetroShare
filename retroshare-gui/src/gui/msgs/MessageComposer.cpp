@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "gui/common/FilesDefs.h"
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QClipboard>
@@ -133,6 +134,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     m_completer = NULL;
     
     ui.distantFrame->hide();
+    ui.sizeLimitFrame->hide();
     ui.respond_to_CB->hide();
     ui.fromLabel->hide();
 
@@ -394,6 +396,11 @@ void MessageComposer::updateCells(int,int)
         ui.distantFrame->hide() ;
         ui.fromLabel->hide();
     }
+
+    if(rowCount > 20)
+        ui.sizeLimitFrame->show();
+    else
+        ui.sizeLimitFrame->hide();
 }
 
 void MessageComposer::processSettings(bool bLoad)
@@ -696,7 +703,7 @@ void MessageComposer::contextMenuFileList(QPoint)
 {
     QMenu contextMnu(this);
 
-    QAction *action = contextMnu.addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteRecommended()));
+    QAction *action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteRecommended()));
     action->setDisabled(RSLinkClipboard::empty(RetroShareLink::TYPE_FILE));
 
     contextMnu.exec(QCursor::pos());
@@ -805,7 +812,7 @@ void MessageComposer::peerStatusChanged(const QString& peer_id, int status)
             {
                 QTableWidgetItem *item = ui.recipientWidget->item(row, COLUMN_RECIPIENT_ICON);
                 if (item)
-                    item->setIcon(QIcon(StatusDefs::imageUser(status)));
+                    item->setIcon(FilesDefs::getIconFromQtResourcePath(StatusDefs::imageUser(status)));
             }
         }
     }
@@ -1426,7 +1433,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
             break ;
 
         default:
-            std::cerr << __PRETTY_FUNCTION__ << ": Unhandled desitnation type " << dtype << std::endl;
+            std::cerr << __PRETTY_FUNCTION__ << ": Unhandled destination type " << dtype << std::endl;
             break ;
         }
     }
@@ -1606,7 +1613,7 @@ void MessageComposer::setRecipientToRow(int row, enumType type, destinationType 
         switch(dest_type)
         {
         case PEER_TYPE_GROUP: {
-            icon = QIcon(IMAGE_GROUP16);
+            icon = FilesDefs::getIconFromQtResourcePath(IMAGE_GROUP16);
 
             RsGroupInfo groupInfo;
             if (rsPeers->getGroupInfo(RsNodeGroupId(id), groupInfo)) {
@@ -1652,7 +1659,7 @@ void MessageComposer::setRecipientToRow(int row, enumType type, destinationType 
             // No check of return value. Non existing status info is handled as offline.
             rsStatus->getStatus(RsPeerId(id), peerStatusInfo);
 
-            icon = QIcon(StatusDefs::imageUser(peerStatusInfo.status));
+            icon = FilesDefs::getIconFromQtResourcePath(StatusDefs::imageUser(peerStatusInfo.status));
         }
         break ;
         default:
@@ -1928,7 +1935,7 @@ void MessageComposer::setupFileActions()
     connect(a, SIGNAL(triggered()), this, SLOT(filePrint()));
     menu->addAction(a);
 
-    /*a = new QAction(QIcon(":/images/textedit/fileprint.png"), tr("Print Preview..."), this);
+    /*a = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/textedit/fileprint.png"), tr("Print Preview..."), this);
     connect(a, SIGNAL(triggered()), this, SLOT(filePrintPreview()));
     menu->addAction(a);*/
 
@@ -2021,7 +2028,7 @@ void MessageComposer::setupContactActions()
     connect(mActionAddBCC, SIGNAL(triggered(bool)), this, SLOT(addBcc()));
     mActionAddRecommend = new QAction(tr("Add as Recommend"), this);
     connect(mActionAddRecommend, SIGNAL(triggered(bool)), this, SLOT(addRecommend()));
-    mActionContactDetails = new QAction(QIcon(IMAGE_FRIENDINFO), tr("Details"), this);
+    mActionContactDetails = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_FRIENDINFO), tr("Details"), this);
     connect(mActionContactDetails, SIGNAL(triggered(bool)), this, SLOT(contactDetails()));
 
     ui.friendSelectionWidget->addContextMenuAction(mActionAddTo);
@@ -2435,9 +2442,9 @@ void MessageComposer::on_contactsdockWidget_visibilityChanged(bool visible)
 void MessageComposer::updatecontactsviewicons()
 {
     if(!ui.contactsdockWidget->isVisible()){
-      ui.actionContactsView->setIcon(QIcon(":/icons/mail/contacts.png"));
+      ui.actionContactsView->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/mail/contacts.png"));
     }else{
-      ui.actionContactsView->setIcon(QIcon(":/icons/mail/contacts.png"));
+      ui.actionContactsView->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/mail/contacts.png"));
     } 
 }
 
@@ -2769,7 +2776,10 @@ void MessageComposer::showTagLabels()
 		ui.tagLayout->addStretch();
 	}
 }
-
+void MessageComposer::on_closeSizeLimitFrameButton_clicked()
+{
+    ui.sizeLimitFrame->setVisible(false);
+}
 void MessageComposer::on_closeInfoFrameButton_clicked()
 {
 	ui.distantFrame->setVisible(false);

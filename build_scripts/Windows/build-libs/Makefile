@@ -1,15 +1,15 @@
 ZLIB_VERSION=1.2.3
 BZIP2_VERSION=1.0.6
 MINIUPNPC_VERSION=2.0
-OPENSSL_VERSION=1.0.2n
+OPENSSL_VERSION=1.1.1g
 SPEEX_VERSION=1.2.0
 SPEEXDSP_VERSION=1.2rc3
-OPENCV_VERSION=3.4.1
+OPENCV_VERSION=3.4.11
 LIBXML2_VERSION=2.9.7
 LIBXSLT_VERSION=1.1.32
 CURL_VERSION=7.58.0
-TCL_VERSION=8.6.2
-SQLCIPHER_VERSION=2.2.1
+TCL_VERSION=8.6.10
+SQLCIPHER_VERSION=4.4.0
 LIBMICROHTTPD_VERSION=0.9.59
 FFMPEG_VERSION=3.4
 RAPIDJSON_VERSION=1.1.0
@@ -74,7 +74,7 @@ $(BUILD_PATH)/zlib-$(ZLIB_VERSION): $(DOWNLOAD_PATH)/zlib-$(ZLIB_VERSION).tar.gz
 bzip2: $(BUILD_PATH)/bzip2-$(BZIP2_VERSION)
 
 $(DOWNLOAD_PATH)/bzip2-$(BZIP2_VERSION).tar.gz:
-	wget http://bzip.org/$(BZIP2_VERSION)/bzip2-$(BZIP2_VERSION).tar.gz -O $(DOWNLOAD_PATH)/bzip2-$(BZIP2_VERSION).tar.gz
+	wget https://sourceforge.net/projects/bzip2/files/bzip2-$(BZIP2_VERSION).tar.gz/download -O $(DOWNLOAD_PATH)/bzip2-$(BZIP2_VERSION).tar.gz
 
 $(BUILD_PATH)/bzip2-$(BZIP2_VERSION): $(DOWNLOAD_PATH)/bzip2-$(BZIP2_VERSION).tar.gz
 	# prepare
@@ -102,7 +102,7 @@ $(BUILD_PATH)/miniupnpc-$(MINIUPNPC_VERSION): $(DOWNLOAD_PATH)/miniupnpc-$(MINIU
 	rm -r -f $(BUILD_PATH)/miniupnpc-*
 	tar xvf $(DOWNLOAD_PATH)/miniupnpc-$(MINIUPNPC_VERSION).tar.gz
 	# build
-	cd miniupnpc-$(MINIUPNPC_VERSION) && export CC=gcc && make -f Makefile.mingw init libminiupnpc.a miniupnpc.dll
+	cd miniupnpc-$(MINIUPNPC_VERSION) && export CC=gcc && export PATH=.:$$PATH && make -f Makefile.mingw init libminiupnpc.a miniupnpc.dll
 	# copy files
 	mkdir -p $(BUILD_PATH)/miniupnpc-$(MINIUPNPC_VERSION).tmp/include/miniupnpc
 	cp miniupnpc-$(MINIUPNPC_VERSION)/*.h $(BUILD_PATH)/miniupnpc-$(MINIUPNPC_VERSION).tmp/include/miniupnpc/
@@ -132,8 +132,11 @@ $(BUILD_PATH)/openssl-$(OPENSSL_VERSION): $(DOWNLOAD_PATH)/openssl-$(OPENSSL_VER
 	mkdir -p $(BUILD_PATH)/openssl-$(OPENSSL_VERSION).tmp/include/openssl
 	cp openssl-$(OPENSSL_VERSION)/include/openssl/*.h $(BUILD_PATH)/openssl-$(OPENSSL_VERSION).tmp/include/openssl/
 	mkdir -p $(BUILD_PATH)/openssl-$(OPENSSL_VERSION).tmp/bin
-	cp openssl-$(OPENSSL_VERSION)/libeay32.dll $(BUILD_PATH)/openssl-$(OPENSSL_VERSION).tmp/bin/
-	cp openssl-$(OPENSSL_VERSION)/ssleay32.dll $(BUILD_PATH)/openssl-$(OPENSSL_VERSION).tmp/bin/
+	if [ $(MSYSTEM) = "MINGW32" ] ; then cp openssl-$(OPENSSL_VERSION)/libcrypto-1_1.dll $(BUILD_PATH)/openssl-$(OPENSSL_VERSION).tmp/bin/ ; fi
+	if [ $(MSYSTEM) = "MINGW32" ] ; then cp openssl-$(OPENSSL_VERSION)/libcrypto-1_1.dll $(BUILD_PATH)/openssl-$(OPENSSL_VERSION).tmp/bin/ ; fi
+	if [ $(MSYSTEM) = "MINGW32" ] ; then cp openssl-$(OPENSSL_VERSION)/libssl-1_1.dll $(BUILD_PATH)/openssl-$(OPENSSL_VERSION).tmp/bin/ ; fi
+	if [ $(MSYSTEM) = "MINGW64" ] ; then cp openssl-$(OPENSSL_VERSION)/libcrypto-1_1-x64.dll $(BUILD_PATH)/openssl-$(OPENSSL_VERSION).tmp/bin/ ; fi
+	if [ $(MSYSTEM) = "MINGW64" ] ; then cp openssl-$(OPENSSL_VERSION)/libssl-1_1-x64.dll $(BUILD_PATH)/openssl-$(OPENSSL_VERSION).tmp/bin/ ; fi
 	mkdir -p $(BUILD_PATH)/openssl-$(OPENSSL_VERSION).tmp/lib
 	cp openssl-$(OPENSSL_VERSION)/libcrypto.dll.a $(BUILD_PATH)/openssl-$(OPENSSL_VERSION).tmp/lib/
 	cp openssl-$(OPENSSL_VERSION)/libssl.dll.a $(BUILD_PATH)/openssl-$(OPENSSL_VERSION).tmp/lib/
@@ -193,6 +196,8 @@ $(BUILD_PATH)/opencv-$(OPENCV_VERSION): $(DOWNLOAD_PATH)/opencv-$(OPENCV_VERSION
 	# prepare
 	rm -r -f $(BUILD_PATH)/opencv-*
 	tar xvf $(DOWNLOAD_PATH)/opencv-$(OPENCV_VERSION).tar.gz
+	# Remove version numbers from libraries. Is there a switch?
+	sed -i -e's/\(ocv_update(OPENCV_DLLVERSION \).*$$/\1"")/' opencv-$(OPENCV_VERSION)/CMakeLists.txt
 	# build
 	mkdir -p opencv-$(OPENCV_VERSION)/build
 	#cd opencv-$(OPENCV_VERSION)/build && cmake .. -G"MSYS Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="`pwd`/../../build"
@@ -202,7 +207,7 @@ $(BUILD_PATH)/opencv-$(OPENCV_VERSION): $(DOWNLOAD_PATH)/opencv-$(OPENCV_VERSION
 	mkdir -p $(BUILD_PATH)/opencv-$(OPENCV_VERSION).tmp/include
 	cp -r opencv-$(OPENCV_VERSION)/build/install/include/* $(BUILD_PATH)/opencv-$(OPENCV_VERSION).tmp/include/
 	mkdir -p $(BUILD_PATH)/opencv-$(OPENCV_VERSION).tmp/lib/opencv
-	cp -r opencv-$(OPENCV_VERSION)/build/install/x86/mingw/staticlib/* $(BUILD_PATH)/opencv-$(OPENCV_VERSION).tmp/lib/opencv/
+	cp -r opencv-$(OPENCV_VERSION)/build/install/x64/mingw/staticlib/* $(BUILD_PATH)/opencv-$(OPENCV_VERSION).tmp/lib/opencv/
 	# cleanup
 	rm -r -f opencv-$(OPENCV_VERSION)
 	mv $(BUILD_PATH)/opencv-$(OPENCV_VERSION).tmp $(BUILD_PATH)/opencv-$(OPENCV_VERSION)

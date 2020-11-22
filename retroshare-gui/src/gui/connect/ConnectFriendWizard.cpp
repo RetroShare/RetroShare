@@ -33,6 +33,7 @@
 #include <QUrlQuery>
 #endif
 
+#include "gui/common/FilesDefs.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/misc.h"
 #include "ConnectFriendWizard.h"
@@ -94,10 +95,10 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 //	setOption(HaveHelpButton, true);
 //	connect(this, SIGNAL(helpRequested()), this, SLOT(showHelp()));
 
-	setPixmap(QWizard::LogoPixmap, QPixmap(":/icons/invite64.png"));
+    setPixmap(QWizard::LogoPixmap, FilesDefs::getPixmapFromQtResourcePath(":/icons/invite64.png"));
 
 // we have no good pictures for watermarks
-//	setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/connectFriendWatermark.png"));
+//	setPixmap(QWizard::WatermarkPixmap, FilesDefs::getPixmapFromQtResourcePath(":/images/connectFriendWatermark.png"));
 
 	/* register global fields */
 	ui->ErrorMessagePage->registerField("errorMessage", ui->messageLabel, "text");
@@ -145,11 +146,11 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	switch (rsFiles->filePermDirectDL())
 	{
 		case RS_FILE_PERM_DIRECT_DL_YES:
-			ui->_direct_transfer_CB_2->setIcon(QIcon(":/icons/warning_yellow_128.png"));
+            ui->_direct_transfer_CB_2->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/warning_yellow_128.png"));
 			ui->_direct_transfer_CB_2->setToolTip(ui->_direct_transfer_CB_2->toolTip().append(tr("\nWarning: In your File-Transfer option, you select allow direct download to Yes.")));
 			break ;
 		case RS_FILE_PERM_DIRECT_DL_NO:
-			ui->_direct_transfer_CB_2->setIcon(QIcon(":/icons/warning_yellow_128.png"));
+            ui->_direct_transfer_CB_2->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/warning_yellow_128.png"));
 			ui->_direct_transfer_CB_2->setToolTip(ui->_direct_transfer_CB_2->toolTip().append(tr("\nWarning: In your File-Transfer option, you select allow direct download to No.")));
 			break ;
 
@@ -549,7 +550,25 @@ void ConnectFriendWizard::initializePage(int id)
 			}
 
 			ui->nodeEdit->setText(loc);
-			ui->ipEdit->setText(QString::fromStdString(peerDetails.isHiddenNode ? peerDetails.hiddenNodeAddress : peerDetails.extAddr));
+
+            std::string s;
+            if(peerDetails.isHiddenNode)
+                s += peerDetails.hiddenNodeAddress;
+            else
+            {
+                if(peerDetails.localAddr!="0.0.0.0")// This is not so nice, but because we deal we string there's no way
+                    s += peerDetails.localAddr;		// to ask about if the ip is null. We really need a proper IP class.
+
+                if(peerDetails.extAddr!="0.0.0.0")
+                {
+                    if(!s.empty()) s += " / " ;
+                    s += peerDetails.extAddr;
+                }
+
+                if(!peerDetails.dyndns.empty())
+                    s += "(" + peerDetails.dyndns + ")" ;
+            }
+            ui->ipEdit->setText(QString::fromStdString(s));
 			ui->signersEdit->setPlainText(ts);
 
 			fillGroups(this, ui->groupComboBox, groupId);
@@ -562,7 +581,7 @@ void ConnectFriendWizard::initializePage(int id)
 				ui->_addIPToWhiteList_ComboBox_2->addItem("(Hidden node)") ;
 				int S = QFontMetricsF(ui->ipEdit->font()).height() ;
 				ui->ipEdit->setToolTip("This is a Hidden node - you need tor/i2p proxy to connect");
-				ui->ipLabel->setPixmap(QPixmap(":/images/anonymous_128_blue.png").scaledToHeight(S*2,Qt::SmoothTransformation));
+                ui->ipLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/anonymous_128_blue.png").scaledToHeight(S*2,Qt::SmoothTransformation));
 				ui->ipLabel->setToolTip("This is a Hidden node - you need tor/i2p proxy to connect");
 			}
 			if(mIsShortInvite)
@@ -812,7 +831,7 @@ void ConnectFriendWizard::cleanFriendCert()
 	std::string cert = ui->friendCertEdit->toPlainText().toUtf8().constData();
 
 	if (cert.empty()) {
-		ui->friendCertCleanLabel->setPixmap(QPixmap(":/images/delete.png"));
+        ui->friendCertCleanLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/delete.png"));
 		ui->friendCertCleanLabel->setToolTip("");
 		ui->friendCertCleanLabel->setStyleSheet("");
 		errorMsg = tr("");
@@ -836,7 +855,7 @@ void ConnectFriendWizard::cleanFriendCert()
 			}
 			errorMsg = tr("Valid certificate") + (mIsShortInvite?" (Short format)":" (plain format with profile key)");
 
-			ui->friendCertCleanLabel->setPixmap(QPixmap(":/images/accepted16.png"));
+            ui->friendCertCleanLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/accepted16.png"));
 		} else {
 			if (error_code > 0) {
 				switch (error_code) {
@@ -855,11 +874,11 @@ void ConnectFriendWizard::cleanFriendCert()
 					ui->friendCertCleanLabel->setStyleSheet("QLabel#friendCertCleanLabel {border: 2px solid red; border-radius: 6px;}");
 				}
 			}
-			ui->friendCertCleanLabel->setPixmap(QPixmap(":/images/delete.png"));
+            ui->friendCertCleanLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/delete.png"));
 		}
 	}
 
-	ui->friendCertCleanLabel->setPixmap(certValid ? QPixmap(":/images/accepted16.png") : QPixmap(":/images/delete.png"));
+    ui->friendCertCleanLabel->setPixmap(certValid ? FilesDefs::getPixmapFromQtResourcePath(":/images/accepted16.png") : FilesDefs::getPixmapFromQtResourcePath(":/images/delete.png"));
 	ui->friendCertCleanLabel->setToolTip(errorMsg);
 	ui->friendCertCleanLabel->setText(errorMsg);
 

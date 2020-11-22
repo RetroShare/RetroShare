@@ -25,6 +25,7 @@
 #include "ui_NotifyPage.h"
 
 #include "gui/chat/ChatLobbyUserNotify.h"
+#include "gui/common/FilesDefs.h"
 
 class UserNotify;
 class FeedNotify;
@@ -78,7 +79,7 @@ public:
     /** Loads the settings for this page */
     virtual void load();
 
-	 virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/notify.svg") ; }
+     virtual QPixmap iconPixmap() const { return FilesDefs::getPixmapFromQtResourcePath(":/icons/settings/notify.svg") ; }
 	 virtual QString pageName() const { return tr("Notify") ; }
 	 virtual QString helpText() const ;
 
@@ -99,12 +100,10 @@ private slots:
 	void updateToasterMargin();
 
 	void updateToasterPosition();
-	void updateChatLobbyUserNotify();
 
 private:
 	uint getNewsFlags();
 	uint getNotifyFlags();
-	ChatLobbyUserNotify* mChatLobbyUserNotify;
 
     QList<FeedNotifySetting> mFeedNotifySettingList;
     QList<ToasterNotifySetting> mToasterNotifySettingList;

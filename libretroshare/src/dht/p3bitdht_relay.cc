@@ -35,7 +35,7 @@
 
 int p3BitDht::setupRelayDefaults()
 {
-	uint32_t mode = RSDHT_RELAY_ENABLED | RSDHT_RELAY_MODE_OFF;
+	RsDhtRelayMode mode = RsDhtRelayMode::ENABLED | RsDhtRelayMode::OFF;
 	setRelayMode(mode);
 	
 	return 1;
@@ -111,19 +111,19 @@ int p3BitDht::pushRelayServers()
 }
 
 
-uint32_t p3BitDht::getRelayMode()
+RsDhtRelayMode p3BitDht::getRelayMode()
 {
 	RsStackMutex stack(dhtMtx); /*********** LOCKED **********/
 
 	return mRelayMode;
 }
 
-int p3BitDht::setRelayMode(uint32_t mode)
+int p3BitDht::setRelayMode(RsDhtRelayMode mode)
 {
 	std::cerr << "p3BitDht::setRelayMode(" << mode << ")";
 	std::cerr << std::endl;
 
-	if (mode & RSDHT_RELAY_ENABLED)
+	if (!!(mode & RsDhtRelayMode::ENABLED))
 	{
 		mUdpBitDht->ConnectionOptions(
 			BITDHT_CONNECT_MODE_DIRECT | BITDHT_CONNECT_MODE_PROXY | BITDHT_CONNECT_MODE_RELAY,
@@ -136,18 +136,18 @@ int p3BitDht::setRelayMode(uint32_t mode)
 			BITDHT_CONNECT_OPTION_AUTOPROXY);
 	}
 
-	int relaymode = mode & RSDHT_RELAY_MODE_MASK;
+	RsDhtRelayMode relaymode = mode & RsDhtRelayMode::MASK;
 
 	switch(relaymode)
 	{
-		case RSDHT_RELAY_MODE_OFF:
+	    case RsDhtRelayMode::OFF:
 			mUdpBitDht->setDhtMode(BITDHT_MODE_RELAYSERVERS_IGNORED);
 			break;
-		case RSDHT_RELAY_MODE_ON:
+	    case RsDhtRelayMode::ON:
 			pushRelayServers();
 			mUdpBitDht->setDhtMode(BITDHT_MODE_RELAYSERVERS_FLAGGED);
 			break;
-		case RSDHT_RELAY_MODE_SERVER:
+	    case RsDhtRelayMode::SERVER:
 			pushRelayServers();
 			mUdpBitDht->setDhtMode(BITDHT_MODE_RELAYSERVERS_SERVER);
 			break;
@@ -163,13 +163,13 @@ int p3BitDht::setRelayMode(uint32_t mode)
 	return 1;
 }
 
-int p3BitDht::getRelayAllowance(int classIdx, uint32_t &count, uint32_t &bandwidth)
+int p3BitDht::getRelayAllowance(RsDhtRelayClass classIdx, uint32_t &count, uint32_t &bandwidth)
 {
-	std::cerr << "p3BitDht::getRelayAllowance(" << classIdx << "): ";
-	if ((classIdx >= 0) && (classIdx < RSDHT_RELAY_NUM_CLASS))
+	std::cerr << "p3BitDht::getRelayAllowance(" << static_cast<typename std::underlying_type<RsDhtRelayClass>::type>(classIdx) << "): ";
+	if ((classIdx >= RsDhtRelayClass::ALL) && (classIdx < RsDhtRelayClass::NUM_CLASS))
 	{
-		count = mRelay->getRelayClassMax(classIdx);
-		bandwidth = mRelay->getRelayClassBandwidth(classIdx);
+		count = mRelay->getRelayClassMax(static_cast<typename std::underlying_type<RsDhtRelayClass>::type>(classIdx));
+		bandwidth = mRelay->getRelayClassBandwidth(static_cast<typename std::underlying_type<RsDhtRelayClass>::type>(classIdx));
 
 		std::cerr << " count: " << count << " bandwidth: " << bandwidth;
 		std::cerr << std::endl;
@@ -181,13 +181,13 @@ int p3BitDht::getRelayAllowance(int classIdx, uint32_t &count, uint32_t &bandwid
 	return 0;
 }
 
-int p3BitDht::setRelayAllowance(int classIdx, uint32_t count, uint32_t bandwidth)
+int p3BitDht::setRelayAllowance(RsDhtRelayClass classIdx, uint32_t count, uint32_t bandwidth)
 {
-	std::cerr << "p3BitDht::getRelayAllowance(" << classIdx << ", ";
+	std::cerr << "p3BitDht::getRelayAllowance(" << static_cast<typename std::underlying_type<RsDhtRelayClass>::type>(classIdx) << ", ";
 	std::cerr << ", " << count << ", " << bandwidth << ")";
 	std::cerr << std::endl;
 
-	int retval = mRelay->setRelayClassMax(classIdx, count, bandwidth);
+	int retval = mRelay->setRelayClassMax(static_cast<typename std::underlying_type<RsDhtRelayClass>::type>(classIdx), count, bandwidth);
 	IndicateConfigChanged();
 
 	return retval;
@@ -224,7 +224,7 @@ bool p3BitDht::saveList(bool &cleanup, std::list<RsItem *> &saveList)
 
 	/* Push Relay Class Stuff */
 	int i;
-	for(i = 0; i < RSDHT_RELAY_NUM_CLASS; ++i)
+	for(i = 0; i < static_cast<typename std::underlying_type<RsDhtRelayClass>::type>(RsDhtRelayClass::NUM_CLASS); ++i)
 	{
 		rs_sprintf(kv.key, "RELAY_CLASS%d_COUNT", i);
 		rs_sprintf(kv.value, "%d", mRelay->getRelayClassMax(i));
@@ -302,11 +302,11 @@ bool    p3BitDht::loadList(std::list<RsItem *>& load)
 	//config->print(std::cerr, 0);
 
 	std::list<std::string> servers;
-	int peers[RSDHT_RELAY_NUM_CLASS] = {0};
-	int bandwidth[RSDHT_RELAY_NUM_CLASS] = {0};
+	int peers[static_cast<typename std::underlying_type<RsDhtRelayClass>::type>(RsDhtRelayClass::NUM_CLASS)] = {0};
+	int bandwidth[static_cast<typename std::underlying_type<RsDhtRelayClass>::type>(RsDhtRelayClass::NUM_CLASS)] = {0};
 
 	bool haveMode = false;
-	int mode = 0;
+	RsDhtRelayMode mode = RsDhtRelayMode::DISABLED;
 
 	std::list<RsTlvKeyValue>::iterator it;
 	for(it = config->tlvkvs.pairs.begin(); it != config->tlvkvs.pairs.end(); ++it)
@@ -322,7 +322,7 @@ bool    p3BitDht::loadList(std::list<RsItem *>& load)
 		}
 		else if (0 == strncmp(key.c_str(), "RELAY_MODE", 10))
 		{
-			mode = atoi(value.c_str());
+			mode = static_cast<RsDhtRelayMode>(atoi(value.c_str()));
 			haveMode = true;
 
 			//std::cerr << "p3BitDht::loadList() Found Mode: " << mode;
@@ -386,7 +386,7 @@ bool    p3BitDht::loadList(std::list<RsItem *>& load)
 	}
 	
 	int i;
-	for(i = 0; i < RSDHT_RELAY_NUM_CLASS; ++i)
+	for(i = 0; i < static_cast<typename std::underlying_type<RsDhtRelayClass>::type>(RsDhtRelayClass::NUM_CLASS); ++i)
 	{
 		mRelay->setRelayClassMax(i, peers[i], bandwidth[i]);
 	}
