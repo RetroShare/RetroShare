@@ -473,10 +473,10 @@ FFmpegVideo::FFmpegVideo()
     encoding_context->rc_max_rate = 0;
     encoding_context->rc_buffer_size = 0;
 #endif
-    if (encoding_codec->capabilities & CODEC_CAP_TRUNCATED)
-        encoding_context->flags |= CODEC_FLAG_TRUNCATED;
-    encoding_context->flags |= CODEC_FLAG_PSNR;//Peak signal-to-noise ratio
-    encoding_context->flags |= CODEC_CAP_PARAM_CHANGE;
+	if (encoding_codec->capabilities & AV_CODEC_CAP_TRUNCATED)
+		encoding_context->flags |= AV_CODEC_FLAG_TRUNCATED;
+	encoding_context->flags |= AV_CODEC_FLAG_PSNR;//Peak signal-to-noise ratio
+	encoding_context->flags |= AV_CODEC_CAP_PARAM_CHANGE;
     encoding_context->i_quant_factor = 0.769f;
     encoding_context->b_quant_factor = 1.4f;
     encoding_context->time_base.num = 1;
@@ -569,10 +569,10 @@ FFmpegVideo::FFmpegVideo()
     decoding_context->pix_fmt = AV_PIX_FMT_YUV420P;
 #endif
 
-    if(decoding_codec->capabilities & CODEC_CAP_TRUNCATED)
-        decoding_context->flags |= CODEC_FLAG_TRUNCATED; // we do not send complete frames
+	if(decoding_codec->capabilities & AV_CODEC_CAP_TRUNCATED)
+		decoding_context->flags |= AV_CODEC_FLAG_TRUNCATED; // we do not send complete frames
     //we can receive truncated frames
-    decoding_context->flags2 |= CODEC_FLAG2_CHUNKS;
+	decoding_context->flags2 |= AV_CODEC_FLAG2_CHUNKS;
 
     AVDictionary* dictionary = NULL;
     if(avcodec_open2(decoding_context, decoding_codec, &dictionary) < 0)
