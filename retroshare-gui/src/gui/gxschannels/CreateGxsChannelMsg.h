@@ -75,6 +75,7 @@ private slots:
 
 	void on_channelpostButton_clicked();
 	void on_attachmentsButton_clicked();
+	void on_removeButton_clicked();
 private:
 	void processSettings(bool load);
 	void loadChannelInfo();
