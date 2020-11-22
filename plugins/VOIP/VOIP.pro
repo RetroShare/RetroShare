@@ -121,9 +121,16 @@ win32 {
 		message(Use system opencv libraries.)
 		LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc
 	}
-	LIBS += -lzlib -lole32 -loleaut32 -luuid -lvfw32 -llibjpeg-turbo -llibtiff -llibpng -llibjasper -lIlmImf
+        LIBS += -lole32 -loleaut32 -luuid -lvfw32
 	LIBS += -lavifil32 -lavicap32 -lavcodec -lavutil -lswresample
+
+        # Check for msys2
+        !isEmpty(PREFIX_MSYS2) {
+                message(Use msys2 opencv4.)
+                INCLUDEPATH  += "$${PREFIX_MSYS2}/include/opencv4"
+        }
 }
+
 
 #################################### MacOSX #####################################
 
