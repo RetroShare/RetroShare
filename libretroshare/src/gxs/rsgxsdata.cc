@@ -196,7 +196,6 @@ bool RsGxsGrpMetaData::deserialise(void *data, uint32_t &pktsize)
 
     return ok;
 }
-int RsGxsMsgMetaData::refcount = 0;
 
 RsGxsMsgMetaData::RsGxsMsgMetaData(){
 	clear();
@@ -209,7 +208,7 @@ RsGxsMsgMetaData::~RsGxsMsgMetaData(){
 	return;
 }
 
-uint32_t RsGxsMsgMetaData::serial_size()
+uint32_t RsGxsMsgMetaData::serial_size() const
 {
 
     uint32_t s = 8; // header size

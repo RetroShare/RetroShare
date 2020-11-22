@@ -25,6 +25,7 @@
 
 #include <retroshare-gui/configpage.h>
 #include "ui_ServicePermissionsPage.h"
+#include "gui/common/FilesDefs.h"
 
 class ServicePermissionsPage: public ConfigPage
 {
@@ -37,7 +38,7 @@ public:
     /** Loads the settings for this page */
     virtual void load() {}
 
-    virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/permissions.svg") ; }
+    virtual QPixmap iconPixmap() const { return FilesDefs::getPixmapFromQtResourcePath(":/icons/settings/permissions.svg") ; }
     virtual QString pageName() const { return tr("Permissions") ; }
     virtual QString helpText() const ;
 

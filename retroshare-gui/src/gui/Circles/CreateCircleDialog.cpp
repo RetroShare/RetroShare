@@ -24,11 +24,13 @@
 #include <QMenu>
 
 #include <algorithm>
+#include <memory>
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
 
 #include "gui/common/AvatarDefs.h"
+#include "gui/common/FilesDefs.h"
 #include "util/qtthreadsutils.h"
 #include "gui/Circles/CreateCircleDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
@@ -52,14 +54,14 @@ CreateCircleDialog::CreateCircleDialog()
 	ui.setupUi(this);
 
 	/* Setup Queue */
-	ui.headerFrame->setHeaderImage(QPixmap(":/icons/png/circles.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/circles.png"));
 
 	// connect up the buttons.
 	connect(ui.addButton, SIGNAL(clicked()), this, SLOT(addMember()));
 	connect(ui.removeButton, SIGNAL(clicked()), this, SLOT(removeMember()));
 
-	connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(createCircle()));
-	connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
+	connect(ui.createButton, SIGNAL(clicked()), this, SLOT(createCircle()));
+	connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(close()));
 
 	connect(ui.treeWidget_membership, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(selectedMember(QTreeWidgetItem*, QTreeWidgetItem*)));
 	connect(ui.treeWidget_IdList, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(selectedId(QTreeWidgetItem*, QTreeWidgetItem*)));
@@ -144,15 +146,15 @@ void CreateCircleDialog::editExistingId(const RsGxsGroupId &circleId, const bool
 	    ui.idChooser->setVisible(true) ;
     }
     
-    ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Update"));
+    ui.createButton->setText(tr("Update"));
     
 	ui.addButton->setEnabled(!readonly) ;
 	ui.removeButton->setEnabled(!readonly) ;
     
     if(readonly)
 	{
-		ui.buttonBox->setStandardButtons(QDialogButtonBox::Cancel);
-		ui.buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Close"));
+		ui.createButton->hide() ;
+		ui.cancelButton->setText(tr("Close"));
 		ui.peersSelection_GB->hide() ;
 		ui.addButton->hide() ;
 		ui.removeButton->hide() ;
@@ -173,7 +175,7 @@ void CreateCircleDialog::editNewId(bool isExternal)
 	{
 		setupForExternalCircle();
 		ui.headerFrame->setHeaderText(tr("Create New Circle"));	
-		ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Create"));
+		ui.createButton->setText(tr("Create"));
 	}
 	else
 	{
@@ -696,34 +698,32 @@ void CreateCircleDialog::loadIdentities()
 {
 	RsThread::async([this]()
 	{
-        std::list<RsGroupMetaData> ids_meta;
+		std::list<RsGroupMetaData> ids_meta;
 
 		if(!rsIdentity->getIdentitiesSummaries(ids_meta))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve identities ids for all identities" << std::endl;
+			RS_ERR("failed to retrieve identities ids for all identities");
 			return;
-        }
-        std::set<RsGxsId> ids;
+		}
 
-		for(auto& meta:ids_meta)
-			ids.insert(RsGxsId(meta.mGroupId)) ;
+		std::set<RsGxsId> ids;
+		for(auto& meta:ids_meta) ids.insert(RsGxsId(meta.mGroupId));
 
-        std::vector<RsGxsIdGroup> id_groups;
-
-        if(!rsIdentity->getIdentitiesInfo(ids,id_groups))
+		auto id_groups = std::make_unique<std::vector<RsGxsIdGroup>>();
+		if(!rsIdentity->getIdentitiesInfo(ids, *id_groups))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve identities group info for all identities" << std::endl;
+			RS_ERR("failed to retrieve identities group info for all identities");
 			return;
-        }
+		}
 
-        RsQThreadUtils::postToObject( [id_groups,this]()
+		RsQThreadUtils::postToObject(
+		            [id_groups = std::move(id_groups), this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-			fillIdentitiesList(id_groups) ;
-
+			fillIdentitiesList(*id_groups);
 		}, this );
 	});
 

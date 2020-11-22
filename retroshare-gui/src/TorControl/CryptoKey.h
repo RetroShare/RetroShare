@@ -51,14 +51,19 @@ public:
     };
 
     CryptoKey();
-    CryptoKey(const CryptoKey &other) : d(other.d) { }
     ~CryptoKey();
 
+#ifdef TO_REMOVE
     bool loadFromData(const QByteArray &data, KeyType type, KeyFormat format = PEM);
     bool loadFromFile(const QString &path, KeyType type, KeyFormat format = PEM);
+#endif
+    bool loadFromFile(const QString &path);
     void clear();
 
-    bool isLoaded() const { return d.data() && d->key != 0; }
+    const QByteArray bytes() const { return key_data; }
+    bool loadFromTorMessage(const QByteArray& b);
+    bool isLoaded() const { return !key_data.isNull(); }
+#ifdef TO_REMOVE
     bool isPrivate() const;
 
     QByteArray publicKeyDigest() const;
@@ -76,8 +81,10 @@ public:
     QByteArray signSHA256(const QByteArray &digest) const;
     // Verify a signature as per signSHA256
     bool verifySHA256(const QByteArray &digest, QByteArray signature) const;
+#endif
 
 private:
+#ifdef TO_REMOVE
     struct Data : public QSharedData
     {
         typedef struct rsa_st RSA;
@@ -86,8 +93,12 @@ private:
         Data(RSA *k = 0) : key(k) { }
         ~Data();
     };
+#endif
 
+    QByteArray key_data;
+#ifdef TO_REMOVE
     QExplicitlySharedDataPointer<Data> d;
+#endif
 };
 
 QByteArray torControlHashedPassword(const QByteArray &password);

@@ -20,7 +20,8 @@
 
 #include "RemoteDirModel.h"
 
-#include "RsAutoUpdatePage.h"
+#include <retroshare-gui/RsAutoUpdatePage.h>
+
 #include "gui/common/FilesDefs.h"
 #include "gui/common/GroupDefs.h"
 #include "gui/common/RsCollection.h"
@@ -520,7 +521,19 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 			case COLUMN_SIZE:
 				return  misc::friendlyUnit(details.count);
 			case COLUMN_AGE:
-				return  (details.type == DIR_TYPE_FILE)?(misc::timeRelativeToNow(details.max_mtime)):QString();
+			{
+				if(details.type == DIR_TYPE_FILE)
+					return misc::timeRelativeToNow(details.max_mtime);
+				else if(details.type == DIR_TYPE_EXTRA_FILE)
+				{
+					FileInfo fi;
+					if (rsFiles->FileDetails(details.hash, RS_FILE_HINTS_EXTRA , fi))
+						return misc::timeRelativeToNow((rstime_t)fi.age-(30 * 3600 * 24)); // AFI_DEFAULT_PERIOD
+					return QString();
+				}
+				else
+					return QString();
+			}
 			case COLUMN_FRIEND_ACCESS:
 				return QVariant();
 			case COLUMN_WN_VISU_DIR:
@@ -1103,15 +1116,9 @@ Qt::ItemFlags RetroshareDirModel::flags( const QModelIndex & index ) const
 /* Callback from Core*/
 void RetroshareDirModel::preMods()
 {
-    emit layoutAboutToBeChanged();
     mUpdating = true ;
-#if QT_VERSION < 0x050000
-	reset();
-#else
-	beginResetModel();
-	endResetModel();
-#endif
 
+	beginResetModel();
 #ifdef RDM_DEBUG
 	std::cerr << "RetroshareDirModel::preMods()" << std::endl;
 #endif
@@ -1120,20 +1127,14 @@ void RetroshareDirModel::preMods()
 /* Callback from Core*/
 void RetroshareDirModel::postMods()
 {
-//	emit layoutAboutToBeChanged();
     mUpdating = false ;
-#if QT_VERSION >= 0x040600
-	beginResetModel();
-#endif
-
 #ifdef RDM_DEBUG
 	std::cerr << "RetroshareDirModel::postMods()" << std::endl;
 #endif
 
-#if QT_VERSION >= 0x040600
 	endResetModel();
-#endif
-	emit layoutChanged();
+
+    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1,COLUMN_COUNT-1,(void*)NULL));
 }
 
 void FlatStyle_RDM::postMods()
@@ -1381,7 +1382,7 @@ void RetroshareDirModel::getFileInfoFromIndexList(const QModelIndexList& list, s
  * OLD RECOMMEND SYSTEM - DISABLED
  ******/
 
-void RetroshareDirModel::openSelected(const QModelIndexList &qmil)
+void RetroshareDirModel::openSelected(const QModelIndexList &qmil, bool openDir)
 {
 #ifdef RDM_DEBUG
 	std::cerr << "RetroshareDirModel::openSelected()" << std::endl;
@@ -1404,12 +1405,15 @@ void RetroshareDirModel::openSelected(const QModelIndexList &qmil)
 
 		QDir dir(QString::fromUtf8((*it).path.c_str()));
 		QString dest;
-		if ((*it).type & DIR_TYPE_FILE || (*it).type & DIR_TYPE_EXTRA_FILE) {
+		if ((*it).type & DIR_TYPE_FILE || (!openDir && (*it).type & DIR_TYPE_EXTRA_FILE)) {
 			dest = dir.absoluteFilePath(QString::fromUtf8(it->name.c_str()));
 		} else if ((*it).type & DIR_TYPE_DIR) {
 			dest = dir.absolutePath();
+		} else if (openDir) // extra
+		{
+			QDir d = QFileInfo(it->name.c_str()).absoluteDir();
+			dest = d.absolutePath();
 		}
-
 		std::cerr << "Opening this file: " << dest.toStdString() << std::endl ;
 
 		RsUrlHandler::openUrl(QUrl::fromLocalFile(dest));

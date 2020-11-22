@@ -21,7 +21,6 @@
  *******************************************************************************/
 
 #include "dht/connectstatebox.h"
-#include "retroshare/rsconfig.h"
 
 #include "util/rsrandom.h"
 #include "util/rsstring.h"
@@ -260,26 +259,26 @@ std::string PeerConnectStateBox::connectState() const
 }
 
 
-uint32_t convertNetStateToInternal(uint32_t netmode, uint32_t nathole, uint32_t nattype)
+uint32_t convertNetStateToInternal(RsNetworkMode netmode, RsNatHoleMode nathole, RsNatTypeMode nattype)
 {
 	uint32_t connNet = CSB_NETSTATE_UNKNOWN;
 		
-	if (netmode == RSNET_NETWORK_EXTERNALIP)
+	if (netmode == RsNetworkMode::EXTERNALIP)
 	{
 		connNet = CSB_NETSTATE_FORWARD;
 	}
-	else if ((nathole != RSNET_NATHOLE_UNKNOWN) && (nathole != RSNET_NATHOLE_NONE))
+	else if ((nathole != RsNatHoleMode::UNKNOWN) && (nathole != RsNatHoleMode::NONE))
 	{
 		connNet = CSB_NETSTATE_FORWARD;
 	}
-	else if (netmode == RSNET_NETWORK_BEHINDNAT)
+	else if (netmode == RsNetworkMode::BEHINDNAT)
 	{
-		if ((nattype == RSNET_NATTYPE_RESTRICTED_CONE) ||
-			(nattype == RSNET_NATTYPE_FULL_CONE))
+		if ((nattype == RsNatTypeMode::RESTRICTED_CONE) ||
+		    (nattype == RsNatTypeMode::FULL_CONE))
 		{
 			connNet = CSB_NETSTATE_STABLENAT;
 		}
-		else if (nattype == RSNET_NATTYPE_DETERM_SYM)
+		else if (nattype == RsNatTypeMode::DETERM_SYM)
 		{
 			connNet = CSB_NETSTATE_EXCLUSIVENAT; 
 		}
@@ -300,20 +299,20 @@ bool shouldUseProxyPortInternal(uint32_t netstate)
 	return true;
 }
 
-bool PeerConnectStateBox::shouldUseProxyPort(uint32_t netmode, uint32_t nathole, uint32_t nattype)
+bool PeerConnectStateBox::shouldUseProxyPort(RsNetworkMode netmode, RsNatHoleMode nathole, RsNatTypeMode nattype)
 {
 	uint32_t netstate = convertNetStateToInternal(netmode, nathole, nattype);
 	return shouldUseProxyPortInternal(netstate);
 }
 
-uint32_t PeerConnectStateBox::calcNetState(uint32_t netmode, uint32_t nathole, uint32_t nattype)
+uint32_t PeerConnectStateBox::calcNetState(RsNetworkMode netmode, RsNatHoleMode nathole, RsNatTypeMode nattype)
 {
 	uint32_t netstate = convertNetStateToInternal(netmode, nathole, nattype);
 	return netstate;
 }
 
 
-uint32_t PeerConnectStateBox::connectCb(uint32_t cbtype, uint32_t netmode, uint32_t nathole, uint32_t nattype)
+uint32_t PeerConnectStateBox::connectCb(uint32_t cbtype, RsNetworkMode netmode, RsNatHoleMode nathole, RsNatTypeMode nattype)
 {
 	uint32_t netstate = convertNetStateToInternal(netmode, nathole, nattype);
 

@@ -25,8 +25,8 @@ CONFIG += console
 TARGET = retroshare
 DEFINES += TARGET=\\\"$${TARGET}\\\"
 
-DEPENDPATH  *= $${PWD} $${RS_INCLUDE_DIR} retroshare-gui
-INCLUDEPATH *= $${PWD} retroshare-gui
+DEPENDPATH  *= $${PWD} $${RS_INCLUDE_DIR}
+INCLUDEPATH *= $${PWD}
 
 !include("../../libretroshare/src/use_libretroshare.pri"):error("Including")
 
@@ -59,7 +59,7 @@ rs_gui_cmark {
 
 		DUMMYCMARKINPUT = FORCE
 		CMAKE_GENERATOR_OVERRIDE=""
-		win32-g++:CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
+		win32-g++|win32-clang-g++:CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
 		gencmarklib.name = Generating libcmark.
 		gencmarklib.input = DUMMYCMARKINPUT
 		gencmarklib.output = $$clean_path($${CMARK_BUILD_PATH}/src/libcmark.a)
@@ -73,6 +73,7 @@ rs_gui_cmark {
 		    mkdir -p $${CMARK_BUILD_PATH} && cd $${CMARK_BUILD_PATH} && \
 		    cmake \
 		        -DCMAKE_CXX_COMPILER=$$QMAKE_CXX \
+                        \"-DCMAKE_CXX_FLAGS=$${QMAKE_CXXFLAGS}\" \
 		        $${CMAKE_GENERATOR_OVERRIDE} \
 		        -DCMAKE_INSTALL_PREFIX=. \
 		        -B. \
@@ -209,7 +210,7 @@ win32-x-g++ {
 
 #################################### Windows #####################################
 
-win32-g++ {
+win32-g++|win32-clang-g++ {
 	CONFIG(debug, debug|release) {
 		# show console output
 		CONFIG += console
@@ -231,7 +232,7 @@ win32-g++ {
 
     # Fix linking error (ld.exe: Error: export ordinal too large) due to too
     # many exported symbols.
-    QMAKE_LFLAGS+=-Wl,--exclude-libs,ALL
+    !libretroshare_shared:QMAKE_LFLAGS+=-Wl,--exclude-libs,ALL
 
 	# Switch off optimization for release version
 	QMAKE_CXXFLAGS_RELEASE -= -O2
@@ -344,11 +345,15 @@ openbsd-* {
 	LIBS *= -rdynamic
 }
 
+################################### COMMON stuff ##################################
+
 wikipoos {
 	PRE_TARGETDEPS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS *= -lglib-2.0
 }
+
+################################### HEADERS & SOURCES #############################
 
 # Tor controller
 
@@ -433,7 +438,9 @@ HEADERS +=  rshare.h \
             gui/FileTransfer/BannedFilesDialog.h \
             gui/statistics/TurtleRouterDialog.h \
             gui/statistics/TurtleRouterStatistics.h \
+            gui/statistics/GxsIdStatistics.h \
             gui/statistics/dhtgraph.h \
+            gui/statistics/Histogram.h \
             gui/statistics/BandwidthGraphWindow.h \
             gui/statistics/turtlegraph.h \
             gui/statistics/BandwidthStatsWidget.h \
@@ -751,6 +758,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/statistics/DhtWindow.ui \
             gui/statistics/TurtleRouterDialog.ui \
             gui/statistics/TurtleRouterStatistics.ui \
+            gui/statistics/GxsIdStatistics.ui \
             gui/statistics/GlobalRouterStatistics.ui \
             gui/statistics/GxsTransportStatistics.ui \
             gui/statistics/StatisticsWindow.ui \
@@ -991,8 +999,10 @@ SOURCES +=  main.cpp \
             gui/statistics/BandwidthGraphWindow.cpp \
             gui/statistics/BandwidthStatsWidget.cpp \
             gui/statistics/DhtWindow.cpp \
+            gui/statistics/Histogram.cpp \
             gui/statistics/TurtleRouterDialog.cpp \
             gui/statistics/TurtleRouterStatistics.cpp \
+            gui/statistics/GxsIdStatistics.cpp \
             gui/statistics/GlobalRouterStatistics.cpp \
             gui/statistics/GxsTransportStatistics.cpp \
             gui/statistics/StatisticsWindow.cpp \
@@ -1221,25 +1231,39 @@ gxsthewire {
 	
 	DEFINES += RS_USE_WIRE
 
-	HEADERS += gui/TheWire/PulseItem.h \
-		gui/TheWire/PulseDetails.h \
-		gui/TheWire/WireDialog.h \
+	HEADERS += gui/TheWire/WireDialog.h \
 		gui/TheWire/WireGroupItem.h \
 		gui/TheWire/WireGroupDialog.h \
+		gui/TheWire/WireGroupExtra.h \
 		gui/TheWire/PulseAddDialog.h \
-	
-	FORMS += gui/TheWire/PulseItem.ui \
-		gui/TheWire/PulseDetails.ui \
+		gui/TheWire/PulseViewItem.h \
+		gui/TheWire/PulseTopLevel.h \
+		gui/TheWire/PulseViewGroup.h \
+		gui/TheWire/PulseReply.h \
+		gui/TheWire/PulseReplySeperator.h \
+		gui/TheWire/PulseMessage.h \
+
+	FORMS += gui/TheWire/WireDialog.ui \
 		gui/TheWire/WireGroupItem.ui \
-		gui/TheWire/WireDialog.ui \
+		gui/TheWire/WireGroupExtra.ui \
 		gui/TheWire/PulseAddDialog.ui \
+		gui/TheWire/PulseTopLevel.ui \
+		gui/TheWire/PulseViewGroup.ui \
+		gui/TheWire/PulseReply.ui \
+		gui/TheWire/PulseReplySeperator.ui \
+		gui/TheWire/PulseMessage.ui \
 	
-	SOURCES += gui/TheWire/PulseItem.cpp \
-		gui/TheWire/PulseDetails.cpp \
-		gui/TheWire/WireDialog.cpp \
+	SOURCES += gui/TheWire/WireDialog.cpp \
 		gui/TheWire/WireGroupItem.cpp \
 		gui/TheWire/WireGroupDialog.cpp \
+		gui/TheWire/WireGroupExtra.cpp \
 		gui/TheWire/PulseAddDialog.cpp \
+		gui/TheWire/PulseViewItem.cpp \
+		gui/TheWire/PulseTopLevel.cpp \
+		gui/TheWire/PulseViewGroup.cpp \
+		gui/TheWire/PulseReply.cpp \
+		gui/TheWire/PulseReplySeperator.cpp \
+		gui/TheWire/PulseMessage.cpp \
 
 	RESOURCES += gui/TheWire/TheWire_images.qrc
 }
@@ -1332,24 +1356,28 @@ gxschannels {
 	HEADERS += gui/gxschannels/GxsChannelDialog.h \
 		gui/gxschannels/GxsChannelGroupDialog.h \
 		gui/gxschannels/CreateGxsChannelMsg.h \
-		gui/gxschannels/GxsChannelPostsWidget.h \
-		gui/gxschannels/GxsChannelFilesWidget.h \
+		gui/gxschannels/GxsChannelPostsWidgetWithModel.h \
+		gui/gxschannels/GxsChannelPostsModel.h \
+		gui/gxschannels/GxsChannelPostFilesModel.h \
+		gui/gxschannels/GxsChannelPostThumbnail.h \
 		gui/gxschannels/GxsChannelFilesStatusWidget.h \
 		gui/feeds/GxsChannelGroupItem.h \
 		gui/feeds/GxsChannelPostItem.h \
 		gui/gxschannels/GxsChannelUserNotify.h
 	
-	FORMS += gui/gxschannels/GxsChannelPostsWidget.ui \
-		gui/gxschannels/GxsChannelFilesWidget.ui \
+	FORMS += \
+		gui/gxschannels/GxsChannelPostsWidgetWithModel.ui \
 		gui/gxschannels/GxsChannelFilesStatusWidget.ui \
 		gui/gxschannels/CreateGxsChannelMsg.ui \
 		gui/feeds/GxsChannelGroupItem.ui \
 		gui/feeds/GxsChannelPostItem.ui
 	
 	SOURCES += gui/gxschannels/GxsChannelDialog.cpp \
-		gui/gxschannels/GxsChannelPostsWidget.cpp \
-		gui/gxschannels/GxsChannelFilesWidget.cpp \
+		gui/gxschannels/GxsChannelPostsWidgetWithModel.cpp \
+		gui/gxschannels/GxsChannelPostsModel.cpp \
+		gui/gxschannels/GxsChannelPostFilesModel.cpp \
 		gui/gxschannels/GxsChannelFilesStatusWidget.cpp \
+                gui/gxschannels/GxsChannelPostThumbnail.cpp \
 		gui/gxschannels/GxsChannelGroupDialog.cpp \
 		gui/gxschannels/CreateGxsChannelMsg.cpp \
 		gui/feeds/GxsChannelGroupItem.cpp \
@@ -1361,7 +1389,9 @@ gxschannels {
 posted {
 	
 	HEADERS += gui/Posted/PostedDialog.h \
-		gui/Posted/PostedListWidget.h \
+		gui/Posted/PostedListWidgetWithModel.h \
+		gui/Posted/PostedPostsModel.h \
+		gui/Posted/BoardPostDisplayWidget.h \
 		gui/Posted/PostedItem.h \
 		gui/Posted/PostedCardView.h \
 		gui/Posted/PostedGroupDialog.h \
@@ -1373,18 +1403,22 @@ posted {
 		#gui/Posted/PostedCreateCommentDialog.h \
 		#gui/Posted/PostedComments.h \
 	
-	FORMS += gui/Posted/PostedListWidget.ui \
+	FORMS += gui/Posted/PostedListWidgetWithModel.ui \
 		gui/feeds/PostedGroupItem.ui \
+		gui/Posted/BoardPostDisplayWidget_compact.ui \
+		gui/Posted/BoardPostDisplayWidget_card.ui \
 		gui/Posted/PostedItem.ui \
 		gui/Posted/PostedCardView.ui \
 		gui/Posted/PostedCreatePostDialog.ui \
-		gui/Posted/PhotoView.ui 
+		gui/Posted/PhotoView.ui \
 		#gui/Posted/PostedDialog.ui \
 		#gui/Posted/PostedComments.ui \
 		#gui/Posted/PostedCreateCommentDialog.ui
 	
 	SOURCES += gui/Posted/PostedDialog.cpp \
-		gui/Posted/PostedListWidget.cpp \
+		gui/Posted/PostedListWidgetWithModel.cpp \
+		gui/Posted/BoardPostDisplayWidget.cpp \
+		gui/Posted/PostedPostsModel.cpp \
 		gui/feeds/PostedGroupItem.cpp \
 		gui/Posted/PostedItem.cpp \
 		gui/Posted/PostedCardView.cpp \

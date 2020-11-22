@@ -235,8 +235,7 @@ template<> bool RsTypeSerializer::from_JSON( \
  \
 	if(!ret) \
     { \
-	    Dbg3() << __PRETTY_FUNCTION__ << " " << memberName << " not found" \
-	           << std::endl; \
+	    RS_DBG3(memberName, " not found"); \
 	    return false; \
 	} \
  \

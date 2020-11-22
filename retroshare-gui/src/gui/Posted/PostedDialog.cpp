@@ -21,7 +21,7 @@
 #include "PostedDialog.h"
 #include "PostedItem.h"
 #include "PostedGroupDialog.h"
-#include "PostedListWidget.h"
+#include "PostedListWidgetWithModel.h"
 #include "PostedUserNotify.h"
 #include "gui/gxs/GxsGroupShareKey.h"
 #include "gui/settings/rsharesettings.h"
@@ -162,8 +162,8 @@ bool PostedDialog::getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo)
 
     // request all group infos at once
 
-    if(! rsPosted->getBoardsInfo(std::list<RsGxsGroupId>(),groups))
-        return false;
+	if(! rsPosted->getBoardsInfo(std::list<RsGxsGroupId>(),groups))
+		return false;
 
  	/* Save groups to fill icons and description */
 
@@ -195,7 +195,7 @@ int PostedDialog::shareKeyType()
 
 GxsMessageFrameWidget *PostedDialog::createMessageFrameWidget(const RsGxsGroupId &groupId)
 {
-	return new PostedListWidget(groupId);
+	return new PostedListWidgetWithModel(groupId);
 }
 
 RsGxsCommentService *PostedDialog::getCommentService()
@@ -255,7 +255,7 @@ void PostedDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupDa
 	groupItemInfo.icon        = image;
     }
     else
-	groupItemInfo.icon        = QIcon(":icons/png/postedlinks.png");
+    groupItemInfo.icon        = FilesDefs::getIconFromQtResourcePath(":icons/png/postedlinks.png");
 
 	groupItemInfo.description = QString::fromUtf8(postedGroupData->mDescription.c_str());
 }

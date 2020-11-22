@@ -60,7 +60,7 @@ void GxsCommentContainer::commentLoad(const RsGxsGroupId &grpId, const std::set<
 		comments += "...";
 	}
 
-	GxsCommentDialog *commentDialog = new GxsCommentDialog(this, getTokenService(), getCommentService());
+    GxsCommentDialog *commentDialog = new GxsCommentDialog(this, RsGxsId(),getTokenService(), getCommentService());
 
 	QWidget *commentHeader = createHeaderWidget(grpId, msgId);
 	commentDialog->setCommentHeader(commentHeader);

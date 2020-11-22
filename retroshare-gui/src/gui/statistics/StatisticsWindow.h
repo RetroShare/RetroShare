@@ -38,6 +38,7 @@ class TurtleRouterStatistics;
 class GlobalRouterStatistics;
 class GxsTransportStatistics;
 class RttStatistics;
+class GxsIdStatistics;
 
 class StatisticsWindow : public QMainWindow {
     Q_OBJECT
@@ -57,6 +58,7 @@ public:
   BwCtrlWindow *bwdlg;
   TurtleRouterStatistics *trsdlg;
   RttStatistics *rttdlg;
+  GxsIdStatistics *gxsiddlg;
 
 
 public slots:

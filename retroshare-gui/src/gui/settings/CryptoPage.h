@@ -21,8 +21,9 @@
 #ifndef _CRYPTOPAGE_H
 #define _CRYPTOPAGE_H
 
-#include <retroshare-gui/configpage.h>
+#include "retroshare-gui/configpage.h"
 #include "ui_CryptoPage.h"
+#include "gui/common/FilesDefs.h"
 
 class CryptoPage : public ConfigPage
 {
@@ -36,16 +37,17 @@ class CryptoPage : public ConfigPage
 
       /** Loads the settings for this page */
 
-		virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/profile.svg") ; }
+        virtual QPixmap iconPixmap() const { return FilesDefs::getPixmapFromQtResourcePath(":/icons/settings/profile.svg") ; }
 		virtual QString pageName() const { return tr("Node") ; }
 		virtual QString helpText() const { return ""; }
 
   private slots:
+      void exportProfile();
       virtual void load();
       void copyPublicKey();
 	  void copyRSLink() ;
 	  virtual void showEvent ( QShowEvent * event );
-	  void profilemanager();
+//	  void profilemanager();
       bool fileSave();
       bool fileSaveAs();
       void showStats();

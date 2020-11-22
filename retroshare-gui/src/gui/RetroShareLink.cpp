@@ -566,7 +566,7 @@ RetroShareLink RetroShareLink::createCertificate(const RsPeerId& ssl_id)
 	} else {
 
 		link._type = TYPE_CERTIFICATE;
-		link._radix = QString::fromUtf8(rsPeers->GetRetroshareInvite(ssl_id,false,false).c_str());
+        link._radix = QString::fromUtf8(rsPeers->GetRetroshareInvite(ssl_id).c_str());
 		link._name = QString::fromUtf8(detail.name.c_str());
 		link._location = QString::fromUtf8(detail.location.c_str());
 		link._radix.replace("\n","");

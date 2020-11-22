@@ -21,6 +21,12 @@ if not exist "%BuildLibsPath%\libs\gcc-version" %cecho% error "Cannot get gcc ve
 set /P LibsGCCVersion=<"%BuildLibsPath%\libs\gcc-version"
 if "%LibsGCCVersion%" NEQ "%GCCVersion%" %cecho% error "Please use correct version of external libraries. (gcc %GCCVersion% ^<^> libs %LibsGCCVersion%)." & exit /B 1
 
+:: Get date
+call "%ToolsPath%\get-rs-date.bat" "%SourcePath%" RsDate
+if errorlevel 1 %cecho% error "Could not get date."& goto error
+
+if "%RsDate%"=="" %cecho% error "Could not get date."& goto error
+
 :: Build defines for script
 set NSIS_PARAM=
 
@@ -30,6 +36,10 @@ set NSIS_PARAM=%NSIS_PARAM% /DMINGWDIR="%MinGWPath%\.."
 set NSIS_PARAM=%NSIS_PARAM% /DOUTDIR="%RsPackPath%"
 set NSIS_PARAM=%NSIS_PARAM% /DINSTALLERADD="%RsArchiveAdd%"
 set NSIS_PARAM=%NSIS_PARAM% /DEXTERNAL_LIB_DIR="%BuildLibsPath%\libs"
+set NSIS_PARAM=%NSIS_PARAM% /DARCHITECTURE="%GCCArchitecture%"
+set NSIS_PARAM=%NSIS_PARAM% /DDATE="%RsDate%"
+
+if exist "%EnvTorPath%\Tor\tor.exe" set NSIS_PARAM=%NSIS_PARAM% /DTORDIR="%EnvTorPath%\Tor"
 
 :: Get compiled version
 call "%ToolsPath%\get-rs-version.bat" "%RsBuildPath%\retroshare-gui\src\%RsBuildConfig%\retroshare.exe" RsVersion

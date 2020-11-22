@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "gui/common/FilesDefs.h"
 #include "MessageUserNotify.h"
 #include "gui/notifyqt.h"
 #include "gui/MainWindow.h"
@@ -40,12 +41,12 @@ bool MessageUserNotify::hasSetting(QString *name, QString *group)
 
 QIcon MessageUserNotify::getIcon()
 {
-    return QIcon(":/icons/png/messages.png");
+    return FilesDefs::getIconFromQtResourcePath(":/icons/png/messages.png");
 }
 
 QIcon MessageUserNotify::getMainIcon(bool hasNew)
 {
-    return hasNew ? QIcon(":/icons/png/messages-notify.png") : QIcon(":/icons/png/messages.png");
+    return hasNew ? FilesDefs::getIconFromQtResourcePath(":/icons/png/messages-notify.png") : FilesDefs::getIconFromQtResourcePath(":/icons/png/messages.png");
 }
 
 unsigned int MessageUserNotify::getNewCount()

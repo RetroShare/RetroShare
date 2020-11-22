@@ -1028,7 +1028,7 @@ bool RsGxsDataAccess::getMsgMetaDataList( const GxsMsgReq& msgIds, const RsTokRe
 
             //auto& filter( metaFilter[grpId] ); // does the initialization of metaFilter[grpId] and avoids further O(log(n)) calls
 
-            std::vector<RsGxsMsgMetaData*>& metaV = meta_it->second;
+            std::vector<const RsGxsMsgMetaData*>& metaV = meta_it->second;
 
             if (onlyLatestMsgs) // if we only consider latest messages, we need to first filter out messages with "children"
             {
@@ -1046,9 +1046,9 @@ bool RsGxsDataAccess::getMsgMetaDataList( const GxsMsgReq& msgIds, const RsTokRe
                // Now loop once over message Metas and see if they have a parent. If yes, then mark the parent to be discarded.
 
                for(uint32_t i=0;i<metaV.size();++i)
-                   if(!metaV[i]->mParentId.isNull() && metaV[i]->mParentId != metaV[i]->mMsgId)	// this one is a follow up
+                   if(!metaV[i]->mOrigMsgId.isNull() && metaV[i]->mOrigMsgId != metaV[i]->mMsgId)	// this one is a follow up
                    {
-                       auto it = index_in_metaV.find(metaV[i]->mParentId);
+                       auto it = index_in_metaV.find(metaV[i]->mOrigMsgId);
 
                        if(it != index_in_metaV.end())
                            keep[it->second] = false;
@@ -1062,7 +1062,7 @@ bool RsGxsDataAccess::getMsgMetaDataList( const GxsMsgReq& msgIds, const RsTokRe
                for(uint32_t i=0;i<metaV.size();++i)
                    if(!keep[i])
                    {
-                       delete metaV[i];
+                       //delete metaV[i];
                        metaV[i] = nullptr;
                    }
 			}
@@ -1122,20 +1122,20 @@ bool RsGxsDataAccess::getMsgMetaDataList( const GxsMsgReq& msgIds, const RsTokRe
 			for(uint32_t i=0;i<metaV.size();++i)
                 if(metaV[i] != nullptr)
 				{
-					RsGxsMsgMetaData* msgMeta = metaV[i];
+					const RsGxsMsgMetaData* msgMeta = metaV[i];
 					bool add = false;
 
 					/* if we are grabbing thread Head... then parentId == empty. */
 					if (onlyThreadHeadMsgs && !msgMeta->mParentId.isNull())
 					{
-						delete msgMeta;
+						//delete msgMeta;
 						metaV[i] = nullptr;
 						continue;
 					}
 
 					if (onlyOrigMsgs && !msgMeta->mOrigMsgId.isNull() && msgMeta->mMsgId != msgMeta->mOrigMsgId)
 					{
-						delete msgMeta;
+						//delete msgMeta;
 						metaV[i] = nullptr;
 						continue;
 					}
@@ -1187,7 +1187,7 @@ bool RsGxsDataAccess::getMsgIdList( const GxsMsgReq& msgIds, const RsTokReqOptio
     }
 
     // delete meta data
-    cleanseMsgMetaMap(result);
+    //cleanseMsgMetaMap(result);
 
     return true;
 }
@@ -1240,65 +1240,44 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
             onlyThreadMsgs = true;
     }
 
-    if (onlyAllVersions && onlyChildMsgs)
-    {
-#ifdef DATA_DEBUG
-            RsDbg() << "RsGxsDataAccess::getMsgRelatedList() ERROR Incompatible FLAGS (VERSIONS & PARENT)" << std::endl;
-#endif
+	if(onlyAllVersions && onlyChildMsgs)
+	{
+		RS_ERR("Incompatible FLAGS (VERSIONS & PARENT)");
+		return false;
+	}
 
-            return false;
-    }
+	if(onlyAllVersions && onlyThreadMsgs)
+	{
+		RS_ERR("Incompatible FLAGS (VERSIONS & THREAD)");
+		return false;
+	}
 
-    if (onlyAllVersions && onlyThreadMsgs)
-    {
-#ifdef DATA_DEBUG
-            RsDbg() << "RsGxsDataAccess::getMsgRelatedList() ERROR Incompatible FLAGS (VERSIONS & THREAD)" << std::endl;
-#endif
+	if((!onlyLatestMsgs) && onlyChildMsgs)
+	{
+		RS_ERR("Incompatible FLAGS (!LATEST & PARENT)");
+		return false;
+	}
 
-            return false;
-    }
+	if((!onlyLatestMsgs) && onlyThreadMsgs)
+	{
+		RS_ERR("Incompatible FLAGS (!LATEST & THREAD)");
+		return false;
+	}
 
-    if ((!onlyLatestMsgs) && onlyChildMsgs)
-    {
-#ifdef DATA_DEBUG
-            RsDbg() << "RsGxsDataAccess::getMsgRelatedList() ERROR Incompatible FLAGS (!LATEST & PARENT)" << std::endl;
-#endif
+	if(onlyChildMsgs && onlyThreadMsgs)
+	{
+		RS_ERR("Incompatible FLAGS (PARENT & THREAD)");
+		return false;
+	}
 
-            return false;
-    }
+	if( (!onlyLatestMsgs) && (!onlyAllVersions) && (!onlyChildMsgs) &&
+	        (!onlyThreadMsgs) )
+	{
+		RS_WARN("NO FLAGS -> SIMPLY RETURN nothing");
+		return true;
+	}
 
-    if ((!onlyLatestMsgs) && onlyThreadMsgs)
-    {
-#ifdef DATA_DEBUG
-            RsDbg() << "RsGxsDataAccess::getMsgRelatedList() ERROR Incompatible FLAGS (!LATEST & THREAD)" << std::endl;
-#endif
-
-            return false;
-    }
-
-    if (onlyChildMsgs && onlyThreadMsgs)
-    {
-#ifdef DATA_DEBUG
-            RsDbg() << "RsGxsDataAccess::getMsgRelatedList() ERROR Incompatible FLAGS (PARENT & THREAD)" << std::endl;
-#endif
-
-            return false;
-    }
-
-
-    /* FALL BACK OPTION */
-    if ((!onlyLatestMsgs) && (!onlyAllVersions) && (!onlyChildMsgs) && (!onlyThreadMsgs))
-    {
-#ifdef DATA_DEBUG
-            RsDbg() << "RsGxsDataAccess::getMsgRelatedList() FALLBACK -> NO FLAGS -> SIMPLY RETURN nothing" << std::endl;
-#endif
-
-            return true;
-    }
-
-    std::vector<RsGxsGrpMsgIdPair>::iterator vit_msgIds = req->mMsgIds.begin();
-
-    for(; vit_msgIds != req->mMsgIds.end(); ++vit_msgIds)
+    for(auto vit_msgIds(req->mMsgIds.begin()); vit_msgIds != req->mMsgIds.end(); ++vit_msgIds)
     {
         MsgMetaFilter filterMap;
 
@@ -1310,8 +1289,8 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
         GxsMsgReq msgIds;
         msgIds.insert(std::make_pair(grpMsgIdPair.first, std::set<RsGxsMessageId>()));
         mDataStore->retrieveGxsMsgMetaData(msgIds, result);
-        std::vector<RsGxsMsgMetaData*>& metaV = result[grpMsgIdPair.first];
-        std::vector<RsGxsMsgMetaData*>::iterator vit_meta;
+        std::vector<const RsGxsMsgMetaData*>& metaV = result[grpMsgIdPair.first];
+        std::vector<const RsGxsMsgMetaData*>::iterator vit_meta;
 
         // msg id to relate to
         const RsGxsMessageId& msgId = grpMsgIdPair.second;
@@ -1319,10 +1298,11 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
 
         std::set<RsGxsMessageId> outMsgIds;
 
-        RsGxsMsgMetaData* origMeta = nullptr;
+        const RsGxsMsgMetaData* origMeta = nullptr;
+
         for(vit_meta = metaV.begin(); vit_meta != metaV.end(); ++vit_meta)
         {
-            RsGxsMsgMetaData* meta = *vit_meta;
+            const RsGxsMsgMetaData* meta = *vit_meta;
 
             if(msgId == meta->mMsgId)
             {
@@ -1331,18 +1311,14 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
             }
         }
 
-        if(!origMeta)
-        {
-#ifdef DATA_DEBUG
-            RsDbg() << "RsGxsDataAccess::getMsgRelatedInfo(): Cannot find meta of msgId (to relate to)!"
-                      << std::endl;
-#endif
-            cleanseMsgMetaMap(result);
-            return false;
-        }
+		if(!origMeta)
+		{
+			RS_ERR("Cannot find meta of msgId: ", msgId, " to relate to");
+			return false;
+		}
 
         const RsGxsMessageId& origMsgId = origMeta->mOrigMsgId;
-        std::map<RsGxsMessageId, RsGxsMsgMetaData*>& metaMap = filterMap[grpId];
+        std::map<RsGxsMessageId, const RsGxsMsgMetaData*>& metaMap = filterMap[grpId];
 
         if (onlyLatestMsgs)
         {
@@ -1354,7 +1330,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
                 for(vit_meta = metaV.begin(); vit_meta != metaV.end(); ++vit_meta)
                 {
 
-                    RsGxsMsgMetaData* meta = *vit_meta;
+                    const RsGxsMsgMetaData* meta = *vit_meta;
 
                     // skip msgs that aren't children.
                     if (onlyChildMsgs)
@@ -1422,11 +1398,11 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
                 /* first guess is potentially better than Orig (can't be worse!) */
                 rstime_t latestTs = 0;
                 RsGxsMessageId latestMsgId;
-                RsGxsMsgMetaData* latestMeta=nullptr;
+                const RsGxsMsgMetaData* latestMeta=nullptr;
 
                 for(vit_meta = metaV.begin(); vit_meta != metaV.end(); ++vit_meta)
                 {
-                    RsGxsMsgMetaData* meta = *vit_meta;
+                    const RsGxsMsgMetaData* meta = *vit_meta;
 
                     if (meta->mOrigMsgId == origMsgId)
                     {
@@ -1446,7 +1422,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
         {
             for(vit_meta = metaV.begin(); vit_meta != metaV.end(); ++vit_meta)
             {
-                RsGxsMsgMetaData* meta = *vit_meta;
+                const RsGxsMsgMetaData* meta = *vit_meta;
 
                 if (meta->mOrigMsgId == origMsgId)
                 {
@@ -1482,8 +1458,6 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
 
         outMsgIds.clear();
         filteredOutMsgIds.clear();
-
-        cleanseMsgMetaMap(result);
     }
     return true;
 }
@@ -1496,7 +1470,7 @@ bool RsGxsDataAccess::getGroupStatistic(GroupStatisticRequest *req)
     GxsMsgMetaResult metaResult;
     mDataStore->retrieveGxsMsgMetaData(metaReq, metaResult);
 
-    const std::vector<RsGxsMsgMetaData*>& msgMetaV = metaResult[req->mGrpId];
+    const std::vector<const RsGxsMsgMetaData*>& msgMetaV = metaResult[req->mGrpId];
 
     req->mGroupStatistic.mGrpId = req->mGrpId;
     req->mGroupStatistic.mNumMsgs = msgMetaV.size();
@@ -1514,7 +1488,7 @@ bool RsGxsDataAccess::getGroupStatistic(GroupStatisticRequest *req)
 
     for(uint32_t i = 0; i < msgMetaV.size(); ++i)
     {
-        RsGxsMsgMetaData* m = msgMetaV[i];
+        const RsGxsMsgMetaData* m = msgMetaV[i];
         req->mGroupStatistic.mTotalSizeOfMsgs += m->mMsgSize + m->serial_size();
 
         if(obsolete_msgs.find(m->mMsgId) != obsolete_msgs.end()) 	// skip obsolete messages.
@@ -1540,7 +1514,7 @@ bool RsGxsDataAccess::getGroupStatistic(GroupStatisticRequest *req)
         }
     }
 
-    cleanseMsgMetaMap(metaResult);
+    //cleanseMsgMetaMap(metaResult);
     return true;
 }
 
@@ -1595,21 +1569,19 @@ bool RsGxsDataAccess::getMsgIdList(MsgIdReq* req)
 
     mDataStore->retrieveGxsMsgMetaData(req->mMsgIds, result);
 
-
     GxsMsgMetaResult::iterator mit = result.begin(), mit_end = result.end();
 
     for(; mit != mit_end; ++mit)
     {
         const RsGxsGroupId grpId = mit->first;
-        std::vector<RsGxsMsgMetaData*>& metaV = mit->second;
-        std::vector<RsGxsMsgMetaData*>::iterator vit = metaV.begin(),
+        std::vector<const RsGxsMsgMetaData*>& metaV = mit->second;
+        std::vector<const RsGxsMsgMetaData*>::iterator vit = metaV.begin(),
         vit_end = metaV.end();
 
         for(; vit != vit_end; ++vit)
         {
-            RsGxsMsgMetaData* meta = *vit;
+            const RsGxsMsgMetaData* meta = *vit;
             req->mMsgIdResult[grpId].insert(meta->mMsgId);
-            delete meta; // discard meta data mem
         }
     }
 
@@ -1622,24 +1594,24 @@ bool RsGxsDataAccess::getMsgIdList(MsgIdReq* req)
     return true;
 }
 
-void RsGxsDataAccess::cleanseMsgMetaMap(GxsMsgMetaResult& result)
-{
-    GxsMsgMetaResult::iterator mit = result.begin();
-
-        for(; mit !=result.end(); ++mit)
-	{
-
-            std::vector<RsGxsMsgMetaData*>& msgMetaV = mit->second;
-            std::vector<RsGxsMsgMetaData*>::iterator vit = msgMetaV.begin();
-                for(; vit != msgMetaV.end(); ++vit)
-		{
-                        delete *vit;
-		}
-	}
-
-        result.clear();
-	return;
-}
+// void RsGxsDataAccess::cleanseMsgMetaMap(GxsMsgMetaResult& result)
+// {
+//     GxsMsgMetaResult::iterator mit = result.begin();
+//
+//         for(; mit !=result.end(); ++mit)
+// 	{
+//
+//             std::vector<RsGxsMsgMetaData*>& msgMetaV = mit->second;
+//             std::vector<RsGxsMsgMetaData*>::iterator vit = msgMetaV.begin();
+//                 for(; vit != msgMetaV.end(); ++vit)
+// 		{
+//                         delete *vit;
+// 		}
+// 	}
+//
+//         result.clear();
+// 	return;
+// }
 
 void RsGxsDataAccess::filterMsgIdList( GxsMsgIdResult& resultsMap, const RsTokReqOptions& opts, const MsgMetaFilter& msgMetas ) const
 {
@@ -1659,11 +1631,11 @@ void RsGxsDataAccess::filterMsgIdList( GxsMsgIdResult& resultsMap, const RsTokRe
 		for( std::set<RsGxsMessageId>::iterator msgIdIt = msgsIdSet.begin(); msgIdIt != msgsIdSet.end(); )
 		{
 			const RsGxsMessageId& msgId(*msgIdIt);
-			const std::map<RsGxsMessageId, RsGxsMsgMetaData*>& msgsMetaMap =
+			const std::map<RsGxsMessageId, const RsGxsMsgMetaData*>& msgsMetaMap =
 			        cit->second;
 
 			bool keep = false;
-			std::map<RsGxsMessageId, RsGxsMsgMetaData*>::const_iterator msgsMetaMapIt;
+			std::map<RsGxsMessageId, const RsGxsMsgMetaData*>::const_iterator msgsMetaMapIt;
 
 			if( (msgsMetaMapIt = msgsMetaMap.find(msgId)) != msgsMetaMap.end() )
 			{

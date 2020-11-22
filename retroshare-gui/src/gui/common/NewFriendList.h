@@ -25,8 +25,9 @@
 #include <QWidget>
 #include <QTreeView>
 
+#include <retroshare-gui/RsAutoUpdatePage.h>
+
 #include "FriendListModel.h"
-#include "RsAutoUpdatePage.h"
 #include "retroshare/rsstatus.h"
 
 namespace Ui {
@@ -102,7 +103,9 @@ private:
 	RsFriendListModel *mModel;
 	QAction *mActionSortByState;
 
-	void expandGroup(const RsNodeGroupId& gid);
+    void applyWhileKeepingTree(std::function<void()> predicate);
+
+    void expandGroup(const RsNodeGroupId& gid);
 	void recursRestoreExpandedItems(const QModelIndex& index, const QString& parent_path, const std::set<QString>& exp, const std::set<QString> &sel);
 	void recursSaveExpandedItems(const QModelIndex& index,const QString& parent_path,std::set<QString>& exp, std::set<QString>& sel);
 	void saveExpandedPathsAndSelection(std::set<QString>& expanded_indexes, std::set<QString>& selected_indexes);
@@ -122,6 +125,9 @@ private:
 
 	std::set<RsNodeGroupId> openGroups;
 	std::set<RsPgpId>   openPeers;
+
+    int mLastSortColumn;
+    Qt::SortOrder mLastSortOrder;
 
 	bool getOrCreateGroup(const std::string& name, uint flag, RsNodeGroupId& id);
 	bool getGroupIdByName(const std::string& name, RsNodeGroupId& id);

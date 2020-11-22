@@ -67,7 +67,7 @@ static void fillGxsIdRSTreeWidgetItemCallback(GxsIdDetailsType type, const RsIde
 		break;
         
     	case GXS_ID_DETAILS_TYPE_BANNED:
-        	icons.push_back(QIcon("BANNED_IMAGE")) ;
+            icons.push_back(FilesDefs::getIconFromQtResourcePath("BANNED_IMAGE")) ;
             	break ;
 	}
 
@@ -161,7 +161,7 @@ QVariant GxsIdRSTreeWidgetItem::data(int column, int role) const
 			if(mId.isNull())
                 return RSTreeWidgetItem::data(column, role);
 			else if( rsReputations->overallReputationLevel(mId) == RsReputationLevel::LOCALLY_NEGATIVE )
-				pix = QPixmap(BANNED_IMAGE);
+                pix = FilesDefs::getPixmapFromQtResourcePath(BANNED_IMAGE);
 			else if ( mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(mAvatar.mData, mAvatar.mSize, pix,GxsIdDetails::LARGE) )
 				pix = GxsIdDetails::makeDefaultIcon(mId,GxsIdDetails::LARGE);
 

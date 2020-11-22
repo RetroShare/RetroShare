@@ -32,16 +32,17 @@ public:
     explicit ClickableLabel(QWidget* parent = Q_NULLPTR, Qt::WindowFlags f = Qt::WindowFlags());
     ~ClickableLabel();
 
+    void setUseStyleSheet(bool b){ mUseStyleSheet=b ; update();}
 signals:
     void clicked();
 
 protected:
-    void mousePressEvent(QMouseEvent* event);
+    void mousePressEvent(QMouseEvent* event) override;
 
-	void enterEvent(QEvent * /* ev */ ) override { setStyleSheet("QLabel { border: 2px solid #039bd5; }");}
+    void enterEvent(QEvent * /* ev */ ) override { if(mUseStyleSheet) setStyleSheet("QLabel { border: 2px solid #039bd5; }");}
+    void leaveEvent(QEvent * /* ev */ ) override { if(mUseStyleSheet) setStyleSheet("QLabel { border: 2px solid #CCCCCC; border-radius: 3px; }");}
 
-    void leaveEvent(QEvent * /* ev */ ) override { setStyleSheet("QLabel { border: 2px solid #CCCCCC; border-radius: 3px; }");}
-
+    bool mUseStyleSheet;
 };
 
 #endif // CLICKABLELABEL_H

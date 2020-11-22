@@ -107,7 +107,8 @@ namespace GXS_SERV {
     static const uint32_t GXS_MSG_STATUS_UNPROCESSED = 0x00000001;	// Flags to store the read/process status of group messages.
     static const uint32_t GXS_MSG_STATUS_GUI_UNREAD  = 0x00000002;	// The actual meaning may depend on the type of service.
     static const uint32_t GXS_MSG_STATUS_GUI_NEW     = 0x00000004;	//
-    static const uint32_t GXS_MSG_STATUS_KEEP        = 0x00000008;	//
+	/** Do not delete message even if older then group maximum storage time */
+	static const uint32_t GXS_MSG_STATUS_KEEP_FOREVER = 0x00000008;
     static const uint32_t GXS_MSG_STATUS_DELETE      = 0x00000020;	//
 
     /** END GXS Msg status flags **/

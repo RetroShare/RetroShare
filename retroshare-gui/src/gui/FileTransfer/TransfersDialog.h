@@ -25,7 +25,7 @@
 
 #include <retroshare/rstypes.h>
 #include <retroshare/rsevents.h>
-#include "RsAutoUpdatePage.h"
+#include <retroshare-gui/RsAutoUpdatePage.h>
 
 #include "ui_TransfersDialog.h"
 
@@ -260,7 +260,7 @@ private:
     bool controlTransferFile(uint32_t flags);
     void changePriority(int priority);
     void setChunkStrategy(FileChunksInfo::ChunkStrategy s) ;
-	void handleEvent(std::shared_ptr<const RsEvent> event);
+	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
     QTreeView *downloadList;
 

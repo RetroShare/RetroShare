@@ -21,6 +21,7 @@
 
 #include "PostedGroupDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/common/FilesDefs.h"
 
 #include <retroshare/rswiki.h>
 #include <iostream>
@@ -89,7 +90,7 @@ void PostedGroupDialog::initUi()
 
 QPixmap PostedGroupDialog::serviceImage()
 {
-	return QPixmap(":/icons/png/posted.png");
+    return FilesDefs::getPixmapFromQtResourcePath(":/icons/png/posted.png");
 }
 
 void PostedGroupDialog::preparePostedGroup(RsPostedGroup &group, const RsGroupMetaData &meta)
@@ -159,7 +160,7 @@ bool PostedGroupDialog::service_loadGroup(const RsGxsGenericGroupData *data, Mod
 
 	}
     else
-		setLogo(QPixmap(":/icons/png/posted.png"));
+        setLogo(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/posted.png"));
 
 	return true;
 }

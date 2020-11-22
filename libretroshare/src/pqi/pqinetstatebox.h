@@ -27,6 +27,9 @@
 #include <string>
 #include <list>
 
+#include <util/rstime.h>
+#include <retroshare/rsconfig.h>
+
 /*** Network state 
  * Want this to be all encompassing.
  *
@@ -51,11 +54,11 @@ class pqiNetStateBox
 
 	void setDhtState(bool dhtOn, bool dhtActive);
 
-	uint32_t getNetStateMode();
-	uint32_t getNetworkMode();
-	uint32_t getNatTypeMode();
-	uint32_t getNatHoleMode();
-	uint32_t getConnectModes();
+	RsNetState getNetStateMode();
+	RsNetworkMode getNetworkMode();
+	RsNatTypeMode getNatTypeMode();
+	RsNatHoleMode getNatHoleMode();
+	RsConnectModes getConnectModes();
 
 	private:
 
@@ -71,11 +74,11 @@ class pqiNetStateBox
 	bool mStatusOkay;
 	rstime_t mStatusTS;
 
-	uint32_t mNetworkMode;
-	uint32_t mNatTypeMode;
-	uint32_t mNatHoleMode;
-	uint32_t mConnectModes;
-	uint32_t mNetStateMode;
+	RsNetworkMode mNetworkMode;
+	RsNatTypeMode mNatTypeMode;
+	RsNatHoleMode mNatHoleMode;
+	RsConnectModes mConnectModes;
+	RsNetState mNetStateMode;
 
 	/* Parameters set externally */
 
@@ -113,14 +116,5 @@ class pqiNetStateBox
 	bool mPortForwardSet;
 	uint16_t  mPortForwarded;
 };
-
-
-
-std::string NetStateNetStateString(uint32_t netstate);
-std::string NetStateConnectModesString(uint32_t connect);
-std::string NetStateNatHoleString(uint32_t natHole);
-std::string NetStateNatTypeString(uint32_t natType);
-std::string NetStateNetworkModeString(uint32_t netMode);
-
 
 #endif

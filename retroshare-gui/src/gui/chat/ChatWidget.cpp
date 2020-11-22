@@ -42,7 +42,6 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/settings/rsettingswin.h"
 #include "gui/settings/RsharePeerSettings.h"
-#include "gui/im_history/ImHistoryBrowser.h"
 #include "gui/common/StatusDefs.h"
 #include "gui/common/FilesDefs.h"
 #include "gui/common/Emoticons.h"
@@ -53,6 +52,7 @@
 #include "gui/chat/ChatUserNotify.h"//For BradCast
 #include "util/DateTime.h"
 #include "util/imageutil.h"
+#include "gui/im_history/ImHistoryBrowser.h"
 
 #include <retroshare/rsstatus.h>
 #include <retroshare/rsidentity.h>
@@ -78,7 +78,7 @@ ChatWidget::ChatWidget(QWidget *parent)
   , lastStatusSendTime(0)
   , firstShow(true), inChatCharFormatChanged(false), firstSearch(true)
   , lastUpdateCursorPos(0), lastUpdateCursorEnd(0)
-  , completer(NULL), notify(NULL)
+  , completer(NULL), imBrowser(NULL), notify(NULL)
   , ui(new Ui::ChatWidget)
 {
 	ui->setupUi(this);
@@ -87,8 +87,8 @@ ChatWidget::ChatWidget(QWidget *parent)
 	double fmm = iconHeight > FMM_THRESHOLD ? FMM : FMM_SMALLER;
 	iconHeight *= fmm;
 	QSize iconSize = QSize(iconHeight, iconHeight);
-	int butt_size(iconSize.height() + fmm);
-	QSize buttonSize = QSize(butt_size, butt_size);
+	//int butt_size(iconSize.height() + fmm);
+	//QSize buttonSize = QSize(butt_size, butt_size);
 
 	lastMsgDate = QDate::currentDate();
 
@@ -245,7 +245,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 
 //#ifdef ENABLE_DISTANT_CHAT_AND_MSGS
 //	contextMnu->addSeparator();
-//    QAction *action = new QAction(QIcon(":/images/pasterslink.png"), tr("Paste/Create private chat or Message link..."), this);
+//    QAction *action = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/pasterslink.png"), tr("Paste/Create private chat or Message link..."), this);
 //    connect(action, SIGNAL(triggered()), this, SLOT(pasteCreateMsgLink()));
 //    ui->chatTextEdit->addContextMenuAction(action);
 //#endif
@@ -1067,7 +1067,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 		rsIdentity->getIdDetails(gxsId, details);
 		bool isUnsigned = !(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED);
 		if(isUnsigned && ui->textBrowser->getShowImages()) {
-			QIcon icon = QIcon(":/icons/anonymous_blue_128.png");
+            QIcon icon = FilesDefs::getIconFromQtResourcePath(":/icons/anonymous_blue_128.png");
 			int height = ui->textBrowser->fontMetrics().height()*0.8;
 			QImage image(icon.pixmap(height,height).toImage());
 			QByteArray byteArray;
@@ -1607,8 +1607,9 @@ void ChatWidget::deleteChatHistory()
 
 void ChatWidget::messageHistory()
 {
-    ImHistoryBrowser imBrowser(chatId, ui->chatTextEdit, window());
-	imBrowser.exec();
+	if (!imBrowser)
+		imBrowser = new ImHistoryBrowser(chatId, ui->chatTextEdit, this->title, window());
+	imBrowser->show();
 }
 
 void ChatWidget::addExtraFile()
@@ -1863,7 +1864,7 @@ void ChatWidget::updatePeersCustomStateString(const QString& /*peer_id*/, const 
 void ChatWidget::updateStatusString(const QString &statusMask, const QString &statusString, bool permanent)
 {
 	ui->typingLabel->setText(QString(statusMask).arg(trUtf8(statusString.toUtf8()))); // displays info for 5 secs.
-	ui->typingPixmapLabel->setPixmap(QPixmap(":icons/png/typing.png") );
+    ui->typingPixmapLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":icons/png/typing.png") );
 
 	if (statusString == "is typing...") {
 		typing = true;

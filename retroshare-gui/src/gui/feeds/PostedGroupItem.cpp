@@ -25,6 +25,7 @@
 #include "util/qtthreadsutils.h"
 #include "gui/RetroShareLink.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/common/FilesDefs.h"
 
 /****
  * #define DEBUG_ITEM 1
@@ -156,15 +157,15 @@ void PostedGroupItem::fill()
 		GxsIdDetails::loadPixmapFromData(mGroup.mGroupImage.mData, mGroup.mGroupImage.mSize, postedImage,GxsIdDetails::ORIGINAL);
 		ui->logoLabel->setPixmap(QPixmap(postedImage));
 	} else {
-		ui->logoLabel->setPixmap(QPixmap(":/icons/png/posted.png"));
+        ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/posted.png"));
 	}
 
 
 	//TODO - nice icon for subscribed group
 //	if (IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags)) {
-//		ui->logoLabel->setPixmap(QPixmap(":/icons/png/posted.png"));
+//		ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/posted.png"));
 //	} else {
-//		ui->logoLabel->setPixmap(QPixmap(":/icons/png/posted.png"));
+//		ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/posted.png"));
 //	}
 
 	if (IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags)) {
@@ -204,13 +205,13 @@ void PostedGroupItem::doExpand(bool open)
 	if (open)
 	{
 		ui->expandFrame->show();
-		ui->expandButton->setIcon(QIcon(QString(":/icons/png/up-arrow.png")));
+        ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/up-arrow.png")));
 		ui->expandButton->setToolTip(tr("Hide"));
 	}
 	else
 	{
 		ui->expandFrame->hide();
-		ui->expandButton->setIcon(QIcon(QString(":/icons/png/down-arrow.png")));
+        ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/down-arrow.png")));
 		ui->expandButton->setToolTip(tr("Expand"));
 	}
 

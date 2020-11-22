@@ -1063,8 +1063,12 @@ void    p3LinkMgrIMPL::peerStatus(const RsPeerId& id, const pqiIpAddrSet &addrs,
 	uint32_t peer_vs_dht = 0;
 	uint32_t peerNetMode = 0;
 
-	uint32_t ownNetMode = mNetMgr->getNetworkMode();
-	
+	int ownNetMode;
+	{
+		peerState ps;
+		mPeerMgr->getOwnNetStatus(ps);
+		ownNetMode = ps.netMode;
+	}
 	{
 		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 

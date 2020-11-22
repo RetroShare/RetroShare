@@ -37,6 +37,7 @@
 #include "util/rstime.h"
 #include "retroshare/rsevents.h"
 #include "util/rsmemory.h"
+#include "util/rsdebug.h"
 
 class RsFiles;
 
@@ -63,8 +64,7 @@ struct RsFilesErrorCategory: std::error_category
 		case RsFilesErrorNum::FILES_HANDLE_NOT_FOUND:
 			return "Files handle not found";
 		default:
-			return "Error message for error: " + std::to_string(ev) +
-			        " not available in category: " + name();
+			return rsErrorNotInCategory(ev, name());
 		}
 	}
 

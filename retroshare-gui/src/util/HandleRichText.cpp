@@ -1034,9 +1034,10 @@ static void styleCreate(QDomDocument& doc
 		it.next();
 		const QStringList& classUsingIt ( it.value()) ;
 		bool first = true;
+		QString classNames = "";
 		foreach(QString className, classUsingIt) {
 			if (!className.trimmed().isEmpty()) {
-				style += QString(first?".":",.") + className;// + " ";
+				classNames += QString(first?".":",.") + className;// + " ";
 				first = false;
 			}
 		}
@@ -1083,9 +1084,9 @@ static void styleCreate(QDomDocument& doc
 			}
 
 			//.S1 .S2 .S4 {font-family:'Sans';}
-			style += "{" + key + ":" + val + ";}";
+			style += classNames + "{" + key + ":" + val + ";}";
 		} else {
-			style += "{" + it.key() + ";}\n";
+			style += classNames + "{" + it.key() + ";}\n";
 		}
 	}
 
