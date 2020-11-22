@@ -43,7 +43,6 @@ win32 {
 	}
 
 	libretroshare_shared {
-		PRE_TARGETDEPS += $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
 		LIBS += -L"$$OUT_PWD/../../libretroshare/src/lib" -lretroshare
 	}
 

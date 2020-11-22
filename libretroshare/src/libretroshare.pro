@@ -868,7 +868,7 @@ rs_jsonapi {
         genrestbedlib.output = $$clean_path($${RESTBED_BUILD_PATH}/librestbed.a)
         genrestbedlib.CONFIG += target_predeps combine
         genrestbedlib.variable_out = PRE_TARGETDEPS
-        win32-g++:isEmpty(QMAKE_SH) {
+        win32-g++|win32-clang-g++:isEmpty(QMAKE_SH) {
             genrestbedlib.commands = \
                 cd /D $$shell_path($${RS_SRC_PATH}) && git submodule update --init supportlibs/restbed || cd . $$escape_expand(\\n\\t) \
                 cd /D $$shell_path($${RESTBED_SRC_PATH}) && git submodule update --init dependency/asio || cd . $$escape_expand(\\n\\t) \
@@ -919,7 +919,7 @@ rs_jsonapi {
     genjsonapi.clean = $${WRAPPERS_INCL_FILE} $${WRAPPERS_REG_FILE}
     genjsonapi.CONFIG += target_predeps combine no_link
     genjsonapi.variable_out = HEADERS
-    win32-g++:isEmpty(QMAKE_SH) {
+    win32-g++|win32-clang-g++:isEmpty(QMAKE_SH) {
         genjsonapi.commands = \
             $(CHK_DIR_EXISTS) $$shell_path($$JSONAPI_GENERATOR_OUT) $(MKDIR) $$shell_path($${JSONAPI_GENERATOR_OUT}) $$escape_expand(\\n\\t)
     } else {
@@ -989,7 +989,7 @@ rs_broadcast_discovery {
         udpdiscoverycpplib.output = $$clean_path($${UDP_DISCOVERY_BUILD_PATH}/libudp-discovery.a)
         udpdiscoverycpplib.CONFIG += target_predeps combine
         udpdiscoverycpplib.variable_out = PRE_TARGETDEPS
-        win32-g++:isEmpty(QMAKE_SH) {
+        win32-g++|win32-clang-g++:isEmpty(QMAKE_SH) {
             udpdiscoverycpplib.commands = \
                 cd /D $$shell_path($${RS_SRC_PATH}) && git submodule update --init supportlibs/udp-discovery-cpp || cd . $$escape_expand(\\n\\t) \
                 $(CHK_DIR_EXISTS) $$shell_path($$UDP_DISCOVERY_BUILD_PATH) $(MKDIR) $$shell_path($${UDP_DISCOVERY_BUILD_PATH}) $$escape_expand(\\n\\t)
