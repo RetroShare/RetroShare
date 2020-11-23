@@ -113,23 +113,6 @@
               <property name="rightMargin">
                <number>0</number>
               </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="checkBox_enableCustomFontColor">
-              <property name="text">
-               <string>Enable custom font color</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="minimumFontSizeHLayout">
-              <property name="topMargin">
-               <number>0</number>
-              </property>
               <property name="bottomMargin">
                <number>0</number>
               </property>
@@ -366,6 +349,16 @@
                <widget class="QCheckBox" name="checkBox_enableCustomFontSize">
                 <property name="text">
                  <string>Enable custom font size</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="checkBox_enableCustomFontColor">
+                <property name="text">
+                 <string>Enable custom font color</string>
                 </property>
                 <property name="checked">
                  <bool>true</bool>
