@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare GUI is distributed under the following license:
- *
- *  Copyright (C) 2012 by Thunder
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * plugins/FeedReader/services/p3FeedReaderThread.h                            *
+ *                                                                             *
+ * Copyright (C) 2012 by Thunder <retroshare.project@gmail.com>                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef P3_FEEDREADERTHREAD
 #define P3_FEEDREADERTHREAD
@@ -43,10 +42,10 @@ public:
 	};
 
 public:
-	p3FeedReaderThread(p3FeedReader *feedReader, Type type, const std::string &feedId);
+	p3FeedReaderThread(p3FeedReader *feedReader, Type type, uint32_t feedId);
 	virtual ~p3FeedReaderThread();
 
-	std::string getFeedId() { return mFeedId; }
+	uint32_t getFeedId() { return mFeedId; }
 
 	static RsFeedReaderErrorState processXPath(const std::list<std::string> &xpathsToUse, const std::list<std::string> &xpathsToRemove, std::string &description, std::string &errorString);
 	static RsFeedReaderErrorState processXPath(const std::list<std::string> &xpathsToUse, const std::list<std::string> &xpathsToRemove, HTMLWrapper &html, std::string &errorString);
@@ -56,7 +55,7 @@ public:
 
 	static RsFeedReaderErrorState processTransformation(const RsFeedReaderFeed &feed, RsFeedReaderMsg *msg, std::string &errorString);
 private:
-    virtual void data_tick();
+	virtual void threadTick() override; /// @see RsTickingThread
 
 	RsFeedReaderErrorState download(const RsFeedReaderFeed &feed, std::string &content, std::string &icon, std::string &errorString);
 	RsFeedReaderErrorState process(const RsFeedReaderFeed &feed, std::list<RsFeedReaderMsg*> &entries, std::string &errorString);
@@ -66,7 +65,7 @@ private:
 
 	p3FeedReader *mFeedReader;
 	Type mType;
-	std::string mFeedId;
+	uint32_t mFeedId;
 };
 
 #endif 

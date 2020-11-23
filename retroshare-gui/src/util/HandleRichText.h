@@ -1,23 +1,22 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (c) 2010, Thomas Kister
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * util/HandleRichText.h                                                       *
+ *                                                                             *
+ * Copyright (c) 2010 Thomas Kister    <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <gui/common/RSTextBrowser.h>
 
@@ -44,6 +43,7 @@
 #define RSHTML_FORMATTEXT_REMOVE_FONT         (RSHTML_FORMATTEXT_REMOVE_FONT_WEIGHT | RSHTML_FORMATTEXT_REMOVE_FONT_STYLE | RSHTML_FORMATTEXT_REMOVE_FONT_FAMILY | RSHTML_FORMATTEXT_REMOVE_FONT_SIZE)
 #define RSHTML_FORMATTEXT_CLEANSTYLE          (RSHTML_FORMATTEXT_REMOVE_FONT | RSHTML_FORMATTEXT_REMOVE_COLOR)
 #define RSHTML_FORMATTEXT_NO_EMBED            0x0400//1024
+#define RSHTML_FORMATTEXT_USE_CMARK           0x0800//2048
 /* Flags for RsHtml::optimizeHtml */
 #define RSHTML_OPTIMIZEHTML_MASK              (RSHTML_FORMATTEXT_CLEANSTYLE | RSHTML_FORMATTEXT_FIX_COLORS | RSHTML_FORMATTEXT_OPTIMIZE)
 
@@ -69,8 +69,8 @@ public:
 	static void    optimizeHtml(QString &text, unsigned int flag = 0, const QColor &backgroundColor = Qt::white, qreal desiredContrast = 1.0, int desiredMinimumFontSize = 10);
 	static QString toHtml(QString text, bool realHtml = true);
 
-	static bool    makeEmbeddedImage(const QString &fileName, QString &embeddedImage, const int maxPixels);
-	static bool    makeEmbeddedImage(const QImage &originalImage, QString &embeddedImage, const int maxPixels);
+	static bool    makeEmbeddedImage(const QString &fileName, QString &embeddedImage, const int maxPixels, const int maxBytes = -1);
+	static bool    makeEmbeddedImage(const QImage &originalImage, QString &embeddedImage, const int maxPixels, const int maxBytes = -1);
 
 	static QString plainText(const QString &text);
 	static QString plainText(const std::string &text);

@@ -1,28 +1,30 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (c) 2012, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/common/RSTreeWidget.h                                                   *
+ *                                                                             *
+ * Copyright (C) 2012 RetroShare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef _RSTREEWIDGET_H
 #define _RSTREEWIDGET_H
 
 #include <QTreeWidget>
+
+#define FILTER_REASON_TEXT           0x0001
+#define FILTER_REASON_MINVAL         0x0002
 
 /* Subclassing QTreeWidget */
 class RSTreeWidget : public QTreeWidget
@@ -35,7 +37,9 @@ public:
 	QString placeholderText() { return mPlaceholderText; }
 	void setPlaceholderText(const QString &text);
 
+	void setFilterReasonRole(int role = -1);
 	void filterItems(int filterColumn, const QString &text, int role = Qt::DisplayRole);
+	void filterMinValItems(int filterColumn, const double &value, int role = Qt::DisplayRole);
 
 	void setSettingsVersion(qint32 version);
 	void processSettings(bool load);
@@ -58,6 +62,7 @@ signals:
 
 private:
 	bool filterItem(QTreeWidgetItem *item, int filterColumn, const QString &text, int role);
+	bool filterMinValItem(QTreeWidgetItem *item, int filterColumn, const double &value, int role);
 
 private slots:
 	void headerContextMenuRequested(const QPoint &pos);
@@ -74,6 +79,7 @@ private:
 	QMap<int, bool> mColumnCustomizable;
 	QList<QAction*> mContextMenuActions;
 	QList<QMenu*> mContextMenuMenus;
+	int mFilterReasonRole;
 };
 
 #endif

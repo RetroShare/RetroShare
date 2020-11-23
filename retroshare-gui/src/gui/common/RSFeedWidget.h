@@ -1,23 +1,22 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (c) 2014, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/common/RSFeedWidget.h                                                   *
+ *                                                                             *
+ * Copyright (C) 2014, Retroshare Team <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef _RSFEEDTREEWIDGET_H
 #define _RSFEEDTREEWIDGET_H
@@ -72,7 +71,7 @@ public:
 	bool scrollTo(FeedItem *feedItem, bool focus);
 
 	void withAll(RSFeedWidgetCallbackFunction callback, void *data);
-	FeedItem *findFeedItem(RSFeedWidgetFindCallbackFunction callback, void *data);
+	FeedItem *findFeedItem(uint64_t identifier);
 
 	void selectedFeedItems(QList<FeedItem*> &feedItems);
 
@@ -88,18 +87,18 @@ public slots:
 protected:
 	bool eventFilter(QObject *object, QEvent *event);
 	virtual void feedAdded(FeedItem *feedItem, QTreeWidgetItem *treeItem);
-	virtual void feedRemoved(FeedItem *feedItem);
 	virtual void feedsCleared();
 
 private slots:
-	void feedItemDestroyed(FeedItem *feedItem);
+	void feedItemDestroyed(qulonglong id);
 	void feedItemSizeChanged(FeedItem *feedItem);
 
 private:
 	void connectSignals(FeedItem *feedItem);
 	void disconnectSignals(FeedItem *feedItem);
 	FeedItem *feedItemFromTreeItem(QTreeWidgetItem *treeItem);
-	QTreeWidgetItem *findTreeWidgetItem(FeedItem *feedItem);
+	QTreeWidgetItem *findTreeWidgetItem(uint64_t identifier);
+	QTreeWidgetItem *findTreeWidgetItem(const FeedItem *w);
 	void filterItems();
 	void filterItem(QTreeWidgetItem *treeItem, FeedItem *feedItem);
 
@@ -117,9 +116,6 @@ private:
 
 	/* Options */
 	int mCountChangedDisabled;
-
-	/* Items */
-	QMap<FeedItem*, QTreeWidgetItem*> mItems;
 
 	Ui::RSFeedWidget *ui;
 };

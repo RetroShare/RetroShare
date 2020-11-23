@@ -1,23 +1,23 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2015
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * plugins/VOIP/VOIPPlugin.cpp                                                 *
+ *                                                                             *
+ * Copyright 2011 by Retroshare Team <retroshare.project@gmail.com>            *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsversion.h>
 #include <retroshare/rsinit.h>
@@ -61,7 +61,7 @@ extern "C" {
 	// It will be tested by RS to load the plugin automatically, since it is safe to load plugins
 	// with same revision numbers, assuming that the revision numbers are up-to-date.
 	//
-	uint32_t RETROSHARE_PLUGIN_revision = RS_REVISION_NUMBER ;
+	uint32_t RETROSHARE_PLUGIN_revision = 0;
 
 	// This symbol contains the svn revision number grabbed from the executable. 
 	// It will be tested by RS to load the plugin automatically, since it is safe to load plugins
@@ -74,8 +74,8 @@ void VOIPPlugin::getPluginVersion(int& major, int& minor, int& build, int& svn_r
 {
 	major = RS_MAJOR_VERSION ;
 	minor = RS_MINOR_VERSION ;
-	build = RS_BUILD_NUMBER ;
-	svn_rev = RS_REVISION_NUMBER ;
+	build = RS_MINI_VERSION ;
+	svn_rev = 0;
 }
 
 VOIPPlugin::VOIPPlugin()
@@ -216,7 +216,7 @@ QTranslator* VOIPPlugin::qt_translator(QApplication */*app*/, const QString& lan
 
 void VOIPPlugin::qt_sound_events(SoundEvents &events) const
 {
-	QDir baseDir = QDir(QString::fromUtf8(RsAccounts::DataDirectory().c_str()) + "/sounds");
+	QDir baseDir = QDir(QString::fromUtf8(RsAccounts::systemDataDirectory().c_str()) + "/sounds");
 
 	events.addEvent(QApplication::translate("VOIP", "VOIP")
 	                , QApplication::translate("VOIP", "Incoming audio call")

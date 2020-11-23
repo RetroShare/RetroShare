@@ -1,34 +1,33 @@
-/*
- * RetroShare Hash cache
- *
- *     file_sharing/hash_cache.cc
- *
- * Copyright 2016 Mr.Alice
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare.project@gmail.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/file_sharing: hash_cache.cc                               *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2018 by Mr.Alice <mralice@users.sourceforge.net>                  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ ******************************************************************************/
 #include "util/rsdir.h"
 #include "util/rsprint.h"
+#include "util/rstime.h"
 #include "rsserver/p3face.h"
 #include "pqi/authssl.h"
 #include "hash_cache.h"
 #include "filelist_io.h"
 #include "file_sharing_defaults.h"
+#include "retroshare/rsinit.h"
 
 //#define HASHSTORAGE_DEBUG 1
 
@@ -43,7 +42,11 @@ HashStorage::HashStorage(const std::string& save_file_name)
     mLastSaveTime = 0 ;
     mTotalSizeToHash = 0;
     mTotalFilesToHash = 0;
+	mCurrentHashingSpeed = 0 ;
     mMaxStorageDurationDays = DEFAULT_HASH_STORAGE_DURATION_DAYS ;
+	mHashingProcessPaused = false;
+	mHashedBytes = 0 ;
+	mHashingTime = 0 ;
 
     {
         RS_STACK_MUTEX(mHashMtx) ;
@@ -52,14 +55,26 @@ HashStorage::HashStorage(const std::string& save_file_name)
             try_load_import_old_hash_cache();
     }
 }
+
+void HashStorage::togglePauseHashingProcess()
+{
+	RS_STACK_MUTEX(mHashMtx) ;
+	mHashingProcessPaused = !mHashingProcessPaused ;
+}
+bool HashStorage::hashingProcessPaused()
+{
+	RS_STACK_MUTEX(mHashMtx) ;
+	return mHashingProcessPaused;
+}
+
 static std::string friendlyUnit(uint64_t val)
 {
-    const std::string units[5] = {"B","KB","MB","GB","TB"};
+    const std::string units[6] = {"B","KB","MB","GB","TB","PB"};
     char buf[50] ;
 
     double fact = 1.0 ;
 
-    for(unsigned int i=0; i<5; ++i)
+    for(unsigned int i=0; i<6; ++i)
         if(double(val)/fact < 1024.0)
         {
             sprintf(buf,"%2.2f",double(val)/fact) ;
@@ -72,11 +87,12 @@ static std::string friendlyUnit(uint64_t val)
     return  std::string(buf) + " TB";
 }
 
-void HashStorage::data_tick()
+void HashStorage::threadTick()
 {
     FileHashJob job;
     RsFileHash hash;
     uint64_t size = 0;
+
 
     {
         bool empty ;
@@ -84,6 +100,7 @@ void HashStorage::data_tick()
 
         {
             RS_STACK_MUTEX(mHashMtx) ;
+
             if(mChanged && mLastSaveTime + MIN_INTERVAL_BETWEEN_HASH_CACHE_SAVE < time(NULL))
             {
                 locked_save();
@@ -106,7 +123,7 @@ void HashStorage::data_tick()
             std::cerr << "nothing to hash. Sleeping for " << st << " us" << std::endl;
 #endif
 
-            usleep(st);	// when no files to hash, just wait for 2 secs. This avoids a dramatic loop.
+            rstime::rs_usleep(st);	// when no files to hash, just wait for 2 secs. This avoids a dramatic loop.
 
             if(st > MAX_INACTIVITY_SLEEP_TIME)
             {
@@ -116,15 +133,16 @@ void HashStorage::data_tick()
 
                 if(!mChanged)	// otherwise it might prevent from saving the hash cache
                 {
-                    std::cerr << "Stopping hashing thread." << std::endl;
-                    shutdown();
-                    mRunning = false ;
-                    mTotalSizeToHash = 0;
-                    mTotalFilesToHash = 0;
-                    std::cerr << "done." << std::endl;
+                    stopHashThread();
                 }
 
-                RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_FINISH, "") ;
+                if(rsEvents)
+                {
+                    auto ev = std::make_shared<RsSharedDirectoriesEvent>();
+                    ev->mEventCode = RsSharedDirectoriesEventCode::DIRECTORY_SWEEP_ENDED;
+                    rsEvents->postEvent(ev);
+                }
+                //RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_FINISH, "") ;
             }
             else
             {
@@ -136,6 +154,19 @@ void HashStorage::data_tick()
         }
         mInactivitySleepTime = DEFAULT_INACTIVITY_SLEEP_TIME;
 
+		bool paused = false ;
+        {
+            RS_STACK_MUTEX(mHashMtx) ;
+			paused = mHashingProcessPaused ;
+		}
+
+		if(paused)	// we need to wait off mutex!!
+		{
+			rstime::rs_usleep(MAX_INACTIVITY_SLEEP_TIME) ;
+			std::cerr << "Hashing process currently paused." << std::endl;
+			return;
+		}
+		else
         {
             RS_STACK_MUTEX(mHashMtx) ;
 
@@ -150,32 +181,55 @@ void HashStorage::data_tick()
 #endif
 
             std::string tmpout;
-            rs_sprintf(tmpout, "%lu/%lu (%s - %d%%) : %s", (unsigned long int)mHashCounter+1, (unsigned long int)mTotalFilesToHash, friendlyUnit(mTotalHashedSize).c_str(), int(mTotalHashedSize/double(mTotalSizeToHash)*100.0), job.full_path.c_str()) ;
 
-            RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_HASH_FILE, tmpout) ;
+			if(mCurrentHashingSpeed > 0)
+				rs_sprintf(tmpout, "%lu/%lu (%s - %d%%, %d MB/s) : %s", (unsigned long int)mHashCounter+1, (unsigned long int)mTotalFilesToHash, friendlyUnit(mTotalHashedSize).c_str(), int(mTotalHashedSize/double(mTotalSizeToHash)*100.0), mCurrentHashingSpeed,job.full_path.c_str()) ;
+			else
+				rs_sprintf(tmpout, "%lu/%lu (%s - %d%%) : %s", (unsigned long int)mHashCounter+1, (unsigned long int)mTotalFilesToHash, friendlyUnit(mTotalHashedSize).c_str(), int(mTotalHashedSize/double(mTotalSizeToHash)*100.0), job.full_path.c_str()) ;
 
-            if(RsDirUtil::getFileHash(job.full_path, hash,size, this))
-            {
-                // store the result
+            //RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_HASH_FILE, tmpout) ;
+            if(rsEvents)
+			{
+				auto ev = std::make_shared<RsSharedDirectoriesEvent>();
+				ev->mEventCode = RsSharedDirectoriesEventCode::HASHING_FILE;
+				ev->mMessage = tmpout;
+				rsEvents->postEvent(ev);
+			}
+
+			double seconds_origin = rstime::RsScopeTimer::currentTime() ;
+
+			if(RsDirUtil::getFileHash(job.full_path, hash,size, this))
+			{
+				// store the result
 
 #ifdef HASHSTORAGE_DEBUG
-                std::cerr << "done."<< std::endl;
+				std::cerr << "done."<< std::endl;
 #endif
 
-                RS_STACK_MUTEX(mHashMtx) ;
-                HashStorageInfo& info(mFiles[job.full_path]);
+				RS_STACK_MUTEX(mHashMtx) ;
+				HashStorageInfo& info(mFiles[job.real_path]);
 
-                info.filename = job.full_path ;
-                info.size = size ;
-                info.modf_stamp = job.ts ;
-                info.time_stamp = time(NULL);
-                info.hash = hash;
+				info.filename = job.real_path ;
+				info.size = size ;
+				info.modf_stamp = job.ts ;
+				info.time_stamp = time(NULL);
+				info.hash = hash;
 
-                mChanged = true ;
-                mTotalHashedSize += size ;
-            }
-            else
-                std::cerr << "ERROR: cannot hash file " << job.full_path << std::endl;
+				mChanged = true ;
+				mTotalHashedSize += size ;
+			}
+			else
+				std::cerr << "ERROR: cannot hash file " << job.full_path << std::endl;
+
+			mHashingTime += rstime::RsScopeTimer::currentTime() - seconds_origin ;
+			mHashedBytes += size ;
+
+			if(mHashingTime > 3)
+			{
+				mCurrentHashingSpeed = (int)(mHashedBytes / mHashingTime ) / (1024*1024) ;
+				mHashingTime = 0 ;
+				mHashedBytes = 0 ;
+			}
 
             ++mHashCounter ;
         }
@@ -186,17 +240,19 @@ void HashStorage::data_tick()
         job.client->hash_callback(job.client_param, job.full_path, hash, size);
 }
 
-bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t mod_time,RsFileHash& known_hash,HashStorageClient *c,uint32_t client_param)
+bool HashStorage::requestHash(const std::string& full_path,uint64_t size,rstime_t mod_time,RsFileHash& known_hash,HashStorageClient *c,uint32_t client_param)
 {
     // check if the hash is up to date w.r.t. cache.
 
 #ifdef HASHSTORAGE_DEBUG
-    std::cerr << "HASH Requested for file " << full_path << ": ";
+    std::cerr << "HASH Requested for file " << full_path << ": mod_time: " << mod_time << ", size: " << size << " :" ;
 #endif
     RS_STACK_MUTEX(mHashMtx) ;
 
-    time_t now = time(NULL) ;
-    std::map<std::string,HashStorageInfo>::iterator it = mFiles.find(full_path) ;
+	std::string real_path = RsDirUtil::removeSymLinks(full_path) ;
+
+    rstime_t now = time(NULL) ;
+    std::map<std::string,HashStorageInfo>::iterator it = mFiles.find(real_path) ;
 
     // On windows we compare the time up to +/- 3600 seconds. This avoids re-hashing files in case of daylight saving change.
     //
@@ -214,10 +270,12 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t 
         it->second.time_stamp = now ;
 
 #ifdef WINDOWS_SYS
-        if(it->second.time_stamp != (uint64_t)mod_time)
+        if(it->second.modf_stamp != (uint64_t)mod_time)
         {
             std::cerr << "(WW) detected a 1 hour shift in file modification time. This normally happens to many files at once, when daylight saving time shifts (file=\"" << full_path << "\")." << std::endl;
-            it->second.time_stamp = (uint64_t)mod_time;
+            it->second.modf_stamp = (uint64_t)mod_time;
+            mChanged = true;
+            startHashThread();
         }
 #endif
 
@@ -233,7 +291,7 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t 
 
     // we need to schedule a re-hashing
 
-    if(mFilesToHash.find(full_path) != mFilesToHash.end())
+    if(mFilesToHash.find(real_path) != mFilesToHash.end())
         return false ;
 
     FileHashJob job ;
@@ -242,13 +300,24 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t 
     job.size = size ;
     job.client_param = client_param ;
     job.full_path = full_path ;
+    job.real_path = real_path ;
     job.ts = mod_time ;
 
-    mFilesToHash[full_path] = job;
+	// We store the files indexed by their real path, so that we allow to not re-hash files that are pointed multiple times through the directory links
+	// The client will be notified with the full path instead of the real path.
+
+    mFilesToHash[real_path] = job;
 
     mTotalSizeToHash += size ;
     ++mTotalFilesToHash;
 
+    startHashThread();
+
+    return false;
+}
+
+void HashStorage::startHashThread()
+{
     if(!mRunning)
     {
         mRunning = true ;
@@ -256,18 +325,30 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t 
         mHashCounter = 0;
         mTotalHashedSize = 0;
 
-		start("fs hash cache") ;
+        start("fs hash cache") ;
     }
+}
 
-    return false;
+void HashStorage::stopHashThread()
+{
+	if(mRunning)
+	{
+		RsInfo() << __PRETTY_FUNCTION__ << "Stopping hashing thread."
+		         << std::endl;
+
+		RsThread::askForStop();
+        mRunning = false ;
+        mTotalSizeToHash = 0;
+        mTotalFilesToHash = 0;
+    }
 }
 
 void HashStorage::clean()
 {
     RS_STACK_MUTEX(mHashMtx) ;
 
-    time_t now = time(NULL) ;
-    time_t duration = mMaxStorageDurationDays * 24 * 3600 ; // seconds
+    rstime_t now = time(NULL) ;
+    rstime_t duration = mMaxStorageDurationDays * 24 * 3600 ; // seconds
 
 #ifdef HASHSTORAGE_DEBUG
     std::cerr << "Cleaning hash cache." << std::endl ;
@@ -410,7 +491,7 @@ bool HashStorage::writeHashStorageInfo(unsigned char *& data,uint32_t&  total_si
 
 std::ostream& operator<<(std::ostream& o,const HashStorage::HashStorageInfo& info)
 {
-    return o << info.hash << " " << info.size << " " << info.filename ;
+    return o << info.hash << " " << info.modf_stamp << " " << info.size << " " << info.filename ;
 }
 
 /********************************************************************************************************************************/
@@ -427,7 +508,7 @@ bool HashStorage::try_load_import_old_hash_cache()
 {
     // compute file name
 
-    std::string base_dir = rsAccounts->PathAccountDirectory();
+    std::string base_dir = RsAccounts::AccountDirectory();
     std::string old_cache_filename = base_dir + "/" + "file_cache.bin" ;
 
     // check for unencrypted

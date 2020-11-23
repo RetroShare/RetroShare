@@ -1,59 +1,58 @@
+# RetroShare main qmake build script
+#
+# Copyright (C) 2004-2019, Retroshare Team <contact@retroshare.cc>
+# Copyright (C) 2016-2019, Gioacchino Mazzurco <gio@eigenlab.org>
+#
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU Lesser General Public License as published by the
+# Free Software Foundation, either version 3 of the License, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.
+# See the GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License along
+# with this program. If not, see <https://www.gnu.org/licenses/>.
+#
+# SPDX-FileCopyrightText: Retroshare Team <contact@retroshare.cc>
+# SPDX-License-Identifier: LGPL-3.0-or-later
+
+CONFIG += c++14
+
 !include("retroshare.pri"): error("Could not include file retroshare.pri")
 
 TEMPLATE = subdirs
-#CONFIG += tests
 
 SUBDIRS += openpgpsdk
 openpgpsdk.file = openpgpsdk/src/openpgpsdk.pro
 
+rs_jsonapi:isEmpty(JSONAPI_GENERATOR_EXE) {
+    SUBDIRS += jsonapi-generator
+    jsonapi-generator.file = jsonapi-generator/src/jsonapi-generator.pro
+    libretroshare.depends += jsonapi-generator
+}
+
 SUBDIRS += libbitdht
 libbitdht.file = libbitdht/src/libbitdht.pro
+libretroshare.depends += openpgpsdk libbitdht
 
 SUBDIRS += libretroshare
 libretroshare.file = libretroshare/src/libretroshare.pro
-libretroshare.depends = openpgpsdk libbitdht
-
-SUBDIRS += libresapi
-libresapi.file = libresapi/src/libresapi.pro
-libresapi.depends = libretroshare
 
 retroshare_gui {
     SUBDIRS += retroshare_gui
     retroshare_gui.file = retroshare-gui/src/retroshare-gui.pro
-    retroshare_gui.depends = libretroshare libresapi
     retroshare_gui.target = retroshare_gui
+    retroshare_gui.depends = libretroshare
 }
 
-retroshare_nogui {
-    SUBDIRS += retroshare_nogui
-    retroshare_nogui.file = retroshare-nogui/src/retroshare-nogui.pro
-    retroshare_nogui.depends = libretroshare libresapi
-    retroshare_nogui.target = retroshare_nogui
-}
-
-retroshare_android_service {
-    SUBDIRS += retroshare_android_service
-    retroshare_android_service.file = retroshare-android-service/src/retroshare-android-service.pro
-    retroshare_android_service.depends = libresapi
-    retroshare_android_service.target = retroshare_android_service
-}
-
-retroshare_android_notify_service {
-    SUBDIRS += retroshare_android_notify_service
-    retroshare_android_notify_service.file = retroshare-android-notify-service/src/retroshare-android-notify-service.pro
-    retroshare_android_notify_service.depends = retroshare_android_service
-    retroshare_android_notify_service.target = retroshare_android_notify_service
-}
-
-retroshare_qml_app {
-    SUBDIRS += retroshare_qml_app
-    retroshare_qml_app.file = retroshare-qml-app/src/retroshare-qml-app.pro
-    retroshare_qml_app.depends = retroshare_android_service
-    retroshare_qml_app.target = retroshare_qml_app
-
-    android-g++ {
-        retroshare_qml_app.depends += retroshare_android_notify_service
-    }
+retroshare_service {
+    SUBDIRS += retroshare_service
+    retroshare_service.file = retroshare-service/src/retroshare-service.pro
+    retroshare_service.depends = libretroshare
+    retroshare_service.target = retroshare_service
 }
 
 retroshare_plugins {

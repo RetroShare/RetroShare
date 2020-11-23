@@ -1,42 +1,39 @@
-/*
- * libretroshare/src/services p3rtt.cc
- *
- * Round Trip Time Measurement for RetroShare.
- *
- * Copyright 2011-2013 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/services: p3rtt.cc                                        *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2011-2013 Robert Fernie <retroshare@lunamutt.com>                 *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include <iomanip>
+#include <sys/time.h>
+#include <cmath>
 
 #include "util/rsdir.h"
 #include "retroshare/rsiface.h"
+#include "retroshare/rspeers.h"
 #include "pqi/pqibin.h"
 #include "pqi/pqistore.h"
 #include "pqi/p3linkmgr.h"
 #include "rsserver/p3face.h"
-
+#include "util/cxx17retrocompat.h"
 #include "services/p3rtt.h"
 #include "rsitems/rsrttitems.h"
 
-#include <sys/time.h>
-#include <math.h>
 
 /****
  * #define DEBUG_RTT		1
@@ -79,7 +76,7 @@ RsRtt *rsRtt = NULL;
 
 
 #ifdef WINDOWS_SYS
-#include <time.h>
+#include "util/rstime.h"
 #include <sys/timeb.h>
 #endif
 
@@ -164,8 +161,8 @@ int	p3rtt::status()
 
 int	p3rtt::sendPackets()
 {
-	time_t now = time(NULL);
-	time_t pt;
+	rstime_t now = time(NULL);
+	rstime_t pt;
 	{
 		RsStackMutex stack(mRttMtx); /****** LOCKED MUTEX *******/
 		pt = mSentPingTime;
@@ -356,28 +353,29 @@ int	p3rtt::storePongResult(const RsPeerId& id, uint32_t counter, double recv_ts,
 
 
 	while(peerInfo->mPongResults.size() > MAX_PONG_RESULTS)
-	{
 		peerInfo->mPongResults.pop_front();
-	}
 
 	//Wait at least 20 pongs before compute mean time offset
 	if(peerInfo->mPongResults.size() > 20)
 	{
 		double mean = 0;
-		for(std::list<RsRttPongResult>::const_iterator prIt = peerInfo->mPongResults.begin(), end = peerInfo->mPongResults.end(); prIt != end; ++ prIt)
-		{
-			mean += prIt->mOffset;
-		}
+		for(auto prIt : std::as_const(peerInfo->mPongResults))
+			mean += prIt.mOffset;
 		peerInfo->mCurrentMeanOffset = mean / peerInfo->mPongResults.size();
+
 		if(fabs(peerInfo->mCurrentMeanOffset) > 120)
 		{
-			p3Notify *notify = RsServer::notify();
-			if (notify)
+			if(rsEvents)
 			{
-				//notify->AddPopupMessage(RS_POPUP_OFFSET, eerInfo->mId.toStdString(),"", "Time Offset: ");
-				notify->AddFeedItem(RS_FEED_ITEM_PEER_OFFSET, peerInfo->mId.toStdString());
+				auto ev = std::make_shared<RsConnectionEvent>();
+				ev->mSslId = peerInfo->mId;
+				ev->mTimeShift = static_cast<rstime_t>(peerInfo->mCurrentMeanOffset);
+				ev->mConnectionInfoCode = RsConnectionEventCode::PEER_TIME_SHIFT;
+				rsEvents->postEvent(ev);
 			}
-			std::cerr << "(WW) Peer:" << peerInfo->mId << " get time offset more than two minutes with you!!!" << std::endl;
+			RsWarn() << __PRETTY_FUNCTION__ << " Peer: " << peerInfo->mId
+			         << " have a time offset of more than two minutes with you"
+			         << std::endl;
 		}
 	}
 	return 1;
@@ -442,6 +440,7 @@ bool RttPeerInfo::initialisePeerInfo(const RsPeerId& id)
 	mCurrentPingTS = 0;
 	mCurrentPingCounter = 0;
 	mCurrentPongRecvd = true;
+	mCurrentMeanOffset = 0;
 
 	mSentPings = 0;
 	mLostPongs = 0;

@@ -1,8 +1,10 @@
 ﻿; Script generated with the Venis Install Wizard & modified by defnax
 ; Reworked by Thunder
 
+!include ifexist.nsh
+
 # Needed defines
-;!define BUILDADD ""
+;!define REVISION ""
 ;!define RELEASEDIR ""
 ;!define QTDIR ""
 ;!define MINGWDIR ""
@@ -11,10 +13,6 @@
 ;!define OUTDIR ""
 
 # Check needed defines
-!ifndef BUILDADD
-!error "BUILDADD is not defined"
-!endif
-
 !ifndef RELEASEDIR
 !error "RELEASEDIR is not defined"
 !endif
@@ -23,6 +21,9 @@
 !endif
 !ifndef MINGWDIR
 !error "MINGWDIR is not defined"
+!endif
+!ifndef ARCHITECTURE
+!error "Architecture is not defined"
 !endif
 
 # Check optional defines
@@ -42,7 +43,7 @@
 
 # Get version from executable
 !GetDllVersion "${RELEASEDIR}\retroshare-gui\src\release\retroshare.exe" VERSION_
-!define VERSION ${VERSION_1}.${VERSION_2}.${VERSION_3}${BUILDADD}
+!define VERSION ${VERSION_1}.${VERSION_2}.${VERSION_3}
 ;!define REVISION ${VERSION_4}
 
 # Get version of Qt
@@ -54,12 +55,18 @@
 !error "REVISION is not defined"
 !endif
 
-!ifndef REVISION
-!error "REVISION is not defined"
+# Date
+!ifndef DATE
+!define /date DATE "%Y%m%d"
 !endif
 
-# Date
-!define /date Date "%Y%m%d"
+# Tor
+!ifdef TORDIR
+${!defineifexist} TOR_EXISTS "${TORDIR}\tor.exe"
+!ifndef TOR_EXISTS
+!error "tor.exe not found"
+!endif
+!endif
 
 # Application name and version
 !define APPNAME "RetroShare"
@@ -67,7 +74,12 @@
 !define PUBLISHER "RetroShare Team"
 
 # Install path
-!define INSTDIR_NORMAL "$ProgramFiles\${APPNAME}"
+!if ${ARCHITECTURE} == "x86"
+  !define INSTDIR_NORMAL "$ProgramFiles32\${APPNAME}"
+!endif
+!if ${ARCHITECTURE} == "x64"
+  !define INSTDIR_NORMAL "$ProgramFiles64\${APPNAME}"
+!endif
 !define INSTDIR_PORTABLE "$Desktop\${APPNAME}"
 
 !define DATADIR_NORMAL "$APPDATA\${APPNAME}"
@@ -76,7 +88,7 @@
 # Main Install settings
 Name "${APPNAMEANDVERSION}"
 InstallDirRegKey HKLM "Software\${APPNAME}" ""
-OutFile "${OUTDIR_}RetroShare-${VERSION}-${Date}-${REVISION}-Qt-${QTVERSION}${INSTALLERADD}-setup.exe"
+OutFile "${OUTDIR_}RetroShare-${VERSION}-${DATE}-${REVISION}-Qt-${QTVERSION}-${ARCHITECTURE}${INSTALLERADD}-setup.exe"
 BrandingText "${APPNAMEANDVERSION}"
 RequestExecutionlevel highest
 # Use compression
@@ -110,7 +122,7 @@ Var StyleSheetDir
 !define MUI_FINISHPAGE_RUN "$INSTDIR\retroshare.exe"
 !define MUI_FINISHPAGE_SHOWREADME $INSTDIR\changelog.txt
 !define MUI_FINISHPAGE_SHOWREADME_TEXT changelog.txt
-!define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
+;!define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\orange-uninstall.ico"
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
 ;!define MUI_LANGDLL_REGISTRY_ROOT HKLM
@@ -180,8 +192,9 @@ Section $(Section_Main) Section_Main
 
   ; Main binaries
   SetOutPath "$INSTDIR"
-  File /oname=retroshare.exe "${RELEASEDIR}\retroshare-gui\src\release\retroshare.exe"
-  File /oname=retroshare-nogui.exe "${RELEASEDIR}\retroshare-nogui\src\release\retroshare-nogui.exe"
+  File "${RELEASEDIR}\retroshare-gui\src\release\retroshare.exe"
+  File "${RELEASEDIR}\retroshare-service\src\release\retroshare-service.exe"
+  File /nonfatal "${RELEASEDIR}\libretroshare\src\lib\retroshare.dll"
 
   ; Qt binaries
   File "${QTDIR}\bin\Qt5Core.dll"
@@ -195,26 +208,45 @@ Section $(Section_Main) Section_Main
 
   ; Qt audio
   SetOutPath "$INSTDIR\audio"
-  File /r "${QTDIR}\plugins\audio\qtaudio_windows.dll"
+  File "${QTDIR}\plugins\audio\qtaudio_windows.dll"
 
   ; Qt platforms
   SetOutPath "$INSTDIR\platforms"
-  File /r "${QTDIR}\plugins\platforms\qwindows.dll"
+  File "${QTDIR}\plugins\platforms\qwindows.dll"
+
+  ; Qt styles
+  SetOutPath "$INSTDIR\styles"
+  File /NONFATAL "${QTDIR}\plugins\styles\qwindowsvistastyle.dll"
 
   ; MinGW binaries
   SetOutPath "$INSTDIR"
   File "${MINGWDIR}\bin\libstdc++-6.dll"
-  File "${MINGWDIR}\bin\libgcc_s_dw2-1.dll"
+  !if ${ARCHITECTURE} == "x86"
+    File "${MINGWDIR}\bin\libgcc_s_dw2-1.dll"
+  !endif
+  !if ${ARCHITECTURE} == "x64"
+    File "${MINGWDIR}\bin\libgcc_s_seh-1.dll"
+  !endif
   File "${MINGWDIR}\bin\libwinpthread-1.dll"
 
   ; External binaries
-  File "${SOURCEDIR}\..\libs\bin\miniupnpc.dll"
-  File "${SOURCEDIR}\..\libs\bin\libeay32.dll"
-  File "${SOURCEDIR}\..\libs\bin\ssleay32.dll"
+  File "${EXTERNAL_LIB_DIR}\bin\miniupnpc.dll"
+  !if ${ARCHITECTURE} == "x86"
+    File "${EXTERNAL_LIB_DIR}\bin\libcrypto-1_1.dll"
+    File "${EXTERNAL_LIB_DIR}\bin\libssl-1_1.dll"
+  !endif
+  !if ${ARCHITECTURE} == "x64"
+    File "${EXTERNAL_LIB_DIR}\bin\libcrypto-1_1-x64.dll"
+    File "${EXTERNAL_LIB_DIR}\bin\libssl-1_1-x64.dll"
+  !endif
 
   ; Other files
-  File "${SOURCEDIR}\retroshare-gui\src\changelog.txt"
+  File "${RELEASEDIR}\changelog.txt"
   File "${SOURCEDIR}\libbitdht\src\bitdht\bdboot.txt"
+
+  ; License
+  SetOutPath "$INSTDIR\license"
+  File "${SOURCEDIR}\retroshare-gui\src\license\*.*"
 
   ; Image formats
   SetOutPath "$INSTDIR\imageformats"
@@ -238,31 +270,54 @@ Section $(Section_Main) Section_Main
   File /r "${QTDIR}\translations\qt_*.qm"
   File /r "${QTDIR}\translations\qtbase_*.qm"
   File /r "${QTDIR}\translations\qtscript_*.qm"
-  File /r "${QTDIR}\translations\qtquick1_*.qm"
   File /r "${QTDIR}\translations\qtmultimedia_*.qm"
   File /r "${QTDIR}\translations\qtxmlpatterns_*.qm"
 
   ; WebUI
-  SetOutPath "$INSTDIR\webui"
-  File /r "${SOURCEDIR}\libresapi\src\webui\*.*"
+;  SetOutPath "$INSTDIR\webui"
+;  File /r "${SOURCEDIR}\libresapi\src\webui\*.*"
 
   ; License
   SetOutPath "$INSTDIR\license"
   File /r "${SOURCEDIR}\retroshare-gui\src\license\*.*"
 SectionEnd
 
-# Plugins
-SectionGroup $(Section_Plugins) Section_Plugins
-Section $(Section_Plugin_FeedReader) Section_Plugin_FeedReader
-  SetOutPath "$DataDir\extensions6"
-  File "${RELEASEDIR}\plugins\FeedReader\release\FeedReader.dll"
-SectionEnd
+# Tor
+!ifdef TOR_EXISTS
+  Section /o $(Section_Tor) Section_Tor
+    SetOutPath "$INSTDIR"
+    File /r "${TORDIR}\*"
+  SectionEnd
+!endif
 
-Section $(Section_Plugin_VOIP) Section_Plugin_VOIP
-  SetOutPath "$DataDir\extensions6"
-  File "${RELEASEDIR}\plugins\VOIP\release\VOIP.dll"
-SectionEnd
-SectionGroupEnd
+# Plugins
+${!defineifexist} PLUGIN_FEEDREADER_EXISTS "${RELEASEDIR}\plugins\FeedReader\lib\FeedReader.dll"
+${!defineifexist} PLUGIN_VOIP_EXISTS "${RELEASEDIR}\plugins\VOIP\lib\VOIP.dll"
+
+!ifdef PLUGIN_FEEDREADER_EXISTS
+!define /ifndef PLUGIN_EXISTS
+!endif
+!ifdef PLUGIN_VOIP_EXISTS
+!define /ifndef PLUGIN_EXISTS
+!endif
+
+!ifdef PLUGIN_EXISTS
+  SectionGroup $(Section_Plugins) Section_Plugins
+  !ifdef PLUGIN_FEEDREADER_EXISTS
+    Section $(Section_Plugin_FeedReader) Section_Plugin_FeedReader
+      SetOutPath "$DataDir\extensions6"
+      File "${RELEASEDIR}\plugins\FeedReader\lib\FeedReader.dll"
+    SectionEnd
+  !endif
+
+  !ifdef PLUGIN_VOIP_EXISTS
+    Section $(Section_Plugin_VOIP) Section_Plugin_VOIP
+      SetOutPath "$DataDir\extensions6"
+      File "${RELEASEDIR}\plugins\VOIP\lib\VOIP.dll"
+    SectionEnd
+  !endif
+  SectionGroupEnd
+!endif
 
 # Data (Styles)
 Section $(Section_Data) Section_Data
@@ -310,7 +365,7 @@ SectionEnd
 SectionGroupEnd
 
 Section $(Section_AutoStart) Section_AutoStart
-  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "RetroShare"   "$INSTDIR\${APPNAME}06.exe -m"
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "RetroShare"   "$INSTDIR\retroshare.exe -m"
 SectionEnd
 
 ;Section $(Section_AutoStart) Section_AutoStart
@@ -349,6 +404,7 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_Plugin_VOIP} $(Section_Plugin_VOIP_Desc)
 ;  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Link} $(Section_Link_Desc)
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_AutoStart} $(Section_AutoStart_Desc)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Tor} $(Section_Tor_Desc)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 # Uninstall

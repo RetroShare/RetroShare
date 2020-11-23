@@ -1,32 +1,32 @@
-/*
- * Retroshare Gxs Support
- *
- * Copyright 2012-2013 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * retroshare-gui/src/gui/gxs/GxsGroupDialog.cpp                               *
+ *                                                                             *
+ * Copyright 2012-2013  by Robert Fernie      <retroshare.project@gmail.com>   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QMessageBox>
+#include <QPushButton>
 
 #include "util/misc.h"
 #include "util/DateTime.h"
+#include "util/qtthreadsutils.h"
 #include "GxsGroupDialog.h"
 #include "gui/common/PeerDefs.h"
+#include "gui/RetroShareLink.h"
 #include "retroshare/rsgxsflags.h"
 
 #include <algorithm>
@@ -34,7 +34,10 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsgxscircles.h>
 
+#include <gui/settings/rsharesettings.h>
+
 #include <iostream>
+
 
 // Control of Publish Signatures.
 // 
@@ -61,25 +64,21 @@
 #define GXSGROUP_INTERNAL_LOADGROUP 3
 
 /** Constructor */
-GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenExternalQueue, uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent)
-    : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mTokenService(NULL), mExternalTokenQueue(tokenExternalQueue), mInternalTokenQueue(NULL), mGrpMeta(), mMode(MODE_CREATE), mEnabledFlags(enableFlags), mReadonlyFlags(0), mDefaultsFlags(defaultFlags)
+GxsGroupDialog::GxsGroupDialog(uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent)
+    : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mGrpMeta(), mMode(MODE_CREATE), mEnabledFlags(enableFlags), mReadonlyFlags(0), mDefaultsFlags(defaultFlags)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
-
-	mInternalTokenQueue = NULL;
-
+	
 	init();
 }
 
-GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent)
-    : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mTokenService(NULL), mExternalTokenQueue(tokenExternalQueue), mInternalTokenQueue(NULL), mGrpMeta(), mMode(mode), mEnabledFlags(enableFlags), mReadonlyFlags(0), mDefaultsFlags(defaultFlags)
+GxsGroupDialog::GxsGroupDialog(Mode mode, RsGxsGroupId groupId, uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent)
+    : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mGrpMeta(), mMode(mode), mEnabledFlags(enableFlags), mReadonlyFlags(0), mDefaultsFlags(defaultFlags)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
 
-	mTokenService = tokenService;
-	mInternalTokenQueue = new TokenQueue(tokenService, this);
 	mGrpMeta.mGroupId = groupId;
 
 	init();
@@ -87,20 +86,20 @@ GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *t
 
 GxsGroupDialog::~GxsGroupDialog()
 {
-	if (mInternalTokenQueue) {
-		delete(mInternalTokenQueue);
-	}
+	Settings->saveWidgetInformation(this);
 }
 
 void GxsGroupDialog::init()
 {
 	// connect up the buttons.
-	connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(submitGroup()));
-	connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(cancelDialog()));
+	connect(ui.createButton, SIGNAL(clicked()), this, SLOT(submitGroup()));
+	connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(cancelDialog()));
 	connect(ui.pubKeyShare_cb, SIGNAL(clicked()), this, SLOT(setShareList()));
+	connect(ui.addAdmins_cb, SIGNAL(clicked()), this, SLOT(setAdminsList()));
+	connect(ui.filtercomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterComboBoxChanged(int)));
+
 
 	connect(ui.groupLogo, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
-	connect(ui.addLogoButton, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
 
 	ui.typePublic->setChecked(true);
 	ui.distributionValueLabel->setText(tr("Public"));
@@ -112,14 +111,32 @@ void GxsGroupDialog::init()
 
 	if (!ui.pubKeyShare_cb->isChecked())
 	{
-		ui.contactsdockWidget->hide();
-		this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
+		ui.shareKeyList->hide();
+		//this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
 	}
+	if (!ui.addAdmins_cb->isChecked())
+	{
+		ui.adminsList->hide();
+		ui.filtercomboBox->hide();
+		//this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
+	}
+	
+	/* Add filter types */
+    ui.filtercomboBox->addItem(tr("All People"));
+    ui.filtercomboBox->addItem(tr("My Contacts"));
+	ui.filtercomboBox->setCurrentIndex(0);
 
 	/* initialize key share list */
-	ui.keyShareList->setHeaderText(tr("Contacts:"));
-	ui.keyShareList->setModus(FriendSelectionWidget::MODUS_CHECK);
-	ui.keyShareList->start();
+	ui.shareKeyList->setHeaderText(tr("Contacts:"));
+	ui.shareKeyList->setModus(FriendSelectionWidget::MODUS_CHECK);
+	ui.shareKeyList->start();
+
+	/* initialize key share list */
+	ui.adminsList->setHeaderText(tr("Moderators:"));
+	ui.adminsList->setModus(FriendSelectionWidget::MODUS_CHECK);
+	ui.adminsList->setShowType(FriendSelectionWidget::SHOW_GXS);
+	ui.adminsList->start();
+	
 
 	/* Setup Reasonable Defaults */
 
@@ -134,6 +151,15 @@ void GxsGroupDialog::init()
     	ui.personal_required->setChecked(true) ;	// this is always true
 
 	initMode();
+	Settings->loadWidgetInformation(this);
+}
+
+void GxsGroupDialog::injectExtraWidget(QWidget *widget)
+{
+    // add extra widget into layout.
+    QVBoxLayout *vbox = new QVBoxLayout();
+    vbox->addWidget(widget);
+    ui.extraFrame->setLayout(vbox);
 }
 
 QIcon GxsGroupDialog::serviceWindowIcon()
@@ -147,6 +173,9 @@ void GxsGroupDialog::showEvent(QShowEvent*)
 	setWindowIcon(serviceWindowIcon());
 
 	initUi();
+
+    if(!mGrpMeta.mGroupId.isNull() && mGrpMeta.mPublishTs == 0) // group not actually loaded yet
+		loadGroup(mGrpMeta.mGroupId);
 }
 
 void GxsGroupDialog::setUiText(UiType uiType, const QString &text)
@@ -161,10 +190,28 @@ void GxsGroupDialog::setUiText(UiType uiType, const QString &text)
 		ui.pubKeyShare_cb->setText(text);
 		break;
 	case UITYPE_CONTACTS_DOCK:
-		ui.contactsdockWidget->setWindowTitle(text);
+	case UITYPE_ADD_ADMINS_CHECKBOX:
+		//ui.contactsdockWidget->setWindowTitle(text);
 		break;
 	case UITYPE_BUTTONBOX_OK:
-		ui.buttonBox->button(QDialogButtonBox::Ok)->setText(text);
+		ui.createButton->setText(text);
+		break;
+	}
+}
+
+void GxsGroupDialog::setUiToolTip(UiType uiType, const QString &text)
+{
+	switch (uiType)
+	{
+	case UITYPE_KEY_SHARE_CHECKBOX:
+		ui.pubKeyShare_cb->setToolTip(text);
+		break;
+	case UITYPE_ADD_ADMINS_CHECKBOX:
+		ui.addAdmins_cb->setToolTip(text);
+		break;
+	case UITYPE_BUTTONBOX_OK:
+		ui.createButton->setToolTip(text);
+    default:
 		break;
 	}
 }
@@ -177,7 +224,6 @@ void GxsGroupDialog::initMode()
 		case MODE_CREATE:
 		{
             ui.stackedWidget->setCurrentIndex(0);
-			ui.buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
 			newGroup();
 		}
 		break;
@@ -186,17 +232,14 @@ void GxsGroupDialog::initMode()
 		{
 			ui.stackedWidget->setCurrentIndex(1);
 			mReadonlyFlags = 0xffffffff; // Force all to readonly.
-			ui.buttonBox->setStandardButtons(QDialogButtonBox::Close);
-			requestGroup(mGrpMeta.mGroupId);
+			ui.createButton->hide();
 		}
 		break;
 
 		case MODE_EDIT:
 		{
             ui.stackedWidget->setCurrentIndex(0);
-			ui.buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-			ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Submit Group Changes"));
-			requestGroup(mGrpMeta.mGroupId);
+			ui.createButton->setText(tr("Submit Group Changes"));
 		}
 		break;
 	}
@@ -326,7 +369,6 @@ void GxsGroupDialog::setupVisibility()
 	ui.groupName->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_NAME);
 
 	ui.groupLogo->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ICON);
-	ui.addLogoButton->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ICON);
 
 	ui.groupDesc->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DESCRIPTION);
 
@@ -341,6 +383,9 @@ void GxsGroupDialog::setupVisibility()
 	ui.publishGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_PUBLISHSIGN);
 
 	ui.pubKeyShare_cb->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_SHAREKEYS);
+	ui.addAdmins_cb->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ADDADMINS);
+	ui.label_8->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ADDADMINS);
+	ui.moderatorsLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ADDADMINS);
 
 	ui.personalGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_PERSONALSIGN);
 
@@ -363,8 +408,6 @@ void GxsGroupDialog::setAllReadonly()
 
 void GxsGroupDialog::setupReadonly()
 {
-
-	ui.addLogoButton->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ICON));
 
 	ui.publishGroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_PUBLISHSIGN));
 
@@ -408,6 +451,8 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
     setupReadonly();
     clearForm();
     setGroupSignFlags(mGrpMeta.mSignFlags) ;
+	
+	RetroShareLink link;
 
     /* setup name */
     ui.groupName->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
@@ -421,6 +466,12 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
     else
         ui.lastpostline->setText(DateTime::formatLongDateTime(mGrpMeta.mLastPost));
     ui.authorLabel->setId(mGrpMeta.mAuthorId);
+	
+    ui.createdline->setText(DateTime::formatLongDateTime(mGrpMeta.mPublishTs));
+
+	link = RetroShareLink::createMessage(mGrpMeta.mAuthorId, "");
+	ui.authorLabel->setText(link.toHtml());
+	
     ui.IDline->setText(QString::fromStdString(mGrpMeta.mGroupId.toStdString()));
     ui.descriptiontextEdit->setPlainText(description);
 
@@ -527,25 +578,18 @@ void GxsGroupDialog::editGroup()
 
 	RsGroupMetaData newMeta;
 	newMeta.mGroupId = mGrpMeta.mGroupId;
-
-	if(!prepareGroupMetaData(newMeta))
+	QString reason;
+	if(!prepareGroupMetaData(newMeta, reason))
 	{
 		/* error message */
-		QMessageBox::warning(this, "RetroShare", tr("Failed to Prepare Group MetaData - please Review"), QMessageBox::Ok, QMessageBox::Ok);
+		QMessageBox::warning(this, "RetroShare", tr("Failed to Prepare Group MetaData: ") + reason, QMessageBox::Ok, QMessageBox::Ok);
 		return; //Don't add  a empty name!!
 	}
 
 	std::cerr << "GxsGroupDialog::editGroup() calling service_EditGroup";
 	std::cerr << std::endl;
 
-	uint32_t token;
-	if (service_EditGroup(token, newMeta))
-	{
-		// get the Queue to handle response.
-		if(mExternalTokenQueue != NULL)
-			mExternalTokenQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, GXSGROUP_NEWGROUPID);
-	}
-	else
+	if (!service_updateGroup(newMeta))
 	{
 		std::cerr << "GxsGroupDialog::editGroup() ERROR";
 		std::cerr << std::endl;
@@ -554,14 +598,22 @@ void GxsGroupDialog::editGroup()
 	close();
 }
 
-bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta)
+bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta, QString &reason)
 {
 	std::cerr << "GxsGroupDialog::prepareGroupMetaData()";
 	std::cerr << std::endl;
 
     // here would be the place to check for empty author id
     // but GXS_SERV::GRP_OPTION_AUTHEN_AUTHOR_SIGN is currently not used by any service
+
     ui.idChooser->getChosenId(meta.mAuthorId);
+    if ((mDefaultsFlags & GXS_GROUP_DEFAULTS_PERSONAL_GROUP) && (meta.mAuthorId.isNull())) {
+		std::cerr << "GxsGroupDialog::prepareGroupMetaData()";
+		std::cerr << " Group needs a Personal Signature";
+		std::cerr << std::endl;
+		reason = "Missing AuthorId";
+		return false;
+	}
 
 	QString name = getName();
 	uint32_t flags = GXS_SERV::FLAG_PRIVACY_PUBLIC;
@@ -570,6 +622,7 @@ bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta)
 		std::cerr << "GxsGroupDialog::prepareGroupMetaData()";
 		std::cerr << " Invalid GroupName";
 		std::cerr << std::endl;
+		reason = "Missing GroupName";
 		return false;
 	}
 
@@ -583,6 +636,7 @@ bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta)
 		std::cerr << "GxsGroupDialog::prepareGroupMetaData()";
 		std::cerr << " Invalid Circles";
 		std::cerr << std::endl;
+		reason = "Invalid Circle Parameters";
 		return false;
 	}
 
@@ -608,20 +662,25 @@ void GxsGroupDialog::createGroup()
 		return; //Don't add  a empty name!!
 	}
 
-	uint32_t token;
 	RsGroupMetaData meta;
-	if (!prepareGroupMetaData(meta))
+	QString reason;
+	if (!prepareGroupMetaData(meta, reason))
 	{
 		/* error message */
-		QMessageBox::warning(this, "RetroShare", tr("Failed to Prepare Group MetaData - please Review"), QMessageBox::Ok, QMessageBox::Ok);
+		QMessageBox::warning(this, "RetroShare", tr("Failed to Prepare Group MetaData: ") + reason, QMessageBox::Ok, QMessageBox::Ok);
 		return; //Don't add with invalid circle.
 	}
 
-	if (service_CreateGroup(token, meta))
+	if (service_createGroup(meta))
 	{
-		// get the Queue to handle response.
+        // now update the UI
+#warning Missing code here!
+#ifdef TODO
+        //
+		// get the Queue to handle response. What is this for?
 		if(mExternalTokenQueue != NULL)
 			mExternalTokenQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, GXSGROUP_NEWGROUPID);
+#endif
 	}
 
 	close();
@@ -704,12 +763,12 @@ void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
         	// (cyril) very weird piece of code. Need to clear this up.
         
 		ui.comments_allowed->setChecked(true);
-        	ui.commentsValueLabel->setText("Allowed") ;
+		ui.commentsValueLabel->setText("Allowed") ;
 	}
 	else
 	{
 		ui.comments_no->setChecked(true);
-        	ui.commentsValueLabel->setText("Allowed") ;
+		ui.commentsValueLabel->setText("Forbidden") ;
 	}
 }
 
@@ -824,6 +883,42 @@ QString GxsGroupDialog::getDescription()
 	return ui.groupDesc->toPlainText();
 }
 
+void GxsGroupDialog::getSelectedModerators(std::set<RsGxsId>& ids)
+{
+	ui.adminsList->selectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(ids, true);
+}
+
+void GxsGroupDialog::setSelectedModerators(const std::set<RsGxsId>& ids)
+{
+    ui.addAdmins_cb->setChecked(true);
+	ui.adminsList->show();
+	ui.filtercomboBox->show();
+
+	ui.adminsList->setSelectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(ids, false);
+
+	QString moderatorsListString ;
+    RsIdentityDetails det;
+	RetroShareLink link;
+
+    for(auto it(ids.begin());it!=ids.end();++it)
+    {
+		rsIdentity->getIdDetails(*it,det);
+
+        if(!moderatorsListString.isNull())
+            moderatorsListString += ", " ;
+
+        if(det.mNickname.empty())
+			moderatorsListString += "[Unknown]";
+		
+		link = RetroShareLink::createMessage(det.mId, "");
+		if (link.valid())
+				moderatorsListString += link.toHtml() + "   ";
+
+    }
+	//ui.moderatorsLabel->setId(det.mId);
+	ui.moderatorsLabel->setText(moderatorsListString);
+}
+
 /***********************************************************************************
   Share Lists.
  ***********************************************************************************/
@@ -831,6 +926,22 @@ QString GxsGroupDialog::getDescription()
 void GxsGroupDialog::sendShareList(std::string /*groupId*/)
 {
 	close();
+}
+
+void GxsGroupDialog::setAdminsList()
+{
+	if (ui.addAdmins_cb->isChecked())
+    {
+		//this->resize(this->size().width() + ui.contactsdockWidget->size().width(), this->size().height());
+		ui.adminsList->show();
+		ui.filtercomboBox->show();
+	}
+    else
+    {  // hide share widget
+		ui.adminsList->hide();
+		ui.filtercomboBox->hide();
+		//this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
+	}
 }
 
 void GxsGroupDialog::setShareList()
@@ -848,55 +959,55 @@ void GxsGroupDialog::setShareList()
 //	}
 }
 
+void GxsGroupDialog::filterComboBoxChanged(int i)
+{
+	switch(i)
+	{
+	default:
+	case 0:
+		ui.adminsList->setShowType(FriendSelectionWidget::SHOW_GXS);
+		break;
+	case 1:
+		ui.adminsList->setShowType(FriendSelectionWidget::SHOW_CONTACTS);
+		break;
+	}
+}
+
+
 /***********************************************************************************
   Loading Group.
  ***********************************************************************************/
 
-void GxsGroupDialog::requestGroup(const RsGxsGroupId &groupId)
+void GxsGroupDialog::loadGroup(const RsGxsGroupId& grpId)
 {
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-
-	std::list<RsGxsGroupId> groupIds;
-	groupIds.push_back(groupId);
-
-	std::cerr << "GxsGroupDialog::requestGroup() Requesting Group Summary(" << groupId << ")";
-	std::cerr << std::endl;
-
-	uint32_t token;
-	if (mInternalTokenQueue)
-		mInternalTokenQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, GXSGROUP_INTERNAL_LOADGROUP) ;
-}
-
-void GxsGroupDialog::loadGroup(uint32_t token)
-{
-	std::cerr << "GxsGroupDialog::loadGroup(" << token << ")";
-	std::cerr << std::endl;
-
-	QString description;
-	if (service_loadGroup(token, mMode, mGrpMeta, description))
+	RsThread::async([this,grpId]()
 	{
-		updateFromExistingMeta(description);
-	}
-}
+		RsGxsGenericGroupData *groupData;
 
-void GxsGroupDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
-{
-	std::cerr << "GxsGroupDialog::loadRequest() UserType: " << req.mUserType;
-	std::cerr << std::endl;
-
-	if (queue == mInternalTokenQueue)
-	{
-		/* now switch on req */
-		switch(req.mUserType)
+		if(!service_getGroupData(grpId,groupData))
 		{
-			case GXSGROUP_INTERNAL_LOADGROUP:
-				loadGroup(req.mToken);
-				break;
-			default:
-				std::cerr << "GxsGroupDialog::loadGroup() UNKNOWN UserType ";
-				std::cerr << std::endl;
-				break;
+			std::cerr << __PRETTY_FUNCTION__ << " failed to collect group info " << std::endl;
+			return;
 		}
-	}
+
+		RsQThreadUtils::postToObject( [this,groupData]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete, note that
+			 * Qt::QueuedConnection is important!
+			 */
+
+            mGrpMeta = groupData->mMeta;
+
+			QString description;
+
+			if (service_loadGroup(groupData, mMode, description))
+				updateFromExistingMeta(description);
+
+            delete groupData;
+
+		}, this );
+	});
 }
+

@@ -1,129 +1,165 @@
-
-/*
- * RetroShare : RetroDb functionality
- *
- * Copyright 2012-2013 Christopher Evi-Parker
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/util: retrodb.cc                                          *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2012  Christopher Evi-Parker <retroshare@lunamutt.com>        *
+ * Copyright (C) 2019  Gioacchino Mazzurco <gio@altermundi.net>                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <iostream>
 #include <sstream>
-#include <memory.h>
-#include <time.h>
-#include <inttypes.h>
+#include <memory>
+#include <cstdint>
+#include <cerrno>
 
-#include "retrodb.h"
-#include "rsdbbind.h"
+#include "util/rstime.h"
+#include "util/retrodb.h"
+#include "util/rsdbbind.h"
+#include "util/stacktrace.h"
+#include "util/rsdir.h"
 
 //#define RETRODB_DEBUG
-
-#ifndef NO_SQLCIPHER
-#define ENABLE_ENCRYPTED_DB
-#endif
 
 const int RetroDb::OPEN_READONLY = SQLITE_OPEN_READONLY;
 const int RetroDb::OPEN_READWRITE = SQLITE_OPEN_READWRITE;
 const int RetroDb::OPEN_READWRITE_CREATE = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
 
-RetroDb::RetroDb(const std::string &dbPath, int flags, const std::string& key) : mDb(NULL), mKey(key) {
+RetroDb::RetroDb(const std::string& dbPath, int flags, const std::string& key):
+    mDb(nullptr), mKey(key)
+{
+	bool alreadyExists = RsDirUtil::fileExists(dbPath);
 
-    int rc = sqlite3_open_v2(dbPath.c_str(), &mDb, flags, NULL);
-
-    if(rc){
-        std::cerr << "Can't open database, Error code: " <<  sqlite3_errmsg(mDb)
-                  << std::endl;
-        sqlite3_close(mDb);
-        mDb = NULL;
-        return;
-     }
-
-#ifdef ENABLE_ENCRYPTED_DB
-    if(!mKey.empty())
-    {
-    	rc = sqlite3_key(mDb, mKey.c_str(), mKey.size());
-
-		if(rc){
-			std::cerr << "Can't key database: " <<  sqlite3_errmsg(mDb)
-					  << std::endl;
-
-			sqlite3_close(mDb);
-			mDb = NULL;
-			return;
-		 }
-    }
-
-    char *err = NULL;
-    rc = sqlite3_exec(mDb, "PRAGMA cipher_migrate;", NULL, NULL, &err);
-    if (rc != SQLITE_OK)
-    {
-        std::cerr << "RetroDb::RetroDb(): Error upgrading database, error code: " << rc;
-        if (err)
-        {
-            std::cerr << ", " << err;
-        }
-        std::cerr << std::endl;
-        sqlite3_free(err);
-    }
-
-	//Test DB for correct sqlcipher version
-	if (sqlite3_exec(mDb, "PRAGMA user_version;", NULL, NULL, NULL) != SQLITE_OK)
+	int rc = sqlite3_open_v2(dbPath.c_str(), &mDb, flags, nullptr);
+	if(rc)
 	{
-		std::cerr << "RetroDb::RetroDb(): Failed to open database: " << dbPath << std::endl << "Trying with settings for sqlcipher version 3...";
-		//Reopening the database with correct settings
-		rc = sqlite3_close(mDb);
-		mDb = NULL;
-		if(!rc)
-			rc = sqlite3_open_v2(dbPath.c_str(), &mDb, flags, NULL);
-		if(!rc && !mKey.empty())
-			rc = sqlite3_key(mDb, mKey.c_str(), mKey.size());
-		if(!rc)
-			rc = sqlite3_exec(mDb, "PRAGMA kdf_iter = 64000;", NULL, NULL, NULL);
-		if (!rc && (sqlite3_exec(mDb, "PRAGMA user_version;", NULL, NULL, NULL) == SQLITE_OK))
+		RsErr() << __PRETTY_FUNCTION__ << " Can't open database, Error: "
+		        << rc << " " <<  sqlite3_errmsg(mDb) << std::endl;
+		closeDb();
+		print_stacktrace();
+		return;
+	}
+
+	if(alreadyExists)
+	{
+		/* If the database has been created by a RetroShare compiled without
+		 * SQLCipher, open it as a plain SQLite database instead of failing
+		 * miserably. If RetroShare has been compiled without SQLCipher but the
+		 * database seems encrypted print a meaningful error message instead of
+		 * crashing miserably.
+		 * At some point we could implement a migration SQLite <-> SQLCipher
+		 * mecanism and suggest it to the user, or give the option to the user
+		 * to choice between plain SQLite or SQLCipher database, is some cases
+		 * such as encrypted FS it might make sense to keep SQLite even if
+		 * SQLCipher is availble for performance, as encryption is already
+		 * provided at FS level. */
+
+		rc = sqlite3_exec( mDb, "PRAGMA schema_version;",
+		                   nullptr, nullptr, nullptr );
+		if( rc == SQLITE_OK )
 		{
-			std::cerr << "\tSuccess" << std::endl;
-		} else {
-			std::cerr << "\tFailed, giving up" << std::endl;
-			sqlite3_close(mDb);
-			mDb = NULL;
+#ifndef NO_SQLCIPHER
+			RsWarn() << __PRETTY_FUNCTION__ << " The database is not encrypted: "
+			         << dbPath << std::endl;
+#endif // ndef NO_SQLCIPHER
+
+			return;
+		}
+		else
+		{
+#ifdef NO_SQLCIPHER
+			RsErr() << __PRETTY_FUNCTION__ << " Error quering schema version."
+			        << " Are you trying to open an encrypted database without "
+			        << "compiling SQLCipher support?" << std::endl << std::endl;
+			print_stacktrace();
+			closeDb();
+#else // def NO_SQLCIPHER
+			RsInfo() << __PRETTY_FUNCTION__ << " The database seems encrypted: "
+			         << dbPath << std::endl;
+#endif // def NO_SQLCIPHER
+		}
+	}
+
+#ifndef NO_SQLCIPHER
+	if(!mKey.empty())
+	{
+		rc = sqlite3_key(mDb, mKey.c_str(), static_cast<int>(mKey.size()));
+
+		if(rc)
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " Can't key database: " << rc
+			        << " " <<  sqlite3_errmsg(mDb) << std::endl;
+			closeDb();
 			return;
 		}
 	}
-#endif
+
+	char* err = nullptr;
+	rc = sqlite3_exec(mDb, "PRAGMA cipher_migrate;", nullptr, nullptr, &err);
+	if (rc != SQLITE_OK)
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Error upgrading database, error "
+		        << "code: " << rc << " " << err << std::endl;
+		sqlite3_free(err);
+	}
+
+	// Test DB for correct sqlcipher version
+	if(sqlite3_exec(
+	            mDb, "PRAGMA user_version;",
+	            nullptr, nullptr, nullptr ) != SQLITE_OK)
+	{
+		RsWarn() << __PRETTY_FUNCTION__ << " Failed to open database: "
+		         << dbPath << std::endl;
+
+		//Reopening the database with correct settings
+		closeDb();
+		if(!rc) rc = sqlite3_open_v2(dbPath.c_str(), &mDb, flags, nullptr);
+		if(!rc && !mKey.empty())
+			rc = sqlite3_key(mDb, mKey.c_str(), static_cast<int>(mKey.size()));
+		if(!rc)
+			rc = sqlite3_exec( mDb, "PRAGMA kdf_iter = 64000;",
+			                   nullptr, nullptr, nullptr );
+		if (!rc && (sqlite3_exec( mDb, "PRAGMA user_version;",
+		                          nullptr, nullptr, nullptr ) == SQLITE_OK))
+		{
+			RsInfo() << __PRETTY_FUNCTION__ << " Re-trying with settings for "
+			         << "sqlcipher version 3 successed" << std::endl;
+		}
+		else
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " Re-trying with settings for "
+			        << "sqlcipher version 3 failed, giving up" << std::endl;
+			closeDb();
+			return;
+		}
+	}
+#endif // ndef NO_SQLCIPHER
 }
 
-RetroDb::~RetroDb(){
+RetroDb::~RetroDb() { closeDb(); }
 
-	sqlite3_close(mDb);	// no-op if mDb is NULL (https://www.sqlite.org/c3ref/close.html)
-	mDb = NULL ;
-}
+void RetroDb::closeDb()
+{
+	// no-op if mDb is nullptr (https://www.sqlite.org/c3ref/close.html)
+	int rc = sqlite3_close(mDb);
+	mDb = nullptr;
 
-void RetroDb::closeDb(){
-
-    int rc= sqlite3_close(mDb);
-	mDb = NULL ;
-
-#ifdef RETRODB_DEBUG
-    std::cerr << "RetroDb::closeDb(): Error code on close: " << rc << std::endl;
-#else
-    (void)rc;
-#endif
-
+	Dbg2() << __PRETTY_FUNCTION__ << " sqlite3_close return: " << rc
+	       << std::endl;
 }
 
 #define TIME_LIMIT 3
@@ -149,7 +185,7 @@ bool RetroDb::execSQL(const std::string &query){
 
 
     uint32_t delta = 3;
-    time_t stamp = time(NULL), now = 0;
+    rstime_t stamp = time(NULL);
     bool timeOut = false, ok = false;
 
     while(!timeOut){
@@ -166,10 +202,8 @@ bool RetroDb::execSQL(const std::string &query){
             break;
         }
 
-        now = time(NULL);
-        delta = stamp - now;
-
-        if(delta > TIME_LIMIT){
+        if(time(NULL) > stamp + TIME_LIMIT)
+        {
             ok = false;
             timeOut = true;
         }
@@ -350,7 +384,7 @@ bool RetroDb::execSQL_bind(const std::string &query, std::list<RetroBind*> &para
     }
 
     uint32_t delta = 3;
-    time_t stamp = time(NULL), now = 0;
+    rstime_t stamp = time(NULL), now = 0;
     bool timeOut = false, ok = false;
 
     while(!timeOut){

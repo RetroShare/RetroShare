@@ -1,29 +1,25 @@
-/*
- * libretroshare/src/dht: p3bitdht.h
- *
- * BitDht interface for RetroShare.
- *
- * Copyright 2009-2010 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-
+/*******************************************************************************
+ * libretroshare/src/dht: p3bitdht_peernet.cc                                  *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2009-2010 by Robert Fernie. <drbob@lunamutt.com>                  *
+ * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "dht/p3bitdht.h"
 
 #include "bitdht/bdstddht.h"
@@ -68,7 +64,7 @@ bool 	p3BitDht::findPeer(const RsPeerId& pid)
 		DhtPeerDetails *dpd = findInternalRsPeer_locked(pid);
 		if (!dpd)
 		{
-			dpd = addInternalPeer_locked(pid, RSDHT_PEERTYPE_FRIEND);
+			dpd = addInternalPeer_locked(pid, RsDhtPeerType::FRIEND);
 			if (!dpd)
 			{
 				/* ERROR */
@@ -80,7 +76,7 @@ bool 	p3BitDht::findPeer(const RsPeerId& pid)
 			}
 	
 			/* new entry... what do we need to set? */
-			dpd->mDhtState = RSDHT_PEERDHT_SEARCHING;
+			dpd->mDhtState = RsDhtPeerDht::SEARCHING;
 	
 #ifdef DEBUG_BITDHT
 			std::cerr << "p3BitDht::findPeer() Installed new DhtPeer with pid => NodeId: ";
@@ -97,7 +93,7 @@ bool 	p3BitDht::findPeer(const RsPeerId& pid)
 			std::cerr << std::endl;
 #endif
 	
-			if (dpd->mDhtState != RSDHT_PEERDHT_NOT_ACTIVE)
+			if (dpd->mDhtState != RsDhtPeerDht::NOT_ACTIVE)
 			{
 #ifdef DEBUG_BITDHT
 				std::cerr << "p3BitDht::findPeer() WARNING DhtState is Already Active!";
@@ -108,7 +104,7 @@ bool 	p3BitDht::findPeer(const RsPeerId& pid)
 			else
 			{
 				/* flag as searching */
-				dpd->mDhtState = RSDHT_PEERDHT_SEARCHING;
+				dpd->mDhtState = RsDhtPeerDht::SEARCHING;
 #ifdef DEBUG_BITDHT
 				std::cerr << "p3BitDht::findPeer() Marking Old Peer as SEARCHING";
 				std::cerr << std::endl;
@@ -154,13 +150,13 @@ bool 	p3BitDht::dropPeer(const RsPeerId& pid)
 #endif
 	
 			//addFriend(pid);
-			dpd = addInternalPeer_locked(pid, RSDHT_PEERTYPE_FOF);
+			dpd = addInternalPeer_locked(pid, RsDhtPeerType::FOF);
 			
 			return false;
 		}
 	
 		/* flag as searching */
-		dpd->mDhtState = RSDHT_PEERDHT_NOT_ACTIVE;
+		dpd->mDhtState = RsDhtPeerDht::NOT_ACTIVE;
 	
 		nid = dpd->mDhtId.id;
 	
@@ -184,18 +180,24 @@ bool 	p3BitDht::dropPeer(const RsPeerId& pid)
  ********************************* Basic Peer Details *************************************
  ******************************************************************************************/
 
-int p3BitDht::addBadPeer(const struct sockaddr_storage &addr, uint32_t /*reason*/, uint32_t /*flags*/, uint32_t /*age*/)
+int p3BitDht::addBadPeer( const sockaddr_storage &addr, uint32_t /*reason*/,
+                          uint32_t /*flags*/, uint32_t /*age*/ )
 {
 	//mUdpBitDht->updateKnownPeer(&id, 0, bdflags);
 
-	struct sockaddr_in addrv4;
-	if (addr.ss_family != AF_INET)
+	sockaddr_in addrv4;
+	sockaddr_storage tmpaddr;
+	sockaddr_storage_copy(addr, tmpaddr);
+	if(!sockaddr_storage_ipv6_to_ipv4(tmpaddr))
 	{
-		std::cerr << "p3BitDht::addBadPeer() cannot handle IPV6 Yet, aborting";
-		std::cerr << std::endl;
-		abort();
+		std::cerr << __PRETTY_FUNCTION__ << " Error: got non IPv4 address!"
+		          << std::endl;
+		sockaddr_storage_dump(addr);
+		print_stacktrace();
+		return -EINVAL;
 	}
-	struct sockaddr_in *ap = (struct sockaddr_in *) &addr;
+
+	struct sockaddr_in *ap = (struct sockaddr_in *) &tmpaddr;
 
 	// convert.
 	addrv4.sin_family = ap->sin_family;
@@ -216,40 +218,31 @@ int p3BitDht::addBadPeer(const struct sockaddr_storage &addr, uint32_t /*reason*
 }
 
 
-int p3BitDht::addKnownPeer(const RsPeerId &pid, const struct sockaddr_storage &addr, uint32_t flags) 
+int p3BitDht::addKnownPeer( const RsPeerId &pid,
+                            const sockaddr_storage &addr, uint32_t flags )
 {
-    struct sockaddr_in addrv4;
-    sockaddr_clear(&addrv4);
+	sockaddr_in addrv4;
+	sockaddr_clear(&addrv4);
 
-	if (addr.ss_family != AF_INET)
-    {
-        if(addr.ss_family != AF_UNSPEC)
-        {
-            std::cerr << "p3BitDht::addKnownPeer() Warning! Non IPv4 Address - Cannot handle IPV6 Yet. addr.ss_family=" << addr.ss_family;
-            std::cerr << std::endl;
-        }
-
-		if (flags & NETASSIST_KNOWN_PEER_ONLINE)
-		{
-			std::cerr << "p3BitDht::addKnownPeer() Non IPv4 Address & ONLINE. Abort()ing.";
-			std::cerr << std::endl;
-			abort();
-		}
-	}
-	else
+	sockaddr_storage tmpaddr;
+	sockaddr_storage_copy(addr, tmpaddr);
+	if( !sockaddr_storage_isnull(addr) &&
+	         !sockaddr_storage_ipv6_to_ipv4(tmpaddr) )
 	{
-
-		// convert.
-		struct sockaddr_in *ap = (struct sockaddr_in *) &addr;
-	
-		addrv4.sin_family = ap->sin_family;
-		addrv4.sin_addr = ap->sin_addr;
-		addrv4.sin_port = ap->sin_port;	
+		std::cerr << __PRETTY_FUNCTION__ << " Error: got non IPv4 address!"
+		          << std::endl;
+		sockaddr_storage_dump(addr);
+		print_stacktrace();
+		return -EINVAL;
 	}
 
-	
-	
-	int p3type = 0;
+	// convert.
+	struct sockaddr_in *ap = (struct sockaddr_in *) &tmpaddr;
+	addrv4.sin_family = ap->sin_family;
+	addrv4.sin_addr = ap->sin_addr;
+	addrv4.sin_port = ap->sin_port;
+
+	RsDhtPeerType p3type = RsDhtPeerType::ANY;
 	int bdflags = 0;
 	bdId id;
 	bool isOwnId = false;
@@ -260,27 +253,27 @@ int p3BitDht::addKnownPeer(const RsPeerId &pid, const struct sockaddr_storage &a
 			return 0;
 			break;
 		case NETASSIST_KNOWN_PEER_WHITELIST:
-			p3type = RSDHT_PEERTYPE_OTHER;
+		    p3type = RsDhtPeerType::OTHER;
 			bdflags = BITDHT_PEER_STATUS_DHT_WHITELIST;
 
 			break;
 		case NETASSIST_KNOWN_PEER_FOF:
-			p3type = RSDHT_PEERTYPE_FOF;
+		    p3type = RsDhtPeerType::FOF;
 			bdflags = BITDHT_PEER_STATUS_DHT_FOF;
 
 			break;
 		case NETASSIST_KNOWN_PEER_FRIEND:
-			p3type = RSDHT_PEERTYPE_FRIEND;
+		    p3type = RsDhtPeerType::FRIEND;
 			bdflags = BITDHT_PEER_STATUS_DHT_FRIEND;
 
 			break;
 		case NETASSIST_KNOWN_PEER_RELAY:
-			p3type = RSDHT_PEERTYPE_OTHER;
+		    p3type = RsDhtPeerType::OTHER;
 			bdflags = BITDHT_PEER_STATUS_DHT_RELAY_SERVER;
 
 			break;
 		case NETASSIST_KNOWN_PEER_SELF:
-			p3type = RSDHT_PEERTYPE_OTHER;
+		    p3type = RsDhtPeerType::OTHER;
 			bdflags = BITDHT_PEER_STATUS_DHT_SELF;
 			isOwnId = true;
 
@@ -295,7 +288,7 @@ int p3BitDht::addKnownPeer(const RsPeerId &pid, const struct sockaddr_storage &a
 
 	if (!isOwnId)
 	{
-		RsStackMutex stack(dhtMtx);    /********* LOCKED *********/
+		RS_STACK_MUTEX(dhtMtx);
 		DhtPeerDetails *dpd = addInternalPeer_locked(pid, p3type);
 	
 	
@@ -371,7 +364,7 @@ int p3BitDht::addFriend(const std::string pid)
 {
 	RsStackMutex stack(dhtMtx);    /********* LOCKED *********/
 
-	return (NULL != addInternalPeer_locked(pid, RSDHT_PEERTYPE_FRIEND));
+	return (NULL != addInternalPeer_locked(pid, RsDhtPeerType::FRIEND));
 }
 
 
@@ -379,7 +372,7 @@ int p3BitDht::addFriendOfFriend(const std::string pid)
 {
 	RsStackMutex stack(dhtMtx);    /********* LOCKED *********/
 
-	return (NULL != addInternalPeer_locked(pid, RSDHT_PEERTYPE_FOF));
+	return (NULL != addInternalPeer_locked(pid, RsDhtPeerType::FOF));
 }
 
 
@@ -387,7 +380,7 @@ int p3BitDht::addOther(const std::string pid)
 {
 	RsStackMutex stack(dhtMtx);    /********* LOCKED *********/
 
-	return (NULL != addInternalPeer_locked(pid, RSDHT_PEERTYPE_OTHER));
+	return (NULL != addInternalPeer_locked(pid, RsDhtPeerType::OTHER));
 }
 #endif
 
@@ -404,7 +397,7 @@ int p3BitDht::removePeer(const RsPeerId& pid)
  ********************************* Basic Peer Details *************************************
  ******************************************************************************************/
 
-DhtPeerDetails *p3BitDht::addInternalPeer_locked(const RsPeerId& pid, uint32_t type)
+DhtPeerDetails *p3BitDht::addInternalPeer_locked(const RsPeerId& pid, RsDhtPeerType type)
 {
 	/* create the data structure */
 	if (!havePeerTranslation_locked(pid))
@@ -418,18 +411,18 @@ DhtPeerDetails *p3BitDht::addInternalPeer_locked(const RsPeerId& pid, uint32_t t
 		return 0;
 	}
 
-	DhtPeerDetails *dpd = findInternalDhtPeer_locked(&id, RSDHT_PEERTYPE_ANY);
+	DhtPeerDetails *dpd = findInternalDhtPeer_locked(&id, RsDhtPeerType::ANY);
 	if (!dpd)
 	{
         DhtPeerDetails newdpd;
 
         newdpd.mDhtId.id = id;
         newdpd.mRsId = pid;
-            newdpd.mDhtState = RSDHT_PEERDHT_NOT_ACTIVE;
-            newdpd.mPeerType = RSDHT_PEERTYPE_ANY;
+		    newdpd.mDhtState = RsDhtPeerDht::NOT_ACTIVE;
+			newdpd.mPeerType = RsDhtPeerType::ANY;
 
         mPeers[id] = newdpd;
-        dpd = findInternalDhtPeer_locked(&id, RSDHT_PEERTYPE_ANY);
+		dpd = findInternalDhtPeer_locked(&id, RsDhtPeerType::ANY);
 
         if(dpd == NULL)
         {
@@ -469,14 +462,14 @@ int p3BitDht::removeInternalPeer_locked(const RsPeerId& pid)
 
 
 /* indexed by bdNodeId, as this is the more used call interface */
-DhtPeerDetails *p3BitDht::findInternalDhtPeer_locked(const bdNodeId *id, uint32_t type)
+DhtPeerDetails *p3BitDht::findInternalDhtPeer_locked(const bdNodeId *id, RsDhtPeerType type)
 {
 	std::map<bdNodeId, DhtPeerDetails>::iterator it = mPeers.find(*id);
 	if (it == mPeers.end())
 	{
 		return NULL;
 	}
-	if (type)
+	if (type != RsDhtPeerType::ANY)
 	{
 		if (it->second.mPeerType != type)
 		{
@@ -502,7 +495,7 @@ DhtPeerDetails *p3BitDht::findInternalRsPeer_locked(const RsPeerId &pid)
 		return NULL;
 	}
 
-	DhtPeerDetails *dpd = findInternalDhtPeer_locked(&id,RSDHT_PEERTYPE_ANY);
+	DhtPeerDetails *dpd = findInternalDhtPeer_locked(&id,RsDhtPeerType::ANY);
 
 	return dpd;
 }
@@ -724,13 +717,13 @@ int p3BitDht::calculateNodeId(const RsPeerId& pid, bdNodeId *id)
 
 DhtPeerDetails::DhtPeerDetails()
 {
-	mDhtState = RSDHT_PEERDHT_NOT_ACTIVE;
+	mDhtState = RsDhtPeerDht::NOT_ACTIVE;
 
-	mDhtState = RSDHT_PEERDHT_SEARCHING;
+	mDhtState = RsDhtPeerDht::SEARCHING;
 	mDhtUpdateTS = time(NULL);
 		
 	mPeerReqStatusMsg = "Just Added";
-	mPeerReqState = RSDHT_PEERREQ_STOPPED;
+	mPeerReqState = RsDhtPeerRequest::STOPPED;
 	mPeerReqMode = 0;
 	//mPeerReqProxyId;
 	mPeerReqTS = time(NULL);
@@ -744,7 +737,7 @@ DhtPeerDetails::DhtPeerDetails()
 	//mPeerCbDestId = 0;
 	mPeerCbTS = 0;
 		
-	mPeerConnectState = RSDHT_PEERCONN_DISCONNECTED;
+	mPeerConnectState = RsDhtPeerConnectState::DISCONNECTED;
 	mPeerConnectMsg = "Disconnected";
 	mPeerConnectMode = 0;
 	//dpd->mPeerConnectProxyId;

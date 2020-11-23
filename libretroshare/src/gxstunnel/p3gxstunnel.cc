@@ -1,36 +1,31 @@
-/*
- * libretroshare/src/chat: distantchat.cc
- *
- * Services for RetroShare.
- *
- * Copyright 2014 by Cyril Soler
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "csoler@users.sourceforge.net".
- *
- */
-
-
+/*******************************************************************************
+ * libretroshare/src/chat: distantchat.cc                                      *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2015 by Cyril Soler <csoler@users.sourceforge.net>                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include <unistd.h>
 
 #include "openssl/rand.h"
 #include "openssl/dh.h"
 #include "openssl/err.h"
 
-#include "util/rsaes.h"
+#include "crypto/rsaes.h"
 #include "util/rsprint.h"
 #include "util/rsmemory.h"
 
@@ -106,8 +101,8 @@ int p3GxsTunnelService::tick()
 {
     
 #ifdef DEBUG_GXS_TUNNEL    
-    time_t now = time(NULL);
-	static time_t last_dump = 0;
+    rstime_t now = time(NULL);
+	static rstime_t last_dump = 0;
     
     if(now > last_dump + INTERVAL_BETWEEN_DEBUG_DUMP )
     {
@@ -117,7 +112,7 @@ int p3GxsTunnelService::tick()
 #endif
     
     flush() ;
-    
+
     return 0 ;
 }
 
@@ -143,7 +138,10 @@ void p3GxsTunnelService::flush()
 
 	    for(std::list<RsGxsTunnelDHPublicKeyItem*>::iterator it=pendingDHItems.begin();it!=pendingDHItems.end();)
 		    if(locked_sendClearTunnelData(*it) )
+			{
+				delete *it ;
 			    it = pendingDHItems.erase(it) ;
+			}
 		    else
 			    ++it ;
     }
@@ -155,7 +153,10 @@ void p3GxsTunnelService::flush()
 
 	    for(std::list<RsGxsTunnelItem*>::iterator it=pendingGxsTunnelItems.begin();it!=pendingGxsTunnelItems.end();)
 		    if(locked_sendEncryptedTunnelData(*it) )
+			{
+				delete *it ;
 			    it = pendingGxsTunnelItems.erase(it) ;
+			}
 		    else
 		    {
 			    ++it ;
@@ -170,7 +171,7 @@ void p3GxsTunnelService::flush()
     {
 	    RS_STACK_MUTEX(mGxsTunnelMtx); /********** STACK LOCKED MTX ******/
 
-	    time_t now = time(NULL) ;
+	    rstime_t now = time(NULL) ;
 
 	    for(std::map<uint64_t, GxsTunnelData>::iterator it = pendingGxsTunnelDataItems.begin();it != pendingGxsTunnelDataItems.end();++it)
 		    if(now > RS_GXS_TUNNEL_DELAY_BETWEEN_RESEND + it->second.last_sending_attempt)
@@ -193,7 +194,7 @@ void p3GxsTunnelService::flush()
 
     RS_STACK_MUTEX(mGxsTunnelMtx); /********** STACK LOCKED MTX ******/
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     for(std::map<RsGxsTunnelId,GxsTunnelPeerInfo>::iterator it(_gxs_tunnel_contacts.begin());it!=_gxs_tunnel_contacts.end();)
     {
@@ -255,13 +256,13 @@ void p3GxsTunnelService::flush()
         
         // clean old received data prints.
         
-        for(std::map<uint64_t,time_t>::iterator it2=it->second.received_data_prints.begin();it2!=it->second.received_data_prints.end();)
+        for(std::map<uint64_t,rstime_t>::iterator it2=it->second.received_data_prints.begin();it2!=it->second.received_data_prints.end();)
             if(now > it2->second + RS_GXS_TUNNEL_DATA_PRINT_STORAGE_DELAY)
             {
 #ifdef DEBUG_GXS_TUNNEL
                 std::cerr << "(II) erasing old data print for message #" << it2->first << " in tunnel " << it->first << std::endl;
 #endif
-                std::map<uint64_t,time_t>::iterator tmp(it2) ;
+                std::map<uint64_t,rstime_t>::iterator tmp(it2) ;
                 ++tmp ;
                 it->second.received_data_prints.erase(it2) ;
                 it2 = tmp ;
@@ -369,11 +370,11 @@ void p3GxsTunnelService::handleRecvTunnelDataItem(const RsGxsTunnelId& tunnel_id
             std::map<RsGxsTunnelId,GxsTunnelPeerInfo>::iterator it2 = _gxs_tunnel_contacts.find(tunnel_id) ; 
             
             if(it2 != _gxs_tunnel_contacts.end())
-	    {
-		    it2->second.client_services.insert(item->service_id) ;
-		    peer_from = it2->second.to_gxs_id ;
-		    is_client_side = (it2->second.direction == RsTurtleGenericDataItem::DIRECTION_CLIENT);
-	    }
+			{
+				it2->second.client_services.insert(item->service_id) ;
+				peer_from = it2->second.to_gxs_id ;
+				is_client_side = (it2->second.direction == RsTurtleGenericDataItem::DIRECTION_SERVER);
+			}
             
             // Check if the item has already been received. This is necessary because we actually re-send items until an ACK is received. If the ACK gets lost (connection interrupted) the
             // item may be received twice. This is conservative and ensure that no item is lost nor received twice.
@@ -679,7 +680,7 @@ void p3GxsTunnelService::removeVirtualPeer(const TurtleFileHash& hash,const Turt
     }
 }
 
-void p3GxsTunnelService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,const RsFileHash& hash, const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction)
+void p3GxsTunnelService::receiveTurtleData(const RsTurtleGenericTunnelItem *gitem, const RsFileHash& hash, const RsPeerId& virtual_peer_id, RsTurtleGenericTunnelItem::Direction direction)
 {
 #ifdef DEBUG_GXS_TUNNEL
     std::cerr << "GxsTunnelService::receiveTurtleData(): Received turtle data. " << std::endl;
@@ -691,22 +692,40 @@ void p3GxsTunnelService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,cons
     (void) direction;
 #endif
 
-    RsTurtleGenericDataItem *item = dynamic_cast<RsTurtleGenericDataItem*>(gitem) ;
+    void *data_bytes;
+    uint32_t data_size ;
+    bool accept_fast_items = false;
 
-    if(item == NULL)
+    const RsTurtleGenericFastDataItem *fitem = dynamic_cast<const RsTurtleGenericFastDataItem*>(gitem) ;
+
+    if(fitem != NULL)
     {
-        std::cerr << "(EE) item is not a data item. That is an error." << std::endl;
-        return ;
+        data_bytes = fitem->data_bytes ;
+        data_size = fitem->data_size ;
+        accept_fast_items = true;
     }
-    // Call the AES crypto module
+    else
+    {
+		const RsTurtleGenericDataItem *item = dynamic_cast<const RsTurtleGenericDataItem*>(gitem) ;
+
+		if(item == NULL)
+		{
+			std::cerr << "(EE) item is not a data item. That is an error." << std::endl;
+			return ;
+		}
+        data_bytes = item->data_bytes ;
+        data_size = item->data_size ;
+    }
+
+	// Call the AES crypto module
     // - the IV is the first 8 bytes of item->data_bytes
 
-    if(item->data_size < 8)
+    if(data_size < 8)
     {
-        std::cerr << "(EE) item encrypted data stream is too small: size = " << item->data_size << std::endl;
+        std::cerr << "(EE) item encrypted data stream is too small: size = " << data_size << std::endl;
         return ;
     }
-    if(*((uint64_t*)item->data_bytes) != 0)	// WTF?? we should use flags
+    if(*((uint64_t*)data_bytes) != 0)	// WTF?? we should use flags
     {
 #ifdef DEBUG_GXS_TUNNEL
         std::cerr << "  Item is encrypted." << std::endl;
@@ -714,7 +733,7 @@ void p3GxsTunnelService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,cons
 
         // if cannot decrypt, it means the key is wrong. We need to re-negociate a new key.
 
-        handleEncryptedData((uint8_t*)item->data_bytes,item->data_size,hash,virtual_peer_id) ;
+        handleEncryptedData((uint8_t*)data_bytes,data_size,hash,virtual_peer_id,accept_fast_items) ;
     }
     else
     {
@@ -724,8 +743,8 @@ void p3GxsTunnelService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,cons
 
         // Now try deserialise the decrypted data to make an RsItem out of it.
         //
-        uint32_t pktsize = item->data_size-8;
-        RsItem *citem = RsGxsTunnelSerialiser().deserialise(&((uint8_t*)item->data_bytes)[8],&pktsize) ;
+        uint32_t pktsize = data_size-8;
+        RsItem *citem = RsGxsTunnelSerialiser().deserialise(&((uint8_t*)data_bytes)[8],&pktsize) ;
 
         if(citem == NULL)
         {
@@ -744,12 +763,18 @@ void p3GxsTunnelService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,cons
         }
         else
             std::cerr << "(EE) Deserialiased item has unexpected type." << std::endl;
+
+		delete citem ;
     }
 }
 
 // This function encrypts the given data and adds a MAC and an IV into a serialised memory chunk that is then sent through the tunnel.
 
+#ifndef V07_NON_BACKWARD_COMPATIBLE_CHANGE_004
+bool p3GxsTunnelService::handleEncryptedData(const uint8_t *data_bytes,uint32_t data_size,const TurtleFileHash& hash,const RsPeerId& virtual_peer_id,bool accepts_fast_items)
+#else
 bool p3GxsTunnelService::handleEncryptedData(const uint8_t *data_bytes,uint32_t data_size,const TurtleFileHash& hash,const RsPeerId& virtual_peer_id)
+#endif
 {
 #ifdef DEBUG_GXS_TUNNEL
     std::cerr << "p3GxsTunnelService::handleEncryptedDataItem()" << std::endl;
@@ -792,6 +817,16 @@ bool p3GxsTunnelService::handleEncryptedData(const uint8_t *data_bytes,uint32_t 
             std::cerr << "(EE) no tunnel data for tunnel ID=" << tunnel_id << ". This is a bug." << std::endl;
             return false ;
         }
+#ifndef V07_NON_BACKWARD_COMPATIBLE_CHANGE_004
+        if(accepts_fast_items)
+        {
+            if(!it2->second.accepts_fast_turtle_items)
+                std::cerr << "(II) received probe for Fast track turtle items for tunnel VPID " << it2->second.virtual_peer_id << ": switching to Fast items mode." << std::endl;
+
+            it2->second.accepts_fast_turtle_items = true;
+        }
+#endif
+
         memcpy(aes_key,it2->second.aes_key,GXS_TUNNEL_AES_KEY_SIZE) ;
 
 #ifdef DEBUG_GXS_TUNNEL
@@ -941,7 +976,7 @@ void p3GxsTunnelService::handleRecvDHPublicKey(RsGxsTunnelDHPublicKeyItem *item)
         std::cerr << "(SS) Signature was verified and it doesn't check! This is a security issue!" << std::endl;
         return ;
     }
-    mGixs->timeStampKey(item->signature.keyId,RsIdentityUsage(RS_SERVICE_TYPE_GXS_TUNNEL,RsIdentityUsage::GXS_TUNNEL_DH_SIGNATURE_CHECK));
+    mGixs->timeStampKey(item->signature.keyId,RsIdentityUsage(RsServiceType::GXS_TUNNEL,RsIdentityUsage::GXS_TUNNEL_DH_SIGNATURE_CHECK));
 
 #ifdef DEBUG_GXS_TUNNEL
     std::cerr << "  Signature checks! Sender's ID = " << senders_id << std::endl;
@@ -1027,7 +1062,7 @@ void p3GxsTunnelService::handleRecvDHPublicKey(RsGxsTunnelDHPublicKeyItem *item)
 
 // Note: for some obscure reason, the typedef does not work here. Looks like a compiler error. So I use the primary type.
 
-/*static*/ GXSTunnelId p3GxsTunnelService::makeGxsTunnelId(
+/*static*/ RsGxsTunnelId p3GxsTunnelService::makeGxsTunnelId(
         const RsGxsId &own_id, const RsGxsId &distant_id )
 {
     unsigned char mem[RsGxsId::SIZE_IN_BYTES * 2] ;
@@ -1259,8 +1294,9 @@ bool p3GxsTunnelService::locked_sendEncryptedTunnelData(RsGxsTunnelItem *item)
 	}
 	if(it->second.status != RS_GXS_TUNNEL_STATUS_CAN_TALK)
 	{
-		std::cerr << "(EE) Cannot talk to tunnel id " << tunnel_id
-		          << ". Tunnel status is: " << it->second.status << std::endl;
+#ifdef DEBUG_GXS_TUNNEL
+		std::cerr << "(EE) Cannot talk to tunnel id " << tunnel_id << ". Tunnel status is: " << it->second.status << std::endl;
+#endif
 		return false;
 	}
 
@@ -1288,36 +1324,79 @@ bool p3GxsTunnelService::locked_sendEncryptedTunnelData(RsGxsTunnelItem *item)
 
     // make a TurtleGenericData item out of it:
     //
-    RsTurtleGenericDataItem *gitem = new RsTurtleGenericDataItem ;
 
-    gitem->data_size  = encrypted_size + GXS_TUNNEL_ENCRYPTION_IV_SIZE + GXS_TUNNEL_ENCRYPTION_HMAC_SIZE ;
-    gitem->data_bytes = rs_malloc(gitem->data_size) ;
+    uint32_t data_size  = encrypted_size + GXS_TUNNEL_ENCRYPTION_IV_SIZE + GXS_TUNNEL_ENCRYPTION_HMAC_SIZE ;
+    void *data_bytes = rs_malloc(data_size) ;
 
-    if(gitem->data_bytes == NULL)
+    if(data_bytes == NULL)
         return false ;
     
-    memcpy(& ((uint8_t*)gitem->data_bytes)[0]                                       ,&IV,8) ;
+    memcpy(& ((uint8_t*)data_bytes)[0]                                       ,&IV,8) ;
 
     unsigned int md_len = GXS_TUNNEL_ENCRYPTION_HMAC_SIZE ;
-    HMAC(EVP_sha1(),aes_key,GXS_TUNNEL_AES_KEY_SIZE,encrypted_data,encrypted_size,&(((uint8_t*)gitem->data_bytes)[GXS_TUNNEL_ENCRYPTION_IV_SIZE]),&md_len) ;
+    HMAC(EVP_sha1(),aes_key,GXS_TUNNEL_AES_KEY_SIZE,encrypted_data,encrypted_size,&(((uint8_t*)data_bytes)[GXS_TUNNEL_ENCRYPTION_IV_SIZE]),&md_len) ;
     
-    memcpy(& (((uint8_t*)gitem->data_bytes)[GXS_TUNNEL_ENCRYPTION_HMAC_SIZE+GXS_TUNNEL_ENCRYPTION_IV_SIZE]),encrypted_data,encrypted_size) ;
+    memcpy(& (((uint8_t*)data_bytes)[GXS_TUNNEL_ENCRYPTION_HMAC_SIZE+GXS_TUNNEL_ENCRYPTION_IV_SIZE]),encrypted_data,encrypted_size) ;
     
 #ifdef DEBUG_GXS_TUNNEL
     std::cerr << "   Using  IV: " << std::hex << IV << std::dec << std::endl;
     std::cerr << "   Using Key: " << RsUtil::BinToHex((char*)aes_key,GXS_TUNNEL_AES_KEY_SIZE) ; std::cerr << std::endl;
-    std::cerr << "        hmac: " << RsUtil::BinToHex((char*)gitem->data_bytes,GXS_TUNNEL_ENCRYPTION_HMAC_SIZE) << std::endl;
+    std::cerr << "        hmac: " << RsUtil::BinToHex((char*)data_bytes,GXS_TUNNEL_ENCRYPTION_HMAC_SIZE) << std::endl;
 #endif
 #ifdef DEBUG_GXS_TUNNEL
     std::cerr << "GxsTunnelService::sendEncryptedTunnelData(): Sending encrypted data to virtual peer: " << virtual_peer_id << std::endl;
-    std::cerr << "   gitem->data_size = " << gitem->data_size << std::endl;
-    std::cerr << "    serialised data = " << RsUtil::BinToHex((unsigned char*)gitem->data_bytes,gitem->data_size,100) ;
+    std::cerr << "   data_size = " << data_size << std::endl;
+    std::cerr << "    serialised data = " << RsUtil::BinToHex((unsigned char*)data_bytes,data_size,100) ;
     std::cerr << std::endl;
 #endif
 
-    mTurtle->sendTurtleData(virtual_peer_id,gitem) ;
-    
-    return true ;
+    // We send the item through the turtle tunnel. We do that using the new 'fast' item type if the tunnel accepts it, and using the old slow one otherwise.
+    // Still if the tunnel hasn't been probed, we duplicate the packet using the new fast item format. The packet being received twice on the other side will
+    // be discarded with a warning.
+    // Note that because the data is deleted by sendTurtleData(), we need to send all packets at the end, and properly duplicate the data when needed.
+
+#ifdef V07_NON_BACKWARD_COMPATIBLE_CHANGE_004
+	RsTurtleGenericFastDataItem *gitem = new RsTurtleGenericFastDataItem;
+	gitem->data_bytes = data_bytes;
+	gitem->data_size  = data_size ;
+#else
+	RsTurtleGenericDataItem *gitem = NULL;
+	RsTurtleGenericFastDataItem *gitem2 = NULL;
+
+	if(!it->second.accepts_fast_turtle_items)
+	{
+        std::cerr << "Sending old format (slow) item for packet IV=" << std::hex << IV << std::dec << " in tunnel VPID=" << it->second.virtual_peer_id << std::endl;
+		gitem = new RsTurtleGenericDataItem ;
+
+		gitem->data_bytes = data_bytes;
+		gitem->data_size  = data_size ;
+	}
+
+	if(it->second.accepts_fast_turtle_items || !it->second.already_probed_for_fast_items)
+	{
+        std::cerr << "Sending new format (fast) item for packet IV=" << std::hex << IV << std::dec << " in tunnel VPID=" << it->second.virtual_peer_id << std::endl;
+		gitem2 = new RsTurtleGenericFastDataItem ;
+
+        if(gitem != NULL)	// duplicate the data because it was already sent in gitem.
+		{
+			gitem2->data_bytes = rs_malloc(data_size);
+			gitem2->data_size  = data_size ;
+            memcpy(gitem2->data_bytes,data_bytes,data_size);
+		}
+		else
+		{
+			gitem2->data_bytes = data_bytes;
+			gitem2->data_size  = data_size ;
+		}
+
+		it->second.already_probed_for_fast_items = true;
+
+	}
+	if(gitem2) mTurtle->sendTurtleData(virtual_peer_id,gitem2) ;
+#endif
+    if(gitem)  mTurtle->sendTurtleData(virtual_peer_id,gitem) ;
+
+	return true ;
 }
 
 bool p3GxsTunnelService::requestSecuredTunnel(const RsGxsId& to_gxs_id, const RsGxsId& from_gxs_id, RsGxsTunnelId &tunnel_id, uint32_t service_id, uint32_t& error_code)
@@ -1442,7 +1521,7 @@ void p3GxsTunnelService::startClientGxsTunnelConnection(const RsGxsId& to_gxs_id
 
     GxsTunnelPeerInfo info ;
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     info.last_contact = now ;
     info.last_keep_alive_sent = now ;
@@ -1517,7 +1596,13 @@ bool p3GxsTunnelService::getTunnelInfo(const RsGxsTunnelId& tunnel_id,GxsTunnelI
 
     // Data packets
 
-    info.pending_data_packets = 0;     
+    info.pending_data_packets = 0;
+    RsPeerId p(tunnel_id);
+
+    for(auto it(pendingGxsTunnelDataItems.begin());it!=pendingGxsTunnelDataItems.end();++it)
+        if(it->second.data_item->PeerId() == p)
+            ++info.pending_data_packets ;
+
     info.total_data_packets_sent=0 ;     
     info.total_data_packets_received=0 ;
 
@@ -1625,7 +1710,16 @@ bool p3GxsTunnelService::getTunnelsInfo(std::vector<RsGxsTunnelService::GxsTunne
         ti.tunnel_status = it->second.status ;
         ti.total_size_sent = it->second.total_sent ;
         ti.total_size_received = it->second.total_received ;
-        
+
+		ti.pending_data_packets = 0;
+        RsPeerId p(it->first);
+		for(auto it(pendingGxsTunnelDataItems.begin());it!=pendingGxsTunnelDataItems.end();++it)
+			if(it->second.data_item->PeerId() == p)
+				++ti.pending_data_packets ;
+
+	    ti.total_data_packets_sent =0;     // not accounted for yet.
+	    ti.total_data_packets_received=0 ; // not accounted for yet.
+
         infos.push_back(ti) ;
     }
     
@@ -1636,7 +1730,7 @@ void p3GxsTunnelService::debug_dump()
 {
     RS_STACK_MUTEX(mGxsTunnelMtx); /********** STACK LOCKED MTX ******/
     
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
     
     std::cerr << "p3GxsTunnelService::debug_dump()" << std::endl;
     std::cerr << "  Registered client services: " << std::endl;

@@ -1,24 +1,23 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (c) 2008, defnax
- * Copyright (C) 2006  Christophe Dumez
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- *************************************************************************/
+/*******************************************************************************
+ * util/misc.cpp                                                               *
+ *                                                                             *
+ * Copyright (c) 2008, defnax           <retroshare.project@gmail.com>         *
+ * Copyright (C) 2006  Christophe Dumez                                        *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QString>
 #include <QDir>
@@ -26,8 +25,11 @@
 #include <QByteArray>
 #include <QBuffer>
 #include <time.h>
+#include <QFontDialog>
 
 #include "misc.h"
+#include "util/rsdebug.h"
+#include "gui/common/FilesDefs.h"
 
 // return best userfriendly storage unit (B, KiB, MiB, GiB, TiB)
 // use Binary prefix standards from IEC 60027-2
@@ -38,8 +40,8 @@ QString misc::friendlyUnit(float val)
     if(val < 0) {
         return tr("Unknown", "Unknown (size)");
     }
-    const QString units[5] = {tr(" B", "bytes"), tr(" KB", "kilobytes (1024 bytes)"), tr(" MB", "megabytes (1024 kilobytes)"), tr(" GB", "gigabytes (1024 megabytes)"), tr(" TB", "terabytes (1024 gigabytes)") };
-    for(unsigned int i=0; i<5; ++i) {
+    const QString units[6] = {tr(" B", "bytes"), tr(" KB", "kilobytes (1024 bytes)"), tr(" MB", "megabytes (1024 kilobytes)"), tr(" GB", "gigabytes (1024 megabytes)"), tr(" TB", "terabytes (1024 gigabytes)"), tr(" PB", "petabytes (1024 terabytes)") };
+    for(unsigned int i=0; i<6; ++i) {
         if (val < 1024.) {
             return QString(QByteArray::number(val, 'f', 1)) + units[i];
         }
@@ -306,8 +308,10 @@ QPixmap misc::getOpenThumbnailedPicture(QWidget *parent, const QString &caption,
 	if (!getOpenFileName(parent, RshareSettings::LASTDIR_IMAGES, caption, tr("Pictures (*.png *.jpeg *.xpm *.jpg *.tiff *.gif)"), fileName))
 		return QPixmap();
 
-    return QPixmap(fileName).scaledToHeight(height, Qt::SmoothTransformation).copy( 0, 0, width, height);
-	//return QPixmap(fileName).scaledToHeight(width, height, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+    if(width > 0 && height > 0)
+        return FilesDefs::getPixmapFromQtResourcePath(fileName).scaledToHeight(height, Qt::SmoothTransformation).copy( 0, 0, width, height);
+    else
+        return FilesDefs::getPixmapFromQtResourcePath(fileName);
 }
 
 bool misc::getOpenFileName(QWidget *parent, RshareSettings::enumLastDir type
@@ -316,7 +320,11 @@ bool misc::getOpenFileName(QWidget *parent, RshareSettings::enumLastDir type
 {
     QString lastDir = Settings->getLastDir(type);
 
+#ifdef RS_NATIVEDIALOGS
+    file = QFileDialog::getOpenFileName(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks |                                    options);
+#else
     file = QFileDialog::getOpenFileName(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks | QFileDialog::DontUseNativeDialog | options);
+#endif
 
     if (file.isEmpty())
         return false;
@@ -339,7 +347,11 @@ bool misc::getOpenFileNames(QWidget *parent, RshareSettings::enumLastDir type
 {
     QString lastDir = Settings->getLastDir(type);
 
+#ifdef RS_NATIVEDIALOGS
+    files = QFileDialog::getOpenFileNames(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks |                                    options);
+#else
     files = QFileDialog::getOpenFileNames(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks | QFileDialog::DontUseNativeDialog | options);
+#endif
 
     if (files.isEmpty())
         return false;
@@ -363,9 +375,13 @@ bool misc::getSaveFileName(QWidget *parent, RshareSettings::enumLastDir type
 													 , QString &file, QString *selectedFilter
 													 , QFileDialog::Options options)
 {
-    QString lastDir = Settings->getLastDir(type);
+    QString lastDir = Settings->getLastDir(type) + "/" + file;
 
+#ifdef RS_NATIVEDIALOGS
+    file = QFileDialog::getSaveFileName(parent, caption, lastDir, filter, selectedFilter,                                    options);
+#else
     file = QFileDialog::getSaveFileName(parent, caption, lastDir, filter, selectedFilter, QFileDialog::DontUseNativeDialog | options);
+#endif
 
     if (file.isEmpty())
         return false;
@@ -373,5 +389,48 @@ bool misc::getSaveFileName(QWidget *parent, RshareSettings::enumLastDir type
     lastDir = QFileInfo(file).absoluteDir().absolutePath();
     Settings->setLastDir(type, lastDir);
 
-    return true;
+	return true;
+}
+
+QFont misc::getFont(bool *ok, const QFont &initial, QWidget *parent, const QString &title)
+{
+#ifdef RS_NATIVEDIALOGS
+		return QFontDialog::getFont(ok, initial, parent, title);
+#else
+		return QFontDialog::getFont(ok, initial, parent, title, QFontDialog::DontUseNativeDialog);
+#endif
+}
+
+QString misc::getExistingDirectory(QWidget *parent, const QString &caption, const QString &dir)
+{
+#ifdef RS_NATIVEDIALOGS
+		return QFileDialog::getExistingDirectory(parent, caption, dir, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+#else
+		return QFileDialog::getExistingDirectory(parent, caption, dir, QFileDialog::DontUseNativeDialog | QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+#endif
+}
+
+/*!
+ * Clear a Layout content
+ * \param layout: Layout to Clear
+ */
+void misc::clearLayout(QLayout * layout) {
+	if (! layout)
+		return;
+
+	while (auto item = layout->takeAt(0))
+	{
+		//First get all pointers, else item may be deleted when last object removed and get SIGSEGV
+		auto *widget = item->widget();
+		auto *spacer = item->spacerItem();
+		//Then Clear Layout
+		clearLayout(item->layout());
+		//Last clear objects
+		if (widget)
+			widget->deleteLater();
+		if (spacer)
+			delete spacer;
+
+		//delete item;//Auto deleted by Qt.
+	}
 }

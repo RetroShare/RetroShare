@@ -1,36 +1,32 @@
+/*******************************************************************************
+ * libretroshare/src/gxs: rsgxsdata.h                                          *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2012 by Christopher Evi-Parker, Robert Fernie                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RSGXSMETA_H
 #define RSGXSMETA_H
 
-/*
- * libretroshare/src/gxs: rsgxsdata.h
- *
- * Gxs Data types used to specific services
- *
- * Copyright 2012-2012 by Christopher Evi-Parker, Robert Fernie
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
 #include <string>
 
-#include <retroshare/rstypes.h>
+#include "retroshare/rstypes.h"
 #include "serialiser/rstlvkeys.h"
-
+#include "util/rstime.h"
 #include "rsitems/rsgxsitems.h"
 
 struct RsGroupMetaData;
@@ -51,7 +47,8 @@ public:
     RsGxsGrpMetaData();
     bool deserialise(void *data, uint32_t &pktsize);
     bool serialise(void* data, uint32_t &pktsize, uint32_t api_version);
-    uint32_t serial_size(uint32_t api_version);
+    uint32_t serial_size(uint32_t api_version) const;
+    uint32_t serial_size() const { return serial_size(RS_GXS_GRP_META_DATA_CURRENT_API_VERSION); }
     void clear();
     void operator =(const RsGroupMetaData& rMeta);
 
@@ -98,11 +95,9 @@ public:
     ~RsGxsMsgMetaData();
     bool deserialise(void *data, uint32_t *size);
     bool serialise(void* data, uint32_t *size);
-    uint32_t serial_size();
+    uint32_t serial_size() const;
     void clear();
     void operator =(const RsMsgMetaData& rMeta);
-
-    static int refcount;
 
     //Sort data in same order than serialiser and deserializer
     RsGxsGroupId mGroupId;
@@ -114,8 +109,8 @@ public:
 
     RsTlvKeySignatureSet signSet;
     std::string mMsgName;
-    time_t      mPublishTs;
-    uint32_t    mMsgFlags; // Whats this for?
+    rstime_t      mPublishTs;
+    uint32_t    mMsgFlags; // used by some services (e.g. by forums to store message moderation flags)
 
     // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
     // normally READ / UNREAD flags. LOCAL Data.
@@ -123,7 +118,7 @@ public:
     std::string mServiceString;
     uint32_t    mMsgStatus;
     uint32_t    mMsgSize;
-    time_t      mChildTs;
+    rstime_t      mChildTs;
     uint32_t recvTS;
     RsFileHash mHash;
     bool validated;

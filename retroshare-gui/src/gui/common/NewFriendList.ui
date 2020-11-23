@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>NewFriendList</class>
+ <widget class="QWidget" name="NewFriendList">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>475</width>
+    <height>292</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QFrame" name="titleBarFrame">
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="spacing">
+       <number>3</number>
+      </property>
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
+       <number>2</number>
+      </property>
+      <item>
+       <widget class="LineEditClear" name="filterLineEdit"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTreeView" name="peerTreeWidget">
+     <property name="contextMenuPolicy">
+      <enum>Qt::CustomContextMenu</enum>
+     </property>
+     <property name="sortingEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="wordWrap">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+  </layout>
+  <action name="actionShowOfflineFriends">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Offline Friends</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Offline Friends</string>
+   </property>
+  </action>
+  <action name="actionShowState">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Status</string>
+   </property>
+   <property name="toolTip">
+    <string>Show status</string>
+   </property>
+  </action>
+  <action name="actionShowGroups">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Groups</string>
+   </property>
+   <property name="toolTip">
+    <string>Show groups</string>
+   </property>
+  </action>
+  <action name="actionExportFriendlist">
+   <property name="text">
+    <string>export friendlist</string>
+   </property>
+   <property name="toolTip">
+    <string>export your friendlist including groups</string>
+   </property>
+  </action>
+  <action name="actionImportFriendlist">
+   <property name="text">
+    <string>import friendlist</string>
+   </property>
+   <property name="toolTip">
+    <string>import your friendlist including groups</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header location="global">gui/common/LineEditClear.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

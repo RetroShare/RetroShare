@@ -1,24 +1,23 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (c) 2006-2007, crypton
- * Copyright (c) 2006, Matt Edman, Justin Hipple
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/settings/rsharesettings.cpp                                             *
+ *                                                                             *
+ * Copyright (c) 2006-2007, crypton                                            *
+ * Copyright (c) 2006, Matt Edman, Justin Hipple                               *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <math.h>
 #include <QDir>
@@ -31,11 +30,15 @@
 #include "rsharesettings.h"
 #include "gui/MainWindow.h"
 
+#ifdef RS_JSONAPI
+#include <retroshare/rsjsonapi.h>
+#endif
+
 #include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
 
-#if defined(Q_OS_WIN)
-#include <util/win32.h>
+#ifdef Q_OS_WIN
+#	include <util/retroshareWin32.h>
 #endif
 
 /* Retroshare's Settings */
@@ -110,10 +113,10 @@ void RshareSettings::initSettings()
 #else
 	static QStringList styles = QStyleFactory::keys();
 #if defined(Q_OS_WIN)
-	if (styles.contains("windowsvista", Qt::CaseInsensitive))
+	if (styles.contains("Fusion", Qt::CaseInsensitive))
+		setDefault(SETTING_STYLE, "Fusion");
+	else if (styles.contains("windowsvista", Qt::CaseInsensitive))
 		setDefault(SETTING_STYLE, "windowsvista");
-	else if (styles.contains("windowsxp", Qt::CaseInsensitive))
-		setDefault(SETTING_STYLE, "windowsxp");
 	else
 #endif
 	{
@@ -729,6 +732,16 @@ void RshareSettings::setPrivateChatHistoryCount(int value)
 	setValueToGroup("Chat", "PrivateChatHistoryCount", value);
 }
 
+int RshareSettings::getDistantChatHistoryCount()
+{
+	return valueFromGroup("Chat", "DistantChatHistoryCount", 20).toInt();
+}
+
+void RshareSettings::setDistantChatHistoryCount(int value)
+{
+	setValueToGroup("Chat", "DistantChatHistoryCount", value);
+}
+
 /** Returns true if RetroShare is set to run on system boot. */
 bool
 RshareSettings::runRetroshareOnBoot(bool &minimized)
@@ -1141,25 +1154,20 @@ void RshareSettings::setWebinterfaceEnabled(bool enabled)
     setValueToGroup("Webinterface", "enabled", enabled);
 }
 
-uint16_t RshareSettings::getWebinterfacePort()
+QString RshareSettings::getWebinterfaceFilesDirectory()
 {
-    return valueFromGroup("Webinterface", "port", 9090).toUInt();
+#ifdef WINDOWS_SYS
+	return valueFromGroup("Webinterface","directory","./webui/").toString();
+#else
+    return valueFromGroup("Webinterface","directory","/usr/share/retroshare/webui/").toString();
+#endif
 }
 
-void RshareSettings::setWebinterfacePort(uint16_t port)
+void RshareSettings::setWebinterfaceFilesDirectory(const QString& s)
 {
-    setValueToGroup("Webinterface", "port", port);
+    setValueToGroup("Webinterface","directory",s);
 }
 
-bool RshareSettings::getWebinterfaceAllowAllIps()
-{
-    return valueFromGroup("Webinterface", "allowAllIps", false).toBool();
-}
-
-void RshareSettings::setWebinterfaceAllowAllIps(bool allow_all)
-{
-    setValueToGroup("Webinterface", "allowAllIps", allow_all);
-}
 
 bool RshareSettings::getPageAlreadyDisplayed(const QString& page_name)
 {
@@ -1171,3 +1179,47 @@ void RshareSettings::setPageAlreadyDisplayed(const QString& page_name,bool b)
 {
 	return setValueToGroup("PageAlreadyDisplayed",page_name,b);
 }
+
+#ifdef RS_JSONAPI
+bool RshareSettings::getJsonApiEnabled()
+{
+	return valueFromGroup("JsonApi", "enabled", false).toBool();
+}
+
+void RshareSettings::setJsonApiEnabled(bool enabled)
+{
+	setValueToGroup("JsonApi", "enabled", enabled);
+}
+
+uint16_t RshareSettings::getJsonApiPort()
+{
+	return static_cast<uint16_t>(
+	            valueFromGroup(
+	                "JsonApi", "port", RsJsonApi::DEFAULT_PORT ).toUInt() );
+}
+
+void RshareSettings::setJsonApiPort(uint16_t port)
+{
+	setValueToGroup("JsonApi", "port", port);
+}
+
+QString RshareSettings::getJsonApiListenAddress()
+{
+	return valueFromGroup("JsonApi", "listenAddress", "127.0.0.1").toString();
+}
+
+void RshareSettings::setJsonApiListenAddress(const QString& listenAddress)
+{
+	setValueToGroup("JsonApi", "listenAddress", listenAddress);
+}
+
+QStringList RshareSettings::getJsonApiAuthTokens()
+{
+	return valueFromGroup("JsonApi", "authTokens", QStringList()).toStringList();
+}
+
+void RshareSettings::setJsonApiAuthTokens(const QStringList& authTokens)
+{
+	setValueToGroup("JsonApi", "authTokens", authTokens);
+}
+#endif // RS_JSONAPI

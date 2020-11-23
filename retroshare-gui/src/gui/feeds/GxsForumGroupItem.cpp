@@ -1,29 +1,31 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2014 RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/feeds/GxsForumGroupItem.cpp                                             *
+ *                                                                             *
+ * Copyright (c) 2014, Retroshare Team <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "GxsForumGroupItem.h"
 #include "ui_GxsForumGroupItem.h"
+#include "gui/NewsFeed.h"
 
+#include "gui/common/FilesDefs.h"
 #include "FeedHolder.h"
 #include "gui/RetroShareLink.h"
+#include "util/qtthreadsutils.h"
 
 /****
  * #define DEBUG_ITEM 1
@@ -31,6 +33,16 @@
 
 GxsForumGroupItem::GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, bool autoUpdate) :
     GxsGroupFeedItem(feedHolder, feedId, groupId, isHome, rsGxsForums, autoUpdate)
+{
+	setup();
+
+	requestGroup();
+}
+
+GxsForumGroupItem::GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const std::list<RsGxsId>& added_moderators,const std::list<RsGxsId>& removed_moderators,bool isHome, bool autoUpdate):
+    GxsGroupFeedItem(feedHolder, feedId, groupId, isHome, rsGxsForums, autoUpdate),
+    mAddedModerators(added_moderators),
+    mRemovedModerators(removed_moderators)
 {
 	setup();
 
@@ -59,7 +71,7 @@ void GxsForumGroupItem::setup()
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
 	/* clear ui */
-	ui->nameLabel->setText(tr("Loading"));
+	ui->nameLabel->setText(tr("Loading..."));
 	ui->titleLabel->clear();
 	ui->descLabel->clear();
 
@@ -88,29 +100,43 @@ bool GxsForumGroupItem::setGroup(const RsGxsForumGroup &group)
 	return true;
 }
 
-void GxsForumGroupItem::loadGroup(const uint32_t &token)
+void GxsForumGroupItem::loadGroup()
 {
-#ifdef DEBUG_ITEM
-	std::cerr << "GxsForumGroupItem::loadGroup()";
-	std::cerr << std::endl;
+ 	RsThread::async([this]()
+	{
+		// 1 - get group data
+
+#ifdef DEBUG_FORUMS
+		std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
 #endif
 
-	std::vector<RsGxsForumGroup> groups;
-	if (!rsGxsForums->getGroupData(token, groups))
-	{
-		std::cerr << "GxsForumGroupItem::loadGroup() ERROR getting data";
-		std::cerr << std::endl;
-		return;
-	}
+		std::vector<RsGxsForumGroup> groups;
+		const std::list<RsGxsGroupId> forumIds = { groupId() };
 
-	if (groups.size() != 1)
-	{
-		std::cerr << "GxsForumGroupItem::loadGroup() Wrong number of Items";
-		std::cerr << std::endl;
-		return;
-	}
+		if(!rsGxsForums->getForumsInfo(forumIds,groups))
+		{
+			RsErr() << "GxsForumGroupItem::loadGroup() ERROR getting data" << std::endl;
+			return;
+		}
 
-	setGroup(groups[0]);
+		if (groups.size() != 1)
+		{
+			std::cerr << "GxsForumGroupItem::loadGroup() Wrong number of Items";
+			std::cerr << std::endl;
+			return;
+		}
+		const RsGxsForumGroup& group(groups[0]);
+
+		RsQThreadUtils::postToObject( [group,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
+
+			setGroup(group);
+
+		}, this );
+	});
 }
 
 QString GxsForumGroupItem::groupName()
@@ -133,9 +159,9 @@ void GxsForumGroupItem::fill()
 	ui->descLabel->setText(QString::fromUtf8(mGroup.mDescription.c_str()));
 
 	if (IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags)) {
-		ui->forumlogo_label->setPixmap(QPixmap(":/images/konv_message64.png"));
+        ui->forumlogo_label->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums.png"));
 	} else {
-		ui->forumlogo_label->setPixmap(QPixmap(":/images/konversation64.png"));
+        ui->forumlogo_label->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums-default.png"));
 	}
 
 	if (IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags)) {
@@ -144,10 +170,62 @@ void GxsForumGroupItem::fill()
 		ui->subscribeButton->setEnabled(true);
 	}
 
-//	if (mIsNew)
-//	{
+    if(feedId() == NEWSFEED_UPDATED_FORUM)
+    {
+        if(!mAddedModerators.empty() || !mRemovedModerators.empty())
+        {
+			ui->titleLabel->setText(tr("Moderator list changed"));
+            ui->moderatorList_GB->show();
+
+            QString msg;
+
+            if(!mAddedModerators.empty())
+            {
+                msg += "<b>Added moderators:</b>" ;
+                msg += "<p>";
+                for(auto& gxsid: mAddedModerators)
+                {
+                    RsIdentityDetails det;
+                    if(rsIdentity->getIdDetails(gxsid,det))
+						msg += QString::fromUtf8(det.mNickname.c_str())+" ("+QString::fromStdString(gxsid.toStdString())+"), ";
+					else
+						msg += QString("[Unknown name]") + " ("+QString::fromStdString(gxsid.toStdString())+"), ";
+                }
+                msg.resize(msg.size()-2);
+                msg += "</p>";
+            }
+			if(!mRemovedModerators.empty())
+            {
+                msg += "<b>Removed moderators:</b>" ;
+                msg += "<p>";
+                for(auto& gxsid: mRemovedModerators)
+                {
+					RsIdentityDetails det;
+
+                    if( rsIdentity->getIdDetails(gxsid,det))
+						msg += QString::fromUtf8(det.mNickname.c_str())+" ("+QString::fromStdString(gxsid.toStdString())+"), ";
+					else
+						msg += QString("[Unknown name]") + " ("+QString::fromStdString(gxsid.toStdString())+"), ";
+                }
+                msg.resize(msg.size()-2);
+                msg += "</p>";
+            }
+            ui->moderatorList_TE->setText(msg);
+        }
+		else
+        {
+            ui->moderatorList_GB->hide();
+
+			ui->titleLabel->setText(tr("Forum updated"));
+            ui->moderatorList_GB->hide();
+		}
+    }
+	else
+    {
 		ui->titleLabel->setText(tr("New Forum"));
-//	}
+		ui->moderatorList_GB->hide();
+    }
+
 //	else
 //	{
 //		ui->titleLabel->setText(tr("Updated Forum"));
@@ -159,7 +237,6 @@ void GxsForumGroupItem::fill()
 		ui->clearButton->setEnabled(false);
 	}
 }
-
 void GxsForumGroupItem::toggle()
 {
 	expand(ui->expandFrame->isHidden());
@@ -175,13 +252,13 @@ void GxsForumGroupItem::doExpand(bool open)
 	if (open)
 	{
 		ui->expandFrame->show();
-		ui->expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
+        ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/up-arrow.png")));
 		ui->expandButton->setToolTip(tr("Hide"));
 	}
 	else
 	{
 		ui->expandFrame->hide();
-		ui->expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+        ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/down-arrow.png")));
 		ui->expandButton->setToolTip(tr("Expand"));
 	}
 

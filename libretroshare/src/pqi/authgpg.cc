@@ -1,29 +1,24 @@
-/*
- * libretroshare/src    AuthGPG.cc
- *
- * GnuPG/GPGme interface for RetroShare.
- *
- * Copyright 2008-2009 by Robert Fernie, Retroshare Team.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the termsf the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/pqi: authgpg.cc                                           *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2008-2009 by Robert Fernie, Retroshare Team.                      *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "authgpg.h"
 #include "retroshare/rsiface.h"		// For rsicontrol.
 #include "retroshare/rspeers.h"		// For RsPeerDetails.
@@ -35,6 +30,7 @@
 #include "pgp/pgphandler.h"
 
 #include <util/rsdir.h>
+#include <util/rstime.h>
 #include <pgp/pgpkeyutil.h>
 #include <unistd.h>		/* for (u)sleep() */
 #include <iostream>
@@ -48,7 +44,7 @@
 
 //#define DEBUG_AUTHGPG 1
 
-//const time_t STORE_KEY_TIMEOUT = 1 * 60 * 60; //store key is call around every hour
+//const rstime_t STORE_KEY_TIMEOUT = 1 * 60 * 60; //store key is call around every hour
 
 AuthGPG *AuthGPG::_instance = NULL ;
 
@@ -99,7 +95,11 @@ std::string pgp_pwd_callback(void * /*hook*/, const char *uid_title, const char 
 	return password ;
 }
 
-void AuthGPG::init(const std::string& path_to_public_keyring,const std::string& path_to_secret_keyring,const std::string& path_to_trustdb,const std::string& pgp_lock_file)
+void AuthGPG::init(
+        const std::string& path_to_public_keyring,
+        const std::string& path_to_secret_keyring,
+        const std::string& path_to_trustdb,
+        const std::string& pgp_lock_file)
 {
 	if(_instance != NULL)
 	{
@@ -107,17 +107,20 @@ void AuthGPG::init(const std::string& path_to_public_keyring,const std::string& 
 		std::cerr << "AuthGPG::init() called twice!" << std::endl ;
 	}
 
-	PGPHandler::setPassphraseCallback(pgp_pwd_callback) ;
-	_instance = new AuthGPG(path_to_public_keyring,path_to_secret_keyring,path_to_trustdb,pgp_lock_file) ;
+//	if(cb) PGPHandler::setPassphraseCallback(cb);else
+	PGPHandler::setPassphraseCallback(pgp_pwd_callback);
+	_instance = new AuthGPG( path_to_public_keyring,
+	                         path_to_secret_keyring,
+	                         path_to_trustdb, pgp_lock_file );
 }
 
 void AuthGPG::exit()
 {
-	if(_instance != NULL)
+	if(_instance)
 	{
-		_instance->join();
-		delete _instance ;
-		_instance = NULL;
+		_instance->fullstop();
+		delete _instance;
+		_instance = nullptr;
 	}
 }
 
@@ -127,11 +130,12 @@ AuthGPG::AuthGPG(const std::string& path_to_public_keyring,const std::string& pa
 	gpgMtxService("AuthGPG-service"),
 	gpgMtxEngine("AuthGPG-engine"),
 	gpgMtxData("AuthGPG-data"),
-	gpgKeySelected(false)
+	mStoreKeyTime(0),
+	gpgKeySelected(false),
+	_force_sync_database(false),
+	mCount(0)
 {
-	_force_sync_database = false ;
-    mCount = 0;
-    start("AuthGPG");
+	start("AuthGPG");
 }
 
 /* This function is called when retroshare is first started
@@ -184,9 +188,9 @@ int AuthGPG::GPGInit(const RsPgpId &ownId)
 {
 }
 
-void AuthGPG::data_tick()
+void AuthGPG::threadTick()
 {
-    usleep(100 * 1000); //100 msec
+    rstime::rs_usleep(100 * 1000); //100 msec
 
     /// every 100 milliseconds
     processServices();
@@ -323,6 +327,14 @@ bool AuthGPG::exportProfile(const std::string& fname,const RsPgpId& exported_id)
 	return PGPHandler::exportGPGKeyPair(fname,exported_id) ;
 }
 
+bool AuthGPG::exportIdentityToString(
+        std::string& data, const RsPgpId& pgpId, bool includeSignatures,
+        std::string& errorMsg )
+{
+	return PGPHandler::exportGPGKeyPairToString(
+	            data, pgpId, includeSignatures, errorMsg);
+}
+
 bool AuthGPG::importProfile(const std::string& fname,RsPgpId& imported_id,std::string& import_error)
 {
 	return PGPHandler::importGPGKeyPair(fname,imported_id,import_error) ;
@@ -332,7 +344,6 @@ bool AuthGPG::importProfileFromString(const std::string &data, RsPgpId &gpg_id, 
 {
     return PGPHandler::importGPGKeyPairFromString(data, gpg_id, import_error);
 }
-
 
 bool   AuthGPG::active()
 {
@@ -523,6 +534,19 @@ bool	AuthGPG::getGPGSignedList(std::list<RsPgpId> &ids)
 
  	return PGPHandler::SaveCertificateToString(id,include_signatures) ;
  }
+/* import to GnuPG and other Certificates */
+bool AuthGPG::LoadPGPKeyFromBinaryData(const unsigned char *data,uint32_t data_len, RsPgpId& gpg_id,std::string& error_string)
+{
+	RsStackMutex stack(gpgMtxEngine); /******* LOCKED ******/
+
+	if(PGPHandler::LoadCertificateFromBinaryData(data,data_len,gpg_id,error_string))
+	{
+		updateOwnSignatureFlag(gpg_id,mOwnGpgId) ;
+		return true ;
+	}
+
+	return false ;
+}
 
 /* import to GnuPG and other Certificates */
 bool AuthGPG::LoadCertificateFromString(const std::string &str, RsPgpId& gpg_id,std::string& error_string)

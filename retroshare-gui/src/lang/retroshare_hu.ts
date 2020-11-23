@@ -2,12 +2,13 @@
 <context>
     <name>AWidget</name>
     <message>
-        <location filename="../gui/AboutWidget.cpp" line="+228"/>
+        <location filename="../gui/AboutWidget.cpp" line="+229"/>
+        <location line="+2"/>
         <source>Retroshare version</source>
-        <translation type="unfinished"/>
+        <translation>Retroshare verzió</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>version</source>
         <translation>verzió</translation>
     </message>
@@ -25,7 +26,7 @@
     <message>
         <location filename="../gui/settings/AboutPage.h" line="+43"/>
         <source>About</source>
-        <translation type="unfinished"/>
+        <translation>Névjegy</translation>
     </message>
 </context>
 <context>
@@ -33,47 +34,52 @@
     <message>
         <location filename="../gui/AboutWidget.ui" line="+14"/>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>Forma</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>About</source>
-        <translation type="unfinished"/>
+        <translation>Névjegy</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Copy Info</source>
-        <translation type="unfinished"/>
+        <translation>Információ másolása</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>close</source>
-        <translation type="unfinished"/>
+        <translation>bezár</translation>
     </message>
     <message>
-        <location filename="../gui/AboutWidget.cpp" line="-144"/>
+        <location filename="../gui/AboutWidget.cpp" line="-148"/>
         <source>Max score: %1</source>
-        <translation type="unfinished"/>
+        <translation>Max. pontszám: %1</translation>
     </message>
     <message>
         <location line="+47"/>
         <source>Score: %1</source>
-        <translation type="unfinished"/>
+        <translation>Pontszám: %1</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Level: %1</source>
-        <translation type="unfinished"/>
+        <translation>Szint: %1</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>About RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>RetroShate Névjegy</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Have fun ;-)</source>
-        <translation type="unfinished"/>
+        <translation>Kezdődhet a móka! ;)</translation>
+    </message>
+    <message>
+        <location line="+797"/>
+        <source>Only Hidden Node</source>
+        <translation>Csak rejtett csomópont</translation>
     </message>
 </context>
 <context>
@@ -110,7 +116,8 @@
         <location line="+1"/>
         <source>Sorry, can't determine system default command for this file
 </source>
-        <translation>Sajnálom, nem található alapértelmezett parancs a fájlhoz(\n)</translation>
+        <translation>Sajnálom, nem található alapértelmezett parancs a fájlhoz
+</translation>
     </message>
 </context>
 <context>
@@ -133,7 +140,7 @@
     <message>
         <location line="+17"/>
         <source>Reset the search criteria.</source>
-        <translation>Keresési feltétel törlése.</translation>
+        <translation>Keresési feltételek törlése.</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -197,7 +204,7 @@
     <message>
         <location line="+5"/>
         <source>Holiday</source>
-        <translation>Nyaralás</translation>
+        <translation>Vakáció</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -232,7 +239,7 @@
     <message>
         <location line="+8"/>
         <source>Caption:</source>
-        <translation>Képaláírás</translation>
+        <translation>Képaláírás:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -307,7 +314,7 @@
     <message>
         <location line="+5"/>
         <source>Authenticated Comments</source>
-        <translation>Azonosított hozzászólások</translation>
+        <translation>Hitelesített hozzászólások</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -317,7 +324,7 @@
     <message>
         <location line="+15"/>
         <source>Publish with Identity</source>
-        <translation>Küldés a nevemmel ellátva</translation>
+        <translation>Küldés személyazonossággal</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -365,7 +372,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+118"/>
         <source>Load Album Thumbnail</source>
-        <translation>Album előnézet betöltése</translation>
+        <translation>Album bélyegkép betöltése</translation>
     </message>
 </context>
 <context>
@@ -379,7 +386,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+37"/>
         <source>Album Thumbnail</source>
-        <translation>Album előnézet</translation>
+        <translation>Album bélyegkép</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -531,7 +538,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+26"/>
         <source>(Needs restart)</source>
-        <translation type="unfinished"/>
+        <translation>(Újraindítás szükséges)</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -541,7 +548,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+12"/>
         <source>Choose RetroShare&apos;s interface style</source>
-        <translation>RetroShare külső stílusának váltása</translation>
+        <translation>Válaszd ki a RetroShare felületének stílusát</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -561,7 +568,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+57"/>
         <source>Icon Only</source>
-        <translation>Csak ikonokként</translation>
+        <translation>Csak ikonok</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -616,47 +623,47 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+12"/>
         <source>Show Toaster Disable</source>
-        <translation type="unfinished"/>
+        <translation>Toaster letiltása</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Show Sound Status</source>
-        <translation type="unfinished"/>
+        <translation>Hang </translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Show Network Rate Status</source>
-        <translation type="unfinished"/>
+        <translation>Hálózatforgalom</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Show Discovery Status</source>
-        <translation type="unfinished"/>
+        <translation>Felfedezés állapota</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+59"/>
         <source>Show DHT Status</source>
-        <translation type="unfinished"/>
+        <translation>DHT állapota</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="-52"/>
         <source>Show Hashing Status</source>
-        <translation type="unfinished"/>
+        <translation>Hashelés állapota</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+38"/>
         <source>Show NAT Status</source>
-        <translation type="unfinished"/>
+        <translation>NAT állapota</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="-31"/>
         <source>Show Peer Status</source>
-        <translation type="unfinished"/>
+        <translation>Partnerek állapota</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Show Status ComboBox</source>
-        <translation type="unfinished"/>
+        <translation>Állapot lista</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -666,37 +673,37 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+3"/>
         <source>Compact Mode</source>
-        <translation>Kompakt mód</translation>
+        <translation>Összevont mód</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Show Operating Mode Status</source>
-        <translation type="unfinished"/>
+        <translation>Működési mód</translation>
     </message>
     <message>
-        <location line="-7"/>
+        <location line="+14"/>
         <source>Show SysTray on Status Bar</source>
-        <translation>Mutassa a SysTray-t az Állapotjelző sávon</translation>
+        <translation>Mutassa az Értesítési Területet az Állapotjelző sávon</translation>
     </message>
     <message>
-        <location line="-7"/>
+        <location line="-28"/>
         <source>Disable SysTray ToolTip</source>
-        <translation>SysTray ToolTip letiltása</translation>
+        <translation>Értesítési Terület elemleírásának letiltása</translation>
     </message>
     <message>
-        <location line="-210"/>
+        <location line="-196"/>
         <source>Main page items:</source>
-        <translation type="unfinished"/>
+        <translation>Főoldal elemei:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Buttons</source>
-        <translation type="unfinished"/>
+        <translation>Gombok</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Item list</source>
-        <translation type="unfinished"/>
+        <translation>Lista</translation>
     </message>
     <message>
         <location line="+88"/>
@@ -812,7 +819,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>BWGraphSource</name>
     <message>
-        <location filename="../gui/statistics/BWGraph.cpp" line="+315"/>
+        <location filename="../gui/statistics/BWGraph.cpp" line="+375"/>
         <source>KB/s</source>
         <translation>KB/s</translation>
     </message>
@@ -891,7 +898,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/statistics/BandwidthGraphWindow.cpp" line="-75"/>
         <source>Since:</source>
-        <translation>Óta:</translation>
+        <translation>Átvitel kezdete:</translation>
     </message>
     <message>
         <location line="+67"/>
@@ -923,6 +930,16 @@ p, li { white-space: pre-wrap; }
         <source>Count</source>
         <translation>Számláló</translation>
     </message>
+    <message>
+        <location line="+183"/>
+        <source>Average</source>
+        <translation>Átlag</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Total</source>
+        <translation>Összesen</translation>
+    </message>
 </context>
 <context>
     <name>BwCtrlWindow</name>
@@ -934,7 +951,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+5"/>
         <source>ID</source>
-        <translation>ID</translation>
+        <translation>Azonosító</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1007,10 +1024,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/statistics/BandwidthStatsWidget.ui" line="+14"/>
         <source>Form</source>
-        <translation>Ablak</translation>
+        <translation>Forma</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+33"/>
         <source>Friend:</source>
         <translation>Barátod:</translation>
     </message>
@@ -1041,8 +1058,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+10"/>
+        <source>Legend:</source>
+        <translation>Jelmagyarázat</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Current</source>
+        <translation>Jelenlegi</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Total</source>
+        <translation>Összesen</translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Log scale</source>
-        <translation type="unfinished"/>
+        <translation>Napló mérték</translation>
     </message>
 </context>
 <context>
@@ -1065,10 +1097,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+6"/>
         <source>Load posts in background (Thread)</source>
-        <translation type="unfinished"/>
+        <translation>Hozzászólások betöltése a háttérben (Fonál)</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ChannelPage.cpp" line="+33"/>
+        <location filename="../gui/settings/ChannelPage.cpp" line="+34"/>
         <source>Open each channel in a new tab</source>
         <translation>Minden egyes csatorna megnyitása új fülön</translation>
     </message>
@@ -1076,14 +1108,9 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChatLobbyDialog</name>
     <message>
-        <location filename="../gui/chat/ChatLobbyDialog.ui" line="+150"/>
-        <source>Participants</source>
-        <translation>Résztvevők</translation>
-    </message>
-    <message>
-        <location line="+5"/>
+        <location filename="../gui/chat/ChatLobbyDialog.ui" line="+153"/>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Név</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -1091,19 +1118,19 @@ p, li { white-space: pre-wrap; }
         <translation>Becenév változtatása</translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatLobbyDialog.cpp" line="+90"/>
+        <location filename="../gui/chat/ChatLobbyDialog.cpp" line="+94"/>
         <source>Mute participant</source>
         <translation>Résztvevő némítása</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Ban this person (Sets negative opinion)</source>
-        <translation type="unfinished"/>
+        <translation>Személy bannolása (Negatív véleményt állít be)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Send Message</source>
-        <translation>Üzenet elküldése </translation>
+        <translation>Üzenet küldése </translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1128,7 +1155,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+0"/>
         <source>Select friends to invite:</source>
-        <translation>Meghivandó barátok kiválasztása:</translation>
+        <translation>Meghívandó barátok kiválasztása:</translation>
     </message>
     <message>
         <location line="+113"/>
@@ -1136,77 +1163,70 @@ p, li { white-space: pre-wrap; }
         <translation>Téma: %1</translation>
     </message>
     <message>
-        <location line="+473"/>
-        <location line="+5"/>
-        <location line="+21"/>
-        <source>Lobby management</source>
-        <translation>Szobák kezelése</translation>
-    </message>
-    <message>
-        <location line="+2"/>
+        <location line="+500"/>
         <source>%1 changed his name to: %2</source>
         <translation>%1 megváltoztatta a nevét: %2</translation>
     </message>
     <message>
         <location line="-248"/>
         <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person&lt;br/&gt;</source>
-        <translation>Némításhoz kattints jobb gombbal&lt;br/&gt;A személy megszólításához kattints duplán&lt;br/&gt;</translation>
+        <translation>Résztvevő némításhoz/némítás visszavonásához kattints jobb gombbal&lt;br/&gt;A személy megszólításához kattints duplán&lt;br/&gt;</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This participant is not active since:</source>
-        <translation>Ezen résztvevő már nem aktív:</translation>
+        <translation>Ezen résztvevő már ennyi ideje nem aktív:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source> seconds</source>
-        <translation>másodpercek</translation>
+        <translation>másodperc</translation>
     </message>
     <message>
-        <location line="-482"/>
+        <location line="-481"/>
         <source>Start private chat</source>
-        <translation>Privát beszélgetés kezdése</translation>
+        <translation>Privát beszélgetés indítása</translation>
     </message>
     <message>
         <location line="-2"/>
         <source>Give neutral opinion</source>
-        <translation type="unfinished"/>
+        <translation>Semleges vélemény beállítása</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Give positive opinion</source>
-        <translation type="unfinished"/>
+        <translation>Pozitív vélemény beállítása</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show author in people tab</source>
-        <translation type="unfinished"/>
+        <translation>Mutasd a szerzőt a Személyek fülön</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>Keresés</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Leave this chat room (Unsubscribe)</source>
-        <translation type="unfinished"/>
+        <translation>Csevegőszoba elhagyása (Leiratkozás)</translation>
     </message>
     <message>
         <location line="+136"/>
         <source>Welcome to chat room %1</source>
-        <translation type="unfinished"/>
+        <translation>Üdvözlünk a csevegőszobában: %1</translation>
     </message>
     <message>
-        <location line="+166"/>
+        <location line="+165"/>
         <location line="+2"/>
         <source>Room chat</source>
-        <translation type="unfinished"/>
+        <translation>Szoba társalgás</translation>
     </message>
     <message>
         <location line="+194"/>
         <source>Decryption failed.</source>
-        <translation>Dekódolás sikertelen.</translation>
+        <translation>Visszafejtés sikertelen.</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1226,37 +1246,44 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+2"/>
         <source>Unknown error.</source>
-        <translation>Ismeretlen hiba</translation>
+        <translation>Ismeretlen hiba.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Cannot start distant chat</source>
-        <translation>Nem sikerült távoli beszélgetést kedeményezni</translation>
+        <translation>Nem sikerült távoli beszélgetést kezdeményezni</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Distant chat cannot be initiated:</source>
-        <translation>Távoli beszélgetés indítása meghiúsult </translation>
+        <translation>Távoli beszélgetés indítása meghiúsult:</translation>
     </message>
     <message>
         <location line="+107"/>
         <source>%1 has left the room.</source>
-        <translation type="unfinished"/>
+        <translation>%1 elhagyta a szobát.</translation>
     </message>
     <message>
+        <location line="+0"/>
         <location line="+5"/>
+        <location line="+21"/>
+        <source>Chat room management</source>
+        <translation>Csevegőszoba beállításai</translation>
+    </message>
+    <message>
+        <location line="-21"/>
         <source>%1 joined the room.</source>
-        <translation type="unfinished"/>
+        <translation>%1 belépett a szobába.</translation>
     </message>
     <message>
         <location line="+59"/>
         <source>Unsubscribe from chat room</source>
-        <translation type="unfinished"/>
+        <translation>Leiratkozás a társalgószobából</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Do you want to unsubscribe to this chat room?</source>
-        <translation type="unfinished"/>
+        <translation>Le szeretnél iratkozni erről a társalgószobáról?</translation>
     </message>
 </context>
 <context>
@@ -1264,15 +1291,15 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/toaster/ChatLobbyToaster.ui" line="+133"/>
         <source>Show Chat Lobby</source>
-        <translation>Chatszoba mutatása</translation>
+        <translation>Társalgószoba megjelenítése</translation>
     </message>
 </context>
 <context>
     <name>ChatLobbyUserNotify</name>
     <message>
-        <location filename="../gui/chat/ChatLobbyUserNotify.cpp" line="+36"/>
+        <location filename="../gui/chat/ChatLobbyUserNotify.cpp" line="+40"/>
         <source>Chats</source>
-        <translation type="unfinished"/>
+        <translation>Társalgószobák</translation>
     </message>
     <message>
         <location line="+97"/>
@@ -1309,7 +1336,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChatLobbyWidget</name>
     <message>
-        <location filename="../gui/ChatLobbyWidget.cpp" line="+86"/>
+        <location filename="../gui/ChatLobbyWidget.cpp" line="+95"/>
         <location line="+80"/>
         <source>Name</source>
         <translation>Név</translation>
@@ -1327,102 +1354,116 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+14"/>
         <source>Private Subscribed chat rooms</source>
-        <translation type="unfinished"/>
+        <translation>Feliratkozásaid: Privát társalgószobák</translation>
     </message>
     <message>
         <location line="+7"/>
+        <location line="+553"/>
         <source>Public Subscribed chat rooms</source>
-        <translation type="unfinished"/>
+        <translation>Feliratkozásaid: Nyilvános társalgószobák</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="-546"/>
         <source>Private chat rooms</source>
-        <translation type="unfinished"/>
+        <translation>Privát társalgószobák</translation>
     </message>
     <message>
         <location line="+7"/>
+        <location line="+541"/>
         <source>Public chat rooms</source>
-        <translation type="unfinished"/>
+        <translation>Nyilvános társalgószobák</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="-491"/>
         <source>                          &lt;h1&gt;&lt;img width=&quot;%1&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Rooms&lt;/h1&gt;                              	                      &lt;p&gt;Chat rooms work pretty much like IRC.                                      	                      They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    	                      &lt;p&gt;A chat room can be public (your friends see it) or private (your friends can&apos;t see it, unless you                                     invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=%2/&gt;). 	                      Once you have been invited to a private room, you will be able to see it when your friends   	                      are using it.&lt;/p&gt;                                                                                               	                      &lt;p&gt;The list at left shows                                                                                     	                      chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat room&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat room to enter, chat, and show it to your friends&lt;/li&gt;                      	                      &lt;/ul&gt; 	                      Note: For the chat rooms to work properly, your computer needs be on time.  So check your system clock!	                      &lt;/p&gt;                                      	                      </source>
-        <translation type="unfinished"/>
+        <translation>                          &lt;h1&gt;&lt;img width=&quot;%1&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Társalgószobák&lt;/h1&gt;                              	                      &lt;p&gt;A társalgószobák az IRC-hez hasonlóan működnek.                                      	                      Névtelen módon beszélgethetsz, anélkül, hogy fel kellene venned a személyeket barátnak.&lt;/p&gt;                    	                      &lt;p&gt;Egy társalgószoba lehet nyilvános (a barátaid látják) vagy privát (a barátaid nem látják, mindaddig míg nem hívod meg őket: &lt;img src=&quot;:/images/add_24x24.png&quot; width=%2/&gt;). 	                      Ha meghívnak egy privát szobába, akkor válik számodra láthatóvá, ha egy barátod is   	                      belépett az adott szobába.&lt;/p&gt;                                                                                               	                      &lt;p&gt;A bal oldali listában találhatók                                                                                     	                      azok a szobák, amikbe a barátaid bejelentkeztek. Továbbá                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Létrehozatsz új szobát Jobb klikkel&lt;/li&gt;                                                              		     &lt;li&gt;Dupla kattintással belépsz a szobába. Ekkor a szoba láthatóvá válik a további barátaid számára.&lt;/li&gt;                      	                      &lt;/ul&gt; 	                      Megjegyzés: A társalgószobák zökkenőmentes működéséhez nem árt ha pontos a számítógép órája. Vess rá egy pillantást!	                      &lt;/p&gt;                                      	                      </translation>
     </message>
     <message>
         <location line="+86"/>
         <source>Create chat room</source>
-        <translation type="unfinished"/>
+        <translation>Társalgószoba létrehozása</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Leave this room</source>
-        <translation type="unfinished"/>
+        <translation>Szoba elhagyása</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Create a non anonymous identity and enter this room</source>
-        <translation type="unfinished"/>
+        <translation>Hozz létre egy személyazonosságot, amely nem Álnév típusú és lépj be a szobába</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Create an identity and enter this chat room</source>
-        <translation type="unfinished"/>
+        <translation>Hozz létre egy személyazonosságot és lépj be a szobába</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Enter this chat room</source>
-        <translation type="unfinished"/>
+        <translation>Belépés a társalgószobába</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Enter this chat room as...</source>
-        <translation type="unfinished"/>
+        <translation>Belépés a társalgószobába mint...</translation>
     </message>
     <message>
-        <location line="+504"/>
+        <location line="+23"/>
+        <source>Copy RetroShare Link</source>
+        <translation>RetroShare link másolása</translation>
+    </message>
+    <message>
+        <location line="+490"/>
         <source>You cannot join this chat room with your default identity, since it is anonymous and the chat room forbids it.</source>
-        <translation type="unfinished"/>
+        <translation>Nem léphetsz be ebbe a szobába az alapértelmezett személyazonosságoddal, mert az Álnév és ez a szoba nem engedélyezi így a belépést.</translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="+46"/>
         <source>You&apos;re not subscribed to this chat room; Double click-it to enter and chat.</source>
-        <translation type="unfinished"/>
+        <translation>Nem vagy feliratkozva erre a társalgószobára; Kattints duplán a belépéshez.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>You will need to create a non anonymous identity in order to join this chat room.</source>
-        <translation type="unfinished"/>
+        <translation>Létre kell hoznod lesz egy nem Álnév típusú személyazonosságot, hogy beléphess ebbe a szobába.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You will need to create an identity in order to join chat rooms.</source>
-        <translation type="unfinished"/>
+        <translation>Létre kell hoznod egy személyazonosságot, hogy beléphess ebbe a szobába.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>No chat room selected. 
 Select chat rooms at left to show details.
 Double click a chat room to enter and chat.</source>
-        <translation type="unfinished"/>
+        <translation>Nincs társalgószoba kiválasztva.
+Kattints egy társalgószobára a bal oldali listában, hogy lásd a részleteket.
+Kattints duplán egy társalgószobára a belépéshez.</translation>
     </message>
     <message>
-        <location line="+212"/>
+        <location line="+242"/>
         <source>%1 invites you to chat room named %2</source>
-        <translation type="unfinished"/>
+        <translation>%1 meghívott téged a %2 nevű társalgószobába</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+10"/>
+        <source>Choose a non anonymous identity for this chat room:</source>
+        <translation>Ehhez a társalgószobához válassz nyilvános felhasználónevet:</translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>Choose an identity for this chat room:</source>
-        <translation type="unfinished"/>
+        <translation>Válassz személyazonosságot ehhez a szobához:</translation>
     </message>
     <message>
         <location filename="../gui/ChatLobbyWidget.ui" line="+159"/>
         <source>Create chat lobby</source>
-        <translation>Új chatszoba létrehozása</translation>
+        <translation>Társalgószoba létrehozása</translation>
     </message>
     <message>
-        <location filename="../gui/ChatLobbyWidget.cpp" line="-736"/>
+        <location filename="../gui/ChatLobbyWidget.cpp" line="-785"/>
         <location line="+1"/>
         <source>[No topic provided]</source>
         <translation>[Nincs téma beállítva]</translation>
@@ -1433,7 +1474,7 @@ Double click a chat room to enter and chat.</source>
         <translation>Kiválasztott csevegőszoba adatai</translation>
     </message>
     <message>
-        <location filename="../gui/ChatLobbyWidget.cpp" line="+494"/>
+        <location filename="../gui/ChatLobbyWidget.cpp" line="+502"/>
         <source>Private</source>
         <translation>Privát</translation>
     </message>
@@ -1445,10 +1486,10 @@ Double click a chat room to enter and chat.</source>
     <message>
         <location line="+1"/>
         <source>Anonymous IDs accepted</source>
-        <translation>Névtelen ID-k elfogadottak</translation>
+        <translation>Névtelen azonosítók elfogadottak</translation>
     </message>
     <message>
-        <location line="-527"/>
+        <location line="-537"/>
         <source>Remove Auto Subscribe</source>
         <translation>Automatikus feliratkozás megszüntetése</translation>
     </message>
@@ -1460,7 +1501,7 @@ Double click a chat room to enter and chat.</source>
     <message>
         <location filename="../gui/ChatLobbyWidget.ui" line="-77"/>
         <source>Search Chat lobbies</source>
-        <translation>Csevegőszobák keresése</translation>
+        <translation>Társalgószobák keresése</translation>
     </message>
     <message>
         <location filename="../gui/ChatLobbyWidget.cpp" line="-150"/>
@@ -1473,7 +1514,7 @@ Double click a chat room to enter and chat.</source>
         <translation>Feliratkozva</translation>
     </message>
     <message>
-        <location line="+236"/>
+        <location line="+238"/>
         <source>Columns</source>
         <translation>Oszlopok</translation>
     </message>
@@ -1490,17 +1531,17 @@ Double click a chat room to enter and chat.</source>
     <message>
         <location filename="../gui/ChatLobbyWidget.ui" line="-77"/>
         <source>Chat rooms</source>
-        <translation type="unfinished"/>
+        <translation>Társalgószobák</translation>
     </message>
     <message>
         <location line="+170"/>
         <source>Chat room Name:</source>
-        <translation type="unfinished"/>
+        <translation>Társalgószoba neve:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Chat room Id:</source>
-        <translation type="unfinished"/>
+        <translation>Társalgószoba azonosító:</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -1533,17 +1574,17 @@ Double click a chat room to enter and chat.</source>
         <translation>Szövegcímke</translation>
     </message>
     <message>
-        <location filename="../gui/ChatLobbyWidget.cpp" line="+442"/>
+        <location filename="../gui/ChatLobbyWidget.cpp" line="+449"/>
         <source>Default identity is anonymous</source>
-        <translation type="unfinished"/>
+        <translation>Az alapértelmezett személyazonosság névtelen</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+43"/>
         <source>No anonymous IDs</source>
-        <translation type="unfinished"/>
+        <translation>Névtelen azonosítók nem engedélyezettek</translation>
     </message>
     <message>
-        <location line="-696"/>
+        <location line="-706"/>
         <location line="+3"/>
         <location line="+3"/>
         <source>Show</source>
@@ -1557,9 +1598,9 @@ Double click a chat room to enter and chat.</source>
         <translation>oszlop</translation>
     </message>
     <message>
-        <location filename="../gui/ChatLobbyWidget.h" line="+38"/>
+        <location filename="../gui/ChatLobbyWidget.h" line="+44"/>
         <source>Chats</source>
-        <translation type="unfinished"/>
+        <translation>Társalgószobák</translation>
     </message>
 </context>
 <context>
@@ -1617,7 +1658,7 @@ Double click a chat room to enter and chat.</source>
     <message>
         <location line="-783"/>
         <source>Distant Chat</source>
-        <translation>Távoli csevegés</translation>
+        <translation>Távoli beszélgetés</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1637,22 +1678,22 @@ Double click a chat room to enter and chat.</source>
     <message>
         <location line="+8"/>
         <source>Accept encrypted distant chat from</source>
-        <translation>Titkosított távoli üzenetek elfogadása tőle:</translation>
+        <translation>Titkosított távoli beszélgetés fogadása tőle:</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Chat Settings</source>
-        <translation>Csevegés beállításai</translation>
+        <translation>Beszélgetés beállításai</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enable Emoticons Private Chat</source>
-        <translation>Hangulatjelek engedélyezése privát beszélgetésben</translation>
+        <translation>Hangulatjelek engedélyezése Privát beszélgetésnél</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Enable Emoticons Group Chat</source>
-        <translation>Hangulatjelek engedélyezése csoportos csevegésnél</translation>
+        <translation>Hangulatjelek engedélyezése Csoportos beszélgetésnél</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1692,17 +1733,17 @@ Double click a chat room to enter and chat.</source>
     <message>
         <location line="+7"/>
         <source>Send as plain text by default</source>
-        <translation type="unfinished"/>
+        <translation>Küldés egyszerű szövegként legyen az alapértelmezett</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Load embedded images</source>
-        <translation type="unfinished"/>
+        <translation>Beágyazott képek betöltése</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Chat Lobby</source>
-        <translation>Csevegő szoba</translation>
+        <translation>Társalgószoba</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1712,22 +1753,22 @@ Double click a chat room to enter and chat.</source>
     <message>
         <location line="+37"/>
         <source>Do not send typing notifications</source>
-        <translation type="unfinished"/>
+        <translation>Ne küldjön értesítést arról, ha írok</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Private Chat</source>
-        <translation>Privát csevegés</translation>
+        <translation>Privát beszélgetés</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Open Window for new chat</source>
-        <translation>Új csevegőablak nyitása</translation>
+        <translation>Új társalgóablak nyitása</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Grab Focus when chat arrives</source>
-        <translation>Ablak előtérbe hozása csevegés kezdésekor</translation>
+        <translation>Ablak előtérbe hozása társalgás kezdetekor</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1742,17 +1783,17 @@ Double click a chat room to enter and chat.</source>
     <message>
         <location line="+10"/>
         <source>Chat Font</source>
-        <translation>Csevegés betűtípusa</translation>
+        <translation>Beszélgetés betűtípusa</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Change Chat Font</source>
-        <translation>Csevegés betűtípusának megváltoztatása</translation>
+        <translation>Beszélgetés betűtípusának megváltoztatása</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Chat Font:</source>
-        <translation>Csevegés betűtípusa</translation>
+        <translation>Beszélgetés betűtípusa:</translation>
     </message>
     <message>
         <location line="+197"/>
@@ -1770,29 +1811,34 @@ Double click a chat room to enter and chat.</source>
         <location line="+114"/>
         <location line="+114"/>
         <source>Style:</source>
-        <translation type="unfinished"/>
+        <translation>Stílus:</translation>
     </message>
     <message>
         <location line="-212"/>
         <location line="+114"/>
         <location line="+114"/>
         <source>Variant:</source>
-        <translation type="unfinished"/>
+        <translation>Változat:</translation>
     </message>
     <message>
         <location line="-525"/>
         <location line="+263"/>
         <source>Group chat</source>
-        <translation>Csoport beszélgetés</translation>
+        <translation>Csoportos beszélgetés</translation>
     </message>
     <message>
         <location line="-250"/>
         <location line="+364"/>
         <source>Private chat</source>
-        <translation>Privát csevegés</translation>
+        <translation>Privát beszélgetés</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ChatPage.cpp" line="+437"/>
+        <location filename="../gui/settings/ChatPage.cpp" line="+419"/>
+        <source>Choose your default font for Chat.</source>
+        <translation>Válassz betűtípust a Beszélgetéshez.</translation>
+    </message>
+    <message>
+        <location line="+19"/>
         <source>Incoming</source>
         <translation>Bejövő</translation>
     </message>
@@ -1844,22 +1890,17 @@ Double click a chat room to enter and chat.</source>
     <message>
         <location line="+0"/>
         <source>/me is sending a message with /me</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/settings/ChatPage.h" line="+43"/>
-        <source>Chat</source>
-        <translation>Csevegés</translation>
+        <translation>Felhasználónév elküldése ezzel: /me</translation>
     </message>
     <message>
         <location filename="../gui/settings/ChatPage.ui" line="-403"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;In this tab you can setup how many chat messages Retroshare will keep saved on the disc and how much of the previous conversation it will display, for the different chat systems. The max storage period allows to discard old messages and prevents the chat history from filling up with volatile chat (e.g. chat lobbies and distant chat).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Ezen a fülön beállíthatod, hogy a különböző típusú üzenetekből mennyit tároljon el a RetroShare a merevlemezen és hogy mennyi előző beszélgetést állítson vissza az aktuális ablakba. A maximális tárolási idő beállítása lehetővé teszi a régi üzenetek mellőzését, illetve segít megakadályozni, hogy az előzmények tele legyenek kevésbé fontos beszélgetésekkel (például egyes társalgószobák vagy távoli üzenetek előzményei). &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+52"/>
         <source>Chatlobbies</source>
-        <translation>Csevegőszobák</translation>
+        <translation>Társalgószobák</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1884,7 +1925,7 @@ Double click a chat room to enter and chat.</source>
     <message>
         <location line="-426"/>
         <source>Search by default</source>
-        <translation type="unfinished"/>
+        <translation>Keresés alapértelmezései</translation>
     </message>
     <message>
         <location line="+59"/>
@@ -1894,67 +1935,72 @@ Double click a chat room to enter and chat.</source>
     <message>
         <location line="+7"/>
         <source>Whole Words</source>
-        <translation type="unfinished"/>
+        <translation>Teljes szavak</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Move to cursor</source>
-        <translation type="unfinished"/>
+        <translation>Ugrás az kurzorhoz</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Color All Text Found</source>
-        <translation type="unfinished"/>
+        <translation>Az összes megtalált szöveg kiemelése színnel</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Color of found text</source>
-        <translation type="unfinished"/>
+        <translation>Megtalált szöveg színe</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Choose color of found text</source>
-        <translation type="unfinished"/>
+        <translation>Válaszd ki a megtalált szöveg színét</translation>
     </message>
     <message>
         <location line="-63"/>
         <source>Maximum count for coloring matching text</source>
-        <translation type="unfinished"/>
+        <translation>Maximum ennyi illeszkedő szöveget színezzen ki</translation>
     </message>
     <message>
         <location line="-59"/>
         <source>Threshold for automatic search</source>
-        <translation type="unfinished"/>
+        <translation>Automatikus keresés küszöb</translation>
     </message>
     <message>
         <location line="-175"/>
         <source>Default identity for chat lobbies:</source>
-        <translation type="unfinished"/>
+        <translation>Alapértelmezett személyazonosság a társalgószobákhoz:</translation>
     </message>
     <message>
         <location line="+166"/>
         <source>Show Bar by default</source>
-        <translation type="unfinished"/>
+        <translation>Keresés mező megjelenítése legyen alapértelmezett</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ChatPage.cpp" line="-47"/>
+        <location filename="../gui/settings/ChatPage.cpp" line="-48"/>
         <source>Private chat invite from</source>
-        <translation type="unfinished"/>
+        <translation>Meghívás privát beszélgetésre tőle:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Name :</source>
-        <translation type="unfinished"/>
+        <translation>Név :</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>PGP id :</source>
-        <translation type="unfinished"/>
+        <translation>PGP azonosító :</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Valid until :</source>
-        <translation type="unfinished"/>
+        <translation>Érvényes eddig :</translation>
+    </message>
+    <message>
+        <location filename="../gui/settings/ChatPage.h" line="+43"/>
+        <source>Chats</source>
+        <translation>Beszélgetések</translation>
     </message>
 </context>
 <context>
@@ -1995,7 +2041,7 @@ Double click a chat room to enter and chat.</source>
     <message>
         <location filename="../gui/toaster/ChatToaster.ui" line="+133"/>
         <source>Show Chat</source>
-        <translation>Csevegés mutatása</translation>
+        <translation>Beszélgetés mutatása</translation>
     </message>
 </context>
 <context>
@@ -2003,23 +2049,23 @@ Double click a chat room to enter and chat.</source>
     <message>
         <location filename="../gui/chat/ChatUserNotify.cpp" line="+69"/>
         <source>Private Chat</source>
-        <translation>Privát csevegés</translation>
+        <translation>Privát beszélgetés</translation>
     </message>
 </context>
 <context>
     <name>ChatWidget</name>
     <message>
-        <location filename="../gui/chat/ChatWidget.ui" line="+184"/>
+        <location filename="../gui/chat/ChatWidget.ui" line="+157"/>
         <source>Close</source>
         <translation>Bezárás</translation>
     </message>
     <message>
-        <location line="+440"/>
+        <location line="+422"/>
         <source>Send</source>
         <translation>Küldés</translation>
     </message>
     <message>
-        <location line="+180"/>
+        <location line="+162"/>
         <source>Bold</source>
         <translation>Félkövér</translation>
     </message>
@@ -2034,9 +2080,9 @@ Double click a chat room to enter and chat.</source>
         <translation>Dőlt</translation>
     </message>
     <message>
-        <location line="-456"/>
+        <location line="-429"/>
         <source>Insert emoticon</source>
-        <translation type="unfinished"/>
+        <translation>Hangulatjel beillesztése</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -2044,19 +2090,19 @@ Double click a chat room to enter and chat.</source>
         <translation>Kép csatolása</translation>
     </message>
     <message>
-        <location line="+251"/>
+        <location line="+242"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;QToolButton:disabled {&lt;/p&gt;&lt;p&gt;	image: url(:/icons/png/send-message-blocked.png) ;&lt;/p&gt;&lt;p&gt;}&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;QToolButton:disabled {&lt;/p&gt;&lt;p&gt;	image: url(:/icons/png/send-message-blocked.png) ;&lt;/p&gt;&lt;p&gt;}&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+192"/>
+        <location line="+174"/>
         <source>Strike</source>
-        <translation type="unfinished"/>
+        <translation>Áthúzott</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Clear Chat History</source>
-        <translation>Csevegési előzmények törlése</translation>
+        <translation>Beszélgetés előzmények törlése</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -2067,7 +2113,7 @@ Double click a chat room to enter and chat.</source>
         <location line="+9"/>
         <location line="+3"/>
         <source>Save Chat History</source>
-        <translation>Csevegési előzmények mentése</translation>
+        <translation>Beszélgetés előzmények mentése</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2082,12 +2128,12 @@ Double click a chat room to enter and chat.</source>
     <message>
         <location line="+9"/>
         <source>Delete Chat History</source>
-        <translation>Csevegési előzmények törlése</translation>
+        <translation>Beszélgetés előzmények törlése</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Deletes all stored and displayed chat history</source>
-        <translation>Az összes tárolt és megjelenített csevegési előzmény törlése</translation>
+        <translation>Az összes tárolt és megjelenített beszélgetés előzmény törlése</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2102,68 +2148,75 @@ Double click a chat room to enter and chat.</source>
     <message>
         <location line="+51"/>
         <source>Quote</source>
-        <translation type="unfinished"/>
+        <translation>Idézés</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Quotes the selected text</source>
-        <translation type="unfinished"/>
+        <translation>Kiválasztott szöveg idézése</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Drop Placemark</source>
-        <translation type="unfinished"/>
+        <translation>Helyzetjelző beillesztése</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Insert horizontal rule</source>
-        <translation type="unfinished"/>
+        <translation>Vízszintes vonalzó beillesztése</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Save image</source>
-        <translation type="unfinished"/>
+        <translation>Kép mentése</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Send as PlainText</source>
-        <translation type="unfinished"/>
+        <translation>Küldés egyszerű üzenetként</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Send as plain text without font.</source>
-        <translation type="unfinished"/>
+        <translation>Küldés egyszerű üzenetként betűtípus nélkül.</translation>
     </message>
     <message>
         <location line="+12"/>
         <location line="+3"/>
         <source>Don&apos;t replace tag with Emote Icon.</source>
-        <translation type="unfinished"/>
+        <translation>Ne helyettesítsd Hangulatjellel.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Show Hidden Images</source>
-        <translation type="unfinished"/>
+        <translation>Rejtett képek megjelenítése</translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatWidget.cpp" line="+1089"/>
+        <location filename="../gui/chat/ChatWidget.cpp" line="+1176"/>
         <source>is typing...</source>
         <translation>éppen ír...</translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+26"/>
         <source>It remains %1 characters
 after HTML conversion.</source>
-        <translation type="unfinished"/>
+        <translation>%1 karakter marad
+a HTML átalakítás után.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Warning: This message is too big of %1 characters
 after HTML conversion.</source>
-        <translation type="unfinished"/>
+        <translation>Figyelem: Az üzenet %1 karakterrel hosszabb a megengedettnél
+a HTML átalakítás után.</translation>
     </message>
     <message>
-        <location line="+341"/>
+        <location line="+271"/>
+        <source>Choose your font.</source>
+        <translation>Válassz betütípust.</translation>
+    </message>
+    <message>
+        <location line="+71"/>
         <source>Do you really want to physically delete the history?</source>
         <translation>Tényleg törölni akarod az előzményeket?</translation>
     </message>
@@ -2178,7 +2231,7 @@ after HTML conversion.</source>
         <translation>Kép betöltése</translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+69"/>
         <source>Save as...</source>
         <translation>Mentés másként...</translation>
     </message>
@@ -2194,8 +2247,8 @@ after HTML conversion.</source>
     </message>
     <message>
         <location line="+0"/>
-        <source>Messages you send will be delivered after Friend is again Online</source>
-        <translation>Az általad elküldött üzenet a barátod csatlakozásakor lesz kézbesítve</translation>
+        <source>Messages you send will be delivered after Friend is again Online.</source>
+        <translation>Az elküldött üzeneteket a címzett akkor kapja meg, amikor újra bejelentkezett.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2215,59 +2268,59 @@ after HTML conversion.</source>
     <message>
         <location filename="../gui/chat/ChatWidget.ui" line="-98"/>
         <source>Find Case Sensitively</source>
-        <translation type="unfinished"/>
+        <translation>Kis- és nagybetű érzékenység szerinti keresés</translation>
     </message>
     <message>
         <location line="+8"/>
         <location line="+3"/>
         <source>Find Whole Words</source>
-        <translation type="unfinished"/>
+        <translation>Teljes szavak keresése</translation>
     </message>
     <message>
         <location line="+8"/>
         <location line="+3"/>
         <source>Move To Cursor</source>
-        <translation type="unfinished"/>
+        <translation>Ugrás a kurzorhoz</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Don&apos;t stop to color after X items found (need more CPU)</source>
-        <translation type="unfinished"/>
+        <translation>Ne hagyd abba a színezést X elem megtalálása után (több CPU erőforrás szükséges)</translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatWidget.cpp" line="-1514"/>
+        <location filename="../gui/chat/ChatWidget.cpp" line="-1587"/>
         <source>&lt;b&gt;Find Previous &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+Shift+G&lt;/i&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;b&gt;Előző keresése &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+Shift+G&lt;/i&gt;</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&lt;b&gt;Find Next &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+G&lt;/i&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;b&gt;Következő keresése&lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+G&lt;/i&gt;</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;b&gt;Find &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+F&lt;/i&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;b&gt;Keresés &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+F&lt;/i&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatWidget.ui" line="-175"/>
+        <location filename="../gui/chat/ChatWidget.ui" line="-166"/>
         <source>(Status)</source>
-        <translation type="unfinished"/>
+        <translation>(Állapot)</translation>
     </message>
     <message>
         <location filename="../gui/chat/ChatWidget.cpp" line="+53"/>
         <source>Set text font &amp; color</source>
-        <translation type="unfinished"/>
+        <translation>Betűtípus és szín beállítása</translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatWidget.ui" line="-342"/>
+        <location filename="../gui/chat/ChatWidget.ui" line="-324"/>
         <source>Attach a File</source>
-        <translation type="unfinished"/>
+        <translation>Fájl csatolása</translation>
     </message>
     <message>
-        <location line="+520"/>
+        <location line="+493"/>
         <source>WARNING: Could take a long time on big history.</source>
-        <translation type="unfinished"/>
+        <translation>FIGYELEM: Sokáig tarthat terjedelmes előzmények esetén.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2276,39 +2329,56 @@ after HTML conversion.</source>
     </message>
     <message>
         <location filename="../gui/chat/ChatWidget.cpp" line="-41"/>
-        <location line="+1227"/>
+        <location line="+1298"/>
         <source>&lt;b&gt;Mark this selected text&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctrl+M&lt;/i&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;b&gt;Kiválasztott szöveg megjelölése&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctrl+M&lt;/i&gt;</translation>
     </message>
     <message>
-        <location line="-47"/>
+        <location line="-827"/>
+        <source>Person id: </source>
+        <translation>Személyazonosító</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>
+Double click on it to add his name on text writer.</source>
+        <translation>
+A nevet kettős kattintással hozzáadhatod a szövegszerkesztőhöz.</translation>
+    </message>
+    <message>
+        <location line="+433"/>
+        <source> Unsigned</source>
+        <translation>Aláiratlan</translation>
+    </message>
+    <message>
+        <location line="+346"/>
         <source> items found.</source>
-        <translation type="unfinished"/>
+        <translation>találat.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>No items found.</source>
-        <translation type="unfinished"/>
+        <translation>Nincs találat.</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>&lt;b&gt;Return to marked text&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctrl+M&lt;/i&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;b&gt;Vissza a megjelölt szöveghez&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctrl+M&lt;/i&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatWidget.ui" line="-612"/>
+        <location filename="../gui/chat/ChatWidget.ui" line="-576"/>
         <source>Type a message here</source>
-        <translation type="unfinished"/>
+        <translation>Írj be egy üzenetet ide</translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatWidget.cpp" line="-1241"/>
+        <location filename="../gui/chat/ChatWidget.cpp" line="-1312"/>
         <source>Don&apos;t stop to color after</source>
-        <translation type="unfinished"/>
+        <translation>Ne állj le a színezéssel, miután</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>items found (need more CPU)</source>
-        <translation type="unfinished"/>
+        <translation>elemet megtaláltál (több CPU erőforrás szükséges)</translation>
     </message>
 </context>
 <context>
@@ -2321,7 +2391,7 @@ after HTML conversion.</source>
     <message>
         <location filename="../gui/People/CircleWidget.cpp" line="+20"/>
         <source>Empty Circle</source>
-        <translation type="unfinished"/>
+        <translation>Üres Kör</translation>
     </message>
 </context>
 <context>
@@ -2329,7 +2399,7 @@ after HTML conversion.</source>
     <message>
         <location filename="../gui/Circles/CirclesDialog.ui" line="+111"/>
         <source>Showing details: </source>
-        <translation>Részletek mutatása:</translation>
+        <translation>Részletek megjelenítése:</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -2345,7 +2415,7 @@ after HTML conversion.</source>
     <message>
         <location line="-34"/>
         <source>IDs</source>
-        <translation>ID</translation>
+        <translation>Azonosító</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -2361,7 +2431,7 @@ after HTML conversion.</source>
     <message>
         <location line="+19"/>
         <source>Peers</source>
-        <translation>Kapcsolatok</translation>
+        <translation>Partnerek</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -2371,7 +2441,7 @@ after HTML conversion.</source>
     <message>
         <location line="+5"/>
         <source>ID</source>
-        <translation>ID</translation>
+        <translation>Azonosító</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -2387,7 +2457,7 @@ after HTML conversion.</source>
     <message>
         <location line="-8"/>
         <source>Others</source>
-        <translation>Egyebek</translation>
+        <translation>Többiek</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -2442,7 +2512,7 @@ after HTML conversion.</source>
     <message>
         <location line="+4"/>
         <source>External Circles (Subscribed)</source>
-        <translation>Külső körök (feliratkozva)</translation>
+        <translation>Külső körök (feliratkozottak)</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2464,59 +2534,58 @@ after HTML conversion.</source>
         <translation>Részletek</translation>
     </message>
     <message>
-        <location line="+209"/>
-        <source>Peer Address</source>
-        <translation>Partner címe</translation>
-    </message>
-    <message>
-        <location line="+37"/>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="+207"/>
+        <location line="+249"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="+206"/>
         <source>Local Address</source>
         <translation>Helyi cím</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="-27"/>
         <source>External Address</source>
         <translation>Külső cím</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-214"/>
+        <source>Node info:</source>
+        <translation>Csomópont adatai:</translation>
+    </message>
+    <message>
+        <location line="+167"/>
+        <source>Current address:</source>
+        <translation>Jelenlegi cím:</translation>
+    </message>
+    <message>
+        <location line="+37"/>
         <source>Dynamic DNS</source>
         <translation>Dinamikus DNS</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+20"/>
         <location line="+7"/>
         <source>Port</source>
         <translation>Port</translation>
     </message>
     <message>
-        <location line="+39"/>
-        <location line="+6"/>
-        <source>Addresses list</source>
-        <translation>Címlista</translation>
-    </message>
-    <message>
-        <location line="+33"/>
+        <location line="+69"/>
         <source>Include signatures</source>
         <translation>Aláírásokat tartalmaz</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="-76"/>
-        <location line="+133"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="-74"/>
+        <location line="+131"/>
         <location line="+69"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location line="-201"/>
-        <location line="+133"/>
+        <location line="-199"/>
+        <location line="+131"/>
         <location line="+69"/>
         <source>Error : cannot get peer details.</source>
         <translation>Hiba: a partner adatai nem elérhetőek.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="-261"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="-205"/>
         <source>Encryption</source>
         <translation>Titkosítás</translation>
     </message>
@@ -2526,69 +2595,59 @@ after HTML conversion.</source>
         <translation>Nem csatlakozott</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="+100"/>
-        <source>Peer Addresses</source>
-        <translation>Partner címei</translation>
-    </message>
-    <message>
-        <location line="-269"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="-169"/>
         <source>Retroshare node details</source>
-        <translation type="unfinished"/>
+        <translation>Retroshare csomópont részletei</translation>
     </message>
     <message>
-        <location line="+74"/>
-        <source>Friend info</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+29"/>
+        <location line="+103"/>
         <source>Node name :</source>
-        <translation type="unfinished"/>
+        <translation>Csomópont neve :</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Status :</source>
-        <translation type="unfinished"/>
+        <translation>Állapot :</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Last Contact :</source>
-        <translation type="unfinished"/>
+        <translation>Legutóbbi kapcsolat :</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Retroshare version :</source>
-        <translation type="unfinished"/>
+        <translation>Retroshare verzió :</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Node ID :</source>
-        <translation type="unfinished"/>
+        <translation>Csomópont azonosító :</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>Név:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Status message:</source>
-        <translation type="unfinished"/>
+        <translation>Állapot üzenet:</translation>
     </message>
     <message>
-        <location line="+63"/>
-        <source>Connectivity</source>
-        <translation type="unfinished"/>
+        <location line="+134"/>
+        <source>List of known addresses:</source>
+        <translation>Ismert címek felsorolása:</translation>
     </message>
     <message>
-        <location line="+160"/>
+        <location line="+33"/>
         <source>Retroshare Certificate</source>
-        <translation type="unfinished"/>
+        <translation>Retroshare tanúsítvány</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="+5"/>
         <source>Hidden Address</source>
-        <translation type="unfinished"/>
+        <translation>Rejtett cím</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -2599,47 +2658,47 @@ after HTML conversion.</source>
     <message>
         <location line="+86"/>
         <source>&lt;p&gt;This certificate contains:</source>
-        <translation type="unfinished"/>
+        <translation>&lt;p&gt;Ez a tanúsítvány tartalmaz:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>&lt;li&gt;a &lt;b&gt;node ID&lt;/b&gt; and &lt;b&gt;name&lt;/b&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;li&gt;egy &lt;b&gt;csomópont azonosítót&lt;/b&gt; és &lt;b&gt;nevet&lt;/b&gt;</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>an &lt;b&gt;onion address&lt;/b&gt; and &lt;b&gt;port&lt;/b&gt;</source>
-        <translation type="unfinished"/>
+        <translation>egy &lt;b&gt;onion címet&lt;/b&gt; és &lt;b&gt;portot&lt;/b&gt;</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>an &lt;b&gt;IP address&lt;/b&gt; and &lt;b&gt;port&lt;/b&gt;</source>
-        <translation type="unfinished"/>
+        <translation>egy &lt;b&gt;IP címet&lt;/b&gt; és &lt;b&gt;portot&lt;/b&gt;</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;p&gt;You can use this certificate to make new friends. Send it by email, or give it hand to hand.&lt;/p&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;p&gt;Használd ezt a tanúsítványt, hogy új barátokat szerezz. Küldd el emailben, vagy juttasd el a címzettnek egyéb módon.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="-260"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="-204"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the ID of the node&apos;s &lt;span style=&quot; font-weight:600;&quot;&gt;OpenSSL&lt;/span&gt; certifcate, which is signed by the above &lt;span style=&quot; font-weight:600;&quot;&gt;PGP&lt;/span&gt; key. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ez egy csomópont &lt;span style=&quot; font-weight:600;&quot;&gt;OpenSSL&lt;/span&gt; tanúsítvánnyal ellátott azonosítója, amely a fenti &lt;span style=&quot; font-weight:600;&quot;&gt;PGP&lt;/span&gt; kulccsal lett aláírva. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the encryption method used by &lt;span style=&quot; font-weight:600;&quot;&gt;OpenSSL&lt;/span&gt;. The connection to friend nodes&lt;/p&gt;&lt;p&gt;is always heavily encrypted and if DHE is present the connection further uses&lt;/p&gt;&lt;p&gt;&amp;quot;perfect forward secrecy&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ez az &lt;span style=&quot; font-weight:600;&quot;&gt;OpenSSL&lt;/span&gt; által használt titkosítási eljárás. Az összeköttetés a barátok csomópontjaihoz&lt;/p&gt;&lt;p&gt;mindig erősen titkosított és ha a DHE jelen van, akkor az összeköttetés további &lt;/p&gt;&lt;p&gt;&amp;quot;tökéletes továbbítási titkosítást&amp;quot;.&lt;/p&gt; használ.&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="-17"/>
         <source>with</source>
-        <translation type="unfinished"/>
+        <translation>­</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>external signatures&lt;/li&gt;</source>
-        <translation type="unfinished"/>
+        <translation>külső aláírásokkal&lt;/li&gt;</translation>
     </message>
 </context>
 <context>
@@ -2657,16 +2716,23 @@ after HTML conversion.</source>
     <message>
         <location line="+19"/>
         <source>&amp;You get a certificate file from your friend</source>
-        <translation>&amp;Barátod tanúsítványának átvétele fájlként</translation>
+        <translation>&amp;Tanúsítvány fájl érkezett a barátodtól</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&amp;Make friend with selected friends of my friends</source>
-        <translation>&amp;Barát barátjával barátkozás</translation>
+        <translation>&amp;Barátaim barátjainak felvétele barátként</translation>
     </message>
     <message>
-        <location line="+83"/>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+986"/>
+        <location line="+21"/>
+        <source>&amp;Send an Invitation by Email 
+ (Your friend will receive an email with instructions how to download RetroShare)</source>
+        <translation>&amp;Küldj meghívót emailben 
+ (A címzett emailben kapja meg hogyan kell letölteni a Retroshare-t)</translation>
+    </message>
+    <message>
+        <location line="+62"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+1027"/>
         <source>Include signatures</source>
         <translation>Aláírásokat tartalmaz</translation>
     </message>
@@ -2686,9 +2752,19 @@ after HTML conversion.</source>
         <translation>Levelező program indítása</translation>
     </message>
     <message>
-        <location line="+142"/>
+        <location line="+127"/>
+        <source>Open Cert of your friend from File</source>
+        <translation>Ismerős tanúsítványának megnyitása fájlból</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Open certificate</source>
+        <translation>Tanusítvány megnyitása</translation>
+    </message>
+    <message>
+        <location line="+47"/>
         <source>Please, paste your friend&apos;s Retroshare certificate into the box below</source>
-        <translation type="unfinished"/>
+        <translation>Kérlek illeszd be a barátod Retroshare tanúsítványát az alábbi mezőbe</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -2748,70 +2824,70 @@ after HTML conversion.</source>
     <message>
         <location line="+8"/>
         <source>RetroShare ID</source>
-        <translation>RetroShare ID</translation>
+        <translation>RetroShare azonosító</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Use RetroShare ID for adding a Friend which is available in your network.</source>
-        <translation>RetroShare ID használata egy a hálózatodban elérhető barát felvételéhez.</translation>
+        <translation>RetroShare azonosító használata egy a hálózatodban elérhető barát felvételéhez.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Add Friends RetroShare ID...</source>
-        <translation>Barát RetroShare ID-jének megadása...</translation>
+        <translation>Barát RetroShare azonosítójának megadása...</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Paste Friends RetroShare ID in the box below</source>
-        <translation>Illeszd be az alábbi mezőbe a barát RetroShare ID-jét</translation>
+        <translation>Illeszd be az alábbi mezőbe a barát RetroShare azonosítóját</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Enter the RetroShare ID of your Friend, e.g. Peer@BDE8D16A46D938CF</source>
-        <translation>Írd be a barátod RetroShare ID-jét. Pl.: Valaki@BDE8D16A46D938CF</translation>
+        <translation>Írd be a barátod RetroShare azonosítóját! Pl.: Partner@BDE8D16A46D938CF</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>RetroShare is better with Friends </source>
-        <translation type="unfinished"/>
+        <translation>A barátiaddal sokkal jobb hely a RetroShare</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Invite your Friends from other Networks to RetroShare.</source>
-        <translation type="unfinished"/>
+        <translation>Barátok meghívása a RetroShare-be egyéb hálózatokból.</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>GMail</source>
-        <translation type="unfinished"/>
+        <translation>GMail</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Yahoo</source>
-        <translation type="unfinished"/>
+        <translation>Yahoo</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Outlook</source>
-        <translation type="unfinished"/>
+        <translation>Outlook</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>AOL</source>
-        <translation type="unfinished"/>
+        <translation>AOL</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Yandex</source>
-        <translation type="unfinished"/>
+        <translation>Yandex</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Email</source>
-        <translation type="unfinished"/>
+        <translation>Email</translation>
     </message>
     <message>
-        <location line="+79"/>
+        <location line="+49"/>
         <source>Invite Friends by Email</source>
         <translation>Barátok meghívása emailben</translation>
     </message>
@@ -2837,15 +2913,15 @@ after HTML conversion.</source>
     </message>
     <message>
         <location line="+20"/>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-702"/>
-        <location line="+26"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-714"/>
+        <location line="+27"/>
         <source>Friend request</source>
         <translation>Baráti felkérés</translation>
     </message>
     <message>
         <location line="+3"/>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-25"/>
-        <location line="+26"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-26"/>
+        <location line="+27"/>
         <source>Details about the request</source>
         <translation>A kérelem részletei</translation>
     </message>
@@ -2870,13 +2946,14 @@ after HTML conversion.</source>
     <message>
         <location line="-380"/>
         <source>Node:</source>
-        <translation type="unfinished"/>
+        <translation>Csomópont:</translation>
     </message>
     <message>
         <location line="+249"/>
         <source>Please note that RetroShare will require excessive amounts of bandwidth, memory and CPU if you add too many friends. You can add as many friends as you like, but more than 40 will probably require too much 
 resources.</source>
-        <translation type="unfinished"/>
+        <translation>Kérlek vedd figyelembe, hogy a RetroShare sok sávszélességet, memóriát vagy CPU használatot igényel, ha túl sok barátot veszel fel. Természetesen annyi barátot vehetsz fel amennyit csak szeretnél, de 40-nél több barát felvétele esetleg túl sok 
+erőforrást igényel.</translation>
     </message>
     <message>
         <location line="+145"/>
@@ -2891,58 +2968,52 @@ resources.</source>
         <translation>Beállítások</translation>
     </message>
     <message>
-        <location line="-1351"/>
+        <location line="-1356"/>
         <source>This wizard will help you to connect to your friend(s) to RetroShare network.&lt;br&gt;Select how you would like to add a friend:</source>
-        <translation type="unfinished"/>
+        <translation>Ez a varázsló segít abban, hogy csatlakozhass a barát(ok)hoz a RetroShare hálózaton keresztül. &lt;br&gt;Válaszd ki, miként szeretnéd felvenni:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Enter the certificate manually</source>
-        <translation type="unfinished"/>
+        <translation>Tanúsítvány beírása kézzel</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Enter RetroShare ID manually</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare azonosító beírása kézzel</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&amp;Send an Invitation by Web Mail Providers</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Küldés és meghívás webes email kiszolgálókon keresztül</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>&amp;Send an Invitation by Email 
- (Your friend will receive an email with instructions how to to download RetroShare)</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+8"/>
+        <location line="+15"/>
         <source>Recommend many friends to each other</source>
-        <translation type="unfinished"/>
+        <translation>Ajánlj barátokat egymásnak</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>RetroShare certificate</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare tanúsítvány</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Please paste below your friend&apos;s Retroshare certificate</source>
-        <translation type="unfinished"/>
+        <translation>Kérlek illeszd be alább a barátod Retroshare tanúsítványát</translation>
     </message>
     <message>
         <location line="+210"/>
         <source>Paste certificate</source>
-        <translation type="unfinished"/>
+        <translation>Tanúsítvány beillesztése</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+73"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This box expects your friend&apos;s Retroshare certificate. WARNING: this is different from your friend&apos;s profile key. Do not paste your friend&apos;s profile key here (not even a part of it). It&apos;s not going to work.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A mezőbe a barátod Retroshare tanúsítványát illeszd be. FIGYELEM:  ez különbözik a barátod profil kulcsától. Ne illeszd be ide a barátod profil kulcsát (vagy annak egy részét), mert nem fog működni!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+559"/>
+        <location line="+529"/>
         <location line="+465"/>
         <source>Add friend to group:</source>
         <translation>Barát hozzáadása a csoporthoz:</translation>
@@ -2963,7 +3034,7 @@ resources.</source>
         <location line="-358"/>
         <location line="+524"/>
         <source>To accept the Friend Request, click the Finish button.</source>
-        <translation>A baráti kérelem elfogadásához kattints a kész gombra.</translation>
+        <translation>A baráti kérelem elfogadásához kattints a Kész gombra.</translation>
     </message>
     <message>
         <location line="-503"/>
@@ -2998,15 +3069,15 @@ resources.</source>
     <message>
         <location line="+7"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Signing a friend&apos;s key is a way to express your trust into this friend, to your other friends. The signatures below cryptographically attest that owners of the listed keys recognise the current PGP key as authentic.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;A barátod kulcsának aláírása alkalmas arra, hogy kifejezd a bizalmad iránta és ezt jelezd a többiek felé. Az aláírások kriptográfiailag bizonyítják, hogy az alábbi kulcsok hitelesnek ismerik el az aktuális PGP kulcsot.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>This peer is already on your friend list. Adding it might just set it&apos;s ip address.</source>
-        <translation>A személy már szerepel a barátlistádon. Az újbóli felvétele csak az ip címét fogja változtatni.</translation>
+        <translation>A személy már szerepel a barátlistádon. Az újbóli felvétele csak az IP címét fogja változtatni.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-64"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-74"/>
         <source>Abnormal size read is bigger than memory block.</source>
         <translation>Helytelen méret olvasás. Nagyobb, mint a memória blokk.</translation>
     </message>
@@ -3046,18 +3117,18 @@ resources.</source>
         <translation>Ismeretlen hiba a tanúsítványban</translation>
     </message>
     <message>
-        <location line="+31"/>
-        <location line="+401"/>
+        <location line="+41"/>
+        <location line="+406"/>
         <source>Certificate Load Failed</source>
         <translation>A tanúsítvány betöltése sikertelen</translation>
     </message>
     <message>
-        <location line="-393"/>
+        <location line="-398"/>
         <source>Cannot get peer details of PGP key %1</source>
         <translation>A %1 PGP kulcshoz tartozó partner adatainak lehívása sikertelen</translation>
     </message>
     <message>
-        <location line="+79"/>
+        <location line="+80"/>
         <source>Any peer I&apos;ve not signed</source>
         <translation>Akárki, akit nem írtam alá</translation>
     </message>
@@ -3069,7 +3140,7 @@ resources.</source>
     <message>
         <location line="+1"/>
         <source>Signed peers showing as denied</source>
-        <translation>Aláírt partnrek elutasítva</translation>
+        <translation>Aláírt partnerek elutasítottként jelennek meg</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3084,28 +3155,61 @@ resources.</source>
     <message>
         <location line="+1"/>
         <source>Peer id</source>
-        <translation>Partner ID</translation>
+        <translation>Partner azonosító</translation>
     </message>
     <message>
-        <location line="+648"/>
+        <location line="+658"/>
         <source>Certificate appears to be valid</source>
-        <translation type="unfinished"/>
+        <translation>Úgy tűnik, érvényes a tanúsítvány</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Not a valid Retroshare certificate!</source>
-        <translation type="unfinished"/>
+        <translation>Érvénytelen Retroshare tanúsítvány!</translation>
     </message>
     <message>
-        <location line="-923"/>
-        <location line="+278"/>
+        <location line="-962"/>
+        <location line="+307"/>
         <source>RetroShare Invitation</source>
         <translation>RetroShare meghívás</translation>
     </message>
     <message>
-        <location line="+87"/>
+        <location line="-277"/>
+        <location line="+2"/>
+        <source>
+Warning: In your File-Transfer option, you select allow direct download to Yes.</source>
+        <translation>
+Figyelmeztetés: a fájlküldési beállításoknál a közvetlen letöltés engedélyét IGENre állítottad.</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <location line="+2"/>
+        <source>
+Warning: In your File-Transfer option, you select allow direct download to No.</source>
+        <translation>
+Figyelmeztetés: az Átvitel beállításainál Nem engedélyezted a közvetlen letöltést.</translation>
+    </message>
+    <message>
+        <location line="+135"/>
+        <location line="+419"/>
+        <location line="+40"/>
+        <source>This is your own certificate! You would not want to make friend with yourself. Wouldn&apos;t you?</source>
+        <translation>Ez a saját tanusítványod! Ugye nem saját magadat akarod ismerősként megadni?!</translation>
+    </message>
+    <message>
+        <location line="-253"/>
+        <source>This key is already on your trusted list</source>
+        <translation>A kulcs már fenn van a megbízhatók listáján</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>You have already signed this key</source>
+        <translation>Ezt a kulcsot már aláírtad</translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Ultimate</source>
-        <translation>Teljes</translation>
+        <translation>Legteljesebb</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3129,14 +3233,14 @@ resources.</source>
     </message>
     <message>
         <location line="+21"/>
-        <location line="+99"/>
+        <location line="+98"/>
         <source>You have a friend request from</source>
-        <translation>Van egy baráti felkérésed tőle</translation>
+        <translation>Van egy barát felkérésed tőle</translation>
     </message>
     <message>
-        <location line="+104"/>
+        <location line="+117"/>
         <source>Certificate Load Failed:file %1 not found</source>
-        <translation>Tanúsítvány betöltése sikertelen: nem található %1 fájl</translation>
+        <translation>Tanúsítvány betöltése sikertelen: nem található ez a fájl: %1</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -3179,19 +3283,21 @@ resources.</source>
         <translation>A tanúsítványod a vágólapra lett másolva. Illeszd be és küld el a barátodnak emailben vagy oszd meg vele egyéb módon</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+27"/>
         <source>Save as...</source>
         <translation>Mentés másként...</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="-15"/>
+        <location line="+15"/>
         <location line="+20"/>
         <location line="+20"/>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
         <translation>RetroShare tanúsítvány (*.rsc );;Minden fájl (*)</translation>
     </message>
     <message>
-        <location line="-20"/>
+        <location line="-55"/>
+        <location line="+35"/>
         <source>Select Certificate</source>
         <translation>Tanúsítvány kiválasztása</translation>
     </message>
@@ -3203,7 +3309,7 @@ resources.</source>
     <message>
         <location line="+4"/>
         <source>Please choose a filename</source>
-        <translation>Kérlek, válassz ki egy fájlnevet</translation>
+        <translation>Kérlek, válassz egy fájlnevet</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -3229,37 +3335,37 @@ resources.</source>
     <message>
         <location line="+351"/>
         <source>IP-Addr:</source>
-        <translation type="unfinished"/>
+        <translation>IP-cím:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>IP-Address</source>
-        <translation type="unfinished"/>
+        <translation>IP-cím:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Show Advanced options</source>
-        <translation type="unfinished"/>
+        <translation>Haladó beállítások megjelenítése</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Signing a friend&apos;s key is a way to express your trust into this friend, to your other friends. It helps them to decide whether to allow connections from that key based on your own trust. Signing a key is absolutely optional and cannot be undone, so do it wisely.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;A barátod kulcsának aláírása alkalmas arra, hogy kifejezd a bizalmad iránta és ezt jelezd a többiek felé. Ez segíthet nekik eldönteni, hogy elfogadják-e a kapcsolódást az adott kulcs tulajdonosától. Egy kulcs aláírása csak egy lehetőség, de visszavonhatatlan. Ezért fontold meg és dönts okosan.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare periodically checks your friend lists for browsable files matching your transfers, to establish a direct transfer. In this case, your friend knows you&apos;re downloading the file.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;To prevent this behavior for this friend only, uncheck this box. You can still perform a direct transfer if you explicitly ask for it, by e.g. downloading from your friend&apos;s file list. This setting is applied to all locations of the same node.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;A Retroshare időnként ellenőrzi a barátlistád kereshető fájlokért, melyek megegyeznek az átviteli fájlokkal, azért, hogy közvetlen fájlátvitel valósulhasson meg. Ebben az esetben a barátod tudni fogja, hogy letöltöd azt a fájlt.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Hogy elkerüld ezt a viselkedést, és ki szeretnéd hagyni ebből ezt a barátodat, akkor szüntesd meg a doboz kijelölését. Továbbra is lehetőséged lesz a fájl letöltésére tőle, ehhez azonban előbb igényelned kell azt. Például az adott fájl manuális letöltésével a barátod megosztott mappájából. Ez a beállítás egy adott csomóponthoz tartozó összes helyszínre érvényes lesz.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This option allows you to automatically download a file that is recommended in an message coming from this node. This can be used for instance to send files between your own nodes. Applied to all locations of the same node.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ez az opció lehetővé teszi, hogy önműködően letöltsd az ennek a csomópontnak valamelyik üzenetben javasolt fájlt. Arra is használhatod, hogy saját csomópontjaid között fájlokat továbbíts. Ugyanazon csomópont összes helyszinére vonatkozik.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Peers that have this option cannot connect if their connection address is not in the whitelist. This protects you from traffic forwarding attacks. When used, rejected peers will be reported by &amp;quot;security feed items&amp;quot; in the News Feed section. From there, you can whitelist/blacklist their IP. Applies to all locations of the same node.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Azon ismerősök, akiknél ez a beállítás szerepel, nem tudnak kapcsolódni, ha a címük hiányzik az engedélyezettek listájáról. Ez védelmet nyújt az adatforgalom-átirányítás jellegű támadásokkal szemben. Ha ez van beállítva, akkor az elutasított kapcsolatot a &amp;quot;biztonsági hírcsatorna tétel&amp;quot; a Hírcsatornába irányítja. Ott letilthatod vagy engedélyezheted az IP címüket. Ugyanazon csomópont összes helyszinére vonatkozik. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+128"/>
@@ -3272,17 +3378,17 @@ resources.</source>
         <translation>Ajánlott barátok</translation>
     </message>
     <message>
-        <location line="-1254"/>
+        <location line="-1259"/>
         <source>The text below is your Retroshare certificate. You have to provide it to your friend</source>
-        <translation type="unfinished"/>
+        <translation>Ez a személyes Retroshare tanúsítványod. Ezt kell eljuttatnod a barátaidhoz</translation>
     </message>
     <message>
-        <location line="+1290"/>
+        <location line="+1295"/>
         <source>Message:</source>
         <translation>Üzenet:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-597"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-626"/>
         <source>Recommend friends</source>
         <translation>Barátok ajánlása</translation>
     </message>
@@ -3292,7 +3398,7 @@ resources.</source>
         <translation>Címzett</translation>
     </message>
     <message>
-        <location line="+144"/>
+        <location line="+157"/>
         <source>Please select at least one friend for recommendation.</source>
         <translation>Kérlek, válassz ki az ajánláshoz legalább egy barátot.</translation>
     </message>
@@ -3307,7 +3413,7 @@ resources.</source>
         <translation>Kulcs hozzáadása a kulcstartóhoz</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-331"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-327"/>
         <source>This key is already in your keyring</source>
         <translation>Ez a kulcs már szerepel a kulcstartódban</translation>
     </message>
@@ -3317,69 +3423,72 @@ resources.</source>
 This might be useful for sending
 distant messages to this peer
 even if you don&apos;t make friends.</source>
-        <translation type="unfinished"/>
+        <translation>Válaszd, ha hozzá szeretnéd adni ezt a kulcsot a kulcstartódhoz
+Hasznos lehet akkor, ha
+távoli üzeneteket szeretnél küldeni ennek a partnernek,
+ de nem veszed fel barátnak.</translation>
     </message>
     <message>
-        <location line="-202"/>
+        <location line="-227"/>
         <source>Certificate has wrong version number. Remember that v0.6 and v0.5 networks are incompatible.</source>
-        <translation type="unfinished"/>
+        <translation>A tanúsítvány verziója rossz. Kérlek vedd figyelembe, hogy a v0.6 és a v0.5 hálózatok nem kompatibilisek egymással.</translation>
     </message>
     <message>
         <location line="-5"/>
         <source>Invalid node id.</source>
-        <translation type="unfinished"/>
+        <translation>Érvénytelen csomópont azonosító.</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.ui" line="-376"/>
         <location line="+451"/>
         <source>Auto-download recommended files</source>
-        <translation type="unfinished"/>
+        <translation>Automatikusan töltse le az ajánlott fájlokat</translation>
     </message>
     <message>
         <location line="-10"/>
         <source>Can be used as direct source</source>
-        <translation type="unfinished"/>
+        <translation>Közvetlen forrásként használható</translation>
     </message>
     <message>
         <location line="-434"/>
         <location line="+454"/>
         <source>Require whitelist clearance to connect</source>
-        <translation type="unfinished"/>
+        <translation>Fehérlistás engedélyezést követel meg a csatlakozáshoz</translation>
     </message>
     <message>
         <location line="-59"/>
         <source>Add IP to whitelist</source>
-        <translation type="unfinished"/>
+        <translation>IP hozzáadása a fehérlistához</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+191"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+216"/>
         <source>No IP in this certificate!</source>
-        <translation type="unfinished"/>
+        <translation>Ez a tanúsítvány nem tartalmaz IP-t!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;p&gt;This certificate has no IP. You will rely on discovery and DHT to find it. Because you require whitelist clearance, the peer will raise a security warning in the NewsFeed tab. From there, you can whitelist his IP.&lt;/p&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;p&gt;Ez a tanúsítvány nem tartalmaz IP-t. A felfedezésre és a DHT-re vagy utalva, hogy megtaláld. Mivel fehérlistás engedélyezést kértél, ezért egy biztonsági figyelmeztetést fogsz kapni a Hírek fülön. Itt hozzáadhatod a partner IP-jét a fehérlistához.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="+452"/>
+        <location line="+448"/>
         <source>Added with certificate from %1</source>
-        <translation type="unfinished"/>
+        <translation>Tanúsítvánnyal hozzáadva innen: %1</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.ui" line="-1051"/>
+        <location filename="../gui/connect/ConnectFriendWizard.ui" line="-1056"/>
         <source>Paste Cert of your friend from Clipboard</source>
-        <translation type="unfinished"/>
+        <translation>Barát tanúsítványának beillesztése a Vágólapról</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-183"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-189"/>
         <source>Certificate Load Failed:can&apos;t read from file %1</source>
-        <translation type="unfinished"/>
+        <translation>Tanúsítvány betöltése sikertelen: nem olvasható az alábbi fájl: %1</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+18"/>
         <source>Certificate Load Failed:something is wrong with %1</source>
-        <translation type="unfinished"/>
+        <translation>Tanúsítvány betöltése sikertelen: valami gond van ezzel: %1</translation>
     </message>
 </context>
 <context>
@@ -3390,7 +3499,7 @@ even if you don&apos;t make friends.</source>
         <translation>Csatlakozási folyamat</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+64"/>
         <source>Connecting to:</source>
         <translation>Kapcsolódás hozzá:</translation>
     </message>
@@ -3421,7 +3530,7 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <location line="-133"/>
-        <location filename="../gui/connect/ConnectProgressDialog.cpp" line="+168"/>
+        <location filename="../gui/connect/ConnectProgressDialog.cpp" line="+174"/>
         <source>DHT Startup</source>
         <translation>DHT indítása</translation>
     </message>
@@ -3442,7 +3551,7 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <location line="+13"/>
-        <location filename="../gui/connect/ConnectProgressDialog.cpp" line="+384"/>
+        <location filename="../gui/connect/ConnectProgressDialog.cpp" line="+405"/>
         <source>UDP Setup</source>
         <translation>UDP kapcsolat létrehozása</translation>
     </message>
@@ -3452,17 +3561,30 @@ even if you don&apos;t make friends.</source>
         <translation>UDP kapcsolat eredménye</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectProgressDialog.cpp" line="-488"/>
+        <location line="+128"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;This Widget shows the progress of your connection to your new peer.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;It is helpful for problem-solving.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;If you are an expert RS user, or trust that RS will do the right thing&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;you can close it.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/connect/ConnectProgressDialog.cpp" line="-515"/>
         <source>Connection Assistant</source>
         <translation>Kapcsolódási segéd</translation>
     </message>
     <message>
-        <location line="+127"/>
+        <location line="+150"/>
         <source>Invalid Peer ID</source>
-        <translation>Helytelen partner ID</translation>
+        <translation>Érvénytelen partner azonosító</translation>
     </message>
     <message>
-        <location line="+70"/>
+        <location line="+72"/>
         <source>Unknown State</source>
         <translation>Ismeretlen állapot</translation>
     </message>
@@ -3522,7 +3644,7 @@ even if you don&apos;t make friends.</source>
         <translation>RS partnerek keresése</translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="+49"/>
         <source>Lookup requires DHT</source>
         <translation>A felkutatáshoz DHT szükséges</translation>
     </message>
@@ -3548,12 +3670,12 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <location line="+5"/>
-        <location line="+286"/>
+        <location line="+289"/>
         <source>Peer Offline</source>
         <translation>A partner nincs bejelentkezve</translation>
     </message>
     <message>
-        <location line="-281"/>
+        <location line="-284"/>
         <source>Peer Firewalled</source>
         <translation>A partner tűzfal mögött van</translation>
     </message>
@@ -3563,7 +3685,7 @@ even if you don&apos;t make friends.</source>
         <translation>A partner be van jelentkezve</translation>
     </message>
     <message>
-        <location line="+133"/>
+        <location line="+136"/>
         <source>Connection In Progress</source>
         <translation>A csatlakozás folyamatban van</translation>
     </message>
@@ -3746,7 +3868,7 @@ even if you don&apos;t make friends.</source>
         <location line="+17"/>
         <location line="+13"/>
         <source>Your Retroshare Node is configured Okay</source>
-        <translation>A Retroshare kliensed megfelelően van beállítva</translation>
+        <translation>A Retroshare csomópontod megfelelően van beállítva</translation>
     </message>
     <message>
         <location line="-21"/>
@@ -3814,28 +3936,15 @@ even if you don&apos;t make friends.</source>
         <translation>Kérlek, próbáld meg újból importálni a tanúsítványt</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectProgressDialog.ui" line="+128"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;This Widget shows the progress of your connection to your new peer.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;It is helpful for problem-solving.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;If you are an expert RS user, or trust that RS will do the right thing&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;you can close it.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/connect/ConnectProgressDialog.cpp" line="-667"/>
+        <location line="-693"/>
         <location line="+1"/>
-        <location line="+5"/>
-        <location line="+3"/>
+        <location line="+24"/>
+        <location line="+4"/>
         <source>N/A</source>
         <translation>N/A</translation>
     </message>
     <message>
-        <location line="+111"/>
+        <location line="+113"/>
         <source>UNVERIFIABLE FORWARD!</source>
         <translation>Végrehajthatatlan továbbítás!</translation>
     </message>
@@ -3845,17 +3954,17 @@ p, li { white-space: pre-wrap; }
         <translation>Végrehajthatatlan továbbítás és nincs DHT</translation>
     </message>
     <message>
-        <location line="+212"/>
+        <location line="+213"/>
         <source>Searching</source>
         <translation>Keresés</translation>
     </message>
     <message>
-        <location line="+64"/>
+        <location line="+65"/>
         <source>UDP Connect Timeout</source>
         <translation>Az UDP csatlakozás túl sokáig tartott</translation>
     </message>
     <message>
-        <location line="+190"/>
+        <location line="+192"/>
         <source>Only Advanced Retroshare users should switch off the DHT.</source>
         <translation>Csak tapasztalt Retroshare felhasználóknak ajánlott a DHT letiltása.</translation>
     </message>
@@ -3867,7 +3976,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-45"/>
         <source>They need a Certificate + Node for UDP connections to succeed</source>
-        <translation type="unfinished"/>
+        <translation>Szükségük van egy Tanúsítványra + Csomópontra ahhoz, hogy az UDP kapcsolat sikeres legyen</translation>
     </message>
 </context>
 <context>
@@ -3886,14 +3995,24 @@ p, li { white-space: pre-wrap; }
         <translation>Név</translation>
     </message>
     <message>
-        <location line="+302"/>
+        <location line="+206"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The circle name, contact author and invited member list will be visible to all invited members. If the circle is not private, it will also be visible to neighbor nodes of the nodes who host the invited members.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A kör neve, a kapcsolattartó és a meghívott tagok listája látható lesz az összes meghívott számára. Ha a kör nem privát, akkor látható lesz a meghívott csomópontok szomszédos csomópontjai által is.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The creator of a circle is purely optional. It is however useful for public circles so that people know with whom to discuss membership aspects.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+70"/>
         <source>Public</source>
         <translation>Publikus</translation>
     </message>
     <message>
         <location line="-297"/>
         <source>IDs</source>
-        <translation>ID</translation>
+        <translation>Azonosító</translation>
     </message>
     <message>
         <location line="+150"/>
@@ -3909,7 +4028,7 @@ p, li { white-space: pre-wrap; }
         <location line="-103"/>
         <location filename="../gui/Circles/CreateCircleDialog.cpp" line="+87"/>
         <source>Invited Members</source>
-        <translation type="unfinished"/>
+        <translation>Meghívott tagok</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -3919,12 +4038,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+81"/>
         <source>Known People</source>
-        <translation type="unfinished"/>
+        <translation>Ismert személyek</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>ID</source>
-        <translation>ID</translation>
+        <translation>Azonosító</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3934,32 +4053,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+99"/>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>Név:</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The circle name, contact author and invted member list will be visible to all invited members. If the circle is not private, it will also be visible to neighbor nodes of the nodes who host the invited members.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+13"/>
+        <location line="+23"/>
         <source>Contact author:</source>
-        <translation type="unfinished"/>
+        <translation>Kapcsolattartó: </translation>
     </message>
     <message>
-        <location line="+13"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The creator of a circle ia purely optional. It is however useful for public circles so that people know with whom to discuss membership aspects.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+7"/>
+        <location line="+20"/>
         <source>[Circle Admin]</source>
-        <translation type="unfinished"/>
+        <translation>[Kör Admin]</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Distribution:</source>
-        <translation type="unfinished"/>
+        <translation>Megosztás: </translation>
     </message>
     <message>
         <location line="+31"/>
@@ -3974,7 +4083,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+3"/>
         <source>Private</source>
-        <translation type="unfinished"/>
+        <translation>Személyes</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -3984,7 +4093,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+3"/>
         <source>Only visible to members of:</source>
-        <translation type="unfinished"/>
+        <translation>Csak a következő csoportok tagjai számára látható:</translation>
     </message>
     <message>
         <location filename="../gui/Circles/CreateCircleDialog.cpp" line="+74"/>
@@ -4016,7 +4125,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+14"/>
         <source>Remove </source>
-        <translation type="unfinished"/>
+        <translation>Eltávolítás</translation>
     </message>
     <message>
         <location filename="../gui/Circles/CreateCircleDialog.cpp" line="-451"/>
@@ -4037,7 +4146,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+7"/>
         <source>Signed by known nodes</source>
-        <translation type="unfinished"/>
+        <translation>Ismert csomópontok által aláírva</translation>
     </message>
     <message>
         <location filename="../gui/Circles/CreateCircleDialog.cpp" line="+44"/>
@@ -4047,55 +4156,55 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+226"/>
         <source>PGP Identity</source>
-        <translation type="unfinished"/>
+        <translation>PGP Személyazonosság</translation>
     </message>
     <message>
         <location line="-82"/>
         <location line="+61"/>
         <location line="+483"/>
         <source>Anon Id</source>
-        <translation>Névtelen ID</translation>
+        <translation>Névtelen azonosító</translation>
     </message>
     <message>
         <location line="-712"/>
         <source>Circle name</source>
-        <translation type="unfinished"/>
+        <translation>Kör neve</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>Update</source>
-        <translation type="unfinished"/>
+        <translation>Frissít</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>Bezár</translation>
     </message>
     <message>
         <location line="+19"/>
         <location line="+6"/>
         <source>Create New Circle</source>
-        <translation type="unfinished"/>
+        <translation>Új kör létrehozása</translation>
     </message>
     <message>
         <location line="-5"/>
         <source>Create</source>
-        <translation type="unfinished"/>
+        <translation>Létrehoz</translation>
     </message>
     <message>
         <location line="+656"/>
         <source>PGP Linked Id</source>
-        <translation>PGP-hez linkelt ID</translation>
+        <translation>PGP-hez linkelt azonosító</translation>
     </message>
     <message>
         <location line="+93"/>
         <source>Add Member</source>
-        <translation type="unfinished"/>
+        <translation>Tag hozzáadása</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Remove Member</source>
-        <translation type="unfinished"/>
+        <translation>Tag eltávolítása</translation>
     </message>
 </context>
 <context>
@@ -4109,12 +4218,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+26"/>
         <source>Group Name:</source>
-        <translation type="unfinished"/>
+        <translation>Csoport neve:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Group ID:</source>
-        <translation type="unfinished"/>
+        <translation>Csoport azonosító:</translation>
     </message>
     <message>
         <location line="-7"/>
@@ -4124,7 +4233,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/groups/CreateGroup.cpp" line="-32"/>
         <source>To be defined</source>
-        <translation type="unfinished"/>
+        <translation>Meghatározandó</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4142,7 +4251,7 @@ p, li { white-space: pre-wrap; }
     <name>CreateGxsChannelMsg</name>
     <message>
         <location filename="../gui/gxschannels/CreateGxsChannelMsg.ui" line="+17"/>
-        <location filename="../gui/gxschannels/CreateGxsChannelMsg.cpp" line="+53"/>
+        <location filename="../gui/gxschannels/CreateGxsChannelMsg.cpp" line="+61"/>
         <source>New Channel Post</source>
         <translation>Új bejegyzés a csatornán</translation>
     </message>
@@ -4215,7 +4324,7 @@ p, li { white-space: pre-wrap; }
         <translation>Fájlok megragadása és bedobása a keresési találatokból</translation>
     </message>
     <message>
-        <location filename="../gui/gxschannels/CreateGxsChannelMsg.cpp" line="+59"/>
+        <location filename="../gui/gxschannels/CreateGxsChannelMsg.cpp" line="+60"/>
         <source>Paste RetroShare Links</source>
         <translation>RetroShare linkek beillesztése</translation>
     </message>
@@ -4241,28 +4350,28 @@ p, li { white-space: pre-wrap; }
         <translation>A fájl nem található, vagy hibás a fájlnév.</translation>
     </message>
     <message>
-        <location line="+130"/>
+        <location line="+150"/>
         <source>Add Extra File</source>
         <translation>Extra fájl hozzáadása</translation>
     </message>
     <message>
-        <location line="+25"/>
-        <location line="+212"/>
+        <location line="+37"/>
+        <location line="+225"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location line="-212"/>
+        <location line="-225"/>
         <source>File already Added and Hashed</source>
         <translation>A fájl már hozzá van adva és hashelve van.</translation>
     </message>
     <message>
-        <location line="+212"/>
+        <location line="+225"/>
         <source>Please add a Subject</source>
         <translation>Kérlek, adj meg egy tárgyat</translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+63"/>
         <source>Load thumbnail picture</source>
         <translation>Előnézeti kép betöltése</translation>
     </message>
@@ -4270,20 +4379,25 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/gxschannels/CreateGxsChannelMsg.ui" line="+18"/>
         <location filename="../gui/gxschannels/CreateGxsChannelMsg.cpp" line="-26"/>
         <source>Generate mass data</source>
-        <translation type="unfinished"/>
+        <translation>Adattömeg létrehozása</translation>
     </message>
     <message>
         <location filename="../gui/gxschannels/CreateGxsChannelMsg.cpp" line="+0"/>
         <source>Do you really want to generate %1 messages ?</source>
-        <translation type="unfinished"/>
+        <translation>Valóban generálni szeretnél %1 üzenetet ?</translation>
     </message>
     <message>
-        <location line="-506"/>
+        <location line="-552"/>
         <source>You are about to add files you&apos;re not actually sharing. Do you still want this to happen?</source>
         <translation>Fájlokat fogsz hozzáadni a megosztásodhoz. Biztos ezt szeretnéd tenni?</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="-96"/>
+        <source>Edit Channel Post</source>
+        <translation>Csatornabejegyzés létrehozása</translation>
+    </message>
+    <message>
+        <location line="+101"/>
         <source>About to post un-owned files to a channel.</source>
         <translation>Nem birtokolt fájlok beküldése a csatornára.</translation>
     </message>
@@ -4292,7 +4406,7 @@ p, li { white-space: pre-wrap; }
     <name>CreateGxsForumMsg</name>
     <message>
         <location filename="../gui/gxsforums/CreateGxsForumMsg.ui" line="+14"/>
-        <location filename="../gui/gxsforums/CreateGxsForumMsg.cpp" line="+78"/>
+        <location filename="../gui/gxsforums/CreateGxsForumMsg.cpp" line="+86"/>
         <source>Post Forum Message</source>
         <translation>Fórum üzenet beküldése</translation>
     </message>
@@ -4337,83 +4451,89 @@ p, li { white-space: pre-wrap; }
         <translation>Új szál indítása</translation>
     </message>
     <message>
-        <location line="+61"/>
+        <location line="+0"/>
+        <source>Edit Message</source>
+        <translation>Üzenet szerkesztése</translation>
+    </message>
+    <message>
+        <location line="+73"/>
         <source>No Forum</source>
         <translation>Nincs fórum</translation>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+140"/>
         <source>In Reply to</source>
         <translation>Válasz</translation>
     </message>
     <message>
-        <location line="+56"/>
-        <location line="+51"/>
+        <location line="+50"/>
+        <location line="+52"/>
         <location line="+7"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location line="-58"/>
+        <location line="-59"/>
         <source>Please set a Forum Subject and Forum Message</source>
         <translation>Kérlek, állíts be egy tárgyat és egy üzenetet a fórumnak</translation>
     </message>
     <message>
-        <location line="+58"/>
+        <location line="+59"/>
         <source>Please choose Signing Id, it is required</source>
-        <translation>Kérlek, válassz egy aláírás Id-t, ez szükséges.</translation>
+        <translation>Kérlek, válassz egy Aláírás azonosítót, ez szükséges.</translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+41"/>
+        <source>Cancel Forum Message</source>
+        <translation>Fórum üzenet visszavonása</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Forum Message has not been sent yet!
+Do you want to discard this message?</source>
+        <translation>A fórum-üzenetet még nem küldted el.
+Törölni szeretnéd?</translation>
+    </message>
+    <message>
+        <location line="+35"/>
         <source>Add Extra File</source>
         <translation>Extra fájl hozzáadása</translation>
     </message>
     <message>
         <location line="+103"/>
         <source>No compatible ID for this forum</source>
-        <translation type="unfinished"/>
+        <translation>Nem kompatibilis azonosító ehhez a fórumhoz</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>None of your identities is allowed to post in this forum. This could be due to the forum being limited to a circle that contains none of your identities, or forum flags requiring a PGP-signed identity.</source>
-        <translation type="unfinished"/>
+        <translation>Egyetlen személyazonosságod számára sem engedélyezett a hozzászólás ezen a fórumon. Ennek oka az lehet, hogy a fórum korlátozva van egy olyan körre, amely nem tartalmazza semelyik személyazonosságod, vagy pedig a fórum jelölők megkövetelik a PGP hitelesítésű azonosítókat.</translation>
     </message>
     <message>
         <location filename="../gui/gxsforums/CreateGxsForumMsg.ui" line="+18"/>
         <location filename="../gui/gxsforums/CreateGxsForumMsg.cpp" line="-171"/>
         <source>Generate mass data</source>
-        <translation type="unfinished"/>
+        <translation>Adattömeg létrehozása</translation>
     </message>
     <message>
         <location filename="../gui/gxsforums/CreateGxsForumMsg.cpp" line="+0"/>
         <source>Do you really want to generate %1 messages ?</source>
-        <translation type="unfinished"/>
+        <translation>Valóban generálni szeretnél %1 üzenetet ? </translation>
     </message>
     <message>
-        <location line="-257"/>
+        <location line="-318"/>
         <source>Send</source>
         <translation>Küldés</translation>
     </message>
     <message>
-        <location line="+289"/>
-        <source>Forum Message</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Forum Message has not been Sent.
-Do you want to reject this message?</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <location filename="../gui/gxsforums/CreateGxsForumMsg.ui" line="-178"/>
         <source>Post as</source>
-        <translation type="unfinished"/>
+        <translation>Hozzászólás mint</translation>
     </message>
     <message>
-        <location filename="../gui/gxsforums/CreateGxsForumMsg.cpp" line="-49"/>
+        <location filename="../gui/gxsforums/CreateGxsForumMsg.cpp" line="+302"/>
         <source>Congrats, you found a bug!</source>
-        <translation type="unfinished"/>
+        <translation>Gratulálunk, találtál egy bugot!</translation>
     </message>
 </context>
 <context>
@@ -4421,12 +4541,12 @@ Do you want to reject this message?</source>
     <message>
         <location filename="../gui/chat/CreateLobbyDialog.ui" line="+14"/>
         <source>Create Chat Lobby</source>
-        <translation>Chatszoba létrehozása</translation>
+        <translation>Társalgószoba létrehozása</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>A chat lobby is a decentralized and anonymous chat group. All participants receive all messages. Once the lobby is created you can invite other friends from the Friends tab.</source>
-        <translation>A csevegőszoba egy központosítatlan, névtelen helyszín a beszélgetésekhez. Az összes résztvevő megkapja az összes üzenetet. A szoba létrehozása után meghívhatod abba barátaidat a barátlistádról.</translation>
+        <translation>A társalgószoba egy központosítatlan, névtelen helyszín a beszélgetésekhez. Az összes résztvevő megkapja az összes üzenetet. A szoba létrehozása után meghívhatod abba barátaidat a barátlistádról.</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -4441,7 +4561,7 @@ Do you want to reject this message?</source>
     <message>
         <location line="+23"/>
         <source>Visibility:</source>
-        <translation type="unfinished"/>
+        <translation>Láthatóság:</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -4461,7 +4581,7 @@ Do you want to reject this message?</source>
     <message>
         <location line="+3"/>
         <source>require PGP-signed identities</source>
-        <translation type="unfinished"/>
+        <translation>PGP hitelesítésű azonosító megkövetelése</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -4471,7 +4591,7 @@ Do you want to reject this message?</source>
     <message>
         <location line="+30"/>
         <source>Select the Friends with which you want to group chat.</source>
-        <translation>Válassz ki barátokat a csoportos csevegéshez.</translation>
+        <translation>Válassz ki barátokat a csoportos beszélgetéshez.</translation>
     </message>
     <message>
         <location line="+40"/>
@@ -4481,17 +4601,17 @@ Do you want to reject this message?</source>
     <message>
         <location filename="../gui/chat/CreateLobbyDialog.cpp" line="+43"/>
         <source>Create Chat Room</source>
-        <translation type="unfinished"/>
+        <translation>Társalgószoba létrehozása</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Put a sensible chat room name here</source>
-        <translation type="unfinished"/>
+        <translation>Adj a társalgószobának egy kifejező nevet</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set a descriptive topic here</source>
-        <translation type="unfinished"/>
+        <translation>Add meg a témakör közérthető leírását.</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -4501,7 +4621,7 @@ Do you want to reject this message?</source>
     <message>
         <location filename="../gui/chat/CreateLobbyDialog.ui" line="-120"/>
         <source>Identity to use:</source>
-        <translation type="unfinished"/>
+        <translation>Használandó személyazonosság: </translation>
     </message>
 </context>
 <context>
@@ -4524,7 +4644,7 @@ Do you want to reject this message?</source>
     <message>
         <location line="+38"/>
         <source>Location ID:</source>
-        <translation>Helyszín ID:</translation>
+        <translation>Helyszín azonosító:</translation>
     </message>
     <message>
         <location line="+146"/>
@@ -4604,42 +4724,42 @@ Do you want to reject this message?</source>
     <message>
         <location line="-210"/>
         <source>Node information</source>
-        <translation type="unfinished"/>
+        <translation>Csomópont információ</translation>
     </message>
     <message>
         <location line="+171"/>
         <source>PGP Id :</source>
-        <translation type="unfinished"/>
+        <translation>PGP azonosító : </translation>
     </message>
     <message>
         <location line="+70"/>
         <source>Friend nodes:</source>
-        <translation type="unfinished"/>
+        <translation>Barát csomópontok:</translation>
     </message>
     <message>
         <location line="+215"/>
         <source>Copy certificate to clipboard</source>
-        <translation type="unfinished"/>
+        <translation>Tanúsítvány másolása a vágólapra</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Save certificate to file</source>
-        <translation type="unfinished"/>
+        <translation>Tanúsítvány mentése fájlként</translation>
     </message>
     <message>
         <location filename="../gui/settings/CryptoPage.h" line="+41"/>
         <source>Node</source>
-        <translation type="unfinished"/>
+        <translation>Csomópont</translation>
     </message>
     <message>
         <location filename="../gui/settings/CryptoPage.ui" line="+7"/>
         <source>Create new node...</source>
-        <translation type="unfinished"/>
+        <translation>Új csomópont létrehozása...</translation>
     </message>
     <message>
         <location line="-91"/>
         <source>show statistics window</source>
-        <translation type="unfinished"/>
+        <translation>Statisztika megjelenítése</translation>
     </message>
 </context>
 <context>
@@ -4647,7 +4767,7 @@ Do you want to reject this message?</source>
     <message>
         <location filename="../gui/statistics/dhtgraph.h" line="+53"/>
         <source>users</source>
-        <translation type="unfinished"/>
+        <translation>felhasználók</translation>
     </message>
 </context>
 <context>
@@ -4686,7 +4806,7 @@ Do you want to reject this message?</source>
     <message>
         <location line="+14"/>
         <source>No peer found in DHT</source>
-        <translation type="unfinished"/>
+        <translation>Nem található partner a DHT-ben</translation>
     </message>
 </context>
 <context>
@@ -4712,7 +4832,22 @@ Do you want to reject this message?</source>
         <translation>GB</translation>
     </message>
     <message>
-        <location line="+189"/>
+        <location line="+156"/>
+        <source>Faster</source>
+        <translation>Gyorsabb</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Average</source>
+        <translation>Átlagos</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Slower</source>
+        <translation>Lassabb</translation>
+    </message>
+    <message>
+        <location line="+64"/>
         <source>File Never Seen</source>
         <translation>Soha nem látott fájl</translation>
     </message>
@@ -4820,7 +4955,7 @@ Do you want to reject this message?</source>
     <message>
         <location line="+5"/>
         <source>PeerId</source>
-        <translation>Partner ID</translation>
+        <translation>Partner azonosító</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4855,7 +4990,7 @@ Do you want to reject this message?</source>
     <message>
         <location line="+5"/>
         <source>RsId</source>
-        <translation>RS ID</translation>
+        <translation>RS azonosító</translation>
     </message>
     <message>
         <location line="-107"/>
@@ -4896,7 +5031,7 @@ Do you want to reject this message?</source>
     <message>
         <location line="+96"/>
         <source>Relay Mode</source>
-        <translation>Relay mód</translation>
+        <translation>Relé mód</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4931,17 +5066,17 @@ Do you want to reject this message?</source>
     <message>
         <location filename="../gui/statistics/DhtWindow.cpp" line="+59"/>
         <source>IP</source>
-        <translation type="unfinished"/>
+        <translation>IP</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Search IP</source>
-        <translation type="unfinished"/>
+        <translation>IP Keresés</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Copy %1 to clipboard</source>
-        <translation type="unfinished"/>
+        <translation>%1 másolása a vágólapra</translation>
     </message>
     <message>
         <location line="+70"/>
@@ -4986,12 +5121,12 @@ Do you want to reject this message?</source>
     <message>
         <location line="+3"/>
         <source>RESTRICTED CONE NAT</source>
-        <translation type="unfinished"/>
+        <translation>Címhez kötött NAT</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>FULL CONE NAT</source>
-        <translation type="unfinished"/>
+        <translation>Egy az egyben NAT</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5149,9 +5284,9 @@ Do you want to reject this message?</source>
         <translation>Ismeretlen</translation>
     </message>
     <message>
-        <location line="+73"/>
+        <location line="+74"/>
         <source>RELAY END</source>
-        <translation>Relay vége</translation>
+        <translation>RELÉ VÉGE</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5173,12 +5308,12 @@ Do you want to reject this message?</source>
     <message>
         <location line="+1"/>
         <source>Own Relay</source>
-        <translation>Saját relay</translation>
+        <translation>Saját relé</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>RELAY PROXY</source>
-        <translation>RELAY PROXY</translation>
+        <translation>RELÉ PROXY</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -5197,7 +5332,7 @@ Do you want to reject this message?</source>
     <message>
         <location line="+14"/>
         <source>Relays</source>
-        <translation type="unfinished"/>
+        <translation>Relék</translation>
     </message>
     <message>
         <location line="+65"/>
@@ -5220,108 +5355,108 @@ Do you want to reject this message?</source>
     <message>
         <location line="-423"/>
         <source>Net Status:</source>
-        <translation type="unfinished"/>
+        <translation>Hálózat állapota:</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Network Mode:</source>
-        <translation type="unfinished"/>
+        <translation>Hálózati mód:</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Nat Type:</source>
-        <translation type="unfinished"/>
+        <translation>NAT típusa:</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Nat Hole:</source>
-        <translation type="unfinished"/>
+        <translation>NAT átjáró</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Connect Mode:</source>
-        <translation type="unfinished"/>
+        <translation>Csatlakozás módja:</translation>
     </message>
     <message>
         <location line="+33"/>
         <source>Peer Address:</source>
-        <translation type="unfinished"/>
+        <translation>Partner címe: </translation>
     </message>
     <message>
         <location line="+50"/>
         <source>Unreach:</source>
-        <translation type="unfinished"/>
+        <translation>Elérhetetlen:</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Online:</source>
-        <translation type="unfinished"/>
+        <translation>Elérhető:</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Offline:</source>
-        <translation type="unfinished"/>
+        <translation>Kijelentkezett:</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>DHT Peers:</source>
-        <translation type="unfinished"/>
+        <translation>DHT partnerek:</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Disconnected:</source>
-        <translation type="unfinished"/>
+        <translation>Lekapcsolódva:</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Direct:</source>
-        <translation type="unfinished"/>
+        <translation>Közvetlen:</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Proxy:</source>
-        <translation type="unfinished"/>
+        <translation>Proxy:</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Relay:</source>
-        <translation type="unfinished"/>
+        <translation>Relé:</translation>
     </message>
     <message>
         <location line="+99"/>
         <source>Filter:</source>
-        <translation type="unfinished"/>
+        <translation>Szűrő:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Search Network</source>
-        <translation type="unfinished"/>
+        <translation>Hálózat keresése</translation>
     </message>
     <message>
         <location line="+10"/>
-        <location filename="../gui/statistics/DhtWindow.cpp" line="-186"/>
+        <location filename="../gui/statistics/DhtWindow.cpp" line="-187"/>
         <source>Peers</source>
-        <translation type="unfinished"/>
+        <translation>Partnerek</translation>
     </message>
     <message>
         <location line="+59"/>
         <source>Relay</source>
-        <translation type="unfinished"/>
+        <translation>Relé</translation>
     </message>
     <message>
         <location line="+58"/>
         <source>DHT Graph</source>
-        <translation type="unfinished"/>
+        <translation>DHT gráf</translation>
     </message>
     <message>
         <location filename="../gui/statistics/DhtWindow.cpp" line="-102"/>
         <source>Proxy VIA</source>
-        <translation type="unfinished"/>
+        <translation>Proxy ezen keresztül:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Relay VIA</source>
-        <translation type="unfinished"/>
+        <translation>Relé ezen keresztül:</translation>
     </message>
 </context>
 <context>
@@ -5554,7 +5689,7 @@ Do you want to reject this message?</source>
 <context>
     <name>FilesDefs</name>
     <message>
-        <location filename="../gui/common/FilesDefs.cpp" line="+33"/>
+        <location filename="../gui/common/FilesDefs.cpp" line="+36"/>
         <source>Picture</source>
         <translation>Kép</translation>
     </message>
@@ -5607,28 +5742,28 @@ Do you want to reject this message?</source>
     <message>
         <location line="+2"/>
         <source>Patch</source>
-        <translation type="unfinished"/>
+        <translation>Javítás</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>C++</source>
-        <translation type="unfinished"/>
+        <translation>C++</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Header</source>
-        <translation type="unfinished"/>
+        <translation>Fejléc</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>C </source>
-        <translation type="unfinished"/>
+        <translation>C</translation>
     </message>
 </context>
 <context>
     <name>FlatStyle_RDM</name>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="+815"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="+861"/>
         <source>Friends Directories</source>
         <translation>Barátok mappái</translation>
     </message>
@@ -5636,6 +5771,11 @@ Do you want to reject this message?</source>
         <location line="+2"/>
         <source>My Directories</source>
         <translation>Saját mappáim</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source># Files</source>
+        <translation># Fájlok</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5662,6 +5802,16 @@ Do you want to reject this message?</source>
         <source>Directory</source>
         <translation>Mappa</translation>
     </message>
+    <message>
+        <location line="+2"/>
+        <source>Column %1</source>
+        <translation>Oszlop-szám %1</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Row %1</source>
+        <translation>Sor-szám %1</translation>
+    </message>
 </context>
 <context>
     <name>ForumPage</name>
@@ -5681,12 +5831,7 @@ Do you want to reject this message?</source>
         <translation>Új üzenetek lenyitása</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ForumPage.h" line="+40"/>
-        <source>Forum</source>
-        <translation>Fórum</translation>
-    </message>
-    <message>
-        <location filename="../gui/settings/ForumPage.ui" line="+7"/>
+        <location line="+7"/>
         <source>Load embedded images</source>
         <translation>Beágyazott képek megjelenítése</translation>
     </message>
@@ -5698,7 +5843,7 @@ Do you want to reject this message?</source>
     <message>
         <location line="+3"/>
         <source>Load emoticons (costly)</source>
-        <translation type="unfinished"/>
+        <translation>Hangulatjelek megjelenítése (erőforrásigényes)</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -5708,7 +5853,12 @@ Do you want to reject this message?</source>
     <message>
         <location filename="../gui/settings/ForumPage.cpp" line="+33"/>
         <source>Open each forum in a new tab</source>
-        <translation type="unfinished"/>
+        <translation>Minden fórum külön lapon nyíljon meg</translation>
+    </message>
+    <message>
+        <location filename="../gui/settings/ForumPage.h" line="+40"/>
+        <source>Forums</source>
+        <translation>Fórumok</translation>
     </message>
 </context>
 <context>
@@ -5719,49 +5869,55 @@ Do you want to reject this message?</source>
         <translation>Utolsó kapcsolat</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+10"/>
+        <location filename="../gui/common/FriendList.cpp" line="+146"/>
+        <source>ID</source>
+        <translation>Azonosító</translation>
+    </message>
+    <message>
+        <location line="+11"/>
         <source>Hide Offline Friends</source>
         <translation>Kilépett barátok elrejtése</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>export friendlist</source>
-        <translation type="unfinished"/>
+        <translation>barátlista mentése</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>export your friendlist including groups</source>
-        <translation type="unfinished"/>
+        <translation>barátlista mentése csoportok megtartásával</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>import friendlist</source>
-        <translation type="unfinished"/>
+        <translation>barátlista visszaállítása</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>import your friendlist including groups</source>
-        <translation type="unfinished"/>
+        <translation>barátlista visszaállítása a megtartott csoportokkal</translation>
     </message>
     <message>
         <location line="-30"/>
         <location line="+3"/>
         <source>Show State</source>
-        <translation type="unfinished"/>
+        <translation>Állapot megjelenítése</translation>
     </message>
     <message>
-        <location line="-35"/>
+        <location line="-40"/>
         <source>Trusted nodes</source>
-        <translation type="unfinished"/>
+        <translation>Megbízható csomópontok</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+48"/>
         <location line="+3"/>
         <source>Show Groups</source>
         <translation>Csoportok mutatása</translation>
     </message>
     <message>
-        <location filename="../gui/common/FriendList.cpp" line="+324"/>
+        <location filename="../gui/common/FriendList.cpp" line="+185"/>
         <source>Group</source>
         <translation>Csoport</translation>
     </message>
@@ -5771,7 +5927,7 @@ Do you want to reject this message?</source>
         <translation>Barát</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+18"/>
         <source>Edit Group</source>
         <translation>Csoport szerkesztése</translation>
     </message>
@@ -5784,37 +5940,43 @@ Do you want to reject this message?</source>
         <location line="+6"/>
         <location line="+80"/>
         <source>Chat</source>
-        <translation>Csevegés</translation>
+        <translation>Beszélgetés</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+14"/>
         <source>Copy certificate link</source>
         <translation>Tanúsítvány hivatkozásának másolása</translation>
     </message>
     <message>
-        <location line="-65"/>
+        <location line="-66"/>
         <source>Add to group</source>
         <translation>Hozzáadás a csoporthoz</translation>
     </message>
     <message>
-        <location line="-242"/>
+        <location line="-250"/>
+        <location line="+6"/>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>Keresés</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+1"/>
+        <source>Search ID</source>
+        <translation>Azonosító keresése</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Sort by state</source>
-        <translation type="unfinished"/>
+        <translation>Rendezés állapot szerint</translation>
     </message>
     <message>
-        <location line="+216"/>
+        <location line="+218"/>
         <source>Profile details</source>
-        <translation type="unfinished"/>
+        <translation>Profil részletek</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Deny connections</source>
-        <translation type="unfinished"/>
+        <translation>Csatlakozások megtagadása</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -5839,17 +6001,17 @@ Do you want to reject this message?</source>
     <message>
         <location line="+13"/>
         <source>Send message to this node</source>
-        <translation type="unfinished"/>
+        <translation>Üzenet küldése a csomópont számára</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Node details</source>
-        <translation type="unfinished"/>
+        <translation>Csomópont részletei</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Recommend this node to...</source>
-        <translation type="unfinished"/>
+        <translation>Ajánld ezt a csomópontot neki...</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -5862,12 +6024,12 @@ Do you want to reject this message?</source>
         <translation>Összes becsukása</translation>
     </message>
     <message>
-        <location line="+672"/>
+        <location line="+685"/>
         <source>Available</source>
         <translation>Elérhető</translation>
     </message>
     <message>
-        <location line="+381"/>
+        <location line="+379"/>
         <source>Do you want to remove this Friend?</source>
         <translation>El szeretnéd távolítani ezt a barátot?</translation>
     </message>
@@ -5875,100 +6037,102 @@ Do you want to reject this message?</source>
         <location line="+257"/>
         <location line="+18"/>
         <source>Done!</source>
-        <translation type="unfinished"/>
+        <translation>Kész!</translation>
     </message>
     <message>
         <location line="-17"/>
         <source>Your friendlist is stored at:
 </source>
-        <translation type="unfinished"/>
+        <translation>A barátlistád tárolva itt:
+</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>
 (keep in mind that the file is unencrypted!)</source>
-        <translation type="unfinished"/>
+        <translation>
+(tartsd észben, hogy a fájl titkosítatlan!)</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+7"/>
         <source>Your friendlist was imported from:
 </source>
-        <translation type="unfinished"/>
+        <translation>A barátlistád helyreállítva innen:
+</translation>
     </message>
     <message>
         <location line="-1"/>
         <source>Done - but errors happened!</source>
-        <translation type="unfinished"/>
+        <translation>Kész - de hibák történtek!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>
 at least one peer was not added</source>
-        <translation type="unfinished"/>
+        <translation>
+legalább egy partner nem lett hozzáadva</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>
 at least one peer was not added to a group</source>
-        <translation type="unfinished"/>
+        <translation>
+legalább egy partner nem lett hozzáadva a csoporthoz</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+20"/>
         <source>Select file for importing your friendlist from</source>
-        <translation type="unfinished"/>
+        <translation>Válaszd ki a visszaállítandó fájlt</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+7"/>
         <source>Select a file for exporting your friendlist to</source>
-        <translation type="unfinished"/>
+        <translation>Válassz egy fájlt ahova mentésre kerül a barátlistád</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-6"/>
+        <location line="+7"/>
         <source>XML File (*.xml);;All Files (*)</source>
-        <translation type="unfinished"/>
+        <translation>XML fájl (*.xml);;Minden fájl (*)</translation>
     </message>
     <message>
-        <location line="+8"/>
-        <location line="+27"/>
+        <location line="+29"/>
         <location line="+112"/>
         <source>Error</source>
         <translation>Hiba</translation>
     </message>
     <message>
-        <location line="-138"/>
-        <source>Failed to get a file!</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+27"/>
+        <location line="-111"/>
         <source>File is not writeable!
 </source>
-        <translation type="unfinished"/>
+        <translation>A fájl nem írható!
+</translation>
     </message>
     <message>
         <location line="+112"/>
         <source>File is not readable!
 </source>
-        <translation type="unfinished"/>
+        <translation>A fájl nem olvasható!
+</translation>
     </message>
     <message>
-        <location line="+319"/>
+        <location line="+320"/>
         <source>Show Items</source>
-        <translation type="unfinished"/>
+        <translation>Elemek megjelenítése</translation>
     </message>
     <message>
-        <location filename="../gui/common/FriendList.ui" line="-33"/>
+        <location filename="../gui/common/FriendList.ui" line="-38"/>
         <source>IP</source>
         <translation>IP</translation>
     </message>
     <message>
-        <location filename="../gui/common/FriendList.cpp" line="-1846"/>
+        <location filename="../gui/common/FriendList.cpp" line="-1858"/>
         <source>Attempt to connect</source>
         <translation>Csatlakozási kísérlet</translation>
     </message>
     <message>
-        <location line="-42"/>
+        <location line="-43"/>
         <source>Create new group</source>
         <translation>Új csoport létrehozása</translation>
     </message>
@@ -5978,29 +6142,29 @@ at least one peer was not added to a group</source>
         <translation>Tanúsítvány beillesztése</translation>
     </message>
     <message>
-        <location line="-127"/>
+        <location line="-128"/>
         <source>Node</source>
-        <translation type="unfinished"/>
+        <translation>Csomópont</translation>
     </message>
     <message>
-        <location line="+118"/>
+        <location line="+119"/>
         <source>Remove Friend Node</source>
-        <translation type="unfinished"/>
+        <translation>Barát csomópontjának eltávolítása</translation>
     </message>
     <message>
-        <location line="+1075"/>
+        <location line="+1086"/>
         <source>Do you want to remove this node?</source>
-        <translation type="unfinished"/>
+        <translation>El szeretnéd távolítani ezt a csomópontot?</translation>
     </message>
     <message>
-        <location line="-1182"/>
+        <location line="-1193"/>
         <source>Send message to whole group</source>
-        <translation type="unfinished"/>
+        <translation>Üzenet elküldése a teljes csoportnak</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Send message</source>
-        <translation type="unfinished"/>
+        <translation>Üzenet elküldése</translation>
     </message>
 </context>
 <context>
@@ -6008,42 +6172,42 @@ at least one peer was not added to a group</source>
     <message>
         <location filename="../gui/connect/FriendRecommendDialog.ui" line="+14"/>
         <source>Dialog</source>
-        <translation type="unfinished"/>
+        <translation>Párbeszéd</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Message:</source>
-        <translation type="unfinished"/>
+        <translation>Üzenet:</translation>
     </message>
     <message>
         <location filename="../gui/connect/FriendRecommendDialog.cpp" line="+17"/>
         <source>Recommend friends</source>
-        <translation type="unfinished"/>
+        <translation>Barát ajánlása</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>To</source>
-        <translation type="unfinished"/>
+        <translation>Neki</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Please select at least one friend for recommendation.</source>
-        <translation type="unfinished"/>
+        <translation>Válassz legalább egy barátot az ajánláshoz!</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Please select at least one friend as recipient.</source>
-        <translation type="unfinished"/>
+        <translation>Válassz legalább egy fogadó barátot!</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Recommendation messages sent!</source>
-        <translation type="unfinished"/>
+        <translation>Üzenet az ajánlásokkal elküldve!</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>A recommendation message was sent to each of the chosen friends!</source>
-        <translation type="unfinished"/>
+        <translation>Egy üzenet ajánlásokkal mindegyik kiválasztott barátodnak el lett küldve!</translation>
     </message>
 </context>
 <context>
@@ -6072,9 +6236,14 @@ at least one peer was not added to a group</source>
         <translation>Keresés:</translation>
     </message>
     <message>
-        <location filename="../gui/common/FriendSelectionWidget.cpp" line="+108"/>
+        <location filename="../gui/common/FriendSelectionWidget.cpp" line="+109"/>
         <source>Sort by state</source>
-        <translation type="unfinished"/>
+        <translation>Rendezés állapot szerint</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Filter only connected</source>
+        <translation>Csak a csatlakozottakat szűrjed</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -6082,19 +6251,19 @@ at least one peer was not added to a group</source>
         <translation>Név</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+7"/>
         <source>Search Friends</source>
         <translation>Barát keresése</translation>
     </message>
     <message>
-        <location line="+693"/>
+        <location line="+695"/>
         <source>Mark all</source>
-        <translation type="unfinished"/>
+        <translation>Jelöld mind</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark none</source>
-        <translation type="unfinished"/>
+        <translation>Egyiket se jelöld</translation>
     </message>
 </context>
 <context>
@@ -6113,7 +6282,7 @@ at least one peer was not added to a group</source>
     <message>
         <location line="+18"/>
         <source>Clear Chat History</source>
-        <translation>Csevegési előzmények törlése</translation>
+        <translation>Beszélgetés előzmények törlése</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -6154,7 +6323,7 @@ at least one peer was not added to a group</source>
         <location line="+5"/>
         <location line="+3"/>
         <source>Save Chat History</source>
-        <translation>Csevegési előzmények mentése</translation>
+        <translation>Beszélgetés előzmények mentése</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -6165,12 +6334,12 @@ at least one peer was not added to a group</source>
     <message>
         <location line="+9"/>
         <source>Delete Chat History</source>
-        <translation>Csevegési előzmények törlése</translation>
+        <translation>Beszélgetés előzmények törlése</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Deletes all stored and displayed chat history</source>
-        <translation>Az összes tárolt és megjelenített csevegési előzmény törlése</translation>
+        <translation>Az összes tárolt és megjelenített beszélgetés előzmény törlése</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -6194,12 +6363,12 @@ at least one peer was not added to a group</source>
         <translation>Kulcstartó</translation>
     </message>
     <message>
-        <location line="+63"/>
+        <location line="+64"/>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Network&lt;/h1&gt;                                       &lt;p&gt;The Network tab shows your friend Retroshare nodes: the neighbor Retroshare nodes that are connected to you.     &lt;/p&gt;                                                       &lt;p&gt;You can group nodes together to allow a finer level of information access, for instance to only allow          some nodes to see some of your files.&lt;/p&gt;     &lt;p&gt;On the right, you will find 3 useful tabs:                                                                       &lt;ul&gt;                                                                                                                &lt;li&gt;Broadcast sends messages to all connected nodes at once&lt;/li&gt;                                   &lt;li&gt;Local network graph shows the network around you, based on discovery information&lt;/li&gt;                       &lt;li&gt;Keyring contains node keys you collected, mostly forwarded to you by your friend nodes&lt;/li&gt;                                  &lt;/ul&gt; &lt;/p&gt;                                                                                                        </source>
-        <translation type="unfinished"/>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Hálózat&lt;/h1&gt;                                       &lt;p&gt;A Hálózat fül tartalmazza a barátaid Retroshare csomópontjait: pontosabban azokat a szomszédos Retroshare csomópontokat, akik kapcsolódtak hozzád.     &lt;/p&gt;                                                       &lt;p&gt;Csoportokba rendezheted őket, és így beállíthatod például azt, hogy mely csoportok férhessenek hozzá egy-egy fájlodhoz.&lt;/p&gt;     &lt;p&gt;Jobb oldalt 3 hasznos fület találsz:                                                                       &lt;ul&gt;                                                                                                                &lt;li&gt;Az Üzenőfal segítségével egyszerre küldhetsz üzenetet az összes csomópontnak&lt;/li&gt;                                   &lt;li&gt;A Hálózat gráf a felfedezés információit felhasználva megmutatja, hogy kikkel állasz kapcsolatban.&lt;/li&gt;                       &lt;li&gt;A Kulcstartóban találhatók az összegyűjtött csomópontok kulcsai, leginkább a barátiad csomópontjain keresztül jutnak el hozzád ezek a kulcsok.&lt;/li&gt;                                  &lt;/ul&gt; &lt;/p&gt;                                                                                                        </translation>
     </message>
     <message>
-        <location line="-83"/>
+        <location line="-84"/>
         <source>Retroshare broadcast chat: messages are sent to all connected friends.</source>
         <translation>Retroshare üzenőfal: az ide írt üzeneteidet az összes barátod láthatja.</translation>
     </message>
@@ -6212,12 +6381,12 @@ at least one peer was not added to a group</source>
     <message>
         <location filename="../gui/FriendsDialog.cpp" line="+19"/>
         <source>Network graph</source>
-        <translation type="unfinished"/>
+        <translation>Hálózat gráf</translation>
     </message>
     <message>
-        <location line="+209"/>
+        <location line="+210"/>
         <source>Set your status message here.</source>
-        <translation type="unfinished"/>
+        <translation>Add meg az állapotüzenetedet.</translation>
     </message>
 </context>
 <context>
@@ -6228,235 +6397,167 @@ at least one peer was not added to a group</source>
         <translation>Új profil létrehozása</translation>
     </message>
     <message>
-        <location line="+313"/>
+        <location filename="../gui/GenCertDialog.cpp" line="+174"/>
         <source>Password</source>
         <translation>Jelszó</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="+483"/>
+        <location line="+374"/>
         <source>All fields are required with a minimum of 3 characters</source>
         <translation>Az összes adatnak legalább 3 karakter hosszúnak kell lennie</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="+23"/>
-        <source>Password (check)</source>
-        <translation>Jelszó (ellenőrzés)</translation>
-    </message>
-    <message>
-        <location filename="../gui/GenCertDialog.cpp" line="-316"/>
-        <source>[Required] Type the same password again here.</source>
-        <translation>[Szükséges] Írd be mégegyszer a jelszavadat.</translation>
-    </message>
-    <message>
-        <location line="+325"/>
+        <location line="+9"/>
         <source>Passwords do not match</source>
         <translation>A jelszavak nem egyeznek</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="+305"/>
+        <location filename="../gui/GenCertDialog.ui" line="+413"/>
         <source>Port</source>
         <translation>Port</translation>
     </message>
     <message>
-        <location line="-331"/>
-        <location line="+23"/>
+        <location line="+29"/>
+        <source>Use BOB</source>
+        <translation>Használj BOB-t</translation>
+    </message>
+    <message>
+        <location line="+159"/>
+        <location line="+25"/>
         <source>This password is for PGP</source>
-        <translation type="unfinished"/>
+        <translation>Ez egy PGP jelszó</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="-199"/>
-        <source>Generate new node</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+110"/>
+        <location filename="../gui/GenCertDialog.cpp" line="-95"/>
         <source>You can use it now to create a new node.</source>
         <translation>Most létrehozhatsz egy új csomópontot.</translation>
     </message>
     <message>
-        <location line="+44"/>
-        <source>Invalid hidden node</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+15"/>
+        <location line="+65"/>
         <source>Node field is required with a minimum of 3 characters</source>
-        <translation type="unfinished"/>
+        <translation>A csomópont mező legalább 3 karaktert kell tartalmazzon</translation>
     </message>
     <message>
-        <location line="+36"/>
-        <source>Generating new node key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
-
-Fill in your password when asked, to sign your new key.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+78"/>
+        <location line="+112"/>
         <source>Failed to generate your new certificate, maybe PGP password is wrong!</source>
-        <translation type="unfinished"/>
+        <translation>Az új tanúsítványod létrehozása meghiúsult, talán rossz PGP jelszót adtál meg.</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="-259"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this if you need to import an existing profile, if you want to generate a new  node with an already existing key, or if you want to create a TOR/I2P hidden node.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <location filename="../gui/GenCertDialog.ui" line="-549"/>
+        <source>Options</source>
+        <translation>Beállítások</translation>
     </message>
     <message>
-        <location line="+95"/>
-        <source>You can create a new profile with this form.
-Alternatively you can use an existing profile. Just uncheck &quot;Create a new profile&quot;</source>
-        <translation type="unfinished"/>
+        <location line="+51"/>
+        <source>PGP Key Length</source>
+        <translation>PGP kulcs hossza</translation>
     </message>
     <message>
-        <location line="+81"/>
-        <source>You can create and run Retroshare nodes on different computers using the same profile. To do so just export the selected profile, import it on the other computer and create a new node with it.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>It looks like no profile (PGP keys) exists. Please fill in the form below to create one, or import an existing profile.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>No node exists for this profile.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+24"/>
-        <location line="+258"/>
+        <location line="+51"/>
+        <location line="+185"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Put a strong password here. This password protects your private node key!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="-193"/>
+        <location line="-163"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Please move your mouse around in order to collect as much randomness as possible. A minimum of 20% is needed to create your node keys.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location line="+31"/>
         <source>Standard node</source>
-        <translation type="unfinished"/>
+        <translation>Alap csomópont</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>TOR/I2P Hidden node</source>
-        <translation type="unfinished"/>
+        <translation>TOR/I2P rejtett csomópont</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+20"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Your node name designates the Retroshare instance that&lt;/p&gt;&lt;p&gt;will run on this computer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+10"/>
-        <source>Node name</source>
-        <translation type="unfinished"/>
+        <location line="+474"/>
+        <source>Use existing profile</source>
+        <translation>Meglévő profil használata</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location filename="../gui/GenCertDialog.cpp" line="-469"/>
+        <source>Node name</source>
+        <translation>Csomópont neve</translation>
+    </message>
+    <message>
+        <location filename="../gui/GenCertDialog.ui" line="-437"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The profile name identifies you over the network.&lt;/p&gt;&lt;p&gt;It is used by your friends to accept connections from you.&lt;/p&gt;&lt;p&gt;You can create multiple Retroshare nodes with the&lt;/p&gt;&lt;p&gt;same profile on different computers.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+35"/>
         <source>Export this profle</source>
-        <translation type="unfinished"/>
+        <translation>Profil mentése</translation>
     </message>
     <message>
-        <location line="+26"/>
-        <source>Re-use an existing profile</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+38"/>
-        <source>Profile name</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Randomness</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Node type</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+43"/>
+        <location line="+74"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This should be a Tor Onion address of the form: xa76giaf6ifda7ri63i263.onion &lt;br/&gt;or an I2P address in the form: [52 characters].b32.i2p &lt;/p&gt;&lt;p&gt;In order to get one, you must configure either Tor or I2P to create a new hidden service / server tunnel. &lt;/p&gt;&lt;p&gt;You can also leave this blank now, but your node will only work if you correctly set the Tor/I2P service address in Options-&amp;gt;Network-&amp;gt;Hidden Service configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+44"/>
-        <source>Chat identity</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+16"/>
+        <location line="+54"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Identities are used when you write in chat rooms, forums and channel comments. &lt;/p&gt;&lt;p&gt;They also receive/send email over the Retroshare network. You can create&lt;/p&gt;&lt;p&gt;a signed identity now, or do it later on when you get to need it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+27"/>
         <source>Go!</source>
-        <translation type="unfinished"/>
+        <translation>Nyomás!</translation>
     </message>
     <message>
-        <location line="-647"/>
+        <location line="+207"/>
+        <source>TextLabel</source>
+        <translation>Szövegcimke</translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <location filename="../gui/GenCertDialog.cpp" line="+14"/>
         <source>Advanced options</source>
-        <translation type="unfinished"/>
+        <translation>Haladó beállítások</translation>
     </message>
     <message>
-        <location line="+521"/>
+        <location filename="../gui/GenCertDialog.cpp" line="+248"/>
         <source>hidden address</source>
-        <translation type="unfinished"/>
+        <translation>rejtett cím</translation>
     </message>
     <message>
-        <location line="-107"/>
+        <location filename="../gui/GenCertDialog.ui" line="-410"/>
         <source>Your profile is associated with a PGP key pair. RetroShare currently ignores DSA keys.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+163"/>
+        <location line="+113"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your connection port.&lt;/p&gt;&lt;p&gt;Any value between 1024 and 65535 &lt;/p&gt;&lt;p&gt;should be ok. You can change it later.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="-251"/>
-        <source>PGP key length</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/GenCertDialog.cpp" line="-272"/>
+        <location filename="../gui/GenCertDialog.cpp" line="-81"/>
         <source>Click to create your node and/or profile</source>
-        <translation type="unfinished"/>
+        <translation>Csomópont és/vagy profil létrehozásához kattints ide</translation>
     </message>
     <message>
-        <location line="-11"/>
-        <source>Generate new profile and node</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="-30"/>
-        <source>Welcome to Retroshare. Before you can proceed you need to create a profile and associate a node with it. To do so please fill out this form.
-Alternatively you can import a (previously exported) profile. Just uncheck &quot;Create a new profile&quot;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+53"/>
+        <location line="+9"/>
         <source>Export profile</source>
-        <translation type="unfinished"/>
+        <translation>Profil exportálása</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>RetroShare profile files (*.asc)</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare profilfájlok (*.asc)</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Profile saved</source>
-        <translation type="unfinished"/>
+        <translation>Profil mentve</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6465,121 +6566,135 @@ It is encrypted
 
 You can now copy it to another computer
 and use the import button to load it</source>
-        <translation type="unfinished"/>
+        <translation>A profilod sikeresen elmentve.
+Titkosítva van.
+
+Most már átmásolhatod egy másik számítógépre
+és az importálás gombbal betöltheted.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Profile not saved</source>
-        <translation type="unfinished"/>
+        <translation>A profil nem lett elmentve</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Your profile was not saved. An error occurred.</source>
-        <translation type="unfinished"/>
+        <translation>Hiba történt. A profilodat nem sikerült elmenteni.</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="+114"/>
-        <location filename="../gui/GenCertDialog.cpp" line="+55"/>
+        <location filename="../gui/GenCertDialog.ui" line="-84"/>
+        <location filename="../gui/GenCertDialog.cpp" line="+70"/>
         <source>Import profile</source>
-        <translation type="unfinished"/>
+        <translation>Profil importálása</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="-220"/>
-        <source>[Required] Examples: Home, Laptop,...(Visible to friends).</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>[Optional] Tor/I2P address (Example: xa76giaf6ifda7ri63i263.onion)</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>[Required] Visible to friends, and friends of friends.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>[Optional] Used to write in chat rooms and forums. Can be set later.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>[Required] This password protects your data. Dont forget it!</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+85"/>
+        <location filename="../gui/GenCertDialog.cpp" line="-160"/>
         <source>Create new profile and new Retroshare node</source>
-        <translation type="unfinished"/>
+        <translation>Új profil és Retroshare csomópont létrehozása</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Create new Retroshare node</source>
+        <translation>Új Retroshare csomópont létrehozása</translation>
+    </message>
+    <message>
+        <location line="-110"/>
+        <source>Tor/I2P address</source>
+        <translation>Tor/I2P cím</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Username</source>
+        <translation>Felhasználónév</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Chat name</source>
+        <translation>Társalgónév</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Password again</source>
+        <translation>Jelszó ismét</translation>
+    </message>
+    <message>
+        <location line="+156"/>
+        <source>&lt;p&gt;Node creation is disabled until all fields correctly set.&lt;/p&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+59"/>
-        <source>Disabled until all fields correctly set and enough randomness collected.</source>
+        <location line="+9"/>
+        <source>&lt;p&gt;Node creation is disabled until enough randomness is collected. Please mouve your mouse around until you reach at least 20%.&lt;/p&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+72"/>
+        <location line="+86"/>
+        <source>I2P instance address with BOB enabled</source>
+        <translation>I2P hivatkozás bekapcsolt BOB-val</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>I2P instance address</source>
+        <translation>I2P hivatkozás címe</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>hidden service address</source>
+        <translation>rejtett szolgáltatás címe</translation>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>RetroShare profile files (*.asc);;All files (*)</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location line="+11"/>
         <source>Profile not loaded</source>
-        <translation type="unfinished"/>
+        <translation>A profil nincs betöltve</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Your profile was not loaded properly:</source>
-        <translation type="unfinished"/>
+        <translation>A profilod nem jól töltődött be:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>New profile imported</source>
-        <translation type="unfinished"/>
+        <translation>Új profil importálva</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Your profile was imported successfully:</source>
-        <translation type="unfinished"/>
+        <translation>Az új profilod sikeresen importálva:</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+29"/>
         <source>The GXS nickname is too short. Please input at least %1 characters.</source>
-        <translation type="unfinished"/>
+        <translation>A GXS becenév túl rövid. Adj meg legalább %1 karaktert!</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>The GXS nickname is too long. Please reduce the length to %1 characters.</source>
-        <translation type="unfinished"/>
+        <translation>A GXS becenév túl hosszú. Csökkents a hosszát %1 karakterre!</translation>
     </message>
     <message>
-        <location line="+15"/>
-        <source>Please enter a valid address of the form: 31769173498.onion:7800 or [52 characters].b32.i2p</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+13"/>
+        <location line="+26"/>
         <location line="+21"/>
         <location line="+9"/>
         <source>PGP key pair generation failure</source>
-        <translation type="unfinished"/>
+        <translation>A PGP kulcspár létrehozása meghiúsult</translation>
     </message>
     <message>
         <location line="-20"/>
-        <location line="+104"/>
+        <location line="+102"/>
         <source>Profile generation failure</source>
-        <translation type="unfinished"/>
+        <translation>A profil létrehozása meghiúsult</translation>
     </message>
     <message>
-        <location line="-103"/>
+        <location line="-101"/>
         <source>Missing PGP certificate</source>
-        <translation type="unfinished"/>
+        <translation>Hiányzó PGP tanusítvány</translation>
     </message>
 </context>
 <context>
@@ -6632,7 +6747,7 @@ and use the import button to load it</source>
     <message>
         <location line="+15"/>
         <source>Register retroshare:// as URL protocol</source>
-        <translation type="unfinished"/>
+        <translation>retroshare:// regisztrálása URL protokollként</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -6676,12 +6791,12 @@ and use the import button to load it</source>
     </message>
     <message>
         <location filename="../gui/settings/GeneralPage.cpp" line="+61"/>
-        <source>You have enough right.</source>
-        <translation type="unfinished"/>
+        <source>You have sufficient rights.</source>
+        <translation>A jogosultságaid megfelelőek.</translation>
     </message>
     <message>
         <location line="+8"/>
-        <source>You don&apos;t have enough right. Run RetroShare as Admin to change this setting.</source>
+        <source>You don&apos;t have sufficient rights. Run RetroShare as Admin to change this setting.</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -6695,7 +6810,7 @@ and use the import button to load it</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+58"/>
+        <location line="+62"/>
         <location line="+2"/>
         <source>Error</source>
         <translation>Hiba</translation>
@@ -6769,18 +6884,7 @@ p, li { white-space: pre-wrap; }
         <translation>Barát hozzáadása</translation>
     </message>
     <message>
-        <location line="+22"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;When your friends send you their invitations, click to open the Add Friends window.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Paste your Friend&apos;s &amp;quot;ID Certificates&amp;quot; into the window and add them as friends.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+85"/>
+        <location line="+107"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -6841,7 +6945,24 @@ p, li { white-space: pre-wrap; }
         <translation>Csatlakozás a barátokhoz</translation>
     </message>
     <message>
-        <location line="+90"/>
+        <location line="-31"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;When your friends send you their invitations, click to open the Add Friends window.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Paste your Friends&apos; &amp;quot;ID Certificates&amp;quot; into the window and add them as friends.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Mikor a barátaid meghívót küldenek, kattints rá, hogy megnyisd a Barátok hozzáadása ablakot.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Illeszd be az abalakba a barátaid tanúsítványait és vedd fel őket!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+121"/>
         <source>Advanced: Open Firewall Port</source>
         <translation>Haladó: Port nyitása a tűzfalon</translation>
     </message>
@@ -6903,7 +7024,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+3"/>
         <source>Here is your friends ID Certificate.</source>
-        <translation>Itt láthatod a barátaid ID tanúsítványait.</translation>
+        <translation>Itt láthatod a barátaid azonosító tanúsítványait.</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6913,7 +7034,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+1"/>
         <source>and send them your ID Certificate to get securely connected.</source>
-        <translation>és küld el a barátaidnak a te ID tanúsítványodat, hogy biztonságosan kapcsolódhassatok egymáshoz.</translation>
+        <translation>és küld el a barátaidnak a te azonosító tanúsítványodat, hogy biztonságosan kapcsolódhassatok egymáshoz.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -6933,7 +7054,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-182"/>
         <source>It has many features, including built-in chat, messaging,</source>
-        <translation type="unfinished"/>
+        <translation>Sok funkciója van, többek között beépített társalgó és üzenetküldő.</translation>
     </message>
 </context>
 <context>
@@ -6951,47 +7072,47 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+13"/>
         <source>ID</source>
-        <translation type="unfinished"/>
+        <translation>Azonosító</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Identity Name</source>
-        <translation type="unfinished"/>
+        <translation>Azonosító név</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Destinaton</source>
-        <translation type="unfinished"/>
+        <translation>Célállomás</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Data status</source>
-        <translation type="unfinished"/>
+        <translation>Adatkapcsolat állapota</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Tunnel status</source>
-        <translation type="unfinished"/>
+        <translation>Alagút állapota</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Stored data size</source>
-        <translation type="unfinished"/>
+        <translation>Tárolt adatok mérete</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Receive time (secs ago)</source>
-        <translation type="unfinished"/>
+        <translation>Beérkezés ideje (eltelt másodperc)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Sending time (secs ago)</source>
-        <translation type="unfinished"/>
+        <translation>Elküldés ideje (eltelt másodperc)</translation>
     </message>
     <message>
         <location line="-10"/>
         <source>Data hash</source>
-        <translation type="unfinished"/>
+        <translation>HASH adatok</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -7001,7 +7122,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/statistics/GlobalRouterStatistics.cpp" line="+124"/>
         <source>Details</source>
-        <translation type="unfinished"/>
+        <translation>Részletek</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -7011,12 +7132,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+18"/>
         <source>Pending packets</source>
-        <translation type="unfinished"/>
+        <translation>Függőben levő csomagok</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>Ismeretlen</translation>
     </message>
 </context>
 <context>
@@ -7024,22 +7145,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+92"/>
         <source>Managed keys</source>
-        <translation type="unfinished"/>
+        <translation>Nyilvántartott kulcsok</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Routing matrix  (</source>
-        <translation type="unfinished"/>
+        <translation>Útválasztási mátrix (</translation>
     </message>
     <message>
         <location line="+83"/>
         <source>[Unknown identity]</source>
-        <translation type="unfinished"/>
+        <translation>[Ismeretlen azonosító]</translation>
     </message>
     <message>
         <location line="-97"/>
         <source> : Service ID =</source>
-        <translation type="unfinished"/>
+        <translation>: Szolgáltatás azonosító =</translation>
     </message>
 </context>
 <context>
@@ -7047,15 +7168,15 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/toaster/GroupChatToaster.ui" line="+133"/>
         <source>Show Group Chat</source>
-        <translation>Csoportos csevegés mutatása</translation>
+        <translation>Csoportos beszélgetés mutatása</translation>
     </message>
 </context>
 <context>
     <name>GroupChooser</name>
     <message>
-        <location filename="../gui/common/GroupChooser.cpp" line="+52"/>
+        <location filename="../gui/common/GroupChooser.cpp" line="+53"/>
         <source>[Unknown]</source>
-        <translation type="unfinished"/>
+        <translation>[Ismeretlen]</translation>
     </message>
 </context>
 <context>
@@ -7177,7 +7298,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/gxs/GxsGroupShareKey.cpp" line="+41"/>
         <source>Share</source>
-        <translation type="unfinished"/>
+        <translation>Megosztás</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7245,12 +7366,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+153"/>
         <source>Sort Descending Order</source>
-        <translation type="unfinished"/>
+        <translation>Csökkenő sorbarendezés</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Sort Ascending Order</source>
-        <translation type="unfinished"/>
+        <translation>Növekvő sorbarendezés</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -7269,13 +7390,13 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+4"/>
-        <source>Sort by Posts</source>
-        <translation type="unfinished"/>
+        <source>Sort by Number of Posts</source>
+        <translation>Bejegyzések száma szerinti rendezés</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Sort by Unread</source>
-        <translation type="unfinished"/>
+        <translation>Olvasatlanság szerinti rendezés</translation>
     </message>
     <message>
         <location line="+176"/>
@@ -7291,12 +7412,12 @@ p, li { white-space: pre-wrap; }
         <location line="+6"/>
         <location line="+2"/>
         <source>Last Post</source>
-        <translation type="unfinished"/>
+        <translation>Utolsó bejegyzés</translation>
     </message>
     <message>
         <location line="-2"/>
         <source>Never</source>
-        <translation type="unfinished"/>
+        <translation>Soha</translation>
     </message>
     <message>
         <location filename="../gui/common/GroupTreeWidget.ui" line="+65"/>
@@ -7306,7 +7427,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/common/GroupTreeWidget.cpp" line="+4"/>
         <source>Subscribe to download and read messages</source>
-        <translation type="unfinished"/>
+        <translation>Feliratkozás üzenetek letöltéséhez és olvasásához</translation>
     </message>
 </context>
 <context>
@@ -7410,7 +7531,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GxsChannelDialog</name>
     <message>
-        <location filename="../gui/gxschannels/GxsChannelDialog.cpp" line="+83"/>
+        <location filename="../gui/gxschannels/GxsChannelDialog.cpp" line="+104"/>
         <location filename="../gui/gxschannels/GxsChannelDialog.h" line="+40"/>
         <source>Channels</source>
         <translation>Csatornák</translation>
@@ -7431,12 +7552,12 @@ p, li { white-space: pre-wrap; }
         <translation>Csatornáim</translation>
     </message>
     <message>
-        <location line="-33"/>
+        <location line="-53"/>
         <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;        &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network&lt;/p&gt;                &lt;p&gt;You can see the channels your friends are subscribed to, and you automatically forward subscribed channels to     your friends. This promotes good channels in the network.&lt;/p&gt;    &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share 	 the posting rights or the reading rights with friend Retroshare nodes.&lt;/p&gt;	 &lt;p&gt;Channels can be made anonymous, or attached to a Retroshare identity so that readers can contact you if needed.	 Enable &quot;Allow Comments&quot; if you want to let users comment on your posts.&lt;/p&gt;    &lt;p&gt;Channel posts are kept for %1 days, and sync-ed over the last %2 days, unless you change this.&lt;/p&gt;                </source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+55"/>
         <source>Subscribed Channels</source>
         <translation>Feliratkozások</translation>
     </message>
@@ -7453,7 +7574,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+62"/>
         <source>Select channel download directory</source>
-        <translation type="unfinished"/>
+        <translation>Válassz a csatornához letöltési könyvtárat</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -7463,7 +7584,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+9"/>
         <source>Set download directory</source>
-        <translation type="unfinished"/>
+        <translation>Állítsd be a letöltési könyvtárat</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7497,7 +7618,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+52"/>
         <source>Open folder</source>
-        <translation type="unfinished"/>
+        <translation>Mappa megnyitása</translation>
     </message>
     <message>
         <location filename="../gui/gxschannels/GxsChannelFilesStatusWidget.cpp" line="+137"/>
@@ -7517,7 +7638,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+14"/>
         <source>Checking</source>
-        <translation type="unfinished"/>
+        <translation>Ellenőrzés</translation>
     </message>
     <message>
         <location line="+73"/>
@@ -7527,7 +7648,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+20"/>
         <source>Can&apos;t open folder</source>
-        <translation type="unfinished"/>
+        <translation>A mappa nem nyitható meg</translation>
     </message>
 </context>
 <context>
@@ -7555,7 +7676,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+1"/>
         <source>Published</source>
-        <translation type="unfinished"/>
+        <translation>Közzétéve</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7593,7 +7714,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-5"/>
         <source>Update Channel</source>
-        <translation type="unfinished"/>
+        <translation>Csatorna frissítése</translation>
     </message>
     <message>
         <location line="-7"/>
@@ -7610,7 +7731,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+20"/>
-        <location filename="../gui/feeds/GxsChannelGroupItem.cpp" line="+186"/>
+        <location filename="../gui/feeds/GxsChannelGroupItem.cpp" line="+185"/>
         <source>Expand</source>
         <translation>Lenyitás</translation>
     </message>
@@ -7625,12 +7746,12 @@ p, li { white-space: pre-wrap; }
         <translation>Csatorna leírása</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/GxsChannelGroupItem.cpp" line="-124"/>
+        <location filename="../gui/feeds/GxsChannelGroupItem.cpp" line="-123"/>
         <source>Loading</source>
         <translation>Töltés</translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+87"/>
         <source>New Channel</source>
         <translation>Új csatorna</translation>
     </message>
@@ -7645,7 +7766,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/GxsChannelPostItem.ui" line="+199"/>
         <source>New Comment:</source>
-        <translation type="unfinished"/>
+        <translation>Új hozzászólás:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -7664,16 +7785,20 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+17"/>
-        <location filename="../gui/feeds/GxsChannelPostItem.cpp" line="+466"/>
+        <location filename="../gui/feeds/GxsChannelPostItem.cpp" line="+547"/>
         <source>Play</source>
         <translation>Lejátszás</translation>
     </message>
     <message>
         <location line="+11"/>
-        <location filename="../gui/feeds/GxsChannelPostItem.cpp" line="-162"/>
-        <location line="+106"/>
+        <location filename="../gui/feeds/GxsChannelPostItem.cpp" line="-61"/>
         <source>Comments</source>
         <translation>Hozzászólások</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Edit</source>
+        <translation>Szerkesztés</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -7687,7 +7812,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/feeds/GxsChannelPostItem.cpp" line="+224"/>
+        <location filename="../gui/feeds/GxsChannelPostItem.cpp" line="+214"/>
         <source>Expand</source>
         <translation>Lenyitás</translation>
     </message>
@@ -7702,17 +7827,17 @@ p, li { white-space: pre-wrap; }
         <translation>Eltávolítás</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/GxsChannelPostItem.cpp" line="-301"/>
+        <location filename="../gui/feeds/GxsChannelPostItem.cpp" line="-292"/>
         <source>Channel Feed</source>
         <translation>Csatorna feed</translation>
     </message>
     <message>
-        <location line="+106"/>
+        <location line="+109"/>
         <source>Files</source>
         <translation>Fájlok</translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+76"/>
         <source>Warning! You have less than %1 hours and %2 minute before this file is deleted Consider saving it.</source>
         <translation>Vigyázz! A fájl törlődni fog kevesbb, mint %1 óra %2 perc múlva. Ha menteni szeretnéd, tedd meg időben.</translation>
     </message>
@@ -7722,7 +7847,7 @@ p, li { white-space: pre-wrap; }
         <translation>Elrejt</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/GxsChannelPostItem.ui" line="-218"/>
+        <location filename="../gui/feeds/GxsChannelPostItem.ui" line="-225"/>
         <source>New</source>
         <translation>Új</translation>
     </message>
@@ -7732,8 +7857,8 @@ p, li { white-space: pre-wrap; }
         <translation>0</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/GxsChannelPostItem.cpp" line="-326"/>
-        <location line="+115"/>
+        <location filename="../gui/feeds/GxsChannelPostItem.cpp" line="-325"/>
+        <location line="+124"/>
         <source>Comment</source>
         <translation>Hozzászólás</translation>
     </message>
@@ -7748,12 +7873,17 @@ p, li { white-space: pre-wrap; }
         <translation>Nem tetszik</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/GxsChannelPostItem.cpp" line="-305"/>
+        <location filename="../gui/feeds/GxsChannelPostItem.cpp" line="-321"/>
         <source>Loading</source>
         <translation>Töltés</translation>
     </message>
     <message>
-        <location line="+353"/>
+        <location line="+201"/>
+        <source>Comments </source>
+        <translation>Hozzászólások</translation>
+    </message>
+    <message>
+        <location line="+173"/>
         <source>Open</source>
         <translation>Megnyitás</translation>
     </message>
@@ -7776,17 +7906,23 @@ p, li { white-space: pre-wrap; }
         <translation>Új bejegyzés</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+3"/>
+        <location filename="../gui/gxschannels/GxsChannelPostsWidget.cpp" line="+78"/>
+        <source>Add new post</source>
+        <translation>Új hozzászólás</translation>
+    </message>
+    <message>
+        <location line="+39"/>
         <source>Loading</source>
         <translation>Töltés</translation>
     </message>
     <message>
         <location line="+88"/>
         <source>Search channels</source>
-        <translation type="unfinished"/>
+        <translation>Keresés a csatornákban</translation>
     </message>
     <message>
-        <location filename="../gui/gxschannels/GxsChannelPostsWidget.cpp" line="+79"/>
+        <location filename="../gui/gxschannels/GxsChannelPostsWidget.cpp" line="+3"/>
         <source>Title</source>
         <translation>Cím</translation>
     </message>
@@ -7803,7 +7939,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+0"/>
         <source>Search Message</source>
-        <translation type="unfinished"/>
+        <translation>Üzenet keresése</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7813,7 +7949,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+0"/>
         <source>Search Filename</source>
-        <translation type="unfinished"/>
+        <translation>Keresés a fájlok között</translation>
     </message>
     <message>
         <location line="+91"/>
@@ -7823,12 +7959,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+99"/>
         <source>Never</source>
-        <translation type="unfinished"/>
+        <translation>Soha</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Public</source>
-        <translation type="unfinished"/>
+        <translation>Nyilvános</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -7851,7 +7987,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+200"/>
+        <location line="+323"/>
         <source>Disable Auto-Download</source>
         <translation>Automatikus letöltés tiltása</translation>
     </message>
@@ -7868,28 +8004,28 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+17"/>
         <source>Show files</source>
-        <translation type="unfinished"/>
+        <translation>Mutasd a fájlokat</translation>
     </message>
     <message>
         <location line="+152"/>
         <source>Administrator:</source>
-        <translation type="unfinished"/>
+        <translation>Adminisztrátor:</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Last Post:</source>
-        <translation type="unfinished"/>
+        <translation>Utolsó bejegyzés</translation>
     </message>
     <message>
         <location line="+37"/>
         <location line="+34"/>
         <source>unknown</source>
-        <translation type="unfinished"/>
+        <translation>ismeretlen</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>Distribution:</source>
-        <translation type="unfinished"/>
+        <translation>Megosztás</translation>
     </message>
     <message>
         <location line="+55"/>
@@ -7902,12 +8038,12 @@ p, li { white-space: pre-wrap; }
         <translation>Fájlok</translation>
     </message>
     <message>
-        <location line="-420"/>
+        <location line="-426"/>
         <source>Subscribers</source>
-        <translation type="unfinished"/>
+        <translation>Feliratkozottak</translation>
     </message>
     <message>
-        <location line="+326"/>
+        <location line="+332"/>
         <source>Description:</source>
         <translation>Leírás:</translation>
     </message>
@@ -7923,6 +8059,55 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/gxschannels/GxsChannelUserNotify.cpp" line="+32"/>
         <source>Channel Post</source>
         <translation>Üzenet</translation>
+    </message>
+</context>
+<context>
+    <name>GxsCircleItem</name>
+    <message>
+        <location filename="../gui/feeds/GxsCircleItem.ui" line="+256"/>
+        <source>Details</source>
+        <translation>Részletek</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Remove Item</source>
+        <translation>Tétel törlése</translation>
+    </message>
+    <message>
+        <location filename="../gui/feeds/GxsCircleItem.cpp" line="+74"/>
+        <location line="+2"/>
+        <source>for identity </source>
+        <translation>előle: </translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>You received a membership request for circle:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Grant membership request</source>
+        <translation>Tagsági kérelem jóváhagyása</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Revoke membership request</source>
+        <translation>Tagsági kérelem visszavonása</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>You received an invitation for circle:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Accept invitation</source>
+        <translation>Meghívó elfogadása</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Received event from unknown Circle:</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7958,7 +8143,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+29"/>
         <source>Voter ID:</source>
-        <translation>Szavazó ID:</translation>
+        <translation>Szavazó azonosító:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -8004,7 +8189,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GxsCommentTreeWidget</name>
     <message>
-        <location filename="../gui/gxs/GxsCommentTreeWidget.cpp" line="+97"/>
+        <location filename="../gui/gxs/GxsCommentTreeWidget.cpp" line="+182"/>
         <source>Reply to Comment</source>
         <translation>Válasz a hozzászólásra</translation>
     </message>
@@ -8012,6 +8197,11 @@ p, li { white-space: pre-wrap; }
         <location line="+2"/>
         <source>Submit Comment</source>
         <translation>Hozzászólás küldése</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Copy Comment</source>
+        <translation>Hozzászólás másolása</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8050,7 +8240,7 @@ p, li { white-space: pre-wrap; }
         <translation>Aláírva általa</translation>
     </message>
     <message>
-        <location filename="../gui/gxs/GxsCreateCommentDialog.cpp" line="+76"/>
+        <location filename="../gui/gxs/GxsCreateCommentDialog.cpp" line="+82"/>
         <source>Comment Signing Error</source>
         <translation>Hiba a hozzászólás aláírásakor</translation>
     </message>
@@ -8082,17 +8272,17 @@ mielőtt hozzászólhatsz</translation>
     <message>
         <location line="+1"/>
         <source>Update Forum</source>
-        <translation type="unfinished"/>
+        <translation>Fórum frissítése</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Add Forum Admins</source>
-        <translation type="unfinished"/>
+        <translation>Fórum adminisztrátorok hozzáadása</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Select Forum Admins</source>
-        <translation type="unfinished"/>
+        <translation>Fórum adminisztrátorok kiválasztása</translation>
     </message>
     <message>
         <location line="-12"/>
@@ -8109,7 +8299,7 @@ mielőtt hozzászólhatsz</translation>
     </message>
     <message>
         <location line="+20"/>
-        <location filename="../gui/feeds/GxsForumGroupItem.cpp" line="+186"/>
+        <location filename="../gui/feeds/GxsForumGroupItem.cpp" line="+185"/>
         <source>Expand</source>
         <translation>Lenyitás</translation>
     </message>
@@ -8124,12 +8314,12 @@ mielőtt hozzászólhatsz</translation>
         <translation>Fórum leírása</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/GxsForumGroupItem.cpp" line="-124"/>
+        <location filename="../gui/feeds/GxsForumGroupItem.cpp" line="-123"/>
         <source>Loading</source>
         <translation>Töltés</translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+87"/>
         <source>New Forum</source>
         <translation>Új fórum</translation>
     </message>
@@ -8154,7 +8344,7 @@ mielőtt hozzászólhatsz</translation>
     </message>
     <message>
         <location line="+20"/>
-        <location filename="../gui/feeds/GxsForumMsgItem.cpp" line="+394"/>
+        <location filename="../gui/feeds/GxsForumMsgItem.cpp" line="+388"/>
         <source>Expand</source>
         <translation>Lenyitás</translation>
     </message>
@@ -8171,10 +8361,10 @@ mielőtt hozzászólhatsz</translation>
     <message>
         <location line="+293"/>
         <source>In Reply to: </source>
-        <translation type="unfinished"/>
+        <translation>Válasz címzettje:</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/GxsForumMsgItem.cpp" line="-294"/>
+        <location filename="../gui/feeds/GxsForumMsgItem.cpp" line="-291"/>
         <source>Loading</source>
         <translation>Töltés</translation>
     </message>
@@ -8184,7 +8374,7 @@ mielőtt hozzászólhatsz</translation>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+108"/>
+        <location line="+105"/>
         <source>Hide</source>
         <translation>Elrejt</translation>
     </message>
@@ -8202,7 +8392,7 @@ mielőtt hozzászólhatsz</translation>
         <translation>Új fonál indítása a kiválasztotta fórumban</translation>
     </message>
     <message>
-        <location line="+112"/>
+        <location line="+118"/>
         <source>Search forums</source>
         <translation>Fórumok keresése</translation>
     </message>
@@ -8212,7 +8402,12 @@ mielőtt hozzászólhatsz</translation>
         <translation>Utolsó beküldés</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="-97"/>
+        <source>New Thread</source>
+        <translation>Új szál</translation>
+    </message>
+    <message>
+        <location line="+102"/>
         <source>Threaded View</source>
         <translation>Fa nézet</translation>
     </message>
@@ -8223,7 +8418,7 @@ mielőtt hozzászólhatsz</translation>
     </message>
     <message>
         <location line="+35"/>
-        <location filename="../gui/gxsforums/GxsForumThreadWidget.cpp" line="+252"/>
+        <location filename="../gui/gxsforums/GxsForumThreadWidget.cpp" line="+259"/>
         <source>Title</source>
         <translation>Cím</translation>
     </message>
@@ -8236,28 +8431,28 @@ mielőtt hozzászólhatsz</translation>
     <message>
         <location line="+17"/>
         <location filename="../gui/gxsforums/GxsForumThreadWidget.cpp" line="+1"/>
-        <location line="+708"/>
+        <location line="+734"/>
         <source>Author</source>
         <translation>Szerző</translation>
     </message>
     <message>
-        <location line="+266"/>
+        <location line="+275"/>
         <source>Save image</source>
-        <translation type="unfinished"/>
+        <translation>Kép mentése</translation>
     </message>
     <message>
-        <location line="-372"/>
-        <location filename="../gui/gxsforums/GxsForumThreadWidget.cpp" line="-608"/>
+        <location line="-381"/>
+        <location filename="../gui/gxsforums/GxsForumThreadWidget.cpp" line="-634"/>
         <source>Loading</source>
         <translation>Töltés</translation>
     </message>
     <message>
-        <location line="+175"/>
+        <location line="+168"/>
         <source>Reply Message</source>
         <translation>Válasz az üzenetre</translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+94"/>
         <source>Previous Thread</source>
         <translation>Előző fonál</translation>
     </message>
@@ -8267,12 +8462,12 @@ mielőtt hozzászólhatsz</translation>
         <translation>Következő fonál</translation>
     </message>
     <message>
-        <location line="-172"/>
+        <location line="-171"/>
         <source>Download all files</source>
         <translation>Összes fájl letöltése</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+20"/>
         <source>Next unread</source>
         <translation>Következő olvasatlan</translation>
     </message>
@@ -8312,12 +8507,14 @@ mielőtt hozzászólhatsz</translation>
         <translation>Nincs név</translation>
     </message>
     <message>
-        <location line="+121"/>
+        <location filename="../gui/gxsforums/GxsForumThreadWidget.ui" line="+19"/>
+        <location filename="../gui/gxsforums/GxsForumThreadWidget.cpp" line="-159"/>
+        <location line="+283"/>
         <source>Reply</source>
         <translation>Válasz</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location filename="../gui/gxsforums/GxsForumThreadWidget.cpp" line="+21"/>
         <source>Start New Thread</source>
         <translation>Új szál indítása</translation>
     </message>
@@ -8350,12 +8547,12 @@ mielőtt hozzászólhatsz</translation>
         <translation>Megjelölés olvasatlanként</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+63"/>
         <source>Copy RetroShare Link</source>
         <translation>RetroShare hivatkozás másolása</translation>
     </message>
     <message>
-        <location line="+98"/>
+        <location line="+96"/>
         <source>Hide</source>
         <translation>Elrejt</translation>
     </message>
@@ -8365,19 +8562,19 @@ mielőtt hozzászólhatsz</translation>
         <translation>Lenyitás</translation>
     </message>
     <message>
-        <location line="+219"/>
+        <location line="+232"/>
         <source>[Banned]</source>
-        <translation type="unfinished"/>
+        <translation>[Letiltva]</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>[unknown]</source>
-        <translation type="unfinished"/>
+        <translation>[ismeretlen]</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Public</source>
-        <translation type="unfinished"/>
+        <translation>Nyilvános</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -8400,21 +8597,21 @@ mielőtt hozzászólhatsz</translation>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/gxsforums/GxsForumThreadWidget.ui" line="-62"/>
-        <location filename="../gui/gxsforums/GxsForumThreadWidget.cpp" line="-706"/>
-        <location line="+712"/>
+        <location filename="../gui/gxsforums/GxsForumThreadWidget.ui" line="-74"/>
+        <location filename="../gui/gxsforums/GxsForumThreadWidget.cpp" line="-732"/>
+        <location line="+738"/>
         <source>Distribution</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../gui/gxsforums/GxsForumThreadWidget.cpp" line="+4"/>
         <source>Anti-spam</source>
-        <translation type="unfinished"/>
+        <translation>Szemétszűrő</translation>
     </message>
     <message>
-        <location line="+164"/>
+        <location line="+166"/>
         <source>[ ... Redacted message ... ]</source>
-        <translation type="unfinished"/>
+        <translation>[ ... Szerkesztett üzenet ... ]</translation>
     </message>
     <message>
         <location line="+71"/>
@@ -8437,9 +8634,9 @@ mielőtt hozzászólhatsz</translation>
         <translation>[ ... Hiányzó üzenet ... ]</translation>
     </message>
     <message>
-        <location line="+367"/>
+        <location line="+416"/>
         <source>&lt;p&gt;&lt;font color=&quot;#ff0000&quot;&gt;&lt;b&gt;The author of this message (with ID %1) is banned.&lt;/b&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;p&gt;&lt;font color=&quot;#ff0000&quot;&gt;&lt;b&gt;Az üzenet szerzője (azonosító: %1) bannolva van.&lt;/b&gt;</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8454,56 +8651,70 @@ mielőtt hozzászólhatsz</translation>
     <message>
         <location line="+1"/>
         <source>&lt;p&gt;&lt;b&gt;&lt;font color=&quot;#ff0000&quot;&gt;You can force the visibility and forwarding of messages by setting a different opinion for that Id in People&apos;s tab.&lt;/font&gt;&lt;/b&gt;&lt;/p&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;p&gt;&lt;b&gt;&lt;font color=&quot;#ff0000&quot;&gt;Kényszerítheted az üzenetek láthatóságát és továbbítását, ha módosítod az Azonosítóra adott véleményed a Személyek fülön.&lt;/font&gt;&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="+181"/>
-        <location line="+163"/>
-        <location line="+33"/>
+        <location line="+197"/>
+        <location line="+164"/>
+        <location line="+32"/>
         <location line="+28"/>
-        <location line="+12"/>
+        <location line="+11"/>
+        <location line="+11"/>
         <location line="+33"/>
-        <location line="+40"/>
+        <location line="+36"/>
+        <location line="+29"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location line="-146"/>
+        <location line="-180"/>
         <source>No Forum Selected!</source>
         <translation>Nincs fórum kiválasztva!</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+32"/>
         <location line="+28"/>
-        <location line="+12"/>
+        <location line="+11"/>
+        <location line="+11"/>
         <source>You cant reply to a non-existant Message</source>
         <translation>Válaszolhatsz hiányzó üzenetre</translation>
     </message>
     <message>
         <location line="+33"/>
-        <location line="+40"/>
+        <location line="+36"/>
+        <location line="+29"/>
         <source>You cant reply to an Anonymous Author</source>
         <translation>Válaszolhatsz névtelen szerzőnek</translation>
     </message>
     <message>
-        <location line="-130"/>
+        <location line="-165"/>
         <source>Original Message</source>
         <translation>Eredeti üzenet</translation>
     </message>
     <message>
-        <location line="-1731"/>
-        <source>Read status</source>
-        <translation type="unfinished"/>
+        <location line="-1865"/>
+        <source>New thread</source>
+        <translation>Új szál</translation>
     </message>
     <message>
-        <location line="+241"/>
+        <location line="+41"/>
+        <source>Read status</source>
+        <translation>Elolvasott / nem olvasott</translation>
+    </message>
+    <message>
+        <location line="+238"/>
+        <source>Edit</source>
+        <translation>Szerkesztés</translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Reply to author with private message</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location line="+3"/>
         <source>Give positive opinion</source>
-        <translation type="unfinished"/>
+        <translation>Pozitív vélemény</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8514,7 +8725,7 @@ mielőtt hozzászólhatsz</translation>
     <message>
         <location line="-6"/>
         <source>Give neutral opinion</source>
-        <translation type="unfinished"/>
+        <translation>Semleges vélemény</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8524,20 +8735,20 @@ mielőtt hozzászólhatsz</translation>
     <message>
         <location line="+4"/>
         <source>Give negative opinion</source>
-        <translation type="unfinished"/>
+        <translation>Adj negatív értékelést</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Show author in people tab</source>
-        <translation type="unfinished"/>
+        <translation>Mutasd a szerzőt a Személyek fülön</translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+87"/>
         <source>Author&apos;s reputation</source>
-        <translation type="unfinished"/>
+        <translation>Szerző megitélése</translation>
     </message>
     <message>
-        <location line="+306"/>
+        <location line="+319"/>
         <source>Anonymous/unknown posts forwarded if reputation is positive</source>
         <translation type="unfinished"/>
     </message>
@@ -8550,33 +8761,34 @@ mielőtt hozzászólhatsz</translation>
         <location line="+6"/>
         <location line="+2"/>
         <source>Last post</source>
-        <translation type="unfinished"/>
+        <translation>Utolsó bejegyzés</translation>
     </message>
     <message>
         <location line="-2"/>
         <source>Never</source>
-        <translation type="unfinished"/>
+        <translation>Soha</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Synchronization</source>
-        <translation type="unfinished"/>
+        <translation>Szinkronizálás</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Storage</source>
-        <translation type="unfinished"/>
+        <translation>Tárolás</translation>
     </message>
     <message>
-        <location line="+216"/>
+        <location line="+218"/>
         <source>Information for this identity is currently missing.</source>
-        <translation type="unfinished"/>
+        <translation>A személyazonossághoz tartozó információ jelenleg hiányzik.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>You have banned this ID. The message will not be
 displayed nor forwarded to your friends.</source>
-        <translation type="unfinished"/>
+        <translation>Tiltottad ezt az azonosítót. Az üzenet nem lesz
+megjelenítve és nem lesz továbbítva a barátaid számára.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8591,7 +8803,17 @@ prevents the message to be forwarded to your friends.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+646"/>
+        <location line="+428"/>
+        <source>(Latest) </source>
+        <translation>(Legutóbbi)</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>(Old) </source>
+        <translation>(Régi)</translation>
+    </message>
+    <message>
+        <location line="+283"/>
         <source>You cant act on the author to a non-existant Message</source>
         <translation type="unfinished"/>
     </message>
@@ -8616,14 +8838,14 @@ prevents the message to be forwarded to your friends.</source>
         <translation>%1, %2 írta:</translation>
     </message>
     <message>
-        <location line="-1071"/>
+        <location line="-1138"/>
         <source>Forum name</source>
-        <translation type="unfinished"/>
+        <translation>Fórum címe</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Subscribers</source>
-        <translation type="unfinished"/>
+        <translation>Feliratkozottak</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8636,7 +8858,7 @@ prevents the message to be forwarded to your friends.</source>
         <translation>Leírás</translation>
     </message>
     <message>
-        <location filename="../gui/gxsforums/GxsForumThreadWidget.ui" line="+231"/>
+        <location filename="../gui/gxsforums/GxsForumThreadWidget.ui" line="+230"/>
         <source>By </source>
         <translation type="unfinished"/>
     </message>
@@ -8652,12 +8874,12 @@ prevents the message to be forwarded to your friends.</source>
 <context>
     <name>GxsForumsDialog</name>
     <message>
-        <location filename="../gui/gxsforums/GxsForumsDialog.cpp" line="+52"/>
+        <location filename="../gui/gxsforums/GxsForumsDialog.cpp" line="+53"/>
         <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;               			&lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way&lt;/p&gt;    			&lt;p&gt;You see forums your friends are subscribed to, and you forward subscribed forums to      			your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                        &lt;p&gt;Forum messages are kept for %1 days and sync-ed over the last %2 days, unless you configure it otherwise.&lt;/p&gt;                </source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+38"/>
         <location filename="../gui/gxsforums/GxsForumsDialog.h" line="+38"/>
         <source>Forums</source>
         <translation>Fórum</translation>
@@ -8691,7 +8913,7 @@ prevents the message to be forwarded to your friends.</source>
 <context>
     <name>GxsForumsFillThread</name>
     <message>
-        <location filename="../gui/gxsforums/GxsForumsFillThread.cpp" line="+96"/>
+        <location filename="../gui/gxsforums/GxsForumsFillThread.cpp" line="+98"/>
         <source>Waiting</source>
         <translation>Várakozás</translation>
     </message>
@@ -8751,25 +8973,15 @@ prevents the message to be forwarded to your friends.</source>
         <translation>Üzenet elosztás</translation>
     </message>
     <message>
-        <location line="+14"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Messsages will spread way beyond your friend nodes, as long as people subscribe to the channel/forum/posted you&apos;re creating.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+3"/>
-        <location filename="../gui/gxs/GxsGroupDialog.cpp" line="+106"/>
-        <location line="+115"/>
+        <location line="+17"/>
+        <location filename="../gui/gxs/GxsGroupDialog.cpp" line="+109"/>
+        <location line="+116"/>
         <location line="+246"/>
         <source>Public</source>
         <translation>Publikus</translation>
     </message>
     <message>
-        <location line="+52"/>
-        <source>Only For Your Friends</source>
-        <translation>Csak a barátaidnak</translation>
-    </message>
-    <message>
-        <location line="+80"/>
+        <location line="+132"/>
         <source>Publish Signatures</source>
         <translation>Aláírások közzététele</translation>
     </message>
@@ -8836,19 +9048,19 @@ prevents the message to be forwarded to your friends.</source>
     <message>
         <location line="+158"/>
         <source>Comments:</source>
-        <translation type="unfinished"/>
+        <translation>Hozzászólások</translation>
     </message>
     <message>
         <location line="+7"/>
         <location line="+9"/>
         <location line="+33"/>
         <source>TextLabel</source>
-        <translation type="unfinished"/>
+        <translation>Szövegcimke</translation>
     </message>
     <message>
         <location line="-14"/>
         <source>Distribution:</source>
-        <translation type="unfinished"/>
+        <translation>Megosztás</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -8856,12 +9068,12 @@ prevents the message to be forwarded to your friends.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/gxs/GxsGroupDialog.cpp" line="-347"/>
+        <location filename="../gui/gxs/GxsGroupDialog.cpp" line="-348"/>
         <source>Contacts:</source>
         <translation>Kapcsolatok:</translation>
     </message>
     <message>
-        <location line="+107"/>
+        <location line="+108"/>
         <location line="+246"/>
         <source>Restricted to circle:</source>
         <translation type="unfinished"/>
@@ -8875,29 +9087,29 @@ prevents the message to be forwarded to your friends.</source>
         <location line="+57"/>
         <location line="+11"/>
         <source>Allowed</source>
-        <translation type="unfinished"/>
+        <translation>Engedélyezett</translation>
     </message>
     <message>
         <location line="-6"/>
         <source>Disallowed</source>
-        <translation type="unfinished"/>
+        <translation>Tiltott</translation>
     </message>
     <message>
         <location line="+17"/>
-        <location line="+376"/>
+        <location line="+377"/>
         <source>Message tracking</source>
-        <translation type="unfinished"/>
+        <translation>Üzenet követése</translation>
     </message>
     <message>
-        <location line="-375"/>
-        <location line="+378"/>
+        <location line="-376"/>
+        <location line="+379"/>
         <source>PGP signature required</source>
-        <translation type="unfinished"/>
+        <translation>PGP hitelesítés szükséges</translation>
     </message>
     <message>
-        <location line="-271"/>
+        <location line="-272"/>
         <source>Never</source>
-        <translation type="unfinished"/>
+        <translation>Soha</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -8910,9 +9122,9 @@ prevents the message to be forwarded to your friends.</source>
         <translation>Kérlek, adj meg egy nevet</translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+83"/>
         <source>PGP signature from known ID required</source>
-        <translation type="unfinished"/>
+        <translation>Szükség van PGP aláírásra egy ismert azonosítótól</translation>
     </message>
     <message>
         <location line="+106"/>
@@ -8920,7 +9132,7 @@ prevents the message to be forwarded to your friends.</source>
         <translation>Csoport logó betöltése</translation>
     </message>
     <message>
-        <location line="-597"/>
+        <location line="-598"/>
         <source>Submit Group Changes</source>
         <translation type="unfinished"/>
     </message>
@@ -8938,22 +9150,22 @@ prevents the message to be forwarded to your friends.</source>
     <message>
         <location line="+3"/>
         <source>Owner:</source>
-        <translation type="unfinished"/>
+        <translation>Tulajdonos</translation>
     </message>
     <message>
-        <location filename="../gui/gxs/GxsGroupDialog.cpp" line="-486"/>
+        <location filename="../gui/gxs/GxsGroupDialog.cpp" line="-487"/>
         <source>Set a descriptive description here</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../gui/gxs/GxsGroupDialog.ui" line="+502"/>
         <source>Info</source>
-        <translation type="unfinished"/>
+        <translation>Információ</translation>
     </message>
     <message>
         <location line="+79"/>
         <source>ID</source>
-        <translation>ID</translation>
+        <translation>Azonosító</translation>
     </message>
     <message>
         <location line="-28"/>
@@ -8961,7 +9173,12 @@ prevents the message to be forwarded to your friends.</source>
         <translation>Utolsó beküldés</translation>
     </message>
     <message>
-        <location line="-384"/>
+        <location line="-410"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Messages will spread way beyond your friend nodes, as long as people subscribe to the channel/forum/posted you&apos;re creating.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+26"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Messages will spread among Retroshare nodes that host one of the identities listed as member of the circle and who also subscribe the media. Only these nodes will be able to see that this forum/channel/posted media exists. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
@@ -8976,9 +9193,14 @@ prevents the message to be forwarded to your friends.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+248"/>
-        <source>Posts permissions:</source>
+        <location line="+3"/>
+        <source>Restricted node group </source>
         <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+245"/>
+        <source>Posts permissions:</source>
+        <translation>Hozzászólási engedélyek</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -8988,17 +9210,17 @@ prevents the message to be forwarded to your friends.</source>
     <message>
         <location line="+4"/>
         <source>All allowed</source>
-        <translation type="unfinished"/>
+        <translation>Mind engedélyezve</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Defavor unsigned IDs</source>
-        <translation type="unfinished"/>
+        <translation>Aláíratlan azonosítók eltávolítása a kedvencek közül</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Defavor unsigned IDs and IDs from unknown nodes</source>
-        <translation type="unfinished"/>
+        <translation>Aláíratlan és ismeretlen csomóponthoz tartozó azonosítók eltávolítása a kedvencek közül</translation>
     </message>
     <message>
         <location line="+58"/>
@@ -9008,7 +9230,7 @@ prevents the message to be forwarded to your friends.</source>
     <message>
         <location line="+14"/>
         <source>Posts</source>
-        <translation type="unfinished"/>
+        <translation>Bejegyzések</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -9018,7 +9240,7 @@ prevents the message to be forwarded to your friends.</source>
     <message>
         <location line="+7"/>
         <source>GxsIdLabel</source>
-        <translation type="unfinished"/>
+        <translation>Gxs azonosító címke</translation>
     </message>
 </context>
 <context>
@@ -9044,7 +9266,7 @@ prevents the message to be forwarded to your friends.</source>
         <translation>Nyomtatási kép</translation>
     </message>
     <message>
-        <location filename="../gui/gxs/GxsGroupFrameDialog.cpp" line="+271"/>
+        <location filename="../gui/gxs/GxsGroupFrameDialog.cpp" line="+278"/>
         <source>Unsubscribe</source>
         <translation>Leiratkozás</translation>
     </message>
@@ -9061,59 +9283,59 @@ prevents the message to be forwarded to your friends.</source>
     <message>
         <location line="+18"/>
         <source>Show Details</source>
-        <translation type="unfinished"/>
+        <translation>Mutasd a részleteket</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Edit Details</source>
-        <translation type="unfinished"/>
+        <translation>Részletek szerkesztése</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Synchronise posts of last...</source>
-        <translation type="unfinished"/>
+        <translation>Add meg a szinkronizálandó elmúlt időtartamot...</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+9"/>
         <source> 5 days</source>
-        <translation type="unfinished"/>
+        <translation>5 nap</translation>
     </message>
     <message>
         <location line="-8"/>
         <location line="+9"/>
         <source> 2 weeks</source>
-        <translation type="unfinished"/>
+        <translation>2 hét</translation>
     </message>
     <message>
         <location line="-8"/>
         <location line="+9"/>
         <source> 1 month</source>
-        <translation type="unfinished"/>
+        <translation>1 hónap</translation>
     </message>
     <message>
         <location line="-8"/>
         <location line="+9"/>
         <source> 3 months</source>
-        <translation type="unfinished"/>
+        <translation>3 hónap</translation>
     </message>
     <message>
         <location line="-8"/>
         <location line="+9"/>
         <source> 6 months</source>
-        <translation type="unfinished"/>
+        <translation>6 hónap</translation>
     </message>
     <message>
         <location line="-8"/>
         <location line="+9"/>
         <source> 1 year  </source>
-        <translation type="unfinished"/>
+        <translation>1 év</translation>
     </message>
     <message>
         <location line="-8"/>
         <location line="+9"/>
         <source> Indefinitly</source>
-        <translation type="unfinished"/>
+        <translation>Végtelen</translation>
     </message>
     <message>
         <location line="-7"/>
@@ -9123,7 +9345,7 @@ prevents the message to be forwarded to your friends.</source>
     <message>
         <location line="+10"/>
         <source>Share publish permissions</source>
-        <translation type="unfinished"/>
+        <translation>Nyilvános engedélyek megosztása</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -9141,7 +9363,7 @@ prevents the message to be forwarded to your friends.</source>
         <translation>Összes megjelölése olvasatlanként</translation>
     </message>
     <message>
-        <location line="+439"/>
+        <location line="+452"/>
         <source>AUTHD</source>
         <translation>HITELESÍTETT</translation>
     </message>
@@ -9149,7 +9371,7 @@ prevents the message to be forwarded to your friends.</source>
 <context>
     <name>GxsIdChooser</name>
     <message>
-        <location filename="../gui/gxs/GxsIdChooser.cpp" line="+262"/>
+        <location filename="../gui/gxs/GxsIdChooser.cpp" line="+266"/>
         <source>No Signature</source>
         <translation>Nincs aláírás</translation>
     </message>
@@ -9181,33 +9403,33 @@ prevents the message to be forwarded to your friends.</source>
         <location line="+55"/>
         <location line="+23"/>
         <source>[Banned]</source>
-        <translation type="unfinished"/>
+        <translation>[Letiltva]</translation>
     </message>
     <message>
         <location line="+12"/>
         <location line="+13"/>
         <source>Authentication</source>
-        <translation type="unfinished"/>
+        <translation>Azonosítás</translation>
     </message>
     <message>
         <location line="-3"/>
         <source>unknown Key</source>
-        <translation type="unfinished"/>
+        <translation>ismeretlen kulcs</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>anonymous</source>
-        <translation type="unfinished"/>
+        <translation>névtelen</translation>
     </message>
     <message>
         <location line="-20"/>
         <source>Identity&amp;nbsp;name</source>
-        <translation type="unfinished"/>
+        <translation>Személyazonosság&amp;nbsp;név</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Identity&amp;nbsp;Id</source>
-        <translation type="unfinished"/>
+        <translation>Személyazonosság&amp;nbsp;azonosító</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -9217,7 +9439,7 @@ prevents the message to be forwarded to your friends.</source>
     <message>
         <location line="-14"/>
         <source>[Unknown]</source>
-        <translation type="unfinished"/>
+        <translation>[Ismeretlen]</translation>
     </message>
 </context>
 <context>
@@ -9234,16 +9456,124 @@ prevents the message to be forwarded to your friends.</source>
     </message>
 </context>
 <context>
+    <name>GxsTransportStatistics</name>
+    <message>
+        <location filename="../gui/statistics/GxsTransportStatistics.ui" line="+14"/>
+        <source>Router Statistics</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>GroupBox</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>ID</source>
+        <translation>Azonosító</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Destination</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Data status</source>
+        <translation>Adatkapcsolat állapota</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Data size</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Data hash</source>
+        <translation>HASH adatok</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Sending time (secs ago)</source>
+        <translation>Elküldés ideje (eltelt másodperc)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Group ID</source>
+        <translation>Csoportazonosító</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Gxs Transport Groups:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Group ID / Author</source>
+        <translation>Csoportazonosító / Szerző</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Number of messages / Publish TS</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Local size of data</source>
+        <translation>Helyi adatméret</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Subscribed</source>
+        <translation>Feliratkozva</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Popularity</source>
+        <translation>Népszerüség</translation>
+    </message>
+    <message>
+        <location filename="../gui/statistics/GxsTransportStatistics.cpp" line="+139"/>
+        <source>Details</source>
+        <translation>Részletek</translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>Unknown Peer</source>
+        <translation>Ismeretlen kapcsolat</translation>
+    </message>
+    <message>
+        <location line="+40"/>
+        <source>Pending data items</source>
+        <translation>Függőben levő tételek</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Unknown</source>
+        <translation>Ismeretlen</translation>
+    </message>
+    <message>
+        <location line="+51"/>
+        <source>Yes</source>
+        <translation>Igen</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>No</source>
+        <translation>Nem</translation>
+    </message>
+</context>
+<context>
     <name>GxsTunnelsDialog</name>
     <message>
-        <location filename="../gui/statistics/TurtleRouterDialog.cpp" line="+306"/>
+        <location filename="../gui/statistics/TurtleRouterDialog.cpp" line="+329"/>
         <source>Authenticated tunnels:</source>
-        <translation type="unfinished"/>
+        <translation>Azonosított csatornák</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Tunnel ID: %1</source>
-        <translation type="unfinished"/>
+        <translation>Alagút azonosító: %1</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9258,22 +9588,22 @@ prevents the message to be forwarded to your friends.</source>
     <message>
         <location line="+1"/>
         <source>status: %1</source>
-        <translation type="unfinished"/>
+        <translation>állapot: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>total sent: %1 bytes</source>
-        <translation type="unfinished"/>
+        <translation>elküldve: %1 byte</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>total recv: %1 bytes</source>
-        <translation type="unfinished"/>
+        <translation>fogadva: %1 byte</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Unknown Peer</source>
-        <translation type="unfinished"/>
+        <translation>Ismeretlen kapcsolat</translation>
     </message>
 </context>
 <context>
@@ -9460,7 +9790,7 @@ prevents the message to be forwarded to your friends.</source>
         <location line="-308"/>
         <location line="+5"/>
         <source>Error Loading Help Contents:</source>
-        <translation type="unfinished"/>
+        <translation>A segítség tartalomjegyzékének betöltése nem sikerült:</translation>
     </message>
 </context>
 <context>
@@ -9489,7 +9819,23 @@ p, li { white-space: pre-wrap; }
 &lt;li style=&quot; font-family:'MS Shell Dlg 2'; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; color:#007af4;&quot;&gt;Retroshare Project Page&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
 &lt;li style=&quot; font-family:'MS Shell Dlg 2'; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; color:#007af4;&quot;&gt;RetroShare Team Blog&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
 &lt;li style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; color:#007af4;&quot;&gt;RetroShare Dev Twitter&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;A RetroShare egy Nyílt Forrású platformok közötti, &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;privát és biztonságos decentralizált kommunikációt nyújtó szolgáltatás.	&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;Segítségével biztonságosan oszthatod meg a barátlistádat, mert &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;egy megbízhatósági hálózat: &quot;web-of-trust&quot; által hitelesíti a partnereket és OpenSSL használatával titkosít minden kommunikációt.  &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;A RetroShare lehetőséget biztosít fájlmegosztásra, beszélgetésre, üzenetküldésre valamint csatornák használatára&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; font-weight:600;&quot;&gt;Hasznos linkek további információhoz:&lt;/span&gt;&lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Weboldal&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; color:#007af4;&quot;&gt;Retroshare Wiki&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; color:#007af4;&quot;&gt;RetroShare Fórum&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; color:#007af4;&quot;&gt;Retroshare Projekt Oldala&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; color:#007af4;&quot;&gt;RetroShare Csapat Blogja&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; color:#007af4;&quot;&gt;RetroShare Fejlesztői Twitter&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -9545,7 +9891,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-97"/>
         <source>Libraries</source>
-        <translation type="unfinished"/>
+        <translation>Könyvtárak</translation>
     </message>
 </context>
 <context>
@@ -9578,7 +9924,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-35"/>
         <source>Error opening help file:</source>
-        <translation type="unfinished"/>
+        <translation>A segítség fájl megnyitása nem sikerült:</translation>
     </message>
 </context>
 <context>
@@ -9586,54 +9932,61 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/HomePage.ui" line="+14"/>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>Forma</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+174"/>
         <source>Did you receive a certificate from a friend?</source>
-        <translation type="unfinished"/>
+        <translation>Kaptál egy tanúsítványt egy barátodtól?</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Add friends certificate</source>
-        <translation type="unfinished"/>
+        <translation>Ismerősök tanusítványainak hozzáadása.</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Add certificate file</source>
-        <translation type="unfinished"/>
+        <translation>Tanusítvány-fájl hozzáadása</translation>
     </message>
     <message>
-        <location line="+91"/>
+        <location line="-151"/>
         <source>Share your RetroShare Key</source>
-        <translation type="unfinished"/>
+        <translation>Saját RetroShare kulcsod megosztása</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>...</source>
-        <translation type="unfinished"/>
+        <translation>...</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>The text below is your own Retroshare certificate. Send it to your friends</source>
-        <translation type="unfinished"/>
+        <translation>Az alábbi szöveghalmaz a te RetroShare tanusítványod. Küld el a barátaidnak.</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Open Source cross-platform, 
 private and secure decentralized communication platform.
 </source>
-        <translation type="unfinished"/>
+        <translation>Nyílt Forrású platformok közötti,
+privát és biztonságos decentralizált kommunikációt nyújtó szolgáltatás.
+</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Launch startup wizard</source>
-        <translation type="unfinished"/>
+        <translation>Nyisd meg az indító varázslót</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+126"/>
+        <source>Do you need help with RetroShare?</source>
+        <translation>Segítségre van szükséged?</translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Open Web Help</source>
-        <translation type="unfinished"/>
+        <translation>Nyisd meg a segítség honlapot</translation>
     </message>
     <message>
         <location filename="../gui/HomePage.cpp" line="+57"/>
@@ -9643,32 +9996,32 @@ private and secure decentralized communication platform.
     <message>
         <location line="+3"/>
         <source>Save your Cert into a File</source>
-        <translation type="unfinished"/>
+        <translation>Mentsd el egy fájlba a tanusítványodat</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Send via Email</source>
-        <translation type="unfinished"/>
+        <translation>Küld el emailben</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Invite via WebMail</source>
-        <translation type="unfinished"/>
+        <translation>Küldj meghívót webmailben</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Recommend friends to each others</source>
-        <translation type="unfinished"/>
+        <translation>Javasolj ismerősöket a többieknek</translation>
     </message>
     <message>
         <location line="+19"/>
-        <source> &lt;h1&gt;&lt;img width=&quot;%1&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Welcome to Retroshare!&lt;/h1&gt;   &lt;p&gt;The first thing you have to do is to &lt;b&gt;make friends&lt;/b&gt;. Once you create a network of Retroshare nodes, or join an existing network,	  you&apos;ll be able to exchange files, chat, talk in forums, etc. &lt;/p&gt;	&lt;div align=center&gt;	&lt;IMG align=&quot;center&quot; width=&quot;%2&quot; src=&quot;:/images/network_map.png&quot;/&gt;     &lt;/div&gt;   &lt;p&gt;To do so, use the current page to exchange certificates with other persons you want your Retroshare node to connect to.&lt;/p&gt;    &lt;p&gt;Another option is to search the internet for &quot;Retroshare chat servers&quot; (independently administrated). These servers allow you to exchange 	certificates with a dedicated Retroshare node, through which	  you will be able to meet other people anonymously.&lt;/p&gt; </source>
+        <source> &lt;h1&gt;&lt;img width=&quot;%1&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Welcome to Retroshare!&lt;/h1&gt;   &lt;p&gt;You need to &lt;b&gt;make friends&lt;/b&gt;! After you create a network of friends or join an existing network,	  you&apos;ll be able to exchange files, chat, talk in forums, etc. &lt;/p&gt;	&lt;div align=center&gt;	&lt;IMG align=&quot;center&quot; width=&quot;%2&quot; src=&quot;:/images/network_map.png&quot;/&gt;     &lt;/div&gt;   &lt;p&gt;To do so, copy your certificate on this page and send it to friends, and add your friends&apos; certificate.&lt;/p&gt;    &lt;p&gt;Another option is to search the internet for &quot;Retroshare chat servers&quot; (independently administrated). These servers allow you to exchange 	certificates with a dedicated Retroshare node, through which	  you will be able to anonymously meet other people.&lt;/p&gt; </source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location line="+61"/>
         <source>RetroShare Invite</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare meghívó</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -9678,7 +10031,7 @@ private and secure decentralized communication platform.
     <message>
         <location line="+5"/>
         <source>Save as...</source>
-        <translation type="unfinished"/>
+        <translation>Mentés mint...</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -9688,7 +10041,7 @@ private and secure decentralized communication platform.
     <message>
         <location filename="../gui/HomePage.h" line="+47"/>
         <source>Home</source>
-        <translation type="unfinished"/>
+        <translation>Kezdőlap</translation>
     </message>
 </context>
 <context>
@@ -9697,17 +10050,17 @@ private and secure decentralized communication platform.
         <location filename="../gui/Identity/IdDetailsDialog.ui" line="+14"/>
         <location filename="../gui/Identity/IdDetailsDialog.cpp" line="+85"/>
         <source>Person Details</source>
-        <translation type="unfinished"/>
+        <translation>Személyes adatok</translation>
     </message>
     <message>
         <location line="+46"/>
         <source>Identity Info</source>
-        <translation type="unfinished"/>
+        <translation>Személyazonosság információ</translation>
     </message>
     <message>
         <location line="+33"/>
         <source>Friends votes:</source>
-        <translation type="unfinished"/>
+        <translation>Ismerősők szavazatai</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -9722,7 +10075,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+62"/>
         <source>Owner node ID :</source>
-        <translation type="unfinished"/>
+        <translation>Tulajdonos csomópont azonosító :</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -9732,48 +10085,48 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+7"/>
         <source>Owner node name :</source>
-        <translation type="unfinished"/>
+        <translation>Csomópont tulajdonos neve:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Identity name :</source>
-        <translation type="unfinished"/>
+        <translation>Személyazonosság név :</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Identity ID :</source>
-        <translation type="unfinished"/>
+        <translation>Személyazonosság azonosító :</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Last used:</source>
-        <translation type="unfinished"/>
+        <translation>Utoljára használva:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Ban-option:</source>
-        <translation type="unfinished"/>
+        <translation>Letiltási opció:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Auto-Ban all identities signed by the same node</source>
-        <translation type="unfinished"/>
+        <translation>Automatikusan bannolj minden személyazonosságot amelyet ugyanez a csomópont írt alá</translation>
     </message>
     <message>
         <location line="+91"/>
         <source>Your Avatar</source>
         <extracomment>Click here to change your avatar</extracomment>
-        <translation type="unfinished"/>
+        <translation>Saját avatár</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Send Invite</source>
-        <translation type="unfinished"/>
+        <translation>Meghívó küldése</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Positive votes</source>
-        <translation type="unfinished"/>
+        <translation>Elismerő szavazatok</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9784,7 +10137,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-3"/>
         <source>Negative votes</source>
-        <translation type="unfinished"/>
+        <translation>Bíráló szavazatok</translation>
     </message>
     <message>
         <location line="-250"/>
@@ -9794,24 +10147,24 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-55"/>
         <source>Your opinion:</source>
-        <translation type="unfinished"/>
+        <translation>A véleményed:</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Negative</source>
-        <translation type="unfinished"/>
+        <translation>rossz</translation>
     </message>
     <message>
         <location line="+9"/>
         <location filename="../gui/Identity/IdDetailsDialog.cpp" line="+228"/>
         <source>Neutral</source>
-        <translation type="unfinished"/>
+        <translation>semleges</translation>
     </message>
     <message>
         <location line="+9"/>
         <location filename="../gui/Identity/IdDetailsDialog.cpp" line="-5"/>
         <source>Positive</source>
-        <translation type="unfinished"/>
+        <translation>jó</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -9821,12 +10174,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-79"/>
         <source>Overall:</source>
-        <translation type="unfinished"/>
+        <translation>Általánosan</translation>
     </message>
     <message>
         <location filename="../gui/Identity/IdDetailsDialog.cpp" line="-131"/>
         <source> [unverified]</source>
-        <translation type="unfinished"/>
+        <translation> [hitelesítetlen]</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -9836,17 +10189,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+4"/>
         <source>Anonymous Id</source>
-        <translation>Névtelen Id</translation>
+        <translation>Névtelen azonosító</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Identity owned by you, linked to your Retroshare node</source>
-        <translation type="unfinished"/>
+        <translation>A te személyazonosságod, linkelve a Retroshare csomópontodhoz</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Anonymous identity, owned by you</source>
-        <translation type="unfinished"/>
+        <translation>A te személyazonosságod, Álnév</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -9866,22 +10219,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+3"/>
         <source>Anonymous identity</source>
-        <translation type="unfinished"/>
+        <translation>Névtelen személyazonosság</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>+50 Known PGP</source>
-        <translation type="unfinished"/>
+        <translation>50-nél több ismert PGP</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>+10 UnKnown PGP</source>
-        <translation type="unfinished"/>
+        <translation>10-nél több ismeretlen PGP</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>+5 Anon Id</source>
-        <translation type="unfinished"/>
+        <translation>+5 Névtelen azonosító</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -9921,24 +10274,24 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+8"/>
         <source>You have a friend invite</source>
-        <translation type="unfinished"/>
+        <translation>Van egy barát felkérésed</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+9"/>
         <source>Respond now:</source>
-        <translation type="unfinished"/>
+        <translation>Válasz most:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Thanks, &lt;br&gt;</source>
-        <translation type="unfinished"/>
+        <translation>Kösz, &lt;br&gt;</translation>
     </message>
 </context>
 <context>
     <name>IdDialog</name>
     <message>
-        <location filename="../gui/Identity/IdDialog.cpp" line="+157"/>
-        <location line="+88"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="+161"/>
+        <location line="+89"/>
         <source>All</source>
         <translation>Összes</translation>
     </message>
@@ -9953,71 +10306,59 @@ p, li { white-space: pre-wrap; }
         <translation>Keresés</translation>
     </message>
     <message>
-        <location line="+1458"/>
+        <location line="+1499"/>
         <source>Anonymous Id</source>
-        <translation>Névtelen Id</translation>
+        <translation>Névtelen azonosító</translation>
     </message>
     <message>
-        <location line="-1472"/>
+        <location line="-1513"/>
         <source>Create new Identity</source>
         <translation>Új személyazonosság létrehozása</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Create new circle</source>
-        <translation type="unfinished"/>
+        <translation>Hozz létre új kört</translation>
     </message>
     <message>
         <location filename="../gui/Identity/IdDialog.ui" line="+231"/>
         <source>Persons</source>
-        <translation type="unfinished"/>
+        <translation>Személyek</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Votes</source>
-        <translation type="unfinished"/>
+        <translation>Szavazatok</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Person</source>
-        <translation type="unfinished"/>
+        <translation>Személy</translation>
     </message>
     <message>
-        <location line="+178"/>
+        <location line="+184"/>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>Bezárás</translation>
     </message>
     <message>
-        <location line="+87"/>
+        <location line="+93"/>
         <source>Ban-option:</source>
-        <translation type="unfinished"/>
+        <translation>Letiltási opció:</translation>
     </message>
     <message>
-        <location line="+30"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Your own opinion about an identity rules the visibility of that identity for yourself and your friend nodes. Your own opinion is shared among friends and used to compute a reputation score: If your opinion about an identity is neutral, the reputation score is the average of your friend's opinions. If not, your own opinion gives the score.&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The overall score is used in chat lobbies, forums and channels to decide on the actions to take for each specific identity. When the overall score is lower than -0.6, the identity is banned, which prevents all messages and forums/channels authored by this identity to be forwarded, both ways. Some forums also have special anti-spam flags that require a higher reputation level, making them more sensitive to bad opinions. Banned identities gradually lose their activity and eventually disappear (after 30 days).  &lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+50"/>
+        <location line="+81"/>
         <source>Auto-Ban all identities signed by the same node</source>
-        <translation type="unfinished"/>
+        <translation>Automatikusan bannolj minden Személyazonosságot amelyet ugyanez a csomópont írt alá</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Friend votes:</source>
-        <translation type="unfinished"/>
+        <translation>Ismerős szavazatai:</translation>
     </message>
     <message>
         <location line="+183"/>
         <source>Positive votes</source>
-        <translation type="unfinished"/>
+        <translation>Elismerő szavazatok</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10028,187 +10369,200 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-3"/>
         <source>Negative votes</source>
-        <translation type="unfinished"/>
+        <translation>Bíráló szavazatok</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Usage statistics</source>
-        <translation type="unfinished"/>
+        <translation>Használati statisztika</translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+37"/>
         <location line="+43"/>
-        <location filename="../gui/Identity/IdDialog.cpp" line="-72"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="-67"/>
         <source>Circles</source>
-        <translation type="unfinished"/>
+        <translation>Körök</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Circle name</source>
-        <translation type="unfinished"/>
+        <translation>Kör neve</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Membership</source>
-        <translation type="unfinished"/>
+        <translation>Tagság</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Public Circles</source>
-        <translation type="unfinished"/>
+        <translation>Nyilvános körök</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Personal Circles</source>
-        <translation type="unfinished"/>
+        <translation>Személyes körök</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Edit identity</source>
-        <translation type="unfinished"/>
+        <translation>Személyazonosság szerkesztése</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Delete identity</source>
-        <translation type="unfinished"/>
+        <translation>Személyazonosság törlése</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Chat with this peer</source>
-        <translation type="unfinished"/>
+        <translation>Beszélgetés ezzel a partnerrel</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Launches a distant chat with this peer</source>
-        <translation type="unfinished"/>
+        <translation>Távoli beszélgetést kezdeményez ezzel a partnerrel</translation>
     </message>
     <message>
-        <location line="-328"/>
+        <location line="-326"/>
         <source>Owner node ID :</source>
-        <translation type="unfinished"/>
+        <translation>Tulajdonos csomópont azonosító :</translation>
     </message>
     <message>
         <location line="-31"/>
         <source>Identity name :</source>
-        <translation type="unfinished"/>
+        <translation>Személyazonosság név :</translation>
     </message>
     <message>
-        <location line="-578"/>
+        <location line="-591"/>
         <source>()</source>
-        <translation type="unfinished"/>
+        <translation>()</translation>
     </message>
     <message>
         <location line="+139"/>
         <source>Identity ID</source>
-        <translation type="unfinished"/>
+        <translation>Személyazonosság azonosító</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.cpp" line="+2139"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="+2229"/>
         <source>Send message</source>
-        <translation type="unfinished"/>
+        <translation>Üzenet elküldése</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.ui" line="+279"/>
+        <location filename="../gui/Identity/IdDialog.ui" line="+291"/>
         <source>Identity info</source>
-        <translation type="unfinished"/>
+        <translation>Személyazonosság információ</translation>
     </message>
     <message>
-        <location line="+208"/>
+        <location line="+209"/>
         <source>Identity ID :</source>
-        <translation type="unfinished"/>
+        <translation>Személyazonosság azonosító :</translation>
     </message>
     <message>
         <location line="-24"/>
         <source>Owner node name :</source>
-        <translation type="unfinished"/>
+        <translation>Csomópont tulajdonos neve:</translation>
     </message>
     <message>
-        <location line="-522"/>
+        <location line="-535"/>
         <source>Create new...</source>
-        <translation type="unfinished"/>
+        <translation>Új létrehozása</translation>
     </message>
     <message>
-        <location line="+478"/>
+        <location line="+491"/>
         <source>Type:</source>
         <translation>Típus:</translation>
     </message>
     <message>
         <location line="+117"/>
         <source>Send Invite</source>
-        <translation type="unfinished"/>
+        <translation>Meghívó küldése</translation>
     </message>
     <message>
-        <location line="-251"/>
+        <location line="-252"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Average opinion of neighbor nodes about this identity. Negative is bad,&lt;/p&gt;&lt;p&gt;positive is good. Zero is neutral.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location line="+10"/>
         <source>Your opinion:</source>
+        <translation>A véleményed:</translation>
+    </message>
+    <message>
+        <location line="+37"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Your own opinion about an identity rules the visibility of that identity for yourself and your friend nodes. Your own opinion is shared among friends and used to compute a reputation score: If your opinion about an identity is neutral, the reputation score is the difference between friend's positive and negative opinions. If not, your own opinion gives the score.&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The overall score is used in chat lobbies, forums and channels to decide on the actions to take for each specific identity. When the overall score is lower than -1, the identity is banned, which prevents all messages and forums/channels authored by this identity to be forwarded, both ways. Some forums also have special anti-spam flags that require a non negative reputation level, making them more sensitive to bad opinions. Banned identities gradually lose their activity and eventually disappear (after 5 days).&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You can change the thresholds and the time of inactivity to delete identities in preferences -&amp;gt; people. &lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+21"/>
         <source>Negative</source>
-        <translation type="unfinished"/>
+        <translation>rossz</translation>
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/Identity/IdDialog.cpp" line="-486"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="-537"/>
         <source>Neutral</source>
-        <translation type="unfinished"/>
+        <translation>semleges</translation>
     </message>
     <message>
         <location line="+9"/>
         <location filename="../gui/Identity/IdDialog.cpp" line="-5"/>
         <source>Positive</source>
-        <translation type="unfinished"/>
+        <translation>jó</translation>
     </message>
     <message>
-        <location line="-54"/>
+        <location line="-55"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Overall reputation score, accounting for yours and your friends&apos;.&lt;/p&gt;&lt;p&gt;Negative is bad, positive is good. Zero is neutral. If the score is too low,&lt;/p&gt;&lt;p&gt;the identity is flagged as bad, and will be filtered out in forums, chat lobbies,&lt;/p&gt;&lt;p&gt;channels, etc.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+87"/>
         <source>Overall:</source>
-        <translation type="unfinished"/>
+        <translation>Általánosan</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.cpp" line="-1593"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="-1637"/>
         <source>Anonymous</source>
         <translation>Névtelen</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>ID</source>
-        <translation type="unfinished"/>
+        <translation>Azonosító</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Search ID</source>
-        <translation type="unfinished"/>
+        <translation>Azonosító keresése</translation>
     </message>
     <message>
-        <location line="+1179"/>
+        <location line="+1200"/>
         <source>This identity is owned by you</source>
-        <translation type="unfinished"/>
+        <translation>Ez a személyazonosság a tiéd</translation>
     </message>
     <message>
-        <location line="-1345"/>
+        <location line="-1367"/>
         <source>My own identities</source>
-        <translation type="unfinished"/>
+        <translation>Saját személyazonosságaim</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>My contacts</source>
-        <translation type="unfinished"/>
+        <translation>Kapcsolataim</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+81"/>
         <source>Show Items</source>
-        <translation type="unfinished"/>
+        <translation>Elemek megjelenítése</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -10221,9 +10575,9 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+229"/>
+        <location line="+244"/>
         <source>Other circles</source>
-        <translation type="unfinished"/>
+        <translation>Más körök</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -10233,17 +10587,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+113"/>
         <source>Circle ID: </source>
-        <translation type="unfinished"/>
+        <translation>Kör azonosító:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: </source>
-        <translation type="unfinished"/>
+        <translation>Láthatóság:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Private (only visible to invited members)</source>
-        <translation type="unfinished"/>
+        <translation>Magán (csak a meghívottak láthatják)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10253,22 +10607,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+2"/>
         <source>Public</source>
-        <translation type="unfinished"/>
+        <translation>Nyilvános</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Your role: </source>
-        <translation type="unfinished"/>
+        <translation>A szereped:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Administrator (Can edit invite list, and request membership).</source>
-        <translation type="unfinished"/>
+        <translation>Adminisztrátor (szerkesztheti a meghívottak névsorát és tagságot kérelmezhet)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>User (Can only request membership).</source>
-        <translation type="unfinished"/>
+        <translation>Felhasználó (csak tagságot kérelmezhet)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10288,97 +10642,92 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+2"/>
         <source>Your status: </source>
-        <translation type="unfinished"/>
+        <translation>Tagsági állapotod:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Full member (you have access to data limited to this circle)</source>
-        <translation type="unfinished"/>
+        <translation>Teljes jogú (hozzáférsz a jelen körre korlátozott adatokhoz)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Not a member (do not have access to data limited to this circle)</source>
-        <translation type="unfinished"/>
+        <translation>Nem-tag (nem férsz hozzá a kör adataihoz)</translation>
     </message>
     <message>
-        <location line="+94"/>
-        <source>Unknown ID :</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+3"/>
+        <location line="+97"/>
         <source>Identity ID: </source>
-        <translation type="unfinished"/>
+        <translation>Személyazonosság azonosító:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Status: </source>
-        <translation type="unfinished"/>
+        <translation>Állapot:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Full member</source>
-        <translation type="unfinished"/>
+        <translation>Teljes jogú tag</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Invited by admin</source>
-        <translation type="unfinished"/>
+        <translation>Az admin által meghívva</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Subscription request pending</source>
-        <translation type="unfinished"/>
+        <translation>Feliratkozási kérelem függőben</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>unknown</source>
-        <translation type="unfinished"/>
+        <translation>ismeretlen</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Invited</source>
-        <translation type="unfinished"/>
+        <translation>Meghívott</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Subscription pending</source>
-        <translation type="unfinished"/>
+        <translation>Feliratkozás függőben</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Member</source>
-        <translation type="unfinished"/>
+        <translation>Tag</translation>
     </message>
     <message>
         <location line="+278"/>
         <source>Edit Circle</source>
-        <translation type="unfinished"/>
+        <translation>Kör szerkesztése</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>See details</source>
-        <translation type="unfinished"/>
+        <translation>Részletek megtekintése</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+41"/>
         <source>Request subscription</source>
-        <translation type="unfinished"/>
+        <translation>Feliratkozási kérelem</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Accept circle invitation</source>
-        <translation type="unfinished"/>
+        <translation>Kör-meghívó elfogadása</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Quit this circle</source>
-        <translation type="unfinished"/>
+        <translation>Kilépés a körből</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Cancel subscribe request</source>
-        <translation type="unfinished"/>
+        <translation>Feliratkozási kérelem visszavonása</translation>
     </message>
     <message>
         <location line="+40"/>
@@ -10386,68 +10735,97 @@ p, li { white-space: pre-wrap; }
         <location line="+26"/>
         <location line="+2"/>
         <source>for identity </source>
-        <translation type="unfinished"/>
+        <translation>ehhez a személyazonossághoz</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Revoke this member</source>
-        <translation type="unfinished"/>
+        <translation>Tagság megvonása</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Grant membership</source>
-        <translation type="unfinished"/>
+        <translation>Tagság megadása</translation>
     </message>
     <message>
-        <location line="+308"/>
+        <location line="+310"/>
         <source>
 This identity has a unsecure fingerprint (It's probably quite old).
 You should get rid of it now and use a new one.
 These identities will soon be not supported anymore.</source>
-        <translation type="unfinished"/>
+        <translation>
+Ennek a személyazonosságnak nem biztonságos az ujjlenyomata (valószínűleg túl régi).
+Szabadulj meg tőle és készíts egy újat.
+Ezek a személyazonosságok hamarosan kikerülnek a támogatásból.</translation>
     </message>
     <message>
         <location line="+33"/>
-        <location line="+227"/>
+        <location line="+247"/>
         <source>[Unknown node]</source>
-        <translation type="unfinished"/>
+        <translation>[Ismeretlen csomópont]</translation>
     </message>
     <message>
-        <location line="-222"/>
+        <location line="-242"/>
         <location line="+1"/>
         <source>Unverified signature from node </source>
-        <translation type="unfinished"/>
+        <translation>A csomópont aláírása nem hitelesített</translation>
     </message>
     <message>
         <location line="+4"/>
         <location line="+1"/>
         <source>Unchecked signature</source>
-        <translation type="unfinished"/>
+        <translation>Ellenőrizetlen aláírás</translation>
     </message>
     <message>
-        <location line="+186"/>
+        <location line="+200"/>
         <source> [unverified]</source>
-        <translation type="unfinished"/>
+        <translation> [hitelesítetlen]</translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+68"/>
         <source>Identity owned by you, linked to your Retroshare node</source>
-        <translation type="unfinished"/>
+        <translation>A te személyazonosságod, linkelve a Retroshare csomópontodhoz</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Identity owned by you, linked to your Retroshare node but not yet validated</source>
+        <translation>A te személyazonosságod, linkelve a Retroshare csomópontodhoz de még nincs érvényesítve</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Anonymous identity, owned by you</source>
-        <translation type="unfinished"/>
+        <translation>A te személyazonosságod, névtelen</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Anonymous identity</source>
+        <translation>Névtelen személyazonosság</translation>
+    </message>
+    <message>
+        <location line="+136"/>
+        <source>Message in chat room %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+655"/>
+        <location line="+269"/>
+        <source>information</source>
+        <translation>Információ</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>This identity link was copied to your clipboard. Paste it in a mail, or a message to transmit the identity to someone.</source>
+        <translation>A személyazonosság a vágólapra lett másolva. Illeszd be egy e-mailbe vagy egy üzenetbe, hogy eljuttasd valakihez!</translation>
+    </message>
+    <message>
+        <location line="+196"/>
+        <location line="+29"/>
+        <source>Copy identity to clipboard</source>
+        <translation>Személyazonosság másolása a vágólapra</translation>
+    </message>
+    <message>
+        <location line="+119"/>
         <source>Send invite?</source>
-        <translation type="unfinished"/>
+        <translation>Küldesz meghívót</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -10455,17 +10833,22 @@ These identities will soon be not supported anymore.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="-2179"/>
+        <location line="-2317"/>
         <source>Banned</source>
-        <translation type="unfinished"/>
+        <translation>Letiltva</translation>
     </message>
     <message>
         <location line="+59"/>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Identities&lt;/h1&gt;    			&lt;p&gt;In this tab you can create/edit &lt;b&gt;pseudo-anonymous identities&lt;/b&gt;, and &lt;b&gt;circles&lt;/b&gt;.&lt;/p&gt;                			&lt;p&gt;&lt;b&gt;Identities&lt;/b&gt; are used to securely identify your data: sign messages in chat lobbies, forum and channel posts,				receive feedback using the Retroshare built-in email system, post comments 				after channel posts, chat using secured tunnels, etc.&lt;/p&gt; 			&lt;p&gt;Identities can optionally be &lt;b&gt;signed&lt;/b&gt; by your Retroshare node&apos;s certificate.   			Signed identities are easier to trust but are easily linked to your node&apos;s IP address.&lt;/p&gt;  			&lt;p&gt;&lt;b&gt;Anonymous identities&lt;/b&gt; allow you to anonymously interact with other users. They cannot be   			spoofed, but noone can prove who really owns a given identity.&lt;/p&gt;                     &lt;p&gt;&lt;b&gt;Circles&lt;/b&gt; are groups of identities (anonymous or signed), that are shared at a distance over the network. They can be                 		used to restrict the visibility to forums, channels, etc. &lt;/p&gt;                     &lt;p&gt;An &lt;b&gt;circle&lt;/b&gt; can be restricted to another circle, thereby limiting its visibility to members of that circle                         or even self-restricted, meaning that it is only visible to invited members.&lt;/p&gt;</source>
-        <translation type="unfinished"/>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Személyazonosságok&lt;/h1&gt;    			&lt;p&gt;Ezen a fülön készíthetsz új vagy szerkesztheted a már meglévő &lt;b&gt;ál-névtelen személyazonosságokat&lt;/b&gt;, és &lt;b&gt;köröket&lt;/b&gt;.&lt;/p&gt;                			&lt;p&gt;A &lt;b&gt;személyazonosságokat&lt;/b&gt; használjuk az adataid biztonságos azonosításához: aláírják az üzeneteid a társalgószobákban, a fórum- és csatorna hozzászólásaidat, 				visszajelzést kapnak a Retroshare beépített e-mail rendszerén keresztül, hozzászólhatsz 				csatorna bejegyzésekhez, biztonságos alagutakon keresztül beszélgethetsz, stb.&lt;/p&gt; 			&lt;p&gt;Személyazonosságaidat&lt;b&gt;aláírhatod&lt;/b&gt; a Retroshare csomópontod tanúsítványával.   			Az aláírt Személyazonosságok jobban ellenőrizhetőbbek ezért megbízhatóbbnak számíthatnak, ugyanakkor hozzá vannak kapcsolva a csomópontod IP címéhez.&lt;/p&gt;  			&lt;p&gt;Az úgynevezett&lt;b&gt;Álnevek&lt;/b&gt; segítségével névtelenséged megőrzésével léphetsz kapcsolatba a többiekkel. Nem visszakereshető,  			ezáltal senki sem tudhatja, hogy pontosan kihez is tartozik egy ilyen személyazonosság.&lt;/p&gt;                     &lt;p&gt;A &lt;b&gt;Körök&lt;/b&gt; tulajdonképpen a hálózat személyazonosságainak (Álnév típusú, vagy aláírt) részhalmazai. Felhasználhatók  arra,              		hogy szigorítsuk a hozzáférést egy fórumhoz, csatornához, stb. &lt;/p&gt;                     &lt;p&gt;Egy &lt;b&gt;kör&lt;/b&gt; szűkíthető további körökkel, ezáltal láthatatlanná téve bizonyos tartalmakat olyanok számára akik nem tagjai a szűkebb köröknek. Sőt egy kör önmaga is lehet korlátozott, ez azt jelenti, hogy csak a meghívott személyek számára lesz látható a tartalom.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="+1514"/>
+        <location line="+401"/>
+        <source>Unknown ID:</source>
+        <translation>Ismeretlen azonosító:</translation>
+    </message>
+    <message>
+        <location line="+1157"/>
         <source> positive </source>
         <translation type="unfinished"/>
     </message>
@@ -10502,12 +10885,12 @@ These identities will soon be not supported anymore.</source>
     <message>
         <location line="+12"/>
         <source>Channels</source>
-        <translation type="unfinished"/>
+        <translation>Csatornák</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Forums</source>
-        <translation type="unfinished"/>
+        <translation>Fórumok</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10517,17 +10900,17 @@ These identities will soon be not supported anymore.</source>
     <message>
         <location line="+1"/>
         <source>Chat</source>
-        <translation type="unfinished"/>
+        <translation>Beszélgetés</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>Ismeretlen</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>[Unknown]</source>
-        <translation type="unfinished"/>
+        <translation>[Ismeretlen]</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10545,7 +10928,7 @@ These identities will soon be not supported anymore.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>Message/vote/comment</source>
         <translation type="unfinished"/>
     </message>
@@ -10555,14 +10938,9 @@ These identities will soon be not supported anymore.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+5"/>
-        <source>Message in chat lobby %1</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+4"/>
+        <location line="+9"/>
         <source>Distant message signature validation.</source>
-        <translation type="unfinished"/>
+        <translation>Távoli üzenet aláírásának hitelesítése.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10572,7 +10950,7 @@ These identities will soon be not supported anymore.</source>
     <message>
         <location line="+4"/>
         <source>Signature validation in distant tunnel system.</source>
-        <translation type="unfinished"/>
+        <translation>Aláírás hitelesítése távoli alagút rendszeren.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10582,27 +10960,27 @@ These identities will soon be not supported anymore.</source>
     <message>
         <location line="+4"/>
         <source>Update of identity data.</source>
-        <translation type="unfinished"/>
+        <translation>Személyazonosság adat frissítése.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Generic signature validation.</source>
-        <translation type="unfinished"/>
+        <translation>Általános aláírás hitelesítés.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Generic signature.</source>
-        <translation type="unfinished"/>
+        <translation>Általános aláírás</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Generic encryption.</source>
-        <translation type="unfinished"/>
+        <translation>Általános titkosítás</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Generic decryption.</source>
-        <translation type="unfinished"/>
+        <translation>Titkosítás feloldása (általános)</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10610,39 +10988,39 @@ These identities will soon be not supported anymore.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+381"/>
+        <location line="+433"/>
         <source>Add to Contacts</source>
-        <translation type="unfinished"/>
+        <translation>Hozzáadás a kapcsolatokhoz</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Remove from Contacts</source>
-        <translation type="unfinished"/>
+        <translation>Törlés a kapcsolatok közül</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Set positive opinion</source>
-        <translation type="unfinished"/>
+        <translation>Dicsérő vélemény</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Set neutral opinion</source>
-        <translation type="unfinished"/>
+        <translation>Semleges vélemény</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Set negative opinion</source>
-        <translation type="unfinished"/>
+        <translation>Rossz vélemény</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+83"/>
         <source>Distant chat cannot work</source>
-        <translation type="unfinished"/>
+        <translation>A távoli beszélgetés nem működik</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Error code</source>
-        <translation type="unfinished"/>
+        <translation>Hibakód</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -10650,21 +11028,21 @@ These identities will soon be not supported anymore.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.ui" line="-548"/>
-        <location line="+218"/>
-        <location filename="../gui/Identity/IdDialog.cpp" line="-2229"/>
+        <location filename="../gui/Identity/IdDialog.ui" line="-561"/>
+        <location line="+224"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="-2199"/>
         <location filename="../gui/Identity/IdDialog.h" line="+60"/>
         <source>People</source>
-        <translation type="unfinished"/>
+        <translation>Személyek</translation>
     </message>
     <message>
-        <location line="+451"/>
+        <location line="+458"/>
         <source>Your Avatar</source>
         <extracomment>Click here to change your avatar</extracomment>
-        <translation type="unfinished"/>
+        <translation>Saját avatár</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.cpp" line="+42"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="-126"/>
         <source>Linked to neighbor nodes</source>
         <translation type="unfinished"/>
     </message>
@@ -10674,7 +11052,7 @@ These identities will soon be not supported anymore.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+1530"/>
+        <location line="+1574"/>
         <source>Linked to a friend Retroshare node</source>
         <translation type="unfinished"/>
     </message>
@@ -10689,64 +11067,64 @@ These identities will soon be not supported anymore.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+529"/>
+        <location line="+577"/>
         <source>Chat with this person</source>
-        <translation type="unfinished"/>
+        <translation>Beszélgetés ezzel a személlyel</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Chat with this person as...</source>
-        <translation type="unfinished"/>
+        <translation>Beszélgetés ezzel a személlyel mint...</translation>
     </message>
     <message>
-        <location line="+78"/>
+        <location line="+124"/>
         <source>Distant chat refused with this person.</source>
-        <translation type="unfinished"/>
+        <translation>A távoli beszélgetés nem engedélyezett ezzel a személlyel.</translation>
     </message>
     <message>
         <location filename="../gui/Identity/IdDialog.ui" line="-67"/>
         <source>Last used:</source>
-        <translation type="unfinished"/>
+        <translation>Utoljára használva:</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.cpp" line="-584"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="-678"/>
         <source>+50 Known PGP</source>
-        <translation type="unfinished"/>
+        <translation>50-nél több ismert PGP</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>+10 UnKnown PGP</source>
-        <translation type="unfinished"/>
+        <translation>10-nél több ismeretlen PGP</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>+5 Anon Id</source>
-        <translation type="unfinished"/>
+        <translation>+5 Névtelen azonosító</translation>
     </message>
     <message>
-        <location line="+261"/>
+        <location line="+267"/>
         <source>Do you really want to delete this identity?</source>
-        <translation type="unfinished"/>
+        <translation>Tényleg törölni szeretnéd ezt a személyazonosságot?</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.ui" line="-451"/>
+        <location filename="../gui/Identity/IdDialog.ui" line="-464"/>
         <source>Owned by</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.cpp" line="-577"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="-606"/>
         <source>Node name:</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location line="+1"/>
         <source>Node Id  :</source>
-        <translation type="unfinished"/>
+        <translation>Csomópont azonosító :</translation>
     </message>
     <message>
-        <location line="+576"/>
+        <location line="+605"/>
         <source>Really delete?</source>
-        <translation type="unfinished"/>
+        <translation>Tényleg törlöd?</translation>
     </message>
 </context>
 <context>
@@ -10759,7 +11137,7 @@ These identities will soon be not supported anymore.</source>
     <message>
         <location line="+7"/>
         <source>Key ID</source>
-        <translation>Kulcs ID</translation>
+        <translation>Kulcs azonosító</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -10774,7 +11152,7 @@ These identities will soon be not supported anymore.</source>
     <message>
         <location line="+74"/>
         <source>PGP Id</source>
-        <translation>PGP id</translation>
+        <translation>PGP azonosító</translation>
     </message>
     <message>
         <location line="-31"/>
@@ -10796,7 +11174,7 @@ These identities will soon be not supported anymore.</source>
         <location line="-12"/>
         <location line="+1"/>
         <location line="+1"/>
-        <location line="+74"/>
+        <location line="+75"/>
         <location line="+1"/>
         <location line="+1"/>
         <location line="+55"/>
@@ -10806,25 +11184,25 @@ These identities will soon be not supported anymore.</source>
         <translation>N/A</translation>
     </message>
     <message>
-        <location line="-104"/>
+        <location line="-105"/>
         <location line="+2"/>
         <source>Edit identity</source>
         <translation>Személyazonosság szerkesztése</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+32"/>
         <source>Error getting key!</source>
         <translation>Hiba a kulcs beolvasásakor!</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Error KeyID invalid</source>
-        <translation>Rossz kulcsID</translation>
+        <translation>Hiba, érvénytelen Kulcs azonosító</translation>
     </message>
     <message>
         <location line="+54"/>
         <source>Unknown GpgId</source>
-        <translation>Ismeretlen GPGID</translation>
+        <translation>Ismeretlen Gpg azonosító</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10832,7 +11210,7 @@ These identities will soon be not supported anymore.</source>
         <translation>Ismeretlen igazi név</translation>
     </message>
     <message>
-        <location line="-251"/>
+        <location line="-252"/>
         <source>Create New Identity</source>
         <translation>Új személyazonosság létrehozása</translation>
     </message>
@@ -10858,7 +11236,7 @@ These identities will soon be not supported anymore.</source>
         <location line="+14"/>
         <location line="+14"/>
         <source>RM</source>
-        <translation type="unfinished"/>
+        <translation>Eltávolítás</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -10869,12 +11247,12 @@ These identities will soon be not supported anymore.</source>
         <location line="-135"/>
         <source>Your Avatar</source>
         <extracomment>Click here to change your avatar</extracomment>
-        <translation type="unfinished"/>
+        <translation>Saját avatár</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Set Avatar</source>
-        <translation type="unfinished"/>
+        <translation>Avatár beállítása</translation>
     </message>
     <message>
         <location line="-166"/>
@@ -10884,10 +11262,10 @@ These identities will soon be not supported anymore.</source>
     <message>
         <location line="-37"/>
         <source>You can have one or more identities. They are used when you write in chat lobbies, forums and channel comments. They act as the destination for distant chat and the Retroshare distant mail system.</source>
-        <translation type="unfinished"/>
+        <translation>Rendelkezhetsz egy vagy több személyazonossággal. Írhatsz velük társalgószobákba, hozzászólhatsz fórumokhoz és csatorna bejegyzésekhez. Végpontként viselkednek távoli beszélgetések valamint Retroshare távoli üzenetküldés esetén.</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdEditDialog.cpp" line="+463"/>
+        <location filename="../gui/Identity/IdEditDialog.cpp" line="+464"/>
         <source>The nickname is too short. Please input at least %1 characters.</source>
         <translation type="unfinished"/>
     </message>
@@ -10907,12 +11285,12 @@ These identities will soon be not supported anymore.</source>
     <message>
         <location line="+25"/>
         <source>KeyId</source>
-        <translation>Kulcs ID</translation>
+        <translation>Kulcs azonosító</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>GXSId</source>
-        <translation type="unfinished"/>
+        <translation>GXS azonosító</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -10937,12 +11315,12 @@ These identities will soon be not supported anymore.</source>
         <location line="-44"/>
         <location line="+9"/>
         <source>GXS id:</source>
-        <translation type="unfinished"/>
+        <translation>GXS azonosító:</translation>
     </message>
     <message>
         <location line="+44"/>
         <source>PGP id:</source>
-        <translation type="unfinished"/>
+        <translation>PGP azonosító:</translation>
     </message>
 </context>
 <context>
@@ -10988,37 +11366,37 @@ These identities will soon be not supported anymore.</source>
 <context>
     <name>ImageUtil</name>
     <message>
-        <location filename="../util/imageutil.cpp" line="+35"/>
+        <location filename="../util/imageutil.cpp" line="+41"/>
         <location line="+6"/>
         <source>Save image</source>
-        <translation type="unfinished"/>
+        <translation>Kép mentése</translation>
     </message>
     <message>
         <location line="-6"/>
         <source>Cannot save the image, invalid filename</source>
-        <translation type="unfinished"/>
+        <translation>Kép mentése sikertelen, érvénytelen fájlnév</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Not an image</source>
-        <translation type="unfinished"/>
+        <translation>Ez nem kép</translation>
     </message>
 </context>
 <context>
     <name>LocalSharedFilesDialog</name>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="+249"/>
-        <location line="+838"/>
+        <location filename="../gui/FileTransfer/SharedFilesDialog.cpp" line="+239"/>
+        <location line="+934"/>
         <source>Open File</source>
         <translation>Fájl megnyitása</translation>
     </message>
     <message>
-        <location line="-836"/>
+        <location line="-932"/>
         <source>Open Folder</source>
         <translation>Mappa megnyitása</translation>
     </message>
     <message>
-        <location line="+225"/>
+        <location line="+230"/>
         <source>Checking...</source>
         <translation>Ellenőrzés...</translation>
     </message>
@@ -11028,17 +11406,27 @@ These identities will soon be not supported anymore.</source>
         <translation>Fájlok ellenőrzése</translation>
     </message>
     <message>
-        <location line="+585"/>
-        <source>Recommend in a message to</source>
-        <translation>Ajánlása üzenetben</translation>
+        <location line="+592"/>
+        <source>Recommend in a message to...</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+8"/>
+        <source>Share on channel...</source>
+        <translation>Megosztás valamelyik csatornán...</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Share on forum...</source>
+        <translation>Megosztás valamelyik fórumon...</translation>
+    </message>
+    <message>
+        <location line="+83"/>
         <source>Set command for opening this file</source>
         <translation>Parancs beállítása a fájl megnyitásához</translation>
     </message>
     <message>
-        <location line="-58"/>
+        <location line="-138"/>
         <source>Collection</source>
         <translation>Kollekció</translation>
     </message>
@@ -11062,7 +11450,7 @@ These identities will soon be not supported anymore.</source>
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/MainWindow.cpp" line="+577"/>
+        <location filename="../gui/MainWindow.cpp" line="+597"/>
         <source>Options</source>
         <translation>Beállítások</translation>
     </message>
@@ -11094,12 +11482,12 @@ These identities will soon be not supported anymore.</source>
         <translation>Gyors beállítások varázsló</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="-271"/>
+        <location filename="../gui/MainWindow.cpp" line="-291"/>
         <source>RetroShare %1 a secure decentralized communication platform</source>
         <translation>RetroShare %1 egy biztonságos, központosítatlan kommunikációs platform</translation>
     </message>
     <message>
-        <location line="+257"/>
+        <location line="+277"/>
         <source>Unfinished</source>
         <translation>Befejezetlen</translation>
     </message>
@@ -11139,7 +11527,7 @@ These identities will soon be not supported anymore.</source>
     <message>
         <location line="+4"/>
         <source>Open Messenger</source>
-        <translation type="unfinished"/>
+        <translation>Üzenő megnyitása</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11182,7 +11570,7 @@ These identities will soon be not supported anymore.</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+94"/>
         <source>%1 new message</source>
         <translation>%1 új üzenet</translation>
     </message>
@@ -11192,7 +11580,7 @@ These identities will soon be not supported anymore.</source>
         <translation>%1 új üzenet</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+49"/>
         <source>Down: %1 (kB/s)</source>
         <translation>Letöltés: %1 (kB/s)</translation>
     </message>
@@ -11212,7 +11600,7 @@ These identities will soon be not supported anymore.</source>
         <translation>%1 csatlakozott barát</translation>
     </message>
     <message>
-        <location line="+384"/>
+        <location line="+361"/>
         <source>Do you really want to exit RetroShare ?</source>
         <translation>Tényleg ki szeretnél lépni a RetroShareből?</translation>
     </message>
@@ -11262,14 +11650,14 @@ These identities will soon be not supported anymore.</source>
         <translation>Szolgáltatás jogosultságok mátrix</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="-888"/>
+        <location filename="../gui/MainWindow.cpp" line="-880"/>
         <source>Statistics</source>
-        <translation type="unfinished"/>
+        <translation>Statisztika</translation>
     </message>
     <message>
         <location line="-3"/>
         <source>Show web interface</source>
-        <translation type="unfinished"/>
+        <translation>Beépített böngésző megnyitása</translation>
     </message>
     <message>
         <location line="-26"/>
@@ -11282,16 +11670,16 @@ These identities will soon be not supported anymore.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+565"/>
+        <location line="+557"/>
         <source>Really quit ?</source>
-        <translation type="unfinished"/>
+        <translation>Tényleg kilépsz?</translation>
     </message>
 </context>
 <context>
     <name>MessageComposer</name>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="+14"/>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="+887"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="+884"/>
         <source>Compose</source>
         <translation>Írás</translation>
     </message>
@@ -11393,14 +11781,14 @@ These identities will soon be not supported anymore.</source>
     </message>
     <message>
         <location line="-82"/>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="-534"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="-533"/>
         <source>Tags</source>
         <translation>Címkék</translation>
     </message>
     <message>
         <location line="-822"/>
         <source>Address list:</source>
-        <translation type="unfinished"/>
+        <translation>Címek listája:</translation>
     </message>
     <message>
         <location line="+109"/>
@@ -11410,12 +11798,12 @@ These identities will soon be not supported anymore.</source>
     <message>
         <location line="+479"/>
         <source>Set Text color</source>
-        <translation type="unfinished"/>
+        <translation>Szövegszin beállítása</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Set Text background color</source>
-        <translation type="unfinished"/>
+        <translation>Szöveg háttérszinének beállítása</translation>
     </message>
     <message>
         <location line="+409"/>
@@ -11515,17 +11903,17 @@ These identities will soon be not supported anymore.</source>
     <message>
         <location line="+29"/>
         <source>All addresses (mixed)</source>
-        <translation type="unfinished"/>
+        <translation>Minden cím (vegyes)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>All people</source>
-        <translation type="unfinished"/>
+        <translation>Minden személy</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>My contacts</source>
-        <translation type="unfinished"/>
+        <translation>Kapcsolataim</translation>
     </message>
     <message>
         <location line="+263"/>
@@ -11538,7 +11926,7 @@ These identities will soon be not supported anymore.</source>
         <translation>Van egy barátajánlásod.</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+13"/>
         <source>This friend is suggested by</source>
         <translation>Ezt a barátot ajánlotta</translation>
     </message>
@@ -11554,12 +11942,12 @@ These identities will soon be not supported anymore.</source>
     </message>
     <message>
         <location line="+46"/>
-        <location line="+1717"/>
+        <location line="+1725"/>
         <source>Save Message</source>
         <translation>Üzenet mentése</translation>
     </message>
     <message>
-        <location line="-1716"/>
+        <location line="-1724"/>
         <source>Message has not been Sent.
 Do you want to save message to draft box?</source>
         <translation>Az üzenet nem lett elküldve.
@@ -11571,7 +11959,7 @@ Szeretnéd piszkozatként menteni az üzenetet?</translation>
         <translation>RetroShare link beillesztése</translation>
     </message>
     <message>
-        <location line="+1291"/>
+        <location line="+1299"/>
         <source>Add to &quot;To&quot;</source>
         <translation>Hozzáadás címzettként</translation>
     </message>
@@ -11775,7 +12163,7 @@ Szeretnéd piszkozatként menteni az üzenetet?</translation>
     <message>
         <location line="+20"/>
         <source>Details</source>
-        <translation type="unfinished"/>
+        <translation>Részletek</translation>
     </message>
     <message>
         <location line="+282"/>
@@ -11833,12 +12221,12 @@ Szeretnéd menteni az üzenetet?</translation>
     <message>
         <location line="+8"/>
         <source>You have a friend invite</source>
-        <translation type="unfinished"/>
+        <translation>Van egy barát felkérésed</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+9"/>
         <source>Respond now:</source>
-        <translation type="unfinished"/>
+        <translation>Válasz most:</translation>
     </message>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="+692"/>
@@ -11851,9 +12239,9 @@ Szeretnéd menteni az üzenetet?</translation>
         <translation>Feladó:</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="-2518"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="-2524"/>
         <source>Friend Nodes</source>
-        <translation type="unfinished"/>
+        <translation>Barát csomópontok</translation>
     </message>
     <message>
         <location line="-23"/>
@@ -11896,30 +12284,30 @@ Szeretnéd menteni az üzenetet?</translation>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+308"/>
-        <location line="+2222"/>
+        <location line="+307"/>
+        <location line="+2229"/>
         <source>Thanks, &lt;br&gt;</source>
-        <translation type="unfinished"/>
+        <translation>Kösz, &lt;br&gt;</translation>
     </message>
     <message>
-        <location line="-1256"/>
+        <location line="-1255"/>
         <source>Distant identity:</source>
-        <translation type="unfinished"/>
+        <translation>Távoli személyazonosság:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>[Missing]</source>
-        <translation type="unfinished"/>
+        <translation>[Hiányzik]</translation>
     </message>
     <message>
         <location line="-95"/>
         <source>Please create an identity to sign distant messages, or remove the distant peers from the destination list.</source>
-        <translation type="unfinished"/>
+        <translation>Hozz létre egy személyazonosságot, hogy aláírd a távoli üzeneteket, vagy töröld a távoli partnereket a cél listáról.</translation>
     </message>
     <message>
         <location line="+97"/>
         <source>Node name &amp; id:</source>
-        <translation type="unfinished"/>
+        <translation>Csomópont név &amp; azonosító:</translation>
     </message>
 </context>
 <context>
@@ -12005,11 +12393,6 @@ Szeretnéd menteni az üzenetet?</translation>
         <translation>Címke szerkesztése</translation>
     </message>
     <message>
-        <location filename="../gui/settings/MessagePage.h" line="+44"/>
-        <source>Message</source>
-        <translation>Üzenet</translation>
-    </message>
-    <message>
         <location filename="../gui/settings/MessagePage.ui" line="-138"/>
         <source>Distant messages:</source>
         <translation>Távoli üzenetek:</translation>
@@ -12018,6 +12401,11 @@ Szeretnéd menteni az üzenetet?</translation>
         <location line="+48"/>
         <source>Load embedded images</source>
         <translation>Beágyazott képek megjelenítése</translation>
+    </message>
+    <message>
+        <location filename="../gui/settings/MessagePage.h" line="+44"/>
+        <source>Mail</source>
+        <translation>Levél</translation>
     </message>
 </context>
 <context>
@@ -12039,7 +12427,7 @@ Szeretnéd menteni az üzenetet?</translation>
 <context>
     <name>MessageWidget</name>
     <message>
-        <location filename="../gui/msgs/MessageWidget.ui" line="+460"/>
+        <location filename="../gui/msgs/MessageWidget.ui" line="+477"/>
         <source>Recommended Files</source>
         <translation>Ajánlott fájlok</translation>
     </message>
@@ -12049,12 +12437,12 @@ Szeretnéd menteni az üzenetet?</translation>
         <translation>Az összes ajánlott fájl letöltése</translation>
     </message>
     <message>
-        <location line="-448"/>
+        <location line="-473"/>
         <source>Subject:</source>
         <translation>Tárgy:</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+58"/>
         <source>From:</source>
         <translation>Feladó:</translation>
     </message>
@@ -12064,24 +12452,24 @@ Szeretnéd menteni az üzenetet?</translation>
         <translation>Címzett:</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+35"/>
         <source>Cc:</source>
         <translation>Másolat:</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+38"/>
         <source>Bcc:</source>
         <translation>Rejtett másolat:</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+35"/>
         <source>Tags:</source>
         <translation>Címkék:</translation>
     </message>
     <message>
-        <location line="+196"/>
+        <location line="+152"/>
         <source>Send Invite</source>
-        <translation type="unfinished"/>
+        <translation>Meghívó küldése</translation>
     </message>
     <message>
         <location line="+139"/>
@@ -12119,7 +12507,7 @@ Szeretnéd menteni az üzenetet?</translation>
         <translation>%1 hozzáadása barátként</translation>
     </message>
     <message>
-        <location line="+189"/>
+        <location line="+193"/>
         <source>No subject</source>
         <translation>Nincs tárgy</translation>
     </message>
@@ -12129,9 +12517,9 @@ Szeretnéd menteni az üzenetet?</translation>
         <translation>Letöltés</translation>
     </message>
     <message>
-        <location line="+483"/>
+        <location line="+510"/>
         <source>Send invite?</source>
-        <translation type="unfinished"/>
+        <translation>Küldesz meghívót?</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -12140,12 +12528,12 @@ Szeretnéd menteni az üzenetet?</translation>
     </message>
     <message>
         <location filename="../gui/msgs/MessageWidget.ui" line="-49"/>
-        <location filename="../gui/msgs/MessageWidget.cpp" line="-482"/>
+        <location filename="../gui/msgs/MessageWidget.cpp" line="-509"/>
         <source>Download all</source>
         <translation>Az összes letöltése</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageWidget.cpp" line="+356"/>
+        <location filename="../gui/msgs/MessageWidget.cpp" line="+383"/>
         <source>Print Document</source>
         <translation>Dokumentum nyomtatása</translation>
     </message>
@@ -12160,25 +12548,25 @@ Szeretnéd menteni az üzenetet?</translation>
         <translation>Html-Fájlok (*.htm *.html);;Összes fájl (*)</translation>
     </message>
     <message>
-        <location line="-513"/>
+        <location line="-544"/>
         <source>Load images always for this message</source>
         <translation>Ezen üzenethez mindig töltse be a képeket</translation>
     </message>
     <message>
-        <location line="+149"/>
+        <location line="+153"/>
         <source>Hide the attachment pane</source>
-        <translation type="unfinished"/>
+        <translation>Csatolmány mező elrejtése</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show the attachment pane</source>
-        <translation type="unfinished"/>
+        <translation>Mutasd a melléklet ablakot</translation>
     </message>
 </context>
 <context>
     <name>MessageWindow</name>
     <message>
-        <location filename="../gui/msgs/MessageWindow.ui" line="+60"/>
+        <location filename="../gui/msgs/MessageWindow.ui" line="+78"/>
         <source>New Message</source>
         <translation>Új üzenet</translation>
     </message>
@@ -12311,7 +12699,7 @@ Szeretnéd menteni az üzenetet?</translation>
     <name>MessagesDialog</name>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="+93"/>
-        <location filename="../gui/MessagesDialog.cpp" line="+634"/>
+        <location filename="../gui/MessagesDialog.cpp" line="+632"/>
         <source>New Message</source>
         <translation>Új üzenet</translation>
     </message>
@@ -12378,7 +12766,7 @@ Szeretnéd menteni az üzenetet?</translation>
     <message>
         <location line="+57"/>
         <location line="+3"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-456"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-454"/>
         <location line="+73"/>
         <location line="+25"/>
         <source>Tags</source>
@@ -12386,7 +12774,7 @@ Szeretnéd menteni az üzenetet?</translation>
     </message>
     <message>
         <location line="+227"/>
-        <location filename="../gui/MessagesDialog.cpp" line="+609"/>
+        <location filename="../gui/MessagesDialog.cpp" line="+607"/>
         <location line="+856"/>
         <location line="+10"/>
         <source>Inbox</source>
@@ -12435,7 +12823,7 @@ Szeretnéd menteni az üzenetet?</translation>
         <translation>Gyors nézet</translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+51"/>
         <location line="+3"/>
         <source>Print...</source>
         <translation>Nyomtatás...</translation>
@@ -12454,7 +12842,7 @@ Szeretnéd menteni az üzenetet?</translation>
     <message>
         <location line="+5"/>
         <source>Buttons Text Beside Icon</source>
-        <translation>Gombok szöveggel és ikonnal</translation>
+        <translation>Szöveg az ikonok mellett</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -12483,7 +12871,7 @@ Szeretnéd menteni az üzenetet?</translation>
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-1579"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-1577"/>
         <source>Reply to All</source>
         <translation>Válasz mindenkinek</translation>
     </message>
@@ -12501,12 +12889,12 @@ Szeretnéd menteni az üzenetet?</translation>
     <message>
         <location line="-73"/>
         <location line="+74"/>
-        <location line="+704"/>
+        <location line="+702"/>
         <source>From</source>
         <translation>Feladó</translation>
     </message>
     <message>
-        <location line="-775"/>
+        <location line="-773"/>
         <location line="+72"/>
         <source>Date</source>
         <translation>Dátum</translation>
@@ -12534,12 +12922,12 @@ Szeretnéd menteni az üzenetet?</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+767"/>
+        <location line="+765"/>
         <source>Click to sort by from</source>
         <translation>Rendezés alak szerint</translation>
     </message>
     <message>
-        <location line="-765"/>
+        <location line="-763"/>
         <source>Click to sort by date</source>
         <translation>Rendezés dátum szerint</translation>
     </message>
@@ -12595,11 +12983,11 @@ Szeretnéd menteni az üzenetet?</translation>
     </message>
     <message>
         <location line="+46"/>
-        <source> &lt;h1&gt;&lt;img width=&quot;%1&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Retroshare has its own internal email system. You can send/receive emails to/from connected friend nodes.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to other people&apos;s Identities using the global routing system. These messages     are always encrypted and signed, and are relayed by intermediate nodes until they reach their final destination. &lt;/p&gt;    &lt;p&gt;Distant messages stay into your Outbox until an acknowledgement of receipt has been received.&lt;/p&gt; &lt;p&gt;Generally, you may use messages to recommend files to your friends by pasting file links,  or recommend friend nodes to other friend nodes, in order to strenghten your network, or send feedback  to a channel&apos;s owner.&lt;/p&gt;                    </source>
+        <source> &lt;h1&gt;&lt;img width=&quot;%1&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Retroshare has its own internal email system. You can send/receive emails to/from connected friend nodes.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to other people&apos;s Identities using the global routing system. These messages     are always encrypted and signed, and are relayed by intermediate nodes until they reach their final destination. &lt;/p&gt;    &lt;p&gt;Distant messages stay into your Outbox until an acknowledgement of receipt has been received.&lt;/p&gt; &lt;p&gt;Generally, you may use messages to recommend files to your friends by pasting file links,  or recommend friend nodes to other friend nodes, in order to strengthen your network, or send feedback  to a channel&apos;s owner.&lt;/p&gt;                    </source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+136"/>
+        <location line="+134"/>
         <source>Starred</source>
         <translation>Csillagozott</translation>
     </message>
@@ -12705,17 +13093,17 @@ Szeretnéd menteni az üzenetet?</translation>
         <translation>Összes:</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="-676"/>
+        <location filename="../gui/MessagesDialog.ui" line="-671"/>
         <source>Messages</source>
         <translation>Üzenetek</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="-1541"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-1539"/>
         <source>Click to sort by signature</source>
         <translation>Rendezés aláírás szerint</translation>
     </message>
     <message>
-        <location line="+1077"/>
+        <location line="+1075"/>
         <source>This message was signed and the signature checks</source>
         <translation>Az üzenet aláírást tartalmazott és az értéke egyezett</translation>
     </message>
@@ -12732,7 +13120,7 @@ Szeretnéd menteni az üzenetet?</translation>
     <message>
         <location filename="../gui/MessagesDialog.h" line="+48"/>
         <source>Mail</source>
-        <translation type="unfinished"/>
+        <translation>Levél</translation>
     </message>
 </context>
 <context>
@@ -12756,9 +13144,9 @@ Szeretnéd menteni az üzenetet?</translation>
 <context>
     <name>MimeTextEdit</name>
     <message>
-        <location filename="../gui/common/MimeTextEdit.cpp" line="+245"/>
+        <location filename="../gui/common/MimeTextEdit.cpp" line="+250"/>
         <source>Paste as plain text</source>
-        <translation type="unfinished"/>
+        <translation>Beillesztés sima szövegként</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12768,7 +13156,7 @@ Szeretnéd menteni az üzenetet?</translation>
     <message>
         <location line="+1"/>
         <source>Select text to hide, then push this button</source>
-        <translation type="unfinished"/>
+        <translation>Jelöld ki az elrejtendő szöveget és nyomd meg a gombot</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12786,7 +13174,7 @@ Szeretnéd menteni az üzenetet?</translation>
     <message>
         <location filename="../gui/feeds/MsgItem.ui" line="+213"/>
         <source>Send Invite</source>
-        <translation type="unfinished"/>
+        <translation>Meghívó küldése</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -12827,7 +13215,7 @@ Szeretnéd menteni az üzenetet?</translation>
     <message>
         <location line="+1"/>
         <source>Reply to invite</source>
-        <translation type="unfinished"/>
+        <translation>Válaszolj a meghívásra</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -12857,7 +13245,7 @@ Szeretnéd menteni az üzenetet?</translation>
     <message>
         <location line="+132"/>
         <source>Send invite?</source>
-        <translation type="unfinished"/>
+        <translation>Küldesz meghívót?</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -12931,44 +13319,12 @@ Szeretnéd menteni az üzenetet?</translation>
         <translation>Keresés a hálózaton</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="+160"/>
+        <location filename="../gui/NetworkDialog.cpp" line="+140"/>
         <source>Name</source>
         <translation>Név</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="+79"/>
-        <source>Did I authenticated peer</source>
-        <translation>Hitelesítettem a partnert?</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Did I sign his PGP key</source>
-        <translation>Aláírtam a PGP kulcsát</translation>
-    </message>
-    <message>
-        <location line="-8"/>
-        <location filename="../gui/NetworkDialog.cpp" line="-46"/>
-        <source>Profile</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>Has signed my key</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Cert Id</source>
-        <translation>Tanúsítávny ID</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <location filename="../gui/NetworkDialog.cpp" line="+4"/>
-        <source>Last used</source>
-        <translation>Utoljára használt</translation>
-    </message>
-    <message>
-        <location line="+9"/>
+        <location filename="../gui/NetworkDialog.ui" line="+49"/>
         <source>Clear</source>
         <translation>Tisztítás</translation>
     </message>
@@ -13028,12 +13384,12 @@ Szeretnéd menteni az üzenetet?</translation>
         <translation>Egy új profil létrehozása</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="+43"/>
+        <location filename="../gui/NetworkDialog.cpp" line="+1"/>
         <source>Peer ID</source>
-        <translation>Partner ID</translation>
+        <translation>Partner azonosító</translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="+49"/>
         <source>Remove unused keys...</source>
         <translation>Használatlan kulcsok eltávolítása...</translation>
     </message>
@@ -13088,146 +13444,34 @@ A biztonság kedvéért a kulcstartód ezt megelőzően el lett mentve egy fájl
         <translation>Nem hozható létre biztonsági mentés. Ellenőrízd a jogosultságokat a PGP mappában, a szabad helyet, stb.</translation>
     </message>
     <message>
-        <location line="+173"/>
-        <source>Personal signature</source>
-        <translation>Személyes aláírás</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>PGP key signed by you</source>
-        <translation>PGP kulcs általad aláírva</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Marginally trusted peer</source>
-        <translation>Részlegesen megbízható partner</translation>
-    </message>
-    <message>
         <location line="+2"/>
-        <source>Fully trusted peer</source>
-        <translation>Teljesen megbízható partner</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Untrusted peer</source>
-        <translation>Nem bizalmas partner</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Yes</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>No</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Last hour</source>
-        <translation>Utolsó óra</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Today</source>
-        <translation>Ma</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Never</source>
-        <translation>Soha</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>%1 days ago</source>
-        <translation>%1 nappal ezelőtt</translation>
-    </message>
-    <message>
-        <location line="+34"/>
-        <source> has authenticated you. 
-Right-click and select &apos;make friend&apos; to be able to connect.</source>
-        <translation> hitelesített téged. 
-Kattints rá jobb gombbal, majd választ ki a &apos;barátság kezdeményezése&apos; menüt, hogy elfogadd a kérést.</translation>
-    </message>
-    <message>
-        <location line="+32"/>
-        <source>yourself</source>
-        <translation>magad</translation>
-    </message>
-    <message>
-        <location line="-272"/>
         <source>Data inconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
         <translation>Adatrendezési hiba a kulcstartóban. Ez valószínűleg egy programhiba. Kérlek lépj kapcsolatba a fejlesztőkkel.</translation>
     </message>
     <message>
-        <location line="-152"/>
-        <source>Has signed your key?</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Id</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source> Do you accept connections signed by this profile?</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Name of the profile</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>This column indicates trust level and whether you signed the profile PGP key</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Did that peer sign your own profile PGP key</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>PGP Key Id of that profile</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Last time this key was used (received time, or to check connection)</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+77"/>
+        <location line="-66"/>
         <source>Export/create a new node</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="-160"/>
+        <location filename="../gui/NetworkDialog.ui" line="-103"/>
         <source>Trusted keys only</source>
-        <translation type="unfinished"/>
+        <translation>Csak megbízható kulcsok</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="-87"/>
-        <source>Trust level</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+45"/>
+        <location filename="../gui/NetworkDialog.cpp" line="-46"/>
         <source>Search name</source>
-        <translation type="unfinished"/>
+        <translation>Név keresése</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Search peer ID</source>
-        <translation type="unfinished"/>
+        <translation>Partner azonosító keresése</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+47"/>
         <source>Profile details...</source>
-        <translation type="unfinished"/>
+        <translation>Profil részletei</translation>
     </message>
     <message>
         <location line="+68"/>
@@ -13265,7 +13509,7 @@ Reported error:</source>
     <message>
         <location line="+7"/>
         <source>Freeze</source>
-        <translation type="unfinished"/>
+        <translation>Befagyasztás</translation>
     </message>
 </context>
 <context>
@@ -13301,7 +13545,7 @@ Reported error:</source>
     <message>
         <location filename="../gui/NewsFeed.ui" line="+72"/>
         <source>Log entries</source>
-        <translation type="unfinished"/>
+        <translation>Naplóbejegyzések</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -13314,19 +13558,19 @@ Reported error:</source>
         <translation>Összes eltávolítása</translation>
     </message>
     <message>
-        <location filename="../gui/NewsFeed.cpp" line="+496"/>
+        <location filename="../gui/NewsFeed.cpp" line="+546"/>
         <source>This is a test.</source>
         <translation>Ez egy teszt.</translation>
     </message>
     <message>
-        <location line="-380"/>
+        <location line="-434"/>
         <source>Newest on top</source>
-        <translation type="unfinished"/>
+        <translation>A legújabb felül</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Oldest on top</source>
-        <translation type="unfinished"/>
+        <translation>A legrégibb felül</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -13336,7 +13580,7 @@ Reported error:</source>
     <message>
         <location filename="../gui/NewsFeed.h" line="+52"/>
         <source>Log</source>
-        <translation type="unfinished"/>
+        <translation>Napló</translation>
     </message>
 </context>
 <context>
@@ -13347,7 +13591,7 @@ Reported error:</source>
         <translation>Hírek</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+37"/>
         <source>Channels</source>
         <translation>Csatornák</translation>
     </message>
@@ -13375,7 +13619,7 @@ Reported error:</source>
     <message>
         <location line="-21"/>
         <source>Chat Room</source>
-        <translation type="unfinished"/>
+        <translation>Társalgószoba</translation>
     </message>
     <message>
         <location line="+147"/>
@@ -13407,27 +13651,32 @@ Reported error:</source>
     <message>
         <location line="-104"/>
         <source>Ip security</source>
-        <translation type="unfinished"/>
+        <translation>IP biztonság</translation>
     </message>
     <message>
-        <location line="-56"/>
+        <location line="-63"/>
         <source>Friend Connected</source>
-        <translation type="unfinished"/>
+        <translation>Kapcsolódó ismerős</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Circles</source>
+        <translation>Körök</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Links</source>
-        <translation type="unfinished"/>
+        <translation>Hivatkozások</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Mails</source>
-        <translation type="unfinished"/>
+        <translation>Levelek</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Chats</source>
-        <translation type="unfinished"/>
+        <translation>Társalgószobák</translation>
     </message>
     <message>
         <location line="+125"/>
@@ -13442,32 +13691,42 @@ Reported error:</source>
     <message>
         <location line="+7"/>
         <source>Private Chat</source>
-        <translation>Privát csevegés</translation>
+        <translation>Privát beszélgetés</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Group Chat</source>
-        <translation>Csoportos csevegés</translation>
+        <translation>Csoport beszélgetés</translation>
     </message>
     <message>
         <location line="+179"/>
         <source>Chat rooms</source>
-        <translation type="unfinished"/>
+        <translation>Társalgószobák</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Chat Rooms</source>
+        <translation>Társalgószobák</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Count occurrences of my current identity</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+30"/>
-        <source>Checked, if the identity and the text above occurences must be in the same case to trigger count.</source>
+        <location line="+7"/>
+        <source>Count occurrences of any of the following texts (separate by newlines):</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Checked, if the identity and the text above occurrences must be in the same case to trigger count.</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location line="+3"/>
         <source>Case sensitive</source>
-        <translation type="unfinished"/>
+        <translation>Kis- és nagybetű érzékeny</translation>
     </message>
     <message>
         <location line="-176"/>
@@ -13505,12 +13764,12 @@ Reported error:</source>
         <translation>Villogás</translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+85"/>
         <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Notify&lt;/h1&gt; 		  &lt;p&gt;Retroshare will notify you about what happens in your network.         		  Depending on your usage, you may want to enable or disable some of the    		  notifications. This page is designed for that!&lt;/p&gt;                        		  </source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+128"/>
+        <location line="+129"/>
         <source>Top Left</source>
         <translation>Bal felül</translation>
     </message>
@@ -13545,28 +13804,18 @@ Reported error:</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="-160"/>
+        <location line="-167"/>
         <source>Feed</source>
         <translation>Hírcsatorna</translation>
     </message>
     <message>
-        <location line="+365"/>
+        <location line="+372"/>
         <source>Systray</source>
-        <translation type="unfinished"/>
+        <translation>Rendszertálca</translation>
     </message>
     <message>
         <location line="+61"/>
         <source>Count all unread messages</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Count occurences of any of the following texts (separate by newlines):</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="-7"/>
-        <source>Count occurences of my current identity</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -13585,7 +13834,7 @@ Reported error:</source>
     <message>
         <location line="+2"/>
         <source>You need to sign your forum/chatrooms identity.</source>
-        <translation type="unfinished"/>
+        <translation>Alá kell írnod a fórum- vagy társalgószobabeli személyazonosságodat.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -13598,7 +13847,7 @@ Reported error:</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+33"/>
         <source>Unregistered plugin/executable</source>
         <translation>Nem regisztrált beépülő/futtatható állomány</translation>
     </message>
@@ -13608,7 +13857,7 @@ Reported error:</source>
         <translation>A RetroShare regisztrálatlan beépülőt észlelt. Ez két esetben történhet:&lt;UL&gt;&lt;LI&gt;A RetroShare megváltozott.&lt;/LI&gt;&lt;LI&gt;A beépülő megváltozott&lt;/LI&gt;&lt;/UL&gt;Kattints az Igenre a beépülő hitelesítéséhez, vagy a Nemre az elutasításához. Később is megváltoztathatod a döntésedet a Beállítások -&gt; Beépülők menüben, amit követően újra kell indítanod a programot.</translation>
     </message>
     <message>
-        <location line="+189"/>
+        <location line="+203"/>
         <source>Please check your system clock.</source>
         <translation>Kérlek, ellenőrízd a rendszerórádat.</translation>
     </message>
@@ -13628,7 +13877,7 @@ Reported error:</source>
         <translation>Fájlindex mentése</translation>
     </message>
     <message>
-        <location line="+387"/>
+        <location line="+394"/>
         <source>Test</source>
         <translation>Teszt</translation>
     </message>
@@ -13649,9 +13898,9 @@ Reported error:</source>
         <translation>Titkosított üzenet</translation>
     </message>
     <message>
-        <location line="-499"/>
+        <location line="-506"/>
         <source>For the chat lobbies to work properly, the time of your computer needs to be correct. Please check that this is the case (A possible time shift of several minutes was detected with your friends).</source>
-        <translation type="unfinished"/>
+        <translation>Ahhoz, hogy a társalgószobák megfelelően működjenek, a számítógép órájának pontosnak kell lennie. Kérlek ellenőrizd (Lehetséges időeltérést tapasztaltunk a barátaidhoz képest).</translation>
     </message>
 </context>
 <context>
@@ -13665,27 +13914,27 @@ Reported error:</source>
 <context>
     <name>OpModeStatus</name>
     <message>
-        <location filename="../gui/statusbar/OpModeStatus.cpp" line="+33"/>
+        <location filename="../gui/statusbar/OpModeStatus.cpp" line="+43"/>
         <source>Normal Mode</source>
         <translation>Normális mód</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>No Anon D/L</source>
         <translation>Nincs névtelen átvitel</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Gaming Mode</source>
         <translation>Játszó mód</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Low Traffic</source>
         <translation>Kis forgalom</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+7"/>
         <source>Use this DropList to quickly change Retroshare's behaviour
  No Anon D/L: switches off file forwarding
  Gaming Mode: 25% standard traffic and TODO: reduced popups
@@ -13694,6 +13943,17 @@ Reported error:</source>
  Nincs névtelen forgalom: kikapcsolja a fájltovábbítást
  Játszó mód: 25% standard forgalom és TODO: kevesebb értesítés
  Alacsony forgalom: 10% standard forgalom és TODO: szüneteltetett fájlátvitelek</translation>
+    </message>
+    <message>
+        <location line="+44"/>
+        <source>&lt;p&gt;Warning: This Operating mode disables the tunneling service. This means you can use distant chat not anonymously download files and the mail service will be slower.&lt;/p&gt;&lt;p&gt;This state will be saved after restart, so do not forget that you changed it!&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Figyelmeztetés: Ez a működési mód kikapcsolja az alagút szolgáltatást. Ez azt jelenti, hogy nem kezdeményezhetsz távoli beszélgetést, névtelenül nem tölthetsz le fájlokat és az üzenet szolgáltatás lassabb lesz.&lt;/p&gt;&lt;p&gt;Ez a beállítás újraindítás után lesz érvényben, szóval ne felejtsd el, hogy megváltoztattad!&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <location line="+5"/>
+        <source>Turtle routing disabled!</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -13706,17 +13966,17 @@ Reported error:</source>
     <message>
         <location line="+20"/>
         <source>Profile info</source>
-        <translation type="unfinished"/>
+        <translation>Profil adatok</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Name :</source>
-        <translation type="unfinished"/>
+        <translation>Név :</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Fingerprint :</source>
-        <translation type="unfinished"/>
+        <translation>Ujjlenyomat</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -13771,12 +14031,12 @@ Reported error:</source>
     <message>
         <location line="+7"/>
         <source>Key signatures :</source>
-        <translation type="unfinished"/>
+        <translation>Kulcs aláírások:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Signing a friend&apos;s key is a way to express your trust into this friend, to your other friends. The signatures below cryptographically attest that owners of the listed keys recognise the current PGP key as authentic.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;A barátod kulcsának aláírása alkalmas arra, hogy kifejezd a bizalmad iránta: ez egyfajta segítség is a többiek számára. Az aláírások kriptográfiailag bizonyítják, hogy az alábbi kulcsok hitelesnek ismerik el az aktuális PGP kulcsot.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -13790,27 +14050,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+7"/>
         <source>Sign this key</source>
-        <translation type="unfinished"/>
+        <translation>Írd alá a kulcsot</translation>
     </message>
     <message>
         <location line="+104"/>
         <source>PGP key</source>
-        <translation type="unfinished"/>
+        <translation>PGP kulcs</translation>
     </message>
     <message>
-        <location line="+6"/>
-        <source>Below is the node&apos;s profile key in PGP ascii format. It identifies all nodes of the same profile. A &quot;Retroshare certificate&quot; that you can exchange in order to make friends, is in the the &quot;details&quot; of each separate node.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+41"/>
+        <location line="+47"/>
         <source>These options apply to all nodes of the profile:</source>
-        <translation type="unfinished"/>
+        <translation>Ezek a beállítások a következő profil összes csomópontjára érvényesek:</translation>
     </message>
     <message>
         <location line="-131"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Signing a friend&apos;s key is a way to express your trust into this friend, to your other friends. It helps them to decide whether to allow connections from that key based on your own trust. Signing a key is absolutely optional and cannot be undone, so do it wisely.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;A barátod kulcsának aláírása alkalmas arra, hogy kifejezd a bizalmad iránta és ezt jelezd a többiek felé. Ez segíthet nekik eldönteni, hogy elfogadják-e a kapcsolódást az adott kulcs tulajdonosától. Egy kulcs aláírása csak egy lehetőség, de visszavonhatatlan. Ezért fontold meg és dönts okosan.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -13825,7 +14080,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+3"/>
         <source>Deny connections</source>
-        <translation type="unfinished"/>
+        <translation>Csatlakozások megtagadása</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -13835,10 +14090,15 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+3"/>
         <source>Accept connections</source>
+        <translation>Kapcsolatok elfogadása</translation>
+    </message>
+    <message>
+        <location line="+41"/>
+        <source>Below is the node&apos;s profile key in PGP ASCII format. It identifies all nodes of the same profile. A &quot;Retroshare certificate&quot; that you can exchange in order to make friends, is in the the &quot;details&quot; of each separate node.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+63"/>
+        <location line="+22"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button will toggle the inclusion of signatures in the ascii display of the PGP key. See the comments about signatures in the other tab. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
@@ -13850,12 +14110,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+10"/>
         <source>Options</source>
-        <translation type="unfinished"/>
+        <translation>Beállítások</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare periodically checks your friend lists for browsable files matching your transfers, to establish a direct transfer. In this case, your friend knows you&apos;re downloading the file.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;To prevent this behavior for this friend only, uncheck this box. You can still perform a direct transfer if you explicitly ask for it, by e.g. downloading from your friend&apos;s file list. This setting is applied to all locations of the same node.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;A Retroshare időnként ellenőrzi a barátlistád kereshető fájlokért, melyek megegyeznek az átviteli fájlokkal, azért, hogy közvetlen fájlátvitel valósulhasson meg. Ebben az esetben a barátod tudni fogja, hogy letöltöd azt a fájlt.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Hogy elkerüld ezt a viselkedést, és ki szeretnéd hagyni ebből ezt a barátodat, akkor szüntesd meg a doboz kijelölését. Továbbra is lehetőséged lesz a fájl letöltésére tőle, ehhez azonban előbb igényelned kell azt. Például az adott fájl manuális letöltésével a barátod megosztott mappájából. Ez a beállítás egy adott csomóponthoz tartozó összes helyszínre érvényes lesz.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -13865,17 +14125,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+7"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This option allows you to automatically download a file that is recommended in an message coming from this node. This can be used for instance to send files between your own nodes. Applied to all locations of the same node.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ez az opció lehetővé teszi, hogy önműködően letöltsd az ennek a csomópontnak valamelyik üzenetben javasolt fájlt. Arra is használhatod, hogy saját csomópontjaid között fájlokat továbbíts. Ugyanazon csomópont összes helyszinére vonatkozik.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Auto-download recommended files from this node</source>
-        <translation type="unfinished"/>
+        <translation>A csomópont ajánlott fáljainak önműködő letöltése</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Peers that have this option cannot connect if their connection address is not in the whitelist. This protects you from traffic forwarding attacks. When used, rejected peers will be reported by &amp;quot;security feed items&amp;quot; in the News Feed section. From there, you can whitelist/blacklist their IP. Applies to all locations of the same node.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Azon ismerősök, akiknél ez a beállítás szerepel, nem tudnak kapcsolódni, ha a címük hiányzik az engedélyezettek listájáról. Ez védelmet nyújt az adatforgalom-átirányítás jellegű támadásokkal szemben. Ha ez van beállítva, akkor az elutasított kapcsolatot a &amp;quot;biztonsági hírcsatorna tétel&amp;quot; a Hírcsatornába irányítja. Ott letilthatod vagy engedélyezheted az IP címüket. Ugyanazon csomópont összes helyszinére vonatkozik. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -13885,42 +14145,56 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+11"/>
         <source>Max upload speed (0=unlimited)</source>
-        <translation type="unfinished"/>
+        <translation>Megengedett feltöltési sebesség (0=korlátlan)</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Max download speed (0=unlimited)</source>
-        <translation type="unfinished"/>
+        <translation>Megengedett letöltési sebesség (0=korlátlan)</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+10"/>
         <source> kB/s</source>
-        <translation type="unfinished"/>
+        <translation> kB/másodpercenként</translation>
     </message>
     <message>
-        <location filename="../gui/connect/PGPKeyDialog.cpp" line="+131"/>
-        <location line="+142"/>
+        <location filename="../gui/connect/PGPKeyDialog.cpp" line="+132"/>
+        <location line="+156"/>
         <location line="+40"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location line="-181"/>
-        <location line="+142"/>
+        <location line="-195"/>
+        <location line="+156"/>
         <location line="+40"/>
         <source>Error : cannot get peer details.</source>
         <translation>Hiba: a partner adatai nem elérhetőek.</translation>
     </message>
     <message>
-        <location line="-174"/>
+        <location line="-188"/>
         <source>The supplied key algorithm is not supported by RetroShare
 (Only RSA keys are supported at the moment)</source>
         <translation>A RetroShare nem támogatja a kulcsot.
 (Jelenleg csak RSA kulcsok engedélyezettek)</translation>
     </message>
     <message>
-        <location line="+78"/>
+        <location line="+20"/>
+        <source>
+Warning: In your File-Transfer option, you select allow direct download to Yes.</source>
+        <translation>
+Figyelmeztetés: az Átvitel beállításainál engedélyezted a közvetlen letöltést.</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>
+Warning: In your File-Transfer option, you select allow direct download to No.</source>
+        <translation>
+Figyelmeztetés: az Átvitel beállításainál Nem engedélyezted a közvetlen letöltést.</translation>
+    </message>
+    <message>
+        <location line="+68"/>
         <source>The trust level is a way to express your own trust in this key. It is not used by the software nor shared, but can be useful to you in order to remember good/bad keys.</source>
         <translation type="unfinished"/>
     </message>
@@ -13952,7 +14226,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+47"/>
         <source>&lt;p&gt;This PGP key (ID=</source>
-        <translation type="unfinished"/>
+        <translation>&lt;p&gt;Ez a PGP kulcs (Azonosító=</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -13980,12 +14254,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="-160"/>
+        <location line="-175"/>
         <source>Retroshare profile</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare profil</translation>
     </message>
     <message>
-        <location line="+99"/>
+        <location line="+114"/>
         <source>This is your own PGP key, and it is signed by :</source>
         <translation type="unfinished"/>
     </message>
@@ -14011,18 +14285,18 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PeerItem</name>
     <message>
-        <location filename="../gui/feeds/PeerItem.ui" line="+256"/>
+        <location filename="../gui/feeds/PeerItem.ui" line="+265"/>
         <source>Chat</source>
-        <translation>Csevegés</translation>
+        <translation>Beszélgetés</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Start Chat</source>
-        <translation>Csevegés kezdeményezése</translation>
+        <translation>Beszélgetés kezdeményezése</translation>
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/feeds/PeerItem.cpp" line="+220"/>
+        <location filename="../gui/feeds/PeerItem.cpp" line="+247"/>
         <source>Expand</source>
         <translation>Lenyitás</translation>
     </message>
@@ -14039,7 +14313,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+13"/>
         <source>Peer ID:</source>
-        <translation>Partner ID:</translation>
+        <translation>Partner azonosító:</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -14067,12 +14341,17 @@ p, li { white-space: pre-wrap; }
         <translation>Állapot:</translation>
     </message>
     <message>
-        <location line="+104"/>
+        <location line="+20"/>
+        <source>Time offset:</source>
+        <translation>Időeltolódás:</translation>
+    </message>
+    <message>
+        <location line="+111"/>
         <source>Write Message</source>
         <translation>Üzenet írása</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/PeerItem.cpp" line="-133"/>
+        <location filename="../gui/feeds/PeerItem.cpp" line="-149"/>
         <source>Friend</source>
         <translation>Barát</translation>
     </message>
@@ -14093,11 +14372,16 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+3"/>
+        <source>Friend Time Offset</source>
+        <translation>Ismerős időeltolódása</translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Peer</source>
         <translation>Partner</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+26"/>
         <location line="+1"/>
         <location line="+1"/>
         <location line="+1"/>
@@ -14110,12 +14394,12 @@ p, li { white-space: pre-wrap; }
         <translation>Ismeretlen partner</translation>
     </message>
     <message>
-        <location line="+87"/>
+        <location line="+94"/>
         <source>Hide</source>
         <translation>Elrejt</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/PeerItem.ui" line="-299"/>
+        <location filename="../gui/feeds/PeerItem.ui" line="-326"/>
         <source>Send Message</source>
         <translation>Üzenet küldése</translation>
     </message>
@@ -14145,53 +14429,53 @@ p, li { white-space: pre-wrap; }
         <location line="+36"/>
         <location filename="../gui/People/PeopleDialog.h" line="+53"/>
         <source>People</source>
-        <translation type="unfinished"/>
+        <translation>Személyek</translation>
     </message>
     <message>
         <location line="+41"/>
         <location line="+69"/>
         <source>Drag your circles or people to each other.</source>
-        <translation type="unfinished"/>
+        <translation>Társítsd a köreidet a személyekkel.</translation>
     </message>
     <message>
         <location line="-41"/>
         <source>Internal</source>
-        <translation type="unfinished"/>
+        <translation>Belső</translation>
     </message>
     <message>
         <location filename="../gui/People/PeopleDialog.cpp" line="+449"/>
         <source>Chat with this person</source>
-        <translation type="unfinished"/>
+        <translation>Beszélgetés ezzel a személlyel</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Chat with this person as...</source>
-        <translation type="unfinished"/>
+        <translation>Beszélgetés ezzel a személlyel mint...</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Send message to this person</source>
-        <translation type="unfinished"/>
+        <translation>Üzenet küldése ennek a személynek</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Person details</source>
-        <translation type="unfinished"/>
+        <translation>Személy adatai</translation>
     </message>
     <message>
         <location line="+105"/>
         <source>Distant chat cannot work</source>
-        <translation type="unfinished"/>
+        <translation>A távoli beszélgetés nem működik</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Distant chat refused with this person.</source>
-        <translation type="unfinished"/>
+        <translation>A távoli beszélgetés nem engedélyezett ezzel a személlyel.</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Error code</source>
-        <translation type="unfinished"/>
+        <translation>Hibakód</translation>
     </message>
 </context>
 <context>
@@ -14199,12 +14483,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/PeoplePage.h" line="+40"/>
         <source>People</source>
-        <translation type="unfinished"/>
+        <translation>Személyek</translation>
     </message>
     <message>
         <location filename="../gui/settings/PeoplePage.ui" line="+17"/>
         <source>Reputation</source>
-        <translation type="unfinished"/>
+        <translation>Megitélés</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -14219,7 +14503,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+15"/>
         <source>Difference in votes (+/-) to rate an ID negatively:</source>
-        <translation type="unfinished"/>
+        <translation>A (+/-) szavazatok különbsége, ahhoz, hogy egy azonosítót negatívnak értékeljen:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -14234,17 +14518,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+19"/>
         <source>Difference in votes (+/-) to rate an ID positively:</source>
-        <translation type="unfinished"/>
+        <translation>A (+/-) szavazatok különbsége, ahhoz, hogy egy azonosítót pozitívnak értékeljen:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Delete banned identities after (0 means indefinitely):</source>
-        <translation type="unfinished"/>
+        <translation>Töröld a bannolt személyazonosságokat ennyi idő után (0 = meghatározatlan):</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Reset reputation of banned identities after (0 means never):</source>
-        <translation type="unfinished"/>
+        <translation>Állítsd alaphelyzetbe a bannolt személyazonosságok hírnevét ennyi idő után (0 = soha):</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -14255,7 +14539,7 @@ p, li { white-space: pre-wrap; }
         <location line="+3"/>
         <location line="+16"/>
         <source> days</source>
-        <translation type="unfinished"/>
+        <translation>nap</translation>
     </message>
     <message>
         <location line="-3"/>
@@ -14597,31 +14881,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+141"/>
-        <source>Error: instance &apos;%1&apos;can&apos;t create a widget</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>Error: no plugin with name &apos;%1&apos; found</source>
+        <source>Error: instance &apos;%1&apos; can&apos;t create a widget</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location line="+83"/>
-        <source>Error(uninstall): no plugin with name &apos;%1&apos; found</source>
+        <source>Error: failed to remove file %1 (uninstalling plugin &apos;%2&apos;)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Error (uninstall): no plugin with name &apos;%1&apos; found</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location line="+15"/>
-        <source>Error(installation): plugin file %1 doesn&apos;t exist</source>
+        <source>Error (installation): plugin file %1 doesn&apos;t exist</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="-28"/>
-        <source>Error: failed to remove file %1(uninstalling plugin &apos;%2&apos;)</source>
+        <location line="-98"/>
+        <source>Error: no plugin with name &apos;%1&apos; found</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+122"/>
         <source>Error: can&apos;t copy %1 to %2</source>
         <translation type="unfinished"/>
     </message>
@@ -14669,7 +14953,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+1"/>
         <source>[disabled]</source>
-        <translation type="unfinished"/>
+        <translation>[leállítva]</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -14683,7 +14967,7 @@ p, li { white-space: pre-wrap; }
         <location line="+4"/>
         <location line="+4"/>
         <source>[loading problem]</source>
-        <translation type="unfinished"/>
+        <translation>[betöltési hiba]</translation>
     </message>
     <message>
         <location line="-13"/>
@@ -14791,7 +15075,7 @@ a kártevőként működő beépülők használatától.</translation>
         <location line="+9"/>
         <location line="+3"/>
         <source>Set Chat Window Color</source>
-        <translation>Csevegőablak színének beállítása</translation>
+        <translation>Társalgóablak színének beállítása</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -14803,17 +15087,27 @@ a kártevőként működő beépülők használatától.</translation>
 <context>
     <name>PopupDistantChatDialog</name>
     <message>
-        <location filename="../gui/chat/PopupDistantChatDialog.cpp" line="+111"/>
-        <source>Chat remotely closed. Please close this window.</source>
-        <translation>A csevegőablak távoli bezárásra került. Kérlek zárd be ezt az ablakot.</translation>
+        <location filename="../gui/chat/PopupDistantChatDialog.cpp" line="+115"/>
+        <source>Remote status unknown.</source>
+        <translation>Távoli állapot ismeretlen</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <source>The person you&apos;re talking to has deleted the secured chat tunnel. You may remove the chat window now.</source>
-        <translation>A csevegőpartnered megszűntette a biztonságos csevegő alagutat. Bezárhatod a csevegőablakot.</translation>
+        <location line="+3"/>
+        <source>Can&apos;t send message immediately, because there is no tunnel available.</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+11"/>
+        <source>The person you are talking to has deleted the secured chat tunnel.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>The chat partner deleted the secure tunnel, messages will be delivered as soon as possible</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+37"/>
         <source>Closing this window will end the conversation, notify the peer and remove the encrypted tunnel.</source>
         <translation>Ha bezárod ezt az ablakot, akkor a beszélgetés megszakad és megszűnik titkosított alagút.</translation>
     </message>
@@ -14821,16 +15115,6 @@ a kártevőként működő beépülők használatától.</translation>
         <location line="+2"/>
         <source>Kill the tunnel?</source>
         <translation>Alagút bezárása?</translation>
-    </message>
-    <message>
-        <location line="-42"/>
-        <source>Can&apos;t send message, because there is no tunnel.</source>
-        <translation>Nem küldhetsz üzenetet, mert nem létezik alagút.</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Can&apos;t send message, because the chat partner deleted the secure tunnel.</source>
-        <translation>Az üzenetet nem lehet elküldeni, mert a partnered törölte a biztonságos alagutat.</translation>
     </message>
 </context>
 <context>
@@ -14846,14 +15130,14 @@ a kártevőként működő beépülők használatától.</translation>
         <translation>Jegyzetek</translation>
     </message>
     <message>
-        <location filename="../gui/Posted/PostedCreatePostDialog.cpp" line="+69"/>
+        <location filename="../gui/Posted/PostedCreatePostDialog.cpp" line="+72"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Please create or choose a Signing Id first</source>
-        <translation>Kérlek, először hozz létre vagy válassz ki egy aláírás Id-t.</translation>
+        <translation>Kérlek, először hozz létre vagy válassz ki egy Aláíró azonosítót.</translation>
     </message>
     <message>
         <location filename="../gui/Posted/PostedCreatePostDialog.ui" line="-176"/>
@@ -14871,12 +15155,12 @@ a kártevőként működő beépülők használatától.</translation>
         <translation>Jóváhagyás</translation>
     </message>
     <message>
-        <location filename="../gui/Posted/PostedCreatePostDialog.cpp" line="-26"/>
+        <location filename="../gui/Posted/PostedCreatePostDialog.cpp" line="-27"/>
         <source>Submit a new Post</source>
         <translation>Új hozzászólás beküldése</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+41"/>
         <source>Please add a Title</source>
         <translation>Kérlek, adj meg egy címet</translation>
     </message>
@@ -14931,7 +15215,7 @@ a kártevőként működő beépülők használatától.</translation>
     <message>
         <location filename="../gui/Posted/PostedDialog.h" line="+42"/>
         <source>Links</source>
-        <translation type="unfinished"/>
+        <translation>Hivatkozások</translation>
     </message>
 </context>
 <context>
@@ -14981,7 +15265,7 @@ a kártevőként működő beépülők használatától.</translation>
     </message>
     <message>
         <location line="+20"/>
-        <location filename="../gui/feeds/PostedGroupItem.cpp" line="+191"/>
+        <location filename="../gui/feeds/PostedGroupItem.cpp" line="+190"/>
         <source>Expand</source>
         <translation>Lenyitás</translation>
     </message>
@@ -14996,12 +15280,12 @@ a kártevőként működő beépülők használatától.</translation>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/feeds/PostedGroupItem.cpp" line="-129"/>
+        <location filename="../gui/feeds/PostedGroupItem.cpp" line="-128"/>
         <source>Loading</source>
         <translation>Töltés</translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+92"/>
         <source>New Posted</source>
         <translation type="unfinished"/>
     </message>
@@ -15025,14 +15309,14 @@ a kártevőként működő beépülők használatától.</translation>
     </message>
     <message>
         <location line="-70"/>
-        <location filename="../gui/Posted/PostedItem.cpp" line="+216"/>
-        <location line="+77"/>
+        <location filename="../gui/Posted/PostedItem.cpp" line="+211"/>
+        <location line="+78"/>
         <source>Comments</source>
         <translation>Hozzászólások</translation>
     </message>
     <message>
-        <location filename="../gui/Posted/PostedItem.cpp" line="-81"/>
-        <location line="+86"/>
+        <location filename="../gui/Posted/PostedItem.cpp" line="-82"/>
+        <location line="+87"/>
         <source>Comment</source>
         <translation>Hozzászólás</translation>
     </message>
@@ -15064,7 +15348,7 @@ a kártevőként működő beépülők használatától.</translation>
     <message>
         <location line="-100"/>
         <source>New Comment:</source>
-        <translation type="unfinished"/>
+        <translation>Új hozzászólás</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -15082,7 +15366,7 @@ a kártevőként működő beépülők használatától.</translation>
         <translation>Eltávolítás</translation>
     </message>
     <message>
-        <location filename="../gui/Posted/PostedItem.cpp" line="-212"/>
+        <location filename="../gui/Posted/PostedItem.cpp" line="-211"/>
         <source>Loading</source>
         <translation>Töltés</translation>
     </message>
@@ -15157,7 +15441,7 @@ a kártevőként működő beépülők használatától.</translation>
     <message>
         <location line="+0"/>
         <source>Please create or choose a Signing Id before Voting</source>
-        <translation>Kérlek, hozz létre vagy válassz ki egy aláírás azonosítót a szavazás előtt</translation>
+        <translation>Kérlek, hozz létre vagy válassz ki egy Aláíró azonosítót a szavazás előtt</translation>
     </message>
     <message>
         <location filename="../gui/Posted/PostedListWidget.ui" line="-21"/>
@@ -15178,14 +15462,14 @@ a kártevőként működő beépülők használatától.</translation>
         <translation>Fülek</translation>
     </message>
     <message>
-        <location filename="../gui/settings/PostedPage.h" line="+43"/>
-        <source>Posted</source>
-        <translation>Beküldve</translation>
-    </message>
-    <message>
         <location filename="../gui/settings/PostedPage.cpp" line="+34"/>
         <source>Open each topic in a new tab</source>
         <translation>Minden egyes téma megnyitása új fülön</translation>
+    </message>
+    <message>
+        <location filename="../gui/settings/PostedPage.h" line="+43"/>
+        <source>Links</source>
+        <translation>Hivatkozások</translation>
     </message>
 </context>
 <context>
@@ -15243,7 +15527,20 @@ a kártevőként működő beépülők használatától.</translation>
         <translation>Profilkezelő</translation>
     </message>
     <message>
-        <location line="+66"/>
+        <location line="+31"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select a Retroshare node key from the list below to be used on another computer, and press &amp;quot;Export selected key.&amp;quot;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To create a new location on a different computer,  select the identity manager in the login window. From there you can import the key file and create a new location for that key. &lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Creating a new node with the same key allows your friend nodes to accept you automatically.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+35"/>
         <source>Name</source>
         <translation>Név</translation>
     </message>
@@ -15331,20 +15628,7 @@ az importálás gombot, hogy betöltsd.</translation>
         <translation>Igazolások (*.pqi *.pem)</translation>
     </message>
     <message>
-        <location filename="../gui/profile/ProfileManager.ui" line="-45"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select a Retroshare node key from the list below to be used on another computer, and press &amp;quot;Export selected key.&amp;quot;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To create a new location on a different computer,  select the identity manager in the login window. From there you can import the key file and create a new location for that key. &lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Creating a new node with the same key allows your  your friend nodes to accept you automatically.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+22"/>
+        <location filename="../gui/profile/ProfileManager.ui" line="-23"/>
         <source>Full keys available in your keyring:</source>
         <translation type="unfinished"/>
     </message>
@@ -15395,7 +15679,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+38"/>
         <source>Peer ID:</source>
-        <translation>Partner ID:</translation>
+        <translation>Partner azonosító:</translation>
     </message>
     <message>
         <location line="+50"/>
@@ -15545,8 +15829,7 @@ p, li { white-space: pre-wrap; }
     <name>QObject</name>
     <message>
         <location filename="../gui/MainWindow.cpp" line="+318"/>
-        <location filename="../gui/RetroShareLink.cpp" line="+1049"/>
-        <location line="+171"/>
+        <location filename="../gui/RetroShareLink.cpp" line="+1613"/>
         <source>Confirmation</source>
         <translation>Megerősítés</translation>
     </message>
@@ -15556,7 +15839,7 @@ p, li { white-space: pre-wrap; }
         <translation>Szeretnéd, ha ezt a hivatkozást a rendszered kezelné?</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="-550"/>
+        <location filename="../gui/RetroShareLink.cpp" line="-727"/>
         <source>Click to add this RetroShare cert to your PGP keyring
 and open the Make Friend Wizard.
 </source>
@@ -15565,27 +15848,7 @@ and open the Make Friend Wizard.
 </translation>
     </message>
     <message>
-        <location line="+363"/>
-        <source>Add file</source>
-        <translation>Fájl hozzáadása</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Add files</source>
-        <translation>Fájlok hozzáadása</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Do you want to process the link ?</source>
-        <translation>Meg szeretnéd nyitni a hivatkozást?</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Do you want to process %1 links ?</source>
-        <translation>Meg szeretnéd nyitni mind a %1 hivatkozást?</translation>
-    </message>
-    <message>
-        <location line="+171"/>
+        <location line="+723"/>
         <source>Warning: Retroshare is about to ask your system to open this file. </source>
         <translation type="unfinished"/>
     </message>
@@ -15595,7 +15858,27 @@ and open the Make Friend Wizard.
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+248"/>
+        <location line="+78"/>
+        <source>Identity added to People</source>
+        <translation>A személyazonosság fel lett véve a Személyek közé</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>The identity was added to people. You can now chat with it, send messages to it, etc.</source>
+        <translation>A személyazonosság fel lett véve a Személyek közé. Most már beszélgethetsz vele, küldhetsz neki üzenetet, stb.</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Identity cannot be added to People</source>
+        <translation>A személyazonosságot nem sikerült felvenni a Személyek közé</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>The identity was not added to people. Some error occured. The link is probably corrupted.</source>
+        <translation>A személyazonosság nem lett felvéve a Személyek közé. Valami hiba történt. Talán nem megfelelő a hivatkozás.</translation>
+    </message>
+    <message>
+        <location line="+87"/>
         <source>%1 of %2 RetroShare link processed.</source>
         <translation>%1 Retroshare hivatkozás a %2 -ból feldolgozva.</translation>
     </message>
@@ -15705,7 +15988,7 @@ and open the Make Friend Wizard.
         <translation>Csatorna üzenetek nem találhatóak</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+17"/>
         <source>Posted not found</source>
         <translation type="unfinished"/>
     </message>
@@ -15720,12 +16003,32 @@ and open the Make Friend Wizard.
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="-13"/>
         <source>Recipient not accepted</source>
         <translation>Az átvevő nem fogadta</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="-924"/>
+        <source>Click to browse/download this file collection</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+163"/>
+        <source>%1 (%2)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Identity link (name=%1, ID=%2)</source>
+        <translation>Személyazonosító hivatkozás(név=%1, azonosító=%2)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>%1 (%2 files, %3)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+735"/>
         <source>Recipients not accepted</source>
         <translation>Az átvevők nem fogadták</translation>
     </message>
@@ -15740,6 +16043,11 @@ and open the Make Friend Wizard.
         <translation>Ismeretlen átvevők</translation>
     </message>
     <message>
+        <location line="+17"/>
+        <source>Chat room not found</source>
+        <translation>A társalgószoba nem található</translation>
+    </message>
+    <message>
         <location line="+6"/>
         <source>Malformed links</source>
         <translation>Hibás linkek</translation>
@@ -15747,7 +16055,7 @@ and open the Make Friend Wizard.
     <message>
         <location line="+3"/>
         <source>Invalid links</source>
-        <translation>Helytelen linkek</translation>
+        <translation>Helytelen hivatkozások</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -15762,7 +16070,7 @@ A &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; karakterek le lesznek cs
         <translation>Eredmény</translation>
     </message>
     <message>
-        <location filename="../gui/common/RsCollectionDialog.cpp" line="+1250"/>
+        <location filename="../gui/common/RsCollectionDialog.cpp" line="+1379"/>
         <source>Unable to make path</source>
         <translation>Hibás útvonal</translation>
     </message>
@@ -15772,7 +16080,7 @@ A &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; karakterek le lesznek cs
         <translation>Hibás útvonal:</translation>
     </message>
     <message>
-        <location filename="../gui/common/RsCollectionFile.cpp" line="+207"/>
+        <location filename="../gui/common/RsCollection.cpp" line="+269"/>
         <source>Failed to process collection file</source>
         <translation>A kollekciófájl feldolgozása sikertelen</translation>
     </message>
@@ -15797,7 +16105,7 @@ A &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; karakterek le lesznek cs
         <translation>Fájl kérése megszakítva</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="+193"/>
+        <location filename="../main.cpp" line="+228"/>
         <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although PGP keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
         <translation>A RetroShare ezen verziója OpenPGP-SDK-t használ. Ennek hála, nem használja a rendszer PGP kulcstartóját, viszont van egy saját kulcstartója, amit az összes futó RetroShare elérhet. &lt;br&gt;&lt;br&gt;Úgy tűnik, hogy még nem rendelkezel ilyen kulcstartóval annak ellenére, hogy már létrehozott RetroShare fiókjaidban szerepelnek PGP kulcsok. Ez valószínűleg azért lehetséges, mert most frissítettél az alkalmazás új verziójára.</translation>
     </message>
@@ -15808,12 +16116,12 @@ A &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; karakterek le lesznek cs
     </message>
     <message>
         <location line="+31"/>
-        <location line="+81"/>
+        <location line="+79"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location line="-74"/>
+        <location line="-72"/>
         <source>Initialization failed. Wrong or missing installation of PGP.</source>
         <translation>Sikertelen elemzés. Rossz vagy hiányzó PGP telepítés.</translation>
     </message>
@@ -15823,12 +16131,48 @@ A &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; karakterek le lesznek cs
         <translation>Váratlan hiba történt. Kérlek jelentsd &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</translation>
     </message>
     <message>
-        <location line="+69"/>
+        <location line="+67"/>
         <source>An unexpected error occured. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
         <translation>Váratlan hiba történt. Kérlek jelentsd &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</translation>
     </message>
     <message>
-        <location filename="../rshare.cpp" line="+853"/>
+        <location line="+25"/>
+        <source>Cannot start Tor Manager!</source>
+        <translation>A Tor-kezelő nem indul!</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Tor cannot be started on your system: 
+
+</source>
+        <translation>A Tor nem indul el a rendszereden:
+
+</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Cannot start Tor</source>
+        <translation>A Tor nem indítható</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Sorry but Tor cannot be started on your system!
+
+The error reported is:&quot;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Cannot start a hidden tor service!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>It was not possible to start a hidden service.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../rshare.cpp" line="+944"/>
         <location line="+7"/>
         <source>Multiple instances</source>
         <translation>Több példány</translation>
@@ -15852,22 +16196,22 @@ Zárolófájl:
 </translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupDistantChatDialog.cpp" line="-3"/>
+        <location filename="../gui/chat/PopupDistantChatDialog.cpp" line="-43"/>
         <source>Distant peer has closed the chat</source>
-        <translation>A távoli partner kilépett a csevegésből</translation>
+        <translation>A távoli partner kilépett a beszélgetésből</translation>
     </message>
     <message>
-        <location line="+9"/>
-        <source>Tunnel is pending...</source>
-        <translation>Függőben lévő alagút...</translation>
+        <location line="+12"/>
+        <source>Tunnel is pending... Messages will be delivered as soon as possible</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+8"/>
-        <source>Secured tunnel is working. You can talk!</source>
-        <translation>A biztonságos alagút működik. Most már beszélhetsz!</translation>
+        <location line="+10"/>
+        <source>Secured tunnel is working. Messages are delivered immediately!</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/common/RsCollectionFile.cpp" line="+0"/>
+        <location filename="../gui/common/RsCollection.cpp" line="+0"/>
         <source>The collection file %1 could not be opened.
 Reported error is: 
 
@@ -15878,22 +16222,22 @@ A hibajelentés:
 %2</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="-902"/>
+        <location filename="../gui/RetroShareLink.cpp" line="-970"/>
         <source>Click to send a private message to %1 (%2).</source>
         <translation>Kattints ide, hogy privát üzenetet küldj neki: %1 (%2).</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="-8"/>
         <source>%1 (%2, Extra - Source included)</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+157"/>
+        <location line="+200"/>
         <source>Click this link to send a private message to %1 (%2)</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-6"/>
         <source>RetroShare Certificate (%1, @%2)</source>
         <translation>RetroShare Tanúsítvány (%1, @%2)</translation>
     </message>
@@ -15925,10 +16269,10 @@ A hibajelentés:
     <message>
         <location line="+1"/>
         <source>Data forward</source>
-        <translation type="unfinished"/>
+        <translation>Adat továbbítása</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="-224"/>
+        <location filename="../main.cpp" line="-283"/>
         <source>You appear to have nodes associated to DSA keys:</source>
         <translation type="unfinished"/>
     </message>
@@ -15938,17 +16282,17 @@ A hibajelentés:
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/ChatLobbyWidget.cpp" line="+226"/>
+        <location filename="../gui/ChatLobbyWidget.cpp" line="+228"/>
         <source>enabled</source>
-        <translation type="unfinished"/>
+        <translation>elindítva</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>disabled</source>
-        <translation type="unfinished"/>
+        <translation>leállítva</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ServerPage.cpp" line="+521"/>
+        <location filename="../gui/settings/ServerPage.cpp" line="+683"/>
         <source>Move IP %1 to whitelist</source>
         <translation type="unfinished"/>
     </message>
@@ -15963,8 +16307,8 @@ A hibajelentés:
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDetailsDialog.cpp" line="-360"/>
-        <location filename="../gui/Identity/IdDialog.cpp" line="-802"/>
+        <location filename="../gui/Identity/IdDetailsDialog.cpp" line="-359"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="-833"/>
         <source>%1 seconds ago</source>
         <translation>%1 másodperccel ezelőtt</translation>
     </message>
@@ -16022,23 +16366,23 @@ A hibajelentés:
     <message>
         <location line="+1"/>
         <source>Id:</source>
-        <translation>ID:</translation>
+        <translation>Azonosító:</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>
 Security: no anonymous IDs</source>
         <translation>
-Biztonság: nincsenek névtelen ID-k</translation>
+Biztonság: névtelen azonosítók nem engedélyezettek</translation>
     </message>
     <message>
-        <location line="+695"/>
+        <location line="+732"/>
         <source>Join chat room</source>
-        <translation type="unfinished"/>
+        <translation>Belépés a társalgószobába</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="-150"/>
-        <location line="+148"/>
+        <location filename="../gui/RetroShareLink.cpp" line="-201"/>
+        <location line="+199"/>
         <source>This cert is malformed. Error code:</source>
         <translation>A tanúsítvány hibás. Hibakód:</translation>
     </message>
@@ -16048,7 +16392,7 @@ Biztonság: nincsenek névtelen ID-k</translation>
         <translation>Nem lett hozzáadva a letöltési listádhoz, mert már szerepel a megosztásodban:</translation>
     </message>
     <message>
-        <location filename="../gui/common/FriendList.cpp" line="+1592"/>
+        <location filename="../gui/common/FriendList.cpp" line="+1604"/>
         <source>Error</source>
         <translation>Hiba</translation>
     </message>
@@ -16065,36 +16409,116 @@ Biztonság: nincsenek névtelen ID-k</translation>
     <message>
         <location line="+1"/>
         <source>5 days</source>
-        <translation type="unfinished"/>
+        <translation>5 nap</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>2 weeks</source>
-        <translation type="unfinished"/>
+        <translation>2 hét</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>1 month</source>
-        <translation type="unfinished"/>
+        <translation>1 hónap</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>2 month</source>
-        <translation type="unfinished"/>
+        <translation>2 hónap</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>6 month</source>
-        <translation type="unfinished"/>
+        <translation>6 hónap</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>1 year</source>
-        <translation type="unfinished"/>
+        <translation>1 év</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>days</source>
+        <translation>nap</translation>
+    </message>
+    <message>
+        <location filename="../gui/statistics/GxsTransportStatistics.cpp" line="-95"/>
+        <source>Processing</source>
+        <translation>Feldolgozás</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Choosing group</source>
+        <translation>Csoport kiválasztása</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Creating receipt</source>
+        <translation>Nyugta létrehozása</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Signing receipt</source>
+        <translation>Nyugta aláírása</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Serializing</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Creating payload</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Encrypting payload</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Publishing</source>
+        <translation>Közzététel</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Waiting for receipt</source>
+        <translation>Várakozás a nyugtára</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Receipt received</source>
+        <translation>Nyugta fogadva</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Receipt signature failed</source>
+        <translation>Nyugta fogadása meghiúsult</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Encryption failed</source>
+        <translation>A titkosítás meghiúsult</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Unknown</source>
+        <translation>Ismeretlen</translation>
+    </message>
+    <message>
+        <location filename="../gui/statusbar/hashingstatus.cpp" line="+73"/>
+        <source>Click to pause the hashing process</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>[Hashing is paused]</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Click to resume the hashing process</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -16406,9 +16830,9 @@ p, li { white-space: pre-wrap; }
 * Browsable: 	browsable by your friends
 * Universal: 		both</source>
         <translation>Kérlek döntsd el, hogy az alábbiak közül melyik vonatkozzon erre a mappára
-*Hálózatszintű: ⇥névtelenül megosztva a teljes hálózattal (a barátaidat is beleértve)
-*Böngészhető: ⇥böngészhető a barátaid által
-*Teljeskörű: ⇥⇥mindkettő</translation>
+*Hálózatszintű: 	névtelenül megosztva a teljes hálózattal (a barátaidat is beleértve)
+*Böngészhető: 	böngészhető a barátaid által
+*Teljeskörű: 		mindkettő</translation>
     </message>
     <message>
         <location line="-50"/>
@@ -16419,7 +16843,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RSGraphWidget</name>
     <message>
-        <location filename="../gui/common/RSGraphWidget.cpp" line="+544"/>
+        <location filename="../gui/common/RSGraphWidget.cpp" line="+609"/>
         <source>%1 KB</source>
         <translation>%1 KB</translation>
     </message>
@@ -16502,25 +16926,25 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+1"/>
         <source>Peer Id:</source>
-        <translation>Partner ID:</translation>
+        <translation>Partner azonosító:</translation>
     </message>
 </context>
 <context>
     <name>RSTreeWidget</name>
     <message>
-        <location filename="../gui/common/RSTreeWidget.cpp" line="+202"/>
+        <location filename="../gui/common/RSTreeWidget.cpp" line="+267"/>
         <source>Tree View Options</source>
-        <translation type="unfinished"/>
+        <translation>Fa nézet beállítása</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Show column...</source>
-        <translation type="unfinished"/>
+        <translation>Mutatandó oszlop...</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>[no title]</source>
-        <translation type="unfinished"/>
+        <translation>[nincs cím]</translation>
     </message>
 </context>
 <context>
@@ -16542,109 +16966,24 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>RelayPage</name>
-    <message>
-        <location filename="../gui/settings/RelayPage.ui" line="+19"/>
-        <source>Enable Relay Connections</source>
-        <translation>Relay csatlakozások engedélyezése</translation>
-    </message>
-    <message>
-        <location line="+20"/>
-        <source>Use Relay Servers</source>
-        <translation>Relay szerverek használata</translation>
-    </message>
-    <message>
-        <location line="+25"/>
-        <source>Relay options</source>
-        <translation>Relay beállítások</translation>
-    </message>
-    <message>
-        <location line="+34"/>
-        <source>Number</source>
-        <translation>Darabszám</translation>
-    </message>
-    <message>
-        <location line="+20"/>
-        <source>Bandwidth per link</source>
-        <translation>Sávszélesség kapcsolatonként</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Total Bandwidth</source>
-        <translation>Teljes sávszélesség</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Friends</source>
-        <translation>Barátok</translation>
-    </message>
-    <message>
-        <location line="+27"/>
-        <location line="+44"/>
-        <location line="+44"/>
-        <source>kB/s</source>
-        <translation>kB/s</translation>
-    </message>
-    <message>
-        <location line="-65"/>
-        <source>Friends of Friends</source>
-        <translation>Barátok barátai</translation>
-    </message>
-    <message>
-        <location line="+44"/>
-        <source>General</source>
-        <translation>Általános</translation>
-    </message>
-    <message>
-        <location line="+61"/>
-        <source>Total:</source>
-        <translation>Összes:</translation>
-    </message>
-    <message>
-        <location line="+33"/>
-        <source>Relay Server Setup</source>
-        <translation>Relay kiszolgáló beállítása</translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>Add Server</source>
-        <translation>Kiszolgáló hozzáadása</translation>
-    </message>
-    <message>
-        <location line="+18"/>
-        <source>Server DHT Key</source>
-        <translation>Kiszolgáló DHT kulcs</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Remove Server</source>
-        <translation>Távoli kiszolgáló</translation>
-    </message>
-    <message>
-        <location filename="../gui/settings/RelayPage.h" line="+42"/>
-        <source>Relay</source>
-        <translation>Relay</translation>
-    </message>
-    <message>
-        <location filename="../gui/settings/RelayPage.cpp" line="+68"/>
-        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Relays&lt;/h1&gt;                                 &lt;p&gt;By activating relays, you allow your Retroshare node to act as a bridge between Retroshare  				  users who cannot connect directly, e.g. because they&apos;re firewalled.&lt;/p&gt;                        				  &lt;p&gt;You may choose to act as a relay by checking &lt;i&gt;enable relay connections&lt;/i&gt;, or simply     				  benefit from other peers acting as relay, by checking &lt;i&gt;use relay servers&lt;/i&gt;. For the former,				  you may specify the bandwidth allocated when acting as a relay for friends of you, for friends 				  of your friends, or anyone in the Retroshare network.&lt;/p&gt;                                      				  &lt;p&gt;In any case, a Retroshare node acting as a relay cannot see the relayed traffic, since it   				  is encrypted and authenticated by the two relayed nodes.&lt;/p&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
     <name>RemoteSharedFilesDialog</name>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="-514"/>
+        <location filename="../gui/FileTransfer/SharedFilesDialog.cpp" line="-526"/>
+        <source>Download...</source>
+        <translation>Letöltés...</translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Download</source>
         <translation>Letöltés</translation>
     </message>
     <message>
-        <location line="+15"/>
-        <source>Recommend in a message to</source>
-        <translation>Ajánlása üzenetben</translation>
+        <location line="+9"/>
+        <source>Recommend in a message to...</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location line="-22"/>
+        <location line="-24"/>
         <source>Collection</source>
         <translation>Kollekció</translation>
     </message>
@@ -16652,14 +16991,14 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RetroshareDirModel</name>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="-595"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="-644"/>
         <source>[All friend nodes]</source>
-        <translation type="unfinished"/>
+        <translation>[az összes ismerős csomópontja]</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Only </source>
-        <translation type="unfinished"/>
+        <translation>Csak</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -16667,9 +17006,9 @@ p, li { white-space: pre-wrap; }
         <translation>ÚJ</translation>
     </message>
     <message>
-        <location line="+448"/>
+        <location line="+488"/>
         <source>This node hasn&apos;t sent any directory information yet.</source>
-        <translation type="unfinished"/>
+        <translation>Ez a csomópont még nem küldött információt a könyvtárakról.</translation>
     </message>
 </context>
 <context>
@@ -16705,7 +17044,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/common/RsBanListToolButton.cpp" line="+89"/>
         <source>Add IP to whitelist</source>
-        <translation type="unfinished"/>
+        <translation>IP hozzáadása a fehérlistához</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -16725,24 +17064,57 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+13"/>
         <source>Only IP</source>
-        <translation type="unfinished"/>
+        <translation>Csak IP</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+1"/>
         <source>Entire range</source>
+        <translation>Teljes tartomány</translation>
+    </message>
+</context>
+<context>
+    <name>RsCollection</name>
+    <message>
+        <location filename="../gui/common/RsCollection.cpp" line="+167"/>
+        <source>Save Collection File.</source>
         <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>File already exists.</source>
+        <translation>A fájl már létezik.</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>What do you want to do?</source>
+        <translation>Mit szeretnél tenni?</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Overwrite</source>
+        <translation>Felülírás</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Merge</source>
+        <translation>Összefűzés</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Cancel</source>
+        <translation>Visszavonás</translation>
     </message>
 </context>
 <context>
     <name>RsCollectionDialog</name>
     <message>
-        <location filename="../gui/common/RsCollectionDialog.ui" line="+14"/>
+        <location filename="../gui/common/RsCollectionDialog.ui" line="+17"/>
         <source>Collection</source>
         <translation>Kollekció</translation>
     </message>
     <message>
-        <location line="+112"/>
+        <location line="+100"/>
         <source>File name :</source>
         <translation>Fájlnév</translation>
     </message>
@@ -16752,8 +17124,18 @@ p, li { white-space: pre-wrap; }
         <translation>Teljes méret:</translation>
     </message>
     <message>
-        <location line="+294"/>
-        <location filename="../gui/common/RsCollectionDialog.cpp" line="-635"/>
+        <location line="+310"/>
+        <source>Destination:</source>
+        <translation>Címzett:</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Right click to change download directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+10"/>
+        <location filename="../gui/common/RsCollectionDialog.cpp" line="-681"/>
         <source>Cancel</source>
         <translation>Mégse</translation>
     </message>
@@ -16763,7 +17145,7 @@ p, li { white-space: pre-wrap; }
         <translation>Letöltés!</translation>
     </message>
     <message>
-        <location filename="../gui/common/RsCollectionDialog.cpp" line="-467"/>
+        <location filename="../gui/common/RsCollectionDialog.cpp" line="-522"/>
         <source>File</source>
         <translation>Fájl</translation>
     </message>
@@ -16792,59 +17174,50 @@ A &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; karakterek &apos;_&apos;
  Az érintett fájlokat pirossal kiemelve láthatod.</translation>
     </message>
     <message>
-        <location filename="../gui/common/RsCollectionDialog.ui" line="-298"/>
+        <location filename="../gui/common/RsCollectionDialog.ui" line="-345"/>
         <source>Selected files :</source>
         <translation>Kiválasztott fájlok:</translation>
     </message>
     <message>
         <location line="+34"/>
+        <location line="+273"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location line="+108"/>
+        <location line="-165"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add selected item to collection one by one.&lt;/p&gt;&lt;p&gt;Select parent dir to add this too.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;Enter&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+26"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add selected item to collection.&lt;/p&gt;&lt;p&gt;If a directory is selected, all of his children will be added.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; text-decoration: underline; vertical-align:sub;&quot;&gt;&amp;lt;Shift + Enter&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+3"/>
-        <source>&gt;&gt;</source>
-        <translation>&gt;&gt;</translation>
-    </message>
-    <message>
-        <location line="+41"/>
+        <location line="+52"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Make a new directory in the collection.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;+&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Új könyvtár létrehozása a kollekcióban.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;+&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>+</source>
-        <translation>+</translation>
-    </message>
-    <message>
-        <location line="+53"/>
+        <location line="+60"/>
         <source>Remove Duplicate</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+58"/>
         <source>Save</source>
         <translation>Mentés</translation>
     </message>
     <message>
-        <location filename="../gui/common/RsCollectionDialog.cpp" line="-68"/>
+        <location filename="../gui/common/RsCollectionDialog.cpp" line="-85"/>
         <source>Collection Editor</source>
         <translation>Kollekció szerkesztő</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+25"/>
         <source>File Path</source>
-        <translation type="unfinished"/>
+        <translation>Fájl elérési út</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -16852,19 +17225,12 @@ A &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; karakterek &apos;_&apos;
         <translation>Fájlok száma</translation>
     </message>
     <message>
-        <location line="+196"/>
-        <source>This is the root directory.</source>
-        <translation>Ez a gyökérkönyvtár.</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <location line="+81"/>
+        <location line="+338"/>
         <source>Real Size: Waiting child...</source>
         <translation>Valódi méret: Várakozás a gyerekre...</translation>
     </message>
     <message>
-        <location line="-77"/>
-        <location line="+82"/>
+        <location line="+5"/>
         <source>Real File Count: Waiting child...</source>
         <translation>A fájlok valódi száma: Várakozás a gyerekre...</translation>
     </message>
@@ -16874,14 +17240,29 @@ A &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; karakterek &apos;_&apos;
         <translation>Ez egy könyvtár. Kattints duplán a kibontásához.</translation>
     </message>
     <message>
-        <location line="+15"/>
-        <location line="+30"/>
+        <location line="-355"/>
+        <source>Download files</source>
+        <translation>Fájlok letöltése</translation>
+    </message>
+    <message>
+        <location line="+101"/>
+        <source>Specify...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Choose directory</source>
+        <translation>Válassz könyvtárat</translation>
+    </message>
+    <message>
+        <location line="+256"/>
+        <location line="+31"/>
         <source>Real Size=%1</source>
         <translation>Valódi méret=%1</translation>
     </message>
     <message>
-        <location line="-25"/>
-        <location line="+32"/>
+        <location line="-26"/>
+        <location line="+33"/>
         <source>Real File Count=%1</source>
         <translation>A fájlok valódi száma=%1</translation>
     </message>
@@ -16916,12 +17297,12 @@ A &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; karakterek &apos;_&apos;
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+311"/>
+        <location line="+357"/>
         <source>Do you want to remove this file from the list?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="-182"/>
+        <location line="-224"/>
         <source>New Directory</source>
         <translation>Új könyvtár</translation>
     </message>
@@ -16931,17 +17312,17 @@ A &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; karakterek &apos;_&apos;
         <translation>Nevezd el az új könyvtárat</translation>
     </message>
     <message>
-        <location filename="../gui/common/RsCollectionDialog.ui" line="-260"/>
+        <location filename="../gui/common/RsCollectionDialog.ui" line="-307"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Change the file where collection will be saved.&lt;/p&gt;&lt;p&gt;If you select an existing file, you could merge it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Jelöld ki a fáljt amibe a kollekciót szeretnéd menteni.&lt;/p&gt;&lt;p&gt;Ha egy már létező fájlt választasz, akkor egyesítheted őket.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/common/RsCollectionDialog.cpp" line="-371"/>
+        <location filename="../gui/common/RsCollectionDialog.cpp" line="-375"/>
         <source>File already exists.</source>
         <translation>A fájl már létezik.</translation>
     </message>
     <message>
-        <location filename="../gui/common/RsCollectionDialog.ui" line="+155"/>
+        <location filename="../gui/common/RsCollectionDialog.ui" line="+163"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Remove selected item from collection.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;Del&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Választott fájl eltávolítása a kollekcióból.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;Törlés&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -16949,7 +17330,7 @@ A &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; karakterek &apos;_&apos;
 <context>
     <name>RsCollectionFile</name>
     <message>
-        <location filename="../gui/common/RsCollectionFile.cpp" line="+14"/>
+        <location filename="../gui/common/RsCollection.cpp" line="-157"/>
         <location line="+28"/>
         <source>Cannot open file %1</source>
         <translation>Sikertelen fájlmegnyitás: %1</translation>
@@ -16960,71 +17341,152 @@ A &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; karakterek &apos;_&apos;
         <translation>Sikertelen xml fájl elemzés</translation>
     </message>
     <message>
-        <location line="+79"/>
+        <location line="+78"/>
         <source>Open collection file</source>
         <translation>Kollekciófájl megnyitása</translation>
     </message>
     <message>
-        <location filename="../gui/common/RsCollectionDialog.cpp" line="-18"/>
-        <location filename="../gui/common/RsCollectionFile.cpp" line="+0"/>
+        <location line="+0"/>
         <location line="+31"/>
-        <location line="+17"/>
+        <location line="+16"/>
+        <location filename="../gui/common/RsCollectionDialog.cpp" line="-18"/>
         <source>Collection files</source>
         <translation>Kollekciófájlok</translation>
     </message>
     <message>
-        <location line="-1"/>
-        <location filename="../gui/common/RsCollectionFile.cpp" line="-17"/>
-        <location line="+16"/>
+        <location line="-16"/>
+        <location line="+15"/>
+        <location filename="../gui/common/RsCollectionDialog.cpp" line="-1"/>
         <source>Create collection file</source>
         <translation>Kollekciófájl létrehozása</translation>
     </message>
     <message>
-        <location filename="../gui/common/RsCollectionFile.cpp" line="-67"/>
+        <location line="-65"/>
         <source>This file contains the string &quot;%1&quot; and is therefore an invalid collection file. 
 
 If you believe it is correct, remove the corresponding line from the file and re-open it with Retroshare.</source>
         <translation type="unfinished"/>
     </message>
-    <message>
-        <location line="+84"/>
-        <source>Save Collection File.</source>
-        <translation>Kollekciófájl mentése.</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>What do you want to do?</source>
-        <translation>Mit szeretnél csinálni?</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Overwrite</source>
-        <translation>Felülírás</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Merge</source>
-        <translation>Egyesítés</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Cancel</source>
-        <translation>Mégse</translation>
-    </message>
-    <message>
-        <location line="-3"/>
-        <source>File already exists.</source>
-        <translation>A fájl már létezik.</translation>
-    </message>
 </context>
 <context>
-    <name>RsHtml</name>
+    <name>RsDownloadListModel</name>
     <message>
-        <location filename="../util/HandleRichText.cpp" line="+1135"/>
-        <source>Image is oversized for transmission.
-Reducing image to %1x%2 pixels?</source>
-        <translation>A kép túl nagy az átvitelhez.
-Lecsökkented a méretét %1x%2 pixelre?</translation>
+        <location filename="../gui/FileTransfer/TransfersDialog.cpp" line="+205"/>
+        <source>Name</source>
+        <comment>i.e: file name</comment>
+        <translation>Név</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Size</source>
+        <comment>i.e: file size</comment>
+        <translation>Méret</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Completed</source>
+        <translation>Kész</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Speed</source>
+        <comment>i.e: Download speed</comment>
+        <translation>Sebesség</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Progress / Availability</source>
+        <comment>i.e: % downloaded</comment>
+        <translation>Előrehaladás / elérhetőség</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Sources</source>
+        <comment>i.e: Sources</comment>
+        <translation>Források</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Status</source>
+        <translation>Állapot</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Speed / Queue position</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Remaining</source>
+        <translation>Hátralevő</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Download time</source>
+        <comment>i.e: Estimated Time of Arrival / Time left</comment>
+        <translation>Letöltési idő</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hash</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Last Time Seen</source>
+        <comment>i.e: Last Time Receiced Data</comment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Path</source>
+        <comment>i.e: Where file is saved</comment>
+        <translation>Útvonal</translation>
+    </message>
+    <message>
+        <location line="+84"/>
+        <source>Failed</source>
+        <translation>Meghiúsult</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Okay</source>
+        <translation>Rendben</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Waiting</source>
+        <translation>Várakozik</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Downloading</source>
+        <translation>Letöltés</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Complete</source>
+        <translation>Kész</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Queued</source>
+        <translation>Sorbaállítva</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Paused</source>
+        <translation>Szüneteltetve</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Checking...</source>
+        <translation>Ellenőrzés folyamatban...</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Unknown</source>
+        <translation>Ismeretlen</translation>
     </message>
 </context>
 <context>
@@ -17032,13 +17494,13 @@ Lecsökkented a méretét %1x%2 pixelre?</translation>
     <message>
         <location filename="../util/RsNetUtil.cpp" line="+104"/>
         <source>Invalid format</source>
-        <translation type="unfinished"/>
+        <translation>Érvénytelen formátum</translation>
     </message>
 </context>
 <context>
     <name>Rshare</name>
     <message>
-        <location filename="../rshare.cpp" line="-492"/>
+        <location filename="../rshare.cpp" line="-522"/>
         <source>Resets ALL stored RetroShare settings.</source>
         <translation>Az összes tárolt RetroShare beállítás visszaváltása alapértelmezettre.</translation>
     </message>
@@ -17048,42 +17510,69 @@ Lecsökkented a méretét %1x%2 pixelre?</translation>
         <translation>Adatfájlok mappájának megadása.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
+        <location line="+18"/>
+        <source>filename</source>
+        <translation>fájlnév</translation>
+    </message>
+    <message>
+        <location line="-17"/>
         <source>Sets the name and location of RetroShare&apos;s logfile.</source>
         <translation>Naplófájl nevének és helyének megadása.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
+        <source>level</source>
+        <translation>szint</translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Sets the verbosity of RetroShare&apos;s logging.</source>
         <translation>A RetroShare naplózási részletességének beállítása.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+2"/>
+        <source>style</source>
+        <translation>stílus</translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Sets RetroShare&apos;s interface style.</source>
         <translation>A RetroShare külső stílusának beállítása.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+2"/>
+        <source>stylesheet</source>
+        <translation>stíluslap</translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Sets RetroShare&apos;s interface stylesheets.</source>
         <translation>RetroShare külső stílusához stíluslap beállítása.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
+        <source>language</source>
+        <translation>nyelv</translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Sets RetroShare&apos;s language.</source>
         <translation>RetroShare nyelvi beállítása.</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>RetroShare Usage Information</source>
-        <translation>RetroShare használati adatok</translation>
-    </message>
-    <message>
-        <location line="+90"/>
+        <location line="+94"/>
         <source>Unable to open log file &apos;%1&apos;: %2</source>
         <translation>Naplófájl megnyitása sikertelen: &apos;%1&apos;: %2</translation>
     </message>
     <message>
-        <location line="+211"/>
+        <location line="+27"/>
+        <location line="+6"/>
+        <source>Invalid operating mode specified:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+209"/>
         <source>built-in</source>
         <translation>beépített</translation>
     </message>
@@ -17093,22 +17582,52 @@ Lecsökkented a méretét %1x%2 pixelre?</translation>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="-474"/>
+        <location line="-504"/>
         <source>Revision</source>
+        <translation>Változat</translation>
+    </message>
+    <message>
+        <location line="+83"/>
+        <source>opmode</source>
+        <translation>működési mód</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Sets RetroShare&apos;s operating mode.</source>
+        <translation>A RetroShare működési módjának beállítása</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>RsLinkURL</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+158"/>
+        <location line="+1"/>
+        <source>Open RsLink with protocol retroshare://</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Open RsFile with or without arg.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>RetroShare GUI Usage Information</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+103"/>
         <source>Invalid language code specified:</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="-6"/>
         <source>Invalid GUI style specified:</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="-7"/>
         <source>Invalid log level specified:</source>
         <translation type="unfinished"/>
     </message>
@@ -17212,7 +17731,7 @@ Lecsökkented a méretét %1x%2 pixelre?</translation>
     <message>
         <location line="+5"/>
         <source>Search Id</source>
-        <translation>Keresés ID</translation>
+        <translation>Keresés azonosító</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -17326,17 +17845,17 @@ Lecsökkented a méretét %1x%2 pixelre?</translation>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+306"/>
+        <location line="+313"/>
         <source>Copy RetroShare Link</source>
         <translation>RetroShare link másolása</translation>
     </message>
     <message>
-        <location line="-305"/>
+        <location line="-312"/>
         <source>Send RetroShare Link</source>
         <translation>RetroShare hivatkozás küldése</translation>
     </message>
     <message>
-        <location line="+83"/>
+        <location line="+90"/>
         <source>Download Notice</source>
         <translation>Megjegyzés letöltése</translation>
     </message>
@@ -17373,35 +17892,35 @@ Lecsökkented a méretét %1x%2 pixelre?</translation>
         <translation>Összes eltávolítása</translation>
     </message>
     <message>
-        <location line="+370"/>
+        <location line="+369"/>
         <location line="+69"/>
         <source>Folder</source>
         <translation>Mappa</translation>
     </message>
     <message>
-        <location line="+375"/>
+        <location line="+402"/>
         <source>New RetroShare Link(s)</source>
         <translation>Új RetroShare hivatkozás(ok)</translation>
     </message>
     <message>
-        <location line="-1101"/>
+        <location line="-1134"/>
         <source>Open Folder</source>
         <translation>Mappa megnyitása</translation>
     </message>
     <message>
         <location line="-247"/>
         <source>Create Collection...</source>
-        <translation type="unfinished"/>
+        <translation>Gyűjtemény létrehozása</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Modify Collection...</source>
-        <translation type="unfinished"/>
+        <translation>Gyűjtemény módosítása</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>View Collection...</source>
-        <translation type="unfinished"/>
+        <translation>Gyűjtemény megtekintése</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -17435,12 +17954,12 @@ Lecsökkented a méretét %1x%2 pixelre?</translation>
     <message>
         <location line="+47"/>
         <source>IP address:</source>
-        <translation type="unfinished"/>
+        <translation>IP cím:</translation>
     </message>
     <message>
         <location line="+96"/>
         <source>Peer ID:</source>
-        <translation>Partner ID:</translation>
+        <translation>Partner azonosító:</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -17450,7 +17969,7 @@ Lecsökkented a méretét %1x%2 pixelre?</translation>
     <message>
         <location line="+13"/>
         <source>Peer Name:</source>
-        <translation type="unfinished"/>
+        <translation>Kapcsolat neve:</translation>
     </message>
     <message>
         <location filename="../gui/feeds/SecurityIpItem.cpp" line="-47"/>
@@ -17521,12 +18040,12 @@ Lecsökkented a méretét %1x%2 pixelre?</translation>
     <message>
         <location line="+48"/>
         <source>Chat</source>
-        <translation>Csevegés</translation>
+        <translation>Beszélgetés</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Start Chat</source>
-        <translation>Csevegés kezdeményezése</translation>
+        <translation>Beszélgetés kezdeményezése</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -17547,7 +18066,7 @@ Lecsökkented a méretét %1x%2 pixelre?</translation>
     <message>
         <location line="+13"/>
         <source>Peer ID:</source>
-        <translation>Partner ID:</translation>
+        <translation>Partner azonosító:</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -17641,7 +18160,7 @@ Lecsökkented a méretét %1x%2 pixelre?</translation>
     <message>
         <location line="-15"/>
         <source>Peer/node not in friendlist (PGP id=</source>
-        <translation type="unfinished"/>
+        <translation>Partner/csomópont nincs a barátlistádon (PGP azonosító=</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -17659,15 +18178,10 @@ Lecsökkented a méretét %1x%2 pixelre?</translation>
     <message>
         <location line="+19"/>
         <source>Network Mode</source>
-        <translation type="unfinished"/>
+        <translation>Hálózati üzemmód</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Nat</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+142"/>
+        <location line="+149"/>
         <source>Automatic (UPnP)</source>
         <translation>Automatikus (UPnP)</translation>
     </message>
@@ -17703,12 +18217,17 @@ Lecsökkented a méretét %1x%2 pixelre?</translation>
     </message>
     <message>
         <location line="-178"/>
-        <location line="+948"/>
+        <location line="+1451"/>
         <source>Local Address</source>
         <translation>Helyi cím</translation>
     </message>
     <message>
-        <location line="-941"/>
+        <location line="-1458"/>
+        <source>NAT</source>
+        <translation>NAT</translation>
+    </message>
+    <message>
+        <location line="+14"/>
         <source>External Address</source>
         <translation>Külső cím</translation>
     </message>
@@ -17739,17 +18258,12 @@ Lecsökkented a méretét %1x%2 pixelre?</translation>
         <translation>UPnP</translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+69"/>
         <source>Known / Previous IPs:</source>
         <translation>Ismert / Előző IP címek:</translation>
     </message>
     <message>
         <location line="+42"/>
-        <source>Show Discovery information in statusbar</source>
-        <translation>Felfedezés adatainak mutatása az állapotsorban</translation>
-    </message>
-    <message>
-        <location line="+7"/>
         <source>If you uncheck this, RetroShare can only determine your IP 
 when you connect to somebody. Leaving this checked helps 
 connecting when you have few friends. It also helps if you're 
@@ -17762,13 +18276,16 @@ behind a firewall or a VPN.</source>
         <translation>Engedélyezem a RetroSharenek, hogy a következő oldalakon lekérdezze az IP címemet:</translation>
     </message>
     <message>
-        <location line="-356"/>
+        <location line="-361"/>
         <location line="+201"/>
+        <location line="+1476"/>
+        <location line="+44"/>
+        <location line="+44"/>
         <source>kB/s</source>
         <translation>KB/s</translation>
     </message>
     <message>
-        <location line="-175"/>
+        <location line="-1739"/>
         <source>Acceptable ports range from 10 to 65535. Normally Ports below 1024 are reserved by your system.</source>
         <translation type="unfinished"/>
     </message>
@@ -17778,29 +18295,35 @@ behind a firewall or a VPN.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/settings/ServerPage.cpp" line="+474"/>
+        <location filename="../gui/settings/ServerPage.cpp" line="+480"/>
         <source>Onion Address</source>
-        <translation type="unfinished"/>
+        <translation>Onion cím</translation>
     </message>
     <message>
-        <location line="-94"/>
+        <location line="-89"/>
         <source>Discovery On (recommended)</source>
         <translation type="unfinished"/>
     </message>
     <message>
+        <location line="-966"/>
         <location line="+1"/>
+        <source>Tor has been automatically configured by Retroshare. You shouldn&apos;t need to change anything here.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+966"/>
         <source>Discovery Off</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location line="+32"/>
         <source>Hidden - See Config</source>
-        <translation type="unfinished"/>
+        <translation>Rejtett - Lásd Beállítások</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+46"/>
         <source>I2P Address</source>
-        <translation type="unfinished"/>
+        <translation>I2P cím</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -17823,7 +18346,7 @@ behind a firewall or a VPN.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+145"/>
+        <location line="+118"/>
         <location line="+14"/>
         <source>Proxy seems to work.</source>
         <translation type="unfinished"/>
@@ -17834,24 +18357,147 @@ behind a firewall or a VPN.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+58"/>
-        <source>You are reachable through the hidden service.</source>
+        <location line="+9"/>
+        <source>BOB is running and accessible</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+5"/>
+        <source>BOB is not accessible! Is it running?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+318"/>
+        <source>RetroShare uses BOB to set up a %1 tunnel at %2:%3 (named %4)
+
+When changing options (e.g. port) use the buttons at the bottom to restart BOB.
+
+</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>client</source>
+        <translation>ügyfél</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>server</source>
+        <translation>kiszolgáló</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>unknown</source>
+        <translation>ismeretlen</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <location line="+62"/>
+        <location line="+4"/>
+        <source>BOB is processing a request</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="-58"/>
+        <source>connectivity check</source>
+        <translation>kapcsolat ellenőrzése</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>generating key</source>
+        <translation>kulcs létrehozása</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>starting up</source>
+        <translation>indulás</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>shuting down</source>
+        <translation>leállás</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>BOB is processing a request: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>BOB is broken
+</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>BOB encountered an error:
+</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>BOB tunnel is running</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>BOB is working fine: tunnel established</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>BOB tunnel is not running</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>BOB is inactive: tunnel closed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+66"/>
+        <source>request a new server key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>load server key from base64</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>stop BOB tunnel first to generate a new key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>stop BOB tunnel first to load a key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>stop BOB tunnel first to disable BOB</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>You are reachable through the hidden service.</source>
+        <translation>Elérhető vagy a rejtett szolgáltatáson keresztül.</translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>The proxy is not enabled or broken.
 Are all services up and running fine??
 Also check your ports!</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/settings/ServerPage.ui" line="+234"/>
+        <location filename="../gui/settings/ServerPage.ui" line="+231"/>
         <source>[Hidden mode]</source>
-        <translation type="unfinished"/>
+        <translation>[Rejtett mód]</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+50"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This clears the list of known addresses. This action is useful if for some reason your address list contains an invalid/irrelevant/expired address that you want to avoid passing to your friends as a contact address.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
@@ -17861,9 +18507,9 @@ Also check your ports!</source>
         <translation>Tisztítás</translation>
     </message>
     <message>
-        <location line="-360"/>
+        <location line="-372"/>
         <source>Download limit (KB/s) </source>
-        <translation type="unfinished"/>
+        <translation>Letöltési korlát (KB/s)</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -17873,7 +18519,7 @@ Also check your ports!</source>
     <message>
         <location line="-20"/>
         <source>Upload limit (KB/s) </source>
-        <translation type="unfinished"/>
+        <translation>Feltöltési korlát (KB/s)</translation>
     </message>
     <message>
         <location line="+221"/>
@@ -17881,7 +18527,139 @@ Also check your ports!</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+658"/>
+        <location line="+101"/>
+        <source>WARNING:
+These values don&apos;t take into account the Relays.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+531"/>
+        <source>Tor Socks Proxy default: 127.0.0.1:9050.  Set in torrc config and update here.
+
+I2P Socks Proxy: see http://127.0.0.1:7657/i2ptunnelmgr for setting up a client tunnel:
+Tunnel Wizard -&gt; Client Tunnel -&gt; SOCKS 4/4a/5 -&gt; enter a name -&gt; leave 'Outproxies' empty -&gt; enter port (memorize!) [you may also want to set the reachability to 127.0.0.1] -&gt; Next -&gt; check 'Auto Start' -&gt; finish!
+Now enter the address (e.g. 127.0.0.1) and the port you've picked before for the I2P Proxy.
+
+You can connect to Hidden Nodes, even if you are running a standard Node, so why not setup Tor and/or I2P?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+27"/>
+        <source>Automatic I2P/BOB</source>
+        <translation>Önműködő I2P/BOB</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Enable I2P BOB - changing this requires a restart to fully take effect</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>enableds advanced settings</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>advanced mode</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>I2P Basic Open Bridge</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>I2P Instance address</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>127.0.0.1</source>
+        <translation>127.0.0.1</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>I2P proxy port</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>BOB accessible</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Address</source>
+        <translation>Cím</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>.b32.i2p</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>generate new</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+53"/>
+        <source>Tunnel length (in/out)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+43"/>
+        <source>Tunnel quantity (in/out)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+49"/>
+        <source>Tunnel variance (in/out)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+56"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Server Key - When a key it set it will be used to setup a hidden&lt;br/&gt;service for I2P. Otherwise only a client tunnel is created.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>load key</source>
+        <translation>kulcs betöltése</translation>
+    </message>
+    <message>
+        <location line="+46"/>
+        <source>Start</source>
+        <translation>Indítás</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Restart</source>
+        <translation>Újraindítás</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Stop</source>
+        <translation>Leállítás</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>BOB status</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Incoming</source>
+        <translation>Bejövő</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Setup your hidden address (and port if needed)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+21"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button simulates a SSL connection to your hidden address using the corresponding proxy. If your hidden node is reachable, it should cause a SSL handshake error, which RS will interpret as a valid connection state. This operation might also cause several &amp;quot;security warning&amp;quot; about connections from your local host IP (127.0.0.1) in the News Feed if you enabled it, which you should interpret as a sign of good communication.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
@@ -17891,30 +18669,138 @@ Also check your ports!</source>
         <translation>Teszt</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ServerPage.h" line="+54"/>
+        <location line="+136"/>
+        <source>To Receive Connections, you must first setup a Tor/I2P Hidden Service. 
+
+For Tor: See torrc and documentation for HOWTO details.
+
+For I2P: See http://127.0.0.1:7657/i2ptunnelmgr for setting up a server tunnel:
+Tunnel Wizard -&gt; Server Tunnel -&gt; Standard -&gt; enter a name -&gt; enter the address and port your RS is using (see Local Address above) -&gt; check 'Auto Start' -&gt; finish!
+
+Once this is done, paste the Onion/I2P (Base32) Address in the box above.
+This is your external address on the Tor/I2P network.
+Finally make sure that the Ports match the configuration.
+
+If you have issues connecting over Tor check the Tor logs too.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+36"/>
+        <source>Relay</source>
+        <translation>Közvetítő</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Enable Relay Connections</source>
+        <translation>Közvetítő állomások engedélyezése</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Use Relay Servers</source>
+        <translation>Közvetítő kiszolgálók használata</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Relay options</source>
+        <translation>Közvetítő beállítások</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Number</source>
+        <translation>Szám</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Bandwidth per link</source>
+        <translation>Sávszélesség hivatkozásokként</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Total Bandwidth</source>
+        <translation>Teljes sávszélesség</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Friends</source>
+        <translation>Ismerősök</translation>
+    </message>
+    <message>
+        <location line="+50"/>
+        <source>Friends of Friends</source>
+        <translation>Ismerősök ismerősei</translation>
+    </message>
+    <message>
+        <location line="+44"/>
+        <source>General</source>
+        <translation>Általános</translation>
+    </message>
+    <message>
+        <location line="+51"/>
+        <source>Total:</source>
+        <translation>Összesen:</translation>
+    </message>
+    <message>
+        <location line="+53"/>
+        <source>Warning: This bandwidth adds up to the max bandwidth.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Relay Server Setup</source>
+        <translation>Közvetítő kiszolgáló beállítása</translation>
+    </message>
+    <message>
+        <location line="+29"/>
+        <source>Add Server</source>
+        <translation>Kiszolgáló hozzáadása</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Server DHT Key</source>
+        <translation>Kiszolgáló DHT kulcsa</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Remove Server</source>
+        <translation>Kiszolgáló eltávolítása</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>&lt;p&gt;By activating relays, you allow your Retroshare node to act as a bridge between Retroshare  users who cannot connect directly, e.g. because they're firewalled.&lt;/p&gt;
+&lt;p&gt;You may choose to act as a relay by checking &lt;i&gt;enable relay connections&lt;/i&gt;, or simply  benefit from other peers acting as relay, by checking &lt;i&gt;use relay servers&lt;/i&gt;. For the former,  you may specify the bandwidth allocated when acting as a relay for friends of you, for friends of your friends, or anyone in the Retroshare network.&lt;/p&gt;
+&lt;p&gt;In any case, a Retroshare node acting as a relay cannot see the relayed traffic, since it is encrypted and authenticated by the two relayed nodes.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/settings/ServerPage.h" line="+60"/>
         <source>Network</source>
         <translation>Hálózat</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ServerPage.ui" line="-462"/>
+        <location filename="../gui/settings/ServerPage.ui" line="-1525"/>
         <source>IP Filters</source>
-        <translation type="unfinished"/>
+        <translation>IP szűrők</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+6"/>
+        <source>Activate IP filtering</source>
+        <translation>IP szűrés bekapcsolása</translation>
+    </message>
+    <message>
+        <location line="+11"/>
         <source>IP blacklist</source>
-        <translation type="unfinished"/>
+        <translation>IP feketelista</translation>
     </message>
     <message>
         <location line="+25"/>
         <location line="+114"/>
         <source>IP range</source>
-        <translation type="unfinished"/>
+        <translation>IP tartomány</translation>
     </message>
     <message>
         <location line="-109"/>
         <location line="+114"/>
-        <location filename="../gui/settings/ServerPage.cpp" line="-1176"/>
+        <location filename="../gui/settings/ServerPage.cpp" line="-1726"/>
         <source>Status</source>
         <translation>Állapot</translation>
     </message>
@@ -17923,13 +18809,13 @@ Also check your ports!</source>
         <location line="+114"/>
         <location filename="../gui/settings/ServerPage.cpp" line="+1"/>
         <source>Origin</source>
-        <translation type="unfinished"/>
+        <translation>Származás</translation>
     </message>
     <message>
         <location line="-109"/>
         <location line="+114"/>
         <source>Reason</source>
-        <translation type="unfinished"/>
+        <translation>Indok</translation>
     </message>
     <message>
         <location line="-109"/>
@@ -17941,99 +18827,79 @@ Also check your ports!</source>
     <message>
         <location line="-74"/>
         <source>  IPs</source>
-        <translation type="unfinished"/>
+        <translation>IP-k</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>IP whitelist</source>
-        <translation type="unfinished"/>
+        <translation>IP fehérlista</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>Manual input</source>
-        <translation type="unfinished"/>
+        <translation>Kézi bevitel</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter an IP range.  Accepted formats:&lt;/p&gt;&lt;p&gt;193.190.209.15&lt;/p&gt;&lt;p&gt;193.190.209.15/24&lt;/p&gt;&lt;p&gt;193.190.209.15/16&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;EÍrj be egy IP tartományt.  Elfogadott formátumok:&lt;/p&gt;&lt;p&gt;193.190.209.15&lt;/p&gt;&lt;p&gt;193.190.209.15/24&lt;/p&gt;&lt;p&gt;193.190.209.15/16&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter any comment you&apos;d like&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Írj bármilyen megjegyzést&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Add to blacklist</source>
-        <translation type="unfinished"/>
+        <translation>Hozzáadás a feketelistához</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Add to whitelist</source>
-        <translation type="unfinished"/>
+        <translation>Hozzáadás a fehérlistához</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Hidden Service Configuration</source>
-        <translation type="unfinished"/>
+        <translation>Rejtett szolgáltatás beállításai</translation>
     </message>
     <message>
-        <location line="+6"/>
-        <source>Outgoing Connections</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+20"/>
+        <location line="+31"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the port of the Tor Socks proxy. Your Retroshare node can use this port to connect to&lt;/p&gt;&lt;p&gt;Hidden nodes. The led at right turns green when this port is active on your computer. &lt;/p&gt;&lt;p&gt;This does not mean however that your Retroshare traffic transits though Tor. It does only if &lt;/p&gt;&lt;p&gt;you connect to Hidden nodes, or if you are running a Hidden node yourself.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+41"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This led is green when the port listen on the left is active on your computer. It does not&lt;/p&gt;&lt;p&gt;mean that your Retroshare traffic transits though Tor. It will do so only if &lt;/p&gt;&lt;p&gt;you connect to Hidden nodes, or if you are running a Hidden node yourself.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+12"/>
         <source>I2P Socks Proxy</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+17"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the port of the I2P Socks proxy. Your Retroshare node can use this port to connect to&lt;/p&gt;&lt;p&gt;Hidden nodes. The led at right turns green when this port is active on your computer. &lt;/p&gt;&lt;p&gt;This does not mean however that your Retroshare traffic transits though I2P. It does only if &lt;/p&gt;&lt;p&gt;you connect to Hidden nodes, or if you are running a Hidden node yourself.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+25"/>
+        <location line="+162"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This led is green when the port listen on the left is active on your computer. It does not&lt;/p&gt;&lt;p&gt;mean that your Retroshare traffic transits though I2P. It will do so only if &lt;/p&gt;&lt;p&gt;you connect to Hidden nodes, or if you are running a Hidden node yourself.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="-159"/>
         <source>I2P outgoing Okay</source>
-        <translation type="unfinished"/>
+        <translation>I2P kimenő kapcsolat rendben</translation>
     </message>
     <message>
-        <location line="+23"/>
-        <source>Tor Socks Proxy default: 127.0.0.1:9050.  Set in torrc config and update here.
-
-I2P Socks Proxy: see http://127.0.0.1:7657/i2ptunnelmgr for setting up a client tunnel:
-Tunnel Wizard -&gt; Client Tunnel -&gt; SOCKS 4/4a/5 -&gt; enter a name -&gt; leave 'Outproxies' empty -&gt; enter port (memorize!) [you may also want to set the reachability to 127.0.0.1] -&gt; check 'Auto Start' -&gt; finish!
-Now enter the address (e.g. 127.0.0.1) and the port you've picked before for the I2P Proxy.
-
-You can connect to Hidden Nodes, even if you are running a standard Node, so why not setup Tor and/or I2P?</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+22"/>
-        <source>Incoming Service Connections</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+42"/>
-        <location filename="../gui/settings/ServerPage.cpp" line="+942"/>
+        <location line="+580"/>
+        <location filename="../gui/settings/ServerPage.cpp" line="+1061"/>
         <source>Service Address</source>
-        <translation type="unfinished"/>
+        <translation>Kiszolgáló címe</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -18053,39 +18919,25 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
     <message>
         <location line="+3"/>
         <source>incoming  ok</source>
-        <translation type="unfinished"/>
+        <translation>bejövő forgalom rendben</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Expected Configuration:</source>
-        <translation type="unfinished"/>
+        <translation>Várt konfiguráció:</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Please fill in a service address</source>
-        <translation type="unfinished"/>
+        <translation>Kérlek adj meg egy szolgáltatás címet</translation>
     </message>
     <message>
-        <location line="+24"/>
-        <source>To Receive Connections, you must first setup a Tor/I2P Hidden Service. 
-For Tor: See torrc and documentation for HOWTO details.
-For I2P: See http://127.0.0.1:7657/i2ptunnelmgr for setting up a server tunnel:
-Tunnel Wizard -&gt; Server Tunnel -&gt; Standard -&gt; enter a name -&gt; enter the address and port your RS is using (see Local Address above) -&gt; check 'Auto Start' -&gt; finish!
-
-Once this is done, paste the Onion/I2P (Base32) Address in the box above.
-This is your external address on the Tor/I2P network.
-Finally make sure that the Ports match the configuration.
-
-If you have issues connecting over Tor check the Tor logs too.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/settings/ServerPage.cpp" line="-945"/>
+        <location filename="../gui/settings/ServerPage.cpp" line="-1064"/>
         <source>IP Range</source>
-        <translation type="unfinished"/>
+        <translation>IP tartomány</translation>
     </message>
     <message>
-        <location line="+402"/>
+        <location line="+515"/>
         <source>Reported by DHT for IP masquerading</source>
         <translation type="unfinished"/>
     </message>
@@ -18096,52 +18948,46 @@ If you have issues connecting over Tor check the Tor logs too.</source>
     </message>
     <message>
         <location line="+47"/>
-        <location line="+90"/>
+        <location line="+92"/>
         <source>Remove</source>
         <translation>Eltávolítás</translation>
     </message>
     <message>
-        <location line="-34"/>
-        <location line="+10"/>
-        <location line="+10"/>
+        <location line="-37"/>
+        <location line="+11"/>
+        <location line="+11"/>
         <source>Added by you</source>
-        <translation type="unfinished"/>
+        <translation>Hozzáadva általad</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ServerPage.ui" line="-458"/>
+        <location filename="../gui/settings/ServerPage.ui" line="-933"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;White listed IPs are gathered from the following sources: IPs coming inside a manually exchanged certificate, IP ranges entered by you in this window, or in the security feed items.&lt;/p&gt;&lt;p&gt;The default behavior for Retroshare is to (1) always allow connection to peers with IP in the whitelist, even if that IP is also blacklisted; (2) optionally require IPs to be  in the whitelist. You can change this behavior for each peer in the &amp;quot;Details&amp;quot; window of each Retroshare node. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="-441"/>
+        <location line="-445"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The DHT allows you to answer connection requests from your friends using BitTorrent&apos;s DHT. It greatly improves the connectivity. No information is actually stored in the DHT. It is only used as a proxy system to get in touch with other Retroshare nodes.&lt;/p&gt;&lt;p&gt;The Discovery service sends node name and ids of your trusted contacts to connected peers, to help them choose new friends. The friendship is never automatic however, and both peers still need to trust each other to allow connection. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location line="+51"/>
-        <location line="+136"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The bullet turns green as soon as Retroshare manages to get your own IP from the websites listed below, if you enabled that action. Retroshare will also use other means to find out your own IP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+140"/>
+        <location line="+280"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This list gets automatically filled with information gathered at multiple sources: masquerading peers reported by the DHT, IP ranges entered by you, and IP ranges reported by your friends. Default settings should protect you against large scale traffic relaying.&lt;/p&gt;&lt;p&gt;Automatically guessing masquerading IPs can put your friends IPs in the blacklist. In this case, use the context menu to whitelist them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="-20"/>
-        <source>activate IP filtering</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+64"/>
+        <location line="+44"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is very drastic, be careful. Since masquerading IPs might be actual real IPs, this option might cause disconnection, and will probably force you to add your friends&apos; IPs into the whitelist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location line="+3"/>
         <source>Ban every  IP reported by your friends</source>
-        <translation type="unfinished"/>
+        <translation>Az ismerőseid által jelentett összes IP cím letiltása</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -18165,18 +19011,28 @@ If you have issues connecting over Tor check the Tor logs too.</source>
     </message>
     <message>
         <location line="+192"/>
+        <source>Outgoing Manual Tor/I2P</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Configure your Tor and I2P SOCKS proxy here. &lt;br/&gt;If you prefer to use BOB to automatically manage I2P check the other tab.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+25"/>
         <source>Tor Socks Proxy</source>
-        <translation type="unfinished"/>
+        <translation>Tor Socks Proxy</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+28"/>
         <source>Tor outgoing Okay</source>
-        <translation type="unfinished"/>
+        <translation>Tor kimenő forgalom Rendben</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ServerPage.cpp" line="+565"/>
+        <location filename="../gui/settings/ServerPage.cpp" line="+543"/>
         <source>Tor proxy is not enabled</source>
-        <translation type="unfinished"/>
+        <translation>Tor proxy nincs engedélyezve</translation>
     </message>
 </context>
 <context>
@@ -18199,12 +19055,12 @@ If you have issues connecting over Tor check the Tor logs too.</source>
     <message>
         <location line="+2"/>
         <source>Auto-download recommended files</source>
-        <translation type="unfinished"/>
+        <translation>Automatikusan töltse le az ajánlott fájlokat</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Require whitelist</source>
-        <translation type="unfinished"/>
+        <translation>Fehérlista megkövetelése</translation>
     </message>
 </context>
 <context>
@@ -18227,7 +19083,7 @@ If you have issues connecting over Tor check the Tor logs too.</source>
     <message>
         <location filename="../gui/settings/ServicePermissionsPage.ui" line="-23"/>
         <source>hide offline</source>
-        <translation type="unfinished"/>
+        <translation>kilépett elrejtése</translation>
     </message>
     <message>
         <location filename="../gui/settings/ServicePermissionsPage.cpp" line="+50"/>
@@ -18240,7 +19096,7 @@ If you have issues connecting over Tor check the Tor logs too.</source>
     <message>
         <location filename="../gui/settings/settingsw.ui" line="+14"/>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>Forma</translation>
     </message>
 </context>
 <context>
@@ -18248,7 +19104,7 @@ If you have issues connecting over Tor check the Tor logs too.</source>
     <message>
         <location filename="../gui/settings/rsettingswin.h" line="+49"/>
         <source>Preferences</source>
-        <translation type="unfinished"/>
+        <translation>Tulajdonságok</translation>
     </message>
 </context>
 <context>
@@ -18266,7 +19122,7 @@ If you have issues connecting over Tor check the Tor logs too.</source>
     <message>
         <location line="-63"/>
         <source>Share</source>
-        <translation type="unfinished"/>
+        <translation>Megosztás</translation>
     </message>
     <message>
         <location line="+145"/>
@@ -18290,32 +19146,32 @@ Select the Friends with which you want to Share your Channel.</source>
     <message>
         <location line="+40"/>
         <source>Shared directory</source>
-        <translation type="unfinished"/>
+        <translation>Megosztott mappa</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Visible name</source>
-        <translation type="unfinished"/>
+        <translation>Megosztási név</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Access</source>
-        <translation type="unfinished"/>
+        <translation>Hozzáférés</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Visibility</source>
-        <translation type="unfinished"/>
+        <translation>Láthatóság</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Add new</source>
-        <translation type="unfinished"/>
+        <translation>Hozzáadás</translation>
     </message>
     <message>
         <location line="+33"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Mégse</translation>
     </message>
     <message>
         <location line="-36"/>
@@ -18340,32 +19196,32 @@ Select the Friends with which you want to Share your Channel.</source>
     <message>
         <location line="+66"/>
         <source>Choose directory</source>
-        <translation type="unfinished"/>
+        <translation>Válassz könyvtárat</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>Change group visibility...</source>
-        <translation type="unfinished"/>
+        <translation>Válassz csoport láthatóságot...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Choose directory to share...</source>
-        <translation type="unfinished"/>
+        <translation>Válassz könyvtárat a megosztáshoz...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Choose visible name...</source>
-        <translation type="unfinished"/>
+        <translation>Válassz megosztási nevet...</translation>
     </message>
     <message>
         <location line="+48"/>
         <source>[Unset] (Double click to change)</source>
-        <translation type="unfinished"/>
+        <translation>[Nincs beállítva] (Dupla kattintás a módosításhoz)</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Double click to select which groups of friends can see the files</source>
-        <translation type="unfinished"/>
+        <translation>Kattints duplán, hogy kiválaszthasd, hogy kik láthatják a fájlokat</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -18385,7 +19241,7 @@ Select the Friends with which you want to Share your Channel.</source>
     <message>
         <location line="+46"/>
         <source>[All friend nodes]</source>
-        <translation type="unfinished"/>
+        <translation>[az összes ismerős csomópontja]</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -18400,7 +19256,7 @@ Select the Friends with which you want to Share your Channel.</source>
     <message>
         <location line="+21"/>
         <source>Choose a directory to share</source>
-        <translation type="unfinished"/>
+        <translation>Válassz ki egy megosztási könyvtárat</translation>
     </message>
     <message>
         <location line="+64"/>
@@ -18427,22 +19283,17 @@ Select the Friends with which you want to Share your Channel.</source>
 <context>
     <name>SharedFilesDialog</name>
     <message>
-        <location filename="../gui/SharedFilesDialog.ui" line="+66"/>
+        <location filename="../gui/FileTransfer/SharedFilesDialog.ui" line="+66"/>
         <source>Files</source>
         <translation>Fájlok</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Configure shared directories</source>
-        <translation type="unfinished"/>
+        <translation>Megosztott könyvtárak beállításai</translation>
     </message>
     <message>
-        <location line="+26"/>
-        <source>Search files</source>
-        <translation>Fájlok keresése</translation>
-    </message>
-    <message>
-        <location line="+25"/>
+        <location line="+77"/>
         <source>Start Search</source>
         <translation>Keresés indítása</translation>
     </message>
@@ -18497,7 +19348,7 @@ Select the Friends with which you want to Share your Channel.</source>
         <translation>Letöltés</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="-307"/>
+        <location filename="../gui/FileTransfer/SharedFilesDialog.cpp" line="-303"/>
         <source>Copy retroshare Links to Clipboard</source>
         <translation>RetroShare hivatkozás másolása a vágólapra</translation>
     </message>
@@ -18512,23 +19363,8 @@ Select the Friends with which you want to Share your Channel.</source>
         <translation>RetroShare hivatkozás küldése</translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>Send retroshare Links to Cloud</source>
-        <translation>Retroshare hivatkozás küldése a felhőbe</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Add Links to Cloud</source>
-        <translation>Hivatkozások hozzáadása a felhőhöz</translation>
-    </message>
-    <message>
-        <location line="+415"/>
+        <location line="+424"/>
         <source>Some files have been omitted</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Some files have been ommitted because their hash is not available yet.</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -18537,30 +19373,45 @@ Select the Friends with which you want to Share your Channel.</source>
         <translation>RetroShare hivatkozás</translation>
     </message>
     <message>
-        <location line="+184"/>
+        <location line="+159"/>
         <location line="+1"/>
         <source>Recommendation(s)</source>
         <translation>Ajánlás(ok)</translation>
     </message>
     <message>
-        <location line="-629"/>
+        <location line="-614"/>
         <source>Create Collection...</source>
-        <translation type="unfinished"/>
+        <translation>Gyűjtemény létrehozása</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Modify Collection...</source>
-        <translation type="unfinished"/>
+        <translation>Gyűjtemény módosítása</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>View Collection...</source>
-        <translation type="unfinished"/>
+        <translation>Gyűjtemény megtekintése</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Download from collection file...</source>
         <translation>Letöltés kollekciófájlból...</translation>
+    </message>
+    <message>
+        <location line="+415"/>
+        <source>Some files have been omitted because they have not been indexed yet.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+628"/>
+        <source>Search string should be at least 3 characters long.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+29"/>
+        <source>More than 3000 results. Add more/longer search words to select less.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -18568,43 +19419,43 @@ Select the Friends with which you want to Share your Channel.</source>
     <message>
         <location filename="../gui/SoundManager.cpp" line="+84"/>
         <source>Friend</source>
-        <translation type="unfinished"/>
+        <translation>Ismerős</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Go Online</source>
-        <translation type="unfinished"/>
+        <translation>Jelentkezz be</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Chatmessage</source>
-        <translation type="unfinished"/>
+        <translation>Társalgóüzenet</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>New Msg</source>
-        <translation type="unfinished"/>
+        <translation>Új üzenet</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Message</source>
-        <translation type="unfinished"/>
+        <translation>Üzenet</translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+2"/>
         <source>Message arrived</source>
-        <translation type="unfinished"/>
+        <translation>Üzenet érkezett</translation>
     </message>
     <message>
         <location line="-1"/>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>Letöltés</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Download complete</source>
-        <translation type="unfinished"/>
+        <translation>A letöltés kész</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -18671,17 +19522,12 @@ Select the Friends with which you want to Share your Channel.</source>
 <context>
     <name>SplashScreen</name>
     <message>
-        <location filename="../main.cpp" line="+196"/>
-        <source>Load profile</source>
-        <translation>Profil betöltése</translation>
-    </message>
-    <message>
-        <location line="+22"/>
+        <location filename="../main.cpp" line="+276"/>
         <source>Load configuration</source>
         <translation>Beállítások betöltése</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+41"/>
         <source>Create interface</source>
         <translation>Felület létrehozása</translation>
     </message>
@@ -18694,27 +19540,23 @@ Select the Friends with which you want to Share your Channel.</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location line="+172"/>
-        <source>Login</source>
-        <translation>Bejelentkezés</translation>
+        <location line="+268"/>
+        <location filename="../gui/StartDialog.cpp" line="+94"/>
+        <source>Password</source>
+        <translation>Jelszó</translation>
     </message>
     <message>
-        <location line="+37"/>
-        <source>Profile - Location</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+10"/>
+        <location line="+7"/>
         <source>Remember Password</source>
         <translation>Jelszó megjegyzése</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+15"/>
         <source>Log In</source>
         <translation>Bejelentkezés</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+31"/>
         <source>Opens a dialog for creating a new profile or 
 adding locations to an existing profile. 
 The current identities/locations will not be affected.</source>
@@ -18723,7 +19565,16 @@ The current identities/locations will not be affected.</source>
 A jelenlegi személyazonosságok, helyszínek nem érintettek.</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="+97"/>
+        <location line="+8"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;New Profile/Node&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/StartDialog.cpp" line="+17"/>
         <source>Load Person Failure</source>
         <translation>A személy betöltése sikertelen</translation>
     </message>
@@ -18733,23 +19584,19 @@ A jelenlegi személyazonosságok, helyszínek nem érintettek.</translation>
         <translation>Hiányzó PGP tanúsítvány</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+19"/>
+        <source>Wrong password</source>
+        <translation>Hibás jelszó</translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <location line="+3"/>
         <location line="+3"/>
         <source>Warning</source>
         <translation>Vigyázat</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.ui" line="+5"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Manage profiles and nodes...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/StartDialog.cpp" line="+0"/>
+        <location line="+0"/>
         <source>The password to your SSL certificate (your node) will be stored encrypted in your Gnome Keyring. 
 
  Your PGP passwd will not be stored.
@@ -18835,23 +19682,28 @@ This choice can be reverted in settings.</source>
         <translation>Szolgáltatás jogosultságok mátrix</translation>
     </message>
     <message>
-        <location filename="../gui/statistics/StatisticsWindow.cpp" line="+140"/>
+        <location filename="../gui/statistics/StatisticsWindow.cpp" line="+166"/>
         <source>DHT</source>
         <translation>DHT</translation>
     </message>
     <message>
-        <location line="-12"/>
+        <location line="-24"/>
         <source>Bandwidth</source>
         <translation>Sávszélesség</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Turtle Router</source>
-        <translation type="unfinished"/>
+        <translation>Teknőc útválasztó</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Global Router</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Gxs Transport</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -18984,12 +19836,12 @@ This choice can be reverted in settings.</source>
     <message>
         <location line="-59"/>
         <source>inbound connection</source>
-        <translation type="unfinished"/>
+        <translation>bejövő kapcsolat</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>outbound connection</source>
-        <translation type="unfinished"/>
+        <translation>kimenő kapcsolat</translation>
     </message>
     <message>
         <location line="+61"/>
@@ -19019,7 +19871,7 @@ This choice can be reverted in settings.</source>
     <message>
         <location line="+3"/>
         <source>unkown</source>
-        <translation type="unfinished"/>
+        <translation>ismeretlen</translation>
     </message>
     <message>
         <location line="-88"/>
@@ -19114,7 +19966,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SubFileItem</name>
     <message>
-        <location filename="../gui/feeds/SubFileItem.ui" line="+73"/>
+        <location filename="../gui/feeds/SubFileItem.ui" line="+61"/>
         <source>%p Kb</source>
         <translation>%p Kb</translation>
     </message>
@@ -19135,7 +19987,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/feeds/SubFileItem.cpp" line="+581"/>
+        <location filename="../gui/feeds/SubFileItem.cpp" line="+595"/>
         <location line="+6"/>
         <source>Play File</source>
         <translation>Fájl lejátszása</translation>
@@ -19151,7 +20003,12 @@ p, li { white-space: pre-wrap; }
         <translation>Fájl mentése</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/SubFileItem.cpp" line="-372"/>
+        <location line="+11"/>
+        <source>Remove this item</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/feeds/SubFileItem.cpp" line="-373"/>
         <location line="+7"/>
         <source>ERROR</source>
         <translation>HIBA</translation>
@@ -19162,7 +20019,7 @@ p, li { white-space: pre-wrap; }
         <translation>EXTRA</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+11"/>
         <source>REMOTE</source>
         <translation>TÁVOLI</translation>
     </message>
@@ -19213,7 +20070,7 @@ p, li { white-space: pre-wrap; }
         <translation>Fájl megnyitása</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/SubFileItem.ui" line="-26"/>
+        <location filename="../gui/feeds/SubFileItem.ui" line="-37"/>
         <source>Copy RetroShare Link</source>
         <translation>RetroShare hivatkozás másolása</translation>
     </message>
@@ -19239,7 +20096,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TBoard</name>
     <message>
-        <location filename="../gui/AboutWidget.cpp" line="+455"/>
+        <location filename="../gui/AboutWidget.cpp" line="-338"/>
         <source>Pause</source>
         <translation>Szünet</translation>
     </message>
@@ -19299,9 +20156,97 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>TorControlDialog</name>
+    <message>
+        <location filename="../TorControl/TorControlWindow.ui" line="+20"/>
+        <source>Dialog</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Setting up Tor...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+27"/>
+        <source>Tor status:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Unknown</source>
+        <translation>Ismeretlen</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Not started</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Hidden service address:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Tor bootstrap status:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+10"/>
+        <location line="+17"/>
+        <source>Not set</source>
+        <translation>Nincs beállítva</translation>
+    </message>
+    <message>
+        <location line="-10"/>
+        <source>Onion address:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../TorControl/TorControlWindow.cpp" line="+86"/>
+        <source>Check that Tor is accessible in your executable path</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>[Waiting for Tor...]</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>TorStatus</name>
+    <message>
+        <location filename="../gui/statusbar/torstatus.cpp" line="+45"/>
+        <source>Tor</source>
+        <translation>Tor</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&lt;p&gt;This version of Retroshare uses Tor to connect to your friends.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+75"/>
+        <location line="+15"/>
+        <source>Tor is currently offline</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="-10"/>
+        <source>Tor is OK</source>
+        <translation>Tor rendben</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>No tor configuration</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>TransferPage</name>
     <message>
-        <location filename="../gui/settings/TransferPage.ui" line="+192"/>
+        <location filename="../gui/settings/TransferPage.ui" line="+262"/>
         <source>Transfer options</source>
         <translation>Átvitel beállításai</translation>
     </message>
@@ -19311,22 +20256,22 @@ p, li { white-space: pre-wrap; }
         <translation>Maximum egyidejű letöltések száma:</translation>
     </message>
     <message>
-        <location line="-185"/>
+        <location line="-255"/>
         <source>Shared Directories</source>
-        <translation type="unfinished"/>
+        <translation>Megosztott könyvtárak</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+16"/>
         <source>Automatically share incoming directory (Recommended)</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-10"/>
         <source>Edit Share</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+28"/>
         <source>Auto-check shared directories every </source>
         <translation type="unfinished"/>
     </message>
@@ -19336,7 +20281,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+20"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tells Retroshare to follow the links. Loops and duplicate directories are automatically taken care of. If unchecked, Retroshare will just ignore symbolic links to both files and directories.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
@@ -19346,23 +20291,68 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+13"/>
-        <source>Incoming Directory</source>
+        <location line="+14"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When following sybolic links, Retroshare can encounter the same directory/file more than once. If checked, this option will make tell Retroshare to silently ignore the file. This option saves Retroshare indexing against directory loops.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ignore duplicate files/directories</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Maximum depth (0=unlimited):</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This value allows you to limit the depth of the directory hierarchy you are indexing, starting from the base directory. If you allow Retroshare to follow symbolic links and unchecked &amp;quot;Ignore duplicate files/directories&amp;quot;, this option will avoid that Retroshare loops indefinitly while parsing directories.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Ignore files ending with:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add any combination of suffixes separated by &amp;quot;;&amp;quot; for instance &amp;quot;~;.bak;.old&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>ignore files starting with:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add any combination of prefixes, separated by &amp;quot;;&amp;quot; for instance &amp;quot;.;~&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Incoming Directory</source>
+        <translation>Bejövő könyvtár</translation>
     </message>
     <message>
         <location line="+25"/>
         <location line="+48"/>
         <source>Browse</source>
-        <translation type="unfinished"/>
+        <translation>Böngészés</translation>
     </message>
     <message>
         <location line="-25"/>
         <source>Partials Directory</source>
-        <translation type="unfinished"/>
+        <translation>Részleges könyvtár</translation>
     </message>
     <message>
         <location line="+65"/>
+        <source>Maximum uploads per friend (0 = no limit)</source>
+        <translation>Ismewrősök feltöltéseinek száma legfeljebb (0=korlátlan)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Default chunk strategy:</source>
         <translation>Alapértelmezett szeletletöltési stratégia:</translation>
     </message>
@@ -19374,10 +20364,15 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+14"/>
         <source>End-to-end encryption:</source>
-        <translation type="unfinished"/>
+        <translation>Végpontok közötti titkosítás:</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+7"/>
+        <source>Allow direct download:</source>
+        <translation>Közvetlen letöltés engedélyezése:</translation>
+    </message>
+    <message>
+        <location line="+37"/>
         <source>Streaming</source>
         <translation>Streamelés</translation>
     </message>
@@ -19404,12 +20399,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+4"/>
         <source>Accepted</source>
-        <translation type="unfinished"/>
+        <translation>Elfogadva</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Enforced</source>
+        <translation>Kényszerítve</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;How RS manage direct download setting.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Yes</source>
+        <translation>Igen</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>No</source>
+        <translation>Nem</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Per user</source>
+        <translation>Felhasználónként</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -19425,12 +20440,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="-124"/>
+        <location line="-156"/>
         <source>Max. tunnel req. forwarded per second:</source>
         <translation>Maximális továbbított csatornák száma másodpercenként:</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+47"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Streaming &lt;/span&gt;causes the transfer to request 1MB file chunks in increasing order, facilitating preview while downloading. &lt;span style=&quot; font-weight:600;&quot;&gt;Random&lt;/span&gt; is purely random and favors swarming behavior. &lt;span style=&quot; font-weight:600;&quot;&gt;Progressive&lt;/span&gt; is a compromise, selecting the next chunk at random within less than 50MB after the end of the partial file. That allows  some randomness while preventing large empty file initialization times.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
@@ -19445,19 +20460,19 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/settings/TransferPage.cpp" line="+132"/>
+        <location filename="../gui/settings/TransferPage.cpp" line="+223"/>
         <source>Set Incoming Directory</source>
-        <translation type="unfinished"/>
+        <translation>Fogadó könyvtár beállítása</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Set Partials Directory</source>
-        <translation type="unfinished"/>
+        <translation>Részleges könyvtár beállítása</translation>
     </message>
     <message>
         <location filename="../gui/settings/TransferPage.h" line="+42"/>
         <source>Files</source>
-        <translation type="unfinished"/>
+        <translation>Fájlok</translation>
     </message>
 </context>
 <context>
@@ -19492,111 +20507,75 @@ p, li { white-space: pre-wrap; }
     <name>TransfersDialog</name>
     <message>
         <location filename="../gui/FileTransfer/TransfersDialog.ui" line="+138"/>
-        <location filename="../gui/FileTransfer/TransfersDialog.cpp" line="+1374"/>
+        <location filename="../gui/FileTransfer/TransfersDialog.cpp" line="+1622"/>
         <source>Downloads</source>
         <translation>Letöltések</translation>
     </message>
     <message>
-        <location line="+113"/>
+        <location line="+122"/>
         <location filename="../gui/FileTransfer/TransfersDialog.cpp" line="+1"/>
         <source>Uploads</source>
         <translation>Feltöltések</translation>
     </message>
     <message>
-        <location filename="../gui/FileTransfer/TransfersDialog.cpp" line="-1181"/>
-        <location line="+76"/>
+        <location filename="../gui/FileTransfer/TransfersDialog.cpp" line="-1113"/>
         <source>Name</source>
         <comment>i.e: file name</comment>
         <translation>Név</translation>
     </message>
     <message>
-        <location line="-75"/>
-        <location line="+76"/>
+        <location line="+2"/>
         <source>Size</source>
         <comment>i.e: file size</comment>
         <translation>Méret</translation>
     </message>
     <message>
-        <location line="-75"/>
-        <location line="+239"/>
+        <location line="+136"/>
         <source>Completed</source>
         <translation>Elkészült</translation>
     </message>
     <message>
-        <location line="-238"/>
-        <source>Speed</source>
-        <comment>i.e: Download speed</comment>
-        <translation>Sebesség</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Progress / Availability</source>
-        <comment>i.e: % downloaded</comment>
-        <translation>Folyamat / Elérhetőség</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Sources</source>
-        <comment>i.e: Sources</comment>
-        <translation>Források</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <location line="+75"/>
-        <location line="+172"/>
+        <location line="+12"/>
         <source>Status</source>
         <translation>Állapot</translation>
     </message>
     <message>
-        <location line="-246"/>
-        <location line="+249"/>
+        <location line="+3"/>
         <source>Speed / Queue position</source>
         <translation>Sebesség / Sorszám</translation>
     </message>
     <message>
-        <location line="-248"/>
-        <location line="+251"/>
+        <location line="+3"/>
         <source>Remaining</source>
         <translation>Hátralévő</translation>
     </message>
     <message>
-        <location line="-250"/>
-        <source>Download time</source>
-        <comment>i.e: Estimated Time of Arrival / Time left</comment>
-        <translation>Letöltési idő</translation>
-    </message>
-    <message>
-        <location line="+69"/>
-        <source>Peer</source>
-        <comment>i.e: user name</comment>
-        <translation>Partner</translation>
-    </message>
-    <message>
-        <location line="+1"/>
+        <location line="-151"/>
         <source>Progress</source>
         <comment>i.e: % uploaded</comment>
         <translation>Folyamat</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-1"/>
         <source>Speed</source>
         <comment>i.e: upload speed</comment>
         <translation>Sebesség</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-1"/>
         <source>Transferred</source>
         <translation>Forgalmazott</translation>
     </message>
     <message>
-        <location line="-72"/>
-        <location line="+73"/>
-        <location line="+182"/>
+        <location line="+3"/>
+        <location line="+156"/>
         <source>Hash</source>
         <translation>Hash</translation>
     </message>
     <message>
-        <location line="-131"/>
+        <location line="-170"/>
+        <location line="+2"/>
+        <location line="+51"/>
         <source>Search</source>
         <translation>Keresés</translation>
     </message>
@@ -19611,38 +20590,44 @@ p, li { white-space: pre-wrap; }
         <translation>Fájljaim</translation>
     </message>
     <message>
-        <location line="+97"/>
+        <location line="+83"/>
         <source>Download from collection file...</source>
         <translation>Letöltés kollekciófájlból...</translation>
     </message>
     <message>
-        <location line="-74"/>
+        <location line="-72"/>
         <source>Pause</source>
         <translation>Szünet</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="-58"/>
+        <source>Peer</source>
+        <comment>i.e: user name / tunnel id</comment>
+        <translation>Kapcsolat</translation>
+    </message>
+    <message>
+        <location line="+61"/>
         <source>Resume</source>
         <translation>Folytatás</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+3"/>
         <source>Force Check</source>
         <translation>Erőltetett ellenőrzés</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>Cancel</source>
         <translation>Mégse</translation>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+98"/>
+        <location line="+102"/>
         <source>Open Folder</source>
         <translation>Mappa megnyitása</translation>
     </message>
     <message>
-        <location line="-95"/>
+        <location line="-99"/>
         <source>Open File</source>
         <translation>Fájl megnyitása</translation>
     </message>
@@ -19663,12 +20648,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+4"/>
-        <location line="+84"/>
+        <location line="+88"/>
         <source>Copy RetroShare Link</source>
         <translation>RetroShare link másolása</translation>
     </message>
     <message>
-        <location line="-82"/>
+        <location line="-86"/>
         <source>Paste RetroShare Link</source>
         <translation>RetroShare hivatkozás beillesztése</translation>
     </message>
@@ -19699,25 +20684,21 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+2"/>
-        <location line="+516"/>
         <source>Slower</source>
         <translation>Lassabb</translation>
     </message>
     <message>
-        <location line="-514"/>
-        <location line="+515"/>
         <location line="+2"/>
         <source>Average</source>
         <translation>Átlagos</translation>
     </message>
     <message>
-        <location line="-515"/>
-        <location line="+514"/>
+        <location line="+2"/>
         <source>Faster</source>
         <translation>Gyorsabb</translation>
     </message>
     <message>
-        <location line="-512"/>
+        <location line="+2"/>
         <source>Random</source>
         <translation>Véletlenszerű</translation>
     </message>
@@ -19742,12 +20723,12 @@ p, li { white-space: pre-wrap; }
         <translation>Meghatározás...</translation>
     </message>
     <message>
-        <location line="+63"/>
+        <location line="+67"/>
         <source> &lt;h1&gt;&lt;img width=&quot;%1&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt;                                                             &lt;p&gt;Retroshare brings two ways of transferring files: direct transfers from your friends, and                                         distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                          (you can be a source while downloading)&lt;/p&gt;                                         &lt;p&gt;You can share files using the &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=%2 /&gt; icon from the left side bar.     These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files     in their Friends Files tab&lt;/p&gt;    &lt;p&gt;The search tab reports files from your friends&apos; file lists, and distant files that can be reached     anonymously using the multi-hop tunnelling system.&lt;/p&gt;     </source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+139"/>
+        <location line="+127"/>
         <source>Move in Queue...</source>
         <translation>Mozgatás a sorban...</translation>
     </message>
@@ -19762,100 +20743,25 @@ p, li { white-space: pre-wrap; }
         <translation>Szeletletöltési stratégia</translation>
     </message>
     <message>
-        <location line="+89"/>
+        <location line="+88"/>
         <source>Set destination directory</source>
         <translation>Célmappa beállítása</translation>
     </message>
     <message>
-        <location line="+146"/>
+        <location line="+140"/>
         <source>Choose directory</source>
         <translation>Mappa kiválasztása</translation>
     </message>
     <message>
-        <location line="+35"/>
-        <location line="+241"/>
-        <location line="+166"/>
-        <source>Failed</source>
-        <translation>Sikertelen</translation>
-    </message>
-    <message>
-        <location line="-406"/>
-        <location line="+244"/>
-        <location line="+163"/>
-        <source>Okay</source>
-        <translation>Oké</translation>
-    </message>
-    <message>
-        <location line="-406"/>
-        <location line="+407"/>
-        <source>Waiting</source>
-        <translation>Várakozás</translation>
-    </message>
-    <message>
-        <location line="-406"/>
-        <source>Downloading</source>
-        <translation>Letöltés</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <location line="+253"/>
-        <location line="+154"/>
-        <location line="+1"/>
-        <source>Complete</source>
-        <translation>Elkészült</translation>
-    </message>
-    <message>
-        <location line="-407"/>
-        <source>Queued</source>
-        <translation>Sorban áll</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Paused</source>
-        <translation>Szüneteltetve</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Checking...</source>
-        <translation>Ellenőrzés...</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Unknown</source>
-        <translation>Ismeretlen</translation>
-    </message>
-    <message>
-        <location line="+66"/>
-        <source>If the hash of the downloaded data does
-not correspond to the hash announced
-by the file source. The data is likely 
-to be corrupted.
-
-RetroShare will ask the source a detailed 
-map of the data; it will compare and invalidate
-bad blocks, and download them again
-
-Try to be patient!</source>
-        <translation>Amennyiben a letöltött adatok hash értéke nem egyezik a forrás
- által megadott hash értékkel, a fájl valószínűleg hibás. A RetroShare
-igényel egy részletesebb hash térképet a forrástól, hogy meghatározza
-és elkülönítse a hibás adatokat, majd megkísérelje újból letölteni a fájlt.
-Kérlek, légy türelmes!</translation>
-    </message>
-    <message>
-        <location line="+179"/>
-        <source>Transferring</source>
-        <translation>Folyamatban</translation>
-    </message>
-    <message>
-        <location line="+157"/>
-        <source>Uploading</source>
-        <translation>Feltöltés</translation>
-    </message>
-    <message>
-        <location line="+81"/>
+        <location line="+583"/>
         <source>Anonymous end-to-end encrypted tunnel 0x</source>
         <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+1"/>
+        <location line="+5"/>
+        <source>Tunnel</source>
+        <translation>Alagút</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -19868,7 +20774,7 @@ Kérlek, légy türelmes!</translation>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location line="+308"/>
+        <location line="+305"/>
         <location line="+10"/>
         <location line="+7"/>
         <location line="+9"/>
@@ -19916,23 +20822,14 @@ Kérlek, légy türelmes!</translation>
         <translation>Kérlek, írj be egy új --és megfelelő-- fájlnevet</translation>
     </message>
     <message>
-        <location line="-1711"/>
-        <source>Last Time Seen</source>
-        <comment>i.e: Last Time Receiced Data</comment>
-        <translation>Utoljára látva</translation>
-    </message>
-    <message>
-        <location line="+73"/>
-        <source>UserID</source>
-        <translation>FelhasználóID</translation>
-    </message>
-    <message>
-        <location line="+140"/>
+        <location line="-1543"/>
+        <location line="+4"/>
         <source>Expand all</source>
         <translation>Összes lenyitása</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-2"/>
+        <location line="+4"/>
         <source>Collapse all</source>
         <translation>Összes becsukása</translation>
     </message>
@@ -20022,23 +20919,17 @@ Kérlek, légy türelmes!</translation>
         <translation>Utoljára látva oszlop mutatása</translation>
     </message>
     <message>
-        <location line="+353"/>
+        <location line="+337"/>
         <source>Columns</source>
         <translation>Oszlopok</translation>
     </message>
     <message>
-        <location filename="../gui/FileTransfer/TransfersDialog.ui" line="-176"/>
+        <location filename="../gui/FileTransfer/TransfersDialog.ui" line="-185"/>
         <source>File Transfers</source>
         <translation>Fájl átvitelek</translation>
     </message>
     <message>
-        <location filename="../gui/FileTransfer/TransfersDialog.cpp" line="-610"/>
-        <source>Path</source>
-        <comment>i.e: Where file is saved</comment>
-        <translation>Elérési út</translation>
-    </message>
-    <message>
-        <location line="+259"/>
+        <location filename="../gui/FileTransfer/TransfersDialog.cpp" line="-335"/>
         <source>Path</source>
         <translation>Elérési út</translation>
     </message>
@@ -20048,83 +20939,90 @@ Kérlek, légy türelmes!</translation>
         <translation>Elérési útvonal mutatása</translation>
     </message>
     <message>
-        <location line="+1288"/>
+        <location line="+1329"/>
         <source>Could not delete preview file</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location line="+0"/>
         <source>Try it again?</source>
-        <translation type="unfinished"/>
+        <translation>Újból megpróbálod?</translation>
     </message>
     <message>
-        <location line="-1332"/>
+        <location line="-1373"/>
         <source>Create Collection...</source>
-        <translation type="unfinished"/>
+        <translation>Gyűjtemény létrehozása</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Modify Collection...</source>
-        <translation type="unfinished"/>
+        <translation>Gyűjtemény módosítása</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>View Collection...</source>
-        <translation type="unfinished"/>
+        <translation>Gyűjtemény megtekintése</translation>
     </message>
     <message>
-        <location line="+211"/>
+        <location line="+199"/>
         <source>Collection</source>
         <translation>Kollekció</translation>
     </message>
     <message>
-        <location line="+757"/>
+        <location line="+558"/>
+        <source>%1 tunnels</source>
+        <translation>%1 alagút</translation>
+    </message>
+    <message>
+        <location line="+252"/>
         <source>Anonymous tunnel 0x</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="-368"/>
-        <source>version:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/FileTransfer/TransfersDialog.h" line="+63"/>
+        <location filename="../gui/FileTransfer/TransfersDialog.h" line="+67"/>
         <source>Files</source>
-        <translation type="unfinished"/>
+        <translation>Fájlok</translation>
     </message>
 </context>
 <context>
     <name>TreeStyle_RDM</name>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="-303"/>
-        <location line="+152"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="-343"/>
+        <location line="+169"/>
         <source>My files</source>
         <translation>Fájljaim</translation>
     </message>
     <message>
-        <location line="-102"/>
-        <location line="+131"/>
+        <location line="-107"/>
+        <location line="+156"/>
         <source>FILE</source>
         <translation>FÁJL</translation>
     </message>
     <message>
-        <location line="-118"/>
+        <location line="-203"/>
+        <location line="+60"/>
         <source>Files</source>
         <translation>Fájlok</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-58"/>
+        <location line="+60"/>
         <source>File</source>
         <translation>Fájl</translation>
     </message>
     <message>
-        <location line="+9"/>
-        <location line="+123"/>
+        <location line="-58"/>
+        <source>Empty</source>
+        <translation>Üres</translation>
+    </message>
+    <message>
+        <location line="+69"/>
+        <location line="+148"/>
         <source>DIR</source>
         <translation>MAPPA</translation>
     </message>
     <message>
-        <location line="+165"/>
+        <location line="+166"/>
         <source>Friends Directories [updating...]</source>
         <translation type="unfinished"/>
     </message>
@@ -20145,6 +21043,11 @@ Kérlek, légy türelmes!</translation>
     </message>
     <message>
         <location line="+2"/>
+        <source># Files</source>
+        <translation># Fájlok</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Size</source>
         <translation>Méret</translation>
     </message>
@@ -20161,15 +21064,25 @@ Kérlek, légy türelmes!</translation>
     <message>
         <location line="+2"/>
         <source>Access</source>
-        <translation type="unfinished"/>
+        <translation>Hozzáférés</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Visibility</source>
-        <translation type="unfinished"/>
+        <translation>Láthatóság</translation>
     </message>
     <message>
-        <location line="-2"/>
+        <location line="+2"/>
+        <source>Column %1</source>
+        <translation>Oszlop-szám %1</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Row %1</source>
+        <translation>Sor-szám %1</translation>
+    </message>
+    <message>
+        <location line="-7"/>
         <source>What&apos;s new</source>
         <translation>Újdonságok</translation>
     </message>
@@ -20177,20 +21090,20 @@ Kérlek, légy türelmes!</translation>
 <context>
     <name>TurtleRouterDialog</name>
     <message>
-        <location filename="../gui/statistics/TurtleRouterDialog.cpp" line="-315"/>
-        <location line="+126"/>
+        <location filename="../gui/statistics/TurtleRouterDialog.cpp" line="-337"/>
+        <location line="+148"/>
         <source>Search requests</source>
         <translation>Keresési kérelem</translation>
     </message>
     <message>
-        <location line="-121"/>
-        <location line="+141"/>
+        <location line="-143"/>
+        <location line="+163"/>
         <source>Tunnel requests</source>
         <translation>Alagút kérelem</translation>
     </message>
     <message>
-        <location line="-39"/>
-        <location line="+42"/>
+        <location line="-58"/>
+        <location line="+61"/>
         <location line="+7"/>
         <location line="+23"/>
         <location line="+5"/>
@@ -20198,9 +21111,9 @@ Kérlek, légy türelmes!</translation>
         <translation>Ismeretlen hashek</translation>
     </message>
     <message>
-        <location line="-74"/>
+        <location line="-85"/>
         <source>Tunnel id</source>
-        <translation>Alagút ID</translation>
+        <translation>Alagút azonosító</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -20213,10 +21126,14 @@ Kérlek, légy türelmes!</translation>
         <translation>Sebesség</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+20"/>
+        <source>Request id: %1	 %3 secs ago	 from  %2	 %4 (%5 hits)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <location line="+12"/>
         <source>Request id: %1	 from [%2]	 %3 secs ago</source>
-        <translation>Kérelem ID: %1 » tőle [%2]» %3 másodperccel ezelőtt</translation>
+        <translation>Kérelem azonosító: %1 	 tőle [%2]	 %3 másodperccel ezelőtt</translation>
     </message>
 </context>
 <context>
@@ -20257,7 +21174,7 @@ Kérlek, légy türelmes!</translation>
     <message>
         <location line="+48"/>
         <source>Anonymous tunnels</source>
-        <translation type="unfinished"/>
+        <translation>Névtelen alagutak</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -20272,7 +21189,7 @@ Kérlek, légy türelmes!</translation>
     <message>
         <location filename="../gui/statistics/TurtleRouterStatistics.ui" line="+10"/>
         <source>Turtle Router</source>
-        <translation type="unfinished"/>
+        <translation>Teknőc útválasztó</translation>
     </message>
 </context>
 <context>
@@ -20320,7 +21237,7 @@ Kérlek, légy türelmes!</translation>
     <message>
         <location line="-7"/>
         <source>Forwarded data</source>
-        <translation type="unfinished"/>
+        <translation>Továbbított adatok</translation>
     </message>
 </context>
 <context>
@@ -20458,48 +21375,48 @@ Kérlek, légy türelmes!</translation>
     </message>
     <message>
         <location line="+16"/>
-        <source>Port :</source>
+        <source>Port:</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location line="+7"/>
-        <source>allow access from all IP adresses (Default: localhost only)</source>
-        <translation type="unfinished"/>
+        <source>Allow access from all IP addresses (Default: localhost only)</source>
+        <translation>Engedélyezd a hozzáférést az összes IP cím részére (Alapértelmezett: csak localhost)</translation>
     </message>
     <message>
         <location line="+10"/>
-        <source>apply setting and start browser</source>
-        <translation type="unfinished"/>
+        <source>Apply setting and start browser</source>
+        <translation>Beállítások alkalmazása és a böngésző indítása</translation>
     </message>
     <message>
         <location line="+7"/>
-        <source>Note: these settings do not affect retroshare-nogui. retroshare-nogui has a command line switch to active the webinterface.</source>
+        <source>Note: these settings do not affect retroshare-nogui. Retroshare-nogui has a command line switch to activate the web interface.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/settings/WebuiPage.cpp" line="+75"/>
+        <location filename="../gui/settings/WebuiPage.cpp" line="+78"/>
         <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Webinterface&lt;/h1&gt;       &lt;p&gt;The webinterface allows you to control Retroshare from the browser. Multiple devices can share control over one Retroshare instance. So you could start a conversation on a tablet computer and later use a desktop computer to continue it.&lt;/p&gt;     &lt;p&gt;Warning: don&apos;t expose the webinterface to the internet, because there is no access control and no encryption. If you want to use the webinterface over the internet, use a SSH tunnel or a proxy to secure the connection.&lt;/p&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location line="+61"/>
         <source>Webinterface not enabled</source>
-        <translation type="unfinished"/>
+        <translation>A beépített böngésző nincs engedélyezve</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>The webinterface is not enabled. Enable it in Settings -&gt; Webinterface.</source>
-        <translation type="unfinished"/>
+        <translation>A beépített böngészőt a menü &quot;Beállítások&quot; -&gt; &quot;Böngésző&quot; pontjai alatt engedélyezheted.</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+30"/>
         <source>failed to start Webinterface</source>
-        <translation type="unfinished"/>
+        <translation>a böngészőt nem sikerült elindítani</translation>
     </message>
     <message>
         <location filename="../gui/settings/WebuiPage.h" line="+27"/>
         <source>Webinterface</source>
-        <translation type="unfinished"/>
+        <translation>Böngésző</translation>
     </message>
 </context>
 <context>
@@ -20647,12 +21564,12 @@ Kérlek, légy türelmes!</translation>
     <message>
         <location line="+5"/>
         <source>Page Id</source>
-        <translation>Oldal id</translation>
+        <translation>Oldal azonosító</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Orig Id</source>
-        <translation type="unfinished"/>
+        <translation>Eredeti azonosító</translation>
     </message>
     <message>
         <location line="+46"/>
@@ -20727,7 +21644,7 @@ Kérlek, légy türelmes!</translation>
     <message>
         <location filename="../gui/WikiPoos/WikiDialog.cpp" line="+5"/>
         <source>Show Wiki Group</source>
-        <translation type="unfinished"/>
+        <translation>Mutasd a Wiki csoportot</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -20770,7 +21687,7 @@ Kérlek, légy türelmes!</translation>
     <message>
         <location line="+5"/>
         <source>PageId</source>
-        <translation>Oldal Id</translation>
+        <translation>Oldal azonosító</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -20898,7 +21815,7 @@ Kérlek, légy türelmes!</translation>
     <message>
         <location line="+7"/>
         <source>Update Group</source>
-        <translation type="unfinished"/>
+        <translation>Csoport frissítése</translation>
     </message>
 </context>
 <context>
@@ -21120,6 +22037,140 @@ Kérlek, légy türelmes!</translation>
     <message>
         <location line="+23"/>
         <source>Pictures (*.png *.jpeg *.xpm *.jpg *.tiff *.gif)</source>
+        <translation>Képek (*.png *.jpeg *.xpm *.jpg *.tiff *.gif)</translation>
+    </message>
+</context>
+<context>
+    <name>pgpid_item_model</name>
+    <message>
+        <location filename="../gui/NetworkDialog/pgpid_item_model.cpp" line="+25"/>
+        <source> Do you accept connections signed by this profile?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Name of the profile</source>
+        <translation>Profilnév</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>This column indicates trust level and whether you signed the profile PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Did that peer sign your own profile PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>PGP Key Id of that profile</source>
+        <translation>A profil PGP kulcs azonosítója</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Last time this key was used (received time, or to check connection)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Connections</source>
+        <translation>Kapcsolatok</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Profile</source>
+        <translation>Profil</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Trust level</source>
+        <translation>Bizalmi szint</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Has signed your key?</source>
+        <translation>Aláírta a kulcsodat?</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Id</source>
+        <translation>Azonosító</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Last used</source>
+        <translation>Utoljára használva</translation>
+    </message>
+    <message>
+        <location line="+102"/>
+        <source>Personal signature</source>
+        <translation>Személyes aláírás</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Marginally trusted peer</source>
+        <translation>Alig megbízható kapcsolat</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Fully trusted peer</source>
+        <translation>Teljesen megbízható kapcsolat</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Untrusted peer</source>
+        <translation>Nem megbízható kapcsolat</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Yes</source>
+        <translation>Igen</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>No</source>
+        <translation>Nem</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Last hour</source>
+        <translation>Elmúlt órában</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Today</source>
+        <translation>Ma</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Never</source>
+        <translation>Soha</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>%1 days ago</source>
+        <translation>%1 napja</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Accepted</source>
+        <translation>Elfogadva</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source> - </source>
+        <translation> - </translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>PGP key signed by you</source>
+        <translation>az általad aláírt PGP kulcs</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source> has authenticated you. 
+Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation type="unfinished"/>
     </message>
 </context>

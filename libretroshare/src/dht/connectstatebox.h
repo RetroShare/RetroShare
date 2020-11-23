@@ -1,30 +1,26 @@
+/*******************************************************************************
+ * libretroshare/src/dht: connectstatebox.h                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2011-2011 by Robert Fernie <drbob@lunamutt.com>                   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef CONNECT_STATUS_BOX_H
 #define CONNECT_STATUS_BOX_H
-
-/*
- * libretroshare/src/dht: connectstatebox.h
- *
- * RetroShare DHT C++ Interface.
- *
- * Copyright 2011-2011 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
 
 /* a connect state box */
 
@@ -76,20 +72,22 @@
 #include <string>
 
 #include <stdlib.h>
-#include <time.h>
+#include "util/rstime.h"
 #include <inttypes.h>
+
+#include <retroshare/rsconfig.h>
 
 class PeerConnectStateBox
 {
 	public:
 	PeerConnectStateBox();
 
-	uint32_t connectCb(uint32_t cbtype, uint32_t netmode, uint32_t nathole, uint32_t nattype);
+	uint32_t connectCb(uint32_t cbtype, RsNetworkMode netmode, RsNatHoleMode nathole, RsNatTypeMode nattype);
 	uint32_t updateCb(uint32_t updateType);
 
-	bool shouldUseProxyPort(uint32_t netmode, uint32_t nathole, uint32_t nattype);
+	bool shouldUseProxyPort(RsNetworkMode netmode, RsNatHoleMode nathole, RsNatTypeMode nattype);
 
-	uint32_t calcNetState(uint32_t netmode, uint32_t nathole, uint32_t nattype);
+	uint32_t calcNetState(RsNetworkMode netmode, RsNatHoleMode nathole, RsNatTypeMode nattype);
 	std::string connectState() const;
 
 	std::string mPeerId;
@@ -108,16 +106,16 @@ class PeerConnectStateBox
 
 	uint32_t mState;
 	uint32_t mNetState;
-	time_t mStateTS;
+	rstime_t mStateTS;
 	uint32_t mNoAttempts;
 	uint32_t mNoFailedAttempts;
-	time_t mNextAttemptTS;
-	time_t mAttemptLength;
+	rstime_t mNextAttemptTS;
+	rstime_t mAttemptLength;
 
 	// ProxyPort Storage.
 	uint32_t mProxyPortFlags;
 	bool     mProxyPortChoice;
-	time_t   mProxyPortTS;
+	rstime_t   mProxyPortTS;
 };
 
 

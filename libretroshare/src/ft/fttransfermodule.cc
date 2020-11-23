@@ -1,33 +1,29 @@
-/*
- * libretroshare/src/ft: fttransfermodule.cc
- *
- * File Transfer for RetroShare.
- *
- * Copyright 2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/ft: fttransfermodule.cc                                   *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2008 by Robert Fernie <retroshare@lunamutt.com>                   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 /******
  * #define FT_DEBUG 1
  *****/
 
-#include <time.h>
+#include "util/rstime.h"
 
 #include "retroshare/rsturtle.h"
 #include "fttransfermodule.h"
@@ -48,27 +44,16 @@
  *
  */
 
-const double 	FT_TM_MAX_PEER_RATE 		       = 100 * 1024 * 1024; /* 100MB/s */
+const double   FT_TM_MAX_PEER_RATE 		       = 100 * 1024 * 1024; /* 100MB/s */
 const uint32_t FT_TM_MAX_RESETS  		       = 5;
-const uint32_t FT_TM_MINIMUM_CHUNK 		       = 1024; /* ie 1Kb / sec */
-const uint32_t FT_TM_RESTART_DOWNLOAD 	       = 20; /* 20 seconds */
-const uint32_t FT_TM_DOWNLOAD_TIMEOUT 	       = 10; /* 10 seconds */
-//const uint32_t FT_TM_CRC_MAP_MAX_WAIT_PER_GIG = 20; /* 20 seconds per gigabyte */
-
-// const double FT_TM_MAX_INCREASE = 1.00;
-// const double FT_TM_MIN_INCREASE = -0.10;
+const uint32_t FT_TM_MINIMUM_CHUNK 		       = 1024;              /* ie 1Kb / sec */
+const uint32_t FT_TM_DEFAULT_TRANSFER_RATE     = 20*1024;           /* ie 20 Kb/sec */
+const uint32_t FT_TM_RESTART_DOWNLOAD 	       = 20;                /* 20 seconds */
+const uint32_t FT_TM_DOWNLOAD_TIMEOUT 	       = 10;                /* 10 seconds */
 
 const double FT_TM_RATE_INCREASE_SLOWER  = 0.05 ;
 const double FT_TM_RATE_INCREASE_AVERAGE = 0.3 ;
 const double FT_TM_RATE_INCREASE_FASTER  = 1.0 ;
-
-//const int32_t FT_TM_FAST_RTT    = 1.0;
-//const int32_t FT_TM_STD_RTT     = 5.0;
-//const int32_t FT_TM_SLOW_RTT    = 20.0;
-
-//const uint32_t FT_TM_CRC_MAP_STATE_NOCHECK 	= 0 ;
-//const uint32_t FT_TM_CRC_MAP_STATE_DONT_HAVE = 1 ;
-//const uint32_t FT_TM_CRC_MAP_STATE_HAVE 		= 2 ;
 
 #define FT_TM_FLAG_DOWNLOADING 	0
 #define FT_TM_FLAG_CANCELED		1
@@ -76,6 +61,23 @@ const double FT_TM_RATE_INCREASE_FASTER  = 1.0 ;
 #define FT_TM_FLAG_CHECKING 		3
 #define FT_TM_FLAG_CHUNK_CRC 		4
 
+peerInfo::peerInfo(const RsPeerId& peerId_in)
+    :peerId(peerId_in),state(PQIPEER_NOT_ONLINE),desiredRate(FT_TM_DEFAULT_TRANSFER_RATE),actualRate(FT_TM_DEFAULT_TRANSFER_RATE),
+		lastTS(0),
+		recvTS(0), lastTransfers(0), nResets(0),
+		rtt(0), rttActive(false), rttStart(0), rttOffset(0),
+		mRateIncrease(1)
+	{
+	}
+//	peerInfo(const RsPeerId& peerId_in,uint32_t state_in,uint32_t maxRate_in):
+//		peerId(peerId_in),state(state_in),desiredRate(maxRate_in),actualRate(0),
+//		lastTS(0),
+//		recvTS(0), lastTransfers(0), nResets(0),
+//		rtt(0), rttActive(false), rttStart(0), rttOffset(0),
+//		mRateIncrease(1)
+//	{
+//		return;
+//	}
 ftTransferModule::ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftController *c)
 	:mFileCreator(fc), mMultiplexor(dm), mFtController(c), tfMtx("ftTransferModule"), mFlag(FT_TM_FLAG_DOWNLOADING),mPriority(SPEED_NORMAL)
 {
@@ -155,7 +157,7 @@ bool ftTransferModule::addFileSource(const RsPeerId& peerId)
 		/* add in new source */
 		peerInfo pInfo(peerId);
 		mFileSources.insert(std::pair<RsPeerId,peerInfo>(peerId,pInfo));
-		mit = mFileSources.find(peerId);
+		//mit = mFileSources.find(peerId);
 
 		mMultiplexor->sendChunkMapRequest(peerId, mHash,false) ;
 #ifdef FT_DEBUG
@@ -289,7 +291,7 @@ void ftTransferModule::resetActvTimeStamp()
 	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
 	_last_activity_time_stamp = time(NULL);
 }
-time_t ftTransferModule::lastActvTimeStamp()
+rstime_t ftTransferModule::lastActvTimeStamp()
 {
 	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
 	return _last_activity_time_stamp ;
@@ -542,10 +544,10 @@ bool ftTransferModule::isCheckingHash()
 	return mFlag == FT_TM_FLAG_CHECKING || mFlag == FT_TM_FLAG_CHUNK_CRC;
 }
 
-class HashThread: public RsSingleJobThread
+class HashThread: public RsThread
 {
 	public:
-		HashThread(ftFileCreator *m) 
+		explicit HashThread(ftFileCreator *m)
 			: _hashThreadMtx("HashThread"), _m(m),_finished(false),_hash("") {}
 
         virtual void run()
@@ -697,7 +699,7 @@ void ftTransferModule::adjustSpeed()
 bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 {
 	/* how long has it been? */
-	time_t ts = time(NULL);
+	rstime_t ts = time(NULL);
 
 	int ageRecv = ts - info.recvTS;
 	int ageReq = ts - info.lastTS;
@@ -869,7 +871,7 @@ bool ftTransferModule::locked_recvPeerData(peerInfo &info, uint64_t offset, uint
 	std::cerr << std::endl;
 #endif
 
-  time_t ts = time(NULL);
+  rstime_t ts = time(NULL);
   info.recvTS = ts;
   info.nResets = 0;
   info.state = PQIPEER_DOWNLOADING;

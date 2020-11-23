@@ -1,34 +1,33 @@
-/*
- * rs-core/src/rsiface: rsexpr.h
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2007-2008 by Kashif Kaleem.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/retroshare: rsexpr.h                                      *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2007-2008 by Kashif Kaleem                                        *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #pragma once
 
 #include <string>
 #include <list>
 #include <stdint.h>
+
+#include "util/rsprint.h"
 #include "retroshare/rstypes.h"
+#include "util/rstime.h"
 
 /******************************************************************************************
 Enumerations defining the Operators usable in the Boolean search expressions
@@ -85,7 +84,9 @@ public:
                     EXPR_SIZE_MB = 8 } token ;
 
     static Expression *toExpr(const LinearizedExpression& e) ;
-
+	
+	std::string GetStrings();
+	
 private:
     static Expression *toExpr(const LinearizedExpression& e,int&,int&,int&) ;
     static void readStringExpr(const LinearizedExpression& e,int& n_ints,int& n_strings,std::list<std::string>& strings,bool& b,StringOperator& op) ;
@@ -114,7 +115,7 @@ class ExpFileEntry
 public:
     virtual const std::string& file_name()        const =0;
     virtual uint64_t           file_size()        const =0;
-    virtual time_t             file_modtime()     const =0;
+    virtual rstime_t             file_modtime()     const =0;
     virtual uint32_t           file_popularity()  const =0;
     virtual std::string        file_parent_path() const =0;
     virtual const RsFileHash&  file_hash()        const =0;
@@ -127,6 +128,7 @@ public:
     virtual ~Expression() {};
 
     virtual void linearize(LinearizedExpression& e) const = 0 ;
+	virtual std::string toStdString() const = 0 ;
 };
 
 class CompoundExpression : public Expression 
@@ -155,6 +157,18 @@ public:
         delete Rexp;
     }
 
+	virtual std::string toStdString() const
+	{
+		switch(Op)
+		{
+		case AndOp: return "(" + Lexp->toStdString() + ") AND (" + Rexp->toStdString() +")" ;
+		case  OrOp: return "(" + Lexp->toStdString() + ") OR (" + Rexp->toStdString() +")" ;
+		case XorOp: return "(" + Lexp->toStdString() + ") XOR (" + Rexp->toStdString() +")" ;
+		default:
+			return "" ;
+		}
+	}
+
     virtual void linearize(LinearizedExpression& e) const ;
 private:
     Expression *Lexp;
@@ -166,9 +180,10 @@ private:
 class StringExpression: public Expression 
 {
 public:
-    StringExpression(enum StringOperator op, std::list<std::string> &t, bool ic): Op(op),terms(t), IgnoreCase(ic){}
+    StringExpression(enum StringOperator op, const std::list<std::string> &t, bool ic): Op(op),terms(t), IgnoreCase(ic){}
 
     virtual void linearize(LinearizedExpression& e) const ;
+	virtual std::string toStdStringWithParam(const std::string& varstr) const;
 protected:
     bool evalStr(const std::string &str);
 
@@ -184,6 +199,7 @@ public:
     RelExpression(enum RelOperator op, T lv, T hv): Op(op), LowerValue(lv), HigherValue(hv) {}
 
     virtual void linearize(LinearizedExpression& e) const ;
+	virtual std::string toStdStringWithParam(const std::string& typestr) const;
 protected:
     bool evalRel(T val);
 
@@ -214,6 +230,22 @@ bool RelExpression<T>::evalRel(T val) {
     }
 }
 
+template <class T>
+std::string RelExpression<T>::toStdStringWithParam(const std::string& typestr) const
+{
+	std::string LowerValueStr = RsUtil::NumberToString(LowerValue) ;
+
+    switch (Op) {
+    case Equals:		 return typestr + " = " + LowerValueStr ;
+    case GreaterEquals:  return typestr + " <= "+ LowerValueStr ;
+    case Greater:		 return typestr + " < " + LowerValueStr ;
+    case SmallerEquals:  return typestr + " >= "+ LowerValueStr ;
+    case Smaller:		 return typestr + " > " + LowerValueStr ;
+    case InRange:		 return LowerValueStr + " <= " + typestr + " <= " + RsUtil::NumberToString(HigherValue) ;
+    default:
+        return "";
+    }
+}
 
 /******************************************************************************************
 Binary Predicate for Case Insensitive search 
@@ -241,9 +273,11 @@ Some implementations of StringExpressions.
 class NameExpression: public StringExpression 
 {
 public:
-    NameExpression(enum StringOperator op, std::list<std::string> &t, bool ic):
+    NameExpression(enum StringOperator op, const std::list<std::string> &t, bool ic):
         StringExpression(op,t,ic) {}
     bool eval(const ExpFileEntry& file);
+
+	virtual std::string toStdString() const { return StringExpression::toStdStringWithParam("NAME"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {
@@ -254,9 +288,11 @@ public:
 
 class PathExpression: public StringExpression {
 public:
-    PathExpression(enum StringOperator op, std::list<std::string> &t, bool ic):
+    PathExpression(enum StringOperator op, const std::list<std::string> &t, bool ic):
         StringExpression(op,t,ic) {}
     bool eval(const ExpFileEntry& file);
+
+	virtual std::string toStdString()const { return StringExpression::toStdStringWithParam("PATH"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {
@@ -267,9 +303,11 @@ public:
 
 class ExtExpression: public StringExpression {
 public:
-    ExtExpression(enum StringOperator op, std::list<std::string> &t, bool ic):
+    ExtExpression(enum StringOperator op, const std::list<std::string> &t, bool ic):
         StringExpression(op,t,ic) {}
     bool eval(const ExpFileEntry& file);
+
+	virtual std::string toStdString()const { return StringExpression::toStdStringWithParam("EXTENSION"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {
@@ -280,9 +318,11 @@ public:
 
 class HashExpression: public StringExpression {
 public:
-    HashExpression(enum StringOperator op, std::list<std::string> &t):
+    HashExpression(enum StringOperator op, const std::list<std::string> &t):
         StringExpression(op,t, true) {}
     bool eval(const ExpFileEntry& file);
+
+	virtual std::string toStdString() const { return StringExpression::toStdStringWithParam("HASH"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {
@@ -304,6 +344,8 @@ public:
         RelExpression<int>(op,lv,hv) {}
     bool eval(const ExpFileEntry& file);
 
+	virtual std::string toStdString() const { return RelExpression<int>::toStdStringWithParam("DATE"); }
+
     virtual void linearize(LinearizedExpression& e) const
     {
         e._tokens.push_back(LinearizedExpression::EXPR_DATE) ;
@@ -318,6 +360,8 @@ public:
     SizeExpression(enum RelOperator op, int lv, int hv):
         RelExpression<int>(op,lv,hv) {}
     bool eval(const ExpFileEntry& file);
+
+	virtual std::string toStdString() const { return RelExpression<int>::toStdStringWithParam("SIZE"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {
@@ -334,6 +378,8 @@ public:
         RelExpression<int>(op,lv,hv) {}
     bool eval(const ExpFileEntry& file);
 
+	virtual std::string toStdString() const { return RelExpression<int>::toStdStringWithParam("SIZE"); }
+
     virtual void linearize(LinearizedExpression& e) const
     {
         e._tokens.push_back(LinearizedExpression::EXPR_SIZE_MB) ;
@@ -347,6 +393,8 @@ public:
     PopExpression(enum RelOperator op, int lv, int hv): RelExpression<int>(op,lv,hv) {}
     PopExpression(const LinearizedExpression& e) ;
     bool eval(const ExpFileEntry& file);
+
+	virtual std::string toStdString() const { return RelExpression<int>::toStdStringWithParam("POPULARITY"); }
 
     virtual void linearize(LinearizedExpression& e) const
     {

@@ -1,38 +1,43 @@
-/****************************************************************
- *  RetroShare QT Gui is distributed under the following license:
- *
- *  Copyright (C) 2006, crypton
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/: main.cpp                                               *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2006 by Crypton <retroshare@lunamutt.com>                         *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
+#include "util/stacktrace.h"
+#include "util/argstream.h"
+
+CrashStackTrace gCrashStackTrace;
 
 #include <QObject>
 #include <QMessageBox>
 #include <QSplashScreen>
 
 #include <rshare.h>
+#include "gui/common/FilesDefs.h"
 #include "gui/FriendsDialog.h"
 #include "gui/GenCertDialog.h"
 #include "gui/MainWindow.h"
-#include "gui/MessengerWindow.h"
 #include "gui/NetworkDialog.h"
 #include "gui/NetworkView.h"
 #include "gui/QuickStartWizard.h"
 #include "gui/RetroShareLink.h"
-#include "gui/SharedFilesDialog.h"
 #include "gui/SoundManager.h"
 #include "gui/StartDialog.h"
 #include "gui/chat/ChatDialog.h"
@@ -42,12 +47,29 @@
 #include "gui/FileTransfer/TransfersDialog.h"
 #include "gui/settings/RsharePeerSettings.h"
 #include "gui/settings/rsharesettings.h"
-#include "gui/settings/WebuiPage.h"
 #include "idle/idle.h"
 #include "lang/languagesupport.h"
 #include "util/RsGxsUpdateBroadcast.h"
+#include "util/rsdir.h"
+#include "util/rstime.h"
+#include "retroshare/rsinit.h"
+
+#ifdef MESSENGER_WINDOW
+#include "gui/MessengerWindow.h"
+#endif
+#ifdef RS_WEBUI
+#	include "gui/settings/WebuiPage.h"
+#endif
+
+#ifdef RS_JSONAPI
+#	include "gui/settings/JsonApiPage.h"
+#endif // RS_JSONAPI
+
+#include "TorControl/TorManager.h"
+#include "TorControl/TorControlWindow.h"
 
 #include "retroshare/rsidentity.h"
+#include "retroshare/rspeers.h"
 
 #ifdef SIGFPE_DEBUG
 #include <fenv.h>
@@ -115,7 +137,7 @@ static void displayWarningAboutDSAKeys()
 	msgBox.setInformativeText(QObject::tr("DSA keys are not yet supported by this version of RetroShare. All these nodes will be unusable. We're very sorry for that."));
 	msgBox.setStandardButtons(QMessageBox::Ok);
 	msgBox.setDefaultButton(QMessageBox::Ok);
-    msgBox.setWindowIcon(QIcon(":/icons/logo_128.png"));
+    msgBox.setWindowIcon(FilesDefs::getIconFromQtResourcePath(":/icons/logo_128.png"));
 
 	msgBox.exec();
 }
@@ -209,7 +231,34 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
 	/* RetroShare Core Objects */
 	RsInit::InitRsConfig();
-	int initResult = RsInit::InitRetroShare(argc, argv);
+
+    RsConfigOptions conf;
+
+	argstream as(argc,argv);
+	as      >> option('s',"stderr"           ,conf.outStderr      ,"output to stderr instead of log file."    )
+	        >> option('u',"udp"              ,conf.udpListenerOnly,"Only listen to UDP."                      )
+	        >> parameter('c',"base-dir"      ,conf.optBaseDir     ,"directory", "Set base directory."                                         ,false)
+	        >> parameter('l',"log-file"      ,conf.logfname       ,"logfile"   ,"Set Log filename."                                           ,false)
+	        >> parameter('d',"debug-level"   ,conf.debugLevel     ,"level"     ,"Set debug level."                                            ,false)
+	        >> parameter('i',"ip-address"    ,conf.forcedInetAddress,"nnn.nnn.nnn.nnn", "Force IP address to use (if cannot be detected)."    ,false)
+	        >> parameter('p',"port"          ,conf.forcedPort     ,"port"      ,"Set listenning port to use."                                 ,false)
+	        >> parameter('o',"opmode"        ,conf.opModeStr      ,"opmode"    ,"Set Operating mode (Full, NoTurtle, Gaming, Minimal)."       ,false);
+#ifdef RS_JSONAPI
+	as      >> parameter('J', "jsonApiPort", conf.jsonApiPort, "jsonApiPort", "Enable JSON API on the specified port", false )
+	        >> parameter('P', "jsonApiBindAddress", conf.jsonApiBindAddress, "jsonApiBindAddress", "JSON API Bind Address.", false);
+#endif // ifdef RS_JSONAPI
+
+#ifdef LOCALNET_TESTING
+	as      >> parameter('R',"restrict-port" ,portRestrictions             ,"port1-port2","Apply port restriction"                   ,false);
+#endif // ifdef LOCALNET_TESTING
+
+#ifdef RS_AUTOLOGIN
+	as      >> option('a',"auto-login"       ,conf.autoLogin      ,"AutoLogin (Windows Only) + StartMinimised");
+#endif // ifdef RS_AUTOLOGIN
+
+    conf.main_executable_path = argv[0];
+
+	int initResult = RsInit::InitRetroShare(conf);
 
 	if(initResult == RS_INIT_NO_KEYRING)	// happens when we already have accounts, but no pgp key. This is when switching to the openpgp-sdk version.
 	{
@@ -222,7 +271,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 		msgBox.setInformativeText(QObject::tr("Choose between:<br><ul><li><b>Ok</b> to copy the existing keyring from gnupg (safest bet), or </li><li><b>Close without saving</b> to start fresh with an empty keyring (you will be asked to create a new PGP key to work with RetroShare, or import a previously saved pgp keypair). </li><li><b>Cancel</b> to quit and forge a keyring by yourself (needs some PGP skills)</li></ul>"));
 		msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Discard | QMessageBox::Cancel);
 		msgBox.setDefaultButton(QMessageBox::Ok);
-        msgBox.setWindowIcon(QIcon(":/icons/logo_128.png"));
+        msgBox.setWindowIcon(FilesDefs::getIconFromQtResourcePath(":/icons/logo_128.png"));
 
 		int ret = msgBox.exec();
 
@@ -233,7 +282,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 			if(!RsAccounts::CopyGnuPGKeyrings())
 				return 0 ; 
 
-			initResult = RsInit::InitRetroShare(argc, argv);
+			initResult = RsInit::InitRetroShare(conf);
 
 			displayWarningAboutDSAKeys() ;
 
@@ -251,7 +300,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 		displayWarningAboutDSAKeys();
 
 		QMessageBox mb(QMessageBox::Critical, QObject::tr("RetroShare"), "", QMessageBox::Ok);
-        mb.setWindowIcon(QIcon(":/icons/logo_128.png"));
+        mb.setWindowIcon(FilesDefs::getIconFromQtResourcePath(":/icons/logo_128.png"));
 
 		switch (initResult) 
 		{
@@ -275,12 +324,9 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	RshareSettings::Create ();
 
 	/* Setup The GUI Stuff */
-	Rshare rshare(args, argc, argv, 
-	              QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()));
+	Rshare rshare(args, argc, argv,  QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()));
 
 	/* Start RetroShare */
-	QSplashScreen splashScreen(QPixmap(":/images/logo/logo_splash.png")/* , Qt::WindowStaysOnTopHint*/);
-
 	QString sDefaultGXSIdToCreate = "";
 	switch (initResult) {
 	case RS_INIT_OK:
@@ -307,19 +353,20 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 			if (genCert)
 			{
 				GenCertDialog gd(false);
-				if (gd.exec () == QDialog::Rejected) {
+
+				if (gd.exec () == QDialog::Rejected)
 					return 1;
-				}
+
 				sDefaultGXSIdToCreate = gd.getGXSNickname();
 			}
 
-			splashScreen.show();
+			//splashScreen.show();
 		}
 		break;
 	case RS_INIT_HAVE_ACCOUNT:
 		{
-			splashScreen.show();
-			splashScreen.showMessage(rshare.translate("SplashScreen", "Load profile"), Qt::AlignHCenter | Qt::AlignBottom);
+			//splashScreen.show();
+			//splashScreen.showMessage(rshare.translate("SplashScreen", "Load profile"), Qt::AlignHCenter | Qt::AlignBottom);
 
 			RsPeerId preferredId;
 			RsAccounts::GetPreferredAccountId(preferredId);
@@ -341,7 +388,65 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
 	SoundManager::create();
 
+    bool is_hidden_node = false;
+    bool is_auto_tor = false ;
+    bool is_first_time = false ;
+
+    RsAccounts::getCurrentAccountOptions(is_hidden_node,is_auto_tor,is_first_time);
+
+    if(is_auto_tor)
+	{
+		// Now that we know the Tor service running, and we know the SSL id, we can make sure it provides a viable hidden service
+
+		QString tor_hidden_service_dir = QString::fromStdString(RsAccounts::AccountDirectory()) + QString("/hidden_service/") ;
+
+		Tor::TorManager *torManager = Tor::TorManager::instance();
+		torManager->setTorDataDirectory(Rshare::dataDirectory() + QString("/tor/"));
+		torManager->setHiddenServiceDirectory(tor_hidden_service_dir);	// re-set it, because now it's changed to the specific location that is run
+
+		RsDirUtil::checkCreateDirectory(std::string(tor_hidden_service_dir.toUtf8())) ;
+
+		torManager->setupHiddenService();
+
+		if(! torManager->start() || torManager->hasError())
+		{
+			QMessageBox::critical(NULL,QObject::tr("Cannot start Tor Manager!"),QObject::tr("Tor cannot be started on your system: \n\n")+torManager->errorMessage()) ;
+			return 1 ;
+		}
+
+		{
+			TorControlDialog tcd(torManager) ;
+			QString error_msg ;
+			tcd.show();
+
+			while(tcd.checkForTor(error_msg) != TorControlDialog::TOR_STATUS_OK || tcd.checkForHiddenService() != TorControlDialog::HIDDEN_SERVICE_STATUS_OK)	// runs until some status is reached: either tor works, or it fails.
+			{
+				QCoreApplication::processEvents();
+				rstime::rs_usleep(0.2*1000*1000) ;
+
+				if(!error_msg.isNull())
+				{
+					QMessageBox::critical(NULL,QObject::tr("Cannot start Tor"),QObject::tr("Sorry but Tor cannot be started on your system!\n\nThe error reported is:\"")+error_msg+"\"") ;
+					return 1;
+				}
+			}
+
+			tcd.hide();
+
+			if(tcd.checkForHiddenService() != TorControlDialog::HIDDEN_SERVICE_STATUS_OK)
+			{
+				QMessageBox::critical(NULL,QObject::tr("Cannot start a hidden tor service!"),QObject::tr("It was not possible to start a hidden service.")) ;
+				return 1 ;
+			}
+		}
+	}
+
+    QSplashScreen splashScreen(FilesDefs::getPixmapFromQtResourcePath(":/images/logo/logo_splash.png")/* , Qt::WindowStaysOnTopHint*/);
+
+	splashScreen.show();
 	splashScreen.showMessage(rshare.translate("SplashScreen", "Load configuration"), Qt::AlignHCenter | Qt::AlignBottom);
+
+	QCoreApplication::processEvents();
 
 	/* stop Retroshare if startup fails */
 	if (!RsControl::instance()->StartupRetroShare())
@@ -350,10 +455,40 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 		return 1;
 	}
 
+    if(is_auto_tor)
+	{
+		// Tor works with viable hidden service. Let's use it!
+
+		QString service_id ;
+		QString onion_address ;
+		uint16_t service_port ;
+		uint16_t service_target_port ;
+		uint16_t proxy_server_port ;
+		QHostAddress service_target_address ;
+		QHostAddress proxy_server_address ;
+
+		Tor::TorManager *torManager = Tor::TorManager::instance();
+		torManager->getHiddenServiceInfo(service_id,onion_address,service_port,service_target_address,service_target_port);
+		torManager->getProxyServerInfo(proxy_server_address,proxy_server_port) ;
+
+		std::cerr << "Got hidden service info: " << std::endl;
+		std::cerr << "  onion address  : " << onion_address.toStdString() << std::endl;
+		std::cerr << "  service_id     : " << service_id.toStdString() << std::endl;
+		std::cerr << "  service port   : " << service_port << std::endl;
+		std::cerr << "  target port    : " << service_target_port << std::endl;
+		std::cerr << "  target address : " << service_target_address.toString().toStdString() << std::endl;
+
+		std::cerr << "Setting proxy server to " << service_target_address.toString().toStdString() << ":" << service_target_port << std::endl;
+
+		rsPeers->setLocalAddress(rsPeers->getOwnId(), service_target_address.toString().toStdString(), service_target_port);
+		rsPeers->setHiddenNode(rsPeers->getOwnId(), onion_address.toStdString(), service_port);
+		rsPeers->setProxyServer(RS_HIDDEN_TYPE_TOR, proxy_server_address.toString().toStdString(),proxy_server_port) ;
+	}
 
 	Rshare::initPlugins();
 
 	splashScreen.showMessage(rshare.translate("SplashScreen", "Create interface"), Qt::AlignHCenter | Qt::AlignBottom);
+	QCoreApplication::processEvents();	// forces splashscreen to show up
 
 	RsharePeerSettings::Create();
 
@@ -417,7 +552,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	QObject::connect(notify,SIGNAL(chatStatusChanged(const QString&,const QString&,bool)),w->friendsDialog,SLOT(updatePeerStatusString(const QString&,const QString&,bool)));
 	QObject::connect(notify,SIGNAL(ownStatusMessageChanged()),w->friendsDialog,SLOT(loadmypersonalstatus()));
 
-	QObject::connect(notify,SIGNAL(logInfoChanged(const QString&))		,w->friendsDialog->networkDialog,SLOT(setLogInfo(QString))) ;
+//	QObject::connect(notify,SIGNAL(logInfoChanged(const QString&))		,w->friendsDialog->networkDialog,SLOT(setLogInfo(QString))) ;
 	QObject::connect(notify,SIGNAL(discInfoChanged())						,w->friendsDialog->networkView,SLOT(update()),Qt::QueuedConnection) ;
 	QObject::connect(notify,SIGNAL(errorOccurred(int,int,const QString&)),w,SLOT(displayErrorMessage(int,int,const QString&))) ;
 
@@ -438,22 +573,21 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
 	notify->enable() ;	// enable notification system after GUI creation, to avoid data races in Qt.
 
-#ifdef ENABLE_WEBUI
-    WebuiPage::checkStartWebui();
-#endif // ENABLE_WEBUI
+#ifdef RS_JSONAPI
+	JsonApiPage::checkStartJsonApi();
 
-	// This is done using a timer, because the passphrase request from notify is asynchrouneous and therefore clearing the
-	// passphrase here makes it request for a passphrase when creating the default chat identity.
-
-	QTimer::singleShot(10000, notify, SLOT(resetCachedPassphrases())) ;
+#ifdef RS_WEBUI
+    WebuiPage::checkStartWebui();	// normally we should rather save the UI flags internally to p3webui
+#endif
+#endif // RS_JSONAPI
 
 	/* dive into the endless loop */
 	int ti = rshare.exec();
 	delete w ;
 
-#ifdef ENABLE_WEBUI
-	WebuiPage::checkShutdownWebui();
-#endif // ENABLE_WEBUI
+#ifdef RS_JSONAPI
+	JsonApiPage::checkShutdownJsonApi();
+#endif // RS_JSONAPI
 
 	/* cleanup */
 	ChatDialog::cleanupChat();

@@ -1,28 +1,24 @@
-
-/*
- * libretroshare/src/gxs: rsdataservice.cc
- *
- * Data Access, interface for RetroShare.
- *
- * Copyright 2011-2011 by Evi-Parker Christopher
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/gxs: gxsdataservice.cc                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2011-2011 by Evi-Parker Christopher                               *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 /*****
  * #define RS_DATA_SERVICE_DEBUG       1
@@ -35,10 +31,11 @@
 #include <algorithm>
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-#include <util/rsscopetimer.h>
+#include <util/rstime.h>
 #endif
 
 #include "rsdataservice.h"
+#include "retroshare/rsgxsflags.h"
 #include "util/rsstring.h"
 
 #define MSG_TABLE_NAME std::string("MESSAGES")
@@ -124,7 +121,6 @@ RsDataService::RsDataService(const std::string &serviceDir, const std::string &d
     : RsGeneralDataService(), mDbMutex("RsDataService"), mServiceDir(serviceDir), mDbName(dbName), mDbPath(mServiceDir + "/" + dbName), mServType(serviceType), mDb(NULL)
 {
     bool isNewDatabase = !RsDirUtil::fileExists(mDbPath);
-    mGrpMetaDataCache_ContainsAllDatabase = false ;
 
     mDb = new RetroDb(mDbPath, RetroDb::OPEN_READWRITE_CREATE, key);
 
@@ -486,14 +482,11 @@ bool RsDataService::finishReleaseUpdate(int release, bool result)
     return result;
 }
 
-RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c, int colOffset)
+RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c, int colOffset,bool use_cache)
 {
 #ifdef RS_DATA_SERVICE_DEBUG
-    std::cerr << "RsDataService::locked_getGrpMeta()";
-    std::cerr << std::endl;
+    std::cerr << "RsDataService::locked_getGrpMeta()" << std::endl;
 #endif
-
-    RsGxsGrpMetaData* grpMeta = new RsGxsGrpMetaData();
 
     bool ok = true;
 
@@ -505,6 +498,21 @@ RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c, int colOffset
     // grpId
     std::string tempId;
     c.getString(mColGrpMeta_GrpId + colOffset, tempId);
+
+    RsGxsGrpMetaData* grpMeta ;
+	RsGxsGroupId grpId(tempId) ;
+
+    if(grpId.isNull())			// not in the DB!
+        return nullptr;
+
+	if(use_cache)
+        grpMeta = mGrpMetaDataCache.getOrCreateMeta(grpId);
+	else
+		grpMeta = new RsGxsGrpMetaData();
+
+    if(!grpMeta->mGroupId.isNull())	// the grpMeta is already initialized because it comes from the cache
+        return grpMeta;
+
     grpMeta->mGroupId = RsGxsGroupId(tempId);
     c.getString(mColGrpMeta_NxsIdentity + colOffset, tempId);
     grpMeta->mAuthorId = RsGxsId(tempId);
@@ -553,12 +561,46 @@ RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c, int colOffset
     c.getString(mColGrpMeta_ParentGrpId, tempId);
     grpMeta->mParentGrpId = RsGxsGroupId(tempId);
 
+	// make sure that flags and keys are actually consistent
+
+	bool have_private_admin_key = false ;
+	bool have_private_publish_key = false ;
+
+	for(auto mit = grpMeta->keys.private_keys.begin(); mit != grpMeta->keys.private_keys.end();++mit)
+	{
+		if(mit->second.keyFlags == (RSTLV_KEY_DISTRIB_PUBLISH | RSTLV_KEY_TYPE_FULL)) have_private_publish_key = true ;
+		if(mit->second.keyFlags == (RSTLV_KEY_DISTRIB_ADMIN   | RSTLV_KEY_TYPE_FULL)) have_private_admin_key = true ;
+	}
+
+	if(have_private_admin_key && !(grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN))
+	{
+		std::cerr << "(WW) inconsistency in group " << grpMeta->mGroupId << ": group does not have flag ADMIN but an admin key was found. Updating the flags." << std::endl;
+		grpMeta->mSubscribeFlags |= GXS_SERV::GROUP_SUBSCRIBE_ADMIN;
+	}
+	if(!have_private_admin_key && (grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN))
+	{
+		std::cerr << "(WW) inconsistency in group " << grpMeta->mGroupId << ": group has flag ADMIN but no admin key found. Updating the flags." << std::endl;
+		grpMeta->mSubscribeFlags &= ~GXS_SERV::GROUP_SUBSCRIBE_ADMIN;
+	}
+	if(have_private_publish_key && !(grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH))
+	{
+		std::cerr << "(WW) inconsistency in group " << grpMeta->mGroupId << ": group does not have flag PUBLISH but an admin key was found. Updating the flags." << std::endl;
+		grpMeta->mSubscribeFlags |= GXS_SERV::GROUP_SUBSCRIBE_PUBLISH;
+	}
+	if(!have_private_publish_key && (grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH))
+	{
+		std::cerr << "(WW) inconsistency in group " << grpMeta->mGroupId << ": group has flag PUBLISH but no admin key found. Updating the flags." << std::endl;
+		grpMeta->mSubscribeFlags &= ~GXS_SERV::GROUP_SUBSCRIBE_PUBLISH;
+	}
+
     if(ok)
         return grpMeta;
     else
-        delete grpMeta;
-
-    return NULL;
+	{
+		if(!use_cache)
+			delete grpMeta;
+		return NULL;
+	}
 }
 
 RsNxsGrp* RsDataService::locked_getGroup(RetroCursor &c)
@@ -603,24 +645,40 @@ RsNxsGrp* RsDataService::locked_getGroup(RetroCursor &c)
     return NULL;
 }
 
-RsGxsMsgMetaData* RsDataService::locked_getMsgMeta(RetroCursor &c, int colOffset)
+RsGxsMsgMetaData* RsDataService::locked_getMsgMeta(RetroCursor &c, int colOffset,bool use_cache)
 {
-
-    RsGxsMsgMetaData* msgMeta = new RsGxsMsgMetaData();
 
     bool ok = true;
     uint32_t data_len = 0,
     offset = 0;
     char* data = NULL;
 
+    RsGxsGroupId group_id;
+    RsGxsMessageId msg_id;
+
     std::string gId;
     c.getString(mColMsgMeta_GrpId + colOffset, gId);
-    msgMeta->mGroupId = RsGxsGroupId(gId);
+    group_id = RsGxsGroupId(gId);
     std::string temp;
     c.getString(mColMsgMeta_MsgId + colOffset, temp);
-    msgMeta->mMsgId = RsGxsMessageId(temp);
+    msg_id = RsGxsMessageId(temp);
+
     // without these, a msg is meaningless
-    ok &= (!msgMeta->mGroupId.isNull()) && (!msgMeta->mMsgId.isNull());
+    if(group_id.isNull() || msg_id.isNull())
+        return nullptr;
+
+    RsGxsMsgMetaData* msgMeta = nullptr;
+
+	if(use_cache)
+        msgMeta = mMsgMetaDataCache[group_id].getOrCreateMeta(msg_id);
+	else
+		msgMeta = new RsGxsMsgMetaData();
+
+    if(!msgMeta->mGroupId.isNull())	// we cannot do that because the cursor needs to advance. Is there a method to skip some data in the db?
+        return msgMeta;
+
+	msgMeta->mGroupId = group_id;
+	msgMeta->mMsgId = msg_id;
 
     c.getString(mColMsgMeta_OrigMsgId + colOffset, temp);
     msgMeta->mOrigMsgId = RsGxsMessageId(temp);
@@ -654,7 +712,7 @@ RsGxsMsgMetaData* RsDataService::locked_getMsgMeta(RetroCursor &c, int colOffset
 
     if(ok)
         return msgMeta;
-    else
+    else if(!use_cache)
         delete msgMeta;
 
     return NULL;
@@ -784,7 +842,8 @@ int RsDataService::storeMessage(const std::list<RsNxsMsg*>& msg)
 
         // This is needed so that mLastPost is correctly updated in the group meta when it is re-loaded.
 
-        locked_clearGrpMetaCache(msgMetaPtr->mGroupId);
+        mGrpMetaDataCache.clear(msgMetaPtr->mGroupId);
+		mMsgMetaDataCache[msgMetaPtr->mGroupId].updateMeta(msgMetaPtr->mMsgId,*msgMetaPtr);
     }
 
     // finish transaction
@@ -876,7 +935,7 @@ int RsDataService::storeGroup(const std::list<RsNxsGrp*>& grp)
 		cv.put(KEY_GRP_STATUS, (int32_t)grpMetaPtr->mGroupStatus);
 		cv.put(KEY_GRP_LAST_POST, (int32_t)grpMetaPtr->mLastPost);
 
-		locked_clearGrpMetaCache(grpMetaPtr->mGroupId);
+		mGrpMetaDataCache.updateMeta(grpMetaPtr->mGroupId,*grpMetaPtr);
 
 		if (!mDb->sqlInsert(GRP_TABLE_NAME, "", cv))
 		{
@@ -890,12 +949,6 @@ int RsDataService::storeGroup(const std::list<RsNxsGrp*>& grp)
     bool ret = mDb->commitTransaction();
 
     return ret;
-}
-
-void RsDataService::locked_clearGrpMetaCache(const RsGxsGroupId& gid)
-{
-    mGrpMetaDataCache.erase(gid) ;	// cleans existing cache entry
-    mGrpMetaDataCache_ContainsAllDatabase = false;
 }
 
 int RsDataService::updateGroup(const std::list<RsNxsGrp *> &grp)
@@ -966,7 +1019,7 @@ int RsDataService::updateGroup(const std::list<RsNxsGrp *> &grp)
 
         mDb->sqlUpdate(GRP_TABLE_NAME, "grpId='" + grpPtr->grpId.toStdString() + "'", cv);
 
-        locked_clearGrpMetaCache(grpMetaPtr->mGroupId);
+        mGrpMetaDataCache.updateMeta(grpMetaPtr->mGroupId,*grpMetaPtr);
     }
     // finish transaction
     bool ret = mDb->commitTransaction();
@@ -1009,7 +1062,7 @@ bool RsDataService::validSize(RsNxsGrp* grp) const
 int RsDataService::retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp *> &grp, bool withMeta, bool /* cache */)
 {
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-    RsScopeTimer timer("");
+    rstime::RsScopeTimer timer("");
     int resultCount = 0;
     int requestedGroups = grp.size();
 #endif
@@ -1097,7 +1150,7 @@ void RsDataService::locked_retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>
             if(g)
             {
                 if (metaOffset) {
-                    g->metaData = locked_getGrpMeta(*c, metaOffset);
+                    g->metaData = locked_getGrpMeta(*c, metaOffset,false);
                 }
                 grps.push_back(g);
             }
@@ -1106,27 +1159,27 @@ void RsDataService::locked_retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>
     }
 }
 
-int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, bool /* cache */, bool withMeta)
+int RsDataService::retrieveNxsMsgs(
+        const GxsMsgReq &reqIds, GxsMsgResult &msg, bool /* cache */,
+        bool withMeta )
 {
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-    RsScopeTimer timer("");
+    rstime::RsScopeTimer timer("");
     int resultCount = 0;
 #endif
 
-    GxsMsgReq::const_iterator mit = reqIds.begin();
-
-    for(; mit != reqIds.end(); ++mit)
+	for(auto mit = reqIds.begin(); mit != reqIds.end(); ++mit)
     {
 
         const RsGxsGroupId& grpId = mit->first;
 
         // if vector empty then request all messages
-        const std::vector<RsGxsMessageId>& msgIdV = mit->second;
+        const std::set<RsGxsMessageId>& msgIdV = mit->second;
         std::vector<RsNxsMsg*> msgSet;
 
-        if(msgIdV.empty()){
-
-            RsStackMutex stack(mDbMutex);
+		if(msgIdV.empty())
+		{
+			RS_STACK_MUTEX(mDbMutex);
 
             RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, withMeta ? mMsgColumnsWithMeta : mMsgColumns, KEY_GRP_ID+ "='" + grpId.toStdString() + "'", "");
 
@@ -1136,15 +1189,16 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
             }
 
             delete c;
-        }else{
+		}
+		else
+		{
+			RS_STACK_MUTEX(mDbMutex);
 
             // request each grp
-            std::vector<RsGxsMessageId>::const_iterator sit = msgIdV.begin();
-
-            for(; sit!=msgIdV.end();++sit){
+			for( std::set<RsGxsMessageId>::const_iterator sit = msgIdV.begin();
+			     sit!=msgIdV.end();++sit )
+			{
                 const RsGxsMessageId& msgId = *sit;
-
-                RsStackMutex stack(mDbMutex);
 
                 RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, withMeta ? mMsgColumnsWithMeta : mMsgColumns, KEY_GRP_ID+ "='" + grpId.toStdString()
                                                + "' AND " + KEY_MSG_ID + "='" + msgId.toStdString() + "'", "");
@@ -1182,7 +1236,7 @@ void RsDataService::locked_retrieveMessages(RetroCursor *c, std::vector<RsNxsMsg
 
         if(m){
             if (metaOffset) {
-                m->metaData = locked_getMsgMeta(*c, metaOffset);
+                m->metaData = locked_getMsgMeta(*c, metaOffset,false);
             }
             msgs.push_back(m);
         }
@@ -1192,212 +1246,263 @@ void RsDataService::locked_retrieveMessages(RetroCursor *c, std::vector<RsNxsMsg
     return;
 }
 
-int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaResult &msgMeta)
+int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaResult& msgMeta)
 {
     RsStackMutex stack(mDbMutex);
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-    RsScopeTimer timer("");
+    rstime::RsScopeTimer timer("");
     int resultCount = 0;
 #endif
 
-    GxsMsgReq::const_iterator mit = reqIds.begin();
-
-    for(; mit != reqIds.end(); ++mit)
+    for(auto mit(reqIds.begin()); mit != reqIds.end(); ++mit)
     {
 
         const RsGxsGroupId& grpId = mit->first;
+        const std::set<RsGxsMessageId>& msgIdV = mit->second;
 
         // if vector empty then request all messages
-        const std::vector<RsGxsMessageId>& msgIdV = mit->second;
-        std::vector<RsGxsMsgMetaData*> metaSet;
 
-        if(msgIdV.empty()){
-            RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, mMsgMetaColumns, KEY_GRP_ID+ "='" + grpId.toStdString() + "'", "");
+        t_MetaDataCache<RsGxsMessageId,RsGxsMsgMetaData>& cache(mMsgMetaDataCache[grpId]);
 
-            if (c)
-            {
-                locked_retrieveMsgMeta(c, metaSet);
+        if(msgIdV.empty())
+        {
+            if(cache.isCacheUpToDate())
+                cache.getFullMetaList(msgMeta[grpId]);
+            else
+			{
+				RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, mMsgMetaColumns, KEY_GRP_ID+ "='" + grpId.toStdString() + "'", "");
+
+				if (c)
+				{
+					locked_retrieveMsgMetaList(c, msgMeta[grpId]);
+					cache.setCacheUpToDate(true);
+				}
+                delete c;
+			}
 #ifdef RS_DATA_SERVICE_DEBUG_CACHE
-              std::cerr << "Retrieving (all) Msg metadata grpId=" << grpId << ", " << std::dec << metaSet.size() << " messages" << std::endl;
+			std::cerr << mDbName << ": Retrieving (all) Msg metadata grpId=" << grpId << ", " << std::dec << metaSet.size() << " messages" << std::endl;
 #endif
-            }
-        }else{
-
-            // request each grp
-            std::vector<RsGxsMessageId>::const_iterator sit = msgIdV.begin();
-
-            for(; sit!=msgIdV.end(); ++sit){
-                const RsGxsMessageId& msgId = *sit;
-                RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, mMsgMetaColumns, KEY_GRP_ID+ "='" + grpId.toStdString()
-                                               + "' AND " + KEY_MSG_ID + "='" + msgId.toStdString() + "'", "");
-
-                if (c)
-                {
-                    locked_retrieveMsgMeta(c, metaSet);
-#ifdef RS_DATA_SERVICE_DEBUG_CACHE
-              std::cerr << "Retrieving Msg metadata grpId=" << grpId << ", " << std::dec << metaSet.size() << " messages" << std::endl;
-#endif
-                }
-            }
         }
+        else
+        {
+            // request each msg meta
+			auto& metaSet(msgMeta[grpId]);
 
-#ifdef RS_DATA_SERVICE_DEBUG_TIME
-        resultCount += metaSet.size();
+            for(auto sit(msgIdV.begin()); sit!=msgIdV.end(); ++sit)
+			{
+				const RsGxsMessageId& msgId = *sit;
+
+				RsGxsMsgMetaData *meta = cache.getMeta(msgId);
+
+                if(meta)
+                    metaSet.push_back(meta);
+                else
+				{
+					RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, mMsgMetaColumns, KEY_GRP_ID+ "='" + grpId.toStdString() + "' AND " + KEY_MSG_ID + "='" + msgId.toStdString() + "'", "");
+
+                    c->moveToFirst();
+                    RsGxsMsgMetaData* meta = locked_getMsgMeta(*c, 0,true);
+
+                    if(meta)
+                        metaSet.push_back(meta);
+
+                    delete c;
+				}
+			}
+#ifdef RS_DATA_SERVICE_DEBUG_CACHE
+			std::cerr << mDbName << ": Retrieving Msg metadata grpId=" << grpId << ", " << std::dec << metaSet.size() << " messages" << std::endl;
 #endif
-
-        msgMeta[grpId] = metaSet;
+        }
     }
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
+    if(mDbName==std::string("gxsforums_db"))
     std::cerr << "RsDataService::retrieveGxsMsgMetaData() " << mDbName << ", Requests: " << reqIds.size() << ", Results: " << resultCount << ", Time: " << timer.duration() << std::endl;
 #endif
 
     return 1;
 }
 
-void RsDataService::locked_retrieveMsgMeta(RetroCursor *c, std::vector<RsGxsMsgMetaData *> &msgMeta)
+void RsDataService::locked_retrieveGrpMetaList(RetroCursor *c, std::map<RsGxsGroupId,RsGxsGrpMetaData *>& grpMeta)
 {
+	if(!c)
+	{
+        RsErr() << __PRETTY_FUNCTION__ << ": attempt to retrieve Group Meta data from the DB with null cursor!" << std::endl;
+		return;
+	}
 
-    if(c)
-    {
-        bool valid = c->moveToFirst();
-        while(valid){
-            RsGxsMsgMetaData* m = locked_getMsgMeta(*c, 0);
+	bool valid = c->moveToFirst();
 
-            if(m != NULL)
-                msgMeta.push_back(m);
+	while(valid)
+	{
+		RsGxsGrpMetaData* m = locked_getGrpMeta(*c, 0,true);
 
-            valid = c->moveToNext();
-        }
-        delete c;
-    }
+		if(m)
+			grpMeta[m->mGroupId] = m;
+
+		valid = c->moveToNext();
+	}
+}
+void RsDataService::locked_retrieveMsgMetaList(RetroCursor *c, std::vector<const RsGxsMsgMetaData *>& msgMeta)
+{
+	if(!c)
+	{
+		RsErr() << __PRETTY_FUNCTION__ << ": attempt to retrieve Msg Meta data from the DB with null cursor!" << std::endl;
+		return;
+	}
+
+	bool valid = c->moveToFirst();
+	while(valid){
+		const RsGxsMsgMetaData* m = locked_getMsgMeta(*c, 0,true);
+
+		if(m != NULL)
+			msgMeta.push_back(m);
+
+		valid = c->moveToNext();
+	}
 }
 
-int RsDataService::retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaData *>& grp)
+int RsDataService::retrieveGxsGrpMetaData(RsGxsGrpMetaTemporaryMap& grp)
 {
 #ifdef RS_DATA_SERVICE_DEBUG
     std::cerr << "RsDataService::retrieveGxsGrpMetaData()";
     std::cerr << std::endl;
 #endif
 
-    RsStackMutex stack(mDbMutex);
+	RS_STACK_MUTEX(mDbMutex);
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-    RsScopeTimer timer("");
+    rstime::RsScopeTimer timer("");
     int resultCount = 0;
     int requestedGroups = grp.size();
 #endif
 
     if(grp.empty())
     {
-        if(mGrpMetaDataCache_ContainsAllDatabase)	// grab all the stash from the cache, so as to avoid decryption costs.
+        if(mGrpMetaDataCache.isCacheUpToDate())	// grab all the stash from the cache, so as to avoid decryption costs.
         {
 #ifdef RS_DATA_SERVICE_DEBUG_CACHE
         std::cerr << (void*)this << ": RsDataService::retrieveGxsGrpMetaData() retrieving all from cache!" << std::endl;
 #endif
 
-            for(std::map<RsGxsGroupId,RsGxsGrpMetaData>::const_iterator it(mGrpMetaDataCache.begin());it!=mGrpMetaDataCache.end();++it)
-            grp[it->first] = new RsGxsGrpMetaData(it->second);
+			mGrpMetaDataCache.getFullMetaList(grp) ;
         }
         else
-    {
+		{
 #ifdef RS_DATA_SERVICE_DEBUG
-        std::cerr << "RsDataService::retrieveGxsGrpMetaData() retrieving all" << std::endl;
+			std::cerr << "RsDataService::retrieveGxsGrpMetaData() retrieving all" << std::endl;
 #endif
+			// clear the cache
 
-        RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, mGrpMetaColumns, "", "");
+			RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, mGrpMetaColumns, "", "");
 
-        if(c)
-        {
-            bool valid = c->moveToFirst();
+            if(c)
+			{
+				locked_retrieveGrpMetaList(c,grp);
 
-            while(valid)
-            {
-                RsGxsGrpMetaData* g = locked_getGrpMeta(*c, 0);
-                if(g)
-                {
-                    grp[g->mGroupId] = g;
-                        mGrpMetaDataCache[g->mGroupId] = *g ;
-#ifdef RS_DATA_SERVICE_DEBUG_CACHE
-                    std::cerr << (void *)this << ": Retrieving (all) Grp metadata grpId=" << g->mGroupId << std::endl;
-#endif
-                }
-                valid = c->moveToNext();
-
-#ifdef RS_DATA_SERVICE_DEBUG_TIME
-                ++resultCount;
-#endif
-            }
+				mGrpMetaDataCache.setCacheUpToDate(true);
+			}
             delete c;
-        }
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+			resultCount += grp.size();
+#endif
 
-                mGrpMetaDataCache_ContainsAllDatabase = true ;
+//			if(c)
+//			{
+//				bool valid = c->moveToFirst();
+//
+//				while(valid)
+//				{
+//					RsGxsGrpMetaData* g = locked_getGrpMeta(*c, 0,true);
+//
+//					if(g)
+//					{
+//						grp[g->mGroupId] = g;
+//#ifdef RS_DATA_SERVICE_DEBUG_CACHE
+//						std::cerr << (void *)this << " " << mDbName << ": Retrieving (all) Grp metadata grpId=" << g->mGroupId << std::endl;
+//#endif
+//					}
+//					valid = c->moveToNext();
+//
+//				}
+//				delete c;
+//			}
+		}
     }
+	else
+	{
+		for(auto mit(grp.begin()); mit != grp.end(); ++mit)
+		{
+			RsGxsGrpMetaData *meta = mGrpMetaDataCache.getMeta(mit->first) ;
 
-    }else
-    {
-        std::map<RsGxsGroupId, RsGxsGrpMetaData *>::iterator mit = grp.begin();
-
-          for(; mit != grp.end(); ++mit)
-          {
-              std::map<RsGxsGroupId, RsGxsGrpMetaData>::const_iterator itt = mGrpMetaDataCache.find(mit->first) ;
-              if(itt != mGrpMetaDataCache.end())
-              {
+			if(meta)
+				mit->second = meta;
+			else
+			{
 #ifdef RS_DATA_SERVICE_DEBUG_CACHE
-          std::cerr << "Retrieving Grp metadata grpId=" << mit->first << " from cache!" << std::endl;
-#endif
-          grp[mit->first] = new RsGxsGrpMetaData(itt->second) ;
-              }
-              else
-          {
-#ifdef RS_DATA_SERVICE_DEBUG_CACHE
-              std::cerr << "Retrieving Grp metadata grpId=" << mit->first ;
+				std::cerr << mDbName << ": Retrieving Grp metadata grpId=" << mit->first ;
 #endif
 
-              const RsGxsGroupId& grpId = mit->first;
-              RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, mGrpMetaColumns, "grpId='" + grpId.toStdString() + "'", "");
+				const RsGxsGroupId& grpId = mit->first;
+				RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, mGrpMetaColumns, "grpId='" + grpId.toStdString() + "'", "");
 
-              if(c)
-              {
-                  bool valid = c->moveToFirst();
+				c->moveToFirst();
+				RsGxsGrpMetaData* meta = locked_getGrpMeta(*c, 0,true);
 
-#ifdef RS_DATA_SERVICE_DEBUG_CACHE
-                      if(!valid)
-                                  std::cerr << " Empty query! GrpId " << grpId << " is not in database" << std::endl;
-#endif
-                  while(valid)
-                  {
-                      RsGxsGrpMetaData* g = locked_getGrpMeta(*c, 0);
-
-                      if(g)
-                      {
-                          grp[g->mGroupId] = g;
-                        mGrpMetaDataCache[g->mGroupId] = *g ;
-#ifdef RS_DATA_SERVICE_DEBUG_CACHE
-                            std::cerr << ". Got it. Updating cache." << std::endl;
-#endif
-                      }
-                      valid = c->moveToNext();
+                if(meta)
+                    mit->second = meta;
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-                      ++resultCount;
+				++resultCount;
 #endif
-                  }
-                  delete c;
-              }
-#ifdef RS_DATA_SERVICE_DEBUG_CACHE
-            else
-              std::cerr << ". not found!" << std::endl;
-#endif
-          }
-          }
 
-      }
+                delete c;
+
+				//				  if(c)
+				//				  {
+				//					  bool valid = c->moveToFirst();
+				//
+				//#ifdef RS_DATA_SERVICE_DEBUG_CACHE
+				//					  if(!valid)
+				//						  std::cerr << " Empty query! GrpId " << grpId << " is not in database" << std::endl;
+				//#endif
+				//					  while(valid)
+				//					  {
+				//						  RsGxsGrpMetaData* g = locked_getGrpMeta(*c, 0,true);
+				//
+				//						  if(g)
+				//						  {
+				//							  grp[g->mGroupId] = g;
+				//#ifdef RS_DATA_SERVICE_DEBUG_CACHE
+				//							  std::cerr << ". Got it. Updating cache." << std::endl;
+				//#endif
+				//						  }
+				//						  valid = c->moveToNext();
+				//
+				//#ifdef RS_DATA_SERVICE_DEBUG_TIME
+				//						  ++resultCount;
+				//#endif
+				//					  }
+				//					  delete c;
+				//				  }
+#ifdef RS_DATA_SERVICE_DEBUG_CACHE
+				else
+				std::cerr << ". not found!" << std::endl;
+#endif
+			}
+		}
+
+	}
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
     std::cerr << "RsDataService::retrieveGxsGrpMetaData() " << mDbName << ", Requests: " << requestedGroups << ", Results: " << resultCount << ", Time: " << timer.duration() << std::endl;
 #endif
+
+	/* Remove not found entries as stated in the documentation */
+	for(auto i = grp.begin(); i != grp.end();)
+		if(!i->second) i = grp.erase(i);
+		else ++i;
 
     return 1;
 }
@@ -1425,35 +1530,37 @@ int RsDataService::resetDataStore()
     return 1;
 }
 
-int RsDataService::updateGroupMetaData(GrpLocMetaData &meta)
+int RsDataService::updateGroupMetaData(const GrpLocMetaData& meta)
 {
 #ifdef RS_DATA_SERVICE_DEBUG_CACHE
     std::cerr << (void*)this << ": Updating Grp Meta data: grpId = " << meta.grpId << std::endl;
 #endif
 
     RsStackMutex stack(mDbMutex);
-    RsGxsGroupId& grpId = meta.grpId;
+    const RsGxsGroupId& grpId = meta.grpId;
 
 #ifdef RS_DATA_SERVICE_DEBUG_CACHE
     std::cerr << (void*)this << ": erasing old entry from cache." << std::endl;
 #endif
 
-    locked_clearGrpMetaCache(meta.grpId);
+    mGrpMetaDataCache.clear(meta.grpId);
 
     return mDb->sqlUpdate(GRP_TABLE_NAME,  KEY_GRP_ID+ "='" + grpId.toStdString() + "'", meta.val) ? 1 : 0;
 }
 
-int RsDataService::updateMessageMetaData(MsgLocMetaData &metaData)
+int RsDataService::updateMessageMetaData(const MsgLocMetaData& metaData)
 {
 #ifdef RS_DATA_SERVICE_DEBUG_CACHE
     std::cerr << (void*)this << ": Updating Msg Meta data: grpId = " << metaData.msgId.first << " msgId = " << metaData.msgId.second << std::endl;
 #endif
 
     RsStackMutex stack(mDbMutex);
-    RsGxsGroupId& grpId = metaData.msgId.first;
-    RsGxsMessageId& msgId = metaData.msgId.second;
-    return mDb->sqlUpdate(MSG_TABLE_NAME,  KEY_GRP_ID+ "='" + grpId.toStdString()
-                          + "' AND " + KEY_MSG_ID + "='" + msgId.toStdString() + "'", metaData.val) ? 1 : 0;
+    const RsGxsGroupId& grpId = metaData.msgId.first;
+    const RsGxsMessageId& msgId = metaData.msgId.second;
+
+    mMsgMetaDataCache[grpId].clear(msgId);
+
+    return mDb->sqlUpdate(MSG_TABLE_NAME,  KEY_GRP_ID+ "='" + grpId.toStdString() + "' AND " + KEY_MSG_ID + "='" + msgId.toStdString() + "'", metaData.val) ? 1 : 0;
 }
 
 int RsDataService::removeMsgs(const GxsMsgReq& msgIds)
@@ -1464,7 +1571,7 @@ int RsDataService::removeMsgs(const GxsMsgReq& msgIds)
 
     for(; mit != msgIds.end(); ++mit)
     {
-        const std::vector<RsGxsMessageId>& msgIdV = mit->second;
+        const std::set<RsGxsMessageId>& msgIdV = mit->second;
         const RsGxsGroupId& grpId = mit->first;
 
         // delete messages
@@ -1491,7 +1598,7 @@ int RsDataService::retrieveGroupIds(std::vector<RsGxsGroupId> &grpIds)
     RsStackMutex stack(mDbMutex);
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-    RsScopeTimer timer("");
+    rstime::RsScopeTimer timer("");
     int resultCount = 0;
 #endif
 
@@ -1525,10 +1632,10 @@ int RsDataService::retrieveGroupIds(std::vector<RsGxsGroupId> &grpIds)
     return 1;
 }
 
-int RsDataService::retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std_vector& msgIds)
+int RsDataService::retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std_set& msgIds)
 {
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-    RsScopeTimer timer("");
+    rstime::RsScopeTimer timer("");
     int resultCount = 0;
 #endif
 
@@ -1546,7 +1653,7 @@ int RsDataService::retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std
             if(c->columnCount() != 1)
             std::cerr << "(EE) ********* not retrieving all columns!!" << std::endl;
 
-            msgIds.push_back(RsGxsMessageId(msgId));
+            msgIds.insert(RsGxsMessageId(msgId));
             valid = c->moveToNext();
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
@@ -1577,14 +1684,14 @@ bool RsDataService::locked_removeMessageEntries(const GxsMsgReq& msgIds)
     for(; mit != msgIds.end(); ++mit)
     {
         const RsGxsGroupId& grpId = mit->first;
-        const std::vector<RsGxsMessageId>& msgsV = mit->second;
-        std::vector<RsGxsMessageId>::const_iterator vit = msgsV.begin();
+        const std::set<RsGxsMessageId>& msgsV = mit->second;
+        auto& cache(mMsgMetaDataCache[grpId]);
 
-        for(; vit != msgsV.end(); ++vit)
+        for(auto& msgId:msgsV)
         {
-            const RsGxsMessageId& msgId = *vit;
-            mDb->sqlDelete(MSG_TABLE_NAME, KEY_GRP_ID+ "='" + grpId.toStdString()
-                    + "' AND " + KEY_MSG_ID + "='" + msgId.toStdString() + "'", "");
+            mDb->sqlDelete(MSG_TABLE_NAME, KEY_GRP_ID+ "='" + grpId.toStdString() + "' AND " + KEY_MSG_ID + "='" + msgId.toStdString() + "'", "");
+
+            cache.clear(msgId);
         }
     }
 
@@ -1598,23 +1705,18 @@ bool RsDataService::locked_removeGroupEntries(const std::vector<RsGxsGroupId>& g
     // start a transaction
     bool ret = mDb->beginTransaction();
 
-    std::vector<RsGxsGroupId>::const_iterator vit = grpIds.begin();
-
-    for(; vit != grpIds.end(); ++vit)
+    for(auto grpId:grpIds)
     {
-
-        const RsGxsGroupId& grpId = *vit;
         mDb->sqlDelete(GRP_TABLE_NAME, KEY_GRP_ID+ "='" + grpId.toStdString() + "'", "");
 
 		// also remove the group meta from cache.
-		mGrpMetaDataCache.erase(*vit) ;
+		mGrpMetaDataCache.clear(grpId) ;
     }
 
     ret &= mDb->commitTransaction();
-
-    mGrpMetaDataCache_ContainsAllDatabase = false ;
     return ret;
 }
+
 uint32_t RsDataService::cacheSize() const {
     return 0;
 }
@@ -1623,4 +1725,39 @@ int RsDataService::setCacheSize(uint32_t /* size */)
 {
     return 0;
 }
+
+void RsDataService::debug_printCacheSize() const
+{
+    uint32_t nb_items,nb_items_on_deadlist;
+    uint64_t total_size,total_size_of_deadlist;
+
+    mGrpMetaDataCache.debug_computeSize(nb_items, nb_items_on_deadlist, total_size,total_size_of_deadlist);
+
+    RsDbg() << "Cache size: " << std::endl;
+    RsDbg() << "   Groups: " << " total: " << nb_items << " (dead: " << nb_items_on_deadlist << "), size: " << total_size << " (Dead: " << total_size_of_deadlist << ")" << std::endl;
+
+    nb_items = 0,nb_items_on_deadlist = 0;
+    total_size = 0,total_size_of_deadlist = 0;
+
+    for(auto it:mMsgMetaDataCache)
+    {
+		uint32_t tmp_nb_items,tmp_nb_items_on_deadlist;
+		uint64_t tmp_total_size,tmp_total_size_of_deadlist;
+
+		it.second.debug_computeSize(tmp_nb_items, tmp_nb_items_on_deadlist, tmp_total_size,tmp_total_size_of_deadlist);
+
+        nb_items += tmp_nb_items;
+        nb_items_on_deadlist += tmp_nb_items_on_deadlist;
+        total_size += tmp_total_size;
+        total_size_of_deadlist += tmp_total_size_of_deadlist;
+    }
+    RsDbg() << "   Msgs:   " << " total: " << nb_items << " (dead: " << nb_items_on_deadlist << "), size: " << total_size << " (Dead: " << total_size_of_deadlist << ")" << std::endl;
+}
+
+
+
+
+
+
+
 

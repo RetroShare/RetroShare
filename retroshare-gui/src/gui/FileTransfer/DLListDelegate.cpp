@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006,2007 crypton
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/FileTransfer/DLListDelegate.cpp                      *
+ *                                                                             *
+ * Copyright 2007 by Crypton         <retroshare.project@gmail.com>            *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <retroshare/rstypes.h>
 #include <QModelIndex>
@@ -35,12 +34,6 @@ Q_DECLARE_METATYPE(FileProgressInfo)
 
 DLListDelegate::DLListDelegate(QObject *parent) : QAbstractItemDelegate(parent)
 {
-	;
-}
-
-DLListDelegate::~DLListDelegate(void)
-{
-	;
 }
 
 void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
@@ -161,7 +154,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
         case COLUMN_PROGRESS:
 			{
 				// create a xProgressBar
-				FileProgressInfo pinfo = index.data().value<FileProgressInfo>() ;
+				FileProgressInfo pinfo = index.data(Qt::UserRole).value<FileProgressInfo>() ;
 
 //				std::cerr << "drawing progress info: nb_chunks = " << pinfo.nb_chunks ;
 //				for(uint i=0;i<pinfo.cmap._map.size();++i)
@@ -187,15 +180,32 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			}
 			painter->drawText(option.rect, Qt::AlignCenter, newopt.text);
 			break;
-	case COLUMN_SOURCES:
-	{
-		double dblValue = index.data().toDouble();
+		case COLUMN_SOURCES:
+		{
+			double dblValue = index.data().toDouble();
 
-		temp = dblValue!=0 ? QString("%1 (%2)").arg((int)dblValue).arg((int)((fmod(dblValue,1)*1000)+0.5)) : "";
-		painter->drawText(option.rect, Qt::AlignCenter, temp);
-	}
-			break;
-        case COLUMN_DOWNLOADTIME:
+			temp = dblValue!=0 ? QString("%1 (%2)").arg((int)dblValue).arg((int)((fmod(dblValue,1)*1000)+0.5)) : "";
+			painter->drawText(option.rect, Qt::AlignCenter, temp);
+		}
+		break;
+		case COLUMN_PRIORITY:
+		{
+			double dblValue = index.data().toDouble();
+			if (dblValue == PRIORITY_NULL)
+				temp = "";
+			else if (dblValue == PRIORITY_FASTER)
+				temp = tr("Faster");
+			else if (dblValue == PRIORITY_AVERAGE)
+				temp = tr("Average");
+			else if (dblValue == PRIORITY_SLOWER)
+				temp = tr("Slower");
+			else
+				temp = QString::number((uint32_t)dblValue);
+
+			painter->drawText(option.rect, Qt::AlignCenter, temp);
+		}
+		break;
+		case COLUMN_DOWNLOADTIME:
 			downloadtime = index.data().toLongLong();
 			minutes = downloadtime / 60;
 			seconds = downloadtime % 60;
@@ -215,20 +225,38 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 				temp = "" ;
 			painter->drawText(option.rect, Qt::AlignCenter, temp);
 			break;
-        case COLUMN_NAME:
-        		// decoration
-                        value = index.data(Qt::DecorationRole);
-                        temp = index.data().toString();
-                        pixmap = qvariant_cast<QIcon>(value).pixmap(option.decorationSize, option.state & QStyle::State_Enabled ? QIcon::Normal : QIcon::Disabled, option.state & QStyle::State_Open ? QIcon::On : QIcon::Off);
-                        pixmapRect = (pixmap.isNull() ? QRect(0, 0, 0, 0): QRect(QPoint(0, 0), option.decorationSize));
-                        if (pixmapRect.isValid()){
-                                QPoint p = QStyle::alignedRect(option.direction, Qt::AlignLeft, pixmap.size(), option.rect).topLeft();
-                                painter->drawPixmap(p, pixmap);
-                                temp = " " + temp;
-                        }
-                        painter->drawText(option.rect.translated(pixmap.size().width(), 0), Qt::AlignLeft, temp);
-                        break;
+		case COLUMN_NAME:
+		{
+			// decoration
+			int pixOffset = 0;
+			value = index.data(Qt::StatusTipRole);
+			temp = index.data().toString();
+			pixmap = qvariant_cast<QIcon>(value).pixmap(option.decorationSize, option.state & QStyle::State_Enabled ? QIcon::Normal : QIcon::Disabled, option.state & QStyle::State_Open ? QIcon::On : QIcon::Off);
+			pixmapRect = (pixmap.isNull() ? QRect(0, 0, 0, 0): QRect(QPoint(0, 0), option.decorationSize));
+			if (pixmapRect.isValid()){
+				QPoint p = QStyle::alignedRect(option.direction, Qt::AlignLeft, pixmap.size(), option.rect).topLeft();
+				p.setX( p.x() + pixOffset);
+				painter->drawPixmap(p, pixmap);
+				temp = " " + temp;
+				pixOffset += pixmap.size().width();
+			}
+			value = index.data(Qt::DecorationRole);
+			temp = index.data().toString();
+			pixmap = qvariant_cast<QIcon>(value).pixmap(option.decorationSize, option.state & QStyle::State_Enabled ? QIcon::Normal : QIcon::Disabled, option.state & QStyle::State_Open ? QIcon::On : QIcon::Off);
+			pixmapRect = (pixmap.isNull() ? QRect(0, 0, 0, 0): QRect(QPoint(0, 0), option.decorationSize));
+			if (pixmapRect.isValid()){
+				QPoint p = QStyle::alignedRect(option.direction, Qt::AlignLeft, pixmap.size(), option.rect).topLeft();
+				p.setX( p.x() + pixOffset);
+				painter->drawPixmap(p, pixmap);
+				temp = " " + temp;
+				pixOffset += pixmap.size().width();
+			}
+			painter->drawText(option.rect.translated(pixOffset, 0), Qt::AlignLeft, temp);
+		}
+		break;
     case COLUMN_LASTDL:
+        if (index.data().value<QString>().isEmpty())
+            break;
         qi64Value = index.data().value<qint64>();
         if (qi64Value < std::numeric_limits<qint64>::max()){
             QDateTime qdtLastDL = QDateTime::fromTime_t(qi64Value);

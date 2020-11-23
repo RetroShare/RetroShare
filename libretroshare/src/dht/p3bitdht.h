@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/dht: p3bitdht.h
- *
- * BitDht interface for RetroShare.
- *
- * Copyright 2009-2010 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/dht: p3bitdht.h                                           *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2009-2010 by Robert Fernie <drbob@lunamutt.com>                   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef MRK_P3_BITDHT_H
 #define MRK_P3_BITDHT_H
@@ -49,20 +45,20 @@ class DhtPeerDetails
 
 	DhtPeerDetails();
 
-	uint32_t mPeerType;
+	RsDhtPeerType mPeerType;
 
 	bdId    mDhtId;
 	RsPeerId mRsId;
 
 	/* direct from the DHT! */
-	uint32_t mDhtState; // One of RSDHT_PEERDHT_[...]
-	time_t   mDhtUpdateTS;
+	RsDhtPeerDht mDhtState;
+	rstime_t   mDhtUpdateTS;
 
 	/* internal state */
 	PeerConnectStateBox mConnectLogic;
 	
 	/* Actual Connection Status */
-	uint32_t  		mPeerConnectState; // One of RSDHT_PEERCONN_
+	RsDhtPeerConnectState	mPeerConnectState;
 	std::string 		mPeerConnectMsg;
 	uint32_t 		mPeerConnectMode;
 	bdId 			mPeerConnectPeerId;
@@ -70,9 +66,9 @@ class DhtPeerDetails
 	struct sockaddr_in 	mPeerConnectAddr;
 	uint32_t 		mPeerConnectPoint;
 	
-	time_t 		mPeerConnectUdpTS;
-	time_t 		mPeerConnectTS;
-	time_t		mPeerConnectClosedTS;
+	rstime_t 		mPeerConnectUdpTS;
+	rstime_t 		mPeerConnectTS;
+	rstime_t		mPeerConnectClosedTS;
 	
 	bool 			mExclusiveProxyLock;
 
@@ -81,10 +77,10 @@ class DhtPeerDetails
 
         /* Connection Request Status */
 	std::string		mPeerReqStatusMsg;
-	uint32_t		mPeerReqState;
+	RsDhtPeerRequest	mPeerReqState;
 	uint32_t		mPeerReqMode;
 	bdId			mPeerReqProxyId;
-	time_t			mPeerReqTS;
+	rstime_t			mPeerReqTS;
 
         /* Callback Info */
 	std::string		mPeerCbMsg;
@@ -92,7 +88,7 @@ class DhtPeerDetails
 	uint32_t		mPeerCbPoint;
 	bdId			mPeerCbProxyId;
 	bdId			mPeerCbDestId;
-	time_t			mPeerCbTS;
+	rstime_t			mPeerCbTS;
 
 };
 
@@ -298,11 +294,11 @@ public:
     virtual int     addRelayServer(std::string ids);
     virtual int     removeRelayServer(std::string ids);
 
-    virtual uint32_t getRelayMode();
-    virtual int      setRelayMode(uint32_t mode);
+	virtual RsDhtRelayMode getRelayMode();
+	virtual int      setRelayMode(RsDhtRelayMode mode);
 
-    virtual int     getRelayAllowance(int  classIdx, uint32_t &count, uint32_t &bandwidth);
-    virtual int     setRelayAllowance(int classIdx, uint32_t  count, uint32_t  bandwidth);
+	virtual int     getRelayAllowance(RsDhtRelayClass classIdx, uint32_t &count, uint32_t &bandwidth);
+	virtual int     setRelayAllowance(RsDhtRelayClass classIdx, uint32_t  count, uint32_t  bandwidth);
 
 private:
 
@@ -311,7 +307,7 @@ private:
     int     pushRelayServers();
 
     std::list<std::string> mRelayServerList;
-    uint32_t mRelayMode;
+	RsDhtRelayMode mRelayMode;
 
 protected:
     /*****************************************************************/
@@ -335,7 +331,7 @@ private:
     float mDhtReadRate;
     float mDhtWriteRate;
 
-    time_t mLastDataRateUpdate;
+    rstime_t mLastDataRateUpdate;
 
 
     /***********************************************************************************************
@@ -352,9 +348,9 @@ public:
 
 private:
 
-    DhtPeerDetails *addInternalPeer_locked(const RsPeerId& pid, uint32_t type);
+	DhtPeerDetails *addInternalPeer_locked(const RsPeerId& pid, RsDhtPeerType type);
     int 	removeInternalPeer_locked(const RsPeerId& pid);
-    DhtPeerDetails *findInternalDhtPeer_locked(const bdNodeId *id, uint32_t type);
+	DhtPeerDetails *findInternalDhtPeer_locked(const bdNodeId *id, RsDhtPeerType type);
     DhtPeerDetails *findInternalRsPeer_locked(const RsPeerId &pid);
 
     bool 	havePeerTranslation_locked(const RsPeerId &pid);
@@ -384,7 +380,7 @@ private:
     RsPeerId mOwnRsId;
     bdNodeId    mOwnDhtId;
 
-    time_t mMinuteTS;
+    rstime_t mMinuteTS;
 
     /* translation maps */
     std::map<RsPeerId, bdNodeId> mTransToNodeId;

@@ -1,21 +1,22 @@
-/***************************************************************************
- *   Copyright (C) 2009 Cyril Soler                                        *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                       *
- *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
- ***************************************************************************/
+/*******************************************************************************
+ * gui/RetroshareLink.h                                                        *
+ *                                                                             *
+ * Copyright (c) 2009 Cyril Soler      <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef RETROSHARE_LINK_ANALYZER
 #define RETROSHARE_LINK_ANALYZER
@@ -32,23 +33,25 @@
 //          shared |      Y         |            Y             | Y (send RS link) | Paste menu? | Paste menu?
 //    -------------+----------------+--------------------------+------------------+-------------+-------------
 //
-#include <stdint.h>
 
-#include <retroshare/rstypes.h>
 #include <retroshare/rsgxsifacetypes.h>
+#include <retroshare/rsmsgs.h>
+#include <retroshare/rstypes.h>
 
 #include <QString>
-#include <QVector>
 #include <QUrl>
+#include <QVector>
 
-#define RSLINK_PROCESS_NOTIFY_SUCCESS	  1 // notify on success
-#define RSLINK_PROCESS_NOTIFY_ERROR		  2 // notify on error
-#define RSLINK_PROCESS_NOTIFY_ASK		  4 // ask for add the links
-#define RSLINK_PROCESS_NOTIFY_BAD_CHARS  8 // / or \\ characters in a filename
+#include <stdint.h>
 
-#define RSLINK_PROCESS_NOTIFY_ALL      15
+#define RSLINK_PROCESS_NOTIFY_SUCCESS     0x01u // notify on success
+#define RSLINK_PROCESS_NOTIFY_ERROR       0x02u // notify on error
+#define RSLINK_PROCESS_NOTIFY_ASK         0x04u // ask for add the links
+#define RSLINK_PROCESS_NOTIFY_BAD_CHARS   0x08u // / or \\ characters in a filename
 
-#define RSLINK_SCHEME 	"retroshare"
+#define RSLINK_PROCESS_NOTIFY_ALL         0x0Fu
+
+#define RSLINK_SCHEME          "retroshare"
 
 #define RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST 1
 #define RSLINK_SUBTYPE_FILE_EXTRA               2
@@ -57,19 +60,21 @@ class RetroShareLink
 {
 	public:
 		enum enumType {
-		    TYPE_UNKNOWN       = 0x00,
-		    TYPE_FILE          = 0x01,
-		    TYPE_PERSON        = 0x02,
-		    TYPE_FORUM         = 0x03,
-		    TYPE_CHANNEL       = 0x04,
-		    TYPE_SEARCH        = 0x05,
-		    TYPE_MESSAGE       = 0x06,
-		    TYPE_CERTIFICATE   = 0x07,
-		    TYPE_EXTRAFILE     = 0x08,
-		    TYPE_PRIVATE_CHAT  = 0x09,
-            TYPE_PUBLIC_MSG    = 0x0a,
-            TYPE_POSTED        = 0x0b,
-            TYPE_IDENTITY      = 0x0c
+			TYPE_UNKNOWN       = 0x00,
+			TYPE_FILE          = 0x01,
+			TYPE_PERSON        = 0x02,
+			TYPE_FORUM         = 0x03,
+			TYPE_CHANNEL       = 0x04,
+			TYPE_SEARCH        = 0x05,
+			TYPE_MESSAGE       = 0x06,
+			TYPE_CERTIFICATE   = 0x07,
+			TYPE_EXTRAFILE     = 0x08,
+			TYPE_PRIVATE_CHAT  = 0x09,//Deprecated
+			TYPE_PUBLIC_MSG    = 0x0a,
+			TYPE_POSTED        = 0x0b,
+			TYPE_IDENTITY      = 0x0c,
+			TYPE_FILE_TREE     = 0x0d,
+			TYPE_CHAT_ROOM     = 0x0e
 		};
 
 	public:
@@ -77,42 +82,47 @@ class RetroShareLink
 		RetroShareLink(const QUrl& url);
 		RetroShareLink(const QString& url);
 
-		static RetroShareLink createIdentity(const RsGxsId& gxs_id,const QString& name,const QString& radix_data) ;
-		static RetroShareLink createExtraFile(const QString& name, uint64_t size, const QString& hash, const QString& ssl_id);
 		static RetroShareLink createFile(const QString& name, uint64_t size, const QString& hash);
-		static RetroShareLink createPublicMsgInvite(time_t time_stamp,const QString& pgp_id,const QString& hash) ;
 		static RetroShareLink createPerson(const RsPgpId &id);
-		static RetroShareLink createCertificate(const RsPeerId &ssl_id) ;
-		static RetroShareLink createUnknwonSslCertificate(const RsPeerId &sslId, const RsPgpId &gpgId = RsPgpId()) ;
 		static RetroShareLink createGxsGroupLink(const RetroShareLink::enumType &linkType, const RsGxsGroupId &groupId, const QString &groupName);
 		static RetroShareLink createGxsMessageLink(const RetroShareLink::enumType &linkType, const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &msgName);
 		static RetroShareLink createSearch(const QString& keywords);
 		static RetroShareLink createMessage(const RsPeerId &peerId, const QString& subject);
 		static RetroShareLink createMessage(const RsGxsId &peerId, const QString& subject);
+		static RetroShareLink createCertificate(const RsPeerId &ssl_id) ;
+		static RetroShareLink createUnknownSslCertificate(const RsPeerId &sslId, const RsPgpId &gpgId = RsPgpId()) ;
+		static RetroShareLink createExtraFile(const QString& name, uint64_t size, const QString& hash, const QString& ssl_id);
+		static RetroShareLink createPublicMsgInvite(time_t time_stamp,const QString& pgp_id,const QString& hash) ;
+		static RetroShareLink createIdentity(const RsGxsId& gxs_id,const QString& name,const QString& radix_data) ;
+		static RetroShareLink createFileTree(const QString& name, uint64_t size,uint32_t count,const QString& radix_data);
+		static RetroShareLink createChatRoom(const ChatId &chatId, const QString& name);
 
+		bool valid() const { return _valid; }
 		enumType type() const {return _type; }
-		uint64_t size() const { return _size ; }
 		const QString& name() const { return _name ; }
+		uint64_t size() const { return _size ; }
 		const QString& hash() const { return _hash ; }
 		const QString& id() const { return _hash ; }
 		const QString& msgId() const { return _msgId ; }
 		const QString& subject() const { return _subject ; }
-		const QString& GPGRadix64Key() const { return _GPGBase64String ; }
-		const QString& GPGBase64CheckSum() const { return _GPGBase64CheckSum ; }
 		const QString& SSLId() const { return _SSLid ; }
 		const QString& GPGId() const { return _GPGid ; }
-		const QString& localIPAndPort() const { return _loc_ip_port ; }
-		const QString& externalIPAndPort() const { return _ext_ip_port ; }
-		const QString& dyndns() const { return _dyndns_name ; }
+		//const QString& GPGRadix64Key() const { return _GPGBase64String ; }
+		//const QString& GPGBase64CheckSum() const { return _GPGBase64CheckSum ; }
 		const QString& location() const { return _location ; }
+		//const QString& externalIPAndPort() const { return _ext_ip_port ; }
+		//const QString& localIPAndPort() const { return _loc_ip_port ; }
+		//const QString& dyndns() const { return _dyndns_name ; }
 		const QString& radix() const { return _radix ; }
 		time_t timeStamp() const { return _time_stamp ; }
-		QString title() const;
-        QString radixGroupData() const { return _radix_group_data ;}
+		QString radixGroupData() const { return _radix_group_data ;}
+		uint32_t count() const { return _count ; }
 
 		unsigned int subType() const { return _subType; }
 		void setSubType(unsigned int subType) { _subType = subType; }
 
+		// get title depends link's type
+		QString title() const;
 		// get nice name for anchor
 		QString niceName() const;
 
@@ -129,8 +139,6 @@ class RetroShareLink
 		QString toHtmlSize() const ;
 
 		QUrl toUrl() const ;
-
-		bool valid() const { return _valid; }
 
 		bool operator==(const RetroShareLink& l) const { return _type == l._type && _hash == l._hash ; }
 
@@ -152,21 +160,22 @@ class RetroShareLink
 		enumType _type;
 		QString  _name;
 		uint64_t _size;
-		QString  _hash;  // or id (forum, channel, message)
+		QString  _hash;  // or id (forum, channel, message, chat room)
 		QString  _msgId; // id of the message (forum, channel)
 		QString  _subject;
 		QString  _SSLid ; // ssl id for rs links
 		QString  _GPGid ; // ssl id for rs links
-		QString  _GPGBase64String ; // GPG Cert
-		QString  _GPGBase64CheckSum ; // GPG Cert
+		//QString  _GPGBase64String ; // GPG Cert
+		//QString  _GPGBase64CheckSum ; // GPG Cert
 		QString  _location ;	// location 
-		QString  _ext_ip_port ;
-		QString  _loc_ip_port ;
-		QString  _dyndns_name ;
-        QString  _radix ;
-		QString  _encrypted_chat_info ; // encrypted data string for the recipient of a chat invite
+		//QString  _ext_ip_port ;
+		//QString  _loc_ip_port ;
+		//QString  _dyndns_name ;
+		QString  _radix ;
+		//QString  _encrypted_chat_info ; // encrypted data string for the recipient of a chat invite
 		time_t   _time_stamp ; 				// time stamp at which the link will expire.
-        QString  _radix_group_data;
+		QString  _radix_group_data;
+		uint32_t _count ;
 
 		unsigned int _subType; // for general use as sub type for _type (RSLINK_SUBTYPE_...)
 };
@@ -189,7 +198,7 @@ class RSLinkClipboard
 		// Get the liste of pasted links, either from the internal RS links, or by default
 		// from the clipboard.
 		//
-		static void pasteLinks(QList<RetroShareLink> &links) ;
+		static void pasteLinks(QList<RetroShareLink> &links,RetroShareLink::enumType type = RetroShareLink::TYPE_UNKNOWN) ;
 
 		// Produces a list of links with no html structure.
 		static QString toString() ;
@@ -212,10 +221,10 @@ class RSLinkClipboard
 		//
 		static int process(RetroShareLink::enumType type = RetroShareLink::TYPE_UNKNOWN, uint flag = RSLINK_PROCESS_NOTIFY_ALL);
 
-		static void parseText(QString text, QList<RetroShareLink> &links) ;
+		static void parseText(QString text, QList<RetroShareLink> &links, RetroShareLink::enumType type = RetroShareLink::TYPE_UNKNOWN) ;
 
 	private:
-		static void parseClipboard(QList<RetroShareLink> &links) ;
+		static void parseClipboard(QList<RetroShareLink> &links, RetroShareLink::enumType type = RetroShareLink::TYPE_UNKNOWN) ;
 };
 
 #endif

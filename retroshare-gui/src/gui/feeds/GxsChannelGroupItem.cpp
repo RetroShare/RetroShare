@@ -1,28 +1,31 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2008 Robert Fernie
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/feeds/GxsChannelGroupItem.cpp                                           *
+ *                                                                             *
+ * Copyright (c) 2008, Robert Fernie   <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
+#include "gui/gxs/GxsIdDetails.h"
 #include "GxsChannelGroupItem.h"
 #include "ui_GxsChannelGroupItem.h"
 
 #include "FeedHolder.h"
+#include "util/qtthreadsutils.h"
+#include "gui/common/FilesDefs.h"
+#include "gui/NewsFeed.h"
 #include "gui/RetroShareLink.h"
 
 /****
@@ -88,29 +91,39 @@ bool GxsChannelGroupItem::setGroup(const RsGxsChannelGroup &group)
 	return true;
 }
 
-void GxsChannelGroupItem::loadGroup(const uint32_t &token)
+void GxsChannelGroupItem::loadGroup()
 {
-#ifdef DEBUG_ITEM
-	std::cerr << "GxsChannelGroupItem::loadGroup()";
-	std::cerr << std::endl;
-#endif
-
-	std::vector<RsGxsChannelGroup> groups;
-	if (!rsGxsChannels->getGroupData(token, groups))
+	RsThread::async([this]()
 	{
-		std::cerr << "GxsChannelGroupItem::loadGroup() ERROR getting data";
-		std::cerr << std::endl;
-		return;
-	}
+		// 1 - get group data
 
-	if (groups.size() != 1)
-	{
-		std::cerr << "GxsChannelGroupItem::loadGroup() Wrong number of Items";
-		std::cerr << std::endl;
-		return;
-	}
+		std::vector<RsGxsChannelGroup> groups;
+		const std::list<RsGxsGroupId> groupIds = { groupId() };
 
-	setGroup(groups[0]);
+		if(!rsGxsChannels->getChannelsInfo(groupIds,groups))
+		{
+			RsErr() << "PostedItem::loadGroup() ERROR getting data" << std::endl;
+			return;
+		}
+
+		if (groups.size() != 1)
+		{
+			std::cerr << "GxsGxsChannelGroupItem::loadGroup() Wrong number of Items";
+			std::cerr << std::endl;
+			return;
+		}
+		RsGxsChannelGroup group(groups[0]);
+
+		RsQThreadUtils::postToObject( [group,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
+
+			setGroup(group);
+
+		}, this );
+	});
 }
 
 QString GxsChannelGroupItem::groupName()
@@ -134,8 +147,8 @@ void GxsChannelGroupItem::fill()
 
 	if (mGroup.mImage.mData != NULL) {
 		QPixmap chanImage;
-		chanImage.loadFromData(mGroup.mImage.mData, mGroup.mImage.mSize, "PNG");
-		ui->logoLabel->setPixmap(QPixmap(chanImage));
+		GxsIdDetails::loadPixmapFromData(mGroup.mImage.mData, mGroup.mImage.mSize, chanImage,GxsIdDetails::ORIGINAL);
+        ui->logoLabel->setPixmap(chanImage);
 	}
 
 	if (IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags)) {
@@ -144,14 +157,14 @@ void GxsChannelGroupItem::fill()
 		ui->subscribeButton->setEnabled(true);
 	}
 
-//	if (mIsNew)
-//	{
-		ui->titleLabel->setText(tr("New Channel"));
-//	}
-//	else
-//	{
-//		ui->titleLabel->setText(tr("Updated Channel"));
-//	}
+	switch(mFeedId)
+	{
+	case NEWSFEED_CHANNELPUBKEYLIST:	ui->titleLabel->setText(tr("Publish permission received for channel: "));
+										break ;
+
+	case NEWSFEED_CHANNELNEWLIST:	 	ui->titleLabel->setText(tr("New Channel: "));
+										break ;
+	}
 
 	if (mIsHome)
 	{
@@ -175,13 +188,13 @@ void GxsChannelGroupItem::doExpand(bool open)
 	if (open)
 	{
 		ui->expandFrame->show();
-		ui->expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
+        ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/up-arrow.png")));
 		ui->expandButton->setToolTip(tr("Hide"));
 	}
 	else
 	{
 		ui->expandFrame->hide();
-		ui->expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+        ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/down-arrow.png")));
 		ui->expandButton->setToolTip(tr("Expand"));
 	}
 

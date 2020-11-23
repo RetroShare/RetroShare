@@ -1,28 +1,25 @@
-/*
- * "$Id: pqissludp.cc,v 1.16 2007-02-18 21:46:49 rmf24 Exp $"
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2004-2006 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/pqi: pqissludp.cc                                         *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2004-2006  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2015-2019  Gioacchino Mazzurco <gio@altermundi.net>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "pqi/pqissludp.h"
 #include "pqi/pqinetwork.h"
 
@@ -35,6 +32,7 @@
 
 #include "util/rsdebug.h"
 #include "util/rsnet.h"
+#include "util/rstime.h"
 #include "util/rsstring.h"
 
 #include "pqi/p3linkmgr.h"
@@ -53,38 +51,21 @@ static const uint32_t PQI_SSLUDP_DEF_CONN_PERIOD = 300;  /* 5  minutes? */
 /********** PQI SSL UDP STUFF **************************************/
 
 pqissludp::pqissludp(PQInterface *parent, p3LinkMgr *lm) :
-	pqissl(NULL, parent, lm), tou_bio(NULL),// listen_checktime(0),
-	mConnectPeriod(PQI_SSLUDP_DEF_CONN_PERIOD), mConnectFlags(0),
-	mConnectBandwidth(0)
-{
-	RS_STACK_MUTEX(mSslMtx);
+    pqissl(nullptr, parent, lm), tou_bio(nullptr),
+    mConnectPeriod(PQI_SSLUDP_DEF_CONN_PERIOD), mConnectFlags(0),
+    mConnectBandwidth(0), mConnectProxyAddr(), mConnectSrcAddr() {}
 
-	sockaddr_storage_clear(remote_addr);
-	sockaddr_storage_clear(mConnectProxyAddr);
-	sockaddr_storage_clear(mConnectSrcAddr);
-}
+/*
+ * No need to call reset() here as it will be called in the upper class,
+ * pqissludp::reset_locked() just reset a few members to 0 that (that will be
+ * deleted anyway when this destructor ends), so pqissl::reset_locked() that is
+ * called by in parent class destructor will do just fine.
+ *
+ * DISCLAIMER: do not double free tou_bio here, as it is implicitely freed
+ * by SSL_free(...) in pqissl::reset()
+ */
+pqissludp::~pqissludp() = default;
 
-
-pqissludp::~pqissludp()
-{ 
-	rslog(RSL_ALERT, pqissludpzone,
-            "pqissludp::~pqissludp -> destroying pqissludp");
-
-	/* must call reset from here, so that the
-	 * virtual functions will still work.
-	 * -> as they stop working in base class destructor.
-	 *
-	 *  This means that reset() will be called twice, but this should
-	 *  be harmless.
-	 */
-	stoplistening(); /* remove from p3proxy listenqueue */
-	reset();
-
-	RS_STACK_MUTEX(mSslMtx);
-
-	if (tou_bio) // this should be in the reset?
-		BIO_free(tou_bio);
-}
 
 int pqissludp::reset_locked()
 {
@@ -206,7 +187,7 @@ int pqissludp::Initiate_Connection()
 		out += sockaddr_storage_tostring(remote_addr);
 		out += " ";
 
-		if (sslmode)
+		if (sslmode == PQISSL_ACTIVE)
 		{
 			out += "ACTIVE Connect (SSL_Connect)";
 		}
@@ -226,6 +207,15 @@ int pqissludp::Initiate_Connection()
 		return -1;
 	}
 
+	if(!sockaddr_storage_ipv6_to_ipv4(remote_addr))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error: remote_addr is not "
+		          << "valid IPv4!" << std::endl;
+		sockaddr_storage_dump(remote_addr);
+		print_stacktrace();
+		return -EINVAL;
+	}
+
 	mTimeoutTS = time(NULL) + mConnectTimeout;
 	//std::cerr << "Setting Connect Timeout " << mConnectTimeout << " Seconds into Future " << std::endl;
 	//std::cerr << " Connect Period is:" << mConnectPeriod <<  std::endl;
@@ -242,49 +232,34 @@ int pqissludp::Initiate_Connection()
 	}
 	else if (mConnectFlags & RS_CB_FLAG_MODE_UDP_RELAY)
 	{
-		std::cerr << "Calling tou_connect_via_relay(";
-		std::cerr << sockaddr_storage_tostring(mConnectSrcAddr) << ",";
-		std::cerr << sockaddr_storage_tostring(mConnectProxyAddr) << ",";
-		std::cerr << sockaddr_storage_tostring(remote_addr) << ")" << std::endl;
+		std::cerr << __PRETTY_FUNCTION__ << " Calling tou_connect_via_relay("
+		          << sockaddr_storage_tostring(mConnectSrcAddr) << ","
+		          << sockaddr_storage_tostring(mConnectProxyAddr) << ","
+		          << sockaddr_storage_tostring(remote_addr) << ")" << std::endl;
 
-		
+		if(!sockaddr_storage_ipv6_to_ipv4(mConnectSrcAddr))
 		{
-			std::cerr << "CONVERTING ALL ADDRESSES TO IPV4: TODO make IPV6";
-			std::cerr << std::endl;
-			
-			struct sockaddr_in srcaddr;
-			struct sockaddr_in proxyaddr;
-			struct sockaddr_in remoteaddr;
-			
-			if ((mConnectSrcAddr.ss_family != AF_INET) ||
-					(mConnectProxyAddr.ss_family != AF_INET) ||
-					(remote_addr.ss_family != AF_INET))
-			{
-				std::cerr << "Error One Address is not IPv4. aborting";
-				std::cerr << std::endl;
-				abort();
-			}
-			
-			struct sockaddr_in *rap = (struct sockaddr_in *) &remote_addr;
-			struct sockaddr_in *pap = (struct sockaddr_in *) &mConnectProxyAddr;
-			struct sockaddr_in *sap = (struct sockaddr_in *) &mConnectSrcAddr;
-			
-			srcaddr.sin_family = AF_INET;
-			proxyaddr.sin_family = AF_INET;
-			remoteaddr.sin_family = AF_INET;
-
-			srcaddr.sin_addr = sap->sin_addr;
-			proxyaddr.sin_addr = pap->sin_addr;
-			remoteaddr.sin_addr = rap->sin_addr;
-			
-			srcaddr.sin_port = sap->sin_port;
-			proxyaddr.sin_port = pap->sin_port;
-			remoteaddr.sin_port = rap->sin_port;
-			
-			err = tou_connect_via_relay(sockfd, &srcaddr, &proxyaddr, &remoteaddr);
-			
+			std::cerr << __PRETTY_FUNCTION__ << " ERROR mConnectSrcAddr is "
+			          << "not a valid IPv4!" << std::endl;
+			sockaddr_storage_dump(mConnectSrcAddr);
+			print_stacktrace();
+			return -EINVAL;
 		}
-		
+		if(!sockaddr_storage_ipv6_to_ipv4(mConnectProxyAddr))
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " ERROR mConnectProxyAddr "
+			          << "is not a valid IPv4!" << std::endl;
+			sockaddr_storage_dump(mConnectProxyAddr);
+			print_stacktrace();
+			return -EINVAL;
+
+		}
+
+		err = tou_connect_via_relay(
+		            sockfd,
+		            reinterpret_cast<sockaddr_in&>(mConnectSrcAddr),
+		            reinterpret_cast<sockaddr_in&>(mConnectProxyAddr),
+		            reinterpret_cast<sockaddr_in&>(remote_addr) );
 
 /*** It seems that the UDP Layer sees x 1.2 the traffic of the SSL layer.
  * We need to compensate somewhere... we drop the maximum traffic to 75% of limit
@@ -439,30 +414,6 @@ int pqissludp::net_internal_SSL_set_fd(SSL *ssl, int fd)
 	return 1;
 }
 
-int pqissludp::net_internal_fcntl_nonblock(int /*fd*/)
-{
-  	rslog(RSL_DEBUG_BASIC, pqissludpzone, 
-	  	  "pqissludp::net_internal_fcntl_nonblock()");
-	return 0;
-}
-
-
-        // listen fns call the udpproxy.
-int pqissludp::listen()
-{
-	rslog(RSL_DEBUG_BASIC, pqissludpzone, "pqissludp::listen() (NULLOP)");
-
-	return 1; //udpproxy->listen();
-}
-
-int pqissludp::stoplistening()
-{
-	rslog(RSL_DEBUG_BASIC, pqissludpzone, "pqissludp::stoplistening() (NULLOP)");
-
-	return 1; //udpproxy->stoplistening();
-}
-
-
 bool 	pqissludp::connect_parameter(uint32_t type, uint32_t value)
 {
 	{
@@ -571,7 +522,7 @@ bool 	pqissludp::moretoread(uint32_t usec)
 		{
 			return true;
 		}
-		usleep(usec);
+		rstime::rs_usleep(usec);
 	}
 
 	/* check for more to read first ... if nothing... check error
@@ -655,7 +606,7 @@ bool 	pqissludp::cansend(uint32_t usec)
 			return true;
 		}
 
-		usleep(usec);
+		rstime::rs_usleep(usec);
 	}
 
 	rslog(RSL_DEBUG_ALL, pqissludpzone, 

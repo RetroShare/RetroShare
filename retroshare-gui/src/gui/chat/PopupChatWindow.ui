@@ -10,11 +10,14 @@
     <height>451</height>
    </rect>
   </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::CustomContextMenu</enum>
+  </property>
   <property name="windowTitle">
    <string notr="true">MainWindow</string>
   </property>
   <widget class="QWidget" name="chatcentralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QHBoxLayout" name="chatcentralLayout">
     <property name="leftMargin">
      <number>5</number>
     </property>

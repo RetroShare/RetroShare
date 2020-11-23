@@ -1,23 +1,24 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2013, Cyril Soler
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/chat/PopupDistantChatDialog.cpp                                         *
+ *                                                                             *
+ * LibResAPI: API for local socket server                                      *
+ *                                                                             *
+ * Copyright (C) 2013, Cyril Soler <csoler@users.sourceforge.net>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QTimer>
 #include <QCloseEvent>
@@ -25,17 +26,19 @@
 
 #include <unistd.h>
 
+#include "gui/common/FilesDefs.h"
 #include <retroshare/rsstatus.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
 
-#include "RsAutoUpdatePage.h"
+#include <retroshare-gui/RsAutoUpdatePage.h>
+
 #include "PopupDistantChatDialog.h"
 
-#define IMAGE_RED_LED ":/icons/bullet_red_64.png"
-#define IMAGE_YEL_LED ":/icons/bullet_yellow_64.png"
-#define IMAGE_GRN_LED ":/icons/bullet_green_64.png"
-#define IMAGE_GRY_LED ":/icons/bullet_grey_64.png"
+#define IMAGE_RED_LED ":/icons/bullet_red_128.png"
+#define IMAGE_YEL_LED ":/icons/bullet_yellow_128.png"
+#define IMAGE_GRN_LED ":/icons/bullet_green_128.png"
+#define IMAGE_GRY_LED ":/icons/bullet_grey_128.png"
 
 PopupDistantChatDialog::~PopupDistantChatDialog() 
 { 
@@ -110,8 +113,8 @@ void PopupDistantChatDialog::updateDisplay()
 	switch(tinfo.status)
 	{
 	case RS_DISTANT_CHAT_STATUS_UNKNOWN:
-		//std::cerr << "Unknown hash. Error!" << std::endl;
-		_status_label->setIcon(QIcon(IMAGE_GRY_LED));
+
+        _status_label->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_GRY_LED));
 		msg = tr("Remote status unknown.");
 		_status_label->setToolTip(msg);
 		getChatWidget()->updateStatusString("%1", msg, true);
@@ -122,32 +125,32 @@ void PopupDistantChatDialog::updateDisplay()
 		break ;
 	case RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED:
 		std::cerr << "Chat remotely closed. " << std::endl;
-		_status_label->setIcon(QIcon(IMAGE_RED_LED));
-		_status_label->setToolTip(
-		            QObject::tr("Distant peer has closed the chat") );
-		getChatWidget()->updateStatusString(
-		            "%1", tr( "The person you are talking to has deleted the"
-		                      " secured chat tunnel." ), true );
-		getChatWidget()->blockSending(tr( "The chat partner deleted the secure"
-		                                  " tunnel, messages will be delivered"
-		                                  " as soon as possible"));
+        _status_label->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_RED_LED));
+		_status_label->setToolTip( QObject::tr("Distant peer has closed the chat") );
+
+		getChatWidget()->updateStatusString("%1", tr( "Your partner closed the conversation." ), true );
+		getChatWidget()->blockSending(tr( "Your partner closed the conversation."));
+
 		setPeerStatus(RS_STATUS_OFFLINE) ;
 		break ;
+
 	case RS_DISTANT_CHAT_STATUS_TUNNEL_DN:
-		//std::cerr << "Tunnel asked. Waiting for reponse. " << std::endl;
-		_status_label->setIcon(QIcon(IMAGE_RED_LED));
-		msg = QObject::tr( "Tunnel is pending... Messages will be delivered as"
-		                   " soon as possible" );
+
+        _status_label->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_YEL_LED));
+		msg = QObject::tr( "Tunnel is pending");
+
+        if(tinfo.pending_items > 0)
+            msg += QObject::tr("(some undelivered messages)") ;	// we cannot use the pending_items count because it accounts for ACKS and keep alive packets as well.
+
 		_status_label->setToolTip(msg);
 		getChatWidget()->updateStatusString("%1", msg, true);
 		getChatWidget()->blockSending(msg);
 		setPeerStatus(RS_STATUS_OFFLINE);
 		break;
 	case RS_DISTANT_CHAT_STATUS_CAN_TALK:
-		//std::cerr << "Tunnel is ok and data is transmitted." << std::endl;
-		_status_label->setIcon(QIcon(IMAGE_GRN_LED));
-		msg = QObject::tr( "Secured tunnel is working. "
-		                   "Messages are delivered immediately!" );
+
+        _status_label->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_GRN_LED));
+		msg = QObject::tr( "End-to-end encrypted conversation established");
 		_status_label->setToolTip(msg);
 		getChatWidget()->unblockSending();
 		setPeerStatus(RS_STATUS_ONLINE);
@@ -157,17 +160,15 @@ void PopupDistantChatDialog::updateDisplay()
 
 void PopupDistantChatDialog::closeEvent(QCloseEvent *e)
 {
-	//std::cerr << "Closing window => closing distant chat for hash " << _pid << std::endl;
-
     DistantChatPeerInfo tinfo ;
     
 	rsMsgs->getDistantChatStatus(_tunnel_id,tinfo) ;
 
 	if(tinfo.status != RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED)
 	{
-		QString msg = tr("Closing this window will end the conversation, notify the peer and remove the encrypted tunnel.") ;
+		QString msg = tr("Closing this window will end the conversation. Unsent messages will be dropped.") ;
 
-		if(QMessageBox::Ok == QMessageBox::critical(NULL,tr("Kill the tunnel?"),msg, QMessageBox::Ok | QMessageBox::Cancel))
+		if(QMessageBox::Ok == QMessageBox::critical(NULL,tr("Close conversation?"),msg, QMessageBox::Ok | QMessageBox::Cancel))
 			rsMsgs->closeDistantChatConnexion(_tunnel_id) ;
 		else
 		{
@@ -181,11 +182,13 @@ void PopupDistantChatDialog::closeEvent(QCloseEvent *e)
 	PopupChatDialog::closeEvent(e) ;
 }
 
-QString PopupDistantChatDialog::getPeerName(const ChatId& /*id*/) const
+QString PopupDistantChatDialog::getPeerName(const ChatId& /*id*/, QString& additional_info) const
 {
     DistantChatPeerInfo tinfo;
 
     rsMsgs->getDistantChatStatus(_tunnel_id,tinfo) ;
+
+	additional_info = QString("Identity ID: ") + QString::fromStdString(tinfo.to_id.toStdString());
 
     RsIdentityDetails details  ;
     if(rsIdentity->getIdDetails(tinfo.to_id,details))

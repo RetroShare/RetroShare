@@ -1,27 +1,24 @@
-/*
- * libretroshare/src/pqi: sslfns.cc
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2004-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/pqi: sslfns.cc                                            *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2008 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 /* Functions in this file are SSL only, 
  * and have no dependence on SSLRoot() etc.
@@ -34,6 +31,7 @@
 #include "pqi/pqi_base.h"
 #include "util/rsdir.h"
 #include "util/rsstring.h"
+#include "pqi/authssl.h"
 
 #include <openssl/ssl.h>
 #include <openssl/err.h>
@@ -610,31 +608,53 @@ bool getX509id(X509 *x509, RsPeerId& xid)
 
     X509_get0_signature(&signature,&algor,x509);
 #endif
-	int signlen = ASN1_STRING_length(signature);
-	if (signlen < CERTSIGNLEN)
+
+	uint32_t version_number = getX509RetroshareCertificateVersion(x509) ;
+
+	if(version_number >= RS_CERTIFICATE_VERSION_NUMBER_06_0001)
 	{
-#ifdef AUTHSSL_DEBUG
-		std::cerr << "AuthSSL::getX509id() ERROR: Short Signature";
-		std::cerr << std::endl;
-#endif
-		return false;
+		//	What: Computes the node id by performing a sha256 hash of the certificate's PGP signature, instead of simply picking up the last 20 bytes of it.
+		//
+		//	Why: There is no real risk in forging a certificate with the same ID as the authentication is performed over the PGP signature of the certificate
+		//			which hashes the full SSL certificate (i.e. the full serialized CERT_INFO structure). However the possibility to
+		//			create two certificates with the same IDs is a problem, as it can be used to cause disturbance in the software.
+		//
+		//	Backward compat: makes connexions impossible with non patched peers, probably because the SSL id that is computed is not the same on both side,
+		//						and in particular unpatched peers see a cerficate with ID different (because computed with the old method) than the ID that was
+		//						submitted when making friends.
+		//
+		//	Note: the advantage of basing the ID on the signature rather than the public key is not very clear, given that the signature is based on a hash
+		//			of the public key (and the rest of the certificate info).
+		//
+
+		if(RsPeerId::SIZE_IN_BYTES > Sha256CheckSum::SIZE_IN_BYTES)
+			return false ;
+
+		xid = RsPeerId(RsDirUtil::sha256sum(ASN1_STRING_data(const_cast<ASN1_BIT_STRING*>(signature)),ASN1_STRING_length(signature)).toByteArray()) ;
 	}
+	else
+	{
+		int signlen = ASN1_STRING_length(signature);
+		if (signlen < CERTSIGNLEN)
+		{
+#ifdef AUTHSSL_DEBUG
+			std::cerr << "AuthSSL::getX509id() ERROR: Short Signature";
+			std::cerr << std::endl;
+#endif
+			return false;
+		}
 
-	// else copy in the first CERTSIGNLEN.
-	unsigned char *signdata = ASN1_STRING_data(const_cast<ASN1_BIT_STRING*>(signature));
+		// else copy in the first CERTSIGNLEN.
+		unsigned char *signdata = ASN1_STRING_data(const_cast<ASN1_BIT_STRING*>(signature));
 
-	/* switched to the other end of the signature. for
-	 * more randomness
-	 */
+		/* switched to the other end of the signature. for
+	 	 * more randomness
+	 	 */
 
-#warning csoler 2017-02-19: This is cryptographically horrible. We should do a hash of the public key here!!!
+#warning csoler 2017-02-19: This is cryptographically horrible. We should hash the entire signature here!
 
-	xid = RsPeerId(&signdata[signlen - CERTSIGNLEN]) ;
-
-	//for(int i = signlen - CERTSIGNLEN; i < signlen; i++)
-	//{
-	//	rs_sprintf_append(xid, "%02x", (uint16_t) (((uint8_t *) (signdata))[i]));
-	//}
+		xid = RsPeerId(&signdata[signlen - CERTSIGNLEN]) ;
+	}
 
 	return true;
 }
@@ -656,74 +676,32 @@ int pem_passwd_cb(char *buf, int size, int rwflag, void *password)
 	return(strlen(buf));
 }
 
-/* XXX FIX */
-bool CheckX509Certificate(X509 */*x509*/)
+uint64_t getX509SerialNumber(X509 *cert)
 {
+	ASN1_INTEGER *serial = X509_get_serialNumber(cert);
 
-	return true;
+	BIGNUM *btmp = ASN1_INTEGER_to_BN(serial, NULL);
+
+	uint64_t res = BN_get_word(btmp) ;
+	BN_free(btmp);
+
+	return res ;
 }
 
-
-// Not dependent on sslroot. load, and detroys the X509 memory.
-int	LoadCheckX509(const char *cert_file, RsPgpId& issuerName, std::string &location, RsPeerId &userId)
+uint32_t getX509RetroshareCertificateVersion(X509 *cert)
 {
-	/* This function loads the X509 certificate from the file, 
-	 * and checks the certificate 
-	 */
+	// Because the serial number was totally random before being used to identity the handshake protocol, we check if we see known version strings. If not,
+	// we assume v0.6-0000
+	//
+	// We compare the uint32_t into a uint64_t on purpose,to make sure that the highest bits are 0 and not random.
 
-	FILE *tmpfp = RsDirUtil::rs_fopen(cert_file, "r");
-	if (tmpfp == NULL)
+	switch(getX509SerialNumber(cert))
 	{
-#ifdef AUTHSSL_DEBUG
-		std::cerr << "sslroot::LoadCheckAndGetX509Name()";
-		std::cerr << " Failed to open Certificate File:" << cert_file;
-		std::cerr << std::endl;
-#endif
-		return 0;
-	}
-
-	// get xPGP certificate.
-	X509 *x509 = PEM_read_X509(tmpfp, NULL, NULL, NULL);
-	fclose(tmpfp);
-
-	// check the certificate.
-	bool valid = false;
-	if (x509)
-	{
-                valid = CheckX509Certificate(x509);
-		if (valid)
-		{
-                	valid = getX509id(x509, userId);
-		}
-	}
-
-	if (valid)
-	{
-		// extract the name.
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
-		issuerName = RsPgpId(std::string(getX509CNString(x509->cert_info->issuer)));
-		location = getX509LocString(x509->cert_info->subject);
-#else
-		issuerName = RsPgpId(std::string(getX509CNString(X509_get_issuer_name(x509))));
-		location = getX509LocString(X509_get_subject_name(x509));
-#endif
-	}
-
-#ifdef AUTHSSL_DEBUG
-	std::cout << getX509Info(x509) << std::endl ;
-#endif
-	// clean up.
-	X509_free(x509);
-
-	if (valid)
-	{
-		// happy!
-		return 1;
-	}
-	else
-	{
-		// something went wrong!
-		return 0;
+	case uint64_t(RS_CERTIFICATE_VERSION_NUMBER_06_0000): return RS_CERTIFICATE_VERSION_NUMBER_06_0000 ;
+	case uint64_t(RS_CERTIFICATE_VERSION_NUMBER_06_0001): return RS_CERTIFICATE_VERSION_NUMBER_06_0001 ;
+	case uint64_t(RS_CERTIFICATE_VERSION_NUMBER_07_0001): return RS_CERTIFICATE_VERSION_NUMBER_07_0001 ;
+	default:
+		return RS_CERTIFICATE_VERSION_NUMBER_06_0000;
 	}
 }
 
@@ -849,10 +827,9 @@ std::string getX509Info(X509 *cert)
 
 /********** SSL ERROR STUFF ******************************************/
 
-int printSSLError(SSL *ssl, int retval, int err, unsigned long err2, std::string &out)
+int printSSLError(
+        SSL*, int retval, int err, unsigned long err2, std::string& out )
 {
-	(void) ssl; /* remove unused parameter warnings */
-
 	std::string reason;
 
 	std::string mainreason = std::string("UNKNOWN ERROR CODE");
@@ -892,7 +869,18 @@ int printSSLError(SSL *ssl, int retval, int err, unsigned long err2, std::string
 	{
 		mainreason =  std::string("SSL_ERROR_SSL");
 	}
-	rs_sprintf_append(out, "RetVal(%d) -> SSL Error: %s\n\t + ERR Error: %s\n", retval, mainreason.c_str(), ERR_error_string(err2, NULL));
+	rs_sprintf_append( out,
+	                   "RetVal(%d) -> SSL Error: %s\n\t + ERR Error: %s\n",
+	                   retval, mainreason.c_str(),
+	                   ERR_error_string(err2, nullptr) );
 	return 1;
 }
 
+
+std::string sslErrorToString(int retval, int err, unsigned long err2)
+{
+	std::string ret;
+	// When printSSLError will be removed it's code will be moved here
+	printSSLError(nullptr, retval, err, err2, ret);
+	return ret;
+}

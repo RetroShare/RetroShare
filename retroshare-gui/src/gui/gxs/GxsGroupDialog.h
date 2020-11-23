@@ -1,25 +1,22 @@
-/*
- * Retroshare Gxs Support
- *
- * Copyright 2012-2013 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * retroshare-gui/src/gui/gxs/GxsGroupDialog.h                                 *
+ *                                                                             *
+ * Copyright 2012-2013  by Robert Fernie      <retroshare.project@gmail.com>   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef _GXS_GROUP_DIALOG_H
 #define _GXS_GROUP_DIALOG_H
@@ -55,44 +52,48 @@ public:
 
 /*** Group flags affect what is visually enabled that gets input into the grpMeta ***/
 
-#define GXS_GROUP_FLAGS_NAME			0x00000001
-#define GXS_GROUP_FLAGS_ICON			0x00000002
-#define GXS_GROUP_FLAGS_DESCRIPTION		0x00000004
-#define GXS_GROUP_FLAGS_DISTRIBUTION		0x00000008
-#define GXS_GROUP_FLAGS_PUBLISHSIGN		0x00000010
-#define GXS_GROUP_FLAGS_SHAREKEYS		0x00000020
-#define GXS_GROUP_FLAGS_PERSONALSIGN		0x00000040
-#define GXS_GROUP_FLAGS_COMMENTS		0x00000080
-#define GXS_GROUP_FLAGS_EXTRA			0x00000100
-#define GXS_GROUP_FLAGS_ANTI_SPAM   		0x00000200
+#define GXS_GROUP_FLAGS_NAME              0x00000001
+#define GXS_GROUP_FLAGS_ICON              0x00000002
+#define GXS_GROUP_FLAGS_DESCRIPTION       0x00000004
+#define GXS_GROUP_FLAGS_DISTRIBUTION      0x00000008
+#define GXS_GROUP_FLAGS_PUBLISHSIGN       0x00000010
+#define GXS_GROUP_FLAGS_SHAREKEYS         0x00000020
+#define GXS_GROUP_FLAGS_PERSONALSIGN      0x00000040
+#define GXS_GROUP_FLAGS_COMMENTS          0x00000080
+#define GXS_GROUP_FLAGS_EXTRA             0x00000100
+#define GXS_GROUP_FLAGS_ANTI_SPAM         0x00000200
+#define GXS_GROUP_FLAGS_ADDADMINS         0x00000400
 
 /*** Default flags are used to determine privacy of group, signatures required ***
  *** whether publish or id and whether comments are allowed or not             ***/
 
-#define GXS_GROUP_DEFAULTS_DISTRIB_MASK	0x0000000f
-#define GXS_GROUP_DEFAULTS_PUBLISH_MASK	0x000000f0
-#define GXS_GROUP_DEFAULTS_PERSONAL_MASK	0x00000f00
-#define GXS_GROUP_DEFAULTS_COMMENTS_MASK	0x0000f000
+#define GXS_GROUP_DEFAULTS_DISTRIB_MASK               0x0000000f
+#define GXS_GROUP_DEFAULTS_PUBLISH_MASK               0x000000f0
+#define GXS_GROUP_DEFAULTS_PERSONAL_MASK              0x00000f00
+#define GXS_GROUP_DEFAULTS_COMMENTS_MASK              0x0000f000
 
-#define GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC	0x00000001
-#define GXS_GROUP_DEFAULTS_DISTRIB_GROUP	0x00000002
-#define GXS_GROUP_DEFAULTS_DISTRIB_LOCAL	0x00000004
+#define GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC             0x00000001
+#define GXS_GROUP_DEFAULTS_DISTRIB_GROUP              0x00000002
+#define GXS_GROUP_DEFAULTS_DISTRIB_LOCAL              0x00000004
 
-#define GXS_GROUP_DEFAULTS_PUBLISH_OPEN	0x00000010
-#define GXS_GROUP_DEFAULTS_PUBLISH_THREADS	0x00000020
-#define GXS_GROUP_DEFAULTS_PUBLISH_REQUIRED	0x00000040
-#define GXS_GROUP_DEFAULTS_PUBLISH_ENCRYPTED	0x00000080
+#define GXS_GROUP_DEFAULTS_PUBLISH_OPEN               0x00000010
+#define GXS_GROUP_DEFAULTS_PUBLISH_THREADS            0x00000020
+#define GXS_GROUP_DEFAULTS_PUBLISH_REQUIRED           0x00000040
+#define GXS_GROUP_DEFAULTS_PUBLISH_ENCRYPTED          0x00000080
 
-#define GXS_GROUP_DEFAULTS_PERSONAL_PGP	0x00000100
-#define GXS_GROUP_DEFAULTS_PERSONAL_REQUIRED	0x00000200
-#define GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB	0x00000400
+#define GXS_GROUP_DEFAULTS_PERSONAL_PGP               0x00000100
+#define GXS_GROUP_DEFAULTS_PERSONAL_REQUIRED          0x00000200
+#define GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB           0x00000400
+// independent from other PERSONAL FLAGS. If Group requires a AuthorId.
+#define GXS_GROUP_DEFAULTS_PERSONAL_GROUP             0x00000800
 
-#define GXS_GROUP_DEFAULTS_COMMENTS_YES	0x00001000
-#define GXS_GROUP_DEFAULTS_COMMENTS_NO		0x00002000
+#define GXS_GROUP_DEFAULTS_COMMENTS_YES               0x00001000
+#define GXS_GROUP_DEFAULTS_COMMENTS_NO                0x00002000
 
-#define GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP		0x00100000
-#define GXS_GROUP_DEFAULTS_ANTISPAM_TRACK		0x00200000
-#define GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP_KNOWN	0x00400000
+
+#define GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP         0x00100000
+#define GXS_GROUP_DEFAULTS_ANTISPAM_TRACK             0x00200000
+#define GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP_KNOWN   0x00400000
 
 /*!
  * The aim of this dialog is to be convenient to encapsulate group
@@ -107,7 +108,7 @@ public:
  * The long term plan is perhap logic structure (i.e. code) will be moved into each GXS \n
  * service for better customisation of group creation, or perhaps not!
  */
-class GxsGroupDialog : public QDialog, public TokenResponse
+class GxsGroupDialog : public QDialog
 {
 	Q_OBJECT
 
@@ -121,6 +122,7 @@ public:
 	enum UiType {
 		UITYPE_SERVICE_HEADER,
 		UITYPE_KEY_SHARE_CHECKBOX,
+		UITYPE_ADD_ADMINS_CHECKBOX,
 		UITYPE_CONTACTS_DOCK,
 		UITYPE_BUTTONBOX_OK
 	};
@@ -129,15 +131,12 @@ public:
 
 	/*!
 	 * Constructs a GxsGroupDialog for creating group
-	 * @param tokenQueue This should be the TokenQueue of the (parent) service
-	 *        in order to receive acknowledgement of group creation, if set to NULL with create mode \n
-	 *        creation will not happen
 	 * @param enableFlags This determines what options are enabled such as Icon, Description, publish type and key sharing
 	 * @param defaultFlags This deter
 	 * @param parent The parent dialog
 	 * @param mode
 	 */
-	GxsGroupDialog(TokenQueue* tokenQueue, uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent = NULL);
+	GxsGroupDialog(uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent = NULL);
 
 	/*!
 	 * Contructs a GxsGroupDialog for display a group or editing
@@ -145,14 +144,11 @@ public:
 	 * @param mode This determines whether the dialog starts in show or edit mode (Edit not supported yet)
 	 * @param parent
 	 */
-	GxsGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent = NULL);
+	GxsGroupDialog(Mode mode, RsGxsGroupId groupId, uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent = NULL);
 
 	~GxsGroupDialog();
 
 	uint32_t mode() { return mMode; }
-
-	// overloaded from TokenResponse
-	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private:
 	void newGroup();
@@ -164,6 +160,7 @@ private:
 protected slots:
 	void submitGroup();
 	void addGroupLogo();
+	void filterComboBoxChanged(int);
 
 protected:
 	virtual void showEvent(QShowEvent*);
@@ -172,26 +169,53 @@ protected:
 	virtual QPixmap serviceImage() = 0;
 	virtual QIcon serviceWindowIcon();
 
-	void setUiText(UiType uiType, const QString &text);
+	/*!
+	 * Inject Extra Widget for additional Group configuration options.
+	 * NB: These are only inserted for createMode currently.
+	 * @param widget Addtional widget which is added to extraFrame.
+	 */
+        void injectExtraWidget(QWidget *widget);
+
+    /*!
+     * \brief setUiToolTip/setUiText
+     * 		Sets the text and tooltip of some parts of the UI
+     * \param uiType	widget to set
+     * \param text		text to set
+     */
+	void setUiToolTip(UiType uiType, const QString &text);
+	void setUiText   (UiType uiType, const QString &text);
+
+    /*!
+     * It is up to the service to retrieve its own group data, which derives from RsGxsGenericGroupData. That data will be passed down
+     * to the service itself for specific tasks.
+     * \param grpId  Id of the group to retrieve
+     * \param data   Generic group data for this group. /!\ The pointer should be deleted by the client when released.
+     * \return       True if everything does fine.
+     */
+    virtual bool service_getGroupData(const RsGxsGroupId& grpId,RsGxsGenericGroupData *& data) = 0;
 
 	/*!
 	 * It is up to the service to do the actual group creation
 	 * Service can also modify initial meta going into group
-	 * @param token This should be set to the token retrieved
 	 * @param meta The deriving GXS service should set their grp meta to this value
 	 */
-	virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta) = 0;
+	virtual bool service_createGroup(RsGroupMetaData& meta) = 0;
 
 	/*!
 	 * It is up to the service to do the actual group editing
-	 * @param token This should be set to the token retrieved
 	 * @param meta The deriving GXS service should set their grp meta to this value
 	 */
-	virtual bool service_EditGroup(uint32_t &token, RsGroupMetaData &editedMeta) = 0;
+	virtual bool service_updateGroup(const RsGroupMetaData& editedMeta) = 0;
 
-	// To be overloaded by users.
-	// use Token to retrieve from service, fill in metaData.
-	virtual bool service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData, QString &description) = 0;
+    /*!
+     * Should be overloaded by the service in order to extract meaningful information from the group data (that is usually group-specific).
+     * One of them however, common to all groups is the description. So it is returned by this method so that the GxsGroupDialog updates it.
+     * \param data            Generic group data, to be dynamic_cast by the client to specific service-level group data
+     * \param mode            Editing mode (?)
+     * \param description     Description string for the group. Common to all services, but still present in the service-specific data part.
+     * \return
+     */
+	virtual bool service_loadGroup(const RsGxsGenericGroupData *data, Mode mode, QString &description) = 0;
 
 	/*!
 	 * This returns a group logo from the ui \n
@@ -219,12 +243,20 @@ protected:
 	 */
 	QString getDescription();
 
+    /*!
+     * \brief getSelectedModerators
+     * 			Returns the set of ids that hve been selected as moderators.
+     */
+	void getSelectedModerators(std::set<RsGxsId>& ids);
+	void setSelectedModerators(const std::set<RsGxsId>& ids);
+
 private slots:
 	/* actions to take.... */
 	void cancelDialog();
 
 	// set private forum key share list
 	void setShareList();
+	void setAdminsList();
 
 	void updateCircleOptions();
 
@@ -245,11 +277,10 @@ private:
 	void loadNewGroupId(const uint32_t &token);
 
 	// loading existing Groups.
-	void requestGroup(const RsGxsGroupId &groupId);
-	void loadGroup(uint32_t token);
+	void loadGroup(const RsGxsGroupId &groupId);
 	void updateFromExistingMeta(const QString &description);
 
-	bool prepareGroupMetaData(RsGroupMetaData &meta);
+	bool prepareGroupMetaData(RsGroupMetaData &meta, QString &reason);
 
 	std::list<std::string> mShareList;
 	QPixmap mPicture;

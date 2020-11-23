@@ -1,30 +1,27 @@
-/*
- * libretroshare/src/gxs: rsgxsutil.h
- *
- * RetroShare C++ Interface. Generic routines that are useful in GXS
- *
- * Copyright 2013-2013 by Christopher Evi-Parker
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/gxs: rsgxsutil.h                                          *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2013-2013 by Christopher Evi-Parker                               *
+ * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
-#ifndef GXSUTIL_H_
-#define GXSUTIL_H_
+#pragma once
 
 #include <vector>
 #include "rsitems/rsnxsitems.h"
@@ -32,6 +29,7 @@
 
 class RsGixs ;
 class RsGenExchange ;
+class RsGeneralDataService ;
 
 // temporary holds a map of pointers to class T, and destroys all pointers on delete.
 
@@ -104,7 +102,7 @@ public:
     }
 };
 
-typedef t_RsGxsGenericDataTemporaryMap<RsGxsGroupId,RsGxsGrpMetaData> RsGxsGrpMetaTemporaryMap;
+typedef std::map<RsGxsGroupId,RsGxsGrpMetaData*>                	  RsGxsGrpMetaTemporaryMap;
 typedef t_RsGxsGenericDataTemporaryMap<RsGxsGroupId,RsNxsGrp>         RsNxsGrpDataTemporaryMap;
 
 typedef t_RsGxsGenericDataTemporaryMapVector<RsGxsMsgMetaData>        RsGxsMsgMetaTemporaryMap ;
@@ -112,27 +110,6 @@ typedef t_RsGxsGenericDataTemporaryMapVector<RsNxsMsg>                RsNxsMsgDa
 
 typedef t_RsGxsGenericDataTemporaryList<RsNxsGrp>                     RsNxsGrpDataTemporaryList ;
 typedef t_RsGxsGenericDataTemporaryList<RsNxsMsg>                     RsNxsMsgDataTemporaryList ;
-
-#ifdef UNUSED
-template<class T>
-class RsGxsMetaDataTemporaryMapVector: public std::vector<T*>
-{
-public:
-    virtual ~RsGxsMetaDataTemporaryMapVector()
-    {
-        clear() ;
-    }
-
-    virtual void clear()
-    {
-        for(typename RsGxsMetaDataTemporaryMapVector<T>::iterator it = this->begin();it!=this->end();++it)
-            if(it->second != NULL)
-		    delete it->second ;
-        std::vector<T*>::clear() ;
-    }
-};
-#endif
-
 
 inline RsGxsGrpMsgIdPair getMsgIdPair(RsNxsMsg& msg)
 {
@@ -148,7 +125,7 @@ inline RsGxsGrpMsgIdPair getMsgIdPair(RsGxsMsgItem& msg)
  * Does message clean up based on individual group expirations first
  * if avialable. If not then deletion s
  */
-class RsGxsMessageCleanUp //: public RsThread
+class RsGxsMessageCleanUp
 {
 public:
 
@@ -168,24 +145,19 @@ public:
 	 */
 	bool clean();
 
-	/*!
-	 * TODO: Rather than manual progressions consider running through a thread
-	 */
-    //virtual void data_tick(){}
-
 private:
 
 	RsGeneralDataService* const mDs;
     RsGenExchange *mGenExchangeClient;
 	uint32_t CHUNK_SIZE;
-	std::vector<RsGxsGrpMetaData*> mGrpMeta;
+	std::vector<const RsGxsGrpMetaData*> mGrpMeta;
 };
 
 /*!
  * Checks the integrity message and groups
  * in rsDataService using computed hash
  */
-class RsGxsIntegrityCheck : public RsSingleJobThread
+class RsGxsIntegrityCheck : public RsThread
 {
 
 	enum CheckState { CheckStart, CheckChecking };
@@ -200,25 +172,30 @@ public:
 	 * @param chunkSize
 	 * @param sleepPeriod
 	 */
-	RsGxsIntegrityCheck(RsGeneralDataService* const dataService, RsGenExchange *genex, RsGixs *gixs);
+	RsGxsIntegrityCheck( RsGeneralDataService* const dataService,
+	                     RsGenExchange *genex, RsSerialType& gxsSerialiser,
+	                     RsGixs *gixs);
 
 	bool check();
 	bool isDone();
 
 	void run();
 
-	void getDeletedIds(std::list<RsGxsGroupId>& grpIds, std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgIds);
+	void getDeletedIds(std::list<RsGxsGroupId>& grpIds, std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgIds);
 
 private:
 
 	RsGeneralDataService* const mDs;
-    RsGenExchange *mGenExchangeClient;
+	RsGenExchange *mGenExchangeClient;
+#ifdef RS_DEEP_CHANNEL_INDEX
+	RsSerialType& mSerializer;
+#endif
 	bool mDone;
 	RsMutex mIntegrityMutex;
 	std::list<RsGxsGroupId> mDeletedGrps;
-	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > mDeletedMsgs;
-    
-    	RsGixs *mGixs ;
+	std::map<RsGxsGroupId, std::set<RsGxsMessageId> > mDeletedMsgs;
+
+	RsGixs* mGixs;
 };
 
 class GroupUpdate
@@ -226,7 +203,7 @@ class GroupUpdate
 public:
 	GroupUpdate() : oldGrpMeta(NULL), newGrp(NULL), validUpdate(false)
 	{}
-	RsGxsGrpMetaData* oldGrpMeta;
+	const RsGxsGrpMetaData* oldGrpMeta;
 	RsNxsGrp* newGrp;
 	bool validUpdate;
 };
@@ -259,5 +236,3 @@ public:
 	GxsMsgReq mMsgs ;
 	uint32_t mToken;
 };
-
-#endif /* GXSUTIL_H_ */

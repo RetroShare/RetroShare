@@ -1,25 +1,22 @@
-/*
- * Retroshare Identity
- *
- * Copyright 2012-2012 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * retroshare-gui/src/gui/Identity/IdEditDialog.cpp                            *
+ *                                                                             *
+ * Copyright (C) 2012 by Robert Fernie       <retroshare.project@gmail.com>    *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QBuffer>
 #include <QMessageBox>
@@ -29,11 +26,13 @@
 #include "gui/common/UIStateHelper.h"
 #include "gui/common/AvatarDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
-#include "util/TokenQueue.h"
+#include "util/qtthreadsutils.h"
 #include "util/misc.h"
+#include "gui/notifyqt.h"
 
 #include <retroshare/rsidentity.h>
 #include <retroshare/rspeers.h>
+#include "gui/common/FilesDefs.h"
 
 #include <iostream>
 
@@ -49,7 +48,7 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
 
 	ui->setupUi(this);
 
-	ui->headerFrame->setHeaderImage(QPixmap(":/icons/png/person.png"));
+    ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/person.png"));
 	ui->headerFrame->setHeaderText(tr("Create New Identity"));
 
 	/* Setup UI helper */
@@ -76,8 +75,8 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
 	/* Connect signals */
 	connect(ui->radioButton_GpgId, SIGNAL(toggled(bool)), this, SLOT(idTypeToggled(bool)));
 	connect(ui->radioButton_Pseudo, SIGNAL(toggled(bool)), this, SLOT(idTypeToggled(bool)));
-	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(submit()));
-	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	connect(ui->createButton, SIGNAL(clicked()), this, SLOT(submit()));
+	connect(ui->cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
 
 	connect(ui->plainTextEdit_Tag, SIGNAL(textChanged()), this, SLOT(checkNewTag()));
 	connect(ui->pushButton_Tag, SIGNAL(clicked(bool)), this, SLOT(addRecognTag()));
@@ -91,17 +90,13 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
 	/* Initialize ui */
 	ui->lineEdit_Nickname->setMaxLength(RSID_MAXIMUM_NICKNAME_SIZE);
 
-	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 	ui->pushButton_Tag->setEnabled(false);
 	ui->pushButton_Tag->hide(); // unfinished
 	ui->plainTextEdit_Tag->hide();
 	ui->label_TagCheck->hide();
 }
 
-IdEditDialog::~IdEditDialog()
-{
-	delete(mIdQueue);
-}
+IdEditDialog::~IdEditDialog() {}
 
 void IdEditDialog::changeAvatar()
 {
@@ -198,70 +193,74 @@ void IdEditDialog::setAvatar(const QPixmap &avatar)
 		ui->avatarLabel->setPixmap(mAvatar);
 	} else {
 		// we need to use the default pixmap here, generated from the ID
-		ui->avatarLabel->setPixmap(QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(mEditGroup.mMeta.mGroupId))));
+		ui->avatarLabel->setPixmap(GxsIdDetails::makeDefaultIcon(RsGxsId(mEditGroup.mMeta.mGroupId)));
 	}
 }
 
-void IdEditDialog::setupExistingId(const RsGxsGroupId &keyId)
+void IdEditDialog::setupExistingId(const RsGxsGroupId& keyId)
 {
 	setWindowTitle(tr("Edit identity"));
-	ui->headerFrame->setHeaderImage(QPixmap(":/icons/png/person.png"));
+    ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/person.png"));
 	ui->headerFrame->setHeaderText(tr("Edit identity"));
+	ui->createButton->setText(tr("Update"));
+
+	mStateHelper->setLoading(IDEDITDIALOG_LOADID, true);
 
 	mIsNew = false;
 	mGroupId.clear();
 
-	mStateHelper->setLoading(IDEDITDIALOG_LOADID, true);
+	RsThread::async([this,keyId]()
+	{
+		std::vector<RsGxsIdGroup> datavector;
+		bool res = rsIdentity->getIdentitiesInfo(
+		            std::set<RsGxsId>({(RsGxsId)keyId}), datavector );
 
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+		RsQThreadUtils::postToObject( [this,keyId,res,datavector]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete, note that
+			 * Qt::QueuedConnection is important!
+			 */
 
-	std::list<RsGxsGroupId> groupIds;
-	groupIds.push_back(keyId);
+			mStateHelper->setLoading(IDEDITDIALOG_LOADID, false);
 
-	uint32_t token;
-    mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDEDITDIALOG_LOADID);
+			/* get details from libretroshare */
+
+			if (!res || datavector.size() != 1)
+			{
+				std::cerr << __PRETTY_FUNCTION__ << " failed to collect group info for identity " << keyId << std::endl;
+
+				ui->lineEdit_KeyId->setText(tr("Error KeyID invalid"));
+				ui->lineEdit_Nickname->setText("");
+
+				ui->lineEdit_GpgHash->setText(tr("N/A"));
+				ui->lineEdit_GpgId->setText(tr("N/A"));
+				ui->lineEdit_GpgName->setText(tr("N/A"));
+				return;
+			}
+
+            loadExistingId(datavector[0]);
+
+		}, this );
+	});
 }
 
 void IdEditDialog::enforceNoAnonIds()
 {
     ui->radioButton_GpgId->setChecked(true);
     ui->radioButton_GpgId->setEnabled(false);
+    ui->radioButton_Pseudo->setEnabled(false);
 }
 
-void IdEditDialog::loadExistingId(uint32_t token)
+void IdEditDialog::loadExistingId(const RsGxsIdGroup& id_group)
 {
-	mStateHelper->setLoading(IDEDITDIALOG_LOADID, false);
-
-	/* get details from libretroshare */
-	std::vector<RsGxsIdGroup> datavector;
-	if (!rsIdentity->getGroupData(token, datavector))
-	{
-		ui->lineEdit_KeyId->setText(tr("Error getting key!"));
-		return;
-	}
-
-	if (datavector.size() != 1)
-	{
-		std::cerr << "IdDialog::insertIdDetails() Invalid datavector size";
-		std::cerr << std::endl;
-
-		ui->lineEdit_KeyId->setText(tr("Error KeyID invalid"));
-		ui->lineEdit_Nickname->setText("");
-
-		ui->lineEdit_GpgHash->setText(tr("N/A"));
-		ui->lineEdit_GpgId->setText(tr("N/A"));
-		ui->lineEdit_GpgName->setText(tr("N/A"));
-		return;
-	}
-
-	mEditGroup = datavector[0];
+	mEditGroup = id_group;
 	mGroupId = mEditGroup.mMeta.mGroupId;
 
 	QPixmap avatar;
-	if (mEditGroup.mImage.mSize > 0) {
-		avatar.loadFromData(mEditGroup.mImage.mData, mEditGroup.mImage.mSize, "PNG");
-	}
+	if (mEditGroup.mImage.mSize > 0)
+		GxsIdDetails::loadPixmapFromData(mEditGroup.mImage.mData, mEditGroup.mImage.mSize, avatar,GxsIdDetails::LARGE);
 
 	setAvatar(avatar);
 
@@ -312,7 +311,7 @@ void IdEditDialog::loadExistingId(uint32_t token)
 	}
 
 	// RecognTags.
-	ui->frame_Tags->setHidden(false);
+	ui->frame_Tags->setHidden(true);
 
 	loadRecognTags();
 }
@@ -542,25 +541,41 @@ void IdEditDialog::createId()
 	else
 		params.mImage.clear();
 
-	uint32_t token = 0;
-	rsIdentity->createIdentity(token, params);
+    RsGxsId keyId;
+    std::string gpg_password;
 
-	ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+    if(params.isPgpLinked)
+    {
+		std::string gpg_name = rsPeers->getGPGName(rsPeers->getGPGOwnId());
+        bool cancelled;
 
-	mIdQueue->queueRequest(token, 0, 0, IDEDITDIALOG_CREATEID);
-}
+        if(!NotifyQt::getInstance()->askForPassword(tr("Profile password needed.").toStdString(),
+		                                            gpg_name + " (" + rsPeers->getOwnId().toStdString() + ")",
+		                                            false,
+		                                            gpg_password,cancelled))
+		{
+			QMessageBox::critical(NULL,tr("Identity creation failed"),tr("Cannot create an identity linked to your profile without your profile password."));
+			return;
+        }
 
-void IdEditDialog::idCreated(uint32_t token)
-{
-	if (!rsIdentity->acknowledgeGrp(token, mGroupId)) {
-		std::cerr << "IdDialog::idCreated() acknowledgeGrp failed";
-		std::cerr << std::endl;
+    }
 
-		reject();
-		return;
-	}
+    if(rsIdentity->createIdentity(keyId,params.nickname,params.mImage,!params.isPgpLinked,gpg_password))
+    {
+		ui->createButton->setEnabled(false);
 
-	accept();
+        RsIdentityDetails det;
+
+        if(rsIdentity->getIdDetails(keyId,det))
+        {
+            QMessageBox::information(NULL,tr("Identity creation success"),tr("Your new identity was successfuly created."));
+            close();
+        }
+        else
+			QMessageBox::critical(NULL,tr("Identity creation failed"),tr("Cannot create identity. Something went wrong."));
+    }
+    else
+        QMessageBox::critical(NULL,tr("Identity creation failed"),tr("Cannot create identity. Something went wrong. Check your profile password."));
 }
 
 void IdEditDialog::updateId()
@@ -597,24 +612,8 @@ void IdEditDialog::updateId()
 		mEditGroup.mImage.clear();
 
 	uint32_t dummyToken = 0;
-	rsIdentity->updateIdentity(dummyToken, mEditGroup);
+	rsIdentity->updateIdentity(mEditGroup);
 
 	accept();
 }
 
-void IdEditDialog::loadRequest(const TokenQueue */*queue*/, const TokenRequest &req)
-{
-	std::cerr << "IdDialog::loadRequest() UserType: " << req.mUserType;
-	std::cerr << std::endl;
-
-	switch (req.mUserType) {
-	case IDEDITDIALOG_LOADID:
-		loadExistingId(req.mToken);
-		break;
-
-	case IDEDITDIALOG_CREATEID:
-		idCreated(req.mToken);
-		break;
-	}
-
-}

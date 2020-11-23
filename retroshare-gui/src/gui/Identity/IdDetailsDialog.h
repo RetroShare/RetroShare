@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2014 - 2010 RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/Identity/IdDetailsDialog.h                           *
+ *                                                                             *
+ *  Copyright (C) 2014 - 2010 RetroShare Team <retroshare.project@gmail.com>   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef _IDDETAILSDIALOG_H
 #define _IDDETAILSDIALOG_H
@@ -33,7 +32,7 @@ class IdDetailsDialog;
 
 class UIStateHelper;
 
-class IdDetailsDialog : public QDialog, public TokenResponse
+class IdDetailsDialog : public QDialog
 {
 	Q_OBJECT
 
@@ -43,9 +42,6 @@ public:
 	/** Default destructor */
 	~IdDetailsDialog();
 
-	/* TokenResponse */
-	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
-
 private slots:
 	void modifyReputation();
 	void toggleAutoBanIdentities(bool b);
@@ -53,15 +49,11 @@ private slots:
 	static QString inviteMessage();
 	void sendInvite();
 private :
-	void requestIdDetails();
-	void insertIdDetails(uint32_t token);
-	
-  void requestRepList();
-	void insertRepList(uint32_t token);
+	void loadIdentity();
+	void loadIdentity(RsGxsIdGroup data);
 
 private:
 	RsGxsGroupId mId;
-	TokenQueue *mIdQueue;
 	UIStateHelper *mStateHelper;
 
 	/** Qt Designer generated object */

@@ -1,38 +1,34 @@
-#ifndef RS_BASE_SERIALISER_H
-#define RS_BASE_SERIALISER_H
+/*******************************************************************************
+ * libretroshare/src/serialiser: rsserial.h                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2007-2008 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+#pragma once
 
-/*
- * libretroshare/src/serialiser: rsserial.h
- *
- * RetroShare Serialiser.
- *
- * Copyright 2007-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-#include <stdlib.h>
-#include <string.h>
+#include <cstring>
 #include <map>
 #include <string>
 #include <iosfwd>
-#include <stdlib.h>
-#include <stdint.h>
+#include <cstdlib>
+#include <cstdint>
+
+#include "util/rsdeprecate.h"
 
 /*******************************************************************
  * This is the Top-Level serialiser/deserialise, 
@@ -64,13 +60,17 @@ const uint8_t RS_PKT_CLASS_CONFIG    = 0x02;
 
 const uint8_t RS_PKT_SUBTYPE_DEFAULT = 0x01; /* if only one subtype */
 
-class RsItem ;
+struct RsItem;
 class RsSerialType ;
 
 
 class RsSerialiser
 {
-	public:
+public:
+	/** Remember that every pqistreamer allocates an input buffer of this size!
+	 * So don't make it too big! */
+	static constexpr uint32_t MAX_SERIAL_SIZE = 262143; /* 2^18 -1 */
+
 	RsSerialiser();
 	~RsSerialiser();
 	bool        addSerialType(RsSerialType *type);
@@ -80,7 +80,7 @@ class RsSerialiser
 	RsItem *    deserialise(void *data, uint32_t *size);
 	
 	
-	private:
+private:
 	std::map<uint32_t, RsSerialType *> serialisers;
 };
 
@@ -99,6 +99,8 @@ uint16_t  getRsItemService(uint32_t type);
 
 /* size constants */
 uint32_t getRsPktBaseSize();
+
+RS_DEPRECATED_FOR(RsSerialiser::MAX_SERIAL_SIZE)
 uint32_t getRsPktMaxSize();
 
 
@@ -110,5 +112,3 @@ std::ostream &printRsItemEnd(std::ostream &o, std::string n, uint16_t i);
 /* defined in rstlvtypes.cc - redeclared here for ease */
 std::ostream &printIndent(std::ostream &out, uint16_t indent);
 /* Wrapper class for data that is serialised somewhere else */
-
-#endif /* RS_BASE_SERIALISER_H */

@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/rsserver: p3serverconfig.h
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2011-2011 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/rsserver: p3serverconfig.cc                               *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2011-2011 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include <retroshare/rsturtle.h>
 #include "rsserver/p3serverconfig.h"
 #include "services/p3bwctrl.h"
@@ -52,11 +48,11 @@ p3ServerConfig::p3ServerConfig(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr 
 
 	RsStackMutex stack(configMtx); /******* LOCKED MUTEX *****/
 
-	mUserLevel = RSCONFIG_USER_LEVEL_NEW; /* START LEVEL */
+	mUserLevel = RsConfigUserLvl::NEW; /* START LEVEL */
 	mRateDownload =  DEFAULT_DOWNLOAD_KB_RATE;
 	mRateUpload = DEFAULT_UPLOAD_KB_RATE;
 
-	mOpMode = RS_OPMODE_FULL;
+	mOpMode = RsOpMode::FULL;
 
 	rsConfig = this;
 }
@@ -90,7 +86,7 @@ void p3ServerConfig::load_config()
         }
 
 	/* enable operating mode */
-	uint32_t opMode = getOperatingMode();
+	RsOpMode opMode = getOperatingMode();
 	switchToOperatingMode(opMode);
 }
 
@@ -164,7 +160,6 @@ int 	p3ServerConfig::getConfigNetStatus(RsConfigNetStatus &status)
 	pqiNetStatus nstatus;
 	mNetMgr->getNetStatus(nstatus);
 
-	status.netLocalOk = nstatus.mLocalAddrOk;
 	status.netUpnpOk  = nstatus.mUpnpOk;
 	status.netStunOk  = false;
 	status.netExtAddressOk = nstatus.mExtAddrOk;
@@ -269,9 +264,9 @@ std::string p3ServerConfig::getRetroshareDataDirectory()
 
 	/* New Stuff */
 
-uint32_t p3ServerConfig::getUserLevel()
+RsConfigUserLvl p3ServerConfig::getUserLevel()
 {
-	uint32_t userLevel = RSCONFIG_USER_LEVEL_NEW;
+	RsConfigUserLvl userLevel = RsConfigUserLvl::NEW;
 	{
 		RsStackMutex stack(configMtx); /******* LOCKED MUTEX *****/
 		userLevel = mUserLevel;
@@ -279,47 +274,47 @@ uint32_t p3ServerConfig::getUserLevel()
 
 	switch(userLevel)
 	{
-                case RSCONFIG_USER_LEVEL_OVERRIDE:
+	            case RsConfigUserLvl::OVERRIDE:
 			break;
 
 #define MIN_BASIC_FRIENDS 2
 			
 		// FALL THROUGH EVERYTHING.
 		default:
-		case RSCONFIG_USER_LEVEL_NEW:
+	    case RsConfigUserLvl::NEW:
 		{
 
 			if (mPeerMgr->getFriendCount(true, false) > MIN_BASIC_FRIENDS)
 			{
-				userLevel = RSCONFIG_USER_LEVEL_BASIC;
+				userLevel = RsConfigUserLvl::BASIC;
 			}
 		}
 		/* fallthrough */
-		case RSCONFIG_USER_LEVEL_BASIC:
+	    case RsConfigUserLvl::BASIC:
 		{
 			/* check that we have some lastConnect > 0 */
 			if (mPeerMgr->haveOnceConnected())
 			{
-				userLevel = RSCONFIG_USER_LEVEL_CASUAL;
+				userLevel = RsConfigUserLvl::CASUAL;
 			}
 		}
 		/* fallthrough */
-		case RSCONFIG_USER_LEVEL_CASUAL:
-		case RSCONFIG_USER_LEVEL_POWER:
+	    case RsConfigUserLvl::CASUAL:
+	    case RsConfigUserLvl::POWER:
 
 		{
 			/* check that the firewall is open */
 
-			uint32_t netMode = mNetMgr->getNetworkMode();
-			uint32_t firewallMode = mNetMgr->getNatHoleMode();
+		    RsNetworkMode netMode = mNetMgr->getNetworkMode();
+			RsNatHoleMode firewallMode = mNetMgr->getNatHoleMode();
 
-			if ((RSNET_NETWORK_EXTERNALIP == netMode) ||
-			   ((RSNET_NETWORK_BEHINDNAT == netMode) &&
-			  	 	((RSNET_NATHOLE_UPNP == firewallMode) ||
-			   		(RSNET_NATHOLE_NATPMP == firewallMode) ||
-			   		(RSNET_NATHOLE_FORWARDED == firewallMode))))
+			if ((RsNetworkMode::EXTERNALIP == netMode) ||
+			   ((RsNetworkMode::BEHINDNAT == netMode) &&
+			        (RsNatHoleMode::UPNP == firewallMode ||
+			        (RsNatHoleMode::NATPMP == firewallMode) ||
+			        (RsNatHoleMode::FORWARDED == firewallMode))))
 			{
-				userLevel = RSCONFIG_USER_LEVEL_POWER;
+				userLevel = RsConfigUserLvl::POWER;
 			}
 		}
 			break; /* for all */
@@ -334,27 +329,27 @@ uint32_t p3ServerConfig::getUserLevel()
 }
 
 
-uint32_t p3ServerConfig::getNetState()
+RsNetState p3ServerConfig::getNetState()
 {
 	return mNetMgr->getNetStateMode();
 }
 
-uint32_t p3ServerConfig::getNetworkMode()
+RsNetworkMode p3ServerConfig::getNetworkMode()
 {
 	return mNetMgr->getNetworkMode();
 }
 
-uint32_t p3ServerConfig::getNatTypeMode()
+RsNatTypeMode p3ServerConfig::getNatTypeMode()
 {
 	return mNetMgr->getNatTypeMode();
 }
 
-uint32_t p3ServerConfig::getNatHoleMode()
+RsNatHoleMode p3ServerConfig::getNatHoleMode()
 {
 	return mNetMgr->getNatHoleMode();
 }
 
-uint32_t p3ServerConfig::getConnectModes()
+RsConnectModes p3ServerConfig::getConnectModes()
 {
 	return mNetMgr->getConnectModes();
 }
@@ -362,27 +357,27 @@ uint32_t p3ServerConfig::getConnectModes()
         /* Operating Mode */
 #define RS_CONFIG_OPERATING_STRING 	"OperatingMode"
 
-uint32_t p3ServerConfig::getOperatingMode()
+RsOpMode p3ServerConfig::getOperatingMode()
 {
 #ifdef SAVE_OPERATING_MODE
 	std::string modestr = mGeneralConfig->getSetting(RS_CONFIG_OPERATING_STRING);
-	uint32_t mode = RS_OPMODE_FULL;
+	uint32_t mode = RsOpMode::FULL;
 
 	if (modestr == "FULL")
 	{
-		mode = RS_OPMODE_FULL;
+		mode = RsOpMode::FULL;
 	}
 	else if (modestr == "NOTURTLE")
 	{
-		mode = RS_OPMODE_NOTURTLE;
+		mode = RsOpMode::NOTURTLE;
 	}
 	else if (modestr == "GAMING")
 	{
-		mode = RS_OPMODE_GAMING;
+		mode = RsOpMode::GAMING;
 	}
 	else if (modestr == "MINIMAL")
 	{
-		mode = RS_OPMODE_MINIMAL;
+		mode = RsOpMode::MINIMAL;
 	}
 	return mode;
 #else
@@ -392,24 +387,24 @@ uint32_t p3ServerConfig::getOperatingMode()
 }
 
 
-bool p3ServerConfig::setOperatingMode(uint32_t opMode)
+bool p3ServerConfig::setOperatingMode(RsOpMode opMode)
 {
 #ifdef SAVE_OPERATING_MODE
 	std::string modestr = "FULL";
 	switch(opMode)
 	{
-		case RS_OPMODE_FULL:
+	    case RsOpMode::FULL:
 			modestr = "FULL";
 		break;
-		case RS_OPMODE_NOTURTLE:
+	    case RsOpMode::NOTURTLE:
 			modestr = "NOTURTLE";
 
 		break;
-		case RS_OPMODE_GAMING:
+	    case RsOpMode::GAMING:
 			modestr = "GAMING";
 
 		break;
-		case RS_OPMODE_MINIMAL:
+	    case RsOpMode::MINIMAL:
 			modestr = "MINIMAL";
 		break;
 	}
@@ -425,31 +420,31 @@ bool p3ServerConfig::setOperatingMode(uint32_t opMode)
 
 bool p3ServerConfig::setOperatingMode(const std::string &opModeStr)
 {
-	uint32_t opMode = RS_OPMODE_FULL;
+	RsOpMode opMode = RsOpMode::FULL;
 	std::string upper;
 	stringToUpperCase(opModeStr, upper);
 
 	if (upper == "NOTURTLE")
 	{
-		opMode = RS_OPMODE_NOTURTLE;
+		opMode = RsOpMode::NOTURTLE;
 	}
 	else if (upper == "GAMING")
 	{
-		opMode = RS_OPMODE_GAMING;
+		opMode = RsOpMode::GAMING;
 	}
 	else if (upper == "MINIMAL")
 	{
-		opMode = RS_OPMODE_MINIMAL;
+		opMode = RsOpMode::MINIMAL;
 	}
 	else	// "FULL" by default
 	{
-		opMode = RS_OPMODE_FULL;
+		opMode = RsOpMode::FULL;
 	}
 
 	return setOperatingMode(opMode);
 }
 
-bool p3ServerConfig::switchToOperatingMode(uint32_t opMode)
+bool p3ServerConfig::switchToOperatingMode(RsOpMode opMode)
 {
 	float dl_rate = 0;
 	float ul_rate = 0;
@@ -461,13 +456,13 @@ bool p3ServerConfig::switchToOperatingMode(uint32_t opMode)
 		ul_rate = mRateUpload;
 	}
 
-	std::cerr << "p3ServerConfig::switchToOperatingMode(" << opMode << ")";
+	std::cerr << "p3ServerConfig::switchToOperatingMode(" << static_cast<typename std::underlying_type<RsOpMode>::type>(opMode) << ")";
 	std::cerr << std::endl;
 
 	switch (opMode)
 	{
 		default:
-		case RS_OPMODE_FULL:
+	    case RsOpMode::FULL:
 			/* switch on all transfers */
 			/* 100% bandwidth */
 			/* switch on popups, enable hashing */
@@ -475,14 +470,14 @@ bool p3ServerConfig::switchToOperatingMode(uint32_t opMode)
                 	//setMaxRate(false, mro); // Out / Upload.
 			turtle_enabled = true;
 		break;
-		case RS_OPMODE_NOTURTLE:
+	    case RsOpMode::NOTURTLE:
 			/* switch on all transfers - except turtle, enable hashing */
 			/* 100% bandwidth */
 			/* switch on popups, enable hashing */
 			turtle_enabled = false;
 
 		break;
-		case RS_OPMODE_GAMING:
+	    case RsOpMode::GAMING:
 			/* switch on all transfers */
 			/* reduce bandwidth to 25% */
 			/* switch off popups, enable hashing */
@@ -491,7 +486,7 @@ bool p3ServerConfig::switchToOperatingMode(uint32_t opMode)
 			dl_rate *= 0.25;
 			ul_rate *= 0.25;
 		break;
-		case RS_OPMODE_MINIMAL:
+	    case RsOpMode::MINIMAL:
 			/* switch off all transfers */
 			/* reduce bandwidth to 10%, but make sure there is enough for VoIP */
 			/* switch on popups, enable hashing */
@@ -564,4 +559,8 @@ int p3ServerConfig::GetCurrentDataRates( float &inKb, float &outKb )
 	return 1;
 }
 
-
+int p3ServerConfig::GetTrafficSum(uint64_t &inb, uint64_t &outb )
+{
+	mPqiHandler->GetTraffic(inb, outb);
+	return 1;
+}

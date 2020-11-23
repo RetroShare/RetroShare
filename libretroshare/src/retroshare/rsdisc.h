@@ -1,53 +1,32 @@
-#ifndef RETROSHARE_DISC_GUI_INTERFACE_H
-#define RETROSHARE_DISC_GUI_INTERFACE_H
+/*******************************************************************************
+ * RetroShare gossip discovery - discovery2 retro-compatibility include        *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2019  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+#pragma once
 
-/*
- * libretroshare/src/rsiface: rsdisc.h
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2008-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+#include "retroshare/rsgossipdiscovery.h"
+#include "util/rsdeprecate.h"
 
-#include <inttypes.h>
-#include <string>
-#include <list>
-#include <map>
-#include <retroshare/rstypes.h>
+#warning "Including retroshare/rsdisc.h is deprecated, \
+use retroshare/rsgossipdiscovery.h instead"
 
-/* The Main Interface Class - for information about your Peers */
-class RsDisc;
-extern RsDisc   *rsDisc;
+using RsDisc RS_DEPRECATED_FOR("RsGossipDiscovery") = RsGossipDiscovery;
 
-class RsDisc
-{
-	public:
-
-	RsDisc()  { return; }
-virtual ~RsDisc() { return; }
-
-virtual bool	getDiscFriends(const RsPeerId &id, std::list<RsPeerId>& friends) = 0;
-virtual bool	getDiscPgpFriends(const RsPgpId &pgpid, std::list<RsPgpId>& gpg_friends) = 0;
-virtual bool 	getPeerVersion(const RsPeerId &id, std::string &versions) = 0;
-virtual bool 	getWaitingDiscCount(unsigned int *sendCount, unsigned int *recvCount) = 0;
-
-};
-
-#endif
+#define rsDisc rsGossipDiscovery.get()

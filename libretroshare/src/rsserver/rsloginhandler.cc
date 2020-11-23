@@ -1,9 +1,32 @@
+/*******************************************************************************
+ * libretroshare/src/rsserver: rsloginhandler.cc                                *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2018         retroshare team <retroshare.project@gmail.com>       *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #include <string>
 #include <iostream>
 #include <pqi/authgpg.h>
 #include "rsloginhandler.h"
 #include "util/rsdir.h"
-#include "rsaccounts.h"
+#include "retroshare/rsinit.h"
+#include "util/rsdebug.h"
 
 //#define DEBUG_RSLOGINHANDLER 1
 
@@ -31,7 +54,7 @@ bool RsLoginHandler::checkAndStoreSSLPasswdIntoGPGFile(
 	FILE *sslPassphraseFile = RsDirUtil::rs_fopen(
 	            getSSLPasswdFileName(ssl_id).c_str(), "r");
 
-	if(sslPassphraseFile != NULL)	// already have it.
+	if(sslPassphraseFile)	// already have it.
 	{
 		fclose(sslPassphraseFile);
 		return true ;
@@ -52,7 +75,7 @@ bool RsLoginHandler::getSSLPasswdFromGPGFile(const RsPeerId& ssl_id,std::string&
 	FILE *sslPassphraseFile = RsDirUtil::rs_fopen(
 	            getSSLPasswdFileName(ssl_id).c_str(), "r");
 
-	if (sslPassphraseFile == NULL)
+	if (!sslPassphraseFile)
 	{
 		std::cerr << "No password provided, and no sslPassphraseFile : "
 		          << getSSLPasswdFileName(ssl_id).c_str() << std::endl;
@@ -91,7 +114,7 @@ bool RsLoginHandler::getSSLPasswdFromGPGFile(const RsPeerId& ssl_id,std::string&
 
 std::string RsLoginHandler::getSSLPasswdFileName(const RsPeerId& /*ssl_id*/)
 {
-	return rsAccounts->PathAccountKeysDirectory() + "/" + "ssl_passphrase.pgp";
+	return RsAccounts::AccountKeysDirectory() + "/" + "ssl_passphrase.pgp";
 }
 
 #ifdef RS_AUTOLOGIN
@@ -109,6 +132,20 @@ GnomeKeyringPasswordSchema my_schema = {
     NULL,
     NULL
 };
+#elif defined(HAS_LIBSECRET)
+#include <libsecret-1/libsecret/secret.h>
+const SecretSchema *libsecret_get_schema(void)
+{
+	static const SecretSchema the_schema = {
+	    "org.Retroshare.Password", SECRET_SCHEMA_NONE,
+	    {
+	        {  "RetroShare SSL Id", SECRET_SCHEMA_ATTRIBUTE_STRING },
+	        {  "NULL", static_cast<SecretSchemaAttributeType>(0) },
+	    },
+	    0,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr
+	};
+	return &the_schema;
+}
 #endif
 
 
@@ -209,7 +246,7 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 #endif
 	if( gnome_keyring_find_password_sync(&my_schema, &passwd,"RetroShare SSL Id",ssl_id.toStdString().c_str(),NULL) == GNOME_KEYRING_RESULT_OK )
 	{
-		std::cerr << "Got SSL passwd ********************" /*<< passwd*/ << " from gnome keyring" << std::endl;
+		std::cout << "Got SSL passwd ********************" /*<< passwd*/ << " from gnome keyring" << std::endl;
 		ssl_passwd = std::string(passwd);
 		return true ;
 	}
@@ -220,7 +257,41 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 #endif
 		return false ;
 	}
+#elif defined(HAS_LIBSECRET)
+	// do synchronous lookup
 
+#ifdef DEBUG_RSLOGINHANDLER
+	std::cerr << "Using attribute: " << ssl_id << std::endl;
+#endif
+
+	GError *error = nullptr;
+	gchar *password = secret_password_lookup_sync (libsecret_get_schema(), nullptr, &error,
+	                                               "RetroShare SSL Id", ssl_id.toStdString().c_str(),
+	                                               NULL);
+
+	if (error) {
+		g_error_free (error);
+#ifdef DEBUG_RSLOGINHANDLER
+		std::cerr << "Could not get passwd using libsecret: error" << std::endl;
+#endif
+		return false;
+	} else if (!password) {
+		/* password will be null, if no matching password found */
+#ifdef DEBUG_RSLOGINHANDLER
+		std::cerr << "Could not get passwd using libsecret: not found" << std::endl;
+#endif
+		return false;
+	} else {
+		std::cout << "Got SSL passwd ********************" /*<< passwd*/ << " using libsecret" << std::endl;
+		ssl_passwd = std::string(password);
+
+		secret_password_free (password);
+		return true;
+	}
+#ifdef DEBUG_RSLOGINHANDLER
+	std::cerr << "Could not get passwd from gnome keyring: unknown" << std::endl;
+#endif
+	//return false; //Never used returned before
 #else
 	/******************** OSX KeyChain stuff *****************************/
 #ifdef __APPLE__
@@ -281,7 +352,7 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 
 	/******************** OSX KeyChain stuff *****************************/
 #endif // APPLE
-#endif // HAS_GNOME_KEYRING
+#endif // HAS_GNOME_KEYRING / HAS_LIBSECRET
 #else /******* WINDOWS BELOW *****/
 
 	/* try to load from file */
@@ -393,7 +464,7 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 #endif
 	/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
-	return false;
+	//return false; //never used
 }
 
 
@@ -405,9 +476,9 @@ bool RsLoginHandler::enableAutoLogin(const RsPeerId& ssl_id,const std::string& s
 #ifndef __HAIKU__
 #ifndef WINDOWS_SYS /* UNIX */
 #if defined(HAS_GNOME_KEYRING) || defined(__FreeBSD__) || defined(__OpenBSD__)
-	if(GNOME_KEYRING_RESULT_OK == gnome_keyring_store_password_sync(&my_schema, NULL, (gchar*)("RetroShare password for SSL Id "+ssl_id.toStdString()).c_str(),(gchar*)ssl_passwd.c_str(),"RetroShare SSL Id",ssl_id.toStdString().c_str(),NULL)) 
+	if(GNOME_KEYRING_RESULT_OK == gnome_keyring_store_password_sync(&my_schema, NULL, (gchar*)("RetroShare password for SSL Id "+ssl_id.toStdString()).c_str(),(gchar*)ssl_passwd.c_str(),"RetroShare SSL Id",ssl_id.toStdString().c_str(),NULL))
 	{
-		std::cerr << "Stored passwd " << "************************" << " into gnome keyring" << std::endl;
+		std::cout << "Stored passwd " << "************************" << " into gnome keyring" << std::endl;
 		return true ;
 	}
 	else
@@ -415,6 +486,31 @@ bool RsLoginHandler::enableAutoLogin(const RsPeerId& ssl_id,const std::string& s
 		std::cerr << "Could not store passwd into gnome keyring" << std::endl;
 		return false ;
 	}
+#elif defined(HAS_LIBSECRET)
+	// do synchronous store
+
+	GError *error = nullptr;
+	secret_password_store_sync (libsecret_get_schema(), SECRET_COLLECTION_DEFAULT,
+	                            static_cast<const gchar*>(("RetroShare password for SSL Id " + ssl_id.toStdString()).c_str()),
+	                            static_cast<const gchar*>(ssl_passwd.c_str()),
+	                            nullptr, &error,
+	                            "RetroShare SSL Id", ssl_id.toStdString().c_str(),
+	                            NULL);
+
+	if (error) {
+		RsErr() << __PRETTY_FUNCTION__
+		        << " Could not store passwd using libsecret with"
+		        << " error.code=" << error->code
+		        << " error.domain=" << error->domain
+		        << " error.message=\"" << error->message << "\"" << std::endl;
+		if (error->code == 2)
+			RsErr() << "Do have a key wallet installed?"  << std::endl
+			        << "Like gnome-keyring or other using \"Secret Service\" by DBus." << std::endl;
+		g_error_free (error);
+		return false;
+	}
+	std::cout << "Stored passwd " << "************************" << " using libsecret" << std::endl;
+	return true;
 #else
 #ifdef __APPLE__
 	/***************** OSX KEYCHAIN ****************/
@@ -484,7 +580,7 @@ bool RsLoginHandler::enableAutoLogin(const RsPeerId& ssl_id,const std::string& s
 	return true;
 #endif // TODO_CODE_ROTTEN
 #endif // __APPLE__
-#endif // HAS_GNOME_KEYRING.
+#endif // HAS_GNOME_KEYRING / HAS_LIBSECRET
 #else  /* windows */
 
 	/* store password encrypted in a file */
@@ -559,10 +655,10 @@ bool RsLoginHandler::enableAutoLogin(const RsPeerId& ssl_id,const std::string& s
 	free(pbDataInput);
 	free(pbDataEnt);
 	LocalFree(DataOut.pbData);
+	return false;
 #endif
 	/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
-	return false;
 #endif
 }
 
@@ -571,7 +667,7 @@ bool RsLoginHandler::clearAutoLogin(const RsPeerId& ssl_id)
 #ifdef HAS_GNOME_KEYRING
 	if(GNOME_KEYRING_RESULT_OK == gnome_keyring_delete_password_sync(&my_schema,"RetroShare SSL Id", ssl_id.toStdString().c_str(),NULL))
 	{
-		std::cerr << "Successfully Cleared gnome keyring passwd for SSLID " << ssl_id << std::endl;
+		std::cout << "Successfully Cleared gnome keyring passwd for SSLID " << ssl_id << std::endl;
 		return true ;
 	}
 	else
@@ -579,7 +675,26 @@ bool RsLoginHandler::clearAutoLogin(const RsPeerId& ssl_id)
 		std::cerr << "Could not clear gnome keyring passwd for SSLID " << ssl_id << std::endl;
 		return false ;
 	}
-#else 
+#elif defined(HAS_LIBSECRET)
+	// do synchronous clear
+
+	GError *error = nullptr;
+	gboolean removed = secret_password_clear_sync (libsecret_get_schema(), nullptr, &error,
+	                                               "RetroShare SSL Id", ssl_id.toStdString().c_str(),
+	                                               NULL);
+
+	if (error) {
+		g_error_free (error);
+		std::cerr << "Could not clearpasswd for SSLID " << ssl_id << " using libsecret: error" << std::endl;
+		return false ;
+	} else if (removed == FALSE) {
+		std::cerr << "Could not clearpasswd for SSLID " << ssl_id << " using libsecret: false" << std::endl;
+		return false ;
+	}
+
+	std::cout << "Successfully Cleared passwd for SSLID " << ssl_id << " using libsecret" << std::endl;
+	return true ;
+#else // HAS_GNOME_KEYRING / HAS_LIBSECRET
   #ifdef __APPLE__
 
 	std::cerr << "clearAutoLogin() OSX Version" << std::endl;
@@ -671,7 +786,7 @@ bool RsLoginHandler::clearAutoLogin(const RsPeerId& ssl_id)
 
 std::string RsLoginHandler::getAutologinFileName(const RsPeerId& /*ssl_id*/)
 {
-	return rsAccounts->PathAccountKeysDirectory() + "/" + "help.dta" ;
+	return RsAccounts::AccountKeysDirectory() + "/" + "help.dta" ;
 }
 
 #endif // RS_AUTOLOGIN

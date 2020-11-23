@@ -1,32 +1,28 @@
+/*******************************************************************************
+ * libretroshare/src/util: rsdir.h                                             *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2004-2007  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2020  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>       *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
-/*
- * "$Id: rsdir.h,v 1.1 2007-02-19 20:08:30 rmf24 Exp $"
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2004-2007 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-
-#ifndef RSUTIL_DIRFNS_H
-#define RSUTIL_DIRFNS_H
+#pragma once
 
 #include <string>
 #include <list>
@@ -83,8 +79,16 @@ const char *scanf_string_for_uint(int bytes) ;
 
 int     	breakupDirList(const std::string& path, std::list<std::string> &subdirs);
 
+// Splits the path into parent directory and file. File can be empty if full_path is a dir ending with '/'
+// if full_path does not contain a directory, then dir will be "." and file will be full_path.
+
+bool        splitDirFromFile(const std::string& full_path,std::string& dir, std::string& file);
+
 bool 		copyFile(const std::string& source,const std::string& dest);
-bool 		moveFile(const std::string& source,const std::string& dest);
+
+/** Move file. If destination directory doesn't exists create it. */
+bool moveFile(const std::string& source, const std::string& dest);
+
 bool 		removeFile(const std::string& file);
 bool 		fileExists(const std::string& file);
 bool    	checkFile(const std::string& filename,uint64_t& file_size,bool disallow_empty_file = false);
@@ -101,7 +105,8 @@ bool    	cleanupDirectoryFaster(const std::string& dir, const std::set<std::stri
 bool 		hashFile(const std::string& filepath,   std::string &name, RsFileHash &hash, uint64_t &size);
 bool 		getFileHash(const std::string& filepath,RsFileHash &hash, uint64_t &size, RsThread *thread = NULL);
 
-Sha1CheckSum sha1sum(const uint8_t *data,uint32_t size) ;
+Sha1CheckSum   sha1sum(const uint8_t *data,uint32_t size) ;
+Sha256CheckSum sha256sum(const uint8_t *data,uint32_t size) ;
 
 bool saveStringToFile(const std::string& file, const std::string& str);
 bool loadStringFromFile(const std::string& file, std::string& str);
@@ -140,8 +145,20 @@ bool 		getWideFileHash(std::wstring filepath,                RsFileHash &hash, u
 FILE		*rs_fopen(const char* filename, const char* mode);
 
 std::string convertPathToUnix(std::string path);
+
+/** Concatenate two path pieces putting '/' separator between them only if
+ * needed */
 std::string makePath(const std::string &path1, const std::string &path2);
+
+RS_SET_CONTEXT_DEBUG_LEVEL(1);
 }
 
-	
-#endif
+#if __cplusplus < 201703L
+namespace std
+{
+namespace filesystem
+{
+bool create_directories(const std::string& path);
+}
+}
+#endif // __cplusplus < 201703L

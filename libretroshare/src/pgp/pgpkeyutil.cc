@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * libretroshare/src/pgp: pgpkeyutil.cc                                        *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2018 Cyril Soler <csoler@users.sourceforge.net>                   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include <stdint.h>
 #include <util/radix64.h>
 #include "pgpkeyutil.h"
@@ -160,7 +181,7 @@ uint32_t PGPKeyManagement::compute24bitsCRC(unsigned char *octets, size_t len)
     return crc & 0xFFFFFFL;
 }
 
-bool PGPKeyManagement::parseSignature(const unsigned char *signature, size_t sign_len, uint64_t& issuer)
+bool PGPKeyManagement::parseSignature(const unsigned char *signature, size_t sign_len, PGPSignatureInfo& info)
 {
     unsigned char *data = (unsigned char *)signature ;
 
@@ -189,10 +210,10 @@ bool PGPKeyManagement::parseSignature(const unsigned char *signature, size_t sig
     if(signature_type != 4)
         return false ;
     
-    data += 1 ;	// skip version number 
-    data += 1 ;	// skip signature type
-    data += 1 ;	// skip public key algorithm
-    data += 1 ;	// skip hash algorithm
+	info.signature_version    = data[0] ; data += 1 ;	// skip version number
+    info.signature_type       = data[0] ; data += 1 ;	// skip signature type
+    info.public_key_algorithm = data[0] ; data += 1 ;	// skip public key algorithm
+    info.hash_algorithm       = data[0] ; data += 1 ;	// skip hash algorithm
 
     uint32_t hashed_size = 256u*data[0] + data[1] ;
     data += 2 ;
@@ -214,7 +235,7 @@ bool PGPKeyManagement::parseSignature(const unsigned char *signature, size_t sig
 	    if(subpacket_type == PGPKeyParser::PGP_PACKET_TAG_ISSUER && subpacket_size == 9)
 	    {
 		    issuer_found = true ;
-		    issuer = PGPKeyParser::read_KeyID(data) ;
+		    info.issuer = PGPKeyParser::read_KeyID(data) ;
 	    }
 	    else
 		    data += subpacket_size-1 ;	// we remove the size of subpacket type

@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/serialiser: rschatitems.h
- *
- * RetroShare Serialiser.
- *
- * Copyright 2007-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/chat: rsgxstunnelitems.h                                  *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2015 by Cyril Soler <csoler@users.sourceforge.net>                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #pragma once
 
 #include <openssl/ssl.h>
@@ -53,7 +49,7 @@ typedef uint64_t		GxsTunnelDHSessionId ;
 class RsGxsTunnelItem: public RsItem
 {
 	public:
-		RsGxsTunnelItem(uint8_t item_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_GXS_TUNNEL,item_subtype) 
+		explicit RsGxsTunnelItem(uint8_t item_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_GXS_TUNNEL,item_subtype)
 		{
 			setPriorityLevel(QOS_PRIORITY_RS_CHAT_ITEM) ;
 		}
@@ -72,8 +68,8 @@ class RsGxsTunnelItem: public RsItem
 class RsGxsTunnelDataItem: public RsGxsTunnelItem
 {
 public:
-    RsGxsTunnelDataItem() :RsGxsTunnelItem(RS_PKT_SUBTYPE_GXS_TUNNEL_DATA) { data=NULL ;data_size=0;service_id=0;unique_item_counter=0; }
-    RsGxsTunnelDataItem(uint8_t subtype) :RsGxsTunnelItem(subtype) { data=NULL ;data_size=0; }
+    RsGxsTunnelDataItem() :RsGxsTunnelItem(RS_PKT_SUBTYPE_GXS_TUNNEL_DATA), unique_item_counter(0), flags(0), service_id(0), data_size(0), data(NULL) {}
+    explicit RsGxsTunnelDataItem(uint8_t subtype) :RsGxsTunnelItem(subtype) , unique_item_counter(0), flags(0), service_id(0), data_size(0), data(NULL) {}
 
     virtual ~RsGxsTunnelDataItem() {}
     virtual void clear() {}
@@ -108,7 +104,7 @@ class RsGxsTunnelStatusItem: public RsGxsTunnelItem
 class RsGxsTunnelDataAckItem: public RsGxsTunnelItem
 {
 	public:
-		RsGxsTunnelDataAckItem() :RsGxsTunnelItem(RS_PKT_SUBTYPE_GXS_TUNNEL_DATA_ACK) {}
+		RsGxsTunnelDataAckItem() :RsGxsTunnelItem(RS_PKT_SUBTYPE_GXS_TUNNEL_DATA_ACK), unique_item_counter(0) {}
 		RsGxsTunnelDataAckItem(void *data,uint32_t size) ; // deserialization
 
 		virtual ~RsGxsTunnelDataAckItem() {}
@@ -125,7 +121,7 @@ class RsGxsTunnelDataAckItem: public RsGxsTunnelItem
 class RsGxsTunnelDHPublicKeyItem: public RsGxsTunnelItem
 {
 	public:
-		RsGxsTunnelDHPublicKeyItem() :RsGxsTunnelItem(RS_PKT_SUBTYPE_GXS_TUNNEL_DH_PUBLIC_KEY) {}
+		RsGxsTunnelDHPublicKeyItem() :RsGxsTunnelItem(RS_PKT_SUBTYPE_GXS_TUNNEL_DH_PUBLIC_KEY), public_key(NULL) {}
 		RsGxsTunnelDHPublicKeyItem(void *data,uint32_t size) ; // deserialization
 
 		virtual ~RsGxsTunnelDHPublicKeyItem() ;
@@ -141,8 +137,8 @@ class RsGxsTunnelDHPublicKeyItem: public RsGxsTunnelItem
 
 	private:
 		// make the object non copy-able
-		RsGxsTunnelDHPublicKeyItem(const RsGxsTunnelDHPublicKeyItem&) : RsGxsTunnelItem(RS_PKT_SUBTYPE_GXS_TUNNEL_DH_PUBLIC_KEY) {}
-		const RsGxsTunnelDHPublicKeyItem& operator=(const RsGxsTunnelDHPublicKeyItem&) { return *this ;}
+		RsGxsTunnelDHPublicKeyItem(const RsGxsTunnelDHPublicKeyItem&) : RsGxsTunnelItem(RS_PKT_SUBTYPE_GXS_TUNNEL_DH_PUBLIC_KEY), public_key(NULL) {}
+		const RsGxsTunnelDHPublicKeyItem& operator=(const RsGxsTunnelDHPublicKeyItem&) { public_key = NULL; return *this ;}
 };
 
 class RsGxsTunnelSerialiser: public RsServiceSerializer

@@ -1,28 +1,26 @@
-
-/*
- * "$Id: rsdir.cc,v 1.1 2007-02-19 20:08:30 rmf24 Exp $"
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2004-2007 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/util: rsdir.cc                                            *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2004-2007  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2020  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>       *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 // Includes for directory creation.
 #include <sys/types.h>
@@ -33,6 +31,7 @@
 #include "util/rsdir.h"
 #include "util/rsstring.h"
 #include "util/rsrandom.h"
+#include "util/rstime.h"
 #include "util/rsmemory.h"
 #include "util/folderiterator.h"
 #include "retroshare/rstypes.h"
@@ -102,6 +101,23 @@ const char *RsDirUtil::scanf_string_for_uint(int bytes)
 
 	std::cerr << "RsDirUtil::scanf_string_for_uint(): no corresponding scan string for "<< bytes << " bytes. This will probably cause inconsistencies." << std::endl;
 	return strgs[0] ;
+}
+
+bool RsDirUtil::splitDirFromFile(const std::string& full_path,std::string& dir, std::string& file)
+{
+	int i = full_path.rfind('/', full_path.size()-1);
+
+	if(i == full_path.size()-1)	// '/' not found!
+	{
+		file = full_path ;
+		dir = "." ;
+		return true ;
+	}
+
+	dir.assign(full_path,0,i+1) ;
+	file.assign(full_path,i+1,full_path.size()) ;
+
+	return true ;
 }
 
 void RsDirUtil::removeTopDir(const std::string& dir, std::string& path)
@@ -240,28 +256,59 @@ int	RsDirUtil::breakupDirList(const std::string& path,
 /**** Copied and Tweaked from ftcontroller ***/
 bool RsDirUtil::fileExists(const std::string& filename)
 {
+#ifdef WINDOWS_SYS
+	std::wstring wfilename;
+	librs::util::ConvertUtf8ToUtf16(filename, wfilename);
+	return ( _waccess( wfilename.c_str(), F_OK ) != -1 );
+#else
 	return ( access( filename.c_str(), F_OK ) != -1 );
+#endif
 }
 
 bool RsDirUtil::moveFile(const std::string& source,const std::string& dest)
 {
-    // First try a rename
-	//
+	Dbg3() << __PRETTY_FUNCTION__<< " source: " << source
+	       << " dest: " << dest << std::endl;
 
-    if(renameFile(source,dest))
-        return true ;
+	std::string dest_dir ;
+	std::string dest_file ;
 
-    // If not, try to copy. The src and dest probably belong to different file systems
+	splitDirFromFile(dest, dest_dir, dest_file);
 
-    if(!copyFile(source,dest))
-        return false ;
+	if(!checkDirectory(dest_dir))
+	{
+		if(!std::filesystem::create_directories(dest_dir))
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " failure creating directory: "
+			        << dest_dir << std::endl;
+			return false;
+		}
+	}
 
-	// copy was successful, let's delete the original
+	// First try a rename
+	if(renameFile(source,dest))
+	{
+		Dbg3() << __PRETTY_FUNCTION__ << " plain rename worked" << std::endl;
+		return true;
+	}
 
-    if(!removeFile(source))
-        return false ;
+	/* If not, try to copy. The src and dest probably belong to different file
+	 * systems */
+	if(!copyFile(source,dest))
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " failure copying file" << std::endl;
+		return false;
+	}
 
-    return true ;
+	// delete the original
+	if(!removeFile(source))
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " failure deleting original file"
+		        << std::endl;
+		return false;
+	}
+
+	return true;
 }
 
 bool RsDirUtil::removeFile(const std::string& filename)
@@ -392,7 +439,7 @@ bool	RsDirUtil::checkFile(const std::string& filename,uint64_t& file_size,bool d
 }
 
 
-bool	RsDirUtil::checkDirectory(const std::string& dir)
+bool RsDirUtil::checkDirectory(const std::string& dir)
 {
 	int val;
 	mode_t st_mode;
@@ -428,11 +475,9 @@ bool	RsDirUtil::checkDirectory(const std::string& dir)
 }
 
 
-bool	RsDirUtil::checkCreateDirectory(const std::string& dir)
+bool RsDirUtil::checkCreateDirectory(const std::string& dir)
 {
-#ifdef RSDIR_DEBUG
-	std::cerr << "RsDirUtil::checkCreateDirectory() dir: " << dir << std::endl;
-#endif
+	Dbg3() << __PRETTY_FUNCTION__ << " " << dir << std::endl;
 
 #ifdef WINDOWS_SYS
 	std::wstring wdir;
@@ -458,7 +503,7 @@ bool	RsDirUtil::checkCreateDirectory(const std::string& dir)
 			std::cerr << "check_create_directory() Fatal Error et oui--";
 			std::cerr <<std::endl<< "\tcannot create:" <<dir<<std::endl;
 #endif
-			return 0;
+			return false;
 		}
 
 #ifdef RSDIR_DEBUG
@@ -466,7 +511,7 @@ bool	RsDirUtil::checkCreateDirectory(const std::string& dir)
 		std::cerr <<std::endl<< "\tcreated:" <<dir<<std::endl;
 #endif
 
-		return 1;
+		return true;
 	}
 
 #ifdef RSDIR_DEBUG
@@ -480,9 +525,26 @@ bool	RsDirUtil::checkCreateDirectory(const std::string& dir)
 	closedir(direc) ;
 #endif
 
-	return 1;
+	return true;
 }
 
+#if __cplusplus < 201703L
+bool std::filesystem::create_directories(const std::string& path)
+{
+	for( std::string::size_type lastIndex = 0; lastIndex < std::string::npos;
+	     lastIndex = path.find('/', lastIndex) )
+	{
+		std::string&& curDir = path.substr(0, ++lastIndex);
+		if(!RsDirUtil::checkCreateDirectory(curDir))
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " failure creating: " << curDir
+			        << " of: " << path << std::endl;
+			return false;
+		}
+	}
+	return true;
+}
+#endif // __cplusplus < 201703L
 
 std::string RsDirUtil::removeSymLinks(const std::string& path)
 {
@@ -536,7 +598,10 @@ bool RsDirUtil::getFileHash(const std::string& filepath, RsFileHash &hash, uint6
 	int  len;
 	SHA_CTX *sha_ctx = new SHA_CTX;
 	unsigned char sha_buf[SHA_DIGEST_LENGTH];
-	unsigned char gblBuf[512];
+
+	static const uint32_t HASH_BUFFER_SIZE = 1024*1024*10 ;// allocate a 10MB buffer. Too small a buffer will cause multiple HD hits and slow down the hashing process.
+	RsTemporaryMemory gblBuf(HASH_BUFFER_SIZE) ;
+	//unsigned char gblBuf[512];
 
 	/* determine size */
  	fseeko64(fd, 0, SEEK_END);
@@ -548,7 +613,7 @@ bool RsDirUtil::getFileHash(const std::string& filepath, RsFileHash &hash, uint6
 	int runningCheckCount = 0;
 
 	SHA1_Init(sha_ctx);
-	while(isRunning && (len = fread(gblBuf,1, 512, fd)) > 0)
+	while(isRunning && (len = fread(gblBuf,1, HASH_BUFFER_SIZE, fd)) > 0)
 	{
 		SHA1_Update(sha_ctx, gblBuf, len);
 
@@ -607,6 +672,27 @@ Sha1CheckSum RsDirUtil::sha1sum(const unsigned char *data, uint32_t size)
 	return Sha1CheckSum(sha_buf) ;
 }
 
+Sha256CheckSum RsDirUtil::sha256sum(const unsigned char *data, uint32_t size)
+{
+	SHA256_CTX sha_ctx ;
+
+	if(SHA256_DIGEST_LENGTH != 32)
+		throw std::runtime_error("Warning: can't compute Sha2561Sum with sum size != 32") ;
+
+	SHA256_Init(&sha_ctx);
+	while(size > 512)
+	{
+		SHA256_Update(&sha_ctx, data, 512);
+		data = &data[512] ;
+		size -= 512 ;
+	}
+	SHA256_Update(&sha_ctx, data, size);
+
+	unsigned char sha_buf[SHA256_DIGEST_LENGTH];
+	SHA256_Final(&sha_buf[0], &sha_ctx);
+
+	return Sha256CheckSum(sha_buf) ;
+}
 bool RsDirUtil::saveStringToFile(const std::string &file, const std::string &str)
 {
     std::ofstream out(file.c_str(), std::ios_base::out | std::ios_base::binary);
@@ -657,7 +743,7 @@ bool RsDirUtil::renameFile(const std::string& from, const std::string& to)
 #endif
 			/* set errno? */
 			return false ;
-		usleep(100 * 1000);		// 100 msec
+		rstime::rs_usleep(100 * 1000);		// 100 msec
 
 		if (loops >= 30)
 			return false ;
@@ -863,7 +949,7 @@ RsStackFileLock::RsStackFileLock(const std::string& file_path)
 	while(RsDirUtil::createLockFile(file_path,_file_handle))
 	{
 		std::cerr << "Cannot acquire file lock " << file_path << ", waiting 1 sec." << std::endl;
-		usleep(1 * 1000 * 1000) ; // 1 sec
+		rstime::rs_usleep(1 * 1000 * 1000) ; // 1 sec
 	}
 #ifdef RSDIR_DEBUG 
 	std::cerr << "Acquired file handle " << _file_handle << ", lock file:" << file_path << std::endl;
@@ -1267,7 +1353,7 @@ bool RsDirUtil::renameWideFile(const std::wstring& from, const std::wstring& to)
 #endif
 			/* set errno? */
 			return false ;
-		usleep(100 * 1000); //100 msec
+		rstime::rs_usleep(100 * 1000); //100 msec
 
 		if (loops >= 30)
 			return false ;

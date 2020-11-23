@@ -1,23 +1,24 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (c) 2010, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/common/AvatarWidget.cpp                                                 *
+ *                                                                             *
+ * Copyright (C) 2012, Robert Fernie <retroshare.project@gmail.com>            *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
+#include <QBuffer>
 
 #include <rshare.h>
 #include <retroshare/rsstatus.h>
@@ -25,6 +26,7 @@
 #include <retroshare/rsmsgs.h>
 
 #include "gui/notifyqt.h"
+#include "util/misc.h"
 #include "gui/common/AvatarDefs.h"
 #include "gui/common/AvatarDialog.h"
 
@@ -86,19 +88,33 @@ void AvatarWidget::mouseReleaseEvent(QMouseEvent */*event*/)
 	if (!mFlag.isOwnId) {
 		return;
 	}
+	QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Choose avatar"), AvatarDialog::RS_AVATAR_DEFAULT_IMAGE_W,AvatarDialog::RS_AVATAR_DEFAULT_IMAGE_H);
 
-	AvatarDialog dialog(this);
+	if (img.isNull())
+		return;
 
-	QPixmap avatar;
-	AvatarDefs::getOwnAvatar(avatar, "");
+	setPixmap(img);
 
-	dialog.setAvatar(avatar);
-	if (dialog.exec() == QDialog::Accepted) {
-		QByteArray newAvatar;
-		dialog.getAvatar(newAvatar);
+    QByteArray data;
+	QBuffer buffer(&data);
 
-		rsMsgs->setOwnAvatarData((unsigned char *)(newAvatar.data()), newAvatar.size()) ;	// last char 0 included.
-	}
+	buffer.open(QIODevice::WriteOnly);
+	img.save(&buffer, "PNG"); // writes image into a in PNG format
+
+	rsMsgs->setOwnAvatarData((unsigned char *)(data.data()), data.size()) ;	// last char 0 included.
+
+//	AvatarDialog dialog(this);
+//
+//	QPixmap avatar;
+//	AvatarDefs::getOwnAvatar(avatar, "");
+//
+//	dialog.setAvatar(avatar);
+//	if (dialog.exec() == QDialog::Accepted) {
+//		QByteArray newAvatar;
+//		dialog.getAvatar(newAvatar);
+//
+//		rsMsgs->setOwnAvatarData((unsigned char *)(newAvatar.data()), newAvatar.size()) ;	// last char 0 included.
+//	}
 }
 
 void AvatarWidget::setFrameType(FrameType type)

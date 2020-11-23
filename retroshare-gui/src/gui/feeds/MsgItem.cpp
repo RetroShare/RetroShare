@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2008 Robert Fernie
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/feeds/MsgItem.cpp                                                       *
+ *                                                                             *
+ * Copyright (c) 2008, Robert Fernie   <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QMessageBox>
 #include <QDateTime>
@@ -30,6 +29,7 @@
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
 #include "gui/common/AvatarDefs.h"
+#include "gui/common/FilesDefs.h"
 #include "gui/notifyqt.h"
 
 #include <retroshare/rsmsgs.h>
@@ -44,7 +44,7 @@
 
 /** Constructor */
 MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, const std::string &msgId, bool isHome) :
-   FeedItem(NULL), mParent(parent), mFeedId(feedId), mMsgId(msgId), mIsHome(isHome)
+   FeedItem(parent,feedId,NULL), mMsgId(msgId), mIsHome(isHome)
 {
   /* Invoke the Qt Designer generated object setup routine */
   setupUi(this);
@@ -223,21 +223,16 @@ void MsgItem::updateItem()
 	}
 }
 
-void MsgItem::toggle()
-{
-	expand(expandFrame->isHidden());
-}
-
 void MsgItem::doExpand(bool open)
 {
-	if (mParent) {
-		mParent->lockLayout(this, true);
+	if (mFeedHolder) {
+		mFeedHolder->lockLayout(this, true);
 	}
 
 	if (open)
 	{
 		expandFrame->show();
-		expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
+        expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/up-arrow.png")));
 		expandButton->setToolTip(tr("Hide"));
 
 		mCloseOnRead = false;
@@ -247,14 +242,14 @@ void MsgItem::doExpand(bool open)
 	else
 	{
 		expandFrame->hide();
-		expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+        expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/down-arrow.png")));
 		expandButton->setToolTip(tr("Expand"));
 	}
 
 	emit sizeChanged(this);
 
-	if (mParent) {
-		mParent->lockLayout(this, false);
+	if (mFeedHolder) {
+		mFeedHolder->lockLayout(this, false);
 	}
 }
 
@@ -264,23 +259,6 @@ void MsgItem::expandFill(bool first)
 
 	if (first) {
 		fillExpandFrame();
-	}
-}
-
-void MsgItem::removeItem()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "MsgItem::removeItem()";
-	std::cerr << std::endl;
-#endif
-
-	mParent->lockLayout(this, true);
-	hide();
-	mParent->lockLayout(this, false);
-
-	if (mParent)
-	{
-		mParent->deleteFeedItem(this, mFeedId);
 	}
 }
 
@@ -316,7 +294,7 @@ void MsgItem::replyMsg()
 	std::cerr << "MsgItem::replyMsg()";
 	std::cerr << std::endl;
 #endif
-	if (mParent)
+	if (mFeedHolder)
 	{
 		//mParent->openMsg(FEEDHOLDER_MSG_MESSAGE, mPeerId, mMsgId);
 		
@@ -338,6 +316,11 @@ void MsgItem::playMedia()
 	std::cerr << "MsgItem::playMedia()";
 	std::cerr << std::endl;
 #endif
+}
+
+void MsgItem::toggle()
+{
+	expand(expandFrame->isHidden());
 }
 
 void MsgItem::checkMessageReadStatus()
@@ -370,9 +353,9 @@ void MsgItem::sendInvite()
 	if (!rsMail->getMessage(mMsgId, mi))
 		return;
 
-    if ((QMessageBox::question(this, tr("Send invite?"),tr("Do you really want send a invite with your Certificate?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
-	{
-      MessageComposer::sendInvite(mi.rsgxsid_srcId);
-	}    
+    //if ((QMessageBox::question(this, tr("Send invite?"),tr("Do you really want send a invite with your Certificate?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
+	//{
+	MessageComposer::sendInvite(mi.rsgxsid_srcId,false);
+	//}
 
 }

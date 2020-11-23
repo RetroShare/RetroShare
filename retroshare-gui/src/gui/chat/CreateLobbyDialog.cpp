@@ -1,23 +1,24 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2010 Christopher Evi-Parker
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/chat/CreateLobbyDialog.cpp                                              *
+ *                                                                             *
+ * LibResAPI: API for local socket server                                      *
+ *                                                                             *
+ * Copyright (C) 2010, Christopher Evi-Parker <retroshare.project@gmail.com>   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "CreateLobbyDialog.h"
 
@@ -32,6 +33,7 @@
 #include "gui/common/PeerDefs.h"
 #include "ChatDialog.h"
 #include "gui/ChatLobbyWidget.h"
+#include "gui/common/FilesDefs.h"
 
 CreateLobbyDialog::CreateLobbyDialog(const std::set<RsPeerId>& peer_list, int privacyLevel, QWidget *parent) :
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
@@ -39,7 +41,7 @@ CreateLobbyDialog::CreateLobbyDialog(const std::set<RsPeerId>& peer_list, int pr
 	ui = new Ui::CreateLobbyDialog() ;
 	ui->setupUi(this);
 
-	ui->headerFrame->setHeaderImage(QPixmap(":/icons/png/chat-lobbies.png"));
+    ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/chat-lobbies.png"));
 	ui->headerFrame->setHeaderText(tr("Create Chat Room"));
 
     RsGxsId default_identity ;
@@ -52,8 +54,8 @@ CreateLobbyDialog::CreateLobbyDialog(const std::set<RsPeerId>& peer_list, int pr
 	ui->lobbyTopic_LE->setPlaceholderText(tr("Set a descriptive topic here"));
 #endif
 
-	connect( ui->buttonBox, SIGNAL(accepted()), this, SLOT(createLobby()));
-	connect( ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
+	connect( ui->createButton, SIGNAL(clicked()), this, SLOT(createLobby()));
+	connect( ui->cancelButton, SIGNAL(clicked()), this, SLOT(close()));
 	connect( ui->lobbyName_LE, SIGNAL( textChanged ( QString ) ), this, SLOT( checkTextFields( ) ) );
 	connect( ui->lobbyTopic_LE, SIGNAL( textChanged ( QString ) ), this, SLOT( checkTextFields( ) ) );
     connect( ui->idChooser_CB, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( checkTextFields( ) ) );
@@ -99,19 +101,19 @@ void CreateLobbyDialog::checkTextFields()
     switch(ui->idChooser_CB->getChosenId(id))
     {
         case GxsIdChooser::NoId:
-        case GxsIdChooser::None: ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false) ;
+        case GxsIdChooser::None: ui->createButton->setEnabled(false) ;
                     break ;
         default:
-                    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true) ;
+                    ui->createButton->setEnabled(true) ;
                     break ;
     }
     
-    RsIdentityDetails(idd) ;
+    RsIdentityDetails idd;
     
     rsIdentity->getIdDetails(id,idd) ;
     
     if( (!(idd.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN)) && ui->pgp_signed_CB->isChecked())
-                    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false) ;
+                    ui->createButton->setEnabled(false) ;
 }
 
 void CreateLobbyDialog::createLobby()

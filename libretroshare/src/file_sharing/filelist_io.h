@@ -1,29 +1,24 @@
-/*
- * RetroShare C++ File lists IO methods.
- *
- *      file_sharing/filelist_io.h
- *
- * Copyright 2016 by Mr.Alice
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare.project@gmail.com".
- *
- */
-
-
+/*******************************************************************************
+ * libretroshare/src/file_sharing: filelist_io.h                               *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2018 by Mr.Alice <mralice@users.sourceforge.net>                  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ ******************************************************************************/
 #pragma once
 
 #include <stdlib.h>
@@ -36,6 +31,7 @@
 // WARNING: the encoding is system-dependent, so this should *not* be used to exchange data between computers.
 
 static const uint32_t FILE_LIST_IO_LOCAL_DIRECTORY_STORAGE_VERSION_0001 =  0x00000001 ;
+static const uint32_t FILE_LIST_IO_LOCAL_DIRECTORY_TREE_VERSION_0001    =  0x00010001 ;
 
 static const uint8_t FILE_LIST_IO_TAG_UNKNOWN                   =  0x00 ;
 static const uint8_t FILE_LIST_IO_TAG_LOCAL_DIRECTORY_VERSION   =  0x01 ;
@@ -65,6 +61,7 @@ static const uint8_t FILE_LIST_IO_TAG_RAW_NUMBER                =  0x62 ;
 
 static const uint32_t SECTION_HEADER_MAX_SIZE            =  6 ;   // section tag (1 byte) + size (max = 5 bytes)
 
+
 class FileListIO
 {
 public:
@@ -93,7 +90,19 @@ public:
        return deserialise(buff,buff_size,offset,val);
     }
 
-    static bool writeField(      unsigned char*&buff,uint32_t& buff_size,uint32_t& offset,uint8_t       section_tag,const unsigned char *  val,uint32_t  size) ;
+	class read_error
+	{
+	public:
+		read_error(unsigned char *sec,uint32_t size,uint32_t offset,uint8_t expected_tag);
+		read_error(const std::string& s) : err_string(s) {}
+
+		const std::string& what() const { return err_string ; }
+	private:
+		std::string err_string ;
+	};
+
+
+	static bool writeField(      unsigned char*&buff,uint32_t& buff_size,uint32_t& offset,uint8_t       section_tag,const unsigned char *  val,uint32_t  size) ;
     static bool readField (const unsigned char *buff,uint32_t  buff_size,uint32_t& offset,uint8_t check_section_tag,      unsigned char *& val,uint32_t& size) ;
 
     template<class T> static bool serialise(unsigned char *buff,uint32_t size,uint32_t& offset,const T& val) ;

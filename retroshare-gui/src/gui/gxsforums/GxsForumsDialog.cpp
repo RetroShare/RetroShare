@@ -1,30 +1,31 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2008 Robert Fernie
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/gxsforums/GxsForumsDialog.cpp                        *
+ *                                                                             *
+ * Copyright 2013 Robert Fernie        <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "GxsForumsDialog.h"
 #include "GxsForumGroupDialog.h"
 #include "GxsForumThreadWidget.h"
+#include "CreateGxsForumMsg.h"
 #include "GxsForumUserNotify.h"
 #include "gui/notifyqt.h"
 #include "gui/gxs/GxsGroupShareKey.h"
+#include "util/qtthreadsutils.h"
 #include "gui/common/GroupTreeWidget.h"
 
 class GxsForumGroupInfoData : public RsUserdata
@@ -37,15 +38,73 @@ public:
 };
 
 /** Constructor */
-GxsForumsDialog::GxsForumsDialog(QWidget *parent)
-	: GxsGroupFrameDialog(rsGxsForums, parent)
+GxsForumsDialog::GxsForumsDialog(QWidget *parent) :
+    GxsGroupFrameDialog(rsGxsForums, parent), mEventHandlerId(0)
 {
 	mCountChildMsgs = true;
+
+	rsEvents->registerEventsHandler(
+	            [this](std::shared_ptr<const RsEvent> event)
+	{ RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); },
+	            mEventHandlerId, RsEventType::GXS_FORUMS );
+}
+
+void GxsForumsDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+    if(event->mType == RsEventType::GXS_FORUMS)
+    {
+        const RsGxsForumEvent *e = dynamic_cast<const RsGxsForumEvent*>(event.get());
+
+        if(!e)
+            return;
+
+        switch(e->mForumEventCode)
+        {
+		case RsForumEventCode::NEW_MESSAGE:
+		case RsForumEventCode::UPDATED_MESSAGE:        // [[fallthrough]];
+		case RsForumEventCode::READ_STATUS_CHANGED:
+			updateGroupStatisticsReal(e->mForumGroupId); // update the list immediately
+            break;
+
+		case RsForumEventCode::NEW_FORUM:       // [[fallthrough]];
+        case RsForumEventCode::SUBSCRIBE_STATUS_CHANGED:
+            updateDisplay(true);
+            break;
+
+        case RsForumEventCode::STATISTICS_CHANGED:
+            updateGroupStatistics(e->mForumGroupId);   // update the list when redraw less often than once every 2 mins
+            break;
+
+        default:
+            break;
+        }
+    }
 }
 
 GxsForumsDialog::~GxsForumsDialog()
 {
+	rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
+
+bool GxsForumsDialog::getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo)
+{
+	std::vector<RsGxsForumGroup> groups;
+
+	if(! rsGxsForums->getForumsInfo(std::list<RsGxsGroupId>(),groups))
+		return false;
+
+	for (auto& group: groups)
+		groupInfo.push_back(new RsGxsForumGroup(group));
+
+    return true;
+}
+
+bool GxsForumsDialog::getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat)
+{
+    return rsGxsForums->getForumStatistics(groupId,stat);
+}
+
+
 
 QString GxsForumsDialog::getHelpString() const
 {
@@ -60,9 +119,27 @@ QString GxsForumsDialog::getHelpString() const
 	return hlp_str ;	
 }
 
-UserNotify *GxsForumsDialog::getUserNotify(QObject *parent)
+void GxsForumsDialog::shareInMessage(const RsGxsGroupId& forum_id,const QList<RetroShareLink>& file_links)
 {
-	return new GxsForumUserNotify(rsGxsForums, parent);
+	CreateGxsForumMsg *msgDialog = new CreateGxsForumMsg(forum_id,RsGxsMessageId(),RsGxsMessageId(),RsGxsId()) ;
+
+	QString txt ;
+	for(QList<RetroShareLink>::const_iterator it(file_links.begin());it!=file_links.end();++it)
+		txt += (*it).toHtml() + "\n" ;
+
+	if(!file_links.empty())
+	{
+		QString subject = (*file_links.begin()).name() ;
+		msgDialog->setSubject(subject);
+	}
+
+	msgDialog->insertPastedText(txt);
+	msgDialog->show();
+}
+
+UserNotify *GxsForumsDialog::createUserNotify(QObject *parent)
+{
+	return new GxsForumUserNotify(rsGxsForums,this, parent);
 }
 
 QString GxsForumsDialog::text(TextType type)
@@ -96,32 +173,34 @@ QString GxsForumsDialog::icon(IconType type)
 {
 	switch (type) {
 	case ICON_NAME:
-		return ":/icons/png/forums.png";
+		return ":/icons/png/forum.png";
 	case ICON_NEW:
 		return ":/icons/png/add.png";
 	case ICON_YOUR_GROUP:
-		return ":/images/folder16.png";
+		return "";
 	case ICON_SUBSCRIBED_GROUP:
-		return ":/images/folder_red.png";
+		return "";
 	case ICON_POPULAR_GROUP:
-		return ":/images/folder_green.png";
+		return "";
 	case ICON_OTHER_GROUP:
-		return ":/images/folder_yellow.png";
+		return "";
+	case ICON_SEARCH:
+		return ":/images/find.png";
 	case ICON_DEFAULT:
-		return ":/images/konversation.png";
+		return ":/icons/png/forums-default.png";
 	}
 
 	return "";
 }
 
-GxsGroupDialog *GxsForumsDialog::createNewGroupDialog(TokenQueue *tokenQueue)
+GxsGroupDialog *GxsForumsDialog::createNewGroupDialog()
 {
-	return new GxsForumGroupDialog(tokenQueue, this);
+	return new GxsForumGroupDialog(this);
 }
 
-GxsGroupDialog *GxsForumsDialog::createGroupDialog(TokenQueue *tokenQueue, RsTokenService *tokenService, GxsGroupDialog::Mode mode, RsGxsGroupId groupId)
+GxsGroupDialog *GxsForumsDialog::createGroupDialog(GxsGroupDialog::Mode mode, RsGxsGroupId groupId)
 {
-	return new GxsForumGroupDialog(tokenQueue, tokenService, mode, groupId, this);
+	return new GxsForumGroupDialog(mode, groupId, this);
 }
 
 int GxsForumsDialog::shareKeyType()
@@ -134,45 +213,23 @@ GxsMessageFrameWidget *GxsForumsDialog::createMessageFrameWidget(const RsGxsGrou
 	return new GxsForumThreadWidget(groupId);
 }
 
-void GxsForumsDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata *&userdata)
+void GxsForumsDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupData, GroupItemInfo &groupItemInfo)
 {
-	std::vector<RsGxsForumGroup> groups;
-	rsGxsForums->getGroupData(token, groups);
+	GxsGroupFrameDialog::groupInfoToGroupItemInfo(groupData, groupItemInfo);
 
-	/* Save groups to fill description */
-	GxsForumGroupInfoData *forumData = new GxsForumGroupInfoData;
-	userdata = forumData;
+	const RsGxsForumGroup *forumGroupData = dynamic_cast<const RsGxsForumGroup*>(groupData);
 
-	std::vector<RsGxsForumGroup>::iterator groupIt;
-	for (groupIt = groups.begin(); groupIt != groups.end(); ++groupIt) {
-		RsGxsForumGroup &group = *groupIt;
-		groupInfo.push_back(group.mMeta);
-
-		if (!group.mDescription.empty()) {
-			forumData->mDescription[group.mMeta.mGroupId] = QString::fromUtf8(group.mDescription.c_str());
-		}
-	}
-}
-
-void GxsForumsDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata)
-{
-	GxsGroupFrameDialog::groupInfoToGroupItemInfo(groupInfo, groupItemInfo, userdata);
-
-	const GxsForumGroupInfoData *forumData = dynamic_cast<const GxsForumGroupInfoData*>(userdata);
-	if (!forumData) {
-		std::cerr << "GxsForumsDialog::groupInfoToGroupItemInfo() Failed to cast data to GxsForumGroupInfoData";
-		std::cerr << std::endl;
+	if (!forumGroupData)
+    {
+		std::cerr << "GxsChannelDialog::groupInfoToGroupItemInfo() Failed to cast data to GxsChannelGroupInfoData"<< std::endl;
 		return;
 	}
 
-	QMap<RsGxsGroupId, QString>::const_iterator descriptionIt = forumData->mDescription.find(groupInfo.mGroupId);
-	if (descriptionIt != forumData->mDescription.end()) {
-		groupItemInfo.description = descriptionIt.value();
-	}
-	
-	//if (IS_GROUP_ADMIN(groupInfo.mSubscribeFlags)) 
-	//	groupItemInfo.icon = QIcon(":images/konv_message2.png");
-	if ((IS_GROUP_PGP_AUTHED(groupInfo.mSignFlags)) || (IS_GROUP_MESSAGE_TRACKING(groupInfo.mSignFlags)) )
-		groupItemInfo.icon = QIcon(":images/konv_message3.png");
+	groupItemInfo.description = QString::fromUtf8(forumGroupData->mDescription.c_str());
 
+	if(IS_GROUP_ADMIN(groupData->mMeta.mSubscribeFlags))
+        groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/forums.png");
+	else if ((IS_GROUP_PGP_AUTHED(groupData->mMeta.mSignFlags)) || (IS_GROUP_MESSAGE_TRACKING(groupData->mMeta.mSignFlags)) )
+        groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/forums-signed.png");
 }
+

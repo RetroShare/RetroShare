@@ -1,192 +1,96 @@
+/*******************************************************************************
+ * libretroshare/src/retroshare: rsphoto.h                                     *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2008-2020 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RSPHOTOV2_H
 #define RSPHOTOV2_H
-
-/*
- * libretroshare/src/retroshare: rsphoto.h
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2008-2012 by Robert Fernie, Christopher Evi-Parker
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
 
 #include <inttypes.h>
 #include <string>
 #include <list>
-#include "rsgxsservice.h"
+#include "retroshare/rsgxsservice.h"
+#include "retroshare/rsgxscommon.h"
+#include "retroshare/rsgxsifacehelper.h"
+
 
 /* The Main Interface Class - for information about your Peers */
 class RsPhoto;
 extern RsPhoto *rsPhoto;
 
-/******************* NEW STUFF FOR NEW CACHE SYSTEM *********/
-
-#define RSPHOTO_MODE_NEW	1
-#define RSPHOTO_MODE_OWN	2
-#define RSPHOTO_MODE_REMOTE	3
-
-class RsPhotoThumbnail
-{
-        public:
-                RsPhotoThumbnail()
-                :data(NULL), size(0), type("N/A") { return; }
-
-        bool deleteImage();
-        bool copyFrom(const RsPhotoThumbnail &nail);
-
-        // Holds Thumbnail image.
-        uint8_t *data;
-        uint32_t size;
-        std::string type;
-};
-
-/* If these flags are no set - the Photo inherits values from the Album
- */
-
-#define RSPHOTO_FLAGS_ATTRIB_TITLE		0x0001
-#define RSPHOTO_FLAGS_ATTRIB_CAPTION		0x0002
-#define RSPHOTO_FLAGS_ATTRIB_DESC		0x0004
-#define RSPHOTO_FLAGS_ATTRIB_PHOTOGRAPHER	0x0008
-#define RSPHOTO_FLAGS_ATTRIB_WHERE		0x0010
-#define RSPHOTO_FLAGS_ATTRIB_WHEN		0x0020
-#define RSPHOTO_FLAGS_ATTRIB_OTHER		0x0040
-#define RSPHOTO_FLAGS_ATTRIB_CATEGORY		0x0080
-#define RSPHOTO_FLAGS_ATTRIB_HASHTAGS		0x0100
-#define RSPHOTO_FLAGS_ATTRIB_ORDER		0x0200
-#define RSPHOTO_FLAGS_ATTRIB_THUMBNAIL		0x0400
-#define RSPHOTO_FLAGS_ATTRIB_MODE		0x0800
-#define RSPHOTO_FLAGS_ATTRIB_AUTHOR		0x1000 // PUSH UP ORDER
-#define RSPHOTO_FLAGS_ATTRIB_PHOTO		0x2000 // PUSH UP ORDER.
-
 class RsPhotoPhoto
 {
-        public:
-
-        RsMsgMetaData mMeta;
-
-        RsPhotoPhoto();
-
-        // THESE ARE IN THE META DATA.
-        //std::string mAlbumId;
-        //std::string mId;
-        //std::string mTitle; // only used by Album.
-        std::string mCaption;
-        std::string mDescription;
-        std::string mPhotographer;
-        std::string mWhere;
-        std::string mWhen;
-        std::string mOther;
-        std::string mCategory;
-
-        std::string mHashTags;
-
-        uint32_t mSetFlags;
-
-        int mOrder;
-
-        RsPhotoThumbnail mThumbnail;
-
-        int mMode;
-
-        // These are not saved.
-        std::string path; // if in Mode NEW.
-        uint32_t mModFlags;
-};
-
-class RsPhotoAlbumShare
-{
-        public:
-
-        uint32_t mShareType;
-        std::string mShareGroupId;
-        std::string mPublishKey;
-        uint32_t mCommentMode;
-        uint32_t mResizeMode;
-};
-
-class RsPhotoAlbum
-{
-        public:
-        RsPhotoAlbum();
-
-        RsGroupMetaData mMeta;
-
-        // THESE ARE IN THE META DATA.
-        //std::string mAlbumId;
-        //std::string mTitle; // only used by Album.
-
-        std::string mCaption;
-        std::string mDescription;
-        std::string mPhotographer;
-        std::string mWhere;
-        std::string mWhen;
-        std::string mOther;
-        std::string mCategory;
-
-        std::string mHashTags;
-
-        RsPhotoThumbnail mThumbnail;
-
-        int mMode;
-
-        std::string mPhotoPath;
-        RsPhotoAlbumShare mShareOptions;
-
-        // These aren't saved.
-        uint32_t mSetFlags;
-        uint32_t mModFlags;
-};
-
-class RsGxsPhotoCommentItem;
-class RsPhotoComment
-{
 public:
-    RsPhotoComment();
 
-    RsPhotoComment(const RsGxsPhotoCommentItem& comment);
+	RsMsgMetaData mMeta;
 
-    RsPhotoComment& operator=(const RsGxsPhotoCommentItem& comment);
+	RsPhotoPhoto();
 
-    RsMsgMetaData mMeta;
+	// V2 PhotoMsg - keep it simple.
+	// mMeta.mTitle used for Photo Caption.
+	// mDescription optional field for addtional notes.
+	// mLowResImage - < 50k jpg of image.
+	// mPhotoFile   - transfer details for original photo.
+	std::string mDescription;
+	uint32_t    mOrder;
+	RsGxsImage mLowResImage;
+	RsGxsFile  mPhotoFile;
 
-    std::string mComment;
-    uint32_t mCommentFlag;
+	// These are not saved.
+	std::string mPath; // if New photo
+};
+
+#define RSPHOTO_SHAREMODE_LOWRESONLY    (1)
+#define RSPHOTO_SHAREMODE_ORIGINAL      (2)
+#define RSPHOTO_SHAREMODE_DUP_ORIGINAL  (3)
+#define RSPHOTO_SHAREMODE_DUP_200K      (4)
+#define RSPHOTO_SHAREMODE_DUP_1M        (5)
+
+struct RsPhotoAlbum: RsGxsGenericGroupData
+{
+	RsPhotoAlbum();
+
+	// V2 Album - keep it simple.
+	// mMeta.mTitle.
+	uint32_t mShareMode;
+
+	std::string mCaption;
+	std::string mDescription;
+	std::string mPhotographer;
+	std::string mWhere;
+	std::string mWhen;
+
+	RsGxsImage mThumbnail;
+
+	// Below is not saved.
+	bool mAutoDownload;
 };
 
 std::ostream &operator<<(std::ostream &out, const RsPhotoPhoto &photo);
 std::ostream &operator<<(std::ostream &out, const RsPhotoAlbum &album);
 
 typedef std::map<RsGxsGroupId, std::vector<RsPhotoPhoto> > PhotoResult;
-typedef std::map<RsGxsGroupId, std::vector<RsPhotoComment> > PhotoCommentResult;
-typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsPhotoComment> > PhotoRelatedCommentResult;
 
-class RsPhoto
+class RsPhoto: public RsGxsIfaceHelper, public RsGxsCommentService
 {
-
 public:
-
-    static const uint32_t FLAG_MSG_TYPE_PHOTO_POST;
-    static const uint32_t FLAG_MSG_TYPE_PHOTO_COMMENT;
-    static const uint32_t FLAG_MSG_TYPE_MASK;
-
-
-    RsPhoto()  { return; }
+    explicit RsPhoto(RsGxsIface &gxs) : RsGxsIfaceHelper(gxs)  { return; }
 
     virtual ~RsPhoto() { return; }
 
@@ -253,7 +157,7 @@ public:
     virtual bool getMsgSummary(const uint32_t &token,
                                                        MsgMetaResult &msgInfo) = 0;
 
-                    /* Specific Service Data */
+    /* Specific Service Data */
 
     /*!
      * @param token token to be redeemed for album request
@@ -270,22 +174,6 @@ public:
     virtual bool getPhoto(const uint32_t &token,
                                               PhotoResult &photo) = 0;
 
-    /* details are updated in album - to choose Album ID, and storage path */
-
-    /*!
-     * @param token token to be redeemed for photo request
-     * @param photo the photo returned for given request token
-     * @return false if request token is invalid, check token status for error report
-     */
-    virtual bool getPhotoComment(const uint32_t &token,
-                                              PhotoCommentResult& comments) = 0;
-    /*!
-     * @param token token to be redeemed for photo request
-     * @param photo the photo returned for given request token
-     * @return false if request token is invalid, check token status for error report
-     */
-    virtual bool getPhotoRelatedComment(const uint32_t &token, PhotoRelatedCommentResult &comments) = 0;
-
     /*!
      * submits album, which returns a token that needs
      * to be acknowledge to get album grp id
@@ -301,16 +189,6 @@ public:
      * @param photo photo to be submitted
      */
     virtual bool submitPhoto(uint32_t& token, RsPhotoPhoto &photo) = 0;
-
-    /*!
-     * submits photo comment, which returns a token that needs
-     * to be acknowledged to get photo msg-grp id pair
-     * The mParentId needs to be set to an existing msg for which
-     * commenting is enabled
-     * @param token token to redeem for acknowledgement
-     * @param comment comment to be submitted
-     */
-    virtual bool submitComment(uint32_t& token, RsPhotoComment &photo) = 0;
 
     /*!
      * subscribes to group, and returns token which can be used
@@ -340,7 +218,29 @@ public:
      */
     virtual bool acknowledgeGrp(const uint32_t& token, RsGxsGroupId& grpId) = 0;
 
+    // Blocking versions.
+    /*!
+     * request to create a new album. Blocks until process completes.
+     * @param album album to be submitted
+     * @return true if created false otherwise
+     */
+    virtual bool createAlbum(RsPhotoAlbum &album) = 0;
 
+    /*!
+     * request to update an existing album. Blocks until process completes.
+     * @param album album to be submitted
+     * @return true if created false otherwise
+     */
+    virtual bool updateAlbum(const RsPhotoAlbum &album) = 0;
+
+    /*!
+     * retrieve albums based in groupIds.
+     * @param groupIds the ids to fetch.
+     * @param albums vector to be filled by request.
+     * @return true is successful, false otherwise.
+     */
+    virtual bool getAlbums(const std::list<RsGxsGroupId> &groupIds,
+			std::vector<RsPhotoAlbum> &albums) = 0;
 };
 
 

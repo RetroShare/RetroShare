@@ -1,24 +1,24 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006,2007 RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/msgs/MessageComposer.cpp                             *
+ *                                                                             *
+ * Copyright (C) 2007 by Retroshare Team     <retroshare.project@gmail.com>    *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
+#include "gui/common/FilesDefs.h"
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QClipboard>
@@ -75,8 +75,6 @@
 
 #define ROLE_CONTACT_ID       Qt::UserRole
 #define ROLE_CONTACT_SORT     Qt::UserRole + 1
-
-#define COLOR_CONNECT Qt::blue
 
 #define COLUMN_RECIPIENT_TYPE  0
 #define COLUMN_RECIPIENT_ICON  1
@@ -136,6 +134,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     m_completer = NULL;
     
     ui.distantFrame->hide();
+    ui.sizeLimitFrame->hide();
     ui.respond_to_CB->hide();
     ui.fromLabel->hide();
 
@@ -220,24 +219,22 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     /* initialize friends list */
     ui.friendSelectionWidget->setHeaderText(tr("Send To:"));
     ui.friendSelectionWidget->setModus(FriendSelectionWidget::MODUS_MULTI);
-    ui.friendSelectionWidget->setShowType(//FriendSelectionWidget::SHOW_GROUP	// removed this because it's too confusing.
-                                            FriendSelectionWidget::SHOW_SSL
-                                          | FriendSelectionWidget::SHOW_GXS);
+	ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GXS);
     ui.friendSelectionWidget->start();
 
     QActionGroup *grp = new QActionGroup(this);
     connect(grp, SIGNAL(triggered(QAction *)), this, SLOT(textAlign(QAction *)));
 
-    actionAlignLeft = new QAction(QIcon(":/images/textedit/textleft.png"), tr("&Left"), grp);
+    actionAlignLeft = new QAction(QIcon(""), tr("&Left"), grp);
     actionAlignLeft->setShortcut(Qt::CTRL + Qt::Key_L);
     actionAlignLeft->setCheckable(true);
-    actionAlignCenter = new QAction(QIcon(":/images/textedit/textcenter.png"), tr("C&enter"), grp);
+    actionAlignCenter = new QAction(QIcon(""), tr("C&enter"), grp);
     actionAlignCenter->setShortcut(Qt::CTRL + Qt::Key_E);
     actionAlignCenter->setCheckable(true);
-    actionAlignRight = new QAction(QIcon(":/images/textedit/textright.png"), tr("&Right"), grp);
+    actionAlignRight = new QAction(QIcon(""), tr("&Right"), grp);
     actionAlignRight->setShortcut(Qt::CTRL + Qt::Key_R);
     actionAlignRight->setCheckable(true);
-    actionAlignJustify = new QAction(QIcon(":/images/textedit/textjustify.png"), tr("&Justify"), grp);
+    actionAlignJustify = new QAction(QIcon(""), tr("&Justify"), grp);
     actionAlignJustify->setShortcut(Qt::CTRL + Qt::Key_J);
     actionAlignJustify->setCheckable(true);
     
@@ -266,11 +263,12 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     ui.respond_to_CB->setFlags(IDCHOOSER_ID_REQUIRED) ;
     
     /* Add filter types */
-    ui.filterComboBox->addItem(tr("All addresses (mixed)"));
-    ui.filterComboBox->addItem(tr("Friend Nodes"));
     ui.filterComboBox->addItem(tr("All people"));
     ui.filterComboBox->addItem(tr("My contacts"));
-    ui.filterComboBox->setCurrentIndex(3);
+	ui.filterComboBox->setCurrentIndex(0);
+
+    if(rsIdentity->nbRegularContacts() > 0)
+    	ui.filterComboBox->setCurrentIndex(3);
 
     connect(ui.comboStyle, SIGNAL(activated(int)),this, SLOT(changeFormatType(int)));
     connect(ui.comboFont,  SIGNAL(activated(const QString &)), this, SLOT(textFamily(const QString &)));
@@ -283,8 +281,6 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
 
     connect(ui.comboSize, SIGNAL(activated(const QString &)),this, SLOT(textSize(const QString &)));
     ui.comboSize->setCurrentIndex(ui.comboSize->findText(QString::number(QApplication::font().pointSize())));
-
-    ui.textalignmentbtn->setIcon(QIcon(QString(":/images/textedit/textcenter.png")));
 
     QMenu * alignmentmenu = new QMenu();
     alignmentmenu->addAction(actionAlignLeft);
@@ -400,6 +396,11 @@ void MessageComposer::updateCells(int,int)
         ui.distantFrame->hide() ;
         ui.fromLabel->hide();
     }
+
+    if(rowCount > 20)
+        ui.sizeLimitFrame->show();
+    else
+        ui.sizeLimitFrame->hide();
 }
 
 void MessageComposer::processSettings(bool bLoad)
@@ -588,16 +589,18 @@ void MessageComposer::recommendFriend(const std::set <RsPeerId> &sslIds, const R
     /* window will destroy itself! */
 }
 
-void MessageComposer::sendConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId &sslId, const QString &/*sslName*/)
+void MessageComposer::addConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId &sslId, const QString &/*sslName*/)
 {
-    if (gpgId.isNull()) {
+    if (gpgId.isNull())
         return;
-    }
 
-    RetroShareLink link = RetroShareLink::createUnknwonSslCertificate(sslId, gpgId);
-    if (link.valid() == false) {
+    // PGPId+SslId are always here.  But if the peer is not a friend the SSL id cannot be used.
+    // (todo) If the PGP id doesn't get us a PGP key from the keyring, we need to create a short invite
+
+	RetroShareLink link = RetroShareLink::createUnknownSslCertificate(sslId);
+
+    if (!link.valid())
         return;
-    }
 
     QString title = QString("%1 %2").arg(link.name(), tr("wants to be friends with you on RetroShare"));
 
@@ -700,7 +703,7 @@ void MessageComposer::contextMenuFileList(QPoint)
 {
     QMenu contextMnu(this);
 
-    QAction *action = contextMnu.addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteRecommended()));
+    QAction *action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteRecommended()));
     action->setDisabled(RSLinkClipboard::empty(RetroShareLink::TYPE_FILE));
 
     contextMnu.exec(QCursor::pos());
@@ -809,7 +812,7 @@ void MessageComposer::peerStatusChanged(const QString& peer_id, int status)
             {
                 QTableWidgetItem *item = ui.recipientWidget->item(row, COLUMN_RECIPIENT_ICON);
                 if (item)
-                    item->setIcon(QIcon(StatusDefs::imageUser(status)));
+                    item->setIcon(FilesDefs::getIconFromQtResourcePath(StatusDefs::imageUser(status)));
             }
         }
     }
@@ -980,7 +983,8 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
 
     msgComposer->addEmptyRecipient();
 
-    if (msgId.empty() == false) {
+    if (!msgId.empty())
+    {
         // fill existing message
         MessageInfo msgInfo;
         if (!rsMail->getMessage(msgId, msgInfo)) {
@@ -1174,6 +1178,17 @@ MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
     if(!msgInfo.rspeerid_srcId.isNull()) msgComposer->addRecipient(MessageComposer::TO, msgInfo.rspeerid_srcId);
     if(!msgInfo.rsgxsid_srcId.isNull()) msgComposer->addRecipient(MessageComposer::TO, msgInfo.rsgxsid_srcId);
 
+    // make sure the current ID is among the ones the msg was actually sent to.
+    for(auto it(msgInfo.rsgxsid_msgto.begin());it!=msgInfo.rsgxsid_msgto.end();++it)
+        if(rsIdentity->isOwnId(*it))
+        {
+            msgComposer->ui.respond_to_CB->setDefaultId(*it) ;
+            break ;
+        }
+    // Note: another solution is to do
+    //		msgComposer->ui.respond_to_CB->setIdConstraintSet(msgInfo.rsgxsid_msgto);	// always choose one of the destinations to originate the response!
+    // but that prevent any use of IDs tht are not in the destination set to be chosen to author the msg.
+
     if (all)
     {
         RsPeerId ownId = rsPeers->getOwnId();
@@ -1197,6 +1212,12 @@ MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
 
     // needed to send system flags with reply
     msgComposer->msgFlags = (msgInfo.msgflags & RS_MSG_SYSTEM);
+
+	MsgTagInfo tagInfo;
+	rsMail->getMessageTag(msgId, tagInfo);
+
+	msgComposer->m_tagIds = tagInfo.tagIds;
+	msgComposer->showTagLabels();
 
     msgComposer->calculateTitle();
 
@@ -1412,7 +1433,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
             break ;
 
         default:
-            std::cerr << __PRETTY_FUNCTION__ << ": Unhandled desitnation type " << dtype << std::endl;
+            std::cerr << __PRETTY_FUNCTION__ << ": Unhandled destination type " << dtype << std::endl;
             break ;
         }
     }
@@ -1592,7 +1613,7 @@ void MessageComposer::setRecipientToRow(int row, enumType type, destinationType 
         switch(dest_type)
         {
         case PEER_TYPE_GROUP: {
-            icon = QIcon(IMAGE_GROUP16);
+            icon = FilesDefs::getIconFromQtResourcePath(IMAGE_GROUP16);
 
             RsGroupInfo groupInfo;
             if (rsPeers->getGroupInfo(RsNodeGroupId(id), groupInfo)) {
@@ -1638,7 +1659,7 @@ void MessageComposer::setRecipientToRow(int row, enumType type, destinationType 
             // No check of return value. Non existing status info is handled as offline.
             rsStatus->getStatus(RsPeerId(id), peerStatusInfo);
 
-            icon = QIcon(StatusDefs::imageUser(peerStatusInfo.status));
+            icon = FilesDefs::getIconFromQtResourcePath(StatusDefs::imageUser(peerStatusInfo.status));
         }
         break ;
         default:
@@ -1882,19 +1903,19 @@ void MessageComposer::setupFileActions()
 
     QAction *a;
 
-    a = new QAction(QIcon(":/images/textedit/filenew.png"), tr("&New"), this);
+    a = new QAction(QIcon(""), tr("&New"), this);
     a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), this, SLOT(fileNew()));
     menu->addAction(a);
 
-    a = new QAction(QIcon(":/images/textedit/fileopen.png"), tr("&Open..."), this);
+    a = new QAction(QIcon(""), tr("&Open..."), this);
     a->setShortcut(QKeySequence::Open);
     connect(a, SIGNAL(triggered()), this, SLOT(fileOpen()));
     menu->addAction(a);
 
     menu->addSeparator();
 
-    actionSave = a = new QAction(QIcon(":/images/textedit/filesave.png"), tr("&Save"), this);
+    actionSave = a = new QAction(QIcon(""), tr("&Save"), this);
     a->setShortcut(QKeySequence::Save);
     connect(a, SIGNAL(triggered()), this, SLOT(saveasDraft()));
     a->setEnabled(false);
@@ -1909,16 +1930,16 @@ void MessageComposer::setupFileActions()
     menu->addAction(a);
     menu->addSeparator();
 
-    a = new QAction(QIcon(":/images/textedit/fileprint.png"), tr("&Print..."), this);
+    a = new QAction(QIcon(""), tr("&Print..."), this);
     a->setShortcut(QKeySequence::Print);
     connect(a, SIGNAL(triggered()), this, SLOT(filePrint()));
     menu->addAction(a);
 
-    /*a = new QAction(QIcon(":/images/textedit/fileprint.png"), tr("Print Preview..."), this);
+    /*a = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/textedit/fileprint.png"), tr("Print Preview..."), this);
     connect(a, SIGNAL(triggered()), this, SLOT(filePrintPreview()));
     menu->addAction(a);*/
 
-    a = new QAction(QIcon(":/images/textedit/exportpdf.png"), tr("&Export PDF..."), this);
+    a = new QAction(QIcon(""), tr("&Export PDF..."), this);
     a->setShortcut(Qt::CTRL + Qt::Key_D);
     connect(a, SIGNAL(triggered()), this, SLOT(filePrintPdf()));
     menu->addAction(a);
@@ -1937,20 +1958,20 @@ void MessageComposer::setupEditActions()
     menuBar()->addMenu(menu);
 
     QAction *a;
-    a = actionUndo = new QAction(QIcon(":/images/textedit/editundo.png"), tr("&Undo"), this);
+    a = actionUndo = new QAction(QIcon(""), tr("&Undo"), this);
     a->setShortcut(QKeySequence::Undo);
     menu->addAction(a);
-    a = actionRedo = new QAction(QIcon(":/images/textedit/editredo.png"), tr("&Redo"), this);
+    a = actionRedo = new QAction(QIcon(""), tr("&Redo"), this);
     a->setShortcut(QKeySequence::Redo);
     menu->addAction(a);
     menu->addSeparator();
-    a = actionCut = new QAction(QIcon(":/images/textedit/editcut.png"), tr("Cu&t"), this);
+    a = actionCut = new QAction(QIcon(""), tr("Cu&t"), this);
     a->setShortcut(QKeySequence::Cut);
     menu->addAction(a);
-    a = actionCopy = new QAction(QIcon(":/images/textedit/editcopy.png"), tr("&Copy"), this);
+    a = actionCopy = new QAction(QIcon(""), tr("&Copy"), this);
     a->setShortcut(QKeySequence::Copy);
     menu->addAction(a);
-    a = actionPaste = new QAction(QIcon(":/images/textedit/editpaste.png"), tr("&Paste"), this);
+    a = actionPaste = new QAction(QIcon(""), tr("&Paste"), this);
     a->setShortcut(QKeySequence::Paste);
     menu->addAction(a);
     actionPaste->setEnabled(!QApplication::clipboard()->text().isEmpty());
@@ -2007,7 +2028,7 @@ void MessageComposer::setupContactActions()
     connect(mActionAddBCC, SIGNAL(triggered(bool)), this, SLOT(addBcc()));
     mActionAddRecommend = new QAction(tr("Add as Recommend"), this);
     connect(mActionAddRecommend, SIGNAL(triggered(bool)), this, SLOT(addRecommend()));
-    mActionContactDetails = new QAction(QIcon(IMAGE_FRIENDINFO), tr("Details"), this);
+    mActionContactDetails = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_FRIENDINFO), tr("Details"), this);
     connect(mActionContactDetails, SIGNAL(triggered(bool)), this, SLOT(contactDetails()));
 
     ui.friendSelectionWidget->addContextMenuAction(mActionAddTo);
@@ -2421,9 +2442,9 @@ void MessageComposer::on_contactsdockWidget_visibilityChanged(bool visible)
 void MessageComposer::updatecontactsviewicons()
 {
     if(!ui.contactsdockWidget->isVisible()){
-      ui.actionContactsView->setIcon(QIcon(":/images/contactsclosed24.png"));
+      ui.actionContactsView->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/mail/contacts.png"));
     }else{
-      ui.actionContactsView->setIcon(QIcon(":/images/contacts24.png"));
+      ui.actionContactsView->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/mail/contacts.png"));
     } 
 }
 
@@ -2580,25 +2601,14 @@ void MessageComposer::filterComboBoxChanged(int i)
 {
 	switch(i)
 	{
-		case 0:  ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP
-                                          | FriendSelectionWidget::SHOW_SSL
-                                          | FriendSelectionWidget::SHOW_GXS) ;
-				  break ;
-				  
-		case 1: ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP
-                                          | FriendSelectionWidget::SHOW_SSL) ;
-				  break ;
-
-		case 2: ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GXS) ;
-				  break ;
-
-					  
-		case 3: ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_CONTACTS) ;
-				  break ;		  
-				  				  
-		default: ;
+	default:
+	case 0:
+		ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GXS);
+		break;
+	case 1:
+		ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_CONTACTS);
+		break;
 	}
-
 }
 
 void MessageComposer::friendSelectionChanged()
@@ -2766,7 +2776,10 @@ void MessageComposer::showTagLabels()
 		ui.tagLayout->addStretch();
 	}
 }
-
+void MessageComposer::on_closeSizeLimitFrameButton_clicked()
+{
+    ui.sizeLimitFrame->setVisible(false);
+}
 void MessageComposer::on_closeInfoFrameButton_clicked()
 {
 	ui.distantFrame->setVisible(false);
@@ -2777,12 +2790,12 @@ QString MessageComposer::inviteMessage()
     return tr("Hi,<br>I want to be friends with you on RetroShare.<br>");
 }
 
-void MessageComposer::sendInvite(const RsGxsId &to, const QString &/*msg*/, bool autoSend)
+void MessageComposer::sendInvite(const RsGxsId &to, bool autoSend)
 {
     /* create a message */
     MessageComposer *composer = MessageComposer::newMsg();
 
-    composer->setTitleText(tr("You have a friend invite"));
+    composer->setTitleText(tr("Invite message"));
     composer->msgFlags |= RS_MSG_USER_REQUEST;
 
 
@@ -2805,8 +2818,8 @@ void MessageComposer::sendInvite(const RsGxsId &to, const QString &/*msg*/, bool
             return;
         }
     }
-
-    //composer->show();
+	else
+		composer->show();
 
     /* window will destroy itself! */
 }

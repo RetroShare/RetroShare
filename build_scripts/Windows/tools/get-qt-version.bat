@@ -16,19 +16,10 @@ call "%~dp0find-in-path.bat" QMakePath qmake.exe
 if "%QMakePath%"=="" (
 	echo.
 	echo Cannot find qmake.exe in PATH.
-	goto exit
+	exit /B 1
 )
 
-qmake.exe -version >"%~dp0qtversion.tmp"
-for /F "tokens=1,2,3,4" %%A in (%~sdp0qtversion.tmp) do (
-	if "%%A"=="Using" (
-		set QtVersion=%%D
-		goto exit
-	)
-)
-
-:exit
-if exist "%~dp0qtversion.tmp" del /Q "%~dp0qtversion.tmp"
+for /F "tokens=1,2,3,4 delims= " %%A in ('qmake.exe -version') do if "%%A"=="Using" set QtVersion=%%D
 
 endlocal & set %Var%=%QtVersion%
 exit /B 0

@@ -1,17 +1,39 @@
+/*******************************************************************************
+ * libretroshare/src/services/autoproxy: p3i2pbob.h                            *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2016 by Sehraf                                                    *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef P3I2PBOB_H
 #define P3I2PBOB_H
 
 #include <map>
 #include <queue>
 #include <sys/types.h>
-#include <time.h>
+#include "util/rstime.h"
 #ifndef WINDOWS_SYS
 	#include <sys/socket.h>
 #endif
 
+#include "pqi/p3cfgmgr.h"
 #include "services/autoproxy/rsautoproxymonitor.h"
 #include "util/rsthreads.h"
-#include "pqi/p3cfgmgr.h"
+#include "util/i2pcommon.h"
 
 /*
  * This class implements I2P BOB (BASIC OPEN BRIDGE) communication to allow RS
@@ -28,7 +50,7 @@
  *
  * Note 3:
  *	BOB needs a unique name as an ID for each tunnel.
- *	We use 'RetroShare-' + 8 base32 characters.
+ *	We use 'RetroShare-' + 8 random base32 characters.
  *
  * Design:
  *	The service uses three state machines to manage its task:
@@ -51,7 +73,7 @@
  *		mCommands[bobState::quit]     = {quit,    bobState::cleared};
  *
  * stateMachineController:
- *	This state machone manages the high level tasks.
+ *	This state machine manages the high level tasks.
  *	It is controlled by mState and mTask.
  *
  *		mTast:
@@ -141,19 +163,7 @@ struct bobStateInfo {
 	bobState    nextState;
 };
 
-struct bobSettings {
-	bool enableBob;		///< This field is used by the pqi subsystem to determinine whether SOCKS proxy or BOB is used for I2P connections
-	std::string keys;	///< (optional) server keys
-	std::string addr;	///< (optional) hidden service addr. in base32 form
-
-	int8_t inLength;
-	int8_t inQuantity;
-	int8_t inVariance;
-
-	int8_t outLength;
-	int8_t outQuantity;
-	int8_t outVariance;
-};
+struct bobSettings : i2p::settings {};
 
 ///
 /// \brief The bobStates struct
@@ -173,7 +183,7 @@ class p3PeerMgr;
 class p3I2pBob : public RsTickingThread, public p3Config, public autoProxyService
 {
 public:
-	p3I2pBob(p3PeerMgr *peerMgr);
+	explicit p3I2pBob(p3PeerMgr *peerMgr);
 
 	// autoProxyService interface
 public:
@@ -182,11 +192,7 @@ public:
 	void processTaskAsync(taskTicket *ticket);
 	void processTaskSync(taskTicket *ticket);
 
-	static std::string keyToBase32Addr(const std::string &key);
-
-	// RsTickingThread interface
-public:
-	void data_tick();
+	void threadTick() override; /// @see RsTickingThread
 
 private:
 	int stateMachineBOB();
@@ -234,7 +240,7 @@ private:
 	p3PeerMgr *mPeerMgr;
 	bool mConfigLoaded;
 	int mSocket;
-	time_t mLastProxyCheck;
+	rstime_t mLastProxyCheck;
 	sockaddr_storage mI2PProxyAddr;
 	std::map<bobState, bobStateInfo> mCommands;
 	std::string mErrorMsg;

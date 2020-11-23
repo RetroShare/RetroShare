@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare GUI is distributed under the following license:
- *
- *  Copyright (C) 2012 by Thunder
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * plugins/FeedReader/services/rsFeedReaderItems.cc                            *
+ *                                                                             *
+ * Copyright (C) 2012 by Thunder <retroshare.project@gmail.com>                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvbase.h"
@@ -34,8 +33,8 @@ RsFeedReaderFeed::RsFeedReaderFeed()
 
 void RsFeedReaderFeed::clear()
 {
-	feedId.clear();
-	parentId.clear();
+	feedId = 0;
+	parentId = 0;
 	name.clear();
 	url.clear();
 	user.clear();
@@ -61,17 +60,12 @@ void RsFeedReaderFeed::clear()
 	content.clear();
 }
 
-std::ostream &RsFeedReaderFeed::print(std::ostream &out, uint16_t /*indent*/)
-{
-	return out;
-}
-
 uint32_t RsFeedReaderSerialiser::sizeFeed(RsFeedReaderFeed *item)
 {
 	uint32_t s = 8; /* header */
 	s += 2; /* version */
-	s += GetTlvStringSize(item->feedId);
-	s += GetTlvStringSize(item->parentId);
+	s += sizeof(uint32_t);
+	s += sizeof(uint32_t);
 	s += GetTlvStringSize(item->url);
 	s += GetTlvStringSize(item->name);
 	s += GetTlvStringSize(item->description);
@@ -114,9 +108,9 @@ bool RsFeedReaderSerialiser::serialiseFeed(RsFeedReaderFeed *item, void *data, u
 	offset += 8;
 
 	/* add values */
-	ok &= setRawUInt16(data, tlvsize, &offset, 1); /* version */
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GENID, item->feedId);
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, item->parentId);
+	ok &= setRawUInt16(data, tlvsize, &offset, 2); /* version */
+	ok &= setRawUInt32(data, tlvsize, &offset, item->feedId);
+	ok &= setRawUInt32(data, tlvsize, &offset, item->parentId);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_LINK, item->url);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, item->name);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_COMMENT, item->description);
@@ -179,8 +173,28 @@ RsFeedReaderFeed *RsFeedReaderSerialiser::deserialiseFeed(void *data, uint32_t *
 	/* get values */
 	uint16_t version = 0;
 	ok &= getRawUInt16(data, rssize, &offset, &version);
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_GENID, item->feedId);
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VALUE, item->parentId);
+	if (version >= 2) {
+		ok &= getRawUInt32(data, rssize, &offset, &item->feedId);
+		ok &= getRawUInt32(data, rssize, &offset, &item->parentId);
+	} else {
+		std::string feedId;
+		ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_GENID, feedId);
+		std::string parentId;
+		ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VALUE, parentId);
+
+		if (ok) {
+			if (sscanf(feedId.c_str(), "%u", &item->feedId) != 1) {
+				ok = false;
+			}
+			if (!parentId.empty()) {
+				if (sscanf(parentId.c_str(), "%u", &item->parentId) != 1) {
+					ok = false;
+				}
+			} else {
+				item->parentId = 0;
+			}
+		}
+	}
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_LINK, item->url);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, item->name);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_COMMENT, item->description);
@@ -246,7 +260,7 @@ RsFeedReaderMsg::RsFeedReaderMsg() : RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_T
 void RsFeedReaderMsg::clear()
 {
 	msgId.clear();
-	feedId.clear();
+	feedId = 0;
 	title.clear();
 	link.clear();
 	author.clear();
@@ -266,7 +280,7 @@ uint32_t RsFeedReaderSerialiser::sizeMsg(RsFeedReaderMsg *item)
 	uint32_t s = 8; /* header */
 	s += 2; /* version */
 	s += GetTlvStringSize(item->msgId);
-	s += GetTlvStringSize(item->feedId);
+	s += sizeof(uint32_t);
 	s += GetTlvStringSize(item->title);
 	s += GetTlvStringSize(item->link);
 	s += GetTlvStringSize(item->author);
@@ -297,9 +311,9 @@ bool RsFeedReaderSerialiser::serialiseMsg(RsFeedReaderMsg *item, void *data, uin
 	offset += 8;
 
 	/* add values */
-	ok &= setRawUInt16(data, tlvsize, &offset, 1); /* version */
+	ok &= setRawUInt16(data, tlvsize, &offset, 2); /* version */
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GENID, item->msgId);
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, item->feedId);
+	ok &= setRawUInt32(data, tlvsize, &offset, item->feedId);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, item->title);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_LINK, item->link);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, item->author);
@@ -351,7 +365,16 @@ RsFeedReaderMsg *RsFeedReaderSerialiser::deserialiseMsg(void *data, uint32_t *pk
 	uint16_t version = 0;
 	ok &= getRawUInt16(data, rssize, &offset, &version);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_GENID, item->msgId);
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VALUE, item->feedId);
+	if (version >= 2) {
+		ok &= getRawUInt32(data, rssize, &offset, &item->feedId);
+	} else {
+		std::string feedId;
+		ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VALUE, feedId);
+
+		if (sscanf(feedId.c_str(), "%u", &item->feedId) != 1) {
+			ok = false;
+		}
+	}
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, item->title);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_LINK, item->link);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VALUE, item->author);

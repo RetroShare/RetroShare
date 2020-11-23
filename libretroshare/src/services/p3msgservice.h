@@ -1,29 +1,24 @@
-/*
- * libretroshare/src/services msgservice.h
- *
- * Services for RetroShare.
- *
- * Copyright 2004-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-
+/*******************************************************************************
+ * libretroshare/src/services: p3msgservice.h                                  *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2008 Robert Fernie <retroshare@lunamutt.com>                 *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef MESSAGE_SERVICE_HEADER
 #define MESSAGE_SERVICE_HEADER
 
@@ -42,7 +37,7 @@
 #include "services/p3service.h"
 #include "rsitems/rsmsgitems.h"
 #include "util/rsthreads.h"
-
+#include "util/rsdebug.h"
 #include "retroshare/rsgxsifacetypes.h"
 
 #include "grouter/p3grouter.h"
@@ -64,10 +59,23 @@ public:
 
 	virtual RsServiceInfo getServiceInfo();
 
+	/// @see RsMsgs::sendMail
+	uint32_t sendMail(const RsGxsId from,
+	        const std::string& subject,
+	        const std::string& body,
+	        const std::set<RsGxsId>& to = std::set<RsGxsId>(),
+	        const std::set<RsGxsId>& cc = std::set<RsGxsId>(),
+	        const std::set<RsGxsId>& bcc = std::set<RsGxsId>(),
+	        const std::vector<FileInfo>& attachments = std::vector<FileInfo>(),
+	        std::set<RsMailIdRecipientIdPair>& trackingIds =
+	            RS_DEFAULT_STORAGE_PARAM(std::set<RsMailIdRecipientIdPair>),
+	        std::string& errorMsg =
+	            RS_DEFAULT_STORAGE_PARAM(std::string) );
+
     /* External Interface */
     bool 	getMessageSummaries(std::list<Rs::Msgs::MsgInfoSummary> &msgList);
     bool 	getMessage(const std::string &mid, Rs::Msgs::MessageInfo &msg);
-    void    getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox);
+	void	getMessageCount(uint32_t &nInbox, uint32_t &nInboxNew, uint32_t &nOutbox, uint32_t &nDraftbox, uint32_t &nSentbox, uint32_t &nTrashbox);
 
     bool decryptMessage(const std::string& mid) ;
     bool    removeMsgId(const std::string &mid); 
@@ -77,16 +85,17 @@ public:
     // msgParentId == 0 --> remove
     bool    setMsgParentId(uint32_t msgId, uint32_t msgParentId);
 
+	RS_DEPRECATED_FOR(sendMail)
     bool    MessageSend(Rs::Msgs::MessageInfo &info);
     bool    SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag);
     bool    MessageToDraft(Rs::Msgs::MessageInfo &info, const std::string &msgParentId);
     bool    MessageToTrash(const std::string &mid, bool bTrash);
 
+    bool 	getMessageTag(const std::string &msgId, Rs::Msgs::MsgTagInfo& info);
     bool 	getMessageTagTypes(Rs::Msgs::MsgTagType& tags);
     bool  	setMessageTagType(uint32_t tagId, std::string& text, uint32_t rgb_color);
     bool    removeMessageTagType(uint32_t tagId);
 
-    bool 	getMessageTag(const std::string &msgId, Rs::Msgs::MsgTagInfo& info);
     /* set == false && tagId == 0 --> remove all */
     bool 	setMessageTag(const std::string &msgId, uint32_t tagId, bool set);
 
@@ -99,7 +108,6 @@ public:
     //std::list<RsMsgItem *> &getMsgOutList();
 
     int	tick();
-    int	status();
 
     /*** Overloaded from p3Config ****/
     virtual RsSerialiser *setupSerialiser();
@@ -121,11 +129,11 @@ public:
 
     struct DistantMessengingInvite
     {
-	    time_t time_of_validity ;
+	    rstime_t time_of_validity ;
     };
     struct DistantMessengingContact
     {
-	    time_t last_hit_time ;
+	    rstime_t last_hit_time ;
 	    RsPeerId virtual_peer_id ;
 	    uint32_t status ;
 	    bool pending_messages ;
@@ -147,6 +155,7 @@ public:
 
 private:
 	void sendDistantMsgItem(RsMsgItem *msgitem);
+    bool locked_getMessageTag(const std::string &msgId, Rs::Msgs::MsgTagInfo& info);
 
 	/** This contains the ongoing tunnel handling contacts.
 	 * The map is indexed by the hash */
@@ -231,6 +240,8 @@ private:
     bool mShouldEnableDistantMessaging ;
 
 	p3GxsTrans& mGxsTransServ;
+
+	RS_SET_CONTEXT_DEBUG_LEVEL(3)
 };
 
 #endif // MESSAGE_SERVICE_HEADER

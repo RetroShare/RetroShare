@@ -1,34 +1,32 @@
-/*
- * "$Id: p3ChatService.cc,v 1.24 2007-05-05 16:10:06 rmf24 Exp $"
- *
- * Other Bits for RetroShare.
- *
- * Copyright 2004-2006 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/chat: chatservice.cc                                      *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2008 by Robert Fernie.                                       *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #include <math.h>
 #include <sstream>
 #include <unistd.h>
 
 #include "util/rsdir.h"
 #include "util/radix64.h"
-#include "util/rsaes.h"
+#include "crypto/rsaes.h"
 #include "util/rsrandom.h"
 #include "util/rsstring.h"
 #include "retroshare/rsiface.h"
@@ -49,7 +47,7 @@
  * #define CHAT_DEBUG 1
  ****/
 
-static const uint32_t MAX_MESSAGE_SECURITY_SIZE         = 6000 ; // Max message size to forward other friends
+static const uint32_t MAX_MESSAGE_SECURITY_SIZE         = 31000 ; // Max message size to forward other friends
 static const uint32_t MAX_AVATAR_JPEG_SIZE              = 32767; // Maximum size in bytes for an avatar. Too large packets 
                                                                  // don't transfer correctly and can kill the system.
 																					  // Images are 96x96, which makes approx. 27000 bytes uncompressed.
@@ -158,9 +156,17 @@ class p3ChatService::AvatarInfo
 
 	  void init(const unsigned char *jpeg_data,int size)
 	  {
-		  _image_size = size ;
-		  _image_data = (unsigned char*)rs_malloc(size) ;
-		  memcpy(_image_data,jpeg_data,size) ;
+          if(size == 0)
+          {
+              _image_size = 0;
+              _image_data = nullptr;
+          }
+          else
+		  {
+			  _image_size = size ;
+			  _image_data = (unsigned char*)rs_malloc(size) ;
+			  memcpy(_image_data,jpeg_data,size) ;
+		  }
 	  }
 	  AvatarInfo(const unsigned char *jpeg_data,int size)
 	  {
@@ -343,7 +349,7 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
     message.incoming = false;
     message.online = true;
 
-	if(!isOnline(vpid))
+	if(!isOnline(vpid)  && !destination.isDistantChatId())
 	{
 		message.online = false;
 		RsServer::notify()->notifyChatMessage(message);
@@ -354,11 +360,15 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
 
 		RsGxsTransId tId = RSRandom::random_u64();
 
+#ifdef SUSPENDED_CODE
+        // this part of the code was formerly used to send the traffic over GxsTransport. The problem is that
+        // gxstunnel takes care of reaching the peer already, so GxsTransport would only be needed when the
+        // current peer is offline. So we need to fin a way to quickly push the items to friends when quitting RS.
+
 		if(destination.isDistantChatId())
 		{
 			RS_STACK_MUTEX(mDGMutex);
-			DIDEMap::const_iterator it =
-			        mDistantGxsMap.find(destination.toDistantChatId());
+			DIDEMap::const_iterator it = mDistantGxsMap.find(destination.toDistantChatId());
 			if(it != mDistantGxsMap.end())
 			{
 				const DistantEndpoints& de(it->second);
@@ -373,6 +383,7 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
 				          << "chat id in mDistantGxsMap this is unxpected!"
 				          << std::endl;
 		}
+#endif
 
 		// peer is offline, add to outgoing list
 		{
@@ -414,10 +425,10 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
 
     RsServer::notify()->notifyChatMessage(message);
     
-    // cyril: history is temporarily diabled for distant chat, since we need to store the full tunnel ID, but then
+    // cyril: history is temporarily disabled for distant chat, since we need to store the full tunnel ID, but then
     // at loading time, the ID is not known so that chat window shows 00000000 as a peer.
     
-    if(!message.chat_id.isDistantChatId())
+    //if(!message.chat_id.isDistantChatId())
 	    mHistoryMgr->addMessage(message);
 
     checkSizeAndSendMessage(ci);
@@ -523,12 +534,12 @@ class MsgCounter
 	public:
 		MsgCounter() {}
 
-		void clean(time_t max_time)
+		void clean(rstime_t max_time)
 		{
 			while(!recv_times.empty() && recv_times.front() < max_time)
 				recv_times.pop_front() ;
 		}
-		std::list<time_t> recv_times ;
+		std::list<rstime_t> recv_times ;
 };
 
 void p3ChatService::handleIncomingItem(RsItem *item)
@@ -711,6 +722,23 @@ bool p3ChatService::initiateDistantChatConnexion( const RsGxsId& to_gxs_id,
                                                   uint32_t& error_code,
                                                   bool notify )
 {
+
+	if(to_gxs_id.isNull())
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Destination RsGxsId is invalid" << std::endl;
+		return false;
+	}
+	if (from_gxs_id.isNull())
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Origin RsGxsId is invalid" << std::endl;
+		return false;
+	}
+	if (!rsIdentity->isOwnId(from_gxs_id))
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Origin RsGxsId id must be own" << std::endl;
+		return false;
+	}
+
 	if(DistantChatService::initiateDistantChatConnexion( to_gxs_id,
 	                                                     from_gxs_id, pid,
 	                                                     error_code, notify ))
@@ -850,9 +878,14 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *& ci)
             RsServer::notify()->AddPopupMessage(popupChatFlag, ci->PeerId().toStdString(), name, message); /* notify private chat message */
         else
         {
-            /* notify public chat message */
-            RsServer::notify()->AddPopupMessage(RS_POPUP_GROUPCHAT, ci->PeerId().toStdString(), "", message);
-            RsServer::notify()->AddFeedItem(RS_FEED_ITEM_CHAT_NEW, ci->PeerId().toStdString(), message, "");
+#ifdef RS_DIRECT_CHAT
+			/* notify public chat message */
+			RsServer::notify()->AddPopupMessage( RS_POPUP_GROUPCHAT, ci->PeerId().toStdString(), "", message );
+			//RsServer::notify()->AddFeedItem( RS_FEED_ITEM_CHAT_NEW, ci->PeerId().toStdString(), message, "" );
+#else // def RS_DIRECT_CHAT
+			/* Ignore deprecated direct node broadcast chat messages */
+			return false;
+#endif
         }
     }
 
@@ -864,11 +897,14 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *& ci)
     cm.online = true;
     RsServer::notify()->notifyChatMessage(cm);
     
-    // cyril: history is temporarily diabled for distant chat, since we need to store the full tunnel ID, but then
-    // at loading time, the ID is not known so that chat window shows 00000000 as a peer.
-    
-    if(!cm.chat_id.isDistantChatId())
 	mHistoryMgr->addMessage(cm);
+
+	if(rsEvents)
+	{
+		auto ev = std::make_shared<RsChatMessageEvent>();
+		ev->mChatMessage = cm;
+		rsEvents->postEvent(ev);
+	}
     
     return true ;
 }

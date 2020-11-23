@@ -1,38 +1,37 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (c) 2009, RetroShare Team
- * Copyright (C) 2008 Unipro, Russia (http://ugene.unipro.ru)
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/AboutWidget.cpp                                                         *
+ *                                                                             *
+ * Copyright (C) 2012 Retroshare Team <retroshare.project@gmail.com>           *
+ * Copyright (C) 2008 Unipro, Russia (http://ugene.unipro.ru)                  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "AboutDialog.h"
 #include "HelpDialog.h"
 #include "rshare.h"
+
+#ifdef RS_JSONAPI
+#include "restbed"
+#endif
 
 #include <retroshare/rsiface.h>
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsdisc.h>
 #include <retroshare/rspeers.h>
 #include "settings/rsharesettings.h"
-
-#ifdef ENABLE_WEBUI
-#include <microhttpd.h>
-#endif
 
 #include <QClipboard>
 #include <QSysInfo>
@@ -60,8 +59,8 @@ AboutWidget::AboutWidget(QWidget* parent)
 
     updateTitle();
 
-    QObject::connect(help_button,SIGNAL(clicked()),this,SLOT(on_help_button_clicked()));
-    QObject::connect(copy_button,SIGNAL(clicked()),this,SLOT(on_copy_button_clicked()));
+    //QObject::connect(help_button,SIGNAL(clicked()),this,SLOT(on_help_button_clicked()));
+    //QObject::connect(copy_button,SIGNAL(clicked()),this,SLOT(on_copy_button_clicked()));
 }
 
 void AboutWidget::installAWidget() {
@@ -225,7 +224,11 @@ void AWidget::initImages()
     //p.drawPixmap(QRect(10, 10, width()-10, 60), image);
 
     /* Draw RetroShare version */
+#ifdef RS_ONLYHIDDENNODE
+    p.drawText(QPointF(10, 50), QString("%1 : %2 (With embedded Tor)").arg(tr("Retroshare version"), Rshare::retroshareVersion(true)));
+#else
     p.drawText(QPointF(10, 50), QString("%1 : %2").arg(tr("Retroshare version"), Rshare::retroshareVersion(true)));
+#endif
 
     /* Draw Qt's version number */
     p.drawText(QPointF(10, 90), QString("Qt %1 : %2").arg(tr("version"), QT_VERSION_STR));
@@ -938,6 +941,9 @@ void AboutWidget::on_copy_button_clicked()
     QString rsVerString = "RetroShare Version: ";
     rsVerString+=Rshare::retroshareVersion(true);
     verInfo+=rsVerString;
+#ifdef RS_ONLYHIDDENNODE
+    verInfo+=" " + tr("Only Hidden Node");
+#endif
     verInfo+="\n";
 
 
@@ -966,13 +972,14 @@ void AboutWidget::on_copy_button_clicked()
     RsControl::instance()->getLibraries(libraries);
     verInfo+=addLibraries("libretroshare", libraries);
 
-#ifdef ENABLE_WEBUI
-    /* Add version numbers of RetroShare */
-    // Add versions here. Find a better place.
-    libraries.clear();
-    libraries.push_back(RsLibraryInfo("Libmicrohttpd", MHD_get_version()));
-    verInfo+=addLibraries("RetroShare", libraries);
-#endif // ENABLE_WEBUI
+#ifdef RS_JSONAPI
+// Disabled because I could not find how to get restbed version number
+//    /* Add version numbers of RetroShare */
+//    // Add versions here. Find a better place.
+//    libraries.clear();
+//    libraries.push_back(RsLibraryInfo("RestBed", restbed::get_version()));
+//    verInfo+=addLibraries("RetroShare", libraries);
+#endif
 
     /* Add version numbers of plugins */
     if (rsPlugins) {

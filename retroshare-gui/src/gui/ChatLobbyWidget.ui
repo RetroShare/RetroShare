@@ -32,7 +32,7 @@
       </sizepolicy>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Box</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
@@ -62,7 +62,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="icons.qrc">:/icons/png/chat-lobbies.png</pixmap>
+         <pixmap resource="icons.qrc">:/icons/png/chats.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -95,7 +95,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="icons.qrc">
+         <iconset resource="images.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -116,6 +116,9 @@
      </property>
      <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="lobbyTreeVLayout">
+       <property name="spacing">
+        <number>1</number>
+       </property>
        <item>
         <widget class="QFrame" name="toolBarFrame">
          <property name="styleSheet">
@@ -225,176 +228,174 @@
         </property>
         <item row="0" column="0">
          <widget class="QGroupBox" name="lobbyinfo_groupBox">
-          <property name="title">
-           <string>Selected lobby info</string>
+          <property name="styleSheet">
+           <string notr="true"/>
           </property>
-          <layout class="QVBoxLayout" name="lobbyinfo_groupBoxVLayout">
-           <item>
-            <layout class="QHBoxLayout" name="lobbyInfoHLayout">
-             <item>
-              <layout class="QVBoxLayout" name="lobbyInfoNameVLayout">
-               <item>
-                <widget class="QLabel" name="lobbyname_label">
-                 <property name="font">
-                  <font>
-                   <weight>75</weight>
-                   <bold>true</bold>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Chat room Name:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="lobbyid_label">
-                 <property name="font">
-                  <font>
-                   <weight>75</weight>
-                   <bold>true</bold>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Chat room Id:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="lobbytopic_label">
-                 <property name="font">
-                  <font>
-                   <weight>75</weight>
-                   <bold>true</bold>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Topic:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="lobbytype_label">
-                 <property name="font">
-                  <font>
-                   <weight>75</weight>
-                   <bold>true</bold>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Type:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="lobbysec_label">
-                 <property name="font">
-                  <font>
-                   <weight>75</weight>
-                   <bold>true</bold>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Security:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="lobbypeers_label">
-                 <property name="font">
-                  <font>
-                   <weight>75</weight>
-                   <bold>true</bold>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Peers:</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
+          <property name="title">
+           <string>Chat Room info</string>
+          </property>
+          <layout class="QGridLayout" name="lobbyinfo_groupBoxgridLayout">
+           <item row="0" column="0">
+            <layout class="QGridLayout" name="lobbyinfo_gridLayout">
+             <property name="topMargin">
+              <number>6</number>
+             </property>
+             <item row="0" column="0">
+              <widget class="QLabel" name="lobbyname_label">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Chat room Name:</string>
+               </property>
+              </widget>
              </item>
-             <item>
-              <layout class="QVBoxLayout" name="lobbyInfoValueVLayout">
-               <item>
-                <widget class="QLabel" name="lobbyname_lineEdit">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>TextLabel</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="lobbyid_lineEdit">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>TextLabel</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="lobbytopic_lineEdit">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>TextLabel</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="lobbytype_lineEdit">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>TextLabel</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="lobbysec_lineEdit">
-                 <property name="text">
-                  <string>TextLabel</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="lobbypeers_lineEdit">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>TextLabel</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
+             <item row="0" column="1">
+              <widget class="QLabel" name="lobbyname_lineEdit">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>TextLabel</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="lobbyid_label">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Chat room Id:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLabel" name="lobbyid_lineEdit">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>TextLabel</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="lobbytopic_label">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Topic:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QLabel" name="lobbytopic_lineEdit">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>TextLabel</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="lobbytype_label">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Type:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QLabel" name="lobbytype_lineEdit">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>TextLabel</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="lobbysec_label">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Security:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QLabel" name="lobbysec_lineEdit">
+               <property name="text">
+                <string>TextLabel</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QLabel" name="lobbypeers_label">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Peers:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <widget class="QLabel" name="lobbypeers_lineEdit">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>TextLabel</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
-           <item>
+           <item row="1" column="0">
             <widget class="QLabel" name="lobbyInfoLabel">
              <property name="text">
               <string notr="true">TextLabel</string>
@@ -404,7 +405,7 @@
              </property>
             </widget>
            </item>
-           <item>
+           <item row="2" column="0">
             <spacer name="lobbyInfoVSpacer">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
@@ -440,6 +441,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="images.qrc"/>
   <include location="icons.qrc"/>
  </resources>
  <connections/>

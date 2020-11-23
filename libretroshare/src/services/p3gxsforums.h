@@ -1,92 +1,159 @@
-/*
- * libretroshare/src/services: p3gxsforums.h
- *
- * GxsForum interface for RetroShare.
- *
- * Copyright 2012-2012 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-#ifndef P3_GXSFORUMS_SERVICE_HEADER
-#define P3_GXSFORUMS_SERVICE_HEADER
-
-
-#include "retroshare/rsgxsforums.h"
-#include "gxs/rsgenexchange.h"
-
-#include "util/rstickevent.h"
+/*******************************************************************************
+ * libretroshare/src/services: p3gxsforums.h                                   *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2012-2014  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2020  Asociación Civil Altermundi <info@altermundi.net>  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+#pragma once
 
 #include <map>
 #include <string>
 
-/* 
- *
- */
+#include "retroshare/rsgxsforums.h"
+#include "gxs/rsgenexchange.h"
+#include "retroshare/rsgxscircles.h"
+#include "util/rstickevent.h"
+#include "util/rsdebug.h"
 
-class p3GxsForums: public RsGenExchange, public RsGxsForums, 
+
+class p3GxsForums: public RsGenExchange, public RsGxsForums, public p3Config,
 	public RsTickEvent	/* only needed for testing - remove after */
 {
-	public:
+public:
+	p3GxsForums(
+	        RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs* gixs);
 
-	p3GxsForums(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs* gixs);
+	virtual RsServiceInfo getServiceInfo();
+	virtual void service_tick();
 
-virtual RsServiceInfo getServiceInfo();
+protected:
+	virtual void notifyChanges(std::vector<RsGxsNotify*>& changes);
+	/// Overloaded from RsTickEvent.
+	virtual void handle_event(uint32_t event_type, const std::string &elabel);
 
-virtual void service_tick();
+	virtual RsSerialiser* setupSerialiser();                            // @see p3Config::setupSerialiser()
+	virtual bool saveList(bool &cleanup, std::list<RsItem *>&saveList); // @see p3Config::saveList(bool &cleanup, std::list<RsItem *>&)
+	virtual bool loadList(std::list<RsItem *>& loadList);               // @see p3Config::loadList(std::list<RsItem *>&)
 
-	protected:
+public:
+	/// @see RsGxsForums::createForumV2
+	bool createForumV2(
+	        const std::string& name, const std::string& description,
+	        const RsGxsId& authorId = RsGxsId(),
+	        const std::set<RsGxsId>& moderatorsIds = std::set<RsGxsId>(),
+	        RsGxsCircleType circleType = RsGxsCircleType::PUBLIC,
+	        const RsGxsCircleId& circleId = RsGxsCircleId(),
+	        RsGxsGroupId& forumId = RS_DEFAULT_STORAGE_PARAM(RsGxsGroupId),
+	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
 
+	/// @see RsGxsForums::createPost
+	bool createPost(
+	        const RsGxsGroupId&   forumId,
+	        const std::string&    title,
+	        const std::string&    mBody,
+	        const RsGxsId&        authorId,
+	        const RsGxsMessageId& parentId = RsGxsMessageId(),
+	        const RsGxsMessageId& origPostId = RsGxsMessageId(),
+	        RsGxsMessageId&       postMsgId = RS_DEFAULT_STORAGE_PARAM(RsGxsMessageId),
+	        std::string&          errorMessage     = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
 
-virtual void notifyChanges(std::vector<RsGxsNotify*>& changes);
+	/// @see RsGxsForums::createForum @deprecated
+	RS_DEPRECATED_FOR(createForumV2)
+	virtual bool createForum(RsGxsForumGroup& forum);
 
-        // Overloaded from RsTickEvent.
-virtual void handle_event(uint32_t event_type, const std::string &elabel);
+	/// @see RsGxsForums::createMessage  @deprecated
+	RS_DEPRECATED_FOR(createPost)
+	virtual bool createMessage(RsGxsForumMsg& message);
 
-	public:
+	/// @see RsGxsForums::editForum
+	virtual bool editForum(RsGxsForumGroup& forum) override;
 
-virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsForumGroup> &groups);
-virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs);
-//Not currently used
-//virtual bool getRelatedMessages(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs);
+	/// @see RsGxsForums::getForumsSummaries
+	virtual bool getForumsSummaries(std::list<RsGroupMetaData>& forums);
 
-        //////////////////////////////////////////////////////////////////////////////
-virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read);
+	/// @see RsGxsForums::getForumsInfo
+	virtual bool getForumsInfo(
+	        const std::list<RsGxsGroupId>& forumIds,
+	        std::vector<RsGxsForumGroup>& forumsInfo );
 
-//virtual bool setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask);
-//virtual bool setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask);
+    /// Implementation of @see RsGxsForums::getForumStatistics
+    bool getForumStatistics(const RsGxsGroupId& ForumId,GxsGroupStatistic& stat) override;
 
-//virtual bool groupRestoreKeys(const std::string &groupId);
-//virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers);
+    /// Implementation of @see RsGxsForums::getForumServiceStatistics
+	bool getForumServiceStatistics(GxsServiceStatistic& stat) override;
 
-virtual bool createGroup(uint32_t &token, RsGxsForumGroup &group);
-virtual bool createMsg(uint32_t &token, RsGxsForumMsg &msg);
+	/// @see RsGxsForums::getForumMsgMetaData
+	virtual bool getForumMsgMetaData(const RsGxsGroupId& forumId, std::vector<RsMsgMetaData>& msg_metas) ;
 
-/*!
- * To update forum group with new information
- * @param token the token used to check completion status of update
- * @param group group to be updated, groupId element must be set or will be rejected
- * @return false groupId not set, true if set and accepted (still check token for completion)
- */
-virtual bool updateGroup(uint32_t &token, RsGxsForumGroup &group);
+	/// @see RsGxsForums::getForumContent
+	virtual bool getForumContent(
+	        const RsGxsGroupId& forumId,
+	        const std::set<RsGxsMessageId>& msgs_to_request,
+	        std::vector<RsGxsForumMsg>& msgs );
 
+	/// @see RsGxsForums::markRead
+	virtual bool markRead(const RsGxsGrpMsgIdPair& messageId, bool read);
 
-	private:
+	/// @see RsGxsForums::subscribeToForum
+	virtual bool subscribeToForum( const RsGxsGroupId& forumId,
+	                               bool subscribe );
+
+	/// @see RsGxsForums
+	bool exportForumLink(
+	        std::string& link, const RsGxsGroupId& forumId,
+	        bool includeGxsData = true,
+	        const std::string& baseUrl = DEFAULT_FORUM_BASE_URL,
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
+
+	/// @see RsGxsForums
+	bool importForumLink(
+	        const std::string& link,
+	        RsGxsGroupId& forumId = RS_DEFAULT_STORAGE_PARAM(RsGxsGroupId),
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
+
+	/// @see RsGxsForums
+	std::error_condition getChildPosts(
+	        const RsGxsGroupId& forumId, const RsGxsMessageId& parentId,
+	        std::vector<RsGxsForumMsg>& childPosts ) override;
+
+	/// @see RsGxsForums
+	std::error_condition setPostKeepForever(
+	        const RsGxsGroupId& forumId, const RsGxsMessageId& postId,
+	        bool keepForever );
+
+    /// implementation of rsGxsGorums
+    ///
+	bool getGroupData(const uint32_t &token, std::vector<RsGxsForumGroup> &groups) override;
+	bool getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs) override;
+	void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) override;
+	bool createGroup(uint32_t &token, RsGxsForumGroup &group) override;
+	bool createMsg(uint32_t &token, RsGxsForumMsg &msg) override;
+	bool updateGroup(uint32_t &token, const RsGxsForumGroup &group) override;
+
+	bool getMsgMetaData(const uint32_t &token, GxsMsgMetaMap& msg_metas) ;
+
+private:
 
 static uint32_t forumsAuthenPolicy();
 
@@ -117,8 +184,7 @@ bool generateGroup(uint32_t &token, std::string groupName);
 	int mGenCount;
 	std::vector<ForumDummyRef> mGenRefs;
 	RsGxsMessageId mGenThreadId;
-    std::set<RsGxsGroupId> mKnownForums ;
+    std::map<RsGxsGroupId,rstime_t> mKnownForums ;
 	
+	RsMutex mKnownForumsMutex;
 };
-
-#endif 

@@ -1,28 +1,24 @@
-/*
- * bitdht/bdpeer.cc
- *
- * BitDHT: An Flexible DHT library.
- *
- * Copyright 2010 by Robert Fernie
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 3 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "bitdht@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * bitdht/bdpeer.cc                                                            *
+ *                                                                             *
+ * BitDHT: An Flexible DHT library.                                            *
+ *                                                                             *
+ * Copyright 2010 by Robert Fernie <bitdht@lunamutt.com>                       *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "bitdht/bdpeer.h"
 #include "util/bdnet.h"
@@ -1025,82 +1021,77 @@ int     bdSpace::getDhtBucket(const int idx, bdBucket &bucket)
 
 uint32_t  bdSpace::calcNetworkSize()
 {
+	return calcNetworkSizeWithFlag(~0u) ;
+}
+
+uint32_t  bdSpace::calcNetworkSizeWithFlag(uint32_t withFlag)
+{
 	std::vector<bdBucket>::iterator it;
 
 	/* little summary */
 	unsigned long long sum = 0;
 	unsigned long long no_peers = 0;
 	uint32_t count = 0;
-	bool doPrint = false;
-	bool doAvg = false;
+
+#ifdef BITDHT_DEBUG
+	std::cerr << "Estimating DHT network size. Flags=" << std::hex << withFlag << std::dec << std::endl;
+#endif
 
 	int i = 0;
 	for(it = buckets.begin(); it != buckets.end(); it++, i++)
 	{
-		int size = it->entries.size();
+		int size = 0;
+		std::list<bdPeer>::iterator lit;
+		for(lit = it->entries.begin(); lit != it->entries.end(); lit++)
+			if (withFlag & lit->mPeerFlags)
+				size++;
+
 		int shift = BITDHT_KEY_BITLEN - i;
-		bool toBig = false;
 
 		if (shift > BITDHT_ULLONG_BITS - mFns->bdBucketBitSize() - 1)
-		{
-			toBig = true;
-			shift = BITDHT_ULLONG_BITS - mFns->bdBucketBitSize() - 1;
-		}
+			continue ;
+
 		unsigned long long no_nets = ((unsigned long long) 1 << shift);
 
-		/* use doPrint so it acts as a single switch */
-		if (size && !doAvg && !doPrint)
-		{	
-			doAvg = true;
-		}
+		no_peers = no_nets * size;
 
-		if (size && !doPrint)
-		{	
-			doPrint = true;
-		}
-
-		if (size == 0)
+		if(size < mFns->bdNodesPerBucket() && size > 0)
 		{
-			/* reset counters - if empty slot - to discount outliers in average */
-			sum = 0;
-			no_peers = 0;
-			count = 0;
+			sum += no_peers;
+			count++;
 		}
 
-		if (!toBig)
-		{
-			no_peers = no_nets * size;
-		}
-
-		if (doPrint && doAvg && !toBig)
-		{
-			if (size == mFns->bdNodesPerBucket())
-			{
-				/* last average */
-				doAvg = false;
-			}
-			if (no_peers != 0)
-			{
-				sum += no_peers;
-				count++;	
-			}
-		}
+#ifdef BITDHT_DEBUG
+		if(size > 0)
+			std::cerr << "  Bucket " << shift << ": " << size << " / " << mFns->bdNodesPerBucket() << " peers. no_nets=" << no_nets << ". no_peers=" << no_peers << "." << std::endl;
+#endif
 	}
 
 
 	uint32_t NetSize = 0;
 	if (count != 0)
-	{
 		NetSize = sum / count;
-	}
 
-	//std::cerr << "bdSpace::calcNetworkSize() : " << NetSize;
-	//std::cerr << std::endl;
+#ifdef BITDHT_DEBUG
+	std::cerr << "Estimated net size: " << NetSize << ". Old style estimate: " << calcNetworkSizeWithFlag_old(withFlag) << std::endl;
+#endif
 
 	return NetSize;
 }
 
-uint32_t  bdSpace::calcNetworkSizeWithFlag(uint32_t withFlag)
+/* (csoler) This is the old method for computing the DHT size estimate. The method is based on averaging the
+ *          estimate given by each bucket: n 2^b where n is the bucket size and b is the number of similar bits
+ *          in this bucket. The idea is that buckets that are not empty nor full give a estimate of the network
+ *          size.
+ *
+ *          The existing implementation of this method was not using all non empty/full buckets, in order to avoid
+ *          outliers, but this method is also biased, and tends to give a lower value (because it skips the largest buckets)
+ *          especially when the network is very sparse.
+ *
+ *          The new implementation respects the original estimate without bias, but it still notoriously wrong. Only averaging
+ *          the estimate over a large period of time would produce a reliable value.
+ */
+uint32_t  bdSpace::calcNetworkSizeWithFlag_old(uint32_t withFlag)
 {
 	std::vector<bdBucket>::iterator it;
 
@@ -1140,12 +1131,12 @@ uint32_t  bdSpace::calcNetworkSizeWithFlag(uint32_t withFlag)
 
 		/* use doPrint so it acts as a single switch */
 		if (size && !doAvg && !doPrint)
-		{	
+		{
 			doAvg = true;
 		}
 
 		if (size && !doPrint)
-		{	
+		{
 			doPrint = true;
 		}
 
@@ -1172,7 +1163,7 @@ uint32_t  bdSpace::calcNetworkSizeWithFlag(uint32_t withFlag)
 			if (no_peers != 0)
 			{
 				sum += no_peers;
-				count++;	
+				count++;
 			}
 		}
 	}
@@ -1189,7 +1180,6 @@ uint32_t  bdSpace::calcNetworkSizeWithFlag(uint32_t withFlag)
 
 	return NetSize;
 }
-
 
 uint32_t  bdSpace::calcSpaceSize()
 {

@@ -1,29 +1,28 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (c) 2010, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/common/GroupTreeWidget.h                                                *
+ *                                                                             *
+ * Copyright (C) 2010, Retroshare Team <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef GROUPTREEWIDGET_H
 #define GROUPTREEWIDGET_H
 
-#include <QWidget>
-#include <QIcon>
+#include<set>
+
 #include <QTreeWidgetItem>
 #include <QDateTime>
 
@@ -45,26 +44,25 @@ class GroupItemInfo
 {
 public:
 	GroupItemInfo()
-	{
-		popularity = 0;
-		publishKey = false;
-        subscribeFlags = 0;
-        max_visible_posts =0;
-	}
+	  : popularity(0), publishKey(false), adminKey(false)
+	  , subscribeFlags(0), max_visible_posts(0)
+	{}
 
 public:
-	QString   id;
-	QString   name;
-	QString   description;
-	int       popularity;
-	QDateTime lastpost;
-	QIcon     icon;
-	bool      publishKey;
-	bool      adminKey;
-    quint32  subscribeFlags;
-    quint32  max_visible_posts ;
+	QString               id;
+	QString               name;
+	QString               description;
+	int                   popularity;
+	QDateTime             lastpost;
+	QIcon                 icon;
+	bool                  publishKey;
+	bool                  adminKey;
+    quint32               subscribeFlags;
+    quint32               max_visible_posts ;
+    std::set<std::string> context_strings;
 };
 
+//cppcheck-suppress noConstructor
 class GroupTreeWidget : public QWidget
 {
 	Q_OBJECT
@@ -79,11 +77,16 @@ public:
 	// Add a tool button to the tool area
 	void addToolButton(QToolButton *toolButton);
 
-	// Load and save settings (group must be startet from the caller)
-	void processSettings(RshareSettings *settings, bool load);
+	// Load and save settings (group must be started from the caller)
+	void processSettings(bool load);
 
 	// Add a new category item
 	QTreeWidgetItem *addCategoryItem(const QString &name, const QIcon &icon, bool expand);
+    // Add a new search item
+    void setDistSearchVisible(bool) ; // shows/hides distant search UI parts.
+	QTreeWidgetItem *addSearchItem(const QString& search_string, uint32_t id, const QIcon &icon) ;
+	void removeSearchItem(QTreeWidgetItem *item);
+
 	// Get id of item
 	QString itemId(QTreeWidgetItem *item);
 	QString itemIdAt(QPoint &point);
@@ -91,6 +94,10 @@ public:
 	void fillGroupItems(QTreeWidgetItem *categoryItem, const QList<GroupItemInfo> &itemList);
 	// Set the unread count of an item
 	void setUnreadCount(QTreeWidgetItem *item, int unreadCount);
+
+	bool isSearchRequestItem(QPoint &point,uint32_t& search_req_id);
+	bool isSearchRequestResult(QPoint &point, QString &group_id, uint32_t& search_req_id);
+	bool isSearchRequestResultItem(QTreeWidgetItem *item,QString& group_id,uint32_t& search_req_id);
 
 	QTreeWidgetItem *getItemFromId(const QString &id);
 	QTreeWidgetItem *activateId(const QString &id, bool focus);
@@ -104,7 +111,8 @@ public:
 
 	void setTextColorCategory(QColor color) { mTextColor[GROUPTREEWIDGET_COLOR_CATEGORY] = color; }
 	void setTextColorPrivateKey(QColor color) { mTextColor[GROUPTREEWIDGET_COLOR_PRIVATEKEY] = color; }
-        bool getGroupName(QString id, QString& name);
+
+	bool getGroupName(QString id, QString& name);
 
 	int subscribeFlags(const QString &id);
 
@@ -112,6 +120,7 @@ signals:
 	void treeCustomContextMenuRequested(const QPoint &pos);
 	void treeCurrentItemChanged(const QString &id);
 	void treeItemActivated(const QString &id);
+    void distantSearchRequested(const QString&) ;
 
 protected:
 	void changeEvent(QEvent *e);
@@ -121,6 +130,7 @@ private slots:
 	void currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
 	void itemActivated(QTreeWidgetItem *item, int column);
 	void filterChanged();
+	void distantSearch();
 
 	void sort();
 

@@ -8,29 +8,26 @@ if errorlevel 1 goto error_env
 call "%EnvPath%\env.bat"
 if errorlevel 1 goto error_env
 
-:: Get gcc versions
-call "%ToolsPath%\get-gcc-version.bat" GCCVersion
-if "%GCCVersion%"=="" echo Cannot get gcc version.& exit /B 1
+:: Initialize environment
+call "%~dp0env.bat" %*
+if errorlevel 2 exit /B 2
+if errorlevel 1 goto error_env
 
 :: Check external libraries
-if not exist "%RootPath%\libs" echo Please build external libraries first.& exit /B 1
+if not exist "%BuildLibsPath%\libs" %cecho% error "Please build external libraries first." & exit /B 1
 
 :: Check gcc version of external libraries
-if not exist "%RootPath%\libs\gcc-version" echo Cannot get gcc version of external libraries.& exit /B 1
-set /P LibsGCCVersion=<"%RootPath%\libs\gcc-version"
-if "%LibsGCCVersion%" NEQ "%GCCVersion%" echo Please use correct version of external libraries. (gcc %GCCVersion% ^<^> libs %LibsGCCVersion%).& exit /B 1
-
-:: Initialize environment
-call "%~dp0env.bat"
-if errorlevel 1 goto error_env
+if not exist "%BuildLibsPath%\libs\gcc-version" %cecho% error "Cannot get gcc version of external libraries." & exit /B 1
+set /P LibsGCCVersion=<"%BuildLibsPath%\libs\gcc-version"
+if "%LibsGCCVersion%" NEQ "%GCCVersion%" %cecho% error "Please use correct version of external libraries. (gcc %GCCVersion% ^<^> libs %LibsGCCVersion%)." & exit /B 1
 
 :: Check git executable
 set GitPath=
 call "%ToolsPath%\find-in-path.bat" GitPath git.exe
-if "%GitPath%" NEQ "" goto found_git
-choice /M "Git not found in PATH. Version information cannot be calculated. Do you want to proceed?"
-if %errorlevel%==2 exit /B 1
-:found_git
+if "%GitPath%"=="" (
+	%cecho% error "Git not found in PATH. Version information cannot be determined."
+	exit /B 1
+)
 
 echo.
 echo === Version
@@ -52,7 +49,12 @@ echo.
 
 title Build - %SourceName%-%RsBuildConfig% [qmake]
 
-qmake "%SourcePath%\RetroShare.pro" -r "CONFIG+=%RsBuildConfig% version_detail_bash_script rs_autologin"
+set RS_QMAKE_CONFIG=%RsBuildConfig%
+if "%ParamAutologin%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% rs_autologin
+if "%ParamJsonApi%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% rs_jsonapi
+if "%ParamPlugins%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% retroshare_plugins
+
+qmake "%SourcePath%\RetroShare.pro" -r -spec win32-g++ "CONFIG+=%RS_QMAKE_CONFIG%" "EXTERNAL_LIB_DIR=%BuildLibsPath%\libs"
 if errorlevel 1 goto error
 
 echo.
@@ -61,18 +63,22 @@ echo.
 
 title Build - %SourceName%-%RsBuildConfig% [make]
 
-if exist "%EnvJomExe%" (
-	"%EnvJomExe%"
-) else (
-	mingw32-make
-)
+mingw32-make -j %CoreCount%
+if errorlevel 1 goto error
+
+echo.
+echo === Changelog
+echo.
+
+title Build - %SourceName%-%RsBuildConfig% [changelog]
+call "%ToolsPath%\generate-changelog.bat" "%SourcePath%" "%RsBuildPath%\changelog.txt"
 
 :error
 popd
 
 title %COMSPEC%
 
-if errorlevel 1 echo.& echo Build failed& echo.
+if errorlevel 1 %cecho% error "\nBuild failed\n"
 exit /B %ERRORLEVEL%
 
 :error_env

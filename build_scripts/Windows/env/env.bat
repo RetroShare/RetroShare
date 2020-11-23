@@ -6,11 +6,9 @@ set EnvRootPath=%RootPath%\%SourceName%-env
 set EnvToolsPath=%EnvRootPath%\tools
 set EnvTempPath=%EnvRootPath%\tmp
 set EnvDownloadPath=%EnvRootPath%\download
+set EnvTorPath=%EnvDownloadPath%\tor
 
-::set EnvCurlExe=%EnvToolsPath%\curl.exe
-set EnvWgetExe=%EnvToolsPath%\wget.exe
 set EnvSevenZipExe=%EnvToolsPath%\7z.exe
-set EnvJomExe=%EnvToolsPath%\jom.exe
 set EnvSedExe=%EnvToolsPath%\sed.exe
 set EnvCutExe=%EnvToolsPath%\cut.exe
 set EnvDependsExe=%EnvToolsPath%\depends.exe
@@ -24,7 +22,13 @@ if not exist "%EnvToolsPath%" mkdir "%EnvToolsPath%"
 if not exist "%EnvDownloadPath%" mkdir "%EnvDownloadPath%"
 
 call "%~dp0tools\prepare-tools.bat"
-exit /B %ERRORLEVEL%
+if errorlevel 1 exit /B %ERRORLEVEL%
+
+:: Add MinGit to PATH
+set PATH=%EnvToolsPath%\MinGit\cmd;%EnvToolsPath%\cmake\bin;%PATH%
+set HOME=%EnvToolsPath%\MinGit\home
+
+exit /B 0
 
 :error_env
 echo Failed to initialize environment.

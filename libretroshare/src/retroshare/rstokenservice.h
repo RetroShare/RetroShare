@@ -1,30 +1,27 @@
-#ifndef RSTOKENSERVICE_H
-#define RSTOKENSERVICE_H
-
-/*
- * libretroshare/src/retroshare: rstokenservice.h
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2012-2012 by Robert Fernie, Christopher Evi-Parker
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/retroshare: rstokenservice.h                              *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2012  Chris Evi-Parker                                        *
+ * Copyright (C) 2012  Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+#pragma once
 
 #include <inttypes.h>
 #include <string>
@@ -32,6 +29,7 @@
 
 #include "retroshare/rsgxsifacetypes.h"
 #include "util/rsdeprecate.h"
+#include "util/rsdebug.h"
 
 // TODO CLEANUP: GXS_REQUEST_TYPE_* should be an inner enum of RsTokReqOptions
 #define GXS_REQUEST_TYPE_GROUP_DATA			0x00010000
@@ -61,14 +59,17 @@
 
 /* TODO CLEANUP: RS_TOKREQ_ANSTYPE_* values are meaningless and not used by
  * RsTokenService or its implementation, and may be arbitrarly defined by each
- * GXS client as they are of no usage, their use is deprecated */
+ * GXS client as they are of no usage, their use is deprecated, up until the
+ * definitive cleanup is done new code must use RS_DEPRECATED_TOKREQ_ANSTYPE for
+ * easier cleanup. */
 #ifndef RS_NO_WARN_DEPRECATED
 #	warning RS_TOKREQ_ANSTYPE_* macros are deprecated!
 #endif
-#define RS_TOKREQ_ANSTYPE_LIST      0x0001
-#define RS_TOKREQ_ANSTYPE_SUMMARY   0x0002
-#define RS_TOKREQ_ANSTYPE_DATA      0x0003
-#define RS_TOKREQ_ANSTYPE_ACK       0x0004
+#define RS_DEPRECATED_TOKREQ_ANSTYPE 0x0000
+#define RS_TOKREQ_ANSTYPE_LIST       0x0001
+#define RS_TOKREQ_ANSTYPE_SUMMARY    0x0002
+#define RS_TOKREQ_ANSTYPE_DATA       0x0003
+#define RS_TOKREQ_ANSTYPE_ACK        0x0004
 
 
 /*!
@@ -79,7 +80,7 @@ struct RsTokReqOptions
 {
 	RsTokReqOptions() : mOptions(0), mStatusFilter(0), mStatusMask(0),
 	    mMsgFlagMask(0), mMsgFlagFilter(0), mReqType(0), mSubscribeFilter(0),
-	    mSubscribeMask(0), mBefore(0), mAfter(0) {}
+	    mSubscribeMask(0), mBefore(0), mAfter(0),mPriority(GxsRequestPriority::NORMAL) {}
 
 	/**
 	 * Can be one or multiple RS_TOKREQOPT_*
@@ -104,12 +105,11 @@ struct RsTokReqOptions
 	uint32_t mSubscribeFilter, mSubscribeMask; // Only for Groups.
 
 	// Time range... again applied after Options.
-	time_t   mBefore;
-	time_t   mAfter;
-};
+	rstime_t   mBefore;
+	rstime_t   mAfter;
 
-std::ostream &operator<<(std::ostream &out, const RsGroupMetaData &meta);
-std::ostream &operator<<(std::ostream &out, const RsMsgMetaData &meta);
+    GxsRequestPriority mPriority;
+};
 
 /*!
  * A proxy class for requesting generic service data for GXS
@@ -117,22 +117,20 @@ std::ostream &operator<<(std::ostream &out, const RsMsgMetaData &meta);
  */
 class RsTokenService
 {
-
 public:
 
-	// TODO CLEANUP: This should be an enum
-        static const uint8_t GXS_REQUEST_V2_STATUS_FAILED;
-        static const uint8_t GXS_REQUEST_V2_STATUS_PENDING;
-        static const uint8_t GXS_REQUEST_V2_STATUS_PARTIAL;
-        static const uint8_t GXS_REQUEST_V2_STATUS_FINISHED_INCOMPLETE;
-        static const uint8_t GXS_REQUEST_V2_STATUS_COMPLETE;
-        static const uint8_t GXS_REQUEST_V2_STATUS_DONE;			 // ONCE ALL DATA RETRIEVED.
-        static const uint8_t GXS_REQUEST_V2_STATUS_CANCELLED;
+	enum GxsRequestStatus : uint8_t
+	{
+		FAILED    = 0,
+		PENDING   = 1,
+		PARTIAL   = 2,
+		COMPLETE  = 3,
+		DONE      = 4, /// Once all data has been retrived
+		CANCELLED = 5
+	};
 
-public:
-
-    RsTokenService()  { return; }
-    virtual ~RsTokenService() { return; }
+	RsTokenService() {}
+	virtual ~RsTokenService() {}
 
     /* Data Requests */
 
@@ -185,6 +183,25 @@ public:
      */
     virtual bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::vector<RsGxsGrpMsgIdPair>& msgIds) = 0;
 
+    /*!
+     * This request statistics on amount of data held
+     * number of groups
+     * number of groups subscribed
+     * number of messages
+     * size of db store
+     * total size of messages
+     * total size of groups
+     * @param token
+     */
+    virtual void requestServiceStatistic(uint32_t& token, const RsTokReqOptions &opts) = 0;
+
+	/*!
+	 * To request statistic on a group
+	 * @param token set to value to be redeemed to get statistic
+	 * @param grpId the id of the group
+	 */
+    virtual void requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId, const RsTokReqOptions &opts) = 0;
+
 
     /* Poll */
 
@@ -196,40 +213,73 @@ public:
      * @param token value of token to check status for
      * @return the current status of request
      */
-    virtual uint32_t requestStatus(const uint32_t token) = 0;
-
-    /*!
-     * This request statistics on amount of data held
-     * number of groups
-     * number of groups subscribed
-     * number of messages
-     * size of db store
-     * total size of messages
-     * total size of groups
-     * @param token
-     */
-    virtual void requestServiceStatistic(uint32_t& token) = 0;
+	virtual GxsRequestStatus requestStatus(const uint32_t token) = 0;
 
 	/*!
-	 * To request statistic on a group
-	 * @param token set to value to be redeemed to get statistic
-	 * @param grpId the id of the group
+	 * @brief Cancel Request
+	 * If this function returns false, it may be that the request has completed
+	 * already. Useful for very expensive request.
+	 * @param token the token of the request to cancel
+	 * @return false if unusuccessful in cancelling request, true if successful
 	 */
-    virtual void requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId) = 0;
+	virtual bool cancelRequest(const uint32_t &token) = 0;
 
+#ifdef TO_REMOVE
+	/**
+	 * Block caller while request is being processed.
+	 * Useful for blocking API implementation.
+	 * @param[in] token token associated to the request caller is waiting for
+	 * @param[in] maxWait maximum waiting time in milliseconds
+	 * @param[in] checkEvery time in millisecond between status checks
+	 */
+	RsTokenService::GxsRequestStatus waitToken(
+	        uint32_t token,
+	        std::chrono::milliseconds maxWait = std::chrono::milliseconds(10000),
+	        std::chrono::milliseconds checkEvery = std::chrono::milliseconds(20),
+            bool auto_delete_if_unsuccessful=true)
+	{
+#if defined(__ANDROID__) && (__ANDROID_API__ < 24)
+		auto wkStartime = std::chrono::steady_clock::now();
+		int maxWorkAroundCnt = 10;
+LLwaitTokenBeginLabel:
+#endif
+		auto timeout = std::chrono::steady_clock::now() + maxWait;
+		auto st = requestStatus(token);
+		while( !(st == RsTokenService::FAILED || st >= RsTokenService::COMPLETE) && std::chrono::steady_clock::now() < timeout )
+		{
+			std::this_thread::sleep_for(checkEvery);
+			st = requestStatus(token);
+		}
+        if(st != RsTokenService::COMPLETE && auto_delete_if_unsuccessful)
+            cancelRequest(token);
 
-        /* Cancel Request */
+#if defined(__ANDROID__) && (__ANDROID_API__ < 24)
+		/* Work around for very slow/old android devices, we don't expect this
+		 * to be necessary on newer devices. If it take unreasonably long
+		 * something worser is already happening elsewere and we return anyway.
+		 */
+		if( st > RsTokenService::FAILED && st < RsTokenService::COMPLETE
+		        && maxWorkAroundCnt-- > 0 )
+		{
+			maxWait *= 10;
+			checkEvery *= 3;
+			Dbg3() << __PRETTY_FUNCTION__ << " Slow Android device "
+			       << " workaround st: " << st
+			       << " maxWorkAroundCnt: " << maxWorkAroundCnt
+			       << " maxWait: " << maxWait.count()
+			       << " checkEvery: " << checkEvery.count() << std::endl;
+			goto LLwaitTokenBeginLabel;
+		}
+		Dbg3() << __PRETTY_FUNCTION__ << " lasted: "
+		       << std::chrono::duration_cast<std::chrono::milliseconds>(
+		              std::chrono::steady_clock::now() - wkStartime ).count()
+		       << "ms" << std::endl;
 
-    /*!
-     * If this function returns false, it may be that the request has completed
-     * already. Useful for very expensive request. This is a blocking operation
-     * @param token the token of the request to cancel
-     * @return false if unusuccessful in cancelling request, true if successful
-     */
-    virtual bool cancelRequest(const uint32_t &token) = 0;
+#endif
 
+		return st;
+	}
+#endif
 
-
+	RS_SET_CONTEXT_DEBUG_LEVEL(2)
 };
-
-#endif // RSTOKENSERVICE_H

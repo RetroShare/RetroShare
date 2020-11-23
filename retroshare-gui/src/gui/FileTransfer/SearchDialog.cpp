@@ -1,23 +1,22 @@
-/****************************************************************
- *  RShare is distributed under the following license:
- *
- *  Copyright (C) 2006, crypton
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/FileTransfer/SearchDialog.cpp                        *
+ *                                                                             *
+ * Copyright (c) 2006, Crypton       <retroshare.project@gmail.com>            *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QMessageBox>
 #include <QDir>
@@ -26,11 +25,12 @@
 
 #include "rshare.h"
 #include "SearchDialog.h"
+#include "gui/FileTransfer/BannedFilesDialog.h"
 #include "gui/RSHumanReadableDelegate.h"
 #include "gui/RetroShareLink.h"
 #include "retroshare-gui/RsAutoUpdatePage.h"
 #include "gui/msgs/MessageComposer.h"
-#include "gui/common/RsCollectionFile.h"
+#include "gui/common/RsCollection.h"
 #include "gui/common/FilesDefs.h"
 #include "gui/common/RsUrlHandler.h"
 #include "gui/settings/rsharesettings.h"
@@ -43,17 +43,19 @@
 #include <retroshare/rsexpr.h>
 
 /* Images for context menu icons */
-#define IMAGE_START  		    ":/images/download.png"
-#define IMAGE_REMOVE  		  ":/images/delete.png"
+#define IMAGE_START                ":/icons/png/download.png"
+#define IMAGE_SEARCHAGAIN          ":/images/update.png"
+#define IMAGE_REMOVE               ":/images/delete.png"
 #define IMAGE_REMOVEALL            ":/images/deleteall.png"
 #define IMAGE_DIRECTORY            ":/images/folder16.png"
 #define IMAGE_OPENFOLDER           ":/images/folderopen.png"
-#define IMAGE_LIBRARY              ":/images/library.png"
-#define IMAGE_COLLCREATE           ":/images/library_add.png"
-#define IMAGE_COLLMODIF            ":/images/library_edit.png"
-#define IMAGE_COLLVIEW             ":/images/library_view.png"
-#define IMAGE_COLLOPEN             ":/images/library.png"
+#define IMAGE_LIBRARY              ":/icons/collections.png"
+#define IMAGE_COLLCREATE           ":/iconss/png/add.png"
+#define IMAGE_COLLMODIF            ":/icons/png/pencil-edit-button.png"
+#define IMAGE_COLLVIEW             ":/images/find.png"
+#define IMAGE_COLLOPEN             ":/icons/collections.png"
 #define IMAGE_COPYLINK             ":/images/copyrslink.png"
+#define IMAGE_BANFILE              ":/icons/biohazard_red.png"
 
 /* Key for UI Preferences */
 #define UI_PREF_ADVANCED_SEARCH  "UIOptions/AdvancedSearch"
@@ -117,6 +119,7 @@ SearchDialog::SearchDialog(QWidget *parent)
     connect( ui.searchResultWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( searchResultWidgetCustomPopupMenu( QPoint ) ) );
 
     connect( ui.searchSummaryWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( searchSummaryWidgetCustomPopupMenu( QPoint ) ) );
+    connect( ui.showBannedFiles_TB, SIGNAL( clicked() ), this, SLOT( openBannedFiles() ) );
 
     connect( ui.lineEdit, SIGNAL( returnPressed ( void ) ), this, SLOT( searchKeywords( void ) ) );
     connect( ui.lineEdit, SIGNAL( textChanged ( const QString& ) ), this, SLOT( checkText( const QString& ) ) );
@@ -165,8 +168,10 @@ SearchDialog::SearchDialog(QWidget *parent)
     QHeaderView_setSectionResizeModeColumn(_smheader, SS_KEYWORDS_COL, QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(_smheader, SS_RESULTS_COL, QHeaderView::Interactive);
 
-    _smheader->resizeSection ( SS_KEYWORDS_COL, 160 );
-    _smheader->resizeSection ( SS_RESULTS_COL, 50 );
+    float f = QFontMetricsF(font()).height()/14.0 ;
+
+    _smheader->resizeSection ( SS_KEYWORDS_COL, 160*f );
+    _smheader->resizeSection ( SS_RESULTS_COL, 50*f );
 
     ui.searchResultWidget->setColumnCount(SR_COL_COUNT);
     _smheader = ui.searchResultWidget->header () ;
@@ -174,12 +179,12 @@ SearchDialog::SearchDialog(QWidget *parent)
     QHeaderView_setSectionResizeModeColumn(_smheader, SR_SIZE_COL, QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(_smheader, SR_SOURCES_COL, QHeaderView::Interactive);
 
-    _smheader->resizeSection ( SR_NAME_COL, 240 );
-    _smheader->resizeSection ( SR_SIZE_COL, 75 );
-    _smheader->resizeSection ( SR_SOURCES_COL, 75 );
-    _smheader->resizeSection ( SR_TYPE_COL, 75 );
-    _smheader->resizeSection ( SR_AGE_COL, 90 );
-    _smheader->resizeSection ( SR_HASH_COL, 240 );
+    _smheader->resizeSection ( SR_NAME_COL, 240*f );
+    _smheader->resizeSection ( SR_SIZE_COL, 75*f );
+    _smheader->resizeSection ( SR_SOURCES_COL, 75*f );
+    _smheader->resizeSection ( SR_TYPE_COL, 75*f );
+    _smheader->resizeSection ( SR_AGE_COL, 90*f );
+    _smheader->resizeSection ( SR_HASH_COL, 240*f );
 
     // set header text aligment
     QTreeWidgetItem * headerItem = ui.searchResultWidget->headerItem();
@@ -201,10 +206,10 @@ SearchDialog::SearchDialog(QWidget *parent)
     // load settings
     processSettings(true);
   
-  	ui._ownFiles_CB->setMinimumWidth(20);
-  	ui._friendListsearch_SB->setMinimumWidth(20);
-    ui._anonF2Fsearch_CB->setMinimumWidth(20);
-    ui.label->setMinimumWidth(20);
+  	ui._ownFiles_CB->setMinimumWidth(20*f);
+  	ui._friendListsearch_SB->setMinimumWidth(20*f);
+    ui._anonF2Fsearch_CB->setMinimumWidth(20*f);
+    ui.label->setMinimumWidth(20*f);
 
     // workaround for Qt bug, be solved in next Qt release 4.7.0
     // https://bugreports.qt-project.org/browse/QTBUG-8270
@@ -331,6 +336,9 @@ void SearchDialog::searchResultWidgetCustomPopupMenu( QPoint /*point*/ )
 	contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Send RetroShare Link"), this, SLOT(sendLinkTo())) ;
 	contextMnu.addSeparator();//--------------------------------------
 
+    contextMnu.addAction(QIcon(IMAGE_BANFILE), tr("Mark as bad"), this, SLOT(ban())) ;
+    contextMnu.addSeparator();//--------------------------------------
+
 	QMenu collectionMenu(tr("Collection"), this);
 	collectionMenu.setIcon(QIcon(IMAGE_LIBRARY));
 	collectionMenu.addAction(collCreateAct);
@@ -345,7 +353,7 @@ void SearchDialog::searchResultWidgetCustomPopupMenu( QPoint /*point*/ )
 		QList<QTreeWidgetItem*> item =ui.searchResultWidget->selectedItems() ;
 		if (item.at(0)->data(SR_DATA_COL, SR_ROLE_LOCAL).toBool()) {
 			contextMnu.addAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this, SLOT(openFolderSearch())) ;
-			if (item.at(0)->text(SR_NAME_COL).endsWith(RsCollectionFile::ExtensionString)) {
+			if (item.at(0)->text(SR_NAME_COL).endsWith(RsCollection::ExtensionString)) {
 				add_CollActions = true ;
 			}//if (item.at(0)->text(SR_NAME_COL).endsWith(RsCollectionFile::ExtensionString))
 		}//if (item.at(0)->data(SR_DATA_COL, SR_ROLE_LOCAL).toBool())
@@ -368,7 +376,7 @@ void SearchDialog::getSourceFriendsForHash(const RsFileHash& hash,std::list<RsPe
 	FileInfo finfo ;
 	rsFiles->FileDetails(hash, RS_FILE_HINTS_REMOTE,finfo) ;
 
-	for(std::list<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
+	for(std::vector<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
 	{
 		std::cerr << "  adding peerid " << (*it).peerId << std::endl ;
 		srcIds.push_back((*it).peerId) ;
@@ -404,22 +412,52 @@ void SearchDialog::download()
 				std::cout << "isuing file request from search dialog: -"
 				          << (item->text(SR_NAME_COL)).toStdString()
 				          << "-" << hash << "-" << (item->text(SR_SIZE_COL)).toULongLong() << "-ids=" ;
-				for(std::list<RsPeerId>::const_iterator it(srcIds.begin()); it!=srcIds.end(); ++it) {
+				for(std::list<RsPeerId>::const_iterator it(srcIds.begin()); it!=srcIds.end(); ++it)
 					std::cout << *it << "-" << std::endl;
-				}//for(std::list<RsPeerId>::const_iterator
-				//QColor foreground = QColor(0, 128, 0); // green
+
 				QColor foreground = textColorDownloading();
-				QBrush brush(foreground);
 				for (int i = 0; i < item->columnCount(); ++i)
-				{
-					item->setForeground(i, brush);
-				}
-			}//if(!rsFiles -> FileRequest(
-		}//if (item->text(SR_HASH_COL).isEmpty())
-	}//for (int i = 0
-	if (attemptDownloadLocal) {
+					item->setData(i, Qt::ForegroundRole, foreground );
+			}
+		}
+	}
+	if (attemptDownloadLocal)
 		QMessageBox::information(this, tr("Download Notice"), tr("Skipping Local Files")) ;
-	}//if (attemptDownloadLocal)
+}
+
+void SearchDialog::ban()
+{
+	/* should also be able to handle multi-selection  */
+
+	QList<QTreeWidgetItem*> itemsForDownload = ui.searchResultWidget->selectedItems() ;
+	int numdls = itemsForDownload.size() ;
+	QTreeWidgetItem * item ;
+
+	for (int i = 0; i < numdls; ++i)
+    {
+		item = itemsForDownload.at(i) ;
+		 //  call the download
+		// *
+		if(!item->text(SR_HASH_COL).isEmpty())
+		{
+			std::cerr << "SearchDialog::download() Calling File Ban" << std::endl ;
+
+			RsFileHash hash( item->text(SR_HASH_COL).toStdString()) ;
+
+			rsFiles -> banFile( hash, (item->text(SR_NAME_COL)).toUtf8().constData() , (item->text(SR_SIZE_COL)).toULongLong());
+
+            while(item->parent() != NULL)
+                item = item->parent();
+
+            ui.searchResultWidget->takeTopLevelItem(ui.searchResultWidget->indexOfTopLevelItem(item)) ;
+		}
+	}
+}
+
+void SearchDialog::openBannedFiles()
+{
+    BannedFilesDialog d ;
+    d.exec();
 }
 
 void SearchDialog::collCreate()
@@ -445,10 +483,10 @@ void SearchDialog::collCreate()
 			details.type = DIR_TYPE_FILE;
 
 			dirVec.push_back(details);
-		}//if (!item->text(SR_HASH_COL).isEmpty())
-	}//for (int i = 0; i < numdls; ++i)
+		}
+	}
 
-	RsCollectionFile(dirVec).openNewColl(this);
+	RsCollection(dirVec,RS_FILE_HINTS_LOCAL).openNewColl(this);
 }
 
 void SearchDialog::collModif()
@@ -476,8 +514,8 @@ void SearchDialog::collModif()
 	QFileInfo qinfo;
 	qinfo.setFile(QString::fromUtf8(path.c_str()));
 	if (qinfo.exists()) {
-		if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
-			RsCollectionFile collection;
+		if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
+			RsCollection collection;
 			collection.openColl(qinfo.absoluteFilePath());
 		}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
 	}//if (qinfo.exists())
@@ -508,8 +546,8 @@ void SearchDialog::collView()
 	QFileInfo qinfo;
 	qinfo.setFile(QString::fromUtf8(path.c_str()));
 	if (qinfo.exists()) {
-		if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
-			RsCollectionFile collection;
+		if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
+			RsCollection collection;
 			collection.openColl(qinfo.absoluteFilePath(), true);
 		}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
 	}//if (qinfo.exists())
@@ -540,8 +578,8 @@ void SearchDialog::collOpen()
 				QFileInfo qinfo;
 				qinfo.setFile(QString::fromUtf8(path.c_str()));
 				if (qinfo.exists()) {
-					if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
-						RsCollectionFile collection;
+					if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
+						RsCollection collection;
 						if (collection.load(qinfo.absoluteFilePath())) {
 							collection.downloadFiles();
 							return;
@@ -552,7 +590,7 @@ void SearchDialog::collOpen()
 		}
 	}
 
-	RsCollectionFile collection;
+	RsCollection collection;
 	if (collection.load(this)) {
 		collection.downloadFiles();
 	}//if (collection.load(this))
@@ -633,14 +671,14 @@ void SearchDialog::searchSummaryWidgetCustomPopupMenu( QPoint /*point*/ )
     QMenu contextMnu(this);
 
     QTreeWidgetItem* ci = ui.searchSummaryWidget->currentItem();
-    QAction* action = contextMnu.addAction(tr("Search again"), this, SLOT(searchAgain()));
+    QAction* action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_SEARCHAGAIN),tr("Search again"), this, SLOT(searchAgain()));
     if (!ci || ci->data(SS_DATA_COL, ROLE_KEYWORDS).toString().isEmpty()) {
         action->setDisabled(true);
     }
-    contextMnu.addAction(QIcon(IMAGE_REMOVE), tr("Remove"), this, SLOT(searchRemove()));
-    contextMnu.addAction(QIcon(IMAGE_REMOVE), tr("Remove All"), this, SLOT(searchRemoveAll()));
+    contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_REMOVE), tr("Remove"), this, SLOT(searchRemove()));
+    contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_REMOVEALL), tr("Remove All"), this, SLOT(searchRemoveAll()));
     contextMnu.addSeparator();
-    action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copySearchLink()));
+    action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copySearchLink()));
     if (!ci || ci->data(SS_DATA_COL, ROLE_KEYWORDS).toString().isEmpty()) {
         action->setDisabled(true);
     }
@@ -792,11 +830,10 @@ void SearchDialog::advancedSearch(RsRegularExpression::Expression* expression)
     RsRegularExpression::LinearizedExpression e ;
 	expression->linearize(e) ;
 
-	TurtleRequestId req_id = rsTurtle->turtleSearch(e) ;
+	TurtleRequestId req_id = rsFiles->turtleSearch(e) ;
 
 	// This will act before turtle results come to the interface, thanks to the signals scheduling policy.
-	// The text "bool exp" should be replaced by an appropriate text describing the actual search.
-	initSearchResult("bool exp",req_id, ui.FileTypeComboBox->currentIndex(), true) ;
+	initSearchResult(QString::fromStdString(e.GetStrings()),req_id, ui.FileTypeComboBox->currentIndex(), true) ;
 
 	rsFiles -> SearchBoolExp(expression, results, RS_FILE_HINTS_REMOTE);// | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE);
 
@@ -859,9 +896,9 @@ void SearchDialog::searchKeywords(const QString& keywords)
 	if(ui._anonF2Fsearch_CB->isChecked())
 	{
 		if(n==1)
-			req_id = rsTurtle->turtleSearch(words.front()) ;
+			req_id = rsFiles->turtleSearch(words.front()) ;
 		else
-			req_id = rsTurtle->turtleSearch(lin_exp) ;
+			req_id = rsFiles->turtleSearch(lin_exp) ;
 	}
 	else
 		req_id = RSRandom::random_u32() ; // generate a random 32 bits request id
@@ -941,9 +978,7 @@ void SearchDialog::processResultQueue()
 	while(!searchResultsQueue.empty() && nb_treated_elements++ < 250)
 	{
 		qulonglong search_id = searchResultsQueue.back().first ;
-		FileDetail file = searchResultsQueue.back().second ;
-
-		searchResultsQueue.pop_back() ;
+		FileDetail& file = searchResultsQueue.back().second ;
 
 #ifdef DEBUG
 		std::cout << "Updating file detail:" << std::endl ;
@@ -953,6 +988,8 @@ void SearchDialog::processResultQueue()
 #endif
 
 		insertFile(search_id,file);
+
+		searchResultsQueue.pop_back() ;
 	}
 	ui.searchResultWidget->setSortingEnabled(true);
 	if(!searchResultsQueue.empty())
@@ -1166,6 +1203,7 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 	// 1 - look in result window whether the file already exists.
 	//
 	bool found = false ;
+	bool altname = false ;
 	int sources;
 	int friendSource = 0;
 	int anonymousSource = 0;
@@ -1193,7 +1231,11 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 			(*it)->setText(SR_SOURCES_COL,modifiedResult);
 			(*it)->setData(SR_SOURCES_COL, ROLE_SORT, fltRes);
 			QTreeWidgetItem *item = (*it);
+			
 			found = true ;
+			
+			if(QString::compare((*it)->text(SR_NAME_COL), QString::fromUtf8(file.name.c_str()), Qt::CaseSensitive)!=0)
+				altname = true;
 
 			if (!item->data(SR_DATA_COL, SR_ROLE_LOCAL).toBool()) {
 			
@@ -1227,15 +1269,25 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 					foreground = textColorHighSources();
 				}
 
-				QBrush brush(foreground);
 				for (int i = 0; i < item->columnCount(); ++i)
 				{
-					item->setForeground(i, brush);
+					item->setData(i, Qt::ForegroundRole, foreground);
 				}
 			}
-			break ;
-		}
 
+		if(altname)
+		{
+			QTreeWidgetItem *item = new RSTreeWidgetItem(compareResultRole);
+			item->setText(SR_NAME_COL, QString::fromUtf8(file.name.c_str()));
+			item->setText(SR_HASH_COL, QString::fromStdString(file.hash.toStdString()));
+			setIconAndType(item, QString::fromUtf8(file.name.c_str()));
+			item->setText(SR_SIZE_COL, QString::number(file.size));
+			setIconAndType(item, QString::fromUtf8(file.name.c_str()));
+			(*it)->addChild(item);
+		}
+	
+	}
+	
 	if(!found)
 	{
 		++nb_results[searchId] ;
@@ -1271,6 +1323,7 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 		modifiedResult =QString::number(friendSource) + "/" + QString::number(anonymousSource);
 		float fltRes = friendSource + (float)anonymousSource/1000;
 		item->setText(SR_SOURCES_COL,modifiedResult);
+		item->setToolTip(SR_SOURCES_COL, tr("Obtained via ")+QString::fromStdString(rsPeers->getPeerName(file.id)) );
 		item->setData(SR_SOURCES_COL, ROLE_SORT, fltRes);
 		item->setTextAlignment( SR_SOURCES_COL, Qt::AlignRight );
 		item->setText(SR_SEARCH_ID_COL, sid_hexa);
@@ -1301,10 +1354,9 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 		}
 
 		if (setForeground) {
-			QBrush brush(foreground);
 			for (int i = 0; i < item->columnCount(); ++i)
 			{
-				item->setForeground(i, brush);
+				item->setData(i, Qt::ForegroundRole, foreground);
 			}
 		}
 
@@ -1416,7 +1468,7 @@ void SearchDialog::hideOrShowSearchResult(QTreeWidgetItem* resultItem, QString c
 
 void SearchDialog::setIconAndType(QTreeWidgetItem *item, const QString& filename)
 {
-	item->setIcon(SR_NAME_COL, FilesDefs::getIconFromFilename(filename));
+	item->setIcon(SR_NAME_COL, FilesDefs::getIconFromFileType(filename));
 	item->setText(SR_TYPE_COL, FilesDefs::getNameFromFilename(filename));
 }
 

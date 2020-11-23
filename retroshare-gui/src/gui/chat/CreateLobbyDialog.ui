@@ -11,17 +11,26 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Create Chat Lobby</string>
+   <string>Create Chat Room</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../images.qrc">
     <normaloff>:/images/logo/logo_32.png</normaloff>:/images/logo/logo_32.png</iconset>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="CreateLobbyDialogVLayout">
    <property name="spacing">
     <number>0</number>
    </property>
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -29,11 +38,11 @@
    </item>
    <item>
     <widget class="QFrame" name="frame">
-     <layout class="QVBoxLayout" name="verticalLayout_3">
+     <layout class="QVBoxLayout" name="frameVLayout">
       <item>
        <widget class="StyledLabel" name="lobbyInfoLabel">
         <property name="text">
-         <string>A chat lobby is a decentralized and anonymous chat group. All participants receive all messages. Once the lobby is created you can invite other friends from the Friends tab.</string>
+         <string>A chat room is a decentralized and anonymous chat group. All participants receive all messages. Once the room is created you can invite other friend nodes with invite button on top right.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -41,16 +50,16 @@
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <layout class="QHBoxLayout" name="mainHLayout">
         <item>
-         <widget class="QFrame" name="lobbyFrame">
-          <layout class="QVBoxLayout" name="verticalLayout">
+         <widget class="QFrame" name="roomFrame">
+          <layout class="QVBoxLayout" name="roomFrameVLayout">
            <item>
-            <layout class="QGridLayout" name="gridLayout_3">
+            <layout class="QGridLayout" name="roomGLayout">
              <item row="0" column="0">
-              <widget class="QLabel" name="label_3">
+              <widget class="QLabel" name="lobbyName_Lb">
                <property name="text">
-                <string>Lobby name:</string>
+                <string>Room name:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -61,9 +70,9 @@
               <widget class="QLineEdit" name="lobbyName_LE"/>
              </item>
              <item row="1" column="0">
-              <widget class="QLabel" name="label_7">
+              <widget class="QLabel" name="lobbyTopic_Lb">
                <property name="text">
-                <string>Lobby topic:</string>
+                <string>Room topic:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -74,7 +83,7 @@
               <widget class="QLineEdit" name="lobbyTopic_LE"/>
              </item>
              <item row="2" column="0">
-              <widget class="QLabel" name="label_4">
+              <widget class="QLabel" name="idChooser_Lb">
                <property name="text">
                 <string>Identity to use:</string>
                </property>
@@ -84,7 +93,7 @@
               </widget>
              </item>
              <item row="3" column="0">
-              <widget class="QLabel" name="label_6">
+              <widget class="QLabel" name="security_Lb">
                <property name="text">
                 <string>Visibility:</string>
                </property>
@@ -113,7 +122,7 @@
              <item row="4" column="2">
               <widget class="QCheckBox" name="pgp_signed_CB">
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you check this, only PGP-signed ids can be used to join and talk in this lobby. This limitation prevents anonymous spamming as it becomes possible for at least some people in the lobby to locate the spammer's node.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you check this, only PGP-signed ids can be used to join and talk in this room. This limitation prevents anonymous spamming as it becomes possible for at least some people in the room to locate the spammer's node.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>require PGP-signed identities</string>
@@ -121,7 +130,7 @@
               </widget>
              </item>
              <item row="4" column="0">
-              <widget class="QLabel" name="label">
+              <widget class="QLabel" name="pgp_signed_Lb">
                <property name="layoutDirection">
                 <enum>Qt::LeftToRight</enum>
                </property>
@@ -136,7 +145,7 @@
             </layout>
            </item>
            <item>
-            <spacer name="verticalSpacer">
+            <spacer name="roomVSpacer">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
@@ -152,34 +161,37 @@
          </widget>
         </item>
         <item>
-         <layout class="QGridLayout" name="gridLayout">
+         <layout class="QGridLayout" name="friendListGLayout">
           <item row="0" column="0">
-           <widget class="QLabel" name="label_2">
+           <widget class="QLabel" name="friendListLabel">
             <property name="text">
              <string>Select the Friends with which you want to group chat.</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QDockWidget" name="contactsdockWidget">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
+           <widget class="FriendSelectionWidget" name="keyShareList" native="true">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
               <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
+              <verstretch>4</verstretch>
              </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>20</width>
+              <height>0</height>
+             </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>52487</width>
-              <height>524287</height>
+              <width>1677215</width>
+              <height>16777215</height>
              </size>
             </property>
             <property name="sizeIncrement">
              <size>
-              <width>220</width>
+              <width>0</width>
               <height>0</height>
              </size>
             </property>
@@ -189,59 +201,6 @@
               <height>0</height>
              </size>
             </property>
-            <property name="floating">
-             <bool>false</bool>
-            </property>
-            <property name="features">
-             <set>QDockWidget::NoDockWidgetFeatures</set>
-            </property>
-            <property name="windowTitle">
-             <string>Invited friends</string>
-            </property>
-            <widget class="QWidget" name="dockWidgetContents">
-             <layout class="QGridLayout" name="_2">
-              <property name="margin">
-               <number>0</number>
-              </property>
-              <property name="spacing">
-               <number>0</number>
-              </property>
-              <item row="0" column="0">
-               <widget class="FriendSelectionWidget" name="keyShareList" native="true">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                  <horstretch>0</horstretch>
-                  <verstretch>4</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>20</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>1677215</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="sizeIncrement">
-                 <size>
-                  <width>0</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="baseSize">
-                 <size>
-                  <width>0</width>
-                  <height>0</height>
-                 </size>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
            </widget>
           </item>
          </layout>
@@ -249,7 +208,7 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="toolBarHLayout">
         <property name="sizeConstraint">
          <enum>QLayout::SetDefaultConstraint</enum>
         </property>
@@ -257,9 +216,29 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QDialogButtonBox" name="buttonBox">
-          <property name="standardButtons">
-           <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="createButton">
+          <property name="text">
+           <string>Create</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="cancelButton">
+          <property name="text">
+           <string>Cancel</string>
           </property>
          </widget>
         </item>

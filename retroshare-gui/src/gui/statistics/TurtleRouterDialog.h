@@ -1,10 +1,32 @@
+/*******************************************************************************
+ * gui/statistics/TurtleRouterDialog.h                                         *
+ *                                                                             *
+ * Copyright (c) 2011 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #pragma once
 
 #include <retroshare/rsturtle.h>
 #include <retroshare/rstypes.h>
+
+#include <retroshare-gui/RsAutoUpdatePage.h>
+
 #include "ui_TurtleRouterDialog.h"
 #include "ui_TurtleRouterStatistics.h"
-#include "RsAutoUpdatePage.h"
 
 
 class TurtleRouterDialog: public RsAutoUpdatePage, public Ui::TurtleRouterDialogForm
@@ -21,8 +43,8 @@ class TurtleRouterDialog: public RsAutoUpdatePage, public Ui::TurtleRouterDialog
 	private:
 		void updateTunnelRequests(	const std::vector<std::vector<std::basic_string<char> > >&, 
 											const std::vector<std::vector<std::basic_string<char> > >&, 
-											const std::vector<TurtleRequestDisplayInfo >&, 
-											const std::vector<TurtleRequestDisplayInfo >&) ;
+											const std::vector<TurtleSearchRequestDisplayInfo >&,
+											const std::vector<TurtleTunnelRequestDisplayInfo >&) ;
 											
 		void processSettings(bool bLoad);
 		bool m_bProcessSettings;
@@ -37,29 +59,55 @@ class TurtleRouterDialog: public RsAutoUpdatePage, public Ui::TurtleRouterDialog
 
 } ;
 
-class GxsTunnelsDialog: public RsAutoUpdatePage
+class TunnelStatisticsDialog: public RsAutoUpdatePage
 {
     Q_OBJECT
 
 public:
-    GxsTunnelsDialog(QWidget *parent = NULL) ;
-    ~GxsTunnelsDialog();
+    TunnelStatisticsDialog(QWidget *parent = NULL) ;
+    ~TunnelStatisticsDialog();
 
     // Cache for peer names.
     static QString getPeerName(const RsPeerId &peer_id) ;
+	static QString getPeerName(const RsGxsId& gxs_id);
 
 protected:
     virtual void paintEvent(QPaintEvent *);
     virtual void resizeEvent(QResizeEvent *event);
+
+	int maxWidth ;
+    int maxHeight ;
+
+    QPixmap pixmap;
+
 private:
     void processSettings(bool bLoad);
     bool m_bProcessSettings;
     static QString speedString(float f);
 
+    virtual void updateDisplay() =0;
+} ;
+
+class GxsAuthenticatedTunnelsDialog: public TunnelStatisticsDialog
+{
+    Q_OBJECT
+
+public:
+    GxsAuthenticatedTunnelsDialog(QWidget *parent = NULL) ;
+    ~GxsAuthenticatedTunnelsDialog() {}
+
+private:
     virtual void updateDisplay() ;
-    
-    int maxWidth ;
-    int maxHeight ;
-    
-    QPixmap pixmap;
+} ;
+
+class GxsNetTunnelsDialog: public TunnelStatisticsDialog
+{
+    Q_OBJECT
+
+public:
+    GxsNetTunnelsDialog(QWidget *parent = NULL) ;
+    ~GxsNetTunnelsDialog() {}
+
+private:
+    virtual void updateDisplay() ;
 } ;

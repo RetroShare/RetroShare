@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006, 2007 crypton
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/MainWindow.cpp                                                          *
+ *                                                                             *
+ * Copyright (c) 2006 Crypton          <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QColorDialog>
 #include <QDesktopServices>
@@ -29,23 +28,22 @@
 #include <QUrl>
 #include <QtDebug>
 
-#ifdef BLOGS
-#include "gui/unfinished/blogs/BlogsDialog.h"
-#endif 
-
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsconfig.h>
+
+#ifdef MESSENGER_WINDOW
+#include "MessengerWindow.h"
+#endif
 
 #include "rshare.h"
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
-#include "MessengerWindow.h"
 #include "HomePage.h"
 #include "NetworkDialog.h"
 #include "gui/FileTransfer/SearchDialog.h"
+#include "gui/FileTransfer/SharedFilesDialog.h"
 #include "gui/FileTransfer/TransfersDialog.h"
-#include "MessagesDialog.h"
-#include "SharedFilesDialog.h"
+#include "gui/msgs/MessagesDialog.h"
 #include "PluginsPage.h"
 #include "NewsFeed.h"
 #include "ShareManager.h"
@@ -87,12 +85,14 @@
 #include "statusbar/SoundStatus.h"
 #include "statusbar/ToasterDisable.h"
 #include "statusbar/SysTrayStatus.h"
-#include <retroshare/rsstatus.h>
+#include "statusbar/torstatus.h"
 
-#include <retroshare/rsiface.h>
-#include <retroshare/rspeers.h>
-#include <retroshare/rsfiles.h>
-#include <retroshare/rsnotify.h>
+#include "retroshare/rsstatus.h"
+#include "retroshare/rsiface.h"
+#include "retroshare/rspeers.h"
+#include "retroshare/rsfiles.h"
+#include "retroshare/rsnotify.h"
+#include "retroshare/rsinit.h"
 
 #include "gui/gxschannels/GxsChannelDialog.h"
 #include "gui/gxsforums/GxsForumsDialog.h"
@@ -103,23 +103,35 @@
 #ifdef RS_USE_WIKI
 #include "gui/WikiPoos/WikiDialog.h"
 #endif
+#ifdef RS_USE_WIRE
+#include "gui/TheWire/WireDialog.h"
+#endif
+#ifdef RS_USE_PHOTO
+#include "gui/PhotoShare/PhotoShare.h"
+#endif
 #include "gui/Posted/PostedDialog.h"
 #include "gui/statistics/StatisticsWindow.h"
 
 #include "gui/connect/ConnectFriendWizard.h"
-#include "gui/common/RsCollectionFile.h"
+#include "gui/common/RsCollection.h"
 #include "settings/rsettingswin.h"
 #include "settings/rsharesettings.h"
-#include "settings/WebuiPage.h"
 #include "common/StatusDefs.h"
 #include "gui/notifyqt.h"
+
+#ifdef RS_WEBUI
+#	include "settings/WebuiPage.h"
+#endif
 
 #include <iomanip>
 #include <unistd.h>
 
 #define IMAGE_QUIT              ":/icons/png/exit.png"
-#define IMAGE_PREFERENCES       ":/icons/png/options.png"
+#define IMAGE_PREFERENCES       ":/icons/png/options2.png"
 #define IMAGE_ABOUT             ":/icons/png/info.png"
+#define IMAGE_STATS             ":/icons/png/netgraph2.png"
+#define IMAGE_CLOSE             ":/icons/png/exit2.png"
+
 #define IMAGE_ADDFRIEND         ":/icons/png/invite.png"
 #define IMAGE_RETROSHARE        ":/icons/logo_128.png"
 #define IMAGE_NOONLINE          ":/icons/logo_0_connected_128.png"
@@ -127,24 +139,19 @@
 #define IMAGE_TWOONLINE         ":/icons/logo_2_connected_128.png"
 #define IMAGE_OVERLAY           ":/icons/star_overlay_128.png"
 
-#define IMAGE_BWGRAPH           ":/images/ksysguard.png"
+#define IMAGE_BWGRAPH           ":/icons/png/bandwidth.png"
 #define IMAGE_MESSENGER         ":/images/rsmessenger48.png"
-#define IMAGE_CLOSE             ":/images/close_normal.png"
-#define IMAGE_BLOCK         	":/images/blockdevice.png"
 #define IMAGE_COLOR         	":/images/highlight.png"
-#define IMAGE_GAMES             ":/images/kgames.png"
-#define IMAGE_PHOTO             ":/images/lphoto.png"
 #define IMAGE_NEWRSCOLLECTION   ":/images/library.png"
 #define IMAGE_ADDSHARE          ":/images/directoryadd_24x24_shadow.png"
 #define IMAGE_OPTIONS           ":/images/settings.png"
 #define IMAGE_UNFINISHED        ":/images/underconstruction.png"
-#define IMAGE_MINIMIZE          ":/images/window_nofullscreen.png"
-#define IMAGE_MAXIMIZE          ":/images/window_fullscreen.png"
+#define IMAGE_MINIMIZE          ":/icons/fullscreen.png"
+#define IMAGE_MAXIMIZE          ":/icons/fullscreen-exit.png"
 
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
-#define IMAGE_BLOGS             ":/images/kblogger.png"
-#define IMAGE_DHT               ":/images/dht16.png"
 
+/*static*/ bool MainWindow::hiddenmode = false;
 
 /*static*/ MainWindow *MainWindow::_instance = NULL;
 
@@ -171,6 +178,16 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     ui = new Ui::MainWindow;
     trayIcon = NULL;
 
+	friendsDialog=NULL;
+	idDialog=NULL;
+	chatLobbyDialog=NULL;
+	settingsDialog=NULL;
+	transfersDialog=NULL;
+	messagesDialog=NULL;
+	gxschannelDialog=NULL;
+	gxsforumDialog=NULL;
+	postedDialog=NULL;
+
     /* Invoke the Qt Designer generated QObject setup routine */
     ui->setupUi(this);
 
@@ -186,6 +203,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     RsPeerDetails pd;
     if (rsPeers->getPeerDetails(rsPeers->getOwnId(), pd)) {
         nameAndLocation = QString("%1 (%2)").arg(QString::fromUtf8(pd.name.c_str())).arg(QString::fromUtf8(pd.location.c_str()));
+        if(pd.netMode == RS_NETMODE_HIDDEN)
+            hiddenmode = true;
     }
 
     setWindowTitle(tr("RetroShare %1 a secure decentralized communication platform").arg(Rshare::retroshareVersion(true)) + " - " + nameAndLocation);
@@ -200,7 +219,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     this->setWindowIcon(QIcon(QString::fromUtf8(":/icons/logo_128.png")));
 
     /* Create all the dialogs of which we only want one instance */
-    _bandwidthGraph = new BandwidthGraph();
+    _bandwidthGraph = NULL ;
 
     #ifdef UNFINISHED
     applicationWindow = new ApplicationWindow();
@@ -211,8 +230,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     connect(ui->listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(setNewPage(int)));
     connect(ui->stackPages, SIGNAL(currentChanged(int)), this, SLOT(setNewPage(int)));
 
-    //ui->stackPages->setCurrentIndex(Settings->getLastPageInMainWindow());
-    setNewPage(Settings->getLastPageInMainWindow());
+	int lastpageindex = Settings->getLastPageInMainWindow();
+	if(lastpageindex < ui->stackPages->count())	//Do not crash when a page was removed after last run
+		setNewPage(lastpageindex);
 
     ui->splitter->setStretchFactor(0, 0);
     ui->splitter->setStretchFactor(1, 1);
@@ -244,13 +264,37 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     peerstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowPeer", QVariant(true)).toBool());
     statusBar()->addWidget(peerstatus);
 
-    natstatus = new NATStatus();
-    natstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowNAT", QVariant(true)).toBool());
-    statusBar()->addWidget(natstatus);
-    
-    dhtstatus = new DHTStatus();
-    dhtstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowDHT", QVariant(true)).toBool());
-    statusBar()->addWidget(dhtstatus);
+	if(hiddenmode)
+	{
+        if(RsAccounts::isHiddenNode())
+		{
+			torstatus = new TorStatus();
+			torstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowTor", QVariant(true)).toBool());
+			statusBar()->addWidget(torstatus);
+			torstatus->getTorStatus();
+		}
+        else
+			torstatus = NULL ;
+
+		natstatus = NULL ;
+		dhtstatus = NULL ;
+	}
+	else
+	{
+		torstatus = NULL ;
+
+		natstatus = new NATStatus();
+		if(hiddenmode) natstatus->setVisible(false);
+		else natstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowNAT", QVariant(true)).toBool());
+		statusBar()->addWidget(natstatus);
+		natstatus->getNATStatus();
+
+		dhtstatus = new DHTStatus();
+		if(hiddenmode) dhtstatus->setVisible(false);
+		else dhtstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowDHT", QVariant(true)).toBool());
+		statusBar()->addWidget(dhtstatus);
+		dhtstatus->getDHTStatus();
+	}
 
     hashingstatus = new HashingStatus();
     hashingstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowHashing", QVariant(true)).toBool());
@@ -331,7 +375,9 @@ MainWindow::~MainWindow()
     delete soundStatus;
     delete toasterDisable;
     delete sysTrayStatus;
+#ifdef MESSENGER_WINDOW
     MessengerWindow::releaseInstance();
+#endif
 #ifdef UNFINISHED
     delete applicationWindow;
 #endif
@@ -373,15 +419,21 @@ void MainWindow::initStackedPage()
   PeopleDialog *peopleDialog = NULL;
   addPage(peopleDialog = new PeopleDialog(ui->stackPages), grp, &notify);
   #endif
-  addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
 #ifdef RS_USE_WIKI
   WikiDialog *wikiDialog = NULL;
   addPage(wikiDialog = new WikiDialog(ui->stackPages), grp, &notify);
 #endif
 
-#ifdef BLOGS
-  addPage(blogsFeed = new BlogsDialog(ui->stackPages), grp, NULL);
+#ifdef RS_USE_WIRE
+  WireDialog *wireDialog = NULL;
+  addPage(wireDialog = new WireDialog(ui->stackPages), grp, &notify);
 #endif
+
+#ifdef RS_USE_PHOTO
+  PhotoShare *photoDialog = NULL;
+  addPage(photoDialog = new PhotoShare(ui->stackPages), grp, &notify);
+#endif
+
 
  std::cerr << "Looking for interfaces in existing plugins:" << std::endl;
  for(int i = 0;i<rsPlugins->nbPlugins();++i)
@@ -410,7 +462,7 @@ void MainWindow::initStackedPage()
 
 #ifndef RS_RELEASE_VERSION
 #ifdef PLUGINMGR
-  addPage(pluginsPage = new PluginsPage(ui->stackPages), grp, NULL);
+  addPage(pluginsPage = new gui::PluginsPage(ui->stackPages), grp, NULL);
 #endif
 #endif
 
@@ -426,12 +478,15 @@ void MainWindow::initStackedPage()
   }
 #endif
 
+
+  addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
+
   //List All notify before Setting was created
   QList<QPair<MainPage*, QPair<QAction*, QListWidgetItem*> > >::iterator notifyIt;
   for (notifyIt = notify.begin(); notifyIt != notify.end(); ++notifyIt) {
-      UserNotify *userNotify = notifyIt->first->getUserNotify(this);
+      UserNotify *userNotify = notifyIt->first->getUserNotify();
       if (userNotify) {
-          userNotify->initialize(ui->toolBarPage, notifyIt->second.first, notifyIt->second.second);
+          userNotify->initialize(ui->toolBarPage, notifyIt->second.first, notifyIt->second.second,userNotify->textInfo());
           connect(userNotify, SIGNAL(countChanged()), this, SLOT(updateTrayCombine()));
           userNotifyList.push_back(userNotify);
       }
@@ -562,13 +617,17 @@ void MainWindow::createTrayIcon()
     notifyMenu->menuAction()->setVisible(false);
 
     trayMenu->addSeparator();
+#ifdef MESSENGER_WINDOW
     trayMenu->addAction(QIcon(IMAGE_MESSENGER), tr("Open Messenger"), this, SLOT(showMessengerWindow()));
+#endif
     trayMenu->addAction(QIcon(IMAGE_MESSAGES), tr("Open Messages"), this, SLOT(showMess()));
-#ifdef ENABLE_WEBUI
+#ifdef RS_JSONAPI
+#ifdef RS_WEBUI
     trayMenu->addAction(QIcon(":/images/emblem-web.png"), tr("Show web interface"), this, SLOT(showWebinterface()));
-#endif // ENABLE_WEBUI
-    trayMenu->addAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth Graph"), _bandwidthGraph, SLOT(showWindow()));
-    trayMenu->addAction(QIcon(IMAGE_DHT), tr("Statistics"), this, SLOT(showStatisticsWindow()));
+#endif
+#endif
+    trayMenu->addAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth Graph"), this, SLOT(showBandwidthGraph()));
+    trayMenu->addAction(QIcon(IMAGE_STATS), tr("Statistics"), this, SLOT(showStatisticsWindow()));
 
 
 #ifdef UNFINISHED
@@ -593,6 +652,14 @@ void MainWindow::createTrayIcon()
     trayIcon->show();
 }
 
+void MainWindow::showBandwidthGraph()
+{
+	if(_bandwidthGraph == NULL)
+		_bandwidthGraph = new BandwidthGraph();
+
+	_bandwidthGraph->showWindow();
+}
+
 void MainWindow::createNotifyIcons()
 {
     /* create notify icons */
@@ -612,10 +679,10 @@ const QList<UserNotify*> &MainWindow::getUserNotifyList()
 
 /*static*/ void MainWindow::displayLobbySystrayMsg(const QString& title,const QString& msg)
 {
-    if (_instance == NULL) 
+    if (_instance == NULL)
         return;
 
-    if(Settings->getDisplayTrayChatLobby()) 
+    if(Settings->getDisplayTrayChatLobby())
 		 _instance->displaySystrayMsg(title,msg) ;
 }
 
@@ -698,15 +765,24 @@ void MainWindow::updateStatus()
     float downKb = 0;
     float upKb = 0;
     rsConfig->GetCurrentDataRates(downKb, upKb);
+	uint64_t down = 0;
+	uint64_t up = 0;
+	rsConfig->GetTrafficSum(down, up);
 
     if (ratesstatus)
-        ratesstatus->getRatesStatus(downKb, upKb);
+        ratesstatus->getRatesStatus(downKb, down, upKb, up);
 
-    if (natstatus)
-        natstatus->getNATStatus();
-        
-    if (dhtstatus)
-        dhtstatus->getDHTStatus();
+    if(torstatus)
+        torstatus->getTorStatus();
+
+    if(!hiddenmode)
+    {
+        if (natstatus)
+            natstatus->getNATStatus();
+
+        if (dhtstatus)
+            dhtstatus->getDHTStatus();
+    }
 
     if (discstatus) {
         discstatus->update();
@@ -915,11 +991,6 @@ void SetForegroundWindowInternal(HWND hWnd)
 		 case Forums:
                          _instance->ui->stackPages->setCurrentPage( _instance->gxsforumDialog );
                          return true ;
-#ifdef BLOGS
-		 case Blogs:
-			 Page = _instance->blogsFeed;
-			 return true ;
-#endif
 		case Posted:
 			_instance->ui->stackPages->setCurrentPage( _instance->postedDialog );
 			return true ;
@@ -960,22 +1031,12 @@ void SetForegroundWindowInternal(HWND hWnd)
    if (page == _instance->messagesDialog) {
        return Messages;
    }
-#ifdef RS_USE_LINKS
-   if (page == _instance->linksDialog) {
-       return Links;
-   }
-#endif
 #if 0
    if (page == _instance->channelFeed) {
        return Channels;
    }
    if (page == _instance->forumsDialog) {
        return Forums;
-   }
-#endif
-#ifdef BLOGS
-   if (page == _instance->blogsFeed) {
-       return Blogs;
    }
 #endif
 
@@ -989,7 +1050,7 @@ void SetForegroundWindowInternal(HWND hWnd)
        return NULL;
    }
 
-   switch (page) 
+   switch (page)
 	{
 		case Network:
 			return _instance->friendsDialog->networkDialog;
@@ -1009,20 +1070,12 @@ void SetForegroundWindowInternal(HWND hWnd)
 			return _instance->transfersDialog->searchDialog;
 		case Messages:
 			return _instance->messagesDialog;
-#ifdef RS_USE_LINKS
-		case Links:
-			return _instance->linksDialog;
-#endif
 		case Channels:
 			return _instance->gxschannelDialog;
 		case Forums:
 			return _instance->gxsforumDialog;
 		case Posted:
 			return _instance->postedDialog;
-#ifdef BLOGS
-		case Blogs:
-			return _instance->blogsFeed;
-#endif
 	}
 
    return NULL;
@@ -1039,12 +1092,12 @@ void MainWindow::addFriend()
 }
 
 /** New RSCollection ShortCut */
-void MainWindow::newRsCollection()
-{
-    std::vector <DirDetails> dirVec;
-
-    RsCollectionFile(dirVec).openNewColl(this);
-}
+// void MainWindow::newRsCollection()
+// {
+//     std::vector <DirDetails> dirVec;
+//
+//     RsCollection(dirVec).openNewColl(this);
+// }
 
 /** Shows Share Manager */
 void MainWindow::openShareManager()
@@ -1067,11 +1120,13 @@ void MainWindow::showSettings()
     showWindow(MainWindow::Options);
 }
 
+#ifdef MESSENGER_WINDOW
 /** Shows Messenger window */
 void MainWindow::showMessengerWindow()
 {
     MessengerWindow::showYourself();
 }
+#endif
 
 /** Shows Statistics window */
 void MainWindow::showStatisticsWindow()
@@ -1079,12 +1134,14 @@ void MainWindow::showStatisticsWindow()
     StatisticsWindow::showYourself();
 }
 
-#ifdef ENABLE_WEBUI
+#ifdef RS_JSONAPI
+#ifdef RS_WEBUI
 void MainWindow::showWebinterface()
 {
     WebuiPage::showWebui();
 }
 #endif // ENABLE_WEBUI
+#endif 
 
 /** Shows Application window */
 #ifdef UNFINISHED
@@ -1420,27 +1477,37 @@ void MainWindow::settingsChanged()
 void MainWindow::externalLinkActivated(const QUrl &url)
 {
 	static bool already_warned = false ;
+	bool never_ask_me = Settings->value("NeverAskMeForExternalLinkActivated",false).toBool();
 
-	if(!already_warned)
+	if(!already_warned && !never_ask_me)
 	{
 		QMessageBox mb(QObject::tr("Confirmation"), QObject::tr("Do you want this link to be handled by your system?")+"<br/><br/>"+ url.toString()+"<br/><br/>"+tr("Make sure this link has not been forged to drag you to a malicious website."), QMessageBox::Question, QMessageBox::Yes,QMessageBox::No, 0);
 
-		QCheckBox *checkbox = new QCheckBox(tr("Don't ask me again")) ;
+		QCheckBox *dontAsk_CB = new QCheckBox(tr("Don't ask me again"));
+		QCheckBox *neverAsk_CB = new QCheckBox(tr("Never ask me again"));
+		dontAsk_CB->setToolTip(tr("This will be saved only for this session."));
+		neverAsk_CB->setToolTip(tr("This will be saved permanently. You'll need to clean RetroShare.conf to revert."));
 		QGridLayout* layout = qobject_cast<QGridLayout*>(mb.layout());
 		if (layout)
 		{
-			layout->addWidget(checkbox,layout->rowCount(),0,1, layout->columnCount(), Qt::AlignLeft);
+			layout->addWidget(dontAsk_CB,layout->rowCount(),0,1, layout->columnCount(), Qt::AlignLeft);
+			layout->addWidget(neverAsk_CB,layout->rowCount(),0,1, layout->columnCount(), Qt::AlignLeft);
 		} else {
 			//Not QGridLayout so add at end
-			mb.layout()->addWidget(checkbox) ;
+			mb.layout()->addWidget(dontAsk_CB);
+			mb.layout()->addWidget(neverAsk_CB);
 		}
 
 		int res = mb.exec() ;
 
-		if (res == QMessageBox::No) 
+		if (res == QMessageBox::No)
 			return ;
-		else if(checkbox->isChecked())
+
+		if(dontAsk_CB->isChecked())
 			already_warned = true ;
+
+		if(neverAsk_CB->isChecked())
+			Settings->setValue("NeverAskMeForExternalLinkActivated",true);
 	}
 
 	QDesktopServices::openUrl(url) ;
@@ -1471,8 +1538,8 @@ void MainWindow::openRsCollection(const QString &filename)
 {
 	QFileInfo qinfo(filename);
 	if (qinfo.exists()) {
-		if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
-			RsCollectionFile collection;
+		if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
+			RsCollection collection;
 			collection.openColl(qinfo.absoluteFilePath());
 		}
 	}
@@ -1496,13 +1563,13 @@ void MainWindow::processLastArgs()
 	if (opModeStatus) {
 		QString opmode = Rshare::opmode().toLower();
 		if (opmode == "noturtle") {
-			opModeStatus->setCurrentIndex(RS_OPMODE_NOTURTLE - 1);
+			opModeStatus->setCurrentIndex(static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::NOTURTLE) - 1);
 		} else if (opmode == "gaming") {
-			opModeStatus->setCurrentIndex(RS_OPMODE_GAMING - 1);
+			opModeStatus->setCurrentIndex(static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::GAMING) - 1);
 		} else if (opmode == "minimal") {
-			opModeStatus->setCurrentIndex(RS_OPMODE_MINIMAL - 1);
-		} else {
-			opModeStatus->setCurrentIndex(RS_OPMODE_FULL - 1);
+			opModeStatus->setCurrentIndex(static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::MINIMAL) - 1);
+		} else if (opmode != "") {
+			opModeStatus->setCurrentIndex(static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::FULL) - 1);
 		}
 		opModeStatus->setOpMode();
 	} else {
@@ -1599,10 +1666,17 @@ void MainWindow::setCompactStatusMode(bool compact)
 	//statusComboBox: TODO Show only icon
 	peerstatus->setCompactMode(compact);
 	updateFriends();
+    if(!hiddenmode)
+    {
 	natstatus->setCompactMode(compact);
 	natstatus->getNATStatus();
 	dhtstatus->setCompactMode(compact);
 	dhtstatus->getDHTStatus();
+    }
+
+	if(torstatus)
+		torstatus->setCompactMode(compact) ;
+
 	hashingstatus->setCompactMode(compact);
 	ratesstatus->setCompactMode(compact);
 	//opModeStatus: TODO Show only ???

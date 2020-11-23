@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * libretroshare/src/util: radix64.h                                           *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2015 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #pragma once
 
 #include <string>
@@ -5,10 +26,13 @@
 #include <vector>
 #include <stdint.h>
 
-class Radix64
+#include "util/rsdeprecate.h"
+
+/** @deprecated use RsBase64 instead which supports also URL safe encoding */
+class RS_DEPRECATED_FOR(RsBase64) Radix64
 {
-    public:
-        static std::vector<uint8_t> decode(const std::string& buffer)
+public:
+	static std::vector<uint8_t> decode(const std::string& buffer)
 		{
 			char val;
 			int c = 0, c2;/* init c because gcc is not clever
@@ -101,13 +125,14 @@ again:
 		/****************
 		 * create a radix64 encoded string.
 		 */
-		static void encode(const unsigned char *data,int len,std::string& out_string)
+	static void encode(
+	        const unsigned char* data, size_t len, std::string& out_string )
 		{
 			char *buffer, *p;
 
 			radix64_init();
 
-			int size = (len + 2) / 3 * 4 +1;
+			size_t size = (len + 2) / 3 * 4 +1;
 			buffer = p = new char[size] ;
 
 			for (; len >= 3; len -= 3, data += 3)
@@ -173,5 +198,3 @@ again:
 			return true ;
 		}
 };
-
-

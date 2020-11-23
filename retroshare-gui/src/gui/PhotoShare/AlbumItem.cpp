@@ -1,3 +1,23 @@
+/*******************************************************************************
+ * retroshare-gui/src/gui/PhotoShare/AlbumItem.cpp                             *
+ *                                                                             *
+ * Copyright (C) 2018 by Retroshare Team     <retroshare.project@gmail.com>    *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #include "AlbumItem.h"
 #include "ui_AlbumItem.h"
 #include <iostream>
@@ -21,17 +41,17 @@ void AlbumItem::setUp()
 {
     ui->label_AlbumTitle->setText(QString::fromStdString(mAlbum.mMeta.mGroupName));
     ui->label_Photographer->setText(QString::fromStdString(mAlbum.mPhotographer));
-    QPixmap qtn;
-    qtn.loadFromData(mAlbum.mThumbnail.data, mAlbum.mThumbnail.size, mAlbum.mThumbnail.type.c_str());
     
-    if(mAlbum.mThumbnail.size != 0)
+    if(mAlbum.mThumbnail.mSize != 0)
     {
-		ui->label_Thumbnail->setPixmap(qtn);
+        QPixmap qtn;
+        qtn.loadFromData(mAlbum.mThumbnail.mData, mAlbum.mThumbnail.mSize, "PNG");
+        ui->label_Thumbnail->setPixmap(qtn);
     }
     else
     {
-		// display a default Album icon when album has no Thumbnail
-		ui->label_Thumbnail->setPixmap(QPixmap(":/images/album_default_128.png"));
+        // display a default Album icon when album has no Thumbnail
+        ui->label_Thumbnail->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/album_default_128.png"));
     }
 }
 

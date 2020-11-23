@@ -1,3 +1,23 @@
+/*******************************************************************************
+ * gui/statistics/BWGraph.cpp                                                  *
+ *                                                                             *
+ * Copyright (c) 2012 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #include "BWGraph.h"
 
 #include <time.h>
@@ -88,12 +108,17 @@ void BWGraphSource::update()
 
         lst.push_back(std::make_pair(ms,it->second)) ;
 
+		float& total(_totals[it->first].v) ;
+
+		total += it->second ;
+
         unused_vals.erase(it->first) ;
 
         for(std::list<std::pair<qint64,float> >::iterator it2=lst.begin();it2!=lst.end();)
             if( ms - (*it2).first > _time_limit_msecs)
             {
                 //std::cerr << "  removing old value with time " << (*it).first/1000.0f << std::endl;
+				total -=(*it2).second ;
                 it2 = lst.erase(it2) ;
             }
             else
@@ -114,6 +139,7 @@ void BWGraphSource::update()
 		{
 			std::map<std::string,std::list<std::pair<qint64,float> > >::iterator tmp(it) ;
 			++tmp;
+			_totals.erase(it->first) ;
 			_points.erase(it) ;
 			it=tmp ;
 		}
@@ -147,17 +173,29 @@ void BWGraphSource::update()
                 break ;
     }
 
+	_total_duration_seconds = duration/1000.0 ;
+
     // now update the totals, and possibly convert into an average if the unit requires it.
 
-    updateTotals();
+    // updateTotals();
 
-    if(_current_unit == UNIT_KILOBYTES)
-        for(std::map<std::string,float>::iterator it(_totals.begin());it!=_totals.end();++it)
-            it->second /= (duration/1000.0) ;
+    // if(_current_unit == UNIT_KILOBYTES)
+    //     for(std::map<std::string,ZeroInitFloat>::iterator it(_totals.begin());it!=_totals.end();++it)
+    //         it->second.v /= (duration/1000.0) ;
 
 #ifdef BWGRAPH_DEBUG
     std::cerr << "Traffic history has size " << mTrafficHistory.size() << std::endl;
 #endif
+}
+
+void BWGraphSource::getCumulatedValues(std::vector<float>& vals) const
+{
+	if(_current_unit == UNIT_KILOBYTES && _total_duration_seconds > 0.0)
+		for(std::map<std::string,ZeroInitFloat>::const_iterator it = _totals.begin();it!=_totals.end();++it)
+			vals.push_back(it->second.v/_total_duration_seconds) ;
+	else
+		for(std::map<std::string,ZeroInitFloat>::const_iterator it = _totals.begin();it!=_totals.end();++it)
+			vals.push_back(it->second.v) ;
 }
 
 std::string BWGraphSource::makeSubItemName(uint16_t service_id,uint8_t sub_item_type) const

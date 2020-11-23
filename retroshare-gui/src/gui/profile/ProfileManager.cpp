@@ -1,24 +1,25 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2012, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/profile/ProfileManager.cpp                           *
+ *                                                                             *
+ * Copyright (C) 2012 by Retroshare Team     <retroshare.project@gmail.com>    *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
+
+#include "gui/common/FilesDefs.h"
 #include <rshare.h>
 #include <util/rsrandom.h>
 #include <retroshare/rsinit.h>
@@ -37,7 +38,7 @@
 
 #include <time.h>
 
-#define IMAGE_EXPORT         ":/images/exportpeers_16x16.png"
+#define IMAGE_EXPORT         ""
 
 #define COLUMN_NAME			0
 #define COLUMN_EMAIL		1
@@ -50,7 +51,7 @@ ProfileManager::ProfileManager(QWidget *parent)
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
 
-	ui.headerFrame->setHeaderImage(QPixmap(":/images/contact_new128.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/profile.png"));
 	ui.headerFrame->setHeaderText(tr("Profile Manager"));
 
 	connect(ui.identityTreeWidget, SIGNAL( customContextMenuRequested(QPoint)), this, SLOT( identityTreeWidgetCostumPopupMenu(QPoint)));
@@ -67,7 +68,7 @@ void ProfileManager::identityTreeWidgetCostumPopupMenu(QPoint)
 
 	QMenu contextMnu(this);
 
-	QAction *action = contextMnu.addAction(QIcon(IMAGE_EXPORT), tr("Export Identity"), this, SLOT(exportIdentity()));
+    QAction *action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EXPORT), tr("Export Identity"), this, SLOT(exportIdentity()));
 	action->setEnabled(item != NULL);
 
 	contextMnu.exec(QCursor::pos());

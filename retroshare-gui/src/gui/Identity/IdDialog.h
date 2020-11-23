@@ -1,25 +1,22 @@
-/*
- * Retroshare Identity.
- *
- * Copyright 2012-2012 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * retroshare-gui/src/gui/Identity/IdDialog.h                                  *
+ *                                                                             *
+ * Copyright (C) 2012 by Robert Fernie       <retroshare.project@gmail.com>    *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef IDENTITYDIALOG_H
 #define IDENTITYDIALOG_H
@@ -27,8 +24,6 @@
 #include "gui/gxs/RsGxsUpdateBroadcastPage.h"
 
 #include <retroshare/rsidentity.h>
-
-#include "util/TokenQueue.h"
 
 #define IMAGE_IDDIALOG          ":/icons/png/people.png"
 
@@ -48,7 +43,7 @@ struct CircleUpdateOrder
     uint32_t action ;
 };
 
-class IdDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
+class IdDialog : public MainPage
 {
 	Q_OBJECT
 
@@ -60,17 +55,19 @@ public:
 	virtual QString pageName() const { return tr("People") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 
-	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
-
     void navigate(const RsGxsId& gxs_id) ; // shows the info about this particular ID
 protected:
 	virtual void updateDisplay(bool complete);
 
-	void loadCircleGroupMeta(const uint32_t &token);
-	void loadCircleGroupData(const uint32_t &token);
-	void updateCircleGroup(const uint32_t& token);
+	void updateIdList();
+	void loadIdentities(const std::map<RsGxsGroupId, RsGxsIdGroup> &ids_set);
 
-	void requestCircleGroupMeta();
+	void updateIdentity();
+	void loadIdentity(RsGxsIdGroup id_data);
+
+	void updateCircles();
+	void loadCircles(const std::list<RsGroupMetaData>& circle_metas);
+
 	//void requestCircleGroupData(const RsGxsCircleId& circle_id);
 	bool getItemCircleId(QTreeWidgetItem *item,RsGxsCircleId& id) ;
 
@@ -92,6 +89,7 @@ private slots:
 	void removeIdentity();
 	void editIdentity();
 	void chatIdentity();
+	void chatIdentityItem(QTreeWidgetItem* item);
 	void sendMsg();
 	void copyRetroshareLink();
   void on_closeInfoFrameButton_clicked();
@@ -122,10 +120,6 @@ private:
 	void processSettings(bool load);
 	QString createUsageString(const RsIdentityUsage& u) const;
 
-	void requestIdDetails();
-	void insertIdDetails(uint32_t token);
-
-	void requestIdList();
 	void requestIdData(std::list<RsGxsGroupId> &ids);
 	bool fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, const RsPgpId &ownPgpId, int accept);
 	void insertIdList(uint32_t token);
@@ -138,10 +132,9 @@ private:
 	void requestIdEdit(std::string &id);
 	void showIdEdit(uint32_t token);
 
-private:
-	TokenQueue *mIdQueue;
-	TokenQueue *mCircleQueue;
+	void clearPerson();
 
+private:
 	UIStateHelper *mStateHelper;
 
 	QTreeWidgetItem *contactsItem;
@@ -149,7 +142,11 @@ private:
 	QTreeWidgetItem *ownItem;
 	QTreeWidgetItem *mExternalBelongingCircleItem;
 	QTreeWidgetItem *mExternalOtherCircleItem;
+	QTreeWidgetItem *mMyCircleItem;
 	RsGxsUpdateBroadcastBase *mCirclesBroadcastBase ;
+
+	void saveExpandedCircleItems(std::vector<bool> &expanded_root_items, std::set<RsGxsCircleId>& expanded_circle_items) const;
+	void restoreExpandedCircleItems(const std::vector<bool>& expanded_root_items,const std::set<RsGxsCircleId>& expanded_circle_items);
 
 	std::map<uint32_t, CircleUpdateOrder> mCircleUpdates ;
 
@@ -157,7 +154,11 @@ private:
 	RsGxsGroupId mIdToNavigate;
 	int filter;
 
-	/* UI -  Designer */
+    void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+    RsEventsHandlerId_t mEventHandlerId_identity;
+    RsEventsHandlerId_t mEventHandlerId_circles;
+
+    /* UI -  Designer */
 	Ui::IdDialog *ui;
 };
 

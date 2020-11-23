@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/services p3gxscommon.cc
- *
- * GxsChannels interface for RetroShare.
- *
- * Copyright 2012-2013 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/services: p3gxscommon.cc                                  *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2013 Robert Fernie <retroshare@lunamutt.com>                 *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "retroshare/rsgxscommon.h"
 #include "services/p3gxscommon.h"
 #include "rsitems/rsgxscommentitems.h"
@@ -82,6 +78,11 @@ RsGxsImage &RsGxsImage::operator=(const RsGxsImage &a)
 	return *this;
 }
 
+
+bool RsGxsImage::empty() const
+{
+	return ((mData == NULL) || (mSize == 0));
+}
 
 void RsGxsImage::take(uint8_t *data, uint32_t size)
 {
@@ -394,18 +395,28 @@ bool p3GxsCommentService::getGxsRelatedComments(const uint32_t &token, std::vect
 
 double p3GxsCommentService::calculateBestScore(int upVotes, int downVotes)
 {
-	static float z = 1.0;
 
 	float score;
-	int n = upVotes - downVotes;
+	int n = upVotes + downVotes;
+
 	if(n==0)
-	{
 		score = 0.0;
-	}
 	else
 	{
-		float phat = upVotes;
-		score = sqrt(phat+z*z/(2*n)-z*((phat*(1-phat)+z*z/(4*n))/n))/(1+z*z/n);
+		// See https://github.com/reddit/reddit/blob/master/r2/r2/lib/db/_sorts.pyx#L45 for the source of this nice formula.
+		//     http://www.evanmiller.org/how-not-to-sort-by-average-rating.html for the mathematical explanation.
+
+		float p = upVotes/n;
+		float z = 1.281551565545 ;
+
+		float left  = p + 1/(2*n)*z*z ;
+		float right = z*sqrt(p*(1-p)/n + z*z/(4*n*n)) ;
+		float under = 1+1/n*z*z ;
+
+		score = (left - right)/under ;
+
+		//static float z = 1.0;
+		//score = sqrt(phat+z*z/(2*n)-z*((phat*(1-phat)+z*z/(4*n))/n))/(1+z*z/n);
 	}
 	return score;
 }
@@ -414,7 +425,7 @@ double p3GxsCommentService::calculateBestScore(int upVotes, int downVotes)
 
 /********************************************************************************************/
 
-bool p3GxsCommentService::createGxsComment(uint32_t &token, RsGxsComment &msg)
+bool p3GxsCommentService::createGxsComment(uint32_t &token, const RsGxsComment &msg)
 {
 #ifdef DEBUG_GXSCOMMON
     std::cerr << "p3GxsCommentService::createGxsComment() GroupId: " << msg.mMeta.mGroupId;
@@ -492,8 +503,8 @@ bool p3GxsCommentService::createGxsVote(uint32_t &token, RsGxsVote &vote)
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_META;
 
 	GxsMsgReq msgIds;
-	std::vector<RsGxsMessageId> &vect_msgIds = msgIds[parentId.first];
-	vect_msgIds.push_back(parentId.second);
+	std::set<RsGxsMessageId> &vect_msgIds = msgIds[parentId.first];
+	vect_msgIds.insert(parentId.second);
 
 	uint32_t int_token;
 	mExchange->getTokenService()->requestMsgInfo(int_token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, msgIds);
@@ -546,24 +557,22 @@ void p3GxsCommentService::load_PendingVoteParent(const uint32_t &token)
 			pit = mPendingVotes.find(parentId);
 			if (pit == mPendingVotes.end())
 			{
-                		std::cerr << "p3GxsCommentService::load_PendingVoteParent() ERROR Finding Pending Vote";
-				std::cerr << std::endl;
+				std::cerr << __PRETTY_FUNCTION__
+				          << " ERROR Finding Pending Vote" << std::endl;
 				continue;
 			}
 
 			RsGxsVote vote = pit->second.mVote;
 			if (meta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK)
 			{
-                		std::cerr << "p3GxsCommentService::load_PendingVoteParent() ERROR Already Voted";
-				std::cerr << std::endl;
-                		std::cerr << "mGroupId: " << meta.mGroupId;
-				std::cerr << std::endl;
-                		std::cerr << "mMsgId: " << meta.mMsgId;
-				std::cerr << std::endl;
+				std::cerr << __PRETTY_FUNCTION__ << " ERROR Already Voted"
+				          << std::endl
+				          << "mGroupId: " << meta.mGroupId << std::endl
+				          << "mMsgId: " << meta.mMsgId << std::endl;
 
 				pit->second.mStatus = VoteHolder::VOTE_ERROR;
-				uint32_t status = RsTokenService::GXS_REQUEST_V2_STATUS_FAILED;
-				mExchange->updatePublicRequestStatus(pit->second.mReqToken, status);
+				mExchange->updatePublicRequestStatus(
+				            pit->second.mReqToken, RsTokenService::FAILED );
 				continue;
 			}
 
@@ -607,8 +616,8 @@ void p3GxsCommentService::completeInternalVote(uint32_t &token)
 	{
 		if (it->second.mVoteToken == token)
 		{
-
-			uint32_t status = mExchange->getTokenService()->requestStatus(token);
+			RsTokenService::GxsRequestStatus status =
+			        mExchange->getTokenService()->requestStatus(token);
 			mExchange->updatePublicRequestStatus(it->second.mReqToken, status);
 
 #ifdef DEBUG_GXSCOMMON

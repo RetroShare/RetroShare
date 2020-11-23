@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="ru" version="2.0">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="ru">
 <context>
     <name>AudioInput</name>
     <message>
@@ -404,11 +406,16 @@
         <translation>Установите оптимальные настройки громкости микрофона.</translation>
     </message>
     <message>
-        <location line="+6"/>
-        <source>&lt;p &gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there's an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it's checked. &lt;/p&gt;
+        <source>&lt;p &gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there&apos;s an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it&apos;s checked. &lt;/p&gt;
 &lt;p&gt;Speak loudly, as when you are annoyed or excited. Decrease the volume in the sound control panel until the bar below stays as high as possible in the green and orange but not the red zone while you speak. &lt;/p&gt;</source>
-        <translation>&lt;p&gt;Откройте системную панель управления звуком и перейдите к параметрам записи. Убедитесь, что микрофон выбран в качестве активного входа с максимальной громкостью записи. Если есть возможность включить &quot;усиление Микрофона&quot; (Microphone Boost) - включите его.&lt;/p&gt;
+        <translation type="vanished">&lt;p&gt;Откройте системную панель управления звуком и перейдите к параметрам записи. Убедитесь, что микрофон выбран в качестве активного входа с максимальной громкостью записи. Если есть возможность включить &quot;усиление Микрофона&quot; (Microphone Boost) - включите его.&lt;/p&gt;
 &lt;p&gt;Говорите громко, как будто Вы раздражены или взволнованы. Уменьшите громкость звука в системной панели управления так, чтобы показания индикатора звука были максимум в синей и зеленой зоне, но &lt;b&gt;НЕ&lt;/b&gt; красной, пока Вы говорите.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>&lt;p&gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there&apos;s an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it&apos;s checked. &lt;/p&gt;
+&lt;p&gt;Speak loudly, as when you are annoyed or excited. Decrease the volume in the sound control panel until the bar below stays as high as possible in the green and orange but not the red zone while you speak. &lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+11"/>
@@ -489,19 +496,27 @@
         <translation>&lt;h3&gt;RetroShare VOIP плагин&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. to use it, proceed as follows:&lt;UL&gt;</source>
-        <translation>&lt;br/&gt;Плагин VOIP добавляет VOIP в частном окне чата из RetroShare. Чтобы использовать его, выполните следующие действия:&lt;UL&gt;</translation>
+        <translation type="vanished">&lt;br/&gt;Плагин VOIP добавляет VOIP в частном окне чата из RetroShare. Чтобы использовать его, выполните следующие действия:&lt;UL&gt;</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>&lt;li&gt; setup microphone levels using the configuration panel&lt;/li&gt;</source>
         <translation>&lt;li&gt;установка уровня использования микрофона с помощью панели настройки&lt;/li&gt;</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>&lt;li&gt; check your microphone by looking at the VU-metters&lt;/li&gt;</source>
-        <translation>&lt;li&gt;проверьте свой ​​микрофон, глядя на VU-Меттерс&lt;/li&gt;</translation>
+        <translation type="vanished">&lt;li&gt;проверьте свой ​​микрофон, глядя на VU-Меттерс&lt;/li&gt;</translation>
+    </message>
+    <message>
+        <location line="-1"/>
+        <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. To use it, proceed as follows:&lt;UL&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>&lt;li&gt; check your microphone by looking at the VU-meters&lt;/li&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -595,12 +610,11 @@
         <translation>Полноэкранный режим</translation>
     </message>
     <message>
-        <location line="-412"/>
         <source>%1 inviting you to start an audio conversation. Do you want Accept or Decline the invitation?</source>
-        <translation>%1 приглашает вас начать голосовое общение. Хотите Принять или Отклонить приглашение?</translation>
+        <translation type="vanished">%1 приглашает вас начать голосовое общение. Хотите Принять или Отклонить приглашение?</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-410"/>
         <source>Accept Audio Call</source>
         <translation>Принять аудиозвонок</translation>
     </message>
@@ -615,12 +629,11 @@
         <translation>Отклонить аудиовызов</translation>
     </message>
     <message>
-        <location line="+33"/>
         <source>%1 inviting you to start a video conversation. Do you want Accept or Decline the invitation?</source>
-        <translation>%1 приглашает вас начать видеообщение. Хотите Принять или Отклонить приглашение? </translation>
+        <translation type="vanished">%1 приглашает вас начать видеообщение. Хотите Принять или Отклонить приглашение? </translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+52"/>
         <source>Decline Video Call</source>
         <translation>Отклонить Видеовызов</translation>
     </message>
@@ -640,12 +653,11 @@
         <translation>Включить микрофон</translation>
     </message>
     <message>
-        <location line="+589"/>
         <source>Waiting your friend respond your video call.</source>
-        <translation>Ожидание ответа друга на ваш видео звонок</translation>
+        <translation type="vanished">Ожидание ответа друга на ваш видео звонок</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+603"/>
         <source>Your friend is calling you for video. Respond.</source>
         <translation>Ваш друг пытается сделать видеозвонок вам. Принять.</translation>
     </message>
@@ -711,12 +723,22 @@
         <translation>Принимать видеозвонок</translation>
     </message>
     <message>
-        <location line="-52"/>
+        <location line="-55"/>
+        <source>%1 is inviting you to start an audio conversation. Do you want to Accept or Decline the invitation?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Activate audio</source>
         <translation>Активировать аудио</translation>
     </message>
     <message>
-        <location line="+384"/>
+        <location line="+50"/>
+        <source>%1 is inviting you to start a video conversation. Do you want to Accept or Decline the invitation?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+334"/>
         <source>Show Chat Text</source>
         <translation>Показать содержание чата</translation>
     </message>
@@ -752,11 +774,20 @@
     </message>
     <message>
         <location line="+20"/>
-        <source>Waiting your friend respond your audio call.</source>
-        <translation>Ожидание ответа друга на ваш вызов.</translation>
+        <source>Waiting for your friend to respond to your audio call.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+58"/>
+        <source>Waiting for your friend to respond to your video call.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Waiting your friend respond your audio call.</source>
+        <translation type="vanished">Ожидание ответа друга на ваш вызов.</translation>
+    </message>
+    <message>
+        <location line="-44"/>
         <source>Your friend is calling you for audio. Respond.</source>
         <translation>Ваш друг совершает аудиовызов. Ответьте.</translation>
     </message>
@@ -877,8 +908,12 @@
     </message>
     <message>
         <location line="+24"/>
+        <source>Bandwidth Info received from this peer: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Bandwidth Info received from this peer:%1</source>
-        <translation>Информация о трафике получена от этого участника: % 1</translation>
+        <translation type="vanished">Информация о трафике получена от этого участника: % 1</translation>
     </message>
     <message>
         <location line="+24"/>

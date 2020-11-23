@@ -1,24 +1,24 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2012 Cyril Soler <csoler@users.sourceforge.net>
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
- 
+/*******************************************************************************
+ * libretroshare/src/pgp: pgpkeyutil.h                                         *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012 Cyril Soler <csoler@users.sourceforge.net>                   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #pragma once
 
 // refer to RFC4880 specif document for loading GPG public keys:
@@ -40,6 +40,46 @@
 
 #include <stdint.h>
 #include <string>
+
+static const uint8_t PGP_PACKET_TAG_HASH_ALGORITHM_UNKNOWN       = 0  ;
+static const uint8_t PGP_PACKET_TAG_HASH_ALGORITHM_MD5           = 1  ;
+static const uint8_t PGP_PACKET_TAG_HASH_ALGORITHM_SHA1          = 2  ;
+static const uint8_t PGP_PACKET_TAG_HASH_ALGORITHM_SHA256        = 8  ;
+static const uint8_t PGP_PACKET_TAG_HASH_ALGORITHM_SHA512        = 10 ;
+
+static const uint8_t PGP_PACKET_TAG_PUBLIC_KEY_ALGORITHM_UNKNOWN = 0  ;
+static const uint8_t PGP_PACKET_TAG_PUBLIC_KEY_ALGORITHM_RSA_ES  = 1  ;
+static const uint8_t PGP_PACKET_TAG_PUBLIC_KEY_ALGORITHM_RSA_E   = 2  ;
+static const uint8_t PGP_PACKET_TAG_PUBLIC_KEY_ALGORITHM_RSA_S   = 3  ;
+static const uint8_t PGP_PACKET_TAG_PUBLIC_KEY_ALGORITHM_DSA     = 17 ;
+
+static const uint8_t PGP_PACKET_TAG_SIGNATURE_VERSION_UNKNOWN    = 0 ;
+static const uint8_t PGP_PACKET_TAG_SIGNATURE_VERSION_V3         = 3 ;
+static const uint8_t PGP_PACKET_TAG_SIGNATURE_VERSION_V4         = 4 ;
+
+static const uint8_t PGP_PACKET_TAG_SIGNATURE_TYPE_UNKNOWN          = 0xff ;
+static const uint8_t PGP_PACKET_TAG_SIGNATURE_TYPE_BINARY_DOCUMENT  = 0x00 ;
+static const uint8_t PGP_PACKET_TAG_SIGNATURE_TYPE_CANONICAL_TEXT   = 0x01 ;
+static const uint8_t PGP_PACKET_TAG_SIGNATURE_TYPE_STANDALONE_SIG   = 0x02 ;
+// All other consts for signature types not used, so not defines.
+
+class PGPSignatureInfo
+{
+public:
+	PGPSignatureInfo() :
+	    signature_version   (PGP_PACKET_TAG_SIGNATURE_VERSION_UNKNOWN),
+	    signature_type      (PGP_PACKET_TAG_SIGNATURE_TYPE_UNKNOWN),
+	    issuer              (0),
+	    public_key_algorithm(PGP_PACKET_TAG_PUBLIC_KEY_ALGORITHM_UNKNOWN),
+	    hash_algorithm      (PGP_PACKET_TAG_HASH_ALGORITHM_UNKNOWN)
+	{}
+
+	uint8_t  signature_version ;
+	uint8_t  signature_type ;
+	uint64_t issuer ;
+	uint8_t  public_key_algorithm ;
+	uint8_t  hash_algorithm ;
+};
 
 // This class handles GPG keys. For now we only clean them from signatures, but
 // in the future, we might cache them to avoid unnecessary calls to gpgme.
@@ -66,7 +106,7 @@ class PGPKeyManagement
 		// 
 		static uint32_t compute24bitsCRC(unsigned char *data,size_t len) ;
         
-        	static bool parseSignature(const unsigned char *signature, size_t sign_len, uint64_t &issuer) ;
+		static bool parseSignature(const unsigned char *signature, size_t sign_len, PGPSignatureInfo& info) ;
 };
 
 // This class handles the parsing of PGP packet headers under various (old and new) formats.
@@ -74,6 +114,8 @@ class PGPKeyManagement
 class PGPKeyParser
 {
 	public:
+		// These constants correspond to packet tags from RFC4880
+
 		static const uint8_t PGP_PACKET_TAG_PUBLIC_KEY  =  6 ;
 		static const uint8_t PGP_PACKET_TAG_USER_ID     = 13 ;
 		static const uint8_t PGP_PACKET_TAG_SIGNATURE   =  2 ;

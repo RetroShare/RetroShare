@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006,2007 crypton
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/FileTransfer/TransfersDialog.h                       *
+ *                                                                             *
+ * Copyright (c) 2007 Crypton         <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef _TRANSFERSDIALOG_H
 #define _TRANSFERSDIALOG_H
@@ -25,11 +24,15 @@
 #include <set>
 
 #include <retroshare/rstypes.h>
-#include "RsAutoUpdatePage.h"
+#include <retroshare/rsevents.h>
+#include <retroshare-gui/RsAutoUpdatePage.h>
 
 #include "ui_TransfersDialog.h"
 
-#define IMAGE_TRANSFERS      	":/icons/ktorrent_128.png"
+#include <QItemSelectionModel>
+#include <QSortFilterProxyModel>
+
+#define IMAGE_TRANSFERS      	":/icons/png/fileshare.png"
 
 class QShortcut;
 class DLListDelegate;
@@ -41,6 +44,7 @@ class FileProgressInfo;
 class SearchDialog;
 class LocalSharedFilesDialog;
 class RemoteSharedFilesDialog;
+class RsDownloadListModel;
 
 class TransfersDialog : public RsAutoUpdatePage
 {
@@ -51,7 +55,8 @@ public:
 						 /* Fixed numbers for load and save the last page */
 			 				SearchTab              = 0,  /** Network page. */
 							LocalSharedFilesTab    = 1,  /** Network new graph. */
-							RemoteSharedFilesTab   = 2   /** Old group chat page. */
+							RemoteSharedFilesTab   = 2,  /** Old group chat page. */
+							DownloadTab            = 3
 		 };
 
 
@@ -63,7 +68,7 @@ public:
     virtual QString pageName() const { return tr("Files") ; } //MainPage
     virtual QString helpText() const { return ""; } //MainPage
 
-    virtual UserNotify *getUserNotify(QObject *parent);
+    virtual UserNotify *createUserNotify(QObject *parent) override;
 
 	 void activatePage(TransfersDialog::Page page) ;
 
@@ -75,6 +80,7 @@ public:
 	 LocalSharedFilesDialog *localSharedFiles ;
 	 RemoteSharedFilesDialog *remoteSharedFiles ;
 
+    static QString getPeerName(const RsPeerId &peer_id, QString &iconName, QString &tooltip) ;
 public slots:
     void insertTransfers();
 
@@ -86,29 +92,29 @@ private slots:
     void downloadListCustomPopupMenu( QPoint point );
     void downloadListHeaderCustomPopupMenu( QPoint point );
     void uploadsListCustomPopupMenu( QPoint point );
+	void uploadsListHeaderCustomPopupMenu (QPoint point );
 
     void cancel();
     void forceCheck();
     /** removes finished Downloads**/
     void clearcompleted();
 
-    void copyLink();
+    void dlCopyLink();
     void pasteLink();
     void renameFile();
     void setDestinationDirectory();
     void chooseDestinationDirectory();
 
-    void expandAll();
-    void collapseAll();
-
-//    void rootdecorated();
-//    void rootisnotdecorated();
+    void expandAllDL();
+    void collapseAllDL();
+    void expandAllUL();
+    void collapseAllUL();
 
     void pauseFileTransfer();
     void resumeFileTransfer();
-    void openFolderTransfer();
-    void openTransfer();
-    void previewTransfer();
+    void dlOpenFolder();
+    void dlOpenFile();
+    void dlPreviewFile();
 
     void ulOpenFolder();
     void ulCopyLink();
@@ -139,6 +145,7 @@ private slots:
     void collModif();
     void collView();
     void collOpen();
+    void collAutoOpen(const QString& fileHash);
 
     void setShowDLSizeColumn(bool show);
     void setShowDLCompleteColumn(bool show);
@@ -153,13 +160,22 @@ private slots:
     void setShowDLLastDLColumn(bool show);
     void setShowDLPath(bool show);
 
+	void setShowULPeerColumn(bool show);
+	void setShowULSizeColumn(bool show);
+	void setShowULTransferredColumn(bool show);
+	void setShowULSpeedColumn(bool show);
+	void setShowULProgressColumn(bool show);
+	void setShowULHashColumn(bool show);
+
+    void filterChanged(const QString &text);
+
 signals:
     void playFiles(QStringList files);
 
 private:
-    QString getPeerName(const RsPeerId &peer_id) const ;
 
-    QStandardItemModel *DLListModel;
+    RsDownloadListModel *DLListModel;
+    QSortFilterProxyModel *DLLFilterModel;
     QStandardItemModel *ULListModel;
     QItemSelectionModel *selection;
     QItemSelectionModel *selectionUp;
@@ -201,14 +217,16 @@ private:
     QAction *detailsFileAct;
     QAction *renameFileAct;
     QAction *specifyDestinationDirectoryAct;
-    QAction *expandAllAct;
-    QAction *collapseAllAct;
+    QAction *expandAllDLAct;
+    QAction *collapseAllDLAct;
+    QAction *expandAllULAct;
+    QAction *collapseAllULAct;
     QAction *collCreateAct;
     QAction *collModifAct;
     QAction *collViewAct;
     QAction *collOpenAct;
 
-    /** Defines the actions for the header context menu */
+	/** Defines the actions for the header context menu in download */
     QAction* showDLSizeAct;
     QAction* showDLCompleteAct;
     QAction* showDLDLSpeedAct;
@@ -226,14 +244,23 @@ private:
     QAction* ulOpenFolderAct;
     QAction* ulCopyLinkAct;
 
+	/** Defines the actions for the header context menu in upload*/
+	QAction* showULPeerAct;
+	QAction* showULSizeAct;
+	QAction* showULTransferredAct;
+	QAction* showULSpeedAct;
+	QAction* showULProgressAct;
+	QAction* showULHashAct;
+
     bool m_bProcessSettings;
     void processSettings(bool bLoad);
 
-    void getSelectedItems(std::set<RsFileHash> *ids, std::set<int> *rows);
+    void getDLSelectedItems(std::set<RsFileHash> *ids, std::set<int> *rows);
     void getULSelectedItems(std::set<RsFileHash> *ids, std::set<int> *rows);
     bool controlTransferFile(uint32_t flags);
     void changePriority(int priority);
     void setChunkStrategy(FileChunksInfo::ChunkStrategy s) ;
+	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
     QTreeView *downloadList;
 
@@ -248,13 +275,13 @@ private:
     /** Qt Designer generated object */
     Ui::TransfersDialog ui;
 
+     RsEventsHandlerId_t mEventHandlerId;
 public slots:
-	// these two functions add entries to the transfers dialog, and return the row id of the entry modified/added
-	//
-    int addItem(int row, const FileInfo &fileInfo);
-    int addPeerToItem(QStandardItem *dlItem, const QString& name, const QString& coreID, double dlspeed, uint32_t status, const FileProgressInfo& peerInfo);
-
-    int addUploadItem(const QString& symbol, const QString& name, const QString& coreID, qlonglong size, const FileProgressInfo& pinfo, double dlspeed, const QString& sources,const QString& source_id, const QString& status, qlonglong completed, qlonglong remaining);
+    // these four functions add entries to the transfers dialog, and return the row id of the entry modified/added
+//    int addDLItem(int row, const FileInfo &fileInfo);
+//    int addPeerToDLItem(QStandardItem* dlItem, const RsPeerId &peer_ID, const QString &coreID, double dlspeed, uint32_t status, const FileProgressInfo &peerInfo);
+    int addULItem(int row, const FileInfo &fileInfo);
+    int addPeerToULItem(QStandardItem* ulItem, const RsPeerId &peer_ID, const QString &coreID, qlonglong completed, double ulspeed, const FileProgressInfo &peerInfo);
 
     void showFileDetails() ;
 
@@ -263,6 +290,7 @@ public slots:
     QString getFileName(int row, QStandardItemModel *model);
     QString getStatus(int row, QStandardItemModel *model);
     QString getID(int row, QStandardItemModel *model);
+    QString getID(int row, QSortFilterProxyModel *filter);
     QString getPriority(int row, QStandardItemModel *model);
     qlonglong getFileSize(int row, QStandardItemModel *model);
     qlonglong getTransfered(int row, QStandardItemModel *model);

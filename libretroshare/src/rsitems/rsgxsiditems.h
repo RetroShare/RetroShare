@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/serialiser: rsgxsiditems.h
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2012-2012 by Robert Fernie
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/rsitems: rsgxsiditems.h                                   *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2012 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RS_GXS_IDENTITY_ITEMS_H
 #define RS_GXS_IDENTITY_ITEMS_H
 
@@ -71,11 +67,9 @@ public:
     // Avatar
     RsTlvImage mImage ;
 };
-class RsGxsIdLocalInfoItem : public RsGxsIdItem
+
+struct RsGxsIdLocalInfoItem : public RsGxsIdItem
 {
-
-public:
-
     RsGxsIdLocalInfoItem():  RsGxsIdItem(RS_PKT_SUBTYPE_GXSID_LOCAL_INFO_ITEM) {}
     virtual ~RsGxsIdLocalInfoItem() {}
 
@@ -83,42 +77,9 @@ public:
 
 	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
-    std::map<RsGxsId,time_t> mTimeStamps ;
+    std::map<RsGxsId,rstime_t> mTimeStamps ;
     std::set<RsGxsId> mContacts ;
 };
-
-#if 0
-class RsGxsIdOpinionItem : public RsGxsMsgItem
-{
-public:
-
-    RsGxsIdOpinionItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_GXSID,
-			RS_PKT_SUBTYPE_GXSID_OPINION_ITEM) {return; }
-        virtual ~RsGxsIdOpinionItem() { return;}
-        void clear();
-    virtual bool serialise(void *data,uint32_t& size) = 0 ;
-    virtual uint32_t serial_size() = 0 ;
-
-    std::ostream &print(std::ostream &out, uint16_t indent = 0);
-	RsGxsIdOpinion opinion;
-};
-
-class RsGxsIdCommentItem : public RsGxsMsgItem
-{
-public:
-
-    RsGxsIdCommentItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_GXSID,
-                                          RS_PKT_SUBTYPE_GXSID_COMMENT_ITEM) { return; }
-    virtual ~RsGxsIdCommentItem() { return; }
-    void clear();
-    virtual bool serialise(void *data,uint32_t& size) = 0 ;
-    virtual uint32_t serial_size() = 0 ;
-
-    std::ostream &print(std::ostream &out, uint16_t indent = 0);
-    RsGxsIdComment comment;
-
-};
-#endif
 
 class RsGxsIdSerialiser : public RsServiceSerializer
 {

@@ -1,25 +1,24 @@
-/****************************************************************
- *
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2012, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/common/FriendSelectionWidget.cpp                                        *
+ *                                                                             *
+ * Copyright (C) 2012, Retroshare Team <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
+#include "gui/common/FilesDefs.h"
 #include <QDialogButtonBox>
 #include <QMenu>
 #include "FriendSelectionWidget.h"
@@ -29,6 +28,7 @@
 #include "gui/notifyqt.h"
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/common/StatusDefs.h"
+#include "util/qtthreadsutils.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/common/GroupDefs.h"
 #include "rshare.h"
@@ -37,6 +37,7 @@
 #include <retroshare/rsstatus.h>
 
 #include <algorithm>
+#include <memory>
 
 #define COLUMN_NAME   0
 #define COLUMN_CHECK  0
@@ -45,11 +46,12 @@
 
 #define IDDIALOG_IDLIST		1
 
-#define ROLE_ID                  Qt::UserRole
-#define ROLE_SORT_GROUP          Qt::UserRole + 1
-#define ROLE_SORT_STANDARD_GROUP Qt::UserRole + 2
-#define ROLE_SORT_NAME           Qt::UserRole + 3
-#define ROLE_SORT_STATE          Qt::UserRole + 4
+#define ROLE_ID                     Qt::UserRole
+#define ROLE_SORT_GROUP             Qt::UserRole + 1
+#define ROLE_SORT_STANDARD_GROUP    Qt::UserRole + 2
+#define ROLE_SORT_NAME              Qt::UserRole + 3
+#define ROLE_SORT_STATE             Qt::UserRole + 4
+#define ROLE_FILTER_REASON          Qt::UserRole + 5
 
 #define IMAGE_GROUP16    ":/images/user/group16.png"
 #define IMAGE_FRIENDINFO ":/images/peerdetails_16x16.png"
@@ -81,7 +83,7 @@ static void setSelected(FriendSelectionWidget::Modus modus, QTreeWidgetItem *ite
 }
 
 FriendSelectionWidget::FriendSelectionWidget(QWidget *parent) 
-	: RsGxsUpdateBroadcastPage(rsIdentity,parent), ui(new Ui::FriendSelectionWidget)
+	: QWidget(parent), ui(new Ui::FriendSelectionWidget)
 {
 	ui->setupUi(this);
 
@@ -92,8 +94,6 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent)
 	mInGpgItemChanged = false;
 	mInSslItemChanged = false;
 	mInFillList = false;
-
-	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 
 	connect(ui->friendList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequested(QPoint)));
 	connect(ui->friendList, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(itemDoubleClicked(QTreeWidgetItem*,int)));
@@ -109,10 +109,15 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent)
 	mActionSortByState->setCheckable(true);
 	connect(mActionSortByState, SIGNAL(toggled(bool)), this, SLOT(sortByState(bool)));
 	ui->friendList->addContextMenuAction(mActionSortByState);
+	mActionFilterConnected = new QAction(tr("Filter only connected"), this);
+	mActionFilterConnected->setCheckable(true);
+	connect(mActionFilterConnected, SIGNAL(toggled(bool)), this, SLOT(filterConnected(bool)));
+	ui->friendList->addContextMenuAction(mActionFilterConnected);
 
 	/* initialize list */
 	ui->friendList->setColumnCount(COLUMN_COUNT);
 	ui->friendList->headerItem()->setText(COLUMN_NAME, tr("Name"));
+	ui->friendList->setFilterReasonRole(ROLE_FILTER_REASON);
 
 	/* sort list by name ascending */
 	ui->friendList->sortItems(COLUMN_NAME, Qt::AscendingOrder);
@@ -127,7 +132,6 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent)
 
 FriendSelectionWidget::~FriendSelectionWidget()
 {
-	delete(mIdQueue);
 	delete ui;
 }
 
@@ -181,6 +185,11 @@ int FriendSelectionWidget::addColumn(const QString &title)
 	return column;
 }
 
+void FriendSelectionWidget::showEvent(QShowEvent *e)
+{
+    if(gxsIds.empty())
+        loadIdentities();
+}
 void FriendSelectionWidget::start()
 {
 	mStarted = true;
@@ -208,16 +217,16 @@ static void initSslItem(QTreeWidgetItem *item, const RsPeerDetails &detail, cons
 	}
 
 	if (state != (int) RS_STATUS_OFFLINE) {
-		item->setTextColor(COLUMN_NAME, textColorOnline);
+		item->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline);
 	}
 
-	item->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(state)));
+    item->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(StatusDefs::imageUser(state)));
 	item->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.id.toStdString()));
 
 	item->setData(COLUMN_NAME, ROLE_SORT_GROUP, 1);
 	item->setData(COLUMN_NAME, ROLE_SORT_STANDARD_GROUP, 0);
-	item->setData(COLUMN_NAME, ROLE_SORT_STATE, (state != (int) RS_STATUS_OFFLINE) ? 0 : 1);
 	item->setData(COLUMN_NAME, ROLE_SORT_NAME, name);
+	item->setData(COLUMN_NAME, ROLE_SORT_STATE, state);
 }
 
 void FriendSelectionWidget::fillList()
@@ -233,32 +242,33 @@ void FriendSelectionWidget::fillList()
 	secured_fillList() ;
 }
 
-void FriendSelectionWidget::loadRequest(const TokenQueue */*queue*/, const TokenRequest &req)
+void FriendSelectionWidget::loadIdentities()
 {
 	// store all IDs locally, and call fillList() ;
 
-	uint32_t token = req.mToken ;
-
-	RsGxsIdGroup data;
-	std::vector<RsGxsIdGroup> datavector;
-	std::vector<RsGxsIdGroup>::iterator vit;
-
-	if (!rsIdentity->getGroupData(token, datavector))
+	RsThread::async([this]()
 	{
-		std::cerr << "FriendSelectionWidget::loadRequest() ERROR. Cannot load data from rsIdentity." << std::endl;
-		return ;
-	}
+        std::list<RsGroupMetaData> ids_meta;
 
-	gxsIds.clear() ;
+		if(!rsIdentity->getIdentitiesSummaries(ids_meta))
+		{
+			RS_ERR("failed to retrieve identities group info for all identities");
+			return;
+		}
 
-	for(uint32_t i=0;i<datavector.size();++i)
-	{
-		gxsIds.push_back(datavector[i].mMeta.mGroupId) ;
-		//std::cerr << "  got ID = " << datavector[i].mMeta.mGroupId << std::endl;
-	}
+		auto ids = std::make_unique<std::vector<RsGxsGroupId>>();
+		for(auto& meta: ids_meta) ids->push_back(meta.mGroupId);
 
-	//std::cerr << "Got all " << datavector.size() << " ids from rsIdentity. Calling update of list." << std::endl;
-	fillList() ;
+		RsQThreadUtils::postToObject(
+		            [ids = std::move(ids), this]()
+		{
+			// We do that is the GUI thread. Dont try it on another thread!
+			gxsIds = *ids;
+			/* TODO: To furter optimize away a copy gxsIds could be a unique_ptr
+			 * too */
+			fillList();
+		}, this );
+	});
 }
 
 void FriendSelectionWidget::secured_fillList()
@@ -267,23 +277,47 @@ void FriendSelectionWidget::secured_fillList()
 
 	// get selected items
     std::set<RsPeerId> sslIdsSelected;
-	if (mShowTypes & SHOW_SSL) {
+	if (mShowTypes & SHOW_SSL)
+    {
+        if(!ui->friendList->topLevelItemCount())					// if not loaded yet, use the existing list.
+            for(auto& s:mPreSelectedIds)
+				sslIdsSelected.insert(RsPeerId(s));
+
         selectedIds<RsPeerId,IDTYPE_SSL>(sslIdsSelected,true);
 	}
 
     std::set<RsNodeGroupId> groupIdsSelected;
-	if (mShowTypes & SHOW_GROUP) {
+
+	if (mShowTypes & SHOW_GROUP)
+    {
         selectedIds<RsNodeGroupId,IDTYPE_GROUP>(groupIdsSelected,true);
+
+        if(!ui->friendList->topLevelItemCount())					// if not loaded yet, use the existing list.
+            for(auto& s:mPreSelectedIds)
+				groupIdsSelected.insert(RsNodeGroupId(s));
 	}
 
     std::set<RsPgpId> gpgIdsSelected;
-	if (mShowTypes & (SHOW_GPG | SHOW_NON_FRIEND_GPG)) {
+
+	if (mShowTypes & (SHOW_GPG | SHOW_NON_FRIEND_GPG))
+    {
         selectedIds<RsPgpId,IDTYPE_GPG>(gpgIdsSelected,true);
+
+        if(!ui->friendList->topLevelItemCount())					// if not loaded yet, use the existing list.
+            for(auto& s:mPreSelectedIds)
+				gpgIdsSelected.insert(RsPgpId(s));
 	}
 
     std::set<RsGxsId> gxsIdsSelected;
+
 	if (mShowTypes & SHOW_GXS)
+    {
 		selectedIds<RsGxsId,IDTYPE_GXS>(gxsIdsSelected,true);
+
+        if(!ui->friendList->topLevelItemCount())					// if not loaded yet, use the existing list.
+            for(auto& s:mPreSelectedIds)
+				gxsIdsSelected.insert(RsGxsId(s));
+    }
 		
     std::set<RsGxsId> gxsIdsSelected2;
 	if (mShowTypes & SHOW_CONTACTS)
@@ -348,7 +382,7 @@ void FriendSelectionWidget::secured_fillList()
 			groupItem->setFlags(Qt::ItemIsUserCheckable | groupItem->flags());
 			groupItem->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
 			groupItem->setTextAlignment(COLUMN_NAME, Qt::AlignLeft | Qt::AlignVCenter);
-			groupItem->setIcon(COLUMN_NAME, QIcon(IMAGE_GROUP16));
+            groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(IMAGE_GROUP16));
 
             groupItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(groupInfo->id.toStdString()));
 
@@ -359,8 +393,8 @@ void FriendSelectionWidget::secured_fillList()
 
 			groupItem->setData(COLUMN_NAME, ROLE_SORT_GROUP, 0);
 			groupItem->setData(COLUMN_NAME, ROLE_SORT_STANDARD_GROUP, (groupInfo->flag & RS_GROUP_FLAG_STANDARD) ? 0 : 1);
-			groupItem->setData(COLUMN_NAME, ROLE_SORT_STATE, 0);
 			groupItem->setData(COLUMN_NAME, ROLE_SORT_NAME, groupName);
+			groupItem->setData(COLUMN_NAME, ROLE_SORT_STATE, 0);
 
 			if (mListModus == MODUS_CHECK) {
 				groupItem->setCheckState(0, Qt::Unchecked);
@@ -417,17 +451,17 @@ void FriendSelectionWidget::secured_fillList()
 				}
 
 				if (state != (int) RS_STATUS_OFFLINE) {
-					gpgItem->setTextColor(COLUMN_NAME, textColorOnline());
+					gpgItem->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
 				}
 
 				gpgItem->setFlags(Qt::ItemIsUserCheckable | gpgItem->flags());
-				gpgItem->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(state)));
+                gpgItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(StatusDefs::imageUser(state)));
 				gpgItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.gpg_id.toStdString()));
 
 				gpgItem->setData(COLUMN_NAME, ROLE_SORT_GROUP, 1);
 				gpgItem->setData(COLUMN_NAME, ROLE_SORT_STANDARD_GROUP, 0);
-				gpgItem->setData(COLUMN_NAME, ROLE_SORT_STATE, (state != (int) RS_STATUS_OFFLINE) ? 0 : 1);
 				gpgItem->setData(COLUMN_NAME, ROLE_SORT_NAME, name);
+				gpgItem->setData(COLUMN_NAME, ROLE_SORT_STATE, state);
 
 				if (mListModus == MODUS_CHECK) {
 					gpgItem->setCheckState(0, Qt::Unchecked);
@@ -554,16 +588,16 @@ void FriendSelectionWidget::secured_fillList()
 				QString name = QString::fromUtf8(detail.mNickname.c_str());
 				gxsItem->setText(COLUMN_NAME, name + " ("+QString::fromStdString( (*gxsIt).toStdString() )+")");
 
-				//gxsItem->setTextColor(COLUMN_NAME, textColorOnline());
+				//gxsItem->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
 				gxsItem->setFlags(Qt::ItemIsUserCheckable | gxsItem->flags());
                 gxsItem->setIcon(COLUMN_NAME, identicon);
 				gxsItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.mId.toStdString()));
 
 				gxsItem->setData(COLUMN_NAME, ROLE_SORT_GROUP, 1);
 				gxsItem->setData(COLUMN_NAME, ROLE_SORT_STANDARD_GROUP, 0);
+				gxsItem->setData(COLUMN_NAME, ROLE_SORT_NAME, name);
 //TODO: online state for gxs items
 				gxsItem->setData(COLUMN_NAME, ROLE_SORT_STATE, 1);
-				gxsItem->setData(COLUMN_NAME, ROLE_SORT_NAME, name);
 
 				if (mListModus == MODUS_CHECK) 
 					gxsItem->setCheckState(0, Qt::Unchecked);
@@ -608,16 +642,16 @@ void FriendSelectionWidget::secured_fillList()
           QString name = QString::fromUtf8(detail.mNickname.c_str());
           gxsItem->setText(COLUMN_NAME, name + " ("+QString::fromStdString( (*gxsIt).toStdString() )+")");
 
-          //gxsItem->setTextColor(COLUMN_NAME, textColorOnline());
+          //gxsItem->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
           gxsItem->setFlags(Qt::ItemIsUserCheckable | gxsItem->flags());
                   gxsItem->setIcon(COLUMN_NAME, identicon);
           gxsItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.mId.toStdString()));
 
           gxsItem->setData(COLUMN_NAME, ROLE_SORT_GROUP, 1);
           gxsItem->setData(COLUMN_NAME, ROLE_SORT_STANDARD_GROUP, 0);
+          gxsItem->setData(COLUMN_NAME, ROLE_SORT_NAME, name);
           //TODO: online state for gxs items
           gxsItem->setData(COLUMN_NAME, ROLE_SORT_STATE, 1);
-          gxsItem->setData(COLUMN_NAME, ROLE_SORT_NAME, name);
 
           if (mListModus == MODUS_CHECK) 
             gxsItem->setCheckState(0, Qt::Unchecked);
@@ -650,32 +684,25 @@ void FriendSelectionWidget::secured_fillList()
 	mInFillList = false;
 
 	ui->friendList->resort();
+	filterConnected(isFilterConnected());
 
 	emit contentChanged();
 }
 void FriendSelectionWidget::updateDisplay(bool)
 {
-	requestGXSIdList() ;
+	loadIdentities() ;
 }
-void FriendSelectionWidget::requestGXSIdList()
+// This call is inlined so that there's no linking conflict with MinGW on Windows
+template<> inline void FriendSelectionWidget::setSelectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(const std::set<RsGxsId>& ids, bool add)
 {
-	if (!mIdQueue)
-		return;
+    if(!add)
+		mPreSelectedIds.clear();
 
-	//mStateHelper->setLoading(IDDIALOG_IDLIST, true);
-	//mStateHelper->setLoading(IDDIALOG_IDDETAILS, true);
-	//mStateHelper->setLoading(IDDIALOG_REPLIST, true);
+    for(auto& gxsId:ids)
+        mPreSelectedIds.insert(gxsId.toStdString());
 
-	mIdQueue->cancelActiveRequestTokens(IDDIALOG_IDLIST);
-
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-
-	uint32_t token;
-
-	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, IDDIALOG_IDLIST);
+    loadIdentities();
 }
-
 
 void FriendSelectionWidget::groupsChanged(int /*type*/)
 {
@@ -741,17 +768,15 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 		case IDTYPE_GPG:
 			{
 				if (item->data(COLUMN_DATA, ROLE_ID).toString() == gpgId) {
-					QColor color;
 					if (status != (int) RS_STATUS_OFFLINE) {
-						color = textColorOnline();
+						item->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
 					} else {
-						color = ui->friendList->palette().color(QPalette::Text);
+						item->setData(COLUMN_NAME, Qt::ForegroundRole, QVariant());
 					}
 
-					item->setTextColor(COLUMN_NAME, color);
-					item->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(gpgStatus)));
+                    item->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(StatusDefs::imageUser(gpgStatus)));
 
-					item->setData(COLUMN_NAME, ROLE_SORT_STATE, (gpgStatus != (int) RS_STATUS_OFFLINE) ? 0 : 1);
+					item->setData(COLUMN_NAME, ROLE_SORT_STATE, gpgStatus);
 
 					bFoundGPG = true;
 				}
@@ -760,17 +785,15 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 		case IDTYPE_SSL:
 			{
 				if (item->data(COLUMN_DATA, ROLE_ID).toString() == peerId) {
-					QColor color;
 					if (status != (int) RS_STATUS_OFFLINE) {
-						color = textColorOnline();
+						item->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
 					} else {
-						color = ui->friendList->palette().color(QPalette::Text);
+						item->setData(COLUMN_NAME, Qt::ForegroundRole, QVariant());
 					}
 
-					item->setTextColor(COLUMN_NAME, color);
-					item->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(status)));
+                    item->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(StatusDefs::imageUser(status)));
 
-					item->setData(COLUMN_NAME, ROLE_SORT_STATE, (status != (int) RS_STATUS_OFFLINE) ? 0 : 1);
+					item->setData(COLUMN_NAME, ROLE_SORT_STATE, status);
 
 					bFoundSSL = true;
 				}
@@ -799,6 +822,7 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 	}
 
 	ui->friendList->resort();
+	filterConnected(isFilterConnected());
 }
 
 void FriendSelectionWidget::addContextMenuAction(QAction *action)
@@ -810,7 +834,7 @@ void FriendSelectionWidget::contextMenuRequested(const QPoint &/*pos*/)
 {
 	QMenu *contextMenu = new QMenu(this);
 
-	if (mListModus == MODUS_CHECK) {
+	if (mListModus == MODUS_MULTI) {
 		contextMenu->addAction(QIcon(), tr("Mark all"), this, SLOT(selectAll()));
 		contextMenu->addAction(QIcon(), tr("Mark none"), this, SLOT(deselectAll()));
 	}
@@ -953,37 +977,9 @@ void FriendSelectionWidget::itemChanged(QTreeWidgetItem *item, int column)
 
 void FriendSelectionWidget::filterItems(const QString& text)
 {
-	int count = ui->friendList->topLevelItemCount();
-	for (int index = 0; index < count; ++index) {
-		filterItem(ui->friendList->topLevelItem(index), text);
-	}
-}
-
-bool FriendSelectionWidget::filterItem(QTreeWidgetItem *item, const QString &text)
-{
-	bool visible = true;
-
-	if (text.isEmpty() == false) {
-		if (item->text(0).contains(text, Qt::CaseInsensitive) == false) {
-			visible = false;
-		}
-	}
-
-	int visibleChildCount = 0;
-	int count = item->childCount();
-	for (int index = 0; index < count; ++index) {
-		if (filterItem(item->child(index), text)) {
-			++visibleChildCount;
-		}
-	}
-
-	if (visible || visibleChildCount) {
-		item->setHidden(false);
-	} else {
-		item->setHidden(true);
-	}
-
-	return (visible || visibleChildCount);
+	ui->friendList->filterItems(COLUMN_NAME, text);
+	ui->friendList->resort();
+	filterConnected(isFilterConnected());
 }
 
 int FriendSelectionWidget::selectedItemCount()
@@ -1003,7 +999,7 @@ std::string FriendSelectionWidget::selectedId(IdType &idType)
 	return idFromItem(item);
 }
 
-void FriendSelectionWidget::selectedIds(IdType idType, std::set<std::string> &ids, bool onlyDirectSelected)
+void FriendSelectionWidget::selectedIds_internal(IdType idType, std::set<std::string> &ids, bool onlyDirectSelected)
 {
 	QTreeWidgetItemIterator itemIterator(ui->friendList);
 	QTreeWidgetItem *item;
@@ -1077,11 +1073,21 @@ void FriendSelectionWidget::selectAll()
 		setSelected(mListModus, *itemIterator, true);
 }
 
-void FriendSelectionWidget::setSelectedIds(IdType idType, const std::set<std::string> &ids, bool add)
+void FriendSelectionWidget::setSelectedIdsFromString(IdType type, const std::set<std::string>& ids, bool add)
 {
+	setSelectedIds_internal(type,ids,add);
+}
+
+void FriendSelectionWidget::setSelectedIds_internal(IdType idType, const std::set<std::string> &ids, bool add)
+{
+    mPreSelectedIds = ids;
+
+    // if items are already loaded, check them
+
 	QTreeWidgetItemIterator itemIterator(ui->friendList);
 	QTreeWidgetItem *item;
-	while ((item = *itemIterator) != NULL) {
+	while ((item = *itemIterator) != NULL)
+    {
 		++itemIterator;
 
 		std::string id = idFromItem(item);
@@ -1168,9 +1174,24 @@ void FriendSelectionWidget::sortByState(bool sort)
 	mActionSortByState->setChecked(sort);
 
 	ui->friendList->resort();
+	filterConnected(isFilterConnected());
 }
 
 bool FriendSelectionWidget::isSortByState()
 {
 	return mActionSortByState->isChecked();
+}
+
+void FriendSelectionWidget::filterConnected(bool filter)
+{
+	ui->friendList->filterMinValItems(COLUMN_NAME, filter ? RS_STATUS_AWAY : RS_STATUS_OFFLINE, ROLE_SORT_STATE);
+
+	mActionFilterConnected->setChecked(filter);
+
+	ui->friendList->resort();
+}
+
+bool FriendSelectionWidget::isFilterConnected()
+{
+	return mActionFilterConnected->isChecked();
 }

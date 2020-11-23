@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/pqi: p3servicecontrol.cc
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2014 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/pqi: p3servicecontrol.cc                                  *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2014-2014  Robert Fernie                                      *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include <iostream>
 
 #include "p3servicecontrol.h"
@@ -32,6 +28,8 @@
 #include "rsitems/rsnxsitems.h"
 #include "pqi/p3cfgmgr.h"
 #include "pqi/pqiservice.h"
+#include "retroshare/rspeers.h"
+#include "retroshare/rsevents.h"
 
 /*******************************/
 // #define SERVICECONTROL_DEBUG	1
@@ -42,17 +40,17 @@ static const uint8_t RS_PKT_SUBTYPE_SERVICE_CONTROL_SERVICE_PERMISSIONS = 0x01 ;
 class RsServiceControlItem: public RsItem
 {
 public:
-    RsServiceControlItem(uint8_t item_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_SERVICE_CONTROL,item_subtype) {}
+	explicit RsServiceControlItem(uint8_t item_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_SERVICE_CONTROL,item_subtype) {}
 };
 
 class RsServicePermissionItem: public RsServiceControlItem, public RsServicePermissions
 {
 public:
-    RsServicePermissionItem(): RsServiceControlItem(RS_PKT_SUBTYPE_SERVICE_CONTROL_SERVICE_PERMISSIONS) {}
-    RsServicePermissionItem(const RsServicePermissions& perms) : RsServiceControlItem(RS_PKT_SUBTYPE_SERVICE_CONTROL_SERVICE_PERMISSIONS), RsServicePermissions(perms) {}
+	RsServicePermissionItem(): RsServiceControlItem(RS_PKT_SUBTYPE_SERVICE_CONTROL_SERVICE_PERMISSIONS) {}
+	explicit RsServicePermissionItem(const RsServicePermissions& perms) : RsServiceControlItem(RS_PKT_SUBTYPE_SERVICE_CONTROL_SERVICE_PERMISSIONS), RsServicePermissions(perms) {}
 
-    virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
-    {
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+	{
 		RsTypeSerializer::serial_process<uint32_t>(j,ctx,mServiceId,"mServiceId") ;
 		RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_NAME,mServiceName,"mServiceName") ;
 		RsTypeSerializer::serial_process<bool>    (j,ctx,mDefaultAllowed,"mDefaultAllowed") ;
@@ -86,9 +84,10 @@ public:
 RsServiceControl *rsServiceControl = NULL;
 
 p3ServiceControl::p3ServiceControl(p3LinkMgr *linkMgr)
-    :RsServiceControl(), p3Config(),
-          mLinkMgr(linkMgr), mOwnPeerId(linkMgr->getOwnId()),
-	mCtrlMtx("p3ServiceControl"), mMonitorMtx("P3ServiceControl::Monitor")
+  : RsServiceControl(), p3Config(),
+    mLinkMgr(linkMgr), mOwnPeerId(linkMgr->getOwnId()),
+    mCtrlMtx("p3ServiceControl"), mMonitorMtx("P3ServiceControl::Monitor"),
+    mServiceServer(NULL)
 {
     mSerialiser = new ServiceControlSerialiser ;
 }
@@ -356,7 +355,7 @@ bool p3ServiceControl::getServicePermissions(uint32_t serviceId, RsServicePermis
 	return true;
 }
 
-bool p3ServiceControl::createDefaultPermissions_locked(uint32_t serviceId, std::string serviceName, bool defaultOn)
+bool p3ServiceControl::createDefaultPermissions_locked(uint32_t serviceId, const std::string& serviceName, bool defaultOn)
 {
 	std::map<uint32_t, RsServicePermissions>::iterator it;
 	it = mServicePermissionMap.find(serviceId);
@@ -462,10 +461,7 @@ bool	p3ServiceControl::checkFilter(uint32_t serviceId, const RsPeerId &peerId)
 #endif
 
 	// must allow ServiceInfo through, or we have nothing!
-#define FULLID_SERVICEINFO ((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + ((RS_SERVICE_TYPE_SERVICEINFO) << 8))
-
-	//if (serviceId == RS_SERVICE_TYPE_SERVICEINFO)
-	if (serviceId == FULLID_SERVICEINFO)
+	if (serviceId == RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(RS_SERVICE_TYPE_SERVICEINFO))
 	{
 #ifdef SERVICECONTROL_DEBUG
 		std::cerr << "p3ServiceControl::checkFilter() Allowed SERVICEINFO";
@@ -762,6 +758,11 @@ bool	p3ServiceControl::updateFilterByPeer_locked(const RsPeerId &peerId)
 		mPeerFilterMap[peerId] = peerFilter;
 	}
 	recordFilterChanges_locked(peerId, originalFilter, peerFilter);
+
+	using Evt_t = RsPeerStateChangedEvent;
+	if(rsEvents)
+		rsEvents->postEvent(std::unique_ptr<Evt_t>(new Evt_t(peerId)));
+
 	return true;
 }
 
@@ -780,7 +781,7 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 #endif
 
 	/* find differences */
-	std::map<uint32_t, bool> changes;
+	//std::map<uint32_t, bool> changes;
 	std::set<uint32_t>::const_iterator it1, it2, eit1, eit2;
 	it1 = originalFilter.mAllowedServices.begin();
 	eit1 = originalFilter.mAllowedServices.end();
@@ -796,7 +797,7 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 			std::cerr << std::endl;
 #endif
 			// removal
-			changes[*it1] = false;
+			//changes[*it1] = false;
 			filterChangeRemoved_locked(peerId, *it1);
 			++it1;
 		}
@@ -808,7 +809,7 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 #endif
 			// addition.
 			filterChangeAdded_locked(peerId, *it2);
-			changes[*it2] = true;
+			//changes[*it2] = true;
 			++it2;
 		}
 		else
@@ -826,7 +827,7 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 		std::cerr << std::endl;
 #endif
 		// removal
-		changes[*it1] = false;
+		//changes[*it1] = false;
 		filterChangeRemoved_locked(peerId, *it1);
 	}
 
@@ -837,7 +838,7 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 		std::cerr << std::endl;
 #endif
 		// addition.
-		changes[*it2] = true;
+		//changes[*it2] = true;
 		filterChangeAdded_locked(peerId, *it2);
 	}
 
@@ -938,7 +939,7 @@ void p3ServiceControl::filterChangeRemoved_locked(const RsPeerId &peerId, uint32
 	std::cerr << std::endl;
 #endif
 
-	std::map<uint32_t, std::set<RsPeerId> >::iterator mit;
+	//std::map<uint32_t, std::set<RsPeerId> >::iterator mit;
 
 	std::set<RsPeerId> &peerSet = mServicePeerMap[serviceId];
 	std::set<RsPeerId>::iterator sit;
@@ -969,7 +970,7 @@ void p3ServiceControl::filterChangeAdded_locked(const RsPeerId &peerId, uint32_t
 	std::cerr << std::endl;
 #endif
 
-	std::map<uint32_t, std::set<RsPeerId> >::iterator mit;
+	//std::map<uint32_t, std::set<RsPeerId> >::iterator mit;
 
 	std::set<RsPeerId> &peerSet = mServicePeerMap[serviceId];
 
@@ -990,9 +991,9 @@ void p3ServiceControl::filterChangeAdded_locked(const RsPeerId &peerId, uint32_t
 
 
 
-void p3ServiceControl::getPeersConnected(const uint32_t serviceId, std::set<RsPeerId> &peerSet)
+void p3ServiceControl::getPeersConnected(uint32_t serviceId, std::set<RsPeerId> &peerSet)
 {
-	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
+	RS_STACK_MUTEX(mCtrlMtx);
 
 	std::map<uint32_t, std::set<RsPeerId> >::iterator mit;
 	mit = mServicePeerMap.find(serviceId);
@@ -1007,9 +1008,9 @@ void p3ServiceControl::getPeersConnected(const uint32_t serviceId, std::set<RsPe
 }
 
 
-bool p3ServiceControl::isPeerConnected(const uint32_t serviceId, const RsPeerId &peerId)
+bool p3ServiceControl::isPeerConnected(uint32_t serviceId, const RsPeerId &peerId)
 {
-	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
+	RS_STACK_MUTEX(mCtrlMtx);
 
 	std::map<uint32_t, std::set<RsPeerId> >::iterator mit;
 	mit = mServicePeerMap.find(serviceId);
@@ -1366,19 +1367,24 @@ void RsServicePermissions::resetPermission(const RsPeerId& peerId)
 
 RsServiceInfo::RsServiceInfo(
 		const uint16_t service_type,
-		const std::string service_name,
+		const std::string& service_name,
 		const uint16_t version_major,
 		const uint16_t version_minor,
 		const uint16_t min_version_major,
 		const uint16_t min_version_minor)
  :mServiceName(service_name),
-  mServiceType((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + (((uint32_t) service_type) << 8)),
+  mServiceType(RsServiceInfoUIn16ToFullServiceId(service_type)),
   mVersionMajor(version_major),
   mVersionMinor(version_minor),
   mMinVersionMajor(min_version_major),
   mMinVersionMinor(min_version_minor)
 {
-	return;
+  return;
+}
+
+unsigned int RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(uint16_t serviceType)
+{
+  return (((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + (((uint32_t) serviceType) << 8);
 }
 
 
@@ -1391,29 +1397,6 @@ RsServiceInfo::RsServiceInfo()
   mMinVersionMinor(0)
 {
 	return;
-}
-
-std::ostream &operator<<(std::ostream &out, const RsPeerServiceInfo &info)
-{
-	out << "RsPeerServiceInfo(" << info.mPeerId << ")";
-	out << std::endl;
-	std::map<uint32_t, RsServiceInfo>::const_iterator it;
-	for(it = info.mServiceList.begin(); it != info.mServiceList.end(); ++it)
-	{
-		out << "\t Service:" << it->first << " : ";
-		out << it->second;
-		out << std::endl;
-	}
-	return out;
-}
-
-
-std::ostream &operator<<(std::ostream &out, const RsServiceInfo &info)
-{
-	out << "RsServiceInfo(" << info.mServiceType << "): " << info.mServiceName;
-	out << " Version(" << info.mVersionMajor << "," << info.mVersionMinor << ")";
-	out << " MinVersion(" << info.mMinVersionMajor << "," << info.mMinVersionMinor << ")";
-	return out;
 }
 
 std::ostream &operator<<(std::ostream &out, const ServicePeerFilter &filter)

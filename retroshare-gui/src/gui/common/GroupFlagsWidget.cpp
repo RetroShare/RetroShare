@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * gui/common/GroupFlagsWidget.cpp                                             *
+ *                                                                             *
+ * Copyright (C) 2010, Retroshare Team <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
+#include "gui/common/FilesDefs.h"
 #include <QHBoxLayout>
 #include <QSizePolicy>
 #include "GroupFlagsWidget.h"
@@ -34,12 +55,12 @@ GroupFlagsWidget::GroupFlagsWidget(QWidget *parent,FileStorageFlags flags)
     setMaximumSize(128 * QFontMetricsF(font()).height()/14.0,32 * QFontMetricsF(font()).height()/14.0) ;
 	setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
 
-    _icons[2*INDEX_BROWSABLE+0]   = new QIcon(FLAGS_BROWSABLE_OFF) ;
-    _icons[2*INDEX_BROWSABLE+1]    = new QIcon(FLAGS_BROWSABLE_ON) ;
-    _icons[2*INDEX_ANON_SEARCH+0] = new QIcon(FLAGS_ANONYMOUS_SEARCH_OFF) ;
-    _icons[2*INDEX_ANON_SEARCH+1]  = new QIcon(FLAGS_ANONYMOUS_SEARCH_ON) ;
-    _icons[2*INDEX_ANON_DL+0]     = new QIcon(FLAGS_ANONYMOUS_DL_OFF) ;
-    _icons[2*INDEX_ANON_DL+1]      = new QIcon(FLAGS_ANONYMOUS_DL_ON) ;
+    _icons[2*INDEX_BROWSABLE+0]   = FilesDefs::getIconFromQtResourcePath(FLAGS_BROWSABLE_OFF) ;
+    _icons[2*INDEX_BROWSABLE+1]   = FilesDefs::getIconFromQtResourcePath(FLAGS_BROWSABLE_ON) ;
+    _icons[2*INDEX_ANON_SEARCH+0] = FilesDefs::getIconFromQtResourcePath(FLAGS_ANONYMOUS_SEARCH_OFF) ;
+    _icons[2*INDEX_ANON_SEARCH+1] = FilesDefs::getIconFromQtResourcePath(FLAGS_ANONYMOUS_SEARCH_ON) ;
+    _icons[2*INDEX_ANON_DL+0]     = FilesDefs::getIconFromQtResourcePath(FLAGS_ANONYMOUS_DL_OFF) ;
+    _icons[2*INDEX_ANON_DL+1]     = FilesDefs::getIconFromQtResourcePath(FLAGS_ANONYMOUS_DL_ON) ;
 
 	setLayout(_layout) ;
 
@@ -116,7 +137,7 @@ void GroupFlagsWidget::update_button_state(bool b,int button_id)
       tip_on = "";
       tip_off = "";
   }
-  _buttons[button_id]->setIcon(*_icons[2*button_id+(int)b]) ;
+  _buttons[button_id]->setIcon(_icons[2*button_id+(int)b]) ;
   _buttons[button_id]->setToolTip(b?tip_on:tip_off) ;
 }
 
@@ -163,10 +184,6 @@ void GroupFlagsWidget::update_BR_button(bool b) { update_button_state(b,INDEX_BR
 GroupFlagsWidget::~GroupFlagsWidget()
 {
     for(int i=0;i<3;++i)
-	{
 		delete _buttons[i] ;
-        delete _icons[2*i+0] ;
-        delete _icons[2*i+1] ;
-    }
 }
 

@@ -1,45 +1,105 @@
-/*
- * "$Id: pqissllistener.h,v 1.2 2007-02-18 21:46:49 rmf24 Exp $"
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2004-2006 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-
-
-#ifndef MRK_PQI_SSL_LISTEN_HEADER
-#define MRK_PQI_SSL_LISTEN_HEADER
+/*******************************************************************************
+ * libretroshare/src/pqi: pqissllistener.h                                     *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2006 by Robert Fernie.                                       *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+#pragma once
 
 #include <openssl/ssl.h>
-
-// operating system specific network header.
-#include "pqi/pqinetwork.h"
 
 #include <string>
 #include <map>
 
 #include "pqi/pqi_base.h"
 #include "pqi/pqilistener.h"
-
 #include "pqi/authssl.h"
+#include "util/rsdebug.h"
+#include "pqi/pqinetwork.h"
+
+#define RS_PQISSL_AUTH_DOUBLE_CHECK 1
+
+
+//  This is a simple overview of how the listener is setup, ticked (calling accept) and peers added to it.
+//  On the highest level (RsServer) the listener lives inside the pqisslpersongrp class (variable: "pqih").
+//  Inside pqisslpersongrp the listener is stored in "pqil".
+//
+//  The listener has an internal list with incoming connections that are handled in a similar fashion to pqissl.
+//  (Mainly setting up the socket (non-blocking) and establisching the ssl handshake.)
+//  When everything went fine the connection is passed to pqissl in finaliseConnection()
+//
+//  This is how the listener is initialized during start up:
+//
+//   RsServer::StartupRetroShare()
+//      |
+//      +----- pqih = new pqisslpersongrp(serviceCtrl, flags, mPeerMgr);
+//      +----- pqih->init_listener();
+//                  |
+//                  +----- pqil = locked_createListener(laddr);
+//                              |
+//                              +----- return new pqissllistener(laddr, mPeerMgr);
+//
+//
+//  This is how the listener is ticked to call accept:
+//
+//   RsServer::StartupRetroShare()
+//      |
+//      +----- pqih->tick();
+//                  |
+//                  +----- pqil->tick();
+//                              |
+//                              +----- acceptconnection();
+//                              |           |
+//                              |           +----- accecpt()
+//                              |
+//                              +----- continueaccepts();
+//                              +----- finaliseAccepts();
+//                                          |
+//                                          +----- finaliseConnection()
+//                                                      |
+//                                                      +----- pqis->accept()
+//
+//
+//  This is how peers (their id) are registered to the listener:
+//  (This is only used to tell if a connection peer is known or a new one (which is then added))
+//
+//   pqipersongrp::addPeer()
+//      |
+//      +----- pqiperson *pqip = locked_createPerson(id, pqil);
+//      |           |
+//      |           +----- pqiperson *pqip = new pqiperson(id, this);
+//      |           +----- pqissl *pqis = new pqissl((pqissllistener *) listener, pqip, mLinkMgr);
+//      |           +----- pqiconnect *pqisc = new pqiconnect(pqip, rss, pqis);
+//      |           +----- pqip->addChildInterface(PQI_CONNECT_TCP, pqisc);
+//      |                       |
+//      |                       +-- sets kids[type] = pqisc;
+//      |
+//      +----- pqip->reset();
+//      +----- pqip->listen();
+//                  |
+//                  +-- for all kids[]
+//                              |
+//                              +----- listen() ( of class pqiconnect )
+//                                          |
+//                                          +----- listen() ( of class pqissl )
+//                                                      |
+//                                                      +----- pqil->addlistenaddr(PeerId(), this);
+
 
 /***************************** pqi Net SSL Interface *********************************
  */
@@ -55,7 +115,7 @@ public:
 	RsPeerId mPeerId;
 
 	sockaddr_storage mAddr;
-	time_t mAcceptTS;
+	rstime_t mAcceptTS;
 };
 
 
@@ -104,7 +164,7 @@ protected:
 	p3PeerMgr *mPeerMgr;
 
 private:
-	int Extract_Failed_SSL_Certificate(const IncomingSSLInfo&);
+
 	bool active;
 	int lsock;
 	std::list<IncomingSSLInfo> incoming_ssl ;
@@ -128,7 +188,6 @@ public:
 
 private:
 	std::map<RsPeerId, pqissl*> listenaddr;
+
+	RS_SET_CONTEXT_DEBUG_LEVEL(2)
 };
-
-
-#endif // MRK_PQI_SSL_LISTEN_HEADER

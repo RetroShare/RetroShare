@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006,2007 The RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/MainWindow.h                                                            *
+ *                                                                             *
+ * Copyright (c) 2006 Retroshare Team  <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef _MainWindow_H
 #define _MainWindow_H
@@ -46,6 +45,7 @@ class OpModeStatus;
 class SoundStatus;
 class ToasterDisable;
 class SysTrayStatus;
+class TorStatus ;
 //class ForumsDialog;
 class GxsChannelDialog ;
 class GxsForumsDialog ;
@@ -59,8 +59,6 @@ class NetworkDialog;
 class SearchDialog;
 class TransfersDialog;
 class MessagesDialog;
-class SharedFilesDialog;
-class MessengerWindow;
 class PluginsPage;
 class HomePage;
 //class ChannelFeed;
@@ -69,14 +67,9 @@ class MainPage;
 class NewsFeed;
 class UserNotify;
 
-#ifdef RS_USE_LINKS
-class LinksDialog;
+#ifdef MESSENGER_WINDOW
+class MessengerWindow;
 #endif
-
-#ifdef BLOGS
-class BlogsDialog;
-#endif
-
 #ifdef UNFINISHED
 class ApplicationWindow;
 #endif
@@ -98,12 +91,6 @@ public:
         Channels           = 6,  /** Channels page. */
         Forums             = 7,  /** Forums page. */
         Search             = 8,  /** Search page. */
-#ifdef BLOGS
-        Blogs              = 9,  /** Blogs page. */
-#endif
-#ifdef RS_USE_LINKS
-        Links              = 10,  /** Links page. */
-#endif
         Posted             = 11,  /** Posted links */
         People             = 12,   /** People page. */
         Options            = 13   /** People page. */
@@ -163,7 +150,6 @@ public:
 	 ChatLobbyWidget   *chatLobbyDialog;
 	 MessagesDialog    *messagesDialog;
 	 SettingsPage      *settingsDialog;
-	 SharedFilesDialog *sharedfilesDialog;
 	 GxsChannelDialog  *gxschannelDialog ;
 	 GxsForumsDialog   *gxsforumDialog ;
 	 PostedDialog      *postedDialog;
@@ -171,14 +157,6 @@ public:
 //    ForumsDialog      *forumsDialog;
 //    ChannelFeed       *channelFeed;
     Idle              *idle;
-
-#ifdef RS_USE_LINKS
-    LinksDialog       *linksDialog;
-#endif
-
-#ifdef BLOGS
-    BlogsDialog       *blogsFeed;
-#endif
 
 #ifdef UNFINISHED
     ApplicationWindow   *applicationWindow;
@@ -208,6 +186,8 @@ public:
     ToasterDisable *toasterDisableInstance();
     SysTrayStatus *sysTrayStatusInstance();
 
+    static bool hiddenmode;
+	
 public slots:
     void receiveNewArgs(QStringList args);
     void displayErrorMessage(int,int,const QString&) ;
@@ -222,6 +202,7 @@ public slots:
     //! Go to a specific part of the control panel.
     void setNewPage(int page);
     void setCompactStatusMode(bool compact);
+    void showBandwidthGraph();
 
     void toggleStatusToolTip(bool toggle);
 protected:
@@ -244,11 +225,15 @@ private slots:
 
     /** Toolbar fns. */
     void addFriend();
-    void newRsCollection();
+    //void newRsCollection();
+#ifdef MESSENGER_WINDOW
     void showMessengerWindow();
+#endif
     void showStatisticsWindow();
-#ifdef ENABLE_WEBUI
+#ifdef RS_JSONAPI
+#ifdef RS_WEBUI
     void showWebinterface();
+#endif
 #endif
     //void servicePermission();
 
@@ -314,6 +299,7 @@ private:
     SoundStatus *soundStatus;
     ToasterDisable *toasterDisable;
     SysTrayStatus *sysTrayStatus;
+    TorStatus *torstatus;
 
     /* Status */
     std::set <QObject*> m_apStatusObjects; // added objects for status

@@ -1,28 +1,24 @@
-
-/*
- * libretroshare/src/serialiser: rsbaseserial.cc
- *
- * RetroShare Serialiser.
- *
- * Copyright 2007-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/serialiser: rsbaseserial.cc                               *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2007-2008 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <stdlib.h>	/* Included because GCC4.4 wants it */
 #include <string.h> 	/* Included because GCC4.4 wants it */
@@ -30,8 +26,10 @@
 #include "retroshare/rstypes.h"
 #include "serialiser/rsbaseserial.h"
 #include "util/rsnet.h"
+#include "util/rstime.h"
 
 #include <iostream>
+#include <cstdint>
 
 /* UInt8 get/set */
 
@@ -238,8 +236,7 @@ uint32_t getRawStringSize(const std::string &outStr)
 
 bool getRawString(const void *data, uint32_t size, uint32_t *offset, std::string &outStr)
 {
-#warning Gio: "I had to change this. It seems like a bug to not clear the string. Should make sure it's not introducing any side effect."
-    outStr.clear();
+	outStr.clear();
 
 	uint32_t len = 0;
 	if (!getRawUInt32(data, size, offset, &len))
@@ -249,9 +246,10 @@ bool getRawString(const void *data, uint32_t size, uint32_t *offset, std::string
 	}
 
 	/* check there is space for string */
-    	if(len > size || size-len < *offset) // better than if(size < *offset + len) because it avoids integer overflow
+	if(len > size || size-len < *offset) // better than if(size < *offset + len) because it avoids integer overflow
 	{
-                std::cerr << "getRawString() not enough size" << std::endl;
+		std::cerr << "getRawString() not enough size" << std::endl;
+		print_stacktrace();
 		return false;
 	}
 	uint8_t *buf = &(((uint8_t *) data)[*offset]);
@@ -291,15 +289,23 @@ bool setRawString(void *data, uint32_t size, uint32_t *offset, const std::string
 	return true;
 }
 
-bool getRawTimeT(const void *data,uint32_t size,uint32_t *offset,time_t& t)
+bool getRawTimeT(const void *data,uint32_t size,uint32_t *offset,rstime_t& t)
 {
-	uint64_t T ;
-	bool res = getRawUInt64(data,size,offset,&T) ;
-	t = T ;
+	uint64_t T;
+	bool res = getRawUInt64(data,size,offset,&T);
+	t = T;
 
-	return res ;
+	if(t < 0) // [[unlikely]]
+		std::cerr << __PRETTY_FUNCTION__ << " got a negative time: " << t
+		          << " this seems fishy, report to the developers!" << std::endl;
+
+	return res;
 }
-bool setRawTimeT(void *data, uint32_t size, uint32_t *offset, const time_t& t)
+bool setRawTimeT(void *data, uint32_t size, uint32_t *offset, const rstime_t& t)
 {
+	if(t < 0) // [[unlikely]]
+		std::cerr << __PRETTY_FUNCTION__ << " got a negative time: " << t
+		          << " this seems fishy, report to the developers!" << std::endl;
+
 	return setRawUInt64(data,size,offset,t) ;
 }

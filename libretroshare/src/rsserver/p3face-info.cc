@@ -1,28 +1,24 @@
-
-/*
- * "$Id: p3face-info.cc,v 1.5 2007-04-15 18:45:23 rmf24 Exp $"
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2015 by RetroShare Team.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/rsserver: p3face-info.cc                                  *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2015 by RetroShare Team <retroshare.project@gmail.com>            *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "rsserver/p3face.h"
 #include <bzlib.h>
@@ -30,18 +26,16 @@
 #include <zlib.h>
 
 #ifdef NO_SQLCIPHER
-#include <sqlite3.h>
+#	include <sqlite3.h>
 #else
-#include <sqlcipher/sqlite3.h>
+#	include <sqlcipher/sqlite3.h>
 #endif
 
-#ifndef RS_ENABLE_ZCNATASSIST
 #ifdef RS_USE_LIBUPNP
-#include "upnp/upnpconfig.h"
-#else
-#include "miniupnpc/miniupnpc.h"
-#endif // RS_USE_LIBUPNP
-#endif // RS_ENABLE_ZCNATASSIST
+#	include <upnp/upnpconfig.h>
+#elif defined(RS_USE_LIBMINIUPNPC)
+#	include <miniupnpc/miniupnpc.h>
+#endif // def RS_USE_LIBUPNP
 
 std::string RsServer::getSQLCipherVersion()
 {
@@ -92,12 +86,12 @@ void RsServer::getLibraries(std::list<RsLibraryInfo> &libraries)
 #ifndef NO_SQLCIPHER
 	libraries.push_back(RsLibraryInfo("SQLCipher", getSQLCipherVersion()));
 #endif
-#ifndef RS_ENABLE_ZCNATASSIST
+
 #ifdef RS_USE_LIBUPNP
 	libraries.push_back(RsLibraryInfo("UPnP (libupnp)", UPNP_VERSION_STRING));
-#else
+#elif defined(RS_USE_LIBMINIUPNPC)
 	libraries.push_back(RsLibraryInfo("UPnP (MiniUPnP)", MINIUPNPC_VERSION));
-#endif // RS_USE_LIBUPNP
-#endif // RS_ENABLE_ZCNATASSIST
+#endif // def RS_USE_LIBUPNP
+
 	libraries.push_back(RsLibraryInfo("Zlib", ZLIB_VERSION));
 }

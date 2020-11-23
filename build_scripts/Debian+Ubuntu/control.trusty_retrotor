@@ -1,0 +1,20 @@
+Source: retroshare
+Section: devel
+Priority: standard
+Maintainer: Cyril Soler <csoler@users.sourceforge.net>
+Build-Depends: debhelper (>= 7),  libglib2.0-dev, libupnp-dev, libssl-dev, libxss-dev, libgnome-keyring-dev, libbz2-dev, libspeex-dev, libspeexdsp-dev, libxslt1-dev, cmake, libcurl4-openssl-dev, libopencv-dev, tcl8.6, libsqlcipher-dev, libmicrohttpd-dev, libavcodec-dev, qtmultimedia5-dev, qttools5-dev, libqt5x11extras5-dev, qt5-default
+Standards-Version: 3.9.6
+Homepage: http://retroshare.net
+
+Package: retrotor
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, gnome-keyring, tor (>= 0.2.6)
+Conflicts: retroshare-nogui,retroshare06,retroshare
+Description: Secure communication with friends
+ RetroShare is a Open Source cross-platform, private and secure decentralised 
+ commmunication platform. It lets you to securely chat and share files with your 
+ friends and family, using a web-of-trust to authenticate peers and OpenSSL to 
+ encrypt all communication. RetroShare provides filesharing, chat, messages, 
+ forums and channels.
+
+

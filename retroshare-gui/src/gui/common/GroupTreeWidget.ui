@@ -27,7 +27,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QFrame" name="titleBarFrame">
+    <widget class="QFrame" name="toolBarFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
        <horstretch>0</horstretch>
@@ -65,8 +65,8 @@
          <string>Display</string>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
-          <normaloff>:/images/looknfeel.png</normaloff>:/images/looknfeel.png</iconset>
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/svg/display_options.svg</normaloff>:/icons/svg/display_options.svg</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -124,13 +124,20 @@
      </column>
     </widget>
    </item>
+   <item>
+    <widget class="QLineEdit" name="distantSearchLineEdit">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Searches a single keyword into the reachable network.&lt;/p&gt;&lt;p&gt;Objects already provided by friend nodes are not reported.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
-   <header location="global">gui/common/LineEditClear.h</header>
+   <header>gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
    <class>RSTreeWidget</class>
@@ -139,7 +146,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -1,37 +1,34 @@
-/*
- * libretroshare/src/gxs: rsgxnetutils.cc
- *
- * Helper objects for the operation rsgxsnetservice
- *
- * Copyright 2012-2013 by Christopher Evi-Parker
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/gxs: rsgxsnetutils.cc                                     *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2013 by Christopher Evi-Parker                               *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "rsgxsnetutils.h"
 #include "pqi/p3servicecontrol.h"
 #include "pgp/pgpauxutils.h"
 
- const time_t AuthorPending::EXPIRY_PERIOD_OFFSET = 30; // 30 seconds
+ const rstime_t AuthorPending::EXPIRY_PERIOD_OFFSET = 30; // 30 seconds
  const int AuthorPending::MSG_PEND = 1;
  const int AuthorPending::GRP_PEND = 2;
 
-AuthorPending::AuthorPending(RsGixsReputation* rep, time_t timeStamp) : mRep(rep), mTimeStamp(timeStamp) {}
+AuthorPending::AuthorPending(RsGixsReputation* rep, rstime_t timeStamp) : mRep(rep), mTimeStamp(timeStamp) {}
 
 AuthorPending::~AuthorPending() {}
 
@@ -43,7 +40,8 @@ bool AuthorPending::expired() const
 bool AuthorPending::getAuthorRep(GixsReputation& rep, const RsGxsId& authorId, const RsPeerId& /*peerId*/)
 {
     rep.id = authorId ;
-    rep.reputation_level = mRep->overallReputationLevel(authorId);
+	rep.reputation_level =
+	        static_cast<uint32_t>(mRep->overallReputationLevel(authorId));
 
 #warning csoler 2017-01-10: Can it happen that reputations do not have the info yet?
     return true ;
@@ -200,7 +198,7 @@ void RsNxsNetMgrImpl::getOnlineList(const uint32_t serviceId, std::set<RsPeerId>
     mServiceCtrl->getPeersConnected(serviceId, ssl_peers);
 }
 
-const time_t GrpCircleVetting::EXPIRY_PERIOD_OFFSET = 5; // 10 seconds
+const rstime_t GrpCircleVetting::EXPIRY_PERIOD_OFFSET = 5; // 10 seconds
 const int GrpCircleVetting::GRP_ID_PEND = 1;
 const int GrpCircleVetting::GRP_ITEM_PEND = 2;
 const int GrpCircleVetting::MSG_ID_SEND_PEND = 3;
@@ -219,7 +217,9 @@ bool GrpCircleVetting::expired()
 {
 	return  time(NULL) > (mTimeStamp + EXPIRY_PERIOD_OFFSET);
 }
-bool GrpCircleVetting::canSend(const SSLIdType& peerId, const RsGxsCircleId& circleId,bool& should_encrypt)
+bool GrpCircleVetting::canSend(
+        const RsPeerId& peerId, const RsGxsCircleId& circleId,
+        bool& should_encrypt )
 {
 	if(mCircles->isLoaded(circleId))
 	{

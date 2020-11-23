@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1220</width>
-    <height>896</height>
+    <width>712</width>
+    <height>502</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="ServerPageVLayout">
@@ -408,9 +408,6 @@
                  <bold>true</bold>
                 </font>
                </property>
-               <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The bullet turns green as soon as Retroshare manages to get your own IP from the websites listed below, if you enabled that action. Retroshare will also use other means to find out your own IP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
                <property name="text">
                 <string>[Hidden mode]</string>
                </property>
@@ -482,13 +479,6 @@ These values don't take into account the Relays.</string>
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QCheckBox" name="showDiscStatusBar">
-         <property name="text">
-          <string>Show Discovery information in statusbar</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
         <widget class="QCheckBox" name="allowIpDeterminationCB">
          <property name="toolTip">
           <string>If you uncheck this, RetroShare can only determine your IP 
@@ -504,7 +494,7 @@ behind a firewall or a VPN.</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
+       <item row="4" column="0">
         <widget class="QListWidget" name="IPServersLV">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
@@ -517,7 +507,7 @@ behind a firewall or a VPN.</string>
          </property>
         </widget>
        </item>
-       <item row="6" column="0">
+       <item row="5" column="0">
         <spacer name="tabNetConfVSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -531,281 +521,9 @@ behind a firewall or a VPN.</string>
         </spacer>
        </item>
       </layout>
-      <zorder>showDiscStatusBar</zorder>
       <zorder>allowIpDeterminationCB</zorder>
       <zorder>IPServersLV</zorder>
       <zorder>ipAddressList</zorder>
-     </widget>
-     <widget class="QWidget" name="tabIPFilters">
-      <attribute name="title">
-       <string>IP Filters</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="tabIPFiltersVLayout">
-       <item>
-        <widget class="QCheckBox" name="denyAll_CB">
-         <property name="text">
-          <string>Activate IP filtering</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QTabWidget" name="ipTabWidget">
-         <property name="currentIndex">
-          <number>0</number>
-         </property>
-         <widget class="QWidget" name="ipBlackListTabWidget">
-          <attribute name="title">
-           <string>IP blacklist</string>
-          </attribute>
-          <layout class="QVBoxLayout" name="ipBlackListTabWidgetVLayout">
-           <item>
-            <widget class="QTableWidget" name="filteredIpsTable">
-             <property name="contextMenuPolicy">
-              <enum>Qt::CustomContextMenu</enum>
-             </property>
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This list gets automatically filled with information gathered at multiple sources: masquerading peers reported by the DHT, IP ranges entered by you, and IP ranges reported by your friends. Default settings should protect you against large scale traffic relaying.&lt;/p&gt;&lt;p&gt;Automatically guessing masquerading IPs can put your friends IPs in the blacklist. In this case, use the context menu to whitelist them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="alternatingRowColors">
-              <bool>true</bool>
-             </property>
-             <property name="selectionMode">
-              <enum>QAbstractItemView::SingleSelection</enum>
-             </property>
-             <property name="sortingEnabled">
-              <bool>false</bool>
-             </property>
-             <attribute name="horizontalHeaderStretchLastSection">
-              <bool>true</bool>
-             </attribute>
-             <column>
-              <property name="text">
-               <string>IP range</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Status</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Origin</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Reason</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Comment</string>
-              </property>
-             </column>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="includeFromFriends_CB">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is very drastic, be careful. Since masquerading IPs might be actual real IPs, this option might cause disconnection, and will probably force you to add your friends' IPs into the whitelist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Ban every  IP reported by your friends</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="includeFromDHT_CB">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Another drastic option. If you use it, be prepared to add your friends' IPs into the whitelist when needed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Ban every masquerading IP reported by your DHT</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="groupIPRangesHLayout">
-             <item>
-              <widget class="QCheckBox" name="groupIPRanges_CB">
-               <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If used alone, this option protects you quite well from large scale IP masquerading.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-               <property name="text">
-                <string>Automatically ban ranges of DHT masquerading IPs starting at</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QSpinBox" name="groupIPRanges_SB">
-               <property name="suffix">
-                <string>  IPs</string>
-               </property>
-               <property name="minimum">
-                <number>2</number>
-               </property>
-               <property name="maximum">
-                <number>255</number>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="groupIPRangesHSpacer">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-         <widget class="QWidget" name="ipWhiteListTabWidget">
-          <attribute name="title">
-           <string>IP whitelist</string>
-          </attribute>
-          <layout class="QGridLayout" name="ipWhiteListTabWidgetGLayout">
-           <item row="0" column="0">
-            <widget class="QTableWidget" name="whiteListIpsTable">
-             <property name="contextMenuPolicy">
-              <enum>Qt::CustomContextMenu</enum>
-             </property>
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;White listed IPs are gathered from the following sources: IPs coming inside a manually exchanged certificate, IP ranges entered by you in this window, or in the security feed items.&lt;/p&gt;&lt;p&gt;The default behavior for Retroshare is to (1) always allow connection to peers with IP in the whitelist, even if that IP is also blacklisted; (2) optionally require IPs to be  in the whitelist. You can change this behavior for each peer in the &amp;quot;Details&amp;quot; window of each Retroshare node. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="alternatingRowColors">
-              <bool>true</bool>
-             </property>
-             <property name="selectionMode">
-              <enum>QAbstractItemView::SingleSelection</enum>
-             </property>
-             <property name="sortingEnabled">
-              <bool>false</bool>
-             </property>
-             <attribute name="horizontalHeaderStretchLastSection">
-              <bool>true</bool>
-             </attribute>
-             <column>
-              <property name="text">
-               <string>IP range</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Status</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Origin</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Reason</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Comment</string>
-              </property>
-             </column>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="manualInputGBox">
-         <property name="title">
-          <string>Manual input</string>
-         </property>
-         <layout class="QVBoxLayout" name="manualInputGBoxVLayout">
-          <item>
-           <layout class="QHBoxLayout" name="ipinputHLayout">
-            <item>
-             <widget class="QLineEdit" name="ipInput_LE">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter an IP range.  Accepted formats:&lt;/p&gt;&lt;p&gt;193.190.209.15&lt;/p&gt;&lt;p&gt;193.190.209.15/24&lt;/p&gt;&lt;p&gt;193.190.209.15/16&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="ipInputRange_SB">
-              <property name="minimum">
-               <number>16</number>
-              </property>
-              <property name="maximum">
-               <number>32</number>
-              </property>
-              <property name="singleStep">
-               <number>8</number>
-              </property>
-              <property name="value">
-               <number>24</number>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="ipInputComment_LE">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter any comment you'd like&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="ipInputAddBlackList_PB">
-              <property name="text">
-               <string>Add to blacklist</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="ipInputAddWhiteList_PB">
-              <property name="text">
-               <string>Add to whitelist</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer name="manualInputVSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
      </widget>
      <widget class="QWidget" name="tabHiddenConf">
       <attribute name="title">
@@ -831,7 +549,7 @@ behind a firewall or a VPN.</string>
            <item>
             <widget class="QLabel" name="hiddenpage_outHeader">
              <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Outgoing Connctions&lt;/p&gt;&lt;p&gt;Configure your Tor and I2P SOCKS proxy here. &lt;br/&gt;If you prefer to use BOB to automatically manage I2P check the other tab.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Configure your Tor and I2P SOCKS proxy here. It will allow you to also connect &lt;/p&gt;&lt;p&gt;to hidden nodes.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
@@ -979,6 +697,204 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
            </item>
            <item>
             <spacer name="vspacerHiddenOut">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="hiddenServiceTabIncoming">
+          <attribute name="title">
+           <string>Incoming</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="hiddenServiceTabIncomingVLayout">
+           <item>
+            <widget class="QLabel" name="hiddenpage_inHeader">
+             <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Setup your hidden address (and port if needed)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QGridLayout" name="incomingAddressGLayout">
+             <item row="0" column="2">
+              <widget class="QSpinBox" name="hiddenpage_localPort">
+               <property name="minimum">
+                <number>10</number>
+               </property>
+               <property name="maximum">
+                <number>65535</number>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="3">
+              <layout class="QHBoxLayout" name="testIncomingHLayout">
+               <item>
+                <widget class="QPushButton" name="testIncoming_PB">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button simulates a SSL connection to your hidden address using the corresponding proxy. If your hidden node is reachable, it should cause a SSL handshake error, which RS will interpret as a valid connection state. This operation might also cause several &amp;quot;security warning&amp;quot; about connections from your local host IP (127.0.0.1) in the News Feed if you enabled it, which you should interpret as a sign of good communication.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>Test</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="1" column="2">
+              <widget class="QSpinBox" name="hiddenpage_servicePort">
+               <property name="minimum">
+                <number>10</number>
+               </property>
+               <property name="maximum">
+                <number>65535</number>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="l_serviceAddress">
+               <property name="text">
+                <string>Service Address</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="l_localAddress">
+               <property name="text">
+                <string>Local Address</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="hiddenpage_serviceAddress">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your hidden address. It should look like &lt;span style=&quot; font-weight:600;&quot;&gt;[something].onion&lt;/span&gt; or &lt;span style=&quot; font-weight:600;&quot;&gt;[something].b32.i2p. &lt;/span&gt;If you configured a hidden service with Tor, the onion address is generated automatically by Tor. You can get it in e.g. &lt;span style=&quot; font-weight:600;&quot;&gt;/var/lib/tor/[service name]/hostname&lt;/span&gt;. For I2P: Setup a server tunnel ( http://127.0.0.1:7657/i2ptunnelmgr ) and copy it's base32 address when it is started (should end with .b32.i2p)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="hiddenpage_localAddress">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the local address to which the hidden service points at your localhost. Most of the time, &lt;span style=&quot; font-weight:600;&quot;&gt;127.0.0.1&lt;/span&gt; is the right answer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="3">
+              <layout class="QHBoxLayout" name="serviceIncomingHLayout">
+               <item>
+                <widget class="QLabel" name="iconlabel_service_incoming">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16</width>
+                   <height>16</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="pixmap">
+                  <pixmap resource="../images.qrc">:/images/ledoff1.png</pixmap>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="l_incomingTestResult">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This led turns green only if you launch an active test using the above button. &lt;/p&gt;&lt;p&gt;When it does, it means that your hidden node can be reached from anywhere, using the Tor (resp. I2P) &lt;/p&gt;&lt;p&gt;network. Congratulations!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>incoming  ok</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="hiddenpage_configurationVLayout">
+             <item>
+              <widget class="QLabel" name="l_hiddenpage_configuration">
+               <property name="text">
+                <string>Expected Configuration:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPlainTextEdit" name="hiddenpage_configuration">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>10</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>50</height>
+                </size>
+               </property>
+               <property name="verticalScrollBarPolicy">
+                <enum>Qt::ScrollBarAlwaysOff</enum>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+               <property name="plainText">
+                <string>Please fill in a service address</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QPlainTextEdit" name="hiddenpageInHelpPlainTextEdit">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+             <property name="plainText">
+              <string>To Receive Connections, you must first setup a Tor/I2P Hidden Service. 
+
+For Tor: See torrc and documentation for HOWTO details.
+
+For I2P: See http://127.0.0.1:7657/i2ptunnelmgr for setting up a server tunnel:
+Tunnel Wizard -&gt; Server Tunnel -&gt; Standard -&gt; enter a name -&gt; enter the address and port your RS is using (see Local Address above) -&gt; check 'Auto Start' -&gt; finish!
+
+Once this is done, paste the Onion/I2P (Base32) Address in the box above.
+This is your external address on the Tor/I2P network.
+Finally make sure that the Ports match the configuration.
+
+If you have issues connecting over Tor check the Tor logs too.</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="vspacerHiddenIn">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
@@ -1467,204 +1383,277 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="hiddenServiceTabIncoming">
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabIPFilters">
+      <attribute name="title">
+       <string>IP Filters</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="tabIPFiltersVLayout">
+       <item>
+        <widget class="QCheckBox" name="denyAll_CB">
+         <property name="text">
+          <string>Activate IP filtering</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTabWidget" name="ipTabWidget">
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="ipBlackListTabWidget">
           <attribute name="title">
-           <string>Incoming</string>
+           <string>IP blacklist</string>
           </attribute>
-          <layout class="QVBoxLayout" name="hiddenServiceTabIncomingVLayout">
+          <layout class="QVBoxLayout" name="ipBlackListTabWidgetVLayout">
            <item>
-            <widget class="QLabel" name="hiddenpage_inHeader">
-             <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Incoming Connection&lt;/p&gt;&lt;p&gt;Setup your hidden address (and port if needed)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <widget class="QTableWidget" name="filteredIpsTable">
+             <property name="contextMenuPolicy">
+              <enum>Qt::CustomContextMenu</enum>
              </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QGridLayout" name="incomingAddressGLayout">
-             <item row="0" column="2">
-              <widget class="QSpinBox" name="hiddenpage_localPort">
-               <property name="minimum">
-                <number>10</number>
-               </property>
-               <property name="maximum">
-                <number>65535</number>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="3">
-              <layout class="QHBoxLayout" name="testIncomingHLayout">
-               <item>
-                <widget class="QPushButton" name="testIncoming_PB">
-                 <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button simulates a SSL connection to your hidden address using the corresponding proxy. If your hidden node is reachable, it should cause a SSL handshake error, which RS will interpret as a valid connection state. This operation might also cause several &amp;quot;security warning&amp;quot; about connections from your local host IP (127.0.0.1) in the News Feed if you enabled it, which you should interpret as a sign of good communication.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
-                 <property name="text">
-                  <string>Test</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item row="1" column="2">
-              <widget class="QSpinBox" name="hiddenpage_servicePort">
-               <property name="minimum">
-                <number>10</number>
-               </property>
-               <property name="maximum">
-                <number>65535</number>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="l_serviceAddress">
-               <property name="text">
-                <string>Service Address</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="0">
-              <widget class="QLabel" name="l_localAddress">
-               <property name="text">
-                <string>Local Address</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QLineEdit" name="hiddenpage_serviceAddress">
-               <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your hidden address. It should look like &lt;span style=&quot; font-weight:600;&quot;&gt;[something].onion&lt;/span&gt; or &lt;span style=&quot; font-weight:600;&quot;&gt;[something].b32.i2p. &lt;/span&gt;If you configured a hidden service with Tor, the onion address is generated automatically by Tor. You can get it in e.g. &lt;span style=&quot; font-weight:600;&quot;&gt;/var/lib/tor/[service name]/hostname&lt;/span&gt;. For I2P: Setup a server tunnel ( http://127.0.0.1:7657/i2ptunnelmgr ) and copy it's base32 address when it is started (should end with .b32.i2p)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLineEdit" name="hiddenpage_localAddress">
-               <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the local address to which the hidden service points at your localhost. Most of the time, &lt;span style=&quot; font-weight:600;&quot;&gt;127.0.0.1&lt;/span&gt; is the right answer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="3">
-              <layout class="QHBoxLayout" name="serviceIncomingHLayout">
-               <item>
-                <widget class="QLabel" name="iconlabel_service_incoming">
-                 <property name="maximumSize">
-                  <size>
-                   <width>16</width>
-                   <height>16</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="pixmap">
-                  <pixmap resource="../images.qrc">:/images/ledoff1.png</pixmap>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="l_incomingTestResult">
-                 <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This led turns green only if you launch an active test using the above button. &lt;/p&gt;&lt;p&gt;When it does, it means that your hidden node can be reached from anywhere, using the Tor (resp. I2P) &lt;/p&gt;&lt;p&gt;network. Congratulations!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
-                 <property name="text">
-                  <string>incoming  ok</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" name="hiddenpage_configurationVLayout">
-             <item>
-              <widget class="QLabel" name="l_hiddenpage_configuration">
-               <property name="text">
-                <string>Expected Configuration:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPlainTextEdit" name="hiddenpage_configuration">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>10</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>50</height>
-                </size>
-               </property>
-               <property name="verticalScrollBarPolicy">
-                <enum>Qt::ScrollBarAlwaysOff</enum>
-               </property>
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-               <property name="plainText">
-                <string>Please fill in a service address</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <widget class="QPlainTextEdit" name="hiddenpageInHelpPlainTextEdit">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This list gets automatically filled with information gathered at multiple sources: masquerading peers reported by the DHT, IP ranges entered by you, and IP ranges reported by your friends. Default settings should protect you against large scale traffic relaying.&lt;/p&gt;&lt;p&gt;Automatically guessing masquerading IPs can put your friends IPs in the blacklist. In this case, use the context menu to whitelist them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="readOnly">
+             <property name="alternatingRowColors">
               <bool>true</bool>
              </property>
-             <property name="plainText">
-              <string>To Receive Connections, you must first setup a Tor/I2P Hidden Service. 
-
-For Tor: See torrc and documentation for HOWTO details.
-
-For I2P: See http://127.0.0.1:7657/i2ptunnelmgr for setting up a server tunnel:
-Tunnel Wizard -&gt; Server Tunnel -&gt; Standard -&gt; enter a name -&gt; enter the address and port your RS is using (see Local Address above) -&gt; check 'Auto Start' -&gt; finish!
-
-Once this is done, paste the Onion/I2P (Base32) Address in the box above.
-This is your external address on the Tor/I2P network.
-Finally make sure that the Ports match the configuration.
-
-If you have issues connecting over Tor check the Tor logs too.</string>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::SingleSelection</enum>
+             </property>
+             <property name="sortingEnabled">
+              <bool>false</bool>
+             </property>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>IP range</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Status</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Origin</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Reason</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Comment</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="includeFromFriends_CB">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is very drastic, be careful. Since masquerading IPs might be actual real IPs, this option might cause disconnection, and will probably force you to add your friends' IPs into the whitelist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Ban every  IP reported by your friends</string>
              </property>
             </widget>
            </item>
            <item>
-            <spacer name="vspacerHiddenIn">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
+            <widget class="QCheckBox" name="includeFromDHT_CB">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Another drastic option. If you use it, be prepared to add your friends' IPs into the whitelist when needed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
+             <property name="text">
+              <string>Ban every masquerading IP reported by your DHT</string>
              </property>
-            </spacer>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="groupIPRangesHLayout">
+             <item>
+              <widget class="QCheckBox" name="groupIPRanges_CB">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If used alone, this option protects you quite well from large scale IP masquerading.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>Automatically ban ranges of DHT masquerading IPs starting at</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="groupIPRanges_SB">
+               <property name="suffix">
+                <string>  IPs</string>
+               </property>
+               <property name="minimum">
+                <number>2</number>
+               </property>
+               <property name="maximum">
+                <number>255</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="groupIPRangesHSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
            </item>
           </layout>
          </widget>
+         <widget class="QWidget" name="ipWhiteListTabWidget">
+          <attribute name="title">
+           <string>IP whitelist</string>
+          </attribute>
+          <layout class="QGridLayout" name="ipWhiteListTabWidgetGLayout">
+           <item row="0" column="0">
+            <widget class="QTableWidget" name="whiteListIpsTable">
+             <property name="contextMenuPolicy">
+              <enum>Qt::CustomContextMenu</enum>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;White listed IPs are gathered from the following sources: IPs coming inside a manually exchanged certificate, IP ranges entered by you in this window, or in the security feed items.&lt;/p&gt;&lt;p&gt;The default behavior for Retroshare is to (1) always allow connection to peers with IP in the whitelist, even if that IP is also blacklisted; (2) optionally require IPs to be  in the whitelist. You can change this behavior for each peer in the &amp;quot;Details&amp;quot; window of each Retroshare node. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="alternatingRowColors">
+              <bool>true</bool>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::SingleSelection</enum>
+             </property>
+             <property name="sortingEnabled">
+              <bool>false</bool>
+             </property>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>IP range</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Status</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Origin</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Reason</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Comment</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="manualInputGBox">
+         <property name="title">
+          <string>Manual input</string>
+         </property>
+         <layout class="QVBoxLayout" name="manualInputGBoxVLayout">
+          <item>
+           <layout class="QHBoxLayout" name="ipinputHLayout">
+            <item>
+             <widget class="QLineEdit" name="ipInput_LE">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter an IP range.  Accepted formats:&lt;/p&gt;&lt;p&gt;193.190.209.15&lt;/p&gt;&lt;p&gt;193.190.209.15/24&lt;/p&gt;&lt;p&gt;193.190.209.15/16&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="ipInputRange_SB">
+              <property name="minimum">
+               <number>16</number>
+              </property>
+              <property name="maximum">
+               <number>32</number>
+              </property>
+              <property name="singleStep">
+               <number>8</number>
+              </property>
+              <property name="value">
+               <number>24</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="ipInputComment_LE">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter any comment you'd like&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="ipInputAddBlackList_PB">
+              <property name="text">
+               <string>Add to blacklist</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="ipInputAddWhiteList_PB">
+              <property name="text">
+               <string>Add to whitelist</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <spacer name="manualInputVSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>
@@ -1727,19 +1716,7 @@ If you have issues connecting over Tor check the Tor logs too.</string>
           <string>Relay options</string>
          </property>
          <layout class="QGridLayout" name="relayOptionGBoxGLayout">
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <property name="spacing">
+          <property name="verticalSpacing">
            <number>0</number>
           </property>
           <item row="0" column="0">
@@ -2109,7 +2086,6 @@ If you have issues connecting over Tor check the Tor logs too.</string>
   <tabstop>extAddress</tabstop>
   <tabstop>extPort</tabstop>
   <tabstop>dynDNS</tabstop>
-  <tabstop>showDiscStatusBar</tabstop>
  </tabstops>
  <resources>
   <include location="../images.qrc"/>

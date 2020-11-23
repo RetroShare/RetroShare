@@ -1,30 +1,26 @@
+/*******************************************************************************
+ * unittests/libretroshare/serialiser/support.h                                *
+ *                                                                             *
+ * Copyright 2007-2008 by Christopher Evi-Parker <retroshare.project@gmail.com>*
+ * Copyright 2007-2008 by Cyril Soler            <retroshare.project@gmail.com>*
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ ******************************************************************************/
+
 #ifndef SUPPORT_H_
 #define SUPPORT_H_
-
-/*
- * libretroshare/src/tests/serialiser:
- *
- * RetroShare Serialiser tests.
- *
- * Copyright 2007-2008 by Christopher Evi-Parker, Cyril Soler
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
 
 #include <gtest/gtest.h>
 
@@ -166,7 +162,9 @@ template<class ItemClass,class ItemSerialiser> int test_RsItem()
 		rsfi.print(std::cerr,0) ;
 	}
 	if (outfi)
+	{
 		EXPECT_TRUE(*outfi == rsfi) ;
+	}
 
 
 	sersize2 = MAX_BUFSIZE;
@@ -232,7 +230,9 @@ template<class ItemClass,class ItemSerialiser> int test_RsItem(uint16_t servtype
         EXPECT_TRUE(outfi != NULL);
 
         if (outfi)
+        {
                 EXPECT_TRUE(*outfi == rsfi) ;
+        }
 
         sersize2 = MAX_BUFSIZE;
         bool done2 = srl.serialise(outfi, (void *) &(buffer[16*8]), &sersize2);

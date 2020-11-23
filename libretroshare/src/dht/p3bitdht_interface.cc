@@ -1,27 +1,24 @@
-/*
- * libretroshare/src/dht: p3bitdht.h
- *
- * BitDht interface for RetroShare.
- *
- * Copyright 2009-2011 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/dht: p3bitdht_interface.cc                                *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2009-2011 by Robert Fernie <drbob@lunamutt.com>                   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "util/rsnet.h"
 #include "dht/p3bitdht.h"
@@ -207,7 +204,7 @@ void    p3BitDht::updateDataRates()
 
 	RsStackMutex stack(dhtMtx);    /********* LOCKED *********/
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	float period = now - mLastDataRateUpdate;
 
 #define RATE_FACTOR (0.75)
@@ -305,16 +302,16 @@ void	convertDhtPeerDetailsToRsDhtNetPeer(RsDhtNetPeer &status, const DhtPeerDeta
 	switch(details.mPeerConnectMode)
 	{
 		default:
-			status.mPeerConnectMode = RSDHT_TOU_MODE_NONE;
+		    status.mPeerConnectMode = RsDhtTouMode::NONE;
 			break;
 		case BITDHT_CONNECT_MODE_DIRECT:
-			status.mPeerConnectMode = RSDHT_TOU_MODE_DIRECT;
+		    status.mPeerConnectMode = RsDhtTouMode::DIRECT;
 			break;
 		case BITDHT_CONNECT_MODE_PROXY:
-			status.mPeerConnectMode = RSDHT_TOU_MODE_PROXY;
+		    status.mPeerConnectMode = RsDhtTouMode::PROXY;
 			break;
 		case BITDHT_CONNECT_MODE_RELAY:
-			status.mPeerConnectMode = RSDHT_TOU_MODE_RELAY;
+		    status.mPeerConnectMode = RsDhtTouMode::RELAY;
 			break;
 	}
 
@@ -383,7 +380,7 @@ RsDhtRelayProxy::RsDhtRelayProxy()
         mCreateTS = 0;
 
         //uint32_t mDataSize;
-        //time_t mLastBandwidthTS;
+        //rstime_t mLastBandwidthTS;
 
 }
 

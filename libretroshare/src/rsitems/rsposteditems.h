@@ -1,9 +1,31 @@
+/*******************************************************************************
+ * libretroshare/src/rsitems: rsposteditems.h                                  *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012 by Robert Fernie <retroshare@lunamutt.com>                   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RSPOSTEDITEMS_H
 #define RSPOSTEDITEMS_H
 
 #include "rsitems/rsserviceids.h"
 #include "rsitems/rsgxscommentitems.h"
 #include "rsitems/rsgxsitems.h"
+#include "serialiser/rstlvimage.h"
 
 #include "retroshare/rsposted.h"
 
@@ -17,9 +39,16 @@ public:
 	virtual ~RsGxsPostedGroupItem() {}
 
 	void clear();
+	
 	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+	
+	// use conversion functions to transform:
+	bool fromPostedGroup(RsPostedGroup &group, bool moveImage);
+	bool toPostedGroup(RsPostedGroup &group, bool moveImage);
+	
+	std::string mDescription;
+	RsTlvImage mGroupImage;
 
-	RsPostedGroup mGroup;
 };
 
 class RsGxsPostedPostItem : public RsGxsMsgItem
@@ -30,8 +59,14 @@ public:
 
 	void clear();
 	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+	
+	// Slightly unusual structure.
+	// use conversion functions to transform:
+	bool fromPostedPost(RsPostedPost &post, bool moveImage);
+	bool toPostedPost(RsPostedPost &post, bool moveImage);
 
 	RsPostedPost mPost;
+	RsTlvImage mImage;
 };
 
 class RsGxsPostedSerialiser : public RsGxsCommentSerialiser

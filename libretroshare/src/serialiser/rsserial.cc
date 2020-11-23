@@ -1,28 +1,24 @@
-
-/*
- * libretroshare/src/serialiser: rsserial.cc
- *
- * RetroShare Serialiser.
- *
- * Copyright 2007-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/serialiser: rsserial.cc                                   *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2007-2008 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "serialiser/rsbaseserial.h"
 
@@ -79,7 +75,7 @@ class Counter
 	static int total_rsitem_mallocs = 0 ;
 	static int total_rsitem_frees = 0 ;
 	static int total_rsitem_freed = 0 ;
-	static time_t last_time = 0 ;
+	static rstime_t last_time = 0 ;
 
 void *RsItem::operator new(size_t s)
 {
@@ -89,7 +85,7 @@ void *RsItem::operator new(size_t s)
 
 	++size_hits[ s ].v() ;
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	++nb_rsitem_creations ;
 	total_rsitem_mallocs += s ;
 
@@ -129,9 +125,7 @@ RsItem::RsItem(uint8_t ver, uint8_t cls, uint8_t t, uint8_t subtype)
 	type = (ver << 24) + (cls << 16) + (t << 8) + subtype;
 }
 
-RsItem::~RsItem()
-{
-}
+RsItem::~RsItem() = default;
 
 void RsItem::print_string(std::string &out, uint16_t indent)
 {
@@ -247,10 +241,7 @@ uint32_t    RsSerialType::PacketId() const
 
 
 
-RsSerialiser::RsSerialiser()
-{
-	return;
-}
+RsSerialiser::RsSerialiser() = default;
 
 
 RsSerialiser::~RsSerialiser()
@@ -563,17 +554,7 @@ std::ostream &RsRawItem::print(std::ostream &out, uint16_t indent)
 	return out;
 }
 
-
-uint32_t getRsPktMaxSize()
-{
-	//return 65535; /* 2^16 (old artifical low size) */
-	//return 1048575; /* 2^20 -1 (Too Big! - must remove fixed static buffers first) */
-	/* Remember that every pqistreamer allocates an input buffer of this size!
-	 * So don't make it too big!
-	 */
-	return 262143; /* 2^18 -1 */
-}
-
+uint32_t getRsPktMaxSize() { return RsSerialiser::MAX_SERIAL_SIZE; }
 
 uint32_t getRsPktBaseSize()
 {

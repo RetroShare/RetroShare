@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2012 RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * plugins/FeedReader/gui/FeedReaderFeedNotify.cpp                             *
+ *                                                                             *
+ * Copyright (C) 2012 by RetroShare Team <retroshare.project@gmail.com>        *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QMutex>
 #include <QDateTime>
@@ -66,9 +65,9 @@ void FeedReaderFeedNotify::setNotifyEnabled(bool enabled)
 	}
 }
 
-void FeedReaderFeedNotify::msgChanged(const QString &feedId, const QString &msgId, int type)
+void FeedReaderFeedNotify::msgChanged(uint32_t feedId, const QString &msgId, int type)
 {
-	if (feedId.isEmpty() || msgId.isEmpty()) {
+	if (feedId == 0 || msgId.isEmpty()) {
 		return;
 	}
 
@@ -102,8 +101,8 @@ FeedItem *FeedReaderFeedNotify::feedItem(FeedHolder *parent)
 		FeedItemData feedItemData = mPendingNewsFeed.front();
 		mPendingNewsFeed.pop_front();
 
-		if (mFeedReader->getFeedInfo(feedItemData.mFeedId.toStdString(), feedInfo) &&
-			mFeedReader->getMsgInfo(feedItemData.mFeedId.toStdString(), feedItemData.mMsgId.toStdString(), msgInfo)) {
+		if (mFeedReader->getFeedInfo(feedItemData.mFeedId, feedInfo) &&
+			mFeedReader->getMsgInfo(feedItemData.mFeedId, feedItemData.mMsgId.toStdString(), msgInfo)) {
 			if (msgInfo.flag.isnew) {
 				msgPending = true;
 				break;
@@ -116,7 +115,8 @@ FeedItem *FeedReaderFeedNotify::feedItem(FeedHolder *parent)
 		return NULL;
 	}
 
-	return new FeedReaderFeedItem(mFeedReader, mNotify, parent, feedInfo, msgInfo);
+	//TODO: parent?
+	return new FeedReaderFeedItem(mFeedReader, mNotify, feedInfo, msgInfo);
 }
 
 FeedItem *FeedReaderFeedNotify::testFeedItem(FeedHolder *parent)
@@ -137,5 +137,6 @@ FeedItem *FeedReaderFeedNotify::testFeedItem(FeedHolder *parent)
 	msgInfo.description = tr("This is a test message.").toUtf8().constData();
 	msgInfo.pubDate = QDateTime::currentDateTime().toTime_t();
 
-	return new FeedReaderFeedItem(mFeedReader, mNotify, parent, feedInfo, msgInfo);
+	//TODO: parent?
+	return new FeedReaderFeedItem(mFeedReader, mNotify, feedInfo, msgInfo);
 }

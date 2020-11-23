@@ -1,24 +1,22 @@
-/****************************************************************
- *
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2012, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/common/FriendSelectionWidget.h                                          *
+ *                                                                             *
+ * Copyright (C) 2012, Retroshare Team <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef FRIENDSELECTIONWIDGET_H
 #define FRIENDSELECTIONWIDGET_H
@@ -27,7 +25,6 @@
 #include <QDialog>
 
 #include <gui/gxs/RsGxsUpdateBroadcastPage.h>
-#include "util/TokenQueue.h"
 
 namespace Ui {
 class FriendSelectionWidget;
@@ -36,7 +33,7 @@ class FriendSelectionWidget;
 class QTreeWidgetItem;
 class RSTreeWidgetItemCompareRole;
 
-class FriendSelectionWidget : public RsGxsUpdateBroadcastPage, public TokenResponse
+class FriendSelectionWidget : public QWidget
 {
 	Q_OBJECT
 
@@ -82,14 +79,18 @@ public:
 	void start();
 
 	bool isSortByState();
+	bool isFilterConnected();
 
+	void loadIdentities();
 	int selectedItemCount();
     std::string selectedId(IdType &idType);
+
+    void setSelectedIdsFromString(IdType type,const std::set<std::string>& ids,bool add);
 
     template<class ID_CLASS,FriendSelectionWidget::IdType TYPE> void selectedIds(std::set<ID_CLASS>& ids, bool onlyDirectSelected)
     {
         std::set<std::string> tmpids ;
-        selectedIds(TYPE, tmpids, onlyDirectSelected);
+        selectedIds_internal(TYPE, tmpids, onlyDirectSelected);
         ids.clear() ;
         for(std::set<std::string>::const_iterator it(tmpids.begin());it!=tmpids.end();++it)
             ids.insert(ID_CLASS(*it)) ;
@@ -99,7 +100,7 @@ public:
         std::set<std::string> tmpids ;
         for(typename std::set<ID_CLASS>::const_iterator it(ids.begin());it!=ids.end();++it)
             tmpids.insert((*it).toStdString()) ;
-        setSelectedIds(TYPE, tmpids, add);
+        setSelectedIds_internal(TYPE, tmpids, add);
     }
 
 	void itemsFromId(IdType idType, const std::string &id, QList<QTreeWidgetItem*> &items);
@@ -116,9 +117,9 @@ public:
 	void addContextMenuAction(QAction *action);
 
 protected:
+	void showEvent(QShowEvent *e) override;
 	void changeEvent(QEvent *e);
 
-	virtual void loadRequest(const TokenQueue *queue,const TokenRequest& req);
 	virtual void updateDisplay(bool complete);
 
 signals:
@@ -130,6 +131,7 @@ signals:
 
 public slots:
 	void sortByState(bool sort);
+	void filterConnected(bool filter);
 
 private slots:
 	void groupsChanged(int type);
@@ -144,12 +146,9 @@ private slots:
 private:
 	void fillList();
 	void secured_fillList();
-	bool filterItem(QTreeWidgetItem *item, const QString &text);
 
-    void selectedIds(IdType idType, std::set<std::string> &ids, bool onlyDirectSelected);
-    void setSelectedIds(IdType idType, const std::set<std::string> &ids, bool add);
-
-	void requestGXSIdList() ;
+    void selectedIds_internal(IdType idType, std::set<std::string> &ids, bool onlyDirectSelected);
+    void setSelectedIds_internal(IdType idType, const std::set<std::string> &ids, bool add);
 
 private:
 	bool mStarted;
@@ -161,6 +160,7 @@ private:
 	bool mInSslItemChanged;
 	bool mInFillList;
 	QAction *mActionSortByState;
+	QAction *mActionFilterConnected;
 
 	/* Color definitions (for standard see qss.default) */
 	QColor mTextColorOnline;
@@ -170,8 +170,9 @@ private:
 	friend class FriendSelectionDialog ;
 
 	std::vector<RsGxsGroupId> gxsIds ;
-	TokenQueue *mIdQueue ;
 	QList<QAction*> mContextMenuActions;
+
+    std::set<std::string> mPreSelectedIds; // because loading of GxsIds is asynchroneous we keep selected Ids from the client in a list here and use it to initialize after loading them.
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(FriendSelectionWidget::ShowTypes)

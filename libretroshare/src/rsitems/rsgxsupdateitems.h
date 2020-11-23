@@ -1,45 +1,33 @@
+/*******************************************************************************
+ * libretroshare/src/rsitems: rsgxsupdateitems.h                               *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012 Christopher Evi-Parker                                       *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RSGXSUPDATEITEMS_H_
 #define RSGXSUPDATEITEMS_H_
 
-/*
- * libretroshare/src/serialiser: rsgxsupdateitems.h
- *
- * RetroShare Serialiser.
- *
- * Copyright 2012 Christopher Evi-Parker
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-
-
-#if 0
-#include <map>
-#include "rsitems/rsserviceids.h"
-#include "serialiser/rsserial.h"
-#include "serialiser/rstlvbase.h"
-#include "serialiser/rstlvtypes.h"
-#include "serialiser/rstlvkeys.h"
-#endif
-
 #include "gxs/rsgxs.h"
 #include "gxs/rsgxsdata.h"
+#include "gxs/rsgxsnettunnel.h"
 #include "serialiser/rstlvidset.h"
+#include "serialiser/rstypeserializer.h"
+#include "serialiser/rsserializable.h"
 
 
 const uint8_t RS_PKT_SUBTYPE_GXS_GRP_UPDATE             = 0x01;
@@ -48,6 +36,7 @@ const uint8_t RS_PKT_SUBTYPE_GXS_MSG_UPDATE             = 0x03;
 const uint8_t RS_PKT_SUBTYPE_GXS_SERVER_GRP_UPDATE      = 0x04;
 const uint8_t RS_PKT_SUBTYPE_GXS_SERVER_MSG_UPDATE      = 0x08;
 const uint8_t RS_PKT_SUBTYPE_GXS_GRP_CONFIG             = 0x09;
+const uint8_t RS_PKT_SUBTYPE_GXS_RANDOM_BIAS            = 0x0a;
 
 class RsGxsNetServiceItem: public RsItem
 {
@@ -78,14 +67,14 @@ public:
 
 	RsTlvPeerIdSet suppliers;		// list of friends who feed this group
 	uint32_t max_visible_count ;	// max visible count reported by contributing friends
-	time_t statistics_update_TS ;	// last time the max visible count was updated.
-	time_t last_group_modification_TS ;	// last time the group was modified, either in meta data or in the list of messages posted in it.
+	rstime_t statistics_update_TS ;	// last time the max visible count was updated.
+	rstime_t last_group_modification_TS ;	// last time the group was modified, either in meta data or in the list of messages posted in it.
 };
 
 class RsGxsGrpConfigItem : public RsGxsNetServiceItem, public RsGxsGrpConfig
 {
 public:
-    RsGxsGrpConfigItem(uint16_t servType) : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_GRP_CONFIG) {}
+    explicit RsGxsGrpConfigItem(uint16_t servType) : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_GRP_CONFIG) {}
     RsGxsGrpConfigItem(const RsGxsGrpConfig& m,uint16_t servType) : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_GRP_CONFIG),RsGxsGrpConfig(m) {}
     virtual ~RsGxsGrpConfigItem() {}
 
@@ -106,7 +95,7 @@ public:
 class RsGxsGrpUpdateItem : public RsGxsNetServiceItem, public RsGxsGrpUpdate
 {
 public:
-    RsGxsGrpUpdateItem(uint16_t servType) : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_GRP_UPDATE) {clear();}
+    explicit RsGxsGrpUpdateItem(uint16_t servType) : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_GRP_UPDATE) {clear();}
     RsGxsGrpUpdateItem(const RsGxsGrpUpdate& u,uint16_t serv_type) : RsGxsNetServiceItem(serv_type, RS_PKT_SUBTYPE_GXS_GRP_UPDATE), RsGxsGrpUpdate(u) {}
 
     virtual ~RsGxsGrpUpdateItem() {}
@@ -117,18 +106,28 @@ public:
     RsPeerId peerID;
 };
 
+struct RsPeerUpdateTsRecord
+{
+    RsPeerUpdateTsRecord() : mLastTsReceived(0), mTs(0) {}
+
+    rstime_t mLastTsReceived; // last TS that was sent for this group by this peer ID.
+    rstime_t mTs;             // time at which this TS was sent.
+};
+
 class RsGxsServerGrpUpdate
 {
 public:
     RsGxsServerGrpUpdate() { grpUpdateTS = 0 ; }
 
 	uint32_t grpUpdateTS;
+
+    std::map<RsPeerId,RsPeerUpdateTsRecord> grpUpdateTsRecords;
 };
 
 class RsGxsServerGrpUpdateItem : public RsGxsNetServiceItem, public RsGxsServerGrpUpdate
 {
 public:
-    RsGxsServerGrpUpdateItem(uint16_t servType) : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_SERVER_GRP_UPDATE) { clear();}
+    explicit RsGxsServerGrpUpdateItem(uint16_t servType) : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_SERVER_GRP_UPDATE) { clear();}
     RsGxsServerGrpUpdateItem(const RsGxsServerGrpUpdate& u,uint16_t serv_type) : RsGxsNetServiceItem(serv_type, RS_PKT_SUBTYPE_GXS_SERVER_GRP_UPDATE), RsGxsServerGrpUpdate(u) {}
 
     virtual ~RsGxsServerGrpUpdateItem() {}
@@ -140,21 +139,30 @@ public:
 class RsGxsMsgUpdate
 {
 public:
-    struct MsgUpdateInfo
+	struct MsgUpdateInfo : RsSerializable
     {
         MsgUpdateInfo(): time_stamp(0), message_count(0) {}
 
         uint32_t time_stamp ;
         uint32_t message_count ;
+
+		/// @see RsSerializable
+		void serial_process(RsGenericSerializer::SerializeJob j,
+		                    RsGenericSerializer::SerializeContext& ctx)
+		{
+			RS_SERIAL_PROCESS(time_stamp);
+			RS_SERIAL_PROCESS(message_count);
+		}
     };
 
     std::map<RsGxsGroupId, MsgUpdateInfo> msgUpdateInfos;
 };
 
+
 class RsGxsMsgUpdateItem : public RsGxsNetServiceItem, public RsGxsMsgUpdate
 {
 public:
-    RsGxsMsgUpdateItem(uint16_t servType) : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_MSG_UPDATE) { clear();}
+    explicit RsGxsMsgUpdateItem(uint16_t servType) : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_MSG_UPDATE) { clear();}
     RsGxsMsgUpdateItem(const RsGxsMsgUpdate& m,uint16_t servType) : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_MSG_UPDATE), RsGxsMsgUpdate(m) {}
 
     virtual ~RsGxsMsgUpdateItem() {}
@@ -170,13 +178,19 @@ class RsGxsServerMsgUpdate
 public:
     RsGxsServerMsgUpdate() { msgUpdateTS = 0 ;}
 
-	uint32_t msgUpdateTS; // local time stamp this group last received a new msg
+	uint32_t msgUpdateTS; // local time stamp at which this group last received a new msg
+
+    // Now we also store for each peer the last own TS the peer sent and when it did so. This allows to detect when transactions are stuck because of
+    // outqueues clogging. If that happens, we receive multiple times the same TS from the friend, in which case we do not send the list of msgs
+    // again until a significant amount of time has passed. These values are obviously initialized to 0.
+
+    std::map<RsPeerId, RsPeerUpdateTsRecord> msgUpdateTsRecords;
 };
 
 class RsGxsServerMsgUpdateItem : public RsGxsNetServiceItem, public RsGxsServerMsgUpdate
 {
 public:
-    RsGxsServerMsgUpdateItem(uint16_t servType) : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_SERVER_MSG_UPDATE) { clear();}
+    explicit RsGxsServerMsgUpdateItem(uint16_t servType) : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_SERVER_MSG_UPDATE) { clear();}
     RsGxsServerMsgUpdateItem(const RsGxsServerMsgUpdate& m,uint16_t servType) : RsGxsNetServiceItem(servType, RS_PKT_SUBTYPE_GXS_SERVER_MSG_UPDATE),RsGxsServerMsgUpdate(m) {}
     virtual ~RsGxsServerMsgUpdateItem() {}
 
@@ -186,12 +200,11 @@ public:
 	RsGxsGroupId grpId;
 };
 
-
 class RsGxsUpdateSerialiser : public RsServiceSerializer
 {
 public:
 
-	RsGxsUpdateSerialiser(uint16_t servtype) : RsServiceSerializer(servtype), SERVICE_TYPE(servtype) {}
+	explicit RsGxsUpdateSerialiser(uint16_t servtype) : RsServiceSerializer(servtype), SERVICE_TYPE(servtype) {}
 
 	virtual ~RsGxsUpdateSerialiser() {}
 

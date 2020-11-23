@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006 - 2011 RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/FriendsDialog.cpp                                                       *
+ *                                                                             *
+ * Copyright (C) 2012 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <time.h>
 
@@ -44,17 +43,14 @@
 #include "FriendsDialog.h"
 #include "NetworkView.h"
 #include "NetworkDialog.h"
+#include "gui/common/NewFriendList.h"
 #include "gui/Identity/IdDialog.h"
-#ifdef RS_USE_CIRCLES
-#include "gui/Circles/CirclesDialog.h"
-#endif
 /* Images for Newsfeed icons */
 //#define IMAGE_NEWSFEED           ""
 //#define IMAGE_NEWSFEED_NEW       ":/images/message-state-new.png"
-#define IMAGE_NETWORK2          ":/icons/png/netgraph.png"
-#define IMAGE_PEERS         	":/icons/png/keyring.png"
+#define IMAGE_NETWORK2          ":/icons/png/netgraph2.png"
+#define IMAGE_PEERS         	":/icons/png/digital-key.png"
 #define IMAGE_IDENTITY          ":/images/identity/identities_32.png"
-//#define IMAGE_CIRCLES           ":/icons/png/circles.png"
 
 /******
  * #define FRIENDS_DEBUG 1
@@ -63,25 +59,26 @@
 static FriendsDialog *instance = NULL;
 
 /** Constructor */
-FriendsDialog::FriendsDialog(QWidget *parent)
-            : RsAutoUpdatePage(1500,parent)
+FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
-    if (instance == NULL) {
-        instance = this;
-    }
+	if (!instance) instance = this;
+
+#ifdef RS_DIRECT_CHAT
     QString msg = tr("Retroshare broadcast chat: messages are sent to all connected friends.");
     // "<font color='grey'>" + DateTime::formatTime(QTime::currentTime()) + "</font> -
     msg = QString("<font color='blue'><i>" + msg + "</i></font>");
     ui.chatWidget->setWelcomeMessage(msg);
     ui.chatWidget->init(ChatId::makeBroadcastId(), tr("Broadcast"));
 
-    connect(NotifyQt::getInstance(), SIGNAL(chatMessageReceived(ChatMessage)),
-            this, SLOT(chatMessageReceived(ChatMessage)));
-    connect(NotifyQt::getInstance(), SIGNAL(chatStatusChanged(ChatId,QString)),
-            this, SLOT(chatStatusReceived(ChatId,QString)));
+    connect(NotifyQt::getInstance(), SIGNAL(chatMessageReceived(ChatMessage)), this, SLOT(chatMessageReceived(ChatMessage)));
+    connect(NotifyQt::getInstance(), SIGNAL(chatStatusChanged(ChatId,QString)), this, SLOT(chatStatusReceived(ChatId,QString)));
+#else // def RS_DIRECT_CHAT
+	ui.tabWidget->removeTab(ui.tabWidget->indexOf(ui.groupChatTab));
+#endif // def RS_DIRECT_CHAT
+
 
     connect( ui.mypersonalstatusLabel, SIGNAL(clicked()), SLOT(statusmessage()));
     connect( ui.actionSet_your_Avatar, SIGNAL(triggered()), this, SLOT(getAvatar()));
@@ -94,47 +91,15 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     ui.tabWidget->addTab(networkView = new NetworkView(),QIcon(IMAGE_NETWORK2), tr("Network graph"));
     ui.tabWidget->addTab(networkDialog = new NetworkDialog(),QIcon(IMAGE_PEERS), tr("Keyring"));
 
-    //ui.tabWidget->addTab(new ProfileWidget(), tr("Profile"));
-    //newsFeed = new NewsFeed();
-    //int newsFeedTabIndex = ui.tabWidget->insertTab(0, newsFeed, tr("News Feed"));
-    //ui.tabWidget->setCurrentIndex(newsFeedTabIndex);
-
     ui.tabWidget->hideCloseButton(0);
     ui.tabWidget->hideCloseButton(1);
     ui.tabWidget->hideCloseButton(2);
     ui.tabWidget->hideCloseButton(3);
     ui.tabWidget->hideCloseButton(4);
 
-    /* get the current text and text color of the tab bar */
-    //newsFeedTabColor = ui.tabWidget->tabBar()->tabTextColor(newsFeedTabIndex);
-    //newsFeedText = ui.tabWidget->tabBar()->tabText(newsFeedTabIndex);
-
-    //connect(newsFeed, SIGNAL(newsFeedChanged(int)), this, SLOT(newsFeedChanged(int)));
-
-//    menu = new QMenu();
-//    menu->addAction(ui.actionAdd_Friend);
-//    menu->addAction(ui.actionAdd_Group);
-//    menu->addAction(ui.actionCreate_new_Chat_lobby);
-//
-//    menu->addSeparator();
-//    menu->addAction(ui.actionSet_your_Avatar);
-//    menu->addAction(ui.actionSet_your_Personal_Message);
-//
-//    ui.menutoolButton->setMenu(menu);
-
-    /*QToolButton *addFriendButton = new QToolButton(this);
-    addFriendButton->setIcon(QIcon(":/images/user/add_user24.png"));
-    addFriendButton->setToolTip(tr("Add friend node"));
-    connect(addFriendButton, SIGNAL(clicked()), this, SLOT(addFriend()));
-    ui.friendList->addToolButton(addFriendButton);*/
-
     /* Set initial size the splitter */
     ui.splitter->setStretchFactor(0, 0);
     ui.splitter->setStretchFactor(1, 1);
-    /*remove
-QList<int> sizes;
-    sizes << height() << 100; // Qt calculates the right sizes
-    ui.splitter_2->setSizes(sizes);*/
 
     loadmypersonalstatus();
 
@@ -142,8 +107,9 @@ QList<int> sizes;
 
     // load settings
     RsAutoUpdatePage::lockAllEvents();
-    ui.friendList->setColumnVisible(FriendList::COLUMN_LAST_CONTACT, false);
-    ui.friendList->setColumnVisible(FriendList::COLUMN_IP, false);
+    ui.friendList->setColumnVisible(RsFriendListModel::COLUMN_THREAD_LAST_CONTACT, false);
+    ui.friendList->setColumnVisible(RsFriendListModel::COLUMN_THREAD_IP, false);
+    ui.friendList->setColumnVisible(RsFriendListModel::COLUMN_THREAD_ID, false);
     ui.friendList->setShowGroups(true);
     processSettings(true);
     RsAutoUpdatePage::unlockAllEvents();
@@ -188,10 +154,6 @@ void FriendsDialog::activatePage(FriendsDialog::Page page)
 	{
 		case FriendsDialog::IdTab: ui.tabWidget->setCurrentWidget(idDialog) ;
 											  break ;
-#ifdef RS_USE_CIRCLES
-		case FriendsDialog::CirclesTab: ui.tabWidget->setCurrentWidget(circlesDialog) ;
-											  break ;
-#endif
 		case FriendsDialog::NetworkTab: ui.tabWidget->setCurrentWidget(networkDialog) ;
 											  break ;
 		case FriendsDialog::BroadcastTab: ui.tabWidget->setCurrentWidget(networkDialog) ;
@@ -201,7 +163,7 @@ void FriendsDialog::activatePage(FriendsDialog::Page page)
 	}
 }
 
-UserNotify *FriendsDialog::getUserNotify(QObject *parent)
+UserNotify *FriendsDialog::createUserNotify(QObject *parent)
 {
     return new ChatUserNotify(parent);
 }
@@ -227,11 +189,6 @@ void FriendsDialog::processSettings(bool bLoad)
     ui.friendList->processSettings(bLoad);
 
     Settings->endGroup();
-}
-
-void FriendsDialog::showEvent(QShowEvent *event)
-{
-    RsAutoUpdatePage::showEvent(event);
 }
 
 void FriendsDialog::chatMessageReceived(const ChatMessage &msg)
@@ -261,10 +218,6 @@ void FriendsDialog::chatStatusReceived(const ChatId &chat_id, const QString &sta
         QString name = QString::fromUtf8(rsPeers->getPeerName(chat_id.broadcast_status_peer_id).c_str());
         ui.chatWidget->updateStatusString(name + " %1", status_string);
     }
-}
-
-void FriendsDialog::updateDisplay()
-{
 }
 
 void FriendsDialog::addFriend()

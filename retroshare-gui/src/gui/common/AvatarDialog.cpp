@@ -1,25 +1,22 @@
-/*
- * Avatar Dialog
- *
- * Copyright 2015 by RetroShare Team
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * gui/common/AvatarDialog.cpp                                                 *
+ *                                                                             *
+ * Copyright (C) 2012, Robert Fernie <retroshare.project@gmail.com>            *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QBuffer>
 
@@ -27,6 +24,7 @@
 #include "ui_AvatarDialog.h"
 #include "AvatarDefs.h"
 #include "util/misc.h"
+#include "gui/common/FilesDefs.h"
 
 /** Constructor */
 AvatarDialog::AvatarDialog(QWidget *parent) :
@@ -36,7 +34,7 @@ AvatarDialog::AvatarDialog(QWidget *parent) :
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui->setupUi(this);
 
-	ui->headerFrame->setHeaderImage(QPixmap(":/images/no_avatar_70.png"));
+    ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/no_avatar_70.png"));
 	ui->headerFrame->setHeaderText(tr("Set your Avatar picture"));
 
 	connect(ui->avatarButton, SIGNAL(clicked(bool)), this, SLOT(changeAvatar()));
@@ -48,6 +46,9 @@ AvatarDialog::AvatarDialog(QWidget *parent) :
 	updateInterface();
 }
 
+const int AvatarDialog::RS_AVATAR_DEFAULT_IMAGE_W = 96;
+const int AvatarDialog::RS_AVATAR_DEFAULT_IMAGE_H = 96;
+
 AvatarDialog::~AvatarDialog()
 {
 	delete(ui);
@@ -55,7 +56,7 @@ AvatarDialog::~AvatarDialog()
 
 void AvatarDialog::changeAvatar()
 {
-	QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load Avatar"), 128, 128);
+	QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load Avatar"), RS_AVATAR_DEFAULT_IMAGE_W,RS_AVATAR_DEFAULT_IMAGE_H);
 
 	if (img.isNull())
 		return;

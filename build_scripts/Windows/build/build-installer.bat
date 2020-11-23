@@ -8,21 +8,24 @@ if errorlevel 1 goto error_env
 call "%EnvPath%\env.bat"
 if errorlevel 1 goto error_env
 
-:: Get gcc versions
-call "%ToolsPath%\get-gcc-version.bat" GCCVersion
-if "%GCCVersion%"=="" echo Cannot get gcc version.& exit /B 1
+:: Initialize environment
+call "%~dp0env.bat" release
+if errorlevel 2 exit /B 2
+if errorlevel 1 goto error_env
 
 :: Check external libraries
-if not exist "%RootPath%\libs" echo Please build external libraries first.& exit /B 1
+if not exist "%BuildLibsPath%\libs" %cecho% error "Please build external libraries first." & exit /B 1
 
 :: Check gcc version of external libraries
-if not exist "%RootPath%\libs\gcc-version" echo Cannot get gcc version of external libraries.& exit /B 1
-set /P LibsGCCVersion=<"%RootPath%\libs\gcc-version"
-if "%LibsGCCVersion%" NEQ "%GCCVersion%" echo Please use correct version of external libraries. (gcc %GCCVersion% ^<^> libs %LibsGCCVersion%).& exit /B 1
+if not exist "%BuildLibsPath%\libs\gcc-version" %cecho% error "Cannot get gcc version of external libraries." & exit /B 1
+set /P LibsGCCVersion=<"%BuildLibsPath%\libs\gcc-version"
+if "%LibsGCCVersion%" NEQ "%GCCVersion%" %cecho% error "Please use correct version of external libraries. (gcc %GCCVersion% ^<^> libs %LibsGCCVersion%)." & exit /B 1
 
-:: Initialize environment
-call "%~dp0env.bat"
-if errorlevel 1 goto error_env
+:: Get date
+call "%ToolsPath%\get-rs-date.bat" "%SourcePath%" RsDate
+if errorlevel 1 %cecho% error "Could not get date."& goto error
+
+if "%RsDate%"=="" %cecho% error "Could not get date."& goto error
 
 :: Build defines for script
 set NSIS_PARAM=
@@ -32,16 +35,19 @@ set NSIS_PARAM=%NSIS_PARAM% /DQTDIR="%QtPath%\.."
 set NSIS_PARAM=%NSIS_PARAM% /DMINGWDIR="%MinGWPath%\.."
 set NSIS_PARAM=%NSIS_PARAM% /DOUTDIR="%RsPackPath%"
 set NSIS_PARAM=%NSIS_PARAM% /DINSTALLERADD="%RsArchiveAdd%"
+set NSIS_PARAM=%NSIS_PARAM% /DEXTERNAL_LIB_DIR="%BuildLibsPath%\libs"
+set NSIS_PARAM=%NSIS_PARAM% /DARCHITECTURE="%GCCArchitecture%"
+set NSIS_PARAM=%NSIS_PARAM% /DDATE="%RsDate%"
 
-:: Scan version from source
-set RsRevision=
-set RsBuildAdd=
-call "%ToolsPath%\get-rs-version.bat" RS_REVISION_STRING RsRevision
-if "%RsRevision%"=="" echo Revision not found.& exit /B 1
-call "%ToolsPath%\get-rs-version.bat" RS_BUILD_NUMBER_ADD RsBuildAdd
-if errorlevel 1 exit /B 1
+if exist "%EnvTorPath%\Tor\tor.exe" set NSIS_PARAM=%NSIS_PARAM% /DTORDIR="%EnvTorPath%\Tor"
 
-set NSIS_PARAM=%NSIS_PARAM% /DREVISION=%RsRevision% /DBUILDADD=%RsBuildAdd%
+:: Get compiled version
+call "%ToolsPath%\get-rs-version.bat" "%RsBuildPath%\retroshare-gui\src\%RsBuildConfig%\retroshare.exe" RsVersion
+if errorlevel 1 %cecho% error "Version not found."& exit /B 1
+
+if "%RsVersion.Extra%"=="" %cecho% error "Extra number not found".& exit /B 1
+
+set NSIS_PARAM=%NSIS_PARAM% /DREVISION=%RsVersion.Extra%
 
 set QtMainVersion=%QtVersion:~0,1%
 

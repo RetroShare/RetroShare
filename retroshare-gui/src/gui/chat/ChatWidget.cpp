@@ -1,29 +1,27 @@
-/****************************************************************
- *
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2011, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
-
+/*******************************************************************************
+ * gui/chat/ChatWidget.cpp                                                     *
+ *                                                                             *
+ * LibResAPI: API for local socket server                                      *
+ *                                                                             *
+ * Copyright (C) 2011, Retroshare Team <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include <QApplication>
 #include <QBuffer>
 #include <QColorDialog>
-#include <QFontDialog>
 #include <QKeyEvent>
 #include <QMenu>
 #include <QMessageBox>
@@ -34,6 +32,7 @@
 #include <QTextStream>
 #include <QTimer>
 #include <QToolTip>
+#include <QInputDialog>
 
 #include "ChatWidget.h"
 #include "ui_ChatWidget.h"
@@ -43,7 +42,6 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/settings/rsettingswin.h"
 #include "gui/settings/RsharePeerSettings.h"
-#include "gui/im_history/ImHistoryBrowser.h"
 #include "gui/common/StatusDefs.h"
 #include "gui/common/FilesDefs.h"
 #include "gui/common/Emoticons.h"
@@ -54,6 +52,7 @@
 #include "gui/chat/ChatUserNotify.h"//For BradCast
 #include "util/DateTime.h"
 #include "util/imageutil.h"
+#include "gui/im_history/ImHistoryBrowser.h"
 
 #include <retroshare/rsstatus.h>
 #include <retroshare/rsidentity.h>
@@ -65,54 +64,59 @@
 #include <time.h>
 
 #define FMM 2.5//fontMetricsMultiplicator
-
-#define PERSONID "PersonId:"
+#define FMM_SMALLER 1.8
+#define FMM_THRESHOLD 25
 
 /*****
  * #define CHAT_DEBUG 1
  *****/
 
-ChatWidget::ChatWidget(QWidget *parent) :
-    QWidget(parent), sendingBlocked(false), ui(new Ui::ChatWidget)
+ChatWidget::ChatWidget(QWidget *parent)
+  : QWidget(parent)
+  , completionPosition(0), newMessages(false), typing(false), peerStatus(0)
+  , sendingBlocked(false), useCMark(false)
+  , lastStatusSendTime(0)
+  , firstShow(true), inChatCharFormatChanged(false), firstSearch(true)
+  , lastUpdateCursorPos(0), lastUpdateCursorEnd(0)
+  , completer(NULL), imBrowser(NULL), notify(NULL)
+  , ui(new Ui::ChatWidget)
 {
 	ui->setupUi(this);
 
-	int iconHeight = FMM*QFontMetricsF(font()).height() ;
-	QSize iconSize = QSize(iconHeight,iconHeight);
-	QSize buttonSize = QSize(iconSize + QSize((int)FMM,(int)FMM));
+	int iconHeight = QFontMetricsF(font()).height();
+	double fmm = iconHeight > FMM_THRESHOLD ? FMM : FMM_SMALLER;
+	iconHeight *= fmm;
+	QSize iconSize = QSize(iconHeight, iconHeight);
+	//int butt_size(iconSize.height() + fmm);
+	//QSize buttonSize = QSize(butt_size, butt_size);
 
-	newMessages = false;
-	typing = false;
-	peerStatus = 0;
-	firstShow = true;
-	firstSearch = true;
-	inChatCharFormatChanged = false;
-	completer = NULL;
 	lastMsgDate = QDate::currentDate();
 
-	lastStatusSendTime = 0 ;
-
 	//Resize Tool buttons
-	ui->emoteiconButton->setFixedSize(buttonSize);
+	//ui->emoteiconButton->setFixedSize(buttonSize);
 	ui->emoteiconButton->setIconSize(iconSize);
-	ui->attachPictureButton->setFixedSize(buttonSize);
+	//ui->stickerButton->setFixedSize(buttonSize);
+	ui->stickerButton->setIconSize(iconSize);
+	//ui->attachPictureButton->setFixedSize(buttonSize);
 	ui->attachPictureButton->setIconSize(iconSize);
-	ui->addFileButton->setFixedSize(buttonSize);
+	//ui->addFileButton->setFixedSize(buttonSize);
 	ui->addFileButton->setIconSize(iconSize);
-	ui->pushtoolsButton->setFixedSize(buttonSize);
+	//ui->pushtoolsButton->setFixedSize(buttonSize);
 	ui->pushtoolsButton->setIconSize(iconSize);
-	ui->notifyButton->setFixedSize(buttonSize);
+	//ui->notifyButton->setFixedSize(buttonSize);
 	ui->notifyButton->setIconSize(iconSize);
-	ui->markButton->setFixedSize(buttonSize);
+	//ui->markButton->setFixedSize(buttonSize);
 	ui->markButton->setIconSize(iconSize);
 	ui->leSearch->setFixedHeight(iconHeight);
 	ui->searchBefore->setFixedHeight(iconHeight);
 	ui->searchAfter->setFixedHeight(iconHeight);
-	ui->searchButton->setFixedSize(buttonSize);
+	//ui->searchButton->setFixedSize(buttonSize);
 	ui->searchButton->setIconSize(iconSize);
-	ui->sendButton->setFixedHeight(iconHeight);
-  ui->sendButton->setIconSize(iconSize);
-  
+	//ui->sendButton->setFixedHeight(iconHeight);
+	ui->sendButton->setIconSize(iconSize);
+	ui->typingLabel->setMaximumHeight(QFontMetricsF(font()).height()*1.2);
+	ui->fontcolorButton->setIconSize(iconSize);
+
 	//Initialize search
 	iCharToStartSearch=Settings->getChatSearchCharToStartSearch();
 	bFindCaseSensitively=Settings->getChatSearchCaseSensitively();
@@ -141,12 +145,12 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	connect(ui->actionSearchWithoutLimit, SIGNAL(triggered()), this, SLOT(toogle_SeachWithoutLimit()));
 	connect(ui->searchButton, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuSearchButton(QPoint)));
 
-	notify=NULL;
 	ui->notifyButton->setVisible(false);
 
 	ui->markButton->setToolTip(tr("<b>Mark this selected text</b><br><i>Ctrl+M</i>"));
 
 	connect(ui->emoteiconButton, SIGNAL(clicked()), this, SLOT(smileyWidget()));
+	connect(ui->stickerButton, SIGNAL(clicked()), this, SLOT(stickerWidget()));
 	connect(ui->attachPictureButton, SIGNAL(clicked()), this, SLOT(addExtraPicture()));
 	connect(ui->addFileButton, SIGNAL(clicked()), this , SLOT(addExtraFile()));
 	connect(ui->sendButton, SIGNAL(clicked()), this, SLOT(sendChat()));
@@ -161,6 +165,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	connect(ui->actionQuote, SIGNAL(triggered()), this, SLOT(quote()));
 	connect(ui->actionDropPlacemark, SIGNAL(triggered()), this, SLOT(dropPlacemark()));
 	connect(ui->actionSave_image, SIGNAL(triggered()), this, SLOT(saveImage()));
+	connect(ui->actionImport_sticker, SIGNAL(triggered()), this, SLOT(saveSticker()));
 	connect(ui->actionShow_Hidden_Images, SIGNAL(triggered()), ui->textBrowser, SLOT(showImages()));
 	ui->actionShow_Hidden_Images->setIcon(ui->textBrowser->getBlockedImage());
 
@@ -172,37 +177,48 @@ ChatWidget::ChatWidget(QWidget *parent) :
 
 	connect(ui->textBrowser, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuTextBrowser(QPoint)));
 
-	connect(ui->chatTextEdit, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenu(QPoint)));
+	//connect(ui->chatTextEdit, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenu(QPoint)));
 	// reset text and color after removing all characters from the QTextEdit and after calling QTextEdit::clear
 	connect(ui->chatTextEdit, SIGNAL(currentCharFormatChanged(QTextCharFormat)), this, SLOT(chatCharFormatChanged()));
 	connect(ui->chatTextEdit, SIGNAL(textChanged()), this, SLOT(updateLenOfChatTextEdit()));
 
 	ui->infoFrame->setVisible(false);
 	ui->statusMessageLabel->hide();
-	
+
 	setAcceptDrops(true);
 	ui->chatTextEdit->setAcceptDrops(false);
 	ui->hashBox->setDropWidget(this);
 	ui->hashBox->setAutoHide(true);
 
-	QMenu *fontmenu = new QMenu(tr("Set text font & color"));
+	QMenu *fontmenu = new QMenu();
 	fontmenu->addAction(ui->actionChooseFont);
 	fontmenu->addAction(ui->actionChooseColor);
 	fontmenu->addAction(ui->actionResetFont);
 	fontmenu->addAction(ui->actionNoEmbed);
 	fontmenu->addAction(ui->actionSendAsPlainText);
+	#ifdef USE_CMARK
+	fontmenu->addAction(ui->actionSend_as_CommonMark);
+	#endif
+	ui->fontcolorButton->setMenu(fontmenu);
 
 	QMenu *menu = new QMenu();
+	menu->addAction(ui->actionMessageHistory);
+	menu->addSeparator();
+	menu->addAction(ui->actionSaveChatHistory);
 	menu->addAction(ui->actionClearChatHistory);
 	menu->addAction(ui->actionDeleteChatHistory);
-	menu->addAction(ui->actionSaveChatHistory);
-	menu->addAction(ui->actionMessageHistory);
+
 	ui->pushtoolsButton->setMenu(menu);
-	menu->addMenu(fontmenu);
-	
+
 	ui->actionSendAsPlainText->setChecked(Settings->getChatSendAsPlainTextByDef());
 	ui->chatTextEdit->setOnlyPlainText(ui->actionSendAsPlainText->isChecked());
 	connect(ui->actionSendAsPlainText, SIGNAL(toggled(bool)), ui->chatTextEdit, SLOT(setOnlyPlainText(bool)) );
+
+#ifdef USE_CMARK
+	connect(ui->actionSend_as_CommonMark, SIGNAL(toggled(bool)), this, SLOT(setUseCMark(bool)) );
+	connect(ui->chatTextEdit, SIGNAL(textChanged()), this, SLOT(updateCMPreview()) );
+#endif
+	ui->cmPreview->setVisible(false);
 
 	ui->textBrowser->resetImagesStatus(Settings->getChatLoadEmbeddedImages());
 	ui->textBrowser->installEventFilter(this);
@@ -229,7 +245,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 
 //#ifdef ENABLE_DISTANT_CHAT_AND_MSGS
 //	contextMnu->addSeparator();
-//    QAction *action = new QAction(QIcon(":/images/pasterslink.png"), tr("Paste/Create private chat or Message link..."), this);
+//    QAction *action = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/pasterslink.png"), tr("Paste/Create private chat or Message link..."), this);
 //    connect(action, SIGNAL(triggered()), this, SLOT(pasteCreateMsgLink()));
 //    ui->chatTextEdit->addContextMenuAction(action);
 //#endif
@@ -261,9 +277,12 @@ void ChatWidget::addChatHorizontalWidget(QWidget *w)
 
 void ChatWidget::addChatBarWidget(QWidget *w)
 {
-	int iconHeight = FMM*QFontMetricsF(font()).height() ;
-	QSize iconSize = QSize(iconHeight,iconHeight);
-	QSize buttonSize = QSize(iconSize + QSize((int)FMM,(int)FMM));
+	int iconHeight = QFontMetricsF(font()).height();
+	double fmm = iconHeight > FMM_THRESHOLD ? FMM : FMM_SMALLER;
+	iconHeight *= fmm;
+	QSize iconSize = QSize(iconHeight, iconHeight);
+	int butt_size(iconSize.height() + fmm);
+	QSize buttonSize = QSize(butt_size, butt_size);
 	w->setFixedSize(buttonSize);
 	ui->pluginButtonFrame->layout()->addWidget(w) ;
 }
@@ -295,6 +314,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 	this->title = title;
 
 	ui->titleLabel->setText(RsHtml::plainText(title));
+	ui->chatTextEdit->setMaxBytes(this->maxMessageSize() - 200);
 
     RsPeerId ownId = rsPeers->getOwnId();
 	setName(QString::fromUtf8(rsPeers->getPeerName(ownId).c_str()));
@@ -349,8 +369,8 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
         QString customStateString = QString::fromUtf8(rsMsgs->getCustomStateString(chatId.toPeerId()).c_str());
         updatePeersCustomStateString(QString::fromStdString(chatId.toPeerId().toStdString()), customStateString);
     } else if (chatType() == CHATTYPE_DISTANT){
-        hist_chat_type = RS_HISTORY_TYPE_PRIVATE ;
-        messageCount = Settings->getPrivateChatHistoryCount();
+        hist_chat_type = RS_HISTORY_TYPE_DISTANT ;
+        messageCount = Settings->getDistantChatHistoryCount();
     } else if(chatId.isBroadcast()){
         hist_chat_type = RS_HISTORY_TYPE_PUBLIC;
         messageCount = Settings->getPublicChatHistoryCount();
@@ -358,38 +378,49 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
         ui->titleBarFrame->setVisible(false);
     }
 
-	if (rsHistory->getEnable(hist_chat_type)) 
+	if (rsHistory->getEnable(hist_chat_type))
 	{
 		// get chat messages from history
 		std::list<HistoryMsg> historyMsgs;
 
-		if (messageCount > 0) 
+		if (messageCount > 0)
 		{
-            rsHistory->getMessages(chatId, historyMsgs, messageCount);
+			rsHistory->getMessages(chatId, historyMsgs, messageCount);
 
 			std::list<HistoryMsg>::iterator historyIt;
 			for (historyIt = historyMsgs.begin(); historyIt != historyMsgs.end(); ++historyIt)
-            {
-                // it can happen that a message is first added to the message history
-                // and later the gui receives the message through notify
-                // avoid this by not adding history entries if their age is < 2secs
-                if ((time(NULL)-2) <= historyIt->recvTime)
-                    continue;
+			{
+				// it can happen that a message is first added to the message history
+				// and later the gui receives the message through notify
+				// avoid this by not adding history entries if their age is < 2secs
+				if (time(nullptr) <= historyIt->recvTime+2)
+					continue;
 
-                QString name;
-                if (chatId.isLobbyId() || chatId.isDistantChatId()) 
-                {
-                    RsIdentityDetails details;
-                    if (rsIdentity->getIdDetails(RsGxsId(historyIt->peerName), details))
-                        name = QString::fromUtf8(details.mNickname.c_str());
-                    else
-                        name = QString::fromUtf8(historyIt->peerName.c_str());
-                } else {
-                    name = QString::fromUtf8(historyIt->peerName.c_str());
-                }
+				QString name;
+				if (chatId.isLobbyId() || chatId.isDistantChatId())
+				{
+					RsIdentityDetails details;
+					time_t start = time(nullptr);
+					while (!rsIdentity->getIdDetails(RsGxsId(historyIt->peerName), details))
+					{
+						std::this_thread::sleep_for(std::chrono::milliseconds(10));
+						if (time(nullptr)>start+2)
+						{
+							std::cerr << "ChatWidget History haven't found Id Details and have wait 1 sec for it." << std::endl;
+							break;
+						}
+					}
 
-                addChatMsg(historyIt->incoming, name, QDateTime::fromTime_t(historyIt->sendTime), QDateTime::fromTime_t(historyIt->recvTime), QString::fromUtf8(historyIt->message.c_str()), MSGTYPE_HISTORY);
-            }
+					if (rsIdentity->getIdDetails(RsGxsId(historyIt->peerName), details))
+						name = QString::fromUtf8(details.mNickname.c_str());
+					else
+						name = QString::fromUtf8(historyIt->peerName.c_str());
+				} else {
+					name = QString::fromUtf8(historyIt->peerName.c_str());
+				}
+
+				addChatMsg(historyIt->incoming, name, RsGxsId(historyIt->peerName.c_str()), QDateTime::fromTime_t(historyIt->sendTime), QDateTime::fromTime_t(historyIt->recvTime), QString::fromUtf8(historyIt->message.c_str()), MSGTYPE_HISTORY);
+			}
 		}
 	}
 
@@ -421,8 +452,9 @@ ChatWidget::ChatType ChatWidget::chatType()
 void ChatWidget::blockSending(QString msg)
 {
 #ifndef RS_ASYNC_CHAT
-	sendingBlocked = true;
-	ui->sendButton->setEnabled(false);
+//	sendingBlocked = true;
+//	ui->sendButton->setEnabled(false);
+//	ui->stickerButton->setEnabled(false);
 #endif
 	ui->sendButton->setToolTip(msg);
 }
@@ -430,6 +462,7 @@ void ChatWidget::blockSending(QString msg)
 void ChatWidget::unblockSending()
 {
     sendingBlocked = false;
+	ui->stickerButton->setEnabled(true);
     updateLenOfChatTextEdit();
 }
 
@@ -452,8 +485,28 @@ void ChatWidget::processSettings(bool load)
 	Settings->endGroup();
 }
 
+uint32_t ChatWidget::maxMessageSize()
+{
+	uint32_t maxMessageSize = 0;
+	switch (chatType()) {
+	case CHATTYPE_UNKNOWN:
+		break;
+	case CHATTYPE_PRIVATE:
+		maxMessageSize = rsMsgs->getMaxMessageSecuritySize(RS_CHAT_TYPE_PRIVATE);
+		break;
+	case CHATTYPE_LOBBY:
+		maxMessageSize = rsMsgs->getMaxMessageSecuritySize(RS_CHAT_TYPE_LOBBY);
+		break;
+	case CHATTYPE_DISTANT:
+		maxMessageSize = rsMsgs->getMaxMessageSecuritySize(RS_CHAT_TYPE_DISTANT);
+		break;
+	}
+	return maxMessageSize;
+}
+
 bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 {
+	//QEvent::Type type = event->type();
 	if (obj == ui->textBrowser || obj == ui->textBrowser->viewport()
 	    || obj == ui->leSearch || obj == ui->chatTextEdit) {
 		if (event->type() == QEvent::KeyPress) {
@@ -479,7 +532,7 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 							bTextselected=true;
 						}
 					}
-					ui->searchButton->setChecked(!ui->searchButton->isChecked() | bTextselected);
+					ui->searchButton->setChecked(!ui->searchButton->isChecked() || bTextselected);
 					ui->leSearch->setVisible(bTextselected);//To discard re-selection of text
 					on_searchButton_clicked(ui->searchButton->isChecked());
 					return true; // eat event
@@ -573,31 +626,15 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 
 		if (event->type() == QEvent::ToolTip)	{
 			QHelpEvent* helpEvent = static_cast<QHelpEvent*>(event);
-			QTextCursor cursor = ui->textBrowser->cursorForPosition(helpEvent->pos());
-			cursor.select(QTextCursor::WordUnderCursor);
-			QString toolTipText = "";
-			if (!cursor.selectedText().isEmpty()){
-				QRegExp rx("<a name=\"(.*)\"",Qt::CaseSensitive, QRegExp::RegExp2);
-				rx.setMinimal(true);
-				QString sel=cursor.selection().toHtml();
-				QStringList anchors;
-				int pos=0;
-				while ((pos = rx.indexIn(sel,pos)) != -1) {
-					anchors << rx.cap(1);
-					pos += rx.matchedLength();
+			QString toolTipText = ui->textBrowser->anchorForPosition(helpEvent->pos());
+			if (toolTipText.isEmpty() && !ui->textBrowser->getShowImages()){
+				QString imageStr;
+				if (ui->textBrowser->checkImage(helpEvent->pos(), imageStr)) {
+					toolTipText = imageStr;
 				}
-				if (!anchors.isEmpty()){
-					toolTipText = anchors.at(0);
-				}
-				if (toolTipText.isEmpty() && !ui->textBrowser->getShowImages()){
-					QString imageStr;
-					if (ui->textBrowser->checkImage(helpEvent->pos(), imageStr)) {
-						toolTipText = imageStr;
-					}
-				} else if (toolTipText.startsWith(PERSONID)){
-					toolTipText = toolTipText.replace(PERSONID, tr("Person id: ") );
-					toolTipText = toolTipText.append(tr("\nDouble click on it to add his name on text writer.") );
-				}
+			} else if (toolTipText.startsWith(PERSONID)){
+				toolTipText = toolTipText.replace(PERSONID, tr("Person id: ") );
+				toolTipText = toolTipText.append(tr("\nDouble click on it to add his name on text writer.") );
 			}
 			if (!toolTipText.isEmpty()){
 				QToolTip::showText(helpEvent->globalPos(), toolTipText);
@@ -653,6 +690,17 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 				}
 			}
 		}
+		if (event->type() == QEvent::StyleChange)
+		{
+			QString colorName = currentColor.name();
+			qreal desiredContrast = Settings->valueFromGroup("Chat", "MinimumContrast", 4.5).toDouble();
+			QColor backgroundColor = ui->chatTextEdit->palette().base().color();
+			RsHtml::findBestColor(colorName, backgroundColor, desiredContrast);
+
+			currentColor = QColor(colorName);
+			ui->chatTextEdit->setTextColor(currentColor);
+			colorChanged();
+		}
 	} else if (obj == ui->leSearch) {
 		if (event->type() == QEvent::KeyPress) {
 
@@ -678,32 +726,19 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 		if (event->type() == QEvent::MouseButtonDblClick)	{
 
 			QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
-			QTextCursor cursor = ui->textBrowser->cursorForPosition(mouseEvent->pos());
-			cursor.select(QTextCursor::WordUnderCursor);
-			if (!cursor.selectedText().isEmpty()){
-				QRegExp rx("<a name=\"(.*)\"",Qt::CaseSensitive, QRegExp::RegExp2);
-				rx.setMinimal(true);
-				QString sel=cursor.selection().toHtml();
-				QStringList anchors;
-				int pos=0;
-				while ((pos = rx.indexIn(sel,pos)) != -1) {
-					anchors << rx.cap(1);
-					pos += rx.matchedLength();
-				}
+			QString anchor = ui->textBrowser->anchorForPosition(mouseEvent->pos());
+			if (!anchor.isEmpty()){
+				if (anchor.startsWith(PERSONID)){
+					QString strId = anchor.replace(PERSONID,"");
+					if (strId.contains(" "))
+						strId.truncate(strId.indexOf(" "));
 
-				if (!anchors.isEmpty()){
-					if (anchors.at(0).startsWith(PERSONID)){
-						QString strId = QString(anchors.at(0)).replace(PERSONID,"");
-						if (strId.contains(" "))
-							strId.truncate(strId.indexOf(" "));
-
-						RsGxsId mId = RsGxsId(strId.toStdString());
-						if(!mId.isNull()) {
-							RsIdentityDetails details;
-							if (rsIdentity->getIdDetails(mId, details)){
-								QString text = QString("@").append(GxsIdDetails::getName(details)).append(" ");
-								ui->chatTextEdit->textCursor().insertText(text);
-							}
+					RsGxsId mId = RsGxsId(strId.toStdString());
+					if(!mId.isNull()) {
+						RsIdentityDetails details;
+						if (rsIdentity->getIdDetails(mId, details)){
+							QString text = QString("@").append(GxsIdDetails::getName(details)).append(" ");
+							ui->chatTextEdit->textCursor().insertText(text);
 						}
 					}
 				}
@@ -712,14 +747,12 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 
 		}
 	} else {
-		if (event->type() == QEvent::WindowActivate) {
-			if (isVisible() && (window() == NULL || window()->isActiveWindow())) {
-				newMessages = false;
-				emit infoChanged(this);
-				focusDialog();
-                ChatUserNotify::clearWaitingChat(chatId);
+			if (event->type() == QEvent::WindowActivate) {
+				if (isVisible() && (window() == NULL || window()->isActiveWindow())) {
+					newMessages = false;
+					emit infoChanged(this);
+				}
 			}
-		}
 	}
 	// pass the event on to the parent class
 	return QWidget::eventFilter(obj, event);
@@ -779,7 +812,7 @@ void ChatWidget::completeNickname(bool reverse)
 		std::list<QString> participants;
         RsIdentityDetails details ;
 
-        for (	std::map<RsGxsId,time_t>::const_iterator it = lobby.gxs_ids.begin(); it != lobby.gxs_ids.end(); ++it)
+	for (auto it = lobby.gxs_ids.begin(); it != lobby.gxs_ids.end(); ++it)
     {
         if(rsIdentity->getIdDetails(it->first,details))
             participants.push_front(QString::fromUtf8(details.mNickname.c_str()));
@@ -846,7 +879,7 @@ QAbstractItemModel *ChatWidget::modelFromPeers()
     // Get participants list
     QStringList participants;
 
-    for (std::map<RsGxsId,time_t>::const_iterator it = lobby.gxs_ids.begin(); it != lobby.gxs_ids.end(); ++it)
+	for (auto it = lobby.gxs_ids.begin(); it != lobby.gxs_ids.end(); ++it)
     {
         RsIdentityDetails details ;
         rsIdentity->getIdDetails(it->first,details) ;
@@ -869,7 +902,17 @@ void ChatWidget::showEvent(QShowEvent */*event*/)
 {
 	newMessages = false;
 	emit infoChanged(this);
-	focusDialog();
+	// if user waded through the jungle of history just let him on
+	// own decide whether to continue the journey or start typing
+	QScrollBar *scrollbar = ui->textBrowser->verticalScrollBar();
+	bool is_scrollbar_at_end = scrollbar->value() == scrollbar->maximum();
+	bool is_chat_text_edit_empty = ui->chatTextEdit->toPlainText().isEmpty();
+	if (is_scrollbar_at_end || !is_chat_text_edit_empty) {
+		focusDialog();
+	} else {
+		// otherwise focus will be get even not chat itself
+		ui->textBrowser->setFocus();
+	}
     ChatUserNotify::clearWaitingChat(chatId);
 
 	if (firstShow) {
@@ -953,7 +996,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 	unsigned int formatFlag = 0;
 
     bool addDate = false;
-    if (QDate::currentDate()>lastMsgDate) 
+    if (QDate::currentDate()>lastMsgDate)
 	 {
 		 addDate=true;
     }
@@ -963,6 +1006,13 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 		if (!message.contains("NoEmbed=\"true\""))
 			formatTextFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS;
 	}
+
+#ifdef USE_CMARK
+	//Use CommonMark
+	if (message.contains("CMark=\"true\"")) {
+		formatTextFlag |= RSHTML_FORMATTEXT_USE_CMARK;
+	}
+#endif
 
 	// Always fix colors
 	formatTextFlag |= RSHTML_FORMATTEXT_FIX_COLORS;
@@ -1026,7 +1076,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 		rsIdentity->getIdDetails(gxsId, details);
 		bool isUnsigned = !(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED);
 		if(isUnsigned && ui->textBrowser->getShowImages()) {
-			QIcon icon = QIcon(":/icons/anonymous_blue_128.png");
+            QIcon icon = FilesDefs::getIconFromQtResourcePath(":/icons/anonymous_blue_128.png");
 			int height = ui->textBrowser->fontMetrics().height()*0.8;
 			QImage image(icon.pixmap(height,height).toImage());
 			QByteArray byteArray;
@@ -1095,7 +1145,8 @@ void ChatWidget::contextMenuTextBrowser(QPoint point)
 
 	contextMnu->addSeparator();
 	contextMnu->addAction(ui->actionClearChatHistory);
-	contextMnu->addAction(ui->actionQuote);
+	if (ui->textBrowser->textCursor().selection().toPlainText().length())
+		contextMnu->addAction(ui->actionQuote);
 	contextMnu->addAction(ui->actionDropPlacemark);
 
 	if(ui->textBrowser->checkImage(point))
@@ -1104,8 +1155,13 @@ void ChatWidget::contextMenuTextBrowser(QPoint point)
 			contextMnu->addAction(ui->actionShow_Hidden_Images);
 
 		ui->actionSave_image->setData(point);
+		ui->actionImport_sticker->setData(point);
 		contextMnu->addAction(ui->actionSave_image);
+		contextMnu->addAction(ui->actionImport_sticker);
 	}
+
+	QString anchor = ui->textBrowser->anchorForPosition(point);
+	emit textBrowserAskContextMenu(contextMnu, anchor, point);
 
 	contextMnu->exec(ui->textBrowser->viewport()->mapToGlobal(point));
 	delete(contextMnu);
@@ -1158,13 +1214,14 @@ void ChatWidget::resetStatusBar()
 
 void ChatWidget::updateStatusTyping()
 {
+	if(Settings->getChatDoNotSendIsTyping())
+		return;
 	if (time(NULL) - lastStatusSendTime > 5)	// limit 'peer is typing' packets to at most every 10 sec
 	{
 #ifdef ONLY_FOR_LINGUIST
 		tr("is typing...");
 #endif
-		if(!Settings->getChatDoNotSendIsTyping())
-			rsMsgs->sendStatusString(chatId, "is typing...");
+		rsMsgs->sendStatusString(chatId, "is typing...");
 		lastStatusSendTime = time(NULL) ;
 	}
 }
@@ -1178,20 +1235,7 @@ void ChatWidget::updateLenOfChatTextEdit()
 	RsHtml::optimizeHtml(chatWidget, text);
 	std::wstring msg = text.toStdWString();
 
-	uint32_t maxMessageSize = 0;
-	switch (chatType()) {
-	case CHATTYPE_UNKNOWN:
-		break;
-	case CHATTYPE_PRIVATE:
-		maxMessageSize = rsMsgs->getMaxMessageSecuritySize(RS_CHAT_TYPE_PRIVATE);
-		break;
-	case CHATTYPE_LOBBY:
-		maxMessageSize = rsMsgs->getMaxMessageSecuritySize(RS_CHAT_TYPE_LOBBY);
-		break;
-	case CHATTYPE_DISTANT:
-		maxMessageSize = rsMsgs->getMaxMessageSecuritySize(RS_CHAT_TYPE_DISTANT);
-		break;
-	}
+	uint32_t maxMessageSize = this->maxMessageSize();
 
 	int charRemains = 0;
 	if (maxMessageSize > 0) {
@@ -1229,7 +1273,9 @@ void ChatWidget::sendChat()
 		text = chatWidget->toPlainText();
 		text.replace(QChar(-4),"");//Char used when image on text.
 	} else {
-		RsHtml::optimizeHtml(chatWidget, text, (ui->actionNoEmbed->isChecked() ? RSHTML_FORMATTEXT_NO_EMBED : 0));
+		RsHtml::optimizeHtml(chatWidget, text,
+		                     (ui->actionNoEmbed->isChecked() ? RSHTML_FORMATTEXT_NO_EMBED : 0)
+		                     + (ui->actionSend_as_CommonMark->isChecked() ? RSHTML_FORMATTEXT_USE_CMARK : 0) );
 	}
 	std::string msg = text.toUtf8().constData();
 
@@ -1473,7 +1519,8 @@ void ChatWidget::chooseFont()
 {
 	bool ok;
 	//Use NULL as parent as with this QFontDialog don't take care of title nether options.
-	QFont font = QFontDialog::getFont(&ok, currentFont, NULL, tr("Choose your font."),QFontDialog::DontUseNativeDialog);
+	QFont font = misc::getFont(&ok, currentFont, nullptr, tr("Choose your font."));
+
 	if (ok) {
 		currentFont = font;
 		setFont();
@@ -1531,6 +1578,23 @@ void ChatWidget::addSmiley()
 	ui->chatTextEdit->textCursor().insertText(smiley);
 }
 
+void ChatWidget::stickerWidget()
+{
+	Emoticons::showStickerWidget(this, ui->stickerButton, SLOT(sendSticker()), true);
+}
+
+void ChatWidget::sendSticker()
+{
+	if(sendingBlocked) return;
+	QString sticker = qobject_cast<QPushButton*>(sender())->statusTip();
+	QString encodedImage;
+	if (RsHtml::makeEmbeddedImage(sticker, encodedImage, 640*480, maxMessageSize() - 200)) {		//-200 for the html stuff
+		RsHtml::optimizeHtml(encodedImage, 0);
+		std::string msg = encodedImage.toUtf8().constData();
+		rsMsgs->sendChat(chatId, msg);
+	}
+}
+
 void ChatWidget::clearChatHistory()
 {
 	ui->textBrowser->clear();
@@ -1552,8 +1616,9 @@ void ChatWidget::deleteChatHistory()
 
 void ChatWidget::messageHistory()
 {
-    ImHistoryBrowser imBrowser(chatId, ui->chatTextEdit, window());
-	imBrowser.exec();
+	if (!imBrowser)
+		imBrowser = new ImHistoryBrowser(chatId, ui->chatTextEdit, this->title, window());
+	imBrowser->show();
 }
 
 void ChatWidget::addExtraFile()
@@ -1568,9 +1633,10 @@ void ChatWidget::addExtraPicture()
 {
 	// select a picture file
 	QString file;
-	if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg)", file)) {
+	if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg *.gif *.webp )", file)) {
 		QString encodedImage;
-		if (RsHtml::makeEmbeddedImage(file, encodedImage, 640*480)) {
+		uint32_t maxMessageSize = this->maxMessageSize();
+		if (RsHtml::makeEmbeddedImage(file, encodedImage, 640*480, maxMessageSize - 200)) {		//-200 for the html stuff
 			QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
 			ui->chatTextEdit->textCursor().insertFragment(fragment);
 		}
@@ -1586,22 +1652,35 @@ void ChatWidget::fileHashingFinished(QList<HashedFile> hashedFiles)
 	QList<HashedFile>::iterator it;
 	for (it = hashedFiles.begin(); it != hashedFiles.end(); ++it) {
 		HashedFile& hashedFile = *it;
-		//QString ext = QFileInfo(hashedFile.filename).suffix();
+		QString ext = QFileInfo(hashedFile.filename).suffix().toUpper();
 
 		RetroShareLink link;
 
-		if(mDefaultExtraFileFlags & RS_FILE_REQ_ANONYMOUS_ROUTING)
-			link = RetroShareLink::createFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash.toStdString()));
-		else
-			link = RetroShareLink::createExtraFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash.toStdString()),QString::fromStdString(rsPeers->getOwnId().toStdString()));
+		// We dont use extra links anymore, since files in the extra list can always be accessed using anonymous+encrypted FT.
+
+		link = RetroShareLink::createFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash.toStdString()));
 
 		if (hashedFile.flag & HashedFile::Picture) {
 			message += QString("<img src=\"file:///%1\" width=\"100\" height=\"100\">").arg(hashedFile.filepath);
 			message+="<br>";
 		} else {
-			QString image = FilesDefs::getImageFromFilename(hashedFile.filename, false);
-			if (!image.isEmpty()) {
-				message += QString("<img src=\"%1\">").arg(image);
+			bool preview = false;
+			if(hashedFiles.size()==1 && (ext == "JPG" || ext == "PNG" || ext == "JPEG" || ext == "GIF"))
+			{
+				QString encodedImage;
+				uint32_t maxMessageSize = this->maxMessageSize();
+				if (RsHtml::makeEmbeddedImage(hashedFile.filepath, encodedImage, 640*480, maxMessageSize - 200 - link.toHtmlSize().length()))
+				{	QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
+					ui->chatTextEdit->textCursor().insertFragment(fragment);
+					preview=true;
+				}
+			}
+			if(!preview)
+			{
+				QString image = FilesDefs::getImageFromFilename(hashedFile.filename, false);
+				if (!image.isEmpty()) {
+					message += QString("<img src=\"%1\">").arg(image);
+				}
 			}
 		}
 		message += link.toHtmlSize();
@@ -1669,26 +1748,38 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
         vpid = chatId.toPeerId();
 
 	/* set font size for status  */
-    if (peer_id.toStdString() == vpid.toStdString()) 
+    if (peer_id.toStdString() == vpid.toStdString())
     {
 	    // the peers status has changed
 
+		QString tooltip_info ;
 	    QString peerName ;
+
 	    if(chatId.isDistantChatId())
 	    {
 		    DistantChatPeerInfo dcpinfo ;
 		    RsIdentityDetails details  ;
 
 		    if(rsMsgs->getDistantChatStatus(chatId.toDistantChatId(),dcpinfo))
+			{
 			    if(rsIdentity->getIdDetails(dcpinfo.to_id,details))
 				    peerName = QString::fromUtf8( details.mNickname.c_str() ) ;
 			    else
 				    peerName = QString::fromStdString(dcpinfo.to_id.toStdString()) ;
+
+				tooltip_info = QString("Identity Id: ")+QString::fromStdString(dcpinfo.to_id.toStdString());
+			}
 		    else
+			{
 			    peerName = QString::fromStdString(chatId.toDistantChatId().toStdString()) ;
+				tooltip_info = QString("Identity Id: unknown (bug?)");
+			}
 	    }
 	    else
+		{
 		    peerName = QString::fromUtf8(rsPeers->getPeerName(chatId.toPeerId()).c_str());
+			tooltip_info = QString("Peer Id: ") + QString::fromStdString(chatId.toPeerId().toStdString());
+		}
 
 	    // is scrollbar at the end?
 	    QScrollBar *scrollbar = ui->textBrowser->verticalScrollBar();
@@ -1721,6 +1812,7 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 	    }
 
 	    ui->titleLabel->setText(peerName);
+	    ui->titleLabel->setToolTip(tooltip_info);
 	    ui->statusLabel->setText(QString("(%1)").arg(StatusDefs::name(status)));
 
 	    peerStatus = status;
@@ -1780,8 +1872,8 @@ void ChatWidget::updatePeersCustomStateString(const QString& /*peer_id*/, const 
 
 void ChatWidget::updateStatusString(const QString &statusMask, const QString &statusString, bool permanent)
 {
-	ui->typingLabel->setText(QString(statusMask).arg(tr(statusString.toUtf8()))); // displays info for 5 secs.
-	ui->typingPixmapLabel->setPixmap(QPixmap(":images/typing.png") );
+	ui->typingLabel->setText(QString(statusMask).arg(trUtf8(statusString.toUtf8()))); // displays info for 5 secs.
+    ui->typingPixmapLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":icons/png/typing.png") );
 
 	if (statusString == "is typing...") {
 		typing = true;
@@ -1809,16 +1901,26 @@ bool ChatWidget::setStyle()
 	return false;
 }
 
+void ChatWidget::setUseCMark(const bool bUseCMark)
+{
+	useCMark = bUseCMark;
+	ui->cmPreview->setVisible(useCMark);
+	updateCMPreview();
+}
+
+void ChatWidget::updateCMPreview()
+{
+	if (!useCMark) return;
+
+	QString message = ui->chatTextEdit->toHtml();
+	QString formattedMessage = RsHtml().formatText(ui->cmPreview->document(), message, RSHTML_FORMATTEXT_USE_CMARK);
+	ui->cmPreview->setHtml(formattedMessage);
+}
+
 void ChatWidget::quote()
 {
-	QString text = ui->textBrowser->textCursor().selection().toPlainText();
-	if(text.length() > 0)
-	{
-		QStringList sl = text.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
-		text = sl.join("\n> ");
-		text.replace(QChar(-4)," ");//Char used when image on text.
-		emit ui->chatTextEdit->append(QString("> ") + text);
-	}
+	QString text = RsHtml::makeQuotedText(ui->textBrowser);
+	emit ui->chatTextEdit->append(text);
 }
 
 void ChatWidget::dropPlacemark()
@@ -1835,4 +1937,14 @@ void ChatWidget::saveImage()
 	QPoint point = ui->actionSave_image->data().toPoint();
 	QTextCursor cursor = ui->textBrowser->cursorForPosition(point);
 	ImageUtil::extractImage(window(), cursor);
+}
+
+void ChatWidget::saveSticker()
+{
+	QPoint point = ui->actionImport_sticker->data().toPoint();
+	QTextCursor cursor = ui->textBrowser->cursorForPosition(point);
+	QString filename = QInputDialog::getText(window(), "Import sticker", "Sticker name");
+	if(filename.isEmpty()) return;
+	filename = Emoticons::importedStickerPath() + "/" + filename + ".png";
+	ImageUtil::extractImage(window(), cursor, filename);
 }

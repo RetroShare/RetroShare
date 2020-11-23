@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2015, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/feeds/SecurityIpItem.cpp                                                *
+ *                                                                             *
+ * Copyright (c) 2015, Retroshare Team <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QDateTime>
 #include <QTimer>
@@ -30,6 +29,7 @@
 #include "util/DateTime.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/common/RsBanListDefs.h"
+#include "gui/common/FilesDefs.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsbanlist.h>
@@ -41,14 +41,14 @@
 
 /** Constructor */
 SecurityIpItem::SecurityIpItem(FeedHolder *parent, const RsPeerId &sslId, const std::string &ipAddr, uint32_t result, uint32_t type, bool isTest) :
-    FeedItem(NULL), mParent(parent), mType(type), mSslId(sslId), mIpAddr(ipAddr), mResult(result), mIsTest(isTest),
+    FeedItem(parent,0,NULL), mType(type), mSslId(sslId), mIpAddr(ipAddr), mResult(result), mIsTest(isTest),
     ui(new(Ui::SecurityIpItem))
 {
 	setup();
 }
 
 SecurityIpItem::SecurityIpItem(FeedHolder *parent, const RsPeerId &sslId, const std::string& ipAddr, const std::string& ipAddrReported, uint32_t type, bool isTest) :
-    FeedItem(NULL), mParent(parent), mType(type), mSslId(sslId), mIpAddr(ipAddr), mIpAddrReported(ipAddrReported), mResult(0), mIsTest(isTest),
+    FeedItem(parent,0,NULL),  mType(type), mSslId(sslId), mIpAddr(ipAddr), mIpAddrReported(ipAddrReported), mResult(0), mIsTest(isTest),
     ui(new(Ui::SecurityIpItem))
 {
 	setup();
@@ -79,13 +79,9 @@ void SecurityIpItem::setup()
 	updateItem();
 }
 
-bool SecurityIpItem::isSame(const std::string& ipAddr, const std::string& ipAddrReported, uint32_t type)
+uint64_t SecurityIpItem::uniqueIdentifier() const
 {
-	if (mType == type && mIpAddr == ipAddr && mIpAddrReported == ipAddrReported) {
-		return true;
-	}
-
-	return false;
+    return hash_64bits("SecurityItem " + QString::number(mType).toStdString() + " " + mSslId.toStdString() + " " + mIpAddr + " " + mIpAddrReported) ;
 }
 
 void SecurityIpItem::updateItemStatic()
@@ -197,44 +193,27 @@ void SecurityIpItem::toggle()
 
 void SecurityIpItem::doExpand(bool open)
 {
-	if (mParent) {
-		mParent->lockLayout(this, true);
+	if (mFeedHolder) {
+		mFeedHolder->lockLayout(this, true);
 	}
 
 	if (open)
 	{
 		ui->expandFrame->show();
-		ui->expandButton->setIcon(QIcon(":/images/edit_remove24.png"));
+        ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/up-arrow.png"));
 		ui->expandButton->setToolTip(tr("Hide"));
 	}
 	else
 	{
 		ui->expandFrame->hide();
-		ui->expandButton->setIcon(QIcon(":/images/edit_add24.png"));
+        ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/down-arrow.png"));
 		ui->expandButton->setToolTip(tr("Expand"));
 	}
 
 	emit sizeChanged(this);
 
-	if (mParent) {
-		mParent->lockLayout(this, false);
-	}
-}
-
-void SecurityIpItem::removeItem()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "SecurityIpItem::removeItem()";
-	std::cerr << std::endl;
-#endif
-
-	mParent->lockLayout(this, true);
-	hide();
-	mParent->lockLayout(this, false);
-
-	if (mParent)
-	{
-		mParent->deleteFeedItem(this, mFeedId);
+	if (mFeedHolder) {
+		mFeedHolder->lockLayout(this, false);
 	}
 }
 

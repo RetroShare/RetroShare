@@ -1,30 +1,25 @@
-#ifndef RS_PQI_SSL_HELPER_H 
-#define RS_PQI_SSL_HELPER_H 
-
-/*
- * libretroshare/src/pqi: sslfns.cc
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2004-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+﻿/*******************************************************************************
+ * libretroshare/src/pqi: sslfns.h                                             *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2008 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+#pragma once
 
 /* Functions in this file are SSL only, 
  * and have no dependence on SSLRoot() etc.
@@ -36,9 +31,12 @@
 #include <openssl/evp.h>
 #include <openssl/x509.h>
 
-#include <inttypes.h>
-#include <retroshare/rstypes.h>
 #include <string>
+#include <inttypes.h>
+
+#include "util/rsdeprecate.h"
+#include "retroshare/rstypes.h"
+
 
 /****
  * #define AUTHSSL_DEBUG 1
@@ -61,7 +59,15 @@ int EVP_CIPHER_CTX_rand_key(EVP_CIPHER_CTX *ctx, unsigned char *key);
 
 #endif
 
+// Certificates serial number is used to store the protocol version for the handshake. (*) means current version.
+//
+//   06_0000:  < Nov.2017.
+// * 06_0001:  > Nov 2017.   SSL id is computed by hashing the entire signature of the cert instead of simply picking up the last bytes.
+//   07_0001:                Signatures are performed using SHA256+RSA instead of SHA1+RSA
 
+static const uint32_t RS_CERTIFICATE_VERSION_NUMBER_06_0000 = 0x00060000 ;	// means version RS-0.6, certificate version 0. Default version before patch.
+static const uint32_t RS_CERTIFICATE_VERSION_NUMBER_06_0001 = 0x00060001 ;	// means version RS-0.6, certificate version 1.
+static const uint32_t RS_CERTIFICATE_VERSION_NUMBER_07_0001 = 0x00070001 ;	// means version RS-0.7, certificate version 1.
 
 X509_REQ *GenerateX509Req(
 		std::string pkey_file, std::string passwd,
@@ -109,11 +115,6 @@ bool getX509id(X509 *x509, RsPeerId &xid);
 
 int pem_passwd_cb(char *buf, int size, int rwflag, void *password);
 
-bool CheckX509Certificate(X509 *x509);
-// Not dependent on sslroot. load, and detroys the X509 memory.
-int	LoadCheckX509(const char *cert_file, RsPgpId& issuer, std::string &location, RsPeerId& userId);
-
-
 std::string getX509NameString(X509_NAME *name);
 std::string getX509CNString(X509_NAME *name);
 std::string getX509TypeString(X509_NAME *name, const char *type, int len);
@@ -122,9 +123,13 @@ std::string getX509OrgString(X509_NAME *name);
 std::string getX509CountryString(X509_NAME *name);
 std::string getX509Info(X509 *cert);
 
+uint64_t getX509SerialNumber(X509 *cert);
+uint32_t getX509RetroshareCertificateVersion(X509 *cert) ;
+
 /********** SSL ERROR STUFF ******************************************/
 
-int printSSLError(SSL *ssl, int retval, int err, unsigned long err2, std::string &out);
+RS_DEPRECATED_FOR(sslErrorToString)
+int printSSLError(
+        SSL* unused, int retval, int err, unsigned long err2, std::string& out);
 
-#endif /* RS_PQI_SSL_HELPER_H */
-
+std::string sslErrorToString(int retval, int err, unsigned long err2);

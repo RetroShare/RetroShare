@@ -1,39 +1,34 @@
-
-/*
- * "$Id: p3face-msgs.cc,v 1.7 2007-05-05 16:10:06 rmf24 Exp $"
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2004-2006 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-
-
+/*******************************************************************************
+ * libretroshare/src/rsserver: p3msgs.cc                                       *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2004-2006  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2016-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include <iostream>
+#include <tuple>
 
 #include "util/rsdir.h"
 #include "util/rsdebug.h"
 //const int p3facemsgzone = 11453;
 
 #include <sys/time.h>
-#include <time.h>
+#include "util/rstime.h"
 
 #include "retroshare/rstypes.h"
 #include "rsserver/p3msgs.h"
@@ -45,8 +40,7 @@
 
 using namespace Rs::Msgs;
 
-/* external reference point */
-RsMsgs *rsMsgs = NULL;
+/*extern*/ RsMsgs* rsMsgs = nullptr;
 
 /****************************************/
 /****************************************/
@@ -294,9 +288,9 @@ bool p3Msgs::getMessage(const std::string &mid, MessageInfo &msg)
 	return mMsgSrv->getMessage(mid, msg);
 }
 
-void p3Msgs::getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox)
+void p3Msgs::getMessageCount(uint32_t &nInbox, uint32_t &nInboxNew, uint32_t &nOutbox, uint32_t &nDraftbox, uint32_t &nSentbox, uint32_t &nTrashbox)
 {
-	mMsgSrv->getMessageCount(pnInbox, pnInboxNew, pnOutbox, pnDraftbox, pnSentbox, pnTrashbox);
+	mMsgSrv->getMessageCount(nInbox, nInboxNew, nOutbox, nDraftbox, nSentbox, nTrashbox);
 }
 
 /****************************************/
@@ -305,6 +299,22 @@ void p3Msgs::getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, un
 bool p3Msgs::MessageSend(MessageInfo &info)
 {
 	return mMsgSrv->MessageSend(info);
+}
+
+uint32_t p3Msgs::sendMail(
+        const RsGxsId from,
+        const std::string& subject,
+        const std::string& body,
+        const std::set<RsGxsId>& to,
+        const std::set<RsGxsId>& cc,
+        const std::set<RsGxsId>& bcc,
+        const std::vector<FileInfo>& attachments,
+        std::set<RsMailIdRecipientIdPair>& trackingIds,
+        std::string& errorMsg )
+{
+	return mMsgSrv->sendMail(
+	            from, subject, body, to, cc, bcc, attachments,
+	            trackingIds, errorMsg );
 }
 
 bool p3Msgs::SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag)
@@ -366,9 +376,13 @@ bool 	p3Msgs::getMessageTagTypes(MsgTagType& tags)
 }
 
 bool p3Msgs::MessageStar(const std::string &mid, bool star)
-
 {
 	return mMsgSrv->setMsgFlag(mid, star ? RS_MSG_FLAGS_STAR : 0, RS_MSG_FLAGS_STAR);
+}
+
+bool p3Msgs::MessageJunk(const std::string &mid, bool junk)
+{
+	return mMsgSrv->setMsgFlag(mid, junk ? RS_MSG_FLAGS_SPAM : 0, RS_MSG_FLAGS_SPAM);
 }
 
 bool  p3Msgs::setMessageTagType(uint32_t tagId, std::string& text, uint32_t rgb_color)
@@ -460,6 +474,10 @@ void p3Msgs::invitePeerToLobby(const ChatLobbyId& lobby_id, const RsPeerId& peer
 {
 	mChatSrv->invitePeerToLobby(lobby_id,peer_id) ;
 }
+void p3Msgs::sendLobbyStatusPeerLeaving(const ChatLobbyId& lobby_id)
+{
+	mChatSrv->sendLobbyStatusPeerLeaving(lobby_id) ;
+}
 void p3Msgs::unsubscribeChatLobby(const ChatLobbyId& lobby_id)
 {
 	mChatSrv->unsubscribeChatLobby(lobby_id) ;
@@ -524,8 +542,7 @@ bool p3Msgs::initiateDistantChatConnexion(
         const RsGxsId& to_gxs_id, const RsGxsId& from_gxs_id,
         DistantChatPeerId& pid, uint32_t& error_code, bool notify )
 {
-	return mChatSrv->initiateDistantChatConnexion( to_gxs_id, from_gxs_id,
-	                                               pid, error_code, notify );
+	return mChatSrv->initiateDistantChatConnexion( to_gxs_id, from_gxs_id, pid, error_code, notify );
 }
 bool p3Msgs::getDistantChatStatus(const DistantChatPeerId& pid,DistantChatPeerInfo& info)
 {
@@ -544,3 +561,27 @@ uint32_t p3Msgs::getDistantChatPermissionFlags()
 	return mChatSrv->getDistantChatPermissionFlags() ;
 }
 
+RsMsgs::~RsMsgs() = default;
+Rs::Msgs::MessageInfo::~MessageInfo() = default;
+MsgInfoSummary::~MsgInfoSummary() = default;
+VisibleChatLobbyRecord::~VisibleChatLobbyRecord() = default;
+
+void RsMailIdRecipientIdPair::serial_process(
+        RsGenericSerializer::SerializeJob j,
+        RsGenericSerializer::SerializeContext& ctx )
+{
+	RS_SERIAL_PROCESS(mMailId);
+	RS_SERIAL_PROCESS(mRecipientId);
+}
+
+bool RsMailIdRecipientIdPair::operator<(const RsMailIdRecipientIdPair& o) const
+{
+	return std::tie(  mMailId,   mRecipientId) <
+	       std::tie(o.mMailId, o.mRecipientId);
+}
+
+bool RsMailIdRecipientIdPair::operator==(const RsMailIdRecipientIdPair& o) const
+{
+	return std::tie(  mMailId,   mRecipientId) ==
+	       std::tie(o.mMailId, o.mRecipientId);
+}

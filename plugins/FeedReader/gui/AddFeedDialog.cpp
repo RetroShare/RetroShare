@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare GUI is distributed under the following license:
- *
- *  Copyright (C) 2012 by Thunder
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * plugins/FeedReader/gui/AddFeedDialog.cpp                                    *
+ *                                                                             *
+ * Copyright (C) 2012 by Thunder                                               *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QMessageBox>
 #include <QDateTime>
@@ -42,6 +41,9 @@ AddFeedDialog::AddFeedDialog(RsFeedReader *feedReader, FeedReaderNotify *notify,
 
 	/* Setup UI helper */
 	mStateHelper = new UIStateHelper(this);
+
+	mFeedId = 0;
+	mParentId = 0;
 
 	mStateHelper->addWidget(TOKEN_TYPE_FORUM_GROUPS, ui->forumComboBox, UISTATE_LOADING_DISABLED);
 	mStateHelper->addWidget(TOKEN_TYPE_FORUM_GROUPS, ui->buttonBox->button(QDialogButtonBox::Ok), UISTATE_LOADING_DISABLED);
@@ -198,19 +200,19 @@ void AddFeedDialog::validate()
 	mStateHelper->setWidgetEnabled(ui->buttonBox->button(QDialogButtonBox::Ok), ok);
 }
 
-void AddFeedDialog::setParent(const std::string &parentId)
+void AddFeedDialog::setParent(uint32_t parentId)
 {
 	mParentId = parentId;
 }
 
-bool AddFeedDialog::fillFeed(const std::string &feedId)
+bool AddFeedDialog::fillFeed(uint32_t feedId)
 {
 	mFeedId = feedId;
 
-	if (!mFeedId.empty()) {
+	if (mFeedId) {
 		FeedInfo feedInfo;
 		if (!mFeedReader->getFeedInfo(mFeedId, feedInfo)) {
-			mFeedId.clear();
+			mFeedId = 0;
 			return false;
 		}
 
@@ -327,7 +329,7 @@ void AddFeedDialog::getFeedInfo(FeedInfo &feedInfo)
 void AddFeedDialog::createFeed()
 {
 	FeedInfo feedInfo;
-	if (!mFeedId.empty()) {
+	if (mFeedId) {
 		if (!mFeedReader->getFeedInfo(mFeedId, feedInfo)) {
 			QMessageBox::critical(this, tr("Edit feed"), tr("Can't edit feed. Feed does not exist."));
 			return;
@@ -336,7 +338,7 @@ void AddFeedDialog::createFeed()
 
 	getFeedInfo(feedInfo);
 
-	if (mFeedId.empty()) {
+	if (mFeedId == 0) {
 		/* add new feed */
 		RsFeedAddResult result = mFeedReader->addFeed(feedInfo, mFeedId);
 		if (FeedReaderStringDefs::showError(this, result, tr("Create feed"), tr("Cannot create feed."))) {
@@ -366,7 +368,7 @@ void AddFeedDialog::preview()
 
 void AddFeedDialog::clearMessageCache()
 {
-	if (mFeedId.empty()) {
+	if (mFeedId == 0) {
 		return;
 	}
 

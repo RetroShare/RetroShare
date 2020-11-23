@@ -1,25 +1,24 @@
-/*
- * Retroshare Circle.
- *
- * Copyright 2012-2012 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * gui/Circles/CirclesDialog.h                                                 *
+ *                                                                             *
+ * LibResAPI: API for local socket server                                      *
+ *                                                                             *
+ * Copyright (C) 2012, robert Fernie <retroshare.project@gmail.com>            *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef MRK_CIRCLE_DIALOG_H
 #define MRK_CIRCLE_DIALOG_H
@@ -28,11 +27,11 @@
 #include "util/TokenQueue.h"
 #include "ui_CirclesDialog.h"
 
-#define IMAGE_CIRCLES           ":/images/circles/circles_32.png"
+#define IMAGE_CIRCLES           ":/icons/png/circles.png"
 
 class UIStateHelper;
 
-class CirclesDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
+class CirclesDialog : public MainPage, public TokenResponse
 {
 	Q_OBJECT
 
@@ -59,34 +58,8 @@ private slots:
 	void friend_selected();
 	void category_selected();
 
-#if 0
-	void OpenOrShowAddPageDialog();
-	void OpenOrShowAddGroupDialog();
-	void OpenOrShowEditDialog();
-	void OpenOrShowRepublishDialog();
-
-	void groupTreeChanged();
-
-	void newGroup();
-	void showGroupDetails();
-	void editGroupDetails();
-
-	void insertWikiGroups();
-#endif
-
 private:
 	void reloadAll();
-
-#if 0
-	voidclearWikiPage();
-	void clearGroupTree();
-
-	void updateWikiPage(const RsWikiSnapshot &page);
-
-	bool getSelectedPage(std::string &groupId, std::string &pageId, std::string &origPageId);
-	std::string getSelectedPage();
-	std::string getSelectedGroup();
-#endif
 
 	void requestGroupMeta();
 	void loadGroupMeta(const uint32_t &token);

@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * libretroshare/src/ft: ftfilecreator.cc                                      *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2008 by Retroshare Team <retroshare.project@gmail.com>            *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifdef WINDOWS_SYS
 #include "util/rsstring.h"
 #include "util/rswin.h"
@@ -6,7 +27,7 @@
 #include "ftfilecreator.h"
 #include <errno.h>
 #include <stdio.h>
-#include <time.h>
+#include "util/rstime.h"
 #include <sys/stat.h>
 #include <util/rsdiscspace.h>
 #include <util/rsdir.h>
@@ -42,7 +63,7 @@ ftFileCreator::ftFileCreator(const std::string& path, uint64_t size, const RsFil
 	std::cerr << std::endl;
 #endif
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 	_creation_time = now ;
 
 	struct stat64 buf;
@@ -83,7 +104,7 @@ bool ftFileCreator::getFileData(const RsPeerId& peer_id,uint64_t offset, uint32_
         // try if we have data from an incomplete or not veryfied chunk
         if(!have_it && allow_unverified)
         {
-            std::map<uint64_t, ftChunk>::iterator it;
+            //std::map<uint64_t, ftChunk>::iterator it;
             have_it = true;
             // this map contains chunks which are currently being downloaded
             for(std::map<uint64_t,ftChunk>::iterator it=mChunks.begin(); it!=mChunks.end(); ++it)
@@ -122,12 +143,12 @@ bool ftFileCreator::getFileData(const RsPeerId& peer_id,uint64_t offset, uint32_
 		return false ;
 }
 
-time_t ftFileCreator::creationTimeStamp() 
+rstime_t ftFileCreator::creationTimeStamp() 
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 	return _creation_time ;
 }
-time_t ftFileCreator::lastRecvTimeStamp() 
+rstime_t ftFileCreator::lastRecvTimeStamp() 
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 	return _last_recv_time_t ;
@@ -240,7 +261,7 @@ void ftFileCreator::removeInactiveChunks()
 #ifdef FILE_DEBUG
 	std::cerr << "ftFileCreator::removeInactiveChunks(): looking for old chunks." << std::endl ;
 #endif
-	std::vector<ftChunk::ChunkId> to_remove ;
+	std::vector<ftChunk::OffsetInFile> to_remove ;
 
 	chunkMap.removeInactiveChunks(to_remove) ;
 
@@ -421,7 +442,9 @@ int ftFileCreator::locked_notifyReceived(uint64_t offset, uint32_t chunk_size)
 
 		if(!found)
 		{
+#ifdef FILE_DEBUG
 			std::cerr << "ftFileCreator::locked_notifyReceived(): failed to find an active slice for " << offset << "+" << chunk_size << ", hash = " << hash << ": dropping data." << std::endl;
+#endif
 			return 0; /* ignoring */
 		}
 	}
@@ -497,7 +520,7 @@ bool ftFileCreator::getMissingChunk(const RsPeerId& peer_id,uint32_t size_hint,u
 	locked_printChunkMap();
 #endif
 	source_chunk_map_needed = false ;
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	// 0 - is there a faulting chunk that would need to be asked again ?
 	
@@ -531,7 +554,14 @@ bool ftFileCreator::getMissingChunk(const RsPeerId& peer_id,uint32_t size_hint,u
 	ftChunk chunk ;
 
 	if(!chunkMap.getDataChunk(peer_id,size_hint,chunk,source_chunk_map_needed))
+	{
+		// No chunks are available. We brutally re-ask an ongoing chunk to another peer.
+
+		if(chunkMap.reAskPendingChunk(peer_id,size_hint,offset,size))
+			return true ;
+
 		return false ;
+	}
 
 #ifdef FILE_DEBUG
 	std::cerr << "ffc::getMissingChunk() Retrieved new chunk: " << chunk << std::endl ;
@@ -542,6 +572,7 @@ bool ftFileCreator::getMissingChunk(const RsPeerId& peer_id,uint32_t size_hint,u
 	mChunks[chunk.offset] = chunk ;
 
 	offset = chunk.offset ;
+	// cppcheck-suppress unreadVariable
 	size = chunk.size ;
 
 	++chunks_for_this_peer ;	// increase number of chunks for this peer.

@@ -84,7 +84,7 @@ ConfCertDialog QLabel#servicePermissionsLabel
 	qproperty-fontSizeFactor: 125;
 }
 
-GxsChannelPostsWidget QLabel#nameLabel
+GxsChannelPostsWidgetWithModel QLabel#channelName_LB
 {
 	qproperty-fontSizeFactor: 250;
 }
@@ -105,11 +105,6 @@ ConnectFrientWizard QLabel#fr_label
 }
 
 ConnectFrientWizard QLabel#requestinfolabel
-{
-	qproperty-fontSizeFactor: 125;
-}
-
-ConnectFriendWizard QLabel#makefriend_infolabel
 {
 	qproperty-fontSizeFactor: 125;
 }
@@ -143,6 +138,10 @@ ForumsDialog, GxsForumThreadWidget
 	qproperty-textColorUnreadChildren: darkgray;
 	qproperty-textColorNotSubscribed: black;
 	qproperty-textColorMissing: darkRed;
+	qproperty-textColorPinned: darkOrange;
+
+	qproperty-backgroundColorPinned: rgb(255, 200, 180);
+	qproperty-backgroundColorFiltered: rgb(255, 240, 210);
 }
 
 GroupTreeWidget
@@ -161,7 +160,7 @@ MessagesDialog
 	qproperty-textColorInbox: rgb(49, 106, 197);
 }
 
-FriendList
+NewFriendList
 {
     qproperty-textColorStatusOffline: black;
     qproperty-textColorStatusAway: gray;
@@ -191,7 +190,8 @@ NetworkDialog
 
 RSTextBrowser, MimeTextEdit
 {
-	qproperty-textColorQuote: rgb(120, 153, 34);
+	/*qproperty-textColorQuote: rgb(120, 153, 34);*/
+	qproperty-textColorQuotes: ColorList(#789922 #039bd5 #800000 #800080 #008080 #b10dc9 #85144b #3d9970);
 }
 
 QLabel#headerTextLabel_Person
@@ -242,4 +242,17 @@ OpModeStatus[opMode="Gaming"] {
 }
 OpModeStatus[opMode="Minimal"] {
 	background: #FFCCCC;
+}
+
+/*Property Values at end to overwrite other settings*/
+
+[new=false] {
+	background: #F8F8F8;
+}
+[new=true] {
+	background: #DCECFD;
+}
+
+[WrongValue="true"] {
+	background-color: #FF8080;
 }

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (C) 2004-2019 Retroshare Team <contact@retroshare.cc>
+# SPDX-License-Identifier: CC0-1.0
+
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = lib
@@ -9,8 +12,8 @@ QMAKE_CXXFLAGS *= -Wall -Werror -W
 
 TARGET = ops
 DESTDIR = lib
-DEPENDPATH += . $$INC_DIR
-INCLUDEPATH += . $$INC_DIR
+
+!include(use_openpgpsdk.pri):error("Including")
 
 #################################### Windows #####################################
 
@@ -18,8 +21,12 @@ linux-* {
 	OBJECTS_DIR = temp/linux/obj
 }
 
-win32 {
-	DEFINES *= WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
+win32-g++|win32-clang-g++ {
+
+    HEADERS += openpgpsdk/opsstring.h
+    SOURCES += openpgpsdk/opsstring.c
+
+    DEFINES *= WIN32_LEAN_AND_MEAN
 
 	# Switch off optimization for release version
 	QMAKE_CXXFLAGS_RELEASE -= -O2
@@ -27,9 +34,13 @@ win32 {
 	QMAKE_CFLAGS_RELEASE -= -O2
 	QMAKE_CFLAGS_RELEASE += -O0
 
-	# Switch on optimization for debug version
-	#QMAKE_CXXFLAGS_DEBUG += -O2
-	#QMAKE_CFLAGS_DEBUG += -O2
+    mLibs = bz2 z ssl crypto
+    static {
+        LIBS += $$linkStaticLibs(mLibs)
+        PRE_TARGETDEPS += $$pretargetStaticLibs(mLibs)
+    } else {
+        LIBS += $$linkDynamicLibs(mLibs)
+    }
 }
 
 
@@ -74,9 +85,6 @@ HEADERS += openpgpsdk/writer.h \
            openpgpsdk/parse_local.h \
            openpgpsdk/keyring_local.h \
            openpgpsdk/opsdir.h
-win32{
-HEADERS += openpgpsdk/opsstring.h
-}
 
 SOURCES += openpgpsdk/accumulate.c \
            openpgpsdk/compress.c \
@@ -116,16 +124,14 @@ SOURCES += openpgpsdk/accumulate.c \
            openpgpsdk/writer_skey_checksum.c \
            openpgpsdk/writer_stream_encrypt_se_ip.c \
            openpgpsdk/opsdir.c
-win32{
-SOURCES += openpgpsdk/opsstring.c
-}
+
 
 ################################# Android #####################################
 
-android-g++ {
+android-* {
 
-## Add this here and not in retroshare.pri because static library are very
-## sensible to order in command line
+## Add this here because static library are very sensible to order in
+## command line
     LIBS += -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/ -lssl
     INCLUDEPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
     DEPENDPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
@@ -135,5 +141,4 @@ android-g++ {
     INCLUDEPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
     DEPENDPATH += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
     PRE_TARGETDEPS += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libcrypto.a
-
 }

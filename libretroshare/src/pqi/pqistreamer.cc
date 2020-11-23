@@ -1,35 +1,30 @@
-/*
- * "$Id: pqistreamer.cc,v 1.19 2007-02-18 21:46:50 rmf24 Exp $"
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2004-2006 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-
+/*******************************************************************************
+ * libretroshare/src/pqi: pqistreamer.cc                                       *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2006 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "pqi/pqistreamer.h"
 
 #include <sys/time.h>             // for gettimeofday
 #include <stdlib.h>               // for free, realloc, exit
 #include <string.h>               // for memcpy, memset, memcmp
-#include <time.h>                 // for NULL, time, time_t
+#include "util/rstime.h"                 // for NULL, time, rstime_t
 #include <algorithm>              // for min
 #include <iostream>               // for operator<<, ostream, basic_ostream
 #include <string>                 // for string, allocator, operator<<, oper...
@@ -107,38 +102,39 @@ pqistreamer::pqistreamer(RsSerialiser *rss, const RsPeerId& id, BinInterface *bi
 	mAvgDtOut(0), mAvgDtIn(0)
 {
 
-    // 100 B/s (minimal)
-    setMaxRate(true, 0.1);
-    setMaxRate(false, 0.1);
-    setRate(true, 0);		// needs to be off-mutex
-    setRate(false, 0);
+	// 100 B/s (minimal)
+	setMaxRate(true, 0.1);
+	setMaxRate(false, 0.1);
+	setRate(true, 0);		// needs to be off-mutex
+	setRate(false, 0);
 
-    RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 
-    mAcceptsPacketSlicing = false ; // by default. Will be turned into true when everyone's ready.
-    mLastSentPacketSlicingProbe = 0 ;
+	mAcceptsPacketSlicing = false ; // by default. Will be turned into true when everyone's ready.
+	mLastSentPacketSlicingProbe = 0 ;
 
-    mAvgLastUpdate = mCurrSentTS = mCurrReadTS = getCurrentTS();
+	mAvgLastUpdate = mCurrSentTS = mCurrReadTS = getCurrentTS();
 
-    mIncomingSize = 0 ;
+	mIncomingSize = 0 ;
+	mIncomingSize_bytes = 0;
 
-    mStatisticsTimeStamp = 0 ;
-    /* allocated once */
-    mPkt_rpend_size = 0;
-    mPkt_rpending = 0;
-    mReading_state = reading_state_initial ;
+	mStatisticsTimeStamp = 0 ;
+	/* allocated once */
+	mPkt_rpend_size = 0;
+	mPkt_rpending = 0;
+	mReading_state = reading_state_initial ;
 
-    pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::pqistreamer() Initialisation!");
+	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::pqistreamer() Initialisation!");
 
-    if (!bio_in)
-    {
-	    pqioutput(PQL_ALERT, pqistreamerzone, "pqistreamer::pqistreamer() NULL bio, FATAL ERROR!");
-	    exit(1);
-    }
+	if (!bio_in)
+	{
+		pqioutput(PQL_ALERT, pqistreamerzone, "pqistreamer::pqistreamer() NULL bio, FATAL ERROR!");
+		exit(1);
+	}
 
-    mFailed_read_attempts = 0;  // reset failed read, as no packet is still read.
+	mFailed_read_attempts = 0;  // reset failed read, as no packet is still read.
 
-    return;
+	return;
 }
 
 pqistreamer::~pqistreamer()
@@ -164,7 +160,7 @@ pqistreamer::~pqistreamer()
 	if (mRsSerialiser)
 		delete mRsSerialiser;
 
-	free_pend_locked() ;
+	free_pend() ;
 
 	// clean up incoming.
 	while (!mIncoming.empty())
@@ -182,6 +178,7 @@ pqistreamer::~pqistreamer()
 
 
 // Get/Send Items.
+// This is the entry poing for methods willing to send items through our out queue
 int	pqistreamer::SendItem(RsItem *si,uint32_t& out_size)
 {
 #ifdef RSITEM_DEBUG 
@@ -204,16 +201,28 @@ RsItem *pqistreamer::GetItem()
 	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::GetItem()");
 #endif
 
-	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
-
 	if(mIncoming.empty())
 		return NULL; 
 
 	RsItem *osr = mIncoming.front() ;
-    mIncoming.pop_front() ;
-    --mIncomingSize;
+	mIncoming.pop_front() ;
+	--mIncomingSize;
+// for future use
+//	mIncomingSize_bytes -= 
 
 	return osr;
+}
+
+
+float pqistreamer::getMaxRate(bool b)
+{
+        RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+        return getMaxRate_locked(b);
+}
+
+float pqistreamer::getMaxRate_locked(bool b)
+{
+        return RateInterface::getMaxRate(b) ;
 }
 
 float pqistreamer::getRate(bool b)
@@ -221,28 +230,31 @@ float pqistreamer::getRate(bool b)
 	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
     	return RateInterface::getRate(b) ;
 }
+
 void pqistreamer::setMaxRate(bool b,float f)
 {
-	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
-    	RateInterface::setMaxRate(b,f) ;
+        RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+        setMaxRate_locked(b,f);
 }
+
+void pqistreamer::setMaxRate_locked(bool b,float f)
+{
+        RateInterface::setMaxRate(b,f) ;
+}
+
 void pqistreamer::setRate(bool b,float f)
 {
 	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
     	RateInterface::setRate(b,f) ;
 }
 
+
 void pqistreamer::updateRates()
 {
-	// update rates both ways.
+	// update actual rates both ways.
 
 	double t = getCurrentTS(); // get current timestamp.
-	double diff ;
-
-	{
-		RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
-		diff = t - mAvgLastUpdate ;
-	}
+	double diff = t - mAvgLastUpdate;
 
 	if (diff > PQISTREAM_AVG_PERIOD)
 	{
@@ -267,10 +279,11 @@ void pqistreamer::updateRates()
 			setRate(false, 0);
 		}
 
+		mAvgLastUpdate = t;
+		mAvgReadCount = 0;
+
 		{
 			RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
-			mAvgLastUpdate = t;
-			mAvgReadCount = 0;
 			mAvgSentCount = 0;
 		}
 	}
@@ -281,7 +294,7 @@ int 	pqistreamer::tick_bio()
 	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 	mBio->tick();
 	
-	/* short circuit everything is bio isn't active */
+	/* short circuit everything if bio isn't active */
 	if (!(mBio->isactive()))
 	{
 		return 0;
@@ -289,36 +302,36 @@ int 	pqistreamer::tick_bio()
 	return 1;
 }
 
-
 int 	pqistreamer::tick_recv(uint32_t timeout)
 {
-	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+//      Apart from a few exceptions that are atomic (mLastIncomingTs, mIncomingSize), only this pqi thread reads/writes mIncoming queue and related counters.
+//      The lock of pqistreamer mutex is thus not needed here.
+//      The mutex lock is still needed before calling locked_addTrafficClue because this method is also used by the thread pushing packets in mOutPkts.
+//	Locks around rates are provided internally.
 
 	if (mBio->moretoread(timeout))
 	{
-		handleincoming_locked();
+		handleincoming();
 	}
-    if(!(mBio->isactive()))
-    {
-        free_pend_locked();
-    }
+	if(!(mBio->isactive()))
+	{
+		free_pend();
+	}
 	return 1;
 }
 
-
 int 	pqistreamer::tick_send(uint32_t timeout)
 {
-	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
-
-	/* short circuit everything is bio isn't active */
+	/* short circuit everything if bio isn't active */
 	if (!(mBio->isactive()))
 	{
-        		free_pend_locked();
+		free_pend();
 		return 0;
 	}
 
 	if (mBio->cansend(timeout))
 	{
+		RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 		handleoutgoing_locked();
 	}
     
@@ -344,12 +357,11 @@ int	pqistreamer::status()
 	return 0;
 }
 
+// this method is overloaded by pqiqosstreamer
 void pqistreamer::locked_storeInOutputQueue(void *ptr,int,int)
 {
 	mOutPkts.push_back(ptr);
 }
-//
-/**************** HANDLE OUTGOING TRANSLATION + TRANSMISSION ******/
 
 int	pqistreamer::queue_outpqi_locked(RsItem *pqi,uint32_t& pktsize)
 {
@@ -358,7 +370,6 @@ int	pqistreamer::queue_outpqi_locked(RsItem *pqi,uint32_t& pktsize)
         std::cerr << "pqistreamer::queue_outpqi() called." << std::endl;
 #endif
 
-
 	/* decide which type of packet it is */
 
 	pktsize = mRsSerialiser->size(pqi);
@@ -366,7 +377,6 @@ int	pqistreamer::queue_outpqi_locked(RsItem *pqi,uint32_t& pktsize)
     
     	if(ptr == NULL)
             return 0 ;
-            
 
 #ifdef DEBUG_PQISTREAMER
 	std::cerr << "pqistreamer::queue_outpqi() serializing packet with packet size : " << pktsize << std::endl;
@@ -407,34 +417,38 @@ int	pqistreamer::queue_outpqi_locked(RsItem *pqi,uint32_t& pktsize)
 	return 1; // keep error internal.
 }
 
-int 	pqistreamer::handleincomingitem_locked(RsItem *pqi,int len)
+int 	pqistreamer::handleincomingitem(RsItem *pqi,int len)
 {
 
 #ifdef DEBUG_PQISTREAMER
-	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::handleincomingitem_locked()");
+	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::handleincomingitem()");
 #endif
 	// timestamp last received packet.
 	mLastIncomingTs = time(NULL);
 
 	// Use overloaded Contact function 
 	pqi -> PeerId(PeerId());
-    mIncoming.push_back(pqi);
-    ++mIncomingSize ;
 
-            /*******************************************************************************************/
-    	// keep info for stats for a while. Only keep the items for the last two seconds. sec n is ongoing and second n-1
-    	// is a full statistics chunk that can be used in the GUI
+	mIncoming.push_back(pqi);
+	++mIncomingSize;
+	// for future use
+	//	mIncomingSize_bytes += len;
 
-    	locked_addTrafficClue(pqi,len,mCurrentStatsChunk_In) ;
-
-        /*******************************************************************************************/
+	/*******************************************************************************************/
+	// keep info for stats for a while. Only keep the items for the last two seconds. sec n is ongoing and second n-1
+	// is a full statistics chunk that can be used in the GUI
+	{
+		RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+		locked_addTrafficClue(pqi,len,mCurrentStatsChunk_In) ;
+	}
+	/*******************************************************************************************/
 
 	return 1;
 }
 
 void pqistreamer::locked_addTrafficClue(const RsItem *pqi,uint32_t pktsize,std::list<RSTrafficClue>& lst)
 {
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     if(now > mStatisticsTimeStamp)	// new chunk => get rid of oldest, replace old list by current list, clear current list.
     {
@@ -458,10 +472,10 @@ void pqistreamer::locked_addTrafficClue(const RsItem *pqi,uint32_t pktsize,std::
     lst.push_back(tc) ;
 }
 
-time_t	pqistreamer::getLastIncomingTS()
+rstime_t	pqistreamer::getLastIncomingTS()
 {
-	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
-
+	// This is the only case where another thread (rs main for pqiperson) will access our data
+	// Still a mutex lock is not needed because the operation is atomic
 	return mLastIncomingTs;
 }
 
@@ -558,7 +572,7 @@ int	pqistreamer::handleoutgoing_locked()
 
         	// Checks for inserting a packet slicing probe. We do that to send the other peer the information that packet slicing can be used.
         	// if so, we enable it for the session. This should be removed (because it's unnecessary) when all users have switched to the new version.
-		time_t now = time(NULL) ;
+		rstime_t now = time(NULL) ;
         
             if(now > mLastSentPacketSlicingProbe + PQISTREAM_PACKET_SLICING_PROBE_DELAY)
         	{
@@ -697,23 +711,23 @@ int	pqistreamer::handleoutgoing_locked()
 
 /* Handles reading from input stream.
  */
-int pqistreamer::handleincoming_locked()
+int pqistreamer::handleincoming()
 {
     int readbytes = 0;
     static const int max_failed_read_attempts = 2000 ;
 
 #ifdef DEBUG_PQISTREAMER
-    pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::handleincoming_locked()");
+    pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::handleincoming()");
 #endif
 
     if(!(mBio->isactive()))
     {
 	    mReading_state = reading_state_initial ;
-	    free_pend_locked();
+	    free_pend();
 	    return 0;
     }
     else
-	    allocate_rpend_locked();
+	    allocate_rpend();
 
     // enough space to read any packet.
     uint32_t maxlen = mPkt_rpend_size; 
@@ -722,7 +736,7 @@ int pqistreamer::handleincoming_locked()
     // initial read size: basic packet.
     int blen = getRsPktBaseSize();	// this is valid for both packet slices and normal un-sliced packets (same header size)
 
-    int maxin = inAllowedBytes_locked();
+    int maxin = inAllowedBytes();
 
 #ifdef DEBUG_PQISTREAMER
     std::cerr << "[" << (void*)pthread_self() << "] " << "reading state = " << mReading_state << std::endl ;
@@ -971,19 +985,19 @@ continue_packet:
 		    std::cerr << "Inputing partial packet " << RsUtil::BinToHex((char*)block,8) << std::endl;
 #endif
             		uint32_t packet_length = 0 ;
-		    pkt = addPartialPacket_locked(block,pktlen,slice_packet_id,is_packet_starting,is_packet_ending,packet_length) ;
+		    pkt = addPartialPacket(block,pktlen,slice_packet_id,is_packet_starting,is_packet_ending,packet_length) ;
             
             		pktlen = packet_length ;
 	    }
 	    else
 		    pkt = mRsSerialiser->deserialise(block, &pktlen);
 
-	    if ((pkt != NULL) && (0  < handleincomingitem_locked(pkt,pktlen)))
+	    if ((pkt != NULL) && (0  < handleincomingitem(pkt,pktlen)))
 	    {
 #ifdef DEBUG_PQISTREAMER
 		    pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, "Successfully Read a Packet!");
 #endif
-		    inReadBytes_locked(pktlen);	// only count deserialised packets, because that's what is actually been transfered.
+		    inReadBytes(pktlen);	// only count deserialised packets, because that's what is actually been transfered.
 	    }
 	    else if (!is_partial_packet)
 	    {
@@ -1016,7 +1030,7 @@ continue_packet:
     return 0;
 }
 
-RsItem *pqistreamer::addPartialPacket_locked(const void *block, uint32_t len, uint32_t slice_packet_id, bool is_packet_starting, bool is_packet_ending, uint32_t &total_len) 
+RsItem *pqistreamer::addPartialPacket(const void *block, uint32_t len, uint32_t slice_packet_id, bool is_packet_starting, bool is_packet_ending, uint32_t &total_len) 
 {
 #ifdef DEBUG_PACKET_SLICING
     std::cerr << "Receiving partial packet. size=" << len << ", ID=" << std::hex << slice_packet_id << std::dec << ", starting:" << is_packet_starting << ", ending:" << is_packet_ending ;
@@ -1138,7 +1152,7 @@ int     pqistreamer::outAllowedBytes_locked()
 	// low pass filter on mAvgDtOut
 	mAvgDtOut = PQISTREAM_AVG_DT_FRAC * mAvgDtOut + (1 - PQISTREAM_AVG_DT_FRAC) * dt;
 	
-	double maxout = getMaxRate(false) * 1024.0;
+	double maxout = getMaxRate_locked(false) * 1024.0;
 
 	// this is used to take into account a possible excess of data sent during the previous round
 	mCurrSent -= int(dt * maxout);
@@ -1160,7 +1174,7 @@ int     pqistreamer::outAllowedBytes_locked()
 	return quota;
 }
 
-int     pqistreamer::inAllowedBytes_locked()
+int     pqistreamer::inAllowedBytes()
 {
 	double t = getCurrentTS(); // in sec, with high accuracy
 
@@ -1198,7 +1212,7 @@ int     pqistreamer::inAllowedBytes_locked()
 
 #ifdef DEBUG_PQISTREAMER
 	uint64_t t_now = 1000 * getCurrentTS();
-	std::cerr << std::dec << t_now << " DEBUG_PQISTREAMER pqistreamer::inAllowedBytes_locked PeerId " << this->PeerId().toStdString() << " dt " << (int)(1000 * dt) << "ms, mAvgDtIn " << (int)(1000 * mAvgDtIn) << "ms, maxin " << (int)(maxin) << " bytes/s, mCurrRead " << mCurrRead << " bytes, quota " << (int)(quota) << " bytes" << std::endl;
+	std::cerr << std::dec << t_now << " DEBUG_PQISTREAMER pqistreamer::inAllowedBytes PeerId " << this->PeerId().toStdString() << " dt " << (int)(1000 * dt) << "ms, mAvgDtIn " << (int)(1000 * mAvgDtIn) << "ms, maxin " << (int)(maxin) << " bytes/s, mCurrRead " << mCurrRead << " bytes, quota " << (int)(quota) << " bytes" << std::endl;
 #endif
 
 	return quota;
@@ -1231,11 +1245,11 @@ void    pqistreamer::outSentBytes_locked(uint32_t outb)
 	mTotalSent += outb;
 	mCurrSent += outb;
 	mAvgSentCount += outb;
-
+	PQInterface::traf_out += outb;
 	return;
 }
 
-void    pqistreamer::inReadBytes_locked(uint32_t inb)
+void    pqistreamer::inReadBytes(uint32_t inb)
 {
 #ifdef DEBUG_PQISTREAMER
 	{
@@ -1248,11 +1262,11 @@ void    pqistreamer::inReadBytes_locked(uint32_t inb)
 	mTotalRead += inb;
 	mCurrRead += inb;
 	mAvgReadCount += inb;
-
+	PQInterface::traf_in += inb;
 	return;
 }
 
-void pqistreamer::allocate_rpend_locked()
+void pqistreamer::allocate_rpend()
 {
     if(mPkt_rpending)
         return;
@@ -1275,17 +1289,17 @@ int pqistreamer::reset()
 #ifdef DEBUG_PQISTREAMER
 	std::cerr << "pqistreamer::reset()" << std::endl;
 #endif
-	free_pend_locked();
+	free_pend();
     
     return 1 ;
 }
 
-void pqistreamer::free_pend_locked()
+void pqistreamer::free_pend()
 {
 	if(mPkt_rpending)
 	{
 #ifdef DEBUG_PQISTREAMER
-        		std::cerr << "pqistreamer::free_pend_locked(): pending input packet buffer" << std::endl;
+        		std::cerr << "pqistreamer::free_pend(): pending input packet buffer" << std::endl;
 #endif
 		free(mPkt_rpending);
 		mPkt_rpending = 0;
@@ -1295,7 +1309,7 @@ void pqistreamer::free_pend_locked()
 	if (mPkt_wpending)
 	{
 #ifdef DEBUG_PQISTREAMER
-        		std::cerr << "pqistreamer::free_pend_locked(): pending output packet buffer" << std::endl;
+        		std::cerr << "pqistreamer::free_pend(): pending output packet buffer" << std::endl;
 #endif
 		free(mPkt_wpending);
 		mPkt_wpending = NULL;
@@ -1304,7 +1318,7 @@ void pqistreamer::free_pend_locked()
 
 #ifdef DEBUG_PQISTREAMER
     if(!mPartialPackets.empty())
-        		std::cerr << "pqistreamer::free_pend_locked(): " << mPartialPackets.size() << " pending input partial packets" << std::endl;
+        		std::cerr << "pqistreamer::free_pend(): " << mPartialPackets.size() << " pending input partial packets" << std::endl;
 #endif
 	// also delete any incoming partial packet
 	for(std::map<uint32_t,PartialPacketRecord>::iterator it(mPartialPackets.begin());it!=mPartialPackets.end();++it)
@@ -1322,26 +1336,47 @@ int     pqistreamer::gatherStatistics(std::list<RSTrafficClue>& outqueue_lst,std
 
     return locked_gatherStatistics(outqueue_lst,inqueue_lst);
 }
+
+// this method is overloaded by pqiqosstreamer
 int     pqistreamer::getQueueSize(bool in)
 {
-	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
-
 	if (in)
-        return mIncomingSize;
-    else
-        return locked_out_queue_size();
+// no mutex is needed here because this is atomic
+		return mIncomingSize;
+	else
+	{
+		RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+		return locked_out_queue_size();
+	}
+}
+
+int     pqistreamer::getQueueSize_bytes(bool in)
+{
+        if (in)
+// no mutex is needed here because this is atomic
+// for future use, mIncomingSize_bytes is not updated yet
+                return mIncomingSize_bytes;
+        else
+        {
+                RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+                return locked_compute_out_pkt_size();
+        }
 }
 
 void    pqistreamer::getRates(RsBwRates &rates)
 {
 	RateInterface::getRates(rates);
 
-	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+// no mutex is needed here because this is atomic
+	rates.mQueueIn = mIncomingSize;
 
-    rates.mQueueIn = mIncomingSize;
-	rates.mQueueOut = locked_out_queue_size();
+	{
+		RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+		rates.mQueueOut = locked_out_queue_size();
+	}
 }
 
+// this method is overloaded by pqiqosstreamer
 int pqistreamer::locked_out_queue_size() const
 {
 	// Warning: because out_pkt is a list, calling size
@@ -1351,6 +1386,7 @@ int pqistreamer::locked_out_queue_size() const
 	return mOutPkts.size() ; 
 }
 
+// this method is overloaded by pqiqosstreamer
 void pqistreamer::locked_clear_out_queue()
 {
 	for(std::list<void*>::iterator it = mOutPkts.begin(); it != mOutPkts.end(); )
@@ -1365,6 +1401,7 @@ void pqistreamer::locked_clear_out_queue()
 	}
 }
 
+// this method is overloaded by pqiqosstreamer
 int pqistreamer::locked_compute_out_pkt_size() const
 {
 	int total = 0 ;
@@ -1383,6 +1420,7 @@ int pqistreamer::locked_gatherStatistics(std::list<RSTrafficClue>& out_lst,std::
     return 1 ;
 }
 
+// this method is overloaded by pqiqosstreamer
 void *pqistreamer::locked_pop_out_data(uint32_t /*max_slice_size*/, uint32_t &size, bool &starts, bool &ends, uint32_t &packet_id)
 {
     size = 0 ;
@@ -1404,4 +1442,3 @@ void *pqistreamer::locked_pop_out_data(uint32_t /*max_slice_size*/, uint32_t &si
 	return res ;
 }
 
-    

@@ -1,23 +1,23 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (c) 2012, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/common/RSTreeWidget.cpp                                                 *
+ *                                                                             *
+ * Copyright (C) 2012 RetroShare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #include "RSTreeWidget.h"
 
 #include <QHBoxLayout>
@@ -29,11 +29,13 @@
 #include <QWidgetAction>
 
 #include "gui/settings/rsharesettings.h"
+#include "gui/common/FilesDefs.h"
 
 RSTreeWidget::RSTreeWidget(QWidget *parent) : QTreeWidget(parent)
 {
 	mEnableColumnCustomize = false;
 	mSettingsVersion = 0; // disabled
+	mFilterReasonRole = -1; // disabled
 
 	QHeaderView *h = header();
 	h->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -84,6 +86,12 @@ void RSTreeWidget::mousePressEvent(QMouseEvent *event)
 	QTreeWidget::mousePressEvent(event);
 }
 
+void RSTreeWidget::setFilterReasonRole(int role /*=-1*/)
+{
+	if (role > Qt::UserRole)
+		mFilterReasonRole = role;
+}
+
 void RSTreeWidget::filterItems(int filterColumn, const QString &text, int role)
 {
 	int count = topLevelItemCount();
@@ -101,6 +109,13 @@ void RSTreeWidget::filterItems(int filterColumn, const QString &text, int role)
 bool RSTreeWidget::filterItem(QTreeWidgetItem *item, int filterColumn, const QString &text, int role)
 {
 	bool itemVisible = true;
+	//Get who hide this item
+	int filterReason = 0;
+	if (mFilterReasonRole >= Qt::UserRole)
+		filterReason = item->data(filterColumn, mFilterReasonRole).toInt();
+	//Remove this filter for last test
+	if (filterReason & FILTER_REASON_TEXT)
+		filterReason -= FILTER_REASON_TEXT;
 
 	if (!text.isEmpty()) {
 		if (!item->data(filterColumn, role).toString().contains(text, Qt::CaseInsensitive)) {
@@ -116,11 +131,62 @@ bool RSTreeWidget::filterItem(QTreeWidgetItem *item, int filterColumn, const QSt
 		}
 	}
 
-	if (itemVisible || visibleChildCount) {
-		item->setHidden(false);
-	} else {
-		item->setHidden(true);
+	if (!itemVisible && !visibleChildCount) {
+		filterReason |= FILTER_REASON_TEXT;
 	}
+	item->setHidden(filterReason != 0);
+	//Update hiding reason
+	if (mFilterReasonRole >= Qt::UserRole)
+		item->setData(filterColumn, mFilterReasonRole, filterReason);
+
+	return (itemVisible || visibleChildCount);
+}
+
+void RSTreeWidget::filterMinValItems(int filterColumn, const double &value, int role)
+{
+	int count = topLevelItemCount();
+	for (int index = 0; index < count; ++index) {
+		filterMinValItem(topLevelItem(index), filterColumn, value, role);
+	}
+
+	QTreeWidgetItem *item = currentItem();
+	if (item && item->isHidden()) {
+		// active item is hidden, deselect it
+		setCurrentItem(NULL);
+	}
+}
+
+bool RSTreeWidget::filterMinValItem(QTreeWidgetItem *item, int filterColumn, const double &value, int role)
+{
+	bool itemVisible = true;
+	//Get who hide this item
+	int filterReason = 0;
+	if (mFilterReasonRole >= Qt::UserRole)
+		filterReason = item->data(filterColumn, mFilterReasonRole).toInt();
+	//Remove this filter for last test
+	if (filterReason & FILTER_REASON_MINVAL)
+		filterReason -= FILTER_REASON_MINVAL;
+
+	bool ok = false;
+	if ((item->data(filterColumn, role).toDouble(&ok) < value) && ok ) {
+		itemVisible = false;
+	}
+
+	int visibleChildCount = 0;
+	int count = item->childCount();
+	for (int index = 0; index < count; ++index) {
+		if (filterMinValItem(item->child(index), filterColumn, value, role)) {
+			++visibleChildCount;
+		}
+	}
+
+	if (!itemVisible && !visibleChildCount) {
+		filterReason |= FILTER_REASON_MINVAL;
+	}
+	item->setHidden(filterReason != 0);
+	//Update hiding reason
+	if (mFilterReasonRole >= Qt::UserRole)
+		item->setData(filterColumn, mFilterReasonRole, filterReason);
 
 	return (itemVisible || visibleChildCount);
 }
@@ -194,7 +260,7 @@ QMenu *RSTreeWidget::createStandardContextMenu(QMenu *contextMenu)
 		hbox->setSpacing(6);
 
 		QLabel *iconLabel = new QLabel(widget);
-		QPixmap pix = QPixmap(":/images/settings.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
+        QPixmap pix = FilesDefs::getPixmapFromQtResourcePath(":/images/settings.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
 		iconLabel->setPixmap(pix);
 		iconLabel->setMaximumSize(iconLabel->frameSize().height() + pix.height(), pix.width());
 		hbox->addWidget(iconLabel);
@@ -294,6 +360,6 @@ void RSTreeWidget::columnVisible()
 void RSTreeWidget::resort()
 {
 	if (isSortingEnabled()) {
-		sortByColumn(header()->sortIndicatorSection(), header()->sortIndicatorOrder());
+		sortItems(header()->sortIndicatorSection(), header()->sortIndicatorOrder());
 	}
 }

@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * libretroshare/src/pqi: pqinetstatebox.h                                     *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2018 Retroshare Team <retroshare.project@gmail.com>               *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef PQI_NET_STATUS_BOX_H
 #define PQI_NET_STATUS_BOX_H
 
@@ -5,6 +26,9 @@
 
 #include <string>
 #include <list>
+
+#include <util/rstime.h>
+#include <retroshare/rsconfig.h>
 
 /*** Network state 
  * Want this to be all encompassing.
@@ -30,11 +54,11 @@ class pqiNetStateBox
 
 	void setDhtState(bool dhtOn, bool dhtActive);
 
-	uint32_t getNetStateMode();
-	uint32_t getNetworkMode();
-	uint32_t getNatTypeMode();
-	uint32_t getNatHoleMode();
-	uint32_t getConnectModes();
+	RsNetState getNetStateMode();
+	RsNetworkMode getNetworkMode();
+	RsNatTypeMode getNatTypeMode();
+	RsNatHoleMode getNatHoleMode();
+	RsConnectModes getConnectModes();
 
 	private:
 
@@ -48,58 +72,49 @@ class pqiNetStateBox
 	void workoutNetworkMode();
 
 	bool mStatusOkay;
-	time_t mStatusTS;
+	rstime_t mStatusTS;
 
-	uint32_t mNetworkMode;
-	uint32_t mNatTypeMode;
-	uint32_t mNatHoleMode;
-	uint32_t mConnectModes;
-	uint32_t mNetStateMode;
+	RsNetworkMode mNetworkMode;
+	RsNatTypeMode mNatTypeMode;
+	RsNatHoleMode mNatHoleMode;
+	RsConnectModes mConnectModes;
+	RsNetState mNetStateMode;
 
 	/* Parameters set externally */
 
 	bool mStunDhtSet;
-	time_t mStunDhtTS;
+	rstime_t mStunDhtTS;
 	bool mStunDhtStable;
 	struct sockaddr_storage mStunDhtAddr;
 
 	bool mStunProxySet;
-	time_t mStunProxyTS;
+	rstime_t mStunProxyTS;
 	bool mStunProxyStable;
 	bool mStunProxySemiStable;
 	struct sockaddr_storage mStunProxyAddr;
 
 	bool mDhtSet;
-	time_t mDhtTS;
+	rstime_t mDhtTS;
 	bool mDhtOn;
 	bool mDhtActive;
 
 	bool mUPnPSet;
 	struct sockaddr_storage mUPnPAddr;
 	bool mUPnPActive;
-	time_t mUPnPTS;
+	rstime_t mUPnPTS;
 
 	bool mNatPMPSet;
 	struct sockaddr_storage mNatPMPAddr;
 	bool mNatPMPActive;
-	time_t mNatPMPTS;
+	rstime_t mNatPMPTS;
 
 	bool mWebIPSet;
 	struct sockaddr_storage mWebIPAddr;
 	bool mWebIPActive;
-	time_t mWebIPTS;
+	rstime_t mWebIPTS;
 
 	bool mPortForwardSet;
 	uint16_t  mPortForwarded;
 };
-
-
-
-std::string NetStateNetStateString(uint32_t netstate);
-std::string NetStateConnectModesString(uint32_t connect);
-std::string NetStateNatHoleString(uint32_t natHole);
-std::string NetStateNatTypeString(uint32_t natType);
-std::string NetStateNetworkModeString(uint32_t netMode);
-
 
 #endif

@@ -1,24 +1,25 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2009 The RetroShare Team, Oleksiy Bilyanskyy
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/settings/FileAssociationPage.cpp                                        *
+ *                                                                             *
+ * Copyright 2009, Retroshare Team <retroshare.project@gmail.com>              *
+ * Copyright 2009, Oleksiy Bilyanskyy                                          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
+#include "gui/common/FilesDefs.h"
 #include "FileAssociationsPage.h"
 #include "AddFileAssociationDialog.h"
 //#include "rshare.h" // for Rshare::dataDirectory() method
@@ -60,19 +61,19 @@ FileAssociationsPage::FileAssociationsPage(QWidget * parent, Qt::WindowFlags fla
     QVBoxLayout* pageLay = new QVBoxLayout(this);
 
     toolBar = new QToolBar("actions", this);
-    newAction = new QAction(QIcon(":/images/add_24x24.png"), tr("&New"), this);
+    newAction = new QAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/add.png"), tr("&New"), this);
     //newAction->setShortcut(tr("Ctrl+N"));
     newAction->setStatusTip(tr("Add new Association"));
     connect(newAction, SIGNAL(triggered()), this, SLOT(addnew()));
     toolBar->addAction(newAction);
 
-    editAction = new QAction(QIcon(":/images/kcmsystem24.png"),
+    editAction = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/kcmsystem24.png"),
                              tr("&Edit"), this);
     editAction->setStatusTip(tr("Edit this Association"));
     connect(editAction, SIGNAL(triggered()), this, SLOT(edit()));
     toolBar->addAction(editAction);
 
-    removeAction = new QAction(QIcon(":/images/edit_remove24.png"),
+    removeAction = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/edit_remove24.png"),
                                tr("&Remove"), this);
     removeAction->setStatusTip(tr("Remove this Association"));
     connect(removeAction, SIGNAL(triggered()), this, SLOT(remove()));

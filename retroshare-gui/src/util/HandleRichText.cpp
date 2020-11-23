@@ -1,27 +1,22 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (c) 2010, Thomas Kister
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- *
- *  ccr . 2016 Jan 30 . Change regular expression(s) for identifying
- *      .             . hotlinks in feral text.
- *
- ****************************************************************/
+/*******************************************************************************
+ * util/HandleRichText.cpp                                                     *
+ *                                                                             *
+ * Copyright (c) 2010 Thomas Kister    <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QApplication>
 #include <QTextBrowser>
@@ -35,8 +30,19 @@
 #include "HandleRichText.h"
 #include "gui/RetroShareLink.h"
 #include "util/ObjectPainter.h"
+#include "util/imageutil.h"
+
+#include "util/rsdebug.h"
+#include "util/rstime.h"
+
+#ifdef USE_CMARK
+//Include for CMark
+#include <cmark.h>
+#endif
 
 #include <iostream>
+
+//#define DEBUG_SAVESPACE 1
 
 /**
  * The type of embedding we'd like to do
@@ -237,6 +243,8 @@ bool RsHtml::canReplaceAnchor(QDomDocument &/*doc*/, QDomElement &/*element*/, c
 	case RetroShareLink::TYPE_PUBLIC_MSG:
 	case RetroShareLink::TYPE_POSTED:
 	case RetroShareLink::TYPE_IDENTITY:
+	case RetroShareLink::TYPE_FILE_TREE:
+	case RetroShareLink::TYPE_CHAT_ROOM:
 		// not yet implemented
 		break;
 
@@ -267,6 +275,8 @@ void RsHtml::anchorStylesheetForImg(QDomDocument &/*doc*/, QDomElement &/*elemen
 	case RetroShareLink::TYPE_PUBLIC_MSG:
 	case RetroShareLink::TYPE_POSTED:
 	case RetroShareLink::TYPE_IDENTITY:
+	case RetroShareLink::TYPE_FILE_TREE:
+	case RetroShareLink::TYPE_CHAT_ROOM:
 		// not yet implemented
 		break;
 
@@ -384,6 +394,20 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 								replaceAnchorWithImg(doc, element, textDocument, link);
 							}
 						}
+						else
+						{
+							QUrl url(element.attribute("href"));
+							if(url.isValid())
+							{
+								QString title = url.host();
+								if (!title.isEmpty()) {
+									element.setAttribute("title", title);
+								}
+								if (textDocument && (flag & RSHTML_FORMATTEXT_REPLACE_LINKS)) {
+									replaceAnchorWithImg(doc, element, textDocument, url);
+								}
+							}
+						}
 					} else {
 						if (textDocument && (flag & RSHTML_FORMATTEXT_REPLACE_LINKS)) {
 							RetroShareLink link(element.attribute("href"));
@@ -437,6 +461,20 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 
 									if (textDocument && (flag & RSHTML_FORMATTEXT_REPLACE_LINKS)) {
 										replaceAnchorWithImg(doc, insertedTag, textDocument, link);
+									}
+								}
+								else
+								{
+									QUrl url(myRE.cap(0));
+									if(url.isValid())
+									{
+										QString title = url.host();
+										if (!title.isEmpty()) {
+											insertedTag.setAttribute("title", title);
+										}
+										if (textDocument && (flag & RSHTML_FORMATTEXT_REPLACE_LINKS)) {
+											replaceAnchorWithImg(doc, insertedTag, textDocument, url);
+										}
 									}
 								}
 							}
@@ -520,18 +558,24 @@ static QString saveSpace(const QString text)
 		if(cursChar==QLatin1Char('>'))         {
 			if(!echapChar && i>0) {outBrackets=true; firstOutBracket=true;}
  		} else if(cursChar==QLatin1Char('\t')) {
-			if(outBrackets && firstOutBracket && (keyName!="style")) savedSpaceText.replace(i, 1, "&nbsp;&nbsp;");
+			if(outBrackets && firstOutBracket && (keyName!="style")) { savedSpaceText.replace(i, 1, "&nbsp;&nbsp;"); i+= 11; }
 		} else if(cursChar==QLatin1Char(' '))  {
-			if(outBrackets && firstOutBracket && (keyName!="style")) savedSpaceText.replace(i, 1, "&nbsp;");
+			if(outBrackets && firstOutBracket && (keyName!="style")) { savedSpaceText.replace(i, 1, "&nbsp;"); i+= 5; }
 		} else if(cursChar==QChar(0xA0))  {
-			if(outBrackets && firstOutBracket && (keyName!="style")) savedSpaceText.replace(i, 1, "&nbsp;");
+			if(outBrackets && firstOutBracket && (keyName!="style")) { savedSpaceText.replace(i, 1, "&nbsp;"); i+= 5; }
 		} else if(cursChar==QLatin1Char('<'))  {
 			if(!echapChar) {outBrackets=false; getKeyName=true; keyName.clear();}
 		} else firstOutBracket=false;
 		echapChar=(cursChar==QLatin1Char('\\'));
 
 	}
-	
+#ifdef DEBUG_SAVESPACE
+	RsDbg() << __PRETTY_FUNCTION__ << "Text to save:" << std::endl
+	        << text.toStdString() << std::endl
+	        << "---------------------- Saved Text:" << std::endl
+	        << savedSpaceText.toStdString() << std::endl;
+#endif
+
 	return savedSpaceText;
 }
 
@@ -547,6 +591,30 @@ QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulo
 	formattedText.remove(0,text.indexOf("<"));
 	// Save Space and Tab because doc loose it.
 	formattedText=saveSpace(formattedText);
+
+#ifdef USE_CMARK
+	if (flag & RSHTML_FORMATTEXT_USE_CMARK) {
+		// Transform html to plain text
+		QTextBrowser textBrowser;
+		textBrowser.setHtml(text);
+		formattedText = textBrowser.toPlainText();
+		// Parse CommonMark
+		int options = CMARK_OPT_DEFAULT;
+		cmark_parser *parser = cmark_parser_new(options);
+		cmark_parser_feed(parser, formattedText.toStdString().c_str(),static_cast<size_t>(formattedText.length()));
+		cmark_node *document = cmark_parser_finish(parser);
+		cmark_parser_free(parser);
+		char *result;
+		result = cmark_render_html(document, options);
+		// Get result as html
+		formattedText = QString::fromUtf8(result);
+		//Clean
+		cmark_node_free(document);
+		//Get document formed HTML
+		textBrowser.setHtml(formattedText);
+		formattedText=textBrowser.toHtml();
+	}
+#endif
 
 	QString errorMsg; int errorLine; int errorColumn;
 
@@ -947,6 +1015,12 @@ static void styleCreate(QDomDocument& doc
 			noEmbedAttr.setValue("true");
 			styleElem.attributes().setNamedItem(noEmbedAttr);
 		}
+		if (flag & RSHTML_FORMATTEXT_USE_CMARK) {
+			QDomAttr cMarkAttr;
+			cMarkAttr = doc.createAttribute("CMark");
+			cMarkAttr.setValue("true");
+			styleElem.attributes().setNamedItem(cMarkAttr);
+		}
 	}
 
 	while(styleElem.childNodes().count()>0) {
@@ -960,9 +1034,10 @@ static void styleCreate(QDomDocument& doc
 		it.next();
 		const QStringList& classUsingIt ( it.value()) ;
 		bool first = true;
+		QString classNames = "";
 		foreach(QString className, classUsingIt) {
 			if (!className.trimmed().isEmpty()) {
-				style += QString(first?".":",.") + className;// + " ";
+				classNames += QString(first?".":",.") + className;// + " ";
 				first = false;
 			}
 		}
@@ -1009,9 +1084,9 @@ static void styleCreate(QDomDocument& doc
 			}
 
 			//.S1 .S2 .S4 {font-family:'Sans';}
-			style += "{" + key + ":" + val + ";}";
+			style += classNames + "{" + key + ":" + val + ";}";
 		} else {
-			style += "{" + it.key() + ";}\n";
+			style += classNames + "{" + it.key() + ";}\n";
 		}
 	}
 
@@ -1105,7 +1180,7 @@ QString RsHtml::toHtml(QString text, bool realHtml)
 }
 
 /** Loads image and converts image to embedded image HTML fragment **/
-bool RsHtml::makeEmbeddedImage(const QString &fileName, QString &embeddedImage, const int maxPixels)
+bool RsHtml::makeEmbeddedImage(const QString &fileName, QString &embeddedImage, const int maxPixels, const int maxBytes)
 {
 	QImage image;
 
@@ -1113,54 +1188,15 @@ bool RsHtml::makeEmbeddedImage(const QString &fileName, QString &embeddedImage, 
 		fprintf (stderr, "RsHtml::makeEmbeddedImage() - image \"%s\" can't be load\n", fileName.toLatin1().constData());
 		return false;
 	}
-	return RsHtml::makeEmbeddedImage(image, embeddedImage, maxPixels);
+	return RsHtml::makeEmbeddedImage(image, embeddedImage, maxPixels, maxBytes);
 }
 
 /** Converts image to embedded image HTML fragment **/
-bool RsHtml::makeEmbeddedImage(const QImage &originalImage, QString &embeddedImage, const int maxPixels)
+bool RsHtml::makeEmbeddedImage(const QImage &originalImage, QString &embeddedImage, const int maxPixels, const int maxBytes)
 {
-	QByteArray bytearray;
-	QBuffer buffer(&bytearray);
-	QImage resizedImage;
-	const QImage *image = &originalImage;
-
-	if (maxPixels > 0) {
-		QSize imgSize = originalImage.size();
-		if ((imgSize.height() * imgSize.width()) > maxPixels) {
-			// image is too large - resize keeping aspect ratio
-			QSize newSize;
-			newSize.setWidth(int(qSqrt((maxPixels * imgSize.width()) / imgSize.height())));
-			newSize.setHeight(int((imgSize.height() * newSize.width()) / imgSize.width()));
-
-			// ask user
-			QMessageBox msgBox;
-			msgBox.setText(QString(QApplication::translate("RsHtml", "Image is oversized for transmission.\nReducing image to %1x%2 pixels?")).arg(newSize.width()).arg(newSize.height()));
-			msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-			msgBox.setDefaultButton(QMessageBox::Ok);
-			if (msgBox.exec() != QMessageBox::Ok) {
-				return false;
-			}
-			resizedImage = originalImage.scaled(newSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-			image = &resizedImage;
-		}
-	}
-
-	if (buffer.open(QIODevice::WriteOnly)) {
-		if (image->save(&buffer, "PNG")) {
-			QByteArray encodedByteArray = bytearray.toBase64();
-
-			embeddedImage = "<img src=\"data:image/png;base64,";
-			embeddedImage.append(encodedByteArray);
-			embeddedImage.append("\">");
-		} else {
-            //fprintf (stderr, "RsHtml::makeEmbeddedImage() - image can't be saved to buffer\n");
-			return false;
-		}
-	} else {
-		fprintf (stderr, "RsHtml::makeEmbeddedImage() - buffer can't be opened\n");
-		return false;
-	}
-	return true;
+	rstime::RsScopeTimer s("Embed image");
+	QImage opt;
+	return ImageUtil::optimizeSizeHtml(embeddedImage, originalImage, opt, maxPixels, maxBytes);
 }
 
 QString RsHtml::plainText(const QString &text)
@@ -1190,8 +1226,10 @@ QString RsHtml::makeQuotedText(RSTextBrowser *browser)
 	}
 	QStringList sl = text.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
 	text = sl.join("\n> ");
+	text.replace("\n> >","\n>>"); // Don't add space for already quotted lines.
 	text.replace(QChar(-4)," ");//Char used when image on text.
-	return QString("> ") + text;
+	QString quote = (text.left(1) == ">") ? QString(">") : QString("> ");
+	return quote + text;
 }
 
 void RsHtml::insertSpoilerText(QTextCursor cursor)

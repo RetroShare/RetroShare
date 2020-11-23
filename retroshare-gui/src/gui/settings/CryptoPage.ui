@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>650</width>
-    <height>566</height>
+    <width>869</width>
+    <height>487</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
@@ -22,15 +22,180 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QFrame" name="frame_1">
-         <property name="frameShape">
-          <enum>QFrame::Box</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Sunken</enum>
-         </property>
+        <widget class="QGroupBox" name="groupBox_1">
          <layout class="QGridLayout" name="gridLayout_4">
-          <item row="0" column="0" colspan="2">
+          <item row="6" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Retroshare ID:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="11" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Statistics:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1" colspan="3">
+           <widget class="QLabel" name="peerid">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string notr="true">TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>PGP fingerprint:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_6">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Location ID:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="14" column="2">
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="8" column="1" colspan="2">
+           <widget class="QLabel" name="friendsEdit">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string notr="true">TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item row="14" column="0">
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>Export Profile:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1" colspan="3">
+           <widget class="QLabel" name="pgpfingerprint">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1" colspan="3">
+           <widget class="QLabel" name="pgpid">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string notr="true">TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item row="10" column="0">
+           <widget class="QLabel" name="label_16">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Online since:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_8">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Location:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" colspan="4">
            <layout class="QGridLayout" name="gridLayout_3">
             <item row="0" column="0">
              <widget class="QLabel" name="publicIcon">
@@ -60,64 +225,7 @@
             </item>
            </layout>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_10">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Name:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLabel" name="name">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string notr="true">TextLabel</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_8">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Location:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
+          <item row="2" column="1" colspan="3">
            <widget class="QLabel" name="country">
             <property name="sizePolicy">
              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
@@ -136,153 +244,17 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_6">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
+          <item row="14" column="1">
+           <widget class="QPushButton" name="exportprofile">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this to export your profile key. You can then import it in a different computer and make a new node with the same profile. Doing so, existing friends that you also add to the new node will automatically recognise that new node as friend.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
-             <string>Location ID:</string>
+             <string>Export</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
-           <widget class="QLabel" name="peerid">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string notr="true">TextLabel</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_7">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>PGP Id :</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QLabel" name="pgpid">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string notr="true">TextLabel</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QLabel" name="pgpfingerprint">
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>TextLabel</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>PGP fingerprint:</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QFrame" name="frame_2">
-         <property name="frameShape">
-          <enum>QFrame::Box</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Sunken</enum>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_6" columnstretch="0,0,0" columnminimumwidth="0,0,0">
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_9">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Friend nodes:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1" colspan="2">
-           <widget class="QLabel" name="friendsEdit">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string notr="true">TextLabel</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
+          <item row="9" column="0">
            <widget class="QLabel" name="label_3">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
@@ -301,68 +273,18 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_16">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
+          <item row="11" column="1">
+           <widget class="QPushButton" name="showStats_PB">
             <property name="text">
-             <string>Online since:</string>
+             <string>Show statistics</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="1" colspan="2">
-           <widget class="QLabel" name="version">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string notr="true">TextLabel</string>
-            </property>
-            <property name="textInteractionFlags">
-             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1" colspan="2">
-           <widget class="QLabel" name="onlinesince">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string notr="true">TextLabel</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" colspan="3">
+          <item row="7" column="0" colspan="4">
            <layout class="QGridLayout" name="gridLayout">
+            <property name="topMargin">
+             <number>6</number>
+            </property>
             <item row="0" column="0">
              <widget class="QLabel" name="otherIcon">
               <property name="maximumSize">
@@ -394,14 +316,209 @@
             </item>
            </layout>
           </item>
+          <item row="11" column="2">
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="13" column="0">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Profile path:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="0">
+           <widget class="QLabel" name="label_9">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Friend nodes:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" colspan="3">
+           <widget class="QLabel" name="name">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string notr="true">TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item row="12" column="0" colspan="3">
+           <layout class="QGridLayout" name="gridLayout_6">
+            <property name="topMargin">
+             <number>6</number>
+            </property>
+            <item row="0" column="0">
+             <widget class="QLabel" name="otherIcon_2">
+              <property name="maximumSize">
+               <size>
+                <width>16</width>
+                <height>16</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="pixmap">
+               <pixmap resource="../images.qrc">:/images/info16.png</pixmap>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="StyledLabel" name="otherLabel_2">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>Profile</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_10">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Name:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="1" colspan="2">
+           <widget class="QLabel" name="version">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string notr="true">TextLabel</string>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_7">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>PGP Id :</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1" colspan="3">
+           <widget class="QLabel" name="retroshareid">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+            </property>
+           </widget>
+          </item>
+          <item row="10" column="1" colspan="2">
+           <widget class="QLabel" name="onlinesince">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string notr="true">TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item row="13" column="1" colspan="2">
+           <widget class="QLabel" name="labelpath">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
          </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="showStats_PB">
-         <property name="text">
-          <string>show statistics window</string>
-         </property>
         </widget>
        </item>
        <item>
@@ -412,7 +529,7 @@
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>205</height>
+           <height>40</height>
           </size>
          </property>
         </spacer>
@@ -423,9 +540,15 @@
       <attribute name="title">
        <string>Certificate</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
+      <layout class="QGridLayout" name="gridLayout_7">
+       <item row="0" column="0">
         <widget class="QPlainTextEdit" name="certplainTextEdit">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="font">
           <font>
            <family>Courier New</family>
@@ -445,32 +568,38 @@
          </property>
         </widget>
        </item>
-       <item>
+       <item row="1" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
           <widget class="QCheckBox" name="_includeSignatures_CB">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This option includes all signatures of your profile key. Signatures are not mandatory, but only a way to express your trust in some particular profile.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
             <string>Include signatures</string>
            </property>
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+          <widget class="QCheckBox" name="_shortFormat_CB">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The short format only contains the profile fingerprint, and authentication is based on the node ID (ID of the SSL key). If you choose the old (long) format, the certificate includes the full profile public key. There is no fundamental difference between making friends with either method, because the public profile keys will be exchanged and checked w.r.t. the fingerprint after connection.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
+           <property name="text">
+            <string>Short format</string>
            </property>
-          </spacer>
+          </widget>
          </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QCheckBox" name="_includeAllIPs_CB">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;IP history is the list of IP you used accross time. Including this might help your friends reach you. This is optional for privacy reasons.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Include IP history</string>
+           </property>
+          </widget>
+         </item>
          <item>
           <widget class="QPushButton" name="_copyLink_PB">
            <property name="text">
@@ -481,7 +610,7 @@
          <item>
           <widget class="QPushButton" name="saveButton">
            <property name="toolTip">
-            <string>Save Key into a file</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Saves your profile key pair into a file. This allows you to create a new node for the same profile, by importing this key pair on a different computer. Friends who already accept connections from you will automatically accept connections from that new node after you add them yourself. Your key is exported encrypted and you will need your login password to create a new profile.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
             <string>Save certificate to file</string>
@@ -489,14 +618,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="createNewNode_PB">
-           <property name="text">
-            <string>Create new node...</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_3">
+          <spacer name="horizontalSpacer_2">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>

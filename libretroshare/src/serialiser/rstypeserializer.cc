@@ -1,155 +1,288 @@
-/*
- * libretroshare/src/serialiser: rstypeserializer.cc
- *
- * RetroShare Serialiser.
- *
- * Copyright 2017 by Cyril Soler
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "csoler@users.sourceforge.net".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/serialiser: rstypeserializer.cc                           *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2017       Cyril Soler <csoler@users.sourceforge.net>         *
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2020       Asociación Civil Altermundi <info@altermundi.net>  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "serialiser/rsserializer.h"
 #include "serialiser/rstypeserializer.h"
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvkeys.h"
-
-#include "rsitems/rsitem.h"
-
+#include "serialiser/rsserializable.h"
+#include "util/rsbase64.h"
 #include "util/rsprint.h"
+#include "util/rstime.h"
 
 #include <iomanip>
-#include <typeinfo>
-#include <time.h>
+#include <string>
+#include <typeinfo> // for typeid
+#include <rapidjson/prettywriter.h>
 
+#ifdef RSSERIAL_DEBUG
+#	define SAFE_GET_JSON_V() \
+	const char* mName = memberName.c_str(); \
+	bool ret = jDoc.HasMember(mName); \
+	if(!ret) \
+    { \
+	    std::cerr << __PRETTY_FUNCTION__ << " \"" << memberName \
+	              << "\" not found in JSON:" << std::endl \
+	              << jDoc << std::endl << std::endl; \
+	    return false; \
+	} \
+	rapidjson::Value& v = jDoc[mName]
+#else // ifdef RSSERIAL_DEBUG
+#	define SAFE_GET_JSON_V() \
+	const char* mName = memberName.c_str(); \
+	bool ret = jDoc.HasMember(mName); \
+	if(!ret) return false; \
+	rapidjson::Value& v = jDoc[mName]
+#endif // ifdef RSSERIAL_DEBUG
 
-//static const uint32_t MAX_SERIALIZED_ARRAY_SIZE = 500 ;
-static const uint32_t MAX_SERIALIZED_CHUNK_SIZE = 10*1024*1024 ; // 10 MB.
+//============================================================================//
+//                             std::string                                    //
+//============================================================================//
 
-//=================================================================================================//
-//                                            Integer types                                        //
-//=================================================================================================//
+template<>  /*static*/
+bool RsTypeSerializer::to_JSON( const std::string& membername,
+                                const std::string& member, RsJson& jDoc )
+{
+	rapidjson::Document::AllocatorType& allocator = jDoc.GetAllocator();
 
-template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const bool& member)
-{
-	return setRawUInt8(data,size,&offset,member);
-}
-template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const uint8_t& member)
-{ 
-	return setRawUInt8(data,size,&offset,member);
-}
-template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const uint16_t& member)
-{
-	return setRawUInt16(data,size,&offset,member);
-}
-template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const uint32_t& member)
-{ 
-	return setRawUInt32(data,size,&offset,member);
-}
-template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const uint64_t& member) 
-{ 
-	return setRawUInt64(data,size,&offset,member);
-}
-template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const time_t& member)
-{
-	return setRawTimeT(data,size,&offset,member);
-}
+	rapidjson::Value key;
+	key.SetString( membername.c_str(),
+	               static_cast<rapidjson::SizeType>(membername.length()),
+	               allocator );
 
-template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, bool& member)
-{
-    uint8_t m ;
-	bool ok = getRawUInt8(data,size,&offset,&m);
-    member = m ;
-    return ok;
-}
-template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, uint8_t& member)
-{ 
-	return getRawUInt8(data,size,&offset,&member);
-}
-template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, uint16_t& member)
-{
-	return getRawUInt16(data,size,&offset,&member);
-}
-template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, uint32_t& member)
-{ 
-	return getRawUInt32(data,size,&offset,&member);
-}
-template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, uint64_t& member) 
-{ 
-	return getRawUInt64(data,size,&offset,&member);
-}
-template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, time_t& member)
-{
-	return getRawTimeT(data,size,&offset,member);
-}
+	rapidjson::Value value;
+	value.SetString( member.c_str(),
+	                 static_cast<rapidjson::SizeType>(member.length()),
+	                 allocator );
 
-template<> uint32_t RsTypeSerializer::serial_size(const bool& /* member*/)
-{
-	return 1;
-}
-template<> uint32_t RsTypeSerializer::serial_size(const uint8_t& /* member*/)
-{ 
-	return 1;
-}
-template<> uint32_t RsTypeSerializer::serial_size(const uint16_t& /* member*/)
-{
-	return 2;
-}
-template<> uint32_t RsTypeSerializer::serial_size(const uint32_t& /* member*/)
-{ 
-	return 4;
-}
-template<> uint32_t RsTypeSerializer::serial_size(const uint64_t& /* member*/)
-{ 
-	return 8;
-}
-template<> uint32_t RsTypeSerializer::serial_size(const time_t& /* member*/)
-{
-	return 8;
-}
+	jDoc.AddMember(key, value, allocator);
 
-template<> void RsTypeSerializer::print_data(const std::string& n, const bool & V)
-{
-    std::cerr << "  [bool       ] " << n << ": " << V << std::endl;
+	return true;
 }
-template<> void RsTypeSerializer::print_data(const std::string& n, const uint8_t & V)
+template<> /*static*/
+bool RsTypeSerializer::from_JSON( const std::string& memberName,
+                                  std::string& member, RsJson& jDoc )
 {
-    std::cerr << "  [uint8_t    ] " << n << ": " << V << std::endl;
-}
-template<> void RsTypeSerializer::print_data(const std::string& n, const uint16_t& V)
-{
-    std::cerr << "  [uint16_t   ] " << n << ": " << V << std::endl;
-}
-template<> void RsTypeSerializer::print_data(const std::string& n, const uint32_t& V)
-{
-    std::cerr << "  [uint32_t   ] " << n << ": " << V << std::endl;
-}
-template<> void RsTypeSerializer::print_data(const std::string& n, const uint64_t& V)
-{
-    std::cerr << "  [uint64_t   ] " << n << ": " << V << std::endl;
-}
-template<> void RsTypeSerializer::print_data(const std::string& n, const time_t& V)
-{
-    std::cerr << "  [time_t     ] " << n << ": " << V << " (" << time(NULL)-V << " secs ago)" << std::endl;
+	SAFE_GET_JSON_V();
+	ret = ret && v.IsString();
+	if(ret) member = v.GetString();
+	return ret;
 }
 
 
-//=================================================================================================//
-//                                            FLoats                                               //
-//=================================================================================================//
+//============================================================================//
+//                            Integral types                                  //
+//============================================================================//
+
+#define SIMPLE_TO_JSON_DEF(T) \
+template<> bool RsTypeSerializer::to_JSON( const std::string& memberName, \
+	                                       const T& member, RsJson& jDoc ) \
+{ \
+	rapidjson::Document::AllocatorType& allocator = jDoc.GetAllocator(); \
+	\
+	rapidjson::Value key; \
+	key.SetString( memberName.c_str(), \
+	               static_cast<rapidjson::SizeType>(memberName.length()), \
+	               allocator ); \
+ \
+	rapidjson::Value value(member); \
+ \
+	jDoc.AddMember(key, value, allocator); \
+ \
+	return true; \
+}
+
+SIMPLE_TO_JSON_DEF(bool)
+SIMPLE_TO_JSON_DEF(int32_t)
+
+SIMPLE_TO_JSON_DEF(uint8_t)
+SIMPLE_TO_JSON_DEF(uint16_t)
+SIMPLE_TO_JSON_DEF(uint32_t)
+
+/** Be very careful in changing this constant as it would break 64 bit integers
+ * members JSON string representation retrocompatibility */
+static constexpr char strReprKey[] = "xstr64";
+
+/** Be very careful in changing this constant as it would break 64 bit integers
+ * members JSON string representation retrocompatibility */
+static constexpr char intReprKey[] = "xint64";
+
+/** While JSON doesn't have problems representing 64 bits integers JavaScript,
+ * Dart and other languages represents numbers in a double-like format thus they
+ * are not capable to handle safely integers outside the range
+ * [-(2^53 - 1), 2^53 - 1].
+ * To overcome this limitation we represent 64 bit integers as an object with
+ * two keys, one as integer and one as string representation.
+ * In our case we need to wrap those into an object instead of just adding a key
+ * with a suffix so support well also containers like std::map or std::vector.
+ * More discussion on the topic at @see https://stackoverflow.com/a/34989371
+ */
+#define SIXTYFOUR_INTEGERS_TO_JSON_DEF(T) \
+template<> bool RsTypeSerializer::to_JSON( const std::string& memberName, \
+	                                       const T& member, RsJson& jDoc ) \
+{ \
+	using namespace rapidjson; \
+	Document::AllocatorType& allocator = jDoc.GetAllocator(); \
+ \
+	Document wrapper(rapidjson::kObjectType, &allocator); \
+ \
+	Value intKey; \
+	intKey.SetString(intReprKey, allocator ); \
+	Value intValue(member); \
+	wrapper.AddMember(intKey, intValue, allocator); \
+ \
+	bool ok = to_JSON(strReprKey, std::to_string(member), wrapper); \
+ \
+	Value key; \
+	key.SetString( memberName.c_str(), \
+	               static_cast<rapidjson::SizeType>(memberName.length()), \
+	               allocator ); \
+	jDoc.AddMember(key, wrapper, allocator); \
+ \
+	return ok; \
+}
+
+SIXTYFOUR_INTEGERS_TO_JSON_DEF(int64_t);
+SIXTYFOUR_INTEGERS_TO_JSON_DEF(uint64_t);
+
+template<> /*static*/
+bool RsTypeSerializer::from_JSON( const std::string& memberName, bool& member,
+                                  RsJson& jDoc )
+{
+	SAFE_GET_JSON_V();
+	ret = ret && v.IsBool();
+	if(ret) member = v.GetBool();
+	return ret;
+}
+
+template<> /*static*/
+bool RsTypeSerializer::from_JSON( const std::string& memberName,
+                                  int32_t& member, RsJson& jDoc )
+{
+	SAFE_GET_JSON_V();
+	ret = ret && v.IsInt();
+	if(ret) member = v.GetInt();
+	return ret;
+}
+
+template<> /*static*/
+bool RsTypeSerializer::from_JSON( const std::string& memberName,
+                                  uint8_t& member, RsJson& jDoc )
+{
+	SAFE_GET_JSON_V();
+	ret = ret && v.IsUint();
+	if(ret) member = static_cast<uint8_t>(v.GetUint());
+	return ret;
+}
+
+template<> /*static*/
+bool RsTypeSerializer::from_JSON( const std::string& memberName,
+                                  uint16_t& member, RsJson& jDoc )
+{
+	SAFE_GET_JSON_V();
+	ret = ret && v.IsUint();
+	if(ret) member = static_cast<uint16_t>(v.GetUint());
+	return ret;
+}
+
+template<> /*static*/
+bool RsTypeSerializer::from_JSON( const std::string& memberName,
+                                  uint32_t& member, RsJson& jDoc )
+{
+	SAFE_GET_JSON_V();
+	ret = ret && v.IsUint();
+	if(ret) member = v.GetUint();
+	return ret;
+}
+
+/** inverse of @see SIXTYFOUR_INTEGERS_TO_JSON_DEF */
+#define SIXTYFOUR_INTEGERS_FROM_JSON_DEF(T, PRED, GET, CONV) \
+template<> bool RsTypeSerializer::from_JSON( \
+	    const std::string& memberName, T& member, RsJson& jDoc ) \
+{ \
+	using namespace rapidjson; \
+ \
+	SAFE_GET_JSON_V(); \
+ \
+	/* For retro-compatibility take it directly if it is passed as integer */ \
+	if(v.PRED()) \
+    { \
+	    member = v.GET(); \
+	    return true; \
+	} \
+ \
+	ret = ret && v.IsObject(); \
+ \
+	if(!ret) \
+    { \
+	    RS_DBG3(memberName, " not found"); \
+	    return false; \
+	} \
+ \
+	if(v.HasMember(intReprKey)) \
+    { \
+	    Value& iVal = v[intReprKey]; \
+	    if(iVal.PRED()) \
+        { \
+	        member = iVal.GET(); \
+	        return true; \
+	    } \
+	} \
+ \
+	Dbg4() << __PRETTY_FUNCTION__ << " integer representation of " << memberName \
+	       << " not found in JSON then attempt to look for string representation" \
+	       << std::endl; \
+ \
+ \
+	if(v.HasMember(strReprKey)) \
+    { \
+	    Value& sVal = v[strReprKey]; \
+	    if(sVal.IsString()) \
+        { \
+	        try { member = CONV(sVal.GetString()); } \
+	        catch (...) \
+            { \
+	            RsErr() << __PRETTY_FUNCTION__ << " cannot convert " \
+	                    << sVal.GetString() << " to integral type" << std::endl; \
+	            return false; \
+	        } \
+ \
+	        return true; \
+	    } \
+	} \
+ \
+	Dbg3() << __PRETTY_FUNCTION__ << " neither integral representation nor " \
+	       << "string representation found for: " <<  memberName << std::endl; \
+ \
+	return false; \
+}
+
+SIXTYFOUR_INTEGERS_FROM_JSON_DEF(uint64_t, IsUint64, GetUint64, std::stoull)
+SIXTYFOUR_INTEGERS_FROM_JSON_DEF( int64_t,  IsInt64,  GetInt64,  std::stoll)
+
+//============================================================================//
+//                                 Floats                                     //
+//============================================================================//
 
 template<> uint32_t RsTypeSerializer::serial_size(const float&){ return 4; }
 
@@ -166,10 +299,65 @@ template<> void RsTypeSerializer::print_data(const std::string& n, const float& 
     std::cerr << "  [float      ] " << n << ": " << V << std::endl;
 }
 
+SIMPLE_TO_JSON_DEF(float)
 
-//=================================================================================================//
-//                                    TlvString with subtype                                       //
-//=================================================================================================//
+template<> /*static*/
+bool RsTypeSerializer::from_JSON( const std::string& memberName,
+                                  float& member, RsJson& jDoc )
+{
+	SAFE_GET_JSON_V();
+	ret = ret && v.IsFloat();
+	if(ret) member = v.GetFloat();
+	return ret;
+}
+
+template<> /*static*/
+uint32_t RsTypeSerializer::serial_size(const double&)
+{
+	std::cerr << "Binary [de]serialization not implemented yet for double"
+	          << std::endl;
+	print_stacktrace();
+	return 0;
+}
+
+template<>  /*static*/
+bool RsTypeSerializer::serialize(uint8_t[], uint32_t, uint32_t&, const double&)
+{
+	std::cerr << "Binary [de]serialization not implemented yet for double"
+	          << std::endl;
+	print_stacktrace();
+	return false;
+}
+
+template<>  /*static*/
+bool RsTypeSerializer::deserialize(const uint8_t[], uint32_t, uint32_t&, double&)
+{
+	std::cerr << "Binary [de]serialization not implemented yet for double"
+	          << std::endl;
+	print_stacktrace();
+	return false;
+}
+
+template<>  /*static*/
+void RsTypeSerializer::print_data(const std::string& n, const double& V)
+{ std::cerr << "  [double     ] " << n << ": " << V << std::endl; }
+
+SIMPLE_TO_JSON_DEF(double)
+
+template<> /*static*/
+bool RsTypeSerializer::from_JSON( const std::string& memberName,
+                                  double& member, RsJson& jDoc )
+{
+	SAFE_GET_JSON_V();
+	ret = ret && v.IsDouble();
+	if(ret) member = v.GetDouble();
+	return ret;
+}
+
+
+//============================================================================//
+//                      TlvString with subtype                                //
+//============================================================================//
 
 template<> uint32_t RsTypeSerializer::serial_size(uint16_t /* type_subtype */,const std::string& s)
 { 
@@ -188,180 +376,337 @@ template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t siz
 
 template<> void RsTypeSerializer::print_data(const std::string& n, uint16_t type_substring,const std::string& V)
 {
-    std::cerr << "  [TlvString  ] " << n << ": type=" << std::hex <<std::setw(4)<<std::setfill('0') <<  type_substring << std::dec << " s=\"" << V<< "\"" << std::endl;
+	std::cerr << "  [TlvString  ] " << n << ": type=" << std::hex <<std::setw(4)<<std::setfill('0') <<  type_substring << std::dec << " s=\"" << V<< "\"" << std::endl;
 }
 
-//=================================================================================================//
-//                                       TlvInt with subtype                                       //
-//=================================================================================================//
-
-template<> uint32_t RsTypeSerializer::serial_size(uint16_t /* type_subtype */,const uint32_t& /*s*/)
+template<> /*static*/
+bool RsTypeSerializer::to_JSON( const std::string& memberName,
+                                uint16_t /*sub_type*/,
+                                const std::string& member, RsJson& jDoc )
 {
-	return GetTlvUInt32Size() ;
+	return to_JSON<std::string>(memberName, member, jDoc);
 }
 
-template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset,uint16_t sub_type,const uint32_t& s)
+template<> /*static*/
+bool RsTypeSerializer::from_JSON( const std::string& memberName,
+                                  uint16_t /*sub_type*/,
+                                  std::string& member, RsJson& jDoc )
 {
-	return SetTlvUInt32(data,size,&offset,sub_type,s) ;
-}
-
-template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size,uint32_t& offset,uint16_t sub_type,uint32_t& s)
-{
-	return GetTlvUInt32((void*)data,size,&offset,sub_type,&s) ;
-}
-
-template<> void RsTypeSerializer::print_data(const std::string& n, uint16_t sub_type,const uint32_t& V)
-{
-    std::cerr << "  [TlvUInt32  ] " << n << ": type=" << std::hex <<std::setw(4)<<std::setfill('0') <<  sub_type << std::dec << " s=\"" << V<< "\"" << std::endl;
-}
-
-
-//=================================================================================================//
-//                                            std::string                                          //
-//=================================================================================================//
-
-template<> void RsTypeSerializer::print_data(const std::string& n, const std::string& V)
-{
-    std::cerr << "  [std::string] " << n << ": " << V << std::endl;
-}
-
-//=================================================================================================//
-//                                            Binary blocks                                        //
-//=================================================================================================//
-
-template<> uint32_t RsTypeSerializer::serial_size(const RsTypeSerializer::TlvMemBlock_proxy& r) { return 4 + r.second ; }
-
-template<> bool RsTypeSerializer::deserialize(const uint8_t data[],uint32_t size,uint32_t& offset,RsTypeSerializer::TlvMemBlock_proxy& r)
-{
-    uint32_t saved_offset = offset ;
-
-    bool ok = deserialize<uint32_t>(data,size,offset,r.second) ;
-
-    if(r.second == 0)
-    {
-        r.first = NULL ;
-
-        if(!ok)
-			offset = saved_offset ;
-
-        return ok ;
-    }
-    if(r.second > MAX_SERIALIZED_CHUNK_SIZE)
-    {
-        std::cerr << "(EE) RsTypeSerializer::deserialize<TlvMemBlock_proxy>(): data chunk has size larger than safety size (" << MAX_SERIALIZED_CHUNK_SIZE << "). Item will be dropped." << std::endl;
-        offset = saved_offset ;
-        return false ;
-    }
-
-    r.first = (uint8_t*)rs_malloc(r.second) ;
-
-    ok = ok && (NULL != r.first);
-
-    memcpy(r.first,&data[offset],r.second) ;
-    offset += r.second ;
-
-    if(!ok)
-        offset = saved_offset ;
-
-    return ok;
-}
-
-template<> bool RsTypeSerializer::serialize(uint8_t data[],uint32_t size,uint32_t& offset,const RsTypeSerializer::TlvMemBlock_proxy& r)
-{
-    uint32_t saved_offset = offset ;
-
-    bool ok = serialize<uint32_t>(data,size,offset,r.second) ;
-
-    memcpy(&data[offset],r.first,r.second) ;
-    offset += r.second ;
-
-    if(!ok)
-        offset = saved_offset ;
-
-    return ok;
-}
-
-template<> void RsTypeSerializer::print_data(const std::string& n, const RsTypeSerializer::TlvMemBlock_proxy& s)
-{
-    std::cerr << "  [Binary data] " << n << ", length=" << s.second << " data=" << RsUtil::BinToHex((uint8_t*)s.first,std::min(50u,s.second)) << ((s.second>50)?"...":"") << std::endl;
-}
-
-//=================================================================================================//
-//                                            TlvItems                                             //
-//=================================================================================================//
-
-template<> uint32_t RsTypeSerializer::serial_size(const RsTlvItem& s)
-{
-	return s.TlvSize() ;
-}
-
-template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset,const RsTlvItem& s)
-{
-	return s.SetTlv(data,size,&offset) ;
-}
-
-template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size,uint32_t& offset,RsTlvItem& s)
-{
-	return s.GetTlv((void*)data,size,&offset) ;
-}
-
-template<> void RsTypeSerializer::print_data(const std::string& n, const RsTlvItem& s)
-{
-    // can we call TlvPrint inside this?
-
-    std::cerr << "  [" << typeid(s).name() << "] " << n << std::endl;
+	return from_JSON<std::string>(memberName, member, jDoc);
 }
 
 //============================================================================//
-//                          RsItem and derivated                              //
+//                          TlvInt with subtype                               //
 //============================================================================//
 
-template<> uint32_t RsTypeSerializer::serial_size(const RsItem& s)
+template<> uint32_t RsTypeSerializer::serial_size( uint16_t /* type_subtype */,
+                                                   const uint32_t& /*s*/ )
 {
-	RsGenericSerializer::SerializeContext ctx(
-	            NULL, 0, RsGenericSerializer::FORMAT_BINARY,
-	            RsGenericSerializer::SERIALIZATION_FLAG_NONE );
-
-	ctx.mOffset = 8;	// header size
-	const_cast<RsItem&>(s).serial_process(RsGenericSerializer::SIZE_ESTIMATE,
-	                                      ctx);
-
-	return ctx.mOffset;
+	return GetTlvUInt32Size();
 }
 
 template<> bool RsTypeSerializer::serialize( uint8_t data[], uint32_t size,
-                                             uint32_t &offset, const RsItem& s )
+                                             uint32_t &offset,uint16_t sub_type,
+                                             const uint32_t& s)
 {
-	RsGenericSerializer::SerializeContext ctx(
-	            data, size, RsGenericSerializer::FORMAT_BINARY,
-	            RsGenericSerializer::SERIALIZATION_FLAG_NONE );
-	ctx.mOffset = offset;
-	const_cast<RsItem&>(s).serial_process(RsGenericSerializer::SERIALIZE,
-	                                      ctx);
-	return true;
+	return SetTlvUInt32(data,size,&offset,sub_type,s);
 }
 
 template<> bool RsTypeSerializer::deserialize( const uint8_t data[],
                                                uint32_t size, uint32_t& offset,
-                                               RsItem& s )
+                                               uint16_t sub_type, uint32_t& s)
 {
-	RsGenericSerializer::SerializeContext ctx(
-	            const_cast<uint8_t*>(data), size,
-	            RsGenericSerializer::FORMAT_BINARY,
-	            RsGenericSerializer::SERIALIZATION_FLAG_NONE );
-	ctx.mOffset = offset;
-	const_cast<RsItem&>(s).serial_process(RsGenericSerializer::DESERIALIZE,
-	                                      ctx);
+	return GetTlvUInt32((void*)data, size, &offset, sub_type, &s);
+}
+
+template<> void RsTypeSerializer::print_data(const std::string& n, uint16_t sub_type,const uint32_t& V)
+{
+	std::cerr << "  [TlvUInt32  ] " << n << ": type=" << std::hex
+	          << std::setw(4) << std::setfill('0') << sub_type << std::dec
+	          << " s=\"" << V << "\"" << std::endl;
+}
+
+template<> /*static*/
+bool RsTypeSerializer::to_JSON( const std::string& memberName,
+                                uint16_t /*sub_type*/,
+                                const uint32_t& member, RsJson& jDoc )
+{
+	return to_JSON<uint32_t>(memberName, member, jDoc);
+}
+
+template<> /*static*/
+bool RsTypeSerializer::from_JSON( const std::string& memberName,
+                                  uint16_t /*sub_type*/,
+                                  uint32_t& member, RsJson& jDoc )
+{
+	return from_JSON<uint32_t>(memberName, member, jDoc);
+}
+
+
+//============================================================================//
+//                              TlvItems                                      //
+//============================================================================//
+
+template<> uint32_t RsTypeSerializer::serial_size(const RsTlvItem& s)
+{
+	return s.TlvSize();
+}
+
+template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size,
+                                            uint32_t &offset,const RsTlvItem& s)
+{
+	return s.SetTlv(data,size,&offset);
+}
+
+template<> bool RsTypeSerializer::deserialize(const uint8_t data[],
+                                              uint32_t size,uint32_t& offset,
+                                              RsTlvItem& s)
+{
+	return s.GetTlv((void*)data,size,&offset) ;
+}
+
+template<> void RsTypeSerializer::print_data( const std::string& n,
+                                              const RsTlvItem& s )
+{
+	std::cerr << "  [" << typeid(s).name() << "] " << n << std::endl;
+}
+
+template<> /*static*/
+bool RsTypeSerializer::to_JSON( const std::string& memberName,
+                                const RsTlvItem& member, RsJson& jDoc )
+{
+	rapidjson::Document::AllocatorType& allocator = jDoc.GetAllocator();
+
+	rapidjson::Value key;
+	key.SetString(memberName.c_str(), memberName.length(), allocator);
+
+	rapidjson::Value value;
+	const char* tName = typeid(member).name();
+	value.SetString(tName, allocator);
+
+	jDoc.AddMember(key, value, allocator);
+
 	return true;
 }
 
-template<> void RsTypeSerializer::print_data( const std::string& /*n*/,
-                                              const RsItem& s )
+template<> /*static*/
+bool RsTypeSerializer::from_JSON( const std::string& /*memberName*/,
+                                  RsTlvItem& member, RsJson& /*jDoc*/)
 {
-	RsGenericSerializer::SerializeContext ctx(
-	            NULL, 0,
-	            RsGenericSerializer::FORMAT_BINARY,
-	            RsGenericSerializer::SERIALIZATION_FLAG_NONE );
-	const_cast<RsItem&>(s).serial_process(RsGenericSerializer::PRINT,
-	                                      ctx);
+	member.TlvClear();
+	return true;
+}
+
+
+//============================================================================//
+//                              Binary blocks                                 //
+//============================================================================//
+
+#if __cplusplus < 201703L
+/* Solve weird undefined reference error with C++ < 17 see:
+ * https://stackoverflow.com/questions/8016780/undefined-reference-to-static-constexpr-char
+ */
+/*static*/ decltype(RsTypeSerializer::RawMemoryWrapper::base64_key) constexpr
+RsTypeSerializer::RawMemoryWrapper::base64_key;
+
+/*static*/ /* without this Android compilation breaks */
+constexpr uint32_t RsTypeSerializer::RawMemoryWrapper::MAX_SERIALIZED_CHUNK_SIZE;
+#endif
+
+/*static*/
+void RsTypeSerializer::RawMemoryWrapper::serial_process(
+                RsGenericSerializer::SerializeJob j,
+                RsGenericSerializer::SerializeContext& ctx )
+{
+	switch(j)
+	{
+	case RsGenericSerializer::SIZE_ESTIMATE:
+		RS_SERIAL_PROCESS(second);
+		ctx.mOffset += second;
+		break;
+	case RsGenericSerializer::SERIALIZE:
+		if(!ctx.mOk) break;
+		if(second > MAX_SERIALIZED_CHUNK_SIZE)
+		{
+			RsErr() << __PRETTY_FUNCTION__
+			        << std::errc::message_size << " "
+			        << second << " > " << MAX_SERIALIZED_CHUNK_SIZE
+			        << std::endl;
+			print_stacktrace();
+			break;
+		}
+		RS_SERIAL_PROCESS(second);
+		if(!ctx.mOk) break;
+		ctx.mOk = ctx.mSize >= ctx.mOffset + second;
+		if(!ctx.mOk)
+		{
+			RsErr() << __PRETTY_FUNCTION__ << std::errc::no_buffer_space
+			        << std::endl;
+			print_stacktrace();
+			break;
+		}
+		memcpy(ctx.mData + ctx.mOffset, first, second);
+		ctx.mOffset += second;
+		break;
+	case RsGenericSerializer::DESERIALIZE:
+		freshMemCheck();
+
+		RS_SERIAL_PROCESS(second);
+		if(!ctx.mOk) break;
+		ctx.mOk = (second <= MAX_SERIALIZED_CHUNK_SIZE);
+		if(!ctx.mOk)
+		{
+			RsErr() << __PRETTY_FUNCTION__
+			        << std::errc::message_size << " "
+			        << second << " > " << MAX_SERIALIZED_CHUNK_SIZE
+			        << std::endl;
+			clear();
+			break;
+		}
+
+		if(!second)
+		{
+			Dbg3() << __PRETTY_FUNCTION__ << " Deserialized empty memory chunk"
+			       << std::endl;
+			clear();
+			break;
+		}
+
+		ctx.mOk = ctx.mSize >= ctx.mOffset + second;
+		if(!ctx.mOk)
+		{
+			RsErr() << __PRETTY_FUNCTION__ << std::errc::no_buffer_space
+			        << std::endl;
+			print_stacktrace();
+
+			clear();
+			break;
+		}
+
+		first = reinterpret_cast<uint8_t*>(malloc(second));
+		memcpy(first, ctx.mData + ctx.mOffset, second);
+		ctx.mOffset += second;
+		break;
+	case RsGenericSerializer::PRINT:  break;
+	case RsGenericSerializer::TO_JSON:
+	{
+		if(!ctx.mOk) break;
+		std::string encodedValue;
+		RsBase64::encode(first, second, encodedValue, true, false);
+		ctx.mOk = ctx.mOk &&
+		        RsTypeSerializer::to_JSON(base64_key, encodedValue, ctx.mJson);
+		break;
+	}
+	case RsGenericSerializer::FROM_JSON:
+	{
+		freshMemCheck();
+
+		const auto failure = [&]() -> void { ctx.mOk = false; clear(); };
+		const bool yielding = !!(
+		            RsSerializationFlags::YIELDING & ctx.mFlags );
+		if(!(ctx.mOk || yielding)) return failure();
+
+		std::string encodedValue;
+		if(!RsTypeSerializer::from_JSON(
+		            base64_key, encodedValue, ctx.mJson )) return failure();
+
+		if( encodedValue.length() >
+		        RsBase64::encodedSize(MAX_SERIALIZED_CHUNK_SIZE, true) )
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " "
+			        << std::errc::message_size << std::endl;
+			print_stacktrace();
+
+			return failure();
+		}
+
+		std::vector<uint8_t> decoded;
+		auto ec = RsBase64::decode(encodedValue, decoded);
+		if(ec)
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " " << ec << std::endl;
+			print_stacktrace();
+
+			return failure();
+		}
+
+		const auto decodedSize = decoded.size();
+
+		if(!decodedSize)
+		{
+			clear();
+			break;
+		}
+
+		first = reinterpret_cast<uint8_t*>(malloc(decodedSize));
+		second = static_cast<uint32_t>(decodedSize);
+
+		memcpy(first, decoded.data(), second);
+		break;
+	}
+	default: RsTypeSerializer::fatalUnknownSerialJob(j);
+	}
+}
+
+void RsTypeSerializer::RawMemoryWrapper::clear()
+{
+	free(first);
+	first = nullptr;
+	second = 0;
+}
+
+bool RsTypeSerializer::RawMemoryWrapper::freshMemCheck()
+{
+	if(first || second)
+	{
+		/* Items are created anew before deserialization so buffer pointer
+		 * must be null and size 0 at this point */
+
+		RsWarn() << __PRETTY_FUNCTION__ << " got uninitialized "
+		         << " or pre-allocated buffer! Buffer pointer: " << first
+		         << " must be null and size: " << second << " must be 0 at "
+		         << "this point. Does your item costructor initialize them "
+		         << "properly?" << std::endl;
+		print_stacktrace();
+		return false;
+	}
+	return true;
+}
+
+//============================================================================//
+//                         std::error_condition                               //
+//============================================================================//
+
+void RsTypeSerializer::ErrConditionWrapper::serial_process(
+        RsGenericSerializer::SerializeJob j,
+        RsGenericSerializer::SerializeContext& ctx )
+{
+	switch(j)
+	{
+	case RsGenericSerializer::SIZE_ESTIMATE: // fallthrough
+	case RsGenericSerializer::DESERIALIZE: // fallthrough
+	case RsGenericSerializer::SERIALIZE: // fallthrough
+	case RsGenericSerializer::FROM_JSON: // [[fallthrough]]
+	case RsGenericSerializer::PRINT:
+		RsFatal() << __PRETTY_FUNCTION__ << " SerializeJob: " << j
+		          << "is not supported on std::error_condition " << std::endl;
+		print_stacktrace();
+		exit(-2);
+	case RsGenericSerializer::TO_JSON:
+	{
+		constexpr RsGenericSerializer::SerializeJob rj =
+		        RsGenericSerializer::TO_JSON;
+
+		int32_t tNum = mec.value();
+		RsTypeSerializer::serial_process(rj, ctx, tNum, "errorNumber");
+
+		std::string tStr = mec.category().name();
+		RsTypeSerializer::serial_process(rj, ctx, tStr, "errorCategory");
+
+		tStr = mec.message();
+		RsTypeSerializer::serial_process(rj, ctx, tStr, "errorMessage");
+		break;
+	}
+	default: RsTypeSerializer::fatalUnknownSerialJob(j);
+	}
 }

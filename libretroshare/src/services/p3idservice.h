@@ -1,72 +1,44 @@
-/*
- * libretroshare/src/services: p3idservice.h
- *
- * Identity interface for RetroShare.
- *
- * Copyright 2012-2012 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/services: p3idservice.h                                   *
+ *                                                                             *
+ * Copyright (C) 2012-2014  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2017-2019  Gioacchino Mazzurco <gio@altermundi.net>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+#pragma once
 
-#ifndef P3_IDENTITY_SERVICE_HEADER
-#define P3_IDENTITY_SERVICE_HEADER
+/// RetroShare GXS identities service
 
-
-#include "retroshare/rsidentity.h"	// External Interfaces.
-#include "gxs/rsgenexchange.h"		// GXS service.
-#include "gxs/rsgixs.h"			// Internal Interfaces.
-
-#include "gxs/gxstokenqueue.h"		
-#include "rsitems/rsgxsiditems.h"
 
 #include <map>
 #include <string>
 
+#include "retroshare/rsidentity.h"	// External Interfaces.
+#include "gxs/rsgenexchange.h"		// GXS service.
+#include "gxs/rsgixs.h"			// Internal Interfaces.
+#include "util/rsdebug.h"
+#include "gxs/gxstokenqueue.h"		
+#include "rsitems/rsgxsiditems.h"
 #include "util/rsmemcache.h"
 #include "util/rstickevent.h"
 #include "util/rsrecogn.h"
-
 #include "pqi/authgpg.h"
-
 #include "rsitems/rsgxsrecognitems.h"
 
 class PgpAuxUtils;
-
-/* 
- * Identity Service
- *
- */
-
-#if 0
-class GxsReputation
-{
-	public:
-	GxsReputation();
-
-	bool updateIdScore(bool pgpLinked, bool pgpKnown);
-	bool update();    // checks ranges and calculates overall score.
-	int mOverallScore;
-	int mIdScore;      // PGP, Known, etc.
-	int mOwnOpinion;
-	int mPeerOpinion;
-};
-
-#endif
 
 class OpinionRequest
 {
@@ -107,7 +79,7 @@ virtual	bool load(const std::string &input);
 virtual	std::string save() const;
 
 	bool validatedSignature;
-	time_t lastCheckTs;
+	rstime_t lastCheckTs;
 	uint32_t checkAttempts;
 	RsPgpId pgpId;
 };
@@ -128,8 +100,8 @@ virtual	std::string save() const;
 	bool tagValid(int i) const;
 
 	uint32_t tagFlags;
-	time_t publishTs;
-	time_t lastCheckTs;
+	rstime_t publishTs;
+	rstime_t lastCheckTs;
 };
 
 
@@ -200,7 +172,7 @@ public:
     
     void updateServiceString(std::string serviceString);
 
-    time_t mPublishTs;
+    rstime_t mPublishTs;
     std::list<RsRecognTag> mRecognTags; // Only partially validated.
 
     RsIdentityDetails details;
@@ -216,12 +188,11 @@ struct SerialisedIdentityStruct
 {
     unsigned char *mMem ;
     uint32_t mSize ;
-    time_t mLastUsageTS;
+    rstime_t mLastUsageTS;
 };
 
-// Not sure exactly what should be inherited here?
-// Chris - please correct as necessary.
-
+// We cache all identities, and provide alternative (instantaneous)
+// functions to extract info, rather than the horrible Token system.
 class p3IdService: public RsGxsIdExchange, public RsIdentity,  public GxsTokenQueue, public RsTickEvent, public p3Config
 {
 public:
@@ -243,6 +214,13 @@ public:
 
 	/* Data Specific Interface */
 
+	/// @see RsIdentity
+	bool getIdentitiesInfo(const std::set<RsGxsId>& ids,
+	        std::vector<RsGxsIdGroup>& idsInfo ) override;
+
+	/// @see RsIdentity
+	bool getIdentitiesSummaries(std::list<RsGroupMetaData>& ids) override;
+
 	// These are exposed via RsIdentity.
 	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &groups);
 	virtual bool getGroupSerializedData(const uint32_t &token, std::map<RsGxsId,std::string>& serialized_groups);
@@ -252,7 +230,7 @@ public:
 	// These are local - and not exposed via RsIdentity.
 	virtual bool createGroup(uint32_t& token, RsGxsIdGroup &group);
 	virtual bool updateGroup(uint32_t& token, RsGxsIdGroup &group);
-	virtual bool deleteGroup(uint32_t& token, RsGxsIdGroup &group);
+	virtual bool deleteGroup(uint32_t& token, RsGxsGroupId& group);
 	//virtual bool createMsg(uint32_t& token, RsGxsIdOpinion &opinion);
 
 	/**************** RsIdentity External Interface.
@@ -267,12 +245,28 @@ public:
 	//virtual bool  getNickname(const RsGxsId &id, std::string &nickname);
 	virtual bool  getIdDetails(const RsGxsId &id, RsIdentityDetails &details);
 
-	// 
+	RS_DEPRECATED_FOR(RsReputations)
 	virtual bool submitOpinion(uint32_t& token, const RsGxsId &id, 
 	                           bool absOpinion, int score);
+
+	/// @see RsIdentity
+	virtual bool createIdentity(
+	        RsGxsId& id,
+	        const std::string& name, const RsGxsImage& avatar = RsGxsImage(),
+	        bool pseudonimous = true, const std::string& pgpPassword = "" ) override;
+
 	virtual bool createIdentity(uint32_t& token, RsIdentityParameters &params);
 
+	/// @see RsIdentity
+	bool updateIdentity(RsGxsIdGroup& identityData) override;
+
+	RS_DEPRECATED
 	virtual bool updateIdentity(uint32_t& token, RsGxsIdGroup &group);
+
+	/// @see RsIdentity
+	bool deleteIdentity(RsGxsId& id) override;
+
+	RS_DEPRECATED
 	virtual bool deleteIdentity(uint32_t& token, RsGxsIdGroup &group);
 
     virtual void setDeleteBannedNodesThreshold(uint32_t days) ;
@@ -283,18 +277,47 @@ public:
 	virtual bool getRecognTagRequest(const RsGxsId &id, const std::string &comment, 
 	                                 uint16_t tag_class, uint16_t tag_type, std::string &tag);
 
-	virtual bool setAsRegularContact(const RsGxsId& id,bool is_a_contact) ;
-	virtual bool isARegularContact(const RsGxsId& id) ;
-	virtual time_t getLastUsageTS(const RsGxsId &id) ;
+	virtual bool setAsRegularContact(const RsGxsId& id,bool is_a_contact) override;
+	virtual bool isARegularContact(const RsGxsId& id) override;
+	virtual void setAutoAddFriendIdsAsContact(bool b) override;
+	virtual bool autoAddFriendIdsAsContact() override;
+
+	virtual uint32_t nbRegularContacts() ;
+	virtual rstime_t getLastUsageTS(const RsGxsId &id) ;
 
 	/**************** RsGixs Implementation ***************/
 
-	virtual bool getOwnIds(std::list<RsGxsId> &ownIds);
+	/// @see RsIdentity
+	bool getOwnSignedIds(std::vector<RsGxsId>& ids) override;
 
-	//virtual bool getPublicKey(const RsGxsId &id, RsTlvSecurityKey &key) ;
-	//virtual void networkRequestPublicKey(const RsGxsId& key_id,const std::list<RsPeerId>& peer_ids) ;
+	/// @see RsIdentity
+	bool getOwnPseudonimousIds(std::vector<RsGxsId>& ids) override;
 
-	virtual bool isOwnId(const RsGxsId& key_id) ;
+	/// @see RsIdentity
+	bool getOwnIds(
+	        std::list<RsGxsId> &ownIds, bool signed_only = false ) override;
+
+	/// @see RsIdentity
+	bool isKnownId(const RsGxsId& id) override;
+
+	/// @see RsIdentity
+	bool isOwnId(const RsGxsId& key_id) override;
+
+	/// @see RsIdentity
+	bool exportIdentityLink(
+	        std::string& link, const RsGxsId& id,
+	        bool includeGxsData = true,
+	        const std::string& baseUrl = DEFAULT_IDENTITY_BASE_URL,
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
+
+	/// @see RsIdentity
+	bool importIdentityLink(
+	        const std::string& link,
+	        RsGxsId& id = RS_DEFAULT_STORAGE_PARAM(RsGxsId),
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
+
 
 	virtual bool signData( const uint8_t* data,
 	                       uint32_t data_size,
@@ -350,10 +373,18 @@ public:
 	                         const RsIdentityUsage &use_info );
 	virtual bool requestPrivateKey(const RsGxsId &id);
 
+	RS_DEPRECATED_FOR(exportIdentityLink)
 	virtual bool serialiseIdentityToMemory(const RsGxsId& id,
 	                                       std::string& radix_string);
+	RS_DEPRECATED_FOR(importIdentityLink)
 	virtual bool deserialiseIdentityFromMemory(const std::string& radix_string,
 	                                           RsGxsId* id = nullptr);
+
+	/// @see RsIdentity
+	bool requestIdentity(
+	            const RsGxsId& id,
+	            const std::vector<RsPeerId>& peers = std::vector<RsPeerId>()
+	        ) override;
 
 	/**************** RsGixsReputation Implementation ****************/
 
@@ -427,6 +458,7 @@ private:
 	bool cache_load_ownids(uint32_t token);
 
 	std::list<RsGxsId> mOwnIds;
+	std::list<RsGxsId> mOwnSignedIds;
 
 	/************************************************************************
  * Test fns for Caching.
@@ -465,7 +497,7 @@ private:
 
 	/* MUTEX PROTECTED DATA (mIdMtx - maybe should use a 2nd?) */
 
-	std::map<RsPgpId, PGPFingerprintType> mPgpFingerprintMap;
+	std::map<RsPgpId, RsPgpFingerprint> mPgpFingerprintMap;
 	std::list<RsGxsIdGroup> mGroupsToProcess;
 
 	/************************************************************************
@@ -529,7 +561,7 @@ private:
 	void slowIndicateConfigChanged() ;
 
 	virtual void timeStampKey(const RsGxsId& id, const RsIdentityUsage& reason) ;
-	time_t locked_getLastUsageTS(const RsGxsId& gxs_id);
+	rstime_t locked_getLastUsageTS(const RsGxsId& gxs_id);
 
 	std::string genRandomId(int len = 20);
 
@@ -572,8 +604,8 @@ private:
     {
         keyTSInfo() : TS(0) {}
 
-        time_t TS ;
-        std::map<RsIdentityUsage,time_t> usage_map ;
+        rstime_t TS ;
+        std::map<RsIdentityUsage,rstime_t> usage_map ;
     };
 	friend class IdCacheEntryCleaner;
 
@@ -595,14 +627,14 @@ private:
 
 	PgpAuxUtils *mPgpUtils;
 
-	time_t mLastKeyCleaningTime ;
-	time_t mLastConfigUpdate ;
+	rstime_t mLastKeyCleaningTime ;
+	rstime_t mLastConfigUpdate ;
 
-	bool mOwnIdsLoaded ;
-    uint32_t mMaxKeepKeysBanned ;
+	bool mOwnIdsLoaded;
+	bool ownIdsAreLoaded() { RS_STACK_MUTEX(mIdMtx); return mOwnIdsLoaded; }
+
+	bool mAutoAddFriendsIdentitiesAsContacts;
+	uint32_t mMaxKeepKeysBanned;
+
+	RS_SET_CONTEXT_DEBUG_LEVEL(2)
 };
-
-#endif // P3_IDENTITY_SERVICE_HEADER
-
-
-

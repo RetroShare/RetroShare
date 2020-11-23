@@ -1,3 +1,23 @@
+/*******************************************************************************
+ * unittests/libretroshare/services/gxs/GxsPeerNode.cc                         *
+ *                                                                             *
+ * Copyright 2014      by Robert Fernie    <retroshare.project@gmail.com>      *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ ******************************************************************************/
+
 
 // from libretroshare
 //#include "serialiser/rsstatusitems.h"
@@ -242,7 +262,7 @@ bool GxsPeerNode::createIdentity(const std::string &name,
 		return false;
 	}
 
-	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token) != RsTokenService::COMPLETE)
 	{
 		tick();
 		sleep(1);
@@ -316,7 +336,7 @@ bool GxsPeerNode::createCircle(const std::string &name,
 	uint32_t token;
 	mGxsCircles->createGroup(token, grp1) ;
 
-	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token) != RsTokenService::COMPLETE)
 	{
 		tick();
 		sleep(1);
@@ -371,7 +391,7 @@ bool GxsPeerNode::createGroup(const std::string &name,
 		return false;
 	}
 
-	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token) != RsTokenService::COMPLETE)
 	{
 		tick();
 		sleep(1);
@@ -402,7 +422,7 @@ bool GxsPeerNode::createMsg(const std::string &msgstr,
 		return false;
 	}
 
-	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token) != RsTokenService::COMPLETE)
 	{
 		tick();
 		sleep(1);
@@ -430,7 +450,7 @@ bool GxsPeerNode::subscribeToGroup(const RsGxsGroupId &groupId, bool subscribe)
 		return false;
 	}
 
-	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token) != RsTokenService::COMPLETE)
 	{
 		tick();
 		sleep(1);
@@ -453,7 +473,7 @@ bool GxsPeerNode::getGroups(std::vector<RsTestGroup> &groups)
 
         uint32_t token;
 	tokenService->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts);
-	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token) != RsTokenService::COMPLETE)
 	{
 		tick();
 		sleep(1);
@@ -475,7 +495,7 @@ bool GxsPeerNode::getGroupList(std::list<RsGxsGroupId> &groups)
 
         uint32_t token;
 	tokenService->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_LIST, opts);
-	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token) != RsTokenService::COMPLETE)
 	{
 		tick();
 		sleep(1);
@@ -500,7 +520,7 @@ bool GxsPeerNode::getMsgList(const RsGxsGroupId &id, std::list<RsGxsMessageId> &
 	grpIds.push_back(id);
 
 	tokenService->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_LIST, opts, grpIds);
-	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token) != RsTokenService::COMPLETE)
 	{
 		tick();
 		sleep(1);
@@ -533,7 +553,7 @@ bool GxsPeerNode::getIdentities(std::vector<RsGxsIdGroup> &groups)
 
         uint32_t token;
 	tokenService->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts);
-	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token) != RsTokenService::COMPLETE)
 	{
 		tick();
 		sleep(1);
@@ -553,7 +573,7 @@ bool GxsPeerNode::getIdentitiesList(std::list<RsGxsGroupId> &groups)
 
         uint32_t token;
 	tokenService->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_LIST, opts);
-	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token) != RsTokenService::COMPLETE)
 	{
 		tick();
 		sleep(1);
@@ -575,7 +595,7 @@ bool GxsPeerNode::getCircles(std::vector<RsGxsCircleGroup> &groups)
 
         uint32_t token;
 	tokenService->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts);
-	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token) != RsTokenService::COMPLETE)
 	{
 		tick();
 		sleep(1);
@@ -595,7 +615,7 @@ bool GxsPeerNode::getCirclesList(std::list<RsGxsGroupId> &groups)
 
         uint32_t token;
 	tokenService->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_LIST, opts);
-	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token) != RsTokenService::COMPLETE)
 	{
 		tick();
 		sleep(1);

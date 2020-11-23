@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/serialiser: rsgxscircleitems.h
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2012-2012 by Robert Fernie
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/rsitems: rsgxscircleitems.h                               *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2012 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RS_GXSCIRCLE_ITEMS_H
 #define RS_GXSCIRCLE_ITEMS_H
 
@@ -68,6 +64,7 @@ public:
 	RsTlvGxsCircleIdSet subCircleSet;
 };
 
+#ifdef TO_REMOVE
 class RsGxsCircleMsgItem : public RsGxsMsgItem
 {
 public:
@@ -80,6 +77,7 @@ public:
 
 	RsGxsCircleMsg mMsg;
 };
+#endif
 
 class RsGxsCircleSubscriptionRequestItem: public RsGxsMsgItem
 {
@@ -90,17 +88,11 @@ public:
     
     void clear();
     
-    enum {
-        SUBSCRIPTION_REQUEST_UNKNOWN     = 0x00, 
-        SUBSCRIPTION_REQUEST_SUBSCRIBE   = 0x01,
-        SUBSCRIPTION_REQUEST_UNSUBSCRIBE = 0x02
-    };
-    
 	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
     uint32_t           time_stamp ;
     uint32_t           time_out ;
-    uint8_t          subscription_type ;
+    RsGxsCircleSubscriptionType subscription_type ;
 };
 
 class RsGxsCircleSerialiser : public RsServiceSerializer

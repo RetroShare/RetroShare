@@ -1,25 +1,25 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (c) 2010, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/common/RSItemDelegate.cpp                                               *
+ *                                                                             *
+ * Copyright (C) 2010 RetroShare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "RSItemDelegate.h"
+#include "util/rsdebug.h"
 
 RSItemDelegate::RSItemDelegate(QObject *parent) : QItemDelegate(parent)
 {
@@ -59,6 +59,51 @@ void RSItemDelegate::removeFocusRect(int column)
 }
 
 void RSItemDelegate::setSpacing(const QSize &spacing)
+{
+    m_spacing = spacing;
+}
+
+
+/** RSStyledItemDelegate **/
+
+RSStyledItemDelegate::RSStyledItemDelegate(QObject *parent) : QStyledItemDelegate(parent)
+{
+}
+
+void RSStyledItemDelegate::paint (QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+	QStyleOptionViewItem ownOption (option);
+
+	if (m_noFocusRect.indexOf(index.column()) >= 0) {
+		ownOption.state &= ~QStyle::State_HasFocus; // don't show text and focus rectangle
+	}
+
+	QStyledItemDelegate::paint (painter, ownOption, index);
+}
+
+QSize RSStyledItemDelegate::sizeHint (const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+	QStyleOptionViewItem ownOption (option);
+
+	if (m_noFocusRect.indexOf(index.column()) >= 0) {
+		ownOption.state &= ~QStyle::State_HasFocus; // don't show text and focus rectangle
+	}
+
+	QSize size = QStyledItemDelegate::sizeHint(ownOption, index);
+
+	size += m_spacing;
+
+	return size;
+}
+
+void RSStyledItemDelegate::removeFocusRect(int column)
+{
+    if (m_noFocusRect.indexOf(column) == -1) {
+        m_noFocusRect.push_back(column);
+    }
+}
+
+void RSStyledItemDelegate::setSpacing(const QSize &spacing)
 {
     m_spacing = spacing;
 }

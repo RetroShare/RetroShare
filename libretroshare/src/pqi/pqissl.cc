@@ -1,28 +1,25 @@
-/*
- * "$Id: pqissl.cc,v 1.28 2007-03-17 19:32:59 rmf24 Exp $"
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2004-2006 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/pqi: pqissl.cc                                            *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2006 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "pqi/pqissl.h"
 #include "pqi/pqinetwork.h"
 #include "pqi/sslfns.h"
@@ -38,7 +35,7 @@
 #include "pqi/pqissllistener.h"
 
 #include "pqi/p3linkmgr.h"
-#include <retroshare/rspeers.h>
+#include "retroshare/rspeers.h"
 #include <retroshare/rsdht.h>
 #include <retroshare/rsbanlist.h>
 
@@ -59,16 +56,17 @@ static struct RsLog::logInfo pqisslzoneInfo = {RsLog::Default, "pqisslzone"};
 #define PQISSL_PASSIVE  0x00
 #define PQISSL_ACTIVE   0x01
 
-#define PQISSL_DEBUG 		1
-#define PQISSL_LOG_DEBUG 	1
-
 const int PQISSL_LOCAL_FLAG = 0x01;
 const int PQISSL_REMOTE_FLAG = 0x02;
 const int PQISSL_UDP_FLAG = 0x02;
 ***********/
 
+//#define PQISSL_DEBUG 		1
+//#define PQISSL_LOG_DEBUG 	1
+//#define PQISSL_LOG_DEBUG2 	1
+
 static const int PQISSL_MAX_READ_ZERO_COUNT = 20;
-static const time_t PQISSL_MAX_READ_ZERO_TIME = 15; // 15 seconds of no data => reset. (atm HeartBeat pkt sent 5 secs)
+static const rstime_t PQISSL_MAX_READ_ZERO_TIME = 15; // 15 seconds of no data => reset. (atm HeartBeat pkt sent 5 secs)
 
 static const int PQISSL_SSL_CONNECT_TIMEOUT = 30;
 
@@ -96,44 +94,14 @@ static const int PQISSL_SSL_CONNECT_TIMEOUT = 30;
  *
  */
 
-pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm)
-	:NetBinInterface(parent, parent->PeerId()), 
-	mLinkMgr(lm), pqil(l), 
-	mSslMtx("pqissl"),
-	active(false), certvalid(false), waiting(WAITING_NOT), 
-	sslmode(PQISSL_ACTIVE), ssl_connection(NULL), sockfd(-1), 
-	readpkt(NULL), pktlen(0), total_len(0),
-	attempt_ts(0),
-	n_read_zero(0), mReadZeroTS(0), ssl_connect_timeout(0),
-	mConnectDelay(0), mConnectTS(0),
-	mConnectTimeout(0), mTimeoutTS(0)
-{
-	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
-
-	/* set address to zero */
-        sockaddr_storage_clear(remote_addr);
-
-#ifdef PQISSL_LOG_DEBUG 
-    rslog(RSL_DEBUG_BASIC, pqisslzone, "pqissl for PeerId: " + PeerId());
-#endif
-
-#if 0
-	if (!(AuthSSL::getAuthSSL()->isAuthenticated(PeerId())))
-	{
-  	  rslog(RSL_ALERT, pqisslzone, 
-	    "pqissl::Warning Certificate Not Approved!");
-
-  	  rslog(RSL_ALERT, pqisslzone, 
-	    "\t pqissl will not initialise....");
-
-	}
-#else
-  	  rslog(RSL_DEBUG_BASIC, pqisslzone, 
-	    "pqissl::Warning SSL Certificate Approval Not CHECKED??");
-#endif
-
-	return;
-}
+pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm) :
+    NetBinInterface(parent, parent->PeerId()),
+    mLinkMgr(lm), pqil(l), mSslMtx("pqissl"), active(false), certvalid(false),
+    waiting(WAITING_NOT), sslmode(PQISSL_ACTIVE), ssl_connection(NULL),
+    sockfd(-1), readpkt(NULL), pktlen(0), total_len(0), attempt_ts(0),
+    n_read_zero(0), mReadZeroTS(0), ssl_connect_timeout(0), mConnectDelay(0),
+    mConnectTS(0), mConnectTimeout(0), mTimeoutTS(0)
+{ sockaddr_storage_clear(remote_addr); }
 
 	pqissl::~pqissl()
 { 
@@ -151,11 +119,9 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm)
 
 int	pqissl::connect(const struct sockaddr_storage &raddr)
 {
-	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+	RS_STACK_MUTEX(mSslMtx);
 
-	// reset failures
 	remote_addr = raddr;
-
 	return ConnectAttempt();
 }
 
@@ -203,12 +169,11 @@ int 	pqissl::close()
 // put back on the listening queue.
 int 	pqissl::reset()
 {
-	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
-
+	RS_STACK_MUTEX(mSslMtx);
 	return reset_locked();
 }
 
-int 	pqissl::reset_locked()
+int pqissl::reset_locked()
 {
 	std::string outLog;
 	bool neededReset = false;
@@ -269,7 +234,9 @@ int 	pqissl::reset_locked()
 #endif
 	}
 
+#ifdef PQISSL_LOG_DEBUG2
 	rslog(RSL_ALERT, pqisslzone, outLog);
+#endif
 
 	// notify people of problem!
 	// but only if we really shut something down.
@@ -337,25 +304,15 @@ void pqissl::getCryptoParams(RsPeerCryptoParams& params)
 	if(active)
 	{
 		params.connexion_state = 1 ;
-		params.cipher_name = std::string( SSL_get_cipher(ssl_connection));
-
-		int alg ;
-		int al2 = SSL_get_cipher_bits(ssl_connection,&alg);
-
-		params.cipher_bits_1 = alg ;
-		params.cipher_bits_2 = al2 ;
 
 		char *desc = SSL_CIPHER_description(SSL_get_current_cipher(ssl_connection), NULL, 0);
-		params.cipher_version = std::string(desc).find("TLSv1.2") != std::string::npos ? std::string("TLSv1.2") : std::string("TLSv1");
+		params.cipher_name = std::string(desc);
 		OPENSSL_free(desc);
 	}
 	else
 	{
 		params.connexion_state = 0 ;
 		params.cipher_name.clear() ;
-		params.cipher_bits_1 = 0 ;
-		params.cipher_bits_2 = 0 ;
-		params.cipher_version.clear() ;
 	}
 }
 
@@ -387,7 +344,7 @@ int 	pqissl::status()
 
 		out += " active: \n";
 		// print out connection.
-		out += "Connected TO : " + PeerId() + "\n";
+		out += "Connected TO : " + PeerId().toStdString() + "\n";
 		// print out cipher.
 		rs_sprintf_append(out, "\t\tSSL Cipher:%s", SSL_get_cipher(ssl_connection));
 		rs_sprintf_append(out, " (%d:%d)", SSL_get_cipher_bits(ssl_connection, &alg), alg);
@@ -415,9 +372,11 @@ int 	pqissl::status()
 	// tick......
 int	pqissl::tick()
 {
-	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+	// there is no reason to lock pqissl mutex now 
+	// we will lock the mutex later if we actually need to call to ConnectAttempt
+	// RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
 
-	//pqistreamer::tick();
+	// pqistreamer::tick();
 
 	// continue existing connection attempt.
 	if (!active)
@@ -428,7 +387,8 @@ int	pqissl::tick()
 #ifdef PQISSL_LOG_DEBUG 
 			rslog(RSL_DEBUG_BASIC, pqisslzone, "pqissl::tick() Continuing Connection Attempt!");
 #endif
-
+			// now lock pqissl mutex, that will take up to 10 ms
+			RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
 			ConnectAttempt();
 			return 1;
 		}
@@ -583,7 +543,7 @@ int 	pqissl::Delay_Connection()
 #ifdef PQISSL_LOG_DEBUG 
 		{ 
 			std::string out;
-			rs_sprintf(out, "pqissl::Delay_Connection()  Delaying Connection to %s for %lu seconds", PeerId().c_str(), mConnectDelay);
+			rs_sprintf(out, "pqissl::Delay_Connection()  Delaying Connection to %s for %lu seconds", PeerId().toStdString(), mConnectDelay);
 			rslog(RSL_DEBUG_BASIC, pqisslzone, out);
 		}
 #endif
@@ -596,7 +556,7 @@ int 	pqissl::Delay_Connection()
 #ifdef PQISSL_LOG_DEBUG 
 		{ 
 			std::string out;
-			rs_sprintf(out, "pqissl::Delay_Connection() Connection to %s starting in %ld seconds", PeerId().c_str(), mConnectTS - time(NULL));
+			rs_sprintf(out, "pqissl::Delay_Connection() Connection to %s starting in %ld seconds", PeerId().toStdString(), mConnectTS - time(NULL));
 			rslog(RSL_DEBUG_BASIC, pqisslzone, out);
 		}
 #endif
@@ -608,35 +568,30 @@ int 	pqissl::Delay_Connection()
 	}
 
   	rslog(RSL_WARNING, pqisslzone, 
-		 "pqissl::Initiate_Connection() Already Attempt in Progress!");
+	     "pqissl::Delay_Connection() Already Attempt in Progress!");
 	return -1;
 }
 
 
-int 	pqissl::Initiate_Connection()
+int pqissl::Initiate_Connection()
 {
-	int err;
-	struct sockaddr_storage addr = remote_addr;
-
-#ifdef PQISSL_LOG_DEBUG 
-  	rslog(RSL_DEBUG_BASIC, pqisslzone, 
-	  "pqissl::Initiate_Connection() Attempting Outgoing Connection....");
+#ifdef PQISSL_DEBUG
+	std::cerr << __PRETTY_FUNCTION__ << " "
+	          << sockaddr_storage_tostring(remote_addr) << std::endl;
 #endif
 
-	if (waiting != WAITING_DELAY)
+	int err;
+	sockaddr_storage addr; sockaddr_storage_copy(remote_addr, addr);
+
+	if(waiting != WAITING_DELAY)
 	{
-  		rslog(RSL_WARNING, pqisslzone, 
-		 "pqissl::Initiate_Connection() Already Attempt in Progress!");
+		std::cerr << __PRETTY_FUNCTION__ << " Already Attempt in Progress!"
+		          << std::endl;
 		return -1;
 	}
 
-#ifdef PQISSL_LOG_DEBUG 
-  	rslog(RSL_DEBUG_BASIC, pqisslzone, 
-	  "pqissl::Initiate_Connection() Opening Socket");
-#endif
-
 	// open socket connection to addr.
-	int osock = unix_socket(PF_INET, SOCK_STREAM, 0);
+	int osock = unix_socket(PF_INET6, SOCK_STREAM, 0);
 
 #ifdef PQISSL_LOG_DEBUG 
 	{
@@ -662,7 +617,7 @@ int 	pqissl::Initiate_Connection()
 	  "pqissl::Initiate_Connection() Making Non-Blocking");
 #endif
 
-        err = unix_fcntl_nonblock(osock);
+	err = unix_fcntl_nonblock(osock);
 	if (err < 0)
 	{
 		std::string out;
@@ -672,13 +627,6 @@ int 	pqissl::Initiate_Connection()
 		waiting = WAITING_FAIL_INTERFACE;
 		net_internal_close(osock);
 		return -1;
-	}
-
-	{ 
-		std::string out;
-		rs_sprintf(out, "pqissl::Initiate_Connection() Connecting To: %s via: ", PeerId().toStdString().c_str());
-		out += sockaddr_storage_tostring(addr);
-		rslog(RSL_WARNING, pqisslzone, out);
 	}
 
 	if (sockaddr_storage_isnull(addr))
@@ -736,66 +684,55 @@ int 	pqissl::Initiate_Connection()
 #endif
 #endif // WINDOWS_SYS
 
+	/* Systems that supports dual stack sockets defines IPV6_V6ONLY and some set
+	 * it to 1 by default. This enable dual stack socket on such systems.
+	 * Systems which don't support dual stack (only Windows older then XP SP3)
+	 * will support IPv6 only and not IPv4 */
+#ifdef IPV6_V6ONLY
+	int no = 0;
+	err = rs_setsockopt( osock, IPPROTO_IPV6, IPV6_V6ONLY,
+	                     reinterpret_cast<uint8_t*>(&no), sizeof(no) );
+#ifdef PQISSL_DEBUG
+	if (err) std::cerr << __PRETTY_FUNCTION__
+	                   << " Error setting IPv6 socket dual stack: "
+	                   << errno << " " << strerror(errno) << std::endl;
+	else std::cerr << __PRETTY_FUNCTION__
+	               << " Setting IPv6 socket dual stack" << std::endl;
+#endif // PQISSL_DEBUG
+#endif // IPV6_V6ONLY
+
 	mTimeoutTS = time(NULL) + mConnectTimeout;
 	//std::cerr << "Setting Connect Timeout " << mConnectTimeout << " Seconds into Future " << std::endl;
 
-	if (0 != (err = unix_connect(osock, (struct sockaddr *) &addr, sizeof(addr))))
+	sockaddr_storage_ipv4_to_ipv6(addr);
+#ifdef PQISSL_DEBUG
+	std::cerr << __PRETTY_FUNCTION__ << " Connecting To: "
+	          << PeerId().toStdString() <<" via: "
+	          << sockaddr_storage_tostring(addr) << std::endl;
+#endif
+
+	if (0 != (err = unix_connect(osock, addr)))
 	{
-		std::string out;
-		rs_sprintf(out, "pqissl::Initiate_Connection() connect returns:%d -> errno: %d error: %s\n", err, errno, socket_errorType(errno).c_str());
-		
-		if (errno == EINPROGRESS)
+		switch (errno)
 		{
-			// set state to waiting.....
+		case EINPROGRESS:
 			waiting = WAITING_SOCK_CONNECT;
 			sockfd = osock;
-
-#ifdef PQISSL_LOG_DEBUG 
-			out += " EINPROGRESS Waiting for Socket Connection";
-			rslog(RSL_DEBUG_BASIC, pqisslzone, out);
-#endif
-  
 			return 0;
-		}
-		else if ((errno == ENETUNREACH) || (errno == ETIMEDOUT))
-		{
-			out += "ENETUNREACHABLE: cert: " + PeerId().toStdString();
-			rslog(RSL_WARNING, pqisslzone, out);
+		default:
+#ifdef PQISSL_DEBUG
+			std::cerr << __PRETTY_FUNCTION__ << " Failure connect "
+			          << sockaddr_storage_tostring(addr)
+			          << " returns: "
+			          << err << " -> errno: " << errno << " "
+			          << socket_errorType(errno) << std::endl;
+#endif
 
-			// Then send unreachable message.
 			net_internal_close(osock);
-			osock=-1;
-			//reset();
-
+			osock = -1;
 			waiting = WAITING_FAIL_INTERFACE;
-
 			return -1;
 		}
-
-		/* IF we get here ---- we Failed for some other reason. 
-                 * Should abandon this interface 
-		 * Known reasons to get here: EINVAL (bad address)
-		 */
-
-		rs_sprintf_append(out, "Error: Connection Failed: %d - %s", errno, socket_errorType(errno).c_str());
-
-		net_internal_close(osock);
-		osock=-1;
-		waiting = WAITING_FAIL_INTERFACE;
-
-		rslog(RSL_WARNING, pqisslzone, out);
-
-		// extra output for the moment.
-		std::cerr << out;
-
-		return -1;
-	}
-	else
-	{
-#ifdef PQISSL_LOG_DEBUG 
-  		rslog(RSL_DEBUG_BASIC, pqisslzone,
-		 "pqissl::Init_Connection() connect returned 0");
-#endif
 	}
 
 	waiting = WAITING_SOCK_CONNECT;
@@ -832,10 +769,14 @@ bool  	pqissl::CheckConnectionTimeout()
 		std::string out;
 		rs_sprintf(out, "pqissl::Basic_Connection_Complete() Connection Timed Out. Peer: %s Period: %lu", PeerId().toStdString().c_str(), mConnectTimeout);
 
+#ifdef PQISSL_LOG_DEBUG2
 		rslog(RSL_WARNING, pqisslzone, out);
+#endif
 		/* as sockfd is valid, this should close it all up */
 		
+#ifdef PQISSL_LOG_DEBUG2
 		rslog(RSL_ALERT, pqisslzone, "pqissl::Basic_Connection_Complete() -> calling reset()");
+#endif
 		reset_locked();
 		return true;
 	}
@@ -974,7 +915,9 @@ int 	pqissl::Basic_Connection_Complete()
 			{
 				std::string out;
 				rs_sprintf(out, "pqissl::Basic_Connection_Complete() TCP Connection Complete: cert: %s on osock: ", PeerId().toStdString().c_str(), sockfd);
+#ifdef PQISSL_LOG_DEBUG2
 				rslog(RSL_WARNING, pqisslzone, out);
+#endif
 			}
 			return 1;
 		}
@@ -999,8 +942,9 @@ int 	pqissl::Basic_Connection_Complete()
 		}
 		else if ((err == EHOSTUNREACH) || (err == EHOSTDOWN))
 		{
+#ifdef PQISSL_DEBUG
 			rslog(RSL_WARNING, pqisslzone, "pqissl::Basic_Connection_Complete() EHOSTUNREACH/EHOSTDOWN: cert: " + PeerId().toStdString());
-
+#endif
 			// Then send unreachable message.
 			net_internal_close(sockfd);
 			sockfd=-1;
@@ -1011,7 +955,9 @@ int 	pqissl::Basic_Connection_Complete()
 		}
 		else if (err == ECONNREFUSED)
 		{
+#ifdef PQISSL_DEBUG
 			rslog(RSL_WARNING, pqisslzone, "pqissl::Basic_Connection_Complete() ECONNREFUSED: cert: " + PeerId().toStdString());
+#endif
 
 			// Then send unreachable message.
 			net_internal_close(sockfd);
@@ -1105,7 +1051,7 @@ int 	pqissl::Initiate_SSL_Connection()
 	return 1;
 }
 
-int 	pqissl::SSL_Connection_Complete()
+int pqissl::SSL_Connection_Complete()
 {
 #ifdef PQISSL_LOG_DEBUG 
   	rslog(RSL_DEBUG_BASIC, pqisslzone, 
@@ -1135,7 +1081,7 @@ int 	pqissl::SSL_Connection_Complete()
 	/* if we are passive - then accept! */
 	int err;
 
-	if (sslmode)
+	if (sslmode == PQISSL_ACTIVE)
 	{
 #ifdef PQISSL_LOG_DEBUG 
         rslog(RSL_DEBUG_BASIC, pqisslzone, "--------> Active Connect! Client side.");
@@ -1153,8 +1099,7 @@ int 	pqissl::SSL_Connection_Complete()
 	if (err != 1)
 	{
 		int serr = SSL_get_error(ssl_connection, err);
-		if ((serr == SSL_ERROR_WANT_READ) 
-				|| (serr == SSL_ERROR_WANT_WRITE))
+		if ((serr == SSL_ERROR_WANT_READ)  || (serr == SSL_ERROR_WANT_WRITE))
 		{
 #ifdef PQISSL_LOG_DEBUG 
   			rslog(RSL_DEBUG_BASIC, pqisslzone, 
@@ -1165,15 +1110,26 @@ int 	pqissl::SSL_Connection_Complete()
 			return 0;
 		}
 
+		if(rsEvents)
+		{
+			X509 *x509 = SSL_get_peer_certificate(ssl_connection);
+
+            if(x509)
+			{
+				auto ev = std::make_shared<RsAuthSslConnectionAutenticationEvent>();
+				ev->mSslId = RsX509Cert::getCertSslId(*x509);
+				ev->mErrorCode = RsAuthSslError::PEER_REFUSED_CONNECTION;
+
+				if(!ev->mSslId.isNull())
+					rsEvents->postEvent(ev);
+			}
+		}
 
 		std::string out;
 		rs_sprintf(out, "pqissl::SSL_Connection_Complete()\nIssues with SSL Connect(%d)!\n", err);
 		printSSLError(ssl_connection, err, serr, ERR_get_error(), out);
 
 		rslog(RSL_WARNING, pqisslzone, out);
-
-		// attempt real error.
-		Extract_Failed_SSL_Certificate();
 
 		rslog(RSL_ALERT, pqisslzone, "pqissl::SSL_Connection_Complete() -> calling reset()");
 		reset_locked();
@@ -1189,199 +1145,163 @@ int 	pqissl::SSL_Connection_Complete()
 	return 1;
 }
 
-int 	pqissl::Extract_Failed_SSL_Certificate()
+int pqissl::Authorise_SSL_Connection()
 {
-	std::cerr << "pqissl::Extract_Failed_SSL_Certificate() FAILED Connection due to Security Issues";
-	std::cerr << std::endl;
+	Dbg3() << __PRETTY_FUNCTION__ << std::endl;
 
-#ifdef PQISSL_LOG_DEBUG 
-  	rslog(RSL_DEBUG_BASIC, pqisslzone, 
-	  "pqissl::Extract_Failed_SSL_Certificate()");
-#endif
+	constexpr int failure = -1;
 
-	// Get the Peer Certificate....
-	X509 *peercert = SSL_get_peer_certificate(ssl_connection);
-
-	if (peercert == NULL)
+	if (time(nullptr) > ssl_connect_timeout)
 	{
-  		rslog(RSL_WARNING, pqisslzone, 
-		  "pqissl::Extract_Failed_SSL_Certificate() Peer Didnt Give Cert");
-
-		std::cerr << "pqissl::Extract_Failed_SSL_Certificate() ERROR Peer Didn't Give Us Certificate";
-		std::cerr << std::endl;
-
-		return -1;
-	}
-
-#ifdef PQISSL_LOG_DEBUG 
-  	rslog(RSL_DEBUG_BASIC, pqisslzone, 
-	  "pqissl::Extract_Failed_SSL_Certificate() Have Peer Cert - Registering");
-#endif
-
-	std::cerr << "pqissl::Extract_Failed_SSL_Certificate() Passing FAILED Cert to AuthSSL for analysis";
-	std::cerr << std::endl;
-
-	// save certificate... (and ip locations)
-	// false for outgoing....
-	// we actually connected to remote_addr, 
-	// 	which could be 
-	//      (pqissl's case) sslcert->serveraddr or sslcert->localaddr.
-
-	RsPeerId sslid ;
-	getX509id(peercert, sslid) ;
-
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
-	RsPgpId gpgid(getX509CNString(peercert->cert_info->issuer));
-	std::string sslcn = getX509CNString(peercert->cert_info->subject);
-#else
-	RsPgpId gpgid(getX509CNString(X509_get_issuer_name(peercert)));
-	std::string sslcn = getX509CNString(X509_get_subject_name(peercert));
-#endif
-
-	AuthSSL::getAuthSSL()->FailedCertificate(peercert, gpgid,sslid,sslcn,remote_addr, false);
-	mLinkMgr->notifyDeniedConnection(gpgid, sslid, sslcn, remote_addr, false);
-
-	return 1;
-}
-
-
-
-
-int 	pqissl::Authorise_SSL_Connection()
-{
-#ifdef PQISSL_LOG_DEBUG 
-  	rslog(RSL_DEBUG_BASIC, pqisslzone, 
-	  "pqissl::Authorise_SSL_Connection()");
-#endif
-
-        if (time(NULL) > ssl_connect_timeout)
-        {
-		rslog(RSL_WARNING, pqisslzone,
-			"pqissl::Authorise_SSL_Connection() Connection Timed Out!");
-	        /* as sockfd is valid, this should close it all up */
-		rslog(RSL_ALERT, pqisslzone, "pqissl::Authorise_Connection_Complete() -> calling reset()");
-	        reset_locked();
+		RsInfo() << __PRETTY_FUNCTION__ << " Connection timed out reset!"
+		         << std::endl;
+		reset_locked();
 	}
 
 	int err;
-	if (0 >= (err = SSL_Connection_Complete()))
-	{
-		return err;
-	}
+	if (0 >= (err = SSL_Connection_Complete())) return err;
 
-#ifdef PQISSL_LOG_DEBUG 
-  	rslog(RSL_DEBUG_BASIC, pqisslzone, 
-	  "pqissl::Authorise_SSL_Connection() SSL_Connection_Complete");
-#endif
+	Dbg3() << __PRETTY_FUNCTION__ << "SSL_Connection_Complete success."
+	       << std::endl;
 
 	// reset switch.
 	waiting = WAITING_NOT;
 
-	X509 *peercert = SSL_get_peer_certificate(ssl_connection);
-
-	if (peercert == NULL)
+#ifdef RS_PQISSL_AUTH_DOUBLE_CHECK
+	X509* peercert = SSL_get_peer_certificate(ssl_connection);
+	if (!peercert)
 	{
-  		rslog(RSL_WARNING, pqisslzone, 
-		  "pqissl::Authorise_SSL_Connection() Peer Didnt Give Cert");
+		RsFatal() << __PRETTY_FUNCTION__ << " failed to retrieve peer "
+		          << "certificate at this point this should never happen!"
+		          << std::endl;
+		print_stacktrace();
+		exit(failure);
+	}
 
-		rslog(RSL_ALERT, pqisslzone, "pqissl::Authorise_Connection_Complete() -> calling reset()");
-		// Failed completely
+	RsPeerId certPeerId = RsX509Cert::getCertSslId(*peercert);
+	if (RsPeerId(certPeerId) != PeerId())
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " the cert Id doesn't match the peer "
+		        << "id we're trying to connect to." << std::endl;
+
+		/* TODO: Considering how difficult is managing to get a connection to a
+		 * friend nowadays on the Internet because of evil NAT everywhere.
+		 * If the cert is from a friend anyway we should find a way to make good
+		 * use of this connection instead of throwing it away... */
+
+		X509_free(peercert);
 		reset_locked();
-		return -1;
+		return failure;
 	}
 
-        RsPeerId certPeerId;
-        getX509id(peercert, certPeerId);
-        if (RsPeerId(certPeerId) != PeerId()) {
-                rslog(RSL_WARNING, pqisslzone,
-                  "pqissl::Authorise_SSL_Connection() the cert Id doesn't match the Peer id we're trying to connect to.");
+	/* At this point the actual connection authentication has already been
+	 * performed in AuthSSL::VerifyX509Callback, any furter authentication check
+	 * like the followings are redundant. */
 
-		rslog(RSL_ALERT, pqisslzone, "pqissl::Authorise_Connection_Complete() -> calling reset()");
-                // Failed completely
-                reset_locked();
-                return -1;
-        }
+	bool isSslOnlyFriend = rsPeers->isSslOnlyFriend(certPeerId);
 
-#ifdef PQISSL_LOG_DEBUG 
-  	rslog(RSL_DEBUG_BASIC, pqisslzone, 
-	  "pqissl::Authorise_SSL_Connection() Have Peer Cert");
-#endif
-
-	// save certificate... (and ip locations)
-	// false for outgoing....
-	// we actually connected to remote_addr, 
-	// 	which could be 
-	//      (pqissl's case) sslcert->serveraddr or sslcert->localaddr.
-
-	AuthSSL::getAuthSSL()->CheckCertificate(PeerId(), peercert);
-	bool certCorrect = true; /* WE know it okay already! */
-
-    uint32_t check_result ;
-    uint32_t checking_flags = RSBANLIST_CHECKING_FLAGS_BLACKLIST;
-    if (rsPeers->servicePermissionFlags(PeerId()) & RS_NODE_PERM_REQUIRE_WL)
-        checking_flags |= RSBANLIST_CHECKING_FLAGS_WHITELIST;
-
-    if(!rsBanList->isAddressAccepted(remote_addr,checking_flags,&check_result))
-    {
-	std::cerr << "(SS) refusing connection attempt from IP address " << sockaddr_storage_iptostring(remote_addr) << ". Reason: " <<
-        ((check_result == RSBANLIST_CHECK_RESULT_NOT_WHITELISTED)?"not whitelisted (peer requires whitelist)":"blacklisted") << std::endl;
-            
-        RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_IP_BLACKLISTED, PeerId().toStdString(), sockaddr_storage_iptostring(remote_addr), "", "", check_result);
-    reset_locked();
-    return 0 ;
-    }
-	// check it's the right one.
-	if (certCorrect)
+	uint32_t authErrCode = 0;
+	if( !isSslOnlyFriend && !AuthSSL::instance().AuthX509WithGPG(peercert,false, authErrCode) )
 	{
-		// then okay...
-		rslog(RSL_WARNING, pqisslzone, "pqissl::Authorise_SSL_Connection() Accepting Conn. Peer: " + PeerId().toStdString());
+		RsFatal() << __PRETTY_FUNCTION__ << " failure verifying peer "
+		          << "certificate signature. This should never happen at this "
+		          << "point!" << std::endl;
+		print_stacktrace();
 
-        //std::cerr << "pqissl::Authorise_SSL_Connection(): accepting connection from " << sockaddr_storage_iptostring(remote_addr) << std::endl;
-		accept_locked(ssl_connection, sockfd, remote_addr);
-		return 1;
+		X509_free(peercert); // not needed but just in case we change to return
+		exit(failure);
 	}
 
-	rslog(RSL_WARNING, pqisslzone, "pqissl::Authorise_SSL_Connection() Something Wrong ... Shutdown. Peer: " + PeerId().toStdString());
+	RsPgpId pgpId = RsX509Cert::getCertIssuer(*peercert);
+	if( !isSslOnlyFriend && pgpId != AuthGPG::getAuthGPG()->getGPGOwnId() &&
+	        !AuthGPG::getAuthGPG()->isGPGAccepted(pgpId) )
+	{
+		RsFatal() << __PRETTY_FUNCTION__ << " pgpId: " << pgpId
+		          << " is not friend. It is very unlikely to happen at this "
+		          << "point! Either the user must have been so fast to deny "
+		          << "friendship just after VerifyX509Callback have returned "
+		          << "success and just before this code being executed, or "
+		          << "something really fishy is happening! Share the full log "
+		          << "with developers." << std::endl;
+		print_stacktrace();
 
-	// else shutdown ssl connection.
-	rslog(RSL_ALERT, pqisslzone, "pqissl::Authorise_Connection_Complete() -> calling reset()");
+		X509_free(peercert); // not needed but just in case we change to return
+		exit(failure);
+	}
+#endif // def RS_PQISSL_AUTH_REDUNDANT_CHECK
 
-	reset_locked();
-	return 0;
+	Dbg2() << __PRETTY_FUNCTION__ << " Accepting connection to peer: "
+	       << PeerId() << " with address: " << remote_addr << std::endl;
+
+	return accept_locked(ssl_connection, sockfd, remote_addr);
 }
 
 
 /* This function is public, and callable from pqilistener - so must be mutex protected */
-int	pqissl::accept(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr) // initiate incoming connection.
+int pqissl::accept( SSL *ssl, int fd,
+                    const sockaddr_storage &foreign_addr)
 {
 #ifdef PQISSL_DEBUG
-	std::cerr << "pqissl::accept()";
-    std::cerr << std::endl;
+	std::cerr << __PRETTY_FUNCTION__ << std::endl;
 #endif
 
-	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
-
+	RS_STACK_MUTEX(mSslMtx);
 	return accept_locked(ssl, fd, foreign_addr);
 }
 
-int	pqissl::accept_locked(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr) // initiate incoming connection.
+int pqissl::accept_locked( SSL *ssl, int fd,
+                           const sockaddr_storage &foreign_addr )
 {
-    uint32_t check_result;
-    uint32_t checking_flags = RSBANLIST_CHECKING_FLAGS_BLACKLIST;
-    if (rsPeers->servicePermissionFlags(PeerId()) & RS_NODE_PERM_REQUIRE_WL)
-        checking_flags |= RSBANLIST_CHECKING_FLAGS_WHITELIST;
+	Dbg3() << __PRETTY_FUNCTION__ << std::endl;
 
-    if(!rsBanList->isAddressAccepted(foreign_addr,checking_flags,&check_result))
-    {
-        std::cerr << "(SS) refusing incoming SSL connection from blacklisted foreign address " << sockaddr_storage_iptostring(foreign_addr)
-              << ". Reason: " << check_result << "." << std::endl;
-        RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_IP_BLACKLISTED, PeerId().toStdString(), sockaddr_storage_iptostring(foreign_addr), "", "", check_result);
-            reset_locked();
-        return -1;
-    }
+	constexpr int failure = -1;
+	constexpr int success = 1;
+
+#ifdef RS_PQISSL_BANLIST_DOUBLE_CHECK
+	/* At this point, as we are actively attempting the connection, we decide
+	 * the address to which to connect to, banned addresses should never get
+	 * here as the filtering for banned addresses happens much before, this
+	 * check is therefore redundant, and if it trigger something really fishy
+	 * must be happening (a bug somewhere else in the code). */
+	uint32_t check_result;
+	uint32_t checking_flags = RSBANLIST_CHECKING_FLAGS_BLACKLIST;
+
+	if (rsPeers->servicePermissionFlags(PeerId()) & RS_NODE_PERM_REQUIRE_WL)
+		checking_flags |= RSBANLIST_CHECKING_FLAGS_WHITELIST;
+
+    if( RsX509Cert::getCertSslId(*SSL_get_peer_certificate(ssl)) != PeerId())
+        std::cerr << "(EE) pqissl::accept_locked(): PeerId() is " << PeerId() << " but certificate ID is " << RsX509Cert::getCertSslId(*SSL_get_peer_certificate(ssl)) << std::endl;
+
+	if(rsBanList && !rsBanList->isAddressAccepted( foreign_addr, checking_flags, check_result ))
+	{
+		RsInfo() << __PRETTY_FUNCTION__
+		        << " Refusing incoming SSL connection from blacklisted "
+		        << "foreign address " << foreign_addr
+		        << ". Reason: " << check_result << ". This should never happen "
+		        << "at this point! Please report full log to developers!"
+		        << std::endl;
+		print_stacktrace();
+
+		if(rsEvents)
+		{
+			X509 *x509 = SSL_get_peer_certificate(ssl);
+			auto ev = std::make_shared<RsAuthSslConnectionAutenticationEvent>();
+			ev->mSslId = RsX509Cert::getCertSslId(*x509);
+			ev->mLocator = RsUrl(foreign_addr);
+			ev->mErrorCode = RsAuthSslError::IP_IS_BLACKLISTED;
+			rsEvents->postEvent(ev);
+		}
+
+		reset_locked();
+		return failure;
+	}
+#endif //def RS_BANLIST_REDUNDANT_CHECK
+
 	if (waiting != WAITING_NOT)
 	{
-		rslog(RSL_WARNING, pqisslzone, "pqissl::accept() Peer: " + PeerId().toStdString() + " - Two connections in progress - Shut 1 down!");
+		RsInfo() << __PRETTY_FUNCTION__ << " Peer: " << PeerId()
+		         << " - Two connections in progress - Shut 1 down!"
+		         << std::endl;
 
 		// outgoing connection in progress.
 		// shut this baby down.
@@ -1392,70 +1312,51 @@ int	pqissl::accept_locked(SSL *ssl, int fd, const struct sockaddr_storage &forei
 		
 		switch(waiting)
 		{
-
 		case WAITING_SOCK_CONNECT:
-
-#ifdef PQISSL_LOG_DEBUG 
-  	  		rslog(RSL_DEBUG_BASIC, pqisslzone, 
-			  "pqissl::accept() STATE = Waiting Sock Connect - close the socket");
+#ifdef PQISSL_DEBUG
+			std::cerr << __PRETTY_FUNCTION__ << " STATE = Waiting Sock Connect "
+			          << "- close the socket" << std::endl;
 #endif
-
 			break;
-
 		case WAITING_SSL_CONNECTION:
-
-#ifdef PQISSL_LOG_DEBUG 
-  	  		rslog(RSL_DEBUG_BASIC, pqisslzone, 
-			  "pqissl::accept() STATE = Waiting SSL Connection - close sockfd + ssl_conn");
+#ifdef PQISSL_DEBUG
+			std::cerr << __PRETTY_FUNCTION__ << " STATE = Waiting SSL "
+			          << "Connection - close sockfd + ssl_conn" << std::endl;
 #endif
-
 			break;
-
 		case WAITING_SSL_AUTHORISE:
-
-#ifdef PQISSL_LOG_DEBUG 
-  	  		rslog(RSL_DEBUG_BASIC, pqisslzone, 
-			  "pqissl::accept() STATE = Waiting SSL Authorise - close sockfd + ssl_conn");
+#ifdef PQISSL_DEBUG
+			std::cerr << __PRETTY_FUNCTION__ << " STATE = Waiting SSL Authorise"
+			          << " - close sockfd + ssl_conn" << std::endl;
 #endif
-
 			break;
-
 		case WAITING_FAIL_INTERFACE:
-
-#ifdef PQISSL_LOG_DEBUG 
-  	  		rslog(RSL_DEBUG_BASIC, pqisslzone, 
-			  "pqissl::accept() STATE = Failed, ignore?");
+#ifdef PQISSL_DEBUG
+			std::cerr << __PRETTY_FUNCTION__ << " STATE = Failed, ignore?"
+			          << std::endl;
 #endif
-
 			break;
-
-
 		default:
-  	  		rslog(RSL_ALERT, pqisslzone, 
-		 		"pqissl::accept() STATE = Unknown - ignore?");
-
-			rslog(RSL_ALERT, pqisslzone, "pqissl::accept() -> calling reset()");
+			std::cerr << __PRETTY_FUNCTION__ << " STATE = Unknown - resetting!"
+			          << std::endl;
 			reset_locked();
 			break;
 		}
-
-		//waiting = WAITING_FAIL_INTERFACE;
-		//return -1;
 	}
 
 	/* shutdown existing - in all cases use the new one */
 	if ((ssl_connection) && (ssl_connection != ssl))
 	{
-  	 	rslog(RSL_ALERT, pqisslzone, 
-		  "pqissl::accept() closing Previous/Existing ssl_connection");
+		RsInfo() << __PRETTY_FUNCTION__
+		          << " closing Previous/Existing ssl_connection" << std::endl;
 		SSL_shutdown(ssl_connection);
 		SSL_free (ssl_connection);
 	}
 
 	if ((sockfd > -1) && (sockfd != fd))
 	{
-  	 	rslog(RSL_ALERT, pqisslzone, 
-		  "pqissl::accept() closing Previous/Existing sockfd");
+		RsInfo() << __PRETTY_FUNCTION__ << " closing Previous/Existing sockfd"
+		          << std::endl;
 		net_internal_close(sockfd);
 	}
 
@@ -1468,54 +1369,39 @@ int	pqissl::accept_locked(SSL *ssl, int fd, const struct sockaddr_storage &forei
 	/* if we connected - then just writing the same over, 
 	 * but if from ssllistener then we need to save the address.
 	 */
-	remote_addr = foreign_addr; 
+	sockaddr_storage_copy(foreign_addr, remote_addr);
 
-	/* check whether it is on the same LAN */
+	RsInfo() << __PRETTY_FUNCTION__ << " SUCCESSFUL connection to: "
+	          << PeerId().toStdString() << " remoteaddr: "
+	          << sockaddr_storage_iptostring(remote_addr) << std::endl;
 
-	struct sockaddr_storage localaddr;
-	mLinkMgr->getLocalAddress(localaddr);
-
+#ifdef PQISSL_DEBUG
 	{
-		std::string out = "pqissl::accept() SUCCESSFUL connection to: " + PeerId().toStdString();
-		out += " localaddr: " + sockaddr_storage_iptostring(localaddr);
-		out += " remoteaddr: " + sockaddr_storage_iptostring(remote_addr);
-
-		rslog(RSL_WARNING, pqisslzone, out);
-	}
-
-	// establish the ssl details.
-	// cipher name.
-	int err;
-
-#ifdef PQISSL_LOG_DEBUG 
-	{
-	  int alg;
-	  std::string out;
-	  rs_sprintf(out, "SSL Cipher:%s\n", SSL_get_cipher(ssl));
-	  rs_sprintf_append(out, "SSL Cipher Bits:%d - %d\n", SSL_get_cipher_bits(ssl, &alg), alg);
-	  rs_sprintf_append(out, "SSL Cipher Version:%s\n", SSL_get_cipher_version(ssl));
-	  rslog(RSL_DEBUG_BASIC, pqisslzone, out);
+		int alg;
+		std::cerr << __PRETTY_FUNCTION__ << "SSL Cipher: "
+		          << SSL_get_cipher(ssl) << std::endl << "SSL Cipher Bits: "
+		          << SSL_get_cipher_bits(ssl, &alg) << " - " << alg
+		          << std::endl;
 	}
 #endif
 
 	// make non-blocking / or check.....
-        if ((err = net_internal_fcntl_nonblock(sockfd)) < 0)
+	int err;
+	if ((err = net_internal_fcntl_nonblock(sockfd)) < 0)
 	{
-  	  	rslog(RSL_ALERT, pqisslzone, "Error: Cannot make socket NON-Blocking: ");
+		std::cerr << __PRETTY_FUNCTION__ << "Cannot make socket NON-Blocking "
+		          << "reset!" << std::endl;
 
 		active = false;
-		waiting = WAITING_FAIL_INTERFACE;
-		// failed completely.
-		rslog(RSL_ALERT, pqisslzone, "pqissl::accept() -> calling reset()");
+		waiting = WAITING_FAIL_INTERFACE; // failed completely.
+
 		reset_locked();
-		return -1;
+		return failure;
 	}
-	else
-	{
-#ifdef PQISSL_LOG_DEBUG 
-  	  	rslog(RSL_DEBUG_BASIC, pqisslzone, "pqissl::accept() Socket Made Non-Blocking!");
+#ifdef PQISSL_DEBUG
+	else std::cerr << __PRETTY_FUNCTION__ << " Socket made non-nlocking!"
+	               << std::endl;
 #endif
-	}
 
 	// we want to continue listening - incase this socket is crap, and they try again.
 	//stoplistening();
@@ -1524,17 +1410,18 @@ int	pqissl::accept_locked(SSL *ssl, int fd, const struct sockaddr_storage &forei
 	waiting = WAITING_NOT;
 
 #ifdef PQISSL_DEBUG
-	std::cerr << "pqissl::accept_locked() connection complete - notifying parent";
-    std::cerr << std::endl;
+	std::cerr << __PRETTY_FUNCTION__ << "connection complete - notifying parent"
+	          << std::endl;
 #endif
 
 	// Notify the pqiperson.... (Both Connect/Receive)
 	if (parent())
 	{
-		struct sockaddr_storage addr = remote_addr;
-		parent() -> notifyEvent(this, NET_CONNECT_SUCCESS, addr);
+		// Is the copy necessary?
+		sockaddr_storage addr; sockaddr_storage_copy(remote_addr, addr);
+		parent()->notifyEvent(this, NET_CONNECT_SUCCESS, addr);
 	}
-	return 1;
+	return success;
 }
 
 /********** Implementation of BinInterface **************************
@@ -1626,31 +1513,35 @@ int 	pqissl::senddata(void *data, int len)
 	return tmppktlen;
 }
 
-int 	pqissl::readdata(void *data, int len)
+int pqissl::readdata(void *data, int len)
 {
-	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+	RS_STACK_MUTEX(mSslMtx);
 
 #ifdef PQISSL_DEBUG
-	std::cout << "Reading data thread=" << pthread_self() << ", ssl=" << (void*)this << std::endl ;
+	std::cout << "Reading data thread=" << pthread_self() << ", ssl="
+	          << (void*)this << std::endl;
 #endif
+
 	// Safety check.  Apparently this avoids some SIGSEGV.
-	//
-	if (ssl_connection == NULL)
-		return -1 ;
+	if (ssl_connection == NULL) return -1;
 
 	// There is a do, because packets can be splitted into multiple ssl buffers
 	// when they are larger than 16384 bytes. Such packets have to be read in 
 	// multiple slices.
 	do
 	{
-		int tmppktlen  ;
+		int tmppktlen;
 
 #ifdef PQISSL_DEBUG
-		std::cerr << "calling SSL_read. len=" << len << ", total_len=" << total_len << std::endl ;
+		std::cerr << "calling SSL_read. len=" << len << ", total_len="
+		          << total_len << std::endl;
 #endif
-        		ERR_clear_error() ;
-                
-		tmppktlen = SSL_read(ssl_connection, (void*)( &(((uint8_t*)data)[total_len])), len-total_len) ;
+		ERR_clear_error();
+
+		tmppktlen = SSL_read(ssl_connection,
+		                     (void*)( &(((uint8_t*)data)[total_len])),
+		                     len-total_len);
+
 #ifdef PQISSL_DEBUG
 		std::cerr << "have read " << tmppktlen << " bytes" << std::endl ;
 		std::cerr << "data[0] = " 
@@ -1665,7 +1556,6 @@ int 	pqissl::readdata(void *data, int len)
 #endif
 
 		// Need to catch errors.....
-		//
 		if (tmppktlen <= 0) // probably needs a reset.
 		{
 			std::string out;

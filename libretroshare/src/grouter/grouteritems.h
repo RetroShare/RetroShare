@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/services: rsgrouteritems.h
- *
- * Services for RetroShare.
- *
- * Copyright 2013 by Cyril Soler
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "csoler@users.sourceforge.net".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/grouter: grouteritems.h                                   *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2013 by Cyril Soler <csoler@users.sourceforge.net>                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #pragma once
 
 #include "util/rsmemory.h"
@@ -31,7 +27,7 @@
 #include "serialiser/rstlvkeys.h"
 #include "rsitems/rsserviceids.h"
 #include "retroshare/rstypes.h"
-
+#include "retroshare/rsflags.h"
 #include "retroshare/rsgrouter.h"
 #include "groutermatrix.h"
 
@@ -59,7 +55,7 @@ const uint8_t QOS_PRIORITY_RS_GROUTER = 4 ;			// relevant for items that travel 
 class RsGRouterItem: public RsItem
 {
 	public:
-		RsGRouterItem(uint8_t grouter_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_GROUTER,grouter_subtype) {}
+		explicit RsGRouterItem(uint8_t grouter_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_GROUTER,grouter_subtype) {}
 
         virtual ~RsGRouterItem() {}
 
@@ -87,40 +83,59 @@ class RsGRouterNonCopyableObject
 // and routing ID. Sub-items are responsible for providing the serialised data to be signed for
 // both signing and checking.
 
-class RsGRouterAbstractMsgItem: public RsGRouterItem
+enum class RsGRouterItemFlags : uint32_t
 {
-public:
-    RsGRouterAbstractMsgItem(uint8_t pkt_subtype) : RsGRouterItem(pkt_subtype) {}
-    virtual ~RsGRouterAbstractMsgItem() {}
+	NONE               = 0x0,
+	ENCRYPTED          = 0x1,
+	SERVICE_UNKNOWN    = 0x2
+};
+RS_REGISTER_ENUM_FLAGS_TYPE(RsGRouterItemFlags)
+
+struct RsGRouterAbstractMsgItem: RsGRouterItem
+{
+    explicit RsGRouterAbstractMsgItem(uint8_t pkt_subtype):
+        RsGRouterItem(pkt_subtype), flags(RsGRouterItemFlags::NONE) {}
 
     GRouterMsgPropagationId routing_id ;
     GRouterKeyId destination_key ;
     GRouterServiceId service_id ;
     RsTlvKeySignature signature ;		// signs mid+destination_key+state
-	uint32_t flags ; 					// packet was delivered, not delivered, bounced, etc
+
+	/// packet was delivered, not delivered, bounced, etc
+	RsGRouterItemFlags flags;
+
+	~RsGRouterAbstractMsgItem();
 };
 
-class RsGRouterGenericDataItem: public RsGRouterAbstractMsgItem, public RsGRouterNonCopyableObject
+class RsGRouterGenericDataItem:
+        public RsGRouterAbstractMsgItem, public  RsGRouterNonCopyableObject
 {
-    public:
-        RsGRouterGenericDataItem() : RsGRouterAbstractMsgItem(RS_PKT_SUBTYPE_GROUTER_DATA) { setPriorityLevel(QOS_PRIORITY_RS_GROUTER) ; }
-        virtual ~RsGRouterGenericDataItem() { clear() ; }
+public:
+	RsGRouterGenericDataItem():
+	    RsGRouterAbstractMsgItem(RS_PKT_SUBTYPE_GROUTER_DATA),
+	    data_size(0), data_bytes(nullptr), duplication_factor(0)
+	{ setPriorityLevel(QOS_PRIORITY_RS_GROUTER); }
 
-        virtual void clear()
-        {
-            free(data_bytes);
-            data_bytes=NULL;
-        }
+	virtual ~RsGRouterGenericDataItem() { clear(); }
+	virtual void clear() 
+	{ 
+		free(data_bytes); 
+		data_bytes = nullptr;
+	}
 
-		virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+	virtual void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext& ctx );
 
-        RsGRouterGenericDataItem *duplicate() const ;
+	RsGRouterGenericDataItem *duplicate() const;
 
-        // packet data
-        //
-        uint32_t data_size ;
-        uint8_t *data_bytes;
-        uint32_t duplication_factor ;	// number of duplicates allowed. Should be capped at each de-serialise operation!
+	/// packet data
+	uint32_t data_size;
+	uint8_t* data_bytes;
+
+	/** number of duplicates allowed. Should be capped at each de-serialise
+	 * operation! */
+	uint32_t duplication_factor;
 };
 
 class RsGRouterSignedReceiptItem: public RsGRouterAbstractMsgItem
@@ -144,7 +159,7 @@ class RsGRouterSignedReceiptItem: public RsGRouterAbstractMsgItem
 class RsGRouterTransactionItem: public RsGRouterItem
 {
     public:
-        RsGRouterTransactionItem(uint8_t pkt_subtype) : RsGRouterItem(pkt_subtype) {}
+        explicit RsGRouterTransactionItem(uint8_t pkt_subtype) : RsGRouterItem(pkt_subtype) {}
 
 		virtual ~RsGRouterTransactionItem() {}
 
@@ -156,7 +171,7 @@ class RsGRouterTransactionItem: public RsGRouterItem
 class RsGRouterTransactionChunkItem: public RsGRouterTransactionItem, public RsGRouterNonCopyableObject
 {
 public:
-	RsGRouterTransactionChunkItem() : RsGRouterTransactionItem(RS_PKT_SUBTYPE_GROUTER_TRANSACTION_CHUNK) { setPriorityLevel(QOS_PRIORITY_RS_GROUTER) ; }
+	RsGRouterTransactionChunkItem() : RsGRouterTransactionItem(RS_PKT_SUBTYPE_GROUTER_TRANSACTION_CHUNK), chunk_start(0), chunk_size(0), total_size(0), chunk_data(NULL) { setPriorityLevel(QOS_PRIORITY_RS_GROUTER) ; }
 
 	virtual ~RsGRouterTransactionChunkItem()  { free(chunk_data) ; }
 
@@ -217,7 +232,7 @@ class RsGRouterMatrixCluesItem: public RsGRouterItem
 class RsGRouterMatrixTrackItem: public RsGRouterItem
 {
 	public:
-        RsGRouterMatrixTrackItem() : RsGRouterItem(RS_PKT_SUBTYPE_GROUTER_MATRIX_TRACK)
+        RsGRouterMatrixTrackItem() : RsGRouterItem(RS_PKT_SUBTYPE_GROUTER_MATRIX_TRACK), time_stamp(0)
 		{ setPriorityLevel(0) ; }	// this item is never sent through the network
 
 		virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
@@ -228,7 +243,7 @@ class RsGRouterMatrixTrackItem: public RsGRouterItem
 		//
 		RsGxsMessageId message_id ;
 		RsPeerId provider_id ;
-		time_t time_stamp ;
+		rstime_t time_stamp ;
 };
 class RsGRouterMatrixFriendListItem: public RsGRouterItem
 {
@@ -271,7 +286,9 @@ class RsGRouterRoutingInfoItem: public RsGRouterItem, public GRouterRoutingInfo,
 class RsGRouterSerialiser: public RsServiceSerializer
 {
 public:
-    RsGRouterSerialiser(SerializationFlags flags = SERIALIZATION_FLAG_NONE) : RsServiceSerializer(RS_SERVICE_TYPE_GROUTER,RsGenericSerializer::FORMAT_BINARY,flags) {}
+	explicit RsGRouterSerialiser(
+	        RsSerializationFlags flags = RsSerializationFlags::NONE ):
+	    RsServiceSerializer(RS_SERVICE_TYPE_GROUTER, flags) {}
 
     virtual RsItem *create_item(uint16_t service,uint8_t subtype) const ;
 };

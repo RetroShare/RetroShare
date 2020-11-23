@@ -1,162 +1,151 @@
-#ifndef RS_SERVICE_IDS_H
-#define RS_SERVICE_IDS_H
+/*******************************************************************************
+ * libretroshare/src/rsitems: rsserviceids.h                                   *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2007-2008 Robert Fernie <retroshare@lunamutt.com>             *
+ * Copyright (C) 2019  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+#pragma once
 
-/*
- * libretroshare/src/serialiser: rsserviceids.h
- *
- * RetroShare Serialiser.
- *
- * Copyright 2007-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+#include "util/rsdeprecate.h"
 
-#include <inttypes.h>
+#include <cstdint>
 
-/* Single place for Cache/Service Ids (uint16_t)
- * to 64K of them....
- *
- * Some Services/Caches are only msgs or caches...
- * but they need to be combined so that the messages/caches
- * can easily be aligned.
- *
- */
+enum class RsServiceType : uint16_t
+{
+	NONE                       = 0, /// To detect non-initialized reads
+	GOSSIP_DISCOVERY           = 0x0011,
+	CHAT                       = 0x0012,
+	MSG                        = 0x0013,
+	TURTLE                     = 0x0014,
+	TUNNEL                     = 0x0015,
+	HEARTBEAT                  = 0x0016,
+	FILE_TRANSFER              = 0x0017,
+	GROUTER                    = 0x0018,
+	FILE_DATABASE              = 0x0019,
+	SERVICEINFO                = 0x0020,
+	BANDWIDTH_CONTROL          = 0x0021,
+	MAIL                       = 0x0022,
+	DIRECT_MAIL                = 0x0023,
+	DISTANT_MAIL               = 0x0024,
+	GWEMAIL_MAIL               = 0x0025,
+	SERVICE_CONTROL            = 0x0026,
+	DISTANT_CHAT               = 0x0027,
+	GXS_TUNNEL                 = 0x0028,
+	BANLIST                    = 0x0101,
+	STATUS                     = 0x0102,
+	NXS                        = 0x0200,
+	GXSID                      = 0x0211,
+	PHOTO                      = 0x0212,
+	WIKI                       = 0x0213,
+	WIRE                       = 0x0214,
+	FORUMS                     = 0x0215,
+	POSTED                     = 0x0216,
+	CHANNELS                   = 0x0217,
+	GXSCIRCLE                  = 0x0218,
+	/// not gxs, but used with identities.
+	REPUTATION                 = 0x0219,
+	GXS_RECOGN                 = 0x0220,
+	GXS_TRANS                  = 0x0230,
+	JSONAPI                    = 0x0240,
+	FORUMS_CONFIG              = 0x0315,
+	POSTED_CONFIG              = 0x0316,
+	CHANNELS_CONFIG            = 0x0317,
+	RTT                        = 0x1011, /// Round Trip Time
 
-/* These are Cache Only */
-const uint16_t RS_SERVICE_TYPE_FILE_INDEX     = 0x0001;
 
-/* These are Services only */
-const uint16_t RS_SERVICE_TYPE_DISC           = 0x0011;
-const uint16_t RS_SERVICE_TYPE_CHAT           = 0x0012;
-const uint16_t RS_SERVICE_TYPE_MSG            = 0x0013;
-const uint16_t RS_SERVICE_TYPE_TURTLE         = 0x0014;
-const uint16_t RS_SERVICE_TYPE_TUNNEL         = 0x0015;
-const uint16_t RS_SERVICE_TYPE_HEARTBEAT      = 0x0016;
-const uint16_t RS_SERVICE_TYPE_FILE_TRANSFER  = 0x0017;
-const uint16_t RS_SERVICE_TYPE_GROUTER        = 0x0018;
-const uint16_t RS_SERVICE_TYPE_FILE_DATABASE  = 0x0019;
+	/***************** IDS ALLOCATED FOR PLUGINS ******************/
+	// 2000+
+	PLUGIN_ARADO_ID            = 0x2001,
+	PLUGIN_QCHESS_ID           = 0x2002,
+	PLUGIN_FEEDREADER          = 0x2003,
 
-const uint16_t RS_SERVICE_TYPE_SERVICEINFO    = 0x0020;
-/* Bandwidth Control */
-const uint16_t RS_SERVICE_TYPE_BWCTRL         = 0x0021;
-// New Mail Service (replace old Msg Service) 
-const uint16_t RS_SERVICE_TYPE_MAIL           = 0x0022;
-const uint16_t RS_SERVICE_TYPE_DIRECT_MAIL    = 0x0023;
-const uint16_t RS_SERVICE_TYPE_DISTANT_MAIL   = 0x0024;
-const uint16_t RS_SERVICE_TYPE_GWEMAIL_MAIL   = 0x0025;
-const uint16_t RS_SERVICE_TYPE_SERVICE_CONTROL= 0x0026;
-const uint16_t RS_SERVICE_TYPE_DISTANT_CHAT   = 0x0027;
-const uint16_t RS_SERVICE_TYPE_GXS_TUNNEL     = 0x0028;
+	/// Reserved for packet slicing probes.
+	PACKET_SLICING_PROBE       = 0xAABB,
 
-// Non essential services.
-const uint16_t RS_SERVICE_TYPE_BANLIST        = 0x0101;
-const uint16_t RS_SERVICE_TYPE_STATUS         = 0x0102;
+	// Nabu's experimental services.
+	PLUGIN_FIDO_GW             = 0xF1D0,
+	PLUGIN_ZERORESERVE         = 0xBEEF
+};
 
- /* New Cache Services  */
-/* Rs Network Exchange Service */
-const uint16_t RS_SERVICE_TYPE_NXS 	       = 0x0200;
 
-const uint16_t RS_SERVICE_GXS_TYPE_GXSID       = 0x0211;
-const uint16_t RS_SERVICE_GXS_TYPE_PHOTO       = 0x0212;
-const uint16_t RS_SERVICE_GXS_TYPE_WIKI        = 0x0213;
-const uint16_t RS_SERVICE_GXS_TYPE_WIRE        = 0x0214;
-const uint16_t RS_SERVICE_GXS_TYPE_FORUMS      = 0x0215;
-const uint16_t RS_SERVICE_GXS_TYPE_POSTED      = 0x0216;
-const uint16_t RS_SERVICE_GXS_TYPE_CHANNELS    = 0x0217;
-const uint16_t RS_SERVICE_GXS_TYPE_GXSCIRCLE   = 0x0218;
-// not gxs, but used with identities.
-const uint16_t RS_SERVICE_GXS_TYPE_REPUTATION  = 0x0219;
-const uint16_t RS_SERVICE_TYPE_GXS_RECOGN      = 0x0220;
-const uint16_t RS_SERVICE_TYPE_GXS_TRANS       = 0x0230;
+
+// TODO: Port all services types to RsServiceType
+
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_FILE_INDEX     = 0x0001;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_DISC           = 0x0011;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_CHAT           = 0x0012;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_MSG            = 0x0013;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_TURTLE         = 0x0014;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_TUNNEL         = 0x0015;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_HEARTBEAT      = 0x0016;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_FILE_TRANSFER  = 0x0017;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_GROUTER        = 0x0018;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_FILE_DATABASE  = 0x0019;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_SERVICEINFO    = 0x0020;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_BWCTRL         = 0x0021; /// Bandwidth Control
+/// New Mail Service (replace old Msg Service)
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_MAIL           = 0x0022;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_DIRECT_MAIL    = 0x0023;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_DISTANT_MAIL   = 0x0024;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_GWEMAIL_MAIL   = 0x0025;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_SERVICE_CONTROL= 0x0026;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_DISTANT_CHAT   = 0x0027;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_GXS_TUNNEL     = 0x0028;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_BANLIST        = 0x0101;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_STATUS         = 0x0102;
+/// Rs Network Exchange Service
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_NXS            = 0x0200;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_GXS_TYPE_GXSID       = 0x0211;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_GXS_TYPE_PHOTO       = 0x0212;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_GXS_TYPE_WIKI        = 0x0213;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_GXS_TYPE_WIRE        = 0x0214;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_GXS_TYPE_FORUMS      = 0x0215;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_GXS_TYPE_POSTED      = 0x0216;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_GXS_TYPE_CHANNELS    = 0x0217;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_GXS_TYPE_GXSCIRCLE   = 0x0218;
+/// not gxs, but used with identities.
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_GXS_TYPE_REPUTATION  = 0x0219;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_GXS_RECOGN      = 0x0220;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_GXS_TRANS       = 0x0230;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_JSONAPI         = 0x0240;
+/// used to save notification records in GXS and possible other service-based configuration
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_GXS_TYPE_FORUMS_CONFIG   = 0x0315;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_GXS_TYPE_POSTED_CONFIG   = 0x0316;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_GXS_TYPE_CHANNELS_CONFIG = 0x0317;
 
 // Experimental Services.
 /* DSDV Testing at the moment - Service Only */
-const uint16_t RS_SERVICE_TYPE_DSDV        = 0x1010;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_DSDV        = 0x1010;
 /* Latency RTT Measurements */
-const uint16_t RS_SERVICE_TYPE_RTT         = 0x1011;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_RTT         = 0x1011;
 
 
 /***************** IDS ALLOCATED FOR PLUGINS ******************/
 // 2000+
 
-const uint16_t RS_SERVICE_TYPE_PLUGIN_ARADO_ID    = 0x2001;
-const uint16_t RS_SERVICE_TYPE_PLUGIN_QCHESS_ID   = 0x2002;
-const uint16_t RS_SERVICE_TYPE_PLUGIN_FEEDREADER  = 0x2003;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_PLUGIN_ARADO_ID    = 0x2001;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_PLUGIN_QCHESS_ID   = 0x2002;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_PLUGIN_FEEDREADER  = 0x2003;
 
 // Reserved for packet slicing probes.
-const uint16_t RS_SERVICE_TYPE_PACKET_SLICING_PROBE = 0xAABB;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_PACKET_SLICING_PROBE = 0xAABB;
 
 // Nabu's services.
-const uint16_t RS_SERVICE_TYPE_PLUGIN_FIDO_GW     = 0xF1D0;
-const uint16_t RS_SERVICE_TYPE_PLUGIN_ZERORESERVE = 0xBEEF;
-
-/****************** BELOW ARE ONLY THEORETICAL (CAN BE CHANGED) *****/
-/*
- * If you are planning on making a new service....
- * Test it out with an ID in the range from 0xf000 - 0xffff
- * And Change the ID everytime you make significant changes to the
- * data structures... 
- *
- * eg.
- * const uint16_t RS_SERVICE_TYPE_DISTRIB_O1  = 0xf110;  // First  Revision.
- * const uint16_t RS_SERVICE_TYPE_DISTRIB_O2  = 0xf111;  // Second Revision.
- * const uint16_t RS_SERVICE_TYPE_DISTRIB     = 0xf112;  // Final  Revision.
- *
- * This minimises the chances of your new serialisers messing with
- * other existing, older, or proposed services.
- *
- * ONLY MOVE your Id once the service has been finalised.
- *
- */
-
- /*! for Qblog service (Cache Only) */
-//const uint16_t RS_SERVICE_TYPE_QBLOG	   = 0xf010;
-
-/* TEST VOIP - Service only */
-// NOT SURE WHATS HAPPENING WITH THIS ONE? 
-// SHOULD BE DEFINED IN PLUGIN SECTION!
-//const uint16_t RS_SERVICE_TYPE_VOIP        = 0xf011;
-
- /* Proxy - Service only */
-//const uint16_t RS_SERVICE_TYPE_PROXY       = 0xf030;
-
-/* Games/External Apps - Service Only */
-//const uint16_t RS_SERVICE_TYPE_GAME_LAUNCHER = 0xf200;
-//const uint16_t RS_SERVICE_TYPE_PORT          = 0xf201;
-
-/* Example Games (NOT USED YET!) */
-/* Board Games */
-//const uint16_t RS_SERVICE_TYPE_GAME_QTCHESS  = 0xf211;
-//const uint16_t RS_SERVICE_TYPE_GAME_QGO      = 0xf212;
-
-/* Card Games */
-//const uint16_t RS_SERVICE_TYPE_GAME_BIGTWO   = 0xf213;
-//const uint16_t RS_SERVICE_TYPE_GAME_POKER    = 0xf214;
-
-/***************** IDS ALLOCATED FOR PLUGINS ******************/
-
-//const uint16_t RS_SERVICE_TYPE_PLUGIN_ARADO_TEST_ID1   = 0xf401;
-//const uint16_t RS_SERVICE_TYPE_PLUGIN_QCHESS_TEST_ID1   = 0xf402;
-
-// test
-//const uint16_t RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM = 0xf403;
-
-
-#endif /* RS_SERVICE_IDS_H */
-
-
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_PLUGIN_FIDO_GW     = 0xF1D0;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_PLUGIN_ZERORESERVE = 0xBEEF;

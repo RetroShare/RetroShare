@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * libretroshare/src/pgp: pgphandler.cc                                        *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2018 Cyril Soler <csoler@users.sourceforge.net>                   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include <stdexcept>
 #include <sstream>
 #include <iostream>
@@ -580,8 +601,8 @@ const ops_keydata_t *PGPHandler::locked_getPublicKey(const RsPgpId& id,bool stam
 	{
 		if(stamp_the_key)		// Should we stamp the key as used?
 		{
-			static time_t last_update_db_because_of_stamp = 0 ;
-			time_t now = time(NULL) ;
+			static rstime_t last_update_db_because_of_stamp = 0 ;
+			rstime_t now = time(NULL) ;
 
 			res->second._time_stamp = now ;
 
@@ -609,50 +630,61 @@ std::string PGPHandler::SaveCertificateToString(const RsPgpId& id,bool include_s
 	return makeRadixEncodedPGPKey(key,include_signatures) ;
 }
 
-bool PGPHandler::exportPublicKey(const RsPgpId& id,unsigned char *& mem_block,size_t& mem_size,bool armoured,bool include_signatures) const
+bool PGPHandler::exportPublicKey(
+        const RsPgpId& id,
+        unsigned char*& mem_block, size_t& mem_size,
+        bool armoured, bool include_signatures ) const
 {
-	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
-	const ops_keydata_t *key = locked_getPublicKey(id,false) ;
-	mem_block = NULL ;
+	mem_block = nullptr; mem_size = 0; // clear just in case
 
 	if(armoured)
 	{
-		std::cerr << __PRETTY_FUNCTION__ << ": should not be used with armoured=true, because there's a bug in the armoured export of OPS" << std::endl;
-		return false ;
+		RsErr() << __PRETTY_FUNCTION__ << " should not be used with "
+		        << "armoured=true, because there's a bug in the armoured export"
+		        << " of OPS" << std::endl;
+		print_stacktrace();
+		return false;
 	}
 
-	if(key == NULL)
+	RS_STACK_MUTEX(pgphandlerMtx);
+	const ops_keydata_t* key = locked_getPublicKey(id,false);
+
+	if(!key)
 	{
-		std::cerr << "Cannot output key " << id.toStdString() << ": not found in keyring." << std::endl;
-		return false ;
+		RsErr() << __PRETTY_FUNCTION__ << " key id: " << id
+		        << " not found in keyring." << std::endl;
+		return false;
 	}
 
-   ops_create_info_t* cinfo;
-	ops_memory_t *buf = NULL ;
-   ops_setup_memory_write(&cinfo, &buf, 0);
+	ops_create_info_t* cinfo;
+	ops_memory_t *buf = nullptr;
+	ops_setup_memory_write(&cinfo, &buf, 0);
 
-	if(ops_write_transferable_public_key_from_packet_data(key,armoured,cinfo) != ops_true)
+	if(ops_write_transferable_public_key_from_packet_data(
+	            key, armoured, cinfo ) != ops_true)
 	{
-		std::cerr << "ERROR: This key cannot be processed by RetroShare because\nDSA certificates are not yet handled." << std::endl;
-		return false ;
+		RsErr() << __PRETTY_FUNCTION__ << "  This key id " << id
+		        << " cannot be processed by RetroShare because DSA certificates"
+		        << " support is not implemented yet." << std::endl;
+		return false;
 	}
 
-	ops_writer_close(cinfo) ;
+	ops_writer_close(cinfo);
 
-	mem_block = new unsigned char[ops_memory_get_length(buf)] ;
-	mem_size = ops_memory_get_length(buf) ;
-	memcpy(mem_block,ops_memory_get_data(buf),mem_size) ;
+	mem_size = ops_memory_get_length(buf);
+	mem_block = reinterpret_cast<unsigned char*>(malloc(mem_size));
+	memcpy(mem_block,ops_memory_get_data(buf),mem_size);
 
-   ops_teardown_memory_write(cinfo,buf);
+	ops_teardown_memory_write(cinfo,buf);
 
 	if(!include_signatures)
 	{
-		size_t new_size ;
-		PGPKeyManagement::findLengthOfMinimalKey(mem_block,mem_size,new_size) ;
-		mem_size = new_size ;
+		size_t new_size;
+		PGPKeyManagement::findLengthOfMinimalKey(mem_block, mem_size, new_size);
+		mem_size = new_size;
 	}
 
-	return true ;
+	return true;
 }
 
 bool PGPHandler::exportGPGKeyPair(const std::string& filename,const RsPgpId& exported_key_id) const
@@ -686,6 +718,36 @@ bool PGPHandler::exportGPGKeyPair(const std::string& filename,const RsPgpId& exp
 
 	fclose(f) ;
 	return true ;
+}
+
+bool PGPHandler::exportGPGKeyPairToString(
+        std::string& data, const RsPgpId& exportedKeyId,
+        bool includeSignatures, std::string& errorMsg ) const
+{
+	RS_STACK_MUTEX(pgphandlerMtx);
+
+	const ops_keydata_t *pubkey = locked_getPublicKey(exportedKeyId,false);
+
+	if(!pubkey)
+	{
+		errorMsg = "Cannot output key " + exportedKeyId.toStdString() +
+		           ": not found in public keyring.";
+		return false;
+	}
+	const ops_keydata_t *seckey = locked_getSecretKey(exportedKeyId);
+
+	if(!seckey)
+	{
+		errorMsg = "Cannot output key " + exportedKeyId.toStdString() +
+		           ": not found in secret keyring.";
+		return false;
+	}
+
+	data  = makeRadixEncodedPGPKey(pubkey, includeSignatures);
+	data += "\n";
+	data += makeRadixEncodedPGPKey(seckey, includeSignatures);
+	data += "\n";
+	return true;
 }
 
 bool PGPHandler::getGPGDetailsFromBinaryBlock(const unsigned char *mem_block,size_t mem_size,RsPgpId& key_id, std::string& name, std::list<RsPgpId>& signers) const
@@ -857,12 +919,14 @@ bool PGPHandler::checkAndImportKeyPair(ops_keyring_t *tmp_keyring, RsPgpId &impo
 		return false ;
 	}
 
-	if(pubkey == NULL || seckey == NULL || pubkey == seckey)
+	if(pubkey == nullptr || seckey == nullptr || pubkey == seckey)
 	{
 		import_error = "File does not contain a public and a private key. Sorry." ;
 		return false ;
 	}
-	if(memcmp(pubkey->fingerprint.fingerprint,seckey->fingerprint.fingerprint,PGP_KEY_FINGERPRINT_SIZE) != 0)
+	if(memcmp( pubkey->fingerprint.fingerprint,
+	           seckey->fingerprint.fingerprint,
+	           RsPgpFingerprint::SIZE_IN_BYTES ) != 0)
 	{
 		import_error = "Public and private keys do nt have the same fingerprint. Sorry!" ;
 		return false ;
@@ -889,7 +953,10 @@ bool PGPHandler::checkAndImportKeyPair(ops_keyring_t *tmp_keyring, RsPgpId &impo
 	bool found = false ;
 
 	for(uint32_t i=0;i<result->valid_count;++i)
-		if(!memcmp((unsigned char*)result->valid_sigs[i].signer_id,pubkey->key_id,PGP_KEY_ID_SIZE)) 
+		if(!memcmp(
+		            static_cast<uint8_t*>(result->valid_sigs[i].signer_id),
+		            pubkey->key_id,
+		            RsPgpId::SIZE_IN_BYTES ))
 		{
 			found = true ;
 			break ;
@@ -981,7 +1048,17 @@ void PGPHandler::addNewKeyToOPSKeyring(ops_keyring_t *kr,const ops_keydata_t& ke
 	kr->nkeys++ ;
 }
 
+bool PGPHandler::LoadCertificateFromBinaryData(const unsigned char *data,uint32_t data_len,RsPgpId& id,std::string& error_string)
+{
+    return LoadCertificate(data,data_len,ops_false,id,error_string);
+}
+
 bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,RsPgpId& id,std::string& error_string)
+{
+    return LoadCertificate((unsigned char*)(pgp_cert.c_str()),pgp_cert.length(),ops_true,id,error_string);
+}
+
+bool PGPHandler::LoadCertificate(const unsigned char *data,uint32_t data_len,bool armoured,RsPgpId& id,std::string& error_string)
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 #ifdef DEBUG_PGPHANDLER
@@ -990,9 +1067,9 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,RsPgpId& 
 
 	ops_keyring_t *tmp_keyring = allocateOPSKeyring();
 	ops_memory_t *mem = ops_memory_new() ;
-	ops_memory_add(mem,(unsigned char *)pgp_cert.c_str(),pgp_cert.length()) ;
+	ops_memory_add(mem,data,data_len) ;
 
-	if(!ops_keyring_read_from_mem(tmp_keyring,ops_true,mem))
+	if(!ops_keyring_read_from_mem(tmp_keyring,armoured,mem))
 	{
 		ops_keyring_free(tmp_keyring) ;
 		free(tmp_keyring) ;
@@ -1036,7 +1113,10 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,RsPgpId& 
 	bool found = false ;
 
 	for(uint32_t i=0;i<result->valid_count;++i)
-		if(!memcmp((unsigned char*)result->valid_sigs[i].signer_id,keydata->key_id,PGP_KEY_ID_SIZE)) 
+		if(!memcmp(
+		            static_cast<uint8_t*>(result->valid_sigs[i].signer_id),
+		            keydata->key_id,
+		            RsPgpId::SIZE_IN_BYTES ))
 		{
 			found = true ;
 			break ;
@@ -1113,7 +1193,9 @@ bool PGPHandler::locked_addOrMergeKey(ops_keyring_t *keyring,std::map<RsPgpId,PG
 	}
 	else
 	{
-		if(memcmp(existing_key->fingerprint.fingerprint, keydata->fingerprint.fingerprint,PGP_KEY_FINGERPRINT_SIZE))
+		if(memcmp( existing_key->fingerprint.fingerprint,
+		           keydata->fingerprint.fingerprint,
+		           RsPgpFingerprint::SIZE_IN_BYTES ))
 		{
 			std::cerr << "(EE) attempt to merge key with identical id, but different fingerprint!" << std::endl;
 			return false ;
@@ -1136,37 +1218,7 @@ bool PGPHandler::locked_addOrMergeKey(ops_keyring_t *keyring,std::map<RsPgpId,PG
 
 	return ret ;
 }
-//   bool PGPHandler::encryptTextToString(const RsPgpId& key_id,const std::string& text,std::string& outstring) 
-//   {
-//   	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
-//   
-//   	const ops_keydata_t *public_key = getPublicKey(key_id) ;
-//   
-//   	if(public_key == NULL)
-//   	{
-//   		std::cerr << "Cannot get public key of id " << key_id.toStdString() << std::endl;
-//   		return false ;
-//   	}
-//   
-//   	if(public_key->type != OPS_PTAG_CT_PUBLIC_KEY)
-//   	{
-//   		std::cerr << "PGPHandler::encryptTextToFile(): ERROR: supplied id did not return a public key!" << std::endl;
-//   		return false ;
-//   	}
-//   
-//   	ops_create_info_t *info;
-//   	ops_memory_t *buf = NULL ;
-//      ops_setup_memory_write(&info, &buf, 0);
-//   
-//   	ops_encrypt_stream(info, public_key, NULL, ops_false, ops_true);
-//   	ops_write(text.c_str(), text.length(), info);
-//   	ops_writer_close(info);
-//   
-//   	outstring = std::string((char *)ops_memory_get_data(buf),ops_memory_get_length(buf)) ;
-//   	ops_create_info_delete(info);
-//   
-//   	return true ;
-//   }
+
 bool PGPHandler::encryptTextToFile(const RsPgpId& key_id,const std::string& text,const std::string& outfile) 
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
@@ -1382,7 +1434,11 @@ ops_secret_key_t *secret_key = NULL ;
 	// then do the signature.
 
 	ops_boolean_t not_raw = !use_raw_signature ;
-	ops_memory_t *memres = ops_sign_buf(data,len,(ops_sig_type_t)0x00,secret_key,ops_false,ops_false,not_raw,not_raw) ;
+#ifdef V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
+	ops_memory_t *memres = ops_sign_buf(data,len,OPS_SIG_BINARY,OPS_HASH_SHA256,secret_key,ops_false,ops_false,not_raw,not_raw) ;
+#else
+	ops_memory_t *memres = ops_sign_buf(data,len,OPS_SIG_BINARY,OPS_HASH_SHA1,secret_key,ops_false,ops_false,not_raw,not_raw) ;
+#endif
 
 	if(!memres)
 		return false ;
@@ -1536,19 +1592,25 @@ void PGPHandler::locked_updateOwnSignatureFlag(PGPCertificateInfo& cert,const Rs
 		cert._flags &= ~PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_SIGNED_ME ;
 }
 
-bool PGPHandler::getKeyFingerprint(const RsPgpId& id,PGPFingerprintType& fp) const
+/*static*/ RsPgpId PGPHandler::pgpIdFromFingerprint(const RsPgpFingerprint& f)
 {
-	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
+	return RsPgpId::fromBufferUnsafe(
+	            f.toByteArray() +
+	            RsPgpFingerprint::SIZE_IN_BYTES - RsPgpId::SIZE_IN_BYTES );
+}
+
+bool PGPHandler::getKeyFingerprint(const RsPgpId& id, RsPgpFingerprint& fp) const
+{
+	RS_STACK_MUTEX(pgphandlerMtx);
 
 	const ops_keydata_t *key = locked_getPublicKey(id,false) ;
 
-	if(key == NULL)
-		return false ;
+	if(!key) return false;
 
 	ops_fingerprint_t f ;
 	ops_fingerprint(&f,&key->key.pkey) ; 
 
-	fp = PGPFingerprintType(f.fingerprint) ;
+	fp = RsPgpFingerprint::fromBufferUnsafe(f.fingerprint);
 
 	return true ;
 }
@@ -1616,6 +1678,9 @@ bool PGPHandler::getGPGFilteredList(std::list<RsPgpId>& list,bool (*filter)(cons
 
 	return true ;
 }
+
+bool PGPHandler::isPgpPubKeyAvailable(const RsPgpId &id)
+{ return _public_keyring_map.find(id) != _public_keyring_map.end(); }
 
 bool PGPHandler::isGPGId(const RsPgpId &id)
 {
@@ -1695,16 +1760,16 @@ bool PGPHandler::mergeKeySignatures(ops_keydata_t *dst,const ops_keydata_t *src)
 
 bool PGPHandler::parseSignature(unsigned char *sign, unsigned int signlen,RsPgpId& issuer_id) 
 {
-    uint64_t issuer ;
+	PGPSignatureInfo info ;
     
-    if(!PGPKeyManagement::parseSignature(sign,signlen,issuer))
+    if(!PGPKeyManagement::parseSignature(sign,signlen,info))
         return false ;
     
     unsigned char bytes[8] ;
     for(int i=0;i<8;++i)
     {
-        bytes[7-i] = issuer & 0xff ;
-        issuer >>= 8 ;
+        bytes[7-i] = info.issuer & 0xff ;
+        info.issuer >>= 8 ;
     }
     issuer_id = RsPgpId(bytes) ;
     
@@ -1737,7 +1802,8 @@ bool PGPHandler::privateTrustCertificate(const RsPgpId& id,int trustlvl)
 
 struct PrivateTrustPacket
 {
-	unsigned char user_id[PGP_KEY_ID_SIZE] ;  	// pgp id in unsigned char format.
+	/// pgp id in unsigned char format.
+	unsigned char user_id[RsPgpId::SIZE_IN_BYTES];
 	uint8_t trust_level ;						// trust level. From 0 to 6.
 	uint32_t time_stamp ;						// last time the cert was ever used, in seconds since the epoch. 0 means not initialized.
 };
@@ -1799,9 +1865,12 @@ bool PGPHandler::locked_writePrivateTrustDatabase()
 	}
 	PrivateTrustPacket trustpacket ;
 
-	for(std::map<RsPgpId,PGPCertificateInfo>::iterator it = _public_keyring_map.begin();it!=_public_keyring_map.end() ;++it)
+	for( std::map<RsPgpId,PGPCertificateInfo>::iterator it =
+	     _public_keyring_map.begin(); it!=_public_keyring_map.end(); ++it )
 	{
-		memcpy(trustpacket.user_id,RsPgpId(it->first).toByteArray(),PGP_KEY_ID_SIZE) ;
+		memcpy( trustpacket.user_id,
+		        it->first.toByteArray(),
+		        RsPgpId::SIZE_IN_BYTES );
 		trustpacket.trust_level = it->second._trustLvl ;
 		trustpacket.time_stamp = it->second._time_stamp ;
 
@@ -2060,4 +2129,3 @@ bool PGPHandler::removeKeysFromPGPKeyring(const std::set<RsPgpId>& keys_to_remov
 
 	return true ;
 }
-

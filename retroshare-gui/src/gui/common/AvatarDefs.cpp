@@ -1,23 +1,22 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (c) 2010, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/common/AvatarDefs.cpp                                                   *
+ *                                                                             *
+ * Copyright (C) 2012, Robert Fernie <retroshare.project@gmail.com>            *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QPixmap>
 
@@ -27,6 +26,7 @@
 #include <gui/gxs/GxsIdDetails.h>
 
 #include "AvatarDefs.h"
+#include "gui/common/FilesDefs.h"
 
 void AvatarDefs::getOwnAvatar(QPixmap &avatar, const QString& defaultImage)
 {
@@ -37,16 +37,16 @@ void AvatarDefs::getOwnAvatar(QPixmap &avatar, const QString& defaultImage)
 	rsMsgs->getOwnAvatarData(data, size);
 
 	if (size == 0) {
-		avatar = QPixmap(defaultImage);
+        avatar = FilesDefs::getPixmapFromQtResourcePath(defaultImage);
 		return;
 	}
 
 	/* load image */
-	avatar.loadFromData(data, size, "PNG") ;
+	GxsIdDetails::loadPixmapFromData(data, size, avatar,GxsIdDetails::ORIGINAL) ;
 
 	free(data);
 }
-void AvatarDefs::getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, const QString& defaultImage)
+bool AvatarDefs::getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, const QString& defaultImage)
 {
     unsigned char *data = NULL;
     int size = 0;
@@ -54,16 +54,17 @@ void AvatarDefs::getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, cons
     /* get avatar */
     rsMsgs->getAvatarData(RsPeerId(sslId), data, size);
     if (size == 0) {
-        avatar = QPixmap(defaultImage);
-        return;
+        avatar = FilesDefs::getPixmapFromQtResourcePath(defaultImage);
+        return false;
     }
 
     /* load image */
-    avatar.loadFromData(data, size, "PNG") ;
+    GxsIdDetails::loadPixmapFromData(data, size, avatar, GxsIdDetails::LARGE) ;
 
     free(data);
+    return true;
 }
-void AvatarDefs::getAvatarFromGxsId(const RsGxsId& gxsId, QPixmap &avatar, const QString& defaultImage)
+bool AvatarDefs::getAvatarFromGxsId(const RsGxsId& gxsId, QPixmap &avatar, const QString& defaultImage)
 {
     //int size = 0;
 
@@ -72,17 +73,19 @@ void AvatarDefs::getAvatarFromGxsId(const RsGxsId& gxsId, QPixmap &avatar, const
 
     if(!rsIdentity->getIdDetails(gxsId, details))
     {
-        avatar = QPixmap(defaultImage);
-        return ;
+        avatar = FilesDefs::getPixmapFromQtResourcePath(defaultImage);
+        return false;
     }
 
     /* load image */
 
-        if(details.mAvatar.mSize == 0 || !avatar.loadFromData(details.mAvatar.mData, details.mAvatar.mSize, "PNG"))
-            avatar = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(gxsId));
+        if(details.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(details.mAvatar.mData, details.mAvatar.mSize, avatar,GxsIdDetails::LARGE))
+            avatar = GxsIdDetails::makeDefaultIcon(gxsId,GxsIdDetails::LARGE);
+
+        return true;
 }
 
-void AvatarDefs::getAvatarFromGpgId(const RsPgpId& gpgId, QPixmap &avatar, const QString& defaultImage)
+bool AvatarDefs::getAvatarFromGpgId(const RsPgpId& gpgId, QPixmap &avatar, const QString& defaultImage)
 {
 	unsigned char *data = NULL;
 	int size = 0;
@@ -105,12 +108,14 @@ void AvatarDefs::getAvatarFromGpgId(const RsPgpId& gpgId, QPixmap &avatar, const
 	}
 
 	if (size == 0) {
-		avatar = QPixmap(defaultImage);
-		return;
+        avatar = FilesDefs::getPixmapFromQtResourcePath(defaultImage);
+		return false;
 	}
 
 	/* load image */
-	avatar.loadFromData(data, size, "PNG") ;
+	GxsIdDetails::loadPixmapFromData(data, size, avatar);
 
 	free(data);
+
+    return true;
 }

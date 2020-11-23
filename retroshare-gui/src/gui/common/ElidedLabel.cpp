@@ -1,42 +1,24 @@
-/****************************************************************************
- **
- ** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
- ** Contact: http://www.qt-project.org/legal
- **
- ** This file is part of the QtCore module of the Qt Toolkit.
- **
- ** $QT_BEGIN_LICENSE:BSD$
- ** You may use this file under the terms of the BSD license as follows:
- **
- ** "Redistribution and use in source and binary forms, with or without
- ** modification, are permitted provided that the following conditions are
- ** met:
- **   * Redistributions of source code must retain the above copyright
- **     notice, this list of conditions and the following disclaimer.
- **   * Redistributions in binary form must reproduce the above copyright
- **     notice, this list of conditions and the following disclaimer in
- **     the documentation and/or other materials provided with the
- **     distribution.
- **   * Neither the name of Digia Plc and its Subsidiary(-ies) nor the names
- **     of its contributors may be used to endorse or promote products derived
- **     from this software without specific prior written permission.
- **
- **
- ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- ** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- ** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- ** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- ** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- ** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- ** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- ** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- ** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
- **
- ** $QT_END_LICENSE$
- **
- ****************************************************************************/
+/*******************************************************************************
+ * gui/common/ElidedLabel.cpp                                                  *
+ *                                                                             *
+ * Copyright (C) 2012, Retroshare Team <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
+// Inspired from Qt examples set
 
 #include "ElidedLabel.h"
 
@@ -92,19 +74,9 @@ void ElidedLabel::clear()
 void ElidedLabel::paintEvent(QPaintEvent *event)
 {
 	QLabel::paintEvent(event);
-	QList<QPair<QTextLine,QPoint> > lLines;
-	QString elidedLastLine = "";
+
 	QPainter painter(this);
-	QFontMetrics fontMetrics = painter.fontMetrics();
-	QRect cr = contentsRect();
-	cr.adjust(margin(), margin(), -margin(), -margin());
-
-	bool didElide = false;
-	QChar ellipsisChar(0x2026);//= "…"
-	int lineSpacing = fontMetrics.lineSpacing();
-	int y = 0;
-
-	QString plainText = "";
+ 	QString plainText = "";
 	if (mOnlyPlainText)
 	{
 		plainText = mContent;
@@ -113,15 +85,48 @@ void ElidedLabel::paintEvent(QPaintEvent *event)
 		td.setHtml(mContent);
 		plainText = td.toPlainText();
 	}
+	QRect cr(contentsRect());
+	cr.adjust(margin(), margin(), -margin(), -margin());
+
+	bool didElide = paintElidedLine(&painter,plainText,cr,font(),alignment(),wordWrap(),true,&mRectElision);
+
+	//Send signal if changed
+
+	if (didElide != mElided)
+	{
+		mElided = didElide;
+		emit elisionChanged(didElide);
+	}
+}
+
+bool ElidedLabel::paintElidedLine( QPainter* painter, QString plainText
+                                 , const QRect& cr, QFont useFont
+                                 , Qt::Alignment alignment, bool wordWrap
+                                 , bool drawRoundedRect, QRect* rectElision/*=nullptr*/)
+{
+	if (rectElision) *rectElision = QRect();
+	if (plainText.isEmpty())
+		return false;
+
+	QList<QPair<QTextLine,QPoint> > lLines;
+	QString elidedLastLine = "";
+	QFontMetrics fontMetrics = QFontMetrics(useFont);
+
+	bool didElide = false;
+	QChar ellipsisChar(0x2026);//= "…"
+	int lineSpacing = fontMetrics.lineSpacing();
+	int y = 0;
+
 	plainText = plainText.replace("\n",QChar(QChar::LineSeparator));
 	plainText = plainText.replace("\r",QChar(QChar::LineSeparator));
 
-	QTextLayout textLayout(plainText, painter.font());
+	QTextLayout textLayout(plainText, useFont);
 	QTextOption to = textLayout.textOption();
-	to.setAlignment(alignment());
-	to.setWrapMode(wordWrap() ? QTextOption::WrapAtWordBoundaryOrAnywhere : QTextOption::NoWrap);
+	to.setAlignment(alignment);
+	to.setWrapMode(wordWrap ? QTextOption::WrapAtWordBoundaryOrAnywhere : QTextOption::NoWrap);
 	textLayout.setTextOption(to);
 
+	if (painter) painter->save();
 	textLayout.beginLayout();
 	forever {
 		//Get new line for text.
@@ -133,7 +138,7 @@ void ElidedLabel::paintEvent(QPaintEvent *event)
 		line.setLineWidth(cr.width());
 		int nextLineY = y + lineSpacing;
 
-		if ((cr.height() >= nextLineY + lineSpacing) && wordWrap()) {
+		if ((cr.height() >= nextLineY + lineSpacing) && wordWrap) {
 			//Line written normaly, next line will too
 			lLines.append(QPair<QTextLine, QPoint>(line, QPoint(0, y)));
 			y = nextLineY;
@@ -141,8 +146,13 @@ void ElidedLabel::paintEvent(QPaintEvent *event)
 			//The next line can't be written.
 			QString lastLine = plainText.mid(line.textStart()).split(QChar(QChar::LineSeparator)).at(0);
 			QTextLine lineEnd = textLayout.createLine();
-			if (!lineEnd.isValid() && (wordWrap()
-			                           || (fontMetrics.width(lastLine) < cr.width()))) {
+			if (!lineEnd.isValid() && (wordWrap
+#if QT_VERSION < QT_VERSION_CHECK(5,11,0)
+		                               || (fontMetrics.width(lastLine) < cr.width()) ))
+#else
+			                           || (fontMetrics.horizontalAdvance(lastLine) < cr.width()) ))
+#endif
+			{
 				//No more text for next line so this one is OK
 				lLines.append(QPair<QTextLine, QPoint>(line, QPoint(0, y)));
 				elidedLastLine="";
@@ -168,11 +178,11 @@ void ElidedLabel::paintEvent(QPaintEvent *event)
 	if (didElide) iHeight += lineSpacing;
 
 	//Compute lines translation with alignment
-	if (alignment() & Qt::AlignTop)
+	if (alignment & Qt::AlignTop)
 		iTransY = 0;
-	if (alignment() & Qt::AlignBottom)
+	if (alignment & Qt::AlignBottom)
 		iTransY = cr.height() - iHeight;
-	if (alignment() & Qt::AlignVCenter)
+	if (alignment & Qt::AlignVCenter)
 		iTransY = (cr.height() - iHeight) / 2;
 
 	QPair<QTextLine,QPoint> pair;
@@ -180,12 +190,17 @@ void ElidedLabel::paintEvent(QPaintEvent *event)
 	//Now we know how many lines to redraw at good position
 	foreach (pair, lLines){
 		lastPos = pair.second + QPoint(0+ cr.left(), iTransY + cr.top());
-		pair.first.draw(&painter, lastPos);
+		if (painter) pair.first.draw(painter, lastPos);
 	}
 
 	//Print last elided line
-	if (didElide) {
+	if (didElide)
+	{
+#if QT_VERSION < QT_VERSION_CHECK(5,11,0)
 		int width = fontMetrics.width(elidedLastLine);
+#else
+		int width = fontMetrics.horizontalAdvance(elidedLastLine);
+#endif
 		if (lastPos.y() == -1){
 			y = iTransY;// Only one line
 		} else {
@@ -193,32 +208,45 @@ void ElidedLabel::paintEvent(QPaintEvent *event)
 		}
 		if (width < cr.width()){
 			//Text don't taking all line (with line break), so align it
-			if (alignment() & Qt::AlignLeft)
+			if (alignment & Qt::AlignLeft)
 				iTransX = 0;
-			if (alignment() & Qt::AlignRight)
+			if (alignment & Qt::AlignRight)
 				iTransX = cr.width() - width;
-			if (alignment() & Qt::AlignHCenter)
+			if (alignment & Qt::AlignHCenter)
 				iTransX = (cr.width() - width) / 2;
-			if (alignment() & Qt::AlignJustify)
+			if (alignment & Qt::AlignJustify)
 				iTransX = 0;
 		}
 
-		painter.drawText(QPoint(iTransX + cr.left(), y + fontMetrics.ascent() + cr.top()), elidedLastLine);
+		if(width+iTransX+cr.left() <= cr.right())
+			if (painter)
+			{
+				painter->setFont(useFont);
+				painter->drawText(QPoint(iTransX + cr.left(), y + fontMetrics.ascent() + cr.top()), elidedLastLine);
+			}
+
 		//Draw button to get ToolTip
-		mRectElision = QRect(iTransX + width - fontMetrics.width(ellipsisChar) + cr.left()
-		                     , y + cr.top()
-		                     , fontMetrics.width(ellipsisChar)
-		                     , fontMetrics.height() - 1);
-		painter.drawRoundRect(mRectElision);
-	} else {
-		mRectElision = QRect();
+#if QT_VERSION < QT_VERSION_CHECK(5,11,0)
+		int fontWidth = fontMetrics.width(ellipsisChar);
+#else
+		int fontWidth = fontMetrics.horizontalAdvance(ellipsisChar);
+#endif
+		QRect mRectElision = QRect(  iTransX + width - fontWidth + cr.left()
+		                           , y + cr.top()
+		                           , fontWidth
+		                           , fontMetrics.height() - 1);
+		if (rectElision)
+			*rectElision = mRectElision;
+
+		if(drawRoundedRect)
+			if (painter) {
+				painter->setBrush(QBrush(Qt::transparent));
+				painter->drawRoundedRect(mRectElision, 2 , 2);
+			}
 	}
 
-	//Send signal if changed
-	if (didElide != mElided) {
-		mElided = didElide;
-		emit elisionChanged(didElide);
-	}
+	if (painter) painter->restore();
+	return didElide;
 }
 
 void ElidedLabel::mousePressEvent(QMouseEvent *ev)

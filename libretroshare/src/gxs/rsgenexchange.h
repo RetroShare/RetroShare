@@ -1,33 +1,29 @@
+/*******************************************************************************
+ * libretroshare/src/gxs: rsgenexchange.h                                      *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2012 by Robert Fernie, Evi-Parker Christopher                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RSGENEXCHANGE_H
 #define RSGENEXCHANGE_H
 
-/*
- * libretroshare/src/gxs: rsgenexchange.h
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2012-2012 by Christopher Evi-Parker, Robert Fernie
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
 #include <queue>
-#include <ctime>
+#include "util/rstime.h"
 
 #include "rsgxs.h"
 #include "rsgds.h"
@@ -37,13 +33,14 @@
 #include "rsnxsobserver.h"
 #include "retroshare/rsgxsservice.h"
 #include "rsitems/rsnxsitems.h"
+#include "gxs/rsgxsnotify.h"
 #include "rsgxsutil.h"
 
 template<class GxsItem, typename Identity = std::string>
 class GxsPendingItem
 {
 public:
-	GxsPendingItem(GxsItem item, Identity id,time_t ts) :
+	GxsPendingItem(GxsItem item, Identity id,rstime_t ts) :
 		mItem(item), mId(id), mFirstTryTS(ts)
 	{}
 
@@ -54,7 +51,7 @@ public:
 
 	GxsItem mItem;
 	Identity mId;
-	time_t mFirstTryTS;
+	rstime_t mFirstTryTS;
 };
 
 class GxsGrpPendingSign
@@ -65,7 +62,7 @@ public:
 		mItem(item), mHaveKeys(false), mIsUpdate(false)
 	{}
 
-	time_t mLastAttemptTS, mStartTS;
+	rstime_t mLastAttemptTS, mStartTS;
 	uint32_t mToken;
 	RsGxsGrpItem* mItem;
 	bool mHaveKeys; // mKeys->first == true if key present
@@ -99,7 +96,8 @@ typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsGxsMsgItem*> > GxsMsgRelatedDa
 
 class RsGixs;
 
-class RsGenExchange : public RsNxsObserver, public RsTickingThread, public RsGxsIface
+class RsGenExchange : public RsNxsObserver, public RsTickingThread,
+        public RsGxsIface
 {
 public:
 
@@ -117,13 +115,16 @@ public:
      * @param gixs This is used for verification of msgs and groups received by Gen Exchange using identities.
      * @param authenPolicy This determines the authentication used for verfying authorship of msgs and groups
      */
-    RsGenExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns, RsSerialType* serviceSerialiser, uint16_t mServType, RsGixs* gixs, uint32_t authenPolicy);
+	RsGenExchange(
+	        RsGeneralDataService* gds, RsNetworkExchangeService* ns,
+	        RsSerialType* serviceSerialiser, uint16_t mServType, RsGixs* gixs,
+	        uint32_t authenPolicy );
 
     virtual ~RsGenExchange();
 
-    // Convention that this is implemented here. 
+    // Convention that this is implemented here.
     // and passes to network service.
-    virtual RsServiceInfo getServiceInfo() = 0; 
+    virtual RsServiceInfo getServiceInfo() = 0;
 
     void setNetworkExchangeService(RsNetworkExchangeService *ns) ;
 
@@ -132,22 +133,29 @@ public:
     /*!
      * @param messages messages are deleted after function returns
      */
-    virtual void notifyNewMessages(std::vector<RsNxsMsg*>& messages);
+    virtual void receiveNewMessages(std::vector<RsNxsMsg*>& messages) override;
 
     /*!
      * @param groups groups are deleted after function returns
      */
-    virtual void notifyNewGroups(std::vector<RsNxsGrp*>& groups);
+    virtual void receiveNewGroups(std::vector<RsNxsGrp*>& groups) override;
 
     /*!
      * @param grpId group id
      */
-    virtual void notifyReceivePublishKey(const RsGxsGroupId &grpId);
+    virtual void notifyReceivePublishKey(const RsGxsGroupId &grpId) override;
 
+    virtual void notifyChangedGroupSyncParams(const RsGxsGroupId &grpId) override;
+    /*!
+     * \brief notifyReceiveDistantSearchResults
+     * 				Should be called when new search results arrive.
+     * \param grpId
+     */
+    virtual void receiveDistantSearchResults(TurtleRequestId id,const RsGxsGroupId &grpId) override;
     /*!
      * @param grpId group id
      */
-    virtual void notifyChangedGroupStats(const RsGxsGroupId &grpId);
+    virtual void notifyChangedGroupStats(const RsGxsGroupId &grpId) override;
 
     /** E: Observer implementation **/
 
@@ -170,7 +178,7 @@ public:
      */
     RsTokenService* getTokenService();
 
-    virtual void data_tick();
+	void threadTick() override; /// @see RsTickingThread
 
     /*!
      * Policy bit pattern portion
@@ -214,7 +222,7 @@ public:
      * @param msgIds a map of RsGxsGrpMsgIdPair -> msgList (vector)
      * @return false if could not redeem token
      */
-    bool getMsgRelatedList(const uint32_t &token, MsgRelatedIdResult& msgIds);
+    bool getMsgRelatedList(const uint32_t &token, MsgRelatedIdResult& msgIds)override;
 
 
     /*!
@@ -223,14 +231,14 @@ public:
      * @param groupInfo
      * @return false if could not redeem token
      */
-    bool getGroupMeta(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo);
+    bool getGroupMeta(const uint32_t &token, std::list<RsGroupMetaData>& groupInfo)override;
 
     /*!
      * retrieves message meta data associated to a request token
      * @param token token to be redeemed
      * @param msgInfo the meta data to be retrieved for token store here
      */
-    bool getMsgMeta(const uint32_t &token, GxsMsgMetaMap &msgInfo);
+    bool getMsgMeta(const uint32_t &token, GxsMsgMetaMap &msgInfo)override;
 
     /*!
      * Retrieve msg meta for a given token for message related info
@@ -238,15 +246,32 @@ public:
      * @param msgIds a map of RsGxsGrpMsgIdPair -> msgList (vector)
      * @return false if could not redeem token
      */
-    bool getMsgRelatedMeta(const uint32_t &token, GxsMsgRelatedMetaMap& msgMeta);
+    bool getMsgRelatedMeta(const uint32_t &token, GxsMsgRelatedMetaMap& msgMeta)override;
 
+    /*!
+     * Retrieves the meta data of a newly created group. The meta is kept in cache for the current session.
+     * \param token  token that was used to create the group
+     * \param meta   meta data for this group
+     * \return   false if the group is not yet created.
+     */
+    bool getPublishedGroupMeta(const uint32_t& token,RsGroupMetaData& meta);
 
+    /*!
+     * Retrieves the meta data of a newly created post. The meta is kept in cache for the current session.
+     * \param token  token that was used to create the post
+     * \param meta   meta data for this post
+     * \return   false if the group is not yet created.
+     */
+    bool getPublishedMsgMeta(const uint32_t& token,RsMsgMetaData& meta);
+
+#ifdef TO_REMOVE
     /*!
      * Gxs services should call this for automatic handling of
      * changes, send
      * @param changes
      */
     virtual void receiveChanges(std::vector<RsGxsNotify*>& changes);
+#endif
 
     /*!
      * \brief acceptNewGroup
@@ -269,7 +294,7 @@ public:
      */
 	virtual bool acceptNewMessage(const RsGxsMsgMetaData *msgMeta, uint32_t size) ;
 
-    bool subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe);
+    bool subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe) override;
 
 	/*!
 	 * Gets service statistic for a given services
@@ -277,7 +302,7 @@ public:
 	 * @param stats the status
 	 * @return true if token exists false otherwise
 	 */
-	bool getServiceStatistic(const uint32_t& token, GxsServiceStatistic& stats);
+    bool getServiceStatistic(const uint32_t& token, GxsServiceStatistic& stats) override;
 
 	/*!
 	 * Get group statistic
@@ -285,7 +310,45 @@ public:
 	 * @param stats the stats associated to token requ
 	 * @return true if token is false otherwise
 	 */
-	bool getGroupStatistic(const uint32_t& token, GxsGroupStatistic& stats);
+    bool getGroupStatistic(const uint32_t& token, GxsGroupStatistic& stats) override;
+
+    /*!
+     * \brief turtleGroupRequest
+     * 			Issues a browadcast group request using the turtle router generic search system. The request is obviously asynchroneous and will be
+     * 			handled in RsGenExchange when received.
+     * \param group_id
+     */
+    void turtleGroupRequest(const RsGxsGroupId& group_id);
+    void turtleSearchRequest(const std::string& match_string);
+
+    /*!
+     * \brief getDistantSearchStatus
+     * 			Returns the status of ongoing search: unknown (probably not even searched), known as a search result,
+     *          data request ongoing and data available
+     */
+    DistantSearchGroupStatus getDistantSearchStatus(const RsGxsGroupId& group_id) ;
+
+    /**
+	 * @brief Search local groups. Blocking API.
+	 * @param matchString string to look for in the search
+	 * @param results storage for results
+	 * @return false on error, true otherwise
+	 */
+	bool localSearch( const std::string& matchString,
+	                  std::list<RsGxsGroupSummary>& results );
+
+	/// @see RsGxsIface
+	bool exportGroupBase64(
+	        std::string& radix, const RsGxsGroupId& groupId,
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
+
+	/// @see RsGxsIface
+	bool importGroupBase64(
+	        const std::string& radix,
+	        RsGxsGroupId& groupId = RS_DEFAULT_STORAGE_PARAM(RsGxsGroupId),
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
 
 protected:
 
@@ -468,7 +531,8 @@ public:
      * @param status
      * @return false if token could not be found, true if token disposed of
      */
-    bool updatePublicRequestStatus(const uint32_t &token, const uint32_t &status);
+	bool updatePublicRequestStatus(
+	        uint32_t token, RsTokenService::GxsRequestStatus status);
 
     /*!
      * This gets rid of a publicly issued token
@@ -566,7 +630,7 @@ public:
      * @param msgs
      */
     void deleteMsgs(uint32_t& token, const GxsMsgReq& msgs);
-    
+
 protected:
     /*!
      * This represents the group before its signature is calculated
@@ -650,33 +714,34 @@ public:
      */
 
     void shareGroupPublishKey(const RsGxsGroupId& grpId,const std::set<RsPeerId>& peers) ;
-    
+
     /*!
      * Returns the local TS of the group as known by the network service.
      * This is useful to allow various network services to sync their update TS
      * when needed. Typical use case is forums and circles.
      * @param gid GroupId the TS is which is requested
      */
-    bool getGroupServerUpdateTS(const RsGxsGroupId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) ;
+    bool getGroupServerUpdateTS(const RsGxsGroupId& gid,rstime_t& grp_server_update_TS,rstime_t& msg_server_update_TS) ;
 
     /*!
      * \brief getDefaultStoragePeriod. All times in seconds.
      * \return
      */
-	virtual uint32_t getDefaultStoragePeriod() { return mNetService->getDefaultKeepAge() ; }
+    virtual uint32_t getDefaultStoragePeriod() override{ return mNetService->getDefaultKeepAge() ; }
 
-    virtual uint32_t getStoragePeriod(const RsGxsGroupId& grpId) ;
-    virtual void     setStoragePeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) ;
+    virtual uint32_t getStoragePeriod(const RsGxsGroupId& grpId) override;
+    virtual void     setStoragePeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) override;
 
-    virtual uint32_t getDefaultSyncPeriod();
-    virtual uint32_t getSyncPeriod(const RsGxsGroupId& grpId) ;
-    virtual void     setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) ;
-	virtual bool     getGroupNetworkStats(const RsGxsGroupId& grpId,RsGroupNetworkStats& stats);
+    virtual uint32_t getDefaultSyncPeriod()override;
+    virtual uint32_t getSyncPeriod(const RsGxsGroupId& grpId) override;
+    virtual void     setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) override;
+    virtual bool     getGroupNetworkStats(const RsGxsGroupId& grpId,RsGroupNetworkStats& stats);
 
-    uint16_t serviceType() const { return mServType ; }
-    uint32_t serviceFullType() const { return ((uint32_t)mServType << 8) + (((uint32_t) RS_PKT_VERSION_SERVICE) << 24); }
+    uint16_t serviceType() const override { return mServType ; }
+    uint32_t serviceFullType() const { return RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(mServType); }
 
-    virtual RsReputations::ReputationLevel minReputationForForwardingMessages(uint32_t group_sign_flags,uint32_t identity_flags);
+	virtual RsReputationLevel minReputationForForwardingMessages(
+            uint32_t group_sign_flags, uint32_t identity_flags )override;
 protected:
 
     /** Notifications **/
@@ -693,9 +758,6 @@ protected:
      * @param changes the changes that have occured to data held by this service
      */
     virtual void notifyChanges(std::vector<RsGxsNotify*>& changes) = 0;
-
-
-
 
 private:
 
@@ -755,6 +817,8 @@ protected:
      */
     int createMessage(RsNxsMsg* msg);
 
+    RsNetworkExchangeService *netService() const { return mNetService ; }
+
 private:
     /*!
      * convenience function to create sign
@@ -765,7 +829,7 @@ private:
      * 		   SIGN_FAIL_TRY_LATER for Id sign key not avail (but requested), try later
      */
     int createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinaryData& msgData,
-                             const RsGxsMsgMetaData& msgMeta, RsGxsGrpMetaData& grpMeta);
+                             const RsGxsMsgMetaData& msgMeta, const RsGxsGrpMetaData& grpMeta);
 
     /*!
      * convenience function to create sign for groups
@@ -835,7 +899,7 @@ private:
      * @param newGrp the new group that updates the old group (must have meta data member initialised)
      * @return
      */
-    bool updateValid(RsGxsGrpMetaData& oldGrp, RsNxsGrp& newGrp) const;
+    bool updateValid(const RsGxsGrpMetaData& oldGrp, const RsNxsGrp& newGrp) const;
 
     /*!
      * convenience function for checking private publish and admin keys are present
@@ -869,6 +933,9 @@ private:
     std::vector<GxsGrpPendingSign> mGrpsToPublish;
     typedef std::vector<GxsGrpPendingSign> NxsGrpSignPendVect;
 
+    std::map<uint32_t,RsGxsGrpMetaData> mPublishedGrps ;		// keeps track of which group was created using which token
+    std::map<uint32_t,RsGxsMsgMetaData> mPublishedMsgs ;		// keeps track of which message was created using which token
+
     std::map<uint32_t, RsGxsMsgItem*> mMsgsToPublish;
 
     std::map<uint32_t, RsGxsGrpMsgIdPair > mMsgNotify;
@@ -891,12 +958,12 @@ private:
     NxsMsgPendingVect mMsgPendingValidate;
 
     bool mCleaning;
-    time_t mLastClean;
+    rstime_t mLastClean;
     RsGxsMessageCleanUp* mMsgCleanUp;
 
 
     bool mChecking, mCheckStarted;
-    time_t mLastCheck;
+    rstime_t mLastCheck;
     RsGxsIntegrityCheck* mIntegrityCheck;
 
 protected:
@@ -915,7 +982,6 @@ private:
     std::vector<MsgDeletePublish>   mMsgDeletePublish;
 
     std::map<RsGxsId,std::set<RsPeerId> > mRoutingClues ;
-    std::list<std::pair<RsGxsMessageId,RsPeerId> > mTrackingClues ;
 };
 
 #endif // RSGENEXCHANGE_H

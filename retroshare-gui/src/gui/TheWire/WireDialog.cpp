@@ -1,117 +1,180 @@
-/*
- * Retroshare Photo Plugin.
- *
- * Copyright 2012-2012 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * gui/TheWire/WireDialog.cpp                                                  *
+ *                                                                             *
+ * Copyright (c) 2012-2020 Robert Fernie   <retroshare.project@gmail.com>      *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "WireDialog.h"
 
+#include "WireGroupDialog.h"
+#include "WireGroupItem.h"
+
+#include "PulseViewGroup.h"
+#include "PulseReplySeperator.h"
+
+#include "util/qtthreadsutils.h"
+
 #include <retroshare/rspeers.h>
-#include <retroshare/rsphoto.h>
+#include <retroshare/rswire.h>
 
 #include <iostream>
 #include <sstream>
 
 #include <QTimer>
-
-/******
- * #define PHOTO_DEBUG 1
- *****/
-
+#include <QMessageBox>
 
 /****************************************************************
- * New Photo Display Widget.
+ * TheWire Display Widget.
  *
- * This has two 'lists'.
- * Top list shows Albums.
- * Lower list is photos from the selected Album.
- * 
- * Notes:
- *   Each Item will be an AlbumItem, which contains a thumbnail & random details.
- *   We will limit Items to < 100. With a 'Filter to see more message.
- * 
- *   Thumbnails will come from Service.
- *   Option to Share albums / pictures onward (if permissions allow).
- *   Option to Download the albums to a specified directory. (is this required if sharing an album?)
- *
- *   Will introduce a FullScreen SlideShow later... first get basics happening.
  */
 
+#define GROUP_SET_ALL           (0)
+#define GROUP_SET_OWN           (1)
+#define GROUP_SET_SUBSCRIBED    (2)
+#define GROUP_SET_OTHERS        (3)
+// Future Extensions.
+// #define GROUP_SET_AUTO          (4)
+// #define GROUP_SET_RECOMMENDED   (5)
 
+
+#define WIRE_TOKEN_TYPE_SUBSCRIBE_CHANGE 1
 
 
 /** Constructor */
 WireDialog::WireDialog(QWidget *parent)
-: MainPage(parent)
+: MainPage(parent), mGroupSet(GROUP_SET_ALL)
 {
 	ui.setupUi(this);
 
 	mAddDialog = NULL;
-	mPulseSelected = NULL;
+	mGroupSelected = NULL;
+	mHistoryIndex = -1;
 
-	connect( ui.pushButton_Post, SIGNAL(clicked()), this, SLOT(OpenOrShowPulseAddDialog()));
-	//connect( ui.pushButton_Accounts, SIGNAL(clicked()), this, SLOT(OpenOrShowAccountDialog()));
+	connect( ui.toolButton_createAccount, SIGNAL(clicked()), this, SLOT(createGroup()));
+	connect( ui.toolButton_createPulse, SIGNAL(clicked()), this, SLOT(createPulse()));
+	connect( ui.toolButton_refresh, SIGNAL(clicked()), this, SLOT(refreshGroups()));
+
+	connect(ui.comboBox_groupSet, SIGNAL(currentIndexChanged(int)), this, SLOT(selectGroupSet(int)));
+	connect(ui.comboBox_filterTime, SIGNAL(currentIndexChanged(int)), this, SLOT(selectFilterTime(int)));
+
+	connect( ui.toolButton_back, SIGNAL(clicked()), this, SLOT(back()));
+	connect( ui.toolButton_forward, SIGNAL(clicked()), this, SLOT(forward()));
+	ui.toolButton_back->setEnabled(false);
+	ui.toolButton_forward->setEnabled(false);
 
 	QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
 	timer->start(1000);
 
+	/* setup TokenQueue */
+	mWireQueue = new TokenQueue(rsWire->getTokenService(), this);
 
+	requestGroupData();
+
+	// just for testing
+	postTestTwitterView();
+}
+
+void WireDialog::refreshGroups()
+{
+	requestGroupData();
 }
 
 
-void WireDialog::notifySelection(PulseItem *item, int ptype)
+void WireDialog::addGroup(QWidget *item)
 {
-        std::cerr << "WireDialog::notifySelection() from : " << ptype << " " << item;
-        std::cerr << std::endl;
-
-	notifyPulseSelection(item);
-
-#if 0
-	switch(ptype)
-	{
-		default:
-		case PHOTO_ITEM_TYPE_ALBUM:
-			notifyAlbumSelection(item);
-			break;
-		case PHOTO_ITEM_TYPE_PHOTO:
-			notifyPhotoSelection(item);
-			break;
-	}
-#endif
+	QLayout *alayout = ui.scrollAreaWidgetContents_groups->layout();
+	alayout->addWidget(item);
 }
 
-void WireDialog::notifyPulseSelection(PulseItem *item)
+bool WireDialog::setupPulseAddDialog()
 {
-	std::cerr << "WireDialog::notifyPulseSelection() from : " << item;
+	std::cerr << "WireDialog::setupPulseAddDialog()";
 	std::cerr << std::endl;
-	
-	if (mPulseSelected)
+
+	if (!mAddDialog)
 	{
-		std::cerr << "WireDialog::notifyPulseSelection() unselecting old one : " << mPulseSelected;
-		std::cerr << std::endl;
-	
-		mPulseSelected->setSelected(false);
+		mAddDialog = new PulseAddDialog(NULL);
+		mAddDialog->hide();
 	}
-	
-	mPulseSelected = item;
+
+	mAddDialog->cleanup();
+
+	int idx = ui.groupChooser->currentIndex();
+	if (idx < 0) {
+		std::cerr << "WireDialog::setupPulseAddDialog() ERROR GETTING AuthorId!";
+		std::cerr << std::endl;
+
+		QMessageBox::warning(this, tr("RetroShare"),tr("Please create or choose Wire Groupd first"), QMessageBox::Ok, QMessageBox::Ok);
+		return false;
+	}
+
+	// publishing group.
+	RsWireGroup group = mOwnGroups[idx];
+	mAddDialog->setGroup(group.mMeta.mGroupId);
+
+	return true;
+}
+
+
+void WireDialog::subscribe(RsGxsGroupId &groupId)
+{
+	uint32_t token;
+	rsWire->subscribeToGroup(token, groupId, true);
+	mWireQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, WIRE_TOKEN_TYPE_SUBSCRIBE_CHANGE);
+}
+
+void WireDialog::unsubscribe(RsGxsGroupId &groupId)
+{
+	uint32_t token;
+	rsWire->subscribeToGroup(token, groupId, false);
+	mWireQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, WIRE_TOKEN_TYPE_SUBSCRIBE_CHANGE);
+}
+
+void WireDialog::notifyGroupSelection(WireGroupItem *item)
+{
+	std::cerr << "WireDialog::notifyGroupSelection() from : " << item;
+	std::cerr << std::endl;
+
+	bool doSelection = true;
+	if (mGroupSelected)
+	{
+		std::cerr << "WireDialog::notifyGroupSelection() unselecting old one : " << mGroupSelected;
+		std::cerr << std::endl;
+
+		mGroupSelected->setSelected(false);
+		if (mGroupSelected == item)
+		{
+			std::cerr << "WireDialog::notifyGroupSelection() current -> unselect";
+			std::cerr << std::endl;
+			/* de-selection of current item */
+			mGroupSelected = NULL;
+			doSelection = false;
+		}
+	}
+
+	if (doSelection)
+	{
+		item->setSelected(true);
+		mGroupSelected = item;
+	}
+
+	/* update display */
+	showSelectedGroups();
 }
 
 
@@ -130,331 +193,792 @@ void WireDialog::checkUpdate()
 	return;
 }
 
-
-/*************** New Photo Dialog ***************/
-
-void WireDialog::OpenOrShowPulseAddDialog()
+void WireDialog::createGroup()
 {
-	if (mAddDialog)
+	WireGroupDialog wireCreate(this);
+	wireCreate.exec();
+}
+
+void WireDialog::createPulse()
+{
+	if (!mAddDialog)
 	{
-		mAddDialog->show();
+		mAddDialog = new PulseAddDialog(NULL);
+		mAddDialog->hide();
+	}
+
+	int idx = ui.groupChooser->currentIndex();
+	if (idx < 0) {
+		std::cerr << "WireDialog::createPulse() ERROR GETTING AuthorId!";
+		std::cerr << std::endl;
+
+		QMessageBox::warning(this, tr("RetroShare"),tr("Please create or choose Wire Groupd first"), QMessageBox::Ok, QMessageBox::Ok);
+		return;
+	}
+
+	RsWireGroup group = mOwnGroups[idx];
+
+	mAddDialog->cleanup();
+	mAddDialog->setGroup(group.mMeta.mGroupId);
+	mAddDialog->show();
+}
+
+void WireDialog::addGroup(const RsWireGroup &group)
+{
+	std::cerr << "WireDialog::addGroup() GroupId : " << group.mMeta.mGroupId;
+	std::cerr << std::endl;
+
+	addGroup(new WireGroupItem(this, group));
+}
+
+void WireDialog::deleteGroups()
+{
+	std::cerr << "WireDialog::deleteGroups()";
+	std::cerr << std::endl;
+
+	mGroupSelected = NULL;
+
+	QLayout *alayout = ui.scrollAreaWidgetContents_groups->layout();
+	QLayoutItem *item;
+	int i = 0;
+	while (i < alayout->count())
+	{
+		item = alayout->itemAt(i);
+		QWidget *widget = item->widget();
+		if (NULL != dynamic_cast<WireGroupItem *>(widget))
+		{
+			std::cerr << "WireDialog::deleteGroups() Removing Item at: " << i;
+			std::cerr << std::endl;
+
+			item = alayout->takeAt(i);
+			delete item->widget();
+			delete item;
+		}
+		else
+		{
+			std::cerr << "WireDialog::deleteGroups() Leaving Item at: " << i;
+			std::cerr << std::endl;
+
+			i++;
+		}
+	}
+}
+
+void WireDialog::updateGroups(std::vector<RsWireGroup>& groups)
+{
+	mAllGroups.clear();
+	mOwnGroups.clear();
+	ui.groupChooser->clear();
+
+	std::vector<RsWireGroup>::const_iterator it;
+	for(it = groups.begin(); it != groups.end(); it++) {
+		// save list of all groups.
+		mAllGroups[it->mMeta.mGroupId] = *it;
+
+		if (it->mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+		{
+			// grab own groups.
+			// setup Chooser too.
+			mOwnGroups.push_back(*it);
+			ui.groupChooser->addItem(QString::fromStdString(it->mMeta.mGroupName));
+		}
+	}
+}
+
+
+void WireDialog::selectGroupSet(int index)
+{
+	std::cerr << "WireDialog::selectGroupSet(" << index << ")";
+	std::cerr << std::endl;
+
+	mGroupSet = index;
+	if (mGroupSet < 0) {
+		mGroupSet = GROUP_SET_ALL;
+	}
+	showGroups();
+}
+
+void WireDialog::selectFilterTime(int index)
+{
+	std::cerr << "WireDialog::selectFilterTime(" << index << ")";
+	std::cerr << std::endl;
+
+	showSelectedGroups();
+}
+
+void WireDialog::showSelectedGroups()
+{
+	ui.comboBox_filterTime->setEnabled(false);
+	if (mGroupSelected)
+	{
+		// request data.
+		std::list<RsGxsGroupId> grpIds;
+		grpIds.push_back(mGroupSelected->groupId());
+
+		// show GroupFocus.
+		requestGroupFocus(mGroupSelected->groupId());
 	}
 	else
 	{
-		mAddDialog = new PulseAddDialog(NULL);
+		showGroups();
+	}
+}
+
+void WireDialog::showGroups()
+{
+	ui.comboBox_filterTime->setEnabled(false);
+	deleteGroups();
+
+	std::list<RsGxsGroupId> allGroupIds;
+
+	/* depends on the comboBox */
+	std::map<RsGxsGroupId, RsWireGroup>::const_iterator it;
+	for (it = mAllGroups.begin(); it != mAllGroups.end(); it++)
+	{
+		bool add = (mGroupSet == GROUP_SET_ALL);
+		if (it->second.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) {
+			if (mGroupSet == GROUP_SET_OWN) {
+				add = true;
+			}
+		}
+		else if (it->second.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) {
+			if (mGroupSet == GROUP_SET_SUBSCRIBED) {
+				add = true;
+			}
+		}
+		else {
+			if (mGroupSet == GROUP_SET_OTHERS) {
+				add = true;
+			}
+		}
+
+		if (add) {
+			addGroup(it->second);
+			// request data.
+			std::list<RsGxsGroupId> grpIds;
+			grpIds.push_back(it->second.mMeta.mGroupId);
+			allGroupIds.push_back(it->second.mMeta.mGroupId);
+		}
+	}
+
+	requestGroupsPulses(allGroupIds);
+}
+
+
+// LOAD DATA...............................................
+
+void WireDialog::requestGroupData()
+{
+	std::cerr << "WireDialog::requestGroupData()";
+	std::cerr << std::endl;
+
+	RsTokReqOptions opts;
+	uint32_t token;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	mWireQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, 0);
+}
+
+bool WireDialog::loadGroupData(const uint32_t &token)
+{
+	std::cerr << "WireDialog::loadGroupData()";
+	std::cerr << std::endl;
+
+	std::vector<RsWireGroup> groups;
+	rsWire->getGroupData(token, groups);
+
+	// save list of groups.
+	updateGroups(groups);
+	showGroups();
+	return true;
+}
+
+rstime_t WireDialog::getFilterTimestamp()
+{
+	rstime_t filterTimestamp = time(NULL);
+	switch(ui.comboBox_filterTime->currentIndex())
+	{
+		case 1: // Last 24 Hours.
+			filterTimestamp -= (3600 * 24);
+			break;
+		case 2: // Last 7 Days.
+			filterTimestamp -= (3600 * 24 * 7);
+			break;
+		case 3: // Last 30 Days.
+			filterTimestamp -= (3600 * 24 * 30);
+			break;
+		case 0: // All Time.
+		case -1: // no index.
+		default:
+			filterTimestamp = 0; // back to Epoch! effectively all.
+			break;
+	}
+	return filterTimestamp;
+}
+
+void WireDialog::acknowledgeGroup(const uint32_t &token, const uint32_t &userType)
+{
+	/* reload groups */
+	std::cerr << "WireDialog::acknowledgeGroup(usertype: " << userType << ")";
+	std::cerr << std::endl;
+
+	RsGxsGroupId grpId;
+	rsWire->acknowledgeGrp(token, grpId);
+
+	refreshGroups();
+}
+
+
+/**************************** Request / Response Filling of Data ************************/
+
+void WireDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+{
+	std::cerr << "WireDialog::loadRequest()";
+	std::cerr << std::endl;
+
+	if (queue == mWireQueue)
+	{
+		/* now switch on req */
+		switch(req.mType)
+		{
+			case TOKENREQ_GROUPINFO:
+				switch(req.mAnsType)
+				{
+					case RS_TOKREQ_ANSTYPE_DATA:
+						loadGroupData(req.mToken);
+						break;
+					case RS_TOKREQ_ANSTYPE_ACK:
+						acknowledgeGroup(req.mToken, req.mUserType);
+						break;
+					default:
+						std::cerr << "WireDialog::loadRequest() ERROR: GROUP: INVALID ANS TYPE";
+						std::cerr << std::endl;
+						break;
+				}
+				break;
+			default:
+				std::cerr << "WireDialog::loadRequest() ERROR: INVALID TYPE";
+				std::cerr << std::endl;
+				break;
+		}
+	}
+}
+
+
+/**************************** Request / Response Filling of Data ************************/
+
+
+
+
+
+/****************************************************************************************/
+// TWITTER VIEW.
+/****************************************************************************************/
+
+// TODO
+// - Handle Groups
+//	 - Add GroupPtr to WirePulseSPtrs (DONE)
+//   - Add HeadShot to WireGroup
+//   - Add GxsIdLabel to Pulse UI elements.
+//
+// - Create Groups.
+//   - Add HeadShot
+//
+// - Create Pulse.
+//   - Add Images.
+//
+// - Link up Reply / Republish / Like.
+//
+// - showGroupFocus
+//   - TODO
+//
+// - showPulseFocus
+//   - Basics (DONE).
+//   - MoreReplies
+//   - Show Actual Message.
+
+//
+// - showReplyFocus
+//   - TODO
+
+
+// PulseDataItem interface
+// Actions.
+void WireDialog::PVHreply(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId)
+{
+	std::cerr << "WireDialog::PVHreply() GroupId: " << groupId;
+	std::cerr << "MsgId: " << msgId;
+	std::cerr << std::endl;
+
+	if (setupPulseAddDialog())
+	{
+		mAddDialog->setReplyTo(groupId, msgId, WIRE_PULSE_TYPE_REPLY);
 		mAddDialog->show();
 	}
 }
 
-
-bool WireDialog::matchesAlbumFilter(const RsPhotoAlbum &album)
+void WireDialog::PVHrepublish(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId)
 {
+	std::cerr << "WireDialog::PVHrepublish() GroupId: " << groupId;
+	std::cerr << "MsgId: " << msgId;
+	std::cerr << std::endl;
 
-	return true;
-}
-
-double WireDialog::AlbumScore(const RsPhotoAlbum &album)
-{
-	return 1;
-}
-
-
-bool WireDialog::matchesPhotoFilter(const RsPhotoPhoto &photo)
-{
-
-	return true;
-}
-
-double WireDialog::PhotoScore(const RsPhotoPhoto &photo)
-{
-	return 1;
-}
-
-
-bool WireDialog::FilterNSortAlbums(const std::list<std::string> &albumIds, std::list<std::string> &filteredAlbumIds, int count)
-{
-#if 0
-	std::multimap<double, std::string> sortedAlbums;
-	std::multimap<double, std::string>::iterator sit;
-	std::list<std::string>::const_iterator it;
-	
-	for(it = albumIds.begin(); it != albumIds.end(); ++it)
+	if (setupPulseAddDialog())
 	{
-		RsPhotoAlbum album;
-		rsPhoto->getAlbum(*it, album);
-
-		if (matchesAlbumFilter(album))
-		{
-			double score = AlbumScore(album);
-
-			sortedAlbums.insert(std::make_pair(score, *it));
-		}
+		mAddDialog->setReplyTo(groupId, msgId, WIRE_PULSE_TYPE_REPUBLISH);
+		mAddDialog->show();
 	}
-
-	int i;
-	for (sit = sortedAlbums.begin(), i = 0; (sit != sortedAlbums.end()) && (i < count); ++sit, ++i)
-	{
-		filteredAlbumIds.push_back(sit->second);
-	}
-#endif
-	return true;
 }
 
-
-bool WireDialog::FilterNSortPhotos(const std::list<std::string> &photoIds, std::list<std::string> &filteredPhotoIds, int count)
+void WireDialog::PVHlike(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId)
 {
-#if 0
-	std::multimap<double, std::string> sortedPhotos;
-	std::multimap<double, std::string>::iterator sit;
-	std::list<std::string>::const_iterator it;
+	std::cerr << "WireDialog::PVHlike() GroupId: " << groupId;
+	std::cerr << "MsgId: " << msgId;
+	std::cerr << std::endl;
 
+	if (setupPulseAddDialog())
+	{
+		mAddDialog->setReplyTo(groupId, msgId, WIRE_PULSE_TYPE_LIKE);
+		mAddDialog->show();
+	}
+}
+
+void WireDialog::PVHviewGroup(const RsGxsGroupId &groupId)
+{
+	std::cerr << "WireDialog::PVHviewGroup(";
+	std::cerr << groupId.toStdString();
+	std::cerr << ")";
+	std::cerr << std::endl;
+
+	requestGroupFocus(groupId);
+}
+
+void WireDialog::PVHviewPulse(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId)
+{
+	std::cerr << "WireDialog::PVHviewPulse(";
+	std::cerr << groupId.toStdString() << ",";
+	std::cerr << msgId.toStdString();
+	std::cerr << ")";
+	std::cerr << std::endl;
+
+	requestPulseFocus(groupId, msgId);
+}
+
+void WireDialog::PVHviewReply(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId)
+{
+	std::cerr << "WireDialog::PVHviewReply(";
+	std::cerr << groupId.toStdString() << ",";
+	std::cerr << msgId.toStdString();
+	std::cerr << ")";
+	std::cerr << std::endl;
+
+	// requestPulseFocus(groupId, msgId);
+}
+
+void WireDialog::PVHfollow(const RsGxsGroupId &groupId)
+{
+	std::cerr << "WireDialog::PVHfollow(";
+	std::cerr << groupId.toStdString();
+	std::cerr << ")";
+	std::cerr << std::endl;
+
+	uint32_t token;
+	rsWire->subscribeToGroup(token, groupId, true);
+	mWireQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, WIRE_TOKEN_TYPE_SUBSCRIBE_CHANGE);
+}
+
+void WireDialog::PVHrate(const RsGxsId &authorId)
+{
+	std::cerr << "WireDialog::PVHrate(";
+	std::cerr << authorId.toStdString();
+	std::cerr << ") TODO";
+	std::cerr << std::endl;
+}
+
+void WireDialog::postTestTwitterView()
+{
+	clearTwitterView();
+
+	addTwitterView(new PulseTopLevel(NULL,RsWirePulseSPtr())); 
+	addTwitterView(new PulseReply(NULL,RsWirePulseSPtr()));
+	addTwitterView(new PulseReply(NULL,RsWirePulseSPtr()));
+	addTwitterView(new PulseReply(NULL,RsWirePulseSPtr()));
+	addTwitterView(new PulseReply(NULL,RsWirePulseSPtr()));
+	addTwitterView(new PulseReply(NULL,RsWirePulseSPtr()));
+}
+
+void WireDialog::clearTwitterView()
+{
+	std::cerr << "WireDialog::clearTwitterView()";
+	std::cerr << std::endl;
+
+	QLayout *alayout = ui.scrollAreaWidgetContents->layout();
+	QLayoutItem *item;
 	int i = 0;
-	for(it = photoIds.begin(); it != photoIds.end(); ++it, ++i)
+	while (i < alayout->count())
 	{
-		RsPhotoPhoto photo;
-		rsPhoto->getPhoto(*it, photo);
-
-		if (matchesPhotoFilter(photo))
+		item = alayout->itemAt(i);
+		QWidget *widget = item->widget();
+		if (NULL != dynamic_cast<PulseViewItem *>(widget))
 		{
-			double score = i; //PhotoScore(album);
-			sortedPhotos.insert(std::make_pair(score, *it));
+			std::cerr << "WireDialog::clearTwitterView() Removing Item at: " << i;
+			std::cerr << std::endl;
+
+			item = alayout->takeAt(i);
+			delete item->widget();
+			delete item;
+		}
+		else
+		{
+			std::cerr << "WireDialog::clearTwitterView() Leaving Item at: " << i;
+			std::cerr << std::endl;
+
+			i++;
 		}
 	}
-
-	for (sit = sortedPhotos.begin(), i = 0; (sit != sortedPhotos.end()) && (i < count); ++sit, ++i)
-	{
-		filteredPhotoIds.push_back(sit->second);
-	}
-#endif
-	return true;
 }
 
-
-
-void WireDialog::insertAlbums()
+void WireDialog::addTwitterView(PulseViewItem *item)
 {
-#if 0
-	/* clear it all */
-	clearAlbums();
-	//ui.albumLayout->clear();
-
-	/* create a list of albums */
-
-
-	std::list<std::string> albumIds;
-	std::list<std::string> filteredAlbumIds;
-	std::list<std::string>::iterator it;
-
-	rsPhoto->getAlbumList(albumIds);
-
-	/* Filter Albums */ /* Sort Albums */
-#define MAX_ALBUMS 50
-
-	int count = MAX_ALBUMS;
-	FilterNSortAlbums(albumIds, filteredAlbumIds, count);
-
-	for(it = filteredAlbumIds.begin(); it != filteredAlbumIds.end(); ++it)
-	{
-		addAlbum(*it);
-	}
-
-	insertPhotosForAlbum(filteredAlbumIds);
-#endif
-}
-
-void WireDialog::insertPhotosForSelectedAlbum()
-{
-#if 0
-	std::cerr << "WireDialog::insertPhotosForSelectedAlbum()";
+	std::cerr << "WireDialog::addTwitterView()";
 	std::cerr << std::endl;
 
-	clearPhotos();
-
-	std::list<std::string> albumIds;
-	if (mAlbumSelected)
-	{
-		albumIds.push_back(mAlbumSelected->mDetails.mAlbumId);
-
-		std::cerr << "WireDialog::insertPhotosForSelectedAlbum() AlbumId: " << mAlbumSelected->mDetails.mAlbumId;
+	/* ensure its a boxlayout */
+	QLayout *alayout = ui.scrollAreaWidgetContents->layout();
+	QBoxLayout *boxlayout = dynamic_cast<QBoxLayout *>(alayout);
+	if (boxlayout == NULL) {
+		std::cerr << "WireDialog::addTwitterView() ERROR not boxlayout, not Inserting";
 		std::cerr << std::endl;
+		return;
 	}
 
-	insertPhotosForAlbum(albumIds);
-#endif
+	// inserting as last item.
+	std::cerr << "WireDialog::addTwitterView() Inserting at end";
+	std::cerr << std::endl;
+	boxlayout->addWidget(item);
 }
 
+// HISTORY -------------------------------------------------------------------------------
 
-void WireDialog::addAlbum(const std::string &id)
+void printWireViewHistory(const WireViewHistory &view)
 {
-#if 0
-	RsPhotoAlbum album;
-	rsPhoto->getAlbum(id, album);
-
-
-	RsPhotoThumbnail thumbnail;
-	rsPhoto->getAlbumThumbnail(id, thumbnail);
-
-	std::cerr << " WireDialog::addAlbum() AlbumId: " << album.mAlbumId << std::endl;
-
-	PulseItem *item = new PulseItem(this, album, thumbnail);
-	QLayout *alayout = ui.scrollAreaWidgetContents->layout();
-	alayout->addWidget(item);
-#endif
+	std::cerr << "WireViewHistory(" << (int) view.viewType << "): ";
+	switch(view.viewType) {
+		case WireViewType::PULSE_FOCUS:
+			std::cerr << " PULSE_FOCUS: grpId: " << view.groupId;
+			std::cerr << " msgId: " << view.msgId;
+			std::cerr << std::endl;
+			break;
+		case WireViewType::GROUP_FOCUS:
+			std::cerr << " GROUP_FOCUS: grpId: " << view.groupId;
+			std::cerr << std::endl;
+			break;
+		case WireViewType::GROUPS:
+			std::cerr << " GROUPS_PULSES: grpIds: TBD";
+			std::cerr << std::endl;
+			break;
+		default:
+			break;
+	}
 }
 
-void WireDialog::clearAlbums()
+void WireDialog::AddToHistory(const WireViewHistory &view)
 {
-#if 0
-	std::cerr << "WireDialog::clearAlbums()" << std::endl;
+	std::cerr << "AddToHistory():";
+	printWireViewHistory(view);
 
-	std::list<PulseItem *> photoItems;
-	std::list<PulseItem *>::iterator pit;
-	
-	QLayout *alayout = ui.scrollAreaWidgetContents->layout();
-        int count = alayout->count();
-	for(int i = 0; i < count; ++i)
+	/* clear future history */
+	mHistory.resize(mHistoryIndex + 1);
+
+	mHistory.push_back(view);
+	mHistoryIndex = mHistory.size() - 1;
+
+	// at end of history.
+	// enable back, disable forward.
+	ui.toolButton_back->setEnabled(mHistoryIndex > 0);
+	ui.toolButton_forward->setEnabled(false);
+}
+
+void WireDialog::back()
+{
+	LoadHistory(mHistoryIndex-1);
+}
+
+void WireDialog::forward()
+{
+	LoadHistory(mHistoryIndex+1);
+}
+
+void WireDialog::LoadHistory(uint32_t index)
+{
+	if (index >= mHistory.size()) {
+		return;
+	}
+
+	mHistoryIndex = index;
+	WireViewHistory view = mHistory[index];
+
+	std::cerr << "LoadHistory:";
+	printWireViewHistory(view);
+
+	switch(view.viewType) {
+		case WireViewType::PULSE_FOCUS:
+			showPulseFocus(view.groupId, view.msgId);
+			break;
+		case WireViewType::GROUP_FOCUS:
+			showGroupFocus(view.groupId);
+			break;
+		case WireViewType::GROUPS:
+			showGroupsPulses(view.groupIds);
+			break;
+		default:
+			break;
+	}
+
+	ui.toolButton_back->setEnabled(index > 0);
+	ui.toolButton_forward->setEnabled(index + 1 < mHistory.size());
+}
+// HISTORY -------------------------------------------------------------------------------
+
+void WireDialog::requestPulseFocus(const RsGxsGroupId groupId, const RsGxsMessageId msgId)
+{
+	WireViewHistory view;
+	view.viewType = WireViewType::PULSE_FOCUS;
+	view.groupId = groupId;
+	view.msgId = msgId;
+
+	AddToHistory(view);
+	showPulseFocus(groupId, msgId);
+}
+
+void WireDialog::showPulseFocus(const RsGxsGroupId groupId, const RsGxsMessageId msgId)
+{
+	clearTwitterView();
+
+	// background thread for loading.
+	RsThread::async([this, groupId, msgId]()
 	{
-		QLayoutItem *litem = alayout->itemAt(i);
-		if (!litem)
+		// fetch data from backend.
+		RsWirePulseSPtr pPulse;
+		int type = 0;
+		bool success = rsWire->getPulseFocus(groupId, msgId, type, pPulse);
+
+		// sleep(2);
+
+		/* now insert the pulse + children into the layput */
+		RsQThreadUtils::postToObject([pPulse,this]()
 		{
-			std::cerr << "WireDialog::clearAlbums() missing litem";
-			std::cerr << std::endl;
-			continue;
-		}
-		
-		PulseItem *item = dynamic_cast<PulseItem *>(litem->widget());
-		if (item)
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
+
+			postPulseFocus(pPulse);
+
+		}, this);
+	});
+}
+
+
+void WireDialog::postPulseFocus(RsWirePulseSPtr pPulse)
+{
+	clearTwitterView();
+	if (!pPulse)
+	{
+		std::cerr << "WireDialog::postPulseFocus() Invalid pulse";
+		std::cerr << std::endl;
+		return;
+	}
+
+	ui.label_viewMode->setText("Pulse Focus");
+
+	addTwitterView(new PulseTopLevel(this, pPulse));
+
+	std::list<RsWirePulseSPtr>::iterator it;
+	for(it = pPulse->mReplies.begin(); it != pPulse->mReplies.end(); it++)
+	{
+		RsWirePulseSPtr reply = *it;
+		PulseReply *firstReply = new PulseReply(this, reply);
+		addTwitterView(firstReply);
+
+		if (reply->mReplies.size() > 0)
 		{
-			std::cerr << "WireDialog::clearAlbums() item: " << item;
-			std::cerr << std::endl;
-		
-			photoItems.push_back(item);
+			PulseReply *secondReply = new PulseReply(this, reply->mReplies.front());
+			addTwitterView(secondReply);
+			firstReply->showReplyLine(true);
+			secondReply->showReplyLine(false);
 		}
 		else
 		{
-			std::cerr << "WireDialog::clearAlbums() Found Child, which is not a PulseItem???";
-			std::cerr << std::endl;
+			firstReply->showReplyLine(false);
 		}
+
+
+		if (reply->mReplies.size() > 1)
+		{
+			// addTwitterView(new PulseMoreReplies(NULL, reply));
+		}
+
+		addTwitterView(new PulseReplySeperator());
 	}
-	
-	for(pit = photoItems.begin(); pit != photoItems.end(); ++pit)
+
+	// Add big separator, and republishes.
+	if (pPulse->mReplies.size() > 0 && pPulse->mRepublishes.size() > 0)
 	{
-		PulseItem *item = *pit;
-		alayout->removeWidget(item);
-		delete item;
+		addTwitterView(new PulseReplySeperator());
+		addTwitterView(new PulseReplySeperator());
 	}
-	mAlbumSelected = NULL;
-#endif
+
+	for(it = pPulse->mRepublishes.begin(); it != pPulse->mRepublishes.end(); it++)
+	{
+		RsWirePulseSPtr repub = *it;
+
+		PulseReply *firstRepub = new PulseReply(this, repub);
+		firstRepub->showReplyLine(false);
+
+		addTwitterView(firstRepub);
+		addTwitterView(new PulseReplySeperator());
+	}
+
+
 }
 
-void WireDialog::clearPhotos()
+void WireDialog::requestGroupFocus(const RsGxsGroupId groupId)
 {
-#if 0
-	std::cerr << "WireDialog::clearPhotos()" << std::endl;
+	WireViewHistory view;
+	view.viewType = WireViewType::GROUP_FOCUS;
+	view.groupId = groupId;
 
-	std::list<PulseItem *> photoItems;
-	std::list<PulseItem *>::iterator pit;
-	
-	QLayout *alayout = ui.scrollAreaWidgetContents_2->layout();
-        int count = alayout->count();
-	for(int i = 0; i < count; ++i)
-	{
-		QLayoutItem *litem = alayout->itemAt(i);
-		if (!litem)
-		{
-			std::cerr << "WireDialog::clearPhotos() missing litem";
-			std::cerr << std::endl;
-			continue;
-		}
-		
-		PulseItem *item = dynamic_cast<PulseItem *>(litem->widget());
-		if (item)
-		{
-			std::cerr << "WireDialog::clearPhotos() item: " << item;
-			std::cerr << std::endl;
-		
-			photoItems.push_back(item);
-		}
-		else
-		{
-			std::cerr << "WireDialog::clearPhotos() Found Child, which is not a PulseItem???";
-			std::cerr << std::endl;
-		}
-	}
-	
-	for(pit = photoItems.begin(); pit != photoItems.end(); ++pit)
-	{
-		PulseItem *item = *pit;
-		alayout->removeWidget(item);
-		delete item;
-	}
-	
-	mPhotoSelected = NULL;
-#endif	
-	
+	AddToHistory(view);
+	showGroupFocus(groupId);
 }
 
-
-void WireDialog::insertPhotosForAlbum(const std::list<std::string> &albumIds)
+void WireDialog::showGroupFocus(const RsGxsGroupId groupId)
 {
-#if 0
-	/* clear it all */
-	clearPhotos();
-	//ui.photoLayout->clear();
+	clearTwitterView();
 
-	/* create a list of albums */
-
-	std::list<std::string> ids;
-	std::list<std::string> photoIds;
-	std::list<std::string> filteredPhotoIds;
-	std::list<std::string>::const_iterator it;
-
-	for(it = albumIds.begin(); it != albumIds.end(); ++it)
+	// background thread for loading.
+	RsThread::async([this, groupId]()
 	{
-		rsPhoto->getPhotoList(*it, photoIds);
-	}
+		// fetch data from backend.
+		RsWireGroupSPtr grp;
+		std::list<RsWirePulseSPtr> pulses;
 
-	/* Filter Albums */ /* Sort Albums */
-#define MAX_PHOTOS 50
-	
-	int count = MAX_PHOTOS;
+		bool success = rsWire->getWireGroup(groupId, grp);
+		std::list<RsGxsGroupId> groupIds = { groupId };
+		success = rsWire->getPulsesForGroups(groupIds, pulses);
 
-	FilterNSortPhotos(photoIds, filteredPhotoIds, MAX_PHOTOS);
+		// sleep(2);
 
-	for(it = filteredPhotoIds.begin(); it != filteredPhotoIds.end(); ++it)
-	{
-		addPhoto(*it);
-	}
-#endif
+		/* now insert the pulse + children into the layput */
+		RsQThreadUtils::postToObject([grp, pulses,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
+
+			postGroupFocus(grp, pulses);
+
+		}, this);
+	});
 }
 
 
-void WireDialog::addPhoto(const std::string &id)
+void WireDialog::postGroupFocus(RsWireGroupSPtr group, std::list<RsWirePulseSPtr> pulses)
 {
-#if 0
-	RsPhotoPhoto photo;
-	rsPhoto->getPhoto(id,photo);
-
-	RsPhotoThumbnail thumbnail;
-	rsPhoto->getPhotoThumbnail(id, thumbnail);
-
-	std::cerr << "WireDialog::addPhoto() AlbumId: " << photo.mAlbumId;
-	std::cerr << " PhotoId: " << photo.mId;
+	std::cerr << "WireDialog::postGroupFocus()";
 	std::cerr << std::endl;
 
-	PulseItem *item = new PulseItem(this, photo, thumbnail);
-	QLayout *alayout = ui.scrollAreaWidgetContents_2->layout();
-	alayout->addWidget(item);
-#endif
+	if (!group)
+	{
+		std::cerr << "WireDialog::postGroupFocus() group is INVALID";
+		std::cerr << std::endl;
+		return;
+	}
+
+	ui.label_viewMode->setText("Group Focus");
+
+	addTwitterView(new PulseViewGroup(this, group));
+
+	std::list<RsWirePulseSPtr>::iterator it;
+	for(it = pulses.begin(); it != pulses.end(); it++)
+	{
+		RsWirePulseSPtr reply = *it;
+
+		// don't show likes
+		if (reply->mPulseType & WIRE_PULSE_TYPE_LIKE) {
+			std::cerr << "WireDialog::postGroupFocus() Not showing LIKE";
+			std::cerr << std::endl;
+			continue;
+		}
+
+		PulseReply *firstReply = new PulseReply(this, reply);
+		addTwitterView(firstReply);
+		firstReply->showReplyLine(false);
+
+		addTwitterView(new PulseReplySeperator());
+
+	}
 }
 
-
-void WireDialog::deletePulseItem(PulseItem *item, uint32_t type)
+void WireDialog::requestGroupsPulses(const std::list<RsGxsGroupId> groupIds)
 {
+	WireViewHistory view;
+	view.viewType = WireViewType::GROUPS;
+	view.groupIds = groupIds;
 
-
-	return;
+	AddToHistory(view);
+	showGroupsPulses(groupIds);
 }
 
+void WireDialog::showGroupsPulses(const std::list<RsGxsGroupId> groupIds)
+{
+	clearTwitterView();
 
+	// background thread for loading.
+	RsThread::async([this, groupIds]()
+	{
+		// fetch data from backend.
+		std::list<RsWirePulseSPtr> pulses;
+		bool success = rsWire->getPulsesForGroups(groupIds, pulses);
+
+		// sleep(2);
+
+		/* now insert the pulse + children into the layput */
+		RsQThreadUtils::postToObject([pulses,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
+
+			postGroupsPulses(pulses);
+
+		}, this);
+	});
+}
+
+void WireDialog::postGroupsPulses(std::list<RsWirePulseSPtr> pulses)
+{
+	std::cerr << "WireDialog::postGroupsPulses()";
+	std::cerr << std::endl;
+
+	ui.label_viewMode->setText("Groups Pulses");
+
+	std::list<RsWirePulseSPtr>::iterator it;
+	for(it = pulses.begin(); it != pulses.end(); it++)
+	{
+		RsWirePulseSPtr reply = *it;
+		// don't show likes
+		if (reply->mPulseType & WIRE_PULSE_TYPE_LIKE) {
+			std::cerr << "WireDialog::postGroupsPulses() Not showing LIKE";
+			std::cerr << std::endl;
+			continue;
+		}
+
+		PulseReply *firstReply = new PulseReply(this, reply);
+		addTwitterView(firstReply);
+		firstReply->showReplyLine(false);
+
+		addTwitterView(new PulseReplySeperator());
+
+	}
+}
 

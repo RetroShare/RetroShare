@@ -1,47 +1,52 @@
-/****************************************************************
- *
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2011, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/chat/ChatWidget.h                                                       *
+ *                                                                             *
+ * LibResAPI: API for local socket server                                      *
+ *                                                                             *
+ * Copyright (C) 2011, Retroshare Team <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef CHATWIDGET_H
 #define CHATWIDGET_H
 
-#include <QWidget>
-#include <QCompleter>
-#include <QTextCursor>
-#include <QTextCharFormat>
-#include <QToolButton>
+#include "ChatLobbyUserNotify.h"
+#include "ChatStyle.h"
 #include "gui/common/HashBox.h"
 #include "gui/common/RsButtonOnText.h"
-#include "ChatStyle.h"
 #include "gui/style/RSStyle.h"
-#include "ChatLobbyUserNotify.h"
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsfiles.h>
+
+#include <QCompleter>
+#include <QTextCharFormat>
+#include <QTextCursor>
+#include <QToolButton>
+#include <QWidget>
+
+//For PersonId anchor.
+#define PERSONID "PersonId:"
 
 class QAction;
 class QTextEdit;
 class QPushButton;
 class ChatWidget;
 class QMenu;
+class ImHistoryBrowser;
 
 namespace Ui {
 class ChatWidget;
@@ -125,6 +130,8 @@ public:
 
 public slots:
 	void updateStatus(const QString &peer_id, int status);
+	void setUseCMark(const bool bUseCMark);
+	void updateCMPreview();
 
 private slots:
 	//void pasteCreateMsgLink() ;
@@ -137,6 +144,7 @@ signals:
 	void infoChanged(ChatWidget*);
 	void newMessage(ChatWidget*);
 	void statusChanged(int);
+	void textBrowserAskContextMenu(QMenu* contextMnu, QString anchorForPosition, const QPoint point);
 
 protected:
 	bool eventFilter(QObject *obj, QEvent *event);
@@ -153,6 +161,8 @@ private slots:
 
 	void smileyWidget();
 	void addSmiley();
+	void stickerWidget();
+	void sendSticker();
 
 	void addExtraFile();
 	void addExtraPicture();
@@ -186,6 +196,7 @@ private slots:
 	void quote();
 	void dropPlacemark();
 	void saveImage();
+	void saveSticker();
 
 private:
 	bool findText(const QString& qsStringToFind);
@@ -197,6 +208,8 @@ private:
 	void colorChanged();
 	void setColorAndFont(bool both);
 	void processSettings(bool load);
+
+	uint32_t maxMessageSize();
 
 	void completeNickname(bool reverse);
     QAbstractItemModel *modelFromPeers();
@@ -216,7 +229,8 @@ private:
 	bool typing;
 	int peerStatus;
 
-    bool sendingBlocked;
+	bool sendingBlocked;
+	bool useCMark;
 
 	time_t lastStatusSendTime;
 
@@ -246,7 +260,8 @@ private:
 	TransferRequestFlags mDefaultExtraFileFlags ; // flags for extra files shared in this chat. Will be 0 by default, but might be ANONYMOUS for chat lobbies.
 	QDate lastMsgDate ;
 
-    QCompleter *completer;
+	QCompleter *completer;
+	ImHistoryBrowser* imBrowser;
 
 	QList<ChatWidgetHolder*> mChatWidgetHolder;
 	ChatLobbyUserNotify* notify;

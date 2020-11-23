@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006, 2007 crypton
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/ShareManager.cpp                                                        *
+ *                                                                             *
+ * Copyright (c) 2006 Crypton          <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QContextMenuEvent>
 #include <QMenu>
@@ -38,10 +37,12 @@
 #include "gui/common/GroupDefs.h"
 #include "gui/notifyqt.h"
 #include "util/QtVersion.h"
+#include "util/misc.h"
+#include "gui/common/FilesDefs.h"
 
 /* Images for context menu icons */
 #define IMAGE_CANCEL               ":/images/delete.png"
-#define IMAGE_EDIT                 ":/images/edit_16.png"
+#define IMAGE_EDIT                 ":/icons/png/pencil-edit-button.png"
 
 #define COLUMN_PATH         0
 #define COLUMN_VIRTUALNAME  1
@@ -57,7 +58,7 @@ ShareManager::ShareManager()
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
 
-    ui.headerFrame->setHeaderImage(QPixmap(":/images/fileshare64.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/fileshare64.png"));
     ui.headerFrame->setHeaderText(tr("Share Manager"));
 
     isLoading = false;
@@ -124,7 +125,7 @@ void ShareManager::doubleClickedCell(int row,int column)
 {
     if(column == COLUMN_PATH)
     {
-        QString dirname = QFileDialog::getExistingDirectory(NULL,tr("Choose directory"),QString(),QFileDialog::DontUseNativeDialog | QFileDialog::ShowDirsOnly);
+		QString dirname = misc::getExistingDirectory(nullptr,tr("Choose directory"),QString());
 
         if(!dirname.isNull())
         {
@@ -250,21 +251,23 @@ void ShareManager::load()
 
         listWidget->item(row,COLUMN_GROUPS)->setText(getGroupString(mDirInfos[row].parent_groups));
 
-        QFont font = listWidget->item(row,COLUMN_GROUPS)->font();
-        font.setBold(mDirInfos[row].shareflags & DIR_FLAGS_BROWSABLE) ;
-        listWidget->item(row,COLUMN_GROUPS)->setTextColor( (mDirInfos[row].shareflags & DIR_FLAGS_BROWSABLE)? (Qt::black):(Qt::lightGray)) ;
-        listWidget->item(row,COLUMN_GROUPS)->setFont(font);
+		//TODO (Phenom): Add qproperty for these text colors in stylesheets
+		// As palette is not updated by stylesheet
+		QFont font = listWidget->item(row,COLUMN_GROUPS)->font();
+		font.setBold(mDirInfos[row].shareflags & DIR_FLAGS_BROWSABLE) ;
+		listWidget->item(row,COLUMN_GROUPS)->setData(Qt::ForegroundRole, QColor((mDirInfos[row].shareflags & DIR_FLAGS_BROWSABLE) ? (Qt::black):(Qt::lightGray)) );
+		listWidget->item(row,COLUMN_GROUPS)->setFont(font);
 
-        if(QDir(QString::fromUtf8(mDirInfos[row].filename.c_str())).exists())
-        {
-        	listWidget->item(row,COLUMN_PATH)->setTextColor(Qt::black);
+		if(QDir(QString::fromUtf8(mDirInfos[row].filename.c_str())).exists())
+		{
+			listWidget->item(row,COLUMN_PATH)->setData(Qt::ForegroundRole, QColor(Qt::black));
 			listWidget->item(row,COLUMN_PATH)->setToolTip(tr("Double click to change shared directory path")) ;
-        }
-        else
-        {
-        	listWidget->item(row,COLUMN_PATH)->setTextColor(Qt::lightGray);
+		}
+		else
+		{
+			listWidget->item(row,COLUMN_PATH)->setData(Qt::ForegroundRole, QColor(Qt::lightGray));
 			listWidget->item(row,COLUMN_PATH)->setToolTip(tr("Directory does not exist! Double click to change shared directory path")) ;
-        }
+		}
     }
 
     listWidget->setColumnWidth(COLUMN_SHARE_FLAGS,132 * QFontMetricsF(font()).height()/14.0) ;
@@ -358,7 +361,7 @@ void ShareManager::showEvent(QShowEvent *event)
 
 void ShareManager::addShare()
 {
-    QString fname = QFileDialog::getExistingDirectory(NULL,tr("Choose a directory to share"),QString(),QFileDialog::DontUseNativeDialog | QFileDialog::ShowDirsOnly);
+	QString fname = misc::getExistingDirectory(nullptr,tr("Choose a directory to share"),QString());
 
     if(fname.isNull())
         return;

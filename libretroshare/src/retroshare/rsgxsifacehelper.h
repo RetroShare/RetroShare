@@ -1,57 +1,79 @@
-#ifndef RSGXSIFACEIMPL_H
-#define RSGXSIFACEIMPL_H
+/*******************************************************************************
+ * libretroshare/src/retroshare: rsgxsifacehelper.h                            *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2011  Christopher Evi-Parker                                  *
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+#pragma once
 
-/*
- * libretroshare/src/gxs/: rsgxsifaceimpl.h
- *
- * RetroShare GXS. Convenience interface implementation
- *
- * Copyright 2012 by Christopher Evi-Parker
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+#include <chrono>
+#include <thread>
 
 #include "retroshare/rsgxsiface.h"
+#include "retroshare/rsservicecontrol.h"
 #include "retroshare/rsreputations.h"
 #include "rsgxsflags.h"
+#include "util/rsdeprecate.h"
+#include "util/rsdebug.h"
 
 /*!
- * The simple idea of this class is to implement the simple interface functions
- * of gen exchange.
- * This class provides convenience implementations of:
- * - Handle msg and group changes (client class must pass changes sent by RsGenExchange to it)
- * - subscription to groups
- * - retrieval of msgs and group ids and meta info
+ * This class only make method of internal members visible tu upper level to
+ * offer a more friendly API.
+ * This is just a workaround to awkward GXS API design, do not take it as an
+ * example for your coding.
+ * To properly fix the API design many changes with the implied chain reactions
+ * are necessary, so at this point this workaround seems acceptable.
  */
+
+//==================================
+//  #define DEBUG_GXSIFACEHELPER 1
+//==================================
+
+enum class TokenRequestType: uint8_t
+{
+	__NONE              = 0x00, /// Used to detect uninitialized
+    GROUP_DATA          = 0x01,
+    GROUP_META          = 0x02,
+    GROUP_IDS           = 0x03,
+    POSTS               = 0x04,
+    ALL_POSTS           = 0x05,
+    MSG_RELATED_INFO    = 0x06,
+    GROUP_STATISTICS    = 0x07,
+    SERVICE_STATISTICS  = 0x08,
+    NO_KILL_TYPE        = 0x09,
+	__MAX                       /// Used to detect out of range
+};
+
 class RsGxsIfaceHelper
 {
 public:
-
-    /*!
-     *
-     * @param gxs handle to RsGenExchange instance of service (Usually the service class itself)
-     */
-	RsGxsIfaceHelper(RsGxsIface* gxs)
-	    : mGxs(gxs)
+	/*!
+	 * @param gxs handle to RsGenExchange instance of service (Usually the
+	 *   service class itself)
+	 */
+	explicit RsGxsIfaceHelper(RsGxsIface& gxs) :
+	    mGxs(gxs), mTokenService(*gxs.getTokenService()), mMtx("GxsIfaceHelper")
 	{}
 
-    ~RsGxsIfaceHelper(){}
+	~RsGxsIfaceHelper() = default;
 
+#ifdef TO_REMOVE
     /*!
      * Gxs services should call this for automatic handling of
      * changes, send
@@ -59,16 +81,9 @@ public:
      */
     void receiveChanges(std::vector<RsGxsNotify *> &changes)
     {
-    	mGxs->receiveChanges(changes);
+		mGxs.receiveChanges(changes);
     }
-
-    /*!
-     * @return handle to token service for this GXS service
-     */
-    RsTokenService* getTokenService()
-    {
-        return mGxs->getTokenService();
-    }
+#endif
 
     /* Generic Lists */
 
@@ -78,10 +93,9 @@ public:
      * @param groupIds the ids return for given request token
      * @return false if request token is invalid, check token status for error report
      */
-    bool getGroupList(const uint32_t &token,
-            std::list<RsGxsGroupId> &groupIds)
+    bool getGroupList(const uint32_t &token, std::list<RsGxsGroupId> &groupIds)
 	{
-    	return mGxs->getGroupList(token, groupIds);
+		return mGxs.getGroupList(token, groupIds);
 	}
 
     /*!
@@ -93,7 +107,7 @@ public:
     bool getMsgList(const uint32_t &token,
             GxsMsgIdResult& msgIds)
 	{
-    	return mGxs->getMsgList(token, msgIds);
+		return mGxs.getMsgList(token, msgIds);
 	}
 
     /*!
@@ -104,7 +118,7 @@ public:
      */
     bool getMsgRelatedList(const uint32_t &token, MsgRelatedIdResult &msgIds)
     {
-        return mGxs->getMsgRelatedList(token, msgIds);
+		return mGxs.getMsgRelatedList(token, msgIds);
     }
 
     /*!
@@ -112,10 +126,9 @@ public:
      * @param groupInfo the ids returned for given request token
      * @return false if request token is invalid, check token status for error report
      */
-    bool getGroupSummary(const uint32_t &token,
-            std::list<RsGroupMetaData> &groupInfo)
+    bool getGroupSummary(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo)
 	{
-    	return mGxs->getGroupMeta(token, groupInfo);
+		return mGxs.getGroupMeta(token, groupInfo);
 	}
 
     /*!
@@ -123,10 +136,9 @@ public:
      * @param msgInfo the message metadata returned for given request token
      * @return false if request token is invalid, check token status for error report
      */
-    bool getMsgSummary(const uint32_t &token,
-            GxsMsgMetaMap &msgInfo)
+    bool getMsgSummary(const uint32_t &token, GxsMsgMetaMap &msgInfo)
 	{
-    	return mGxs->getMsgMeta(token, msgInfo);
+		return mGxs.getMsgMeta(token, msgInfo);
 	}
 
     /*!
@@ -136,7 +148,7 @@ public:
      */
     bool getMsgRelatedSummary(const uint32_t &token, GxsMsgRelatedMetaMap &msgInfo)
     {
-        return mGxs->getMsgRelatedMeta(token, msgInfo);
+		return mGxs.getMsgRelatedMeta(token, msgInfo);
     }
 
     /*!
@@ -147,7 +159,7 @@ public:
      */
     bool subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe)
     {
-    	return mGxs->subscribeToGroup(token, grpId, subscribe);
+		return mGxs.subscribeToGroup(token, grpId, subscribe);
     }
 
     /*!
@@ -159,7 +171,7 @@ public:
      */
     bool acknowledgeMsg(const uint32_t& token, std::pair<RsGxsGroupId, RsGxsMessageId>& msgId)
     {
-		return mGxs->acknowledgeTokenMsg(token, msgId);
+		return mGxs.acknowledgeTokenMsg(token, msgId);
     }
 
     /*!
@@ -171,7 +183,7 @@ public:
      */
     bool acknowledgeGrp(const uint32_t& token, RsGxsGroupId& grpId)
     {
-            return mGxs->acknowledgeTokenGrp(token, grpId);
+		    return mGxs.acknowledgeTokenGrp(token, grpId);
     }
 
 	/*!
@@ -182,7 +194,7 @@ public:
 	 */
 	bool getServiceStatistic(const uint32_t& token, GxsServiceStatistic& stats)
 	{
-		return mGxs->getServiceStatistic(token, stats);
+		return mGxs.getServiceStatistic(token, stats);
 	}
 
 	/*!
@@ -193,7 +205,7 @@ public:
 	 */
 	bool getGroupStatistic(const uint32_t& token, GxsGroupStatistic& stats)
 	{
-		return mGxs->getGroupStatistic(token, stats);
+		return mGxs.getGroupStatistic(token, stats);
 	}
 
 	/*!
@@ -206,7 +218,7 @@ public:
 	 */
 	void setGroupReputationCutOff(uint32_t& token, const RsGxsGroupId& grpId, int CutOff)
 	{
-		return mGxs->setGroupReputationCutOff(token, grpId, CutOff);
+		return mGxs.setGroupReputationCutOff(token, grpId, CutOff);
 	}
 
     /*!
@@ -214,36 +226,311 @@ public:
      */
     uint32_t getDefaultStoragePeriod()
     {
-        return mGxs->getDefaultStoragePeriod();
+		return mGxs.getDefaultStoragePeriod();
     }
     uint32_t getStoragePeriod(const RsGxsGroupId& grpId)
     {
-        return mGxs->getStoragePeriod(grpId);
+		return mGxs.getStoragePeriod(grpId);
     }
     void setStoragePeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs)
     {
-        mGxs->setStoragePeriod(grpId,age_in_secs);
+		mGxs.setStoragePeriod(grpId,age_in_secs);
     }
     uint32_t getDefaultSyncPeriod()
     {
-        return mGxs->getDefaultSyncPeriod();
+		return mGxs.getDefaultSyncPeriod();
     }
     uint32_t getSyncPeriod(const RsGxsGroupId& grpId)
     {
-        return mGxs->getSyncPeriod(grpId);
+		return mGxs.getSyncPeriod(grpId);
     }
     void setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs)
     {
-        mGxs->setSyncPeriod(grpId,age_in_secs);
+		mGxs.setSyncPeriod(grpId,age_in_secs);
     }
 
-    RsReputations::ReputationLevel minReputationForForwardingMessages(uint32_t group_sign_flags,uint32_t identity_flags)
+	RsReputationLevel minReputationForForwardingMessages(
+	        uint32_t group_sign_flags, uint32_t identity_flags )
     {
-        return mGxs->minReputationForForwardingMessages(group_sign_flags,identity_flags);
+		return mGxs.minReputationForForwardingMessages(group_sign_flags,identity_flags);
     }
+
+	/// @see RsTokenService::requestGroupInfo
+	bool requestGroupInfo( uint32_t& token, const RsTokReqOptions& opts, const std::list<RsGxsGroupId> &groupIds, bool high_priority_request = false )
+	{
+        TokenRequestType token_request_type;
+
+        switch(opts.mReqType)
+        {
+        case GXS_REQUEST_TYPE_GROUP_DATA: token_request_type = TokenRequestType::GROUP_DATA; break;
+        case GXS_REQUEST_TYPE_GROUP_META: token_request_type = TokenRequestType::GROUP_META; break;
+        case GXS_REQUEST_TYPE_GROUP_IDS: token_request_type = TokenRequestType::GROUP_IDS; break;
+        default:
+            RsErr() << __PRETTY_FUNCTION__ << "(EE) Unexpected request type " << opts.mReqType << "!!" << std::endl;
+            return false;
+        }
+
+		cancelActiveRequestTokens(token_request_type);
+
+		if( mTokenService.requestGroupInfo(token, 0, opts, groupIds))
+        {
+			RS_STACK_MUTEX(mMtx);
+			mActiveTokens[token]=high_priority_request? (TokenRequestType::NO_KILL_TYPE) : token_request_type;
+#ifdef DEBUG_GXSIFACEHELPER
+            locked_dumpTokens();
+#endif
+            return true;
+        }
+        else
+            return false;
+    }
+
+	/// @see RsTokenService::requestGroupInfo
+	bool requestGroupInfo(uint32_t& token, const RsTokReqOptions& opts, bool high_priority_request = false)
+	{
+        TokenRequestType token_request_type;
+
+        switch(opts.mReqType)
+        {
+        case GXS_REQUEST_TYPE_GROUP_DATA: token_request_type = TokenRequestType::GROUP_DATA; break;
+        case GXS_REQUEST_TYPE_GROUP_META: token_request_type = TokenRequestType::GROUP_META; break;
+        case GXS_REQUEST_TYPE_GROUP_IDS: token_request_type = TokenRequestType::GROUP_IDS; break;
+        default:
+            RsErr() << __PRETTY_FUNCTION__ << "(EE) Unexpected request type " << opts.mReqType << "!!" << std::endl;
+            return false;
+        }
+
+		cancelActiveRequestTokens(token_request_type);
+
+
+		if(  mTokenService.requestGroupInfo(token, 0, opts))
+        {
+			RS_STACK_MUTEX(mMtx);
+			mActiveTokens[token]=high_priority_request? (TokenRequestType::NO_KILL_TYPE) : token_request_type;
+#ifdef DEBUG_GXSIFACEHELPER
+            locked_dumpTokens();
+#endif
+            return true;
+        }
+        else
+            return false;
+    }
+
+	/// @see RsTokenService::requestMsgInfo
+	bool requestMsgInfo( uint32_t& token, const RsTokReqOptions& opts, const GxsMsgReq& msgIds )
+	{
+        if(mTokenService.requestMsgInfo(token, 0, opts, msgIds))
+        {
+			RS_STACK_MUTEX(mMtx);
+
+			mActiveTokens[token]=  (msgIds.size()==1 && msgIds.begin()->second.size()==0) ?(TokenRequestType::ALL_POSTS):(TokenRequestType::POSTS);
+#ifdef DEBUG_GXSIFACEHELPER
+			locked_dumpTokens();
+#endif
+			return true;
+        }
+        else
+            return false;
+    }
+
+	/// @see RsTokenService::requestMsgInfo
+	bool requestMsgInfo( uint32_t& token, const RsTokReqOptions& opts, const std::list<RsGxsGroupId>& grpIds )
+    {
+        if(mTokenService.requestMsgInfo(token, 0, opts, grpIds))
+        {
+			RS_STACK_MUTEX(mMtx);
+			mActiveTokens[token]=TokenRequestType::ALL_POSTS;
+#ifdef DEBUG_GXSIFACEHELPER
+			locked_dumpTokens();
+#endif
+            return true;
+        }
+        else
+            return false;
+    }
+
+	/// @see RsTokenService::requestMsgRelatedInfo
+	bool requestMsgRelatedInfo(
+	        uint32_t& token, const RsTokReqOptions& opts,
+	        const std::vector<RsGxsGrpMsgIdPair>& msgIds )
+	{
+        if( mTokenService.requestMsgRelatedInfo(token, 0, opts, msgIds))
+        {
+			RS_STACK_MUTEX(mMtx);
+			mActiveTokens[token]=TokenRequestType::MSG_RELATED_INFO;
+#ifdef DEBUG_GXSIFACEHELPER
+            locked_dumpTokens();
+#endif
+            return true;
+        }
+        else
+            return false;
+    }
+
+	/**
+	 * @jsonapi{development}
+	 * @param[in] token
+	 */
+	RsTokenService::GxsRequestStatus requestStatus(uint32_t token)
+	{ return mTokenService.requestStatus(token); }
+
+	/// @see RsTokenService::requestServiceStatistic
+	bool requestServiceStatistic(uint32_t& token)
+	{
+        RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_SERVICE_STATS;
+
+        mTokenService.requestServiceStatistic(token,opts);
+
+		RS_STACK_MUTEX(mMtx);
+		mActiveTokens[token]=TokenRequestType::SERVICE_STATISTICS;
+
+#ifdef DEBUG_GXSIFACEHELPER
+		locked_dumpTokens();
+#endif
+        return true;
+    }
+
+	/// @see RsTokenService::requestGroupStatistic
+	bool requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId)
+	{
+        RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_STATS;
+
+		mTokenService.requestGroupStatistic(token, grpId,opts);
+
+		RS_STACK_MUTEX(mMtx);
+		mActiveTokens[token]=TokenRequestType::GROUP_STATISTICS;
+#ifdef DEBUG_GXSIFACEHELPER
+		locked_dumpTokens();
+#endif
+        return true;
+    }
+
+    bool cancelActiveRequestTokens(TokenRequestType type)
+    {
+		RS_STACK_MUTEX(mMtx);
+        for(auto it = mActiveTokens.begin();it!=mActiveTokens.end();)
+            if(it->second == type)
+			{
+                mTokenService.cancelRequest(it->first);
+                it = mActiveTokens.erase(it);
+			}
+        	else
+                ++it;
+
+        return true;
+    }
+
+	/// @see RsTokenService::cancelRequest
+	bool cancelRequest(uint32_t token)
+    {
+		{
+			RS_STACK_MUTEX(mMtx);
+			mActiveTokens.erase(token);
+		}
+        return mTokenService.cancelRequest(token);
+    }
+
+	/**
+	 * @deprecated
+	 * Token service methods are already exposed by this helper, so you should
+	 * not need to get token service pointer directly anymore.
+	 */
+	RS_DEPRECATED RsTokenService* getTokenService() { return &mTokenService; }
+
+protected:
+	/**
+	 * Block caller while request is being processed.
+	 * Useful for blocking API implementation.
+	 * @param[in] token token associated to the request caller is waiting for
+	 * @param[in] maxWait maximum waiting time in milliseconds
+	 * @param[in] checkEvery time in millisecond between status checks
+	 * @param[in] auto_delete_if_unsuccessful delete the request when it fails. This avoid leaving useless pending requests in the queue that would slow down additional calls.
+	 */
+	RsTokenService::GxsRequestStatus waitToken(
+	        uint32_t token,
+	        std::chrono::milliseconds maxWait = std::chrono::milliseconds(20000),
+	        std::chrono::milliseconds checkEvery = std::chrono::milliseconds(100),
+	        bool auto_delete_if_unsuccessful=true)
+	{
+#if defined(__ANDROID__) && (__ANDROID_API__ < 24)
+		auto wkStartime = std::chrono::steady_clock::now();
+		int maxWorkAroundCnt = 10;
+LLwaitTokenBeginLabel:
+#endif
+		auto timeout = std::chrono::steady_clock::now() + maxWait;
+		auto st = requestStatus(token);
+
+		while( !(st == RsTokenService::FAILED || st >= RsTokenService::COMPLETE)
+		       && std::chrono::steady_clock::now() < timeout )
+		{
+			std::this_thread::sleep_for(checkEvery);
+			st = requestStatus(token);
+		}
+		if(st != RsTokenService::COMPLETE && auto_delete_if_unsuccessful)
+			cancelRequest(token);
+
+#if defined(__ANDROID__) && (__ANDROID_API__ < 24)
+		/* Work around for very slow/old android devices, we don't expect this
+		 * to be necessary on newer devices. If it take unreasonably long
+		 * something worser is already happening elsewere and we return anyway.
+		 */
+		if( st > RsTokenService::FAILED && st < RsTokenService::COMPLETE
+		        && maxWorkAroundCnt-- > 0 )
+		{
+			maxWait *= 10;
+			checkEvery *= 3;
+			Dbg3() << __PRETTY_FUNCTION__ << " Slow Android device "
+			       << " workaround st: " << st
+			       << " maxWorkAroundCnt: " << maxWorkAroundCnt
+			       << " maxWait: " << maxWait.count()
+			       << " checkEvery: " << checkEvery.count() << std::endl;
+			goto LLwaitTokenBeginLabel;
+		}
+		Dbg3() << __PRETTY_FUNCTION__ << " lasted: "
+		       << std::chrono::duration_cast<std::chrono::milliseconds>(
+		              std::chrono::steady_clock::now() - wkStartime ).count()
+		       << "ms" << std::endl;
+
+#endif
+
+		{
+			RS_STACK_MUTEX(mMtx);
+			mActiveTokens.erase(token);
+		}
+
+		return st;
+	}
+
 private:
+	RsGxsIface& mGxs;
+	RsTokenService& mTokenService;
+	RsMutex mMtx;
 
-    RsGxsIface* mGxs;
+	std::map<uint32_t,TokenRequestType> mActiveTokens;
+
+#ifdef DEBUG_GXSIFACEHELPER
+	void locked_dumpTokens()
+	{
+		const uint16_t service_id =  mGxs.serviceType();
+		const auto countSize = static_cast<size_t>(TokenRequestType::__MAX);
+		uint32_t count[countSize] = {0};
+
+		RsDbg rsdbg;
+		rsdbg << __PRETTY_FUNCTION__ << " Service 0x" << std::hex << service_id
+		      << " (" << rsServiceControl->getServiceName(
+		             RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(service_id) )
+		      << ") this=0x" << static_cast<void*>(this)
+		      << ") Active tokens (per type): ";
+
+		// let's count how many token of each type we've got.
+		for(auto& it: mActiveTokens) ++count[static_cast<size_t>(it.second)];
+
+		for(uint32_t i=0; i < countSize; ++i)
+			rsdbg /* << i << ":" */ << count[i] << " ";
+	}
+#endif // def DEBUG_GXSIFACEHELPER
+
+	RS_SET_CONTEXT_DEBUG_LEVEL(1)
 };
-
-#endif // RSGXSIFACEIMPL_H

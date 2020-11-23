@@ -1,27 +1,24 @@
-/*
- * libretroshare/src/services: groutermatrix.cc
- *
- * Services for RetroShare.
- *
- * Copyright 2013 by Cyril Soler
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "csoler@users.sourceforge.net".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/grouter: groutermatrix.cc                                 *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2013 by Cyril Soler <csoler@users.sourceforge.net>                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "groutertypes.h"
 #include "groutermatrix.h"
@@ -36,7 +33,7 @@ GRouterMatrix::GRouterMatrix()
 
 bool GRouterMatrix::addTrackingInfo(const RsGxsMessageId& mid,const RsPeerId& source_friend)
 {
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     RoutingTrackEntry rte ;
 
@@ -57,7 +54,7 @@ bool GRouterMatrix::cleanUp()
 #ifdef ROUTING_MATRIX_DEBUG
     std::cerr << "GRouterMatrix::cleanup()" << std::endl;
 #endif
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     for(std::map<RsGxsMessageId,RoutingTrackEntry>::iterator it(_tracking_clues.begin());it!=_tracking_clues.end();)
 	    if(it->second.time_stamp + RS_GROUTER_MAX_KEEP_TRACKING_CLUES < now)
@@ -84,7 +81,7 @@ bool GRouterMatrix::addRoutingClue(const GRouterKeyId& key_id,const RsPeerId& so
 
 	// 2 - get the Key map, and add the routing clue.
 	//
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	RoutingMatrixHitEntry rc ;
 	rc.weight = weight ;
@@ -179,7 +176,7 @@ void GRouterMatrix::debugDump() const
 	std::cerr << "    Proba needs up: " << _proba_need_updating << std::endl;
 	std::cerr << "    Known keys:     " << _time_combined_hits.size() << std::endl;
 	std::cerr << "    Routing events: " << std::endl;
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	for(std::map<GRouterKeyId, std::list<RoutingMatrixHitEntry> >::const_iterator it(_routing_clues.begin());it!=_routing_clues.end();++it)
 	{
@@ -209,7 +206,7 @@ bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, cons
 {
 	// Routing probabilities are computed according to routing clues
 	//
-	// For a given key, each friend has a known set of routing clues (time_t, weight)
+	// For a given key, each friend has a known set of routing clues (rstime_t, weight)
 	//	We combine these to compute a static weight for each friend/key pair. 
 	//	This is performed in updateRoutingProbabilities()
 	//
@@ -271,7 +268,7 @@ bool GRouterMatrix::updateRoutingProbabilities()
 	if(!_proba_need_updating)
 		return false ;
 
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	for(std::map<GRouterKeyId, std::list<RoutingMatrixHitEntry> >::const_iterator it(_routing_clues.begin());it!=_routing_clues.end();++it)
 	{

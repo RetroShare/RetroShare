@@ -1,27 +1,24 @@
-/*
- * RetroShare C++ Hash cache.
- *
- *      file_sharing/hash_cache.h
- *
- * Copyright 2016 by Mr.Alice
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare.project@gmail.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/file_sharing: hash_cache.h                                *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2018 by Mr.Alice <mralice@users.sourceforge.net>                  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ ******************************************************************************/
 
 
 #pragma once
@@ -29,6 +26,7 @@
 #include <map>
 #include "util/rsthreads.h"
 #include "retroshare/rsfiles.h"
+#include "util/rstime.h"
 
 /*!
  * \brief The HashStorageClient class
@@ -54,7 +52,7 @@ public:
 class HashStorage: public RsTickingThread
 {
 public:
-    HashStorage(const std::string& save_file_name) ;
+    explicit HashStorage(const std::string& save_file_name) ;
 
     /*!
      * \brief requestHash  Requests the hash for the given file, assuming size and mod_time are the same.
@@ -68,7 +66,7 @@ public:
      *
      * \return true if the supplied hash info is up to date.
      */
-    bool requestHash(const  std::string& full_path, uint64_t size, time_t mod_time, RsFileHash& known_hash, HashStorageClient *c, uint32_t client_param) ;
+    bool requestHash(const  std::string& full_path, uint64_t size, rstime_t mod_time, RsFileHash& known_hash, HashStorageClient *c, uint32_t client_param) ;
 
     struct HashStorageInfo
     {
@@ -84,10 +82,10 @@ public:
     uint32_t rememberHashFilesDuration() const { return mMaxStorageDurationDays ; }
     void clear() { mFiles.clear(); mChanged=true; }												// drop all known hashes. Not something to do, except if you want to rehash the entire database
     bool empty() const { return mFiles.empty() ; }
+	void togglePauseHashingProcess() ;
+	bool hashingProcessPaused();
 
-    // Functions called by the thread
-
-    virtual void data_tick() ;
+	void threadTick() override; /// @see RsTickingThread
 
     friend std::ostream& operator<<(std::ostream& o,const HashStorageInfo& info) ;
 private:
@@ -96,6 +94,9 @@ private:
      * 		This function is responsible for removing old hashes, etc
      */
     void clean() ;
+
+    void startHashThread();
+    void stopHashThread();
 
     // loading/saving the entire hash database to a file
 
@@ -112,14 +113,16 @@ private:
     std::map<std::string, HashStorageInfo> mFiles ;	// stored as (full_path, hash_info)
     std::string mFilePath ;							// file where the hash database is stored
     bool mChanged ;
+	bool mHashingProcessPaused ;
 
     struct FileHashJob
     {
-        std::string full_path;
+        std::string full_path;		// canonicalized file name (means: symlinks removed, loops removed, etc)
+        std::string real_path;		// path supplied by the client.
         uint64_t size ;
         HashStorageClient *client;
         uint32_t client_param ;
-        time_t ts;
+        rstime_t ts;
     };
 
     // current work
@@ -135,6 +138,12 @@ private:
     uint64_t mTotalSizeToHash ;
     uint64_t mTotalHashedSize ;
     uint64_t mTotalFilesToHash ;
-    time_t mLastSaveTime ;
+    rstime_t mLastSaveTime ;
+
+	// The following is used to estimate hashing speed.
+
+	double mHashingTime ;
+	uint64_t mHashedBytes ;
+	uint32_t mCurrentHashingSpeed ; // in MB/s
 };
 

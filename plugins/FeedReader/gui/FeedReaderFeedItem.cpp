@@ -1,23 +1,24 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2012 by Thunder
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * plugins/FeedReader/gui/FeedReaderFeedItem.cpp                               *
+ *                                                                             *
+ * LibResAPI: API for local socket server                                      *
+ *                                                                             *
+ * Copyright (C) 2012 by Thunder                                               *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QMenu>
 #include <QUrl>
@@ -33,8 +34,8 @@
 #include "gui/feeds/FeedHolder.h"
 
 /** Constructor */
-FeedReaderFeedItem::FeedReaderFeedItem(RsFeedReader *feedReader, FeedReaderNotify *notify, FeedHolder *parent, const FeedInfo &feedInfo, const FeedMsgInfo &msgInfo)
-    : FeedItem(NULL), mFeedReader(feedReader), mNotify(notify), mParent(parent), ui(new Ui::FeedReaderFeedItem)
+FeedReaderFeedItem::FeedReaderFeedItem(RsFeedReader *feedReader, FeedReaderNotify *notify, const FeedInfo &feedInfo, const FeedMsgInfo &msgInfo)
+    : FeedItem(NULL, feedInfo.feedId), mFeedReader(feedReader), mNotify(notify), ui(new Ui::FeedReaderFeedItem)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
@@ -50,7 +51,6 @@ FeedReaderFeedItem::FeedReaderFeedItem(RsFeedReader *feedReader, FeedReaderNotif
 
 	ui->expandFrame->hide();
 
-	mFeedId = feedInfo.feedId;
 	mMsgId = msgInfo.msgId;
 
 	if (feedInfo.icon.empty()) {
@@ -100,37 +100,26 @@ void FeedReaderFeedItem::toggle()
 
 void FeedReaderFeedItem::doExpand(bool open)
 {
-	if (mParent) {
-		mParent->lockLayout(this, true);
+	if (mFeedHolder) {
+		mFeedHolder->lockLayout(this, true);
 	}
 
 	if (open) {
 		ui->expandFrame->show();
-		ui->expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
+		ui->expandButton->setIcon(QIcon(QString(":/icons/png/up-arrow.png")));
 		ui->expandButton->setToolTip(tr("Hide"));
 
 		setMsgRead();
 	} else {
 		ui->expandFrame->hide();
-		ui->expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+		ui->expandButton->setIcon(QIcon(QString(":/icons/png/down-arrow.png")));
 		ui->expandButton->setToolTip(tr("Expand"));
 	}
 
 	emit sizeChanged(this);
 
-	if (mParent) {
-		mParent->lockLayout(this, false);
-	}
-}
-
-void FeedReaderFeedItem::removeItem()
-{
-	mParent->lockLayout(this, true);
-	hide();
-	mParent->lockLayout(this, false);
-
-	if (mParent) {
-		mParent->deleteFeedItem(this, 0);
+	if (mFeedHolder) {
+		mFeedHolder->lockLayout(this, false);
 	}
 }
 
@@ -149,9 +138,9 @@ void FeedReaderFeedItem::setMsgRead()
 	connect(mNotify, SIGNAL(msgChanged(QString,QString,int)), this, SLOT(msgChanged(QString,QString,int)), Qt::QueuedConnection);
 }
 
-void FeedReaderFeedItem::msgChanged(const QString &feedId, const QString &msgId, int /*type*/)
+void FeedReaderFeedItem::msgChanged(uint32_t feedId, const QString &msgId, int /*type*/)
 {
-	if (feedId.toStdString() != mFeedId) {
+	if (feedId != mFeedId) {
 		return;
 	}
 

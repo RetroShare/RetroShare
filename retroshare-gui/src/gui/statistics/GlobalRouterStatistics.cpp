@@ -1,24 +1,24 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 20011, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/statistics/GlobalRouterStatistics.cpp                                   *
+ *                                                                             *
+ * Copyright (c) 2011 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
+#include <QDateTime>
 #include <iostream>
 #include <QTimer>
 #include <QObject>
@@ -40,6 +40,9 @@
 
 #include "gui/Identity/IdDetailsDialog.h"
 #include "gui/settings/rsharesettings.h"
+#include "gui/gxs/GxsIdDetails.h"
+#include "gui/gxs/GxsIdTreeWidgetItem.h"
+#include "util/DateTime.h"
 #include "util/QtVersion.h"
 #include "util/misc.h"
 
@@ -50,9 +53,11 @@
 #define COL_TUNNELSTATUS        4
 #define COL_DATASIZE            5
 #define COL_DATAHASH            6
-#define COL_RECEIVED            7
-#define COL_SEND                8
+#define COL_RECEIVED			7
+#define COL_SEND				8
 #define COL_DUPLICATION_FACTOR  9
+#define COL_RECEIVEDTIME	    10
+#define COL_SENDTIME			11
 
 static const int PARTIAL_VIEW_SIZE           = 9 ;
 //static const int MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
@@ -66,7 +71,7 @@ static QColor colorScale(float f)
 }
 
 GlobalRouterStatistics::GlobalRouterStatistics(QWidget *parent)
-    : RsAutoUpdatePage(2000,parent)
+    : RsAutoUpdatePage(4000,parent)
 {
 	setupUi(this) ;
 	
@@ -121,7 +126,7 @@ void GlobalRouterStatistics::CustomPopupMenu( QPoint )
 	
 	QTreeWidgetItem *item = treeWidget->currentItem();
 	if (item) {
-	contextMnu.addAction(QIcon(":/images/info16.png"), tr("Details"), this, SLOT(personDetails()));
+    contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/info16.png"), tr("Details"), this, SLOT(personDetails()));
 
   }
 
@@ -169,7 +174,8 @@ void GlobalRouterStatistics::updateContent()
 
     for(uint32_t i=0;i<cache_infos.size();++i)
     {
-        QTreeWidgetItem *item = new QTreeWidgetItem();
+        //QTreeWidgetItem *item = new QTreeWidgetItem();
+		GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(NULL,GxsIdDetails::ICON_TYPE_AVATAR) ;
         treeWidget->addTopLevelItem(item);
         
         RsIdentityDetails details ;
@@ -178,7 +184,13 @@ void GlobalRouterStatistics::updateContent()
         
         if(nicknames.isEmpty())
           nicknames = tr("Unknown");
-
+	  
+	    QDateTime routingtime;
+		routingtime.setTime_t(cache_infos[i].routing_time);
+		QDateTime senttime;
+		senttime.setTime_t(cache_infos[i].last_sent_time);
+	  
+		item -> setId(cache_infos[i].destination,COL_NICKNAME, false) ;
         item -> setData(COL_ID,           Qt::DisplayRole, QString::number(cache_infos[i].mid,16).rightJustified(16,'0'));
         item -> setData(COL_NICKNAME,     Qt::DisplayRole, nicknames ) ;
         item -> setData(COL_DESTINATION,  Qt::DisplayRole, QString::fromStdString(cache_infos[i].destination.toStdString()));
@@ -186,9 +198,11 @@ void GlobalRouterStatistics::updateContent()
         item -> setData(COL_TUNNELSTATUS, Qt::DisplayRole, tunnel_status_string[cache_infos[i].tunnel_status % 3]);
         item -> setData(COL_DATASIZE,     Qt::DisplayRole, misc::friendlyUnit(cache_infos[i].data_size));
         item -> setData(COL_DATAHASH,     Qt::DisplayRole, QString::fromStdString(cache_infos[i].item_hash.toStdString()));
-        item -> setData(COL_RECEIVED,     Qt::DisplayRole, QString::number(now - cache_infos[i].routing_time));
-        item -> setData(COL_SEND,         Qt::DisplayRole, QString::number(now - cache_infos[i].last_sent_time));
-        item -> setData(COL_DUPLICATION_FACTOR, Qt::DisplayRole, QString::number(cache_infos[i].duplication_factor));
+		item -> setData(COL_RECEIVED, 	  Qt::DisplayRole, DateTime::formatDateTime(routingtime));
+        item -> setData(COL_SEND,         Qt::DisplayRole, DateTime::formatDateTime(senttime));
+		item -> setData(COL_DUPLICATION_FACTOR, Qt::DisplayRole, QString::number(cache_infos[i].duplication_factor));
+		item -> setData(COL_RECEIVEDTIME,     Qt::DisplayRole, QString::number(now - cache_infos[i].routing_time));
+        item -> setData(COL_SENDTIME,         Qt::DisplayRole, QString::number(now - cache_infos[i].last_sent_time));
     }
 }
 

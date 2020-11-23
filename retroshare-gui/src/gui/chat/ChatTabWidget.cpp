@@ -1,32 +1,35 @@
-/****************************************************************
- *
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2011, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/chat/ChatTabWidget.cpp                                                  *
+ *                                                                             *
+ * LibResAPI: API for local socket server                                      *
+ *                                                                             *
+ * Copyright (C) 2011, Retroshare Team <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
+#include <QTabBar>
+
+#include "gui/common/FilesDefs.h"
 #include "ChatTabWidget.h"
 #include "ui_ChatTabWidget.h"
 #include "ChatDialog.h"
 #include "gui/common/StatusDefs.h"
 #include "rshare.h"
 
-#define IMAGE_TYPING         ":/images/typing.png"
+#define IMAGE_TYPING         ":/icons/png/typing.png"
 #define IMAGE_CHAT           ":/images/chat.png"
 
 ChatTabWidget::ChatTabWidget(QWidget *parent) :
@@ -100,9 +103,9 @@ void ChatTabWidget::tabInfoChanged(ChatDialog *dialog)
 	if (tab >= 0) {
 		if (dialog->isTyping()) {
 			setBlinking(tab, false);
-			setTabIcon(tab, QIcon(IMAGE_TYPING));
+            setTabIcon(tab, FilesDefs::getIconFromQtResourcePath(IMAGE_TYPING));
 		} else if (dialog->hasNewMessages()) {
-			setTabIcon(tab, QIcon(IMAGE_CHAT));
+            setTabIcon(tab, FilesDefs::getIconFromQtResourcePath(IMAGE_CHAT));
 			if (dialog->notifyBlink()) {
 				setBlinking(tab, true);
 			} else {
@@ -146,9 +149,9 @@ void ChatTabWidget::getInfo(bool &isTyping, bool &hasNewMessage, QIcon *icon)
 
 	if (icon) {
 		if (isTyping) {
-			*icon = QIcon(IMAGE_TYPING);
+            *icon = FilesDefs::getIconFromQtResourcePath(IMAGE_TYPING);
 		} else if (hasNewMessage) {
-			*icon = QIcon(IMAGE_CHAT);
+            *icon = FilesDefs::getIconFromQtResourcePath(IMAGE_CHAT);
 		} else {
 			cd = dynamic_cast<ChatDialog*>(currentWidget());
 			if (cd && cd->hasPeerStatus()) {

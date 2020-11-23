@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006, crypton
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/settings/ChannelPage.cpp                                                *
+ *                                                                             *
+ * Copyright 2006, Crypton         <retroshare.project@gmail.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "ChannelPage.h"
 #include "rsharesettings.h"
@@ -34,13 +33,8 @@ ChannelPage::ChannelPage(QWidget * parent, Qt::WindowFlags flags)
 	ui.groupFrameSettingsWidget->setOpenAllInNewTabText(tr("Open each channel in a new tab"));
     ui.groupFrameSettingsWidget->setType(GroupFrameSettings::Channel) ;
 
-    connect(ui.loadThreadCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateLoadThread())) ;
-}
+	connect(ui.emoteicon_checkBox,SIGNAL(toggled(bool)),this,SLOT(updateEmotes())) ;
 
-void ChannelPage::updateLoadThread()
-{
-	Settings->setChannelLoadThread(ui.loadThreadCheckBox->isChecked());
-    NotifyQt::getInstance()->notifySettingsChanged();
 }
 
 ChannelPage::~ChannelPage()
@@ -50,6 +44,16 @@ ChannelPage::~ChannelPage()
 /** Loads the settings for this page */
 void ChannelPage::load()
 {
-	whileBlocking(ui.loadThreadCheckBox)->setChecked(Settings->getChannelLoadThread());
 	ui.groupFrameSettingsWidget->loadSettings(GroupFrameSettings::Channel);
+	
+	Settings->beginGroup(QString("ChannelPostsWidget"));
+    whileBlocking(ui.emoteicon_checkBox)->setChecked(Settings->value("Emoteicons_ChannelDecription", true).toBool());
+    Settings->endGroup();
+}
+
+void ChannelPage::updateEmotes()
+{
+    Settings->beginGroup(QString("ChannelPostsWidget"));
+    Settings->setValue("Emoteicons_ChannelDecription", ui.emoteicon_checkBox->isChecked());
+    Settings->endGroup();
 }

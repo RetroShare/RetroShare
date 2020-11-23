@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * libretroshare/src/rsitems: rsnxsitems.cc                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012 Christopher Evi-Parker,Robert Fernie<retroshare@lunamutt.com>*
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "rsnxsitems.h"
 #include "util/rsprint.h"
 #include <iomanip>
@@ -73,12 +94,12 @@ void RsNxsSyncMsgItem::serial_process(RsGenericSerializer::SerializeJob j,RsGene
 void RsNxsMsg::serial_process( RsGenericSerializer::SerializeJob j,
                                RsGenericSerializer::SerializeContext& ctx )
 {
-	RS_REGISTER_SERIAL_MEMBER_TYPED(transactionNumber, uint32_t);
-	RS_REGISTER_SERIAL_MEMBER_TYPED(pos, uint8_t);
-	RS_REGISTER_SERIAL_MEMBER(msgId);
-	RS_REGISTER_SERIAL_MEMBER(grpId);
-	RS_REGISTER_SERIAL_MEMBER_TYPED(msg, RsTlvItem);
-	RS_REGISTER_SERIAL_MEMBER_TYPED(meta, RsTlvItem);
+	RS_SERIAL_PROCESS(transactionNumber);
+	RS_SERIAL_PROCESS(pos);
+	RS_SERIAL_PROCESS(msgId);
+	RS_SERIAL_PROCESS(grpId);
+	RS_SERIAL_PROCESS(msg);
+	RS_SERIAL_PROCESS(meta);
 }
 
 void RsNxsGrp::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
@@ -151,9 +172,6 @@ void RsNxsMsg::clear()
     msg.TlvClear();
     meta.TlvClear();
 }
-
-std::ostream&RsNxsMsg::print(std::ostream& out, uint16_t /*indent*/)
-{ return out; }
 
 void RsNxsGrp::clear()
 {

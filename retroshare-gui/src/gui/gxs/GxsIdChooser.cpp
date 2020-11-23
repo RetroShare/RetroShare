@@ -1,36 +1,35 @@
-/*
- * Retroshare Gxs Support
- *
- * Copyright 2012-2013 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * retroshare-gui/src/gui/gxs/GxsIdChooser.cpp                                 *
+ *                                                                             *
+ * Copyright 2012-2013 by Robert Fernie     <retroshare.project@gmail.com>     *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "GxsIdChooser.h"
 #include "GxsIdDetails.h"
 #include "RsGxsUpdateBroadcastBase.h"
 #include "gui/Identity/IdEditDialog.h"
+#include "gui/common/FilesDefs.h"
+#include "util/misc.h"
+
+#include <retroshare/rspeers.h>
 
 #include <QSortFilterProxyModel>
 #include <QStandardItemModel>
 #include <algorithm>
-
-#include <retroshare/rspeers.h>
 
 #include <iostream>
 
@@ -53,8 +52,8 @@
 GxsIdChooser::GxsIdChooser(QWidget *parent)
     : QComboBox(parent), mFlags(IDCHOOSER_ANON_DEFAULT)
 {
-	mBase = new RsGxsUpdateBroadcastBase(rsIdentity, this);
-	connect(mBase, SIGNAL(fillDisplay(bool)), this, SLOT(fillDisplay(bool)));
+//	mBase = new RsGxsUpdateBroadcastBase(rsIdentity, this);
+//	connect(mBase, SIGNAL(fillDisplay(bool)), this, SLOT(fillDisplay(bool)));
 
 	/* Initialize ui */
 	setSizeAdjustPolicy(QComboBox::AdjustToContents);
@@ -96,7 +95,8 @@ void GxsIdChooser::fillDisplay(bool complete)
 
 void GxsIdChooser::showEvent(QShowEvent *event)
 {
-	mBase->showEvent(event);
+//	mBase->showEvent(event);
+    updateDisplay(true);
 	QComboBox::showEvent(event);
 }
 
@@ -126,10 +126,9 @@ void GxsIdChooser::setDefaultId(const RsGxsId &defId)
 static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &/*data*/)
 {
 	GxsIdChooser *chooser = dynamic_cast<GxsIdChooser*>(object);
-	if (!chooser) {
+
+	if (!chooser)
 		return;
-	}
-    
 
     // this prevents the objects that depend on what's in the combo-box to activate and
     // perform any change.Only user-changes should cause this.
@@ -164,7 +163,7 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
 		break;
         
 	case GXS_ID_DETAILS_TYPE_BANNED:
-		icons.push_back(QIcon(BANNED_ICON)) ;
+        icons.push_back(FilesDefs::getIconFromQtResourcePath(BANNED_ICON)) ;
 		break;
 	}
 
@@ -185,6 +184,31 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
         
     chooser->model()->sort(0);
 
+	// now restore the current item. Problem is, we cannot use the ID position because it may have changed.
+#ifdef IDCHOOSER_DEBUG
+    std::cerr << "GxsIdChooser: default ID = " << chooser->defaultId() << std::endl;
+#endif
+	if(!chooser->defaultId().isNull())
+	{
+		for(int indx=0;indx<chooser->count();++indx)
+			if(RsGxsId(chooser->itemData(indx).toString().toStdString()) == chooser->defaultId())
+			{
+				chooser->setCurrentIndex(indx);
+#ifdef IDCHOOSER_DEBUG
+				std::cerr << "GxsIdChooser-003 " << (void*)chooser << " setting current index to " << indx << " because it has ID=" << chooser->defaultId() << std::endl;
+#endif
+				break;
+			}
+	}
+	else
+    {
+		RsGxsId id;
+        GxsIdChooser::ChosenId_Ret cid = chooser->getChosenId(id) ;
+
+        if(cid == GxsIdChooser::UnKnowId || cid == GxsIdChooser::KnowId)
+            chooser->setDefaultId(id) ;
+    }
+
     chooser->blockSignals(false) ;
 }
 
@@ -198,56 +222,20 @@ bool GxsIdChooser::isInConstraintSet(const RsGxsId& id) const
 void GxsIdChooser::setEntryEnabled(int indx,bool /*enabled*/)
 {
     removeItem(indx) ;
-    
-#ifdef TO_REMOVE
-//    bool disable = !enabled ;
-//    
-//    QSortFilterProxyModel* model = qobject_cast<QSortFilterProxyModel*>(QComboBox::model());
-//    //QStandardItem* item = model->item(index);
-//    
-//    QModelIndex ii = model->index(indx,0);
-//    
-//    // visually disable by greying out - works only if combobox has been painted already and palette returns the wanted color
-//    //model->setFlags(ii,disable ? (model->flags(ii) & ~(Qt::ItemIsSelectable|Qt::ItemIsEnabled)) : (Qt::ItemIsSelectable|Qt::ItemIsEnabled));
-//    
-//    uint32_t v = enabled?(1|32):(0);
-//    
-//    std::cerr << "GxsIdChooser::setEnabledEntry: i=" << indx << ", v=" << v << std::endl;
-//    
-//    // clear item data in order to use default color
-//    //model->setData(ii,disable ? (QComboBox::palette().color(QPalette::Disabled, QPalette::Text)) : QVariant(),  Qt::TextColorRole);
-//    model->setData(ii,QVariant(v),Qt::UserRole-1) ;
-//    
-//    std::cerr << "model data after operation: " <<  model->data(ii,Qt::UserRole-1).toUInt() << std::endl;
-#endif
 }
 
 uint32_t GxsIdChooser::countEnabledEntries() const
 {
     return count() ;
-    
-#ifdef TO_REMOVE
-//    uint32_t res = 0 ;
-//    QSortFilterProxyModel* model = qobject_cast<QSortFilterProxyModel*>(QComboBox::model());
-//
-//    for(uint32_t i=0;i<model->rowCount();++i)
-//    {
-//	    QModelIndex ii = model->index(i,0);
-//	    uint32_t v = model->data(ii,Qt::UserRole-1).toUInt() ;
-//        
-//        	std::cerr << "GxsIdChooser::countEnabledEntries(): i=" << i << ", v=" << v << std::endl;
-//	    if(v > 0)
-//		    ++res ;
-//    }
-//
-//    return res ;
-#endif
 }
 
 void GxsIdChooser::loadPrivateIds()
 {
 	if (mFirstLoad) {
+		//whileBlocking doesn't work here.
+		bool prev = this->blockSignals(true);
 		clear();
+		this->blockSignals(prev);
 	}
 
 	std::list<RsGxsId> ids;
@@ -298,7 +286,7 @@ void GxsIdChooser::loadPrivateIds()
 			QString str = tr("Create new Identity");
 			QString id = "";
 
-			addItem(QIcon(":/images/identity/identity_create_32.png"), str, id);
+            addItem(FilesDefs::getIconFromQtResourcePath(":/icons/png/add-identity.png"), str, id);
 			setItemData(count() - 1, QString("%1_%2").arg(TYPE_CREATE_ID).arg(str), ROLE_SORT);
 			setItemData(count() - 1, TYPE_CREATE_ID, ROLE_TYPE);
             
@@ -325,7 +313,10 @@ void GxsIdChooser::setDefaultItem()
 	}
 
 	if (def >= 0) {
-		setCurrentIndex(def);
+        whileBlocking(this)->setCurrentIndex(def);
+#ifdef IDCHOOSER_DEBUG
+        std::cerr << "GxsIdChooser-002" << (void*)this << " setting current index to " << def << std::endl;
+#endif
 	}
 }
 
@@ -337,6 +328,9 @@ bool GxsIdChooser::setChosenId(const RsGxsId &gxsId)
 	int index = findData(id);
 	if (index >= 0) {
 		setCurrentIndex(index);
+#ifdef IDCHOOSER_DEBUG
+        std::cerr << "GxsIdChooser-001" << (void*)this << " setting current index to " << index << std::endl;
+#endif
 		return true;
 	}
 	return false;
@@ -378,6 +372,11 @@ void GxsIdChooser::myCurrentIndexChanged(int index)
 	} else {
 		setToolTip("");
 	}
+	QVariant var = itemData(index);
+	RsGxsId gxsId(var.toString().toStdString());
+
+    if(!gxsId.isNull())
+        mDefaultId = gxsId;
 }
 
 void GxsIdChooser::indexActivated(int index)

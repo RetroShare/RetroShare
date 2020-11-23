@@ -1,20 +1,22 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="pl" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="pl">
 <context>
     <name>AddFeedDialog</name>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="+14"/>
         <source>Create new feed</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+79"/>
         <source>Authentication (not yet supported)</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Feed needs authentication</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
@@ -29,22 +31,22 @@
     <message>
         <location line="+53"/>
         <source>Clear cache</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+50"/>
         <source>Update interval</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Use standard update interval</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Interval in minutes (0 = manual)</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+19"/>
@@ -59,17 +61,17 @@
     <message>
         <location line="+121"/>
         <source>Embed images</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-249"/>
         <source>Storage time</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Use standard storage time</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-20"/>
@@ -109,27 +111,27 @@
     <message>
         <location line="+12"/>
         <source>Local Feed</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+239"/>
         <source>Transformation</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Transformation type</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Preview &amp;&amp; Transformation</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Misc</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
@@ -139,17 +141,17 @@
     <message>
         <location line="+7"/>
         <source>Use name and description from feed</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Update forum information</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Save complete web page (experimental for local feeds)</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-103"/>
@@ -159,7 +161,7 @@
     <message>
         <location line="+14"/>
         <source>RSS-Feed-URL:</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+10"/>
@@ -169,34 +171,34 @@
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="+75"/>
         <source>Feed Details</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+142"/>
         <location line="+115"/>
         <location line="+15"/>
         <source>Edit feed</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-15"/>
         <source>Can&apos;t edit feed. Feed does not exist.</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Create feed</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Cannot create feed.</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Cannot change feed.</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -214,12 +216,12 @@
     <message>
         <location line="+6"/>
         <source>Interval in minutes (0 = manual)</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Storage time</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
@@ -249,22 +251,22 @@
     <message>
         <location line="+10"/>
         <source>Misc</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Set message to read on activate</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Save configuration in background (for slow systems, more memory needed)</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-14"/>
         <source>Open all feeds in new tab</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.h" line="+50"/>
@@ -277,22 +279,22 @@
     <message>
         <location filename="../gui/FeedReaderDialog.ui" line="+73"/>
         <source>Feeds</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Add new feed</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Update feed</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="+94"/>
         <source>Message Folders</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+197"/>
@@ -302,7 +304,7 @@
     <message>
         <location line="+1"/>
         <source>Feed</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
@@ -374,7 +376,7 @@
     <message>
         <location line="+0"/>
         <source>Remove feed</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
@@ -384,7 +386,7 @@
     <message>
         <location line="+0"/>
         <source>Do you want to remove the feed %1?</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+20"/>
@@ -400,7 +402,7 @@
 <context>
     <name>FeedReaderFeedItem</name>
     <message>
-        <location filename="../gui/FeedReaderFeedItem.ui" line="+196"/>
+        <location filename="../gui/FeedReaderFeedItem.ui" line="+195"/>
         <location filename="../gui/FeedReaderFeedItem.cpp" line="+116"/>
         <source>Expand</source>
         <translation>Rozwiń</translation>
@@ -408,7 +410,7 @@
     <message>
         <location line="+26"/>
         <source>Set as read and remove item</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+26"/>
@@ -436,7 +438,7 @@
     <message>
         <location filename="../gui/FeedReaderFeedNotify.cpp" line="+47"/>
         <source>Feed Reader</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+78"/>
@@ -446,12 +448,12 @@
     <message>
         <location line="+11"/>
         <source>Test message</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This is a test message.</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -464,7 +466,7 @@
     <message>
         <location line="+52"/>
         <source>Mark messages as read</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -474,22 +476,22 @@
     <message>
         <location line="+17"/>
         <source>Mark messages as unread</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Mark all messages as read</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Remove messages</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Update feed</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+14"/>
@@ -497,7 +499,7 @@
         <translation>Przeszukaj fora</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+26"/>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="+92"/>
         <source>Title</source>
         <translation>Tytuł</translation>
@@ -542,7 +544,7 @@
     <message>
         <location line="+122"/>
         <source>The messages will be added to the forum</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+15"/>
@@ -577,7 +579,7 @@
     <message>
         <location line="+5"/>
         <source>Retransform</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+374"/>
@@ -593,9 +595,9 @@
 <context>
     <name>FeedReaderPlugin</name>
     <message>
-        <location filename="../FeedReaderPlugin.cpp" line="+158"/>
+        <location filename="../FeedReaderPlugin.cpp" line="+157"/>
         <source>This plugin provides a Feedreader.</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
@@ -608,32 +610,32 @@
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="+36"/>
         <source>Feed not found.</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Parent not found.</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Parent is no folder.</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Feed is a folder.</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Feed is no folder.</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown error occured.</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+14"/>
@@ -664,7 +666,7 @@
     <message>
         <location line="-79"/>
         <source>Internal download error</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -684,12 +686,12 @@
     <message>
         <location line="+3"/>
         <source>Unknown response code</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Internal process error</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -714,42 +716,42 @@
     <message>
         <location line="+3"/>
         <source>Forum has no author</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Can&apos;t read html</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Internal XPath error</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Wrong XPath expression</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Empty XPath result</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>XSLT format error</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>XSLT transformation error</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Empty XSLT result</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
@@ -759,17 +761,17 @@
     <message>
         <location line="+14"/>
         <source>No transformation</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>XPath</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>XSLT</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -777,7 +779,7 @@
     <message>
         <location filename="../gui/FeedReaderUserNotify.cpp" line="+40"/>
         <source>FeedReader Message</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -795,7 +797,7 @@
     <message>
         <location line="+7"/>
         <source>Feed name</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+136"/>
@@ -815,7 +817,7 @@
     <message>
         <location line="+20"/>
         <source>Transformation type</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+26"/>
@@ -830,12 +832,12 @@
     <message>
         <location line="+192"/>
         <source>XPath use</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+21"/>
         <source>XPath remove</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="+179"/>
@@ -845,7 +847,7 @@
     <message>
         <location line="-13"/>
         <source>XSLT is used on focus lost or when Ctrl+Enter is pressed</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+257"/>
@@ -871,13 +873,13 @@
         <location line="+95"/>
         <location line="+19"/>
         <source>Error getting content</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+111"/>
         <location line="+21"/>
         <source>Error parsing document</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

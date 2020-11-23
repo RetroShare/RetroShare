@@ -1,0 +1,18 @@
+app: retroshare
+union: true
+
+ingredients:
+  dist: trusty
+  sources: 
+    - deb http://archive.ubuntu.com/ubuntu trusty main restricted universe multiverse
+    - deb http://archive.ubuntu.com/ubuntu trusty-updates main restricted universe multiverse
+  ppas:
+    - retroshare/unstable
+  packages:
+    - libqt4-svg
+    - retroshare
+
+script:
+  - rm -rf usr/share/glib-2.0/schemas/
+  - sed -i -e 's|/usr/share/pixmaps/||g' retroshare.desktop
+  - sed -i -e 's|/usr/bin/||g' retroshare.desktop

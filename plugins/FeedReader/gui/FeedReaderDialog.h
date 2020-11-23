@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare GUI is distributed under the following license:
- *
- *  Copyright (C) 2012 by Thunder
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * plugins/FeedReader/gui/FeedReaderDialog.h                                   *
+ *                                                                             *
+ * Copyright (C) 2012 by Thunder                                               *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef _FEEDREADERDIALOG_H
 #define _FEEDREADERDIALOG_H
@@ -43,11 +42,10 @@ public:
 	FeedReaderDialog(RsFeedReader *feedReader, FeedReaderNotify *notify, QWidget *parent = 0);
 	~FeedReaderDialog();
 
-	virtual UserNotify *getUserNotify(QObject *parent);
-
 	static QIcon iconFromFeed(const FeedInfo &feedInfo);
 
 protected:
+	virtual UserNotify *createUserNotify(QObject *parent) override;
 	virtual void showEvent(QShowEvent *event);
 	bool eventFilter(QObject *obj, QEvent *ev);
 
@@ -69,26 +67,27 @@ private slots:
 	void messageTabInfoChanged(QWidget *widget);
 
 	/* FeedReaderNotify */
-	void feedChanged(const QString &feedId, int type);
+	void feedChanged(uint32_t feedId, int type);
 
 private:
-	std::string currentFeedId();
-	void setCurrentFeedId(const std::string &feedId);
+	uint32_t currentFeedId();
+	void setCurrentFeedId(uint32_t feedId);
 	void processSettings(bool load);
-	void addFeedToExpand(const std::string &feedId);
-	void getExpandedFeedIds(QList<std::string> &feedIds);
-	void updateFeeds(const std::string &parentId, QTreeWidgetItem *parentItem);
+	void addFeedToExpand(uint32_t feedId);
+	void getExpandedFeedIds(QList<uint32_t> &feedIds);
+	void updateFeeds(uint32_t parentId, QTreeWidgetItem *parentItem);
 	void updateFeedItem(QTreeWidgetItem *item, const FeedInfo &feedInfo);
-	void openFeedInNewTab(const std::string &feedId);
+	void openFeedInNewTab(uint32_t feedId);
 
 	void calculateFeedItems();
 	void calculateFeedItem(QTreeWidgetItem *item, uint32_t &unreadCount, uint32_t &newCount, bool &loading);
 
-	FeedReaderMessageWidget *feedMessageWidget(const std::string &feedId);
-	FeedReaderMessageWidget *createMessageWidget(const std::string &feedId);
+	FeedReaderMessageWidget *feedMessageWidget(uint32_t feedId);
+	FeedReaderMessageWidget *createMessageWidget(uint32_t feedId);
 
+private:
 	bool mProcessSettings;
-	QList<std::string> *mOpenFeedIds;
+	QList<uint32_t> *mOpenFeedIds;
 	QTreeWidgetItem *mRootItem;
 	RSTreeWidgetItemCompareRole *mFeedCompareRole;
 	FeedReaderMessageWidget *mMessageWidget;

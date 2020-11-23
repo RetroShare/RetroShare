@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare GUI is distributed under the following license:
- *
- *  Copyright (C) 2012 by Thunder
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * plugins/FeedReader/services/p3FeedReader.cc                                 *
+ *                                                                             *
+ * Copyright (C) 2012 by Thunder <retroshare.project@gmail.com>                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "rsFeedReaderItems.h"
 #include "p3FeedReader.h"
@@ -26,6 +25,7 @@
 #include "retroshare/rsiface.h"
 #include "retroshare/rsgxsforums.h"
 #include "util/rsstring.h"
+#include "util/rstime.h"
 #include "gxs/rsgenexchange.h"
 
 #include <unistd.h>
@@ -63,12 +63,12 @@ p3FeedReader::p3FeedReader(RsPluginHandler* pgHandler, RsGxsForums *forums)
 	mPreviewProcessThread = NULL;
 
 	/* start download thread */
-	p3FeedReaderThread *frt = new p3FeedReaderThread(this, p3FeedReaderThread::DOWNLOAD, "");
+	p3FeedReaderThread *frt = new p3FeedReaderThread(this, p3FeedReaderThread::DOWNLOAD, 0);
 	mThreads.push_back(frt);
 	frt->start("fr download");
 
 	/* start process thread */
-	frt = new p3FeedReaderThread(this, p3FeedReaderThread::PROCESS, "");
+	frt = new p3FeedReaderThread(this, p3FeedReaderThread::PROCESS, 0);
 	mThreads.push_back(frt);
 	frt->start("fr process");
 }
@@ -321,7 +321,7 @@ void p3FeedReader::stop()
 		/* stop threads */
 		std::list<p3FeedReaderThread*>::iterator it;
 		for (it = mThreads.begin(); it != mThreads.end(); ++it) {
-			(*it)->join();
+			(*it)->fullstop();
 			delete(*it);
 		}
 		mThreads.clear();
@@ -331,27 +331,27 @@ void p3FeedReader::stop()
 void p3FeedReader::stopPreviewThreads_locked()
 {
 	if (mPreviewDownloadThread) {
-		mPreviewDownloadThread->join();
+		mPreviewDownloadThread->fullstop();
 		delete mPreviewDownloadThread;
 		mPreviewDownloadThread = NULL;
 	}
 	if (mPreviewProcessThread) {
-		mPreviewProcessThread->join();
+		mPreviewProcessThread->fullstop();
 		delete mPreviewProcessThread;
 		mPreviewProcessThread = NULL;
 	}
 }
 
-RsFeedAddResult p3FeedReader::addFolder(const std::string parentId, const std::string &name, std::string &feedId)
+RsFeedAddResult p3FeedReader::addFolder(uint32_t parentId, const std::string &name, uint32_t &feedId)
 {
-	feedId.clear();
+	feedId = 0;
 
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
-		if (!parentId.empty()) {
+		if (parentId) {
 			/* check parent id */
-			std::map<std::string, RsFeedReaderFeed*>::iterator parentIt = mFeeds.find(parentId);
+			std::map<uint32_t, RsFeedReaderFeed*>::iterator parentIt = mFeeds.find(parentId);
 			if (parentIt == mFeeds.end()) {
 #ifdef FEEDREADER_DEBUG
 				std::cerr << "p3FeedReader::addFolder - parent id " << parentId << " not found" << std::endl;
@@ -368,7 +368,7 @@ RsFeedAddResult p3FeedReader::addFolder(const std::string parentId, const std::s
 		}
 
 		RsFeedReaderFeed *fi = new RsFeedReaderFeed;
-		rs_sprintf(fi->feedId, "%lu", mNextFeedId++);
+		fi->feedId = mNextFeedId++;
 		fi->parentId = parentId;
 		fi->name = name;
 		fi->flag = RS_FEED_FLAG_FOLDER;
@@ -386,7 +386,7 @@ RsFeedAddResult p3FeedReader::addFolder(const std::string parentId, const std::s
 	return RS_FEED_ADD_RESULT_SUCCESS;
 }
 
-RsFeedAddResult p3FeedReader::setFolder(const std::string &feedId, const std::string &name)
+RsFeedAddResult p3FeedReader::setFolder(uint32_t feedId, const std::string &name)
 {
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
@@ -395,7 +395,7 @@ RsFeedAddResult p3FeedReader::setFolder(const std::string &feedId, const std::st
 		std::cerr << "p3FeedReader::setFolder - feed id " << feedId << ", name " << name << std::endl;
 #endif
 
-		std::map<std::string, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
+		std::map<uint32_t, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
 		if (feedIt == mFeeds.end()) {
 #ifdef FEEDREADER_DEBUG
 			std::cerr << "p3FeedReader::setFolder - feed id " << feedId << " not found" << std::endl;
@@ -426,9 +426,9 @@ RsFeedAddResult p3FeedReader::setFolder(const std::string &feedId, const std::st
 	return RS_FEED_ADD_RESULT_SUCCESS;
 }
 
-RsFeedAddResult p3FeedReader::addFeed(const FeedInfo &feedInfo, std::string &feedId)
+RsFeedAddResult p3FeedReader::addFeed(const FeedInfo &feedInfo, uint32_t &feedId)
 {
-	feedId.clear();
+	feedId = 0;
 
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
@@ -437,9 +437,9 @@ RsFeedAddResult p3FeedReader::addFeed(const FeedInfo &feedInfo, std::string &fee
 		std::cerr << "p3FeedReader::addFeed - add feed " << feedInfo.name << ", url " << feedInfo.url << std::endl;
 #endif
 
-		if (!feedInfo.parentId.empty()) {
+		if (feedInfo.parentId) {
 			/* check parent id */
-			std::map<std::string, RsFeedReaderFeed*>::iterator parentIt = mFeeds.find(feedInfo.parentId);
+			std::map<uint32_t, RsFeedReaderFeed*>::iterator parentIt = mFeeds.find(feedInfo.parentId);
 			if (parentIt == mFeeds.end()) {
 #ifdef FEEDREADER_DEBUG
 				std::cerr << "p3FeedReader::addFeed - parent id " << feedInfo.parentId << " not found" << std::endl;
@@ -457,7 +457,7 @@ RsFeedAddResult p3FeedReader::addFeed(const FeedInfo &feedInfo, std::string &fee
 
 		RsFeedReaderFeed *fi = new RsFeedReaderFeed;
 		infoToFeed(feedInfo, fi);
-		rs_sprintf(fi->feedId, "%lu", mNextFeedId++);
+		fi->feedId = mNextFeedId++;
 
 		mFeeds[fi->feedId] = fi;
 
@@ -473,7 +473,7 @@ RsFeedAddResult p3FeedReader::addFeed(const FeedInfo &feedInfo, std::string &fee
 	return RS_FEED_ADD_RESULT_SUCCESS;
 }
 
-RsFeedAddResult p3FeedReader::setFeed(const std::string &feedId, const FeedInfo &feedInfo)
+RsFeedAddResult p3FeedReader::setFeed(uint32_t feedId, const FeedInfo &feedInfo)
 {
 	std::string forumId;
 	std::string forumName;
@@ -486,7 +486,7 @@ RsFeedAddResult p3FeedReader::setFeed(const std::string &feedId, const FeedInfo 
 		std::cerr << "p3FeedReader::setFeed - set feed " << feedInfo.name << ", url " << feedInfo.url << std::endl;
 #endif
 
-		std::map<std::string, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
+		std::map<uint32_t, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
 		if (feedIt == mFeeds.end()) {
 #ifdef FEEDREADER_DEBUG
 			std::cerr << "p3FeedReader::setFeed - feed id " << feedId << " not found" << std::endl;
@@ -501,9 +501,9 @@ RsFeedAddResult p3FeedReader::setFeed(const std::string &feedId, const FeedInfo 
 			return RS_FEED_ADD_RESULT_FEED_IS_FOLDER;
 		}
 
-		if (!feedInfo.parentId.empty()) {
+		if (feedInfo.parentId) {
 			/* check parent id */
-			std::map<std::string, RsFeedReaderFeed*>::iterator parentIt = mFeeds.find(feedInfo.parentId);
+			std::map<uint32_t, RsFeedReaderFeed*>::iterator parentIt = mFeeds.find(feedInfo.parentId);
 			if (parentIt == mFeeds.end()) {
 #ifdef FEEDREADER_DEBUG
 				std::cerr << "p3FeedReader::setFeed - parent id " << feedInfo.parentId << " not found" << std::endl;
@@ -567,16 +567,16 @@ void p3FeedReader::deleteAllMsgs_locked(RsFeedReaderFeed *fi)
 	fi->msgs.clear();
 }
 
-bool p3FeedReader::removeFeed(const std::string &feedId)
+bool p3FeedReader::removeFeed(uint32_t feedId)
 {
-	std::list<std::string> removedFeedIds;
+	std::list<uint32_t> removedFeedIds;
 	bool changed = false;
 	bool preview = false;
 
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
-		std::map<std::string, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
+		std::map<uint32_t, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
 		if (feedIt == mFeeds.end()) {
 #ifdef FEEDREADER_DEBUG
 			std::cerr << "p3FeedReader::removeFeed - feed " << feedId << " not found" << std::endl;
@@ -592,20 +592,20 @@ bool p3FeedReader::removeFeed(const std::string &feedId)
 		preview = fi->preview;
 
 		if (fi->flag & RS_FEED_FLAG_FOLDER) {
-			std::list<std::string> feedIds;
+			std::list<uint32_t> feedIds;
 			feedIds.push_back(fi->feedId);
 			while (!feedIds.empty()) {
-				std::string parentId = feedIds.front();
+				uint32_t parentId = feedIds.front();
 				feedIds.pop_front();
 
-				std::map<std::string, RsFeedReaderFeed*>::iterator feedIt1;
+				std::map<uint32_t, RsFeedReaderFeed*>::iterator feedIt1;
 				for (feedIt1 = mFeeds.begin(); feedIt1 != mFeeds.end(); ) {
 					RsFeedReaderFeed *fi1 = feedIt1->second;
 
 					if (fi1->parentId == parentId) {
 						removedFeedIds.push_back(fi1->feedId);
 
-						std::map<std::string, RsFeedReaderFeed*>::iterator tempIt = feedIt1;
+						std::map<uint32_t, RsFeedReaderFeed*>::iterator tempIt = feedIt1;
 						++feedIt1;
 						mFeeds.erase(tempIt);
 
@@ -642,7 +642,7 @@ bool p3FeedReader::removeFeed(const std::string &feedId)
 
 	if (mNotify) {
 		/* only notify remove of feed */
-		std::list<std::string>::iterator it;
+		std::list<uint32_t>::iterator it;
 		for (it = removedFeedIds.begin(); it != removedFeedIds.end(); ++it) {
 			mNotify->notifyFeedChanged(*it, NOTIFY_TYPE_DEL);
 		}
@@ -651,7 +651,7 @@ bool p3FeedReader::removeFeed(const std::string &feedId)
 	return true;
 }
 
-bool p3FeedReader::addPreviewFeed(const FeedInfo &feedInfo, std::string &feedId)
+bool p3FeedReader::addPreviewFeed(const FeedInfo &feedInfo, uint32_t &feedId)
 {
 	{
 		RsStackMutex stack(mPreviewMutex); /******* LOCK STACK MUTEX *********/
@@ -659,7 +659,7 @@ bool p3FeedReader::addPreviewFeed(const FeedInfo &feedInfo, std::string &feedId)
 		stopPreviewThreads_locked();
 	}
 
-	feedId.clear();
+	feedId = 0;
 
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
@@ -670,7 +670,7 @@ bool p3FeedReader::addPreviewFeed(const FeedInfo &feedInfo, std::string &feedId)
 
 		RsFeedReaderFeed *fi = new RsFeedReaderFeed;
 		infoToFeed(feedInfo, fi);
-		rs_sprintf(fi->feedId, "preview%d", mNextPreviewFeedId--);
+		fi->feedId = mNextPreviewFeedId--;
 		fi->preview = true;
 
 		/* process feed */
@@ -678,7 +678,7 @@ bool p3FeedReader::addPreviewFeed(const FeedInfo &feedInfo, std::string &feedId)
 		fi->content.clear();
 
 		/* clear not needed members */
-		fi->parentId.clear();
+		fi->parentId = 0;
 		fi->updateInterval = 0;
 		fi->lastUpdate = 0;
 		fi->forumId.clear();
@@ -708,11 +708,11 @@ bool p3FeedReader::addPreviewFeed(const FeedInfo &feedInfo, std::string &feedId)
 	return true;
 }
 
-void p3FeedReader::getFeedList(const std::string &parentId, std::list<FeedInfo> &feedInfos)
+void p3FeedReader::getFeedList(uint32_t parentId, std::list<FeedInfo> &feedInfos)
 {
 	RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
-	std::map<std::string, RsFeedReaderFeed*>::iterator feedIt;
+	std::map<uint32_t, RsFeedReaderFeed*>::iterator feedIt;
 	for (feedIt = mFeeds.begin(); feedIt != mFeeds.end(); ++feedIt) {
 		RsFeedReaderFeed *fi = feedIt->second;
 
@@ -728,11 +728,11 @@ void p3FeedReader::getFeedList(const std::string &parentId, std::list<FeedInfo> 
 	}
 }
 
-bool p3FeedReader::getFeedInfo(const std::string &feedId, FeedInfo &feedInfo)
+bool p3FeedReader::getFeedInfo(uint32_t feedId, FeedInfo &feedInfo)
 {
 	RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
-	std::map<std::string, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
+	std::map<uint32_t, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
 	if (feedIt == mFeeds.end()) {
 #ifdef FEEDREADER_DEBUG
 		std::cerr << "p3FeedReader::getFeedInfo - feed " << feedId << " not found" << std::endl;
@@ -745,11 +745,11 @@ bool p3FeedReader::getFeedInfo(const std::string &feedId, FeedInfo &feedInfo)
 	return true;
 }
 
-bool p3FeedReader::getMsgInfo(const std::string &feedId, const std::string &msgId, FeedMsgInfo &msgInfo)
+bool p3FeedReader::getMsgInfo(uint32_t feedId, const std::string &msgId, FeedMsgInfo &msgInfo)
 {
 	RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
-	std::map<std::string, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
+	std::map<uint32_t, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
 	if (feedIt == mFeeds.end()) {
 #ifdef FEEDREADER_DEBUG
 		std::cerr << "p3FeedReader::getMsgInfo - feed " << feedId << " not found" << std::endl;
@@ -773,14 +773,14 @@ bool p3FeedReader::getMsgInfo(const std::string &feedId, const std::string &msgI
 	return true;
 }
 
-bool p3FeedReader::removeMsg(const std::string &feedId, const std::string &msgId)
+bool p3FeedReader::removeMsg(uint32_t feedId, const std::string &msgId)
 {
 	bool changed = false;
 
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
-		std::map<std::string, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
+		std::map<uint32_t, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
 		if (feedIt == mFeeds.end()) {
 #ifdef FEEDREADER_DEBUG
 			std::cerr << "p3FeedReader::removeMsg - feed " << feedId << " not found" << std::endl;
@@ -819,7 +819,7 @@ bool p3FeedReader::removeMsg(const std::string &feedId, const std::string &msgId
 	return true;
 }
 
-bool p3FeedReader::removeMsgs(const std::string &feedId, const std::list<std::string> &msgIds)
+bool p3FeedReader::removeMsgs(uint32_t feedId, const std::list<std::string> &msgIds)
 {
 	std::list<std::string> removedMsgs;
 	bool changed = false;
@@ -827,7 +827,7 @@ bool p3FeedReader::removeMsgs(const std::string &feedId, const std::list<std::st
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
-		std::map<std::string, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
+		std::map<uint32_t, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
 		if (feedIt == mFeeds.end()) {
 #ifdef FEEDREADER_DEBUG
 			std::cerr << "p3FeedReader::removeMsgs - feed " << feedId << " not found" << std::endl;
@@ -875,7 +875,7 @@ bool p3FeedReader::removeMsgs(const std::string &feedId, const std::list<std::st
 	return true;
 }
 
-bool p3FeedReader::getMessageCount(const std::string &feedId, uint32_t *msgCount, uint32_t *newCount, uint32_t *unreadCount)
+bool p3FeedReader::getMessageCount(uint32_t feedId, uint32_t *msgCount, uint32_t *newCount, uint32_t *unreadCount)
 {
 	if (msgCount) *msgCount = 0;
 	if (unreadCount) *unreadCount = 0;
@@ -887,8 +887,8 @@ bool p3FeedReader::getMessageCount(const std::string &feedId, uint32_t *msgCount
 
 	RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
-	if (feedId.empty()) {
-		std::map<std::string, RsFeedReaderFeed*>::iterator feedIt;
+	if (feedId == 0) {
+		std::map<uint32_t, RsFeedReaderFeed*>::iterator feedIt;
 		for (feedIt = mFeeds.begin(); feedIt != mFeeds.end(); ++feedIt) {
 			RsFeedReaderFeed *fi = feedIt->second;
 
@@ -906,7 +906,7 @@ bool p3FeedReader::getMessageCount(const std::string &feedId, uint32_t *msgCount
 			}
 		}
 	} else {
-		std::map<std::string, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
+		std::map<uint32_t, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
 		if (feedIt == mFeeds.end()) {
 #ifdef FEEDREADER_DEBUG
 			std::cerr << "p3FeedReader::getMessageCount - feed " << feedId << " not found" << std::endl;
@@ -933,11 +933,11 @@ bool p3FeedReader::getMessageCount(const std::string &feedId, uint32_t *msgCount
 	return true;
 }
 
-bool p3FeedReader::getFeedMsgList(const std::string &feedId, std::list<FeedMsgInfo> &msgInfos)
+bool p3FeedReader::getFeedMsgList(uint32_t feedId, std::list<FeedMsgInfo> &msgInfos)
 {
 	RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
-	std::map<std::string, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
+	std::map<uint32_t, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
 	if (feedIt == mFeeds.end()) {
 #ifdef FEEDREADER_DEBUG
 		std::cerr << "p3FeedReader::getFeedMsgList - feed " << feedId << " not found" << std::endl;
@@ -963,11 +963,11 @@ bool p3FeedReader::getFeedMsgList(const std::string &feedId, std::list<FeedMsgIn
 	return true;
 }
 
-bool p3FeedReader::getFeedMsgIdList(const std::string &feedId, std::list<std::string> &msgIds)
+bool p3FeedReader::getFeedMsgIdList(uint32_t feedId, std::list<std::string> &msgIds)
 {
 	RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
-	std::map<std::string, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
+	std::map<uint32_t, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
 	if (feedIt == mFeeds.end()) {
 #ifdef FEEDREADER_DEBUG
 		std::cerr << "p3FeedReader::getFeedMsgList - feed " << feedId << " not found" << std::endl;
@@ -1016,16 +1016,16 @@ static bool canProcessFeed(RsFeedReaderFeed *fi)
 	return true;
 }
 
-bool p3FeedReader::processFeed(const std::string &feedId)
+bool p3FeedReader::processFeed(uint32_t feedId)
 {
-	std::list<std::string> feedToDownload;
+	std::list<uint32_t> feedToDownload;
 
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
-		std::map<std::string, RsFeedReaderFeed*>::iterator feedIt;
+		std::map<uint32_t, RsFeedReaderFeed*>::iterator feedIt;
 
-		if (feedId.empty()) {
+		if (feedId == 0) {
 			/* process all feeds */
 			for (feedIt = mFeeds.begin(); feedIt != mFeeds.end(); ++feedIt) {
 				RsFeedReaderFeed *fi = feedIt->second;
@@ -1054,13 +1054,13 @@ bool p3FeedReader::processFeed(const std::string &feedId)
 
 			RsFeedReaderFeed *fi = feedIt->second;
 			if (fi->flag & RS_FEED_FLAG_FOLDER) {
-				std::list<std::string> feedIds;
+				std::list<uint32_t> feedIds;
 				feedIds.push_back(fi->feedId);
 				while (!feedIds.empty()) {
-					std::string parentId = feedIds.front();
+					uint32_t parentId = feedIds.front();
 					feedIds.pop_front();
 
-					std::map<std::string, RsFeedReaderFeed*>::iterator feedIt1;
+					std::map<uint32_t, RsFeedReaderFeed*>::iterator feedIt1;
 					for (feedIt1 = mFeeds.begin(); feedIt1 != mFeeds.end(); ++feedIt1) {
 						RsFeedReaderFeed *fi1 = feedIt1->second;
 
@@ -1095,8 +1095,8 @@ bool p3FeedReader::processFeed(const std::string &feedId)
 		}
 	}
 
-	std::list<std::string> notifyIds;
-	std::list<std::string>::iterator it;
+	std::list<uint32_t> notifyIds;
+	std::list<uint32_t>::iterator it;
 
 	if (!feedToDownload.empty()) {
 		RsStackMutex stack(mDownloadMutex); /******* LOCK STACK MUTEX *********/
@@ -1118,14 +1118,14 @@ bool p3FeedReader::processFeed(const std::string &feedId)
 	return true;
 }
 
-bool p3FeedReader::setMessageRead(const std::string &feedId, const std::string &msgId, bool read)
+bool p3FeedReader::setMessageRead(uint32_t feedId, const std::string &msgId, bool read)
 {
 	bool changed = false;
 
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
-		std::map<std::string, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
+		std::map<uint32_t, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
 		if (feedIt == mFeeds.end()) {
 #ifdef FEEDREADER_DEBUG
 			std::cerr << "p3FeedReader::setMessageRead - feed " << feedId << " not found" << std::endl;
@@ -1168,7 +1168,7 @@ bool p3FeedReader::setMessageRead(const std::string &feedId, const std::string &
 	return true;
 }
 
-bool p3FeedReader::retransformMsg(const std::string &feedId, const std::string &msgId)
+bool p3FeedReader::retransformMsg(uint32_t feedId, const std::string &msgId)
 {
 	bool msgChanged = false;
 	bool feedChanged = false;
@@ -1176,7 +1176,7 @@ bool p3FeedReader::retransformMsg(const std::string &feedId, const std::string &
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
-		std::map<std::string, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
+		std::map<uint32_t, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
 		if (feedIt == mFeeds.end()) {
 #ifdef FEEDREADER_DEBUG
 			std::cerr << "p3FeedReader::setMessageRead - feed " << feedId << " not found" << std::endl;
@@ -1226,7 +1226,7 @@ bool p3FeedReader::retransformMsg(const std::string &feedId, const std::string &
 	return true;
 }
 
-bool p3FeedReader::clearMessageCache(const std::string &feedId)
+bool p3FeedReader::clearMessageCache(uint32_t feedId)
 {
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
@@ -1235,7 +1235,7 @@ bool p3FeedReader::clearMessageCache(const std::string &feedId)
 		std::cerr << "p3FeedReader::clearMessageCache - feed id " << feedId << std::endl;
 #endif
 
-		std::map<std::string, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
+		std::map<uint32_t, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
 		if (feedIt == mFeeds.end()) {
 #ifdef FEEDREADER_DEBUG
 			std::cerr << "p3FeedReader::clearMessageCache - feed id " << feedId << " not found" << std::endl;
@@ -1292,8 +1292,8 @@ int p3FeedReader::tick()
 
 	/* check feeds for update interval */
 	time_t currentTime = time(NULL);
-	std::list<std::string> feedToDownload;
-	std::map<std::string, RsFeedReaderFeed*>::iterator feedIt;
+	std::list<uint32_t> feedToDownload;
+	std::map<uint32_t, RsFeedReaderFeed*>::iterator feedIt;
 
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
@@ -1329,8 +1329,8 @@ int p3FeedReader::tick()
 		}
 	}
 
-	std::list<std::string> notifyIds;
-	std::list<std::string>::iterator it;
+	std::list<uint32_t> notifyIds;
+	std::list<uint32_t>::iterator it;
 
 	if (!feedToDownload.empty()) {
 		RsStackMutex stack(mDownloadMutex); /******* LOCK STACK MUTEX *********/
@@ -1359,8 +1359,8 @@ void p3FeedReader::cleanFeeds()
 	if (mLastClean == 0 || mLastClean + FEEDREADER_CLEAN_INTERVAL <= currentTime) {
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
-		std::list<std::pair<std::string, std::string> > removedMsgIds;
-		std::map<std::string, RsFeedReaderFeed*>::iterator feedIt;
+		std::list<std::pair<uint32_t, std::string> > removedMsgIds;
+		std::map<uint32_t, RsFeedReaderFeed*>::iterator feedIt;
 		for (feedIt = mFeeds.begin(); feedIt != mFeeds.end(); ++feedIt) {
 			RsFeedReaderFeed *fi = feedIt->second;
 
@@ -1379,7 +1379,7 @@ void p3FeedReader::cleanFeeds()
 
 					if (mi->flag & RS_FEEDMSG_FLAG_DELETED) {
 						if (mi->pubDate < currentTime - (long) storageTime) {
-							removedMsgIds.push_back(std::pair<std::string, std::string> (fi->feedId, mi->msgId));
+							removedMsgIds.push_back(std::pair<uint32_t, std::string> (fi->feedId, mi->msgId));
 							delete(mi);
 							std::map<std::string, RsFeedReaderMsg*>::iterator deleteIt = msgIt++;
 							fi->msgs.erase(deleteIt);
@@ -1400,7 +1400,7 @@ void p3FeedReader::cleanFeeds()
 			IndicateConfigChanged();
 
 			if (mNotify) {
-				std::list<std::pair<std::string, std::string> >::iterator it;
+				std::list<std::pair<uint32_t, std::string> >::iterator it;
 				for (it = removedMsgIds.begin(); it != removedMsgIds.end(); ++it) {
 					mNotify->notifyMsgChanged(it->first, it->second, NOTIFY_TYPE_DEL);
 				}
@@ -1467,7 +1467,7 @@ bool p3FeedReader::saveList(bool &cleanup, std::list<RsItem *> &saveData)
 		cleanSaveData.push_back(rskv);
 	}
 
-	std::map<std::string, RsFeedReaderFeed *>::iterator it1;
+	std::map<uint32_t, RsFeedReaderFeed *>::iterator it1;
 	for (it1 = mFeeds.begin(); it1 != mFeeds.end(); ++it1) {
 		RsFeedReaderFeed *fi = it1->second;
 		if (fi->preview) {
@@ -1533,21 +1533,15 @@ bool p3FeedReader::loadList(std::list<RsItem *>& load)
 	for (it = load.begin(); it != load.end(); ++it) {
 		/* switch on type */
 		if (NULL != (fi = dynamic_cast<RsFeedReaderFeed*>(*it))) {
-			uint32_t feedId = 0;
-			if (sscanf(fi->feedId.c_str(), "%u", &feedId) == 1) {
-				RsStackMutex stack(mFeedReaderMtx); /********** STACK LOCKED MTX ******/
-				if (mFeeds.find(fi->feedId) != mFeeds.end()) {
-					/* feed with the same id exists */
-					delete mFeeds[fi->feedId];
-				}
-				mFeeds[fi->feedId] = fi;
+			RsStackMutex stack(mFeedReaderMtx); /********** STACK LOCKED MTX ******/
+			if (mFeeds.find(fi->feedId) != mFeeds.end()) {
+				/* feed with the same id exists */
+				delete mFeeds[fi->feedId];
+			}
+			mFeeds[fi->feedId] = fi;
 
-				if (feedId + 1 > mNextFeedId) {
-					mNextFeedId = feedId + 1;
-				}
-			} else {
-				/* invalid feed id */
-				delete(*it);
+			if (fi->feedId + 1 > mNextFeedId) {
+				mNextFeedId = fi->feedId + 1;
 			}
 		} else if (NULL != (mi = dynamic_cast<RsFeedReaderMsg*>(*it))) {
 			if (msgs.find(mi->msgId) != msgs.end()) {
@@ -1595,14 +1589,14 @@ bool p3FeedReader::loadList(std::list<RsItem *>& load)
 	RsStackMutex stack(mFeedReaderMtx); /********** STACK LOCKED MTX ******/
 
 	/* check feeds */
-	std::map<std::string, RsFeedReaderFeed*>::iterator feedIt;
+	std::map<uint32_t, RsFeedReaderFeed*>::iterator feedIt;
 	for (feedIt = mFeeds.begin(); feedIt != mFeeds.end(); ++feedIt) {
 		RsFeedReaderFeed *feed = feedIt->second;
-		if (!feed->parentId.empty()) {
+		if (feed->parentId) {
 			/* check parent */
 			if (mFeeds.find(feed->parentId) == mFeeds.end()) {
 				/* parent not found, clear it */
-				feed->parentId.clear();
+				feed->parentId = 0;
 			}
 		}
 	}
@@ -1635,11 +1629,11 @@ bool p3FeedReader::loadList(std::list<RsItem *>& load)
 /****************************** internal ***********************************/
 /***************************************************************************/
 
-bool p3FeedReader::getFeedToDownload(RsFeedReaderFeed &feed, const std::string &neededFeedId)
+bool p3FeedReader::getFeedToDownload(RsFeedReaderFeed &feed, uint32_t neededFeedId)
 {
-	std::string feedId = neededFeedId;
+	uint32_t feedId = neededFeedId;
 
-	if (feedId.empty()) {
+	if (feedId == 0) {
 		RsStackMutex stack(mDownloadMutex); /******* LOCK STACK MUTEX *********/
 
 		if (mDownloadFeeds.empty()) {
@@ -1656,7 +1650,7 @@ bool p3FeedReader::getFeedToDownload(RsFeedReaderFeed &feed, const std::string &
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
 		/* find feed */
-		std::map<std::string, RsFeedReaderFeed*>::iterator it = mFeeds.find(feedId);
+		std::map<uint32_t, RsFeedReaderFeed*>::iterator it = mFeeds.find(feedId);
 		if (it == mFeeds.end()) {
 			/* feed not found */
 #ifdef FEEDREADER_DEBUG
@@ -1689,7 +1683,7 @@ bool p3FeedReader::getFeedToDownload(RsFeedReaderFeed &feed, const std::string &
 	return true;
 }
 
-void p3FeedReader::onDownloadSuccess(const std::string &feedId, const std::string &content, std::string &icon)
+void p3FeedReader::onDownloadSuccess(uint32_t feedId, const std::string &content, std::string &icon)
 {
 	bool preview;
 
@@ -1697,7 +1691,7 @@ void p3FeedReader::onDownloadSuccess(const std::string &feedId, const std::strin
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
 		/* find feed */
-		std::map<std::string, RsFeedReaderFeed*>::iterator it = mFeeds.find(feedId);
+		std::map<uint32_t, RsFeedReaderFeed*>::iterator it = mFeeds.find(feedId);
 		if (it == mFeeds.end()) {
 			/* feed not found */
 #ifdef FEEDREADER_DEBUG
@@ -1738,13 +1732,13 @@ void p3FeedReader::onDownloadSuccess(const std::string &feedId, const std::strin
 	}
 }
 
-void p3FeedReader::onDownloadError(const std::string &feedId, RsFeedReaderErrorState result, const std::string &errorString)
+void p3FeedReader::onDownloadError(uint32_t feedId, RsFeedReaderErrorState result, const std::string &errorString)
 {
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
 		/* find feed */
-		std::map<std::string, RsFeedReaderFeed*>::iterator it = mFeeds.find(feedId);
+		std::map<uint32_t, RsFeedReaderFeed*>::iterator it = mFeeds.find(feedId);
 		if (it == mFeeds.end()) {
 			/* feed not found */
 #ifdef FEEDREADER_DEBUG
@@ -1775,11 +1769,11 @@ void p3FeedReader::onDownloadError(const std::string &feedId, RsFeedReaderErrorS
 	}
 }
 
-bool p3FeedReader::getFeedToProcess(RsFeedReaderFeed &feed, const std::string &neededFeedId)
+bool p3FeedReader::getFeedToProcess(RsFeedReaderFeed &feed, uint32_t neededFeedId)
 {
-	std::string feedId = neededFeedId;
+	uint32_t feedId = neededFeedId;
 
-	if (feedId.empty()) {
+	if (feedId == 0) {
 		RsStackMutex stack(mProcessMutex); /******* LOCK STACK MUTEX *********/
 
 		if (mProcessFeeds.empty()) {
@@ -1796,7 +1790,7 @@ bool p3FeedReader::getFeedToProcess(RsFeedReaderFeed &feed, const std::string &n
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
 		/* find feed */
-		std::map<std::string, RsFeedReaderFeed*>::iterator it = mFeeds.find(feedId);
+		std::map<uint32_t, RsFeedReaderFeed*>::iterator it = mFeeds.find(feedId);
 		if (it == mFeeds.end()) {
 			/* feed not found */
 #ifdef FEEDREADER_DEBUG
@@ -1832,7 +1826,7 @@ bool p3FeedReader::getFeedToProcess(RsFeedReaderFeed &feed, const std::string &n
 	return true;
 }
 
-void p3FeedReader::onProcessSuccess_filterMsg(const std::string &feedId, std::list<RsFeedReaderMsg*> &msgs)
+void p3FeedReader::onProcessSuccess_filterMsg(uint32_t feedId, std::list<RsFeedReaderMsg*> &msgs)
 {
 #ifdef FEEDREADER_DEBUG
 	std::cerr << "p3FeedReader::onProcessSuccess_filterMsg - feed " << feedId << " got " << msgs.size() << " messages" << std::endl;
@@ -1842,7 +1836,7 @@ void p3FeedReader::onProcessSuccess_filterMsg(const std::string &feedId, std::li
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
 		/* find feed */
-		std::map<std::string, RsFeedReaderFeed*>::iterator it = mFeeds.find(feedId);
+		std::map<uint32_t, RsFeedReaderFeed*>::iterator it = mFeeds.find(feedId);
 		if (it == mFeeds.end()) {
 			/* feed not found */
 #ifdef FEEDREADER_DEBUG
@@ -1883,7 +1877,7 @@ void p3FeedReader::onProcessSuccess_filterMsg(const std::string &feedId, std::li
 	}
 }
 
-void p3FeedReader::onProcessSuccess_addMsgs(const std::string &feedId, std::list<RsFeedReaderMsg*> &msgs, bool single)
+void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedReaderMsg*> &msgs, bool single)
 {
 #ifdef FEEDREADER_DEBUG
 	std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - feed " << feedId << " got " << msgs.size() << " messages" << std::endl;
@@ -1898,7 +1892,7 @@ void p3FeedReader::onProcessSuccess_addMsgs(const std::string &feedId, std::list
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
 		/* find feed */
-		std::map<std::string, RsFeedReaderFeed*>::iterator it = mFeeds.find(feedId);
+		std::map<uint32_t, RsFeedReaderFeed*>::iterator it = mFeeds.find(feedId);
 		if (it == mFeeds.end()) {
 			/* feed not found */
 #ifdef FEEDREADER_DEBUG
@@ -2042,13 +2036,13 @@ void p3FeedReader::onProcessSuccess_addMsgs(const std::string &feedId, std::list
 	}
 }
 
-void p3FeedReader::onProcessError(const std::string &feedId, RsFeedReaderErrorState result, const std::string &errorString)
+void p3FeedReader::onProcessError(uint32_t feedId, RsFeedReaderErrorState result, const std::string &errorString)
 {
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
 		/* find feed */
-		std::map<std::string, RsFeedReaderFeed*>::iterator it = mFeeds.find(feedId);
+		std::map<uint32_t, RsFeedReaderFeed*>::iterator it = mFeeds.find(feedId);
 		if (it == mFeeds.end()) {
 			/* feed not found */
 #ifdef FEEDREADER_DEBUG
@@ -2079,7 +2073,7 @@ void p3FeedReader::onProcessError(const std::string &feedId, RsFeedReaderErrorSt
 	}
 }
 
-void p3FeedReader::setFeedInfo(const std::string &feedId, const std::string &name, const std::string &description)
+void p3FeedReader::setFeedInfo(uint32_t feedId, const std::string &name, const std::string &description)
 {
 	bool changed = false;
 	bool preview;
@@ -2091,7 +2085,7 @@ void p3FeedReader::setFeedInfo(const std::string &feedId, const std::string &nam
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
 		/* find feed */
-		std::map<std::string, RsFeedReaderFeed*>::iterator it = mFeeds.find(feedId);
+		std::map<uint32_t, RsFeedReaderFeed*>::iterator it = mFeeds.find(feedId);
 		if (it == mFeeds.end()) {
 			/* feed not found */
 #ifdef FEEDREADER_DEBUG
@@ -2228,11 +2222,11 @@ bool p3FeedReader::waitForToken(uint32_t token)
 
 	while (!mStopped) {
 		uint32_t status = service->requestStatus(token);
-		if (status == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED) {
+		if (status == RsTokenService::FAILED) {
 			break;
 		}
 
-		if (status == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE) {
+		if (status == RsTokenService::COMPLETE) {
 			return true;
 		}
 
@@ -2240,7 +2234,7 @@ bool p3FeedReader::waitForToken(uint32_t token)
 			break;
 		}
 
-		usleep(500 * 1000); // sleep for 500 msec
+		rstime::rs_usleep(500 * 1000); // sleep for 500 msec
 	}
 
 	return false;

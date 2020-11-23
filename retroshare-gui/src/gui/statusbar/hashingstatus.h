@@ -1,27 +1,28 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2008 RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/statusbar/hashingstatus.h                                               *
+ *                                                                             *
+ * Copyright (c) 2008 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #ifndef HASHINGSTATUS_H
 #define HASHINGSTATUS_H
 
 #include <QWidget>
+#include "retroshare/rsevents.h"
 
 class QLabel;
 class ElidedLabel;
@@ -35,15 +36,18 @@ public:
     ~HashingStatus();
 
     void setCompactMode(bool compact) {_compactMode = compact; }
-
-public slots:
-    void updateHashingInfo(const QString&) ;
+	void mousePressEvent(QMouseEvent *);
 
 private:
+	void updateHashingInfo(const QString& s);
+    void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+
     ElidedLabel *statusHashing;
     QLabel *hashloader;
+	QString mLastText ;
     QMovie *movie;
     bool _compactMode;
+    RsEventsHandlerId_t mEventHandlerId;
 };
 
 #endif

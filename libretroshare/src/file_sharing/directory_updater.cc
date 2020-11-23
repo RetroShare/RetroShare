@@ -1,28 +1,26 @@
-/*
- * RetroShare Directory watching system.
- *
- *      file_sharing/directory_updater.cc
- *
- * Copyright 2016 Mr.Alice
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare.project@gmail.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/file_sharing: directory_updater.cc                        *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2016 by Mr.Alice <mralice@users.sourceforge.net>                  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ ******************************************************************************/
 #include "util/folderiterator.h"
+#include "util/rstime.h"
 #include "rsserver/p3face.h"
 
 #include "directory_storage.h"
@@ -36,20 +34,15 @@
 //=============================================================================================================//
 
 LocalDirectoryUpdater::LocalDirectoryUpdater(HashStorage *hc,LocalDirectoryStorage *lds)
-    : mHashCache(hc),mSharedDirectories(lds)
+    : mHashCache(hc), mSharedDirectories(lds)
+    , mLastSweepTime(0), mLastTSUpdateTime(0)
+    , mDelayBetweenDirectoryUpdates(DELAY_BETWEEN_DIRECTORY_UPDATES)
+    , mIsEnabled(false), mFollowSymLinks(FOLLOW_SYMLINKS_DEFAULT)
+    , mIgnoreDuplicates(true)
+    /* Can be left to false, but setting it to true will force to re-hash any file that has been left unhashed in the last session.*/
+    , mNeedsFullRecheck(true)
+    , mIsChecking(false), mForceUpdate(false), mIgnoreFlags (0),  mMaxShareDepth(0)
 {
-    mLastSweepTime = 0;
-    mLastTSUpdateTime = 0;
-
-    mDelayBetweenDirectoryUpdates = DELAY_BETWEEN_DIRECTORY_UPDATES;
-    mIsEnabled = false ;
-    mFollowSymLinks = FOLLOW_SYMLINKS_DEFAULT ;
-
-    // Can be left to false, but setting it to true will force to re-hash any file that has been left unhashed in the last session.
-
-    mNeedsFullRecheck = true ;
-    mIsChecking = false ;
-    mForceUpdate = false ;
 }
 
 bool LocalDirectoryUpdater::isEnabled() const
@@ -58,29 +51,37 @@ bool LocalDirectoryUpdater::isEnabled() const
 }
 void LocalDirectoryUpdater::setEnabled(bool b)
 {
-    if(mIsEnabled == b)
-        return ;
-
-    if(!b)
-        shutdown();
-    else if(!isRunning())
-        start("fs dir updater") ;
-
-    mIsEnabled = b ;
+	if(mIsEnabled == b) return;
+	if(!b) RsThread::askForStop();
+	else if(!RsThread::isRunning()) start("fs dir updater");
+	mIsEnabled = b ;
 }
 
-void LocalDirectoryUpdater::data_tick()
+void LocalDirectoryUpdater::threadTick()
 {
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     if (mIsEnabled || mForceUpdate)
     {
         if(now > mDelayBetweenDirectoryUpdates + mLastSweepTime)
         {
-            if(sweepSharedDirectories())
+            bool some_files_not_ready = false ;
+
+            if(sweepSharedDirectories(some_files_not_ready))
             {
-                mNeedsFullRecheck = false;
-                mLastSweepTime = now ;
+                if(some_files_not_ready)
+                {
+					mNeedsFullRecheck = true ;
+					mLastSweepTime = now - mDelayBetweenDirectoryUpdates + 60 ; // retry 20 secs from now
+
+					std::cerr << "(II) some files being modified. Will re-scan in 60 secs." << std::endl;
+                }
+				else
+                {
+					mNeedsFullRecheck = false ;
+					mLastSweepTime = now ;
+                }
+
                 mSharedDirectories->notifyTSChanged();
                 mForceUpdate = false ;
             }
@@ -95,16 +96,30 @@ void LocalDirectoryUpdater::data_tick()
         }
     }
 
-    usleep(10*1000*1000);
+	for(uint32_t i=0;i<10;++i)
+	{
+		rstime::rs_usleep(1*1000*1000);
+
+		{
+		if(mForceUpdate)
+			break ;
+		}
+	}
 }
 
-void LocalDirectoryUpdater::forceUpdate()
+void LocalDirectoryUpdater::forceUpdate(bool add_safe_delay)
 {
     mForceUpdate = true ;
-	mLastSweepTime = 0 ;
+	mLastSweepTime = rstime_t(time(NULL)) - rstime_t(mDelayBetweenDirectoryUpdates) ;
+
+    if(add_safe_delay)
+        mLastSweepTime += rstime_t(MIN_TIME_AFTER_LAST_MODIFICATION);
+
+	if(mHashCache != NULL && mHashCache->hashingProcessPaused())
+		mHashCache->togglePauseHashingProcess();
 }
 
-bool LocalDirectoryUpdater::sweepSharedDirectories()
+bool LocalDirectoryUpdater::sweepSharedDirectories(bool& some_files_not_ready)
 {
     if(mHashSalt.isNull())
     {
@@ -149,9 +164,10 @@ bool LocalDirectoryUpdater::sweepSharedDirectories()
 #ifdef DEBUG_LOCAL_DIR_UPDATER
         std::cerr << "[directory storage]   recursing into " << stored_dir_it.name() << std::endl;
 #endif
+		existing_dirs.insert(RsDirUtil::removeSymLinks(stored_dir_it.name()));
 
-        recursUpdateSharedDir(stored_dir_it.name(), *stored_dir_it,existing_dirs) ;		// here we need to use the list that was stored, instead of the shared dir list, because the two
-                                                                            // are not necessarily in the same order.
+        recursUpdateSharedDir(stored_dir_it.name(), *stored_dir_it,existing_dirs,1,some_files_not_ready) ;		// here we need to use the list that was stored, instead of the shared dir list, because the two
+                                                                            									// are not necessarily in the same order.
     }
 
     RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
@@ -160,22 +176,11 @@ bool LocalDirectoryUpdater::sweepSharedDirectories()
     return true ;
 }
 
-void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_path, DirectoryStorage::EntryIndex indx,std::set<std::string>& existing_directories)
+void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_path, DirectoryStorage::EntryIndex indx,std::set<std::string>& existing_directories,uint32_t current_depth,bool& some_files_not_ready)
 {
 #ifdef DEBUG_LOCAL_DIR_UPDATER
     std::cerr << "[directory storage]   parsing directory " << cumulated_path << ", index=" << indx << std::endl;
 #endif
-
-    if(mFollowSymLinks)
-	{
-		std::string real_path = RsDirUtil::removeSymLinks(cumulated_path) ;
-		if(existing_directories.end() != existing_directories.find(real_path))
-		{
-            std::cerr << "(WW) Directory " << cumulated_path << " has real path " << real_path << " which already belongs to another shared directory. Ignoring" << std::endl;
-			return ;
-		}
-		existing_directories.insert(real_path) ;
-	}
 
     // make sure list of subdirs is the same
     // make sure list of subfiles is the same
@@ -183,12 +188,14 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 
     librs::util::FolderIterator dirIt(cumulated_path,mFollowSymLinks,false);	// disallow symbolic links and files from the future.
 
-    time_t dir_local_mod_time ;
+    rstime_t dir_local_mod_time ;
     if(!mSharedDirectories->getDirectoryLocalModTime(indx,dir_local_mod_time))
     {
         std::cerr << "(EE) Cannot get local mod time for dir index " << indx << std::endl;
         return;
     }
+
+    rstime_t now = time(NULL) ;
 
     if(mNeedsFullRecheck || dirIt.dir_modtime() > dir_local_mod_time)	// the > is because we may have changed the virtual name, and therefore the TS wont match.
 																		// we only want to detect when the directory has changed on the disk
@@ -199,25 +206,61 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
        std::set<std::string> subdirs ;
 
        for(;dirIt.isValid();dirIt.next())
-       {
-          switch(dirIt.file_type())
-          {
-          case librs::util::FolderIterator::TYPE_FILE:	subfiles[dirIt.file_name()].modtime = dirIt.file_modtime() ;
-             subfiles[dirIt.file_name()].size = dirIt.file_size();
-#ifdef DEBUG_LOCAL_DIR_UPDATER
-             std::cerr << "  adding sub-file \"" << dirIt.file_name() << "\"" << std::endl;
-#endif
-             break;
+		   if(filterFile(dirIt.file_name()))
+		   {
+			   switch(dirIt.file_type())
+			   {
+			   case librs::util::FolderIterator::TYPE_FILE:
 
-          case librs::util::FolderIterator::TYPE_DIR:  	subdirs.insert(dirIt.file_name());
+                   if(dirIt.file_modtime() + MIN_TIME_AFTER_LAST_MODIFICATION < now)
+				   {
+					   subfiles[dirIt.file_name()].modtime = dirIt.file_modtime() ;
+					   subfiles[dirIt.file_name()].size = dirIt.file_size();
 #ifdef DEBUG_LOCAL_DIR_UPDATER
-             std::cerr << "  adding sub-dir \"" << dirIt.file_name() << "\"" << std::endl;
+					   std::cerr << "  adding sub-file \"" << dirIt.file_name() << "\"" << std::endl;
 #endif
-             break;
-          default:
-             std::cerr << "(EE) Dir entry of unknown type with path \"" << cumulated_path << "/" << dirIt.file_name() << "\"" << std::endl;
-          }
-       }
+				   }
+                   else
+                   {
+                       some_files_not_ready = true ;
+
+                       std::cerr << "(WW) file " << dirIt.file_fullpath() << " is probably being modified. Keeping it for later." << std::endl;
+                   }
+
+				   break;
+
+			   case librs::util::FolderIterator::TYPE_DIR:
+			   {
+				   bool dir_is_accepted = true ;
+
+				   if( (mMaxShareDepth > 0u && current_depth > mMaxShareDepth) || (mMaxShareDepth==0 && current_depth >= 64))	// 64 is here as a safe limit, to make loops impossible.
+					   dir_is_accepted = false ;
+
+				   if(dir_is_accepted && mFollowSymLinks && mIgnoreDuplicates)
+				   {
+					   std::string real_path = RsDirUtil::removeSymLinks(cumulated_path + "/" + dirIt.file_name()) ;
+
+					   if(existing_directories.end() != existing_directories.find(real_path))
+					   {
+						   std::cerr << "(WW) Directory " << cumulated_path << " has real path " << real_path << " which already belongs to another shared directory. Ignoring" << std::endl;
+						   dir_is_accepted = false ;
+					   }
+					   else
+						   existing_directories.insert(real_path) ;
+				   }
+
+				   if(dir_is_accepted)
+					   subdirs.insert(dirIt.file_name());
+
+#ifdef DEBUG_LOCAL_DIR_UPDATER
+				   std::cerr << "  adding sub-dir \"" << dirIt.file_name() << "\"" << std::endl;
+#endif
+			   }
+				   break;
+			   default:
+				   std::cerr << "(EE) Dir entry of unknown type with path \"" << cumulated_path << "/" << dirIt.file_name() << "\"" << std::endl;
+			   }
+		   }
        // update folder modificatoin time, which is the only way to detect e.g. removed or renamed files.
 
        mSharedDirectories->setDirectoryLocalModTime(indx,dirIt.dir_modtime()) ;
@@ -232,16 +275,16 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
        // now go through list of subfiles and request the hash to hashcache
 
        for(DirectoryStorage::FileIterator dit(mSharedDirectories,indx);dit;++dit)
-       {
-          // ask about the hash. If not present, ask HashCache. If not present, or different, the callback will update it.
+	   {
+		   // ask about the hash. If not present, ask HashCache. If not present, or different, the callback will update it.
 
-          RsFileHash hash ;
+		   RsFileHash hash ;
 
-          // mSharedDirectories des two things: store H(F), and compute H(H(F)), which is used in FT. The later is always needed.
+		   // mSharedDirectories does two things: store H(F), and compute H(H(F)), which is used in FT. The later is always needed.
 
-          if(mHashCache->requestHash(cumulated_path + "/" + dit.name(),dit.size(),dit.modtime(),hash,this,*dit))
-             mSharedDirectories->updateHash(*dit,hash,hash != dit.hash());
-       }
+		   if(mHashCache->requestHash(cumulated_path + "/" + dit.name(),dit.size(),dit.modtime(),hash,this,*dit))
+			   mSharedDirectories->updateHash(*dit,hash,hash != dit.hash());
+	   }
     }
 #ifdef DEBUG_LOCAL_DIR_UPDATER
     else
@@ -250,13 +293,43 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 
     // go through the list of sub-dirs and recursively update
 
-    for(DirectoryStorage::DirIterator stored_dir_it(mSharedDirectories,indx) ; stored_dir_it; ++stored_dir_it)
-    {
+		for(DirectoryStorage::DirIterator stored_dir_it(mSharedDirectories,indx) ; stored_dir_it; ++stored_dir_it)
+		{
 #ifdef DEBUG_LOCAL_DIR_UPDATER
-        std::cerr << "  recursing into " << stored_dir_it.name() << std::endl;
+			std::cerr << "  recursing into " << stored_dir_it.name() << std::endl;
 #endif
-        recursUpdateSharedDir(cumulated_path + "/" + stored_dir_it.name(), *stored_dir_it,existing_directories) ;
-    }
+			recursUpdateSharedDir(cumulated_path + "/" + stored_dir_it.name(), *stored_dir_it,existing_directories,current_depth+1,some_files_not_ready) ;
+		}
+}
+
+bool LocalDirectoryUpdater::filterFile(const std::string& fname) const
+{
+	if(mIgnoreFlags & RS_FILE_SHARE_FLAGS_IGNORE_SUFFIXES)
+		for(auto it(mIgnoredSuffixes.begin());it!=mIgnoredSuffixes.end();++it)
+			if(fname.size() >= (*it).size() && fname.substr( fname.size() - (*it).size()) == *it)
+			{
+				std::cerr << "(II) ignoring file " << fname << ", because it matches suffix \"" << *it << "\"" << std::endl;
+				return false ;
+			}
+
+	if(mIgnoreFlags & RS_FILE_SHARE_FLAGS_IGNORE_PREFIXES)
+		for(auto it(mIgnoredPrefixes.begin());it!=mIgnoredPrefixes.end();++it)
+			if(fname.size() >= (*it).size() && fname.substr( 0,(*it).size()) == *it)
+			{
+				std::cerr << "(II) ignoring file " << fname << ", because it matches prefix \"" << *it << "\"" << std::endl;
+				return false ;
+			}
+
+	return true ;
+}
+
+void LocalDirectoryUpdater::togglePauseHashingProcess()
+{
+	mHashCache->togglePauseHashingProcess() ;
+}
+bool LocalDirectoryUpdater::hashingProcessPaused()
+{
+	return mHashCache->hashingProcessPaused();
 }
 
 bool LocalDirectoryUpdater::inDirectoryCheck() const
@@ -293,7 +366,7 @@ void LocalDirectoryUpdater::setFollowSymLinks(bool b)
 
     mFollowSymLinks = b ;
 
-    forceUpdate();
+    forceUpdate(false);
 }
 
 bool LocalDirectoryUpdater::followSymLinks() const
@@ -301,5 +374,43 @@ bool LocalDirectoryUpdater::followSymLinks() const
     return mFollowSymLinks ;
 }
 
+void LocalDirectoryUpdater::setIgnoreLists(const std::list<std::string>& ignored_prefixes,const std::list<std::string>& ignored_suffixes,uint32_t ignore_flags)
+{
+	mIgnoredPrefixes = ignored_prefixes ;
+	mIgnoredSuffixes = ignored_suffixes ;
+	mIgnoreFlags = ignore_flags;
+}
+bool LocalDirectoryUpdater::getIgnoreLists(std::list<std::string>& ignored_prefixes,std::list<std::string>& ignored_suffixes,uint32_t& ignore_flags) const
+{
+	 ignored_prefixes = mIgnoredPrefixes;
+	 ignored_suffixes = mIgnoredSuffixes;
+	 ignore_flags     = mIgnoreFlags    ;
 
+	 return true;
+}
 
+int LocalDirectoryUpdater::maxShareDepth() const
+{
+	return mMaxShareDepth ;
+}
+
+void LocalDirectoryUpdater::setMaxShareDepth(uint32_t d)
+{
+	if(d != mMaxShareDepth)
+        mNeedsFullRecheck = true ;
+
+	mMaxShareDepth = d ;
+}
+
+bool LocalDirectoryUpdater::ignoreDuplicates() const
+{
+	return mIgnoreDuplicates;
+}
+
+void LocalDirectoryUpdater::setIgnoreDuplicates(bool b)
+{
+	if(b != mIgnoreDuplicates)
+        mNeedsFullRecheck = true ;
+
+	mIgnoreDuplicates = b ;
+}

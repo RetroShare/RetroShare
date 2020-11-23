@@ -1,25 +1,22 @@
-/*
- * Retroshare Gxs Feed Item
- *
- * Copyright 2012-2013 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * retroshare-gui/src/gui/gxs/GxsFeedItem.cpp                                  *
+ *                                                                             *
+ * Copyright 2012-2013 by Robert Fernie   <retroshare.project@gmail.com>       *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "gui/gxs/GxsFeedItem.h"
 #include "gui/feeds/FeedHolder.h"
@@ -42,9 +39,6 @@ GxsFeedItem::GxsFeedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGro
 
 	/* load data if we can */
 	mMessageId = messageId;
-
-	mTokenTypeMessage = nextTokenType();
-	mTokenTypeComment = nextTokenType();
 }
 
 GxsFeedItem::~GxsFeedItem()
@@ -89,114 +83,14 @@ void GxsFeedItem::copyMessageLink()
 	}
 }
 
-void GxsFeedItem::fillDisplay(RsGxsUpdateBroadcastBase *updateBroadcastBase, bool complete)
-{
-	GxsGroupFeedItem::fillDisplay(updateBroadcastBase, complete);
-
-	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgs;
-	updateBroadcastBase->getAllMsgIds(msgs);
-
-	if (!msgs.empty())
-	{
-		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::const_iterator mit = msgs.find(groupId());
-		if (mit != msgs.end())
-		{
-			const std::vector<RsGxsMessageId> &msgIds = mit->second;
-			if (std::find(msgIds.begin(), msgIds.end(), messageId()) != msgIds.end()) {
-				requestMessage();
-			}
-		}
-	}
-}
-
 void GxsFeedItem::requestMessage()
 {
-#ifdef DEBUG_ITEM
-	std::cerr << "GxsFeedItem::requestMessage()";
-	std::cerr << std::endl;
-#endif
+    loadMessage();
 
-	if (!initLoadQueue()) {
-		return;
-	}
-
-	if (mLoadQueue->activeRequestExist(mTokenTypeMessage)) {
-		/* Request already running */
-		return;
-	}
-
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-
-	GxsMsgReq msgIds;
-	std::vector<RsGxsMessageId> &vect_msgIds = msgIds[groupId()];
-	vect_msgIds.push_back(mMessageId);
-
-	uint32_t token;
-	mLoadQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, mTokenTypeMessage);
 }
 
 void GxsFeedItem::requestComment()
 {
-#ifdef DEBUG_ITEM
-	std::cerr << "GxsFeedItem::requestComment()";
-	std::cerr << std::endl;
-#endif
-
-	if (!initLoadQueue()) {
-		return;
-	}
-
-	if (mLoadQueue->activeRequestExist(mTokenTypeComment)) {
-		/* Request already running */
-		return;
-	}
-
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
-	opts.mOptions = RS_TOKREQOPT_MSG_THREAD | RS_TOKREQOPT_MSG_LATEST;
-
-	std::vector<RsGxsGrpMsgIdPair> msgIds;
-
-	for(int i=0;i<mMessageVersions.size();++i)
-		msgIds.push_back(std::make_pair(groupId(),mMessageVersions[i])) ;
-
-	msgIds.push_back(std::make_pair(groupId(),messageId()));
-
-	uint32_t token;
-	mLoadQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, mTokenTypeComment);
+    loadComment();
 }
 
-void GxsFeedItem::loadRequest(const TokenQueue *queue, const TokenRequest &req)
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "GxsFeedItem::loadRequest()";
-	std::cerr << std::endl;
-#endif
-
-	if (queue == mLoadQueue) {
-		if (req.mUserType == mTokenTypeMessage) {
-			loadMessage(req.mToken);
-			return;
-		}
-		if (req.mUserType == mTokenTypeComment) {
-			loadComment(req.mToken);
-			return;
-		}
-	}
-
-	GxsGroupFeedItem::loadRequest(queue, req);
-}
-
-bool GxsFeedItem::isLoading()
-{
-	if (GxsGroupFeedItem::isLoading()) {
-		return true;
-	}
-
-	if (mLoadQueue && mLoadQueue->activeRequestExist(mTokenTypeMessage)) {
-		return true;
-	}
-
-	return false;
-}

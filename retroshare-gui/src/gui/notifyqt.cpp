@@ -1,23 +1,24 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (c) 2010 RetroShare Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- *************************************************************************/
+/*******************************************************************************
+ * gui/NotifyQt.cpp                                                            *
+ *                                                                             *
+ * Copyright (c) 2010 Retroshare Team  <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
+#include "gui/common/FilesDefs.h"
 #include <retroshare/rsgxsifacehelper.h>
 
 #include <QInputDialog>
@@ -32,7 +33,7 @@
 #include <retroshare/rsidentity.h>
 #include <util/rsdir.h>
 
-#include "RsAutoUpdatePage.h"
+#include <retroshare-gui/RsAutoUpdatePage.h>
 
 #include "MainWindow.h"
 #include "toaster/OnlineToaster.h"
@@ -199,51 +200,6 @@ class SignatureEventData
 		std::string reason ;
 };
 
-bool NotifyQt::askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result, std::string reason /*=""*/)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-
-		std::cerr << "NotifyQt:: deferred signature event requeted. " << std::endl;
-
-		// Look into the queue
-
-		Sha1CheckSum chksum = RsDirUtil::sha1sum((uint8_t*)data,len) ;
-
-        std::map<std::string,SignatureEventData*>::iterator it = _deferred_signature_queue.find(chksum.toStdString()) ;
-        signature_result = SELF_SIGNATURE_RESULT_PENDING ;
-
-		if(it != _deferred_signature_queue.end())
-        {
-            signature_result = it->second->signature_result ;
-
-            if(it->second->signature_result != SELF_SIGNATURE_RESULT_PENDING)	// found it. Copy the result, and remove from the queue.
-            {
-                // We should check for the exact data match, for the sake of being totally secure.
-                //
-                std::cerr << "Found into queue: returning it" << std::endl;
-
-                memcpy(sign,it->second->sign,*it->second->signlen) ;
-                *signlen = *(it->second->signlen) ;
-
-                delete it->second ;
-                _deferred_signature_queue.erase(it) ;
-            }
-            return true ;		// already registered, but not done yet.
-        }
-
-		// Not found. Store in the queue and emit a signal.
-		//
-		std::cerr << "NotifyQt:: deferred signature event requeted. Pushing into queue" << std::endl;
-
-		SignatureEventData *edta = new SignatureEventData(data,len,*signlen, reason) ;
-
-		_deferred_signature_queue[chksum.toStdString()] = edta ;
-	}
-	emit deferredSignatureHandlingRequested() ;
-    return true;
-}
-
 void NotifyQt::handleSignatureEvent()
 {
 	std::cerr << "NotifyQt:: performing a deferred signature in the main GUI thread." << std::endl;
@@ -321,7 +277,7 @@ bool NotifyQt::askForPluginConfirmation(const std::string& plugin_file_name, con
 	text += "</UL>" ;
 
 	dialog.setText(text) ;
-    dialog.setWindowIcon(QIcon(":/icons/logo_128.png"));
+    dialog.setWindowIcon(FilesDefs::getIconFromQtResourcePath(":/icons/logo_128.png"));
 	dialog.setStandardButtons(QMessageBox::Yes | QMessageBox::No) ;
 
 	int ret = dialog.exec();
@@ -347,34 +303,6 @@ void NotifyQt::notifyDiscInfoChanged()
 #endif
 
 	emit discInfoChanged() ;
-}
-
-void NotifyQt::notifyDownloadComplete(const std::string& fileHash)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-#ifdef NOTIFY_DEBUG
-	std::cerr << "Notifyqt::notifyDownloadComplete notified that a download is completed" << std::endl;
-#endif
-
-	emit downloadComplete(QString::fromStdString(fileHash));
-}
-
-void NotifyQt::notifyDownloadCompleteCount(uint32_t count)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-	std::cerr << "Notifyqt::notifyDownloadCompleteCount " << count << std::endl;
-
-	emit downloadCompleteCountChanged(count);
 }
 
 void NotifyQt::notifyDiskFull(uint32_t loc,uint32_t size_in_mb)
@@ -420,21 +348,6 @@ void NotifyQt::notifyPeerStatusChangedSummary()
 #endif
 
 	emit peerStatusChangedSummary();
-}
-
-void NotifyQt::notifyGxsChange(const RsGxsChanges& changes)
-{
-    {
-        QMutexLocker m(&_mutex) ;
-        if(!_enabled)
-            return ;
-    }
-
-#ifdef NOTIFY_DEBUG
-    std::cerr << "Notifyqt:: notified that gxs has changes" << std::endl;
-#endif
-
-    emit gxsChange(changes);
 }
 
 void NotifyQt::notifyOwnStatusMessageChanged()
@@ -490,20 +403,6 @@ void NotifyQt::notifyChatLobbyTimeShift(int shift)
 	std::cerr << "notifyQt: Received chat lobby time shift message: shift = " << shift << std::endl;
 #endif
 	emit chatLobbyTimeShift(shift) ;
-}
-
-void NotifyQt::notifyConnectionWithoutCert()
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-#ifdef NOTIFY_DEBUG
-	std::cerr << "notifyQt: Received notifyConnectionWithoutCert" << std::endl;
-#endif
-	emit connectionWithoutCert();
 }
 
 void NotifyQt::handleChatLobbyTimeShift(int /*shift*/)
@@ -563,7 +462,12 @@ void NotifyQt::notifyChatCleared(const ChatId& chat_id)
 	emit chatCleared(chat_id);
 }
 
-void NotifyQt::notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& files)
+void NotifyQt::notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleGxsInfo>& found_groups)
+{
+    std::cerr << "(EE) missing code to handle GXS turtle search result." << std::endl;
+}
+
+void NotifyQt::notifyTurtleSearchResult(const RsPeerId& pid,uint32_t search_id,const std::list<TurtleFileInfo>& files)
 {
 	{
 		QMutexLocker m(&_mutex) ;
@@ -583,37 +487,10 @@ void NotifyQt::notifyTurtleSearchResult(uint32_t search_id,const std::list<Turtl
 		det.name = (*it).name ;
 		det.hash = (*it).hash ;
 		det.size = (*it).size ;
-		det.id.clear() ;
+		det.id   = pid ;
 
 		emit gotTurtleSearchResult(search_id,det) ;
 	}
-}
-
-void NotifyQt::notifyHashingInfo(uint32_t type, const std::string& fileinfo)
-{
-	QString info;
-
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-	switch (type) {
-	case NOTIFY_HASHTYPE_EXAMINING_FILES:
-		info = tr("Examining shared files...");
-		break;
-	case NOTIFY_HASHTYPE_FINISH:
-		break;
-	case NOTIFY_HASHTYPE_HASH_FILE:
-		info = tr("Hashing file") + " " + QString::fromUtf8(fileinfo.c_str());
-		break;
-	case NOTIFY_HASHTYPE_SAVE_FILE_INDEX:
-		info = tr("Saving file index...");
-		break;
-	}
-
-	emit hashingInfoChanged(info);
 }
 
 void NotifyQt::notifyHistoryChanged(uint32_t msgId, int type)
@@ -745,7 +622,6 @@ void NotifyQt::notifyListChange(int list, int type)
 	return;
 }
 
-
 void NotifyQt::notifyListPreChange(int list, int /*type*/)
 {
 	{
@@ -782,19 +658,6 @@ void NotifyQt::notifyListPreChange(int list, int /*type*/)
 			break;
 	}
 	return;
-}
-
-	/* New Timer Based Update scheme ...
-	 * means correct thread seperation
-	 *
-	 * uses Flags, to detect changes
-	 */
-
-void NotifyQt::resetCachedPassphrases()
-{
-	std::cerr << "Clearing PGP passphrase." << std::endl;
-
-	rsNotify->clearPgpPassphrase() ;
 }
 
 void NotifyQt::enable()
@@ -889,6 +752,7 @@ void NotifyQt::UpdateGUI()
 					}
 					break;
 				case RS_POPUP_GROUPCHAT:
+#ifdef RS_DIRECT_CHAT
 					if ((popupflags & RS_POPUP_GROUPCHAT) && !_disableAllToaster)
 					{
 						MainWindow *mainWindow = MainWindow::getInstance();
@@ -902,6 +766,7 @@ void NotifyQt::UpdateGUI()
 						}
 						toaster = new ToasterItem(new GroupChatToaster(RsPeerId(id), QString::fromUtf8(msg.c_str())));
 					}
+#endif // RS_DIRECT_CHAT
 					break;
 				case RS_POPUP_CHATLOBBY:
 					if ((popupflags & RS_POPUP_CHATLOBBY) && !_disableAllToaster)
@@ -1036,7 +901,9 @@ void NotifyQt::testToasters(uint notifyFlags, /*RshareSettings::enumToasterPosit
                 toaster = new ToasterItem(new ChatToaster(id, message));
 				break;
 			case RS_POPUP_GROUPCHAT:
+#ifdef RS_DIRECT_CHAT
 				toaster = new ToasterItem(new GroupChatToaster(id, message));
+#endif // RS_DIRECT_CHAT
 				break;
 			case RS_POPUP_CHATLOBBY:
 				{

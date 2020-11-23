@@ -1,24 +1,24 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (c) 2010, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/common/MimeTextEdit.cpp                                                 *
+ *                                                                             *
+ * Copyright (C) 2012, Retroshare Team <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
+#include "gui/common/FilesDefs.h"
 #include <QApplication>
 #include <QClipboard>
 #include <QMimeData>
@@ -69,7 +69,7 @@ void MimeTextEdit::insertFromMimeData(const QMimeData* source)
 			QImage image = qvariant_cast<QImage>(source->imageData());
 			if (image.isNull() == false) {
 				QString	encodedImage;
-				if (RsHtml::makeEmbeddedImage(image, encodedImage, 640*480)) {
+				if (RsHtml::makeEmbeddedImage(image, encodedImage, 640*480, mMaxBytes)) {
 					QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
 					textCursor().insertFragment(fragment);
 					return;
@@ -251,8 +251,8 @@ void MimeTextEdit::contextMenuEvent(QContextMenuEvent *e)
 	QAction *spoilerAction =  contextMenu->addAction(tr("Spoiler"), this, SLOT(spoiler()));
 	spoilerAction->setToolTip(tr("Select text to hide, then push this button"));
 	contextMenu->addSeparator();
-	QAction *pasteLinkAction = contextMenu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
-	contextMenu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste my certificate link"), this, SLOT(pasteOwnCertificateLink()));
+    QAction *pasteLinkAction = contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
+    contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/pasterslink.png"), tr("Paste my certificate link"), this, SLOT(pasteOwnCertificateLink()));
 
 	if (RSLinkClipboard::empty()) {
 		pasteLinkAction->setDisabled(true);

@@ -1,26 +1,22 @@
-/*
- * Connect Progress Dialog
- *
- * Copyright 2012-2013 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * gui/connect/ConnectProgressDialog.cpp                                       *
+ *                                                                             *
+ * Copyright 2012-2013 by Robert Fernie <retroshare.project@gmail.com>         *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "gui/connect/ConnectProgressDialog.h"
 
@@ -33,6 +29,7 @@
 #include <retroshare/rsdht.h>
 
 #include "gui/common/StatusDefs.h"
+#include "gui/common/FilesDefs.h"
 
 /* maintain one static dialog per SSL ID */
 
@@ -60,10 +57,13 @@ ConnectProgressDialog::ConnectProgressDialog(const RsPeerId& id, QWidget *parent
 	ui->setupUi(this);
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
-	ui->headerFrame->setHeaderImage(QPixmap(":/images/user/identityinfo64.png"));
+    ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/user/identityinfo64.png"));
 	ui->headerFrame->setHeaderText(tr("Connection Assistant"));
 
 	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(stopAndClose()));
+
+	mAmIHiddenNode = rsPeers->isHiddenNode(rsPeers->getOwnId()) ;
+	mIsPeerHiddenNode = rsPeers->isHiddenNode(id) ;
 }
 
 ConnectProgressDialog::~ConnectProgressDialog()
@@ -165,14 +165,42 @@ void ConnectProgressDialog::initDialog()
 	ui->NetResult->setText(tr("N/A"));
 	ui->ContactResult->setText(tr("N/A"));
 
+#ifdef RS_USE_BITDHT
+	if(!mIsPeerHiddenNode && !mAmIHiddenNode)
+	{
 	ui->DhtResult->setText(tr("DHT Startup"));
 	ui->DhtProgressBar->setValue(0);
+	}
+#else
+	if(mIsPeerHiddenNode || mAmIHiddenNode)
+	{
+		ui->DhtResult->hide();
+		ui->DhtLabel->hide();
+		ui->DhtProgressBar->hide();
+	}
+#endif
+	if(mIsPeerHiddenNode || mAmIHiddenNode)
+	{
+		ui->UdpResult->hide();
+		ui->UdpProgressBar->hide();
+		ui->UdpLabel->hide();
+
+        ui->DhtLabel->hide();
+        ui->DhtProgressBar->hide();
+        ui->DhtResult->hide();
+
+        ui->LookupLabel->hide();
+        ui->LookupProgressBar->hide();
+        ui->LookupResult->hide();
+	}
+	else
+	{
+		ui->UdpResult->setText(tr("N/A"));
+		ui->UdpProgressBar->setValue(0);
+	}
 
 	ui->LookupResult->setText(tr("N/A"));
 	ui->LookupProgressBar->setValue(0);
-
-	ui->UdpResult->setText(tr("N/A"));
-	ui->UdpProgressBar->setValue(0);
 
 	sayInProgress();
 
@@ -219,7 +247,9 @@ void ConnectProgressDialog::updateStatus()
 
 			updateNetworkStatus();
 			updateContactStatus();
+#ifdef RS_USE_BITDHT
 			updateDhtStatus();
+#endif
 			updateLookupStatus();
 			updateUdpStatus();
 
@@ -252,39 +282,39 @@ void ConnectProgressDialog::stopAndClose()
 
 void ConnectProgressDialog::updateNetworkStatus()
 {
-	uint32_t netState = rsConfig->getNetState();
+	RsNetState netState = rsConfig->getNetState();
 
 	QLabel *label = ui->NetResult;
 	switch(netState)
 	{
-		case RSNET_NETSTATE_BAD_UNKNOWN:
+	    case RsNetState::BAD_UNKNOWN:
 			label->setText(tr("Unknown State"));
 			break;
-		case RSNET_NETSTATE_BAD_OFFLINE:
+	    case RsNetState::BAD_OFFLINE:
 			label->setText(tr("Offline"));
 			break;
-		case RSNET_NETSTATE_BAD_NATSYM:
+	    case RsNetState::BAD_NATSYM:
 			label->setText(tr("Behind Symmetric NAT"));
 			break;
-		case RSNET_NETSTATE_BAD_NODHT_NAT:
+	    case RsNetState::BAD_NODHT_NAT:
 			label->setText(tr("Behind NAT & No DHT"));
 			break;
-		case RSNET_NETSTATE_WARNING_RESTART:
+	    case RsNetState::WARNING_RESTART:
 			label->setText(tr("NET Restart"));
 			break;
-		case RSNET_NETSTATE_WARNING_NATTED:
+	    case RsNetState::WARNING_NATTED:
 			label->setText(tr("Behind NAT"));
 			break;
-		case RSNET_NETSTATE_WARNING_NODHT:
+	    case RsNetState::WARNING_NODHT:
 			label->setText(tr("No DHT"));
 			break;
-		case RSNET_NETSTATE_GOOD:
+	    case RsNetState::GOOD:
 			label->setText(tr("NET STATE GOOD!"));
 			break;
-		case RSNET_NETSTATE_ADV_FORWARD:
+	    case RsNetState::ADV_FORWARD:
 			label->setText(tr("UNVERIFIABLE FORWARD!"));
 			break;
-		case RSNET_NETSTATE_ADV_DARK_FORWARD:
+	    case RsNetState::ADV_DARK_FORWARD:
 			label->setText(tr("UNVERIFIABLE FORWARD & NO DHT"));
 			break;
 	}
@@ -443,6 +473,7 @@ void ConnectProgressDialog::updateLookupStatus()
 			break;
 	}
 
+#ifdef RS_USE_BITDHT
 	time_t now = time(NULL);
 	switch(mDhtStatus)
 	{
@@ -491,35 +522,36 @@ void ConnectProgressDialog::updateLookupStatus()
 	switch(status.mDhtState)
 	{
 		default:
-		case RSDHT_PEERDHT_NOT_ACTIVE:
+	    case RsDhtPeerDht::NOT_ACTIVE:
 			ui->LookupProgressBar->setValue(0);
 			ui->LookupResult->setText(tr("Peer DHT NOT ACTIVE"));
 			mLookupStatus = CONNECT_LOOKUP_NODHTCONFIG;
 			break;
-		case RSDHT_PEERDHT_SEARCHING:
+	    case RsDhtPeerDht::SEARCHING:
 			ui->LookupResult->setText(tr("Searching"));
 			break;
-		case RSDHT_PEERDHT_FAILURE:
+	    case RsDhtPeerDht::FAILURE:
 			ui->LookupProgressBar->setValue(0);
 			ui->LookupResult->setText(tr("Lookup Failure"));
 			mLookupStatus = CONNECT_LOOKUP_FAIL;
 			break;
-		case RSDHT_PEERDHT_OFFLINE:
+	    case RsDhtPeerDht::OFFLINE:
 			ui->LookupProgressBar->setValue(100);
 			ui->LookupResult->setText(tr("Peer Offline"));
 			mLookupStatus = CONNECT_LOOKUP_OFFLINE;
 			break;
-		case RSDHT_PEERDHT_UNREACHABLE:
+	    case RsDhtPeerDht::UNREACHABLE:
 			ui->LookupProgressBar->setValue(100);
 			ui->LookupResult->setText(tr("Peer Firewalled"));
 			mLookupStatus = CONNECT_LOOKUP_UNREACHABLE;
 			break;
-		case RSDHT_PEERDHT_ONLINE:
+	    case RsDhtPeerDht::ONLINE:
 			ui->LookupProgressBar->setValue(100);
 			ui->LookupResult->setText(tr("Peer Online"));
 			mLookupStatus = CONNECT_LOOKUP_ONLINE;
 			break;
 	}
+#endif
 }
 
 
@@ -572,6 +604,7 @@ void ConnectProgressDialog::updateUdpStatus()
 
 	ui->UdpProgressBar->setValue(calcProgress(now, mUdpTS, CONNECT_UDP_TYPICAL, CONNECT_UDP_SLOW, CONNECT_UDP_PERIOD));
 
+#ifdef RS_USE_BITDHT
 	/* now lookup details from Dht */
 	RsDhtNetPeer status;
 	rsDht->getNetPeerStatus(mId, status);
@@ -599,6 +632,7 @@ void ConnectProgressDialog::updateUdpStatus()
 			}
 		}
 	}
+#endif
 }
 
 

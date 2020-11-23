@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2008 Robert Fernie
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/feeds/SecurityItem.cpp                                                  *
+ *                                                                             *
+ * Copyright (c) 2008, Robert Fernie   <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QDateTime>
 #include <QTimer>
@@ -30,6 +29,7 @@
 #include "gui/common/StatusDefs.h"
 #include "gui/connect/ConfCertDialog.h"
 #include "gui/connect/PGPKeyDialog.h"
+#include "gui/common/FilesDefs.h"
 #include "gui/connect/ConnectFriendWizard.h"
 #include "gui/common/AvatarDefs.h"
 #include "util/DateTime.h"
@@ -45,7 +45,7 @@
 
 /** Constructor */
 SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &gpgId, const RsPeerId &sslId, const std::string &sslCn, const std::string& ip_address,uint32_t type, bool isHome) :
-    FeedItem(NULL), mParent(parent), mFeedId(feedId),
+    FeedItem(parent,feedId,NULL),
     mGpgId(gpgId), mSslId(sslId), mSslCn(sslCn), mIP(ip_address), mType(type), mIsHome(isHome)
 {
 	/* Invoke the Qt Designer generated object setup routine */
@@ -82,16 +82,10 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &g
 	updateItem();
 }
 
-
-bool SecurityItem::isSame(const RsPeerId &sslId, uint32_t type)
+uint64_t SecurityItem::uniqueIdentifier() const
 {
-	if ((mSslId == sslId) && (mType == type))
-	{
-		return true;
-	}
-	return false;
+    return hash_64bits("SecurityItem " + QString::number(mType).toStdString() + " " + mSslId.toStdString());
 }
-
 
 void SecurityItem::updateItemStatic()
 {
@@ -181,40 +175,47 @@ void SecurityItem::updateItem()
 	std::cerr << std::endl;
 #endif
 
-	if(!RsAutoUpdatePage::eventsLocked()) {
+	if(!RsAutoUpdatePage::eventsLocked())
+    {
 		RsPeerDetails details;
-		/* first try sslid */
-		if (!rsPeers->getPeerDetails(mSslId, details))
+		/* first try sslid */;
+		if (!rsPeers->getPeerDetails(mSslId, details) && !rsPeers->getGPGDetails(mGpgId, details))
 		{
-			/* then gpgid */
-            if(!rsPeers->getGPGDetails(mGpgId, details))
-			{
-				/* it is very likely that we will end up here for some of the
+			/* it is very likely that we will end up here for some of the
 				 * Unknown peer cases.... so allow them here
 				 */
 
-				/* set peer name */
-				peerNameLabel->setText(QString("%1 (%2)").arg(tr("Unknown Peer"), QString::fromUtf8(mSslCn.c_str())));
+			/* set peer name */
+			peerNameLabel->setText(tr("A unknown peer"));
 
-                nameLabel->setText(QString::fromUtf8(mSslCn.c_str()) + " (" + QString::fromStdString(mGpgId.toStdString()) + ")");
-                idLabel->setText(QString::fromStdString(mSslId.toStdString()));
+			nameLabel->setText(tr("Unknown") + " (" + tr("Profile ID: ") + QString::fromStdString(mGpgId.toStdString()) + ")");
+			idLabel->setText(QString::fromStdString(mSslId.toStdString()));
 
-				statusLabel->setText(tr("Unknown Peer"));
-				trustLabel->setText(tr("Unknown Peer"));
-				locLabel->setText(tr("Unknown Peer"));
-				ipLabel->setText(QString::fromStdString(mIP)) ; //tr("Unknown Peer"));
-				connLabel->setText(tr("Unknown Peer"));
+			statusLabel->hide();
+			typeLabel->hide();
 
-				chatButton->hide();
-				//quickmsgButton->hide();
-				requestLabel->hide();
+			trustLabel->hide();
+			trustLeftLabel->hide();
 
-				removeFriendButton->setEnabled(false);
-				removeFriendButton->hide();
-				peerDetailsButton->setEnabled(false);
+			locLabel->hide();
+			locLeftLabel->hide();
 
-				return;
-			}
+			ipLabel->setText(QString::fromStdString(mIP)) ;
+			connLabel->hide();
+			connLeftLabel->hide();
+
+			chatButton->hide();
+			//quickmsgButton->hide();
+			requestLabel->hide();
+
+			removeFriendButton->setEnabled(false);
+			removeFriendButton->hide();
+			peerDetailsButton->setEnabled(false);
+
+			friendRequesttoolButton->show();
+			requestLabel->show();
+
+			return;
 		}
 
 		/* set peer name */
@@ -288,44 +289,27 @@ void SecurityItem::toggle()
 
 void SecurityItem::doExpand(bool open)
 {
-	if (mParent) {
-		mParent->lockLayout(this, true);
+	if (mFeedHolder) {
+		mFeedHolder->lockLayout(this, true);
 	}
 
 	if (open)
 	{
 		expandFrame->show();
-		expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
+        expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/up-arrow.png")));
 		expandButton->setToolTip(tr("Hide"));
 	}
 	else
 	{
 		expandFrame->hide();
-		expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+        expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/down-arrow.png")));
 		expandButton->setToolTip(tr("Expand"));
 	}
 
 	emit sizeChanged(this);
 
-	if (mParent) {
-		mParent->lockLayout(this, false);
-	}
-}
-
-void SecurityItem::removeItem()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "SecurityItem::removeItem()";
-	std::cerr << std::endl;
-#endif
-
-	mParent->lockLayout(this, true);
-	hide();
-	mParent->lockLayout(this, false);
-
-	if (mParent)
-	{
-		mParent->deleteFeedItem(this, mFeedId);
+	if (mFeedHolder) {
+		mFeedHolder->lockLayout(this, false);
 	}
 }
 
@@ -351,6 +335,7 @@ void SecurityItem::friendRequest()
 #endif
 
 	ConnectFriendWizard *connectFriendWizard = new ConnectFriendWizard;
+
 	connectFriendWizard->setAttribute(Qt::WA_DeleteOnClose, true);
 	connectFriendWizard->setGpgId(mGpgId, mSslId, true);
 	connectFriendWizard->show();
@@ -412,8 +397,8 @@ void SecurityItem::openChat()
 	std::cerr << "SecurityItem::openChat()";
 	std::cerr << std::endl;
 #endif
-	if (mParent)
+	if (mFeedHolder)
 	{
-        mParent->openChat(mSslId);
+        mFeedHolder->openChat(mSslId);
 	}
 }

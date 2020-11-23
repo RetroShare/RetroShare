@@ -1,31 +1,26 @@
+/*******************************************************************************
+ * libretroshare/src/rsserver: p3serverconfig.h                                *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2011-2011 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef LIBRETROSHARE_CONFIG_IMPLEMENTATION_H
 #define LIBRETROSHARE_CONFIG_IMPLEMENTATION_H
-
-/*
- * libretroshare/src/rsserver: p3serverconfig.h
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2011-2011 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
 
 #include "retroshare/rsconfig.h"
 #include "pqi/p3peermgr.h"
@@ -77,31 +72,32 @@ virtual std::string getRetroshareDataDirectory();
 
 	/* New Stuff */
 
-virtual uint32_t getUserLevel();
+virtual RsConfigUserLvl getUserLevel();
 
-virtual uint32_t getNetState();
-virtual uint32_t getNetworkMode();
-virtual uint32_t getNatTypeMode();
-virtual uint32_t getNatHoleMode();
-virtual uint32_t getConnectModes();
+virtual RsNetState getNetState();
+virtual RsNetworkMode getNetworkMode();
+virtual RsNatTypeMode getNatTypeMode();
+virtual RsNatHoleMode getNatHoleMode();
+virtual RsConnectModes getConnectModes();
 
 virtual bool getConfigurationOption(uint32_t key, std::string &opt);
 virtual bool setConfigurationOption(uint32_t key, const std::string &opt);
 
 	/* Operating Mode */
-virtual uint32_t getOperatingMode();
-virtual bool     setOperatingMode(uint32_t opMode);
+virtual RsOpMode getOperatingMode();
+virtual bool     setOperatingMode(RsOpMode opMode);
 virtual bool     setOperatingMode(const std::string &opModeStr);
 
 virtual int SetMaxDataRates( int downKb, int upKb );
 virtual int GetMaxDataRates( int &downKb, int &upKb );
 virtual int GetCurrentDataRates( float &inKb, float &outKb );
+virtual int GetTrafficSum( uint64_t &inb, uint64_t &outb );
 
 /********************* ABOVE is RsConfig Interface *******/
 
 	private:
 
-bool switchToOperatingMode(uint32_t opMode);
+bool switchToOperatingMode(RsOpMode opMode);
 
 bool findConfigurationOption(uint32_t key, std::string &keystr);
 
@@ -112,11 +108,11 @@ bool findConfigurationOption(uint32_t key, std::string &keystr);
 	p3GeneralConfig *mGeneralConfig;
 
 	RsMutex configMtx;
-	uint32_t mUserLevel; // store last one... will later be a config Item too.
+        RsConfigUserLvl mUserLevel; // store last one... will later be a config Item too.
 	float mRateDownload;
 	float mRateUpload;
 
-	uint32_t mOpMode;
+        RsOpMode mOpMode;
 };
 
 #endif

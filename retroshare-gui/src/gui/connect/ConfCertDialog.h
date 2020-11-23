@@ -1,24 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006, crypton
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
-
+/*******************************************************************************
+ * gui/connect/ConfCertDialog.h                                                *
+ *                                                                             *
+ * Copyright (C) 2006 Crypton         <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef _CONFCERTDIALOG_H
 #define _CONFCERTDIALOG_H
@@ -27,6 +25,7 @@
 
 #include "ui_ConfCertDialog.h"
 #include <retroshare/rstypes.h>
+#include <retroshare/rspeers.h>
 
 class ConfCertDialog : public QDialog
 {
@@ -59,6 +58,7 @@ public:
         /* window will destroy itself! */
     }
     static void loadAll();
+	static QString getCertificateDescription(const RsPeerDetails& det, bool signatures_included, bool use_short_format, bool extra_locators_included);
 
 signals:
     void configChanged();

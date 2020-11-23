@@ -1,29 +1,29 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2008 RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/statusbar/discstatus.cpp                                                *
+ *                                                                             *
+ * Copyright (c) 2008 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QHBoxLayout>
 #include <QLabel>
 
 #include "discstatus.h"
 #include "gui/settings/rsharesettings.h"
+#include "gui/common/FilesDefs.h"
 
 #include <retroshare/rsdisc.h>
 
@@ -37,7 +37,7 @@ DiscStatus::DiscStatus(QWidget *parent)
 	hbox->setSpacing(6);
 
 	QLabel *iconLabel = new QLabel(this);
-	iconLabel->setPixmap(QPixmap(":/images/uploads.png"));
+    iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/uploads.png"));
 	iconLabel->setToolTip(tr("Waiting outgoing discovery operations"));
 	hbox->addWidget(iconLabel);
 
@@ -46,7 +46,7 @@ DiscStatus::DiscStatus(QWidget *parent)
 	hbox->addWidget(sendLabel);
 
 	iconLabel = new QLabel(this);
-	iconLabel->setPixmap(QPixmap(":/images/download.png"));
+    iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/download.png"));
 	iconLabel->setToolTip(tr("Waiting incoming discovery operations"));
 	hbox->addWidget(iconLabel);
 
@@ -66,10 +66,10 @@ void DiscStatus::update()
 		return;
 	}
 
-	unsigned int sendCount = 0;
-	unsigned int recvCount = 0;
+	size_t sendCount = 0;
+	size_t recvCount = 0;
 
-	rsDisc->getWaitingDiscCount(&sendCount, &recvCount);
+	rsDisc->getWaitingDiscCount(sendCount, recvCount);
 
 	sendLabel->setText(QString::number(sendCount));
 	recvLabel->setText(QString::number(recvCount));

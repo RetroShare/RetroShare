@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1052</width>
-    <height>338</height>
+    <width>1092</width>
+    <height>231</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gxsChannelPostItem_GLayout">
@@ -50,39 +50,34 @@
       <item>
        <layout class="QHBoxLayout" name="mainTopHLayout">
         <item>
-         <widget class="QLabel" name="logoLabel">
-          <property name="minimumSize">
-           <size>
-            <width>158</width>
-            <height>108</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>156</width>
-            <height>107</height>
-           </size>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="pixmap">
-           <pixmap resource="../images.qrc">:/images/thumb-default-video.png</pixmap>
-          </property>
-          <property name="scaledContents">
-           <bool>false</bool>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QLabel" name="logoLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="scaledContents">
+             <bool>false</bool>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <layout class="QVBoxLayout" name="mainRTopVLayout">
           <item>
            <layout class="QHBoxLayout" name="tilteHLayout">
             <item>
-             <widget class="StyledLabel" name="titleLabel">
+             <widget class="StyledElidedLabel" name="titleLabel">
               <property name="sizePolicy">
                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                 <horstretch>0</horstretch>
@@ -120,73 +115,37 @@
               </property>
              </widget>
             </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="subjectHLayout">
             <item>
-             <widget class="QLabel" name="subjectLabel">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>60</height>
-               </size>
-              </property>
+             <widget class="QLabel" name="newLabel">
               <property name="text">
-               <string notr="true">Short Description</string>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
-              <property name="openExternalLinks">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="filelabel">
-              <property name="text">
-               <string notr="true">fileLabel</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+               <string>New</string>
               </property>
              </widget>
             </item>
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="warningHLayout">
-            <item>
-             <widget class="QLabel" name="warn_image_label">
-              <property name="maximumSize">
-               <size>
-                <width>24</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="pixmap">
-               <pixmap resource="../images.qrc">:/images/status_unknown.png</pixmap>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="warning_label">
-              <property name="text">
-               <string notr="true">TextLabel</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <widget class="QLabel" name="subjectLabel">
+            <property name="text">
+             <string notr="true">TextLabel</string>
+            </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
           </item>
           <item>
            <layout class="QHBoxLayout" name="newCommHLayout">
@@ -231,10 +190,6 @@
               <property name="toolTip">
                <string>Toggle Message Read Status</string>
               </property>
-              <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/message-state-unread.png</normaloff>:/images/message-state-unread.png</iconset>
-              </property>
               <property name="checkable">
                <bool>true</bool>
               </property>
@@ -243,13 +198,6 @@
               </property>
               <property name="flat">
                <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="newLabel">
-              <property name="text">
-               <string>New</string>
               </property>
              </widget>
             </item>
@@ -274,10 +222,6 @@
               <property name="text">
                <string/>
               </property>
-              <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/vote_up.png</normaloff>:/images/vote_up.png</iconset>
-              </property>
              </widget>
             </item>
             <item>
@@ -288,10 +232,6 @@
               <property name="text">
                <string/>
               </property>
-              <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/vote_down.png</normaloff>:/images/vote_down.png</iconset>
-              </property>
              </widget>
             </item>
             <item>
@@ -301,10 +241,6 @@
               </property>
               <property name="text">
                <string>Download</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/download16.png</normaloff>:/images/download16.png</iconset>
               </property>
               <property name="autoExclusive">
                <bool>false</bool>
@@ -318,10 +254,6 @@
               </property>
               <property name="text">
                <string>Play</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/player_play.png</normaloff>:/images/player_play.png</iconset>
               </property>
              </widget>
             </item>
@@ -340,7 +272,52 @@
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer">
+             <widget class="QPushButton" name="copyLinkButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="toolTip">
+               <string>Copy RetroShare Link</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="filelabel">
+              <property name="text">
+               <string notr="true">fileLabel</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="unsubscribeButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="toolTip">
+               <string>Unsubscribe From Channel</string>
+              </property>
+              <property name="text">
+               <string>Unsubscribe</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_2">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -353,58 +330,6 @@
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="copyLinkButton">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>24</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="toolTip">
-               <string>Copy RetroShare Link</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/copyrslink.png</normaloff>:/images/copyrslink.png</iconset>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="unsubscribeButton">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>24</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="toolTip">
-               <string>Unsubscribe From Channel</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/mail_delete.png</normaloff>:/images/mail_delete.png</iconset>
-              </property>
-             </widget>
-            </item>
-            <item>
              <widget class="QPushButton" name="expandButton">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -412,21 +337,11 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="maximumSize">
-               <size>
-                <width>24</width>
-                <height>16777215</height>
-               </size>
-              </property>
               <property name="focusPolicy">
                <enum>Qt::NoFocus</enum>
               </property>
               <property name="toolTip">
                <string>Expand</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
               </property>
              </widget>
             </item>
@@ -438,21 +353,11 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="maximumSize">
-               <size>
-                <width>24</width>
-                <height>16777215</height>
-               </size>
-              </property>
               <property name="focusPolicy">
                <enum>Qt::NoFocus</enum>
               </property>
               <property name="toolTip">
                <string>Set as read and remove item</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/cancel.png</normaloff>:/images/cancel.png</iconset>
               </property>
              </widget>
             </item>
@@ -464,21 +369,11 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="maximumSize">
-               <size>
-                <width>24</width>
-                <height>16777215</height>
-               </size>
-              </property>
               <property name="focusPolicy">
                <enum>Qt::NoFocus</enum>
               </property>
               <property name="toolTip">
                <string>Remove Item</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
               </property>
              </widget>
             </item>
@@ -575,9 +470,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>StyledLabel</class>
+   <class>StyledElidedLabel</class>
    <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
+   <header>gui/common/StyledElidedLabel.h</header>
   </customwidget>
   <customwidget>
    <class>ElidedLabel</class>
@@ -586,8 +481,6 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

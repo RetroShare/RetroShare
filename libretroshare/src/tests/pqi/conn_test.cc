@@ -38,7 +38,7 @@ std::string peerIds[NumOfPeers] =
 #define STUN_PORT 7777
 
 std::string ownId = "OWNID-AAAA";
-time_t      ownPublishTs; 
+rstime_t      ownPublishTs; 
 
 RsMutex frmMtx;
 std::list<std::string> searchIds;
@@ -85,7 +85,7 @@ void respondPublish()
 void respondSearch(p3DhtMgr *mgr, std::string id, uint32_t mode)
 {
 	std::cerr << "Checking for Search Results" << std::endl;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	bool doNotify = false;
 	bool doOnline = false;
 	std::string notifyId;
@@ -268,7 +268,7 @@ virtual void    loadConfiguration()
 
 int main()
 {
-	time_t startTime = time(NULL);
+	rstime_t startTime = time(NULL);
 	/* setup system */
 	initTestData();
 

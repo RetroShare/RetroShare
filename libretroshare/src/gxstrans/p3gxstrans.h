@@ -1,23 +1,27 @@
+/*******************************************************************************
+ * libretroshare/src/gxstrans: p3gxstrans.h                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2016-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #pragma once
-/*
- * GXS Mailing Service
- * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 
-#include <stdint.h>
+#include <cstdint>
 #include <unordered_map>
 #include <map>
 
@@ -66,7 +70,7 @@ struct MsgSizeCount
 };
 
 /**
- * @brief p3GxsTrans is a mail delivery service based on GXS.
+ * @brief p3GxsTrans asyncronous redundant small mail trasport on top of GXS.
  * p3GxsTrans is capable of asynchronous mail delivery and acknowledgement.
  * p3GxsTrans is meant to be capable of multiple encryption options,
  * @see RsGxsTransEncryptionMode at moment messages are encrypted using RSA
@@ -94,29 +98,36 @@ public:
 	                   RS_SERVICE_TYPE_GXS_TRANS, &identities,
 	                   AuthenPolicy()),
 	    GxsTokenQueue(this),
-        RsGxsTrans(this),
-        mIdService(identities),
+	    RsGxsTrans(static_cast<RsGxsIface&>(*this)),
+	    // always check 30 secs after start)
+	    mLastMsgCleanup(time(NULL) - MAX_DELAY_BETWEEN_CLEANUPS + 30),
+	    mIdService(identities),
 	    mServClientsMutex("p3GxsTrans client services map mutex"),
 	    mOutgoingMutex("p3GxsTrans outgoing queue map mutex"),
 	    mIngoingMutex("p3GxsTrans ingoing queue map mutex"),
+	    mCleanupThread(nullptr),
 	    mPerUserStatsMutex("p3GxsTrans user stats mutex"),
-	    mDataMutex("p3GxsTrans data mutex")
-    {
-        mLastMsgCleanup = time(NULL) - MAX_DELAY_BETWEEN_CLEANUPS + 30;	// always check 30 secs after start
-        mCleanupThread = NULL ;
-    }
+	    mDataMutex("p3GxsTrans data mutex") {}
 
 	virtual ~p3GxsTrans();
 
     /*!
      * \brief getStatistics
-     * 				Gathers all sorts of statistics about the internals of p3GxsTrans, in order to display info about the running status,
-     * 			message transport, etc.
+     * 				Gathers all sorts of statistics about the data transported by p3GxsTrans, in order to display info about the running status,
+     * 			message transport, etc. This is a blocking call. Use it in a thread.
      * \param stats This structure contains all statistics information.
      * \return 		true is the call succeeds.
      */
 
-	virtual bool getStatistics(GxsTransStatistics& stats);
+	virtual bool getDataStatistics(GxsTransStatistics& stats) override;
+
+    /*!
+     * \brief getGroupStatistics
+     * 				Gathers statistics about GXS groups and messages used by GxsTrans to transport data. This is a blocking call. Use it in a thread.
+     * \param stats
+     * \return true if the data collection succeeds.
+     */
+	virtual bool getGroupStatistics(std::map<RsGxsGroupId,RsGxsTransGroupStatistics>& stats) override;
 
 	/**
 	 * Send an email to recipient, in the process author of the email is
@@ -172,7 +183,7 @@ private:
 	 */
 	static const uint32_t MAX_DELAY_BETWEEN_CLEANUPS ; // every 20 mins. Could be less.
 
-    time_t mLastMsgCleanup ;
+    rstime_t mLastMsgCleanup ;
 
 	/// Define how the backend should handle authentication based on signatures
 	static uint32_t AuthenPolicy();
@@ -269,8 +280,8 @@ private:
 
 	/** @return true if has passed more then interval seconds between timeStamp
 	 * and ref. @param ref by default now is taked as reference. */
-	bool static inline olderThen(time_t timeStamp, int32_t interval,
-	                             time_t ref = time(NULL))
+	bool static inline olderThen(rstime_t timeStamp, int32_t interval,
+	                             rstime_t ref = time(NULL))
 	{ return (timeStamp + interval) < ref; }
 
 
@@ -285,15 +296,15 @@ private:
 
 	void notifyClientService(const OutgoingRecord& pr);
 
-	/*!
-	 * Checks the integrity message and groups
-	 */
-	class GxsTransIntegrityCleanupThread : public RsSingleJobThread
+	/// Checks the integrity message and groups
+	class GxsTransIntegrityCleanupThread : public RsThread
 	{
 		enum CheckState { CheckStart, CheckChecking };
 
 	public:
-        GxsTransIntegrityCleanupThread(RsGeneralDataService *const dataService): mDs(dataService),mMtx("GxsTransIntegrityCheck") { mDone=false;}
+		explicit GxsTransIntegrityCleanupThread(
+		        RsGeneralDataService* const dataService ):
+		    mDs(dataService), mMtx("GxsTransIntegrityCheck"), mDone(false) {}
 
 		bool isDone();
 		void run();
@@ -309,7 +320,7 @@ private:
 
 		GxsMsgReq mMsgToDel ;
 		std::map<RsGxsId,MsgSizeCount> total_message_size_and_count;
-        bool mDone ;
+		bool mDone;
 	};
 
 	// Overloaded from RsGenExchange.

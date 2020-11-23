@@ -1,25 +1,24 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (C) 2014 RetroShare Team
- * Copyright (c) 2006-2007, crypton
- * Copyright (c) 2006, Matt Edman, Justin Hipple
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/common/RSGraphWidget.h                                                  *
+ *                                                                             *
+ * Copyright (C) 2014 RetroShare Team                                          *
+ * Copyright (c) 2006-2007, crypton                                            *
+ * Copyright (c) 2006, Matt Edman, Justin Hipple                               *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #pragma once
 
@@ -42,6 +41,17 @@
 #define GRID_COLOR    Qt::lightGray
 #define RSDHT_COLOR   Qt::magenta
 #define ALLDHT_COLOR  Qt::yellow
+
+struct ZeroInitFloat
+{
+	ZeroInitFloat() { v=0; }
+	ZeroInitFloat(float f) { v=f; }
+
+	float operator()() const { return v ; }
+	float& operator()() { return v ; }
+
+	float v ;
+};
 
 // This class provides a source value that the graph can retrieve on demand.
 // In order to use your own source, derive from RSGraphSource and overload the value() method.
@@ -102,13 +112,15 @@ protected slots:
 protected:
     virtual void getValues(std::map<std::string,float>& values) const = 0 ;// overload this in your own class to fill in the values you want to display.
 
+#ifdef TO_REMOVE
 	void updateTotals();
+#endif
     qint64 getTime() const ;						   // returns time in ms since RS has started
 
     // Storage of collected events. The string is any string used to represent the collected data.
 
     std::map<std::string, std::list<std::pair<qint64,float> > > _points ;
-    std::map<std::string, float> _totals ;
+    std::map<std::string, ZeroInitFloat> _totals ;
 
     QTimer *_timer ;
 

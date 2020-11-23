@@ -6,15 +6,33 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>765</width>
-    <height>230</height>
+    <width>825</width>
+    <height>337</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string notr="true"/>
   </property>
-  <layout class="QVBoxLayout" name="PostedItemVLayout">
-   <item>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_3">
+   <property name="leftMargin">
+    <number>1</number>
+   </property>
+   <property name="topMargin">
+    <number>1</number>
+   </property>
+   <property name="rightMargin">
+    <number>1</number>
+   </property>
+   <property name="bottomMargin">
+    <number>1</number>
+   </property>
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
     <widget class="QFrame" name="mainFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -23,7 +41,7 @@
       </sizepolicy>
      </property>
      <property name="autoFillBackground">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="frameShape">
       <enum>QFrame::Box</enum>
@@ -31,44 +49,175 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QVBoxLayout" name="mainFrameVLayout">
-      <item>
-       <widget class="StyledLabel" name="titleLabel">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <property name="horizontalSpacing">
+       <number>6</number>
+      </property>
+      <item row="0" column="0" rowspan="2">
+       <widget class="QFrame" name="voteFrame">
+        <property name="minimumSize">
+         <size>
+          <width>37</width>
+          <height>0</height>
+         </size>
         </property>
-        <property name="font">
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
+        <property name="styleSheet">
+         <string notr="true"/>
         </property>
-        <property name="text">
-         <string notr="true">This is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title don't you think? Yes it is and should wrap around I hope</string>
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
         </property>
-        <property name="alignment">
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
         </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-        <property name="openExternalLinks">
-         <bool>true</bool>
-        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>3</number>
+         </property>
+         <property name="topMargin">
+          <number>3</number>
+         </property>
+         <property name="rightMargin">
+          <number>3</number>
+         </property>
+         <property name="bottomMargin">
+          <number>3</number>
+         </property>
+         <item>
+          <widget class="QToolButton" name="voteUpButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>Vote up</string>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="Posted_images.qrc">
+             <normaloff>:/images/up-arrow.png</normaloff>:/images/up-arrow.png</iconset>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="StyledLabel" name="scoreLabel">
+           <property name="text">
+            <string>0</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="voteDownButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Vote down</string>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <property name="icon">
+            <iconset resource="Posted_images.qrc">
+             <normaloff>:/images/down-arrow.png</normaloff>:/images/down-arrow.png</iconset>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>5</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </widget>
       </item>
-			<item>
-       <layout class="QHBoxLayout" name="newCommHLayout">
+      <item row="0" column="1" rowspan="2">
+       <layout class="QVBoxLayout" name="verticalLayout_3">
         <property name="topMargin">
-         <number>0</number>
+         <number>6</number>
         </property>
         <item>
-         <widget class="QLabel" name="newCommentLabel">
+         <widget class="ClickableLabel" name="thumbnailLabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>75</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>100</width>
+            <height>75</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
           <property name="text">
-           <string>New Comment:</string>
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="Posted_images.qrc">:/images/thumb-default.png</pixmap>
           </property>
           <property name="scaledContents">
            <bool>true</bool>
@@ -76,255 +225,442 @@
          </widget>
         </item>
         <item>
-         <widget class="ElidedLabel" name="commLabel">
-          <property name="text">
-           <string>Comment Value</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="buttonHLayout">
-        <item>
-         <widget class="StyledLabel" name="scoreLabel">
-          <property name="text">
-           <string>0</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QToolButton" name="voteUpButton">
-          <property name="minimumSize">
-           <size>
-            <width>24</width>
-            <height>24</height>
-           </size>
-          </property>
-          <property name="toolTip">
-           <string>Vote up</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/vote_up.png</normaloff>:/images/vote_up.png</iconset>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QToolButton" name="voteDownButton">
-          <property name="minimumSize">
-           <size>
-            <width>24</width>
-            <height>24</height>
-           </size>
-          </property>
-          <property name="toolTip">
-           <string>Vote down</string>
-          </property>
-          <property name="text">
-           <string>\/</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/vote_down.png</normaloff>:/images/vote_down.png</iconset>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="readButton">
-          <property name="maximumSize">
-           <size>
-            <width>24</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="focusPolicy">
-           <enum>Qt::NoFocus</enum>
-          </property>
-          <property name="toolTip">
-           <string>Toggle Message Read Status</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/message-state-unread.png</normaloff>:/images/message-state-unread.png</iconset>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-          <property name="flat">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="newLabel">
-          <property name="text">
-           <string>New</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="commentButton">
-          <property name="text">
-           <string>Comments</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="dateLabel">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string notr="true">You eyes only</string>
-          </property>
-          <property name="openExternalLinks">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="fromBoldLabel">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>By</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="GxsIdLabel" name="fromLabel">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string notr="true">Signed by</string>
-          </property>
-          <property name="openExternalLinks">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="siteBoldLabel">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Site</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="siteLabel">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string notr="true">Signed by</string>
-          </property>
-          <property name="openExternalLinks">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer">
+         <spacer name="verticalSpacer_2">
           <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+           <enum>Qt::Vertical</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>118</width>
-            <height>20</height>
+            <width>50</width>
+            <height>5</height>
            </size>
           </property>
          </spacer>
         </item>
+       </layout>
+      </item>
+      <item row="0" column="2">
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <property name="topMargin">
+         <number>6</number>
+        </property>
         <item>
-         <widget class="QPushButton" name="readAndClearButton">
-          <property name="maximumSize">
-           <size>
-            <width>24</width>
-            <height>16777215</height>
-           </size>
+         <widget class="StyledLabel" name="titleLabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-          <property name="focusPolicy">
-           <enum>Qt::NoFocus</enum>
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
           </property>
-          <property name="toolTip">
-           <string>Set as read and remove item</string>
+          <property name="text">
+           <string notr="true">This is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title don't you think? Yes it is and should wrap around I hope</string>
           </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/cancel.png</normaloff>:/images/cancel.png</iconset>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+          <property name="openExternalLinks">
+           <bool>true</bool>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="clearButton">
-          <property name="maximumSize">
-           <size>
-            <width>24</width>
-            <height>16777215</height>
-           </size>
+         <layout class="QHBoxLayout" name="newCommHLayout">
+          <property name="topMargin">
+           <number>0</number>
           </property>
-          <property name="focusPolicy">
-           <enum>Qt::NoFocus</enum>
+          <item>
+           <widget class="QLabel" name="newCommentLabel">
+            <property name="text">
+             <string>New Comment:</string>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="ElidedLabel" name="commLabel">
+            <property name="text">
+             <string>Comment Value</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="2">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="sizeConstraint">
+         <enum>QLayout::SetDefaultConstraint</enum>
+        </property>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="spacing">
+           <number>5</number>
           </property>
-          <property name="toolTip">
-           <string>Remove Item</string>
+          <property name="leftMargin">
+           <number>0</number>
           </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
+          <property name="rightMargin">
+           <number>6</number>
           </property>
-         </widget>
+          <item>
+           <widget class="QLabel" name="nameLabel">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <italic>true</italic>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Name</string>
+            </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="fromBoldLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Posted by</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="GxsIdLabel" name="fromLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string notr="true">Signed by</string>
+            </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="dateLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string notr="true">You eyes only</string>
+            </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="siteLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string notr="true">site</string>
+            </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>70</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="buttonHLayout">
+          <property name="spacing">
+           <number>6</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>6</number>
+          </property>
+          <property name="bottomMargin">
+           <number>3</number>
+          </property>
+          <item>
+           <widget class="QToolButton" name="expandButton">
+            <property name="toolTip">
+             <string>Expand</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="Posted_images.qrc">
+              <normaloff>:/images/expand.png</normaloff>:/images/expand.png</iconset>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="readButton">
+            <property name="maximumSize">
+             <size>
+              <width>24</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="toolTip">
+             <string>Toggle Message Read Status</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../images.qrc">
+              <normaloff>:/images/message-state-unread.png</normaloff>:/images/message-state-unread.png</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="newLabel">
+            <property name="text">
+             <string>New</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="commentButton">
+            <property name="text">
+             <string>Comments</string>
+            </property>
+            <property name="icon">
+             <iconset resource="Posted_images.qrc">
+              <normaloff>:/images/comments.png</normaloff>:/images/comments.png</iconset>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="shareButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="baseSize">
+             <size>
+              <width>0</width>
+              <height>22</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Share</string>
+            </property>
+            <property name="icon">
+             <iconset resource="Posted_images.qrc">
+              <normaloff>:/images/share.png</normaloff>:/images/share.png</iconset>
+            </property>
+            <property name="default">
+             <bool>false</bool>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="notesButton">
+            <property name="text">
+             <string>Notes</string>
+            </property>
+            <property name="icon">
+             <iconset resource="Posted_images.qrc">
+              <normaloff>:/images/notes.png</normaloff>:/images/notes.png</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>118</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="readAndClearButton">
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="toolTip">
+             <string>Set as read and remove item</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/png/correct.png</normaloff>:/icons/png/correct.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="clearButton">
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="toolTip">
+             <string>Remove Item</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/png/exit2.png</normaloff>:/icons/png/exit2.png</iconset>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
      </layout>
-     <zorder>titleLabel</zorder>
     </widget>
    </item>
-   <item>
+   <item row="1" column="0">
+    <widget class="QFrame" name="frame_picture">
+     <property name="maximumSize">
+      <size>
+       <width>800</width>
+       <height>600</height>
+      </size>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>257</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="pictureLabel">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+        <property name="textInteractionFlags">
+         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>257</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="0">
     <widget class="QFrame" name="frame_notes">
      <property name="frameShape">
       <enum>QFrame::Box</enum>
@@ -332,25 +668,39 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <widget class="QLabel" name="notes">
-      <property name="geometry">
-       <rect>
-        <x>2</x>
-        <y>2</y>
-        <width>16</width>
-        <height>17</height>
-       </rect>
+     <layout class="QGridLayout" name="gridLayout">
+      <property name="leftMargin">
+       <number>3</number>
       </property>
-      <property name="styleSheet">
-       <string notr="true"/>
+      <property name="topMargin">
+       <number>3</number>
       </property>
-      <property name="text">
-       <string/>
+      <property name="rightMargin">
+       <number>3</number>
       </property>
-      <property name="wordWrap">
-       <bool>true</bool>
+      <property name="bottomMargin">
+       <number>3</number>
       </property>
-     </widget>
+      <property name="spacing">
+       <number>1</number>
+      </property>
+      <item row="0" column="0" colspan="2">
+       <widget class="QLabel" name="notes">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+        <property name="openExternalLinks">
+         <bool>true</bool>
+        </property>
+        <property name="textInteractionFlags">
+         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
@@ -362,19 +712,26 @@
    <header>gui/common/StyledLabel.h</header>
   </customwidget>
   <customwidget>
-   <class>GxsIdLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/gxs/GxsIdLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>ElidedLabel</class>
    <extends>QLabel</extends>
    <header location="global">gui/common/ElidedLabel.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>GxsIdLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/gxs/GxsIdLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ClickableLabel</class>
+   <extends>QLabel</extends>
+   <header>util/ClickableLabel.h</header>
+  </customwidget>
  </customwidgets>
  <resources>
+  <include location="Posted_images.qrc"/>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

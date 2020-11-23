@@ -1,3 +1,23 @@
+/*******************************************************************************
+ * gui/statistics/BWGraph.h                                                    *
+ *                                                                             *
+ * Copyright (c) 2012 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #pragma once
 
 #include "retroshare/rsconfig.h"
@@ -32,6 +52,7 @@ public:
 
     // re-derived from RSGraphSource
 
+	virtual void getCumulatedValues(std::vector<float>& vals) const;
     virtual void getValues(std::map<std::string,float>& values) const;
     virtual QString displayValue(float v) const;
     virtual QString legend(int i,float v,bool show_value=true) const;
@@ -66,6 +87,8 @@ private:
 
     int _friend_graph_type ;
     int _service_graph_type ;
+
+	float _total_duration_seconds ;
 
     RsPeerId    _current_selected_friend ;
     uint16_t    _current_selected_service ;

@@ -1,24 +1,23 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2016, defnax
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
- 
+/*******************************************************************************
+ * gui/HomePage.h                                                              *
+ *                                                                             *
+ * Copyright (C) 2016 Defnax          <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #ifndef HOMEPAGE_H
 #define HOMEPAGE_H
 
@@ -42,27 +41,37 @@ class HomePage : public MainPage
 public:
 	explicit HomePage(QWidget *parent);
 	~HomePage();
-	
-	  virtual QIcon iconPixmap() const { return QPixmap(":/icons/svg/profile.svg") ; } //MainPage
-    virtual QString pageName() const { return tr("Home") ; } //MainPage
-    virtual QString helpText() const { return ""; } //MainPage
+
+	virtual QIcon iconPixmap() const { return QIcon(":/icons/png/home.png") ; } //MainPage
+	virtual QString pageName() const { return tr("Home") ; } //MainPage
+	virtual QString helpText() const { return ""; } //MainPage
 
 private slots:
+	void certContextMenu(QPoint);
 	void updateOwnCert();
+    void updateCertificate();
 	void runEmailClient();
 	void copyCert();
+	void copyId();
 	void saveCert();
-  void addFriend();
-  void webMail();
-  void loadCert();
-	void runStartWizard() ;
+	void addFriend();
+	void webMail();
+	//void loadCert();
 	void openWebHelp() ;
-	void recommendFriends();
+    void toggleUseOldFormat() ;
+    void recommendFriends();
+	void toggleIncludeAllIPs();
+	void toggleUseShortFormat();
 
 private:
 	Ui::HomePage *ui;
-	
 
+	bool mIncludeAllIPs;
+	bool mUseShortFormat;
+
+    RsEventsHandlerId_t mEventHandlerId;
+
+    void handleEvent(std::shared_ptr<const RsEvent> event);
 };
 
 #endif // HomePage_H

@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>497</width>
-    <height>404</height>
+    <width>960</width>
+    <height>717</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="WebuiPageVLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <widget class="QCheckBox" name="enableWebUI_CB">
      <property name="text">
@@ -29,26 +29,62 @@
      <property name="title">
       <string>Web parameters</string>
      </property>
-     <layout class="QGridLayout" name="params_GBGLayout">
-      <item row="0" column="1">
-       <widget class="QSpinBox" name="port_SB">
-        <property name="minimum">
-         <number>1024</number>
-        </property>
-        <property name="maximum">
-         <number>65535</number>
-        </property>
-       </widget>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Password:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Web interface directory:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="password_LE">
+          <property name="echoMode">
+           <enum>QLineEdit::Password</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QLineEdit" name="webInterfaceFiles_LE">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="webInterfaceFilesDirectory_PB">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select directory for webinterface files (advanced)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../images.qrc">
+              <normaloff>:/images/folder-draft24-pressed.png</normaloff>:/images/folder-draft24-pressed.png</iconset>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="port_Label">
-        <property name="text">
-         <string>Port:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
+      <item>
        <widget class="QCheckBox" name="allIp_CB">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>Allow access from all IP addresses (Default: localhost only)</string>
         </property>
@@ -58,16 +94,27 @@
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="applyStartBrowser_PB">
-     <property name="text">
-      <string>Apply setting and start browser</string>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QPushButton" name="apply_PB">
+       <property name="text">
+        <string>Apply settings</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="startWebBrowser_PB">
+       <property name="text">
+        <string>Start web browser</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QLabel" name="noteLabel">
      <property name="text">
-      <string>Note: these settings do not affect retroshare-nogui. Retroshare-nogui has a command line switch to activate the web interface.</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Note: these settings do not affect retroshare-service, which has a command line switch to activate the web interface and select the listening port.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -89,6 +136,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../images.qrc"/>
+ </resources>
  <connections/>
 </ui>

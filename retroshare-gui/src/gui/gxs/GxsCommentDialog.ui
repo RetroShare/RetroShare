@@ -7,112 +7,30 @@
     <x>0</x>
     <y>0</y>
     <width>632</width>
-    <height>547</height>
+    <height>248</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
-   <item>
-    <widget class="QFrame" name="postFrame">
+  <layout class="QGridLayout" name="GxsCommentDialogGLayout">
+   <item row="1" column="0">
+    <widget class="GxsCommentTreeWidget" name="treeWidget">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <property name="leftMargin">
-       <number>9</number>
-      </property>
-      <property name="topMargin">
-       <number>1</number>
-      </property>
-      <property name="bottomMargin">
-       <number>1</number>
-      </property>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QPushButton" name="hotSortButton">
-       <property name="text">
-        <string>Hot</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="newSortButton">
-       <property name="text">
-        <string>New</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="topSortButton">
-       <property name="text">
-        <string>Top</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Voter ID:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="GxsIdChooser" name="idChooser"/>
-     </item>
-     <item>
-      <widget class="QPushButton" name="refreshButton">
-       <property name="text">
-        <string>Refresh</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="GxsCommentTreeWidget" name="treeWidget">
+     <property name="sortingEnabled">
+      <bool>true</bool>
+     </property>
      <column>
       <property name="text">
        <string>Comment</string>
@@ -150,6 +68,109 @@
      </column>
     </widget>
    </item>
+   <item row="0" column="0">
+    <layout class="QHBoxLayout" name="toolBarHLayout">
+     <item>
+      <widget class="QToolButton" name="commentButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Comment</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../icons.qrc">
+         <normaloff>:/icons/png/comment.png</normaloff>:/icons/png/comment.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextBesideIcon</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="sortBox">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol'; font-size:14px; color:#24292e; background-color:#ffffff;&quot;&gt;sort by&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+       <item>
+        <property name="text">
+         <string>Hot</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/png/flame.png</normaloff>:/icons/png/flame.png</iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>New</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/png/new.png</normaloff>:/icons/png/new.png</iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Top</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/png/top.png</normaloff>:/icons/png/top.png</iconset>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <spacer name="toolBarHSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="idLabel">
+       <property name="text">
+        <string>Voter ID:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="GxsIdChooser" name="idChooser"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="refreshButton">
+       <property name="text">
+        <string>Refresh</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -164,6 +185,8 @@
    <header>gui/gxs/GxsCommentTreeWidget.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../icons.qrc"/>
+ </resources>
  <connections/>
 </ui>

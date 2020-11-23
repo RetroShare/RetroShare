@@ -1,59 +1,59 @@
-/*
- * Retroshare Gxs Support
- *
- * Copyright 2012-2013 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * retroshare-gui/src/gui/gxs/GxsIdLabel.cpp                                   *
+ *                                                                             *
+ * Copyright 2012-2013 by Robert Fernie     <retroshare.project@gmail.com>     *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "GxsIdLabel.h"
 #include "GxsIdDetails.h"
 
 /** Constructor */
-GxsIdLabel::GxsIdLabel(QWidget *parent)
-    : QLabel(parent)
+GxsIdLabel::GxsIdLabel(bool show_tooltip,QWidget *parent)
+    : QLabel(parent),mShowTooltip(show_tooltip)
 {
 }
 
 static void fillLabelCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &/*data*/)
 {
-	QLabel *label = dynamic_cast<QLabel*>(object);
+	GxsIdLabel *label = dynamic_cast<GxsIdLabel*>(object);
 	if (!label) {
 		return;
 	}
 
 	label->setText(GxsIdDetails::getNameForType(type, details));
 
-	QString toolTip;
+    if(label->showTooltip())
+	{
+		QString toolTip;
 
-	switch (type) {
-	case GXS_ID_DETAILS_TYPE_EMPTY:
-	case GXS_ID_DETAILS_TYPE_LOADING:
-	case GXS_ID_DETAILS_TYPE_FAILED:
-	case GXS_ID_DETAILS_TYPE_BANNED:
-		break;
+		switch (type) {
+		case GXS_ID_DETAILS_TYPE_EMPTY:
+		case GXS_ID_DETAILS_TYPE_LOADING:
+		case GXS_ID_DETAILS_TYPE_FAILED:
+		case GXS_ID_DETAILS_TYPE_BANNED:
+			break;
 
-	case GXS_ID_DETAILS_TYPE_DONE:
-        toolTip = GxsIdDetails::getComment(details);
-		break;
+		case GXS_ID_DETAILS_TYPE_DONE:
+			toolTip = GxsIdDetails::getComment(details);
+			break;
+		}
+
+		label->setToolTip(toolTip);
 	}
-
-	label->setToolTip(toolTip);
 }
 
 void GxsIdLabel::setId(const RsGxsId &id)

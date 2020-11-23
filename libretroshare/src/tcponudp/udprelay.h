@@ -1,30 +1,26 @@
+/*******************************************************************************
+ * libretroshare/src/tcponudp: udprelay.h                                      *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2010-2010 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RS_UDP_RELAY_H
 #define RS_UDP_RELAY_H
-
-/*
- * tcponudp/udprelay.h
- *
- * libretroshare.
- *
- * Copyright 2010 by Robert Fernie
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 3 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
 
 #include "tcponudp/udppeer.h"
 #include <retroshare/rsdht.h>
@@ -55,10 +51,10 @@ class UdpRelayProxy
 	UdpRelayAddrSet mAddrs;
 	double mBandwidth;
 	uint32_t mDataSize;
-	time_t mLastBandwidthTS;
-	time_t mLastTS;
+	rstime_t mLastBandwidthTS;
+	rstime_t mLastTS;
 
-	time_t mStartTS;
+	rstime_t mStartTS;
 	double mBandwidthLimit;
 
 	int mRelayClass;
@@ -105,12 +101,14 @@ std::ostream &operator<<(std::ostream &out, const UdpRelayEnd &ure);
 
 
 /**** DEFINED IN EXTERNAL HEADER FILE ***/
-#define UDP_RELAY_NUM_CLASS		RSDHT_RELAY_NUM_CLASS
+// sehraf: this is a bit ugly but since the int is used as an integer i'lll stick to this hack for now
+/// TODO fix me!
+#define UDP_RELAY_NUM_CLASS		static_cast<typename std::underlying_type<RsDhtRelayClass>::type>(RsDhtRelayClass::NUM_CLASS)
 
-#define UDP_RELAY_CLASS_ALL		RSDHT_RELAY_CLASS_ALL		
-#define UDP_RELAY_CLASS_GENERAL		RSDHT_RELAY_CLASS_GENERAL		
-#define UDP_RELAY_CLASS_FOF		RSDHT_RELAY_CLASS_FOF		
-#define UDP_RELAY_CLASS_FRIENDS		RSDHT_RELAY_CLASS_FRIENDS		
+#define UDP_RELAY_CLASS_ALL		static_cast<typename std::underlying_type<RsDhtRelayClass>::type>(RsDhtRelayClass::ALL)
+#define UDP_RELAY_CLASS_GENERAL	static_cast<typename std::underlying_type<RsDhtRelayClass>::type>(RsDhtRelayClass::GENERAL)
+#define UDP_RELAY_CLASS_FOF		static_cast<typename std::underlying_type<RsDhtRelayClass>::type>(RsDhtRelayClass::FOF)
+#define UDP_RELAY_CLASS_FRIENDS	static_cast<typename std::underlying_type<RsDhtRelayClass>::type>(RsDhtRelayClass::FRIENDS)
 
 // Just for some testing fun!
 //#define UDP_RELAY_LIFETIME_GENERAL	180	// 3 minutes

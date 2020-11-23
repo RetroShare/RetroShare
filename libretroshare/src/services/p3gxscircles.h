@@ -1,41 +1,36 @@
-/*
- * libretroshare/src/services: p3circles.h
- *
- * Identity interface for RetroShare.
- *
- * Copyright 2012-2012 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-#ifndef P3_CIRCLES_SERVICE_HEADER
-#define P3_CIRCLES_SERVICE_HEADER
+/*******************************************************************************
+ * libretroshare/src/services: p3gxscircles.h                                  *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2012-2014  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+#pragma once
 
 
 #include "retroshare/rsgxscircles.h"	// External Interfaces.
 #include "gxs/rsgenexchange.h"		// GXS service.
 #include "gxs/rsgixs.h"			// Internal Interfaces.
-
 #include "services/p3idservice.h"	// For constructing Caches
-
 #include "gxs/gxstokenqueue.h"
 #include "util/rstickevent.h"
 #include "util/rsmemcache.h"
+#include "util/rsdebug.h"
 
 #include <map>
 #include <string>
@@ -129,15 +124,24 @@ class RsGxsCircleMembershipStatus
 public:
     RsGxsCircleMembershipStatus() : last_subscription_TS(0), subscription_flags(0) {}
     
-    time_t   last_subscription_TS ;
+    rstime_t   last_subscription_TS ;
     uint32_t subscription_flags ;	// combination of  GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST and  GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED   
+};
+
+enum CircleEntryCacheStatus: uint8_t {
+	UNKNOWN             = 0x00, // Used to detect uninitialized memory
+	NO_DATA_YET         = 0x01, // Used in the constuctor
+	LOADING             = 0x02, // When the token request to load cache has been sent and no data is present
+	UPDATING            = 0x03, // Starting from this level the cache entry can be used
+	CHECKING_MEMBERSHIP = 0x04, // Means we're actually looking into msgs to update membership status
+	UP_TO_DATE          = 0x05  // Everything should be loaded here.
 };
 
 class RsGxsCircleCache
 {
-	public:
-
+public:
 	RsGxsCircleCache();
+
 	bool loadBaseCircle(const RsGxsCircleGroup &circle);
 	bool loadSubCircle(const RsGxsCircleCache &subcircle);
 
@@ -147,45 +151,127 @@ class RsGxsCircleCache
 	bool addAllowedPeer(const RsPgpId &pgpid);
 	bool addLocalFriend(const RsPgpId &pgpid);
 
+    // Cache related data
+
+	rstime_t mLastUpdatedMembershipTS ;     // Last time the subscribe messages have been requested. Should be reset when new messages arrive.
+	rstime_t mLastUpdateTime;               // Last time the cache entry was loaded
+    CircleEntryCacheStatus mStatus;         // Overall state of the cache entry
+    bool mAllIdsHere ;                      // True when all ids are knwon and available.
+
+    // GxsCircle related data
+
 	RsGxsCircleId mCircleId;
 	std::string mCircleName;
 
-	uint32_t      mCircleType;
+	RsGxsCircleType  mCircleType;
 	bool	      mIsExternal;
-    	RsGxsCircleId mRestrictedCircleId ;	// circle ID that circle is restricted to.
+	RsGxsCircleId mRestrictedCircleId ;	// circle ID that circle is restricted to.
 
 	uint32_t      mGroupStatus;
 	uint32_t      mGroupSubscribeFlags;
 
-	time_t mUpdateTime;
 #ifdef SUBSCIRCLES
 	std::set<RsGxsCircleId> mUnprocessedCircles;
 	std::set<RsGxsCircleId> mProcessedCircles;
 #endif
 	std::map<RsGxsId,RsGxsCircleMembershipStatus> mMembershipStatus;
-    	time_t mLastUpdatedMembershipTS ;	// last time the subscribe messages have been requested. Should be reset when new messages arrive.
-    
+
 	std::set<RsGxsId> mAllowedGxsIds;	// IDs that are allowed in the circle and have requested membership. This is the official members list.
 	std::set<RsPgpId> mAllowedNodes;
-    
-    	RsPeerId mOriginator ; // peer who sent the data, in case we need to ask for ids
+
+	RsPeerId mOriginator ; // peer who sent the data, in case we need to ask for ids
 };
 
 
 class PgpAuxUtils;
 
-class p3GxsCircles: public RsGxsCircleExchange, public RsGxsCircles, public GxsTokenQueue, public RsTickEvent
+class RsCirclesMemCache : public std::map<RsGxsCircleId,RsGxsCircleCache>
 {
-	public:
-	p3GxsCircles(RsGeneralDataService* gds, RsNetworkExchangeService* nes,  p3IdService *identities, PgpAuxUtils *pgpUtils);
+public:
+    RsCirclesMemCache() : std::map<RsGxsCircleId,RsGxsCircleCache>(){}
 
-virtual RsServiceInfo getServiceInfo();
+    bool is_cached(const RsGxsCircleId& id) { return end() != find(id) ; }
+    RsGxsCircleCache& ref(const RsGxsCircleId& id) { return operator[](id) ; }
 
-	/*********** External Interface ***************/
+    void printStats() { std::cerr << "CircleMemCache: " << size() << " elements." << std::endl; }
+
+	template<class ClientClass> void applyToAllCachedEntries(ClientClass& c,bool (ClientClass::*method)(RsGxsCircleCache&))
+    {
+        for(auto& it:*this)
+            (c.*method)(it.second);
+    }
+	template<class ClientClass> void applyToAllCachedEntries(ClientClass& c,bool (ClientClass::*method)(const RsGxsCircleCache&))
+    {
+        for(const auto& it:*this)
+            (c.*method)(it.second);
+    }
+};
+
+class p3GxsCircles: public RsGxsCircleExchange, public RsGxsCircles,
+        public GxsTokenQueue, public RsTickEvent
+{
+public:
+	p3GxsCircles(
+	        RsGeneralDataService* gds, RsNetworkExchangeService* nes,
+	        p3IdService* identities, PgpAuxUtils* pgpUtils );
+
+	RsServiceInfo getServiceInfo() override;
+
+	/// @see RsGxsCircles
+	bool createCircle(
+	        const std::string& circleName, RsGxsCircleType circleType,
+	        RsGxsCircleId& circleId = RS_DEFAULT_STORAGE_PARAM(RsGxsCircleId),
+	        const RsGxsCircleId& restrictedId = RsGxsCircleId(),
+	        const RsGxsId& authorId = RsGxsId(),
+	        const std::set<RsGxsId>& gxsIdMembers = std::set<RsGxsId>(),
+	        const std::set<RsPgpId>& localMembers = std::set<RsPgpId>()
+	        ) override;
+
+	/// @see RsGxsCircles
+	bool editCircle(RsGxsCircleGroup& cData) override;
+
+	/// @see RsGxsCircles
+	bool getCirclesSummaries(std::list<RsGroupMetaData>& circles) override;
+
+	/// @see RsGxsCircles
+	bool getCirclesInfo(
+	        const std::list<RsGxsGroupId>& circlesIds,
+	        std::vector<RsGxsCircleGroup>& circlesInfo ) override;
+
+	/// @see RsGxsCircles
+	bool getCircleRequests( const RsGxsGroupId& circleId,
+	                        std::vector<RsGxsCircleMsg>& requests ) override;
+
+	/// @see RsGxsCircles
+	bool inviteIdsToCircle( const std::set<RsGxsId>& identities,
+	                        const RsGxsCircleId& circleId ) override;
+
+	/// @see RsGxsCircles
+	bool revokeIdsFromCircle( const std::set<RsGxsId>& identities,
+	                        const RsGxsCircleId& circleId ) override;
+
+    /// @see RsGxsCircles
+	bool getCircleRequest(const RsGxsGroupId& circleId,
+                          const RsGxsMessageId& msgId,
+                          RsGxsCircleMsg& msg) override;
+
+	/// @see RsGxsCircles
+	bool exportCircleLink(
+	        std::string& link, const RsGxsCircleId& circleId,
+	        bool includeGxsData = true,
+	        const std::string& baseUrl = DEFAULT_CIRCLE_BASE_URL,
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
+
+	/// @see RsGxsCircles
+	bool importCircleLink(
+	        const std::string& link,
+	        RsGxsCircleId& circleId = RS_DEFAULT_STORAGE_PARAM(RsGxsCircleId),
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
 
 	virtual bool getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails &details);
 	virtual bool getCircleExternalIdList(std::list<RsGxsCircleId> &circleIds);
-	virtual bool getCirclePersonalIdList(std::list<RsGxsCircleId> &circleIds);
 
 	virtual bool isLoaded(const RsGxsCircleId &circleId);
 	virtual bool loadCircle(const RsGxsCircleId &circleId);
@@ -216,7 +302,7 @@ virtual RsServiceInfo getServiceInfo();
 
 	protected:
 
-	bool pushCircleMembershipRequest(const RsGxsId& own_gxsid,const RsGxsCircleId& circle_id,uint32_t request_type) ;
+	bool pushCircleMembershipRequest(const RsGxsId& own_gxsid, const RsGxsCircleId& circle_id, RsGxsCircleSubscriptionType request_type) ;
 	static uint32_t circleAuthenPolicy();
 
 	/** Notifications **/
@@ -261,6 +347,8 @@ virtual RsServiceInfo getServiceInfo();
     // put a circle id into the external or personal circle id list
     // this function locks the mutex
     // if the id is already in the list, it will not be added again
+	// G10h4ck: this is terrible, an std::set instead of a list should be used
+	//	to guarantee uniqueness
     void addCircleIdToList(const RsGxsCircleId& circleId, uint32_t circleType);
 
 	RsMutex mCircleMtx; /* Locked Below Here */
@@ -269,20 +357,18 @@ virtual RsServiceInfo getServiceInfo();
 	std::list<RsGxsCircleId> mCirclePersonalIdList;
 
 	/***** Caching Circle Info, *****/
-	// initial load queue
-	std::list<RsGxsCircleId> mCacheLoad_ToCache;   
 
 	// waiting for subcircle to load. (first is part of each of the second list)
 	// TODO.
 	//std::map<RsGxsCircleId, std::list<RsGxsCircleId> > mCacheLoad_SubCircle; 
 
-	// Circles that are being loaded.
-	std::map<RsGxsCircleId, RsGxsCircleCache> mLoadingCache;
+    std::set<RsGxsCircleId> mCirclesToLoad;                   // list of circles to update/load, so that we can treat them by groups.
+    RsCirclesMemCache mCircleCache;
+	//RsMemCache<RsGxsCircleId, RsGxsCircleCache> mCircleCache; // actual cache data
 
-	// actual cache.
-	RsMemCache<RsGxsCircleId, RsGxsCircleCache> mCircleCache;
-
-	private:
+    void debug_dumpCache();	// debug method to overview what's going on
+	bool debug_dumpCacheEntry(RsGxsCircleCache &cache);
+private:
 
 	std::string genRandomId();
 
@@ -290,11 +376,14 @@ virtual RsServiceInfo getServiceInfo();
 	void checkDummyIdData();
 	void generateDummyCircle();
 
-    time_t mLastCacheMembershipUpdateTS ;
+    rstime_t mLastCacheMembershipUpdateTS ;
 
 	uint32_t mDummyIdToken;
 	std::list<RsGxsId> mDummyPgpLinkedIds;
 	std::list<RsGxsId> mDummyOwnIds;
-};
+    bool mShouldSendCacheUpdateNotification ;
+    rstime_t mLastCacheUpdateEvent;
+    rstime_t mLastDebugPrintTS;
 
-#endif // P3_CIRCLES_SERVICE_HEADER
+	RS_SET_CONTEXT_DEBUG_LEVEL(2)
+};

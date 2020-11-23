@@ -1,0 +1,61 @@
+#!/usr/bin/make -f
+
+configure: configure-stamp
+configure-stamp:
+	dh_testdir
+	cd src && qmake "CONFIG-=debug" "CONFIG+=release retrotor" "CONFIG+=rs_autologin" PREFIX=/usr LIB_DIR=/usr/lib RetroShare.pro
+	touch $@
+
+
+build: build-stamp
+build-stamp: configure-stamp
+	dh_testdir
+	# Add here commands to compile the package.
+	# cd libssh-0.6.4 && mkdir -p build && cd build && cmake -DWITH_STATIC_LIB=ON .. && make 
+	# cd sqlcipher && ./configure --disable-shared --enable-static --enable-tempstore=yes CFLAGS="-DSQLITE_HAS_CODEC" LDFLAGS="-lcrypto" && make
+	# mkdir lib
+	# cp -r libssh-0.6.4 lib/
+	#cp -r sqlcipher lib/
+	#cd src/rsctrl/src && make
+	cd src && $(MAKE)
+	touch $@
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f configure-stamp build-stamp
+	# Add here commands to clean up after the build process.
+	[ ! -f src/Makefile ] || (cd src && $(MAKE) distclean)
+	dh_clean
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	#dh_installdirs
+	cd src && $(MAKE) INSTALL_ROOT=$(CURDIR)/debian/tmp install
+
+# Build architecture-independent files here.
+binary-indep: build install
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_install --list-missing
+	#dh_installdocs
+	#dh_installexamples
+	#dh_installman
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install configure

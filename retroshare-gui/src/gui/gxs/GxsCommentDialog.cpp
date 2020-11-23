@@ -1,27 +1,25 @@
-/*
- * Retroshare Comment Dialog
- *
- * Copyright 2012-2012 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * retroshare-gui/src/gui/gxs/GxsCommentDialog.cpp                             *
+ *                                                                             *
+ * Copyright 2012-2012 by Robert Fernie   <retroshare.project@gmail.com>       *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "gui/gxs/GxsCommentDialog.h"
+#include "gui/gxs/GxsCommentTreeWidget.h"
 #include "ui_GxsCommentDialog.h"
 
 #include <iostream>
@@ -32,26 +30,55 @@
 #include <QDateTime>
 
 /** Constructor */
-GxsCommentDialog::GxsCommentDialog(QWidget *parent, RsTokenService *token_service, RsGxsCommentService *comment_service)
+GxsCommentDialog::GxsCommentDialog(QWidget *parent, const RsGxsId &default_author, RsTokenService *token_service, RsGxsCommentService *comment_service)
 	: QWidget(parent), ui(new Ui::GxsCommentDialog)
 {
 	/* Invoke the Qt Designer generated QObject setup routine */
 	ui->setupUi(this);
 
-	//ui->postFrame->setVisible(false);
-
-	ui->treeWidget->setup(token_service, comment_service);
+    setTokenService(token_service,comment_service);
+    init(default_author);
+}
 	
-	/* Set header resize modes and initial section sizes */
+void GxsCommentDialog::init(const RsGxsId& default_author)
+{
+    ui->refreshButton->hide();	// this is not needed anymore. Let's keep this piece of code for some time just in case.
+
+    /* Set header resize modes and initial section sizes */
 	QHeaderView * ttheader = ui->treeWidget->header () ;
 	ttheader->resizeSection (0, 440);
 
 	/* fill in the available OwnIds for signing */
-	ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
+    ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, default_author);
 
 	connect(ui->refreshButton, SIGNAL(clicked()), this, SLOT(refresh()));
 	connect(ui->idChooser, SIGNAL(currentIndexChanged( int )), this, SLOT(voterSelectionChanged( int )));
     connect(ui->idChooser, SIGNAL(idsLoaded()), this, SLOT(idChooserReady()));
+    connect(ui->treeWidget,SIGNAL(commentsLoaded(int)),this,SLOT(notifyCommentsLoaded(int)));
+	
+	connect(ui->commentButton, SIGNAL(clicked()), ui->treeWidget, SLOT(makeComment()));
+	connect(ui->sortBox, SIGNAL(currentIndexChanged(int)), this, SLOT(sortComments(int)));
+	
+	// default sort method "HOT".
+	ui->treeWidget->sortByColumn(4, Qt::DescendingOrder);
+	
+	int S = QFontMetricsF(font()).height() ;
+	
+	ui->sortBox->setIconSize(QSize(S*1.5,S*1.5));
+}
+
+void GxsCommentDialog::setTokenService(RsTokenService *token_service, RsGxsCommentService *comment_service)
+{
+	ui->treeWidget->setup(token_service, comment_service);
+}
+
+GxsCommentDialog::GxsCommentDialog(QWidget *parent,const RsGxsId &default_author)
+	: QWidget(parent), ui(new Ui::GxsCommentDialog)
+{
+	/* Invoke the Qt Designer generated QObject setup routine */
+	ui->setupUi(this);
+
+    init(default_author);
 }
 
 GxsCommentDialog::~GxsCommentDialog()
@@ -59,7 +86,14 @@ GxsCommentDialog::~GxsCommentDialog()
 	delete(ui);
 }
 
-void GxsCommentDialog::commentLoad(const RsGxsGroupId &grpId, const std::set<RsGxsMessageId>& msg_versions,const RsGxsMessageId& most_recent_msgId)
+void GxsCommentDialog::commentClear()
+{
+    ui->treeWidget->clear();
+    mGrpId.clear();
+    mMostRecentMsgId.clear();
+    mMsgVersions.clear();
+}
+void GxsCommentDialog::commentLoad(const RsGxsGroupId &grpId, const std::set<RsGxsMessageId>& msg_versions,const RsGxsMessageId& most_recent_msgId,bool use_cache)
 {
 	std::cerr << "GxsCommentDialog::commentLoad(" << grpId << ", most recent msg version: " << most_recent_msgId << ")";
 	std::cerr << std::endl;
@@ -68,7 +102,13 @@ void GxsCommentDialog::commentLoad(const RsGxsGroupId &grpId, const std::set<RsG
 	mMostRecentMsgId = most_recent_msgId;
     mMsgVersions = msg_versions;
 
-	ui->treeWidget->requestComments(mGrpId,msg_versions,most_recent_msgId);
+    ui->treeWidget->setUseCache(use_cache);
+    ui->treeWidget->requestComments(mGrpId,msg_versions,most_recent_msgId);
+}
+
+void GxsCommentDialog::notifyCommentsLoaded(int n)
+{
+    emit commentsLoaded(n);
 }
 
 void GxsCommentDialog::refresh()
@@ -121,10 +161,10 @@ void GxsCommentDialog::setCommentHeader(QWidget *header)
 	//header->setParent(ui->postFrame);
 	//ui->postFrame->setVisible(true);
 
-	QLayout *alayout = ui->postFrame->layout();
+#if 0
+    QLayout *alayout = ui->postFrame->layout();
 	alayout->addWidget(header);
 
-#if 0
 	ui->postFrame->setVisible(true);
 
 	QDateTime qtime;
@@ -143,4 +183,23 @@ void GxsCommentDialog::setCommentHeader(QWidget *header)
 
 	ui->notesBrowser->setPlainText(QString::fromStdString(mCurrentPost.mNotes));
 #endif
+}
+
+void GxsCommentDialog::sortComments(int i)
+{
+
+	switch(i)
+	{
+	default:
+	case 0:
+		ui->treeWidget->sortByColumn(4, Qt::DescendingOrder); 
+		break;
+	case 1:
+		ui->treeWidget->sortByColumn(2, Qt::DescendingOrder); 
+		break;
+	case 2:
+		ui->treeWidget->sortByColumn(3, Qt::DescendingOrder); 
+		break;
+	}
+
 }

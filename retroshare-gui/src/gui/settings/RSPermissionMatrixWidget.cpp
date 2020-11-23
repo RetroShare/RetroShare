@@ -1,23 +1,22 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (C) 2014 RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/settings/RSPermissionMatrixWidget.cpp                                   *
+ *                                                                             *
+ * Copyright (c) 2014 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef WINDOWS_SYS
 #include <sys/times.h>
@@ -36,6 +35,8 @@
 #include <retroshare/rsstatus.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsservicecontrol.h>
+#include "rsitems/rsserviceids.h"
+#include <QTextDocument>
 
 #define NOT_IMPLEMENTED std::cerr << __PRETTY_FUNCTION__ << ": not yet implemented." << std::endl;
 
@@ -58,6 +59,7 @@ RSPermissionMatrixWidget::RSPermissionMatrixWidget(QWidget *parent)
   :QFrame(parent)
 {
   _painter = new QPainter();
+  _current_service_id = 0;
 
   setMouseTracking(true) ;
 
@@ -221,7 +223,7 @@ bool sortRsPeerIdByNameLocation(const RsPeerId &a, const RsPeerId &b)
 	return stringA.toLower() < stringB.toLower();
 }
 
-/** Overloads default QWidget::paintEvent. Draws the actual 
+/** Overloads default QWidget::paintEvent. Draws the actual
  * bandwidth graph. */
 void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 {
@@ -231,14 +233,14 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 
   /* Set current graph dimensions */
   _rec = this->frameRect();
-  
+
   /* Start the painter */
   _painter->begin(this);
-  
+
   /* We want antialiased lines and text */
   _painter->setRenderHint(QPainter::Antialiasing);
   _painter->setRenderHint(QPainter::TextAntialiasing);
-  
+
   /* Fill in the background */
   _painter->fillRect(_rec, QBrush(BACK_COLOR));
   _painter->drawRect(_rec);
@@ -290,7 +292,8 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       rsPeers->getPeerDetails(*it,details) ;
 
       QString name = QString::fromUtf8(details.name.c_str()) + " (" + QString::fromUtf8(details.location.c_str()) + ")";
-      if(name.length() > 20)
+      // TODO does not work correctly with hieroglyphs
+      if(name.length() > 20 + 3)
           name = name.left(20)+"..." ;
 
       peer_name_size = std::max(peer_name_size, fm.width(name)) ;
@@ -299,7 +302,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 
   QPen pen ;
   pen.setWidth(2) ;
-  pen.setBrush(Qt::black) ;
+  pen.setBrush(FOREGROUND_COLOR) ;
 
   _painter->setPen(pen) ;
   int i=0;
@@ -350,7 +353,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       pen.setWidth(2) ;
 
       if(_current_service_id == it->second.mServiceType)
-          pen.setBrush(Qt::black) ;
+          pen.setBrush(FOREGROUND_COLOR) ;
       else
           pen.setBrush(Qt::gray) ;
 
@@ -364,7 +367,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       _painter->drawLine(QPointF(X,Y+3),QPointF(X+text_width,Y+3)) ;
       _painter->drawLine(QPointF(X+text_width/2, Y+3), QPointF(X+text_width/2,S*fMATRIX_START_Y+peer_ids.size()*S*fROW_SIZE - S*fROW_SIZE+5)) ;
 
-      pen.setBrush(Qt::black) ;
+      pen.setBrush(FOREGROUND_COLOR) ;
       _painter->setPen(pen) ;
 
       _painter->drawText(QPointF(X,Y),name);
@@ -497,11 +500,20 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 
       QPen pen ;
       pen.setWidth(2) ;
-      pen.setBrush(Qt::black) ;
+      pen.setBrush(FOREGROUND_COLOR) ;
 
       _painter->setPen(pen) ;
 
-      QRect info_pos( position.x() + 50*S/14.0, position.y() - 10*S/14.0, text_size_x + 10*S/14.0, line_height * 5 + 5*S/14.0) ;
+      int popup_x = position.x() + (50 * S / 14.0);
+      int popup_y = position.y() - (10 * S / 14.0);
+      int popup_width = text_size_x + (10 * S / 14.0);
+      int popup_height = (line_height * 5) + (5 * S / 14.0);
+      if (popup_x + popup_width > _max_width)
+        popup_x = position.x() - popup_width;
+      if (popup_y + popup_height > _max_height)
+        popup_y -= popup_height;
+
+      QRect info_pos(popup_x, popup_y, popup_width, popup_height) ;
 
       _painter->fillRect(info_pos,brush) ;
       _painter->drawRect(info_pos) ;
@@ -520,6 +532,45 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 
   _max_height = S*fMATRIX_START_Y + (peer_ids.size()+3) * S*fROW_SIZE ;
   _max_width  = matrix_start_x + (service_ids.size()+3) * S*fCOL_SIZE ;
+
+	if(n_row_selected == -1)
+	{
+		for(uint32_t i=0;i<service_ids.size();++i)
+		{
+			if(_current_service_id == service_ids[i])
+			{
+				//uint16_t serviceOrig = (uint16_t)((service_ids[i] - (((uint32_t)RS_PKT_VERSION_SERVICE) << 24) ) >> 8);
+				uint16_t serviceOrig=(service_ids[i]>>8) & 0xffff;
+				QTextDocument td;
+				td.setHtml(ServiceDescription(serviceOrig));
+				QString service_name = "Service: 0x"+ QString::number(serviceOrig,16) + "  " + QString::fromStdString(rsServiceControl->getServiceName(service_ids[i]));
+				QBrush brush ;
+				brush.setColor(QColor::fromHsvF(0.0f,0.0f,1.0f,0.8f));
+				brush.setStyle(Qt::SolidPattern) ;
+				QPen pen ;
+				pen.setWidth(1) ;
+				pen.setBrush(FOREGROUND_COLOR) ;
+				_painter->setPen(pen) ;
+				QRect position = computeNodePosition(0,i,false) ;
+				int popup_x = position.x() + (50 * S / 14.0);
+				int popup_y = position.y() - (10 * S / 14.0) + line_height;
+				int popup_width = std::max((int)td.size().width(), fm.width(service_name)) + S;
+				int popup_height = td.size().height() + line_height*2;
+				while (popup_x + popup_width > _max_width)
+					popup_x -= S;
+				if (popup_y + popup_height > _max_height)
+					popup_y -= popup_height;
+				QRect info_pos(popup_x, popup_y, popup_width, popup_height) ;
+				_painter->fillRect(info_pos,brush) ;
+				_painter->drawRect(info_pos) ;
+				float x = info_pos.x()               + 5*S/14.0 ;
+				float y = info_pos.y() + line_height + 1*S/14.0 ;
+				_painter->drawText(QPointF(x,y), service_name)  ; y += line_height ;
+				_painter->translate(QPointF(popup_x, popup_y+2*line_height));
+				td.drawContents(_painter);
+			}
+		}
+	}
 
   /* Stop the painter */
   _painter->end();
@@ -601,4 +652,33 @@ void RSPermissionMatrixWidget::userPermissionSwitched(uint32_t /* ServiceId */,c
     NOT_IMPLEMENTED ;
 }
 
-
+QString RSPermissionMatrixWidget::ServiceDescription(uint16_t serviceid)
+{
+	switch(serviceid)
+	{
+		case RS_SERVICE_TYPE_DISC:			return tr("Location info exchange between friends. Helps to find actual address in case of dynamic IPs<br>Without it you will have to rely on DHT only for getting fresh addresses");
+		case RS_SERVICE_TYPE_CHAT:			return tr("Used by direct F2F chat, distant chat and chat lobbies");
+		case RS_SERVICE_TYPE_MSG:			return tr("Mailing service. Also required for direct f2f chat");
+		case RS_SERVICE_TYPE_TURTLE:		return tr("Anonymous routing. Used by file transfers and file search,<br> distant chat, distant mail and distant channels/etc sync");
+		case RS_SERVICE_TYPE_HEARTBEAT:		return tr("Checks if peers alive");
+		case RS_SERVICE_TYPE_FILE_TRANSFER:	return tr("File transfer. If you kill it - you won't be able to dl files from friend shares. Anonymous access unnaffected");
+		case RS_SERVICE_TYPE_GROUTER:		return tr("Used by distant mail for immediate delivery using anonymous tunnels (turtle router)");
+		case RS_SERVICE_TYPE_FILE_DATABASE:	return tr("Exchange shared directories info, aka browsable(visible) files");
+		case RS_SERVICE_TYPE_SERVICEINFO:	return tr("Allows your node to tell to your friends which service are ON on your side, and vice-versa");
+		case RS_SERVICE_TYPE_BWCTRL:		return tr("Speed management");
+		case RS_SERVICE_TYPE_GXS_TUNNEL:	return tr("Used by distant chat, distant mail, and distant channels sync for transfer data using anonymous tunnels");
+		case RS_SERVICE_TYPE_BANLIST:		return tr("IP filter lists exchange");
+		case RS_SERVICE_TYPE_STATUS:		return tr("Share user status like online, away, busy with friends");
+		case RS_SERVICE_GXS_TYPE_GXSID:		return tr("Identity data exchange. Required by all identities-related functions like chats, forums, mail, etc");
+		case RS_SERVICE_GXS_TYPE_PHOTO:		return tr("RS_SERVICE_GXS_TYPE_PHOTO");
+		case RS_SERVICE_GXS_TYPE_WIKI:		return tr("RS_SERVICE_GXS_TYPE_WIKI");
+		case RS_SERVICE_GXS_TYPE_FORUMS:	return tr("Transfer Forums");
+		case RS_SERVICE_GXS_TYPE_POSTED:	return tr("Transfer Posted");
+		case RS_SERVICE_GXS_TYPE_CHANNELS:	return tr("Transfer Channels");
+		case RS_SERVICE_GXS_TYPE_GXSCIRCLE:	return tr("Transfer Circles");
+		case RS_SERVICE_GXS_TYPE_REPUTATION:return tr("Votes exchange - bans/upvotes for Identities");
+		case RS_SERVICE_TYPE_GXS_TRANS:		return tr("Used by distant mail for deferred delivery - stored at friends when target offline");
+		case RS_SERVICE_TYPE_RTT:			return tr("Measures the Round Trip Time between you and your friends");
+		default:							return tr("unknown");
+	}
+}

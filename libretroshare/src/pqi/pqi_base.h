@@ -1,30 +1,24 @@
-/*
- * "$Id: pqi_base.h,v 1.18 2007-05-05 16:10:05 rmf24 Exp $"
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2004-2006 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-
-
+/*******************************************************************************
+ * libretroshare/src/pqi: pqi_base.h                                           *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2006 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef PQI_BASE_ITEM_HEADER
 #define PQI_BASE_ITEM_HEADER
 
@@ -37,22 +31,16 @@
 
 #include "pqi/pqinetwork.h"
 
-class RSTrafficClue ;
+struct RSTrafficClue;
 
 /*** Base DataTypes: ****/
 #include "serialiser/rsserial.h"
 #include "retroshare/rstypes.h"
 
-
-#define PQI_MIN_PORT 10 // TO ALLOW USERS TO HAVE PORT 80! - was 1024
-#define PQI_MIN_PORT_RNG 1024
-#define PQI_MAX_PORT 65535
-#define PQI_DEFAULT_PORT 7812
-
 int getPQIsearchId();
 int fixme(char *str, int n);
 
-class RsPeerCryptoParams ;
+struct RsPeerCryptoParams;
 
 //! controlling data rates
 /*!
@@ -191,9 +179,10 @@ class NetInterface;
  **/
 class PQInterface: public RateInterface
 {
-	public:
-		PQInterface(const RsPeerId &id) :peerId(id) { return; }
-		virtual	~PQInterface() { return; }
+public:
+	explicit PQInterface(const RsPeerId &id) :
+	    traf_in(0), traf_out(0), peerId(id) {}
+	virtual	~PQInterface() {}
 
 		/*!
 		 * allows user to send RsItems to a particular facility  (file, network)
@@ -233,6 +222,22 @@ class PQInterface: public RateInterface
 		virtual int	notifyEvent(NetInterface * /*ni*/, int /*event*/,
 								const sockaddr_storage & /*remote_peer_address*/)
 		{ return 0; }
+
+		virtual uint64_t getTraffic(bool in)
+		{
+			uint64_t ret = 0;
+			if (in)
+			{
+				ret = traf_in;
+				traf_in = 0;
+				return ret;
+			}
+			ret = traf_out;
+			traf_out = 0;
+			return ret;
+		}
+		uint64_t traf_in;
+		uint64_t traf_out;
 
 	private:
 

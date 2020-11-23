@@ -1,30 +1,26 @@
+/*******************************************************************************
+ * libretroshare/src/rsitems: rsbanlistitems.h                                 *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2011 by Robert Fernie <retroshare@lunamutt.com>                   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RS_BANLIST_ITEMS_H
 #define RS_BANLIST_ITEMS_H
-
-/*
- * libretroshare/src/serialiser: rsbanlistitems.h
- *
- * RetroShare Serialiser.
- *
- * Copyright 2011 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
 
 #include <map>
 
@@ -60,18 +56,20 @@ class RsBanListItem: public RsItem
 class RsBanListConfigItem: public RsItem
 {
 public:
-    RsBanListConfigItem()
-            :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_BANLIST, RS_PKT_SUBTYPE_BANLIST_CONFIG_ITEM) {}
+	RsBanListConfigItem()
+	  : RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_BANLIST, RS_PKT_SUBTYPE_BANLIST_CONFIG_ITEM)
+	  , banListType(0), update_time(0)
+	{}
 
-    virtual ~RsBanListConfigItem(){}
-    virtual void clear() { banned_peers.TlvClear() ; }
+	virtual ~RsBanListConfigItem(){}
+	virtual void clear() { banned_peers.TlvClear() ; }
 
 	void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
-    uint32_t		type ;
-    RsPeerId  		peerId ;
-    time_t			update_time ;
-    RsTlvBanList	banned_peers;
+	uint32_t      banListType ;
+	RsPeerId      banListPeerId ;
+	rstime_t        update_time ;
+	RsTlvBanList  banned_peers;
 };
 
 class RsBanListSerialiser: public RsServiceSerializer

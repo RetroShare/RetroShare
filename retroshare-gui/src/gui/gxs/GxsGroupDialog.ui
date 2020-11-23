@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1237</width>
-    <height>1145</height>
+    <width>1231</width>
+    <height>529</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -48,394 +48,132 @@
      </property>
      <widget class="QWidget" name="createmode">
       <layout class="QGridLayout" name="gridLayout_8">
-       <item row="0" column="0">
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="verticalSpacing">
+        <number>3</number>
+       </property>
+       <item row="0" column="0" colspan="2">
         <widget class="QGroupBox" name="groupBoxLogo">
          <property name="title">
           <string/>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <property name="leftMargin">
-           <number>4</number>
-          </property>
+         <layout class="QGridLayout" name="gridLayout">
           <property name="topMargin">
-           <number>4</number>
-          </property>
-          <property name="rightMargin">
-           <number>4</number>
+           <number>3</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>3</number>
           </property>
-          <item>
-           <layout class="QGridLayout" name="gridLayout_4">
-            <property name="horizontalSpacing">
+          <item row="0" column="0" rowspan="2">
+           <widget class="ClickableLabel" name="groupLogo">
+            <property name="minimumSize">
+             <size>
+              <width>64</width>
+              <height>64</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>64</width>
+              <height>64</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click to add a Logo&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <property name="pixmap">
+             <pixmap resource="../icons.qrc">:/icons/png/add-image.png</pixmap>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" colspan="5">
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <property name="spacing">
              <number>6</number>
             </property>
-            <property name="verticalSpacing">
-             <number>0</number>
+            <property name="leftMargin">
+             <number>6</number>
             </property>
-            <item row="0" column="0" rowspan="2">
-             <widget class="QLabel" name="groupLogo">
-              <property name="minimumSize">
-               <size>
-                <width>64</width>
-                <height>64</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>64</width>
-                <height>64</height>
-               </size>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-              <property name="pixmap">
-               <pixmap resource="../images.qrc">:/images/channels.png</pixmap>
-              </property>
-              <property name="scaledContents">
-               <bool>true</bool>
+            <item>
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>Name</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
-             <layout class="QHBoxLayout" name="horizontalLayout">
-              <property name="spacing">
-               <number>6</number>
-              </property>
-              <property name="leftMargin">
-               <number>6</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="label">
-                <property name="text">
-                 <string>Name</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="groupName"/>
-              </item>
-             </layout>
-            </item>
-            <item row="1" column="1">
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
-              <property name="spacing">
-               <number>9</number>
-              </property>
-              <property name="leftMargin">
-               <number>3</number>
-              </property>
-              <property name="topMargin">
-               <number>3</number>
-              </property>
-              <property name="rightMargin">
-               <number>3</number>
-              </property>
-              <property name="bottomMargin">
-               <number>3</number>
-              </property>
-              <item>
-               <widget class="QPushButton" name="addLogoButton">
-                <property name="text">
-                 <string>Add Icon</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="../images.qrc">
-                  <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_2">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_2">
-                <property name="toolTip">
-                 <string>Will be used to send feedback</string>
-                </property>
-                <property name="text">
-                 <string>Owner:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="GxsIdChooser" name="idChooser"/>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="pubKeyShare_cb">
-                <property name="toolTip">
-                 <string>Key recipients can publish to restricted-type group and can view and publish for private-type channels</string>
-                </property>
-                <property name="text">
-                 <string>Share Publish Key</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
+            <item>
+             <widget class="QLineEdit" name="groupName"/>
             </item>
            </layout>
           </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QDockWidget" name="contactsdockWidget">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>300</width>
-           <height>524287</height>
-          </size>
-         </property>
-         <property name="sizeIncrement">
-          <size>
-           <width>220</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="baseSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>check peers you would like to share private publish key with</string>
-         </property>
-         <property name="floating">
-          <bool>false</bool>
-         </property>
-         <property name="features">
-          <set>QDockWidget::NoDockWidgetFeatures</set>
-         </property>
-         <property name="windowTitle">
-          <string>Share Key With</string>
-         </property>
-         <widget class="QWidget" name="dockWidgetContents">
-          <layout class="QGridLayout" name="_2">
-           <property name="leftMargin">
-            <number>0</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <item row="0" column="0">
-            <widget class="FriendSelectionWidget" name="keyShareList" native="true">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-               <horstretch>0</horstretch>
-               <verstretch>4</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>20</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>300</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="sizeIncrement">
-              <size>
-               <width>220</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="baseSize">
-              <size>
-               <width>200</width>
-               <height>0</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QGroupBox" name="distribGroupBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="title">
-          <string>Message Distribution</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_7">
-          <item row="0" column="0">
-           <layout class="QGridLayout" name="gridLayout">
-            <item row="0" column="0" colspan="4">
-             <widget class="QRadioButton" name="typePublic">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Messages will spread way beyond your friend nodes, as long as people subscribe to the channel/forum/posted you're creating.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="text">
-               <string>Public</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../icons.qrc">
-                <normaloff>:/icons/png/network-puplic.png</normaloff>:/icons/png/network-puplic.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>24</width>
-                <height>24</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QRadioButton" name="typeGroup">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Messages will spread among Retroshare nodes that host one of the identities listed as member of the circle and who also subscribe the media. Only these nodes will be able to see that this forum/channel/posted media exists. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="text">
-               <string>Restricted to Circle</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../icons.qrc">
-                <normaloff>:/icons/png/circles.png</normaloff>:/icons/png/circles.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>24</width>
-                <height>24</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QRadioButton" name="typeLocal">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Messages will only be distributed to the selected subset of your friend nodes. They will not forward messages with each other, but only use your own node as a central hub to distribute them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="text">
-               <string>Restricted node group </string>
-              </property>
-              <property name="icon">
-               <iconset resource="../icons.qrc">
-                <normaloff>:/icons/png/network.png</normaloff>:/icons/png/network.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>24</width>
-                <height>24</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1" colspan="2">
-             <widget class="GroupChooser" name="localComboBox">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="3">
-             <spacer name="horizontalSpacer_4">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="1" column="3">
-             <spacer name="horizontalSpacer_3">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>68</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="1" column="1" colspan="2">
-             <widget class="GxsCircleChooser" name="circleComboBox">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-           </layout>
+          <item row="1" column="1">
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>132</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLabel" name="label_2">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The identity here can be used to send feedback.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Owner:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="GxsIdChooser" name="idChooser"/>
+          </item>
+          <item row="1" column="4">
+           <widget class="QCheckBox" name="addAdmins_cb">
+            <property name="toolTip">
+             <string/>
+            </property>
+            <property name="text">
+             <string>Add moderators</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/settings/permissions.svg</normaloff>:/icons/settings/permissions.svg</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="5">
+           <widget class="QCheckBox" name="pubKeyShare_cb">
+            <property name="toolTip">
+             <string>Key recipients can publish to restricted-type group and can view and publish for private-type channels</string>
+            </property>
+            <property name="text">
+             <string>Share Publish Key</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
        </item>
        <item row="2" column="0">
+        <widget class="FriendSelectionWidget" name="shareKeyList" native="true"/>
+       </item>
+       <item row="3" column="0">
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
           <string>Description</string>
@@ -447,7 +185,7 @@
          </layout>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item row="4" column="0" colspan="2">
         <widget class="QGroupBox" name="publishGroupBox">
          <property name="title">
           <string>Publish Signatures</string>
@@ -485,14 +223,14 @@
           <item>
            <widget class="QRadioButton" name="publish_required">
             <property name="text">
-             <string>Required</string>
+             <string>Re&amp;quired</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QRadioButton" name="publish_encrypt">
             <property name="text">
-             <string>Encrypted Msgs</string>
+             <string>Encrypted &amp;Msgs</string>
             </property>
            </widget>
           </item>
@@ -512,7 +250,7 @@
          </layout>
         </widget>
        </item>
-       <item row="4" column="0">
+       <item row="5" column="0" colspan="2">
         <widget class="QGroupBox" name="personalGroupBox">
          <property name="title">
           <string>Personal Signatures</string>
@@ -555,7 +293,7 @@
          </layout>
         </widget>
        </item>
-       <item row="5" column="0">
+       <item row="6" column="0" colspan="2">
         <widget class="QGroupBox" name="commentGroupBox">
          <property name="title">
           <string>Comments</string>
@@ -606,7 +344,7 @@
          </layout>
         </widget>
        </item>
-       <item row="6" column="0">
+       <item row="7" column="0" colspan="2">
         <widget class="QGroupBox" name="spamProtection_GB">
          <property name="title">
           <string>Spam-protection</string>
@@ -657,7 +395,7 @@
          </layout>
         </widget>
        </item>
-       <item row="7" column="0" colspan="2">
+       <item row="8" column="0" colspan="2">
         <widget class="QFrame" name="extraFrame">
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
@@ -667,158 +405,353 @@
          </property>
         </widget>
        </item>
+       <item row="2" column="1" rowspan="2">
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="QComboBox" name="filtercomboBox"/>
+         </item>
+         <item>
+          <widget class="FriendSelectionWidget" name="adminsList" native="true"/>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="QGroupBox" name="distribGroupBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="title">
+          <string>Message Distribution</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <property name="topMargin">
+           <number>6</number>
+          </property>
+          <property name="bottomMargin">
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QRadioButton" name="typePublic">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Messages will spread way beyond your friend nodes, as long as people subscribe to the channel/forum/posted you're creating.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Public</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/png/network-puplic.png</normaloff>:/icons/png/network-puplic.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="typeGroup">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Messages will spread among Retroshare nodes that host one of the identities listed as member of the circle and who also subscribe the media. Only these nodes will be able to see that this forum/channel/posted media exists. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Restricted to Circle</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/png/circles.png</normaloff>:/icons/png/circles.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="GxsCircleChooser" name="circleComboBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="typeLocal">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Messages will only be distributed to the selected subset of your friend nodes. They will not forward messages with each other, but only use your own node as a central hub to distribute them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Restricted node group </string>
+            </property>
+            <property name="icon">
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/png/network.png</normaloff>:/icons/png/network.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="GroupChooser" name="localComboBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>0</width>
+              <height>17</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>1</width>
+              <height>25</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="showmode">
       <layout class="QGridLayout" name="gridLayout_6">
+       <property name="topMargin">
+        <number>0</number>
+       </property>
        <item row="0" column="0">
         <widget class="QGroupBox" name="groupBox_2">
          <property name="title">
           <string>Info</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Name</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="nameline">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_10">
-            <property name="text">
-             <string>Popularity</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="popline">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_6">
-            <property name="text">
-             <string>Posts</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="postsline">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_11">
-            <property name="text">
-             <string>Last Post</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QLineEdit" name="lastpostline">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_7">
-            <property name="text">
-             <string>Author</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="GxsIdLabel" name="authorLabel">
-            <property name="text">
-             <string>GxsIdLabel</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>ID</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QLineEdit" name="IDline">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0" rowspan="2">
-           <widget class="QLabel" name="commentsLabel">
-            <property name="text">
-             <string>Comments:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1">
-           <widget class="QLabel" name="commentsValueLabel">
-            <property name="text">
-             <string>TextLabel</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="1" rowspan="2">
-           <layout class="QHBoxLayout" name="horizontalLayout_10">
-            <item>
-             <widget class="QLabel" name="distributionValueLabel">
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="10" column="0">
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>Author</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_11">
+              <property name="text">
+               <string>Last Post</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>Name</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_10">
+              <property name="text">
+               <string>Popularity</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="2">
+             <widget class="QLabel" name="antiSpamValueLabel">
               <property name="text">
                <string>TextLabel</string>
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="GxsCircleChooser" name="distributionCircleComboBox">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
+            <item row="8" column="0">
+             <widget class="QLabel" name="antiSpamLabel">
+              <property name="text">
+               <string>Anti Spam:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="2">
+             <widget class="QLineEdit" name="lastpostline">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="2">
+             <widget class="QLabel" name="commentsValueLabel">
+              <property name="text">
+               <string>TextLabel</string>
+              </property>
+              <property name="openExternalLinks">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="0">
+             <widget class="QLabel" name="commentsLabel">
+              <property name="text">
+               <string>Comments:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="2">
+             <widget class="GxsIdLabel" name="authorLabel">
+              <property name="text">
+               <string>GxsIdLabel</string>
+              </property>
+              <property name="openExternalLinks">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0">
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>ID</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="2">
+             <widget class="QLineEdit" name="IDline">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>Posts</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2">
+             <widget class="QLineEdit" name="postsline">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="2">
+             <layout class="QHBoxLayout" name="horizontalLayout_10">
+              <item>
+               <widget class="QLabel" name="distributionValueLabel">
+                <property name="text">
+                 <string>TextLabel</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="GxsCircleChooser" name="distributionCircleComboBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="7" column="0">
+             <widget class="QLabel" name="distributionLabel">
+              <property name="text">
+               <string>Distribution:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QLineEdit" name="nameline">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QLineEdit" name="popline">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="11" column="0">
+             <widget class="QLabel" name="label_8">
+              <property name="text">
+               <string>Moderators:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="11" column="2">
+             <widget class="GxsIdLabel" name="moderatorsLabel">
+              <property name="text">
+               <string>TextLabel</string>
+              </property>
+              <property name="openExternalLinks">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="2">
+             <widget class="QLineEdit" name="createdline"/>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_9">
+              <property name="text">
+               <string>Created</string>
               </property>
              </widget>
             </item>
            </layout>
-          </item>
-          <item row="8" column="0">
-           <widget class="QLabel" name="distributionLabel">
-            <property name="text">
-             <string>Distribution:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="9" column="0">
-           <widget class="QLabel" name="antiSpamLabel">
-            <property name="text">
-             <string>Anti Spam:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="9" column="1">
-           <widget class="QLabel" name="antiSpamValueLabel">
-            <property name="text">
-             <string>TextLabel</string>
-            </property>
-           </widget>
           </item>
          </layout>
         </widget>
@@ -852,10 +785,10 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
-      <item row="0" column="1">
-       <widget class="QDialogButtonBox" name="buttonBox">
-        <property name="standardButtons">
-         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="cancelButton">
+        <property name="text">
+         <string>Cancel</string>
         </property>
        </widget>
       </item>
@@ -871,6 +804,13 @@
          </size>
         </property>
        </spacer>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="createButton">
+        <property name="text">
+         <string>Create</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -915,10 +855,14 @@
    <extends>QComboBox</extends>
    <header>gui/common/GroupChooser.h</header>
   </customwidget>
+  <customwidget>
+   <class>ClickableLabel</class>
+   <extends>QLabel</extends>
+   <header>util/ClickableLabel.h</header>
+  </customwidget>
  </customwidgets>
  <resources>
   <include location="../icons.qrc"/>
-  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

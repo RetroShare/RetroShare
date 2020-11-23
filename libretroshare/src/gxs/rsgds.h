@@ -1,30 +1,26 @@
+/*******************************************************************************
+ * libretroshare/src/gxs: rsgds.h                                              *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2011-2011 by Robert Fernie, Evi-Parker Christopher                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RSGDS_H
 #define RSGDS_H
-
-/*
- * libretroshare/src/gxp: gxp.h
- *
- * General Data service, interface for RetroShare.
- *
- * Copyright 2011-2011 by Robert Fernie, Evi-Parker Christopher
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
 
 #include <set>
 #include <map>
@@ -36,8 +32,8 @@
 #include "rsitems/rsnxsitems.h"
 #include "gxs/rsgxsdata.h"
 #include "rsgxs.h"
+#include "rsgxsutil.h"
 #include "util/contentvalue.h"
-
 
 class RsGxsSearchModule  {
 
@@ -52,47 +48,44 @@ public:
  * This allows modification of local
  * meta data items of a message
  */
-class MsgLocMetaData {
+struct MsgLocMetaData {
+	MsgLocMetaData() = default;
+	MsgLocMetaData(const MsgLocMetaData& meta): msgId(meta.msgId), val(meta.val) {}
 
-public:
-    MsgLocMetaData(const MsgLocMetaData& meta){ msgId = meta.msgId; val = meta.val;}
-    MsgLocMetaData() {}
-    RsGxsGrpMsgIdPair msgId;
-    ContentValue val;
+	RsGxsGrpMsgIdPair msgId;
+	ContentValue val;
 };
+
+typedef std::map<RsGxsGroupId,RsGxsGrpMetaData*> RsGxsGrpMetaTemporaryMap;
 
 /*!
  * This allows modification of local
  * meta data items of a group
  */
-class GrpLocMetaData {
+struct GrpLocMetaData {
+	GrpLocMetaData() = default;
+	GrpLocMetaData(const GrpLocMetaData& meta): grpId(meta.grpId), val(meta.val) {}
 
-public:
-    GrpLocMetaData(const GrpLocMetaData& meta){ grpId = meta.grpId; val = meta.val;}
-    GrpLocMetaData(){}
-    RsGxsGroupId grpId;
-    ContentValue val;
-
+	RsGxsGroupId grpId;
+	ContentValue val;
 };
 
 /*!
- * This is used to query network statistics for a given group. This is useful to e.g. show group
- * popularity, or number of visible messages for unsubscribed group.
+ * This is used to query network statistics for a given group. This is useful
+ * to e.g. show group popularity, or number of visible messages for unsubscribed
+ * group.
  */
-
-class RsGroupNetworkStats
+struct RsGroupNetworkStats
 {
-public:
-    RsGroupNetworkStats()
-    {
-        mMaxVisibleCount = 0 ;
-    }
+	RsGroupNetworkStats() :
+	    mSuppliers(0), mMaxVisibleCount(0), mGrpAutoSync(false),
+	    mAllowMsgSync(false), mLastGroupModificationTS(0) {}
 
-    uint32_t mSuppliers ;
-    uint32_t mMaxVisibleCount ;
-    bool     mGrpAutoSync ;
-    bool     mAllowMsgSync;
-	time_t   mLastGroupModificationTS ;
+	uint32_t mSuppliers;
+	uint32_t mMaxVisibleCount;
+	bool     mGrpAutoSync;
+	bool     mAllowMsgSync;
+	rstime_t   mLastGroupModificationTS;
 };
 
 typedef std::map<RsGxsGroupId,      std::vector<RsNxsMsg*> > NxsMsgDataResult;
@@ -141,19 +134,22 @@ public:
     typedef std::map<RsNxsMsg*, RsGxsMsgMetaData*> MsgStoreMap;
 
     RsGeneralDataService(){}
-    virtual ~RsGeneralDataService(){return;}
+	virtual ~RsGeneralDataService(){}
 
     /*!
      * Retrieves all msgs
      * @param reqIds requested msg ids (grpId,msgId), leave msg list empty to get all msgs for the grp
      * @param msg result of msg retrieval
      * @param cache whether to store results of this retrieval in memory for faster later retrieval
+	 * @param strictFilter if true do not request any message if reqIds is empty
      * @return error code
-     */
-    virtual int retrieveNxsMsgs(const GxsMsgReq& reqIds, GxsMsgResult& msg, bool cache, bool withMeta=false) = 0;
+	 */
+	virtual int retrieveNxsMsgs(
+	        const GxsMsgReq& reqIds, GxsMsgResult& msg, bool cache,
+	        bool withMeta = false ) = 0;
 
     /*!
-     * Retrieves all groups stored
+     * Retrieves all groups stored. Caller owns the memory and is supposed to delete the RsNxsGrp pointers after use.
      * @param grp retrieved groups
      * @param withMeta if true the meta handle of nxs grps is intitialised
      * @param cache whether to store retrieval in mem for faster later retrieval
@@ -168,7 +164,7 @@ public:
      *            , if grpId is failed to be retrieved it will be erased from map
      * @return error code
      */
-    virtual int retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaData*>& grp) = 0;
+    virtual int retrieveGxsGrpMetaData(RsGxsGrpMetaTemporaryMap& grp) = 0;
 
     /*!
      * Retrieves meta data of all groups stored (most current versions only)
@@ -206,7 +202,7 @@ public:
      * @param msgId msgsids retrieved
      * @return error code
      */
-    virtual int retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std_vector& msgId) = 0;
+    virtual int retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std_set& msgId) = 0;
 
     /*!
      * @return the cache size set for this RsGeneralDataService in bytes
@@ -243,12 +239,12 @@ public:
     /*!
      * @param metaData
      */
-    virtual int updateMessageMetaData(MsgLocMetaData& metaData) = 0;
+    virtual int updateMessageMetaData(const MsgLocMetaData& metaData) = 0;
 
     /*!
      * @param metaData
      */
-    virtual int updateGroupMetaData(GrpLocMetaData& meta) = 0;
+    virtual int updateGroupMetaData(const GrpLocMetaData& meta) = 0;
 
     virtual int updateGroupKeys(const RsGxsGroupId& grpId,const RsTlvSecurityKeySet& keys,uint32_t subscribed_flags) = 0 ;
 

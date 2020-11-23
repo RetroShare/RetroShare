@@ -1,31 +1,24 @@
-/*
- * libretroshare/src/   : gpgauthmgr.h
- *
- * GPG  interface for RetroShare.
- *
- * Copyright 2008-2009 by Raghu Dev R.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- * This is *THE* auth manager. It provides the web-of-trust via
- * gpgme, and authenticates the certificates that are managed
- * by the sublayer AuthSSL.
- *
- */
+/*******************************************************************************
+ * libretroshare/src/pqi: authgpg.h                                            *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2008-2009 by Raghu Dev R.                                         *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 /****
  * Here's GPG policy :
@@ -45,7 +38,7 @@
 
 #define MAX_GPG_SIGNATURE_SIZE  4096
 
-class RsPeerDetails;
+struct RsPeerDetails;
 
 /*!
  * gpgcert is the identifier for a person.
@@ -55,7 +48,7 @@ class RsPeerDetails;
 class AuthGPGOperation
 {
 public:
-    AuthGPGOperation(void *userdata)
+    explicit AuthGPGOperation(void *userdata)
     {
         m_userdata = userdata;
     }
@@ -89,8 +82,8 @@ public:
 class AuthGPGService
 {
 public:
-    AuthGPGService() {};
-    ~AuthGPGService() {};
+	AuthGPGService() {}
+	~AuthGPGService() {}
 
     virtual AuthGPGOperation *getGPGOperation() = 0;
     virtual void setGPGOperation(AuthGPGOperation *operation) = 0;
@@ -98,12 +91,11 @@ public:
 
 class AuthGPG: public p3Config, public RsTickingThread, public PGPHandler
 {
-	public:
-
-		static void init(	const std::string& path_to_pubring, 
-								const std::string& path_to_secring,
-								const std::string& path_to_trustdb,
-								const std::string& pgp_lock_file);
+public:
+	static void init(const std::string& path_to_pubring,
+	        const std::string& path_to_secring,
+	        const std::string& path_to_trustdb,
+	        const std::string& pgp_lock_file);
 
 		static void exit();
 		static AuthGPG *getAuthGPG() { return _instance ; }
@@ -166,6 +158,9 @@ class AuthGPG: public p3Config, public RsTickingThread, public PGPHandler
 		virtual bool   importProfile(const std::string& filename,RsPgpId& gpg_id,std::string& import_error) ;
         virtual bool   importProfileFromString(const std::string& data,RsPgpId& gpg_id,std::string& import_error) ;
 		virtual bool   exportProfile(const std::string& filename,const RsPgpId& gpg_id) ;
+		virtual bool exportIdentityToString(
+		        std::string& data, const RsPgpId& pgpId, bool includeSignatures,
+		        std::string& errorMsg );
 
         virtual bool   removeKeysFromPGPKeyring(const std::set<RsPgpId> &pgp_ids,std::string& backup_file,uint32_t& error_code) ;
 
@@ -177,6 +172,7 @@ class AuthGPG: public p3Config, public RsTickingThread, public PGPHandler
 		 *
 		 ****/
 		virtual bool LoadCertificateFromString(const std::string &pem, RsPgpId& gpg_id,std::string& error_string);
+		virtual bool LoadPGPKeyFromBinaryData(const unsigned char *data,uint32_t data_len, RsPgpId& gpg_id,std::string& error_string);
 		virtual std::string SaveCertificateToString(const RsPgpId &id,bool include_signatures) ;
 
 		// Cached certificates.
@@ -243,7 +239,7 @@ class AuthGPG: public p3Config, public RsTickingThread, public PGPHandler
 		virtual bool    loadList(std::list<RsItem *>& load);
 		/*****************************************************************/
 
-	private:
+private:
 		// Gets the certificate pointer and returns NULL if the string is invalid, or the
 		// cert was not found.
 		//
@@ -275,10 +271,9 @@ class AuthGPG: public p3Config, public RsTickingThread, public PGPHandler
 		bool    printAllKeys_locked();
 		bool    printOwnKeys_locked();
 
-		/* own thread */
-        virtual void data_tick();
+	void threadTick() override; /// @see RsTickingThread
 
-	private:
+private:
 
 		static AuthGPG *instance_gpg; // pointeur vers le singleton
 
@@ -293,7 +288,7 @@ class AuthGPG: public p3Config, public RsTickingThread, public PGPHandler
 		RsMutex gpgMtxData;
 		/* Below is protected via the mutex */
 
-		time_t mStoreKeyTime;
+		rstime_t mStoreKeyTime;
 
 		RsPgpId mOwnGpgId;
 		bool gpgKeySelected;

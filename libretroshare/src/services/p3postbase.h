@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/services: p3postbase.h
- *
- * GxsChannel interface for RetroShare.
- *
- * Copyright 2012-2013 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/services: p3postbase.h                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2008-2012 Robert Fernie <retroshare@lunamutt.com>                 *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef P3_POSTBASE_SERVICE_HEADER
 #define P3_POSTBASE_SERVICE_HEADER
 
@@ -67,42 +63,44 @@ bool encodePostCache(std::string &str, const PostStats &s);
 bool extractPostCache(const std::string &str, PostStats &s);
 
 
-class p3PostBase: public RsGenExchange, public GxsTokenQueue, public RsTickEvent
+class p3PostBase: public RsGenExchange, public GxsTokenQueue, public RsTickEvent, public p3Config
 {
-	public:
+public:
 
 	p3PostBase(RsGeneralDataService *gds, RsNetworkExchangeService *nes, RsGixs* gixs,
-	RsSerialType* serviceSerialiser, uint16_t serviceType);
+	           RsSerialType* serviceSerialiser, uint16_t serviceType);
 
-virtual void service_tick();
+	virtual void service_tick();
 
-	// This should be overloaded to call RsGxsIfaceHelper::receiveChanges().
-virtual void receiveHelperChanges(std::vector<RsGxsNotify*>& changes) = 0;
+protected:
 
-	protected:
+	virtual void notifyChanges(std::vector<RsGxsNotify*>& changes);
 
-virtual void notifyChanges(std::vector<RsGxsNotify*>& changes);
+	// Overloaded from GxsTokenQueue for Request callbacks.
+	virtual void handleResponse(uint32_t token, uint32_t req_type);
 
-        // Overloaded from GxsTokenQueue for Request callbacks.
-virtual void handleResponse(uint32_t token, uint32_t req_type);
+	// Overloaded from RsTickEvent.
+	virtual void handle_event(uint32_t event_type, const std::string &elabel);
 
-        // Overloaded from RsTickEvent.
-virtual void handle_event(uint32_t event_type, const std::string &elabel);
+	// overloads p3Config
+	virtual RsSerialiser* setupSerialiser() override;                            // @see p3Config::setupSerialiser()
+	virtual bool saveList(bool &cleanup, std::list<RsItem *>&saveList) override; // @see p3Config::saveList(bool &cleanup, std::list<RsItem *>&)
+	virtual bool loadList(std::list<RsItem *>& loadList) override;               // @see p3Config::loadList(std::list<RsItem *>&)
 
-	public:
+public:
 
-        //////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////
 
-virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read);
+	virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read);
 
 
-	protected:
+protected:
 
-	p3GxsCommentService *mCommentService;	
+	p3GxsCommentService *mCommentService;
 
-	private:
+private:
 
-static uint32_t postBaseAuthenPolicy();
+	static uint32_t postBaseAuthenPolicy();
 
 	// Background processing.
 	void background_tick();
@@ -123,13 +121,14 @@ static uint32_t postBaseAuthenPolicy();
 	bool background_cleanup();
 
 
-	RsMutex mPostBaseMtx; 
+	RsMutex mPostBaseMtx;
 
 	bool mBgProcessing;
 	bool mBgIncremental;
-        std::list<RsGxsGroupId> mBgGroupList;
-        std::map<RsGxsMessageId, PostStats> mBgStatsMap; 
+	std::set<RsGxsGroupId> mBgGroupList;
+	std::map<RsGxsMessageId, PostStats> mBgStatsMap;
 
+	std::map<RsGxsGroupId,rstime_t> mKnownPosted;
 };
 
 #endif 

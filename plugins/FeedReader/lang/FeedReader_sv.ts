@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="sv" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="sv">
 <context>
     <name>AddFeedDialog</name>
     <message>
@@ -400,7 +402,7 @@
 <context>
     <name>FeedReaderFeedItem</name>
     <message>
-        <location filename="../gui/FeedReaderFeedItem.ui" line="+196"/>
+        <location filename="../gui/FeedReaderFeedItem.ui" line="+195"/>
         <location filename="../gui/FeedReaderFeedItem.cpp" line="+116"/>
         <source>Expand</source>
         <translation>Visa</translation>
@@ -497,7 +499,7 @@
         <translation>Sök i forumen</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+26"/>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="+92"/>
         <source>Title</source>
         <translation>Rubrik</translation>
@@ -593,7 +595,7 @@
 <context>
     <name>FeedReaderPlugin</name>
     <message>
-        <location filename="../FeedReaderPlugin.cpp" line="+158"/>
+        <location filename="../FeedReaderPlugin.cpp" line="+157"/>
         <source>This plugin provides a Feedreader.</source>
         <translation>Detta tillägg förser dig med en Flödesläsare.</translation>
     </message>
@@ -714,7 +716,7 @@
     <message>
         <location line="+3"/>
         <source>Forum has no author</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>

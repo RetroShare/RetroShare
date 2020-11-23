@@ -1,6 +1,29 @@
+/*******************************************************************************
+ * libretroshare/src/services/autoproxy: rsautoproximonitor.cc                 *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2016 by Sehraf                                                    *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "rsautoproxymonitor.h"
 
 #include <unistd.h>		/* for usleep() */
+#include "util/rsdebug.h"
+#include "util/rstime.h"
 
 rsAutoProxyMonitor *rsAutoProxyMonitor::mInstance = NULL;
 
@@ -20,8 +43,10 @@ rsAutoProxyMonitor *rsAutoProxyMonitor::instance()
 void rsAutoProxyMonitor::addProxy(autoProxyType::autoProxyType_enum type, autoProxyService *service)
 {
 	RS_STACK_MUTEX(mLock);
-	if (mProxies.find(type) != mProxies.end())
-		std::cerr << "sAutoProxyMonitor::addProxy type " << type << " already added - OVERWRITING" << std::endl;
+	if (mProxies.find(type) != mProxies.end()) {
+		RS_ERR("type ", type, " already added - OVERWRITING");
+		print_stacktrace();
+	}
 
 	mProxies[type] = service;
 }
@@ -93,9 +118,9 @@ void rsAutoProxyMonitor::stopAllRSShutdown()
 	// wait for shutdown of all services
 	uint32_t t = 0, timeout = 15;
 	do {		
-		usleep(1000 * 1000);
+		rstime::rs_usleep(1000 * 1000);
 		RS_STACK_MUTEX(mLock);
-		std::cout << "(II) waiting for auto proxy service(s) to shut down " << t << "/" << timeout << " (remaining: " << mProxies.size() << ")" << std::endl;
+		RS_DBG("waiting for auto proxy service(s) to shut down ", t, "/", timeout, " (remaining: ", mProxies.size(), ")");
 		if (mProxies.empty())
 			break;
 		t++;
@@ -124,13 +149,16 @@ void rsAutoProxyMonitor::task(taskTicket *ticket)
 {
 	// sanity checks
 	if (!ticket->async && ticket->types.size() > 1) {
-		std::cerr << "(WW) rsAutoProxyMonitor::task synchronous call to multiple services. This can cause problems!" << std::endl;
+		RS_ERR("synchronous call to multiple services. This can cause problems!");
+		print_stacktrace();
 	}
 	if (ticket->async && !ticket->cb && ticket->data) {
-		std::cerr << "(WW) rsAutoProxyMonitor::task asynchronous call with data but no callback. This will likely causes memory leak!" << std::endl;
+		RS_ERR("asynchronous call with data but no callback. This will likely causes memory leak!");
+		print_stacktrace();
 	}
 	if (ticket->types.size() > 1 && ticket->data) {
-		std::cerr << "(WW) rsAutoProxyMonitor::task call with data to multiple services. This will likely causes memory leak!" << std::endl;
+		RS_ERR("call with data to multiple services. This will likely causes memory leak!");
+		print_stacktrace();
 	}
 
 	std::vector<autoProxyType::autoProxyType_enum>::const_iterator it;
@@ -146,7 +174,11 @@ void rsAutoProxyMonitor::task(taskTicket *ticket)
 			*tt = *ticket;
 			tt->types.clear();
 			tt->types.push_back(*it);
-			s->processTaskAsync(tt);
+
+			// it's async!
+			RsThread::async([s, tt] {
+				s->processTaskAsync(tt);
+			});
 		} else {
 			s->processTaskSync(ticket);
 		}
@@ -165,7 +197,8 @@ void rsAutoProxyMonitor::taskAsync(std::vector<autoProxyType::autoProxyType_enum
 	if (!isAsyncTask(task)) {
 		// Usually the services will reject this ticket.
 		// Just print a warning - maybe there is some special case where this is a good idea.
-		std::cerr << "(WW) rsAutoProxyMonitor::taskAsync called with a synchronous task!" << std::endl;
+		RS_ERR("called with a synchronous task!");
+		print_stacktrace();
 	}
 
 	taskTicket *tt = getTicket();
@@ -193,7 +226,8 @@ void rsAutoProxyMonitor::taskSync(std::vector<autoProxyType::autoProxyType_enum>
 	if (isAsyncTask(task)) {
 		// Usually the services will reject this ticket.
 		// Just print a warning - maybe there is some special case where this is a good idea.
-		std::cerr << "(WW) rsAutoProxyMonitor::taskSync called with an asynchronous task!" << std::endl;
+		RS_ERR("called with an asynchronous task!");
+		print_stacktrace();
 	}
 
 	taskTicket *tt = getTicket();
@@ -222,7 +256,8 @@ void rsAutoProxyMonitor::taskDone(taskTicket *t, autoProxyStatus::autoProxyStatu
 		t->cb->taskFinished(t);
 		if (t != NULL) {
 			// callack did not clean up properly
-			std::cerr << "(WW) rsAutoProxyMonitor::taskFinish callback did not clean up!" << std::endl;
+			RS_ERR("callback did not clean up!");
+			print_stacktrace();
 			cleanUp = true;
 		}
 	} else if (t->async){
@@ -230,12 +265,14 @@ void rsAutoProxyMonitor::taskDone(taskTicket *t, autoProxyStatus::autoProxyStatu
 		// we must take care of deleting
 		cleanUp = true;
 		if(t->data)
-			std::cerr << "(WW) rsAutoProxyMonitor::taskFinish async call with data attached but no callback set!" << std::endl;
+			RS_ERR("async call with data attached but no callback set!");
 	}
 
 	if (cleanUp) {
 		if (t->data) {
-			std::cerr << "(WW) rsAutoProxyMonitor::taskFinish will try to delete void pointer!" << std::endl;
+			RS_ERR("will try to delete void pointer!");
+			print_stacktrace();
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdelete-incomplete"
 			delete t->data;
 #pragma GCC diagnostic pop
@@ -267,7 +304,9 @@ void rsAutoProxyMonitor::taskFinished(taskTicket *&ticket)
 
 	// clean up
 	if (ticket->data) {
-		std::cerr << "rsAutoProxyMonitor::taskFinished data set. Will try to delete void pointer" << std::endl;
+		RS_ERR(" data set. Will try to delete void pointer");
+		print_stacktrace();
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdelete-incomplete"
 		delete ticket->data;
 #pragma GCC diagnostic pop
@@ -284,7 +323,7 @@ autoProxyService *rsAutoProxyMonitor::lookUpService(autoProxyType::autoProxyType
 	if ((itService = mProxies.find(t)) != mProxies.end()) {
 		return itService->second;
 	}
-	std::cerr << "sAutoProxyMonitor::lookUpService no service for type " << t << " found!" << std::endl;
+	RS_DBG("no service for type ", t, " found!");
 	return NULL;
 }
 

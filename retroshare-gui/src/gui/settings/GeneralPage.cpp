@@ -1,23 +1,22 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (c) 2009 RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/settings/GeneralPage.h                                                  *
+ *                                                                             *
+ * Copyright 2009, Retroshare Team <retroshare.project@gmail.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QMessageBox>
 #include <iostream>
@@ -80,6 +79,15 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
 	ui.autoLogin->setToolTip(tr("Your RetroShare build has auto-login disabled."));
 #endif // RS_AUTOLOGIN
 
+    ui.checkCloseToTray->setChecked(false) ; // default should be false because some systems to not support this.
+
+    if(!QSystemTrayIcon::isSystemTrayAvailable())
+    {
+		ui.checkCloseToTray->setChecked(false) ; // default should be false because some systems to not support this.
+		ui.checkCloseToTray->setToolTip(tr("No Qt-compatible system tray was found on this system."));
+        Settings->setCloseToTray(false);
+    }
+
     /* Connect signals */
     connect(ui.useLocalServer,                              SIGNAL(toggled(bool)),     this,SLOT(updateUseLocalServer())) ;
     connect(ui.idleSpinBox,                                 SIGNAL(valueChanged(int)), this,SLOT(updateMaxTimeBeforeIdle())) ;
@@ -92,6 +100,10 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
     //connect(ui.runStartWizard_PB,                           SIGNAL(clicked()),         this,SLOT(runStartWizard())) ;
     connect(ui.checkAdvanced,                               SIGNAL(toggled(bool)),     this,SLOT(updateAdvancedMode())) ;
     connect(ui.registerRetroShareProtocol,                  SIGNAL(toggled(bool)),     this,SLOT(updateRegisterRSProtocol())) ;
+
+	// hide advanced checkbox, since the option is not used.
+
+	ui.advGBox->hide();
 }
 
 /** Destructor */

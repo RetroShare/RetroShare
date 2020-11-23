@@ -1,43 +1,34 @@
-/*
- * libretroshare/src/pqi: p3netmgr.h
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2007-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-#ifndef MRK_PQI_NET_MANAGER_HEADER
-#define MRK_PQI_NET_MANAGER_HEADER
+/*******************************************************************************
+ * libretroshare/src/pqi: p3netmgr.h                                           *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2007-2008  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2015-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+#pragma once
 
 #include "pqi/pqimonitor.h"
 #include "pqi/pqiipset.h"
-
-//#include "pqi/p3dhtmgr.h"
-//#include "pqi/p3upnpmgr.h"
 #include "pqi/pqiassist.h"
-
 #include "pqi/pqinetstatebox.h"
-
 #include "pqi/p3cfgmgr.h"
-
 #include "util/rsthreads.h"
+#include "util/rsdebug.h"
 
 class ExtAddrFinder ;
 class DNSResolver ;
@@ -53,13 +44,10 @@ class DNSResolver ;
 
 
 
-class pqiNetStatus
+struct pqiNetStatus
 {
-	public:
-
 	pqiNetStatus();
 
-        bool mLocalAddrOk;     // Local address is not loopback.
         bool mExtAddrOk;       // have external address.
         bool mExtAddrStableOk; // stable external address.
         bool mUpnpOk;          // upnp is ok.
@@ -74,11 +62,6 @@ class pqiNetStatus
 	bool mResetReq; // Not Used yet!.
 
 	void print(std::ostream &out);
-
-	bool NetOk() // minimum to believe network is okay.`
-	{
-		return (mLocalAddrOk && mExtAddrOk);
-	}
 };
 
 class p3PeerMgr;
@@ -105,11 +88,7 @@ class UdpRelayReceiver;
 
 class p3NetMgr
 {
-	public:
-
-        p3NetMgr() { return; }
-virtual ~p3NetMgr() { return; }
-
+public:
 
 	/*************** External Control ****************/
 
@@ -124,11 +103,11 @@ virtual bool netAssistBadPeer(const struct sockaddr_storage &addr, uint32_t reas
 virtual bool netAssistStatusUpdate(const RsPeerId &id, int mode) = 0;
 
 	/* Get Network State */
-virtual uint32_t getNetStateMode() = 0;
-virtual uint32_t getNetworkMode() = 0;
-virtual uint32_t getNatTypeMode() = 0;
-virtual uint32_t getNatHoleMode() = 0;
-virtual uint32_t getConnectModes() = 0;
+virtual RsNetState getNetStateMode() = 0;
+virtual RsNetworkMode getNetworkMode() = 0;
+virtual RsNatTypeMode getNatTypeMode() = 0;
+virtual RsNatHoleMode getNatHoleMode() = 0;
+virtual RsConnectModes getConnectModes() = 0;
 
 	/* Shut It Down! */
 virtual bool	shutdown() = 0; /* blocking shutdown call */
@@ -148,18 +127,13 @@ virtual bool    getUPnPState() = 0;
 virtual bool	getUPnPEnabled() = 0;
 virtual bool	getDHTEnabled() = 0;
 
-
-/************************************************************************************************/
-/************************************************************************************************/
-/************************************************************************************************/
-/************************************************************************************************/
-
+	virtual ~p3NetMgr();
 };
 
 
 class p3NetMgrIMPL: public p3NetMgr
 {
-	public:
+public:
 
         p3NetMgrIMPL();
 
@@ -180,11 +154,11 @@ virtual bool netAssistBadPeer(const struct sockaddr_storage &addr, uint32_t reas
 virtual bool netAssistStatusUpdate(const RsPeerId &id, int mode);
 
 	/* Get Network State */
-virtual uint32_t getNetStateMode();
-virtual uint32_t getNetworkMode();
-virtual uint32_t getNatTypeMode();
-virtual uint32_t getNatHoleMode();
-virtual uint32_t getConnectModes();
+virtual RsNetState getNetStateMode();
+virtual RsNetworkMode getNetworkMode();
+virtual RsNatTypeMode getNatTypeMode();
+virtual RsNatHoleMode getNatHoleMode();
+virtual RsConnectModes getConnectModes();
 
 	/* Shut It Down! */
 virtual bool	shutdown(); /* blocking shutdown call */
@@ -230,25 +204,6 @@ void    addNetListener(pqiNetListener *listener);
 bool	checkNetAddress(); /* check our address is sensible */
 
 protected:
-
-void 	slowTick();
-
-	/* THESE FUNCTIONS ARE ON_LONGER EXTERNAL - CAN THEY BE REMOVED? */
-//bool    getDHTStats(uint32_t &netsize, uint32_t &localnetsize);
-
-//bool	getNetStatusLocalOk();
-//bool	getNetStatusUpnpOk();
-//bool	getNetStatusDhtOk();
-//bool	getNetStatusStunOk();
-//bool	getNetStatusExtraAddressCheckOk();
-
-//bool 	getUpnpExtAddress(struct sockaddr_in &addr);
-//bool 	getExtFinderAddress(struct sockaddr_in &addr);
-
-//void 	setOwnNetConfig(uint32_t netMode, uint32_t visState);
-
-
-protected:
 	/****************** Internal Interface *******************/
 bool enableNetAssistFirewall(bool on);
 bool netAssistFirewallEnabled();
@@ -280,7 +235,7 @@ bool netAssistAttach(bool on);
 void 	netReset();
 
 void 	statusTick();
-void 	netTick();
+void 	netStatusTick();
 void 	netStartup();
 
 	/* startup the bits */
@@ -305,7 +260,21 @@ void    netUnreachableCheck();
 void 	updateNetStateBox_temporal();
 void 	updateNetStateBox_startup();
 void 	updateNetStateBox_reset();
-void    updateNatSetting();
+    void updateNatSetting();
+
+	/** Conservatively guess new external port, previous approach (aka always
+	 * reset it to local port) break setups where external manually
+	 * forwarded port is different then local port. A common case is having
+	 * SSLH listening on port 80 on the router with public IP forwanding
+	 * plain HTTP connections to a web server and --anyprot connections to
+	 * retroshare to make censor/BOFH/bad firewall life a little more
+	 * difficult */
+	uint16_t guessNewExtPort()
+	{
+		uint16_t newExtPort = sockaddr_storage_port(mExtAddr);
+		if(!newExtPort) newExtPort = sockaddr_storage_port(mLocalAddr);
+		return newExtPort;
+	}
 
 private:
 	// These should have there own Mutex Protection,
@@ -322,8 +291,8 @@ private:
 
 	//p3BitDht   *mBitDht;
 #ifdef RS_USE_DHT_STUNNER
-	pqiAddrAssist *mDhtStunner;
-	pqiAddrAssist *mProxyStunner;
+	pqiAddrAssist *mDhtStunner = nullptr;
+	pqiAddrAssist *mProxyStunner = nullptr;
 #endif // RS_USE_DHT_STUNNER
 
 	RsMutex mNetMtx; /* protects below */
@@ -338,7 +307,7 @@ void 	netStatusReset_locked();
 	uint16_t mVsDisc;
 	uint16_t mVsDht;
 
-	time_t   mNetInitTS;
+	rstime_t   mNetInitTS;
 	uint32_t mNetStatus;
 
 	bool     mStatusChanged;
@@ -353,10 +322,9 @@ void 	netStatusReset_locked();
 	// Improved NetStatusBox, which uses the Stunners!
 	pqiNetStateBox mNetStateBox;
 
-	time_t mLastSlowTickTime;
-	uint32_t mOldNatType;
-	uint32_t mOldNatHole;
+	rstime_t mDoNotNetCheckUntilTs;
+	RsNatTypeMode mOldNatType;
+	RsNatHoleMode mOldNatHole;
 
+	RS_SET_CONTEXT_DEBUG_LEVEL(2)
 };
-
-#endif // MRK_PQI_NET_MANAGER_HEADER

@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006,  crypton
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/connect/ConfCertDialog.cpp                                              *
+ *                                                                             *
+ * Copyright (C) 2006 Crypton         <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "ConfCertDialog.h"
 
@@ -33,14 +32,16 @@
 #include <retroshare/rsdisc.h>
 #include <retroshare/rsmsgs.h>
 
+#include <retroshare-gui/mainpage.h>
+
 #include "gui/help/browser/helpbrowser.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/common/StatusDefs.h"
 #include "gui/RetroShareLink.h"
 #include "gui/notifyqt.h"
 #include "gui/common/AvatarDefs.h"
+#include "gui/common/FilesDefs.h"
 #include "gui/MainWindow.h"
-#include "mainpage.h"
 #include "util/DateTime.h"
 #include "util/misc.h"
 
@@ -83,17 +84,20 @@ ConfCertDialog::ConfCertDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidge
 {
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
-
-    ui.headerFrame->setHeaderImage(QPixmap(":/images/user/identityinfo64.png"));
+	Settings->loadWidgetInformation(this);
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/user/identityinfo64.png"));
     //ui.headerFrame->setHeaderText(tr("Friend node details"));
 
     //ui._chat_CB->hide() ;
 
 	setAttribute(Qt::WA_DeleteOnClose, true);
+    ui._shortFormat_CB->setChecked(true);
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(applyDialog()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
     connect(ui._shouldAddSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
+    connect(ui._includeIPHistory_CB, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
+    connect(ui._shortFormat_CB, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
 
     ui.avatar->setFrameType(AvatarWidget::NORMAL_FRAME);
 
@@ -105,6 +109,7 @@ ConfCertDialog::ConfCertDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidge
 
 ConfCertDialog::~ConfCertDialog()
 {
+	Settings->saveWidgetInformation(this);
     QMap<RsPeerId, ConfCertDialog*>::iterator it = instances_ssl.find(peerId);
     if (it != instances_ssl.end())
 	    instances_ssl.erase(it);
@@ -164,16 +169,7 @@ void ConfCertDialog::load()
 
 		 RsPeerCryptoParams cdet ;
 		 if(RsControl::instance()->getPeerCryptoDetails(detail.id,cdet) && cdet.connexion_state!=0)
-		 {
-			 QString ct ;
-			  ct += QString::fromStdString(cdet.cipher_version) + ": ";
-			 ct += QString::fromStdString(cdet.cipher_name);
-
-			 if(cdet.cipher_version != "TLSv1.2")
-				ct += QString::number(cdet.cipher_bits_1);
-
-			 ui.crypto_info->setText(ct) ;
-		 }
+			 ui.crypto_info->setText(QString::fromStdString(cdet.cipher_name));
 		 else
 			 ui.crypto_info->setText(tr("Not connected")) ;
 
@@ -278,34 +274,27 @@ void ConfCertDialog::loadInvitePage()
 //	ui.userCertificateText_2->setFont(font);
 //	ui.userCertificateText_2->setText(QString::fromUtf8(pgp_key.c_str()));
 
-        std::string invite = rsPeers->GetRetroshareInvite(detail.id,ui._shouldAddSignatures_CB->isChecked()) ; // this needs to be a SSL id
+	std::string invite ;
+    RetroshareInviteFlags flags = RetroshareInviteFlags::DNS | RetroshareInviteFlags::CURRENT_IP | RetroshareInviteFlags::RADIX_FORMAT;
 
-    QString infotext ;
+    if(!detail.isHiddenNode && ui._includeIPHistory_CB->isChecked())
+        flags |= RetroshareInviteFlags::FULL_IP_HISTORY;
 
-    //infotext += tr("<p>Use this certificate to make new friends. Send it by email, or give it hand to hand.</p>") ;
-    infotext += tr("<p>This certificate contains:") ;
-    infotext += "<UL>" ;
-    infotext += "<li> a <b>Profile key</b>";
-    infotext += " (" + QString::fromUtf8(detail.name.c_str())  + "@" + detail.gpg_id.toStdString().c_str()+") " ;
-    if(ui._shouldAddSignatures_CB->isChecked())
-        infotext += tr("with")+" "+QString::number(detail.gpgSigners.size()-1)+" "+tr("external signatures</li>") ;
-    else
-        infotext += "</li>" ;
+    if(ui._shortFormat_CB->isChecked())
+	{
+        rsPeers->getShortInvite(invite,detail.id,flags);
+		ui.stabWidget->setTabText(1, tr("Retroshare ID"));
+	}
+	else
+	{
+        if(ui._shouldAddSignatures_CB->isChecked())
+            flags |= RetroshareInviteFlags::PGP_SIGNATURES;
 
-    infotext += tr("<li>a <b>node ID</b> and <b>name</b>") +" (" + detail.id.toStdString().c_str() + ", " + QString::fromUtf8(detail.location.c_str()) +")" ;
-    infotext += "</li>" ;
-
-    infotext += "<li>" ;
-    if(detail.isHiddenNode)
-        infotext += tr("an <b>onion address</b> and <b>port</b>") +" (" + detail.hiddenNodeAddress.c_str() + ":" + QString::number(detail.hiddenNodePort)+ ")";
-    else
-        infotext += tr("an <b>IP address</b> and <b>port</b>") +" (" + detail.connectAddr.c_str() + ":" + QString::number(detail.connectPort)+ ")";
-    infotext += "</li>" ;
-
-    infotext += QString("</p>") ;
-
-    if(rsPeers->getOwnId() == detail.id)
-        infotext += tr("<p>You can use this certificate to make new friends. Send it by email, or give it hand to hand.</p>") ;
+        invite = rsPeers->GetRetroshareInvite(detail.id, flags ) ;
+		ui.stabWidget->setTabText(1, tr("Retroshare Certificate"));
+	}
+	
+	QString infotext = getCertificateDescription(detail,ui._shouldAddSignatures_CB->isChecked(),ui._shortFormat_CB->isChecked(), ui._includeIPHistory_CB->isChecked() );
 
     ui.userCertificateText->setToolTip(infotext) ;
 
@@ -317,6 +306,53 @@ void ConfCertDialog::loadInvitePage()
         font.setStyle(QFont::StyleNormal);
         ui.userCertificateText->setFont(font);
         ui.userCertificateText->setText(QString::fromUtf8(invite.c_str()));
+}
+
+QString ConfCertDialog::getCertificateDescription(const RsPeerDetails& detail,bool signatures_included,bool use_short_format,bool include_additional_locators)
+{
+    //infotext += tr("<p>Use this certificate to make new friends. Send it by email, or give it hand to hand.</p>") ;
+    QString infotext = QObject::tr("<p>This certificate contains:") ;
+    infotext += "<UL>" ;
+
+    if(use_short_format)
+    {
+		infotext += "<li> a <b>Profile fingerprint</b>";
+    	infotext += " (" + QString::fromUtf8(detail.name.c_str())  + "@" + detail.fpr.toStdString().c_str()+") " ;
+    }
+	else
+    {
+		infotext += "<li> a <b>Profile public key</b>";
+    	infotext += " (" + QString::fromUtf8(detail.name.c_str())  + "@" + detail.gpg_id.toStdString().c_str()+") " ;
+    }
+
+    if(signatures_included && !use_short_format)
+        infotext += tr("with")+" "+QString::number(detail.gpgSigners.size()-1)+" "+tr("external signatures</li>") ;
+    else
+        infotext += "</li>" ;
+
+    infotext += tr("<li>a <b>node ID</b> and <b>name</b>") +" (" + detail.id.toStdString().c_str() + ", " + QString::fromUtf8(detail.location.c_str()) +")" ;
+    infotext += "</li>" ;
+
+    if(detail.isHiddenNode)
+        infotext += tr("<li> <b>onion address</b> and <b>port</b>") +" (" + detail.hiddenNodeAddress.c_str() + ":" + QString::number(detail.hiddenNodePort)+ ")</li>";
+    else if(!include_additional_locators)
+    {
+        if(!detail.localAddr.empty()) infotext += tr("<li><b>IP address</b> and <b>port</b>: ") + detail.localAddr.c_str() + ":" + QString::number(detail.localPort)+ "</li>";
+        if(!detail.extAddr.empty()) infotext += tr("<li><b>IP address</b> and <b>port</b>: ") + detail.extAddr.c_str() + ":" + QString::number(detail.extPort)+ "</li>";
+    }
+    else for(auto it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
+	{
+		infotext += "<li>" ;
+		infotext += tr("<b>IP address</b> and <b>port</b>: ") + QString::fromStdString(*it) ;
+		infotext += "</li>" ;
+	}
+
+    infotext += QString("</p>") ;
+
+    if(rsPeers->getOwnId() == detail.id)
+        infotext += tr("<p>You can use this certificate to make new friends. Send it by email, or give it hand to hand.</p>") ;
+
+    return infotext;
 }
 
 

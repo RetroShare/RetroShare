@@ -1,27 +1,28 @@
-/*
- * libretroshare/src/ft: ftextralist.cc
- *
- * File Transfer for RetroShare.
- *
- * Copyright 2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/ft: ftextralist.cc                                        *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2008  Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
+#include <limits>
+#include <system_error>
 
 #ifdef WINDOWS_SYS
 #include "util/rswin.h"
@@ -32,9 +33,10 @@
 #include "ft/ftextralist.h"
 #include "rsitems/rsconfigitems.h"
 #include "util/rsdir.h"
+#include "util/rstime.h"
 #include <stdio.h>
 #include <unistd.h>		/* for (u)sleep() */
-#include <time.h>
+#include "util/rstime.h"
 
 /******
  * #define DEBUG_ELIST	1
@@ -48,10 +50,10 @@ ftExtraList::ftExtraList()
 }
 
 
-void ftExtraList::data_tick()
+void ftExtraList::threadTick()
 {
     bool todo = false;
-    time_t now = time(NULL);
+    rstime_t now = time(NULL);
 
     {
         RsStackMutex stack(extMutex);
@@ -64,12 +66,8 @@ void ftExtraList::data_tick()
         /* Hash a file */
         hashAFile();
 
-#ifdef WIN32
-        Sleep(1);
-#else
         /* microsleep */
-        usleep(10);
-#endif
+        rstime::rs_usleep(10);
     }
     else
     {
@@ -102,7 +100,7 @@ void ftExtraList::hashAFile()
 	FileDetails details;
 
 	{
-		RsStackMutex stack(extMutex);
+		RS_STACK_MUTEX(extMutex);
 
 		if (mToHash.empty())
 			return;
@@ -119,10 +117,9 @@ void ftExtraList::hashAFile()
 	/* hash it! */
 	std::string name, hash;
 	//uint64_t size;
-	if (RsDirUtil::hashFile(details.info.path, details.info.fname, 
-				details.info.hash, details.info.size))
+	if (RsDirUtil::hashFile(details.info.path, details.info.fname,  details.info.hash, details.info.size))
 	{
-		RsStackMutex stack(extMutex);
+		RS_STACK_MUTEX(extMutex);
 
 		/* stick it in the available queue */
 		mFiles[details.info.hash] = details;
@@ -152,7 +149,7 @@ bool	ftExtraList::addExtraFile(std::string path, const RsFileHash& hash,
 	std::cerr << std::endl;
 #endif
 
-	RsStackMutex stack(extMutex);
+	RS_STACK_MUTEX(extMutex);
 
 	FileDetails details;
 
@@ -172,11 +169,9 @@ bool	ftExtraList::addExtraFile(std::string path, const RsFileHash& hash,
 	return true;
 }
 
-bool ftExtraList::removeExtraFile(const RsFileHash& hash, TransferRequestFlags flags)
+bool ftExtraList::removeExtraFile(const RsFileHash& hash)
 {
 	/* remove unused parameter warnings */
-	(void) flags;
-
 #ifdef  DEBUG_ELIST
 	std::cerr << "ftExtraList::removeExtraFile()";
 	std::cerr << " hash: " << hash;
@@ -185,7 +180,7 @@ bool ftExtraList::removeExtraFile(const RsFileHash& hash, TransferRequestFlags f
 	std::cerr << std::endl;
 #endif
 
-	RsStackMutex stack(extMutex);
+	RS_STACK_MUTEX(extMutex);
 
     mHashOfHash.erase(makeEncryptedHash(hash)) ;
 
@@ -236,14 +231,14 @@ bool	ftExtraList::cleanupOldFiles()
 	std::cerr << std::endl;
 #endif
 
-	RsStackMutex stack(extMutex);
+	RS_STACK_MUTEX(extMutex);
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
     std::list<RsFileHash> toRemove;
 
 	for( std::map<RsFileHash, FileDetails>::iterator it = mFiles.begin(); it != mFiles.end(); ++it) /* check timestamps */
-		if ((time_t)it->second.info.age < now)
+		if ((rstime_t)it->second.info.age < now)
 			toRemove.push_back(it->first);
 
 	if (toRemove.size() > 0)
@@ -253,12 +248,8 @@ bool	ftExtraList::cleanupOldFiles()
 		/* remove items */
 		for(std::list<RsFileHash>::iterator rit = toRemove.begin(); rit != toRemove.end(); ++rit)
         {
-			if (mFiles.end() != (it = mFiles.find(*rit)))
-			{
-				cleanupEntry(it->second.info.path, it->second.info.transfer_info_flags);
-				mFiles.erase(it);
-			}
-			mHashOfHash.erase(makeEncryptedHash(*rit)) ;
+			if (mFiles.end() != (it = mFiles.find(*rit))) mFiles.erase(it);
+			mHashOfHash.erase(makeEncryptedHash(*rit));
         }
 
 		IndicateConfigChanged();
@@ -266,37 +257,44 @@ bool	ftExtraList::cleanupOldFiles()
 	return true;
 }
 
-
-bool	ftExtraList::cleanupEntry(std::string /*path*/, TransferRequestFlags /*flags*/)
+bool ftExtraList::hashExtraFile(
+        std::string path, uint32_t period, TransferRequestFlags flags )
 {
-//	if (flags & RS_FILE_CONFIG_CLEANUP_DELETE)
-//	{
-//		/* Delete the file? - not yet! */
-//	}
-	return true;
-}
+	constexpr rstime_t max_int = std::numeric_limits<int>::max();
+	const rstime_t now = time(nullptr);
+	const rstime_t timeOut = now + period;
 
-		/***
-		 * Hash file, and add to the files, 
-		 * file is removed after period.
-		 **/
+	if(timeOut > max_int)
+	{
+		/* Under the hood period is stored as int FileInfo::age so we do this
+		 * check here to detect 2038 year problem
+		 * https://en.wikipedia.org/wiki/Year_2038_problem */
+		RsErr() << __PRETTY_FUNCTION__ << " period: " << period  << " > "
+		        << max_int - now << std::errc::value_too_large << std::endl;
+		return false;
+	}
 
-bool 	ftExtraList::hashExtraFile(std::string path, uint32_t period, TransferRequestFlags flags)
-{
-#ifdef  DEBUG_ELIST
-	std::cerr << "ftExtraList::hashExtraFile() path: " << path;
-	std::cerr << " period: " << period;
-	std::cerr << " flags: " << flags;
+	if(!RsDirUtil::fileExists(path))
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " path: " << path
+		        << std::errc::no_such_file_or_directory << std::endl;
+		return false;
+	}
 
-	std::cerr << std::endl;
-#endif
-
-	/* add into queue */
-	RsStackMutex stack(extMutex);
+	if(RsDirUtil::checkDirectory(path))
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " path: " << path
+		        << std::errc::is_a_directory << std::endl;
+		return false;
+	}
 
 	FileDetails details(path, period, flags);
-	details.info.age = time(NULL) + period;
-	mToHash.push_back(details);
+	details.info.age = static_cast<int>(timeOut);
+
+	{
+		RS_STACK_MUTEX(extMutex);
+		mToHash.push_back(details); /* add into queue */
+	}
 
 	return true;
 }
@@ -311,7 +309,7 @@ bool	ftExtraList::hashExtraFileDone(std::string path, FileInfo &info)
     RsFileHash hash;
 	{
 		/* Find in the path->hash map */
-		RsStackMutex stack(extMutex);
+		RS_STACK_MUTEX(extMutex);
 
         std::map<std::string, RsFileHash>::iterator it;
 		if (mHashedList.end() == (it = mHashedList.find(path)))
@@ -426,7 +424,7 @@ bool ftExtraList::saveList(bool &cleanup, std::list<RsItem *>& sList)
 	std::cerr << std::endl;
 #endif
 
-	RsStackMutex stack(extMutex);
+	RS_STACK_MUTEX(extMutex);
 
 
     std::map<RsFileHash, FileDetails>::const_iterator it;
@@ -459,7 +457,7 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 	std::cerr << std::endl;
 #endif
 
-	time_t ts = time(NULL);
+	rstime_t ts = time(NULL);
 
 
 	std::list<RsItem *>::iterator it;
@@ -484,10 +482,9 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 		fclose(fd);
 		fd = NULL ;
 
-		if (ts > (time_t)fi->file.age)
+		if (ts > (rstime_t)fi->file.age)
 		{
-			/* to old */
-			cleanupEntry(fi->file.path, TransferRequestFlags(fi->flags));
+			/* too old */
 			delete (*it);
 			continue ;
 		}
@@ -495,8 +492,8 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 		/* add into system */
 		FileDetails file;
 
-		RsStackMutex stack(extMutex);
-	
+		RS_STACK_MUTEX(extMutex);
+
 		FileDetails details;
 	
 		details.info.path = fi->file.path;
@@ -513,18 +510,18 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 		delete (*it);
 
 		/* short sleep */
-#ifndef WINDOWS_SYS
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-		usleep(1000); /* 1000 per second */
-
-#else
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-		Sleep(1);
-#endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-
+		rstime::rs_usleep(1000) ;
 	}
     load.clear() ;
 	return true;
 }
 
+void ftExtraList::getExtraFileList(std::vector<FileInfo>& files) const
+{
+	RS_STACK_MUTEX(extMutex);
+
+    files.clear();
+
+    for(auto it(mFiles.begin());it!=mFiles.end();++it)
+        files.push_back(it->second.info);
+}

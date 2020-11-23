@@ -1,43 +1,42 @@
+/*******************************************************************************
+ * libretroshare/src/gxs: rsgxsdataaccess.h                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2012 by Christopher Evi-Parker, Robert Fernie                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RSGXSDATAACCESS_H
 #define RSGXSDATAACCESS_H
 
-/*
- * libretroshare/src/retroshare: rsgxsdataaccess.cc
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2012-2012 by Robert Fernie, Christopher Evi-Parker
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+#include <queue>
 #include "retroshare/rstokenservice.h"
 #include "rsgxsrequesttypes.h"
 #include "rsgds.h"
 
 
-typedef std::map< RsGxsGroupId, std::map<RsGxsMessageId, RsGxsMsgMetaData*> > MsgMetaFilter;
+typedef std::map< RsGxsGroupId, std::map<RsGxsMessageId, const RsGxsMsgMetaData*> > MsgMetaFilter;
 typedef std::map< RsGxsGroupId, RsGxsGrpMetaData* > GrpMetaFilter;
+
+bool operator<(const std::pair<uint32_t,GxsRequest*>& p1,const std::pair<uint32_t,GxsRequest*>& p2);
 
 class RsGxsDataAccess : public RsTokenService
 {
 public:
-    RsGxsDataAccess(RsGeneralDataService* ds);
+    explicit RsGxsDataAccess(RsGeneralDataService* ds);
     virtual ~RsGxsDataAccess() ;
 
 public:
@@ -48,6 +47,8 @@ public:
 	 * deprecated and should be removed as soon as possible as it is cause of
 	 * many confusions, instead use const RsTokReqOptions::mReqType &opts to
 	 * specify the kind of data you are interested in.
+	 * Most of the methods use const uint32_t &token as param type change it to
+	 * uint32_t
 	 */
 
     /*!
@@ -58,7 +59,7 @@ public:
      * @param groupIds group id to request info for
      * @return
      */
-    bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId> &groupIds);
+    bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId> &groupIds) override;
 
     /*!
      * Use this to request all group related info
@@ -67,7 +68,7 @@ public:
      * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
      * @return
      */
-    bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts);
+    bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts) override;
 
     /*!
      * Use this to get msg information (id, meta, or data), store token value to poll for request completion
@@ -77,7 +78,7 @@ public:
      * @param groupIds The ids of the groups to get, second entry of map empty to query for all msgs
      * @return true if request successful false otherwise
      */
-    bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const GxsMsgReq& msgIds);
+    bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const GxsMsgReq& msgIds) override;
 
     /*!
      * Use this to get message information (id, meta, or data), store token value to poll for request completion
@@ -88,7 +89,7 @@ public:
      * all messages for all groups are retrieved
      * @return true if request successful false otherwise
      */
-    bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId>& grpIds);
+    bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId>& grpIds) override;
 
     /*!
      * For requesting msgs related to a given msg id within a group
@@ -98,7 +99,7 @@ public:
      * @param groupIds The ids of the groups to get, second entry of map empty to query for all msgs
      * @return true if request successful false otherwise
      */
-    bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::vector<RsGxsGrpMsgIdPair> &msgIds);
+    bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::vector<RsGxsGrpMsgIdPair> &msgIds) override;
 
     /*!
      * This request statistics on amount of data held
@@ -109,19 +110,20 @@ public:
      * total size of messages
      * total size of groups
      * @param token
+     * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
      */
-    void requestServiceStatistic(uint32_t& token);
+    void requestServiceStatistic(uint32_t& token, const RsTokReqOptions &opts) override;
 
 	/*!
 	 * To request statistic on a group
 	 * @param token set to value to be redeemed to get statistic
 	 * @param grpId the id of the group
+     * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
 	 */
-    void requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId);
-
+    void requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId, const RsTokReqOptions &opts) override;
 
     /* Poll */
-    uint32_t requestStatus(const uint32_t token);
+	GxsRequestStatus requestStatus(uint32_t token);
 
     /* Cancel Request */
     bool cancelRequest(const uint32_t &token);
@@ -155,6 +157,14 @@ public:
      * @return false if msg could not be added, true otherwise
      */
     bool addMsgData(RsNxsMsg* msg);
+
+    /*!
+     * This retrieves a group from the gxs data base, this is a blocking call \n
+     * @param grp the group to add, memory ownership passed to the callee
+     * @return false if group cound not be retrieved
+     */
+    bool getGroupData(const RsGxsGroupId& grpId,RsNxsGrp *& grp_data);
+
 
 public:
 
@@ -194,7 +204,8 @@ public:
      * @param token request token to be redeemed
      * @param msgIds
      */
-    bool getMsgList(const uint32_t &token, GxsMsgIdResult &msgIds);
+    bool getMsgIdList(const uint32_t &token, GxsMsgIdResult &msgIds);
+
 
     /*!
      * Retrieve msg list for a given token for message related info
@@ -209,7 +220,7 @@ public:
      * @param token request token to be redeemed
      * @param groupInfo
      */
-    bool getGroupSummary(const uint32_t &token, std::list<RsGxsGrpMetaData*> &groupInfo);
+    bool getGroupSummary(const uint32_t &token, std::list<const RsGxsGrpMetaData*>& groupInfo);
 
     /*!
      *
@@ -265,7 +276,7 @@ private:
      * @param token the value of the token for the request object handle wanted
      * @return the request associated to this token
      */
-    GxsRequest* locked_retrieveRequest(const uint32_t& token);
+    GxsRequest* locked_retrieveCompetedRequest(const uint32_t& token);
 
     /*!
      * Add a gxs request to queue
@@ -296,7 +307,7 @@ private:
      * @param status the status to set
      * @return
      */
-    bool locked_updateRequestStatus(const uint32_t &token, const uint32_t &status);
+	bool locked_updateRequestStatus(uint32_t token, GxsRequestStatus status);
 
     /*!
      * Use to query the status and other values of a given token
@@ -307,7 +318,8 @@ private:
      * @param ts time stamp
      * @return false if token does not exist, true otherwise
      */
-    bool checkRequestStatus(const uint32_t &token, uint32_t &status, uint32_t &reqtype, uint32_t &anstype, time_t &ts);
+	bool checkRequestStatus( uint32_t token, GxsRequestStatus &status,
+	                         uint32_t &reqtype, uint32_t &anstype, rstime_t &ts);
 
             // special ones for testing (not in final design)
     /*!
@@ -316,11 +328,11 @@ private:
      */
     void tokenList(std::list<uint32_t> &tokens);
 
-    /*!
-     * Convenience function to delete the ids
-     * @param filter the meta filter to clean
-     */
-    void cleanseMsgMetaMap(GxsMsgMetaResult& result);
+    //  /*!
+    //   * Convenience function to delete the ids
+    //   * @param filter the meta filter to clean
+    //   */
+    //  void cleanseMsgMetaMap(GxsMsgMetaResult& result);
 
 public:
 
@@ -337,14 +349,14 @@ public:
      * @param status
      * @return false if token could not be found, true if token disposed of
      */
-    bool updatePublicRequestStatus(const uint32_t &token, const uint32_t &status);
+	bool updatePublicRequestStatus(uint32_t token, GxsRequestStatus status);
 
     /*!
      * This gets rid of a publicly issued token
      * @param token
      * @return false if token could not found, true if token disposed of
      */
-    bool disposeOfPublicToken(const uint32_t &token);
+	bool disposeOfPublicToken(uint32_t token);
 
 private:
 
@@ -371,8 +383,18 @@ private:
      * @param req
      * @return false if unsuccessful, true otherwise
      */
-    bool getMsgList(MsgIdReq* req);
+    bool getMsgIdList(MsgIdReq* req);
 
+    /*!
+     * Attempts to retrieve msg Meta list from data store
+     * Computationally/CPU-Bandwidth expensive
+     *
+     * @param msgIds List of message Ids for the Message Metas to retrieve
+     * @param opts   GxsRequest options
+     * @param result Map of Meta information for messages
+     *
+     */
+	bool getMsgMetaDataList( const GxsMsgReq& msgIds, const RsTokReqOptions& opts, GxsMsgMetaResult& result );
 
     /*!
      * Attempts to retrieve group meta data from data store
@@ -438,7 +460,7 @@ private:
      * @param opts the request options set by user
      * @param meta The accompanying meta information for msg, ids
      */
-    void filterMsgList(GxsMsgIdResult& msgIds, const RsTokReqOptions& opts, const MsgMetaFilter& meta) const;
+    void filterMsgIdList(GxsMsgIdResult& msgIds, const RsTokReqOptions& opts, const MsgMetaFilter& meta) const;
 
     /*!
      * This filter msgs based of options supplied (at the moment just status masks)
@@ -475,20 +497,20 @@ private:
      * @param opts the options used to parameterise the id filter
      * @param msgIdsOut the left overs ids after filter is applied to msgIds
      */
-    bool getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptions& opts, GxsMsgReq& msgIdsOut);
+    bool getMsgIdList(const GxsMsgReq& msgIds, const RsTokReqOptions& opts, GxsMsgReq& msgIdsOut);
 
 private:
+    bool locked_clearRequest(const uint32_t &token);
 
     RsGeneralDataService* mDataStore;
 
     RsMutex mDataMutex; /* protecting below */
 
     uint32_t mNextToken;
-    std::map<uint32_t, uint32_t> mPublicToken;
-    std::map<uint32_t, GxsRequest*> mRequests;
+	std::map<uint32_t, GxsRequestStatus> mPublicToken;
 
-
-
+    std::set<std::pair<uint32_t,GxsRequest*> > mRequestQueue;
+    std::map<uint32_t, GxsRequest*> mCompletedRequests;
 };
 
 #endif // RSGXSDATAACCESS_H

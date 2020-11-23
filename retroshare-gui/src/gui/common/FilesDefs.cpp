@@ -1,29 +1,33 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (c) 2011, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/common/FilesDefs.cpp                                                    *
+ *                                                                             *
+ * Copyright (C) 2011, Retroshare Team <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
+#include "FilesDefs.h"
+
+#include "RsCollection.h"
 
 #include <QApplication>
 #include <QFileInfo>
 
-#include "FilesDefs.h"
-#include "RsCollectionFile.h"
+#include <map>
+
+//#define DEBUG_FILESDEFS 1
 
 static QString getInfoFromFilename(const QString& filename, bool anyForUnknown, bool image)
 {
@@ -54,7 +58,7 @@ static QString getInfoFromFilename(const QString& filename, bool anyForUnknown, 
 		return image ? ":/images/FileTypeDocument.png" : QApplication::translate("FilesDefs", "Document");
 	} else if (ext == "pdf") {
 		return image ? ":/images/mimetypes/pdf.png" : QApplication::translate("FilesDefs", "Document");
-	} else if (ext == RsCollectionFile::ExtensionString) {
+	} else if (ext == RsCollection::ExtensionString) {
 		return image ? ":/images/mimetypes/rscollection-16.png" : QApplication::translate("FilesDefs", "RetroShare collection file");
 	} else if (ext == "sub" || ext == "srt") {
 		return image ? ":/images/FileTypeAny.png" : QApplication::translate("FilesDefs", "Subtitles");
@@ -83,9 +87,109 @@ QString FilesDefs::getImageFromFilename(const QString& filename, bool anyForUnkn
 	return getInfoFromFilename(filename, anyForUnknown, true);
 }
 
-QIcon FilesDefs::getIconFromFilename(const QString& filename)
+QPixmap FilesDefs::getPixmapFromQtResourcePath(const QString& resource_path)
 {
-	return QIcon(getInfoFromFilename(filename, true, true));
+	static std::map<QString,QPixmap> mPixmapCache;
+	QPixmap pixmap;
+#ifdef DEBUG_FILESDEFS
+    std::cerr << "Creating Pixmap from resource path " << resource_path.toStdString() ;
+#endif
+
+	auto item = mPixmapCache.find(resource_path);
+
+	if (item == mPixmapCache.end())
+	{
+#ifdef DEBUG_FILESDEFS
+        std::cerr << "  Not in cache. Creating new one." << std::endl;
+#endif
+        pixmap = QPixmap(resource_path);
+		mPixmapCache[resource_path] = pixmap;
+	}
+	else
+    {
+#ifdef DEBUG_FILESDEFS
+        std::cerr << "  In cache. " << std::endl;
+#endif
+		pixmap = item->second;
+	}
+
+	return pixmap;
+}
+
+QIcon FilesDefs::getIconFromQtResourcePath(const QString& resource_path)
+{
+	static std::map<QString,QIcon> mIconCache;
+	QIcon icon;
+#ifdef DEBUG_FILESDEFS
+    std::cerr << "Creating Icon from resource path " << resource_path.toStdString() ;
+#endif
+
+	auto item = mIconCache.find(resource_path);
+
+	if (item == mIconCache.end())
+	{
+#ifdef DEBUG_FILESDEFS
+        std::cerr << "  Not in cache. Creating new one." << std::endl;
+#endif
+		icon = QIcon(resource_path);
+		mIconCache[resource_path] = icon;
+	}
+	else
+    {
+#ifdef DEBUG_FILESDEFS
+        std::cerr << "  In cache. " << std::endl;
+#endif
+		icon = item->second;
+	}
+
+	return icon;
+}
+
+QIcon FilesDefs::getIconFromGxsIdCache(const RsGxsId& id,const QIcon& setIcon, bool& exist)
+{
+	static std::map<RsGxsId,QIcon> mIconCache;
+	exist = false;
+	QIcon icon;
+#ifdef DEBUG_FILESDEFS
+	std::cerr << "Creating Icon from id " << id.toStdString() ;
+#endif
+	if (setIcon.isNull())
+	{
+		if (id.isNull())
+			return getIconFromQtResourcePath(":/icons/notification.png");
+
+		auto item = mIconCache.find(id);
+
+		if (item == mIconCache.end())
+		{
+#ifdef DEBUG_FILESDEFS
+			std::cerr << "  Not in cache. And not setted." << std::endl;
+#endif
+			icon = getIconFromQtResourcePath(":/icons/png/anonymous.png");
+		}
+		else
+		{
+#ifdef DEBUG_FILESDEFS
+			std::cerr << "  In cache. " << std::endl;
+#endif
+			icon = item->second;
+			exist = true;
+		}
+	}
+	else
+	{
+#ifdef DEBUG_FILESDEFS
+		std::cerr << "  Have to set it." << std::endl;
+#endif
+		icon = setIcon;
+		mIconCache[id] = icon;
+	}
+	return icon;
+}
+
+QIcon FilesDefs::getIconFromFileType(const QString& filename)
+{
+    return getIconFromQtResourcePath(getInfoFromFilename(filename,true,true));
 }
 
 QString FilesDefs::getNameFromFilename(const QString &filename)

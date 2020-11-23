@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/services: ftturtlefiletransferitem.h
- *
- * Services for RetroShare.
- *
- * Copyright 2013 by Cyril Soler
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "csoler@users.sourceforge.net".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/ft: ftturtlefiletransferitem.h                            *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2013 by Cyril Soler <csoler@users.sourceforge.net>                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include <stdint.h>
 #include <turtle/rsturtleitem.h>
 
@@ -33,7 +29,7 @@
 class RsTurtleFileRequestItem: public RsTurtleGenericTunnelItem
 {
 	public:
-		RsTurtleFileRequestItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_REQUEST) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_REQUEST);}
+		RsTurtleFileRequestItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_REQUEST), chunk_offset(0), chunk_size(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_REQUEST);}
 
 		virtual bool shouldStampTunnel() const { return false ; }
 		virtual Direction travelingDirection() const { return DIRECTION_SERVER ; }
@@ -49,7 +45,7 @@ class RsTurtleFileRequestItem: public RsTurtleGenericTunnelItem
 class RsTurtleFileDataItem: public RsTurtleGenericTunnelItem
 {
 	public:
-		RsTurtleFileDataItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_DATA) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_DATA) ;}
+		RsTurtleFileDataItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_DATA), chunk_offset(0), chunk_size(0), chunk_data(NULL) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_DATA) ;}
         ~RsTurtleFileDataItem() { clear() ; }
 
 		virtual bool shouldStampTunnel() const { return true ; }
@@ -99,13 +95,13 @@ class RsTurtleFileMapItem: public RsTurtleGenericTunnelItem
 class RsTurtleChunkCrcRequestItem: public RsTurtleGenericTunnelItem			
 {
 	public:
-		RsTurtleChunkCrcRequestItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST) { setPriorityLevel(QOS_PRIORITY_RS_CHUNK_CRC_REQUEST);}
+		RsTurtleChunkCrcRequestItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST), chunk_number(0) { setPriorityLevel(QOS_PRIORITY_RS_CHUNK_CRC_REQUEST);}
 
 		virtual bool shouldStampTunnel() const { return false ; }
 		virtual Direction travelingDirection() const { return DIRECTION_SERVER ; }
 
 		uint32_t chunk_number ; // id of the chunk to CRC.
-												
+
         void clear() {}
 		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };
@@ -113,7 +109,7 @@ class RsTurtleChunkCrcRequestItem: public RsTurtleGenericTunnelItem
 class RsTurtleChunkCrcItem: public RsTurtleGenericTunnelItem			
 {
 	public:
-		RsTurtleChunkCrcItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_CHUNK_CRC) { setPriorityLevel(QOS_PRIORITY_RS_CHUNK_CRC);}
+		RsTurtleChunkCrcItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_CHUNK_CRC), chunk_number(0) { setPriorityLevel(QOS_PRIORITY_RS_CHUNK_CRC);}
 
 		virtual bool shouldStampTunnel() const { return true ; }
 		virtual Direction travelingDirection() const { return DIRECTION_CLIENT ; }

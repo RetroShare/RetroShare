@@ -41,7 +41,7 @@
          <bool>true</bool>
         </property>
         <attribute name="headerShowSortIndicator" stdset="0">
-         <bool>false</bool>
+         <bool>true</bool>
         </attribute>
         <column>
          <property name="text">
@@ -70,12 +70,22 @@
         </column>
         <column>
          <property name="text">
-          <string>Sending time (secs ago)</string>
+          <string>Sending time</string>
          </property>
         </column>
         <column>
          <property name="text">
           <string>Group ID</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Sending time (secs ago)</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Destination ID</string>
          </property>
         </column>
        </widget>
@@ -95,6 +105,15 @@
          <enum>Qt::Vertical</enum>
         </property>
         <widget class="QTreeWidget" name="groupTreeWidget">
+         <property name="contextMenuPolicy">
+          <enum>Qt::CustomContextMenu</enum>
+         </property>
+         <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+         <attribute name="headerShowSortIndicator" stdset="0">
+          <bool>true</bool>
+         </attribute>
          <column>
           <property name="text">
            <string>Group ID / Author</string>
@@ -102,7 +121,12 @@
          </column>
          <column>
           <property name="text">
-           <string>Number of messages / Publish TS</string>
+           <string>Publish TS</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Number of messages </string>
           </property>
          </column>
          <column>

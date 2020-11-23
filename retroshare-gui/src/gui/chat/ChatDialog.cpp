@@ -1,24 +1,24 @@
-/****************************************************************
- *
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2011, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/chat/ChatDialog.cpp                                                     *
+ *                                                                             *
+ * LibResAPI: API for local socket server                                      *
+ *                                                                             *
+ * Copyright (C) 2011 RetroShare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QMessageBox>
 #include <QCloseEvent>
@@ -38,7 +38,7 @@
 #include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
 
-static std::map<ChatId, ChatDialog*> chatDialogs2;
+static std::map<ChatId, ChatDialog*> chatDialogsList;
 
 ChatDialog::ChatDialog(QWidget *parent, Qt::WindowFlags flags) :
 	QWidget(parent, flags)
@@ -49,8 +49,8 @@ ChatDialog::ChatDialog(QWidget *parent, Qt::WindowFlags flags) :
 ChatDialog::~ChatDialog()
 {
     std::map<ChatId, ChatDialog *>::iterator it;
-    if (chatDialogs2.end() != (it = chatDialogs2.find(mChatId))) {
-        chatDialogs2.erase(it);
+    if (chatDialogsList.end() != (it = chatDialogsList.find(mChatId))) {
+        chatDialogsList.erase(it);
 	}
 }
 
@@ -78,7 +78,7 @@ void ChatDialog::init(const ChatId &id, const QString &title)
 /*static*/ ChatDialog* ChatDialog::getExistingChat(ChatId id)
 {
     std::map<ChatId, ChatDialog*>::iterator it;
-    if (chatDialogs2.end() != (it = chatDialogs2.find(id))) {
+    if (chatDialogsList.end() != (it = chatDialogsList.find(id))) {
         /* exists already */
         return it->second;
     }
@@ -122,7 +122,7 @@ void ChatDialog::init(const ChatId &id, const QString &title)
                 }
             }
             if(cd)
-                chatDialogs2[id] = cd;
+                chatDialogsList[id] = cd;
         }
     }
 
@@ -142,14 +142,14 @@ void ChatDialog::init(const ChatId &id, const QString &title)
 	/* ChatDialog destuctor removes the entry from the map */
 	std::list<ChatDialog*> list;
 
-    std::map<ChatId, ChatDialog*>::iterator it;
-    for (it = chatDialogs2.begin(); it != chatDialogs2.end(); ++it) {
+	std::map<ChatId, ChatDialog*>::iterator it;
+	for (it = chatDialogsList.begin(); it != chatDialogsList.end(); ++it) {
 		if (it->second) {
 			list.push_back(it->second);
 		}
 	}
 
-    chatDialogs2.clear();
+	chatDialogsList.clear();
 
 	std::list<ChatDialog*>::iterator it1;
 	for (it1 = list.begin(); it1 != list.end(); ++it1) {
@@ -311,10 +311,13 @@ bool ChatDialog::hasNewMessages()
 
 	return false;
 }
-QString ChatDialog::getPeerName(const ChatId& id) const
+QString ChatDialog::getPeerName(const ChatId& id, QString& additional_info) const
 {
     if(id.isPeerId())
+	{
+		additional_info = QString("Peer ID: ")+QString::fromStdString(id.toPeerId().toStdString());
         return QString::fromUtf8(rsPeers->getPeerName(id.toPeerId()).c_str()) ;
+	}
     else
         return "ChatDialog::getPeerName(): invalid id type passed (RsPeerId is required). This is a bug.";
 }

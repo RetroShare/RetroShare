@@ -1,66 +1,50 @@
-/*
- * "$Id: pqissludp.h,v 1.8 2007-02-18 21:46:49 rmf24 Exp $"
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2004-2006 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-
-
-#ifndef MRK_PQI_SSL_UDP_HEADER
-#define MRK_PQI_SSL_UDP_HEADER
-
-// operating system specific network header.
-#include "pqi/pqinetwork.h"
+/*******************************************************************************
+ * libretroshare/src/pqi: pqissludp.h                                          *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2004-2006  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2015-2019  Gioacchino Mazzurco <gio@altermundi.net>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+#pragma once
 
 #include <string>
 #include <map>
 
 #include "pqi/pqissl.h"
+#include "pqi/pqinetwork.h"
+#include "util/rsdebug.h"
 
- /* So pqissludp is the special firewall breaking protocol.
-  * This class will implement the basics of streaming
-  * ssl over udp using a tcponudp library....
-  * and a small extension to ssl.
-  */
 
-class pqissludp;
-class cert;
-
-/* This provides a NetBinInterface, which is
- * primarily inherited from pqissl.
- * fns declared here are different -> all others are identical.
+/**
+ * @brief pqissludp is the special NAT traversal protocol.
+ * This class will implement the basics of streaming ssl over udp using a
+ * tcponudp library.
+ * It provides a NetBinInterface, which is primarily inherited from pqissl.
+ * Some methods are override all others are identical.
  */
-
 class pqissludp: public pqissl
 {
 public:
 	pqissludp(PQInterface *parent, p3LinkMgr *lm);
+	~pqissludp() override;
 
-	virtual ~pqissludp();
-
-	// NetInterface.
-	// listen fns call the udpproxy.
-	virtual int listen();
-	virtual int stoplistening();
+	int listen() override { return 1; }
+	int stoplistening() override { return 1; }
 
 	virtual bool connect_parameter(uint32_t type, uint32_t value);
 	virtual bool connect_additional_address(uint32_t type, const struct sockaddr_storage &addr);
@@ -89,13 +73,11 @@ protected:
 	 */
 	virtual int net_internal_close(int fd);
 	virtual int net_internal_SSL_set_fd(SSL *ssl, int fd);
-	virtual int net_internal_fcntl_nonblock(int fd);
+	virtual int net_internal_fcntl_nonblock(int /*fd*/) { return 0; }
 
 private:
 
 	BIO *tou_bio;  // specific to ssludp.
-
-	//long listen_checktime;
 
 	uint32_t mConnectPeriod;
 	uint32_t mConnectFlags;
@@ -103,6 +85,6 @@ private:
 
 	struct sockaddr_storage mConnectProxyAddr;
 	struct sockaddr_storage mConnectSrcAddr;
-};
 
-#endif // MRK_PQI_SSL_UDP_HEADER
+	RS_SET_CONTEXT_DEBUG_LEVEL(2)
+};

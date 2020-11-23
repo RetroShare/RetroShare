@@ -1,13 +1,12 @@
 :: Usage:
-:: call build-libs.bat [auto-copy] [make tasks]
+:: call build-libs.bat [make tasks]
 
 @echo off
 
 setlocal
 
 :: Parameter
-set MakeParam="DOWNLOAD_PATH=../download"
-if "%~1"=="auto-copy" set MakeParam=%MakeParam% "COPY_ANSWER=y"& shift /1
+set MakeParam="DOWNLOAD_PATH=../../download"
 
 set MakeTask=
 :param_loop
@@ -20,22 +19,29 @@ if "%~1" NEQ "" (
 :: Initialize environment
 call "%~dp0..\env.bat"
 if errorlevel 1 goto error_env
-call "%EnvPath%\env-msys.bat"
+call "%EnvPath%\env-msys2.bat"
 if errorlevel 1 goto error_env
 
 :: Check MSYS environment
-if not exist "%EnvMSYSSH%" %cecho% error "Please install MSYS first." & exit /B 1
+if not exist "%EnvMSYS2SH%" %cecho% error "Please install MSYS2 first." & exit /B 1
 
 :: Initialize environment
 call "%~dp0env.bat"
 if errorlevel 1 goto error_env
 
-call "%ToolsPath%\msys-path.bat" "%~dp0" MSYSCurPath
-call "%ToolsPath%\msys-path.bat" "%BuildLibsPath%" MSYSBuildLibsPath
+call "%ToolsPath%\msys2-path.bat" "%~dp0" MSYS2CurPath
+call "%ToolsPath%\msys2-path.bat" "%BuildLibsPath%" MSYS2BuildLibsPath
 
 if not exist "%BuildLibsPath%" mkdir "%BuildLibsPath%"
 
-%EnvMSYSCmd% "cd "%MSYSBuildLibsPath%" && make -f %MSYSCurPath%/makefile %MakeParam% %MakeTask%"
+set MSYSTEM=MINGW%MSYS2Base%
+set MSYS2_PATH_TYPE=inherit
+
+%EnvMSYS2Cmd% "pacman --needed --noconfirm -S diffutils perl tar make wget mingw-w64-%MSYS2Architecture%-make"
+::mingw-w64-%MSYS2Architecture%-cmake
+::%EnvMSYS2Cmd% "pacman --noconfirm -Rd --nodeps mingw-w64-%MSYS2Architecture%-zlib"
+
+%EnvMSYS2Cmd% "cd "%MSYS2BuildLibsPath%" && make -f %MSYS2CurPath%/makefile %MakeParam% %MakeTask%"
 
 exit /B %ERRORLEVEL%
 

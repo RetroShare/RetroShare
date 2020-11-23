@@ -1,30 +1,27 @@
-#ifndef MRK_P3RS_INTERFACE_H
-#define MRK_P3RS_INTERFACE_H
+/*******************************************************************************
+ * libretroshare/src/rsserver: p3face.h                                        *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2006 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+#pragma once
 
-/*
- * "$Id: p3face.h,v 1.9 2007-05-05 16:10:06 rmf24 Exp $"
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2004-2006 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+#include <functional>
 
 //#include "server/filedexserver.h"
 #include "ft/ftserver.h"
@@ -78,19 +75,20 @@ class RsPluginManager;
 
 class RsServer: public RsControl, public RsTickingThread
 {
-	public:
-		/****************************************/
-		/* p3face-startup.cc: init... */
-		virtual int StartupRetroShare();
+public:
+	RsServer();
+	virtual ~RsServer();
 
-		/****************************************/
-		/* p3face.cc: main loop / util fns / locking. */
+	virtual int StartupRetroShare();
 
-		RsServer() ;
-		virtual ~RsServer();
+	/// @see RsControl::isReady()
+	virtual bool isReady() { return coreReady; }
 
-		/* Thread Fn: Run the Core */
-        virtual void data_tick();
+	/// @see RsControl::setShutdownCallback
+	void setShutdownCallback(const std::function<void(int)>& callback)
+	{ mShutdownCallback = callback; }
+
+	void threadTick() override; /// @see RsTickingThread
 
 		/* locking stuff */
 		void    lockRsCore() 
@@ -126,11 +124,11 @@ class RsServer: public RsControl, public RsTickingThread
 
 		/************* Rs shut down function: in upnp 'port lease time' bug *****************/
 
-		/**
-		 * This function is responsible for ensuring Retroshare exits in a legal state:
-		 * i.e. releases all held resources and saves current configuration
-		 */
-		virtual void 	rsGlobalShutDown( );
+	/**
+	 * This function is responsible for ensuring Retroshare exits in a legal state:
+	 * i.e. releases all held resources and saves current configuration
+	 */
+	virtual void rsGlobalShutDown();
 
 		/****************************************/
 
@@ -140,7 +138,7 @@ class RsServer: public RsControl, public RsTickingThread
 
 	private: 
 
-		std::string getSQLCipherVersion();
+		std::string getSQLCipherVersion(); // TODO: move to rsversion.h
 
 		// The real Server Parts.
 
@@ -156,8 +154,6 @@ class RsServer: public RsControl, public RsTickingThread
 
 		RsPluginManager *mPluginsManager;
 
-		//sslroot *sslr;
-
 		/* services */
 		p3heartbeat *mHeart;
 		p3discovery2 *mDisc;
@@ -165,7 +161,9 @@ class RsServer: public RsControl, public RsTickingThread
 		p3ChatService *chatSrv;
 		p3StatusService *mStatusSrv;
 		p3GxsTunnelService *mGxsTunnels;
+#ifdef RS_USE_I2P_BOB
 		p3I2pBob *mI2pBob;
+#endif
 
         // This list contains all threaded services. It will be used to shut them down properly.
 
@@ -176,8 +174,8 @@ class RsServer: public RsControl, public RsTickingThread
 //		p3Posted *mPosted;
 //		p3PhotoService *mPhoto;
 //		p3GxsCircles *mGxsCircles;
-//        p3GxsNetService *mGxsNetService;
-//        p3IdService *mGxsIdService;
+//		p3GxsNetService *mGxsNetService;
+//		p3IdService *mGxsIdService;
 //		p3GxsForums *mGxsForums;
 //		p3GxsChannels *mGxsChannels;
 //		p3Wire *mWire;
@@ -192,16 +190,22 @@ class RsServer: public RsControl, public RsTickingThread
 
 		// Worker Data.....
 
-    int mMin ;
-    int mLoop ;
-    int mLastts ;
-    long mLastSec ;
-    double mAvgTickRate ;
-    double mTimeDelta ;
+	double mLastts;
+	double mTickInterval;
+	double mLastRunDuration;
+	double mAvgRunDuration;
+	double mCycle1, mCycle2, mCycle3, mCycle4;
 
-    static const double minTimeDelta; // 25;
-    static const double maxTimeDelta;
-    static const double kickLimit;
+	static const double minTickInterval;
+	static const double maxTickInterval;
+
+	/// @see RsControl::setShutdownCallback
+	std::function<void(int)> mShutdownCallback;
+
+	/** Keep track of the core being fully ready, true only after
+	 *  StartupRetroShare() finish and before rsGlobalShutDown() begin
+	 */
+	bool coreReady;
 };
 
 /* Helper function to convert windows paths
@@ -209,5 +213,3 @@ class RsServer: public RsControl, public RsTickingThread
  */
 
 std::string make_path_unix(std::string winpath);
-
-#endif

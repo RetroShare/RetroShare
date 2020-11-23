@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 20011, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/statistics/TurtleRouterStatistics.cpp                                   *
+ *                                                                             *
+ * Copyright (c) 2011 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <iostream>
 #include <QTimer>
@@ -35,10 +34,10 @@
 
 //static const int MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
 
-class TRHistogram
+template<class TURTLE_REQ_DISPLAY_INFO> class TRHistogram
 {
 	public:
-		TRHistogram(const std::vector<TurtleRequestDisplayInfo >& info) :_infos(info) {}
+		TRHistogram(const std::vector<TURTLE_REQ_DISPLAY_INFO>& info) :_infos(info) {}
 
 		QColor colorScale(float f)
 		{
@@ -177,7 +176,7 @@ class TRHistogram
 		}
 
 	private:
-		const std::vector<TurtleRequestDisplayInfo>& _infos ;
+		const std::vector<TURTLE_REQ_DISPLAY_INFO>& _infos ;
 };
 
 TurtleRouterStatistics::TurtleRouterStatistics(QWidget *parent)
@@ -195,11 +194,13 @@ TurtleRouterStatistics::TurtleRouterStatistics(QWidget *parent)
 	_tunnel_statistics_F->setFrameStyle(QFrame::NoFrame);
 	_tunnel_statistics_F->setFocusPolicy(Qt::NoFocus);
 	
-	routertabWidget->addTab(new TurtleRouterDialog(),QString(tr("Anonymous tunnels")));
-	routertabWidget->addTab(new GxsTunnelsDialog(),QString(tr("Authenticated tunnels")));
+	routertabWidget->addTab(new TurtleRouterDialog(),           QString(tr("File transfer tunnels")));
+	routertabWidget->addTab(new GxsAuthenticatedTunnelsDialog(),QString(tr("Authenticated tunnels")));
+	routertabWidget->addTab(new GxsNetTunnelsDialog(),          QString(tr("GXS sync tunnels")     ));
 
-        float fontHeight = QFontMetricsF(font()).height();
-        float fact = fontHeight/14.0;
+	float fontHeight = QFontMetricsF(font()).height();
+	float fact = fontHeight/14.0;
+
     frmGraph->setMinimumHeight(200*fact);
 	
 	// load settings
@@ -242,8 +243,8 @@ void TurtleRouterStatistics::updateDisplay()
 {
 	std::vector<std::vector<std::string> > hashes_info ;
 	std::vector<std::vector<std::string> > tunnels_info ;
-	std::vector<TurtleRequestDisplayInfo > search_reqs_info ;
-	std::vector<TurtleRequestDisplayInfo > tunnel_reqs_info ;
+	std::vector<TurtleSearchRequestDisplayInfo > search_reqs_info ;
+	std::vector<TurtleTunnelRequestDisplayInfo > tunnel_reqs_info ;
 
 	rsTurtle->getInfo(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
 
@@ -279,8 +280,8 @@ TurtleRouterStatisticsWidget::TurtleRouterStatisticsWidget(QWidget *parent)
 
 void TurtleRouterStatisticsWidget::updateTunnelStatistics(const std::vector<std::vector<std::string> >& /*hashes_info*/,
 																const std::vector<std::vector<std::string> >& /*tunnels_info*/,
-																const std::vector<TurtleRequestDisplayInfo >& search_reqs_info, 
-																const std::vector<TurtleRequestDisplayInfo >& tunnel_reqs_info)
+																const std::vector<TurtleSearchRequestDisplayInfo >& search_reqs_info,
+																const std::vector<TurtleTunnelRequestDisplayInfo >& tunnel_reqs_info)
 
 {
 	QPixmap tmppixmap(maxWidth, maxHeight);
@@ -304,13 +305,13 @@ void TurtleRouterStatisticsWidget::updateTunnelStatistics(const std::vector<std:
 	// draw...
     int ox=5*fact,oy=5*fact ;
 
-    TRHistogram(search_reqs_info).draw(&painter,ox,oy,tr("Search requests repartition") + ":",fontHeight) ;
+    TRHistogram<TurtleSearchRequestDisplayInfo>(search_reqs_info).draw(&painter,ox,oy,tr("Search requests repartition") + ":",fontHeight) ;
 
 	painter.setPen(QColor::fromRgb(70,70,70)) ;
 	painter.drawLine(0,oy,maxWidth,oy) ;
 	oy += celly ;
 
-    TRHistogram(tunnel_reqs_info).draw(&painter,ox,oy,tr("Tunnel requests repartition") + ":",fontHeight) ;
+    TRHistogram<TurtleTunnelRequestDisplayInfo>(tunnel_reqs_info).draw(&painter,ox,oy,tr("Tunnel requests repartition") + ":",fontHeight) ;
 
 	// now give information about turtle traffic.
 	//

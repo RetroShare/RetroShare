@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2011 RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/common/FriendList.cpp                                                   *
+ *                                                                             *
+ * Copyright (C) 2011, Retroshare Team <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <algorithm>
 
@@ -66,12 +65,12 @@
 #define IMAGE_EXPORTFRIEND       ":/images/user/friend_suggestion16.png"
 #define IMAGE_ADDFRIEND          ":/images/user/add_user16.png"
 #define IMAGE_FRIENDINFO         ":/images/info16.png"
-#define IMAGE_CHAT               ":/images/chat_24.png"
-#define IMAGE_MSG                ":/images/mail_new.png"
+#define IMAGE_CHAT               ":/icons/png/chats.png"
+#define IMAGE_MSG                ":/icons/mail/write-mail.png"
 #define IMAGE_CONNECT            ":/images/connect_friend.png"
 #define IMAGE_COPYLINK           ":/images/copyrslink.png"
 #define IMAGE_GROUP16            ":/images/user/group16.png"
-#define IMAGE_EDIT               ":/images/edit_16.png"
+#define IMAGE_EDIT               ":/icons/png/pencil-edit-button.png"
 #define IMAGE_REMOVE             ":/images/delete.png"
 #define IMAGE_EXPAND             ":/images/edit_add24.png"
 #define IMAGE_COLLAPSE           ":/images/edit_remove24.png"
@@ -121,9 +120,14 @@ FriendList::FriendList(QWidget *parent) :
     ui->setupUi(this);
 
     connect(ui->peerTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(peerTreeWidgetCustomPopupMenu()));
-    connect(ui->peerTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), this, SLOT(chatfriend(QTreeWidgetItem *)));
     connect(ui->peerTreeWidget, SIGNAL(itemExpanded(QTreeWidgetItem *)), this, SLOT(expandItem(QTreeWidgetItem *)));
     connect(ui->peerTreeWidget, SIGNAL(itemCollapsed(QTreeWidgetItem *)), this, SLOT(collapseItem(QTreeWidgetItem *)));
+
+#ifdef RS_DIRECT_CHAT
+	connect(ui->peerTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), this, SLOT(chatfriend(QTreeWidgetItem *)));
+#else
+	connect( ui->peerTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(expandItem(QTreeWidgetItem *)) );
+#endif
 
     connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(groupsChanged()));
     connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(insertPeers()));
@@ -302,7 +306,7 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
     hbox->setSpacing(6);
 
     QLabel *iconLabel = new QLabel(widget);
-    QPixmap pix = QPixmap(":/images/user/friends24.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
+    QPixmap pix = FilesDefs::getPixmapFromQtResourcePath(":/images/user/friends24.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
     iconLabel->setPixmap(pix);
     iconLabel->setMaximumSize(iconLabel->frameSize().height() + pix.height(), pix.width());
     hbox->addWidget(iconLabel);
@@ -342,28 +346,31 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
 
 //         QMenu *lobbyMenu = NULL;
 
-         switch (type) {
+         switch (type)
+		 {
          case TYPE_GROUP:
              {
                  bool standard = c->data(COLUMN_DATA, ROLE_STANDARD).toBool();
-
-                 contextMenu->addAction(QIcon(IMAGE_MSG), tr("Send message to whole group"), this, SLOT(msgfriend()));
+#ifdef RS_DIRECT_CHAT
+                 contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MSG), tr("Send message to whole group"), this, SLOT(msgfriend()));
                  contextMenu->addSeparator();
-                 contextMenu->addAction(QIcon(IMAGE_EDIT), tr("Edit Group"), this, SLOT(editGroup()));
+#endif // RS_DIRECT_CHAT
+                 contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EDIT), tr("Edit Group"), this, SLOT(editGroup()));
 
-                 QAction *action = contextMenu->addAction(QIcon(IMAGE_REMOVE), tr("Remove Group"), this, SLOT(removeGroup()));
+                 QAction *action = contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_REMOVE), tr("Remove Group"), this, SLOT(removeGroup()));
                  action->setDisabled(standard);
              }
              break;
          case TYPE_GPG:
         {
-             contextMenu->addAction(QIcon(IMAGE_CHAT), tr("Chat"), this, SLOT(chatfriendproxy()));
-             contextMenu->addAction(QIcon(IMAGE_MSG), tr("Send message"), this, SLOT(msgfriend()));
-
+#ifdef RS_DIRECT_CHAT
+             contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_CHAT), tr("Chat"), this, SLOT(chatfriendproxy()));
+             contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MSG), tr("Send message"), this, SLOT(msgfriend()));
              contextMenu->addSeparator();
+#endif // RS_DIRECT_CHAT
 
-             contextMenu->addAction(QIcon(IMAGE_FRIENDINFO), tr("Profile details"), this, SLOT(configurefriend()));
-             contextMenu->addAction(QIcon(IMAGE_DENYFRIEND), tr("Deny connections"), this, SLOT(removefriend()));
+             contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_FRIENDINFO), tr("Profile details"), this, SLOT(configurefriend()));
+             contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_DENYFRIEND), tr("Deny connections"), this, SLOT(removefriend()));
 
              if(mShowGroups)
              {
@@ -405,8 +412,8 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
                      }
                  }
 
-                 QMenu *groupsMenu = contextMenu->addMenu(QIcon(IMAGE_GROUP16), tr("Groups"));
-                 groupsMenu->addAction(QIcon(IMAGE_EXPAND), tr("Create new group"), this, SLOT(createNewGroup()));
+                 QMenu *groupsMenu = contextMenu->addMenu(FilesDefs::getIconFromQtResourcePath(IMAGE_GROUP16), tr("Groups"));
+                 groupsMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EXPAND), tr("Create new group"), this, SLOT(createNewGroup()));
 
                  if (addToGroupMenu || moveToGroupMenu || foundGroup) {
                      if (addToGroupMenu) {
@@ -437,24 +444,25 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
 
          case TYPE_SSL:
              {
-                 contextMenu->addAction(QIcon(IMAGE_CHAT), tr("Chat"), this, SLOT(chatfriendproxy()));
-                 contextMenu->addAction(QIcon(IMAGE_MSG), tr("Send message to this node"), this, SLOT(msgfriend()));
-
+#ifdef RS_DIRECT_CHAT
+                 contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_CHAT), tr("Chat"), this, SLOT(chatfriendproxy()));
+                 contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MSG), tr("Send message to this node"), this, SLOT(msgfriend()));
                  contextMenu->addSeparator();
+#endif // RS_DIRECT_CHAT
 
-                 contextMenu->addAction(QIcon(IMAGE_FRIENDINFO), tr("Node details"), this, SLOT(configurefriend()));
+                 contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_FRIENDINFO), tr("Node details"), this, SLOT(configurefriend()));
 
                  if (type == TYPE_GPG || type == TYPE_SSL) {
-                     contextMenu->addAction(QIcon(IMAGE_EXPORTFRIEND), tr("Recommend this node to..."), this, SLOT(recommendfriend()));
+                     contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EXPORTFRIEND), tr("Recommend this node to..."), this, SLOT(recommendfriend()));
                  }
 
-                 contextMenu->addAction(QIcon(IMAGE_CONNECT), tr("Attempt to connect"), this, SLOT(connectfriend()));
+				 if(!rsPeers->isHiddenNode(rsPeers->getOwnId()) || rsPeers->isHiddenNode( RsPeerId(getRsId(c)) ))
+                     contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_CONNECT), tr("Attempt to connect"), this, SLOT(connectfriend()));
 
-                 contextMenu->addAction(QIcon(IMAGE_COPYLINK), tr("Copy certificate link"), this, SLOT(copyFullCertificate()));
-
+                 contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy certificate link"), this, SLOT(copyFullCertificate()));
 
                  //this is a SSL key
-                 contextMenu->addAction(QIcon(IMAGE_REMOVEFRIEND), tr("Remove Friend Node"), this, SLOT(removefriend()));
+                 contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_REMOVEFRIEND), tr("Remove Friend Node"), this, SLOT(removefriend()));
 
              }
          }
@@ -463,12 +471,12 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
 
     contextMenu->addSeparator();
 
-    QAction *action = contextMenu->addAction(QIcon(IMAGE_PASTELINK), tr("Paste certificate link"), this, SLOT(pastePerson()));
+    QAction *action = contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PASTELINK), tr("Paste certificate link"), this, SLOT(pastePerson()));
     if (RSLinkClipboard::empty(RetroShareLink::TYPE_CERTIFICATE))
         action->setDisabled(true);
 
-    contextMenu->addAction(QIcon(IMAGE_EXPAND), tr("Expand all"), ui->peerTreeWidget, SLOT(expandAll()));
-    contextMenu->addAction(QIcon(IMAGE_COLLAPSE), tr("Collapse all"), ui->peerTreeWidget, SLOT(collapseAll()));
+    contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EXPAND), tr("Expand all"), ui->peerTreeWidget, SLOT(expandAll()));
+    contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COLLAPSE), tr("Collapse all"), ui->peerTreeWidget, SLOT(collapseAll()));
 
     contextMenu = ui->peerTreeWidget->createStandardContextMenu(contextMenu);
 
@@ -495,22 +503,21 @@ void FriendList::groupsChanged()
 
 static QIcon createAvatar(const QPixmap &avatar, const QPixmap &overlay)
 {
-    int avatarWidth = avatar.width();
-    int avatarHeight = avatar.height();
+	int avatarWidth = avatar.width();
+	int avatarHeight = avatar.height();
 
-    QPixmap pixmap(avatar);
+	QPixmap pixmap(avatar);
 
-    int overlayWidth = avatarWidth / 2.5;
-    int overlayHeight = avatarHeight / 2.5;
-    int overlayX = avatarWidth - overlayWidth;
-    int overlayY = avatarHeight - overlayHeight;
+	int overlaySize = (avatarWidth > avatarHeight) ? (avatarWidth/2.5) :  (avatarHeight/2.5);
+	int overlayX = avatarWidth - overlaySize;
+	int overlayY = avatarHeight - overlaySize;
 
-    QPainter painter(&pixmap);
-    painter.drawPixmap(overlayX, overlayY, overlayWidth, overlayHeight, overlay);
+	QPainter painter(&pixmap);
+	painter.drawPixmap(overlayX, overlayY, overlaySize, overlaySize, overlay);
 
-    QIcon icon;
-    icon.addPixmap(pixmap);
-    return icon;
+	QIcon icon;
+	icon.addPixmap(pixmap);
+	return icon;
 }
 
 static void getNameWidget(QTreeWidget *treeWidget, QTreeWidgetItem *item, ElidedLabel *&nameLabel, ElidedLabel *&textLabel)
@@ -709,8 +716,8 @@ void FriendList::insertPeers()
 
                 groupItem->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
                 groupItem->setTextAlignment(COLUMN_NAME, Qt::AlignLeft | Qt::AlignVCenter);
-                groupItem->setIcon(COLUMN_NAME, QIcon(IMAGE_GROUP24));
-                groupItem->setForeground(COLUMN_NAME, QBrush(textColorGroup()));
+                groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(IMAGE_GROUP24));
+                groupItem->setData(COLUMN_NAME, Qt::ForegroundRole, textColorGroup());
 
                 /* used to find back the item */
                 QString strID = QString::fromStdString(groupInfo->id.toStdString());
@@ -999,13 +1006,14 @@ void FriendList::insertPeers()
                     sslItem->setHidden(false);
                     gpg_connected = true;
 
-                    sslOverlayIcon = QPixmap(StatusDefs::imageStatus(bestRSState));
+                    sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(bestRSState));
 
                     connectStateString = StatusDefs::name(rsState);
 
                     if (rsState == 0) {
                         sslFont.setBold(true);
                         sslColor = mTextColorStatus[RS_STATUS_ONLINE];
+
                     } else {
                         sslFont = StatusDefs::font(rsState);
                         sslColor = mTextColorStatus[rsState];
@@ -1016,9 +1024,9 @@ void FriendList::insertPeers()
                     peerState = PEER_STATE_AVAILABLE;
 
                     if (sslDetail.connectState) {
-                        sslOverlayIcon = QPixmap(":/images/connect_creating.png");
+                        sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(":/images/connect_creating.png");
                     } else {
-                        sslOverlayIcon = QPixmap(StatusDefs::imageStatus(RS_STATUS_ONLINE));
+                        sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(RS_STATUS_ONLINE));
                     }
 
                     connectStateString = StatusDefs::name(RS_STATUS_ONLINE);
@@ -1029,9 +1037,9 @@ void FriendList::insertPeers()
                     peerState = PEER_STATE_OFFLINE;
                     sslItem->setHidden(mHideUnconnected);
                     if (sslDetail.connectState) {
-                        sslOverlayIcon = QPixmap(":/images/connect_creating.png");
+                        sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(":/images/connect_creating.png");
                     } else {
-                        sslOverlayIcon = QPixmap(StatusDefs::imageStatus(RS_STATUS_OFFLINE));
+                        sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(RS_STATUS_OFFLINE));
                     }
 
                     connectStateString = StatusDefs::connectStateWithoutTransportTypeString(sslDetail);
@@ -1091,7 +1099,7 @@ void FriendList::insertPeers()
 
                 if (std::find(privateChatIds.begin(), privateChatIds.end(), sslDetail.id) != privateChatIds.end()) {
                     // private chat is available
-                    sslOverlayIcon = QPixmap(":/images/chat.png");
+                    sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(":/images/chat.png");
                     gpg_hasPrivateChat = true;
                 }
                 sslItem->setIcon(COLUMN_NAME, createAvatar(sslAvatar, sslOverlayIcon));
@@ -1102,8 +1110,8 @@ void FriendList::insertPeers()
                 for (int i = 0; i < columnCount; ++i) {
                     sslItem->setData(i, ROLE_SORT_STATE, peerState);
 
-                    sslItem->setTextColor(i, sslColor);
-                    sslItem->setFont(i, sslFont);
+                    sslItem->setData(i, Qt::ForegroundRole, sslColor);
+                    sslItem->setData(i, Qt::FontRole, sslFont);
                 }
             }
 
@@ -1130,7 +1138,7 @@ void FriendList::insertPeers()
                 gpgFont = StatusDefs::font(bestRSState);
 
                 if (showInfoAtGpgItem) {
-                    gpgOverlayIcon = QPixmap(StatusDefs::imageStatus(bestRSState));
+                    gpgOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(bestRSState));
 
                     if (mShowState) {
                         gpgText = StatusDefs::name(bestRSState);
@@ -1156,7 +1164,7 @@ void FriendList::insertPeers()
                         gpgText += tr("Available");
                     }
 
-                    gpgOverlayIcon = QPixmap(IMAGE_AVAILABLE);
+                    gpgOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(IMAGE_AVAILABLE);
                 }
             } else {
                 bestPeerState = PEER_STATE_OFFLINE;
@@ -1170,15 +1178,15 @@ void FriendList::insertPeers()
                         gpgText += StatusDefs::name(RS_STATUS_OFFLINE);
                     }
 
-                    gpgOverlayIcon = QPixmap(StatusDefs::imageStatus(RS_STATUS_OFFLINE));
+                    gpgOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(RS_STATUS_OFFLINE));
                 }
             }
 
             if (gpg_hasPrivateChat) {
-                gpgOverlayIcon = QPixmap(":/images/chat.png");
+                gpgOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(":/images/chat.png");
             }
 
-            gpgItem->setIcon(COLUMN_NAME, createAvatar(bestAvatar.isNull() ? QPixmap(AVATAR_DEFAULT_IMAGE) : bestAvatar, gpgOverlayIcon));
+            gpgItem->setIcon(COLUMN_NAME, createAvatar(bestAvatar.isNull() ? FilesDefs::getPixmapFromQtResourcePath(AVATAR_DEFAULT_IMAGE) : bestAvatar, gpgOverlayIcon));
 
             /* Create or get gpg label */
             ElidedLabel *gpgNameLabel = NULL;
@@ -1214,8 +1222,8 @@ void FriendList::insertPeers()
             for (int i = 0; i < columnCount; ++i) {
                 gpgItem->setData(i, ROLE_SORT_STATE, bestPeerState);
 
-                gpgItem->setTextColor(i, gpgColor);
-                gpgItem->setFont(i, gpgFont);
+                gpgItem->setData(i, Qt::ForegroundRole, gpgColor);
+                gpgItem->setData(i, Qt::FontRole, gpgFont);
             }
 
             if (openPeers.find(gpgId) != openPeers.end()) {
@@ -1903,7 +1911,7 @@ bool FriendList::exportFriendlist(QString &fileName)
             if (!rsPeers->getPeerDetails(*list_iter, detailSSL))
                 continue;
 
-            std::string certificate = rsPeers->GetRetroshareInvite(detailSSL.id, true);
+            std::string certificate = rsPeers->GetRetroshareInvite(detailSSL.id, true,true);
             // remove \n from certificate
             certificate.erase(std::remove(certificate.begin(), certificate.end(), '\n'), certificate.end());
 
@@ -1957,7 +1965,7 @@ bool FriendList::exportFriendlist(QString &fileName)
 /**
  * @brief helper function to show a message box
  */
-void showXMLParsingError()
+static void showXMLParsingError()
 {
     // show error to user
     QMessageBox mbox;
@@ -2011,7 +2019,6 @@ bool FriendList::importFriendlist(QString &fileName, bool &errorPeers, bool &err
     errorPeers = false;
     errorGroups = false;
 
-    uint32_t error_code;
     std::string error_string;
     RsPeerDetails rsPeerDetails;
     RsPeerId rsPeerID;
@@ -2044,44 +2051,10 @@ bool FriendList::importFriendlist(QString &fileName, bool &errorPeers, bool &err
 
             // load everything needed from the pubkey string
             std::string pubkey = sslIDElem.attribute("certificate").toStdString();
-            if(rsPeers->loadDetailsFromStringCert(pubkey, rsPeerDetails, error_code)) {
-                if(rsPeers->loadCertificateFromString(pubkey, rsPeerID, rsPgpID, error_string)) {
-                    ServicePermissionFlags service_perm_flags(sslIDElem.attribute("service_perm_flags").toInt());
-
-                    // everything is loaded - start setting things
-                    if (!rsPeerDetails.id.isNull() && !rsPeerDetails.gpg_id.isNull()) {
-                        // pgp and ssl ID are available
-                        rsPeers->addFriend(rsPeerDetails.id, rsPeerDetails.gpg_id, service_perm_flags);
-                        if(rsPeerDetails.isHiddenNode) {
-                            // for hidden notes
-                            if (!rsPeerDetails.hiddenNodeAddress.empty() && rsPeerDetails.hiddenNodePort)
-                                rsPeers->setHiddenNode(rsPeerDetails.id, rsPeerDetails.hiddenNodeAddress, rsPeerDetails.hiddenNodePort);
-                        } else {
-                            // for normal nodes
-                            if (!rsPeerDetails.extAddr.empty() && rsPeerDetails.extPort)
-                                rsPeers->setExtAddress(rsPeerDetails.id, rsPeerDetails.extAddr, rsPeerDetails.extPort);
-                            if (!rsPeerDetails.localAddr.empty() && rsPeerDetails.localPort)
-                                rsPeers->setLocalAddress(rsPeerDetails.id, rsPeerDetails.localAddr, rsPeerDetails.localPort);
-                            if (!rsPeerDetails.dyndns.empty())
-                                rsPeers->setDynDNS(rsPeerDetails.id, rsPeerDetails.dyndns);
-                            if (!rsPeerDetails.location.empty())
-                                rsPeers->setLocation(rsPeerDetails.id, rsPeerDetails.location);
-                        }
-                    } else if (!rsPeerDetails.gpg_id.isNull()) {
-                        // only pgp id is avaiable
-                        RsPeerId pid;
-                        rsPeers->addFriend(pid, rsPeerDetails.gpg_id, service_perm_flags);
-                    } else {
-                        errorPeers = true;
-                        std::cerr << "FriendList::importFriendlist(): error while processing SSL id: " << sslIDElem.attribute("sslID", "invalid").toStdString() << std::endl;
-                    }
-                } else {
-                    errorPeers = true;
-                    std::cerr << "FriendList::importFriendlist(): failed to get peer detaisl from public key (SSL id: " << sslIDElem.attribute("sslID", "invalid").toStdString() << " - error: " << error_string << ")" << std::endl;
-                }
-            } else {
+			ServicePermissionFlags service_perm_flags(sslIDElem.attribute("service_perm_flags").toInt());
+			if (!rsPeers->acceptInvite(pubkey, service_perm_flags)) {
                 errorPeers = true;
-                std::cerr << "FriendList::importFriendlist(): failed to get peer detaisl from public key (SSL id: " << sslIDElem.attribute("sslID", "invalid").toStdString() << " - error: " << error_code << ")" << std::endl;
+				std::cerr << "FriendList::importFriendlist(): failed to get peer detaisl from public key (SSL id: " << sslIDElem.attribute("sslID", "invalid").toStdString() << ")" << std::endl;
             }
             sslIDElem = sslIDElem.nextSiblingElement("sslID");
         }

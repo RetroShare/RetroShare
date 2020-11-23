@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="tr" version="2.0">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="tr">
 <context>
     <name>AudioInput</name>
     <message>
@@ -404,14 +406,19 @@
         <translation>Mikrofon donanım ses düzeyinin en uygun değere ayarlanması.</translation>
     </message>
     <message>
-        <location line="+6"/>
-        <source>&lt;p &gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there's an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it's checked. &lt;/p&gt;
+        <source>&lt;p &gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there&apos;s an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it&apos;s checked. &lt;/p&gt;
 &lt;p&gt;Speak loudly, as when you are annoyed or excited. Decrease the volume in the sound control panel until the bar below stays as high as possible in the green and orange but not the red zone while you speak. &lt;/p&gt;</source>
-        <translation>&lt;p&gt;Ses denetim panelini açarak kayıt ayarlarına gidin. Etkin giriş olarak mikrofonun ses düzeyi en fazla şekilde seçildiğine emin olun. &quot;Mikrofon güçlendirmesi&quot; gibi bir seçenek varsa etkinleştirildiğinden emin olun.
+        <translation type="vanished">&lt;p&gt;Ses denetim panelini açarak kayıt ayarlarına gidin. Etkin giriş olarak mikrofonun ses düzeyi en fazla şekilde seçildiğine emin olun. &quot;Mikrofon güçlendirmesi&quot; gibi bir seçenek varsa etkinleştirildiğinden emin olun.
 &lt;/p&gt;
 &lt;p&gt;
 Sinirli ya da coştuğunuz zamanlardaki gibi yüksek sesle konuşun. Denetim panelinde, aşağıdaki çubuğun olabildiğince mavi ve yeşil bölgede en yüksek değerde bulunacağı ancak kırmızı bölgeye &lt;b&gt;ulaşmayacağı&lt;/b&gt; şekilde ses düzeyini düşürün.
 &lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>&lt;p&gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there&apos;s an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it&apos;s checked. &lt;/p&gt;
+&lt;p&gt;Speak loudly, as when you are annoyed or excited. Decrease the volume in the sound control panel until the bar below stays as high as possible in the green and orange but not the red zone while you speak. &lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+11"/>
@@ -492,19 +499,27 @@ Sinirli ya da coştuğunuz zamanlardaki gibi yüksek sesle konuşun. Denetim pan
         <translation>&lt;h3&gt;RetroShare VOIP uyumlu eki&lt;/h3&gt;&lt;br/&gt;   * Geliştirenler: Cyril Soler, Josselin Jacquard&lt;br/&gt;</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. to use it, proceed as follows:&lt;UL&gt;</source>
-        <translation>&lt;br/&gt;VOIP uyumlu eki RetroShare özel sohbet penceresine VOIP özelliğini ekler.  Kullanmak için şu işlemleri yapın:&lt;UL&gt;</translation>
+        <translation type="vanished">&lt;br/&gt;VOIP uyumlu eki RetroShare özel sohbet penceresine VOIP özelliğini ekler.  Kullanmak için şu işlemleri yapın:&lt;UL&gt;</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>&lt;li&gt; setup microphone levels using the configuration panel&lt;/li&gt;</source>
         <translation>&lt;li&gt; ayarlar bölümünden mikrofon düzeylerini ayarlayın&lt;/li&gt;</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>&lt;li&gt; check your microphone by looking at the VU-metters&lt;/li&gt;</source>
-        <translation>&lt;li&gt; düzey ölçerlere bakarak mikrofonunuzu ayarlayın&lt;/li&gt;</translation>
+        <translation type="vanished">&lt;li&gt; düzey ölçerlere bakarak mikrofonunuzu ayarlayın&lt;/li&gt;</translation>
+    </message>
+    <message>
+        <location line="-1"/>
+        <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. To use it, proceed as follows:&lt;UL&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>&lt;li&gt; check your microphone by looking at the VU-meters&lt;/li&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -598,12 +613,11 @@ Sinirli ya da coştuğunuz zamanlardaki gibi yüksek sesle konuşun. Denetim pan
         <translation>Tam Ekran Kipi</translation>
     </message>
     <message>
-        <location line="-412"/>
         <source>%1 inviting you to start an audio conversation. Do you want Accept or Decline the invitation?</source>
-        <translation>%1 sizi sesli görüşmeye çağırıyor. Çağrıyı kabul ya da ret edin.</translation>
+        <translation type="vanished">%1 sizi sesli görüşmeye çağırıyor. Çağrıyı kabul ya da ret edin.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-410"/>
         <source>Accept Audio Call</source>
         <translation>Sesli Çağrıyı Kabul Edin</translation>
     </message>
@@ -618,12 +632,11 @@ Sinirli ya da coştuğunuz zamanlardaki gibi yüksek sesle konuşun. Denetim pan
         <translation>Sesli Çağrıyı Geri Çevirin</translation>
     </message>
     <message>
-        <location line="+33"/>
         <source>%1 inviting you to start a video conversation. Do you want Accept or Decline the invitation?</source>
-        <translation>%1 sizi görüntülü görüşmeye çağırıyor. Çağrıyı kabul ya da ret edin.</translation>
+        <translation type="vanished">%1 sizi görüntülü görüşmeye çağırıyor. Çağrıyı kabul ya da ret edin.</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+52"/>
         <source>Decline Video Call</source>
         <translation>Görüntülü Çağrıyı Kabul Edin</translation>
     </message>
@@ -643,12 +656,11 @@ Sinirli ya da coştuğunuz zamanlardaki gibi yüksek sesle konuşun. Denetim pan
         <translation>Sesinizi açın</translation>
     </message>
     <message>
-        <location line="+589"/>
         <source>Waiting your friend respond your video call.</source>
-        <translation>Arkadaşınızın görüntülü çağrıya yanıt vermesi bekleniyor.</translation>
+        <translation type="vanished">Arkadaşınızın görüntülü çağrıya yanıt vermesi bekleniyor.</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+603"/>
         <source>Your friend is calling you for video. Respond.</source>
         <translation>Arkadaşınızın görüntülü çağrısını yanıtlayın.</translation>
     </message>
@@ -714,12 +726,22 @@ Sinirli ya da coştuğunuz zamanlardaki gibi yüksek sesle konuşun. Denetim pan
         <translation>Görüntülü Çağrıyı Kabul Edin</translation>
     </message>
     <message>
-        <location line="-52"/>
+        <location line="-55"/>
+        <source>%1 is inviting you to start an audio conversation. Do you want to Accept or Decline the invitation?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Activate audio</source>
         <translation>Sesi Etkinleştirin</translation>
     </message>
     <message>
-        <location line="+384"/>
+        <location line="+50"/>
+        <source>%1 is inviting you to start a video conversation. Do you want to Accept or Decline the invitation?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+334"/>
         <source>Show Chat Text</source>
         <translation>Sohbet Metni Görüntülensin</translation>
     </message>
@@ -755,11 +777,20 @@ Sinirli ya da coştuğunuz zamanlardaki gibi yüksek sesle konuşun. Denetim pan
     </message>
     <message>
         <location line="+20"/>
-        <source>Waiting your friend respond your audio call.</source>
-        <translation>Arkadaşınızın sesli çağrınıza yanıt vermesi bekleniyor.</translation>
+        <source>Waiting for your friend to respond to your audio call.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+58"/>
+        <source>Waiting for your friend to respond to your video call.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Waiting your friend respond your audio call.</source>
+        <translation type="vanished">Arkadaşınızın sesli çağrınıza yanıt vermesi bekleniyor.</translation>
+    </message>
+    <message>
+        <location line="-44"/>
         <source>Your friend is calling you for audio. Respond.</source>
         <translation>Arkadaşınızın sesli çağrısını yanıtlayın.</translation>
     </message>
@@ -880,8 +911,12 @@ Sinirli ya da coştuğunuz zamanlardaki gibi yüksek sesle konuşun. Denetim pan
     </message>
     <message>
         <location line="+24"/>
+        <source>Bandwidth Info received from this peer: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Bandwidth Info received from this peer:%1</source>
-        <translation>Bu kullanıcıdan alınan bant genişliği bilgisi: %1</translation>
+        <translation type="vanished">Bu kullanıcıdan alınan bant genişliği bilgisi: %1</translation>
     </message>
     <message>
         <location line="+24"/>

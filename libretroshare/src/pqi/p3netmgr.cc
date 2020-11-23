@@ -1,29 +1,27 @@
-/*
- * libretroshare/src/pqi: p3netmgr.cc
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2007-2011 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-#include <time.h>
+/*******************************************************************************
+ * libretroshare/src/pqi: p3netmgr.cc                                          *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2007-2011  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2015-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+#include "util/rstime.h"
+#include <vector>
 
 #include "pqi/p3netmgr.h"
 
@@ -37,8 +35,7 @@
 #include "util/extaddrfinder.h"
 #include "util/dnsresolver.h"
 
-//#include "util/rsprint.h"
-//#include "util/rsdebug.h"
+
 struct RsLog::logInfo p3netmgrzoneInfo = {RsLog::Default, "p3netmgr"};
 #define p3netmgrzone &p3netmgrzoneInfo
 
@@ -82,16 +79,12 @@ const uint32_t MAX_UPNP_COMPLETE = 	600; /* 10 min... seems to take a while */
 // #define NETMGR_DEBUG_TICK 1
 // #define NETMGR_DEBUG_STATEBOX 1
 
-pqiNetStatus::pqiNetStatus()
-	:mLocalAddrOk(false), mExtAddrOk(false), mExtAddrStableOk(false), 
-	mUpnpOk(false), mDhtOk(false), mResetReq(false)
+pqiNetStatus::pqiNetStatus() :
+    mExtAddrOk(false), mExtAddrStableOk(false), mUpnpOk(false), mDhtOk(false),
+    mDhtNetworkSize(0), mDhtRsNetworkSize(0), mResetReq(false)
 {
-        mDhtNetworkSize = 0;
-        mDhtRsNetworkSize = 0;
-
 	sockaddr_storage_clear(mLocalAddr);
 	sockaddr_storage_clear(mExtAddr);
-	return;
 }
 
 
@@ -99,7 +92,6 @@ pqiNetStatus::pqiNetStatus()
 void pqiNetStatus::print(std::ostream &out)
 {
 	out << "pqiNetStatus: ";
-	out << "mLocalAddrOk: " << mLocalAddrOk; 
         out << " mExtAddrOk: " << mExtAddrOk;
         out << " mExtAddrStableOk: " << mExtAddrStableOk;
 	out << std::endl;
@@ -111,14 +103,13 @@ void pqiNetStatus::print(std::ostream &out)
         out << std::endl;
 	out << "mLocalAddr: " << sockaddr_storage_tostring(mLocalAddr) << " ";
 	out << "mExtAddr: " << sockaddr_storage_tostring(mExtAddr) << " ";
-	out << " NetOk: " << NetOk();
         out << std::endl;
 }
 
 
-p3NetMgrIMPL::p3NetMgrIMPL()
-	:mPeerMgr(NULL), mLinkMgr(NULL), mNetMtx("p3NetMgr"),
-	mNetStatus(RS_NET_UNKNOWN), mStatusChanged(false)
+p3NetMgrIMPL::p3NetMgrIMPL() : mPeerMgr(nullptr), mLinkMgr(nullptr),
+    mNetMtx("p3NetMgr"), mNetStatus(RS_NET_UNKNOWN), mStatusChanged(false),
+    mDoNotNetCheckUntilTs(0)
 {
 
 	{
@@ -133,9 +124,8 @@ p3NetMgrIMPL::p3NetMgrIMPL()
 		mNetFlags = pqiNetStatus();
 		mOldNetFlags = pqiNetStatus();
 
-		mLastSlowTickTime = 0;
-		mOldNatType = RSNET_NATTYPE_UNKNOWN;
-		mOldNatHole = RSNET_NATHOLE_UNKNOWN;
+		mOldNatType = RsNatTypeMode::UNKNOWN;
+		mOldNatHole = RsNatHoleMode::UNKNOWN;
 		sockaddr_storage_clear(mLocalAddr);
 		sockaddr_storage_clear(mExtAddr);
 
@@ -164,11 +154,6 @@ void p3NetMgrIMPL::setManagers(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr)
 	mPeerMgr = peerMgr;
 	mLinkMgr = linkMgr;
 }
-
-//void p3NetMgrIMPL::setDhtMgr(p3DhtMgr *dhtMgr)
-//{
-//	mDhtMgr = dhtMgr;
-//}
 
 #ifdef RS_USE_DHT_STUNNER
 void p3NetMgrIMPL::setAddrAssist(pqiAddrAssist *dhtStun, pqiAddrAssist *proxyStun)
@@ -423,47 +408,37 @@ void p3NetMgrIMPL::netStartup()
 
 void p3NetMgrIMPL::tick()
 {
-	time_t now = time(NULL);
-	bool doSlowTick = false;
+	rstime_t now = time(nullptr);
+	rstime_t dontCheckNetUntil;
+	{ RS_STACK_MUTEX(mNetMtx); dontCheckNetUntil = mDoNotNetCheckUntilTs; }
+
+	if(now >= dontCheckNetUntil) netStatusTick();
+
+	uint32_t netStatus; { RS_STACK_MUTEX(mNetMtx); netStatus = mNetStatus; }
+	switch (netStatus)
 	{
-		RsStackMutex stack(mNetMtx);   /************** LOCK MUTEX ***************/
-		if (now > mLastSlowTickTime)
+	case RS_NET_LOOPBACK:
+		if(dontCheckNetUntil <= now)
 		{
-			mLastSlowTickTime = now;
-			doSlowTick = true;
+			RS_STACK_MUTEX(mNetMtx);
+			mDoNotNetCheckUntilTs = now + 30;
 		}
-	}
-
-	if (doSlowTick)
-	{
-		slowTick();
-	}
-}
-
-
-void p3NetMgrIMPL::slowTick()
-{
-	netTick();
-	netAssistTick();
-	updateNetStateBox_temporal();
-
+		break;
+	default:
+		netAssistTick();
+		updateNetStateBox_temporal();
 #ifdef RS_USE_DHT_STUNNER
-	if (mDhtStunner)
-	{
-		mDhtStunner->tick();
-	}
-
-	if (mProxyStunner)
-	{
-		mProxyStunner->tick();
-	}
+		if (mDhtStunner) mDhtStunner->tick();
+		if (mProxyStunner) mProxyStunner->tick();
 #endif // RS_USE_DHT_STUNNER
+		break;
+	}
 }
 
 #define STARTUP_DELAY 5
 
 
-void p3NetMgrIMPL::netTick()
+void p3NetMgrIMPL::netStatusTick()
 {
 
 #ifdef NETMGR_DEBUG_TICK
@@ -482,7 +457,7 @@ void p3NetMgrIMPL::netTick()
 	checkNetAddress() ;
 
 	uint32_t netStatus = 0;
-	time_t   age = 0;
+	rstime_t   age = 0;
 	{
 		RsStackMutex stack(mNetMtx);   /************** LOCK MUTEX ***************/
 
@@ -613,7 +588,7 @@ void p3NetMgrIMPL::netUpnpCheck()
 	/* grab timestamp */
 	mNetMtx.lock();   /*   LOCK MUTEX */
 
-	time_t delta = time(NULL) - mNetInitTS;
+	rstime_t delta = time(NULL) - mNetInitTS;
 
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 		std::cerr << "p3NetMgrIMPL::netUpnpCheck() age: " << delta << std::endl;
@@ -624,8 +599,8 @@ void p3NetMgrIMPL::netUpnpCheck()
 	struct sockaddr_storage extAddr;
 	int upnpState = netAssistFirewallActive();
 
-	if (((upnpState == 0) && (delta > (time_t)MAX_UPNP_INIT)) ||
-	    ((upnpState > 0) && (delta > (time_t)MAX_UPNP_COMPLETE)))
+	if (((upnpState == 0) && (delta > (rstime_t)MAX_UPNP_INIT)) ||
+	    ((upnpState > 0) && (delta > (rstime_t)MAX_UPNP_COMPLETE)))
 	{
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 		std::cerr << "p3NetMgrIMPL::netUpnpCheck() ";
@@ -696,11 +671,12 @@ void p3NetMgrIMPL::netExtCheck()
 	bool netSetupDone = false;
 
 	{
-		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
-		bool isStable = false;
-		struct sockaddr_storage tmpip ;
+		RS_STACK_MUTEX(mNetMtx);
 
-		std::map<sockaddr_storage,ZeroInt> address_votes ;
+		bool isStable = false;
+		sockaddr_storage tmpip;
+
+		std::map<sockaddr_storage,ZeroInt> address_votes;
 
 		/* check for External Address */
 		/* in order of importance */
@@ -709,46 +685,117 @@ void p3NetMgrIMPL::netExtCheck()
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 			std::cerr << "p3NetMgrIMPL::netExtCheck() Ext Not Ok" << std::endl;
 #endif
-
 			/* net Assist */
-			if (netAssistExtAddress(tmpip))
+			if ( netAssistExtAddress(tmpip) &&
+			     sockaddr_storage_isValidNet(tmpip) &&
+			     sockaddr_storage_ipv6_to_ipv4(tmpip) )
+			{
+				if( !rsBanList ||
+				        rsBanList->isAddressAccepted(
+				            tmpip, RSBANLIST_CHECKING_FLAGS_BLACKLIST ) )
+				{
+					// must be stable???
+					isStable = true;
+					mNetFlags.mExtAddrOk = true;
+					mNetFlags.mExtAddrStableOk = isStable;
+					address_votes[tmpip].n++ ;
+					std::cerr << __PRETTY_FUNCTION__ << " NetAssistAddress "
+					          << " reported external address "
+					          << sockaddr_storage_iptostring(tmpip)
+					          << std::endl;
+				}
+				else
+					std::cerr << "(SS) netAssisExternalAddress returned banned "
+					          << "own IP " << sockaddr_storage_iptostring(tmpip)
+					          << " (banned). Rejecting." << std::endl;
+			}
+		}
+
+		/* ask ExtAddrFinder */
+		{
+			/* ExtAddrFinder */
+			if (mUseExtAddrFinder)
 			{
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-				std::cerr << "p3NetMgrIMPL::netExtCheck() Ext supplied from netAssistExternalAddress()" << std::endl;
+				std::cerr << "p3NetMgrIMPL::netExtCheck() checking ExtAddrFinder" << std::endl;
 #endif
-				if(sockaddr_storage_isValidNet(tmpip))
+				bool extFinderOk = mExtAddrFinder->hasValidIP(tmpip);
+				if (extFinderOk && sockaddr_storage_ipv6_to_ipv4(tmpip))
 				{
-					if(rsBanList->isAddressAccepted(tmpip,RSBANLIST_CHECKING_FLAGS_BLACKLIST))
-					{
-						// must be stable???
-						isStable = true;
-						//mNetFlags.mExtAddr = tmpip;
-						mNetFlags.mExtAddrOk = true;
-						mNetFlags.mExtAddrStableOk = isStable;
-
-						address_votes[tmpip].n++ ;
-                        
-						std::cerr << "NetAssistAddress reported external address " << sockaddr_storage_iptostring(tmpip) << std::endl;
-					}
-					else
-						std::cerr << "(SS) netAssisExternalAddress returned banned own IP " << sockaddr_storage_iptostring(tmpip) << " (banned). Rejecting." << std::endl;
-				}
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-				else
-				{
-					std::cerr << "p3NetMgrIMPL::netExtCheck() Bad Address supplied from netAssistExternalAddress()" << std::endl;
-				}
+					std::cerr << "p3NetMgrIMPL::netExtCheck() Ext supplied by ExtAddrFinder" << std::endl;
 #endif
-			}
+					sockaddr_storage_setport(tmpip, guessNewExtPort());
 
+#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
+					std::cerr << "p3NetMgrIMPL::netExtCheck() ";
+					std::cerr << "ExtAddr: " << sockaddr_storage_tostring(tmpip);
+					std::cerr << std::endl;
+#endif
+
+					mNetFlags.mExtAddrOk = true;
+
+					address_votes[tmpip].n++ ;
+
+					/* XXX HACK TO FIX drbob: ALLOWING
+					 * ExtAddrFinder -> ExtAddrStableOk = true
+					 * (which it is not normally) */
+					mNetFlags.mExtAddrStableOk = true;
+
+					std::cerr << __PRETTY_FUNCTION__ << " ExtAddrFinder "
+					          << " reported external address "
+					          << sockaddr_storage_iptostring(tmpip)
+					          << std::endl;
+				}
+			}
+		}
+
+		/* also ask peer mgr. */
+		if (mPeerMgr)
+		{
+#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
+			std::cerr << "p3NetMgrIMPL::netExtCheck() checking mPeerMgr" << std::endl;
+#endif
+			uint8_t isstable; // unused
+			sockaddr_storage tmpaddr;
+
+			if ( mPeerMgr->getExtAddressReportedByFriends(tmpaddr, isstable) &&
+			     sockaddr_storage_ipv6_to_ipv4(tmpaddr) )
+			{
+#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
+				std::cerr << "p3NetMgrIMPL::netExtCheck() Ext supplied by ExtAddrFinder" << std::endl;
+#endif
+				sockaddr_storage_setport(tmpaddr, guessNewExtPort());
+
+#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
+				std::cerr << "p3NetMgrIMPL::netExtCheck() ";
+				std::cerr << "ExtAddr: " << sockaddr_storage_tostring(tmpip);
+				std::cerr << std::endl;
+#endif
+
+				mNetFlags.mExtAddrOk = true;
+				mNetFlags.mExtAddrStableOk = isstable;
+
+				address_votes[tmpaddr].n++;
+
+				std::cerr << __PRETTY_FUNCTION__ << " PeerMgr reported external"
+				          << " address "
+				          << sockaddr_storage_iptostring(tmpaddr) << std::endl;
+			}
+#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
+			else
+				std::cerr << "  No reliable address returned." << std::endl;
+#endif
 		}
 
 #ifdef ALLOW_DHT_STUNNER
-        // (cyril) I disabled this because it's pretty dangerous. The DHT can report a wrong address quite easily
-        // if the other DHT peers are not collaborating.
-        
-		/* Next ask the DhtStunner */
-		{
+		// (cyril) I disabled this because it's pretty dangerous. The DHT can report a wrong address quite easily
+		// if the other DHT peers are not collaborating.
+		// (sehraf) For the record: The udp stunner uses multiple (as for now: two) peers to ensure that the IP recieved is the correct one, see UdpStunner::locked_checkExternalAddress()
+		// Nevertheless this stays a more risky method to determine the external ip address.
+
+		/* lastly ask the DhtStunner as fallback */
+		if (address_votes.empty()) {
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 			std::cerr << "p3NetMgrIMPL::netExtCheck() Ext Not Ok, Checking DhtStunner" << std::endl;
 #endif
@@ -761,7 +808,7 @@ void p3NetMgrIMPL::netExtCheck()
 				/* input network bits */
 				if (mDhtStunner->getExternalAddr(tmpaddr, isstable))
 				{
-					if(rsBanList->isAddressAccepted(tmpaddr,RSBANLIST_CHECKING_FLAGS_BLACKLIST))
+					if((rsBanList == NULL) || rsBanList->isAddressAccepted(tmpaddr,RSBANLIST_CHECKING_FLAGS_BLACKLIST))
 					{
 						// must be stable???
 						isStable = (isstable == 1);
@@ -784,82 +831,6 @@ void p3NetMgrIMPL::netExtCheck()
 		}
 #endif
 
-		/* otherwise ask ExtAddrFinder */
-		{
-			/* ExtAddrFinder */
-			if (mUseExtAddrFinder)
-			{
-#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-				std::cerr << "p3NetMgrIMPL::netExtCheck() checking ExtAddrFinder" << std::endl;
-#endif
-				bool extFinderOk = mExtAddrFinder->hasValidIP(tmpip);
-				if (extFinderOk)
-				{
-#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-					std::cerr << "p3NetMgrIMPL::netExtCheck() Ext supplied by ExtAddrFinder" << std::endl;
-#endif
-					/* best guess at port */
-					sockaddr_storage_setport(tmpip, sockaddr_storage_port(mLocalAddr));
-
-#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-					std::cerr << "p3NetMgrIMPL::netExtCheck() ";
-					std::cerr << "ExtAddr: " << sockaddr_storage_tostring(tmpip);
-					std::cerr << std::endl;
-#endif
-
-					//mNetFlags.mExtAddr = tmpip;
-					mNetFlags.mExtAddrOk = true;
-
-					address_votes[tmpip].n++ ;
-
-					/* XXX HACK TO FIX */
-#warning drbob: ALLOWING ExtAddrFinder -> ExtAddrStableOk = true (which it is not normally)
-					mNetFlags.mExtAddrStableOk = true;
-                    
-		    std::cerr << "ExtAddrFinder reported external address " << sockaddr_storage_iptostring(tmpip) << std::endl;
-
-				}
-			}
-		}
-        
-        	/* also ask peer mgr. */
-		
-		if (mPeerMgr)
-		{
-#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-			std::cerr << "p3NetMgrIMPL::netExtCheck() checking mPeerMgr" << std::endl;
-#endif
-            		uint8_t isstable ;	// unused
-                    	sockaddr_storage tmpaddr ;
-
-			if (mPeerMgr->getExtAddressReportedByFriends(tmpaddr, isstable))
-			{
-#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-				std::cerr << "p3NetMgrIMPL::netExtCheck() Ext supplied by ExtAddrFinder" << std::endl;
-#endif
-				/* best guess at port */
-				sockaddr_storage_setport(tmpaddr, sockaddr_storage_port(mLocalAddr));
-
-#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-				std::cerr << "p3NetMgrIMPL::netExtCheck() ";
-				std::cerr << "ExtAddr: " << sockaddr_storage_tostring(tmpip);
-				std::cerr << std::endl;
-#endif
-
-				//mNetFlags.mExtAddr = tmpaddr;
-				mNetFlags.mExtAddrOk = true;
-				mNetFlags.mExtAddrStableOk = isstable;
-
-				address_votes[tmpaddr].n++ ;
-                
-		    std::cerr << "PeerMgr reported external address " << sockaddr_storage_iptostring(tmpaddr) << std::endl;
-			}
-#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-	    else
-                std::cerr << "  No reliable address returned." << std::endl;
-#endif
-		}
-        
 		/* any other sources ??? */
 
 		/* finalise address */
@@ -923,8 +894,8 @@ void p3NetMgrIMPL::netExtCheck()
 				//pqiNotify *notify = getPqiNotify();
 				//if (notify)
 				{
-					std::string title =
-					                "Warning: Bad Firewall Configuration";
+					//std::string title =
+					//                "Warning: Bad Firewall Configuration";
 
 					std::string msg;
 					msg +=  "               **** WARNING ****     \n";
@@ -954,14 +925,6 @@ void p3NetMgrIMPL::netExtCheck()
 #endif
 			netAssistSetAddress(mNetFlags.mLocalAddr, mNetFlags.mExtAddr, mNetMode);
 		}
-#if 0
-		else
-		{
-			std::cerr << "p3NetMgrIMPL::netExtCheck() setting ERR netAssistSetAddress(0)" << std::endl;
-			/* mode = 0 for error */
-			netAssistSetAddress(mNetFlags.mLocalAddr, mNetFlags.mExtAddr, mNetMode);
-		}
-#endif
 
 		/* flag unreachables! */
 		if ((mNetFlags.mExtAddrOk) && (!mNetFlags.mExtAddrStableOk))
@@ -970,9 +933,6 @@ void p3NetMgrIMPL::netExtCheck()
 			std::cerr << "p3NetMgrIMPL::netExtCheck() Ext Unstable - Unreachable Check" << std::endl;
 #endif
 		}
-
-
-
 	}
 
 	if (netSetupDone)
@@ -992,9 +952,9 @@ void p3NetMgrIMPL::netExtCheck()
 		RsPeerId fakeId;
 		netAssistKnownPeer(fakeId, mExtAddr, NETASSIST_KNOWN_PEER_SELF | NETASSIST_KNOWN_PEER_ONLINE);
 
-		rslog(RSL_WARNING, p3netmgrzone, "p3NetMgr::netExtCheck() Network Setup Complete");
+		std::cerr << __PRETTY_FUNCTION__ << " Network Setup Complete"
+		          << std::endl;
 	}
-
 }
 
 /**********************************************************************************************
@@ -1006,159 +966,137 @@ bool p3NetMgrIMPL::checkNetAddress()
 	bool addrChanged = false;
 	bool validAddr = false;
 	
-	struct sockaddr_storage prefAddr;
-	struct sockaddr_storage oldAddr;
+	sockaddr_storage prefAddr;
+	sockaddr_storage oldAddr;
 
 	if (mNetMode & RS_NET_MODE_TRY_LOOPBACK)
 	{
-#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-        std::cerr << "p3NetMgrIMPL::checkNetAddress() LOOPBACK ... forcing to 127.0.0.1";
-        std::cerr << std::endl;
-#endif
-	    sockaddr_storage_ipv4_aton(prefAddr, "127.0.0.1");
+		RsInfo() << __PRETTY_FUNCTION__ <<" network mode set to LOOPBACK,"
+		         << " forcing  address to 127.0.0.1" << std::endl;
+
+		sockaddr_storage_ipv4_aton(prefAddr, "127.0.0.1");
 		validAddr = true;
 	}
 	else
 	{
-		// TODO: Sat Oct 24 15:51:24 CEST 2015 The fact of having just one local address is a flawed assumption, this should be redesigned soon.
-		std::list<sockaddr_storage> addrs;
-		std::list<sockaddr_storage>::iterator it;
+		/* TODO: Sat Oct 24 15:51:24 CEST 2015 The fact of having just one local
+		 *  address is a flawed assumption, this should be redesigned as soon as
+		 *  possible. It will require complete reenginering of the network layer
+		 *  code. */
+
+		/* For retro-compatibility strictly accept only IPv4 addresses here,
+		 * IPv6 addresses are handled in a retro-compatible manner in
+		 * p3PeerMgrIMPL::UpdateOwnAddress */
+		std::vector<sockaddr_storage> addrs;
 		if (getLocalAddresses(addrs))
-			for(it = addrs.begin(); (it != addrs.end() && !validAddr); ++it)
-				if(sockaddr_storage_isValidNet(*it) && !sockaddr_storage_isLoopbackNet(*it))
+		{
+			for (auto it = addrs.begin(); it != addrs.end(); ++it)
+			{
+				sockaddr_storage& addr(*it);
+				if( sockaddr_storage_isValidNet(addr) &&
+				    !sockaddr_storage_isLoopbackNet(addr) &&
+				    !sockaddr_storage_isLinkLocalNet(addr) &&
+				    sockaddr_storage_ipv6_to_ipv4(addr) )
 				{
-					prefAddr = *it;
+					prefAddr = addr;
 					validAddr = true;
-#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-					std::cout << "p3NetMgrIMPL::checkNetAddress() prefAddr: " << sockaddr_storage_iptostring(prefAddr) << std::endl;
-#endif
+					break;
 				}
+			}
+
+			/* If no satisfactory local address has been found yet relax and
+			 * accept also link local addresses */
+			if(!validAddr) for (auto it = addrs.begin(); it!=addrs.end(); ++it)
+			{
+				sockaddr_storage& addr(*it);
+				if( sockaddr_storage_isValidNet(addr) &&
+				    !sockaddr_storage_isLoopbackNet(addr) &&
+				    sockaddr_storage_ipv6_to_ipv4(addr) )
+				{
+					prefAddr = addr;
+					validAddr = true;
+					break;
+				}
+			}
+
+			/* If no satisfactory local address has been found yet relax and
+			 * accept also loopback addresses */
+			if(!validAddr) for (auto it = addrs.begin(); it!=addrs.end(); ++it)
+			{
+				sockaddr_storage& addr(*it);
+				if( sockaddr_storage_isValidNet(addr) &&
+				    sockaddr_storage_ipv6_to_ipv4(addr) )
+				{
+					prefAddr = addr;
+					validAddr = true;
+					break;
+				}
+			}
+		}
 	}
 
-
-	/* if we don't have a valid address - reset */
 	if (!validAddr)
 	{
-#ifdef NETMGR_DEBUG_RESET
-		std::cerr << "p3NetMgrIMPL::checkNetAddress() no Valid Network Address, resetting network." << std::endl;
-#endif
-		rslog(RSL_WARNING, p3netmgrzone, "p3NetMgr::checkNetAddress() No Valid Network Address, resetting network");
-		netReset();
+		RsErr() << __PRETTY_FUNCTION__ << " no valid local network address "
+		        <<" found. Report to developers." << std::endl;
+		print_stacktrace();
+
 		return false;
 	}
 	
-	
 	/* check addresses */
-	
-	{
-		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
-		
-		oldAddr = mLocalAddr;
+	{ RS_STACK_MUTEX(mNetMtx);
+
+		sockaddr_storage_copy(mLocalAddr, oldAddr);
 		addrChanged = !sockaddr_storage_sameip(prefAddr, mLocalAddr);
 
-#ifdef NETMGR_DEBUG_TICK
-		std::cerr << "p3NetMgrIMPL::checkNetAddress()";
-		std::cerr << std::endl;
-		std::cerr << "Current Local: " << sockaddr_storage_tostring(mLocalAddr);
-		std::cerr << std::endl;
-		std::cerr << "Current Preferred: " << sockaddr_storage_iptostring(prefAddr);
-		std::cerr << std::endl;
-#endif
-		
-#ifdef NETMGR_DEBUG_RESET
-		if (addrChanged)
-		{
-			std::cerr << "p3NetMgrIMPL::checkNetAddress() Address Changed!";
-			std::cerr << std::endl;
-			std::cerr << "Current Local: " << sockaddr_storage_tostring(mLocalAddr);
-			std::cerr << std::endl;
-			std::cerr << "Current Preferred: " << sockaddr_storage_iptostring(prefAddr);
-			std::cerr << std::endl;
-		}
-#endif
-		
 		// update address.
 		sockaddr_storage_copyip(mLocalAddr, prefAddr);
-		mNetFlags.mLocalAddr = mLocalAddr;
+		sockaddr_storage_copy(mLocalAddr, mNetFlags.mLocalAddr);
 
 		if(sockaddr_storage_isLoopbackNet(mLocalAddr))
-		{
-#ifdef NETMGR_DEBUG
-			std::cerr << "p3NetMgrIMPL::checkNetAddress() laddr: Loopback" << std::endl;
-#endif
-			mNetFlags.mLocalAddrOk = false;
 			mNetStatus = RS_NET_LOOPBACK;
-		}
-		else if (!sockaddr_storage_isValidNet(mLocalAddr))
-		{
-#ifdef NETMGR_DEBUG
-			std::cerr << "p3NetMgrIMPL::checkNetAddress() laddr: invalid" << std::endl;
-#endif
-			mNetFlags.mLocalAddrOk = false;
-		}
-		else
-		{
-#ifdef NETMGR_DEBUG_TICK
-			std::cerr << "p3NetMgrIMPL::checkNetAddress() laddr okay" << std::endl;
-#endif
-			mNetFlags.mLocalAddrOk = true;
-		}
 
-
-		int port = sockaddr_storage_port(mLocalAddr);
-		if ((port < PQI_MIN_PORT) || (port > PQI_MAX_PORT))
+		// Check if local port is valid, reset it if not
+		if (!sockaddr_storage_port(mLocalAddr))
 		{
-#ifdef NETMGR_DEBUG
-			std::cerr << "p3NetMgrIMPL::checkNetAddress() Correcting Port to DEFAULT" << std::endl;
-#endif
-			// Generate a default port from SSL id. The port will always be the
-			// same, but appear random from peer to peer.
-		 	// Random port avoids clashes, improves anonymity.
-			//
-		
-			int new_port = htons(PQI_MIN_PORT_RNG + (RSRandom::random_u32() % (PQI_MAX_PORT - PQI_MIN_PORT_RNG)));
-			sockaddr_storage_setport(mLocalAddr, new_port);
+			/* Using same port as external may make some NAT happier */
+			uint16_t port = sockaddr_storage_port(mExtAddr);
 
+			/* Avoid to automatically set a local port to a reserved one < 1024
+			 * that needs special permissions or root access.
+			 * This do not impede the user to set a reserved port manually,
+			 * which make sense in some cases. */
+			while (port < 1025)
+				port = static_cast<uint16_t>(RsRandom::random_u32());
+
+			sockaddr_storage_setport(mLocalAddr, htons(port));
 			addrChanged = true;
+
+			RsWarn() << __PRETTY_FUNCTION__ << " local port was 0, corrected "
+			         <<"to: " << port << std::endl;
 		}
+	} // RS_STACK_MUTEX(mNetMtx);
 
-		/* if localaddr = serveraddr, then ensure that the ports
-		 * are the same (modify server)... this mismatch can
-		 * occur when the local port is changed....
-		 */
-		if (sockaddr_storage_sameip(mLocalAddr, mExtAddr))
-		{
-			sockaddr_storage_setport(mExtAddr, sockaddr_storage_port(mLocalAddr));
-		}
-
-		// ensure that address family is set, otherwise windows Barfs.
-		//mLocalAddr.sin_family = AF_INET;
-		//mExtAddr.sin_family = AF_INET;
-
-#ifdef NETMGR_DEBUG_TICK
-		std::cerr << "p3NetMgrIMPL::checkNetAddress() Final Local Address: " << sockaddr_storage_tostring(mLocalAddr);
-		std::cerr << std::endl;
-#endif
-		
-	}
-	
 	if (addrChanged)
 	{
-#ifdef NETMGR_DEBUG_RESET
-		std::cerr << "p3NetMgrIMPL::checkNetAddress() local address changed, resetting network." << std::endl;
-		std::cerr << std::endl;
-#endif
-		
-		if (mPeerMgr)
-		{
-			mPeerMgr->UpdateOwnAddress(mLocalAddr, mExtAddr);
-		}
-		
-		rslog(RSL_WARNING, p3netmgrzone, "p3NetMgr::checkNetAddress() local address changed, resetting network");
+		RsInfo() << __PRETTY_FUNCTION__ << " local address changed, resetting"
+		         <<" network." << std::endl;
+
+        if(rsEvents)
+        {
+            auto ev = std::make_shared<RsNetworkEvent>();
+            ev->mNetworkEventCode = RsNetworkEventCode::LOCAL_IP_UPDATED;
+            ev->mIPAddress = sockaddr_storage_iptostring(mLocalAddr);
+            rsEvents->postEvent(ev);
+        }
+
+		if (mPeerMgr) mPeerMgr->UpdateOwnAddress(mLocalAddr, mExtAddr);
+
 		netReset();
 	}
 
-	return 1;
+	return true;
 }
 
 
@@ -1193,7 +1131,7 @@ bool    p3NetMgrIMPL::setLocalAddress(const struct sockaddr_storage &addr)
 #ifdef NETMGR_DEBUG_RESET
 		std::cerr << "p3NetMgrIMPL::setLocalAddress() Calling NetReset" << std::endl;
 #endif
-		rslog(RSL_WARNING, p3netmgrzone, "p3NetMgr::setLocalAddress() local address changed, resetting network");
+        rslog(RSL_WARNING, p3netmgrzone, "p3NetMgr::setLocalAddress() local address changed, resetting network");
 		netReset();
 	}
 	return true;
@@ -1229,6 +1167,15 @@ bool    p3NetMgrIMPL::setExtAddress(const struct sockaddr_storage &addr)
 #ifdef NETMGR_DEBUG_RESET
 		std::cerr << "p3NetMgrIMPL::setExtAddress() Calling NetReset" << std::endl;
 #endif
+
+        if(rsEvents)
+        {
+            auto ev = std::make_shared<RsNetworkEvent>();
+            ev->mNetworkEventCode = RsNetworkEventCode::EXTERNAL_IP_UPDATED;
+            ev->mIPAddress = sockaddr_storage_iptostring(addr);
+            rsEvents->postEvent(ev);
+        }
+
 		rslog(RSL_WARNING, p3netmgrzone, "p3NetMgr::setExtAddress() ext address changed, resetting network");
 		netReset();
 	}
@@ -1699,31 +1646,31 @@ void p3NetMgrIMPL::setIPServersEnabled(bool b)
  ************************************** NetStateBox  ******************************************
  **********************************************************************************************/
 
-uint32_t p3NetMgrIMPL::getNetStateMode()
+RsNetState p3NetMgrIMPL::getNetStateMode()
 {
 	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 	return mNetStateBox.getNetStateMode();
 }
 
-uint32_t p3NetMgrIMPL::getNetworkMode()
+RsNetworkMode p3NetMgrIMPL::getNetworkMode()
 {
 	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 	return mNetStateBox.getNetworkMode();
 }
 
-uint32_t p3NetMgrIMPL::getNatTypeMode()
+RsNatTypeMode p3NetMgrIMPL::getNatTypeMode()
 {
 	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 	return mNetStateBox.getNatTypeMode();
 }
 
-uint32_t p3NetMgrIMPL::getNatHoleMode()
+RsNatHoleMode p3NetMgrIMPL::getNatHoleMode()
 {
 	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 	return mNetStateBox.getNatHoleMode();
 }
 
-uint32_t p3NetMgrIMPL::getConnectModes()
+RsConnectModes p3NetMgrIMPL::getConnectModes()
 {
 	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 	return mNetStateBox.getConnectModes();
@@ -1814,7 +1761,7 @@ void p3NetMgrIMPL::updateNetStateBox_temporal()
 		std::cerr << std::endl;
 		std::cerr << "\tNetState: " << netstatestr;
 		std::cerr << std::endl;
-		std::cerr << "\tConnectModes: " << netstatestr;
+		std::cerr << "\tConnectModes: " << connectstr;
 		std::cerr << std::endl;
 		std::cerr << "\tNetworkMode: " << netmodestr;
 		std::cerr << std::endl;
@@ -1838,8 +1785,8 @@ void p3NetMgrIMPL::updateNetStateBox_temporal()
 void p3NetMgrIMPL::updateNatSetting()
 {
 	bool updateRefreshRate = false;
-	uint32_t natType = RSNET_NATTYPE_UNKNOWN;
-	uint32_t natHole = RSNET_NATHOLE_UNKNOWN;
+	RsNatTypeMode natType = RsNatTypeMode::UNKNOWN;
+	RsNatHoleMode natHole = RsNatHoleMode::UNKNOWN;
 	{
 		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 
@@ -1873,29 +1820,31 @@ void p3NetMgrIMPL::updateNatSetting()
 #endif
 		
 #ifdef RS_USE_DHT_STUNNER
-		switch(natType)
-		{
-			case RSNET_NATTYPE_RESTRICTED_CONE: 
+		if (mProxyStunner) {
+			switch(natType)
 			{
-				if ((natHole == RSNET_NATHOLE_NONE) || (natHole == RSNET_NATHOLE_UNKNOWN))
+			case RsNatTypeMode::RESTRICTED_CONE:
+			{
+			    if ((natHole == RsNatHoleMode::NONE) || (natHole == RsNatHoleMode::UNKNOWN))
 				{
 					mProxyStunner->setRefreshPeriod(NET_STUNNER_PERIOD_FAST);
 				}
-				else 
+				else
 				{
 					mProxyStunner->setRefreshPeriod(NET_STUNNER_PERIOD_SLOW);
 				}
 				break;
 			}
-			case RSNET_NATTYPE_NONE:
-			case RSNET_NATTYPE_UNKNOWN:
-			case RSNET_NATTYPE_SYMMETRIC:
-			case RSNET_NATTYPE_DETERM_SYM:
-			case RSNET_NATTYPE_FULL_CONE:
-			case RSNET_NATTYPE_OTHER:
+		    case RsNatTypeMode::NONE:
+		    case RsNatTypeMode::UNKNOWN:
+		    case RsNatTypeMode::SYMMETRIC:
+		    case RsNatTypeMode::DETERM_SYM:
+		    case RsNatTypeMode::FULL_CONE:
+		    case RsNatTypeMode::OTHER:
 
 				mProxyStunner->setRefreshPeriod(NET_STUNNER_PERIOD_SLOW);
 				break;
+			}
 		}
 #endif // RS_USE_DHT_STUNNER
 
@@ -1904,22 +1853,22 @@ void p3NetMgrIMPL::updateNatSetting()
 		 * So that messages can get through.
 		 * We only want to be attached - if we don't have a stable DHT port.
 		 */
-		if ((natHole == RSNET_NATHOLE_NONE) || (natHole == RSNET_NATHOLE_UNKNOWN))
+		if ((natHole == RsNatHoleMode::NONE) || (natHole == RsNatHoleMode::UNKNOWN))
 		{
 			switch(natType)
 			{
 				/* switch to attach mode if we have a bad firewall */
-				case RSNET_NATTYPE_UNKNOWN:
-				case RSNET_NATTYPE_SYMMETRIC:
-				case RSNET_NATTYPE_RESTRICTED_CONE: 
-				case RSNET_NATTYPE_DETERM_SYM:
-				case RSNET_NATTYPE_OTHER:
+			    case RsNatTypeMode::UNKNOWN:
+			    case RsNatTypeMode::SYMMETRIC:
+			    case RsNatTypeMode::RESTRICTED_CONE:
+			    case RsNatTypeMode::DETERM_SYM:
+			    case RsNatTypeMode::OTHER:
 					netAssistAttach(true);
 
 				break;
 				/* switch off attach mode if we have a nice firewall */
-				case RSNET_NATTYPE_NONE:
-				case RSNET_NATTYPE_FULL_CONE:
+			    case RsNatTypeMode::NONE:
+			    case RsNatTypeMode::FULL_CONE:
 					netAssistAttach(false);
 				break;
 			}
@@ -1992,8 +1941,7 @@ void p3NetMgrIMPL::updateNetStateBox_startup()
 			bool extFinderOk = mExtAddrFinder->hasValidIP(tmpip);
 			if (extFinderOk)
 			{
-				/* best guess at port */
-				sockaddr_storage_setport(tmpip, sockaddr_storage_port(mNetFlags.mLocalAddr));
+				sockaddr_storage_setport(tmpip, guessNewExtPort());
 
 #ifdef	NETMGR_DEBUG_STATEBOX
 				std::cerr << "p3NetMgrIMPL::updateNetStateBox_startup() ";
@@ -2039,10 +1987,13 @@ void p3NetMgrIMPL::updateNetStateBox_reset()
 
 		mNetStateBox.reset();
 
-		mOldNatHole = RSNET_NATHOLE_UNKNOWN;
-		mOldNatType = RSNET_NATTYPE_UNKNOWN;
+		mOldNatHole = RsNatHoleMode::UNKNOWN;
+		mOldNatType = RsNatTypeMode::UNKNOWN;
 
 	}
 }
 
-	
+p3NetMgr::~p3NetMgr() = default;
+pqiNetAssist::~pqiNetAssist() = default;
+pqiNetAssistPeerShare::~pqiNetAssistPeerShare() = default;
+pqiNetAssistConnect::~pqiNetAssistConnect() = default;

@@ -3,7 +3,7 @@ HeaderFrame {
 	border: 0px;
 }
 
-ForumsDialog
+ForumsDialog, GxsForumThreadWidget
 {
 	qproperty-textColorRead: gray;
 	qproperty-textColorUnread: white; 
@@ -23,7 +23,7 @@ FriendSelectionWidget
 	qproperty-textColorOnline: lightBlue;
 }
 
-FriendList
+NewFriendList
 {
 	qproperty-textColorStatusOffline: white;
 	qproperty-textColorStatusAway: gray;
@@ -51,6 +51,10 @@ background: black;
 color: lightgray;
 border-color: transparent;
 }
+QTreeView::item, QTreeWidget::item, QListWidget::item{
+	color: lightgray;
+}
+
 QDialog, QMainWindow{
 background-color: qlineargradient(spread:reflect, x1:0, y1:0, x2:0, y2:1, stop:0 rgb(25, 25, 25), stop:0.05 rgb(0, 0, 0), stop:0.95 rgb(0, 0, 0), stop:1 rgb(25, 25, 25));
 }
@@ -132,9 +136,9 @@ selection-background-color: qlineargradient(spread:reflect, x1:0, y1:0, x2:0, y2
 background-color: qlineargradient(spread:reflect, x1:0, y1:0, x2:1, y2:0, stop:0 rgb(15, 15, 15), stop:0.10 rgb(0, 0, 0), stop:0.90 rgb(0, 0, 0), stop:1 rgb(15, 15, 15));
 }
 QComboBox::down-arrow{
-image: url(:/qss/simple/combobox/arrow.png);
-width: 8px;
-height: 8px;
+  image: url(%THISPATH%/blacknight/down.png);
+  width: 8px;
+  height: 8px;
 }
 QComboBox::drop-down{
 width: 20px;
@@ -202,10 +206,10 @@ subcontrol-position: top;
 subcontrol-origin: margin;
 }
 QScrollBar::up-arrow:vertical{
-image: url(qss/blacknight/up.png);
+  image: url(%THISPATH%/blacknight/up.png);
 }
 QScrollBar::down-arrow:vertical{
-image: url(qss/blacknight/down.png);
+  image: url(%THISPATH%/blacknight/down.png);
 }
 QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical{
 background: none;
@@ -216,47 +220,29 @@ spacing: 2px;
 QCheckBox::!enabled, QRadioButton::!enabled{
 color : rgb(50, 50, 50);
 }
-QCheckBox::indicator:unchecked{
-image: url(qss/blacknight/check_unsel.png);
-}
-QCheckBox::indicator:unchecked:hover{
-image: url(qss/blacknight/check_unsel.png);
-}
-QCheckBox::indicator:unchecked:pressed{
-image: url(qss/blacknight/check_unsel.png);
-}
-QCheckBox::indicator:checked{
-image: url(qss/blacknight/check_sel.png);
-}
-QCheckBox::indicator:checked:hover{
-image: url(qss/blacknight/check_sel.png);
-}
-QCheckBox::indicator:checked:!enabled{
-image: url(qss/blacknight/check_sel.png);
-}
+QCheckBox::indicator:unchecked,
+QCheckBox::indicator:unchecked:hover,
+QCheckBox::indicator:unchecked:pressed,
 QCheckBox::indicator:unchecked:!enabled{
-image: url(qss/blacknight/check_unsel.png);
+  image: url(%THISPATH%/blacknight/check_unsel.png);
 }
-QRadioButton::indicator::unchecked{
-image: url(qss/blacknight/radio_unsel.png);
+QCheckBox::indicator:checked,
+QCheckBox::indicator:checked:hover,
+QCheckBox::indicator:checked:!enabled{
+  image: url(%THISPATH%/blacknight/check_sel.png);
 }
-QRadioButton::indicator:unchecked:hover{
-image: url(qss/blacknight/radio_unsel.png);
-}
+QRadioButton::indicator::unchecked,
+QRadioButton::indicator:unchecked:hover,
 QRadioButton::indicator:unchecked:pressed{
-image: url(qss/blacknight/radio_unsel.png);
+  image: url(%THISPATH%/blacknight/radio_unsel.png);
 }
-QRadioButton::indicator::checked{
-image: url(qss/blacknight/radio_sel.png);
-}
-QRadioButton::indicator:checked:hover{
-image: url(qss/blacknight/radio_sel.png);
-}
+QRadioButton::indicator::checked,
+QRadioButton::indicator:checked:hover,
 QRadioButton::indicator:checked:pressed{
-image: url(qss/blacknight/radio_sel.png);
+  image: url(%THISPATH%/blacknight/radio_sel.png);
 }
 QTreeWidget#contactListTree{
-background: black url(qss/blacknight/clbg.png) repeat-y;
+background: black url(%THISPATH%/blacknight/clbg.png) repeat-y;
 }
 icqTextBrowser, icqTextEdit{
 /*
@@ -271,6 +257,12 @@ QTextBrowser {
 
 QTextEdit {
 	color: white;
+}
+
+RSTextBrowser, MimeTextEdit
+{
+	/*qproperty-textColorQuote: rgb(125, 125, 255);*/
+	qproperty-textColorQuotes: ColorList(#789922 #039bd5 #800000 #800080 #008080 #b10dc9 #85144b #3d9970);
 }
 
 /* OpModeStatus need to be at end to overload other values*/
@@ -292,3 +284,17 @@ OpModeStatus[opMode="Gaming"] {
 OpModeStatus[opMode="Minimal"] {
 	background: #700000;
 }
+
+/*Property Values at end to overwrite other settings*/
+
+[new=false] {
+	background: #202020;
+}
+[new=true] {
+	background: #005000;
+}
+
+[WrongValue=true] {
+	background-color: #702020;
+}
+

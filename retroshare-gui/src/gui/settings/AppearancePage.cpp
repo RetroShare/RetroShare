@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006 - 2009 RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/settings/AppearancePage.cpp                                             *
+ *                                                                             *
+ * Copyright 2009, Retroshare Team <retroshare.project@gmail.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QCheckBox>
 #include <QDir>
@@ -43,6 +42,7 @@
 #include "gui/statusbar/SoundStatus.h"
 #include "gui/statusbar/ToasterDisable.h"
 #include "gui/statusbar/SysTrayStatus.h"
+#include "gui/common/FilesDefs.h"
 
 /** Constructor */
 AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
@@ -70,7 +70,7 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 
 	/* Populate combo boxes */
 	foreach (QString code, LanguageSupport::languageCodes()) {
-		ui.cmboLanguage->addItem(QIcon(":/images/flags/" + code + ".png"), LanguageSupport::languageName(code), code);
+        ui.cmboLanguage->addItem(FilesDefs::getIconFromQtResourcePath(":/images/flags/" + code + ".png"), LanguageSupport::languageName(code), code);
 	}
 	foreach (QString style, QStyleFactory::keys()) {
 		ui.cmboStyle->addItem(style, style.toLower());
@@ -301,8 +301,15 @@ void AppearancePage::load()
 	whileBlocking(ui.checkBoxDisableSysTrayToolTip)->setChecked(Settings->valueFromGroup("StatusBar", "DisableSysTrayToolTip", QVariant(false)).toBool());
 	whileBlocking(ui.checkBoxShowStatusStatus)->  setChecked(Settings->valueFromGroup("StatusBar", "ShowStatus",  QVariant(true)).toBool());
 	whileBlocking(ui.checkBoxShowPeerStatus)->    setChecked(Settings->valueFromGroup("StatusBar", "ShowPeer",    QVariant(true)).toBool());
-	whileBlocking(ui.checkBoxShowNATStatus)->     setChecked(Settings->valueFromGroup("StatusBar", "ShowNAT",     QVariant(true)).toBool());
-	whileBlocking(ui.checkBoxShowDHTStatus)->     setChecked(Settings->valueFromGroup("StatusBar", "ShowDHT",     QVariant(true)).toBool());
+	if(MainWindow::hiddenmode)	{
+		whileBlocking(ui.checkBoxShowNATStatus)->     setChecked(0);
+		whileBlocking(ui.checkBoxShowDHTStatus)->     setChecked(0);
+		ui.checkBoxShowNATStatus->setVisible(false);
+		ui.checkBoxShowDHTStatus->setVisible(false);
+	} else {
+		whileBlocking(ui.checkBoxShowNATStatus)->     setChecked(Settings->valueFromGroup("StatusBar", "ShowNAT",     QVariant(true)).toBool());
+		whileBlocking(ui.checkBoxShowDHTStatus)->     setChecked(Settings->valueFromGroup("StatusBar", "ShowDHT",     QVariant(true)).toBool());
+	}
 	whileBlocking(ui.checkBoxShowHashingStatus)-> setChecked(Settings->valueFromGroup("StatusBar", "ShowHashing", QVariant(true)).toBool());
 	whileBlocking(ui.checkBoxShowDiscStatus)->    setChecked(Settings->valueFromGroup("StatusBar", "ShowDisc",    QVariant(true)).toBool());
 	whileBlocking(ui.checkBoxShowRateStatus)->    setChecked(Settings->valueFromGroup("StatusBar", "ShowRate",    QVariant(true)).toBool());

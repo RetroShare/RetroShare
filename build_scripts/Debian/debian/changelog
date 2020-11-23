@@ -1,0 +1,5 @@
+retroshare (0.6.5-1) UNRELEASED; urgency=medium
+
+  * Initial release for Debian. (Closes: #659069)
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Wed, 09 May 2018 10:11:31 +0200

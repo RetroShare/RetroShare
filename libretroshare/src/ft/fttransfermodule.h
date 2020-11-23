@@ -1,26 +1,24 @@
-/*
- * Retroshare file transfer module: ftTransferModule.h
- *
- * Copyright 2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
- 
+/*******************************************************************************
+ * libretroshare/src/ft: fttransfermodule.h                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2008 by Robert Fernie <retroshare@lunamutt.com>                   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef FT_TRANSFER_MODULE_HEADER
 #define FT_TRANSFER_MODULE_HEADER
 
@@ -56,39 +54,32 @@ class HashThread ;
 class peerInfo
 {
 public:
-	peerInfo(const RsPeerId& peerId_in):peerId(peerId_in),state(PQIPEER_NOT_ONLINE),desiredRate(0),actualRate(0),
-		lastTS(0),
-		recvTS(0), lastTransfers(0), nResets(0), 
-		rtt(0), rttActive(false), rttStart(0), rttOffset(0),
-		mRateIncrease(1)
-	{
-		return;
-	}
-	peerInfo(const RsPeerId& peerId_in,uint32_t state_in,uint32_t maxRate_in):
-		peerId(peerId_in),state(state_in),desiredRate(maxRate_in),actualRate(0),
-		lastTS(0),
-		recvTS(0), lastTransfers(0), nResets(0), 
-		rtt(0), rttActive(false), rttStart(0), rttOffset(0),
-		mRateIncrease(1)
-	{
-		return;
-	}
+	explicit peerInfo(const RsPeerId& peerId_in);
+
+//	peerInfo(const RsPeerId& peerId_in,uint32_t state_in,uint32_t maxRate_in):
+//		peerId(peerId_in),state(state_in),desiredRate(maxRate_in),actualRate(0),
+//		lastTS(0),
+//		recvTS(0), lastTransfers(0), nResets(0),
+//		rtt(0), rttActive(false), rttStart(0), rttOffset(0),
+//		mRateIncrease(1)
+//	{
+//		return;
+//	}
   	RsPeerId peerId;
   	uint32_t state;
-  	double desiredRate;
-  	double actualRate;
+  	double desiredRate;        /* speed at which the data should be requested */
+  	double actualRate;	       /* actual speed at which the data is received  */
 
-  	time_t lastTS; /* last Request */
-	time_t recvTS; /* last Recv */
-	uint32_t lastTransfers; /* data recvd in last second */
-	uint32_t nResets; /* count to disable non-existant files */
+  	rstime_t lastTS;           /* last Request */
+	rstime_t recvTS;           /* last Recv */
+	uint32_t lastTransfers;    /* data recvd in last second */
+	uint32_t nResets;          /* count to disable non-existant files */
 
-	/* rrt rate control */
-	uint32_t rtt;       /* last rtt */
-	bool     rttActive; /* have we initialised an rtt measurement */
-	time_t	 rttStart;  /* ts of request */
-	uint64_t rttOffset; /* end of request */
-	float    mRateIncrease; /* current rate */
+	uint32_t rtt;              /* last rtt */
+	bool     rttActive;        /* have we initialised an rtt measurement */
+	rstime_t	 rttStart;     /* ts of request */
+	uint64_t rttOffset;        /* end of request */
+	float    mRateIncrease;    /* current rate increase factor */
 };
 
 class ftFileStatus
@@ -111,13 +102,13 @@ public:
 	};
         
         ftFileStatus():hash(""),stat(PQIFILE_INIT) {}
-	ftFileStatus(const RsFileHash& hash_in):hash(hash_in),stat(PQIFILE_INIT) {}
+	explicit ftFileStatus(const RsFileHash& hash_in):hash(hash_in),stat(PQIFILE_INIT) {}
 
 	RsFileHash hash;
 	Status stat;
 };
 
-class ftTransferModule 
+class ftTransferModule
 {
 public:
   ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftController *c);
@@ -158,7 +149,7 @@ public:
   void setDownloadPriority(DwlSpeed p) { mPriority =p ; }
 
   // read/reset the last time the transfer module was active (either wrote data, or was solicitaded by clients)
-  time_t lastActvTimeStamp() ;
+  rstime_t lastActvTimeStamp() ;
   void resetActvTimeStamp() ;
 
 private:
@@ -187,7 +178,7 @@ private:
   double desiredRate;
   double actualRate;
 
-  time_t _last_activity_time_stamp ;
+  rstime_t _last_activity_time_stamp ;
 
   ftFileStatus mFileStatus; //used for pause/resume file transfer
 

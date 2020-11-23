@@ -3,22 +3,20 @@
 configure: configure-stamp
 configure-stamp:
 	dh_testdir
-	cd src && qmake "CONFIG-=debug" "CONFIG+=release" "CONFIG+=rs_autologin" PREFIX=/usr LIB_DIR=/usr/lib RetroShare.pro
+	cd src && qmake "RS_MAJOR_VERSION=0" "RS_MINOR_VERSION=6" "RS_MINI_VERSION=4" "RS_EXTRA_VERSION=XXXXXX" "CONFIG-=debug" "CONFIG+=release" "CONFIG+=rs_autologin" "CONFIG+=retroshare_plugins" PREFIX=/usr LIB_DIR=/usr/lib RetroShare.pro
 	touch $@
 
 
-build: build-stamp
+build: build-arch build-indep
+
 build-stamp: configure-stamp
 	dh_testdir
-	# Add here commands to compile the package.
-	# cd libssh-0.6.4 && mkdir -p build && cd build && cmake -DWITH_STATIC_LIB=ON .. && make 
-	# cd sqlcipher && ./configure --disable-shared --enable-static --enable-tempstore=yes CFLAGS="-DSQLITE_HAS_CODEC" LDFLAGS="-lcrypto" && make
-	# mkdir lib
-	# cp -r libssh-0.6.4 lib/
-	#cp -r sqlcipher lib/
-	#cd src/rsctrl/src && make
 	cd src && $(MAKE)
 	touch $@
+
+build-indep: build-stamp
+
+build-arch: build-stamp
 
 clean:
 	dh_testdir
@@ -26,12 +24,14 @@ clean:
 	rm -f configure-stamp build-stamp
 	# Add here commands to clean up after the build process.
 	[ ! -f src/Makefile ] || (cd src && $(MAKE) distclean)
+	dh_prep
 	dh_clean
 
 install: build
 	dh_testdir
 	dh_testroot
-	dh_clean -k
+	dh_prep
+	dh_clean
 	#dh_installdirs
 	cd src && $(MAKE) INSTALL_ROOT=$(CURDIR)/debian/tmp install
 

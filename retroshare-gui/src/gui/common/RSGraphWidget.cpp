@@ -1,25 +1,24 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (C) 2014 RetroShare Team
- * Copyright (c) 2006-2007, crypton
- * Copyright (c) 2006, Matt Edman, Justin Hipple
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/common/RSGraphWidget.cpp                                                *
+ *                                                                             *
+ * Copyright (C) 2014 RetroShare Team                                          *
+ * Copyright (c) 2006-2007, crypton                                            *
+ * Copyright (c) 2006, Matt Edman, Justin Hipple                               *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef WINDOWS_SYS
 #include <sys/times.h>
@@ -102,8 +101,8 @@ QString RSGraphSource::displayValue(float v) const
 
 void RSGraphSource::getCumulatedValues(std::vector<float>& vals) const
 {
-    for(std::map<std::string,float>::const_iterator it = _totals.begin();it!=_totals.end();++it)
-        vals.push_back(it->second) ;
+    for(std::map<std::string,ZeroInitFloat>::const_iterator it = _totals.begin();it!=_totals.end();++it)
+        vals.push_back(it->second.v) ;
 }
 void RSGraphSource::getCurrentValues(std::vector<QPointF>& vals) const
 {
@@ -196,10 +195,15 @@ void RSGraphSource::update()
 
         lst.push_back(std::make_pair(ms,it->second)) ;
 
-        for(std::list<std::pair<qint64,float> >::iterator it2=lst.begin();it2!=lst.end();)
+        float& total ( _totals[it->first].v );
+
+		total += it->second ;
+
+        for(std::list<std::pair<qint64,float> >::iterator it2=lst.begin();it2!=lst.end();) // This loop should be very fast, since we only remove the first elements, if applicable.
             if( ms - (*it2).first > _time_limit_msecs)
             {
                 //std::cerr << "  removing old value with time " << (*it).first/1000.0f << std::endl;
+				total -= (*it2).second ;
                 it2 = lst.erase(it2) ;
             }
             else
@@ -210,33 +214,34 @@ void RSGraphSource::update()
 
     for(std::map<std::string,std::list<std::pair<qint64,float> > >::iterator it=_points.begin();it!=_points.end();)
         if(it->second.empty())
-    {
-        std::map<std::string,std::list<std::pair<qint64,float> > >::iterator tmp(it) ;
-        ++tmp;
-        _points.erase(it) ;
-        it=tmp ;
-    }
+		{
+			std::map<std::string,std::list<std::pair<qint64,float> > >::iterator tmp(it) ;
+			++tmp;
+			_totals.erase(it->first) ;
+			_points.erase(it) ;
+			it=tmp ;
+		}
         else
             ++it ;
-
-    updateTotals();
 }
 
+#ifdef TO_REMOVE
 void RSGraphSource::updateTotals()
 {
+	std::cerr << "RsGraphSource::updateTotals() for " << _points.size() << " values" << std::endl;
     // now compute totals
 
     _totals.clear();
 
     for(std::map<std::string,std::list<std::pair<qint64,float> > >::const_iterator it(_points.begin());it!=_points.end();++it)
     {
-        float& f = _totals[it->first] ;
+        float& f = _totals[it->first].v ;
 
-        f = 0.0f ;
         for(std::list<std::pair<qint64,float> >::const_iterator it2=it->second.begin();it2!=it->second.end();++it2)
 			f += (*it2).second ;
     }
 }
+#endif
 
 void RSGraphSource::reset()
 {

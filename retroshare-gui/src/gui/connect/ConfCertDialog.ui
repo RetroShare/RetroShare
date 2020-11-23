@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1104</width>
-    <height>1086</height>
+    <width>658</width>
+    <height>584</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -390,6 +390,20 @@
              </widget>
             </item>
             <item>
+             <widget class="QCheckBox" name="_shortFormat_CB">
+              <property name="text">
+               <string>short format</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="_includeIPHistory_CB">
+              <property name="text">
+               <string>Include IP history</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer name="horizontalSpacer_2">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -415,12 +429,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>HeaderFrame</class>
-   <extends>QFrame</extends>
-   <header>gui/common/HeaderFrame.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>RSTextBrowser</class>
    <extends>QTextBrowser</extends>
    <header>gui/common/RSTextBrowser.h</header>
@@ -431,7 +439,34 @@
    <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>HeaderFrame</class>
+   <extends>QFrame</extends>
+   <header>gui/common/HeaderFrame.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>stabWidget</tabstop>
+  <tabstop>pgpfingerprint</tabstop>
+  <tabstop>peerid</tabstop>
+  <tabstop>loc</tabstop>
+  <tabstop>statusline</tabstop>
+  <tabstop>crypto_info</tabstop>
+  <tabstop>lastcontact</tabstop>
+  <tabstop>version</tabstop>
+  <tabstop>statusmessage</tabstop>
+  <tabstop>localAddress</tabstop>
+  <tabstop>localPort</tabstop>
+  <tabstop>extAddress</tabstop>
+  <tabstop>extPort</tabstop>
+  <tabstop>dynDNS</tabstop>
+  <tabstop>ipAddressList</tabstop>
+  <tabstop>userCertificateText</tabstop>
+  <tabstop>_shouldAddSignatures_CB</tabstop>
+  <tabstop>_shortFormat_CB</tabstop>
+  <tabstop>_includeIPHistory_CB</tabstop>
+ </tabstops>
  <resources>
   <include location="../images.qrc"/>
  </resources>

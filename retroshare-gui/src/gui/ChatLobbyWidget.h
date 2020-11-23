@@ -1,10 +1,36 @@
+/*******************************************************************************
+ * gui/ChatLobbyWidget.h                                                       *
+ *                                                                             *
+ * Copyright (C) 2012 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #pragma once
 
-#include <QTreeWidget>
-#include <retroshare/rsmsgs.h>
+#include <retroshare-gui/RsAutoUpdatePage.h>
+
 #include "ui_ChatLobbyWidget.h"
-#include "RsAutoUpdatePage.h"
+
 #include "chat/ChatLobbyUserNotify.h"
+#include "gui/gxs/GxsIdChooser.h"
+
+
+#include <retroshare/rsmsgs.h>
+
+#include <QAbstractButton>
+#include <QTreeWidget>
 
 #define IMAGE_CHATLOBBY			    ":/icons/png/chat-lobbies.png"
 
@@ -13,6 +39,7 @@
 
 class RSTreeWidgetItemCompareRole;
 class ChatTabWidget ;
+class ChatDialog ;
 class ChatLobbyDialog ;
 class QTextBrowser ;
 
@@ -38,13 +65,14 @@ public:
 	virtual QString pageName() const { return tr("Chats") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 
-	virtual UserNotify *getUserNotify(QObject *parent); //MainPage
+	virtual UserNotify *createUserNotify(QObject *parent) override; //MainPage
 
 	virtual void updateDisplay();
 
 	void setCurrentChatPage(ChatLobbyDialog *) ;	// used by ChatLobbyDialog to raise.
 	void addChatPage(ChatLobbyDialog *) ;
-	void showLobbyAnchor(ChatLobbyId id, QString anchor) ;
+	void removeChatPage(ChatLobbyDialog *) ;
+	bool showLobbyAnchor(ChatLobbyId id, QString anchor) ;
 
 	uint unreadCount();
 
@@ -52,6 +80,7 @@ signals:
 	void unreadCountChanged(uint unreadCount);
 
 protected slots:
+	void dialogClose(ChatDialog*);
 	void lobbyChanged();
 	void lobbyTreeWidgetCustomPopupMenu(QPoint);
 	void createChatLobby();
@@ -62,7 +91,7 @@ protected slots:
     void displayChatLobbyEvent(qulonglong lobby_id, int event_type, const RsGxsId& gxs_id, const QString& str);
 	void readChatLobbyInvites();
 	void showLobby(QTreeWidgetItem *lobby_item) ;
-	void showBlankPage(ChatLobbyId id) ;
+	void showBlankPage(ChatLobbyId id, bool subscribed = false) ;
     void unsubscribeChatLobby(ChatLobbyId id) ;
     void createIdentityAndSubscribe();
     void subscribeChatLobbyAs() ;
@@ -72,6 +101,7 @@ protected slots:
 	void updatePeerEntering(ChatLobbyId);
 	void updatePeerLeaving(ChatLobbyId);
 	void autoSubscribeItem();
+	void copyItemLink();
 
 private slots:
 	void filterColumnChanged(int);
@@ -79,9 +109,9 @@ private slots:
 	
     void setShowUserCountColumn(bool show);
     void setShowTopicColumn(bool show);
-    void setShowSubscribeColumn(bool show);
 
 	void updateNotify(ChatLobbyId id, unsigned int count) ;
+	void idChooserCurrentIndexChanged(int index);
 
 private:
 	void autoSubscribeLobby(QTreeWidgetItem *item);
@@ -109,10 +139,12 @@ private:
     /** Defines the actions for the header context menu */
     QAction* showUserCountAct;
 	QAction* showTopicAct;
-	QAction* showSubscribeAct;
 	int getNumColVisible();
 
-	ChatLobbyUserNotify* myChatLobbyUserNotify;
+	ChatLobbyUserNotify* myChatLobbyUserNotify; // local copy that avoids dynamic casts
+
+	QAbstractButton* myInviteYesButton;
+	GxsIdChooser* myInviteIdChooser;
 
 	/* UI - from Designer */
 	Ui::ChatLobbyWidget ui;

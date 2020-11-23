@@ -32,7 +32,7 @@
       </sizepolicy>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Box</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
@@ -59,7 +59,7 @@
          </size>
         </property>
         <property name="pixmap">
-         <pixmap resource="icons.qrc">:/icons/png/newsfeed.png</pixmap>
+         <pixmap resource="icons.qrc">:/icons/png/newsfeed2.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>

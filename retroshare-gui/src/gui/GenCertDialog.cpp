@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006,  crypton
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/GenCertDialog.cpp                                                       *
+ *                                                                             *
+ * Copyright (C) 2006 Crypton         <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "GenCertDialog.h"
 
@@ -34,7 +33,9 @@
 
 #include <rshare.h>
 #include "gui/settings/rsharesettings.h"
+#include "TorControl/TorManager.h"
 #include "util/misc.h"
+#include "gui/common/FilesDefs.h"
 
 #include <retroshare/rsidentity.h>
 #include <retroshare/rsinit.h>
@@ -132,11 +133,11 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
 	
-	//ui.headerFrame->setHeaderImage(QPixmap(":/icons/svg/profile.svg"));
+    //ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/svg/profile.svg"));
 	//ui.headerFrame->setHeaderText(tr("Create a new profile"));
 
 	connect(ui.reuse_existing_node_CB, SIGNAL(triggered()), this, SLOT(switchReuseExistingNode()));
-	connect(ui.adv_checkbox, SIGNAL(triggered()), this, SLOT(setupState()));
+	connect(ui.adv_checkbox, SIGNAL(toggled(bool)), this, SLOT(setupState()));
 	connect(ui.nodeType_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(setupState()));
 
 	connect(ui.genButton, SIGNAL(clicked()), this, SLOT(genPerson()));
@@ -144,7 +145,7 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	connect(ui.exportIdentity_PB, SIGNAL(clicked()), this, SLOT(exportIdentity()));
 
 	connect(ui.password_input,   SIGNAL(textChanged(QString)), this, SLOT(updateCheckLabels()));
-	connect(ui.password_input_2, SIGNAL(textChanged(QString)), this, SLOT(updateCheckLabels()));
+	connect(ui.password2_input, SIGNAL(textChanged(QString)), this, SLOT(updateCheckLabels()));
 	connect(ui.name_input,       SIGNAL(textChanged(QString)), this, SLOT(updateCheckLabels()));
 	connect(ui.node_input,       SIGNAL(textChanged(QString)), this, SLOT(updateCheckLabels()));
 	connect(ui.reuse_existing_node_CB, SIGNAL(toggled(bool)), this, SLOT(updateCheckLabels()));
@@ -172,7 +173,7 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	ui.name_input->setPlaceholderText(tr("Username"));
 	ui.nickname_input->setPlaceholderText(tr("Chat name"));
 	ui.password_input->setPlaceholderText(tr("Password"));
-	ui.password_input_2->setPlaceholderText(tr("Password again"));
+	ui.password2_input->setPlaceholderText(tr("Password again"));
 #endif
 
 	ui.nickname_input->setMaxLength(RSID_MAXIMUM_NICKNAME_SIZE);
@@ -181,13 +182,24 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	 * mark last one as default.
 	 */
 	 
-	QMenu *menu = new QMenu(tr("Advanced options"));
-	menu->addAction(ui.adv_checkbox);
-	menu->addAction(ui.reuse_existing_node_CB);
-    ui.optionsButton->setMenu(menu);
+	//QMenu *menu = new QMenu(tr("Advanced options"));
+	//menu->addAction(ui.adv_checkbox);
+	//menu->addAction(ui.reuse_existing_node_CB);
+ //   ui.optionsButton->setMenu(menu);
 
     mAllFieldsOk = false ;
     mEntropyOk = false ;
+
+#ifdef RS_ONLYHIDDENNODE
+	ui.adv_checkbox->setChecked(true);
+	ui.adv_checkbox->setVisible(false);
+	ui.nodeType_CB->setCurrentIndex(1);
+	ui.nodeType_CB->setEnabled(false);
+#endif
+//#ifdef RETROTOR
+//	ui.adv_checkbox->setChecked(false);
+//	ui.adv_checkbox->setVisible(true);
+//#endif
 
 	initKeyList();
     setupState();
@@ -231,7 +243,7 @@ void GenCertDialog::initKeyList()
 			RsAccounts::GetPGPLoginDetails(*it, name, email);
 			std::cerr << "Adding PGPUser: " << name << " id: " << *it << std::endl;
 			QString gid = QString::fromStdString( (*it).toStdString()).right(8) ;
-			ui.genPGPuser->addItem(QString::fromUtf8(name.c_str()) + " <" + QString::fromUtf8(email.c_str()) + "> (" + gid + ")", userData);
+			ui.genPGPuser->addItem(QString::fromUtf8(name.c_str()) + " (" + gid + ")", userData);
 			haveGPGKeys = true;
 		}
 	}
@@ -251,24 +263,40 @@ void GenCertDialog::setupState()
     if(!adv_state)
     {
         ui.reuse_existing_node_CB->setChecked(false) ;
-        ui.nodeType_CB->setCurrentIndex(0) ;
         ui.keylength_comboBox->setCurrentIndex(0) ;
+//        ui.nodeType_CB->setCurrentIndex(0);
     }
-	bool hidden_state = ui.nodeType_CB->currentIndex()==1;
+	ui.reuse_existing_node_CB->setVisible(adv_state) ;
+
+//    ui.nodeType_CB->setVisible(adv_state) ;
+//    ui.nodeType_LB->setVisible(adv_state) ;
+//    ui.nodeTypeExplanation_TE->setVisible(adv_state) ;
+
+	bool hidden_state = ui.nodeType_CB->currentIndex()==1 || ui.nodeType_CB->currentIndex()==2;
     bool generate_new = !ui.reuse_existing_node_CB->isChecked();
+    bool tor_auto = ui.nodeType_CB->currentIndex()==1;
 
 	genNewGPGKey = generate_new;
+
+    switch(ui.nodeType_CB->currentIndex())
+    {
+    case 0: ui.nodeTypeExplanation_TE->setText(tr("<b>Your IP is visible to trusted nodes only. You can also connect to hidden nodes if running Tor on your machine. Best choice for sharing with trusted friends.</b>"));
+        break;
+    case 1: ui.nodeTypeExplanation_TE->setText(tr("<b>Your IP is hidden. All traffic happens over the Tor network. Best choice if you cannot trust friend nodes with your own IP.</b>"));
+        break;
+    case 2: ui.nodeTypeExplanation_TE->setText(tr("<b>Hidden node for advanced users only. Allows to use other proxy solutions such as I2P.</b>"));
+        break;
+    }
 
 	//ui.no_node_label->setVisible(false);
 
 	setWindowTitle(generate_new?tr("Create new profile and new Retroshare node"):tr("Create new Retroshare node"));
 	//ui.headerFrame->setHeaderText(generate_new?tr("Create a new profile and node"):tr("Create a new node"));
 
-    ui.label_nodeType->setVisible(adv_state) ;
-    ui.nodeType_CB->setVisible(adv_state) ;
     ui.reuse_existing_node_CB->setEnabled(adv_state) ;
     ui.importIdentity_PB->setVisible(adv_state && !generate_new) ;
-    ui.exportIdentity_PB->setVisible(adv_state && !generate_new) ;
+    //ui.exportIdentity_PB->setVisible(adv_state && !generate_new) ;
+    ui.exportIdentity_PB->setVisible(false); // not useful, and probably confusing
 
     ui.genPGPuser->setVisible(adv_state && haveGPGKeys && !generate_new) ;
 
@@ -291,9 +319,14 @@ void GenCertDialog::setupState()
 	ui.password_input->setVisible(true);
 	ui.password_label->setVisible(true);
 
+    if(generate_new)
+        ui.password_input->setToolTip(tr("<html><p>Put a strong password here. This password will be required to start your Retroshare node and protects all your data.</p></html>"));
+	else
+        ui.password_input->setToolTip(tr("<html><p>Please supply the existing password for the selected profile above.</p></html>"));
+
 	ui.password2_check_LB->setVisible(generate_new);
-	ui.password_input_2->setVisible(generate_new);
-	ui.password_label_2->setVisible(generate_new);
+	ui.password2_input->setVisible(generate_new);
+	ui.password2_label->setVisible(generate_new);
 
 	ui.keylength_label->setVisible(adv_state);
 	ui.keylength_comboBox->setVisible(adv_state);
@@ -301,13 +334,17 @@ void GenCertDialog::setupState()
 	ui.entropy_bar->setVisible(true);
 	ui.genButton->setVisible(true);
 
-	ui.hiddenaddr_input->setVisible(hidden_state);
-	ui.hiddenaddr_label->setVisible(hidden_state);
+	ui.hiddenaddr_input->setVisible(hidden_state && !tor_auto);
+	ui.hiddenaddr_label->setVisible(hidden_state && !tor_auto);
 
-	ui.hiddenport_label->setVisible(hidden_state);
-	ui.hiddenport_spinBox->setVisible(hidden_state);
+	ui.hiddenport_label->setVisible(hidden_state && !tor_auto);
+	ui.hiddenport_spinBox->setVisible(hidden_state && !tor_auto);
 
-	ui.cbUseBob->setVisible(hidden_state);
+	ui.cbUseBob->setVisible(hidden_state && !tor_auto);
+#ifndef RS_USE_I2P_BOB
+	ui.cbUseBob->setDisabled(true);
+	ui.cbUseBob->setToolTip(tr("BOB support is not available"));
+#endif
 
 	if(!mAllFieldsOk)
 	{
@@ -315,7 +352,7 @@ void GenCertDialog::setupState()
 
 		ui.genButton->setVisible(false) ;
 		ui.generate_label->setVisible(false) ;
-		ui.info_label->setText("Please fill your profile name and password...") ;
+		ui.info_label->setText("Please choose a profile name and password...") ;
 		ui.info_label->setVisible(true) ;
 	}
 	else if(!mEntropyOk)
@@ -324,7 +361,7 @@ void GenCertDialog::setupState()
 
 		ui.genButton->setVisible(false) ;
 		ui.generate_label->setVisible(false) ;
-		ui.info_label->setText("Please mouve your mouse randomply to generate enough random data to create your profile.") ;
+		ui.info_label->setText("Please move your mouse randomly to generate enough random data to create your profile.") ;
 		ui.info_label->setVisible(true) ;
 	}
 	else
@@ -385,7 +422,7 @@ void GenCertDialog::updateCheckLabels()
         mAllFieldsOk = false ;
 		ui.password_check_LB   ->setPixmap(bad) ;
     }
-    if(ui.password_input->text().length() >= 3 && ui.password_input->text() == ui.password_input_2->text())
+    if(ui.password_input->text().length() >= 3 && ui.password_input->text() == ui.password2_input->text())
 		ui.password2_check_LB   ->setPixmap(good) ;
     else
     {
@@ -396,9 +433,9 @@ void GenCertDialog::updateCheckLabels()
     }
 
     if(mEntropyOk)
-		ui.randomness_check_LB->setPixmap(QPixmap(IMAGE_GOOD)) ;
+        ui.randomness_check_LB->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_GOOD)) ;
 	else
-		ui.randomness_check_LB->setPixmap(QPixmap(IMAGE_BAD)) ;
+        ui.randomness_check_LB->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_BAD)) ;
 
 	setupState();
 }
@@ -442,7 +479,10 @@ bool GenCertDialog::importIdentity()
 		RsAccounts::GetPGPLoginDetails(gpg_id, name, email);
 		std::cerr << "Adding PGPUser: " << name << " id: " << gpg_id << std::endl;
 
-		QMessageBox::information(this,tr("New profile imported"),tr("Your profile was imported successfully:")+" \n"+"\nName :"+QString::fromStdString(name)+"\nemail: " + QString::fromStdString(email)+"\nKey ID: "+QString::fromStdString(gpg_id.toStdString())+"\n\n"+tr("You can use it now to create a new node.")) ;
+		QMessageBox::information(this,tr("New profile imported"),tr("Your profile was imported successfully:")+" \n"+"\nName :"+QString::fromStdString(name)+"\nKey ID: "+QString::fromStdString(gpg_id.toStdString())+"\n\n"+tr("You can use it now to create a new node.")) ;
+
+		initKeyList();
+		setupState();
 
         return true ;
 	}
@@ -453,7 +493,6 @@ void GenCertDialog::genPerson()
 	/* Check the data from the GUI. */
 	std::string genLoc  = ui.node_input->text().toUtf8().constData();
 	RsPgpId PGPId;
-	bool isHiddenLoc = false;
 
 	if(ui.nickname_input->isVisible())
 	{
@@ -486,18 +525,26 @@ void GenCertDialog::genPerson()
 		}
 	}
 
-	if (ui.nodeType_CB->currentIndex()==1)
+	bool isHiddenLoc = (ui.nodeType_CB->currentIndex()>0);
+    bool isAutoTor = (ui.nodeType_CB->currentIndex()==1);
+
+    if(isAutoTor && !Tor::TorManager::isTorAvailable())
+    {
+        QMessageBox::critical(this,tr("Tor is not available"),tr("No Tor executable has been found on your system. You need to install Tor before creating a hidden identity.")) ;
+        return ;
+    }
+
+    if(isHiddenLoc)
 	{
 		std::string hl = ui.hiddenaddr_input->text().toStdString();
 		uint16_t port  = ui.hiddenport_spinBox->value();
+
 		bool useBob    = ui.cbUseBob->isChecked();
 
 		if (useBob && hl.empty())
 			hl = "127.0.0.1";
 
 		RsInit::SetHiddenLocation(hl, port, useBob);	/* parses it */
-
-		isHiddenLoc = true;
 	}
 
 
@@ -533,7 +580,7 @@ void GenCertDialog::genPerson()
 			return;
 		}
 
-		if(ui.password_input->text() != ui.password_input_2->text())
+		if(ui.password_input->text() != ui.password2_input->text())
 		{
 			QMessageBox::warning(this,
 								 tr("PGP key pair generation failure"),
@@ -550,8 +597,8 @@ void GenCertDialog::genPerson()
 		ui.name_input->hide();
 		ui.nickname_label->hide();
 		ui.nickname_input->hide();
-		ui.password_label_2->hide();
-		ui.password_input_2->hide();
+		ui.password2_label->hide();
+		ui.password2_input->hide();
 		ui.password2_check_LB->hide();
 		ui.password_check_LB->hide();
 		ui.password_label->hide();
@@ -603,7 +650,7 @@ void GenCertDialog::genPerson()
 	std::string err;
 	this->hide();//To show dialog asking password PGP Key.
 	std::cout << "RsAccounts::GenerateSSLCertificate" << std::endl;
-	bool okGen = RsAccounts::GenerateSSLCertificate(PGPId, "", genLoc, "", isHiddenLoc, sslPasswd, sslId, err);
+	bool okGen = RsAccounts::createNewAccount(PGPId, "", genLoc, "", isHiddenLoc, isAutoTor, sslPasswd, sslId, err);
 
 	if (okGen)
 	{

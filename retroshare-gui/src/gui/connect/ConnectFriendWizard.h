@@ -1,3 +1,23 @@
+/*******************************************************************************
+ * gui/connect/ConnectFriendWizard.h                                           *
+ *                                                                             *
+ * Copyright (C) 2018 retroshare team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #ifndef CONNECTFRIENDWIZARD_H
 #define CONNECTFRIENDWIZARD_H
 
@@ -30,7 +50,7 @@ class ConnectFriendWizard : public QWizard
 	Q_PROPERTY(QString titleColor READ titleColor WRITE setTitleColor)
 
 public:
-	enum Page { Page_Intro, Page_Text, Page_Cert, Page_ErrorMessage, Page_Conclusion, Page_Foff, Page_Rsid, Page_WebMail, Page_Email, Page_FriendRequest, Page_FriendRecommendations };
+	enum Page { Page_Text, Page_ErrorMessage, Page_Conclusion, Page_WebMail };
 
 	ConnectFriendWizard(QWidget *parent = 0);
 	~ConnectFriendWizard();
@@ -58,38 +78,27 @@ protected:
 
 private slots:
 	/* TextPage */
-	void updateOwnCert();
-	void toggleSignatureState(bool doUpdate = true);
-	void toggleFormatState(bool doUpdate = true);
-	void runEmailClient();
 	void runEmailClient2();
-	void showHelpUserCert();
-	void copyCert();
 	void pasteCert();
 	void openCert();
-	void saveCert();
 	void friendCertChanged();
 	void cleanFriendCert();
 
 	ServicePermissionFlags serviceFlags() const ;
 
 	/* CertificatePage */
-	void loadFriendCert();
-	void generateCertificateCalled();
-
-	/* FofPage */
-	void updatePeersList(int index);
-	void signAllSelectedUsers();
+	//void loadFriendCert();
+	//void generateCertificateCalled();
 
 	/* ConclusionPage */
 	void groupCurrentIndexChanged(int index);
-	
+
 	/* WebMailPage */
-    void inviteGmail();
-    void inviteYahoo();
-    void inviteOutlook();
-    void inviteAol();
-    void inviteYandex();
+	void inviteGmail();
+	void inviteYahoo();
+	void inviteOutlook();
+	void inviteAol();
+	void inviteYandex();
 
 	void toggleAdvanced();
 
@@ -99,11 +108,13 @@ private:
 	void updateStylesheet();
 	void setTitleText(QWizardPage *page, const QString &title);
 	bool AdvancedVisible;
-	
+
 private:
 	bool error;
 	RsPeerDetails peerDetails;
 	std::string mCertificate;
+
+	bool mIsShortInvite;
 
 	/* Stylesheet */
 	QString mBannerPixmap;
@@ -121,9 +132,9 @@ private:
 
 	/* ConclusionPage */
 	QString groupId;
-	
+
 	/* WebMailPage */
-  QString subject;
+	QString subject;
 	QString body;
 
 	Ui::ConnectFriendWizard *ui;

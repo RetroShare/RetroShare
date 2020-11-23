@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2008 RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/statusbar/OpModeStatus.cpp                                              *
+ *                                                                             *
+ * Copyright (c) 2008 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QHBoxLayout>
 #include <QMessageBox>
@@ -40,13 +39,13 @@ OpModeStatus::OpModeStatus(QWidget *parent)
 	opMode_Minimal_Color = QColor("#FFCCCC");
 
 	/* add the options */
-	addItem(tr("Normal Mode"), RS_OPMODE_FULL);
+	addItem(tr("Normal Mode"), static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::FULL));
 	setItemData(0, opMode_Full_Color, Qt::BackgroundRole);
-	addItem(tr("No Anon D/L"), RS_OPMODE_NOTURTLE);
+	addItem(tr("No Anon D/L"), static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::NOTURTLE));
 	setItemData(1, opMode_NoTurtle_Color, Qt::BackgroundRole);
-	addItem(tr("Gaming Mode"), RS_OPMODE_GAMING);
+	addItem(tr("Gaming Mode"), static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::GAMING));
 	setItemData(2, opMode_Gaming_Color, Qt::BackgroundRole);
-	addItem(tr("Low Traffic"), RS_OPMODE_MINIMAL);
+	addItem(tr("Low Traffic"), static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::MINIMAL));
 	setItemData(3, opMode_Minimal_Color, Qt::BackgroundRole);
 
 	connect(this, SIGNAL(activated( int )), this, SLOT(setOpMode()));
@@ -60,23 +59,23 @@ OpModeStatus::OpModeStatus(QWidget *parent)
 
 void OpModeStatus::getOpMode()
 {
-	int opMode = rsConfig->getOperatingMode();
+	RsOpMode opMode = rsConfig->getOperatingMode();
 	switch(opMode)
 	{
 		default:
-		case RS_OPMODE_FULL:
+	    case RsOpMode::FULL:
 			setCurrentIndex(0);
 			setProperty("opMode", "Full");
 		break;
-		case RS_OPMODE_NOTURTLE:
+	    case RsOpMode::NOTURTLE:
 			setCurrentIndex(1);
 			setProperty("opMode", "NoTurtle");
 		break;
-		case RS_OPMODE_GAMING:
+	    case RsOpMode::GAMING:
 			setCurrentIndex(2);
 			setProperty("opMode", "Gaming");
 		break;
-		case RS_OPMODE_MINIMAL:
+	    case RsOpMode::MINIMAL:
 			setCurrentIndex(3);
 			setProperty("opMode", "Minimal");
 		break;
@@ -95,19 +94,19 @@ void OpModeStatus::setOpMode()
 
 	int idx = currentIndex();
 	QVariant var = itemData(idx);
-	uint32_t opMode = var.toUInt();
+	RsOpMode opMode = static_cast<RsOpMode>(var.toUInt());
 
 	QString message = tr("<p>Warning: This Operating mode disables the tunneling service. This means you can use distant chat not anonymously download files and the mail service will be slower.</p><p>This state will be saved after restart, so do not forget that you changed it!</p>");
 
-	if(opMode == RS_OPMODE_NOTURTLE && ! Settings->getPageAlreadyDisplayed(QString("RS_OPMODE_NO_TURTLE")))
+	if(opMode == RsOpMode::NOTURTLE && ! Settings->getPageAlreadyDisplayed(QString("RsOpMode::NO_TURTLE")))
 	{
 		QMessageBox::warning(NULL,tr("Turtle routing disabled!"),message);
-		Settings->setPageAlreadyDisplayed(QString("RS_OPMODE_NO_TURTLE"),true) ;
+		Settings->setPageAlreadyDisplayed(QString("RsOpMode::NO_TURTLE"),true) ;
 	}
-	if( (opMode == RS_OPMODE_MINIMAL  && ! Settings->getPageAlreadyDisplayed(QString("RS_OPMODE_MINIMAL"))))
+	if( (opMode == RsOpMode::MINIMAL  && ! Settings->getPageAlreadyDisplayed(QString("RsOpMode::MINIMAL"))))
 	{
 		QMessageBox::warning(NULL,tr("Turtle routing disabled!"),message);
-		Settings->setPageAlreadyDisplayed(QString("RS_OPMODE_MINIMAL"),true) ;
+		Settings->setPageAlreadyDisplayed(QString("RsOpMode::MINIMAL"),true) ;
 	}
 
 	rsConfig->setOperatingMode(opMode);

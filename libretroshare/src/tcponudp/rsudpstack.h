@@ -1,33 +1,28 @@
+/*******************************************************************************
+ * libretroshare/src/tcponudp: rsudpstack.h                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2012 by Robert Fernie <retroshare.project@gmail.com>         *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #ifndef RS_UDP_STACK_RECEIVER_H
 #define RS_UDP_STACK_RECEIVER_H
 
-/*
- * tcponudp/rsudpstack.h
- *
- * libretroshare.
- *
- * Copyright 2010 by Robert Fernie
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 3 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-
-/*******************************************************/
 #ifdef RS_USE_BITDHT
 
 #include "udp/udpstack.h"
@@ -50,34 +45,37 @@ virtual bool resetAddress(struct sockaddr_in &local) { return false; }
 /*******************************************************/
 
 #include "pqi/pqimonitor.h"
+#include "util/rsnet.h"
+#include "util/stacktrace.h"
+
 #include <iostream>
 
 class rsUdpStack: public UdpStack, public pqiNetListener
 {
-	public:
-	rsUdpStack(struct sockaddr_in &local)
-	:UdpStack(local) { return; }
+public:
+	rsUdpStack(struct sockaddr_in &local) : UdpStack(local) {}
 
-        rsUdpStack(int testmode, struct sockaddr_in &local)
-	:UdpStack(testmode, local) { return; }
+	rsUdpStack(int testmode, struct sockaddr_in &local) :
+	    UdpStack(testmode, local) {}
 
-	/* from pqiNetListener */
-virtual bool resetListener(const struct sockaddr_storage &local)
+	/// @see pqiNetListener
+	virtual bool resetListener(const sockaddr_storage& local)
 	{
-		//std::cerr << "rsUdpStack::resetListener(" << sockaddr_storage_tostring(local) << ")";
-		//std::cerr << std::endl;
+		sockaddr_storage temp;
+		sockaddr_storage_copy(local, temp);
 
-		if (local.ss_family != AF_INET)
+		if (!sockaddr_storage_ipv6_to_ipv4(temp))
 		{
-			std::cerr << "rsUdpStack::resetListener() NOT IPv4 ERROR";
-			std::cerr << std::endl;
-			abort();
+			std::cerr << __PRETTY_FUNCTION__ << " Got non IPv4 address ERROR"
+			          << std::endl;
+			sockaddr_storage_dump(local);
+			print_stacktrace();
+			return -EINVAL;
 		}
 
-		struct sockaddr_in *addr = (struct sockaddr_in *) &local;
+		sockaddr_in *addr = reinterpret_cast<sockaddr_in*>(&temp);
 		return resetAddress(*addr);
 	}
-
 };
 
 class rsFixedUdpStack: public UdpStack, public pqiNetListener

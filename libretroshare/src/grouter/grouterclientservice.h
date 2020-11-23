@@ -1,27 +1,24 @@
-/*
- * libretroshare/src/grouter: grouterclientservice.h
- *
- * Services for RetroShare.
- *
- * Copyright 2013 by Cyril Soler
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "csoler@users.sourceforge.net".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/grouter: grouterclientservice.h                           *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2013 by Cyril Soler <csoler@users.sourceforge.net>                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 // This class is the parent class for any service that will use the global router to distribute its packets.
 // Typical representative clients include:
@@ -34,7 +31,7 @@
 #include <stdlib.h>
 #include <grouter/grouteritems.h>
 
-class RsItem ;
+struct RsItem;
 
 static const uint32_t GROUTER_CLIENT_SERVICE_DATA_STATUS_UNKNOWN  = 0x0000 ;	// unused.
 static const uint32_t GROUTER_CLIENT_SERVICE_DATA_STATUS_RECEIVED = 0x0001 ;	// sent when data has been received and a receipt is available.

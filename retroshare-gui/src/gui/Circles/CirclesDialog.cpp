@@ -1,25 +1,24 @@
-/*
- * Retroshare Circle Plugin.
- *
- * Copyright 2012-2012 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * gui/Circles/CirclesDialog.cpp                                               *
+ *                                                                             *
+ * LibResAPI: API for local socket server                                      *
+ *                                                                             *
+ * Copyright (C) 2012, robert Fernie <retroshare.project@gmail.com>            *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QMessageBox>
 
@@ -51,7 +50,7 @@
 
 /** Constructor */
 CirclesDialog::CirclesDialog(QWidget *parent)
-	: RsGxsUpdateBroadcastPage(rsGxsCircles, parent)
+	: MainPage(parent)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -63,9 +62,6 @@ CirclesDialog::CirclesDialog(QWidget *parent)
 	mStateHelper->addWidget(CIRCLESDIALOG_GROUPMETA, ui.pushButton_editCircle);
 
 	mStateHelper->addWidget(CIRCLESDIALOG_GROUPMETA, ui.treeWidget_membership, UISTATE_ACTIVE_ENABLED);
-//	mStateHelper->addWidget(CIRCLESDIALOG_GROUPMETA, ui.treeWidget_friends, UISTATE_ACTIVE_ENABLED);
-//	mStateHelper->addWidget(CIRCLESDIALOG_GROUPMETA, ui.treeWidget_category, UISTATE_ACTIVE_ENABLED);
-
 	mStateHelper->setWidgetEnabled(ui.pushButton_editCircle, false);
 
 	/* Connect signals */
@@ -75,19 +71,13 @@ CirclesDialog::CirclesDialog(QWidget *parent)
 	connect(ui.todoPushButton, SIGNAL(clicked()), this, SLOT(todo()));
 
 	connect(ui.treeWidget_membership, SIGNAL(itemSelectionChanged()), this, SLOT(circle_selected()));
-//	connect(ui.treeWidget_friends, SIGNAL(itemSelectionChanged()), this, SLOT(friend_selected()));
-//	connect(ui.treeWidget_category, SIGNAL(itemSelectionChanged()), this, SLOT(category_selected()));
 
 	/* Setup TokenQueue */
 	mCircleQueue = new TokenQueue(rsGxsCircles->getTokenService(), this);
 	
 	/* Set header resize modes and initial section sizes */
-  QHeaderView * membership_header = ui.treeWidget_membership->header () ;
-  membership_header->resizeSection ( CIRCLEGROUP_CIRCLE_COL_GROUPNAME, 200 );
-
-//  QHeaderView * friends_header = ui.treeWidget_friends->header () ;
-//  friends_header->resizeSection ( CIRCLEGROUP_FRIEND_COL_NAME, 200 );
-  
+	QHeaderView * membership_header = ui.treeWidget_membership->header () ;
+	membership_header->resizeSection ( CIRCLEGROUP_CIRCLE_COL_GROUPNAME, 200 );
 }
 
 CirclesDialog::~CirclesDialog()

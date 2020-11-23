@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare GUI is distributed under the following license:
- *
- *  Copyright (C) 2012 by Thunder
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * plugins/FeedReader/gui/PreviewFeedDialog.h                                  *
+ *                                                                             *
+ * Copyright (C) 2012 by Thunder <retroshare.project@gmail.com>                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef PREVIEWFEEDDIALOG_H
 #define PREVIEWFEEDDIALOG_H
@@ -78,8 +77,8 @@ private slots:
 	void transformationTypeChanged();
 
 	/* FeedReaderNotify */
-	void feedChanged(const QString &feedId, int type);
-	void msgChanged(const QString &feedId, const QString &msgId, int type);
+	void feedChanged(uint32_t feedId, int type);
+	void msgChanged(uint32_t feedId, const QString &msgId, int type);
 
 private:
 	void processSettings(bool load);
@@ -94,7 +93,7 @@ private:
 
 	RsFeedReader *mFeedReader;
 	FeedReaderNotify *mNotify;
-	std::string mFeedId;
+	uint32_t mFeedId;
 	std::string mMsgId;
 	std::list<std::string> mMsgIds;
 	std::string mDescription;

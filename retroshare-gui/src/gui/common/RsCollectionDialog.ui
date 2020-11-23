@@ -6,9 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>693</width>
-    <height>525</height>
+    <width>600</width>
+    <height>400</height>
    </rect>
+  </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::CustomContextMenu</enum>
   </property>
   <property name="windowTitle">
    <string>Collection</string>
@@ -67,19 +70,7 @@
          <property name="frameShadow">
           <enum>QFrame::Plain</enum>
          </property>
-         <layout class="QVBoxLayout">
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
+         <layout class="QVBoxLayout" name="verticalLayout">
           <item>
            <widget class="QFrame" name="_frameInfo">
             <property name="sizePolicy">
@@ -288,7 +279,11 @@
                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add selected item to collection one by one.&lt;/p&gt;&lt;p&gt;Select parent dir to add this too.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;Enter&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                      </property>
                      <property name="text">
-                      <string notr="true">&gt;</string>
+                      <string notr="true"/>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="../images.qrc">
+                       <normaloff>:/images/feedback_arrow.png</normaloff>:/images/feedback_arrow.png</iconset>
                      </property>
                     </widget>
                    </item>
@@ -310,7 +305,11 @@
                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add selected item to collection.&lt;/p&gt;&lt;p&gt;If a directory is selected, all of his children will be added.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; text-decoration: underline; vertical-align:sub;&quot;&gt;&amp;lt;Shift + Enter&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                      </property>
                      <property name="text">
-                      <string>&gt;&gt;</string>
+                      <string/>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="../images.qrc">
+                       <normaloff>:/images/update.png</normaloff>:/images/update.png</iconset>
                      </property>
                     </widget>
                    </item>
@@ -332,7 +331,11 @@
                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Remove selected item from collection.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;Del&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                      </property>
                      <property name="text">
-                      <string notr="true">&lt;</string>
+                      <string notr="true"/>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="../images.qrc">
+                       <normaloff>:/images/deletemail24.png</normaloff>:/images/deletemail24.png</iconset>
                      </property>
                     </widget>
                    </item>
@@ -354,7 +357,11 @@
                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Make a new directory in the collection.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;+&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                      </property>
                      <property name="text">
-                      <string>+</string>
+                      <string/>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="../images.qrc">
+                       <normaloff>:/images/directoryadd_24x24_shadow.png</normaloff>:/images/directoryadd_24x24_shadow.png</iconset>
                      </property>
                     </widget>
                    </item>
@@ -386,7 +393,7 @@
                  <enum>QAbstractItemView::ExtendedSelection</enum>
                 </property>
                 <property name="rootIsDecorated">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                 <property name="allColumnsShowFocus">
                  <bool>true</bool>
@@ -403,7 +410,7 @@
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout">
+           <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
              <widget class="QCheckBox" name="_removeDuplicate_CB">
               <property name="text">
@@ -423,6 +430,37 @@
                </size>
               </property>
              </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="downloadFolder_LB">
+              <property name="text">
+               <string>Destination:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="destinationDir_TB">
+              <property name="text">
+               <string>...</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../images.qrc">
+                <normaloff>:/images/start.png</normaloff>:/images/start.png</iconset>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="downloadFolder_LE">
+              <property name="contextMenuPolicy">
+               <enum>Qt::CustomContextMenu</enum>
+              </property>
+              <property name="toolTip">
+               <string>Right click to change download directory</string>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="QPushButton" name="_cancel_PB">
@@ -479,6 +517,7 @@
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../../../../plugins/FeedReader/gui/FeedReader_images.qrc"/>
  </resources>
  <connections/>
 </ui>

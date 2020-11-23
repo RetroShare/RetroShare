@@ -1,35 +1,30 @@
-/*
- * libretroshare/src/pqi: p3cfgmgr.cc
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2007-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/pqi: p3cfgmgr.cc                                          *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2007-2008 by Robert Fernie, Retroshare Team.                      *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "util/rsdir.h"
 //#include "retroshare/rspeers.h"
 #include "pqi/p3cfgmgr.h"
 #include "pqi/authssl.h"
 #include "pqi/pqibin.h"
 #include "pqi/pqistore.h"
-#include "pqi/pqiarchive.h"
 #include <errno.h>
 #include <rsserver/p3face.h>
 #include <util/rsdiscspace.h>
@@ -65,7 +60,7 @@ void	p3ConfigMgr::tick()
 
 #ifdef CONFIG_DEBUG
 			std::cerr << "p3ConfigMgr::tick() Config Changed - Element: ";
-			std::cerr << it->first;
+			std::cerr << *it;
 			std::cerr << std::endl;
 #endif
 
@@ -111,7 +106,7 @@ void p3ConfigMgr::saveConfig()
 		{
 #ifdef CONFIG_DEBUG
 			std::cerr << "p3ConfigMgr::globalSaveConfig() Saving Element: ";
-			std::cerr << it->first;
+			std::cerr << *it;
 			std::cerr << std::endl;
 #endif
 			ok &= (*it)->saveConfiguration();
@@ -137,7 +132,7 @@ void p3ConfigMgr::loadConfig()
 	{
 #ifdef CONFIG_DEBUG
 		std::cerr << "p3ConfigMgr::loadConfig() Element: ";
-		std::cerr << cit->first <<"Dummy Hash: " << dummyHash;
+		std::cerr << *cit <<" Dummy Hash: " << dummyHash;
 		std::cerr << std::endl;
 #endif
 
@@ -178,15 +173,16 @@ void	p3ConfigMgr::addConfiguration(std::string file, pqiConfig *conf)
 	}
 	// Also check that the filename is not already registered for another config
 
-	for(std::list<pqiConfig*>::const_iterator it = mConfigs.begin(); it!= mConfigs.end(); ++it)
+	for(std::list<pqiConfig*>::iterator it = mConfigs.begin(); it!= mConfigs.end();)
 		if((*it)->filename == filename)
 		{
-			std::cerr << "!!!!!!!!!! Trying to register a config for file \"" << filename << "\" that is already registered" << std::endl;
-			std::cerr << "!!!!!!!!!! Please correct the code !" << std::endl;
-			return;
+			std::cerr << "(WW) Registering a config for file \"" << filename << "\" that is already registered. Replacing previous component." << std::endl;
+			it = mConfigs.erase(it);
 		}
+		else
+			++it;
 
-	conf->setFilename(filename);
+	conf->setFilename(filename);// (cyril) this is quite terrible. The constructor of pqiConfig should take the filename as parameter and hold the information.
 	mConfigs.push_back(conf);
 }
 
@@ -304,26 +300,38 @@ bool p3Config::loadAttempt(const std::string& cfgFname,const std::string& signFn
 	/* set hash */
 	setHash(bio->gethash());
 
+    // In order to check the signature that is stored on disk, we compute the hash of the current data (which should match the hash of the data on disc because we just read it),
+    // and validate the signature from the disk on this data. The config file data is therefore hashed twice. Not a security issue, but
+    // this is a bit inelegant.
+
 	std::string signatureRead;
 	RsFileHash strHash(Hash());
-	AuthSSL::getAuthSSL()->SignData(strHash.toByteArray(), RsFileHash::SIZE_IN_BYTES, signatureRead);
 
-	BinMemInterface *signbio = new BinMemInterface(signatureRead.size(), BIN_FLAGS_READABLE);
+	BinFileInterface bfi(signFname.c_str(), BIN_FLAGS_READABLE);
 
-	if(!signbio->readfromfile(signFname.c_str()))
-	{
-		delete signbio;
+    if(bfi.getFileSize() == 0)
+        return false ;
+
+    RsTemporaryMemory mem(bfi.getFileSize()) ;
+
+    if(!bfi.readdata(mem,mem.size()))
 		return false;
+
+    // signature is stored as ascii so we need to convert it back to binary
+
+    RsTemporaryMemory mem2(bfi.getFileSize()/2) ;
+
+    if(!RsUtil::HexToBin(std::string((char*)(unsigned char*)mem,mem.size()),mem2,mem2.size()))
+    {
+        std::cerr << "Input string is not a Hex string!!"<< std::endl;
+        return false ;
 	}
 
-	std::string signatureStored((char *) signbio->memptr(), signbio->memsize());
+	bool signature_checks = AuthSSL::getAuthSSL()->VerifyOwnSignBin(strHash.toByteArray(), RsFileHash::SIZE_IN_BYTES,mem2,mem2.size());
 
-	delete signbio;
+    std::cerr << "(II) checked signature of config file " << cfgFname << ": " << (signature_checks?"OK":"Wrong!") << std::endl;
 
-	if(signatureRead != signatureStored)
-		return false;
-
-	return true;
+    return signature_checks;
 }
 
 bool p3Config::saveConfiguration()
@@ -333,7 +341,6 @@ bool p3Config::saveConfiguration()
 
 bool p3Config::saveConfig()
 {
-
 	bool cleanup = true;
 	std::list<RsItem *> toSave;
 	saveList(cleanup, toSave);
@@ -348,6 +355,7 @@ bool p3Config::saveConfig()
 	std::string cfgFname = Filename();
 	std::string signFname = Filename() + ".sgn";
 
+    std::cerr << "(II) Saving configuration file " << cfgFname << std::endl;
 
 	uint32_t bioflags = BIN_FLAGS_HASH_DATA | BIN_FLAGS_WRITEABLE;
 	uint32_t stream_flags = BIN_FLAGS_WRITEABLE;

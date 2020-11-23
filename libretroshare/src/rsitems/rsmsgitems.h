@@ -1,30 +1,25 @@
-#ifndef RS_MSG_ITEMS_H
-#define RS_MSG_ITEMS_H
-
-/*
- * libretroshare/src/serialiser: rsmsgitems.h
- *
- * RetroShare Serialiser.
- *
- * Copyright 2007-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/rsitems: rsmsgitems.h                                     *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2007-2008 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+#pragma once
 
 #include <map>
 
@@ -37,10 +32,6 @@
 #include "serialiser/rstlvfileitem.h"
 #include "grouter/grouteritems.h"
 
-#if 0
-#include "serialiser/rstlvtypes.h"
-#include "serialiser/rstlvfileitem.h"
-#endif
 
 /**************************************************************************/
 
@@ -77,6 +68,7 @@ const uint32_t RS_MSG_FLAGS_LOAD_EMBEDDED_IMAGES  = 0x00040000;
 const uint32_t RS_MSG_FLAGS_DECRYPTED             = 0x00080000;
 const uint32_t RS_MSG_FLAGS_ROUTED                = 0x00100000;
 const uint32_t RS_MSG_FLAGS_PUBLISH_KEY           = 0x00200000;
+const uint32_t RS_MSG_FLAGS_SPAM                  = 0x00400000;
 
 const uint32_t RS_MSG_FLAGS_SYSTEM                = RS_MSG_FLAGS_USER_REQUEST | RS_MSG_FLAGS_FRIEND_RECOMMENDATION | RS_MSG_FLAGS_PUBLISH_KEY;
 
@@ -222,17 +214,12 @@ class RsMsgParentId : public RsMessageItem
 
 class RsMsgSerialiser: public RsServiceSerializer
 {
-	public:
-		RsMsgSerialiser(SerializationFlags flags = RsServiceSerializer::SERIALIZATION_FLAG_NONE)
-			:RsServiceSerializer(RS_SERVICE_TYPE_MSG,RsGenericSerializer::FORMAT_BINARY,flags){}
+public:
+	RsMsgSerialiser(
+	        RsSerializationFlags flags = RsSerializationFlags::NONE ):
+	    RsServiceSerializer(RS_SERVICE_TYPE_MSG, flags){}
 
-		virtual     ~RsMsgSerialiser() {}
+	RsItem* create_item(uint16_t service,uint8_t type) const override;
 
-        virtual RsItem *create_item(uint16_t service,uint8_t type) const ;
+	~RsMsgSerialiser() override = default;
 };
-
-/**************************************************************************/
-
-#endif /* RS_MSG_ITEMS_H */
-
-

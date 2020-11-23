@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>758</width>
-    <height>339</height>
+    <width>793</width>
+    <height>511</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -26,19 +26,28 @@
       </sizepolicy>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Box</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
+      <enum>QFrame::Plain</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
-      <property name="margin">
-       <number>2</number>
+      <property name="leftMargin">
+       <number>3</number>
+      </property>
+      <property name="topMargin">
+       <number>3</number>
+      </property>
+      <property name="rightMargin">
+       <number>3</number>
+      </property>
+      <property name="bottomMargin">
+       <number>3</number>
       </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <property name="spacing">
-         <number>0</number>
+         <number>2</number>
         </property>
         <item>
          <widget class="QFrame" name="searchLineFrame">
@@ -55,14 +64,23 @@
            </size>
           </property>
           <layout class="QGridLayout" name="gridLayout">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
            <property name="horizontalSpacing">
             <number>0</number>
            </property>
            <property name="verticalSpacing">
             <number>1</number>
-           </property>
-           <property name="margin">
-            <number>0</number>
            </property>
            <item row="0" column="0">
             <widget class="LineEditClear" name="lineEdit">
@@ -149,6 +167,23 @@
         </property>
         <property name="text">
          <string>Clear</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="showBannedFiles_TB">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/biohazard_red.png</normaloff>:/icons/biohazard_red.png</iconset>
         </property>
        </widget>
       </item>
@@ -307,7 +342,7 @@
              <string>Any</string>
             </property>
             <property name="icon">
-             <iconset resource="images.qrc">
+             <iconset resource="../images.qrc">
               <normaloff>:/images/FileTypeAny.png</normaloff>:/images/FileTypeAny.png</iconset>
             </property>
            </item>
@@ -316,7 +351,7 @@
              <string>Archive</string>
             </property>
             <property name="icon">
-             <iconset resource="images.qrc">
+             <iconset resource="../images.qrc">
               <normaloff>:/images/FileTypeArchive.png</normaloff>:/images/FileTypeArchive.png</iconset>
             </property>
            </item>
@@ -325,7 +360,7 @@
              <string>Audio</string>
             </property>
             <property name="icon">
-             <iconset resource="images.qrc">
+             <iconset resource="../images.qrc">
               <normaloff>:/images/FileTypeAudio.png</normaloff>:/images/FileTypeAudio.png</iconset>
             </property>
            </item>
@@ -334,7 +369,7 @@
              <string>CD-Image</string>
             </property>
             <property name="icon">
-             <iconset resource="images.qrc">
+             <iconset resource="../images.qrc">
               <normaloff>:/images/FileTypeCDImage.png</normaloff>:/images/FileTypeCDImage.png</iconset>
             </property>
            </item>
@@ -343,7 +378,7 @@
              <string>Document</string>
             </property>
             <property name="icon">
-             <iconset resource="images.qrc">
+             <iconset resource="../images.qrc">
               <normaloff>:/images/FileTypeDocument.png</normaloff>:/images/FileTypeDocument.png</iconset>
             </property>
            </item>
@@ -352,7 +387,7 @@
              <string>Picture</string>
             </property>
             <property name="icon">
-             <iconset resource="images.qrc">
+             <iconset resource="../images.qrc">
               <normaloff>:/images/FileTypePicture.png</normaloff>:/images/FileTypePicture.png</iconset>
             </property>
            </item>
@@ -361,7 +396,7 @@
              <string>Program</string>
             </property>
             <property name="icon">
-             <iconset resource="images.qrc">
+             <iconset resource="../images.qrc">
               <normaloff>:/images/FileTypeProgram.png</normaloff>:/images/FileTypeProgram.png</iconset>
             </property>
            </item>
@@ -370,7 +405,7 @@
              <string>Video</string>
             </property>
             <property name="icon">
-             <iconset resource="images.qrc">
+             <iconset resource="../images.qrc">
               <normaloff>:/images/FileTypeVideo.png</normaloff>:/images/FileTypeVideo.png</iconset>
             </property>
            </item>
@@ -379,8 +414,8 @@
              <string>Directory</string>
             </property>
             <property name="icon">
-             <iconset resource="images.qrc">
-              <normaloff>:/images/folder16.png</normaloff>:/images/folder16.png</iconset>
+             <iconset resource="../images.qrc">
+              <normaloff>:/images/foldermail.png</normaloff>:/images/foldermail.png</iconset>
             </property>
            </item>
           </widget>
@@ -406,8 +441,8 @@
             <string>Download selected</string>
            </property>
            <property name="icon">
-            <iconset resource="images.qrc">
-             <normaloff>:/images/download16.png</normaloff>:/images/download16.png</iconset>
+            <iconset resource="../icons.qrc">
+             <normaloff>:/icons/png/download.png</normaloff>:/icons/png/download.png</iconset>
            </property>
           </widget>
          </item>
@@ -423,7 +458,7 @@
   <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
+   <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
    <class>SearchTreeWidget</class>
@@ -432,7 +467,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="images.qrc"/>
+  <include location="../icons.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

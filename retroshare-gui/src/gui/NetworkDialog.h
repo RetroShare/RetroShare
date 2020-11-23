@@ -1,32 +1,38 @@
-/****************************************************************
- *  RShare is distributed under the following license:
- *
- *  Copyright (C) 2006, crypton
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
-
+/*******************************************************************************
+ * gui/NetworkDialog.h                                                         *
+ *                                                                             *
+ * Copyright (c) 2006 Crypton          <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef _CONNECTIONSDIALOG_H
 #define _CONNECTIONSDIALOG_H
 
+#include <retroshare-gui/RsAutoUpdatePage.h>
+
 #include "ui_NetworkDialog.h"
-#include "RsAutoUpdatePage.h"
+
+#include "gui/NetworkDialog/pgpid_item_model.h"
+#include "gui/NetworkDialog/pgpid_item_proxy.h"
+
+//tmp
+class  QTreeWidgetItem;
 
 class RSTreeWidgetItemCompareRole ;
+
 
 class NetworkDialog : public RsAutoUpdatePage
 {
@@ -42,76 +48,43 @@ public:
   /** Default Constructor */
   NetworkDialog(QWidget *parent = 0);
 
-  //void load();
   virtual void updateDisplay() ; // overloaded from RsAutoUpdatePage
-  
+
   QColor backgroundColorSelf() const { return mBackgroundColorSelf; }
   QColor backgroundColorOwnSign() const { return mBackgroundColorOwnSign; }
   QColor backgroundColorAcceptConnection() const { return mBackgroundColorAcceptConnection; }
   QColor backgroundColorHasSignedMe() const { return mBackgroundColorHasSignedMe; }
   QColor backgroundColorDenied() const { return mBackgroundColorDenied; }
 
-  void setBackgroundColorSelf(QColor color) { mBackgroundColorSelf = color; }
-  void setBackgroundColorOwnSign(QColor color) { mBackgroundColorOwnSign = color; }
-  void setBackgroundColorAcceptConnection(QColor color) { mBackgroundColorAcceptConnection = color; }
-  void setBackgroundColorHasSignedMe(QColor color) { mBackgroundColorHasSignedMe = color; }
-  void setBackgroundColorDenied(QColor color) { mBackgroundColorDenied = color; }
-
-private:
-  void  insertConnect();
-//  std::string loadneighbour();
-  /* void loadneighbour(); */
-  //void updateNewDiscoveryInfo() ;
+  void setBackgroundColorSelf(QColor color) { PGPIdItemModel->setBackgroundColorSelf(color); mBackgroundColorSelf = color; }
+  void setBackgroundColorOwnSign(QColor color) { PGPIdItemModel->setBackgroundColorOwnSign(color); mBackgroundColorOwnSign = color; }
+  void setBackgroundColorAcceptConnection(QColor color) { PGPIdItemModel->setBackgroundColorAcceptConnection(color); mBackgroundColorAcceptConnection = color; }
+  void setBackgroundColorHasSignedMe(QColor color) { PGPIdItemModel->setBackgroundColorHasSignedMe(color); mBackgroundColorHasSignedMe = color; }
+  void setBackgroundColorDenied(QColor color) { PGPIdItemModel->setBackgroundColorDenied(color); mBackgroundColorDenied = color; }
 
 protected:
   void changeEvent(QEvent *e);
 
 private slots:
 
-	void removeUnusedKeys() ;
+  void removeUnusedKeys() ;
   void makeFriend() ;
   void denyFriend() ;
-//  void deleteCert() ;
   void peerdetails();
   void copyLink();
-//  void sendDistantMessage();
+
   /** Create the context popup menu and it's submenus */
   void connectTreeWidgetCostumPopupMenu( QPoint point );
-  //void unvalidGPGKeyWidgetCostumPopupMenu( QPoint point );
 
   /** Called when user clicks "Load Cert" to choose location of a Cert file */
-//  void loadcert();
 
-//  void authneighbour();
-//  void addneighbour();
-
-  void on_actionAddFriend_activated();
-  //void on_actionCopyKey_activated();
-  void on_actionExportKey_activated();
-
-  void on_actionCreate_New_Profile_activated();
+  //void on_actionAddFriend_activated();
+  //void on_actionExportKey_activated();
+  //void on_actionCreate_New_Profile_activated();
     
-  //void updateNetworkStatus();
-  
-//  void loadtabsettings();
-  
-//  void on_actionTabsright_activated();
-//  void on_actionTabsnorth_activated();
-//  void on_actionTabssouth_activated();
-//  void on_actionTabswest_activated();
-//
-//  void on_actionTabsRounded_activated();
-//  void on_actionTabsTriangular_activated();
-  
   void filterColumnChanged(int);
-  void filterItems(const QString &text);
 
 private:
-  QTreeWidgetItem *getCurrentNeighbour();
-
-//  class NetworkView *networkview;
-  
-  bool filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn);
 
   /* Color definitions (for standard see qss.default) */
   QColor mBackgroundColorSelf;
@@ -121,6 +94,12 @@ private:
   QColor mBackgroundColorDenied;
 
   RSTreeWidgetItemCompareRole *compareNetworkRole ;
+
+  //iinternal long lived data
+  std::list<RsPgpId> neighs;
+
+  pgpid_item_model *PGPIdItemModel;
+  pgpid_item_proxy *PGPIdItemProxy;
 
   /** Qt Designer generated object */
   Ui::NetworkDialog ui;

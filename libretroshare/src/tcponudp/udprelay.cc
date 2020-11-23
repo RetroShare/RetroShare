@@ -1,31 +1,27 @@
-/*
- * tcponudp/udprelay.cc
- *
- * libretroshare.
- *
- * Copyright 2010 by Robert Fernie
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 3 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/tcponudp: udprelay.cc                                     *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2010-2010 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "udprelay.h"
 #include <iostream>
-#include <time.h>
+#include "util/rstime.h"
 #include <util/rsmemory.h>
 
 /*
@@ -236,7 +232,7 @@ int UdpRelayReceiver::checkRelays()
 
 	std::list<UdpRelayAddrSet> eraseList;
 	std::map<UdpRelayAddrSet, UdpRelayProxy>::iterator rit;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 #define BANDWIDTH_FILTER_K	(0.8)
 	
@@ -302,13 +298,13 @@ int UdpRelayReceiver::checkRelays()
 			switch(rit->second.mRelayClass)
 			{
 				default:
-				case UDP_RELAY_CLASS_GENERAL:
+			    case UDP_RELAY_CLASS_GENERAL:
 					lifetime = UDP_RELAY_LIFETIME_GENERAL;
 					break;
-				case UDP_RELAY_CLASS_FOF:
+			    case UDP_RELAY_CLASS_FOF:
 					lifetime = UDP_RELAY_LIFETIME_FOF;
 					break;
-				case UDP_RELAY_CLASS_FRIENDS:
+			    case UDP_RELAY_CLASS_FRIENDS:
 					lifetime = UDP_RELAY_LIFETIME_FRIENDS;
 					break;
 			}
@@ -1052,13 +1048,13 @@ UdpRelayProxy::UdpRelayProxy(UdpRelayAddrSet *addrSet, int relayClass, uint32_t 
 		switch(relayClass)
 		{
 			default:
-			case UDP_RELAY_CLASS_GENERAL:
+		    case UDP_RELAY_CLASS_GENERAL:
 	        		mBandwidthLimit = RELAY_MAX_BANDWIDTH;
 				break;
-			case UDP_RELAY_CLASS_FOF:
+		    case UDP_RELAY_CLASS_FOF:
 	        		mBandwidthLimit = RELAY_MAX_BANDWIDTH;
 				break;
-			case UDP_RELAY_CLASS_FRIENDS:
+		    case UDP_RELAY_CLASS_FRIENDS:
 	        		mBandwidthLimit = RELAY_MAX_BANDWIDTH;
 				break;
 		}
@@ -1092,7 +1088,7 @@ std::ostream &operator<<(std::ostream &out, const UdpRelayAddrSet &uras)
 
 std::ostream &operator<<(std::ostream &out, const UdpRelayProxy &urp)
 {
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	out << "UdpRelayProxy for " << urp.mAddrs;
 	out << std::endl;
 	out << "\tRelayClass: " << urp.mRelayClass;

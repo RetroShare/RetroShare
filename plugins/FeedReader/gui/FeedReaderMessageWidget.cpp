@@ -1,3 +1,23 @@
+/*******************************************************************************
+ * plugins/FeedReader/gui/FeedReaderMessageWidget.cpp                          *
+ *                                                                             *
+ * Copyright (C) 2012 by RetroShare Team <retroshare.project@gmail.com>        *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #include <QDateTime>
 #include <QMenu>
 #include <QKeyEvent>
@@ -32,18 +52,19 @@
 #define ROLE_MSG_READ       Qt::UserRole + 3
 #define ROLE_MSG_LINK       Qt::UserRole + 4
 
-FeedReaderMessageWidget::FeedReaderMessageWidget(const std::string &feedId, RsFeedReader *feedReader, FeedReaderNotify *notify, QWidget *parent) :
+FeedReaderMessageWidget::FeedReaderMessageWidget(uint32_t feedId, RsFeedReader *feedReader, FeedReaderNotify *notify, QWidget *parent) :
 	QWidget(parent), mFeedReader(feedReader), mNotify(notify), ui(new Ui::FeedReaderMessageWidget)
 {
 	ui->setupUi(this);
 
+	mFeedId = 0;
 	mProcessSettings = false;
 	mUnreadCount = 0;
 	mNewCount = 0;
 
 	/* connect signals */
-	connect(mNotify, SIGNAL(feedChanged(QString,int)), this, SLOT(feedChanged(QString,int)));
-	connect(mNotify, SIGNAL(msgChanged(QString,QString,int)), this, SLOT(msgChanged(QString,QString,int)));
+	connect(mNotify, &FeedReaderNotify::feedChanged, this, &FeedReaderMessageWidget::feedChanged, Qt::QueuedConnection);
+	connect(mNotify, &FeedReaderNotify::msgChanged, this, &FeedReaderMessageWidget::msgChanged, Qt::QueuedConnection);
 
 	connect(ui->msgTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(msgItemChanged()));
 	connect(ui->msgTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(msgItemClicked(QTreeWidgetItem*,int)));
@@ -197,30 +218,30 @@ bool FeedReaderMessageWidget::eventFilter(QObject *obj, QEvent *event)
 	return QWidget::eventFilter(obj, event);
 }
 
-void FeedReaderMessageWidget::setFeedId(const std::string &feedId)
+void FeedReaderMessageWidget::setFeedId(uint32_t feedId)
 {
 	if (mFeedId == feedId) {
-		if (!feedId.empty()) {
+		if (feedId) {
 			return;
 		}
 	}
 
 	mFeedId = feedId;
 
-	ui->feedProcessButton->setEnabled(!mFeedId.empty());
+	ui->feedProcessButton->setEnabled(mFeedId);
 
-	if (!mFeedId.empty()) {
+	if (mFeedId) {
 		if (mFeedReader->getFeedInfo(mFeedId, mFeedInfo)) {
 			mFeedReader->getMessageCount(mFeedId, NULL, &mNewCount, &mUnreadCount);
 		} else {
-			mFeedId.clear();
+			mFeedId = 0;
 			mFeedInfo = FeedInfo();
 		}
 	} else {
 		mFeedInfo = FeedInfo();
 	}
 
-	if (mFeedId.empty()) {
+	if (mFeedId == 0) {
 		ui->msgReadAllButton->setEnabled(false);
 		ui->msgTreeWidget->setPlaceholderText("");
 	} else {
@@ -259,7 +280,7 @@ QIcon FeedReaderMessageWidget::feedIcon()
 		icon = icon.pixmap(QSize(16, 16), QIcon::Disabled);
 	}
 
-	if (!mFeedId.empty()) {
+	if (mFeedId) {
 		QImage overlayIcon;
 
 		if (mFeedInfo.workstate != FeedInfo::WAITING) {
@@ -309,7 +330,7 @@ void FeedReaderMessageWidget::msgTreeCustomPopupMenu(QPoint /*point*/)
 	action->setEnabled(!selectedItems.empty());
 
 	action = contextMnu.addAction(QIcon(""), tr("Mark all as read"), this, SLOT(markAllAsReadMsg()));
-	action->setEnabled(!mFeedId.empty());
+	action->setEnabled(mFeedId);
 
 	contextMnu.addSeparator();
 
@@ -329,7 +350,7 @@ void FeedReaderMessageWidget::msgTreeCustomPopupMenu(QPoint /*point*/)
 
 void FeedReaderMessageWidget::updateMsgs()
 {
-	if (mFeedId.empty()) {
+	if (mFeedId == 0) {
 		ui->msgTreeWidget->clear();
 		return;
 	}
@@ -414,7 +435,7 @@ void FeedReaderMessageWidget::updateMsgItem(QTreeWidgetItem *item, FeedMsgInfo &
 	qdatetime.setTime_t(info.pubDate);
 
 	/* add string to all data */
-	QString sort = QString("%1_%2_%2").arg(title, qdatetime.toString("yyyyMMdd_hhmmss"), QString::fromStdString(info.feedId));
+	QString sort = QString("%1_%2_%3").arg(title, qdatetime.toString("yyyyMMdd_hhmmss")).arg(info.feedId);
 
 	item->setText(COLUMN_MSG_TITLE, title);
 	item->setData(COLUMN_MSG_TITLE, ROLE_MSG_SORT, sort);
@@ -439,24 +460,24 @@ void FeedReaderMessageWidget::updateMsgItem(QTreeWidgetItem *item, FeedMsgInfo &
 	calculateMsgIconsAndFonts(item);
 }
 
-void FeedReaderMessageWidget::feedChanged(const QString &feedId, int type)
+void FeedReaderMessageWidget::feedChanged(uint32_t feedId, int type)
 {
-	if (feedId.isEmpty()) {
+	if (feedId == 0) {
 		return;
 	}
 
-	if (feedId.toStdString() != mFeedId) {
+	if (feedId != mFeedId) {
 		return;
 	}
 
 	if (type == NOTIFY_TYPE_DEL) {
-		setFeedId("");
+		setFeedId(0);
 		return;
 	}
 
 	if (type == NOTIFY_TYPE_MOD) {
 		if (!mFeedReader->getFeedInfo(mFeedId, mFeedInfo)) {
-			setFeedId("");
+			setFeedId(0);
 			return;
 		}
 
@@ -464,13 +485,13 @@ void FeedReaderMessageWidget::feedChanged(const QString &feedId, int type)
 	}
 }
 
-void FeedReaderMessageWidget::msgChanged(const QString &feedId, const QString &msgId, int type)
+void FeedReaderMessageWidget::msgChanged(uint32_t feedId, const QString &msgId, int type)
 {
-	if (feedId.isEmpty() || msgId.isEmpty()) {
+	if (feedId == 0 || msgId.isEmpty()) {
 		return;
 	}
 
-	if (feedId.toStdString() != mFeedId) {
+	if (feedId != mFeedId) {
 		return;
 	}
 
@@ -490,7 +511,7 @@ void FeedReaderMessageWidget::msgChanged(const QString &feedId, const QString &m
 
 	FeedMsgInfo msgInfo;
 	if (type != NOTIFY_TYPE_DEL) {
-		if (!mFeedReader->getMsgInfo(feedId.toStdString(), msgId.toStdString(), msgInfo)) {
+		if (!mFeedReader->getMsgInfo(feedId, msgId.toStdString(), msgInfo)) {
 			return;
 		}
 	}
@@ -558,7 +579,7 @@ void FeedReaderMessageWidget::updateCurrentMessage()
 
 	std::string msgId = currentMsgId();
 
-	if (mFeedId.empty() || msgId.empty()) {
+	if (mFeedId == 0 || msgId.empty()) {
 		ui->msgTitle->clear();
 //		ui->msgLink->clear();
 		ui->msgText->clear();
@@ -626,7 +647,7 @@ void FeedReaderMessageWidget::setMsgAsReadUnread(QList<QTreeWidgetItem *> &rows,
 {
 	QList<QTreeWidgetItem*>::iterator rowIt;
 
-	if (mFeedId.empty()) {
+	if (mFeedId == 0) {
 		return;
 	}
 
@@ -753,7 +774,7 @@ void FeedReaderMessageWidget::copySelectedLinksMsg()
 
 void FeedReaderMessageWidget::removeMsg()
 {
-	if (mFeedId.empty()) {
+	if (mFeedId == 0) {
 		return;
 	}
 
@@ -769,7 +790,7 @@ void FeedReaderMessageWidget::removeMsg()
 
 void FeedReaderMessageWidget::retransformMsg()
 {
-	if (mFeedId.empty()) {
+	if (mFeedId == 0) {
 		return;
 	}
 
@@ -783,7 +804,7 @@ void FeedReaderMessageWidget::retransformMsg()
 
 void FeedReaderMessageWidget::processFeed()
 {
-	if (mFeedId.empty()) {
+	if (mFeedId == 0) {
 		return;
 	}
 

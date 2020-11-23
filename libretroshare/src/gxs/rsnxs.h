@@ -1,34 +1,32 @@
+/*******************************************************************************
+ * libretroshare/src/gxs: rsnxs.h                                              *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2011-2011 by Robert Fernie <retroshare.project@gmail.com>         *
+ * Copyright 2011-2011 by Christopher Evi-Parker                               *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #ifndef RSGNP_H
 #define RSGNP_H
 
-/*
- * libretroshare/src/gxs: rsnxs.h
- *
- * Network Exchange Service interface for RetroShare.
- *
- * Copyright 2011-2011 by Robert Fernie, Christopher Evi-Prker
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
 #include <set>
 #include <string>
-#include <time.h>
+#include "util/rstime.h"
 #include <stdlib.h>
 #include <list>
 #include <map>
@@ -36,6 +34,7 @@
 #include "services/p3service.h"
 #include "retroshare/rsreputations.h"
 #include "retroshare/rsidentity.h"
+#include "retroshare/rsturtle.h"
 #include "rsgds.h"
 
 /*!
@@ -58,6 +57,7 @@
  *  2 transfers only between group
  *   - the also group matrix settings which is by default everyone can transfer to each other
  */
+
 class RsNetworkExchangeService
 {
 public:
@@ -65,6 +65,7 @@ public:
 	RsNetworkExchangeService(){ return;}
     virtual ~RsNetworkExchangeService() {}
 
+    virtual uint16_t serviceType() const =0;
     /*!
      * Use this to set how far back synchronisation of messages should take place
      * @param age in seconds the max age a sync/store item can to be allowed in a synchronisation
@@ -80,6 +81,73 @@ public:
 
     virtual uint32_t getDefaultSyncAge() =0;
     virtual uint32_t getDefaultKeepAge() =0;
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///                                          DISTANT SEARCH FUNCTIONS                                           ///
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /*!
+     * \brief turtleGroupRequest
+     * 			Requests a particular group meta data. The request protects the group ID.
+     * \param group_id
+     * \return
+     * 			returns the turtle request ID that might be associated to some results.
+     */
+    virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id)=0;
+
+    /*!
+     * \brief turtleSearchRequest
+     * 			Uses distant search to match the substring to the group meta data.
+     * \param match_string
+     * \return
+     * 			returns the turtle request ID that might be associated to some results.
+     */
+    virtual TurtleRequestId turtleSearchRequest(const std::string& match_string)=0;
+
+    /*!
+     * \brief receiveTurtleSearchResults
+     * 			Called by turtle (through RsGxsNetTunnel) when new results are received
+     * \param req			Turtle search request ID associated with this result
+     * \param group_infos	Group summary information for the groups returned by the search
+     */
+    virtual void receiveTurtleSearchResults(TurtleRequestId req,const std::list<RsGxsGroupSummary>& group_infos)=0;
+
+    /*!
+     * \brief receiveTurtleSearchResults
+     * 			Called by turtle (through RsGxsNetTunnel) when new data is received
+     * \param req			        Turtle search request ID associated with this result
+     * \param encrypted_group_data  Group data
+     */
+	virtual void receiveTurtleSearchResults(TurtleRequestId req,const unsigned char *encrypted_group_data,uint32_t encrypted_group_data_len)=0;
+
+    /*!
+     * \brief retrieveTurtleSearchResults
+     * 			To be used to retrieve the search results that have been notified (or not)
+     * \param req			request that match the results to retrieve
+     * \param group_infos	results to retrieve.
+     * \return
+     * 			false when the request is unknown.
+     */
+	virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSearchResults> &group_infos)=0;
+    /*!
+     * \brief getDistantSearchResults
+     * \param id
+     * \param group_infos
+     * \return
+     */
+    virtual bool clearDistantSearchResults(const TurtleRequestId& id)=0;
+    virtual bool retrieveDistantGroupSummary(const RsGxsGroupId&,RsGxsGroupSearchResults&)=0;
+
+    virtual bool search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos) =0;
+	virtual bool search(const Sha1CheckSum& hashed_group_id,unsigned char *& encrypted_group_data,uint32_t& encrypted_group_data_len)=0;
+
+    /*!
+     * \brief getDistantSearchStatus
+     * 			Request status of a possibly ongoing/finished search. If UNKNOWN is returned, it means that no
+     * 			such group is under request
+     * \return
+     */
+    virtual DistantSearchGroupStatus getDistantSearchStatus(const RsGxsGroupId&) =0;
 
     /*!
      * Initiates a search through the network
@@ -99,6 +167,9 @@ public:
      */
     //virtual int searchGrps(RsGxsSearch* search, uint8_t hops = 1, bool retrieve = 0) = 0;
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///                                           DATA ACCESS FUNCTIONS                                             ///
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /*!
      * pauses synchronisation of subscribed groups and request for group id
@@ -155,7 +226,7 @@ public:
      * \param tm	time stamp computed
      * \return 		false if the group is not found, true otherwise
      */
-    virtual bool getGroupServerUpdateTS(const RsGxsGroupId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) =0;
+    virtual bool getGroupServerUpdateTS(const RsGxsGroupId& gid,rstime_t& grp_server_update_TS,rstime_t& msg_server_update_TS) =0;
 
     /*!
      * \brief stampMsgServerUpdateTS
@@ -165,6 +236,14 @@ public:
      * \return
      */
     virtual bool stampMsgServerUpdateTS(const RsGxsGroupId& gid) =0;
+
+    /*!
+     * \brief isDistantPeer
+     * \param pid		peer that is a virtual peer provided by GxsNetTunnel
+     * \return
+     * 					true if the peer exists (adn therefore is online)
+     */
+    virtual bool isDistantPeer(const RsPeerId& pid)=0;
 
     /*!
      * \brief removeGroups
@@ -182,13 +261,14 @@ public:
      * \param identity_flags	Flags of the identity
      * \return
      */
-    static RsReputations::ReputationLevel minReputationForRequestingMessages(uint32_t /* group_sign_flags */, uint32_t /* identity_flags */)
+	static RsReputationLevel minReputationForRequestingMessages(
+	        uint32_t /* group_sign_flags */, uint32_t /* identity_flags */ )
 	{
 		// We always request messages, except if the author identity is locally banned.
-
-		return RsReputations::REPUTATION_REMOTELY_NEGATIVE;
+		return RsReputationLevel::REMOTELY_NEGATIVE;
 	}
-    static RsReputations::ReputationLevel minReputationForForwardingMessages(uint32_t group_sign_flags, uint32_t identity_flags)
+	static RsReputationLevel minReputationForForwardingMessages(
+	        uint32_t group_sign_flags, uint32_t identity_flags )
 	{
 		// If anti-spam is enabled, do not send messages from authors with bad reputation. The policy is to only forward messages if the reputation of the author is at least
 		// equal to the minimal reputation in the table below (R=remotely, L=locally, P=positive, N=negative, O=neutral) :
@@ -206,20 +286,20 @@ public:
 		//
 
 		if(identity_flags & RS_IDENTITY_FLAGS_PGP_KNOWN)
-			return RsReputations::REPUTATION_NEUTRAL;
+			return RsReputationLevel::NEUTRAL;
 		else if(identity_flags & RS_IDENTITY_FLAGS_PGP_LINKED)
 		{
 			if(group_sign_flags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN)
-				return RsReputations::REPUTATION_REMOTELY_POSITIVE;
+				return RsReputationLevel::REMOTELY_POSITIVE;
 			else
-				return RsReputations::REPUTATION_NEUTRAL;
+				return RsReputationLevel::NEUTRAL;
 		}
 		else
 		{
 			if( (group_sign_flags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN) || (group_sign_flags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG))
-				return RsReputations::REPUTATION_REMOTELY_POSITIVE;
+				return RsReputationLevel::REMOTELY_POSITIVE;
 			else
-				return RsReputations::REPUTATION_NEUTRAL;
+				return RsReputationLevel::NEUTRAL;
 		}
 	}
 };

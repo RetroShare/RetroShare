@@ -1,29 +1,31 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2015 RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/Identity/IdDetailsDialog.cpp                         *
+ *                                                                             *
+ * Copyright (C) 2014 - 2010 RetroShare Team <retroshare.project@gmail.com>    *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+#include <QDateTime>
 
 #include "IdDetailsDialog.h"
 #include "ui_IdDetailsDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "util/qtthreadsutils.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/common/UIStateHelper.h"
+#include "gui/common/FilesDefs.h"
 #include "gui/msgs/MessageComposer.h"
 #include "gui/RetroShareLink.h"
 
@@ -54,6 +56,7 @@ IdDetailsDialog::IdDetailsDialog(const RsGxsGroupId& id, QWidget *parent) :
 	mStateHelper->addWidget(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_GpgId);
 	mStateHelper->addWidget(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_GpgName);
 	mStateHelper->addWidget(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_Type);
+	mStateHelper->addWidget(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_Created);
 	mStateHelper->addWidget(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
 	mStateHelper->addWidget(IDDETAILSDIALOG_IDDETAILS, ui->ownOpinion_CB);
 	mStateHelper->addWidget(IDDETAILSDIALOG_IDDETAILS, ui->overallOpinion_TF);
@@ -64,6 +67,7 @@ IdDetailsDialog::IdDetailsDialog(const RsGxsGroupId& id, QWidget *parent) :
 	mStateHelper->addLoadPlaceholder(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_KeyId);
 	mStateHelper->addLoadPlaceholder(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_GpgId);
 	mStateHelper->addLoadPlaceholder(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_Type);
+	mStateHelper->addLoadPlaceholder(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_Created);
 	mStateHelper->addLoadPlaceholder(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
 	mStateHelper->addLoadPlaceholder(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_GpgName);
 
@@ -71,17 +75,15 @@ IdDetailsDialog::IdDetailsDialog(const RsGxsGroupId& id, QWidget *parent) :
 	mStateHelper->addClear(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_KeyId);
 	mStateHelper->addClear(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_GpgId);
 	mStateHelper->addClear(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_Type);
+	mStateHelper->addClear(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_Created);
 	mStateHelper->addClear(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
 	mStateHelper->addClear(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_GpgName);
 
 	mStateHelper->setActive(IDDETAILSDIALOG_REPLIST, false);
 
-	/* Create token queue */
-	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
-
 	Settings->loadWidgetInformation(this);
 
-	ui->headerFrame->setHeaderImage(QPixmap(":/images/identity/identity_64.png"));
+    ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/person.png"));
 	ui->headerFrame->setHeaderText(tr("Person Details"));
 
 	//connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(changeGroup()));
@@ -91,7 +93,7 @@ IdDetailsDialog::IdDetailsDialog(const RsGxsGroupId& id, QWidget *parent) :
 	
   connect(ui->inviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
 	
-	requestIdDetails();
+	loadIdentity();
 }
 
 /** Destructor. */
@@ -100,7 +102,6 @@ IdDetailsDialog::~IdDetailsDialog()
 	Settings->saveWidgetInformation(this);
 
 	delete(ui);
-	delete(mIdQueue);
 }
 
 void IdDetailsDialog::toggleAutoBanIdentities(bool b)
@@ -132,40 +133,8 @@ static QString getHumanReadableDuration(uint32_t seconds)
         return QString(QObject::tr("%1 days ago")).arg(seconds/86400) ;
 }
 
-void IdDetailsDialog::insertIdDetails(uint32_t token)
+void IdDetailsDialog::loadIdentity(RsGxsIdGroup data)
 {
-	mStateHelper->setLoading(IDDETAILSDIALOG_IDDETAILS, false);
-
-	/* get details from libretroshare */
-	std::vector<RsGxsIdGroup> datavector;
-	if (!rsIdentity->getGroupData(token, datavector))
-	{
-		mStateHelper->setActive(IDDETAILSDIALOG_IDDETAILS, false);
-		mStateHelper->clear(IDDETAILSDIALOG_REPLIST);
-
-		ui->lineEdit_KeyId->setText("ERROR GETTING KEY!");
-
-		return;
-	}
-
-	if (datavector.size() != 1)
-	{
-#ifdef ID_DEBUG
-		std::cerr << "IdDetailsDialog::insertIdDetails() Invalid datavector size";
-#endif
-
-		mStateHelper->setActive(IDDETAILSDIALOG_IDDETAILS, false);
-		mStateHelper->clear(IDDETAILSDIALOG_IDDETAILS);
-
-		ui->lineEdit_KeyId->setText("INVALID DV SIZE");
-
-		return;
-	}
-
-	mStateHelper->setActive(IDDETAILSDIALOG_IDDETAILS, true);
-
-	RsGxsIdGroup &data = datavector[0];
-
 	/* get GPG Details from rsPeers */
 	RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
 
@@ -179,16 +148,18 @@ void IdDetailsDialog::insertIdDetails(uint32_t token)
     ui->autoBanIdentities_CB->setVisible(!data.mPgpId.isNull()) ;
     ui->banoption_label->setVisible(!data.mPgpId.isNull()) ;
 	
-  time_t now = time(NULL) ;
-  ui->lineEdit_LastUsed->setText(getHumanReadableDuration(now - data.mLastUsageTS)) ;
+	ui->lineEdit_Created->setText(QDateTime::fromMSecsSinceEpoch(qint64(1000)*data.mMeta.mPublishTs).toString(Qt::SystemLocaleShortDate));
+	
+	time_t now = time(NULL) ;
+	ui->lineEdit_LastUsed->setText(getHumanReadableDuration(now - data.mLastUsageTS)) ;
 	
 	QPixmap pixmap;
 	
-	if(data.mImage.mSize > 0 && pixmap.loadFromData(data.mImage.mData, data.mImage.mSize, "PNG"))
-		ui->avatarLabel->setPixmap(pixmap) ;
+	if(data.mImage.mSize > 0 && GxsIdDetails::loadPixmapFromData(data.mImage.mData, data.mImage.mSize, pixmap, GxsIdDetails::LARGE))
+		ui->avatarLabel->setPixmap(pixmap);
 	else
 	{
-		pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId)) ) ;
+		pixmap = GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId),GxsIdDetails::LARGE) ;
 		ui->avatarLabel->setPixmap(pixmap) ; // we need to use the default pixmap here, generated from the ID
 	}
 
@@ -286,7 +257,7 @@ void IdDetailsDialog::insertIdDetails(uint32_t token)
 
 #endif
 
-    RsReputations::ReputationInfo info ;
+	RsReputationInfo info;
     rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),data.mPgpId,info) ;
     
 #warning (csoler) Do we need to do this? This code is apparently not used.
@@ -303,23 +274,34 @@ void IdDetailsDialog::insertIdDetails(uint32_t token)
     ui->label_positive->setText(QString::number(info.mFriendsPositiveVotes));
     ui->label_negative->setText(QString::number(info.mFriendsNegativeVotes));
 
-    switch(info.mOverallReputationLevel)
-    {
-    	case RsReputations::REPUTATION_LOCALLY_POSITIVE:  ui->overallOpinion_TF->setText(tr("Positive")) ; break ;
-    	case RsReputations::REPUTATION_LOCALLY_NEGATIVE:  ui->overallOpinion_TF->setText(tr("Negative (Banned by you)")) ; break ;
-    	case RsReputations::REPUTATION_REMOTELY_POSITIVE: ui->overallOpinion_TF->setText(tr("Positive (according to your friends)")) ; break ;
-    	case RsReputations::REPUTATION_REMOTELY_NEGATIVE: ui->overallOpinion_TF->setText(tr("Negative (according to your friends)")) ; break ;
-    default:
-    	case RsReputations::REPUTATION_NEUTRAL:           ui->overallOpinion_TF->setText(tr("Neutral")) ; break ;
-    }
-    
-    switch(info.mOwnOpinion)
+	switch(info.mOverallReputationLevel)
 	{
-        case RsReputations::OPINION_NEGATIVE: ui->ownOpinion_CB->setCurrentIndex(0); break ;
-        case RsReputations::OPINION_NEUTRAL : ui->ownOpinion_CB->setCurrentIndex(1); break ;
-        case RsReputations::OPINION_POSITIVE: ui->ownOpinion_CB->setCurrentIndex(2); break ;
-        default:
-            std::cerr << "Unexpected value in own opinion: " << info.mOwnOpinion << std::endl;
+	case RsReputationLevel::LOCALLY_POSITIVE:
+		ui->overallOpinion_TF->setText(tr("Positive")); break;
+	case RsReputationLevel::LOCALLY_NEGATIVE:
+		ui->overallOpinion_TF->setText(tr("Negative (Banned by you)")); break;
+	case RsReputationLevel::REMOTELY_POSITIVE:
+		ui->overallOpinion_TF->setText(
+		            tr("Positive (according to your friends)"));
+		break;
+	case RsReputationLevel::REMOTELY_NEGATIVE:
+		ui->overallOpinion_TF->setText(
+		            tr("Negative (according to your friends)"));
+		break;
+	case RsReputationLevel::NEUTRAL: // fallthrough
+	default:
+		ui->overallOpinion_TF->setText(tr("Neutral")); break;
+	}
+
+	switch(info.mOwnOpinion)
+	{
+	case RsOpinion::NEGATIVE: ui->ownOpinion_CB->setCurrentIndex(0); break;
+	case RsOpinion::NEUTRAL : ui->ownOpinion_CB->setCurrentIndex(1); break;
+	case RsOpinion::POSITIVE: ui->ownOpinion_CB->setCurrentIndex(2); break;
+	default:
+		std::cerr << "Unexpected value in own opinion: "
+		          << static_cast<uint32_t>(info.mOwnOpinion) << std::endl;
+		break;
 	}
 }
 
@@ -331,56 +313,30 @@ void IdDetailsDialog::modifyReputation()
 #endif
 
 	RsGxsId id(ui->lineEdit_KeyId->text().toStdString());
-    
-    	RsReputations::Opinion op ;
 
-    	switch(ui->ownOpinion_CB->currentIndex())
-        {
-        	case 0: op = RsReputations::OPINION_NEGATIVE ; break ;
-        	case 1: op = RsReputations::OPINION_NEUTRAL  ; break ;
-        	case 2: op = RsReputations::OPINION_POSITIVE ; break ;
-        default:
-            std::cerr << "Wrong value from opinion combobox. Bug??" << std::endl;
-            
-        }
-    	rsReputations->setOwnOpinion(id,op) ;
+	RsOpinion op;
 
-#ifdef ID_DEBUG
-	std::cerr << "IdDialog::modifyReputation() ID: " << id << " Mod: " << mod;
-	std::cerr << std::endl;
-#endif
-
-#ifdef SUSPENDED
-    	// Cyril: apparently the old reputation system was in used here. It's based on GXS data exchange, and probably not
-    	// very efficient because of this.
-    
-	uint32_t token;
-	if (!rsIdentity->submitOpinion(token, id, false, op))
+	switch(ui->ownOpinion_CB->currentIndex())
 	{
-#ifdef ID_DEBUG
-		std::cerr << "IdDialog::modifyReputation() Error submitting Opinion";
-		std::cerr << std::endl;
-#endif
+	case 0: op = RsOpinion::NEGATIVE; break;
+	case 1: op = RsOpinion::NEUTRAL ; break;
+	case 2: op = RsOpinion::POSITIVE; break;
+	default:
+		std::cerr << "Wrong value from opinion combobox. Bug??" << std::endl;
+		return;
 	}
-#endif
-
-#ifdef ID_DEBUG
-	std::cerr << "IdDialog::modifyReputation() queuingRequest(), token: " << token;
-	std::cerr << std::endl;
-#endif
+	rsReputations->setOwnOpinion(id,op);
 
 	// trigger refresh when finished.
 	// basic / anstype are not needed.
-    requestIdDetails();
+	loadIdentity();
 
 	return;
 }
 
-void IdDetailsDialog::requestIdDetails()
+void IdDetailsDialog::loadIdentity()
 {
-	mIdQueue->cancelActiveRequestTokens(IDDETAILSDIALOG_IDDETAILS);
-
-	if (mId.isNull())
+    if (mId.isNull())
 	{
 		mStateHelper->setActive(IDDETAILSDIALOG_IDDETAILS, false);
 		mStateHelper->setLoading(IDDETAILSDIALOG_IDDETAILS, false);
@@ -391,68 +347,41 @@ void IdDetailsDialog::requestIdDetails()
 
 	mStateHelper->setLoading(IDDETAILSDIALOG_IDDETAILS, true);
 
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-
-	uint32_t token;
-	std::list<RsGxsGroupId> groupIds;
-	groupIds.push_back(mId);
-
-	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDDETAILSDIALOG_IDDETAILS);
-}
-
-void IdDetailsDialog::requestRepList()
-{
-	// Removing this for the moment.
-	return;
-
-	mStateHelper->setLoading(IDDETAILSDIALOG_REPLIST, true);
-
-	mIdQueue->cancelActiveRequestTokens(IDDETAILSDIALOG_REPLIST);
-
-	std::list<RsGxsGroupId> groupIds;
-	groupIds.push_back(mId);
-
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-
-	uint32_t token;
-	mIdQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDDETAILSDIALOG_REPLIST);
-}
-
-void IdDetailsDialog::insertRepList(uint32_t token)
-{
-	Q_UNUSED(token)
-	mStateHelper->setLoading(IDDETAILSDIALOG_REPLIST, false);
-	mStateHelper->setActive(IDDETAILSDIALOG_REPLIST, true);
-}
-
-void IdDetailsDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
-{
-	if (queue != mIdQueue) {
-		return;
-	}
-
+	RsThread::async([this]()
+	{
 #ifdef ID_DEBUG
-	std::cerr << "IdDetailsDialog::loadRequest() UserType: " << req.mUserType;
-	std::cerr << std::endl;
+        std::cerr << "Retrieving post data for identity " << mThreadId << std::endl;
 #endif
 
-	switch (req.mUserType)
-	{
-	case IDDETAILSDIALOG_IDDETAILS:
-		insertIdDetails(req.mToken);
-		break;
-		
-  case IDDETAILSDIALOG_REPLIST:
-			insertRepList(req.mToken);
-			break;
-			
-	default:
-		std::cerr << "IdDetailsDialog::loadRequest() ERROR";
-		std::cerr << std::endl;
-	}
+        std::set<RsGxsId> ids( { RsGxsId(mId) } ) ;
+        std::vector<RsGxsIdGroup> ids_data;
+
+		if(!rsIdentity->getIdentitiesInfo(ids,ids_data))
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve identities group info for id " << mId << std::endl;
+			return;
+        }
+
+        if(ids_data.size() != 1)
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve exactly one group info for id " << mId << std::endl;
+			return;
+        }
+        RsGxsIdGroup group(ids_data[0]);
+
+        RsQThreadUtils::postToObject( [group,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
+
+            loadIdentity(group);
+
+		}, this );
+	});
+
 }
+
 
 QString IdDetailsDialog::inviteMessage()
 {

@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2011, drbob
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/GetStartedDialog.cpp                                                    *
+ *                                                                             *
+ * Copyright (C) 2011 Robert Fernie   <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "gui/GetStartedDialog.h"
 #include "gui/connect/ConnectFriendWizard.h"
@@ -33,9 +32,9 @@
 #include <iostream>
 
 #define URL_FAQ         "http://retroshare.sourceforge.net/wiki/index.php/Frequently_Asked_Questions"
-#define URL_FORUM       "http://retroshare.sourceforge.net/forum/"
-#define URL_WEBSITE     "http://retroshare.org"
-#define URL_DOWNLOAD    "http://retroshare.sourceforge.net/downloads.html"
+#define URL_FORUM       "https://github.com/RetroShare/RetroShare/issues"
+#define URL_WEBSITE     "http://retroshare.net"
+#define URL_DOWNLOAD    "http://retroshare.net/downloads.html"
 
 #define EMAIL_SUBSCRIBE "lists@retroshare.org"
 
@@ -106,7 +105,7 @@ void GetStartedDialog::showEvent ( QShowEvent * /*event*/ )
 
 void GetStartedDialog::updateFromUserLevel()
 {
-	uint32_t userLevel = RSCONFIG_USER_LEVEL_NEW;
+	RsConfigUserLvl userLevel = RsConfigUserLvl::NEW;
 	userLevel = rsConfig->getUserLevel();
 
 	ui.inviteCheckBox->setChecked(false);
@@ -117,19 +116,19 @@ void GetStartedDialog::updateFromUserLevel()
 	switch(userLevel)
 	{
 		// FALLS THROUGH EVERYWHERE.
-		case RSCONFIG_USER_LEVEL_POWER:
-		case RSCONFIG_USER_LEVEL_OVERRIDE:
+	    case RsConfigUserLvl::POWER:
+	    case RsConfigUserLvl::OVERRIDE:
 			ui.firewallCheckBox->setChecked(true);
 			/* fallthrough */
-		case RSCONFIG_USER_LEVEL_CASUAL:
+	    case RsConfigUserLvl::CASUAL:
 			ui.connectCheckBox->setChecked(true);
 			/* fallthrough */
-		case RSCONFIG_USER_LEVEL_BASIC:
+	    case RsConfigUserLvl::BASIC:
 			ui.addCheckBox->setChecked(true);
 			ui.inviteCheckBox->setChecked(true);
 
 		default:
-		case RSCONFIG_USER_LEVEL_NEW:
+	    case RsConfigUserLvl::NEW:
 
 			break;
 	}
@@ -236,7 +235,7 @@ void GetStartedDialog::inviteFriends()
 	{
 		RsAutoUpdatePage::lockAllEvents();
 
-		cert = rsPeers->GetRetroshareInvite(false);
+        cert = rsPeers->GetRetroshareInvite(RsPeerId(),RetroshareInviteFlags::DNS | RetroshareInviteFlags::CURRENT_IP | RetroshareInviteFlags::FULL_IP_HISTORY);
 
 		RsAutoUpdatePage::unlockAllEvents() ;
 	}
@@ -326,7 +325,7 @@ void GetStartedDialog::emailSupport()
 		return;
 	}
 
-	uint32_t    userLevel;
+	RsConfigUserLvl    userLevel;
 	{
 		RsAutoUpdatePage::lockAllEvents();
 
@@ -428,7 +427,7 @@ void GetStartedDialog::emailSupport()
 	sysVersion = "Linux";
   #endif
 #endif
-    text += QString("My RetroShare Configuration is: (%1, %2, 0x60%3)").arg(Rshare::retroshareVersion(true)).arg(sysVersion).arg(userLevel) + "\n";
+	text += QString("My RetroShare Configuration is: (%1, %2, %3)").arg(Rshare::retroshareVersion(true)).arg(sysVersion).arg(static_cast<typename std::underlying_type<RsConfigUserLvl>::type>(userLevel)) + "\n";
     text += "\n";
 
 	text += QString("I am having trouble with RetroShare.");

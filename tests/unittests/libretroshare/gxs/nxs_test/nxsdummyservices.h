@@ -1,9 +1,22 @@
-/*
- * nxsdummyservices.h
- *
- *  Created on: 13 Apr 2014
- *      Author: crispy
- */
+/*******************************************************************************
+ * unittests/libretroshare/gxs/nxs_test/nxsdummyservice.h                      *
+ *                                                                             *
+ * Copyright (C) 2014, Crispy <retroshare.team@gmailcom>                       *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ ******************************************************************************/
 
 #ifndef NXSDUMMYSERVICES_H_
 #define NXSDUMMYSERVICES_H_
@@ -157,7 +170,6 @@ namespace rs_nxs_test
 
 		bool parseSignature(unsigned char *sign, unsigned int signlen, RsPgpId& issuer) const;
 		bool VerifySignBin(const void *data, uint32_t len, unsigned char *sign, unsigned int signlen, const PGPFingerprintType& withfingerprint);
-		bool askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen, int& signature_result , std::string reason = "");
 
 
 		private:

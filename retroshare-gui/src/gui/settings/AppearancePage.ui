@@ -366,24 +366,10 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QCheckBox" name="checkBoxShowDHTStatus">
-        <property name="text">
-         <string>Show DHT Status</string>
-        </property>
-       </widget>
-      </item>
       <item row="2" column="1">
        <widget class="QCheckBox" name="checkBoxShowHashingStatus">
         <property name="text">
          <string>Show Hashing Status</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2">
-       <widget class="QCheckBox" name="checkBoxShowNATStatus">
-        <property name="text">
-         <string>Show NAT Status</string>
         </property>
        </widget>
       </item>
@@ -418,17 +404,31 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="2">
-       <widget class="QCheckBox" name="checkBoxShowSystrayOnStatus">
+      <item row="2" column="2">
+       <widget class="QCheckBox" name="checkBoxShowNATStatus">
         <property name="text">
-         <string>Show SysTray on Status Bar</string>
+         <string>Show NAT Status</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QCheckBox" name="checkBoxShowOpModeStatus">
+        <property name="text">
+         <string>Show Operating Mode Status</string>
         </property>
        </widget>
       </item>
       <item row="3" column="2">
-       <widget class="QCheckBox" name="checkBoxShowOpModeStatus">
+       <widget class="QCheckBox" name="checkBoxShowDHTStatus">
         <property name="text">
-         <string>Show Operating Mode Status</string>
+         <string>Show DHT Status</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="checkBoxShowSystrayOnStatus">
+        <property name="text">
+         <string>Show SysTray on Status Bar</string>
         </property>
        </widget>
       </item>

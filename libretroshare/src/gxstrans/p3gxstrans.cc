@@ -1,36 +1,41 @@
-/*
- * GXS Mailing Service
- * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
+/*******************************************************************************
+ * libretroshare/src/gxstrans: p3gxstrans.cc                                   *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2016-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "util/rsdir.h"
 #include "gxstrans/p3gxstrans.h"
 #include "util/stacktrace.h"
+#include "util/rsdebug.h"
 
 //#define DEBUG_GXSTRANS 1
 
 typedef unsigned int uint;
 
-RsGxsTrans *rsGxsTrans = NULL ;
+/*extern*/ RsGxsTrans* rsGxsTrans = nullptr;
 
 const uint32_t p3GxsTrans::MAX_DELAY_BETWEEN_CLEANUPS = 900; // every 15 mins. Could be less.
 
 p3GxsTrans::~p3GxsTrans()
 {
-	p3Config::saveConfiguration();
+    // (cyril) this cannot be called here! There's chances the thread that saves configs will be dead already!
+	//p3Config::saveConfiguration();
 
 	{
 		RS_STACK_MUTEX(mIngoingMutex);
@@ -38,7 +43,7 @@ p3GxsTrans::~p3GxsTrans()
 	}
 }
 
-bool p3GxsTrans::getStatistics(GxsTransStatistics& stats)
+bool p3GxsTrans::getDataStatistics(GxsTransStatistics& stats)
 {
 	{
 		RS_STACK_MUTEX(mDataMutex);
@@ -236,10 +241,7 @@ void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 		if(!have_preferred_group)
 		{
 			/* This is true only at first run when we haven't received mail
-			 * distribuition groups from friends
-			 * TODO: We should check if we have some connected friend too, to
-			 * avoid to create yet another never used mail distribution group.
-			 */
+			 * distribuition groups from friends */
 
 #ifdef DEBUG_GXSTRANS
 			std::cerr << "p3GxsTrans::handleResponse(...) preferredGroupId.isNu"
@@ -432,8 +434,7 @@ void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
 			totalMessageSizeAndCount[msg->metaData->mAuthorId].count++;
 		    delete msg;
 
-			if(item != NULL)
-				delete item ;
+			delete item;
 	    }
     }
 
@@ -455,7 +456,7 @@ void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
 
         if(stored_msgs.end() != it2)
         {
-            msgsToDel[it2->second.first].push_back(it2->second.second);
+            msgsToDel[it2->second.first].insert(it2->second.second);
 
 #ifdef DEBUG_GXSTRANS
             std::cerr << "  scheduling msg " << std::hex << it2->second.first << "," << it2->second.second << " for deletion." << std::endl;
@@ -478,7 +479,7 @@ void p3GxsTrans::service_tick()
 {
 	GxsTokenQueue::checkRequests();
 
-    time_t now = time(NULL);
+    rstime_t now = time(NULL);
 	bool changed = false ;
 
     if(mLastMsgCleanup + MAX_DELAY_BETWEEN_CLEANUPS < now)
@@ -529,6 +530,14 @@ void p3GxsTrans::service_tick()
 		for(std::map<RsGxsId,MsgSizeCount>::const_iterator it(per_user_statistics.begin());it!=per_user_statistics.end();++it)
 			std::cerr << "  " << it->first << ": " << it->second.count << " " << it->second.size << std::endl;
 #endif
+        // Waiting here is very important because the thread may still be updating its semaphores after setting isDone() to true
+        // If we delete it during this operation it will corrupt the stack and cause unpredictable errors.
+
+        while(mCleanupThread->isRunning())
+        {
+            std::cerr << "Waiting for mCleanupThread to terminate..." << std::endl;
+            rstime::rs_usleep(500*1000);
+        }
 
 		delete mCleanupThread;
 		mCleanupThread=NULL ;
@@ -609,9 +618,10 @@ void p3GxsTrans::service_tick()
 				}
 				else
 				{
-					/* TODO: It is a receipt for a message sent by someone else
+					/* It is a receipt for a message sent by someone else
 					 * we can delete original mail from our GXS DB without
-					 * waiting for GXS_STORAGE_PERIOD */
+					 * waiting for GXS_STORAGE_PERIOD, this has been implemented
+					 * already by Cyril into GxsTransIntegrityCleanupThread */
 				}
 				break;
 			}
@@ -646,8 +656,10 @@ void p3GxsTrans::notifyChanges(std::vector<RsGxsNotify*>& changes)
 #ifdef DEBUG_GXSTRANS
 	std::cout << "p3GxsTrans::notifyChanges(...)" << std::endl;
 #endif
-	for( std::vector<RsGxsNotify*>::const_iterator it = changes.begin();
-	     it != changes.end(); ++it )
+	std::list<RsGxsGroupId> grps_to_request;
+    GxsMsgReq msgs_to_request;
+
+	for( auto it = changes.begin(); it != changes.end(); ++it )
 	{
 		RsGxsGroupChange* grpChange = dynamic_cast<RsGxsGroupChange *>(*it);
 		RsGxsMsgChange* msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
@@ -657,18 +669,15 @@ void p3GxsTrans::notifyChanges(std::vector<RsGxsNotify*>& changes)
 #ifdef DEBUG_GXSTRANS
 			std::cout << "p3GxsTrans::notifyChanges(...) grpChange" << std::endl;
 #endif
-			requestGroupsData(&(grpChange->mGrpIdList));
+            grps_to_request.push_back(grpChange->mGroupId);
 		}
 		else if(msgChange)
 		{
 #ifdef DEBUG_GXSTRANS
 			std::cout << "p3GxsTrans::notifyChanges(...) msgChange" << std::endl;
 #endif
-			uint32_t token;
-			RsTokReqOptions opts; opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-			RsGenExchange::getTokenService()->requestMsgInfo( token, 0xcaca,
-			                                   opts, msgChange->msgChangeMap );
-			GxsTokenQueue::queueRequest(token, MAILS_UPDATE);
+
+            msgs_to_request[msgChange->mGroupId].insert(msgChange->mMsgId);
 
 #ifdef DEBUG_GXSTRANS
 			for( GxsMsgReq::const_iterator it = msgChange->msgChangeMap.begin();
@@ -687,8 +696,22 @@ void p3GxsTrans::notifyChanges(std::vector<RsGxsNotify*>& changes)
 			}
 #endif
 		}
+        delete *it;
 	}
-	RsGxsIfaceHelper::receiveChanges(changes);
+
+    if(!msgs_to_request.empty())
+	{
+		uint32_t token;
+		RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+		RsGenExchange::getTokenService()->requestMsgInfo( token, 0xcaca, opts, msgs_to_request);
+
+		GxsTokenQueue::queueRequest(token, MAILS_UPDATE);
+	}
+
+
+    if(!grps_to_request.empty())
+		requestGroupsData(&grps_to_request);
 }
 
 uint32_t p3GxsTrans::AuthenPolicy()
@@ -749,8 +772,9 @@ bool p3GxsTrans::handleEncryptedMail(const RsGxsTransMailItem* mail)
 	// Hint match none of our own ids
 	if(decryptIds.empty())
 	{
-		std::cout << "p3GxsTrans::handleEcryptedMail(...) hint doesn't match"
-		          << std::endl;
+#ifdef DEBUG_GXSTRANS
+		std::cout << "p3GxsTrans::handleEcryptedMail(...) hint doesn't match" << std::endl;
+#endif
 		return true;
 	}
 
@@ -839,7 +863,7 @@ bool p3GxsTrans::dispatchDecryptedMail( const RsGxsId& authorId,
 #endif
 
 	std::vector<RsNxsMsg*> rcct; rcct.push_back(receipt);
-	RsGenExchange::notifyNewMessages(rcct);
+	RsGenExchange::receiveNewMessages(rcct);
 
 	GxsTransClient* recipientService = NULL;
 	{
@@ -951,9 +975,9 @@ void p3GxsTrans::locked_processOutgoingRecord(OutgoingRecord& pr)
 		{
 		case RsGxsTransEncryptionMode::CLEAR_TEXT:
 		{
-			std::cerr << "p3GxsTrans::sendMail(...) you are sending a mail "
-			          << "without encryption, everyone can read it!"
-			          << std::endl;
+			RsWarn() << __PRETTY_FUNCTION__ << " you are sending a mail "
+			         << "without encryption, everyone can read it!"
+			         << std::endl;
 			break;
 		}
 		case RsGxsTransEncryptionMode::RSA:
@@ -973,15 +997,15 @@ void p3GxsTrans::locked_processOutgoingRecord(OutgoingRecord& pr)
 			}
 			else
 			{
-				std::cerr << "p3GxsTrans::sendMail(...) RSA encryption failed! "
-				          << "error_status: " << encryptError << std::endl;
+				RsErr() << __PRETTY_FUNCTION__ << " RSA encryption failed! "
+				        << "error_status: " << encryptError << std::endl;
 				pr.status = GxsTransSendStatus::FAILED_ENCRYPTION;
 				goto processingFailed;
 			}
 		}
 		case RsGxsTransEncryptionMode::UNDEFINED_ENCRYPTION:
 		default:
-			std::cerr << "p3GxsTrans::sendMail(...) attempt to send mail with "
+			RsErr() << __PRETTY_FUNCTION__ << " attempt to send mail with "
 			          << "wrong EncryptionMode: "
 			          << static_cast<uint>(pr.mailItem.cryptoType)
 			          << " dropping mail!" << std::endl;
@@ -1027,7 +1051,8 @@ void p3GxsTrans::locked_processOutgoingRecord(OutgoingRecord& pr)
 	{
 		RS_STACK_MUTEX(mIngoingMutex);
 		auto range = mIncomingQueue.equal_range(pr.mailItem.mailId);
-		bool changed = false ;
+		bool changed = false;
+		bool received = false;
 
 		for( auto it = range.first; it != range.second; ++it)
 		{
@@ -1038,14 +1063,21 @@ void p3GxsTrans::locked_processOutgoingRecord(OutgoingRecord& pr)
 				mIncomingQueue.erase(it); delete rt;
 				pr.status = GxsTransSendStatus::RECEIPT_RECEIVED;
 
-				changed = true ;
+				changed = true;
+				received = true;
 				break;
 			}
 		}
+
+		if(!received && time(nullptr) - pr.sent_ts > GXS_STORAGE_PERIOD)
+		{
+			changed = true;
+			pr.status = GxsTransSendStatus::FAILED_TIMED_OUT;
+		}
+
 		if(changed)
 			IndicateConfigChanged();
 
-		// TODO: Resend message if older then treshold
 		break;
 	}
 	case GxsTransSendStatus::RECEIPT_RECEIVED:
@@ -1054,13 +1086,12 @@ void p3GxsTrans::locked_processOutgoingRecord(OutgoingRecord& pr)
 processingFailed:
 	case GxsTransSendStatus::FAILED_RECEIPT_SIGNATURE:
 	case GxsTransSendStatus::FAILED_ENCRYPTION:
+	case GxsTransSendStatus::FAILED_TIMED_OUT:
 	default:
-	{
-		std::cout << "p3GxsTrans::processRecord(" << pr.mailItem.mailId
-		          << ") failed with: " << static_cast<uint>(pr.status)
+		RsErr() << __PRETTY_FUNCTION__ << " processing:" << pr.mailItem.mailId
+		          << " failed with: " << static_cast<uint>(pr.status)
 		          << std::endl;
 		break;
-	}
 	}
 }
 
@@ -1251,31 +1282,38 @@ bool p3GxsTrans::acceptNewMessage(const RsGxsMsgMetaData *msgMeta,uint32_t msg_s
 	uint32_t max_size  = 0 ;
 	uint32_t identity_flags = 0 ;
 
-	RsReputations::ReputationLevel rep_lev = rsReputations->overallReputationLevel(msgMeta->mAuthorId,&identity_flags);
+	RsReputationLevel rep_lev =
+	        rsReputations->overallReputationLevel(
+	            msgMeta->mAuthorId, &identity_flags );
 
 	switch(rep_lev)
 	{
-	case RsReputations::REPUTATION_REMOTELY_NEGATIVE:   max_count = GXSTRANS_MAX_COUNT_REMOTELY_NEGATIVE_DEFAULT;
-														max_size  = GXSTRANS_MAX_SIZE_REMOTELY_NEGATIVE_DEFAULT;
-														break ;
-	case RsReputations::REPUTATION_NEUTRAL:   			max_count = GXSTRANS_MAX_COUNT_NEUTRAL_DEFAULT;
-														max_size  = GXSTRANS_MAX_SIZE_NEUTRAL_DEFAULT;
-														break ;
-	case RsReputations::REPUTATION_REMOTELY_POSITIVE:   max_count = GXSTRANS_MAX_COUNT_REMOTELY_POSITIVE_DEFAULT;
-														max_size  = GXSTRANS_MAX_SIZE_REMOTELY_POSITIVE_DEFAULT;
-														break ;
-	case RsReputations::REPUTATION_LOCALLY_POSITIVE:    max_count = GXSTRANS_MAX_COUNT_LOCALLY_POSITIVE_DEFAULT;
-														max_size  = GXSTRANS_MAX_SIZE_LOCALLY_POSITIVE_DEFAULT;
-														break ;
-    default:
-	case RsReputations::REPUTATION_LOCALLY_NEGATIVE:    max_count = 0 ;
-														max_size = 0 ;
+	case RsReputationLevel::REMOTELY_NEGATIVE:
+		max_count = GXSTRANS_MAX_COUNT_REMOTELY_NEGATIVE_DEFAULT;
+		max_size  = GXSTRANS_MAX_SIZE_REMOTELY_NEGATIVE_DEFAULT;
 		break ;
+	case RsReputationLevel::NEUTRAL:
+		max_count = GXSTRANS_MAX_COUNT_NEUTRAL_DEFAULT;
+		max_size  = GXSTRANS_MAX_SIZE_NEUTRAL_DEFAULT;
+		break;
+	case RsReputationLevel::REMOTELY_POSITIVE:
+		max_count = GXSTRANS_MAX_COUNT_REMOTELY_POSITIVE_DEFAULT;
+		max_size  = GXSTRANS_MAX_SIZE_REMOTELY_POSITIVE_DEFAULT;
+		break;
+	case RsReputationLevel::LOCALLY_POSITIVE:
+		max_count = GXSTRANS_MAX_COUNT_LOCALLY_POSITIVE_DEFAULT;
+		max_size  = GXSTRANS_MAX_SIZE_LOCALLY_POSITIVE_DEFAULT;
+		break;
+	case RsReputationLevel::LOCALLY_NEGATIVE: // fallthrough
+	default:
+		max_count = 0;
+		max_size = 0;
+		break;
 	}
 
-	bool pgp_linked = identity_flags & RS_IDENTITY_FLAGS_PGP_LINKED ;
+	bool pgp_linked = identity_flags & RS_IDENTITY_FLAGS_PGP_LINKED;
 
-	if(rep_lev <= RsReputations::REPUTATION_NEUTRAL && !pgp_linked)
+	if(rep_lev <= RsReputationLevel::NEUTRAL && !pgp_linked)
 	{
 		max_count /= 10 ;
 		max_size  /= 10 ;
@@ -1283,7 +1321,7 @@ bool p3GxsTrans::acceptNewMessage(const RsGxsMsgMetaData *msgMeta,uint32_t msg_s
 
 	RS_STACK_MUTEX(mPerUserStatsMutex);
 
-	MsgSizeCount& s(per_user_statistics[msgMeta->mAuthorId]) ;
+	MsgSizeCount& s(per_user_statistics[msgMeta->mAuthorId]);
 
 #ifdef DEBUG_GXSTRANS
 	std::cerr << "GxsTrans::acceptMessage(): size=" << msg_size << ", grp=" << msgMeta->mGroupId << ", gxs_id=" << msgMeta->mAuthorId << ", pgp_linked=" << pgp_linked << ", current (size,cnt)=("
@@ -1310,5 +1348,54 @@ bool p3GxsTrans::acceptNewMessage(const RsGxsMsgMetaData *msgMeta,uint32_t msg_s
 	}
 }
 
+
+bool p3GxsTrans::getGroupStatistics(std::map<RsGxsGroupId,RsGxsTransGroupStatistics>& stats)
+{
+    uint32_t token1;
+
+	RsTokReqOptions opts1;
+	opts1.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+	if( !requestGroupInfo(token1, opts1) || waitToken(token1) != RsTokenService::COMPLETE )
+        return false;
+
+    std::list<RsGroupMetaData> group_metas;
+    getGroupSummary(token1,group_metas);
+
+	for(auto& group_meta:group_metas)
+	{
+		RsGxsTransGroupStatistics& stat(stats[group_meta.mGroupId]);
+
+		uint32_t token2;
+		if(!RsGxsIfaceHelper::requestGroupStatistic(token2,group_meta.mGroupId) || waitToken(token2) != RsTokenService::COMPLETE)
+			continue;
+
+		RsGenExchange::getGroupStatistic(token2,stat);
+
+		stat.popularity = group_meta.mPop ;
+		stat.subscribed = IS_GROUP_SUBSCRIBED(group_meta.mSubscribeFlags) ;
+		stat.mGrpId = group_meta.mGroupId ;
+
+		std::vector<RsMsgMetaData> metas;
+
+        uint32_t token3;
+		RsTokReqOptions opts;
+		opts.mReqType = GXS_REQUEST_TYPE_MSG_META;
+
+		std::list<RsGxsGroupId> groupIds;
+		groupIds.push_back(group_meta.mGroupId);
+
+		if( !requestMsgInfo(token3, opts, groupIds) || waitToken(token3, std::chrono::seconds(5)) != RsTokenService::COMPLETE )
+			continue;
+
+		GxsMsgMetaMap metaMap;
+		if(!RsGenExchange::getMsgMeta(token3, metaMap) || metaMap.size() != 1)
+            continue;
+
+		for(auto& meta: metaMap.begin()->second)
+			stat.addMessageMeta(group_meta.mGroupId,meta) ;
+	}
+
+	return true;
+}
 
 

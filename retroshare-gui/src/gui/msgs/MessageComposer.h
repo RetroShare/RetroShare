@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2007, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/msgs/MessageComposer.h                               *
+ *                                                                             *
+ * Copyright (C) 2007 by Retroshare Team     <retroshare.project@gmail.com>    *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef _MESSAGECOMPOSER_H
 #define _MESSAGECOMPOSER_H
@@ -31,14 +30,14 @@
 #include "gui/msgs/MessageInterface.h"
 
 class QAction;
-class RsIdentityDetails;
+struct RsIdentityDetails;
 class QComboBox;
 class QFontComboBox;
 class QTextEdit;
 class QTextCharFormat;
 class RSTreeWidgetItemCompareRole;
-class RsGxsChannelGroup;
-class RsGxsForumGroup;
+struct RsGxsChannelGroup;
+struct RsGxsForumGroup;
 
 class MessageComposer : public QMainWindow 
 {
@@ -63,8 +62,8 @@ public:
 
     static QString recommendMessage();
     static void recommendFriend(const std::set <RsPeerId> &sslIds, const RsPeerId &to = RsPeerId(), const QString &msg = "", bool autoSend = false);
-    static void sendConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId &sslId, const QString &sslName);
-    static void sendInvite(const RsGxsId &to = RsGxsId(), const QString &msg = "", bool autoSend = true);
+    static void addConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId &sslId, const QString &sslName);
+    static void sendInvite(const RsGxsId &to, bool autoSend);
 #ifdef UNUSED_CODE
     static void sendChannelPublishKey(RsGxsChannelGroup &group);
     static void sendForumPublishKey(RsGxsForumGroup &group);
@@ -165,7 +164,8 @@ private slots:
     void tagRemoveAll();
     
     void on_closeInfoFrameButton_clicked();
-    
+    void on_closeSizeLimitFrameButton_clicked();
+
     static QString inviteMessage();
 
 private:

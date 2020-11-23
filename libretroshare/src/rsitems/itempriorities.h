@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/serialiser: itempriorities.h
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2011-2011 by Cyril Soler
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "csoler@users.sourceforge.net"
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/rsitems: rsitempriorities.h                               *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2011-2011 by Cyril Soler <csoler@users.sourceforge.net>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #pragma once
 
 #include <stdint.h>
@@ -35,21 +31,22 @@ const uint8_t QOS_PRIORITY_TOP                        = 9 ;
 
 // Turtle traffic
 //
-const uint8_t QOS_PRIORITY_RS_TURTLE_OPEN_TUNNEL    	= 6 ;
-const uint8_t QOS_PRIORITY_RS_TURTLE_TUNNEL_OK      	= 6 ;
+const uint8_t QOS_PRIORITY_RS_TURTLE_OPEN_TUNNEL      = 6 ;
+const uint8_t QOS_PRIORITY_RS_TURTLE_TUNNEL_OK        = 6 ;
 const uint8_t QOS_PRIORITY_RS_TURTLE_SEARCH_REQUEST   = 6 ;
-const uint8_t QOS_PRIORITY_RS_TURTLE_FILE_REQUEST   	= 5 ;
-const uint8_t QOS_PRIORITY_RS_TURTLE_FILE_CRC_REQUEST = 5 ;	
-const uint8_t QOS_PRIORITY_RS_TURTLE_CHUNK_CRC_REQUEST= 5 ;	
+const uint8_t QOS_PRIORITY_RS_TURTLE_FILE_REQUEST     = 5 ;
+const uint8_t QOS_PRIORITY_RS_TURTLE_FILE_CRC_REQUEST = 5 ;
+const uint8_t QOS_PRIORITY_RS_TURTLE_CHUNK_CRC_REQUEST= 5 ;
 const uint8_t QOS_PRIORITY_RS_TURTLE_FILE_MAP_REQUEST = 5 ;
-const uint8_t QOS_PRIORITY_RS_TURTLE_SEARCH_RESULT  	= 3 ;
-const uint8_t QOS_PRIORITY_RS_TURTLE_FILE_DATA      	= 3 ;
+const uint8_t QOS_PRIORITY_RS_TURTLE_SEARCH_RESULT    = 3 ;
+const uint8_t QOS_PRIORITY_RS_TURTLE_FILE_DATA        = 3 ;
 const uint8_t QOS_PRIORITY_RS_TURTLE_FILE_CRC         = 3 ;
 const uint8_t QOS_PRIORITY_RS_TURTLE_CHUNK_CRC        = 5 ;
 const uint8_t QOS_PRIORITY_RS_TURTLE_FILE_MAP         = 3 ;
 const uint8_t QOS_PRIORITY_RS_TURTLE_GENERIC_ITEM     = 3 ;
 const uint8_t QOS_PRIORITY_RS_TURTLE_FORWARD_FILE_DATA= 3 ;
 const uint8_t QOS_PRIORITY_RS_TURTLE_GENERIC_DATA     = 5 ;
+const uint8_t QOS_PRIORITY_RS_TURTLE_GENERIC_FAST_DATA= 7 ;
 
 // File transfer
 //

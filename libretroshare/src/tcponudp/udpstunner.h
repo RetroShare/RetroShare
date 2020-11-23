@@ -1,29 +1,26 @@
+/*******************************************************************************
+ * libretroshare/src/tcponudp: udpstunner.h                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2010-2010 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RS_UDP_STUN_H
 #define RS_UDP_STUN_H
-/*
- * tcponudp/udpstunner.h
- *
- * libretroshare.
- *
- * Copyright 2010 by Robert Fernie
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 3 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
 
 #ifndef WINDOWS_SYS
 #include <netinet/in.h>
@@ -33,10 +30,10 @@
 #include "util/rsthreads.h"
 #include <string>
 
-/* UdpStun.
+/**
+ * @brief The TouStunPeer class
  * Stuns peers to determine external addresses.
  */
-
 class TouStunPeer
 {
 	public:
@@ -56,10 +53,17 @@ class TouStunPeer
 		return; 
 	}
 	
+	/// id for identification
 	std::string id;
-	struct sockaddr_in remote, eaddr;
+	/// Remote address of the peer.
+	struct sockaddr_in remote;
+	/// Our external IP address as reported by the peer.
+	struct sockaddr_in eaddr;
+	/// true when a response was received in the past
 	bool response;
-	time_t lastsend;
+	/// used to rate limit STUN requests
+	rstime_t lastsend;
+	/// fail counter for dead/bad peer detection (0 = good)
 	uint32_t failCount;
 };
 
@@ -68,6 +72,13 @@ class TouStunPeer
  * #define UDPSTUN_ALLOW_LOCALNET	1	
  */
 
+/**
+ * @brief The UdpStunner class
+ * The UDP stunner implements the STUN protocol to determin the NAT type (behind that RS is usually running).
+ * It maintains a list of DHT peers that are regulary contacted.
+ *
+ * The actual NAT type determination logic is located in void pqiNetStateBox::determineNetworkState()
+ */
 class UdpStunner: public UdpSubReceiver
 {
 	public:
@@ -92,7 +103,7 @@ bool    dropStunPeer(const struct sockaddr_in &remote);
 
 bool    getStunPeer(int idx, std::string &id,
                 struct sockaddr_in &remote, struct sockaddr_in &eaddr,
-                uint32_t &failCount, time_t &lastSend);
+                uint32_t &failCount, rstime_t &lastSend);
 
 bool	needStunPeers();
 
@@ -104,6 +115,12 @@ virtual int status(std::ostream &out);
 
 	/* monitoring / updates */
 	int tick();
+
+	/*
+	 * based on RFC 3489
+	 */
+	static constexpr uint16_t STUN_BINDING_REQUEST  = 0x0001;
+	static constexpr uint16_t STUN_BINDING_RESPONSE = 0x0101;
 
 	private:
 
@@ -126,14 +143,14 @@ bool    locked_checkExternalAddress();
 
 	struct sockaddr_in eaddr; /* external addr */
 
-        bool eaddrKnown;
+	bool eaddrKnown;
 	bool eaddrStable; /* if true then usable. if false -> Symmettric NAT */
-	time_t eaddrTime;
+	rstime_t eaddrTime;
 
-	time_t mStunLastRecvResp;
-	time_t mStunLastRecvAny;
-	time_t mStunLastSendStun;
-	time_t mStunLastSendAny;
+	rstime_t mStunLastRecvResp;
+	rstime_t mStunLastRecvAny;
+	rstime_t mStunLastSendStun;
+	rstime_t mStunLastSendAny;
 
 	std::list<TouStunPeer> mStunList; /* potentials */
 
@@ -146,13 +163,19 @@ bool    locked_checkExternalAddress();
 
 #endif
 
+	/// The UDP stunner will only (actively) contact it's peers when mPassiveStunMode is false. (has priority over mForceRestun
 	bool mPassiveStunMode;
-        uint32_t mTargetStunPeriod;
+	/// Time between STUNs
+	uint32_t mTargetStunPeriod;
+	/// Rate that determines how often STUN attempts are successfull
 	double mSuccessRate;
 
+	/// Some variables used for tracking who and when exclusive mode is enabled
 	bool mExclusiveMode; /* when this is switched on, the stunner stays silent (and extAddr is maintained) */
-	time_t mExclusiveModeTS;
+	rstime_t mExclusiveModeTS;
 	std::string mExclusiveHolder;
+
+	/// force a STUN immediately
 	bool mForceRestun;
 
 };
@@ -161,7 +184,14 @@ bool    locked_checkExternalAddress();
 
 bool	UdpStun_isStunPacket(void *data, int size);
 bool    UdpStun_response(void *stun_pkt, int size, struct sockaddr_in &addr);
-void   *UdpStun_generate_stun_reply(struct sockaddr_in *stun_addr, int *len);
+/**
+ * @brief UdpStun_generate_stun_reply Generates a STUN reply package.
+ * @param stun_addr The address to set in the response field.
+ * @param len Lenght of the generated package (always 28).
+ * @param transId The transaction ID of the request package.
+ * @return Pointer to the generated reply package.
+ */
+void   *UdpStun_generate_stun_reply(struct sockaddr_in *stun_addr, int *len, const void* transId);
 bool    UdpStun_generate_stun_pkt(void *stun_pkt, int *len);
 
 #endif

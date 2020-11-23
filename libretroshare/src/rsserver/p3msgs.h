@@ -1,30 +1,26 @@
-#ifndef RS_P3MSG_INTERFACE_H
-#define RS_P3MSG_INTERFACE_H
-
-/*
- * libretroshare/src/rsserver: p3msgs.h
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2007-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/rsserver: p3msgs.h                                        *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2007-2008  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2016-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+#pragma once
 
 #include "retroshare/rsmsgs.h"
 #include "retroshare/rsgxsifacetypes.h"
@@ -42,11 +38,25 @@ class RsChatMsgItem;
  */
 class p3Msgs: public RsMsgs 
 {
-   public:
+public:
 
-          p3Msgs(p3MsgService *p3m, p3ChatService *p3c)
-                 :mMsgSrv(p3m), mChatSrv(p3c) { return; }
-	  virtual ~p3Msgs() { return; }
+	p3Msgs(p3MsgService *p3m, p3ChatService *p3c) :
+	    mMsgSrv(p3m), mChatSrv(p3c) {}
+	~p3Msgs() override = default;
+
+	/// @see RsMsgs
+	uint32_t sendMail(
+	        const RsGxsId from,
+	        const std::string& subject,
+	        const std::string& body,
+	        const std::set<RsGxsId>& to = std::set<RsGxsId>(),
+	        const std::set<RsGxsId>& cc = std::set<RsGxsId>(),
+	        const std::set<RsGxsId>& bcc = std::set<RsGxsId>(),
+	        const std::vector<FileInfo>& attachments = std::vector<FileInfo>(),
+	        std::set<RsMailIdRecipientIdPair>& trackingIds =
+	            RS_DEFAULT_STORAGE_PARAM(std::set<RsMailIdRecipientIdPair>),
+	        std::string& errorMsg =
+	            RS_DEFAULT_STORAGE_PARAM(std::string) ) override;
 
 	  /****************************************/
 	  /* Message Items */
@@ -56,8 +66,9 @@ class p3Msgs: public RsMsgs
 	   */
 	  virtual bool getMessageSummaries(std::list<Rs::Msgs::MsgInfoSummary> &msgList);
 	  virtual bool getMessage(const std::string &mId, Rs::Msgs::MessageInfo &msg);
-	  virtual void getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox);
+	  virtual void getMessageCount(uint32_t &nInbox, uint32_t &nInboxNew, uint32_t &nOutbox, uint32_t &nDraftbox, uint32_t &nSentbox, uint32_t &nTrashbox);
 
+	RS_DEPRECATED_FOR(sendMail)
 	  virtual bool MessageSend(Rs::Msgs::MessageInfo &info);
 	  virtual bool SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag);
 	  virtual bool MessageToDraft(Rs::Msgs::MessageInfo &info, const std::string &msgParentId);
@@ -67,6 +78,7 @@ class p3Msgs: public RsMsgs
 	  virtual bool MessageReplied(const std::string &mid, bool replied);
 	  virtual bool MessageForwarded(const std::string &mid, bool forwarded);
 	  virtual bool MessageStar(const std::string &mid, bool star);
+	  virtual bool MessageJunk(const std::string &mid, bool junk);
 	  virtual bool MessageLoadEmbeddedImages(const std::string &mid, bool load);
 	  virtual bool getMsgParentId(const std::string &msgId, std::string &msgParentId);
 
@@ -151,6 +163,7 @@ class p3Msgs: public RsMsgs
 	  virtual void denyLobbyInvite(const ChatLobbyId& id) ;
 	  virtual void getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites) ;
 	  virtual void unsubscribeChatLobby(const ChatLobbyId& lobby_id) ;
+	  virtual void sendLobbyStatusPeerLeaving(const ChatLobbyId& lobby_id);
       virtual bool setIdentityForChatLobby(const ChatLobbyId& lobby_id,const RsGxsId&) ;
       virtual bool getIdentityForChatLobby(const ChatLobbyId&,RsGxsId& nick) ;
       virtual bool setDefaultIdentityForChatLobby(const RsGxsId&) ;
@@ -175,6 +188,3 @@ class p3Msgs: public RsMsgs
 	  p3MsgService  *mMsgSrv;
 	  p3ChatService *mChatSrv;
 };
-
-
-#endif

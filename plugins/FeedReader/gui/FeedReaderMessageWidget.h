@@ -1,3 +1,23 @@
+/*******************************************************************************
+ * plugins/FeedReader/gui/FeedReaderMessageWidget.h                            *
+ *                                                                             *
+ * Copyright (C) 2012 by RetroShare Team <retroshare.project@gmail.com>        *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #ifndef FEEDREADERMESSAGEWIDGET_H
 #define FEEDREADERMESSAGEWIDGET_H
 
@@ -21,11 +41,11 @@ class FeedReaderMessageWidget : public QWidget
 	Q_OBJECT
 
 public:
-	explicit FeedReaderMessageWidget(const std::string &feedId, RsFeedReader *feedReader, FeedReaderNotify *notify, QWidget *parent = 0);
+	explicit FeedReaderMessageWidget(uint32_t feedId, RsFeedReader *feedReader, FeedReaderNotify *notify, QWidget *parent = 0);
 	~FeedReaderMessageWidget();
 
-	std::string feedId() { return mFeedId; }
-	void setFeedId(const std::string &feedId);
+	uint32_t feedId() { return mFeedId; }
+	void setFeedId(uint32_t feedId);
 	QString feedName(bool withUnreadCount);
 	QIcon feedIcon();
 
@@ -55,8 +75,8 @@ private slots:
 	void retransformMsg();
 
 	/* FeedReaderNotify */
-	void feedChanged(const QString &feedId, int type);
-	void msgChanged(const QString &feedId, const QString &msgId, int type);
+	void feedChanged(uint32_t feedId, int type);
+	void msgChanged(uint32_t feedId, const QString &msgId, int type);
 
 private:
 	std::string currentMsgId();
@@ -71,7 +91,7 @@ private:
 
 	bool mProcessSettings;
 	RSTreeWidgetItemCompareRole *mMsgCompareRole;
-	std::string mFeedId;
+	uint32_t mFeedId;
 	unsigned int mUnreadCount;
 	unsigned int mNewCount;
 	QTimer *mTimer;

@@ -1,25 +1,22 @@
-/*
- * Token Queue.
- *
- * Copyright 2012-2012 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * util/TokenQueue.cpp                                                         *
+ *                                                                             *
+ * Copyright (c) 2012  Robert Fernie           <retroshare.project@gmail.com>  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "util/TokenQueue.h"
 #include "util/RsProtectedTimer.h"
@@ -37,7 +34,7 @@ TokenQueue::TokenQueue(RsTokenService *service, TokenResponse *resp)
 {
 	mTrigger = new RsProtectedTimer(this);
 	mTrigger->setSingleShot(true);
-	connect(mTrigger, SIGNAL(timeout()), this, SLOT(pollRequests()));
+	connect(mTrigger, SIGNAL(timeout()), this, SLOT(pollRequests()),Qt::QueuedConnection);
 }
 
 bool TokenQueue::requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, std::list<RsGxsGroupId>& ids, uint32_t usertype)
@@ -119,7 +116,7 @@ void TokenQueue::doPoll(float dt)
 
 void TokenQueue::pollRequests()
 {
-	double pollPeriod = 0.5; // max poll period.
+	double pollPeriod = 0.1; // max poll period.
 
 	if (mRequests.empty())	{
 		return;
@@ -164,8 +161,8 @@ bool TokenQueue::checkForRequest(uint32_t token)
 {
 	/* check token */
 	uint32_t status =  mService->requestStatus(token);
-	return ( (RsTokenService::GXS_REQUEST_V2_STATUS_FAILED == status) ||
-			 (RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE == status) );
+	return ( (RsTokenService::FAILED == status) ||
+			 (RsTokenService::COMPLETE == status) );
 }
 
 bool TokenQueue::activeRequestExist(const uint32_t& userType) const

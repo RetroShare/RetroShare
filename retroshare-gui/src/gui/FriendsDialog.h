@@ -1,28 +1,25 @@
-/****************************************************************
- *  RShare is distributed under the following license:
- *
- *  Copyright (C) 2006 - 2011 RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/FriendsDialog.h                                                         *
+ *                                                                             *
+ * Copyright (C) 2012 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef _FRIENDSDIALOG_H
 #define _FRIENDSDIALOG_H
-
-#include "retroshare-gui/RsAutoUpdatePage.h"
 
 #include "ui_FriendsDialog.h"
 
@@ -34,7 +31,7 @@ class NetworkView;
 class IdDialog;
 class CirclesDialog;
 
-class FriendsDialog : public RsAutoUpdatePage
+class FriendsDialog : public MainPage
 {
     Q_OBJECT
 
@@ -42,9 +39,7 @@ public:
 		 enum Page {
 						 /* Fixed numbers for load and save the last page */
 			 				IdTab              = 0,  /** Identities page. */
-#ifdef RS_USE_CIRCLES
-							CirclesTab         = 1,  /** Circles page. */
-#endif
+							// CirclesTab         = 1,  /** Circles page - DEPRECATED - please keep the numbering. */
 							NetworkTab         = 2,  /** Network page. */
 							NetworkViewTab     = 3,  /** Network new graph. */
 							BroadcastTab       = 4   /** Old group chat page. */
@@ -60,9 +55,7 @@ public:
 	virtual QString pageName() const { return tr("Network") ; } //MainPage
     virtual QString helpText() const { return ""; } //MainPage
 
-    virtual UserNotify *getUserNotify(QObject *parent);
-
-    virtual void updateDisplay() ;	// overloaded from RsAutoUpdatePage
+    virtual UserNotify *createUserNotify(QObject *parent) override;
 
     static bool isGroupChatActive();
     static void groupChatActivate();
@@ -72,14 +65,8 @@ public:
 	 NetworkDialog *networkDialog ;
 	 NetworkView *networkView ;
 	 
-#ifdef RS_USE_CIRCLES
-	 CirclesDialog *circlesDialog;
-#endif
 	 IdDialog *idDialog;
 	 
-protected:
-    void showEvent (QShowEvent *event);
-
 private slots:
     void chatMessageReceived(const ChatMessage& msg);
     void chatStatusReceived(const ChatId& chat_id, const QString& status_string);

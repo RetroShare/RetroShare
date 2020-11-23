@@ -1,29 +1,27 @@
-/*
- * RetroShare File list storage system.
- *
- *      file_sharing/directory_storage.cc
- *
- * Copyright 2016 Mr.Alice
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare.project@gmail.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/file_sharing: directory_storage.cc                        *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2016 by Mr.Alice <mralice@users.sourceforge.net>                  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ ******************************************************************************/
 #include <set>
-#include <time.h>
+
+#include "util/rstime.h"
 #include "serialiser/rstlvbinary.h"
 #include "retroshare/rspeers.h"
 #include "util/rsdir.h"
@@ -32,6 +30,10 @@
 #include "directory_storage.h"
 #include "dir_hierarchy.h"
 #include "filelist_io.h"
+
+#ifdef RS_DEEP_FILES_INDEX
+#	include "deep_search/filesindex.hpp"
+#endif // def RS_DEEP_FILES_INDEX
 
 //#define DEBUG_REMOTE_DIRECTORY_STORAGE 1
 
@@ -74,7 +76,7 @@ DirectoryStorage::DirIterator ::operator bool() const { return **this != Directo
 RsFileHash  DirectoryStorage::FileIterator::hash()     const { const InternalFileHierarchyStorage::FileEntry *f = mStorage->getFileEntry(**this) ; return f?(f->file_hash):RsFileHash(); }
 uint64_t    DirectoryStorage::FileIterator::size()     const { const InternalFileHierarchyStorage::FileEntry *f = mStorage->getFileEntry(**this) ; return f?(f->file_size):0; }
 std::string DirectoryStorage::FileIterator::name()     const { const InternalFileHierarchyStorage::FileEntry *f = mStorage->getFileEntry(**this) ; return f?(f->file_name):std::string(); }
-time_t      DirectoryStorage::FileIterator::modtime()  const { const InternalFileHierarchyStorage::FileEntry *f = mStorage->getFileEntry(**this) ; return f?(f->file_modtime):0; }
+rstime_t      DirectoryStorage::FileIterator::modtime()  const { const InternalFileHierarchyStorage::FileEntry *f = mStorage->getFileEntry(**this) ; return f?(f->file_modtime):0; }
 
 std::string DirectoryStorage::DirIterator::name()      const { const InternalFileHierarchyStorage::DirEntry *d = mStorage->getDirEntry(**this) ; return d?(d->dir_name):std::string(); }
 
@@ -122,13 +124,13 @@ uint32_t DirectoryStorage::getEntryType(const EntryIndex& indx)
     }
 }
 
-bool DirectoryStorage::getDirectoryUpdateTime   (EntryIndex index,time_t& update_TS) const { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->getTS(index,update_TS,&InternalFileHierarchyStorage::DirEntry::dir_update_time     ); }
-bool DirectoryStorage::getDirectoryRecursModTime(EntryIndex index,time_t& rec_md_TS) const { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->getTS(index,rec_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_most_recent_time); }
-bool DirectoryStorage::getDirectoryLocalModTime (EntryIndex index,time_t& loc_md_TS) const { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->getTS(index,loc_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_modtime         ); }
+bool DirectoryStorage::getDirectoryUpdateTime   (EntryIndex index,rstime_t& update_TS) const { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->getTS(index,update_TS,&InternalFileHierarchyStorage::DirEntry::dir_update_time     ); }
+bool DirectoryStorage::getDirectoryRecursModTime(EntryIndex index,rstime_t& rec_md_TS) const { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->getTS(index,rec_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_most_recent_time); }
+bool DirectoryStorage::getDirectoryLocalModTime (EntryIndex index,rstime_t& loc_md_TS) const { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->getTS(index,loc_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_modtime         ); }
 
-bool DirectoryStorage::setDirectoryUpdateTime   (EntryIndex index,time_t  update_TS) { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->setTS(index,update_TS,&InternalFileHierarchyStorage::DirEntry::dir_update_time     ); }
-bool DirectoryStorage::setDirectoryRecursModTime(EntryIndex index,time_t  rec_md_TS) { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->setTS(index,rec_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_most_recent_time); }
-bool DirectoryStorage::setDirectoryLocalModTime (EntryIndex index,time_t  loc_md_TS) { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->setTS(index,loc_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_modtime         ); }
+bool DirectoryStorage::setDirectoryUpdateTime   (EntryIndex index,rstime_t  update_TS) { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->setTS(index,update_TS,&InternalFileHierarchyStorage::DirEntry::dir_update_time     ); }
+bool DirectoryStorage::setDirectoryRecursModTime(EntryIndex index,rstime_t  rec_md_TS) { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->setTS(index,rec_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_most_recent_time); }
+bool DirectoryStorage::setDirectoryLocalModTime (EntryIndex index,rstime_t  loc_md_TS) { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->setTS(index,loc_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_modtime         ); }
 
 bool DirectoryStorage::updateSubDirectoryList(const EntryIndex& indx, const std::set<std::string> &subdirs, const RsFileHash& hash_salt)
 {
@@ -183,7 +185,9 @@ void DirectoryStorage::print()
     mFileHierarchy->print();
 }
 
-int DirectoryStorage::searchTerms(const std::list<std::string>& terms, std::list<EntryIndex> &results) const
+int DirectoryStorage::searchTerms(
+        const std::list<std::string>& terms,
+        std::list<EntryIndex>& results ) const
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
     return mFileHierarchy->searchTerms(terms,results);
@@ -284,7 +288,7 @@ bool DirectoryStorage::getIndexFromDirHash(const RsFileHash& hash,EntryIndex& in
 
 void DirectoryStorage::checkSave()
 {
-    time_t now = time(NULL);
+    rstime_t now = time(NULL);
 
     if(mChanged && mLastSavedTime + MIN_INTERVAL_BETWEEN_REMOTE_DIRECTORY_SAVE < now)
 	{
@@ -492,7 +496,7 @@ void LocalDirectoryStorage::updateTimeStamps()
 
         bool unfinished_files_below ;
 
-        time_t last_modf_time = mFileHierarchy->recursUpdateLastModfTime(EntryIndex(0),unfinished_files_below) ;
+        rstime_t last_modf_time = mFileHierarchy->recursUpdateLastModfTime(EntryIndex(0),unfinished_files_below) ;
         mTSChanged = false ;
 
 #ifdef DEBUG_LOCAL_DIRECTORY_STORAGE
@@ -504,18 +508,39 @@ void LocalDirectoryStorage::updateTimeStamps()
 #endif
     }
 }
-bool LocalDirectoryStorage::updateHash(const EntryIndex& index, const RsFileHash& hash, bool update_internal_hierarchy)
-{
-	RS_STACK_MUTEX(mDirStorageMtx) ;
 
-	mEncryptedHashes[makeEncryptedHash(hash)] = hash ;
-	mChanged = true ;
+bool LocalDirectoryStorage::updateHash(
+        const EntryIndex& index, const RsFileHash& hash,
+        bool update_internal_hierarchy )
+{
+	bool ret = false;
+
+	{
+		RS_STACK_MUTEX(mDirStorageMtx);
+
+		mEncryptedHashes[makeEncryptedHash(hash)] = hash ;
+		mChanged = true ;
 
 #ifdef DEBUG_LOCAL_DIRECTORY_STORAGE
-    std::cerr << "Updating index of hash " << hash << " update_internal=" << update_internal_hierarchy << std::endl;
+		std::cerr << "Updating index of hash " << hash << " update_internal="
+		          << update_internal_hierarchy << std::endl;
 #endif
 
-	return (!update_internal_hierarchy)|| mFileHierarchy->updateHash(index,hash);
+		ret = (!update_internal_hierarchy) ||
+		        mFileHierarchy->updateHash(index,hash);
+	} // RS_STACK_MUTEX(mDirStorageMtx);
+
+#ifdef RS_DEEP_FILES_INDEX
+	FileInfo fInfo;
+	if( ret && getFileInfo(index, fInfo) &&
+	        fInfo.storage_permission_flags & DIR_FLAGS_ANONYMOUS_SEARCH )
+	{
+		DeepFilesIndex dfi(DeepFilesIndex::dbDefaultPath());
+		ret &= dfi.indexFile(fInfo.path, fInfo.fname, hash);
+	}
+#endif // def RS_DEEP_FILES_INDEX
+
+	return ret;
 }
 std::string LocalDirectoryStorage::locked_findRealRootFromVirtualFilename(const std::string& virtual_rootdir) const
 {
@@ -576,7 +601,7 @@ bool LocalDirectoryStorage::getFileInfo(DirectoryStorage::EntryIndex i,FileInfo&
     info.transfered = 0;
     info.tfRate = 0; /* in kbytes */
     info.downloadStatus = FT_STATE_COMPLETE ;
-    std::list<TransferInfo> peers;
+    //std::list<TransferInfo> peers;
 
     info.priority  = SPEED_NORMAL;
     info.lastTS = 0;
@@ -623,7 +648,7 @@ bool LocalDirectoryStorage::locked_getFileSharingPermissions(const EntryIndex& i
 
         if(it == mLocalDirs.end())
         {
-            std::cerr << "(EE) very weird bug: base directory \"" << base_dir << "\" not found in shared dir list." << std::endl;
+            std::cerr << "(II) base directory \"" << base_dir << "\" not found in shared dir list." << std::endl;
             return false ;
         }
 
@@ -923,7 +948,12 @@ bool RemoteDirectoryStorage::deserialiseUpdateDirEntry(const EntryIndex& indx,co
     return true ;
 }
 
+int RemoteDirectoryStorage::searchHash(const RsFileHash& hash, EntryIndex& result) const
+{
+    RS_STACK_MUTEX(mDirStorageMtx) ;
 
+    return mFileHierarchy->searchHash(hash,result);
+}
 
 
 

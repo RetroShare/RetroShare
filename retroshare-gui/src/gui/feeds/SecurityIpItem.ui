@@ -11,7 +11,16 @@
    </rect>
   </property>
   <layout class="QGridLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>1</number>
+   </property>
+   <property name="topMargin">
+    <number>1</number>
+   </property>
+   <property name="rightMargin">
+    <number>1</number>
+   </property>
+   <property name="bottomMargin">
     <number>1</number>
    </property>
    <item row="0" column="0">
@@ -22,75 +31,11 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="palette">
-      <palette>
-       <active>
-        <colorrole role="Base">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>207</red>
-           <green>150</green>
-           <blue>103</blue>
-          </color>
-         </brush>
-        </colorrole>
-        <colorrole role="Window">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>207</red>
-           <green>150</green>
-           <blue>103</blue>
-          </color>
-         </brush>
-        </colorrole>
-       </active>
-       <inactive>
-        <colorrole role="Base">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>207</red>
-           <green>150</green>
-           <blue>103</blue>
-          </color>
-         </brush>
-        </colorrole>
-        <colorrole role="Window">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>207</red>
-           <green>150</green>
-           <blue>103</blue>
-          </color>
-         </brush>
-        </colorrole>
-       </inactive>
-       <disabled>
-        <colorrole role="Base">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>240</red>
-           <green>240</green>
-           <blue>240</blue>
-          </color>
-         </brush>
-        </colorrole>
-        <colorrole role="Window">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>207</red>
-           <green>150</green>
-           <blue>103</blue>
-          </color>
-         </brush>
-        </colorrole>
-       </disabled>
-      </palette>
-     </property>
      <property name="toolTip">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This warning is here to protect you against traffic forwarding attacks. In such a case, the friend you're connected to will not see your external IP, but the attacker's IP. &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;However, if you just changed IPs for some reason (some ISPs regularly force change IPs) this warning just tells you that a friend connected to the new IP before Retroshare figured out the IP changed. Nothing's wrong in this case.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;You can easily suppress false warnings by white-listing your own IPs (e.g. the range of your ISP), or by completely disabling these warnings in Options-&amp;gt;Notify-&amp;gt;News Feed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="autoFillBackground">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="frameShape">
       <enum>QFrame::Box</enum>
@@ -105,10 +50,19 @@
       <item row="0" column="0">
        <widget class="QFrame" name="headFrame">
         <layout class="QGridLayout">
-         <property name="verticalSpacing">
+         <property name="leftMargin">
           <number>0</number>
          </property>
-         <property name="margin">
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="verticalSpacing">
           <number>0</number>
          </property>
          <item row="0" column="0" rowspan="2">
@@ -215,8 +169,8 @@
               <string>Expand</string>
              </property>
              <property name="icon">
-              <iconset resource="../images.qrc">
-               <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
+              <iconset resource="../icons.qrc">
+               <normaloff>:/icons/png/down-arrow.png</normaloff>:/icons/png/down-arrow.png</iconset>
              </property>
             </widget>
            </item>
@@ -235,8 +189,8 @@
               <string>Remove Item</string>
              </property>
              <property name="icon">
-              <iconset resource="../images.qrc">
-               <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
+              <iconset resource="../icons.qrc">
+               <normaloff>:/icons/png/exit2.png</normaloff>:/icons/png/exit2.png</iconset>
              </property>
             </widget>
            </item>
@@ -457,15 +411,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>AvatarWidget</class>
    <extends>QLabel</extends>
    <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
   </customwidget>
   <customwidget>
    <class>RsBanListToolButton</class>
@@ -475,6 +429,7 @@
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

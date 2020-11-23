@@ -1,31 +1,25 @@
-#ifndef RS_NOTIFY_GUI_INTERFACE_H
-#define RS_NOTIFY_GUI_INTERFACE_H
-
-/*
- * libretroshare/src/rsiface: rsnotify.h
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2007-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/retroshare: rsnotify.h                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2007-2008 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+#pragma once
 
 #include <map>
 #include <list>
@@ -35,10 +29,11 @@
 
 #include "rsturtle.h"
 #include "rsgxsifacetypes.h"
+#include "util/rsdeprecate.h"
 
 class ChatId;
 class ChatMessage;
-class RsGxsChanges;
+struct RsGxsChanges;
 
 class RsNotify;
 extern RsNotify   *rsNotify;
@@ -84,9 +79,10 @@ const uint32_t RS_FEED_ITEM_PEER_DISCONNECT         = RS_FEED_TYPE_PEER  | 0x000
 const uint32_t RS_FEED_ITEM_PEER_HELLO              = RS_FEED_TYPE_PEER  | 0x0003;
 const uint32_t RS_FEED_ITEM_PEER_NEW                = RS_FEED_TYPE_PEER  | 0x0004;
 const uint32_t RS_FEED_ITEM_PEER_OFFSET             = RS_FEED_TYPE_PEER  | 0x0005;
+const uint32_t RS_FEED_ITEM_PEER_DENIES_CONNEXION   = RS_FEED_TYPE_PEER  | 0x0006;
 
 const uint32_t RS_FEED_ITEM_SEC_CONNECT_ATTEMPT     = RS_FEED_TYPE_SECURITY  | 0x0001;
-const uint32_t RS_FEED_ITEM_SEC_AUTH_DENIED         = RS_FEED_TYPE_SECURITY  | 0x0002;
+const uint32_t RS_FEED_ITEM_SEC_AUTH_DENIED         = RS_FEED_TYPE_SECURITY  | 0x0002;	// locally denied connection
 const uint32_t RS_FEED_ITEM_SEC_UNKNOWN_IN          = RS_FEED_TYPE_SECURITY  | 0x0003;
 const uint32_t RS_FEED_ITEM_SEC_UNKNOWN_OUT         = RS_FEED_TYPE_SECURITY  | 0x0004;
 const uint32_t RS_FEED_ITEM_SEC_WRONG_SIGNATURE     = RS_FEED_TYPE_SECURITY  | 0x0005;
@@ -119,8 +115,13 @@ const uint32_t RS_FEED_ITEM_CHAT_NEW         = RS_FEED_TYPE_CHAT  | 0x0001;
 const uint32_t RS_FEED_ITEM_MESSAGE          = RS_FEED_TYPE_MSG   | 0x0001;
 const uint32_t RS_FEED_ITEM_FILES_NEW        = RS_FEED_TYPE_FILES | 0x0001;
 
-const uint32_t RS_FEED_ITEM_CIRCLE_MEMB_REQ  = RS_FEED_TYPE_CIRCLE  | 0x0001;
-const uint32_t RS_FEED_ITEM_CIRCLE_INVIT_REC = RS_FEED_TYPE_CIRCLE  | 0x0002;
+const uint32_t RS_FEED_ITEM_CIRCLE_MEMB_REQ        = RS_FEED_TYPE_CIRCLE  | 0x0001;
+const uint32_t RS_FEED_ITEM_CIRCLE_INVITE_REC      = RS_FEED_TYPE_CIRCLE  | 0x0002;
+const uint32_t RS_FEED_ITEM_CIRCLE_MEMB_LEAVE      = RS_FEED_TYPE_CIRCLE  | 0x0003;
+const uint32_t RS_FEED_ITEM_CIRCLE_MEMB_JOIN       = RS_FEED_TYPE_CIRCLE  | 0x0004;
+const uint32_t RS_FEED_ITEM_CIRCLE_MEMB_ACCEPTED   = RS_FEED_TYPE_CIRCLE  | 0x0005;
+const uint32_t RS_FEED_ITEM_CIRCLE_MEMB_REVOKED    = RS_FEED_TYPE_CIRCLE  | 0x0006;
+const uint32_t RS_FEED_ITEM_CIRCLE_INVITE_CANCELLED= RS_FEED_TYPE_CIRCLE  | 0x0007;
 
 const uint32_t RS_MESSAGE_CONNECT_ATTEMPT    = 0x0001;
 
@@ -153,7 +154,7 @@ const uint32_t NOTIFY_HASHTYPE_FINISH          = 2; /* Finish */
 const uint32_t NOTIFY_HASHTYPE_HASH_FILE       = 3; /* Hashing file */
 const uint32_t NOTIFY_HASHTYPE_SAVE_FILE_INDEX = 4; /* Hashing file */
 
-class RsFeedItem
+class RS_DEPRECATED RsFeedItem
 {
 	public:
 		RsFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3, const std::string& id4, uint32_t result1)
@@ -186,9 +187,9 @@ class RsFeedItem
 // This mechanism can be used in plugins, new services, etc.
 //	
 
-class NotifyClient ;
+class RS_DEPRECATED NotifyClient;
 
-class RsNotify 
+class RS_DEPRECATED_FOR(RsEvents) RsNotify
 {
 	public:
 		/* registration of notifies clients */
@@ -211,42 +212,37 @@ class RsNotify
 		virtual bool setDisableAskPassword (const bool /*bValue*/) { return false ; }
 };
 
-class NotifyClient
+class RS_DEPRECATED NotifyClient
 {
-	public:
-		NotifyClient() {}
-		virtual ~NotifyClient() {}
+public:
+	NotifyClient() {}
+	virtual ~NotifyClient() {}
 
-		virtual void notifyListPreChange              (int /* list */, int /* type */) {}
-		virtual void notifyListChange                 (int /* list */, int /* type */) {}
-		virtual void notifyErrorMsg                   (int /* list */, int /* sev  */, std::string /* msg */) {}
-		virtual void notifyChatMessage                (const ChatMessage& /* msg      */) {}
-		virtual void notifyChatStatus                 (const ChatId&      /* chat_id  */, const std::string& /* status_string */) {}
-		virtual void notifyChatCleared                (const ChatId&      /* chat_id  */) {}
-		virtual void notifyChatLobbyEvent             (uint64_t           /* lobby id */, uint32_t           /* event type    */ ,const RsGxsId& /* nickname */,const std::string& /* any string */) {}
-		virtual void notifyChatLobbyTimeShift         (int                /* time_shift*/) {}
-		virtual void notifyCustomState                (const std::string& /* peer_id   */, const std::string&               /* status_string */) {}
-		virtual void notifyHashingInfo                (uint32_t           /* type      */, const std::string&               /* fileinfo      */) {}
-		virtual void notifyTurtleSearchResult         (uint32_t           /* search_id */, const std::list<TurtleFileInfo>& /* files         */) {}
-		virtual void notifyPeerHasNewAvatar           (std::string        /* peer_id   */) {}
-		virtual void notifyOwnAvatarChanged           () {}
-		virtual void notifyOwnStatusMessageChanged    () {}
-		virtual void notifyDiskFull                   (uint32_t           /* location  */, uint32_t                         /* size limit in MB */) {}
-		virtual void notifyPeerStatusChanged          (const std::string& /* peer_id   */, uint32_t                         /* status           */) {}
-        virtual void notifyGxsChange                  (const RsGxsChanges& /* changes  */) {}
-		virtual void notifyConnectionWithoutCert      () {}
+	virtual void notifyListPreChange              (int /* list */, int /* type */) {}
+	virtual void notifyListChange                 (int /* list */, int /* type */) {}
+	virtual void notifyErrorMsg                   (int /* list */, int /* sev  */, std::string /* msg */) {}
+	virtual void notifyChatMessage                (const ChatMessage& /* msg      */) {}
+	virtual void notifyChatStatus                 (const ChatId&      /* chat_id  */, const std::string& /* status_string */) {}
+	virtual void notifyChatCleared                (const ChatId&      /* chat_id  */) {}
+	virtual void notifyChatLobbyEvent             (uint64_t           /* lobby id */, uint32_t           /* event type    */ ,const RsGxsId& /* nickname */,const std::string& /* any string */) {}
+	virtual void notifyChatLobbyTimeShift         (int                /* time_shift*/) {}
+	virtual void notifyCustomState                (const std::string& /* peer_id   */, const std::string&               /* status_string */) {}
+	virtual void notifyHashingInfo                (uint32_t           /* type      */, const std::string&               /* fileinfo      */) {}
+	virtual void notifyTurtleSearchResult         (const RsPeerId&    /* pid       */, uint32_t                         /* search_id     */, const std::list<TurtleFileInfo>& /* files         */) {}
+	virtual void notifyPeerHasNewAvatar           (std::string        /* peer_id   */) {}
+	virtual void notifyOwnAvatarChanged           () {}
+	virtual void notifyOwnStatusMessageChanged    () {}
+	virtual void notifyDiskFull                   (uint32_t           /* location  */, uint32_t                         /* size limit in MB */) {}
+	virtual void notifyPeerStatusChanged          (const std::string& /* peer_id   */, uint32_t                         /* status           */) {}
 
-		/* one or more peers has changed the states */
-		virtual void notifyPeerStatusChangedSummary   () {}
-		virtual void notifyDiscInfoChanged            () {}
+	/* one or more peers has changed the states */
+	virtual void notifyPeerStatusChangedSummary   () {}
+	virtual void notifyDiscInfoChanged            () {}
 
-		virtual bool askForDeferredSelfSignature      (const void *       /* data      */, const uint32_t     /* len   */, unsigned char * /* sign */, unsigned int * /* signlen */,int& signature_result , std::string /*reason = ""*/) { signature_result = false ;return true; }
-		virtual void notifyDownloadComplete           (const std::string& /* fileHash  */) {}
-		virtual void notifyDownloadCompleteCount      (uint32_t           /* count     */) {}
-		virtual void notifyHistoryChanged             (uint32_t           /* msgId     */, int /* type */) {}
+	virtual void notifyDownloadComplete           (const std::string& /* fileHash  */) {}
+	virtual void notifyDownloadCompleteCount      (uint32_t           /* count     */) {}
+	virtual void notifyHistoryChanged             (uint32_t           /* msgId     */, int /* type */) {}
 
-		virtual bool askForPassword                   (const std::string& /* title     */, const std::string& /* key_details     */, bool               /* prev_is_bad */, std::string& /* password */,bool& /* cancelled */ ) { return false ;}
-		virtual bool askForPluginConfirmation         (const std::string& /* plugin_filename */, const std::string& /* plugin_file_hash */,bool /* first_time */) { return false ;}
-
+	virtual bool askForPassword                   (const std::string& /* title     */, const std::string& /* key_details     */, bool               /* prev_is_bad */, std::string& /* password */,bool& /* cancelled */ ) { return false ;}
+	virtual bool askForPluginConfirmation         (const std::string& /* plugin_filename */, const std::string& /* plugin_file_hash */,bool /* first_time */) { return false ;}
 };
-#endif

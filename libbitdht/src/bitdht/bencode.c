@@ -1,16 +1,25 @@
-/*
- * C implementation of a bencode decoder.
- * This is the format defined by BitTorrent:
- *  http://wiki.theory.org/BitTorrentSpecification#bencoding
- *
- * The only external requirements are a few [standard] function calls and
- * the long long type.  Any sane system should provide all of these things.
- *
- * See the bencode.h header file for usage information.
- *
- * This is released into the public domain.
- * Written by Mike Frysinger <vapier@gmail.com>.
- */
+/*******************************************************************************
+ * bitdht/bdencode.cc                                                          *
+ *                                                                             *
+ * BitDHT: An Flexible DHT library.                                            *
+ *                                                                             *
+ * Copyright 2011 by Robert Fernie <bitdht@lunamutt.com>                       *
+ *                by Mike Frysinger <vapier@gmail.com>                         *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 /*
  * This implementation isn't optimized at all as I wrote it to support

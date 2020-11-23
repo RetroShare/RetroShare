@@ -1,21 +1,25 @@
+/*******************************************************************************
+ * libretroshare/src/gxstrans: p3gxstrans.cc                                   *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #pragma once
-/*
- * GXS Mailing Service
- * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 
 #include <string>
 
@@ -39,7 +43,7 @@ public:
 class RsGxsTransBaseMsgItem : public RsGxsMsgItem
 {
 public:
-	RsGxsTransBaseMsgItem(GxsTransItemsSubtypes subtype) :
+	explicit RsGxsTransBaseMsgItem(GxsTransItemsSubtypes subtype) :
 	    RsGxsMsgItem( RS_SERVICE_TYPE_GXS_TRANS,
 	                  static_cast<uint8_t>(subtype) ), mailId(0) {}
 
@@ -55,7 +59,7 @@ public:
 
 	void serial_process( RsGenericSerializer::SerializeJob j,
 	                     RsGenericSerializer::SerializeContext& ctx )
-	{ RS_REGISTER_SERIAL_MEMBER_TYPED(mailId, uint64_t); }
+	{ RS_SERIAL_PROCESS(mailId); }
 };
 
 class RsGxsTransPresignedReceipt : public RsGxsTransBaseMsgItem
@@ -140,9 +144,9 @@ public:
 	                     RsGenericSerializer::SerializeContext& ctx )
 	{
 		RsGxsTransBaseMsgItem::serial_process(j, ctx);
-		RS_REGISTER_SERIAL_MEMBER_TYPED(cryptoType, uint8_t);
-		RS_REGISTER_SERIAL_MEMBER(recipientHint);
-		RS_REGISTER_SERIAL_MEMBER(payload);
+		RS_SERIAL_PROCESS(cryptoType);
+		RS_SERIAL_PROCESS(recipientHint);
+		RS_SERIAL_PROCESS(payload);
 	}
 
 	void clear()
@@ -177,8 +181,6 @@ public:
 	{}
 
 	void clear() {}
-	std::ostream &print(std::ostream &out, uint16_t /*indent = 0*/)
-	{ return out; }
 };
 
 class RsGxsTransSerializer;

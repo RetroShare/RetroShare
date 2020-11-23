@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>618</width>
-    <height>157</height>
+    <width>784</width>
+    <height>464</height>
    </rect>
   </property>
   <layout class="QGridLayout">
@@ -104,8 +104,8 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QGridLayout">
-      <item row="0" column="0">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
        <layout class="QGridLayout">
         <item row="0" column="0" rowspan="2">
          <widget class="QLabel" name="forumlogo_label">
@@ -125,7 +125,10 @@
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="../images.qrc">:/images/konversation64.png</pixmap>
+           <pixmap resource="../icons.qrc">:/icons/png/forums-default.png</pixmap>
+          </property>
+          <property name="scaledContents">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -153,6 +156,12 @@
           </item>
           <item>
            <widget class="QLabel" name="nameLabel">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string notr="true">name</string>
             </property>
@@ -179,6 +188,25 @@
         <item row="1" column="1">
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
+           <widget class="QPushButton" name="subscribeButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="toolTip">
+             <string>Subscribe to Forum</string>
+            </property>
+            <property name="text">
+             <string>Subscribe</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -199,29 +227,12 @@
             <property name="focusPolicy">
              <enum>Qt::NoFocus</enum>
             </property>
-            <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/copyrslink.png</normaloff>:/images/copyrslink.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="subscribeButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="focusPolicy">
-             <enum>Qt::NoFocus</enum>
-            </property>
             <property name="toolTip">
-             <string>Subscribe to Forum</string>
+             <string>Copy RetroShare link</string>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/directoryadd_24x24_shadow.png</normaloff>:/images/directoryadd_24x24_shadow.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/png/copy.png</normaloff>:/icons/png/copy.png</iconset>
             </property>
            </widget>
           </item>
@@ -240,8 +251,8 @@
              <string>Expand</string>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/png/down-arrow.png</normaloff>:/icons/png/down-arrow.png</iconset>
             </property>
            </widget>
           </item>
@@ -260,8 +271,8 @@
              <string>Remove Item</string>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/png/exit2.png</normaloff>:/icons/png/exit2.png</iconset>
             </property>
            </widget>
           </item>
@@ -269,7 +280,7 @@
         </item>
        </layout>
       </item>
-      <item row="1" column="0">
+      <item>
        <widget class="QFrame" name="expandFrame">
         <layout class="QVBoxLayout">
          <property name="spacing">
@@ -323,6 +334,33 @@
         </layout>
        </widget>
       </item>
+      <item>
+       <widget class="QGroupBox" name="moderatorList_GB">
+        <property name="title">
+         <string>Moderator list</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QTextEdit" name="moderatorList_TE"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -330,6 +368,7 @@
  </widget>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

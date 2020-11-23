@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1216</width>
-    <height>1107</height>
+    <width>800</width>
+    <height>592</height>
    </rect>
   </property>
-  <layout class="QGridLayout">
-   <item row="3" column="0">
+  <layout class="QHBoxLayout" name="horizontalLayout_6">
+   <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
       <number>0</number>
@@ -20,93 +20,98 @@
       <attribute name="title">
        <string>General</string>
       </attribute>
-      <layout class="QGridLayout" name="generalGLayout">
-       <item row="0" column="0" colspan="2">
-        <widget class="QGroupBox" name="distantGBox">
-         <property name="title">
-          <string>Distant Chat</string>
-         </property>
-         <layout class="QGridLayout" name="distantGBoxGLayout">
-          <item row="0" column="2">
-           <widget class="QComboBox" name="distantChatComboBox">
-            <item>
-             <property name="text">
-              <string>Everyone</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Contacts</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Nobody</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="distantChatLabel">
-            <property name="text">
-             <string>Accept encrypted distant chat from</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <layout class="QVBoxLayout" name="leftVLayout">
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_16">
          <item>
-          <widget class="QGroupBox" name="chatSettingsGBox">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="title">
-            <string>Chat Settings</string>
-           </property>
-           <layout class="QVBoxLayout" name="chatSettingsGBoxVLayout">
-            <item>
-             <widget class="QCheckBox" name="checkBox_emoteprivchat">
-              <property name="text">
-               <string>Enable Emoticons Private Chat</string>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="QGroupBox" name="chatSettingsGBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="title">
+              <string>General settings</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout">
+              <item>
+               <layout class="QHBoxLayout" name="minimumContrastHLayout">
+                <item>
+                 <widget class="QLabel" name="minimumContrastLabel">
+                  <property name="text">
+                   <string>Minimum text contrast</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="minimumContrastHSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QDoubleSpinBox" name="minimumContrast">
+                  <property name="minimum">
+                   <double>1.000000000000000</double>
+                  </property>
+                  <property name="maximum">
+                   <double>21.000000000000000</double>
+                  </property>
+                  <property name="singleStep">
+                   <double>0.500000000000000</double>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="sendMessageWithCtrlReturn">
+                <property name="text">
+                 <string>Send message with Ctrl+Return</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="sendAsPlainTextByDef">
+                <property name="text">
+                 <string>Send as plain text by default</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="loadEmbeddedImages">
+                <property name="text">
+                 <string>Load embedded images</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="searchGBox">
+             <property name="title">
+              <string>Search</string>
+             </property>
+             <layout class="QVBoxLayout" name="vlSearch">
+              <property name="spacing">
+               <number>2</number>
               </property>
-              <property name="checked">
-               <bool>true</bool>
+              <property name="leftMargin">
+               <number>2</number>
               </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="checkBox_emotegroupchat">
-              <property name="text">
-               <string>Enable Emoticons Group Chat</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="checkBox_enableCustomFonts">
-              <property name="text">
-               <string>Enable custom fonts</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="checkBox_enableCustomFontSize">
-              <property name="text">
-               <string>Enable custom font size</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
+              <property name="rightMargin">
+               <number>0</number>
               </property>
              </widget>
             </item>
@@ -125,455 +130,744 @@
               <property name="topMargin">
                <number>0</number>
               </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
-               <widget class="QLabel" name="minimumFontSizeLabel">
+               <widget class="QCheckBox" name="cbSearch_ShowBar">
                 <property name="text">
-                 <string>Minimum font size</string>
+                 <string>Show Bar by default</string>
                 </property>
                </widget>
               </item>
               <item>
-               <spacer name="minimumFontSizeHSpacer">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
+               <layout class="QHBoxLayout" name="hlSearch_CharToStart">
+                <item>
+                 <widget class="QLabel" name="lSearch_CharToStart">
+                  <property name="text">
+                   <string>Threshold for automatic search</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="hsSearch_CharToStart">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="sbSearch_CharToStart">
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
-               <widget class="QSpinBox" name="minimumFontSize">
-                <property name="minimum">
-                 <number>1</number>
-                </property>
-                <property name="maximum">
-                 <number>64</number>
+               <widget class="QCheckBox" name="cbSearch_CaseSensitively">
+                <property name="text">
+                 <string>Case sensitive</string>
                 </property>
                </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbSearch_WholeWords">
+                <property name="text">
+                 <string>Whole Words</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbSearch_MoveToCursor">
+                <property name="text">
+                 <string>Move to cursor</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbSearch_WithoutLimit">
+                <property name="text">
+                 <string>Color All Text Found</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="hlSearch_MaxLimitColor">
+                <item>
+                 <widget class="QLabel" name="lSearch_MaxLimitColor">
+                  <property name="text">
+                   <string>Maximum count for coloring matching text</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="hsSearch_MaxLimitColor">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="sbSearch_MaxLimitColor">
+                  <property name="maximum">
+                   <number>1000</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="hlSearch_FoundColor">
+                <item>
+                 <widget class="QLabel" name="lSearch_FoundColor">
+                  <property name="text">
+                   <string>Color of found text</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="hsSearch_FoundColor">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="btSearch_FoundColor">
+                  <property name="minimumSize">
+                   <size>
+                    <width>24</width>
+                    <height>24</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>24</width>
+                    <height>24</height>
+                   </size>
+                  </property>
+                  <property name="toolTip">
+                   <string>Choose color of found text</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
              </layout>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="checkBox_enableBold">
-              <property name="text">
-               <string>Enable bold</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="checkBox_enableItalics">
-              <property name="text">
-               <string>Enable italics</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="minimumContrastHLayout">
-              <item>
-               <widget class="QLabel" name="minimumContrastLabel">
-                <property name="text">
-                 <string>Minimum text contrast</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="minimumContrastHSpacer">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QDoubleSpinBox" name="minimumContrast">
-                <property name="minimum">
-                 <double>1.000000000000000</double>
-                </property>
-                <property name="maximum">
-                 <double>21.000000000000000</double>
-                </property>
-                <property name="singleStep">
-                 <double>0.500000000000000</double>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="sendMessageWithCtrlReturn">
-              <property name="text">
-               <string>Send message with Ctrl+Return</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="sendAsPlainTextByDef">
-              <property name="text">
-               <string>Send as plain text by default</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="loadEmbeddedImages">
-              <property name="text">
-               <string>Load embedded images</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
+            </widget>
+           </item>
+          </layout>
          </item>
          <item>
-          <widget class="QGroupBox" name="chatLobbyGBox">
-           <property name="title">
-            <string>Chat Lobby</string>
-           </property>
-           <layout class="QVBoxLayout" name="chatLobbyGBoxVLayout">
-            <item>
-             <widget class="QCheckBox" name="chatLobby_Blink">
-              <property name="text">
-               <string>Blink tab icon</string>
+          <layout class="QVBoxLayout" name="rightVLayout">
+           <item>
+            <widget class="QGroupBox" name="chatFontGBox">
+             <property name="title">
+              <string>Fonts</string>
+             </property>
+             <layout class="QVBoxLayout" name="chatFontGBoxVLayout">
+              <property name="spacing">
+               <number>2</number>
               </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="defIDLabel">
-              <property name="text">
-               <string>Default identity for chat lobbies:</string>
+              <property name="leftMargin">
+               <number>2</number>
               </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="nickNameLayout">
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
-               <spacer name="chatLobbyIdentity_HSpacer">
+               <widget class="QPushButton" name="pushButtonChangeChatFont">
+                <property name="text">
+                 <string>Change Chat Font</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="labelChatFont">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Chat Font:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="labelChatFontPreview">
+                <property name="text">
+                 <string notr="true">Font Preview</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="Line" name="line_4">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Maximum</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
+               </widget>
               </item>
               <item>
-               <widget class="GxsIdChooser" name="chatLobbyIdentity_IC"/>
+               <widget class="QCheckBox" name="checkBox_enableItalics">
+                <property name="text">
+                 <string>Enable italics</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="checkBox_enableCustomFonts">
+                <property name="text">
+                 <string>Enable custom fonts</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="checkBox_enableBold">
+                <property name="text">
+                 <string>Enable bold</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="checkBox_enableCustomFontSize">
+                <property name="text">
+                 <string>Enable custom font size</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="minimumFontSizeHLayout">
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="minimumFontSizeLabel">
+                  <property name="text">
+                   <string>Minimum displayed font size</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="minimumFontSizeHSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="minimumFontSize">
+                  <property name="minimum">
+                   <number>1</number>
+                  </property>
+                  <property name="maximum">
+                   <number>64</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
              </layout>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="DontSendTyping">
-              <property name="text">
-               <string>Do not send typing notifications</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <spacer name="leftVSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
+            </widget>
+           </item>
+           <item>
+            <spacer name="rightVSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </item>
         </layout>
        </item>
-       <item row="1" column="1">
-        <layout class="QVBoxLayout" name="rightVLayout">
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>120</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Chat rooms</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
-          <widget class="QGroupBox" name="privateChatGBox">
-           <property name="title">
-            <string>Private Chat</string>
+          <widget class="QCheckBox" name="chatLobbies_TextCaseSensitive">
+           <property name="toolTip">
+            <string>Checked, if the identity and the text above occurrences must be in the same case to trigger count.</string>
            </property>
-           <layout class="QVBoxLayout" name="privateChatGBoxVLayout">
-            <item>
-             <widget class="QCheckBox" name="chat_NewWindow">
-              <property name="text">
-               <string>Open Window for new chat</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="chat_Focus">
-              <property name="text">
-               <string>Grab Focus when chat arrives</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="chat_tabbedWindow">
-              <property name="text">
-               <string>Use a single tabbed window</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="chat_Blink">
-              <property name="text">
-               <string>Blink window/tab icon</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <property name="text">
+            <string>Case sensitive search</string>
+           </property>
           </widget>
          </item>
          <item>
-          <widget class="QGroupBox" name="chatFontGBox">
-           <property name="title">
-            <string>Chat Font</string>
+          <widget class="QLabel" name="defIDLabel">
+           <property name="text">
+            <string>Default identity for chat rooms:</string>
            </property>
-           <layout class="QVBoxLayout" name="chatFontGBoxVLayout">
-            <property name="spacing">
-             <number>2</number>
-            </property>
-            <property name="leftMargin">
-             <number>2</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QPushButton" name="pushButtonChangeChatFont">
-              <property name="text">
-               <string>Change Chat Font</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="labelChatFont">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>Chat Font:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="labelChatFontPreview">
-              <property name="text">
-               <string notr="true">Font Preview</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
           </widget>
          </item>
          <item>
-          <widget class="QGroupBox" name="searchGBox">
-           <property name="title">
-            <string>Search by default</string>
-           </property>
-           <layout class="QVBoxLayout" name="vlSearch">
-            <property name="spacing">
-             <number>2</number>
-            </property>
-            <property name="leftMargin">
-             <number>2</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QCheckBox" name="cbSearch_ShowBar">
-              <property name="text">
-               <string>Show Bar by default</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="hlSearch_CharToStart">
-              <item>
-               <widget class="QLabel" name="lSearch_CharToStart">
-                <property name="text">
-                 <string>Threshold for automatic search</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="hsSearch_CharToStart">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="sbSearch_CharToStart">
-                <property name="maximum">
-                 <number>100</number>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cbSearch_CaseSensitively">
-              <property name="text">
-               <string>Case sensitive</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cbSearch_WholeWords">
-              <property name="text">
-               <string>Whole Words</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cbSearch_MoveToCursor">
-              <property name="text">
-               <string>Move to cursor</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cbSearch_WithoutLimit">
-              <property name="text">
-               <string>Color All Text Found</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="hlSearch_MaxLimitColor">
-              <item>
-               <widget class="QLabel" name="lSearch_MaxLimitColor">
-                <property name="text">
-                 <string>Maximum count for coloring matching text</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="hsSearch_MaxLimitColor">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="sbSearch_MaxLimitColor">
-                <property name="maximum">
-                 <number>1000</number>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="hlSearch_FoundColor">
-              <item>
-               <widget class="QLabel" name="lSearch_FoundColor">
-                <property name="text">
-                 <string>Color of found text</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="hsSearch_FoundColor">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QPushButton" name="btSearch_FoundColor">
-                <property name="minimumSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
-                </property>
-                <property name="toolTip">
-                 <string>Choose color of found text</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <spacer name="rightVSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
+          <widget class="GxsIdChooser" name="chatLobbyIdentity_IC"/>
          </item>
         </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_14">
+         <item>
+          <widget class="QCheckBox" name="DontSendTyping">
+           <property name="text">
+            <string>Do not send typing notifications</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="chatLobby_Blink">
+           <property name="text">
+            <string>Blink tab icon</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_15">
+         <item>
+          <widget class="QCheckBox" name="chatLobbies_CountUnRead">
+           <property name="text">
+            <string>Count all unread messages</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="chatLobbies_CheckNickName">
+           <property name="text">
+            <string>Count occurrences of my current identity</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="chatLobbies_CountFollowingText">
+         <property name="text">
+          <string>Count occurrences of any of the following texts (separate by newlines):</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPlainTextEdit" name="chatLobbies_TextToNotify"/>
+       </item>
+       <item>
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Style:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="publicStyle"/>
+           </item>
+           <item>
+            <widget class="QLabel" name="publicLabelVariant">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Variant:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="publicComboBoxVariant">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Author:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="publicAuthor">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string notr="true">AuthorText</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <item>
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>Description:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="publicDescription">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string notr="true">DescriptionText</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QTextBrowser" name="publicPreview">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="tabChatLobbiesVSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>8</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Private chat</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QLabel" name="distantChatLabel">
+           <property name="text">
+            <string>Accept chat from:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="distantChatComboBox">
+           <item>
+            <property name="text">
+             <string>Everyone</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Contacts only</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Nobody</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="chat_NewWindow">
+         <property name="text">
+          <string>Open Window for new chat</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="chat_Focus">
+         <property name="text">
+          <string>Grab Focus when chat arrives</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="chat_tabbedWindow">
+         <property name="text">
+          <string>Use a single tabbed window</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="chat_Blink">
+         <property name="text">
+          <string>Blink window/tab icon</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBox_emoteprivchat">
+         <property name="text">
+          <string>Enable Emoticons</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Style:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="privateStyle"/>
+         </item>
+         <item>
+          <widget class="QLabel" name="privateLabelVariant">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Variant:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="privateComboBoxVariant">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_10">
+         <item>
+          <widget class="QLabel" name="label_6">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Author:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="privateAuthor">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string notr="true">Author Text</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_11">
+         <item>
+          <widget class="QLabel" name="label_7">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Description:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="privateDescription">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string notr="true">Description Text</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QTextBrowser" name="privatePreview">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>Broadcast</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <widget class="QCheckBox" name="checkBox_emotegroupchat">
+         <property name="text">
+          <string>Enable Emoticons</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>549</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -581,7 +875,7 @@
       <attribute name="title">
        <string>History</string>
       </attribute>
-      <layout class="QVBoxLayout" name="historyVLayout">
+      <layout class="QVBoxLayout" name="verticalLayout_7">
        <item>
         <widget class="QLabel" name="histHeaderLabel">
          <property name="sizePolicy">
@@ -608,8 +902,21 @@
         <layout class="QHBoxLayout" name="histSetupVLayout">
          <item>
           <layout class="QGridLayout" name="histSetupGLayout">
-           <item row="0" column="1">
-            <widget class="QLabel" name="publicHeaderLabel">
+           <item row="1" column="0">
+            <widget class="QLabel" name="labelChatEnable">
+             <property name="layoutDirection">
+              <enum>Qt::LeftToRight</enum>
+             </property>
+             <property name="text">
+              <string>Enabled:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="4">
+            <widget class="QLabel" name="lobbyHeaderLabel">
              <property name="font">
               <font>
                <weight>75</weight>
@@ -617,7 +924,7 @@
               </font>
              </property>
              <property name="text">
-              <string>Group chat</string>
+              <string>Chatlobbies</string>
              </property>
             </widget>
            </item>
@@ -634,8 +941,8 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="3">
-            <widget class="QLabel" name="lobbyHeaderLabel">
+           <item row="0" column="1">
+            <widget class="QLabel" name="publicHeaderLabel">
              <property name="font">
               <font>
                <weight>75</weight>
@@ -643,39 +950,12 @@
               </font>
              </property>
              <property name="text">
-              <string>Chatlobbies</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="labelChatEnable">
-             <property name="layoutDirection">
-              <enum>Qt::LeftToRight</enum>
-             </property>
-             <property name="text">
-              <string>Enabled:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              <string>Group chat</string>
              </property>
             </widget>
            </item>
            <item row="1" column="1">
             <widget class="QCheckBox" name="publicChatEnable">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="2">
-            <widget class="QCheckBox" name="privateChatEnable">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="3">
-            <widget class="QCheckBox" name="lobbyChatEnable">
              <property name="text">
               <string/>
              </property>
@@ -688,6 +968,13 @@
              </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QCheckBox" name="privateChatEnable">
+             <property name="text">
+              <string/>
              </property>
             </widget>
            </item>
@@ -710,27 +997,15 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="2">
-            <widget class="QSpinBox" name="privateChatSaveCount">
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="suffix">
+           <item row="1" column="4">
+            <widget class="QCheckBox" name="lobbyChatEnable">
+             <property name="text">
               <string/>
-             </property>
-             <property name="prefix">
-              <string/>
-             </property>
-             <property name="maximum">
-              <number>1000000000</number>
              </property>
             </widget>
            </item>
-           <item row="2" column="3">
-            <widget class="QSpinBox" name="lobbyChatSaveCount">
+           <item row="2" column="2">
+            <widget class="QSpinBox" name="privateChatSaveCount">
              <property name="maximumSize">
               <size>
                <width>60</width>
@@ -771,6 +1046,25 @@
              </property>
             </widget>
            </item>
+           <item row="2" column="4">
+            <widget class="QSpinBox" name="lobbyChatSaveCount">
+             <property name="maximumSize">
+              <size>
+               <width>60</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="suffix">
+              <string/>
+             </property>
+             <property name="prefix">
+              <string/>
+             </property>
+             <property name="maximum">
+              <number>1000000000</number>
+             </property>
+            </widget>
+           </item>
            <item row="3" column="2">
             <widget class="QSpinBox" name="privateChatLoadCount">
              <property name="maximumSize">
@@ -784,7 +1078,7 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="3">
+           <item row="3" column="4">
             <widget class="QSpinBox" name="lobbyChatLoadCount">
              <property name="maximumSize">
               <size>
@@ -796,6 +1090,32 @@
               <number>20</number>
              </property>
             </widget>
+           </item>
+           <item row="0" column="3">
+            <widget class="QLabel" name="distantchatHeaderLabel">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Distant chat</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3">
+            <widget class="QCheckBox" name="distantChatEnable">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="3">
+            <widget class="QSpinBox" name="distantChatSaveCount"/>
+           </item>
+           <item row="3" column="3">
+            <widget class="QSpinBox" name="distantChatLoadCount"/>
            </item>
           </layout>
          </item>
@@ -851,375 +1171,123 @@
         </widget>
        </item>
        <item>
-        <spacer name="histVSpacer">
+        <widget class="Line" name="line_3">
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
+        </widget>
        </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="style">
-      <attribute name="title">
-       <string>Style</string>
-      </attribute>
-      <layout class="QHBoxLayout" name="styleHLayout">
        <item>
-        <widget class="QTabWidget" name="styleTabWidget">
-         <property name="tabPosition">
-          <enum>QTabWidget::North</enum>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLabel" name="label_3">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Style:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="historyStyle"/>
+         </item>
+         <item>
+          <widget class="QLabel" name="historyLabelVariant">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Variant:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="historyComboBoxVariant">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_12">
+         <item>
+          <widget class="QLabel" name="label_8">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Author:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="historyAuthor">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string notr="true">Author Text</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_13">
+         <item>
+          <widget class="QLabel" name="label_9">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Description:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="historyDescription">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string notr="true">Description Text</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QTextBrowser" name="historyPreview">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <property name="currentIndex">
-          <number>0</number>
-         </property>
-         <widget class="QWidget" name="publicTab">
-          <attribute name="title">
-           <string>Group chat</string>
-          </attribute>
-          <layout class="QVBoxLayout" name="verticalLayout">
-           <item>
-            <widget class="QTextBrowser" name="publicPreview">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout">
-             <item>
-              <widget class="QLabel" name="label">
-               <property name="text">
-                <string>Style:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QComboBox" name="publicStyle"/>
-             </item>
-             <item>
-              <widget class="QLabel" name="publicLabelVariant">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Variant:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QComboBox" name="publicComboBoxVariant">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="publicInfoLayout">
-             <item>
-              <layout class="QVBoxLayout" name="publicLayout">
-               <item>
-                <widget class="QLabel" name="publicAuthor">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string notr="true">Author</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="publicDescription">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string notr="true">Description</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-         <widget class="QWidget" name="privateTab">
-          <attribute name="title">
-           <string>Private chat</string>
-          </attribute>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <item>
-            <widget class="QTextBrowser" name="privatePreview">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
-             <item>
-              <widget class="QLabel" name="label_2">
-               <property name="text">
-                <string>Style:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QComboBox" name="privateStyle"/>
-             </item>
-             <item>
-              <widget class="QLabel" name="privateLabelVariant">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Variant:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QComboBox" name="privateComboBoxVariant">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_3">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="privateInfoLayout">
-             <item>
-              <layout class="QVBoxLayout" name="privateLayout">
-               <item>
-                <widget class="QLabel" name="privateAuthor">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string notr="true">Author</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="privateDescription">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string notr="true">Description</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_4">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-         <widget class="QWidget" name="historyTab">
-          <attribute name="title">
-           <string>History</string>
-          </attribute>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
-           <item>
-            <widget class="QTextBrowser" name="historyPreview">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_3">
-             <item>
-              <widget class="QLabel" name="label_3">
-               <property name="text">
-                <string>Style:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QComboBox" name="historyStyle"/>
-             </item>
-             <item>
-              <widget class="QLabel" name="historyLabelVariant">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Variant:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QComboBox" name="historyComboBoxVariant">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_6">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="historyInfoLayout">
-             <item>
-              <layout class="QVBoxLayout" name="historyLayout">
-               <item>
-                <widget class="QLabel" name="historyAuthor">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string notr="true">Author</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="historyDescription">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string notr="true">Description</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_5">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
         </widget>
        </item>
       </layout>

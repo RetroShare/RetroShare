@@ -10,7 +10,7 @@ QDialog{
 
 QFrame#titleBarFrame, QFrame#toolBarFrame {
        
-       border-image: url(qss/qlive/qb.png);
+       border-image: url(%THISPATH%/qlive/qb.png);
 }
 
 HeaderFrame {
@@ -20,17 +20,17 @@ HeaderFrame {
 
 /* Customize the toolbar. */
 QToolBar#toolBarAction {
-       border-image: url(qss/qlive/qb.png);
+       border-image: url(%THISPATH%/qlive/qb.png);
 
 }
 
 QToolBar#toolBarPage {
-       border-image: url(qss/qlive/qb.png);
+       border-image: url(%THISPATH%/qlive/qb.png);
 
 }
 
 QToolBar#chattoolBar{
-    border-image: url(qss/qlive/qb.png);
+    border-image: url(%THISPATH%/qlive/qb.png);
 
 }
 
@@ -72,13 +72,13 @@ QTreeView::item:selected { /* when user selects item using mouse or keyboard */
 
 QFrame#messengerframetop{
          
-       border-image: url(qss/qlive/qb.png);
+       border-image: url(%THISPATH%/qlive/qb.png);
 
 }
 
 QFrame#Chatbuttonframe{
          
-       border-image: url(qss/qlive/qb.png);
+       border-image: url(%THISPATH%/qlive/qb.png);
 
 }
 
@@ -113,6 +113,6 @@ QLabel#fromText{
 
 }
 QStatusBar{
-       border-image: url(qss/qlive/qb.png);
+       border-image: url(%THISPATH%/qlive/qb.png);
 }
 

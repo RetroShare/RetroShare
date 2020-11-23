@@ -1,29 +1,31 @@
-/*
- * libretroshare/src/services p3idservice.cc
- *
- * Id interface for RetroShare.
- *
- * Copyright 2012-2012 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/services: p3idservice.cc                                  *
+ *                                                                             *
+ * Copyright (C) 2012-2014  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2017-2019  Gioacchino Mazzurco <gio@altermundi.net>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
+/// RetroShare GXS identities service
+
 
 #include <unistd.h>
+#include <algorithm>
+#include <sstream>
+#include <cstdio>
 
 #include "services/p3idservice.h"
 #include "pgp/pgpauxutils.h"
@@ -34,17 +36,12 @@
 #include "util/rsstring.h"
 #include "util/radix64.h"
 #include "util/rsdir.h"
+#include "util/rstime.h"
 #include "crypto/hashstream.h"
 #include "gxs/gxssecurity.h"
 #include "retroshare/rspeers.h"
+#include "retroshare/rsnotify.h"
 
-
-//#include "pqi/authgpg.h"
-
-//#include <retroshare/rspeers.h>
-
-#include <sstream>
-#include <stdio.h>
 
 /****
  * #define DEBUG_IDS	1
@@ -58,21 +55,21 @@
 #define ID_REQUEST_REPUTATION	0x0003
 #define ID_REQUEST_OPINION	    0x0004
 
-#define GXSID_MAX_CACHE_SIZE 5000
+#define GXSID_MAX_CACHE_SIZE 15000
 
 // unused keys are deleted according to some heuristic that should favor known keys, signed keys etc. 
 
-static const time_t MAX_KEEP_KEYS_BANNED_DEFAULT =     2 * 86400 ; // get rid of banned ids after 1 days. That gives a chance to un-ban someone before he gets definitely kicked out
+static const rstime_t MAX_KEEP_KEYS_BANNED_DEFAULT =     2 * 86400 ; // get rid of banned ids after 1 days. That gives a chance to un-ban someone before he gets definitely kicked out
 
-static const time_t MAX_KEEP_KEYS_DEFAULT      =     5 * 86400 ; // default for unsigned identities: 5 days
-static const time_t MAX_KEEP_KEYS_SIGNED       =     8 * 86400 ; // signed identities by unknown key
-static const time_t MAX_KEEP_KEYS_SIGNED_KNOWN =    30 * 86400 ; // signed identities by known node keys
+static const rstime_t MAX_KEEP_KEYS_DEFAULT      =     5 * 86400 ; // default for unsigned identities: 5 days
+static const rstime_t MAX_KEEP_KEYS_SIGNED       =     8 * 86400 ; // signed identities by unknown key
+static const rstime_t MAX_KEEP_KEYS_SIGNED_KNOWN =    30 * 86400 ; // signed identities by known node keys
 
 static const uint32_t MAX_DELAY_BEFORE_CLEANING=    1800 ; // clean old keys every 30 mins
 
 static const uint32_t MAX_SERIALISED_IDENTITY_AGE  = 600 ; // after 10 mins, a serialised identity record must be renewed.
 
-RsIdentity *rsIdentity = NULL;
+RsIdentity* rsIdentity = nullptr;
 
 /******
  * Some notes:
@@ -154,18 +151,21 @@ RsIdentity *rsIdentity = NULL;
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
-p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *nes, PgpAuxUtils *pgpUtils)
-	: RsGxsIdExchange(gds, nes, new RsGxsIdSerialiser(), RS_SERVICE_GXS_TYPE_GXSID, idAuthenPolicy()), 
-	RsIdentity(this), GxsTokenQueue(this), RsTickEvent(), 
-	mKeyCache(GXSID_MAX_CACHE_SIZE, "GxsIdKeyCache"), 
-	mIdMtx("p3IdService"), mNes(nes),
-	mPgpUtils(pgpUtils)
+p3IdService::p3IdService(
+        RsGeneralDataService *gds, RsNetworkExchangeService *nes,
+        PgpAuxUtils *pgpUtils ) :
+    RsGxsIdExchange( gds, nes, new RsGxsIdSerialiser(),
+                     RS_SERVICE_GXS_TYPE_GXSID, idAuthenPolicy() ),
+    RsIdentity(static_cast<RsGxsIface&>(*this)), GxsTokenQueue(this),
+    RsTickEvent(), mKeyCache(GXSID_MAX_CACHE_SIZE, "GxsIdKeyCache"),
+    mIdMtx("p3IdService"), mNes(nes), mPgpUtils(pgpUtils)
 {
 	mBgSchedule_Mode = 0;
     mBgSchedule_Active = false;
     mLastKeyCleaningTime = time(NULL) - int(MAX_DELAY_BEFORE_CLEANING * 0.9) ;
     mLastConfigUpdate = 0 ;
     mOwnIdsLoaded = false ;
+	mAutoAddFriendsIdentitiesAsContacts = true; // default
     mMaxKeepKeysBanned = MAX_KEEP_KEYS_BANNED_DEFAULT;
 
 	// Kick off Cache Testing, + Others.
@@ -206,6 +206,32 @@ void p3IdService::setNes(RsNetworkExchangeService *nes)
     mNes = nes;
 }
 
+bool p3IdService::getIdentitiesInfo(
+        const std::set<RsGxsId>& ids, std::vector<RsGxsIdGroup>& idsInfo )
+{
+	uint32_t token;
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+	std::list<RsGxsGroupId> idsList;
+	for (auto&& id : ids) idsList.push_back(RsGxsGroupId(id));
+
+	if( !requestGroupInfo(token, opts, idsList)
+	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	return getGroupData(token, idsInfo);
+}
+
+bool p3IdService::getIdentitiesSummaries(std::list<RsGroupMetaData>& ids)
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+	if( !requestGroupInfo(token, opts)
+	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	return getGroupSummary(token, ids);
+}
+
 uint32_t p3IdService::idAuthenPolicy()
 {
 	uint32_t policy = 0;
@@ -224,7 +250,13 @@ uint32_t p3IdService::idAuthenPolicy()
 	return policy;
 }
 
-bool p3IdService::isARegularContact(const RsGxsId& id) 
+uint32_t p3IdService::nbRegularContacts()
+{
+    RsStackMutex stack(mIdMtx);
+    return mContacts.size();
+}
+
+bool p3IdService::isARegularContact(const RsGxsId& id)
 {
     RsStackMutex stack(mIdMtx);
     return mContacts.find(id) != mContacts.end() ;
@@ -232,6 +264,7 @@ bool p3IdService::isARegularContact(const RsGxsId& id)
 
 bool p3IdService::setAsRegularContact(const RsGxsId& id,bool b)
 {
+    RsStackMutex stack(mIdMtx);
     std::set<RsGxsId>::iterator it = mContacts.find(id) ;
     
     if(b && (it == mContacts.end()))
@@ -251,7 +284,7 @@ bool p3IdService::setAsRegularContact(const RsGxsId& id,bool b)
 
 void p3IdService::slowIndicateConfigChanged()
 {
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     if(mLastConfigUpdate + DELAY_BETWEEN_CONFIG_UPDATES < now)
     {
@@ -259,7 +292,7 @@ void p3IdService::slowIndicateConfigChanged()
     mLastConfigUpdate = now ;
     }
 }
-time_t p3IdService::locked_getLastUsageTS(const RsGxsId& gxs_id)
+rstime_t p3IdService::locked_getLastUsageTS(const RsGxsId& gxs_id)
 {
     std::map<RsGxsId,keyTSInfo>::const_iterator it = mKeysTS.find(gxs_id) ;
 
@@ -276,12 +309,12 @@ void p3IdService::timeStampKey(const RsGxsId& gxs_id, const RsIdentityUsage& rea
         return ;
     }
 #ifdef DEBUG_IDS
-    std::cerr << "(II) time stamping key " << gxs_id << " for the following reason: " << reason << std::endl;
+    std::cerr << "(II) time stamping key " << gxs_id << " for the following reason: " << reason.mUsageCode << std::endl;
 #endif
 
     RS_STACK_MUTEX(mIdMtx) ;
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     keyTSInfo& info(mKeysTS[gxs_id]) ;
 
@@ -292,10 +325,10 @@ void p3IdService::timeStampKey(const RsGxsId& gxs_id, const RsIdentityUsage& rea
     {
         // This is very costly, but normally the outerloop should never be rolled more than once.
 
-        std::map<RsIdentityUsage,time_t>::iterator best_it ;
-        time_t best_time = now+1;
+        std::map<RsIdentityUsage,rstime_t>::iterator best_it ;
+        rstime_t best_time = now+1;
 
-        for(std::map<RsIdentityUsage,time_t>::iterator it(info.usage_map.begin());it!=info.usage_map.end();++it)
+        for(std::map<RsIdentityUsage,rstime_t>::iterator it(info.usage_map.begin());it!=info.usage_map.end();++it)
             if(it->second < best_time)
             {
                 best_time = it->second ;
@@ -317,7 +350,7 @@ bool p3IdService::loadList(std::list<RsItem*>& items)
     {
         if( (lii = dynamic_cast<RsGxsIdLocalInfoItem*>(*it)) != NULL)
         {
-            for(std::map<RsGxsId,time_t>::const_iterator it2 = lii->mTimeStamps.begin();it2!=lii->mTimeStamps.end();++it2)
+            for(std::map<RsGxsId,rstime_t>::const_iterator it2 = lii->mTimeStamps.begin();it2!=lii->mTimeStamps.end();++it2)
                 mKeysTS[it2->first].TS = it2->second;
 
             mContacts = lii->mContacts ;
@@ -337,6 +370,8 @@ bool p3IdService::loadList(std::list<RsItem*>& items)
 					    std::cerr << "Setting mMaxKeepKeysBanned threshold to " << val << std::endl ;
 				    }
 			    };
+                if(kit->key == "AUTO_SET_FRIEND_IDENTITIES_AS_CONTACT")
+					mAutoAddFriendsIdentitiesAsContacts = (kit->value == "YES") ;
             }
 
         delete *it ;
@@ -362,6 +397,20 @@ uint32_t p3IdService::deleteBannedNodesThreshold()
     return mMaxKeepKeysBanned/86400;
 }
 
+void p3IdService::setAutoAddFriendIdsAsContact(bool b)
+{
+    RS_STACK_MUTEX(mIdMtx) ;
+    if(b != mAutoAddFriendsIdentitiesAsContacts)
+    {
+        IndicateConfigChanged();
+        mAutoAddFriendsIdentitiesAsContacts=b;
+    }
+}
+bool p3IdService::autoAddFriendIdsAsContact()
+{
+    RS_STACK_MUTEX(mIdMtx) ;
+    return mAutoAddFriendsIdentitiesAsContacts;
+}
 
 bool p3IdService::saveList(bool& cleanup,std::list<RsItem*>& items)
 {
@@ -387,6 +436,10 @@ bool p3IdService::saveList(bool& cleanup,std::list<RsItem*>& items)
 	rs_sprintf(kv.value, "%d", mMaxKeepKeysBanned);
 	vitem->tlvkvs.pairs.push_back(kv) ;
 
+	kv.key = "AUTO_SET_FRIEND_IDENTITIES_AS_CONTACT" ;
+	kv.value = mAutoAddFriendsIdentitiesAsContacts?"YES":"NO";
+	vitem->tlvkvs.pairs.push_back(kv) ;
+
     items.push_back(vitem) ;
 
     return true ;
@@ -399,7 +452,7 @@ public:
 
     bool processEntry(RsGxsIdCache& entry)
     {
-        time_t now = time(NULL);
+        rstime_t now = time(NULL);
         const RsGxsId& gxs_id = entry.details.mId ;
 
         bool is_id_banned = rsReputations->isIdentityBanned(gxs_id) ;
@@ -424,8 +477,8 @@ public:
 
         bool no_ts = (it == mLastUsageTS.end()) ;
 
-        time_t last_usage_ts = no_ts?0:(it->second.TS);
-        time_t max_keep_time = 0;
+        rstime_t last_usage_ts = no_ts?0:(it->second.TS);
+        rstime_t max_keep_time = 0;
         bool should_check = true ;
 
         if(no_ts)
@@ -517,7 +570,7 @@ void	p3IdService::service_tick()
     RsTickEvent::tick_events();
     GxsTokenQueue::checkRequests(); // GxsTokenQueue handles all requests.
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     if(mLastKeyCleaningTime + MAX_DELAY_BEFORE_CLEANING < now)
     {
@@ -550,67 +603,79 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
     for(uint32_t i = 0;i<changes.size();++i)
     {
-        RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(changes[i]);
         RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(changes[i]);
 
         if (msgChange && !msgChange->metaChange())
-        {
-#ifdef DEBUG_IDS
-            std::cerr << "p3IdService::notifyChanges() Found Message Change Notification";
-            std::cerr << std::endl;
-#endif
+            RsWarn() << __PRETTY_FUNCTION__ << " Found a Msg data change in p3IdService. This is quite unexpected." << std::endl;
 
-            std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
-            std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
-            for(mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
-            {
-#ifdef DEBUG_IDS
-                std::cerr << "p3IdService::notifyChanges() Msgs for Group: " << mit->first;
-                std::cerr << std::endl;
-#endif
-            }
-        }
+        RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(changes[i]);
 
-        /* shouldn't need to worry about groups - as they need to be subscribed to */
-        if (groupChange && !groupChange->metaChange())
+        if (groupChange)
         {
 #ifdef DEBUG_IDS
             std::cerr << "p3IdService::notifyChanges() Found Group Change Notification";
             std::cerr << std::endl;
 #endif
-            std::list<RsGxsGroupId> &groupList = groupChange->mGrpIdList;
-            std::list<RsGxsGroupId>::iterator git;
-
-            for(git = groupList.begin(); git != groupList.end();)
-            {
+                const RsGxsGroupId& gid(groupChange->mGroupId);
 #ifdef DEBUG_IDS
-                std::cerr << "p3IdService::notifyChanges() Auto Subscribe to Incoming Groups: " << *git;
+                std::cerr << "p3IdService::notifyChanges() Auto Subscribe to Incoming Groups: " << gid;
                 std::cerr << std::endl;
 #endif
-                if(!rsReputations->isIdentityBanned(RsGxsId(*git)))
+
+                if(!rsReputations->isIdentityBanned(RsGxsId(gid)))
                 {
-                    uint32_t token;
-                    RsGenExchange::subscribeToGroup(token, *git, true);
+                    // notify that a new identity is received, if needed
 
-                    // also time_stamp the key that this group represents
+                    bool should_subscribe = false;
 
-                    timeStampKey(RsGxsId(*git),RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_DATA_UPDATE)) ;
+                    switch(groupChange->getType())
+                    {
+					case RsGxsNotify::TYPE_PROCESSED:	break ; // Happens when the group is subscribed. This is triggered by RsGenExchange::subscribeToGroup, so better not
+                        										// call it again from here!!
 
-                    ++git;
+                    case RsGxsNotify::TYPE_PUBLISHED:
+                    {
+                        auto ev = std::make_shared<RsGxsIdentityEvent>();
+                        ev->mIdentityId = gid;
+                        ev->mIdentityEventCode = RsGxsIdentityEventCode::UPDATED_IDENTITY;
+                        rsEvents->postEvent(ev);
+
+						// also time_stamp the key that this group represents
+						timeStampKey(RsGxsId(gid),RsIdentityUsage(RsServiceType(serviceType()),RsIdentityUsage::IDENTITY_NEW_FROM_GXS_SYNC)) ;
+                        should_subscribe = true;
+                    }
+						break;
+
+                    case RsGxsNotify::TYPE_RECEIVED_NEW:
+                    {
+                        auto ev = std::make_shared<RsGxsIdentityEvent>();
+                        ev->mIdentityId = gid;
+                        ev->mIdentityEventCode = RsGxsIdentityEventCode::NEW_IDENTITY;
+                        rsEvents->postEvent(ev);
+
+						// also time_stamp the key that this group represents
+						timeStampKey(RsGxsId(gid),RsIdentityUsage(RsServiceType(serviceType()),RsIdentityUsage::IDENTITY_NEW_FROM_GXS_SYNC)) ;
+                        should_subscribe = true;
+
+                        std::cerr << "Received new identity " << gid << " and subscribing to it" << std::endl;
+                    }
+                        break;
+
+                    default:
+                        break;
+                    }
+
+                    if(should_subscribe)
+					{
+						uint32_t token;
+						RsGenExchange::subscribeToGroup(token, gid, true);
+					}
+
                 }
-                else
-                    git = groupList.erase(git) ;
-            }
-
-            if(groupList.empty())
-            {
-                delete changes[i] ;
-                changes[i] = NULL ;
-            }
         }
-    }
 
-    RsGxsIfaceHelper::receiveChanges(changes);
+        delete changes[i];
+    }
 }
 
 /********************************************************************************/
@@ -624,7 +689,7 @@ bool p3IdService:: getNickname(const RsGxsId &id, std::string &nickname)
 }
 #endif
 
-time_t p3IdService::getLastUsageTS(const RsGxsId &id)
+rstime_t p3IdService::getLastUsageTS(const RsGxsId &id)
 {
     RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
     return locked_getLastUsageTS(id) ;
@@ -644,13 +709,28 @@ bool p3IdService::getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
 
         if (mKeyCache.fetch(id, data))
         {
+            bool is_a_contact = (mContacts.find(id) != mContacts.end());
+
+            details = data.details;
+
+            if(mAutoAddFriendsIdentitiesAsContacts && (!is_a_contact) && (details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN) && rsPeers->isPgpFriend(details.mPgpId))
+            {
+				mContacts.insert(id) ;
+				slowIndicateConfigChanged() ;
+
+                is_a_contact = true;
+            }
+
             // This step is needed, because p3GxsReputation does not know all identities, and might not have any data for
             // the ones in the contact list. So we change them on demand.
 
-            if(mContacts.find(id) != mContacts.end() && rsReputations->nodeAutoPositiveOpinionForContacts())
-                rsReputations->setOwnOpinion(id,RsReputations::OPINION_POSITIVE) ;
-
-            details = data.details;
+            if(is_a_contact && rsReputations->autoPositiveOpinionForContacts())
+			{
+				RsOpinion op;
+				if( rsReputations->getOwnOpinion(id,op) &&
+				        op == RsOpinion::NEUTRAL )
+					rsReputations->setOwnOpinion(id, RsOpinion::POSITIVE);
+			}
 
 			std::map<RsGxsId,keyTSInfo>::const_iterator it = mKeysTS.find(id) ;
 
@@ -661,6 +741,7 @@ bool p3IdService::getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
 				details.mLastUsageTS = it->second.TS ;
 				details.mUseCases = it->second.usage_map ;
             }
+            details.mPublishTS = data.mPublishTs;
 
             // one utf8 symbol can be at most 4 bytes long - would be better to measure real unicode length !!!
             if(details.mNickname.length() > RSID_MAXIMUM_NICKNAME_SIZE*4)
@@ -684,7 +765,49 @@ bool p3IdService::isOwnId(const RsGxsId& id)
 
     return std::find(mOwnIds.begin(),mOwnIds.end(),id) != mOwnIds.end() ;
 }
-bool p3IdService::getOwnIds(std::list<RsGxsId> &ownIds)
+
+
+bool p3IdService::getOwnSignedIds(std::vector<RsGxsId>& ids)
+{
+	ids.clear();
+
+	std::chrono::seconds maxWait(5);
+	auto timeout = std::chrono::steady_clock::now() + maxWait;
+	while( !ownIdsAreLoaded() && std::chrono::steady_clock::now() < timeout )
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+	if(ownIdsAreLoaded())
+	{
+		RS_STACK_MUTEX(mIdMtx);
+		ids.resize(mOwnSignedIds.size());
+		std::copy(mOwnSignedIds.begin(), mOwnSignedIds.end(), ids.begin());
+		return true;
+	}
+
+	return false;
+}
+
+bool p3IdService::getOwnPseudonimousIds(std::vector<RsGxsId>& ids)
+{
+	ids.clear();
+	std::vector<RsGxsId> signedV;
+
+	// this implicitely ensure ids are already loaded ;)
+	if(!getOwnSignedIds(signedV)) return false;
+
+	std::set<RsGxsId> signedS(signedV.begin(), signedV.end());
+
+	{
+		RS_STACK_MUTEX(mIdMtx);
+		ids.resize(mOwnIds.size() - signedV.size());
+		std::copy_if( mOwnIds.begin(), mOwnIds.end(), ids.begin(),
+		              [&](const RsGxsId& id) {return !signedS.count(id);} );
+	}
+
+	return true;
+}
+
+bool p3IdService::getOwnIds(std::list<RsGxsId> &ownIds,bool signed_only)
 {
     RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
@@ -694,8 +817,16 @@ bool p3IdService::getOwnIds(std::list<RsGxsId> &ownIds)
         return false ;
     }
 
-    ownIds = mOwnIds;
+	ownIds = signed_only ? mOwnSignedIds : mOwnIds;
+
     return true ;
+}
+
+bool p3IdService::isKnownId(const RsGxsId& id)
+{
+	RS_STACK_MUTEX(mIdMtx);
+	return mKeyCache.is_cached(id) ||
+	        std::find(mOwnIds.begin(), mOwnIds.end(),id) != mOwnIds.end();
 }
 
 bool p3IdService::serialiseIdentityToMemory( const RsGxsId& id,
@@ -782,6 +913,87 @@ bool p3IdService::deserialiseIdentityFromMemory(const std::string& radix_string,
 	return true;
 }
 
+bool p3IdService::createIdentity(
+        RsGxsId& id,
+        const std::string& name, const RsGxsImage& avatar,
+        bool pseudonimous, const std::string& pgpPassword)
+{
+	bool ret = true;
+	RsIdentityParameters params;
+	uint32_t token = 0;
+	RsGroupMetaData meta;
+	RsTokenService::GxsRequestStatus wtStatus = RsTokenService::CANCELLED;
+
+	if(!pseudonimous && !pgpPassword.empty())
+	{
+		if(!rsNotify->cachePgpPassphrase(pgpPassword))
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " Failure caching password"
+			        << std::endl;
+			ret = false;
+			goto LabelCreateIdentityCleanup;
+		}
+
+		if(!rsNotify->setDisableAskPassword(true))
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " Failure disabling password user"
+			        << " request" << std::endl;
+			ret = false;
+			goto LabelCreateIdentityCleanup;
+		}
+	}
+
+	params.isPgpLinked = !pseudonimous;
+	params.nickname = name;
+	params.mImage = avatar;
+
+	if(!createIdentity(token, params))
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Failed creating GXS group."
+		        << std::endl;
+		ret = false;
+		goto LabelCreateIdentityCleanup;
+	}
+
+	/* Use custom timeout for waitToken because creating identities involves
+	 * creating multiple signatures, which can take a lot of time expecially on
+	 * slow hardware like phones or embedded devices */
+	if( (wtStatus = waitToken(
+	         token, std::chrono::seconds(10), std::chrono::milliseconds(20) ))
+	        != RsTokenService::COMPLETE )
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " waitToken("<< token
+		        << ") failed with: " << wtStatus << std::endl;
+		ret = false;
+		goto LabelCreateIdentityCleanup;
+	}
+
+	if(!RsGenExchange::getPublishedGroupMeta(token, meta))
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Failure getting updated group data."
+		        << std::endl;
+		ret = false;
+		goto LabelCreateIdentityCleanup;
+	}
+
+	id = RsGxsId(meta.mGroupId);
+
+	{
+		RS_STACK_MUTEX(mIdMtx);
+		mOwnIds.push_back(id);
+		if(!pseudonimous) mOwnSignedIds.push_back(id);
+	}
+
+LabelCreateIdentityCleanup:
+	if(!pseudonimous && !pgpPassword.empty())
+	{
+		rsNotify->setDisableAskPassword(false);
+		rsNotify->clearPgpPassphrase();
+	}
+
+	return ret;
+}
+
 bool p3IdService::createIdentity(uint32_t& token, RsIdentityParameters &params)
 {
 
@@ -819,6 +1031,26 @@ bool p3IdService::createIdentity(uint32_t& token, RsIdentityParameters &params)
     return true;
 }
 
+bool p3IdService::updateIdentity(RsGxsIdGroup& identityData)
+{
+	uint32_t token;
+	if(!updateGroup(token, identityData))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed updating group."
+		          << std::endl;
+		return false;
+	}
+
+	if(waitToken(token) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
+		          << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
 bool p3IdService::updateIdentity(uint32_t& token, RsGxsIdGroup &group)
 {
 #ifdef DEBUG_IDS
@@ -832,6 +1064,35 @@ bool p3IdService::updateIdentity(uint32_t& token, RsGxsIdGroup &group)
     return false;
 }
 
+bool p3IdService::deleteIdentity(RsGxsId& id)
+{
+	uint32_t token;
+	RsGxsGroupId grouId = RsGxsGroupId(id);
+	if(!deleteGroup(token, grouId))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed deleting group."
+		          << std::endl;
+		return false;
+	}
+
+	if(waitToken(token) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
+		          << std::endl;
+		return false;
+	}
+
+    if(rsEvents)
+	{
+		auto ev = std::make_shared<RsGxsIdentityEvent>();
+		ev->mIdentityId = grouId;
+		ev->mIdentityEventCode = RsGxsIdentityEventCode::DELETED_IDENTITY;
+		rsEvents->postEvent(ev);
+	}
+
+	return true;
+}
+
 bool p3IdService::deleteIdentity(uint32_t& token, RsGxsIdGroup &group)
 {
 #ifdef DEBUG_IDS
@@ -839,7 +1100,7 @@ bool p3IdService::deleteIdentity(uint32_t& token, RsGxsIdGroup &group)
     std::cerr << std::endl;
 #endif
 
-    deleteGroup(token, group);
+	deleteGroup(token, group.mMeta.mGroupId);
 
     return false;
 }
@@ -922,82 +1183,89 @@ bool p3IdService::havePrivateKey(const RsGxsId &id)
     if(! isOwnId(id))
         return false ;
 
-    RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-    return mKeyCache.is_cached(id) ;
+	RS_STACK_MUTEX(mIdMtx);
+	return mKeyCache.is_cached(id);
 }
 
 static void mergeIds(std::map<RsGxsId,std::list<RsPeerId> >& idmap,const RsGxsId& id,const std::list<RsPeerId>& peers)
 {
-    // merge the two lists (I use a std::set to make it more efficient)
-#ifdef DEBUG_IDS
-    std::cerr << "p3IdService::requestKey(): merging list with existing pending request." << std::endl;
-#endif
+	/* merge the two lists, use std::set to avoid duplicates efficiently */
 
-    std::list<RsPeerId>& old_peers(idmap[id]) ;	// create if necessary
-    std::set<RsPeerId> new_peers ;
+	std::set<RsPeerId> new_peers(std::begin(peers), std::end(peers));
 
-    for(std::list<RsPeerId>::const_iterator it(peers.begin());it!=peers.end();++it)
-        new_peers.insert(*it) ;
+	std::list<RsPeerId>& stored_peers(idmap[id]);
+	std::copy( std::begin(stored_peers), std::end(stored_peers),
+	           std::inserter(new_peers, std::begin(new_peers)) );
+	stored_peers.clear();
+	std::copy( std::begin(new_peers), std::end(new_peers),
+	           std::inserter(stored_peers, std::begin(stored_peers)) );
+}
 
-    for(std::list<RsPeerId>::iterator it(old_peers.begin());it!=old_peers.end();++it)
-        new_peers.insert(*it) ;
+bool p3IdService::requestIdentity(
+        const RsGxsId& id, const std::vector<RsPeerId>& peers )
+{
+	std::list<RsPeerId> askPeersList(peers.begin(), peers.end());
 
-    old_peers.clear();
+	// Empty list passed? Ask to all online peers.
+	if(askPeersList.empty()) rsPeers->getOnlineList(askPeersList);
 
-    for(std::set<RsPeerId>::iterator it(new_peers.begin());it!=new_peers.end();++it)
-        old_peers.push_back(*it) ;
+	if(askPeersList.empty()) // Still empty? Fail!
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " failure retrieving peers list"
+		        << std::endl;
+		return false;
+	}
+
+	RsIdentityUsage usageInfo( RsServiceType::GXSID, RsIdentityUsage::IDENTITY_NEW_FROM_EXPLICIT_REQUEST );
+
+	return requestKey(id, askPeersList, usageInfo);
 }
 
 bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers,const RsIdentityUsage& use_info)
 {
-    if(id.isNull())
-    {
-        std::cerr << "(EE) nul ID requested to p3IdService. This should not happen. Callstack:" << std::endl;
-        print_stacktrace();
-        return false ;
-    }
+	Dbg3() << __PRETTY_FUNCTION__ << " id: " <<  id << std::endl;
 
-    if (haveKey(id))
-        return true;
-    else
-    {
-        // Normally we should call getIdDetails(), but since the key is not known, we need to digg a possibly old information
-        // from the reputation system, which keeps its own list of banned keys. Of course, the owner ID is not known at this point.
+	if(id.isNull())
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " cannot request null id"
+		        << std::endl;
+		return false;
+	}
 
+	if(peers.empty())
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " cannot request id: " << id
+		        << " to empty lists of peers" << std::endl;
+		return false;
+	}
+
+	if(isKnownId(id)) return true;
+
+	/* Normally we should call getIdDetails(), but since the key is not known,
+	 * we need to dig a possibly old information from the reputation system,
+	 * which keeps its own list of banned keys.
+	 * Of course, the owner ID is not known at this point.c*/
+
+	RsReputationInfo info;
+	rsReputations->getReputationInfo(id, RsPgpId(), info);
+
+	if( info.mOverallReputationLevel == RsReputationLevel::LOCALLY_NEGATIVE )
+	{
 #ifdef DEBUG_IDS
-        std::cerr << "p3IdService::requesting key " << id <<std::endl;
+		RsInfo() << __PRETTY_FUNCTION__ << " not requesting Key " << id << " because it has been banned." << std::endl;
 #endif
 
-        RsReputations::ReputationInfo info ;
-        rsReputations->getReputationInfo(id,RsPgpId(),info) ;
+		RS_STACK_MUTEX(mIdMtx);
+		mIdsNotPresent.erase(id);
 
-        if(info.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
-        {
-            std::cerr << "(II) not requesting Key " << id << " because it has been banned." << std::endl;
+		return false;
+	}
 
-            {
-                RS_STACK_MUTEX(mIdMtx); /********** STACK LOCKED MTX ******/
-                mIdsNotPresent.erase(id) ;
-            }
-            return true;
-        }
-
-        RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-
-        std::map<RsGxsId,std::list<RsPeerId> >::iterator rit = mIdsNotPresent.find(id) ;
-
-        if(rit != mIdsNotPresent.end())
-        {
-            if(!peers.empty())
-                mergeIds(mIdsNotPresent,id,peers) ;
-
-            return true ;
-        }
-    }
-    {
-		RS_STACK_MUTEX(mIdMtx); /********** STACK LOCKED MTX ******/
-		mKeysTS[id].usage_map[use_info] = time(NULL) ;
-    }
+	{
+		RS_STACK_MUTEX(mIdMtx);
+		mergeIds(mIdsNotPresent, id, peers);
+		mKeysTS[id].usage_map[use_info] = time(nullptr);
+	}
 
     return cache_request_load(id, peers);
 }
@@ -1071,7 +1339,7 @@ bool p3IdService::signData(const uint8_t *data,uint32_t data_size,const RsGxsId&
 #ifdef DEBUG_IDS
             std::cerr << "  Cannot get key. Waiting for caching. try " << i << "/6" << std::endl;
 #endif
-            usleep(500 * 1000) ;	// sleep for 500 msec.
+            rstime::rs_usleep(500 * 1000) ;	// sleep for 500 msec.
         }
         else
             break ;
@@ -1094,7 +1362,7 @@ bool p3IdService::signData(const uint8_t *data,uint32_t data_size,const RsGxsId&
         return false ;
     }
     error_status = RS_GIXS_ERROR_NO_ERROR ;
-    timeStampKey(own_gxs_id,RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_GENERIC_SIGNATURE_CREATION)) ;
+    timeStampKey(own_gxs_id,RsIdentityUsage(RsServiceType(serviceType()),RsIdentityUsage::IDENTITY_GENERIC_SIGNATURE_CREATION)) ;
 
     return true ;
 }
@@ -1110,7 +1378,7 @@ bool p3IdService::validateData(const uint8_t *data,uint32_t data_size,const RsTl
 #ifdef DEBUG_IDS
             std::cerr << "  Cannot get key. Waiting for caching. try " << i << "/6" << std::endl;
 #endif
-            if(force_load) usleep(500 * 1000) ;	// sleep for 500 msec.
+            if(force_load) rstime::rs_usleep(500 * 1000) ;	// sleep for 500 msec.
         }
         else
             break ;
@@ -1151,7 +1419,7 @@ bool p3IdService::encryptData( const uint8_t *decrypted_data,
 		if(getKey(encryption_key_id,encryption_key))
             break ;
         else
-            usleep(500*1000) ; // sleep half a sec.
+            rstime::rs_usleep(500*1000) ; // sleep half a sec.
 
     if(encryption_key.keyId.isNull())
     {
@@ -1167,7 +1435,7 @@ bool p3IdService::encryptData( const uint8_t *decrypted_data,
         return false ;
     }
     error_status = RS_GIXS_ERROR_NO_ERROR ;
-    timeStampKey(encryption_key_id,RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_GENERIC_ENCRYPTION)) ;
+    timeStampKey(encryption_key_id,RsIdentityUsage(RsServiceType::GXSID,RsIdentityUsage::IDENTITY_GENERIC_ENCRYPTION)) ;
 
     return true ;
 }
@@ -1222,7 +1490,7 @@ bool p3IdService::encryptData( const uint8_t* decrypted_data,
 		}
 
 		if(keyNotYetFoundIds.empty()) break;
-		else usleep(500*1000);
+		else rstime::rs_usleep(500*1000);
 	}
 
 	if(!keyNotYetFoundIds.empty())
@@ -1256,7 +1524,7 @@ bool p3IdService::encryptData( const uint8_t* decrypted_data,
 	{
 		timeStampKey( *it,
 		              RsIdentityUsage(
-		                  serviceType(),
+		                  RsServiceType::GXSID,
 		                  RsIdentityUsage::IDENTITY_GENERIC_ENCRYPTION ) );
 	}
 
@@ -1279,7 +1547,7 @@ bool p3IdService::decryptData( const uint8_t *encrypted_data,
 	int maxRounds = force_load ? 6 : 1;
 	for(int i=0; i<maxRounds ;++i)
 		if(getPrivateKey(key_id,encryption_key)) break;
-		else usleep(500*1000) ; // sleep half a sec.
+		else rstime::rs_usleep(500*1000) ; // sleep half a sec.
 
     if(encryption_key.keyId.isNull())
     {
@@ -1297,7 +1565,7 @@ bool p3IdService::decryptData( const uint8_t *encrypted_data,
 	error_status = RS_GIXS_ERROR_NO_ERROR;
 	timeStampKey( key_id,
 	              RsIdentityUsage(
-	                  serviceType(),
+	                  RsServiceType::GXSID,
 	                  RsIdentityUsage::IDENTITY_GENERIC_DECRYPTION) );
 
     return true ;
@@ -1356,7 +1624,7 @@ bool p3IdService::decryptData( const uint8_t* encrypted_data,
 		}
 
 		if(keyNotYetFoundIds.empty()) break;
-		else usleep(500*1000);
+		else rstime::rs_usleep(500*1000);
 	}
 
 	if(!keyNotYetFoundIds.empty())
@@ -1390,7 +1658,7 @@ bool p3IdService::decryptData( const uint8_t* encrypted_data,
 	{
 		timeStampKey( *it,
 		              RsIdentityUsage(
-		                  serviceType(),
+		                  RsServiceType::GXSID,
 		                  RsIdentityUsage::IDENTITY_GENERIC_DECRYPTION ) );
 	}
 
@@ -1534,7 +1802,7 @@ bool p3IdService::opinion_handlerequest(uint32_t token)
         std::cerr << "p3IdService::opinion_handlerequest() ERROR getGroupMeta()";
         std::cerr << std::endl;
 
-        updatePublicRequestStatus(req.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+        updatePublicRequestStatus(req.mToken, RsTokenService::FAILED);
         return false;
     }
 
@@ -1544,7 +1812,7 @@ bool p3IdService::opinion_handlerequest(uint32_t token)
         std::cerr << std::endl;
 
         // error.
-        updatePublicRequestStatus(req.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+        updatePublicRequestStatus(req.mToken, RsTokenService::FAILED);
         return false;
     }
     RsGroupMetaData &meta = *(groups.begin());
@@ -1555,7 +1823,7 @@ bool p3IdService::opinion_handlerequest(uint32_t token)
         std::cerr << std::endl;
 
         // error.
-        updatePublicRequestStatus(req.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+        updatePublicRequestStatus(req.mToken, RsTokenService::FAILED);
         return false;
     }
 
@@ -1590,7 +1858,7 @@ bool p3IdService::opinion_handlerequest(uint32_t token)
     setGroupServiceString(dummyToken, meta.mGroupId, serviceString);
     cache_update_if_cached(RsGxsId(meta.mGroupId), serviceString);
 
-    updatePublicRequestStatus(req.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE);
+    updatePublicRequestStatus(req.mToken, RsTokenService::COMPLETE);
     return true;
 }
 
@@ -1658,9 +1926,8 @@ bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> 
                     group.mPgpKnown = false;
                     group.mPgpId.clear();
 
-                    std::cerr << "p3IdService::getGroupData() Failed to decode ServiceString \""
-                              << group.mMeta.mServiceString << "\"" ;
-                    std::cerr << std::endl;
+					if(!group.mMeta.mServiceString.empty())
+						std::cerr << "p3IdService::getGroupData() " << group.mMeta.mGroupId << " (" << group.mMeta.mGroupName << ") : Failed to decode, or no ServiceString \"" << group.mMeta.mServiceString << "\"" << std::endl;
                 }
 
                 group.mIsAContact =  (mContacts.find(RsGxsId(group.mMeta.mGroupId)) != mContacts.end());
@@ -1753,16 +2020,16 @@ bool p3IdService::updateGroup(uint32_t& token, RsGxsIdGroup &group)
     return true;
 }
 
-bool 	p3IdService::deleteGroup(uint32_t& token, RsGxsIdGroup &group)
+bool p3IdService::deleteGroup(uint32_t& token, RsGxsGroupId& groupId)
 {
-    RsGxsId id(group.mMeta.mGroupId);
+	RsGxsId id(groupId);
 
 #ifdef DEBUG_IDS
     std::cerr << "p3IdService::deleteGroup() Deleting RsGxsId: " << id;
     std::cerr << std::endl;
 #endif
 
-    RsGenExchange::deleteGroup(token,group.mMeta.mGroupId);
+	RsGenExchange::deleteGroup(token, groupId);
 
     // if its in the cache - clear it.
     {
@@ -2027,7 +2294,7 @@ bool SSGxsIdGroup::load(const std::string &input)
     char scorestr[RSGXSID_MAX_SERVICE_STRING];
 
     // split into parts.
-    if (3 != sscanf(input.c_str(), "v2 {P:%[^}]} {T:%[^}]} {R:%[^}]}", pgpstr, recognstr, scorestr))
+    if (3 != sscanf(input.c_str(), "v2 {P:%[^}]}{T:%[^}]}{R:%[^}]}", pgpstr, recognstr, scorestr))
     {
 #ifdef DEBUG_IDS
         std::cerr << "SSGxsIdGroup::load() Failed to extract 4 Parts";
@@ -2252,7 +2519,7 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 #ifdef DEBUG_RECOGN
             std::cerr << "RsGxsIdCache::updateServiceString() updating recogntags";
             std::cerr << std::endl;
-#endif // DEBUG_RECOGN
+#endif
             if (ssdata.recogntags.publishTs == mPublishTs)
             {
                 std::list<RsRecognTag>::iterator it;
@@ -2264,7 +2531,7 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 #ifdef DEBUG_RECOGN
                         std::cerr << "RsGxsIdCache::updateServiceString() Valid Tag: " << it->tag_class << ":" << it->tag_type;
                         std::cerr << std::endl;
-#endif // DEBUG_RECOGN
+#endif
                         details.mRecognTags.push_back(*it);
                     }
                     else
@@ -2272,7 +2539,7 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 #ifdef DEBUG_RECOGN
                         std::cerr << "RsGxsIdCache::updateServiceString() Invalid Tag: " << it->tag_class << ":" << it->tag_type;
                         std::cerr << std::endl;
-#endif // DEBUG_RECOGN
+#endif
                     }
                 }
             }
@@ -2281,7 +2548,7 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 #ifdef DEBUG_RECOGN
                 std::cerr << "RsGxsIdCache::updateServiceString() recogntags old publishTs";
                 std::cerr << std::endl;
-#endif // DEBUG_RECOGN
+#endif
             }
 
         }
@@ -2290,7 +2557,7 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 #ifdef DEBUG_RECOGN
             std::cerr << "RsGxsIdCache::updateServiceString() recogntags unprocessed";
             std::cerr << std::endl;
-#endif // DEBUG_RECOGN
+#endif
         }
 
         // copy over Reputation scores.
@@ -2400,7 +2667,7 @@ bool p3IdService::cache_process_recogntaginfo(const RsGxsIdGroupItem *item, std:
 
     recogn_extract_taginfo(item, tagItems);
 
-    //time_t now = time(NULL);
+    //rstime_t now = time(NULL);
     for(it = tagItems.begin(); it != tagItems.end(); ++it)
     {
         RsRecognTag info((*it)->tag_class, (*it)->tag_type, false);
@@ -2522,34 +2789,30 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 
 bool p3IdService::cache_request_load(const RsGxsId &id, const std::list<RsPeerId> &peers)
 {
-#ifdef DEBUG_IDS
-    std::cerr << "p3IdService::cache_request_load(" << id << ")" << std::endl;
-#endif // DEBUG_IDS
+	Dbg4() << __PRETTY_FUNCTION__ << " id: " << id << std::endl;
 
-    {
-        RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+	{
+		RS_STACK_MUTEX(mIdMtx);
+		// merge, even if peers is empty
+		mergeIds(mCacheLoad_ToCache, id, peers);
+	}
 
-        mergeIds(mCacheLoad_ToCache,id,peers) ;	// merge, even if peers is empty
-    }
+	if(RsTickEvent::event_count(GXSID_EVENT_CACHELOAD) > 0)
+	{
+		Dbg3() << __PRETTY_FUNCTION__ << " cache reload already scheduled "
+		       << "skipping" << std::endl;
+		return true;
+	}
 
-    if (RsTickEvent::event_count(GXSID_EVENT_CACHELOAD) > 0)
-    {
-        /* its already scheduled */
-        return true;
-    }
+	int32_t age = 0;
+	if( RsTickEvent::prev_event_ago(GXSID_EVENT_CACHELOAD, age) && age < MIN_CYCLE_GAP )
+	{
+		RsTickEvent::schedule_in(GXSID_EVENT_CACHELOAD, MIN_CYCLE_GAP - age);
+		return true;
+	}
 
-    int32_t age = 0;
-    if (RsTickEvent::prev_event_ago(GXSID_EVENT_CACHELOAD, age))
-    {
-        if (age < MIN_CYCLE_GAP)
-        {
-            RsTickEvent::schedule_in(GXSID_EVENT_CACHELOAD, MIN_CYCLE_GAP - age);
-            return true;
-        }
-    }
-
-    RsTickEvent::schedule_now(GXSID_EVENT_CACHELOAD);
-    return true;
+	RsTickEvent::schedule_now(GXSID_EVENT_CACHELOAD);
+	return true;
 }
 
 
@@ -2673,71 +2936,107 @@ bool p3IdService::cache_load_for_token(uint32_t token)
 
 void p3IdService::requestIdsFromNet()
 {
-    RsStackMutex stack(mIdMtx);
+	RS_STACK_MUTEX(mIdMtx);
 
-    if(!mNes)
-    {
-        std::cerr << "(WW) cannot request missing GXS IDs because network service is not present." << std::endl;
-        return ;
-    }
+	if(!mNes)
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Cannot request missing GXS IDs "
+		        << "because network service is not present." << std::endl;
+		return;
+	}
 
     std::map<RsGxsId, std::list<RsPeerId> >::iterator cit;
     std::map<RsPeerId, std::list<RsGxsId> > requests;
 
-    // Transform to appropriate structure (<peer, std::list<RsGxsId> > map) to make request to nes per peer ID
-    // Only delete entries in mIdsNotPresent that can actually be performed.
+	/* Transform to appropriate structure (<RsPeerId, std::list<RsGxsId> > map)
+	 * to make request to nes per peer ID
+	 * Only delete entries in mIdsNotPresent that can actually be performed, or
+	 * that have empty peer list */
 
-    for(cit = mIdsNotPresent.begin(); cit != mIdsNotPresent.end();)
-    {
+	for(cit = mIdsNotPresent.begin(); cit != mIdsNotPresent.end();)
+	{
 #ifdef DEBUG_IDS
-        std::cerr << "p3IdService::requestIdsFromNet() Id not found, deferring for net request: " << cit->first << std::endl;
+		Dbg2() << __PRETTY_FUNCTION__ << " Processing missing key RsGxsId: " << cit->first << std::endl;
 #endif
+        RsGxsIdCache data;
 
-        const std::list<RsPeerId>& peers = cit->second;
-        std::list<RsPeerId>::const_iterator cit2;
+		if(mKeyCache.fetch(cit->first,data))
+        {
+#ifdef DEBUG_IDS
+			std::cerr << __PRETTY_FUNCTION__ << ". Dropping request for ID " << cit->first << " at last minute, because it was found in cache"<< std::endl;
+#endif
+            auto tmp(cit);
+            ++tmp;
+            mIdsNotPresent.erase(cit);
+            cit = tmp;
+            continue;
+        }
+
+		const RsGxsId& gxsId = cit->first;
+		const std::list<RsPeerId>& peers = cit->second;
+		std::list<RsPeerId>::const_iterator cit2;
 
         bool request_can_proceed = false ;
 
-        for(cit2 = peers.begin(); cit2 != peers.end(); ++cit2)
-            if(rsPeers->isOnline(*cit2)) 		// make sure that the peer in online, so that we know that the request has some chance to succeed.
-            {
-                requests[*cit2].push_back(cit->first);
-                request_can_proceed = true ;
-#ifdef DEBUG_IDS
-                std::cerr << "       will ask ID " << cit->first << " to peer ID " << *cit2 << std::endl;
-#endif
-            }
+		for(cit2 = peers.begin(); cit2 != peers.end(); ++cit2)
+		{
+			const RsPeerId& peer = *cit2;
 
-        if(request_can_proceed || peers.empty())
-        {
-            std::map<RsGxsId, std::list<RsPeerId> >::iterator tmp(cit);
-            ++tmp ;
-            mIdsNotPresent.erase(cit) ;
-            cit = tmp ;
-        }
-        else
-        {
-#ifdef DEBUG_IDS
-            std::cerr << "(EE) no online peers among supply list in ID request for groupId " << cit->first << ". Keeping it until peers show up."<< std::endl;
-#endif
-            ++cit ;
-        }
-    }
+			if(rsPeers->isOnline(peer) || mNes->isDistantPeer(peer))
+			{
+				/* make sure that the peer in online, so that we know that the
+				 * request has some chance to succeed.*/
+				requests[peer].push_back(cit->first);
+				request_can_proceed = true ;
 
-    for(std::map<RsPeerId, std::list<RsGxsId> >::const_iterator cit2(requests.begin()); cit2 != requests.end(); ++cit2)
-    {
-        std::list<RsGxsId>::const_iterator gxs_id_it = cit2->second.begin();
-        std::list<RsGxsGroupId> grpIds;
-        for(; gxs_id_it != cit2->second.end(); ++gxs_id_it)
-        {
 #ifdef DEBUG_IDS
-            std::cerr << "  asking ID " << *gxs_id_it << " to peer ID " << cit2->first << std::endl;
+				Dbg2() << __PRETTY_FUNCTION__ << " Moving missing key RsGxsId:"
+				       << gxsId << " to peer: " << peer << " requests queue"
+				       << std::endl;
 #endif
-            grpIds.push_back(RsGxsGroupId(*gxs_id_it));
-        }
+			}
+		}
 
-        mNes->requestGrp(grpIds, cit2->first);
-    }
+		const bool noPeersFound = peers.empty();
+		if(noPeersFound)
+			RsWarn() << __PRETTY_FUNCTION__ << " No peers supplied to request "
+			         << "RsGxsId: " << gxsId << " dropping." << std::endl;
+
+		if(request_can_proceed || noPeersFound)
+		{
+			std::map<RsGxsId, std::list<RsPeerId> >::iterator tmp(cit);
+			++tmp;
+			mIdsNotPresent.erase(cit);
+			cit = tmp;
+		}
+		else
+		{
+#ifdef DEBUG_IDS
+			RsInfo() << __PRETTY_FUNCTION__ << " no online peers among supplied"
+			         << " list in request for RsGxsId: " << gxsId
+			         << ". Keeping it until peers show up."<< std::endl;
+#endif
+			++cit;
+		}
+	}
+
+	for( std::map<RsPeerId, std::list<RsGxsId> >::const_iterator cit2(
+	         requests.begin() ); cit2 != requests.end(); ++cit2 )
+	{
+		const RsPeerId& peer = cit2->first;
+		std::list<RsGxsGroupId> grpIds;
+		for( std::list<RsGxsId>::const_iterator gxs_id_it = cit2->second.begin(); gxs_id_it != cit2->second.end(); ++gxs_id_it )
+		{
+#ifdef DEBUG_IDS
+			Dbg2() << __PRETTY_FUNCTION__ << " passing RsGxsId: " << *gxs_id_it
+			       << " request for peer: " << peer
+			       << " to RsNetworkExchangeService " << std::endl;
+#endif
+			grpIds.push_back(RsGxsGroupId(*gxs_id_it));
+		}
+
+		mNes->requestGrp(grpIds, peer);
+	}
 }
 
 bool p3IdService::cache_update_if_cached(const RsGxsId &id, std::string serviceString)
@@ -2789,7 +3088,7 @@ bool p3IdService::cache_request_ownids()
 	
 	RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts);
 	GxsTokenQueue::queueRequest(token, GXSIDREQ_CACHEOWNIDS);	
-	return 1;
+	return true;
 }
 
 
@@ -2826,6 +3125,18 @@ bool p3IdService::cache_load_ownids(uint32_t token)
 				{
                     mOwnIds.push_back(RsGxsId(item->meta.mGroupId));
 
+					SSGxsIdGroup ssdata;
+
+                    std::cerr << "Adding own ID " << item->meta.mGroupId << " mGroupFlags=" << std::hex << item->meta.mGroupFlags << std::dec;
+
+					if (ssdata.load(item->meta.mServiceString) && ssdata.pgp.validatedSignature) // (cyril) note: we cannot use if(item->meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+                    {																			 // or we need to cmbine it with the deprecated value that overlaps with GXS_SERV::FLAG_PRIVACY_PRIVATE
+                    	std::cerr << " signed = YES" << std::endl;								 // see comments line 799 in ::createIdentity();
+						mOwnSignedIds.push_back(RsGxsId(item->meta.mGroupId));
+                    }
+                    else
+                    	std::cerr << " signed = NO" << std::endl;
+
                     // This prevents automatic deletion to get rid of them.
                     // In other words, own ids are always used.
 
@@ -2834,6 +3145,8 @@ bool p3IdService::cache_load_ownids(uint32_t token)
 				delete item ;
             }
             mOwnIdsLoaded = true ;
+
+            std::cerr << mOwnIds.size() << " own Ids loaded, " << mOwnSignedIds.size() << " of which are signed" << std::endl;
 		}
 
 		// No need to cache these items...
@@ -2923,7 +3236,7 @@ bool p3IdService::cachetest_handlerequest(uint32_t token)
 				if (!haveKey(*vit))
 				{
                     std::list<RsPeerId> nullpeers;
-					requestKey(*vit, nullpeers,RsIdentityUsage(serviceType(),RsIdentityUsage::UNKNOWN_USAGE));
+					requestKey(*vit, nullpeers,RsIdentityUsage(RsServiceType::GXSID,RsIdentityUsage::UNKNOWN_USAGE));
 
 #ifdef DEBUG_IDS
 					std::cerr << "p3IdService::cachetest_request() Requested Key Id: " << *vit;
@@ -3081,13 +3394,10 @@ static void calcPGPHash(const RsGxsId &id, const PGPFingerprintType &pgp, Sha1Ch
 
 
 // Must Use meta.
-RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet)
+RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(
+        RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet )
 {
-
-#ifdef DEBUG_IDS
-    std::cerr << "p3IdService::service_CreateGroup()";
-    std::cerr << std::endl;
-#endif // DEBUG_IDS
+	Dbg2() << __PRETTY_FUNCTION__ << std::endl;
 
     RsGxsIdGroupItem *item = dynamic_cast<RsGxsIdGroupItem *>(grpItem);
     if (!item)
@@ -3097,30 +3407,23 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
         return SERVICE_CREATE_FAIL;
     }
 
-#ifdef DEBUG_IDS
-    std::cerr << "p3IdService::service_CreateGroup() Item is:";
-    std::cerr << std::endl;
-    item->print(std::cerr);
-    std::cerr << std::endl;
-#endif // DEBUG_IDS
-    
     item->meta.mGroupId.clear();
 
     /********************* TEMP HACK UNTIL GXS FILLS IN GROUP_ID *****************/
-    // find private admin key
-    for(std::map<RsGxsId, RsTlvPrivateRSAKey>::iterator mit = keySet.private_keys.begin();mit != keySet.private_keys.end(); ++mit)
-        if(mit->second.keyFlags == (RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_FULL))
+	// find private admin key
+	for( std::map<RsGxsId, RsTlvPrivateRSAKey>::iterator mit =
+	     keySet.private_keys.begin(); mit != keySet.private_keys.end(); ++mit )
+		if(mit->second.keyFlags == (RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_FULL))
         {
             item->meta.mGroupId = RsGxsGroupId(mit->second.keyId);
             break;
         }
 
-    if(item->meta.mGroupId.isNull())
-    {
-        std::cerr << "p3IdService::service_CreateGroup() ERROR no admin key";
-        std::cerr << std::endl;
-        return SERVICE_CREATE_FAIL;
-    }
+	if(item->meta.mGroupId.isNull())
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " missing admin key!" << std::endl;
+		return SERVICE_CREATE_FAIL;
+	}
     mKeysTS[RsGxsId(item->meta.mGroupId)].TS = time(NULL) ;
 
     /********************* TEMP HACK UNTIL GXS FILLS IN GROUP_ID *****************/
@@ -3168,8 +3471,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
         /* create the hash */
         Sha1CheckSum hash;
 
-        /* */
-        PGPFingerprintType ownFinger;
+		RsPgpFingerprint ownFinger;
         RsPgpId ownId(mPgpUtils->getPGPOwnId());
 
 #ifdef DEBUG_IDS
@@ -3184,12 +3486,12 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
         //		}
 #endif
 
-        if (!mPgpUtils->getKeyFingerprint(ownId,ownFinger))
-        {
-            std::cerr << "p3IdService::service_CreateGroup() ERROR Own Finger is stuck";
-            std::cerr << std::endl;
-            return SERVICE_CREATE_FAIL; // abandon attempt!
-        }
+		if(!mPgpUtils->getKeyFingerprint(ownId,ownFinger))
+		{
+			RsErr() << __PRETTY_FUNCTION__
+			        << " failure retriving own PGP fingerprint" << std::endl;
+			return SERVICE_CREATE_FAIL; // abandon attempt!
+		}
 
 #ifdef DEBUG_IDS
         std::cerr << "p3IdService::service_CreateGroup() OwnFingerprint: " << ownFinger.toStdString();
@@ -3211,60 +3513,51 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 
 #define MAX_SIGN_SIZE 2048
         uint8_t signarray[MAX_SIGN_SIZE];
-        unsigned int sign_size = MAX_SIGN_SIZE;
-        int result ;
-
+		unsigned int sign_size = MAX_SIGN_SIZE;
         memset(signarray,0,MAX_SIGN_SIZE) ;	// just in case.
 
-        mPgpUtils->askForDeferredSelfSignature((void *) hash.toByteArray(), hash.SIZE_IN_BYTES, signarray, &sign_size,result, "p3IdService::service_CreateGroup()") ;
+		int	result = AuthGPG::getAuthGPG()->SignDataBin(
+			            static_cast<const void*>(hash.toByteArray()),
+			            hash.SIZE_IN_BYTES, signarray, &sign_size,
+			            __PRETTY_FUNCTION__ )
+			        ?
+			            SELF_SIGNATURE_RESULT_SUCCESS :
+			            SELF_SIGNATURE_RESULT_FAILED;
 
-    /* error */
-    switch(result)
-    {
-    case SELF_SIGNATURE_RESULT_PENDING : createStatus = SERVICE_CREATE_FAIL_TRY_LATER;
-        std::cerr << "p3IdService::service_CreateGroup() signature still pending" << std::endl;
-        break ;
-    default:
-    case SELF_SIGNATURE_RESULT_FAILED:  return SERVICE_CREATE_FAIL ;
-        std::cerr << "p3IdService::service_CreateGroup() signature failed" << std::endl;
-        break ;
+		switch(result)
+		{
+		case SELF_SIGNATURE_RESULT_PENDING:
+			createStatus = SERVICE_CREATE_FAIL_TRY_LATER;
+			Dbg1() << __PRETTY_FUNCTION__ << " signature still pending"
+			       << std::endl;
+			break;
+		case SELF_SIGNATURE_RESULT_SUCCESS:
+		{
+			// Additional consistency checks.
+			if(sign_size == MAX_SIGN_SIZE)
+			{
+				RsErr() << __PRETTY_FUNCTION__ << "Inconsistent result. "
+				        << "Signature uses full buffer. This is probably an "
+				        << "error." << std::endl;
+				return SERVICE_CREATE_FAIL;
+			}
 
-    case SELF_SIGNATURE_RESULT_SUCCESS:
-    {
-        // Additional consistency checks.
+			/* push binary into string -> really bad! */
+			item->mPgpIdSign = "";
+			for(unsigned int i = 0; i < sign_size; i++)
+				item->mPgpIdSign += static_cast<char>(signarray[i]);
 
-        if(sign_size == MAX_SIGN_SIZE)
-        {
-            std::cerr << "Inconsistent result. Signature uses full buffer. This is probably an error." << std::endl;
-            return SERVICE_CREATE_FAIL; // abandon attempt!
-        }
-#ifdef DEBUG_IDS
-        std::cerr << "p3IdService::service_CreateGroup() Signature: ";
-        std::string strout;
-#endif
-        /* push binary into string -> really bad! */
-        item->mPgpIdSign = "";
-        for(unsigned int i = 0; i < sign_size; i++)
-        {
-#ifdef DEBUG_IDS
-            rs_sprintf_append(strout, "%02x", (uint32_t) signarray[i]);
-#endif
-            item->mPgpIdSign += signarray[i];
-        }
-        createStatus = SERVICE_CREATE_SUCCESS;
-
-#ifdef DEBUG_IDS
-        std::cerr << strout;
-        std::cerr << std::endl;
-#endif
-    }
-    }
-        /* done! */
-    }
-    else
-    {
-        createStatus = SERVICE_CREATE_SUCCESS;
-    }
+			createStatus = SERVICE_CREATE_SUCCESS;
+			break;
+		}
+		case SELF_SIGNATURE_RESULT_FAILED: /* fall-through */
+		default:
+			RsErr() << __PRETTY_FUNCTION__ << " signature failed with: "
+			        << result << std::endl;
+			return SERVICE_CREATE_FAIL;
+		}
+	}
+	else createStatus = SERVICE_CREATE_SUCCESS;
 
     // Enforce no AuthorId.
     item->meta.mAuthorId.clear() ;
@@ -3275,17 +3568,20 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
     // do it like p3gxscircles: save the new grp id
     // this allows the user interface
     // to see the grp id on the list of ownIds immediately after the group was created
-    {
-        RsStackMutex stack(mIdMtx);
+	{
+		RS_STACK_MUTEX(mIdMtx);
         RsGxsId gxsId(item->meta.mGroupId);
         if (std::find(mOwnIds.begin(), mOwnIds.end(), gxsId) == mOwnIds.end())
         {
-            mOwnIds.push_back(gxsId);
-            mKeysTS[gxsId].TS = time(NULL) ;
+			mOwnIds.push_back(gxsId);
+			mKeysTS[gxsId].TS = time(nullptr);
         }
     }
 
-    return createStatus;
+#ifdef DEBUG_IDS
+	Dbg2() << __PRETTY_FUNCTION__ << " returns: " << createStatus << std::endl;
+#endif
+	return createStatus;
 }
 
 
@@ -3395,8 +3691,8 @@ bool p3IdService::pgphash_handlerequest(uint32_t token)
 				 */
 
 #define SECS_PER_DAY (3600 * 24)
-				time_t age = time(NULL) - ssdata.pgp.lastCheckTs;
-				time_t wait_period = ssdata.pgp.checkAttempts * SECS_PER_DAY;
+				rstime_t age = time(NULL) - ssdata.pgp.lastCheckTs;
+				rstime_t wait_period = ssdata.pgp.checkAttempts * SECS_PER_DAY;
 				if (wait_period > 30 * SECS_PER_DAY)
 				{
 					wait_period = 30 * SECS_PER_DAY;
@@ -3983,7 +4279,7 @@ bool p3IdService::recogn_checktag(const RsGxsId &id, const std::string &nickname
 	// ------ 
 	// signature is valid.  (only if doSignCheck == true)
 	
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	isPending = false;
 	
 	// check date range.
@@ -4090,7 +4386,7 @@ void p3IdService::generateDummyData()
 
 	generateDummy_OwnIds();
 
-	time_t age = 0;
+	rstime_t age = 0;
 	for(int i = 0; i < MAX_KNOWN_PGPIDS; i++)
 	{
 		age += DUMMY_GXSID_DELAY;
@@ -4326,65 +4622,6 @@ std::string rsIdTypeToString(uint32_t idtype)
  * 
  */
 
-
-/************************************************************************************/
-/*
- * Scoring system.
- * -100 to 100 is expected range.
- * 
- *
- * Each Lobby has a publish threshold.
- *   - As part of Lobby definition. ???
- *   - Locally Set.
- *
- * Threshold:
- *   50 VIP List.
- *   20 Dress Code
- *   10 Limit Riffraff.
- *   0 Accept All.
- *
- * Implicit Scores:
- *   +50 for known PGP
- *   +10 for unknown PGP  (want to encourage usage).
- *   +5 for Anon ID.
- *
- * Own Scores:
- *   +1000 Accepted
- *   +50 Friend
- *   +10 Interesting
- *   0 Mostly Harmless
- *   -10 Annoying.
- *   -50 Troll
- *   -1000 Total Banned
- *
- *
- * 
-
-
-
-Processing Algorithm:
- *  - Grab all Groups which have received messages. 
- *  (opt 1)-> grab latest msgs for each of these and process => score.
- *  (opt 2)-> try incremental system (people probably won't change opinions often -> just set them once)
- *      --> if not possible, fallback to full calculation.
- *
- * 
- */
-
-
-
-
-std::ostream &operator<<(std::ostream &out, const RsGxsIdGroup &grp)
-{
-	out << "RsGxsIdGroup: Meta: " << grp.mMeta;
-	out << " PgpIdHash: " << grp.mPgpIdHash;
-	out << " PgpIdSign: [binary]"; // << grp.mPgpIdSign;
-	out << std::endl;
-	
-	return out;
-}
-
-
 void p3IdService::checkPeerForIdentities()
 {
 	RsStackMutex stack(mIdMtx);
@@ -4494,46 +4731,135 @@ void p3IdService::handle_event(uint32_t event_type, const std::string &/*elabel*
 			break;
 		case GXSID_EVENT_REQUEST_IDS:
 			requestIdsFromNet();
-			break;
-
-
-		default:
-			/* error */
-			std::cerr << "p3IdService::handle_event() Unknown Event Type: " << event_type;
-			std::cerr << std::endl;
-			break;
+		    break;
+	    case GXSID_EVENT_REPUTATION:
+		    break;
+	default:
+		RsErr() << __PRETTY_FUNCTION__ << " Unknown Event Type: "
+		        << event_type << std::endl;
+		print_stacktrace();
+		break;
 	}
 }
 
-RsIdentityUsage::RsIdentityUsage(uint16_t service,const RsIdentityUsage::UsageCode& code,const RsGxsGroupId& gid,const RsGxsMessageId& mid,uint64_t additional_id,const std::string& comment)
-    	: mServiceId(service), mUsageCode(code), mGrpId(gid), mMsgId(mid),mAdditionalId(additional_id),mComment(comment)
+/*static*/ const std::string RsIdentity::DEFAULT_IDENTITY_BASE_URL =
+        "retroshare:///identities";
+/*static*/ const std::string RsIdentity::IDENTITY_URL_NAME_FIELD = "identityName";
+/*static*/ const std::string RsIdentity::IDENTITY_URL_ID_FIELD = "identityId";
+/*static*/ const std::string RsIdentity::IDENTITY_URL_DATA_FIELD = "identityData";
+
+bool p3IdService::exportIdentityLink(
+        std::string& link, const RsGxsId& id, bool includeGxsData,
+        const std::string& baseUrl, std::string& errMsg )
 {
-#ifdef DEBUG_IDS
-	// This is a hack, since it will hash also mHash, but because it is initialized to 0, and only computed in the constructor here, it should be ok.
-    std::cerr << "New identity usage: " << std::endl;
-    std::cerr << "  service=" << std::hex << service << std::endl;
-    std::cerr << "  code   =" << std::hex << code << std::endl;
-    std::cerr << "  grpId  =" << std::hex << gid << std::endl;
-    std::cerr << "  msgId  =" << std::hex << mid << std::endl;
-    std::cerr << "  add id =" << std::hex << additional_id << std::endl;
-    std::cerr << "  commnt =\"" << std::hex << comment << "\"" << std::endl;
-#endif
+	constexpr auto fname = __PRETTY_FUNCTION__;
+	const auto failure = [&](const std::string& err)
+	{
+		errMsg = err;
+		RsErr() << fname << " " << err << std::endl;
+		return false;
+	};
 
-    librs::crypto::HashStream hs(librs::crypto::HashStream::SHA1) ;
+	if(id.isNull()) return failure("id cannot be null");
 
-    hs << (uint32_t)service ;
-    hs << (uint8_t)code ;
-    hs << gid ;
-    hs << mid ;
-    hs << (uint64_t)additional_id ;
-    hs << comment ;
+	const bool outputRadix = baseUrl.empty();
+	if(outputRadix && !includeGxsData) return
+	        failure("includeGxsData must be true if format requested is base64");
 
-	mHash = hs.hash();
+	if( includeGxsData &&
+	        !RsGenExchange::exportGroupBase64(
+	            link, reinterpret_cast<const RsGxsGroupId&>(id), errMsg ) )
+		return failure(errMsg);
 
-#ifdef DEBUG_IDS
-    std::cerr << "  hash   =\"" << std::hex << mHash << "\"" << std::endl;
-#endif
+	if(outputRadix) return true;
+
+	 std::vector<RsGxsIdGroup> idsInfo;
+	if( !getIdentitiesInfo(std::set<RsGxsId>({id}), idsInfo )
+	        || idsInfo.empty() )
+		return failure("failure retrieving identity information");
+
+	RsUrl inviteUrl(baseUrl);
+	inviteUrl.setQueryKV(IDENTITY_URL_ID_FIELD, id.toStdString());
+	inviteUrl.setQueryKV(IDENTITY_URL_NAME_FIELD, idsInfo[0].mMeta.mGroupName);
+	if(includeGxsData) inviteUrl.setQueryKV(IDENTITY_URL_DATA_FIELD, link);
+
+	link = inviteUrl.toString();
+	return true;
+}
+
+bool p3IdService::importIdentityLink(
+        const std::string& link, RsGxsId& id, std::string& errMsg )
+{
+	constexpr auto fname = __PRETTY_FUNCTION__;
+	const auto failure = [&](const std::string& err)
+	{
+		errMsg = err;
+		RsErr() << fname << " " << err << std::endl;
+		return false;
+	};
+
+	if(link.empty()) return failure("link is empty");
+
+	const std::string* radixPtr(&link);
+
+	RsUrl url(link);
+	const auto& query = url.query();
+	const auto qIt = query.find(IDENTITY_URL_DATA_FIELD);
+	if(qIt != query.end()) radixPtr = &qIt->second;
+
+	if(radixPtr->empty()) return failure(IDENTITY_URL_DATA_FIELD + " is empty");
+
+	if(!RsGenExchange::importGroupBase64(
+	            *radixPtr, reinterpret_cast<RsGxsGroupId&>(id), errMsg ))
+		return failure(errMsg);
+
+	return true;
 }
 
 
+void RsGxsIdGroup::serial_process(
+        RsGenericSerializer::SerializeJob j,
+        RsGenericSerializer::SerializeContext& ctx )
+{
+	RS_SERIAL_PROCESS(mMeta);
+	RS_SERIAL_PROCESS(mPgpIdHash);
+	RS_SERIAL_PROCESS(mPgpIdSign);
+	RS_SERIAL_PROCESS(mImage);
+	RS_SERIAL_PROCESS(mLastUsageTS);
+	RS_SERIAL_PROCESS(mPgpKnown);
+	RS_SERIAL_PROCESS(mIsAContact);
+	RS_SERIAL_PROCESS(mPgpId);
+	RS_SERIAL_PROCESS(mReputation);
+}
 
+RsIdentityUsage::RsIdentityUsage(RsServiceType service, RsIdentityUsage::UsageCode code,
+        const RsGxsGroupId& gid, const RsGxsMessageId& mid, const RsGxsMessageId &pid, const RsGxsMessageId &tid,
+        uint64_t additional_id, const std::string& comment ) :
+    mServiceId(service), mUsageCode(code), mGrpId(gid), mMsgId(mid),mParentId(pid),mThreadId(tid),
+    mAdditionalId(additional_id), mComment(comment)
+{
+	/* This is a hack, since it will hash also mHash, but because it is
+	 * initialized to 0, and only computed in the constructor here, it should
+	 * be ok. */
+	librs::crypto::HashStream hs(librs::crypto::HashStream::SHA1);
+
+	hs << static_cast<uint32_t>(service); // G10h4ck: Why uint32 if it's 16 bits?
+	hs << static_cast<uint8_t>(code);
+	hs << gid;
+	hs << mid;
+	hs << static_cast<uint64_t>(additional_id);
+	hs << comment;
+
+	mHash = hs.hash();
+}
+
+RsIdentityUsage::RsIdentityUsage() :
+    mServiceId(RsServiceType::NONE), mUsageCode(UNKNOWN_USAGE), mAdditionalId(0)
+{}
+
+RsIdentity::~RsIdentity() = default;
+RsReputationInfo::~RsReputationInfo() = default;
+RsGixs::~RsGixs() = default;
+RsIdentityDetails::~RsIdentityDetails() = default;
+GxsReputation::~GxsReputation() = default;
+RsGxsIdGroup::~RsGxsIdGroup() = default;

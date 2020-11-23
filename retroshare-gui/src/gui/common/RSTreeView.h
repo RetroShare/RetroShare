@@ -1,23 +1,22 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (c) 2010, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/common/RSTreeView.h                                                     *
+ *                                                                             *
+ * Copyright (C) 2010 RetroShare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef _RSTREEVIEW_H
 #define _RSTREEVIEW_H
@@ -34,8 +33,20 @@ public:
 
 	void setPlaceholderText(const QString &text);
 
+    // Use this to make selection automatic based on mouse position. This is useful to trigger selection and therefore editing mode
+    // in trees that show editing widgets using a QStyledItemDelegate
+
+    void setAutoSelect(bool b);
+
+signals:
+    void sizeChanged(QSize);
+    void zoomRequested(bool zoom_or_unzoom);
+
 protected:
-	void paintEvent(QPaintEvent *event);
+	virtual void mouseMoveEvent(QMouseEvent *e) override; // overriding so as to manage auto-selection
+	virtual void wheelEvent(QWheelEvent *e) override; // overriding so as to manage zoom
+    virtual void resizeEvent(QResizeEvent *e) override;
+	virtual void paintEvent(QPaintEvent *event) override;
 
 	QString placeholderText;
 };

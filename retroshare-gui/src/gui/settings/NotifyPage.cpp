@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006 - 2009 RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/settings/NotifyPage.cpp                                                 *
+ *                                                                             *
+ * Copyright 2009, Retroshare Team <retroshare.project@gmail.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <rshare.h>
 #include "NotifyPage.h"
@@ -41,11 +40,12 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
 
+    ui.testFeedButton->hide();	// do not show in release
+
 	connect(ui.testFeedButton, SIGNAL(clicked()), this, SLOT(testFeed()));
 	connect(ui.testToasterButton, SIGNAL(clicked()), this, SLOT(testToaster()));
 	connect(ui.pushButtonDisableAll,SIGNAL(toggled(bool)), NotifyQt::getInstance(), SLOT(SetDisableAll(bool)));
 	connect(NotifyQt::getInstance(),SIGNAL(disableAllChanged(bool)), ui.pushButtonDisableAll, SLOT(setChecked(bool)));
-	connect(ui.chatLobbies_CountFollowingText,SIGNAL(toggled(bool)),ui.chatLobbies_TextToNotify,SLOT(setEnabled(bool)));
 
 	ui.notify_Blogs->hide();
 
@@ -115,41 +115,37 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 
 	}
 
-	/* Add user notify */
-	const QList<UserNotify*> &userNotifyList = MainWindow::getInstance()->getUserNotifyList() ;
-	QList<UserNotify*>::const_iterator it;
-	rowFeed = 0;
-	mChatLobbyUserNotify = 0;
-	for (it = userNotifyList.begin(); it != userNotifyList.end(); ++it) {
-		UserNotify *userNotify = *it;
+    /* Add user notify */
+    const QList<UserNotify*> &userNotifyList = MainWindow::getInstance()->getUserNotifyList() ;
+    QList<UserNotify*>::const_iterator it;
+    rowFeed = 0;
+    for (it = userNotifyList.begin(); it != userNotifyList.end(); ++it) {
+        UserNotify *userNotify = *it;
 
-		QString name;
-		if (!userNotify->hasSetting(&name, NULL)) {
-			continue;
-		}
+        QString name;
+        if (!userNotify->hasSetting(&name, NULL)) {
+            continue;
+        }
 
-		QCheckBox *enabledCheckBox = new QCheckBox(name, this);
-		enabledCheckBox->setFont(font);
-		ui.notifyLayout->addWidget(enabledCheckBox, rowFeed, 0, 0);
-		connect(enabledCheckBox, SIGNAL(toggled(bool)), this, SLOT(notifyToggled()));
+        QCheckBox *enabledCheckBox = new QCheckBox(name, this);
+        enabledCheckBox->setFont(font);
+        ui.notifyLayout->addWidget(enabledCheckBox, rowFeed, 0, 0);
+        connect(enabledCheckBox, SIGNAL(toggled(bool)), this, SLOT(notifyToggled()));
 
-		QCheckBox *combinedCheckBox = new QCheckBox(tr("Combined"), this);
-		combinedCheckBox->setFont(font);
-		ui.notifyLayout->addWidget(combinedCheckBox, rowFeed, 1);
+        QCheckBox *combinedCheckBox = new QCheckBox(tr("Combined"), this);
+        combinedCheckBox->setFont(font);
+        ui.notifyLayout->addWidget(combinedCheckBox, rowFeed, 1);
 
-		QCheckBox *blinkCheckBox = new QCheckBox(tr("Blink"), this);
-		blinkCheckBox->setFont(font);
-		ui.notifyLayout->addWidget(blinkCheckBox, rowFeed++, 2);
+        QCheckBox *blinkCheckBox = new QCheckBox(tr("Blink"), this);
+        blinkCheckBox->setFont(font);
+        ui.notifyLayout->addWidget(blinkCheckBox, rowFeed++, 2);
 
-		mUserNotifySettingList.push_back(UserNotifySetting(userNotify, enabledCheckBox, combinedCheckBox, blinkCheckBox));
+        mUserNotifySettingList.push_back(UserNotifySetting(userNotify, enabledCheckBox, combinedCheckBox, blinkCheckBox));
 
-		connect(enabledCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateUserNotifySettings())) ;
-		connect(blinkCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateUserNotifySettings())) ;
-		connect(combinedCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateUserNotifySettings())) ;
-
-		//To get ChatLobbyUserNotify Settings
-		if (!mChatLobbyUserNotify) mChatLobbyUserNotify = dynamic_cast<ChatLobbyUserNotify*>(*it);
-	}
+        connect(enabledCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateUserNotifySettings())) ;
+        connect(blinkCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateUserNotifySettings())) ;
+        connect(combinedCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateUserNotifySettings())) ;
+    }
 
 	connect(ui.popup_Connect,           SIGNAL(toggled(bool)), this, SLOT(updateNotifyFlags())) ;
 	connect(ui.popup_NewMsg,            SIGNAL(toggled(bool)), this, SLOT(updateNotifyFlags())) ;
@@ -178,12 +174,6 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.spinBoxToasterYMargin, SIGNAL(valueChanged(int)), this, SLOT(updateToasterMargin()));
 
 	connect(ui.comboBoxToasterPosition,  SIGNAL(currentIndexChanged(int)),this, SLOT(updateToasterPosition())) ;
-
-	connect(ui.chatLobbies_CountUnRead,        SIGNAL(toggled(bool)),this, SLOT(updateChatLobbyUserNotify())) ;
-	connect(ui.chatLobbies_CheckNickName,      SIGNAL(toggled(bool)),this, SLOT(updateChatLobbyUserNotify())) ;
-	connect(ui.chatLobbies_CountFollowingText, SIGNAL(toggled(bool)),this, SLOT(updateChatLobbyUserNotify())) ;
-	connect(ui.chatLobbies_TextToNotify,       SIGNAL(textChanged(QString)),this, SLOT(updateChatLobbyUserNotify()));
-	connect(ui.chatLobbies_TextCaseSensitive,  SIGNAL(toggled(bool)),this, SLOT(updateChatLobbyUserNotify())) ;
 }
 
 NotifyPage::~NotifyPage()
@@ -298,18 +288,6 @@ void NotifyPage::updateToasterPosition()
         Settings->setToasterPosition((RshareSettings::enumToasterPosition) ui.comboBoxToasterPosition->itemData(index).toInt());
 }
 
-void NotifyPage::updateChatLobbyUserNotify()
-{
-	if(!mChatLobbyUserNotify)
-		return ;
-
-	mChatLobbyUserNotify->setCountUnRead(ui.chatLobbies_CountUnRead->isChecked()) ;
-	mChatLobbyUserNotify->setCheckForNickName(ui.chatLobbies_CheckNickName->isChecked()) ;
-	mChatLobbyUserNotify->setCountSpecificText(ui.chatLobbies_CountFollowingText->isChecked()) ;
-	mChatLobbyUserNotify->setTextToNotify(ui.chatLobbies_TextToNotify->document()->toPlainText());
-	mChatLobbyUserNotify->setTextCaseSensitive(ui.chatLobbies_TextCaseSensitive->isChecked());
-}
-
 /** Loads the settings for this page */
 void NotifyPage::load()
 {
@@ -322,7 +300,9 @@ void NotifyPage::load()
 	whileBlocking(ui.popup_NewMsg)->setChecked(notifyflags & RS_POPUP_MSG);
 	whileBlocking(ui.popup_DownloadFinished)->setChecked(notifyflags & RS_POPUP_DOWNLOAD);
 	whileBlocking(ui.popup_PrivateChat)->setChecked(notifyflags & RS_POPUP_CHAT);
+#ifdef RS_DIRECT_CHAT
 	whileBlocking(ui.popup_GroupChat)->setChecked(notifyflags & RS_POPUP_GROUPCHAT);
+#endif // def RS_DIRECT_CHAT
 	whileBlocking(ui.popup_ChatLobby)->setChecked(notifyflags & RS_POPUP_CHATLOBBY);
 	whileBlocking(ui.popup_ConnectAttempt)->setChecked(notifyflags & RS_POPUP_CONNECT_ATTEMPT);
 
@@ -396,14 +376,6 @@ void NotifyPage::load()
 
 	notifyToggled() ;
 
-	if (mChatLobbyUserNotify){
-		whileBlocking(ui.chatLobbies_CountUnRead)->setChecked(mChatLobbyUserNotify->isCountUnRead());
-		whileBlocking(ui.chatLobbies_CheckNickName)->setChecked(mChatLobbyUserNotify->isCheckForNickName());
-		whileBlocking(ui.chatLobbies_CountFollowingText)->setChecked(mChatLobbyUserNotify->isCountSpecificText()) ;
-		whileBlocking(ui.chatLobbies_TextToNotify)->setEnabled(mChatLobbyUserNotify->isCountSpecificText()) ;
-		whileBlocking(ui.chatLobbies_TextToNotify)->setPlainText(mChatLobbyUserNotify->textToNotify());
-		whileBlocking(ui.chatLobbies_TextCaseSensitive)->setChecked(mChatLobbyUserNotify->isTextCaseSensitive());
-	}
 }
 
 void NotifyPage::notifyToggled()

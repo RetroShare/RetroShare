@@ -1,31 +1,28 @@
-
-/*
- * libretroshare/src/serialiser: rsbaseitems.cc
- *
- * RetroShare Serialiser.
- *
- * Copyright 2007-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/chat: rschatitems.cc                                      *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2007-2008 by Robert Fernie.                                       *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <stdexcept>
-#include <time.h>
+#include "retroshare/rsmsgs.h"
+#include "util/rstime.h"
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvbase.h"
 
@@ -56,6 +53,7 @@ RsItem *RsChatSerialiser::create_item(uint16_t service_id,uint8_t item_sub_id) c
 	case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST: return new RsChatLobbyListRequestItem();
 	case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST: return new RsChatLobbyListItem();
 	case RS_PKT_SUBTYPE_CHAT_LOBBY_CONFIG: return new RsChatLobbyConfigItem();
+	case RS_PKT_SUBTYPE_SUBSCRIBED_CHAT_LOBBY_CONFIG: return new RsSubscribedChatLobbyConfigItem();
 	case RS_PKT_SUBTYPE_OUTGOING_MAP: return new PrivateOugoingMapItem();
 	default:
 		std::cerr << "Unknown packet type in chat!" << std::endl;
@@ -72,23 +70,14 @@ void RsChatMsgItem::serial_process(RsGenericSerializer::SerializeJob j,RsGeneric
 
 /*************************************************************************/
 
-RsChatAvatarItem::~RsChatAvatarItem()
-{
-	if(image_data != NULL)
-	{
-		free(image_data) ;
-		image_data = NULL ;
-	}
-}
-
 void RsChatLobbyBouncingObject::serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process(j,ctx,lobby_id,"lobby_id") ;
     RsTypeSerializer::serial_process(j,ctx,msg_id  ,"msg_id") ;
     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_NAME,nick,"nick") ;
 
-    if(!(ctx.mFlags & RsServiceSerializer::SERIALIZATION_FLAG_SIGNATURE))
-    	RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,signature,"signature") ;
+	if(!(ctx.mFlags & RsSerializationFlags::SIGNATURE))
+		RS_SERIAL_PROCESS(signature);
 }
 
 void RsChatLobbyMsgItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
@@ -176,6 +165,11 @@ void RsChatAvatarItem::serial_process(RsGenericSerializer::SerializeJob j,RsGene
     RsTypeSerializer::serial_process(j,ctx,b,"image data") ;
 }
 
+void RsSubscribedChatLobbyConfigItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    info.serial_process(j,ctx);
+}
+
 void RsChatLobbyConfigItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint64_t>(j,ctx,lobby_Id,"lobby_Id") ;
@@ -205,11 +199,8 @@ void RsPrivateChatMsgConfigItem::get(RsChatMsgItem *ci)
 	ci->recvTime = recvTime;
 }
 
-/* Necessary to serialize `store` that is an STL container with RsChatMsgItem
- * inside which is a subtype of RsItem */
-RS_REGISTER_ITEM_TYPE(RsChatMsgItem)
 
 void PrivateOugoingMapItem::serial_process(
         RsGenericSerializer::SerializeJob j,
         RsGenericSerializer::SerializeContext& ctx )
-{ RS_REGISTER_SERIAL_MEMBER(store); }
+{ RS_SERIAL_PROCESS(store); }

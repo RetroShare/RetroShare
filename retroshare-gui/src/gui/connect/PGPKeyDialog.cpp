@@ -1,24 +1,24 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006,  crypton
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/connect/PGPKeyDialog.cpp                                                *
+ *                                                                             *
+ * Copyright 2006 by Crypton              <retroshare.project@gmail.com>       *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
+#include "gui/common/FilesDefs.h"
 #include "PGPKeyDialog.h"
 
 #include <QMessageBox>
@@ -33,6 +33,8 @@
 #include <retroshare/rsdisc.h>
 #include <retroshare/rsmsgs.h>
 
+#include <retroshare-gui/mainpage.h>
+
 #include "gui/help/browser/helpbrowser.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/common/StatusDefs.h"
@@ -40,7 +42,6 @@
 #include "gui/notifyqt.h"
 #include "gui/common/AvatarDefs.h"
 #include "gui/MainWindow.h"
-#include "mainpage.h"
 #include "util/DateTime.h"
 #include "util/misc.h"
 
@@ -65,7 +66,7 @@ PGPKeyDialog::PGPKeyDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidget *p
 {
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
-
+	Settings->loadWidgetInformation(this);
 //	 if(id.isNull())
 //		 ui._useOldFormat_CB->setChecked(true) ;
 //	 else
@@ -74,7 +75,7 @@ PGPKeyDialog::PGPKeyDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidget *p
 //		 ui._useOldFormat_CB->setEnabled(false) ;
 //	 }
 
-	ui.headerFrame->setHeaderImage(QPixmap(":/images/user/identityinfo64.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/user/identityinfo64.png"));
     ui.headerFrame->setHeaderText(tr("Retroshare profile"));
 
     //ui._chat_CB->hide() ;
@@ -100,6 +101,7 @@ PGPKeyDialog::PGPKeyDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidget *p
 
 PGPKeyDialog::~PGPKeyDialog()
 {
+	Settings->saveWidgetInformation(this);
         QMap<RsPgpId, PGPKeyDialog*>::iterator it = instances_pgp.find(pgpId);
         if (it != instances_pgp.end())
             instances_pgp.erase(it);
@@ -156,11 +158,11 @@ void PGPKeyDialog::load()
 	switch (rsFiles->filePermDirectDL())
 	{
 		case RS_FILE_PERM_DIRECT_DL_YES:
-			ui._direct_transfer_CB->setIcon(QIcon(":/icons/warning_yellow_128.png"));
+            ui._direct_transfer_CB->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/warning_yellow_128.png"));
 			ui._direct_transfer_CB->setToolTip(ui._direct_transfer_CB->toolTip().append(tr("\nWarning: In your File-Transfer option, you select allow direct download to Yes.")));
 			break ;
 		case RS_FILE_PERM_DIRECT_DL_NO:
-			ui._direct_transfer_CB->setIcon(QIcon(":/icons/warning_yellow_128.png"));
+            ui._direct_transfer_CB->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/warning_yellow_128.png"));
 			ui._direct_transfer_CB->setToolTip(ui._direct_transfer_CB->toolTip().append(tr("\nWarning: In your File-Transfer option, you select allow direct download to No.")));
 			break ;
 

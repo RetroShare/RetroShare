@@ -1,30 +1,26 @@
+/*******************************************************************************
+ * libretroshare/src/gxs: rsgxsrequesttypes.h                                  *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2012 by Christopher Evi-Parker                               *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RSGXSREQUESTTYPES_H_
 #define RSGXSREQUESTTYPES_H_
-
-/*
- * libretroshare/src/gxs: rgxsrequesttypes.h
- *
- * Type introspect request types for data access request implementation
- *
- * Copyright 2012-2012 by Christopher Evi-Parker
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
 
 #include "retroshare/rstokenservice.h"
 #include "gxs/rsgds.h"
@@ -32,38 +28,49 @@
 
 struct GxsRequest
 {
-	GxsRequest() : token(0), reqTime(0), ansType(0), reqType(0), status(0) {}
+	GxsRequest() :
+	    token(0), reqTime(0), clientAnswerType(0), reqType(0),
+	    status(RsTokenService::FAILED) {}
 	virtual ~GxsRequest() {}
 
 	uint32_t token;
 	uint32_t reqTime;
 
-	RS_DEPRECATED uint32_t ansType; /// G10h4ck: This is of no use
+	uint32_t clientAnswerType; /// This is made available to the clients in order to keep track of why specific requests where sent..
 	uint32_t reqType;
 	RsTokReqOptions Options;
 
-	uint32_t status;
+	RsTokenService::GxsRequestStatus status;
+
+    virtual std::ostream& print(std::ostream& o) const = 0;
 };
+
+std::ostream& operator<<(std::ostream& o,const GxsRequest& g);
 
 class GroupMetaReq : public GxsRequest
 {
 public:
 	virtual ~GroupMetaReq();
 
+    virtual std::ostream& print(std::ostream& o) const override;
 public:
 	std::list<RsGxsGroupId> mGroupIds;
-	std::list<RsGxsGrpMetaData*> mGroupMetaData;
+	std::list<const RsGxsGrpMetaData*> mGroupMetaData;
 };
 
 class GroupIdReq : public GxsRequest
 {
 public:
+    virtual std::ostream& print(std::ostream& o) const override ;
+
 	std::list<RsGxsGroupId> mGroupIds;
 	std::list<RsGxsGroupId> mGroupIdResult;
 };
 class GroupSerializedDataReq : public GxsRequest
 {
 public:
+    virtual std::ostream& print(std::ostream& o) const override ;
+
 	std::list<RsGxsGroupId> mGroupIds;
 	std::list<RsNxsGrp*> mGroupData;
 };
@@ -73,6 +80,7 @@ class GroupDataReq : public GxsRequest
 public:
 	virtual ~GroupDataReq();
 
+	virtual std::ostream& print(std::ostream& o) const override;
 public:
 	std::list<RsGxsGroupId> mGroupIds;
 	std::list<RsNxsGrp*> mGroupData;
@@ -81,6 +89,8 @@ public:
 class MsgIdReq : public GxsRequest
 {
 public:
+    virtual std::ostream& print(std::ostream& o) const override ;
+
 	GxsMsgReq mMsgIds;
 	GxsMsgIdResult mMsgIdResult;
 };
@@ -89,6 +99,8 @@ class MsgMetaReq : public GxsRequest
 {
 public:
 	virtual ~MsgMetaReq();
+
+	virtual std::ostream& print(std::ostream& o) const override;
 
 public:
 	GxsMsgReq mMsgIds;
@@ -100,6 +112,7 @@ class MsgDataReq : public GxsRequest
 public:
 	virtual ~MsgDataReq();
 
+	virtual std::ostream& print(std::ostream& o) const override;
 public:
 	GxsMsgReq mMsgIds;
 	NxsMsgDataResult mMsgData;
@@ -108,12 +121,15 @@ public:
 class ServiceStatisticRequest: public GxsRequest
 {
 public:
+    virtual std::ostream& print(std::ostream& o) const override ;
 	GxsServiceStatistic mServiceStatistic;
 };
 
 struct GroupStatisticRequest: public GxsRequest
 {
 public:
+    virtual std::ostream& print(std::ostream& o) const override ;
+
 	RsGxsGroupId mGrpId;
 	GxsGroupStatistic mGroupStatistic;
 };
@@ -123,6 +139,7 @@ class MsgRelatedInfoReq : public GxsRequest
 public:
 	virtual ~MsgRelatedInfoReq();
 
+	std::ostream& print(std::ostream& o) const override;
 public:
 	std::vector<RsGxsGrpMsgIdPair> mMsgIds;
 	MsgRelatedIdResult mMsgIdResult;
@@ -133,6 +150,8 @@ public:
 class GroupSetFlagReq : public GxsRequest
 {
 public:
+    virtual std::ostream& print(std::ostream& o) const override ;
+
 	const static uint32_t FLAG_SUBSCRIBE;
 	const static uint32_t FLAG_STATUS;
 
@@ -147,6 +166,7 @@ class MessageSetFlagReq : public GxsRequest
 public:
 	const static uint32_t FLAG_STATUS;
 
+    virtual std::ostream& print(std::ostream& o) const override ;
 	uint8_t type;
 	uint32_t flag;
 	uint32_t flagMask;

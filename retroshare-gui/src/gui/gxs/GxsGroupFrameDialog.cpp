@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2008 Robert Fernie
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/gxs/GxsGroupFrameDialog.cpp                          *
+ *                                                                             *
+ * Copyright 2012-2013  by Robert Fernie      <retroshare.project@gmail.com>   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QMenu>
 #include <QMessageBox>
@@ -30,9 +29,13 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/RetroShareLink.h"
 #include "gui/gxs/GxsGroupShareKey.h"
+#include "gui/common/GroupTreeWidget.h"
 #include "gui/common/RSTreeWidget.h"
 #include "gui/notifyqt.h"
 #include "gui/common/UIStateHelper.h"
+#include "gui/common/UserNotify.h"
+#include "util/qtthreadsutils.h"
+#include "retroshare/rsgxsifacetypes.h"
 #include "GxsCommentDialog.h"
 
 //#define DEBUG_GROUPFRAMEDIALOG
@@ -43,9 +46,11 @@
 #define IMAGE_INFO           ":/images/info16.png"
 //#define IMAGE_GROUPAUTHD     ":/images/konv_message2.png"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
-#define IMAGE_EDIT           ":/images/edit_16.png"
+#define IMAGE_EDIT           ":/icons/png/pencil-edit-button.png"
 #define IMAGE_SHARE          ":/images/share-icon-16.png"
 #define IMAGE_TABNEW         ":/images/tab-new.png"
+#define IMAGE_DELETE         ":/images/delete.png"
+#define IMAGE_RETRIEVE       ":/images/edit_add24.png"
 #define IMAGE_COMMENT        ""
 
 #define TOKEN_TYPE_GROUP_SUMMARY    1
@@ -54,6 +59,8 @@
 #define TOKEN_TYPE_STATISTICS       4
 
 #define MAX_COMMENT_TITLE 32
+
+static const uint32_t DELAY_BETWEEN_GROUP_STATISTICS_UPDATE = 120; // do not update group statistics more often than once every 2 mins
 
 /*
  * Transformation Notes:
@@ -65,39 +72,46 @@
  */
 
 /** Constructor */
-GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *parent)
-: RsGxsUpdateBroadcastPage(ifaceImpl, parent)
+GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *parent,bool allow_dist_sync)
+: MainPage(parent)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui = new Ui::GxsGroupFrameDialog();
 	ui->setupUi(this);
 
+	mShouldUpdateMessageSummaryList = true;
+	mShouldUpdateGroupStatistics = false;
+    mLastGroupStatisticsUpdateTs=0;
 	mInitialized = false;
+	mDistSyncAllowed = allow_dist_sync;
 	mInFill = false;
 	mCountChildMsgs = false;
 	mYourGroups = NULL;
 	mSubscribedGroups = NULL;
 	mPopularGroups = NULL;
 	mOtherGroups = NULL;
-	mMessageWidget = NULL;
 
 	/* Setup Queue */
 	mInterface = ifaceImpl;
-	mTokenService = mInterface->getTokenService();
-	mTokenQueue = new TokenQueue(mInterface->getTokenService(), this);
 
 	/* Setup UI helper */
 	mStateHelper = new UIStateHelper(this);
 
 	mStateHelper->addWidget(TOKEN_TYPE_GROUP_SUMMARY, ui->loadingLabel, UISTATE_LOADING_VISIBLE);
+	mStateHelper->setLoading(TOKEN_TYPE_GROUP_SUMMARY, true);
 
 	connect(ui->groupTreeWidget, SIGNAL(treeCustomContextMenuRequested(QPoint)), this, SLOT(groupTreeCustomPopupMenu(QPoint)));
-    connect(ui->groupTreeWidget, SIGNAL(treeCurrentItemChanged(QString)), this, SLOT(changedGroup(QString)));
+    connect(ui->groupTreeWidget, SIGNAL(treeCurrentItemChanged(QString)), this, SLOT(changedCurrentGroup(QString)));
 	connect(ui->groupTreeWidget->treeWidget(), SIGNAL(signalMouseMiddleButtonClicked(QTreeWidgetItem*)), this, SLOT(groupTreeMiddleButtonClicked(QTreeWidgetItem*)));
 	connect(ui->messageTabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(messageTabCloseRequested(int)));
 	connect(ui->messageTabWidget, SIGNAL(currentChanged(int)), this, SLOT(messageTabChanged(int)));
 
 	connect(ui->todoPushButton, SIGNAL(clicked()), this, SLOT(todo()));
+
+	ui->groupTreeWidget->setDistSearchVisible(allow_dist_sync) ;
+
+    if(allow_dist_sync)
+		connect(ui->groupTreeWidget, SIGNAL(distantSearchRequested(const QString&)), this, SLOT(searchNetwork(const QString&)));
 
 	/* Set initial size the splitter */
 	ui->splitter->setStretchFactor(0, 0);
@@ -117,29 +131,37 @@ GxsGroupFrameDialog::~GxsGroupFrameDialog()
 	// save settings
 	processSettings(false);
 
-	delete(mTokenQueue);
 	delete(ui);
 }
 
+void GxsGroupFrameDialog::getGroupList(std::map<RsGxsGroupId, RsGroupMetaData> &group_list)
+{
+	group_list = mCachedGroupMetas ;
+
+	if(group_list.empty())
+		updateGroupSummary();
+    else
+        std::cerr << "************** Using cached GroupMetaData" << std::endl;
+}
 void GxsGroupFrameDialog::initUi()
 {
 	registerHelpButton(ui->helpButton, getHelpString(),pageName()) ;
 
-	ui->titleBarPixmap->setPixmap(QPixmap(icon(ICON_NAME)));
+    ui->titleBarPixmap->setPixmap(FilesDefs::getPixmapFromQtResourcePath(icon(ICON_NAME)));
 	ui->titleBarLabel->setText(text(TEXT_NAME));
 
 	/* Initialize group tree */
 	QToolButton *newGroupButton = new QToolButton(this);
-	newGroupButton->setIcon(QIcon(icon(ICON_NEW)));
+    newGroupButton->setIcon(FilesDefs::getIconFromQtResourcePath(icon(ICON_NEW)));
 	newGroupButton->setToolTip(text(TEXT_NEW));
 	connect(newGroupButton, SIGNAL(clicked()), this, SLOT(newGroup()));
 	ui->groupTreeWidget->addToolButton(newGroupButton);
 
 	/* Create group tree */
-	mYourGroups = ui->groupTreeWidget->addCategoryItem(text(TEXT_YOUR_GROUP), QIcon(icon(ICON_YOUR_GROUP)), true);
-	mSubscribedGroups = ui->groupTreeWidget->addCategoryItem(text(TEXT_SUBSCRIBED_GROUP), QIcon(icon(ICON_SUBSCRIBED_GROUP)), true);
-	mPopularGroups = ui->groupTreeWidget->addCategoryItem(text(TEXT_POPULAR_GROUP), QIcon(icon(ICON_POPULAR_GROUP)), false);
-	mOtherGroups = ui->groupTreeWidget->addCategoryItem(text(TEXT_OTHER_GROUP), QIcon(icon(ICON_OTHER_GROUP)), false);
+    mYourGroups = ui->groupTreeWidget->addCategoryItem(text(TEXT_YOUR_GROUP), FilesDefs::getIconFromQtResourcePath(icon(ICON_YOUR_GROUP)), true);
+    mSubscribedGroups = ui->groupTreeWidget->addCategoryItem(text(TEXT_SUBSCRIBED_GROUP), FilesDefs::getIconFromQtResourcePath(icon(ICON_SUBSCRIBED_GROUP)), true);
+    mPopularGroups = ui->groupTreeWidget->addCategoryItem(text(TEXT_POPULAR_GROUP), FilesDefs::getIconFromQtResourcePath(icon(ICON_POPULAR_GROUP)), false);
+    mOtherGroups = ui->groupTreeWidget->addCategoryItem(text(TEXT_OTHER_GROUP), FilesDefs::getIconFromQtResourcePath(icon(ICON_OTHER_GROUP)), false);
 
 	if (text(TEXT_TODO).isEmpty()) {
 		ui->todoPushButton->hide();
@@ -153,18 +175,56 @@ void GxsGroupFrameDialog::initUi()
 		connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
 		settingsChanged();
 	}
+
+	mInitialized = true;
 }
 
 void GxsGroupFrameDialog::showEvent(QShowEvent *event)
 {
-	if (!mInitialized) {
+	if (!mInitialized )
+	{
 		/* Problem: virtual methods cannot be used in constructor */
-		mInitialized = true;
 
 		initUi();
 	}
 
-	RsGxsUpdateBroadcastPage::showEvent(event);
+    uint32_t children =  mYourGroups->childCount() + mSubscribedGroups->childCount() + mPopularGroups->childCount() + mOtherGroups->childCount();
+
+    bool empty = mCachedGroupMetas.empty() || children==0;
+
+    updateDisplay( empty );
+}
+
+void GxsGroupFrameDialog::paintEvent(QPaintEvent *pe)
+{
+	if(mShouldUpdateMessageSummaryList)
+	{
+		if(!mGroupIdsSummaryToUpdate.empty())
+			for(auto& group_id: mGroupIdsSummaryToUpdate)
+				updateMessageSummaryListReal(group_id);
+		else
+			updateMessageSummaryListReal(RsGxsGroupId());
+
+		mShouldUpdateMessageSummaryList = false;
+		mGroupIdsSummaryToUpdate.clear();
+	}
+
+    rstime_t now = time(nullptr);
+
+    if(mShouldUpdateGroupStatistics &&  now > DELAY_BETWEEN_GROUP_STATISTICS_UPDATE + mLastGroupStatisticsUpdateTs)
+    {
+        // This mechanism allows to gather multiple updateGroupStatistics events at once and not send too many of them at the same time.
+        // it avoids re-loadign all the group everytime a friend sends new statistics.
+
+        for(auto& groupId: mGroupStatisticsToUpdate)
+			updateGroupStatisticsReal(groupId);
+
+        mShouldUpdateGroupStatistics = false;
+        mLastGroupStatisticsUpdateTs = time(nullptr);
+        mGroupStatisticsToUpdate.clear();
+    }
+
+    MainPage::paintEvent(pe);
 }
 
 void GxsGroupFrameDialog::processSettings(bool load)
@@ -187,9 +247,16 @@ void GxsGroupFrameDialog::processSettings(bool load)
 		Settings->setValue("Splitter", ui->splitter->saveState());
 	}
 
-	ui->groupTreeWidget->processSettings(Settings, load);
+	ui->groupTreeWidget->processSettings(load);
 
 	Settings->endGroup();
+}
+
+bool GxsGroupFrameDialog::useTabs()
+{
+	GroupFrameSettings groupFrameSettings;
+
+	return Settings->getGroupFrameSettings(groupFrameSettingsType(), groupFrameSettings)  && groupFrameSettings.mOpenAllInNewTab;
 }
 
 void GxsGroupFrameDialog::settingsChanged()
@@ -203,17 +270,15 @@ void GxsGroupFrameDialog::settingsChanged()
 
 void GxsGroupFrameDialog::setSingleTab(bool singleTab)
 {
-	if (singleTab) {
-		if (!mMessageWidget) {
-			mMessageWidget = createMessageWidget(RsGxsGroupId());
-			// remove close button of the the first tab
-			ui->messageTabWidget->hideCloseButton(ui->messageTabWidget->indexOf(mMessageWidget));
-		}
-	} else {
-		if (mMessageWidget) {
-			delete(mMessageWidget);
-			mMessageWidget = NULL;
-		}
+	if (singleTab)
+    {
+        while(ui->messageTabWidget->count() > 1)
+        {
+            auto w = ui->messageTabWidget->widget(0) ;
+            ui->messageTabWidget->removeTab(0);
+            delete w;
+        }
+		ui->messageTabWidget->hideCloseButton(0);
 	}
 }
 
@@ -224,19 +289,59 @@ void GxsGroupFrameDialog::setHideTabBarWithOneTab(bool hideTabBarWithOneTab)
 
 void GxsGroupFrameDialog::updateDisplay(bool complete)
 {
-	if (complete || !getGrpIds().empty() || !getGrpIdsMeta().empty()) {
-		/* Update group list */
-		requestGroupSummary();
-	} else {
-		/* Update all groups of changed messages */
-		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgIds;
-		getAllMsgIds(msgIds);
+    if(complete)    // || !getGrpIds().empty() || !getGrpIdsMeta().empty()) {
+		updateGroupSummary(); /* Update group list */
 
-		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator msgIt;
-		for (msgIt = msgIds.begin(); msgIt != msgIds.end(); ++msgIt) {
-			updateMessageSummaryList(msgIt->first);
-		}
+//    updateSearchResults() ;
+}
+
+void GxsGroupFrameDialog::updateSearchResults()
+{
+    for(auto& it:mSearchGroupsItems)
+        updateSearchResults(it.first);
+}
+
+void GxsGroupFrameDialog::updateSearchResults(const TurtleRequestId& sid)
+{
+	std::cerr << "updating search ID " << std::hex << sid << std::dec << std::endl;
+
+	std::map<RsGxsGroupId,RsGxsGroupSearchResults> group_infos;
+
+	getDistantSearchResults(sid,group_infos) ;
+
+	std::cerr << "retrieved " << std::endl;
+
+	auto it2 = mSearchGroupsItems.find(sid);
+
+    if(it2 == mSearchGroupsItems.end())
+    {
+        std::cerr << "(EE) received a channel group turtle search result with ID " << sid << " but no item is known for this search" << std::endl;
+        return;
+    }
+
+	QList<GroupItemInfo> group_items ;
+
+	for(auto it3(group_infos.begin());it3!=group_infos.end();++it3)
+	{
+		std::cerr << "  adding group " << it3->first << " " << it3->second.mGroupId << " \"" << it3->second.mGroupName << "\"" << std::endl;
+        for(auto s:it3->second.mSearchContexts)
+			std::cerr << "    Context string \"" << s << "\"" << std::endl;
+
+		GroupItemInfo i;
+		i.id             = QString(it3->second.mGroupId.toStdString().c_str());
+		i.name           = QString::fromUtf8(it3->second.mGroupName.c_str());
+		i.popularity     = 0; // could be set to the number of hits
+		i.lastpost       = QDateTime::fromTime_t(it3->second.mLastMessageTs);
+		i.subscribeFlags = 0; // irrelevant here
+		i.publishKey     = false ; // IS_GROUP_PUBLISHER(groupInfo.mSubscribeFlags);
+		i.adminKey       = false ; // IS_GROUP_ADMIN(groupInfo.mSubscribeFlags);
+		i.max_visible_posts = it3->second.mNumberOfMessages;
+		i.context_strings = it3->second.mSearchContexts;
+
+		group_items.push_back(i);
 	}
+
+	ui->groupTreeWidget->fillGroupItems(it2->second, group_items);
 }
 
 void GxsGroupFrameDialog::todo()
@@ -244,87 +349,171 @@ void GxsGroupFrameDialog::todo()
 	QMessageBox::information(this, "Todo", text(TEXT_TODO));
 }
 
+void GxsGroupFrameDialog::removeCurrentSearch()
+{
+    QAction *action = dynamic_cast<QAction*>(sender()) ;
+
+    if(!action)
+        return ;
+
+    TurtleRequestId search_request_id = action->data().toUInt();
+
+    auto it = mSearchGroupsItems.find(search_request_id) ;
+
+    if(it == mSearchGroupsItems.end())
+        return ;
+
+    ui->groupTreeWidget->removeSearchItem(it->second) ;
+    mSearchGroupsItems.erase(it);
+
+    mKnownGroups.erase(search_request_id);
+
+    clearDistantSearchResults(search_request_id);
+}
+
+void GxsGroupFrameDialog::removeAllSearches()
+{
+    for(auto it(mSearchGroupsItems.begin());it!=mSearchGroupsItems.end();++it)
+    {
+        QString group_id;
+        TurtleRequestId search_request_id;
+
+        if(ui->groupTreeWidget->isSearchRequestResultItem(it->second,group_id,search_request_id))
+			clearDistantSearchResults(search_request_id);
+
+		ui->groupTreeWidget->removeSearchItem(it->second) ;
+    }
+    mSearchGroupsItems.clear();
+    mKnownGroups.clear();
+}
+
+// Same function than the one in rsgxsnetservice.cc, so that all times are automatically consistent
+
+uint32_t GxsGroupFrameDialog::checkDelay(uint32_t time_in_secs)
+{
+    if(time_in_secs <    1 * 86400)
+        return 0        ;
+    if(time_in_secs <=  10 * 86400)
+        return 5 * 86400;
+    if(time_in_secs <=  20 * 86400)
+        return 15 * 86400;
+    if(time_in_secs <=  60 * 86400)
+        return 30 * 86400;
+    if(time_in_secs <= 120 * 86400)
+        return 90 * 86400;
+    if(time_in_secs <= 250 * 86400)
+        return 180 * 86400;
+
+   return 365 * 86400;
+}
+
 void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 {
+	// First separately handle the case of search top level items
+
+	TurtleRequestId search_request_id = 0 ;
+
+	if(ui->groupTreeWidget->isSearchRequestItem(point,search_request_id))
+	{
+		QMenu contextMnu(this);
+
+        contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_DELETE), tr("Remove this search"), this, SLOT(removeCurrentSearch()))->setData(search_request_id);
+        contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_DELETE), tr("Remove all searches"), this, SLOT(removeAllSearches()));
+		contextMnu.exec(QCursor::pos());
+		return ;
+	}
+
+    // Then check whether we have a searched item, or a normal group
+
+    QString group_id_s ;
+
+	if(ui->groupTreeWidget->isSearchRequestResult(point,group_id_s,search_request_id))
+    {
+		QMenu contextMnu(this);
+
+        contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_RETRIEVE), tr("Request data"), this, SLOT(distantRequestGroupData()))->setData(group_id_s);
+		contextMnu.exec(QCursor::pos());
+		return ;
+    }
+
 	QString id = ui->groupTreeWidget->itemIdAt(point);
 	if (id.isEmpty()) return;
 
 	mGroupId = RsGxsGroupId(id.toStdString());
 	int subscribeFlags = ui->groupTreeWidget->subscribeFlags(QString::fromStdString(mGroupId.toStdString()));
 
-	bool isAdmin = IS_GROUP_ADMIN(subscribeFlags);
-	bool isPublisher = IS_GROUP_PUBLISHER(subscribeFlags);
+	bool isAdmin      = IS_GROUP_ADMIN(subscribeFlags);
+	bool isPublisher  = IS_GROUP_PUBLISHER(subscribeFlags);
 	bool isSubscribed = IS_GROUP_SUBSCRIBED(subscribeFlags);
 
 	QMenu contextMnu(this);
-
 	QAction *action;
-	
-	if (mMessageWidget) {
-		action = contextMnu.addAction(QIcon(IMAGE_TABNEW), tr("Open in new tab"), this, SLOT(openInNewTab()));
-		if (mGroupId.isNull() || messageWidget(mGroupId, true)) {
-			action->setEnabled(false);
-		}
-	}
+
+    action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_TABNEW), tr("Open in new tab"), this, SLOT(openInNewTab()));
+
+	if(mGroupId.isNull()) // dont enable the open in tab if a tab is already here
+		action->setEnabled(false);
 
 	if (isSubscribed) {
-		action = contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Unsubscribe"), this, SLOT(unsubscribeGroup()));
+        action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_UNSUBSCRIBE), tr("Unsubscribe"), this, SLOT(unsubscribeGroup()));
 		action->setEnabled (!mGroupId.isNull() && IS_GROUP_SUBSCRIBED(subscribeFlags));
 	} else {
-		action = contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Subscribe"), this, SLOT(subscribeGroup()));
+        action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_SUBSCRIBE), tr("Subscribe"), this, SLOT(subscribeGroup()));
 		action->setDisabled (mGroupId.isNull() || IS_GROUP_SUBSCRIBED(subscribeFlags));
 	}
 
 	contextMnu.addSeparator();
 
-	contextMnu.addAction(QIcon(icon(ICON_NEW)), text(TEXT_NEW), this, SLOT(newGroup()));
+    contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(icon(ICON_NEW)), text(TEXT_NEW), this, SLOT(newGroup()));
 
-	action = contextMnu.addAction(QIcon(IMAGE_INFO), tr("Show Details"), this, SLOT(showGroupDetails()));
+    action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_INFO), tr("Show Details"), this, SLOT(showGroupDetails()));
 	action->setEnabled (!mGroupId.isNull());
 
-	action = contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Details"), this, SLOT(editGroupDetails()));
+    action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EDIT), tr("Edit Details"), this, SLOT(editGroupDetails()));
 	action->setEnabled (!mGroupId.isNull() && isAdmin);
 
-    uint32_t current_store_time = mInterface->getStoragePeriod(mGroupId)/86400 ;
-    uint32_t current_sync_time  = mInterface->getSyncPeriod(mGroupId)/86400 ;
+	uint32_t current_store_time = checkDelay(mInterface->getStoragePeriod(mGroupId))/86400 ;
+	uint32_t current_sync_time  = checkDelay(mInterface->getSyncPeriod(mGroupId))/86400 ;
 
-    std::cerr << "Got sync=" << current_sync_time << ". store=" << current_store_time << std::endl;
-    QAction *actnn = NULL;
+	std::cerr << "Got sync=" << current_sync_time << ". store=" << current_store_time << std::endl;
+	QAction *actnn = NULL;
 
 	QMenu *ctxMenu2 = contextMnu.addMenu(tr("Synchronise posts of last...")) ;
-    actnn = ctxMenu2->addAction(tr(" 5 days"     ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(  5)) ; if(current_sync_time ==  5) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-	actnn = ctxMenu2->addAction(tr(" 2 weeks"    ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 15)) ; if(current_sync_time == 15) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-	actnn = ctxMenu2->addAction(tr(" 1 month"    ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 30)) ; if(current_sync_time == 30) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-	actnn = ctxMenu2->addAction(tr(" 3 months"   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 90)) ; if(current_sync_time == 90) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-	actnn = ctxMenu2->addAction(tr(" 6 months"   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(180)) ; if(current_sync_time ==180) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-	actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(372)) ; if(current_sync_time ==372) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-	actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_sync_time ==  0) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+    actnn = ctxMenu2->addAction(tr(" 5 days"     ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(  5)) ; if(current_sync_time ==  5) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+    actnn = ctxMenu2->addAction(tr(" 2 weeks"    ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 15)) ; if(current_sync_time == 15) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+    actnn = ctxMenu2->addAction(tr(" 1 month"    ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 30)) ; if(current_sync_time == 30) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+    actnn = ctxMenu2->addAction(tr(" 3 months"   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 90)) ; if(current_sync_time == 90) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+    actnn = ctxMenu2->addAction(tr(" 6 months"   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(180)) ; if(current_sync_time ==180) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+    actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(365)) ; if(current_sync_time ==365) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+    actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_sync_time ==  0) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+    ctxMenu2->setEnabled(isSubscribed);
 
-    ctxMenu2 = contextMnu.addMenu(tr("Store posts for at most...")) ;
-    actnn = ctxMenu2->addAction(tr(" 5 days"     ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  5)) ; if(current_store_time ==  5) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-    actnn = ctxMenu2->addAction(tr(" 2 weeks"    ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 15)) ; if(current_store_time == 15) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-    actnn = ctxMenu2->addAction(tr(" 1 month"    ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 30)) ; if(current_store_time == 30) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-    actnn = ctxMenu2->addAction(tr(" 3 months"   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 90)) ; if(current_store_time == 90) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-    actnn = ctxMenu2->addAction(tr(" 6 months"   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(180)) ; if(current_store_time ==180) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-    actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(372)) ; if(current_store_time ==372) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-    actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_store_time ==  0) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+	ctxMenu2 = contextMnu.addMenu(tr("Store posts for at most...")) ;
+    actnn = ctxMenu2->addAction(tr(" 5 days"     ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  5)) ; if(current_store_time ==  5) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+    actnn = ctxMenu2->addAction(tr(" 2 weeks"    ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 15)) ; if(current_store_time == 15) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+    actnn = ctxMenu2->addAction(tr(" 1 month"    ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 30)) ; if(current_store_time == 30) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+    actnn = ctxMenu2->addAction(tr(" 3 months"   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 90)) ; if(current_store_time == 90) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+    actnn = ctxMenu2->addAction(tr(" 6 months"   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(180)) ; if(current_store_time ==180) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+    actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(365)) ; if(current_store_time ==365) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+    actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_store_time ==  0) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+    ctxMenu2->setEnabled(isSubscribed);
 
 	if (shareKeyType()) {
-        action = contextMnu.addAction(QIcon(IMAGE_SHARE), tr("Share publish permissions"), this, SLOT(sharePublishKey()));
-        action->setEnabled(!mGroupId.isNull() && isPublisher);
+        action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_SHARE), tr("Share publish permissions..."), this, SLOT(sharePublishKey()));
+		action->setEnabled(!mGroupId.isNull() && isPublisher);
 	}
 
 	if (getLinkType() != RetroShareLink::TYPE_UNKNOWN) {
-		action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyGroupLink()));
+        action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyGroupLink()));
 		action->setEnabled(!mGroupId.isNull());
 	}
 
 	contextMnu.addSeparator();
 
-	action = contextMnu.addAction(QIcon(":/images/message-mail-read.png"), tr("Mark all as read"), this, SLOT(markMsgAsRead()));
+    action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/message-mail-read.png"), tr("Mark all as read"), this, SLOT(markMsgAsRead()));
 	action->setEnabled (!mGroupId.isNull() && isSubscribed);
 
-	action = contextMnu.addAction(QIcon(":/images/message-mail.png"), tr("Mark all as unread"), this, SLOT(markMsgAsUnread()));
+    action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/message-mail.png"), tr("Mark all as unread"), this, SLOT(markMsgAsUnread()));
 	action->setEnabled (!mGroupId.isNull() && isSubscribed);
 
 	/* Add special actions */
@@ -334,6 +523,9 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 		contextMnu.addSeparator();
 		contextMnu.addActions(actions);
 	}
+
+	//Add Standard Menu
+	ui->groupTreeWidget->treeWidget()->createStandardContextMenu(&contextMnu);
 
 	contextMnu.exec(QCursor::pos());
 }
@@ -413,7 +605,8 @@ void GxsGroupFrameDialog::restoreGroupKeys(void)
 
 void GxsGroupFrameDialog::newGroup()
 {
-	GxsGroupDialog *dialog = createNewGroupDialog(mTokenQueue);
+	GxsGroupDialog *dialog = createNewGroupDialog();
+
 	if (!dialog) {
 		return;
 	}
@@ -440,8 +633,6 @@ void GxsGroupFrameDialog::groupSubscribe(bool subscribe)
 
 	uint32_t token;
 	mInterface->subscribeToGroup(token, mGroupId, subscribe);
-// Replaced by meta data changed
-//	mTokenQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, TOKEN_TYPE_SUBSCRIBE_CHANGE);
 }
 
 void GxsGroupFrameDialog::showGroupDetails()
@@ -450,7 +641,7 @@ void GxsGroupFrameDialog::showGroupDetails()
 		return;
 	}
 
-	GxsGroupDialog *dialog = createGroupDialog(mTokenQueue, mInterface->getTokenService(), GxsGroupDialog::MODE_SHOW, mGroupId);
+	GxsGroupDialog *dialog = createGroupDialog(GxsGroupDialog::MODE_SHOW, mGroupId);
 	if (!dialog) {
 		return;
 	}
@@ -465,7 +656,7 @@ void GxsGroupFrameDialog::editGroupDetails()
 		return;
 	}
 
-	GxsGroupDialog *dialog = createGroupDialog(mTokenQueue, mInterface->getTokenService(), GxsGroupDialog::MODE_EDIT, mGroupId);
+	GxsGroupDialog *dialog = createGroupDialog(GxsGroupDialog::MODE_EDIT, mGroupId);
 	if (!dialog) {
 		return;
 	}
@@ -499,7 +690,7 @@ bool GxsGroupFrameDialog::getCurrentGroupName(QString& name)
 
 void GxsGroupFrameDialog::markMsgAsRead()
 {
-	GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId, false);
+	GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId);
 	if (msgWidget) {
 		msgWidget->setAllMessagesRead(true);
 	}
@@ -507,7 +698,7 @@ void GxsGroupFrameDialog::markMsgAsRead()
 
 void GxsGroupFrameDialog::markMsgAsUnread()
 {
-	GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId, false);
+	GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId);
 	if (msgWidget) {
 		msgWidget->setAllMessagesRead(false);
 	}
@@ -543,7 +734,7 @@ void GxsGroupFrameDialog::loadComment(const RsGxsGroupId &grpId, const QVector<R
 			comments += "...";
 		}
 
-		commentDialog = new GxsCommentDialog(this, mInterface->getTokenService(), commentService);
+        commentDialog = new GxsCommentDialog(this,RsGxsId(), mInterface->getTokenService(), commentService);
 
 		QWidget *commentHeader = createCommentHeaderWidget(grpId, most_recent_msgId);
 		if (commentHeader) {
@@ -557,7 +748,7 @@ void GxsGroupFrameDialog::loadComment(const RsGxsGroupId &grpId, const QVector<R
 		commentDialog->commentLoad(grpId, msgv,most_recent_msgId);
 
 		int index = ui->messageTabWidget->addTab(commentDialog, comments);
-		ui->messageTabWidget->setTabIcon(index, QIcon(IMAGE_COMMENT));
+        ui->messageTabWidget->setTabIcon(index, FilesDefs::getIconFromQtResourcePath(IMAGE_COMMENT));
 	}
 
 	ui->messageTabWidget->setCurrentWidget(commentDialog);
@@ -582,10 +773,10 @@ bool GxsGroupFrameDialog::navigate(const RsGxsGroupId &groupId, const RsGxsMessa
 		return false;
 	}
 
-	changedGroup(groupIdString);
+	changedCurrentGroup(groupIdString);
 
 	/* search exisiting tab */
-	GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId, false);
+	GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId);
 	if (!msgWidget) {
 		return false;
 	}
@@ -597,17 +788,16 @@ bool GxsGroupFrameDialog::navigate(const RsGxsGroupId &groupId, const RsGxsMessa
 	return msgWidget->navigate(msgId);
 }
 
-GxsMessageFrameWidget *GxsGroupFrameDialog::messageWidget(const RsGxsGroupId &groupId, bool ownTab)
+GxsMessageFrameWidget *GxsGroupFrameDialog::messageWidget(const RsGxsGroupId &groupId)
 {
 	int tabCount = ui->messageTabWidget->count();
-	for (int index = 0; index < tabCount; ++index) {
+
+	for (int index = 0; index < tabCount; ++index)
+    {
 		GxsMessageFrameWidget *childWidget = dynamic_cast<GxsMessageFrameWidget*>(ui->messageTabWidget->widget(index));
-		if (ownTab && mMessageWidget && childWidget == mMessageWidget) {
-			continue;
-		}
-		if (childWidget && childWidget->groupId() == groupId) {
+
+		if (childWidget && childWidget->groupId() == groupId)
 			return childWidget;
-		}
 	}
 
 	return NULL;
@@ -616,9 +806,9 @@ GxsMessageFrameWidget *GxsGroupFrameDialog::messageWidget(const RsGxsGroupId &gr
 GxsMessageFrameWidget *GxsGroupFrameDialog::createMessageWidget(const RsGxsGroupId &groupId)
 {
 	GxsMessageFrameWidget *msgWidget = createMessageFrameWidget(groupId);
-	if (!msgWidget) {
+
+	if (!msgWidget)
 		return NULL;
-	}
 
 	int index = ui->messageTabWidget->addTab(msgWidget, msgWidget->groupName(true));
 	ui->messageTabWidget->setTabIcon(index, msgWidget->groupIcon());
@@ -643,32 +833,44 @@ GxsCommentDialog *GxsGroupFrameDialog::commentWidget(const RsGxsMessageId& msgId
 	return NULL;
 }
 
-void GxsGroupFrameDialog::changedGroup(const QString &groupId)
+void GxsGroupFrameDialog::changedCurrentGroup(const QString& groupId)
 {
 	if (mInFill) {
 		return;
 	}
 
-	mGroupId = RsGxsGroupId(groupId.toStdString());
-	if (mGroupId.isNull()) {
+	if (groupId.isEmpty())
+    {
+        auto w = currentWidget();
+
+        if(w)
+			w->setGroupId(RsGxsGroupId());
+
 		return;
 	}
 
+	mGroupId = RsGxsGroupId(groupId.toStdString());
+
+	if (mGroupId.isNull())
+		return;
+
 	/* search exisiting tab */
-	GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId, true);
+	GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId);
 
-	if (!msgWidget) {
-		if (mMessageWidget) {
-			/* not found, use standard tab */
-			msgWidget = mMessageWidget;
-			msgWidget->setGroupId(mGroupId);
-		} else {
-			/* create new tab */
-			msgWidget = createMessageWidget(mGroupId);
+    // check that we have at least one tab
+
+	if(msgWidget)
+		ui->messageTabWidget->setCurrentWidget(msgWidget);
+    else
+    {
+        if(useTabs() || ui->messageTabWidget->count()==0)
+        {
+			msgWidget = createMessageWidget(RsGxsGroupId(groupId.toStdString()));
+			ui->messageTabWidget->setCurrentWidget(msgWidget);
 		}
+        else
+			currentWidget()->setGroupId(mGroupId);
 	}
-
-	ui->messageTabWidget->setCurrentWidget(msgWidget);
 }
 
 void GxsGroupFrameDialog::groupTreeMiddleButtonClicked(QTreeWidgetItem *item)
@@ -688,37 +890,31 @@ void GxsGroupFrameDialog::openGroupInNewTab(const RsGxsGroupId &groupId)
 	}
 
 	/* search exisiting tab */
-	GxsMessageFrameWidget *msgWidget = messageWidget(groupId, true);
-	if (!msgWidget) {
-		/* not found, create new tab */
-		msgWidget = createMessageWidget(groupId);
-	}
+	GxsMessageFrameWidget *msgWidget = createMessageWidget(groupId);
 
 	ui->messageTabWidget->setCurrentWidget(msgWidget);
 }
 
 void GxsGroupFrameDialog::messageTabCloseRequested(int index)
 {
-	QWidget *widget = ui->messageTabWidget->widget(index);
-	if (!widget) {
+	if(ui->messageTabWidget->count() == 1) /* Don't close single tab */
 		return;
-	}
 
-	GxsMessageFrameWidget *msgWidget = dynamic_cast<GxsMessageFrameWidget*>(widget);
-	if (msgWidget && msgWidget == mMessageWidget) {
-		/* Don't close single tab */
-		return;
-	}
+	GxsMessageFrameWidget *msgWidget = dynamic_cast<GxsMessageFrameWidget*>(ui->messageTabWidget->widget(index));
+	delete msgWidget ;
+}
 
-	delete(widget);
+GxsMessageFrameWidget *GxsGroupFrameDialog::currentWidget() const
+{
+    return dynamic_cast<GxsMessageFrameWidget*>(ui->messageTabWidget->widget(ui->messageTabWidget->currentIndex()));
 }
 
 void GxsGroupFrameDialog::messageTabChanged(int index)
 {
 	GxsMessageFrameWidget *msgWidget = dynamic_cast<GxsMessageFrameWidget*>(ui->messageTabWidget->widget(index));
-	if (!msgWidget) {
+
+	if (!msgWidget)
 		return;
-	}
 
 	ui->groupTreeWidget->activateId(QString::fromStdString(msgWidget->groupId().toStdString()), false);
 }
@@ -755,30 +951,30 @@ void GxsGroupFrameDialog::messageTabWaitingChanged(QWidget *widget)
 }
 
 ///***** INSERT GROUP LISTS *****/
-void GxsGroupFrameDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata */*userdata*/)
+void GxsGroupFrameDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupInfo, GroupItemInfo &groupItemInfo)
 {
-	groupItemInfo.id = QString::fromStdString(groupInfo.mGroupId.toStdString());
-	groupItemInfo.name = QString::fromUtf8(groupInfo.mGroupName.c_str());
-	groupItemInfo.popularity = groupInfo.mPop;
-	groupItemInfo.lastpost = QDateTime::fromTime_t(groupInfo.mLastPost);
-	groupItemInfo.subscribeFlags = groupInfo.mSubscribeFlags;
-	groupItemInfo.publishKey = IS_GROUP_PUBLISHER(groupInfo.mSubscribeFlags) ;
-	groupItemInfo.adminKey = IS_GROUP_ADMIN(groupInfo.mSubscribeFlags) ;
-	groupItemInfo.max_visible_posts = groupInfo.mVisibleMsgCount ;
+	groupItemInfo.id = QString::fromStdString(groupInfo->mMeta.mGroupId.toStdString());
+	groupItemInfo.name = QString::fromUtf8(groupInfo->mMeta.mGroupName.c_str());
+	groupItemInfo.popularity = groupInfo->mMeta.mPop;
+	groupItemInfo.lastpost = QDateTime::fromTime_t(groupInfo->mMeta.mLastPost);
+	groupItemInfo.subscribeFlags = groupInfo->mMeta.mSubscribeFlags;
+	groupItemInfo.publishKey = IS_GROUP_PUBLISHER(groupInfo->mMeta.mSubscribeFlags) ;
+	groupItemInfo.adminKey = IS_GROUP_ADMIN(groupInfo->mMeta.mSubscribeFlags) ;
+	groupItemInfo.max_visible_posts = groupInfo->mMeta.mVisibleMsgCount ;
 
 #if TOGXS
 	if (groupInfo.mGroupFlags & RS_DISTRIB_AUTHEN_REQ) {
 		groupItemInfo.name += " (" + tr("AUTHD") + ")";
-		groupItemInfo.icon = QIcon(IMAGE_GROUPAUTHD);
+        groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(IMAGE_GROUPAUTHD);
 	}
 	else
 #endif
 	{
-		groupItemInfo.icon = QIcon(icon(ICON_DEFAULT));
+        groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(icon(ICON_DEFAULT));
 	}
 }
 
-void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGroupMetaData> &groupList, const RsUserdata *userdata)
+void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGxsGenericGroupData*>& groupList)
 {
 	if (!mInitialized) {
 		return;
@@ -786,65 +982,50 @@ void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGroupMetaData> &gro
 
 	mInFill = true;
 
-	std::list<RsGroupMetaData>::const_iterator it;
-
 	QList<GroupItemInfo> adminList;
 	QList<GroupItemInfo> subList;
 	QList<GroupItemInfo> popList;
 	QList<GroupItemInfo> otherList;
 	std::multimap<uint32_t, GroupItemInfo> popMap;
 
-	for (it = groupList.begin(); it != groupList.end(); ++it) {
+	for (auto& g:groupList)
+    {
 		/* sort it into Publish (Own), Subscribed, Popular and Other */
-		uint32_t flags = it->mSubscribeFlags;
+		uint32_t flags = g->mMeta.mSubscribeFlags;
 
 		GroupItemInfo groupItemInfo;
-		groupInfoToGroupItemInfo(*it, groupItemInfo, userdata);
+		groupInfoToGroupItemInfo(g, groupItemInfo);
 
 		if (IS_GROUP_SUBSCRIBED(flags))
 		{
 			if (IS_GROUP_ADMIN(flags))
-			{
 				adminList.push_back(groupItemInfo);
-			}
 			else
-			{
-				/* subscribed group */
-				subList.push_back(groupItemInfo);
-			}
+				subList.push_back(groupItemInfo); /* subscribed group */
 		}
 		else
-		{
-			//popMap.insert(std::make_pair(it->mPop, groupItemInfo)); /* rate the others by popularity */
-			popMap.insert(std::make_pair(it->mLastPost, groupItemInfo)); /* rate the others by time of last post */
-		}
+        {
+			popMap.insert(std::make_pair(g->mMeta.mLastPost, groupItemInfo)); /* rate the others by time of last post */
+        }
 	}
 
 	/* iterate backwards through popMap - take the top 5 or 10% of list */
 	uint32_t popCount = 5;
 	if (popCount < popMap.size() / 10)
-	{
 		popCount = popMap.size() / 10;
-	}
 
 	uint32_t i = 0;
 	std::multimap<uint32_t, GroupItemInfo>::reverse_iterator rit;
-	//uint32_t popLimit = 0;
-	//for(rit = popMap.rbegin(); ((rit != popMap.rend()) && (i < popCount)); ++rit, ++i) ;
-	//if (rit != popMap.rend()) {
-	//	popLimit = rit->first;
-	//}
 
-	for (rit = popMap.rbegin(); rit != popMap.rend(); ++rit,++i) {
-		//if (rit->second.popularity > (int) popLimit) {
+	for (rit = popMap.rbegin(); rit != popMap.rend(); ++rit,++i)
 		if(i < popCount)
 			popList.append(rit->second);
 		else
 			otherList.append(rit->second);
-	}
 
 	/* now we can add them in as a tree! */
 	ui->groupTreeWidget->fillGroupItems(mYourGroups, adminList);
+	mYourGroups->setText(2, QString::number(mYourGroups->childCount())); 
 	ui->groupTreeWidget->fillGroupItems(mSubscribedGroups, subList);
 	mSubscribedGroups->setText(2, QString::number(mSubscribedGroups->childCount())); // 1 COLUMN_UNREAD 2 COLUMN_POPULARITY
 	ui->groupTreeWidget->fillGroupItems(mPopularGroups, popList);
@@ -855,20 +1036,32 @@ void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGroupMetaData> &gro
 	mInFill = false;
 
 	/* Re-fill group */
-	if (!ui->groupTreeWidget->activateId(QString::fromStdString(mGroupId.toStdString()), true)) {
+	if (!ui->groupTreeWidget->activateId(QString::fromStdString(mGroupId.toStdString()), true))
 		mGroupId.clear();
-	}
 
 	updateMessageSummaryList(RsGxsGroupId());
 }
 
 void GxsGroupFrameDialog::updateMessageSummaryList(RsGxsGroupId groupId)
 {
+    // groupId.isNull() means that we need to update all groups so we clear up the list of groups to update.
+
+    if(!groupId.isNull())
+        mGroupIdsSummaryToUpdate.insert(groupId);
+    else
+        mGroupIdsSummaryToUpdate.clear();
+
+    mShouldUpdateMessageSummaryList = true;
+}
+
+void GxsGroupFrameDialog::updateMessageSummaryListReal(RsGxsGroupId groupId)
+{
 	if (!mInitialized) {
 		return;
 	}
 
-	if (groupId.isNull()) {
+	if (groupId.isNull())
+    {
 		QTreeWidgetItem *items[2] = { mYourGroups, mSubscribedGroups };
 		for (int item = 0; item < 2; ++item) {
 			int child;
@@ -876,188 +1069,173 @@ void GxsGroupFrameDialog::updateMessageSummaryList(RsGxsGroupId groupId)
 			for (child = 0; child < childCount; ++child) {
 				QTreeWidgetItem *childItem = items[item]->child(child);
 				QString childId = ui->groupTreeWidget->itemId(childItem);
-				if (childId.isEmpty()) {
+				if (childId.isEmpty())
 					continue;
-				}
 
-				requestGroupStatistics(RsGxsGroupId(childId.toLatin1().constData()));
+				updateGroupStatistics(RsGxsGroupId(childId.toLatin1().constData()));
 			}
 		}
-	} else {
-		requestGroupStatistics(groupId);
 	}
+    else
+		updateGroupStatistics(groupId);
 }
 
 /*********************** **** **** **** ***********************/
 /** Request / Response of Data ********************************/
 /*********************** **** **** **** ***********************/
 
-void GxsGroupFrameDialog::requestGroupSummary()
+void GxsGroupFrameDialog::updateGroupSummary()
 {
-	mStateHelper->setLoading(TOKEN_TYPE_GROUP_SUMMARY, true);
-
-#ifdef DEBUG_GROUPFRAMEDIALOG
-	std::cerr << "GxsGroupFrameDialog::requestGroupSummary()";
-	std::cerr << std::endl;
-#endif
-
-	mTokenQueue->cancelActiveRequestTokens(TOKEN_TYPE_GROUP_SUMMARY);
-
-	RsTokReqOptions opts;
-	opts.mReqType = requestGroupSummaryType();
-
-	uint32_t token;
-	mTokenQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, TOKEN_TYPE_GROUP_SUMMARY);
-}
-
-void GxsGroupFrameDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata *&/*userdata*/)
-{
-	/* Default implementation for request type GXS_REQUEST_TYPE_GROUP_META */
-	mInterface->getGroupSummary(token, groupInfo);
-}
-
-void GxsGroupFrameDialog::loadGroupSummary(const uint32_t &token)
-{
-#ifdef DEBUG_GROUPFRAMEDIALOG
-	std::cerr << "GxsGroupFrameDialog::loadGroupSummary()";
-	std::cerr << std::endl;
-#endif
-
-	std::list<RsGroupMetaData> groupInfo;
-	RsUserdata *userdata = NULL;
-	loadGroupSummaryToken(token, groupInfo, userdata);
-
-	insertGroupsData(groupInfo, userdata);
-
-	mStateHelper->setLoading(TOKEN_TYPE_GROUP_SUMMARY, false);
-
-	if (userdata) {
-		delete(userdata);
-	}
-
-	if (!mNavigatePendingGroupId.isNull()) {
-		/* Navigate pending */
-		navigate(mNavigatePendingGroupId, mNavigatePendingMsgId);
-
-		mNavigatePendingGroupId.clear();
-		mNavigatePendingMsgId.clear();
-	}
-}
-
-/*********************** **** **** **** ***********************/
-/*********************** **** **** **** ***********************/
-
-//void GxsGroupFrameDialog::acknowledgeSubscribeChange(const uint32_t &token)
-//{
-//#ifdef DEBUG_GROUPFRAMEDIALOG
-//	std::cerr << "GxsGroupFrameDialog::acknowledgeSubscribeChange()";
-//	std::cerr << std::endl;
-//#endif
-
-//	RsGxsGroupId groupId;
-//	mInterface->acknowledgeGrp(token, groupId);
-
-//	fillComplete();
-//}
-
-/*********************** **** **** **** ***********************/
-/*********************** **** **** **** ***********************/
-
-//void GxsGroupFrameDialog::requestGroupSummary_CurrentGroup(const RsGxsGroupId &groupId)
-//{
-//	RsTokReqOptions opts;
-//	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
-
-//	std::list<std::string> grpIds;
-//	grpIds.push_back(groupId);
-
-//	std::cerr << "GxsGroupFrameDialog::requestGroupSummary_CurrentGroup(" << groupId << ")";
-//	std::cerr << std::endl;
-
-//	uint32_t token;
-//	mInteface->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, grpIds, TOKEN_TYPE_CURRENTGROUP);
-//}
-
-//void GxsGroupFrameDialog::loadGroupSummary_CurrentGroup(const uint32_t &token)
-//{
-//	std::cerr << "GxsGroupFrameDialog::loadGroupSummary_CurrentGroup()";
-//	std::cerr << std::endl;
-
-//	std::list<RsGroupMetaData> groupInfo;
-//	rsGxsForums->getGroupSummary(token, groupInfo);
-
-//	if (groupInfo.size() == 1)
-//	{
-//		RsGroupMetaData fi = groupInfo.front();
-//		mSubscribeFlags = fi.mSubscribeFlags;
-//	}
-//	else
-//	{
-//		resetData();
-//		std::cerr << "GxsGroupFrameDialog::loadGroupSummary_CurrentGroup() ERROR Invalid Number of Groups...";
-//		std::cerr << std::endl;
-//	}
-
-//	setValid(true);
-//}
-
-/*********************** **** **** **** ***********************/
-/*********************** **** **** **** ***********************/
-
-void GxsGroupFrameDialog::requestGroupStatistics(const RsGxsGroupId &groupId)
-{
-	uint32_t token;
-	mTokenService->requestGroupStatistic(token, groupId);
-	mTokenQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, TOKEN_TYPE_STATISTICS);
-}
-
-void GxsGroupFrameDialog::loadGroupStatistics(const uint32_t &token)
-{
-	GxsGroupStatistic stats;
-	mInterface->getGroupStatistic(token, stats);
-
-	QTreeWidgetItem *item = ui->groupTreeWidget->getItemFromId(QString::fromStdString(stats.mGrpId.toStdString()));
-	if (!item) {
-		return;
-	}
-
-    ui->groupTreeWidget->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
-}
-
-/*********************** **** **** **** ***********************/
-/*********************** **** **** **** ***********************/
-
-void GxsGroupFrameDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
-{
-#ifdef DEBUG_GROUPFRAMEDIALOG
-	std::cerr << "GxsGroupFrameDialog::loadRequest() UserType: " << req.mUserType;
-	std::cerr << std::endl;
-#endif
-
-	if (queue == mTokenQueue)
+	RsThread::async([this]()
 	{
-		/* now switch on req */
-		switch(req.mUserType)
+		auto groupInfo = new std::list<RsGxsGenericGroupData*>() ;
+
+		if(!getGroupData(*groupInfo))
 		{
-		case TOKEN_TYPE_GROUP_SUMMARY:
-			loadGroupSummary(req.mToken);
-			break;
-
-//		case TOKEN_TYPE_SUBSCRIBE_CHANGE:
-//			acknowledgeSubscribeChange(req.mToken);
-//			break;
-
-//		case TOKEN_TYPE_CURRENTGROUP:
-//			loadGroupSummary_CurrentGroup(req.mToken);
-//			break;
-
-		case TOKEN_TYPE_STATISTICS:
-			loadGroupStatistics(req.mToken);
-			break;
-
-		default:
-			std::cerr << "GxsGroupFrameDialog::loadRequest() ERROR: INVALID TYPE";
-			std::cerr << std::endl;
+			std::cerr << __PRETTY_FUNCTION__ << " failed to collect group info." << std::endl;
+            delete groupInfo;
+			return;
 		}
-	}
+        if(groupInfo->empty())
+        {
+			std::cerr << __PRETTY_FUNCTION__ << " no group info collected." << std::endl;
+            delete groupInfo;
+            return;
+        }
+
+		RsQThreadUtils::postToObject( [this,groupInfo]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete, note that
+			 * Qt::QueuedConnection is important!
+			 */
+
+			insertGroupsData(*groupInfo);
+			updateSearchResults();
+
+			mStateHelper->setLoading(TOKEN_TYPE_GROUP_SUMMARY, false);
+
+			if (!mNavigatePendingGroupId.isNull()) {
+				/* Navigate pending */
+				navigate(mNavigatePendingGroupId, mNavigatePendingMsgId);
+
+				mNavigatePendingGroupId.clear();
+				mNavigatePendingMsgId.clear();
+			}
+
+			// update the local cache in order to avoid re-asking the data when the UI wants it (this happens on ::show() for instance)
+
+			mCachedGroupMetas.clear();
+
+			// now delete the data that is not used anymore
+
+			for(auto& g:*groupInfo)
+			{
+				mCachedGroupMetas[g->mMeta.mGroupId] = g->mMeta;
+				delete g;
+			}
+
+            delete groupInfo;
+
+		}, this );
+	});
 }
+
+/*********************** **** **** **** ***********************/
+/*********************** **** **** **** ***********************/
+
+void GxsGroupFrameDialog::updateGroupStatistics(const RsGxsGroupId &groupId)
+{
+    mGroupStatisticsToUpdate.insert(groupId);
+    mShouldUpdateGroupStatistics = true;
+}
+
+void GxsGroupFrameDialog::updateGroupStatisticsReal(const RsGxsGroupId &groupId)
+{
+    RsThread::async([this,groupId]()
+	{
+		GxsGroupStatistic stats;
+
+        if(! getGroupStatistics(groupId, stats))
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " failed to collect group statistics for group " << groupId << std::endl;
+			return;
+		}
+
+		RsQThreadUtils::postToObject( [this,stats, groupId]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete, note that
+			 * Qt::QueuedConnection is important!
+			 */
+
+			QTreeWidgetItem *item = ui->groupTreeWidget->getItemFromId(QString::fromStdString(stats.mGrpId.toStdString()));
+			if (!item)
+				return;
+
+			ui->groupTreeWidget->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
+            mCachedGroupStats[groupId] = stats;
+
+			getUserNotify()->updateIcon();
+
+		}, this );
+	});
+}
+
+void GxsGroupFrameDialog::getServiceStatistics(GxsServiceStatistic& stats) const
+{
+	stats = GxsServiceStatistic(); // clears everything
+
+   for(auto it:  mCachedGroupStats)
+   {
+       const GxsGroupStatistic& s(it.second);
+
+	   stats.mNumMsgs             += s.mNumMsgs;
+	   stats.mNumGrps             += 1;
+	   stats.mSizeOfMsgs          += s.mTotalSizeOfMsgs;
+	   stats.mNumThreadMsgsNew    += s.mNumThreadMsgsNew;
+	   stats.mNumThreadMsgsUnread += s.mNumThreadMsgsUnread;
+	   stats.mNumChildMsgsNew     += s.mNumChildMsgsNew ;
+	   stats.mNumChildMsgsUnread  += s.mNumChildMsgsUnread ;
+   }
+}
+
+TurtleRequestId GxsGroupFrameDialog::distantSearch(const QString& search_string)   // this should be overloaded in the child class
+{
+    std::cerr << "Searching for \"" << search_string.toStdString() << "\". Function is not overloaded, so nothing will happen." << std::endl;
+    return 0;
+}
+
+void GxsGroupFrameDialog::searchNetwork(const QString& search_string)
+{
+    if(search_string.isNull())
+        return ;
+
+    uint32_t request_id = distantSearch(search_string);
+
+    if(request_id == 0)
+        return ;
+
+    mSearchGroupsItems[request_id] = ui->groupTreeWidget->addSearchItem(tr("Search for")+ " \"" + search_string + "\"",(uint32_t)request_id,FilesDefs::getIconFromQtResourcePath(icon(ICON_SEARCH)));
+}
+
+void GxsGroupFrameDialog::distantRequestGroupData()
+{
+    QAction *action = dynamic_cast<QAction*>(sender()) ;
+
+    if(!action)
+        return ;
+
+    RsGxsGroupId group_id(action->data().toString().toStdString());
+
+    if(group_id.isNull())
+    {
+        std::cerr << "Cannot retrieve group! Group id is null!" << std::endl;
+    }
+
+	std::cerr << "Explicit request for group " << group_id << std::endl;
+    checkRequestGroup(group_id) ;
+}
+

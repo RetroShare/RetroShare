@@ -1,30 +1,26 @@
+/*******************************************************************************
+ * libretroshare/src/gxs: gxsdataservice.h                                     *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2011-2012 by Evi-Parker Christopher                               *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RSDATASERVICE_H
 #define RSDATASERVICE_H
-
-/*
- * libretroshare/src/gxs: rsdataservice.h
- *
- * General Data service, interface for RetroShare.
- *
- * Copyright 2011-2012 by Evi-Parker Christopher
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
 
 #include "gxs/rsgds.h"
 #include "util/retrodb.h"
@@ -39,6 +35,124 @@ public:
 	ContentValue cv;
 };
 
+template<class ID, class MetaDataClass> class t_MetaDataCache
+{
+public:
+    t_MetaDataCache() : mCache_ContainsAllMetas(false) {}
+    virtual ~t_MetaDataCache()
+    {
+        for(auto it: mMetas)
+            delete it.second;
+
+        for(auto it: mOldCachedItems)
+            delete it.second;
+    }
+
+    bool isCacheUpToDate() const { return mCache_ContainsAllMetas ; }
+    void setCacheUpToDate(bool b) { mCache_ContainsAllMetas = b; }
+
+	void getFullMetaList(std::map<ID,MetaDataClass*>& mp) const { mp = mMetas ; }
+    void getFullMetaList(std::vector<const MetaDataClass*>& mp) const { for(auto& m:mMetas) mp.push_back(m.second) ; }
+
+    MetaDataClass *getMeta(const ID& id)
+    {
+		auto itt = mMetas.find(id);
+
+		if(itt != mMetas.end())
+			return itt->second ;
+        else
+            return NULL;
+    }
+
+    MetaDataClass *getOrCreateMeta(const ID& id)
+    {
+        MetaDataClass *meta = nullptr;
+		auto it = mMetas.find(id) ;
+
+		if(it != mMetas.end())
+		{
+#ifdef RS_DATA_SERVICE_DEBUG
+			RsDbg() << __PRETTY_FUNCTION__ << ": getting group meta " << grpId << " from cache." << std::endl;
+#endif
+			meta = it->second ;
+		}
+		else
+		{
+#ifdef RS_DATA_SERVICE_DEBUG
+			RsDbg() << __PRETTY_FUNCTION__ << ": group meta " << grpId << " not in cache. Loading it from DB..." << std::endl;
+#endif
+			meta = new MetaDataClass();
+			mMetas[id] = meta ;
+		}
+
+        return meta;
+    }
+
+	void updateMeta(const ID& id,const MetaDataClass& meta)
+	{
+		auto it = mMetas.find(id) ;
+
+		if(it != mMetas.end())
+			*(it->second) = meta ;
+		else
+			mMetas[id] = new MetaDataClass(meta) ;
+	}
+
+    void clear(const ID& id)
+	{
+		rstime_t now = time(NULL) ;
+		auto it = mMetas.find(id) ;
+
+		// We dont actually delete the item, because it might be used by a calling client.
+		// In this case, the memory will not be used for long, so we keep it into a list for a safe amount
+		// of time and delete it later. Using smart pointers here would be more elegant, but that would need
+		// to be implemented thread safe, which is difficult in this case.
+
+		if(it != mMetas.end())
+		{
+#ifdef RS_DATA_SERVICE_DEBUG
+			std::cerr << "(II) moving database cache entry " << (void*)(*it).second << " to dead list." << std::endl;
+#endif
+
+			mOldCachedItems.push_back(std::make_pair(now,it->second)) ;
+
+			mMetas.erase(it) ;
+			mCache_ContainsAllMetas = false;
+		}
+
+		// We also take that opportunity to delete old entries.
+
+		auto it2(mOldCachedItems.begin());
+
+		while(it2!=mOldCachedItems.end() && (*it2).first + CACHE_ENTRY_GRACE_PERIOD < now)
+		{
+#ifdef RS_DATA_SERVICE_DEBUG
+			std::cerr << "(II) deleting old GXS database cache entry " << (void*)(*it2).second << ", " << now - (*it2).first << " seconds old." << std::endl;
+#endif
+			delete (*it2).second ;
+			it2 = mOldCachedItems.erase(it2) ;
+		}
+	}
+
+    void debug_computeSize(uint32_t& nb_items, uint32_t& nb_items_on_deadlist, uint64_t& total_size,uint64_t& total_size_of_deadlist) const
+    {
+        nb_items = mMetas.size();
+        nb_items_on_deadlist = mOldCachedItems.size();
+        total_size = 0;
+        total_size_of_deadlist = 0;
+
+        for(auto it:mMetas) total_size += it.second->serial_size();
+        for(auto it:mOldCachedItems) total_size_of_deadlist += it.second->serial_size();
+    }
+private:
+	std::map<ID,MetaDataClass*> mMetas;
+	std::list<std::pair<rstime_t,MetaDataClass*> > mOldCachedItems ;	// dead list, where items get deleted after being unused for a while. This is due to not using smart ptrs.
+
+	static const uint32_t CACHE_ENTRY_GRACE_PERIOD = 600 ; // Unused items are deleted 10 minutes after last usage.
+
+    bool mCache_ContainsAllMetas ;
+};
+
 class RsDataService : public RsGeneralDataService
 {
 public:
@@ -51,10 +165,14 @@ public:
      * Retrieves all msgs
      * @param reqIds requested msg ids (grpId,msgId), leave msg list empty to get all msgs for the grp
      * @param msg result of msg retrieval
-     * @param cache whether to store results of this retrieval in memory for faster later retrieval
+	 * @param cache IGNORED whether to store results of this retrieval in memory
+	 *	for faster later retrieval
+	 * @param strictFilter if true do not request any message if reqIds is empty
      * @return error code
-     */
-    int retrieveNxsMsgs(const GxsMsgReq& reqIds, GxsMsgResult& msg, bool cache, bool withMeta = false);
+	 */
+	int retrieveNxsMsgs(
+	        const GxsMsgReq& reqIds, GxsMsgResult& msg, bool cache,
+	        bool withMeta = false );
 
     /*!
      * Retrieves groups, if empty, retrieves all grps, if map is not empty
@@ -71,7 +189,7 @@ public:
      * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
-    int retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaData*>& grp);
+    int retrieveGxsGrpMetaData(RsGxsGrpMetaTemporaryMap& grp);
 
     /*!
      * Retrieves meta data of all groups stored (most current versions only)
@@ -110,7 +228,7 @@ public:
      * @param msgId msgsids retrieved
      * @return error code
      */
-    int retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std_vector& msgId);
+    int retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std_set& msgId);
 
     /*!
      * @return the cache size set for this RsGeneralDataService in bytes
@@ -147,13 +265,13 @@ public:
      * @param metaData The meta data item to update
      * @return error code
      */
-    int updateMessageMetaData(MsgLocMetaData& metaData);
+    int updateMessageMetaData(const MsgLocMetaData& metaData);
 
     /*!
      * @param metaData The meta data item to update
      * @return error code
      */
-    int updateGroupMetaData(GrpLocMetaData& meta);
+    int updateGroupMetaData(const GrpLocMetaData &meta);
 
     /*!
      * Completely clear out data stored in
@@ -173,6 +291,8 @@ public:
      */
 
     int updateGroupKeys(const RsGxsGroupId& grpId,const RsTlvSecurityKeySet& keys, uint32_t subscribe_flags) ;
+
+    void debug_printCacheSize() const;
 
 private:
 
@@ -194,21 +314,28 @@ private:
     /*!
      * Retrieves all the msg meta results from a cursor
      * @param c cursor to result set
-     * @param metaSet message metadata retrieved from cursor are stored here
+     * @param msgMeta message metadata retrieved from cursor are stored here
      */
-    void locked_retrieveMsgMeta(RetroCursor* c, std::vector<RsGxsMsgMetaData*>& msgMeta);
+    void locked_retrieveMsgMetaList(RetroCursor* c, std::vector<const RsGxsMsgMetaData*>& msgMeta);
+
+    /*!
+     * Retrieves all the grp meta results from a cursor
+     * @param c cursor to result set
+     * @param grpMeta group metadata retrieved from cursor are stored here
+     */
+	void locked_retrieveGrpMetaList(RetroCursor *c, std::map<RsGxsGroupId,RsGxsGrpMetaData *>& grpMeta);
 
     /*!
      * extracts a msg meta item from a cursor at its
      * current position
      */
-    RsGxsMsgMetaData* locked_getMsgMeta(RetroCursor& c, int colOffset);
+    RsGxsMsgMetaData* locked_getMsgMeta(RetroCursor& c, int colOffset, bool use_cache);
 
     /*!
      * extracts a grp meta item from a cursor at its
      * current position
      */
-    RsGxsGrpMetaData* locked_getGrpMeta(RetroCursor& c, int colOffset);
+    RsGxsGrpMetaData* locked_getGrpMeta(RetroCursor& c, int colOffset, bool use_cache);
 
     /*!
      * extracts a msg item from a cursor at its
@@ -346,9 +473,10 @@ private:
     // the entre list of grp metadata is requested (which happens quite often)
     
     void locked_clearGrpMetaCache(const RsGxsGroupId& gid);
+	void locked_updateGrpMetaCache(const RsGxsGrpMetaData& meta);
 
-    std::map<RsGxsGroupId,RsGxsGrpMetaData> mGrpMetaDataCache ;
-    bool mGrpMetaDataCache_ContainsAllDatabase ;
+    t_MetaDataCache<RsGxsGroupId,RsGxsGrpMetaData> mGrpMetaDataCache;
+    std::map<RsGxsGroupId,t_MetaDataCache<RsGxsMessageId,RsGxsMsgMetaData> > mMsgMetaDataCache;
 };
 
 #endif // RSDATASERVICE_H

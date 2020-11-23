@@ -1,23 +1,22 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (c) 2014, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/common/RSFeedWidget.cpp                                                 *
+ *                                                                             *
+ * Copyright (C) 2014, Retroshare Team <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QKeyEvent>
 #include <QScrollBar>
@@ -29,7 +28,8 @@
 
 #include <iostream>
 
-#define COLUMN_FEED 0
+#define COLUMN_FEED       0
+#define COLUMN_IDENTIFIER 1
 
 #define SINGLE_STEP  15
 
@@ -75,6 +75,8 @@ RSFeedWidget::RSFeedWidget(QWidget *parent)
 	ui->treeWidget->installEventFilter(this);
 
 	ui->treeWidget->setVerticalScrollBar(new RSFeedWidgetScrollBar);
+	ui->treeWidget->setColumnCount(2);
+	ui->treeWidget->setColumnHidden(COLUMN_IDENTIFIER,true);
 }
 
 RSFeedWidget::~RSFeedWidget()
@@ -109,7 +111,6 @@ bool RSFeedWidget::eventFilter(QObject *object, QEvent *event)
 						FeedItem *feedItem = feedItemFromTreeItem(treeItem);
 						if (feedItem) {
 							disconnectSignals(feedItem);
-							feedRemoved(feedItem);
 							delete(feedItem);
 						}
 						delete(treeItem);
@@ -131,28 +132,21 @@ bool RSFeedWidget::eventFilter(QObject *object, QEvent *event)
 
 void RSFeedWidget::feedAdded(FeedItem *feedItem, QTreeWidgetItem *treeItem)
 {
-	mItems.insert(feedItem, treeItem);
-}
-
-void RSFeedWidget::feedRemoved(FeedItem *feedItem)
-{
-	mItems.remove(feedItem);
 }
 
 void RSFeedWidget::feedsCleared()
 {
-	mItems.clear();
 }
 
 void RSFeedWidget::connectSignals(FeedItem *feedItem)
 {
-	connect(feedItem, SIGNAL(feedItemDestroyed(FeedItem*)), this, SLOT(feedItemDestroyed(FeedItem*)));
+	connect(feedItem, SIGNAL(feedItemNeedsClosing(qulonglong)), this, SLOT(feedItemDestroyed(qulonglong)));
 	connect(feedItem, SIGNAL(sizeChanged(FeedItem*)), this, SLOT(feedItemSizeChanged(FeedItem*)));
 }
 
 void RSFeedWidget::disconnectSignals(FeedItem *feedItem)
 {
-	disconnect(feedItem, SIGNAL(feedItemDestroyed(FeedItem*)), this, SLOT(feedItemDestroyed(FeedItem*)));
+	disconnect(feedItem, SIGNAL(feedItemNeedsClosing(qulonglong)), this, SLOT(feedItemDestroyed(qulonglong)));
 	disconnect(feedItem, SIGNAL(sizeChanged(FeedItem*)), this, SLOT(feedItemSizeChanged(FeedItem*)));
 }
 
@@ -180,6 +174,7 @@ void RSFeedWidget::addFeedItem(FeedItem *feedItem, Qt::ItemDataRole sortRole, co
 	QTreeWidgetItem *treeItem = new RSTreeWidgetItem(mFeedCompareRole);
 
 	treeItem->setData(COLUMN_FEED, sortRole, value);
+	treeItem->setData(COLUMN_IDENTIFIER, Qt::DisplayRole, QString("%1").arg(feedItem->uniqueIdentifier(),8,16,QChar('0')));
 
 	ui->treeWidget->addTopLevelItem(treeItem);
 	ui->treeWidget->setItemWidget(treeItem, 0, feedItem);
@@ -207,6 +202,7 @@ void RSFeedWidget::addFeedItem(FeedItem *feedItem, const QMap<Qt::ItemDataRole, 
 	for (it = sort.begin(); it != sort.end(); ++it) {
 		treeItem->setData(COLUMN_FEED, it.key(), it.value());
 	}
+	treeItem->setData(COLUMN_IDENTIFIER, Qt::DisplayRole, QString("%1").arg(feedItem->uniqueIdentifier(),8,16,QChar('0')));
 
 	ui->treeWidget->addTopLevelItem(treeItem);
 	ui->treeWidget->setItemWidget(treeItem, 0, feedItem);
@@ -224,14 +220,13 @@ void RSFeedWidget::addFeedItem(FeedItem *feedItem, const QMap<Qt::ItemDataRole, 
 
 void RSFeedWidget::setSort(FeedItem *feedItem, Qt::ItemDataRole sortRole, const QVariant &value)
 {
-	if (!feedItem) {
+	if (!feedItem)
 		return;
-	}
 
-	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem);
-	if (!treeItem) {
+	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem->uniqueIdentifier());
+
+	if (!treeItem)
 		return;
-	}
 
 	treeItem->setData(COLUMN_FEED, sortRole, value);
 }
@@ -242,10 +237,9 @@ void RSFeedWidget::setSort(FeedItem *feedItem, const QMap<Qt::ItemDataRole, QVar
 		return;
 	}
 
-	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem);
-	if (!treeItem) {
+	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem->uniqueIdentifier());
+	if (!treeItem)
 		return;
-	}
 
 	QMap<Qt::ItemDataRole, QVariant>::const_iterator it;
 	for (it = sort.begin(); it != sort.end(); ++it) {
@@ -385,17 +379,25 @@ FeedItem *RSFeedWidget::feedItem(int index)
 
 void RSFeedWidget::removeFeedItem(FeedItem *feedItem)
 {
-	if (!feedItem) {
+	if (!feedItem)
 		return;
-	}
 
-	disconnectSignals(feedItem);
+	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem);// WARNING: do not use the other function based on identifier here, because some items change their identifier when loading.
 
-	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem);
-	feedRemoved(feedItem);
-	if (treeItem) {
-		delete(treeItem);
-	}
+	if (treeItem)
+    {
+        int treeItem_index = ui->treeWidget->indexOfTopLevelItem(treeItem);
+
+        if(treeItem_index < 0)
+        {
+            std::cerr << "(EE) Cannot remove designated item \"" << (void*)feedItem << "\": not found!" << std::endl;
+            return ;
+		}
+
+		disconnectSignals(feedItem);
+
+		delete ui->treeWidget->takeTopLevelItem(treeItem_index);
+    }
 
 	if (!mCountChangedDisabled) {
 		emit feedCountChanged();
@@ -415,44 +417,65 @@ void RSFeedWidget::feedItemSizeChanged(FeedItem */*feedItem*/)
 	ui->treeWidget->doItemsLayout();
 }
 
-void RSFeedWidget::feedItemDestroyed(FeedItem *feedItem)
+void RSFeedWidget::feedItemDestroyed(qulonglong id)
 {
 	/* No need to disconnect when object will be destroyed */
 
-	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem);
-	feedRemoved(feedItem);
-	if (treeItem) {
-		delete(treeItem);
-	}
+	QTreeWidgetItem *treeItem = findTreeWidgetItem(id);
 
-	if (!mCountChangedDisabled) {
+	if(treeItem)
+		delete(treeItem);
+
+	if (!mCountChangedDisabled)
 		emit feedCountChanged();
-	}
 }
 
-QTreeWidgetItem *RSFeedWidget::findTreeWidgetItem(FeedItem *feedItem)
+QTreeWidgetItem *RSFeedWidget::findTreeWidgetItem(const FeedItem *w)
 {
-	QMap<FeedItem*, QTreeWidgetItem*>::iterator it = mItems.find(feedItem);
-	if (it == mItems.end()) {
-		return NULL;
-	}
+ 	QTreeWidgetItemIterator it(ui->treeWidget);
+ 	QTreeWidgetItem *treeItem=NULL;
 
-	return it.value();
+     // this search could probably be automatised by giving the tree items the identifier as data for some specific role, then calling QTreeWidget::findItems()
+ #warning TODO
+ 	while (*it)
+    {
+ 		FeedItem *feedItem = feedItemFromTreeItem(*it);
+
+ 		if (feedItem == w)
+            return *it;
+
+ 		++it;
+ 	}
+
+ 	return NULL;
+}
+
+QTreeWidgetItem *RSFeedWidget::findTreeWidgetItem(uint64_t identifier)
+{
+    QList<QTreeWidgetItem*> list = ui->treeWidget->findItems(QString("%1").arg(identifier,8,16,QChar('0')),Qt::MatchExactly,COLUMN_IDENTIFIER);
+
+    if(list.empty())
+        return nullptr;
+    else if(list.size() == 1)
+        return list.front();
+    else
+    {
+        std::cerr << "(EE) More than a single item with identifier \"" << identifier << "\" in the feed tree widget. This shouldn't happen!" << std::endl;
+        return nullptr;
+    }
 }
 
 bool RSFeedWidget::scrollTo(FeedItem *feedItem, bool focus)
 {
-	QTreeWidgetItem *item = findTreeWidgetItem(feedItem);
-	if (!feedItem) {
+	QTreeWidgetItem *item = findTreeWidgetItem(feedItem->uniqueIdentifier());
+	if (!feedItem)
 		return false;
-	}
 
 	ui->treeWidget->scrollToItem(item);
 	ui->treeWidget->setCurrentItem(item);
 
-	if (focus) {
+	if (focus)
 		ui->treeWidget->setFocus();
-	}
 
 	return true;
 }
@@ -477,29 +500,22 @@ void RSFeedWidget::withAll(RSFeedWidgetCallbackFunction callback, void *data)
 	}
 }
 
-FeedItem *RSFeedWidget::findFeedItem(RSFeedWidgetFindCallbackFunction callback, void *data)
+FeedItem *RSFeedWidget::findFeedItem(uint64_t identifier)
 {
-	if (!callback) {
-		return NULL;
-	}
+	QList<QTreeWidgetItem*> list = ui->treeWidget->findItems(QString("%1").arg(identifier,8,16,QChar('0')),Qt::MatchExactly,COLUMN_IDENTIFIER);
 
-	QTreeWidgetItemIterator it(ui->treeWidget);
-	QTreeWidgetItem *treeItem;
-	while ((treeItem = *it) != NULL) {
-		++it;
-
-		FeedItem *feedItem = feedItemFromTreeItem(treeItem);
-		if (!feedItem) {
-			continue;
-		}
-
-		if (callback(feedItem, data)) {
-			return feedItem;
-		}
-	}
-
-	return NULL;
+    if(list.empty())
+        return nullptr;
+    else if(list.size() == 1)
+        return feedItemFromTreeItem(list.front());
+    else
+    {
+        std::cerr << "(EE) More than a single item with identifier \"" << identifier << "\" in the feed tree widget. This shouldn't happen!" << std::endl;
+        return nullptr;
+    }
 }
+
+
 
 void RSFeedWidget::selectedFeedItems(QList<FeedItem*> &feedItems)
 {

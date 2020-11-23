@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/services chatservice.h
- *
- * Services for RetroShare.
- *
- * Copyright 2004-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/chat: chatservice.h                                       *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2008 by Robert Fernie.                                       *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef SERVICE_CHAT_HEADER
 #define SERVICE_CHAT_HEADER
@@ -45,6 +41,22 @@ class p3LinkMgr;
 class p3HistoryMgr;
 
 typedef RsPeerId ChatLobbyVirtualPeerId ;
+
+struct RsChatMessageEvent : RsEvent
+{
+	RsChatMessageEvent() : RsEvent(RsEventType::CHAT_MESSAGE) {}
+	~RsChatMessageEvent() override = default;
+
+	///* @see RsEvent @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx ) override
+	{
+		RsEvent::serial_process(j, ctx);
+
+		RS_SERIAL_PROCESS(mChatMessage);
+	}
+
+	ChatMessage mChatMessage;
+};
 
 //!The basic Chat service.
  /**

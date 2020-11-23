@@ -1,24 +1,25 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (c) 2006-2007, crypton
- * Copyright (c) 2006, Matt Edman, Justin Hipple
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/: main.cpp                                               *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2006-2007 by Crypton <retroshare@lunamutt.com>                    *
+ * Copyright (c) 2006, Matt Edman, Justin Hipple                               *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QBuffer>
 #include <QDateTime>
@@ -41,7 +42,8 @@
 #include <iostream>
 #include <stdlib.h>
 
-#include <gui/common/html.h>
+#include "gui/common/FilesDefs.h"
+#include <gui/common/rshtml.h>
 #include <gui/common/vmessagebox.h>
 #include <gui/gxs/GxsIdDetails.h>
 #include <gui/settings/rsharesettings.h>
@@ -240,6 +242,11 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, const QString &dir)
         localServer= new QLocalServer();
         QObject::connect(localServer, SIGNAL(newConnection()), this, SLOT(slotConnectionEstablished()));
         updateLocalServer();
+		// clear out any old arguments (race condition?)
+		QSharedMemory newArgs;
+		newArgs.setKey(QString(TARGET) + "_newArgs");
+		if(newArgs.attach(QSharedMemory::ReadWrite))
+			newArgs.detach();
     }
   }
 
@@ -252,7 +259,7 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, const QString &dir)
 #ifndef __APPLE__
 
   /* set default window icon */
-  setWindowIcon(QIcon(":/icons/logo_128.png"));
+  setWindowIcon(FilesDefs::getIconFromQtResourcePath(":/icons/logo_128.png"));
 
 #endif
 
@@ -324,19 +331,26 @@ Rshare::~Rshare()
  */
 void Rshare::slotConnectionEstablished()
 {
-	QLocalSocket *socket = localServer->nextPendingConnection();
-	socket->close();
-	delete socket;
-
 	QSharedMemory newArgs;
 	newArgs.setKey(QString(TARGET) + "_newArgs");
 
+	QLocalSocket *socket = localServer->nextPendingConnection();
+
 	if (!newArgs.attach())
 	{
-		std::cerr << "(EE) Rshare::slotConnectionEstablished() Unable to attach to shared memory segment."
-		          << newArgs.errorString().toStdString() << std::endl;
+		/* this is not an error. It just means we were notified to check
+		   newArgs, but none had been set yet.
+		   TODO: implement separate ping/take messages
+		   std::cerr << "(EE) Rshare::slotConnectionEstablished() Unable to attach to shared memory segment."
+		   << newArgs.errorString().toStdString() << std::endl;
+		   */
+		socket->close();
+		delete socket;
 		return;
 	}
+
+	socket->close();
+	delete socket;
 
 	QBuffer buffer;
 	QDataStream in(&buffer);
@@ -356,15 +370,7 @@ void Rshare::slotConnectionEstablished()
 	}
 }
 
-QString Rshare::retroshareVersion(bool withRevision)
-{
-	QString version = QString("%1.%2.%3%4").arg(RS_MAJOR_VERSION).arg(RS_MINOR_VERSION).arg(RS_BUILD_NUMBER).arg(RS_BUILD_NUMBER_ADD);
-	if (withRevision) {
-		version += QString(" %1 %2").arg(tr("Revision")).arg(QString::number(RS_REVISION_NUMBER,16));
-	}
-
-	return version;
-}
+QString Rshare::retroshareVersion(bool) { return RS_HUMAN_READABLE_VERSION; }
 
 /** Enters the main event loop and waits until exit() is called. The signal
  * running() will be emitted when the event loop has started. */
@@ -748,7 +754,7 @@ void Rshare::loadStyleSheet(const QString &sheetName)
                 /* external stylesheet */
                 file.setFileName(QString("%1/qss/%2%3.qss").arg(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()), name, sheetName));
                 if (!file.exists()) {
-                    file.setFileName(QString("%1/qss/%2%3.qss").arg(QString::fromUtf8(RsAccounts::DataDirectory().c_str()), name, sheetName));
+                    file.setFileName(QString("%1/qss/%2%3.qss").arg(QString::fromUtf8(RsAccounts::systemDataDirectory().c_str()), name, sheetName));
                 }
             }
             if (file.open(QFile::ReadOnly)) {
@@ -762,6 +768,9 @@ void Rshare::loadStyleSheet(const QString &sheetName)
                     styleSheet += QLatin1String(file.readAll()) + "\n";
                     file.close();
                 }
+
+                /* replace %THISPATH% by file path so url can get relative files */
+                styleSheet = styleSheet.replace("url(%THISPATH%",QString("url(%1").arg(fileInfo.absolutePath()));
             }
         }
     }
@@ -787,7 +796,7 @@ void Rshare::getAvailableStyleSheets(QMap<QString, QString> &styleSheets)
 			styleSheets.insert(name, name);
 		}
 	}
-	fileInfoList = QDir(QString::fromUtf8(RsAccounts::DataDirectory().c_str()) + "/qss/").entryInfoList(QStringList("*.qss"));
+	fileInfoList = QDir(QString::fromUtf8(RsAccounts::systemDataDirectory().c_str()) + "/qss/").entryInfoList(QStringList("*.qss"));
 	foreach (fileInfo, fileInfoList) {
 		if (fileInfo.isFile()) {
 			QString name = fileInfo.baseName();

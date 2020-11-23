@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006 - 2010  The RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/im_history/ImHistoryBrowser.cpp                      *
+ *                                                                             *
+ * Copyright (C) 2012 by Retroshare Team     <retroshare.project@gmail.com>    *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QMessageBox>
 #include <QDateTime>
@@ -33,6 +32,7 @@
 #include "IMHistoryItemDelegate.h"
 #include "IMHistoryItemPainter.h"
 #include "util/HandleRichText.h"
+#include "gui/common/FilesDefs.h"
 
 #include "rshare.h"
 #include <retroshare/rshistory.h>
@@ -91,14 +91,15 @@ void ImHistoryBrowserCreateItemsThread::run()
 }
 
 /** Default constructor */
-ImHistoryBrowser::ImHistoryBrowser(const ChatId &chatId, QTextEdit *edit, QWidget *parent)
+ImHistoryBrowser::ImHistoryBrowser(const ChatId &chatId, QTextEdit *edit,const QString &chatTitle, QWidget *parent)
   : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
 {
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
 
-    ui.headerFrame->setHeaderImage(QPixmap(":/images/user/agt_forum64.png"));
-    ui.headerFrame->setHeaderText(tr("Message History"));
+    setWindowTitle(tr("%1 's Message History").arg(chatTitle));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/user/agt_forum64.png"));
+    ui.headerFrame->setHeaderText(windowTitle());
 
     m_chatId = chatId;
     textEdit = edit;
@@ -225,36 +226,43 @@ void ImHistoryBrowser::historyAdd(HistoryMsg& msg)
 
 void ImHistoryBrowser::historyChanged(uint msgId, int type)
 {
-    if (type == NOTIFY_TYPE_ADD) {
-        /* history message added */
-        HistoryMsg msg;
-        if (rsHistory->getMessage(msgId, msg) == false) {
-            return;
-        }
+	if (type == NOTIFY_TYPE_ADD) {
+		/* history message added */
+		HistoryMsg msg;
+		if (rsHistory->getMessage(msgId, msg) == false) {
+			return;
+		}
+		RsPeerId virtChatId;
+		if ( rsHistory->chatIdToVirtualPeerId(m_chatId ,virtChatId)
+		     && virtChatId == msg.chatPeerId)
+			historyAdd(msg);
 
-        historyAdd(msg);
+		return;
+	}
 
-        return;
-    }
+	if (type == NOTIFY_TYPE_DEL) {
+		/* history message removed */
+		int count = ui.listWidget->count();
+		for (int i = 0; i < count; ++i) {
+			QListWidgetItem *itemWidget = ui.listWidget->item(i);
+			if (itemWidget->data(ROLE_MSGID).toString().toUInt() == msgId) {
+				delete(ui.listWidget->takeItem(i));
+				break;
+			}
+		}
+		return;
+	}
 
-    if (type == NOTIFY_TYPE_DEL) {
-        /* history message removed */
-        int count = ui.listWidget->count();
-        for (int i = 0; i < count; ++i) {
-            QListWidgetItem *itemWidget = ui.listWidget->item(i);
-            if (itemWidget->data(ROLE_MSGID).toString().toUInt() == msgId) {
-                delete(ui.listWidget->takeItem(i));
-                break;
-            }
-        }
-        return;
-    }
-
-    if (type == NOTIFY_TYPE_MOD) {
-        /* clear history */
-        ui.listWidget->clear();
-        return;
-    }
+	if (type == NOTIFY_TYPE_MOD) {
+		/* clear history */
+		// As no ChatId nor msgId are send via Notify,
+		//  only check if history of this chat is empty before clear our list.
+		std::list<HistoryMsg> historyMsgs;
+		rsHistory->getMessages(m_chatId, historyMsgs, 1);
+		if (historyMsgs.empty())
+			ui.listWidget->clear();
+		return;
+	}
 }
 
 void ImHistoryBrowser::fillItem(QListWidgetItem *itemWidget, HistoryMsg& msg)
@@ -419,16 +427,23 @@ void ImHistoryBrowser::customContextMenuRequested(QPoint /*pos*/)
 
 void ImHistoryBrowser::copyMessage()
 {
-    QListWidgetItem *currentItem = ui.listWidget->currentItem();
-    if (currentItem) {
-        uint32_t msgId = currentItem->data(ROLE_MSGID).toString().toInt();
-        HistoryMsg msg;
-        if (rsHistory->getMessage(msgId, msg)) {
-            QTextDocument doc;
-            doc.setHtml(QString::fromUtf8(msg.message.c_str()));
-            QApplication::clipboard()->setText(doc.toPlainText());
-        }
-    }
+	QListWidgetItem *currentItem = ui.listWidget->currentItem();
+	if (currentItem) {
+		uint32_t msgId = currentItem->data(ROLE_MSGID).toString().toInt();
+		HistoryMsg msg;
+		if (rsHistory->getMessage(msgId, msg)) {
+			RsIdentityDetails details;
+			QString name = (rsIdentity->getIdDetails(RsGxsId(msg.peerName), details))
+			        ? QString::fromUtf8(details.mNickname.c_str())
+			        : QString::fromUtf8(msg.peerName.c_str());
+			QDateTime date = msg.incoming
+			        ? QDateTime::fromTime_t(msg.sendTime)
+			        : QDateTime::fromTime_t(msg.recvTime);
+			QTextDocument doc;
+			doc.setHtml(QString::fromUtf8(msg.message.c_str()));
+			QApplication::clipboard()->setText("> " + date.toString() + " " + name + ":" + doc.toPlainText());
+		}
+	}
 }
 
 void ImHistoryBrowser::removeMessages()

@@ -1,27 +1,24 @@
-/*
- * libretroshare/src/serialiser: rschatitems.h
- *
- * RetroShare Serialiser.
- *
- * Copyright 2007-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/chat: rschatitems.h                                       *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2007-2008 by Robert Fernie.                                       *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #pragma once
 
@@ -37,6 +34,7 @@
 
 #include "serialiser/rstlvidset.h"
 #include "serialiser/rstlvfileitem.h"
+#include "retroshare/rsmsgs.h"
 
 /* chat Flags */
 const uint32_t RS_CHAT_FLAG_PRIVATE                    = 0x0001;
@@ -85,6 +83,8 @@ const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE_DEPRECATED = 0x1A ;	// to be remo
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE            = 0x1B ;
 const uint8_t RS_PKT_SUBTYPE_OUTGOING_MAP                 = 0x1C ;
 
+const uint8_t RS_PKT_SUBTYPE_SUBSCRIBED_CHAT_LOBBY_CONFIG = 0x1D ;
+
 typedef uint64_t 		ChatLobbyId ;
 typedef uint64_t 		ChatLobbyMsgId ;
 typedef std::string 	ChatLobbyNickName ;
@@ -99,8 +99,6 @@ class RsChatItem: public RsItem
 		}
 
 		virtual ~RsChatItem() {}
-		virtual std::ostream& print(std::ostream &out, uint16_t /*indent*/ = 0) { return out; }	// derived from RsItem, but should be removed
-
         virtual void clear() {}
 };
 
@@ -301,6 +299,19 @@ struct RsPrivateChatMsgConfigItem : RsChatItem
 	uint32_t recvTime;
 };
 
+class RsSubscribedChatLobbyConfigItem: public RsChatItem
+{
+public:
+    RsSubscribedChatLobbyConfigItem() :RsChatItem(RS_PKT_SUBTYPE_SUBSCRIBED_CHAT_LOBBY_CONFIG) {}
+	virtual ~RsSubscribedChatLobbyConfigItem() {}
+
+    virtual void clear() { RsChatItem::clear(); info.clear(); }
+
+	void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+
+    ChatLobbyInfo info;
+};
+
 class RsChatLobbyConfigItem: public RsChatItem
 {
 public:
@@ -335,14 +346,20 @@ class RsChatStatusItem: public RsChatItem
 //
 class RsChatAvatarItem: public RsChatItem
 {
-	public:
-		RsChatAvatarItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_AVATAR) {setPriorityLevel(QOS_PRIORITY_RS_CHAT_AVATAR_ITEM) ;}
+public:
+	RsChatAvatarItem():
+	    RsChatItem(RS_PKT_SUBTYPE_CHAT_AVATAR),
+	    image_size(0), image_data(nullptr)
+	{ setPriorityLevel(QOS_PRIORITY_RS_CHAT_AVATAR_ITEM); }
 
-		virtual ~RsChatAvatarItem() ;
-		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+	~RsChatAvatarItem() override { free(image_data); }
 
-		uint32_t image_size ;				// size of data in bytes
-		unsigned char *image_data ;		// image
+	void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext& ctx) override;
+
+	uint32_t image_size; /// size of data in bytes
+	unsigned char* image_data ; /// image data
 };
 
 
@@ -358,9 +375,8 @@ struct PrivateOugoingMapItem : RsChatItem
 
 struct RsChatSerialiser : RsServiceSerializer
 {
-	RsChatSerialiser(SerializationFlags flags = SERIALIZATION_FLAG_NONE) :
-	    RsServiceSerializer( RS_SERVICE_TYPE_CHAT,
-	                         RsGenericSerializer::FORMAT_BINARY, flags ) {}
+	RsChatSerialiser(RsSerializationFlags flags = RsSerializationFlags::NONE):
+	    RsServiceSerializer(RS_SERVICE_TYPE_CHAT, flags) {}
 
 	virtual RsItem *create_item(uint16_t service_id,uint8_t item_sub_id) const;
 };

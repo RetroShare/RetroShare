@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006 - 2011 RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/msgs/MessageWidget.cpp                               *
+ *                                                                             *
+ * Copyright (C) 2011 by Retroshare Team     <retroshare.project@gmail.com>    *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QMenu>
 #include <QToolButton>
@@ -28,12 +27,16 @@
 #include <QFile>
 #include <QTextStream>
 #include <QTextCodec>
+#include <QDesktopServices>
+#include <QPlainTextEdit>
+#include <QDialog>
 
 #include "gui/notifyqt.h"
 #include "gui/RetroShareLink.h"
 #include "gui/common/TagDefs.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/common/Emoticons.h"
+#include "gui/common/FilesDefs.h"
 #include "gui/settings/rsharesettings.h"
 #include "MessageComposer.h"
 #include "MessageWidget.h"
@@ -49,8 +52,8 @@
 #include <retroshare/rsmsgs.h>
 
 /* Images for context menu icons */
-#define IMAGE_DOWNLOAD         ":/images/start.png"
-#define IMAGE_DOWNLOADALL      ":/images/startall.png"
+#define IMAGE_DOWNLOAD         ":/icons/png/download.png"
+#define IMAGE_DOWNLOADALL      ":/icons/mail/downloadall.png"
 
 #define COLUMN_FILE_NAME   0
 #define COLUMN_FILE_SIZE   1
@@ -108,7 +111,7 @@ MessageWidget *MessageWidget::openMsg(const std::string &msgId, bool window)
 	msgWidget->isWindow = window;
 	msgWidget->fill(msgId);
 
-	if (parent) {
+    if (parent) {
 		parent->addWidget(msgWidget);
 	}
 
@@ -122,7 +125,7 @@ MessageWidget *MessageWidget::openMsg(const std::string &msgId, bool window)
 
 /** Constructor */
 MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags flags)
-: QWidget(parent, flags)
+  : QWidget(parent, flags), toolButtonReply(NULL)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -130,12 +133,31 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	isControlled = controlled;
 	isWindow = false;
 	currMsgFlags = 0;
+	expandFiles = false;
+
+	ui.actionTextBesideIcon->setData(Qt::ToolButtonTextBesideIcon);
+	ui.actionIconOnly->setData(Qt::ToolButtonIconOnly);
 
 	connect(ui.msgList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(msgfilelistWidgetCostumPopupMenu(QPoint)));
 	connect(ui.expandFilesButton, SIGNAL(clicked()), this, SLOT(togglefileview()));
 	connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(getallrecommended()));
 	connect(ui.msgText, SIGNAL(anchorClicked(QUrl)), this, SLOT(anchorClicked(QUrl)));
 	connect(ui.sendInviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
+	
+	connect(ui.replyButton, SIGNAL(clicked()), this, SLOT(reply()));
+	connect(ui.replyallButton, SIGNAL(clicked()), this, SLOT(replyAll()));
+	connect(ui.forwardButton, SIGNAL(clicked()), this, SLOT(forward()));
+	connect(ui.deleteButton, SIGNAL(clicked()), this, SLOT(remove()));
+	
+	connect(ui.actionSaveAs, SIGNAL(triggered()), this, SLOT(saveAs()));
+	connect(ui.actionPrint, SIGNAL(triggered()), this, SLOT(print()));
+	connect(ui.actionPrintPreview, SIGNAL(triggered()), this, SLOT(printPreview()));
+	connect(ui.actionIconOnly, SIGNAL(triggered()), this, SLOT(buttonStyle()));
+	connect(ui.actionTextBesideIcon, SIGNAL(triggered()), this, SLOT(buttonStyle()));
+	
+	QAction *viewsource = new QAction(tr("View source"), this);
+	viewsource->setShortcut(QKeySequence("CTRL+O"));
+	connect(viewsource, SIGNAL(triggered()), this, SLOT(viewSource()));
 
 	connect(NotifyQt::getInstance(), SIGNAL(messagesTagsChanged()), this, SLOT(messagesTagsChanged()));
 	connect(NotifyQt::getInstance(), SIGNAL(messagesChanged()), this, SLOT(messagesChanged()));
@@ -156,6 +178,16 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	msglheader->resizeSection (COLUMN_FILE_NAME, 200);
 	msglheader->resizeSection (COLUMN_FILE_SIZE, 100);
 	msglheader->resizeSection (COLUMN_FILE_HASH, 200);
+
+	QMenu *moremenu = new QMenu();
+	moremenu->addAction(viewsource);
+	moremenu->addAction(ui.actionSaveAs);
+	moremenu->addAction(ui.actionPrint);
+	moremenu->addAction(ui.actionPrintPreview);
+	moremenu->addSeparator();
+	moremenu->addAction(ui.actionTextBesideIcon);
+	moremenu->addAction(ui.actionIconOnly);
+	ui.moreButton->setMenu(moremenu);
 
 	QFont font = QFont("Arial", 10, QFont::Bold);
 	ui.subjectText->setFont(font);
@@ -196,6 +228,7 @@ void MessageWidget::connectAction(enumActionType actionType, QToolButton* button
 		break;
 	case ACTION_REPLY:
 		connect(button, SIGNAL(clicked()), this, SLOT(reply()));
+		toolButtonReply = button;
 		break;
 	case ACTION_REPLY_ALL:
 		connect(button, SIGNAL(clicked()), this, SLOT(replyAll()));
@@ -250,15 +283,19 @@ void MessageWidget::processSettings(const QString &settingsGroup, bool load)
 		// load settings
 
 		// expandFiles
-		bool value = Settings->value("expandFiles", false).toBool();
-		ui.expandFilesButton->setChecked(value);
-		ui.msgList->setVisible(value);
-		togglefileview();
+		expandFiles = Settings->value("expandFiles", false).toBool();
+		
+		// toolbar button style
+		Qt::ToolButtonStyle style = (Qt::ToolButtonStyle) Settings->value("ToolButon_Style", Qt::ToolButtonTextBesideIcon).toInt();
+		setToolbarButtonStyle(style);
 	} else {
 		// save settings
 
 		// expandFiles
-		Settings->setValue("expandFiles", ui.expandFilesButton->isChecked());
+		Settings->setValue("expandFiles", expandFiles);
+
+		//toolbar button style
+		Settings->setValue("ToolButon_Style", ui.replyButton->toolButtonStyle());
 	}
 
 	Settings->endGroup();
@@ -278,25 +315,29 @@ void MessageWidget::msgfilelistWidgetCostumPopupMenu( QPoint /*point*/ )
 {
 	QMenu contextMnu(this);
 
-	contextMnu.addAction(QIcon(IMAGE_DOWNLOAD), tr("Download"), this, SLOT(getcurrentrecommended()));
-	contextMnu.addAction(QIcon(IMAGE_DOWNLOADALL), tr("Download all"), this, SLOT(getallrecommended()));
+    contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_DOWNLOAD), tr("Download"), this, SLOT(getcurrentrecommended()));
+    contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_DOWNLOADALL), tr("Download all"), this, SLOT(getallrecommended()));
 
 	contextMnu.exec(QCursor::pos());
 }
 
-void MessageWidget::togglefileview()
+void MessageWidget::togglefileview(bool noUpdate/*=false*/)
 {
 	/* if msg header visible -> change icon and tooltip
 	* three widgets...
 	*/
 
 	if (ui.expandFilesButton->isChecked()) {
-		ui.expandFilesButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
+        ui.expandFilesButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/down-arrow.png")));
 		ui.expandFilesButton->setToolTip(tr("Hide the attachment pane"));
 	} else {
-		ui.expandFilesButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+        ui.expandFilesButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/up-arrow.png")));
 		ui.expandFilesButton->setToolTip(tr("Show the attachment pane"));
 	}
+	if (!noUpdate)
+		expandFiles = ui.expandFilesButton->isChecked();
+
+	ui.msgList->setVisible(ui.expandFilesButton->isChecked());
 }
 
 /* download the recommendations... */
@@ -322,7 +363,7 @@ void MessageWidget::getcurrentrecommended()
 			fi.fname = it->data().toString().toUtf8().constData();
 			break ;
 		case COLUMN_FILE_SIZE:
-			fi.size = it->data().toULongLong() ;
+			fi.size = it->data(Qt::UserRole).toULongLong() ;
 			break ;
 		case COLUMN_FILE_HASH:
 			fi.hash = RsFileHash(it->data().toString().toStdString()) ;
@@ -388,13 +429,10 @@ void MessageWidget::messagesChanged()
 void MessageWidget::clearTagLabels()
 {
 	/* clear all tags */
-	while (tagLabels.size()) {
-		delete tagLabels.front();
-		tagLabels.pop_front();
-	}
-	while (ui.tagLayout->count()) {
-		delete ui.tagLayout->takeAt(0);
-	}
+	qDeleteAll(tagLabels);
+	tagLabels.clear();
+
+	misc::clearLayout(ui.tagLayout);
 
 	ui.tagsLabel->setVisible(false);
 }
@@ -472,12 +510,30 @@ void MessageWidget::fill(const std::string &msgId)
 
 		clearTagLabels();
 
+		ui.inviteFrame->hide();
+		ui.expandFilesButton->setChecked(false);
+		ui.downloadButton->setEnabled(false);
+		togglefileview(true);
+
+		ui.replyButton->setEnabled(false);
+		ui.replyallButton->setEnabled(false);
+		ui.forwardButton->setEnabled(false);
+		ui.deleteButton->setEnabled(false);
+		ui.moreButton->setEnabled(false);
+
 		currMsgFlags = 0;
 
 		return;
 	}
 
 	clearTagLabels();
+
+
+	ui.replyButton->setEnabled(true);
+	ui.replyallButton->setEnabled(true);
+	ui.forwardButton->setEnabled(true);
+	ui.deleteButton->setEnabled(true);
+	ui.moreButton->setEnabled(true);
 
 	MessageInfo msgInfo;
 	if (rsMail->getMessage(currMsgId, msgInfo) == false) {
@@ -500,7 +556,9 @@ void MessageWidget::fill(const std::string &msgId)
 	for (it = recList.begin(); it != recList.end(); ++it) {
 		QTreeWidgetItem *item = new QTreeWidgetItem;
 		item->setText(COLUMN_FILE_NAME, QString::fromUtf8(it->fname.c_str()));
+		item->setIcon(COLUMN_FILE_NAME, FilesDefs::getIconFromFileType(it->fname.c_str()));
 		item->setText(COLUMN_FILE_SIZE, misc::friendlyUnit(it->size));
+		item->setData(COLUMN_FILE_SIZE, Qt::UserRole, QVariant(qulonglong(it->size)) );
 		item->setText(COLUMN_FILE_HASH, QString::fromStdString(it->hash.toStdString()));
 		item->setTextAlignment( COLUMN_FILE_SIZE, Qt::AlignRight );
 
@@ -510,6 +568,9 @@ void MessageWidget::fill(const std::string &msgId)
 
 	/* add the items in! */
 	ui.msgList->insertTopLevelItems(0, items);
+	ui.expandFilesButton->setChecked(expandFiles && (items.count()>0) );
+	ui.downloadButton->setEnabled(items.count()>0);
+	togglefileview(true);
 
 	/* iterate through the sources */
 	RetroShareLink link;
@@ -579,7 +640,7 @@ void MessageWidget::fill(const std::string &msgId)
 	ui.dateText->setText(DateTime::formatDateTime(msgInfo.ts));
 
     RsPeerId ownId = rsPeers->getOwnId();
-	 QString tooltip_string ;
+	QString tooltip_string ;
 
 //	if ((msgInfo.msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX) // outgoing message are from me
 //	{
@@ -587,29 +648,35 @@ void MessageWidget::fill(const std::string &msgId)
 //		link.createMessage(ownId, "");
 //	}
 
-     if(msgInfo.msgflags & RS_MSG_DISTANT)	// distant message
-     {
-         tooltip_string = PeerDefs::rsidFromId(msgInfo.rsgxsid_srcId) ;
-         link.createMessage(msgInfo.rsgxsid_srcId, "");
-     }
-     else
-     {
-         tooltip_string = PeerDefs::rsidFromId(msgInfo.rspeerid_srcId) ;
-         link.createMessage(msgInfo.rspeerid_srcId, "");
-     }
+	if(msgInfo.msgflags & RS_MSG_DISTANT)	// distant message
+	{
+		tooltip_string = PeerDefs::rsidFromId(msgInfo.rsgxsid_srcId) ;
+		link = RetroShareLink::createMessage(msgInfo.rsgxsid_srcId, "");
+	}
+	else
+	{
+		tooltip_string = PeerDefs::rsidFromId(msgInfo.rspeerid_srcId) ;
+		link = RetroShareLink::createMessage(msgInfo.rspeerid_srcId, "");
+	}
 
-    if ((msgInfo.msgflags & RS_MSG_SYSTEM) && msgInfo.rspeerid_srcId == ownId) {
-		ui.fromText->setText("RetroShare");
+	if (((msgInfo.msgflags & RS_MSG_SYSTEM) && msgInfo.rspeerid_srcId == ownId) || msgInfo.rspeerid_srcId.isNull()) {
+		ui.fromText->setText("[Notification]");
+		if (toolButtonReply) toolButtonReply->setEnabled(false);
 	} else {
 		ui.fromText->setText(link.toHtml());
 		ui.fromText->setToolTip(tooltip_string) ;
+		if (toolButtonReply) toolButtonReply->setEnabled(true);
 	}
 
-		ui.subjectText->setText(QString::fromUtf8(msgInfo.title.c_str()));
+	ui.subjectText->setText(QString::fromUtf8(msgInfo.title.c_str()));
+	
+	unsigned int formatTextFlag = RSHTML_FORMATTEXT_EMBED_LINKS ;
 
-        // emoticons disabled because of crazy cost.
-	//text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromUtf8(msgInfo.msg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
-	text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromUtf8(msgInfo.msg.c_str()),  RSHTML_FORMATTEXT_EMBED_LINKS);
+	// embed smileys ?
+	if (Settings->valueFromGroup(QString("Messages"), QString::fromUtf8("Emoticons"), true).toBool()) {
+		formatTextFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS ;
+	}
+	text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromUtf8(msgInfo.msg.c_str()), formatTextFlag);
 	ui.msgText->resetImagesStatus(Settings->getMsgLoadEmbeddedImages() || (msgInfo.msgflags & RS_MSG_LOAD_EMBEDDED_IMAGES));
 	ui.msgText->setHtml(text);
 
@@ -647,8 +714,15 @@ void MessageWidget::remove()
 	if (isWindow) {
 		window()->close();
 	} else {
-		deleteLater();
+		if (isControlled) {
+			currMsgId.clear();
+			fill(currMsgId);
+		} else {
+			deleteLater();
+		}
 	}
+
+	emit messageRemoved();
 }
 
 void MessageWidget::print()
@@ -752,18 +826,19 @@ void MessageWidget::anchorClicked(const QUrl &url)
 {
 	RetroShareLink link(url);
 
-	if (link.valid() == false) {
-		return;
+	if(link.valid())
+	{
+		if (link.type() == RetroShareLink::TYPE_CERTIFICATE && currMsgFlags & RS_MSG_USER_REQUEST) {
+			std::cerr << "(WW) Calling some disabled code in MessageWidget::anchorClicked(). Please contact the developpers." << std::endl;
+			//	link.setSubType(RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST);
+		}
+
+		QList<RetroShareLink> links;
+		links.append(link);
+		RetroShareLink::process(links);
 	}
-
-    if (link.type() == RetroShareLink::TYPE_CERTIFICATE && currMsgFlags & RS_MSG_USER_REQUEST) {
-        std::cerr << "(WW) Calling some disabled code in MessageWidget::anchorClicked(). Please contact the developpers." << std::endl;
-    //	link.setSubType(RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST);
-    }
-
-	QList<RetroShareLink> links;
-	links.append(link);
-	RetroShareLink::process(links);
+    else
+		QDesktopServices::openUrl(url) ;
 }
 
 void MessageWidget::loadImagesAlways()
@@ -785,9 +860,40 @@ void MessageWidget::sendInvite()
 	if (!rsMail->getMessage(currMsgId, mi))
 		return;
 
-    if ((QMessageBox::question(this, tr("Send invite?"),tr("Do you really want send a invite with your Certificate?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
-	{
-      MessageComposer::sendInvite(mi.rsgxsid_srcId);
-	}    
+    //if ((QMessageBox::question(this, tr("Send invite?"),tr("Do you really want send a invite with your Certificate?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
+	//{
+      MessageComposer::sendInvite(mi.rsgxsid_srcId,false);
+	//}
 
+}
+
+void MessageWidget::setToolbarButtonStyle(Qt::ToolButtonStyle style)
+{
+	ui.deleteButton->setToolButtonStyle(style);
+	ui.replyButton->setToolButtonStyle(style);
+	ui.replyallButton->setToolButtonStyle(style);
+	ui.forwardButton->setToolButtonStyle(style);
+	ui.moreButton->setToolButtonStyle(style);
+}
+
+void MessageWidget::buttonStyle()
+{
+	setToolbarButtonStyle((Qt::ToolButtonStyle) dynamic_cast<QAction*>(sender())->data().toInt());
+}
+
+void MessageWidget::viewSource()
+{
+	QDialog *dialog = new QDialog(this);
+	QPlainTextEdit *pte = new QPlainTextEdit(dialog);
+	pte->setPlainText( ui.msgText->toHtml() );
+	QGridLayout *gl = new QGridLayout(dialog);
+	gl->addWidget(pte,0,0,1,1);
+	dialog->setWindowTitle(tr("Document source"));
+	dialog->resize(500, 400);
+
+	dialog->exec();
+
+	ui.msgText->setHtml(pte->toPlainText());
+
+	delete dialog;
 }

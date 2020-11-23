@@ -1,3 +1,23 @@
+/*******************************************************************************
+ * gui/settings/WebuiPage.cpp                                                  *
+ *                                                                             *
+ * Copyright (c) 2014 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #include "WebuiPage.h"
 
 #include <iostream>
@@ -7,11 +27,8 @@
 #include <QSpinBox>
 
 #include "util/misc.h"
-#include "api/ApiServer.h"
-#include "api/ApiServerMHD.h"
-#include "api/ApiServerLocal.h"
-#include "api/RsControlModule.h"
-#include "api/GetPluginInterfaces.h"
+#include "retroshare/rswebui.h"
+#include "retroshare/rsjsonapi.h"
 
 #include "rsharesettings.h"
 
@@ -23,18 +40,31 @@ resource_api::ApiServerLocal* WebuiPage::apiServerLocal = 0;
 #endif
 resource_api::RsControlModule* WebuiPage::controlModule = 0;
 
+
 WebuiPage::WebuiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
 {
     ui.setupUi(this);
     connect(ui.enableWebUI_CB, SIGNAL(clicked(bool)), this, SLOT(onEnableCBClicked(bool)));
-    connect(ui.port_SB, SIGNAL(valueChanged(int)), this, SLOT(onPortValueChanged(int)));
     connect(ui.allIp_CB, SIGNAL(clicked(bool)), this, SLOT(onAllIPCBClicked(bool)));
-    connect(ui.applyStartBrowser_PB, SIGNAL(clicked()), this, SLOT(onApplyClicked()));
+    connect(ui.apply_PB, SIGNAL(clicked()), this, SLOT(onApplyClicked()));
+    connect(ui.password_LE, SIGNAL(textChanged(QString)), this, SLOT(onPasswordValueChanged(QString)));
+    connect(ui.startWebBrowser_PB, SIGNAL(clicked()), this, SLOT(onStartWebBrowserClicked()));
+    connect(ui.webInterfaceFilesDirectory_PB, SIGNAL(clicked()), this, SLOT(selectWebInterfaceDirectory()));
 }
 
 WebuiPage::~WebuiPage()
 {
 
+}
+
+void WebuiPage::selectWebInterfaceDirectory()
+{
+    QString dirname = QFileDialog::getExistingDirectory(NULL,tr("Please select the directory were to find retroshare webinterface files"),ui.webInterfaceFiles_LE->text());
+
+    if(dirname.isNull())
+        return;
+
+	whileBlocking(ui.webInterfaceFiles_LE)->setText(dirname);
 }
 
 bool WebuiPage::updateParams(QString &errmsg)
@@ -44,34 +74,57 @@ bool WebuiPage::updateParams(QString &errmsg)
     bool changed = false;
     if(ui.enableWebUI_CB->isChecked() != Settings->getWebinterfaceEnabled())
         changed = true;
-    if(ui.port_SB->value() != Settings->getWebinterfacePort())
+    if(ui.webInterfaceFiles_LE->text() != Settings->getWebinterfaceFilesDirectory())
         changed = true;
-    if(ui.allIp_CB->isChecked() != Settings->getWebinterfaceAllowAllIps())
-        changed = true;
+
     if(changed)
     {
         // store config
         Settings->setWebinterfaceEnabled(ui.enableWebUI_CB->isChecked());
-        Settings->setWebinterfacePort(ui.port_SB->value());
-        Settings->setWebinterfaceAllowAllIps(ui.allIp_CB->isChecked());
-
-        // apply config
-        checkShutdownWebui();
-        ok = checkStartWebui();
+        Settings->setWebinterfaceFilesDirectory(ui.webInterfaceFiles_LE->text());
     }
-    if(!ok)
-        errmsg = "Could not start webinterface.";
     return ok;
+}
+
+void WebuiPage::onPasswordValueChanged(QString password)
+{
+    QColor color;
+
+    bool valid = password.length() >= 1;
+
+	if(!valid)
+		color = QApplication::palette().color(QPalette::Disabled, QPalette::Base);
+	else
+		color = QApplication::palette().color(QPalette::Active, QPalette::Base);
+
+	/* unpolish widget to clear the stylesheet's palette cache */
+	//ui.searchLineFrame->style()->unpolish(ui.searchLineFrame);
+
+	QPalette palette = ui.password_LE->palette();
+	palette.setColor(ui.password_LE->backgroundRole(), color);
+	ui.password_LE->setPalette(palette);
+}
+
+bool WebuiPage::restart()
+{
+	return checkStartWebui();
 }
 
 void WebuiPage::load()
 {
 	std::cerr << "WebuiPage::load()" << std::endl;
 	whileBlocking(ui.enableWebUI_CB)->setChecked(Settings->getWebinterfaceEnabled());
-	whileBlocking(ui.port_SB)->setValue(Settings->getWebinterfacePort());
-	whileBlocking(ui.allIp_CB)->setChecked(Settings->getWebinterfaceAllowAllIps());
-	onEnableCBClicked(Settings->getWebinterfaceEnabled());
+	whileBlocking(ui.webInterfaceFiles_LE)->setText(Settings->getWebinterfaceFilesDirectory());
+
+#ifdef RS_JSONAPI
+	auto smap = rsJsonApi->getAuthorizedTokens();
+    auto it = smap.find("webui");
+
+    if(it != smap.end())
+		whileBlocking(ui.password_LE)->setText(QString::fromStdString(it->second));
+#endif
 }
+
 
 QString WebuiPage::helpText() const
 {
@@ -83,57 +136,30 @@ QString WebuiPage::helpText() const
 /*static*/ bool WebuiPage::checkStartWebui()
 {
     if(!Settings->getWebinterfaceEnabled())
-        return true;
-    if(apiServer || apiServerMHD || controlModule)
-        return true;
+        return false;
 
-    apiServer = new resource_api::ApiServer();
-    controlModule = new resource_api::RsControlModule(0, 0, apiServer->getStateTokenServer(), apiServer, false);
-    apiServer->addResourceHandler("control", dynamic_cast<resource_api::ResourceRouter*>(controlModule), &resource_api::RsControlModule::handleRequest);
+	rsWebUi->setHtmlFilesDirectory(Settings->getWebinterfaceFilesDirectory().toStdString());
+	rsWebUi->restart();
 
-    RsPlugInInterfaces ifaces;
-    resource_api::getPluginInterfaces(ifaces);
-    apiServer->loadMainModules(ifaces);
-
-    apiServerMHD = new resource_api::ApiServerMHD(apiServer);
-    bool ok = apiServerMHD->configure(resource_api::getDefaultDocroot(),
-                                      Settings->getWebinterfacePort(),
-                                      "",
-                                      Settings->getWebinterfaceAllowAllIps());
-    apiServerMHD->start();
-
-// TODO: LIBRESAPI_LOCAL_SERVER Move in appropriate place
-#ifdef LIBRESAPI_LOCAL_SERVER
-	apiServerLocal = new resource_api::ApiServerLocal(apiServer, resource_api::ApiServerLocal::serverPath());
-#endif
-    return ok;
+    return true;
 }
 
 /*static*/ void WebuiPage::checkShutdownWebui()
 {
-    if(apiServer || apiServerMHD)
-    {
-        apiServerMHD->stop();
-        delete apiServerMHD;
-        apiServerMHD = 0;
-// TODO: LIBRESAPI_LOCAL_SERVER Move in appropriate place
-#ifdef LIBRESAPI_LOCAL_SERVER
-		delete apiServerLocal;
-		apiServerLocal = 0;
-#endif
-        delete apiServer;
-        apiServer = 0;
-        delete controlModule;
-        controlModule = 0;
-    }
+	rsWebUi->stop();
 }
 
 /*static*/ void WebuiPage::showWebui()
 {
-    if(Settings->getWebinterfaceEnabled())
-    {
-        QDesktopServices::openUrl(QUrl(QString("http://localhost:")+QString::number(Settings->getWebinterfacePort())));
-    }
+	if(Settings->getWebinterfaceEnabled())
+	{
+		QUrl webuiUrl;
+		webuiUrl.setScheme("http");
+		webuiUrl.setHost(QString::fromStdString(rsJsonApi->getBindingAddress()));
+		webuiUrl.setPort(rsJsonApi->listeningPort());
+		webuiUrl.setPath("/index.html");
+		QDesktopServices::openUrl(webuiUrl);
+	}
     else
     {
         QMessageBox::warning(0, tr("Webinterface not enabled"), tr("The webinterface is not enabled. Enable it in Settings -> Webinterface."));
@@ -143,9 +169,16 @@ QString WebuiPage::helpText() const
 void WebuiPage::onEnableCBClicked(bool checked)
 {
 	ui.params_GB->setEnabled(checked);
-	ui.applyStartBrowser_PB->setEnabled(checked);
+	ui.apply_PB->setEnabled(checked);
+	ui.startWebBrowser_PB->setEnabled(checked);
 	QString S;
-	updateParams(S);
+
+    Settings->setWebinterfaceEnabled(checked);
+
+    if(checked)
+        checkStartWebui();
+    else
+        checkShutdownWebui();
 }
 
 void WebuiPage::onPortValueChanged(int /*value*/)
@@ -159,15 +192,17 @@ void WebuiPage::onAllIPCBClicked(bool /*checked*/)
 	QString S;
 	updateParams(S);
 }
-
 void WebuiPage::onApplyClicked()
 {
-    QString errmsg;
-    bool ok = updateParams(errmsg);
-    if(!ok)
+	rsWebUi->setUserPassword(ui.password_LE->text().toStdString());
+
+    if(!restart())
     {
         QMessageBox::warning(0, tr("failed to start Webinterface"), "Failed to start the webinterface.");
         return;
     }
-    QDesktopServices::openUrl(QUrl(QString("http://localhost:")+QString::number(ui.port_SB->value())));
+
+    emit passwordChanged();
 }
+
+void WebuiPage::onStartWebBrowserClicked() { showWebui(); }

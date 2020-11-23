@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2008 Robert Fernie
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/feeds/ChatMsgItem.cpp                                                   *
+ *                                                                             *
+ * Copyright (c) 2008, Robert Fernie   <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QDateTime>
 #include <QTimer>
@@ -44,7 +43,7 @@
 
 /** Constructor */
 ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, const std::string &message) :
-    FeedItem(NULL), mParent(parent), mFeedId(feedId), mPeerId(peerId)
+    FeedItem(parent,feedId,NULL), mPeerId(peerId)
 {
     /* Invoke the Qt Designer generated object setup routine */
     setupUi(this);
@@ -154,26 +153,6 @@ void ChatMsgItem::insertChat(const std::string &message)
     chatTextlabel->setText(formatMsg);
 }
 
-void ChatMsgItem::removeItem()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "ChatMsgItem::removeItem()";
-	std::cerr << std::endl;
-#endif
-
-	if (mParent) {
-		mParent->lockLayout(this, true);
-	}
-
-	hide();
-
-	if (mParent) {
-		mParent->lockLayout(this, false);
-
-		mParent->deleteFeedItem(this, mFeedId);
-	}
-}
-
 void ChatMsgItem::gotoHome()
 {
 #ifdef DEBUG_ITEM
@@ -192,7 +171,7 @@ void ChatMsgItem::sendMsg()
 	std::cerr << std::endl;
 #endif
 
-	if (mParent)
+	if (mFeedHolder)
 	{
 
     MessageComposer *nMsgDialog = MessageComposer::newMsg();
@@ -215,15 +194,15 @@ void ChatMsgItem::openChat()
 	std::cerr << "ChatMsgItem::openChat()";
 	std::cerr << std::endl;
 #endif
-	if (mParent)
+	if (mFeedHolder)
 	{
-		mParent->openChat(mPeerId);
+		mFeedHolder->openChat(mPeerId);
 	}
 }
 
 void ChatMsgItem::togglequickmessage()
 {
-	mParent->lockLayout(this, true);
+	mFeedHolder->lockLayout(this, true);
 
 	if (messageFrame->isHidden())
 	{
@@ -240,7 +219,7 @@ void ChatMsgItem::togglequickmessage()
 
     emit sizeChanged(this);
 
-    mParent->lockLayout(this, false);
+    mFeedHolder->lockLayout(this, false);
 }
 
 void ChatMsgItem::sendMessage()

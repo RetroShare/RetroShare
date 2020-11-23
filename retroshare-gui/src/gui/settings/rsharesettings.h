@@ -1,24 +1,23 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (c) 2006-2007, crypton
- * Copyright (c) 2006, Matt Edman, Justin Hipple
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/settings/rsharesettings.h                                               *
+ *                                                                             *
+ * Copyright (c) 2006-2007, crypton                                            *
+ * Copyright (c) 2006, Matt Edman, Justin Hipple                               *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef _RSHARESETTINGS_H
 #define _RSHARESETTINGS_H
@@ -187,6 +186,8 @@ public:
 	/** Sets whether the bandwidth graph is always on top. */
 	void setBWGraphAlwaysOnTop(bool alwaysOnTop);
 
+	void setHiddenServiceKey() ;
+
 	uint getNewsFeedFlags();
 	void setNewsFeedFlags(uint flags);
 
@@ -272,6 +273,9 @@ public:
 
 	int  getLobbyChatHistoryCount();
 	void setLobbyChatHistoryCount(int value);
+	
+	int  getDistantChatHistoryCount();
+	void setDistantChatHistoryCount(int value);
 
 	//! Save placement, state and size information of a window.
 	void saveWidgetInformation(QWidget *widget);
@@ -327,17 +331,28 @@ public:
     bool getWebinterfaceEnabled();
     void setWebinterfaceEnabled(bool enabled);
 
-    uint16_t getWebinterfacePort();
-    void setWebinterfacePort(uint16_t port);
+	QString getWebinterfaceFilesDirectory();
+	void setWebinterfaceFilesDirectory(const QString& dirname);
 
-    bool getWebinterfaceAllowAllIps();
-    void setWebinterfaceAllowAllIps(bool allow_all);
-    
     // proxy function that computes the best icon size among sizes passed as array, to match the recommended size on screen.
     int computeBestIconSize(int n_sizes, int *sizes, int recommended_size);
 
     bool getPageAlreadyDisplayed(const QString& page_code) ;
     void setPageAlreadyDisplayed(const QString& page_code,bool b) ;
+
+#ifdef RS_JSONAPI
+	bool getJsonApiEnabled();
+	void setJsonApiEnabled(bool enabled);
+
+	uint16_t getJsonApiPort();
+	void setJsonApiPort(uint16_t port);
+
+	QString getJsonApiListenAddress();
+	void setJsonApiListenAddress(const QString& listenAddress);
+
+	QStringList getJsonApiAuthTokens();
+	void setJsonApiAuthTokens(const QStringList& authTokens);
+#endif // ifdef RS_JSONAPI
 
 protected:
 	/** Default constructor. */

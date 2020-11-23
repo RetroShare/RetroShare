@@ -23,10 +23,17 @@
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Anyone in your contact list will automatically have a positive opinion if not set. This allows to automatically raise reputations of used nodes. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
-         <string>automatically give &quot;Positive&quot; opinion to my contacts</string>
+         <string>use &quot;positive&quot; as the default opinion for contacts (instead of neutral)</string>
         </property>
         <property name="checked">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="autoAddFriendIdsAsContact_CB">
+        <property name="text">
+         <string>Automatically add identities owned by friend nodes to my contacts</string>
         </property>
        </widget>
       </item>
