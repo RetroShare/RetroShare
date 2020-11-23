@@ -43,7 +43,13 @@ win32 {
 	}
 
 	libretroshare_shared {
-		PRE_TARGETDEPS += $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
+		win32-g++|win32-clang-g++:!isEmpty(QMAKE_SH) {
+			# Windows msys2
+			LIBRETROSHARE_TARGET=libretroshare.dll.a
+		} else {
+			LIBRETROSHARE_TARGET=libretroshare.a
+		}
+		PRE_TARGETDEPS += $$OUT_PWD/../../libretroshare/src/lib/$${LIBRETROSHARE_TARGET}
 		LIBS += -L"$$OUT_PWD/../../libretroshare/src/lib" -lretroshare
 	}
 
