@@ -25,6 +25,7 @@
 
 #include "WireGroupItem.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/common/FilesDefs.h"
 
 #include <algorithm>
 #include <iostream>
@@ -66,7 +67,7 @@ void WireGroupItem::setup()
 	else
 	{
 		// default.
-		QPixmap pixmap = QPixmap(":/icons/wire.png").scaled(32,32);
+        QPixmap pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png").scaled(32,32);
 		label_headshot->setPixmap(pixmap);
 	}
 	

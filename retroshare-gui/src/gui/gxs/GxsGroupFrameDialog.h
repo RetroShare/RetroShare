@@ -82,6 +82,8 @@ public:
 
     void getServiceStatistics(GxsServiceStatistic& stats) const ;
 
+    static uint32_t checkDelay(uint32_t time_in_secs);
+
 protected:
 	virtual void showEvent(QShowEvent *event) override;
 	virtual void paintEvent(QPaintEvent *pe) override;
@@ -164,7 +166,7 @@ private:
 	virtual QWidget *createCommentHeaderWidget(const RsGxsGroupId &/*grpId*/, const RsGxsMessageId &/*msgId*/) { return NULL; }
     virtual bool getDistantSearchResults(TurtleRequestId /* id */, std::map<RsGxsGroupId,RsGxsGroupSearchResults>& /* group_infos */){ return false ;}
     virtual void clearDistantSearchResults(TurtleRequestId /* id */) {}
-    virtual RsGxsGenericGroupData *getDistantSearchResultGroupData(const RsGxsGroupId& group_id){ return nullptr ;}
+    virtual RsGxsGenericGroupData *getDistantSearchResultGroupData(const RsGxsGroupId& /*group_id*/){ return nullptr ;}
 
 	void initUi();
 

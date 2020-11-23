@@ -20,8 +20,9 @@
 
 #include "LogoBar.h"
 
-#include <util/RetroStyleLabel.h>
-#include <util/MouseEventFilter.h>
+#include "util/RetroStyleLabel.h"
+#include "util/MouseEventFilter.h"
+#include "gui/common/FilesDefs.h"
 
 #include <QGridLayout>
 
@@ -42,11 +43,11 @@ void LogoBar::init() {
 	//LogoButton
 	_logoButton = new RetroStyleLabel(this);
 	_logoButton->setPixmaps(
-			QPixmap(":/images/logobar/rslogo2.png"), //Start
+            FilesDefs::getPixmapFromQtResourcePath(":/images/logobar/rslogo2.png"), //Start
 			QPixmap(), //End
 			QPixmap(), //Fill
 
-			QPixmap(":/images/logobar/rslogo2.png"), //Start
+            FilesDefs::getPixmapFromQtResourcePath(":/images/logobar/rslogo2.png"), //Start
 			QPixmap(), //End
 			QPixmap() //Fill
 			);
@@ -59,11 +60,11 @@ void LogoBar::init() {
 	FillLabel1->setPixmaps(
 			QPixmap(), //Start
 			QPixmap(), //End
-			QPixmap(":/images/logobar/logo_bar_fill.png"), //Fill
+            FilesDefs::getPixmapFromQtResourcePath(":/images/logobar/logo_bar_fill.png"), //Fill
 
 			QPixmap(), //Start
 			QPixmap(), //End
-			QPixmap(":/images/logobar/logo_bar_fill.png") //Fill
+            FilesDefs::getPixmapFromQtResourcePath(":/images/logobar/logo_bar_fill.png") //Fill
 			);
 
     //FillLabel2
@@ -71,11 +72,11 @@ void LogoBar::init() {
 	FillLabel2->setPixmaps(
 			QPixmap(), //Start
 			QPixmap(), //End
-			QPixmap(":/images/logobar/logo_bar_fill.png"), //Fill
+            FilesDefs::getPixmapFromQtResourcePath(":/images/logobar/logo_bar_fill.png"), //Fill
 
 			QPixmap(), //Start
 			QPixmap(), //End
-			QPixmap(":/images/logobar/logo_bar_fill.png") //Fill
+            FilesDefs::getPixmapFromQtResourcePath(":/images/logobar/logo_bar_fill.png") //Fill
 			);
 
 	QGridLayout * layout = new QGridLayout(this);

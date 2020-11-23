@@ -232,7 +232,7 @@ win32-g++|win32-clang-g++ {
 
     # Fix linking error (ld.exe: Error: export ordinal too large) due to too
     # many exported symbols.
-    QMAKE_LFLAGS+=-Wl,--exclude-libs,ALL
+    !libretroshare_shared:QMAKE_LFLAGS+=-Wl,--exclude-libs,ALL
 
 	# Switch off optimization for release version
 	QMAKE_CXXFLAGS_RELEASE -= -O2
@@ -1356,11 +1356,9 @@ gxschannels {
 	HEADERS += gui/gxschannels/GxsChannelDialog.h \
 		gui/gxschannels/GxsChannelGroupDialog.h \
 		gui/gxschannels/CreateGxsChannelMsg.h \
-		gui/gxschannels/GxsChannelPostsWidget.h \
 		gui/gxschannels/GxsChannelPostsWidgetWithModel.h \
 		gui/gxschannels/GxsChannelPostsModel.h \
 		gui/gxschannels/GxsChannelPostFilesModel.h \
-		gui/gxschannels/GxsChannelFilesWidget.h \
 		gui/gxschannels/GxsChannelPostThumbnail.h \
 		gui/gxschannels/GxsChannelFilesStatusWidget.h \
 		gui/feeds/GxsChannelGroupItem.h \
@@ -1369,20 +1367,17 @@ gxschannels {
 	
 	FORMS += \
 		gui/gxschannels/GxsChannelPostsWidgetWithModel.ui \
-		gui/gxschannels/GxsChannelPostsWidget.ui \
-		gui/gxschannels/GxsChannelFilesWidget.ui \
 		gui/gxschannels/GxsChannelFilesStatusWidget.ui \
 		gui/gxschannels/CreateGxsChannelMsg.ui \
 		gui/feeds/GxsChannelGroupItem.ui \
 		gui/feeds/GxsChannelPostItem.ui
 	
 	SOURCES += gui/gxschannels/GxsChannelDialog.cpp \
-		gui/gxschannels/GxsChannelPostsWidget.cpp \
 		gui/gxschannels/GxsChannelPostsWidgetWithModel.cpp \
 		gui/gxschannels/GxsChannelPostsModel.cpp \
 		gui/gxschannels/GxsChannelPostFilesModel.cpp \
-		gui/gxschannels/GxsChannelFilesWidget.cpp \
 		gui/gxschannels/GxsChannelFilesStatusWidget.cpp \
+                gui/gxschannels/GxsChannelPostThumbnail.cpp \
 		gui/gxschannels/GxsChannelGroupDialog.cpp \
 		gui/gxschannels/CreateGxsChannelMsg.cpp \
 		gui/feeds/GxsChannelGroupItem.cpp \
@@ -1394,7 +1389,9 @@ gxschannels {
 posted {
 	
 	HEADERS += gui/Posted/PostedDialog.h \
-		gui/Posted/PostedListWidget.h \
+		gui/Posted/PostedListWidgetWithModel.h \
+		gui/Posted/PostedPostsModel.h \
+		gui/Posted/BoardPostDisplayWidget.h \
 		gui/Posted/PostedItem.h \
 		gui/Posted/PostedCardView.h \
 		gui/Posted/PostedGroupDialog.h \
@@ -1406,18 +1403,22 @@ posted {
 		#gui/Posted/PostedCreateCommentDialog.h \
 		#gui/Posted/PostedComments.h \
 	
-	FORMS += gui/Posted/PostedListWidget.ui \
+	FORMS += gui/Posted/PostedListWidgetWithModel.ui \
 		gui/feeds/PostedGroupItem.ui \
+		gui/Posted/BoardPostDisplayWidget_compact.ui \
+		gui/Posted/BoardPostDisplayWidget_card.ui \
 		gui/Posted/PostedItem.ui \
 		gui/Posted/PostedCardView.ui \
 		gui/Posted/PostedCreatePostDialog.ui \
-		gui/Posted/PhotoView.ui 
+		gui/Posted/PhotoView.ui \
 		#gui/Posted/PostedDialog.ui \
 		#gui/Posted/PostedComments.ui \
 		#gui/Posted/PostedCreateCommentDialog.ui
 	
 	SOURCES += gui/Posted/PostedDialog.cpp \
-		gui/Posted/PostedListWidget.cpp \
+		gui/Posted/PostedListWidgetWithModel.cpp \
+		gui/Posted/BoardPostDisplayWidget.cpp \
+		gui/Posted/PostedPostsModel.cpp \
 		gui/feeds/PostedGroupItem.cpp \
 		gui/Posted/PostedItem.cpp \
 		gui/Posted/PostedCardView.cpp \

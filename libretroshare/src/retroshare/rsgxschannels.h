@@ -71,14 +71,15 @@ struct RsGxsChannelGroup : RsSerializable, RsGxsGenericGroupData
 
 struct RsGxsChannelPost : RsSerializable, RsGxsGenericMsgData
 {
-	RsGxsChannelPost() : mCount(0), mSize(0) {}
+    RsGxsChannelPost() : mAttachmentCount(0), mCommentCount(0), mSize(0) {}
 
 	std::set<RsGxsMessageId> mOlderVersions;
 	std::string mMsg;  // UTF8 encoded.
 
 	std::list<RsGxsFile> mFiles;
-	uint32_t mCount;   // auto calced.
-	uint64_t mSize;    // auto calced.
+    uint32_t mAttachmentCount;   // auto calced.
+    uint32_t mCommentCount;      // auto calced. WARNING: not computed yet. In the future we need a background process to update this and store in the service string.
+    uint64_t mSize;              // auto calced.
 
 	RsGxsImage mThumbnail;
 
@@ -92,8 +93,9 @@ struct RsGxsChannelPost : RsSerializable, RsGxsGenericMsgData
 
 		RS_SERIAL_PROCESS(mMsg);
 		RS_SERIAL_PROCESS(mFiles);
-		RS_SERIAL_PROCESS(mCount);
-		RS_SERIAL_PROCESS(mSize);
+        RS_SERIAL_PROCESS(mAttachmentCount);
+        RS_SERIAL_PROCESS(mCommentCount);
+        RS_SERIAL_PROCESS(mSize);
 		RS_SERIAL_PROCESS(mThumbnail);
 	}
 
@@ -113,6 +115,9 @@ enum class RsChannelEventCode: uint8_t
 	READ_STATUS_CHANGED             = 0x07, // existing message has been read or set to unread
 	RECEIVED_DISTANT_SEARCH_RESULT  = 0x08, // result for the given group id available for the given turtle request id
 	STATISTICS_CHANGED              = 0x09, // stats (nb of supplier friends, how many msgs they have etc) has changed
+    SYNC_PARAMETERS_UPDATED         = 0x0a, // sync and storage times have changed
+    NEW_COMMENT                     = 0x0b, // new comment arrived/published. mChannelThreadId gives the ID of the commented message
+    NEW_VOTE                        = 0x0c, // new vote arrived/published. mChannelThreadId gives the ID of the votes message comment
 };
 
 struct RsGxsChannelEvent: RsEvent
@@ -122,6 +127,7 @@ struct RsGxsChannelEvent: RsEvent
 	RsChannelEventCode mChannelEventCode;
 	RsGxsGroupId mChannelGroupId;
 	RsGxsMessageId mChannelMsgId;
+    RsGxsMessageId mChannelThreadId;
 
 	///* @see RsEvent @see RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override
@@ -322,8 +328,11 @@ public:
 	        std::vector<RsGxsChannelGroup>& channelsInfo ) = 0;
 
 	/**
-	 * @brief Get all channel messages and comments in a given channel
-	 * @jsonapi{development}
+     * @brief Get all channel messages, comments and votes in a given channel
+     * @note It's the client's responsibility to figure out which message (resp. comment)
+     * a comment (resp. vote) refers to.
+     *
+     * @jsonapi{development}
 	 * @param[in] channelId id of the channel of which the content is requested
 	 * @param[out] posts storage for posts
 	 * @param[out] comments storage for the comments
@@ -336,11 +345,13 @@ public:
 	                                   std::vector<RsGxsVote>& votes ) = 0;
 
 	/**
-	 * @brief Get channel messages and comments corresponding to the given IDs.
-	 * If the set is empty, nothing is returned.
-	 * @note Since comments are internally themselves messages, it is possible
-	 * to get comments only by supplying their IDs.
-	 * @jsonapi{development}
+     * @brief Get channel messages, comments and votes corresponding to the given IDs.
+     * @note Since comments are internally themselves messages, this function actually
+     * returns the data for messages, comments or votes that have the given ID.
+     * It *does not* automatically retrieve the comments or votes for a given message
+     * which Id you supplied.
+     *
+     * @jsonapi{development}
 	 * @param[in] channelId id of the channel of which the content is requested
 	 * @param[in] contentsIds ids of requested contents
 	 * @param[out] posts storage for posts
@@ -355,8 +366,9 @@ public:
 	                                std::vector<RsGxsVote>& votes ) = 0;
 
 	/**
-	 * @brief Get channel comments corresponding to the given IDs.
+     * @brief Get channel comments corresponding to the given message IDs.
 	 * If the set is empty, nothing is returned.
+     *
 	 * @jsonapi{development}
 	 * @param[in] channelId id of the channel of which the content is requested
 	 * @param[in] contentIds ids of requested contents
@@ -518,10 +530,16 @@ public:
 	 * @param[out] distantGroup storage for group data
 	 * @return false on error, true otherwise
 	 */
-	virtual bool getDistantSearchResultGroupData(
-	        const RsGxsGroupId& groupId, RsGxsChannelGroup& distantGroup ) = 0;
+    virtual bool getDistantSearchResultGroupData(const RsGxsGroupId& groupId, RsGxsChannelGroup& distantGroup ) = 0;
 
-	/**
+    /**
+     * @brief getDistantSearchStatus
+     * 			Returns the status of ongoing search: unknown (probably not even searched), known as a search result,
+     *          data request ongoing and data available
+     */
+    virtual DistantSearchGroupStatus getDistantSearchStatus(const RsGxsGroupId& group_id) =0;
+
+    /**
 	 * @brief Clear accumulated search results
 	 * @jsonapi{development}
 	 * @param[in] reqId search id

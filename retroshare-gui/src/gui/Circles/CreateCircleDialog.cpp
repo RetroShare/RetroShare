@@ -30,6 +30,7 @@
 #include <retroshare/rsidentity.h>
 
 #include "gui/common/AvatarDefs.h"
+#include "gui/common/FilesDefs.h"
 #include "util/qtthreadsutils.h"
 #include "gui/Circles/CreateCircleDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
@@ -53,14 +54,14 @@ CreateCircleDialog::CreateCircleDialog()
 	ui.setupUi(this);
 
 	/* Setup Queue */
-	ui.headerFrame->setHeaderImage(QPixmap(":/icons/png/circles.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/circles.png"));
 
 	// connect up the buttons.
 	connect(ui.addButton, SIGNAL(clicked()), this, SLOT(addMember()));
 	connect(ui.removeButton, SIGNAL(clicked()), this, SLOT(removeMember()));
 
-	connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(createCircle()));
-	connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
+	connect(ui.createButton, SIGNAL(clicked()), this, SLOT(createCircle()));
+	connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(close()));
 
 	connect(ui.treeWidget_membership, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(selectedMember(QTreeWidgetItem*, QTreeWidgetItem*)));
 	connect(ui.treeWidget_IdList, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(selectedId(QTreeWidgetItem*, QTreeWidgetItem*)));
@@ -145,15 +146,15 @@ void CreateCircleDialog::editExistingId(const RsGxsGroupId &circleId, const bool
 	    ui.idChooser->setVisible(true) ;
     }
     
-    ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Update"));
+    ui.createButton->setText(tr("Update"));
     
 	ui.addButton->setEnabled(!readonly) ;
 	ui.removeButton->setEnabled(!readonly) ;
     
     if(readonly)
 	{
-		ui.buttonBox->setStandardButtons(QDialogButtonBox::Cancel);
-		ui.buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Close"));
+		ui.createButton->hide() ;
+		ui.cancelButton->setText(tr("Close"));
 		ui.peersSelection_GB->hide() ;
 		ui.addButton->hide() ;
 		ui.removeButton->hide() ;
@@ -174,7 +175,7 @@ void CreateCircleDialog::editNewId(bool isExternal)
 	{
 		setupForExternalCircle();
 		ui.headerFrame->setHeaderText(tr("Create New Circle"));	
-		ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Create"));
+		ui.createButton->setText(tr("Create"));
 	}
 	else
 	{

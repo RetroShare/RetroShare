@@ -46,6 +46,7 @@
 #include "util/DateTime.h"
 #include "util/RsProtectedTimer.h"
 #include "util/QtVersion.h"
+#include "util/qtthreadsutils.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmsgs.h>
@@ -284,6 +285,30 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     connect(ui.messageTreeWidget->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumn(int,Qt::SortOrder)));
 
     connect(ui.messageTreeWidget->selectionModel(), SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&)), this, SLOT(currentChanged(const QModelIndex&,const QModelIndex&)));
+
+    mEventHandlerId=0;
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }); }, mEventHandlerId, RsEventType::MAIL_STATUS );
+}
+
+void MessagesDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+    if(event->mType != RsEventType::MAIL_STATUS)
+        return;
+
+    const RsMailStatusEvent *fe = dynamic_cast<const RsMailStatusEvent*>(event.get());
+    if(!fe)
+        return;
+
+    switch (fe->mMailStatusEventCode)
+    {
+    case RsMailStatusEventCode::MESSAGE_SENT:
+    case RsMailStatusEventCode::MESSAGE_REMOVED:
+    case RsMailStatusEventCode::NEW_MESSAGE:
+        updateMessageSummaryList();
+        break;
+    default:
+        break;
+    }
 }
 
 void MessagesDialog::preModelUpdate()
@@ -836,6 +861,8 @@ void MessagesDialog::changeBox(int box_row)
 		mMessageModel->setCurrentBox(RsMessageModel::BOX_NONE);
 	}
 	inChange = false;
+
+    updateMessageSummaryList();
 }
 
 void MessagesDialog::changeQuickView(int newrow)

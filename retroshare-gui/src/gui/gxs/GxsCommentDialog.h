@@ -32,25 +32,32 @@ class GxsCommentDialog: public QWidget
 	Q_OBJECT
 
 public:
-	GxsCommentDialog(QWidget *parent);
-	GxsCommentDialog(QWidget *parent, RsTokenService *token_service, RsGxsCommentService *comment_service);
+    GxsCommentDialog(QWidget *parent=nullptr,const RsGxsId& default_author=RsGxsId());
+    GxsCommentDialog(QWidget *parent,const RsGxsId& default_author, RsTokenService *token_service, RsGxsCommentService *comment_service);
 	virtual ~GxsCommentDialog();
 
     void setTokenService(RsTokenService *token_service, RsGxsCommentService *comment_service);
 	void setCommentHeader(QWidget *header);
-	void commentLoad(const RsGxsGroupId &grpId, const std::set<RsGxsMessageId> &msg_versions, const RsGxsMessageId &most_recent_msgId);
+    void commentLoad(const RsGxsGroupId &grpId, const std::set<RsGxsMessageId> &msg_versions, const RsGxsMessageId &most_recent_msgId, bool use_cache=false);
+    void commentClear();
 
 	RsGxsGroupId groupId() { return mGrpId; }
 	RsGxsMessageId messageId() { return mMostRecentMsgId; }
 
+public slots:
+    void refresh();
+
 private slots:
-	void refresh();
     void idChooserReady();
 	void voterSelectionChanged( int index );
 	void sortComments(int);
+    void notifyCommentsLoaded(int n);
+
+signals:
+    void commentsLoaded(int);
 
 private:
-    void init();
+    void init(const RsGxsId &default_author);
 
 	RsGxsGroupId   mGrpId;
 	RsGxsMessageId mMostRecentMsgId;

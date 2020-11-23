@@ -260,7 +260,7 @@ private:
     bool controlTransferFile(uint32_t flags);
     void changePriority(int priority);
     void setChunkStrategy(FileChunksInfo::ChunkStrategy s) ;
-	void handleEvent(std::shared_ptr<const RsEvent> event);
+	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
     QTreeView *downloadList;
 

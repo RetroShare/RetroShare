@@ -51,7 +51,7 @@ ProfileManager::ProfileManager(QWidget *parent)
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
 
-	ui.headerFrame->setHeaderImage(QPixmap(":/icons/png/profile.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/profile.png"));
 	ui.headerFrame->setHeaderText(tr("Profile Manager"));
 
 	connect(ui.identityTreeWidget, SIGNAL( customContextMenuRequested(QPoint)), this, SLOT( identityTreeWidgetCostumPopupMenu(QPoint)));

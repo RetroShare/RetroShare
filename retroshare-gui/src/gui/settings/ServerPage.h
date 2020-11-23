@@ -36,8 +36,9 @@
 #include <services/autoproxy/rsautoproxymonitor.h>
 #include <services/autoproxy/p3i2pbob.h>
 
-#include <retroshare-gui/configpage.h>
-#include <retroshare-gui/RsAutoUpdatePage.h>
+#include "retroshare-gui/configpage.h"
+#include "retroshare-gui/RsAutoUpdatePage.h"
+#include "gui/common/FilesDefs.h"
 
 
 class QNetworkReply;
@@ -55,7 +56,7 @@ public:
     /** Loads the settings for this page */
     virtual void load();
 
-    virtual QPixmap iconPixmap() const { return QPixmap(":/icons/png/network.png") ; }
+    virtual QPixmap iconPixmap() const { return FilesDefs::getPixmapFromQtResourcePath(":/icons/png/network.png") ; }
     virtual QString pageName() const { return tr("Network") ; }
     virtual QString helpText() const { return ""; }
 

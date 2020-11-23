@@ -42,10 +42,10 @@ public:
 	};
 
 public:
-	p3FeedReaderThread(p3FeedReader *feedReader, Type type, const std::string &feedId);
+	p3FeedReaderThread(p3FeedReader *feedReader, Type type, uint32_t feedId);
 	virtual ~p3FeedReaderThread();
 
-	std::string getFeedId() { return mFeedId; }
+	uint32_t getFeedId() { return mFeedId; }
 
 	static RsFeedReaderErrorState processXPath(const std::list<std::string> &xpathsToUse, const std::list<std::string> &xpathsToRemove, std::string &description, std::string &errorString);
 	static RsFeedReaderErrorState processXPath(const std::list<std::string> &xpathsToUse, const std::list<std::string> &xpathsToRemove, HTMLWrapper &html, std::string &errorString);
@@ -55,7 +55,7 @@ public:
 
 	static RsFeedReaderErrorState processTransformation(const RsFeedReaderFeed &feed, RsFeedReaderMsg *msg, std::string &errorString);
 private:
-    virtual void data_tick();
+	virtual void threadTick() override; /// @see RsTickingThread
 
 	RsFeedReaderErrorState download(const RsFeedReaderFeed &feed, std::string &content, std::string &icon, std::string &errorString);
 	RsFeedReaderErrorState process(const RsFeedReaderFeed &feed, std::list<RsFeedReaderMsg*> &entries, std::string &errorString);
@@ -65,7 +65,7 @@ private:
 
 	p3FeedReader *mFeedReader;
 	Type mType;
-	std::string mFeedId;
+	uint32_t mFeedId;
 };
 
 #endif 

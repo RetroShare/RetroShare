@@ -38,7 +38,7 @@
 class RsGxsForums;
 
 /**
- * Pointer to global instance of RsGxsChannels service implementation
+ * Pointer to global instance of RsGxsForums service implementation
  * @jsonapi{development}
  */
 extern RsGxsForums* rsGxsForums;
@@ -115,6 +115,8 @@ enum class RsForumEventCode: uint8_t
 	READ_STATUS_CHANGED      = 0x06, /// msg was read or marked unread
 	STATISTICS_CHANGED       = 0x07, /// suppliers and how many messages they have changed
 	MODERATOR_LIST_CHANGED   = 0x08, /// forum moderation list has changed.
+    SYNC_PARAMETERS_UPDATED  = 0x0a, /// sync and storage times have changed
+    PINNED_POSTS_CHANGED     = 0x0b, /// some posts where pinned or un-pinned
 };
 
 struct RsGxsForumEvent: RsEvent

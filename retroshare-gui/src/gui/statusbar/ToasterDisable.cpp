@@ -23,6 +23,7 @@
 
 #include "ToasterDisable.h"
 #include "gui/notifyqt.h"
+#include "gui/common/FilesDefs.h"
 
 #define IMAGE_TOASTERDISABLE   ":/images/toasterDisable.png"
 #define IMAGE_TOASTERENABLE    ":/images/toasterEnable.png"
@@ -57,7 +58,7 @@ ToasterDisable::ToasterDisable(QWidget *parent)
 
 void ToasterDisable::disable(bool isDisable)
 {
-	imageButton->setIcon(QPixmap(isDisable ? IMAGE_TOASTERDISABLE : IMAGE_TOASTERENABLE));
+    imageButton->setIcon(FilesDefs::getPixmapFromQtResourcePath(isDisable ? IMAGE_TOASTERDISABLE : IMAGE_TOASTERENABLE));
 	imageButton->setToolTip(isDisable ? tr("All Toasters are disabled") : tr("Toasters are enabled"));
 	imageButton->setChecked(isDisable);
 }

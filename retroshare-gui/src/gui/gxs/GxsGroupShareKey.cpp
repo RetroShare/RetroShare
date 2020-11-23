@@ -29,6 +29,7 @@
 #include <retroshare/rsposted.h>
 
 #include "gui/common/PeerDefs.h"
+#include "gui/common/FilesDefs.h"
 
 GroupShareKey::GroupShareKey(QWidget *parent, const RsGxsGroupId &grpId, int grpType) :
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mGrpId(grpId), mGrpType(grpType)
@@ -36,7 +37,7 @@ GroupShareKey::GroupShareKey(QWidget *parent, const RsGxsGroupId &grpId, int grp
 	ui = new Ui::ShareKey();
 	ui->setupUi(this);
 
-	ui->headerFrame->setHeaderImage(QPixmap(":/images/user/agt_forum64.png"));
+    ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/user/agt_forum64.png"));
 	ui->headerFrame->setHeaderText(tr("Share"));
 
 	connect( ui->buttonBox, SIGNAL(accepted()), this, SLOT(shareKey()));
@@ -76,14 +77,14 @@ void GroupShareKey::setTyp()
         if (!rsGxsChannels)
             return;
             
-        ui->headerFrame->setHeaderImage(QPixmap(":/icons/png/channels.png"));
+        ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/channels.png"));
         ui->headerFrame->setHeaderText(tr("Share channel publish permissions"));
         ui->sharekeyinfo_label->setText(tr("You can allow your friends to publish in your channel, or send the publish permissions to another Retroshare instance of yours. Select the friends which you want to be allowed to publish in this channel. Note: it is currently not possible to revoke channel publish permissions."));
     }
     else if(mGrpType == FORUM_KEY_SHARE)
     {
         
-        ui->headerFrame->setHeaderImage(QPixmap(":/icons/png/forums.png"));
+        ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums.png"));
         ui->headerFrame->setHeaderText(tr("Share forum admin permissions"));
         ui->sharekeyinfo_label->setText(tr("You can let your friends know about your forum by sharing it with them. Select the friends with which you want to share your forum."));
 
@@ -93,7 +94,7 @@ void GroupShareKey::setTyp()
         if (!rsPosted)
             return;
         
-        ui->headerFrame->setHeaderImage(QPixmap(":/icons/png/posted.png"));    
+        ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/posted.png"));
         ui->headerFrame->setHeaderText(tr("Share board admin permissions"));
         ui->sharekeyinfo_label->setText(tr("You can allow your friends to edit the board. Select them in the list below. Note: it is not possible to revoke Board admin permissions."));
 

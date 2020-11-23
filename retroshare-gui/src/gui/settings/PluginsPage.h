@@ -20,8 +20,9 @@
 
 #pragma once
 
-#include <retroshare-gui/configpage.h>
+#include "retroshare-gui/configpage.h"
 #include "ui_PluginsPage.h"
+#include "gui/common/FilesDefs.h"
 
 namespace settings {
 
@@ -36,7 +37,7 @@ class PluginsPage : public ConfigPage
 		/** Loads the settings for this page */
 		virtual void load();
 
-		virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/plugins.svg") ; }
+        virtual QPixmap iconPixmap() const { return FilesDefs::getPixmapFromQtResourcePath(":/icons/settings/plugins.svg") ; }
 		virtual QString pageName() const { return tr("Plugins") ; }
 		virtual QString helpText() const ;
 

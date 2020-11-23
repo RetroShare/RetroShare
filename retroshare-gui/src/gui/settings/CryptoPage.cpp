@@ -29,6 +29,7 @@
 #include "CryptoPage.h"
 #include "util/misc.h"
 #include "util/DateTime.h"
+#include "retroshare/rsinit.h"
 #include <gui/RetroShareLink.h>
 #include <gui/connect/ConfCertDialog.h>
 #include <gui/profile/ProfileManager.h>
@@ -57,16 +58,38 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WindowFlags flags)
 	// hide profile manager as it causes bugs when generating a new profile.
 	//ui.profile_Button->hide() ;
 
-	connect(ui.exportprofile,SIGNAL(clicked()), this, SLOT(profilemanager()));
+    //connect(ui.exportprofile,SIGNAL(clicked()), this, SLOT(profilemanager()));
+    connect(ui.exportprofile,SIGNAL(clicked()), this, SLOT(exportProfile()));
 
 
 	ui.onlinesince->setText(DateTime::formatLongDateTime(Rshare::startupTime()));
 }
 
+#ifdef UNUSED_CODE
 void CryptoPage::profilemanager()
 {
     ProfileManager().exec();
 }
+#endif
+
+void CryptoPage::exportProfile()
+{
+    RsPgpId gpgId(rsPeers->getGPGOwnId());
+
+    QString fname = QFileDialog::getSaveFileName(this, tr("Export Identity"), "", tr("RetroShare Identity files (*.asc)"));
+
+    if (fname.isNull())
+        return;
+
+    if (fname.right(4).toUpper() != ".ASC") fname += ".asc";
+
+    if (RsAccounts::ExportIdentity(fname.toUtf8().constData(), gpgId))
+        QMessageBox::information(this, tr("Identity saved"), tr("Your identity was successfully saved\nIt is encrypted\n\nYou can now copy it to another computer\nand use the import button to load it"));
+    else
+        QMessageBox::information(this, tr("Identity not saved"), tr("Your identity was not saved. An error occurred."));
+}
+
+
 void CryptoPage::showEvent ( QShowEvent * /*event*/ )
 {
     RsPeerDetails detail;
@@ -80,7 +103,7 @@ void CryptoPage::showEvent ( QShowEvent * /*event*/ )
         ui.pgpfingerprint->setText(misc::fingerPrintStyleSplit(QString::fromStdString(detail.fpr.toStdString())));
 
         std::string invite ;
-        rsPeers->getShortInvite(invite,rsPeers->getOwnId(),true,false);
+        rsPeers->getShortInvite(invite,rsPeers->getOwnId(),RetroshareInviteFlags::RADIX_FORMAT | RetroshareInviteFlags::DNS | RetroshareInviteFlags::CURRENT_IP);
         ui.retroshareid->setText(QString::fromUtf8(invite.c_str()));
 		
         /* set retroshare version */
@@ -116,11 +139,22 @@ void
 CryptoPage::load()
 {
     std::string cert ;
+    RetroshareInviteFlags flags = RetroshareInviteFlags::DNS | RetroshareInviteFlags::CURRENT_IP;
 
     if(ui._shortFormat_CB->isChecked())
-        rsPeers->getShortInvite(cert,rsPeers->getOwnId(), true, !ui._includeAllIPs_CB->isChecked());
+    {
+        if(ui._includeAllIPs_CB->isChecked())
+            flags |= RetroshareInviteFlags::FULL_IP_HISTORY;
+
+        rsPeers->getShortInvite(cert,rsPeers->getOwnId(), RetroshareInviteFlags::RADIX_FORMAT | flags);
+    }
 	else
-		cert = rsPeers->GetRetroshareInvite( rsPeers->getOwnId(), ui._includeSignatures_CB->isChecked(), ui._includeAllIPs_CB->isChecked() );
+    {
+        if(ui._includeSignatures_CB->isChecked())
+            flags |= RetroshareInviteFlags::PGP_SIGNATURES;
+
+        cert = rsPeers->GetRetroshareInvite( rsPeers->getOwnId(), flags);
+    }
 
 	ui.certplainTextEdit->setPlainText( QString::fromUtf8( cert.c_str() ) );
 

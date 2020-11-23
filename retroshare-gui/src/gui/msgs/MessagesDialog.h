@@ -23,6 +23,7 @@
 
 #include <QSortFilterProxyModel>
 
+#include <retroshare/rsevents.h>
 #include <retroshare-gui/mainpage.h>
 
 #include "ui_MessagesDialog.h"
@@ -110,6 +111,8 @@ private slots:
   void tabCloseRequested(int tab);
 
 private:
+    void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+
   void updateInterface();
 
   void connectActions();
@@ -157,6 +160,8 @@ private:
 
   QList<QString> mTmpSavedSelectedIds;
   QModelIndex lastSelectedIndex;
+
+  RsEventsHandlerId_t mEventHandlerId;
 };
 
 #endif

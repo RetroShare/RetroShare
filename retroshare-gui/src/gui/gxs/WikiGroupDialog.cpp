@@ -87,7 +87,7 @@ void WikiGroupDialog::initUi()
 
 QPixmap WikiGroupDialog::serviceImage()
 {
-	return QPixmap(":/icons/png/wiki.png");
+    return FilesDefs::getPixmapFromQtResourcePath(":/icons/png/wiki.png");
 }
 
 

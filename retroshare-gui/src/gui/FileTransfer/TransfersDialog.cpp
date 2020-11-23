@@ -38,6 +38,7 @@
 #include "util/misc.h"
 #include "util/QtVersion.h"
 #include "util/RsFile.h"
+#include "util/qtthreadsutils.h"
 
 #include "retroshare/rsdisc.h"
 #include "retroshare/rsfiles.h"
@@ -1098,12 +1099,11 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 	registerHelpButton(ui.helpButton,help_str,"TransfersDialog") ;
 
 	mEventHandlerId=0;
-	rsEvents->registerEventsHandler(
-	            [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); },
-	    mEventHandlerId, RsEventType::FILE_TRANSFER );
+    // Do the GUI events in the GUI thread!
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }) ;}, mEventHandlerId, RsEventType::FILE_TRANSFER );
 }
 
-void TransfersDialog::handleEvent(std::shared_ptr<const RsEvent> event)
+void TransfersDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 {
 	if(event->mType != RsEventType::FILE_TRANSFER) return;
 
@@ -1115,6 +1115,7 @@ void TransfersDialog::handleEvent(std::shared_ptr<const RsEvent> event)
     {
 	case RsFileTransferEventCode::DOWNLOAD_COMPLETE:
 	case RsFileTransferEventCode::COMPLETED_FILES_REMOVED:
+
         getUserNotify()->updateIcon();
     default:
         break;

@@ -4,7 +4,11 @@
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = lib
-CONFIG += staticlib
+libretroshare_shared {
+	CONFIG += shared
+} else {
+	CONFIG += staticlib
+}
 CONFIG -= qt
 TARGET = retroshare
 TARGET_PRL = libretroshare
@@ -242,7 +246,7 @@ win32-g++|win32-clang-g++ {
 	QMAKE_CC = $${QMAKE_CXX}
 	OBJECTS_DIR = temp/obj
 	MOC_DIR = temp/moc
-    DEFINES *= STATICLIB
+    !libretroshare_shared:DEFINES *= STATICLIB
 
 	# Switch on extra warnings
 	QMAKE_CFLAGS += -Wextra
@@ -866,10 +870,10 @@ rs_jsonapi {
         genrestbedlib.variable_out = PRE_TARGETDEPS
         win32-g++:isEmpty(QMAKE_SH) {
             genrestbedlib.commands = \
-                cd $$shell_path($${RS_SRC_PATH}) && git submodule update --init supportlibs/restbed || cd . $$escape_expand(\\n\\t) \
-                cd $$shell_path($${RESTBED_SRC_PATH}) && git submodule update --init dependency/asio || cd . $$escape_expand(\\n\\t) \
-                cd $$shell_path($${RESTBED_SRC_PATH}) && git submodule update --init dependency/catch || cd . $$escape_expand(\\n\\t )\
-                cd $$shell_path($${RESTBED_SRC_PATH}) && git submodule update --init dependency/kashmir || cd . $$escape_expand(\\n\\t) \
+                cd /D $$shell_path($${RS_SRC_PATH}) && git submodule update --init supportlibs/restbed || cd . $$escape_expand(\\n\\t) \
+                cd /D $$shell_path($${RESTBED_SRC_PATH}) && git submodule update --init dependency/asio || cd . $$escape_expand(\\n\\t) \
+                cd /D $$shell_path($${RESTBED_SRC_PATH}) && git submodule update --init dependency/catch || cd . $$escape_expand(\\n\\t )\
+                cd /D $$shell_path($${RESTBED_SRC_PATH}) && git submodule update --init dependency/kashmir || cd . $$escape_expand(\\n\\t) \
                 $(CHK_DIR_EXISTS) $$shell_path($$UDP_DISCOVERY_BUILD_PATH) $(MKDIR) $$shell_path($${UDP_DISCOVERY_BUILD_PATH}) $$escape_expand(\\n\\t)
         } else {
             genrestbedlib.commands = \
@@ -987,7 +991,7 @@ rs_broadcast_discovery {
         udpdiscoverycpplib.variable_out = PRE_TARGETDEPS
         win32-g++:isEmpty(QMAKE_SH) {
             udpdiscoverycpplib.commands = \
-                cd $$shell_path($${RS_SRC_PATH}) && git submodule update --init supportlibs/udp-discovery-cpp || cd . $$escape_expand(\\n\\t) \
+                cd /D $$shell_path($${RS_SRC_PATH}) && git submodule update --init supportlibs/udp-discovery-cpp || cd . $$escape_expand(\\n\\t) \
                 $(CHK_DIR_EXISTS) $$shell_path($$UDP_DISCOVERY_BUILD_PATH) $(MKDIR) $$shell_path($${UDP_DISCOVERY_BUILD_PATH}) $$escape_expand(\\n\\t)
         } else {
             udpdiscoverycpplib.commands = \

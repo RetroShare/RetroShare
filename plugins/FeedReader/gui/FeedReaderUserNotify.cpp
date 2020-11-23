@@ -30,8 +30,8 @@
 FeedReaderUserNotify::FeedReaderUserNotify(FeedReaderDialog *feedReaderDialog, RsFeedReader *feedReader, FeedReaderNotify *notify, QObject *parent) :
 	UserNotify(parent), mFeedReaderDialog(feedReaderDialog), mFeedReader(feedReader), mNotify(notify)
 {
-	connect(mNotify, SIGNAL(feedChanged(QString,int)), this, SLOT(feedChanged(QString,int)), Qt::QueuedConnection);
-	connect(mNotify, SIGNAL(msgChanged(QString,QString,int)), this, SLOT(updateIcon()), Qt::QueuedConnection);
+	connect(mNotify, &FeedReaderNotify::feedChanged, this, &FeedReaderUserNotify::feedChanged, Qt::QueuedConnection);
+	connect(mNotify, &FeedReaderNotify::msgChanged, this, &FeedReaderUserNotify::updateIcon, Qt::QueuedConnection);
 }
 
 bool FeedReaderUserNotify::hasSetting(QString *name, QString *group)
@@ -55,7 +55,7 @@ QIcon FeedReaderUserNotify::getMainIcon(bool hasNew)
 unsigned int FeedReaderUserNotify::getNewCount()
 {
 	uint32_t newMessageCount = 0;
-	mFeedReader->getMessageCount("", NULL, &newMessageCount, NULL);
+	mFeedReader->getMessageCount(0, NULL, &newMessageCount, NULL);
 
 	return newMessageCount;
 }
@@ -65,7 +65,7 @@ void FeedReaderUserNotify::iconClicked()
 	MainWindow::showWindow(mFeedReaderDialog);
 }
 
-void FeedReaderUserNotify::feedChanged(const QString &/*feedId*/, int type)
+void FeedReaderUserNotify::feedChanged(uint32_t /*feedId*/, int type)
 {
 	if (type == NOTIFY_TYPE_DEL) {
 		updateIcon();

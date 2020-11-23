@@ -33,15 +33,8 @@ ChannelPage::ChannelPage(QWidget * parent, Qt::WindowFlags flags)
 	ui.groupFrameSettingsWidget->setOpenAllInNewTabText(tr("Open each channel in a new tab"));
     ui.groupFrameSettingsWidget->setType(GroupFrameSettings::Channel) ;
 
-    connect(ui.loadThreadCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateLoadThread())) ;
 	connect(ui.emoteicon_checkBox,SIGNAL(toggled(bool)),this,SLOT(updateEmotes())) ;
 
-}
-
-void ChannelPage::updateLoadThread()
-{
-	Settings->setChannelLoadThread(ui.loadThreadCheckBox->isChecked());
-    NotifyQt::getInstance()->notifySettingsChanged();
 }
 
 ChannelPage::~ChannelPage()
@@ -51,7 +44,6 @@ ChannelPage::~ChannelPage()
 /** Loads the settings for this page */
 void ChannelPage::load()
 {
-	whileBlocking(ui.loadThreadCheckBox)->setChecked(Settings->getChannelLoadThread());
 	ui.groupFrameSettingsWidget->loadSettings(GroupFrameSettings::Channel);
 	
 	Settings->beginGroup(QString("ChannelPostsWidget"));

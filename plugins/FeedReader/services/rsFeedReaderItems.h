@@ -62,10 +62,9 @@ public:
 	virtual ~RsFeedReaderFeed() {}
 
 	virtual void clear();
-	virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-	std::string              feedId;
-	std::string              parentId;
+	uint32_t                 feedId;
+	uint32_t                 parentId;
 	std::string              name;
 	std::string              url;
 	std::string              user;
@@ -109,7 +108,7 @@ public:
 	virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
 	std::string msgId;
-	std::string feedId;
+	uint32_t feedId;
 	std::string title;
 	std::string link;
 	std::string author;

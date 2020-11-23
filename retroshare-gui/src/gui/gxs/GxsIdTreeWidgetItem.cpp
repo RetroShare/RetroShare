@@ -199,7 +199,7 @@ QVariant GxsIdRSTreeWidgetItem::data(int column, int role) const
 			if(mId.isNull())
                 return RSTreeWidgetItem::data(column, role);
 			//else if( rsReputations->overallReputationLevel(mId) == RsReputationLevel::LOCALLY_NEGATIVE )
-				//pix = QPixmap(BANNED_IMAGE);
+				//pix = FilesDefs::getPixmapFromQtResourcePath(BANNED_IMAGE);
 			else if ( mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(mAvatar.mData, mAvatar.mSize, pix,GxsIdDetails::LARGE) )
 				pix = GxsIdDetails::makeDefaultIcon(mId,GxsIdDetails::LARGE);
 

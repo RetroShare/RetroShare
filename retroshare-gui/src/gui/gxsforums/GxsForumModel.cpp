@@ -410,7 +410,7 @@ QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
     if(role == Qt::FontRole)
     {
         QFont font ;
-		font.setBold( (fmpe.mPostFlags & (ForumModelPostEntry::FLAG_POST_HAS_UNREAD_CHILDREN | ForumModelPostEntry::FLAG_POST_IS_PINNED)) || IS_MSG_UNREAD(fmpe.mMsgStatus));
+        font.setBold( (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_HAS_UNREAD_CHILDREN) || IS_MSG_UNREAD(fmpe.mMsgStatus));
         return QVariant(font);
     }
 
@@ -445,12 +445,15 @@ QVariant RsGxsForumModel::textColorRole(const ForumModelPostEntry& fmpe,int /*co
     if( (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_MISSING))
         return QVariant(mTextColorMissing);
 
-    if(IS_MSG_UNREAD(fmpe.mMsgStatus) || (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED))
+    if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED)
+        return QVariant(mTextColorPinned);
+
+    if(IS_MSG_UNREAD(fmpe.mMsgStatus))
         return QVariant(mTextColorUnread);
     else
         return QVariant(mTextColorRead);
 
-	return QVariant();
+    return QVariant();
 }
 
 QVariant RsGxsForumModel::statusRole(const ForumModelPostEntry& fmpe,int column) const
@@ -592,11 +595,11 @@ QVariant RsGxsForumModel::pinnedRole(const ForumModelPostEntry& fmpe,int /*colum
 
 QVariant RsGxsForumModel::backgroundRole(const ForumModelPostEntry& fmpe,int /*column*/) const
 {
-    if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED)
-        return QVariant(QBrush(QColor(255,200,180)));
+//    if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED)
+//        return QVariant(QBrush(mBackgroundColorPinned));
 
     if(mFilteringEnabled && (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_PASSES_FILTER))
-        return QVariant(QBrush(QColor(255,240,210)));
+        return QVariant(QBrush(mBackgroundColorFiltered));
 
     return QVariant();
 }
@@ -653,12 +656,13 @@ QVariant RsGxsForumModel::displayRole(const ForumModelPostEntry& fmpe,int col) c
 	{
 		case COLUMN_THREAD_TITLE:  if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_REDACTED)
 									return QVariant(tr("[ ... Redacted message ... ]"));
-								else if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED)
-									return QVariant(tr("[PINNED] ") + QString::fromUtf8(fmpe.mTitle.c_str()));
-								else
+//                                else if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED)
+//                                    return QVariant( QString("<img src=\":/icons/pinned_64.png\" height=%1/>").arg(QFontMetricsF(QFont()).height())
+//                                                     + QString::fromUtf8(fmpe.mTitle.c_str()));
+                                else
 									return QVariant(QString::fromUtf8(fmpe.mTitle.c_str()));
 
-		case COLUMN_THREAD_READ:return QVariant();
+        case COLUMN_THREAD_READ:return QVariant();
     	case COLUMN_THREAD_DATE:{
         							if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_MISSING)
                                         return QVariant(QString());

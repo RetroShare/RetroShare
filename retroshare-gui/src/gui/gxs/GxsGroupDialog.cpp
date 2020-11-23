@@ -92,8 +92,8 @@ GxsGroupDialog::~GxsGroupDialog()
 void GxsGroupDialog::init()
 {
 	// connect up the buttons.
-	connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(submitGroup()));
-	connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(cancelDialog()));
+	connect(ui.createButton, SIGNAL(clicked()), this, SLOT(submitGroup()));
+	connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(cancelDialog()));
 	connect(ui.pubKeyShare_cb, SIGNAL(clicked()), this, SLOT(setShareList()));
 	connect(ui.addAdmins_cb, SIGNAL(clicked()), this, SLOT(setAdminsList()));
 	connect(ui.filtercomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterComboBoxChanged(int)));
@@ -194,7 +194,7 @@ void GxsGroupDialog::setUiText(UiType uiType, const QString &text)
 		//ui.contactsdockWidget->setWindowTitle(text);
 		break;
 	case UITYPE_BUTTONBOX_OK:
-		ui.buttonBox->button(QDialogButtonBox::Ok)->setText(text);
+		ui.createButton->setText(text);
 		break;
 	}
 }
@@ -210,7 +210,7 @@ void GxsGroupDialog::setUiToolTip(UiType uiType, const QString &text)
 		ui.addAdmins_cb->setToolTip(text);
 		break;
 	case UITYPE_BUTTONBOX_OK:
-		ui.buttonBox->button(QDialogButtonBox::Ok)->setToolTip(text);
+		ui.createButton->setToolTip(text);
     default:
 		break;
 	}
@@ -224,7 +224,6 @@ void GxsGroupDialog::initMode()
 		case MODE_CREATE:
 		{
             ui.stackedWidget->setCurrentIndex(0);
-			ui.buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
 			newGroup();
 		}
 		break;
@@ -233,15 +232,14 @@ void GxsGroupDialog::initMode()
 		{
 			ui.stackedWidget->setCurrentIndex(1);
 			mReadonlyFlags = 0xffffffff; // Force all to readonly.
-			ui.buttonBox->setStandardButtons(QDialogButtonBox::Close);
+			ui.createButton->hide();
 		}
 		break;
 
 		case MODE_EDIT:
 		{
             ui.stackedWidget->setCurrentIndex(0);
-			ui.buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-			ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Submit Group Changes"));
+			ui.createButton->setText(tr("Submit Group Changes"));
 		}
 		break;
 	}

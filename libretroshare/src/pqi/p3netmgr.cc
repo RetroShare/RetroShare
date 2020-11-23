@@ -124,8 +124,8 @@ p3NetMgrIMPL::p3NetMgrIMPL() : mPeerMgr(nullptr), mLinkMgr(nullptr),
 		mNetFlags = pqiNetStatus();
 		mOldNetFlags = pqiNetStatus();
 
-		mOldNatType = RSNET_NATTYPE_UNKNOWN;
-		mOldNatHole = RSNET_NATHOLE_UNKNOWN;
+		mOldNatType = RsNatTypeMode::UNKNOWN;
+		mOldNatHole = RsNatHoleMode::UNKNOWN;
 		sockaddr_storage_clear(mLocalAddr);
 		sockaddr_storage_clear(mExtAddr);
 
@@ -1082,7 +1082,15 @@ bool p3NetMgrIMPL::checkNetAddress()
 	{
 		RsInfo() << __PRETTY_FUNCTION__ << " local address changed, resetting"
 		         <<" network." << std::endl;
-		
+
+        if(rsEvents)
+        {
+            auto ev = std::make_shared<RsNetworkEvent>();
+            ev->mNetworkEventCode = RsNetworkEventCode::LOCAL_IP_UPDATED;
+            ev->mIPAddress = sockaddr_storage_iptostring(mLocalAddr);
+            rsEvents->postEvent(ev);
+        }
+
 		if (mPeerMgr) mPeerMgr->UpdateOwnAddress(mLocalAddr, mExtAddr);
 
 		netReset();
@@ -1123,7 +1131,7 @@ bool    p3NetMgrIMPL::setLocalAddress(const struct sockaddr_storage &addr)
 #ifdef NETMGR_DEBUG_RESET
 		std::cerr << "p3NetMgrIMPL::setLocalAddress() Calling NetReset" << std::endl;
 #endif
-		rslog(RSL_WARNING, p3netmgrzone, "p3NetMgr::setLocalAddress() local address changed, resetting network");
+        rslog(RSL_WARNING, p3netmgrzone, "p3NetMgr::setLocalAddress() local address changed, resetting network");
 		netReset();
 	}
 	return true;
@@ -1159,6 +1167,15 @@ bool    p3NetMgrIMPL::setExtAddress(const struct sockaddr_storage &addr)
 #ifdef NETMGR_DEBUG_RESET
 		std::cerr << "p3NetMgrIMPL::setExtAddress() Calling NetReset" << std::endl;
 #endif
+
+        if(rsEvents)
+        {
+            auto ev = std::make_shared<RsNetworkEvent>();
+            ev->mNetworkEventCode = RsNetworkEventCode::EXTERNAL_IP_UPDATED;
+            ev->mIPAddress = sockaddr_storage_iptostring(addr);
+            rsEvents->postEvent(ev);
+        }
+
 		rslog(RSL_WARNING, p3netmgrzone, "p3NetMgr::setExtAddress() ext address changed, resetting network");
 		netReset();
 	}
@@ -1629,31 +1646,31 @@ void p3NetMgrIMPL::setIPServersEnabled(bool b)
  ************************************** NetStateBox  ******************************************
  **********************************************************************************************/
 
-uint32_t p3NetMgrIMPL::getNetStateMode()
+RsNetState p3NetMgrIMPL::getNetStateMode()
 {
 	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 	return mNetStateBox.getNetStateMode();
 }
 
-uint32_t p3NetMgrIMPL::getNetworkMode()
+RsNetworkMode p3NetMgrIMPL::getNetworkMode()
 {
 	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 	return mNetStateBox.getNetworkMode();
 }
 
-uint32_t p3NetMgrIMPL::getNatTypeMode()
+RsNatTypeMode p3NetMgrIMPL::getNatTypeMode()
 {
 	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 	return mNetStateBox.getNatTypeMode();
 }
 
-uint32_t p3NetMgrIMPL::getNatHoleMode()
+RsNatHoleMode p3NetMgrIMPL::getNatHoleMode()
 {
 	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 	return mNetStateBox.getNatHoleMode();
 }
 
-uint32_t p3NetMgrIMPL::getConnectModes()
+RsConnectModes p3NetMgrIMPL::getConnectModes()
 {
 	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 	return mNetStateBox.getConnectModes();
@@ -1768,8 +1785,8 @@ void p3NetMgrIMPL::updateNetStateBox_temporal()
 void p3NetMgrIMPL::updateNatSetting()
 {
 	bool updateRefreshRate = false;
-	uint32_t natType = RSNET_NATTYPE_UNKNOWN;
-	uint32_t natHole = RSNET_NATHOLE_UNKNOWN;
+	RsNatTypeMode natType = RsNatTypeMode::UNKNOWN;
+	RsNatHoleMode natHole = RsNatHoleMode::UNKNOWN;
 	{
 		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 
@@ -1806,9 +1823,9 @@ void p3NetMgrIMPL::updateNatSetting()
 		if (mProxyStunner) {
 			switch(natType)
 			{
-			case RSNET_NATTYPE_RESTRICTED_CONE:
+			case RsNatTypeMode::RESTRICTED_CONE:
 			{
-				if ((natHole == RSNET_NATHOLE_NONE) || (natHole == RSNET_NATHOLE_UNKNOWN))
+			    if ((natHole == RsNatHoleMode::NONE) || (natHole == RsNatHoleMode::UNKNOWN))
 				{
 					mProxyStunner->setRefreshPeriod(NET_STUNNER_PERIOD_FAST);
 				}
@@ -1818,12 +1835,12 @@ void p3NetMgrIMPL::updateNatSetting()
 				}
 				break;
 			}
-			case RSNET_NATTYPE_NONE:
-			case RSNET_NATTYPE_UNKNOWN:
-			case RSNET_NATTYPE_SYMMETRIC:
-			case RSNET_NATTYPE_DETERM_SYM:
-			case RSNET_NATTYPE_FULL_CONE:
-			case RSNET_NATTYPE_OTHER:
+		    case RsNatTypeMode::NONE:
+		    case RsNatTypeMode::UNKNOWN:
+		    case RsNatTypeMode::SYMMETRIC:
+		    case RsNatTypeMode::DETERM_SYM:
+		    case RsNatTypeMode::FULL_CONE:
+		    case RsNatTypeMode::OTHER:
 
 				mProxyStunner->setRefreshPeriod(NET_STUNNER_PERIOD_SLOW);
 				break;
@@ -1836,22 +1853,22 @@ void p3NetMgrIMPL::updateNatSetting()
 		 * So that messages can get through.
 		 * We only want to be attached - if we don't have a stable DHT port.
 		 */
-		if ((natHole == RSNET_NATHOLE_NONE) || (natHole == RSNET_NATHOLE_UNKNOWN))
+		if ((natHole == RsNatHoleMode::NONE) || (natHole == RsNatHoleMode::UNKNOWN))
 		{
 			switch(natType)
 			{
 				/* switch to attach mode if we have a bad firewall */
-				case RSNET_NATTYPE_UNKNOWN:
-				case RSNET_NATTYPE_SYMMETRIC:
-				case RSNET_NATTYPE_RESTRICTED_CONE: 
-				case RSNET_NATTYPE_DETERM_SYM:
-				case RSNET_NATTYPE_OTHER:
+			    case RsNatTypeMode::UNKNOWN:
+			    case RsNatTypeMode::SYMMETRIC:
+			    case RsNatTypeMode::RESTRICTED_CONE:
+			    case RsNatTypeMode::DETERM_SYM:
+			    case RsNatTypeMode::OTHER:
 					netAssistAttach(true);
 
 				break;
 				/* switch off attach mode if we have a nice firewall */
-				case RSNET_NATTYPE_NONE:
-				case RSNET_NATTYPE_FULL_CONE:
+			    case RsNatTypeMode::NONE:
+			    case RsNatTypeMode::FULL_CONE:
 					netAssistAttach(false);
 				break;
 			}
@@ -1970,8 +1987,8 @@ void p3NetMgrIMPL::updateNetStateBox_reset()
 
 		mNetStateBox.reset();
 
-		mOldNatHole = RSNET_NATHOLE_UNKNOWN;
-		mOldNatType = RSNET_NATTYPE_UNKNOWN;
+		mOldNatHole = RsNatHoleMode::UNKNOWN;
+		mOldNatType = RsNatTypeMode::UNKNOWN;
 
 	}
 }

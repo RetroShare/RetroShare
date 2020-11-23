@@ -61,8 +61,74 @@ static const uint32_t INDEX_AUTHEN_ADMIN        = 0x00000040; // admin key
 
 #define GXS_MASK "GXS_MASK_HACK"
 
-//#define GEN_EXCH_DEBUG	1
+#define GEN_EXCH_DEBUG	1
 
+// Data flow in RsGenExchange
+//
+//     publishGroup()
+//       |
+//       +--- stores in mGrpsToPublish
+//
+//     updateGroup()
+//       |
+//       +--- stores in mGroupUpdatePublish
+//
+//     tick()
+//       |
+//       +--- processRecvdData();
+//       |          |
+//       |          +-- processRecvdGroups();
+//       |          |          |
+//       |          |          +---- mGroupPendingValidate
+//       |          |                        |
+//       |          |                        +---- acceptance => validateGrp() => check existance => store in mGroupUpdates
+//       |          |                                                 |
+//       |          |                                                 +--- validateNxsGrp()
+//       |          |
+//       |          +-- processRecvdMessages();
+//       |          |
+//       |          +-- performUpdateValidation();  // validates group updates in mGroupUpdates received from friends
+//       |                     |
+//       |                     +---- mGroupUpdates => updateValid() => store new groups
+//       |                     |                          |
+//       |                     |                          +--- stamp keys, check admin keys are the same, validateNxsGrp()
+//       |                     |                                                                                |
+//       |                     +---- stores RsGxsGroupChange in mNotifications                                  +--- data signature check
+//       |
+//       +--- publishGrps();  // creates signatures and data for locally created groups
+//       |          |
+//       |          +-- reads mGrpsToPublish, creates the group, clears mGrpsToPublish
+//       |                     |
+//       |                     +--- generateGroupKeys()
+//       |                     |
+//       |                     +--- serviceCreateGroup()
+//       |                     |
+//       |                     +--- createGroup()
+//       |                              |
+//       |                              +--- createGroupSignatures()
+//       |
+//       +--- processGroupUpdatePublish(); // goes through list of group updates to perform locally
+//       |          |
+//       |          +-- reads/deletes mGroupUpdatePublish, stores in mGrpsToPublish
+//       |
+//       +--- processGrpMetaChanges();
+//       |          |
+//       |          +-- updates mNotifications, calls mDataAccess
+//       |
+//       +--- processGroupDelete();
+//       |
+//       +--- publishMsgs();
+//       |
+//       +--- processMsgMetaChanges();
+//       |          |
+//       |          +-- updates mNotifications, calls mDataAccess
+//       |
+//       +--- processMessageDelete();
+//       |
+//       +--- mDataAccess->processRequests();
+//       |
+//       +--- processRoutingClues() ;
+//
 static const uint32_t MSG_CLEANUP_PERIOD     = 60*59; // 59 minutes
 static const uint32_t INTEGRITY_CHECK_PERIOD = 60*31; // 31 minutes
 
@@ -1695,6 +1761,14 @@ void RsGenExchange::notifyReceivePublishKey(const RsGxsGroupId &grpId)
 	mNotifications.push_back(gc);
 }
 
+void RsGenExchange::notifyChangedGroupSyncParams(const RsGxsGroupId &grpId)
+{
+    RS_STACK_MUTEX(mGenMtx);
+
+    RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_GROUP_SYNC_PARAMETERS_UPDATED,grpId, false);
+
+    mNotifications.push_back(gc);
+}
 void RsGenExchange::notifyChangedGroupStats(const RsGxsGroupId &grpId)
 {
 	RS_STACK_MUTEX(mGenMtx);
@@ -2588,8 +2662,17 @@ void RsGenExchange::publishGrps()
 	    RS_STACK_MUTEX(mGenMtx) ;
 	    NxsGrpSignPendVect::iterator vit = mGrpsToPublish.begin();
 
-	    typedef std::pair<bool, RsGxsGroupId> GrpNote;
-	    std::map<uint32_t, GrpNote> toNotify;
+        typedef struct _GrpNote {
+
+            _GrpNote(bool success,bool is_update,const RsGxsGroupId& gid) : mSuccess(success),mIsUpdate(is_update),mGroupId(gid){}
+
+            bool mSuccess;
+            bool mIsUpdate;
+            RsGxsGroupId mGroupId;
+
+        } GrpNote;
+
+        std::map<uint32_t, GrpNote> toNotify; // used to notify about token processing if success or fails because of timeout
 
 	    while( vit != mGrpsToPublish.end() )
 	    {
@@ -2603,8 +2686,7 @@ void RsGenExchange::publishGrps()
 		    if(now > (ggps.mStartTS + PENDING_SIGN_TIMEOUT) )
 		    {
 			    // timed out
-			    toNotify.insert(std::make_pair(
-			                            token, GrpNote(false, RsGxsGroupId())));
+                toNotify.insert(std::make_pair( token, GrpNote(false,ggps.mIsUpdate, RsGxsGroupId())));
 			    delete ggps.mItem;
 			    vit = mGrpsToPublish.erase(vit);
 
@@ -2715,12 +2797,36 @@ void RsGenExchange::publishGrps()
 						    computeHash(grp->grp, grp->metaData->mHash);
 						    grp->metaData->mRecvTS = time(NULL);
 
-						    if(ggps.mIsUpdate)
-							    mDataAccess->updateGroupData(grp);
-						    else
-							    mDataAccess->addGroupData(grp);
+                            // Also push in notifications. We do it here when we still have pointers on the old and new groups
 
-							delete grp ;
+                            RsGxsGroupChange *c = new RsGxsGroupChange(ggps.mIsUpdate?RsGxsNotify::TYPE_UPDATED:RsGxsNotify::TYPE_PUBLISHED, grpId,false);
+
+                            c->mNewGroupItem = dynamic_cast<RsGxsGrpItem*>(mSerialiser->deserialise(grp->grp.bin_data,&grp->grp.bin_len));
+                            c->mNewGroupItem->meta = *grp->metaData;	// grp will be deleted because mDataStore will destroy it on update
+
+                            if(ggps.mIsUpdate)
+                            {
+                                RsNxsGrpDataTemporaryMap oldGrpDatas;
+                                oldGrpDatas.insert(std::make_pair(grpId, (RsNxsGrp*)NULL));
+
+                                if(mDataStore->retrieveNxsGrps(oldGrpDatas,true,false) && oldGrpDatas.size() == 1)
+                                {
+                                    auto oldGrp = oldGrpDatas[grpId];
+                                    c->mOldGroupItem = dynamic_cast<RsGxsGrpItem*>(mSerialiser->deserialise(oldGrp->grp.bin_data,&oldGrp->grp.bin_len));
+                                    c->mOldGroupItem->meta = *oldGrp->metaData;
+                                }
+                            }
+
+                            mNotifications.push_back(c);
+
+                            // now store (and incidently delete grp)
+
+                            if(ggps.mIsUpdate)
+                                mDataAccess->updateGroupData(grp);
+                            else
+                                mDataAccess->addGroupData(grp);
+
+                            delete grp ;
 							groups_to_subscribe.push_back(grpId) ;
 					    }
 					    else
@@ -2736,7 +2842,7 @@ void RsGenExchange::publishGrps()
 				    // services should return SERVICE_CREATE_FAIL if the action timed out
 				    // at the moment this is only important for the idservice:
 				    //   the idservice may ask the user for a password, and the user needs time
-				    ggps.mStartTS = now;
+                    ggps.mStartTS = now;
 				    create = CREATE_FAIL_TRY_LATER;
 			    }
 			    else if(ret == SERVICE_CREATE_FAIL)
@@ -2758,8 +2864,7 @@ void RsGenExchange::publishGrps()
 			    delete grp;
 			    delete grpItem;
 			    vit = mGrpsToPublish.erase(vit);
-			    toNotify.insert(std::make_pair(
-			                            token, GrpNote(false, grpId)));
+                toNotify.insert(std::make_pair(token, GrpNote(false, ggps.mIsUpdate,grpId)));
 
 		    }
 		    else if(create == CREATE_FAIL_TRY_LATER)
@@ -2782,30 +2887,21 @@ void RsGenExchange::publishGrps()
 #endif
 
 			    // add to published to allow acknowledgement
-			    toNotify.insert(std::make_pair(token,
-			                                   GrpNote(true,grpId)));
+                toNotify.insert(std::make_pair(token, GrpNote(true,ggps.mIsUpdate,grpId)));
 		    }
 	    }
 
-	    std::map<uint32_t, GrpNote>::iterator mit = toNotify.begin();
+        // toNotify contains the token and the group update/creation info. We parse it to
+        //   - notify that group creation/update for a specific token was
 
-	    std::list<RsGxsGroupId> grpChanged;
-	    for(; mit != toNotify.end(); ++mit)
+        for(auto mit=toNotify.begin(); mit != toNotify.end(); ++mit)
 	    {
 		    GrpNote& note = mit->second;
-			RsTokenService::GxsRequestStatus status =
-			        note.first ? RsTokenService::COMPLETE
-			                   : RsTokenService::FAILED;
+            RsTokenService::GxsRequestStatus status = note.mSuccess ? RsTokenService::COMPLETE : RsTokenService::FAILED;
 
-		    mGrpNotify.insert(std::make_pair(mit->first, note.second));
-		    mDataAccess->updatePublicRequestStatus(mit->first, status);
-
-		    if(note.first)
-			    grpChanged.push_back(note.second);
-	    }
-
-        for(auto& groupId:grpChanged)
-		    mNotifications.push_back(new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVED_NEW,groupId, true));
+            mGrpNotify.insert(std::make_pair(mit->first, note.mGroupId));	// always notify
+            mDataAccess->updatePublicRequestStatus(mit->first, status);		// update the token request with the given status
+        }
     }
 
     // This is done off-mutex to avoid possible cross deadlocks with the net service.
@@ -2814,8 +2910,6 @@ void RsGenExchange::publishGrps()
 		for(std::list<RsGxsGroupId>::const_iterator it(groups_to_subscribe.begin());it!=groups_to_subscribe.end();++it)
 			mNetService->subscribeStatusChanged((*it),true) ;
 }
-
-
 
 uint32_t RsGenExchange::generatePublicToken()
 {
@@ -3074,7 +3168,7 @@ void RsGenExchange::processRecvdMessages()
 				mNotifications.push_back(c);
 			}
 
-		    mDataStore->storeMessage(msgs_to_store);	// we do that late because it destroys the items in msgs_to_store
+            mDataStore->storeMessage(msgs_to_store);	// All items will be destroyed later on, since msgs_to_store is a temporary map
 	    }
     }
 
@@ -3216,9 +3310,9 @@ void RsGenExchange::processRecvdGroups()
 
 		mDataStore->storeGroup(grps_to_store);
 #ifdef GEN_EXCH_DEBUG
-                    			std::cerr << "  adding the following grp ids to notification: " << std::endl;
-                                	for(std::list<RsGxsGroupId>::const_iterator it(grpIds.begin());it!=grpIds.end();++it)
-                                        	std::cerr << "    " << *it << std::endl;
+        std::cerr << "  adding the following grp ids to notification: " << std::endl;
+        for(std::list<RsGxsGroupId>::const_iterator it(grpIds.begin());it!=grpIds.end();++it)
+            std::cerr << "    " << *it << std::endl;
 #endif
 	}
 }
@@ -3309,8 +3403,7 @@ void RsGenExchange::performUpdateValidation()
 		}
 	}
 
-	// Warning: updateGroup will destroy the objects in grps. Dont use it afterwards!
-	mDataStore->updateGroup(grps);
+    mDataStore->updateGroup(grps);
 
 #ifdef GEN_EXCH_DEBUG
 	std::cerr << "  adding the following grp ids to notification: " << std::endl;
@@ -3437,6 +3530,10 @@ void RsGenExchange::removeDeleteExistingMessages( std::list<RsNxsMsg*>& msgs, Gx
 	}
 }
 
+DistantSearchGroupStatus RsGenExchange::getDistantSearchStatus(const RsGxsGroupId& group_id)
+{
+    return mNetService->getDistantSearchStatus(group_id) ;
+}
 void RsGenExchange::turtleGroupRequest(const RsGxsGroupId& group_id)
 {
     mNetService->turtleGroupRequest(group_id) ;

@@ -64,19 +64,19 @@ void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> ev
 	if(e)
         switch(e->mChannelEventCode)
         {
-		case RsChannelEventCode::NEW_MESSAGE:             // [[fallthrough]];
+        case RsChannelEventCode::STATISTICS_CHANGED:      // [[fallthrough]];
+            updateDisplay(true);                          // no breaks, on purpose!
+
+        case RsChannelEventCode::NEW_MESSAGE:             // [[fallthrough]];
 		case RsChannelEventCode::UPDATED_MESSAGE:         // [[fallthrough]];
 		case RsChannelEventCode::READ_STATUS_CHANGED:     // [[fallthrough]];
-			updateGroupStatisticsReal(e->mChannelGroupId); // update the list immediately
+            updateGroupStatisticsReal(e->mChannelGroupId);// update the list immediately
             break;
 
-		case RsChannelEventCode::NEW_CHANNEL:       // [[fallthrough]];
-        case RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED:
+        case RsChannelEventCode::RECEIVED_PUBLISH_KEY:    // [[fallthrough]];
+        case RsChannelEventCode::NEW_CHANNEL:             // [[fallthrough]];
+        case RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED:// reloads group summary (calling GxsGroupFrameDialog parent method)
             updateDisplay(true);
-            break;
-
-        case RsChannelEventCode::STATISTICS_CHANGED:
-            updateGroupStatistics(e->mChannelGroupId);
             break;
 
         default:

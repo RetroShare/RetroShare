@@ -46,7 +46,7 @@
 #define IMAGE_INFO           ":/images/info16.png"
 //#define IMAGE_GROUPAUTHD     ":/images/konv_message2.png"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
-#define IMAGE_EDIT           ":/images/edit_16.png"
+#define IMAGE_EDIT           ":/icons/png/pencil-edit-button.png"
 #define IMAGE_SHARE          ":/images/share-icon-16.png"
 #define IMAGE_TABNEW         ":/images/tab-new.png"
 #define IMAGE_DELETE         ":/images/delete.png"
@@ -98,6 +98,7 @@ GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *p
 	mStateHelper = new UIStateHelper(this);
 
 	mStateHelper->addWidget(TOKEN_TYPE_GROUP_SUMMARY, ui->loadingLabel, UISTATE_LOADING_VISIBLE);
+	mStateHelper->setLoading(TOKEN_TYPE_GROUP_SUMMARY, true);
 
 	connect(ui->groupTreeWidget, SIGNAL(treeCustomContextMenuRequested(QPoint)), this, SLOT(groupTreeCustomPopupMenu(QPoint)));
     connect(ui->groupTreeWidget, SIGNAL(treeCurrentItemChanged(QString)), this, SLOT(changedCurrentGroup(QString)));
@@ -146,7 +147,7 @@ void GxsGroupFrameDialog::initUi()
 {
 	registerHelpButton(ui->helpButton, getHelpString(),pageName()) ;
 
-	ui->titleBarPixmap->setPixmap(QPixmap(icon(ICON_NAME)));
+    ui->titleBarPixmap->setPixmap(FilesDefs::getPixmapFromQtResourcePath(icon(ICON_NAME)));
 	ui->titleBarLabel->setText(text(TEXT_NAME));
 
 	/* Initialize group tree */
@@ -312,6 +313,12 @@ void GxsGroupFrameDialog::updateSearchResults(const TurtleRequestId& sid)
 
 	auto it2 = mSearchGroupsItems.find(sid);
 
+    if(it2 == mSearchGroupsItems.end())
+    {
+        std::cerr << "(EE) received a channel group turtle search result with ID " << sid << " but no item is known for this search" << std::endl;
+        return;
+    }
+
 	QList<GroupItemInfo> group_items ;
 
 	for(auto it3(group_infos.begin());it3!=group_infos.end();++it3)
@@ -382,7 +389,7 @@ void GxsGroupFrameDialog::removeAllSearches()
 
 // Same function than the one in rsgxsnetservice.cc, so that all times are automatically consistent
 
-static uint32_t checkDelay(uint32_t time_in_secs)
+uint32_t GxsGroupFrameDialog::checkDelay(uint32_t time_in_secs)
 {
     if(time_in_secs <    1 * 86400)
         return 0        ;
@@ -479,6 +486,7 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
     actnn = ctxMenu2->addAction(tr(" 6 months"   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(180)) ; if(current_sync_time ==180) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
     actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(365)) ; if(current_sync_time ==365) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
     actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_sync_time ==  0) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+    ctxMenu2->setEnabled(isSubscribed);
 
 	ctxMenu2 = contextMnu.addMenu(tr("Store posts for at most...")) ;
     actnn = ctxMenu2->addAction(tr(" 5 days"     ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  5)) ; if(current_store_time ==  5) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
@@ -488,6 +496,7 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
     actnn = ctxMenu2->addAction(tr(" 6 months"   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(180)) ; if(current_store_time ==180) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
     actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(365)) ; if(current_store_time ==365) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
     actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_store_time ==  0) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+    ctxMenu2->setEnabled(isSubscribed);
 
 	if (shareKeyType()) {
         action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_SHARE), tr("Share publish permissions..."), this, SLOT(sharePublishKey()));
@@ -725,7 +734,7 @@ void GxsGroupFrameDialog::loadComment(const RsGxsGroupId &grpId, const QVector<R
 			comments += "...";
 		}
 
-		commentDialog = new GxsCommentDialog(this, mInterface->getTokenService(), commentService);
+        commentDialog = new GxsCommentDialog(this,RsGxsId(), mInterface->getTokenService(), commentService);
 
 		QWidget *commentHeader = createCommentHeaderWidget(grpId, most_recent_msgId);
 		if (commentHeader) {

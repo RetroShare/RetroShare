@@ -441,7 +441,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 		}
 	}
 
-	QSplashScreen splashScreen(QPixmap(":/images/logo/logo_splash.png")/* , Qt::WindowStaysOnTopHint*/);
+    QSplashScreen splashScreen(FilesDefs::getPixmapFromQtResourcePath(":/images/logo/logo_splash.png")/* , Qt::WindowStaysOnTopHint*/);
 
 	splashScreen.show();
 	splashScreen.showMessage(rshare.translate("SplashScreen", "Load configuration"), Qt::AlignHCenter | Qt::AlignBottom);

@@ -28,6 +28,8 @@
 #include "gui/gxs/GxsMessageFramePostWidget.h"
 #include "gui/feeds/FeedHolder.h"
 
+#include "GxsChannelPostThumbnail.h"
+
 namespace Ui {
 class GxsChannelPostsWidgetWithModel;
 }
@@ -60,21 +62,26 @@ class ChannelPostDelegate: public QAbstractItemDelegate
 	Q_OBJECT
 
 	public:
-		ChannelPostDelegate(QObject *parent=0) : QAbstractItemDelegate(parent), mZoom(1.0){}
+        ChannelPostDelegate(QObject *parent=0) : QAbstractItemDelegate(parent), mZoom(1.2), mUseGrid(true){}
         virtual ~ChannelPostDelegate(){}
 
 		void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const override;
         QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
-        int cellSize(const QFont& font) const;
+        int cellSize(int col, const QFont& font, uint32_t parent_width) const;
         void zoom(bool zoom_or_unzoom) ;
-	private:
+        void setWidgetGrid(bool use_grid) ;
+        void setAspectRatio(ChannelPostThumbnailView::AspectRatio r) ;
+
+    private:
  		static constexpr float IMAGE_MARGIN_FACTOR = 1.0;
  		static constexpr float IMAGE_SIZE_FACTOR_W = 4.0 ;
  		static constexpr float IMAGE_SIZE_FACTOR_H = 6.0 ;
  		static constexpr float IMAGE_ZOOM_FACTOR   = 1.0;
 
         float mZoom;	// zoom factor for the whole thumbnail
+        bool mUseGrid;  // wether we use the grid widget or the list widget
+        ChannelPostThumbnailView::AspectRatio mAspectRatio;
 };
 
 class GxsChannelPostsWidgetWithModel: public GxsMessageFrameWidget
@@ -96,8 +103,8 @@ public:
 	~GxsChannelPostsWidgetWithModel();
 
 	/* GxsMessageFrameWidget */
-	virtual QIcon groupIcon();
-    virtual void groupIdChanged() { updateDisplay(true); }
+    virtual QIcon groupIcon() override;
+    virtual void groupIdChanged() override { updateDisplay(true); }
     virtual QString groupName(bool) override;
     virtual bool navigate(const RsGxsMessageId&) override;
 
@@ -119,7 +126,7 @@ protected:
 	virtual bool insertGroupData(const RsGxsGenericGroupData *data) override;
 #endif
 	virtual bool useThread() { return mUseThread; }
-    virtual void blank() ;
+    virtual void blank() override ;
 
 #ifdef TODO
 	virtual bool getGroupData(RsGxsGenericGroupData *& data) override;
@@ -130,41 +137,48 @@ protected:
 #endif
 
 	/* GxsMessageFrameWidget */
-	virtual void setAllMessagesReadDo(bool read, uint32_t &token);
+    virtual void setAllMessagesReadDo(bool read, uint32_t &token) override;
 
 private slots:
 	void showPostDetails();
 	void updateGroupData();
+	void download();
+	void updateDAll_PB();
 	void createMsg();
-	void toggleAutoDownload();
+//	void toggleAutoDownload();
 	void subscribeGroup(bool subscribe);
 	void filterChanged(QString);
-	void setViewMode(int viewMode);
 	void settingsChanged();
-	void handlePostsTreeSizeChange(QSize s);
+    void handlePostsTreeSizeChange(QSize s, bool force=false);
 	void postChannelPostLoad();
 	void editPost();
 	void postContextMenu(const QPoint&);
 	void copyMessageLink();
 	void updateZoomFactor(bool zoom_or_unzoom);
+    void switchView();
+    void switchOnlyUnread(bool b);
+    void markMessageUnread();
 
 public slots:
  	void sortColumnFiles(int col,Qt::SortOrder so);
  	void sortColumnPostFiles(int col,Qt::SortOrder so);
+    void updateCommentsCount(int n);
 
 private:
 	void processSettings(bool load);
+    RsGxsMessageId getCurrentItemId() const;
+    void selectItem(const RsGxsMessageId& msg_id);
 
-	void setAutoDownload(bool autoDl);
+//	void setAutoDownload(bool autoDl);
 	static bool filterItem(FeedItem *feedItem, const QString &text, int filter);
-
-	int viewMode();
 
 	void insertChannelDetails(const RsGxsChannelGroup &group);
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
 private:
-	QAction *mAutoDownloadAction;
+    void setSubscribeButtonText(const RsGxsGroupId& group_id,uint32_t flags, uint32_t mPop);
+
+//    QAction *mAutoDownloadAction;
 
     RsGxsChannelGroup mGroup;
 	bool mUseThread;
@@ -176,7 +190,8 @@ private:
     ChannelPostDelegate        *mChannelPostsDelegate;
     ChannelPostFilesDelegate   *mFilesDelegate;
 
-    RsGxsMessageId mSelectedPost;
+	std::map<RsGxsGroupId,RsGxsMessageId> mLastSelectedPosts;
+	RsGxsMessageId mNavigatePendingMsgId;
 
 	/* UI - from Designer */
 	Ui::GxsChannelPostsWidgetWithModel *ui;

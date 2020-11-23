@@ -22,8 +22,9 @@
 
 #include <QFileDialog>
 
-#include <retroshare-gui/configpage.h>
+#include "retroshare-gui/configpage.h"
 #include "ui_AboutPage.h"
+#include "gui/common/FilesDefs.h"
 
 class AboutPage : public ConfigPage
 {
@@ -38,7 +39,7 @@ public:
 	/** Loads the settings for this page */
 	virtual void load();
 
-	virtual QPixmap iconPixmap() const { return QPixmap(":/icons/svg/info.svg") ; }
+    virtual QPixmap iconPixmap() const { return FilesDefs::getPixmapFromQtResourcePath(":/icons/svg/info.svg") ; }
 	virtual QString pageName() const { return tr("About") ; }
 	virtual QString helpText() const { return ""; }
 
