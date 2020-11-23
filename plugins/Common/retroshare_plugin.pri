@@ -43,7 +43,6 @@ win32 {
 	}
 
 	libretroshare_shared {
-		PRE_TARGETDEPS += $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
 		LIBS += -L"$$OUT_PWD/../../libretroshare/src/lib" -lretroshare
 	}
 
@@ -69,7 +68,7 @@ win32 {
 
 	DEFINES += WINDOWS_SYS WIN32 STATICLIB MINGW WIN32_LEAN_AND_MEAN
 	#DEFINES += MINIUPNPC_VERSION=13
-#	DESTDIR = lib
+	DESTDIR = lib
 
 	# Switch off optimization for release version
 	QMAKE_CXXFLAGS_RELEASE -= -O2

@@ -9,8 +9,8 @@ INCLUDEPATH  *= $$clean_path($${RS_SRC_PATH}/libretroshare/src)
 
 equals(TARGET, retroshare):equals(TEMPLATE, lib){
 } else {
-	LIBS *= -L$$clean_path($${RS_BUILD_PATH}/libretroshare/src/lib/) -lretroshare
-    PRE_TARGETDEPS *= $$clean_path($${RS_BUILD_PATH}/libretroshare/src/lib/libretroshare.a)
+    LIBS *= -L$$clean_path($${RS_BUILD_PATH}/libretroshare/src/lib/) -lretroshare
+    !libretroshare_shared:PRE_TARGETDEPS *= $$clean_path($${RS_BUILD_PATH}/libretroshare/src/lib/libretroshare.a)
 }
 
 !include("../../openpgpsdk/src/use_openpgpsdk.pri"):error("Including")
