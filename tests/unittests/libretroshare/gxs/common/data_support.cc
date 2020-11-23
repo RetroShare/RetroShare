@@ -146,7 +146,6 @@ void init_item(RsGxsMsgMetaData* metaMsg)
 
     init_random(metaMsg->mGroupId) ;
     init_random(metaMsg->mMsgId) ;
-	 metaMsg->refcount = 1;
     init_random(metaMsg->mThreadId) ;
     init_random(metaMsg->mParentId) ;
     init_random(metaMsg->mOrigMsgId) ;

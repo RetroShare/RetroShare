@@ -22,6 +22,7 @@
 #include "ui_GxsForumGroupItem.h"
 #include "gui/NewsFeed.h"
 
+#include "gui/common/FilesDefs.h"
 #include "FeedHolder.h"
 #include "gui/RetroShareLink.h"
 #include "util/qtthreadsutils.h"
@@ -158,9 +159,9 @@ void GxsForumGroupItem::fill()
 	ui->descLabel->setText(QString::fromUtf8(mGroup.mDescription.c_str()));
 
 	if (IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags)) {
-		ui->forumlogo_label->setPixmap(QPixmap(":/icons/png/forums.png"));
+        ui->forumlogo_label->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums.png"));
 	} else {
-		ui->forumlogo_label->setPixmap(QPixmap(":/icons/png/forums-default.png"));
+        ui->forumlogo_label->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums-default.png"));
 	}
 
 	if (IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags)) {
@@ -251,13 +252,13 @@ void GxsForumGroupItem::doExpand(bool open)
 	if (open)
 	{
 		ui->expandFrame->show();
-		ui->expandButton->setIcon(QIcon(QString(":/icons/png/up-arrow.png")));
+        ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/up-arrow.png")));
 		ui->expandButton->setToolTip(tr("Hide"));
 	}
 	else
 	{
 		ui->expandFrame->hide();
-		ui->expandButton->setIcon(QIcon(QString(":/icons/png/down-arrow.png")));
+        ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/down-arrow.png")));
 		ui->expandButton->setToolTip(tr("Expand"));
 	}
 

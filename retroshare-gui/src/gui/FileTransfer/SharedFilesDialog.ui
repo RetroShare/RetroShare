@@ -88,10 +88,6 @@
         <property name="text">
          <string>Configure shared directories</string>
         </property>
-        <property name="icon">
-         <iconset resource="../images.qrc">
-          <normaloff>:/images/add-share24.png</normaloff>:/images/add-share24.png</iconset>
-        </property>
        </widget>
       </item>
       <item>

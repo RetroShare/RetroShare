@@ -18,17 +18,23 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <iostream>
-
-#include <QDesktopServices>
-#include <QDir>
-#include <QPainter>
-#include <QTextDocumentFragment>
-
 #include "RSTextBrowser.h"
+
 #include "RSImageBlockWidget.h"
+#include "gui/common/FilesDefs.h"
 
 #include <retroshare/rsinit.h> //To get RsAccounts
+
+#include <QDesktopServices>
+#include <QDialog>
+#include <QDir>
+#include <QGridLayout>
+#include <QMenu>
+#include <QPainter>
+#include <QPlainTextEdit>
+#include <QTextDocumentFragment>
+
+#include <iostream>
 
 RSTextBrowser::RSTextBrowser(QWidget *parent) :
 	QTextBrowser(parent)
@@ -149,7 +155,7 @@ QVariant RSTextBrowser::loadResource(int type, const QUrl &name)
 
 QPixmap RSTextBrowser::getBlockedImage()
 {
-	return QPixmap(":/images/imageblocked_24.png");
+    return FilesDefs::getPixmapFromQtResourcePath(":/images/imageblocked_24.png");
 }
 
 void RSTextBrowser::setImageBlockWidget(RSImageBlockWidget *widget)
@@ -289,4 +295,38 @@ QString RSTextBrowser::anchorForPosition(const QPoint &pos) const
 		}
 	}
 	return anchor;
+}
+
+QMenu *RSTextBrowser::createStandardContextMenu()
+{
+	return createStandardContextMenu(QPoint());
+}
+QMenu *RSTextBrowser::createStandardContextMenu(const QPoint &position)
+{
+	QMenu *menu = QTextBrowser::createStandardContextMenu(position);
+
+	menu->addSeparator();
+	QAction *a = menu->addAction(FilesDefs::getIconFromQtResourcePath("://icons/textedit/code.png"), tr("View &Source"), this, SLOT(viewSource()));
+	a->setEnabled(!this->document()->isEmpty());
+
+	return menu;
+}
+
+void RSTextBrowser::viewSource()
+{
+	QString text = this->textCursor().selection().toHtml();
+	if (text.isEmpty())
+		text = this->document()->toHtml();
+
+	QDialog *dialog = new QDialog(this);
+	QPlainTextEdit *pte = new QPlainTextEdit(dialog);
+	pte->setPlainText(text);
+	QGridLayout *gl = new QGridLayout(dialog);
+	gl->addWidget(pte,0,0,1,1);
+	dialog->setWindowTitle(tr("Document source"));
+	dialog->resize(500, 400);
+
+	dialog->exec();
+
+	delete dialog;
 }

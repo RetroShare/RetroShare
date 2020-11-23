@@ -27,6 +27,7 @@
 
 #include "retroshare/rsconfig.h"
 #include "retroshare/rspeers.h"
+#include "gui/common/FilesDefs.h"
 
 #include "util/misc.h"
 
@@ -46,7 +47,7 @@ DHTStatus::DHTStatus(QWidget *parent)
     hbox->addWidget(statusDHT);
     
     dhtstatusLabel = new QLabel( this );
-    dhtstatusLabel->setPixmap(QPixmap(":/icons/bullet_grey_128.png"));
+    dhtstatusLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/bullet_grey_128.png"));
     hbox->addWidget(dhtstatusLabel);
     
     spaceLabel = new QLabel( "|", this );
@@ -56,7 +57,7 @@ DHTStatus::DHTStatus(QWidget *parent)
     dhtnetworkLabel = new QLabel( this );
     dhtnetworkLabel->setVisible(false);
     int S = QFontMetricsF(dhtnetworkLabel->font()).height();
-    dhtnetworkLabel->setPixmap(QPixmap(":/images/dht32.png").scaledToHeight(S,Qt::SmoothTransformation));
+    dhtnetworkLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/dht32.png").scaledToHeight(S,Qt::SmoothTransformation));
     hbox->addWidget(dhtnetworkLabel);
 
     dhtnetworksizeLabel = new QLabel( "0 (0) ",this );
@@ -84,7 +85,7 @@ void DHTStatus::getDHTStatus()
 	if (!(config.DHTActive))
 	{
 		// GRAY.
-        dhtstatusLabel->setPixmap(QPixmap(":/icons/bullet_grey_128.png").scaledToHeight(S,Qt::SmoothTransformation));
+        dhtstatusLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/bullet_grey_128.png").scaledToHeight(S,Qt::SmoothTransformation));
 		dhtstatusLabel->setToolTip( text + tr("DHT Off"));
 
 		spaceLabel->setVisible(false);
@@ -102,7 +103,7 @@ void DHTStatus::getDHTStatus()
 			// YELLOW or GREEN.
 			if (config.netDhtRsNetSize < MIN_RS_NET_SIZE)
 			{
-                dhtstatusLabel->setPixmap(QPixmap(":/icons/bullet_yellow_128.png").scaledToHeight(S,Qt::SmoothTransformation));
+                dhtstatusLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/bullet_yellow_128.png").scaledToHeight(S,Qt::SmoothTransformation));
                 dhtstatusLabel->setToolTip( text + tr("DHT Searching for RetroShare Peers"));
 
 				spaceLabel->setVisible(true);
@@ -114,7 +115,7 @@ void DHTStatus::getDHTStatus()
 			}
 			else
 			{
-                dhtstatusLabel->setPixmap(QPixmap(":/icons/bullet_green_128.png").scaledToHeight(S,Qt::SmoothTransformation));
+                dhtstatusLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/bullet_green_128.png").scaledToHeight(S,Qt::SmoothTransformation));
 				dhtstatusLabel->setToolTip( text + tr("DHT Good"));
 
 				spaceLabel->setVisible(true);
@@ -128,7 +129,7 @@ void DHTStatus::getDHTStatus()
 		else
 		{
 			// RED - some issue.
-                dhtstatusLabel->setPixmap(QPixmap(":/icons/bullet_red_128.png").scaledToHeight(S,Qt::SmoothTransformation));
+                dhtstatusLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/bullet_red_128.png").scaledToHeight(S,Qt::SmoothTransformation));
             dhtstatusLabel->setToolTip( text + tr("No peer found in DHT"));
 
 			spaceLabel->setVisible(false);

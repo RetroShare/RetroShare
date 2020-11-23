@@ -70,15 +70,17 @@ public:
 class RsHistory
 {
 public:
-    virtual bool getMessages(const ChatId &chatPeerId, std::list<HistoryMsg> &msgs, uint32_t loadCount) = 0;
+	virtual bool chatIdToVirtualPeerId(const ChatId &chat_id, RsPeerId &peer_id) = 0;
+	virtual bool getMessages(const ChatId &chatPeerId, std::list<HistoryMsg> &msgs, uint32_t loadCount) = 0;
 	virtual bool getMessage(uint32_t msgId, HistoryMsg &msg) = 0;
 	virtual void removeMessages(const std::list<uint32_t> &msgIds) = 0;
-    virtual void clear(const ChatId &chatPeerId) = 0;
+	virtual void clear(const ChatId &chatPeerId) = 0;
 
 	virtual bool getEnable(uint32_t chat_type) = 0;
 	virtual void setEnable(uint32_t chat_type, bool enable) = 0;
-	virtual uint32_t getMaxStorageDuration() = 0 ;
-	virtual void setMaxStorageDuration(uint32_t seconds) = 0 ;
+
+	virtual uint32_t getMaxStorageDuration() = 0;
+	virtual void     setMaxStorageDuration(uint32_t seconds) = 0;
 
 	// 0 = no limit, >0 count of saved messages
 	virtual uint32_t getSaveCount(uint32_t chat_type) = 0;

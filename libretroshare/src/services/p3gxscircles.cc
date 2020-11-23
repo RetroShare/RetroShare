@@ -683,8 +683,6 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 					RsGxsCircleGroupItem *old_circle_grp_item = dynamic_cast<RsGxsCircleGroupItem*>(groupChange->mOldGroupItem);
 					RsGxsCircleGroupItem *new_circle_grp_item = dynamic_cast<RsGxsCircleGroupItem*>(groupChange->mNewGroupItem);
 
-					const RsGxsCircleId circle_id ( old_circle_grp_item->meta.mGroupId );
-
 					if(old_circle_grp_item == nullptr || new_circle_grp_item == nullptr)
 					{
 						RsErr() << __PRETTY_FUNCTION__ << " received GxsGroupUpdate item with mOldGroup and mNewGroup not of type RsGxsCircleGroupItem. This is inconsistent!" << std::endl;
@@ -692,7 +690,9 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 						continue;
 					}
 
-					// First of all, we check if there is a difference between the old and new list of invited members
+                    const RsGxsCircleId circle_id ( old_circle_grp_item->meta.mGroupId );
+
+                    // First of all, we check if there is a difference between the old and new list of invited members
 
 					for(auto& gxs_id: new_circle_grp_item->gxsIdSet.ids)
 						if(old_circle_grp_item->gxsIdSet.ids.find(gxs_id) == old_circle_grp_item->gxsIdSet.ids.end())
@@ -1400,6 +1400,7 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 		    std::cerr << "  Unprocessed peers. Requesting reload..." << std::endl;
 #endif
             cache.mAllIdsHere = false;
+            cache.mStatus = CircleEntryCacheStatus::UPDATING;
 
 		    /* schedule event to try reload gxsIds */
 		    RsTickEvent::schedule_in(CIRCLE_EVENT_RELOADIDS, GXSID_LOAD_CYCLE, id.toStdString());
@@ -1463,12 +1464,14 @@ bool p3GxsCircles::locked_processLoadingCacheEntry(RsGxsCircleCache& cache)
 				}
 				else
 				{
+#ifdef DEBUG_CIRCLES
 					std::cerr << "    (WW) cache entry for circle " << cache.mCircleId << " has empty originator. Asking info for GXS id " << pit->first << " to all connected friends." << std::endl;
+#endif
 
 					rsPeers->getOnlineList(peers) ;
 				}
 
-				mIdentities->requestKey(pit->first, peers,RsIdentityUsage(serviceType(),RsIdentityUsage::CIRCLE_MEMBERSHIP_CHECK,RsGxsGroupId(cache.mCircleId)));
+				mIdentities->requestKey(pit->first, peers,RsIdentityUsage(RsServiceType::GXSCIRCLE,RsIdentityUsage::CIRCLE_MEMBERSHIP_CHECK,RsGxsGroupId(cache.mCircleId)));
 
 				all_ids_here = false;
 			}
@@ -1997,7 +2000,9 @@ bool p3GxsCircles::processMembershipRequests(uint32_t token)
 
         // now do another sweep and remove all msgs that are older than the latest
 
+#ifdef DEBUG_CIRCLES
 		std::cerr << "    Cleaning old messages..." << std::endl;
+#endif
 
 		for(uint32_t i=0;i<it->second.size();++i)
         {

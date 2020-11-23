@@ -32,6 +32,8 @@
 #include "gui/common/FilesDefs.h"
 #include "util/qtthreadsutils.h"
 #include "util/HandleRichText.h"
+#include "gui/MainWindow.h"
+#include "gui/Identity/IdDialog.h"
 #include "PhotoView.h"
 #include "ui_PostedItem.h"
 
@@ -338,6 +340,24 @@ void BasePostedItem::viewPicture()
 	/* window will destroy itself! */
 }
 
+void BasePostedItem::showAuthorInPeople()
+{
+	if(mPost.mMeta.mAuthorId.isNull())
+	{
+		std::cerr << "(EE) GxsForumThreadWidget::loadMsgData_showAuthorInPeople() ERROR Missing Message Data...";
+		std::cerr << std::endl;
+	}
+
+	/* window will destroy itself! */
+	IdDialog *idDialog = dynamic_cast<IdDialog*>(MainWindow::getPage(MainWindow::People));
+
+	if (!idDialog)
+		return ;
+
+	MainWindow::showWindow(MainWindow::People);
+	idDialog->navigate(RsGxsId(mPost.mMeta.mAuthorId));
+}
+
 //========================================================================================
 //                                        PostedItem                                    //
 //========================================================================================
@@ -394,6 +414,8 @@ void PostedItem::setup()
 	QAction *CopyLinkAction = new QAction(QIcon(""),tr("Copy RetroShare Link"), this);
 	connect(CopyLinkAction, SIGNAL(triggered()), this, SLOT(copyMessageLink()));
 
+	QAction *showInPeopleAct = new QAction(QIcon(), tr("Show author in people tab"), this);
+	connect(showInPeopleAct, SIGNAL(triggered()), this, SLOT(showAuthorInPeople()));
 
 	int S = QFontMetricsF(font()).height() ;
 
@@ -407,6 +429,8 @@ void PostedItem::setup()
 
 	QMenu *menu = new QMenu();
 	menu->addAction(CopyLinkAction);
+	menu->addSeparator();
+	menu->addAction(showInPeopleAct);
 	ui->shareButton->setMenu(menu);
 
 	ui->clearButton->hide();
@@ -438,8 +462,6 @@ void PostedItem::makeUpVote()
 	emit vote(msgId, true);
 }
 
-
-
 void PostedItem::setComment(const RsGxsComment& cmt)
 {
 	ui->newCommentLabel->show();
@@ -459,97 +481,115 @@ void PostedItem::setCommentsSize(int comNb)
 
 void PostedItem::fill()
 {
-	RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_POSTED, mGroupMeta.mGroupId, groupName());
-	ui->nameLabel->setText(link.toHtml());
+	RsReputationLevel overall_reputation = rsReputations->overallReputationLevel(mPost.mMeta.mAuthorId);
+	bool redacted = (overall_reputation == RsReputationLevel::LOCALLY_NEGATIVE);
 
-	QPixmap sqpixmap2 = QPixmap(":/images/thumb-default.png");
+	if(redacted) {
+		ui->expandButton->setDisabled(true);
+		ui->commentButton->setDisabled(true);
+		ui->voteUpButton->setDisabled(true);
+		ui->voteDownButton->setDisabled(true);
 
-	mInFill = true;
-	int desired_height = 1.5*(ui->voteDownButton->height() + ui->voteUpButton->height() + ui->scoreLabel->height());
-	int desired_width =  sqpixmap2.width()*desired_height/(float)sqpixmap2.height();
+        ui->thumbnailLabel->setPixmap( FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default.png"));
+		ui->fromLabel->setId(mPost.mMeta.mAuthorId);
+		ui->titleLabel->setText(tr( "<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(mPost.mMeta.mAuthorId.toStdString()))) ;
+		QDateTime qtime;
+		qtime.setTime_t(mPost.mMeta.mPublishTs);
+		QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
+		ui->dateLabel->setText(timestamp);
+	} else {
+		RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_POSTED, mGroupMeta.mGroupId, groupName());
+		ui->nameLabel->setText(link.toHtml());
 
-	QDateTime qtime;
-	qtime.setTime_t(mPost.mMeta.mPublishTs);
-	QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
-	QString timestamp2 = misc::timeRelativeToNow(mPost.mMeta.mPublishTs);
-	ui->dateLabel->setText(timestamp2);
-	ui->dateLabel->setToolTip(timestamp);
+		QPixmap sqpixmap2 = FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default.png");
 
-	ui->fromLabel->setId(mPost.mMeta.mAuthorId);
+		mInFill = true;
+		int desired_height = 1.5*(ui->voteDownButton->height() + ui->voteUpButton->height() + ui->scoreLabel->height());
+		int desired_width =  sqpixmap2.width()*desired_height/(float)sqpixmap2.height();
 
-	// Use QUrl to check/parse our URL
-	// The only combination that seems to work: load as EncodedUrl, extract toEncoded().
-	QByteArray urlarray(mPost.mLink.c_str());
-    QUrl url = QUrl::fromEncoded(urlarray.trimmed());
-	QString urlstr = "Invalid Link";
-	QString sitestr = "Invalid Link";
+		QDateTime qtime;
+		qtime.setTime_t(mPost.mMeta.mPublishTs);
+		QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
+		QString timestamp2 = misc::timeRelativeToNow(mPost.mMeta.mPublishTs);
+		ui->dateLabel->setText(timestamp2);
+		ui->dateLabel->setToolTip(timestamp);
 
-	bool urlOkay = url.isValid();
-	if (urlOkay)
-	{
-		QString scheme = url.scheme();
-		if ((scheme != "https")
-			&& (scheme != "http")
-			&& (scheme != "ftp")
-			&& (scheme != "retroshare"))
+		ui->fromLabel->setId(mPost.mMeta.mAuthorId);
+
+		// Use QUrl to check/parse our URL
+		// The only combination that seems to work: load as EncodedUrl, extract toEncoded().
+		QByteArray urlarray(mPost.mLink.c_str());
+		QUrl url = QUrl::fromEncoded(urlarray.trimmed());
+		QString urlstr = "Invalid Link";
+		QString sitestr = "Invalid Link";
+
+		bool urlOkay = url.isValid();
+		if (urlOkay)
 		{
-			urlOkay = false;
-			sitestr = "Invalid Link Scheme";
+			QString scheme = url.scheme();
+			if ((scheme != "https")
+				&& (scheme != "http")
+				&& (scheme != "ftp")
+				&& (scheme != "retroshare"))
+			{
+				urlOkay = false;
+				sitestr = "Invalid Link Scheme";
+			}
 		}
-	}
 
-	if (urlOkay)
-	{
-		urlstr =  QString("<a href=\"");
-		urlstr += QString(url.toEncoded());
-		urlstr += QString("\" ><span style=\" text-decoration: underline; color:#2255AA;\"> ");
-		urlstr += messageName();
-		urlstr += QString(" </span></a>");
+		if (urlOkay)
+		{
+			urlstr =  QString("<a href=\"");
+			urlstr += QString(url.toEncoded());
+			urlstr += QString("\" ><span style=\" text-decoration: underline; color:#2255AA;\"> ");
+			urlstr += messageName();
+			urlstr += QString(" </span></a>");
 
-		QString siteurl = url.toEncoded();
-		sitestr = QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#0079d3;\"> %2 </span></a>").arg(siteurl).arg(siteurl);
+			QString siteurl = url.toEncoded();
+			sitestr = QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#0079d3;\"> %2 </span></a>").arg(siteurl).arg(siteurl);
 
-		ui->titleLabel->setText(urlstr);
-	}else
-	{
-		ui->titleLabel->setText(messageName());
+			ui->titleLabel->setText(urlstr);
+		}else
+		{
+			ui->titleLabel->setText(messageName());
 
-	}
-
-	if (urlarray.isEmpty())
-	{
-		ui->siteLabel->hide();
-	}
-
-	ui->siteLabel->setText(sitestr);
-
-	if(mPost.mImage.mData != NULL)
-	{
-		QPixmap pixmap;
-		GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
-		// Wiping data - as its been passed to thumbnail.
-
-		QPixmap sqpixmap = pixmap.scaled(desired_width,desired_height, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
-		ui->thumbnailLabel->setPixmap(sqpixmap);
-		ui->thumbnailLabel->setToolTip(tr("Click to view Picture"));
-
-		QPixmap scaledpixmap;
-		if(pixmap.width() > 800){
-			QPixmap scaledpixmap = pixmap.scaledToWidth(800, Qt::SmoothTransformation);
-			ui->pictureLabel->setPixmap(scaledpixmap);
-		}else{
-			ui->pictureLabel->setPixmap(pixmap);
 		}
-	}
-	else if (urlOkay && (mPost.mImage.mData == NULL))
-	{
-		ui->expandButton->setDisabled(true);
-		ui->thumbnailLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(LINK_IMAGE));
-	}
-	else
-	{
-		ui->expandButton->setDisabled(true);
-		ui->thumbnailLabel->setPixmap(sqpixmap2);
+
+		if (urlarray.isEmpty())
+		{
+			ui->siteLabel->hide();
+		}
+
+		ui->siteLabel->setText(sitestr);
+
+		if(mPost.mImage.mData != NULL)
+		{
+			QPixmap pixmap;
+			GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
+			// Wiping data - as its been passed to thumbnail.
+
+			QPixmap sqpixmap = pixmap.scaled(desired_width,desired_height, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+			ui->thumbnailLabel->setPixmap(sqpixmap);
+			ui->thumbnailLabel->setToolTip(tr("Click to view Picture"));
+
+			QPixmap scaledpixmap;
+			if(pixmap.width() > 800){
+				QPixmap scaledpixmap = pixmap.scaledToWidth(800, Qt::SmoothTransformation);
+				ui->pictureLabel->setPixmap(scaledpixmap);
+			}else{
+				ui->pictureLabel->setPixmap(pixmap);
+			}
+		}
+		else if (urlOkay && (mPost.mImage.mData == NULL))
+		{
+			ui->expandButton->setDisabled(true);
+			ui->thumbnailLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(LINK_IMAGE));
+		}
+		else
+		{
+			ui->expandButton->setDisabled(true);
+			ui->thumbnailLabel->setPixmap(sqpixmap2);
+		}
 	}
 
 
@@ -701,5 +741,3 @@ void PostedItem::toggleNotes()
 	}
 
 }
-
-

@@ -30,6 +30,7 @@ CrashStackTrace gCrashStackTrace;
 #include <QSplashScreen>
 
 #include <rshare.h>
+#include "gui/common/FilesDefs.h"
 #include "gui/FriendsDialog.h"
 #include "gui/GenCertDialog.h"
 #include "gui/MainWindow.h"
@@ -136,7 +137,7 @@ static void displayWarningAboutDSAKeys()
 	msgBox.setInformativeText(QObject::tr("DSA keys are not yet supported by this version of RetroShare. All these nodes will be unusable. We're very sorry for that."));
 	msgBox.setStandardButtons(QMessageBox::Ok);
 	msgBox.setDefaultButton(QMessageBox::Ok);
-    msgBox.setWindowIcon(QIcon(":/icons/logo_128.png"));
+    msgBox.setWindowIcon(FilesDefs::getIconFromQtResourcePath(":/icons/logo_128.png"));
 
 	msgBox.exec();
 }
@@ -270,7 +271,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 		msgBox.setInformativeText(QObject::tr("Choose between:<br><ul><li><b>Ok</b> to copy the existing keyring from gnupg (safest bet), or </li><li><b>Close without saving</b> to start fresh with an empty keyring (you will be asked to create a new PGP key to work with RetroShare, or import a previously saved pgp keypair). </li><li><b>Cancel</b> to quit and forge a keyring by yourself (needs some PGP skills)</li></ul>"));
 		msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Discard | QMessageBox::Cancel);
 		msgBox.setDefaultButton(QMessageBox::Ok);
-        msgBox.setWindowIcon(QIcon(":/icons/logo_128.png"));
+        msgBox.setWindowIcon(FilesDefs::getIconFromQtResourcePath(":/icons/logo_128.png"));
 
 		int ret = msgBox.exec();
 
@@ -299,7 +300,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 		displayWarningAboutDSAKeys();
 
 		QMessageBox mb(QMessageBox::Critical, QObject::tr("RetroShare"), "", QMessageBox::Ok);
-        mb.setWindowIcon(QIcon(":/icons/logo_128.png"));
+        mb.setWindowIcon(FilesDefs::getIconFromQtResourcePath(":/icons/logo_128.png"));
 
 		switch (initResult) 
 		{
@@ -440,7 +441,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 		}
 	}
 
-	QSplashScreen splashScreen(QPixmap(":/images/logo/logo_splash.png")/* , Qt::WindowStaysOnTopHint*/);
+    QSplashScreen splashScreen(FilesDefs::getPixmapFromQtResourcePath(":/images/logo/logo_splash.png")/* , Qt::WindowStaysOnTopHint*/);
 
 	splashScreen.show();
 	splashScreen.showMessage(rshare.translate("SplashScreen", "Load configuration"), Qt::AlignHCenter | Qt::AlignBottom);

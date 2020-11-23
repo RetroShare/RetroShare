@@ -38,8 +38,10 @@ class FeedReaderFeedItem : public FeedItem
 	Q_OBJECT
 
 public:
-	FeedReaderFeedItem(RsFeedReader *feedReader, FeedReaderNotify *notify, FeedHolder *parent, const FeedInfo &feedInfo, const FeedMsgInfo &msgInfo);
+	FeedReaderFeedItem(RsFeedReader *feedReader, FeedReaderNotify *notify, const FeedInfo &feedInfo, const FeedMsgInfo &msgInfo);
 	~FeedReaderFeedItem();
+
+	virtual uint64_t uniqueIdentifier() const override { return hash_64bits("FeedReaderFeedItem " + mMsgId); }
 
 protected:
 	/* FeedItem */
@@ -53,7 +55,7 @@ private slots:
 	void copyLink();
 	void openLink();
 
-	void msgChanged(const QString &feedId, const QString &msgId, int type);
+	void msgChanged(uint32_t feedId, const QString &msgId, int type);
 
 private:
 	void setMsgRead();

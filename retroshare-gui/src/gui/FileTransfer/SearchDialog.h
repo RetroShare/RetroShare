@@ -23,7 +23,7 @@
 
 #include <retroshare/rstypes.h>
 #include "ui_SearchDialog.h"
-#include "mainpage.h"
+#include <retroshare-gui/mainpage.h>
 
 class AdvancedSearchDialog;
 class RSTreeWidgetItemCompareRole;

@@ -38,10 +38,11 @@
 #include "gui/notifyqt.h"
 #include "util/QtVersion.h"
 #include "util/misc.h"
+#include "gui/common/FilesDefs.h"
 
 /* Images for context menu icons */
 #define IMAGE_CANCEL               ":/images/delete.png"
-#define IMAGE_EDIT                 ":/images/edit_16.png"
+#define IMAGE_EDIT                 ":/icons/png/pencil-edit-button.png"
 
 #define COLUMN_PATH         0
 #define COLUMN_VIRTUALNAME  1
@@ -57,7 +58,7 @@ ShareManager::ShareManager()
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
 
-    ui.headerFrame->setHeaderImage(QPixmap(":/images/fileshare64.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/fileshare64.png"));
     ui.headerFrame->setHeaderText(tr("Share Manager"));
 
     isLoading = false;

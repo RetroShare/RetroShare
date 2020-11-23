@@ -83,7 +83,7 @@ int p3BitDht::InfoCallback(const bdId *id, uint32_t /*type*/, uint32_t /*flags*/
 	{
 		RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 
-		DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(id->id), RSDHT_PEERTYPE_ANY);
+		DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(id->id), RsDhtPeerType::ANY);
 
 		if (dpd)
 		{
@@ -204,7 +204,7 @@ int p3BitDht::PeerCallback(const bdId *id, uint32_t status)
 
 	RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 
-	DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(id->id), RSDHT_PEERTYPE_FRIEND);
+	DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(id->id), RsDhtPeerType::FRIEND);
 
 	if (!dpd)
 	{
@@ -222,26 +222,26 @@ int p3BitDht::PeerCallback(const bdId *id, uint32_t status)
 	switch(status)
 	{
 		default:
-			dpd->mDhtState = RSDHT_PEERDHT_NOT_ACTIVE;
+		    dpd->mDhtState = RsDhtPeerDht::NOT_ACTIVE;
 			break;
 
 		case BITDHT_MGR_QUERY_FAILURE:
-			dpd->mDhtState = RSDHT_PEERDHT_FAILURE;
+		    dpd->mDhtState = RsDhtPeerDht::FAILURE;
 			break;
 
 		case BITDHT_MGR_QUERY_PEER_OFFLINE:
-			dpd->mDhtState = RSDHT_PEERDHT_OFFLINE;
+		    dpd->mDhtState = RsDhtPeerDht::OFFLINE;
 			break;
 
 		case BITDHT_MGR_QUERY_PEER_UNREACHABLE:
-			dpd->mDhtState = RSDHT_PEERDHT_UNREACHABLE;
+		    dpd->mDhtState = RsDhtPeerDht::UNREACHABLE;
 			dpd->mDhtId = *id; // set the IP:Port of the unreachable peer.
 			UnreachablePeerCallback_locked(id, status, dpd);
 
 			break;
 
 		case BITDHT_MGR_QUERY_PEER_ONLINE:
-			dpd->mDhtState = RSDHT_PEERDHT_ONLINE;
+		    dpd->mDhtState = RsDhtPeerDht::ONLINE;
 			dpd->mDhtId = *id; // set the IP:Port of the Online peer.
 			OnlinePeerCallback_locked(id, status, dpd);
 
@@ -262,8 +262,8 @@ int p3BitDht::OnlinePeerCallback_locked(const bdId *id, uint32_t /*status*/, Dht
 	/* remove unused parameter warnings */
 	(void) id;
 
-	if ((dpd->mPeerConnectState != RSDHT_PEERCONN_DISCONNECTED) ||
-			(dpd->mPeerReqState == RSDHT_PEERREQ_RUNNING))
+	if ((dpd->mPeerConnectState != RsDhtPeerConnectState::DISCONNECTED) ||
+	        (dpd->mPeerReqState == RsDhtPeerRequest::RUNNING))
 	{
 
 #ifdef DEBUG_PEERNET
@@ -367,8 +367,8 @@ int p3BitDht::OnlinePeerCallback_locked(const bdId *id, uint32_t /*status*/, Dht
 int p3BitDht::UnreachablePeerCallback_locked(const bdId *id, uint32_t /*status*/, DhtPeerDetails *dpd)
 {
 
-	if ((dpd->mPeerConnectState != RSDHT_PEERCONN_DISCONNECTED) ||
-			(dpd->mPeerReqState == RSDHT_PEERREQ_RUNNING))
+	if ((dpd->mPeerConnectState != RsDhtPeerConnectState::DISCONNECTED) ||
+	        (dpd->mPeerReqState == RsDhtPeerRequest::RUNNING))
 	{
 
 #ifdef DEBUG_PEERNET
@@ -717,7 +717,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 				std::cerr << std::endl;
 #endif
 	
-				DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId.id), RSDHT_PEERTYPE_FRIEND);
+				DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId.id), RsDhtPeerType::FRIEND);
 				if (dpd)
 				{
 					proxyPort = dpd->mConnectLogic.shouldUseProxyPort(
@@ -811,7 +811,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 								std::cerr << std::endl;
 #endif
 
-								DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId.id), RSDHT_PEERTYPE_FRIEND);
+								DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId.id), RsDhtPeerType::FRIEND);
 								if (dpd)
 								{
 									dpd->mExclusiveProxyLock = true;
@@ -939,7 +939,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 			
 			RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 
-			DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId.id), RSDHT_PEERTYPE_FRIEND);
+			DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId.id), RsDhtPeerType::FRIEND);
 			if (dpd)
 			{
 				dpd->mPeerCbMsg = "ERROR : ";
@@ -980,7 +980,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 
 			RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 
-			DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId.id), RSDHT_PEERTYPE_FRIEND);
+			DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId.id), RsDhtPeerType::FRIEND);
 			if (dpd)
 			{
 				if (errcode)
@@ -989,7 +989,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 
 					dpd->mPeerReqStatusMsg = "STOPPED: ";
 					dpd->mPeerReqStatusMsg += decodeConnectionError(errcode);
-					dpd->mPeerReqState = RSDHT_PEERREQ_STOPPED;
+					dpd->mPeerReqState = RsDhtPeerRequest::STOPPED;
 					dpd->mPeerReqTS = now;
 
 					int updatecode = CSB_UPDATE_FAILED_ATTEMPT;
@@ -1048,7 +1048,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 				else // a new connection attempt.
 				{
 					dpd->mPeerReqStatusMsg = "Connect Attempt";
-					dpd->mPeerReqState = RSDHT_PEERREQ_RUNNING;
+					dpd->mPeerReqState = RsDhtPeerRequest::RUNNING;
 					dpd->mPeerReqMode = mode;
 					dpd->mPeerReqProxyId = *proxyId;
 					dpd->mPeerReqTS = now;
@@ -1232,7 +1232,7 @@ int p3BitDht::doActions()
 					{
 						RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 	
-						DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mDestId.id), RSDHT_PEERTYPE_FRIEND);
+						DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mDestId.id), RsDhtPeerType::FRIEND);
 						if (dpd)
 						{
 							connectOk = true;
@@ -1387,11 +1387,11 @@ int p3BitDht::doActions()
 #endif
 	
 	
-						DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mDestId.id), RSDHT_PEERTYPE_FRIEND);
+						DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mDestId.id), RsDhtPeerType::FRIEND);
 						if (dpd)
 						{
 							dpd->mPeerReqStatusMsg = "Connect Request";
-							dpd->mPeerReqState = RSDHT_PEERREQ_RUNNING;
+							dpd->mPeerReqState = RsDhtPeerRequest::RUNNING;
 							dpd->mPeerReqMode = action.mMode;
 							dpd->mPeerReqTS = now;
 
@@ -1428,13 +1428,13 @@ int p3BitDht::doActions()
 					//}
 
 					RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
-					DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mDestId.id), RSDHT_PEERTYPE_FRIEND);
+					DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mDestId.id), RsDhtPeerType::FRIEND);
 					if (dpd)
 					{
 						dpd->mConnectLogic.updateCb(failReason);
 
 						dpd->mPeerReqStatusMsg = "Req Mode Unavailable";
-						dpd->mPeerReqState = RSDHT_PEERREQ_STOPPED;
+						dpd->mPeerReqState = RsDhtPeerRequest::STOPPED;
 						dpd->mPeerReqMode = action.mMode;
 						dpd->mPeerReqTS = now;
 
@@ -1496,7 +1496,7 @@ int p3BitDht::doActions()
 				{
 					RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 
-					DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mSrcId.id), RSDHT_PEERTYPE_ANY);
+					DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mSrcId.id), RsDhtPeerType::ANY);
 					if (dpd)
 					{	
 						if (action.mAnswer)
@@ -1604,7 +1604,7 @@ int p3BitDht::doActions()
 				{
 					RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 
-					DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mDestId.id), RSDHT_PEERTYPE_ANY);
+					DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mDestId.id), RsDhtPeerType::ANY);
 					if (dpd)
 					{
 						peerRsId = dpd->mRsId;
@@ -1730,7 +1730,7 @@ int p3BitDht::checkConnectionAllowed(const bdId *peerId, int mode)
 	rstime_t now = time(NULL);
 
 	/* check if they are in our friend list */
-	DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId->id), RSDHT_PEERTYPE_FRIEND);
+	DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId->id), RsDhtPeerType::FRIEND);
 	if (!dpd)
 	{
 #ifdef DEBUG_PEERNET
@@ -1749,14 +1749,14 @@ int p3BitDht::checkConnectionAllowed(const bdId *peerId, int mode)
 
 		/* flag as failed */
 		it->second.mDhtId = *peerId;
-		it->second.mDhtState = RSDHT_PEERDHT_NOT_ACTIVE;
+		it->second.mDhtState = RsDhtPeerDht::NOT_ACTIVE;
 		it->second.mDhtUpdateTS = now;
 
-		it->second.mPeerType = RSDHT_PEERTYPE_OTHER;
+		it->second.mPeerType = RsDhtPeerType::OTHER;
 		it->second.mPeerCbMsg = "Denied Non-Friend";
 
 		it->second.mPeerReqStatusMsg = "Denied Non-Friend";
-		it->second.mPeerReqState = RSDHT_PEERREQ_STOPPED;
+		it->second.mPeerReqState = RsDhtPeerRequest::STOPPED;
 		it->second.mPeerReqTS = now;
 		it->second.mPeerReqMode = 0;
 		//it->second.mPeerProxyId;
@@ -1765,7 +1765,7 @@ int p3BitDht::checkConnectionAllowed(const bdId *peerId, int mode)
 		it->second.mPeerCbMsg = "Denied Non-Friend";
 
 		it->second.mPeerConnectMsg = "Denied Non-Friend";
-		it->second.mPeerConnectState = RSDHT_PEERCONN_DISCONNECTED;
+		it->second.mPeerConnectState = RsDhtPeerConnectState::DISCONNECTED;
 
 		
 		return 0;
@@ -1774,7 +1774,7 @@ int p3BitDht::checkConnectionAllowed(const bdId *peerId, int mode)
 
 	/* are a friend */
 
-	if (dpd->mPeerConnectState == RSDHT_PEERCONN_CONNECTED)
+	if (dpd->mPeerConnectState == RsDhtPeerConnectState::CONNECTED)
 	{
 		std::cerr << "p3BitDht::checkConnectionAllowed() ERROR Peer Already Connected, DENIED";
 		std::cerr << std::endl;
@@ -1979,7 +1979,7 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 	{
 		RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 
-		DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerConnectId.id), RSDHT_PEERTYPE_FRIEND);
+		DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerConnectId.id), RsDhtPeerType::FRIEND);
 		/* grab a socket */
 		if (!dpd)
 		{
@@ -1988,7 +1988,7 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 			return;
 		}
 
-		if (dpd->mPeerConnectState != RSDHT_PEERCONN_DISCONNECTED)
+		if (dpd->mPeerConnectState != RsDhtPeerConnectState::DISCONNECTED)
 		{
 			std::cerr << "p3BitDht::initiateConnection() ERROR Peer is not Disconnected";
 			std::cerr << std::endl;
@@ -2003,7 +2003,7 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 		{
 			default:
 			case BITDHT_CONNECT_MODE_DIRECT:
-//				touConnectMode = RSDHT_TOU_MODE_DIRECT;
+//				touConnectMode = RsDhtTouMode::DIRECT;
 				connectFlags |= RS_CB_FLAG_MODE_UDP_DIRECT;
 				delay = delayOrBandwidth;
 				break;
@@ -2021,12 +2021,12 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 				delay = delayOrBandwidth;
 				if (useProxyPort)
 				{
-//					touConnectMode = RSDHT_TOU_MODE_PROXY;
+//					touConnectMode = RsDhtTouMode::PROXY;
 					connectFlags |= RS_CB_FLAG_MODE_UDP_PROXY;
 				}
 				else
 				{
-//					touConnectMode = RSDHT_TOU_MODE_DIRECT;
+//					touConnectMode = RsDhtTouMode::DIRECT;
 					connectFlags |= RS_CB_FLAG_MODE_UDP_DIRECT;
 				}
 
@@ -2034,7 +2034,7 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 				break;
 	
 			case BITDHT_CONNECT_MODE_RELAY:
-//				touConnectMode = RSDHT_TOU_MODE_RELAY;
+//				touConnectMode = RsDhtTouMode::RELAY;
 				connectFlags |= RS_CB_FLAG_MODE_UDP_RELAY;
 				bandwidth = delayOrBandwidth;
 				break;
@@ -2047,7 +2047,7 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 
 		/* store results in Status */
 		dpd->mPeerConnectMsg = "UDP started";
-		dpd->mPeerConnectState = RSDHT_PEERCONN_UDP_STARTED;
+		dpd->mPeerConnectState = RsDhtPeerConnectState::UDP_STARTED;
 		dpd->mPeerConnectUdpTS = time(NULL);
 		dpd->mPeerConnectMode = mode;
 		dpd->mPeerConnectPoint = loc;
@@ -2092,22 +2092,22 @@ int p3BitDht::installRelayConnection(const bdId *srcId, const bdId *destId, uint
 #endif
 
         /* grab a socket */
-	DhtPeerDetails *dpd_src = findInternalDhtPeer_locked(&(srcId->id), RSDHT_PEERTYPE_ANY);
-	DhtPeerDetails *dpd_dest = findInternalDhtPeer_locked(&(destId->id), RSDHT_PEERTYPE_ANY);
+	DhtPeerDetails *dpd_src = findInternalDhtPeer_locked(&(srcId->id), RsDhtPeerType::ANY);
+	DhtPeerDetails *dpd_dest = findInternalDhtPeer_locked(&(destId->id), RsDhtPeerType::ANY);
 
-	if ((dpd_src) && (dpd_src->mPeerType == RSDHT_PEERTYPE_FRIEND))
+	if ((dpd_src) && (dpd_src->mPeerType == RsDhtPeerType::FRIEND))
 	{
 		relayClass = UDP_RELAY_CLASS_FRIENDS;
 	}
-	else if ((dpd_dest) && (dpd_dest->mPeerType == RSDHT_PEERTYPE_FRIEND))
+	else if ((dpd_dest) && (dpd_dest->mPeerType == RsDhtPeerType::FRIEND))
 	{
 		relayClass = UDP_RELAY_CLASS_FRIENDS;
 	}
-	else if ((dpd_src) && (dpd_src->mPeerType == RSDHT_PEERTYPE_FOF))
+	else if ((dpd_src) && (dpd_src->mPeerType == RsDhtPeerType::FOF))
 	{
 		relayClass = UDP_RELAY_CLASS_FOF;
 	}
-	else if ((dpd_dest) && (dpd_dest->mPeerType == RSDHT_PEERTYPE_FOF))
+	else if ((dpd_dest) && (dpd_dest->mPeerType == RsDhtPeerType::FOF))
 	{
 		relayClass = UDP_RELAY_CLASS_FOF;
 	}
@@ -2178,12 +2178,12 @@ void p3BitDht::monitorConnections()
 	for(it = mPeers.begin(); it != mPeers.end(); ++it)
 	{
 		/* ignore ones which aren't friends */
-		if (it->second.mPeerType != RSDHT_PEERTYPE_FRIEND)
+		if (it->second.mPeerType != RsDhtPeerType::FRIEND)
 		{
 			continue;
 		}
 		
-		if (it->second.mPeerConnectState == RSDHT_PEERCONN_UDP_STARTED)
+		if (it->second.mPeerConnectState == RsDhtPeerConnectState::UDP_STARTED)
 		{
 #ifdef DEBUG_PEERNET
 			std::cerr << "p3BitDht::monitorConnections() Connection in progress to: ";
@@ -2225,7 +2225,7 @@ void p3BitDht::Feedback_Connected(const RsPeerId& pid)
 	}
 	
 	/* sanity checking */
-	if (dpd->mPeerConnectState != RSDHT_PEERCONN_UDP_STARTED)
+	if (dpd->mPeerConnectState != RsDhtPeerConnectState::UDP_STARTED)
 	{
 		/* ERROR */
 		std::cerr << "p3BitDht::Feedback_Connected() ERROR not in UDP_STARTED mode for: ";
@@ -2242,7 +2242,7 @@ void p3BitDht::Feedback_Connected(const RsPeerId& pid)
 #endif
 			
 			/* switch state! */
-	dpd->mPeerConnectState = RSDHT_PEERCONN_CONNECTED;
+	dpd->mPeerConnectState = RsDhtPeerConnectState::CONNECTED;
 	dpd->mPeerConnectTS = time(NULL);
 			
 	dpd->mConnectLogic.updateCb(CSB_UPDATE_CONNECTED);
@@ -2250,7 +2250,7 @@ void p3BitDht::Feedback_Connected(const RsPeerId& pid)
 	rs_sprintf(dpd->mPeerConnectMsg, "Connected in %ld secs", dpd->mPeerConnectTS - dpd->mPeerConnectUdpTS);
 			
 	// Remove the Connection Request.
-	if (dpd->mPeerReqState == RSDHT_PEERREQ_RUNNING)
+	if (dpd->mPeerReqState == RsDhtPeerRequest::RUNNING)
 	{
 #ifdef DEBUG_PEERNET
 		std::cerr << "p3BitDht::monitorConnections() Request Active, Stopping Request";
@@ -2334,7 +2334,7 @@ void p3BitDht::Feedback_ConnectionClosed(const RsPeerId& pid)
 
 void p3BitDht::UdpConnectionFailed_locked(DhtPeerDetails *dpd)
 {
-	if (dpd->mPeerConnectState == RSDHT_PEERCONN_UDP_STARTED)
+	if (dpd->mPeerConnectState == RsDhtPeerConnectState::UDP_STARTED)
 	{
 #ifdef DEBUG_PEERNET
 		std::cerr << "p3BitDht::UdpConnectionFailed_locked() UDP Connection Failed: ";
@@ -2345,11 +2345,11 @@ void p3BitDht::UdpConnectionFailed_locked(DhtPeerDetails *dpd)
 		/* shut it down */
 
 		/* ONLY need to update ConnectLogic - if it was our Attempt Running */
-		if (dpd->mPeerReqState == RSDHT_PEERREQ_RUNNING)
+		if (dpd->mPeerReqState == RsDhtPeerRequest::RUNNING)
 		{
 			dpd->mConnectLogic.updateCb(CSB_UPDATE_FAILED_ATTEMPT);
 		}
-		dpd->mPeerConnectState = RSDHT_PEERCONN_DISCONNECTED;
+		dpd->mPeerConnectState = RsDhtPeerConnectState::DISCONNECTED;
 		dpd->mPeerConnectMsg = "UDP Failed";
 
 	}
@@ -2363,14 +2363,14 @@ void p3BitDht::UdpConnectionFailed_locked(DhtPeerDetails *dpd)
 
 		dpd->mConnectLogic.updateCb(CSB_UPDATE_DISCONNECTED);
 
-		dpd->mPeerConnectState = RSDHT_PEERCONN_DISCONNECTED;
+		dpd->mPeerConnectState = RsDhtPeerConnectState::DISCONNECTED;
 		dpd->mPeerConnectClosedTS = time(NULL);
 		rs_sprintf(dpd->mPeerConnectMsg, "Closed, Alive for: %ld secs", dpd->mPeerConnectClosedTS - dpd->mPeerConnectTS);
 	}
 
 
 
-	if (dpd->mPeerReqState == RSDHT_PEERREQ_RUNNING)
+	if (dpd->mPeerReqState == RsDhtPeerRequest::RUNNING)
 	{
 #ifdef DEBUG_PEERNET
 		std::cerr << "p3BitDht::UdpConnectionFailed_locked() ";

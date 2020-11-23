@@ -67,26 +67,27 @@ private slots:
 	void messageTabInfoChanged(QWidget *widget);
 
 	/* FeedReaderNotify */
-	void feedChanged(const QString &feedId, int type);
+	void feedChanged(uint32_t feedId, int type);
 
 private:
-	std::string currentFeedId();
-	void setCurrentFeedId(const std::string &feedId);
+	uint32_t currentFeedId();
+	void setCurrentFeedId(uint32_t feedId);
 	void processSettings(bool load);
-	void addFeedToExpand(const std::string &feedId);
-	void getExpandedFeedIds(QList<std::string> &feedIds);
-	void updateFeeds(const std::string &parentId, QTreeWidgetItem *parentItem);
+	void addFeedToExpand(uint32_t feedId);
+	void getExpandedFeedIds(QList<uint32_t> &feedIds);
+	void updateFeeds(uint32_t parentId, QTreeWidgetItem *parentItem);
 	void updateFeedItem(QTreeWidgetItem *item, const FeedInfo &feedInfo);
-	void openFeedInNewTab(const std::string &feedId);
+	void openFeedInNewTab(uint32_t feedId);
 
 	void calculateFeedItems();
 	void calculateFeedItem(QTreeWidgetItem *item, uint32_t &unreadCount, uint32_t &newCount, bool &loading);
 
-	FeedReaderMessageWidget *feedMessageWidget(const std::string &feedId);
-	FeedReaderMessageWidget *createMessageWidget(const std::string &feedId);
+	FeedReaderMessageWidget *feedMessageWidget(uint32_t feedId);
+	FeedReaderMessageWidget *createMessageWidget(uint32_t feedId);
 
+private:
 	bool mProcessSettings;
-	QList<std::string> *mOpenFeedIds;
+	QList<uint32_t> *mOpenFeedIds;
 	QTreeWidgetItem *mRootItem;
 	RSTreeWidgetItemCompareRole *mFeedCompareRole;
 	FeedReaderMessageWidget *mMessageWidget;

@@ -1,5 +1,7 @@
 ﻿!insertmacro LANG_STRING Section_Main "${APPNAME}"
 !insertmacro LANG_STRING Section_Main_Desc "Установка ${APPNAME} и необходимых компонентов."
+!insertmacro LANG_STRING Section_Tor "Tor"
+!insertmacro LANG_STRING Section_Tor_Desc "Installs Tor."
 !insertmacro LANG_STRING Section_Data "Оболочки"
 !insertmacro LANG_STRING Section_Data_Desc "Установка оболочек."
 !insertmacro LANG_STRING Section_Shortcuts "Ярлыки"

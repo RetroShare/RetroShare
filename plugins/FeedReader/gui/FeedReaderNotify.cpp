@@ -24,12 +24,12 @@ FeedReaderNotify::FeedReaderNotify() : QObject()
 {
 }
 
-void FeedReaderNotify::notifyFeedChanged(const std::string &feedId, int type)
+void FeedReaderNotify::notifyFeedChanged(uint32_t feedId, int type)
 {
-	emit feedChanged(QString::fromStdString(feedId), type);
+	emit feedChanged(feedId, type);
 }
 
-void FeedReaderNotify::notifyMsgChanged(const std::string &feedId, const std::string &msgId, int type)
+void FeedReaderNotify::notifyMsgChanged(uint32_t feedId, const std::string &msgId, int type)
 {
-	emit msgChanged(QString::fromStdString(feedId), QString::fromStdString(msgId), type);
+	emit msgChanged(feedId, QString::fromStdString(msgId), type);
 }

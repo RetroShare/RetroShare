@@ -96,17 +96,32 @@ win32 {
 				USE_PRECOMPILED_LIBS = 1
 			}
 		}
+		exists( $$lib/opencv/libopencv_videoio.a) {
+			message(videoio found in opencv libraries.)
+			message($$lib)
+			LIBS += -lopencv_videoio
+		}
 		exists( $$lib/libopencv_videoio.dll.a) {
 			message(videoio found in opencv libraries.)
 			message($$lib)
 			LIBS += -lopencv_videoio
+		}
+		exists( $$lib/opencv/libopencv_imgcodecs.a) {
+			message(videoio found in opencv libraries.)
+			message($$lib)
+			LIBS += -lopencv_imgcodecs
+		}
+		exists( $$lib/opencv/liblibwebp.a) {
+			message(videoio found in opencv libraries.)
+			message($$lib)
+			LIBS += -llibwebp
 		}
 	}
 	isEmpty(USE_PRECOMPILED_LIBS) {
 		message(Use system opencv libraries.)
 		LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc
 	}
-	LIBS += -lzlib -lole32 -loleaut32 -luuid -lvfw32 -llibjpeg -llibtiff -llibpng -llibjasper -lIlmImf
+	LIBS += -lzlib -lole32 -loleaut32 -luuid -lvfw32 -llibjpeg-turbo -llibtiff -llibpng -llibjasper -lIlmImf
 	LIBS += -lavifil32 -lavicap32 -lavcodec -lavutil -lswresample
 }
 

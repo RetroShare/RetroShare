@@ -9,11 +9,11 @@ call "%EnvPath%\env.bat"
 if errorlevel 1 goto error_env
 
 %cecho% info "Build %SourceName%"
-call "%~dp0build\build.bat" 32 release tor autologin plugins
+call "%~dp0build\build.bat" 64 release tor autologin "CONFIG+=rs_use_native_dialogs"
 if errorlevel 1 %cecho% error "Failed to build %SourceName%." & exit /B %ERRORLEVEL%
 
 %cecho% info "Pack %SourceName%"
-call "%~dp0build\pack.bat" 32 release tor
+call "%~dp0build\pack.bat" 64 release tor autologin "CONFIG+=rs_use_native_dialogs"
 if errorlevel 1 %cecho% error "Failed to pack %SourceName%." & exit /B %ERRORLEVEL%
 
 exit /B 0

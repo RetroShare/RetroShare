@@ -114,6 +114,8 @@ RsLoginHelper* rsLoginHelper = nullptr;
 
 RsAccounts* rsAccounts = nullptr;
 
+const RsInitErrorCategory RsInitErrorCategory::instance;
+
 RsConfigOptions::RsConfigOptions()
         :
           autoLogin(false),
@@ -921,8 +923,10 @@ int RsServer::StartupRetroShare()
 	mNetMgr->setManagers(mPeerMgr, mLinkMgr);
 
 	rsAutoProxyMonitor *autoProxy = rsAutoProxyMonitor::instance();
+#ifdef RS_USE_I2P_BOB
 	mI2pBob = new p3I2pBob(mPeerMgr);
 	autoProxy->addProxy(autoProxyType::I2PBOB, mI2pBob);
+#endif
 
 	//load all the SSL certs as friends
 	//        std::list<std::string> sslIds;
@@ -1647,7 +1651,9 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("wire.cfg", wire_ns);
 #endif
 #endif //RS_ENABLE_GXS
+#ifdef RS_USE_I2P_BOB
 	mConfigMgr->addConfiguration("I2PBOB.cfg", mI2pBob);
+#endif
 
 	mPluginsManager->addConfigurations(mConfigMgr) ;
 
@@ -1722,7 +1728,7 @@ int RsServer::StartupRetroShare()
 				// now enable bob
 				bobSettings bs;
 				autoProxy->taskSync(autoProxyType::I2PBOB, autoProxyTask::getSettings, &bs);
-				bs.enableBob = true;
+				bs.enable = true;
 				autoProxy->taskSync(autoProxyType::I2PBOB, autoProxyTask::setSettings, &bs);
 			} else {
 				std::cerr << "RsServer::StartupRetroShare failed to receive keys" << std::endl;
@@ -1793,7 +1799,9 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
 
 	// auto proxy threads
+#ifdef RS_USE_I2P_BOB
 	startServiceThread(mI2pBob, "I2P-BOB");
+#endif
 
 #ifdef RS_ENABLE_GXS
 	// Must Set the GXS pointers before starting threads.
@@ -1950,6 +1958,47 @@ void RsLoginHelper::getLocations(std::vector<RsLoginHelper::Location>& store)
 	}
 }
 
+std::error_condition RsLoginHelper::createLocationV2(
+        RsPeerId& locationId, RsPgpId& pgpId,
+        const std::string& locationName, const std::string& pgpName,
+        const std::string& password )
+{
+	if(isLoggedIn()) return RsInitErrorNum::ALREADY_LOGGED_IN;
+	if(locationName.empty()) return RsInitErrorNum::INVALID_LOCATION_NAME;
+	if(pgpId.isNull() && pgpName.empty())
+		return RsInitErrorNum::PGP_NAME_OR_ID_NEEDED;
+
+	std::string errorMessage;
+	if(pgpId.isNull() && !RsAccounts::GeneratePGPCertificate(
+	            pgpName, "", password, pgpId, 4096, errorMessage ) )
+	{
+		RS_ERR("Failure creating PGP key: ", errorMessage);
+		return RsInitErrorNum::PGP_KEY_CREATION_FAILED;
+	}
+
+	std::string sslPassword =
+	        RsRandom::random_alphaNumericString(RsInit::getSslPwdLen());
+
+	rsNotify->cachePgpPassphrase(password);
+	rsNotify->setDisableAskPassword(true);
+
+	bool ret = RsAccounts::createNewAccount(
+	            pgpId, "", locationName, "", false, false, sslPassword,
+	            locationId, errorMessage );
+	if(!ret)
+	{
+		RS_ERR("Failure creating SSL key: ", errorMessage);
+		return RsInitErrorNum::SSL_KEY_CREATION_FAILED;
+	}
+
+	RsInit::LoadPassword(sslPassword);
+	ret = (RsInit::OK == attemptLogin(locationId, password));
+	rsNotify->setDisableAskPassword(false);
+
+	return (ret ? std::error_condition() : RsInitErrorNum::LOGIN_FAILED);
+}
+
+#if !RS_VERSION_AT_LEAST(0,6,6)
 bool RsLoginHelper::createLocation(
         RsLoginHelper::Location& l, const std::string& password,
         std::string& errorMessage, bool makeHidden, bool makeAutoTor )
@@ -1991,6 +2040,7 @@ bool RsLoginHelper::createLocation(
 	rsNotify->setDisableAskPassword(false);
 	return ret;
 }
+#endif // !RS_VERSION_AT_LEAST(0,6,6)
 
 bool RsLoginHelper::isLoggedIn()
 {

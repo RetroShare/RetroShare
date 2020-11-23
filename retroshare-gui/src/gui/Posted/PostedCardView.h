@@ -31,7 +31,7 @@ class PostedCardView;
 }
 
 class FeedHolder;
-class RsPostedPost;
+struct RsPostedPost;
 
 class PostedCardView : public BasePostedItem
 {
@@ -47,7 +47,7 @@ protected:
 
 	void setup() override;
 	void fill() override;
-    void doExpand(bool open) override {}
+    void doExpand(bool) override {}
 	void setComment(const RsGxsComment&) override;
 	void setReadStatus(bool isNew, bool isUnread) override;
     void toggle() override {}

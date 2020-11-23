@@ -29,6 +29,8 @@ QT -= gui
 
 SOURCES += retroshare-service.cc
 
+################################# Linux ##########################################
+
 android-* {
     QT += androidextras
 
@@ -56,10 +58,13 @@ appimage {
     INSTALLS += desktop_files
 }
 
+
 unix {
     target.path = "$${RS_BIN_DIR}"
     INSTALLS += target
 }
+
+################################# MacOSX ##########################################
 
 macx {
 	# ENABLE THIS OPTION FOR Univeral Binary BUILD.
@@ -81,7 +86,9 @@ macx {
 	INCLUDEPATH += . $$INC_DIR
 }
 
-win32-g++ {
+################################# Windows ##########################################
+
+win32-g++|win32-clang-g++ {
 	CONFIG(debug, debug|release) {
 		# show console output
 		CONFIG += console
@@ -130,3 +137,6 @@ win32-g++ {
 		QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib || $(MKDIR) lib
 	}
 }
+
+################################### COMMON stuff ##################################
+

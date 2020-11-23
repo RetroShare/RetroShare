@@ -92,11 +92,11 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	QHeaderView_setSectionResizeModeColumn(header, COLUMN_NAME, QHeaderView::Stretch);
 
     muteAct = new QAction(QIcon(), tr("Mute participant"), this);
-    voteNegativeAct = new QAction(QIcon(":/icons/png/thumbs-down.png"), tr("Ban this person (Sets negative opinion)"), this);
-    voteNeutralAct = new QAction(QIcon(":/icons/png/thumbs-neutral.png"), tr("Give neutral opinion"), this);
-    votePositiveAct = new QAction(QIcon(":/icons/png/thumbs-up.png"), tr("Give positive opinion"), this);
-    distantChatAct = new QAction(QIcon(":/icons/png/chats.png"), tr("Start private chat"), this);
-    sendMessageAct = new QAction(QIcon(":/icons/mail/write-mail.png"), tr("Send Message"), this);
+    voteNegativeAct = new QAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-down.png"), tr("Ban this person (Sets negative opinion)"), this);
+    voteNeutralAct = new QAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-neutral.png"), tr("Give neutral opinion"), this);
+    votePositiveAct = new QAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-up.png"), tr("Give positive opinion"), this);
+    distantChatAct = new QAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/chats.png"), tr("Start private chat"), this);
+    sendMessageAct = new QAction(FilesDefs::getIconFromQtResourcePath(":/icons/mail/write-mail.png"), tr("Send Message"), this);
     showInPeopleAct = new QAction(QIcon(), tr("Show author in people tab"), this);
 
     QActionGroup *sortgrp = new QActionGroup(this);
@@ -154,7 +154,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 
 	{
 	QIcon icon ;
-	icon.addPixmap(QPixmap(":/icons/png/invite.png")) ;
+    icon.addPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/invite.png")) ;
 	inviteFriendsButton->setIcon(icon) ;
 	inviteFriendsButton->setIconSize(icon_size);
 	}
@@ -196,7 +196,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 
 	{
 	QIcon icon ;
-	icon.addPixmap(QPixmap(":/icons/png/leave.png")) ;
+    icon.addPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/leave.png")) ;
 	unsubscribeButton->setIcon(icon) ;
 	unsubscribeButton->setIconSize(icon_size);
 	}
@@ -994,7 +994,7 @@ void ChatLobbyDialog::setWindowed(bool windowed)
 			mPCWindow->addDialog(this);
 
 		undockButton->setToolTip(tr("Redock to Main window"));
-		icon.addPixmap(QPixmap(":/icons/png/dock.png")) ;
+        icon.addPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/dock.png")) ;
 		undockButton->setIcon(icon) ;
 		undockButton->setIconSize(icon_size);
 	}
@@ -1009,7 +1009,7 @@ void ChatLobbyDialog::setWindowed(bool windowed)
 			chatLobbyPage->addChatPage(this);
 
 		undockButton->setToolTip(tr("Undock to a new window"));
-		icon.addPixmap(QPixmap(":/icons/png/undock.png")) ;
+        icon.addPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/undock.png")) ;
 		undockButton->setIcon(icon) ;
 		undockButton->setIconSize(icon_size);
 	}

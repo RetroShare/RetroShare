@@ -24,6 +24,7 @@
 #include "ui_AvatarDialog.h"
 #include "AvatarDefs.h"
 #include "util/misc.h"
+#include "gui/common/FilesDefs.h"
 
 /** Constructor */
 AvatarDialog::AvatarDialog(QWidget *parent) :
@@ -33,7 +34,7 @@ AvatarDialog::AvatarDialog(QWidget *parent) :
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui->setupUi(this);
 
-	ui->headerFrame->setHeaderImage(QPixmap(":/images/no_avatar_70.png"));
+    ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/no_avatar_70.png"));
 	ui->headerFrame->setHeaderText(tr("Set your Avatar picture"));
 
 	connect(ui->avatarButton, SIGNAL(clicked(bool)), this, SLOT(changeAvatar()));

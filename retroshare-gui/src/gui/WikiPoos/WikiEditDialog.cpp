@@ -414,7 +414,7 @@ void WikiEditDialog::setNewPage()
 	ui.groupBox_History->hide();
 	ui.pushButton_History->setText(tr("Show Edit History"));
 
-	ui.headerFrame->setHeaderImage(QPixmap(":/images/addpage.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/addpage.png"));
 	ui.headerFrame->setHeaderText(tr("Create New Wiki Page"));
 	setWindowTitle(tr("Create New Wiki Page"));
 
@@ -569,7 +569,7 @@ void WikiEditDialog::setupData(const RsGxsGroupId &groupId, const RsGxsMessageId
 		requestPage(msgId);
 	}
 
-	ui.headerFrame->setHeaderImage(QPixmap(":/images/editpage.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/editpage.png"));
 	ui.headerFrame->setHeaderText(tr("Edit Wiki Page"));
 	setWindowTitle(tr("Edit Wiki Page"));
 

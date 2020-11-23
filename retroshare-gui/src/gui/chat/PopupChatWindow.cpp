@@ -24,6 +24,7 @@
 #include <QCloseEvent>
 #include <QMenu>
 
+#include "gui/common/FilesDefs.h"
 #include "PopupChatWindow.h"
 #include "ChatDialog.h"
 #include "gui/settings/rsharesettings.h"
@@ -113,14 +114,14 @@ PopupChatWindow::PopupChatWindow(bool tabbed, QWidget *parent, Qt::WindowFlags f
 void PopupChatWindow::showContextMenu(QPoint)
 {
 	QMenu contextMnu(this);
-    contextMnu.addAction(QIcon(":/images/highlight.png"),tr("Choose window color..."),this,SLOT(setStyle()));
+    contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/highlight.png"),tr("Choose window color..."),this,SLOT(setStyle()));
 
 	if (Settings->getChatFlags() & RS_CHAT_TABBED_WINDOW)
     {
         if(tabbedWindow)
-			contextMnu.addAction(QIcon(":/images/tab-dock.png"),tr("Dock window"),this,SLOT(docTab()));
+            contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/tab-dock.png"),tr("Dock window"),this,SLOT(docTab()));
 
-		contextMnu.addAction(QIcon(":/images/tab-undock.png"),tr("Dock window"),this,SLOT(undockTab()));
+        contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/tab-undock.png"),tr("Dock window"),this,SLOT(undockTab()));
     }
     contextMnu.exec(QCursor::pos());
 }
@@ -295,9 +296,9 @@ void PopupChatWindow::calculateTitle(ChatDialog *dialog)
 	QIcon icon;
 	if (isTyping) {
 		mBlinkIcon = QIcon();
-		icon = QIcon(IMAGE_TYPING);
+        icon = FilesDefs::getIconFromQtResourcePath(IMAGE_TYPING);
 	} else if (hasNewMessages) {
-		icon = QIcon(IMAGE_CHAT);
+        icon = FilesDefs::getIconFromQtResourcePath(IMAGE_CHAT);
 		if (Settings->getChatFlags() & RS_CHAT_BLINK) {
 			mBlinkIcon = icon;
 		} else {

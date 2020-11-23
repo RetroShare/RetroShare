@@ -20,7 +20,8 @@
 
 #pragma once
 
-#include <retroshare-gui/configpage.h>
+#include "retroshare-gui/configpage.h"
+#include "gui/common/FilesDefs.h"
 #include "ui_WebuiPage.h"
 
 namespace resource_api{
@@ -43,7 +44,7 @@ public:
   /** Loads the settings for this page */
   virtual void load();
 
-  virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/webinterface.svg") ; }
+  virtual QPixmap iconPixmap() const { return FilesDefs::getPixmapFromQtResourcePath(":/icons/settings/webinterface.svg") ; }
   virtual QString pageName() const { return tr("Webinterface") ; }
   virtual QString helpText() const;
 

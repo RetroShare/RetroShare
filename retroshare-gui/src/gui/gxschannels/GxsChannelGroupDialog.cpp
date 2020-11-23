@@ -21,6 +21,7 @@
 #include <QBuffer>
 
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/common/FilesDefs.h"
 #include "GxsChannelGroupDialog.h"
 
 #include <retroshare/rsgxschannels.h>
@@ -36,7 +37,7 @@ const uint32_t ChannelCreateEnabledFlags = (
 			// GXS_GROUP_FLAGS_PUBLISHSIGN   |
 			// GXS_GROUP_FLAGS_SHAREKEYS     |	// disabled because the UI doesn't handle it, so no need to show the disabled button. The user can do it in a second step from the channel menu.
 			// GXS_GROUP_FLAGS_PERSONALSIGN  |
-			GXS_GROUP_FLAGS_COMMENTS      |
+            // GXS_GROUP_FLAGS_COMMENTS      |  // disabled because the UI doesn't handle it yet. Better to hide it then.
 			0);
 			
 const uint32_t ChannelCreateDefaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC    |
@@ -99,11 +100,9 @@ QPixmap GxsChannelGroupDialog::serviceImage()
 	switch (mode())
 	{
 	case MODE_CREATE:
-		return QPixmap(":/icons/png/channel.png");
 	case MODE_SHOW:
-		return QPixmap(":/icons/png/channel.png");
 	case MODE_EDIT:
-		return QPixmap(":/icons/png/channel.png");
+        return FilesDefs::getPixmapFromQtResourcePath(":/icons/png/channel.png");
 	}
 
 	return QPixmap();

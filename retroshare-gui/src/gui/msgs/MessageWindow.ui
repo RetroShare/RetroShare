@@ -127,8 +127,8 @@
           <string>Display</string>
          </property>
          <property name="icon">
-          <iconset resource="../images.qrc">
-           <normaloff>:/images/looknfeel.png</normaloff>:/images/looknfeel.png</iconset>
+          <iconset resource="../icons.qrc">
+           <normaloff>:/icons/svg/design.svg</normaloff>:/icons/svg/design.svg</iconset>
          </property>
          <property name="iconSize">
           <size>

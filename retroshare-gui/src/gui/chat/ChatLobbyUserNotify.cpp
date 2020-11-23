@@ -23,6 +23,7 @@
 #include <QTime>
 #include <QMenu>
 
+#include "gui/common/FilesDefs.h"
 #include "ChatLobbyUserNotify.h"
 
 #include "gui/ChatLobbyWidget.h"
@@ -104,12 +105,12 @@ void ChatLobbyUserNotify::setTextCaseSensitive(bool value)
 
 QIcon ChatLobbyUserNotify::getIcon()
 {
-	return QIcon(":/icons/png/chat-lobbies.png");
+    return FilesDefs::getIconFromQtResourcePath(":/icons/png/chat-lobbies.png");
 }
 
 QIcon ChatLobbyUserNotify::getMainIcon(bool hasNew)
 {
-    return hasNew ? QIcon(":/icons/png/chat-lobbies-notify.png") : QIcon(":/icons/png/chat-lobbies.png");
+    return hasNew ? FilesDefs::getIconFromQtResourcePath(":/icons/png/chat-lobbies-notify.png") : FilesDefs::getIconFromQtResourcePath(":/icons/png/chat-lobbies.png");
 }
 
 unsigned int ChatLobbyUserNotify::getNewCount()
@@ -164,7 +165,7 @@ void ChatLobbyUserNotify::iconClicked()
                 ChatLobbyInfo clInfo;
                 if (rsMsgs->getChatLobbyInfo(clId,clInfo))
                     strLobbyName=QString::fromUtf8(clInfo.lobby_name.c_str()) ;
-                icoLobby=(clInfo.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(":/images/chat_red24.png") : QIcon(":/images/chat_x24.png");
+                icoLobby=(clInfo.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? FilesDefs::getIconFromQtResourcePath(":/images/chat_red24.png") : FilesDefs::getIconFromQtResourcePath(":/images/chat_x24.png");
                 bFound=true;
                 break;
             }

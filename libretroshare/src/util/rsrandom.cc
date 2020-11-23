@@ -121,13 +121,26 @@ double RsRandom::random_f64()
 	return random_u64() / (double)(~(uint64_t)0) ;
 }
 
-std::string RsRandom::random_alphaNumericString(uint32_t len)
+/*static*/ std::string RsRandom::alphaNumeric(uint32_t length)
 {
-	std::string s = "" ;
+	std::string s;
+	while(s.size() < length)
+	{
+		uint8_t rChar; random_bytes(&rChar, 1); rChar = rChar % 123;
+		/* if(isalnum(val)) isalnum result may vary depend on locale!! */
+		if( (rChar >= 48 && rChar <= 57)  /* 0-9 */ ||
+		    (rChar >= 65 && rChar <= 90)  /* A-Z */ ||
+		    (rChar >= 97 && rChar <= 122) /* a-z */ )
+			s += static_cast<char>(rChar);
+	}
 
-	for(uint32_t i=0;i<len;++i)
-		s += (char)( (random_u32()%94) + 33) ;
-
-	return s ;
+	return s;
 }
 
+/*static*/ std::string RsRandom::printable(uint32_t length)
+{
+	std::string ret(length, 0);
+	random_bytes(reinterpret_cast<uint8_t*>(&ret[0]), length);
+	for(uint32_t i=0; i<length; ++i) ret[i] = (ret[i] % 94) + 33;
+	return ret;
+}

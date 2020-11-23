@@ -32,14 +32,16 @@
 #include <retroshare/rsdisc.h>
 #include <retroshare/rsmsgs.h>
 
+#include <retroshare-gui/mainpage.h>
+
 #include "gui/help/browser/helpbrowser.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/common/StatusDefs.h"
 #include "gui/RetroShareLink.h"
 #include "gui/notifyqt.h"
 #include "gui/common/AvatarDefs.h"
+#include "gui/common/FilesDefs.h"
 #include "gui/MainWindow.h"
-#include "mainpage.h"
 #include "util/DateTime.h"
 #include "util/misc.h"
 
@@ -83,7 +85,7 @@ ConfCertDialog::ConfCertDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidge
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
 	Settings->loadWidgetInformation(this);
-    ui.headerFrame->setHeaderImage(QPixmap(":/images/user/identityinfo64.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/user/identityinfo64.png"));
     //ui.headerFrame->setHeaderText(tr("Friend node details"));
 
     //ui._chat_CB->hide() ;
@@ -273,15 +275,22 @@ void ConfCertDialog::loadInvitePage()
 //	ui.userCertificateText_2->setText(QString::fromUtf8(pgp_key.c_str()));
 
 	std::string invite ;
+    RetroshareInviteFlags flags = RetroshareInviteFlags::DNS | RetroshareInviteFlags::CURRENT_IP | RetroshareInviteFlags::RADIX_FORMAT;
+
+    if(!detail.isHiddenNode && ui._includeIPHistory_CB->isChecked())
+        flags |= RetroshareInviteFlags::FULL_IP_HISTORY;
 
     if(ui._shortFormat_CB->isChecked())
 	{
-		rsPeers->getShortInvite(invite,detail.id,true,!ui._includeIPHistory_CB->isChecked() );
+        rsPeers->getShortInvite(invite,detail.id,flags);
 		ui.stabWidget->setTabText(1, tr("Retroshare ID"));
 	}
 	else
 	{
-		invite = rsPeers->GetRetroshareInvite(detail.id, ui._shouldAddSignatures_CB->isChecked(), ui._includeIPHistory_CB->isChecked() ) ;
+        if(ui._shouldAddSignatures_CB->isChecked())
+            flags |= RetroshareInviteFlags::PGP_SIGNATURES;
+
+        invite = rsPeers->GetRetroshareInvite(detail.id, flags ) ;
 		ui.stabWidget->setTabText(1, tr("Retroshare Certificate"));
 	}
 	

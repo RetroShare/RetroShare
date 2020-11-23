@@ -19,8 +19,10 @@
  *******************************************************************************/
 
 #include <iostream>
+#include <QtGui>
 
-#include "PulseDetails.h"
+#include "PulseReply.h"
+#include "gui/common/FilesDefs.h"
 
 #include "PulseAddDialog.h"
 
@@ -28,17 +30,17 @@ const uint32_t PULSE_MAX_SIZE = 1000; // 1k char.
 
 /** Constructor */
 PulseAddDialog::PulseAddDialog(QWidget *parent)
-: QWidget(parent), mIsReply(false), mWaitingRefMsg(false)
+: QWidget(parent), mIsReply(false)
 {
 	ui.setupUi(this);
-
-	mWireQueue = new TokenQueue(rsWire->getTokenService(), this);
 
 	connect(ui.pushButton_Post, SIGNAL( clicked( void ) ), this, SLOT( postPulse( void ) ) );
 	connect(ui.pushButton_AddURL, SIGNAL( clicked( void ) ), this, SLOT( addURL( void ) ) );
 	connect(ui.pushButton_ClearDisplayAs, SIGNAL( clicked( void ) ), this, SLOT( clearDisplayAs( void ) ) );
 	connect(ui.pushButton_Cancel, SIGNAL( clicked( void ) ), this, SLOT( cancelPulse( void ) ) );
 	connect(ui.textEdit_Pulse, SIGNAL( textChanged( void ) ), this, SLOT( pulseTextChanged( void ) ) );
+
+	setAcceptDrops(true);
 }
 
 void PulseAddDialog::setGroup(RsWireGroup &group)
@@ -48,12 +50,21 @@ void PulseAddDialog::setGroup(RsWireGroup &group)
 	mGroup = group;
 }
 
+// set ReplyWith Group.
+void PulseAddDialog::setGroup(const RsGxsGroupId &grpId)
+{
+	/* fetch in the background */
+	RsWireGroupSPtr pGroup;
+	rsWire->getWireGroup(grpId, pGroup);
+
+	setGroup(*pGroup);
+}
 
 void PulseAddDialog::cleanup()
 {
 	if (mIsReply)
 	{
-		std::cerr << "PulseAddDialog::setReplyTo() cleaning up old replyto";
+		std::cerr << "PulseAddDialog::cleanup() cleaning up old replyto";
 		std::cerr << std::endl;
 		QLayout *layout = ui.widget_replyto->layout();
 		// completely delete layout and sublayouts
@@ -63,30 +74,51 @@ void PulseAddDialog::cleanup()
 		{
 			if ((widget = item->widget()) != 0)
 			{
-				std::cerr << "PulseAddDialog::setReplyTo() removing widget";
+				std::cerr << "PulseAddDialog::cleanup() removing widget";
 				std::cerr << std::endl;
 				widget->hide();
 				delete widget;
 			}
 			else
 			{
-				std::cerr << "PulseAddDialog::setReplyTo() removing item";
+				std::cerr << "PulseAddDialog::cleanup() removing item";
 				std::cerr << std::endl;
 				delete item;
 			}
 		}
 		// then finally
 		delete layout;
-	    mIsReply = false;
+		mIsReply = false;
 	}
 	ui.frame_reply->setVisible(false);
 	ui.comboBox_sentiment->setCurrentIndex(0);
 	ui.lineEdit_URL->setText("");
 	ui.lineEdit_DisplayAs->setText("");
 	ui.textEdit_Pulse->setPlainText("");
-	ui.pushButton_Post->setEnabled(false);
 	// disable URL until functionality finished.
 	ui.frame_URL->setEnabled(false);
+
+	ui.pushButton_Post->setEnabled(false);
+	ui.pushButton_Post->setText("Post Pulse to Wire");
+	ui.frame_input->setVisible(true);
+	ui.widget_sentiment->setVisible(true);
+
+	// cleanup images.
+	mImage1.clear();
+	ui.label_image1->clear();
+	ui.label_image1->setText("Drag and Drop Image");
+
+	mImage2.clear();
+	ui.label_image2->clear();
+	ui.label_image2->setText("Drag and Drop Image");
+
+	mImage3.clear();
+	ui.label_image3->clear();
+	ui.label_image3->setText("Drag and Drop Image");
+
+	mImage4.clear();
+	ui.label_image4->clear();
+	ui.label_image4->setText("Drag and Drop Image");
 }
 
 void PulseAddDialog::pulseTextChanged()
@@ -96,26 +128,74 @@ void PulseAddDialog::pulseTextChanged()
 	ui.pushButton_Post->setEnabled(enable);
 }
 
-void PulseAddDialog::setReplyTo(RsWirePulse &pulse, std::string &groupName)
+// Old Interface, deprecate / make internal.
+// TODO: Convert mReplyToPulse to be an SPtr, and remove &pulse parameter.
+void PulseAddDialog::setReplyTo(RsWirePulse &pulse, RsWirePulseSPtr pPulse, std::string &groupName, uint32_t replyType)
 {
 	mIsReply = true;
 	mReplyToPulse = pulse;
-	mReplyGroupName = groupName;
+	mReplyType = replyType;
 	ui.frame_reply->setVisible(true);
 
 	{
-		std::map<rstime_t, RsWirePulse *> replies;
-		PulseDetails *details = new PulseDetails(NULL, &pulse, groupName, replies);
+		PulseReply *reply = new PulseReply(NULL, pPulse);
+
 		// add extra widget into layout.
 		QVBoxLayout *vbox = new QVBoxLayout();
-		vbox->addWidget(details);
+		vbox->addWidget(reply);
 		vbox->setSpacing(1);
 		vbox->setContentsMargins(0,0,0,0);
 		ui.widget_replyto->setLayout(vbox);
 		ui.widget_replyto->setVisible(true);
 	}
+
+	if (mReplyType & WIRE_PULSE_TYPE_REPLY)
+	{
+		ui.pushButton_Post->setText("Reply to Pulse");
+	}
+	else
+	{
+		// cannot add msg for like / republish.
+		ui.pushButton_Post->setEnabled(true);
+		ui.frame_input->setVisible(false);
+		ui.widget_sentiment->setVisible(false);
+		if (mReplyType & WIRE_PULSE_TYPE_REPUBLISH) {
+			ui.pushButton_Post->setText("Republish Pulse");
+		}
+		else if (mReplyType & WIRE_PULSE_TYPE_LIKE) {
+			ui.pushButton_Post->setText("Like Pulse");
+		}
+	}
+
 }
 
+void PulseAddDialog::setReplyTo(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, uint32_t replyType)
+{
+	/* fetch in the background */
+	RsWireGroupSPtr pGroup;
+	if (!rsWire->getWireGroup(grpId, pGroup))
+	{
+		std::cerr << "PulseAddDialog::setRplyTo() failed to fetch group";
+		std::cerr << std::endl;
+		return;
+	}
+
+	RsWirePulseSPtr pPulse;
+	if (!rsWire->getWirePulse(grpId, msgId, pPulse))
+	{
+		std::cerr << "PulseAddDialog::setRplyTo() failed to fetch pulse";
+		std::cerr << std::endl;
+		return;
+	}
+
+	// update GroupPtr
+	// TODO - this should be handled in libretroshare if possible.
+	if (pPulse->mGroupPtr == NULL) {
+		pPulse->mGroupPtr = pGroup;
+	}
+
+	setReplyTo(*pPulse, pPulse, pGroup->mMeta.mGroupName, replyType);
+}
 
 void PulseAddDialog::addURL()
 {
@@ -164,21 +244,23 @@ void PulseAddDialog::postOriginalPulse()
 	std::cerr << "PulseAddDialog::postOriginalPulse()";
 	std::cerr << std::endl;
 
-	RsWirePulse pulse;
+	RsWirePulseSPtr pPulse(new RsWirePulse());
 
-	pulse.mMeta.mGroupId  = mGroup.mMeta.mGroupId;
-	pulse.mMeta.mAuthorId = mGroup.mMeta.mAuthorId;
-	pulse.mMeta.mThreadId.clear();
-	pulse.mMeta.mParentId.clear();
-	pulse.mMeta.mOrigMsgId.clear();
+	pPulse->mSentiment = WIRE_PULSE_SENTIMENT_NO_SENTIMENT;
+	pPulse->mPulseText = ui.textEdit_Pulse->toPlainText().toStdString();
+	// set images here too.
+	pPulse->mImage1 = mImage1;
+	pPulse->mImage2 = mImage2;
+	pPulse->mImage3 = mImage3;
+	pPulse->mImage4 = mImage4;
 
-	pulse.mPulseType = WIRE_PULSE_TYPE_ORIGINAL_MSG;
-	pulse.mReplySentiment = WIRE_PULSE_SENTIMENT_NO_SENTIMENT;
-	pulse.mPulseText = ui.textEdit_Pulse->toPlainText().toStdString();
-	// all mRefs should empty.
-
-	uint32_t token;
-	rsWire->createPulse(token, pulse);
+	// this should be in async thread, so doesn't block UI thread.
+	if (!rsWire->createOriginalPulse(mGroup.mMeta.mGroupId, pPulse))
+	{
+		std::cerr << "PulseAddDialog::postOriginalPulse() FAILED";
+		std::cerr << std::endl;
+		return;
+	}
 
 	clearDialog();
 	hide();
@@ -211,67 +293,39 @@ void PulseAddDialog::postReplyPulse()
 	std::cerr << "PulseAddDialog::postReplyPulse()";
 	std::cerr << std::endl;
 
-	RsWirePulse pulse;
+	RsWirePulseSPtr pPulse(new RsWirePulse());
 
-	pulse.mMeta.mGroupId  = mGroup.mMeta.mGroupId;
-	pulse.mMeta.mAuthorId = mGroup.mMeta.mAuthorId;
-	pulse.mMeta.mThreadId.clear();
-	pulse.mMeta.mParentId.clear();
-	pulse.mMeta.mOrigMsgId.clear();
+	pPulse->mSentiment = toPulseSentiment(ui.comboBox_sentiment->currentIndex());
+	pPulse->mPulseText = ui.textEdit_Pulse->toPlainText().toStdString();
+	// set images here too.
+	pPulse->mImage1 = mImage1;
+	pPulse->mImage2 = mImage2;
+	pPulse->mImage3 = mImage3;
+	pPulse->mImage4 = mImage4;
 
-	pulse.mPulseType = WIRE_PULSE_TYPE_REPLY_MSG;
-	pulse.mReplySentiment = toPulseSentiment(ui.comboBox_sentiment->currentIndex());
-	pulse.mPulseText = ui.textEdit_Pulse->toPlainText().toStdString();
+	if (mReplyType & WIRE_PULSE_TYPE_REPUBLISH) {
+		// Copy details from parent, and override
+		pPulse->mSentiment = mReplyToPulse.mSentiment;
+		pPulse->mPulseText = mReplyToPulse.mPulseText;
 
-	// mRefs refer to parent post.
-	pulse.mRefGroupId   = mReplyToPulse.mMeta.mGroupId;
-	pulse.mRefGroupName = mReplyGroupName;
-	pulse.mRefOrigMsgId = mReplyToPulse.mMeta.mOrigMsgId;
-	pulse.mRefAuthorId  = mReplyToPulse.mMeta.mAuthorId;
-	pulse.mRefPublishTs = mReplyToPulse.mMeta.mPublishTs;
-	pulse.mRefPulseText = mReplyToPulse.mPulseText;
+		// Copy images.
+		pPulse->mImage1 = mReplyToPulse.mImage1;
+		pPulse->mImage2 = mReplyToPulse.mImage2;
+		pPulse->mImage3 = mReplyToPulse.mImage3;
+		pPulse->mImage4 = mReplyToPulse.mImage4;
+	}
 
-	// Need Pulse MsgID before we can create associated Reference.
-	mWaitingRefMsg = true;
-
-	uint32_t token;
-	rsWire->createPulse(token, pulse);
-	mWireQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, 0);
-}
-
-
-void PulseAddDialog::postRefPulse(RsWirePulse &pulse)
-{
-	std::cerr << "PulseAddDialog::postRefPulse() create Reference!";
-	std::cerr << std::endl;
-
-	// Reference Pulse. posted on Parent's Group.
-	RsWirePulse refPulse;
-
-	refPulse.mMeta.mGroupId  = mReplyToPulse.mMeta.mGroupId;
-	refPulse.mMeta.mAuthorId = mGroup.mMeta.mAuthorId; // own author Id.
-	refPulse.mMeta.mThreadId = mReplyToPulse.mMeta.mOrigMsgId;
-	refPulse.mMeta.mParentId = mReplyToPulse.mMeta.mOrigMsgId;
-	refPulse.mMeta.mOrigMsgId.clear();
-
-	refPulse.mPulseType = WIRE_PULSE_TYPE_REPLY_REFERENCE;
-	refPulse.mReplySentiment = toPulseSentiment(ui.comboBox_sentiment->currentIndex());
-
-	// Dont put parent PulseText into refPulse - it is available on Thread Msg.
-	// otherwise gives impression it is correctly setup Parent / Reply...
-	// when in fact the parent PublishTS, and AuthorId are wrong.
-	refPulse.mPulseText = "";
-
-	// refs refer back to own Post.
-	refPulse.mRefGroupId   = mGroup.mMeta.mGroupId;
-	refPulse.mRefGroupName = mGroup.mMeta.mGroupName;
-	refPulse.mRefOrigMsgId = pulse.mMeta.mOrigMsgId;
-	refPulse.mRefAuthorId  = mGroup.mMeta.mAuthorId;
-	refPulse.mRefPublishTs = pulse.mMeta.mPublishTs;
-	refPulse.mRefPulseText = pulse.mPulseText;
-
-	uint32_t token;
-	rsWire->createPulse(token, refPulse);
+	// this should be in async thread, so doesn't block UI thread.
+	if (!rsWire->createReplyPulse(mReplyToPulse.mMeta.mGroupId,
+			mReplyToPulse.mMeta.mOrigMsgId,
+			mGroup.mMeta.mGroupId,
+			mReplyType,
+			pPulse))
+	{
+		std::cerr << "PulseAddDialog::postReplyPulse() FAILED";
+		std::cerr << std::endl;
+		return;
+	}
 
 	clearDialog();
 	hide();
@@ -282,90 +336,131 @@ void PulseAddDialog::clearDialog()
 	ui.textEdit_Pulse->setPlainText("");
 }
 
+//---------------------------------------------------------------------
+// Drag and Drop Images.
 
-void PulseAddDialog::acknowledgeMessage(const uint32_t &token)
+void PulseAddDialog::dragEnterEvent(QDragEnterEvent *event)
 {
-	std::cerr << "PulseAddDialog::acknowledgeMessage()";
+	std::cerr << "PulseAddDialog::dragEnterEvent()";
 	std::cerr << std::endl;
 
-	std::pair<RsGxsGroupId, RsGxsMessageId> p;
-	rsWire->acknowledgeMsg(token, p);
-
-	if (mWaitingRefMsg)
+	if (event->mimeData()->hasUrls())
 	{
-		std::cerr << "PulseAddDialog::acknowledgeMessage() Waiting Ref Msg";
+		std::cerr << "PulseAddDialog::dragEnterEvent() Accepting";
 		std::cerr << std::endl;
-		mWaitingRefMsg = false;
-
-		// request photo data.
-		GxsMsgReq req;
-		std::set<RsGxsMessageId> msgIds;
-		msgIds.insert(p.second);
-		req[p.first] = msgIds;
-
-		RsTokReqOptions opts;
-		opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-		uint32_t token;
-		mWireQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, req, 0);
+		event->accept();
 	}
 	else
 	{
-		std::cerr << "PulseAddDialog::acknowledgeMessage() Not Waiting Ref Msg";
+		std::cerr << "PulseAddDialog::dragEnterEvent() Ignoring";
 		std::cerr << std::endl;
+		event->ignore();
 	}
 }
 
-void PulseAddDialog::loadPulseData(const uint32_t &token)
+void PulseAddDialog::dragLeaveEvent(QDragLeaveEvent *event)
 {
-	std::cerr << "PulseAddDialog::loadPulseData()";
+	std::cerr << "PulseAddDialog::dragLeaveEvent()";
 	std::cerr << std::endl;
-	std::vector<RsWirePulse> pulses;
-	rsWire->getPulseData(token, pulses);
 
-	if (pulses.size() != 1)
+	event->ignore();
+}
+
+void PulseAddDialog::dragMoveEvent(QDragMoveEvent *event)
+{
+	std::cerr << "PulseAddDialog::dragMoveEvent()";
+	std::cerr << std::endl;
+
+	event->accept();
+}
+
+void PulseAddDialog::dropEvent(QDropEvent *event)
+{
+	std::cerr << "PulseAddDialog::dropEvent()";
+	std::cerr << std::endl;
+
+	if (event->mimeData()->hasUrls())
 	{
-		std::cerr << "PulseAddDialog::loadPulseData() Error Too many pulses";
+		std::cerr << "PulseAddDialog::dropEvent() Urls:" << std::endl;
+
+		QList<QUrl> urls = event->mimeData()->urls();
+		QList<QUrl>::iterator uit;
+		for (uit = urls.begin(); uit != urls.end(); ++uit)
+		{
+			QString localpath = uit->toLocalFile();
+			std::cerr << "Whole URL: " << uit->toString().toStdString() << std::endl;
+			std::cerr << "or As Local File: " << localpath.toStdString() << std::endl;
+
+			addImage(localpath);
+		}
+		event->setDropAction(Qt::CopyAction);
+		event->accept();
+	}
+	else
+	{
+		std::cerr << "PulseAddDialog::dropEvent Ignoring";
+		std::cerr << std::endl;
+		event->ignore();
+	}
+}
+
+
+void PulseAddDialog::addImage(const QString &path)
+{
+	std::cerr << "PulseAddDialog::addImage() loading image from: " << path.toStdString();
+	std::cerr << std::endl;
+
+    QPixmap qtn = FilesDefs::getPixmapFromQtResourcePath(path);
+	if (qtn.isNull()) {
+		std::cerr << "PulseAddDialog::addImage() Invalid Image";
 		std::cerr << std::endl;
 		return;
 	}
 
-	std::cerr << "PulseAddDialog::loadPulseData() calling postRefMsg";
-	std::cerr << std::endl;
+	QPixmap image;
+	if ((qtn.width() <= 512) && (qtn.height() <= 512)) {
+		image = qtn;
+	} else {
+		image = qtn.scaled(512, 512, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+	}
 
-	RsWirePulse& pulse = pulses[0];
-	postRefPulse(pulse);
-}
+	// scaled down for display, allow wide images.
+	QPixmap icon = qtn.scaled(256, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+	QByteArray ba;
+	QBuffer buffer(&ba);
 
+	buffer.open(QIODevice::WriteOnly);
+	image.save(&buffer, "JPG");
 
-/**************************** Request / Response Filling of Data ************************/
-
-void PulseAddDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
-{
-	if (queue == mWireQueue)
-	{
-		/* now switch on req */
-		switch(req.mType)
-		{
-			case TOKENREQ_MSGINFO:
-				switch(req.mAnsType)
-				{
-					case RS_TOKREQ_ANSTYPE_ACK:
-						acknowledgeMessage(req.mToken);
-						break;
-					case RS_TOKREQ_ANSTYPE_DATA:
-						loadPulseData(req.mToken);
-						break;
-					default:
-						std::cerr << "PulseAddDialog::loadRequest() ERROR: MSG: INVALID ANS TYPE";
-						std::cerr << std::endl;
-						break;
-				}
-				break;
-			default:
-				std::cerr << "PulseAddDialog::loadRequest() ERROR: INVALID TYPE";
-				std::cerr << std::endl;
-				break;
-		}
+	if (mImage1.empty()) {
+		std::cerr << "PulseAddDialog::addImage() Installing in Image1";
+		std::cerr << std::endl;
+		ui.label_image1->setPixmap(icon);
+		mImage1.copy((uint8_t *) ba.data(), ba.size());
+		std::cerr << "PulseAddDialog::addImage() Installing in Image1 Size: " << mImage1.mSize;
+		std::cerr << std::endl;
+	}
+	else if (mImage2.empty()) {
+		ui.label_image2->setPixmap(icon);
+		mImage2.copy((uint8_t *) ba.data(), ba.size());
+		std::cerr << "PulseAddDialog::addImage() Installing in Image2 Size: " << mImage2.mSize;
+		std::cerr << std::endl;
+	}
+	else if (mImage3.empty()) {
+		ui.label_image3->setPixmap(icon);
+		mImage3.copy((uint8_t *) ba.data(), ba.size());
+		std::cerr << "PulseAddDialog::addImage() Installing in Image3 Size: " << mImage3.mSize;
+		std::cerr << std::endl;
+	}
+	else if (mImage4.empty()) {
+		ui.label_image4->setPixmap(icon);
+		mImage4.copy((uint8_t *) ba.data(), ba.size());
+		std::cerr << "PulseAddDialog::addImage() Installing in Image4 Size: " << mImage4.mSize;
+		std::cerr << std::endl;
+	}
+	else {
+		std::cerr << "PulseAddDialog::addImage() Images all full";
+		std::cerr << std::endl;
 	}
 }
-	
+

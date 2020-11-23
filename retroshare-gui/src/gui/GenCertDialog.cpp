@@ -35,6 +35,7 @@
 #include "gui/settings/rsharesettings.h"
 #include "TorControl/TorManager.h"
 #include "util/misc.h"
+#include "gui/common/FilesDefs.h"
 
 #include <retroshare/rsidentity.h>
 #include <retroshare/rsinit.h>
@@ -132,7 +133,7 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
 	
-	//ui.headerFrame->setHeaderImage(QPixmap(":/icons/svg/profile.svg"));
+    //ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/svg/profile.svg"));
 	//ui.headerFrame->setHeaderText(tr("Create a new profile"));
 
 	connect(ui.reuse_existing_node_CB, SIGNAL(triggered()), this, SLOT(switchReuseExistingNode()));
@@ -340,6 +341,10 @@ void GenCertDialog::setupState()
 	ui.hiddenport_spinBox->setVisible(hidden_state && !tor_auto);
 
 	ui.cbUseBob->setVisible(hidden_state && !tor_auto);
+#ifndef RS_USE_I2P_BOB
+	ui.cbUseBob->setDisabled(true);
+	ui.cbUseBob->setToolTip(tr("BOB support is not available"));
+#endif
 
 	if(!mAllFieldsOk)
 	{
@@ -428,9 +433,9 @@ void GenCertDialog::updateCheckLabels()
     }
 
     if(mEntropyOk)
-		ui.randomness_check_LB->setPixmap(QPixmap(IMAGE_GOOD)) ;
+        ui.randomness_check_LB->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_GOOD)) ;
 	else
-		ui.randomness_check_LB->setPixmap(QPixmap(IMAGE_BAD)) ;
+        ui.randomness_check_LB->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_BAD)) ;
 
 	setupState();
 }

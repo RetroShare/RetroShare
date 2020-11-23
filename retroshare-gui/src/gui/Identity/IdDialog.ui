@@ -268,7 +268,7 @@
      </widget>
      <widget class="QTabWidget" name="rightTabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="personTab">
        <attribute name="icon">
@@ -289,8 +289,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1372</width>
-             <height>719</height>
+             <width>634</width>
+             <height>523</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="scrollAreaWidgetContentsVLayout">
@@ -1031,7 +1031,7 @@ border-image: url(:/images/closepressed.png)
   </layout>
   <action name="editIdentity">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset>
      <normaloff>:/images/edit_16.png</normaloff>:/images/edit_16.png</iconset>
    </property>
    <property name="text">

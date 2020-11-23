@@ -49,7 +49,7 @@ public:
 private slots:
 	void certContextMenu(QPoint);
 	void updateOwnCert();
-	void updateOwnId();
+    void updateCertificate();
 	void runEmailClient();
 	void copyCert();
 	void copyId();
@@ -58,10 +58,10 @@ private slots:
 	void webMail();
 	//void loadCert();
 	void openWebHelp() ;
-	void recommendFriends();
+    void toggleUseOldFormat() ;
+    void recommendFriends();
 	void toggleIncludeAllIPs();
 	void toggleUseShortFormat();
-	void doExpand();
 
 private:
 	Ui::HomePage *ui;
@@ -69,6 +69,9 @@ private:
 	bool mIncludeAllIPs;
 	bool mUseShortFormat;
 
+    RsEventsHandlerId_t mEventHandlerId;
+
+    void handleEvent(std::shared_ptr<const RsEvent> event);
 };
 
 #endif // HomePage_H

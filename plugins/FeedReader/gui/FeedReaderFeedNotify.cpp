@@ -65,9 +65,9 @@ void FeedReaderFeedNotify::setNotifyEnabled(bool enabled)
 	}
 }
 
-void FeedReaderFeedNotify::msgChanged(const QString &feedId, const QString &msgId, int type)
+void FeedReaderFeedNotify::msgChanged(uint32_t feedId, const QString &msgId, int type)
 {
-	if (feedId.isEmpty() || msgId.isEmpty()) {
+	if (feedId == 0 || msgId.isEmpty()) {
 		return;
 	}
 
@@ -101,8 +101,8 @@ FeedItem *FeedReaderFeedNotify::feedItem(FeedHolder *parent)
 		FeedItemData feedItemData = mPendingNewsFeed.front();
 		mPendingNewsFeed.pop_front();
 
-		if (mFeedReader->getFeedInfo(feedItemData.mFeedId.toStdString(), feedInfo) &&
-			mFeedReader->getMsgInfo(feedItemData.mFeedId.toStdString(), feedItemData.mMsgId.toStdString(), msgInfo)) {
+		if (mFeedReader->getFeedInfo(feedItemData.mFeedId, feedInfo) &&
+			mFeedReader->getMsgInfo(feedItemData.mFeedId, feedItemData.mMsgId.toStdString(), msgInfo)) {
 			if (msgInfo.flag.isnew) {
 				msgPending = true;
 				break;
@@ -115,7 +115,8 @@ FeedItem *FeedReaderFeedNotify::feedItem(FeedHolder *parent)
 		return NULL;
 	}
 
-	return new FeedReaderFeedItem(mFeedReader, mNotify, parent, feedInfo, msgInfo);
+	//TODO: parent?
+	return new FeedReaderFeedItem(mFeedReader, mNotify, feedInfo, msgInfo);
 }
 
 FeedItem *FeedReaderFeedNotify::testFeedItem(FeedHolder *parent)
@@ -136,5 +137,6 @@ FeedItem *FeedReaderFeedNotify::testFeedItem(FeedHolder *parent)
 	msgInfo.description = tr("This is a test message.").toUtf8().constData();
 	msgInfo.pubDate = QDateTime::currentDateTime().toTime_t();
 
-	return new FeedReaderFeedItem(mFeedReader, mNotify, parent, feedInfo, msgInfo);
+	//TODO: parent?
+	return new FeedReaderFeedItem(mFeedReader, mNotify, feedInfo, msgInfo);
 }

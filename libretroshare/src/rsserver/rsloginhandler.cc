@@ -26,6 +26,7 @@
 #include "rsloginhandler.h"
 #include "util/rsdir.h"
 #include "retroshare/rsinit.h"
+#include "util/rsdebug.h"
 
 //#define DEBUG_RSLOGINHANDLER 1
 
@@ -497,8 +498,15 @@ bool RsLoginHandler::enableAutoLogin(const RsPeerId& ssl_id,const std::string& s
 	                            NULL);
 
 	if (error) {
+		RsErr() << __PRETTY_FUNCTION__
+		        << " Could not store passwd using libsecret with"
+		        << " error.code=" << error->code
+		        << " error.domain=" << error->domain
+		        << " error.message=\"" << error->message << "\"" << std::endl;
+		if (error->code == 2)
+			RsErr() << "Do have a key wallet installed?"  << std::endl
+			        << "Like gnome-keyring or other using \"Secret Service\" by DBus." << std::endl;
 		g_error_free (error);
-		std::cerr << "Could not store passwd using libsecret" << std::endl;
 		return false;
 	}
 	std::cout << "Stored passwd " << "************************" << " using libsecret" << std::endl;

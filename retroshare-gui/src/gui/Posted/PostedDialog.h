@@ -36,15 +36,15 @@ public:
 	/** Default Destructor */
 	~PostedDialog();
 
-	virtual QIcon iconPixmap() const { return QIcon(IMAGE_POSTED) ; } //MainPage
-	virtual QString pageName() const { return tr("Boards") ; } //MainPage
-	virtual QString helpText() const { return ""; } //MainPage
+    virtual QIcon iconPixmap() const override { return QIcon(IMAGE_POSTED) ; } //MainPage
+    virtual QString pageName() const override { return tr("Boards") ; } //MainPage
+    virtual QString helpText() const override { return ""; } //MainPage
 
 protected:
 	virtual UserNotify *createUserNotify(QObject *parent) override;
-	virtual QString getHelpString() const ;
-    virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_POSTED; }
-	virtual GroupFrameSettings::Type groupFrameSettingsType() { return GroupFrameSettings::Posted; }
+    virtual QString getHelpString() const  override;
+    virtual RetroShareLink::enumType getLinkType() override { return RetroShareLink::TYPE_POSTED; }
+    virtual GroupFrameSettings::Type groupFrameSettingsType() override { return GroupFrameSettings::Posted; }
 
 	void groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupData, GroupItemInfo &groupItemInfo) override;
 	bool getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo) override;
@@ -52,16 +52,16 @@ protected:
 
 private:
 	/* GxsGroupFrameDialog */
-	virtual QString text(TextType type);
-	virtual QString icon(IconType type);
-	virtual QString settingsGroupName() { return "PostedDialog"; }
-	virtual GxsGroupDialog *createNewGroupDialog();
-	virtual GxsGroupDialog *createGroupDialog(GxsGroupDialog::Mode mode, RsGxsGroupId groupId);
-	virtual int shareKeyType();
-	virtual GxsMessageFrameWidget *createMessageFrameWidget(const RsGxsGroupId &groupId);
-	virtual RsGxsCommentService *getCommentService();
-	virtual QWidget *createCommentHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId);
-	virtual uint32_t requestGroupSummaryType() { return GXS_REQUEST_TYPE_GROUP_DATA; } // request complete group data
+    virtual QString text(TextType type) override;
+    virtual QString icon(IconType type) override;
+    virtual QString settingsGroupName()  override{ return "PostedDialog"; }
+    virtual GxsGroupDialog *createNewGroupDialog() override;
+    virtual GxsGroupDialog *createGroupDialog(GxsGroupDialog::Mode mode, RsGxsGroupId groupId) override;
+    virtual int shareKeyType() override;
+    virtual GxsMessageFrameWidget *createMessageFrameWidget(const RsGxsGroupId &groupId) override;
+    virtual RsGxsCommentService *getCommentService() override;
+    virtual QWidget *createCommentHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId) override;
+    virtual uint32_t requestGroupSummaryType() override { return GXS_REQUEST_TYPE_GROUP_DATA; } // request complete group data
 
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
     RsEventsHandlerId_t mEventHandlerId;

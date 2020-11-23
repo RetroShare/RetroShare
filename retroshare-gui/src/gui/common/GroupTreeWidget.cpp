@@ -21,6 +21,7 @@
 #include "GroupTreeWidget.h"
 #include "ui_GroupTreeWidget.h"
 
+#include "gui/common/FilesDefs.h"
 #include "retroshare/rsgxsflags.h"
 
 #include "PopularityDefs.h"
@@ -250,11 +251,11 @@ void GroupTreeWidget::initDisplayMenu(QToolButton *toolButton)
 	displayMenu = new QMenu();
 	QActionGroup *actionGroupAsc = new QActionGroup(displayMenu);
 
-	actionSortDescending = displayMenu->addAction(QIcon(":/images/sort_decrease.png"), tr("Sort Descending Order"), this, SLOT(sort()));
+    actionSortDescending = displayMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/sort_decrease.png"), tr("Sort Descending Order"), this, SLOT(sort()));
 	actionSortDescending->setCheckable(true);
 	actionSortDescending->setActionGroup(actionGroupAsc);
 
-	actionSortAscending = displayMenu->addAction(QIcon(":/images/sort_incr.png"), tr("Sort Ascending Order"), this, SLOT(sort()));
+    actionSortAscending = displayMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/sort_incr.png"), tr("Sort Ascending Order"), this, SLOT(sort()));
 	actionSortAscending->setCheckable(true);
 	actionSortAscending->setActionGroup(actionGroupAsc);
 
@@ -397,6 +398,19 @@ bool GroupTreeWidget::isSearchRequestResult(QPoint &point,QString& group_id,uint
 	return search_req_id > 0;
 }
 
+bool GroupTreeWidget::isSearchRequestResultItem(QTreeWidgetItem *item,QString& group_id,uint32_t& search_req_id)
+{
+	QTreeWidgetItem *parent = item->parent();
+
+	if(parent == NULL)
+		return false ;
+
+	search_req_id = parent->data(COLUMN_DATA, ROLE_REQUEST_ID).toUInt();
+	group_id = itemId(item) ;
+
+	return search_req_id > 0;
+}
+
 bool GroupTreeWidget::isSearchRequestItem(QPoint &point,uint32_t& search_req_id)
 {
     QTreeWidgetItem *item = ui->treeWidget->itemAt(point);
@@ -463,6 +477,17 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		item->setData(COLUMN_DATA, ROLE_NAME, itemInfo.name);
 		item->setData(COLUMN_DATA, ROLE_DESCRIPTION, itemInfo.description);
 
+        // Add children for context strings. This happens in the search.
+        while(nullptr != item->takeChild(0));
+
+        for(auto str:itemInfo.context_strings)
+            if(!str.empty())
+            {
+                QTreeWidgetItem *it = new QTreeWidgetItem(QStringList(QString::fromUtf8(str.c_str())));
+                it->setData(COLUMN_DATA,ROLE_ID,itemInfo.id);
+				item->addChild(it);
+            }
+
 		/* Set last post */
 		qlonglong lastPost = itemInfo.lastpost.toTime_t();
 		item->setData(COLUMN_DATA, ROLE_LASTPOST, -lastPost); // negative for correct sorting
@@ -500,7 +525,16 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		if(!IS_GROUP_SUBSCRIBED(itemInfo.subscribeFlags))
 			tooltip += "\n" + tr("Subscribe to download and read messages") ;
 
-		tooltip += "\n" + tr("Description") + ": " + itemInfo.description;
+        QString desc = itemInfo.description.left(30);
+        desc.replace("\n"," ");
+        desc.replace("\t"," ");
+
+        if(itemInfo.description.length() > 30)
+            desc += "...";
+
+        tooltip += "\n" + tr("Description") + ": " + desc;
+
+		tooltip += "\n" + tr("Id") + ": " + itemInfo.id;
 
 		item->setToolTip(COLUMN_NAME, tooltip);
 		item->setToolTip(COLUMN_UNREAD, tooltip);

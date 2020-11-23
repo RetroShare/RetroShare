@@ -39,7 +39,6 @@ MessagePage::MessagePage(QWidget * parent, Qt::WindowFlags flags)
     connect (ui.editpushButton, SIGNAL(clicked(bool)), this, SLOT (editTag()));
     connect (ui.deletepushButton, SIGNAL(clicked(bool)), this, SLOT (deleteTag()));
     connect (ui.defaultTagButton, SIGNAL(clicked(bool)), this, SLOT (defaultTag()));
-    //connect (ui.encryptedMsgs_CB, SIGNAL(toggled(bool)), this, SLOT (toggleEnableEncryptedDistantMsgs(bool)));
 
     connect (ui.tags_listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(currentRowChangedTag(int)));
 
@@ -54,6 +53,7 @@ MessagePage::MessagePage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.setMsgToReadOnActivate,SIGNAL(toggled(bool)),          this,SLOT(updateMsgToReadOnActivate()));
 	connect(ui.loadEmbeddedImages,    SIGNAL(toggled(bool)),          this,SLOT(updateLoadEmbededImages()  ));
 	connect(ui.openComboBox,          SIGNAL(currentIndexChanged(int)),this,SLOT(updateMsgOpen()            ));
+	connect(ui.emoticonscheckBox,     SIGNAL(toggled(bool)),          this,SLOT(updateLoadEmoticons()  ));
 }
 
 MessagePage::~MessagePage()
@@ -84,6 +84,7 @@ void MessagePage::updateMsgToReadOnActivate() { Settings->setMsgSetToReadOnActiv
 void MessagePage::updateLoadEmbededImages()   { Settings->setMsgLoadEmbeddedImages(ui.loadEmbeddedImages->isChecked()); }
 void MessagePage::updateMsgOpen()             { Settings->setMsgOpen( static_cast<RshareSettings::enumMsgOpen>(ui.openComboBox->itemData(ui.openComboBox->currentIndex()).toInt()) ); }
 void MessagePage::updateDistantMsgs()         { Settings->setValue("DistantMessages", ui.comboBox->currentIndex()); }
+void MessagePage::updateLoadEmoticons()       { Settings->setValueToGroup("Messages", "Emoticons", ui.emoticonscheckBox->isChecked()); }
 
 void MessagePage::updateMsgTags()
 {
@@ -110,9 +111,12 @@ void MessagePage::updateMsgTags()
 void
 MessagePage::load()
 {
+    Settings->beginGroup(QString("Messages"));
     whileBlocking(ui.setMsgToReadOnActivate)->setChecked(Settings->getMsgSetToReadOnActivate());
     whileBlocking(ui.loadEmbeddedImages)->setChecked(Settings->getMsgLoadEmbeddedImages());
     whileBlocking(ui.openComboBox)->setCurrentIndex(ui.openComboBox->findData(Settings->getMsgOpen()));
+    whileBlocking(ui.emoticonscheckBox)->setChecked(Settings->value("Emoticons", true).toBool());
+    Settings->endGroup();
 
 	  // state of filter combobox
     
@@ -267,3 +271,4 @@ void MessagePage::currentRowChangedTag(int row)
     ui.editpushButton->setEnabled(bEditEnable);
     ui.deletepushButton->setEnabled(bDeleteEnable);
 }
+

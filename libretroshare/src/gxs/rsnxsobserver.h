@@ -62,6 +62,11 @@ public:
     virtual void notifyReceivePublishKey(const RsGxsGroupId &grpId) = 0;
 
     /*!
+     * \brief notifyChangedGroupSyncParams
+     * \param 	caled when a group sync parameter is updated
+     */
+    virtual void notifyChangedGroupSyncParams(const RsGxsGroupId &grpId) = 0;
+    /*!
      * @param grpId group id
      */
     virtual void notifyChangedGroupStats(const RsGxsGroupId &grpId) = 0;

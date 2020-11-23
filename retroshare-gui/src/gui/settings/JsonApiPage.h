@@ -1,7 +1,7 @@
 /*******************************************************************************
  * gui/settings/JsonApiPage.h                                                  *
  *                                                                             *
- * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -20,7 +20,8 @@
 
 #pragma once
 
-#include <retroshare-gui/configpage.h>
+#include "retroshare-gui/configpage.h"
+#include "gui/common/FilesDefs.h"
 #include "ui_JsonApiPage.h"
 
 class JsonApiPage : public ConfigPage
@@ -30,14 +31,16 @@ class JsonApiPage : public ConfigPage
 public:
 
 	JsonApiPage(QWidget * parent = nullptr, Qt::WindowFlags flags = 0);
-	~JsonApiPage() {}
+	~JsonApiPage() override = default;
 
-	/** Loads the settings for this page */
+	virtual QPixmap iconPixmap() const override
+	{
+		return FilesDefs::getPixmapFromQtResourcePath(
+		            ":/icons/svg/empty-circle.svg" );
+	}
 
-	virtual QPixmap iconPixmap() const
-	{ return QPixmap(":/icons/svg/empty-circle.svg"); }
-	virtual QString pageName() const { return tr("JSON API"); }
-	virtual QString helpText() const;
+	virtual QString pageName() const override { return tr("JSON API"); }
+	virtual QString helpText() const override;
 
 	/** Call this after start of libretroshare/Retroshare
 	 *  checks the settings and starts JSON API if required */

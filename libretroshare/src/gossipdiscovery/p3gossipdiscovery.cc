@@ -388,7 +388,12 @@ void p3discovery2::recvOwnContactInfo(const RsPeerId &fromId, const RsDiscContac
 
 	setPeerVersion(fromId, item->version);
 
-	updatePeerAddresses(item);
+    // Hidden nodes do not need IP information. So that information is dropped.
+    // However, that doesn't mean hidden nodes do not know that information. Normally
+    // normal nodes should not send it, but old nodes still do.
+
+    if(!mPeerMgr->isHiddenNode(rsPeers->getOwnId()))
+        updatePeerAddresses(item);
 
     // if the peer is not validated, we stop the exchange here
 
@@ -450,7 +455,7 @@ void p3discovery2::recvIdentityList(const RsPeerId& pid,const std::list<RsGxsId>
     std::cerr << "p3discovery2::recvIdentityList(): from peer " << pid << ": " << ids.size() << " identities" << std::endl;
 #endif
 
-    RsIdentityUsage use_info(RS_SERVICE_TYPE_DISC,RsIdentityUsage::IDENTITY_DATA_UPDATE);
+    RsIdentityUsage use_info(RsServiceType::GOSSIP_DISCOVERY,RsIdentityUsage::IDENTITY_NEW_FROM_DISCOVERY);
 
 	for(auto it(ids.begin());it!=ids.end();++it)
     {

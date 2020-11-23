@@ -38,6 +38,7 @@
 /****
  * #define POSTBASE_DEBUG 1
  ****/
+#define POSTBASE_DEBUG 1
 
 #define POSTBASE_BACKGROUND_PROCESSING	0x0002
 #define PROCESSING_START_PERIOD		30
@@ -88,101 +89,140 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 #endif
 
 	for(auto it = changes.begin(); it != changes.end(); ++it)
-	{
-		RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
+    {
+        RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
 
-		if (msgChange)
-		{
+        if(msgChange)
+        {
+            // To start with we are just going to trigger updates on these groups.
+            // FUTURE OPTIMISATION.
+            // It could be taken a step further and directly request these msgs for an update.
+            addGroupForProcessing(msgChange->mGroupId);
+
+            if (rsEvents)
+            {
+                switch(msgChange->getType())
+                {
+                case RsGxsNotify::TYPE_RECEIVED_NEW:
+                case RsGxsNotify::TYPE_PUBLISHED:
+                {
+                    auto ev = std::make_shared<RsGxsPostedEvent>();
+                    ev->mPostedMsgId    = msgChange->mMsgId;
+                    ev->mPostedThreadId = msgChange->mNewMsgItem->meta.mThreadId;
+                    ev->mPostedGroupId  = msgChange->mGroupId;
+
+                    if(nullptr != dynamic_cast<RsGxsCommentItem*>(msgChange->mNewMsgItem))
+                        ev->mPostedEventCode = RsPostedEventCode::NEW_COMMENT;
+                    else
+                        if(nullptr != dynamic_cast<RsGxsVoteItem*>(msgChange->mNewMsgItem))
+                            ev->mPostedEventCode = RsPostedEventCode::NEW_VOTE;
+                        else
+                            ev->mPostedEventCode = RsPostedEventCode::NEW_MESSAGE;
+
+                    rsEvents->postEvent(ev);
 #ifdef POSTBASE_DEBUG
-			std::cerr << "p3PostBase::notifyChanges() Found Message Change Notification";
-			std::cerr << std::endl;
+                    std::cerr << "p3PostBase::notifyChanges() Found Message Change Notification: NEW/PUBLISHED ID=" << msgChange->mMsgId << " in group " << msgChange->mGroupId << ", thread ID = " << msgChange->mNewMsgItem->meta.mThreadId << std::endl;
 #endif
 
+                }
+                    break;
+
+                case RsGxsNotify::TYPE_PROCESSED:
+                {
+                    auto ev = std::make_shared<RsGxsPostedEvent>();
+                    ev->mPostedMsgId = msgChange->mMsgId;
+                    ev->mPostedGroupId = msgChange->mGroupId;
+                    ev->mPostedEventCode = RsPostedEventCode::MESSAGE_VOTES_UPDATED;
+                    rsEvents->postEvent(ev);
 #ifdef POSTBASE_DEBUG
-			std::cerr << "p3PostBase::notifyChanges() Msgs for Group: " << mit->first;
-			std::cerr << std::endl;
+                    std::cerr << "p3PostBase::notifyChanges() Found Message Change Notification: PROCESSED ID=" << msgChange->mMsgId << " in group " << msgChange->mGroupId << std::endl;
 #endif
-			// To start with we are just going to trigger updates on these groups.
-			// FUTURE OPTIMISATION.
-			// It could be taken a step further and directly request these msgs for an update.
-			addGroupForProcessing(msgChange->mGroupId);
-
-			if (rsEvents && (msgChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW || msgChange->getType() == RsGxsNotify::TYPE_PUBLISHED))
-			{
-				auto ev = std::make_shared<RsGxsPostedEvent>();
-				ev->mPostedMsgId = msgChange->mMsgId;
-				ev->mPostedGroupId = msgChange->mGroupId;
-				ev->mPostedEventCode = RsPostedEventCode::NEW_MESSAGE;
-				rsEvents->postEvent(ev);
-			}
-		}
-
-		RsGxsGroupChange *grpChange = dynamic_cast<RsGxsGroupChange *>(*it);
-
-		/* pass on Group Changes to GUI */
-		if (grpChange && rsEvents)
-		{
+                }
+                    break;
+                default:
 #ifdef POSTBASE_DEBUG
-			std::cerr << "p3PostBase::notifyChanges() Found Group Change Notification";
-			std::cerr << std::endl;
+                    std::cerr << "p3PostBase::notifyChanges() Found Message Change Notification: type " << msgChange->getType() << " (ignored) " << msgChange->mMsgId << std::endl;
+#endif
+                    break;
+                }
+            }
+        }
+
+        RsGxsGroupChange *grpChange = dynamic_cast<RsGxsGroupChange *>(*it);
+
+        /* pass on Group Changes to GUI */
+        if (grpChange && rsEvents)
+        {
+#ifdef POSTBASE_DEBUG
+            std::cerr << "p3PostBase::notifyChanges() Found Group Change Notification";
+            std::cerr << std::endl;
 #endif
             const RsGxsGroupId& group_id(grpChange->mGroupId);
 
             switch(grpChange->getType())
-			{
-			case RsGxsNotify::TYPE_PROCESSED:	// happens when the group is subscribed
-			{
-				auto ev = std::make_shared<RsGxsPostedEvent>();
-				ev->mPostedGroupId = group_id;
-				ev->mPostedEventCode = RsPostedEventCode::SUBSCRIBE_STATUS_CHANGED;
-				rsEvents->postEvent(ev);
-			}
-				break;
+            {
+            case RsGxsNotify::TYPE_PROCESSED:	// happens when the group is subscribed
+            {
+                auto ev = std::make_shared<RsGxsPostedEvent>();
+                ev->mPostedGroupId = group_id;
+                ev->mPostedEventCode = RsPostedEventCode::SUBSCRIBE_STATUS_CHANGED;
+                rsEvents->postEvent(ev);
+            }
+                break;
 
-			case RsGxsNotify::TYPE_STATISTICS_CHANGED:
-			{
-				auto ev = std::make_shared<RsGxsPostedEvent>();
-				ev->mPostedGroupId = group_id;
-				ev->mPostedEventCode = RsPostedEventCode::STATISTICS_CHANGED;
-				rsEvents->postEvent(ev);
-			}
-				break;
+            case RsGxsNotify::TYPE_GROUP_SYNC_PARAMETERS_UPDATED:
+            {
+                auto ev = std::make_shared<RsGxsPostedEvent>();
+                ev->mPostedGroupId = group_id;
+                ev->mPostedEventCode = RsPostedEventCode::SYNC_PARAMETERS_UPDATED;
+                rsEvents->postEvent(ev);
+            }
+                break;
 
-			case RsGxsNotify::TYPE_PUBLISHED:
-			case RsGxsNotify::TYPE_RECEIVED_NEW:
-			{
-				/* group received */
+            case RsGxsNotify::TYPE_STATISTICS_CHANGED:
+            {
+                auto ev = std::make_shared<RsGxsPostedEvent>();
+                ev->mPostedGroupId = group_id;
+                ev->mPostedEventCode = RsPostedEventCode::STATISTICS_CHANGED;
+                rsEvents->postEvent(ev);
+            }
+                break;
 
-				if(mKnownPosted.find(group_id) == mKnownPosted.end())
-				{
-					mKnownPosted.insert(std::make_pair(group_id, time(nullptr)));
-					IndicateConfigChanged();
+            case RsGxsNotify::TYPE_PUBLISHED:
+            case RsGxsNotify::TYPE_RECEIVED_NEW:
+            {
+                /* group received */
 
-					auto ev = std::make_shared<RsGxsPostedEvent>();
-					ev->mPostedGroupId = group_id;
-					ev->mPostedEventCode = RsPostedEventCode::NEW_POSTED_GROUP;
-					rsEvents->postEvent(ev);
+                if(mKnownPosted.find(group_id) == mKnownPosted.end())
+                {
+                    mKnownPosted.insert(std::make_pair(group_id, time(nullptr)));
+                    IndicateConfigChanged();
+
+                    auto ev = std::make_shared<RsGxsPostedEvent>();
+                    ev->mPostedGroupId = group_id;
+                    ev->mPostedEventCode = RsPostedEventCode::NEW_POSTED_GROUP;
+                    rsEvents->postEvent(ev);
 
 #ifdef POSTBASE_DEBUG
-					std::cerr << "p3PostBase::notifyChanges() Incoming Group: " << group_id;
-					std::cerr << std::endl;
+                    std::cerr << "p3PostBase::notifyChanges() Incoming Group: " << group_id;
+                    std::cerr << std::endl;
 #endif
-				}
-				else
-					RsInfo() << __PRETTY_FUNCTION__
-					         << " Not notifying already known forum "
-					         << group_id << std::endl;
-			}
-				break;
+                }
+                else
+                    RsInfo() << __PRETTY_FUNCTION__
+                             << " Not notifying already known forum "
+                             << group_id << std::endl;
+            }
+                break;
 
-			default:
-				RsErr() << " Got a GXS event of type " << grpChange->getType() << " Currently not handled." << std::endl;
-				break;
-			}
-		}
+            default:
+                RsErr() << " Got a GXS event of type " << grpChange->getType() << " Currently not handled." << std::endl;
+                break;
+            }
+        }
 
         delete *it;
-	}
+    }
 }
 
 void	p3PostBase::service_tick()

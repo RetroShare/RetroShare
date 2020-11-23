@@ -56,6 +56,9 @@ public:
 	QVariant textColorQuotes() const { return highlighter->textColorQuotes();}
 	bool getShowImages() const { return mShowImages; }
 
+	QMenu *createStandardContextMenu();
+	QMenu *createStandardContextMenu(const QPoint &position);
+
 public slots:
 	void showImages();
 	void setTextColorQuote(QColor textColorQuote) { highlighter->setTextColorQuote(textColorQuote);}
@@ -64,6 +67,7 @@ public slots:
 private slots:
 	void linkClicked(const QUrl &url);
 	void destroyImageBlockWidget();
+	void viewSource();
 
 protected:
 	void paintEvent(QPaintEvent *event);
