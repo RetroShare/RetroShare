@@ -128,7 +128,7 @@ public:
     uint32_t subscription_flags ;	// combination of  GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST and  GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED   
 };
 
-enum CircleEntryCacheStatus: uint8_t {
+enum class CircleEntryCacheStatus: uint8_t {
 	UNKNOWN             = 0x00, // Used to detect uninitialized memory
 	NO_DATA_YET         = 0x01, // Used in the constuctor
 	LOADING             = 0x02, // When the token request to load cache has been sent and no data is present
@@ -167,17 +167,18 @@ public:
 	bool	      mIsExternal;
 	RsGxsCircleId mRestrictedCircleId ;	// circle ID that circle is restricted to.
 
-	uint32_t      mGroupStatus;
-	uint32_t      mGroupSubscribeFlags;
+    bool      mDoIAuthorAMembershipMsg;  // Do I have a subscribe/unsubscribe message in the circle group? Will be used to determine if we subscribe to the group or not
+    uint32_t  mGroupStatus;              // Copy of the group status from the GXS group.
+    uint32_t  mGroupSubscribeFlags;		 // Subscribe flags of the group.
 
 #ifdef SUBSCIRCLES
 	std::set<RsGxsCircleId> mUnprocessedCircles;
 	std::set<RsGxsCircleId> mProcessedCircles;
 #endif
-	std::map<RsGxsId,RsGxsCircleMembershipStatus> mMembershipStatus;
+    std::map<RsGxsId,RsGxsCircleMembershipStatus> mMembershipStatus; // Membership status of each ID cited in the group (including the ones posting a message)
 
-	std::set<RsGxsId> mAllowedGxsIds;	// IDs that are allowed in the circle and have requested membership. This is the official members list.
-	std::set<RsPgpId> mAllowedNodes;
+    std::set<RsGxsId> mAllowedGxsIds; // IDs that are allowed in the circle and have requested membership. This is the official members list.
+    std::set<RsPgpId> mAllowedNodes;  // List of friend nodes allowed in the circle (local circles only)
 
 	RsPeerId mOriginator ; // peer who sent the data, in case we need to ask for ids
 };
@@ -338,7 +339,8 @@ public:
 	bool checkCircleCache();
     
 	bool locked_checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cache);
-	bool locked_processLoadingCacheEntry(RsGxsCircleCache &cache);
+    bool locked_processMembershipMessages(RsGxsCircleCache& cache,const std::vector<RsGxsMsgItem*>& items, GxsMsgReq& messages_to_delete,const std::set<RsGxsId>& own_ids);
+    bool locked_processLoadingCacheEntry(RsGxsCircleCache &cache);
 	bool locked_checkCircleCacheForMembershipUpdate(RsGxsCircleCache &cache);
 
 	p3IdService *mIdentities; // Needed for constructing Circle Info,

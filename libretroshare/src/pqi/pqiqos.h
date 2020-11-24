@@ -60,7 +60,6 @@ public:
 		  : _threshold(0.0)
 		  , _counter(0.0)
 		  , _inc(0.0)
-		  , _item_count(0)
 		{}
 		void *pop() 
 		{
@@ -69,7 +68,6 @@ public:
 
 			void *item = _items.front().data ;
 			_items.pop_front() ;
-			--_item_count ;
 
 			return item ;
 		}
@@ -137,12 +135,11 @@ public:
 			_items.push_back(rec) ;
 		}
 
-		uint32_t size() const { return _item_count ; }
+        uint32_t size() const { return _items.size() ; }
 
 		float _threshold ;
 		float _counter ;
 		float _inc ;
-		uint32_t _item_count ;
 
 		std::list<ItemRecord> _items ;
 	};
