@@ -65,72 +65,39 @@ win32 {
 	DEPENDPATH += . $$INC_DIR
 	INCLUDEPATH += . $$INC_DIR
 
-	OPENCV_VERSION = "341"
 	USE_PRECOMPILED_LIBS =
 	for(lib, RS_LIB_DIR) {
 #message(Scanning $$lib)
-		exists( $$lib/opencv/libopencv_core$${OPENCV_VERSION}.a) {
-			isEmpty(USE_PRECOMPILED_LIBS) {
-				message(Get pre-compiled opencv $$OPENCV_VERSION libraries here:)
-				message($$lib)
+		isEmpty(USE_PRECOMPILED_LIBS) {
+			exists($$lib/opencv/libopencv_core.a) {
+				message(Get pre-compiled opencv libraries here:)
+				message($$lib/opencv)
 				LIBS += -L"$$lib/opencv"
-				LIBS += -lopencv_core$$OPENCV_VERSION -lopencv_highgui$$OPENCV_VERSION -lopencv_imgproc$$OPENCV_VERSION -lopencv_videoio$$OPENCV_VERSION -lopencv_imgcodecs$$OPENCV_VERSION -llibwebp
 				USE_PRECOMPILED_LIBS = 1
 			}
-		}
-		exists( $$lib/opencv/libopencv_core.a) {
-			isEmpty(USE_PRECOMPILED_LIBS) {
+			exists($$lib/libopencv_core.dll.a) {
 				message(Get pre-compiled opencv libraries here:)
 				message($$lib)
-				LIBS += -L"$$lib/opencv"
-				LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc
+				LIBS += -L"$$lib"
 				USE_PRECOMPILED_LIBS = 1
 			}
-		}
-		exists( $$lib/libopencv_core.dll.a) {
-			isEmpty(USE_PRECOMPILED_LIBS) {
-				message(Get pre-compiled opencv libraries here:)
-				message($$lib)
-				LIBS += -L"$$lib/opencv"
-				LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc
-				USE_PRECOMPILED_LIBS = 1
-			}
-		}
-		exists( $$lib/opencv/libopencv_videoio.a) {
-			message(videoio found in opencv libraries.)
-			message($$lib)
-			LIBS += -lopencv_videoio
-		}
-		exists( $$lib/libopencv_videoio.dll.a) {
-			message(videoio found in opencv libraries.)
-			message($$lib)
-			LIBS += -lopencv_videoio
-		}
-		exists( $$lib/opencv/libopencv_imgcodecs.a) {
-			message(videoio found in opencv libraries.)
-			message($$lib)
-			LIBS += -lopencv_imgcodecs
-		}
-		exists( $$lib/opencv/liblibwebp.a) {
-			message(videoio found in opencv libraries.)
-			message($$lib)
-			LIBS += -llibwebp
 		}
 	}
 	isEmpty(USE_PRECOMPILED_LIBS) {
 		message(Use system opencv libraries.)
-		LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc
 	}
-        LIBS += -lole32 -loleaut32 -luuid -lvfw32
-	LIBS += -lavifil32 -lavicap32 -lavcodec -lavutil -lswresample
 
-        # Check for msys2
-        !isEmpty(PREFIX_MSYS2) {
-                message(Use msys2 opencv4.)
-                INCLUDEPATH  += "$${PREFIX_MSYS2}/include/opencv4"
-        }
+	LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_videoio -lopencv_imgcodecs -llibwebp -llibtiff -llibpng -llibopenjp2 -lIlmImf
+	LIBS += -lole32 -loleaut32 -luuid -lvfw32
+
+	# Check for msys2
+	!isEmpty(PREFIX_MSYS2) {
+		message(Use msys2 opencv4.)
+		INCLUDEPATH += "$${PREFIX_MSYS2}/include/opencv4"
+	} else {
+		LIBS += -llibjpeg-turbo -lzlib
+	}
 }
-
 
 #################################### MacOSX #####################################
 
