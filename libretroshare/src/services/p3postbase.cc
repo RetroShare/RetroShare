@@ -132,6 +132,7 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
                 }
                     break;
 
+
                 case RsGxsNotify::TYPE_PROCESSED:
                 {
                     auto ev = std::make_shared<RsGxsPostedEvent>();
@@ -183,6 +184,16 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
                 rsEvents->postEvent(ev);
             }
                 break;
+
+          case RsGxsNotify::TYPE_GROUP_DELETED:
+           {
+               auto ev = std::make_shared<RsGxsPostedEvent>();
+               ev->mPostedGroupId = msgChange->mGroupId;
+               ev->mPostedEventCode = RsPostedEventCode::BOARD_DELETED;
+
+               rsEvents->postEvent(ev);
+           }
+               break;
 
             case RsGxsNotify::TYPE_STATISTICS_CHANGED:
             {

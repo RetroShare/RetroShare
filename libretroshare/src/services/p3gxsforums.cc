@@ -298,7 +298,16 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 					}
 						break;
 
-					case RsGxsNotify::TYPE_STATISTICS_CHANGED:
+                    case RsGxsNotify::TYPE_GROUP_DELETED:
+                    {
+                        auto ev = std::make_shared<RsGxsForumEvent>();
+                        ev->mForumGroupId = grpChange->mGroupId;
+                        ev->mForumEventCode = RsForumEventCode::DELETED_FORUM;
+                        rsEvents->postEvent(ev);
+                    }
+                        break;
+
+                    case RsGxsNotify::TYPE_STATISTICS_CHANGED:
 					{
 						auto ev = std::make_shared<RsGxsForumEvent>();
 						ev->mForumGroupId = grpChange->mGroupId;

@@ -235,6 +235,11 @@ enum class RsGxsCircleEventCode: uint8_t
 	 *
 	 * no additional information. Simply means that the info previously from the cache has changed. */
 	CACHE_DATA_UPDATED                             = 0x06,
+
+    /**
+     * The circle has been deleted by auto-cleaning.
+     *                                                                                    */
+    CIRCLE_DELETED                                 = 0x07,
 };
 
 struct RsGxsCircleEvent: RsEvent

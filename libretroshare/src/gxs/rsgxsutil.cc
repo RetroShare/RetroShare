@@ -195,7 +195,7 @@ bool RsGxsCleanUp::clean(RsGxsGroupId& next_group_to_check)
         }
     }
 
-    //mDs->removeGroups(grps_to_delete);
+    mDs->removeGroups(grps_to_delete);
 
     return full_round;
 }

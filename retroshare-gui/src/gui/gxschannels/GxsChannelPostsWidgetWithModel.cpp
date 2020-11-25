@@ -750,6 +750,7 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
 	switch(e->mChannelEventCode)
 	{
 		case RsChannelEventCode::NEW_CHANNEL:     // [[fallthrough]];
+        case RsChannelEventCode::DELETED_CHANNEL: // [[fallthrough]];
         case RsChannelEventCode::NEW_COMMENT:     // [[fallthrough]];
         case RsChannelEventCode::NEW_VOTE:        // [[fallthrough]];
         case RsChannelEventCode::UPDATED_CHANNEL: // [[fallthrough]];

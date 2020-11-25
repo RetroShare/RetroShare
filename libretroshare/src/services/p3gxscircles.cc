@@ -698,7 +698,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 							ev->mCircleId = RsGxsCircleId(*git);
 							ev->mGxsId = gxs_id;
 
-							rsEvents->sendEvent(ev);
+                            rsEvents->postEvent(ev);
 						}
                 }
                 else if(c->getType()==RsGxsNotify::TYPE_UPDATED)
@@ -728,7 +728,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 							ev->mCircleId = circle_id;
 							ev->mGxsId = gxs_id;
 
-							rsEvents->sendEvent(ev);
+                            rsEvents->postEvent(ev);
 						}
 
 					for(auto& gxs_id: old_circle_grp_item->gxsIdSet.ids)
@@ -740,10 +740,19 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 							ev->mCircleId = circle_id;
 							ev->mGxsId = gxs_id;
 
-							rsEvents->sendEvent(ev);
+                            rsEvents->postEvent(ev);
 						}
 
 				}
+                else if(c->getType()==RsGxsNotify::TYPE_GROUP_DELETED)
+                {
+                    auto ev = std::make_shared<RsGxsCircleEvent>();
+
+                    ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_DELETED;
+                    ev->mCircleId = RsGxsCircleId(groupChange->mGroupId);
+
+                    rsEvents->postEvent(ev);
+                }
             }
         }
 

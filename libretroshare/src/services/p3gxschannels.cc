@@ -376,7 +376,16 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 			}
 				break;
 
-			case RsGxsNotify::TYPE_RECEIVED_PUBLISHKEY:
+            case RsGxsNotify::TYPE_GROUP_DELETED:
+            {
+                    auto ev = std::make_shared<RsGxsChannelEvent>();
+                    ev->mChannelGroupId = grpChange->mGroupId;
+                    ev->mChannelEventCode = RsChannelEventCode::DELETED_CHANNEL;
+                    rsEvents->postEvent(ev);
+            }
+                break;
+
+            case RsGxsNotify::TYPE_RECEIVED_PUBLISHKEY:
 			{
 				/* group received */
 				auto ev = std::make_shared<RsGxsChannelEvent>();
