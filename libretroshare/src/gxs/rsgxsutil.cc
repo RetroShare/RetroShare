@@ -50,41 +50,53 @@ static const uint32_t MAX_GXS_IDS_REQUESTS_NET   =  10 ; // max number of reques
 RsGxsCleanUp::RsGxsCleanUp(RsGeneralDataService* const dataService, RsGenExchange *genex, uint32_t chunkSize)
 : mDs(dataService), mGenExchangeClient(genex), CHUNK_SIZE(chunkSize)
 {
-	RsGxsGrpMetaTemporaryMap grpMeta;
-	mDs->retrieveGxsGrpMetaData(grpMeta);
-
-	for(auto cit=grpMeta.begin();cit != grpMeta.end(); ++cit)
-		mGrpMeta.push_back(cit->second);
 }
 
-bool RsGxsCleanUp::clean()
+bool RsGxsCleanUp::clean(RsGxsGroupId& next_group_to_check)
 {
-    uint32_t i = 1;
+    RsGxsGrpMetaTemporaryMap grpMetaMap;
+    mDs->retrieveGxsGrpMetaData(grpMetaMap);
 
     rstime_t now = time(NULL);
     std::vector<RsGxsGroupId> grps_to_delete;
 
 #ifdef DEBUG_GXSUTIL
     uint16_t service_type = mGenExchangeClient->serviceType() ;
-    GXSUTIL_DEBUG() << "  Cleaning up groups in service " << std::hex << service_type << std::dec << std::endl;
+    GXSUTIL_DEBUG() << "  Cleaning up groups in service " << std::hex << service_type << std::dec << " starting at group " << next_group_to_check << std::endl;
 #endif
-    while(!mGrpMeta.empty())
+    // This method stores/takes the next group to check. This allows to limit group checking to a small part of the total groups
+    // in the situation where it takes too much time. So when arriving here, we must start again from where we left last time.
+
+    if(grpMetaMap.empty())		// nothing to do.
     {
-        const RsGxsGrpMetaData* grpMeta = mGrpMeta.back();
+        next_group_to_check.clear();
+        return true;
+    }
+
+    auto it = next_group_to_check.isNull()?grpMetaMap.begin() : grpMetaMap.find(next_group_to_check);
+
+    if(it == grpMetaMap.end())		// group wasn't found
+        it = grpMetaMap.begin();
+
+    bool full_round = false;			// did we have the time to test all groups?
+    next_group_to_check = it->first;	// covers the case where next_group_to_check is null or not found
+
+    while(true)	// check all groups, starting from the one indicated as parameter
+    {
+        const RsGxsGrpMetaData& grpMeta = *(it->second);
 
         // first check if we keep the group or not
 
-        if(!mGenExchangeClient->service_checkIfGroupIsStillUsed(*grpMeta))
+        if(!mGenExchangeClient->service_checkIfGroupIsStillUsed(grpMeta))
         {
 #ifdef DEBUG_GXSUTIL
-            std::cerr << "  Scheduling group " << grpMeta->mGroupId << " for removal." << std::endl;
+            std::cerr << "  Scheduling group " << grpMeta.mGroupId << " for removal." << std::endl;
 #endif
-            grps_to_delete.push_back(grpMeta->mGroupId);
+            grps_to_delete.push_back(grpMeta.mGroupId);
         }
         else
         {
-            const RsGxsGroupId& grpId = grpMeta->mGroupId;
-            mGrpMeta.pop_back();
+            const RsGxsGroupId& grpId = grpMeta.mGroupId;
             GxsMsgReq req;
             GxsMsgMetaResult result;
 
@@ -127,12 +139,12 @@ bool RsGxsCleanUp::clean()
                     remove &= !(meta->mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP_FOREVER);
 
                     // if not subscribed remove messages (can optimise this really)
-                    remove = remove ||  (grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED);
-                    remove = remove || !(grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
+                    remove = remove ||  (grpMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED);
+                    remove = remove || !(grpMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
 
 #ifdef DEBUG_GXSUTIL
                     GXSUTIL_DEBUG() << "    msg id " << meta->mMsgId << " in grp " << grpId << ": keep_flag=" << bool(meta->mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP_FOREVER)
-                                    << " subscribed: " << bool(grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) << " store_period: " << store_period
+                                    << " subscribed: " << bool(grpMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) << " store_period: " << store_period
                                     << " kids: " << have_kids << " now - meta->mPublishTs: " << now - meta->mPublishTs ;
 #endif
 
@@ -153,15 +165,39 @@ bool RsGxsCleanUp::clean()
             }
 
             mDs->removeMsgs(messages_to_delete);
+        }
 
-            i++;
-            if(i > CHUNK_SIZE) break;
+        ++it;
+
+        if(it == grpMetaMap.end())
+            it = grpMetaMap.begin();
+
+        // check if we looped already
+
+        if(it->first == next_group_to_check)
+        {
+            GXSUTIL_DEBUG() << "Had the time to test all groups. Will start again at " << it->first << std::endl;
+            full_round = true;
+            break;
+        }
+
+        // now check if we spent too much time on this already
+
+        rstime_t tm = time(nullptr);
+
+        //if(tm > now + 1) // we spent more than 1 sec on the job already
+        if(tm > now) // we spent more than 1 sec on the job already
+        {
+            GXSUTIL_DEBUG() << "Aborting cleanup because it took too much time already. Next group left to be " << it->first << std::endl;
+            next_group_to_check = it->first;
+            full_round = false;
+            break;
         }
     }
 
     //mDs->removeGroups(grps_to_delete);
 
-    return mGrpMeta.empty();
+    return full_round;
 }
 
 RsGxsIntegrityCheck::RsGxsIntegrityCheck(

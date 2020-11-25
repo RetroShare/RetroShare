@@ -1724,7 +1724,7 @@ void p3GxsCircles::addCircleIdToList(const RsGxsCircleId &circleId, uint32_t cir
 
 bool p3GxsCircles::service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta)
 {
-    std::cerr << "p3gxsChannels: Checking unused board: called by GxsCleaning." << std::endl;
+    std::cerr << "p3gxsChannels: Checking unused circles: called by GxsCleaning." << std::endl;
 
     // request all group infos at once
 

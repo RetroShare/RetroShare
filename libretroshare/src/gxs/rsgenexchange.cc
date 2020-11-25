@@ -148,7 +148,6 @@ RsGenExchange::RsGenExchange(
   mAuthenPolicy(authenPolicy),
   mCleaning(false),
   mLastClean((int)time(NULL) - (int)(RSRandom::random_u32() % MSG_CLEANUP_PERIOD)),	// this helps unsynchronising the checks for the different services
-  mMsgCleanUp(NULL),
   mChecking(false),
   mCheckStarted(false),
   mLastCheck((int)time(NULL) - (int)(RSRandom::random_u32() % INTEGRITY_CHECK_PERIOD) + 120),	// this helps unsynchronising the checks for the different services, with 2 min security to avoid checking right away before statistics come up.
@@ -260,30 +259,16 @@ void RsGenExchange::tick()
     
     // Cleanup unused data. This is only needed when auto-synchronization is needed, which is not the case
     // of identities. This is why idendities do their own cleaning.
+    now = time(NULL);
 
-    if((mNetService->msgAutoSync() || mNetService->grpAutoSync())
-            && ((mLastClean + MSG_CLEANUP_PERIOD < now) || mCleaning))
+    if( (mNetService && (mNetService->msgAutoSync() || mNetService->grpAutoSync())) && (mLastClean + MSG_CLEANUP_PERIOD < now) )
 	{
-		if(mMsgCleanUp)
-		{
-            RS_STACK_MUTEX(mGenMtx);
+        RsGxsCleanUp(mDataStore,this,1).clean(mNextGroupToCheck);	// no need to lock here, because all access below (RsGenExchange, RsDataStore) are properly mutexed
 
-			if(mMsgCleanUp->clean())
-			{
-				mCleaning = false;
-				delete mMsgCleanUp;
-				mMsgCleanUp = NULL;
-				mLastClean = time(NULL);
-			}
-		}
-        else
-		{
-            mMsgCleanUp = new RsGxsCleanUp(mDataStore, this, 1);
-			mCleaning = true;
-		}
-	}
+        RS_STACK_MUTEX(mGenMtx) ;
+        mLastClean = now;
+    }
 
-	now = time(NULL);
 	if(mChecking || (mLastCheck + INTEGRITY_CHECK_PERIOD < now))
 	{
 		mLastCheck = time(NULL);

@@ -972,12 +972,11 @@ private:
 
     bool mCleaning;
     rstime_t mLastClean;
-    RsGxsCleanUp* mMsgCleanUp;
-
 
     bool mChecking, mCheckStarted;
     rstime_t mLastCheck;
     RsGxsIntegrityCheck* mIntegrityCheck;
+    RsGxsGroupId mNextGroupToCheck ;
 
 protected:
 	enum CreateStatus { CREATE_FAIL, CREATE_SUCCESS, CREATE_FAIL_TRY_LATER };

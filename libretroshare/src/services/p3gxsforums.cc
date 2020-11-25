@@ -48,7 +48,7 @@ RsGxsForums *rsGxsForums = NULL;
 
 #define FORUM_TESTEVENT_DUMMYDATA	0x0001
 #define DUMMYDATA_PERIOD		60	// long enough for some RsIdentities to be generated.
-#define FORUM_UNUSED_BY_FRIENDS_DELAY (2*30*86400) 		// unused forums are deleted after 2 months
+#define FORUM_UNUSED_BY_FRIENDS_DELAY (2*5*86400) 		// unused forums are deleted after 2 months
 
 /********************************************************************************/
 /******************* Startup / Tick    ******************************************/

@@ -36,10 +36,10 @@ class RsGeneralDataService ;
 class non_copiable
 {
 public:
-	non_copiable() {}
+    non_copiable() {}
 private:
-	non_copiable& operator=(const non_copiable&) { return *this ;}
-	non_copiable(const non_copiable&) {}
+    non_copiable& operator=(const non_copiable&) { return *this ;}
+    non_copiable(const non_copiable&) {}
 };
 
 template<class IdClass,class IdData>
@@ -55,7 +55,7 @@ public:
     {
         for(typename t_RsGxsGenericDataTemporaryMap<IdClass,IdData>::iterator it = this->begin();it!=this->end();++it)
             if(it->second != NULL)
-		    delete it->second ;
+            delete it->second ;
 
         std::map<IdClass,IdData*>::clear() ;
     }
@@ -75,7 +75,7 @@ public:
         for(typename t_RsGxsGenericDataTemporaryMapVector<T>::iterator it = this->begin();it!=this->end();++it)
         {
             for(uint32_t i=0;i<it->second.size();++i)
-				delete it->second[i] ;
+                delete it->second[i] ;
 
             it->second.clear();
         }
@@ -113,12 +113,12 @@ typedef t_RsGxsGenericDataTemporaryList<RsNxsMsg>                     RsNxsMsgDa
 
 inline RsGxsGrpMsgIdPair getMsgIdPair(RsNxsMsg& msg)
 {
-	return RsGxsGrpMsgIdPair(std::make_pair(msg.grpId, msg.msgId));
+    return RsGxsGrpMsgIdPair(std::make_pair(msg.grpId, msg.msgId));
 }
 
 inline RsGxsGrpMsgIdPair getMsgIdPair(RsGxsMsgItem& msg)
 {
-	return RsGxsGrpMsgIdPair(std::make_pair(msg.meta.mGroupId, msg.meta.mMsgId));
+    return RsGxsGrpMsgIdPair(std::make_pair(msg.meta.mGroupId, msg.meta.mMsgId));
 }
 
 /*!
@@ -129,28 +129,27 @@ class RsGxsCleanUp
 {
 public:
 
-	/*!
-	 *
-	 * @param dataService
-	 * @param mGroupTS
-	 * @param chunkSize
-	 * @param sleepPeriod
-	 */
+    /*!
+     *
+     * @param dataService
+     * @param mGroupTS
+     * @param chunkSize
+     * @param sleepPeriod
+     */
     RsGxsCleanUp(RsGeneralDataService* const dataService, RsGenExchange *genex, uint32_t chunkSize);
 
-	/*!
-	 * On construction this should be called to progress deletions
-	 * Deletion will process by chunk size
-	 * @return true if no more messages to delete, false otherwise
-	 */
-	bool clean();
+    /*!
+     * On construction this should be called to progress deletions
+     * Deletion will process by chunk size
+     * @return true if no more messages to delete, false otherwise
+     */
+    bool clean(RsGxsGroupId &last_checked_group);
 
 private:
 
-	RsGeneralDataService* const mDs;
+    RsGeneralDataService* const mDs;
     RsGenExchange *mGenExchangeClient;
-	uint32_t CHUNK_SIZE;
-	std::vector<const RsGxsGrpMetaData*> mGrpMeta;
+    uint32_t CHUNK_SIZE;
 };
 
 /*!
@@ -160,52 +159,52 @@ private:
 class RsGxsIntegrityCheck : public RsThread
 {
 
-	enum CheckState { CheckStart, CheckChecking };
+    enum CheckState { CheckStart, CheckChecking };
 
 public:
 
 
-	/*!
-	 *
-	 * @param dataService
-	 * @param mGroupTS
-	 * @param chunkSize
-	 * @param sleepPeriod
-	 */
-	RsGxsIntegrityCheck( RsGeneralDataService* const dataService,
-	                     RsGenExchange *genex, RsSerialType& gxsSerialiser,
-	                     RsGixs *gixs);
+    /*!
+     *
+     * @param dataService
+     * @param mGroupTS
+     * @param chunkSize
+     * @param sleepPeriod
+     */
+    RsGxsIntegrityCheck( RsGeneralDataService* const dataService,
+                         RsGenExchange *genex, RsSerialType& gxsSerialiser,
+                         RsGixs *gixs);
 
-	bool check();
-	bool isDone();
+    bool check();
+    bool isDone();
 
-	void run();
+    void run();
 
-	void getDeletedIds(std::list<RsGxsGroupId>& grpIds, std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgIds);
+    void getDeletedIds(std::list<RsGxsGroupId>& grpIds, std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgIds);
 
 private:
 
-	RsGeneralDataService* const mDs;
-	RsGenExchange *mGenExchangeClient;
+    RsGeneralDataService* const mDs;
+    RsGenExchange *mGenExchangeClient;
 #ifdef RS_DEEP_CHANNEL_INDEX
-	RsSerialType& mSerializer;
+    RsSerialType& mSerializer;
 #endif
-	bool mDone;
-	RsMutex mIntegrityMutex;
-	std::list<RsGxsGroupId> mDeletedGrps;
-	std::map<RsGxsGroupId, std::set<RsGxsMessageId> > mDeletedMsgs;
+    bool mDone;
+    RsMutex mIntegrityMutex;
+    std::list<RsGxsGroupId> mDeletedGrps;
+    std::map<RsGxsGroupId, std::set<RsGxsMessageId> > mDeletedMsgs;
 
-	RsGixs* mGixs;
+    RsGixs* mGixs;
 };
 
 class GroupUpdate
 {
 public:
-	GroupUpdate() : oldGrpMeta(NULL), newGrp(NULL), validUpdate(false)
-	{}
-	const RsGxsGrpMetaData* oldGrpMeta;
-	RsNxsGrp* newGrp;
-	bool validUpdate;
+    GroupUpdate() : oldGrpMeta(NULL), newGrp(NULL), validUpdate(false)
+    {}
+    const RsGxsGrpMetaData* oldGrpMeta;
+    RsNxsGrp* newGrp;
+    bool validUpdate;
 };
 
 class GroupUpdatePublish
@@ -213,8 +212,8 @@ class GroupUpdatePublish
 public:
         GroupUpdatePublish(RsGxsGrpItem* item, uint32_t token)
             : grpItem(item), mToken(token) {}
-	RsGxsGrpItem* grpItem;
-	uint32_t mToken;
+    RsGxsGrpItem* grpItem;
+    uint32_t mToken;
 };
 
 class GroupDeletePublish
@@ -222,8 +221,8 @@ class GroupDeletePublish
 public:
         GroupDeletePublish(const RsGxsGroupId& grpId, uint32_t token)
             : mGroupId(grpId), mToken(token) {}
-	RsGxsGroupId mGroupId;
-	uint32_t mToken;
+    RsGxsGroupId mGroupId;
+    uint32_t mToken;
 };
 
 
@@ -232,7 +231,7 @@ class MsgDeletePublish
 public:
         MsgDeletePublish(const GxsMsgReq& msgs, uint32_t token)
             : mMsgs(msgs), mToken(token) {}
-        
-	GxsMsgReq mMsgs ;
-	uint32_t mToken;
+
+    GxsMsgReq mMsgs ;
+    uint32_t mToken;
 };
