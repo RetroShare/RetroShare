@@ -483,6 +483,15 @@ GxsChannelPostItem QLabel#logoLabel {
   background-color: black;
 }
 
+GxsCircleItem QFrame#frame {
+	background-color: white;
+}
+
+GxsCircleItem QLabel#nameLabel, QLabel#titleLabel {
+	font: 11pt;
+	font: bold italic;
+}
+
 ForumNewItem > QFrame#frame, ForumMsgItem > QFrame#frame {
 	border: 2px solid #CCCCCC;
 	background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #EEEEEE, stop: 1 #CCCCCC);

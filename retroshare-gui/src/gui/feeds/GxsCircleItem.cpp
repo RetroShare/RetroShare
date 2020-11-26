@@ -25,6 +25,7 @@
 #include "gui/notifyqt.h"
 #include "gui/Circles/CreateCircleDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/common/FilesDefs.h"
 
 #include <QLabel>
 #include <QPushButton>
@@ -98,8 +99,9 @@ void GxsCircleItem::setup()
 			ui->gxsIdLabel->setId(mGxsId);
 
 			ui->inviteeButton->setHidden(false);
-            ui->inviteeButton->setText(tr("Grant membership"));
-            ui->inviteeButton->setToolTip(tr("Grant membership to this circle, for this identity"));
+			ui->inviteeButton->setText(tr("Grant membership"));
+			ui->inviteeButton->setToolTip(tr("Grant membership to this circle, for this identity"));
+			ui->inviteeButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/accepted16.png"));
 
 			ui->membershipButton->setHidden(true);
 		}
@@ -133,6 +135,7 @@ void GxsCircleItem::setup()
 				ui->inviteeButton->setHidden(false);
 				ui->inviteeButton->setText(tr("Revoke membership"));
 				ui->inviteeButton->setToolTip(tr("Revoke membership for that identity"));
+				ui->inviteeButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/cancel.png"));
 			}
             else
             {
@@ -155,6 +158,7 @@ void GxsCircleItem::setup()
 			ui->membershipButton->setHidden(false);
 			ui->membershipButton->setText(tr("Cancel membership request"));
 			ui->membershipButton->setToolTip(tr("Cancel your membership request from that circle"));
+			ui->membershipButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/cancel.png"));
 
 			ui->inviteeButton->setHidden(true);
 		}
@@ -168,6 +172,7 @@ void GxsCircleItem::setup()
 			ui->membershipButton->setHidden(false);
 			ui->membershipButton->setText(tr("Cancel membership"));
 			ui->membershipButton->setToolTip(tr("Cancel your membership from that circle"));
+			ui->membershipButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/cancel.png"));
 
 			ui->inviteeButton->setHidden(true);
 		}
