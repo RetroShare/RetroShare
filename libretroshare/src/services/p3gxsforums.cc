@@ -48,7 +48,7 @@ RsGxsForums *rsGxsForums = NULL;
 
 #define FORUM_TESTEVENT_DUMMYDATA	0x0001
 #define DUMMYDATA_PERIOD		60	// long enough for some RsIdentities to be generated.
-#define FORUM_UNUSED_BY_FRIENDS_DELAY (2*5*86400) 		// unused forums are deleted after 2 months
+#define FORUM_UNUSED_BY_FRIENDS_DELAY (2*30*86400) 		// unused forums are deleted after 2 months
 
 /********************************************************************************/
 /******************* Startup / Tick    ******************************************/
@@ -407,7 +407,9 @@ void	p3GxsForums::service_tick()
 
 bool p3GxsForums::service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta)
 {
+#ifdef GXSFORUMS_DEBUG
     std::cerr << "p3gxsForums: Checking unused forums: called by GxsCleaning." << std::endl;
+#endif
 
     // request all group infos at once
 
@@ -418,14 +420,18 @@ bool p3GxsForums::service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta)
     auto it = mKnownForums.find(meta.mGroupId);
     bool unknown_forum = it == mKnownForums.end();
 
+#ifdef GXSFORUMS_DEBUG
     std::cerr << "  Forum " << meta.mGroupId ;
+#endif
 
     if(unknown_forum)
     {
         // This case should normally not happen. It does because this forum was never registered since it may
         // arrived before this code was here
 
+#ifdef GXSFORUMS_DEBUG
         std::cerr << ". Not known yet. Adding current time as new TS." << std::endl;
+#endif
         mKnownForums[meta.mGroupId] = now;
         IndicateConfigChanged();
 
@@ -436,16 +442,22 @@ bool p3GxsForums::service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta)
         bool used_by_friends = (now < it->second + FORUM_UNUSED_BY_FRIENDS_DELAY);
         bool subscribed = static_cast<bool>(meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
 
+#ifdef GXSFORUMS_DEBUG
         std::cerr << ". subscribed: " << subscribed << ", used_by_friends: " << used_by_friends << " last TS: " << now - it->second << " secs ago (" << (now-it->second)/86400 << " days)";
+#endif
 
         if(!subscribed && !used_by_friends)
         {
+#ifdef GXSFORUMS_DEBUG
             std::cerr << ". Scheduling for deletion" << std::endl;
+#endif
             return false;
         }
         else
         {
+#ifdef GXSFORUMS_DEBUG
             std::cerr << ". Keeping!" << std::endl;
+#endif
             return true;
         }
     }

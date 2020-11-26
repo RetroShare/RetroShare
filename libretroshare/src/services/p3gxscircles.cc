@@ -49,7 +49,7 @@
 /*static*/ const std::string RsGxsCircles::CIRCLE_URL_ID_FIELD = "circleId";
 /*static*/ const std::string RsGxsCircles::CIRCLE_URL_DATA_FIELD = "circleData";
 
-static const uint32_t CIRCLES_UNUSED_BY_FRIENDS_DELAY = 7*86400 ; // 7 days ...O...
+static const uint32_t CIRCLES_UNUSED_BY_FRIENDS_DELAY = 60*86400 ; // 60 days ...O...
 
 RsGxsCircles::~RsGxsCircles() = default;
 RsGxsCircleMsg::~RsGxsCircleMsg() = default;
@@ -1733,7 +1733,9 @@ void p3GxsCircles::addCircleIdToList(const RsGxsCircleId &circleId, uint32_t cir
 
 bool p3GxsCircles::service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta)
 {
+#ifdef GXSFORUMS_CHANNELS
     std::cerr << "p3gxsChannels: Checking unused circles: called by GxsCleaning." << std::endl;
+#endif
 
     // request all group infos at once
 
@@ -1744,14 +1746,18 @@ bool p3GxsCircles::service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta)
     auto it = mKnownCircles.find(meta.mGroupId);
     bool unknown_posted = (it == mKnownCircles.end());
 
+#ifdef GXSFORUMS_CHANNELS
     std::cerr << "  Circle " << meta.mGroupId ;
+#endif
 
     if(unknown_posted)
     {
         // This case should normally not happen. It does because this board was never registered since it may
         // arrived before this code was here
 
+#ifdef GXSFORUMS_CHANNELS
         std::cerr << ". Not known yet. Adding current time as new TS." << std::endl;
+#endif
         mKnownCircles[meta.mGroupId] = now;
         IndicateConfigChanged();
 
@@ -1766,12 +1772,16 @@ bool p3GxsCircles::service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta)
 
         if(!subscribed && !used_by_friends)
         {
+#ifdef GXSFORUMS_CHANNELS
             std::cerr << ". Scheduling for deletion" << std::endl;
+#endif
             return false;
         }
         else
         {
+#ifdef GXSFORUMS_CHANNELS
             std::cerr << ". Keeping!" << std::endl;
+#endif
             return true;
         }
     }

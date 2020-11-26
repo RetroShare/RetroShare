@@ -452,7 +452,9 @@ void	p3GxsChannels::service_tick()
 
 bool p3GxsChannels::service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta)
 {
+#ifdef GXSFORUMS_CHANNELS
     std::cerr << "p3gxsChannels: Checking unused channel: called by GxsCleaning." << std::endl;
+#endif
 
     // request all group infos at once
 
@@ -463,14 +465,18 @@ bool p3GxsChannels::service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta
     auto it = mKnownChannels.find(meta.mGroupId);
     bool unknown_channel = it == mKnownChannels.end();
 
+#ifdef GXSFORUMS_CHANNELS
     std::cerr << "  Channel " << meta.mGroupId ;
+#endif
 
     if(unknown_channel)
     {
         // This case should normally not happen. It does because this channel was never registered since it may
         // arrived before this code was here
 
+#ifdef GXSFORUMS_CHANNELS
         std::cerr << ". Not known yet. Adding current time as new TS." << std::endl;
+#endif
         mKnownChannels[meta.mGroupId] = now;
         IndicateConfigChanged();
 
@@ -481,16 +487,22 @@ bool p3GxsChannels::service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta
         bool used_by_friends = (now < it->second + CHANNEL_UNUSED_BY_FRIENDS_DELAY);
         bool subscribed = static_cast<bool>(meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
 
+#ifdef GXSFORUMS_CHANNELS
         std::cerr << ". subscribed: " << subscribed << ", used_by_friends: " << used_by_friends << " last TS: " << now - it->second << " secs ago (" << (now-it->second)/86400 << " days)";
+#endif
 
         if(!subscribed && !used_by_friends)
         {
+#ifdef GXSFORUMS_CHANNELS
             std::cerr << ". Scheduling for deletion" << std::endl;
+#endif
             return false;
         }
         else
         {
+#ifdef GXSFORUMS_CHANNELS
             std::cerr << ". Keeping!" << std::endl;
+#endif
             return true;
         }
     }

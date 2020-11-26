@@ -263,7 +263,19 @@ void RsGenExchange::tick()
 
     if( (mNetService && (mNetService->msgAutoSync() || mNetService->grpAutoSync())) && (mLastClean + MSG_CLEANUP_PERIOD < now) )
 	{
-        RsGxsCleanUp(mDataStore,this,1).clean(mNextGroupToCheck);	// no need to lock here, because all access below (RsGenExchange, RsDataStore) are properly mutexed
+        GxsMsgReq msgs_to_delete;
+        std::vector<RsGxsGroupId> grps_to_delete;
+
+        RsGxsCleanUp(mDataStore,this,1).clean(mNextGroupToCheck,grps_to_delete,msgs_to_delete);	// no need to lock here, because all access below (RsGenExchange, RsDataStore) are properly mutexed
+
+        uint32_t token1=0;
+        deleteMsgs(token1,msgs_to_delete);
+
+        for(auto& grpId: grps_to_delete)
+        {
+            uint32_t token2=0;
+            deleteGroup(token2,grpId);
+        }
 
         RS_STACK_MUTEX(mGenMtx) ;
         mLastClean = now;

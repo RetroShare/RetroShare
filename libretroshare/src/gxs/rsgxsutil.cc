@@ -52,13 +52,12 @@ RsGxsCleanUp::RsGxsCleanUp(RsGeneralDataService* const dataService, RsGenExchang
 {
 }
 
-bool RsGxsCleanUp::clean(RsGxsGroupId& next_group_to_check)
+bool RsGxsCleanUp::clean(RsGxsGroupId& next_group_to_check,std::vector<RsGxsGroupId>& grps_to_delete,GxsMsgReq& messages_to_delete)
 {
     RsGxsGrpMetaTemporaryMap grpMetaMap;
     mDs->retrieveGxsGrpMetaData(grpMetaMap);
 
     rstime_t now = time(NULL);
-    std::vector<RsGxsGroupId> grps_to_delete;
 
 #ifdef DEBUG_GXSUTIL
     uint16_t service_type = mGenExchangeClient->serviceType() ;
@@ -108,8 +107,6 @@ bool RsGxsCleanUp::clean(RsGxsGroupId& next_group_to_check)
 #ifdef DEBUG_GXSUTIL
             GXSUTIL_DEBUG() << "  Cleaning up group message for group ID " << grpId << std::endl;
 #endif
-            GxsMsgReq messages_to_delete;
-
             uint32_t store_period = mGenExchangeClient->getStoragePeriod(grpId) ;
 
             for(; mit != result.end(); ++mit)
@@ -151,7 +148,6 @@ bool RsGxsCleanUp::clean(RsGxsGroupId& next_group_to_check)
                     if( remove )
                     {
                         messages_to_delete[grpId].insert(meta->mMsgId);
-
 #ifdef DEBUG_GXSUTIL
                         std::cerr << "    Scheduling for removal." << std::endl;
 #endif
@@ -163,8 +159,6 @@ bool RsGxsCleanUp::clean(RsGxsGroupId& next_group_to_check)
                     //delete meta;
                 }
             }
-
-            mDs->removeMsgs(messages_to_delete);
         }
 
         ++it;
@@ -194,8 +188,6 @@ bool RsGxsCleanUp::clean(RsGxsGroupId& next_group_to_check)
             break;
         }
     }
-
-    mDs->removeGroups(grps_to_delete);
 
     return full_round;
 }

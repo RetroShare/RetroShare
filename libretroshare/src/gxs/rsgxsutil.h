@@ -143,7 +143,7 @@ public:
      * Deletion will process by chunk size
      * @return true if no more messages to delete, false otherwise
      */
-    bool clean(RsGxsGroupId &last_checked_group);
+    bool clean(RsGxsGroupId& next_group_to_check,std::vector<RsGxsGroupId>& grps_to_delete,GxsMsgReq& messages_to_delete);
 
 private:
 

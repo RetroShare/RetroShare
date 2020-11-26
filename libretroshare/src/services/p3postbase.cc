@@ -910,7 +910,9 @@ public:
 
 bool p3PostBase::service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta)
 {
+#ifdef GXSFORUMS_CHANNELS
     std::cerr << "p3gxsChannels: Checking unused board: called by GxsCleaning." << std::endl;
+#endif
 
     // request all group infos at once
 
@@ -921,14 +923,18 @@ bool p3PostBase::service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta)
     auto it = mKnownPosted.find(meta.mGroupId);
     bool unknown_posted = (it == mKnownPosted.end());
 
+#ifdef GXSFORUMS_CHANNELS
     std::cerr << "  Board " << meta.mGroupId ;
+#endif
 
     if(unknown_posted)
     {
         // This case should normally not happen. It does because this board was never registered since it may
         // arrived before this code was here
 
+#ifdef GXSFORUMS_CHANNELS
         std::cerr << ". Not known yet. Adding current time as new TS." << std::endl;
+#endif
         mKnownPosted[meta.mGroupId] = now;
         IndicateConfigChanged();
 
@@ -943,12 +949,16 @@ bool p3PostBase::service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta)
 
         if(!subscribed && !used_by_friends)
         {
+#ifdef GXSFORUMS_CHANNELS
             std::cerr << ". Scheduling for deletion" << std::endl;
+#endif
             return false;
         }
         else
         {
+#ifdef GXSFORUMS_CHANNELS
             std::cerr << ". Keeping!" << std::endl;
+#endif
             return true;
         }
     }
