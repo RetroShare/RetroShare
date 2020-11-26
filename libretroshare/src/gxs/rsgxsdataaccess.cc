@@ -709,44 +709,46 @@ void RsGxsDataAccess::processRequests()
 
 	while (!mRequestQueue.empty())
 	{
-        // Extract the first elements from the request queue. cleanup all other elements marked at terminated.
+		// Extract the first elements from the request queue. cleanup all other elements marked at terminated.
 
 		GxsRequest* req = nullptr;
 		{
 			RsStackMutex stack(mDataMutex); /******* LOCKED *******/
-            rstime_t now = time(nullptr); // this is ok while in the loop below
+			rstime_t now = time(nullptr); // this is ok while in the loop below
 
-            while(!mRequestQueue.empty() && req == nullptr)
-            {
-                if(now > mRequestQueue.begin()->second->reqTime + MAX_REQUEST_AGE)
-                {
+			while(!mRequestQueue.empty() && req == nullptr)
+			{
+				if(now > mRequestQueue.begin()->second->reqTime + MAX_REQUEST_AGE)
+				{
+					delete mRequestQueue.begin()->second;
 					mRequestQueue.erase(mRequestQueue.begin());
 					continue;
-                }
+				}
 
-                switch( mRequestQueue.begin()->second->status )
-                {
-                case PARTIAL:
-                    RsErr() << "Found partial request in mRequestQueue. This is a bug." << std::endl;	// fallthrough
-                case COMPLETE:
-                case DONE:
-                case FAILED:
-                case CANCELLED:
+				switch( mRequestQueue.begin()->second->status )
+				{
+					case PARTIAL:
+						RsErr() << "Found partial request in mRequestQueue. This is a bug." << std::endl;	// fallthrough
+					case COMPLETE:
+					case DONE:
+					case FAILED:
+					case CANCELLED:
 #ifdef DATA_DEBUG
-							RsDbg() << "  request " << mRequestQueue.begin()->second->token << ": status = " << mRequestQueue.begin()->second->status << ": removing from the RequestQueue" << std::endl;
+						RsDbg() << "  request " << mRequestQueue.begin()->second->token << ": status = " << mRequestQueue.begin()->second->status << ": removing from the RequestQueue" << std::endl;
 #endif
-                    		mRequestQueue.erase(mRequestQueue.begin());
-                    		continue;
-                    break;
-                case PENDING:
-                    req = mRequestQueue.begin()->second;
-					req->status = PARTIAL;
-					mRequestQueue.erase(mRequestQueue.begin()); // remove it right away from the waiting queue.
-                    break;
-                }
+						delete mRequestQueue.begin()->second;
+						mRequestQueue.erase(mRequestQueue.begin());
+					continue;
+					break;
+					case PENDING:
+						req = mRequestQueue.begin()->second;
+						req->status = PARTIAL;
+						mRequestQueue.erase(mRequestQueue.begin()); // remove it right away from the waiting queue.
+					break;
+				}
 
-            }
-        }
+			}
+		} // END OF MUTEX.
 
 		if (!req)
 			break;
@@ -813,33 +815,33 @@ void RsGxsDataAccess::processRequests()
 		else
 			RsErr() << __PRETTY_FUNCTION__ << " Failed to process request, token: " << req->token << std::endl;
 
-        // We cannot easily remove the request here because the queue may have more elements now and mRequestQueue.begin() is not necessarily the same element.
-        // but we mark it as COMPLETE/FAILED so that it will be removed in the next loop.
+		// We cannot easily remove the request here because the queue may have more elements now and mRequestQueue.begin() is not necessarily the same element.
+		// but we mark it as COMPLETE/FAILED so that it will be removed in the next loop.
 		{
 			RsStackMutex stack(mDataMutex); /******* LOCKED *******/
 
-            if(ok)
-            {
-                // When the request is complete, we move it to the complete list, so that the caller can easily retrieve the request data
+			if(ok)
+			{
+				// When the request is complete, we move it to the complete list, so that the caller can easily retrieve the request data
 
 #ifdef DATA_DEBUG
-                RsDbg() << "  Request completed successfully. Marking as COMPLETE." << std::endl;
+				RsDbg() << "  Request completed successfully. Marking as COMPLETE." << std::endl;
 #endif
 				req->status = COMPLETE ;
-                mCompletedRequests[req->token] = req;
-                mPublicToken[req->token] = COMPLETE;
-            }
-            else
-            {
+				mCompletedRequests[req->token] = req;
+				mPublicToken[req->token] = COMPLETE;
+			}
+			else
+			{
 				req->status = FAILED;
-                mPublicToken[req->token] = FAILED;
+				mPublicToken[req->token] = FAILED;
 #ifdef DATA_DEBUG
-                RsDbg() << "  Request failed. Marking as FAILED." << std::endl;
+				RsDbg() << "  Request failed. Marking as FAILED." << std::endl;
 #endif
-            }
-        }
+			}
+		} // END OF MUTEX.
 
-	} // END OF MUTEX.
+	}
 }
 
 
