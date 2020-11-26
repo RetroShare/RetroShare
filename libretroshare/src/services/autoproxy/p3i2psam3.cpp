@@ -74,19 +74,26 @@ bool p3I2pSam3::initialSetup(std::string &addr, uint16_t &/*port*/)
 	} else {
 		std::string s, c;
 		i2p::getKeyTypes(mSetting.address.publicKey, s, c);
-		RS_INFO("received key", s, c);
+		RS_INFO("received key ", s, " ", c);
+		RS_INFO("public key:      ", mSetting.address.publicKey);
+		RS_INFO("private key:     ", mSetting.address.privateKey);
+		RS_INFO("address:         ", i2p::keyToBase32Addr(mSetting.address.publicKey));
 
 		// sanity check
 		auto pub = i2p::publicKeyFromPrivate(mSetting.address.privateKey);
+		RS_INFO("pub key derived: ", pub);
+		RS_INFO("address:         ", i2p::keyToBase32Addr(pub));
 		if (pub != mSetting.address.publicKey) {
 			RS_WARN("public key does not match private key! fixing ...");
-			mSetting.address.privateKey = pub;
+			mSetting.address.publicKey = pub;
 		}
+
+		mSetting.address.base32 = i2p::keyToBase32Addr(mSetting.address.publicKey);
 
 		IndicateConfigChanged();
 	}
 
-	addr = mSetting.address.base32 = i2p::keyToBase32Addr(mSetting.address.publicKey);
+	addr = mSetting.address.base32;
 	return true;
 }
 
@@ -527,9 +534,9 @@ bool p3I2pSam3::startSession()
 	mSetting.address.base32 = i2p::keyToBase32Addr(session->pubkey);
 	// do not overwrite the private key, if any!!
 
-	RS_DBG1("nick:", nick, "address:", mSetting.address.base32);
-	RS_DBG2("  myDestination.pub ", mSetting.address.publicKey);
-	RS_DBG2("  myDestination.priv", mSetting.address.privateKey);
+	RS_DBG1("nick: ", nick, " address: ", mSetting.address.base32);
+	RS_DBG2("  myDestination.pub  ", mSetting.address.publicKey);
+	RS_DBG2("  myDestination.priv ", mSetting.address.privateKey);
 	return true;
 }
 
@@ -555,7 +562,6 @@ bool p3I2pSam3::startForwarding()
 	RS_STACK_MUTEX(mLockSam3Access);
 
 	int ret = sam3StreamForward(mSetting.session, sockaddr_storage_iptostring(ps.localaddr).c_str(), sockaddr_storage_port(ps.localaddr));
-
 	if (ret < 0) {
 		RS_DBG("forward failed, due to", mSetting.session->error);
 		return false;
@@ -639,8 +645,8 @@ void p3I2pSam3::lookupKey(taskTicket *ticket)
 		int ret = sam3NameLookup(&ss, SAM3_HOST_DEFAULT, SAM3_PORT_DEFAULT, addr->base32.c_str());
 		if (ret < 0) {
 			// get error
-			RS_DBG("key:", addr->base32);
-			RS_DBG("got error:", ss.error);
+			RS_DBG("key:       ", addr->base32);
+			RS_DBG("got error: ", ss.error);
 			rsAutoProxyMonitor::taskError(ticket);
 		} else {
 			addr->publicKey = ss.destkey;
