@@ -185,7 +185,7 @@ int FriendSelectionWidget::addColumn(const QString &title)
 	return column;
 }
 
-void FriendSelectionWidget::showEvent(QShowEvent *e)
+void FriendSelectionWidget::showEvent(QShowEvent */*e*/)
 {
     if(gxsIds.empty())
         loadIdentities();
@@ -836,6 +836,9 @@ void FriendSelectionWidget::contextMenuRequested(const QPoint &/*pos*/)
 
 	if (mListModus == MODUS_MULTI) {
 		contextMenu->addAction(QIcon(), tr("Mark all"), this, SLOT(selectAll()));
+		contextMenu->addAction(QIcon(), tr("Mark none"), this, SLOT(deselectAll()));
+	}
+	if (mListModus == MODUS_CHECK) {
 		contextMenu->addAction(QIcon(), tr("Mark none"), this, SLOT(deselectAll()));
 	}
 
