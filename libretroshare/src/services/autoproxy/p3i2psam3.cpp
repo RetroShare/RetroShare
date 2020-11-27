@@ -616,8 +616,16 @@ bool p3I2pSam3::generateKey(std::string &pub, std::string &priv)
 		RS_DBG("got error: ", ss.error);
 		return false;
 	}
+
 	pub = std::string(ss.pubkey);
 	priv = std::string(ss.privkey);
+
+	// sanity check
+	auto p = i2p::publicKeyFromPrivate(priv);
+	if (p != pub) {
+		RS_WARN("public key does not match private key! fixing ...");
+		pub = p;
+	}
 
 	RS_DBG2("publuc key / address ", pub);
 	RS_DBG2("private key ", priv);
