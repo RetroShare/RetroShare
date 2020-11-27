@@ -29,7 +29,7 @@ static const std::string kConfigKeyBOBAddr     = "BOB_ADDR";
 
 static constexpr bool   kDefaultSAM3Enable = false;
 
-RS_SET_CONTEXT_DEBUG_LEVEL(4)
+RS_SET_CONTEXT_DEBUG_LEVEL(2)
 
 static void inline doSleep(std::chrono::duration<long, std::ratio<1,1000>> timeToSleepMS) {
 	std::this_thread::sleep_for(timeToSleepMS);
@@ -48,7 +48,7 @@ p3I2pSam3::p3I2pSam3(p3PeerMgr *peerMgr) :
 	mSetting.enable  = kDefaultSAM3Enable;
 	mSetting.session = nullptr;
 
-	libsam3_debug = 1;
+	libsam3_debug = 0;
 }
 
 bool p3I2pSam3::isEnabled()
