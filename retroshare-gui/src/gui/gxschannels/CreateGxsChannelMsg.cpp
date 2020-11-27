@@ -75,6 +75,7 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
     connect(removeAllFilesButton, SIGNAL(clicked() ), this , SLOT(clearAllAttachments()));
     //connect(addfilepushButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
 	connect(subjectEdit,SIGNAL(textChanged(const QString&)),this,SLOT(updatePreviewText(const QString&)));
+	connect(expandButton, SIGNAL(clicked()), this, SLOT( toggle()));
 
 	connect(addThumbnailButton, SIGNAL(clicked() ), this , SLOT(addThumbnail()));
 	connect(thumbNailCb, SIGNAL(toggled(bool)), this, SLOT(allowAutoMediaThumbNail(bool)));
@@ -86,6 +87,8 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 	channelpostButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/comment.png"));
 	attachmentsButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/attachements.png"));
 	addThumbnailButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/add-image.png"));
+	expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/up-arrow.png")));
+	removeButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/mail/delete.png")));
 
     aspectRatio_CB->setItemIcon(0,FilesDefs::getIconFromQtResourcePath(":/icons/svg/ratio-auto.svg"));
     aspectRatio_CB->setItemIcon(1,FilesDefs::getIconFromQtResourcePath(":/icons/svg/ratio-1-1.svg"));
@@ -113,6 +116,8 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 	generateCheckBox->hide();
 	generateSpinBox->hide();
 #endif
+
+	removeButton->hide();
 
 	/* load settings */
 	processSettings(true);
@@ -824,8 +829,8 @@ void CreateGxsChannelMsg::addThumbnail()
 	picture = img;
 
 	// to show the selected
-    preview_W->setPixmap(picture, aspectRatio_CB->currentIndex()==0);
-
+	preview_W->setPixmap(picture, aspectRatio_CB->currentIndex()==0);
+	removeButton->show();
 }
 
 void CreateGxsChannelMsg::loadOriginalChannelPostInfo()
@@ -869,7 +874,8 @@ void CreateGxsChannelMsg::loadOriginalChannelPostInfo()
 			if(post.mThumbnail.mData != NULL)
 			{
 				GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData,post.mThumbnail.mSize,picture,GxsIdDetails::ORIGINAL);
-                preview_W->setPixmap(picture,true);
+				preview_W->setPixmap(picture,true);
+				removeButton->show();
 			}
 
 
@@ -926,3 +932,28 @@ void CreateGxsChannelMsg::on_attachmentsButton_clicked()
 {
 	stackedWidget->setCurrentIndex(1);
 }
+
+void CreateGxsChannelMsg::toggle()
+{
+	if (expandButton->isChecked())
+	{
+		thumbnailFrame->hide();
+		gridLayoutTextEdit->setContentsMargins(0,9,0,0);
+		expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/down-arrow.png")));
+		expandButton->setToolTip(tr("Show"));
+	}
+	else
+	{
+		thumbnailFrame->show();
+		gridLayoutTextEdit->setContentsMargins(0,0,0,0);
+		expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/up-arrow.png")));
+		expandButton->setToolTip(tr("Hide"));
+	}
+}
+
+void CreateGxsChannelMsg::on_removeButton_clicked()
+{
+	preview_W->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ChannelPostThumbnailView::CHAN_DEFAULT_IMAGE),true);
+	removeButton->hide();
+}
+
