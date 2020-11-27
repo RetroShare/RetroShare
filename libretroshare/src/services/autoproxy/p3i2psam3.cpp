@@ -64,12 +64,12 @@ bool p3I2pSam3::initialSetup(std::string &addr, uint16_t &/*port*/)
 	RS_STACK_MUTEX(mLock);
 
 	if (!mSetting.address.publicKey.empty() || !mSetting.address.privateKey.empty())
-		RS_DBG("overwriting keys!");
+		RS_WARN("overwriting keys!");
 
 	bool success = generateKey(mSetting.address.publicKey, mSetting.address.privateKey);
 
 	if (!success) {
-		RS_DBG("failed to retrieve keys");
+		RS_WARN("failed to retrieve keys");
 		return false;
 	} else {
 		std::string s, c;
@@ -613,14 +613,14 @@ bool p3I2pSam3::generateKey(std::string &pub, std::string &priv)
 	Sam3Session ss;
 
 	if (0 > sam3GenerateKeys(&ss, SAM3_HOST_DEFAULT, SAM3_PORT_DEFAULT, Sam3SigType::EdDSA_SHA512_Ed25519)) {
-		RS_DBG("got error:", ss.error);
+		RS_DBG("got error: ", ss.error);
 		return false;
 	}
 	pub = std::string(ss.pubkey);
 	priv = std::string(ss.privkey);
 
-	RS_DBG2("publuc key / address", pub);
-	RS_DBG2("private key", priv);
+	RS_DBG2("publuc key / address ", pub);
+	RS_DBG2("private key ", priv);
 
 	return true;
 }
