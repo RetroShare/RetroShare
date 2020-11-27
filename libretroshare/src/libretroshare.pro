@@ -1029,7 +1029,10 @@ rs_sam3_libsam3 {
     libsam3.CONFIG += target_predeps combine
     libsam3.variable_out = PRE_TARGETDEPS
     libsam3.commands = \
-        cd $${RS_SRC_PATH} && \
+        cd $${RS_SRC_PATH} && ( \
+        git submodule update --init supportlibs/libsam3 || \
+        true ) && \
+        mkdir -p $${UDP_DISCOVERY_BUILD_PATH} && \
         cp -r $${LIBSAM3_SRC_PATH}/* $${LIBSAM3_BUILD_PATH} && \
         cd $${LIBSAM3_BUILD_PATH} && \
         $(MAKE) build
