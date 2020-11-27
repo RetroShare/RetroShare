@@ -324,7 +324,7 @@ class RsTurtleGenericTunnelItem: public RsTurtleItem
 class RsTurtleGenericDataItem: public RsTurtleGenericTunnelItem
 {
 	public:
-        RsTurtleGenericDataItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_GENERIC_DATA), data_size(0), data_bytes(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_REQUEST);}
+        RsTurtleGenericDataItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_GENERIC_DATA), data_size(0), data_bytes(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_GENERIC_DATA);}
 		virtual ~RsTurtleGenericDataItem() { if(data_bytes != NULL) free(data_bytes) ; }
 
 		virtual bool shouldStampTunnel() const { return true ; }

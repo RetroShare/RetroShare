@@ -1221,9 +1221,12 @@ bool p3GxsTunnelService::locked_sendClearTunnelData(RsGxsTunnelDHPublicKeyItem *
     std::cerr << "GxsTunnelService::sendClearTunnelData(): try sending item " << (void*)item << " to peer " << item->PeerId() << std::endl;
 #endif
 
-    // make a TurtleGenericData item out of it, and send it in clear.
-    //
+    // make a RsTurtleGenericData item out of it, and send it in clear.
+    // this is compatible with nodes older than 0.6.6
     RsTurtleGenericDataItem *gitem = new RsTurtleGenericDataItem ;
+    // force item priority to QOS_PRIORITY_RS_TURTLE_GENERIC_FAST_DATA to make the DH exchange faster on 0.6.6+ nodes
+    // this will not affect old nodes
+    gitem->setPriorityLevel(QOS_PRIORITY_RS_TURTLE_GENERIC_FAST_DATA);
 
     RsGxsTunnelSerialiser ser ;
 
