@@ -292,6 +292,11 @@ void ChatWidget::addTitleBarWidget(QWidget *w)
 	ui->pluginTitleFrame->layout()->addWidget(w) ;
 }
 
+void ChatWidget::addTopBarWidget(QWidget *w)
+{
+	ui->pluginTopFrame->layout()->addWidget(w) ;
+}
+
 void ChatWidget::hideChatText(bool hidden)
 {
 	ui->chatTextFrame->setHidden(hidden); ;

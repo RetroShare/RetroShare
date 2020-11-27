@@ -62,7 +62,7 @@ PopupDistantChatDialog::PopupDistantChatDialog(const DistantChatPeerId& tunnel_i
 
 	_update_timer->start() ;
 
-	getChatWidget()->addChatBarWidget(_status_label) ;
+	getChatWidget()->addTopBarWidget(_status_label) ;
 	updateDisplay() ;
 }
 
