@@ -797,13 +797,13 @@ public:
 	 * @jsonapi{development}
 	 * @param[in] sslId Id of the peer of which we want to generate an invite,
 	 *	a null id (all 0) is passed, an invite for own node is returned.
-	 * @param[in] includeSignatures true to add key signatures to the invite
-	 * @param[in] includeExtraLocators false to avoid to add extra locators
+	 * @param[in] inviteFlags specify extra data to include in the invite
 	 * @return invite string
 	 */
 	virtual std::string GetRetroshareInvite(
-	        const RsPeerId& sslId = RsPeerId(),
-            RetroshareInviteFlags = RetroshareInviteFlags::DNS | RetroshareInviteFlags::CURRENT_IP ) = 0;
+	            const RsPeerId& sslId = RsPeerId(),
+	            RetroshareInviteFlags inviteFlags =
+	        RetroshareInviteFlags::DNS | RetroshareInviteFlags::CURRENT_IP ) = 0;
 
 	/**
 	 * @brief Get RetroShare short invite of the given peer
@@ -811,19 +811,19 @@ public:
 	 * @param[out] invite storage for the generated invite
 	 * @param[in] sslId Id of the peer of which we want to generate an invite,
 	 *	a null id (all 0) is passed, an invite for own node is returned.
-	 * @param[in] formatRadix true to get in base64 format false to get URL.
-	 * @param[in] bareBones true to get smallest invite, which miss also
-	 *	the information necessary to attempt an outgoing connection, but still
-	 *	enough to accept an incoming one.
+	 * @param[in] inviteFlags specify extra data to include in the invite and
+	 *	format.
 	 * @param[in] baseUrl URL into which to sneak in the RetroShare invite
 	 *	radix, this is primarly useful to trick other applications into making
 	 *	the invite clickable, or to disguise the RetroShare invite into a
 	 *	"normal" looking web link. Used only if formatRadix is false.
 	 * @return false if error occurred, true otherwise
 	 */
-    virtual bool getShortInvite(std::string& invite, const RsPeerId& sslId = RsPeerId(),
-            RetroshareInviteFlags locator_flags = RetroshareInviteFlags::CURRENT_IP | RetroshareInviteFlags::DNS,
-	        const std::string& baseUrl = "https://retroshare.me/" ) = 0;
+	virtual bool getShortInvite(
+	            std::string& invite, const RsPeerId& sslId = RsPeerId(),
+	            RetroshareInviteFlags inviteFlags =
+	        RetroshareInviteFlags::CURRENT_IP | RetroshareInviteFlags::DNS,
+	            const std::string& baseUrl = "https://retroshare.me/" ) = 0;
 
 	/**
 	 * @brief Parse the give short invite to extract contained information

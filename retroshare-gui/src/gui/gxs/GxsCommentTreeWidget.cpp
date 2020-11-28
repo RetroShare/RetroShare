@@ -313,7 +313,11 @@ void GxsCommentTreeWidget::setCurrentCommentMsgId(QTreeWidgetItem *current, QTre
 		mCurrentCommentText = current->text(PCITEM_COLUMN_COMMENT);
 		mCurrentCommentAuthor = current->text(PCITEM_COLUMN_AUTHOR);
 		mCurrentCommentAuthorId = RsGxsId(current->text(PCITEM_COLUMN_AUTHORID).toStdString());
-
+	} else {
+		mCurrentCommentMsgId.clear();
+		mCurrentCommentText.clear();
+		mCurrentCommentAuthor.clear();
+		mCurrentCommentAuthorId.clear();
 	}
 }
 
@@ -323,19 +327,22 @@ void GxsCommentTreeWidget::customPopUpMenu(const QPoint& point)
 
 	QMenu contextMnu( this );
 	QAction* action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_REPLY), tr("Reply to Comment"), this, SLOT(replyToComment()));
-	action->setDisabled(mCurrentCommentMsgId.isNull());
+	action->setDisabled(!item || mCurrentCommentMsgId.isNull());
+
 	action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MESSAGE), tr("Submit Comment"), this, SLOT(makeComment()));
 	action->setDisabled(mMsgVersions.empty());
+
 	action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPY), tr("Copy Comment"), this, SLOT(copyComment()));
-    action->setData( item->data(PCITEM_COLUMN_COMMENT,Qt::DisplayRole) );
-    action->setDisabled(mCurrentCommentMsgId.isNull());
+    action->setData( item ? item->data(PCITEM_COLUMN_COMMENT,Qt::DisplayRole) : "" );
+    action->setDisabled(!item || mCurrentCommentMsgId.isNull());
 
 	contextMnu.addSeparator();
 
 	action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_VOTEUP), tr("Vote Up"), this, SLOT(voteUp()));
-	action->setDisabled(mVoterId.isNull());
+	action->setDisabled(!item || mCurrentCommentMsgId.isNull() || mVoterId.isNull());
+
 	action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_VOTEDOWN), tr("Vote Down"), this, SLOT(voteDown()));
-	action->setDisabled(mVoterId.isNull());
+	action->setDisabled(!item || mCurrentCommentMsgId.isNull() || mVoterId.isNull());
 
 
 	if (!mCurrentCommentMsgId.isNull())

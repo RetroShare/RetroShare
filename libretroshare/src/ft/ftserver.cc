@@ -1083,6 +1083,8 @@ bool ftServer::sendTurtleItem(const RsPeerId& peerId,const RsFileHash& hash,RsTu
 		if(!encryptItem(item, hash, encrypted_item))
 			return false ;
 
+                encrypted_item->setPriorityLevel(item->priority_level());
+
 		delete item ;
 
 		mTurtleRouter->sendTurtleData(peerId,encrypted_item) ;

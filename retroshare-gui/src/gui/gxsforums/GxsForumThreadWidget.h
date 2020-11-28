@@ -224,6 +224,7 @@ private:
 	QColor mBackgroundColorPinned;
 	QColor mBackgroundColorFiltered;
 
+	std::map<RsGxsGroupId,RsGxsMessageId> mLastSelectedPosts;
 	RsGxsMessageId mNavigatePendingMsgId;
 	QList<RsGxsMessageId> mIgnoredMsgId;
 

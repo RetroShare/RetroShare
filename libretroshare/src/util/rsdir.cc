@@ -892,6 +892,10 @@ int RsDirUtil::createLockFile(const std::string& lock_file_path, rs_lock_handle_
 			return 2;
 	}
 
+	// Write to lock file our pid
+	std::string ourPID = std::to_string(::getpid());
+	write(lock_handle, ourPID.c_str(), sizeof(char)*ourPID.size() );
+
 	return 0;
 #else
 //	Suspended. The user should make sure he's not already using the file descriptor.
