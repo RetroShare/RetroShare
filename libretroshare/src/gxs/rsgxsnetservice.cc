@@ -308,7 +308,7 @@ static const uint32_t GROUP_STATS_UPDATE_DELAY                =          240; //
 static const uint32_t GROUP_STATS_UPDATE_NB_PEERS             =            2; // number of peers to which the group stats are asked
 static const uint32_t MAX_ALLOWED_GXS_MESSAGE_SIZE            =       199000; // 200,000 bytes including signature and headers
 static const uint32_t MIN_DELAY_BETWEEN_GROUP_SEARCH          =           40; // dont search same group more than every 40 secs.
-static const uint32_t SAFETY_DELAY_FOR_UNSUCCESSFUL_UPDATE    =         1800; // avoid re-sending the same msg list to a peer who asks twice for the same update in less than this time
+static const uint32_t SAFETY_DELAY_FOR_UNSUCCESSFUL_UPDATE    =            0; // avoid re-sending the same msg list to a peer who asks twice for the same update in less than this time
 
 static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_UNKNOWN             = 0x00 ;
 static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_NO_ERROR            = 0x01 ;
