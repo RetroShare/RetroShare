@@ -506,10 +506,10 @@ bool p3I2pSam3::startSession()
 
 		if(!mSetting.address.privateKey.empty()) {
 			RS_DBG3("with destination");
-			ret = sam3CreateSilentSession(session, SAM3_HOST_DEFAULT, SAM3_PORT_DEFAULT, mSetting.address.privateKey.c_str(), Sam3SessionType::SAM3_SESSION_STREAM, Sam3SigType::EdDSA_SHA512_Ed25519, paramsStr.c_str());
+			ret = sam3CreateSession(session, SAM3_HOST_DEFAULT, SAM3_PORT_DEFAULT, mSetting.address.privateKey.c_str(), Sam3SessionType::SAM3_SESSION_STREAM, Sam3SigType::EdDSA_SHA512_Ed25519, paramsStr.c_str());
 		} else {
 			RS_DBG("without destination");
-			ret = sam3CreateSilentSession(session, SAM3_HOST_DEFAULT, SAM3_PORT_DEFAULT, SAM3_DESTINATION_TRANSIENT, Sam3SessionType::SAM3_SESSION_STREAM, Sam3SigType::EdDSA_SHA512_Ed25519, paramsStr.c_str());
+			ret = sam3CreateSession(session, SAM3_HOST_DEFAULT, SAM3_PORT_DEFAULT, SAM3_DESTINATION_TRANSIENT, Sam3SessionType::SAM3_SESSION_STREAM, Sam3SigType::EdDSA_SHA512_Ed25519, paramsStr.c_str());
 		}
 	}
 
@@ -561,6 +561,7 @@ bool p3I2pSam3::startForwarding()
 
 	RS_STACK_MUTEX(mLockSam3Access);
 
+	mSetting.session->silent = true;
 	int ret = sam3StreamForward(mSetting.session, sockaddr_storage_iptostring(ps.localaddr).c_str(), sockaddr_storage_port(ps.localaddr));
 	if (ret < 0) {
 		RS_DBG("forward failed, due to", mSetting.session->error);
@@ -686,6 +687,7 @@ void p3I2pSam3::establishConnection(taskTicket *ticket)
 		{
 			auto l = this->mLockSam3Access;
 			RS_STACK_MUTEX(l);
+			mSetting.session->silent = false;
 			connection = sam3StreamConnect(this->mSetting.session, wrapper->address.publicKey.c_str());
 		}
 
