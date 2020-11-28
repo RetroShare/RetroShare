@@ -50,8 +50,10 @@ std::string publicKeyFromPrivate(std::string const &priv)
 	 * https://geti2p.net/spec/common-structures#keysandcert
 	 * https://geti2p.net/spec/common-structures#certificate
 	 */
-	if (priv.empty() || priv.length() < 884) // base64 ( = 663 bytes = KeyCert + priv Keys)
+	if (priv.length() < privKeyMinLenth_b64) {
+		RS_WARN("key to short!");
 		return std::string();
+	}
 
 	// creat a copy to work on, need to convert it to standard base64
 	auto priv_copy(priv);
@@ -163,8 +165,10 @@ std::string publicKeyFromPrivate(std::string const &priv)
 
 bool getKeyTypes(const std::string &key, std::string &signingKey, std::string &cryptoKey)
 {
-	if (key.length() < 522) // base64 (391 bytes = 384 bytes + 7 bytes = KeysAndCert + Certificate)
+	if (key.length() < pubKeyMinLenth_b64) {
+		RS_WARN("key to short!");
 		return false;
+	}
 
 	// creat a copy to work on, need to convert it to standard base64
 	auto key_copy(key);

@@ -186,6 +186,39 @@ static const std::array<std::pair<uint16_t, uint16_t>, 12> signingKeyLengths {
 	/*SigningKeyType::RedDSA_SHA512_Ed25519  */ std::make_pair<uint16_t, uint16_t>( 32,  32),
 };
 
+/*
+ * Key length infos:
+ *
+ * BOB private key
+ * len b64: 884
+ * len pln: 663
+ *
+ * BOB public key / destination
+ * len b64: 516
+ * len pln: 387
+ *
+ * SAMv3 private key
+ * len b64: 908
+ * len pln: 679
+ *
+ * SAMv3 public key
+ * len b64: 516
+ * len pln: 387
+ *
+ * Example:
+ * in bytes, public key only
+ *   384 (Key) + 3 (Null certificate) = 387 bytes
+ *   384 (Key) + 7 (key  certificate) = 391 bytes
+ *
+ * in bytes public + private key
+ *   384 (Key) + 3 (Null certificate) + 256 (ElGamal) + 20 (DSA_SHA1) = 663 bytes
+ *   384 (Key) + 7 (key  certificate) + 256 (ElGamal) + 32 (EdDSA_SHA512_Ed25519) = 679 bytes
+ */
+constexpr size_t pubKeyMinLenth_b64 = 516;
+constexpr size_t pubKeyMinLenth_bin = 387;
+constexpr size_t privKeyMinLenth_b64 = 884;
+constexpr size_t privKeyMinLenth_bin = 663;
+
 /**
  * @brief makeOption Creates the string "lhs=rhs" used by BOB and SAM. Converts rhs
  * @param lhs option to set
