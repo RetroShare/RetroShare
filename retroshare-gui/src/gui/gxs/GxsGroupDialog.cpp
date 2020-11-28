@@ -852,7 +852,7 @@ void GxsGroupDialog::cancelDialog()
 
 void GxsGroupDialog::addGroupLogo() 
 {
-	QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load Group Logo"), 64, 64);
+	QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load Group Logo"), 96, 96);
 	
 	if (img.isNull())
 		return;
