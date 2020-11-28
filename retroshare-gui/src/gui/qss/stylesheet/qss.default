@@ -224,6 +224,12 @@ GenCertDialog QLabel#entropy_label
 	qproperty-fontSizeFactor: 115;
 }
 
+PostedListWidgetWithModel QLabel#namelabel
+{
+	qproperty-fontSizeFactor: 250;
+}
+
+
 /* OpModeStatus need to be at end to overload other values*/
 OpModeStatus {
 	qproperty-opMode_Full_Color: #CCFFCC;
