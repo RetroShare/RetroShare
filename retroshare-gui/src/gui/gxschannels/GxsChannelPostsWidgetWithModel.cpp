@@ -917,7 +917,7 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
 		navigate(mNavigatePendingMsgId);
 
 	else if( (mLastSelectedPosts.count(groupId()) > 0)
-	         && !mLastSelectedPosts[groupId()].isNull())
+             && !mLastSelectedPosts[groupId()].isNull())
 	{
 		QModelIndex index = mChannelPostsModel->getIndexOfMessage(mLastSelectedPosts[groupId()]);
 
@@ -937,7 +937,7 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
     mChannelFilesModel->setFiles(files);
 
     ui->channelFiles_TV->setAutoSelect(true);
-    ui->channelFiles_TV->sortByColumn(0, Qt::AscendingOrder);
+    ui->channelFiles_TV->sortByColumn(3, Qt::AscendingOrder);
 
     ui->infoPosts->setText(QString::number(mChannelPostsModel->getNumberOfPosts()) + " / " + QString::number(mGroup.mMeta.mVisibleMsgCount));
 
