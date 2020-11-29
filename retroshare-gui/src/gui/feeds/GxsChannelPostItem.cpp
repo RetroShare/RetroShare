@@ -221,6 +221,10 @@ void GxsChannelPostItem::setup()
 	//ui->subjectLabel->setMinimumWidth(100);
     //ui->warning_label->setMinimumWidth(100);
 
+	ui->logoLabel->setEnableZoom(false);
+	int desired_height = QFontMetricsF(font()).height() * 8;
+	ui->logoLabel->setFixedSize(4/3.0*desired_height,desired_height);
+
 	ui->mainFrame->setProperty("new", false);
 	ui->mainFrame->style()->unpolish(ui->mainFrame);
 	ui->mainFrame->style()->polish(  ui->mainFrame);
@@ -435,24 +439,16 @@ void GxsChannelPostItem::fill()
 	if(mPost.mThumbnail.mData != NULL)
 	{
 		QPixmap thumbnail;	
-		
-        ui->logoLabel->setScaledContents(true);
+
+		ui->logoLabel->setScaledContents(true);
 
 		GxsIdDetails::loadPixmapFromData(mPost.mThumbnail.mData, mPost.mThumbnail.mSize, thumbnail,GxsIdDetails::ORIGINAL);
 		// Wiping data - as its been passed to thumbnail.
-//		if( thumbnail.width() < 90 ){
-//			ui->logoLabel->setMaximumSize(82*f,108*f);
-//		}
-//		else if( thumbnail.width() < 109 ){
-//			ui->logoLabel->setMinimumSize(108*f,108*f);
-//			ui->logoLabel->setMaximumSize(108*f,108*f);
-//		}
-//		else{
-//			ui->logoLabel->setMinimumSize(156*f,108*f);
-//			ui->logoLabel->setMaximumSize(156*f,108*f);
-//		}
+
 		ui->logoLabel->setPixmap(thumbnail);
 	}
+	else
+		ui->logoLabel->setPicture( FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default-video.png") );
 
 	if( !IS_GROUP_PUBLISHER(mGroupMeta.mSubscribeFlags) )
 		ui->editButton->hide() ;

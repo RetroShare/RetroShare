@@ -52,7 +52,7 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <widget class="QLabel" name="logoLabel">
+           <widget class="ZoomableLabel" name="logoLabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
               <horstretch>0</horstretch>
@@ -474,6 +474,11 @@
    <extends>QLabel</extends>
    <header location="global">gui/common/ElidedLabel.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ZoomableLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/gxschannels/GxsChannelPostThumbnail.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
