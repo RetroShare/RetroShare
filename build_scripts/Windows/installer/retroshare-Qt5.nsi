@@ -314,6 +314,8 @@ ${!defineifexist} PLUGIN_VOIP_EXISTS "${RELEASEDIR}\plugins\VOIP\lib\VOIP.dll"
     Section $(Section_Plugin_VOIP) Section_Plugin_VOIP
       SetOutPath "$DataDir\extensions6"
       File "${RELEASEDIR}\plugins\VOIP\lib\VOIP.dll"
+      SetOutPath "$INSTDIR\sounds"
+      File /r "${SOURCEDIR}\plugins\VOIP\gui\sounds\*.*"
     SectionEnd
   !endif
   SectionGroupEnd
