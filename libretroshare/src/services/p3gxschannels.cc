@@ -1130,12 +1130,14 @@ void p3GxsChannels::handleUnprocessedPost(const RsGxsChannelPost &msg)
 
 
 	// Overloaded from GxsTokenQueue for Request callbacks.
-void p3GxsChannels::handleResponse(uint32_t token, uint32_t req_type)
+void p3GxsChannels::handleResponse(uint32_t token, uint32_t req_type
+                                   , RsTokenService::GxsRequestStatus status)
 {
 #ifdef GXSCHANNELS_DEBUG
-	std::cerr << "p3GxsChannels::handleResponse(" << token << "," << req_type << ")";
-	std::cerr << std::endl;
+	std::cerr << "p3GxsChannels::handleResponse(" << token << "," << req_type << "," << status << ")" << std::endl;
 #endif // GXSCHANNELS_DEBUG
+	if (status != RsTokenService::COMPLETE)
+		return; //For now, only manage Complete request
 
 	// stuff.
 	switch(req_type)
