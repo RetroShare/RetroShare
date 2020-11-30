@@ -67,6 +67,7 @@ void GxsForumsDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> eve
             break;
 
 		case RsForumEventCode::NEW_FORUM:       // [[fallthrough]];
+        case RsForumEventCode::DELETED_FORUM:       // [[fallthrough]];
         case RsForumEventCode::SUBSCRIBE_STATUS_CHANGED:
             updateDisplay(true);
             break;

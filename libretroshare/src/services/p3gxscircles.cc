@@ -40,7 +40,6 @@
 /****
  * #define DEBUG_CIRCLES	 1
  ****/
- #define DEBUG_CIRCLES	 1
 
 /*extern*/ RsGxsCircles* rsGxsCircles = nullptr;
 
@@ -49,6 +48,8 @@
 /*static*/ const std::string RsGxsCircles::CIRCLE_URL_NAME_FIELD = "circleName";
 /*static*/ const std::string RsGxsCircles::CIRCLE_URL_ID_FIELD = "circleId";
 /*static*/ const std::string RsGxsCircles::CIRCLE_URL_DATA_FIELD = "circleData";
+
+static const uint32_t CIRCLES_UNUSED_BY_FRIENDS_DELAY = 60*86400 ; // 60 days ...O...
 
 RsGxsCircles::~RsGxsCircles() = default;
 RsGxsCircleMsg::~RsGxsCircleMsg() = default;
@@ -142,6 +143,7 @@ p3GxsCircles::p3GxsCircles( RsGeneralDataService *gds, RsNetworkExchangeService 
       RsGxsCircles(static_cast<RsGxsIface&>(*this)), GxsTokenQueue(this),
       RsTickEvent(), mIdentities(identities), mPgpUtils(pgpUtils),
       mCircleMtx("p3GxsCircles"),
+      mKnownCirclesMtx("p3GxsCircles"),
 //      mCircleCache(DEFAULT_MEM_CACHE_SIZE, "GxsCircleCache" ),
       mShouldSendCacheUpdateNotification(false)
 {
@@ -656,8 +658,14 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				addCircleIdToList(RsGxsCircleId(*git), 0);
 
 				circles_to_reload.insert(RsGxsCircleId(*git));
-			}
-				break;
+            }	// fallthrough
+            case RsGxsNotify::TYPE_STATISTICS_CHANGED:
+            {
+                RS_STACK_MUTEX(mKnownCirclesMtx);
+                mKnownCircles[*git] = time(nullptr);
+                IndicateConfigChanged();
+            }
+                break;
 			default:
 #ifdef DEBUG_CIRCLES
 				std::cerr << "    Type: " << c->getType() << " is ignored" << std::endl;
@@ -690,7 +698,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 							ev->mCircleId = RsGxsCircleId(*git);
 							ev->mGxsId = gxs_id;
 
-							rsEvents->sendEvent(ev);
+                            rsEvents->postEvent(ev);
 						}
                 }
                 else if(c->getType()==RsGxsNotify::TYPE_UPDATED)
@@ -720,7 +728,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 							ev->mCircleId = circle_id;
 							ev->mGxsId = gxs_id;
 
-							rsEvents->sendEvent(ev);
+                            rsEvents->postEvent(ev);
 						}
 
 					for(auto& gxs_id: old_circle_grp_item->gxsIdSet.ids)
@@ -732,10 +740,19 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 							ev->mCircleId = circle_id;
 							ev->mGxsId = gxs_id;
 
-							rsEvents->sendEvent(ev);
+                            rsEvents->postEvent(ev);
 						}
 
 				}
+                else if(c->getType()==RsGxsNotify::TYPE_GROUP_DELETED)
+                {
+                    auto ev = std::make_shared<RsGxsCircleEvent>();
+
+                    ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_DELETED;
+                    ev->mCircleId = RsGxsCircleId(groupChange->mGroupId);
+
+                    rsEvents->postEvent(ev);
+                }
             }
         }
 
@@ -1714,6 +1731,62 @@ void p3GxsCircles::addCircleIdToList(const RsGxsCircleId &circleId, uint32_t cir
     }
 }
 
+bool p3GxsCircles::service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta)
+{
+#ifdef GXSFORUMS_CHANNELS
+    std::cerr << "p3gxsChannels: Checking unused circles: called by GxsCleaning." << std::endl;
+#endif
+
+    // request all group infos at once
+
+    rstime_t now = time(nullptr);
+
+    RS_STACK_MUTEX(mKnownCirclesMtx);
+
+    auto it = mKnownCircles.find(meta.mGroupId);
+    bool unknown_posted = (it == mKnownCircles.end());
+
+#ifdef GXSFORUMS_CHANNELS
+    std::cerr << "  Circle " << meta.mGroupId ;
+#endif
+
+    if(unknown_posted)
+    {
+        // This case should normally not happen. It does because this board was never registered since it may
+        // arrived before this code was here
+
+#ifdef GXSFORUMS_CHANNELS
+        std::cerr << ". Not known yet. Adding current time as new TS." << std::endl;
+#endif
+        mKnownCircles[meta.mGroupId] = now;
+        IndicateConfigChanged();
+
+        return true;
+    }
+    else
+    {
+        bool used_by_friends = (now < it->second + CIRCLES_UNUSED_BY_FRIENDS_DELAY);
+        bool subscribed = static_cast<bool>(meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
+
+        std::cerr << ". subscribed: " << subscribed << ", used_by_friends: " << used_by_friends << " last TS: " << now - it->second << " secs ago (" << (now-it->second)/86400 << " days)";
+
+        if(!subscribed && !used_by_friends)
+        {
+#ifdef GXSFORUMS_CHANNELS
+            std::cerr << ". Scheduling for deletion" << std::endl;
+#endif
+            return false;
+        }
+        else
+        {
+#ifdef GXSFORUMS_CHANNELS
+            std::cerr << ". Keeping!" << std::endl;
+#endif
+            return true;
+        }
+    }
+}
+
 //====================================================================================//
 //                                     Event handling                                 //
 //====================================================================================//
@@ -2074,6 +2147,100 @@ bool p3GxsCircles::processMembershipRequests(uint32_t token)
     return true ;
 }
 
+//====================================================================================//
+//                                     p3Config methods                               //
+//====================================================================================//
+
+static const uint32_t GXS_FORUMS_CONFIG_MAX_TIME_NOTIFY_STORAGE = 86400*30*2 ; // ignore notifications for 2 months
+static const uint8_t  GXS_CIRCLES_CONFIG_SUBTYPE_NOTIFY_RECORD   = 0x01 ;
+
+struct RsGxsCirclesNotifyRecordsItem: public RsItem
+{
+
+    RsGxsCirclesNotifyRecordsItem()
+        : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_GXS_TYPE_CIRCLES_CONFIG,GXS_CIRCLES_CONFIG_SUBTYPE_NOTIFY_RECORD)
+    {}
+
+    virtual ~RsGxsCirclesNotifyRecordsItem() {}
+
+    void serial_process( RsGenericSerializer::SerializeJob j,
+                         RsGenericSerializer::SerializeContext& ctx )
+    { RS_SERIAL_PROCESS(records); }
+
+    void clear() {}
+
+    std::map<RsGxsGroupId,rstime_t> records;
+};
+
+class GxsCirclesConfigSerializer : public RsServiceSerializer
+{
+public:
+    GxsCirclesConfigSerializer() : RsServiceSerializer(RS_SERVICE_GXS_TYPE_CIRCLES_CONFIG) {}
+    virtual ~GxsCirclesConfigSerializer() {}
+
+    RsItem* create_item(uint16_t service_id, uint8_t item_sub_id) const
+    {
+        if(service_id != RS_SERVICE_GXS_TYPE_CIRCLES_CONFIG)
+            return NULL;
+
+        switch(item_sub_id)
+        {
+        case GXS_CIRCLES_CONFIG_SUBTYPE_NOTIFY_RECORD: return new RsGxsCirclesNotifyRecordsItem();
+        default:
+            return NULL;
+        }
+    }
+};
+
+bool p3GxsCircles::saveList(bool& cleanup, std::list<RsItem *>&saveList)
+{
+    cleanup = true ;
+
+    RsGxsCirclesNotifyRecordsItem *item = new RsGxsCirclesNotifyRecordsItem ;
+
+    {
+        RS_STACK_MUTEX(mKnownCirclesMtx);
+        item->records = mKnownCircles ;
+    }
+
+    saveList.push_back(item) ;
+    return true;
+}
+
+bool p3GxsCircles::loadList(std::list<RsItem *>& loadList)
+{
+    while(!loadList.empty())
+    {
+        RsItem *item = loadList.front();
+        loadList.pop_front();
+
+        rstime_t now = time(NULL);
+
+        RsGxsCirclesNotifyRecordsItem *fnr = dynamic_cast<RsGxsCirclesNotifyRecordsItem*>(item) ;
+
+        if(fnr != NULL)
+        {
+            RS_STACK_MUTEX(mKnownCirclesMtx);
+
+            mKnownCircles.clear();
+
+            for(auto it(fnr->records.begin());it!=fnr->records.end();++it)
+                if( now < it->second + GXS_FORUMS_CONFIG_MAX_TIME_NOTIFY_STORAGE)
+                    mKnownCircles.insert(*it) ;
+        }
+
+        delete item ;
+    }
+    return true;
+}
+
+RsSerialiser* p3GxsCircles::setupSerialiser()
+{
+    RsSerialiser* rss = new RsSerialiser;
+    rss->addSerialType(new GxsCirclesConfigSerializer());
+
+    return rss;
+}
 
 //====================================================================================//
 //                                     DEBUG STUFF                                    //

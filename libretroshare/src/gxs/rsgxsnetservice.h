@@ -128,6 +128,8 @@ public:
     virtual void setDefaultKeepAge(uint32_t t) override { mDefaultMsgStorePeriod = t ; }
     virtual void setDefaultSyncAge(uint32_t t) override { mDefaultMsgSyncPeriod = t ; }
 
+    virtual bool msgAutoSync() const override { return mAllowMsgSync; }
+    virtual bool grpAutoSync() const override { return mGrpAutoSync; }
     /*!
      * \brief Search methods.
      * 			These four methods are used to request distant search and receive the results.

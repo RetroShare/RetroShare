@@ -35,114 +35,161 @@
 #	include "rsitems/rsgxschannelitems.h"
 #endif
 
+// The goals of this set of methods is to check GXS messages and groups for consistency, mostly
+// re-ferifying signatures and hashes, to make sure that the data hasn't been tempered. This shouldn't
+// happen anyway, but we still conduct these test as an extra safety measure.
+
 static const uint32_t MAX_GXS_IDS_REQUESTS_NET   =  10 ; // max number of requests from cache/net (avoids killing the system!)
 
-//#define DEBUG_GXSUTIL 1
+#define DEBUG_GXSUTIL 1
 
 #ifdef DEBUG_GXSUTIL
 #define GXSUTIL_DEBUG() std::cerr << "[" << time(NULL)  << "] : GXS_UTIL : " << __FUNCTION__ << " : "
 #endif
 
-RsGxsMessageCleanUp::RsGxsMessageCleanUp(RsGeneralDataService* const dataService, RsGenExchange *genex, uint32_t chunkSize)
+RsGxsCleanUp::RsGxsCleanUp(RsGeneralDataService* const dataService, RsGenExchange *genex, uint32_t chunkSize)
 : mDs(dataService), mGenExchangeClient(genex), CHUNK_SIZE(chunkSize)
 {
-	RsGxsGrpMetaTemporaryMap grpMeta;
-	mDs->retrieveGxsGrpMetaData(grpMeta);
-
-	for(auto cit=grpMeta.begin();cit != grpMeta.end(); ++cit)
-		mGrpMeta.push_back(cit->second);
 }
 
-bool RsGxsMessageCleanUp::clean()
+bool RsGxsCleanUp::clean(RsGxsGroupId& next_group_to_check,std::vector<RsGxsGroupId>& grps_to_delete,GxsMsgReq& messages_to_delete)
 {
-	uint32_t i = 1;
+    RsGxsGrpMetaTemporaryMap grpMetaMap;
+    mDs->retrieveGxsGrpMetaData(grpMetaMap);
 
-	rstime_t now = time(NULL);
-
-#ifdef DEBUG_GXSUTIL
-	uint16_t service_type = mGenExchangeClient->serviceType() ;
-	GXSUTIL_DEBUG() << "  Cleaning up groups in service " << std::hex << service_type << std::dec << std::endl;
-#endif
-	while(!mGrpMeta.empty())
-	{
-		const RsGxsGrpMetaData* grpMeta = mGrpMeta.back();
-		const RsGxsGroupId& grpId = grpMeta->mGroupId;
-		mGrpMeta.pop_back();
-		GxsMsgReq req;
-		GxsMsgMetaResult result;
-
-		req[grpId] = std::set<RsGxsMessageId>();
-		mDs->retrieveGxsMsgMetaData(req, result);
-
-		GxsMsgMetaResult::iterator mit = result.begin();
+    rstime_t now = time(NULL);
 
 #ifdef DEBUG_GXSUTIL
-		GXSUTIL_DEBUG() << "  Cleaning up group message for group ID " << grpId << std::endl;
+    uint16_t service_type = mGenExchangeClient->serviceType() ;
+    GXSUTIL_DEBUG() << "  Cleaning up groups in service " << std::hex << service_type << std::dec << " starting at group " << next_group_to_check << std::endl;
 #endif
-		req.clear();
+    // This method stores/takes the next group to check. This allows to limit group checking to a small part of the total groups
+    // in the situation where it takes too much time. So when arriving here, we must start again from where we left last time.
 
-        uint32_t store_period = mGenExchangeClient->getStoragePeriod(grpId) ;
+    if(grpMetaMap.empty())		// nothing to do.
+    {
+        next_group_to_check.clear();
+        return true;
+    }
 
-		for(; mit != result.end(); ++mit)
-		{
-			std::vector<const RsGxsMsgMetaData*>& metaV = mit->second;
+    auto it = next_group_to_check.isNull()?grpMetaMap.begin() : grpMetaMap.find(next_group_to_check);
 
-            // First, make a map of which message have a child message. This allows to only delete messages that dont have child messages.
-            // A more accurate way to go would be to compute the time of the oldest message and possibly delete all the branch, but in the
-            // end the message tree will be deleted slice after slice, which should still be reasonnably fast.
-            //
-            std::set<RsGxsMessageId> messages_with_kids ;
+    if(it == grpMetaMap.end())		// group wasn't found
+        it = grpMetaMap.begin();
 
-			for( uint32_t i=0;i<metaV.size();++i)
-                if(!metaV[i]->mParentId.isNull())
-                    messages_with_kids.insert(metaV[i]->mParentId) ;
+    bool full_round = false;			// did we have the time to test all groups?
+    next_group_to_check = it->first;	// covers the case where next_group_to_check is null or not found
 
-			for( uint32_t i=0;i<metaV.size();++i)
-			{
-				const RsGxsMsgMetaData* meta = metaV[i];
+    while(true)	// check all groups, starting from the one indicated as parameter
+    {
+        const RsGxsGrpMetaData& grpMeta = *(it->second);
 
-				bool have_kids = (messages_with_kids.find(meta->mMsgId)!=messages_with_kids.end());
+        // first check if we keep the group or not
 
-				// check if expired
-				bool remove = store_period > 0 && ((meta->mPublishTs + store_period) < now) && !have_kids;
+        if(!mGenExchangeClient->service_checkIfGroupIsStillUsed(grpMeta))
+        {
+#ifdef DEBUG_GXSUTIL
+            std::cerr << "  Scheduling group " << grpMeta.mGroupId << " for removal." << std::endl;
+#endif
+            grps_to_delete.push_back(grpMeta.mGroupId);
+        }
+        else
+        {
+            const RsGxsGroupId& grpId = grpMeta.mGroupId;
+            GxsMsgReq req;
+            GxsMsgMetaResult result;
 
-				// check client does not want the message kept regardless of age
-				remove &= !(meta->mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP_FOREVER);
+            req[grpId] = std::set<RsGxsMessageId>();
+            mDs->retrieveGxsMsgMetaData(req, result);
 
-				// if not subscribed remove messages (can optimise this really)
-				remove = remove ||  (grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED);
-				remove = remove || !(grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
+            GxsMsgMetaResult::iterator mit = result.begin();
 
 #ifdef DEBUG_GXSUTIL
-				GXSUTIL_DEBUG() << "    msg id " << meta->mMsgId << " in grp " << grpId << ": keep_flag=" << bool(meta->mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP)
-				                << " subscribed: " << bool(grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) << " store_period: " << store_period
-				                << " kids: " << have_kids << " now - meta->mPublishTs: " << now - meta->mPublishTs ;
+            GXSUTIL_DEBUG() << "  Cleaning up group message for group ID " << grpId << std::endl;
 #endif
+            uint32_t store_period = mGenExchangeClient->getStoragePeriod(grpId) ;
 
-				if( remove )
-				{
-					req[grpId].insert(meta->mMsgId);
-                    
+            for(; mit != result.end(); ++mit)
+            {
+                std::vector<const RsGxsMsgMetaData*>& metaV = mit->second;
+
+                // First, make a map of which message have a child message. This allows to only delete messages that dont have child messages.
+                // A more accurate way to go would be to compute the time of the oldest message and possibly delete all the branch, but in the
+                // end the message tree will be deleted slice after slice, which should still be reasonnably fast.
+                //
+                std::set<RsGxsMessageId> messages_with_kids ;
+
+                for( uint32_t i=0;i<metaV.size();++i)
+                    if(!metaV[i]->mParentId.isNull())
+                        messages_with_kids.insert(metaV[i]->mParentId) ;
+
+                for( uint32_t i=0;i<metaV.size();++i)
+                {
+                    const RsGxsMsgMetaData* meta = metaV[i];
+
+                    bool have_kids = (messages_with_kids.find(meta->mMsgId)!=messages_with_kids.end());
+
+                    // check if expired
+                    bool remove = store_period > 0 && ((meta->mPublishTs + store_period) < now) && !have_kids;
+
+                    // check client does not want the message kept regardless of age
+                    remove &= !(meta->mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP_FOREVER);
+
+                    // if not subscribed remove messages (can optimise this really)
+                    remove = remove ||  (grpMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED);
+                    remove = remove || !(grpMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
+
 #ifdef DEBUG_GXSUTIL
-					std::cerr << "    Scheduling for removal." << std::endl;
+                    GXSUTIL_DEBUG() << "    msg id " << meta->mMsgId << " in grp " << grpId << ": keep_flag=" << bool(meta->mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP_FOREVER)
+                                    << " subscribed: " << bool(grpMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) << " store_period: " << store_period
+                                    << " kids: " << have_kids << " now - meta->mPublishTs: " << now - meta->mPublishTs ;
 #endif
-				}
+
+                    if( remove )
+                    {
+                        messages_to_delete[grpId].insert(meta->mMsgId);
 #ifdef DEBUG_GXSUTIL
-				else
-					std::cerr << std::endl;
+                        std::cerr << "    Scheduling for removal." << std::endl;
 #endif
+                    }
+#ifdef DEBUG_GXSUTIL
+                    else
+                        std::cerr << std::endl;
+#endif
+                    //delete meta;
+                }
+            }
+        }
 
-				//delete meta;
-			}
-		}
+        ++it;
 
-		mDs->removeMsgs(req);
+        if(it == grpMetaMap.end())
+            it = grpMetaMap.begin();
 
-		i++;
-		if(i > CHUNK_SIZE) break;
-	}
+        // check if we looped already
 
-	return mGrpMeta.empty();
+        if(it->first == next_group_to_check)
+        {
+            GXSUTIL_DEBUG() << "Had the time to test all groups. Will start again at " << it->first << std::endl;
+            full_round = true;
+            break;
+        }
+
+        // now check if we spent too much time on this already
+
+        rstime_t tm = time(nullptr);
+
+        //if(tm > now + 1) // we spent more than 1 sec on the job already
+        if(tm > now) // we spent more than 1 sec on the job already
+        {
+            GXSUTIL_DEBUG() << "Aborting cleanup because it took too much time already. Next group left to be " << it->first << std::endl;
+            next_group_to_check = it->first;
+            full_round = false;
+            break;
+        }
+    }
+
+    return full_round;
 }
 
 RsGxsIntegrityCheck::RsGxsIntegrityCheck(
@@ -223,6 +270,8 @@ bool RsGxsIntegrityCheck::check()
 			else msgIds.erase(msgIds.find(grp->grpId));
 
 #ifdef RS_DEEP_CHANNEL_INDEX
+            // This should be moved to p3gxschannels. It is really not the place for this here!
+
 			if( isGxsChannels
 			        && grp->metaData->mCircleType == GXS_CIRCLE_TYPE_PUBLIC
 			        && grp->metaData->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED )
@@ -359,8 +408,9 @@ bool RsGxsIntegrityCheck::check()
 			else if (subscribed_groups.count(msg->metaData->mGroupId))
 			{
 #ifdef RS_DEEP_CHANNEL_INDEX
-				if( isGxsChannels
-				        && indexedGroups.count(msg->metaData->mGroupId) )
+                // This should be moved to p3gxschannels. It is really not the place for this here!
+
+                if( isGxsChannels && indexedGroups.count(msg->metaData->mGroupId) )
 				{
 					RsGxsMsgMetaData meta;
 					meta.deserialise(msg->meta.bin_data, &msg->meta.bin_len);
