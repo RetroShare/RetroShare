@@ -301,36 +301,23 @@ void RsGenExchange::tick()
 		{
 			RS_STACK_MUTEX(mGenMtx) ;
 
-			std::list<RsGxsGroupId> grpIds;
-			std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgIds;
+            std::vector<RsGxsGroupId> grpIds;
+            GxsMsgReq msgIds;
+
 			mIntegrityCheck->getDeletedIds(grpIds, msgIds);
 
-			if (!grpIds.empty())
-			{
-                for(auto& groupId:grpIds)
-				{
-					RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_GROUP_DELETED,groupId, false);
+            if(!msgIds.empty())
+            {
+                uint32_t token1=0;
+                deleteMsgs(token1,msgIds);
+            }
 
-#ifdef GEN_EXCH_DEBUG
-					std::cerr << "  adding the following grp ids to notification: " << std::endl;
-					for(std::list<RsGxsGroupId>::const_iterator it(grpIds.begin());it!=grpIds.end();++it)
-						std::cerr << "    " << *it << std::endl;
-#endif
-					mNotifications.push_back(gc);
-				}
-
-				// also notify the network exchange service that these groups no longer exist.
-
-				if(mNetService)
-					mNetService->removeGroups(grpIds) ;
-			}
-
-            for(auto it(msgIds.begin());it!=msgIds.end();++it)
-                for(auto& msgId:it->second)
-				{
-					RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_MESSAGE_DELETED,it->first, msgId, false);
-					mNotifications.push_back(c);
-				}
+            if(!grpIds.empty())
+                for(auto& grpId: grpIds)
+                {
+                    uint32_t token2=0;
+                    deleteGroup(token2,grpId);
+                }
 
 			delete mIntegrityCheck;
 			mIntegrityCheck = NULL;

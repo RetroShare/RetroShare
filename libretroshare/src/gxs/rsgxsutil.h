@@ -175,12 +175,12 @@ public:
                          RsGenExchange *genex, RsSerialType& gxsSerialiser,
                          RsGixs *gixs);
 
-    bool check();
+    static bool check(uint16_t service_type, RsGixs *mgixs, RsGeneralDataService *mds, std::vector<RsGxsGroupId>& grpsToDel, GxsMsgReq& msgsToDel);
     bool isDone();
 
     void run();
 
-    void getDeletedIds(std::list<RsGxsGroupId>& grpIds, std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgIds);
+    void getDeletedIds(std::vector<RsGxsGroupId> &grpIds, GxsMsgReq &msgIds);
 
 private:
 
@@ -191,8 +191,8 @@ private:
 #endif
     bool mDone;
     RsMutex mIntegrityMutex;
-    std::list<RsGxsGroupId> mDeletedGrps;
-    std::map<RsGxsGroupId, std::set<RsGxsMessageId> > mDeletedMsgs;
+    std::vector<RsGxsGroupId> mDeletedGrps;
+    GxsMsgReq mDeletedMsgs;
 
     RsGixs* mGixs;
 };
