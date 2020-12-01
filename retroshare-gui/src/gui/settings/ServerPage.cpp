@@ -75,13 +75,13 @@ const static uint32_t TAB_RELAYS                  = 3;
 //#define SERVER_DEBUG 1
 
 ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
-    : ConfigPage(parent, flags), mIsHiddenNode(false), mHiddenType(RS_HIDDEN_TYPE_NONE)
+    : ConfigPage(parent, flags)
+    , manager(NULL), mOngoingConnectivityCheck(-1)
+    , mIsHiddenNode(false), mHiddenType(RS_HIDDEN_TYPE_NONE)
+    , mBobAccessible(false)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
-
-  manager = NULL ;
-  mOngoingConnectivityCheck = -1;
 
 #ifndef RS_USE_I2P_BOB
   ui.hiddenServiceTab->removeTab(TAB_HIDDEN_SERVICE_I2P_BOB);	// warning: the order of operation here is very important.
