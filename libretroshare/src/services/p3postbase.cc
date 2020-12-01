@@ -188,7 +188,7 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
           case RsGxsNotify::TYPE_GROUP_DELETED:
            {
                auto ev = std::make_shared<RsGxsPostedEvent>();
-               ev->mPostedGroupId = msgChange->mGroupId;
+               ev->mPostedGroupId = group_id;
                ev->mPostedEventCode = RsPostedEventCode::BOARD_DELETED;
 
                rsEvents->postEvent(ev);
