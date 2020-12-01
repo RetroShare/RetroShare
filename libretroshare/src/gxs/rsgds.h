@@ -159,6 +159,8 @@ public:
 
     /*!
      * Retrieves meta data of all groups stored (most current versions only)
+     * Memory is owned by the service, not the caller. Therefore the pointers in the temporary map
+     * shouldn't be destroyed.
      *
      * @param grp if null grpIds entries are made, only meta for those grpId are retrieved \n
      *            , if grpId is failed to be retrieved it will be erased from map

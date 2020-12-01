@@ -99,9 +99,11 @@ copy "%RsBuildPath%\retroshare-service\src\%RsBuildConfig%\retroshare*-service.e
 if exist "%RsBuildPath%\libretroshare\src\lib\retroshare.dll" copy "%RsBuildPath%\libretroshare\src\lib\retroshare.dll" "%RsDeployPath%" %Quite%
 
 echo copy extensions
-for /D %%D in ("%RsBuildPath%\plugins\*") do (
-	call :copy_extension "%%D" "%RsDeployPath%\Data\%Extensions%"
-	call :copy_dependencies "%RsDeployPath%\Data\%Extensions%\%%~nxD.dll" "%RsDeployPath%"
+if "%ParamPlugins%"=="1" (
+	for /D %%D in ("%RsBuildPath%\plugins\*") do (
+		call :copy_extension "%%D" "%RsDeployPath%\Data\%Extensions%"
+		call :copy_dependencies "%RsDeployPath%\Data\%Extensions%\%%~nxD.dll" "%RsDeployPath%"
+	)
 )
 
 echo copy external binaries
@@ -141,6 +143,9 @@ rmdir /S /Q "%RsDeployPath%\stylesheets\__MACOSX__Bubble" %Quite%
 
 echo copy sounds
 xcopy /S "%SourcePath%\retroshare-gui\src\sounds" "%RsDeployPath%\sounds" %Quite%
+if "%ParamPlugins%"=="1" (
+	xcopy /S "%SourcePath%\plugins\Voip\gui\sounds" "%RsDeployPath%\sounds" %Quite%
+)
 
 echo copy license
 xcopy /S "%SourcePath%\retroshare-gui\src\license" "%RsDeployPath%\license" %Quite%

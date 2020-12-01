@@ -92,19 +92,20 @@ virtual void receiveHelperChanges(std::vector<RsGxsNotify*>& changes)
 	virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts, std::vector<RsGxsComment> &cmts, std::vector<RsGxsVote> &vots) override;
 	virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts, std::vector<RsGxsComment> &cmts) override;
 	virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts) override;
+
 //Not currently used
 //virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsPostedPost> &posts);
 
-virtual bool createGroup(uint32_t &token, RsPostedGroup &group);
-virtual bool createPost(uint32_t &token, RsPostedPost &post);
+virtual bool createGroup(uint32_t &token, RsPostedGroup &group) override;
+virtual bool createPost(uint32_t &token, RsPostedPost &post) override;
 
-virtual bool updateGroup(uint32_t &token, RsPostedGroup &group);
-virtual bool groupShareKeys(const RsGxsGroupId &group, const std::set<RsPeerId>& peers);
+virtual bool updateGroup(uint32_t &token, RsPostedGroup &group) override;
+virtual bool groupShareKeys(const RsGxsGroupId &group, const std::set<RsPeerId>& peers) override;
 
         //////////////////////////////////////////////////////////////////////////////
 	// WRAPPERS due to the separate Interface.
 
-virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read)
+virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) override
 	{
 		return p3PostBase::setMessageReadStatus(token, msgId, read);
 	}
@@ -112,11 +113,11 @@ virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgI
 
 	/** Comment service - Provide RsGxsCommentService -
 	 * redirect to p3GxsCommentService */
-	virtual bool getCommentData(uint32_t token, std::vector<RsGxsComment> &msgs)
+    virtual bool getCommentData(uint32_t token, std::vector<RsGxsComment> &msgs) override
 	{ return mCommentService->getGxsCommentData(token, msgs); }
 
 	virtual bool getRelatedComments( uint32_t token,
-	                                 std::vector<RsGxsComment> &msgs )
+                                     std::vector<RsGxsComment> &msgs ) override
 	{ return mCommentService->getGxsRelatedComments(token, msgs); }
 
 	virtual bool createNewComment(uint32_t &token, const RsGxsComment &msg) override

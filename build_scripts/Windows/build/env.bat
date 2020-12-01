@@ -4,6 +4,7 @@ set ParamDebug=0
 set ParamAutologin=0
 set ParamPlugins=0
 set ParamJsonApi=0
+set ParamUseNativeDialogs=0
 set ParamTor=0
 set NonInteractive=0
 set CoreCount=%NUMBER_OF_PROCESSORS%
@@ -27,6 +28,8 @@ if "%~1" NEQ "" (
 			set NonInteractive=1
 		) else if "%%~a"=="singlethread" (
 			set CoreCount=1
+		) else if "%%~a"=="nativedialogs" (
+			set ParamUseNativeDialogs=1
 		) else (
 			echo.
 			echo Unknown parameter %1
@@ -96,7 +99,7 @@ exit /B 0
 
 :usage
 echo.
-echo Usage: release^|debug [version autologin plugins]
+echo Usage: release^|debug [^<optional parameters^>]
 echo.
 echo Mandatory parameter
 echo release^|debug      Build release or debug version
@@ -105,6 +108,7 @@ echo Optional parameter (need clean when changed)
 echo autologin          Build with autologin
 echo jsonapi            Build with jsonapi
 echo plugins            Build plugins
+echo nativedialogs      Build with native dialogs
 echo.
 echo Optional parameter
 echo singlethread       Use only 1 thread for building

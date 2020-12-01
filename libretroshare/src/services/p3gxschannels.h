@@ -62,6 +62,7 @@ public:
 
 protected:
 
+    virtual bool service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta) override;	// see RsGenExchange
 
     virtual RsSerialiser* setupSerialiser() override;                            // @see p3Config::setupSerialiser()
     virtual bool saveList(bool &cleanup, std::list<RsItem *>&saveList) override; // @see p3Config::saveList(bool &cleanup, std::list<RsItem *>&)
@@ -332,6 +333,7 @@ static uint32_t channelsAuthenPolicy();
 	void clearUnsubscribedGroup(const RsGxsGroupId &id);
 	bool setAutoDownload(const RsGxsGroupId &groupId, bool enabled);
 	bool autoDownloadEnabled(const RsGxsGroupId &groupId, bool &enabled);
+    bool checkForOldAndUnusedChannels();
 
 // DUMMY DATA,
 virtual bool generateDummyData();
@@ -379,6 +381,7 @@ bool generateGroup(uint32_t &token, std::string groupName);
 	RsMutex mKnownChannelsMutex;
 
     rstime_t mLastDistantSearchNotificationTS;
+
     std::map<TurtleRequestId,std::set<RsGxsGroupId> > mSearchResultsToNotify;
 #ifdef TO_REMOVE
 	/** Store search callbacks with timeout*/

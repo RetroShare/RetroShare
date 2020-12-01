@@ -49,10 +49,11 @@ echo.
 
 title Build - %SourceName%-%RsBuildConfig% [qmake]
 
-set RS_QMAKE_CONFIG=%RsBuildConfig%
+set RS_QMAKE_CONFIG=%RsBuildConfig% no_rs_cppwarning
 if "%ParamAutologin%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% rs_autologin
 if "%ParamJsonApi%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% rs_jsonapi
 if "%ParamPlugins%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% retroshare_plugins
+if "%ParamUseNativeDialogs%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% rs_use_native_dialogs
 
 qmake "%SourcePath%\RetroShare.pro" -r -spec win32-g++ "CONFIG+=%RS_QMAKE_CONFIG%" "EXTERNAL_LIB_DIR=%BuildLibsPath%\libs"
 if errorlevel 1 goto error

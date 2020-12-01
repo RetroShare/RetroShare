@@ -48,13 +48,18 @@
 #define POSTBASE_UNPROCESSED_MSGS	0x0012
 #define POSTBASE_ALL_MSGS 		0x0013
 #define POSTBASE_BG_POST_META		0x0014
+
+#define POSTED_UNUSED_BY_FRIENDS_DELAY (2*30*86400)  // delete unused posted groups after 2 months
+
 /********************************************************************************/
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
 p3PostBase::p3PostBase(RsGeneralDataService *gds, RsNetworkExchangeService *nes, RsGixs* gixs,
 	RsSerialType* serviceSerialiser, uint16_t serviceType)
-    : RsGenExchange(gds, nes, serviceSerialiser, serviceType, gixs, postBaseAuthenPolicy()), GxsTokenQueue(this), RsTickEvent(), mPostBaseMtx("PostBaseMtx")
+    : RsGenExchange(gds, nes, serviceSerialiser, serviceType, gixs, postBaseAuthenPolicy()), GxsTokenQueue(this), RsTickEvent(),
+      mPostBaseMtx("PostBaseMutex"),
+      mKnownPostedMutex("PostBaseKnownPostedMutex")
 {
 	mBgProcessing = false;
 
@@ -127,6 +132,7 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
                 }
                     break;
 
+
                 case RsGxsNotify::TYPE_PROCESSED:
                 {
                     auto ev = std::make_shared<RsGxsPostedEvent>();
@@ -179,12 +185,26 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
             }
                 break;
 
+          case RsGxsNotify::TYPE_GROUP_DELETED:
+           {
+               auto ev = std::make_shared<RsGxsPostedEvent>();
+               ev->mPostedGroupId = msgChange->mGroupId;
+               ev->mPostedEventCode = RsPostedEventCode::BOARD_DELETED;
+
+               rsEvents->postEvent(ev);
+           }
+               break;
+
             case RsGxsNotify::TYPE_STATISTICS_CHANGED:
             {
                 auto ev = std::make_shared<RsGxsPostedEvent>();
                 ev->mPostedGroupId = group_id;
                 ev->mPostedEventCode = RsPostedEventCode::STATISTICS_CHANGED;
                 rsEvents->postEvent(ev);
+
+                RS_STACK_MUTEX(mKnownPostedMutex);
+                mKnownPosted[group_id] = time(nullptr);
+                IndicateConfigChanged();
             }
                 break;
 
@@ -205,11 +225,16 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
             {
                 /* group received */
 
-                if(mKnownPosted.find(group_id) == mKnownPosted.end())
+                bool unknown;
                 {
-                    mKnownPosted.insert(std::make_pair(group_id, time(nullptr)));
-                    IndicateConfigChanged();
+                    RS_STACK_MUTEX(mKnownPostedMutex);
 
+                    unknown = (mKnownPosted.find(grpChange->mGroupId) == mKnownPosted.end());
+                    mKnownPosted[group_id] = time(nullptr);
+                    IndicateConfigChanged();
+                }
+                if(unknown)
+                {
                     auto ev = std::make_shared<RsGxsPostedEvent>();
                     ev->mPostedGroupId = group_id;
                     ev->mPostedEventCode = RsPostedEventCode::NEW_POSTED_GROUP;
@@ -895,13 +920,72 @@ public:
 	}
 };
 
-bool p3PostBase::saveList(bool &cleanup, std::list<RsItem *>&saveList)
+bool p3PostBase::service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta)
+{
+#ifdef GXSFORUMS_CHANNELS
+    std::cerr << "p3gxsChannels: Checking unused board: called by GxsCleaning." << std::endl;
+#endif
+
+    // request all group infos at once
+
+    rstime_t now = time(nullptr);
+
+    RS_STACK_MUTEX(mKnownPostedMutex);
+
+    auto it = mKnownPosted.find(meta.mGroupId);
+    bool unknown_posted = (it == mKnownPosted.end());
+
+#ifdef GXSFORUMS_CHANNELS
+    std::cerr << "  Board " << meta.mGroupId ;
+#endif
+
+    if(unknown_posted)
+    {
+        // This case should normally not happen. It does because this board was never registered since it may
+        // arrived before this code was here
+
+#ifdef GXSFORUMS_CHANNELS
+        std::cerr << ". Not known yet. Adding current time as new TS." << std::endl;
+#endif
+        mKnownPosted[meta.mGroupId] = now;
+        IndicateConfigChanged();
+
+        return true;
+    }
+    else
+    {
+        bool used_by_friends = (now < it->second + POSTED_UNUSED_BY_FRIENDS_DELAY);
+        bool subscribed = static_cast<bool>(meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
+
+        std::cerr << ". subscribed: " << subscribed << ", used_by_friends: " << used_by_friends << " last TS: " << now - it->second << " secs ago (" << (now-it->second)/86400 << " days)";
+
+        if(!subscribed && !used_by_friends)
+        {
+#ifdef GXSFORUMS_CHANNELS
+            std::cerr << ". Scheduling for deletion" << std::endl;
+#endif
+            return false;
+        }
+        else
+        {
+#ifdef GXSFORUMS_CHANNELS
+            std::cerr << ". Keeping!" << std::endl;
+#endif
+            return true;
+        }
+    }
+}
+
+bool p3PostBase::saveList(bool& cleanup, std::list<RsItem *>&saveList)
 {
 	cleanup = true ;
 
 	RsGxsPostedNotifyRecordsItem *item = new RsGxsPostedNotifyRecordsItem ;
 
-	item->records = mKnownPosted ;
+    {
+        RS_STACK_MUTEX(mKnownPostedMutex);
+        item->records = mKnownPosted ;
+    }
 
 	saveList.push_back(item) ;
 	return true;
@@ -920,6 +1004,8 @@ bool p3PostBase::loadList(std::list<RsItem *>& loadList)
 
 		if(fnr != NULL)
 		{
+            RS_STACK_MUTEX(mKnownPostedMutex);
+
 			mKnownPosted.clear();
 
 			for(auto it(fnr->records.begin());it!=fnr->records.end();++it)

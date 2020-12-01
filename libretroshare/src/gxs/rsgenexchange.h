@@ -648,6 +648,19 @@ protected:
      */
     virtual ServiceCreate_Return service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet);
 
+    /*!
+     * \brief service_checkIfGroupIsStillUsed
+     * 			Re-implement this function to help GXS cleaning, by telling that some particular group
+     * 			is not used anymore. This usually depends on subscription, the fact that friend nodes send
+     * 			some info or not, and particular cleaning strategy of each service.
+     * 			Besides, groups in some services are used by other services (e.g. identities, circles, are used in
+     * 			forums and so on), so deciding on a group usage can only be left to the specific service it is used in.
+     * \return
+     * 			true if the group is still used, false otherwise, meaning that the group can be deleted. Default is
+     * 			that the group is always in use.
+     */
+    virtual bool service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& /* meta */) { return true; }	// see RsGenExchange
+
 public:
 
     /*!
@@ -959,12 +972,11 @@ private:
 
     bool mCleaning;
     rstime_t mLastClean;
-    RsGxsMessageCleanUp* mMsgCleanUp;
-
 
     bool mChecking, mCheckStarted;
     rstime_t mLastCheck;
     RsGxsIntegrityCheck* mIntegrityCheck;
+    RsGxsGroupId mNextGroupToCheck ;
 
 protected:
 	enum CreateStatus { CREATE_FAIL, CREATE_SUCCESS, CREATE_FAIL_TRY_LATER };
@@ -982,6 +994,8 @@ private:
     std::vector<MsgDeletePublish>   mMsgDeletePublish;
 
     std::map<RsGxsId,std::set<RsPeerId> > mRoutingClues ;
+
+    friend class RsGxsCleanUp;
 };
 
 #endif // RSGENEXCHANGE_H
