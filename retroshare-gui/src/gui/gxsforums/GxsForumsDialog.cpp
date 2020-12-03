@@ -230,6 +230,8 @@ void GxsForumsDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *grou
 
 	if(IS_GROUP_ADMIN(groupData->mMeta.mSubscribeFlags))
         groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/forums.png");
+	else if (!groupData->mMeta.mCircleId.isNull() )
+        groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/circles.png");
 	else if ((IS_GROUP_PGP_AUTHED(groupData->mMeta.mSignFlags)) || (IS_GROUP_MESSAGE_TRACKING(groupData->mMeta.mSignFlags)) )
         groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/forums-signed.png");
 }
