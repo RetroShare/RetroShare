@@ -283,7 +283,7 @@
 //#define NXS_NET_DEBUG_5 	1
 //#define NXS_NET_DEBUG_6 	1
 //#define NXS_NET_DEBUG_7 	1
-#define NXS_NET_DEBUG_8 	1
+//#define NXS_NET_DEBUG_8 	1
 //#define NXS_NET_DEBUG_9 	1
 
 //#define NXS_FRAG
@@ -325,7 +325,7 @@ static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_GXS_KEY_MISSING     = 0x05 ;
 
 static const RsPeerId     peer_to_print     = RsPeerId();//std::string("a97fef0e2dc82ddb19200fb30f9ac575"))   ;
 static const RsGxsGroupId group_id_to_print = RsGxsGroupId();//std::string("66052380f5d1d0c5992e2b55dc402ce6")) ;	// use this to allow to this group id only, or "" for all IDs
-static const uint32_t     service_to_print  = RS_SERVICE_GXS_TYPE_GXSID;                       	// use this to allow to this service id only, or 0 for all services
+static const uint32_t     service_to_print  = RS_SERVICE_GXS_TYPE_CHANNELS;                       	// use this to allow to this service id only, or 0 for all services
 										// warning. Numbers should be SERVICE IDS (see serialiser/rsserviceids.h. E.g. 0x0215 for forums)
 
 class nullstream: public std::ostream {};
@@ -5380,7 +5380,9 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req,const unsig
         if(!nxs_identity_grp)
             std::cerr << "(EE) decrypted item contains more data that cannot be deserialized as a GxsId. Unexpected!" << std::endl;
 
-#warning We should probably check that the identity that is sent corresponds to the group author and don't add it otherwise.
+        // We should probably check that the identity that is sent corresponds to the group author and don't add
+        // it otherwise. But in any case, this won't harm to add a new public identity. If that identity is banned,
+        // the group will be discarded in RsGenExchange anyway.
     }
 
 	free(clear_group_data);
