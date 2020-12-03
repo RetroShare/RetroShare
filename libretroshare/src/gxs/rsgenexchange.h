@@ -133,12 +133,12 @@ public:
     /*!
      * @param messages messages are deleted after function returns
      */
-    virtual void receiveNewMessages(std::vector<RsNxsMsg*>& messages) override;
+    virtual void receiveNewMessages(const std::vector<RsNxsMsg *> &messages) override;
 
     /*!
      * @param groups groups are deleted after function returns
      */
-    virtual void receiveNewGroups(std::vector<RsNxsGrp*>& groups) override;
+    virtual void receiveNewGroups(const std::vector<RsNxsGrp *> &groups) override;
 
     /*!
      * @param grpId group id
@@ -375,6 +375,12 @@ protected:
 	                            unsigned char *& data, uint32_t& size);
 	bool deserializeGroupData(unsigned char *data, uint32_t size,
 	                          RsGxsGroupId* gId = nullptr);
+
+    /*!
+     * \brief retrieveNxsIdentity
+     * 			Sync version of the previous method. Might take some time, so should be used carefully.
+     */
+    bool retrieveNxsIdentity(const RsGxsGroupId& group_id,RsNxsGrp *& identity_grp);
 
     template<class GrpType>
     bool getGroupDataT(const uint32_t &token, std::vector<GrpType*>& grpItem)

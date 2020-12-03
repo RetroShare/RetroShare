@@ -283,7 +283,7 @@
 //#define NXS_NET_DEBUG_5 	1
 //#define NXS_NET_DEBUG_6 	1
 //#define NXS_NET_DEBUG_7 	1
-//#define NXS_NET_DEBUG_8 	1
+#define NXS_NET_DEBUG_8 	1
 //#define NXS_NET_DEBUG_9 	1
 
 //#define NXS_FRAG
@@ -5366,7 +5366,23 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req,const unsig
 #ifdef NXS_NET_DEBUG_8
 	GXSNETDEBUG___ << " successfuly decrypted data : " << RsUtil::BinToHex(clear_group_data,clear_group_data_len,50) << std::endl;
 #endif
-    RsItem *item = RsNxsSerialiser(mServType).deserialise(clear_group_data,&clear_group_data_len) ;
+    uint32_t used_size = clear_group_data_len;
+    RsItem *item = RsNxsSerialiser(mServType).deserialise(clear_group_data,&used_size) ;
+    RsNxsGrp *nxs_identity_grp=nullptr;
+
+    if(used_size < clear_group_data_len)
+    {
+        uint32_t remaining_size = clear_group_data_len-used_size ;
+        RsItem *item2 = RsNxsSerialiser(RS_SERVICE_GXS_TYPE_GXSID).deserialise(clear_group_data+used_size,&remaining_size) ;
+
+        nxs_identity_grp = dynamic_cast<RsNxsGrp*>(item2);
+
+        if(!nxs_identity_grp)
+            std::cerr << "(EE) decrypted item contains more data that cannot be deserialized as a GxsId. Unexpected!" << std::endl;
+
+#warning We should probably check that the identity that is sent corresponds to the group author and don't add it otherwise.
+    }
+
 	free(clear_group_data);
     clear_group_data = NULL ;
 
@@ -5377,6 +5393,14 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req,const unsig
         std::cerr << "(EE) decrypted item is not a RsNxsGrp. Weird!" << std::endl;
         return ;
     }
+
+#ifdef NXS_NET_DEBUG_8
+    if(nxs_identity_grp)
+        GXSNETDEBUG___ << " Serialized clear data contains a group " << nxs_grp->grpId << " in service " << std::hex << mServType << std::dec << " and a second identity item for an identity." << nxs_identity_grp->grpId << std::endl;
+    else
+        GXSNETDEBUG___ << " Serialized clear data contains a single GXS group for Grp Id " << nxs_grp->grpId << " in service " << std::hex << mServType << std::dec << std::endl;
+#endif
+
     std::vector<RsNxsGrp*> new_grps(1,nxs_grp);
 
     GroupRequestRecord& rec(mSearchedGroups[nxs_grp->grpId]) ;
@@ -5387,6 +5411,9 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req,const unsig
 #endif
 	mObserver->receiveNewGroups(new_grps);
 	mObserver->receiveDistantSearchResults(req, grpId);
+
+    if(nxs_identity_grp)
+        mGixs->receiveNewIdentity(nxs_identity_grp);
 }
 
 bool RsGxsNetService::search( const std::string& substring,
@@ -5504,8 +5531,7 @@ bool RsGxsNetService::search(const Sha1CheckSum& hashed_group_id,unsigned char *
             if(it->second->metaData->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED )	// only cache subscribed groups
             {
                 RsNxsGrp *grp = it->second ;
-                delete grp->metaData ; 		// clean private keys
-                grp->metaData = NULL ;
+                grp->metaData->keys.TlvClear() ;// clean private keys. This technically not needed, since metaData is not serialized, but I still prefer.
 
                 Sha1CheckSum hash(RsDirUtil::sha1sum(it->first.toByteArray(),it->first.SIZE_IN_BYTES));
 
@@ -5531,9 +5557,41 @@ bool RsGxsNetService::search(const Sha1CheckSum& hashed_group_id,unsigned char *
     // Finally, serialize and encrypt the grp data
 
     uint32_t size = RsNxsSerialiser(mServType).size(grp_data);
-	RsTemporaryMemory mem(size) ;
+    RsNxsGrp *author_group=nullptr;
 
-    RsNxsSerialiser(mServType).serialise(grp_data,mem,&size) ;
+    if(!grp_data->metaData->mAuthorId.isNull())
+    {
+#ifdef NXS_NET_DEBUG_8
+        GXSNETDEBUG___ << " this group has an author identity " << grp_data->metaData->mAuthorId << " that we need to send at the same time." << std::endl;
+#endif
+        mGixs->retrieveNxsIdentity(grp_data->metaData->mAuthorId,author_group);	// whatever gets the data
+
+        if(!author_group)
+        {
+            std::cerr << "(EE) Cannot retrieve author group data " << grp_data->metaData->mAuthorId << " for GXS group " << grp_data->grpId << std::endl;
+            return false;
+        }
+
+        delete author_group->metaData;	// delete private information, just in case, but normally it is not serialized.
+        author_group->metaData = NULL ;
+
+        size += RsNxsSerialiser(RS_SERVICE_GXS_TYPE_GXSID).size(author_group);
+    }
+
+	RsTemporaryMemory mem(size) ;
+    uint32_t used_size=size;
+
+    RsNxsSerialiser(mServType).serialise(grp_data,mem,&used_size) ;
+
+    uint32_t remaining_size=size-used_size;
+
+    if(author_group)
+    {
+#ifdef NXS_NET_DEBUG_8
+        GXSNETDEBUG___ << " Serializing author group data..." << std::endl;
+#endif
+        RsNxsSerialiser(RS_SERVICE_GXS_TYPE_GXSID).serialise(author_group,mem+used_size,&remaining_size);
+    }
 
     uint8_t encryption_master_key[32];
     Sha256CheckSum s = RsDirUtil::sha256sum(grp_data->grpId.toByteArray(),grp_data->grpId.SIZE_IN_BYTES);
