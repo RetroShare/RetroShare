@@ -196,15 +196,17 @@ void p3MsgService::processIncomingMsg(RsMsgItem *mi)
 		/**** STACK UNLOCKED ***/
 	}
 
-		// If the peer is allowed to push files, then auto-download the recommended files.
-		if(rsPeers->servicePermissionFlags(mi->PeerId()) & RS_NODE_PERM_ALLOW_PUSH)
-		{
-			std::list<RsPeerId> srcIds;
-			srcIds.push_back(mi->PeerId());
+    // If the peer is allowed to push files, then auto-download the recommended files.
 
-			for(std::list<RsTlvFileItem>::const_iterator it(mi->attachment.items.begin());it!=mi->attachment.items.end();++it)
-				rsFiles->FileRequest((*it).name,(*it).hash,(*it).filesize,std::string(),RS_FILE_REQ_ANONYMOUS_ROUTING,srcIds) ;
-		}
+    RsIdentityDetails id_details;
+    if(rsIdentity->getIdDetails(RsGxsId(mi->PeerId()),id_details) && !id_details.mPgpId.isNull() && (rsPeers->servicePermissionFlags(id_details.mPgpId) & RS_NODE_PERM_ALLOW_PUSH))
+    {
+        std::list<RsPeerId> srcIds;
+        srcIds.push_back(mi->PeerId());
+
+        for(std::list<RsTlvFileItem>::const_iterator it(mi->attachment.items.begin());it!=mi->attachment.items.end();++it)
+            rsFiles->FileRequest((*it).name,(*it).hash,(*it).filesize,std::string(),RS_FILE_REQ_ANONYMOUS_ROUTING,srcIds) ;
+    }
 
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_ADD);
 }

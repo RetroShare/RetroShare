@@ -27,7 +27,7 @@
    <item row="1" column="0">
     <widget class="QTabWidget" name="stabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -385,7 +385,7 @@ p, li { white-space: pre-wrap; }
        <item>
         <widget class="QCheckBox" name="_allow_push_CB">
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This option allows you to automatically download a file that is recommended in an message coming from this node. This can be used for instance to send files between your own nodes. Applied to all locations of the same node.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This option allows you to automatically download a file that is recommended in an message coming from this profile (e.g. when the message author is a signed identity that belongs to this profile). This can be used for instance to send files between your own nodes.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
           <string>Auto-download recommended files from this node</string>

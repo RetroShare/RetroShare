@@ -30,6 +30,7 @@
 #include "retroshare/rsfiles.h"
 #include "retroshare/rspeers.h"
 #include "util/misc.h"
+#include "util/qtthreadsutils.h"
 #include "retroshare/rsexpr.h"
 
 #include <QDir>
@@ -63,6 +64,37 @@ RetroshareDirModel::RetroshareDirModel(bool mode, QObject *parent)
 	treeStyle();
 
 	mDirDetails.ref = (void*)intptr_t(0xffffffff) ;
+
+    rsEvents->registerEventsHandler(
+                [this](std::shared_ptr<const RsEvent> event)
+                {
+                    RsQThreadUtils::postToObject( [this,event]()  {  handleEvent_main_thread(event);  });
+                },
+                mEventHandlerId,
+                RsEventType::SHARED_DIRECTORIES );
+}
+
+RetroshareDirModel::~RetroshareDirModel()
+{
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
+}
+void RetroshareDirModel::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+    if(event->mType != RsEventType::SHARED_DIRECTORIES) return;
+
+    const RsSharedDirectoriesEvent *fe = dynamic_cast<const RsSharedDirectoriesEvent*>(event.get());
+    if(!fe)
+        return;
+
+    switch (fe->mEventCode)
+    {
+    case RsSharedDirectoriesEventCode::EXTRA_LIST_FILE_ADDED:
+    case RsSharedDirectoriesEventCode::EXTRA_LIST_FILE_REMOVED:
+        update();
+        break;
+    default:
+        break;
+    }
 }
 
 TreeStyle_RDM::TreeStyle_RDM(bool mode)

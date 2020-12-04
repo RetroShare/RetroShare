@@ -184,6 +184,8 @@ enum class RsSharedDirectoriesEventCode: uint8_t {
     HASHING_FILE                = 0x02, // mMessage: full path and hashing speed of the file being hashed
     DIRECTORY_SWEEP_ENDED       = 0x03, // (void)
     SAVING_FILE_INDEX           = 0x04, // (void)
+    EXTRA_LIST_FILE_ADDED       = 0x05, // (void)
+    EXTRA_LIST_FILE_REMOVED     = 0x06, // (void)
 };
 
 enum class RsFileTransferEventCode: uint8_t {

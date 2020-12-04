@@ -208,6 +208,18 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
             }
                 break;
 
+            case RsGxsNotify::TYPE_UPDATED:
+            {
+                // Happens when the group data has changed. In this case we need to analyse the old and new group in order to detect possible notifications for clients
+
+                auto ev = std::make_shared<RsGxsPostedEvent>();
+                ev->mPostedGroupId = grpChange->mGroupId;
+                ev->mPostedEventCode = RsPostedEventCode::UPDATED_POSTED_GROUP;
+                rsEvents->postEvent(ev);
+            }
+                break;
+
+
             case RsGxsNotify::TYPE_PUBLISHED:
             case RsGxsNotify::TYPE_RECEIVED_NEW:
             {
