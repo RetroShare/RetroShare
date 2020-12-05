@@ -198,10 +198,10 @@ class p3IdService: public RsGxsIdExchange, public RsIdentity,  public GxsTokenQu
 public:
 	p3IdService(RsGeneralDataService* gds, RsNetworkExchangeService* nes, PgpAuxUtils *pgpUtils);
 
-	virtual RsServiceInfo getServiceInfo();
+    virtual RsServiceInfo getServiceInfo()override;
 	static	uint32_t idAuthenPolicy();
 
-	virtual void service_tick(); // needed for background processing.
+    virtual void service_tick()override; // needed for background processing.
 
 
 	/*!
@@ -222,8 +222,8 @@ public:
 	bool getIdentitiesSummaries(std::list<RsGroupMetaData>& ids) override;
 
 	// These are exposed via RsIdentity.
-	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &groups);
-	virtual bool getGroupSerializedData(const uint32_t &token, std::map<RsGxsId,std::string>& serialized_groups);
+    virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &groups) override;
+    virtual bool getGroupSerializedData(const uint32_t &token, std::map<RsGxsId,std::string>& serialized_groups) override;
 
 	//virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsIdOpinion> &opinions);
 
@@ -233,7 +233,10 @@ public:
 	virtual bool deleteGroup(uint32_t& token, RsGxsGroupId& group);
 	//virtual bool createMsg(uint32_t& token, RsGxsIdOpinion &opinion);
 
-	/**************** RsIdentity External Interface.
+    virtual bool receiveNewIdentity(RsNxsGrp *identity_grp) override;
+    virtual bool retrieveNxsIdentity(const RsGxsId& group_id,RsNxsGrp *& identity_grp)override;
+
+    /**************** RsIdentity External Interface.
 	 * Notes:
 	 * 
 	 * All the data is cached together for the moment - We should probably
@@ -243,11 +246,11 @@ public:
 	 * 
 	 */
 	//virtual bool  getNickname(const RsGxsId &id, std::string &nickname);
-	virtual bool  getIdDetails(const RsGxsId &id, RsIdentityDetails &details);
+    virtual bool  getIdDetails(const RsGxsId &id, RsIdentityDetails &details) override;
 
 	RS_DEPRECATED_FOR(RsReputations)
 	virtual bool submitOpinion(uint32_t& token, const RsGxsId &id, 
-	                           bool absOpinion, int score);
+                               bool absOpinion, int score) override;
 
 	/// @see RsIdentity
 	virtual bool createIdentity(
@@ -255,35 +258,35 @@ public:
 	        const std::string& name, const RsGxsImage& avatar = RsGxsImage(),
 	        bool pseudonimous = true, const std::string& pgpPassword = "" ) override;
 
-	virtual bool createIdentity(uint32_t& token, RsIdentityParameters &params);
+    virtual bool createIdentity(uint32_t& token, RsIdentityParameters &params) override;
 
 	/// @see RsIdentity
 	bool updateIdentity(RsGxsIdGroup& identityData) override;
 
 	RS_DEPRECATED
-	virtual bool updateIdentity(uint32_t& token, RsGxsIdGroup &group);
+    virtual bool updateIdentity(uint32_t& token, RsGxsIdGroup &group) override;
 
 	/// @see RsIdentity
 	bool deleteIdentity(RsGxsId& id) override;
 
 	RS_DEPRECATED
-	virtual bool deleteIdentity(uint32_t& token, RsGxsIdGroup &group);
+    virtual bool deleteIdentity(uint32_t& token, RsGxsIdGroup &group) override;
 
-    virtual void setDeleteBannedNodesThreshold(uint32_t days) ;
-    virtual uint32_t deleteBannedNodesThreshold() ;
+    virtual void setDeleteBannedNodesThreshold(uint32_t days)  override;
+    virtual uint32_t deleteBannedNodesThreshold()  override;
 
 	virtual bool parseRecognTag(const RsGxsId &id, const std::string &nickname,
-	                            const std::string &tag, RsRecognTagDetails &details);
+                                const std::string &tag, RsRecognTagDetails &details) override;
 	virtual bool getRecognTagRequest(const RsGxsId &id, const std::string &comment, 
-	                                 uint16_t tag_class, uint16_t tag_type, std::string &tag);
+                                     uint16_t tag_class, uint16_t tag_type, std::string &tag) override;
 
 	virtual bool setAsRegularContact(const RsGxsId& id,bool is_a_contact) override;
 	virtual bool isARegularContact(const RsGxsId& id) override;
 	virtual void setAutoAddFriendIdsAsContact(bool b) override;
 	virtual bool autoAddFriendIdsAsContact() override;
 
-	virtual uint32_t nbRegularContacts() ;
-	virtual rstime_t getLastUsageTS(const RsGxsId &id) ;
+    virtual uint32_t nbRegularContacts()  override;
+    virtual rstime_t getLastUsageTS(const RsGxsId &id) override ;
 
 	/**************** RsGixs Implementation ***************/
 
@@ -323,12 +326,12 @@ public:
 	                       uint32_t data_size,
 	                       const RsGxsId& signer_id,
 	                       RsTlvKeySignature& signature,
-	                       uint32_t& signing_error);
+                           uint32_t& signing_error)override;
 
 	virtual bool validateData( const uint8_t *data, uint32_t data_size,
 	                           const RsTlvKeySignature& signature,
 	                           bool force_load, const RsIdentityUsage &info,
-	                           uint32_t& signing_error );
+                               uint32_t& signing_error )override;
 
 	virtual bool encryptData( const uint8_t* decrypted_data,
 	                          uint32_t decrypted_data_size,
@@ -336,7 +339,7 @@ public:
 	                          uint32_t& encrypted_data_size,
 	                          const RsGxsId& encryption_key_id,
 	                          uint32_t& error_status,
-	                          bool force_load = true );
+                              bool force_load = true )override;
 
 	bool encryptData( const uint8_t* decrypted_data,
 	                  uint32_t decrypted_data_size,
@@ -351,7 +354,7 @@ public:
 	                          uint32_t& decrypted_data_size,
 	                          const RsGxsId& decryption_key_id,
 	                          uint32_t& error_status,
-	                          bool force_load = true );
+                              bool force_load = true )override;
 
 	virtual bool decryptData(const uint8_t* encrypted_data,
 	                          uint32_t encrypted_data_size,
@@ -359,26 +362,24 @@ public:
 	                          uint32_t& decrypted_data_size,
 	                          const std::set<RsGxsId>& decrypt_ids,
 	                          uint32_t& error_status,
-	                          bool force_load = true );
+                              bool force_load = true );
 
 
-	virtual bool haveKey(const RsGxsId &id);
-	virtual bool havePrivateKey(const RsGxsId &id);
+    virtual bool haveKey(const RsGxsId &id)override;
+    virtual bool havePrivateKey(const RsGxsId &id)override;
 
-	virtual bool getKey(const RsGxsId &id, RsTlvPublicRSAKey &key);
-	virtual bool getPrivateKey(const RsGxsId &id, RsTlvPrivateRSAKey &key);
+    virtual bool getKey(const RsGxsId &id, RsTlvPublicRSAKey &key)override;
+    virtual bool getPrivateKey(const RsGxsId &id, RsTlvPrivateRSAKey &key)override;
 
 	virtual bool requestKey( const RsGxsId &id,
 	                         const std::list<RsPeerId> &peers,
-	                         const RsIdentityUsage &use_info );
-	virtual bool requestPrivateKey(const RsGxsId &id);
+                             const RsIdentityUsage &use_info )override;
+    virtual bool requestPrivateKey(const RsGxsId &id)override;
 
 	RS_DEPRECATED_FOR(exportIdentityLink)
-	virtual bool serialiseIdentityToMemory(const RsGxsId& id,
-	                                       std::string& radix_string);
+    virtual bool serialiseIdentityToMemory(const RsGxsId& id, std::string& radix_string) override;
 	RS_DEPRECATED_FOR(importIdentityLink)
-	virtual bool deserialiseIdentityFromMemory(const std::string& radix_string,
-	                                           RsGxsId* id = nullptr);
+    virtual bool deserialiseIdentityFromMemory(const std::string& radix_string, RsGxsId* id = nullptr) override;
 
 	/// @see RsIdentity
 	bool requestIdentity(
@@ -398,19 +399,19 @@ public:
 
 protected:
 	/** Notifications **/
-	virtual void notifyChanges(std::vector<RsGxsNotify*>& changes);
+    virtual void notifyChanges(std::vector<RsGxsNotify*>& changes) override;
 
 	/** Overloaded to add PgpIdHash to Group Definition **/
-	virtual ServiceCreate_Return service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet);
+    virtual ServiceCreate_Return service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet) override;
 
     // Overloads RsGxsGenExchange
-    virtual bool acceptNewGroup(const RsGxsGrpMetaData *grpMeta) ;
+    virtual bool acceptNewGroup(const RsGxsGrpMetaData *grpMeta) override ;
 
     // Overloaded from GxsTokenQueue for Request callbacks.
-	virtual void handleResponse(uint32_t token, uint32_t req_type);
+    virtual void handleResponse(uint32_t token, uint32_t req_type) override;
 
 	// Overloaded from RsTickEvent.
-	virtual void handle_event(uint32_t event_type, const std::string &elabel);
+    virtual void handle_event(uint32_t event_type, const std::string &elabel) override;
 
 	//===================================================//
 	//                  p3Config methods                 //
@@ -418,10 +419,10 @@ protected:
 
 	// Load/save the routing info, the pending items in transit, and the config variables.
 	//
-	virtual bool loadList(std::list<RsItem*>& items) ;
-	virtual bool saveList(bool& cleanup,std::list<RsItem*>& items) ;
+    virtual bool loadList(std::list<RsItem*>& items) override ;
+    virtual bool saveList(bool& cleanup,std::list<RsItem*>& items) override ;
 
-	virtual RsSerialiser *setupSerialiser() ;
+    virtual RsSerialiser *setupSerialiser() override ;
 
 
 private:

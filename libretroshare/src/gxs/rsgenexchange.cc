@@ -1423,6 +1423,24 @@ bool RsGenExchange::getSerializedGroupData(uint32_t token, RsGxsGroupId& id,
     return RsNxsSerialiser(mServType).serialise(nxs_grp,data,&size) ;
 }
 
+bool RsGenExchange::retrieveNxsIdentity(const RsGxsGroupId& group_id,RsNxsGrp *& identity_grp)
+{
+    RS_STACK_MUTEX(mGenMtx) ;
+
+    std::map<RsGxsGroupId, RsNxsGrp*> grp;
+    grp[group_id]=nullptr;
+    std::map<RsGxsGroupId, RsNxsGrp*>::const_iterator grp_it;
+
+    if(! mDataStore->retrieveNxsGrps(grp, true,true) || grp.end()==(grp_it=grp.find(group_id)) || !grp_it->second)
+    {
+        std::cerr << "(EE) Cannot retrieve group data for group " << group_id << " in service " << mServType << std::endl;
+        return false;
+    }
+
+    identity_grp = grp_it->second;
+    return true;
+}
+
 bool RsGenExchange::deserializeGroupData(unsigned char *data, uint32_t size,
                                          RsGxsGroupId* gId /*= nullptr*/)
 {
@@ -1672,11 +1690,11 @@ bool RsGenExchange::setAuthenPolicyFlag(const uint8_t &msgFlag, uint32_t& authen
     return true;
 }
 
-void RsGenExchange::receiveNewGroups(std::vector<RsNxsGrp *> &groups)
+void RsGenExchange::receiveNewGroups(const std::vector<RsNxsGrp *> &groups)
 {
 	RS_STACK_MUTEX(mGenMtx) ;
 
-    std::vector<RsNxsGrp*>::iterator vit = groups.begin();
+    auto vit = groups.begin();
 
     // store these for tick() to pick them up
     for(; vit != groups.end(); ++vit)
@@ -1704,7 +1722,7 @@ void RsGenExchange::receiveNewGroups(std::vector<RsNxsGrp *> &groups)
 }
 
 
-void RsGenExchange::receiveNewMessages(std::vector<RsNxsMsg *>& messages)
+void RsGenExchange::receiveNewMessages(const std::vector<RsNxsMsg *>& messages)
 {
 	RS_STACK_MUTEX(mGenMtx) ;
 

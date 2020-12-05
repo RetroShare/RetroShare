@@ -1149,9 +1149,11 @@ void RsDataService::locked_retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>
             // only add the latest grp info
             if(g)
             {
-                if (metaOffset) {
+                if (metaOffset)
                     g->metaData = locked_getGrpMeta(*c, metaOffset,false);
-                }
+                else
+                    g->metaData = nullptr;
+
                 grps.push_back(g);
             }
             valid = c->moveToNext();
@@ -1235,9 +1237,11 @@ void RsDataService::locked_retrieveMessages(RetroCursor *c, std::vector<RsNxsMsg
         RsNxsMsg* m = locked_getMessage(*c);
 
         if(m){
-            if (metaOffset) {
+            if (metaOffset)
                 m->metaData = locked_getMsgMeta(*c, metaOffset,false);
-            }
+            else
+                m->metaData = nullptr;
+
             msgs.push_back(m);
         }
 
