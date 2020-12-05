@@ -271,7 +271,7 @@ public:
 	        ) override;
 
     virtual bool getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails &details) override;
-    virtual bool getCircleExternalIdList(std::list<RsGxsCircleId> &circleIds) override;
+    virtual bool getCircleExternalIdList(std::set<RsGxsCircleId> &circleIds) override;
 
     virtual bool isLoaded(const RsGxsCircleId &circleId) override;
     virtual bool loadCircle(const RsGxsCircleId &circleId) override;
@@ -326,8 +326,6 @@ protected:
 	private:
 
 	// Load data.
-	bool request_CircleIdList();
-	bool load_CircleIdList(uint32_t token);
 	bool processMembershipRequests(uint32_t token);
 
 	// Need some crazy arsed cache to store the circle info.
@@ -351,20 +349,10 @@ protected:
 	p3IdService *mIdentities; // Needed for constructing Circle Info,
 	PgpAuxUtils *mPgpUtils;
 
-    // put a circle id into the external or personal circle id list
-    // this function locks the mutex
-    // if the id is already in the list, it will not be added again
-	// G10h4ck: this is terrible, an std::set instead of a list should be used
-	//	to guarantee uniqueness
-    void addCircleIdToList(const RsGxsCircleId& circleId, uint32_t circleType);
-
 	RsMutex mCircleMtx; /* Locked Below Here */
     RsMutex mKnownCirclesMtx; /* Locked Below Here */
 
     std::map<RsGxsGroupId,rstime_t> mKnownCircles;
-
-	std::list<RsGxsCircleId> mCircleExternalIdList;
-	std::list<RsGxsCircleId> mCirclePersonalIdList;
 
 	/***** Caching Circle Info, *****/
 

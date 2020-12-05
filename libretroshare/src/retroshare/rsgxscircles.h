@@ -312,8 +312,7 @@ public:
 	 * @param[out] details Storage for the circle details
 	 * @return false if something failed, true otherwhise
 	 */
-	virtual bool getCircleDetails(
-	        const RsGxsCircleId& id, RsGxsCircleDetails& details ) = 0;
+    virtual bool getCircleDetails(const RsGxsCircleId& id, RsGxsCircleDetails& details ) = 0;
 
 	/**
 	 * @brief Get list of known external circles ids. Memory cached
@@ -321,8 +320,7 @@ public:
 	 * @param[in] circleIds Storage for circles id list
 	 * @return false if something failed, true otherwhise
 	 */
-	virtual bool getCircleExternalIdList(
-	        std::list<RsGxsCircleId>& circleIds ) = 0;
+    virtual bool getCircleExternalIdList(std::set<RsGxsCircleId>& circleIds ) = 0;
 
 	/**
 	 * @brief Get circles summaries list.
