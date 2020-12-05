@@ -432,27 +432,20 @@ void GxsChannelPostItem::fill()
 	QString msgText;
 	//float f = QFontMetricsF(font()).height()/14.0 ;
 
+	ui->logoLabel->setEnableZoom(false);
+	int desired_height = QFontMetricsF(font()).height() * 8;
+	ui->logoLabel->setFixedSize(4/3.0*desired_height,desired_height);
+
 	if(mPost.mThumbnail.mData != NULL)
 	{
-		QPixmap thumbnail;	
-		
-        ui->logoLabel->setScaledContents(true);
-
+		QPixmap thumbnail;
 		GxsIdDetails::loadPixmapFromData(mPost.mThumbnail.mData, mPost.mThumbnail.mSize, thumbnail,GxsIdDetails::ORIGINAL);
 		// Wiping data - as its been passed to thumbnail.
-//		if( thumbnail.width() < 90 ){
-//			ui->logoLabel->setMaximumSize(82*f,108*f);
-//		}
-//		else if( thumbnail.width() < 109 ){
-//			ui->logoLabel->setMinimumSize(108*f,108*f);
-//			ui->logoLabel->setMaximumSize(108*f,108*f);
-//		}
-//		else{
-//			ui->logoLabel->setMinimumSize(156*f,108*f);
-//			ui->logoLabel->setMaximumSize(156*f,108*f);
-//		}
-		ui->logoLabel->setPixmap(thumbnail);
+
+		ui->logoLabel->setPicture(thumbnail);
 	}
+	else
+		ui->logoLabel->setPicture( FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default-video.png") );
 
 	if( !IS_GROUP_PUBLISHER(mGroupMeta.mSubscribeFlags) )
 		ui->editButton->hide() ;
