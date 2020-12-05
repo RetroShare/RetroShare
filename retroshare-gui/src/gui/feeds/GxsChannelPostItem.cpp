@@ -163,7 +163,7 @@ void GxsChannelPostItem::setup()
     ui->downloadButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/download.png"));
     ui->playButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/play.png"));
     ui->commentButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/comment.png"));
-    ui->editButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/pencil-edit-button.png"));
+    //ui->editButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/pencil-edit-button.png"));
     ui->copyLinkButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/copy.png"));
     ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/down-arrow.png"));
     ui->readAndClearButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/correct.png"));
@@ -196,7 +196,7 @@ void GxsChannelPostItem::setup()
 	connect(ui->commentButton, SIGNAL(clicked()), this, SLOT(loadComments()));
 
 	connect(ui->playButton, SIGNAL(clicked()), this, SLOT(play(void)));
-	connect(ui->editButton, SIGNAL(clicked()), this, SLOT(edit(void)));
+    //connect(ui->editButton, SIGNAL(clicked()), this, SLOT(edit(void)));
 	connect(ui->copyLinkButton, SIGNAL(clicked()), this, SLOT(copyMessageLink()));
 
 	connect(ui->readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
@@ -454,8 +454,8 @@ void GxsChannelPostItem::fill()
 		ui->logoLabel->setPixmap(thumbnail);
 	}
 
-	if( !IS_GROUP_PUBLISHER(mGroupMeta.mSubscribeFlags) )
-		ui->editButton->hide() ;
+    //if( !IS_GROUP_PUBLISHER(mGroupMeta.mSubscribeFlags) )
+    ui->editButton->hide() ;	// never show this button. Feeds are not the place to edit posts.
 
 	if (!mIsHome)
 	{
