@@ -159,7 +159,7 @@
           <item row="0" column="1">
            <widget class="QToolButton" name="createLobbyToolButton">
             <property name="toolTip">
-             <string>Create chat lobby</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Create new chat room&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
              <string/>
