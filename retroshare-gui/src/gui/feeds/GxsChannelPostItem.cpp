@@ -442,7 +442,7 @@ void GxsChannelPostItem::fill()
 		GxsIdDetails::loadPixmapFromData(mPost.mThumbnail.mData, mPost.mThumbnail.mSize, thumbnail,GxsIdDetails::ORIGINAL);
 		// Wiping data - as its been passed to thumbnail.
 
-		ui->logoLabel->setPixmap(thumbnail);
+		ui->logoLabel->setPicture(thumbnail);
 	}
 	else
 		ui->logoLabel->setPicture( FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default-video.png") );
