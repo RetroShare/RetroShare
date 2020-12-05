@@ -221,10 +221,6 @@ void GxsChannelPostItem::setup()
 	//ui->subjectLabel->setMinimumWidth(100);
     //ui->warning_label->setMinimumWidth(100);
 
-	ui->logoLabel->setEnableZoom(false);
-	int desired_height = QFontMetricsF(font()).height() * 8;
-	ui->logoLabel->setFixedSize(4/3.0*desired_height,desired_height);
-
 	ui->mainFrame->setProperty("new", false);
 	ui->mainFrame->style()->unpolish(ui->mainFrame);
 	ui->mainFrame->style()->polish(  ui->mainFrame);
@@ -436,12 +432,13 @@ void GxsChannelPostItem::fill()
 	QString msgText;
 	//float f = QFontMetricsF(font()).height()/14.0 ;
 
+	ui->logoLabel->setEnableZoom(false);
+	int desired_height = QFontMetricsF(font()).height() * 8;
+	ui->logoLabel->setFixedSize(4/3.0*desired_height,desired_height);
+
 	if(mPost.mThumbnail.mData != NULL)
 	{
-		QPixmap thumbnail;	
-
-		ui->logoLabel->setScaledContents(true);
-
+		QPixmap thumbnail;
 		GxsIdDetails::loadPixmapFromData(mPost.mThumbnail.mData, mPost.mThumbnail.mSize, thumbnail,GxsIdDetails::ORIGINAL);
 		// Wiping data - as its been passed to thumbnail.
 
