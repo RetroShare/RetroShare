@@ -228,11 +228,19 @@ void GxsForumsDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *grou
 
 	groupItemInfo.description = QString::fromUtf8(forumGroupData->mDescription.c_str());
 
-	if(IS_GROUP_ADMIN(groupData->mMeta.mSubscribeFlags))
-        groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/forums.png");
-	else if (!groupData->mMeta.mCircleId.isNull() )
-        groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/circles.png");
-	else if ((IS_GROUP_PGP_AUTHED(groupData->mMeta.mSignFlags)) || (IS_GROUP_MESSAGE_TRACKING(groupData->mMeta.mSignFlags)) )
-        groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/forums-signed.png");
+	if (groupData->mMeta.mCircleId.isNull() )
+		if(IS_GROUP_ADMIN(groupData->mMeta.mSubscribeFlags))
+			groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/forums.png");
+		else if ((IS_GROUP_PGP_AUTHED(groupData->mMeta.mSignFlags)) || (IS_GROUP_MESSAGE_TRACKING(groupData->mMeta.mSignFlags)) )
+			groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/forums-signed.png");
+	if (!groupData->mMeta.mCircleId.isNull() )
+		if(IS_GROUP_ADMIN(groupData->mMeta.mSubscribeFlags))
+			groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/circles.png");
+		else if ((IS_GROUP_PGP_AUTHED(groupData->mMeta.mSignFlags)) || (IS_GROUP_MESSAGE_TRACKING(groupData->mMeta.mSignFlags)) )
+			groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/circles-green.png");
+		else if ((IS_GROUP_PUBLISHER(groupData->mMeta.mSubscribeFlags)) )
+			groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/circles.png");
+		else
+			groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/circles-black.png");
 }
 
