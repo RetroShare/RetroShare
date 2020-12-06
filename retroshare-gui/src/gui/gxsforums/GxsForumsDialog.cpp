@@ -225,6 +225,9 @@ void GxsForumsDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *grou
 		std::cerr << "GxsChannelDialog::groupInfoToGroupItemInfo() Failed to cast data to GxsChannelGroupInfoData"<< std::endl;
 		return;
 	}
+	
+	RsGxsCircleDetails details;
+	rsGxsCircles->getCircleDetails(RsGxsCircleId(groupData->mMeta.mCircleId), details) ;
 
 	groupItemInfo.description = QString::fromUtf8(forumGroupData->mDescription.c_str());
 
@@ -240,6 +243,8 @@ void GxsForumsDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *grou
 			groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/circles-green.png");
 		else if ((IS_GROUP_PUBLISHER(groupData->mMeta.mSubscribeFlags)) )
 			groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/circles.png");
+		else if (details.mRestrictedCircleId == details.mCircleId)
+			groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/circles-red.png");
 		else
 			groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/circles-black.png");
 }
