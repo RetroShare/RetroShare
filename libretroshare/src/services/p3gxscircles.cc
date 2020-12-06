@@ -741,7 +741,18 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
                             rsEvents->postEvent(ev);
 						}
 
-				}
+                    if(  old_circle_grp_item->meta.mGroupName     != new_circle_grp_item->meta.mGroupName
+                      || old_circle_grp_item->meta.mGroupFlags    != new_circle_grp_item->meta.mGroupFlags
+                      || old_circle_grp_item->meta.mAuthorId      != new_circle_grp_item->meta.mAuthorId
+                      || old_circle_grp_item->meta.mCircleId      != new_circle_grp_item->meta.mCircleId
+                         )
+                    {
+                        auto ev = std::make_shared<RsGxsCircleEvent>();
+                        ev->mCircleId = RsGxsCircleId(new_circle_grp_item->meta.mGroupId);
+                        ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_UPDATED;
+                        rsEvents->postEvent(ev);
+                    }
+                }
                 else if(c->getType()==RsGxsNotify::TYPE_GROUP_DELETED)
                 {
                     auto ev = std::make_shared<RsGxsCircleEvent>();

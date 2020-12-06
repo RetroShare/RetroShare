@@ -380,6 +380,18 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
                             rsEvents->postEvent(ev);
                         }
 
+                        if(  old_forum_grp_item->mGroup.mDescription != new_forum_grp_item->mGroup.mDescription
+                          || old_forum_grp_item->meta.mGroupName     != new_forum_grp_item->meta.mGroupName
+                          || old_forum_grp_item->meta.mGroupFlags    != new_forum_grp_item->meta.mGroupFlags
+                          || old_forum_grp_item->meta.mAuthorId      != new_forum_grp_item->meta.mAuthorId
+                          || old_forum_grp_item->meta.mCircleId      != new_forum_grp_item->meta.mCircleId
+                             )
+                        {
+                            auto ev = std::make_shared<RsGxsForumEvent>();
+                            ev->mForumGroupId = new_forum_grp_item->meta.mGroupId;
+                            ev->mForumEventCode = RsForumEventCode::UPDATED_FORUM;
+                            rsEvents->postEvent(ev);
+                        }
 					}
                         break;
 

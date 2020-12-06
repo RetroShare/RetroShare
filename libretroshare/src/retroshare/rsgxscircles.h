@@ -240,6 +240,11 @@ enum class RsGxsCircleEventCode: uint8_t
      * The circle has been deleted by auto-cleaning.
      *                                                                                    */
     CIRCLE_DELETED                                 = 0x07,
+
+    /**
+      * Circle has been updated (name, parent circle, type, etc)
+      * 																				*/
+    CIRCLE_UPDATED                                 = 0x08,
 };
 
 struct RsGxsCircleEvent: RsEvent
