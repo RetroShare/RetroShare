@@ -35,6 +35,7 @@
 #include "gui/MainWindow.h"
 #include "gui/Identity/IdDialog.h"
 #include "PhotoView.h"
+#include "gui/Posted/PostedDialog.h"
 #include "ui_PostedItem.h"
 
 #include <retroshare/rsposted.h>
@@ -266,14 +267,14 @@ void BasePostedItem::loadComments()
 
 	if (mFeedHolder)
 	{
-		QString title = QString::fromUtf8(mPost.mMeta.mMsgName.c_str());
+		/* window will destroy itself! */
+		PostedDialog *postedDialog = dynamic_cast<PostedDialog*>(MainWindow::getPage(MainWindow::Posted));
 
-#warning (csoler) Posted item versions not handled yet. When it is the case, start here.
+		if (!postedDialog)
+			return ;
 
-        QVector<RsGxsMessageId> post_versions ;
-        post_versions.push_back(mPost.mMeta.mMsgId) ;
-
-		mFeedHolder->openComments(0, mPost.mMeta.mGroupId, post_versions,mPost.mMeta.mMsgId, title);
+		MainWindow::showWindow(MainWindow::Posted);
+		postedDialog->navigate(mPost.mMeta.mGroupId, mPost.mMeta.mMsgId) ;
 	}
 }
 void BasePostedItem::readToggled(bool checked)
@@ -740,4 +741,5 @@ void PostedItem::toggleNotes()
 		ui->frame_notes->hide();
 	}
 
+	emit sizeChanged(this);
 }
