@@ -240,6 +240,11 @@ enum class RsGxsCircleEventCode: uint8_t
      * The circle has been deleted by auto-cleaning.
      *                                                                                    */
     CIRCLE_DELETED                                 = 0x07,
+
+    /**
+      * Circle has been updated (name, parent circle, type, etc)
+      * 																				*/
+    CIRCLE_UPDATED                                 = 0x08,
 };
 
 struct RsGxsCircleEvent: RsEvent
@@ -312,8 +317,7 @@ public:
 	 * @param[out] details Storage for the circle details
 	 * @return false if something failed, true otherwhise
 	 */
-	virtual bool getCircleDetails(
-	        const RsGxsCircleId& id, RsGxsCircleDetails& details ) = 0;
+    virtual bool getCircleDetails(const RsGxsCircleId& id, RsGxsCircleDetails& details ) = 0;
 
 	/**
 	 * @brief Get list of known external circles ids. Memory cached
@@ -321,8 +325,7 @@ public:
 	 * @param[in] circleIds Storage for circles id list
 	 * @return false if something failed, true otherwhise
 	 */
-	virtual bool getCircleExternalIdList(
-	        std::list<RsGxsCircleId>& circleIds ) = 0;
+    virtual bool getCircleExternalIdList(std::set<RsGxsCircleId>& circleIds ) = 0;
 
 	/**
 	 * @brief Get circles summaries list.
