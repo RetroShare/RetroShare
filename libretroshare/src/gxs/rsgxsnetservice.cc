@@ -769,6 +769,7 @@ void RsGxsNetService::generic_sendItem(RsNxsItem *si)
 		ser.serialise(si,mem,&size) ;
 
 		mGxsNetTunnel->sendTunnelData(mServType,mem,size,static_cast<RsGxsNetTunnelVirtualPeerId>(si->PeerId()));
+        delete si;
 	}
 	else
 		sendItem(si) ;
