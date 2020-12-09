@@ -299,12 +299,13 @@ void RsGenExchange::tick()
 
 		if(mIntegrityCheck->isDone())
 		{
-			RS_STACK_MUTEX(mGenMtx) ;
-
             std::vector<RsGxsGroupId> grpIds;
             GxsMsgReq msgIds;
 
-			mIntegrityCheck->getDeletedIds(grpIds, msgIds);
+            {
+                RS_STACK_MUTEX(mGenMtx) ;
+                mIntegrityCheck->getDeletedIds(grpIds, msgIds);
+            }
 
             if(!msgIds.empty())
             {
@@ -319,9 +320,12 @@ void RsGenExchange::tick()
                     deleteGroup(token2,grpId);
                 }
 
-			delete mIntegrityCheck;
-			mIntegrityCheck = NULL;
-			mChecking = false;
+            {
+                RS_STACK_MUTEX(mGenMtx) ;
+                delete mIntegrityCheck;
+                mIntegrityCheck = NULL;
+                mChecking = false;
+            }
 		}
 	}
 }
