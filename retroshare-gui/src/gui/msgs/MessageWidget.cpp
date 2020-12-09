@@ -134,6 +134,8 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	isWindow = false;
 	currMsgFlags = 0;
 	expandFiles = false;
+	ui.expandButton->hide();
+	ui.countLabel->hide();
 
 	ui.actionTextBesideIcon->setData(Qt::ToolButtonTextBesideIcon);
 	ui.actionIconOnly->setData(Qt::ToolButtonIconOnly);
@@ -143,6 +145,7 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(getallrecommended()));
 	connect(ui.msgText, SIGNAL(anchorClicked(QUrl)), this, SLOT(anchorClicked(QUrl)));
 	connect(ui.sendInviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
+	connect(ui.expandButton, SIGNAL(clicked()), this, SLOT(expandTo()));
 	
 	connect(ui.replyButton, SIGNAL(clicked()), this, SLOT(reply()));
 	connect(ui.replyallButton, SIGNAL(clicked()), this, SLOT(replyAll()));
@@ -589,6 +592,19 @@ void MessageWidget::fill(const std::string &msgId)
 
 	ui.toText->setText(text);
 
+	int recipientsCount = ui.toText->toPlainText().split(QRegExp("(\\s|\\n|\\r)+"), QString::SkipEmptyParts).count();
+	ui.countLabel->setText( QString::number(recipientsCount));
+	
+	if (recipientsCount >=20)
+	{
+		ui.expandButton->show();
+		ui.countLabel->show();
+	}else
+	{
+		ui.expandButton->hide();
+		ui.countLabel->hide();
+	}
+
     if (!msgInfo.rspeerid_msgcc.empty() || !msgInfo.rsgxsid_msgcc.empty())
     {
 		ui.ccLabel->setVisible(true);
@@ -889,11 +905,24 @@ void MessageWidget::viewSource()
 	QGridLayout *gl = new QGridLayout(dialog);
 	gl->addWidget(pte,0,0,1,1);
 	dialog->setWindowTitle(tr("Document source"));
-	dialog->resize(500, 400);
+	dialog->resize(600, 400);
 
 	dialog->exec();
 
 	ui.msgText->setHtml(pte->toPlainText());
 
 	delete dialog;
+}
+
+void MessageWidget::expandTo()
+{
+	if (ui.expandButton->isChecked()) {
+		ui.expandButton->setIcon(QIcon(QString(":/icons/png/up-arrow.png")));
+		ui.toText->setMaximumHeight(ui.toText->fontMetrics().lineSpacing()*3.5);
+		ui.expandButton->setToolTip(tr("Minimize"));
+	} else {
+		ui.expandButton->setIcon(QIcon(QString(":/icons/png/down-arrow.png")));
+		ui.toText->setMaximumHeight(ui.toText->fontMetrics().lineSpacing()*1.5);
+		ui.expandButton->setToolTip(tr("Maximize"));
+	}
 }
