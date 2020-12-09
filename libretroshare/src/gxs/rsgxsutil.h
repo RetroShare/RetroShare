@@ -175,7 +175,11 @@ public:
                          RsGenExchange *genex, RsSerialType& gxsSerialiser,
                          RsGixs *gixs);
 
-    static bool check(uint16_t service_type, RsGixs *mgixs, RsGeneralDataService *mds, std::vector<RsGxsGroupId>& grpsToDel, GxsMsgReq& msgsToDel);
+	static bool check(uint16_t service_type, RsGixs *mgixs, RsGeneralDataService *mds
+#ifdef RS_DEEP_CHANNEL_INDEX
+	                  , RsGenExchange* mGenExchangeClient, RsSerialType& mSerializer
+#endif
+	                  , std::vector<RsGxsGroupId>& grpsToDel, GxsMsgReq& msgsToDel);
     bool isDone();
 
     void run();

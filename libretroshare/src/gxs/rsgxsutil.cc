@@ -207,16 +207,24 @@ RsGxsIntegrityCheck::RsGxsIntegrityCheck(
 
 void RsGxsIntegrityCheck::run()
 {
-    std::vector<RsGxsGroupId> grps_to_delete;
-    GxsMsgReq msgs_to_delete;
+	std::vector<RsGxsGroupId> grps_to_delete;
+	GxsMsgReq msgs_to_delete;
 
-    check(mGenExchangeClient->serviceType(),mGixs,mDs,mDeletedGrps,mDeletedMsgs);
+	check(mGenExchangeClient->serviceType(), mGixs, mDs
+#ifdef RS_DEEP_CHANNEL_INDEX
+	      , mGenExchangeClient, mSerializer
+#endif
+	      , mDeletedGrps, mDeletedMsgs);
 
 	RS_STACK_MUTEX(mIntegrityMutex);
 	mDone = true;
 }
 
-bool RsGxsIntegrityCheck::check(uint16_t service_type, RsGixs *mgixs, RsGeneralDataService *mds, std::vector<RsGxsGroupId>& grpsToDel, GxsMsgReq& msgsToDel)
+bool RsGxsIntegrityCheck::check(uint16_t service_type, RsGixs *mgixs, RsGeneralDataService *mds
+#ifdef RS_DEEP_CHANNEL_INDEX
+                                , RsGenExchange* mGenExchangeClient, RsSerialType& mSerializer
+#endif
+                                , std::vector<RsGxsGroupId>& grpsToDel, GxsMsgReq& msgsToDel)
 {
 #ifdef RS_DEEP_CHANNEL_INDEX
 	bool isGxsChannels = mGenExchangeClient->serviceType() == RS_SERVICE_GXS_TYPE_CHANNELS;
