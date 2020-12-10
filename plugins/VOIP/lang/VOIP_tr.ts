@@ -163,7 +163,7 @@
 <context>
     <name>AudioInputConfig</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="+202"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="+185"/>
         <source>Continuous</source>
         <translation>Sürekli</translation>
     </message>
@@ -178,7 +178,7 @@
         <translation>Bas Konuş</translation>
     </message>
     <message>
-        <location line="+105"/>
+        <location line="+91"/>
         <source>%1 s</source>
         <translation>%1 s</translation>
     </message>
@@ -193,7 +193,7 @@
         <translation>-%1 dB</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.h" line="+94"/>
+        <location filename="../gui/AudioInputConfig.h" line="+85"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
     </message>
@@ -812,7 +812,7 @@ Sinirli ya da coştuğunuz zamanlardaki gibi yüksek sesle konuşun. Denetim pan
 <context>
     <name>VOIPToasterItem</name>
     <message>
-        <location filename="../gui/VOIPToasterItem.cpp" line="+43"/>
+        <location filename="../gui/VOIPToasterItem.cpp" line="+42"/>
         <source>Answer</source>
         <translation>Yanıtlayın</translation>
     </message>
@@ -830,7 +830,7 @@ Sinirli ya da coştuğunuz zamanlardaki gibi yüksek sesle konuşun. Denetim pan
 <context>
     <name>VOIPToasterNotify</name>
     <message>
-        <location filename="../gui/VOIPToasterNotify.cpp" line="+56"/>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="+55"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
     </message>
@@ -943,7 +943,7 @@ Sinirli ya da coştuğunuz zamanlardaki gibi yüksek sesle konuşun. Denetim pan
 <context>
     <name>voipGraphSource</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="-260"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="-246"/>
         <source>Required bandwidth</source>
         <translation>Gerekli bant genişliği</translation>
     </message>
