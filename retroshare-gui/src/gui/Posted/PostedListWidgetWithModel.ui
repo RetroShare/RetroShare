@@ -128,7 +128,7 @@ p, li { white-space: pre-wrap; }
                </font>
               </property>
               <property name="text">
-               <string>Last Post:</string>
+               <string>Last activity</string>
               </property>
              </widget>
             </item>
