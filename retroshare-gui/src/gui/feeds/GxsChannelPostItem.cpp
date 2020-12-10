@@ -434,7 +434,7 @@ void GxsChannelPostItem::fill()
 
 	ui->logoLabel->setEnableZoom(false);
 	int desired_height = QFontMetricsF(font()).height() * 8;
-	ui->logoLabel->setFixedSize(4/3.0*desired_height,desired_height);
+	int desired_height_3_4 = QFontMetricsF(font()).height() * 12;
 
 	if(mPost.mThumbnail.mData != NULL)
 	{
@@ -442,10 +442,20 @@ void GxsChannelPostItem::fill()
 		GxsIdDetails::loadPixmapFromData(mPost.mThumbnail.mData, mPost.mThumbnail.mSize, thumbnail,GxsIdDetails::ORIGINAL);
 		// Wiping data - as its been passed to thumbnail.
 
+		//Check if the Thumbnail is a 3:4 Format.
+		if (thumbnail.height() >= 150){
+			ui->logoLabel->setFixedSize(3/4.0*desired_height_3_4,desired_height_3_4);
+		}else{
+			ui->logoLabel->setFixedSize(4/3.0*desired_height,desired_height);
+		}
+
 		ui->logoLabel->setPicture(thumbnail);
 	}
 	else
+	{
+		ui->logoLabel->setFixedSize(4/3.0*desired_height,desired_height);
 		ui->logoLabel->setPicture( FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default-video.png") );
+	}
 
     //if( !IS_GROUP_PUBLISHER(mGroupMeta.mSubscribeFlags) )
     ui->editButton->hide() ;	// never show this button. Feeds are not the place to edit posts.
@@ -610,6 +620,8 @@ void GxsChannelPostItem::fill()
 		QLayout *layout = ui->expandFrame->layout();
 		layout->addWidget(fi);
 	}
+
+	emit sizeChanged(this);
 
 	mInFill = false;
 }
