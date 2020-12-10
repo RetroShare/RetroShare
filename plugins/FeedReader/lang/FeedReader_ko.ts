@@ -169,7 +169,7 @@
         <translation>이름:</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="+75"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="+77"/>
         <source>Feed Details</source>
         <translation>피드 세부정보</translation>
     </message>
@@ -269,7 +269,7 @@
         <translation>모든 피드를 새 탭에서 열기</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderConfig.h" line="+50"/>
+        <location filename="../gui/FeedReaderConfig.h" line="+47"/>
         <source>FeedReader</source>
         <translation>피드리더</translation>
     </message>
@@ -277,7 +277,7 @@
 <context>
     <name>FeedReaderDialog</name>
     <message>
-        <location filename="../gui/FeedReaderDialog.ui" line="+73"/>
+        <location filename="../gui/FeedReaderDialog.ui" line="+91"/>
         <source>Feeds</source>
         <translation>피드</translation>
     </message>
@@ -292,7 +292,7 @@
         <translation>피드 업데이트</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="+94"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="+92"/>
         <source>Message Folders</source>
         <translation>메시지 폴더</translation>
     </message>
@@ -347,7 +347,7 @@
         <translation>이름 없음</translation>
     </message>
     <message>
-        <location line="+212"/>
+        <location line="+210"/>
         <source>Add new folder</source>
         <translation>새 폴더 추가</translation>
     </message>
@@ -436,12 +436,12 @@
 <context>
     <name>FeedReaderFeedNotify</name>
     <message>
-        <location filename="../gui/FeedReaderFeedNotify.cpp" line="+47"/>
+        <location filename="../gui/FeedReaderFeedNotify.cpp" line="+46"/>
         <source>Feed Reader</source>
         <translation>피드 리더</translation>
     </message>
     <message>
-        <location line="+78"/>
+        <location line="+79"/>
         <source>Test</source>
         <translation>시험</translation>
     </message>
@@ -500,7 +500,7 @@
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="+92"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="+113"/>
         <source>Title</source>
         <translation>제목</translation>
     </message>
@@ -595,7 +595,7 @@
 <context>
     <name>FeedReaderPlugin</name>
     <message>
-        <location filename="../FeedReaderPlugin.cpp" line="+157"/>
+        <location filename="../FeedReaderPlugin.cpp" line="+156"/>
         <source>This plugin provides a Feedreader.</source>
         <translation>이 플러그인은 피드리더를 제공합니다</translation>
     </message>
@@ -608,7 +608,7 @@
 <context>
     <name>FeedReaderStringDefs</name>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="+36"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="+35"/>
         <source>Feed not found.</source>
         <translation>피드를 찾을 수 없습니다.</translation>
     </message>
@@ -777,7 +777,7 @@
 <context>
     <name>FeedReaderUserNotify</name>
     <message>
-        <location filename="../gui/FeedReaderUserNotify.cpp" line="+40"/>
+        <location filename="../gui/FeedReaderUserNotify.cpp" line="+39"/>
         <source>FeedReader Message</source>
         <translation>피드리더 메시지</translation>
     </message>
@@ -840,7 +840,7 @@
         <translation>XPath 제거</translation>
     </message>
     <message>
-        <location filename="../gui/PreviewFeedDialog.cpp" line="+179"/>
+        <location filename="../gui/PreviewFeedDialog.cpp" line="+180"/>
         <source>Cannot create preview</source>
         <translation>미리보기를 만들 수 없습니다</translation>
     </message>
