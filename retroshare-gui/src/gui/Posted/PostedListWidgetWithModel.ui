@@ -85,7 +85,7 @@ p, li { white-space: pre-wrap; }
                </font>
               </property>
               <property name="text">
-               <string>Posts</string>
+               <string>Contributions:</string>
               </property>
              </widget>
             </item>
@@ -128,7 +128,7 @@ p, li { white-space: pre-wrap; }
                </font>
               </property>
               <property name="text">
-               <string>Last activity</string>
+               <string>Last activity:</string>
               </property>
              </widget>
             </item>
@@ -180,7 +180,7 @@ p, li { white-space: pre-wrap; }
                </font>
               </property>
               <property name="text">
-               <string>Popularity</string>
+               <string>Popularity:</string>
               </property>
              </widget>
             </item>
