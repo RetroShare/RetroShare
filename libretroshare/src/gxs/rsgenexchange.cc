@@ -3174,6 +3174,10 @@ void RsGenExchange::processRecvdMessages()
             for(auto& nxs_msg: msgs_to_store)
             {
                 RsGxsMsgItem *item = dynamic_cast<RsGxsMsgItem*>(mSerialiser->deserialise(nxs_msg->msg.bin_data,&nxs_msg->msg.bin_len));
+
+                if(!item)
+                    continue;
+
                 item->meta = *nxs_msg->metaData;
 
 				RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_RECEIVED_NEW, item->meta.mGroupId, item->meta.mMsgId,false);

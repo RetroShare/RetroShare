@@ -556,6 +556,7 @@ void RsGxsNetTunnelService::receiveTurtleData(const RsTurtleGenericTunnelItem *i
 		mTurtle2GxsPeer[turtle_virtual_peer_id] = pid_item->virtual_peer_id ;
 
 		RsGxsNetTunnelVirtualPeerInfo& vp_info(mVirtualPeers[pid_item->virtual_peer_id]) ;
+        delete pid_item;
 
 		vp_info.vpid_status = RsGxsNetTunnelVirtualPeerInfo::RS_GXS_NET_TUNNEL_VP_STATUS_ACTIVE ;					// status of the peer
 		vp_info.side = direction;	                        // client/server

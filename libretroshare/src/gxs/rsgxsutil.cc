@@ -252,7 +252,8 @@ bool RsGxsIntegrityCheck::check(uint16_t service_type, RsGixs *mgixs, RsGeneralD
 
 		if(currHash == grp->metaData->mHash)
 		{
-			// get all message ids of group
+            // Get all message ids of group, store them in msgIds, creating the grp entry at the same time.
+
             if (mds->retrieveMsgIds(grp->grpId, msgIds[grp->grpId]) == 1)
 			{
 				// store the group for retrieveNxsMsgs
@@ -275,7 +276,8 @@ bool RsGxsIntegrityCheck::check(uint16_t service_type, RsGixs *mgixs, RsGeneralD
 					}
 				}
 			}
-			else msgIds.erase(msgIds.find(grp->grpId));
+            else
+                msgIds.erase(msgIds.find(grp->grpId));	// could not get them, so group is removed from list.
 
 #ifdef RS_DEEP_CHANNEL_INDEX
             // This should be moved to p3gxschannels. It is really not the place for this here!
@@ -334,30 +336,26 @@ bool RsGxsIntegrityCheck::check(uint16_t service_type, RsGixs *mgixs, RsGeneralD
 
     mds->retrieveNxsMsgs(grps, msgs, false, true);
 
-    // check msg ids and messages
-    GxsMsgReq::iterator msgIdsIt;
-    for (msgIdsIt = msgIds.begin(); msgIdsIt != msgIds.end(); ++msgIdsIt)
+    // Check msg ids and messages. Go through all message IDs referred to by the db call
+    // and verify that the message belongs to the nxs msg data that was just retrieved.
+
+    for(auto& msgIdsIt:msgIds)
     {
-	    const RsGxsGroupId& grpId = msgIdsIt->first;
-	    std::set<RsGxsMessageId> &msgIdV = msgIdsIt->second;
+        const RsGxsGroupId&       grpId  = msgIdsIt.first;
+        std::set<RsGxsMessageId>& msgIdV = msgIdsIt.second;
 
-	    std::set<RsGxsMessageId>::iterator msgIdIt;
-	    for (msgIdIt = msgIdV.begin(); msgIdIt != msgIdV.end(); ++msgIdIt)
-	    {
-		    const RsGxsMessageId& msgId = *msgIdIt;
-		    std::vector<RsNxsMsg*> &nxsMsgV = msgs[grpId];
+        std::set<RsGxsMessageId> nxsMsgS;
+        std::vector<RsNxsMsg*>& nxsMsgV = msgs[grpId];
 
-		    std::vector<RsNxsMsg*>::iterator nxsMsgIt;
-		    for (nxsMsgIt = nxsMsgV.begin(); nxsMsgIt != nxsMsgV.end(); ++nxsMsgIt)
-		    {
-			    RsNxsMsg *nxsMsg = *nxsMsgIt;
-			    if (nxsMsg && msgId == nxsMsg->msgId)
-			    {
-				    break;
-			    }
-		    }
+        // To make the search efficient, we first build a set of msgIds to search in.
+        // Set build and search are both O(n log(n)).
 
-		    if (nxsMsgIt == nxsMsgV.end())
+        for(auto& nxsMsg:nxsMsgV)
+            if(nxsMsg)
+                nxsMsgS.insert(nxsMsg->msgId);
+
+        for (auto& msgId:msgIdV)
+            if(nxsMsgS.find(msgId) == nxsMsgS.end())
 			{
 				msgsToDel[grpId].insert(msgId);
 #ifdef RS_DEEP_CHANNEL_INDEX
@@ -365,7 +363,6 @@ bool RsGxsIntegrityCheck::check(uint16_t service_type, RsGixs *mgixs, RsGeneralD
 					DeepChannelsIndex::removeChannelPostFromIndex(grpId, msgId);
 #endif // def  RS_DEEP_CHANNEL_INDEX
 		    }
-	    }
     }
 
 	GxsMsgResult::iterator mit = msgs.begin();
