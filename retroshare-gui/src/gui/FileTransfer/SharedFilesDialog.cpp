@@ -655,7 +655,7 @@ void SharedFilesDialog::copyLinks(const QModelIndexList& lst, bool remote,QList<
 			}
 			else
 				name = QString::fromUtf8(details.name.c_str());
-			RetroShareLink link = RetroShareLink::createFile(name, details.count, details.hash.toStdString().c_str());
+            RetroShareLink link = RetroShareLink::createFile(name, details.size, details.hash.toStdString().c_str());
 			if (link.valid()) {
 				urls.push_back(link) ;
 			}

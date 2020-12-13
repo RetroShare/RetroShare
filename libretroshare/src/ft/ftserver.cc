@@ -2283,7 +2283,7 @@ std::error_condition ftServer::exportFileLink(
 	tDirDet.type = DIR_TYPE_FILE;
 	tDirDet.name = fileName;
 	tDirDet.hash = fileHash;
-	tDirDet.count = fileSize;
+    tDirDet.size = fileSize;
 
 	return dirDetailsToLink(link, tDirDet, fragSneak, baseUrl);
 }
@@ -2308,7 +2308,7 @@ std::error_condition ftServer::parseFilesLink(
 			dt.name = *tUrl.getQueryV("name");
 			try
 			{
-				dt.count = std::stoull(*tUrl.getQueryV("size"));
+                dt.size = std::stoull(*tUrl.getQueryV("size"));
 				std::unique_ptr<RsFileTree> ft;
 				if( !dt.hash.isNull() &&
 				        (ft = RsFileTree::fromDirDetails(dt, true)) )

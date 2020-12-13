@@ -202,7 +202,7 @@ bool TreeStyle_RDM::hasChildren(const QModelIndex &parent) const
 	}
 	/* PERSON/DIR*/
 #ifdef RDM_DEBUG
-	std::cerr << "lookup PER/DIR #" << details.count;
+    std::cerr << "lookup PER/DIR #" << details.size;
 	std::cerr << std::endl;
 #endif
     return (details.children.size() > 0); /* do we have children? */
@@ -261,7 +261,7 @@ int TreeStyle_RDM::rowCount(const QModelIndex &parent) const
 
 	/* else PERSON/DIR*/
 #ifdef RDM_DEBUG
-	std::cerr << "lookup PER/DIR #" << details.count;
+    std::cerr << "lookup PER/DIR #" << details.size;
 	std::cerr << std::endl;
 #endif
 	if ((details.type == DIR_TYPE_ROOT) && !_showEmpty && RemoteMode)
@@ -551,7 +551,7 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 			case COLUMN_FILENB:
 				return  QVariant();
 			case COLUMN_SIZE:
-				return  misc::friendlyUnit(details.count);
+                return  misc::friendlyUnit(details.size);
 			case COLUMN_AGE:
 			{
 				if(details.type == DIR_TYPE_FILE)
@@ -589,7 +589,7 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 				}
                 return QString::number(details.children.size()) + " " + tr("File");
 			case COLUMN_SIZE:
-                return  misc::friendlyUnit(details.count);
+                return  misc::friendlyUnit(details.size);
             case COLUMN_AGE:
 				return misc::timeRelativeToNow(details.max_mtime);
 			case COLUMN_FRIEND_ACCESS:
@@ -651,7 +651,7 @@ QVariant FlatStyle_RDM::displayRole(const DirDetails& details,int coln) const
 		{
 			case COLUMN_NAME: return QString::fromUtf8(details.name.c_str());
 			case COLUMN_FILENB: return QString();
-			case COLUMN_SIZE: return misc::friendlyUnit(details.count);
+            case COLUMN_SIZE: return misc::friendlyUnit(details.size);
 			case COLUMN_AGE: return misc::timeRelativeToNow(details.max_mtime);
 			case COLUMN_FRIEND_ACCESS: return QString::fromUtf8(rsPeers->getPeerName(details.id).c_str());
 			case COLUMN_WN_VISU_DIR: return computeDirectoryPath(details);
@@ -711,7 +711,7 @@ QVariant TreeStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 			case COLUMN_FILENB:
 				return (qulonglong) 0;
 			case COLUMN_SIZE:
-				return (qulonglong) details.count;
+                return (qulonglong) details.size;
 			case COLUMN_AGE:
 				return details.max_mtime;
 			case COLUMN_FRIEND_ACCESS:
@@ -761,7 +761,7 @@ QVariant FlatStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 		{
 			case COLUMN_NAME: return QString::fromUtf8(details.name.c_str());
 			case COLUMN_FILENB: return (qulonglong) 0;
-			case COLUMN_SIZE: return (qulonglong) details.count;
+            case COLUMN_SIZE: return (qulonglong) details.size;
 			case COLUMN_AGE: return  details.max_mtime;
 			case COLUMN_FRIEND_ACCESS: return QString::fromUtf8(rsPeers->getPeerName(details.id).c_str());
 			case COLUMN_WN_VISU_DIR: {
@@ -1286,7 +1286,7 @@ void RetroshareDirModel::downloadSelected(const QModelIndexList &list,bool inter
 			   std::cerr << std::endl;
 			   std::list<RsPeerId> srcIds;
 			   srcIds.push_back(details.id);
-               rsFiles -> FileRequest(details.name, details.hash, details.count, "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds);
+               rsFiles -> FileRequest(details.name, details.hash, details.size, "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds);
 		   }
 		   /* if it is a dir, copy all files included*/
 		   else if (details.type == DIR_TYPE_DIR)
@@ -1307,7 +1307,7 @@ void RetroshareDirModel::downloadDirectory(const DirDetails & dirDetails, int pr
 		QString cleanPath = QDir::cleanPath(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()) + "/" + QString::fromUtf8(dirDetails.path.substr(prefixLen).c_str()));
 
 		srcIds.push_back(dirDetails.id);
-		rsFiles->FileRequest(dirDetails.name, dirDetails.hash, dirDetails.count, cleanPath.toUtf8().constData(), RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds);
+        rsFiles->FileRequest(dirDetails.name, dirDetails.hash, dirDetails.size, cleanPath.toUtf8().constData(), RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds);
 	}
 	else if (dirDetails.type & DIR_TYPE_DIR)
 	{
@@ -1392,7 +1392,7 @@ void RetroshareDirModel::getFileInfoFromIndexList(const QModelIndexList& list, s
 			std::cerr << "::::::::::::FileRecommend:::: " << std::endl;
 			std::cerr << "Name: " << details.name << std::endl;
 			std::cerr << "Hash: " << details.hash << std::endl;
-			std::cerr << "Size: " << details.count << std::endl;
+            std::cerr << "Size: " << details.size << std::endl;
 			std::cerr << "Path: " << details.path << std::endl;
 #endif
 			// Note: for directories, the returned hash, is the peer id, so if we collect
@@ -1590,7 +1590,7 @@ QMimeData * RetroshareDirModel::mimeData ( const QModelIndexList & indexes ) con
 		std::cerr << "::::::::::::FileDrag:::: " << std::endl;
 		std::cerr << "Name: " << details.name << std::endl;
 		std::cerr << "Hash: " << details.hash << std::endl;
-		std::cerr << "Size: " << details.count << std::endl;
+        std::cerr << "Size: " << details.size << std::endl;
 		std::cerr << "Path: " << details.path << std::endl;
 #endif
 
@@ -1611,7 +1611,7 @@ QMimeData * RetroshareDirModel::mimeData ( const QModelIndexList & indexes ) con
 		}
 
         drags[details.hash] = details.children.size();
-        QString line = QString("%1/%2/%3/").arg(QString::fromUtf8(details.name.c_str()), QString::fromStdString(details.hash.toStdString()), QString::number(details.count));
+        QString line = QString("%1/%2/%3/").arg(QString::fromUtf8(details.name.c_str()), QString::fromStdString(details.hash.toStdString()), QString::number(details.size));
 
 		if (RemoteMode)
 		{

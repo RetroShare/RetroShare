@@ -35,7 +35,7 @@
 #	include "deep_search/filesindex.hpp"
 #endif // def RS_DEEP_FILES_INDEX
 
-#define DEBUG_REMOTE_DIRECTORY_STORAGE 1
+//#define DEBUG_REMOTE_DIRECTORY_STORAGE 1
 
 /******************************************************************************************************************/
 /*                                                      Iterators                                                 */
@@ -235,7 +235,7 @@ bool DirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
 
         d.type = DIR_TYPE_DIR;
         d.hash.clear() ;
-        d.count   = dir_entry->dir_cumulated_size;//dir_entry->subdirs.size() + dir_entry->subfiles.size();
+        d.size   = dir_entry->dir_cumulated_size;//dir_entry->subdirs.size() + dir_entry->subfiles.size();
         d.max_mtime = dir_entry->dir_most_recent_time ;
         d.mtime     = dir_entry->dir_modtime ;
         d.name    = dir_entry->dir_name;
@@ -253,7 +253,7 @@ bool DirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
         const InternalFileHierarchyStorage::FileEntry *file_entry = mFileHierarchy->getFileEntry(indx) ;
 
         d.type    = DIR_TYPE_FILE;
-        d.count   = file_entry->file_size;
+        d.size   = file_entry->file_size;
         d.max_mtime = file_entry->file_modtime ;
         d.name    = file_entry->file_name;
         d.hash    = file_entry->file_hash;
@@ -587,7 +587,7 @@ bool LocalDirectoryStorage::getFileInfo(DirectoryStorage::EntryIndex i,FileInfo&
     info.path                     = d.path + "/" + d.name;
     info.fname                    = d.name;
     info.hash                     = d.hash;
-    info.size                     = d.count;
+    info.size                     = d.size;
 
     // all this stuff below is not useful in this case.
 
