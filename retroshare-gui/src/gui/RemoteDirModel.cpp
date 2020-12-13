@@ -205,7 +205,7 @@ bool TreeStyle_RDM::hasChildren(const QModelIndex &parent) const
 	std::cerr << "lookup PER/DIR #" << details.count;
 	std::cerr << std::endl;
 #endif
-    return (details.count > 0); /* do we have children? */
+    return (details.children.size() > 0); /* do we have children? */
 }
 bool FlatStyle_RDM::hasChildren(const QModelIndex &parent) const
 {
@@ -270,14 +270,14 @@ int TreeStyle_RDM::rowCount(const QModelIndex &parent) const
 		//Scan all children to know if they are empty.
 		//And save their real row index
 		//Prefer do like that than modify requestDirDetails with a new flag (rsFiles->RequestDirDetails)
-		for(uint64_t i = 0; i < details.count; ++i)
+        for(uint64_t i = 0; i < details.children.size(); ++i)
 		{
-			if (requestDirDetails(details.children[i].ref, RemoteMode,childDetails) && (childDetails.count > 0))
+            if (requestDirDetails(details.children[i].ref, RemoteMode,childDetails) && (childDetails.children.size() > 0))
 				_parentRow.push_back(i);
 		}
 		return _parentRow.size();
 	}
-	return details.count;
+    return details.children.size();
 }
 int FlatStyle_RDM::rowCount(const QModelIndex &parent) const
 {
@@ -504,7 +504,7 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 				else if(details.id == rsPeers->getOwnId())
 					rsFiles->getSharedDirStatistics(rsPeers->getOwnId(),stats) ;
                 else
-                    stats.total_number_of_files = details.count;
+                    stats.total_number_of_files = details.children.size();
 
 				if(stats.total_number_of_files > 0)
 				{
@@ -583,14 +583,14 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 				return QString::fromUtf8(details.name.c_str());
 				break;
 			case COLUMN_FILENB:
-				if (details.count > 1)
+                if (details.children.size() > 1)
 				{
-					return QString::number(details.count) + " " + tr("Files");
+                    return QString::number(details.children.size()) + " " + tr("Files");
 				}
-				return QString::number(details.count) + " " + tr("File");
+                return QString::number(details.children.size()) + " " + tr("File");
 			case COLUMN_SIZE:
-				return QVariant();
-			case COLUMN_AGE:
+                return  misc::friendlyUnit(details.count);
+            case COLUMN_AGE:
 				return misc::timeRelativeToNow(details.max_mtime);
 			case COLUMN_FRIEND_ACCESS:
 				return QVariant();
@@ -734,7 +734,7 @@ QVariant TreeStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 			case COLUMN_NAME:
 				return QString::fromUtf8(details.name.c_str());
 			case COLUMN_FILENB:
-				return (qulonglong) details.count;
+                return (qulonglong) details.children.size();
 			case COLUMN_SIZE:
 				return (qulonglong) 0;
 			case COLUMN_AGE:
@@ -1286,8 +1286,7 @@ void RetroshareDirModel::downloadSelected(const QModelIndexList &list,bool inter
 			   std::cerr << std::endl;
 			   std::list<RsPeerId> srcIds;
 			   srcIds.push_back(details.id);
-			   rsFiles -> FileRequest(details.name, details.hash,
-			                          details.count, "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds);
+               rsFiles -> FileRequest(details.name, details.hash, details.count, "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds);
 		   }
 		   /* if it is a dir, copy all files included*/
 		   else if (details.type == DIR_TYPE_DIR)
@@ -1611,8 +1610,7 @@ QMimeData * RetroshareDirModel::mimeData ( const QModelIndexList & indexes ) con
 			continue; /* duplicate */
 		}
 
-        drags[details.hash] = details.count;
-
+        drags[details.hash] = details.children.size();
         QString line = QString("%1/%2/%3/").arg(QString::fromUtf8(details.name.c_str()), QString::fromStdString(details.hash.toStdString()), QString::number(details.count));
 
 		if (RemoteMode)
