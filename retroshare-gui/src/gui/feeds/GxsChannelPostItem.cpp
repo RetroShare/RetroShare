@@ -442,9 +442,9 @@ void GxsChannelPostItem::fill()
 		GxsIdDetails::loadPixmapFromData(mPost.mThumbnail.mData, mPost.mThumbnail.mSize, thumbnail,GxsIdDetails::ORIGINAL);
 		// Wiping data - as its been passed to thumbnail.
 
-		//Check if the Thumbnail is a 3:4 Format.
+		// Check if the Thumbnail is a 3:4 Format.
 		if (thumbnail.height() >= 150){
-			ui->logoLabel->setFixedSize(3/4.0*desired_height_3_4,desired_height_3_4);
+			ui->logoLabel->setFixedSize(2/3.0*desired_height_3_4,desired_height_3_4);
 		}else{
 			ui->logoLabel->setFixedSize(4/3.0*desired_height,desired_height);
 		}
@@ -497,12 +497,12 @@ void GxsChannelPostItem::fill()
 		/* subject */
 		ui->titleLabel->setText(QString::fromUtf8(mPost.mMeta.mMsgName.c_str()));
 
-        uint32_t autorized_lines = (int)floor((ui->logoLabel->height() - ui->titleLabel->height() - ui->buttonHLayout->sizeHint().height())/QFontMetricsF(ui->subjectLabel->font()).height());
+		uint32_t autorized_lines = (int)floor((ui->logoLabel->height() - ui->titleLabel->height() - ui->buttonHLayout->sizeHint().height())/QFontMetricsF(ui->subjectLabel->font()).height());
 
 		// fill first 4 lines of message. (csoler) Disabled the replacement of smileys and links, because the cost is too crazy
 		//ui->subjectLabel->setText(RsHtml().formatText(NULL, RsStringUtil::CopyLines(QString::fromUtf8(mPost.mMsg.c_str()), autorized_lines), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 
-        ui->subjectLabel->setText(RsStringUtil::CopyLines(QString::fromUtf8(mPost.mMsg.c_str()), 2)) ;
+		ui->subjectLabel->setText(RsStringUtil::CopyLines(QString::fromUtf8(mPost.mMsg.c_str()), 2)) ;
 
 		//QString score = QString::number(post.mTopScore);
 		// scoreLabel->setText(score); 
