@@ -24,26 +24,27 @@
 #include "rshare.h"
 #include "rsharesettings.h"
 #include "util/i2pcommon.h"
-#include "util/RsNetUtil.h"
 #include "util/misc.h"
+#include "util/qtthreadsutils.h"
+#include "util/RsNetUtil.h"
 
 #include <iostream>
 
 #include "retroshare/rsbanlist.h"
 #include "retroshare/rsconfig.h"
 #include "retroshare/rsdht.h"
+#include "retroshare/rsinit.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsturtle.h"
-#include "retroshare/rsinit.h"
 
 #include <QCheckBox>
 #include <QMovie>
 #include <QMenu>
-#include <QTcpSocket>
 #include <QNetworkProxy>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QNetworkAccessManager>
+#include <QTcpSocket>
 #include <QTimer>
 
 #define ICON_STATUS_UNKNOWN ":/images/ledoff1.png"
@@ -79,6 +80,7 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     , manager(NULL), mOngoingConnectivityCheck(-1)
     , mIsHiddenNode(false), mHiddenType(RS_HIDDEN_TYPE_NONE)
     , mBobAccessible(false)
+    , mEventHandlerId(0)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
@@ -244,7 +246,37 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 	// when the network menu is opened and the hidden service tab is already selected updateOutProxyIndicator() won't be called and thus resulting in wrong proxy indicators.
 	if (ui.tabWidget->currentIndex() == TAB_HIDDEN_SERVICE)
 		updateOutProxyIndicator();
+
+	rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); }, mEventHandlerId, RsEventType::NETWORK );
+
 }
+
+void ServerPage::handleEvent(std::shared_ptr<const RsEvent> e)
+{
+	if(e->mType != RsEventType::NETWORK)
+		return;
+
+	const RsNetworkEvent *ne = dynamic_cast<const RsNetworkEvent*>(e.get());
+
+	if(!ne)
+		return;
+
+	// in any case we update the IPs
+
+	switch(ne->mNetworkEventCode)
+	{
+		case RsNetworkEventCode::LOCAL_IP_UPDATED:  // [fallthrough]
+		case RsNetworkEventCode::EXTERNAL_IP_UPDATED:  // [fallthrough]
+			RsQThreadUtils::postToObject( [=]()
+			{
+				updateStatus();
+			},this);
+		break;
+		default:
+		break;
+	}
+}
+
 
 void ServerPage::saveAndTestInProxy()
 {
