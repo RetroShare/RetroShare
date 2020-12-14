@@ -40,6 +40,8 @@
 #include "retroshare-gui/RsAutoUpdatePage.h"
 #include "gui/common/FilesDefs.h"
 
+#include "retroshare/rsevents.h"
+
 
 class QNetworkReply;
 class QNetworkAccessManager;
@@ -160,6 +162,9 @@ private:
 	uint32_t mHiddenType;
 	bobSettings mBobSettings;
 	bool mBobAccessible; // keeps track wether bob is accessable or not to en/disable the corresponding buttons
+
+	RsEventsHandlerId_t mEventHandlerId;
+	void handleEvent(std::shared_ptr<const RsEvent> event);
 };
 
 #endif // !SERVERPAGE_H
