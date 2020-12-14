@@ -203,7 +203,7 @@ void CreateGxsChannelMsg::pasteLink()
 {
 	std::cerr << "Pasting links: " << std::endl;
 
-	QList<RetroShareLink> links,not_have ;
+    QList<RetroShareLink> links;
 	RSLinkClipboard::pasteLinks(links) ;
 
 	for(QList<RetroShareLink>::const_iterator it(links.begin());it!=links.end();++it)
@@ -217,14 +217,19 @@ void CreateGxsChannelMsg::pasteLink()
             FileInfo info ;
             RsFileHash hash( (*it).hash().toStdString()) ;
 
+#ifdef TO_REMOVE
             if(rsFiles->alreadyHaveFile( hash,info ) )
-                addAttachment(hash, (*it).name().toUtf8().constData(), (*it).size(), true, RsPeerId()) ;
-			else
-				not_have.push_back( *it ) ;
-		}
+#endif
+                addAttachment(hash, (*it).name().toUtf8().constData(), (*it).size(), rsFiles->alreadyHaveFile( hash,info ), RsPeerId()) ;
+#ifdef TO_REMOVE
+            else
+                not_have.push_back( *it ) ;
+#endif
+        }
 
-	if(!not_have.empty())
-	{
+#ifdef TO_REMOVE
+    if(!not_have.empty())
+    {
         QString msg = tr("You are about to add files you're not actually sharing. Do you still want this to happen?")+"<br><br>" ;
 
         for(QList<RetroShareLink>::const_iterator it(not_have.begin());it!=not_have.end();++it)
@@ -233,7 +238,8 @@ void CreateGxsChannelMsg::pasteLink()
         if(QMessageBox::YesToAll == QMessageBox::question(NULL,tr("About to post un-owned files to a channel."),msg,QMessageBox::YesToAll | QMessageBox::No))
             for(QList<RetroShareLink>::const_iterator it(not_have.begin());it!=not_have.end();++it)
                 addAttachment(RsFileHash((*it).hash().toStdString()), (*it).name().toUtf8().constData(), (*it).size(), false, RsPeerId()) ;
-	}
+    }
+#endif
 }
 
 /* Dropping */
@@ -325,7 +331,7 @@ void CreateGxsChannelMsg::dropEvent(QDropEvent *event)
 					QMessageBox mb(tr("Drop file error."), tr("Directory can't be dropped, only files are accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
 					mb.exec();
 				} else if (QFile::exists(localpath)) {
-					addAttachment(localpath.toUtf8().constData());
+                    addAttachment(localpath.toUtf8().constData());
 				} else {
 					std::cerr << "CreateGxsChannelMsg::dropEvent() file does not exists."<< std::endl;
 					QMessageBox mb(tr("Drop file error."), tr("File not found or file name not accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
@@ -520,7 +526,7 @@ void CreateGxsChannelMsg::addHtmlText(const QString& text)
 	RichTextEditWidget->setText(text) ;
 }
 
-void CreateGxsChannelMsg::addAttachment(const std::string &path)
+bool CreateGxsChannelMsg::addAttachment(const std::string &path)
 {
 	/* add a SubFileItem to the attachment section */
 #ifdef DEBUG_CREATE_GXS_MSG
@@ -540,13 +546,12 @@ void CreateGxsChannelMsg::addAttachment(const std::string &path)
 	for(it= mAttachments.begin(); it != mAttachments.end(); ++it){
 
 		if((*it)->FilePath() == path){
-			QMessageBox::warning(this, tr("RetroShare"), tr("File already Added and Hashed"), QMessageBox::Ok, QMessageBox::Ok);
+            QMessageBox::warning(this, tr("RetroShare"), tr("This file already in this post:")+"<br/>"+QString::fromStdString(path), QMessageBox::Ok, QMessageBox::Ok);
 
-			return;
+            return false;
 		}
 	}
 
-	FileInfo fInfo;
 	std::string filename = RsDirUtil::getTopDir(path);
 	uint64_t size = 0;
     RsFileHash hash ;
@@ -570,7 +575,7 @@ void CreateGxsChannelMsg::addAttachment(const std::string &path)
 
     updateAttachmentCount();
 
-    return;
+    return true;
 }
 
 bool CreateGxsChannelMsg::setThumbNail(const std::string& path, int frame){
@@ -724,32 +729,35 @@ void CreateGxsChannelMsg::sendMsg()
 	std::string msg = std::string(text.toUtf8());
 
 	std::list<RsGxsFile> files;
+    std::list<RsGxsFile> missing_files;
 
-	std::list<SubFileItem *>::iterator fit;
-
-	for(fit = mAttachments.begin(); fit != mAttachments.end(); ++fit)
-	{
-		if (!(*fit)->isHidden())
+    for(auto fit :mAttachments)
+        if (!fit->isHidden())
 		{
 			RsGxsFile fi;
-			fi.mHash = (*fit)->FileHash();
-			fi.mName = (*fit)->FileName();
-			fi.mSize = (*fit)->FileSize();
+            fi.mHash = fit->FileHash();
+            fi.mName = fit->FileName();
+            fi.mSize = fit->FileSize();
 
 			files.push_back(fi);
 
-			/* commence downloads - if we don't have the file */
+            /* if we don't have the file, display info about it */
 
-			if (!(*fit)->done())
-			{
-				if ((*fit)->ready())
-				{
-					(*fit)->download();
-				}
-			// Skips unhashed files.
-			}
+            if (!fit->done() && fit->ready()) // Skips unhashed files.
+                    missing_files.push_back(fi);
 		}
-	}
+
+    if(!missing_files.empty())
+    {
+        QString filesstr = "<br/>";
+
+        for(auto& file: missing_files)
+            filesstr += "<br/>" /*+QString::fromStdString(file.mHash.toStdString()) + " "*/ + QString::fromStdString(file.mName) ;
+
+        if(QMessageBox::Cancel == QMessageBox::warning(nullptr,tr("Post refers to non shared files"),
+                                tr("This post contains files that you are currently not sharing. Do you still want to post?")+filesstr,QMessageBox::Ok,QMessageBox::Cancel))
+            return;
+    }
 
 	sendMessage(subject, msg, files);
 }
