@@ -1368,6 +1368,9 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 			rsEvents->postEvent(std::move(ev));
 		}
 
+		if (auth_diagnostic == RS_SSL_HANDSHAKE_DIAGNOSTIC_ISSUER_UNKNOWN)
+			RsServer::notify()->AddPopupMessage(RS_POPUP_CONNECT_ATTEMPT, pgpId.toStdString(), sslCn, sslId.toStdString()); /* notify Connect Attempt */
+
 		return verificationFailed;
 	}
 #ifdef AUTHSSL_DEBUG
@@ -1391,6 +1394,8 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 			ev->mErrorCode = RsAuthSslError::NOT_A_FRIEND;
 			rsEvents->postEvent(std::move(ev));
 		}
+
+		RsServer::notify()->AddPopupMessage(RS_POPUP_CONNECT_ATTEMPT, pgpId.toStdString(), sslCn, sslId.toStdString()); /* notify Connect Attempt */
 
 		return verificationFailed;
 	}
