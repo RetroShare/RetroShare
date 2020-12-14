@@ -57,6 +57,7 @@ RetroshareDirModel::RetroshareDirModel(bool mode, QObject *parent)
   , ageIndicator(IND_ALWAYS)
   , RemoteMode(mode)//, nIndex(1), indexSet(1) /* ass zero index cant be used */
   , mLastRemote(false), mLastReq(0), mUpdating(false)
+  , mEventHandlerId(0)
 {
 #if QT_VERSION < QT_VERSION_CHECK (5, 0, 0)
 	setSupportedDragActions(Qt::CopyAction);
@@ -65,13 +66,13 @@ RetroshareDirModel::RetroshareDirModel(bool mode, QObject *parent)
 
 	mDirDetails.ref = (void*)intptr_t(0xffffffff) ;
 
-    rsEvents->registerEventsHandler(
-                [this](std::shared_ptr<const RsEvent> event)
-                {
-                    RsQThreadUtils::postToObject( [this,event]()  {  handleEvent_main_thread(event);  });
-                },
-                mEventHandlerId,
-                RsEventType::SHARED_DIRECTORIES );
+	rsEvents->registerEventsHandler(
+	            [this](std::shared_ptr<const RsEvent> event)
+	                  {
+	                  	RsQThreadUtils::postToObject( [this,event]()  {  handleEvent_main_thread(event);  });
+	                  }
+	            , mEventHandlerId
+	            , RsEventType::SHARED_DIRECTORIES );
 }
 
 RetroshareDirModel::~RetroshareDirModel()
