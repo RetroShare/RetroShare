@@ -730,6 +730,7 @@ void CreateGxsChannelMsg::sendMsg()
 
 	std::list<RsGxsFile> files;
     std::list<RsGxsFile> missing_files;
+    std::list<RsGxsFile> files_only_extra;
 
     for(auto fit :mAttachments)
         if (!fit->isHidden())
@@ -745,7 +746,14 @@ void CreateGxsChannelMsg::sendMsg()
 
             if (!fit->done() && fit->ready()) // Skips unhashed files.
                     missing_files.push_back(fi);
-		}
+
+            FileInfo finfo;
+            bool extra = rsFiles->FileDetails(fi.mHash, RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY, finfo );
+            bool local = rsFiles->FileDetails(fi.mHash, RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_SPEC_ONLY, finfo );
+
+            if(extra && !local)
+                files_only_extra.push_back(fi);
+        }
 
     if(!missing_files.empty())
     {
@@ -757,6 +765,18 @@ void CreateGxsChannelMsg::sendMsg()
         if(QMessageBox::Cancel == QMessageBox::warning(nullptr,tr("Post refers to non shared files"),
                                 tr("This post contains files that you are currently not sharing. Do you still want to post?")+filesstr,QMessageBox::Ok,QMessageBox::Cancel))
             return;
+    }
+    if(!files_only_extra.empty())
+    {
+        QString filesstr = "<br/>";
+
+        for(auto& file: files_only_extra)
+            filesstr += "<br/>" /*+QString::fromStdString(file.mHash.toStdString()) + " "*/ + QString::fromStdString(file.mName) ;
+
+        QMessageBox::information(nullptr,
+                                tr("Post refers to temporary shared files"),
+                                tr("The following files will only shared until you restart Retroshare. Think about adding them to a shared directory.")
+                                                           +filesstr);
     }
 
 	sendMessage(subject, msg, files);
