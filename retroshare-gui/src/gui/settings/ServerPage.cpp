@@ -47,6 +47,8 @@
 #include <QTcpSocket>
 #include <QTimer>
 
+#include <libsam3.h>
+
 #define ICON_STATUS_UNKNOWN ":/images/ledoff1.png"
 #define ICON_STATUS_WORKING ":/images/yellowled.png"
 #define ICON_STATUS_OK      ":/images/ledon1.png"
@@ -66,7 +68,7 @@
 // Tabs numbers *after* non relevant tabs are removed. So do not use them to add/remove tabs!!
 const static uint32_t TAB_HIDDEN_SERVICE_OUTGOING = 0;
 const static uint32_t TAB_HIDDEN_SERVICE_INCOMING = 1;
-const static uint32_t TAB_HIDDEN_SERVICE_I2P_BOB  = 2;
+const static uint32_t TAB_HIDDEN_SERVICE_I2P	  = 2;
 
 const static uint32_t TAB_NETWORK                 = 0;
 const static uint32_t TAB_HIDDEN_SERVICE          = 1;
@@ -79,14 +81,14 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
     , manager(NULL), mOngoingConnectivityCheck(-1)
     , mIsHiddenNode(false), mHiddenType(RS_HIDDEN_TYPE_NONE)
-    , mBobAccessible(false)
+    , mSamAccessible(false)
     , mEventHandlerId(0)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
 
 #ifndef RS_USE_I2P_BOB
-  ui.hiddenServiceTab->removeTab(TAB_HIDDEN_SERVICE_I2P_BOB);	// warning: the order of operation here is very important.
+  ui.hiddenServiceTab->removeTab(TAB_HIDDEN_SERVICE_I2P);	// warning: the order of operation here is very important.
 #endif
 
   if(RsAccounts::isHiddenNode())
@@ -166,14 +168,14 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     QObject::connect(ui.filteredIpsTable,SIGNAL(currentCellChanged(int,int,int,int)),this,SLOT(updateSelectedBlackListIP(int,int,int,int)));
     QObject::connect(ui.whiteListIpsTable,SIGNAL(currentCellChanged(int,int,int,int)),this,SLOT(updateSelectedWhiteListIP(int,int,int,int)));
 
-    QObject::connect(ui.pbBobStart,   SIGNAL(clicked()), this, SLOT(startBOB()));
-    QObject::connect(ui.pbBobRestart, SIGNAL(clicked()), this, SLOT(restartBOB()));
-    QObject::connect(ui.pbBobStop,    SIGNAL(clicked()), this, SLOT(stopBOB()));
+	QObject::connect(ui.pbBobStart,   SIGNAL(clicked()), this, SLOT(startSam()));
+	QObject::connect(ui.pbBobRestart, SIGNAL(clicked()), this, SLOT(restartSam()));
+	QObject::connect(ui.pbBobStop,    SIGNAL(clicked()), this, SLOT(stopSam()));
     QObject::connect(ui.pbBobGenAddr, SIGNAL(clicked()), this, SLOT(getNewKey()));
     QObject::connect(ui.pbBobLoadKey, SIGNAL(clicked()), this, SLOT(loadKey()));
-    QObject::connect(ui.cb_enableBob, SIGNAL(toggled(bool)), this, SLOT(enableBob(bool)));
+	QObject::connect(ui.cb_enableBob, SIGNAL(toggled(bool)), this, SLOT(enableSam(bool)));
 
-    QObject::connect(ui.cbBobAdvanced, SIGNAL(toggled(bool)), this, SLOT(toggleBobAdvancedSettings(bool)));
+	QObject::connect(ui.cbBobAdvanced, SIGNAL(toggled(bool)), this, SLOT(toggleSamAdvancedSettings(bool)));
 
     QObject::connect(ui.sbBobLengthIn,    SIGNAL(valueChanged(int)), this, SLOT(tunnelSettingsChanged(int)));
     QObject::connect(ui.sbBobLengthOut,   SIGNAL(valueChanged(int)), this, SLOT(tunnelSettingsChanged(int)));
@@ -184,11 +186,11 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
     // These two spin boxes are used for the same thing - keep them in sync!
     QObject::connect(ui.hiddenpage_proxyPort_i2p,   SIGNAL(valueChanged(int)), this, SLOT(syncI2PProxyPortNormal(int)));
-    QObject::connect(ui.hiddenpage_proxyPort_i2p_2, SIGNAL(valueChanged(int)), this, SLOT(syncI2PProxyPortBob(int)));
+	QObject::connect(ui.hiddenpage_proxyPort_i2p_2, SIGNAL(valueChanged(int)), this, SLOT(syncI2PProxyPortSam(int)));
 
     // These two line edits are used for the same thing - keep them in sync!
     QObject::connect(ui.hiddenpage_proxyAddress_i2p,   SIGNAL(textChanged(QString)), this, SLOT(syncI2PProxyAddrNormal(QString)));
-    QObject::connect(ui.hiddenpage_proxyAddress_i2p_2, SIGNAL(textChanged(QString)), this, SLOT(syncI2PProxyAddrBob(QString)));
+	QObject::connect(ui.hiddenpage_proxyAddress_i2p_2, SIGNAL(textChanged(QString)), this, SLOT(syncI2PProxyAddrSam(QString)));
 
 	connect(NotifyQt::getInstance(), SIGNAL(connectionWithoutCert()), this, SLOT(connectionWithoutCert()));
 
@@ -373,7 +375,7 @@ void ServerPage::load()
     }
     mIsHiddenNode = (detail.netMode == RS_NETMODE_HIDDEN);
 
-    rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::getSettings, &mBobSettings);
+	rsAutoProxyMonitor::taskSync(autoProxyType::I2PSAM3, autoProxyTask::getSettings, &mSamSettings);
 
     loadCommon();
     updateStatus();
@@ -870,9 +872,9 @@ void ServerPage::updateStatus()
 
     loadFilteredIps() ;
 
-    updateStatusBob();
+	updateStatusSam();
 
-    // this is used by BOB
+	// this is used by SAM
     if (mOngoingConnectivityCheck > 0) {
         mOngoingConnectivityCheck--;
 
@@ -1349,32 +1351,33 @@ void ServerPage::updateOutProxyIndicator()
         ui.iconlabel_tor_outgoing->setToolTip(tr("Tor proxy is not enabled")) ;
     }
 
-    // I2P
-    socket.connectToHost(ui.hiddenpage_proxyAddress_i2p->text(),ui.hiddenpage_proxyPort_i2p->text().toInt());
-    if(socket.waitForConnected(500))
-    {
-        socket.disconnectFromHost();
-        ui.iconlabel_i2p_outgoing->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_OK)) ;
-        ui.iconlabel_i2p_outgoing->setToolTip(tr("Proxy seems to work.")) ;
-    }
-    else
-    {
-        ui.iconlabel_i2p_outgoing->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_UNKNOWN)) ;
-        ui.iconlabel_i2p_outgoing->setToolTip(tr("I2P proxy is not enabled")) ;
-    }
+	// I2P - SAM
+	// Note: there is only "the SAM port", there is no additional proxy port!
+	samStatus ss;
+	rsAutoProxyMonitor::taskSync(autoProxyType::I2PSAM3, autoProxyTask::status, &ss);
+	if(ss.state == samStatus::samState::online)
+	{
+		socket.disconnectFromHost();
+		ui.iconlabel_i2p_outgoing->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_OK)) ;
+		ui.iconlabel_i2p_outgoing->setToolTip(tr("Proxy seems to work.")) ;
+	}
+	else
+	{
+		ui.iconlabel_i2p_outgoing->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_UNKNOWN)) ;
+		ui.iconlabel_i2p_outgoing->setToolTip(tr("I2P proxy is not enabled")) ;
+	}
 
-    // I2P - BOB
-    socket.connectToHost(ui.hiddenpage_proxyAddress_i2p_2->text(), 2827);
-    if(true == (mBobAccessible = socket.waitForConnected(500)))
+	socket.connectToHost(ui.hiddenpage_proxyAddress_i2p_2->text(), 7656);
+	if(true == (mSamAccessible = socket.waitForConnected(1000)))
     {
         socket.disconnectFromHost();
         ui.iconlabel_i2p_outgoing_2->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_OK)) ;
-        ui.iconlabel_i2p_outgoing_2->setToolTip(tr("BOB is running and accessible")) ;
+		ui.iconlabel_i2p_outgoing_2->setToolTip(tr("SAMv3 is running and accessible")) ;
     }
     else
     {
         ui.iconlabel_i2p_outgoing_2->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_UNKNOWN)) ;
-        ui.iconlabel_i2p_outgoing_2->setToolTip(tr("BOB is not accessible! Is it running?")) ;
+		ui.iconlabel_i2p_outgoing_2->setToolTip(tr("SAMv3 is not accessible! Is i2p running and SAM enabled?")) ;
     }
 }
 
@@ -1385,28 +1388,18 @@ void ServerPage::updateInProxyIndicator()
     if(!mIsHiddenNode)
         return ;
 
-    //ui.iconlabel_tor_incoming->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_UNKNOWN)) ;
+	//ui.iconlabel_tor_incoming->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_UNKNOWN)) ;
     //ui.testIncomingTor_PB->setIcon(FilesDefs::getIconFromQtResourcePath(":/loader/circleball-16.gif")) ;
     QMovie *movie = new QMovie(":/images/loader/circleball-16.gif");
     ui.iconlabel_service_incoming->setMovie(movie);
     movie->start();
 
-    if (mHiddenType == RS_HIDDEN_TYPE_I2P && mBobSettings.enable) {
-
-        QTcpSocket tcpSocket;
-
-        const QString host = ui.hiddenpage_proxyAddress_i2p->text();
-        qint16 port = ui.hiddenpage_proxyPort_i2p->text().toInt();
-        QByteArray addr = ui.leBobB32Addr->text().toUtf8();
-        addr.push_back('\n');
-
-        mOngoingConnectivityCheck = 5; // timeout in sec
-
-        tcpSocket.connectToHost(host, port);
-        tcpSocket.write(addr); // write addr
-        tcpSocket.write(addr); // trigger connection error since RS expects a tls connection
-        tcpSocket.close();
-        tcpSocket.waitForDisconnected(5 * 1000);
+	if (mHiddenType == RS_HIDDEN_TYPE_I2P && mSamSettings.enable) {
+		// there is no inproxy for SAMv3, since every connection goes through sam itself
+		auto secw = new samEstablishConnectionWrapper();
+		secw->address = mSamSettings.address;
+		secw->connection = nullptr;
+		rsAutoProxyMonitor::taskAsync(autoProxyType::I2PSAM3, autoProxyTask::establishConnection, this, secw);
 
         return;
     }
@@ -1419,18 +1412,10 @@ void ServerPage::updateInProxyIndicator()
     QNetworkProxy proxy ;
 
     proxy.setType(QNetworkProxy::Socks5Proxy);
-    switch (mHiddenType) {
-    case RS_HIDDEN_TYPE_I2P:
-        proxy.setHostName(ui.hiddenpage_proxyAddress_i2p->text());
-        proxy.setPort(ui.hiddenpage_proxyPort_i2p->text().toInt());
-        break;
-    case RS_HIDDEN_TYPE_TOR:
-        proxy.setHostName(ui.hiddenpage_proxyAddress_tor->text());
-        proxy.setPort(ui.hiddenpage_proxyPort_tor->text().toInt());
-        break;
-    default:
-        return;
-    }
+
+	proxy.setHostName(ui.hiddenpage_proxyAddress_tor->text());
+	proxy.setPort(ui.hiddenpage_proxyPort_tor->text().toInt());
+
     proxy.setCapabilities(QNetworkProxy::HostNameLookupCapability | proxy.capabilities()) ;
 
     QNetworkProxy::setApplicationProxy(proxy) ;
@@ -1445,53 +1430,60 @@ void ServerPage::updateInProxyIndicator()
     QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy) ;
 }
 
-void ServerPage::startBOB()
+void ServerPage::startSam()
 {
-    rsAutoProxyMonitor::taskAsync(autoProxyType::I2PBOB, autoProxyTask::start);
+	rsAutoProxyMonitor::taskAsync(autoProxyType::I2PSAM3, autoProxyTask::start);
 
     updateStatus();
 }
 
-void ServerPage::restartBOB()
+void ServerPage::restartSam()
 {
-    rsAutoProxyMonitor::taskAsync(autoProxyType::I2PBOB, autoProxyTask::stop);
-    rsAutoProxyMonitor::taskAsync(autoProxyType::I2PBOB, autoProxyTask::start);
+	rsAutoProxyMonitor::taskAsync(autoProxyType::I2PSAM3, autoProxyTask::stop);
+	rsAutoProxyMonitor::taskAsync(autoProxyType::I2PSAM3, autoProxyTask::start);
 
     updateStatus();
 }
 
-void ServerPage::stopBOB()
+void ServerPage::stopSam()
 {
-    rsAutoProxyMonitor::taskAsync(autoProxyType::I2PBOB, autoProxyTask::stop);
+	rsAutoProxyMonitor::taskAsync(autoProxyType::I2PSAM3, autoProxyTask::stop);
 
     updateStatus();
 }
 
 void ServerPage::getNewKey()
 {
-    bobSettings *bs = new bobSettings();
-
-    rsAutoProxyMonitor::taskAsync(autoProxyType::I2PBOB, autoProxyTask::receiveKey, this, bs);
+	i2p::address *addr = new i2p::address();
+	rsAutoProxyMonitor::taskAsync(autoProxyType::I2PSAM3, autoProxyTask::receiveKey, this, addr);
 
     updateStatus();
 }
 
 void ServerPage::loadKey()
 {
-	mBobSettings.address.privateKey = ui.pteBobServerKey->toPlainText().toStdString();
-	mBobSettings.address.publicKey = i2p::publicKeyFromPrivate(mBobSettings.address.privateKey);
-	mBobSettings.address.base32 = i2p::keyToBase32Addr(mBobSettings.address.publicKey);
+	auto priv = ui.pteBobServerKey->toPlainText().toStdString();
+	auto pub = i2p::publicKeyFromPrivate(priv);
+	if (pub.empty()) {
+		// something went wrong!
+		ui.pteBobServerKey->setPlainText("FAILED! Something went wrong while parsing the key!");
+		return;
+	}
 
-    rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::setSettings, &mBobSettings);
+	mSamSettings.address.privateKey = priv;
+	mSamSettings.address.publicKey = pub;
+	mSamSettings.address.base32 = i2p::keyToBase32Addr(mSamSettings.address.publicKey);
+
+	rsAutoProxyMonitor::taskSync(autoProxyType::I2PSAM3, autoProxyTask::setSettings, &mSamSettings);
 }
 
-void ServerPage::enableBob(bool checked)
+void ServerPage::enableSam(bool checked)
 {
-    mBobSettings.enable = checked;
+	mSamSettings.enable = checked;
 
-    rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::setSettings, &mBobSettings);
+	rsAutoProxyMonitor::taskSync(autoProxyType::I2PSAM3, autoProxyTask::setSettings, &mSamSettings);
 
-    setUpBobElements();
+	setUpSamElements();
 }
 
 int8_t fitRange(int i, int min, int max) {
@@ -1513,21 +1505,21 @@ void ServerPage::tunnelSettingsChanged(int)
     vi = ui.sbBobVarianceIn->value();
     vo = ui.sbBobVarianceOut->value();
 
-    mBobSettings.inLength    = fitRange(li, 0, 7);
-    mBobSettings.outLength   = fitRange(lo, 0, 7);
-    mBobSettings.inQuantity  = fitRange(qi, 1, 16);
-    mBobSettings.outQuantity = fitRange(qo, 1, 16);
-    mBobSettings.inVariance  = fitRange(vi, -1, 2);
-    mBobSettings.outVariance = fitRange(vo, -1, 2);
+	mSamSettings.inLength    = fitRange(li, 0, 7);
+	mSamSettings.outLength   = fitRange(lo, 0, 7);
+	mSamSettings.inQuantity  = fitRange(qi, 1, 16);
+	mSamSettings.outQuantity = fitRange(qo, 1, 16);
+	mSamSettings.inVariance  = fitRange(vi, -1, 2);
+	mSamSettings.outVariance = fitRange(vo, -1, 2);
 
-    rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::setSettings, &mBobSettings);
+	rsAutoProxyMonitor::taskSync(autoProxyType::I2PSAM3, autoProxyTask::setSettings, &mSamSettings);
 }
 
-void ServerPage::toggleBobAdvancedSettings(bool checked)
+void ServerPage::toggleSamAdvancedSettings(bool checked)
 {
     ui.swBobAdvanced->setCurrentIndex(checked ? 1 : 0);
 
-	if (!mBobSettings.address.privateKey.empty()) {
+	if (!mSamSettings.address.privateKey.empty()) {
         if (checked) {
             ui.pbBobGenAddr->show();
         } else {
@@ -1541,13 +1533,13 @@ void ServerPage::syncI2PProxyPortNormal(int i)
     ui.hiddenpage_proxyPort_i2p_2->setValue(i);
 }
 
-void ServerPage::syncI2PProxyPortBob(int i)
+void ServerPage::syncI2PProxyPortSam(int i)
 {
     ui.hiddenpage_proxyPort_i2p->setValue(i);
 
-    // update port
-    saveBob();
-    rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::reloadConfig);
+	// update port, not necessary for same, we just want to keep it consistent
+	saveSam();
+	rsAutoProxyMonitor::taskSync(autoProxyType::I2PSAM3, autoProxyTask::reloadConfig);
 }
 
 void ServerPage::syncI2PProxyAddrNormal(QString t)
@@ -1555,38 +1547,70 @@ void ServerPage::syncI2PProxyAddrNormal(QString t)
     ui.hiddenpage_proxyAddress_i2p_2->setText(t);
 }
 
-void ServerPage::syncI2PProxyAddrBob(QString t)
+void ServerPage::syncI2PProxyAddrSam(QString t)
 {
     ui.hiddenpage_proxyAddress_i2p->setText(t);
 
     // update addr
-    saveBob();
-    rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::reloadConfig);
+	saveSam();
+	rsAutoProxyMonitor::taskSync(autoProxyType::I2PSAM3, autoProxyTask::reloadConfig);
 }
 
 void ServerPage::taskFinished(taskTicket *&ticket)
 {
-    if (ticket->task == autoProxyTask::receiveKey) {
-        bobSettings *s = NULL;
-        switch (ticket->types.front()) {
-        case autoProxyType::I2PBOB:
-            // update settings
-            s = (struct bobSettings *)ticket->data;
-            mBobSettings = *s;
-            delete s;
-            s = NULL;
-            ticket->data = NULL;
-            break;
-        default:
-            break;
-        }
-    }
+	switch (ticket->task) {
+	case autoProxyTask::receiveKey:
+	{
+		i2p::address *addr = nullptr;
+		addr = static_cast<i2p::address *>(ticket->data);
+
+		if (ticket->types.front() != autoProxyType::I2PSAM3)
+			RS_WARN("auto proxy task finished but not for SMA, not exptected! Also not a serious problem.");
+		else {
+			// update settings
+			mSamSettings.address = *addr;
+		}
+
+		delete addr;
+		addr = nullptr;
+		ticket->data = nullptr;
+
+		updateStatusSam();
+		break;
+	}
+	case autoProxyTask::establishConnection:
+	{
+		samEstablishConnectionWrapper *secw = nullptr;
+		secw = static_cast<samEstablishConnectionWrapper *>(ticket->data);
+
+		if (ticket->types.front() != autoProxyType::I2PSAM3)
+			RS_WARN("auto proxy task finished but not for SMA, not exptected! Also not a serious problem.");
+		else {
+			// update settings
+			if (secw->connection->ses) {
+				updateInProxyIndicatorResult(true);
+				sam3CloseConnection(secw->connection);
+				secw->connection = nullptr; // freed by above call
+			} else
+				updateInProxyIndicatorResult(false);
+		}
+
+		if (secw->connection)
+			delete secw->connection;
+		delete secw;
+		secw = nullptr;
+		ticket->data = nullptr;
+		break;
+	}
+	default:
+		RS_DBG("unsupported task!", ticket->task);
+	}
 
     if (ticket->data)
         std::cerr << "(WW) ServerPage::taskFinished data set. This should NOT happen - check the code!" << std::endl;
 
     delete ticket;
-    ticket = NULL;
+	ticket = nullptr;
 }
 
 void ServerPage::connectionWithoutCert()
@@ -1613,14 +1637,14 @@ void ServerPage::loadCommon()
     // I2P
     rsPeers->getProxyServer(RS_HIDDEN_TYPE_I2P, proxyaddr, proxyport, status);
     whileBlocking(ui.hiddenpage_proxyAddress_i2p) -> setText(QString::fromStdString(proxyaddr));
-    whileBlocking(ui.hiddenpage_proxyAddress_i2p_2)->setText(QString::fromStdString(proxyaddr)); // this one is for bob tab
+	whileBlocking(ui.hiddenpage_proxyAddress_i2p_2)->setText(QString::fromStdString(proxyaddr)); // this one is for sam tab
     whileBlocking(ui.hiddenpage_proxyPort_i2p) -> setValue(proxyport);
-    whileBlocking(ui.hiddenpage_proxyPort_i2p_2)->setValue(proxyport); // this one is for bob tab
+	whileBlocking(ui.hiddenpage_proxyPort_i2p_2)->setValue(proxyport); // this one is for sam tab
 
     // don't use whileBlocking here
-    ui.cb_enableBob->setChecked(mBobSettings.enable);
+	ui.cb_enableBob->setChecked(mSamSettings.enable);
 
-	if (!mBobSettings.address.privateKey.empty()) {
+	if (!mSamSettings.address.privateKey.empty()) {
         ui.lBobB32Addr->show();
         ui.leBobB32Addr->show();
     }
@@ -1642,10 +1666,10 @@ void ServerPage::saveCommon()
         rsPeers->setProxyServer(RS_HIDDEN_TYPE_TOR, new_proxyaddr, new_proxyport);
     }
 
-    saveBob();
+	saveSam();
 }
 
-void ServerPage::saveBob()
+void ServerPage::saveSam()
 {
     std::string orig_proxyaddr, new_proxyaddr;
     uint16_t orig_proxyport, new_proxyport;
@@ -1656,20 +1680,29 @@ void ServerPage::saveBob()
     new_proxyaddr = ui.hiddenpage_proxyAddress_i2p -> text().toStdString();
     new_proxyport = ui.hiddenpage_proxyPort_i2p -> value();
 
-    if ((new_proxyaddr != orig_proxyaddr) || (new_proxyport != orig_proxyport)) {
+	// SAMv3 has no proxy port, everything goes through the SAM port.
+	if ((new_proxyaddr != orig_proxyaddr) /* || (new_proxyport != orig_proxyport) */) {
         rsPeers->setProxyServer(RS_HIDDEN_TYPE_I2P, new_proxyaddr, new_proxyport);
     }
 }
 
-void ServerPage::updateStatusBob()
+void ServerPage::updateStatusSam()
 {
-	QString addr = QString::fromStdString(mBobSettings.address.base32);
+	QString addr = QString::fromStdString(mSamSettings.address.base32);
     if (ui.leBobB32Addr->text() != addr) {
         ui.leBobB32Addr->setText(addr);
         ui.hiddenpage_serviceAddress->setText(addr);
-		ui.pteBobServerKey->setPlainText(QString::fromStdString(mBobSettings.address.privateKey));
+		ui.pteBobServerKey->setPlainText(QString::fromStdString(mSamSettings.address.privateKey));
 
-		if (!mBobSettings.address.privateKey.empty()) {
+		std::string signingKeyType, cryptoKeyType;
+		if (i2p::getKeyTypes(mSamSettings.address.publicKey, signingKeyType, cryptoKeyType))
+			ui.samKeyInfo->setText(tr("Your key uses the following algorithms: %1 and %2").
+			                       arg(QString::fromStdString(signingKeyType)).
+			                       arg(QString::fromStdString(cryptoKeyType)));
+		else
+			ui.samKeyInfo->setText(tr("unkown key type"));
+
+		if (!mSamSettings.address.privateKey.empty()) {
             // we have an addr -> show fields
             ui.lBobB32Addr->show();
             ui.leBobB32Addr->show();
@@ -1689,18 +1722,68 @@ void ServerPage::updateStatusBob()
         saveAddresses();
     }
 
-    bobStates bs;
-    rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::status, &bs);
+	samStatus ss;
+	rsAutoProxyMonitor::taskSync(autoProxyType::I2PSAM3, autoProxyTask::status, &ss);
 
     QString bobSimpleText = QString();
-    bobSimpleText.append(tr("RetroShare uses BOB to set up a %1 tunnel at %2:%3 (named %4)\n\n"
-                            "When changing options (e.g. port) use the buttons at the bottom to restart BOB.\n\n").
-	                     arg(mBobSettings.address.privateKey.empty() ? tr("client") : tr("server"),
+	bobSimpleText.append(tr("RetroShare uses SAMv3 to set up a %1 tunnel at %2:%3\n(id: %4)\n\n"
+	                        "When changing options (e.g. port) use the buttons at the bottom to restart SAMv3.\n\n").
+	                     arg(mSamSettings.address.privateKey.empty() ? tr("client") : tr("server"),
                              ui.hiddenpage_proxyAddress_i2p_2->text(),
-                             ui.hiddenpage_proxyPort_i2p_2->text(),
-                             bs.tunnelName.empty() ? tr("unknown") :
-                                                     QString::fromStdString(bs.tunnelName)));
+	                         "7656",
+	                         ss.sessionName.empty() ? tr("unknown") :
+	                                                  QString::fromStdString(ss.sessionName)));
 
+	// update SAM UI based on state
+	QString s;
+	QString icon;
+	switch (ss.state) {
+	case samStatus::samState::offline:
+		enableSamElements(false);
+
+		ui.pbBobStart->setEnabled(true);
+		ui.pbBobRestart->setEnabled(false);
+		ui.pbBobStop->setEnabled(false);
+
+		s = tr("Offline, no SAM session is established yet.\n");
+		icon = ICON_STATUS_ERROR;
+		break;
+	case samStatus::samState::connectSession:
+		enableSamElements(false);
+
+		ui.pbBobStart->setEnabled(false);
+		ui.pbBobRestart->setEnabled(false);
+		ui.pbBobStop->setEnabled(true);
+
+		s = tr("SAM is trying to establish a session ... this can take some time.\n");
+		icon = ICON_STATUS_WORKING;
+		break;
+	case samStatus::samState::connectForward:
+		enableSamElements(false);
+
+		ui.pbBobStart->setEnabled(false);
+		ui.pbBobRestart->setEnabled(false);
+		ui.pbBobStop->setEnabled(true);
+
+		s = tr("SAM session established! Now setting up a forward session ...\n");
+		icon = ICON_STATUS_WORKING;
+		break;
+	case samStatus::samState::online:
+		enableSamElements(true);
+
+		ui.pbBobStart->setEnabled(false);
+		ui.pbBobRestart->setEnabled(true);
+		ui.pbBobStop->setEnabled(true);
+
+		s = tr("Online, SAM is working as exptected\n");
+		icon = ICON_STATUS_OK;
+		break;
+	}
+	ui.iconlabel_i2p_bob->setPixmap(icon);
+	ui.iconlabel_i2p_bob->setToolTip(s);
+	bobSimpleText.append(s);
+
+	/*
     // update BOB UI based on state
     std::string errorString;
     switch (bs.cs) {
@@ -1711,7 +1794,7 @@ void ServerPage::updateStatusBob()
         ui.iconlabel_i2p_bob->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_WORKING));
         ui.iconlabel_i2p_bob->setToolTip(tr("BOB is processing a request"));
 
-        enableBobElements(false);
+		enableSamElements(false);
 
         {
             QString s;
@@ -1744,7 +1827,7 @@ void ServerPage::updateStatusBob()
         ui.iconlabel_i2p_bob->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_ERROR));
         ui.iconlabel_i2p_bob->setToolTip(tr("BOB is broken\n") + QString::fromStdString(errorString));
 
-        enableBobElements(false);
+		enableSamElements(false);
 
         bobSimpleText.append(tr("BOB encountered an error:\n"));
         bobSimpleText.append(QString::fromStdString(errorString));
@@ -1760,7 +1843,7 @@ void ServerPage::updateStatusBob()
             ui.iconlabel_i2p_bob->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_OK));
             ui.iconlabel_i2p_bob->setToolTip(tr("BOB tunnel is running"));
 
-            enableBobElements(false);
+			enableSamElements(false);
 
             bobSimpleText.append(tr("BOB is working fine: tunnel established"));
 
@@ -1773,7 +1856,7 @@ void ServerPage::updateStatusBob()
             ui.iconlabel_i2p_bob->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_WORKING));
 			ui.iconlabel_i2p_bob->setToolTip(tr("BOB is processing a request"));
 
-			enableBobElements(false);
+			enableSamElements(false);
 
 			bobSimpleText.append(tr("BOB is processing a request"));
 
@@ -1786,7 +1869,7 @@ void ServerPage::updateStatusBob()
             ui.iconlabel_i2p_bob->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_UNKNOWN));
             ui.iconlabel_i2p_bob->setToolTip(tr("BOB tunnel is not running"));
 
-            enableBobElements(true);
+			enableSamElements(true);
 
             bobSimpleText.append(tr("BOB is inactive: tunnel closed"));
 
@@ -1798,16 +1881,18 @@ void ServerPage::updateStatusBob()
         break;
 
     }
-    ui.pteBobSimple->setPlainText(bobSimpleText);
+	*/
+	ui.pteBobSimple->setPlainText(bobSimpleText);
+
 
     // disable elements when BOB is not accessible
-    if (!mBobAccessible) {
+	if (!mSamAccessible) {
         ui.pbBobStart->setEnabled(false);
-        ui.pbBobStart->setToolTip("BOB is not accessible");
+		ui.pbBobStart->setToolTip("SAMv3 is not accessible");
         ui.pbBobRestart->setEnabled(false);
-        ui.pbBobRestart->setToolTip("BOB is not accessible");
-        // don't disable the stop button! (in case bob is running you are otherwise unable to stop and disable it)
-        ui.pbBobStop->setToolTip("BOB is not accessible");
+		ui.pbBobRestart->setToolTip("SAMv3 is not accessible");
+		// don't disable the stop button! (in case SAM is running you are otherwise unable to stop and disable it)
+		ui.pbBobStop->setToolTip("SAMv3 is not accessible");
     } else {
         ui.pbBobStart->setToolTip("");
         ui.pbBobRestart->setToolTip("");
@@ -1815,26 +1900,34 @@ void ServerPage::updateStatusBob()
     }
 }
 
-void ServerPage::setUpBobElements()
+void ServerPage::setUpSamElements()
 {
-    ui.gbBob->setEnabled(mBobSettings.enable);
-    if (mBobSettings.enable) {
+	ui.gbBob->setEnabled(mSamSettings.enable);
+	if (mSamSettings.enable) {
         ui.hiddenpage_proxyAddress_i2p->setEnabled(false);
-        ui.hiddenpage_proxyAddress_i2p->setToolTip("Use I2P/BOB settings to change this value");
+		ui.hiddenpage_proxyAddress_i2p->setToolTip("Use I2P settings to change this value");
         ui.hiddenpage_proxyPort_i2p->setEnabled(false);
-        ui.hiddenpage_proxyPort_i2p->setToolTip("Use I2P/BOB settings to change this value");
+		ui.hiddenpage_proxyPort_i2p->setToolTip("Use I2P settings to change this value");
 
-		ui.leBobB32Addr->setText(QString::fromStdString(mBobSettings.address.base32));
-		ui.pteBobServerKey->setPlainText(QString::fromStdString(mBobSettings.address.privateKey));
+		ui.leBobB32Addr->setText(QString::fromStdString(mSamSettings.address.base32));
+		ui.pteBobServerKey->setPlainText(QString::fromStdString(mSamSettings.address.privateKey));
+
+		std::string signingKeyType, cryptoKeyType;
+		if (i2p::getKeyTypes(mSamSettings.address.publicKey, signingKeyType, cryptoKeyType))
+			ui.samKeyInfo->setText(tr("You key uses %1 for signing and %2 for crypto").
+			                       arg(QString::fromStdString(signingKeyType)).
+			                       arg(QString::fromStdString(cryptoKeyType)));
+		else
+			ui.samKeyInfo->setText(tr("unkown key type"));
 
         // cast to int to avoid problems
         int li, lo, qi, qo, vi, vo;
-        li = mBobSettings.inLength;
-        lo = mBobSettings.outLength;
-        qi = mBobSettings.inQuantity;
-        qo = mBobSettings.outQuantity;
-        vi = mBobSettings.inVariance;
-        vo = mBobSettings.outVariance;
+		li = mSamSettings.inLength;
+		lo = mSamSettings.outLength;
+		qi = mSamSettings.inQuantity;
+		qo = mSamSettings.outQuantity;
+		vi = mSamSettings.inVariance;
+		vo = mSamSettings.outVariance;
 
         ui.sbBobLengthIn   ->setValue(li);
         ui.sbBobLengthOut  ->setValue(lo);
@@ -1850,7 +1943,7 @@ void ServerPage::setUpBobElements()
     }
 }
 
-void ServerPage::enableBobElements(bool enable)
+void ServerPage::enableSamElements(bool enable)
 {
     if (enable) {
         ui.pbBobGenAddr->setEnabled(true);
@@ -1863,13 +1956,13 @@ void ServerPage::enableBobElements(bool enable)
         ui.cb_enableBob->setToolTip(tr(""));
     } else {
         ui.pbBobGenAddr->setEnabled(false);
-        ui.pbBobGenAddr->setToolTip(tr("stop BOB tunnel first to generate a new key"));
+		ui.pbBobGenAddr->setToolTip(tr("stop SAM tunnel first to generate a new key"));
 
         ui.pbBobLoadKey->setEnabled(false);
-        ui.pbBobLoadKey->setToolTip(tr("stop BOB tunnel first to load a key"));
+		ui.pbBobLoadKey->setToolTip(tr("stop SAM tunnel first to load a key"));
 
         ui.cb_enableBob->setEnabled(false);
-        ui.cb_enableBob->setToolTip(tr("stop BOB tunnel first to disable BOB"));
+		ui.cb_enableBob->setToolTip(tr("stop SAM tunnel first to disable SAM"));
     }
 }
 
@@ -1896,6 +1989,7 @@ void ServerPage::handleNetworkReply(QNetworkReply *reply)
 {
     int error = reply->error() ;
 
+	RS_INFO("error:", error);
     if(reply->isOpen() &&  error == QNetworkReply::SslHandshakeFailedError)
         updateInProxyIndicatorResult(true);
     else

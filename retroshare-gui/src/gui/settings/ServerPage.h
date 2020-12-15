@@ -34,7 +34,7 @@
 #endif
 
 #include <services/autoproxy/rsautoproxymonitor.h>
-#include <services/autoproxy/p3i2pbob.h>
+#include <services/autoproxy/p3i2psam3.h>
 
 #include "retroshare-gui/configpage.h"
 #include "retroshare-gui/RsAutoUpdatePage.h"
@@ -97,22 +97,22 @@ private slots:
     void handleNetworkReply(QNetworkReply *reply);
     void updateInProxyIndicator();
 
-	// i2p bob
-	void startBOB();
-	void restartBOB();
-	void stopBOB();
+	// i2p SAMv3
+	void startSam();
+	void restartSam();
+	void stopSam();
 	void getNewKey();
 	void loadKey();
-	void enableBob(bool checked);
+	void enableSam(bool checked);
 	void tunnelSettingsChanged(int);
 
-	void toggleBobAdvancedSettings(bool checked);
+	void toggleSamAdvancedSettings(bool checked);
 
 	void syncI2PProxyPortNormal(int i);
-	void syncI2PProxyPortBob(int i);
+	void syncI2PProxyPortSam(int i);
 
 	void syncI2PProxyAddrNormal(QString);
-	void syncI2PProxyAddrBob(QString);
+	void syncI2PProxyAddrSam(QString);
 
 	void connectionWithoutCert();
 
@@ -133,11 +133,11 @@ public:
 private:
 	void loadCommon();
 	void saveCommon();
-	void saveBob();
-	void updateStatusBob();
+	void saveSam();
+	void updateStatusSam();
 
-	void setUpBobElements();
-	void enableBobElements(bool enable);
+	void setUpSamElements();
+	void enableSamElements(bool enable);
 
 	void updateInProxyIndicatorResult(bool success);
 
@@ -160,8 +160,8 @@ private:
 
 	bool mIsHiddenNode;
 	uint32_t mHiddenType;
-	bobSettings mBobSettings;
-	bool mBobAccessible; // keeps track wether bob is accessable or not to en/disable the corresponding buttons
+	samSettings mSamSettings;
+	bool mSamAccessible; // keeps track wether SAM is accessable or not to en/disable the corresponding buttons
 
 	RsEventsHandlerId_t mEventHandlerId;
 	void handleEvent(std::shared_ptr<const RsEvent> event);
