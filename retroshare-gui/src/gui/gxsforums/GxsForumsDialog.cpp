@@ -222,16 +222,20 @@ void GxsForumsDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *grou
 	const RsGxsForumGroup *forumGroupData = dynamic_cast<const RsGxsForumGroup*>(groupData);
 
 	if (!forumGroupData)
-    {
+	{
 		std::cerr << "GxsChannelDialog::groupInfoToGroupItemInfo() Failed to cast data to GxsChannelGroupInfoData"<< std::endl;
 		return;
 	}
 
+	RsGxsCircleDetails details;
+	rsGxsCircles->getCircleDetails(RsGxsCircleId(groupData->mMeta.mCircleId), details) ;
+
 	groupItemInfo.description = QString::fromUtf8(forumGroupData->mDescription.c_str());
 
-	if(IS_GROUP_ADMIN(groupData->mMeta.mSubscribeFlags))
-        groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/forums.png");
-	else if ((IS_GROUP_PGP_AUTHED(groupData->mMeta.mSignFlags)) || (IS_GROUP_MESSAGE_TRACKING(groupData->mMeta.mSignFlags)) )
-        groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/forums-signed.png");
+	if (!groupData->mMeta.mCircleId.isNull() )
+		if (details.mRestrictedCircleId == details.mCircleId)
+			groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/forums-red.png");
+		else
+			groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/forums-signed.png");
 }
 
