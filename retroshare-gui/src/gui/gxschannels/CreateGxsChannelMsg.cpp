@@ -775,7 +775,7 @@ void CreateGxsChannelMsg::sendMsg()
 
         QMessageBox::information(nullptr,
                                 tr("Post refers to temporary shared files"),
-                                tr("The following files will only be shared until you restart Retroshare. Think about adding them to a shared directory.")
+                                tr("The following files will only be shared for 30 days. Think about adding them to a shared directory.")
                                                            +filesstr);
     }
 
