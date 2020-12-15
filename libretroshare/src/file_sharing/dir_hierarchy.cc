@@ -638,6 +638,23 @@ bool InternalFileHierarchyStorage::setTS(const DirectoryStorage::EntryIndex& ind
     return true;
 }
 
+// Do a complete recursive sweep of directory hierarchy and update cumulative size of directories
+
+uint64_t InternalFileHierarchyStorage::recursUpdateCumulatedSize(const DirectoryStorage::EntryIndex& dir_index)
+{
+    DirEntry& d(*static_cast<DirEntry*>(mNodes[dir_index])) ;
+
+    uint64_t local_cumulative_size = 0;
+
+    for(uint32_t i=0;i<d.subfiles.size();++i)
+        local_cumulative_size += static_cast<FileEntry*>(mNodes[d.subfiles[i]])->file_size;
+
+    for(uint32_t i=0;i<d.subdirs.size();++i)
+        local_cumulative_size += recursUpdateCumulatedSize(d.subdirs[i]);
+
+    d.dir_cumulated_size = local_cumulative_size;
+    return local_cumulative_size;
+}
 // Do a complete recursive sweep over sub-directories and files, and update the lst modf TS. This could be also performed by a cleanup method.
 
 rstime_t InternalFileHierarchyStorage::recursUpdateLastModfTime(const DirectoryStorage::EntryIndex& dir_index,bool& unfinished_files_present)
@@ -1198,6 +1215,8 @@ bool InternalFileHierarchyStorage::load(const std::string& fname)
 
         if(!check(err_str))
             std::cerr << "(EE) Error while loading file hierarchy " << fname << std::endl;
+
+        recursUpdateCumulatedSize(mRoot);
 
         return true ;
     }

@@ -224,7 +224,7 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
                    {
                        some_files_not_ready = true ;
 
-                       std::cerr << "(WW) file " << dirIt.file_fullpath() << " is probably being modified. Keeping it for later." << std::endl;
+                       std::cerr << "(WW) file " << dirIt.file_fullpath() << " is probably being written to. Keeping it for later." << std::endl;
                    }
 
 				   break;

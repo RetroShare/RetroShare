@@ -831,7 +831,7 @@ void MessageComposer::setFileList(const std::list<DirDetails>& dir_info)
         FileInfo info ;
         info.fname = it->name ;
         info.hash = it->hash ;
-        info.size = it->count ;
+        info.size = it->size ;
         files_info.push_back(info) ;
     }
 
