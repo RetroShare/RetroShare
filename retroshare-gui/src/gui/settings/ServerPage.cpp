@@ -1452,8 +1452,6 @@ void ServerPage::getNewKey()
 {
 	i2p::address *addr = new i2p::address();
 	rsAutoProxyMonitor::taskAsync(autoProxyType::I2PSAM3, autoProxyTask::receiveKey, this, addr);
-
-    updateStatus();
 }
 
 void ServerPage::loadKey()
@@ -1550,14 +1548,22 @@ void ServerPage::taskFinished(taskTicket *&ticket)
 			RS_WARN("auto proxy task finished but not for SMA, not exptected! Also not a serious problem.");
 		else {
 			// update settings
-			mSamSettings.address = *addr;
+			auto copy = *addr;
+			RsQThreadUtils::postToObject(
+			            [this, copy]()
+			{
+				mSamSettings.address = copy;
+				rsAutoProxyMonitor::taskSync(autoProxyType::I2PSAM3, autoProxyTask::setSettings, &mSamSettings);
+				updateStatusSam();
+
+			});
 		}
 
 		delete addr;
 		addr = nullptr;
 		ticket->data = nullptr;
 
-		updateStatusSam();
+
 		break;
 	}
 	case autoProxyTask::establishConnection:
@@ -1568,13 +1574,19 @@ void ServerPage::taskFinished(taskTicket *&ticket)
 		if (ticket->types.front() != autoProxyType::I2PSAM3)
 			RS_WARN("auto proxy task finished but not for SMA, not exptected! Also not a serious problem.");
 		else {
+			bool res = ticket->result == autoProxyStatus::ok && !!secw->connection->ses;
 			// update settings
-			if (secw->connection->ses) {
-				updateInProxyIndicatorResult(true);
+			if (res) {
 				sam3CloseConnection(secw->connection);
 				secw->connection = nullptr; // freed by above call
-			} else
-				updateInProxyIndicatorResult(false);
+			}
+
+			RsQThreadUtils::postToObject(
+			            [this, res]()
+			{
+				updateInProxyIndicatorResult(res);
+
+			});
 		}
 
 		if (secw->connection)
@@ -1700,7 +1712,7 @@ void ServerPage::updateStatusSam()
             ui.pbBobGenAddr->hide();
         }
 
-        saveAddresses();
+		saveAddresses();
     }
 
 	samStatus ss;
@@ -1764,105 +1776,7 @@ void ServerPage::updateStatusSam()
 	ui.iconlabel_i2p_bob->setToolTip(s);
 	bobSimpleText.append(s);
 
-	/*
-    // update BOB UI based on state
-    std::string errorString;
-    switch (bs.cs) {
-    case csDoConnect:
-    case csConnected:
-    case csDoDisconnect:
-    case csWaitForBob:
-        ui.iconlabel_i2p_bob->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_WORKING));
-        ui.iconlabel_i2p_bob->setToolTip(tr("BOB is processing a request"));
 
-		enableSamElements(false);
-
-        {
-            QString s;
-            switch (bs.ct) {
-            case ctRunCheck:
-                s = tr("connectivity check");
-                break;
-            case ctRunGetKeys:
-                s = tr("generating key");
-                break;
-            case ctRunSetUp:
-                s = tr("starting up");
-                break;
-            case ctRunShutDown:
-                s = tr("shuting down");
-            default:
-                break;
-            }
-            bobSimpleText.append(tr("BOB is processing a request: %1").arg(s));
-        }
-
-        ui.pbBobStart->setEnabled(false);
-        ui.pbBobRestart->setEnabled(false);
-        ui.pbBobStop->setEnabled(false);
-        break;
-    case csError:
-        // get error msg from bob
-        rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::getErrorInfo, &errorString);
-
-        ui.iconlabel_i2p_bob->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_ERROR));
-        ui.iconlabel_i2p_bob->setToolTip(tr("BOB is broken\n") + QString::fromStdString(errorString));
-
-		enableSamElements(false);
-
-        bobSimpleText.append(tr("BOB encountered an error:\n"));
-        bobSimpleText.append(QString::fromStdString(errorString));
-
-        ui.pbBobStart->setEnabled(true);
-        ui.pbBobRestart->setEnabled(false);
-		ui.pbBobStop->setEnabled(true);
-        break;
-    case csDisconnected:
-    case csIdel:
-        switch (bs.ct) {
-        case ctRunSetUp:
-            ui.iconlabel_i2p_bob->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_OK));
-            ui.iconlabel_i2p_bob->setToolTip(tr("BOB tunnel is running"));
-
-			enableSamElements(false);
-
-            bobSimpleText.append(tr("BOB is working fine: tunnel established"));
-
-            ui.pbBobStart->setEnabled(false);
-            ui.pbBobRestart->setEnabled(true);
-            ui.pbBobStop->setEnabled(true);
-            break;
-        case ctRunCheck:
-        case ctRunGetKeys:
-            ui.iconlabel_i2p_bob->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_WORKING));
-			ui.iconlabel_i2p_bob->setToolTip(tr("BOB is processing a request"));
-
-			enableSamElements(false);
-
-			bobSimpleText.append(tr("BOB is processing a request"));
-
-			ui.pbBobStart->setEnabled(false);
-			ui.pbBobRestart->setEnabled(false);
-			ui.pbBobStop->setEnabled(false);
-			break;
-		case ctRunShutDown:
-        case ctIdle:
-            ui.iconlabel_i2p_bob->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_UNKNOWN));
-            ui.iconlabel_i2p_bob->setToolTip(tr("BOB tunnel is not running"));
-
-			enableSamElements(true);
-
-            bobSimpleText.append(tr("BOB is inactive: tunnel closed"));
-
-            ui.pbBobStart->setEnabled(true);
-            ui.pbBobRestart->setEnabled(false);
-            ui.pbBobStop->setEnabled(false);
-            break;
-        }
-        break;
-
-    }
-	*/
 	ui.pteBobSimple->setPlainText(bobSimpleText);
 
 
