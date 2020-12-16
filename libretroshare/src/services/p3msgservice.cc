@@ -1331,11 +1331,10 @@ bool p3MsgService::SystemMessage(const std::string &title, const std::string &me
 		return false;
 	}
 
-    const RsPeerId& ownId = mServiceCtrl->getOwnId();
 
 	RsMsgItem *msg = new RsMsgItem();
 
-	msg->PeerId(ownId);
+	msg->PeerId();// Notification == null
 
 	msg->msgFlags = 0;
 
@@ -1356,7 +1355,7 @@ bool p3MsgService::SystemMessage(const std::string &title, const std::string &me
 	msg->subject = title;
 	msg->message = message;
 
-    msg->rspeerid_msgto.ids.insert(ownId);
+	msg->rspeerid_msgto.ids.insert(mServiceCtrl->getOwnId());
 
 	processIncomingMsg(msg);
 
