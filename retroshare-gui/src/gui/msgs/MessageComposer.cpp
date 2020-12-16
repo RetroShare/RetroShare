@@ -597,7 +597,7 @@ void MessageComposer::addConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId 
     // PGPId+SslId are always here.  But if the peer is not a friend the SSL id cannot be used.
     // (todo) If the PGP id doesn't get us a PGP key from the keyring, we need to create a short invite
 
-	RetroShareLink link = RetroShareLink::createUnknownSslCertificate(sslId);
+	RetroShareLink link = RetroShareLink::createUnknownSslCertificate(sslId, gpgId);
 
     if (!link.valid())
         return;
