@@ -99,7 +99,7 @@ void PulseAddDialog::cleanup()
 	ui.frame_URL->setEnabled(false);
 
 	ui.pushButton_Post->setEnabled(false);
-	ui.pushButton_Post->setText("Post Pulse to Wire");
+	ui.pushButton_Post->setText("Post");
 	ui.frame_input->setVisible(true);
 	ui.widget_sentiment->setVisible(true);
 
