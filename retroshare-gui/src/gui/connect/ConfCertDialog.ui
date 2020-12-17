@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>658</width>
-    <height>584</height>
+    <height>676</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -68,6 +68,12 @@
       </item>
       <item row="0" column="0">
        <widget class="QTabWidget" name="stabWidget">
+        <property name="minimumSize">
+         <size>
+          <width>638</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="currentIndex">
          <number>0</number>
         </property>
@@ -250,6 +256,26 @@
            </layout>
           </item>
           <item>
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="tab_2">
+         <attribute name="title">
+          <string>Connectivity</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="verticalLayout_6">
+          <item>
            <widget class="QGroupBox" name="groupBox">
             <property name="title">
              <string>Current address:</string>
@@ -357,19 +383,6 @@
             </layout>
            </widget>
           </item>
-          <item>
-           <spacer name="verticalSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
          </layout>
         </widget>
         <widget class="QWidget" name="tab_4">
@@ -429,6 +442,12 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>HeaderFrame</class>
+   <extends>QFrame</extends>
+   <header>gui/common/HeaderFrame.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>RSTextBrowser</class>
    <extends>QTextBrowser</extends>
    <header>gui/common/RSTextBrowser.h</header>
@@ -437,12 +456,6 @@
    <class>AvatarWidget</class>
    <extends>QLabel</extends>
    <header>gui/common/AvatarWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>HeaderFrame</class>
-   <extends>QFrame</extends>
-   <header>gui/common/HeaderFrame.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
@@ -456,12 +469,6 @@
   <tabstop>lastcontact</tabstop>
   <tabstop>version</tabstop>
   <tabstop>statusmessage</tabstop>
-  <tabstop>localAddress</tabstop>
-  <tabstop>localPort</tabstop>
-  <tabstop>extAddress</tabstop>
-  <tabstop>extPort</tabstop>
-  <tabstop>dynDNS</tabstop>
-  <tabstop>ipAddressList</tabstop>
   <tabstop>userCertificateText</tabstop>
   <tabstop>_shouldAddSignatures_CB</tabstop>
   <tabstop>_shortFormat_CB</tabstop>
