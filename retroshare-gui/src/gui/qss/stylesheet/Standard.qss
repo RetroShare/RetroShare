@@ -211,7 +211,8 @@ SearchDialog QPushButton#pushButtonSearch:hover{
 }
 
 CreateGxsForumMsg QPushButton#postButton:disabled, PostedCreatePostDialog QPushButton#submitButton:disabled,
-CreateGxsChannelMsg QPushButton#postButton:disabled, GxsCreateCommentDialog QPushButton#postButton:disabled {
+CreateGxsChannelMsg QPushButton#postButton:disabled, GxsCreateCommentDialog QPushButton#postButton:disabled,
+PulseAddDialog QPushButton#pushButton_Post:disabled {
 	font: bold;
 	font-size: 15px;
 	color: white;
