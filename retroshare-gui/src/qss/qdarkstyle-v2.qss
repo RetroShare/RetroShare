@@ -2179,6 +2179,11 @@ GxsChannelPostItem QFrame#mainFrame {
     background-color: #19232D;
 }
 
+GxsChannelPostItem QLabel#subjectLabel, GxsChannelPostItem QLabel#titleLabel {
+	font: 12pt;
+	font: bold italic;
+}
+
 BoardPostDisplayWidget_compact QPushButton#shareButton {
     background-color: transparent;
 	min-width: 80px;
@@ -2239,6 +2244,10 @@ BoardPostDisplayWidget_compact QLabel#titleLabel,
 BoardPostDisplayWidget_card QLabel#titleLabel{
 	font-size: 14px;
 	font: bold;
+}
+
+GxsForumMsgItem QFrame#frame{
+	background-color: #19232D;
 }
 
 WireGroupItem QFrame#wire_frame{

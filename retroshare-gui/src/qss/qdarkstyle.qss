@@ -1381,6 +1381,10 @@ GxsForumThreadWidget QLabel#forumName
 	font: bold;
 }
 
+GxsForumMsgItem QFrame#frame{
+	background: #302F2F;
+}
+
 BoardPostDisplayWidget_compact QPushButton#shareButton
 {
 	background-color: transparent;
