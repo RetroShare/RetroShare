@@ -135,7 +135,9 @@ CreateGxsChannelMsg QPushButton#postButton:hover {
 
 CreateCircleDialog QPushButton#createButton, CreateLobbyDialog QPushButton#createButton,
 IdEditDialog QPushButton#createButton, CreateGxsForumMsg QPushButton#postButton,
-GxsCreateCommentDialog QPushButton#postButton, GxsGroupDialog QPushButton#createButton{
+GxsCreateCommentDialog QPushButton#postButton, GxsGroupDialog QPushButton#createButton,
+PulseAddDialog QPushButton#pushButton_Post, PulseTopLevel QToolButton#toolButton_follow,
+PulseViewGroup QToolButton#toolButton_follow{
 	font: bold;
 	font-size: 15px;
 	color: white;
@@ -144,16 +146,21 @@ GxsCreateCommentDialog QPushButton#postButton, GxsGroupDialog QPushButton#create
 	max-height: 27px;
 	min-width: 4em;
 	padding: 2px;
+	padding-left: 6px;
+	padding-right: 6px;
 }
 
 CreateCircleDialog QPushButton#createButton:hover, CreateLobbyDialog QPushButton#createButton:hover,
 IdEditDialog QPushButton#createButton:hover, CreateGxsForumMsg QPushButton#postButton:hover,
 GxsCreateCommentDialog QPushButton#postButton:hover, GxsGroupDialog QPushButton#createButton:hover,
-ShareManager QPushButton#closeButton:hover {
+ShareManager QPushButton#closeButton:hover, PulseAddDialog QPushButton#pushButton_Post:hover, 
+PulseTopLevel QToolButton#toolButton_follow:hover, PulseViewGroup QToolButton#toolButton_follow:hover{
 	background: #03b1f3;
 	border-radius: 4px;
 	min-width: 4em;
 	padding: 2px;
+	padding-left: 6px;
+	padding-right: 6px;
 }
 
 ShareManager QPushButton#closeButton {
@@ -206,7 +213,8 @@ SearchDialog QPushButton#pushButtonSearch:hover{
 }
 
 CreateGxsForumMsg QPushButton#postButton:disabled, PostedCreatePostDialog QPushButton#submitButton:disabled,
-CreateGxsChannelMsg QPushButton#postButton:disabled, GxsCreateCommentDialog QPushButton#postButton:disabled {
+CreateGxsChannelMsg QPushButton#postButton:disabled, GxsCreateCommentDialog QPushButton#postButton:disabled,
+PulseAddDialog QPushButton#pushButton_Post:disabled {
 	font: bold;
 	font-size: 15px;
 	color: white;
@@ -214,7 +222,8 @@ CreateGxsChannelMsg QPushButton#postButton:disabled, GxsCreateCommentDialog QPus
 	border-radius: 4px;
 	max-height: 27px;
 	min-width: 4em;
-	padding: 2px;
+	padding-left: 6px;
+	padding-right: 6px;
 }
 
 /* Forums */
@@ -491,6 +500,7 @@ GxsCircleItem QLabel#nameLabel, QLabel#titleLabel {
 	font: 11pt;
 	font: bold italic;
 }
+
 
 ForumNewItem > QFrame#frame, ForumMsgItem > QFrame#frame {
 	border: 2px solid #CCCCCC;
@@ -1045,8 +1055,7 @@ MessageWidget QTextBrowser#toText , QTextBrowser#ccText , QTextBrowser#bccText {
 	border: none;
 }
 
-WireGroupItem QWidget:hover
-{
+WireGroupItem QWidget:hover{
 	background-color: #7ecbfb;
 }
 
