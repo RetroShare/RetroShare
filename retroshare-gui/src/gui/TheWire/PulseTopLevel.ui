@@ -740,10 +740,6 @@
            <property name="text">
             <string>FOLLOW</string>
            </property>
-           <property name="icon">
-            <iconset resource="TheWire_images.qrc">
-             <normaloff>:/images/invite.png</normaloff>:/images/invite.png</iconset>
-           </property>
            <property name="toolButtonStyle">
             <enum>Qt::ToolButtonTextBesideIcon</enum>
            </property>

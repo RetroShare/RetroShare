@@ -138,7 +138,7 @@ void WireGroupItem::setSelected(bool on)
 	}
 	else
 	{
-		setBackground("gray");
+		setBackground("white");
 	}
 }
 
