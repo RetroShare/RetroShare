@@ -2250,6 +2250,10 @@ GxsForumMsgItem QFrame#frame{
 	background-color: #19232D;
 }
 
+PostedItem QFrame#mainFrame{
+	background: #19232D;
+}
+
 WireGroupItem QFrame#wire_frame{
 	background: transparent;
 }
