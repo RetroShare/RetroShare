@@ -443,7 +443,7 @@ void GxsChannelPostItem::fill()
 		// Wiping data - as its been passed to thumbnail.
 
 		// Check if the Thumbnail is a 3:4 Format.
-		if (thumbnail.height() >= 150){
+		if (thumbnail.width() >= 130 && thumbnail.height() >= 190){
 			ui->logoLabel->setFixedSize(2/3.0*desired_height_3_4,desired_height_3_4);
 		}else{
 			ui->logoLabel->setFixedSize(4/3.0*desired_height,desired_height);
