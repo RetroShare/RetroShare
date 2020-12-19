@@ -1730,8 +1730,10 @@ int RsDataService::setCacheSize(uint32_t /* size */)
     return 0;
 }
 
-void RsDataService::debug_printCacheSize() const
+void RsDataService::debug_printCacheSize()
 {
+    RS_STACK_MUTEX(mDbMutex);
+
     uint32_t nb_items,nb_items_on_deadlist;
     uint64_t total_size,total_size_of_deadlist;
 
@@ -1743,7 +1745,7 @@ void RsDataService::debug_printCacheSize() const
     nb_items = 0,nb_items_on_deadlist = 0;
     total_size = 0,total_size_of_deadlist = 0;
 
-    for(auto it:mMsgMetaDataCache)
+    for(auto& it:mMsgMetaDataCache)
     {
 		uint32_t tmp_nb_items,tmp_nb_items_on_deadlist;
 		uint64_t tmp_total_size,tmp_total_size_of_deadlist;

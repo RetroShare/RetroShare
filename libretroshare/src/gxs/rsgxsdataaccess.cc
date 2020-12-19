@@ -1472,7 +1472,12 @@ bool RsGxsDataAccess::getGroupStatistic(GroupStatisticRequest *req)
     GxsMsgMetaResult metaResult;
     mDataStore->retrieveGxsMsgMetaData(metaReq, metaResult);
 
-    const std::vector<const RsGxsMsgMetaData*>& msgMetaV = metaResult[req->mGrpId];
+    const auto& msgMetaV_it = metaResult.find(req->mGrpId);
+
+    if(msgMetaV_it == metaResult.end())
+        return false;
+
+    const auto& msgMetaV(msgMetaV_it->second);
 
     req->mGroupStatistic.mGrpId = req->mGrpId;
     req->mGroupStatistic.mNumMsgs = msgMetaV.size();

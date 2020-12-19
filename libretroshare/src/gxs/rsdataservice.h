@@ -292,7 +292,7 @@ public:
 
     int updateGroupKeys(const RsGxsGroupId& grpId,const RsTlvSecurityKeySet& keys, uint32_t subscribe_flags) ;
 
-    void debug_printCacheSize() const;
+    void debug_printCacheSize() ;
 
 private:
 
