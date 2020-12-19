@@ -1385,6 +1385,10 @@ GxsForumMsgItem QFrame#frame{
 	background: #302F2F;
 }
 
+PostedItem QFrame#mainFrame{
+	background: #302F2F;
+}
+
 BoardPostDisplayWidget_compact QPushButton#shareButton
 {
 	background-color: transparent;
