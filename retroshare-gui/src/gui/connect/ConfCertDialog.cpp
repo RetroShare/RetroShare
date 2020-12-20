@@ -283,7 +283,7 @@ void ConfCertDialog::loadInvitePage()
     if(ui._shortFormat_CB->isChecked())
 	{
         rsPeers->getShortInvite(invite,detail.id,flags);
-		ui.stabWidget->setTabText(1, tr("Retroshare ID"));
+        ui.stabWidget->setTabText(2, tr("Retroshare ID"));
 	}
 	else
 	{
