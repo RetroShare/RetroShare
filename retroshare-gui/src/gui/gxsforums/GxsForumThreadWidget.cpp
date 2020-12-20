@@ -400,6 +400,7 @@ void GxsForumThreadWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent
 void GxsForumThreadWidget::showForumInfo()
 {
     mThreadId.clear();
+    ui->threadTreeWidget->selectionModel()->clear();
     updateForumDescription(true);
 }
 
