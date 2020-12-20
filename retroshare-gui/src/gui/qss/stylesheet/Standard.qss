@@ -228,7 +228,7 @@ PulseAddDialog QPushButton#pushButton_Post:disabled {
 
 /* Forums */
 
-GxsForumThreadWidget QLabel#forumName
+GxsForumThreadWidget QPushButton#forumName
 {
 	font: bold;
 	font-size: 14px;
