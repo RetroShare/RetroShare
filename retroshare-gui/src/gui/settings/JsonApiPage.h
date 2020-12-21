@@ -36,7 +36,7 @@ public:
 	virtual QPixmap iconPixmap() const override
 	{
 		return FilesDefs::getPixmapFromQtResourcePath(
-		            ":/icons/svg/empty-circle.svg" );
+		            ":/icons/settings/jasonapi.svg" );
 	}
 
 	virtual QString pageName() const override { return tr("JSON API"); }
