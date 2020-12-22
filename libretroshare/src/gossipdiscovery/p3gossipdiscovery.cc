@@ -258,8 +258,7 @@ int p3discovery2::handleIncoming()
 
 		++nhandled;
 
-		Dbg4() << __PRETTY_FUNCTION__ << " Received item: " << std::endl
-		       << *item << std::endl;
+        Dbg4() << __PRETTY_FUNCTION__ << " Received item: " << *item << std::endl;
 
 		if((contact = dynamic_cast<RsDiscContactItem *>(item)) != nullptr)
 		{
@@ -269,30 +268,26 @@ int p3discovery2::handleIncoming()
                 processContactInfo(item->PeerId(), contact);
 		}
 		else if( (gxsidlst = dynamic_cast<RsDiscIdentityListItem *>(item)) != nullptr )
-		{
 			recvIdentityList(item->PeerId(),gxsidlst->ownIdentityList);
-			delete item;
-		}
 		else if((pgpkey = dynamic_cast<RsDiscPgpKeyItem *>(item)) != nullptr)
 			recvPGPCertificate(item->PeerId(), pgpkey);
 		else if((pgpcert = dynamic_cast<RsDiscPgpCertItem *>(item)) != nullptr)
-			// sink
-			delete pgpcert;
+            RsWarn() << "Received a deprecated RsDiscPgpCertItem. Will not be handled." << std::endl; // nothing to do.
 		else if((pgplist = dynamic_cast<RsDiscPgpListItem *>(item)) != nullptr)
 		{
 			if (pgplist->mode == RsGossipDiscoveryPgpListMode::FRIENDS)
 				processPGPList(pgplist->PeerId(), pgplist);
 			else if (pgplist->mode == RsGossipDiscoveryPgpListMode::GETCERT)
 				recvPGPCertificateRequest(pgplist->PeerId(), pgplist);
-			else delete item;
 		}
 		else
 		{
 			RsWarn() << __PRETTY_FUNCTION__ << " Received unknown item type " << (int)item->PacketSubType() << "! " << std::endl ;
             RsWarn() << item << std::endl;
-			delete item;
 		}
-	}
+
+        delete item;
+    }
 
 	return nhandled;
 }
@@ -716,9 +711,6 @@ void p3discovery2::processPGPList(const RsPeerId &fromId, const RsDiscPgpListIte
 
 	it->second.mergeFriendList(item->pgpIdSet.ids);
 	updatePeers_locked(fromId);
-
-	// cleanup.
-	delete item;
 }
 
 
@@ -1041,8 +1033,6 @@ void p3discovery2::recvPGPCertificateRequest( const RsPeerId& fromId, const RsDi
 			sendPGPCertificate(pgpId, fromId);
 		else
             std::cerr << "(WW) not sending certificate " << pgpId << " asked by friend " << fromId << " because this either this cert is not a friend, or discovery is off" << std::endl;
-
-	delete item;
 }
 
 
@@ -1119,7 +1109,6 @@ void p3discovery2::recvPGPCertificate(const RsPeerId& fromId, RsDiscPgpKeyItem* 
 #endif
 	// now that will add the key *and* set the skip_signature_validation flag at once
 	rsPeers->loadPgpKeyFromBinaryData((unsigned char*)item->bin_data,item->bin_len, tmp_pgp_id,error_string);	// no error should occur at this point because we called loadDetailsFromStringCert() already
-	delete item;
 
     // Make sure we allow connections after the key is added. This is not the case otherwise. We only do that if the peer is non validated peer, since
     // otherwise the connection should already be accepted. This only happens when the short invite peer sends its own PGP key.
