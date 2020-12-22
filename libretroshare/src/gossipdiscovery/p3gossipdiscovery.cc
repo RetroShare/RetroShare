@@ -345,8 +345,6 @@ void p3discovery2::sendOwnContactInfo(const RsPeerId &sslid)
 
 void p3discovery2::recvOwnContactInfo(const RsPeerId &fromId, const RsDiscContactItem *item)
 {
-    std::unique_ptr<const RsDiscContactItem> pitem(item); // ensures that item will be destroyed whichever door we leave through
-
 #ifdef P3DISC_DEBUG
 	std::cerr << "p3discovery2::recvOwnContactInfo()";
 	std::cerr << std::endl;
@@ -673,7 +671,6 @@ void p3discovery2::processPGPList(const RsPeerId &fromId, const RsDiscPgpListIte
 #endif
 
 		// cleanup.
-		delete item;
 		return;
 	}
 
@@ -905,7 +902,6 @@ void p3discovery2::processContactInfo(const RsPeerId &fromId, const RsDiscContac
 		if(sockaddr_storage_isExternalNet(item->currentConnectAddress.addr))
 			mPeerMgr->addCandidateForOwnExternalAddress(item->PeerId(), item->currentConnectAddress.addr);
 
-		delete item;
 		return;
 	}
 
@@ -934,7 +930,6 @@ void p3discovery2::processContactInfo(const RsPeerId &fromId, const RsDiscContac
 			/* inform NetMgr that we know this peer */
 			mNetMgr->netAssistKnownPeer(item->sslId, item->extAddrV4.addr, NETASSIST_KNOWN_PEER_FOF | NETASSIST_KNOWN_PEER_OFFLINE);
 		}
-        delete item;
 		return;
 	}
 
@@ -983,8 +978,6 @@ void p3discovery2::processContactInfo(const RsPeerId &fromId, const RsDiscContac
 
 	if(should_notify_discovery)
 		RsServer::notify()->notifyDiscInfoChanged();
-
-    delete item;
 }
 
 /* we explictly request certificates, instead of getting them all the time
