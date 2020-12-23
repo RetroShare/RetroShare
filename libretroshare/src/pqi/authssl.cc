@@ -1410,9 +1410,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 	return verificationSuccess;
 }
 
-bool AuthSSLimpl::parseX509DetailsFromFile(
-        const std::string& certFilePath, RsPeerId& certId,
-        RsPgpId& issuer, std::string& location )
+bool AuthSSLimpl::parseX509DetailsFromFile( const std::string& certFilePath, RsPeerId& certId, RsPgpId& issuer, std::string& location )
 {
 	FILE* tmpfp = RsDirUtil::rs_fopen(certFilePath.c_str(), "r");
 	if(!tmpfp)
@@ -1433,11 +1431,14 @@ bool AuthSSLimpl::parseX509DetailsFromFile(
 	}
 
 	uint32_t diagnostic = 0;
+
 	if(!AuthX509WithGPG(x509,false, diagnostic))
 	{
 		RsErr() << __PRETTY_FUNCTION__ << " AuthX509WithGPG failed with "
 		        << "diagnostic: " << diagnostic << std::endl;
-		return false;
+
+        X509_free(x509);
+        return false;
 	}
 
 	certId = RsX509Cert::getCertSslId(*x509);
