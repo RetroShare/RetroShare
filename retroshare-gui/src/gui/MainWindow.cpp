@@ -375,6 +375,7 @@ MainWindow::~MainWindow()
     delete soundStatus;
     delete toasterDisable;
     delete sysTrayStatus;
+    delete trayIcon;
 #ifdef MESSENGER_WINDOW
     MessengerWindow::releaseInstance();
 #endif
