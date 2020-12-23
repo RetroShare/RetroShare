@@ -154,8 +154,8 @@ SearchDialog::SearchDialog(QWidget *parent)
     //  To allow a proper sorting, be careful to pad at right with spaces. This
     //  is achieved by using QString("%1").arg(number,15,10).
     //
-    ui.searchResultWidget->setItemDelegateForColumn(SR_SIZE_COL, new RSHumanReadableSizeDelegate()) ;
-    ui.searchResultWidget->setItemDelegateForColumn(SR_AGE_COL, new RSHumanReadableAgeDelegate()) ;
+    ui.searchResultWidget->setItemDelegateForColumn(SR_SIZE_COL, mSizeColumnDelegate=new RSHumanReadableSizeDelegate()) ;
+    ui.searchResultWidget->setItemDelegateForColumn(SR_AGE_COL, mAgeColumnDelegate=new RSHumanReadableAgeDelegate()) ;
 
     /* make it extended selection */
     ui.searchResultWidget -> setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -225,12 +225,17 @@ SearchDialog::~SearchDialog()
     // save settings
     processSettings(false);
 
-    if (compareSummaryRole) {
+    if (compareSummaryRole)
         delete(compareSummaryRole);
-    }
-    if (compareResultRole) {
+
+    if (compareResultRole)
         delete(compareResultRole);
-    }
+
+    delete mSizeColumnDelegate;
+    delete mAgeColumnDelegate;
+
+    ui.searchResultWidget->setItemDelegateForColumn(SR_SIZE_COL, nullptr);
+    ui.searchResultWidget->setItemDelegateForColumn(SR_AGE_COL, nullptr);
 }
 
 void SearchDialog::processSettings(bool bLoad)
