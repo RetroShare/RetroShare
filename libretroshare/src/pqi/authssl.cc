@@ -1238,14 +1238,6 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 
 		RsErr() << __PRETTY_FUNCTION__ << " " << errMsg << std::endl;
 
-//		if(rsEvents)
-//		{
-//			ev->mErrorMsg = errMsg;
-//			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::NO_CERTIFICATE_SUPPLIED;
-//
-//			rsEvents->postEvent(std::move(ev));
-//		}
-
 		return verificationFailed;
 	}
 
@@ -1400,8 +1392,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 		return verificationFailed;
 	}
 
-	//setCurrentConnectionAttemptInfo(pgpId, sslId, sslCn);
-	LocalStoreCert(x509Cert);
+    LocalStoreCert(x509Cert);
 
 	RsInfo() << __PRETTY_FUNCTION__ << " authentication successfull for "
 	         << "sslId: " << sslId << " isSslOnlyFriend: " << isSslOnlyFriend
@@ -1806,26 +1797,28 @@ bool AuthSSLimpl::loadList(std::list<RsItem*>& load)
         for(it = load.begin(); it != load.end(); ++it) {
                 RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet *>(*it);
 
-                if(vitem) {
-                        #ifdef AUTHSSL_DEBUG
+                if(vitem)
+                {
+#ifdef AUTHSSL_DEBUG
                         std::cerr << "AuthSSLimpl::loadList() General Variable Config Item:" << std::endl;
                         vitem->print(std::cerr, 10);
                         std::cerr << std::endl;
-                        #endif
+#endif
 
                         std::list<RsTlvKeyValue>::iterator kit;
-                        for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) {
-                            if (RsPeerId(kit->key) == mOwnId) {
-                                continue;
-                            }
+                        for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit)
+                        {
+                                if (RsPeerId(kit->key) == mOwnId) {
+                                        continue;
+                                }
 
-                            X509 *peer = loadX509FromPEM(kit->value);
-			    /* authenticate it */
-				uint32_t diagnos ;
-			    if (AuthX509WithGPG(peer,false,diagnos))
-			    {
-				LocalStoreCert(peer);
-			    }
+                                X509 *peer = loadX509FromPEM(kit->value);
+                                /* authenticate it */
+                                uint32_t diagnos ;
+                                if (peer && AuthX509WithGPG(peer,false,diagnos))
+                                        LocalStoreCert(peer);
+
+                                X509_free(peer);
                         }
                 }
                 delete (*it);
