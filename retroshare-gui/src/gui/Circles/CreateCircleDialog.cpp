@@ -707,23 +707,30 @@ void CreateCircleDialog::loadIdentities()
 		}
 
 		std::set<RsGxsId> ids;
-		for(auto& meta:ids_meta) ids.insert(RsGxsId(meta.mGroupId));
+        for(auto& meta:ids_meta)
+            ids.insert(RsGxsId(meta.mGroupId));
 
-		auto id_groups = std::make_unique<std::vector<RsGxsIdGroup>>();
+        // Needs a pointer on the heap, to pass to postToObject, otherwise it will get deleted before
+        // the posted method will actually run. Memory ownership is left to the posted method.
+
+        auto id_groups = new std::vector<RsGxsIdGroup>();
+
 		if(!rsIdentity->getIdentitiesInfo(ids, *id_groups))
 		{
 			RS_ERR("failed to retrieve identities group info for all identities");
+            delete id_groups;
 			return;
 		}
 
-		RsQThreadUtils::postToObject(
-		            [id_groups = std::move(id_groups), this]()
+        RsQThreadUtils::postToObject( [id_groups, this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
 			fillIdentitiesList(*id_groups);
+
+            delete id_groups;
 		}, this );
 	});
 
