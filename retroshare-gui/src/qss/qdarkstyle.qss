@@ -1498,3 +1498,11 @@ PulseTopLevel QFrame#frame, PulseViewGroup QFrame#frame, PulseReply QFrame#frame
 MainWindow QListWidget {
 	font-size: 12pt;
 }
+
+ChatLobbyWidget QTreeWidget#lobbyTreeWidget{
+		font-size: 10pt;
+}
+
+NewFriendList QTreeView#peerTreeWidget {
+		font-size: 12pt;
+}
