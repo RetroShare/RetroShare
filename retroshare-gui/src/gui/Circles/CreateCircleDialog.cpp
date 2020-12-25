@@ -32,6 +32,7 @@
 #include "gui/common/AvatarDefs.h"
 #include "gui/common/FilesDefs.h"
 #include "util/qtthreadsutils.h"
+#include "util/misc.h"
 #include "gui/Circles/CreateCircleDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/Identity/IdDialog.h"
@@ -53,23 +54,10 @@ CreateCircleDialog::CreateCircleDialog()
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
 
-	/* Setup Queue */
+    setAttribute(Qt::WA_DeleteOnClose, false);
+
+    /* Setup Queue */
     ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/circles.png"));
-
-	// connect up the buttons.
-	connect(ui.addButton, SIGNAL(clicked()), this, SLOT(addMember()));
-	connect(ui.removeButton, SIGNAL(clicked()), this, SLOT(removeMember()));
-
-	connect(ui.createButton, SIGNAL(clicked()), this, SLOT(createCircle()));
-	connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(close()));
-
-	connect(ui.treeWidget_membership, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(selectedMember(QTreeWidgetItem*, QTreeWidgetItem*)));
-	connect(ui.treeWidget_IdList, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(selectedId(QTreeWidgetItem*, QTreeWidgetItem*)));
-	
-	connect(ui.treeWidget_IdList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(IdListCustomPopupMenu(QPoint)));
-	connect(ui.treeWidget_membership, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(MembershipListCustomPopupMenu(QPoint)));
-	
-	connect(ui.IdFilter, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 
 	//connect(ui.toolButton_NewId, SIGNAL(clicked()), this, SLOT(createNewGxsId()));
 
@@ -88,17 +76,8 @@ CreateCircleDialog::CreateCircleDialog()
 	ui.removeButton->setEnabled(false);
 	ui.addButton->setEnabled(false);
 	ui.radioButton_ListAll->setChecked(true);
-
-	QObject::connect(ui.radioButton_ListAll, SIGNAL(toggled(bool)), this, SLOT(idTypeChanged())) ;
-	QObject::connect(ui.radioButton_ListAllPGP, SIGNAL(toggled(bool)), this, SLOT(idTypeChanged())) ;
-	QObject::connect(ui.radioButton_ListFriendPGP, SIGNAL(toggled(bool)), this, SLOT(idTypeChanged())) ;
-
-	QObject::connect(ui.radioButton_Public, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
-	QObject::connect(ui.radioButton_Self, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
-	QObject::connect(ui.radioButton_Restricted, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
-    
 	ui.radioButton_Public->setChecked(true) ;
-    
+
 	mIsExistingCircle = false;
 	mIsExternalCircle = true;
 	mClearList = true;
@@ -107,9 +86,32 @@ CreateCircleDialog::CreateCircleDialog()
 #endif
         
 	ui.treeWidget_IdList->setColumnHidden(RSCIRCLEID_COL_KEYID,true); // no need to show this. the tooltip will do it.
-
-    //ui.idChooser->loadIds(0,RsGxsId());
     ui.circleComboBox->loadCircles(RsGxsCircleId());
+    ui.circleComboBox->hide();
+
+    // connect up the buttons.
+    connect(ui.addButton, SIGNAL(clicked()), this, SLOT(addMember()));
+    connect(ui.removeButton, SIGNAL(clicked()), this, SLOT(removeMember()));
+
+    connect(ui.createButton, SIGNAL(clicked()), this, SLOT(createCircle()));
+    connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(close()));
+
+    connect(ui.treeWidget_membership, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(selectedMember(QTreeWidgetItem*, QTreeWidgetItem*)));
+    connect(ui.treeWidget_IdList, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(selectedId(QTreeWidgetItem*, QTreeWidgetItem*)));
+
+    connect(ui.treeWidget_IdList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(IdListCustomPopupMenu(QPoint)));
+    connect(ui.treeWidget_membership, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(MembershipListCustomPopupMenu(QPoint)));
+
+    connect(ui.IdFilter, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
+
+
+    QObject::connect(ui.radioButton_ListAll, SIGNAL(toggled(bool)), this, SLOT(idTypeChanged())) ;
+    QObject::connect(ui.radioButton_ListAllPGP, SIGNAL(toggled(bool)), this, SLOT(idTypeChanged())) ;
+    QObject::connect(ui.radioButton_ListFriendPGP, SIGNAL(toggled(bool)), this, SLOT(idTypeChanged())) ;
+
+    QObject::connect(ui.radioButton_Public, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
+    QObject::connect(ui.radioButton_Self, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
+    QObject::connect(ui.radioButton_Restricted, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
 }
 
 CreateCircleDialog::~CreateCircleDialog()
@@ -575,7 +577,7 @@ void CreateCircleDialog::updateCircleGUI()
 	std::cerr << std::endl;
 #endif
 
-	ui.circleName->setText(QString::fromUtf8(mCircleGroup.mMeta.mGroupName.c_str()));
+    whileBlocking(ui.circleName)->setText(QString::fromUtf8(mCircleGroup.mMeta.mGroupName.c_str()));
 
 	bool isExternal = true;
 #ifdef DEBUG_CREATE_CIRCLE_DIALOG 
@@ -583,9 +585,9 @@ void CreateCircleDialog::updateCircleGUI()
 	std::cerr << std::endl;
 #endif
 
-    ui.radioButton_Public->setChecked(false);
-				ui.radioButton_Self->setChecked(false);
-				ui.radioButton_Restricted->setChecked(false);
+    whileBlocking(ui.radioButton_Public)->setChecked(false);
+    whileBlocking(ui.radioButton_Self)->setChecked(false);
+    whileBlocking(ui.radioButton_Restricted)->setChecked(false);
             
 	switch(mCircleGroup.mMeta.mCircleType) 
     	{
@@ -604,7 +606,7 @@ void CreateCircleDialog::updateCircleGUI()
 			std::cerr << std::endl;
 #endif
 
-			ui.radioButton_Public->setChecked(true);
+            whileBlocking(ui.radioButton_Public)->setChecked(true);
 			break;
 
 		case GXS_CIRCLE_TYPE_EXT_SELF:
@@ -618,11 +620,11 @@ void CreateCircleDialog::updateCircleGUI()
 #endif
 
 			if (RsGxsGroupId(mCircleGroup.mMeta.mCircleId) == mCircleGroup.mMeta.mGroupId) 
-				ui.radioButton_Self->setChecked(true);
+                whileBlocking(ui.radioButton_Self)->setChecked(true);
             else
-				ui.radioButton_Restricted->setChecked(true);
+                whileBlocking(ui.radioButton_Restricted)->setChecked(true);
 
-            ui.circleComboBox->loadCircles(mCircleGroup.mMeta.mCircleId);
+            whileBlocking(ui.circleComboBox)->loadCircles(mCircleGroup.mMeta.mCircleId);
 			
 			break;
 
@@ -643,15 +645,15 @@ void CreateCircleDialog::updateCircleGUI()
     
     if(mReadOnly)
     {
-	    ui.circleAdminLabel->setId(mCircleGroup.mMeta.mAuthorId) ;
-        	ui.idChooser->setVisible(false) ;
+        ui.circleAdminLabel->setId(mCircleGroup.mMeta.mAuthorId) ;
+        ui.idChooser->setVisible(false) ;
     }
     else
     {
 	    //std::set<RsGxsId> ids ;
 	    //ids.insert(mCircleGroup.mMeta.mAuthorId) ;
-	    ui.idChooser->setDefaultId(mCircleGroup.mMeta.mAuthorId) ;
-	    ui.idChooser->setChosenId(mCircleGroup.mMeta.mAuthorId) ;
+        ui.idChooser->setDefaultId(mCircleGroup.mMeta.mAuthorId) ;
+        ui.idChooser->setChosenId(mCircleGroup.mMeta.mAuthorId) ;
 	    //ui.idChooser->setIdConstraintSet(ids) ;
 	    ui.idChooser->setFlags(IDCHOOSER_NO_CREATE) ;
 	    ui.circleAdminLabel->setVisible(false) ;
@@ -696,6 +698,8 @@ void CreateCircleDialog::loadCircle(const RsGxsGroupId& groupId)
 
 void CreateCircleDialog::loadIdentities()
 {
+    std::cerr << "Loading identities..." << std::endl;
+
 	RsThread::async([this]()
 	{
 		std::list<RsGroupMetaData> ids_meta;
