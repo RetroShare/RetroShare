@@ -637,7 +637,7 @@ void RsGxsNetService::syncWithPeers()
 
     for(RsGxsGrpMetaTemporaryMap::iterator mit = grpMeta.begin(); mit != grpMeta.end(); ++mit)
     {
-	    RsGxsGrpMetaData* meta = mit->second;
+        const auto& meta = mit->second;
 
 	    // This was commented out because we want to know how many messages are available for unsubscribed groups.
 
@@ -674,7 +674,7 @@ void RsGxsNetService::syncWithPeers()
         RsGxsGrpMetaTemporaryMap::const_iterator mmit = toRequest.begin();
         for(; mmit != toRequest.end(); ++mmit)
         {
-            const RsGxsGrpMetaData* meta = mmit->second;
+            const auto& meta = mmit->second;
             const RsGxsGroupId& grpId = mmit->first;
             RsGxsCircleId encrypt_to_this_circle_id ;
 
@@ -928,7 +928,7 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStatsItem *grs)
 
 	    mDataStore->retrieveGxsGrpMetaData(grpMetas);
 
-	    const RsGxsGrpMetaData* grpMeta = grpMetas[grs->grpId];
+        const auto& grpMeta = grpMetas[grs->grpId];
 
 	if(grpMeta == NULL)
             {
@@ -959,7 +959,7 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStatsItem *grs)
 #endif
 	    mDataStore->retrieveGxsMsgMetaData(reqIds, result);
 
-	    const std::vector<const RsGxsMsgMetaData*>& vec(result[grs->grpId]) ;
+        const auto& vec(result[grs->grpId]) ;
 
 	    if(vec.empty())	// that means we don't have any, or there isn't any, but since the default is always 0, no need to send.
 		    return ;
@@ -2196,7 +2196,7 @@ void RsGxsNetService::updateServerSyncTS()
 
 		RS_STACK_MUTEX(mNxsMutex) ;
 
-		const RsGxsGrpMetaData* grpMeta = mit->second;
+        const auto& grpMeta = mit->second;
 #ifdef TO_REMOVE
 		// That accounts for modification of the meta data.
 
@@ -2924,7 +2924,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
     grpMetaMap[grpId] = NULL;
 
     mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
-    const RsGxsGrpMetaData* grpMeta = grpMetaMap[grpId];
+    const auto& grpMeta = grpMetaMap[grpId];
 
     if(grpMeta == NULL) // this should not happen, but just in case...
     {
@@ -2956,17 +2956,16 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
     reqIds[grpId] = std::set<RsGxsMessageId>();
     GxsMsgMetaResult result;
     mDataStore->retrieveGxsMsgMetaData(reqIds, result);
-    std::vector<const RsGxsMsgMetaData*> &msgMetaV = result[grpId];
+    auto& msgMetaV = result[grpId];
 
 #ifdef NXS_NET_DEBUG_1
     GXSNETDEBUG_PG(item->PeerId(),grpId) << "  retrieving grp message list..." << std::endl;
     GXSNETDEBUG_PG(item->PeerId(),grpId) << "  grp locally contains " << msgMetaV.size() << " messsages." << std::endl;
 #endif
-    std::vector<const RsGxsMsgMetaData*>::const_iterator vit = msgMetaV.begin();
     std::set<RsGxsMessageId> msgIdSet;
 
     // put ids in set for each searching
-    for(; vit != msgMetaV.end(); ++vit)
+    for(auto vit=msgMetaV.begin(); vit != msgMetaV.end(); ++vit)
         msgIdSet.insert((*vit)->mMsgId);
 
     msgMetaV.clear();
@@ -3230,7 +3229,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
         RsNxsSyncGrpItem*& grpSyncItem = *llit;
         const RsGxsGroupId& grpId = grpSyncItem->grpId;
 
-		std::map<RsGxsGroupId, RsGxsGrpMetaData*>::const_iterator metaIter = grpMetaMap.find(grpId);
+        auto metaIter = grpMetaMap.find(grpId);
         bool haveItem = false;
         bool latestVersion = false;
 
@@ -4050,7 +4049,7 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrpReqItem *item)
 
     for(auto mit = grp.begin(); mit != grp.end(); ++mit)
     {
-	    const RsGxsGrpMetaData* grpMeta = mit->second;
+        const auto& grpMeta = mit->second;
 
 	    // Only send info about subscribed groups.
 
@@ -4369,7 +4368,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
     grpMetas[item->grpId] = NULL;
 
     mDataStore->retrieveGxsGrpMetaData(grpMetas);
-    const RsGxsGrpMetaData* grpMeta = grpMetas[item->grpId];
+    const auto& grpMeta = grpMetas[item->grpId];
 
     if(grpMeta == NULL)
     {
@@ -4402,7 +4401,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
 
     GxsMsgMetaResult metaResult;
     mDataStore->retrieveGxsMsgMetaData(req, metaResult);
-    std::vector<const RsGxsMsgMetaData*>& msgMetas = metaResult[item->grpId];
+    auto& msgMetas = metaResult[item->grpId];
 
 #ifdef NXS_NET_DEBUG_0
     GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "   retrieving message meta data." << std::endl;
@@ -4432,7 +4431,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
     {
 	    for(auto vit = msgMetas.begin();vit != msgMetas.end(); ++vit)
 		{
-			const RsGxsMsgMetaData* m = *vit;
+            const auto& m = *vit;
 
             // Check reputation
 
@@ -4577,7 +4576,7 @@ void RsGxsNetService::locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, c
 	}
 }
 
-bool RsGxsNetService::canSendMsgIds(std::vector<const RsGxsMsgMetaData*>& msgMetas, const RsGxsGrpMetaData& grpMeta, const RsPeerId& sslId,RsGxsCircleId& should_encrypt_id)
+bool RsGxsNetService::canSendMsgIds(std::vector<std::shared_ptr<RsGxsMsgMetaData> >& msgMetas, const RsGxsGrpMetaData& grpMeta, const RsPeerId& sslId,RsGxsCircleId& should_encrypt_id)
 {
 #ifdef NXS_NET_DEBUG_4
     GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "RsGxsNetService::canSendMsgIds() CIRCLE VETTING" << std::endl;
@@ -4929,7 +4928,7 @@ void RsGxsNetService::sharePublishKeysPending()
 
         // Find the publish keys in the retrieved info
 
-        const RsGxsGrpMetaData *grpMeta = grpMetaMap[mit->first] ;
+        const auto& grpMeta = grpMetaMap[mit->first] ;
 
         if(grpMeta == NULL)
         {
@@ -5014,7 +5013,7 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 
 	// update the publish keys in this group meta info
 
-	const RsGxsGrpMetaData *grpMeta = grpMetaMap[item->grpId] ;
+    const auto& grpMeta = grpMetaMap[item->grpId] ;
 	if (!grpMeta) {
 		std::cerr << "(EE) RsGxsNetService::handleRecvPublishKeys() grpMeta not found." << std::endl;
 		return ;

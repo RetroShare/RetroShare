@@ -38,35 +38,29 @@ public:
 template<class ID, class MetaDataClass> class t_MetaDataCache
 {
 public:
-    t_MetaDataCache() : mCache_ContainsAllMetas(false) {}
-    virtual ~t_MetaDataCache()
-    {
-        for(auto it: mMetas)
-            delete it.second;
-
-        for(auto it: mOldCachedItems)
-            delete it.second;
-    }
+    t_MetaDataCache()
+        : mCache_ContainsAllMetas(false)
+    {}
+    virtual ~t_MetaDataCache() = default;
 
     bool isCacheUpToDate() const { return mCache_ContainsAllMetas ; }
     void setCacheUpToDate(bool b) { mCache_ContainsAllMetas = b; }
 
-	void getFullMetaList(std::map<ID,MetaDataClass*>& mp) const { mp = mMetas ; }
-    void getFullMetaList(std::vector<const MetaDataClass*>& mp) const { for(auto& m:mMetas) mp.push_back(m.second) ; }
+    void getFullMetaList(std::map<ID,std::shared_ptr<MetaDataClass> >& mp) const { mp = mMetas ; }
+    void getFullMetaList(std::vector<std::shared_ptr<MetaDataClass> >& mp) const { for(auto& m:mMetas) mp.push_back(m.second) ; }
 
-    MetaDataClass *getMeta(const ID& id)
+    std::shared_ptr<MetaDataClass> getMeta(const ID& id)
     {
 		auto itt = mMetas.find(id);
 
 		if(itt != mMetas.end())
 			return itt->second ;
         else
-            return NULL;
+            return nullptr;
     }
 
-    MetaDataClass *getOrCreateMeta(const ID& id)
+    std::shared_ptr<MetaDataClass> getOrCreateMeta(const ID& id)
     {
-        MetaDataClass *meta = nullptr;
 		auto it = mMetas.find(id) ;
 
 		if(it != mMetas.end())
@@ -74,18 +68,15 @@ public:
 #ifdef RS_DATA_SERVICE_DEBUG
 			RsDbg() << __PRETTY_FUNCTION__ << ": getting group meta " << grpId << " from cache." << std::endl;
 #endif
-			meta = it->second ;
+            return it->second ;
 		}
 		else
 		{
 #ifdef RS_DATA_SERVICE_DEBUG
 			RsDbg() << __PRETTY_FUNCTION__ << ": group meta " << grpId << " not in cache. Loading it from DB..." << std::endl;
 #endif
-			meta = new MetaDataClass();
-			mMetas[id] = meta ;
-		}
-
-        return meta;
+            return (mMetas[id] = std::make_shared<MetaDataClass>());
+        }
     }
 
 	void updateMeta(const ID& id,const MetaDataClass& meta)
@@ -95,7 +86,7 @@ public:
 		if(it != mMetas.end())
 			*(it->second) = meta ;
 		else
-			mMetas[id] = new MetaDataClass(meta) ;
+            mMetas[id] = std::make_shared<MetaDataClass>();
 	}
 
     void clear(const ID& id)
@@ -114,39 +105,21 @@ public:
 			std::cerr << "(II) moving database cache entry " << (void*)(*it).second << " to dead list." << std::endl;
 #endif
 
-			mOldCachedItems.push_back(std::make_pair(now,it->second)) ;
-
 			mMetas.erase(it) ;
 			mCache_ContainsAllMetas = false;
-		}
-
-		// We also take that opportunity to delete old entries.
-
-		auto it2(mOldCachedItems.begin());
-
-		while(it2!=mOldCachedItems.end() && (*it2).first + CACHE_ENTRY_GRACE_PERIOD < now)
-		{
-#ifdef RS_DATA_SERVICE_DEBUG
-			std::cerr << "(II) deleting old GXS database cache entry " << (void*)(*it2).second << ", " << now - (*it2).first << " seconds old." << std::endl;
-#endif
-			delete (*it2).second ;
-			it2 = mOldCachedItems.erase(it2) ;
 		}
 	}
 
     void debug_computeSize(uint32_t& nb_items, uint32_t& nb_items_on_deadlist, uint64_t& total_size,uint64_t& total_size_of_deadlist) const
     {
         nb_items = mMetas.size();
-        nb_items_on_deadlist = mOldCachedItems.size();
         total_size = 0;
         total_size_of_deadlist = 0;
 
         for(auto it:mMetas) total_size += it.second->serial_size();
-        for(auto it:mOldCachedItems) total_size_of_deadlist += it.second->serial_size();
     }
 private:
-	std::map<ID,MetaDataClass*> mMetas;
-	std::list<std::pair<rstime_t,MetaDataClass*> > mOldCachedItems ;	// dead list, where items get deleted after being unused for a while. This is due to not using smart ptrs.
+    std::map<ID,std::shared_ptr<MetaDataClass> > mMetas;
 
 	static const uint32_t CACHE_ENTRY_GRACE_PERIOD = 600 ; // Unused items are deleted 10 minutes after last usage.
 
@@ -189,7 +162,7 @@ public:
      * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
-    int retrieveGxsGrpMetaData(RsGxsGrpMetaTemporaryMap& grp);
+    int retrieveGxsGrpMetaData(std::map<RsGxsGroupId, std::shared_ptr<RsGxsGrpMetaData> > &grp);
 
     /*!
      * Retrieves meta data of all groups stored (most current versions only)
@@ -316,26 +289,26 @@ private:
      * @param c cursor to result set
      * @param msgMeta message metadata retrieved from cursor are stored here
      */
-    void locked_retrieveMsgMetaList(RetroCursor* c, std::vector<const RsGxsMsgMetaData*>& msgMeta);
+    void locked_retrieveMsgMetaList(RetroCursor* c, std::vector<std::shared_ptr<RsGxsMsgMetaData> > &msgMeta);
 
     /*!
      * Retrieves all the grp meta results from a cursor
      * @param c cursor to result set
      * @param grpMeta group metadata retrieved from cursor are stored here
      */
-	void locked_retrieveGrpMetaList(RetroCursor *c, std::map<RsGxsGroupId,RsGxsGrpMetaData *>& grpMeta);
+    void locked_retrieveGrpMetaList(RetroCursor *c, std::map<RsGxsGroupId, std::shared_ptr<RsGxsGrpMetaData> > &grpMeta);
 
     /*!
      * extracts a msg meta item from a cursor at its
      * current position
      */
-    RsGxsMsgMetaData* locked_getMsgMeta(RetroCursor& c, int colOffset, bool use_cache);
+    std::shared_ptr<RsGxsMsgMetaData> locked_getMsgMeta(RetroCursor& c, int colOffset, bool use_cache);
 
     /*!
      * extracts a grp meta item from a cursor at its
      * current position
      */
-    RsGxsGrpMetaData* locked_getGrpMeta(RetroCursor& c, int colOffset, bool use_cache);
+    std::shared_ptr<RsGxsGrpMetaData> locked_getGrpMeta(RetroCursor& c, int colOffset, bool use_cache);
 
     /*!
      * extracts a msg item from a cursor at its

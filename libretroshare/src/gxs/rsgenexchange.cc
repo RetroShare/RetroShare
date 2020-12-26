@@ -809,12 +809,13 @@ int RsGenExchange::createMessage(RsNxsMsg* msg)
 	else
 	{
 		// get publish key
-		const RsGxsGrpMetaData* grpMeta = metaMap[id];
+        const auto& grpMeta = metaMap[id];
 
 		uint32_t metaDataLen = meta.serial_size();
 		uint32_t allMsgDataLen = metaDataLen + msg->msg.bin_len;
-		char* metaData = new char[metaDataLen];
-		char* allMsgData = new char[allMsgDataLen]; // msgData + metaData
+
+        RsTemporaryMemory metaData(metaDataLen);
+        RsTemporaryMemory allMsgData(allMsgDataLen);
 
 		meta.serialise(metaData, &metaDataLen);
 
@@ -839,9 +840,6 @@ int RsGenExchange::createMessage(RsNxsMsg* msg)
 
 		// assign msg id to msg meta
 		msg->metaData->mMsgId = msg->msgId;
-
-		delete[] metaData;
-		delete[] allMsgData;
 	}
 
 	if(ret_val == SIGN_FAIL)
@@ -1299,16 +1297,14 @@ bool RsGenExchange::getPublishedGroupMeta(const uint32_t& token,RsGroupMetaData&
 
 bool RsGenExchange::getGroupMeta(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo)
 {
-	std::list<const RsGxsGrpMetaData*> metaL;
+    std::list<std::shared_ptr<RsGxsGrpMetaData> > metaL;
 	bool ok = mDataAccess->getGroupSummary(token, metaL);
-
-	RsGroupMetaData m;
 
 	for( auto lit = metaL.begin(); lit != metaL.end(); ++lit)
 	{
 		const RsGxsGrpMetaData& gMeta = *(*lit);
 
-        m = gMeta;
+        RsGroupMetaData m(gMeta);
         RsGroupNetworkStats sts ;
 
 		if(mNetService != NULL && mNetService->getGroupNetworkStats(gMeta.mGroupId,sts))
@@ -1341,24 +1337,15 @@ bool RsGenExchange::getMsgMeta(const uint32_t &token,
 	GxsMsgMetaResult result;
 	bool ok = mDataAccess->getMsgSummary(token, result);
 
-	GxsMsgMetaResult::iterator mit = result.begin();
-
-	for(; mit != result.end(); ++mit)
+    for(auto mit=result.begin(); mit != result.end(); ++mit)
 	{
-		std::vector<const RsGxsMsgMetaData*>& metaV = mit->second;
+        auto& metaV = mit->second;
 
 		std::vector<RsMsgMetaData>& msgInfoV = msgInfo[mit->first];
 
-		std::vector<const RsGxsMsgMetaData*>::iterator vit = metaV.begin();
 		RsMsgMetaData meta;
-		for(; vit != metaV.end(); ++vit)
-		{
-			const RsGxsMsgMetaData& m = *(*vit);
-			meta = m;
-			msgInfoV.push_back(meta);
-			//delete *vit;
-		}
-		metaV.clear();
+        for(auto vit=metaV.begin(); vit != metaV.end(); ++vit)
+            msgInfoV.push_back(RsMsgMetaData(*(*vit)));
 	}
 
 	return ok;
@@ -1373,20 +1360,12 @@ bool RsGenExchange::getMsgRelatedMeta(const uint32_t &token, GxsMsgRelatedMetaMa
 
         for(; mit != result.end(); ++mit)
         {
-                std::vector<const RsGxsMsgMetaData*>& metaV = mit->second;
+                auto& metaV = mit->second;
 
                 std::vector<RsMsgMetaData>& msgInfoV = msgMeta[mit->first];
 
-                std::vector<const RsGxsMsgMetaData*>::iterator vit = metaV.begin();
-                RsMsgMetaData meta;
-                for(; vit != metaV.end(); ++vit)
-                {
-                        const RsGxsMsgMetaData& m = *(*vit);
-                        meta = m;
-                        msgInfoV.push_back(meta);
-                        //delete *vit;
-                }
-                metaV.clear();
+                for(auto vit=metaV.begin(); vit != metaV.end(); ++vit)
+                        msgInfoV.push_back(RsMsgMetaData(*(*vit)));
         }
 
         return ok;
@@ -2107,15 +2086,14 @@ void RsGenExchange::processMsgMetaChanges()
 
                 if(mit != result.end())
                 {
-                    std::vector<const RsGxsMsgMetaData*>& msgMetaV = mit->second;
+                    const auto& msgMetaV = mit->second;
 
                     if(!msgMetaV.empty())
                     {
-                        const RsGxsMsgMetaData* meta = *(msgMetaV.begin());
+                        const auto& meta = *(msgMetaV.begin());
                         value = (meta->mMsgStatus & ~mask) | (mask & value);
 						changed = (static_cast<int64_t>(meta->mMsgStatus) != value);
                         m.val.put(RsGeneralDataService::MSG_META_STATUS, value);
-                        //delete meta;
                         ok = true;
                     }
                 }
@@ -2210,16 +2188,16 @@ bool RsGenExchange::processGrpMask(const RsGxsGroupId& grpId, ContentValue &grpC
     // first find out which mask is involved
     int32_t value, mask, currValue;
     std::string key;
-    const RsGxsGrpMetaData* grpMeta = NULL;
+    std::shared_ptr<RsGxsGrpMetaData> grpMeta;
     bool ok = false;
 
 	RsGxsGrpMetaTemporaryMap grpMetaMap;
-    std::map<RsGxsGroupId, RsGxsGrpMetaData* >::iterator mit;
     grpMetaMap.insert(std::make_pair(grpId, (RsGxsGrpMetaData*)(NULL)));
 
     mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
+    auto mit = grpMetaMap.find(grpId);
 
-    if((mit = grpMetaMap.find(grpId)) != grpMetaMap.end())
+    if(mit != grpMetaMap.end())
     {
         grpMeta = mit->second;
 
@@ -2501,10 +2479,11 @@ void RsGenExchange::processGroupUpdatePublish()
 	{
 		GroupUpdatePublish& gup = *vit;
 		const RsGxsGroupId& groupId = gup.grpItem->meta.mGroupId;
-		std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMeta.find(groupId);
+        auto mit = grpMeta.find(groupId);
 
-		const RsGxsGrpMetaData* meta = NULL;
-		if(mit == grpMeta.end() || mit->second == NULL)
+        std::shared_ptr<RsGxsGrpMetaData> meta;
+
+        if(mit == grpMeta.end() || mit->second == nullptr)
 		{
 			std::cerr << "Error! could not find meta of old group to update!" << std::endl;
 			mDataAccess->updatePublicRequestStatus(gup.mToken, RsTokenService::FAILED);
@@ -2960,7 +2939,7 @@ bool RsGenExchange::getGroupKeys(const RsGxsGroupId &grpId, RsTlvSecurityKeySet 
 	if(grpMeta.empty())
 		return false;
 
-	const RsGxsGrpMetaData* meta = grpMeta[grpId];
+    const auto& meta = grpMeta[grpId];
 
 	if(meta == NULL)
 		return false;
@@ -3086,7 +3065,7 @@ void RsGenExchange::processRecvdMessages()
 #ifdef GEN_EXCH_DEBUG
 		    std::cerr << "    deserialised info: grp id=" << msg->grpId << ", msg id=" << msg->msgId ;
 #endif
-			std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMetas.find(msg->grpId);
+            auto mit = grpMetas.find(msg->grpId);
 
 #ifdef GEN_EXCH_DEBUG
 			    std::cerr << "    msg info         : grp id=" << msg->grpId << ", msg id=" << msg->msgId << std::endl;
@@ -3100,7 +3079,7 @@ void RsGenExchange::processRecvdMessages()
 				continue ;
 			}
 
-			const RsGxsGrpMetaData *grpMeta = mit->second;
+            const auto& grpMeta = mit->second;
 			RsTlvSecurityKeySet keys = grpMeta->keys ;
 
 			GxsSecurity::createPublicKeysFromPrivateKeys(keys);	// make sure we have the public keys that correspond to the private ones, as it happens. Most of the time this call does nothing.

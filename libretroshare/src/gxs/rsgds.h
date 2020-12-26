@@ -19,8 +19,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef RSGDS_H
-#define RSGDS_H
+
+#pragma once
 
 #include <set>
 #include <map>
@@ -56,18 +56,16 @@ struct MsgLocMetaData {
 	ContentValue val;
 };
 
-typedef std::map<RsGxsGroupId,RsGxsGrpMetaData*> RsGxsGrpMetaTemporaryMap;
-
 /*!
  * This allows modification of local
  * meta data items of a group
  */
 struct GrpLocMetaData {
-	GrpLocMetaData() = default;
-	GrpLocMetaData(const GrpLocMetaData& meta): grpId(meta.grpId), val(meta.val) {}
+    GrpLocMetaData() = default;
+    GrpLocMetaData(const GrpLocMetaData& meta): grpId(meta.grpId), val(meta.val) {}
 
-	RsGxsGroupId grpId;
-	ContentValue val;
+    RsGxsGroupId grpId;
+    ContentValue val;
 };
 
 /*!
@@ -166,7 +164,7 @@ public:
      *            , if grpId is failed to be retrieved it will be erased from map
      * @return error code
      */
-    virtual int retrieveGxsGrpMetaData(RsGxsGrpMetaTemporaryMap& grp) = 0;
+    virtual int retrieveGxsGrpMetaData(std::map<RsGxsGroupId,std::shared_ptr<RsGxsGrpMetaData> >& grp) = 0;
 
     /*!
      * Retrieves meta data of all groups stored (most current versions only)
@@ -274,8 +272,3 @@ public:
     virtual bool validSize(RsNxsGrp* grp) const = 0 ;
 
 };
-
-
-
-
-#endif // RSGDS_H

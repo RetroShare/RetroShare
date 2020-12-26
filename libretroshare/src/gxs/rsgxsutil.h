@@ -102,10 +102,10 @@ public:
     }
 };
 
-typedef std::map<RsGxsGroupId,RsGxsGrpMetaData*>                	  RsGxsGrpMetaTemporaryMap;
-typedef t_RsGxsGenericDataTemporaryMap<RsGxsGroupId,RsNxsGrp>         RsNxsGrpDataTemporaryMap;
+typedef std::map<RsGxsGroupId,            std::shared_ptr<RsGxsGrpMetaData> >   RsGxsGrpMetaTemporaryMap; // This map doesn't need to delete elements since it holds
+typedef std::map<RsGxsGroupId,std::vector<std::shared_ptr<RsGxsMsgMetaData> > > RsGxsMsgMetaTemporaryMap; // shared_ptr's.
 
-typedef t_RsGxsGenericDataTemporaryMapVector<RsGxsMsgMetaData>        RsGxsMsgMetaTemporaryMap ;
+typedef t_RsGxsGenericDataTemporaryMap<RsGxsGroupId,RsNxsGrp>         RsNxsGrpDataTemporaryMap;
 typedef t_RsGxsGenericDataTemporaryMapVector<RsNxsMsg>                RsNxsMsgDataTemporaryMap ;
 
 typedef t_RsGxsGenericDataTemporaryList<RsNxsGrp>                     RsNxsGrpDataTemporaryList ;
