@@ -3038,7 +3038,7 @@ void RsGenExchange::processRecvdMessages()
 			mDataStore->retrieveGxsGrpMetaData(grpMetas);
 
 	    GxsMsgReq msgIds;
-	    RsNxsMsgDataTemporaryList msgs_to_store;
+        std::list<RsNxsMsg*> msgs_to_store;
 
 #ifdef GEN_EXCH_DEBUG
 	    std::cerr << "  updating received messages:" << std::endl;
@@ -3190,7 +3190,7 @@ void RsGenExchange::processRecvdGroups()
     std::cerr << "RsGenExchange::Processing received groups" << std::endl;
 #endif
 	std::list<RsGxsGroupId> grpIds;
-	RsNxsGrpDataTemporaryList grps_to_store;
+    std::list<RsNxsGrp*> grps_to_store;
 
 	// 1 - retrieve the existing groups so as to check what's not new
 	std::vector<RsGxsGroupId> existingGrpIds;
@@ -3305,7 +3305,7 @@ void RsGenExchange::processRecvdGroups()
 			mNotifications.push_back(c);
 		}
 
-		mDataStore->storeGroup(grps_to_store);
+        mDataStore->storeGroup(grps_to_store);  // deletes the data after storing it.
 #ifdef GEN_EXCH_DEBUG
         std::cerr << "  adding the following grp ids to notification: " << std::endl;
         for(std::list<RsGxsGroupId>::const_iterator it(grpIds.begin());it!=grpIds.end();++it)
