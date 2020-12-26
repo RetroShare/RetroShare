@@ -1059,7 +1059,7 @@ bool RsDataService::validSize(RsNxsGrp* grp) const
     return false;
 }
 
-int RsDataService::retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp *> &grp, bool withMeta, bool /* cache */)
+int RsDataService::retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp *> &grp, bool withMeta, bool cache)
 {
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
     rstime::RsScopeTimer timer("");
@@ -1067,8 +1067,8 @@ int RsDataService::retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp *> &grp, bool
     int requestedGroups = grp.size();
 #endif
 
-    if(grp.empty()){
-
+    if(grp.empty())
+    {
         RsStackMutex stack(mDbMutex);
         RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, withMeta ? mGrpColumnsWithMeta : mGrpColumns, "", "");
 
@@ -1076,7 +1076,7 @@ int RsDataService::retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp *> &grp, bool
         {
                 std::vector<RsNxsGrp*> grps;
 
-                locked_retrieveGroups(c, grps, withMeta ? mColGrp_WithMetaOffset : 0);
+                locked_retrieveGroups(c, grps, withMeta ? mColGrp_WithMetaOffset : 0,cache);
                 std::vector<RsNxsGrp*>::iterator vit = grps.begin();
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
@@ -1091,8 +1091,9 @@ int RsDataService::retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp *> &grp, bool
                 delete c;
         }
 
-    }else{
-
+    }
+    else
+    {
         RsStackMutex stack(mDbMutex);
         std::map<RsGxsGroupId, RsNxsGrp *>::iterator mit = grp.begin();
 
@@ -1106,7 +1107,7 @@ int RsDataService::retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp *> &grp, bool
             if(c)
             {
                 std::vector<RsNxsGrp*> grps;
-                locked_retrieveGroups(c, grps, withMeta ? mColGrp_WithMetaOffset : 0);
+                locked_retrieveGroups(c, grps, withMeta ? mColGrp_WithMetaOffset : 0,cache);
 
                 if(!grps.empty())
                 {
@@ -1138,7 +1139,7 @@ int RsDataService::retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp *> &grp, bool
     return 1;
 }
 
-void RsDataService::locked_retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps, int metaOffset)
+void RsDataService::locked_retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps, int metaOffset,bool use_cache)
 {
     if(c){
         bool valid = c->moveToFirst();
@@ -1150,7 +1151,7 @@ void RsDataService::locked_retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>
             if(g)
             {
                 if (metaOffset)
-                    g->metaData = new RsGxsGrpMetaData(*locked_getGrpMeta(*c, metaOffset,true));
+                    g->metaData = new RsGxsGrpMetaData(*locked_getGrpMeta(*c, metaOffset,use_cache));
                 else
                     g->metaData = nullptr;
 
@@ -1161,9 +1162,7 @@ void RsDataService::locked_retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>
     }
 }
 
-int RsDataService::retrieveNxsMsgs(
-        const GxsMsgReq &reqIds, GxsMsgResult &msg, bool /* cache */,
-        bool withMeta )
+int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg,  bool withMeta, bool cache)
 {
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
     rstime::RsScopeTimer timer("");
@@ -1186,9 +1185,7 @@ int RsDataService::retrieveNxsMsgs(
             RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, withMeta ? mMsgColumnsWithMeta : mMsgColumns, KEY_GRP_ID+ "='" + grpId.toStdString() + "'", "");
 
             if(c)
-            {
-                locked_retrieveMessages(c, msgSet, withMeta ? mColMsg_WithMetaOffset : 0);
-            }
+                locked_retrieveMessages(c, msgSet, withMeta ? mColMsg_WithMetaOffset : 0,cache);
 
             delete c;
 		}
@@ -1207,7 +1204,7 @@ int RsDataService::retrieveNxsMsgs(
 
                 if(c)
                 {
-                    locked_retrieveMessages(c, msgSet, withMeta ? mColMsg_WithMetaOffset : 0);
+                    locked_retrieveMessages(c, msgSet, withMeta ? mColMsg_WithMetaOffset : 0,cache);
                 }
 
                 delete c;
@@ -1230,7 +1227,7 @@ int RsDataService::retrieveNxsMsgs(
     return 1;
 }
 
-void RsDataService::locked_retrieveMessages(RetroCursor *c, std::vector<RsNxsMsg *> &msgs, int metaOffset)
+void RsDataService::locked_retrieveMessages(RetroCursor *c, std::vector<RsNxsMsg *> &msgs, int metaOffset,bool use_cache)
 {
     bool valid = c->moveToFirst();
     while(valid){
@@ -1238,7 +1235,7 @@ void RsDataService::locked_retrieveMessages(RetroCursor *c, std::vector<RsNxsMsg
 
         if(m){
             if (metaOffset)
-                m->metaData = new RsGxsMsgMetaData(*locked_getMsgMeta(*c, metaOffset,false));
+                m->metaData = new RsGxsMsgMetaData(*locked_getMsgMeta(*c, metaOffset,use_cache));
             else
                 m->metaData = nullptr;
 

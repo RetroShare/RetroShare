@@ -2802,7 +2802,7 @@ void RsGenExchange::publishGrps()
                                 RsNxsGrpDataTemporaryMap oldGrpDatas;
                                 oldGrpDatas.insert(std::make_pair(grpId, (RsNxsGrp*)NULL));
 
-                                if(mDataStore->retrieveNxsGrps(oldGrpDatas,true,false) && oldGrpDatas.size() == 1)
+                                if(mDataStore->retrieveNxsGrps(oldGrpDatas,true,true) && oldGrpDatas.size() == 1)
                                 {
                                     auto oldGrp = oldGrpDatas[grpId];
                                     c->mOldGroupItem = dynamic_cast<RsGxsGrpItem*>(mSerialiser->deserialise(oldGrp->grp.bin_data,&oldGrp->grp.bin_len));
@@ -3330,7 +3330,7 @@ void RsGenExchange::performUpdateValidation()
 	for(auto vit(mGroupUpdates.begin()); vit != mGroupUpdates.end(); ++vit)
 		grpDatas.insert(std::make_pair(vit->newGrp->grpId, (RsNxsGrp*)NULL));
 
-	if(grpDatas.empty() || !mDataStore->retrieveNxsGrps(grpDatas,true,false))
+    if(grpDatas.empty() || !mDataStore->retrieveNxsGrps(grpDatas,true,true))
     {
         if(grpDatas.empty())
 			RsErr() << __PRETTY_FUNCTION__ << " Validation of multiple group updates failed: no group in list!" << std::endl;

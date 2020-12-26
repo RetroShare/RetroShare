@@ -3551,7 +3551,7 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
 #endif
 #endif
 
-    mDataStore->retrieveNxsMsgs(msgIds, msgs, false, false);
+    mDataStore->retrieveNxsMsgs(msgIds, msgs, false);
 
     NxsTransaction* newTr = new NxsTransaction();
     newTr->mFlag = NxsTransaction::FLAG_STATE_WAITING_CONFIRM;

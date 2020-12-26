@@ -389,7 +389,7 @@ void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
     std::list<RsGxsTransId> received_msgs ;
 
     GxsMsgResult msgs;
-    mDs->retrieveNxsMsgs(grps, msgs, false, true);
+    mDs->retrieveNxsMsgs(grps, msgs, true, false);
 
     for(GxsMsgResult::iterator mit = msgs.begin();mit != msgs.end(); ++mit)
     {

@@ -143,9 +143,7 @@ public:
 	 * @param strictFilter if true do not request any message if reqIds is empty
      * @return error code
 	 */
-	int retrieveNxsMsgs(
-	        const GxsMsgReq& reqIds, GxsMsgResult& msg, bool cache,
-	        bool withMeta = false );
+    int retrieveNxsMsgs( const GxsMsgReq& reqIds, GxsMsgResult& msg,  bool withMeta = false, bool cache=true );
 
     /*!
      * Retrieves groups, if empty, retrieves all grps, if map is not empty
@@ -274,7 +272,7 @@ private:
      * @param c cursor to result set
      * @param msgs messages retrieved from cursor are stored here
      */
-    void locked_retrieveMessages(RetroCursor* c, std::vector<RsNxsMsg*>& msgs, int metaOffset);
+    void locked_retrieveMessages(RetroCursor* c, std::vector<RsNxsMsg*>& msgs, int metaOffset, bool use_cache);
 
     /*!
      * Retrieves all the grp results from a cursor
@@ -282,7 +280,7 @@ private:
      * @param grps groups retrieved from cursor are stored here
      * @param withMeta this initialise the metaData member of the nxsgroups retrieved
      */
-    void locked_retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps, int metaOffset);
+    void locked_retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps, int metaOffset, bool use_cache);
 
     /*!
      * Retrieves all the msg meta results from a cursor

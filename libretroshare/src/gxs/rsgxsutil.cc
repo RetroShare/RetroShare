@@ -233,7 +233,7 @@ bool RsGxsIntegrityCheck::check(uint16_t service_type, RsGixs *mgixs, RsGeneralD
 
     // first take out all the groups
     std::map<RsGxsGroupId, RsNxsGrp*> grp;
-    mds->retrieveNxsGrps(grp, true, true);
+    mds->retrieveNxsGrps(grp, true, false);
     GxsMsgReq msgIds;
     GxsMsgReq grps;
 
@@ -334,7 +334,7 @@ bool RsGxsIntegrityCheck::check(uint16_t service_type, RsGixs *mgixs, RsGeneralD
     // now messages
     GxsMsgResult msgs;
 
-    mds->retrieveNxsMsgs(grps, msgs, false, true);
+    mds->retrieveNxsMsgs(grps, msgs, true,false);
 
     // Check msg ids and messages. Go through all message IDs referred to by the db call
     // and verify that the message belongs to the nxs msg data that was just retrieved.

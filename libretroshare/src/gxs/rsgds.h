@@ -142,9 +142,7 @@ public:
 	 * @param strictFilter if true do not request any message if reqIds is empty
      * @return error code
 	 */
-	virtual int retrieveNxsMsgs(
-	        const GxsMsgReq& reqIds, GxsMsgResult& msg, bool cache,
-	        bool withMeta = false ) = 0;
+    virtual int retrieveNxsMsgs( const GxsMsgReq& reqIds, GxsMsgResult& msg, bool withMeta = false , bool cache=true) = 0;
 
     /*!
      * Retrieves all groups stored. Caller owns the memory and is supposed to delete the RsNxsGrp pointers after use.
