@@ -136,6 +136,20 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QPushButton" name="editButton">
+           <property name="toolTip">
+            <string>Edit Profile</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../icons.qrc">
+             <normaloff>:/icons/mail/compose.png</normaloff>:/icons/mail/compose.png</iconset>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
