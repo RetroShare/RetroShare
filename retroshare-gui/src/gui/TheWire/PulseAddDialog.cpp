@@ -22,6 +22,7 @@
 #include <QtGui>
 
 #include "PulseReply.h"
+#include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
 
 #include "PulseAddDialog.h"
@@ -39,6 +40,10 @@ PulseAddDialog::PulseAddDialog(QWidget *parent)
 	connect(ui.pushButton_ClearDisplayAs, SIGNAL( clicked( void ) ), this, SLOT( clearDisplayAs( void ) ) );
 	connect(ui.pushButton_Cancel, SIGNAL( clicked( void ) ), this, SLOT( cancelPulse( void ) ) );
 	connect(ui.textEdit_Pulse, SIGNAL( textChanged( void ) ), this, SLOT( pulseTextChanged( void ) ) );
+	connect(ui.pushButton_picture, SIGNAL(clicked()), this, SLOT( toggle()));
+
+	ui.pushButton_picture->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/photo.png")));
+	ui.frame_picture->hide();
 
 	setAcceptDrops(true);
 }
@@ -47,6 +52,26 @@ void PulseAddDialog::setGroup(RsWireGroup &group)
 {
 	ui.label_groupName->setText(QString::fromStdString(group.mMeta.mGroupName));
 	ui.label_idName->setText(QString::fromStdString(group.mMeta.mAuthorId.toStdString()));
+	
+	if (mGroup.mHeadshot.mData )
+	{
+		QPixmap pixmap;
+		if (GxsIdDetails::loadPixmapFromData(
+				mGroup.mHeadshot.mData,
+				mGroup.mHeadshot.mSize,
+				pixmap,GxsIdDetails::ORIGINAL))
+		{
+				pixmap = pixmap.scaled(50,50);
+				ui.headshot->setPixmap(pixmap);
+		}
+	}
+	else
+	{
+		// default.
+		QPixmap pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png").scaled(50,50);
+		ui.headshot->setPixmap(pixmap);
+	}
+	
 	mGroup = group;
 }
 
@@ -62,6 +87,8 @@ void PulseAddDialog::setGroup(const RsGxsGroupId &grpId)
 
 void PulseAddDialog::cleanup()
 {
+	resize(700, 400 );
+
 	if (mIsReply)
 	{
 		std::cerr << "PulseAddDialog::cleanup() cleaning up old replyto";
@@ -90,6 +117,7 @@ void PulseAddDialog::cleanup()
 		delete layout;
 		mIsReply = false;
 	}
+
 	ui.frame_reply->setVisible(false);
 	ui.comboBox_sentiment->setCurrentIndex(0);
 	ui.lineEdit_URL->setText("");
@@ -97,11 +125,13 @@ void PulseAddDialog::cleanup()
 	ui.textEdit_Pulse->setPlainText("");
 	// disable URL until functionality finished.
 	ui.frame_URL->setEnabled(false);
+	ui.frame_URL->hide();
 
 	ui.pushButton_Post->setEnabled(false);
 	ui.pushButton_Post->setText("Post");
 	ui.frame_input->setVisible(true);
 	ui.widget_sentiment->setVisible(true);
+	ui.pushButton_picture->show();
 
 	// cleanup images.
 	mImage1.clear();
@@ -119,6 +149,10 @@ void PulseAddDialog::cleanup()
 	mImage4.clear();
 	ui.label_image4->clear();
 	ui.label_image4->setText("Drag and Drop Image");
+
+	// Hide Drag & Drop Frame
+	ui.frame_picture->hide();
+	ui.pushButton_picture->setChecked(false);
 }
 
 void PulseAddDialog::pulseTextChanged()
@@ -136,6 +170,7 @@ void PulseAddDialog::setReplyTo(RsWirePulse &pulse, RsWirePulseSPtr pPulse, std:
 	mReplyToPulse = pulse;
 	mReplyType = replyType;
 	ui.frame_reply->setVisible(true);
+	ui.pushButton_picture->show();
 
 	{
 		PulseReply *reply = new PulseReply(NULL, pPulse);
@@ -161,9 +196,11 @@ void PulseAddDialog::setReplyTo(RsWirePulse &pulse, RsWirePulseSPtr pPulse, std:
 		ui.widget_sentiment->setVisible(false);
 		if (mReplyType & WIRE_PULSE_TYPE_REPUBLISH) {
 			ui.pushButton_Post->setText("Republish Pulse");
+			ui.pushButton_picture->hide();
 		}
 		else if (mReplyType & WIRE_PULSE_TYPE_LIKE) {
 			ui.pushButton_Post->setText("Like Pulse");
+			ui.pushButton_picture->hide();
 		}
 	}
 
@@ -464,3 +501,16 @@ void PulseAddDialog::addImage(const QString &path)
 	}
 }
 
+void PulseAddDialog::toggle()
+{
+	if (ui.pushButton_picture->isChecked())
+	{
+		ui.frame_picture->show();
+		ui.pushButton_picture->setToolTip(tr("Hide Picture"));
+	}
+	else
+	{
+		ui.frame_picture->hide();
+		ui.pushButton_picture->setToolTip(tr("Add Pictures"));
+	}
+}

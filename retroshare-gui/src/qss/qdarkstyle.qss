@@ -1284,7 +1284,7 @@ PulseViewGroup QToolButton#toolButton_follow {
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
-	max-height: 27px;
+	max-height: 20px;
 	min-width: 4em;
 	padding: 2px;
 	padding-left: 6px;
@@ -1299,7 +1299,8 @@ PulseTopLevel QToolButton#toolButton_follow:hover, PulseViewGroup QToolButton#to
 	background: #03b1f3;
 	border-radius: 4px;
 	min-width: 4em;
-	padding: 2px;
+	padding-left: 6px;
+	padding-right: 6px;
 }
 
 CreateGxsForumMsg QPushButton#postButton:disabled, PostedCreatePostDialog QPushButton#submitButton:disabled,
@@ -1310,9 +1311,11 @@ PulseAddDialog QPushButton#pushButton_Post:disabled {
 	color: white;
 	background: #d40000;
 	border-radius: 4px;
-	max-height: 27px;
+	max-height: 20px;
 	min-width: 4em;
 	padding: 2px;
+	padding-left: 6px;
+	padding-right: 6px;
 }
 
 ShareManager QPushButton#closeButton {
