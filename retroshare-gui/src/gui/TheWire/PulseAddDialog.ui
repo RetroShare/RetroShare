@@ -228,6 +228,9 @@
           <pointsize>10</pointsize>
          </font>
         </property>
+        <property name="placeholderText">
+         <string>Whats happening?</string>
+        </property>
        </widget>
       </item>
       <item>

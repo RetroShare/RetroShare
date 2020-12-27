@@ -128,7 +128,7 @@ void PulseAddDialog::cleanup()
 	ui.frame_URL->hide();
 
 	ui.pushButton_Post->setEnabled(false);
-	ui.pushButton_Post->setText("Post");
+	ui.pushButton_Post->setText(tr("Post"));
 	ui.frame_input->setVisible(true);
 	ui.widget_sentiment->setVisible(true);
 	ui.pushButton_picture->show();
@@ -136,19 +136,19 @@ void PulseAddDialog::cleanup()
 	// cleanup images.
 	mImage1.clear();
 	ui.label_image1->clear();
-	ui.label_image1->setText("Drag and Drop Image");
+	ui.label_image1->setText(tr("Drag and Drop Image"));
 
 	mImage2.clear();
 	ui.label_image2->clear();
-	ui.label_image2->setText("Drag and Drop Image");
+	ui.label_image2->setText(tr("Drag and Drop Image"));
 
 	mImage3.clear();
 	ui.label_image3->clear();
-	ui.label_image3->setText("Drag and Drop Image");
+	ui.label_image3->setText(tr("Drag and Drop Image"));
 
 	mImage4.clear();
 	ui.label_image4->clear();
-	ui.label_image4->setText("Drag and Drop Image");
+	ui.label_image4->setText(tr("Drag and Drop Image"));
 
 	// Hide Drag & Drop Frame
 	ui.frame_picture->hide();
@@ -186,7 +186,8 @@ void PulseAddDialog::setReplyTo(RsWirePulse &pulse, RsWirePulseSPtr pPulse, std:
 
 	if (mReplyType & WIRE_PULSE_TYPE_REPLY)
 	{
-		ui.pushButton_Post->setText("Reply to Pulse");
+		ui.pushButton_Post->setText(tr("Reply to Pulse"));
+		ui.textEdit_Pulse->setPlaceholderText(tr("Pulse your reply"));
 	}
 	else
 	{
@@ -195,11 +196,11 @@ void PulseAddDialog::setReplyTo(RsWirePulse &pulse, RsWirePulseSPtr pPulse, std:
 		ui.frame_input->setVisible(false);
 		ui.widget_sentiment->setVisible(false);
 		if (mReplyType & WIRE_PULSE_TYPE_REPUBLISH) {
-			ui.pushButton_Post->setText("Republish Pulse");
+			ui.pushButton_Post->setText(tr("Republish Pulse"));
 			ui.pushButton_picture->hide();
 		}
 		else if (mReplyType & WIRE_PULSE_TYPE_LIKE) {
-			ui.pushButton_Post->setText("Like Pulse");
+			ui.pushButton_Post->setText(tr("Like Pulse"));
 			ui.pushButton_picture->hide();
 		}
 	}
@@ -506,7 +507,7 @@ void PulseAddDialog::toggle()
 	if (ui.pushButton_picture->isChecked())
 	{
 		ui.frame_picture->show();
-		ui.pushButton_picture->setToolTip(tr("Hide Picture"));
+		ui.pushButton_picture->setToolTip(tr("Hide Pictures"));
 	}
 	else
 	{
