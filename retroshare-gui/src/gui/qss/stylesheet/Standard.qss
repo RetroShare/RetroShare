@@ -1104,26 +1104,3 @@ MainWindow QListWidget {
 	font-size: 12pt;
 }
 
-PulseTopLevel QFrame#frame, PulseViewGroup QFrame#frame, PulseReply QFrame#frame {
-	border: 2px solid #7ecbfb;
-	border-radius: 6px;
-	background: white;
-}
-
-PulseAddDialog QTextEdit#textEdit_Pulse {
-	border: 2px solid #7ecbfb;
-	border-radius: 6px;
-	background: white;
-}
-
-PulseAddDialog QFrame#frame_input, QFrame#frame_reply {
-	border: 0px;
-}
-
-PulseReply #line_replyLine , PulseMessage #line{
-	color: #7ecbfb;
-}
-
-WireDialog QLabel#label_viewMode {
-	font-size: 12pt;
-}
