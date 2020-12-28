@@ -219,7 +219,11 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     /* initialize friends list */
     ui.friendSelectionWidget->setHeaderText(tr("Send To:"));
     ui.friendSelectionWidget->setModus(FriendSelectionWidget::MODUS_MULTI);
-	ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GXS);
+    ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GXS 
+#ifdef RS_DIRECT_CHAT
+											| FriendSelectionWidget::SHOW_SSL
+#endif // RS_DIRECT_CHAT
+																				);
     ui.friendSelectionWidget->start();
 
     QActionGroup *grp = new QActionGroup(this);
@@ -265,6 +269,9 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     /* Add filter types */
     ui.filterComboBox->addItem(tr("All people"));
     ui.filterComboBox->addItem(tr("My contacts"));
+#ifdef RS_DIRECT_CHAT
+    ui.filterComboBox->addItem(tr("Friend Nodes"));
+#endif // RS_DIRECT_CHAT
 	ui.filterComboBox->setCurrentIndex(0);
 
     if(rsIdentity->nbRegularContacts() > 0)
@@ -2608,6 +2615,11 @@ void MessageComposer::filterComboBoxChanged(int i)
 	case 1:
 		ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_CONTACTS);
 		break;
+#ifdef RS_DIRECT_CHAT
+	case 2:
+		ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_SSL);
+		break;
+#endif // RS_DIRECT_CHAT
 	}
 }
 
