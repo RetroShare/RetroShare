@@ -143,7 +143,7 @@ PulseViewGroup QToolButton#toolButton_follow{
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
-	max-height: 27px;
+	max-height: 20px;
 	min-width: 4em;
 	padding: 2px;
 	padding-left: 6px;
@@ -220,7 +220,7 @@ PulseAddDialog QPushButton#pushButton_Post:disabled {
 	color: white;
 	background: #d40000;
 	border-radius: 4px;
-	max-height: 27px;
+	max-height: 20px;
 	min-width: 4em;
 	padding-left: 6px;
 	padding-right: 6px;
@@ -1110,6 +1110,20 @@ PulseTopLevel QFrame#frame, PulseViewGroup QFrame#frame, PulseReply QFrame#frame
 	background: white;
 }
 
-ChatLobbyWidget QTreeWidget#lobbyTreeWidget{
-		font-size: 10pt;
+PulseAddDialog QTextEdit#textEdit_Pulse {
+	border: 2px solid #7ecbfb;
+	border-radius: 6px;
+	background: white;
+}
+
+PulseAddDialog QFrame#frame_input, QFrame#frame_reply {
+	border: 0px;
+}
+
+PulseReply #line_replyLine , PulseMessage #line{
+	color: #7ecbfb;
+}
+
+WireDialog QLabel#label_viewMode {
+	font-size: 12pt;
 }
