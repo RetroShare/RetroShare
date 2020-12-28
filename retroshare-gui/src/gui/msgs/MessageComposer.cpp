@@ -221,9 +221,9 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     ui.friendSelectionWidget->setModus(FriendSelectionWidget::MODUS_MULTI);
     ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GXS 
 #ifdef RS_DIRECT_CHAT
-											| FriendSelectionWidget::SHOW_SSL
+		| FriendSelectionWidget::SHOW_SSL
 #endif // RS_DIRECT_CHAT
-																				);
+		);
     ui.friendSelectionWidget->start();
 
     QActionGroup *grp = new QActionGroup(this);
@@ -1063,8 +1063,25 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
 
 QString MessageComposer::buildReplyHeader(const MessageInfo &msgInfo)
 {
-    RetroShareLink link = RetroShareLink::createMessage(msgInfo.rspeerid_srcId, "");
-    QString from = link.toHtml();
+	RetroShareLink link;
+
+	QString from;
+	if(msgInfo.msgflags & RS_MSG_DISTANT)
+	{
+		link = RetroShareLink::createMessage(msgInfo.rsgxsid_srcId, "");
+		if (link.valid())
+		{
+			from += link.toHtml();
+		}
+	}
+	else
+	{
+		link = RetroShareLink::createMessage(msgInfo.rspeerid_srcId, "");
+		if (link.valid())
+		{
+			from += link.toHtml();
+		}
+	}
 
     QString to;
     for ( std::set<RsPeerId>::const_iterator  it = msgInfo.rspeerid_msgto.begin(); it != msgInfo.rspeerid_msgto.end(); ++it)
