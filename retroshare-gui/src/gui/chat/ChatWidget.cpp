@@ -1842,13 +1842,16 @@ void ChatWidget::updateTitle()
 	ui->titleLabel->setText(RsHtml::plainText(name) + "@" + RsHtml::plainText(title));
 }
 
-void ChatWidget::updatePeersCustomStateString(const QString& /*peer_id*/, const QString& /*status_string*/)
+void ChatWidget::updatePeersCustomStateString(const QString& peer_id, const QString& status_string)
 {
+	if (chatType() != CHATTYPE_PRIVATE )
+	{
+		return;
+	}
+
 	QString status_text;
 
-    // TODO: fix peer_id and types and eveyrhing
-    /*
-    if (RsPeerId(peer_id.toStdString()) == peerId) {
+	if (RsPeerId(peer_id.toStdString()) == chatId.toPeerId()) {
 		// the peers status string has changed
 		if (status_string.isEmpty()) {
 			ui->statusMessageLabel->hide();
@@ -1863,7 +1866,6 @@ void ChatWidget::updatePeersCustomStateString(const QString& /*peer_id*/, const 
 			ui->statusLabel->setAlignment ( Qt::AlignVCenter );
 		}
 	}
-    */
 }
 
 void ChatWidget::updateStatusString(const QString &statusMask, const QString &statusString, bool permanent)

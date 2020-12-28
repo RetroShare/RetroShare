@@ -1109,3 +1109,7 @@ PulseTopLevel QFrame#frame, PulseViewGroup QFrame#frame, PulseReply QFrame#frame
 	border-radius: 6px;
 	background: white;
 }
+
+ChatLobbyWidget QTreeWidget#lobbyTreeWidget{
+		font-size: 10pt;
+}

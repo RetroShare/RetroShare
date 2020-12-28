@@ -305,7 +305,7 @@ QPixmap misc::getOpenThumbnailedPicture(QWidget *parent, const QString &caption,
 {
 	// Let the user choose an picture file
 	QString fileName;
-	if (!getOpenFileName(parent, RshareSettings::LASTDIR_IMAGES, caption, tr("Pictures (*.png *.jpeg *.xpm *.jpg *.tiff *.gif)"), fileName))
+	if (!getOpenFileName(parent, RshareSettings::LASTDIR_IMAGES, caption, tr("Pictures (*.png *.jpeg *.xpm *.jpg *.tiff *.gif *.webp)"), fileName))
 		return QPixmap();
 
     if(width > 0 && height > 0)
