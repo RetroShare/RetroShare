@@ -64,6 +64,18 @@
          </size>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_10">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
           <spacer name="horizontalSpacer_14">
            <property name="orientation">
@@ -130,6 +142,9 @@
              <height>24</height>
             </size>
            </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item>
@@ -149,6 +164,9 @@
              <width>24</width>
              <height>24</height>
             </size>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -287,11 +305,8 @@
             <iconset resource="TheWire_images.qrc">
              <normaloff>:/images/external-link.svg</normaloff>:/images/external-link.svg</iconset>
            </property>
-           <property name="iconSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
+           <property name="autoRaise">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -534,6 +549,9 @@
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextBesideIcon</enum>
              </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item>
@@ -584,6 +602,9 @@
              </property>
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -636,6 +657,9 @@
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextBesideIcon</enum>
              </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item>
@@ -686,6 +710,9 @@
              </property>
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
