@@ -1127,3 +1127,8 @@ PulseReply #line_replyLine , PulseMessage #line{
 WireDialog QLabel#label_viewMode {
 	font-size: 12pt;
 }
+
+WireGroupDialog QFrame#frame {
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
+	border: 0px;
+}
