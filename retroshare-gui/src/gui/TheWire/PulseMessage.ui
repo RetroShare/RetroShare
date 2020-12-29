@@ -49,7 +49,14 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QTextBrowser" name="textBrowser"/>
+    <widget class="QTextBrowser" name="textBrowser">
+     <property name="font">
+      <font>
+       <family>MS Sans Serif</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+    </widget>
    </item>
    <item row="1" column="1">
     <widget class="QFrame" name="frame_expand">
