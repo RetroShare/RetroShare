@@ -55,6 +55,12 @@
         </item>
         <item>
          <widget class="QLabel" name="label_groupName">
+          <property name="font">
+           <font>
+            <family>Segoe UI</family>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string>WireGroupName</string>
           </property>

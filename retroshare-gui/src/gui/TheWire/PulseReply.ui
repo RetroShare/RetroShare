@@ -67,6 +67,12 @@
          </size>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_10">
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
           <spacer name="horizontalSpacer_14">
            <property name="orientation">
@@ -98,6 +104,12 @@
          </item>
          <item>
           <widget class="QLabel" name="label_2">
+           <property name="font">
+            <font>
+             <family>MS Sans Serif</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>retweeted</string>
            </property>
@@ -137,6 +149,9 @@
          </size>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <property name="topMargin">
+          <number>0</number>
+         </property>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout">
            <item>
@@ -424,6 +439,12 @@
         <layout class="QHBoxLayout" name="horizontalLayout_12">
          <item>
           <widget class="QLabel" name="label_authorName">
+           <property name="font">
+            <font>
+             <family>MS Sans Serif</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Sidler&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
@@ -431,6 +452,14 @@
          </item>
          <item>
           <widget class="QLabel" name="label_groupName">
+           <property name="font">
+            <font>
+             <family>Segoe UI</family>
+             <pointsize>10</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
            <property name="text">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#555753;&quot;&gt;@sidler_here&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
@@ -457,6 +486,12 @@
          </item>
          <item>
           <widget class="QLabel" name="label_date">
+           <property name="font">
+            <font>
+             <family>MS Sans Serif</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#2e3436;&quot;&gt;·  Apr 13 ·&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
@@ -573,10 +608,25 @@
          </size>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_13">
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QLabel" name="label_reference">
+           <property name="font">
+            <font>
+             <family>MS Sans Serif</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#555753;&quot;&gt;Replying to @sidler&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
            </property>
            <property name="textInteractionFlags">
             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
