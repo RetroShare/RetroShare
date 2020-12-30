@@ -1969,7 +1969,7 @@ GxsChannelPostItem > QFrame#mainFrame[new=true] {
 	border-radius: 10px;
 }
 
-GxsForumThreadWidget QLabel#forumName
+GxsForumThreadWidget QPushButton#forumName
 {
 	qproperty-fontSizeFactor: 140;
 	color: #0099cc;
