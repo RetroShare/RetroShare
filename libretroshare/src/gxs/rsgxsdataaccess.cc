@@ -339,7 +339,7 @@ bool RsGxsDataAccess::cancelRequest(const uint32_t& token)
 {
 	RsStackMutex stack(mDataMutex); /****** LOCKED *****/
 
-	GxsRequest* req = locked_retrieveCompetedRequest(token);
+    GxsRequest* req = locked_retrieveCompletedRequest(token);
 	if (!req)
 	{
 		return false;
@@ -377,7 +377,7 @@ bool RsGxsDataAccess::getGroupSummary(const uint32_t& token, std::list<std::shar
 {
 	RS_STACK_MUTEX(mDataMutex);
 
-	GxsRequest* req = locked_retrieveCompetedRequest(token);
+    GxsRequest* req = locked_retrieveCompletedRequest(token);
 
 	if(req == nullptr)
 	{
@@ -406,7 +406,7 @@ bool RsGxsDataAccess::getGroupData(const uint32_t& token, std::list<RsNxsGrp*>& 
 {
 	RS_STACK_MUTEX(mDataMutex);
 
-	GxsRequest* req = locked_retrieveCompetedRequest(token);
+    GxsRequest* req = locked_retrieveCompletedRequest(token);
 
 	if(req == nullptr)
 	{
@@ -442,7 +442,7 @@ bool RsGxsDataAccess::getMsgData(const uint32_t& token, NxsMsgDataResult& msgDat
 
 	RsStackMutex stack(mDataMutex);
 
-	GxsRequest* req = locked_retrieveCompetedRequest(token);
+    GxsRequest* req = locked_retrieveCompletedRequest(token);
 
 	if(req == nullptr)
     {
@@ -468,12 +468,12 @@ bool RsGxsDataAccess::getMsgData(const uint32_t& token, NxsMsgDataResult& msgDat
 	return true;
 }
 
-bool RsGxsDataAccess::getMsgRelatedData(const uint32_t &token, NxsMsgRelatedDataResult &msgData)
+bool RsGxsDataAccess::getMsgRelatedData(const uint32_t& token, NxsMsgRelatedDataResult& msgData)
 {
 
         RsStackMutex stack(mDataMutex);
 
-        GxsRequest* req = locked_retrieveCompetedRequest(token);
+        GxsRequest* req = locked_retrieveCompletedRequest(token);
 
         if(req == nullptr)
         {
@@ -506,7 +506,7 @@ bool RsGxsDataAccess::getMsgSummary(const uint32_t& token, GxsMsgMetaResult& msg
 
 	RsStackMutex stack(mDataMutex);
 
-	GxsRequest* req = locked_retrieveCompetedRequest(token);
+    GxsRequest* req = locked_retrieveCompletedRequest(token);
 
 	if(req == nullptr)
     {
@@ -533,7 +533,7 @@ bool RsGxsDataAccess::getMsgRelatedSummary(const uint32_t &token, MsgRelatedMeta
 {
 	RsStackMutex stack(mDataMutex);
 
-	GxsRequest* req = locked_retrieveCompetedRequest(token);
+    GxsRequest* req = locked_retrieveCompletedRequest(token);
 
 	if(req == nullptr)
 	{
@@ -564,7 +564,7 @@ bool RsGxsDataAccess::getMsgRelatedList(const uint32_t &token, MsgRelatedIdResul
 {
 	RsStackMutex stack(mDataMutex);
 
-	GxsRequest* req = locked_retrieveCompetedRequest(token);
+    GxsRequest* req = locked_retrieveCompletedRequest(token);
 
 	if(req == nullptr)
 	{
@@ -594,7 +594,7 @@ bool RsGxsDataAccess::getMsgIdList(const uint32_t& token, GxsMsgIdResult& msgIds
 {
 	RsStackMutex stack(mDataMutex);
 
-	GxsRequest* req = locked_retrieveCompetedRequest(token);
+    GxsRequest* req = locked_retrieveCompletedRequest(token);
 
 	if(req == nullptr)
     {
@@ -621,7 +621,7 @@ bool RsGxsDataAccess::getGroupList(const uint32_t& token, std::list<RsGxsGroupId
 {
 	RsStackMutex stack(mDataMutex);
 
-	GxsRequest* req = locked_retrieveCompetedRequest(token);
+    GxsRequest* req = locked_retrieveCompletedRequest(token);
 
 	if(req == nullptr)
     {
@@ -648,7 +648,7 @@ bool RsGxsDataAccess::getGroupStatistic(const uint32_t &token, GxsGroupStatistic
 {
     RsStackMutex stack(mDataMutex);
 
-    GxsRequest* req = locked_retrieveCompetedRequest(token);
+    GxsRequest* req = locked_retrieveCompletedRequest(token);
 
     if(req == nullptr)
 	{
@@ -672,7 +672,7 @@ bool RsGxsDataAccess::getServiceStatistic(const uint32_t &token, GxsServiceStati
 {
     RsStackMutex stack(mDataMutex);
 
-    GxsRequest* req = locked_retrieveCompetedRequest(token);
+    GxsRequest* req = locked_retrieveCompletedRequest(token);
 
     if(req == nullptr)
     {
@@ -691,7 +691,7 @@ bool RsGxsDataAccess::getServiceStatistic(const uint32_t &token, GxsServiceStati
 	locked_clearRequest(token);
     return true;
 }
-GxsRequest* RsGxsDataAccess::locked_retrieveCompetedRequest(const uint32_t& token)
+GxsRequest* RsGxsDataAccess::locked_retrieveCompletedRequest(const uint32_t& token)
 {
     auto it = mCompletedRequests.find(token) ;
 
@@ -1439,7 +1439,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
             else if(req->Options.mReqType == GXS_REQUEST_TYPE_MSG_RELATED_DATA)
             {
                 GxsMsgResult msgResult;
-                mDataStore->retrieveNxsMsgs(filteredOutMsgIds, msgResult, false, true);
+                mDataStore->retrieveNxsMsgs(filteredOutMsgIds, msgResult, true, true);
                 req->mMsgDataResult[grpMsgIdPair] = msgResult[grpId];
             }
         }
@@ -1637,7 +1637,7 @@ bool RsGxsDataAccess::checkRequestStatus( uint32_t token, GxsRequestStatus& stat
 {
 	RS_STACK_MUTEX(mDataMutex);
 
-	GxsRequest* req = locked_retrieveCompetedRequest(token);
+    GxsRequest* req = locked_retrieveCompletedRequest(token);
 
 #ifdef DATA_DEBUG
     RsDbg() << "CheckRequestStatus: token=" << token ;
@@ -1733,7 +1733,7 @@ void RsGxsDataAccess::tokenList(std::list<uint32_t>& tokens)
 
 bool RsGxsDataAccess::locked_updateRequestStatus( uint32_t token, RsTokenService::GxsRequestStatus status )
 {
-	GxsRequest* req = locked_retrieveCompetedRequest(token);
+    GxsRequest* req = locked_retrieveCompletedRequest(token);
 
 	if(req) req->status = status;
 	else return false;
