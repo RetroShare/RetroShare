@@ -2380,15 +2380,15 @@ void RsGenExchange::publishMsgs()
                 if(rsPeers)
                     mRoutingClues[msg->metaData->mAuthorId].insert(rsPeers->getOwnId()) ;
                 
-				computeHash(msg->msg, msg->metaData->mHash);
-				mDataAccess->addMsgData(msg);
+                computeHash(msg->msg, msg->metaData->mHash); // (csoler) weird choice: hash should also depend on metadata. Fortunately, msg signature
+                                                             //          signs the holw thing (msg + meta)
 
                 mPublishedMsgs[token] = *msg->metaData;
 
                 RsGxsMsgItem *msg_item = dynamic_cast<RsGxsMsgItem*>(mSerialiser->deserialise(msg->msg.bin_data,&msg->msg.bin_len)) ;
                 msg_item->meta = *msg->metaData;
 
-				delete msg ;
+                mDataAccess->addMsgData(msg);   // msg is deleted by addMsgData()
 
 				msgChangeMap[grpId].push_back(msg_item);
 
@@ -2819,7 +2819,6 @@ void RsGenExchange::publishGrps()
                             else
                                 mDataAccess->addGroupData(grp);
 
-                            delete grp ;
 							groups_to_subscribe.push_back(grpId) ;
 					    }
 					    else
@@ -3343,8 +3342,7 @@ void RsGenExchange::performUpdateValidation()
 #ifdef GEN_EXCH_DEBUG
 	std::cerr << "RsGenExchange::performUpdateValidation() " << std::endl;
 #endif
-
-	RsNxsGrpDataTemporaryList grps ;
+    std::list<RsNxsGrp*> grps; // dont use RsNxsGrpDataTemporaryList because updateGrps will delete the groups
 
 	for(auto vit(mGroupUpdates.begin()); vit != mGroupUpdates.end(); ++vit)
 	{
