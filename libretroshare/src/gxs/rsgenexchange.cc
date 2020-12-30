@@ -59,6 +59,9 @@ static const uint32_t INDEX_AUTHEN_IDENTITY     = 0x00000010; // identity
 static const uint32_t INDEX_AUTHEN_PUBLISH      = 0x00000020; // publish key
 static const uint32_t INDEX_AUTHEN_ADMIN        = 0x00000040; // admin key
 
+static const uint32_t MSG_CLEANUP_PERIOD     = 60*59; // 59 minutes
+static const uint32_t INTEGRITY_CHECK_PERIOD = 60*31; // 31 minutes
+
 #define GXS_MASK "GXS_MASK_HACK"
 
 /*
@@ -131,9 +134,6 @@ static const uint32_t INDEX_AUTHEN_ADMIN        = 0x00000040; // admin key
 //       |
 //       +--- processRoutingClues() ;
 //
-
-static const uint32_t MSG_CLEANUP_PERIOD     = 60*59; // 59 minutes
-static const uint32_t INTEGRITY_CHECK_PERIOD = 60*31; // 31 minutes
 
 RsGenExchange::RsGenExchange(
         RsGeneralDataService* gds, RsNetworkExchangeService* ns,
@@ -1599,8 +1599,8 @@ bool RsGenExchange::getMsgRelatedData( uint32_t token,
             const RsGxsGrpMsgIdPair& msgId = mit->first;
             std::vector<RsGxsMsgItem*> &gxsMsgItems = msgItems[msgId];
             std::vector<RsNxsMsg*>& nxsMsgsV = mit->second;
-            std::vector<RsNxsMsg*>::iterator vit = nxsMsgsV.begin();
-            for(; vit != nxsMsgsV.end(); ++vit)
+
+            for(auto vit=nxsMsgsV.begin(); vit != nxsMsgsV.end(); ++vit)
             {
                 RsNxsMsg*& msg = *vit;
                 RsItem* item = NULL;
