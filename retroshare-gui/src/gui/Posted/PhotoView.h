@@ -48,6 +48,7 @@ public slots:
 	void setTime(const QString& text);
 	void setGroupId(const RsGxsGroupId &groupId);
 	void setMessageId(const RsGxsMessageId& messageId);
+	void setGroupNameString(const QString& name);
 
 private slots:
 	void copyMessageLink();
