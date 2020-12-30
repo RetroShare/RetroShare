@@ -439,7 +439,8 @@ void IdDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_LEAVE:
 		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_ID_REMOVED_FROM_INVITEE_LIST:
 		case RsGxsCircleEventCode::NEW_CIRCLE:
-		case RsGxsCircleEventCode::CACHE_DATA_UPDATED:
+        case RsGxsCircleEventCode::CIRCLE_DELETED:
+        case RsGxsCircleEventCode::CACHE_DATA_UPDATED:
 
 			updateCircles();
 		default:

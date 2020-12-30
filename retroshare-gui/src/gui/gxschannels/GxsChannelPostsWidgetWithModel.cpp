@@ -750,6 +750,7 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
 	switch(e->mChannelEventCode)
 	{
 		case RsChannelEventCode::NEW_CHANNEL:     // [[fallthrough]];
+        case RsChannelEventCode::DELETED_CHANNEL: // [[fallthrough]];
         case RsChannelEventCode::NEW_COMMENT:     // [[fallthrough]];
         case RsChannelEventCode::NEW_VOTE:        // [[fallthrough]];
         case RsChannelEventCode::UPDATED_CHANNEL: // [[fallthrough]];
@@ -917,7 +918,7 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
 		navigate(mNavigatePendingMsgId);
 
 	else if( (mLastSelectedPosts.count(groupId()) > 0)
-	         && !mLastSelectedPosts[groupId()].isNull())
+             && !mLastSelectedPosts[groupId()].isNull())
 	{
 		QModelIndex index = mChannelPostsModel->getIndexOfMessage(mLastSelectedPosts[groupId()]);
 
@@ -937,7 +938,7 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
     mChannelFilesModel->setFiles(files);
 
     ui->channelFiles_TV->setAutoSelect(true);
-    ui->channelFiles_TV->sortByColumn(0, Qt::AscendingOrder);
+    ui->channelFiles_TV->sortByColumn(3, Qt::AscendingOrder);
 
     ui->infoPosts->setText(QString::number(mChannelPostsModel->getNumberOfPosts()) + " / " + QString::number(mGroup.mMeta.mVisibleMsgCount));
 

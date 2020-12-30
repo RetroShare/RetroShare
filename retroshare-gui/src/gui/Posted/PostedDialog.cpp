@@ -67,7 +67,8 @@ void PostedDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
             break;
 
 		case RsPostedEventCode::NEW_POSTED_GROUP:       // [[fallthrough]];
-		case RsPostedEventCode::SUBSCRIBE_STATUS_CHANGED:   // [[fallthrough]];
+        case RsPostedEventCode::BOARD_DELETED:       // [[fallthrough]];
+        case RsPostedEventCode::SUBSCRIBE_STATUS_CHANGED:   // [[fallthrough]];
             updateDisplay(true);
             break;
 

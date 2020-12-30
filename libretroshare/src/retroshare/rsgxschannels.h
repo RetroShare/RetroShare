@@ -118,6 +118,7 @@ enum class RsChannelEventCode: uint8_t
     SYNC_PARAMETERS_UPDATED         = 0x0a, // sync and storage times have changed
     NEW_COMMENT                     = 0x0b, // new comment arrived/published. mChannelThreadId gives the ID of the commented message
     NEW_VOTE                        = 0x0c, // new vote arrived/published. mChannelThreadId gives the ID of the votes message comment
+    DELETED_CHANNEL                 = 0x0d, // channel was deleted by auto-cleaning system
 };
 
 struct RsGxsChannelEvent: RsEvent

@@ -73,8 +73,10 @@ void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> ev
             updateGroupStatisticsReal(e->mChannelGroupId);// update the list immediately
             break;
 
+        case RsChannelEventCode::UPDATED_CHANNEL:         // [[fallthrough]];
         case RsChannelEventCode::RECEIVED_PUBLISH_KEY:    // [[fallthrough]];
         case RsChannelEventCode::NEW_CHANNEL:             // [[fallthrough]];
+        case RsChannelEventCode::DELETED_CHANNEL:             // [[fallthrough]];
         case RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED:// reloads group summary (calling GxsGroupFrameDialog parent method)
             updateDisplay(true);
             break;

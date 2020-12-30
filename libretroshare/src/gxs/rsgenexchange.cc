@@ -61,7 +61,9 @@ static const uint32_t INDEX_AUTHEN_ADMIN        = 0x00000040; // admin key
 
 #define GXS_MASK "GXS_MASK_HACK"
 
-#define GEN_EXCH_DEBUG	1
+/*
+ *  #define GEN_EXCH_DEBUG	1
+ */
 
 // Data flow in RsGenExchange
 //
@@ -129,6 +131,7 @@ static const uint32_t INDEX_AUTHEN_ADMIN        = 0x00000040; // admin key
 //       |
 //       +--- processRoutingClues() ;
 //
+
 static const uint32_t MSG_CLEANUP_PERIOD     = 60*59; // 59 minutes
 static const uint32_t INTEGRITY_CHECK_PERIOD = 60*31; // 31 minutes
 
@@ -145,7 +148,6 @@ RsGenExchange::RsGenExchange(
   mAuthenPolicy(authenPolicy),
   mCleaning(false),
   mLastClean((int)time(NULL) - (int)(RSRandom::random_u32() % MSG_CLEANUP_PERIOD)),	// this helps unsynchronising the checks for the different services
-  mMsgCleanUp(NULL),
   mChecking(false),
   mCheckStarted(false),
   mLastCheck((int)time(NULL) - (int)(RSRandom::random_u32() % INTEGRITY_CHECK_PERIOD) + 120),	// this helps unsynchronising the checks for the different services, with 2 min security to avoid checking right away before statistics come up.
@@ -255,27 +257,30 @@ void RsGenExchange::tick()
 
 	rstime_t now = time(NULL);
     
-	if((mLastClean + MSG_CLEANUP_PERIOD < now) || mCleaning)
+    // Cleanup unused data. This is only needed when auto-synchronization is needed, which is not the case
+    // of identities. This is why idendities do their own cleaning.
+    now = time(NULL);
+
+    if( (mNetService && (mNetService->msgAutoSync() || mNetService->grpAutoSync())) && (mLastClean + MSG_CLEANUP_PERIOD < now) )
 	{
-		if(mMsgCleanUp)
-		{
-			if(mMsgCleanUp->clean())
-			{
-				mCleaning = false;
-				delete mMsgCleanUp;
-				mMsgCleanUp = NULL;
-				mLastClean = time(NULL);
-			}
+        GxsMsgReq msgs_to_delete;
+        std::vector<RsGxsGroupId> grps_to_delete;
 
-		}
-        else
-		{
-			mMsgCleanUp = new RsGxsMessageCleanUp(mDataStore, this, 1);
-			mCleaning = true;
-		}
-	}
+        RsGxsCleanUp(mDataStore,this,1).clean(mNextGroupToCheck,grps_to_delete,msgs_to_delete);	// no need to lock here, because all access below (RsGenExchange, RsDataStore) are properly mutexed
 
-	now = time(NULL);
+        uint32_t token1=0;
+        deleteMsgs(token1,msgs_to_delete);
+
+        for(auto& grpId: grps_to_delete)
+        {
+            uint32_t token2=0;
+            deleteGroup(token2,grpId);
+        }
+
+        RS_STACK_MUTEX(mGenMtx) ;
+        mLastClean = now;
+    }
+
 	if(mChecking || (mLastCheck + INTEGRITY_CHECK_PERIOD < now))
 	{
 		mLastCheck = time(NULL);
@@ -294,42 +299,33 @@ void RsGenExchange::tick()
 
 		if(mIntegrityCheck->isDone())
 		{
-			RS_STACK_MUTEX(mGenMtx) ;
+            std::vector<RsGxsGroupId> grpIds;
+            GxsMsgReq msgIds;
 
-			std::list<RsGxsGroupId> grpIds;
-			std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgIds;
-			mIntegrityCheck->getDeletedIds(grpIds, msgIds);
+            {
+                RS_STACK_MUTEX(mGenMtx) ;
+                mIntegrityCheck->getDeletedIds(grpIds, msgIds);
+            }
 
-			if (!grpIds.empty())
-			{
-                for(auto& groupId:grpIds)
-				{
-					RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_GROUP_DELETED,groupId, false);
+            if(!msgIds.empty())
+            {
+                uint32_t token1=0;
+                deleteMsgs(token1,msgIds);
+            }
 
-#ifdef GEN_EXCH_DEBUG
-					std::cerr << "  adding the following grp ids to notification: " << std::endl;
-					for(std::list<RsGxsGroupId>::const_iterator it(grpIds.begin());it!=grpIds.end();++it)
-						std::cerr << "    " << *it << std::endl;
-#endif
-					mNotifications.push_back(gc);
-				}
+            if(!grpIds.empty())
+                for(auto& grpId: grpIds)
+                {
+                    uint32_t token2=0;
+                    deleteGroup(token2,grpId);
+                }
 
-				// also notify the network exchange service that these groups no longer exist.
-
-				if(mNetService)
-					mNetService->removeGroups(grpIds) ;
-			}
-
-            for(auto it(msgIds.begin());it!=msgIds.end();++it)
-                for(auto& msgId:it->second)
-				{
-					RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_MESSAGE_DELETED,it->first, msgId, false);
-					mNotifications.push_back(c);
-				}
-
-			delete mIntegrityCheck;
-			mIntegrityCheck = NULL;
-			mChecking = false;
+            {
+                RS_STACK_MUTEX(mGenMtx) ;
+                delete mIntegrityCheck;
+                mIntegrityCheck = NULL;
+                mChecking = false;
+            }
 		}
 	}
 }
@@ -1431,6 +1427,24 @@ bool RsGenExchange::getSerializedGroupData(uint32_t token, RsGxsGroupId& id,
     return RsNxsSerialiser(mServType).serialise(nxs_grp,data,&size) ;
 }
 
+bool RsGenExchange::retrieveNxsIdentity(const RsGxsGroupId& group_id,RsNxsGrp *& identity_grp)
+{
+    RS_STACK_MUTEX(mGenMtx) ;
+
+    std::map<RsGxsGroupId, RsNxsGrp*> grp;
+    grp[group_id]=nullptr;
+    std::map<RsGxsGroupId, RsNxsGrp*>::const_iterator grp_it;
+
+    if(! mDataStore->retrieveNxsGrps(grp, true,true) || grp.end()==(grp_it=grp.find(group_id)) || !grp_it->second)
+    {
+        std::cerr << "(EE) Cannot retrieve group data for group " << group_id << " in service " << mServType << std::endl;
+        return false;
+    }
+
+    identity_grp = grp_it->second;
+    return true;
+}
+
 bool RsGenExchange::deserializeGroupData(unsigned char *data, uint32_t size,
                                          RsGxsGroupId* gId /*= nullptr*/)
 {
@@ -1680,11 +1694,11 @@ bool RsGenExchange::setAuthenPolicyFlag(const uint8_t &msgFlag, uint32_t& authen
     return true;
 }
 
-void RsGenExchange::receiveNewGroups(std::vector<RsNxsGrp *> &groups)
+void RsGenExchange::receiveNewGroups(const std::vector<RsNxsGrp *> &groups)
 {
 	RS_STACK_MUTEX(mGenMtx) ;
 
-    std::vector<RsNxsGrp*>::iterator vit = groups.begin();
+    auto vit = groups.begin();
 
     // store these for tick() to pick them up
     for(; vit != groups.end(); ++vit)
@@ -1712,7 +1726,7 @@ void RsGenExchange::receiveNewGroups(std::vector<RsNxsGrp *> &groups)
 }
 
 
-void RsGenExchange::receiveNewMessages(std::vector<RsNxsMsg *>& messages)
+void RsGenExchange::receiveNewMessages(const std::vector<RsNxsMsg *>& messages)
 {
 	RS_STACK_MUTEX(mGenMtx) ;
 
@@ -3160,6 +3174,10 @@ void RsGenExchange::processRecvdMessages()
             for(auto& nxs_msg: msgs_to_store)
             {
                 RsGxsMsgItem *item = dynamic_cast<RsGxsMsgItem*>(mSerialiser->deserialise(nxs_msg->msg.bin_data,&nxs_msg->msg.bin_len));
+
+                if(!item)
+                    continue;
+
                 item->meta = *nxs_msg->metaData;
 
 				RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_RECEIVED_NEW, item->meta.mGroupId, item->meta.mMsgId,false);

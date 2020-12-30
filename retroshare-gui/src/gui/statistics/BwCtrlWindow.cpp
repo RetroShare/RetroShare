@@ -192,7 +192,7 @@ BwCtrlWindow::BwCtrlWindow(QWidget *parent)
     /* Set header resize modes and initial section sizes Peer TreeView*/
     QHeaderView * _header = bwTreeWidget->header () ;
 //    _header->resizeSection ( COLUMN_RSNAME, 170*fact );
-    QHeaderView_setSectionResizeMode(_header, QHeaderView::ResizeToContents);
+    QHeaderView_setSectionResizeMode(_header, QHeaderView::Interactive);
 }
 
 BwCtrlWindow::~BwCtrlWindow()

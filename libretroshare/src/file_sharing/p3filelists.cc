@@ -1004,7 +1004,7 @@ void p3FileDatabase::getExtraFilesDirDetails(void *ref,DirectoryStorage::EntryIn
 		d.prow = 0;//fi-1 ;
 		d.type = DIR_TYPE_PERSON;
 		d.hash.clear() ;
-		d.count   = mExtraFilesCache.size();
+        d.size   = mExtraFilesCache.size();
 		d.max_mtime = time(NULL);
 		d.mtime     = time(NULL);
 		d.name = "[Extra List]";
@@ -1029,7 +1029,7 @@ void p3FileDatabase::getExtraFilesDirDetails(void *ref,DirectoryStorage::EntryIn
         FileInfo& f(mExtraFilesCache[(int)e-1]) ;
 
 		d.hash      = f.hash;
-		d.count     = f.size;
+        d.size     = f.size;
 		d.max_mtime = 0;			// this is irrelevant
 		d.mtime     = 0;			// this is irrelevant
 		d.name      = f.path;		// so that the UI shows the complete path, since the parent directory is not really a directory.
@@ -1116,7 +1116,7 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
                d.children.push_back(stub);
             }
 
-        d.count = d.children.size();
+        d.size = 0; // non documented
 
 #ifdef DEBUG_FILE_HIERARCHY
         P3FILELISTS_DEBUG() << "ExtractData: ref=" << ref << ", flags=" << flags << " : returning this: " << std::endl;

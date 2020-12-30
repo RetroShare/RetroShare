@@ -63,7 +63,7 @@ public:
     class DirEntry: public FileStorageNode
     {
     public:
-        explicit DirEntry(const std::string& name) : dir_name(name), dir_modtime(0),dir_most_recent_time(0),dir_update_time(0) {}
+        explicit DirEntry(const std::string& name) : dir_name(name), dir_cumulated_size(0), dir_modtime(0),dir_most_recent_time(0),dir_update_time(0) {}
         virtual ~DirEntry() {}
 
         virtual uint32_t type() const { return FileStorageNode::TYPE_DIR ; }
@@ -72,6 +72,7 @@ public:
         std::string dir_name ;
         std::string dir_parent_path ;
         RsFileHash  dir_hash ;
+        uint64_t    dir_cumulated_size;
 
         std::vector<DirectoryStorage::EntryIndex> subdirs ;
         std::vector<DirectoryStorage::EntryIndex> subfiles ;
@@ -107,6 +108,10 @@ public:
     // Also keeps the high level statistics up to date.
 
     rstime_t recursUpdateLastModfTime(const DirectoryStorage::EntryIndex& dir_index, bool &unfinished_files_present);
+
+    // Do a complete recursive sweep over sub-directories and files, and update the cumulative size.
+
+    uint64_t recursUpdateCumulatedSize(const DirectoryStorage::EntryIndex& dir_index);
 
     // hash stuff
 

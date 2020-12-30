@@ -219,7 +219,11 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     /* initialize friends list */
     ui.friendSelectionWidget->setHeaderText(tr("Send To:"));
     ui.friendSelectionWidget->setModus(FriendSelectionWidget::MODUS_MULTI);
-	ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GXS);
+    ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GXS 
+#ifdef RS_DIRECT_CHAT
+		| FriendSelectionWidget::SHOW_SSL
+#endif // RS_DIRECT_CHAT
+		);
     ui.friendSelectionWidget->start();
 
     QActionGroup *grp = new QActionGroup(this);
@@ -265,6 +269,9 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     /* Add filter types */
     ui.filterComboBox->addItem(tr("All people"));
     ui.filterComboBox->addItem(tr("My contacts"));
+#ifdef RS_DIRECT_CHAT
+    ui.filterComboBox->addItem(tr("Friend Nodes"));
+#endif // RS_DIRECT_CHAT
 	ui.filterComboBox->setCurrentIndex(0);
 
     if(rsIdentity->nbRegularContacts() > 0)
@@ -597,7 +604,7 @@ void MessageComposer::addConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId 
     // PGPId+SslId are always here.  But if the peer is not a friend the SSL id cannot be used.
     // (todo) If the PGP id doesn't get us a PGP key from the keyring, we need to create a short invite
 
-	RetroShareLink link = RetroShareLink::createUnknownSslCertificate(sslId);
+	RetroShareLink link = RetroShareLink::createUnknownSslCertificate(sslId, gpgId);
 
     if (!link.valid())
         return;
@@ -831,7 +838,7 @@ void MessageComposer::setFileList(const std::list<DirDetails>& dir_info)
         FileInfo info ;
         info.fname = it->name ;
         info.hash = it->hash ;
-        info.size = it->count ;
+        info.size = it->size ;
         files_info.push_back(info) ;
     }
 
@@ -1056,8 +1063,25 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
 
 QString MessageComposer::buildReplyHeader(const MessageInfo &msgInfo)
 {
-    RetroShareLink link = RetroShareLink::createMessage(msgInfo.rspeerid_srcId, "");
-    QString from = link.toHtml();
+	RetroShareLink link;
+
+	QString from;
+	if(msgInfo.msgflags & RS_MSG_DISTANT)
+	{
+		link = RetroShareLink::createMessage(msgInfo.rsgxsid_srcId, "");
+		if (link.valid())
+		{
+			from += link.toHtml();
+		}
+	}
+	else
+	{
+		link = RetroShareLink::createMessage(msgInfo.rspeerid_srcId, "");
+		if (link.valid())
+		{
+			from += link.toHtml();
+		}
+	}
 
     QString to;
     for ( std::set<RsPeerId>::const_iterator  it = msgInfo.rspeerid_msgto.begin(); it != msgInfo.rspeerid_msgto.end(); ++it)
@@ -2608,6 +2632,11 @@ void MessageComposer::filterComboBoxChanged(int i)
 	case 1:
 		ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_CONTACTS);
 		break;
+#ifdef RS_DIRECT_CHAT
+	case 2:
+		ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_SSL);
+		break;
+#endif // RS_DIRECT_CHAT
 	}
 }
 

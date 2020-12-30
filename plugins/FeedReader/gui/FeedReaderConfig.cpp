@@ -41,17 +41,17 @@ FeedReaderConfig::FeedReaderConfig(QWidget *parent, Qt::WindowFlags flags)
 	connect(ui->storageTimeSpinBox, (void(QSpinBox::*)(int))&QSpinBox::valueChanged, this, [this]() {
 		rsFeedReader->setStandardStorageTime(ui->storageTimeSpinBox->value() * 60 *60 * 24);
 	});
-	connect(ui->saveInBackgroundCheckBox, QCheckBox::toggled, this, [this]() {
+	connect(ui->saveInBackgroundCheckBox, &QCheckBox::toggled, this, [this]() {
 		rsFeedReader->setSaveInBackground(ui->saveInBackgroundCheckBox->isChecked());
 	});
-	connect(ui->setMsgToReadOnActivate, QCheckBox::toggled, this, [this]() {
+	connect(ui->setMsgToReadOnActivate, &QCheckBox::toggled, this, [this]() {
 		Settings->setValueToGroup("FeedReaderDialog", "SetMsgToReadOnActivate", ui->setMsgToReadOnActivate->isChecked());
 	});
-	connect(ui->openAllInNewTabCheckBox, QCheckBox::toggled, this, [this]() {
+	connect(ui->openAllInNewTabCheckBox, &QCheckBox::toggled, this, [this]() {
 		Settings->setValueToGroup("FeedReaderDialog", "OpenAllInNewTab", ui->openAllInNewTabCheckBox->isChecked());
 	});
-	connect(ui->useProxyCheckBox, QCheckBox::toggled, this, &FeedReaderConfig::updateProxy);
-	connect(ui->proxyAddressLineEdit, QLineEdit::textChanged, this, &FeedReaderConfig::updateProxy);
+	connect(ui->useProxyCheckBox, &QCheckBox::toggled, this, &FeedReaderConfig::updateProxy);
+	connect(ui->proxyAddressLineEdit, &QLineEdit::textChanged, this, &FeedReaderConfig::updateProxy);
 	connect(ui->proxyPortSpinBox, (void(QSpinBox::*)(int))&QSpinBox::valueChanged, this, &FeedReaderConfig::updateProxy);
 
 	connect(ui->useProxyCheckBox, SIGNAL(toggled(bool)), this, SLOT(useProxyToggled()));

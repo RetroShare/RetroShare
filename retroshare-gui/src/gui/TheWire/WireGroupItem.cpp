@@ -24,6 +24,7 @@
 #include <QBuffer>
 
 #include "WireGroupItem.h"
+#include "WireGroupDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
 
@@ -39,6 +40,8 @@ WireGroupItem::WireGroupItem(WireGroupHolder *holder, const RsWireGroup &grp)
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 	setup();
 
+	// disabled, still not yet functional Edit/Update
+	editButton->setEnabled(false);
 }
 
 RsGxsGroupId &WireGroupItem::groupId()
@@ -84,6 +87,7 @@ void WireGroupItem::setup()
 
 	connect(toolButton_show, SIGNAL(clicked()), this, SLOT(show()));
 	connect(toolButton_subscribe, SIGNAL(clicked()), this, SLOT(subscribe()));
+	connect(editButton, SIGNAL(clicked()), this, SLOT(editGroupDetails()));
 	setGroupSet();
 }
 
@@ -93,16 +97,19 @@ void WireGroupItem::setGroupSet()
 		toolButton_type->setText("Own");
 		toolButton_subscribe->setText("N/A");
 		toolButton_subscribe->setEnabled(false);
+		editButton->show();
 	}
 	else if (mGroup.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
 	{
 		toolButton_type->setText("Following");
 		toolButton_subscribe->setText("Unfollow");
+		editButton->hide();
 	}
 	else
 	{
 		toolButton_type->setText("Other");
 		toolButton_subscribe->setText("Follow");
+		editButton->hide();
 	}
 }
 
@@ -138,7 +145,7 @@ void WireGroupItem::setSelected(bool on)
 	}
 	else
 	{
-		setBackground("gray");
+		setBackground("white");
 	}
 }
 
@@ -174,3 +181,16 @@ const QPixmap *WireGroupItem::getPixmap()
 	return NULL;
 }
 
+void WireGroupItem::editGroupDetails()
+{
+	RsGxsGroupId groupId = mGroup.mMeta.mGroupId;
+	if (groupId.isNull())
+	{
+		std::cerr << "WireGroupItem::editGroupDetails() No Group selected";
+		std::cerr << std::endl;
+		return;
+	}
+
+	WireGroupDialog wireEdit(GxsGroupDialog::MODE_EDIT, groupId, this);
+	wireEdit.exec ();
+}

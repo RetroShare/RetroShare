@@ -479,7 +479,7 @@ void SearchDialog::collCreate()
 			DirDetails details;
 			details.name = name;
 			details.hash = hash;
-			details.count = count;
+            details.size = count;
 			details.type = DIR_TYPE_FILE;
 
 			dirVec.push_back(details);
@@ -1010,8 +1010,8 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
 		
 		child->setText(SR_NAME_COL, QString::fromUtf8(dir.name.c_str()));
         child->setText(SR_HASH_COL, QString::fromStdString(dir.hash.toStdString()));
-		child->setText(SR_SIZE_COL, QString::number(dir.count));
-		child->setData(SR_SIZE_COL, ROLE_SORT, (qulonglong) dir.count);
+        child->setText(SR_SIZE_COL, QString::number(dir.size));
+        child->setData(SR_SIZE_COL, ROLE_SORT, (qulonglong) dir.size);
 		child->setText(SR_AGE_COL, QString::number(dir.mtime));
 		child->setData(SR_AGE_COL, ROLE_SORT, dir.mtime);
 		child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
@@ -1036,8 +1036,8 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
 		child->setIcon(SR_NAME_COL, QIcon(IMAGE_DIRECTORY));
 		child->setText(SR_NAME_COL, QString::fromUtf8(dir.name.c_str()));
         child->setText(SR_HASH_COL, QString::fromStdString(dir.hash.toStdString()));
-		child->setText(SR_SIZE_COL, QString::number(dir.count));
-		child->setData(SR_SIZE_COL, ROLE_SORT, (qulonglong) dir.count);
+        child->setText(SR_SIZE_COL, QString::number(dir.size));
+        child->setData(SR_SIZE_COL, ROLE_SORT, (qulonglong) dir.size);
 		child->setText(SR_AGE_COL, QString::number(dir.mtime));
 		child->setData(SR_AGE_COL, ROLE_SORT, dir.mtime);
 		child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
@@ -1105,8 +1105,8 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
     child->setIcon(SR_NAME_COL, QIcon(IMAGE_DIRECTORY));
     child->setText(SR_NAME_COL, QString::fromUtf8(dir.name.c_str()));
     child->setText(SR_HASH_COL, QString::fromStdString(dir.hash.toStdString()));
-    child->setText(SR_SIZE_COL, QString::number(dir.count));
-    child->setData(SR_SIZE_COL, ROLE_SORT, (qulonglong) dir.count);
+    child->setText(SR_SIZE_COL, QString::number(dir.size));
+    child->setData(SR_SIZE_COL, ROLE_SORT, (qulonglong) dir.size);
     child->setText(SR_AGE_COL, QString::number(dir.max_mtime));
     child->setData(SR_AGE_COL, ROLE_SORT, dir.max_mtime);
     child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
@@ -1389,7 +1389,7 @@ void SearchDialog::resultsToTree(const QString& txt,qulonglong searchId, const s
 			fd.name = it->name;
 			fd.hash = it->hash;
 			fd.path = it->path;
-			fd.size = it->count;
+            fd.size = it->size;
 			fd.age 	= it->mtime;
 			fd.rank = 0;
 

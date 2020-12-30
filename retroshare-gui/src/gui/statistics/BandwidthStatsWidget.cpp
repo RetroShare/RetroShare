@@ -41,8 +41,6 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
 
     ui.unit_CB->addItem(tr("KB/s")) ;
     ui.unit_CB->addItem(tr("Count")) ;
-    
-    ui.logScale_CB->setChecked(true) ;
 
     ui.bwgraph_BW->setSelector(BWGraphSource::SELECTOR_TYPE_FRIEND,BWGraphSource::GRAPH_TYPE_SUM) ;
     ui.bwgraph_BW->setSelector(BWGraphSource::SELECTOR_TYPE_SERVICE,BWGraphSource::GRAPH_TYPE_SUM) ;

@@ -52,6 +52,7 @@ private slots:
 	void cancelPulse();
 	void clearDialog();
 	void pulseTextChanged();
+	void toggle();
 
 private:
 	// OLD VERSIONs, private now.

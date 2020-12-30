@@ -68,6 +68,7 @@ protected:
 private slots:
 
   void removeUnusedKeys() ;
+  void removeSelectedKeys() ;
   void makeFriend() ;
   void denyFriend() ;
   void peerdetails();
@@ -85,6 +86,8 @@ private slots:
   void filterColumnChanged(int);
 
 private:
+
+  void removeKeys(std::set<RsPgpId> selected) ;
 
   /* Color definitions (for standard see qss.default) */
   QColor mBackgroundColorSelf;

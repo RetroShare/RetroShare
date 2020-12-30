@@ -104,6 +104,7 @@ copy "%RsBuildPath%\retroshare-gui\src\%RsBuildConfig%\RetroShare*.exe" "%RsDepl
 copy "%RsBuildPath%\retroshare-nogui\src\%RsBuildConfig%\retroshare*-nogui.exe" "%RsDeployPath%" %Quite%
 copy "%RsBuildPath%\retroshare-service\src\%RsBuildConfig%\retroshare*-service.exe" "%RsDeployPath%" %Quite%
 copy "%RsBuildPath%\supportlibs\cmark\build\src\libcmark.dll" "%RsDeployPath%" %Quite%
+if exist "%RsBuildPath%\libretroshare\src\lib\retroshare.dll" copy "%RsBuildPath%\libretroshare\src\lib\retroshare.dll" "%RsDeployPath%" %Quite%
 
 echo copy extensions
 for /D %%D in ("%RsBuildPath%\plugins\*") do (
@@ -212,8 +213,8 @@ endlocal
 exit /B 1
 
 :copy_extension
-if exist "%~1\%RsBuildConfig%\%~n1.dll" (
-	copy "%~1\%RsBuildConfig%\%~n1.dll" %2 %Quite%
+if exist "%~1\lib\%~n1.dll" (
+	copy "%~1\lib\%~n1.dll" %2 %Quite%
 )
 goto :EOF
 

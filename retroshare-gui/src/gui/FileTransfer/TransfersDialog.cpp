@@ -2468,7 +2468,7 @@ void TransfersDialog::collCreate()
 		DirDetails details;
 		details.name = info.fname;
 		details.hash = info.hash;
-		details.count = info.size;
+        details.size = info.size;
 		details.type = DIR_TYPE_FILE;
 
 		dirVec.push_back(details);

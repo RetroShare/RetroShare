@@ -10,6 +10,9 @@
     <height>262</height>
    </rect>
   </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
   <layout class="QGridLayout" name="PeerItemGLayout">
    <property name="leftMargin">
     <number>1</number>
@@ -32,7 +35,7 @@
       </sizepolicy>
      </property>
      <property name="autoFillBackground">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="frameShape">
       <enum>QFrame::Box</enum>
@@ -494,7 +497,7 @@
   </layout>
   <action name="actionNew_Message">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset>
      <normaloff>:/images/mail_send.png</normaloff>:/images/mail_send.png</iconset>
    </property>
    <property name="text">

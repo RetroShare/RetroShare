@@ -118,6 +118,9 @@ void GxsForumMsgItem::setup()
 
 	ui->subjectLabel->setMinimumWidth(20);
 
+	// hide unsubscribe button not necessary
+	ui->unsubscribeButton->hide();
+
 	ui->expandFrame->hide();
 	ui->parentFrame->hide();
 }

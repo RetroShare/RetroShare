@@ -564,11 +564,9 @@ void IdEditDialog::createId()
     {
 		ui->createButton->setEnabled(false);
 
-        RsIdentityDetails det;
-
-        if(rsIdentity->getIdDetails(keyId,det))
+        if(!keyId.isNull())
         {
-            QMessageBox::information(NULL,tr("Identity creation success"),tr("Your new identity was successfuly created."));
+            QMessageBox::information(NULL,tr("Identity creation success"),tr("Your new identity was successfuly created, its ID is %1.").arg(QString::fromStdString(keyId.toStdString())));
             close();
         }
         else

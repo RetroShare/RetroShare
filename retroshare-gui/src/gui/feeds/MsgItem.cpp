@@ -117,19 +117,28 @@ void MsgItem::updateItemStatic()
 
 	if (!mIsHome)
 	{
-      if (mi.msgflags & RS_MSG_USER_REQUEST)
-      {
-        title = QString::fromUtf8(mi.title.c_str()) + " " + tr("from") + " " + srcName;
-        replyButton->setText(tr("Reply to invite"));
-        subjectLabel->hide();
-        inviteFrame->show();
-      }
-      else
-      {
-        title = tr("Message From") + ": " + srcName;
-        sendinviteButton->hide();
-        inviteFrame->hide();
-      }
+		if ((mi.msgflags & RS_MSG_USER_REQUEST) && (!mi.rsgxsid_srcId.isNull()))
+		{
+			title = QString::fromUtf8(mi.title.c_str()) + " " + tr("from") + " " + srcName;
+			replyButton->setText(tr("Reply to invite"));
+			subjectLabel->hide();
+			inviteFrame->show();
+		}
+		else if ((mi.msgflags & RS_MSG_USER_REQUEST) && mi.rsgxsid_srcId.isNull())
+		{
+			title = QString::fromUtf8(mi.title.c_str()) + " " + " " + srcName;
+			subjectLabel->hide();
+			inviteFrame->show();
+			infoLabel->setText(tr("This message invites you to make friend! You may accept this request."));
+			sendinviteButton->hide();
+			replyButton->hide();
+		}
+		else
+		{
+			title = tr("Message From") + ": " + srcName;
+			sendinviteButton->hide();
+			inviteFrame->hide();
+		}
 	}
 	else
 	{

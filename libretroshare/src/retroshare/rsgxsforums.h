@@ -117,6 +117,7 @@ enum class RsForumEventCode: uint8_t
 	MODERATOR_LIST_CHANGED   = 0x08, /// forum moderation list has changed.
     SYNC_PARAMETERS_UPDATED  = 0x0a, /// sync and storage times have changed
     PINNED_POSTS_CHANGED     = 0x0b, /// some posts where pinned or un-pinned
+    DELETED_FORUM            = 0x0c, /// forum was deleted by cleaning
 };
 
 struct RsGxsForumEvent: RsEvent
