@@ -14,6 +14,9 @@
    <string/>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
+   <property name="topMargin">
+    <number>0</number>
+   </property>
    <property name="spacing">
     <number>6</number>
    </property>
@@ -38,6 +41,9 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item row="0" column="0">
        <widget class="QLabel" name="label">
         <property name="maximumSize">
@@ -54,25 +60,18 @@
          </font>
         </property>
         <property name="text">
-         <string>Post From:</string>
+         <string>From:</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="label_groupName">
-        <property name="text">
-         <string>GroupLabel</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
+      <item row="0" column="3">
        <widget class="GxsIdLabel" name="label_idName">
         <property name="text">
          <string>IDLabel</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="3">
+      <item row="0" column="4">
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -84,6 +83,35 @@
          </size>
         </property>
        </spacer>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="label_groupName">
+        <property name="text">
+         <string>GroupLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="topheadshot">
+        <property name="minimumSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Head</string>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

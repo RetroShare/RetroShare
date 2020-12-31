@@ -19,6 +19,8 @@
  *******************************************************************************/
 
 #include "PulseMessage.h"
+#include "gui/Posted/PhotoView.h"
+#include "util/misc.h"
 
 /** Constructor */
 
@@ -26,6 +28,11 @@ PulseMessage::PulseMessage(QWidget *parent)
 :QWidget(parent)
 {
 	setupUi(this);
+
+	connect(label_image1, SIGNAL(clicked()), this, SLOT(viewPicture()));
+	connect(label_image2, SIGNAL(clicked()), this, SLOT(viewPicture()));
+	connect(label_image3, SIGNAL(clicked()), this, SLOT(viewPicture()));
+	connect(label_image4, SIGNAL(clicked()), this, SLOT(viewPicture()));
 }
 
 void PulseMessage::setup(RsWirePulseSPtr pulse)
@@ -33,6 +40,8 @@ void PulseMessage::setup(RsWirePulseSPtr pulse)
 	if (!pulse) {
 		return;
 	}
+
+	mPulse = pulse;
 
 	setMessage(QString::fromStdString(pulse->mPulseText));
 
@@ -139,3 +148,46 @@ void PulseMessage::setRefImageCount(uint32_t count)
 	}
 }
 
+void PulseMessage::viewPicture()
+{
+	PhotoView *photoView = new PhotoView(this);
+
+	if (!mPulse->mImage1.empty()) {
+		// install image.
+		QPixmap pixmap;
+		pixmap.loadFromData(mPulse->mImage1.mData, mPulse->mImage1.mSize);
+		photoView->setPixmap(pixmap);
+	}
+	
+	if (!mPulse->mImage2.empty()) {
+		// install image.
+		QPixmap pixmap;
+		pixmap.loadFromData(mPulse->mImage2.mData, mPulse->mImage2.mSize);
+		photoView->setPixmap(pixmap);
+	}
+	
+	if (!mPulse->mImage3.empty()) {
+		// install image.
+		QPixmap pixmap;
+		pixmap.loadFromData(mPulse->mImage3.mData, mPulse->mImage3.mSize);
+		photoView->setPixmap(pixmap);
+	}
+	
+	if (!mPulse->mImage4.empty()) {
+		// install image.
+		QPixmap pixmap;
+		pixmap.loadFromData(mPulse->mImage4.mData, mPulse->mImage4.mSize);
+		photoView->setPixmap(pixmap);
+	}
+
+	QString timestamp = misc::timeRelativeToNow(mPulse->mRefPublishTs);
+
+	photoView->setTitle(QString::fromStdString(mPulse->mPulseText));
+	photoView->setGroupNameString(QString::fromStdString(mPulse->mRefGroupName));
+	photoView->setTime(timestamp);
+	//photoView->setGroupId(mPulse->mRefGroupId);
+
+	photoView->show();
+
+	/* window will destroy itself! */
+}

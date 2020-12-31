@@ -53,16 +53,17 @@ void PulseAddDialog::setGroup(RsWireGroup &group)
 	ui.label_groupName->setText(QString::fromStdString(group.mMeta.mGroupName));
 	ui.label_idName->setText(QString::fromStdString(group.mMeta.mAuthorId.toStdString()));
 	
-	if (mGroup.mHeadshot.mData )
+	if (group.mHeadshot.mData )
 	{
 		QPixmap pixmap;
 		if (GxsIdDetails::loadPixmapFromData(
-				mGroup.mHeadshot.mData,
-				mGroup.mHeadshot.mSize,
+				group.mHeadshot.mData,
+				group.mHeadshot.mSize,
 				pixmap,GxsIdDetails::ORIGINAL))
 		{
 				pixmap = pixmap.scaled(50,50);
 				ui.headshot->setPixmap(pixmap);
+				ui.topheadshot->setPixmap(pixmap);
 		}
 	}
 	else
@@ -70,6 +71,7 @@ void PulseAddDialog::setGroup(RsWireGroup &group)
 		// default.
 		QPixmap pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png").scaled(50,50);
 		ui.headshot->setPixmap(pixmap);
+		ui.topheadshot->setPixmap(pixmap);
 	}
 	
 	mGroup = group;
@@ -129,9 +131,11 @@ void PulseAddDialog::cleanup()
 
 	ui.pushButton_Post->setEnabled(false);
 	ui.pushButton_Post->setText(tr("Post"));
+	ui.textEdit_Pulse->setPlaceholderText(tr("Whats happening?"));
 	ui.frame_input->setVisible(true);
 	ui.widget_sentiment->setVisible(true);
 	ui.pushButton_picture->show();
+	ui.topheadshot->show();
 
 	// cleanup images.
 	mImage1.clear();
@@ -171,6 +175,7 @@ void PulseAddDialog::setReplyTo(RsWirePulse &pulse, RsWirePulseSPtr pPulse, std:
 	mReplyType = replyType;
 	ui.frame_reply->setVisible(true);
 	ui.pushButton_picture->show();
+	ui.topheadshot->hide();
 
 	{
 		PulseReply *reply = new PulseReply(NULL, pPulse);
