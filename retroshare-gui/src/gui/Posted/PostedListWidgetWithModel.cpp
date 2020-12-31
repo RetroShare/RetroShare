@@ -699,7 +699,7 @@ PostedListWidgetWithModel::~PostedListWidgetWithModel()
 
 void PostedListWidgetWithModel::processSettings(bool load)
 {
-	Settings->beginGroup(QString("ChannelPostsWidget"));
+    Settings->beginGroup(QString("BoardPostsWidget"));
 
 	if (load)
 	{

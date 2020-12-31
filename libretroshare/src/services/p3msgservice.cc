@@ -2206,7 +2206,7 @@ bool p3MsgService::notifyGxsTransSendStatus( RsGxsTransId mailId,
 
 	if( status == GxsTransSendStatus::RECEIPT_RECEIVED )
 	{
-		pEvent->mMailStatusEventCode = RsMailStatusEventCode::NEW_MESSAGE;
+        pEvent->mMailStatusEventCode = RsMailStatusEventCode::MESSAGE_RECEIVED_ACK;
 		uint32_t msg_id;
 
 		{
