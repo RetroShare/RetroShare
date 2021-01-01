@@ -142,7 +142,7 @@ public:
 	 * @param strictFilter if true do not request any message if reqIds is empty
      * @return error code
 	 */
-    virtual int retrieveNxsMsgs( const GxsMsgReq& reqIds, GxsMsgResult& msg, bool withMeta = false , bool cache=true) = 0;
+    virtual int retrieveNxsMsgs( const GxsMsgReq& reqIds, GxsMsgResult& msg, bool withMeta = false ) = 0;
 
     /*!
      * Retrieves all groups stored. Caller owns the memory and is supposed to delete the RsNxsGrp pointers after use.
@@ -151,7 +151,7 @@ public:
      * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
-    virtual int retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp*>& grp, bool withMeta, bool cache) = 0;
+    virtual int retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp*>& grp, bool withMeta) = 0;
 
     /*!
      * Retrieves meta data of all groups stored (most current versions only)
@@ -168,7 +168,6 @@ public:
      * Retrieves meta data of all groups stored (most current versions only)
      * @param grpIds grpIds for which to retrieve meta data
      * @param msgMeta meta data result as map of grpIds to array of metadata for that grpId
-     * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
     virtual int retrieveGxsMsgMetaData(const GxsMsgReq& msgIds, GxsMsgMetaResult& msgMeta) = 0;

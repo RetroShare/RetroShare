@@ -926,7 +926,7 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStatsItem *grs)
 	RsGxsGrpMetaTemporaryMap grpMetas;
 	    grpMetas[grs->grpId] = NULL;
 
-	    mDataStore->retrieveGxsGrpMetaData(grpMetas);
+        mDataStore->retrieveGxsGrpMetaData(grpMetas);
 
         const auto& grpMeta = grpMetas[grs->grpId];
 
@@ -957,7 +957,7 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStatsItem *grs)
 #ifdef NXS_NET_DEBUG_6
 	    GXSNETDEBUG_PG(grs->PeerId(),grs->grpId) << "  retrieving message information." << std::endl;
 #endif
-	    mDataStore->retrieveGxsMsgMetaData(reqIds, result);
+        mDataStore->retrieveGxsMsgMetaData(reqIds, result);
 
         const auto& vec(result[grs->grpId]) ;
 
@@ -2115,7 +2115,7 @@ void RsGxsNetService::updateServerSyncTS()
 	{
 		RS_STACK_MUTEX(mNxsMutex) ;
 		// retrieve all grps and update TS
-		mDataStore->retrieveGxsGrpMetaData(gxsMap);
+        mDataStore->retrieveGxsGrpMetaData(gxsMap);
 
 		// (cyril) This code was previously removed because it sounded inconsistent: the list of grps normally does not need to be updated when
 		// new posts arrive. The two (grp list and msg list) are handled independently. Still, when group meta data updates are received,
@@ -3311,7 +3311,7 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 	}
 
 	if(!grps.empty())
-		mDataStore->retrieveNxsGrps(grps, false, false);
+        mDataStore->retrieveNxsGrps(grps, false);
 	else
 	{
 #ifdef NXS_NET_DEBUG_1
@@ -5525,7 +5525,7 @@ bool RsGxsNetService::search(const Sha1CheckSum& hashed_group_id,unsigned char *
 		RsNxsGrpDataTemporaryMap grpDataMap;
 		{
 			RS_STACK_MUTEX(mNxsMutex) ;
-			mDataStore->retrieveNxsGrps(grpDataMap, true, true);
+            mDataStore->retrieveNxsGrps(grpDataMap, true);
             mLastCacheReloadTS = time(NULL);
 		}
 

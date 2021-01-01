@@ -511,6 +511,8 @@ private:
 
     std::set<std::pair<uint32_t,GxsRequest*> > mRequestQueue;
     std::map<uint32_t, GxsRequest*> mCompletedRequests;
+
+    bool mUseMetaCache;
 };
 
 #endif // RSGXSDATAACCESS_H

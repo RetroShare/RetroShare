@@ -138,26 +138,23 @@ public:
      * Retrieves all msgs
      * @param reqIds requested msg ids (grpId,msgId), leave msg list empty to get all msgs for the grp
      * @param msg result of msg retrieval
-	 * @param cache IGNORED whether to store results of this retrieval in memory
-	 *	for faster later retrieval
-	 * @param strictFilter if true do not request any message if reqIds is empty
+     * @param withMeta true will also retrieve metadata
      * @return error code
 	 */
-    int retrieveNxsMsgs( const GxsMsgReq& reqIds, GxsMsgResult& msg,  bool withMeta = false, bool cache=true );
+    int retrieveNxsMsgs(const GxsMsgReq& reqIds, GxsMsgResult& msg,  bool withMeta = false);
 
     /*!
      * Retrieves groups, if empty, retrieves all grps, if map is not empty
      * only retrieve entries, if entry cannot be found, it is removed from map
      * @param grp retrieved groups
      * @param withMeta this initialise the metaData member of the nxsgroups retrieved
-     * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
-    int retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp*>& grp, bool withMeta, bool cache);
+    int retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp*>& grp, bool withMeta);
 
     /*!
      * Retrieves meta data of all groups stored (most current versions only)
-     * @param cache whether to store retrieval in mem for faster later retrieval
+     * @param grp output group meta data
      * @return error code
      */
     int retrieveGxsGrpMetaData(std::map<RsGxsGroupId, std::shared_ptr<RsGxsGrpMetaData> > &grp);
@@ -166,7 +163,6 @@ public:
      * Retrieves meta data of all groups stored (most current versions only)
      * @param grpIds grpIds for which to retrieve meta data
      * @param msgMeta meta data result as map of grpIds to array of metadata for that grpId
-     * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
     int retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaResult& msgMeta);
@@ -272,7 +268,7 @@ private:
      * @param c cursor to result set
      * @param msgs messages retrieved from cursor are stored here
      */
-    void locked_retrieveMessages(RetroCursor* c, std::vector<RsNxsMsg*>& msgs, int metaOffset, bool use_cache);
+    void locked_retrieveMessages(RetroCursor* c, std::vector<RsNxsMsg*>& msgs, int metaOffset);
 
     /*!
      * Retrieves all the grp results from a cursor
@@ -280,7 +276,7 @@ private:
      * @param grps groups retrieved from cursor are stored here
      * @param withMeta this initialise the metaData member of the nxsgroups retrieved
      */
-    void locked_retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps, int metaOffset, bool use_cache);
+    void locked_retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps, int metaOffset);
 
     /*!
      * Retrieves all the msg meta results from a cursor
@@ -300,13 +296,13 @@ private:
      * extracts a msg meta item from a cursor at its
      * current position
      */
-    std::shared_ptr<RsGxsMsgMetaData> locked_getMsgMeta(RetroCursor& c, int colOffset, bool use_cache);
+    std::shared_ptr<RsGxsMsgMetaData> locked_getMsgMeta(RetroCursor& c, int colOffset);
 
     /*!
      * extracts a grp meta item from a cursor at its
      * current position
      */
-    std::shared_ptr<RsGxsGrpMetaData> locked_getGrpMeta(RetroCursor& c, int colOffset, bool use_cache);
+    std::shared_ptr<RsGxsGrpMetaData> locked_getGrpMeta(RetroCursor& c, int colOffset);
 
     /*!
      * extracts a msg item from a cursor at its
@@ -448,6 +444,8 @@ private:
 
     t_MetaDataCache<RsGxsGroupId,RsGxsGrpMetaData> mGrpMetaDataCache;
     std::map<RsGxsGroupId,t_MetaDataCache<RsGxsMessageId,RsGxsMsgMetaData> > mMsgMetaDataCache;
+
+    bool mUseCache;
 };
 
 #endif // RSDATASERVICE_H

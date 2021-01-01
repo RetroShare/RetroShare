@@ -626,6 +626,8 @@ private:
     std::map<TurtleRequestId,RsGxsGroupId> mSearchRequests;
     std::map<RsGxsGroupId,GroupRequestRecord> mSearchedGroups ;
     rstime_t mLastCacheReloadTS ;
+
+    bool mUseMetaCache;
 };
 
 #endif // RSGXSNETSERVICE_H

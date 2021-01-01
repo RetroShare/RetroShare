@@ -860,7 +860,7 @@ bool RsGxsDataAccess::getGroupSerializedData(GroupSerializedDataReq* req)
 	for(std::list<RsGxsGroupId>::iterator lit = grpIdsOut.begin();lit != grpIdsOut.end();++lit)
 		grpData[*lit] = nullptr;
 
-	bool ok = mDataStore->retrieveNxsGrps(grpData, true, true);
+    bool ok = mDataStore->retrieveNxsGrps(grpData, true);
     req->mGroupData.clear();
 
 	std::map<RsGxsGroupId, RsNxsGrp*>::iterator mit = grpData.begin();
@@ -888,7 +888,7 @@ bool RsGxsDataAccess::getGroupData(GroupDataReq* req)
             grpData[*lit] = nullptr;
         }
 
-        bool ok = mDataStore->retrieveNxsGrps(grpData, true, true);
+        bool ok = mDataStore->retrieveNxsGrps(grpData, true);
 
 	std::map<RsGxsGroupId, RsNxsGrp*>::iterator mit = grpData.begin();
 	for(; mit != grpData.end(); ++mit)
@@ -911,7 +911,7 @@ bool RsGxsDataAccess::getGroupSummary(GroupMetaReq* req)
     for(auto lit = grpIdsOut.begin();lit != grpIdsOut.end(); ++lit)
 		grpMeta[*lit] = nullptr;
 
-	mDataStore->retrieveGxsGrpMetaData(grpMeta);
+    mDataStore->retrieveGxsGrpMetaData(grpMeta);
 
     for(auto mit = grpMeta.begin(); mit != grpMeta.end(); ++mit)
 		req->mGroupMetaData.push_back(mit->second);
@@ -954,7 +954,7 @@ bool RsGxsDataAccess::getMsgData(MsgDataReq* req)
 	if((opts.mMsgFlagMask || opts.mStatusMask) && msgIdOut.empty())
 		return true;
 
-	mDataStore->retrieveNxsMsgs(msgIdOut, req->mMsgData, true, true);
+    mDataStore->retrieveNxsMsgs(msgIdOut, req->mMsgData, true);
 	return true;
 }
 
@@ -1439,7 +1439,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
             else if(req->Options.mReqType == GXS_REQUEST_TYPE_MSG_RELATED_DATA)
             {
                 GxsMsgResult msgResult;
-                mDataStore->retrieveNxsMsgs(filteredOutMsgIds, msgResult, true, true);
+                mDataStore->retrieveNxsMsgs(filteredOutMsgIds, msgResult, true);
                 req->mMsgDataResult[grpMsgIdPair] = msgResult[grpId];
             }
         }
@@ -1699,7 +1699,7 @@ bool RsGxsDataAccess::getGroupData(const RsGxsGroupId& grpId, RsNxsGrp *& grp_da
 
     grps[grpId] = nullptr ;
 
-    if(mDataStore->retrieveNxsGrps(grps, false, true))	// the false here is very important: it removes the private key parts.
+    if(mDataStore->retrieveNxsGrps(grps, false))	// the false here is very important: it removes the private key parts.
     {
         grp_data = grps.begin()->second;
         return true;
