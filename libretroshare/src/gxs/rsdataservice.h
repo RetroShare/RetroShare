@@ -81,12 +81,7 @@ public:
 
 	void updateMeta(const ID& id,const MetaDataClass& meta)
 	{
-		auto it = mMetas.find(id) ;
-
-		if(it != mMetas.end())
-			*(it->second) = meta ;
-		else
-            mMetas[id] = std::make_shared<MetaDataClass>();
+        mMetas[id] = std::make_shared<MetaDataClass>(meta);     // create a new shared_ptr to possibly replace the previous one
 	}
 
     void clear(const ID& id)

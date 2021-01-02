@@ -838,7 +838,8 @@ int RsDataService::storeMessage(const std::list<RsNxsMsg*>& msg)
 
         // This is needed so that mLastPost is correctly updated in the group meta when it is re-loaded.
 
-		mMsgMetaDataCache[msgMetaPtr->mGroupId].updateMeta(msgMetaPtr->mMsgId,*msgMetaPtr);
+        if(mUseCache)
+                mMsgMetaDataCache[msgMetaPtr->mGroupId].updateMeta(msgMetaPtr->mMsgId,*msgMetaPtr);
 
         delete *mit;
     }
