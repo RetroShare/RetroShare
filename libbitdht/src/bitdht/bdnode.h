@@ -117,7 +117,7 @@ class bdNode: public bdNodePublisher
 {
 	public:
 
-    bdNode(bdNodeId *id, std::string dhtVersion, const std::string& bootfile, const std::string& filterfile,
+	bdNode(bdNodeId *id, std::string dhtVersion, const std::string& bootfile, const std::string& bootfilebak, const std::string& filterfile,
 		bdDhtFunctions *fns, bdNodeManager* manager);
 
 	void init(); /* sets up the self referential classes (mQueryMgr & mConnMgr) */
