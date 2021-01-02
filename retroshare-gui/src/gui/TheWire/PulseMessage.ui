@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>570</width>
-    <height>376</height>
+    <height>377</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,6 +20,12 @@
       <bool>true</bool>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item>
        <widget class="Line" name="line">
         <property name="minimumSize">
@@ -32,7 +38,7 @@
          <enum>QFrame::Plain</enum>
         </property>
         <property name="lineWidth">
-         <number>5</number>
+         <number>4</number>
         </property>
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -43,7 +49,14 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QTextBrowser" name="textBrowser"/>
+    <widget class="QTextBrowser" name="textBrowser">
+     <property name="font">
+      <font>
+       <family>MS Sans Serif</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+    </widget>
    </item>
    <item row="1" column="1">
     <widget class="QFrame" name="frame_expand">
@@ -55,12 +68,15 @@
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
-       <widget class="QLabel" name="label_image1">
+       <widget class="ClickableLabel" name="label_image1">
         <property name="minimumSize">
          <size>
           <width>128</width>
           <height>128</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>Click to view picture</string>
         </property>
         <property name="text">
          <string>Image</string>
@@ -71,12 +87,15 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLabel" name="label_image2">
+       <widget class="ClickableLabel" name="label_image2">
         <property name="minimumSize">
          <size>
           <width>128</width>
           <height>128</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>Click to view picture</string>
         </property>
         <property name="text">
          <string>Image</string>
@@ -87,12 +106,15 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="label_image3">
+       <widget class="ClickableLabel" name="label_image3">
         <property name="minimumSize">
          <size>
           <width>128</width>
           <height>128</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>Click to view picture</string>
         </property>
         <property name="text">
          <string>Image</string>
@@ -103,12 +125,15 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QLabel" name="label_image4">
+       <widget class="ClickableLabel" name="label_image4">
         <property name="minimumSize">
          <size>
           <width>128</width>
           <height>128</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>Click to view picture</string>
         </property>
         <property name="text">
          <string>Image</string>
@@ -123,6 +148,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ClickableLabel</class>
+   <extends>QLabel</extends>
+   <header>util/ClickableLabel.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

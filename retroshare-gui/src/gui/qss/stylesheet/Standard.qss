@@ -143,7 +143,7 @@ PulseViewGroup QToolButton#toolButton_follow{
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
-	max-height: 27px;
+	max-height: 20px;
 	min-width: 4em;
 	padding: 2px;
 	padding-left: 6px;
@@ -220,7 +220,7 @@ PulseAddDialog QPushButton#pushButton_Post:disabled {
 	color: white;
 	background: #d40000;
 	border-radius: 4px;
-	max-height: 27px;
+	max-height: 20px;
 	min-width: 4em;
 	padding-left: 6px;
 	padding-right: 6px;
@@ -228,7 +228,7 @@ PulseAddDialog QPushButton#pushButton_Post:disabled {
 
 /* Forums */
 
-GxsForumThreadWidget QLabel#forumName
+GxsForumThreadWidget QPushButton#forumName
 {
 	font: bold;
 	font-size: 14px;
@@ -1108,4 +1108,35 @@ PulseTopLevel QFrame#frame, PulseViewGroup QFrame#frame, PulseReply QFrame#frame
 	border: 2px solid #7ecbfb;
 	border-radius: 6px;
 	background: white;
+}
+
+PulseAddDialog QTextEdit#textEdit_Pulse {
+	border: 2px solid #7ecbfb;
+	border-radius: 6px;
+	background: white;
+}
+
+PulseAddDialog QFrame#frame_input, QFrame#frame_reply, QFrame#frame {
+	border: 0px;
+}
+
+PulseAddDialog QLabel#label_groupName {
+	font-size: 12pt;
+}
+
+PulseReply #line_replyLine , PulseMessage #line{
+	color: #7ecbfb;
+}
+
+PulseReply QLabel#label_groupName{
+	color: #5b7083;
+}
+
+WireDialog QLabel#label_viewMode {
+	font-size: 12pt;
+}
+
+WireGroupDialog QFrame#frame {
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
+	border: 0px;
 }

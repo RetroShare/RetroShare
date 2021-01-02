@@ -375,6 +375,9 @@ MainWindow::~MainWindow()
     delete soundStatus;
     delete toasterDisable;
     delete sysTrayStatus;
+    delete trayIcon;
+    delete trayMenu;
+    delete notifyMenu;
 #ifdef MESSENGER_WINDOW
     MessengerWindow::releaseInstance();
 #endif
@@ -602,7 +605,7 @@ void MainWindow::displayDiskSpaceWarning(int loc,int size_limit_mb)
 void MainWindow::createTrayIcon()
 {
     /** Tray icon Menu **/
-    QMenu *trayMenu = new QMenu(this);
+    trayMenu = new QMenu(this);
     if (sysTrayStatus) sysTrayStatus->trayMenu = trayMenu;
     QObject::connect(trayMenu, SIGNAL(aboutToShow()), this, SLOT(updateMenu()));
     toggleVisibilityAction = trayMenu->addAction(QIcon(IMAGE_RETROSHARE), tr("Show/Hide"), this, SLOT(toggleVisibilitycontextmenu()));

@@ -156,6 +156,9 @@ private:
     RSTreeWidgetItemCompareRole *compareSummaryRole;
     RSTreeWidgetItemCompareRole *compareResultRole;
 
+    QAbstractItemDelegate *mAgeColumnDelegate;
+    QAbstractItemDelegate *mSizeColumnDelegate;
+
 	/* Color definitions (for standard see qss.default) */
 	QColor mTextColorLocal;
 	QColor mTextColorDownloading;

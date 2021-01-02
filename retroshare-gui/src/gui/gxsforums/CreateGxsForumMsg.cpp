@@ -127,12 +127,38 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 	ui.generateCheckBox->hide();
 	ui.generateSpinBox->hide();
 #endif
+    processSettings(true);
 }
 
 CreateGxsForumMsg::~CreateGxsForumMsg()
 {
+    processSettings(false);
 	delete(mForumQueue);
 	delete(mCirclesQueue);
+}
+
+void CreateGxsForumMsg::processSettings(bool load)
+{
+    Settings->beginGroup(QString("ForumPostsWidget"));
+
+    if (load)
+    {
+        // state of ID Chooser combobox
+        RsGxsId gxs_id(Settings->value("IDChooser", QString::fromStdString(RsGxsId().toStdString())).toString().toStdString());
+
+        if(!gxs_id.isNull() && rsIdentity->isOwnId(gxs_id))
+            ui.idChooser->setChosenId(gxs_id);
+    }
+    else
+    {
+        // state of ID Chooser combobox
+        RsGxsId id;
+
+        if(ui.idChooser->getChosenId(id))
+            Settings->setValue("IDChooser", QString::fromStdString(id.toStdString()));
+    }
+
+    Settings->endGroup();
 }
 
 void  CreateGxsForumMsg::newMsg()

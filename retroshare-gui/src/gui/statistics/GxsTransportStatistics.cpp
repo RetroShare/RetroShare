@@ -464,17 +464,16 @@ void GxsTransportStatistics::loadGroups()
 #ifdef DEBUG_FORUMS
         std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
 #endif
-		auto stats = std::make_unique<
-		        std::map<RsGxsGroupId,RsGxsTransGroupStatistics> >();
+        auto stats = new std::map<RsGxsGroupId,RsGxsTransGroupStatistics>();
 
 		if(!rsGxsTrans->getGroupStatistics(*stats))
 		{
 			RS_ERR("Cannot retrieve group statistics in GxsTransportStatistics");
+            delete stats;
 			return;
 		}
 
-		RsQThreadUtils::postToObject(
-		            [stats = std::move(stats), this]()
+        RsQThreadUtils::postToObject( [stats, this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
@@ -485,7 +484,8 @@ void GxsTransportStatistics::loadGroups()
 			updateContent();
 			mStateHelper->setLoading(GXSTRANS_GROUP_META, false);
 
-		}, this );
+            delete stats;
+        }, this );
 
     });
 }
