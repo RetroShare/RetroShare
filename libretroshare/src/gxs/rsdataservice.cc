@@ -1265,12 +1265,13 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
 
         // if vector empty then request all messages
 
-        t_MetaDataCache<RsGxsMessageId,RsGxsMsgMetaData>& cache(mMsgMetaDataCache[grpId]);
+        // The pointer here is a trick to not initialize a new cache entry when cache is disabled, while keeping the unique variable all along.
+        t_MetaDataCache<RsGxsMessageId,RsGxsMsgMetaData> *cache(mUseCache? (&mMsgMetaDataCache[grpId]) : nullptr);
 
         if(msgIdV.empty())
         {
-            if(mUseCache && cache.isCacheUpToDate())
-                cache.getFullMetaList(msgMeta[grpId]);
+            if(mUseCache && cache->isCacheUpToDate())
+                cache->getFullMetaList(msgMeta[grpId]);
             else
 			{
 				RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, mMsgMetaColumns, KEY_GRP_ID+ "='" + grpId.toStdString() + "'", "");
@@ -1280,7 +1281,7 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
                     locked_retrieveMsgMetaList(c, msgMeta[grpId]);
 
                     if(mUseCache)
-                            cache.setCacheUpToDate(true);
+                            cache->setCacheUpToDate(true);
 				}
                 delete c;
 			}
@@ -1297,7 +1298,7 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
 			{
 				const RsGxsMessageId& msgId = *sit;
 
-                auto meta = mUseCache?cache.getMeta(msgId): (std::shared_ptr<RsGxsMsgMetaData>());
+                auto meta = mUseCache?cache->getMeta(msgId): (std::shared_ptr<RsGxsMsgMetaData>());
 
                 if(meta)
                     metaSet.push_back(meta);
