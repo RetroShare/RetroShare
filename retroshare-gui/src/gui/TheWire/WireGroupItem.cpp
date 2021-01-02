@@ -22,6 +22,10 @@
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QBuffer>
+#include <QPixmap>
+#include <QImage>
+#include <QSize>
+#include <QPainter>
 
 #include "WireGroupItem.h"
 #include "WireGroupDialog.h"
@@ -30,6 +34,27 @@
 
 #include <algorithm>
 #include <iostream>
+
+static QImage getCirclePhoto(const QImage original, int sizePhoto)
+{
+    QImage target(sizePhoto, sizePhoto, QImage::Format_ARGB32_Premultiplied);
+    target.fill(Qt::transparent);
+
+    QPainter painter(&target);
+    painter.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+    painter.setBrush(QBrush(Qt::white));
+    auto scaledPhoto = original
+            .scaled(sizePhoto, sizePhoto, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation)
+            .convertToFormat(QImage::Format_ARGB32_Premultiplied);
+    int margin = 0;
+    if (scaledPhoto.width() > sizePhoto) {
+        margin = (scaledPhoto.width() - sizePhoto) / 2;
+    }
+    painter.drawEllipse(0, 0, sizePhoto, sizePhoto);
+    painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+    painter.drawImage(0, 0, scaledPhoto, margin, 0);
+    return target;
+}
 
 /** Constructor */
 
@@ -54,7 +79,7 @@ void WireGroupItem::setup()
 	label_groupName->setText(QString::fromStdString(mGroup.mMeta.mGroupName));
 	label_authorId->setId(mGroup.mMeta.mAuthorId);
 	frame_details->setVisible(false);
-	
+
 	if (mGroup.mHeadshot.mData )
 	{
 		QPixmap pixmap;
@@ -63,7 +88,12 @@ void WireGroupItem::setup()
 				mGroup.mHeadshot.mSize,
 				pixmap,GxsIdDetails::ORIGINAL))
 		{
-				pixmap = pixmap.scaled(32,32);
+				//make avatar as circle avatar
+				QImage orginalImage = pixmap.toImage();
+				QImage circleImage = getCirclePhoto(orginalImage,orginalImage.size().width());
+				pixmap.convertFromImage(circleImage);
+
+				pixmap = pixmap.scaled(40,40);
 				label_headshot->setPixmap(pixmap);
 		}
 	}

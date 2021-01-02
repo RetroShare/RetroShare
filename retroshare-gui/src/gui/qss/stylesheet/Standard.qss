@@ -1128,6 +1128,10 @@ PulseReply #line_replyLine , PulseMessage #line{
 	color: #7ecbfb;
 }
 
+PulseReply QLabel#label_groupName{
+	color: #5b7083;
+}
+
 WireDialog QLabel#label_viewMode {
 	font-size: 12pt;
 }
