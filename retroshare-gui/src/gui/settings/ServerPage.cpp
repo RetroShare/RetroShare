@@ -91,12 +91,12 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
   if(RsAccounts::isHiddenNode())
   {
-	  if(RsAccounts::isTorAuto())
+      ui.tabWidget->removeTab(TAB_RELAYS) ;		// remove relays. Not useful in Tor mode.
+      ui.tabWidget->removeTab(TAB_IP_FILTERS) ;	// remove IP filters. Not useful in Tor mode.
+
+      if(RsAccounts::isTorAuto())
 	  {
 		  // Here we use absolute numbers instead of consts defined above, because the consts correspond to the tab number *after* this tab removal.
-
-		  ui.tabWidget->removeTab(TAB_RELAYS) ;		// remove relays. Not useful in Tor mode.
-		  ui.tabWidget->removeTab(TAB_IP_FILTERS) ;	// remove IP filters. Not useful in Tor mode.
 
 		  ui.hiddenpage_proxyAddress_i2p->hide() ;
 		  ui.hiddenpage_proxyLabel_i2p->hide() ;
@@ -108,9 +108,11 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 		  ui.l_hiddenpage_configuration->hide() ;
 		  ui.hiddenpageInHelpPlainTextEdit->hide() ;
 
-		  ui.hiddenpage_outHeader->setText(tr("Tor has been automatically configured by Retroshare. You shouldn't need to change anything here.")) ;
+          ui.hiddenpage_outHeader->setText(tr("Tor has been automatically configured by Retroshare. You shouldn't need to change anything here.")) ;
 		  ui.hiddenpage_inHeader->setText(tr("Tor has been automatically configured by Retroshare. You shouldn't need to change anything here.")) ;
-	  }
+
+          ui.hiddenServiceTab->removeTab(TAB_HIDDEN_SERVICE_I2P_BOB);	// warning: the order of operation here is very important.
+      }
   }
   else
   {
