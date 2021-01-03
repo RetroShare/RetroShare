@@ -277,10 +277,21 @@ void ChatLobbyDialog::textBrowserAskContextMenu(QMenu* contextMnu, QString ancho
 
 void ChatLobbyDialog::initParticipantsContextMenu(QMenu *contextMnu, QList<RsGxsId> idList)
 {
+// later this context menu will be deleted
 	if (!contextMnu)
 		return;
 	if (idList.isEmpty())
 		return;
+
+	// not displaying unneeded menu entries when banning people
+	QAction* make_invisible = contextMnu->findChild<QAction*>("edit-copy", Qt::FindDirectChildrenOnly);
+	if (make_invisible) {
+		make_invisible->setVisible(false);
+	}
+	make_invisible = contextMnu->findChild<QAction*>("link-copy", Qt::FindDirectChildrenOnly);
+	if (make_invisible) {
+		make_invisible->setVisible(false);
+	}
 
 	contextMnu->addAction(distantChatAct);
 	contextMnu->addAction(sendMessageAct);
