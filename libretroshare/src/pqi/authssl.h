@@ -161,7 +161,9 @@ public:
 
 	/** Initialisation Functions (Unique) */
 	AuthSSLimpl();
-	bool validateOwnCertificate(X509 *x509, EVP_PKEY *pkey) override;
+    virtual ~AuthSSLimpl();
+
+    bool validateOwnCertificate(X509 *x509, EVP_PKEY *pkey) override;
 
 	bool active() override;
 	int InitAuth( const char *srvr_cert, const char *priv_key,
