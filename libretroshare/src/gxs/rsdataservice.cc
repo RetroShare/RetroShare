@@ -708,10 +708,8 @@ std::shared_ptr<RsGxsMsgMetaData> RsDataService::locked_getMsgMeta(RetroCursor &
 
     if(ok)
         return msgMeta;
-    else
-        return nullptr;
 
-    return NULL;
+    return nullptr;
 }
 
 
@@ -750,10 +748,9 @@ RsNxsMsg* RsDataService::locked_getMessage(RetroCursor &c)
 
     if(ok)
         return msg;
-    else
-        delete msg;
 
-    return NULL;
+    delete msg;
+    return nullptr;
 }
 
 int RsDataService::storeMessage(const std::list<RsNxsMsg*>& msg)
