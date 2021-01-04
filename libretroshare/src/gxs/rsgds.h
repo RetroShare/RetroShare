@@ -207,6 +207,13 @@ public:
     virtual uint32_t cacheSize() const = 0;
 
     /*!
+     * \brief serviceType
+     * \return
+     *          The service type for the current data service.
+     */
+    virtual uint16_t serviceType() const = 0 ;
+
+    /*!
      * @param size size of cache to set in bytes
      */
     virtual int setCacheSize(uint32_t size) = 0;

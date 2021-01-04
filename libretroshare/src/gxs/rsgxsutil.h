@@ -175,11 +175,7 @@ public:
                          RsGenExchange *genex, RsSerialType& gxsSerialiser,
                          RsGixs *gixs);
 
-	static bool check(uint16_t service_type, RsGixs *mgixs, RsGeneralDataService *mds
-#ifdef RS_DEEP_CHANNEL_INDEX
-	                  , RsGenExchange* mGenExchangeClient, RsSerialType& mSerializer
-#endif
-	                  , std::vector<RsGxsGroupId>& grpsToDel, GxsMsgReq& msgsToDel);
+    static bool check(uint16_t service_type, RsGixs *mgixs, RsGeneralDataService *mds);
     bool isDone();
 
     void run();
@@ -189,6 +185,43 @@ public:
 private:
 
     RsGeneralDataService* const mDs;
+    RsGenExchange *mGenExchangeClient;
+    bool mDone;
+    RsMutex mIntegrityMutex;
+    std::vector<RsGxsGroupId> mDeletedGrps;
+    GxsMsgReq mDeletedMsgs;
+
+    RsGixs* mGixs;
+};
+
+/*!
+ * Checks the integrity message and groups
+ * in rsDataService using computed hash
+ */
+class RsGxsSinglePassIntegrityCheck
+{
+public:
+
+    /*!
+     *
+     * @param dataService
+     * @param mGroupTS
+     * @param chunkSize
+     * @param sleepPeriod
+     */
+    RsGxsSinglePassIntegrityCheck( RsGeneralDataService* const dataService,
+                         RsGenExchange *genex, RsSerialType& gxsSerialiser,
+                         RsGixs *gixs);
+
+    static bool check(uint16_t service_type, RsGixs *mgixs, RsGeneralDataService *mds
+#ifdef RS_DEEP_CHANNEL_INDEX
+                      , RsGenExchange* mGenExchangeClient, RsSerialType& mSerializer
+#endif
+                      , std::vector<RsGxsGroupId>& grpsToDel, GxsMsgReq& msgsToDel);
+
+private:
+
+    RsGeneralDataService *const mDs;
     RsGenExchange *mGenExchangeClient;
 #ifdef RS_DEEP_CHANNEL_INDEX
     RsSerialType& mSerializer;

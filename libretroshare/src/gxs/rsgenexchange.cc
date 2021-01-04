@@ -59,8 +59,8 @@ static const uint32_t INDEX_AUTHEN_IDENTITY     = 0x00000010; // identity
 static const uint32_t INDEX_AUTHEN_PUBLISH      = 0x00000020; // publish key
 static const uint32_t INDEX_AUTHEN_ADMIN        = 0x00000040; // admin key
 
-static const uint32_t MSG_CLEANUP_PERIOD     = 60*59; // 59 minutes
-static const uint32_t INTEGRITY_CHECK_PERIOD = 60*31; // 31 minutes
+static const uint32_t MSG_CLEANUP_PERIOD     = 60*5; // 59 minutes
+static const uint32_t INTEGRITY_CHECK_PERIOD = 60*3; // 31 minutes
 
 #define GXS_MASK "GXS_MASK_HACK"
 

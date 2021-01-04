@@ -135,7 +135,7 @@ public:
      * @param withMeta true will also retrieve metadata
      * @return error code
 	 */
-    int retrieveNxsMsgs(const GxsMsgReq& reqIds, GxsMsgResult& msg,  bool withMeta = false);
+    int retrieveNxsMsgs(const GxsMsgReq& reqIds, GxsMsgResult& msg,  bool withMeta = false) override;
 
     /*!
      * Retrieves groups, if empty, retrieves all grps, if map is not empty
@@ -144,14 +144,14 @@ public:
      * @param withMeta this initialise the metaData member of the nxsgroups retrieved
      * @return error code
      */
-    int retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp*>& grp, bool withMeta);
+    int retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp*>& grp, bool withMeta) override;
 
     /*!
      * Retrieves meta data of all groups stored (most current versions only)
      * @param grp output group meta data
      * @return error code
      */
-    int retrieveGxsGrpMetaData(std::map<RsGxsGroupId, std::shared_ptr<RsGxsGrpMetaData> > &grp);
+    int retrieveGxsGrpMetaData(std::map<RsGxsGroupId, std::shared_ptr<RsGxsGrpMetaData> > &grp) override;
 
     /*!
      * Retrieves meta data of all groups stored (most current versions only)
@@ -159,7 +159,7 @@ public:
      * @param msgMeta meta data result as map of grpIds to array of metadata for that grpId
      * @return error code
      */
-    int retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaResult& msgMeta);
+    int retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaResult& msgMeta) override;
 
     /*!
      * remove msgs in data store
@@ -167,21 +167,21 @@ public:
      * @param msgIds ids of messages to be removed
      * @return error code
      */
-    int removeMsgs(const GxsMsgReq& msgIds);
+    int removeMsgs(const GxsMsgReq& msgIds) override;
 
     /*!
      * remove groups in data store listed in grpIds param
      * @param grpIds ids of groups to be removed
      * @return error code
      */
-    int removeGroups(const std::vector<RsGxsGroupId>& grpIds);
+    int removeGroups(const std::vector<RsGxsGroupId>& grpIds) override;
 
     /*!
      * Retrieves all group ids in store
      * @param grpIds all grpids in store is inserted into this vector
      * @return error code
      */
-    int retrieveGroupIds(std::vector<RsGxsGroupId> &grpIds);
+    int retrieveGroupIds(std::vector<RsGxsGroupId> &grpIds) override;
 
     /*!
      * Retrives all msg ids in store
@@ -189,50 +189,57 @@ public:
      * @param msgId msgsids retrieved
      * @return error code
      */
-    int retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std_set& msgId);
+    int retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std_set& msgId) override;
 
     /*!
      * @return the cache size set for this RsGeneralDataService in bytes
      */
-    uint32_t cacheSize() const;
+    uint32_t cacheSize() const override;
+
+    /*!
+     * \brief serviceType
+     * \return
+     *          The service type for the current data service.
+     */
+    virtual uint16_t serviceType() const override { return mServType; }
 
     /*!
      * @param size size of cache to set in bytes
      */
-    int setCacheSize(uint32_t size);
+    int setCacheSize(uint32_t size) override;
 
     /*!
      * Stores a list of signed messages into data store
      * @param msg map of message and decoded meta data information
      * @return error code
      */
-    int storeMessage(const std::list<RsNxsMsg*>& msg);
+    int storeMessage(const std::list<RsNxsMsg*>& msg) override;
 
     /*!
      * Stores a list of groups in data store
      * @param grp map of group and decoded meta data
      * @return error code
      */
-    int storeGroup(const std::list<RsNxsGrp*>& grp);
+    int storeGroup(const std::list<RsNxsGrp*>& grp) override;
 
     /*!
 	 * Updates group entries in Db
 	 * @param grp map of group and decoded meta data
 	 * @return error code
 	 */
-    int updateGroup(const std::list<RsNxsGrp*>& grsp);
+    int updateGroup(const std::list<RsNxsGrp*>& grsp) override;
 
     /*!
      * @param metaData The meta data item to update
      * @return error code
      */
-    int updateMessageMetaData(const MsgLocMetaData& metaData);
+    int updateMessageMetaData(const MsgLocMetaData& metaData) override;
 
     /*!
      * @param metaData The meta data item to update
      * @return error code
      */
-    int updateGroupMetaData(const GrpLocMetaData &meta);
+    int updateGroupMetaData(const GrpLocMetaData &meta) override;
 
     /*!
      * Completely clear out data stored in
@@ -240,10 +247,10 @@ public:
      * as it was when first constructed
      * @return error code
      */
-    int resetDataStore();
+    int resetDataStore() override;
 
-    bool validSize(RsNxsMsg* msg) const;
-    bool validSize(RsNxsGrp* grp) const;
+    bool validSize(RsNxsMsg* msg) const override;
+    bool validSize(RsNxsGrp* grp) const override;
 
     /*!
      * Convenience function used to only update group keys. This is used when sending
@@ -251,7 +258,7 @@ public:
      * @return SQL error code
      */
 
-    int updateGroupKeys(const RsGxsGroupId& grpId,const RsTlvSecurityKeySet& keys, uint32_t subscribe_flags) ;
+    int updateGroupKeys(const RsGxsGroupId& grpId,const RsTlvSecurityKeySet& keys, uint32_t subscribe_flags)  override;
 
     void debug_printCacheSize() ;
 
