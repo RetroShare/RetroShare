@@ -105,11 +105,10 @@ public:
 		}
 	}
 
-    void debug_computeSize(uint32_t& nb_items, uint32_t& nb_items_on_deadlist, uint64_t& total_size,uint64_t& total_size_of_deadlist) const
+    void debug_computeSize(uint32_t& nb_items, uint64_t& total_size) const
     {
         nb_items = mMetas.size();
         total_size = 0;
-        total_size_of_deadlist = 0;
 
         for(auto it:mMetas) total_size += it.second->serial_size();
     }
