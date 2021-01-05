@@ -25,6 +25,7 @@
 
 #include "PhotoItem.h"
 #include "ui_PhotoItem.h"
+#include "gui/common/FilesDefs.h"
 
 PhotoItem::PhotoItem(PhotoShareItemHolder *holder, const RsPhotoPhoto &photo, QWidget *parent):
     QWidget(parent),
