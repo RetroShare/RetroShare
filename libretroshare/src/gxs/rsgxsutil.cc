@@ -271,7 +271,7 @@ bool RsGxsIntegrityCheck::check(uint16_t service_type, RsGixs *mgixs, RsGeneralD
             const auto& meta = *vit;
 
             if (subscribed_groups.count(meta->mGroupId))
-                if(meta->mAuthorId.isNull())
+                if(!meta->mAuthorId.isNull())
 				{
 #ifdef DEBUG_GXSUTIL
                     GXSUTIL_DEBUG() << "TimeStamping message authors' key ID " << meta->mAuthorId << " in message " << meta->mMsgId << ", group ID " << meta->mGroupId<< std::endl;
