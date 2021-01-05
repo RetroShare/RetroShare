@@ -20,6 +20,8 @@
 
 #include "AlbumItem.h"
 #include "ui_AlbumItem.h"
+#include "gui/common/FilesDefs.h"
+
 #include <iostream>
 
 #include <QMouseEvent>
