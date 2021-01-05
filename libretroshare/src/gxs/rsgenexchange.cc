@@ -162,6 +162,15 @@ RsGenExchange::RsGenExchange(
   VALIDATE_MAX_WAITING_TIME(60)
 {
     mDataAccess = new RsGxsDataAccess(gds);
+
+    std::vector<RsGxsGroupId> grpsToDel;
+    GxsMsgReq msgsToDel;
+
+    RsGxsSinglePassIntegrityCheck::check(mServType,mGixs,mDataStore,
+#ifdef RS_DEEP_CHANNEL_INDEX
+                                         this, mSerialiser,
+#endif
+                                         grpsToDel,msgsToDel);
 }
 
 void RsGenExchange::setNetworkExchangeService(RsNetworkExchangeService *ns)
@@ -169,9 +178,7 @@ void RsGenExchange::setNetworkExchangeService(RsNetworkExchangeService *ns)
     if(mNetService != NULL)
         std::cerr << "(EE) Cannot override existing network exchange service. Make sure it has been deleted otherwise." << std::endl;
     else
-	{
         mNetService = ns ;
-	}
 }
 
 RsGenExchange::~RsGenExchange()
