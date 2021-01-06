@@ -121,6 +121,10 @@ WikiDialog::WikiDialog(QWidget *parent) : RsGxsUpdateBroadcastPage(rsWiki, paren
 	connect(newGroupButton, SIGNAL(clicked()), this, SLOT(OpenOrShowAddGroupDialog()));
 	ui.groupTreeWidget->addToolButton(newGroupButton);
 
+	QTimer *timer = new QTimer(this);
+	timer->connect(timer, SIGNAL(timeout()), this, SLOT(insertWikiGroups()));
+	timer->start(1000);
+
 	// load settings
 	processSettings(true);
 }
