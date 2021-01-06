@@ -41,7 +41,7 @@
 
 static const uint32_t MAX_GXS_IDS_REQUESTS_NET   =  10 ; // max number of requests from cache/net (avoids killing the system!)
 
-#define DEBUG_GXSUTIL 1
+// #define DEBUG_GXSUTIL 1
 
 #ifdef DEBUG_GXSUTIL
 #define GXSUTIL_DEBUG() std::cerr << "[" << time(NULL)  << "] : GXS_UTIL : " << __FUNCTION__ << " : "
@@ -170,7 +170,9 @@ bool RsGxsCleanUp::clean(RsGxsGroupId& next_group_to_check,std::vector<RsGxsGrou
 
         if(it->first == next_group_to_check)
         {
+#ifdef DEBUG_GXSUTIL
             GXSUTIL_DEBUG() << "Had the time to test all groups. Will start again at " << it->first << std::endl;
+#endif
             full_round = true;
             break;
         }
@@ -182,7 +184,9 @@ bool RsGxsCleanUp::clean(RsGxsGroupId& next_group_to_check,std::vector<RsGxsGrou
         //if(tm > now + 1) // we spent more than 1 sec on the job already
         if(tm > now) // we spent more than 1 sec on the job already
         {
+#ifdef DEBUG_GXSUTIL
             GXSUTIL_DEBUG() << "Aborting cleanup because it took too much time already. Next group left to be " << it->first << std::endl;
+#endif
             next_group_to_check = it->first;
             full_round = false;
             break;
