@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include "WikiGroupDialog.h"
+#include "gui/common/FilesDefs.h"
 
 #include <retroshare/rswiki.h>
 #include <iostream>
