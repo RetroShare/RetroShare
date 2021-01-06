@@ -739,3 +739,8 @@ void WikiDialog::updateDisplay(bool complete)
 		}
 	}
 }
+
+void WikiDialog::insertWikiGroups()
+{
+	updateDisplay(true);
+}
