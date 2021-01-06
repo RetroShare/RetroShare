@@ -209,29 +209,11 @@ public:
      * @param chunkSize
      * @param sleepPeriod
      */
-    RsGxsSinglePassIntegrityCheck( RsGeneralDataService* const dataService,
-                         RsGenExchange *genex, RsSerialType& gxsSerialiser,
-                         RsGixs *gixs);
-
     static bool check(uint16_t service_type, RsGixs *mgixs, RsGeneralDataService *mds
 #ifdef RS_DEEP_CHANNEL_INDEX
                       , RsGenExchange* mGenExchangeClient, RsSerialType& mSerializer
 #endif
                       , std::vector<RsGxsGroupId>& grpsToDel, GxsMsgReq& msgsToDel);
-
-private:
-
-    RsGeneralDataService *const mDs;
-    RsGenExchange *mGenExchangeClient;
-#ifdef RS_DEEP_CHANNEL_INDEX
-    RsSerialType& mSerializer;
-#endif
-    bool mDone;
-    RsMutex mIntegrityMutex;
-    std::vector<RsGxsGroupId> mDeletedGrps;
-    GxsMsgReq mDeletedMsgs;
-
-    RsGixs* mGixs;
 };
 
 class GroupUpdate
