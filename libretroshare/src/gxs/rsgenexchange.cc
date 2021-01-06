@@ -163,14 +163,46 @@ RsGenExchange::RsGenExchange(
 {
     mDataAccess = new RsGxsDataAccess(gds);
 
-    std::vector<RsGxsGroupId> grpsToDel;
-    GxsMsgReq msgsToDel;
+    // Perform an early checking/cleaning of the db. Will eliminate groups and messages that do not match their hash
 
-    RsGxsSinglePassIntegrityCheck::check(mServType,mGixs,mDataStore,
 #ifdef RS_DEEP_CHANNEL_INDEX
-                                         this, mSerialiser,
+    // This code is only called because it of deep indexing in channels. But loading
+    // the entire set of messages in order to provide indexing is pretty bad (very costly and slowly
+    // eats memory, as many tests have shown. Not because of leaks, but because new threads are
+    // apparently attributed large stacks and pages of memory are not regained by the system maybe because it thinks
+    // that RS will use them again.
+    //
+    //    * the deep check should be implemented differently, in an incremental way. For instance in notifyChanges() of each
+    //      service (e.g. channels here) should update the index when a new message is received. The question to how old messages
+    //	    are processed is open. I believe that they shouldn't. New users will progressively process them.
+    //
+    //    * integrity check (re-hashing of message data) is not needed. Message signature already ensures that all messages received are
+    //      unalterated. The only problem (possibly very rare) is that a message is locally corrupted and not deleted (because of no check).
+    //      It will therefore never be replaced by the correct one from friends. The cost of re-hashing the whole db data regularly
+    //      doesn't counterbalance such a low risk.
+    //
+    if(mServType == RS_SERVICE_GXS_TYPE_CHANNELS)
+    {
+        std::vector<RsGxsGroupId> grpsToDel;
+        GxsMsgReq msgsToDel;
+
+        RsGxsSinglePassIntegrityCheck::check(mServType,mGixs,mDataStore,
+                                             this, mSerialiser,
+                                             grpsToDel,msgsToDel);
+
+        for(auto& grpId: grpsToDel)
+        {
+            uint32_t token2=0;
+            deleteGroup(token2,grpId);
+        }
+
+        if(!msgsToDel.empty())
+        {
+            uint32_t token1=0;
+            deleteMsgs(token1,msgsToDel);
+        }
+    }
 #endif
-                                         grpsToDel,msgsToDel);
 }
 
 void RsGenExchange::setNetworkExchangeService(RsNetworkExchangeService *ns)
