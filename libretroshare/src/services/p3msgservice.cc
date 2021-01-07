@@ -115,6 +115,19 @@ RsServiceInfo p3MsgService::getServiceInfo()
 		MSG_MIN_MINOR_VERSION);
 }
 
+p3MsgService::~p3MsgService()
+{
+    RS_STACK_MUTEX(mMsgMtx); /********** STACK LOCKED MTX ******/
+
+    for(auto tag:mTags)          delete tag.second;
+    for(auto tag:mMsgTags)       delete tag.second;
+    for(auto msgid:mSrcIds)      delete msgid.second;
+    for(auto parentid:mParentId) delete parentid.second;
+    for(auto img:imsg)           delete img.second;
+    for(auto mout:msgOutgoing)   delete mout.second;
+
+    for(auto mpend:_pendingPartialMessages) delete mpend.second;
+}
 
 uint32_t p3MsgService::getNewUniqueMsgId()
 {
