@@ -74,6 +74,7 @@ private slots:
 	void wikiGroupChanged(const QString &groupId);
 
 	void todo();
+	void insertWikiGroups();
 
 private:
 

@@ -284,6 +284,7 @@ void GxsChannelFilesStatusWidget::download()
 
 	rsFiles->FileRequest(mFile.mName, mFile.mHash, mFile.mSize, destination, RS_FILE_REQ_ANONYMOUS_ROUTING, sources);
 
+	emit onButtonClick();// Signals the parent widget to e.g. update the downloadable file count
 	check();
 }
 
@@ -291,6 +292,7 @@ void GxsChannelFilesStatusWidget::pause()
 {
 	rsFiles->FileControl(mFile.mHash, RS_FILE_CTRL_PAUSE);
 
+	emit onButtonClick();// Signals the parent widget to e.g. update the downloadable file count
 	check();
 }
 
@@ -298,6 +300,7 @@ void GxsChannelFilesStatusWidget::resume()
 {
 	rsFiles->FileControl(mFile.mHash, RS_FILE_CTRL_START);
 
+	emit onButtonClick();// Signals the parent widget to e.g. update the downloadable file count
 	check();
 }
 
@@ -309,6 +312,7 @@ void GxsChannelFilesStatusWidget::cancel()
 
 	rsFiles->FileCancel(mFile.mHash);
 
+	emit onButtonClick();// Signals the parent widget to e.g. update the downloadable file count
 	check();
 }
 

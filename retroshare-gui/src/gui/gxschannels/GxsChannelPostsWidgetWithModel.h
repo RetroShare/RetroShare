@@ -142,8 +142,9 @@ protected:
 private slots:
 	void showPostDetails();
 	void updateGroupData();
-    void download();
-    void createMsg();
+	void download();
+	void updateDAll_PB();
+	void createMsg();
 //	void toggleAutoDownload();
 	void subscribeGroup(bool subscribe);
 	void filterChanged(QString);
@@ -189,7 +190,8 @@ private:
     ChannelPostDelegate        *mChannelPostsDelegate;
     ChannelPostFilesDelegate   *mFilesDelegate;
 
-    RsGxsMessageId mSelectedPost;
+	std::map<RsGxsGroupId,RsGxsMessageId> mLastSelectedPosts;
+	RsGxsMessageId mNavigatePendingMsgId;
 
 	/* UI - from Designer */
 	Ui::GxsChannelPostsWidgetWithModel *ui;

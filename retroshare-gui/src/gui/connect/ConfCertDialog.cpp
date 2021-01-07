@@ -275,15 +275,22 @@ void ConfCertDialog::loadInvitePage()
 //	ui.userCertificateText_2->setText(QString::fromUtf8(pgp_key.c_str()));
 
 	std::string invite ;
+    RetroshareInviteFlags flags = RetroshareInviteFlags::DNS | RetroshareInviteFlags::CURRENT_IP | RetroshareInviteFlags::RADIX_FORMAT;
+
+    if(!detail.isHiddenNode && ui._includeIPHistory_CB->isChecked())
+        flags |= RetroshareInviteFlags::FULL_IP_HISTORY;
 
     if(ui._shortFormat_CB->isChecked())
 	{
-        rsPeers->getShortInvite(invite,detail.id,true,!(ui._includeIPHistory_CB->isChecked()|| detail.isHiddenNode) );
-		ui.stabWidget->setTabText(1, tr("Retroshare ID"));
+        rsPeers->getShortInvite(invite,detail.id,flags);
+        ui.stabWidget->setTabText(2, tr("Retroshare ID"));
 	}
 	else
 	{
-		invite = rsPeers->GetRetroshareInvite(detail.id, ui._shouldAddSignatures_CB->isChecked(), ui._includeIPHistory_CB->isChecked() ) ;
+        if(ui._shouldAddSignatures_CB->isChecked())
+            flags |= RetroshareInviteFlags::PGP_SIGNATURES;
+
+        invite = rsPeers->GetRetroshareInvite(detail.id, flags ) ;
 		ui.stabWidget->setTabText(1, tr("Retroshare Certificate"));
 	}
 	

@@ -262,6 +262,17 @@ bool p3IdService::isARegularContact(const RsGxsId& id)
     return mContacts.find(id) != mContacts.end() ;
 }
 
+bool p3IdService::receiveNewIdentity(RsNxsGrp *identity_grp)
+{
+    receiveNewGroups(std::vector<RsNxsGrp*>{ identity_grp });
+    return true;
+}
+
+bool p3IdService::retrieveNxsIdentity(const RsGxsId& group_id,RsNxsGrp *& identity_grp)
+{
+    return RsGenExchange::retrieveNxsIdentity(RsGxsGroupId(group_id),identity_grp);
+}
+
 bool p3IdService::setAsRegularContact(const RsGxsId& id,bool b)
 {
     RsStackMutex stack(mIdMtx);

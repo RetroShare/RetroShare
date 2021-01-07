@@ -203,6 +203,8 @@ void GlobalRouterStatistics::updateContent()
 		item -> setData(COL_DUPLICATION_FACTOR, Qt::DisplayRole, QString::number(cache_infos[i].duplication_factor));
 		item -> setData(COL_RECEIVEDTIME,     Qt::DisplayRole, QString::number(now - cache_infos[i].routing_time));
         item -> setData(COL_SENDTIME,         Qt::DisplayRole, QString::number(now - cache_infos[i].last_sent_time));
+
+		item->setTextAlignment(COL_DATASIZE, Qt::AlignRight	);
     }
 }
 

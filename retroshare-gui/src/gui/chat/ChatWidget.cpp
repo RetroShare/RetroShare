@@ -42,7 +42,6 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/settings/rsettingswin.h"
 #include "gui/settings/RsharePeerSettings.h"
-#include "gui/im_history/ImHistoryBrowser.h"
 #include "gui/common/StatusDefs.h"
 #include "gui/common/FilesDefs.h"
 #include "gui/common/Emoticons.h"
@@ -53,6 +52,7 @@
 #include "gui/chat/ChatUserNotify.h"//For BradCast
 #include "util/DateTime.h"
 #include "util/imageutil.h"
+#include "gui/im_history/ImHistoryBrowser.h"
 
 #include <retroshare/rsstatus.h>
 #include <retroshare/rsidentity.h>
@@ -78,7 +78,7 @@ ChatWidget::ChatWidget(QWidget *parent)
   , lastStatusSendTime(0)
   , firstShow(true), inChatCharFormatChanged(false), firstSearch(true)
   , lastUpdateCursorPos(0), lastUpdateCursorEnd(0)
-  , completer(NULL), notify(NULL)
+  , completer(NULL), imBrowser(NULL), notify(NULL)
   , ui(new Ui::ChatWidget)
 {
 	ui->setupUi(this);
@@ -87,8 +87,8 @@ ChatWidget::ChatWidget(QWidget *parent)
 	double fmm = iconHeight > FMM_THRESHOLD ? FMM : FMM_SMALLER;
 	iconHeight *= fmm;
 	QSize iconSize = QSize(iconHeight, iconHeight);
-	int butt_size(iconSize.height() + fmm);
-	QSize buttonSize = QSize(butt_size, butt_size);
+	//int butt_size(iconSize.height() + fmm);
+	//QSize buttonSize = QSize(butt_size, butt_size);
 
 	lastMsgDate = QDate::currentDate();
 
@@ -290,6 +290,11 @@ void ChatWidget::addChatBarWidget(QWidget *w)
 void ChatWidget::addTitleBarWidget(QWidget *w)
 {
 	ui->pluginTitleFrame->layout()->addWidget(w) ;
+}
+
+void ChatWidget::addTopBarWidget(QWidget *w)
+{
+	ui->pluginTopFrame->layout()->addWidget(w) ;
 }
 
 void ChatWidget::hideChatText(bool hidden)
@@ -1607,8 +1612,9 @@ void ChatWidget::deleteChatHistory()
 
 void ChatWidget::messageHistory()
 {
-    ImHistoryBrowser imBrowser(chatId, ui->chatTextEdit, window());
-	imBrowser.exec();
+	if (!imBrowser)
+		imBrowser = new ImHistoryBrowser(chatId, ui->chatTextEdit, this->title, window());
+	imBrowser->show();
 }
 
 void ChatWidget::addExtraFile()
@@ -1836,13 +1842,16 @@ void ChatWidget::updateTitle()
 	ui->titleLabel->setText(RsHtml::plainText(name) + "@" + RsHtml::plainText(title));
 }
 
-void ChatWidget::updatePeersCustomStateString(const QString& /*peer_id*/, const QString& /*status_string*/)
+void ChatWidget::updatePeersCustomStateString(const QString& peer_id, const QString& status_string)
 {
+	if (chatType() != CHATTYPE_PRIVATE )
+	{
+		return;
+	}
+
 	QString status_text;
 
-    // TODO: fix peer_id and types and eveyrhing
-    /*
-    if (RsPeerId(peer_id.toStdString()) == peerId) {
+	if (RsPeerId(peer_id.toStdString()) == chatId.toPeerId()) {
 		// the peers status string has changed
 		if (status_string.isEmpty()) {
 			ui->statusMessageLabel->hide();
@@ -1857,7 +1866,6 @@ void ChatWidget::updatePeersCustomStateString(const QString& /*peer_id*/, const 
 			ui->statusLabel->setAlignment ( Qt::AlignVCenter );
 		}
 	}
-    */
 }
 
 void ChatWidget::updateStatusString(const QString &statusMask, const QString &statusString, bool permanent)

@@ -23,6 +23,7 @@
 
 #include "retroshare-gui/configpage.h"
 #include "gui/chat/ChatStyle.h"
+#include "gui/chat/ChatLobbyUserNotify.h"
 #include "ui_ChatPage.h"
 #include "gui/common/FilesDefs.h"
 
@@ -44,6 +45,7 @@ class ChatPage : public ConfigPage
 		virtual QString helpText() const { return ""; }
 
   private slots:
+      void updateChatLobbyUserNotify();
       void on_historyComboBoxVariant_currentIndexChanged(int index);
       void on_privateComboBoxVariant_currentIndexChanged(int index);
       void on_publicComboBoxVariant_currentIndexChanged(int index);
@@ -87,6 +89,8 @@ class ChatPage : public ConfigPage
 
       /** Qt Designer generated object */
       Ui::ChatPage ui;
+
+      ChatLobbyUserNotify* mChatLobbyUserNotify;
 };
 
 #endif

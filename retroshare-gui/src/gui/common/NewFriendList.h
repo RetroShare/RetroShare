@@ -126,6 +126,9 @@ private:
 	std::set<RsNodeGroupId> openGroups;
 	std::set<RsPgpId>   openPeers;
 
+    int mLastSortColumn;
+    Qt::SortOrder mLastSortOrder;
+
 	bool getOrCreateGroup(const std::string& name, uint flag, RsNodeGroupId& id);
 	bool getGroupIdByName(const std::string& name, RsNodeGroupId& id);
 

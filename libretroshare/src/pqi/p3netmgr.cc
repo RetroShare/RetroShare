@@ -1082,7 +1082,15 @@ bool p3NetMgrIMPL::checkNetAddress()
 	{
 		RsInfo() << __PRETTY_FUNCTION__ << " local address changed, resetting"
 		         <<" network." << std::endl;
-		
+
+        if(rsEvents)
+        {
+            auto ev = std::make_shared<RsNetworkEvent>();
+            ev->mNetworkEventCode = RsNetworkEventCode::LOCAL_IP_UPDATED;
+            ev->mIPAddress = sockaddr_storage_iptostring(mLocalAddr);
+            rsEvents->postEvent(ev);
+        }
+
 		if (mPeerMgr) mPeerMgr->UpdateOwnAddress(mLocalAddr, mExtAddr);
 
 		netReset();
@@ -1123,7 +1131,7 @@ bool    p3NetMgrIMPL::setLocalAddress(const struct sockaddr_storage &addr)
 #ifdef NETMGR_DEBUG_RESET
 		std::cerr << "p3NetMgrIMPL::setLocalAddress() Calling NetReset" << std::endl;
 #endif
-		rslog(RSL_WARNING, p3netmgrzone, "p3NetMgr::setLocalAddress() local address changed, resetting network");
+        rslog(RSL_WARNING, p3netmgrzone, "p3NetMgr::setLocalAddress() local address changed, resetting network");
 		netReset();
 	}
 	return true;
@@ -1159,6 +1167,15 @@ bool    p3NetMgrIMPL::setExtAddress(const struct sockaddr_storage &addr)
 #ifdef NETMGR_DEBUG_RESET
 		std::cerr << "p3NetMgrIMPL::setExtAddress() Calling NetReset" << std::endl;
 #endif
+
+        if(rsEvents)
+        {
+            auto ev = std::make_shared<RsNetworkEvent>();
+            ev->mNetworkEventCode = RsNetworkEventCode::EXTERNAL_IP_UPDATED;
+            ev->mIPAddress = sockaddr_storage_iptostring(addr);
+            rsEvents->postEvent(ev);
+        }
+
 		rslog(RSL_WARNING, p3netmgrzone, "p3NetMgr::setExtAddress() ext address changed, resetting network");
 		netReset();
 	}

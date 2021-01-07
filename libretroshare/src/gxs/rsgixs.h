@@ -155,6 +155,12 @@ public:
     virtual bool requestKey(const RsGxsId &id, const std::list<RsPeerId> &peers,const RsIdentityUsage& info) = 0;
     virtual bool requestPrivateKey(const RsGxsId &id) = 0;
 
+    /*!
+     * \brief receiveNewIdentity
+     * 			Receives a new identity. This is a facility offerred to RsGxsNetService when identities are sent/received by turtle tunnels
+     */
+    virtual bool receiveNewIdentity(RsNxsGrp *identity_grp)=0;
+    virtual bool retrieveNxsIdentity(const RsGxsId& group_id,RsNxsGrp *& identity_grp)=0;
 
     /*!
      * Retrieves a key identity

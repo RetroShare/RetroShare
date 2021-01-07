@@ -24,26 +24,27 @@
 #include "rshare.h"
 #include "rsharesettings.h"
 #include "util/i2pcommon.h"
-#include "util/RsNetUtil.h"
 #include "util/misc.h"
+#include "util/qtthreadsutils.h"
+#include "util/RsNetUtil.h"
 
 #include <iostream>
 
 #include "retroshare/rsbanlist.h"
 #include "retroshare/rsconfig.h"
 #include "retroshare/rsdht.h"
+#include "retroshare/rsinit.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsturtle.h"
-#include "retroshare/rsinit.h"
 
 #include <QCheckBox>
 #include <QMovie>
 #include <QMenu>
-#include <QTcpSocket>
 #include <QNetworkProxy>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QNetworkAccessManager>
+#include <QTcpSocket>
 #include <QTimer>
 
 #define ICON_STATUS_UNKNOWN ":/images/ledoff1.png"
@@ -75,13 +76,14 @@ const static uint32_t TAB_RELAYS                  = 3;
 //#define SERVER_DEBUG 1
 
 ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
-    : ConfigPage(parent, flags), mIsHiddenNode(false), mHiddenType(RS_HIDDEN_TYPE_NONE)
+    : ConfigPage(parent, flags)
+    , manager(NULL), mOngoingConnectivityCheck(-1)
+    , mIsHiddenNode(false), mHiddenType(RS_HIDDEN_TYPE_NONE)
+    , mBobAccessible(false)
+    , mEventHandlerId(0)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
-
-  manager = NULL ;
-  mOngoingConnectivityCheck = -1;
 
 #ifndef RS_USE_I2P_BOB
   ui.hiddenServiceTab->removeTab(TAB_HIDDEN_SERVICE_I2P_BOB);	// warning: the order of operation here is very important.
@@ -89,12 +91,12 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
   if(RsAccounts::isHiddenNode())
   {
-	  if(RsAccounts::isTorAuto())
+      ui.tabWidget->removeTab(TAB_RELAYS) ;		// remove relays. Not useful in Tor mode.
+      ui.tabWidget->removeTab(TAB_IP_FILTERS) ;	// remove IP filters. Not useful in Tor mode.
+
+      if(RsAccounts::isTorAuto())
 	  {
 		  // Here we use absolute numbers instead of consts defined above, because the consts correspond to the tab number *after* this tab removal.
-
-		  ui.tabWidget->removeTab(TAB_RELAYS) ;		// remove relays. Not useful in Tor mode.
-		  ui.tabWidget->removeTab(TAB_IP_FILTERS) ;	// remove IP filters. Not useful in Tor mode.
 
 		  ui.hiddenpage_proxyAddress_i2p->hide() ;
 		  ui.hiddenpage_proxyLabel_i2p->hide() ;
@@ -106,9 +108,11 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 		  ui.l_hiddenpage_configuration->hide() ;
 		  ui.hiddenpageInHelpPlainTextEdit->hide() ;
 
-		  ui.hiddenpage_outHeader->setText(tr("Tor has been automatically configured by Retroshare. You shouldn't need to change anything here.")) ;
+          ui.hiddenpage_outHeader->setText(tr("Tor has been automatically configured by Retroshare. You shouldn't need to change anything here.")) ;
 		  ui.hiddenpage_inHeader->setText(tr("Tor has been automatically configured by Retroshare. You shouldn't need to change anything here.")) ;
-	  }
+
+          ui.hiddenServiceTab->removeTab(TAB_HIDDEN_SERVICE_I2P_BOB);	// warning: the order of operation here is very important.
+      }
   }
   else
   {
@@ -244,7 +248,37 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 	// when the network menu is opened and the hidden service tab is already selected updateOutProxyIndicator() won't be called and thus resulting in wrong proxy indicators.
 	if (ui.tabWidget->currentIndex() == TAB_HIDDEN_SERVICE)
 		updateOutProxyIndicator();
+
+	rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); }, mEventHandlerId, RsEventType::NETWORK );
+
 }
+
+void ServerPage::handleEvent(std::shared_ptr<const RsEvent> e)
+{
+	if(e->mType != RsEventType::NETWORK)
+		return;
+
+	const RsNetworkEvent *ne = dynamic_cast<const RsNetworkEvent*>(e.get());
+
+	if(!ne)
+		return;
+
+	// in any case we update the IPs
+
+	switch(ne->mNetworkEventCode)
+	{
+		case RsNetworkEventCode::LOCAL_IP_UPDATED:  // [fallthrough]
+		case RsNetworkEventCode::EXTERNAL_IP_UPDATED:  // [fallthrough]
+			RsQThreadUtils::postToObject( [=]()
+			{
+				updateStatus();
+			},this);
+		break;
+		default:
+		break;
+	}
+}
+
 
 void ServerPage::saveAndTestInProxy()
 {

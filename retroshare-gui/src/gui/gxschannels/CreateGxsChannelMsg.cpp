@@ -75,6 +75,7 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
     connect(removeAllFilesButton, SIGNAL(clicked() ), this , SLOT(clearAllAttachments()));
     //connect(addfilepushButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
 	connect(subjectEdit,SIGNAL(textChanged(const QString&)),this,SLOT(updatePreviewText(const QString&)));
+	connect(expandButton, SIGNAL(clicked()), this, SLOT( toggle()));
 
 	connect(addThumbnailButton, SIGNAL(clicked() ), this , SLOT(addThumbnail()));
 	connect(thumbNailCb, SIGNAL(toggled(bool)), this, SLOT(allowAutoMediaThumbNail(bool)));
@@ -86,6 +87,8 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 	channelpostButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/comment.png"));
 	attachmentsButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/attachements.png"));
 	addThumbnailButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/add-image.png"));
+	expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/up-arrow.png")));
+	removeButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/mail/delete.png")));
 
     aspectRatio_CB->setItemIcon(0,FilesDefs::getIconFromQtResourcePath(":/icons/svg/ratio-auto.svg"));
     aspectRatio_CB->setItemIcon(1,FilesDefs::getIconFromQtResourcePath(":/icons/svg/ratio-1-1.svg"));
@@ -113,6 +116,8 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 	generateCheckBox->hide();
 	generateSpinBox->hide();
 #endif
+
+	removeButton->hide();
 
 	/* load settings */
 	processSettings(true);
@@ -198,7 +203,7 @@ void CreateGxsChannelMsg::pasteLink()
 {
 	std::cerr << "Pasting links: " << std::endl;
 
-	QList<RetroShareLink> links,not_have ;
+    QList<RetroShareLink> links;
 	RSLinkClipboard::pasteLinks(links) ;
 
 	for(QList<RetroShareLink>::const_iterator it(links.begin());it!=links.end();++it)
@@ -212,14 +217,19 @@ void CreateGxsChannelMsg::pasteLink()
             FileInfo info ;
             RsFileHash hash( (*it).hash().toStdString()) ;
 
+#ifdef TO_REMOVE
             if(rsFiles->alreadyHaveFile( hash,info ) )
-                addAttachment(hash, (*it).name().toUtf8().constData(), (*it).size(), true, RsPeerId()) ;
-			else
-				not_have.push_back( *it ) ;
-		}
+#endif
+                addAttachment(hash, (*it).name().toUtf8().constData(), (*it).size(), rsFiles->alreadyHaveFile( hash,info ), RsPeerId()) ;
+#ifdef TO_REMOVE
+            else
+                not_have.push_back( *it ) ;
+#endif
+        }
 
-	if(!not_have.empty())
-	{
+#ifdef TO_REMOVE
+    if(!not_have.empty())
+    {
         QString msg = tr("You are about to add files you're not actually sharing. Do you still want this to happen?")+"<br><br>" ;
 
         for(QList<RetroShareLink>::const_iterator it(not_have.begin());it!=not_have.end();++it)
@@ -228,7 +238,8 @@ void CreateGxsChannelMsg::pasteLink()
         if(QMessageBox::YesToAll == QMessageBox::question(NULL,tr("About to post un-owned files to a channel."),msg,QMessageBox::YesToAll | QMessageBox::No))
             for(QList<RetroShareLink>::const_iterator it(not_have.begin());it!=not_have.end();++it)
                 addAttachment(RsFileHash((*it).hash().toStdString()), (*it).name().toUtf8().constData(), (*it).size(), false, RsPeerId()) ;
-	}
+    }
+#endif
 }
 
 /* Dropping */
@@ -320,7 +331,7 @@ void CreateGxsChannelMsg::dropEvent(QDropEvent *event)
 					QMessageBox mb(tr("Drop file error."), tr("Directory can't be dropped, only files are accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
 					mb.exec();
 				} else if (QFile::exists(localpath)) {
-					addAttachment(localpath.toUtf8().constData());
+                    addAttachment(localpath.toUtf8().constData());
 				} else {
 					std::cerr << "CreateGxsChannelMsg::dropEvent() file does not exists."<< std::endl;
 					QMessageBox mb(tr("Drop file error."), tr("File not found or file name not accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
@@ -515,7 +526,7 @@ void CreateGxsChannelMsg::addHtmlText(const QString& text)
 	RichTextEditWidget->setText(text) ;
 }
 
-void CreateGxsChannelMsg::addAttachment(const std::string &path)
+bool CreateGxsChannelMsg::addAttachment(const std::string &path)
 {
 	/* add a SubFileItem to the attachment section */
 #ifdef DEBUG_CREATE_GXS_MSG
@@ -535,13 +546,12 @@ void CreateGxsChannelMsg::addAttachment(const std::string &path)
 	for(it= mAttachments.begin(); it != mAttachments.end(); ++it){
 
 		if((*it)->FilePath() == path){
-			QMessageBox::warning(this, tr("RetroShare"), tr("File already Added and Hashed"), QMessageBox::Ok, QMessageBox::Ok);
+            QMessageBox::warning(this, tr("RetroShare"), tr("This file already in this post:")+"<br/>"+QString::fromStdString(path), QMessageBox::Ok, QMessageBox::Ok);
 
-			return;
+            return false;
 		}
 	}
 
-	FileInfo fInfo;
 	std::string filename = RsDirUtil::getTopDir(path);
 	uint64_t size = 0;
     RsFileHash hash ;
@@ -565,7 +575,7 @@ void CreateGxsChannelMsg::addAttachment(const std::string &path)
 
     updateAttachmentCount();
 
-    return;
+    return true;
 }
 
 bool CreateGxsChannelMsg::setThumbNail(const std::string& path, int frame){
@@ -719,32 +729,55 @@ void CreateGxsChannelMsg::sendMsg()
 	std::string msg = std::string(text.toUtf8());
 
 	std::list<RsGxsFile> files;
+    std::list<RsGxsFile> missing_files;
+    std::list<RsGxsFile> files_only_extra;
 
-	std::list<SubFileItem *>::iterator fit;
-
-	for(fit = mAttachments.begin(); fit != mAttachments.end(); ++fit)
-	{
-		if (!(*fit)->isHidden())
+    for(auto fit :mAttachments)
+        if (!fit->isHidden())
 		{
 			RsGxsFile fi;
-			fi.mHash = (*fit)->FileHash();
-			fi.mName = (*fit)->FileName();
-			fi.mSize = (*fit)->FileSize();
+            fi.mHash = fit->FileHash();
+            fi.mName = fit->FileName();
+            fi.mSize = fit->FileSize();
 
 			files.push_back(fi);
 
-			/* commence downloads - if we don't have the file */
+            /* if we don't have the file, display info about it */
 
-			if (!(*fit)->done())
-			{
-				if ((*fit)->ready())
-				{
-					(*fit)->download();
-				}
-			// Skips unhashed files.
-			}
-		}
-	}
+            if (!fit->done() && fit->ready()) // Skips unhashed files.
+                    missing_files.push_back(fi);
+
+            FileInfo finfo;
+            bool extra = rsFiles->FileDetails(fi.mHash, RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY, finfo );
+            bool local = rsFiles->FileDetails(fi.mHash, RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_SPEC_ONLY, finfo );
+
+            if(extra && !local)
+                files_only_extra.push_back(fi);
+        }
+
+    if(!missing_files.empty())
+    {
+        QString filesstr = "<br/>";
+
+        for(auto& file: missing_files)
+            filesstr += "<br/>" /*+QString::fromStdString(file.mHash.toStdString()) + " "*/ + QString::fromStdString(file.mName) ;
+
+        if(QMessageBox::Cancel == QMessageBox::warning(nullptr,tr("Post refers to non shared files"),
+                                tr("This post contains files that you are currently not sharing. Do you still want to post?")+filesstr,QMessageBox::Ok,QMessageBox::Cancel))
+            return;
+    }
+    if(!files_only_extra.empty())
+    {
+        QString filesstr = "<br/>";
+
+        for(auto& file: files_only_extra)
+            filesstr += "<br/>" /*+QString::fromStdString(file.mHash.toStdString()) + " "*/ + QString::fromStdString(file.mName) ;
+
+        QMessageBox::information(nullptr,
+                                tr("Post refers to temporary shared files"),
+                                tr("The following files will only be shared for 30 days. Think about adding them to a shared directory.")
+                                                           +filesstr);
+    }
 
 	sendMessage(subject, msg, files);
 }
@@ -824,8 +857,8 @@ void CreateGxsChannelMsg::addThumbnail()
 	picture = img;
 
 	// to show the selected
-    preview_W->setPixmap(picture, aspectRatio_CB->currentIndex()==0);
-
+	preview_W->setPixmap(picture, aspectRatio_CB->currentIndex()==0);
+	removeButton->show();
 }
 
 void CreateGxsChannelMsg::loadOriginalChannelPostInfo()
@@ -869,7 +902,8 @@ void CreateGxsChannelMsg::loadOriginalChannelPostInfo()
 			if(post.mThumbnail.mData != NULL)
 			{
 				GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData,post.mThumbnail.mSize,picture,GxsIdDetails::ORIGINAL);
-                preview_W->setPixmap(picture,true);
+				preview_W->setPixmap(picture,true);
+				removeButton->show();
 			}
 
 
@@ -926,3 +960,28 @@ void CreateGxsChannelMsg::on_attachmentsButton_clicked()
 {
 	stackedWidget->setCurrentIndex(1);
 }
+
+void CreateGxsChannelMsg::toggle()
+{
+	if (expandButton->isChecked())
+	{
+		thumbnailFrame->hide();
+		gridLayoutTextEdit->setContentsMargins(0,9,0,0);
+		expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/down-arrow.png")));
+		expandButton->setToolTip(tr("Show"));
+	}
+	else
+	{
+		thumbnailFrame->show();
+		gridLayoutTextEdit->setContentsMargins(0,0,0,0);
+		expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/up-arrow.png")));
+		expandButton->setToolTip(tr("Hide"));
+	}
+}
+
+void CreateGxsChannelMsg::on_removeButton_clicked()
+{
+	preview_W->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ChannelPostThumbnailView::CHAN_DEFAULT_IMAGE),true);
+	removeButton->hide();
+}
+

@@ -40,18 +40,19 @@ public:
 	p3GxsForums(
 	        RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs* gixs);
 
-	virtual RsServiceInfo getServiceInfo();
-	virtual void service_tick();
+    virtual RsServiceInfo getServiceInfo() override;
+    virtual void service_tick() override;
 
 protected:
-	virtual void notifyChanges(std::vector<RsGxsNotify*>& changes);
+    virtual void notifyChanges(std::vector<RsGxsNotify*>& changes) override;
 	/// Overloaded from RsTickEvent.
-	virtual void handle_event(uint32_t event_type, const std::string &elabel);
+    virtual void handle_event(uint32_t event_type, const std::string &elabel) override;
 
-	virtual RsSerialiser* setupSerialiser();                            // @see p3Config::setupSerialiser()
-	virtual bool saveList(bool &cleanup, std::list<RsItem *>&saveList); // @see p3Config::saveList(bool &cleanup, std::list<RsItem *>&)
-	virtual bool loadList(std::list<RsItem *>& loadList);               // @see p3Config::loadList(std::list<RsItem *>&)
+    virtual RsSerialiser* setupSerialiser() override;                            // @see p3Config::setupSerialiser()
+    virtual bool saveList(bool &cleanup, std::list<RsItem *>&saveList) override; // @see p3Config::saveList(bool &cleanup, std::list<RsItem *>&)
+    virtual bool loadList(std::list<RsItem *>& loadList) override;               // @see p3Config::loadList(std::list<RsItem *>&)
 
+    virtual bool service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta) override;
 public:
 	/// @see RsGxsForums::createForumV2
 	bool createForumV2(
@@ -78,22 +79,22 @@ public:
 
 	/// @see RsGxsForums::createForum @deprecated
 	RS_DEPRECATED_FOR(createForumV2)
-	virtual bool createForum(RsGxsForumGroup& forum);
+    virtual bool createForum(RsGxsForumGroup& forum) override;
 
 	/// @see RsGxsForums::createMessage  @deprecated
 	RS_DEPRECATED_FOR(createPost)
-	virtual bool createMessage(RsGxsForumMsg& message);
+    virtual bool createMessage(RsGxsForumMsg& message) override;
 
 	/// @see RsGxsForums::editForum
 	virtual bool editForum(RsGxsForumGroup& forum) override;
 
 	/// @see RsGxsForums::getForumsSummaries
-	virtual bool getForumsSummaries(std::list<RsGroupMetaData>& forums);
+    virtual bool getForumsSummaries(std::list<RsGroupMetaData>& forums) override;
 
 	/// @see RsGxsForums::getForumsInfo
 	virtual bool getForumsInfo(
 	        const std::list<RsGxsGroupId>& forumIds,
-	        std::vector<RsGxsForumGroup>& forumsInfo );
+            std::vector<RsGxsForumGroup>& forumsInfo ) override;
 
     /// Implementation of @see RsGxsForums::getForumStatistics
     bool getForumStatistics(const RsGxsGroupId& ForumId,GxsGroupStatistic& stat) override;
@@ -102,20 +103,20 @@ public:
 	bool getForumServiceStatistics(GxsServiceStatistic& stat) override;
 
 	/// @see RsGxsForums::getForumMsgMetaData
-	virtual bool getForumMsgMetaData(const RsGxsGroupId& forumId, std::vector<RsMsgMetaData>& msg_metas) ;
+    virtual bool getForumMsgMetaData(const RsGxsGroupId& forumId, std::vector<RsMsgMetaData>& msg_metas)  override;
 
 	/// @see RsGxsForums::getForumContent
 	virtual bool getForumContent(
 	        const RsGxsGroupId& forumId,
 	        const std::set<RsGxsMessageId>& msgs_to_request,
-	        std::vector<RsGxsForumMsg>& msgs );
+            std::vector<RsGxsForumMsg>& msgs ) override;
 
 	/// @see RsGxsForums::markRead
-	virtual bool markRead(const RsGxsGrpMsgIdPair& messageId, bool read);
+    virtual bool markRead(const RsGxsGrpMsgIdPair& messageId, bool read) override;
 
 	/// @see RsGxsForums::subscribeToForum
 	virtual bool subscribeToForum( const RsGxsGroupId& forumId,
-	                               bool subscribe );
+                                   bool subscribe ) override;
 
 	/// @see RsGxsForums
 	bool exportForumLink(
@@ -140,7 +141,7 @@ public:
 	/// @see RsGxsForums
 	std::error_condition setPostKeepForever(
 	        const RsGxsGroupId& forumId, const RsGxsMessageId& postId,
-	        bool keepForever );
+            bool keepForever ) override;
 
     /// implementation of rsGxsGorums
     ///

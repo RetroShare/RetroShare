@@ -41,11 +41,11 @@ class FeedReaderMessageWidget : public QWidget
 	Q_OBJECT
 
 public:
-	explicit FeedReaderMessageWidget(const std::string &feedId, RsFeedReader *feedReader, FeedReaderNotify *notify, QWidget *parent = 0);
+	explicit FeedReaderMessageWidget(uint32_t feedId, RsFeedReader *feedReader, FeedReaderNotify *notify, QWidget *parent = 0);
 	~FeedReaderMessageWidget();
 
-	std::string feedId() { return mFeedId; }
-	void setFeedId(const std::string &feedId);
+	uint32_t feedId() { return mFeedId; }
+	void setFeedId(uint32_t feedId);
 	QString feedName(bool withUnreadCount);
 	QIcon feedIcon();
 
@@ -75,8 +75,8 @@ private slots:
 	void retransformMsg();
 
 	/* FeedReaderNotify */
-	void feedChanged(const QString &feedId, int type);
-	void msgChanged(const QString &feedId, const QString &msgId, int type);
+	void feedChanged(uint32_t feedId, int type);
+	void msgChanged(uint32_t feedId, const QString &msgId, int type);
 
 private:
 	std::string currentMsgId();
@@ -91,7 +91,7 @@ private:
 
 	bool mProcessSettings;
 	RSTreeWidgetItemCompareRole *mMsgCompareRole;
-	std::string mFeedId;
+	uint32_t mFeedId;
 	unsigned int mUnreadCount;
 	unsigned int mNewCount;
 	QTimer *mTimer;

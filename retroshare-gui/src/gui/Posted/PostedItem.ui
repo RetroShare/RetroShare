@@ -611,6 +611,9 @@
        <height>600</height>
       </size>
      </property>
+     <property name="autoFillBackground">
+      <bool>true</bool>
+     </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
@@ -662,6 +665,9 @@
    </item>
    <item row="2" column="0">
     <widget class="QFrame" name="frame_notes">
+     <property name="autoFillBackground">
+      <bool>true</bool>
+     </property>
      <property name="frameShape">
       <enum>QFrame::Box</enum>
      </property>
@@ -686,6 +692,9 @@
       </property>
       <item row="0" column="0" colspan="2">
        <widget class="QLabel" name="notes">
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string/>
         </property>

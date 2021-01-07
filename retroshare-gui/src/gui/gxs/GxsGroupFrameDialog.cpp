@@ -98,6 +98,7 @@ GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *p
 	mStateHelper = new UIStateHelper(this);
 
 	mStateHelper->addWidget(TOKEN_TYPE_GROUP_SUMMARY, ui->loadingLabel, UISTATE_LOADING_VISIBLE);
+	mStateHelper->setLoading(TOKEN_TYPE_GROUP_SUMMARY, true);
 
 	connect(ui->groupTreeWidget, SIGNAL(treeCustomContextMenuRequested(QPoint)), this, SLOT(groupTreeCustomPopupMenu(QPoint)));
     connect(ui->groupTreeWidget, SIGNAL(treeCurrentItemChanged(QString)), this, SLOT(changedCurrentGroup(QString)));
@@ -178,7 +179,7 @@ void GxsGroupFrameDialog::initUi()
 	mInitialized = true;
 }
 
-void GxsGroupFrameDialog::showEvent(QShowEvent *event)
+void GxsGroupFrameDialog::showEvent(QShowEvent* /*event*/)
 {
 	if (!mInitialized )
 	{
@@ -1085,7 +1086,9 @@ void GxsGroupFrameDialog::updateMessageSummaryListReal(RsGxsGroupId groupId)
 
 void GxsGroupFrameDialog::updateGroupSummary()
 {
-	RsThread::async([this]()
+	if (!mInitialized) return;//UI not yet initialized
+
+ 	RsThread::async([this]()
 	{
 		auto groupInfo = new std::list<RsGxsGenericGroupData*>() ;
 

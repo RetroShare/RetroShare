@@ -1,10 +1,10 @@
 ZLIB_VERSION=1.2.3
 BZIP2_VERSION=1.0.6
 MINIUPNPC_VERSION=2.0
-OPENSSL_VERSION=1.1.1g
+OPENSSL_VERSION=1.1.1h
 SPEEX_VERSION=1.2.0
 SPEEXDSP_VERSION=1.2rc3
-OPENCV_VERSION=3.4.11
+OPENCV_VERSION=4.5.0
 LIBXML2_VERSION=2.9.7
 LIBXSLT_VERSION=1.1.32
 CURL_VERSION=7.58.0
@@ -196,6 +196,8 @@ $(BUILD_PATH)/opencv-$(OPENCV_VERSION): $(DOWNLOAD_PATH)/opencv-$(OPENCV_VERSION
 	# prepare
 	rm -r -f $(BUILD_PATH)/opencv-*
 	tar xvf $(DOWNLOAD_PATH)/opencv-$(OPENCV_VERSION).tar.gz
+	# Remove version numbers from libraries. Is there a switch?
+	sed -i -e's/\(ocv_update(OPENCV_DLLVERSION \).*$$/\1"")/' opencv-$(OPENCV_VERSION)/CMakeLists.txt
 	# build
 	mkdir -p opencv-$(OPENCV_VERSION)/build
 	#cd opencv-$(OPENCV_VERSION)/build && cmake .. -G"MSYS Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="`pwd`/../../build"

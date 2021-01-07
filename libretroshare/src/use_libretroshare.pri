@@ -6,11 +6,17 @@ RS_BUILD_PATH=$$clean_path($${OUT_PWD}/../../)
 
 DEPENDPATH *= $$clean_path($${RS_SRC_PATH}/libretroshare/src/)
 INCLUDEPATH  *= $$clean_path($${RS_SRC_PATH}/libretroshare/src)
-LIBS *= -L$$clean_path($${RS_BUILD_PATH}/libretroshare/src/lib/) -lretroshare
 
 equals(TARGET, retroshare):equals(TEMPLATE, lib){
 } else {
-    PRE_TARGETDEPS *= $$clean_path($${RS_BUILD_PATH}/libretroshare/src/lib/libretroshare.a)
+	LIBS *= -L$$clean_path($${RS_BUILD_PATH}/libretroshare/src/lib/) -lretroshare
+	win32-g++|win32-clang-g++:!isEmpty(QMAKE_SH):libretroshare_shared {
+		# Windows msys2
+		LIBRETROSHARE_TARGET=libretroshare.dll.a
+	} else {
+		LIBRETROSHARE_TARGET=libretroshare.a
+	}
+    PRE_TARGETDEPS *= $$clean_path($${RS_BUILD_PATH}/libretroshare/src/lib/$${LIBRETROSHARE_TARGET})
 }
 
 !include("../../openpgpsdk/src/use_openpgpsdk.pri"):error("Including")

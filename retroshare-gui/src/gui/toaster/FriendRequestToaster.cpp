@@ -46,7 +46,7 @@ FriendRequestToaster::FriendRequestToaster(const RsPgpId &gpgId, const QString &
 	QString peerName = QString::fromUtf8(details.name.c_str());
 
 	/* set informations */
-	ui.avatarWidget->setFrameType(AvatarWidget::NORMAL_FRAME);
+	ui.avatarWidget->setFrameType(AvatarWidget::NO_FRAME);
 	if (knownPeer) {
 		ui.textLabel->setText( peerName + " " + tr("wants to be friend with you on RetroShare"));
 		ui.avatarWidget->setDefaultAvatar(":/images/avatar_request.png");

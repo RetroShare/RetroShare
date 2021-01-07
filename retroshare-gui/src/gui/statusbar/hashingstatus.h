@@ -40,7 +40,7 @@ public:
 
 private:
 	void updateHashingInfo(const QString& s);
-    void handleEvent(std::shared_ptr<const RsEvent> event);
+    void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
     ElidedLabel *statusHashing;
     QLabel *hashloader;

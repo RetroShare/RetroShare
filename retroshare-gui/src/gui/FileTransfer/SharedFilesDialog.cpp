@@ -60,7 +60,7 @@
 #define IMAGE_PLAY           ":/images/start.png"
 #define IMAGE_HASH_BUSY      ":/images/settings.png"
 #define IMAGE_HASH_DONE      ":/images/accepted16.png"
-#define IMAGE_MSG            ":/images/message-mail.png"
+#define IMAGE_MSG            ":/icons/png/message.png"
 #define IMAGE_ATTACHMENT     ":/icons/png/attachements.png"
 #define IMAGE_FRIEND         ":/images/peers_16x16.png"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
@@ -655,7 +655,7 @@ void SharedFilesDialog::copyLinks(const QModelIndexList& lst, bool remote,QList<
 			}
 			else
 				name = QString::fromUtf8(details.name.c_str());
-			RetroShareLink link = RetroShareLink::createFile(name, details.count, details.hash.toStdString().c_str());
+            RetroShareLink link = RetroShareLink::createFile(name, details.size, details.hash.toStdString().c_str());
 			if (link.valid()) {
 				urls.push_back(link) ;
 			}

@@ -49,6 +49,9 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout">
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item row="0" column="0" colspan="2">
        <widget class="QWidget" name="widget_prefix" native="true">
         <property name="sizePolicy">
@@ -64,6 +67,12 @@
          </size>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_10">
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
           <spacer name="horizontalSpacer_14">
            <property name="orientation">
@@ -95,8 +104,17 @@
          </item>
          <item>
           <widget class="QLabel" name="label_2">
+           <property name="font">
+            <font>
+             <family>MS Sans Serif</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>retweeted</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
            </property>
           </widget>
          </item>
@@ -131,21 +149,11 @@
          </size>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <property name="topMargin">
+          <number>0</number>
+         </property>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <spacer name="horizontalSpacer_8">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
            <item>
             <widget class="QToolButton" name="toolButton_reply">
              <property name="text">
@@ -157,6 +165,9 @@
              </property>
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -209,6 +220,9 @@
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextBesideIcon</enum>
              </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item>
@@ -260,6 +274,9 @@
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextBesideIcon</enum>
              </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item>
@@ -310,6 +327,9 @@
              </property>
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -419,6 +439,12 @@
         <layout class="QHBoxLayout" name="horizontalLayout_12">
          <item>
           <widget class="QLabel" name="label_authorName">
+           <property name="font">
+            <font>
+             <family>MS Sans Serif</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Sidler&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
@@ -426,8 +452,19 @@
          </item>
          <item>
           <widget class="QLabel" name="label_groupName">
+           <property name="font">
+            <font>
+             <family>Segoe UI</family>
+             <pointsize>10</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
            <property name="text">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#555753;&quot;&gt;@sidler_here&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
            </property>
           </widget>
          </item>
@@ -449,6 +486,12 @@
          </item>
          <item>
           <widget class="QLabel" name="label_date">
+           <property name="font">
+            <font>
+             <family>MS Sans Serif</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#2e3436;&quot;&gt;·  Apr 13 ·&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
@@ -492,63 +535,61 @@
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_11">
-          <item>
-           <spacer name="horizontalSpacer_16">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Minimum</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>5</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="Line" name="line_replyLine">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QWidget" name="widget" native="true">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>1</width>
-              <height>0</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_17">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Minimum</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>5</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
+         <widget class="QWidget" name="widget" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_11">
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>1</number>
+           </property>
+           <item>
+            <spacer name="horizontalSpacer_16">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Minimum</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>5</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="Line" name="line_replyLine">
+             <property name="frameShadow">
+              <enum>QFrame::Plain</enum>
+             </property>
+             <property name="lineWidth">
+              <number>5</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_17">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Minimum</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>5</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
         </item>
        </layout>
       </item>
@@ -567,10 +608,28 @@
          </size>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_13">
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QLabel" name="label_reference">
+           <property name="font">
+            <font>
+             <family>MS Sans Serif</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#555753;&quot;&gt;Replying to @sidler&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
            </property>
           </widget>
          </item>

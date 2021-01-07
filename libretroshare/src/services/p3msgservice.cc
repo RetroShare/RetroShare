@@ -196,15 +196,17 @@ void p3MsgService::processIncomingMsg(RsMsgItem *mi)
 		/**** STACK UNLOCKED ***/
 	}
 
-		// If the peer is allowed to push files, then auto-download the recommended files.
-		if(rsPeers->servicePermissionFlags(mi->PeerId()) & RS_NODE_PERM_ALLOW_PUSH)
-		{
-			std::list<RsPeerId> srcIds;
-			srcIds.push_back(mi->PeerId());
+    // If the peer is allowed to push files, then auto-download the recommended files.
 
-			for(std::list<RsTlvFileItem>::const_iterator it(mi->attachment.items.begin());it!=mi->attachment.items.end();++it)
-				rsFiles->FileRequest((*it).name,(*it).hash,(*it).filesize,std::string(),RS_FILE_REQ_ANONYMOUS_ROUTING,srcIds) ;
-		}
+    RsIdentityDetails id_details;
+    if(rsIdentity->getIdDetails(RsGxsId(mi->PeerId()),id_details) && !id_details.mPgpId.isNull() && (rsPeers->servicePermissionFlags(id_details.mPgpId) & RS_NODE_PERM_ALLOW_PUSH))
+    {
+        std::list<RsPeerId> srcIds;
+        srcIds.push_back(mi->PeerId());
+
+        for(std::list<RsTlvFileItem>::const_iterator it(mi->attachment.items.begin());it!=mi->attachment.items.end();++it)
+            rsFiles->FileRequest((*it).name,(*it).hash,(*it).filesize,std::string(),RS_FILE_REQ_ANONYMOUS_ROUTING,srcIds) ;
+    }
 
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_ADD);
 }
@@ -1329,11 +1331,10 @@ bool p3MsgService::SystemMessage(const std::string &title, const std::string &me
 		return false;
 	}
 
-    const RsPeerId& ownId = mServiceCtrl->getOwnId();
 
 	RsMsgItem *msg = new RsMsgItem();
 
-	msg->PeerId(ownId);
+	msg->PeerId();// Notification == null
 
 	msg->msgFlags = 0;
 
@@ -1354,7 +1355,7 @@ bool p3MsgService::SystemMessage(const std::string &title, const std::string &me
 	msg->subject = title;
 	msg->message = message;
 
-    msg->rspeerid_msgto.ids.insert(ownId);
+	msg->rspeerid_msgto.ids.insert(mServiceCtrl->getOwnId());
 
 	processIncomingMsg(msg);
 
@@ -2205,7 +2206,7 @@ bool p3MsgService::notifyGxsTransSendStatus( RsGxsTransId mailId,
 
 	if( status == GxsTransSendStatus::RECEIPT_RECEIVED )
 	{
-		pEvent->mMailStatusEventCode = RsMailStatusEventCode::NEW_MESSAGE;
+        pEvent->mMailStatusEventCode = RsMailStatusEventCode::MESSAGE_RECEIVED_ACK;
 		uint32_t msg_id;
 
 		{

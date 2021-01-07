@@ -153,16 +153,10 @@ IdDialog::IdDialog(QWidget *parent) : MainPage(parent), ui(new Ui::IdDialog)
 	ui->setupUi(this);
 
 	mEventHandlerId_identity = 0;
-	rsEvents->registerEventsHandler(
-	            [this](std::shared_ptr<const RsEvent> event)
-	{ RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this); },
-	            mEventHandlerId_identity, RsEventType::GXS_IDENTITY );
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this); }, mEventHandlerId_identity, RsEventType::GXS_IDENTITY );
 
 	mEventHandlerId_circles = 0;
-	rsEvents->registerEventsHandler(
-	            [this](std::shared_ptr<const RsEvent> event)
-	{ RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this); },
-	            mEventHandlerId_circles, RsEventType::GXS_CIRCLES );
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this); }, mEventHandlerId_circles, RsEventType::GXS_CIRCLES );
 
 	// This is used to grab the broadcast of changes from p3GxsCircles, which is discarded by the current dialog, since it expects data for p3Identity only.
 	//mCirclesBroadcastBase = new RsGxsUpdateBroadcastBase(rsGxsCircles, this);
@@ -445,7 +439,8 @@ void IdDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_LEAVE:
 		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_ID_REMOVED_FROM_INVITEE_LIST:
 		case RsGxsCircleEventCode::NEW_CIRCLE:
-		case RsGxsCircleEventCode::CACHE_DATA_UPDATED:
+        case RsGxsCircleEventCode::CIRCLE_DELETED:
+        case RsGxsCircleEventCode::CACHE_DATA_UPDATED:
 
 			updateCircles();
 		default:
@@ -510,16 +505,16 @@ void IdDialog::updateCircles()
 
 		/* This can be big so use a smart pointer to just copy the pointer
 		 * instead of copying the whole list accross the lambdas */
-		auto circle_metas = std::make_unique<std::list<RsGroupMetaData>>();
+        auto circle_metas = new std::list<RsGroupMetaData>();
 
 		if(!rsGxsCircles->getCirclesSummaries(*circle_metas))
 		{
 			RS_ERR("failed to retrieve circles group info list");
+            delete circle_metas;
 			return;
 		}
 
-		RsQThreadUtils::postToObject(
-		            [circle_metas = std::move(circle_metas), this]()
+        RsQThreadUtils::postToObject( [circle_metas, this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
@@ -527,7 +522,8 @@ void IdDialog::updateCircles()
 
 			loadCircles(*circle_metas);
 
-		}, this );
+            delete circle_metas;
+        }, this );
 
     });
 }
@@ -602,6 +598,10 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 #endif
 
     mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, true);
+
+    // Disable sorting while updating which avoids calling sortChildren() in child(i), causing heavy loads when adding
+    // many items to a tree.
+    ui->treeWidget_membership->setSortingEnabled(false);
 
     std::vector<bool> expanded_top_level_items;
     std::set<RsGxsCircleId> expanded_circle_items;
@@ -736,6 +736,15 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 		for(auto index:to_delete)
 			delete item->takeChild(index);	// delete items starting from the largest index, because otherwise the count changes while deleting...
 
+        // Now make a list of items to add, but only add them at once at the end of the loop, to avoid a quadratic cost.
+        QList<QTreeWidgetItem*> new_sub_items;
+
+        // ...and make a map of which index each item has, to make the search logarithmic
+        std::map<QString,uint32_t> subitem_indices;
+
+        for(uint32_t k=0; k < (uint32_t)item->childCount(); ++k)
+            subitem_indices[item->child(k)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString()] = k;
+
 		for(std::map<RsGxsId,uint32_t>::const_iterator it(details.mSubscriptionFlags.begin());it!=details.mSubscriptionFlags.end();++it)
 		{
 #ifdef ID_DEBUG
@@ -751,15 +760,11 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
             int subitem_index = -1;
 
 			// see if the item already exists
-			for(uint32_t k=0; k < (uint32_t)item->childCount(); ++k)
-				if(item->child(k)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString() == it->first.toStdString())
-				{
-                    subitem_index = k;
-#ifdef ID_DEBUG
-					std::cerr << " found existing sub item." << std::endl;
-#endif
-					break ;
-				}
+
+            auto itt = subitem_indices.find(QString::fromStdString(it->first.toStdString()));
+
+            if(itt != subitem_indices.end())
+                subitem_index = itt->second;
 
 			if(!(invited || subscrb))
 			{
@@ -825,7 +830,7 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 
 				//subitem->setIcon(RSID_COL_NICKNAME, QIcon(pixmap));
 
-				item->addChild(subitem) ;
+                new_sub_items.push_back(subitem);
 			}
             else
                 subitem = item->child(subitem_index);
@@ -857,6 +862,9 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 			}
 		}    
 
+        // add all items
+        item->addChildren(new_sub_items);
+
 		// The bullet colors below are for the *Membership*. This is independent from admin rights, which cannot be shown as a color.
 		// Admin/non admin is shows using Bold font.
 
@@ -867,6 +875,8 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 		else
 			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,FilesDefs::getIconFromQtResourcePath(IMAGE_UNKNOWN)) ;
 	}
+    ui->treeWidget_membership->setSortingEnabled(true);
+
     restoreExpandedCircleItems(expanded_top_level_items,expanded_circle_items);
 }
 
@@ -1307,17 +1317,19 @@ void IdDialog::updateIdList()
 			return;
 		}
 
-		auto ids_set = std::make_unique<std::map<RsGxsGroupId,RsGxsIdGroup>>();
+        auto ids_set = new std::map<RsGxsGroupId,RsGxsIdGroup>();
+
 		for(auto it(groups.begin()); it!=groups.end(); ++it)
 			(*ids_set)[(*it).mMeta.mGroupId] = *it;
 
-		RsQThreadUtils::postToObject(
-		            [ids_set = std::move(ids_set), this] ()
+        RsQThreadUtils::postToObject( [ids_set, this] ()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 			loadIdentities(*ids_set);
+            delete ids_set;
+
 		}, this );
 
     });
@@ -2386,6 +2398,10 @@ void IdDialog::sendMsg()
 
     if(selected_items.empty())
 	    return ;
+
+    if(selected_items.size() > 20)
+        if(QMessageBox::warning(nullptr,tr("Too many identities"),tr("<p>It is not recommended to send a message to more than 20 persons at once. Large scale diffusion of data (including friend invitations) are much more efficiently handled by forums. Click ok to proceed anyway.</p>"),QMessageBox::Ok|QMessageBox::Cancel,QMessageBox::Cancel)==QMessageBox::Cancel)
+            return;
 
     MessageComposer *nMsgDialog = MessageComposer::newMsg();
     if (nMsgDialog == NULL)

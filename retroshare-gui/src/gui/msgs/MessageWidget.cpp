@@ -541,11 +541,17 @@ void MessageWidget::fill(const std::string &msgId)
 		return;
 	}
 	
-	if (msgInfo.msgflags & RS_MSG_USER_REQUEST){
-        ui.inviteFrame->show();
-  	} else {
-        ui.inviteFrame->hide();
-  	}
+	if ((msgInfo.msgflags & RS_MSG_USER_REQUEST) && msgInfo.rsgxsid_srcId.isNull()){
+		ui.inviteFrame->show();
+		ui.sendInviteButton->hide();
+		ui.infoLabel->setText(tr("You got an invite to make friend! You may accept this request."));
+	} else if ((msgInfo.msgflags & RS_MSG_USER_REQUEST) && (!msgInfo.rsgxsid_srcId.isNull())){
+		ui.inviteFrame->show();
+		ui.sendInviteButton->show();
+		ui.infoLabel->setText(tr("You got an invite to make friend! You may accept this request and send your own Certificate back"));
+	} else {
+		ui.inviteFrame->hide();
+	}
 
 	const std::list<FileInfo> &recList = msgInfo.files;
 	std::list<FileInfo>::const_iterator it;

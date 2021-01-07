@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1196</width>
-    <height>491</height>
+    <width>1015</width>
+    <height>246</height>
    </rect>
   </property>
   <layout class="QGridLayout">
@@ -32,7 +32,7 @@
       </sizepolicy>
      </property>
      <property name="autoFillBackground">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="frameShape">
       <enum>QFrame::Box</enum>
@@ -165,6 +165,9 @@
          </item>
          <item row="1" column="1" colspan="2">
           <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <property name="spacing">
+            <number>6</number>
+           </property>
            <item>
             <widget class="QToolButton" name="friendRequesttoolButton">
              <property name="focusPolicy">
@@ -277,7 +280,7 @@
               <string>Start Chat</string>
              </property>
              <property name="icon">
-              <iconset resource="../images.qrc">
+              <iconset>
                <normaloff>:/images/chat_24.png</normaloff>:/images/chat_24.png</iconset>
              </property>
              <property name="toolButtonStyle">
@@ -556,7 +559,7 @@
   </layout>
   <action name="actionNew_Message">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset>
      <normaloff>:/images/mail_send.png</normaloff>:/images/mail_send.png</iconset>
    </property>
    <property name="text">

@@ -35,11 +35,12 @@
 #include <string>
 
 
+// This class is only a helper to parse the channel group service string.
 
-class SSGxsChannelGroup
+class GxsChannelGroupInfo
 {
 	public:
-	SSGxsChannelGroup(): mAutoDownload(false), mDownloadDirectory("") {}
+    GxsChannelGroupInfo(): mAutoDownload(false), mDownloadDirectory("") {}
 	bool load(const std::string &input);
 	std::string save() const;
 
@@ -55,31 +56,32 @@ class p3GxsChannels: public RsGenExchange, public RsGxsChannels,
 public:
 	p3GxsChannels( RsGeneralDataService* gds, RsNetworkExchangeService* nes,
 	               RsGixs* gixs );
-	virtual RsServiceInfo getServiceInfo();
+    virtual RsServiceInfo getServiceInfo() override;
 
-	virtual void service_tick();
+    virtual void service_tick() override;
 
 protected:
 
+    virtual bool service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta) override;	// see RsGenExchange
 
-	virtual RsSerialiser* setupSerialiser();                            // @see p3Config::setupSerialiser()
-	virtual bool saveList(bool &cleanup, std::list<RsItem *>&saveList); // @see p3Config::saveList(bool &cleanup, std::list<RsItem *>&)
-	virtual bool loadList(std::list<RsItem *>& loadList);               // @see p3Config::loadList(std::list<RsItem *>&)
+    virtual RsSerialiser* setupSerialiser() override;                            // @see p3Config::setupSerialiser()
+    virtual bool saveList(bool &cleanup, std::list<RsItem *>&saveList) override; // @see p3Config::saveList(bool &cleanup, std::list<RsItem *>&)
+    virtual bool loadList(std::list<RsItem *>& loadList) override;               // @see p3Config::loadList(std::list<RsItem *>&)
 
-    virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id);
-    virtual TurtleRequestId turtleSearchRequest(const std::string& match_string);
-    virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSearchResults> &results) ;
-    virtual bool clearDistantSearchResults(TurtleRequestId req);
-    virtual bool getDistantSearchResultGroupData(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group);
-    virtual DistantSearchGroupStatus getDistantSearchStatus(const RsGxsGroupId& group_id) ;
+    virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id) override;
+    virtual TurtleRequestId turtleSearchRequest(const std::string& match_string) override;
+    virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSearchResults> &results)  override;
+    virtual bool clearDistantSearchResults(TurtleRequestId req) override;
+    virtual bool getDistantSearchResultGroupData(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group) override;
+    virtual DistantSearchGroupStatus getDistantSearchStatus(const RsGxsGroupId& group_id)  override;
 
 	// Overloaded to cache new groups.
-virtual RsGenExchange::ServiceCreate_Return service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet);
+virtual RsGenExchange::ServiceCreate_Return service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet) override;
 
-virtual void notifyChanges(std::vector<RsGxsNotify*>& changes);
+virtual void notifyChanges(std::vector<RsGxsNotify*>& changes) override;
 
         // Overloaded from RsTickEvent.
-virtual void handle_event(uint32_t event_type, const std::string &elabel);
+virtual void handle_event(uint32_t event_type, const std::string &elabel) override;
 
 public:
 
@@ -97,18 +99,18 @@ virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &p
 
 //virtual bool groupRestoreKeys(const std::string &groupId);
 	virtual bool groupShareKeys(
-	        const RsGxsGroupId &groupId, const std::set<RsPeerId>& peers);
+            const RsGxsGroupId &groupId, const std::set<RsPeerId>& peers) override;
 
-virtual bool createGroup(uint32_t &token, RsGxsChannelGroup &group);
-virtual bool createPost(uint32_t &token, RsGxsChannelPost &post);
+virtual bool createGroup(uint32_t &token, RsGxsChannelGroup &group) override;
+virtual bool createPost(uint32_t &token, RsGxsChannelPost &post) override;
 
-virtual bool updateGroup(uint32_t &token, RsGxsChannelGroup &group);
+virtual bool updateGroup(uint32_t &token, RsGxsChannelGroup &group) override;
 
 // no tokens... should be cached.
-virtual bool setChannelAutoDownload(const RsGxsGroupId &groupId, bool enabled);
-virtual	bool getChannelAutoDownload(const RsGxsGroupId &groupid, bool& enabled);
-virtual bool setChannelDownloadDirectory(const RsGxsGroupId &groupId, const std::string& directory);
-virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::string& directory);
+virtual bool setChannelAutoDownload(const RsGxsGroupId &groupId, bool enabled) override;
+virtual	bool getChannelAutoDownload(const RsGxsGroupId &groupid, bool& enabled) override;
+virtual bool setChannelDownloadDirectory(const RsGxsGroupId &groupId, const std::string& directory) override;
+virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::string& directory) override;
 
 #ifdef TO_REMOVE
 	/// @see RsGxsChannels::turtleSearchRequest
@@ -331,6 +333,7 @@ static uint32_t channelsAuthenPolicy();
 	void clearUnsubscribedGroup(const RsGxsGroupId &id);
 	bool setAutoDownload(const RsGxsGroupId &groupId, bool enabled);
 	bool autoDownloadEnabled(const RsGxsGroupId &groupId, bool &enabled);
+    bool checkForOldAndUnusedChannels();
 
 // DUMMY DATA,
 virtual bool generateDummyData();
@@ -378,6 +381,7 @@ bool generateGroup(uint32_t &token, std::string groupName);
 	RsMutex mKnownChannelsMutex;
 
     rstime_t mLastDistantSearchNotificationTS;
+
     std::map<TurtleRequestId,std::set<RsGxsGroupId> > mSearchResultsToNotify;
 #ifdef TO_REMOVE
 	/** Store search callbacks with timeout*/

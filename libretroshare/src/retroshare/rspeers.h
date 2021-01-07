@@ -299,6 +299,32 @@ struct RsConnectionEvent : RsEvent
 	~RsConnectionEvent() override;
 };
 
+enum class RsNetworkEventCode: uint8_t {
+    UNKNOWN                 = 0x00,
+    LOCAL_IP_UPDATED        = 0x01,
+    EXTERNAL_IP_UPDATED     = 0x02,
+};
+
+struct RsNetworkEvent : RsEvent
+{
+    RsNetworkEvent()
+        : RsEvent(RsEventType::NETWORK),
+          mNetworkEventCode(RsNetworkEventCode::UNKNOWN){}
+
+    RsNetworkEventCode mNetworkEventCode;
+    std::string mIPAddress;   // local or external IP depending on the event type
+
+    ///* @see RsEvent @see RsSerializable
+    void serial_process(
+            RsGenericSerializer::SerializeJob j,
+            RsGenericSerializer::SerializeContext& ctx ) override
+    {
+        RsEvent::serial_process(j, ctx);
+        RS_SERIAL_PROCESS(mNetworkEventCode);
+        RS_SERIAL_PROCESS(mIPAddress);
+    }
+};
+
 //===================================================================================================//
 //                                         Peer Details                                              //
 //===================================================================================================//
@@ -483,6 +509,16 @@ struct RsPeerStateChangedEvent : RsEvent
 	}
 };
 
+enum class RetroshareInviteFlags:uint32_t {
+    NOTHING           = 0x00,
+    CURRENT_IP        = 0x01,
+    FULL_IP_HISTORY   = 0x02,
+    DNS               = 0x04,
+    RADIX_FORMAT      = 0x08,
+    PGP_SIGNATURES    = 0x10,
+};
+RS_REGISTER_ENUM_FLAGS_TYPE(RetroshareInviteFlags)
+
 /** The Main Interface Class - for information about your Peers
  * A peer is another RS instance, means associated with an SSL certificate
  * A same GPG person can have multiple peer running with different SSL certs
@@ -492,6 +528,7 @@ struct RsPeerStateChangedEvent : RsEvent
 class RsPeers
 {
 public:
+
 	/**
 	 * @brief Get own SSL peer id
 	 * @return own peer id
@@ -760,14 +797,13 @@ public:
 	 * @jsonapi{development}
 	 * @param[in] sslId Id of the peer of which we want to generate an invite,
 	 *	a null id (all 0) is passed, an invite for own node is returned.
-	 * @param[in] includeSignatures true to add key signatures to the invite
-	 * @param[in] includeExtraLocators false to avoid to add extra locators
+	 * @param[in] inviteFlags specify extra data to include in the invite
 	 * @return invite string
 	 */
 	virtual std::string GetRetroshareInvite(
-	        const RsPeerId& sslId = RsPeerId(),
-	        bool includeSignatures = false,
-	        bool includeExtraLocators = true ) = 0;
+	            const RsPeerId& sslId = RsPeerId(),
+	            RetroshareInviteFlags inviteFlags =
+	        RetroshareInviteFlags::DNS | RetroshareInviteFlags::CURRENT_IP ) = 0;
 
 	/**
 	 * @brief Get RetroShare short invite of the given peer
@@ -775,10 +811,8 @@ public:
 	 * @param[out] invite storage for the generated invite
 	 * @param[in] sslId Id of the peer of which we want to generate an invite,
 	 *	a null id (all 0) is passed, an invite for own node is returned.
-	 * @param[in] formatRadix true to get in base64 format false to get URL.
-	 * @param[in] bareBones true to get smallest invite, which miss also
-	 *	the information necessary to attempt an outgoing connection, but still
-	 *	enough to accept an incoming one.
+	 * @param[in] inviteFlags specify extra data to include in the invite and
+	 *	format.
 	 * @param[in] baseUrl URL into which to sneak in the RetroShare invite
 	 *	radix, this is primarly useful to trick other applications into making
 	 *	the invite clickable, or to disguise the RetroShare invite into a
@@ -786,9 +820,10 @@ public:
 	 * @return false if error occurred, true otherwise
 	 */
 	virtual bool getShortInvite(
-	        std::string& invite, const RsPeerId& sslId = RsPeerId(),
-	        bool formatRadix = false, bool bareBones = false,
-	        const std::string& baseUrl = "https://retroshare.me/" ) = 0;
+	            std::string& invite, const RsPeerId& sslId = RsPeerId(),
+	            RetroshareInviteFlags inviteFlags =
+	        RetroshareInviteFlags::CURRENT_IP | RetroshareInviteFlags::DNS,
+	            const std::string& baseUrl = "https://retroshare.me/" ) = 0;
 
 	/**
 	 * @brief Parse the give short invite to extract contained information

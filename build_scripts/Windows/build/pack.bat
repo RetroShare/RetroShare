@@ -96,11 +96,14 @@ copy nul "%RsDeployPath%\portable" %Quite%
 echo copy binaries
 copy "%RsBuildPath%\retroshare-gui\src\%RsBuildConfig%\retroshare*.exe" "%RsDeployPath%" %Quite%
 copy "%RsBuildPath%\retroshare-service\src\%RsBuildConfig%\retroshare*-service.exe" "%RsDeployPath%" %Quite%
+if exist "%RsBuildPath%\libretroshare\src\lib\retroshare.dll" copy "%RsBuildPath%\libretroshare\src\lib\retroshare.dll" "%RsDeployPath%" %Quite%
 
 echo copy extensions
-for /D %%D in ("%RsBuildPath%\plugins\*") do (
-	call :copy_extension "%%D" "%RsDeployPath%\Data\%Extensions%"
-	call :copy_dependencies "%RsDeployPath%\Data\%Extensions%\%%~nxD.dll" "%RsDeployPath%"
+if "%ParamPlugins%"=="1" (
+	for /D %%D in ("%RsBuildPath%\plugins\*") do (
+		call :copy_extension "%%D" "%RsDeployPath%\Data\%Extensions%"
+		call :copy_dependencies "%RsDeployPath%\Data\%Extensions%\%%~nxD.dll" "%RsDeployPath%"
+	)
 )
 
 echo copy external binaries
@@ -108,6 +111,7 @@ copy "%BuildLibsPath%\libs\bin\*.dll" "%RsDeployPath%" %Quite%
 
 echo copy dependencies
 call :copy_dependencies "%RsDeployPath%\retroshare.exe" "%RsDeployPath%"
+if exist "%RsDeployPath%\retroshare.dll" call :copy_dependencies "%RsDeployPath%\retroshare.dll" "%RsDeployPath%"
 
 echo copy Qt DLL's
 copy "%QtPath%\Qt%QtMainVersion1%Svg%QtMainVersion2%.dll" "%RsDeployPath%" %Quite%
@@ -139,6 +143,9 @@ rmdir /S /Q "%RsDeployPath%\stylesheets\__MACOSX__Bubble" %Quite%
 
 echo copy sounds
 xcopy /S "%SourcePath%\retroshare-gui\src\sounds" "%RsDeployPath%\sounds" %Quite%
+if "%ParamPlugins%"=="1" (
+	xcopy /S "%SourcePath%\plugins\Voip\gui\sounds" "%RsDeployPath%\sounds" %Quite%
+)
 
 echo copy license
 xcopy /S "%SourcePath%\retroshare-gui\src\license" "%RsDeployPath%\license" %Quite%
@@ -196,8 +203,8 @@ endlocal
 exit /B 1
 
 :copy_extension
-if exist "%~1\%RsBuildConfig%\%~n1.dll" (
-	copy "%~1\%RsBuildConfig%\%~n1.dll" %2 %Quite%
+if exist "%~1\lib\%~n1.dll" (
+	copy "%~1\lib\%~n1.dll" %2 %Quite%
 )
 goto :EOF
 

@@ -91,14 +91,15 @@ void ImHistoryBrowserCreateItemsThread::run()
 }
 
 /** Default constructor */
-ImHistoryBrowser::ImHistoryBrowser(const ChatId &chatId, QTextEdit *edit, QWidget *parent)
-  : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
+ImHistoryBrowser::ImHistoryBrowser(const ChatId &chatId, QTextEdit *edit,const QString &chatTitle, QWidget *parent)
+  : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint)
 {
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
 
+    setWindowTitle(tr("%1 's Message History").arg(chatTitle));
     ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/user/agt_forum64.png"));
-    ui.headerFrame->setHeaderText(tr("Message History"));
+    ui.headerFrame->setHeaderText(windowTitle());
 
     m_chatId = chatId;
     textEdit = edit;
@@ -225,36 +226,43 @@ void ImHistoryBrowser::historyAdd(HistoryMsg& msg)
 
 void ImHistoryBrowser::historyChanged(uint msgId, int type)
 {
-    if (type == NOTIFY_TYPE_ADD) {
-        /* history message added */
-        HistoryMsg msg;
-        if (rsHistory->getMessage(msgId, msg) == false) {
-            return;
-        }
+	if (type == NOTIFY_TYPE_ADD) {
+		/* history message added */
+		HistoryMsg msg;
+		if (rsHistory->getMessage(msgId, msg) == false) {
+			return;
+		}
+		RsPeerId virtChatId;
+		if ( rsHistory->chatIdToVirtualPeerId(m_chatId ,virtChatId)
+		     && virtChatId == msg.chatPeerId)
+			historyAdd(msg);
 
-        historyAdd(msg);
+		return;
+	}
 
-        return;
-    }
+	if (type == NOTIFY_TYPE_DEL) {
+		/* history message removed */
+		int count = ui.listWidget->count();
+		for (int i = 0; i < count; ++i) {
+			QListWidgetItem *itemWidget = ui.listWidget->item(i);
+			if (itemWidget->data(ROLE_MSGID).toString().toUInt() == msgId) {
+				delete(ui.listWidget->takeItem(i));
+				break;
+			}
+		}
+		return;
+	}
 
-    if (type == NOTIFY_TYPE_DEL) {
-        /* history message removed */
-        int count = ui.listWidget->count();
-        for (int i = 0; i < count; ++i) {
-            QListWidgetItem *itemWidget = ui.listWidget->item(i);
-            if (itemWidget->data(ROLE_MSGID).toString().toUInt() == msgId) {
-                delete(ui.listWidget->takeItem(i));
-                break;
-            }
-        }
-        return;
-    }
-
-    if (type == NOTIFY_TYPE_MOD) {
-        /* clear history */
-        ui.listWidget->clear();
-        return;
-    }
+	if (type == NOTIFY_TYPE_MOD) {
+		/* clear history */
+		// As no ChatId nor msgId are send via Notify,
+		//  only check if history of this chat is empty before clear our list.
+		std::list<HistoryMsg> historyMsgs;
+		rsHistory->getMessages(m_chatId, historyMsgs, 1);
+		if (historyMsgs.empty())
+			ui.listWidget->clear();
+		return;
+	}
 }
 
 void ImHistoryBrowser::fillItem(QListWidgetItem *itemWidget, HistoryMsg& msg)

@@ -62,6 +62,8 @@
  * #define DEBUG_POSTED
  ***/
 
+static const int POSTED_TABS_POSTS  = 1;
+
 /* View mode */
 #define VIEW_MODE_FEEDS  1
 #define VIEW_MODE_FILES  2
@@ -146,7 +148,7 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
 	painter->restore();
 }
 
-QSize PostedPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
+QSize PostedPostDelegate::sizeHint(const QStyleOptionViewItem&, const QModelIndex& index) const
 {
     // This is the only place where we actually set the size of cells
 
@@ -474,7 +476,8 @@ void PostedListWidgetWithModel::handleEvent_main_thread(std::shared_ptr<const Rs
 
 	switch(e->mPostedEventCode)
 	{
-        case RsPostedEventCode::NEW_MESSAGE:     // [[fallthrough]];
+        case RsPostedEventCode::NEW_COMMENT:     // [[fallthrough]];
+        case RsPostedEventCode::NEW_VOTE:        // [[fallthrough]];
         {
             // special treatment here because the message might be a comment, so we need to refresh the comment tab if openned
 
@@ -486,9 +489,11 @@ void PostedListWidgetWithModel::handleEvent_main_thread(std::shared_ptr<const Rs
                     t->refresh();
             }
         }
+        case RsPostedEventCode::NEW_MESSAGE:          // [[fallthrough]];
         case RsPostedEventCode::NEW_POSTED_GROUP:     // [[fallthrough]];
 		case RsPostedEventCode::UPDATED_POSTED_GROUP: // [[fallthrough]];
 		case RsPostedEventCode::UPDATED_MESSAGE:
+        case RsPostedEventCode::BOARD_DELETED:
         case RsPostedEventCode::SYNC_PARAMETERS_UPDATED:
         {
 			if(e->mPostedGroupId == groupId())
@@ -505,7 +510,7 @@ void PostedListWidgetWithModel::showPostDetails()
 {
     QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
 	RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
-	
+
 	QTextDocument doc;
 	doc.setHtml(post.mMsg.c_str());
 
@@ -527,8 +532,8 @@ void PostedListWidgetWithModel::showPostDetails()
     if(index.row()==0 && index.column()==0)
         std::cerr << "here" << std::endl;
 
-	std::cerr << "showPostDetails: setting mSelectedPost to current post Id " << post.mMeta.mMsgId << ". Previous value: " << mSelectedPost << std::endl;
-    mSelectedPost = post.mMeta.mMsgId;
+	std::cerr << "showPostDetails: setting mLastSelectedPosts[groupId()] to current post Id " << post.mMeta.mMsgId << ". Previous value: " << mLastSelectedPosts[groupId()] << std::endl;
+    mLastSelectedPosts[groupId()] = post.mMeta.mMsgId;
 
     std::list<ChannelPostFileInfo> files;
     for(auto& file:post.mFiles)
@@ -623,24 +628,30 @@ void PostedListWidgetWithModel::updateGroupData()
 
 void PostedListWidgetWithModel::postPostLoad()
 {
-    std::cerr << "Post channel load..." << std::endl;
+	std::cerr << "Post channel load..." << std::endl;
+	whileBlocking(ui->filter_LE)->setText(QString()); //Clear it before navigate, as it will update it.
 
-	if(!mSelectedPost.isNull())
-    {
-    	QModelIndex index = mPostedPostsModel->getIndexOfMessage(mSelectedPost);
+	if (!mNavigatePendingMsgId.isNull())
+		navigate(mNavigatePendingMsgId);
 
-        std::cerr << "Setting current index to " << index.row() << ","<< index.column() << " for current post "
-                  << mSelectedPost.toStdString() << std::endl;
+#ifdef TO_REMOVE
+	else if( (mLastSelectedPosts.count(groupId()) > 0)
+	         && !mLastSelectedPosts[groupId()].isNull())
+	{
+		QModelIndex index = mPostedPostsModel->getIndexOfMessage(mLastSelectedPosts[groupId()]);
+
+		std::cerr << "Setting current index to " << index.row() << ","<< index.column() << " for current post "
+		          << mLastSelectedPosts[groupId()].toStdString() << std::endl;
 
 		ui->postsTree->selectionModel()->setCurrentIndex(index,QItemSelectionModel::ClearAndSelect);
 		ui->postsTree->scrollTo(index);//May change if model reloaded
 		ui->postsTree->setFocus();
-    }
-    else
-        std::cerr << "No pre-selected channel post." << std::endl;
+	}
+#endif
+	else
+		std::cerr << "No pre-selected channel post." << std::endl;
 
-    whileBlocking(ui->showLabel)->setText(QString::number(mPostedPostsModel->displayedStartPostIndex()+1)+" - "+QString::number(std::min(mPostedPostsModel->filteredPostsCount(),mPostedPostsModel->displayedStartPostIndex()+POSTS_CHUNK_SIZE+1)));
-	whileBlocking(ui->filter_LE)->setText(QString());
+	whileBlocking(ui->showLabel)->setText(QString::number(mPostedPostsModel->displayedStartPostIndex()+1)+" - "+QString::number(std::min(mPostedPostsModel->filteredPostsCount(),mPostedPostsModel->displayedStartPostIndex()+POSTS_CHUNK_SIZE+1)));
 }
 
 void PostedListWidgetWithModel::forceRedraw()
@@ -688,7 +699,7 @@ PostedListWidgetWithModel::~PostedListWidgetWithModel()
 
 void PostedListWidgetWithModel::processSettings(bool load)
 {
-	Settings->beginGroup(QString("ChannelPostsWidget"));
+    Settings->beginGroup(QString("BoardPostsWidget"));
 
 	if (load)
 	{
@@ -719,7 +730,7 @@ QString PostedListWidgetWithModel::groupName(bool)
     return QString::fromUtf8(mGroup.mMeta.mGroupName.c_str());
 }
 
-void PostedListWidgetWithModel::groupNameChanged(const QString &name)
+void PostedListWidgetWithModel::groupNameChanged(const QString &/*name*/)
 {
 }
 
@@ -735,12 +746,12 @@ QIcon PostedListWidgetWithModel::groupIcon()
 	return QIcon(postedImage);
 }
 
-void PostedListWidgetWithModel::setAllMessagesReadDo(bool read, uint32_t &token)
+void PostedListWidgetWithModel::setAllMessagesReadDo(bool read, uint32_t &/*token*/)
 {
     if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags))
         return;
 
-    QModelIndex src_index;
+    //QModelIndex src_index;
 
     mPostedPostsModel->setAllMsgReadStatus(read);
 
@@ -877,8 +888,10 @@ void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
         sync_string = tr("Unknown");
     }
 
-    if(group.mMeta.mLastPost > 0 && group.mMeta.mLastPost + rsPosted->getSyncPeriod(group.mMeta.mGroupId) < time(NULL) && IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
-        sync_string += " (Warning: will not allow latest posts to sync)";
+    auto sync_period = rsPosted->getSyncPeriod(group.mMeta.mGroupId) ;
+
+    if(sync_period > 0 && group.mMeta.mLastPost > 0 && group.mMeta.mLastPost + sync_period < time(NULL) && IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
+        sync_string += " (Warning: will not allow posts to sync)";
 
     ui->syncPeriodLabel->setText(sync_string);
 
@@ -1122,19 +1135,23 @@ void PostedListWidgetWithModel::blank()
 
 bool PostedListWidgetWithModel::navigate(const RsGxsMessageId& msgId)
 {
+	ui->filter_LE->setText("ID:" + QString::fromStdString(msgId.toStdString()));
+
 	QModelIndex index = mPostedPostsModel->getIndexOfMessage(msgId);
 
-    if(!index.isValid())
-    {
-        std::cerr << "(EE) Cannot navigate to msg " << msgId << " in board " << mGroup.mMeta.mGroupId << ": index unknown. Setting mNavigatePendingMsgId." << std::endl;
+	if(!index.isValid())
+	{
+		std::cerr << "(EE) Cannot navigate to msg " << msgId << " in board " << mGroup.mMeta.mGroupId << ": index unknown. Setting mNavigatePendingMsgId." << std::endl;
 
-        mSelectedPost = msgId;		// not found. That means the forum may not be loaded yet. So we keep that post in mind, for after loading.
-		return true;						// we have to return true here, otherwise the caller will intepret the async loading as an error.
-    }
+		mNavigatePendingMsgId = msgId;    // not found. That means the forum may not be loaded yet. So we keep that post in mind, for after loading.
+		return true;                      // we have to return true here, otherwise the caller will intepret the async loading as an error.
+	}
 
-	ui->postsTree->selectionModel()->setCurrentIndex(index,QItemSelectionModel::ClearAndSelect);
-	ui->postsTree->scrollTo(index);//May change if model reloaded
 	ui->postsTree->setFocus();
+
+	ui->tabWidget->setCurrentIndex(POSTED_TABS_POSTS);
+
+	mNavigatePendingMsgId.clear();
 
 	return true;
 }

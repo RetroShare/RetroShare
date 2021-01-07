@@ -100,6 +100,9 @@ enum class RsEventType : uint32_t
 	/// @see RsMsgs
 	CHAT_MESSAGE                                            = 15,
 
+    /// @see rspeers.h
+    NETWORK                                                 = 16,
+
 	__MAX /// Used internally, keep last
 };
 

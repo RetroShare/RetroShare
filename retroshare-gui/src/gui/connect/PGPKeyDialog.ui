@@ -7,477 +7,521 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>500</height>
+    <height>401</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Retroshare profile</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_3">
-   <item row="0" column="0">
+  <layout class="QGridLayout" name="gridLayout_4">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <item row="2" column="0">
+    <widget class="QFrame" name="frame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <property name="topMargin">
+       <number>3</number>
+      </property>
+      <item row="2" column="0">
+       <widget class="QDialogButtonBox" name="buttonBox">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="standardButtons">
+         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QTabWidget" name="stabWidget">
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <widget class="QWidget" name="tab">
+         <attribute name="title">
+          <string>Profile info</string>
+         </attribute>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <property name="verticalSpacing">
+           <number>6</number>
+          </property>
+          <item row="0" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <layout class="QGridLayout" name="gridLayout">
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="name">
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLineEdit" name="pgpfingerprint">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The PGP key fingerprint is a---supposedly unforgeable---characteristics of the PGP key. In order to make sure that you're dealing with the right key, compare the fingerprints.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="pgpfingerprint_label">
+                <property name="text">
+                 <string>Fingerprint :</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_name">
+                <property name="text">
+                 <string>Name :</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QComboBox" name="trustlevel_CB">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The trust level is an optional and local parameter that you can set in order to remember your option about a given PGP key. It is not used whatsoever to authorize connections. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>Unset</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../images.qrc">
+                   <normaloff>:/images/security-low-off-48.png</normaloff>:/images/security-low-off-48.png</iconset>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Unknown</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../images.qrc">
+                   <normaloff>:/images/security-low-off-48.png</normaloff>:/images/security-low-off-48.png</iconset>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>No trust</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../images.qrc">
+                   <normaloff>:/images/security-low-48.png</normaloff>:/images/security-low-48.png</iconset>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Marginal</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../images.qrc">
+                   <normaloff>:/images/security-medium-48.png</normaloff>:/images/security-medium-48.png</iconset>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Full</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../images.qrc">
+                   <normaloff>:/images/security-high-48.png</normaloff>:/images/security-high-48.png</iconset>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Ultimate</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../images.qrc">
+                   <normaloff>:/images/security-high-48.png</normaloff>:/images/security-high-48.png</iconset>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="web_of_trust_label">
+                <property name="text">
+                 <string>Trust level:</string>
+                </property>
+                <property name="wordWrap">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_5">
+                <property name="text">
+                 <string>Keysigning:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <layout class="QHBoxLayout" name="horizontalLayout_4">
+                <item>
+                 <widget class="QToolButton" name="signKeyButton">
+                  <property name="toolTip">
+                   <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. It helps them to decide whether to allow connections from that key based on your own trust. Signing a key is absolutely optional and cannot be undone, so do it wisely.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                  <property name="text">
+                   <string>Sign this key</string>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="toolButtonStyle">
+                   <enum>Qt::ToolButtonTextUnderIcon</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QCheckBox" name="signGPGKeyCheckBox">
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. It helps them to decide whether to allow connections from that key based on your own trust. Signing a key is absolutely optional and cannot be undone, so do it wisely.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                  <property name="text">
+                   <string>Sign PGP key</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_2">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item row="3" column="0">
+           <layout class="QHBoxLayout" name="friendAndSignLayout">
+            <property name="leftMargin">
+             <number>6</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>6</number>
+            </property>
+            <item>
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QToolButton" name="denyFriendButton">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click here if you want to refuse connections to nodes authenticated by this key.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Deny connections</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../images.qrc">
+                <normaloff>:/images/user/deny_user48.png</normaloff>:/images/user/deny_user48.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>48</width>
+                <height>48</height>
+               </size>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextUnderIcon</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="make_friend_button">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click this if you want your node to accept connecting to Retroshare nodes authenticated by this PGP key. This is done automatically when exchanging your Retroshare certificate with someone. In order to make friends, it is better to exchange certificates than accept connections from a given key, since the certificate also contain useful connection information (IP, DNS, SSL ids, etc).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Accept connections</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../images.qrc">
+                <normaloff>:/images/user/add_user48.png</normaloff>:/images/user/add_user48.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>48</width>
+                <height>48</height>
+               </size>
+              </property>
+              <property name="autoRepeat">
+               <bool>false</bool>
+              </property>
+              <property name="autoExclusive">
+               <bool>false</bool>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextUnderIcon</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>false</bool>
+              </property>
+              <property name="arrowType">
+               <enum>Qt::NoArrow</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="2" column="0">
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <widget class="QLabel" name="signersLabel">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="RSTextBrowser" name="signers">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. The signatures below cryptographically attest that owners of the listed keys recognise the current PGP key as authentic.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="is_signing_me">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>This profile has signed your own profile key</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="widget">
+         <attribute name="title">
+          <string>PGP key</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Below is the node's profile key in PGP ASCII format. It identifies all nodes of the same profile. A &quot;Retroshare certificate&quot; that you can exchange in order to make friends, is in the the &quot;details&quot; of each separate node.</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTextEdit" name="userCertificateText_2">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QCheckBox" name="_shouldAddSignatures_CB_2">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button will toggle the inclusion of signatures in the ascii display of the PGP key. See the comments about signatures in the other tab. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Include signatures</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="tab_2">
+         <attribute name="title">
+          <string>Options</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="verticalLayout_6">
+          <item>
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>These options apply to all nodes of the profile:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="_direct_transfer_CB">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare periodically checks your friend lists for browsable files matching your transfers, to establish a direct transfer. In this case, your friend knows you're downloading the file.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;To prevent this behavior for this friend only, uncheck this box. You can still perform a direct transfer if you explicitly ask for it, by e.g. downloading from your friend's file list. This setting is applied to all locations of the same node.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Use as direct source, when available</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="_allow_push_CB">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This option allows you to automatically download a file that is recommended in an message coming from this profile (e.g. when the message author is a signed identity that belongs to this profile). This can be used for instance to send files between your own nodes.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Auto-download recommended files from this node</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="_require_WL_CB">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Peers that have this option cannot connect if their connection address is not in the whitelist. This protects you from traffic forwarding attacks. When used, rejected peers will be reported by &amp;quot;security feed items&amp;quot; in the News Feed section. From there, you can whitelist/blacklist their IP. Applies to all locations of the same node.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Require white list clearance</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_5">
+              <item>
+               <widget class="QLabel" name="label">
+                <property name="text">
+                 <string>Max upload speed (0=unlimited)</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_2">
+                <property name="text">
+                 <string>Max download speed (0=unlimited)</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_4">
+              <item>
+               <widget class="QSpinBox" name="maxUploadSpeed_SB">
+                <property name="suffix">
+                 <string> kB/s</string>
+                </property>
+                <property name="maximum">
+                 <number>10000</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="maxDownloadSpeed_SB">
+                <property name="suffix">
+                 <string> kB/s</string>
+                </property>
+                <property name="maximum">
+                 <number>10000</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>274</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0">
     <widget class="HeaderFrame" name="headerFrame">
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Plain</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QTabWidget" name="stabWidget">
-     <property name="currentIndex">
-      <number>0</number>
-     </property>
-     <widget class="QWidget" name="tab">
-      <attribute name="title">
-       <string>Profile info</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <item>
-          <layout class="QGridLayout" name="gridLayout">
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="name">
-             <property name="readOnly">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="pgpfingerprint">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The PGP key fingerprint is a---supposedly unforgeable---characteristics of the PGP key. In order to make sure that you're dealing with the right key, compare the fingerprints.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="readOnly">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="pgpfingerprint_label">
-             <property name="text">
-              <string>Fingerprint :</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_name">
-             <property name="text">
-              <string>Name :</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QComboBox" name="trustlevel_CB">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The trust level is an optional and local parameter that you can set in order to remember your option about a given PGP key. It is not used whatsoever to authorize connections. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <item>
-              <property name="text">
-               <string>Unset</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/security-low-off-48.png</normaloff>:/images/security-low-off-48.png</iconset>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Unknown</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/security-low-off-48.png</normaloff>:/images/security-low-off-48.png</iconset>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>No trust</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/security-low-48.png</normaloff>:/images/security-low-48.png</iconset>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Marginal</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/security-medium-48.png</normaloff>:/images/security-medium-48.png</iconset>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Full</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/security-high-48.png</normaloff>:/images/security-high-48.png</iconset>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Ultimate</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/security-high-48.png</normaloff>:/images/security-high-48.png</iconset>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="web_of_trust_label">
-             <property name="text">
-              <string>Trust level:</string>
-             </property>
-             <property name="wordWrap">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_5">
-             <property name="text">
-              <string>Keysigning:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_4">
-             <item>
-              <widget class="QToolButton" name="signKeyButton">
-               <property name="toolTip">
-                <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. It helps them to decide whether to allow connections from that key based on your own trust. Signing a key is absolutely optional and cannot be undone, so do it wisely.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-               <property name="text">
-                <string>Sign this key</string>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>48</width>
-                 <height>48</height>
-                </size>
-               </property>
-               <property name="toolButtonStyle">
-                <enum>Qt::ToolButtonTextUnderIcon</enum>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="signGPGKeyCheckBox">
-               <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. It helps them to decide whether to allow connections from that key based on your own trust. Signing a key is absolutely optional and cannot be undone, so do it wisely.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-               <property name="text">
-                <string>Sign PGP key</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="is_signing_me">
-         <property name="font">
-          <font>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>This profile has signed your own profile key</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QGroupBox" name="signersBox">
-         <property name="title">
-          <string>Key signatures :</string>
-         </property>
-         <layout class="QVBoxLayout" name="_11">
-          <item>
-           <widget class="RSTextBrowser" name="signers">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. The signatures below cryptographically attest that owners of the listed keys recognise the current PGP key as authentic.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <layout class="QHBoxLayout" name="friendAndSignLayout">
-         <property name="leftMargin">
-          <number>6</number>
-         </property>
-         <property name="topMargin">
-          <number>6</number>
-         </property>
-         <property name="rightMargin">
-          <number>6</number>
-         </property>
-         <property name="bottomMargin">
-          <number>6</number>
-         </property>
-         <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QToolButton" name="denyFriendButton">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click here if you want to refuse connections to nodes authenticated by this key.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>Deny connections</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/user/deny_user48.png</normaloff>:/images/user/deny_user48.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>48</width>
-             <height>48</height>
-            </size>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextUnderIcon</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QToolButton" name="make_friend_button">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click this if you want your node to accept connecting to Retroshare nodes authenticated by this PGP key. This is done automatically when exchanging your Retroshare certificate with someone. In order to make friends, it is better to exchange certificates than accept connections from a given key, since the certificate also contain useful connection information (IP, DNS, SSL ids, etc).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>Accept connections</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/user/add_user48.png</normaloff>:/images/user/add_user48.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>48</width>
-             <height>48</height>
-            </size>
-           </property>
-           <property name="autoRepeat">
-            <bool>false</bool>
-           </property>
-           <property name="autoExclusive">
-            <bool>false</bool>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextUnderIcon</enum>
-           </property>
-           <property name="autoRaise">
-            <bool>false</bool>
-           </property>
-           <property name="arrowType">
-            <enum>Qt::NoArrow</enum>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="widget">
-      <attribute name="title">
-       <string>PGP key</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <widget class="QLabel" name="label_4">
-         <property name="text">
-          <string>Below is the node's profile key in PGP ASCII format. It identifies all nodes of the same profile. A &quot;Retroshare certificate&quot; that you can exchange in order to make friends, is in the the &quot;details&quot; of each separate node.</string>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QTextEdit" name="userCertificateText_2">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QCheckBox" name="_shouldAddSignatures_CB_2">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button will toggle the inclusion of signatures in the ascii display of the PGP key. See the comments about signatures in the other tab. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>Include signatures</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tab_2">
-      <attribute name="title">
-       <string>Options</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_6">
-       <item>
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>These options apply to all nodes of the profile:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="_direct_transfer_CB">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare periodically checks your friend lists for browsable files matching your transfers, to establish a direct transfer. In this case, your friend knows you're downloading the file.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;To prevent this behavior for this friend only, uncheck this box. You can still perform a direct transfer if you explicitly ask for it, by e.g. downloading from your friend's file list. This setting is applied to all locations of the same node.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string>Use as direct source, when available</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="_allow_push_CB">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This option allows you to automatically download a file that is recommended in an message coming from this node. This can be used for instance to send files between your own nodes. Applied to all locations of the same node.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string>Auto-download recommended files from this node</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="_require_WL_CB">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Peers that have this option cannot connect if their connection address is not in the whitelist. This protects you from traffic forwarding attacks. When used, rejected peers will be reported by &amp;quot;security feed items&amp;quot; in the News Feed section. From there, you can whitelist/blacklist their IP. Applies to all locations of the same node.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string>Require white list clearance</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_5">
-           <item>
-            <widget class="QLabel" name="label">
-             <property name="text">
-              <string>Max upload speed (0=unlimited)</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_2">
-             <property name="text">
-              <string>Max download speed (0=unlimited)</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
-           <item>
-            <widget class="QSpinBox" name="maxUploadSpeed_SB">
-             <property name="suffix">
-              <string> kB/s</string>
-             </property>
-             <property name="maximum">
-              <number>10000</number>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="maxDownloadSpeed_SB">
-             <property name="suffix">
-              <string> kB/s</string>
-             </property>
-             <property name="maximum">
-              <number>10000</number>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <spacer name="verticalSpacer_4">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>274</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>

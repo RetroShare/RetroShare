@@ -23,19 +23,20 @@
 #ifndef CHATWIDGET_H
 #define CHATWIDGET_H
 
-#include <QWidget>
-#include <QCompleter>
-#include <QTextCursor>
-#include <QTextCharFormat>
-#include <QToolButton>
+#include "ChatLobbyUserNotify.h"
+#include "ChatStyle.h"
 #include "gui/common/HashBox.h"
 #include "gui/common/RsButtonOnText.h"
-#include "ChatStyle.h"
 #include "gui/style/RSStyle.h"
-#include "ChatLobbyUserNotify.h"
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsfiles.h>
+
+#include <QCompleter>
+#include <QTextCharFormat>
+#include <QTextCursor>
+#include <QToolButton>
+#include <QWidget>
 
 //For PersonId anchor.
 #define PERSONID "PersonId:"
@@ -45,6 +46,7 @@ class QTextEdit;
 class QPushButton;
 class ChatWidget;
 class QMenu;
+class ImHistoryBrowser;
 
 namespace Ui {
 class ChatWidget;
@@ -113,6 +115,7 @@ public:
 	// small enough in size.
 	void addChatBarWidget(QWidget *w) ;
 	void addTitleBarWidget(QWidget *w);
+	void addTopBarWidget(QWidget *w);
 	void hideChatText(bool hidden);
 	RSButtonOnText* getNewButtonOnTextBrowser();
 	RSButtonOnText* getNewButtonOnTextBrowser(QString text);
@@ -258,7 +261,8 @@ private:
 	TransferRequestFlags mDefaultExtraFileFlags ; // flags for extra files shared in this chat. Will be 0 by default, but might be ANONYMOUS for chat lobbies.
 	QDate lastMsgDate ;
 
-    QCompleter *completer;
+	QCompleter *completer;
+	ImHistoryBrowser* imBrowser;
 
 	QList<ChatWidgetHolder*> mChatWidgetHolder;
 	ChatLobbyUserNotify* notify;

@@ -170,7 +170,7 @@
         <translation>Ονομα:</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="+75"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="+77"/>
         <source>Feed Details</source>
         <translation>Feed Λεπτομερειες</translation>
     </message>
@@ -270,7 +270,7 @@
         <translation>Ανοίξτε όλων των feeds σε νέα καρτέλα</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderConfig.h" line="+50"/>
+        <location filename="../gui/FeedReaderConfig.h" line="+47"/>
         <source>FeedReader</source>
         <translation>FeedReader</translation>
     </message>
@@ -278,7 +278,7 @@
 <context>
     <name>FeedReaderDialog</name>
     <message>
-        <location filename="../gui/FeedReaderDialog.ui" line="+73"/>
+        <location filename="../gui/FeedReaderDialog.ui" line="+91"/>
         <source>Feeds</source>
         <translation>Feeds</translation>
     </message>
@@ -293,7 +293,7 @@
         <translation>Update feed</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="+94"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="+92"/>
         <source>Message Folders</source>
         <translation>Φάκελοι μηνυμάτων</translation>
     </message>
@@ -348,7 +348,7 @@
         <translation>Δεν υπάρχει όνομα</translation>
     </message>
     <message>
-        <location line="+212"/>
+        <location line="+210"/>
         <source>Add new folder</source>
         <translation>Προσθήκη νέου φακέλου</translation>
     </message>
@@ -437,12 +437,12 @@
 <context>
     <name>FeedReaderFeedNotify</name>
     <message>
-        <location filename="../gui/FeedReaderFeedNotify.cpp" line="+47"/>
+        <location filename="../gui/FeedReaderFeedNotify.cpp" line="+46"/>
         <source>Feed Reader</source>
         <translation>Feed Reader</translation>
     </message>
     <message>
-        <location line="+78"/>
+        <location line="+79"/>
         <source>Test</source>
         <translation>Δοκιμή</translation>
     </message>
@@ -501,7 +501,7 @@
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="+92"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="+113"/>
         <source>Title</source>
         <translation>Τίτλος</translation>
     </message>
@@ -596,7 +596,7 @@
 <context>
     <name>FeedReaderPlugin</name>
     <message>
-        <location filename="../FeedReaderPlugin.cpp" line="+157"/>
+        <location filename="../FeedReaderPlugin.cpp" line="+156"/>
         <source>This plugin provides a Feedreader.</source>
         <translation>Αυτό το plugin παρέχει εναν Feedreader.</translation>
     </message>
@@ -609,7 +609,7 @@
 <context>
     <name>FeedReaderStringDefs</name>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="+36"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="+35"/>
         <source>Feed not found.</source>
         <translation>Το Feed δεν βρεθηκε.</translation>
     </message>
@@ -778,7 +778,7 @@
 <context>
     <name>FeedReaderUserNotify</name>
     <message>
-        <location filename="../gui/FeedReaderUserNotify.cpp" line="+40"/>
+        <location filename="../gui/FeedReaderUserNotify.cpp" line="+39"/>
         <source>FeedReader Message</source>
         <translation>FeedReader μήνυμα</translation>
     </message>
@@ -841,7 +841,7 @@
         <translation>Κατάργηση XPath</translation>
     </message>
     <message>
-        <location filename="../gui/PreviewFeedDialog.cpp" line="+179"/>
+        <location filename="../gui/PreviewFeedDialog.cpp" line="+180"/>
         <source>Cannot create preview</source>
         <translation>Δεν μπορεί να δημιουργήθει η προεπισκόπηση</translation>
     </message>

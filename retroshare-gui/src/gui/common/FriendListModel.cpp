@@ -658,24 +658,51 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 		break;
 
 		case ENTRY_TYPE_PROFILE:
-		{
-			const HierarchicalProfileInformation *profile = getProfileInfo(e);
+        {
+                const HierarchicalProfileInformation *profile = getProfileInfo(e);
 
-			if(!profile)
-				return QVariant();
+                if(!profile)
+                        return QVariant();
 
 #ifdef DEBUG_MODEL_INDEX
-			std::cerr << profile->profile_info.name.c_str() ;
+                std::cerr << profile->profile_info.name.c_str() ;
 #endif
-			switch(col)
-			{
-				case COLUMN_THREAD_NAME:           return QVariant(QString::fromUtf8(profile->profile_info.name.c_str()));
-				case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(profile->profile_info.gpg_id.toStdString()) );
+                switch(col)
+                {
+                case COLUMN_THREAD_NAME:           return QVariant(QString::fromUtf8(profile->profile_info.name.c_str()));
+                case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(profile->profile_info.gpg_id.toStdString()) );
 
-				default:
-				return QVariant();
-			}
-		}
+                case COLUMN_THREAD_IP:
+                case COLUMN_THREAD_LAST_CONTACT:
+                {
+                        if(!isProfileExpanded(e))
+                        {
+                                const HierarchicalProfileInformation *hn = getProfileInfo(e);
+
+                                QDateTime most_recent_time = QDateTime::fromTime_t(0);
+                                QString most_recent_ip("---");
+
+                                for(uint32_t i=0;i<hn->child_node_indices.size();++i)
+                                {
+                                        const HierarchicalNodeInformation& node = mLocations[hn->child_node_indices[i]];
+                                        auto node_time = QDateTime::fromTime_t(node.node_info.lastConnect);
+
+                                        if(most_recent_time < node_time)
+                                        {
+                                                most_recent_time = node_time;
+                                                most_recent_ip = (node.node_info.state & RS_PEER_STATE_CONNECTED) ? StatusDefs::connectStateIpString(node.node_info) : QString("---");
+                                        }
+                                }
+
+                                if(col == COLUMN_THREAD_LAST_CONTACT) return QVariant(most_recent_time);
+                                if(col == COLUMN_THREAD_IP)           return QVariant(most_recent_ip);
+                        }
+
+                }
+                default:
+                        return QVariant();
+                }
+        }
 		break;
 
 		case ENTRY_TYPE_NODE:

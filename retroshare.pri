@@ -204,6 +204,10 @@ no_rs_service_terminal_login:CONFIG -= rs_service_terminal_login
 CONFIG+=rs_dh_init_check
 no_rs_dh_init_check:CONFIG -= rs_dh_init_check
 
+# To export all symbols for the plugins on Windows build we need to build libretroshare as
+# shared library. Fix linking error (ld.exe: Error: export ordinal too large) due to too
+# many exported symbols.
+retroshare_plugins:win32:CONFIG *= libretroshare_shared
 
 # Specify host precompiled jsonapi-generator path, appending the following
 # assignation to qmake command line
@@ -573,6 +577,8 @@ rs_broadcast_discovery:DEFINES *= RS_BROADCAST_DISCOVERY
 no_rs_dh_init_check:DEFINES *= RS_DISABLE_DIFFIE_HELLMAN_INIT_CHECK
 
 debug {
+    rs_mutex_debug:DEFINES *= RS_MUTEX_DEBUG
+
     QMAKE_CXXFLAGS -= -O2 -fomit-frame-pointer
     QMAKE_CFLAGS -= -O2 -fomit-frame-pointer
 

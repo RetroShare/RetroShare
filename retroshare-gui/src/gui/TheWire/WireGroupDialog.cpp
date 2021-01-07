@@ -51,6 +51,7 @@ uint32_t WireCreateDefaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC	|
 							// GXS_GROUP_DEFAULTS_PERSONAL_GPG        |
 							GXS_GROUP_DEFAULTS_PERSONAL_REQUIRED    |
 							// GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB    |
+							GXS_GROUP_DEFAULTS_PERSONAL_GROUP       |
 
 							// GXS_GROUP_DEFAULTS_COMMENTS_YES		  |
 							GXS_GROUP_DEFAULTS_COMMENTS_NO          |
@@ -172,16 +173,26 @@ bool WireGroupDialog::service_loadGroup(const RsGxsGenericGroupData *data, Mode 
 	const RsWireGroup &group = *pgroup;
 	// description = QString::fromUtf8(group.mDescription.c_str());
 
-#if 0
-	if (group.mThumbnail.mData) {
+	if (group.mHeadshot.mData) {
 		QPixmap pixmap;
-		if (GxsIdDetails::loadPixmapFromData(group.mThumbnail.mData, group.mThumbnail.mSize, pixmap,GxsIdDetails::ORIGINAL)) {
+		if (GxsIdDetails::loadPixmapFromData(group.mHeadshot.mData, group.mHeadshot.mSize, pixmap,GxsIdDetails::ORIGINAL)) {
 			setLogo(pixmap);
 		}
 	} else {
-            setLogo(FilesDefs::getPixmapFromQtResourcePath(":/images/album_create_64.png"));
+			setLogo(FilesDefs::getPixmapFromQtResourcePath(":/images/album_create_64.png"));
 	}
-#endif
+
+	// from Extra Widget.
+	mExtra->setTagline(group.mTagline);
+	mExtra->setLocation(group.mLocation);
+
+	if (group.mMasthead.mData){
+		QPixmap pixmap;
+		if (GxsIdDetails::loadPixmapFromData(group.mMasthead.mData, group.mMasthead.mSize, pixmap,GxsIdDetails::ORIGINAL))
+		{
+			mExtra->setMasthead(pixmap);
+		}
+	}
 
 	return true;
 }

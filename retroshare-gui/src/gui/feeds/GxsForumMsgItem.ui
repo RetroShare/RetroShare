@@ -12,16 +12,16 @@
   </property>
   <layout class="QGridLayout">
    <property name="leftMargin">
-    <number>0</number>
+    <number>1</number>
    </property>
    <property name="topMargin">
-    <number>0</number>
+    <number>1</number>
    </property>
    <property name="rightMargin">
-    <number>0</number>
+    <number>1</number>
    </property>
    <property name="bottomMargin">
-    <number>0</number>
+    <number>1</number>
    </property>
    <item row="2" column="0">
     <widget class="QFrame" name="frame">
@@ -555,6 +555,9 @@
              <property name="text">
               <string notr="true">Current Message..</string>
              </property>
+             <property name="alignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+             </property>
              <property name="wordWrap">
               <bool>true</bool>
              </property>
@@ -578,15 +581,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>GxsIdLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/gxs/GxsIdLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>AvatarWidget</class>
    <extends>QLabel</extends>
    <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>GxsIdLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/gxs/GxsIdLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

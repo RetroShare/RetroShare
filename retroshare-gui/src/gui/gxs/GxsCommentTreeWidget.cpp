@@ -28,6 +28,8 @@
 
 #include <QAbstractTextDocumentLayout>
 #include <QApplication>
+#include <QTextEdit>
+#include <QHeaderView>
 #include <QClipboard>
 #include <QDateTime>
 #include <QMenu>
@@ -68,6 +70,8 @@
 std::map<RsGxsMessageId, std::vector<RsGxsComment> > GxsCommentTreeWidget::mCommentsCache;
 QMutex GxsCommentTreeWidget::mCacheMutex;
 
+//#define USE_NEW_DELEGATE 1
+
 // This class allows to draw the item using an appropriate size
 
 class MultiLinesCommentDelegate: public QStyledItemDelegate
@@ -84,7 +88,7 @@ public:
     {
         Q_ASSERT(index.isValid());
 
-        QStyleOptionViewItemV4 opt = option;
+        QStyleOptionViewItem opt = option;
         initStyleOption(&opt, index);
         // disable default icon
         opt.icon = QIcon();
@@ -107,13 +111,13 @@ public:
         QSizeF s = td.documentLayout()->documentSize();
 
         int m = QFontMetricsF(QFont()).height();
-
         QSize full_area(std::min(r.width(),(int)s.width())+m,std::min(r.height(),(int)s.height())+m);
 
         QPixmap px(full_area.width(),full_area.height());
         px.fill(QColor(0,0,0,0));//Transparent background as item background is already paint.
         QPainter p(&px) ;
         p.setRenderHint(QPainter::Antialiasing);
+
 
         QPainterPath path ;
         path.addRoundedRect(QRectF(m/4.0,m/4.0,s.width()+m/2.0,s.height()+m/2.0),m,m) ;
@@ -127,6 +131,7 @@ public:
         p.translate(QPointF(m/2.0,m/2.0));
         td.documentLayout()->draw( &p, ctx );
 
+
         painter->drawPixmap(r.topLeft(),px);
 
         const_cast<QAbstractItemModel*>(index.model())->setData(index,px.size(),POST_CELL_SIZE_ROLE);
@@ -136,11 +141,114 @@ private:
 	QFontMetricsF qf;
 };
 
-GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
-	:QTreeWidget(parent), mTokenQueue(NULL), mRsTokenService(NULL), mCommentService(NULL)
+#ifdef USE_NEW_DELEGATE
+class NoEditDelegate: public QStyledItemDelegate
 {
-//	QTreeWidget* widget = this;
+public:
+    NoEditDelegate(QObject* parent=0): QStyledItemDelegate(parent) {}
+    virtual QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+    {
+        return nullptr;
+    }
+};
 
+class GxsCommentDelegate: public QStyledItemDelegate
+{
+public:
+    GxsCommentDelegate(QFontMetricsF f) : qf(f){}
+
+    QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex &index) const override
+    {
+        return index.data(POST_CELL_SIZE_ROLE).toSize() ;
+    }
+
+    void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex& index) const override
+    {
+        if(index.column() == PCITEM_COLUMN_COMMENT)
+            editor->setGeometry(option.rect);
+    }
+
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override
+    {
+        if(index.column() == PCITEM_COLUMN_COMMENT)
+        {
+            QTextEdit *b = new QTextEdit(parent);
+
+            b->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+            b->setFixedSize(option.rect.size());
+            b->setAcceptRichText(true);
+            b->setTextInteractionFlags(Qt::TextSelectableByMouse|Qt::LinksAccessibleByMouse);
+            b->document()->setHtml("<html>"+index.data(Qt::DisplayRole).toString()+"</html>");
+            b->adjustSize();
+
+            return b;
+        }
+        else
+            return nullptr;
+    }
+
+    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override
+    {
+        if((option.state & QStyle::State_Selected)) // Avoids double display. The selected widget is never exactly the size of the rendered one,
+            return;                                 // so when selected, we only draw the selected one.
+
+        Q_ASSERT(index.isValid());
+
+        QStyleOptionViewItem opt = option;
+        initStyleOption(&opt, index);
+        // disable default icon
+        opt.icon = QIcon();
+        opt.text = QString();
+
+        const QRect r = option.rect.adjusted(0,0,-option.decorationSize.width(),0);
+
+        QTextDocument td ;
+        td.setHtml("<html>"+index.data(Qt::DisplayRole).toString()+"</html>");
+        td.setTextWidth(r.width());
+        QSizeF s = td.documentLayout()->documentSize();
+
+        int m = QFontMetricsF(QFont()).height() ;
+        //int m = 2;
+
+        QSize full_area(std::min(r.width(),(int)s.width())+m,std::min(r.height(),(int)s.height())+m);
+
+        QPixmap px(full_area.width(),full_area.height());
+        px.fill(QColor(0,0,0,0));//Transparent background as item background is already paint.
+        QPainter p(&px) ;
+        p.setRenderHint(QPainter::Antialiasing);
+
+        QTextEdit b;
+        b.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        b.setFixedSize(full_area);
+        b.setAcceptRichText(true);
+        b.setTextInteractionFlags(Qt::TextSelectableByMouse|Qt::LinksAccessibleByMouse);
+        b.document()->setHtml("<html>"+index.data(Qt::DisplayRole).toString()+"</html>");
+        b.adjustSize();
+        b.render(&p,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
+
+        painter->drawPixmap(opt.rect.topLeft(),px);
+
+        const_cast<QAbstractItemModel*>(index.model())->setData(index,px.size(),POST_CELL_SIZE_ROLE);
+    }
+
+private:
+    QFontMetricsF qf;
+};
+#endif
+
+void GxsCommentTreeWidget::mouseMoveEvent(QMouseEvent *e)
+{
+    QModelIndex idx = indexAt(e->pos());
+
+    if(idx != selectionModel()->currentIndex())
+        selectionModel()->setCurrentIndex(idx,QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+
+    QTreeView::mouseMoveEvent(e);
+}
+
+GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
+    :QTreeWidget(parent), mTokenQueue(NULL), mRsTokenService(NULL), mCommentService(NULL)
+{
     setVerticalScrollMode(ScrollPerPixel);
 	setContextMenuPolicy(Qt::CustomContextMenu);
 	RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
@@ -148,29 +256,45 @@ GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
 	setItemDelegate(itemDelegate);
 	setWordWrap(true);
 
+    setSelectionBehavior(QAbstractItemView::SelectRows);
+
+#ifdef USE_NEW_DELEGATE
+    setMouseTracking(true); // for auto selection
+    setItemDelegateForColumn(PCITEM_COLUMN_COMMENT,new GxsCommentDelegate(QFontMetricsF(font()))) ;
+
+    // Apparently the following below is needed, since there is no way to set item flags for a single column
+    // so after setting flags Qt will believe that all columns are editable.
+
+    setItemDelegateForColumn(PCITEM_COLUMN_AUTHOR,   new NoEditDelegate(this));
+    setItemDelegateForColumn(PCITEM_COLUMN_DATE,     new NoEditDelegate(this));
+    setItemDelegateForColumn(PCITEM_COLUMN_SCORE,    new NoEditDelegate(this));
+    setItemDelegateForColumn(PCITEM_COLUMN_UPVOTES,  new NoEditDelegate(this));
+    setItemDelegateForColumn(PCITEM_COLUMN_DOWNVOTES,new NoEditDelegate(this));
+    setItemDelegateForColumn(PCITEM_COLUMN_OWNVOTE,  new NoEditDelegate(this));
+
+    QObject::connect(header(),SIGNAL(geometriesChanged()),this,SLOT(updateContent()));
+    QObject::connect(header(),SIGNAL(sectionResized(int,int,int)),this,SLOT(updateContent()));
+
+    setEditTriggers(QAbstractItemView::CurrentChanged | QAbstractItemView::SelectedClicked);
+#else
     setItemDelegateForColumn(PCITEM_COLUMN_COMMENT,new MultiLinesCommentDelegate(QFontMetricsF(font()))) ;
-	
+#endif
+
 	commentsRole = new RSTreeWidgetItemCompareRole;
     commentsRole->setRole(PCITEM_COLUMN_DATE, ROLE_SORT);
 
     mUseCache = false;
 
-//	QFont font = QFont("ARIAL", 10);
-//	font.setBold(true);
-
-//	QString name("test");
-//	QTreeWidgetItem *item = new QTreeWidgetItem();
-//	item->setText(0, name);
-//	item->setFont(0, font);
-//	item->setSizeHint(0, QSize(18, 18));
-//	item->setForeground(0, QBrush(QColor(79, 79, 79)));
-
-//	addTopLevelItem(item);
-//	item->setExpanded(true);
-
-	return;
+    //header()->setSectionResizeMode(PCITEM_COLUMN_COMMENT,QHeaderView::ResizeToContents);
+    return;
 }
 
+void GxsCommentTreeWidget::updateContent()
+{
+    model()->dataChanged(QModelIndex(),QModelIndex());
+
+    std::cerr << "Updating content" << std::endl;
+}
 GxsCommentTreeWidget::~GxsCommentTreeWidget()
 {
 	if (mTokenQueue) {
@@ -189,26 +313,36 @@ void GxsCommentTreeWidget::setCurrentCommentMsgId(QTreeWidgetItem *current, QTre
 		mCurrentCommentText = current->text(PCITEM_COLUMN_COMMENT);
 		mCurrentCommentAuthor = current->text(PCITEM_COLUMN_AUTHOR);
 		mCurrentCommentAuthorId = RsGxsId(current->text(PCITEM_COLUMN_AUTHORID).toStdString());
-
+	} else {
+		mCurrentCommentMsgId.clear();
+		mCurrentCommentText.clear();
+		mCurrentCommentAuthor.clear();
+		mCurrentCommentAuthorId.clear();
 	}
 }
 
-void GxsCommentTreeWidget::customPopUpMenu(const QPoint& /*point*/)
+void GxsCommentTreeWidget::customPopUpMenu(const QPoint& point)
 {
+    QTreeWidgetItem *item = itemAt(point);
+
 	QMenu contextMnu( this );
 	QAction* action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_REPLY), tr("Reply to Comment"), this, SLOT(replyToComment()));
-	action->setDisabled(mCurrentCommentMsgId.isNull());
+	action->setDisabled(!item || mCurrentCommentMsgId.isNull());
+
 	action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MESSAGE), tr("Submit Comment"), this, SLOT(makeComment()));
 	action->setDisabled(mMsgVersions.empty());
+
 	action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPY), tr("Copy Comment"), this, SLOT(copyComment()));
-	action->setDisabled(mCurrentCommentMsgId.isNull());
+    action->setData( item ? item->data(PCITEM_COLUMN_COMMENT,Qt::DisplayRole) : "" );
+    action->setDisabled(!item || mCurrentCommentMsgId.isNull());
 
 	contextMnu.addSeparator();
 
 	action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_VOTEUP), tr("Vote Up"), this, SLOT(voteUp()));
-	action->setDisabled(mVoterId.isNull());
+	action->setDisabled(!item || mCurrentCommentMsgId.isNull() || mVoterId.isNull());
+
 	action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_VOTEDOWN), tr("Vote Down"), this, SLOT(voteDown()));
-	action->setDisabled(mVoterId.isNull());
+	action->setDisabled(!item || mCurrentCommentMsgId.isNull() || mVoterId.isNull());
 
 
 	if (!mCurrentCommentMsgId.isNull())
@@ -342,8 +476,10 @@ void GxsCommentTreeWidget::replyToComment()
 
 void GxsCommentTreeWidget::copyComment()
 {
+    QString txt = dynamic_cast<QAction*>(sender())->data().toString();
+
 	QMimeData *mimeData = new QMimeData();
-	mimeData->setHtml("<html>"+mCurrentCommentText+"</html>");
+    mimeData->setHtml("<html>"+txt+"</html>");
 	QClipboard *clipboard = QApplication::clipboard();
 	clipboard->setMimeData(mimeData, QClipboard::Clipboard);
 }
@@ -540,23 +676,20 @@ void GxsCommentTreeWidget::addItem(RsGxsMessageId itemId, RsGxsMessageId parentI
 int treeCount(QTreeWidget *tree, QTreeWidgetItem *parent = 0)
 {
     int count = 0;
-    if (parent == 0) {
+    if (parent == 0)
+    {
         int topCount = tree->topLevelItemCount();
-        for (int i = 0; i < topCount; i++) {
-            QTreeWidgetItem *item = tree->topLevelItem(i);
-            if (item->isExpanded()) {
-                count += treeCount(tree, item);
-            }
-        }
+        for (int i = 0; i < topCount; i++)
+            count += treeCount(tree, tree->topLevelItem(i));
+
         count += topCount;
-    } else {
+    }
+    else
+    {
         int childCount = parent->childCount();
-        for (int i = 0; i < childCount; i++) {
-            QTreeWidgetItem *item = parent->child(i);
-            if (item->isExpanded()) {
-                count += treeCount(tree, item);
-            }
-        }
+        for (int i = 0; i < childCount; i++)
+            count += treeCount(tree, parent->child(i));
+
         count += childCount;
     }
     return count;
@@ -642,14 +775,14 @@ void GxsCommentTreeWidget::insertComments(const std::vector<RsGxsComment>& comme
 		}
 
 		text = QString::fromUtf8(comment.mComment.c_str());
-		item->setText(PCITEM_COLUMN_COMMENT, text);
-		item->setToolTip(PCITEM_COLUMN_COMMENT, text);
+        item->setText(PCITEM_COLUMN_COMMENT, text);
+        item->setToolTip(PCITEM_COLUMN_COMMENT, text);
 
-		RsGxsId authorId = comment.mMeta.mAuthorId;
+        RsGxsId authorId = comment.mMeta.mAuthorId;
 		item->setId(authorId, PCITEM_COLUMN_AUTHOR, false);
         item->setData(PCITEM_COLUMN_COMMENT,POST_COLOR_ROLE,QVariant(authorId.toByteArray()[1]));
 
-		text = QString::number(comment.mScore);
+        text = QString::number(comment.mScore);
 		item->setText(PCITEM_COLUMN_SCORE, text);
 
 		text = QString::number(comment.mUpVotes);
@@ -670,6 +803,11 @@ void GxsCommentTreeWidget::insertComments(const std::vector<RsGxsComment>& comme
 		text = QString::fromUtf8(comment.mMeta.mAuthorId.toStdString().c_str());
 		item->setText(PCITEM_COLUMN_AUTHORID, text);
 
+#ifdef USE_NEW_DELEGATE
+        // Allows to call createEditor() in the delegate. Without this, createEditor() is never called in
+        // the styled item delegate.
+        item->setFlags(Qt::ItemIsEditable | item->flags());
+#endif
 
 		addItem(comment.mMeta.mMsgId, comment.mMeta.mParentId, item);
 	}
