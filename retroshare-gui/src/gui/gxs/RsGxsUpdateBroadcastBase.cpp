@@ -21,7 +21,8 @@
 #include <QTimer>
 
 #include "RsGxsUpdateBroadcastBase.h"
-#include "RsAutoUpdatePage.h"
+#include <retroshare-gui/RsAutoUpdatePage.h>
+
 #include "util/RsGxsUpdateBroadcast.h"
 
 #include <algorithm>

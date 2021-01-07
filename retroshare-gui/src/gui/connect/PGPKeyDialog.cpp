@@ -190,7 +190,7 @@ void PGPKeyDialog::load()
         ui.trustlevel_CB->hide();
 
         ui.is_signing_me->hide();
-        ui.signersBox->setTitle(tr("This is your own PGP key, and it is signed by :")+" ");
+        ui.signersLabel->setText(tr("This is your own PGP key, and it is signed by :")+" ");
 
     }
     else
@@ -198,7 +198,7 @@ void PGPKeyDialog::load()
         ui.web_of_trust_label->show();
         ui.trustlevel_CB->show();
         ui.is_signing_me->show();
-        ui.signersBox->setTitle(tr("This key is signed by :")+" ");
+        ui.signersLabel->setText(tr("This key is signed by :")+" ");
 
         if (detail.accept_connection)
         {

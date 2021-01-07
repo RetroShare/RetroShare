@@ -28,8 +28,8 @@
 #include "rsgds.h"
 
 
-typedef std::map< RsGxsGroupId, std::map<RsGxsMessageId, const RsGxsMsgMetaData*> > MsgMetaFilter;
-typedef std::map< RsGxsGroupId, RsGxsGrpMetaData* > GrpMetaFilter;
+typedef std::map< RsGxsGroupId, std::map<RsGxsMessageId, std::shared_ptr<RsGxsMsgMetaData> > > MsgMetaFilter;
+typedef std::map< RsGxsGroupId, std::shared_ptr<RsGxsGrpMetaData> > GrpMetaFilter;
 
 bool operator<(const std::pair<uint32_t,GxsRequest*>& p1,const std::pair<uint32_t,GxsRequest*>& p2);
 
@@ -220,7 +220,7 @@ public:
      * @param token request token to be redeemed
      * @param groupInfo
      */
-    bool getGroupSummary(const uint32_t &token, std::list<const RsGxsGrpMetaData*>& groupInfo);
+    bool getGroupSummary(const uint32_t &token, std::list<std::shared_ptr<RsGxsGrpMetaData> > &groupInfo);
 
     /*!
      *
@@ -276,7 +276,7 @@ private:
      * @param token the value of the token for the request object handle wanted
      * @return the request associated to this token
      */
-    GxsRequest* locked_retrieveCompetedRequest(const uint32_t& token);
+    GxsRequest* locked_retrieveCompletedRequest(const uint32_t& token);
 
     /*!
      * Add a gxs request to queue
@@ -478,7 +478,7 @@ private:
      * @param meta meta containing currently defined options for msg
      * @return true if msg meta passes all options
      */
-    bool checkMsgFilter(const RsTokReqOptions& opts, const RsGxsMsgMetaData* meta) const;
+    bool checkMsgFilter(const RsTokReqOptions& opts, const std::shared_ptr<RsGxsMsgMetaData>& meta) const;
 
     /*!
      * This applies the options to the meta to find out if the given group satisfies
@@ -487,7 +487,7 @@ private:
      * @param meta meta containing currently defined options for group
      * @return true if group meta passes all options
      */
-    bool checkGrpFilter(const RsTokReqOptions& opts, const RsGxsGrpMetaData* meta) const;
+    bool checkGrpFilter(const RsTokReqOptions& opts, const std::shared_ptr<RsGxsGrpMetaData> &meta) const;
 
 
     /*!
@@ -511,6 +511,8 @@ private:
 
     std::set<std::pair<uint32_t,GxsRequest*> > mRequestQueue;
     std::map<uint32_t, GxsRequest*> mCompletedRequests;
+
+    bool mUseMetaCache;
 };
 
 #endif // RSGXSDATAACCESS_H

@@ -989,6 +989,13 @@ int RsServer::StartupRetroShare()
 		bootstrapfile += "/";
 	bootstrapfile += BITDHT_BOOTSTRAP_FILENAME;
 
+	std::string installfile = "";
+#ifndef __ANDROID__
+	installfile = RsAccounts::systemDataDirectory();
+	installfile += "/";
+	installfile += BITDHT_BOOTSTRAP_FILENAME;
+#endif
+
     std::string filteredipfile = RsAccounts::AccountDirectory();
     if (filteredipfile != "")
         filteredipfile += "/";
@@ -1029,10 +1036,6 @@ int RsServer::StartupRetroShare()
 			bdbootRF.close();
 		}
 #else
-		std::string installfile = RsAccounts::systemDataDirectory();
-		installfile += "/";
-		installfile += BITDHT_BOOTSTRAP_FILENAME;
-
 		std::cerr << "Checking for Installation DHT bootstrap file " << installfile << std::endl;
 		if ((installfile != "") && (RsDirUtil::checkFile(installfile,tmp_size)))
 		{
@@ -1080,7 +1083,7 @@ int RsServer::StartupRetroShare()
 		// NEXT BITDHT.
 
 
-		mBitDht = new p3BitDht(ownId, mLinkMgr, mNetMgr, mDhtStack, bootstrapfile, filteredipfile);
+		mBitDht = new p3BitDht(ownId, mLinkMgr, mNetMgr, mDhtStack, bootstrapfile, installfile, filteredipfile);
 
 		// NEXT THE RELAY (NEED to keep a reference for installing RELAYS)
 		UdpRelayReceiver *mRelay = new UdpRelayReceiver(mDhtStack);

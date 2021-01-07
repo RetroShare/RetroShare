@@ -90,7 +90,7 @@ class bdQueryPeer
 class bdNodeManager: public bdNode, public BitDhtInterface
 {
 	public:
-        bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string bootfile, const std::string &filterfile, bdDhtFunctions *fns);
+		bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string bootfile, std::string bootfilebak, const std::string &filterfile, bdDhtFunctions *fns);
 
 
 void 	iteration();

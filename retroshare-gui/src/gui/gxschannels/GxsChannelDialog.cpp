@@ -127,9 +127,14 @@ void GxsChannelDialog::shareOnChannel(const RsGxsGroupId& channel_id,const QList
 
 	CreateGxsChannelMsg *msgDialog = new CreateGxsChannelMsg(channel_id) ;
 
-	QString txt ;
 	for(QList<RetroShareLink>::const_iterator it(file_links.begin());it!=file_links.end();++it)
-		txt += (*it).toHtml() + "\n" ;
+		if((*it).type() == RetroShareLink::TYPE_FILE)
+		{
+			FileInfo info ;
+			RsFileHash hash( (*it).hash().toStdString()) ;
+
+			msgDialog->addAttachment(hash, (*it).name().toUtf8().constData(), (*it).size(), rsFiles->alreadyHaveFile( hash,info ), RsPeerId()) ;
+		}
 
 	if(!file_links.empty())
 	{
@@ -137,7 +142,6 @@ void GxsChannelDialog::shareOnChannel(const RsGxsGroupId& channel_id,const QList
 		msgDialog->addSubject(subject);
 	}
 
-	msgDialog->addHtmlText(txt);
 	msgDialog->show();
 }
 

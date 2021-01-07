@@ -141,7 +141,7 @@ class p3BitDht: public p3Config, public pqiNetAssistConnect, public RsDht
 {
 public:
     p3BitDht(const RsPeerId& id, pqiConnectCb *cb, p3NetMgr *nm,
-             UdpStack *udpstack, std::string bootstrapfile, const std::string &filteredipfile);
+			 UdpStack *udpstack, std::string bootstrapfile, std::string bootstrapfilebak, const std::string &filteredipfile);
 
 
     virtual	~p3BitDht();

@@ -216,8 +216,8 @@ void GxsForumMsgItem::loadGroup()
 
 void GxsForumMsgItem::loadMessage()
 {
-#ifdef DEBUG_ITEM
-	std::cerr << "GxsForumMsgItem::loadMessage()";
+#ifndef DEBUG_ITEM
+    std::cerr << "GxsForumMsgItem::loadMessage(): messageId=" << messageId() << " groupId=" << groupId() ;
 	std::cerr << std::endl;
 #endif
 

@@ -29,7 +29,7 @@
 
 //#define DEBUG_STORE 1
 
-bdStore::bdStore(std::string file, bdDhtFunctions *fns)
+bdStore::bdStore(std::string file, std::string backupfile, bdDhtFunctions *fns)
 	:mFns(fns)
 {
 #ifdef DEBUG_STORE
@@ -39,6 +39,7 @@ bdStore::bdStore(std::string file, bdDhtFunctions *fns)
 
 	/* read data from file */
 	mStoreFile = file;
+	mStoreFileBak = backupfile;
 
 	reloadFromStore();
 }
@@ -52,12 +53,24 @@ int bdStore::clear()
 
 int bdStore::reloadFromStore()
 {
+	int result = reloadFromStore(mStoreFile);
+	if( result != 0 && store.size() > 0){
+		return result;
+	} else if(mStoreFileBak != "") { //Nothing loaded, try the backup file
+		return reloadFromStore(mStoreFileBak);
+	} else {
+		return 0;
+	}
+}
+
+int bdStore::reloadFromStore(std::string file)
+{
 	clear();
 
-	FILE *fd = fopen(mStoreFile.c_str(), "r");
+	FILE *fd = fopen(file.c_str(), "r");
 	if (!fd)
 	{
-		fprintf(stderr, "Failed to Open File: %s ... No Peers\n", mStoreFile.c_str());
+		fprintf(stderr, "Failed to Open File: %s ... No Peers\n", file.c_str());
 		return 0;
 	}
 		

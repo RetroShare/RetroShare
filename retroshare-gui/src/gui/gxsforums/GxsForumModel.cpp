@@ -1276,7 +1276,10 @@ void RsGxsForumModel::recursSetMsgReadStatus(ForumModelIndex i,bool read_status,
 		else
 			rsGxsForums->setMessageReadStatus(token,std::make_pair( mForumGroup.mMeta.mGroupId, mPosts[i].mMsgId ), read_status);
 
-		QModelIndex itemIndex = createIndex(i - 1, 0, &mPosts[i]);
+        void *ref ;
+        convertTabEntryToRefPointer(i,ref);	// we dont use i+1 here because i is not a row, but an index in the mPosts tab
+
+        QModelIndex itemIndex = createIndex(i - 1, 0, ref);
 		emit dataChanged(itemIndex, itemIndex);
 	}
 

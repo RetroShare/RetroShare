@@ -399,7 +399,7 @@ private:
      * @return false, if you cannot send to this peer, true otherwise
      */
     bool canSendGrpId(const RsPeerId& sslId, const RsGxsGrpMetaData& grpMeta, std::vector<GrpIdCircleVet>& toVet, bool &should_encrypt);
-    bool canSendMsgIds(std::vector<const RsGxsMsgMetaData*>& msgMetas, const RsGxsGrpMetaData&, const RsPeerId& sslId, RsGxsCircleId &should_encrypt_id);
+    bool canSendMsgIds(std::vector<std::shared_ptr<RsGxsMsgMetaData> > &msgMetas, const RsGxsGrpMetaData&, const RsPeerId& sslId, RsGxsCircleId &should_encrypt_id);
 
     /*!
      * \brief checkPermissionsForFriendGroup
@@ -626,6 +626,8 @@ private:
     std::map<TurtleRequestId,RsGxsGroupId> mSearchRequests;
     std::map<RsGxsGroupId,GroupRequestRecord> mSearchedGroups ;
     rstime_t mLastCacheReloadTS ;
+
+    bool mUseMetaCache;
 };
 
 #endif // RSGXSNETSERVICE_H

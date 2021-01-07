@@ -121,8 +121,13 @@ WikiDialog::WikiDialog(QWidget *parent) : RsGxsUpdateBroadcastPage(rsWiki, paren
 	connect(newGroupButton, SIGNAL(clicked()), this, SLOT(OpenOrShowAddGroupDialog()));
 	ui.groupTreeWidget->addToolButton(newGroupButton);
 
+	//QTimer *timer = new QTimer(this);
+	//timer->connect(timer, SIGNAL(timeout()), this, SLOT(insertWikiGroups()));
+	//timer->start(5000);
+
 	// load settings
 	processSettings(true);
+	updateDisplay(true);
 }
 
 WikiDialog::~WikiDialog()
@@ -316,7 +321,7 @@ void WikiDialog::clearWikiPage()
 	ui.textBrowser->setPlainText("");
 }
 
-void 	WikiDialog::clearGroupTree()
+void WikiDialog::clearGroupTree()
 {
 	ui.treeWidget_Pages->clear();
 }
@@ -474,7 +479,6 @@ void WikiDialog::requestWikiPage(const RsGxsGrpMsgIdPair &msgId)
 	mWikiQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, WIKIDIALOG_WIKI_PAGE);
 }
 
-
 void WikiDialog::loadWikiPage(const uint32_t &token)
 {
 	std::cerr << "WikiDialog::loadWikiPage()";
@@ -565,6 +569,8 @@ void WikiDialog::wikiSubscribe(bool subscribe)
 
 	uint32_t token;
 	rsWiki->subscribeToGroup(token, mGroupId, subscribe);
+
+	insertWikiGroups();
 }
 
 
@@ -738,4 +744,9 @@ void WikiDialog::updateDisplay(bool complete)
 			wikiGroupChanged(QString::fromStdString(msgIt->first.toStdString()));
 		}
 	}
+}
+
+void WikiDialog::insertWikiGroups()
+{
+	updateDisplay(true);
 }

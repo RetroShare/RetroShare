@@ -55,7 +55,7 @@ public:
     virtual std::ostream& print(std::ostream& o) const override;
 public:
 	std::list<RsGxsGroupId> mGroupIds;
-	std::list<const RsGxsGrpMetaData*> mGroupMetaData;
+    std::list<std::shared_ptr<RsGxsGrpMetaData> > mGroupMetaData;
 };
 
 class GroupIdReq : public GxsRequest
@@ -98,7 +98,7 @@ public:
 class MsgMetaReq : public GxsRequest
 {
 public:
-	virtual ~MsgMetaReq();
+    virtual ~MsgMetaReq() = default;
 
 	virtual std::ostream& print(std::ostream& o) const override;
 
