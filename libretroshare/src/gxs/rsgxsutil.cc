@@ -41,7 +41,7 @@
 
 static const uint32_t MAX_GXS_IDS_REQUESTS_NET   =  10 ; // max number of requests from cache/net (avoids killing the system!)
 
-#define DEBUG_GXSUTIL 1
+// #define DEBUG_GXSUTIL 1
 
 #ifdef DEBUG_GXSUTIL
 #define GXSUTIL_DEBUG() std::cerr << "[" << time(NULL)  << "] : GXS_UTIL : " << __FUNCTION__ << " : "
@@ -111,7 +111,7 @@ bool RsGxsCleanUp::clean(RsGxsGroupId& next_group_to_check,std::vector<RsGxsGrou
 
             for(; mit != result.end(); ++mit)
             {
-                std::vector<const RsGxsMsgMetaData*>& metaV = mit->second;
+                auto& metaV = mit->second;
 
                 // First, make a map of which message have a child message. This allows to only delete messages that dont have child messages.
                 // A more accurate way to go would be to compute the time of the oldest message and possibly delete all the branch, but in the
@@ -125,7 +125,7 @@ bool RsGxsCleanUp::clean(RsGxsGroupId& next_group_to_check,std::vector<RsGxsGrou
 
                 for( uint32_t i=0;i<metaV.size();++i)
                 {
-                    const RsGxsMsgMetaData* meta = metaV[i];
+                    const auto& meta = metaV[i];
 
                     bool have_kids = (messages_with_kids.find(meta->mMsgId)!=messages_with_kids.end());
 
@@ -170,7 +170,9 @@ bool RsGxsCleanUp::clean(RsGxsGroupId& next_group_to_check,std::vector<RsGxsGrou
 
         if(it->first == next_group_to_check)
         {
+#ifdef DEBUG_GXSUTIL
             GXSUTIL_DEBUG() << "Had the time to test all groups. Will start again at " << it->first << std::endl;
+#endif
             full_round = true;
             break;
         }
@@ -182,7 +184,9 @@ bool RsGxsCleanUp::clean(RsGxsGroupId& next_group_to_check,std::vector<RsGxsGrou
         //if(tm > now + 1) // we spent more than 1 sec on the job already
         if(tm > now) // we spent more than 1 sec on the job already
         {
+#ifdef DEBUG_GXSUTIL
             GXSUTIL_DEBUG() << "Aborting cleanup because it took too much time already. Next group left to be " << it->first << std::endl;
+#endif
             next_group_to_check = it->first;
             full_round = false;
             break;
@@ -210,245 +214,80 @@ void RsGxsIntegrityCheck::run()
 	std::vector<RsGxsGroupId> grps_to_delete;
 	GxsMsgReq msgs_to_delete;
 
-	check(mGenExchangeClient->serviceType(), mGixs, mDs
-#ifdef RS_DEEP_CHANNEL_INDEX
-	      , mGenExchangeClient, mSerializer
-#endif
-	      , mDeletedGrps, mDeletedMsgs);
+    check(mGenExchangeClient->serviceType(), mGixs, mDs);
 
 	RS_STACK_MUTEX(mIntegrityMutex);
 	mDone = true;
 }
 
-bool RsGxsIntegrityCheck::check(uint16_t service_type, RsGixs *mgixs, RsGeneralDataService *mds
-#ifdef RS_DEEP_CHANNEL_INDEX
-                                , RsGenExchange* mGenExchangeClient, RsSerialType& mSerializer
-#endif
-                                , std::vector<RsGxsGroupId>& grpsToDel, GxsMsgReq& msgsToDel)
+bool RsGxsIntegrityCheck::check(uint16_t service_type, RsGixs *mgixs, RsGeneralDataService *mds)
 {
-#ifdef RS_DEEP_CHANNEL_INDEX
-	bool isGxsChannels = mGenExchangeClient->serviceType() == RS_SERVICE_GXS_TYPE_CHANNELS;
-	std::set<RsGxsGroupId> indexedGroups;
+#ifdef DEBUG_GXSUTIL
+    GXSUTIL_DEBUG() << "Parsing all groups and messages MetaData in service " << std::hex << mds->serviceType() << std::endl;
 #endif
-
     // first take out all the groups
-    std::map<RsGxsGroupId, RsNxsGrp*> grp;
-    mds->retrieveNxsGrps(grp, true, true);
+    std::map<RsGxsGroupId, std::shared_ptr<RsGxsGrpMetaData> > grp;
+
+    mds->retrieveGxsGrpMetaData(grp);
+
     GxsMsgReq msgIds;
-    GxsMsgReq grps;
 
     std::map<RsGxsId,RsIdentityUsage> used_gxs_ids ;
     std::set<RsGxsGroupId> subscribed_groups ;
 
-    // compute hash and compare to stored value, if it fails then simply add it
-	// to list
-    for( std::map<RsGxsGroupId, RsNxsGrp*>::iterator git = grp.begin(); git != grp.end(); ++git )
-	{
-		RsNxsGrp* grp = git->second;
-		RsFileHash currHash;
-		pqihash pHash;
-		pHash.addData(grp->grp.bin_data, grp->grp.bin_len);
-		pHash.Complete(currHash);
+    // Check that message ids...
 
-		if(currHash == grp->metaData->mHash)
-		{
-            // Get all message ids of group, store them in msgIds, creating the grp entry at the same time.
-
-            if (mds->retrieveMsgIds(grp->grpId, msgIds[grp->grpId]) == 1)
-			{
-				// store the group for retrieveNxsMsgs
-				grps[grp->grpId];
-
-				if(grp->metaData->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
-				{
-					subscribed_groups.insert(git->first);
-
-					if(!grp->metaData->mAuthorId.isNull())
-					{
-#ifdef DEBUG_GXSUTIL
-						GXSUTIL_DEBUG() << "TimeStamping group authors' key ID " << grp->metaData->mAuthorId << " in group ID " << grp->grpId << std::endl;
-#endif
-						if( rsReputations &&
-						        rsReputations->overallReputationLevel(
-						            grp->metaData->mAuthorId ) >
-						        RsReputationLevel::LOCALLY_NEGATIVE )
-                            used_gxs_ids.insert(std::make_pair(grp->metaData->mAuthorId, RsIdentityUsage(RsServiceType(service_type), RsIdentityUsage::GROUP_AUTHOR_KEEP_ALIVE,grp->grpId)));
-					}
-				}
-			}
-            else
-                msgIds.erase(msgIds.find(grp->grpId));	// could not get them, so group is removed from list.
-
-#ifdef RS_DEEP_CHANNEL_INDEX
-            // This should be moved to p3gxschannels. It is really not the place for this here!
-
-			if( isGxsChannels
-			        && grp->metaData->mCircleType == GXS_CIRCLE_TYPE_PUBLIC
-			        && grp->metaData->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED )
-			{
-				RsGxsGrpMetaData meta;
-				meta.deserialise(grp->meta.bin_data, grp->meta.bin_len);
-
-				uint32_t blz = grp->grp.bin_len;
-				RsItem* rIt = mSerializer.deserialise(grp->grp.bin_data,
-				                                      &blz);
-
-				if( RsGxsChannelGroupItem* cgIt =
-				        dynamic_cast<RsGxsChannelGroupItem*>(rIt) )
-				{
-					RsGxsChannelGroup cg;
-					cgIt->toChannelGroup(cg, false);
-					cg.mMeta = meta;
-
-					indexedGroups.insert(grp->grpId);
-					DeepChannelsIndex::indexChannelGroup(cg);
-				}
-				else
-				{
-					std::cerr << __PRETTY_FUNCTION__ << " Group: "
-					          << meta.mGroupId.toStdString() << " "
-					          << meta.mGroupName
-					          << " doesn't seems a channel, please "
-					          << "report to developers"
-					          << std::endl;
-					print_stacktrace();
-				}
-
-				delete rIt;
-			}
-#endif // def RS_DEEP_CHANNEL_INDEX
-		}
-		else
-		{
-            std::cerr << __PRETTY_FUNCTION__ <<" (EE) deleting group " << grp->grpId << " with wrong hash or null/corrupted meta data. meta=" << grp->metaData << std::endl;
-            grpsToDel.push_back(grp->grpId);
-#ifdef RS_DEEP_CHANNEL_INDEX
-			if(isGxsChannels)
-				DeepChannelsIndex::removeChannelFromIndex(grp->grpId);
-#endif // def RS_DEEP_CHANNEL_INDEX
-		}
-
-		delete grp;
-	}
-
-    // now messages
-    GxsMsgResult msgs;
-
-    mds->retrieveNxsMsgs(grps, msgs, false, true);
-
-    // Check msg ids and messages. Go through all message IDs referred to by the db call
-    // and verify that the message belongs to the nxs msg data that was just retrieved.
-
-    for(auto& msgIdsIt:msgIds)
+    for( auto git = grp.begin(); git != grp.end(); ++git )
     {
-        const RsGxsGroupId&       grpId  = msgIdsIt.first;
-        std::set<RsGxsMessageId>& msgIdV = msgIdsIt.second;
+            const auto& grpMeta = git->second;
 
-        std::set<RsGxsMessageId> nxsMsgS;
-        std::vector<RsNxsMsg*>& nxsMsgV = msgs[grpId];
+            if (mds->retrieveMsgIds(grpMeta->mGroupId, msgIds[grpMeta->mGroupId]) == 1)
+            {
+                    if(grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
+                    {
+                            subscribed_groups.insert(git->first);
 
-        // To make the search efficient, we first build a set of msgIds to search in.
-        // Set build and search are both O(n log(n)).
-
-        for(auto& nxsMsg:nxsMsgV)
-            if(nxsMsg)
-                nxsMsgS.insert(nxsMsg->msgId);
-
-        for (auto& msgId:msgIdV)
-            if(nxsMsgS.find(msgId) == nxsMsgS.end())
-			{
-				msgsToDel[grpId].insert(msgId);
-#ifdef RS_DEEP_CHANNEL_INDEX
-				if(isGxsChannels)
-					DeepChannelsIndex::removeChannelPostFromIndex(grpId, msgId);
-#endif // def  RS_DEEP_CHANNEL_INDEX
-		    }
+                            if(!grpMeta->mAuthorId.isNull())
+                            {
+#ifdef DEBUG_GXSUTIL
+                                    GXSUTIL_DEBUG() << "TimeStamping group authors' key ID " << grpMeta->mAuthorId << " in group ID " << grpMeta->mGroupId << std::endl;
+#endif
+                                    if( rsReputations && rsReputations->overallReputationLevel( grpMeta->mAuthorId ) > RsReputationLevel::LOCALLY_NEGATIVE )
+                                            used_gxs_ids.insert(std::make_pair(grpMeta->mAuthorId, RsIdentityUsage(RsServiceType(service_type), RsIdentityUsage::GROUP_AUTHOR_KEEP_ALIVE,grpMeta->mGroupId)));
+                            }
+                    }
+            }
+            else
+                    msgIds.erase(msgIds.find(grpMeta->mGroupId));	// could not get them, so group is removed from list.
     }
 
-	GxsMsgResult::iterator mit = msgs.begin();
-	for(; mit != msgs.end(); ++mit)
+    // now messages
+    GxsMsgMetaResult msgMetas;
+
+    mds->retrieveGxsMsgMetaData(msgIds, msgMetas);
+
+    for(auto mit=msgMetas.begin(); mit != msgMetas.end(); ++mit)
 	{
-		std::vector<RsNxsMsg*>& msgV = mit->second;
-		std::vector<RsNxsMsg*>::iterator vit = msgV.begin();
+        const auto& msgM = mit->second;
 
-		for(; vit != msgV.end(); ++vit)
+        for(auto vit=msgM.begin(); vit != msgM.end(); ++vit)
 		{
-			RsNxsMsg* msg = *vit;
-			RsFileHash currHash;
-			pqihash pHash;
-			pHash.addData(msg->msg.bin_data, msg->msg.bin_len);
-			pHash.Complete(currHash);
+            const auto& meta = *vit;
 
-			if(msg->metaData == NULL || currHash != msg->metaData->mHash)
-			{
-                std::cerr << __PRETTY_FUNCTION__ <<" (EE) deleting message " << msg->msgId << " in group " << msg->grpId << " with wrong hash or null/corrupted meta data. meta=" << (void*)msg->metaData << std::endl;
-				msgsToDel[msg->grpId].insert(msg->msgId);
-#ifdef RS_DEEP_CHANNEL_INDEX
-				if(isGxsChannels)
-					DeepChannelsIndex::removeChannelPostFromIndex(
-					            msg->grpId, msg->msgId );
-#endif // def RS_DEEP_CHANNEL_INDEX
-			}
-			else if (subscribed_groups.count(msg->metaData->mGroupId))
-			{
-#ifdef RS_DEEP_CHANNEL_INDEX
-                // This should be moved to p3gxschannels. It is really not the place for this here!
-
-                if( isGxsChannels && indexedGroups.count(msg->metaData->mGroupId) )
-				{
-					RsGxsMsgMetaData meta;
-					meta.deserialise(msg->meta.bin_data, &msg->meta.bin_len);
-
-					uint32_t blz = msg->msg.bin_len;
-					RsItem* rIt = mSerializer.deserialise(msg->msg.bin_data,
-					                                      &blz);
-
-					if( RsGxsChannelPostItem* cgIt =
-					        dynamic_cast<RsGxsChannelPostItem*>(rIt) )
-					{
-						RsGxsChannelPost cg;
-						cgIt->toChannelPost(cg, false);
-						cg.mMeta = meta;
-
-						DeepChannelsIndex::indexChannelPost(cg);
-					}
-					else if(dynamic_cast<RsGxsCommentItem*>(rIt)) {}
-					else if(dynamic_cast<RsGxsVoteItem*>(rIt)) {}
-					else
-					{
-						std::cerr << __PRETTY_FUNCTION__ << " Message: "
-						          << meta.mMsgId.toStdString()
-						          << " in group: "
-						          << meta.mGroupId.toStdString() << " "
-						          << " doesn't seems a channel post, please "
-						          << "report to developers"
-						          << std::endl;
-						print_stacktrace();
-					}
-
-					delete rIt;
-				}
-#endif // def RS_DEEP_CHANNEL_INDEX
-
-				if(!msg->metaData->mAuthorId.isNull())
+            if (subscribed_groups.count(meta->mGroupId))
+                if(!meta->mAuthorId.isNull())
 				{
 #ifdef DEBUG_GXSUTIL
-					GXSUTIL_DEBUG() << "TimeStamping message authors' key ID " << msg->metaData->mAuthorId << " in message " << msg->msgId << ", group ID " << msg->grpId<< std::endl;
+                    GXSUTIL_DEBUG() << "TimeStamping message authors' key ID " << meta->mAuthorId << " in message " << meta->mMsgId << ", group ID " << meta->mGroupId<< std::endl;
 #endif
-					if( rsReputations &&
-					        rsReputations->overallReputationLevel(
-					            msg->metaData->mAuthorId ) >
-					        RsReputationLevel::LOCALLY_NEGATIVE )
-                        used_gxs_ids.insert(std::make_pair(msg->metaData->mAuthorId,RsIdentityUsage(RsServiceType(service_type),
+                    if( rsReputations && rsReputations->overallReputationLevel( meta->mAuthorId ) > RsReputationLevel::LOCALLY_NEGATIVE )
+                        used_gxs_ids.insert(std::make_pair(meta->mAuthorId,RsIdentityUsage(RsServiceType(service_type),
                                                                                                     RsIdentityUsage::MESSAGE_AUTHOR_KEEP_ALIVE,
-                                                                                                    msg->metaData->mGroupId,
-                                                                                                    msg->metaData->mMsgId,
-                                                                                                    msg->metaData->mParentId,
-                                                                                                    msg->metaData->mThreadId))) ;
+                                                                                                    meta->mGroupId,
+                                                                                                    meta->mMsgId,
+                                                                                                    meta->mParentId,
+                                                                                                    meta->mThreadId))) ;
 				}
-			}
-
-		    delete msg;
 	    }
     }
 
@@ -513,6 +352,211 @@ bool RsGxsIntegrityCheck::check(uint16_t service_type, RsGixs *mgixs, RsGeneralD
     return true;
 }
 
+bool RsGxsSinglePassIntegrityCheck::check(uint16_t service_type, RsGixs *mgixs, RsGeneralDataService *mds
+#ifdef RS_DEEP_CHANNEL_INDEX
+                                , RsGenExchange* mGenExchangeClient, RsSerialType& mSerializer
+#endif
+                                , std::vector<RsGxsGroupId>& grpsToDel, GxsMsgReq& msgsToDel)
+{
+#ifdef DEBUG_GXSUTIL
+    GXSUTIL_DEBUG() << "Parsing all groups and messages data in service " << std::hex << mds->serviceType() << " for integrity check. Could take a while..." << std::endl;
+#endif
+#ifdef RS_DEEP_CHANNEL_INDEX
+    bool isGxsChannels = mGenExchangeClient->serviceType() == RS_SERVICE_GXS_TYPE_CHANNELS;
+    std::set<RsGxsGroupId> indexedGroups;
+#endif
+
+    // first take out all the groups
+    std::map<RsGxsGroupId, RsNxsGrp*> grp;
+    mds->retrieveNxsGrps(grp, true);
+    GxsMsgReq msgIds;
+    GxsMsgReq grps;
+
+    std::map<RsGxsId,RsIdentityUsage> used_gxs_ids ;
+    std::set<RsGxsGroupId> subscribed_groups ;
+
+    // compute hash and compare to stored value, if it fails then simply add it
+    // to list
+    for( std::map<RsGxsGroupId, RsNxsGrp*>::iterator git = grp.begin(); git != grp.end(); ++git )
+    {
+        RsNxsGrp* grp = git->second;
+        RsFileHash currHash;
+        pqihash pHash;
+        pHash.addData(grp->grp.bin_data, grp->grp.bin_len);
+        pHash.Complete(currHash);
+
+        if(currHash == grp->metaData->mHash)
+        {
+            // Get all message ids of group, store them in msgIds, creating the grp entry at the same time.
+
+            if (mds->retrieveMsgIds(grp->grpId, msgIds[grp->grpId]) == 1)
+            {
+                // store the group for retrieveNxsMsgs
+                grps[grp->grpId];
+
+                if(grp->metaData->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
+                    subscribed_groups.insert(git->first);
+            }
+            else
+                msgIds.erase(msgIds.find(grp->grpId));	// could not get them, so group is removed from list.
+
+#ifdef RS_DEEP_CHANNEL_INDEX
+            // This should be moved to p3gxschannels. It is really not the place for this here!
+
+            if( isGxsChannels
+                    && grp->metaData->mCircleType == GXS_CIRCLE_TYPE_PUBLIC
+                    && grp->metaData->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED )
+            {
+                RsGxsGrpMetaData meta;
+                meta.deserialise(grp->meta.bin_data, grp->meta.bin_len);
+
+                uint32_t blz = grp->grp.bin_len;
+                RsItem* rIt = mSerializer.deserialise(grp->grp.bin_data,
+                                                      &blz);
+
+                if( RsGxsChannelGroupItem* cgIt =
+                        dynamic_cast<RsGxsChannelGroupItem*>(rIt) )
+                {
+                    RsGxsChannelGroup cg;
+                    cgIt->toChannelGroup(cg, false);
+                    cg.mMeta = meta;
+
+                    indexedGroups.insert(grp->grpId);
+                    DeepChannelsIndex::indexChannelGroup(cg);
+                }
+                else
+                {
+                    std::cerr << __PRETTY_FUNCTION__ << " Group: "
+                              << meta.mGroupId.toStdString() << " "
+                              << meta.mGroupName
+                              << " doesn't seems a channel, please "
+                              << "report to developers"
+                              << std::endl;
+                    print_stacktrace();
+                }
+
+                delete rIt;
+            }
+#endif // def RS_DEEP_CHANNEL_INDEX
+        }
+        else
+        {
+            std::cerr << __PRETTY_FUNCTION__ <<" (EE) deleting group " << grp->grpId << " with wrong hash or null/corrupted meta data. meta=" << grp->metaData << std::endl;
+            grpsToDel.push_back(grp->grpId);
+#ifdef RS_DEEP_CHANNEL_INDEX
+            if(isGxsChannels)
+                DeepChannelsIndex::removeChannelFromIndex(grp->grpId);
+#endif // def RS_DEEP_CHANNEL_INDEX
+        }
+
+        delete grp;
+    }
+
+    // now messages
+    GxsMsgResult msgs;
+
+    mds->retrieveNxsMsgs(grps, msgs, true);
+
+    // Check msg ids and messages. Go through all message IDs referred to by the db call
+    // and verify that the message belongs to the nxs msg data that was just retrieved.
+
+    for(auto& msgIdsIt:msgIds)
+    {
+        const RsGxsGroupId&       grpId  = msgIdsIt.first;
+        std::set<RsGxsMessageId>& msgIdV = msgIdsIt.second;
+
+        std::set<RsGxsMessageId> nxsMsgS;
+        std::vector<RsNxsMsg*>& nxsMsgV = msgs[grpId];
+
+        // To make the search efficient, we first build a set of msgIds to search in.
+        // Set build and search are both O(n log(n)).
+
+        for(auto& nxsMsg:nxsMsgV)
+            if(nxsMsg)
+                nxsMsgS.insert(nxsMsg->msgId);
+
+        for (auto& msgId:msgIdV)
+            if(nxsMsgS.find(msgId) == nxsMsgS.end())
+            {
+                msgsToDel[grpId].insert(msgId);
+#ifdef RS_DEEP_CHANNEL_INDEX
+                if(isGxsChannels)
+                    DeepChannelsIndex::removeChannelPostFromIndex(grpId, msgId);
+#endif // def  RS_DEEP_CHANNEL_INDEX
+            }
+    }
+
+    for(auto mit = msgs.begin(); mit != msgs.end(); ++mit)
+    {
+        std::vector<RsNxsMsg*>& msgV = mit->second;
+        std::vector<RsNxsMsg*>::iterator vit = msgV.begin();
+
+        for(; vit != msgV.end(); ++vit)
+        {
+            RsNxsMsg* msg = *vit;
+            RsFileHash currHash;
+            pqihash pHash;
+            pHash.addData(msg->msg.bin_data, msg->msg.bin_len);
+            pHash.Complete(currHash);
+
+            if(msg->metaData == NULL || currHash != msg->metaData->mHash)
+            {
+                std::cerr << __PRETTY_FUNCTION__ <<" (EE) deleting message " << msg->msgId << " in group " << msg->grpId << " with wrong hash or null/corrupted meta data. meta=" << (void*)msg->metaData << std::endl;
+                msgsToDel[msg->grpId].insert(msg->msgId);
+#ifdef RS_DEEP_CHANNEL_INDEX
+                if(isGxsChannels)
+                    DeepChannelsIndex::removeChannelPostFromIndex(
+                                msg->grpId, msg->msgId );
+#endif // def RS_DEEP_CHANNEL_INDEX
+            }
+            else if (subscribed_groups.count(msg->metaData->mGroupId))
+            {
+#ifdef RS_DEEP_CHANNEL_INDEX
+                // This should be moved to p3gxschannels. It is really not the place for this here!
+
+                if( isGxsChannels && indexedGroups.count(msg->metaData->mGroupId) )
+                {
+                    RsGxsMsgMetaData meta;
+                    meta.deserialise(msg->meta.bin_data, &msg->meta.bin_len);
+
+                    uint32_t blz = msg->msg.bin_len;
+                    RsItem* rIt = mSerializer.deserialise(msg->msg.bin_data,
+                                                          &blz);
+
+                    if( RsGxsChannelPostItem* cgIt =
+                            dynamic_cast<RsGxsChannelPostItem*>(rIt) )
+                    {
+                        RsGxsChannelPost cg;
+                        cgIt->toChannelPost(cg, false);
+                        cg.mMeta = meta;
+
+                        DeepChannelsIndex::indexChannelPost(cg);
+                    }
+                    else if(dynamic_cast<RsGxsCommentItem*>(rIt)) {}
+                    else if(dynamic_cast<RsGxsVoteItem*>(rIt)) {}
+                    else
+                    {
+                        std::cerr << __PRETTY_FUNCTION__ << " Message: "
+                                  << meta.mMsgId.toStdString()
+                                  << " in group: "
+                                  << meta.mGroupId.toStdString() << " "
+                                  << " doesn't seems a channel post, please "
+                                  << "report to developers"
+                                  << std::endl;
+                        print_stacktrace();
+                    }
+
+                    delete rIt;
+                }
+#endif // def RS_DEEP_CHANNEL_INDEX
+            }
+
+            delete msg;
+        }
+    }
+
+    return true;
+}
 bool RsGxsIntegrityCheck::isDone()
 {
 	RS_STACK_MUTEX(mIntegrityMutex);

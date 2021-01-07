@@ -66,6 +66,7 @@ struct RsGroupMetaData : RsSerializable
     virtual ~RsGroupMetaData() {}
 
     void operator =(const RsGxsGrpMetaData& rGxsMeta);
+    RsGroupMetaData(const RsGxsGrpMetaData& rGxsMeta) { operator=(rGxsMeta); }
 
     RsGxsGroupId mGroupId;
     std::string mGroupName;
@@ -138,7 +139,9 @@ struct RsMsgMetaData : RsSerializable
 	RsMsgMetaData() : mPublishTs(0), mMsgFlags(0), mMsgStatus(0), mChildTs(0) {}
 
     virtual ~RsMsgMetaData() {}
+
     void operator =(const RsGxsMsgMetaData& rGxsMeta);
+    RsMsgMetaData(const RsGxsMsgMetaData& rGxsMeta) { operator=(rGxsMeta); }
 
     RsGxsGroupId mGroupId;
     RsGxsMessageId mMsgId;
