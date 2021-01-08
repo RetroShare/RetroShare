@@ -187,7 +187,7 @@ RsGenExchange::RsGenExchange(
         GxsMsgReq msgsToDel;
 
         RsGxsSinglePassIntegrityCheck::check(mServType,mGixs,mDataStore,
-                                             this, mSerialiser,
+                                             this, *mSerialiser,
                                              grpsToDel,msgsToDel);
 
         for(auto& grpId: grpsToDel)

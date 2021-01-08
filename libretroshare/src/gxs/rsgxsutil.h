@@ -171,8 +171,8 @@ public:
      * @param chunkSize
      * @param sleepPeriod
      */
-    RsGxsIntegrityCheck( RsGeneralDataService* const dataService,
-                         RsGenExchange *genex, RsSerialType& gxsSerialiser,
+    RsGxsIntegrityCheck(RsGeneralDataService* const dataService,
+                         RsGenExchange *genex, RsSerialType&,
                          RsGixs *gixs);
 
     static bool check(uint16_t service_type, RsGixs *mgixs, RsGeneralDataService *mds);
