@@ -549,6 +549,8 @@ void IdEditDialog::createId()
 		std::string gpg_name = rsPeers->getGPGName(rsPeers->getGPGOwnId());
         bool cancelled;
 
+        rsNotify->clearPgpPassphrase(); // just in case
+
         if(!NotifyQt::getInstance()->askForPassword(tr("Profile password needed.").toStdString(),
 		                                            gpg_name + " (" + rsPeers->getOwnId().toStdString() + ")",
 		                                            false,
