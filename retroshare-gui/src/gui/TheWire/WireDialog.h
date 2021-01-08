@@ -74,6 +74,7 @@ class WireDialog : public MainPage, public TokenResponse, public WireGroupHolder
 
 public:
 	WireDialog(QWidget *parent = 0);
+	~WireDialog();
 
 	virtual QIcon iconPixmap() const { return QIcon(IMAGE_WIRE) ; }
 	virtual QString pageName() const { return tr("The Wire") ; }
@@ -141,6 +142,8 @@ private:
 	void showGroups();
 	void showSelectedGroups();
 	void updateGroups(std::vector<RsWireGroup> &groups);
+
+	void processSettings(bool load);
 
 	// utils.
 	rstime_t getFilterTimestamp();

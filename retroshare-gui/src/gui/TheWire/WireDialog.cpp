@@ -22,6 +22,7 @@
 
 #include "WireGroupDialog.h"
 #include "WireGroupItem.h"
+#include "gui/settings/rsharesettings.h"
 
 #include "PulseViewGroup.h"
 #include "PulseReplySeperator.h"
@@ -87,13 +88,42 @@ WireDialog::WireDialog(QWidget *parent)
 
 	// just for testing
 	postTestTwitterView();
+
+	// load settings
+	processSettings(true);
+}
+
+WireDialog::~WireDialog()
+{
+	// save settings
+	processSettings(false);
+	
+	delete(mWireQueue);
+}
+
+void WireDialog::processSettings(bool load)
+{
+	Settings->beginGroup("WireDialog");
+
+	if (load) {
+		// load settings
+
+		// state of splitter
+		ui.splitter->restoreState(Settings->value("SplitterWire").toByteArray());
+	} else {
+		// save settings
+
+		// state of splitter
+		Settings->setValue("SplitterWire", ui.splitter->saveState());
+	}
+
+	Settings->endGroup();
 }
 
 void WireDialog::refreshGroups()
 {
 	requestGroupData();
 }
-
 
 void WireDialog::addGroup(QWidget *item)
 {
