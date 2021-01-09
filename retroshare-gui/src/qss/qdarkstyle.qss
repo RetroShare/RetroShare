@@ -1284,7 +1284,7 @@ PulseViewGroup QToolButton#toolButton_follow {
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
-	max-height: 27px;
+	max-height: 20px;
 	min-width: 4em;
 	padding: 2px;
 	padding-left: 6px;
@@ -1299,7 +1299,8 @@ PulseTopLevel QToolButton#toolButton_follow:hover, PulseViewGroup QToolButton#to
 	background: #03b1f3;
 	border-radius: 4px;
 	min-width: 4em;
-	padding: 2px;
+	padding-left: 6px;
+	padding-right: 6px;
 }
 
 CreateGxsForumMsg QPushButton#postButton:disabled, PostedCreatePostDialog QPushButton#submitButton:disabled,
@@ -1310,9 +1311,11 @@ PulseAddDialog QPushButton#pushButton_Post:disabled {
 	color: white;
 	background: #d40000;
 	border-radius: 4px;
-	max-height: 27px;
+	max-height: 20px;
 	min-width: 4em;
 	padding: 2px;
+	padding-left: 6px;
+	padding-right: 6px;
 }
 
 ShareManager QPushButton#closeButton {
@@ -1479,6 +1482,10 @@ WireGroupItem QFrame#wire_frame
 	background: transparent;
 }
 
+PulseReply #line_replyLine , PulseMessage #line{
+	color: #38444d;
+}
+
 RSTextBrowser, MimeTextEdit
 {
 	/*qproperty-textColorQuote: rgb(125, 125, 255);*/
@@ -1499,10 +1506,16 @@ MainWindow QListWidget {
 	font-size: 12pt;
 }
 
-ChatLobbyWidget QTreeWidget#lobbyTreeWidget{
-		font-size: 10pt;
+PhotoShare QPushButton#pushButton_YourAlbums, QPushButton#pushButton_SubscribedAlbums, 
+QPushButton#pushButton_SharedAlbums {
+	font-size: 12pt;
 }
 
-NewFriendList QTreeView#peerTreeWidget {
-		font-size: 12pt;
+PhotoItem QFrame#photoFrame{
+	border: 2px solid #3A3939;
+}
+
+AlbumItem QFrame#albumFrame {
+	border: 2px solid #3A3939;
+	border-radius: 10px
 }

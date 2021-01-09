@@ -1140,3 +1140,26 @@ WireGroupDialog QFrame#frame {
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
 	border: 0px;
 }
+
+PhotoShare QPushButton#pushButton_YourAlbums, QPushButton#pushButton_SubscribedAlbums, 
+QPushButton#pushButton_SharedAlbums {
+	font-size: 12pt;
+}
+
+AlbumItem QFrame#albumFrame {
+	border: 2px solid #CCCCCC;
+	border-radius: 10px
+}
+
+PhotoItem QFrame#photoFrame {
+	border: 2px solid #CCCCCC;
+	border-radius: 10px
+}
+
+PhotoItem QWidget:hover {
+	background-color: #7ecbfb;
+}
+
+PhotoSlideShow QLabel#albumLabel {
+	font-size: 12pt;
+}
