@@ -740,6 +740,38 @@ void ConnectFriendWizard::accept()
 	{
 		std::cerr << "ConclusionPage::validatePage() accepting GPG key for connection." << std::endl;
 
+        if(sign)
+        {
+            std::cerr << "ConclusionPage::validatePage() signing GPG key." << std::endl;
+            bool prev_is_bad = false;
+
+            for(int i=0;i<3;++i)
+            {
+                std::string pgp_name = rsPeers->getGPGName(rsPeers->getGPGOwnId());
+                bool cancelled;
+                std::string pgp_password;
+
+                if(!NotifyQt::getInstance()->askForPassword(tr("Profile password needed.").toStdString(), pgp_name + " (" + rsPeers->getOwnId().toStdString() + ")", prev_is_bad, pgp_password,cancelled))
+                {
+                    QMessageBox::critical(NULL,tr("Identity creation failed"),tr("Cannot create an identity linked to your profile without your profile password."));
+                    return;
+                }
+
+                if(rsPeers->signGPGCertificate(peerDetails.gpg_id,pgp_password))
+                {
+                    prev_is_bad = false;
+                    break;
+                }
+                else
+                    prev_is_bad = true;
+            }
+
+            if(prev_is_bad)
+            {
+                QMessageBox::warning(nullptr,tr("Signature failed"),tr("Signature failed. Uncheck the key signature box if you want to make friends without signing the friends' certificate"));
+                return;
+            }
+        }
         if(peerDetails.skip_pgp_signature_validation)
 			rsPeers->addSslOnlyFriend(peerDetails.id, peerDetails.gpg_id,peerDetails);
 		else
@@ -757,12 +789,7 @@ void ConnectFriendWizard::accept()
 			}
 		}
 
-		if(sign)
-		{
-			std::cerr << "ConclusionPage::validatePage() signing GPG key." << std::endl;
-			rsPeers->signGPGCertificate(peerDetails.gpg_id); //bye default sign set accept_connection to true;
-			rsPeers->setServicePermissionFlags(peerDetails.gpg_id,serviceFlags()) ;
-		}
+
 
 		if (!groupId.isEmpty())
 			rsPeers->assignPeerToGroup(RsNodeGroupId(groupId.toStdString()), peerDetails.gpg_id, true);
