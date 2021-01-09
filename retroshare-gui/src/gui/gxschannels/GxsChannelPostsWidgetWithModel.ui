@@ -181,7 +181,7 @@
    <item>
     <widget class="QTabWidget" name="channel_TW">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -552,6 +552,9 @@ p, li { white-space: pre-wrap; }
            <layout class="QVBoxLayout" name="verticalLayout_4">
             <item>
              <widget class="RSTreeView" name="channelPostFiles_TV">
+              <property name="contextMenuPolicy">
+               <enum>Qt::CustomContextMenu</enum>
+              </property>
               <property name="editTriggers">
                <set>QAbstractItemView::CurrentChanged|QAbstractItemView::SelectedClicked</set>
               </property>
@@ -602,6 +605,9 @@ p, li { white-space: pre-wrap; }
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
         <widget class="RSTreeView" name="channelFiles_TV">
+         <property name="contextMenuPolicy">
+          <enum>Qt::CustomContextMenu</enum>
+         </property>
          <property name="editTriggers">
           <set>QAbstractItemView::CurrentChanged|QAbstractItemView::SelectedClicked</set>
          </property>

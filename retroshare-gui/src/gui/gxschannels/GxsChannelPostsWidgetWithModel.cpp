@@ -406,6 +406,9 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     connect(ui->channelPostFiles_TV->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumnPostFiles(int,Qt::SortOrder)));
     connect(ui->channelFiles_TV->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumnFiles(int,Qt::SortOrder)));
 
+    connect(ui->channelPostFiles_TV,SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showChannelFilesContextMenu(QPoint)));
+    connect(ui->channelFiles_TV,SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showChannelFilesContextMenu(QPoint)));
+
     ui->channelFiles_TV->setModel(mChannelFilesModel = new RsGxsChannelPostFilesModel());
     ui->channelFiles_TV->setItemDelegate(mFilesDelegate = new ChannelPostFilesDelegate(this));
     ui->channelFiles_TV->setPlaceholderText(tr("No files in the channel, or no channel selected"));
@@ -1241,6 +1244,35 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
     setSubscribeButtonText(group.mMeta.mGroupId,group.mMeta.mSubscribeFlags, group.mMeta.mPop);
 
     showPostDetails();
+}
+
+void GxsChannelPostsWidgetWithModel::showChannelFilesContextMenu(QPoint p)
+{
+    QMenu contextMnu(this) ;
+
+    QAction *action = contextMnu.addAction(QIcon(), tr("Copy Retroshare link"), this, SLOT(copyChannelFilesLink()));
+    action->setData(QVariant::fromValue(sender()));
+    contextMnu.exec(QCursor::pos());
+}
+
+void GxsChannelPostsWidgetWithModel::copyChannelFilesLink()
+{
+    // Block the popup if no results available
+    QAction *action = dynamic_cast<QAction*>(sender());
+    RSTreeView *tree = dynamic_cast<RSTreeView*>(action->data().value<QWidget*>());
+
+    QModelIndexList sel = tree->selectionModel()->selection().indexes();
+
+    if(sel.empty())
+        return;
+
+    ChannelPostFileInfo file;
+
+    if(!static_cast<RsGxsChannelPostFilesModel*>(tree->model())->getFileData(sel.front(),file))
+        return;
+
+    RetroShareLink link = RetroShareLink::createFile(QString::fromUtf8(file.mName.c_str()), file.mSize, QString::fromStdString(file.mHash.toStdString()));
+    RSLinkClipboard::copyLinks(QList<RetroShareLink>{ link });
 }
 
 void GxsChannelPostsWidgetWithModel::setSubscribeButtonText(const RsGxsGroupId& group_id,uint32_t flags, uint32_t mPop)
