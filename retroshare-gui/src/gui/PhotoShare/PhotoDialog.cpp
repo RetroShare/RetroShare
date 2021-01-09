@@ -73,6 +73,8 @@ void PhotoDialog::setUp()
 	// Fixed %, then manually scale to that, with scroll area.
 
 	ui->lineEdit_Title->setText(QString::fromStdString(mPhotoDetails.mMeta.mMsgName));
+	ui->albumGroup->setTitle( tr("Album") + " / " + QString::fromStdString(mPhotoDetails.mMeta.mMsgName));
+
 	ui->frame_comments->setVisible(false);
 	ui->frame_details->setVisible(false);
 }
