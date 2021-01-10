@@ -22,6 +22,7 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QClipboard>
+#include <QLabel>
 #include <QTextCodec>
 #include <QPrintDialog>
 #include <QPrinter>
@@ -93,6 +94,8 @@
 
 #define STYLE_NORMAL "QLineEdit#%1 { border : none; }"
 #define STYLE_FAIL   "QLineEdit#%1 { border : none; color : red; }"
+
+static const uint32_t MAX_ALLOWED_GXS_MESSAGE_SIZE = 199000;
 
 class MessageItemDelegate : public QItemDelegate
 {
@@ -212,6 +215,8 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     connect(ui.friendSelectionWidget, SIGNAL(contentChanged()), this, SLOT(buildCompleter()));
     connect(ui.friendSelectionWidget, SIGNAL(doubleClicked(int,QString)), this, SLOT(addTo()));
     connect(ui.friendSelectionWidget, SIGNAL(itemSelectionChanged()), this, SLOT(friendSelectionChanged()));
+
+    connect(ui.msgText, SIGNAL(textChanged()), this, SLOT(checkLength()));
 
     /* hide the Tree +/- */
     ui.msgFileList -> setRootIsDecorated( false );
@@ -351,6 +356,15 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
 
     /* set focus to subject */
     ui.titleEdit->setFocus();
+
+	infoLabel = new QLabel( "", this );
+	statusBar()->addPermanentWidget(infoLabel);
+
+	lineLabel = new QLabel( "", this );
+	statusBar()->addPermanentWidget(lineLabel);
+
+	lengthLabel = new QLabel( "", this );
+	statusBar()->addPermanentWidget(lengthLabel);
 
     // create tag menu
     TagsMenu *menu = new TagsMenu (tr("Tags"), this);
@@ -2853,3 +2867,28 @@ void MessageComposer::sendInvite(const RsGxsId &to, bool autoSend)
     /* window will destroy itself! */
 }
 
+void MessageComposer::checkLength()
+{
+	QString text;
+	RsHtml::optimizeHtml(ui.msgText, text);
+	std::wstring msg = text.toStdWString();
+	int charlength = msg.length();
+	int charRemains = MAX_ALLOWED_GXS_MESSAGE_SIZE - msg.length();
+
+	text = tr("Message Size: %1").arg(misc::friendlyUnit(charlength));
+	lengthLabel->setText(text);
+
+	lineLabel->setText("|");
+
+	if(charRemains >= 0) {
+		text = tr("It remains %1 characters after HTML conversion.").arg(charRemains);
+		infoLabel->setStyleSheet("QStatusBar QLabel#infoLabel { }");
+	}else{
+		text = tr("Warning: This message is too big of %1 characters after HTML conversion.").arg((0-charRemains));
+		infoLabel->setStyleSheet("QStatusBar QLabel#infoLabel {color: red; font: bold; }");
+	}
+
+	//ui.actionSend->setEnabled(charRemains>=0);
+
+	infoLabel->setText(text);
+}

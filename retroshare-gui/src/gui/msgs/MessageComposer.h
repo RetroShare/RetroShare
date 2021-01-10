@@ -168,6 +168,8 @@ private slots:
 
     static QString inviteMessage();
 
+	void checkLength();
+
 private:
     static QString buildReplyHeader(const MessageInfo &msgInfo);
 
@@ -256,6 +258,10 @@ private:
 
     RSTreeWidgetItemCompareRole *m_compareRole;
     QCompleter *m_completer;
+
+	QLabel *infoLabel;
+	QLabel *lengthLabel;
+	QLabel *lineLabel;
 
     /** Qt Designer generated object */
     Ui::MessageComposer ui;
