@@ -192,221 +192,202 @@ RsSerialiser* p3GxsForums::setupSerialiser()
 
 void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 {
-#ifdef GXSFORUMS_DEBUG
-	std::cerr << "p3GxsForums::notifyChanges() : " << changes.size() << "changes to notify" << std::endl;
-#endif
+	RS_DBG2(changes.size(), " changes to notify");
 
 	std::vector<RsGxsNotify *>::iterator it;
 	for(it = changes.begin(); it != changes.end(); ++it)
 	{
-		RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
-
-		if (msgChange)
+		rs_view_ptr<RsGxsNotify> gxsChange = *it;
+		switch(gxsChange->getType())
 		{
-			if (msgChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW || msgChange->getType() == RsGxsNotify::TYPE_PUBLISHED) /* message received */
-				if (rsEvents)
+		case RsGxsNotify::TYPE_RECEIVED_NEW: // [[fallthrough]]
+		case RsGxsNotify::TYPE_PUBLISHED:
+		{
+			rs_view_ptr<RsGxsMsgChange> msgChange =
+			        dynamic_cast<RsGxsMsgChange*>(*it);
+			rs_view_ptr<RsGxsGroupChange> groupChange =
+			        dynamic_cast<RsGxsGroupChange*>(*it);
+
+			if(msgChange) /* Message received*/
+			{
+				auto ev = std::make_shared<RsGxsForumEvent>();
+				ev->mForumMsgsId.insert(msgChange->mMsgId);
+				ev->mForumGroupId = msgChange->mGroupId;
+				ev->mForumEventCode = RsForumEventCode::NEW_MESSAGE;
+				rsEvents->postEvent(ev);
+			}
+			else if(groupChange) /* Group received */
+			{
+				bool unknown;
+				{
+					RS_STACK_MUTEX(mKnownForumsMutex);
+					unknown = ( mKnownForums.find(gxsChange->mGroupId)
+					            == mKnownForums.end() );
+					mKnownForums[gxsChange->mGroupId] = time(nullptr);
+					IndicateConfigChanged();
+				}
+
+				if(unknown)
 				{
 					auto ev = std::make_shared<RsGxsForumEvent>();
-					ev->mForumMsgId = msgChange->mMsgId;
-					ev->mForumGroupId = msgChange->mGroupId;
-					ev->mForumEventCode = RsForumEventCode::NEW_MESSAGE;
+					ev->mForumGroupId = gxsChange->mGroupId;
+					ev->mForumEventCode = RsForumEventCode::NEW_FORUM;
 					rsEvents->postEvent(ev);
 				}
-
-#ifdef NOT_USED_YET
-			if (!msgChange->metaChange())
-			{
-#ifdef GXSCHANNELS_DEBUG
-				std::cerr << "p3GxsForums::notifyChanges() Found Message Change Notification";
-				std::cerr << std::endl;
-#endif
-
-				std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
-				for(auto mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
-				{
-#ifdef GXSCHANNELS_DEBUG
-					std::cerr << "p3GxsForums::notifyChanges() Msgs for Group: " << mit->first;
-					std::cerr << std::endl;
-#endif
-					bool enabled = false;
-					if (autoDownloadEnabled(mit->first, enabled) && enabled)
-					{
-#ifdef GXSCHANNELS_DEBUG
-						std::cerr << "p3GxsChannels::notifyChanges() AutoDownload for Group: " << mit->first;
-						std::cerr << std::endl;
-#endif
-
-						/* problem is most of these will be comments and votes,
-						 * should make it occasional - every 5mins / 10minutes TODO */
-						unprocessedGroups.push_back(mit->first);
-					}
-				}
+				else
+					RS_DBG1( " Not notifying already known forum ",
+					         gxsChange->mGroupId );
 			}
-#endif
+			break;
 		}
-		else
+		case RsGxsNotify::TYPE_PROCESSED: // happens when the group is subscribed
 		{
-			if (rsEvents)
+			auto ev = std::make_shared<RsGxsForumEvent>();
+			ev->mForumGroupId = gxsChange->mGroupId;
+			ev->mForumEventCode = RsForumEventCode::SUBSCRIBE_STATUS_CHANGED;
+			rsEvents->postEvent(ev);
+			break;
+		}
+		case RsGxsNotify::TYPE_GROUP_SYNC_PARAMETERS_UPDATED:
+		{
+			auto ev = std::make_shared<RsGxsForumEvent>();
+			ev->mForumGroupId = gxsChange->mGroupId;
+			ev->mForumEventCode = RsForumEventCode::SYNC_PARAMETERS_UPDATED;
+			rsEvents->postEvent(ev);
+			break;
+		}
+		case RsGxsNotify::TYPE_MESSAGE_DELETED:
+		{
+			rs_view_ptr<RsGxsBulkMsgDeletedChange> delChange =
+			        dynamic_cast<RsGxsBulkMsgDeletedChange*>(gxsChange);
+
+			if(!delChange)
 			{
-				RsGxsGroupChange *grpChange = dynamic_cast<RsGxsGroupChange*>(*it);
-				if (grpChange)
-				{
-					switch (grpChange->getType())
-					{
-					case RsGxsNotify::TYPE_PROCESSED:	// happens when the group is subscribed
-					{
-							auto ev = std::make_shared<RsGxsForumEvent>();
-							ev->mForumGroupId = grpChange->mGroupId;
-							ev->mForumEventCode = RsForumEventCode::SUBSCRIBE_STATUS_CHANGED;
-							rsEvents->postEvent(ev);
-					}
-                        break;
-
-                    case RsGxsNotify::TYPE_GROUP_SYNC_PARAMETERS_UPDATED:
-                    {
-                            auto ev = std::make_shared<RsGxsForumEvent>();
-                            ev->mForumGroupId = grpChange->mGroupId;
-                            ev->mForumEventCode = RsForumEventCode::SYNC_PARAMETERS_UPDATED;
-                            rsEvents->postEvent(ev);
-                    }
-                        break;
-
-                    case RsGxsNotify::TYPE_PUBLISHED:
-					case RsGxsNotify::TYPE_RECEIVED_NEW:
-					{
-						/* group received */
-
-                        bool unknown;
-                        {
-                            RS_STACK_MUTEX(mKnownForumsMutex);
-                            unknown = (mKnownForums.find(grpChange->mGroupId)==mKnownForums.end());
-                            mKnownForums[grpChange->mGroupId] = time(nullptr);
-                            IndicateConfigChanged();
-                        }
-
-                        if(unknown)
-						{
-							auto ev = std::make_shared<RsGxsForumEvent>();
-							ev->mForumGroupId = grpChange->mGroupId;
-							ev->mForumEventCode = RsForumEventCode::NEW_FORUM;
-							rsEvents->postEvent(ev);
-						}
-						else
-							RsInfo() << __PRETTY_FUNCTION__
-							         << " Not notifying already known forum "
-							         << grpChange->mGroupId << std::endl;
-					}
-						break;
-
-                    case RsGxsNotify::TYPE_GROUP_DELETED:
-                    {
-                        auto ev = std::make_shared<RsGxsForumEvent>();
-                        ev->mForumGroupId = grpChange->mGroupId;
-                        ev->mForumEventCode = RsForumEventCode::DELETED_FORUM;
-                        rsEvents->postEvent(ev);
-                    }
-                        break;
-
-                    case RsGxsNotify::TYPE_STATISTICS_CHANGED:
-					{
-						auto ev = std::make_shared<RsGxsForumEvent>();
-						ev->mForumGroupId = grpChange->mGroupId;
-						ev->mForumEventCode = RsForumEventCode::STATISTICS_CHANGED;
-						rsEvents->postEvent(ev);
-
-                        RS_STACK_MUTEX(mKnownForumsMutex);
-                        mKnownForums[grpChange->mGroupId] = time(nullptr);
-                        IndicateConfigChanged();
-                    }
-						break;
-
-                    case RsGxsNotify::TYPE_UPDATED:
-					{
-						// Happens when the group data has changed. In this case we need to analyse the old and new group in order to detect possible notifications for clients
-
-						RsGxsForumGroupItem *old_forum_grp_item = dynamic_cast<RsGxsForumGroupItem*>(grpChange->mOldGroupItem);
-						RsGxsForumGroupItem *new_forum_grp_item = dynamic_cast<RsGxsForumGroupItem*>(grpChange->mNewGroupItem);
-
-						if(old_forum_grp_item == nullptr || new_forum_grp_item == nullptr)
-						{
-                            RsErr() << __PRETTY_FUNCTION__ << " received GxsGroupUpdate item with mOldGroup and mNewGroup not of type RsGxsForumGroupItem or NULL. This is inconsistent!" << std::endl;
-							delete grpChange;
-							continue;
-						}
-
-						// First of all, we check if there is a difference between the old and new list of moderators
-
-						std::list<RsGxsId> added_mods, removed_mods;
-
-						for(auto& gxs_id: new_forum_grp_item->mGroup.mAdminList.ids)
-							if(old_forum_grp_item->mGroup.mAdminList.ids.find(gxs_id) == old_forum_grp_item->mGroup.mAdminList.ids.end())
-								added_mods.push_back(gxs_id);
-
-						for(auto& gxs_id: old_forum_grp_item->mGroup.mAdminList.ids)
-							if(new_forum_grp_item->mGroup.mAdminList.ids.find(gxs_id) == new_forum_grp_item->mGroup.mAdminList.ids.end())
-								removed_mods.push_back(gxs_id);
-
-						if(!added_mods.empty() || !removed_mods.empty())
-						{
-							auto ev = std::make_shared<RsGxsForumEvent>();
-
-							ev->mForumGroupId = new_forum_grp_item->meta.mGroupId;
-							ev->mModeratorsAdded = added_mods;
-							ev->mModeratorsRemoved = removed_mods;
-							ev->mForumEventCode = RsForumEventCode::MODERATOR_LIST_CHANGED;
-
-							rsEvents->postEvent(ev);
-						}
-
-                        // check the list of pinned posts
-
-                        std::list<RsGxsMessageId> added_pins, removed_pins;
-
-                        for(auto& msg_id: new_forum_grp_item->mGroup.mPinnedPosts.ids)
-                            if(old_forum_grp_item->mGroup.mPinnedPosts.ids.find(msg_id) == old_forum_grp_item->mGroup.mPinnedPosts.ids.end())
-                                added_pins.push_back(msg_id);
-
-                        for(auto& msg_id: old_forum_grp_item->mGroup.mPinnedPosts.ids)
-                            if(new_forum_grp_item->mGroup.mPinnedPosts.ids.find(msg_id) == new_forum_grp_item->mGroup.mPinnedPosts.ids.end())
-                                removed_pins.push_back(msg_id);
-
-                        if(!added_pins.empty() || !removed_pins.empty())
-                        {
-                            auto ev = std::make_shared<RsGxsForumEvent>();
-
-                            ev->mForumGroupId = new_forum_grp_item->meta.mGroupId;
-                            ev->mForumEventCode = RsForumEventCode::PINNED_POSTS_CHANGED;
-
-                            rsEvents->postEvent(ev);
-                        }
-
-                        if(  old_forum_grp_item->mGroup.mDescription != new_forum_grp_item->mGroup.mDescription
-                          || old_forum_grp_item->meta.mGroupName     != new_forum_grp_item->meta.mGroupName
-                          || old_forum_grp_item->meta.mGroupFlags    != new_forum_grp_item->meta.mGroupFlags
-                          || old_forum_grp_item->meta.mAuthorId      != new_forum_grp_item->meta.mAuthorId
-                          || old_forum_grp_item->meta.mCircleId      != new_forum_grp_item->meta.mCircleId
-                             )
-                        {
-                            auto ev = std::make_shared<RsGxsForumEvent>();
-                            ev->mForumGroupId = new_forum_grp_item->meta.mGroupId;
-                            ev->mForumEventCode = RsForumEventCode::UPDATED_FORUM;
-                            rsEvents->postEvent(ev);
-                        }
-					}
-                        break;
-
-
-					default:
-                        RsErr() << " Got a GXS event of type " << grpChange->getType() << " Currently not handled." << std::endl;
-						break;
-					}
-                }
+				RS_ERR( "Got mismatching notification type: ",
+				        gxsChange->getType() );
+				print_stacktrace();
+				goto cleanup;
 			}
+
+			auto ev = std::make_shared<RsGxsForumEvent>();
+			ev->mForumEventCode = RsForumEventCode::DELETED_POSTS;
+			ev->mForumGroupId = delChange->mGroupId;
+			ev->mForumMsgsId = delChange->messagesId;
+			break;
+		}
+		case RsGxsNotify::TYPE_GROUP_DELETED:
+		{
+			auto ev = std::make_shared<RsGxsForumEvent>();
+			ev->mForumGroupId = gxsChange->mGroupId;
+			ev->mForumEventCode = RsForumEventCode::DELETED_FORUM;
+			rsEvents->postEvent(ev);
+			break;
+		}
+		case RsGxsNotify::TYPE_STATISTICS_CHANGED:
+		{
+			auto ev = std::make_shared<RsGxsForumEvent>();
+			ev->mForumGroupId = gxsChange->mGroupId;
+			ev->mForumEventCode = RsForumEventCode::STATISTICS_CHANGED;
+			rsEvents->postEvent(ev);
+
+			RS_STACK_MUTEX(mKnownForumsMutex);
+			mKnownForums[gxsChange->mGroupId] = time(nullptr);
+			IndicateConfigChanged();
+			break;
+		}
+		case RsGxsNotify::TYPE_UPDATED:
+		{
+			/* Happens when the group data has changed. In this case we need to
+			 * analyse the old and new group in order to detect possible
+			 * notifications for clients */
+
+			rs_view_ptr<RsGxsGroupChange> grpChange =
+			        dynamic_cast<RsGxsGroupChange*>(*it);
+
+			RsGxsForumGroupItem* old_forum_grp_item =
+			        dynamic_cast<RsGxsForumGroupItem*>(grpChange->mOldGroupItem);
+			RsGxsForumGroupItem* new_forum_grp_item =
+			        dynamic_cast<RsGxsForumGroupItem*>(grpChange->mNewGroupItem);
+
+			if( old_forum_grp_item == nullptr || new_forum_grp_item == nullptr)
+			{
+				RS_ERR( "received GxsGroupUpdate item with mOldGroup and "
+				        "mNewGroup not of type RsGxsForumGroupItem or NULL. "
+				        "This is inconsistent!");
+				print_stacktrace();
+				goto cleanup;
+			}
+
+			/* First of all, we check if there is a difference between the old
+			 * and new list of moderators */
+
+			std::list<RsGxsId> added_mods, removed_mods;
+			for(auto& gxs_id: new_forum_grp_item->mGroup.mAdminList.ids)
+				if( old_forum_grp_item->mGroup.mAdminList.ids.find(gxs_id)
+				        == old_forum_grp_item->mGroup.mAdminList.ids.end() )
+					added_mods.push_back(gxs_id);
+
+			for(auto& gxs_id: old_forum_grp_item->mGroup.mAdminList.ids)
+				if( new_forum_grp_item->mGroup.mAdminList.ids.find(gxs_id)
+				        == new_forum_grp_item->mGroup.mAdminList.ids.end() )
+					removed_mods.push_back(gxs_id);
+
+			if(!added_mods.empty() || !removed_mods.empty())
+			{
+				auto ev = std::make_shared<RsGxsForumEvent>();
+
+				ev->mForumGroupId = new_forum_grp_item->meta.mGroupId;
+				ev->mModeratorsAdded = added_mods;
+				ev->mModeratorsRemoved = removed_mods;
+				ev->mForumEventCode = RsForumEventCode::MODERATOR_LIST_CHANGED;
+
+				rsEvents->postEvent(ev);
+			}
+
+			// check the list of pinned posts
+			std::list<RsGxsMessageId> added_pins, removed_pins;
+
+			for(auto& msg_id: new_forum_grp_item->mGroup.mPinnedPosts.ids)
+				if( old_forum_grp_item->mGroup.mPinnedPosts.ids.find(msg_id)
+				        == old_forum_grp_item->mGroup.mPinnedPosts.ids.end() )
+					added_pins.push_back(msg_id);
+
+			for(auto& msg_id: old_forum_grp_item->mGroup.mPinnedPosts.ids)
+				if( new_forum_grp_item->mGroup.mPinnedPosts.ids.find(msg_id)
+				        == new_forum_grp_item->mGroup.mPinnedPosts.ids.end() )
+					removed_pins.push_back(msg_id);
+
+			if(!added_pins.empty() || !removed_pins.empty())
+			{
+				auto ev = std::make_shared<RsGxsForumEvent>();
+				ev->mForumGroupId = new_forum_grp_item->meta.mGroupId;
+				ev->mForumEventCode = RsForumEventCode::PINNED_POSTS_CHANGED;
+				rsEvents->postEvent(ev);
+			}
+
+			if( old_forum_grp_item->mGroup.mDescription != new_forum_grp_item->mGroup.mDescription
+			        || old_forum_grp_item->meta.mGroupName  != new_forum_grp_item->meta.mGroupName
+			        || old_forum_grp_item->meta.mGroupFlags != new_forum_grp_item->meta.mGroupFlags
+			        || old_forum_grp_item->meta.mAuthorId   != new_forum_grp_item->meta.mAuthorId
+			        || old_forum_grp_item->meta.mCircleId   != new_forum_grp_item->meta.mCircleId )
+			{
+				auto ev = std::make_shared<RsGxsForumEvent>();
+				ev->mForumGroupId = new_forum_grp_item->meta.mGroupId;
+				ev->mForumEventCode = RsForumEventCode::UPDATED_FORUM;
+				rsEvents->postEvent(ev);
+			}
+
+			break;
 		}
 
-		/* shouldn't need to worry about groups - as they need to be subscribed to */
+		default:
+			RS_ERR( "Got a GXS event of type ", gxsChange->getType(),
+			        " Currently not handled." );
+			break;
+		}
 
-        delete *it;
+cleanup:
+		delete *it;
 	}
 }
 
@@ -1049,7 +1030,7 @@ void p3GxsForums::setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair&
 	{
 		auto ev = std::make_shared<RsGxsForumEvent>();
 
-		ev->mForumMsgId = msgId.second;
+		ev->mForumMsgsId.insert(msgId.second);
 		ev->mForumGroupId = msgId.first;
 		ev->mForumEventCode = RsForumEventCode::READ_STATUS_CHANGED;
 		rsEvents->postEvent(ev);
@@ -1080,7 +1061,7 @@ std::error_condition p3GxsForums::setPostKeepForever(
 	{
 		auto ev = std::make_shared<RsGxsForumEvent>();
 		ev->mForumGroupId = forumId;
-		ev->mForumMsgId = postId;
+		ev->mForumMsgsId.insert(postId);
 		ev->mForumEventCode = RsForumEventCode::UPDATED_MESSAGE;
 		rsEvents->postEvent(ev);
 		return std::error_condition();

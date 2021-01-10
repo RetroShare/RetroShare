@@ -4,7 +4,7 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2012  Christopher Evi-Parker                                  *
- * Copyright (C) 2019  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2019-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -2648,9 +2648,10 @@ void RsGenExchange::processMessageDelete()
 //			grpDeleted.push_back(note.second);
 //	}
 
-    for(uint32_t i=0;i<mMsgDeletePublish.size();++i)
-        for(auto it(mMsgDeletePublish[i].mMsgs.begin());it!=mMsgDeletePublish[i].mMsgs.end();++it)
-			mNotifications.push_back(new RsGxsGroupChange(RsGxsNotify::TYPE_MESSAGE_DELETED,it->first, false));
+	for(const auto& msd : mMsgDeletePublish)
+		for(auto& mp : msd.mMsgs)
+			mNotifications.push_back(
+			            new RsGxsBulkMsgDeletedChange(mp.first, mp.second) );
 
 	mMsgDeletePublish.clear();
 }
