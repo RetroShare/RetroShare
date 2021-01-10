@@ -437,43 +437,45 @@ int     pqihandler::UpdateRates()
 	RsDbg() << "UPDATE_RATES pqihandler::UpdateRates mod_index " << mod_index << " in_max_bw " << in_max_bw << " remaining in bw " << in_remaining_bw << std::endl;
 #endif
 
-	/* Allocate only half the remaining in bw, if any, to make it smoother */
-	in_max_bw = in_max_bw + in_remaining_bw / 2;
+	// allocate all remaining in bw
+	in_max_bw = in_max_bw + in_remaining_bw;
 
-	// store current total in and ou used bw 
+	// store current total in and out used bw 
 	locked_StoreCurrentRates(used_bw_in, used_bw_out);
 
 #ifdef UPDATE_RATES_DEBUG
 	RsDbg() << "UPDATE_RATES pqihandler::UpdateRates setting new out_max " << out_max_bw << " in_max " << in_max_bw << std::endl;
 #endif
 
-	// retrieve down (from peer point of view) bandwidth limits set by peers in their own settings
+	// retrieve the bandwidth limits provided by peers via BwCtrl
         std::map<RsPeerId, RsConfigDataRates> rateMap;
         rsConfig->getAllBandwidthRates(rateMap);
         std::map<RsPeerId, RsConfigDataRates>::iterator rateMap_it;
 
 #ifdef UPDATE_RATES_DEBUG
-	// Dump RsConfigurationDataRates
+	// dump RsConfigurationDataRates
 	RsDbg() << "UPDATE_RATES pqihandler::UpdateRates RsConfigDataRates dump" << std::endl;
 	for (rateMap_it = rateMap.begin(); rateMap_it != rateMap.end(); rateMap_it++)
 		RsDbg () << "UPDATE_RATES pqihandler::UpdateRates PeerId " << rateMap_it->first.toStdString() << " mAllowedOut " << rateMap_it->second.mAllowedOut << std::endl;
 #endif
 
-        // update max rates taking into account the limits set by peers in their own settings
+        // update max rates
 	for(it = mods.begin(); it != mods.end(); ++it)
 	{
 		SearchModule *mod = (it -> second);
 
-		// for our down bandwidth we set the max to the calculated value without taking into account the max set by peers: they will control their up bw on their side
+		// for our down bandwidth we use the calculated value without taking into account the max up provided by peers via BwCtrl
+		// this is harmless as they will control their up bw on their side
 		mod -> pqi -> setMaxRate(true, in_max_bw);
 
-		// for our up bandwidth we limit to the maximum down bw provided by peers via BwCtrl because we don't want to clog our outqueues, the SSL buffers, and our friends inbound queues
+		// for our up bandwidth we take into account the max down provided by peers via BwCtrl
+		// because we don't want to clog our outqueues, the TCP buffers, and the peers inbound queues
 		if ((rateMap_it = rateMap.find(mod->pqi->PeerId())) != rateMap.end())
 		{
 			if (rateMap_it->second.mAllowedOut > 0)
 			{	
-				if (out_max_bw > rateMap_it->second.mAllowedOut)
-        	                        mod -> pqi -> setMaxRate(false, rateMap_it->second.mAllowedOut);
+				if (out_max_bw > 0.95 * rateMap_it->second.mAllowedOut)
+        	                        mod -> pqi -> setMaxRate(false, 0.95 * rateMap_it->second.mAllowedOut);
 				else
 					mod -> pqi -> setMaxRate(false, out_max_bw);
 			}
