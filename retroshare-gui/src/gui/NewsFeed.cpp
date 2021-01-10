@@ -270,7 +270,10 @@ void NewsFeed::handleForumEvent(std::shared_ptr<const RsEvent> event)
 
 	case RsForumEventCode::UPDATED_MESSAGE:
 	case RsForumEventCode::NEW_MESSAGE:
-		addFeedItem(new GxsForumMsgItem(this, NEWSFEED_NEW_FORUM, pe->mForumGroupId, pe->mForumMsgId, false, true));
+		for(const auto& postId: pe->mForumMsgsId)
+			addFeedItem(new GxsForumMsgItem(
+			                this, NEWSFEED_NEW_FORUM, pe->mForumGroupId, postId,
+			                false, true ));
 		break;
 
 	default: break;

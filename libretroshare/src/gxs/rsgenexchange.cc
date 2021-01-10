@@ -4,7 +4,7 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2012  Christopher Evi-Parker                                  *
- * Copyright (C) 2019  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2019-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
