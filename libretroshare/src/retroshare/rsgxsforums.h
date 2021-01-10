@@ -115,9 +115,10 @@ enum class RsForumEventCode: uint8_t
 	READ_STATUS_CHANGED      = 0x06, /// msg was read or marked unread
 	STATISTICS_CHANGED       = 0x07, /// suppliers and how many messages they have changed
 	MODERATOR_LIST_CHANGED   = 0x08, /// forum moderation list has changed.
-    SYNC_PARAMETERS_UPDATED  = 0x0a, /// sync and storage times have changed
-    PINNED_POSTS_CHANGED     = 0x0b, /// some posts where pinned or un-pinned
-    DELETED_FORUM            = 0x0c, /// forum was deleted by cleaning
+	SYNC_PARAMETERS_UPDATED  = 0x0a, /// sync and storage times have changed
+	PINNED_POSTS_CHANGED     = 0x0b, /// some posts where pinned or un-pinned
+	DELETED_FORUM            = 0x0c, /// forum was deleted by cleaning
+	DELETED_POSTS            = 13    /// Posts deleted by cleaning
 };
 
 struct RsGxsForumEvent: RsEvent
@@ -128,7 +129,7 @@ struct RsGxsForumEvent: RsEvent
 
 	RsForumEventCode mForumEventCode;
 	RsGxsGroupId mForumGroupId;
-	RsGxsMessageId mForumMsgId;
+	std::set<RsGxsMessageId> mForumMsgsId;
     std::list<RsGxsId> mModeratorsAdded;
     std::list<RsGxsId> mModeratorsRemoved;
 
@@ -140,8 +141,7 @@ struct RsGxsForumEvent: RsEvent
 		RsEvent::serial_process(j, ctx);
 		RS_SERIAL_PROCESS(mForumEventCode);
 		RS_SERIAL_PROCESS(mForumGroupId);
-		RS_SERIAL_PROCESS(mForumMsgId);
-		RS_SERIAL_PROCESS(mForumMsgId);
+		RS_SERIAL_PROCESS(mForumMsgsId);
 		RS_SERIAL_PROCESS(mModeratorsAdded);
 		RS_SERIAL_PROCESS(mModeratorsRemoved);
 	}
