@@ -308,6 +308,20 @@ AuthSSLimpl::AuthSSLimpl() :
     p3Config(), sslctx(nullptr), mOwnCert(nullptr), sslMtx("AuthSSL"),
     mOwnPrivateKey(nullptr), mOwnPublicKey(nullptr), init(0) {}
 
+AuthSSLimpl::~AuthSSLimpl()
+{
+	RS_STACK_MUTEX(sslMtx);
+
+	SSL_CTX_free(sslctx);
+	X509_free(mOwnCert);
+
+	EVP_PKEY_free(mOwnPrivateKey);
+	EVP_PKEY_free(mOwnPublicKey);
+
+	for(auto pcert: mCerts)
+		X509_free(pcert.second);
+}
+
 bool AuthSSLimpl::active() { return init; }
 
 int AuthSSLimpl::InitAuth(
@@ -1459,14 +1473,14 @@ bool    AuthSSLimpl::encrypt(void *&out, int &outlen, const void *in, int inlen,
 	if (peerId == mOwnId) { public_key = mOwnPublicKey; }
 	else
 	{
-		if (!mCerts[peerId])
+		auto it = mCerts.find(peerId);
+
+		if (it == mCerts.end())
 		{
-			RsErr() << __PRETTY_FUNCTION__ << " public key not found."
-			        << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " public key not found." << std::endl;
 			return false;
 		}
-		else public_key = const_cast<EVP_PKEY*>(
-		            RsX509Cert::getPubKey(*mCerts[peerId]) );
+		else public_key = const_cast<EVP_PKEY*>( RsX509Cert::getPubKey(*it->second) );
 	}
 
         EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
