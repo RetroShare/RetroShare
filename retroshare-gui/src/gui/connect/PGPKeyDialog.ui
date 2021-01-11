@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>401</height>
+    <height>452</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -202,16 +202,6 @@ p, li { white-space: pre-wrap; }
                   </property>
                   <property name="toolButtonStyle">
                    <enum>Qt::ToolButtonTextUnderIcon</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QCheckBox" name="signGPGKeyCheckBox">
-                  <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. It helps them to decide whether to allow connections from that key based on your own trust. Signing a key is absolutely optional and cannot be undone, so do it wisely.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                  </property>
-                  <property name="text">
-                   <string>Sign PGP key</string>
                   </property>
                  </widget>
                 </item>

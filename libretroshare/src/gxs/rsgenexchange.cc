@@ -187,7 +187,7 @@ RsGenExchange::RsGenExchange(
         GxsMsgReq msgsToDel;
 
         RsGxsSinglePassIntegrityCheck::check(mServType,mGixs,mDataStore,
-                                             this, mSerialiser,
+                                             this, *mSerialiser,
                                              grpsToDel,msgsToDel);
 
         for(auto& grpId: grpsToDel)
@@ -2309,7 +2309,16 @@ void RsGenExchange::publishMsgs()
 		uint32_t token = mit->first;
 
 		uint32_t size = mSerialiser->size(msgItem);
-		char* mData = new char[size];
+
+        if(size > RsSerialiser::MAX_SERIAL_SIZE)
+        {
+            std::cerr << "Trying to publish a GXS message larger than the accepted maximal size of " << RsSerialiser::MAX_SERIAL_SIZE << " bytes. This is a bug." << std::endl;
+            mDataAccess->updatePublicRequestStatus(token, RsTokenService::FAILED);
+            delete msgItem;
+
+            continue;
+        }
+        RsTemporaryMemory mData(size);
 
 		// for fatal sign creation
 		bool createOk = false;
@@ -2386,9 +2395,7 @@ void RsGenExchange::publishMsgs()
 
 			// check message not over single msg storage limit
 			if(createOk)
-			{
 				validSize = mDataStore->validSize(msg);
-			}
 
 			if(createOk && validSize)
 			{
@@ -2404,11 +2411,14 @@ void RsGenExchange::publishMsgs()
 				// now serialise meta data
 				size = msg->metaData->serial_size();
 
-				char* metaDataBuff = new char[size];
-				bool s = msg->metaData->serialise(metaDataBuff, &size);
-				s &= msg->meta.setBinData(metaDataBuff, size);
-				if (!s)
-					std::cerr << "(WW) Can't serialise or set bin data" << std::endl;
+                {
+                    RsTemporaryMemory metaDataBuff(size);
+
+                    bool s = msg->metaData->serialise(metaDataBuff, &size);
+                    s &= msg->meta.setBinData(metaDataBuff, size);
+                    if (!s)
+                        std::cerr << "(WW) Can't serialise or set bin data" << std::endl;
+                }
 
 				msg->metaData->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED;
 				msgId = msg->msgId;
@@ -2416,6 +2426,7 @@ void RsGenExchange::publishMsgs()
 				msg->metaData->recvTS = time(NULL);
                 
                 // FIXTESTS global variable rsPeers not available in unittests!
+
                 if(rsPeers)
                     mRoutingClues[msg->metaData->mAuthorId].insert(rsPeers->getOwnId()) ;
                 
@@ -2425,13 +2436,20 @@ void RsGenExchange::publishMsgs()
                 mPublishedMsgs[token] = *msg->metaData;
 
                 RsGxsMsgItem *msg_item = dynamic_cast<RsGxsMsgItem*>(mSerialiser->deserialise(msg->msg.bin_data,&msg->msg.bin_len)) ;
+
+                if(!msg_item)
+                {
+                    delete msg;
+                    mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::FAILED);
+
+                    std::cerr << "RsGenExchange::publishMsgs() failed to publish msg, probably because of data size limits. bin_len=" << msg->msg.bin_len << std::endl;
+                    continue;	// next mit
+                }
                 msg_item->meta = *msg->metaData;
 
                 mDataAccess->addMsgData(msg);   // msg is deleted by addMsgData()
 
 				msgChangeMap[grpId].push_back(msg_item);
-
-				delete[] metaDataBuff;
 
                 if(mNetService != NULL)
                     mNetService->stampMsgServerUpdateTS(grpId) ;
@@ -2439,7 +2457,6 @@ void RsGenExchange::publishMsgs()
 				// add to published to allow acknowledgement
 				mMsgNotify.insert(std::make_pair(mit->first, std::make_pair(grpId, msgId)));
 				mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::COMPLETE);
-
 			}
 			else
 			{
@@ -2447,8 +2464,7 @@ void RsGenExchange::publishMsgs()
 				delete msg;
 
 				if(!tryLater)
-					mDataAccess->updatePublicRequestStatus(mit->first,
-							RsTokenService::FAILED);
+                    mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::FAILED);
 
 				std::cerr << "RsGenExchange::publishMsgs() failed to publish msg " << std::endl;
 			}
@@ -2457,8 +2473,6 @@ void RsGenExchange::publishMsgs()
 		{
 			std::cerr << "RsGenExchange::publishMsgs() failed to serialise msg " << std::endl;
 		}
-
-		delete[] mData;
 
 		if(!tryLater)
 			delete msgItem;

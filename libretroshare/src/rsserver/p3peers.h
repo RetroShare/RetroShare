@@ -165,7 +165,7 @@ public:
 	virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert, bool &is_short_format, uint32_t& error_code) override;
     virtual	std::string saveCertificateToString(const RsPeerId &id) override;
 
-    virtual	bool signGPGCertificate(const RsPgpId &id) override;
+    virtual	bool signGPGCertificate(const RsPgpId &id,const std::string& gpg_passphrase) override;
     virtual	bool trustGPGCertificate(const RsPgpId &id, uint32_t trustlvl) override;
 
 	/* Group Stuff */

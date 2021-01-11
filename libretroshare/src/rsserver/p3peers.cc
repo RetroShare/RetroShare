@@ -34,6 +34,7 @@
 #include "pqi/authssl.h"
 #include "pqi/authgpg.h"
 #include "retroshare/rsinit.h"
+#include "retroshare/rsnotify.h"
 #include "retroshare/rsfiles.h"
 #include "util/rsurl.h"
 #include "util/radix64.h"
@@ -1680,18 +1681,22 @@ std::string p3Peers::saveCertificateToString(const RsPeerId &id)
         }
 }
 
-bool 	p3Peers::signGPGCertificate(const RsPgpId &id)
+bool 	p3Peers::signGPGCertificate(const RsPgpId &id, const std::string &gpg_passphrase)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::SignCertificate() " << id;
 	std::cerr << std::endl;
 #endif
+        rsNotify->cachePgpPassphrase(gpg_passphrase);
+        rsNotify->setDisableAskPassword(true);
 
+        bool res = AuthGPG::getAuthGPG()->SignCertificateLevel0(id);
 
-        AuthGPG::getAuthGPG()->AllowConnection(id, true);
-        return AuthGPG::getAuthGPG()->SignCertificateLevel0(id);
+        rsNotify->clearPgpPassphrase();
+        rsNotify->setDisableAskPassword(false);
+
+        return res;
 }
-
 
 bool 	p3Peers::trustGPGCertificate(const RsPgpId &id, uint32_t trustlvl)
 {

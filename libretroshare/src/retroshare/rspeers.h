@@ -889,7 +889,7 @@ public:
 	        bool& is_short_format, uint32_t& error_code ) = 0;
 	virtual	std::string saveCertificateToString(const RsPeerId &id) = 0;
 
-	virtual	bool signGPGCertificate(const RsPgpId &gpg_id) = 0;
+    virtual	bool signGPGCertificate(const RsPgpId &gpg_id,const std::string& gpg_passphrase) = 0;
 	virtual	bool trustGPGCertificate(const RsPgpId &gpg_id, uint32_t trustlvl) = 0;
 
 	/* Group Stuff */

@@ -199,14 +199,8 @@ bool RsGxsCleanUp::clean(RsGxsGroupId& next_group_to_check,std::vector<RsGxsGrou
 RsGxsIntegrityCheck::RsGxsIntegrityCheck(
     RsGeneralDataService* const dataService, RsGenExchange* genex,
     RsSerialType&
-#ifdef RS_DEEP_CHANNEL_INDEX
-                  serializer
-#endif
                             , RsGixs* gixs )
   : mDs(dataService), mGenExchangeClient(genex),
-#ifdef RS_DEEP_CHANNEL_INDEX
-    mSerializer(serializer),
-#endif
     mDone(false), mIntegrityMutex("integrity"), mGixs(gixs) {}
 
 void RsGxsIntegrityCheck::run()
