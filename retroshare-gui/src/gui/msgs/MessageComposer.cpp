@@ -393,7 +393,7 @@ void MessageComposer::updateCells(int,int)
 {
     int rowCount = ui.recipientWidget->rowCount();
     int row;
-    bool has_gxs = false ;
+    has_gxs = false ;
 
     for (row = 0; row < rowCount; ++row)
     {
@@ -410,6 +410,7 @@ void MessageComposer::updateCells(int,int)
         ui.respond_to_CB->show();
         ui.distantFrame->show();
         ui.fromLabel->show();
+        checkLength();
     }
     else
     {
@@ -2880,15 +2881,17 @@ void MessageComposer::checkLength()
 
 	lineLabel->setText("|");
 
-	if(charRemains >= 0) {
-		text = tr("It remains %1 characters after HTML conversion.").arg(charRemains);
-		infoLabel->setStyleSheet("QStatusBar QLabel#infoLabel { }");
-	}else{
-		text = tr("Warning: This message is too big of %1 characters after HTML conversion.").arg((0-charRemains));
-		infoLabel->setStyleSheet("QStatusBar QLabel#infoLabel {color: red; font: bold; }");
+	if(has_gxs) {
+		if(charRemains >= 0) {
+			text = tr("It remains %1 characters after HTML conversion.").arg(charRemains);
+		}else{
+			text = tr("Warning: This message is too big of %1 characters after HTML conversion.").arg((0-charRemains));
+		}
+		ui.actionSend->setEnabled(charRemains>=0);
+		infoLabel->setText(text);
 	}
-
-	//ui.actionSend->setEnabled(charRemains>=0);
-
-	infoLabel->setText(text);
+	else {
+		infoLabel->setText("");
+		ui.actionSend->setEnabled(true);
+	}
 }

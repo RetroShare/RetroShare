@@ -263,6 +263,8 @@ private:
 	QLabel *lengthLabel;
 	QLabel *lineLabel;
 
+	bool has_gxs;
+
     /** Qt Designer generated object */
     Ui::MessageComposer ui;
 
