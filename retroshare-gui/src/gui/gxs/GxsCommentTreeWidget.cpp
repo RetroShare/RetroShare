@@ -753,9 +753,15 @@ void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
 
 void GxsCommentTreeWidget::insertComments(const std::vector<RsGxsComment>& comments)
 {
+    std::list<RsGxsMessageId> new_comments;
+
     for(auto vit = comments.begin(); vit != comments.end(); ++vit)
 	{
         const RsGxsComment &comment = *vit;
+
+        if(IS_MSG_NEW(comment.mMeta.mMsgStatus))
+            new_comments.push_back(comment.mMeta.mMsgId);
+
 		/* convert to a QTreeWidgetItem */
 		std::cerr << "GxsCommentTreeWidget::service_loadThread() Got Comment: " << comment.mMeta.mMsgId;
 		std::cerr << std::endl;
@@ -811,6 +817,14 @@ void GxsCommentTreeWidget::insertComments(const std::vector<RsGxsComment>& comme
 
 		addItem(comment.mMeta.mMsgId, comment.mMeta.mParentId, item);
 	}
+
+    // now set all loaded comments as not new, since they have been loaded.
+
+    for(auto cid:new_comments)
+    {
+        uint32_t token=0;
+        mCommentService->setCommentAsRead(token,mGroupId,cid);
+    }
 }
 
 QTreeWidgetItem *GxsCommentTreeWidget::service_createMissingItem(const RsGxsMessageId& parent)

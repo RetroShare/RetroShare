@@ -110,6 +110,13 @@ virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgI
 		return p3PostBase::setMessageReadStatus(token, msgId, read);
 	}
 
+    virtual bool setCommentAsRead(uint32_t& token,const RsGxsGroupId& gid,const RsGxsMessageId& comment_msg_id) override
+    {
+        p3PostBase::setMessageReadStatus(token,RsGxsGrpMsgIdPair(gid,comment_msg_id),true);
+        return true;
+    }
+
+
 
 	/** Comment service - Provide RsGxsCommentService -
 	 * redirect to p3GxsCommentService */

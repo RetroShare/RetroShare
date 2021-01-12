@@ -151,6 +151,12 @@ virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::strin
 		return mCommentService->createGxsComment(token, msg);
 	}
 
+    virtual bool setCommentAsRead(uint32_t& token,const RsGxsGroupId& gid,const RsGxsMessageId& comment_msg_id) override
+    {
+        setMessageReadStatus(token,RsGxsGrpMsgIdPair(gid,comment_msg_id),true);
+        return true;
+    }
+
 	virtual bool createNewVote(uint32_t &token, RsGxsVote &msg) override
 	{
 		return mCommentService->createGxsVote(token, msg);
