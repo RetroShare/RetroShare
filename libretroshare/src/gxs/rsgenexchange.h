@@ -133,12 +133,12 @@ public:
     /*!
      * @param messages messages are deleted after function returns
      */
-    virtual void receiveNewMessages(std::vector<RsNxsMsg*>& messages) override;
+    virtual void receiveNewMessages(const std::vector<RsNxsMsg *> &messages) override;
 
     /*!
      * @param groups groups are deleted after function returns
      */
-    virtual void receiveNewGroups(std::vector<RsNxsGrp*>& groups) override;
+    virtual void receiveNewGroups(const std::vector<RsNxsGrp *> &groups) override;
 
     /*!
      * @param grpId group id
@@ -375,6 +375,12 @@ protected:
 	                            unsigned char *& data, uint32_t& size);
 	bool deserializeGroupData(unsigned char *data, uint32_t size,
 	                          RsGxsGroupId* gId = nullptr);
+
+    /*!
+     * \brief retrieveNxsIdentity
+     * 			Sync version of the previous method. Might take some time, so should be used carefully.
+     */
+    bool retrieveNxsIdentity(const RsGxsGroupId& group_id,RsNxsGrp *& identity_grp);
 
     template<class GrpType>
     bool getGroupDataT(const uint32_t &token, std::vector<GrpType*>& grpItem)
@@ -647,6 +653,19 @@ protected:
      * @return SERVICE_CREATE_SUCCESS, SERVICE_CREATE_FAIL, SERVICE_FAIL_TRY_LATER
      */
     virtual ServiceCreate_Return service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet);
+
+    /*!
+     * \brief service_checkIfGroupIsStillUsed
+     * 			Re-implement this function to help GXS cleaning, by telling that some particular group
+     * 			is not used anymore. This usually depends on subscription, the fact that friend nodes send
+     * 			some info or not, and particular cleaning strategy of each service.
+     * 			Besides, groups in some services are used by other services (e.g. identities, circles, are used in
+     * 			forums and so on), so deciding on a group usage can only be left to the specific service it is used in.
+     * \return
+     * 			true if the group is still used, false otherwise, meaning that the group can be deleted. Default is
+     * 			that the group is always in use.
+     */
+    virtual bool service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& /* meta */) { return true; }	// see RsGenExchange
 
 public:
 
@@ -960,12 +979,11 @@ private:
 
     bool mCleaning;
     rstime_t mLastClean;
-    RsGxsMessageCleanUp* mMsgCleanUp;
-
 
     bool mChecking, mCheckStarted;
     rstime_t mLastCheck;
     RsGxsIntegrityCheck* mIntegrityCheck;
+    RsGxsGroupId mNextGroupToCheck ;
 
 protected:
 	enum CreateStatus { CREATE_FAIL, CREATE_SUCCESS, CREATE_FAIL_TRY_LATER };
@@ -983,6 +1001,8 @@ private:
     std::vector<MsgDeletePublish>   mMsgDeletePublish;
 
     std::map<RsGxsId,std::set<RsPeerId> > mRoutingClues ;
+
+    friend class RsGxsCleanUp;
 };
 
 #endif // RSGENEXCHANGE_H

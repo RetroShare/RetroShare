@@ -39,8 +39,6 @@
 #	include "util/rstime.h"
 #endif
 
-//#define RSMUTEX_DEBUG
-
 /**
  * @brief Provide mutexes that keep track of the owner. Based on pthread mutex.
  */
@@ -49,13 +47,13 @@ class RsMutex
 public:
 
 	RsMutex(const std::string& name) : _thread_id(0)
-#ifdef RSMUTEX_DEBUG
+#ifdef RS_MUTEX_DEBUG
 	  , _name(name)
 #endif
 	{
 		pthread_mutex_init(&realMutex, nullptr);
 
-#ifndef RSMUTEX_DEBUG
+#ifndef RS_MUTEX_DEBUG
 		(void) name; // remove unused parameter warnings
 #endif
 	}
@@ -68,7 +66,7 @@ public:
 	void unlock();
 	bool trylock() { return (0 == pthread_mutex_trylock(&realMutex)); }
 
-#ifdef RSMUTEX_DEBUG
+#ifdef RS_MUTEX_DEBUG
 	const std::string& name() const { return _name ; }
 #endif
 
@@ -76,7 +74,7 @@ private:
 	pthread_mutex_t realMutex;
 	pthread_t _thread_id;
 
-#ifdef RSMUTEX_DEBUG
+#ifdef RS_MUTEX_DEBUG
 	std::string _name;
 #endif
 };
@@ -98,7 +96,7 @@ private:
 
 /**
  * Provide mutexes that automatically lock/unlock on creation/destruction and
- * have powerfull debugging facilities (if RSMUTEX_DEBUG is defined at
+ * have powerfull debugging facilities (if RS_MUTEX_DEBUG is defined at
  * compiletime).
  * In most of the cases you should not use this directly instead
  * @see RS_STACK_MUTEX(m)
@@ -110,7 +108,7 @@ public:
 	RsStackMutex(RsMutex &mtx) : mMtx(mtx)
 	{
 		mMtx.lock();
-#ifdef RSMUTEX_DEBUG
+#ifdef RS_MUTEX_DEBUG
 		double ts = getCurrentTS();
 		_time_stamp = ts;
 		_lineno = 0;
@@ -120,11 +118,11 @@ public:
 
 	RsStackMutex(RsMutex &mtx, const char *function_name, const char *file_name,
 	             int lineno) : mMtx(mtx)
-#ifdef RSMUTEX_DEBUG
+#ifdef RS_MUTEX_DEBUG
 	  , _info(std::string(function_name)+" in file "+file_name), _lineno(lineno)
 #endif
 	{
-#ifdef RSMUTEX_DEBUG
+#ifdef RS_MUTEX_DEBUG
 		double ts = getCurrentTS();
 		_time_stamp = ts;
 		pthread_t owner = mMtx.owner();
@@ -135,7 +133,7 @@ public:
 
 		mMtx.lock();
 
-#ifdef RSMUTEX_DEBUG
+#ifdef RS_MUTEX_DEBUG
 		ts = getCurrentTS();
 
 		if(ts - _time_stamp > 1.0)
@@ -152,7 +150,7 @@ public:
 	{
 		mMtx.unlock();
 
-#ifdef RSMUTEX_DEBUG
+#ifdef RS_MUTEX_DEBUG
 		double ts = getCurrentTS();
 
 		    if(ts - _time_stamp > 1.0)
@@ -166,7 +164,7 @@ public:
 private:
 	RsMutex &mMtx;
 
-#ifdef RSMUTEX_DEBUG
+#ifdef RS_MUTEX_DEBUG
 	static double getCurrentTS();
 	double _time_stamp;
 	std::string _info;

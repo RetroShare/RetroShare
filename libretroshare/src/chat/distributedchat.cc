@@ -39,21 +39,21 @@
 
 //#define DEBUG_CHAT_LOBBIES 1
 
-static const int 		CONNECTION_CHALLENGE_MAX_COUNT   =   20 ; // sends a connection challenge every 20 messages
-static const rstime_t	CONNECTION_CHALLENGE_MAX_MSG_AGE =   30 ; // maximum age of a message to be used in a connection challenge
-static const int 		CONNECTION_CHALLENGE_MIN_DELAY   =   15 ; // sends a connection at most every 15 seconds
-static const int 		LOBBY_CACHE_CLEANING_PERIOD      =   10 ; // clean lobby caches every 10 secs (remove old messages)
+static const int 		CONNECTION_CHALLENGE_MAX_COUNT      =   20 ; // sends a connection challenge every 20 messages
+static const rstime_t		CONNECTION_CHALLENGE_MAX_MSG_AGE    =   30 ; // maximum age of a message to be used in a connection challenge
+static const int 		CONNECTION_CHALLENGE_MIN_DELAY      =   15 ; // sends a connection at most every 15 seconds
+static const int 		LOBBY_CACHE_CLEANING_PERIOD         =   10 ; // clean lobby caches every 10 secs (remove old messages)
 
-static const rstime_t 	MAX_KEEP_MSG_RECORD                = 1200 ; // keep msg record for 1200 secs max.
-static const rstime_t 	MAX_KEEP_INACTIVE_NICKNAME         =  180 ; // keep inactive nicknames for 3 mn max.
-static const rstime_t  	MAX_DELAY_BETWEEN_LOBBY_KEEP_ALIVE =  120 ; // send keep alive packet every 2 minutes.
-static const rstime_t 	MAX_KEEP_PUBLIC_LOBBY_RECORD       =   60 ; // keep inactive lobbies records for 60 secs max.
-static const rstime_t 	MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ =   20 ; // don't ask for lobby list more than once every 30 secs.
-static const rstime_t 	LOBBY_LIST_AUTO_UPDATE_TIME        =  121 ; // regularly ask for available lobbies every 5 minutes, to allow auto-subscribe to work
+static const rstime_t		MAX_KEEP_MSG_RECORD                 = 1200 ; // keep msg record for 1200 secs max.
+static const rstime_t	 	MAX_KEEP_INACTIVE_NICKNAME          =  180 ; // keep inactive nicknames for 3 mn max.
+static const rstime_t  		MAX_DELAY_BETWEEN_LOBBY_KEEP_ALIVE  =  120 ; // send keep alive packet every 2 minutes.
+static const rstime_t 		MAX_KEEP_PUBLIC_LOBBY_RECORD        =   60 ; // keep inactive lobbies records for 60 secs max.
+static const rstime_t 		MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ  =   20 ; // don't ask for lobby list more than once every 30 secs.
+static const rstime_t 		LOBBY_LIST_AUTO_UPDATE_TIME         =  121 ; // regularly ask for available lobbies every 5 minutes, to allow auto-subscribe to work
 
-static const uint32_t MAX_ALLOWED_LOBBIES_IN_LIST_WARNING = 50 ;
-//static const uint32_t MAX_MESSAGES_PER_SECONDS_NUMBER   =  5 ; // max number of messages from a given peer in a window for duration below
-static const uint32_t MAX_MESSAGES_PER_SECONDS_PERIOD     = 10 ; // duration window for max number of messages before messages get dropped.
+static const uint32_t 		MAX_ALLOWED_LOBBIES_IN_LIST_WARNING =   50 ;
+//static const uint32_t 	MAX_MESSAGES_PER_SECONDS_NUMBER     =    5 ; // max number of messages from a given peer in a window for duration below
+static const uint32_t 		MAX_MESSAGES_PER_SECONDS_PERIOD     =   10 ; // duration window for max number of messages before messages get dropped.
 
 #define        IS_PUBLIC_LOBBY(flags) (flags & RS_CHAT_LOBBY_FLAGS_PUBLIC    )
 #define    IS_PGP_SIGNED_LOBBY(flags) (flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED)
@@ -604,10 +604,10 @@ void DistributedChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 		}
 	}
 
-	 for(std::list<ChatLobbyId>::const_iterator it = invitationNeeded.begin();it!=invitationNeeded.end();++it)
+	for(std::list<ChatLobbyId>::const_iterator it = invitationNeeded.begin();it!=invitationNeeded.end();++it)
 		 invitePeerToLobby(*it,item->PeerId(),false) ;
 
-	 RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
 	_should_reset_lobby_counts = false ;
 }
 
@@ -696,38 +696,37 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 
 	if( rsReputations->overallReputationLevel(item->signature.keyId) ==
 	         RsReputationLevel::LOCALLY_NEGATIVE )
-    {
-        std::cerr << "(WW) Received lobby msg/item from banned identity " << item->signature.keyId << ". Dropping it." << std::endl;
-        return ;
-    }
-    if(!checkSignature(item,item->PeerId()))	// check the object's signature and possibly request missing keys
-    {
-        std::cerr << "Signature mismatched for this lobby event item: " << std::endl;
-        item->print(std::cerr) ;
-        std::cerr << std::endl;
-        return ;
-    }
+	{
+        	std::cerr << "(WW) Received lobby msg/item from banned identity " << item->signature.keyId << ". Dropping it." << std::endl;
+	        return ;
+	}
+	if(!checkSignature(item,item->PeerId()))	// check the object's signature and possibly request missing keys
+	{
+        	std::cerr << "Signature mismatched for this lobby event item: " << std::endl;
+	        item->print(std::cerr) ;
+        	std::cerr << std::endl;
+	        return ;
+	}
         
-    if(IS_PGP_SIGNED_LOBBY(fl))
-    {
-	    RsIdentityDetails details;
+	if(IS_PGP_SIGNED_LOBBY(fl))
+	{
+		RsIdentityDetails details;
 
-	    if(!rsIdentity->getIdDetails(item->signature.keyId,details))
-	    {
+		if(!rsIdentity->getIdDetails(item->signature.keyId,details))
+		{
 #ifdef DEBUG_CHAT_LOBBIES
-		    std::cerr << "(WW) cannot get ID " << item->signature.keyId << " for checking signature  of lobby item." << std::endl;
+			std::cerr << "(WW) cannot get ID " << item->signature.keyId << " for checking signature  of lobby item." << std::endl;
 #endif
-		    return ;
-	    }
+			return ;
+		}
 
-	    if(!(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED))
-	    {
-		    std::cerr << "(WW) Received a lobby msg/item that is not PGP-authed (ID=" << item->signature.keyId << "), whereas the lobby flags require it. Rejecting!" << std::endl;
-
-		    return ;
-	    }
-    }
-    addTimeShiftStatistics((int)now - (int)item->sendTime) ;
+		if(!(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED))
+		{
+			std::cerr << "(WW) Received a lobby msg/item that is not PGP-authed (ID=" << item->signature.keyId << "), whereas the lobby flags require it. Rejecting!" << std::endl;
+			return ;
+		}
+	}
+	addTimeShiftStatistics((int)now - (int)item->sendTime) ;
 
 	if(now+100 > (rstime_t) item->sendTime + MAX_KEEP_MSG_RECORD)	// the message is older than the max cache keep minus 100 seconds ! It's too old, and is going to make an echo!
 	{
@@ -745,10 +744,10 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 		std::cerr << std::endl;
 		return ;
 	}
-    // add a routing clue for this peer/GXSid combination. This is quite reliable since the lobby transport is almost instantaneous
-    rsGRouter->addRoutingClue(GRouterKeyId(item->signature.keyId),item->PeerId()) ;
+	// add a routing clue for this peer/GXSid combination. This is quite reliable since the lobby transport is almost instantaneous
+	rsGRouter->addRoutingClue(GRouterKeyId(item->signature.keyId),item->PeerId()) ;
     
-    if(! bounceLobbyObject(item,item->PeerId()))
+	if(! bounceLobbyObject(item,item->PeerId()))
 		return ;
 
 #ifdef DEBUG_CHAT_LOBBIES
@@ -756,32 +755,32 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 #endif
 
 	if(item->event_type == RS_CHAT_LOBBY_EVENT_PEER_LEFT)		// if a peer left. Remove its nickname from the list.
-    {
+	{
 #ifdef DEBUG_CHAT_LOBBIES
-        std::cerr << "  removing nickname " << item->nick << " from lobby " << std::hex << item->lobby_id << std::dec << std::endl;
+		std::cerr << "  removing nickname " << item->nick << " from lobby " << std::hex << item->lobby_id << std::dec << std::endl;
 #endif
 
-        RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
+		RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
 
-        std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.find(item->lobby_id) ;
+		std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.find(item->lobby_id) ;
 
-        if(it != _chat_lobbys.end())
-        {
-            std::map<RsGxsId,rstime_t>::iterator it2(it->second.gxs_ids.find(item->signature.keyId)) ;
+		if(it != _chat_lobbys.end())
+		{
+			std::map<RsGxsId,rstime_t>::iterator it2(it->second.gxs_ids.find(item->signature.keyId)) ;
 
-            if(it2 != it->second.gxs_ids.end())
-            {
-                it->second.gxs_ids.erase(it2) ;
+			if(it2 != it->second.gxs_ids.end())
+			{
+				it->second.gxs_ids.erase(it2) ;
 #ifdef DEBUG_CHAT_LOBBIES
-                std::cerr << "  removed id " << item->signature.keyId << " from lobby " << std::hex << item->lobby_id << std::dec << std::endl;
+				std::cerr << "  removed id " << item->signature.keyId << " from lobby " << std::hex << item->lobby_id << std::dec << std::endl;
 #endif
-            }
+			}
 #ifdef DEBUG_CHAT_LOBBIES
-            else
-                std::cerr << "  (EE) nickname " << item->nick << " not in participant nicknames list!" << std::endl;
+			else
+				std::cerr << "  (EE) nickname " << item->nick << " not in participant nicknames list!" << std::endl;
 #endif
-        }
-    }
+		}
+	}
 	else if(item->event_type == RS_CHAT_LOBBY_EVENT_PEER_JOINED)		// if a joined left. Add its nickname to the list.
 	{
 #ifdef DEBUG_CHAT_LOBBIES
@@ -794,10 +793,12 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 
 		if(it != _chat_lobbys.end())
 		{
-            it->second.gxs_ids[item->signature.keyId] = time(NULL) ;
+			it->second.gxs_ids[item->signature.keyId] = time(NULL) ;
 #ifdef DEBUG_CHAT_LOBBIES
 			std::cerr << "  added nickname " << item->nick << " from lobby " << std::hex << item->lobby_id << std::dec << std::endl;
 #endif
+			// trigger a keep alive packets so as to inform the new participant of our presence in the chatroom
+			it->second.last_keep_alive_packet_time = 0 ;
 		}
 	}
 	else if(item->event_type == RS_CHAT_LOBBY_EVENT_KEEP_ALIVE)		// keep alive packet. 
@@ -818,8 +819,10 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 #endif
 		}
 	}
-    RsServer::notify()->notifyChatLobbyEvent(item->lobby_id,item->event_type,item->signature.keyId,item->string1) ;
+
+    	RsServer::notify()->notifyChatLobbyEvent(item->lobby_id,item->event_type,item->signature.keyId,item->string1);
 }
+
 void DistributedChatService::getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& visible_lobbies)
 {
 	{
@@ -886,7 +889,7 @@ bool DistributedChatService::bounceLobbyObject(RsChatLobbyBouncingObject *item,c
 	if(peer_id != mServControl->getOwnId())
 		lobby.participating_friends.insert(peer_id) ;
 
-    lobby.gxs_ids[item->signature.keyId] = now ;
+	lobby.gxs_ids[item->signature.keyId] = now ;
 
 	// Checks wether the msg is already recorded or not
 
@@ -1003,19 +1006,19 @@ bool DistributedChatService::locked_initLobbyBouncableObject(const ChatLobbyId& 
 	} 
 	while( lobby.msg_cache.find(item.msg_id) != lobby.msg_cache.end() ) ;
 
-    RsIdentityDetails details ;
-    if(!rsIdentity || !rsIdentity->getIdDetails(lobby.gxs_id,details))
-    {
-        std::cerr << "(EE) Cannot send chat lobby object. Signign identity " << lobby.gxs_id << " is unknown." << std::endl;
-        return false ;
-    }
+	RsIdentityDetails details ;
+	if(!rsIdentity || !rsIdentity->getIdDetails(lobby.gxs_id,details))
+	{
+        	std::cerr << "(EE) Cannot send chat lobby object. Signign identity " << lobby.gxs_id << " is unknown." << std::endl;
+	        return false ;
+	}
 
-    item.lobby_id = lobby_id ;
-    item.nick = details.mNickname ;
-    item.signature.TlvClear() ;
-    item.signature.keyId = lobby.gxs_id ;
+	item.lobby_id = lobby_id ;
+	item.nick = details.mNickname ;
+	item.signature.TlvClear() ;
+	item.signature.keyId = lobby.gxs_id ;
 
-    // now sign the object, if the lobby expects it
+	// now sign the object, if the lobby expects it
 
 	uint32_t size = RsChatSerialiser(RsSerializationFlags::SIGNATURE)
 	        .size(dynamic_cast<RsItem*>(&item));
@@ -1028,35 +1031,35 @@ bool DistributedChatService::locked_initLobbyBouncableObject(const ChatLobbyId& 
             return false ;
         }
 
-    uint32_t error_status ;
+	uint32_t error_status ;
 
-    if(!mGixs->signData(memory,size,lobby.gxs_id,item.signature,error_status))
-    {
-        switch(error_status)
-        {
-            case RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE: std::cerr << "(EE) Cannot sign item: key not available for ID " << lobby.gxs_id << std::endl;
-                                        break ;
-            default: std::cerr << "(EE) Cannot sign item: unknown error" << std::endl;
-                                        break ;
-        }
-        return false ;
-    }
+	if(!mGixs->signData(memory,size,lobby.gxs_id,item.signature,error_status))
+	{
+        	switch(error_status)
+		{
+			case RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE: std::cerr << "(EE) Cannot sign item: key not available for ID " << lobby.gxs_id << std::endl;
+					break ;
+			default:	std::cerr << "(EE) Cannot sign item: unknown error" << std::endl;
+					break ;
+		}
+		return false ;
+	}
 
 #ifdef DEBUG_CHAT_LOBBIES
-    std::cerr << "  signature done." << std::endl;
+	std::cerr << "  signature done." << std::endl;
 
-    // check signature
-        if(!mGixs->validateData(memory,item.signed_serial_size(),item.signature,true,error_status))
-        {
-            std::cerr << "(EE) Cannot check message item. " << std::endl;
-            return false ;
-        }
-    std::cerr << "  signature checks!" << std::endl;
-    std::cerr << "  Item dump:" << std::endl;
-    item.print(std::cerr,2) ;
+	// check signature
+	if(!mGixs->validateData(memory,item.signed_serial_size(),item.signature,true,error_status))
+	{
+		std::cerr << "(EE) Cannot check message item. " << std::endl;
+		return false ;
+	}
+	std::cerr << "  signature checks!" << std::endl;
+	std::cerr << "  Item dump:" << std::endl;
+	item.print(std::cerr,2) ;
 #endif
 
-    return true ;
+	return true ;
 }
 
 bool DistributedChatService::sendLobbyChat(const ChatLobbyId& lobby_id, const std::string& msg)
@@ -1131,7 +1134,6 @@ void DistributedChatService::handleConnectionChallenge(RsChatLobbyConnectChallen
 #ifdef DEBUG_CHAT_LOBBIES
 					std::cerr << "    Lobby_id = 0x" << std::hex << it->first << ", msg_id = 0x" << it2->first << ": code = 0x" << code << std::dec << std::endl ;
 #endif
-
 					if(code == item->challenge_code)
 					{
 #ifdef DEBUG_CHAT_LOBBIES
@@ -1231,6 +1233,7 @@ uint64_t DistributedChatService::makeConnexionChallengeCode(const RsPeerId& peer
 	}
 	return result ;
 }
+
 void DistributedChatService::getChatLobbyList(std::list<ChatLobbyId>& clids)
 {
     // fill up a dummy list for now.
@@ -1242,6 +1245,7 @@ void DistributedChatService::getChatLobbyList(std::list<ChatLobbyId>& clids)
     for(std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it(_chat_lobbys.begin());it!=_chat_lobbys.end();++it)
         clids.push_back(it->first) ;
 }
+
 bool DistributedChatService::getChatLobbyInfo(const ChatLobbyId& id,ChatLobbyInfo& info)
 {
 	// fill up a dummy list for now.
@@ -1259,6 +1263,7 @@ bool DistributedChatService::getChatLobbyInfo(const ChatLobbyId& id,ChatLobbyInf
     else
         return false ;
 }
+
 void DistributedChatService::invitePeerToLobby(const ChatLobbyId& lobby_id, const RsPeerId& peer_id,bool connexion_challenge) 
 {
 #ifdef DEBUG_CHAT_LOBBIES
@@ -1403,7 +1408,7 @@ void DistributedChatService::getPendingChatLobbyInvites(std::list<ChatLobbyInvit
 
 bool DistributedChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id,const RsGxsId& identity)
 {
-    {
+	{
 		RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
 
 #ifdef DEBUG_CHAT_LOBBIES
@@ -1462,6 +1467,7 @@ bool DistributedChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id,const
 		entry.connexion_challenge_count = 0 ;
 		entry.last_activity = now ;
 		entry.last_connexion_challenge_time = now ;
+		entry.joined_lobby_packet_sent = false;
 		entry.last_keep_alive_packet_time = now ;
 
 		_chat_lobbys[lobby_id] = entry ;
@@ -1476,8 +1482,8 @@ bool DistributedChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id,const
 		RsChatLobbyMsgItem *item = new RsChatLobbyMsgItem;
 		item->lobby_id = entry.lobby_id ;
 		item->msg_id = 0 ;
-        item->parent_msg_id = 0 ;
-        item->nick = "Chat room management" ;
+	        item->parent_msg_id = 0 ;
+        	item->nick = "Chat room management" ;
 		item->message = std::string("Welcome to chat lobby") ;
 		item->PeerId(entry.virtual_peer_id) ;
 		item->chatFlags = RS_CHAT_FLAG_PRIVATE | RS_CHAT_FLAG_LOBBY ;
@@ -1575,11 +1581,11 @@ bool DistributedChatService::joinVisibleChatLobby(const ChatLobbyId& lobby_id,co
 #endif
 		rstime_t now = time(NULL) ;
 
-        ChatLobbyEntry entry ;
+		ChatLobbyEntry entry ;
 
-        entry.lobby_flags = it->second.lobby_flags ;//RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC ;
+		entry.lobby_flags = it->second.lobby_flags ;//RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC ;
 		entry.participating_friends.clear() ;
-        entry.gxs_id = gxs_id ;
+		entry.gxs_id = gxs_id ;
 		entry.lobby_id = lobby_id ;
 		entry.lobby_name = it->second.lobby_name ;
 		entry.lobby_topic = it->second.lobby_topic ;
@@ -1587,6 +1593,7 @@ bool DistributedChatService::joinVisibleChatLobby(const ChatLobbyId& lobby_id,co
 		entry.connexion_challenge_count = 0 ;
 		entry.last_activity = now ; 
 		entry.last_connexion_challenge_time = now ; 
+		entry.joined_lobby_packet_sent = false;
 		entry.last_keep_alive_packet_time = now ;
 
 		for(std::set<RsPeerId>::const_iterator it2(it->second.participating_friends.begin());it2!=it->second.participating_friends.end();++it2)
@@ -1596,9 +1603,10 @@ bool DistributedChatService::joinVisibleChatLobby(const ChatLobbyId& lobby_id,co
 		}
 		_chat_lobbys[lobby_id] = entry ;
 	}
-    setLobbyAutoSubscribe(lobby_id,true);
 
-    triggerConfigSave();	// so that we save the subscribed lobbies
+	setLobbyAutoSubscribe(lobby_id,true);
+
+	triggerConfigSave();	// so that we save the subscribed lobbies
 
 	for(std::list<RsPeerId>::const_iterator it(invited_friends.begin());it!=invited_friends.end();++it)
 		invitePeerToLobby(lobby_id,*it) ;
@@ -1634,9 +1642,9 @@ ChatLobbyId DistributedChatService::createChatLobby(const std::string& lobby_nam
 		rstime_t now = time(NULL) ;
 
 		ChatLobbyEntry entry ;
-        entry.lobby_flags = lobby_flags ;
+		entry.lobby_flags = lobby_flags ;
 		entry.participating_friends.clear() ;
-        entry.gxs_id = lobby_identity ;	// to be changed. For debug only!!
+		entry.gxs_id = lobby_identity ;	// to be changed. For debug only!!
 		entry.lobby_id = lobby_id ;
 		entry.lobby_name = lobby_name ;
 		entry.lobby_topic = lobby_topic ;
@@ -1644,17 +1652,18 @@ ChatLobbyId DistributedChatService::createChatLobby(const std::string& lobby_nam
 		entry.connexion_challenge_count = 0 ;
 		entry.last_activity = now ;
 		entry.last_connexion_challenge_time = now ;
+		entry.joined_lobby_packet_sent = false;
 		entry.last_keep_alive_packet_time = now ;
 
 		_chat_lobbys[lobby_id] = entry ;
 	}
 
-    for(std::set<RsPeerId>::const_iterator it(invited_friends.begin());it!=invited_friends.end();++it)
+	for(std::set<RsPeerId>::const_iterator it(invited_friends.begin());it!=invited_friends.end();++it)
 		invitePeerToLobby(lobby_id,*it) ;
 
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
 
-    triggerConfigSave();
+	triggerConfigSave();
 
 	return lobby_id ;
 }
@@ -1732,14 +1741,14 @@ void DistributedChatService::unsubscribeChatLobby(const ChatLobbyId& id)
 		_chat_lobbys.erase(it) ;
 	}
 
-    triggerConfigSave();	// so that we save the subscribed lobbies
+	triggerConfigSave();	// so that we save the subscribed lobbies
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_DEL) ;
 
 	// done!
 }
 bool DistributedChatService::setDefaultIdentityForChatLobby(const RsGxsId& nick)
 {
-    if (nick.isNull())
+	if (nick.isNull())
 	{
 		std::cerr << "Ignore empty nickname for chat lobby " << std::endl;
 		return false;
@@ -1747,12 +1756,13 @@ bool DistributedChatService::setDefaultIdentityForChatLobby(const RsGxsId& nick)
 
 	{
 		RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
-        _default_identity = nick;
+	        _default_identity = nick;
 	}
 
 	triggerConfigSave() ;
 	return true ;
 }
+
 void DistributedChatService::getDefaultIdentityForChatLobby(RsGxsId& nick)
 {
     RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
@@ -1775,6 +1785,7 @@ RsGxsId DistributedChatService::locked_getDefaultIdentity()
     }
     return _default_identity ;
 }
+
 bool DistributedChatService::getIdentityForChatLobby(const ChatLobbyId& lobby_id,RsGxsId& nick)
 {
 	RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
@@ -1790,7 +1801,7 @@ bool DistributedChatService::getIdentityForChatLobby(const ChatLobbyId& lobby_id
 		return false ;
 	}
 
-    nick = it->second.gxs_id ;
+	nick = it->second.gxs_id ;
 	return true ;
 }
 
@@ -1856,26 +1867,26 @@ bool DistributedChatService::setIdentityForChatLobby(const ChatLobbyId& lobby_id
 void DistributedChatService::setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe)
 {
 
-		if(autoSubscribe)
+	if(autoSubscribe)
         {
-            {
-				RS_STACK_MUTEX(mDistributedChatMtx);
-				_known_lobbies_flags[lobby_id] |=  RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE;
-			}
-			RsGxsId gxsId;
-
-			if (getIdentityForChatLobby(lobby_id, gxsId))
-			{
-				RS_STACK_MUTEX(mDistributedChatMtx);
-				_lobby_default_identity[lobby_id] = gxsId;
-			}
+        	{
+			RS_STACK_MUTEX(mDistributedChatMtx);
+			_known_lobbies_flags[lobby_id] |=  RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE;
 		}
+		RsGxsId gxsId;
+
+		if (getIdentityForChatLobby(lobby_id, gxsId))
+		{
+			RS_STACK_MUTEX(mDistributedChatMtx);
+			_lobby_default_identity[lobby_id] = gxsId;
+		}
+	}
         else
         {
-			RS_STACK_MUTEX(mDistributedChatMtx);
-			_known_lobbies_flags[lobby_id] &= ~RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE ;
-			_lobby_default_identity.erase(lobby_id);
-		}
+		RS_STACK_MUTEX(mDistributedChatMtx);
+		_known_lobbies_flags[lobby_id] &= ~RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE ;
+		_lobby_default_identity.erase(lobby_id);
+	}
 
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
 	triggerConfigSave();
@@ -1898,16 +1909,17 @@ void DistributedChatService::cleanLobbyCaches()
 	std::list<ChatLobbyId> keep_alive_lobby_ids ;
 	std::list<ChatLobbyId> changed_lobbies ;
 	std::list<ChatLobbyId> send_challenge_lobbies ;
+	std::list<ChatLobbyId> joined_lobby_ids ;
 
 	{
 		RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
 
 		rstime_t now = time(NULL) ;
 
-		// 1 - clean cache of all lobbies and participating nicknames.
-		//
 		for(std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.begin();it!=_chat_lobbys.end();++it)
 		{
+			// 1 - remove old messages
+			//
 			for(std::map<ChatLobbyMsgId,rstime_t>::iterator it2(it->second.msg_cache.begin());it2!=it->second.msg_cache.end();)
 				if(it2->second + MAX_KEEP_MSG_RECORD < now)
 				{
@@ -1925,16 +1937,18 @@ void DistributedChatService::cleanLobbyCaches()
 
 			bool changed = false ;
 
-            for(std::map<RsGxsId,rstime_t>::iterator it2(it->second.gxs_ids.begin());it2!=it->second.gxs_ids.end();)
+			// 2 - remove inactive nicknames
+			//
+			for(std::map<RsGxsId,rstime_t>::iterator it2(it->second.gxs_ids.begin());it2!=it->second.gxs_ids.end();)
 				if(it2->second + MAX_KEEP_INACTIVE_NICKNAME < now)
 				{
 #ifdef DEBUG_CHAT_LOBBIES
 					std::cerr << "  removing inactive nickname 0x" << std::hex << it2->first << ", time=" << std::dec << now - it2->second << " secs ago" << std::endl;
 #endif
 
-                    std::map<RsGxsId,rstime_t>::iterator tmp(it2) ;
+					std::map<RsGxsId,rstime_t>::iterator tmp(it2) ;
 					++tmp ;
-                    it->second.gxs_ids.erase(it2) ;
+					it->second.gxs_ids.erase(it2) ;
 					it2 = tmp ;
 					changed = true ;
 				}
@@ -1944,7 +1958,27 @@ void DistributedChatService::cleanLobbyCaches()
 			if(changed)
 				changed_lobbies.push_back(it->first) ;
 
-			// 3 - send lobby keep-alive packets to all lobbies
+			// 3 - send a joined_lobby packet if a participating friend is connected, we do that only once
+			//
+			if (!it->second.joined_lobby_packet_sent)
+			{
+				bool oneParticipatingFriendIsConnected = false;
+				for(std::set<RsPeerId>::const_iterator fit(it->second.participating_friends.begin());fit!=it->second.participating_friends.end();++fit)
+				{
+					if(mServControl->isPeerConnected(mServType, *fit))
+					{
+						oneParticipatingFriendIsConnected = true;
+						break;
+					}
+				}
+				if (oneParticipatingFriendIsConnected)
+				{
+					joined_lobby_ids.push_back(it->first) ;
+					it->second.joined_lobby_packet_sent = true;
+				}
+			}
+
+			// 4 - send lobby keep-alive packet
 			//
 			if(it->second.last_keep_alive_packet_time + MAX_DELAY_BETWEEN_LOBBY_KEEP_ALIVE < now)
 			{
@@ -1952,13 +1986,12 @@ void DistributedChatService::cleanLobbyCaches()
 				it->second.last_keep_alive_packet_time = now ;
 			}
 
-			// 4 - look at lobby activity and possibly send connection challenge
+			// 5 - look at lobby activity and possibly send connection challenge
 			//
 			if(++it->second.connexion_challenge_count > CONNECTION_CHALLENGE_MAX_COUNT && now > it->second.last_connexion_challenge_time + CONNECTION_CHALLENGE_MIN_DELAY) 
 			{
 				it->second.connexion_challenge_count = 0 ;
 				it->second.last_connexion_challenge_time = now ;
-
 				send_challenge_lobbies.push_back(it->first);
 			}
 		}
@@ -1967,12 +2000,12 @@ void DistributedChatService::cleanLobbyCaches()
 		// 
 
 		for(std::map<ChatLobbyId,VisibleChatLobbyRecord>::iterator it(_visible_lobbies.begin());it!=_visible_lobbies.end();)
+		{
 			if(it->second.last_report_time + MAX_KEEP_PUBLIC_LOBBY_RECORD < now && _chat_lobbys.find(it->first)==_chat_lobbys.end())	// this lobby record is too late.
 			{
 #ifdef DEBUG_CHAT_LOBBIES
 				std::cerr << "  removing old public lobby record 0x" << std::hex << it->first << ", time=" << std::dec << now - it->second.last_report_time << " secs ago" << std::endl;
 #endif
-
 				std::map<ChatLobbyMsgId,VisibleChatLobbyRecord>::iterator tmp(it) ;
 				++tmp ;
 				_visible_lobbies.erase(it) ;
@@ -1980,17 +2013,22 @@ void DistributedChatService::cleanLobbyCaches()
 			}
 			else
 				++it ;
+		}
 	}
 
+	// send keep alive
 	for(std::list<ChatLobbyId>::const_iterator it(keep_alive_lobby_ids.begin());it!=keep_alive_lobby_ids.end();++it)
 		sendLobbyStatusKeepAlive(*it) ;
 
 	// update the gui
 	for(std::list<ChatLobbyId>::const_iterator it(changed_lobbies.begin());it!=changed_lobbies.end();++it)
-        RsServer::notify()->notifyChatLobbyEvent(*it,RS_CHAT_LOBBY_EVENT_KEEP_ALIVE,RsGxsId(),"") ;
+	        RsServer::notify()->notifyChatLobbyEvent(*it,RS_CHAT_LOBBY_EVENT_KEEP_ALIVE,RsGxsId(),"") ;
+
+	// send peer joined
+	for(std::list<ChatLobbyId>::const_iterator it(joined_lobby_ids.begin());it!=joined_lobby_ids.end();++it)
+		sendLobbyStatusNewPeer(*it) ;
 
 	// send connection challenges
-	//
 	for(std::list<ChatLobbyId>::const_iterator it(send_challenge_lobbies.begin());it!=send_challenge_lobbies.end();++it)
 		sendConnectionChallenge(*it) ;
 }
@@ -2007,14 +2045,12 @@ void DistributedChatService::addToSaveList(std::list<RsItem*>& list) const
 		list.push_back(clci) ;
 	}
 
-    for(auto it(_chat_lobbys.begin());it!=_chat_lobbys.end();++it)
-    {
-        RsSubscribedChatLobbyConfigItem *scli = new RsSubscribedChatLobbyConfigItem;
-
-        scli->info = it->second;	// copies the ChatLobbyInfo part only
-
-        list.push_back(scli);
-    }
+	for(auto it(_chat_lobbys.begin());it!=_chat_lobbys.end();++it)
+	{
+		RsSubscribedChatLobbyConfigItem *scli = new RsSubscribedChatLobbyConfigItem;
+		scli->info = it->second;	// copies the ChatLobbyInfo part only
+		list.push_back(scli);
+	}
 
 	/* Save Default Nick Name */
 	{
@@ -2103,27 +2139,27 @@ bool DistributedChatService::processLoadListItem(const RsItem *item)
 		return true ;
 	}
 
-    if(_default_identity.isNull() && rsIdentity!=NULL)
-    {
-        std::list<RsGxsId> own_ids ;
-        rsIdentity->getOwnIds(own_ids) ;
+	if(_default_identity.isNull() && rsIdentity!=NULL)
+	{
+		std::list<RsGxsId> own_ids ;
+		rsIdentity->getOwnIds(own_ids) ;
 
-        if(!own_ids.empty())
-            _default_identity = own_ids.front() ;
-    }
+		if(!own_ids.empty())
+		_default_identity = own_ids.front() ;
+	}
 
 	const RsSubscribedChatLobbyConfigItem *scli = dynamic_cast<const RsSubscribedChatLobbyConfigItem*>(item);
 
-    if(scli != NULL)
-    {
-        if(_chat_lobbys.find(scli->info.lobby_id) != _chat_lobbys.end())	// do nothing if the lobby is already subscribed
-            return true;
+	if(scli != NULL)
+	{
+		if(_chat_lobbys.find(scli->info.lobby_id) != _chat_lobbys.end())	// do nothing if the lobby is already subscribed
+			return true;
 
-        std::cerr << "Re-subscribing to chat lobby " << (void*)scli->info.lobby_id << ", flags = " << scli->info.lobby_flags << std::endl;
+		std::cerr << "Re-subscribing to chat lobby " << (void*)scli->info.lobby_id << ", flags = " << scli->info.lobby_flags << std::endl;
 
-        rstime_t now = time(NULL);
+		rstime_t now = time(NULL);
 
-        // Add the chat room into visible chat rooms
+		// Add the chat room into visible chat rooms
 		{
 			RS_STACK_MUTEX(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
 
@@ -2138,33 +2174,32 @@ bool DistributedChatService::processLoadListItem(const RsItem *item)
 			rec.lobby_flags = EXTRACT_PRIVACY_FLAGS(scli->info.lobby_flags) ;
 
 			_known_lobbies_flags[scli->info.lobby_id] |=  RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE;
-        }
+		}
 
-        // Add the chat room into subscribed chat rooms
+	        // Add the chat room into subscribed chat rooms
 
 		ChatLobbyEntry entry ;
-        (ChatLobbyInfo&)entry = scli->info;
+		(ChatLobbyInfo&)entry = scli->info;
 
-		 entry.virtual_peer_id = makeVirtualPeerId(entry.lobby_id) ;	// not random, so we keep the same id at restart
-		 entry.connexion_challenge_count = 0 ;
-		 entry.last_activity = now ;
-		 entry.last_connexion_challenge_time = now ;
-		 entry.last_keep_alive_packet_time = now ;
+		entry.virtual_peer_id = makeVirtualPeerId(entry.lobby_id) ;	// not random, so we keep the same id at restart
+		entry.connexion_challenge_count = 0 ;
+		entry.last_activity = now ;
+		entry.last_connexion_challenge_time = now ;
+		entry.joined_lobby_packet_sent = false ;
+		entry.last_keep_alive_packet_time = now ;
 
-		 {
-			 RS_STACK_MUTEX(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
-			 _chat_lobbys[entry.lobby_id] = entry ;
-		 }
+		{
+			RS_STACK_MUTEX(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
+			_chat_lobbys[entry.lobby_id] = entry ;
+		}
 
-         // make the UI aware of the existing chat room
+		// make the UI aware of the existing chat room
 
-		 RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
+		RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
 
-		 return true;
-    }
-
+		return true;
+	}
 
 	return false ;
 }
-
 

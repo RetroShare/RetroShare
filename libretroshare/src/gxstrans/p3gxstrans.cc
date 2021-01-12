@@ -361,7 +361,7 @@ void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
     // first take out all the groups
 
     std::map<RsGxsGroupId, RsNxsGrp*> grp;
-    mDs->retrieveNxsGrps(grp, true, true);
+    mDs->retrieveNxsGrps(grp, true);
 
 #ifdef DEBUG_GXSTRANS
     std::cerr << "GxsTransIntegrityCleanupThread::run()" << std::endl;
@@ -389,7 +389,7 @@ void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
     std::list<RsGxsTransId> received_msgs ;
 
     GxsMsgResult msgs;
-    mDs->retrieveNxsMsgs(grps, msgs, false, true);
+    mDs->retrieveNxsMsgs(grps, msgs, true);
 
     for(GxsMsgResult::iterator mit = msgs.begin();mit != msgs.end(); ++mit)
     {

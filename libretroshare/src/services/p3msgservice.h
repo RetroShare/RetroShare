@@ -56,6 +56,7 @@ class p3MsgService :
 {
 public:
 	p3MsgService(p3ServiceControl *sc, p3IdService *id_service, p3GxsTrans& gxsMS);
+    virtual ~p3MsgService();
 
 	virtual RsServiceInfo getServiceInfo();
 

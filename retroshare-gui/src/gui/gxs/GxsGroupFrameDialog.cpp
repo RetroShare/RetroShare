@@ -179,7 +179,7 @@ void GxsGroupFrameDialog::initUi()
 	mInitialized = true;
 }
 
-void GxsGroupFrameDialog::showEvent(QShowEvent *event)
+void GxsGroupFrameDialog::showEvent(QShowEvent* /*event*/)
 {
 	if (!mInitialized )
 	{
@@ -1086,7 +1086,9 @@ void GxsGroupFrameDialog::updateMessageSummaryListReal(RsGxsGroupId groupId)
 
 void GxsGroupFrameDialog::updateGroupSummary()
 {
-	RsThread::async([this]()
+	if (!mInitialized) return;//UI not yet initialized
+
+ 	RsThread::async([this]()
 	{
 		auto groupInfo = new std::list<RsGxsGenericGroupData*>() ;
 

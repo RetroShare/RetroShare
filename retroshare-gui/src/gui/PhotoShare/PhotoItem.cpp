@@ -25,6 +25,7 @@
 
 #include "PhotoItem.h"
 #include "ui_PhotoItem.h"
+#include "gui/common/FilesDefs.h"
 
 PhotoItem::PhotoItem(PhotoShareItemHolder *holder, const RsPhotoPhoto &photo, QWidget *parent):
     QWidget(parent),
@@ -100,11 +101,11 @@ void PhotoItem::setSelected(bool selected)
 
     if (mSelected)
     {
-            ui->photoFrame->setStyleSheet("QFrame#photoFrame{border: 2px solid #9562B8;\nbackground: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #55EE55, stop: 1 " + bottomColor + ");\nborder-radius: 10px}");
+            ui->photoFrame->setStyleSheet("QFrame#photoFrame{border: 2px solid #9562B8;\nbackground: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #308dc7, stop: 1 " + bottomColor + ");\nborder-radius: 10px}");
     }
     else
     {
-            ui->photoFrame->setStyleSheet("QFrame#photoFrame{border: 2px solid #CCCCCC;\nbackground: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #EEEEEE, stop: 1 " + bottomColor + ");\nborder-radius: 10px}");
+            ui->photoFrame->setStyleSheet("");
     }
     update();
 }
@@ -151,8 +152,8 @@ void PhotoItem::setUp()
 
     mTitleLabel->setText(QString::fromStdString(mPhotoDetails.mMeta.mMsgName));
 
-    ui->editLayOut->addWidget(mPhotoGrapherLabel);
     ui->editLayOut->addWidget(mTitleLabel);
+    ui->editLayOut->addWidget(mPhotoGrapherLabel);
 
     updateImage(mPhotoDetails.mLowResImage);
 }
@@ -202,3 +203,4 @@ void PhotoItem::mousePressEvent(QMouseEvent *event)
 
         QWidget::mousePressEvent(event);
 }
+

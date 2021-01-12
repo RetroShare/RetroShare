@@ -73,6 +73,8 @@ void PhotoDialog::setUp()
 	// Fixed %, then manually scale to that, with scroll area.
 
 	ui->lineEdit_Title->setText(QString::fromStdString(mPhotoDetails.mMeta.mMsgName));
+	ui->albumGroup->setTitle( tr("Album") + " / " + QString::fromStdString(mPhotoDetails.mMeta.mMsgName));
+
 	ui->frame_comments->setVisible(false);
 	ui->frame_details->setVisible(false);
 }
@@ -96,9 +98,10 @@ void PhotoDialog::toggleComments()
 		if (mCommentsCreated) {
 			ui->frame_comments->setVisible(true);
 		} else {
+			RsGxsId current_author;
 			// create CommentDialog.
 			RsGxsCommentService *commentService = dynamic_cast<RsGxsCommentService *>(mRsPhoto);
-			GxsCommentDialog *commentDialog = new GxsCommentDialog(this, mRsPhoto->getTokenService(), commentService);
+			GxsCommentDialog *commentDialog = new GxsCommentDialog(this,current_author, mRsPhoto->getTokenService(), commentService);
 
 			// TODO: Need to fetch all msg versions, otherwise - won't get all the comments.
 			// For the moment - use current msgid.

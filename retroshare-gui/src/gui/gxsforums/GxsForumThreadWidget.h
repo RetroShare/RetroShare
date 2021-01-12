@@ -110,6 +110,7 @@ private slots:
 	void threadListCustomPopupMenu(QPoint point);
 	void contextMenuTextBrowser(QPoint point);
 	void headerContextMenuRequested(const QPoint& pos);
+    void showForumInfo();
 
 	void changedSelection(const QModelIndex &, const QModelIndex &);
 	void changedThread(QModelIndex index);
@@ -197,7 +198,7 @@ private:
 private:
 	void setForumDescriptionLoading();
 	void clearForumDescription();
-	void blankPost();
+    void blankPost();
 
 	RsGxsGroupId mLastForumID;
 	RsGxsMessageId mThreadId;
@@ -224,6 +225,7 @@ private:
 	QColor mBackgroundColorPinned;
 	QColor mBackgroundColorFiltered;
 
+	std::map<RsGxsGroupId,RsGxsMessageId> mLastSelectedPosts;
 	RsGxsMessageId mNavigatePendingMsgId;
 	QList<RsGxsMessageId> mIgnoredMsgId;
 

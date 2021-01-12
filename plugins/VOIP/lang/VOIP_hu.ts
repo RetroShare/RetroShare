@@ -163,7 +163,7 @@
 <context>
     <name>AudioInputConfig</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="+202"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="+185"/>
         <source>Continuous</source>
         <translation>Folyamatos</translation>
     </message>
@@ -178,7 +178,7 @@
         <translation>Nyomd meg a beszédhez</translation>
     </message>
     <message>
-        <location line="+105"/>
+        <location line="+91"/>
         <source>%1 s</source>
         <translation>%1 m</translation>
     </message>
@@ -193,7 +193,7 @@
         <translation>-%1 dB</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.h" line="+94"/>
+        <location filename="../gui/AudioInputConfig.h" line="+85"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
     </message>
@@ -787,7 +787,7 @@
 <context>
     <name>VOIPToasterItem</name>
     <message>
-        <location filename="../gui/VOIPToasterItem.cpp" line="+43"/>
+        <location filename="../gui/VOIPToasterItem.cpp" line="+42"/>
         <source>Answer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -805,7 +805,7 @@
 <context>
     <name>VOIPToasterNotify</name>
     <message>
-        <location filename="../gui/VOIPToasterNotify.cpp" line="+56"/>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="+55"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
     </message>
@@ -914,7 +914,7 @@
 <context>
     <name>voipGraphSource</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="-260"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="-246"/>
         <source>Required bandwidth</source>
         <translation type="unfinished"></translation>
     </message>

@@ -20,6 +20,8 @@
 
 #include "AlbumItem.h"
 #include "ui_AlbumItem.h"
+#include "gui/common/FilesDefs.h"
+
 #include <iostream>
 
 #include <QMouseEvent>
@@ -79,7 +81,7 @@ void AlbumItem::setSelected(bool on)
     }
     else
     {
-            ui->albumFrame->setStyleSheet("QFrame#albumFrame{border: 2px solid #CCCCCC;\nbackground: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #EEEEEE, stop: 1 #CCCCCC);\nborder-radius: 10px}");
+            ui->albumFrame->setStyleSheet("");
     }
     update();
 }

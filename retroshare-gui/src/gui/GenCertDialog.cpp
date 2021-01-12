@@ -636,9 +636,6 @@ void GenCertDialog::genPerson()
 
 		setCursor(Qt::ArrowCursor) ;
 	}
-	// now cache the PGP password so that it's not asked again for immediately signing the key
-	rsNotify->cachePgpPassphrase(ui.password_input->text().toUtf8().constData()) ;
-
 	//generate a random ssl password
 	std::string sslPasswd = RSRandom::random_alphaNumericString(RsInit::getSslPwdLen()) ;
 
@@ -650,7 +647,11 @@ void GenCertDialog::genPerson()
 	std::string err;
 	this->hide();//To show dialog asking password PGP Key.
 	std::cout << "RsAccounts::GenerateSSLCertificate" << std::endl;
-	bool okGen = RsAccounts::createNewAccount(PGPId, "", genLoc, "", isHiddenLoc, isAutoTor, sslPasswd, sslId, err);
+
+    // now cache the PGP password so that it's not asked again for immediately signing the key
+    rsNotify->cachePgpPassphrase(ui.password_input->text().toUtf8().constData()) ;
+
+    bool okGen = RsAccounts::createNewAccount(PGPId, "", genLoc, "", isHiddenLoc, isAutoTor, sslPasswd, sslId, err);
 
 	if (okGen)
 	{
@@ -658,16 +659,23 @@ void GenCertDialog::genPerson()
 		RsInit::LoadPassword(sslPasswd);
 		if (Rshare::loadCertificate(sslId, false)) {
 
-			accept();
+        // Now clear the cached passphrase
+        rsNotify->clearPgpPassphrase();
+
+            accept();
 		}
 	}
 	else
-	{
-		/* Message Dialog */
-		QMessageBox::warning(this,
-                               tr("Profile generation failure"),
-                               tr("Failed to generate your new certificate, maybe PGP password is wrong!"),
-                               QMessageBox::Ok);
-		reject();
-       }
+    {
+        // Now clear the cached passphrase
+        rsNotify->clearPgpPassphrase();
+
+        /* Message Dialog */
+        QMessageBox::warning(this,
+                             tr("Profile generation failure"),
+                             tr("Failed to generate your new certificate, maybe PGP password is wrong!"),
+                             QMessageBox::Ok);
+
+        reject();
+    }
 }

@@ -49,6 +49,9 @@ const uint16_t GXS_POSTED_APP_MINOR_VERSION  =       0;
 const uint16_t GXS_POSTED_MIN_MAJOR_VERSION  =       1;
 const uint16_t GXS_POSTED_MIN_MINOR_VERSION  =       0;
 
+static const uint32_t GXS_POSTED_CONFIG_MAX_TIME_NOTIFY_STORAGE = 86400*30*2 ; // ignore notifications for 2 months
+static const uint8_t  GXS_POSTED_CONFIG_SUBTYPE_NOTIFY_RECORD   = 0x01 ;
+
 RsServiceInfo p3Posted::getServiceInfo()
 {
         return RsServiceInfo(RS_SERVICE_GXS_TYPE_POSTED,

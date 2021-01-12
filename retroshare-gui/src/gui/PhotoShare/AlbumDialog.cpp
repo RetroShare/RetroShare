@@ -22,7 +22,9 @@
 
 #include "AlbumDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/common/FilesDefs.h"
 #include "ui_AlbumDialog.h"
+
 #include "retroshare/rsgxsflags.h"
 
 AlbumDialog::AlbumDialog(const RsPhotoAlbum& album, TokenQueue* photoQueue, RsPhoto* rs_Photo, QWidget *parent) :

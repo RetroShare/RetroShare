@@ -989,6 +989,13 @@ int RsServer::StartupRetroShare()
 		bootstrapfile += "/";
 	bootstrapfile += BITDHT_BOOTSTRAP_FILENAME;
 
+	std::string installfile = "";
+#ifndef __ANDROID__
+	installfile = RsAccounts::systemDataDirectory();
+	installfile += "/";
+	installfile += BITDHT_BOOTSTRAP_FILENAME;
+#endif
+
     std::string filteredipfile = RsAccounts::AccountDirectory();
     if (filteredipfile != "")
         filteredipfile += "/";
@@ -1029,10 +1036,6 @@ int RsServer::StartupRetroShare()
 			bdbootRF.close();
 		}
 #else
-		std::string installfile = RsAccounts::systemDataDirectory();
-		installfile += "/";
-		installfile += BITDHT_BOOTSTRAP_FILENAME;
-
 		std::cerr << "Checking for Installation DHT bootstrap file " << installfile << std::endl;
 		if ((installfile != "") && (RsDirUtil::checkFile(installfile,tmp_size)))
 		{
@@ -1080,7 +1083,7 @@ int RsServer::StartupRetroShare()
 		// NEXT BITDHT.
 
 
-		mBitDht = new p3BitDht(ownId, mLinkMgr, mNetMgr, mDhtStack, bootstrapfile, filteredipfile);
+		mBitDht = new p3BitDht(ownId, mLinkMgr, mNetMgr, mDhtStack, bootstrapfile, installfile, filteredipfile);
 
 		// NEXT THE RELAY (NEED to keep a reference for installing RELAYS)
 		UdpRelayReceiver *mRelay = new UdpRelayReceiver(mDhtStack);
@@ -1632,15 +1635,16 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("gxs_trans.cfg"   , mGxsTrans);
 #	endif // RS_GXS_TRANS
 
-	mConfigMgr->addConfiguration("p3identity.cfg"  , mGxsIdService);
-	mConfigMgr->addConfiguration("identity.cfg"    , gxsid_ns);
-	mConfigMgr->addConfiguration("gxsforums.cfg"   , gxsforums_ns);
-	mConfigMgr->addConfiguration("gxsforums_srv.cfg", mGxsForums);
-	mConfigMgr->addConfiguration("gxschannels.cfg" , gxschannels_ns);
+    mConfigMgr->addConfiguration("p3identity.cfg"     , mGxsIdService);
+    mConfigMgr->addConfiguration("identity.cfg"       , gxsid_ns);
+    mConfigMgr->addConfiguration("gxsforums.cfg"      , gxsforums_ns);
+    mConfigMgr->addConfiguration("gxsforums_srv.cfg"  , mGxsForums);
+    mConfigMgr->addConfiguration("gxschannels.cfg"    , gxschannels_ns);
 	mConfigMgr->addConfiguration("gxschannels_srv.cfg", mGxsChannels);
-	mConfigMgr->addConfiguration("gxscircles.cfg"  , gxscircles_ns);
-	mConfigMgr->addConfiguration("posted.cfg"      , posted_ns);
-	mConfigMgr->addConfiguration("gxsposted_srv.cfg", mPosted);
+    mConfigMgr->addConfiguration("gxscircles.cfg"     , gxscircles_ns);
+    mConfigMgr->addConfiguration("gxscircles_srv.cfg" , mGxsCircles);
+    mConfigMgr->addConfiguration("posted.cfg"         , posted_ns);
+    mConfigMgr->addConfiguration("gxsposted_srv.cfg"  , mPosted);
 #ifdef RS_USE_WIKI
 	mConfigMgr->addConfiguration("wiki.cfg", wiki_ns);
 #endif
@@ -1923,20 +1927,26 @@ RsInit::LoadCertificateStatus RsLoginHelper::attemptLogin(const RsPeerId& accoun
 {
 	if(isLoggedIn()) return RsInit::ERR_ALREADY_RUNNING;
 
-    if(!password.empty())
-	{
-		if(!rsNotify->cachePgpPassphrase(password)) return RsInit::ERR_UNKNOWN;
-		if(!rsNotify->setDisableAskPassword(true)) return RsInit::ERR_UNKNOWN;
-	}
-	if(!RsAccounts::SelectAccount(account)) return RsInit::ERR_UNKNOWN;
-	std::string _ignore_lockFilePath;
-	RsInit::LoadCertificateStatus ret = RsInit::LockAndLoadCertificates(false, _ignore_lockFilePath);
+    {
+        if(!RsAccounts::SelectAccount(account))
+            return RsInit::ERR_UNKNOWN;
 
-	if(!rsNotify->setDisableAskPassword(false)) return RsInit::ERR_UNKNOWN;
-	if(!rsNotify->clearPgpPassphrase()) return RsInit::ERR_UNKNOWN;
-	if(ret != RsInit::OK) return ret;
-	if(RsControl::instance()->StartupRetroShare() == 1) return RsInit::OK;
-	return RsInit::ERR_UNKNOWN;
+        if(!password.empty())
+        {
+            rsNotify->cachePgpPassphrase(password);
+            rsNotify->setDisableAskPassword(true);
+        }
+        std::string _ignore_lockFilePath;
+        RsInit::LoadCertificateStatus ret = RsInit::LockAndLoadCertificates(false, _ignore_lockFilePath);
+
+        rsNotify->setDisableAskPassword(false) ;
+        rsNotify->clearPgpPassphrase() ;
+
+        if(ret == RsInit::OK && RsControl::instance()->StartupRetroShare() == 1)
+            return RsInit::OK;
+
+        return ret;
+    }
 }
 
 /*static*/ bool RsLoginHelper::collectEntropy(uint32_t bytes)

@@ -134,14 +134,8 @@ public:
 
         QModelIndex index = sourceModel()->index(source_row,0,source_parent);
 
-        if(index.data(RsFriendListModel::TypeRole) == RsFriendListModel::ENTRY_TYPE_GROUP)
-        {
-            RsGroupInfo group_info ;
-            static_cast<RsFriendListModel*>(sourceModel())->getGroupData(index,group_info);
-
-            if(group_info.peerIds.empty())
-				return false;
-        }
+        if(index.data(RsFriendListModel::TypeRole) == RsFriendListModel::ENTRY_TYPE_GROUP)	// always show groups, so we can delete them even when empty
+            return true;
 
         // Filter offline friends
 
@@ -270,6 +264,8 @@ void NewFriendList::handleEvent(std::shared_ptr<const RsEvent> /*e*/)
 NewFriendList::~NewFriendList()
 {
     rsEvents->unregisterEventsHandler(mEventHandlerId);
+    delete mModel;
+    delete mProxyModel;
     delete ui;
 }
 

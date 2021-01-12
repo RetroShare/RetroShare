@@ -129,6 +129,11 @@ void ftExtraList::hashAFile()
 		mHashedList[details.info.path] = details.info.hash;
 	
 		IndicateConfigChanged();
+
+        auto ev = std::make_shared<RsSharedDirectoriesEvent>();
+        ev->mEventCode = RsSharedDirectoriesEventCode::EXTRA_LIST_FILE_ADDED;
+        if(rsEvents)
+            rsEvents->postEvent(ev);
 	}
 }
 
@@ -195,6 +200,12 @@ bool ftExtraList::removeExtraFile(const RsFileHash& hash)
 
 	IndicateConfigChanged();
 
+    if(rsEvents)
+    {
+        auto ev = std::make_shared<RsSharedDirectoriesEvent>();
+        ev->mEventCode = RsSharedDirectoriesEventCode::EXTRA_LIST_FILE_REMOVED;
+        rsEvents->postEvent(ev);
+    }
 	return true;
 }
 

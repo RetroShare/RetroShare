@@ -273,6 +273,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     connect(ui->versions_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(changedVersion()));
     connect(ui->threadTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(threadListCustomPopupMenu(QPoint)));
     connect(ui->postText, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuTextBrowser(QPoint)));
+    connect(ui->forumName, SIGNAL(clicked()), this, SLOT(showForumInfo()));
 
     ui->subscribeToolButton->hide() ;
     connect(ui->subscribeToolButton, SIGNAL(subscribe(bool)), this, SLOT(subscribeGroup(bool)));
@@ -394,6 +395,13 @@ void GxsForumThreadWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent
         default: break;
         }
     }
+}
+
+void GxsForumThreadWidget::showForumInfo()
+{
+    mThreadId.clear();
+    ui->threadTreeWidget->selectionModel()->clear();
+    updateForumDescription(true);
 }
 
 void GxsForumThreadWidget::blank()
@@ -908,6 +916,7 @@ void GxsForumThreadWidget::changedThread(QModelIndex index)
         return;
 
     mThreadId = mOrigThreadId = new_id;
+	mLastSelectedPosts[groupId()] = new_id;
 
 #ifdef DEBUG_FORUMS
     std::cerr << "Switched to new thread ID " << mThreadId << std::endl;
@@ -1492,22 +1501,25 @@ void GxsForumThreadWidget::expandSubtree() {
 
 bool GxsForumThreadWidget::navigate(const RsGxsMessageId &msgId)
 {
-    QModelIndex source_index = mThreadModel->getIndexOfMessage(msgId);
+	QModelIndex source_index = mThreadModel->getIndexOfMessage(msgId);
 
-    if(!source_index.isValid())
-    {
-        std::cerr << "(EE) Cannot navigate to msg " << msgId << " in forum " << mForumGroup.mMeta.mGroupId << ": index unknown. Setting mNavigatePendingMsgId." << std::endl;
+	if(!source_index.isValid())
+	{
+		std::cerr << "(EE) Cannot navigate to msg " << msgId << " in forum " << mForumGroup.mMeta.mGroupId << ": index unknown. Setting mNavigatePendingMsgId." << std::endl;
 
-        mNavigatePendingMsgId = msgId;		// not found. That means the forum may not be loaded yet. So we keep that post in mind, for after loading.
-        return true;						// we have to return true here, otherwise the caller will intepret the async loading as an error.
-    }
+		mNavigatePendingMsgId = msgId;		// not found. That means the forum may not be loaded yet. So we keep that post in mind, for after loading.
+		return true;						// we have to return true here, otherwise the caller will intepret the async loading as an error.
+	}
 
-    QModelIndex indx = mThreadProxyModel->mapFromSource(source_index);
+	QModelIndex indx = mThreadProxyModel->mapFromSource(source_index);
 
-    ui->threadTreeWidget->setCurrentIndex(indx);
-    ui->threadTreeWidget->scrollTo(ui->threadTreeWidget->currentIndex());//May change if model reloaded
-    ui->threadTreeWidget->setFocus();
-    return true;
+	ui->threadTreeWidget->selectionModel()->setCurrentIndex(indx,QItemSelectionModel::ClearAndSelect);
+	ui->threadTreeWidget->scrollTo(ui->threadTreeWidget->currentIndex());//May change if model reloaded
+	ui->threadTreeWidget->setFocus();
+
+	mNavigatePendingMsgId.clear();
+
+	return true;
 }
 
 void GxsForumThreadWidget::copyMessageLink()
@@ -1797,22 +1809,33 @@ void GxsForumThreadWidget::saveImage()
 
 void GxsForumThreadWidget::changedViewBox()
 {
-    ui->threadTreeWidget->selectionModel()->clear();
-    ui->threadTreeWidget->selectionModel()->reset();
-    mThreadId.clear();
+	ui->threadTreeWidget->selectionModel()->clear();
+	ui->threadTreeWidget->selectionModel()->reset();
+	mThreadId.clear();
 
-    // save index
-    Settings->setValueToGroup("ForumThreadWidget", "viewBox", ui->viewBox->currentIndex());
+	// save index
+	Settings->setValueToGroup("ForumThreadWidget", "viewBox", ui->viewBox->currentIndex());
 
-    if(ui->viewBox->currentIndex() == VIEW_FLAT)
-        mThreadModel->setTreeMode(RsGxsForumModel::TREE_MODE_FLAT);
-    else
-        mThreadModel->setTreeMode(RsGxsForumModel::TREE_MODE_TREE);
+	if(ui->viewBox->currentIndex() == VIEW_FLAT)
+		mThreadModel->setTreeMode(RsGxsForumModel::TREE_MODE_FLAT);
+	else
+		mThreadModel->setTreeMode(RsGxsForumModel::TREE_MODE_TREE);
 
-    if(ui->viewBox->currentIndex() == VIEW_LAST_POST)
-        mThreadModel->setSortMode(RsGxsForumModel::SORT_MODE_CHILDREN_PUBLISH_TS);
-    else
-        mThreadModel->setSortMode(RsGxsForumModel::SORT_MODE_PUBLISH_TS);
+	if(ui->viewBox->currentIndex() == VIEW_LAST_POST)
+		mThreadModel->setSortMode(RsGxsForumModel::SORT_MODE_CHILDREN_PUBLISH_TS);
+	else
+		mThreadModel->setSortMode(RsGxsForumModel::SORT_MODE_PUBLISH_TS);
+
+	if( (mLastSelectedPosts.count(groupId()) > 0)
+	        && !mLastSelectedPosts[groupId()].isNull()
+	        && mThreadModel->getIndexOfMessage(mLastSelectedPosts[groupId()]).isValid())
+	{
+		QModelIndex source_index = mThreadModel->getIndexOfMessage(mLastSelectedPosts[groupId()]);
+		QModelIndex index = mThreadProxyModel->mapFromSource(source_index);
+
+		ui->threadTreeWidget->selectionModel()->setCurrentIndex(index,QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
+		ui->threadTreeWidget->scrollTo(ui->threadTreeWidget->currentIndex());//May change if model reloaded
+	}
 }
 
 void GxsForumThreadWidget::filterColumnChanged(int column)
@@ -1868,67 +1891,72 @@ void GxsForumThreadWidget::filterItems(const QString& text)
 
 void GxsForumThreadWidget::postForumLoading()
 {
-    if(groupId().isNull())
-    {
-        ui->nextUnreadButton->setEnabled(false);
-        return;
-    }
+	if(groupId().isNull())
+	{
+		ui->nextUnreadButton->setEnabled(false);
+		return;
+	}
 
 #ifdef DEBUG_FORUMS
-    std::cerr << "Post forum loading..." << std::endl;
+		std::cerr << "Post forum loading..." << std::endl;
 #endif
-    if(!mNavigatePendingMsgId.isNull() && mThreadModel->getIndexOfMessage(mNavigatePendingMsgId).isValid())
-    {
+
+	if (!mNavigatePendingMsgId.isNull())
+		navigate(mNavigatePendingMsgId);
+
+	else if( (mLastSelectedPosts.count(groupId()) > 0)
+	         && !mLastSelectedPosts[groupId()].isNull()
+	         && mThreadModel->getIndexOfMessage(mLastSelectedPosts[groupId()]).isValid())
+	{
 #ifdef DEBUG_FORUMS
-        std::cerr << "Pending msg navigation: " << mNavigatePendingMsgId << ". Using it as new thread Id" << std::endl;
+		std::cerr << "Last selected msg navigation: " << mLastSelectedPosts[groupId()].toStdString()  << ". Using it as new thread Id" << std::endl;
 #endif
 
-        QModelIndex source_index = mThreadModel->getIndexOfMessage(mNavigatePendingMsgId);
-        QModelIndex index = mThreadProxyModel->mapFromSource(source_index);
+		QModelIndex source_index = mThreadModel->getIndexOfMessage(mLastSelectedPosts[groupId()]);
+		QModelIndex index = mThreadProxyModel->mapFromSource(source_index);
 
-        ui->threadTreeWidget->selectionModel()->setCurrentIndex(index,QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
-        ui->threadTreeWidget->scrollTo(ui->threadTreeWidget->currentIndex());//May change if model reloaded
+		ui->threadTreeWidget->selectionModel()->setCurrentIndex(index,QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
+		ui->threadTreeWidget->scrollTo(ui->threadTreeWidget->currentIndex());//May change if model reloaded
 
-        mNavigatePendingMsgId.clear();
-    }
-    else
-    {
+	}
+	else
+	{
 
-        QModelIndex source_index = mThreadModel->getIndexOfMessage(mThreadId);
+		QModelIndex source_index = mThreadModel->getIndexOfMessage(mThreadId);
 
-        if(!mThreadId.isNull() && source_index.isValid())
-        {
-            QModelIndex index = mThreadProxyModel->mapFromSource(source_index);
-            ui->threadTreeWidget->selectionModel()->setCurrentIndex(index,QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
-            ui->threadTreeWidget->scrollTo(ui->threadTreeWidget->currentIndex());//May change if model reloaded
+		if(!mThreadId.isNull() && source_index.isValid())
+		{
+			QModelIndex index = mThreadProxyModel->mapFromSource(source_index);
+			ui->threadTreeWidget->selectionModel()->setCurrentIndex(index,QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
+			ui->threadTreeWidget->scrollTo(ui->threadTreeWidget->currentIndex());//May change if model reloaded
 #ifdef DEBUG_FORUMS
-            std::cerr << "  re-selecting index of message " << mThreadId << " to " << source_index.row() << "," << source_index.column() << " " << (void*)source_index.internalPointer() << std::endl;
+			std::cerr << "  re-selecting index of message " << mThreadId << " to " << source_index.row() << "," << source_index.column() << " " << (void*)source_index.internalPointer() << std::endl;
 #endif
-        }
-        else
-        {
+		}
+		else
+		{
 #ifdef DEBUG_FORUMS
-            std::cerr << "  previously message " << mThreadId << " not visible anymore -> de-selecting" << std::endl;
+			std::cerr << "  previously message " << mThreadId << " not visible anymore -> de-selecting" << std::endl;
 #endif
-            ui->threadTreeWidget->selectionModel()->clear();
-            ui->threadTreeWidget->selectionModel()->reset();
-            mThreadId.clear();
-            //blank();
-        }
-        // we also need to restore expanded threads
-    }
+			ui->threadTreeWidget->selectionModel()->clear();
+			ui->threadTreeWidget->selectionModel()->reset();
+			mThreadId.clear();
+			//blank();
+		}
+		// we also need to restore expanded threads
+	}
 
-    ui->newthreadButton->show();
-    ui->forumName->setText(QString::fromUtf8(mForumGroup.mMeta.mGroupName.c_str()));
-    ui->threadTreeWidget->sortByColumn(RsGxsForumModel::COLUMN_THREAD_DATE, Qt::DescendingOrder);
-    ui->threadTreeWidget->update();
-    ui->viewBox->setEnabled(true);
-    ui->filterLineEdit->setEnabled(true);
+	ui->newthreadButton->show();
+	ui->forumName->setText(QString::fromUtf8(mForumGroup.mMeta.mGroupName.c_str()));
+	ui->threadTreeWidget->sortByColumn(RsGxsForumModel::COLUMN_THREAD_DATE, Qt::DescendingOrder);
+	ui->threadTreeWidget->update();
+	ui->viewBox->setEnabled(true);
+	ui->filterLineEdit->setEnabled(true);
 
-    recursRestoreExpandedItems(mThreadProxyModel->mapFromSource(mThreadModel->root()),mSavedExpandedMessages);
-    //mUpdating = false;
+	recursRestoreExpandedItems(mThreadProxyModel->mapFromSource(mThreadModel->root()),mSavedExpandedMessages);
+	//mUpdating = false;
 
-    ui->nextUnreadButton->setEnabled(true);
+	ui->nextUnreadButton->setEnabled(true);
 }
 
 void GxsForumThreadWidget::updateGroupData()

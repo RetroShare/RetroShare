@@ -22,20 +22,20 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <iostream>
-#include <ctime>
-#include <thread>
-#include <chrono>
-
-#ifdef RSMUTEX_DEBUG
-#include <cstdio>
-#include <sys/time.h>
-#endif
-
 #include "rsthreads.h"
+
 #include "util/rsdebug.h"
 #include "util/rserrno.h"
 
+#include <chrono>
+#include <ctime>
+#include <iostream>
+#include <thread>
+
+#ifdef RS_MUTEX_DEBUG
+#include <cstdio>
+#include <sys/time.h>
+#endif
 
 #ifdef __APPLE__
 int __attribute__((weak)) pthread_setname_np(const char *__buf) ;
@@ -280,8 +280,8 @@ void RsMutex::lock()
 	{
 		RsErr() << __PRETTY_FUNCTION__ << "pthread_mutex_lock returned: "
 		        << rsErrnoName(err)
-#ifdef RSMUTEX_DEBUG
-		        << " name: " << name
+#ifdef RS_MUTEX_DEBUG
+		        << " name: " << name()
 #endif
 		       << std::endl;
 
@@ -295,7 +295,7 @@ void RsMutex::lock()
 	_thread_id = pthread_self();
 }
 
-#ifdef RSMUTEX_DEBUG
+#ifdef RS_MUTEX_DEBUG
 double RsStackMutex::getCurrentTS()
 {
 

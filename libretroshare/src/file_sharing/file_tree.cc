@@ -138,7 +138,7 @@ void RsFileTree::recurs_buildFileTree(
 			{
 				FileData f ;
 				f.name = dd2.name ;
-				f.size = dd2.count ;
+                f.size = dd2.size ;
 				f.hash = dd2.hash ;
 
 				ft.mDirs[index].subfiles.push_back(ft.mFiles.size()) ;
@@ -186,7 +186,7 @@ std::unique_ptr<RsFileTree> RsFileTree::fromDirDetails(
 	if(dd.type == DIR_TYPE_FILE)
 	{
 		FileData fd;
-		fd.name = dd.name; fd.hash = dd.hash; fd.size = dd.count;
+        fd.name = dd.name; fd.hash = dd.hash; fd.size = dd.size;
 		ft->mFiles.push_back(fd);
 		ft->mTotalFiles = 1;
 		ft->mTotalSize = fd.size;

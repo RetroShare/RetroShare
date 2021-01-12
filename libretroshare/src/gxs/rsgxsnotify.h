@@ -85,6 +85,7 @@ class RsGxsMsgChange : public RsGxsNotify
 public:
 	RsGxsMsgChange(NotifyType type, const RsGxsGroupId& gid, const RsGxsMessageId& msg_id,bool metaChange)
         : RsGxsNotify(gid), mMsgId(msg_id), mNewMsgItem(nullptr),NOTIFY_TYPE(type), mMetaChange(metaChange) {}
+    virtual ~RsGxsMsgChange() override { delete mNewMsgItem ; }
 
     RsGxsMessageId mMsgId;
     RsGxsMsgItem *mNewMsgItem;

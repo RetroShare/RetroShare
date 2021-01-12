@@ -1124,10 +1124,16 @@ void TransfersDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> eve
 
 TransfersDialog::~TransfersDialog()
 {
-	rsEvents->unregisterEventsHandler(mEventHandlerId);
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
 
     // save settings
     processSettings(false);
+
+    ui.uploadsList->setItemDelegate(nullptr);
+    ui.downloadList->setItemDelegate(nullptr);
+
+    delete ULDelegate;
+    delete DLDelegate;
 }
 
 void TransfersDialog::activatePage(TransfersDialog::Page page)
@@ -2468,7 +2474,7 @@ void TransfersDialog::collCreate()
 		DirDetails details;
 		details.name = info.fname;
 		details.hash = info.hash;
-		details.count = info.size;
+        details.size = info.size;
 		details.type = DIR_TYPE_FILE;
 
 		dirVec.push_back(details);

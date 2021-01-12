@@ -126,6 +126,7 @@ void StartDialog::loadPerson()
 	bool res = Rshare::loadCertificate(accountId, ui.autologin_checkbox->isChecked()) ;
 
 	rsNotify->setDisableAskPassword(false);
+    rsNotify->clearPgpPassphrase();
 
 	if(res)
 		accept();

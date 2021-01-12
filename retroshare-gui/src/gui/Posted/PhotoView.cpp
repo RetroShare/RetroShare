@@ -101,3 +101,8 @@ void PhotoView::copyMessageLink()
 		QMessageBox::information(NULL,tr("information"),tr("The Retrohare link was copied to your clipboard.")) ;
 	}
 }
+
+void PhotoView::setGroupNameString(const QString& name)
+{
+	ui->nameLabel->setText("@" + name);
+}

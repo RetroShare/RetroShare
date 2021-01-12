@@ -1984,7 +1984,7 @@ void RsTurtleStringSearchRequestItem::search(std::list<TurtleFileInfo>& result) 
 
 		TurtleFileInfo i ;
 		i.hash = it->hash ;
-		i.size = it->count ;
+        i.size = it->size ;
 		i.name = it->name ;
 
 		result.push_back(i) ;
@@ -2022,7 +2022,7 @@ void RsTurtleRegExpSearchRequestItem::search(std::list<TurtleFileInfo>& result) 
 		}
 		TurtleFileInfo i ;
 		i.hash = it->hash ;
-		i.size = it->count ;
+        i.size = it->size ;
 		i.name = it->name ;
 
 		result.push_back(i) ;
