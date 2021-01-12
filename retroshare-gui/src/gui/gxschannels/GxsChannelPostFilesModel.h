@@ -98,6 +98,7 @@ public:
     // Helper functions
 
     void clear() ;
+    bool getFileData(const QModelIndex& i, ChannelPostFileInfo &fmpe) const;
 
     // AbstractItemModel functions.
 
@@ -156,7 +157,6 @@ private:
     quintptr getParentRow(quintptr ref,int& row) const;
     quintptr getChildRef(quintptr ref, int index) const;
     int   getChildrenCount(quintptr ref) const;
-	bool getFileData(const QModelIndex& i, ChannelPostFileInfo &fmpe) const;
 
     static bool convertTabEntryToRefPointer(uint32_t entry, quintptr& ref);
 	static bool convertRefPointerToTabEntry(quintptr ref,uint32_t& entry);

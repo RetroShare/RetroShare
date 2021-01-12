@@ -119,6 +119,7 @@ enum class RsPostedEventCode: uint8_t
     SYNC_PARAMETERS_UPDATED  = 0x09,
     NEW_COMMENT              = 0x0a,
     NEW_VOTE                 = 0x0b,
+    BOARD_DELETED            = 0x0c,
 };
 
 

@@ -121,7 +121,7 @@ RttStatisticsGraph::RttStatisticsGraph(QWidget *parent)
 
     src->setCollectionTimeLimit(10*60*1000) ; // 10 mins
     src->setCollectionTimePeriod(1000) ;     // collect every second
-    src->setDigits(1) ;
+    src->setDigits(3) ;
     src->start() ;
 
     setSource(src) ;

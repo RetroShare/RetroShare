@@ -221,7 +221,7 @@ void RsCollection::recursAddElements(QDomDocument& doc,const DirDetails& details
 
 		f.setAttribute(QString("name"),QString::fromUtf8(details.name.c_str())) ;
         f.setAttribute(QString("sha1"),QString::fromStdString(details.hash.toStdString())) ;
-		f.setAttribute(QString("size"),QString::number(details.count)) ;
+        f.setAttribute(QString("size"),QString::number(details.size)) ;
 
 		e.appendChild(f) ;
 	}

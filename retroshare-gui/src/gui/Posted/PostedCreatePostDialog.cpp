@@ -54,7 +54,7 @@ PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGrou
 	Settings->loadWidgetInformation(this);
 
 	connect(ui->submitButton, SIGNAL(clicked()), this, SLOT(createPost()));
-	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
+	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 	connect(ui->addPicButton, SIGNAL(clicked() ), this , SLOT(addPicture()));
 	connect(ui->RichTextEditWidget, SIGNAL(textSizeOk(bool)),ui->submitButton, SLOT(setEnabled(bool)));
 
@@ -298,4 +298,12 @@ void PostedCreatePostDialog::on_removeButton_clicked()
 	ui->imageLabel->setPixmap(empty);
 	ui->removeButton->hide();
 	ui->stackedWidgetPicture->setCurrentIndex(0);
+}
+
+void PostedCreatePostDialog::reject()
+{
+    if(QMessageBox::warning(nullptr,tr("Close this window?"),tr("Do you really want to discard your post?"),QMessageBox::Yes,QMessageBox::No) == QMessageBox::No)
+        return;
+
+    QDialog::reject();
 }

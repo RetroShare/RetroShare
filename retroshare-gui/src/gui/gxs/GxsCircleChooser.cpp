@@ -63,7 +63,7 @@ bool MakeGxsCircleDesc(const RsGxsCircleId &id, QString &desc)
 
 void GxsCircleChooser::loadGxsCircles()
 {
-	std::list<RsGxsCircleId> ids;
+    std::set<RsGxsCircleId> ids;
     rsGxsCircles->getCircleExternalIdList(ids);
 
 	if (ids.empty())
@@ -73,10 +73,9 @@ void GxsCircleChooser::loadGxsCircles()
 		return;
 	}	
 
-	std::list<RsGxsCircleId>::iterator it;
 	int i = 0; 
 	int def = -1;
-	for(it = ids.begin(); it != ids.end(); ++it, ++i)
+    for(auto it(ids.begin()); it != ids.end(); ++it, ++i)
 	{
 		/* add to Chooser */
 		QString str;
@@ -91,15 +90,11 @@ void GxsCircleChooser::loadGxsCircles()
 		addItem(str, id);
 
 		if (mDefaultCircleId == *it)
-		{
 			def = i;
-		}
 	}
 
 	if (def >= 0)
-	{
 		setCurrentIndex(def);
-	}
 }
 
 bool GxsCircleChooser::getChosenCircle(RsGxsCircleId &id)

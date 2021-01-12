@@ -698,7 +698,7 @@ void ChatLobbyDialog::participantsTreeWidgetDoubleClicked(QTreeWidgetItem *item,
 
 	if(column == COLUMN_NAME)
 	{
-		getChatWidget()->pasteText("@" + RsHtml::plainText(item->text(COLUMN_NAME))) ;
+		getChatWidget()->pasteText("@" + RsHtml::plainText(item->text(COLUMN_NAME)) + " ") ;
 		return ;
 	}
 

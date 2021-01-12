@@ -161,10 +161,6 @@
              <property name="text">
               <string>Reply Message</string>
              </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>:/images/mail_reply.png</normaloff>:/images/mail_reply.png</iconset>
-             </property>
             </widget>
            </item>
            <item>

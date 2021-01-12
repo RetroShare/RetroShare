@@ -185,7 +185,7 @@ int FriendSelectionWidget::addColumn(const QString &title)
 	return column;
 }
 
-void FriendSelectionWidget::showEvent(QShowEvent *e)
+void FriendSelectionWidget::showEvent(QShowEvent */*e*/)
 {
     if(gxsIds.empty())
         loadIdentities();
@@ -256,17 +256,20 @@ void FriendSelectionWidget::loadIdentities()
 			return;
 		}
 
-		auto ids = std::make_unique<std::vector<RsGxsGroupId>>();
-		for(auto& meta: ids_meta) ids->push_back(meta.mGroupId);
+        auto ids = new std::vector<RsGxsGroupId>();
 
-		RsQThreadUtils::postToObject(
-		            [ids = std::move(ids), this]()
+        for(auto& meta: ids_meta)
+            ids->push_back(meta.mGroupId);
+
+        RsQThreadUtils::postToObject( [ids, this]()
 		{
 			// We do that is the GUI thread. Dont try it on another thread!
 			gxsIds = *ids;
 			/* TODO: To furter optimize away a copy gxsIds could be a unique_ptr
 			 * too */
 			fillList();
+
+            delete ids;
 		}, this );
 	});
 }
@@ -836,6 +839,9 @@ void FriendSelectionWidget::contextMenuRequested(const QPoint &/*pos*/)
 
 	if (mListModus == MODUS_MULTI) {
 		contextMenu->addAction(QIcon(), tr("Mark all"), this, SLOT(selectAll()));
+		contextMenu->addAction(QIcon(), tr("Mark none"), this, SLOT(deselectAll()));
+	}
+	if (mListModus == MODUS_CHECK) {
 		contextMenu->addAction(QIcon(), tr("Mark none"), this, SLOT(deselectAll()));
 	}
 

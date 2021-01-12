@@ -44,8 +44,10 @@ public:
     void reject() override;
 
     void addHtmlText(const QString& text) ;
-	void addSubject(const QString& text) ;
-	void addAttachment(const std::string &path);
+    void addSubject(const QString& text) ;
+
+    // adds a file to be hashed and shared. Returns false if something goes wrong.
+    bool addAttachment(const std::string &path);
     void addAttachment(const RsFileHash &hash, const std::string &fname, uint64_t size, bool local, const RsPeerId &srcId,bool assume_file_ready = false);
 
 	void newChannelMsg();
@@ -57,6 +59,7 @@ protected:
 	virtual void dropEvent(QDropEvent *event);
 
 private slots:
+	void toggle() ;
 	void addExtraFile();
 	void checkAttachmentReady();
 	void deleteAttachment();
@@ -74,6 +77,7 @@ private slots:
 
 	void on_channelpostButton_clicked();
 	void on_attachmentsButton_clicked();
+	void on_removeButton_clicked();
 private:
 	void processSettings(bool load);
 	void loadChannelInfo();

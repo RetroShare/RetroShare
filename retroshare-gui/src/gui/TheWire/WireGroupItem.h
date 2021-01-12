@@ -55,6 +55,7 @@ public:
 private slots:
 	void show();
 	void subscribe();
+	void editGroupDetails();
 
 protected:
 	void mousePressEvent(QMouseEvent *event);

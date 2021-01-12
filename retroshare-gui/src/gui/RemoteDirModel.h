@@ -22,6 +22,7 @@
 #define REMOTE_DIR_MODEL
 
 #include <retroshare/rstypes.h>
+#include <retroshare/rsevents.h>
 
 #include <QAbstractItemModel>
 #include <QAction>
@@ -63,9 +64,9 @@ class RetroshareDirModel : public QAbstractItemModel
 		enum Roles{ FileNameRole = Qt::UserRole+1, SortRole = Qt::UserRole+2, FilterRole = Qt::UserRole+3 };
 
 		RetroshareDirModel(bool mode, QObject *parent = 0);
-		virtual ~RetroshareDirModel() {}
+        virtual ~RetroshareDirModel() ;
 
-		virtual Qt::ItemFlags flags ( const QModelIndex & index ) const;
+        virtual Qt::ItemFlags flags ( const QModelIndex & index ) const;
 
 		/* Callback from Core */
 		virtual void preMods();
@@ -107,7 +108,9 @@ class RetroshareDirModel : public QAbstractItemModel
 	protected:
 		bool _visible ;
 
-		void treeStyle();
+        void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+
+        void treeStyle();
 		void downloadDirectory(const DirDetails & details, int prefixLen);
 		static QString getFlagsString(FileStorageFlags f) ;
 		static QString getGroupsString(FileStorageFlags flags, const std::list<RsNodeGroupId> &) ;
@@ -176,6 +179,8 @@ class RetroshareDirModel : public QAbstractItemModel
         bool mUpdating ;
 
 		std::set<void*> mFilteredPointers ;
+
+        RsEventsHandlerId_t mEventHandlerId;
 };
 
 // This class shows the classical hierarchical directory view of shared files

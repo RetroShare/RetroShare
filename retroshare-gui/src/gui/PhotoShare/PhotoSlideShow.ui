@@ -107,7 +107,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_ShiftLeft">
+      <widget class="QToolButton" name="toolButton_ShiftLeft">
        <property name="text">
         <string>&lt;&lt;</string>
        </property>
@@ -124,7 +124,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_ShiftRight">
+      <widget class="QToolButton" name="toolButton_ShiftRight">
        <property name="text">
         <string>&gt;&gt;</string>
        </property>

@@ -33,11 +33,16 @@
 
 RsItem *RsServiceSerializer::deserialise(void *data, uint32_t *size)
 {
-	if(!data || !size || !*size)
+	if(!data || !size || *size < 8)
 	{
-		RsErr() << __PRETTY_FUNCTION__ << " Called with null paramethers data: "
-		        << data << " size: " << static_cast<void*>(size) << " *size: "
-		        << (size ? *size : 0) << " this should never happen!"
+		RsErr() << __PRETTY_FUNCTION__ << " Called with inconsistent parameters data: " << std::endl;
+		if(data)
+			RsErr() << "Data is: " << RsUtil::BinToHex(static_cast<uint8_t*>(data),std::min(50u,*size)) << ((*size>50)?"...":"") << std::endl;
+		else
+			RsErr() << "Null Data" << std::endl;
+
+		RsErr() << " size: " << static_cast<void*>(size) << " *size: " << (size ? *size : 0) << std::endl
+		        << " this should never happen!"
 		        << std::endl;
 		print_stacktrace();
 		return nullptr;

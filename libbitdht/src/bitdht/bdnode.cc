@@ -67,12 +67,12 @@
 
 #define HISTORY_PERIOD  60
 
-bdNode::bdNode(bdNodeId *ownId, std::string dhtVersion, const std::string& bootfile, const std::string& filterfile, bdDhtFunctions *fns, bdNodeManager *manager)
+bdNode::bdNode(bdNodeId *ownId, std::string dhtVersion, const std::string& bootfile, const std::string &bootfilebak, const std::string& filterfile, bdDhtFunctions *fns, bdNodeManager *manager)
     :mNodeSpace(ownId, fns),
           mFilterPeers(filterfile,ownId, BITDHT_FILTER_REASON_OWNID, fns, manager),
           mQueryMgr(NULL),
           mConnMgr(NULL),
-          mOwnId(*ownId), mDhtVersion(dhtVersion), mStore(bootfile, fns), mFns(fns),
+		  mOwnId(*ownId), mDhtVersion(dhtVersion), mStore(bootfile, bootfilebak, fns), mFns(fns),
           mFriendList(ownId), mHistory(HISTORY_PERIOD)
 {
 	init(); /* (uses this pointers) stuff it - do it here! */

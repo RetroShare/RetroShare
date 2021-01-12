@@ -34,6 +34,7 @@
 #include "AlbumGroupDialog.h"
 #include "AlbumItem.h"
 #include "PhotoItem.h"
+#include "gui/common/FilesDefs.h"
 
 /******
  * #define PHOTO_DEBUG 1
@@ -351,8 +352,9 @@ void PhotoShare::updateAlbums()
     if (ui.pushButton_YourAlbums->isChecked())
     {
         ui.toolButton_ViewEditAlbum->setText("Edit Album Details");
+        ui.toolButton_ViewEditAlbum->setIcon(FilesDefs::getPixmapFromQtResourcePath(":/images/kview_64.png"));
         ui.toolButton_subscribe->setText("Delete Album");
-        ui.toolButton_subscribe->setIcon(QIcon(":/images/album_unsubscribe.png"));
+        ui.toolButton_subscribe->setIcon(FilesDefs::getPixmapFromQtResourcePath(":/images/album_unsubscribe.png"));
 
         while (sit.hasNext()) {
 
@@ -368,8 +370,9 @@ void PhotoShare::updateAlbums()
     {
 
         ui.toolButton_ViewEditAlbum->setText("View Album Details");
+        ui.toolButton_ViewEditAlbum->setIcon(FilesDefs::getPixmapFromQtResourcePath(":/images/kview_64.png"));
         ui.toolButton_subscribe->setText("Unsubscribe From Album");
-        ui.toolButton_subscribe->setIcon(QIcon(":/images/album_unsubscribe.png"));
+        ui.toolButton_subscribe->setIcon(FilesDefs::getPixmapFromQtResourcePath(":/images/album_unsubscribe.png"));
 
         while (sit.hasNext()) {
 
@@ -385,7 +388,7 @@ void PhotoShare::updateAlbums()
     {
         ui.toolButton_ViewEditAlbum->setText("View Album Details");
         ui.toolButton_subscribe->setText("Subscribe To Album");
-        ui.toolButton_subscribe->setIcon(QIcon(":/images/album_subscribe.png"));
+        ui.toolButton_subscribe->setIcon(FilesDefs::getPixmapFromQtResourcePath(":/images/album_subscribe.png"));
 
         while (sit.hasNext()){
 

@@ -319,10 +319,10 @@ void GxsIdStatisticsWidget::updateContent()
     painter.drawLine(QPoint(ox+4*cellx,oy),QPoint(ox+4*cellx,oy-celly*hist_height));
 
     uint32_t max_entry=0;
-    for(int i=0;i<mPublishDateHist.entries().size();++i)
+    for(size_t i=0;i<mPublishDateHist.entries().size();++i)
         max_entry = std::max(max_entry,mPublishDateHist.entries()[i]);
 
-    for(int i=0;i<mPublishDateHist.entries().size();++i)
+    for(size_t i=0;i<mPublishDateHist.entries().size();++i)
     {
         float h = floor(celly*mPublishDateHist.entries()[i]/(float)max_entry*hist_height);
         int I = mPublishDateHist.entries().size() - 1 - i;
@@ -331,7 +331,7 @@ void GxsIdStatisticsWidget::updateContent()
 		painter.setPen(QColor::fromRgb(0,0,0));
         painter.drawRect(ox+4*cellx+I*2*cellx+cellx, oy-h, cellx, h);
     }
-    for(int i=0;i<mPublishDateHist.entries().size();++i)
+    for(size_t i=0;i<mPublishDateHist.entries().size();++i)
     {
         QString txt = QString::number(i);
         painter.drawText(ox+4*cellx+i*2*cellx+cellx*1.5 - 0.5*fm_times.width(txt),oy+celly,txt);
@@ -357,10 +357,10 @@ void GxsIdStatisticsWidget::updateContent()
     painter.drawLine(QPoint(ox+4*cellx,oy),QPoint(ox+4*cellx,oy-celly*hist_height));
 
     max_entry=0;
-    for(int i=0;i<mLastUsedHist.entries().size();++i)
+    for(size_t i=0;i<mLastUsedHist.entries().size();++i)
         max_entry = std::max(max_entry,mLastUsedHist.entries()[i]);
 
-    for(int i=0;i<mLastUsedHist.entries().size();++i)
+    for(size_t i=0;i<mLastUsedHist.entries().size();++i)
     {
         float h = floor(celly*mLastUsedHist.entries()[i]/(float)max_entry*hist_height);
         int I = mLastUsedHist.entries().size() - 1 - i;
@@ -369,7 +369,7 @@ void GxsIdStatisticsWidget::updateContent()
 		painter.setPen(QColor::fromRgb(0,0,0));
         painter.drawRect(ox+4*cellx+I*2*cellx+cellx, oy-h, cellx, h);
     }
-    for(int i=0;i<mLastUsedHist.entries().size();++i)
+    for(size_t i=0;i<mLastUsedHist.entries().size();++i)
     {
         QString txt = QString::number(i);
         painter.drawText(ox+4*cellx+i*2*cellx+cellx*1.5 - 0.5*fm_times.width(txt),oy+celly,txt);
@@ -393,16 +393,13 @@ void GxsIdStatisticsWidget::updateContent()
 
 GxsIdStatisticsWidget::GxsIdStatisticsWidget(QWidget *parent)
 	: QWidget(parent)
+	, mMaxHeight(0), mNbWeeks(52), mNbHours(52) ,mTotalIdentities(0)
 {
-    float size = QFontMetricsF(font()).height() ;
-    float fact = size/14.0 ;
+	float size = QFontMetricsF(font()).height() ;
+	float fact = size/14.0 ;
 
-	mNbWeeks = 52;
-	mNbHours = 52;
-
-    mMaxWidth = 400*fact ;
-	mMaxHeight = 0 ;
-    //mCurrentN = PARTIAL_VIEW_SIZE/2+1 ;
+	mMaxWidth = 400*fact ;
+	//mCurrentN = PARTIAL_VIEW_SIZE/2+1 ;
 }
 
 #ifdef TODO

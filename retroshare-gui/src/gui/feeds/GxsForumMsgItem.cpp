@@ -118,6 +118,9 @@ void GxsForumMsgItem::setup()
 
 	ui->subjectLabel->setMinimumWidth(20);
 
+	// hide unsubscribe button not necessary
+	ui->unsubscribeButton->hide();
+
 	ui->expandFrame->hide();
 	ui->parentFrame->hide();
 }
@@ -213,8 +216,8 @@ void GxsForumMsgItem::loadGroup()
 
 void GxsForumMsgItem::loadMessage()
 {
-#ifdef DEBUG_ITEM
-	std::cerr << "GxsForumMsgItem::loadMessage()";
+#ifndef DEBUG_ITEM
+    std::cerr << "GxsForumMsgItem::loadMessage(): messageId=" << messageId() << " groupId=" << groupId() ;
 	std::cerr << std::endl;
 #endif
 

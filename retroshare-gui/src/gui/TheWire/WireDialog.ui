@@ -20,6 +20,18 @@
    <string/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_5">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="QFrame" name="frame_toolbar">
      <property name="sizePolicy">
@@ -29,12 +41,24 @@
       </sizepolicy>
      </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+      <enum>QFrame::Plain</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item>
        <widget class="QToolButton" name="toolButton_createAccount">
         <property name="text">
@@ -60,13 +84,6 @@
         </property>
         <property name="toolButtonStyle">
          <enum>Qt::ToolButtonTextBesideIcon</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="toolButton_5">
-        <property name="text">
-         <string>...</string>
         </property>
        </widget>
       </item>
@@ -192,7 +209,7 @@
             <x>0</x>
             <y>0</y>
             <width>228</width>
-            <height>442</height>
+            <height>488</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -253,12 +270,20 @@
              <property name="text">
               <string>&lt;</string>
              </property>
+             <property name="icon">
+              <iconset resource="../icons.qrc">
+               <normaloff>:/icons/png/arrow-left.png</normaloff>:/icons/png/arrow-left.png</iconset>
+             </property>
             </widget>
            </item>
            <item>
             <widget class="QToolButton" name="toolButton_forward">
              <property name="text">
               <string>&gt;</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../icons.qrc">
+               <normaloff>:/icons/png/arrow-right.png</normaloff>:/icons/png/arrow-right.png</iconset>
              </property>
             </widget>
            </item>
@@ -357,8 +382,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>508</width>
-             <height>435</height>
+             <width>523</width>
+             <height>484</height>
             </rect>
            </property>
            <property name="styleSheet">

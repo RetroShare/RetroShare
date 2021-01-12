@@ -1864,6 +1864,8 @@ bool PGPHandler::locked_writePrivateTrustDatabase()
 		return false;
 	}
 	PrivateTrustPacket trustpacket ;
+	/* Clear PrivateTrustPacket struct to suppress valgrind warnings due to the compiler extra padding*/
+	memset(&trustpacket, 0, sizeof(PrivateTrustPacket));
 
 	for( std::map<RsPgpId,PGPCertificateInfo>::iterator it =
 	     _public_keyring_map.begin(); it!=_public_keyring_map.end(); ++it )

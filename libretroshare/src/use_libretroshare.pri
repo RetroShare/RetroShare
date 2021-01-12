@@ -10,7 +10,13 @@ INCLUDEPATH  *= $$clean_path($${RS_SRC_PATH}/libretroshare/src)
 equals(TARGET, retroshare):equals(TEMPLATE, lib){
 } else {
 	LIBS *= -L$$clean_path($${RS_BUILD_PATH}/libretroshare/src/lib/) -lretroshare
-    PRE_TARGETDEPS *= $$clean_path($${RS_BUILD_PATH}/libretroshare/src/lib/libretroshare.a)
+	win32-g++|win32-clang-g++:!isEmpty(QMAKE_SH):libretroshare_shared {
+		# Windows msys2
+		LIBRETROSHARE_TARGET=libretroshare.dll.a
+	} else {
+		LIBRETROSHARE_TARGET=libretroshare.a
+	}
+    PRE_TARGETDEPS *= $$clean_path($${RS_BUILD_PATH}/libretroshare/src/lib/$${LIBRETROSHARE_TARGET})
 }
 
 !include("../../openpgpsdk/src/use_openpgpsdk.pri"):error("Including")

@@ -59,7 +59,8 @@ protected:
 	void closeEvent (QCloseEvent * event);
     
 private:
-	void loadFormInformation();
+    void processSettings(bool load);
+    void loadFormInformation();
 
 	void loadForumInfo(const uint32_t &token);
 	void loadParentMsg(const uint32_t &token);

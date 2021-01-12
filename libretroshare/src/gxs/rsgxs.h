@@ -29,8 +29,8 @@
 
 /* data types used throughout Gxs from netservice to genexchange */
 
-typedef std::map<RsGxsGroupId,      std::vector<const RsGxsMsgMetaData*> > GxsMsgMetaResult;
-typedef std::map<RsGxsGrpMsgIdPair, std::vector<const RsGxsMsgMetaData*> > MsgRelatedMetaResult;
+typedef std::map<RsGxsGroupId,      std::vector<std::shared_ptr<RsGxsMsgMetaData> > > GxsMsgMetaResult;
+typedef std::map<RsGxsGrpMsgIdPair, std::vector<std::shared_ptr<RsGxsMsgMetaData> > > MsgRelatedMetaResult;
 
 // Default values that are used throughout GXS code
 

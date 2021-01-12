@@ -113,8 +113,8 @@ virtual int dhtInfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::
 };
 
 
-p3BitDht::p3BitDht(const RsPeerId& id, pqiConnectCb *cb, p3NetMgr *nm, 
-            UdpStack *udpstack, std::string bootstrapfile,const std::string& filteredipfile)
+p3BitDht::p3BitDht(const RsPeerId& id, pqiConnectCb *cb, p3NetMgr *nm,
+			UdpStack *udpstack, std::string bootstrapfile, std::string bootstrapfilebak, const std::string& filteredipfile)
 	:p3Config(), pqiNetAssistConnect(id, cb), mNetMgr(nm), dhtMtx("p3BitDht")
 {
 #ifdef RS_USE_DHT_STUNNER
@@ -163,7 +163,7 @@ p3BitDht::p3BitDht(const RsPeerId& id, pqiConnectCb *cb, p3NetMgr *nm,
 #endif
 
 	/* create dht */
-    mUdpBitDht = new UdpBitDht(udpstack, &mOwnDhtId, dhtVersion, bootstrapfile, filteredipfile,mDhtFns);
+	mUdpBitDht = new UdpBitDht(udpstack, &mOwnDhtId, dhtVersion, bootstrapfile, bootstrapfilebak, filteredipfile,mDhtFns);
 	udpstack->addReceiver(mUdpBitDht);
 
 	/* setup callback to here */

@@ -577,6 +577,8 @@ rs_broadcast_discovery:DEFINES *= RS_BROADCAST_DISCOVERY
 no_rs_dh_init_check:DEFINES *= RS_DISABLE_DIFFIE_HELLMAN_INIT_CHECK
 
 debug {
+    rs_mutex_debug:DEFINES *= RS_MUTEX_DEBUG
+
     QMAKE_CXXFLAGS -= -O2 -fomit-frame-pointer
     QMAKE_CFLAGS -= -O2 -fomit-frame-pointer
 

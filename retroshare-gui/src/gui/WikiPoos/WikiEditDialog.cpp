@@ -71,11 +71,11 @@ WikiEditDialog::WikiEditDialog(QWidget *parent)
 
 	mWikiQueue = new TokenQueue(rsWiki->getTokenService(), this);
 
-        mThreadCompareRole = new RSTreeWidgetItemCompareRole;
-        mThreadCompareRole->setRole(WET_COL_DATE, WET_ROLE_SORT);
+	mThreadCompareRole = new RSTreeWidgetItemCompareRole;
+	mThreadCompareRole->setRole(WET_COL_DATE, WET_ROLE_SORT);
 
-        mRepublishMode = false;
-        mPreviewMode = false;
+	mRepublishMode = false;
+	mPreviewMode = false;
 	mPageLoading = false;
 
 	mIgnoreTextChange = false;
@@ -85,6 +85,10 @@ WikiEditDialog::WikiEditDialog(QWidget *parent)
 	mHistoryLoaded = false;
 	mHistoryMergeMode = false;
 
+	ui.toolButton_Show->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/down-arrow.png")));
+	ui.toolButton_Hide->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/up-arrow.png")));
+	ui.pushButton_Preview->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/search.png")));
+
 	ui.checkBox_OldHistory->setChecked(false);
 	mOldHistoryEnabled = false;
 	ui.groupBox_History->hide();
@@ -93,7 +97,7 @@ WikiEditDialog::WikiEditDialog(QWidget *parent)
 
 WikiEditDialog::~WikiEditDialog()
 {
-        delete (mThreadCompareRole);
+	delete (mThreadCompareRole);
 	delete(mWikiQueue);
 }
 
@@ -309,6 +313,7 @@ void WikiEditDialog::previewToggle()
 	{
 		mPreviewMode = false;
 		ui.pushButton_Preview->setText(tr("Preview"));
+		ui.pushButton_Preview->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/search.png")));
 	}
 	else
 	{
@@ -316,6 +321,7 @@ void WikiEditDialog::previewToggle()
 		mCurrentText = ui.textEdit->toPlainText();
 		mPreviewMode = true;
 		ui.pushButton_Preview->setText(tr("Edit Page"));
+		ui.pushButton_Preview->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/pencil-edit-button.png")));
 	}
 
 

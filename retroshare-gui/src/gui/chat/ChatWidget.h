@@ -115,6 +115,7 @@ public:
 	// small enough in size.
 	void addChatBarWidget(QWidget *w) ;
 	void addTitleBarWidget(QWidget *w);
+	void addTopBarWidget(QWidget *w);
 	void hideChatText(bool hidden);
 	RSButtonOnText* getNewButtonOnTextBrowser();
 	RSButtonOnText* getNewButtonOnTextBrowser(QString text);

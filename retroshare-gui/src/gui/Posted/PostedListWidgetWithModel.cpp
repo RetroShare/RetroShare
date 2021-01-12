@@ -493,6 +493,7 @@ void PostedListWidgetWithModel::handleEvent_main_thread(std::shared_ptr<const Rs
         case RsPostedEventCode::NEW_POSTED_GROUP:     // [[fallthrough]];
 		case RsPostedEventCode::UPDATED_POSTED_GROUP: // [[fallthrough]];
 		case RsPostedEventCode::UPDATED_MESSAGE:
+        case RsPostedEventCode::BOARD_DELETED:
         case RsPostedEventCode::SYNC_PARAMETERS_UPDATED:
         {
 			if(e->mPostedGroupId == groupId())
@@ -698,7 +699,7 @@ PostedListWidgetWithModel::~PostedListWidgetWithModel()
 
 void PostedListWidgetWithModel::processSettings(bool load)
 {
-	Settings->beginGroup(QString("ChannelPostsWidget"));
+    Settings->beginGroup(QString("BoardPostsWidget"));
 
 	if (load)
 	{

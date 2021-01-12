@@ -169,7 +169,7 @@
         <translation>Naam:</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="+75"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="+77"/>
         <source>Feed Details</source>
         <translation>Feed Details</translation>
     </message>
@@ -269,7 +269,7 @@
         <translation>Open alle feeds in een nieuwe tab</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderConfig.h" line="+50"/>
+        <location filename="../gui/FeedReaderConfig.h" line="+47"/>
         <source>FeedReader</source>
         <translation>FeedLezer</translation>
     </message>
@@ -277,7 +277,7 @@
 <context>
     <name>FeedReaderDialog</name>
     <message>
-        <location filename="../gui/FeedReaderDialog.ui" line="+73"/>
+        <location filename="../gui/FeedReaderDialog.ui" line="+91"/>
         <source>Feeds</source>
         <translation>Feeds</translation>
     </message>
@@ -292,7 +292,7 @@
         <translation>Update feed</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="+94"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="+92"/>
         <source>Message Folders</source>
         <translation>Berichten mappen</translation>
     </message>
@@ -347,7 +347,7 @@
         <translation>Geen naam</translation>
     </message>
     <message>
-        <location line="+212"/>
+        <location line="+210"/>
         <source>Add new folder</source>
         <translation>Voeg een nieuwe map toe</translation>
     </message>
@@ -436,12 +436,12 @@
 <context>
     <name>FeedReaderFeedNotify</name>
     <message>
-        <location filename="../gui/FeedReaderFeedNotify.cpp" line="+47"/>
+        <location filename="../gui/FeedReaderFeedNotify.cpp" line="+46"/>
         <source>Feed Reader</source>
         <translation>Feed Reader</translation>
     </message>
     <message>
-        <location line="+78"/>
+        <location line="+79"/>
         <source>Test</source>
         <translation>Test</translation>
     </message>
@@ -500,7 +500,7 @@
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="+92"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="+113"/>
         <source>Title</source>
         <translation>Titel</translation>
     </message>
@@ -595,7 +595,7 @@
 <context>
     <name>FeedReaderPlugin</name>
     <message>
-        <location filename="../FeedReaderPlugin.cpp" line="+157"/>
+        <location filename="../FeedReaderPlugin.cpp" line="+156"/>
         <source>This plugin provides a Feedreader.</source>
         <translation>Deze plugin heeft een Feedraeder nodig.</translation>
     </message>
@@ -608,7 +608,7 @@
 <context>
     <name>FeedReaderStringDefs</name>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="+36"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="+35"/>
         <source>Feed not found.</source>
         <translation>Feed niet gevonden</translation>
     </message>
@@ -777,7 +777,7 @@
 <context>
     <name>FeedReaderUserNotify</name>
     <message>
-        <location filename="../gui/FeedReaderUserNotify.cpp" line="+40"/>
+        <location filename="../gui/FeedReaderUserNotify.cpp" line="+39"/>
         <source>FeedReader Message</source>
         <translation>FeedLezer Bericht</translation>
     </message>
@@ -840,7 +840,7 @@
         <translation>XPad verwijderen</translation>
     </message>
     <message>
-        <location filename="../gui/PreviewFeedDialog.cpp" line="+179"/>
+        <location filename="../gui/PreviewFeedDialog.cpp" line="+180"/>
         <source>Cannot create preview</source>
         <translation>Kan geen voorbeeld maken</translation>
     </message>

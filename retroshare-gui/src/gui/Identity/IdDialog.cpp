@@ -439,7 +439,8 @@ void IdDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_LEAVE:
 		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_ID_REMOVED_FROM_INVITEE_LIST:
 		case RsGxsCircleEventCode::NEW_CIRCLE:
-		case RsGxsCircleEventCode::CACHE_DATA_UPDATED:
+        case RsGxsCircleEventCode::CIRCLE_DELETED:
+        case RsGxsCircleEventCode::CACHE_DATA_UPDATED:
 
 			updateCircles();
 		default:
@@ -504,16 +505,16 @@ void IdDialog::updateCircles()
 
 		/* This can be big so use a smart pointer to just copy the pointer
 		 * instead of copying the whole list accross the lambdas */
-		auto circle_metas = std::make_unique<std::list<RsGroupMetaData>>();
+        auto circle_metas = new std::list<RsGroupMetaData>();
 
 		if(!rsGxsCircles->getCirclesSummaries(*circle_metas))
 		{
 			RS_ERR("failed to retrieve circles group info list");
+            delete circle_metas;
 			return;
 		}
 
-		RsQThreadUtils::postToObject(
-		            [circle_metas = std::move(circle_metas), this]()
+        RsQThreadUtils::postToObject( [circle_metas, this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
@@ -521,7 +522,8 @@ void IdDialog::updateCircles()
 
 			loadCircles(*circle_metas);
 
-		}, this );
+            delete circle_metas;
+        }, this );
 
     });
 }
@@ -1315,17 +1317,19 @@ void IdDialog::updateIdList()
 			return;
 		}
 
-		auto ids_set = std::make_unique<std::map<RsGxsGroupId,RsGxsIdGroup>>();
+        auto ids_set = new std::map<RsGxsGroupId,RsGxsIdGroup>();
+
 		for(auto it(groups.begin()); it!=groups.end(); ++it)
 			(*ids_set)[(*it).mMeta.mGroupId] = *it;
 
-		RsQThreadUtils::postToObject(
-		            [ids_set = std::move(ids_set), this] ()
+        RsQThreadUtils::postToObject( [ids_set, this] ()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 			loadIdentities(*ids_set);
+            delete ids_set;
+
 		}, this );
 
     });

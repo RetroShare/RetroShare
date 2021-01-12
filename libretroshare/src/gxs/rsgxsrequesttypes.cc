@@ -156,13 +156,6 @@ GroupDataReq::~GroupDataReq()
 	rsstd::delete_all(mGroupData.begin(), mGroupData.end());
 }
 
-MsgMetaReq::~MsgMetaReq()
-{
-	for (GxsMsgMetaResult::iterator it = mMsgMetaData.begin(); it != mMsgMetaData.end(); ++it) {
-		rsstd::delete_all(it->second.begin(), it->second.end());
-	}
-}
-
 MsgDataReq::~MsgDataReq()
 {
 	for (NxsMsgDataResult::iterator it = mMsgData.begin(); it != mMsgData.end(); ++it) {
@@ -172,12 +165,8 @@ MsgDataReq::~MsgDataReq()
 
 MsgRelatedInfoReq::~MsgRelatedInfoReq()
 {
-	for (MsgRelatedMetaResult::iterator metaIt = mMsgMetaResult.begin(); metaIt != mMsgMetaResult.end(); ++metaIt) {
-		rsstd::delete_all(metaIt->second.begin(), metaIt->second.end());
-	}
-	for (NxsMsgRelatedDataResult::iterator dataIt = mMsgDataResult.begin(); dataIt != mMsgDataResult.end(); ++dataIt) {
+    for (NxsMsgRelatedDataResult::iterator dataIt = mMsgDataResult.begin(); dataIt != mMsgDataResult.end(); ++dataIt)
 		rsstd::delete_all(dataIt->second.begin(), dataIt->second.end());
-	}
 }
 std::ostream& MessageSetFlagReq::print(std::ostream& o) const
 {

@@ -549,6 +549,8 @@ void IdEditDialog::createId()
 		std::string gpg_name = rsPeers->getGPGName(rsPeers->getGPGOwnId());
         bool cancelled;
 
+        rsNotify->clearPgpPassphrase(); // just in case
+
         if(!NotifyQt::getInstance()->askForPassword(tr("Profile password needed.").toStdString(),
 		                                            gpg_name + " (" + rsPeers->getOwnId().toStdString() + ")",
 		                                            false,
@@ -564,11 +566,9 @@ void IdEditDialog::createId()
     {
 		ui->createButton->setEnabled(false);
 
-        RsIdentityDetails det;
-
-        if(rsIdentity->getIdDetails(keyId,det))
+        if(!keyId.isNull())
         {
-            QMessageBox::information(NULL,tr("Identity creation success"),tr("Your new identity was successfuly created."));
+            QMessageBox::information(NULL,tr("Identity creation success"),tr("Your new identity was successfuly created, its ID is %1.").arg(QString::fromStdString(keyId.toStdString())));
             close();
         }
         else

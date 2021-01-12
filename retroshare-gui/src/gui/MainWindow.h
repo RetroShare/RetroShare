@@ -284,6 +284,7 @@ private:
 
     QSystemTrayIcon *trayIcon;
     QMenu *notifyMenu;
+    QMenu *trayMenu;
     QString notifyToolTip;
     QAction *toggleVisibilityAction, *toolAct;
     QList<UserNotify*> userNotifyList;

@@ -163,7 +163,7 @@ void GxsChannelPostItem::setup()
     ui->downloadButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/download.png"));
     ui->playButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/play.png"));
     ui->commentButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/comment.png"));
-    ui->editButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/pencil-edit-button.png"));
+    //ui->editButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/pencil-edit-button.png"));
     ui->copyLinkButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/copy.png"));
     ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/down-arrow.png"));
     ui->readAndClearButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/correct.png"));
@@ -196,7 +196,7 @@ void GxsChannelPostItem::setup()
 	connect(ui->commentButton, SIGNAL(clicked()), this, SLOT(loadComments()));
 
 	connect(ui->playButton, SIGNAL(clicked()), this, SLOT(play(void)));
-	connect(ui->editButton, SIGNAL(clicked()), this, SLOT(edit(void)));
+    //connect(ui->editButton, SIGNAL(clicked()), this, SLOT(edit(void)));
 	connect(ui->copyLinkButton, SIGNAL(clicked()), this, SLOT(copyMessageLink()));
 
 	connect(ui->readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
@@ -208,6 +208,9 @@ void GxsChannelPostItem::setup()
 	//connect(ui->voteDownButton, SIGNAL(clicked()), this, SLOT(makeDownVote()));
 
 	ui->scoreLabel->hide();
+
+	// hide unsubscribe button not necessary
+	ui->unsubscribeButton->hide();
 
 	ui->downloadButton->hide();
 	ui->playButton->hide();
@@ -426,33 +429,26 @@ void GxsChannelPostItem::fill()
 	mInFill = true;
 
 	QString title;
-	
+	QString msgText;
 	//float f = QFontMetricsF(font()).height()/14.0 ;
+
+	ui->logoLabel->setEnableZoom(false);
+	int desired_height = QFontMetricsF(font()).height() * 8;
+	ui->logoLabel->setFixedSize(4/3.0*desired_height,desired_height);
 
 	if(mPost.mThumbnail.mData != NULL)
 	{
-		QPixmap thumbnail;	
-		
-        ui->logoLabel->setScaledContents(true);
-
+		QPixmap thumbnail;
 		GxsIdDetails::loadPixmapFromData(mPost.mThumbnail.mData, mPost.mThumbnail.mSize, thumbnail,GxsIdDetails::ORIGINAL);
 		// Wiping data - as its been passed to thumbnail.
-//		if( thumbnail.width() < 90 ){
-//			ui->logoLabel->setMaximumSize(82*f,108*f);
-//		}
-//		else if( thumbnail.width() < 109 ){
-//			ui->logoLabel->setMinimumSize(108*f,108*f);
-//			ui->logoLabel->setMaximumSize(108*f,108*f);
-//		}
-//		else{
-//			ui->logoLabel->setMinimumSize(156*f,108*f);
-//			ui->logoLabel->setMaximumSize(156*f,108*f);
-//		}
-		ui->logoLabel->setPixmap(thumbnail);
-	}
 
-	if( !IS_GROUP_PUBLISHER(mGroupMeta.mSubscribeFlags) )
-		ui->editButton->hide() ;
+		ui->logoLabel->setPicture(thumbnail);
+	}
+	else
+		ui->logoLabel->setPicture( FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default-video.png") );
+
+    //if( !IS_GROUP_PUBLISHER(mGroupMeta.mSubscribeFlags) )
+    ui->editButton->hide() ;	// never show this button. Feeds are not the place to edit posts.
 
 	if (!mIsHome)
 	{
@@ -465,8 +461,10 @@ void GxsChannelPostItem::fill()
 		title += link.toHtml();
 		ui->titleLabel->setText(title);
 
+		msgText = tr("Post") + ": ";
 		RetroShareLink msgLink = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_CHANNEL, mPost.mMeta.mGroupId, mPost.mMeta.mMsgId, messageName());
-        ui->subjectLabel->setText(msgLink.toHtml());
+		msgText += msgLink.toHtml();
+		ui->subjectLabel->setText(msgText);
 
 		if (IS_GROUP_SUBSCRIBED(mGroupMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroupMeta.mSubscribeFlags))
 		{

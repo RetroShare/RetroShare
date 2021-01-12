@@ -30,10 +30,11 @@ class bdStore
 {
 public:
 
-    bdStore(std::string file, bdDhtFunctions *fns);
+    bdStore(std::string file, std::string backupfile, bdDhtFunctions *fns);
 
     int 	reloadFromStore(); /* for restarts */
-    int	filterIpList(const std::list<struct sockaddr_in> &filteredIPs);
+    int 	reloadFromStore(std::string file);
+    int		filterIpList(const std::list<struct sockaddr_in> &filteredIPs);
     int 	clear();
 
     int 	getPeer(bdPeer *peer);
@@ -43,6 +44,7 @@ public:
 
 protected:
     std::string mStoreFile;
+    std::string mStoreFileBak;
     std::list<bdPeer> store;
     int mIndex;
     bdDhtFunctions *mFns;

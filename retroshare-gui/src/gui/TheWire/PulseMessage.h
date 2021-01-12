@@ -35,6 +35,13 @@ public:
 	void setup(RsWirePulseSPtr pulse);
 	void setMessage(QString msg);
 	void setRefImageCount(uint32_t count);
+
+private slots:
+	void viewPicture();
+
+private:
+	RsWirePulseSPtr mPulse;
+
 };
 
 #endif

@@ -1969,7 +1969,7 @@ GxsChannelPostItem > QFrame#mainFrame[new=true] {
 	border-radius: 10px;
 }
 
-GxsForumThreadWidget QLabel#forumName
+GxsForumThreadWidget QPushButton#forumName
 {
 	qproperty-fontSizeFactor: 140;
 	color: #0099cc;
@@ -2179,6 +2179,11 @@ GxsChannelPostItem QFrame#mainFrame {
     background-color: #19232D;
 }
 
+GxsChannelPostItem QLabel#subjectLabel, GxsChannelPostItem QLabel#titleLabel {
+	font: 12pt;
+	font: bold italic;
+}
+
 BoardPostDisplayWidget_compact QPushButton#shareButton {
     background-color: transparent;
 	min-width: 80px;
@@ -2241,6 +2246,14 @@ BoardPostDisplayWidget_card QLabel#titleLabel{
 	font: bold;
 }
 
+GxsForumMsgItem QFrame#frame{
+	background-color: #19232D;
+}
+
+PostedItem QFrame#mainFrame{
+	background: #19232D;
+}
+
 WireGroupItem QFrame#wire_frame{
 	background: transparent;
 }
@@ -2263,4 +2276,12 @@ PulseTopLevel QFrame#frame, PulseViewGroup QFrame#frame, PulseReply QFrame#frame
 
 MainWindow QListWidget {
 	font-size: 12pt;
+}
+
+ChatLobbyWidget QTreeWidget#lobbyTreeWidget{
+		font-size: 10pt;
+}
+
+NewFriendList QTreeView#peerTreeWidget {
+		font-size: 12pt;
 }

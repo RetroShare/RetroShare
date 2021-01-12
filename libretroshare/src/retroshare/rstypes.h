@@ -300,7 +300,7 @@ struct DirStub : RsSerializable
 struct DirDetails : RsSerializable
 {
 	DirDetails() : parent(nullptr), prow(0), ref(nullptr),
-	    type(DIR_TYPE_UNKNOWN), count(0), mtime(0), max_mtime(0) {}
+        type(DIR_TYPE_UNKNOWN), size(0), mtime(0), max_mtime(0) {}
 
 
 	/* G10h4ck do we still need to keep this as void* instead of uint64_t for
@@ -318,7 +318,7 @@ struct DirDetails : RsSerializable
     std::string name;
     RsFileHash hash;
     std::string path;		// full path of the parent directory, when it is a file; full path of the dir otherwise.
-	uint64_t count;
+    uint64_t size;          // total size of directory, or size of the file.
 	uint32_t mtime;			// file/directory modification time, according to what the system reports
 	FileStorageFlags flags;
 	uint32_t max_mtime ;	// maximum modification time of the whole hierarchy below.
@@ -347,7 +347,7 @@ struct DirDetails : RsSerializable
 		RS_SERIAL_PROCESS(name);
 		RS_SERIAL_PROCESS(hash);
 		RS_SERIAL_PROCESS(path);
-		RS_SERIAL_PROCESS(count);
+        RS_SERIAL_PROCESS(size);
 		RS_SERIAL_PROCESS(mtime);
 		RS_SERIAL_PROCESS(flags);
 		RS_SERIAL_PROCESS(max_mtime);

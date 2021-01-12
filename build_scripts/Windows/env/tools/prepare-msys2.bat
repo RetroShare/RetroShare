@@ -27,8 +27,8 @@ if exist "%EnvMSYS2Path%\msys%MSYS2Base%\usr\bin\pacman.exe" (
 
 set MSYS2Install=msys2-base-%MSYS2Architecture%-20190524.tar.xz
 set MSYS2Url=http://sourceforge.net/projects/msys2/files/Base/%MSYS2Architecture%/%MSYS2Install%/download
-set CMakeInstall=cmake-3.1.0-win32-x86.zip
-set CMakeUrl=http://www.cmake.org/files/v3.1/%CMakeInstall%
+set CMakeInstall=cmake-3.19.0-win32-x86.zip
+set CMakeUrl=https://github.com/Kitware/CMake/releases/download/v3.19.0/%CMakeInstall%
 set CMakeUnpackPath=%EnvMSYS2Path%\msys%MSYS2Base%
 
 if exist "%EnvMSYS2Path%\msys%MSYS2Base%" (
