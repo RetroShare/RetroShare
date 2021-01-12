@@ -406,8 +406,8 @@ int     pqihandler::UpdateRates()
 	RsDbg() << "UPDATE_RATES pqihandler::UpdateRates mod_index " << mod_index << " out_max_bw " << out_max_bw << " remaining out bw " << out_remaining_bw << std::endl;
 #endif
 
-	/* Allocate only half the remaining out bw, if any, to make it smoother */
-	out_max_bw = out_max_bw + out_remaining_bw / 2;
+	/* Allocate only 50 pct the remaining out bw, if any, to make the transition more smooth */
+	out_max_bw = out_max_bw + 0.5 * out_remaining_bw;
 
 	/* Calculate the optimal in_max value, taking into account avail_in and the in bw requested by modules */
 
@@ -437,8 +437,8 @@ int     pqihandler::UpdateRates()
 	RsDbg() << "UPDATE_RATES pqihandler::UpdateRates mod_index " << mod_index << " in_max_bw " << in_max_bw << " remaining in bw " << in_remaining_bw << std::endl;
 #endif
 
-	// allocate all remaining in bw
-	in_max_bw = in_max_bw + in_remaining_bw;
+	// allocate only 75 pct of the remaining in bw, to make the transition more smooth
+	in_max_bw = in_max_bw + 0.75 * in_remaining_bw;
 
 	// store current total in and out used bw 
 	locked_StoreCurrentRates(used_bw_in, used_bw_out);
@@ -474,8 +474,8 @@ int     pqihandler::UpdateRates()
 		{
 			if (rateMap_it->second.mAllowedOut > 0)
 			{	
-				if (out_max_bw > 0.95 * rateMap_it->second.mAllowedOut)
-        	                        mod -> pqi -> setMaxRate(false, 0.95 * rateMap_it->second.mAllowedOut);
+				if (out_max_bw > rateMap_it->second.mAllowedOut)
+        	                        mod -> pqi -> setMaxRate(false, rateMap_it->second.mAllowedOut);
 				else
 					mod -> pqi -> setMaxRate(false, out_max_bw);
 			}
