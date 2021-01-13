@@ -211,7 +211,7 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 			if(msgChange) /* Message received*/
 			{
 				auto ev = std::make_shared<RsGxsForumEvent>();
-				ev->mForumMsgsId.insert(msgChange->mMsgId);
+				ev->mForumMsgId = msgChange->mMsgId;
 				ev->mForumGroupId = msgChange->mGroupId;
 				ev->mForumEventCode = RsForumEventCode::NEW_MESSAGE;
 				rsEvents->postEvent(ev);
@@ -258,8 +258,8 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 		}
 		case RsGxsNotify::TYPE_MESSAGE_DELETED:
 		{
-			rs_view_ptr<RsGxsBulkMsgDeletedChange> delChange =
-			        dynamic_cast<RsGxsBulkMsgDeletedChange*>(gxsChange);
+			rs_view_ptr<RsGxsMsgDeletedChange> delChange =
+			        dynamic_cast<RsGxsMsgDeletedChange*>(gxsChange);
 
 			if(!delChange)
 			{
@@ -272,7 +272,7 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 			auto ev = std::make_shared<RsGxsForumEvent>();
 			ev->mForumEventCode = RsForumEventCode::DELETED_POSTS;
 			ev->mForumGroupId = delChange->mGroupId;
-			ev->mForumMsgsId = delChange->messagesId;
+			ev->mForumMsgId = delChange->messageId;
 			break;
 		}
 		case RsGxsNotify::TYPE_GROUP_DELETED:
@@ -1030,7 +1030,7 @@ void p3GxsForums::setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair&
 	{
 		auto ev = std::make_shared<RsGxsForumEvent>();
 
-		ev->mForumMsgsId.insert(msgId.second);
+		ev->mForumMsgId = msgId.second;
 		ev->mForumGroupId = msgId.first;
 		ev->mForumEventCode = RsForumEventCode::READ_STATUS_CHANGED;
 		rsEvents->postEvent(ev);
@@ -1061,7 +1061,7 @@ std::error_condition p3GxsForums::setPostKeepForever(
 	{
 		auto ev = std::make_shared<RsGxsForumEvent>();
 		ev->mForumGroupId = forumId;
-		ev->mForumMsgsId.insert(postId);
+		ev->mForumMsgId = postId;
 		ev->mForumEventCode = RsForumEventCode::UPDATED_MESSAGE;
 		rsEvents->postEvent(ev);
 		return std::error_condition();
