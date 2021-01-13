@@ -152,93 +152,95 @@ void RsFriendListModel::setDisplayGroups(bool b)
 }
 void RsFriendListModel::preMods()
 {
-	beginResetModel();
+	emit layoutAboutToBeChanged();
 }
 void RsFriendListModel::postMods()
 {
-	endResetModel();
-
-    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1,columnCount()-1,(void*)NULL));
+	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1,columnCount()-1,(void*)NULL));
+	emit layoutChanged();
 }
 
 int RsFriendListModel::rowCount(const QModelIndex& parent) const
 {
-    if(parent.column() >= COLUMN_THREAD_NB_COLUMNS)
-        return 0;
+	if(parent.column() >= COLUMN_THREAD_NB_COLUMNS)
+		return 0;
 
 	if(parent.internalId() == 0)
 		return mTopLevel.size();
 
-    EntryIndex index;
-    if(!convertInternalIdToIndex<sizeof(uintptr_t)>(parent.internalId(),index))
-        return 0;
+	EntryIndex index;
+	if(!convertInternalIdToIndex<sizeof(uintptr_t)>(parent.internalId(),index))
+		return 0;
 
-    if(index.type == ENTRY_TYPE_GROUP)
-        return mGroups[index.group_index].child_profile_indices.size();
+	if(index.type == ENTRY_TYPE_GROUP)
+		return mGroups[index.group_index].child_profile_indices.size();
 
-    if(index.type == ENTRY_TYPE_PROFILE)
+	if(index.type == ENTRY_TYPE_PROFILE)
 	{
 		if(index.group_index < UNDEFINED_GROUP_INDEX_VALUE)
 			return mProfiles[mGroups[index.group_index].child_profile_indices[index.profile_index]].child_node_indices.size();
-        else
-            return mProfiles[index.profile_index].child_node_indices.size();
+		else
+			return mProfiles[index.profile_index].child_node_indices.size();
 	}
 	else //if(index.type == ENTRY_TYPE_NODE)
-        return 0;
+		return 0;
 }
 
-int RsFriendListModel::columnCount(const QModelIndex &parent) const
+int RsFriendListModel::columnCount(const QModelIndex &/*parent*/) const
 {
 	return COLUMN_THREAD_NB_COLUMNS ;
 }
 
 bool RsFriendListModel::hasChildren(const QModelIndex &parent) const
 {
-    if(!parent.isValid())
-        return true;
+	if(!parent.isValid())
+		return true;
 
 	EntryIndex parent_index ;
-    convertInternalIdToIndex<sizeof(uintptr_t)>(parent.internalId(),parent_index);
+	convertInternalIdToIndex<sizeof(uintptr_t)>(parent.internalId(),parent_index);
 
-    if(parent_index.type == ENTRY_TYPE_NODE)
-        return false;
+	if(parent_index.type == ENTRY_TYPE_NODE)
+		return false;
 
-    if(parent_index.type == ENTRY_TYPE_PROFILE)
+	if(parent_index.type == ENTRY_TYPE_PROFILE)
+	{
 		if(parent_index.group_index < UNDEFINED_GROUP_INDEX_VALUE)
 			return !mProfiles[mGroups[parent_index.group_index].child_profile_indices[parent_index.profile_index]].child_node_indices.empty();
-        else
-            return !mProfiles[parent_index.profile_index].child_node_indices.empty();
-
-    if(parent_index.type == ENTRY_TYPE_GROUP)
-        return !mGroups[parent_index.group_index].child_profile_indices.empty();
+		else
+			return !mProfiles[parent_index.profile_index].child_node_indices.empty();
+	}
+	if(parent_index.type == ENTRY_TYPE_GROUP)
+		return !mGroups[parent_index.group_index].child_profile_indices.empty();
 
 	return false;
 }
 
 RsFriendListModel::EntryIndex RsFriendListModel::EntryIndex::parent() const
 {
-    EntryIndex i(*this);
+	EntryIndex i(*this);
 
-    switch(type)
-    {
-    case ENTRY_TYPE_GROUP: return EntryIndex();
+	switch(type)
+	{
+		case ENTRY_TYPE_GROUP: return EntryIndex();
 
-    case ENTRY_TYPE_PROFILE:
-        					if(i.group_index==UNDEFINED_GROUP_INDEX_VALUE)
-                                return EntryIndex();
-                            else
-                            {
-                                i.type = ENTRY_TYPE_GROUP;
-        				   		i.profile_index = UNDEFINED_PROFILE_INDEX_VALUE;
-                            }
-						   break;
+		case ENTRY_TYPE_PROFILE:
+			if(i.group_index==UNDEFINED_GROUP_INDEX_VALUE)
+				return EntryIndex();
+			else
+			{
+				i.type = ENTRY_TYPE_GROUP;
+				i.profile_index = UNDEFINED_PROFILE_INDEX_VALUE;
+			}
+		break;
 
-    case ENTRY_TYPE_NODE:  i.type = ENTRY_TYPE_PROFILE;
-        				   i.node_index = UNDEFINED_NODE_INDEX_VALUE;
-						   break;
-    }
+		case ENTRY_TYPE_NODE:  i.type = ENTRY_TYPE_PROFILE;
+			i.node_index = UNDEFINED_NODE_INDEX_VALUE;
+		break;
+		case ENTRY_TYPE_UNKNOWN:
+			RS_ERR("Unknown Entry type for parent.");
+	}
 
-    return i;
+	return i;
 }
 
 RsFriendListModel::EntryIndex RsFriendListModel::EntryIndex::child(int row,const std::vector<EntryIndex>& top_level) const
@@ -310,32 +312,32 @@ QModelIndex RsFriendListModel::index(int row, int column, const QModelIndex& par
 
 QModelIndex RsFriendListModel::parent(const QModelIndex& index) const
 {
-    if(!index.isValid())
-        return QModelIndex();
+	if(!index.isValid())
+		return QModelIndex();
 
 	EntryIndex I ;
-    convertInternalIdToIndex<sizeof(uintptr_t)>(index.internalId(),I);
+	convertInternalIdToIndex<sizeof(uintptr_t)>(index.internalId(),I);
 
-    EntryIndex p = I.parent();
+	EntryIndex p = I.parent();
 
-    if(p.type == ENTRY_TYPE_UNKNOWN)
-        return QModelIndex();
+	if(p.type == ENTRY_TYPE_UNKNOWN)
+		return QModelIndex();
 
-    quintptr i;
-    convertIndexToInternalId<sizeof(uintptr_t)>(p,i);
+	quintptr i;
+	convertIndexToInternalId<sizeof(uintptr_t)>(p,i);
 
 	return createIndex(I.parentRow(mGroups.size()),0,i);
 }
 
 Qt::ItemFlags RsFriendListModel::flags(const QModelIndex& index) const
 {
-    if (!index.isValid())
-        return 0;
+	if (!index.isValid())
+		return Qt::ItemFlags();
 
-    return QAbstractItemModel::flags(index);
+	return QAbstractItemModel::flags(index);
 }
 
-QVariant RsFriendListModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant RsFriendListModel::headerData(int section, Qt::Orientation /*orientation*/, int role) const
 {
 	if(role == Qt::DisplayRole)
 		switch(section)
@@ -414,17 +416,17 @@ QVariant RsFriendListModel::textColorRole(const EntryIndex& fmpe,int column) con
     }
 }
 
-QVariant RsFriendListModel::statusRole(const EntryIndex& fmpe,int column) const
+QVariant RsFriendListModel::statusRole(const EntryIndex& /*fmpe*/,int /*column*/) const
 {
     return QVariant();//fmpe.mMsgStatus);
 }
 
-bool RsFriendListModel::passesFilter(const EntryIndex& e,int column) const
+bool RsFriendListModel::passesFilter(const EntryIndex& e,int /*column*/) const
 {
 	QString s ;
 	bool passes_strings = true ;
 
-    if(e.type == ENTRY_TYPE_PROFILE && !mFilterStrings.empty())
+	if(e.type == ENTRY_TYPE_PROFILE && !mFilterStrings.empty())
 	{
 		switch(mFilterType)
 		{
@@ -435,6 +437,8 @@ bool RsFriendListModel::passesFilter(const EntryIndex& e,int column) const
 			if(s.isNull())
 				passes_strings = false;
 			break;
+		case FILTER_TYPE_NONE:
+			RS_ERR("None Type for Filter.");
 		};
 	}
 
@@ -447,18 +451,15 @@ bool RsFriendListModel::passesFilter(const EntryIndex& e,int column) const
 
 QVariant RsFriendListModel::filterRole(const EntryIndex& e,int column) const
 {
-    if(passesFilter(e,column))
-        return QVariant(FilterString);
+	if(passesFilter(e,column))
+		return QVariant(FilterString);
 
 	return QVariant(QString());
 }
 
-uint32_t RsFriendListModel::updateFilterStatus(ForumModelIndex i,int column,const QStringList& strings)
+uint32_t RsFriendListModel::updateFilterStatus(ForumModelIndex /*i*/,int /*column*/,const QStringList& /*strings*/)
 {
-    QString s ;
-	uint32_t count = 0;
-
-	return count;
+	return 0;
 }
 
 
@@ -479,7 +480,7 @@ void RsFriendListModel::setFilter(FilterType filter_type, const QStringList& str
 	postMods();
 }
 
-QVariant RsFriendListModel::toolTipRole(const EntryIndex& fmpe,int column) const
+QVariant RsFriendListModel::toolTipRole(const EntryIndex& /*fmpe*/,int /*column*/) const
 {
     return QVariant();
 }
@@ -489,14 +490,14 @@ QVariant RsFriendListModel::sizeHintRole(const EntryIndex& e,int col) const
 	float x_factor = QFontMetricsF(QApplication::font()).height()/14.0f ;
 	float y_factor = QFontMetricsF(QApplication::font()).height()/14.0f ;
 
-    if(e.type == ENTRY_TYPE_NODE)
-        y_factor *= 3.0;
+	if(e.type == ENTRY_TYPE_NODE)
+		y_factor *= 3.0;
 
-    if((e.type == ENTRY_TYPE_PROFILE) && !isProfileExpanded(e))
-        y_factor *= 3.0;
+	if((e.type == ENTRY_TYPE_PROFILE) && !isProfileExpanded(e))
+		y_factor *= 3.0;
 
-    if(e.type == ENTRY_TYPE_GROUP)
-        y_factor = std::max(y_factor, 24.0f / 14.0f ); // allows to fit the 24 pixels icon for groups in the line
+	if(e.type == ENTRY_TYPE_GROUP)
+		y_factor = std::max(y_factor, 24.0f / 14.0f ); // allows to fit the 24 pixels icon for groups in the line
 
 	switch(col)
 	{
@@ -542,7 +543,7 @@ QVariant RsFriendListModel::sortRole(const EntryIndex& entry,int column) const
     }
 }
 
-QVariant RsFriendListModel::onlineRole(const EntryIndex& e, int col) const
+QVariant RsFriendListModel::onlineRole(const EntryIndex& e, int /*col*/) const
 {
     switch(e.type)
 	{
@@ -698,7 +699,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
                                 if(col == COLUMN_THREAD_IP)           return QVariant(most_recent_ip);
                         }
 
-                }
+                }// Fall-through
                 default:
                         return QVariant();
                 }
@@ -826,7 +827,6 @@ const RsFriendListModel::HierarchicalNodeInformation *RsFriendListModel::getNode
     if(e.node_index >= mProfiles[pindex].child_node_indices.size())
         return NULL ;
 
-    time_t now = time(NULL);
     HierarchicalNodeInformation& node(mLocations[mProfiles[pindex].child_node_indices[e.node_index]]);
 
 	return &node;
@@ -894,8 +894,6 @@ void RsFriendListModel::clear()
 
 	emit friendListChanged();
 }
-
-static bool decreasing_time_comp(const std::pair<time_t,RsGxsMessageId>& e1,const std::pair<time_t,RsGxsMessageId>& e2) { return e2.first < e1.first ; }
 
 void RsFriendListModel::debug_dump() const
 {
@@ -1084,14 +1082,14 @@ void RsFriendListModel::updateInternalData()
 {
     preMods();
 
-    beginRemoveRows(QModelIndex(),0,mTopLevel.size()-1);
+    beginResetModel();
 
     mGroups.clear();
     mProfiles.clear();
     mLocations.clear();
     mTopLevel.clear();
 
-    endRemoveRows();
+    endResetModel();
 
     auto TL = mTopLevel ; // This allows to fill TL without touching mTopLevel outside of [begin/end]InsertRows().
 
@@ -1218,17 +1216,19 @@ void RsFriendListModel::updateInternalData()
             TL.push_back(e);
 		}
 
-    // finally, tell the model client that layout has changed.
+	// finally, tell the model client that layout has changed.
 
-    beginInsertRows(QModelIndex(),0,TL.size()-1);
+	mTopLevel = TL;
 
-    mTopLevel = TL;
+	if (TL.size()>0)
+	{
+		beginInsertRows(QModelIndex(),0,TL.size()-1);
+		endInsertRows();
+	}
 
-    endInsertRows();
+	postMods();
 
-    postMods();
-
-    mLastInternalDataUpdate = time(NULL);
+	mLastInternalDataUpdate = time(NULL);
 }
 
 QModelIndex RsFriendListModel::getIndexOfGroup(const RsNodeGroupId& mid) const
@@ -1251,7 +1251,7 @@ void RsFriendListModel::collapseItem(const QModelIndex& index)
     if(!convertInternalIdToIndex<sizeof(uintptr_t)>(index.internalId(),entry))
         return;
 
- 	const HierarchicalProfileInformation *hp = getProfileInfo(entry);
+    const HierarchicalProfileInformation *hp = getProfileInfo(entry);
     const HierarchicalGroupInformation *hg = getGroupInfo(entry);
 
     std::string s ;
@@ -1276,7 +1276,7 @@ void RsFriendListModel::expandItem(const QModelIndex& index)
     if(!convertInternalIdToIndex<sizeof(uintptr_t)>(index.internalId(),entry))
         return;
 
-	const HierarchicalProfileInformation *hp = getProfileInfo(entry);
+    const HierarchicalProfileInformation *hp = getProfileInfo(entry);
     const HierarchicalGroupInformation *hg = getGroupInfo(entry);
 
     std::string s ;
