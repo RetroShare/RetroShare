@@ -2717,10 +2717,15 @@ void RsGenExchange::processMessageDelete()
             msgDeleted.push_back(note.msgIds);
     }
 
-    for(const auto& msgreq:msgDeleted)
-        for(const auto& msgit:msgreq)
-            for(const auto& msg:msgit.second)
-                mNotifications.push_back(new RsGxsMsgChange(RsGxsNotify::TYPE_MESSAGE_DELETED,msgit.first,msg, false));
+	/* Three nested for looks like a performance bomb, but as Cyril says here
+	 * https://github.com/RetroShare/RetroShare/pull/2218#pullrequestreview-565194022
+	 * this should actually not explode at all because it is just one message at
+	 * time that get notified */
+	for(const auto& msd : mMsgDeletePublish)
+		for(auto& msgMap : msd.mMsgs)
+			for(auto& msgId : msgMap.second)
+				mNotifications.push_back(
+				            new RsGxsMsgDeletedChange(msgMap.first, msgId) );
 
 	mMsgDeletePublish.clear();
 }
