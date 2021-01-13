@@ -97,13 +97,13 @@ private:
     bool mMetaChange;
 };
 
-struct RsGxsBulkMsgDeletedChange : RsGxsNotify
+struct RsGxsMsgDeletedChange : RsGxsNotify
 {
-	RsGxsBulkMsgDeletedChange(
-	        const RsGxsGroupId& gid, const std::set<RsGxsMessageId>& msgsId):
-	    RsGxsNotify(gid), messagesId(msgsId) {}
+	RsGxsMsgDeletedChange(
+	        const RsGxsGroupId& gid, const RsGxsMessageId& msgId):
+	    RsGxsNotify(gid), messageId(msgId) {}
 
 	NotifyType getType() override { return TYPE_MESSAGE_DELETED; }
 
-	const std::set<RsGxsMessageId> messagesId;
+	const RsGxsMessageId messageId;
 };
