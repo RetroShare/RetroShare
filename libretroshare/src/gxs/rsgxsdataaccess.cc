@@ -834,8 +834,8 @@ void RsGxsDataAccess::processRequests()
 			}
 			else
 			{
-				req->status = FAILED;
 				mPublicToken[req->token] = FAILED;
+				delete req;//req belongs to no one now
 #ifdef DATA_DEBUG
 				RsDbg() << "  Request failed. Marking as FAILED." << std::endl;
 #endif
