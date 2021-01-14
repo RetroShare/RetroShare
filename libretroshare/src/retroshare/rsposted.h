@@ -202,7 +202,9 @@ public:
 	virtual bool getPostData(
 	        const uint32_t& token, std::vector<RsPostedPost>& posts) = 0;
 
-	//Not currently used
+    virtual bool setCommentAsRead(uint32_t& token,const RsGxsGroupId& gid,const RsGxsMessageId& comment_msg_id) =0;
+
+    //Not currently used
 //virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsPostedPost> &posts) = 0;
 
 	    /* From RsGxsCommentService */

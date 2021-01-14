@@ -176,6 +176,8 @@ struct RsGxsCommentService
 	virtual bool acknowledgeVote(
 	        uint32_t token,
 	        std::pair<RsGxsGroupId, RsGxsMessageId>& msgId ) = 0;
+
+    virtual bool setCommentAsRead(uint32_t& token,const RsGxsGroupId& gid,const RsGxsMessageId& comment_msg_id) = 0;
 };
 
 /// @deprecated use RsGxsVoteType::NONE instead @see RsGxsVoteType

@@ -57,6 +57,7 @@ protected:
     /* to be overloaded */
     virtual void service_requestComments(const RsGxsGroupId &group_id, const std::set<RsGxsMessageId> &msgIds);
     virtual void service_loadThread(const uint32_t &token);
+
     virtual QTreeWidgetItem *service_createMissingItem(const RsGxsMessageId& parent);
 
     void clearItems();

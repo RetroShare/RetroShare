@@ -82,6 +82,7 @@ void updateCommentCounts( std::vector<RsGxsChannelPost>& posts, std::vector<RsGx
     {
         post_indices[posts[i].mMeta.mMsgId] = i;
         posts[i].mCommentCount = 0;	// should be 0 already, but we secure that value.
+        posts[i].mUnreadCommentCount = 0;
     }
 
     // now look into comments and increase the count
@@ -100,6 +101,9 @@ void updateCommentCounts( std::vector<RsGxsChannelPost>& posts, std::vector<RsGx
             continue;
 
         ++posts[it->second].mCommentCount;
+
+        if(IS_MSG_NEW(comments[i].mMeta.mMsgStatus))
+            ++posts[it->second].mUnreadCommentCount;
     }
 }
 
@@ -129,21 +133,42 @@ void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEve
             RsThread::async([this, E]()
 			{
                 // 1 - get message data from p3GxsChannels. No need for pointers here, because we send only a single post to postToObject()
+                //     At this point we dont know what kind of msg id we have. It can be a vote, a comment or an actual message.
 
 				std::vector<RsGxsChannelPost> posts;
 				std::vector<RsGxsComment>     comments;
 				std::vector<RsGxsVote>        votes;
+                std::set<RsGxsMessageId>      msg_ids{ E.mChannelMsgId };
 
-                if(!rsGxsChannels->getChannelContent(E.mChannelGroupId,std::set<RsGxsMessageId>{ E.mChannelMsgId }, posts,comments,votes))
+                if(!rsGxsChannels->getChannelContent(E.mChannelGroupId,msg_ids, posts,comments,votes))
 				{
                     std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel message data for channel/msg " << E.mChannelGroupId << "/" << E.mChannelMsgId << std::endl;
 					return;
 				}
 
+                // Check if what we have actually is a comment or a vote. If so we need to update the actual message they refer to
+
+                if(posts.empty())	// means we have a comment or a vote
+                {
+                    msg_ids.clear();
+
+                    for(auto c:comments) msg_ids.insert(c.mMeta.mThreadId);
+                    for(auto v:votes   ) msg_ids.insert(v.mMeta.mThreadId);
+
+                    comments.clear();
+                    votes.clear();
+
+                    if(!rsGxsChannels->getChannelContent(E.mChannelGroupId,msg_ids,posts,comments,votes))
+                    {
+                        std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel message data for channel/msg " << E.mChannelGroupId << "/" << E.mChannelMsgId << std::endl;
+                        return;
+                    }
+                }
+
                 // Need to call this in order to get the actuall comment count. The previous call only retrieves the message, since we supplied the message ID.
                 // another way to go would be to save the comment ids of the existing message and re-insert them before calling getChannelContent.
 
-                if(!rsGxsChannels->getChannelComments(E.mChannelGroupId,std::set<RsGxsMessageId>{ E.mChannelMsgId },comments))
+                if(!rsGxsChannels->getChannelComments(E.mChannelGroupId,msg_ids,comments))
                 {
                     std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve message comment data for channel/msg " << E.mChannelGroupId << "/" << E.mChannelMsgId << std::endl;
                     return;

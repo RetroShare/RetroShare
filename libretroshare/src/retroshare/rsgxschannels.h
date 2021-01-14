@@ -71,14 +71,15 @@ struct RsGxsChannelGroup : RsSerializable, RsGxsGenericGroupData
 
 struct RsGxsChannelPost : RsSerializable, RsGxsGenericMsgData
 {
-    RsGxsChannelPost() : mAttachmentCount(0), mCommentCount(0), mSize(0) {}
+    RsGxsChannelPost() : mAttachmentCount(0), mCommentCount(0), mUnreadCommentCount(0), mSize(0) {}
 
 	std::set<RsGxsMessageId> mOlderVersions;
 	std::string mMsg;  // UTF8 encoded.
 
 	std::list<RsGxsFile> mFiles;
     uint32_t mAttachmentCount;   // auto calced.
-    uint32_t mCommentCount;      // auto calced. WARNING: not computed yet. In the future we need a background process to update this and store in the service string.
+    uint32_t mCommentCount;      // auto calced.
+    uint32_t mUnreadCommentCount;    // auto calced.
     uint64_t mSize;              // auto calced.
 
 	RsGxsImage mThumbnail;
@@ -95,6 +96,7 @@ struct RsGxsChannelPost : RsSerializable, RsGxsGenericMsgData
 		RS_SERIAL_PROCESS(mFiles);
         RS_SERIAL_PROCESS(mAttachmentCount);
         RS_SERIAL_PROCESS(mCommentCount);
+        RS_SERIAL_PROCESS(mUnreadCommentCount);
         RS_SERIAL_PROCESS(mSize);
 		RS_SERIAL_PROCESS(mThumbnail);
 	}

@@ -183,7 +183,7 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
                 p.drawPixmap(mZoom*QPoint(0.1*fm.height(),-3.4*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(mZoom*6*fm.height(),mZoom*6*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
             }
 
-            if(post.mCommentCount)
+            if(post.mUnreadCommentCount)
             {
                 QPainter p(&pixmap);
                 QFontMetricsF fm(option.font);
