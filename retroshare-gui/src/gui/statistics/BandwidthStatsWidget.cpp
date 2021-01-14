@@ -49,6 +49,7 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
 	ui.bwgraph_BW->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_LEGEND_CUMULATED) ;
 
 	updateUnitSelection(0);
+	toggleLogScale(ui.logScale_CB->checkState() == Qt::Checked);//Update bwgraph_BW with default logScale_CB state defined in ui file.
 
     // Setup connections
 
