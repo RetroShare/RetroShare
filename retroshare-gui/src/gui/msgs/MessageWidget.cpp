@@ -509,6 +509,7 @@ void MessageWidget::fill(const std::string &msgId)
 		ui.msgText->resetImagesStatus(false);
 
 		clearTagLabels();
+		checkLength();
 
 		ui.inviteFrame->hide();
 		ui.expandFilesButton->setChecked(false);
@@ -690,6 +691,7 @@ void MessageWidget::fill(const std::string &msgId)
 	ui.filesSize->setText(QString(misc::friendlyUnit(msgInfo.size)));
 
 	showTagLabels();
+	checkLength();
 
 	currMsgFlags = msgInfo.msgflags;
 }
@@ -902,4 +904,16 @@ void MessageWidget::viewSource()
 	ui.msgText->setHtml(pte->toPlainText());
 
 	delete dialog;
+}
+
+void MessageWidget::checkLength()
+{
+	QString text;
+	RsHtml::optimizeHtml(ui.msgText, text);
+	std::wstring msg = text.toStdWString();
+	int charlength = msg.length();
+
+	text = tr("%1 (%2) ").arg(charlength).arg(misc::friendlyUnit(charlength));
+
+	ui.sizeLabel->setText(text);
 }

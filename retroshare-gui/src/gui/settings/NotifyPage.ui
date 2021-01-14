@@ -18,7 +18,7 @@
      </property>
      <widget class="QWidget" name="tabFeed">
       <attribute name="title">
-       <string>Log</string>
+       <string>Activity</string>
       </attribute>
       <layout class="QVBoxLayout" name="tabFeedVLayout">
        <item>
