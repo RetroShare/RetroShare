@@ -849,12 +849,14 @@ bool p3PostBase::background_cleanup()
 
 
 	// Overloaded from GxsTokenQueue for Request callbacks.
-void p3PostBase::handleResponse(uint32_t token, uint32_t req_type)
+void p3PostBase::handleResponse(uint32_t token, uint32_t req_type
+                                , RsTokenService::GxsRequestStatus status)
 {
 #ifdef POSTBASE_DEBUG
-    std::cerr << "p3PostBase::handleResponse(" << token << "," << req_type << ")";
-    std::cerr << std::endl;
+	std::cerr << "p3PostBase::handleResponse(" << token << "," << req_type << "," << status << ")" << std::endl;
 #endif
+	if (status != RsTokenService::COMPLETE)
+		return; //For now, only manage Complete request
 
 	// stuff.
 	switch(req_type)

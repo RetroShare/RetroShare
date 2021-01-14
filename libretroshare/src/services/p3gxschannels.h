@@ -178,15 +178,15 @@ virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::strin
 
 
 	// Overloaded from RsGxsIface.
-virtual bool subscribeToGroup(uint32_t &token, const RsGxsGroupId &groupId, bool subscribe);
+virtual bool subscribeToGroup(uint32_t &token, const RsGxsGroupId &groupId, bool subscribe) override;
 
 	// Set Statuses.
 virtual void setMessageProcessedStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool processed);
-virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read);
+virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) override;
 
 	// File Interface
-	virtual bool ExtraFileHash(const std::string& path);
-virtual bool ExtraFileRemove(const RsFileHash &hash);
+	virtual bool ExtraFileHash(const std::string& path) override;
+virtual bool ExtraFileRemove(const RsFileHash &hash) override;
 
 
 	/// Implementation of @see RsGxsChannels::getChannelsSummaries
@@ -277,7 +277,7 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 	                                 bool subscribe ) override;
 
 	/// @see RsGxsChannels
-	virtual bool markRead(const RsGxsGrpMsgIdPair& msgId, bool read);
+	virtual bool markRead(const RsGxsGrpMsgIdPair& msgId, bool read) override;
 
 	/// @see RsGxsChannels
 	bool exportChannelLink(
@@ -295,7 +295,7 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 	        ) override;
 
 	virtual bool shareChannelKeys(
-	        const RsGxsGroupId& channelId, const std::set<RsPeerId>& peers );
+	        const RsGxsGroupId& channelId, const std::set<RsPeerId>& peers ) override;
 
 	/// Implementation of @see RsGxsChannels::createChannel
 	RS_DEPRECATED_FOR(createChannelV2)
@@ -316,7 +316,8 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 
 protected:
 	// Overloaded from GxsTokenQueue for Request callbacks.
-	virtual void handleResponse(uint32_t token, uint32_t req_type);
+	virtual void handleResponse(uint32_t token, uint32_t req_type
+	                            , RsTokenService::GxsRequestStatus status) override;
 
 
 private:

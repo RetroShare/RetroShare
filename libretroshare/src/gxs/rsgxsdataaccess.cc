@@ -693,10 +693,10 @@ bool RsGxsDataAccess::getServiceStatistic(const uint32_t &token, GxsServiceStati
 }
 GxsRequest* RsGxsDataAccess::locked_retrieveCompletedRequest(const uint32_t& token)
 {
-    auto it = mCompletedRequests.find(token) ;
+	auto it = mCompletedRequests.find(token) ;
 
-    if(it == mCompletedRequests.end())
-        return nullptr;
+	if(it == mCompletedRequests.end())
+		return nullptr;
 
 	return it->second;
 }
@@ -720,6 +720,7 @@ void RsGxsDataAccess::processRequests()
 			{
 				if(now > mRequestQueue.begin()->second->reqTime + MAX_REQUEST_AGE)
 				{
+					mPublicToken[mRequestQueue.begin()->second->token] = CANCELLED;
 					delete mRequestQueue.begin()->second;
 					mRequestQueue.erase(mRequestQueue.begin());
 					continue;
@@ -1024,7 +1025,7 @@ bool RsGxsDataAccess::getMsgMetaDataList( const GxsMsgReq& msgIds, const RsTokRe
 
     for(meta_it = result.begin(); meta_it != result.end(); ++meta_it)
     {
-            const RsGxsGroupId& grpId = meta_it->first;
+            //const RsGxsGroupId& grpId = meta_it->first;
 
             //auto& filter( metaFilter[grpId] ); // does the initialization of metaFilter[grpId] and avoids further O(log(n)) calls
 
@@ -1122,8 +1123,7 @@ bool RsGxsDataAccess::getMsgMetaDataList( const GxsMsgReq& msgIds, const RsTokRe
 			for(uint32_t i=0;i<metaV.size();++i)
                 if(metaV[i] != nullptr)
 				{
-                    const auto& msgMeta = metaV[i];
-					bool add = false;
+					const auto& msgMeta = metaV[i];
 
 					/* if we are grabbing thread Head... then parentId == empty. */
 					if (onlyThreadHeadMsgs && !msgMeta->mParentId.isNull())

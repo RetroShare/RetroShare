@@ -159,7 +159,7 @@ public:
 	                             GxsTransClient* service );
 
 	/// @see RsGenExchange::getServiceInfo()
-	virtual RsServiceInfo getServiceInfo() { return RsServiceInfo( RS_SERVICE_TYPE_GXS_TRANS, "GXS Mails", 0, 1, 0, 1 ); }
+	virtual RsServiceInfo getServiceInfo() override { return RsServiceInfo( RS_SERVICE_TYPE_GXS_TRANS, "GXS Mails", 0, 1, 0, 1 ); }
 
 	static const uint32_t GXS_STORAGE_PERIOD = 15*86400;	// 15 days.
 	static const uint32_t GXS_SYNC_PERIOD    = 15*86400;
@@ -230,30 +230,32 @@ private:
 	inMap mIncomingQueue;
 	RsMutex mIngoingMutex;
 
-	/// @see GxsTokenQueue::handleResponse(uint32_t token, uint32_t req_type)
-	virtual void handleResponse(uint32_t token, uint32_t req_type);
+	/// @see GxsTokenQueue::handleResponse(uint32_t token, uint32_t req_type
+	///                                    , RsTokenService::GxsRequestStatus status)
+	virtual void handleResponse(uint32_t token, uint32_t req_type
+	                            , RsTokenService::GxsRequestStatus status) override;
 
 	/// @see RsGenExchange::service_tick()
-	virtual void service_tick();
+	virtual void service_tick() override;
 
 	/// @see RsGenExchange::service_CreateGroup(...)
 	RsGenExchange::ServiceCreate_Return service_CreateGroup(
-	        RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& );
+	        RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& ) override;
 
 	/// @see RsGenExchange::notifyChanges(std::vector<RsGxsNotify *> &changes)
-	void notifyChanges(std::vector<RsGxsNotify *> &changes);
+	void notifyChanges(std::vector<RsGxsNotify *> &changes) override;
 
 	/// @see p3Config::setupSerialiser()
-	virtual RsSerialiser* setupSerialiser();
+	virtual RsSerialiser* setupSerialiser() override;
 
 	/// @see p3Config::saveList(bool &cleanup, std::list<RsItem *>&)
-	virtual bool saveList(bool &cleanup, std::list<RsItem *>&saveList);
+	virtual bool saveList(bool &cleanup, std::list<RsItem *>&saveList) override;
 
 	/// @see p3Config::saveDone()
-	void saveDone();
+	void saveDone() override;
 
 	/// @see p3Config::loadList(std::list<RsItem *>&)
-	virtual bool loadList(std::list<RsItem *>& loadList);
+	virtual bool loadList(std::list<RsItem *>& loadList) override;
 
 	/// Request groups list to GXS backend. Async method.
 	bool requestGroupsData(const std::list<RsGxsGroupId>* groupIds = NULL);
@@ -325,9 +327,9 @@ private:
 
 	// Overloaded from RsGenExchange.
 
-	bool acceptNewMessage(const RsGxsMsgMetaData *msgMeta, uint32_t size) ;
+	bool acceptNewMessage(const RsGxsMsgMetaData *msgMeta, uint32_t size) override;
 
-    GxsTransIntegrityCleanupThread *mCleanupThread ;
+	GxsTransIntegrityCleanupThread *mCleanupThread ;
 
 	// statistics of the load across all groups, per user.
 

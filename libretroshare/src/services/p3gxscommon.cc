@@ -199,7 +199,7 @@ bool p3GxsCommentService::getGxsCommentData(const uint32_t &token, std::vector<R
 		
 		for(; mit != msgData.end();  ++mit)
 		{
-			RsGxsGroupId grpId = mit->first;
+			//RsGxsGroupId grpId = mit->first;
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
 
@@ -697,12 +697,15 @@ bool p3GxsCommentService::acknowledgeVote(const uint32_t& token, RsGxsGrpMsgIdPa
 
 
         // Overloaded from GxsTokenQueue for Request callbacks.
-void p3GxsCommentService::handleResponse(uint32_t token, uint32_t req_type)
+void p3GxsCommentService::handleResponse(uint32_t token, uint32_t req_type
+                                         , RsTokenService::GxsRequestStatus status)
 {
 #ifdef DEBUG_GXSCOMMON
-        std::cerr << "p3GxsCommentService::handleResponse(" << token << "," << req_type << ")";
-        std::cerr << std::endl;
+	std::cerr << "p3GxsCommentService::handleResponse(" << token << "," << req_type << "," << status << ")" << std::endl;
 #endif
+	if (status != RsTokenService::COMPLETE)
+		return; //For now, only manage Complete request
+
 
         // stuff.
         switch(req_type)

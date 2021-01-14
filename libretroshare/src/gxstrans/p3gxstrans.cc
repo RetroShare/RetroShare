@@ -137,11 +137,15 @@ void p3GxsTrans::registerGxsTransClient(
 	mServClients[serviceType] = service;
 }
 
-void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
+void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type
+                                , RsTokenService::GxsRequestStatus status)
 {
 #ifdef DEBUG_GXSTRANS
-	std::cout << "p3GxsTrans::handleResponse(" << token << ", " << req_type << ")" << std::endl;
+	std::cout << "p3GxsTrans::handleResponse(" << token << ", " << req_type << ", " << status << ")" << std::endl;
 #endif
+	if (status != RsTokenService::COMPLETE)
+		return; //For now, only manage Complete request
+
 	bool changed = false ;
 
 	switch (req_type)
