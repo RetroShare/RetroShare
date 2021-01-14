@@ -224,14 +224,22 @@ void AvatarWidget::refreshStatus()
                 status = statusInfo.status ;
             }
             else if(mId.isDistantChatId())
-	    {
-		    DistantChatPeerInfo dcpinfo ;
+        {
+            DistantChatPeerInfo dcpinfo ;
 
-		    if(rsMsgs->getDistantChatStatus(mId.toDistantChatId(),dcpinfo))
-			    status = dcpinfo.status ;
-		    else
-			    std::cerr << "(EE) cannot get distant chat status for ID=" << mId.toDistantChatId() << std::endl;
-	    }
+            if(rsMsgs->getDistantChatStatus(mId.toDistantChatId(),dcpinfo))
+            {
+                switch (dcpinfo.status)
+                {
+                    case RS_DISTANT_CHAT_STATUS_CAN_TALK        : status = RS_STATUS_ONLINE ; break;
+                    case RS_DISTANT_CHAT_STATUS_UNKNOWN         : // Fall-through
+                    case RS_DISTANT_CHAT_STATUS_TUNNEL_DN       : // Fall-through
+                    case RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED : status = RS_STATUS_OFFLINE;
+                }
+            }
+            else
+                std::cerr << "(EE) cannot get distant chat status for ID=" << mId.toDistantChatId() << std::endl;
+        }
             else
             {
                 std::cerr << "Unhandled chat id type in AvatarWidget::refreshStatus()" << std::endl;
