@@ -57,9 +57,9 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
 	int graphColor = ui.cmbGraphColor->currentIndex();
 
 	if(graphColor==0)
-		ui.bwgraph_BW->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_PLAIN);
+		ui.bwgraph_BW->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
 	else
-		ui.bwgraph_BW->setFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_PLAIN);
+		ui.bwgraph_BW->setFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
 
     // Setup connections
 

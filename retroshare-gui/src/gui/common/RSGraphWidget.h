@@ -33,7 +33,7 @@
 
 #define GRAPH_BASE     2  /** Position of the 0 of the scale, in count of the text height */
 #define SCALE_WIDTH   75  /** Width of the scale */
-#define MINUSER_SCALE 200  /** 2000 users is the minimum scale */
+#define MINUSER_SCALE 2000  /** 2000 users is the minimum scale */
 #define SCROLL_STEP   4   /** Horizontal change on graph update */
 
 #define BACK_COLOR         Qt::white
