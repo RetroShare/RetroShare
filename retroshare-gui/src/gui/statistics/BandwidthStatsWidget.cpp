@@ -54,12 +54,7 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
 	updateUnitSelection(0);
 	toggleLogScale(ui.logScale_CB->checkState() == Qt::Checked);//Update bwgraph_BW with default logScale_CB state defined in ui file.
 
-	int graphColor = ui.cmbGraphColor->currentIndex();
 
-	if(graphColor==0)
-		ui.bwgraph_BW->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
-	else
-		ui.bwgraph_BW->setFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
 
     // Setup connections
 
@@ -80,6 +75,13 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
 
     // load settings
     processSettings(true);
+
+	int graphColor = ui.cmbGraphColor->currentIndex();
+
+	if(graphColor==0)
+		ui.bwgraph_BW->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
+	else
+		ui.bwgraph_BW->setFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
 }
 
 BandwidthStatsWidget::~BandwidthStatsWidget ()
