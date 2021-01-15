@@ -72,55 +72,57 @@ void RsPostedPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEvent> 
 
 	switch(e->mPostedEventCode)
 	{
-	case RsPostedEventCode::UPDATED_MESSAGE:
-    case RsPostedEventCode::READ_STATUS_CHANGED:
-    case RsPostedEventCode::MESSAGE_VOTES_UPDATED:
-    case RsPostedEventCode::NEW_MESSAGE:
-	{
-		// Normally we should just emit dataChanged() on the index of the data that has changed:
-		//
-		// We need to update the data!
+		case RsPostedEventCode::UPDATED_MESSAGE:
+		case RsPostedEventCode::READ_STATUS_CHANGED:
+		case RsPostedEventCode::MESSAGE_VOTES_UPDATED:
+		case RsPostedEventCode::NEW_MESSAGE:
+		{
+			// Normally we should just emit dataChanged() on the index of the data that has changed:
+			//
+			// We need to update the data!
 
-		if(e->mPostedGroupId == mPostedGroup.mMeta.mGroupId)
-			RsThread::async([this, e]()
-			{
-				// 1 - get message data from p3GxsChannels
+			RsGxsPostedEvent E(*e);
 
-				std::vector<RsPostedPost> posts;
-				std::vector<RsGxsComment> comments;
-				std::vector<RsGxsVote>    votes;
-
-                if(!rsPosted->getBoardContent(mPostedGroup.mMeta.mGroupId,std::set<RsGxsMessageId>{ e->mPostedMsgId }, posts,comments,votes))
+			if(E.mPostedGroupId == mPostedGroup.mMeta.mGroupId)
+				RsThread::async([this, E]()
 				{
-					std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel message data for channel/msg " << e->mPostedGroupId << "/" << e->mPostedMsgId << std::endl;
-					return;
-				}
+					// 1 - get message data from p3GxsChannels
 
-				// 2 - update the model in the UI thread.
+					std::vector<RsPostedPost> posts;
+					std::vector<RsGxsComment> comments;
+					std::vector<RsGxsVote>    votes;
 
-				RsQThreadUtils::postToObject( [posts,comments,votes,this]()
-				{
-					for(uint32_t i=0;i<posts.size();++i)
+					if(!rsPosted->getBoardContent(mPostedGroup.mMeta.mGroupId,std::set<RsGxsMessageId>{ E.mPostedMsgId }, posts,comments,votes))
 					{
-						// linear search. Not good at all, but normally this is for a single post.
-
-						for(uint32_t j=0;j<mPosts.size();++j)
-							if(mPosts[j].mMeta.mMsgId == posts[i].mMeta.mMsgId)
-							{
-								mPosts[j] = posts[i];
-
-                                //emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFilteredPosts.size(),0,(void*)NULL));
-
-                                preMods();
-                                postMods();
-							}
+						RS_ERR(" failed to retrieve channel message data for channel/msg ", E.mPostedGroupId, "/", E.mPostedMsgId);
+						return;
 					}
-				},this);
-            });
 
-	default:
-			break;
+					// 2 - update the model in the UI thread.
+
+					RsQThreadUtils::postToObject( [posts,comments,votes,this]()
+					{
+						for(uint32_t i=0;i<posts.size();++i)
+						{
+							// linear search. Not good at all, but normally this is for a single post.
+
+							for(uint32_t j=0;j<mPosts.size();++j)
+								if(mPosts[j].mMeta.mMsgId == posts[i].mMeta.mMsgId)
+								{
+									mPosts[j] = posts[i];
+
+									//emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFilteredPosts.size(),0,(void*)NULL));
+
+									preMods();
+									postMods();
+								}
+						}
+					},this);
+				});
+
 		}
+		default:
+		break;
 	}
 }
 
