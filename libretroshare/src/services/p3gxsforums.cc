@@ -197,16 +197,14 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	std::vector<RsGxsNotify *>::iterator it;
 	for(it = changes.begin(); it != changes.end(); ++it)
 	{
-		rs_view_ptr<RsGxsNotify> gxsChange = *it;
+		RsGxsNotify* gxsChange = *it;
 		switch(gxsChange->getType())
 		{
 		case RsGxsNotify::TYPE_RECEIVED_NEW: // [[fallthrough]]
 		case RsGxsNotify::TYPE_PUBLISHED:
 		{
-			rs_view_ptr<RsGxsMsgChange> msgChange =
-			        dynamic_cast<RsGxsMsgChange*>(*it);
-			rs_view_ptr<RsGxsGroupChange> groupChange =
-			        dynamic_cast<RsGxsGroupChange*>(*it);
+			RsGxsMsgChange* msgChange = dynamic_cast<RsGxsMsgChange*>(*it);
+			RsGxsGroupChange* groupChange = dynamic_cast<RsGxsGroupChange*>(*it);
 
 			if(msgChange) /* Message received*/
 			{
@@ -258,7 +256,7 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 		}
 		case RsGxsNotify::TYPE_MESSAGE_DELETED:
 		{
-			rs_view_ptr<RsGxsMsgDeletedChange> delChange =
+			RsGxsMsgDeletedChange* delChange =
 			        dynamic_cast<RsGxsMsgDeletedChange*>(gxsChange);
 
 			if(!delChange)
@@ -301,8 +299,7 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 			 * analyse the old and new group in order to detect possible
 			 * notifications for clients */
 
-			rs_view_ptr<RsGxsGroupChange> grpChange =
-			        dynamic_cast<RsGxsGroupChange*>(*it);
+			RsGxsGroupChange* grpChange = dynamic_cast<RsGxsGroupChange*>(*it);
 
 			RsGxsForumGroupItem* old_forum_grp_item =
 			        dynamic_cast<RsGxsForumGroupItem*>(grpChange->mOldGroupItem);
