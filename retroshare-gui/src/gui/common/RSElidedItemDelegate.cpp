@@ -202,7 +202,7 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 			moOption.decorationPosition = QStyleOptionViewItem::Left;
 			moOption.decorationSize = QSize();
 			moOption.displayAlignment = Qt::AlignLeft | Qt::AlignTop;
-			moOption.features=0;
+			moOption.features=QStyleOptionViewItem::ViewItemFeatures();
 			moOption.font = QFont();
 			moOption.icon = QIcon();
 			moOption.index = QModelIndex();
@@ -217,7 +217,8 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 			moOption.palette = QPalette();
 			moOption.styleObject = nullptr;
 		}
-		QStyledItemDelegate::paint(&moPnt, moOption, QModelIndex());
+		//QStyledItemDelegate::paint(&moPnt, moOption, QModelIndex(index));//This update option now.
+		ownStyle->drawControl(QStyle::CE_ItemViewItem, &moOption, &moPnt, widget);
 
 		//// But these lines doesn't works.
 		{
@@ -300,9 +301,9 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 	{
 		QStyleOptionViewItem tstOption = option;
 		// Reduce rect to get this item bg color external and base internal
-		tstOption.rect.adjust(3,3,-6,-6);
+		tstOption.rect.adjust(2,2,-2,-2);
 		// To draw with base for debug purpose
-		QStyledItemDelegate::paint(painter, tstOption, index);
+		RSStyledItemDelegate::paint(painter, tstOption, index);
 	}
 #endif
 
@@ -379,6 +380,10 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 
 		QTextLayout textLayout(ownOption.text, painter->font());
 		QTextOption to = textLayout.textOption();
+		const int textHMargin = ownStyle->pixelMetric(QStyle::PM_FocusFrameHMargin, nullptr, widget) + 1;
+		const int textVMargin = ownStyle->pixelMetric(QStyle::PM_FocusFrameVMargin, nullptr, widget) + 1;
+		textRect = textRect.adjusted(textHMargin, textVMargin, -textHMargin, -textVMargin); // remove width padding
+
 		StyledElidedLabel::paintElidedLine(painter,ownOption.text,textRect,ownOption.font,ownOption.displayAlignment,to.wrapMode()&QTextOption::WordWrap,mPaintRoundedRect);
 	}
 	painter->restore();
@@ -393,7 +398,9 @@ bool RSElidedItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 		QMouseEvent *ev = static_cast<QMouseEvent *>(event);
 		if (ev) {
 			if (ev->buttons()==Qt::LeftButton) {
+#ifdef DEBUG_EID_PAINT
 				QVariant var = index.data();
+#endif
 				if (index.data().type() == QVariant::String) {
 					QString text = index.data().toString();
 					if (!text.isEmpty()) {
@@ -417,6 +424,9 @@ bool RSElidedItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 							ownOption.fontMetrics = QFontMetrics(font);
 						}
 						QRect textRect = ownStyle->subElementRect(QStyle::SE_ItemViewItemText, &ownOption, widget);
+						const int textHMargin = ownStyle->pixelMetric(QStyle::PM_FocusFrameHMargin, nullptr, widget) + 1;
+						const int textVMargin = ownStyle->pixelMetric(QStyle::PM_FocusFrameVMargin, nullptr, widget) + 1;
+						textRect = textRect.adjusted(textHMargin, textVMargin, -textHMargin, -textVMargin); // remove width padding
 
 						QTextLayout textLayout(text, ownOption.font);
 						QTextOption to = textLayout.textOption();
