@@ -5424,6 +5424,12 @@ bool RsGxsNetService::search( const std::string& substring,
 	group_infos.clear();
 
 #ifdef RS_DEEP_CHANNEL_INDEX
+
+#warning TODO: filter deep index search result to non circle-restricted groups.
+//    /!\
+//    /!\   These results should be filtered to only return results coming from a non restricted group!
+//    /!\
+
 	std::vector<DeepChannelsSearchResult> results;
 	DeepChannelsIndex::search(substring, results);
 
@@ -5470,7 +5476,7 @@ bool RsGxsNetService::search( const std::string& substring,
 
 	RsGroupNetworkStats stats;
 	for(auto it(grpMetaMap.begin());it!=grpMetaMap.end();++it)
-		if(termSearch(it->second->mGroupName,substring))
+        if(it->second->mCircleType==GXS_CIRCLE_TYPE_PUBLIC  &&  termSearch(it->second->mGroupName,substring))
 		{
 			getGroupNetworkStats(it->first,stats);
 
