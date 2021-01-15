@@ -24,12 +24,15 @@
 #include "retroshare/rspeers.h"
 #include "retroshare/rsservicecontrol.h"
 #include "retroshare-gui/RsAutoUpdatePage.h"
+#include "gui/settings/rsharesettings.h"
 #include "BandwidthStatsWidget.h"
 
 BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
     : QWidget(parent)
 {
     ui.setupUi(this) ;
+
+    m_bProcessSettings = false;
 
     // now add one button per service
 
@@ -51,6 +54,13 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
 	updateUnitSelection(0);
 	toggleLogScale(ui.logScale_CB->checkState() == Qt::Checked);//Update bwgraph_BW with default logScale_CB state defined in ui file.
 
+	int graphColor = ui.cmbGraphColor->currentIndex();
+
+	if(graphColor==0)
+		ui.bwgraph_BW->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_PLAIN);
+	else
+		ui.bwgraph_BW->setFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_PLAIN);
+
     // Setup connections
 
     QObject::connect(ui.friend_CB  ,SIGNAL(currentIndexChanged(int )),this, SLOT( updateFriendSelection(int ))) ;
@@ -59,6 +69,7 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
     QObject::connect(ui.service_CB ,SIGNAL(currentIndexChanged(int )),this, SLOT(updateServiceSelection(int ))) ;
     QObject::connect(ui.legend_CB  ,SIGNAL(currentIndexChanged(int )),this, SLOT(      updateLegendType(int ))) ;
     QObject::connect(ui.logScale_CB,SIGNAL(            toggled(bool)),this, SLOT(        toggleLogScale(bool))) ;
+    QObject::connect(ui.cmbGraphColor,SIGNAL(currentIndexChanged(int )),this, SLOT(  updateGraphSelection(int))) ;
 
     // setup one timer for auto-update
 
@@ -66,6 +77,38 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
     connect(mTimer, SIGNAL(timeout()), this, SLOT(updateComboBoxes())) ;
     mTimer->setSingleShot(false) ;
     mTimer->start(2000) ;
+
+    // load settings
+    processSettings(true);
+}
+
+BandwidthStatsWidget::~BandwidthStatsWidget ()
+{
+    // save settings
+    processSettings(false);
+}
+
+void BandwidthStatsWidget::processSettings(bool bLoad)
+{
+    m_bProcessSettings = true;
+
+    Settings->beginGroup(QString("BandwidthStatsWidget"));
+
+    if (bLoad) {
+        // load settings
+
+		// state of Graph Color combobox
+		int index = Settings->value("cmbGraphColor", 0).toInt();
+		ui.cmbGraphColor->setCurrentIndex(index);
+    } else {
+        // save settings
+
+		// state of Graph Color combobox
+		Settings->setValue("cmbGraphColor", ui.cmbGraphColor->currentIndex());
+    }
+
+    Settings->endGroup();
+    m_bProcessSettings = false;
 }
 
 void BandwidthStatsWidget::toggleLogScale(bool b)
@@ -75,6 +118,7 @@ void BandwidthStatsWidget::toggleLogScale(bool b)
     else
 	ui.bwgraph_BW->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_LOG_SCALE_Y) ;
 }
+
 void BandwidthStatsWidget::updateComboBoxes()
 {
     if(!isVisible())
@@ -233,4 +277,12 @@ void BandwidthStatsWidget::updateUnitSelection(int n)
         ui.bwgraph_BW->setFiltering(false) ;
         ui.legend_CB->setItemText(1,tr("Total"));
     }
+}
+
+void BandwidthStatsWidget::updateGraphSelection(int n)
+{
+    if(n==0)
+		ui.bwgraph_BW->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
+	else
+		ui.bwgraph_BW->setFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
 }
