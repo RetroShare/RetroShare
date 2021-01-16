@@ -322,9 +322,8 @@ bool p3Wire::getRelatedPulseData(const uint32_t &token, std::vector<RsWirePulse>
 
 bool p3Wire::createGroup(uint32_t &token, RsWireGroup &group)
 {
-	RsGxsWireGroupItem* groupItem = new RsGxsWireGroupItem();
-	groupItem->group = group;
-	groupItem->meta = group.mMeta;
+	RsGxsWireGroupItem* grpItem = new RsGxsWireGroupItem();
+	grpItem->fromWireGroup(group, true);
 
 	std::cerr << "p3Wire::createGroup(): ";
 	std::cerr << std::endl;
@@ -334,7 +333,7 @@ bool p3Wire::createGroup(uint32_t &token, RsWireGroup &group)
 	std::cerr << "p3Wire::createGroup() pushing to RsGenExchange";
 	std::cerr << std::endl;
 
-	RsGenExchange::publishGroup(token, groupItem);
+	RsGenExchange::publishGroup(token, grpItem);
 	return true;
 }
 
