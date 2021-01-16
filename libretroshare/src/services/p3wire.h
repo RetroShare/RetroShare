@@ -58,8 +58,10 @@ public:
 
 	// Blocking Interfaces.
 	virtual bool createGroup(RsWireGroup &group) override;
-	virtual bool updateGroup(const RsWireGroup &group) override;
+	virtual bool updateGroup(uint32_t &token, RsWireGroup &group) override;
 	virtual bool getGroups(const std::list<RsGxsGroupId> grpIds, std::vector<RsWireGroup> &groups) override;
+
+	bool editWire(RsWireGroup& wire) override;
 
 	// New Interfaces.
 	// Blocking, request structures for display.

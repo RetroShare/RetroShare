@@ -152,9 +152,11 @@ bool WireGroupDialog::service_updateGroup(const RsGroupMetaData &editedMeta)
 	std::cerr << "WireGroupDialog::service_updateGroup() submitting changes";
 	std::cerr << std::endl;
 
-	bool success = rsWire->updateGroup(grp);
+	//bool success = rsWire->updateGroup(grp);
 	// TODO updateGroup should refresh groupId or Data
-	return success;
+	//return success;
+
+	return rsWire->editWire(grp);
 }
 
 bool WireGroupDialog::service_loadGroup(const RsGxsGenericGroupData *data, Mode mode, QString &description)

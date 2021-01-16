@@ -220,7 +220,7 @@ virtual bool createPulse(uint32_t &token, RsWirePulse &pulse) = 0;
 
 	// Blocking Interfaces.
 virtual bool createGroup(RsWireGroup &group) = 0;
-virtual bool updateGroup(const RsWireGroup &group) = 0;
+virtual bool updateGroup(uint32_t &token, RsWireGroup &group) = 0;
 virtual bool getGroups(const std::list<RsGxsGroupId> grpIds,
 				std::vector<RsWireGroup> &groups) = 0;
 
@@ -244,6 +244,8 @@ virtual bool getPulsesForGroups(const std::list<RsGxsGroupId> &groupIds,
 	// Provide pulse, and associated replies / like etc.
 virtual bool getPulseFocus(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId,
 				int type, RsWirePulseSPtr &pPulse) = 0;
+
+	virtual bool editWire(RsWireGroup& wire) = 0;
 
 };
 

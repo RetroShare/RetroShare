@@ -28,6 +28,7 @@
 #include "rsitems/rsserviceids.h"
 #include "serialiser/rsserial.h"
 //#include "serialiser/rstlvtypes.h"
+#include "serialiser/rstlvimage.h"
 
 #include "rsgxsitems.h"
 #include "retroshare/rswire.h"
@@ -47,7 +48,17 @@ public:
 
 	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
+	// use conversion functions to transform:
+	bool fromWireGroup(RsWireGroup &group, bool moveImage);
+	bool toWireGroup(RsWireGroup &group, bool moveImage);
+
 	RsWireGroup group;
+	
+	std::string mTagline;
+	std::string mLocation;
+
+	RsTlvImage mHeadshotImage;
+	RsTlvImage mMastheadImage;
 };
 
 class RsGxsWirePulseItem : public RsGxsMsgItem

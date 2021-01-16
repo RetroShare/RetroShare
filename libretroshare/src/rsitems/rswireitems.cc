@@ -95,3 +95,55 @@ void RsGxsWirePulseItem::serial_process(RsGenericSerializer::SerializeJob j,RsGe
 	pulse.mImage4.serial_process(j, ctx);
 }
 
+bool RsGxsWireGroupItem::fromWireGroup(RsWireGroup &group, bool moveImage)
+{
+	clear();
+	meta = group.mMeta;
+	mTagline = group.mTagline;
+	mLocation = group.mLocation;
+
+	if (moveImage)
+	{
+		mHeadshotImage.binData.bin_data = group.mHeadshot.mData;
+		mHeadshotImage.binData.bin_len = group.mHeadshot.mSize;
+		group.mHeadshot.shallowClear();
+
+		mMastheadImage.binData.bin_data = group.mMasthead.mData;
+		mMastheadImage.binData.bin_len = group.mMasthead.mSize;
+		group.mMasthead.shallowClear();
+	}
+	else
+	{
+		mHeadshotImage.binData.setBinData(group.mHeadshot.mData, group.mHeadshot.mSize);
+
+		mMastheadImage.binData.setBinData(group.mMasthead.mData, group.mMasthead.mSize);
+	}
+
+	return true;
+}
+
+bool RsGxsWireGroupItem::toWireGroup(RsWireGroup &group, bool moveImage)
+{
+	group.mMeta = meta;
+	group.mTagline = mTagline;
+	group.mLocation = mLocation;
+
+	if (moveImage)
+	{
+		group.mHeadshot.take((uint8_t *) mHeadshotImage.binData.bin_data, mHeadshotImage.binData.bin_len);
+		// mHeadshotImage doesn't have a ShallowClear at the moment!
+		mHeadshotImage.binData.TlvShallowClear();
+
+		group.mMasthead.take((uint8_t *) mMastheadImage.binData.bin_data, mMastheadImage.binData.bin_len);
+		// mMastheadImage doesn't have a ShallowClear at the moment!
+		mMastheadImage.binData.TlvShallowClear();
+	}
+	else
+	{
+		group.mHeadshot.copy((uint8_t *) mHeadshotImage.binData.bin_data, mHeadshotImage.binData.bin_len);
+
+		group.mMasthead.copy((uint8_t *) mMastheadImage.binData.bin_data, mMastheadImage.binData.bin_len);
+	}
+
+	return true;
+}
