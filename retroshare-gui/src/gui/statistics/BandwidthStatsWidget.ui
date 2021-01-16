@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1148</width>
+    <width>800</width>
     <height>385</height>
    </rect>
   </property>
@@ -138,6 +138,20 @@
         <property name="text">
          <string>Log scale</string>
         </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="cmbGraphColor">
+        <item>
+         <property name="text">
+          <string>Default</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Dark</string>
+         </property>
+        </item>
        </widget>
       </item>
       <item>

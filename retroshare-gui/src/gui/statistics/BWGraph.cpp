@@ -602,6 +602,6 @@ BWGraph::BWGraph(QWidget *parent) : RSGraphWidget(parent)
 
 BWGraph::~BWGraph()
 {
-    delete _local_source ;
+    //delete _local_source ;//Will be deleted by RSGraphWidget destructor
 }
 

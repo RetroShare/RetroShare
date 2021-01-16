@@ -26,6 +26,7 @@
 
 #include <QApplication>
 #include <gui/common/RSGraphWidget.h>
+#include "gui/settings/rsharesettings.h"
 
 #include <retroshare/rsdht.h>
 #include <retroshare/rsconfig.h>
@@ -74,5 +75,12 @@ class DhtGraph : public RSGraphWidget
 
 			resetFlags(RSGRAPH_FLAGS_LOG_SCALE_Y) ;
 			setFlags(RSGRAPH_FLAGS_PAINT_STYLE_PLAIN) ;
+			
+			int graphColor = Settings->valueFromGroup("BandwidthStatsWidget", "cmbGraphColor", 0).toInt();
+
+			if(graphColor==0)
+				resetFlags(RSGraphWidget::RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
+			else
+				setFlags(RSGraphWidget::RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
 		}
 };
