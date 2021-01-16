@@ -423,18 +423,24 @@ void MainWindow::initStackedPage()
   addPage(peopleDialog = new PeopleDialog(ui->stackPages), grp, &notify);
   #endif
 #ifdef RS_USE_WIKI
+  if(Settings->valueFromGroup("Services", "Wiki", QVariant(true)).toBool()){ 
   WikiDialog *wikiDialog = NULL;
   addPage(wikiDialog = new WikiDialog(ui->stackPages), grp, &notify);
+  }
 #endif
 
 #ifdef RS_USE_WIRE
+  if(Settings->valueFromGroup("Services", "Wire", QVariant(true)).toBool()) {
   WireDialog *wireDialog = NULL;
   addPage(wireDialog = new WireDialog(ui->stackPages), grp, &notify);
+  }
 #endif
 
 #ifdef RS_USE_PHOTO
+  if(Settings->valueFromGroup("Services", "Photos", QVariant(true)).toBool()) {
   PhotoShare *photoDialog = NULL;
   addPage(photoDialog = new PhotoShare(ui->stackPages), grp, &notify);
+  }
 #endif
 
 

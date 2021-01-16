@@ -27,6 +27,7 @@
 #include "PluginItem.h"
 #include "rshare.h"
 #include "rsharesettings.h"
+#include "util/misc.h"
 
 #include <retroshare/rsplugin.h>
 
@@ -37,6 +38,10 @@ settings::PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
 {
     ui.setupUi(this);
     setAttribute(Qt::WA_QuitOnClose, false);
+
+	ui.wireBox->hide();
+	ui.wikiBox->hide();
+	ui.photosBox->hide();
 
 	 QString text ;
 
@@ -157,7 +162,26 @@ settings::PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
     ui.enableAll->setEnabled(false);
 
 	QObject::connect(ui.enableAll,SIGNAL(toggled(bool)),this,SLOT(toggleEnableAll(bool))) ;
+	
+	connect(ui.wireBox,     SIGNAL(toggled(bool)),          this,SLOT(enableWire()  ));
+	connect(ui.wikiBox,     SIGNAL(toggled(bool)),          this,SLOT(enableWiki()  ));
+	connect(ui.photosBox,   SIGNAL(toggled(bool)),          this,SLOT(enablePhotos()  ));
+	
+#ifdef RS_USE_WIRE
+	ui.wireBox->show();
+#endif
+#ifdef RS_USE_WIKI
+	ui.wikiBox->show();
+#endif
+#ifdef RS_USE_PHOTO
+	ui.photosBox->show();
+#endif
 }
+
+void settings::PluginsPage::enableWire()       { Settings->setValueToGroup("Services", "Wire", ui.wireBox->isChecked()); }
+void settings::PluginsPage::enableWiki()       { Settings->setValueToGroup("Services", "Wiki", ui.wikiBox->isChecked()); }
+void settings::PluginsPage::enablePhotos()       { Settings->setValueToGroup("Services", "Photos", ui.photosBox->isChecked()); }
+
 QString settings::PluginsPage::helpText() const
 {
    return tr("<h1><img width=\"24\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Plugins</h1>     \
@@ -204,7 +228,6 @@ void settings::PluginsPage::disablePlugin(const QString& hash)
         rsPlugins->disablePlugin(RsFileHash(hash.toStdString())) ;
 }
 
-
 settings::PluginsPage::~PluginsPage()
 {
 }
@@ -212,4 +235,11 @@ settings::PluginsPage::~PluginsPage()
 /** Loads the settings for this page */
 void settings::PluginsPage::load()
 {
+    Settings->beginGroup(QString("Services"));
+
+    whileBlocking(ui.wireBox)->setChecked(Settings->value("Wire", true).toBool());
+    whileBlocking(ui.wikiBox)->setChecked(Settings->value("Wiki", true).toBool());
+    whileBlocking(ui.photosBox)->setChecked(Settings->value("Photos", true).toBool());
+
+    Settings->endGroup();
 }
