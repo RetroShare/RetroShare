@@ -376,8 +376,9 @@ MainWindow::~MainWindow()
     delete toasterDisable;
     delete sysTrayStatus;
     delete trayIcon;
+    delete notifyMenu;//notifyMenu belongs to trayMenu
     delete trayMenu;
-    delete notifyMenu;
+	StatisticsWindow::releaseInstance();
 #ifdef MESSENGER_WINDOW
     MessengerWindow::releaseInstance();
 #endif
