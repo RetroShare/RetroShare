@@ -139,9 +139,13 @@ bool WireGroupDialog::service_createGroup(RsGroupMetaData &meta)
 	RsWireGroup grp;
 	prepareWireGroup(grp, meta);
 
-	bool success = rsWire->createGroup(grp);
+	//bool success = rsWire->createGroup(grp);
 	// TODO createGroup should refresh groupId or Data
-	return success;
+	//return success;
+	rsWire->createWire(grp);
+
+	meta = grp.mMeta;
+	return true;
 }
 
 bool WireGroupDialog::service_updateGroup(const RsGroupMetaData &editedMeta)

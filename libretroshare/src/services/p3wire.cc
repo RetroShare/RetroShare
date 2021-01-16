@@ -1351,6 +1351,33 @@ bool p3Wire::fetchGroupPtrs(const std::list<RsGxsGroupId> &groupIds,
 	return getGroupPtrData(token, groups);
 }
 
+bool p3Wire::createWire(RsWireGroup& wire)
+{
+	uint32_t token;
+	if(!createGroup(token, wire))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error! Failed creating group."
+		          << std::endl;
+		return false;
+	}
+
+	if(waitToken(token) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error! GXS operation failed."
+		          << std::endl;
+		return false;
+	}
+
+	if(!RsGenExchange::getPublishedGroupMeta(token, wire.mMeta))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error! Failure getting updated "
+		          << " group data." << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
 bool p3Wire::editWire(RsWireGroup& wire)
 {
 	uint32_t token;
@@ -1377,3 +1404,5 @@ bool p3Wire::editWire(RsWireGroup& wire)
 
 	return true;
 }
+
+

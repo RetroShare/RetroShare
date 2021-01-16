@@ -245,6 +245,8 @@ virtual bool getPulsesForGroups(const std::list<RsGxsGroupId> &groupIds,
 virtual bool getPulseFocus(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId,
 				int type, RsWirePulseSPtr &pPulse) = 0;
 
+	virtual bool createWire(RsWireGroup& wire) = 0;
+
 	virtual bool editWire(RsWireGroup& wire) = 0;
 
 };

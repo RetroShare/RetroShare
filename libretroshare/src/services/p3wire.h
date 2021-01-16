@@ -61,6 +61,7 @@ public:
 	virtual bool updateGroup(uint32_t &token, RsWireGroup &group) override;
 	virtual bool getGroups(const std::list<RsGxsGroupId> grpIds, std::vector<RsWireGroup> &groups) override;
 
+	bool createWire(RsWireGroup& wire) override;
 	bool editWire(RsWireGroup& wire) override;
 
 	// New Interfaces.
