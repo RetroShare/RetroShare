@@ -140,8 +140,8 @@ bool p3Wire::getGroupData(const uint32_t &token, std::vector<RsWireGroup> &group
 
 			if (item)
 			{
-				RsWireGroup group = item->group;
-				group.mMeta = item->meta;
+				RsWireGroup group;
+				item->toWireGroup(group, true);
 				delete item;
 				groups.push_back(group);
 
@@ -322,9 +322,8 @@ bool p3Wire::getRelatedPulseData(const uint32_t &token, std::vector<RsWirePulse>
 
 bool p3Wire::createGroup(uint32_t &token, RsWireGroup &group)
 {
-	RsGxsWireGroupItem* groupItem = new RsGxsWireGroupItem();
-	groupItem->group = group;
-	groupItem->meta = group.mMeta;
+	RsGxsWireGroupItem* grpItem = new RsGxsWireGroupItem();
+	grpItem->fromWireGroup(group, true);
 
 	std::cerr << "p3Wire::createGroup(): ";
 	std::cerr << std::endl;
@@ -334,7 +333,7 @@ bool p3Wire::createGroup(uint32_t &token, RsWireGroup &group)
 	std::cerr << "p3Wire::createGroup() pushing to RsGenExchange";
 	std::cerr << std::endl;
 
-	RsGenExchange::publishGroup(token, groupItem);
+	RsGenExchange::publishGroup(token, grpItem);
 	return true;
 }
 
@@ -359,10 +358,13 @@ bool p3Wire::createGroup(RsWireGroup &group)
 	return createGroup(token, group) && waitToken(token) == RsTokenService::COMPLETE;
 }
 
-bool p3Wire::updateGroup(const RsWireGroup & /*group*/)
+bool p3Wire::updateGroup(uint32_t &token, RsWireGroup & group)
 {
-	// TODO
-	return false;
+	RsGxsWireGroupItem* grpItem = new RsGxsWireGroupItem();
+	grpItem->fromWireGroup(group, true);
+
+	RsGenExchange::updateGroup(token, grpItem);
+	return true;
 }
 
 bool p3Wire::getGroups(const std::list<RsGxsGroupId> groupIds, std::vector<RsWireGroup> &groups)
@@ -1348,4 +1350,59 @@ bool p3Wire::fetchGroupPtrs(const std::list<RsGxsGroupId> &groupIds,
 	}
 	return getGroupPtrData(token, groups);
 }
+
+bool p3Wire::createWire(RsWireGroup& wire)
+{
+	uint32_t token;
+	if(!createGroup(token, wire))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error! Failed creating group."
+		          << std::endl;
+		return false;
+	}
+
+	if(waitToken(token) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error! GXS operation failed."
+		          << std::endl;
+		return false;
+	}
+
+	if(!RsGenExchange::getPublishedGroupMeta(token, wire.mMeta))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error! Failure getting updated "
+		          << " group data." << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool p3Wire::editWire(RsWireGroup& wire)
+{
+	uint32_t token;
+	if(!updateGroup(token, wire))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error! Failed updating group."
+		          << std::endl;
+		return false;
+	}
+
+	if(waitToken(token) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error! GXS operation failed."
+		          << std::endl;
+		return false;
+	}
+
+	if(!RsGenExchange::getPublishedGroupMeta(token, wire.mMeta))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error! Failure getting updated "
+		          << " group data." << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
 
