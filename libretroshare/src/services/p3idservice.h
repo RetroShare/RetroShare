@@ -261,10 +261,7 @@ public:
     virtual bool createIdentity(uint32_t& token, RsIdentityParameters &params) override;
 
 	/// @see RsIdentity
-	bool updateIdentity(RsGxsIdGroup& identityData) override;
-
-	RS_DEPRECATED
-    virtual bool updateIdentity(uint32_t& token, RsGxsIdGroup &group) override;
+    bool updateIdentity( const RsGxsId& id, const std::string& name, const RsGxsImage& avatar, bool pseudonimous, const std::string& pgpPassword) override;
 
 	/// @see RsIdentity
 	bool deleteIdentity(RsGxsId& id) override;

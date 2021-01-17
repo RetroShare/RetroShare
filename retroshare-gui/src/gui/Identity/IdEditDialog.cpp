@@ -611,8 +611,31 @@ void IdEditDialog::updateId()
 	else
 		mEditGroup.mImage.clear();
 
-	uint32_t dummyToken = 0;
-	rsIdentity->updateIdentity(mEditGroup);
+    RsGxsId keyId;
+    std::string gpg_password;
+
+    if(!mEditGroup.mPgpId.isNull())
+    {
+        std::string gpg_name = rsPeers->getGPGName(rsPeers->getGPGOwnId());
+        bool cancelled;
+
+        rsNotify->clearPgpPassphrase(); // just in case
+
+        if(!NotifyQt::getInstance()->askForPassword(tr("Profile password needed.").toStdString(),
+                                                    gpg_name + " (" + rsPeers->getOwnId().toStdString() + ")",
+                                                    false,
+                                                    gpg_password,cancelled))
+        {
+            QMessageBox::critical(NULL,tr("Identity creation failed"),tr("Cannot create an identity linked to your profile without your profile password."));
+            return;
+        }
+    }
+
+    if(!rsIdentity->updateIdentity(RsGxsId(mEditGroup.mMeta.mGroupId),mEditGroup.mMeta.mGroupName,mEditGroup.mImage,mEditGroup.mPgpId.isNull(),gpg_password))
+    {
+        QMessageBox::critical(NULL,tr("Identity update failed"),tr("Cannot update identity. Something went wrong. Check your profile password."));
+        return;
+    }
 
 	accept();
 }
