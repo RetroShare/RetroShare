@@ -834,7 +834,7 @@ int RsGenExchange::createMessage(RsNxsMsg* msg)
 	std::cerr << "RsGenExchange::createMessage() " << std::endl;
 #endif
 	RsGxsGrpMetaTemporaryMap  metaMap ;
-	metaMap.insert(std::make_pair(id, (RsGxsGrpMetaData*)(NULL)));
+    metaMap[id] = std::make_shared<RsGxsGrpMetaData>();
 	mDataStore->retrieveGxsGrpMetaData(metaMap);
 
 	RsGxsMsgMetaData &meta = *(msg->metaData);
@@ -2231,7 +2231,7 @@ bool RsGenExchange::processGrpMask(const RsGxsGroupId& grpId, ContentValue &grpC
     bool ok = false;
 
 	RsGxsGrpMetaTemporaryMap grpMetaMap;
-    grpMetaMap.insert(std::make_pair(grpId, (RsGxsGrpMetaData*)(NULL)));
+    grpMetaMap[grpId] = std::make_shared<RsGxsGrpMetaData>();
 
     mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
     auto mit = grpMetaMap.find(grpId);

@@ -420,10 +420,14 @@ public:
 	/**
 	 * @brief Update identity data (name, avatar...)
 	 * @jsonapi{development}
-	 * @param[in] identityData updated identiy data
-	 * @return false on error, true otherwise
+     * @param[in] id Id of the identity
+     * @param[in] name New name of the identity
+     * @param[in] avatar New avatar for the identity
+     * @param[in] pseudonimous Set to true to make the identity anonymous. If set to false, updating will require the profile passphrase.
+     * @param[in] pgpPassword Profile passphrase, if non pseudonymous.
+     * @return false on error, true otherwise
 	 */
-	virtual bool updateIdentity(RsGxsIdGroup& identityData) = 0;
+    virtual bool updateIdentity( const RsGxsId& id, const std::string& name, const RsGxsImage& avatar, bool pseudonimous, const std::string& pgpPassword) =0;
 
 	/**
 	 * @brief Get identity details, from the cache
@@ -636,9 +640,6 @@ public:
 	RS_DEPRECATED_FOR(RsReputations)
 	virtual bool submitOpinion(uint32_t& token, const RsGxsId &id,
 	                           bool absOpinion, int score) = 0;
-
-	RS_DEPRECATED
-	virtual bool updateIdentity(uint32_t& token, RsGxsIdGroup &group) = 0;
 
 	RS_DEPRECATED
 	virtual bool deleteIdentity(uint32_t& token, RsGxsIdGroup &group) = 0;

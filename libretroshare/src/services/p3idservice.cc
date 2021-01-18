@@ -1041,37 +1041,87 @@ bool p3IdService::createIdentity(uint32_t& token, RsIdentityParameters &params)
     return true;
 }
 
-bool p3IdService::updateIdentity(RsGxsIdGroup& identityData)
+bool p3IdService::updateIdentity( const RsGxsId& id, const std::string& name, const RsGxsImage& avatar, bool pseudonimous, const std::string& pgpPassword)
 {
+    // 1 - get back the identity group
+
+    std::vector<RsGxsIdGroup> idsInfo;
+
+    if(!getIdentitiesInfo(std::set<RsGxsId>{ id },  idsInfo))
+            return false;
+
+    RsGxsIdGroup& group(idsInfo[0]);
+
+    // 2 - update it with the new information
+
+    group.mMeta.mGroupName = name;
+    group.mMeta.mCircleType = GXS_CIRCLE_TYPE_PUBLIC ;
+    group.mImage = avatar;
+
+    if(!pseudonimous)
+    {
+#warning csoler 2020-01-21: Backward compatibility issue to fix here in v0.7.0
+
+        // This is a hack, because a bad decision led to having RSGXSID_GROUPFLAG_REALID be equal to GXS_SERV::FLAG_PRIVACY_PRIVATE.
+        // In order to keep backward compatibility, we'll also add the new value
+        // When the ID is not PGP linked, the group flag cannot be let empty, so we use PUBLIC.
+        //
+        // The correct combination of flags should be:
+        //		PGP-linked:		GXS_SERV::FLAGS_PRIVACY_PUBLIC | RSGXSID_GROUPFLAG_REALID
+        //		Anonymous :		GXS_SERV::FLAGS_PRIVACY_PUBLIC
+
+        group.mMeta.mGroupFlags |= GXS_SERV::FLAG_PRIVACY_PRIVATE;	// this is also equal to RSGXSID_GROUPFLAG_REALID_deprecated
+        group.mMeta.mGroupFlags |= RSGXSID_GROUPFLAG_REALID;
+
+        // The current version should be able to produce new identities that old peers will accept as well.
+        // In the future, we need to:
+        //     - set the current group flags here (see above)
+        //	   - replace all occurences of RSGXSID_GROUPFLAG_REALID_deprecated by RSGXSID_GROUPFLAG_REALID in the code.
+    }
+    else
+        group.mMeta.mGroupFlags |= GXS_SERV::FLAG_PRIVACY_PUBLIC;
+
 	uint32_t token;
-	if(!updateGroup(token, identityData))
+    bool ret = true;
+
+    // Cache pgp passphrase to allow a proper re-signing of the group data
+
+    if(!pseudonimous && !pgpPassword.empty())
+    {
+        if(!rsNotify->cachePgpPassphrase(pgpPassword))
+        {
+            RsErr() << __PRETTY_FUNCTION__ << " Failure caching password" << std::endl;
+            ret = false;
+            goto LabelUpdateIdentityCleanup;
+        }
+
+        if(!rsNotify->setDisableAskPassword(true))
+        {
+            RsErr() << __PRETTY_FUNCTION__ << " Failure disabling password user request" << std::endl;
+            ret = false;
+            goto LabelUpdateIdentityCleanup;
+        }
+    }
+
+    if(!updateGroup(token, group))
 	{
-		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed updating group."
-		          << std::endl;
-		return false;
+        std::cerr << __PRETTY_FUNCTION__ << "Error! Failed updating group." << std::endl;
+        ret = false;
+        goto LabelUpdateIdentityCleanup;
 	}
 
 	if(waitToken(token) != RsTokenService::COMPLETE)
 	{
-		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
-		          << std::endl;
-		return false;
+        std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed." << std::endl;
+        ret = false;
+        goto LabelUpdateIdentityCleanup;
 	}
 
-	return true;
-}
+LabelUpdateIdentityCleanup:
+    if(!pseudonimous && !pgpPassword.empty())
+        rsNotify->clearPgpPassphrase();
 
-bool p3IdService::updateIdentity(uint32_t& token, RsGxsIdGroup &group)
-{
-#ifdef DEBUG_IDS
-    std::cerr << "p3IdService::updateIdentity()";
-    std::cerr << std::endl;
-#endif
-    group.mMeta.mCircleType = GXS_CIRCLE_TYPE_PUBLIC ;
-
-    updateGroup(token, group);
-
-    return false;
+    return ret;
 }
 
 bool p3IdService::deleteIdentity(RsGxsId& id)

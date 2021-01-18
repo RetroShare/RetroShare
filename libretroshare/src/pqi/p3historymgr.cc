@@ -66,7 +66,6 @@ p3HistoryMgr::~p3HistoryMgr()
 
 /***** p3HistoryMgr *****/
 
-//void p3HistoryMgr::addMessage(bool incoming, const RsPeerId &chatPeerId, const RsPeerId &msgPeerId, const RsChatMsgItem *chatItem)
 void p3HistoryMgr::addMessage(const ChatMessage& cm)
 {
 	uint32_t addMsgId = 0;
@@ -99,7 +98,8 @@ void p3HistoryMgr::addMessage(const ChatMessage& cm)
 		}
 		if (cm.chat_id.isLobbyId() && mLobbyEnable == true) {
 			peerName = cm.lobby_peer_gxs_id.toStdString();
-			enabled = true;
+            msgPeerId = RsPeerId(cm.lobby_peer_gxs_id);
+            enabled = true;
 		}
 
 		if(cm.chat_id.isDistantChatId()&& mDistantEnable == true)
@@ -114,6 +114,8 @@ void p3HistoryMgr::addMessage(const ChatMessage& cm)
 					peerName = det.mNickname;
                 else
 					peerName = writer_id.toStdString();
+
+                msgPeerId = cm.incoming?RsPeerId(dcpinfo.own_id):RsPeerId(dcpinfo.to_id);
             }
             else
             {

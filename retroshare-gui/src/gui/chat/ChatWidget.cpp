@@ -406,25 +406,18 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 				{
 					RsIdentityDetails details;
 					time_t start = time(nullptr);
-					while (!rsIdentity->getIdDetails(RsGxsId(historyIt->peerName), details))
-					{
-						std::this_thread::sleep_for(std::chrono::milliseconds(10));
-						if (time(nullptr)>start+2)
-						{
-							std::cerr << "ChatWidget History haven't found Id Details and have wait 1 sec for it." << std::endl;
-							break;
-						}
-					}
 
-					if (rsIdentity->getIdDetails(RsGxsId(historyIt->peerName), details))
+                    if (rsIdentity->getIdDetails(RsGxsId(historyIt->peerId), details))
 						name = QString::fromUtf8(details.mNickname.c_str());
-					else
-						name = QString::fromUtf8(historyIt->peerName.c_str());
-				} else {
-					name = QString::fromUtf8(historyIt->peerName.c_str());
+                    else if(!historyIt->peerName.empty())
+                        name = QString::fromUtf8(historyIt->peerName.c_str());
+                    else
+                        name = QString::fromUtf8(historyIt->peerId.toStdString().c_str());
+                } else {
+                    name = QString::fromUtf8(historyIt->peerId.toStdString().c_str());
 				}
 
-				addChatMsg(historyIt->incoming, name, RsGxsId(historyIt->peerName.c_str()), QDateTime::fromTime_t(historyIt->sendTime), QDateTime::fromTime_t(historyIt->recvTime), QString::fromUtf8(historyIt->message.c_str()), MSGTYPE_HISTORY);
+                addChatMsg(historyIt->incoming, name, RsGxsId(historyIt->peerId.toStdString().c_str()), QDateTime::fromTime_t(historyIt->sendTime), QDateTime::fromTime_t(historyIt->recvTime), QString::fromUtf8(historyIt->message.c_str()), MSGTYPE_HISTORY);
 			}
 		}
 	}
