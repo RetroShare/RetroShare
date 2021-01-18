@@ -15,7 +15,16 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <property name="margin">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
      <number>0</number>
     </property>
     <item row="0" column="0">
@@ -45,7 +54,6 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="separator"/>
   </widget>
   <action name="actionAdd_Friend">
    <property name="icon">
@@ -61,7 +69,7 @@
   </action>
   <action name="actionAdd_Share">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset>
      <normaloff>:/images/add-share24.png</normaloff>:/images/add-share24.png</iconset>
    </property>
    <property name="text">
@@ -79,7 +87,7 @@
   </action>
   <action name="actionMessenger">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset>
      <normaloff>:/images/messenger.png</normaloff>:/images/messenger.png</iconset>
    </property>
    <property name="text">
@@ -105,7 +113,7 @@
   </action>
   <action name="actionQuit">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset>
      <normaloff>:/images/exit_24x24.png</normaloff>:/images/exit_24x24.png</iconset>
    </property>
    <property name="text">

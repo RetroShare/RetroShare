@@ -378,6 +378,7 @@ MainWindow::~MainWindow()
     delete trayIcon;
     delete notifyMenu;//notifyMenu belongs to trayMenu
     delete trayMenu;
+	StatisticsWindow::releaseInstance();
 #ifdef MESSENGER_WINDOW
     MessengerWindow::releaseInstance();
 #endif

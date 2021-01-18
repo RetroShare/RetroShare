@@ -84,6 +84,9 @@ GlobalRouterStatistics::GlobalRouterStatistics(QWidget *parent)
 		
 		connect(treeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(CustomPopupMenu(QPoint)));
 
+    /* Set initial size the splitter */
+    splitter->setStretchFactor(1, 1);
+    splitter->setStretchFactor(0, 0);
 
 	// load settings
     processSettings(true);
@@ -106,12 +109,12 @@ void GlobalRouterStatistics::processSettings(bool bLoad)
         // load settings
 
         // state of splitter
-        //splitter->restoreState(Settings->value("Splitter").toByteArray());
+        splitter->restoreState(Settings->value("Splitter").toByteArray());
     } else {
         // save settings
 
         // state of splitter
-        //Settings->setValue("Splitter", splitter->saveState());
+        Settings->setValue("Splitter", splitter->saveState());
 
     }
 
