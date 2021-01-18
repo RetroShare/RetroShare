@@ -644,6 +644,7 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 					case RsGxsNotify::TYPE_PROCESSED:	break ; // Happens when the group is subscribed. This is triggered by RsGenExchange::subscribeToGroup, so better not
                         										// call it again from here!!
 
+                    case RsGxsNotify::TYPE_UPDATED:
                     case RsGxsNotify::TYPE_PUBLISHED:
                     {
                         auto ev = std::make_shared<RsGxsIdentityEvent>();
