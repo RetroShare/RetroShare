@@ -110,6 +110,6 @@ android-* {
 }
 
 ################################### Pkg-Config Stuff #############################
-
-LIBS *= $$system(pkg-config --libs $$PKGCONFIG)
-
+!isEmpty(PKGCONFIG) {
+    LIBS *= $$system(pkg-config --libs $$PKGCONFIG)
+}
