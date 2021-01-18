@@ -46,9 +46,19 @@ public:
 	void getAvatar(QPixmap &avatar);
 	void getAvatar(QByteArray &avatar);
 
+	static QString importedStickerPath();
+
 private slots:
 	void changeAvatar();
 	void removeAvatar();
+	void addAvatar();
+
+	void loadFolders();
+	void loadAvatarWidget();
+
+	void loadToolTips(QWidget *container);
+	void refreshStickerTabs(QVector<QString>& stickerTabs, QString foldername);
+	void refreshStickerTabs(QVector<QString>& stickerTabs);
 
 private:
 	void updateInterface();
