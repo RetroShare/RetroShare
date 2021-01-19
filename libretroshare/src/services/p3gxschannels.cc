@@ -93,13 +93,17 @@ p3GxsChannels::p3GxsChannels(
     mLastDistantSearchNotificationTS = 0;
 	mCommentService = new p3GxsCommentService(this,  RS_SERVICE_GXS_TYPE_CHANNELS);
 
-	RsTickEvent::schedule_in(CHANNEL_PROCESS, 0);
-
+    // This is not needed since it just loads all channel data ever 5 mins which takes a lot
+    // of useless CPU/memory.
+    //
+    //     RsTickEvent::schedule_in(CHANNEL_PROCESS, 0);
+    //
 	// Test Data disabled in repo.
-	//RsTickEvent::schedule_in(CHANNEL_TESTEVENT_DUMMYDATA, DUMMYDATA_PERIOD);
+    //
+    //     RsTickEvent::schedule_in(CHANNEL_TESTEVENT_DUMMYDATA, DUMMYDATA_PERIOD);
+
     mGenToken = 0;
     mGenCount = 0;
-
 }
 
 
