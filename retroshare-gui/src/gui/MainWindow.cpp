@@ -377,7 +377,7 @@ MainWindow::~MainWindow()
     delete sysTrayStatus;
     delete trayIcon;
     delete trayMenu;
-    delete notifyMenu;
+//    delete notifyMenu;
 #ifdef MESSENGER_WINDOW
     MessengerWindow::releaseInstance();
 #endif
