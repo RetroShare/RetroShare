@@ -345,7 +345,11 @@ void RSGraphWidget::paintEvent(QPaintEvent *)
   _painter->setRenderHint(QPainter::TextAntialiasing);
   
   /* Fill in the background */
-  _painter->fillRect(_rec, QBrush(BACK_COLOR));
+  if (_flags & RSGRAPH_FLAGS_DARK_STYLE){
+	_painter->fillRect(_rec, QBrush(BACK_COLOR_DARK));
+  }else {
+	_painter->fillRect(_rec, QBrush(BACK_COLOR));
+  }
   _painter->drawRect(_rec);
 
   /* Paint the scale */
@@ -649,10 +653,17 @@ void RSGraphWidget::paintScale1()
 
 		QString text = _source->displayValue(scale) ;
 
-		_painter->setPen(SCALE_COLOR);
-        _painter->drawText(QPointF(SCALE_WIDTH*fact - QFontMetricsF(font()).width(text) - 4*fact, pos+0.4*FS),  text);
-		_painter->setPen(GRID_COLOR);
-        _painter->drawLine(QPointF(SCALE_WIDTH*fact, pos),  QPointF(_rec.width(), pos));
+		if (_flags & RSGRAPH_FLAGS_DARK_STYLE){
+			_painter->setPen(SCALE_COLOR_DARK);
+			_painter->drawText(QPointF(SCALE_WIDTH*fact - QFontMetricsF(font()).width(text) - 4*fact, pos+0.4*FS),  text);
+			_painter->setPen(GRID_COLOR_DARK);
+			_painter->drawLine(QPointF(SCALE_WIDTH*fact, pos),  QPointF(_rec.width(), pos));
+		}else{
+			_painter->setPen(SCALE_COLOR);
+			_painter->drawText(QPointF(SCALE_WIDTH*fact - QFontMetricsF(font()).width(text) - 4*fact, pos+0.4*FS),  text);
+			_painter->setPen(GRID_COLOR);
+			_painter->drawLine(QPointF(SCALE_WIDTH*fact, pos),  QPointF(_rec.width(), pos));
+		}
 	}
 
 	/* Draw vertical separator */
@@ -675,8 +686,10 @@ void RSGraphWidget::paintScale2()
 
         int seconds = (_rec.width()-i)/_time_scale ;	// pixels / (pixels per second) => seconds
         QString text = QString::number(seconds)+ " secs";
-
-        _painter->setPen(SCALE_COLOR);
+		if (_flags & RSGRAPH_FLAGS_DARK_STYLE)
+			_painter->setPen(SCALE_COLOR_DARK);
+		else
+			_painter->setPen(SCALE_COLOR);
         _painter->drawText(QPointF(i, _rec.height()-0.5*FS),  text);
     }
 }
@@ -743,8 +756,10 @@ void RSGraphWidget::paintLegend()
           _painter->setPen(pen);
           _painter->drawLine(QPointF(SCALE_WIDTH*fact+10.0*fact, pos+FS/3),  QPointF(SCALE_WIDTH*fact+30.0*fact, pos+FS/3));
           _painter->setPen(oldPen);
-
-          _painter->setPen(SCALE_COLOR);
+			if (_flags & RSGRAPH_FLAGS_DARK_STYLE)
+				_painter->setPen(SCALE_COLOR_DARK);
+			else
+				_painter->setPen(SCALE_COLOR);
           _painter->drawText(QPointF(SCALE_WIDTH *fact+ 40*fact,pos + 0.5*FS), text) ;
 
           ++j ;

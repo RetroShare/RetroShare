@@ -86,6 +86,7 @@ private slots:
 	void loadImagesAlways();
 	void buttonStyle();
 	void viewSource();
+	void checkLength();
 
 private:
 	void clearTagLabels();

@@ -54,7 +54,7 @@
 
 #define IMAGE_DHT           ":/icons/DHT128.png"
 #define IMAGE_TURTLE        ":/icons/turtle128.png"
-#define IMAGE_IDENTITIES    ":/icons/avatar_128.png"
+#define IMAGE_IDENTITIES    ":/icons/identities.png"
 #define IMAGE_BWGRAPH       ":/icons/bandwidth128.png"
 #define IMAGE_GLOBALROUTER  ":/icons/GRouter128.png"
 #define IMAGE_GXSTRANSPORT  ":/icons/transport128.png"

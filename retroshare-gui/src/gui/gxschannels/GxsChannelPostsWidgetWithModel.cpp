@@ -238,7 +238,7 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
             info_text += ", " + QString::number(post.mAttachmentCount)+ " " +((post.mAttachmentCount>1)?tr("files"):tr("file")) + " (" + misc::friendlyUnit(qulonglong(post.mSize)) + ")" ;
 
         painter->drawText(QPoint(p.x()+0.5*font_height,y),info_text);
-        y += font_height;
+        //y += font_height;
 
         painter->restore();
     }
@@ -400,20 +400,20 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     ui->channelPostFiles_TV->setItemDelegate(new ChannelPostFilesDelegate(this));
     ui->channelPostFiles_TV->setPlaceholderText(tr("No files in this post, or no post selected"));
     ui->channelPostFiles_TV->setSortingEnabled(true);
-    ui->channelPostFiles_TV->sortByColumn(3, Qt::AscendingOrder);	// sort by time
+    ui->channelPostFiles_TV->sortByColumn(RsGxsChannelPostFilesModel::COLUMN_FILES_DATE, Qt::DescendingOrder);	// sort by time
     ui->channelPostFiles_TV->setAlternatingRowColors(false);
+
+    ui->channelFiles_TV->setModel(mChannelFilesModel = new RsGxsChannelPostFilesModel());
+    ui->channelFiles_TV->setItemDelegate(mFilesDelegate = new ChannelPostFilesDelegate(this));
+    ui->channelFiles_TV->setPlaceholderText(tr("No files in the channel, or no channel selected"));
+    ui->channelFiles_TV->setSortingEnabled(true);
+    ui->channelFiles_TV->sortByColumn(RsGxsChannelPostFilesModel::COLUMN_FILES_DATE, Qt::DescendingOrder);	// sort by time
 
     connect(ui->channelPostFiles_TV->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumnPostFiles(int,Qt::SortOrder)));
     connect(ui->channelFiles_TV->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumnFiles(int,Qt::SortOrder)));
 
     connect(ui->channelPostFiles_TV,SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showChannelFilesContextMenu(QPoint)));
     connect(ui->channelFiles_TV,SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showChannelFilesContextMenu(QPoint)));
-
-    ui->channelFiles_TV->setModel(mChannelFilesModel = new RsGxsChannelPostFilesModel());
-    ui->channelFiles_TV->setItemDelegate(mFilesDelegate = new ChannelPostFilesDelegate(this));
-    ui->channelFiles_TV->setPlaceholderText(tr("No files in the channel, or no channel selected"));
-    ui->channelFiles_TV->setSortingEnabled(true);
-    ui->channelFiles_TV->sortByColumn(3, Qt::AscendingOrder);	// sort by time
 
     connect(ui->postsTree->selectionModel(),SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),this,SLOT(showPostDetails()));
     connect(ui->postsTree,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(postContextMenu(const QPoint&)));
@@ -666,7 +666,7 @@ void GxsChannelPostsWidgetWithModel::download()
     std::string destination;
     rsGxsChannels->getChannelDownloadDirectory(mGroup.mMeta.mGroupId,destination);
 
-    for(auto file:post.mFiles)
+    for(auto& file:post.mFiles)
     {
         std::list<RsPeerId> sources;
 
@@ -939,8 +939,9 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
     mChannelPostsModel->getFilesList(files);
     mChannelFilesModel->setFiles(files);
 
-    ui->channelFiles_TV->setAutoSelect(true);
-    ui->channelFiles_TV->sortByColumn(3, Qt::AscendingOrder);
+	ui->channelFiles_TV->setAutoSelect(true);
+	ui->channelFiles_TV->sortByColumn(ui->channelFiles_TV->header()->sortIndicatorSection()
+	                                  ,ui->channelFiles_TV->header()->sortIndicatorOrder());
 
     ui->infoPosts->setText(QString::number(mChannelPostsModel->getNumberOfPosts()) + " / " + QString::number(mGroup.mMeta.mVisibleMsgCount));
 
@@ -1206,11 +1207,11 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 
 	QString distrib_string ( "[unknown]" );
 
-	switch(group.mMeta.mCircleType)
+	switch((RsGxsCircleType)group.mMeta.mCircleType)
 	{
-	case GXS_CIRCLE_TYPE_PUBLIC: distrib_string = tr("Public") ;
+	case RsGxsCircleType::PUBLIC: distrib_string = tr("Public") ;
 		break ;
-	case GXS_CIRCLE_TYPE_EXTERNAL:
+	case RsGxsCircleType::EXTERNAL:
 	{
 		RsGxsCircleDetails det ;
 
@@ -1222,9 +1223,9 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 			distrib_string = tr("Restricted to members of circle ")+QString::fromStdString(group.mMeta.mCircleId.toStdString()) ;
 	}
 		break ;
-	case GXS_CIRCLE_TYPE_YOUR_EYES_ONLY: distrib_string = tr("Your eyes only");
+	case RsGxsCircleType::YOUR_EYES_ONLY: distrib_string = tr("Your eyes only");
 		break ;
-	case GXS_CIRCLE_TYPE_LOCAL: distrib_string = tr("You and your friend nodes");
+	case RsGxsCircleType::LOCAL: distrib_string = tr("You and your friend nodes");
 		break ;
 	default:
 		std::cerr << "(EE) badly initialised group distribution ID = " << group.mMeta.mCircleType << std::endl;
@@ -1245,7 +1246,7 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
     showPostDetails();
 }
 
-void GxsChannelPostsWidgetWithModel::showChannelFilesContextMenu(QPoint p)
+void GxsChannelPostsWidgetWithModel::showChannelFilesContextMenu(QPoint /*p*/)
 {
     QMenu contextMnu(this) ;
 
@@ -1316,7 +1317,7 @@ void GxsChannelPostsWidgetWithModel::switchOnlyUnread(bool)
 }
 void GxsChannelPostsWidgetWithModel::filterChanged(QString s)
 {
-    QStringList ql = s.split(' ',QString::SkipEmptyParts);
+    QStringList ql = s.split(' ',Qt::SkipEmptyParts);
     uint32_t count;
     mChannelPostsModel->setFilter(ql,ui->showUnread_TB->isChecked(),count);
 	mChannelFilesModel->setFilter(ql,count);
@@ -1419,7 +1420,7 @@ void GxsChannelPostsWidgetWithModel::toggleAutoDownload()
 class GxsChannelPostsReadData
 {
 public:
-	GxsChannelPostsReadData(bool read)
+	explicit GxsChannelPostsReadData(bool read)
 	{
 		mRead = read;
 		mLastToken = 0;

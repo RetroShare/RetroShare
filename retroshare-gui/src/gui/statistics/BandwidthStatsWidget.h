@@ -26,7 +26,10 @@ class BandwidthStatsWidget: public QWidget
     Q_OBJECT
 
 public:
+    /** Default Constructor */
     BandwidthStatsWidget(QWidget *parent) ;
+    /** Default Destructor */
+    ~BandwidthStatsWidget ();
 
 protected slots:
     void updateFriendSelection(int n);
@@ -36,8 +39,12 @@ protected slots:
     void updateUnitSelection(int n);
     void toggleLogScale(bool b);
     void updateLegendType(int n);
+    void updateGraphSelection(int n);
 
 private:
+    void processSettings(bool bLoad);
+    bool m_bProcessSettings;
+
     Ui::BwStatsWidget ui;
 
     QTimer *mTimer ;

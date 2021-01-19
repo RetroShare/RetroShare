@@ -322,7 +322,7 @@ bool p3PhotoService::createAlbum(RsPhotoAlbum &album)
 	return submitAlbumDetails(token, album) && waitToken(token) == RsTokenService::COMPLETE;
 }
 
-bool p3PhotoService::updateAlbum(const RsPhotoAlbum &album)
+bool p3PhotoService::updateAlbum(const RsPhotoAlbum &/*album*/)
 {
 	// TODO
 	return false;

@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "gui/settings/rsharesettings.h"
+
 #include "retroshare/rsturtle.h"
 #include <gui/common/RSGraphWidget.h>
 
@@ -68,7 +70,14 @@ class TurtleGraph: public RSGraphWidget
 
 			resetFlags(RSGRAPH_FLAGS_LOG_SCALE_Y) ;
 			resetFlags(RSGRAPH_FLAGS_PAINT_STYLE_PLAIN) ;
-            setFlags(RSGRAPH_FLAGS_SHOW_LEGEND) ;
+			setFlags(RSGRAPH_FLAGS_SHOW_LEGEND) ;
+
+			int graphColor = Settings->valueFromGroup("BandwidthStatsWidget", "cmbGraphColor", 0).toInt();
+
+			if(graphColor==0)
+				resetFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
+			else
+				setFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
         }
 };
 

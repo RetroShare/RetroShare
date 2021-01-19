@@ -151,27 +151,26 @@ RsIdentity* rsIdentity = nullptr;
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
-p3IdService::p3IdService(
-        RsGeneralDataService *gds, RsNetworkExchangeService *nes,
-        PgpAuxUtils *pgpUtils ) :
-    RsGxsIdExchange( gds, nes, new RsGxsIdSerialiser(),
-                     RS_SERVICE_GXS_TYPE_GXSID, idAuthenPolicy() ),
-    RsIdentity(static_cast<RsGxsIface&>(*this)), GxsTokenQueue(this),
-    RsTickEvent(), mKeyCache(GXSID_MAX_CACHE_SIZE, "GxsIdKeyCache"),
-    mIdMtx("p3IdService"), mNes(nes), mPgpUtils(pgpUtils)
+p3IdService::p3IdService( RsGeneralDataService *gds
+                          , RsNetworkExchangeService *nes
+                          , PgpAuxUtils *pgpUtils )
+    : RsGxsIdExchange( gds, nes, new RsGxsIdSerialiser(),
+                       RS_SERVICE_GXS_TYPE_GXSID, idAuthenPolicy() )
+    , RsIdentity(static_cast<RsGxsIface&>(*this))
+    , GxsTokenQueue(this), RsTickEvent(), p3Config()
+    , mKeyCache(GXSID_MAX_CACHE_SIZE, "GxsIdKeyCache")
+    , mBgSchedule_Active(false), mBgSchedule_Mode(0)
+    , mIdMtx("p3IdService"), mNes(nes), mPgpUtils(pgpUtils)
+    , mLastConfigUpdate(0), mOwnIdsLoaded(false)
+    , mAutoAddFriendsIdentitiesAsContacts(true) /*default*/
+    , mMaxKeepKeysBanned(MAX_KEEP_KEYS_BANNED_DEFAULT)
 {
-	mBgSchedule_Mode = 0;
-    mBgSchedule_Active = false;
-    mLastKeyCleaningTime = time(NULL) - int(MAX_DELAY_BEFORE_CLEANING * 0.9) ;
-    mLastConfigUpdate = 0 ;
-    mOwnIdsLoaded = false ;
-	mAutoAddFriendsIdentitiesAsContacts = true; // default
-    mMaxKeepKeysBanned = MAX_KEEP_KEYS_BANNED_DEFAULT;
+	mLastKeyCleaningTime = time(NULL) - int(MAX_DELAY_BEFORE_CLEANING * 0.9) ;
 
 	// Kick off Cache Testing, + Others.
+	RsTickEvent::schedule_now(GXSID_EVENT_CACHEOWNIDS);//First Thing to do
 	RsTickEvent::schedule_in(GXSID_EVENT_PGPHASH, PGPHASH_PERIOD);
 	RsTickEvent::schedule_in(GXSID_EVENT_REPUTATION, REPUTATION_PERIOD);
-	RsTickEvent::schedule_now(GXSID_EVENT_CACHEOWNIDS);
 
 	//RsTickEvent::schedule_in(GXSID_EVENT_CACHETEST, CACHETEST_PERIOD);
 
@@ -4478,7 +4477,7 @@ void p3IdService::generateDummy_OwnIds()
 
 	/* grab all the gpg ids... and make some ids */
 
-	RsPgpId ownId = mPgpUtils->getPGPOwnId();
+	/*RsPgpId ownId = */mPgpUtils->getPGPOwnId();
 
 #if 0
 	// generate some ownIds.
@@ -4694,36 +4693,37 @@ void p3IdService::checkPeerForIdentities()
 
 
 // Overloaded from GxsTokenQueue for Request callbacks.
-void p3IdService::handleResponse(uint32_t token, uint32_t req_type)
+void p3IdService::handleResponse(uint32_t token, uint32_t req_type
+                                 , RsTokenService::GxsRequestStatus status)
 {
 #ifdef DEBUG_IDS
-	std::cerr << "p3IdService::handleResponse(" << token << "," << req_type << ")";
-	std::cerr << std::endl;
+	std::cerr << "p3IdService::handleResponse(" << token << "," << req_type << "," << status << ")" << std::endl;
 #endif // DEBUG_IDS
 
 	// stuff.
 	switch(req_type)
 	{
 	case GXSIDREQ_CACHEOWNIDS:
-		cache_load_ownids(token);
+		if (status == RsTokenService::COMPLETE) cache_load_ownids(token);
+		if (status == RsTokenService::CANCELLED) RsTickEvent::schedule_now(GXSID_EVENT_CACHEOWNIDS);//Cancelled by time-out so ask a new time
 		break;
 	case GXSIDREQ_CACHELOAD:
-		cache_load_for_token(token);
+		if (status == RsTokenService::COMPLETE) cache_load_for_token(token);
 		break;
 	case GXSIDREQ_PGPHASH:
-		pgphash_handlerequest(token);
+		if (status == RsTokenService::COMPLETE) pgphash_handlerequest(token);
 		break;
 	case GXSIDREQ_RECOGN:
-		recogn_handlerequest(token);
+		if (status == RsTokenService::COMPLETE) recogn_handlerequest(token);
 		break;
 	case GXSIDREQ_CACHETEST:
-		cachetest_handlerequest(token);
+		if (status == RsTokenService::COMPLETE) cachetest_handlerequest(token);
 		break;
 	case GXSIDREQ_OPINION:
-		opinion_handlerequest(token);
+		if (status == RsTokenService::COMPLETE) opinion_handlerequest(token);
 		break;
 	case GXSIDREQ_SERIALIZE_TO_MEMORY:
-		handle_get_serialized_grp(token);
+		if (status == RsTokenService::COMPLETE) handle_get_serialized_grp(token);
 		break;
 	default:
 		std::cerr << "p3IdService::handleResponse() Unknown Request Type: "

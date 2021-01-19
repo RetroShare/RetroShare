@@ -50,42 +50,32 @@ RsGxsForumModel::RsGxsForumModel(QObject *parent)
 
 void RsGxsForumModel::preMods()
 {
-	//emit layoutAboutToBeChanged(); //Generate SIGSEGV when click on button move next/prev.
-
-	beginResetModel();
+	emit layoutAboutToBeChanged();
 }
 void RsGxsForumModel::postMods()
 {
-	endResetModel();
-
-    if(mTreeMode == TREE_MODE_FLAT)
+	if(mTreeMode == TREE_MODE_FLAT)
 		emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mPosts.size(),COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
-    else
+	else
 		emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mPosts[0].mChildren.size(),COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+
+	emit layoutChanged();
 }
 
 void RsGxsForumModel::setTreeMode(TreeMode mode)
 {
-    if(mode == mTreeMode)
-        return;
+	if(mode == mTreeMode)
+		return;
 
-    preMods();
+	preMods();
 
-    if(mode == TREE_MODE_TREE)	// means we were in FLAT mode, so the last rows are removed.
-    {
-		beginRemoveRows(QModelIndex(),mPosts[0].mChildren.size(),mPosts.size()-1);
-		endRemoveRows();
-    }
+	beginResetModel();
 
 	mTreeMode = mode;
 
-    if(mode == TREE_MODE_FLAT)	// means we were in tree mode, so the last rows are added.
-	{
-		beginInsertRows(QModelIndex(),mPosts[0].mChildren.size(),mPosts.size()-1);
-		endInsertRows();
-	}
+	endResetModel();
 
-    postMods();
+	postMods();
 }
 
 void RsGxsForumModel::setSortMode(SortMode mode)
@@ -241,7 +231,7 @@ QModelIndex RsGxsForumModel::parent(const QModelIndex& index) const
 Qt::ItemFlags RsGxsForumModel::flags(const QModelIndex& index) const
 {
     if (!index.isValid())
-        return 0;
+        return Qt::ItemFlags();
 
     return QAbstractItemModel::flags(index);
 }
@@ -466,8 +456,8 @@ QVariant RsGxsForumModel::statusRole(const ForumModelPostEntry& fmpe,int column)
 
 QVariant RsGxsForumModel::filterRole(const ForumModelPostEntry& fmpe,int /*column*/) const
 {
-    if(!mFilteringEnabled || (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_CHILDREN_PASSES_FILTER))
-        return QVariant(FilterString);
+	if(!mFilteringEnabled || (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_CHILDREN_PASSES_FILTER))
+		return QVariant(FilterString);
 
 	return QVariant(QString());
 }
@@ -755,65 +745,68 @@ void RsGxsForumModel::clear()
 
 void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<ForumModelPostEntry>& posts,const std::map<RsGxsMessageId,std::vector<std::pair<time_t,RsGxsMessageId> > >& post_versions)
 {
-    preMods();
+	preMods();
 
-    if(mTreeMode == TREE_MODE_FLAT)
-		beginRemoveRows(QModelIndex(),0,mPosts.size()-1);
-	else
-		beginRemoveRows(QModelIndex(),0,mPosts[0].mChildren.size()-1);
+	beginResetModel();
+	endResetModel();
 
-    endRemoveRows();
+	mForumGroup = group;
+	mPosts = posts;
+	mPostVersions = post_versions;
 
-    mForumGroup = group;
-    mPosts = posts;
-    mPostVersions = post_versions;
+	// now update prow for all posts
 
-    // now update prow for all posts
+	for(uint32_t i=0;i<mPosts.size();++i)
+		for(uint32_t j=0;j<mPosts[i].mChildren.size();++j)
+			mPosts[mPosts[i].mChildren[j]].prow = j;
 
-    for(uint32_t i=0;i<mPosts.size();++i)
-        for(uint32_t j=0;j<mPosts[i].mChildren.size();++j)
-            mPosts[mPosts[i].mChildren[j]].prow = j;
+	mPosts[0].prow = 0;
 
-    mPosts[0].prow = 0;
+	bool has_unread_below,has_read_below ;
 
-    bool has_unread_below,has_read_below ;
-
-    recursUpdateReadStatusAndTimes(0,has_unread_below,has_read_below) ;
-    recursUpdateFilterStatus(0,0,QStringList());
+	recursUpdateReadStatusAndTimes(0,has_unread_below,has_read_below) ;
+	recursUpdateFilterStatus(0,0,QStringList());
 
 #ifdef DEBUG_FORUMMODEL
-    debug_dump();
+	debug_dump();
 #endif
 
-    if(mTreeMode == TREE_MODE_FLAT)
-		beginInsertRows(QModelIndex(),0,mPosts.size()-1);
-    else
-		beginInsertRows(QModelIndex(),0,mPosts[0].mChildren.size()-1);
-    endInsertRows();
+	int count = 0;
+	if(mTreeMode == TREE_MODE_FLAT)
+		count = mPosts.size();
+	else
+		count = mPosts[0].mChildren.size();
+
+	if(count>0)
+	{
+		beginInsertRows(QModelIndex(),0,count-1);
+		endInsertRows();
+	}
+
 	postMods();
 	emit forumLoaded();
 }
 
 void RsGxsForumModel::update_posts(const RsGxsGroupId& group_id)
 {
-    if(group_id.isNull())
-        return;
+	if(group_id.isNull())
+		return;
 
 	RsThread::async([this, group_id]()
 	{
-        // 1 - get message data from p3GxsForums
+		// 1 - get message data from p3GxsForums
 
-        std::list<RsGxsGroupId> forumIds;
+		std::list<RsGxsGroupId> forumIds;
 		std::vector<RsMsgMetaData> msg_metas;
 		std::vector<RsGxsForumGroup> groups;
 
-        forumIds.push_back(group_id);
+		forumIds.push_back(group_id);
 
 		if(!rsGxsForums->getForumsInfo(forumIds,groups) || groups.size() != 1)
 		{
 			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum group info for forum " << group_id << std::endl;
 			return;
-        }
+		}
 
 		if(!rsGxsForums->getForumMsgMetaData(group_id,msg_metas))
 		{
@@ -821,17 +814,17 @@ void RsGxsForumModel::update_posts(const RsGxsGroupId& group_id)
 			return;
 		}
 
-        // 2 - sort the messages into a proper hierarchy
+		// 2 - sort the messages into a proper hierarchy
 
-        auto post_versions = new std::map<RsGxsMessageId,std::vector<std::pair<time_t, RsGxsMessageId> > >() ;
-        std::vector<ForumModelPostEntry> *vect = new std::vector<ForumModelPostEntry>();
-        RsGxsForumGroup group = groups[0];
+		auto post_versions = new std::map<RsGxsMessageId,std::vector<std::pair<time_t, RsGxsMessageId> > >() ;
+		std::vector<ForumModelPostEntry> *vect = new std::vector<ForumModelPostEntry>();
+		RsGxsForumGroup group = groups[0];
 
-        computeMessagesHierarchy(group,msg_metas,*vect,*post_versions);
+		computeMessagesHierarchy(group,msg_metas,*vect,*post_versions);
 
-        // 3 - update the model in the UI thread.
+		// 3 - update the model in the UI thread.
 
-        RsQThreadUtils::postToObject( [group,vect,post_versions,this]()
+		RsQThreadUtils::postToObject( [group,vect,post_versions,this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
@@ -839,15 +832,15 @@ void RsGxsForumModel::update_posts(const RsGxsGroupId& group_id)
 			 * Qt::QueuedConnection is important!
 			 */
 
-            setPosts(group,*vect,*post_versions) ;
+			setPosts(group,*vect,*post_versions) ;
 
-            delete vect;
-            delete post_versions;
+			delete vect;
+			delete post_versions;
 
 
 		}, this );
 
-    });
+	});
 }
 
 ForumModelIndex RsGxsForumModel::addEntry(std::vector<ForumModelPostEntry>& posts,const ForumModelPostEntry& entry,ForumModelIndex parent)
@@ -895,26 +888,25 @@ void RsGxsForumModel::convertMsgToPostEntry(const RsGxsForumGroup& mForumGroup,c
 
 void RsGxsForumModel::computeReputationLevel(uint32_t forum_sign_flags,ForumModelPostEntry& fentry)
 {
-    uint32_t idflags =0;
+	uint32_t idflags =0;
 	RsReputationLevel reputation_level =
 	        rsReputations->overallReputationLevel(fentry.mAuthorId, &idflags);
-	bool redacted = false;
 
 	if(reputation_level == RsReputationLevel::LOCALLY_NEGATIVE)
-        fentry.mPostFlags |=  ForumModelPostEntry::FLAG_POST_IS_REDACTED;
-    else
-        fentry.mPostFlags &= ~ForumModelPostEntry::FLAG_POST_IS_REDACTED;
+		fentry.mPostFlags |=  ForumModelPostEntry::FLAG_POST_IS_REDACTED;
+	else
+		fentry.mPostFlags &= ~ForumModelPostEntry::FLAG_POST_IS_REDACTED;
 
-    // We use a specific item model for forums in order to handle the post pinning.
+	// We use a specific item model for forums in order to handle the post pinning.
 
 	if(reputation_level == RsReputationLevel::UNKNOWN)
-        fentry.mReputationWarningLevel = 3 ;
+		fentry.mReputationWarningLevel = 3 ;
 	else if(reputation_level == RsReputationLevel::LOCALLY_NEGATIVE)
-        fentry.mReputationWarningLevel = 2 ;
-    else if(reputation_level < rsGxsForums->minReputationForForwardingMessages(forum_sign_flags,idflags))
-        fentry.mReputationWarningLevel = 1 ;
-    else
-        fentry.mReputationWarningLevel = 0 ;
+		fentry.mReputationWarningLevel = 2 ;
+	else if(reputation_level < rsGxsForums->minReputationForForwardingMessages(forum_sign_flags,idflags))
+		fentry.mReputationWarningLevel = 1 ;
+	else
+		fentry.mReputationWarningLevel = 0 ;
 }
 
 static bool decreasing_time_comp(const std::pair<time_t,RsGxsMessageId>& e1,const std::pair<time_t,RsGxsMessageId>& e2) { return e2.first < e1.first ; }

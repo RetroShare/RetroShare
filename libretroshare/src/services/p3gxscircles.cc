@@ -434,13 +434,13 @@ bool p3GxsCircles::revokeIdsFromCircle( const std::set<RsGxsId>& identities, con
 		return false;
 	}
 
-    // /!\ AVOID calling circleGrp.mInvitedMembers.erase(identities.begin(),identities.end()), because it is not the same set. Consequently
-    //     STL code would corrupt the structure of mInvitedMembers.
+	// /!\ AVOID calling circleGrp.mInvitedMembers.erase(identities.begin(),identities.end()), because it is not the same set. Consequently
+	//     STL code would corrupt the structure of mInvitedMembers.
 
-    std::set<RsGxsId> new_invited_members;
-    for(auto& gxs_id: circleGrp.mInvitedMembers)
-        if(identities.find(gxs_id) == identities.end())
-            new_invited_members.insert(gxs_id);
+	std::set<RsGxsId> new_invited_members;
+	for(auto& gxs_id: circleGrp.mInvitedMembers)
+		if(identities.find(gxs_id) == identities.end())
+			new_invited_members.insert(gxs_id);
 
 	circleGrp.mInvitedMembers = new_invited_members;
 
@@ -585,8 +585,8 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	std::cerr << std::endl;
 #endif
 
-	p3Notify *notify = RsServer::notify();
-    std::set<RsGxsCircleId> circles_to_reload;
+	//p3Notify *notify = RsServer::notify();
+	std::set<RsGxsCircleId> circles_to_reload;
 
 	for(auto it = changes.begin(); it != changes.end(); ++it)
 	{
@@ -1505,8 +1505,8 @@ bool p3GxsCircles::locked_checkCircleCacheForMembershipUpdate(RsGxsCircleCache& 
 {
 	rstime_t now = time(NULL) ;
 
-    if(cache.mStatus < CircleEntryCacheStatus::UPDATING)
-        return false;
+	if(cache.mStatus < CircleEntryCacheStatus::UPDATING)
+		return false;
 
 	if(cache.mLastUpdatedMembershipTS + GXS_CIRCLE_DELAY_TO_FORCE_MEMBERSHIP_UPDATE < now)
 	{ 
@@ -1559,8 +1559,8 @@ bool p3GxsCircles::locked_checkCircleCacheForAutoSubscribe(RsGxsCircleCache& cac
 		return false;
 	}
 
-    if(cache.mStatus < CircleEntryCacheStatus::UPDATING)
-        return false;
+	if(cache.mStatus < CircleEntryCacheStatus::UPDATING)
+		return false;
 
 	/* if we appear in the group - then autosubscribe, and mark as processed. This also applies if we're the group admin */
         
@@ -1702,12 +1702,15 @@ bool p3GxsCircles::service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta)
 //====================================================================================//
 
 	// Overloaded from GxsTokenQueue for Request callbacks.
-void p3GxsCircles::handleResponse(uint32_t token, uint32_t req_type)
+void p3GxsCircles::handleResponse(uint32_t token, uint32_t req_type
+                                  , RsTokenService::GxsRequestStatus status)
 {
 #ifdef DEBUG_CIRCLES
-	std::cerr << "p3GxsCircles::handleResponse(" << token << "," << req_type << ")";
-	std::cerr << std::endl;
+	std::cerr << "p3GxsCircles::handleResponse(" << token << "," << req_type << "," << status << ")" << std::endl;
 #endif // DEBUG_CIRCLES
+	if (status != RsTokenService::COMPLETE)
+		return; //For now, only manage Complete request
+
 
 	// stuff.
 	switch(req_type)

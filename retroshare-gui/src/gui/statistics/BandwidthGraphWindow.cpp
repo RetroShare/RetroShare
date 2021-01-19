@@ -34,10 +34,12 @@
 #define SETTING_OPACITY         "Opacity"
 #define SETTING_ALWAYS_ON_TOP   "AlwaysOnTop"
 #define SETTING_STYLE           "GraphStyle"
+#define SETTING_GRAPHCOLOR      "GraphColor"
 #define DEFAULT_FILTER          (BWGRAPH_LINE_SEND|BWGRAPH_LINE_RECV)
 #define DEFAULT_ALWAYS_ON_TOP   false
 #define DEFAULT_OPACITY         100
 #define DEFAULT_STYLE           LineGraph
+#define DEFAULT_GRAPHCOLOR      DefaultColor
 
 #define ADD_TO_FILTER(f,v,b)  (f = ((b) ? ((f) | (v)) : ((f) & ~(v))))
 
@@ -132,6 +134,19 @@ BandwidthGraph::loadSettings()
       ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_PLAIN);
   else
       ui.frmGraph->setFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_PLAIN);
+ 
+   /* Set whether we are plotting bandwidth as area graphs or not */
+  int graphColor = getSetting(SETTING_GRAPHCOLOR, DEFAULT_GRAPHCOLOR).toInt();
+
+  if (graphColor < 0 || graphColor >= ui.cmbGraphColor->count()) {
+    graphColor = DEFAULT_GRAPHCOLOR;
+  }
+  ui.cmbGraphColor->setCurrentIndex(graphColor);
+
+  if(graphColor==0)
+      ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
+  else
+      ui.frmGraph->setFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
 
   /* Set graph frame settings */
   ui.frmGraph->setShowEntry(0,ui.chkReceiveRate->isChecked()) ;
@@ -158,6 +173,7 @@ void BandwidthGraph::saveChanges()
   /* Save the opacity and graph style */
   saveSetting(SETTING_OPACITY, ui.sldrOpacity->value());
   saveSetting(SETTING_STYLE, ui.cmbGraphStyle->currentIndex());
+  saveSetting(SETTING_GRAPHCOLOR, ui.cmbGraphColor->currentIndex());
 
   /* Save the Always On Top setting */
   saveSetting(SETTING_ALWAYS_ON_TOP, ui.chkAlwaysOnTop->isChecked());
@@ -183,6 +199,11 @@ void BandwidthGraph::saveChanges()
       ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_PLAIN);
   else
       ui.frmGraph->setFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_PLAIN);
+
+  if(ui.cmbGraphColor->currentIndex()==0)
+      ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
+  else
+      ui.frmGraph->setFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
 
   /* A change in window flags causes the window to disappear, so make sure
    * it's still visible. */

@@ -50,9 +50,10 @@ void GxsTokenQueue::checkRequests()
 		for(it = mQueue.begin(); it != mQueue.end();)
 		{
 			uint32_t token = it->mToken;
-			uint32_t status = mGenExchange->getTokenService()->requestStatus(token);
+			it->mStatus = mGenExchange->getTokenService()->requestStatus(token);
 	
-			if (status == RsTokenService::COMPLETE)
+			if (  it->mStatus == RsTokenService::COMPLETE
+			   || it->mStatus == RsTokenService::CANCELLED )
 			{
 				toload.push_back(*it);
 				it = mQueue.erase(it);
@@ -64,7 +65,7 @@ void GxsTokenQueue::checkRequests()
 #endif
 				++it;
 			}
-			else if (status == RsTokenService::FAILED)
+			else if (it->mStatus == RsTokenService::FAILED)
 			{
 				// maybe we should do alternative callback?
 				std::cerr << __PRETTY_FUNCTION__ << " ERROR Request Failed! "
@@ -87,7 +88,7 @@ void GxsTokenQueue::checkRequests()
 	{
 		for(it = toload.begin(); it != toload.end(); ++it)
 		{
-			handleResponse(it->mToken, it->mReqType);
+			handleResponse(it->mToken, it->mReqType, it->mStatus);
 		}
 	}
 }

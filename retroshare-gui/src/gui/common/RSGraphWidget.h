@@ -36,11 +36,14 @@
 #define MINUSER_SCALE 2000  /** 2000 users is the minimum scale */
 #define SCROLL_STEP   4   /** Horizontal change on graph update */
 
-#define BACK_COLOR    Qt::white
-#define SCALE_COLOR   Qt::black
-#define GRID_COLOR    Qt::lightGray
-#define RSDHT_COLOR   Qt::magenta
-#define ALLDHT_COLOR  Qt::yellow
+#define BACK_COLOR         Qt::white
+#define SCALE_COLOR        Qt::black
+#define GRID_COLOR         Qt::lightGray
+#define BACK_COLOR_DARK    Qt::black
+#define SCALE_COLOR_DARK   Qt::green
+#define GRID_COLOR_DARK    Qt::darkGreen
+#define RSDHT_COLOR        Qt::magenta
+#define ALLDHT_COLOR       Qt::yellow
 
 struct ZeroInitFloat
 {
@@ -145,6 +148,7 @@ public:
 	static const uint32_t RSGRAPH_FLAGS_LEGEND_CUMULATED    = 0x0040 ;// show the total in the legend rather than current values
 	static const uint32_t RSGRAPH_FLAGS_PAINT_STYLE_DOTS 	= 0x0080 ;// use dots
 	static const uint32_t RSGRAPH_FLAGS_LEGEND_INTEGER   	= 0x0100 ;// use integer number in the legend, and move the lines to match integers
+	static const uint32_t RSGRAPH_FLAGS_DARK_STYLE      	= 0x0200 ;// darkstyle graph
 
 	/** Bandwidth graph style. */
 	enum GraphStyle 

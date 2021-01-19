@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>680</width>
-    <height>523</height>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,15 +29,15 @@
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
+         <property name="handleWidth">
+          <number>5</number>
+         </property>
          <widget class="QScrollArea" name="_tunnel_statistics_F">
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::NoFrame</enum>
-          </property>
-          <property name="horizontalScrollBarPolicy">
-           <enum>Qt::ScrollBarAlwaysOff</enum>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>200</height>
+           </size>
           </property>
           <property name="widgetResizable">
            <bool>true</bool>
@@ -47,28 +47,23 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>640</width>
-             <height>248</height>
+             <width>636</width>
+             <height>198</height>
             </rect>
-           </property>
-           <property name="autoFillBackground">
-            <bool>true</bool>
            </property>
           </widget>
          </widget>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="TurtleGraph" name="frmGraph" native="true">
-         <property name="minimumSize">
-          <size>
-           <width>120</width>
-           <height>200</height>
-          </size>
-         </property>
-         <property name="contextMenuPolicy">
-          <enum>Qt::NoContextMenu</enum>
-         </property>
+         <widget class="TurtleGraph" name="frmGraph" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>200</height>
+           </size>
+          </property>
+          <property name="contextMenuPolicy">
+           <enum>Qt::NoContextMenu</enum>
+          </property>
+         </widget>
         </widget>
        </item>
       </layout>
