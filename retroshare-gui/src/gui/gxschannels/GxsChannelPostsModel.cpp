@@ -203,23 +203,22 @@ void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEve
 
 void RsGxsChannelPostsModel::initEmptyHierarchy()
 {
-    preMods();
+	beginResetModel();
 
-    mPosts.clear();
-    mFilteredPosts.clear();
+	mPosts.clear();
+	mFilteredPosts.clear();
 
-    postMods();
+	endResetModel();
 }
 
 void RsGxsChannelPostsModel::preMods()
 {
-	beginResetModel();
+	emit layoutAboutToBeChanged();
 }
 void RsGxsChannelPostsModel::postMods()
 {
-	endResetModel();
-
-    triggerViewUpdate();
+	triggerViewUpdate();
+	emit layoutChanged();
 }
 void RsGxsChannelPostsModel::triggerViewUpdate()
 {
@@ -244,13 +243,13 @@ void RsGxsChannelPostsModel::getFilesList(std::list<ChannelPostFileInfo>& files)
 
 void RsGxsChannelPostsModel::setFilter(const QStringList& strings,bool only_unread, uint32_t& count)
 {
-    preMods();
+	preMods();
 
-	beginRemoveRows(QModelIndex(),0,rowCount()-1);
-    endRemoveRows();
+	beginResetModel();
 
-    mFilteredPosts.clear();
-    //mFilteredPosts.push_back(0);
+	mFilteredPosts.clear();
+	//mFilteredPosts.push_back(0);
+	endResetModel();
 
     for(size_t i=0;i<mPosts.size();++i)
     {
@@ -268,8 +267,11 @@ void RsGxsChannelPostsModel::setFilter(const QStringList& strings,bool only_unre
 
     count = mFilteredPosts.size();
 
-    beginInsertRows(QModelIndex(),0,rowCount()-1);
-    endInsertRows();
+	if (rowCount()>0)
+	{
+		beginInsertRows(QModelIndex(),0,rowCount()-1);
+		endInsertRows();
+	}
 
 	postMods();
 }
@@ -321,8 +323,8 @@ bool RsGxsChannelPostsModel::getPostData(const QModelIndex& i,RsGxsChannelPost& 
 
 bool RsGxsChannelPostsModel::hasChildren(const QModelIndex &parent) const
 {
-    if(!parent.isValid())
-        return true;
+	if(!parent.isValid())
+		return true;
 
 	return false;	// by default, no channel post has children
 }
@@ -374,45 +376,45 @@ QModelIndex RsGxsChannelPostsModel::index(int row, int column, const QModelIndex
 	return createIndex(row,column,ref) ;
 }
 
-QModelIndex RsGxsChannelPostsModel::parent(const QModelIndex& index) const
+QModelIndex RsGxsChannelPostsModel::parent(const QModelIndex& /*index*/) const
 {
-    if(!index.isValid())
-        return QModelIndex();
-
 	return QModelIndex();	// there's no hierarchy here. So nothing to do!
 }
 
 Qt::ItemFlags RsGxsChannelPostsModel::flags(const QModelIndex& index) const
 {
     if (!index.isValid())
-        return 0;
+        return Qt::ItemFlags();
 
     return QAbstractItemModel::flags(index);
 }
 
 bool RsGxsChannelPostsModel::setNumColumns(int n)
 {
-    if(n < 1)
-    {
-        RsErr() << __PRETTY_FUNCTION__ << " Attempt to set a number of column of 0. This is wrong." << std::endl;
-        return false;
-    }
-    if((int)mColumns == n)
-        return false;
+	if(n < 1)
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Attempt to set a number of column of 0. This is wrong." << std::endl;
+		return false;
+	}
+	if((int)mColumns == n)
+		return false;
 
 	preMods();
 
-	beginRemoveRows(QModelIndex(),0,rowCount()-1);
-    endRemoveRows();
+	beginResetModel();
+	endResetModel();
 
-    mColumns = n;
+	mColumns = n;
 
-	beginInsertRows(QModelIndex(),0,rowCount()-1);
-    endInsertRows();
+	if (rowCount()>0)
+	{
+		beginInsertRows(QModelIndex(),0,rowCount()-1);
+		endInsertRows();
+	}
 
 	postMods();
 
-    return true;
+	return true;
 }
 
 quintptr RsGxsChannelPostsModel::getChildRef(quintptr ref,int index) const
@@ -450,8 +452,8 @@ quintptr RsGxsChannelPostsModel::getParentRow(quintptr ref,int& row) const
 
 int RsGxsChannelPostsModel::getChildrenCount(quintptr ref) const
 {
-    if(ref == quintptr(0))
-        return rowCount()-1;
+	if(ref == quintptr(0))
+		return rowCount()-1;
 
 	return 0;
 }
@@ -549,10 +551,9 @@ void RsGxsChannelPostsModel::updateChannel(const RsGxsGroupId& channel_group_id)
 
 void RsGxsChannelPostsModel::clear()
 {
-    preMods();
+	preMods();
 
-    mPosts.clear();
-    initEmptyHierarchy();
+	initEmptyHierarchy();
 
 	postMods();
 	emit channelPostsLoaded();
@@ -565,28 +566,27 @@ bool operator<(const RsGxsChannelPost& p1,const RsGxsChannelPost& p2)
 
 void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vector<RsGxsChannelPost>& posts)
 {
-    preMods();
+	preMods();
 
-	beginRemoveRows(QModelIndex(),0,rowCount()-1);
-    endRemoveRows();
+	initEmptyHierarchy();
+	mChannelGroup = group;
 
-    mPosts.clear();
-    mChannelGroup = group;
+	createPostsArray(posts);
 
-    createPostsArray(posts);
+	std::sort(mPosts.begin(),mPosts.end());
 
-    std::sort(mPosts.begin(),mPosts.end());
-
-    mFilteredPosts.clear();
-    for(uint32_t i=0;i<mPosts.size();++i)
-        mFilteredPosts.push_back(i);
+	for(uint32_t i=0;i<mPosts.size();++i)
+		mFilteredPosts.push_back(i);
 
 #ifdef DEBUG_CHANNEL_MODEL
-   // debug_dump();
+	// debug_dump();
 #endif
 
-	beginInsertRows(QModelIndex(),0,rowCount()-1);
-    endInsertRows();
+	if (rowCount()>0)
+	{
+		beginInsertRows(QModelIndex(),0,rowCount()-1);
+		endInsertRows();
+	}
 
 	postMods();
 
@@ -595,8 +595,8 @@ void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vecto
 
 void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
 {
-    if(group_id.isNull())
-        return;
+	if(group_id.isNull())
+		return;
 
 	RsThread::async([this, group_id]()
 	{

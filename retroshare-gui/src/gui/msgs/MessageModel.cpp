@@ -61,31 +61,32 @@ RsMessageModel::RsMessageModel(QObject *parent)
 
 void RsMessageModel::preMods()
 {
- 	emit layoutAboutToBeChanged();
+	emit layoutAboutToBeChanged();
 }
 void RsMessageModel::postMods()
 {
 	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mMessages.size()-1,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+	emit layoutChanged();
 }
 
 int RsMessageModel::rowCount(const QModelIndex& parent) const
 {
 	if(!parent.isValid())
-        return 0;
+		return 0;
 
-    if(parent.column() > 0)
-        return 0;
+	if(parent.column() > 0)
+		return 0;
 
-    if(mMessages.empty())	// security. Should never happen.
-        return 0;
+	if(mMessages.empty())	// security. Should never happen.
+		return 0;
 
 	if(parent.internalPointer() == NULL)
 		return mMessages.size();
 
-    return 0;
+	return 0;
 }
 
-int RsMessageModel::columnCount(const QModelIndex &parent) const
+int RsMessageModel::columnCount(const QModelIndex &/*parent*/) const
 {
 	return COLUMN_THREAD_NB_COLUMNS ;
 }
@@ -145,8 +146,8 @@ QModelIndex RsMessageModel::index(int row, int column, const QModelIndex & paren
 
 QModelIndex RsMessageModel::parent(const QModelIndex& index) const
 {
-    if(!index.isValid())
-        return QModelIndex();
+	if(!index.isValid())
+		return QModelIndex();
 
 	return QModelIndex();
 }
@@ -154,12 +155,12 @@ QModelIndex RsMessageModel::parent(const QModelIndex& index) const
 Qt::ItemFlags RsMessageModel::flags(const QModelIndex& index) const
 {
     if (!index.isValid())
-        return 0;
+        return Qt::ItemFlags();
 
     return QAbstractItemModel::flags(index);
 }
 
-QVariant RsMessageModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant RsMessageModel::headerData(int section, Qt::Orientation /*orientation*/, int role) const
 {
 	if(role == Qt::DisplayRole)
 		switch(section)
@@ -274,20 +275,20 @@ QVariant RsMessageModel::data(const QModelIndex &index, int role) const
 	}
 }
 
-QVariant RsMessageModel::textColorRole(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
+QVariant RsMessageModel::textColorRole(const Rs::Msgs::MsgInfoSummary& fmpe,int /*column*/) const
 {
 	Rs::Msgs::MsgTagType tags;
 	rsMsgs->getMessageTagTypes(tags);
 
-    for(auto it(fmpe.msgtags.begin());it!=fmpe.msgtags.end();++it)
-        for(auto it2(tags.types.begin());it2!=tags.types.end();++it2)
-            if(it2->first == *it)
-                return QColor(it2->second.second);
+	for(auto it(fmpe.msgtags.begin());it!=fmpe.msgtags.end();++it)
+		for(auto it2(tags.types.begin());it2!=tags.types.end();++it2)
+			if(it2->first == *it)
+				return QColor(it2->second.second);
 
 	return QVariant();
 }
 
-QVariant RsMessageModel::statusRole(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
+QVariant RsMessageModel::statusRole(const Rs::Msgs::MsgInfoSummary& /*fmpe*/,int /*column*/) const
 {
 // 	if(column != COLUMN_THREAD_DATA)
 //        return QVariant();
@@ -295,12 +296,12 @@ QVariant RsMessageModel::statusRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col
     return QVariant();//fmpe.mMsgStatus);
 }
 
-bool RsMessageModel::passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
+bool RsMessageModel::passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int /*column*/) const
 {
-    QString s ;
-    bool passes_strings = true ;
+	QString s ;
+	bool passes_strings = true ;
 
-    if(!mFilterStrings.empty())
+	if(!mFilterStrings.empty())
 	{
 		switch(mFilterType)
 		{
@@ -308,9 +309,9 @@ bool RsMessageModel::passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int colum
 			break;
 
 		case FILTER_TYPE_FROM:      s = sortRole(fmpe,COLUMN_THREAD_AUTHOR).toString();
-            						if(s.isNull())
-                                        passes_strings = false;
-            break;
+			if(s.isNull())
+				passes_strings = false;
+			break;
 		case FILTER_TYPE_DATE:   	s = displayRole(fmpe,COLUMN_THREAD_DATE).toString();
 			break;
 		case FILTER_TYPE_CONTENT:   {
@@ -330,6 +331,9 @@ bool RsMessageModel::passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int colum
 			for(auto it(minfo.files.begin());it!=minfo.files.end();++it)
 				s += QString::fromUtf8((*it).fname.c_str())+" ";
 		}
+			break;
+		case FILTER_TYPE_NONE:
+			RS_ERR("None Type for Filter.");
 		};
 	}
 
@@ -355,18 +359,15 @@ bool RsMessageModel::passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int colum
 
 QVariant RsMessageModel::filterRole(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
 {
-    if(passesFilter(fmpe,column))
-        return QVariant(FilterString);
+	if(passesFilter(fmpe,column))
+		return QVariant(FilterString);
 
 	return QVariant(QString());
 }
 
-uint32_t RsMessageModel::updateFilterStatus(ForumModelIndex i,int column,const QStringList& strings)
+uint32_t RsMessageModel::updateFilterStatus(ForumModelIndex /*i*/,int /*column*/,const QStringList& /*strings*/)
 {
-    QString s ;
-	uint32_t count = 0;
-
-	return count;
+	return 0;
 }
 
 
@@ -408,7 +409,7 @@ QVariant RsMessageModel::toolTipRole(const Rs::Msgs::MsgInfoSummary& fmpe,int co
     return QVariant();
 }
 
-QVariant RsMessageModel::backgroundRole(const Rs::Msgs::MsgInfoSummary &fmpe, int column) const
+QVariant RsMessageModel::backgroundRole(const Rs::Msgs::MsgInfoSummary &/*fmpe*/, int /*column*/) const
 {
     return QVariant();
 }
@@ -426,7 +427,7 @@ QVariant RsMessageModel::sizeHintRole(int col) const
 	}
 }
 
-QVariant RsMessageModel::authorRole(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
+QVariant RsMessageModel::authorRole(const Rs::Msgs::MsgInfoSummary& /*fmpe*/,int /*column*/) const
 {
     return QVariant();
 }
@@ -443,15 +444,16 @@ QVariant RsMessageModel::sortRole(const Rs::Msgs::MsgInfoSummary& fmpe,int colum
 
 	case COLUMN_THREAD_SPAM:  return QVariant((fmpe.msgflags & RS_MSG_SPAM)? 1:0);
 
-    case COLUMN_THREAD_AUTHOR:{
-        						QString name;
+	case COLUMN_THREAD_AUTHOR:{
+			QString name;
 
-        						if(GxsIdTreeItemDelegate::computeName(RsGxsId(fmpe.srcId.toStdString()),name))
-                                    return name;
-    }
-    default:
-        return displayRole(fmpe,column);
-    }
+			if(GxsIdTreeItemDelegate::computeName(RsGxsId(fmpe.srcId.toStdString()),name))
+				return name;
+			return ""; //Not Found
+		}
+	default:
+		return displayRole(fmpe,column);
+	}
 }
 
 QVariant RsMessageModel::displayRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col) const
@@ -572,9 +574,12 @@ QVariant RsMessageModel::decorationRole(const Rs::Msgs::MsgInfoSummary& fmpe,int
 
 void RsMessageModel::clear()
 {
-    preMods();
+	preMods();
 
-    mMessages.clear();
+	beginResetModel();
+	mMessages.clear();
+	mMessagesMap.clear();
+	endResetModel();
 
 	postMods();
 
@@ -583,29 +588,26 @@ void RsMessageModel::clear()
 
 void RsMessageModel::setMessages(const std::list<Rs::Msgs::MsgInfoSummary>& msgs)
 {
-    preMods();
 
-    beginRemoveRows(QModelIndex(),0,mMessages.size()-1);
-    endRemoveRows();
+	clear();
 
-    mMessages.clear();
-    mMessagesMap.clear();
+	for(auto it(msgs.begin());it!=msgs.end();++it)
+	{
+		mMessagesMap[(*it).msgId] = mMessages.size();
+		mMessages.push_back(*it);
+	}
 
-    for(auto it(msgs.begin());it!=msgs.end();++it)
-    {
-        mMessagesMap[(*it).msgId] = mMessages.size();
-    	mMessages.push_back(*it);
-    }
-
-    // now update prow for all posts
+	// now update prow for all posts
 
 #ifdef DEBUG_MESSAGE_MODEL
-    debug_dump();
+	debug_dump();
 #endif
 
-    beginInsertRows(QModelIndex(),0,mMessages.size()-1);
-    endInsertRows();
-	postMods();
+	if (mMessages.size()>0)
+	{
+		beginInsertRows(QModelIndex(),0,mMessages.size()-1);
+		endInsertRows();
+	}
 
 	emit messagesLoaded();
 }
@@ -672,8 +674,6 @@ void RsMessageModel::updateMessages()
     emit messagesLoaded();
 }
 
-static bool decreasing_time_comp(const std::pair<time_t,RsGxsMessageId>& e1,const std::pair<time_t,RsGxsMessageId>& e2) { return e2.first < e1.first ; }
-
 void RsMessageModel::setMsgReadStatus(const QModelIndex& i,bool read_status)
 {
 	if(!i.isValid())
@@ -704,12 +704,12 @@ void RsMessageModel::setMsgJunk(const QModelIndex& i,bool junk)
 
 QModelIndex RsMessageModel::getIndexOfMessage(const std::string& mid) const
 {
-    // Brutal search. This is not so nice, so dont call that in a loop! If too costly, we'll use a map.
+	// Brutal search. This is not so nice, so dont call that in a loop! If too costly, we'll use a map.
 
-    auto it = mMessagesMap.find(mid);
+	auto it = mMessagesMap.find(mid);
 
-    if(it == mMessagesMap.end() || it->second >= mMessages.size())
-        return QModelIndex();
+	if(it == mMessagesMap.end() || it->second >= mMessages.size())
+		return QModelIndex();
 
 	quintptr ref ;
 	convertMsgIndexToInternalId(it->second,ref);
