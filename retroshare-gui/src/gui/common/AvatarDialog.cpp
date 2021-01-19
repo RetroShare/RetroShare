@@ -19,7 +19,6 @@
  *******************************************************************************/
 
 #include <QBuffer>
-#include <QDesktopWidget>
 #include <QFile>
 #include <QDir>
 #include <QGridLayout>
@@ -163,7 +162,8 @@ void AvatarDialog::loadAvatarWidget()
 
 	if(stickerTabs.count() == 0) {
 		ui->nostickersLabel->setText("");
-		QString message = "No stickers installed.\nYou can install them by putting images into one of these folders:\n" + stickerFolders.join('\n');
+		QString message = "No stickers installed.\nYou can install them by putting images into one of these folders:\n" /*+ stickerFolders.join('\n')*/;
+		message += "RetroShare/stickers\n RetroShare/Data/stickers\n RetroShare/Data/Location/stickers";
 		ui->nostickersLabel->setText(message);
 	} else {
 		ui->infoframe->hide();
@@ -243,7 +243,7 @@ void AvatarDialog::loadAvatarWidget()
 			button->setFixedSize(QSize(buttonWidth, buttonHeight));
 			if(!iconcache.contains(fi.absoluteFilePath()))
 			{
-                iconcache.insert(fi.absoluteFilePath(), FilesDefs::getPixmapFromQtResourcePath(fi.absoluteFilePath()).scaled(buttonWidth, buttonHeight, Qt::KeepAspectRatio));
+				iconcache.insert(fi.absoluteFilePath(), FilesDefs::getPixmapFromQtResourcePath(fi.absoluteFilePath()).scaled(buttonWidth, buttonHeight, Qt::KeepAspectRatio));
 			}
 			button->setIcon(iconcache[fi.absoluteFilePath()]);
 			button->setToolTip(fi.fileName());
