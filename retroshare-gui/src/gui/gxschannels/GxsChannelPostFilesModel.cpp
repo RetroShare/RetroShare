@@ -66,7 +66,7 @@ void RsGxsChannelPostFilesModel::preMods()
 }
 void RsGxsChannelPostFilesModel::postMods()
 {
-	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFilteredFiles.size(),COLUMN_FILES_NB_COLUMNS-1,(void*)NULL));
+	emit QAbstractItemModel::dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFilteredFiles.size(),COLUMN_FILES_NB_COLUMNS-1,(void*)NULL));
 	emit layoutChanged();
 }
 
