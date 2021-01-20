@@ -1318,9 +1318,9 @@ void GxsChannelPostsWidgetWithModel::switchOnlyUnread(bool)
 }
 void GxsChannelPostsWidgetWithModel::filterChanged(QString s)
 {
-    QStringList ql = s.split(' ',Qt::SkipEmptyParts);
-    uint32_t count;
-    mChannelPostsModel->setFilter(ql,ui->showUnread_TB->isChecked(),count);
+	QStringList ql = s.split(' ',QString::SkipEmptyParts);
+	uint32_t count;
+	mChannelPostsModel->setFilter(ql,ui->showUnread_TB->isChecked(),count);
 	mChannelFilesModel->setFilter(ql,count);
 }
 
