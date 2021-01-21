@@ -669,7 +669,6 @@ void GxsChannelPostsWidgetWithModel::download()
     for(auto& file:post.mFiles)
     {
         std::list<RsPeerId> sources;
-        std::string destination;
 
         // Add possible direct sources.
         FileInfo fileInfo;

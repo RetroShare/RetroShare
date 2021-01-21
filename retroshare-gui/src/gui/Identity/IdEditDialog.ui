@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>542</width>
-    <height>536</height>
+    <width>593</width>
+    <height>604</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -291,7 +291,7 @@
         <item>
          <layout class="QVBoxLayout" name="avatarVLayout">
           <item>
-           <widget class="QLabel" name="avatarLabel">
+           <widget class="ZoomableLabel" name="avatarLabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -330,7 +330,7 @@
           <item>
            <widget class="QPushButton" name="avatarButton">
             <property name="text">
-             <string>Set Avatar</string>
+             <string>Choose image...</string>
             </property>
            </widget>
           </item>
@@ -529,9 +529,13 @@
    <header>gui/common/HeaderFrame.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>ZoomableLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/gxschannels/GxsChannelPostThumbnail.h</header>
+  </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
  </resources>
  <connections/>
