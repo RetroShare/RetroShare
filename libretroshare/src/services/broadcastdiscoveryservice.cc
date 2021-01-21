@@ -141,8 +141,6 @@ void BroadcastDiscoveryService::updatePublishedData()
 
 void BroadcastDiscoveryService::threadTick()
 {
-	auto nextRunAt = std::chrono::system_clock::now() + std::chrono::seconds(5);
-
 	if( mUdcParameters.can_discover() &&
 	        !mRsPeers.isHiddenNode(mRsPeers.getOwnId()) )
 	{
@@ -200,7 +198,13 @@ void BroadcastDiscoveryService::threadTick()
 	if( mUdcParameters.can_be_discovered() &&
 	        !mRsPeers.isHiddenNode(mRsPeers.getOwnId()) ) updatePublishedData();
 
-	std::this_thread::sleep_until(nextRunAt);
+    // This avoids waiting 5 secs when the thread should actually terminate (when RS closes).
+    for(uint32_t i=0;i<10;++i)
+    {
+        if(shouldStop())
+            return;
+        rstime::rs_usleep(500*1000); // sleep for 0.5 sec.
+    }
 }
 
 RsBroadcastDiscoveryResult BroadcastDiscoveryService::createResult(

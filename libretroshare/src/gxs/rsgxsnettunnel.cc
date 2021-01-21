@@ -766,7 +766,12 @@ void RsGxsNetTunnelService::threadTick()
 	}
 #endif
 
-	rstime::rs_usleep(1*1000*1000) ; // 1 sec
+    for(uint32_t i=0;i<2;++i)
+    {
+        if(shouldStop())
+            return;
+        rstime::rs_usleep(500*1000) ; // 1 sec
+    }
 }
 
 const Bias20Bytes& RsGxsNetTunnelService::locked_randomBias()

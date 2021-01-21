@@ -20,6 +20,7 @@
 
 #include <QBuffer>
 #include <QMessageBox>
+#include <QToolTip>
 
 #include "IdEditDialog.h"
 #include "ui_IdEditDialog.h"
@@ -100,6 +101,7 @@ IdEditDialog::~IdEditDialog() {}
 
 void IdEditDialog::changeAvatar()
 {
+#ifdef TODO
 	AvatarDialog dialog(this);
 
 	dialog.setAvatar(mAvatar);
@@ -109,6 +111,23 @@ void IdEditDialog::changeAvatar()
 
 		setAvatar(newAvatar);
 	}
+#endif
+    // For now we use a simpler method since AvatarDialog is not finished yet; we use the thumbnail viewer to allow the user to
+    // select a proper scale/crop of a given image to make his/her avatar.
+
+    QString image_filename ;
+
+    if(!misc::getOpenFileName(this,RshareSettings::LASTDIR_IMAGES,tr("Import image"), tr("Image files (*.jpg *.png);;All files (*)"),image_filename))
+        return;
+
+    QImage img(image_filename);
+
+    ui->avatarLabel->setPicture(QPixmap::fromImage(img));
+    ui->avatarLabel->setEnableZoom(true);
+    ui->avatarLabel->setToolTip(tr("Use the mouse to zoom and adjust the image for your avatar."));
+
+    // shows the tooltip for a while
+    QToolTip::showText( ui->avatarLabel->mapToGlobal( QPoint( 0, 0 ) ), ui->avatarLabel->toolTip() );
 }
 
 void IdEditDialog::setupNewId(bool pseudo,bool enable_anon)
@@ -597,6 +616,8 @@ void IdEditDialog::updateId()
     }
 
     mEditGroup.mMeta.mGroupName = groupname.toUtf8().constData();
+
+    mAvatar = ui->avatarLabel->extractCroppedScaledPicture();
 
 	if (!mAvatar.isNull())
 	{

@@ -2519,7 +2519,7 @@ void RsGenExchange::processGroupUpdatePublish()
 	{
 		GroupUpdatePublish& gup = *vit;
 		const RsGxsGroupId& groupId = gup.grpItem->meta.mGroupId;
-		grpMeta.insert(std::make_pair(groupId, (RsGxsGrpMetaData*)(NULL)));
+        grpMeta.insert(std::make_pair(groupId, std::make_shared<RsGxsGrpMetaData>()));
 	}
 
 	if(grpMeta.empty())
@@ -2985,7 +2985,7 @@ bool RsGenExchange::getGroupKeys(const RsGxsGroupId &grpId, RsTlvSecurityKeySet 
 	RS_STACK_MUTEX(mGenMtx) ;
 
 	RsGxsGrpMetaTemporaryMap grpMeta;
-	grpMeta[grpId] = NULL;
+    grpMeta[grpId] = std::make_shared<RsGxsGrpMetaData>();
 	mDataStore->retrieveGxsGrpMetaData(grpMeta);
 
 	if(grpMeta.empty())
@@ -3078,7 +3078,7 @@ void RsGenExchange::processRecvdMessages()
 		    }
 		    else
 		    {
-				grpMetas.insert(std::make_pair(pend_it->second.mItem->grpId, (RsGxsGrpMetaData*)NULL));
+                grpMetas.insert(std::make_pair(pend_it->second.mItem->grpId, std::make_shared<RsGxsGrpMetaData>()));
 			    ++pend_it;
 		    }
 	    }
