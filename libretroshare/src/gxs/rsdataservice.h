@@ -79,9 +79,14 @@ public:
         }
     }
 
-	void updateMeta(const ID& id,const MetaDataClass& meta)
-	{
+    void updateMeta(const ID& id,const MetaDataClass& meta)
+    {
         mMetas[id] = std::make_shared<MetaDataClass>(meta);     // create a new shared_ptr to possibly replace the previous one
+    }
+
+    void updateMeta(const ID& id,const std::shared_ptr<MetaDataClass>& meta)
+	{
+        mMetas[id] = meta;     // create a new shared_ptr to possibly replace the previous one
 	}
 
     void clear(const ID& id)
@@ -101,8 +106,11 @@ public:
 #endif
 
 			mMetas.erase(it) ;
-			mCache_ContainsAllMetas = false;
-		}
+
+            // No need to modify  mCache_ContainsAllMetas since, assuming that the cache always contains
+            // all possible elements from the DB, clearing one from the cache means that it is also deleted from the db, so
+            // the property is preserved.
+        }
 	}
 
     void debug_computeSize(uint32_t& nb_items, uint64_t& total_size) const
