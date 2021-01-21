@@ -67,7 +67,7 @@ AvatarDialog::AvatarDialog(QWidget *parent) :
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
 	updateInterface();
-	loadFolders();
+
 	loadAvatarWidget();
 }
 
@@ -144,7 +144,7 @@ void AvatarDialog::getAvatar(QByteArray &avatar)
 	pixmap->save(&buffer, "PNG"); // writes image into ba in PNG format
 }
 
-void AvatarDialog::loadFolders()
+void AvatarDialog::load()
 {
 	filters << "*.png" << "*.jpg" << "*.gif";
 	stickerFolders << (QString::fromStdString(RsAccounts::AccountDirectory()) + "/stickers");		//under account, unique for user

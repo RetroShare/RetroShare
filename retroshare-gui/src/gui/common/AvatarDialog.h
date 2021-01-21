@@ -47,13 +47,13 @@ public:
 	void getAvatar(QByteArray &avatar);
 
 	static QString importedStickerPath();
+	static void load();
 
 private slots:
 	void changeAvatar();
 	void removeAvatar();
 	void addAvatar();
 
-	void loadFolders();
 	void loadAvatarWidget();
 
 	void loadToolTips(QWidget *container);
