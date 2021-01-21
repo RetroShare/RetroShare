@@ -35,13 +35,6 @@
 
 #include <stdint.h>
 
-#define COLUMN_NAME        0
-#define COLUMN_UNREAD      1
-#define COLUMN_POPULARITY  2
-#define COLUMN_LAST_POST   3
-#define COLUMN_COUNT       4
-#define COLUMN_DATA        COLUMN_NAME
-
 #define ROLE_ID              Qt::UserRole
 #define ROLE_NAME            Qt::UserRole + 1
 #define ROLE_DESCRIPTION     Qt::UserRole + 2
@@ -74,7 +67,7 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	actionSortByUnread = NULL;
 
 	compareRole = new RSTreeWidgetItemCompareRole;
-	compareRole->setRole(COLUMN_DATA, ROLE_NAME);
+	compareRole->setRole(GTW_COLUMN_DATA, ROLE_NAME);
 
 	/* Connect signals */
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged()));
@@ -94,41 +87,50 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	ui->treeWidget->setItemDelegate(itemDelegate);
 
 	/* Initialize tree widget */
-	ui->treeWidget->setColumnCount(COLUMN_COUNT);
+	ui->treeWidget->setColumnCount(GTW_COLUMN_COUNT);
 	ui->treeWidget->enableColumnCustomize(true);
-	ui->treeWidget->setColumnCustomizable(COLUMN_NAME, false);
+	ui->treeWidget->setColumnCustomizable(GTW_COLUMN_NAME, false);
 
 	int S = QFontMetricsF(font()).height() ;
-	int W = QFontMetricsF(font()).width("999") ;
+	int W = QFontMetricsF(font()).width("_") ;
 	int D = QFontMetricsF(font()).width("9999-99-99[]") ;
+
+	QTreeWidgetItem *headerItem = ui->treeWidget->headerItem();
+	headerItem->setText(GTW_COLUMN_NAME, tr("Name"));
+	headerItem->setText(GTW_COLUMN_UNREAD, tr("Unread"));
+	headerItem->setText(GTW_COLUMN_POSTS, tr("F Posts"));
+	headerItem->setText(GTW_COLUMN_POPULARITY, tr("Popularity"));
+	headerItem->setText(GTW_COLUMN_LAST_POST, tr("Last Post"));
+	headerItem->setToolTip(GTW_COLUMN_NAME, tr("Name"));
+	headerItem->setToolTip(GTW_COLUMN_UNREAD, tr("Number of Unread message"));
+	headerItem->setToolTip(GTW_COLUMN_POSTS, tr("Friend's Posts"));
+	headerItem->setToolTip(GTW_COLUMN_POPULARITY, tr("Popularity"));
+	headerItem->setToolTip(GTW_COLUMN_LAST_POST, tr("Last Post"));
 
 	/* Set header resize modes and initial section sizes */
 	QHeaderView *header = ui->treeWidget->header ();
 	header->setStretchLastSection(false);
-	QHeaderView_setSectionResizeModeColumn(header, COLUMN_NAME, QHeaderView::Stretch);
-	header->resizeSection(COLUMN_NAME, 10*S) ;
-	QHeaderView_setSectionResizeModeColumn(header, COLUMN_UNREAD, QHeaderView::Fixed);
-	header->resizeSection(COLUMN_UNREAD, W+4) ;
-	QHeaderView_setSectionResizeModeColumn(header, COLUMN_POPULARITY, QHeaderView::Fixed);
-	header->resizeSection(COLUMN_POPULARITY, 2*S) ;
-	QHeaderView_setSectionResizeModeColumn(header, COLUMN_LAST_POST, QHeaderView::Fixed);
-	header->resizeSection(COLUMN_LAST_POST, D+4) ;
-	header->setSectionHidden(COLUMN_LAST_POST, true);
-
-	QTreeWidgetItem *headerItem = ui->treeWidget->headerItem();
-	headerItem->setText(COLUMN_NAME, tr("Name"));
-	headerItem->setText(COLUMN_UNREAD, tr("Unread"));
-	headerItem->setText(COLUMN_POPULARITY, tr("Popularity"));
-	headerItem->setText(COLUMN_LAST_POST, tr("Last Post"));
+	QHeaderView_setSectionResizeModeColumn(header, GTW_COLUMN_NAME, QHeaderView::Stretch);
+	header->resizeSection(GTW_COLUMN_NAME, 10*W) ;
+	QHeaderView_setSectionResizeModeColumn(header, GTW_COLUMN_UNREAD, QHeaderView::Interactive);
+	header->resizeSection(GTW_COLUMN_UNREAD, 3*W+4) ;
+	QHeaderView_setSectionResizeModeColumn(header, GTW_COLUMN_POSTS, QHeaderView::Interactive);
+	header->resizeSection(GTW_COLUMN_POSTS, 3*W+4) ;
+	header->setSectionHidden(GTW_COLUMN_POSTS, true);
+	QHeaderView_setSectionResizeModeColumn(header, GTW_COLUMN_POPULARITY, QHeaderView::Interactive);
+	header->resizeSection(GTW_COLUMN_POPULARITY, 3*W) ;
+	QHeaderView_setSectionResizeModeColumn(header, GTW_COLUMN_LAST_POST, QHeaderView::Interactive);
+	header->resizeSection(GTW_COLUMN_LAST_POST, D+4) ;
+	header->setSectionHidden(GTW_COLUMN_LAST_POST, true);
 
 	/* add filter actions */
 	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), FILTER_NAME_INDEX , tr("Search Title"));
 	ui->filterLineEdit->addFilter(QIcon(), tr("Description"), FILTER_DESC_INDEX , tr("Search Description"));
 	ui->filterLineEdit->setCurrentFilter(FILTER_NAME_INDEX);
 
-    ui->distantSearchLineEdit->setPlaceholderText(tr("Search entire network...")) ;
+	ui->distantSearchLineEdit->setPlaceholderText(tr("Search entire network...")) ;
 
-    connect(ui->distantSearchLineEdit,SIGNAL(returnPressed()),this,SLOT(distantSearch())) ;
+	connect(ui->distantSearchLineEdit,SIGNAL(returnPressed()),this,SLOT(distantSearch())) ;
 
 	/* Initialize display button */
 	initDisplayMenu(ui->displayButton);
@@ -179,15 +181,18 @@ void GroupTreeWidget::processSettings(bool load)
 	}
 
 	const int SORTBY_NAME = 1;
-	const int SORTBY_POPULRITY = 2;
+	const int SORTBY_POPULARITY = 2;
 	const int SORTBY_LASTPOST = 3;
 	const int SORTBY_POSTS = 4;
 	const int SORTBY_UNREAD = 5;
 
+	ui->treeWidget->setSettingsVersion(1);//Change it when modifing column properties
 	ui->treeWidget->processSettings(load);
 
 	if (load) {
 		// load Settings
+		bool showHeader = Settings->value("GroupShowHeader", false).toBool();
+		actionShowHeader->setChecked(showHeader);
 
 		// state of order
 		bool ascSort = Settings->value("GroupAscSort", true).toBool();
@@ -202,7 +207,7 @@ void GroupTreeWidget::processSettings(bool load)
 				actionSortByName->setChecked(true);
 			}
 			break;
-		case SORTBY_POPULRITY:
+		case SORTBY_POPULARITY:
 			if (actionSortByPopularity) {
 				actionSortByPopularity->setChecked(true);
 			}
@@ -225,6 +230,7 @@ void GroupTreeWidget::processSettings(bool load)
 		}
 	} else {
 		// save Settings
+		Settings->setValue("GroupShowHeader", !(actionShowHeader && actionShowHeader->isChecked())); //False by default
 
 		// state of order
 		Settings->setValue("GroupAscSort", !(actionSortDescending && actionSortDescending->isChecked())); //True by default
@@ -234,7 +240,7 @@ void GroupTreeWidget::processSettings(bool load)
 		if (actionSortByName && actionSortByName->isChecked()) {
 			sortby = SORTBY_NAME;
 		} else if (actionSortByPopularity && actionSortByPopularity->isChecked()) {
-			sortby = SORTBY_POPULRITY;
+			sortby = SORTBY_POPULARITY;
 		} else if (actionSortByLastPost && actionSortByLastPost->isChecked()) {
 			sortby = SORTBY_LASTPOST;
 		} else if (actionSortByPosts && actionSortByPosts->isChecked()) {
@@ -251,11 +257,15 @@ void GroupTreeWidget::initDisplayMenu(QToolButton *toolButton)
 	displayMenu = new QMenu();
 	QActionGroup *actionGroupAsc = new QActionGroup(displayMenu);
 
-    actionSortDescending = displayMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/sort_decrease.png"), tr("Sort Descending Order"), this, SLOT(sort()));
+	actionShowHeader = displayMenu->addAction(tr("Show Header"));
+	connect(actionShowHeader, SIGNAL(toggled(bool)), this, SLOT(showHeader(bool)));
+	actionShowHeader->setCheckable(true);
+
+	actionSortDescending = displayMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/sort_decrease.png"), tr("Sort Descending Order"), this, SLOT(sort()));
 	actionSortDescending->setCheckable(true);
 	actionSortDescending->setActionGroup(actionGroupAsc);
 
-    actionSortAscending = displayMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/sort_incr.png"), tr("Sort Ascending Order"), this, SLOT(sort()));
+	actionSortAscending = displayMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/sort_incr.png"), tr("Sort Ascending Order"), this, SLOT(sort()));
 	actionSortAscending->setCheckable(true);
 	actionSortAscending->setActionGroup(actionGroupAsc);
 
@@ -275,7 +285,7 @@ void GroupTreeWidget::initDisplayMenu(QToolButton *toolButton)
 	actionSortByLastPost->setCheckable(true);
 	actionSortByLastPost->setActionGroup(actionGroup);
 
-	actionSortByPosts = displayMenu->addAction(QIcon(), tr("Sort by Number of Posts"), this, SLOT(sort()));
+	actionSortByPosts = displayMenu->addAction(QIcon(), tr("Sort by Number of Friend's Posts"), this, SLOT(sort()));
 	actionSortByPosts->setCheckable(true);
 	actionSortByPosts->setActionGroup(actionGroup);
 
@@ -293,11 +303,11 @@ void GroupTreeWidget::updateColors()
 	while ((item = *itemIterator) != NULL) {
 		++itemIterator;
 
-		int color = item->data(COLUMN_DATA, ROLE_COLOR).toInt();
+		int color = item->data(GTW_COLUMN_DATA, ROLE_COLOR).toInt();
 		if (color >= 0) {
-			item->setData(COLUMN_NAME, Qt::TextColorRole, mTextColor[color]);
+			item->setData(GTW_COLUMN_NAME, Qt::TextColorRole, mTextColor[color]);
 		} else {
-			item->setData(COLUMN_NAME, Qt::TextColorRole, QVariant());
+			item->setData(GTW_COLUMN_NAME, Qt::TextColorRole, QVariant());
 		}
 
 	}
@@ -315,7 +325,7 @@ void GroupTreeWidget::currentItemChanged(QTreeWidgetItem *current, QTreeWidgetIt
 	QString id;
 
 	if (current) {
-		id = current->data(COLUMN_DATA, ROLE_ID).toString();
+		id = current->data(GTW_COLUMN_DATA, ROLE_ID).toString();
 	}
 
 	emit treeCurrentItemChanged(id);
@@ -328,7 +338,7 @@ void GroupTreeWidget::itemActivated(QTreeWidgetItem *item, int column)
 	QString id;
 
 	if (item) {
-		id = item->data(COLUMN_DATA, ROLE_ID).toString();
+		id = item->data(GTW_COLUMN_DATA, ROLE_ID).toString();
 	}
 
 	emit treeItemActivated(id);
@@ -343,18 +353,18 @@ QTreeWidgetItem *GroupTreeWidget::addCategoryItem(const QString &name, const QIc
 	ui->treeWidget->style()->unpolish(ui->treeWidget);
 	ui->treeWidget->style()->polish(ui->treeWidget);
 
-	item->setText(COLUMN_NAME, name);
-	item->setData(COLUMN_DATA, ROLE_NAME, name);
-	font = item->font(COLUMN_NAME);
+	item->setText(GTW_COLUMN_NAME, name);
+	item->setData(GTW_COLUMN_DATA, ROLE_NAME, name);
+	font = item->font(GTW_COLUMN_NAME);
 	font.setBold(true);
-	item->setFont(COLUMN_NAME, font);
-	item->setIcon(COLUMN_NAME, icon);
+	item->setFont(GTW_COLUMN_NAME, font);
+	item->setIcon(GTW_COLUMN_NAME, icon);
 
 	int S = QFontMetricsF(font).height();
 
-	item->setSizeHint(COLUMN_NAME, QSize(S*1.9, S*1.9));
-	item->setData(COLUMN_NAME, Qt::TextColorRole, textColorCategory());
-	item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_CATEGORY);
+	item->setSizeHint(GTW_COLUMN_NAME, QSize(S*1.9, S*1.9));
+	item->setData(GTW_COLUMN_NAME, Qt::TextColorRole, textColorCategory());
+	item->setData(GTW_COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_CATEGORY);
 
 	item->setExpanded(expand);
 
@@ -370,8 +380,8 @@ QTreeWidgetItem *GroupTreeWidget::addSearchItem(const QString& search_string, ui
 {
     QTreeWidgetItem *item = addCategoryItem(search_string,icon,true);
 
-    item->setData(COLUMN_DATA,ROLE_SEARCH_STRING,search_string) ;
-    item->setData(COLUMN_DATA,ROLE_REQUEST_ID   ,id) ;
+    item->setData(GTW_COLUMN_DATA,ROLE_SEARCH_STRING,search_string) ;
+    item->setData(GTW_COLUMN_DATA,ROLE_REQUEST_ID   ,id) ;
 
     return item;
 }
@@ -392,7 +402,7 @@ bool GroupTreeWidget::isSearchRequestResult(QPoint &point,QString& group_id,uint
 	if(parent == NULL)
 		return false ;
 
-	search_req_id = parent->data(COLUMN_DATA, ROLE_REQUEST_ID).toUInt();
+	search_req_id = parent->data(GTW_COLUMN_DATA, ROLE_REQUEST_ID).toUInt();
 	group_id = itemId(item) ;
 
 	return search_req_id > 0;
@@ -405,7 +415,7 @@ bool GroupTreeWidget::isSearchRequestResultItem(QTreeWidgetItem *item,QString& g
 	if(parent == NULL)
 		return false ;
 
-	search_req_id = parent->data(COLUMN_DATA, ROLE_REQUEST_ID).toUInt();
+	search_req_id = parent->data(GTW_COLUMN_DATA, ROLE_REQUEST_ID).toUInt();
 	group_id = itemId(item) ;
 
 	return search_req_id > 0;
@@ -417,7 +427,7 @@ bool GroupTreeWidget::isSearchRequestItem(QPoint &point,uint32_t& search_req_id)
 	if (item == NULL)
 		return false;
 
-	search_req_id = item->data(COLUMN_DATA, ROLE_REQUEST_ID).toUInt();
+	search_req_id = item->data(GTW_COLUMN_DATA, ROLE_REQUEST_ID).toUInt();
 
     return search_req_id > 0;
 }
@@ -428,7 +438,7 @@ QString GroupTreeWidget::itemId(QTreeWidgetItem *item)
 		return "";
 	}
 
-	return item->data(COLUMN_DATA, ROLE_ID).toString();
+	return item->data(GTW_COLUMN_DATA, ROLE_ID).toString();
 }
 
 QString GroupTreeWidget::itemIdAt(QPoint &point)
@@ -438,7 +448,7 @@ QString GroupTreeWidget::itemIdAt(QPoint &point)
 		return "";
 	}
 
-	return item->data(COLUMN_DATA, ROLE_ID).toString();
+	return item->data(GTW_COLUMN_DATA, ROLE_ID).toString();
 }
 
 void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<GroupItemInfo> &itemList)
@@ -460,7 +470,7 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		int childCount = categoryItem->childCount();
 		for (int child = 0; child < childCount; ++child) {
 			QTreeWidgetItem *childItem = categoryItem->child(child);
-			if (childItem->data(COLUMN_DATA, ROLE_ID).toString() == itemInfo.id) {
+			if (childItem->data(GTW_COLUMN_DATA, ROLE_ID).toString() == itemInfo.id) {
 				/* Found child */
 				item = childItem;
 				break;
@@ -469,45 +479,46 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 
 		if (item == NULL) {
 			item = new RSTreeWidgetItem(compareRole);
-			item->setData(COLUMN_DATA, ROLE_ID, itemInfo.id);
+			item->setData(GTW_COLUMN_DATA, ROLE_ID, itemInfo.id);
 			categoryItem->addChild(item);
 		}
 
-		item->setText(COLUMN_NAME, itemInfo.name);
-		item->setData(COLUMN_DATA, ROLE_NAME, itemInfo.name);
-		item->setData(COLUMN_DATA, ROLE_DESCRIPTION, itemInfo.description);
+		item->setText(GTW_COLUMN_NAME, itemInfo.name);
+		item->setData(GTW_COLUMN_DATA, ROLE_NAME, itemInfo.name);
+		item->setData(GTW_COLUMN_DATA, ROLE_DESCRIPTION, itemInfo.description);
 
-        // Add children for context strings. This happens in the search.
-        while(nullptr != item->takeChild(0));
+		// Add children for context strings. This happens in the search.
+		while(nullptr != item->takeChild(0));
 
-        for(auto str:itemInfo.context_strings)
-            if(!str.empty())
-            {
-                QTreeWidgetItem *it = new QTreeWidgetItem(QStringList(QString::fromUtf8(str.c_str())));
-                it->setData(COLUMN_DATA,ROLE_ID,itemInfo.id);
-				item->addChild(it);
-            }
+		for(auto& str:itemInfo.context_strings)
+			if(!str.empty())
+			{
+				QTreeWidgetItem *wit = new QTreeWidgetItem(QStringList(QString::fromUtf8(str.c_str())));
+				wit->setData(GTW_COLUMN_DATA,ROLE_ID,itemInfo.id);
+				item->addChild(wit);
+			}
 
 		/* Set last post */
 		qlonglong lastPost = itemInfo.lastpost.toTime_t();
-		item->setData(COLUMN_DATA, ROLE_LASTPOST, -lastPost); // negative for correct sorting
+		item->setData(GTW_COLUMN_DATA, ROLE_LASTPOST, -lastPost); // negative for correct sorting
 		if(itemInfo.lastpost == QDateTime::fromTime_t(0))
-			item->setText(COLUMN_LAST_POST, tr("Never"));
+			item->setText(GTW_COLUMN_LAST_POST, tr("Never"));
 		else
-			item->setText(COLUMN_LAST_POST, itemInfo.lastpost.toString(Qt::ISODate).replace("T"," "));
+			item->setText(GTW_COLUMN_LAST_POST, itemInfo.lastpost.toString(Qt::ISODate).replace("T"," "));
 
 
 		/* Set visible posts */
-		item->setData(COLUMN_DATA, ROLE_POSTS, -itemInfo.max_visible_posts);// negative for correct sorting
+		item->setText(GTW_COLUMN_POSTS, QString::number(itemInfo.max_visible_posts));
+		item->setData(GTW_COLUMN_DATA, ROLE_POSTS, -itemInfo.max_visible_posts);// negative for correct sorting
 
 		/* Set icon */
-		item->setIcon(COLUMN_NAME, itemInfo.icon);
+		item->setIcon(GTW_COLUMN_NAME, itemInfo.icon);
 
 		/* Set popularity */
 		QString tooltip = PopularityDefs::tooltip(itemInfo.popularity);
 
-		item->setIcon(COLUMN_POPULARITY, PopularityDefs::icon(itemInfo.popularity));
-		item->setData(COLUMN_DATA, ROLE_POPULARITY, -itemInfo.popularity); // negative for correct sorting
+		item->setIcon(GTW_COLUMN_POPULARITY, PopularityDefs::icon(itemInfo.popularity));
+		item->setData(GTW_COLUMN_DATA, ROLE_POPULARITY, -itemInfo.popularity); // negative for correct sorting
 
 		/* Set tooltip */
 		if (itemInfo.adminKey)
@@ -525,31 +536,32 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		if(!IS_GROUP_SUBSCRIBED(itemInfo.subscribeFlags))
 			tooltip += "\n" + tr("Subscribe to download and read messages") ;
 
-        QString desc = itemInfo.description.left(30);
-        desc.replace("\n"," ");
-        desc.replace("\t"," ");
+		QString desc = itemInfo.description.left(30);
+		desc.replace("\n"," ");
+		desc.replace("\t"," ");
 
-        if(itemInfo.description.length() > 30)
-            desc += "...";
+		if(itemInfo.description.length() > 30)
+			desc += "…";
 
-        tooltip += "\n" + tr("Description") + ": " + desc;
+		tooltip += "\n" + tr("Description") + ": " + desc;
 
 		tooltip += "\n" + tr("Id") + ": " + itemInfo.id;
 
-		item->setToolTip(COLUMN_NAME, tooltip);
-		item->setToolTip(COLUMN_UNREAD, tooltip);
-		item->setToolTip(COLUMN_POPULARITY, tooltip);
+		item->setToolTip(GTW_COLUMN_NAME, tooltip);
+		item->setToolTip(GTW_COLUMN_UNREAD, tooltip);
+		item->setToolTip(GTW_COLUMN_POSTS, tooltip);
+		item->setToolTip(GTW_COLUMN_POPULARITY, tooltip);
 
-		item->setData(COLUMN_DATA, ROLE_SUBSCRIBE_FLAGS, itemInfo.subscribeFlags);
+		item->setData(GTW_COLUMN_DATA, ROLE_SUBSCRIBE_FLAGS, itemInfo.subscribeFlags);
 
 		/* Set color */
 		if (itemInfo.publishKey) {
-			item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_PRIVATEKEY);
-			item->setData(COLUMN_NAME, Qt::ForegroundRole, QBrush(textColorPrivateKey()));
+			item->setData(GTW_COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_PRIVATEKEY);
+			item->setData(GTW_COLUMN_NAME, Qt::ForegroundRole, QBrush(textColorPrivateKey()));
 		} else {
 			// Let StyleSheet color
-			item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_STANDARD);
-			item->setData(COLUMN_NAME, Qt::BackgroundRole, QVariant());
+			item->setData(GTW_COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_STANDARD);
+			item->setData(GTW_COLUMN_NAME, Qt::BackgroundRole, QVariant());
 		}
 
 		/* Calculate score */
@@ -560,7 +572,7 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 	int child = 0;
 	int childCount = categoryItem->childCount();
 	while (child < childCount) {
-		QString id = categoryItem->child(child)->data(COLUMN_DATA, ROLE_ID).toString();
+		QString id = categoryItem->child(child)->data(GTW_COLUMN_DATA, ROLE_ID).toString();
 
 		for (it = itemList.begin(); it != itemList.end(); ++it) {
 			if (it->id == id) {
@@ -585,18 +597,18 @@ void GroupTreeWidget::setUnreadCount(QTreeWidgetItem *item, int unreadCount)
 		return;
 	}
 
-	QFont font = item->font(COLUMN_NAME);
+	QFont font = item->font(GTW_COLUMN_NAME);
 
 	if (unreadCount) {
-		item->setData(COLUMN_DATA, ROLE_UNREAD, unreadCount);
-		item->setText(COLUMN_UNREAD, QString::number(unreadCount));
+		item->setData(GTW_COLUMN_DATA, ROLE_UNREAD, unreadCount);
+		item->setText(GTW_COLUMN_UNREAD, QString::number(unreadCount));
 		font.setBold(true);
 	} else {
-		item->setText(COLUMN_UNREAD, "");
+		item->setText(GTW_COLUMN_UNREAD, "");
 		font.setBold(false);
 	}
 
-	item->setFont(COLUMN_NAME, font);
+	item->setFont(GTW_COLUMN_NAME, font);
 }
 
 QTreeWidgetItem *GroupTreeWidget::getItemFromId(const QString &id)
@@ -614,7 +626,7 @@ QTreeWidgetItem *GroupTreeWidget::getItemFromId(const QString &id)
 		if (item->parent() == NULL) {
 			continue;
 		}
-		if (item->data(COLUMN_DATA, ROLE_ID).toString() == id) {
+		if (item->data(GTW_COLUMN_DATA, ROLE_ID).toString() == id) {
 			return item;
 		}
 	}
@@ -642,7 +654,7 @@ bool GroupTreeWidget::setWaiting(const QString &id, bool wait)
 		return false;
 	}
 
-	item->setData(COLUMN_NAME, Qt::StatusTipRole, wait ? "waiting" : "");
+	item->setData(GTW_COLUMN_NAME, Qt::StatusTipRole, wait ? "waiting" : "");
 	return true;
 }
 
@@ -651,14 +663,14 @@ RSTreeWidget *GroupTreeWidget::treeWidget()
 	return ui->treeWidget;
 }
 
-bool GroupTreeWidget::getGroupName(QString id, QString& name)
+bool GroupTreeWidget::getGroupName(const QString& id, QString& name)
 {
 	QTreeWidgetItem *item = getItemFromId(id);
 	if (item == NULL) {
 		return false;
 	}
 
-	name = item->data(COLUMN_DATA, ROLE_NAME).toString();
+	name = item->data(GTW_COLUMN_DATA, ROLE_NAME).toString();
 
 	return true;
 }
@@ -670,7 +682,7 @@ int GroupTreeWidget::subscribeFlags(const QString &id)
 		return 0;
 	}
 
-	return item->data(COLUMN_DATA, ROLE_SUBSCRIBE_FLAGS).toInt();
+	return item->data(GTW_COLUMN_DATA, ROLE_SUBSCRIBE_FLAGS).toInt();
 }
 
 void GroupTreeWidget::calculateScore(QTreeWidgetItem *item, const QString &filterText)
@@ -686,10 +698,10 @@ void GroupTreeWidget::calculateScore(QTreeWidgetItem *item, const QString &filte
 
 			switch (ui->filterLineEdit->currentFilter()) {
 			case FILTER_NAME_INDEX:
-				scoreString = item->data(COLUMN_DATA, ROLE_NAME).toString();
+				scoreString = item->data(GTW_COLUMN_DATA, ROLE_NAME).toString();
 				break;
 			case FILTER_DESC_INDEX:
-				scoreString = item->data(COLUMN_DATA, ROLE_DESCRIPTION).toString();
+				scoreString = item->data(GTW_COLUMN_DATA, ROLE_DESCRIPTION).toString();
 				break;
 			}
 
@@ -702,7 +714,7 @@ void GroupTreeWidget::calculateScore(QTreeWidgetItem *item, const QString &filte
 			}
 		}
 
-		item->setData(COLUMN_DATA, ROLE_SEARCH_SCORE, -score); // negative for correct sorting
+		item->setData(GTW_COLUMN_DATA, ROLE_SEARCH_SCORE, -score); // negative for correct sorting
 
 		return;
 	}
@@ -713,7 +725,7 @@ void GroupTreeWidget::calculateScore(QTreeWidgetItem *item, const QString &filte
 	while ((tmpItem = *itemIterator) != NULL) {
 		++itemIterator;
 
-		if (tmpItem->data(COLUMN_DATA, ROLE_ID).toString().isEmpty()) {
+		if (tmpItem->data(GTW_COLUMN_DATA, ROLE_ID).toString().isEmpty()) {
 			continue;
 		}
 
@@ -734,26 +746,26 @@ void GroupTreeWidget::resort(QTreeWidgetItem *categoryItem)
 	Qt::SortOrder order = (actionSortAscending == NULL || actionSortAscending->isChecked()) ? Qt::AscendingOrder : Qt::DescendingOrder;
 
 	if (ui->filterLineEdit->text().isEmpty() == false) {
-		compareRole->setRole(COLUMN_DATA, ROLE_SEARCH_SCORE);
-		compareRole->addRole(COLUMN_DATA, ROLE_LASTPOST);
+		compareRole->setRole(GTW_COLUMN_DATA, ROLE_SEARCH_SCORE);
+		compareRole->addRole(GTW_COLUMN_DATA, ROLE_LASTPOST);
 	} else if (actionSortByName && actionSortByName->isChecked()) {
-		compareRole->setRole(COLUMN_DATA, ROLE_NAME);
+		compareRole->setRole(GTW_COLUMN_DATA, ROLE_NAME);
 	} else if (actionSortByPopularity && actionSortByPopularity->isChecked()) {
-		compareRole->setRole(COLUMN_DATA, ROLE_POPULARITY);
+		compareRole->setRole(GTW_COLUMN_DATA, ROLE_POPULARITY);
 	} else if (actionSortByLastPost && actionSortByLastPost->isChecked()) {
-		compareRole->setRole(COLUMN_DATA, ROLE_LASTPOST);
+		compareRole->setRole(GTW_COLUMN_DATA, ROLE_LASTPOST);
 	} else if (actionSortByPosts && actionSortByPosts->isChecked()) {
-		compareRole->setRole(COLUMN_DATA, ROLE_POSTS);
+		compareRole->setRole(GTW_COLUMN_DATA, ROLE_POSTS);
 	} else if (actionSortByUnread && actionSortByUnread->isChecked()) {
-		compareRole->setRole(COLUMN_DATA, ROLE_UNREAD);
+		compareRole->setRole(GTW_COLUMN_DATA, ROLE_UNREAD);
 	}
 
 	if (categoryItem) {
-		categoryItem->sortChildren(COLUMN_DATA, order);
+		categoryItem->sortChildren(GTW_COLUMN_DATA, order);
 	} else {
 		int count = ui->treeWidget->topLevelItemCount();
 		for (int child = 0; child < count; ++child) {
-			ui->treeWidget->topLevelItem(child)->sortChildren(COLUMN_DATA, order);
+			ui->treeWidget->topLevelItem(child)->sortChildren(GTW_COLUMN_DATA, order);
 		}
 	}
 }
@@ -763,6 +775,11 @@ void GroupTreeWidget::distantSearch()
     emit distantSearchRequested(ui->distantSearchLineEdit->text());
 
     ui->distantSearchLineEdit->clear();
+}
+
+void GroupTreeWidget::showHeader(bool toShow)
+{
+	ui->treeWidget->header()->setVisible(toShow);
 }
 
 void GroupTreeWidget::sort()
