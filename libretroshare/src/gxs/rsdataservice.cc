@@ -1519,7 +1519,10 @@ int RsDataService::updateGroupMetaData(const GrpLocMetaData& meta)
 
         c->moveToFirst();
 
+        // temporarily disable the cache so that we get the value from the DB itself.
+        mUseCache=false;
         auto meta = locked_getGrpMeta(*c, 0);
+        mUseCache=true;
 
         if(meta)
             mGrpMetaDataCache.updateMeta(grpId,meta);
@@ -1548,7 +1551,11 @@ int RsDataService::updateMessageMetaData(const MsgLocMetaData& metaData)
             RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, mMsgMetaColumns, KEY_GRP_ID+ "='" + grpId.toStdString() + "' AND " + KEY_MSG_ID + "='" + msgId.toStdString() + "'", "");
 
             c->moveToFirst();
+
+            // temporarily disable the cache so that we get the value from the DB itself.
+            mUseCache=false;
             auto meta = locked_getMsgMeta(*c, 0);
+            mUseCache=true;
 
             if(meta)
                 mMsgMetaDataCache[grpId].updateMeta(msgId,meta);
