@@ -1515,17 +1515,20 @@ int RsDataService::updateGroupMetaData(const GrpLocMetaData& meta)
 
     if( mDb->sqlUpdate(GRP_TABLE_NAME,  KEY_GRP_ID+ "='" + grpId.toStdString() + "'", meta.val))
     {
-        RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, mGrpMetaColumns, "grpId='" + grpId.toStdString() + "'", "");
+        if(mUseCache)
+        {
+            RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, mGrpMetaColumns, "grpId='" + grpId.toStdString() + "'", "");
 
-        c->moveToFirst();
+            c->moveToFirst();
 
-        // temporarily disable the cache so that we get the value from the DB itself.
-        mUseCache=false;
-        auto meta = locked_getGrpMeta(*c, 0);
-        mUseCache=true;
+            // temporarily disable the cache so that we get the value from the DB itself.
+            mUseCache=false;
+            auto meta = locked_getGrpMeta(*c, 0);
+            mUseCache=true;
 
-        if(meta)
-            mGrpMetaDataCache.updateMeta(grpId,meta);
+            if(meta)
+                mGrpMetaDataCache.updateMeta(grpId,meta);
+        }
 
         return 1;
     }
