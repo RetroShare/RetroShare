@@ -88,33 +88,19 @@ void AvatarWidget::mouseReleaseEvent(QMouseEvent */*event*/)
 	if (!mFlag.isOwnId) {
 		return;
 	}
-	QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Choose avatar"), AvatarDialog::RS_AVATAR_DEFAULT_IMAGE_W,AvatarDialog::RS_AVATAR_DEFAULT_IMAGE_H);
 
-	if (img.isNull())
-		return;
+	AvatarDialog dialog(this);
 
-	setPixmap(img);
+	QPixmap avatar;
+	AvatarDefs::getOwnAvatar(avatar, "");
 
-    QByteArray data;
-	QBuffer buffer(&data);
+	dialog.setAvatar(avatar);
+	if (dialog.exec() == QDialog::Accepted) {
+		QByteArray newAvatar;
+		dialog.getAvatar(newAvatar);
 
-	buffer.open(QIODevice::WriteOnly);
-	img.save(&buffer, "PNG"); // writes image into a in PNG format
-
-	rsMsgs->setOwnAvatarData((unsigned char *)(data.data()), data.size()) ;	// last char 0 included.
-
-//	AvatarDialog dialog(this);
-//
-//	QPixmap avatar;
-//	AvatarDefs::getOwnAvatar(avatar, "");
-//
-//	dialog.setAvatar(avatar);
-//	if (dialog.exec() == QDialog::Accepted) {
-//		QByteArray newAvatar;
-//		dialog.getAvatar(newAvatar);
-//
-//		rsMsgs->setOwnAvatarData((unsigned char *)(newAvatar.data()), newAvatar.size()) ;	// last char 0 included.
-//	}
+		rsMsgs->setOwnAvatarData((unsigned char *)(newAvatar.data()), newAvatar.size()) ;	// last char 0 included.
+	}
 }
 
 void AvatarWidget::setFrameType(FrameType type)

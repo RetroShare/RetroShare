@@ -42,6 +42,7 @@ CrashStackTrace gCrashStackTrace;
 #include "gui/StartDialog.h"
 #include "gui/chat/ChatDialog.h"
 #include "gui/connect/ConfCertDialog.h"
+#include "gui/common/AvatarDialog.h"
 #include "gui/common/Emoticons.h"
 #include "gui/FileTransfer/SearchDialog.h"
 #include "gui/FileTransfer/TransfersDialog.h"
@@ -493,6 +494,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	RsharePeerSettings::Create();
 
 	Emoticons::load();
+	AvatarDialog::load();
 
 	if (Settings->value(QString::fromUtf8("FirstRun"), true).toBool()) {
 		splashScreen.hide();

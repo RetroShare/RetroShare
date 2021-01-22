@@ -6,31 +6,37 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>374</width>
-    <height>252</height>
+    <width>589</width>
+    <height>468</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Change Avatar</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
-   <property name="spacing">
+  <layout class="QGridLayout" name="gridLayout_4">
+   <property name="leftMargin">
     <number>0</number>
    </property>
-   <property name="margin">
+   <property name="topMargin">
     <number>0</number>
    </property>
-   <item>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
     <widget class="HeaderFrame" name="headerFrame">
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
     </widget>
    </item>
-   <item>
+   <item row="1" column="0">
     <widget class="QFrame" name="frame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -38,11 +44,39 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QGridLayout" name="gridLayout_2">
+      <property name="topMargin">
+       <number>3</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QFrame" name="infoframe">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="0" column="0">
+          <widget class="QLabel" name="nostickersLabel">
+           <property name="text">
+            <string>TextLabel</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="0" column="1" rowspan="2">
+       <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <widget class="QLabel" name="avatarLabel">
+         <widget class="ZoomableLabel" name="avatarLabel">
           <property name="minimumSize">
            <size>
             <width>128</width>
@@ -70,73 +104,93 @@
          </widget>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <item>
-           <widget class="QPushButton" name="avatarButton">
-            <property name="text">
-             <string>Add Avatar</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="removeButton">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string>Remove</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
+         <widget class="QPushButton" name="avatarButton">
+          <property name="text">
+           <string>Browse...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="removeButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Remove</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </item>
-      <item row="0" column="2">
-       <spacer name="horizontalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+      <item row="1" column="0">
+       <widget class="QScrollArea" name="scrollArea">
+        <property name="widgetResizable">
+         <bool>true</bool>
         </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>61</width>
-          <height>98</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="1" column="0" colspan="3">
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>218</width>
-          <height>88</height>
-         </size>
-        </property>
-       </spacer>
+        <widget class="QWidget" name="scrollAreaWidgetContents">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>431</width>
+           <height>359</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QWidget" name="avatarWidget" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
       </item>
      </layout>
     </widget>
    </item>
-   <item>
+   <item row="2" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <property name="margin">
+     <property name="leftMargin">
+      <number>9</number>
+     </property>
+     <property name="topMargin">
+      <number>9</number>
+     </property>
+     <property name="rightMargin">
+      <number>9</number>
+     </property>
+     <property name="bottomMargin">
       <number>9</number>
      </property>
      <item>
@@ -174,6 +228,11 @@
    <extends>QFrame</extends>
    <header>gui/common/HeaderFrame.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ZoomableLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/gxschannels/GxsChannelPostThumbnail.h</header>
   </customwidget>
  </customwidgets>
  <resources>

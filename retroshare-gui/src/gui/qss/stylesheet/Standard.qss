@@ -18,6 +18,14 @@ HeaderFrame > QFrame#frame > QLabel#headerLabel {
 	color: rgb(255, 255, 255);
 }
 
+AvatarDialog QFrame#infoframe
+{
+	border: 1px solid #DCDC41;
+	border-radius: 6px;
+	background: #FFFFD7;
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
+}
+
 /* GenCertDialog */
 
 GenCertDialog QLabel#genprofileinfo_label, QLabel#header_label, QLabel#entropy_label
