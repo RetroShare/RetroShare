@@ -365,7 +365,7 @@ void BoardsCommentsItem::setup()
 	mInFill = false;
 
 	/* clear ui */
-	ui->titleLabel->setText(tr("Loading"));
+	//ui->titleLabel->setText(tr("Loading"));
 	ui->datetimeLabel->clear();
 	ui->replyFrame->hide();
 
@@ -456,8 +456,8 @@ void BoardsCommentsItem::fill()
 
 	ui->logoLabel->setPixmap( FilesDefs::getPixmapFromQtResourcePath(":/icons/png/comment.png"));
 
-	RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_POSTED, mGroupMeta.mGroupId, groupName());
-	ui->titleLabel->setText(link.toHtml());
+	//RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_POSTED, mGroupMeta.mGroupId, groupName());
+	//ui->titleLabel->setText(link.toHtml());
 
 	RetroShareLink msgLink = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_POSTED, mPost.mMeta.mGroupId, mPost.mMeta.mMsgId, messageName());
 	ui->subjectLabel->setText(msgLink.toHtml());
@@ -506,6 +506,7 @@ void BoardsCommentsItem::fill()
 	{
 		ui->clearButton->show();
 		ui->readAndClearButton->show();
+		ui->titleLabel->hide();
 	}
 	
 	// hide read button not yet functional
