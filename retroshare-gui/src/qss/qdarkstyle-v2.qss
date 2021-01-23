@@ -2285,3 +2285,22 @@ ChatLobbyWidget QTreeWidget#lobbyTreeWidget{
 NewFriendList QTreeView#peerTreeWidget {
 		font-size: 12pt;
 }
+
+ChannelsCommentsItem QFrame#mainFrame, BoardsCommentsItem QFrame#mainFrame {
+	background: #19232D;
+}
+
+ChannelsCommentsItem QLabel#newCommentLabel, BoardsCommentsItem QLabel#newCommentLabel {
+	font: 14px;
+	font: bold;
+}
+
+ChannelsCommentsItem QLabel#subjectLabel, ChannelsCommentsItem QLabel#titleLabel , QLabel#nameLabel {
+	font: 14px;
+	font: bold;
+}
+
+BoardsCommentsItem QLabel#subjectLabel, QLabel#titleLabel , QLabel#nameLabel {
+	font: 14px;
+	font: bold;
+}
