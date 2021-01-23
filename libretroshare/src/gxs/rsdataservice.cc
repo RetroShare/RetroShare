@@ -1515,6 +1515,8 @@ int RsDataService::updateGroupMetaData(const GrpLocMetaData& meta)
 
     if( mDb->sqlUpdate(GRP_TABLE_NAME,  KEY_GRP_ID+ "='" + grpId.toStdString() + "'", meta.val))
     {
+        // If we use the cache, update the meta data immediately.
+
         if(mUseCache)
         {
             RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, mGrpMetaColumns, "grpId='" + grpId.toStdString() + "'", "");

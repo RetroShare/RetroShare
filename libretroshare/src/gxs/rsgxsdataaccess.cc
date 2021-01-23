@@ -29,6 +29,50 @@
 /***********
  * #define DATA_DEBUG	1
  **********/
+#define DATA_DEBUG	1
+
+// Debug system to allow to print only for some services (group, Peer, etc)
+
+#if defined(DATA_DEBUG)
+static const uint32_t     service_to_print  = RS_SERVICE_GXS_TYPE_GXSCIRCLE;// use this to allow to this service id only, or 0 for all services
+                                                                            // warning. Numbers should be SERVICE IDS (see serialiser/rsserviceids.h. E.g. 0x0215 for forums)
+
+class nullstream: public std::ostream {};
+
+static std::string nice_time_stamp(rstime_t now,rstime_t TS)
+{
+    if(TS == 0)
+        return "Never" ;
+    else
+    {
+        std::ostringstream s;
+        s << now - TS << " secs ago" ;
+        return s.str() ;
+    }
+}
+
+static std::ostream& gxsdatadebug(uint32_t service_type)
+{
+    static nullstream null ;
+
+    if (service_to_print==0 || service_type == 0 || (service_type == service_to_print))
+        return std::cerr << time(NULL) << ":GXSDATASERVICE: " ;
+    else
+        return null ;
+}
+
+#define GXSDATADEBUG gxsdatadebug(mDataStore->serviceType())
+
+static const std::vector<std::string> tokenStatusString( {
+                                                                 std::string("FAILED"),
+                                                                 std::string("PENDING"),
+                                                                 std::string("PARTIAL"),
+                                                                 std::string("COMPLETE"),
+                                                                 std::string("DONE"),
+                                                                 std::string("CANCELLED"),
+                                                         });
+
+#endif
 
 bool operator<(const std::pair<uint32_t,GxsRequest*>& p1,const std::pair<uint32_t,GxsRequest*>& p2)
 {
@@ -48,7 +92,7 @@ bool RsGxsDataAccess::requestGroupInfo( uint32_t &token, uint32_t ansType, const
 {
 	if(groupIds.empty())
 	{
-		RsErr() << __PRETTY_FUNCTION__ << " (WW) Group Id list is empty!" << std::endl;
+        GXSDATADEBUG << __PRETTY_FUNCTION__ << " (WW) Group Id list is empty!" << std::endl;
 		return false;
 	}
 
@@ -89,7 +133,7 @@ bool RsGxsDataAccess::requestGroupInfo( uint32_t &token, uint32_t ansType, const
 	generateToken(token);
 
 #ifdef DATA_DEBUG
-	RsErr() << "RsGxsDataAccess::requestGroupInfo() gets token: " << token << std::endl;
+    GXSDATADEBUG << "RsGxsDataAccess::requestGroupInfo() gets token: " << token << std::endl;
 #endif
 
     setReq(req, token, ansType, opts);
@@ -120,7 +164,7 @@ bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const 
 
 	generateToken(token);
 #ifdef DATA_DEBUG
-	RsErr() << "RsGxsDataAccess::requestGroupInfo() gets Token: " << token << std::endl;
+    GXSDATADEBUG << "RsGxsDataAccess::requestGroupInfo() gets Token: " << token << std::endl;
 #endif
 
     setReq(req, token, ansType, opts);
@@ -187,7 +231,7 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType, const Rs
 	{
 		generateToken(token);
 #ifdef DATA_DEBUG
-		RsErr() << "RsGxsDataAccess::requestMsgInfo() gets Token: " << token << std::endl;
+        GXSDATADEBUG << "RsGxsDataAccess::requestMsgInfo() gets Token: " << token << std::endl;
 #endif
 	}
 
@@ -239,7 +283,7 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType, const Rs
         {
                 generateToken(token);
 #ifdef DATA_DEBUG
-                RsErr() << __PRETTY_FUNCTION__ << " gets Token: " << token << std::endl;
+                GXSDATADEBUG << __PRETTY_FUNCTION__ << " gets Token: " << token << std::endl;
 #endif
         }
 
@@ -314,11 +358,11 @@ void RsGxsDataAccess::storeRequest(GxsRequest* req)
     mPublicToken[req->token] = PENDING;
 
 #ifdef DATA_DEBUG
-    RsErr() << "Stored request token=" << req->token << " priority = " << static_cast<int>(req->Options.mPriority) << " Current request Queue is:" ;
+    GXSDATADEBUG << "Stored request token=" << req->token << " priority = " << static_cast<int>(req->Options.mPriority) << " Current request Queue is:" ;
     for(auto it(mRequestQueue.begin());it!=mRequestQueue.end();++it)
-        RsErr() << it->first << " (p=" << static_cast<int>(req->Options.mPriority) << ") ";
-    std::cerr << std::endl;
-    RsErr() << "PublicToken size: " << mPublicToken.size() << " Completed requests waiting for client: " << mCompletedRequests.size() << std::endl;
+        GXSDATADEBUG << it->first << " (p=" << static_cast<int>(req->Options.mPriority) << ") ";
+    GXSDATADEBUG << std::endl;
+    GXSDATADEBUG << "PublicToken size: " << mPublicToken.size() << " Completed requests waiting for client: " << mCompletedRequests.size() << std::endl;
 #endif
 }
 
@@ -371,7 +415,7 @@ bool RsGxsDataAccess::locked_clearRequest(const uint32_t& token)
         mPublicToken.erase(it2);
 
 #ifdef DATA_DEBUG
-    RsDbg() << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": Removing public token " << token << ". Completed tokens: " << mCompletedRequests.size() << " Size of mPublicToken: " << mPublicToken.size() << std::endl;
+    GXSDATADEBUG << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": Removing public token " << token << ". Completed tokens: " << mCompletedRequests.size() << " Size of mPublicToken: " << mPublicToken.size() << std::endl;
 #endif
     return true;
 }
@@ -712,7 +756,10 @@ void RsGxsDataAccess::processRequests()
 
 	while (!mRequestQueue.empty())
 	{
-		// Extract the first elements from the request queue. cleanup all other elements marked at terminated.
+#ifdef DATA_DEBUG
+        dumpTokenQueues();
+#endif
+        // Extract the first elements from the request queue. cleanup all other elements marked at terminated.
 
 		GxsRequest* req = nullptr;
 		{
@@ -738,7 +785,7 @@ void RsGxsDataAccess::processRequests()
 					case FAILED:
 					case CANCELLED:
 #ifdef DATA_DEBUG
-                        RsDbg() << "  Service " << std::hex << mDataStore->serviceType() << std::dec << ": request " << mRequestQueue.begin()->second->token << ": status = " << mRequestQueue.begin()->second->status << ": removing from the RequestQueue" << std::endl;
+                        GXSDATADEBUG << "  Service " << std::hex << mDataStore->serviceType() << std::dec << ": request " << mRequestQueue.begin()->second->token << ": status = " << mRequestQueue.begin()->second->status << ": removing from the RequestQueue" << std::endl;
 #endif
 						delete mRequestQueue.begin()->second;
 						mRequestQueue.erase(mRequestQueue.begin());
@@ -770,7 +817,7 @@ void RsGxsDataAccess::processRequests()
 		ServiceStatisticRequest* ssr;
 
 #ifdef DATA_DEBUG
-        RsDbg() << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": Processing request: " << req->token << " Status: " << req->status << " ReqType: " << req->reqType << " Age: " << time(nullptr) - req->reqTime << std::endl;
+        GXSDATADEBUG << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": Processing request: " << req->token << " Status: " << req->status << " ReqType: " << req->reqType << " Age: " << time(nullptr) - req->reqTime << std::endl;
 #endif
 
 		/* PROCESS REQUEST! */
@@ -829,7 +876,7 @@ void RsGxsDataAccess::processRequests()
 				// When the request is complete, we move it to the complete list, so that the caller can easily retrieve the request data
 
 #ifdef DATA_DEBUG
-                RsDbg() << "  Service " << std::hex << mDataStore->serviceType() << std::dec << ": Request completed successfully. Marking as COMPLETE." << std::endl;
+                GXSDATADEBUG << "  Service " << std::hex << mDataStore->serviceType() << std::dec << ": Request completed successfully. Marking as COMPLETE." << std::endl;
 #endif
 				req->status = COMPLETE ;
 				mCompletedRequests[req->token] = req;
@@ -840,7 +887,7 @@ void RsGxsDataAccess::processRequests()
 				mPublicToken[req->token] = FAILED;
 				delete req;//req belongs to no one now
 #ifdef DATA_DEBUG
-                RsDbg() << "  Service " << std::hex << mDataStore->serviceType() << std::dec << ": Request failed. Marking as FAILED." << std::endl;
+                GXSDATADEBUG << "  Service " << std::hex << mDataStore->serviceType() << std::dec << ": Request failed. Marking as FAILED." << std::endl;
 #endif
 			}
 		} // END OF MUTEX.
@@ -993,7 +1040,7 @@ bool RsGxsDataAccess::getMsgMetaDataList( const GxsMsgReq& msgIds, const RsTokRe
      *
      */
 #ifdef DATA_DEBUG
-    RsDbg() << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": RsGxsDataAccess::getMsgList()" << std::endl;
+    GXSDATADEBUG << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": RsGxsDataAccess::getMsgList()" << std::endl;
 #endif
 
     bool onlyOrigMsgs = false;
@@ -1004,14 +1051,14 @@ bool RsGxsDataAccess::getMsgMetaDataList( const GxsMsgReq& msgIds, const RsTokRe
     if (opts.mOptions & RS_TOKREQOPT_MSG_ORIGMSG)
     {
 #ifdef DATA_DEBUG
-            RsDbg() << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": RsGxsDataAccess::getMsgList() MSG_ORIGMSG" << std::endl;
+            GXSDATADEBUG << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": RsGxsDataAccess::getMsgList() MSG_ORIGMSG" << std::endl;
 #endif
             onlyOrigMsgs = true;
     }
     else if (opts.mOptions & RS_TOKREQOPT_MSG_LATEST)
     {
 #ifdef DATA_DEBUG
-            RsDbg() << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": RsGxsDataAccess::getMsgList() MSG_LATEST" << std::endl;
+            GXSDATADEBUG << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": RsGxsDataAccess::getMsgList() MSG_LATEST" << std::endl;
 #endif
             onlyLatestMsgs = true;
     }
@@ -1019,7 +1066,7 @@ bool RsGxsDataAccess::getMsgMetaDataList( const GxsMsgReq& msgIds, const RsTokRe
     if (opts.mOptions & RS_TOKREQOPT_MSG_THREAD)
     {
 #ifdef DATA_DEBUG
-            RsDbg() << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": RsGxsDataAccess::getMsgList() MSG_THREAD" << std::endl;
+            GXSDATADEBUG << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": RsGxsDataAccess::getMsgList() MSG_THREAD" << std::endl;
 #endif
             onlyThreadHeadMsgs = true;
     }
@@ -1202,7 +1249,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
      * 1) No Flags => return nothing
      */
 #ifdef DATA_DEBUG
-    RsDbg() << "RsGxsDataAccess::getMsgRelatedList()" << std::endl;
+    GXSDATADEBUG << "RsGxsDataAccess::getMsgRelatedList()" << std::endl;
 #endif
 
     const RsTokReqOptions& opts = req->Options;
@@ -1215,14 +1262,14 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
     if (opts.mOptions & RS_TOKREQOPT_MSG_LATEST)
     {
 #ifdef DATA_DEBUG
-            RsDbg() << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": RsGxsDataAccess::getMsgRelatedList() MSG_LATEST" << std::endl;
+            GXSDATADEBUG << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": RsGxsDataAccess::getMsgRelatedList() MSG_LATEST" << std::endl;
 #endif
             onlyLatestMsgs = true;
     }
     else if (opts.mOptions & RS_TOKREQOPT_MSG_VERSIONS)
     {
 #ifdef DATA_DEBUG
-            RsDbg() << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": RsGxsDataAccess::getMsgRelatedList() MSG_VERSIONS" << std::endl;
+            GXSDATADEBUG << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": RsGxsDataAccess::getMsgRelatedList() MSG_VERSIONS" << std::endl;
 #endif
             onlyAllVersions = true;
     }
@@ -1230,7 +1277,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
     if (opts.mOptions & RS_TOKREQOPT_MSG_PARENT)
     {
 #ifdef DATA_DEBUG
-            RsDbg() << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": RsGxsDataAccess::getMsgRelatedList() MSG_PARENTS" << std::endl;
+            GXSDATADEBUG << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": RsGxsDataAccess::getMsgRelatedList() MSG_PARENTS" << std::endl;
 #endif
             onlyChildMsgs = true;
     }
@@ -1238,7 +1285,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
     if (opts.mOptions & RS_TOKREQOPT_MSG_THREAD)
     {
 #ifdef DATA_DEBUG
-            RsDbg() << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": RsGxsDataAccess::getMsgRelatedList() MSG_THREAD" << std::endl;
+            GXSDATADEBUG << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": RsGxsDataAccess::getMsgRelatedList() MSG_THREAD" << std::endl;
 #endif
             onlyThreadMsgs = true;
     }
@@ -1353,7 +1400,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
                     if (oit == origMsgTs.end())
                     {
 #ifdef DATA_DEBUG
-						RsDbg() << "RsGxsDataAccess::getMsgRelatedList() Found New OrigMsgId: "
+                        GXSDATADEBUG << "RsGxsDataAccess::getMsgRelatedList() Found New OrigMsgId: "
                                 << meta->mOrigMsgId
 								<< " MsgId: " << meta->mMsgId
                             	<< " TS: " << meta->mPublishTs
@@ -1366,7 +1413,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
                     else if (oit->second.second < meta->mPublishTs)
                     {
 #ifdef DATA_DEBUG
-                        RsDbg() << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": RsGxsDataAccess::getMsgRelatedList() Found Later Msg. OrigMsgId: "
+                        GXSDATADEBUG << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": RsGxsDataAccess::getMsgRelatedList() Found Later Msg. OrigMsgId: "
                         		<< meta->mOrigMsgId
                         		<< " MsgId: " << meta->mMsgId
                         		<< " TS: " << meta->mPublishTs
@@ -1587,7 +1634,7 @@ void RsGxsDataAccess::filterMsgIdList( GxsMsgIdResult& resultsMap, const RsTokRe
 		MsgMetaFilter::const_iterator cit = msgMetas.find(groupId);
 		if(cit == msgMetas.end()) continue;
 #ifdef DATA_DEBUG
-		RsDbg() << __PRETTY_FUNCTION__ << " " << msgsIdSet.size()
+        GXSDATADEBUG << __PRETTY_FUNCTION__ << " " << msgsIdSet.size()
 		          << " for group: " << groupId << " before filtering"
 		          << std::endl;
 #endif
@@ -1610,7 +1657,7 @@ void RsGxsDataAccess::filterMsgIdList( GxsMsgIdResult& resultsMap, const RsTokRe
 		}
 
 #ifdef DATA_DEBUG
-		RsDbg() << __PRETTY_FUNCTION__ << " " << msgsIdSet.size()
+        GXSDATADEBUG << __PRETTY_FUNCTION__ << " " << msgsIdSet.size()
 		          << " for group: " << groupId << " after filtering"
 		          << std::endl;
 #endif
@@ -1643,7 +1690,7 @@ bool RsGxsDataAccess::checkRequestStatus( uint32_t token, GxsRequestStatus& stat
     GxsRequest* req = locked_retrieveCompletedRequest(token);
 
 #ifdef DATA_DEBUG
-    RsDbg() << "CheckRequestStatus: token=" << token ;
+    GXSDATADEBUG << "CheckRequestStatus: token=" << token ;
 #endif
 
     if(req != nullptr)
@@ -1653,7 +1700,7 @@ bool RsGxsDataAccess::checkRequestStatus( uint32_t token, GxsRequestStatus& stat
 		status = COMPLETE;
 		ts = req->reqTime;
 #ifdef DATA_DEBUG
-        RsDbg() << __PRETTY_FUNCTION__ << " Returning status = COMPLETE" << std::endl;
+        GXSDATADEBUG << __PRETTY_FUNCTION__ << " Returning status = COMPLETE" << std::endl;
 #endif
 		return true;
 	}
@@ -1664,14 +1711,14 @@ bool RsGxsDataAccess::checkRequestStatus( uint32_t token, GxsRequestStatus& stat
     {
 		status = it->second;
 #ifdef DATA_DEBUG
-        RsDbg() << __PRETTY_FUNCTION__ << " Returning status = " << status << std::endl;
+        GXSDATADEBUG << __PRETTY_FUNCTION__ << " Returning status = " << status << std::endl;
 #endif
         return true;
     }
 
     status = FAILED;
 #ifdef DATA_DEBUG
-    RsDbg() << " Token not found. Returning FAILED" << std::endl;
+    GXSDATADEBUG << " Token not found. Returning FAILED" << std::endl;
 #endif
     return false;
 }
@@ -1753,7 +1800,7 @@ uint32_t RsGxsDataAccess::generatePublicToken()
 		RS_STACK_MUTEX(mDataMutex);
 		mPublicToken[token] = PENDING ;
 #ifdef DATA_DEBUG
-        RsDbg() << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": Adding new public token " << token << " in PENDING state. Completed tokens: " << mCompletedRequests.size() << " Size of mPublicToken: " << mPublicToken.size() << std::endl;
+        GXSDATADEBUG << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": Adding new public token " << token << " in PENDING state. Completed tokens: " << mCompletedRequests.size() << " Size of mPublicToken: " << mPublicToken.size() << std::endl;
 #endif
     }
 
@@ -1771,7 +1818,10 @@ bool RsGxsDataAccess::updatePublicRequestStatus( uint32_t token, RsTokenService:
 	if(mit != mPublicToken.end())
     {
         mit->second = status;
-		return true;
+#ifdef DATA_DEBUG
+        GXSDATADEBUG << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": updating public token " << token << " to state  " << tokenStatusString[status] << std::endl;
+#endif
+        return true;
     }
 	else
         return false;
@@ -1787,7 +1837,7 @@ bool RsGxsDataAccess::disposeOfPublicToken(uint32_t token)
 	{
 		mPublicToken.erase(mit);
 #ifdef DATA_DEBUG
-        RsDbg() << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": Deleting public token " << token << ". Completed tokens: " << mCompletedRequests.size() << " Size of mPublicToken: " << mPublicToken.size() << std::endl;
+        GXSDATADEBUG << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": Deleting public token " << token << ". Completed tokens: " << mCompletedRequests.size() << " Size of mPublicToken: " << mPublicToken.size() << std::endl;
 #endif
         return true;
 	}
@@ -1799,23 +1849,18 @@ void RsGxsDataAccess::dumpTokenQueues()
 {
     RS_STACK_MUTEX(mDataMutex);
 
-    static const std::vector<std::string> tokenStatusString( {
-        std::string("FAILED"),
-        std::string("PENDING"),
-        std::string("PARTIAL"),
-        std::string("COMPLETE"),
-        std::string("DONE"),
-        std::string("CANCELLED"),
-    });
-
-    RsDbg() << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": dumping token list."<< std::endl;
+    GXSDATADEBUG << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": dumping token list."<< std::endl;
 
     for(auto tokenpair:mPublicToken)
-        RsDbg() << "    Public Token " << tokenpair.first << " : " << tokenStatusString[tokenpair.second] << std::endl;
+        GXSDATADEBUG << "    Public Token " << tokenpair.first << " : " << tokenStatusString[tokenpair.second] << std::endl;
 
     for(auto tokenpair:mCompletedRequests)
-        RsDbg() << "    Completed Token " << tokenpair.first << "  " ;
-    RsDbg() << std::endl;
+        GXSDATADEBUG << "    Completed Tokens: " << tokenpair.first << std::endl;
+
+    for(auto tokenpair:mRequestQueue)
+        GXSDATADEBUG << "    RequestQueue: " << tokenpair.first << " status " << tokenStatusString[tokenpair.second->status] << std::endl;
+
+    GXSDATADEBUG << std::endl;
 }
 bool RsGxsDataAccess::checkGrpFilter(const RsTokReqOptions &opts, const std::shared_ptr<RsGxsGrpMetaData>& meta) const
 {
@@ -1846,7 +1891,7 @@ bool RsGxsDataAccess::checkMsgFilter(const RsTokReqOptions& opts, const std::sha
 		     (opts.mStatusMask & meta->mMsgStatus) )
 		{
 #ifdef DATA_DEBUG
-			RsDbg() << __PRETTY_FUNCTION__
+            GXSDATADEBUG << __PRETTY_FUNCTION__
 			          << " Continue checking Msg as StatusMatches: "
 			          << " Mask: " << opts.mStatusMask
 			          << " StatusFilter: " << opts.mStatusFilter
@@ -1857,7 +1902,7 @@ bool RsGxsDataAccess::checkMsgFilter(const RsTokReqOptions& opts, const std::sha
 		else
 		{
 #ifdef DATA_DEBUG
-			RsDbg() << __PRETTY_FUNCTION__
+            GXSDATADEBUG << __PRETTY_FUNCTION__
 			          << " Dropping Msg due to !StatusMatch "
 			          << " Mask: " << opts.mStatusMask
 			          << " StatusFilter: " << opts.mStatusFilter
@@ -1871,7 +1916,7 @@ bool RsGxsDataAccess::checkMsgFilter(const RsTokReqOptions& opts, const std::sha
 	else
 	{
 #ifdef DATA_DEBUG
-		RsDbg() << __PRETTY_FUNCTION__
+        GXSDATADEBUG << __PRETTY_FUNCTION__
 		          << " Status check not requested"
 		          << " mStatusMask: " << opts.mStatusMask
 		          << " MsgId: " << meta->mMsgId << std::endl;
@@ -1885,7 +1930,7 @@ bool RsGxsDataAccess::checkMsgFilter(const RsTokReqOptions& opts, const std::sha
 		     (opts.mMsgFlagMask & meta->mMsgFlags) )
 		{
 #ifdef DATA_DEBUG
-			RsDbg() << __PRETTY_FUNCTION__
+            GXSDATADEBUG << __PRETTY_FUNCTION__
 			          << " Accepting Msg as FlagMatches: "
 			          << " Mask: " << opts.mMsgFlagMask
 			          << " FlagFilter: " << opts.mMsgFlagFilter
@@ -1896,7 +1941,7 @@ bool RsGxsDataAccess::checkMsgFilter(const RsTokReqOptions& opts, const std::sha
 		else
 		{
 #ifdef DATA_DEBUG
-			RsDbg() << __PRETTY_FUNCTION__
+            GXSDATADEBUG << __PRETTY_FUNCTION__
 			          << " Dropping Msg due to !FlagMatch "
 			          << " Mask: " << opts.mMsgFlagMask
 			          << " FlagFilter: " << opts.mMsgFlagFilter
@@ -1910,7 +1955,7 @@ bool RsGxsDataAccess::checkMsgFilter(const RsTokReqOptions& opts, const std::sha
 	else
 	{
 #ifdef DATA_DEBUG
-		RsDbg() << __PRETTY_FUNCTION__
+        GXSDATADEBUG << __PRETTY_FUNCTION__
 		          << " Flags check not requested"
 		          << " mMsgFlagMask: " << opts.mMsgFlagMask
 		          << " MsgId: " << meta->mMsgId << std::endl;

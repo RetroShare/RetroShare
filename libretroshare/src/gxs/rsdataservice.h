@@ -91,7 +91,6 @@ public:
 
     void clear(const ID& id)
 	{
-		rstime_t now = time(NULL) ;
 		auto it = mMetas.find(id) ;
 
 		// We dont actually delete the item, because it might be used by a calling client.
