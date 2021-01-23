@@ -150,7 +150,7 @@ void ChannelsCommentsItem::setup()
 	mLoaded = false;
 
 	/* clear ui */
-	ui->titleLabel->setText(tr("Loading..."));
+	//ui->titleLabel->setText(tr("Loading..."));
 	ui->datetimelabel->clear();
 
 	/* general ones */
@@ -180,7 +180,7 @@ void ChannelsCommentsItem::setup()
 	ui->expandButton->hide();
 	ui->unsubscribeButton->hide();
 
-	ui->titleLabel->setMinimumWidth(100);
+	//ui->titleLabel->setMinimumWidth(100);
 
 	ui->mainFrame->setProperty("new", false);
 	ui->mainFrame->style()->unpolish(ui->mainFrame);
@@ -412,9 +412,9 @@ void ChannelsCommentsItem::fill()
 			removeItem();
 		}
 
-		RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_CHANNEL, mPost.mMeta.mGroupId, groupName());
-		title += link.toHtml();
-		ui->titleLabel->setText(title);
+		//RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_CHANNEL, mPost.mMeta.mGroupId, groupName());
+		//title += link.toHtml();
+		//ui->titleLabel->setText(title);
 
 		RetroShareLink msgLink = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_CHANNEL, mPost.mMeta.mGroupId, mPost.mMeta.mMsgId, messageName());
 		ui->subjectLabel->setText(msgLink.toHtml());
@@ -428,6 +428,7 @@ void ChannelsCommentsItem::fill()
 			ui->unsubscribeButton->setEnabled(false);
 		}
 		ui->readButton->hide();
+		ui->titleLabel->hide();
 
 		if (IS_MSG_NEW(mPost.mMeta.mMsgStatus)) {
 			mCloseOnRead = true;
@@ -436,7 +437,7 @@ void ChannelsCommentsItem::fill()
 	else
 	{
 		/* subject */
-		ui->titleLabel->setText(QString::fromUtf8(mPost.mMeta.mMsgName.c_str()));
+		//ui->titleLabel->setText(QString::fromUtf8(mPost.mMeta.mMsgName.c_str()));
 
 		uint32_t autorized_lines = (int)floor((ui->logoLabel->height() - ui->titleLabel->height() - ui->buttonHLayout->sizeHint().height())/QFontMetricsF(ui->subjectLabel->font()).height());
 
@@ -455,6 +456,7 @@ void ChannelsCommentsItem::fill()
 		ui->readAndClearButton->hide();
 		ui->unsubscribeButton->hide();
 		ui->copyLinkButton->show();
+		ui->titleLabel->hide();
 
 		if (IS_GROUP_SUBSCRIBED(mGroupMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroupMeta.mSubscribeFlags))
 		{

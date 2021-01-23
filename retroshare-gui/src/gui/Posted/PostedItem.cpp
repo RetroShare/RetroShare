@@ -652,6 +652,7 @@ void PostedItem::fill()
 		ui->clearButton->show();
 		ui->readAndClearButton->show();
 		ui->nameLabel->show();
+		ui->voteFrame->hide();
 	}
 
 	// disable voting buttons - if they have already voted.

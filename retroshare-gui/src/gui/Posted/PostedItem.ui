@@ -184,6 +184,9 @@
       </item>
       <item row="0" column="1" rowspan="2">
        <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="leftMargin">
+         <number>9</number>
+        </property>
         <property name="topMargin">
          <number>6</number>
         </property>
