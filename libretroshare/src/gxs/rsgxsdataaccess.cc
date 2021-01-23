@@ -1801,6 +1801,8 @@ uint32_t RsGxsDataAccess::generatePublicToken()
 		mPublicToken[token] = PENDING ;
 #ifdef DATA_DEBUG
         GXSDATADEBUG << "Service " << std::hex << mDataStore->serviceType() << std::dec << ": Adding new public token " << token << " in PENDING state. Completed tokens: " << mCompletedRequests.size() << " Size of mPublicToken: " << mPublicToken.size() << std::endl;
+        if(mDataStore->serviceType() == 0x218 && token==19)
+            print_stacktrace();
 #endif
     }
 
