@@ -1180,6 +1180,36 @@ void RshareSettings::setPageAlreadyDisplayed(const QString& page_name,bool b)
 	return setValueToGroup("PageAlreadyDisplayed",page_name,b);
 }
 
+bool RshareSettings::getWikiService()
+{
+	return valueFromGroup("Service", "Wiki", false).toBool();
+}
+
+void RshareSettings::setWikiService(bool value)
+{
+	setValueToGroup("Service", "Wiki", value);
+}
+
+bool RshareSettings::getWireService()
+{
+	return valueFromGroup("Service", "Wire", false).toBool();
+}
+
+void RshareSettings::setWireService(bool value)
+{
+	setValueToGroup("Service", "Wire", value);
+}
+
+bool RshareSettings::getPhotosService()
+{
+	return valueFromGroup("Service", "Photos", false).toBool();
+}
+
+void RshareSettings::setPhotosService(bool value)
+{
+	setValueToGroup("Service", "Photos", value);
+}
+
 #ifdef RS_JSONAPI
 bool RshareSettings::getJsonApiEnabled()
 {

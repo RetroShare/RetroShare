@@ -276,6 +276,14 @@ public:
 	
 	int  getDistantChatHistoryCount();
 	void setDistantChatHistoryCount(int value);
+	
+	/* Service */
+	bool getWikiService();
+	void setWikiService(bool value);
+	bool getWireService();
+	void setWireService(bool value);
+	bool getPhotosService();
+	void setPhotosService(bool value);
 
 	//! Save placement, state and size information of a window.
 	void saveWidgetInformation(QWidget *widget);
