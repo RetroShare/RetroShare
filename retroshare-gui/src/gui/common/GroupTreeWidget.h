@@ -36,6 +36,14 @@ class RSTreeWidget;
 #define GROUPTREEWIDGET_COLOR_PRIVATEKEY 1
 #define GROUPTREEWIDGET_COLOR_COUNT      2
 
+#define GTW_COLUMN_NAME        0
+#define GTW_COLUMN_UNREAD      1
+#define GTW_COLUMN_POSTS       2
+#define GTW_COLUMN_POPULARITY  3
+#define GTW_COLUMN_LAST_POST   4
+#define GTW_COLUMN_COUNT       5
+#define GTW_COLUMN_DATA        GTW_COLUMN_NAME
+
 namespace Ui {
 	class GroupTreeWidget;
 }
@@ -112,7 +120,7 @@ public:
 	void setTextColorCategory(QColor color) { mTextColor[GROUPTREEWIDGET_COLOR_CATEGORY] = color; }
 	void setTextColorPrivateKey(QColor color) { mTextColor[GROUPTREEWIDGET_COLOR_PRIVATEKEY] = color; }
 
-	bool getGroupName(QString id, QString& name);
+	bool getGroupName(const QString& id, QString& name);
 
 	int subscribeFlags(const QString &id);
 
@@ -132,6 +140,7 @@ private slots:
 	void filterChanged();
 	void distantSearch();
 
+	void showHeader(bool toShow);
 	void sort();
 
 private:
@@ -143,6 +152,7 @@ private:
 
 private:
 	QMenu *displayMenu;
+	QAction *actionShowHeader;
 	QAction *actionSortAscending;
 	QAction *actionSortDescending;
 	QAction *actionSortByName;

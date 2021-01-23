@@ -101,7 +101,7 @@ GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *p
 	mStateHelper->setLoading(TOKEN_TYPE_GROUP_SUMMARY, true);
 
 	connect(ui->groupTreeWidget, SIGNAL(treeCustomContextMenuRequested(QPoint)), this, SLOT(groupTreeCustomPopupMenu(QPoint)));
-    connect(ui->groupTreeWidget, SIGNAL(treeCurrentItemChanged(QString)), this, SLOT(changedCurrentGroup(QString)));
+	connect(ui->groupTreeWidget, SIGNAL(treeCurrentItemChanged(QString)), this, SLOT(changedCurrentGroup(QString)));
 	connect(ui->groupTreeWidget->treeWidget(), SIGNAL(signalMouseMiddleButtonClicked(QTreeWidgetItem*)), this, SLOT(groupTreeMiddleButtonClicked(QTreeWidgetItem*)));
 	connect(ui->messageTabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(messageTabCloseRequested(int)));
 	connect(ui->messageTabWidget, SIGNAL(currentChanged(int)), this, SLOT(messageTabChanged(int)));
@@ -324,7 +324,7 @@ void GxsGroupFrameDialog::updateSearchResults(const TurtleRequestId& sid)
 	for(auto it3(group_infos.begin());it3!=group_infos.end();++it3)
 	{
 		std::cerr << "  adding group " << it3->first << " " << it3->second.mGroupId << " \"" << it3->second.mGroupName << "\"" << std::endl;
-        for(auto s:it3->second.mSearchContexts)
+		for(auto& s:it3->second.mSearchContexts)
 			std::cerr << "    Context string \"" << s << "\"" << std::endl;
 
 		GroupItemInfo i;
@@ -409,121 +409,113 @@ uint32_t GxsGroupFrameDialog::checkDelay(uint32_t time_in_secs)
 
 void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 {
+	QMenu contextMnu(this);
+
 	// First separately handle the case of search top level items
-
 	TurtleRequestId search_request_id = 0 ;
-
+	QString group_id_s;
 	if(ui->groupTreeWidget->isSearchRequestItem(point,search_request_id))
 	{
-		QMenu contextMnu(this);
-
-        contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_DELETE), tr("Remove this search"), this, SLOT(removeCurrentSearch()))->setData(search_request_id);
-        contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_DELETE), tr("Remove all searches"), this, SLOT(removeAllSearches()));
-		contextMnu.exec(QCursor::pos());
-		return ;
+		contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_DELETE), tr("Remove this search"), this, SLOT(removeCurrentSearch()))->setData(search_request_id);
+		contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_DELETE), tr("Remove all searches"), this, SLOT(removeAllSearches()));
 	}
 
-    // Then check whether we have a searched item, or a normal group
-
-    QString group_id_s ;
-
-	if(ui->groupTreeWidget->isSearchRequestResult(point,group_id_s,search_request_id))
-    {
-		QMenu contextMnu(this);
-
-        contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_RETRIEVE), tr("Request data"), this, SLOT(distantRequestGroupData()))->setData(group_id_s);
-		contextMnu.exec(QCursor::pos());
-		return ;
-    }
-
-	QString id = ui->groupTreeWidget->itemIdAt(point);
-	if (id.isEmpty()) return;
-
-	mGroupId = RsGxsGroupId(id.toStdString());
-	int subscribeFlags = ui->groupTreeWidget->subscribeFlags(QString::fromStdString(mGroupId.toStdString()));
-
-	bool isAdmin      = IS_GROUP_ADMIN(subscribeFlags);
-	bool isPublisher  = IS_GROUP_PUBLISHER(subscribeFlags);
-	bool isSubscribed = IS_GROUP_SUBSCRIBED(subscribeFlags);
-
-	QMenu contextMnu(this);
-	QAction *action;
-
-    action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_TABNEW), tr("Open in new tab"), this, SLOT(openInNewTab()));
-
-	if(mGroupId.isNull()) // dont enable the open in tab if a tab is already here
-		action->setEnabled(false);
-
-	if (isSubscribed) {
-        action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_UNSUBSCRIBE), tr("Unsubscribe"), this, SLOT(unsubscribeGroup()));
-		action->setEnabled (!mGroupId.isNull() && IS_GROUP_SUBSCRIBED(subscribeFlags));
-	} else {
-        action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_SUBSCRIBE), tr("Subscribe"), this, SLOT(subscribeGroup()));
-		action->setDisabled (mGroupId.isNull() || IS_GROUP_SUBSCRIBED(subscribeFlags));
+	// Then check whether we have a searched item, or a normal group
+	else if(ui->groupTreeWidget->isSearchRequestResult(point,group_id_s,search_request_id))
+	{
+		contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_RETRIEVE), tr("Request data"), this, SLOT(distantRequestGroupData()))->setData(group_id_s);
 	}
 
-	contextMnu.addSeparator();
+	else // Group Id
+	{
+		QString id = ui->groupTreeWidget->itemIdAt(point);
+		if (!id.isEmpty())
+		{
+			mGroupId = RsGxsGroupId(id.toStdString());
+			int subscribeFlags = ui->groupTreeWidget->subscribeFlags(QString::fromStdString(mGroupId.toStdString()));
 
-    contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(icon(ICON_NEW)), text(TEXT_NEW), this, SLOT(newGroup()));
+			bool isAdmin      = IS_GROUP_ADMIN(subscribeFlags);
+			bool isPublisher  = IS_GROUP_PUBLISHER(subscribeFlags);
+			bool isSubscribed = IS_GROUP_SUBSCRIBED(subscribeFlags);
 
-    action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_INFO), tr("Show Details"), this, SLOT(showGroupDetails()));
-	action->setEnabled (!mGroupId.isNull());
+			QAction *action;
 
-    action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EDIT), tr("Edit Details"), this, SLOT(editGroupDetails()));
-	action->setEnabled (!mGroupId.isNull() && isAdmin);
+			action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_TABNEW), tr("Open in new tab"), this, SLOT(openInNewTab()));
 
-	uint32_t current_store_time = checkDelay(mInterface->getStoragePeriod(mGroupId))/86400 ;
-	uint32_t current_sync_time  = checkDelay(mInterface->getSyncPeriod(mGroupId))/86400 ;
+			if(mGroupId.isNull()) // dont enable the open in tab if a tab is already here
+				action->setEnabled(false);
 
-	std::cerr << "Got sync=" << current_sync_time << ". store=" << current_store_time << std::endl;
-	QAction *actnn = NULL;
+			if (isSubscribed) {
+				action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_UNSUBSCRIBE), tr("Unsubscribe"), this, SLOT(unsubscribeGroup()));
+				action->setEnabled (!mGroupId.isNull() && IS_GROUP_SUBSCRIBED(subscribeFlags));
+			} else {
+				action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_SUBSCRIBE), tr("Subscribe"), this, SLOT(subscribeGroup()));
+				action->setDisabled (mGroupId.isNull() || IS_GROUP_SUBSCRIBED(subscribeFlags));
+			}
 
-	QMenu *ctxMenu2 = contextMnu.addMenu(tr("Synchronise posts of last...")) ;
-    actnn = ctxMenu2->addAction(tr(" 5 days"     ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(  5)) ; if(current_sync_time ==  5) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-    actnn = ctxMenu2->addAction(tr(" 2 weeks"    ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 15)) ; if(current_sync_time == 15) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-    actnn = ctxMenu2->addAction(tr(" 1 month"    ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 30)) ; if(current_sync_time == 30) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-    actnn = ctxMenu2->addAction(tr(" 3 months"   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 90)) ; if(current_sync_time == 90) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-    actnn = ctxMenu2->addAction(tr(" 6 months"   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(180)) ; if(current_sync_time ==180) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-    actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(365)) ; if(current_sync_time ==365) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-    actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_sync_time ==  0) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-    ctxMenu2->setEnabled(isSubscribed);
+			contextMnu.addSeparator();
 
-	ctxMenu2 = contextMnu.addMenu(tr("Store posts for at most...")) ;
-    actnn = ctxMenu2->addAction(tr(" 5 days"     ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  5)) ; if(current_store_time ==  5) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-    actnn = ctxMenu2->addAction(tr(" 2 weeks"    ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 15)) ; if(current_store_time == 15) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-    actnn = ctxMenu2->addAction(tr(" 1 month"    ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 30)) ; if(current_store_time == 30) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-    actnn = ctxMenu2->addAction(tr(" 3 months"   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 90)) ; if(current_store_time == 90) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-    actnn = ctxMenu2->addAction(tr(" 6 months"   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(180)) ; if(current_store_time ==180) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-    actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(365)) ; if(current_store_time ==365) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-    actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_store_time ==  0) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-    ctxMenu2->setEnabled(isSubscribed);
+			contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(icon(ICON_NEW)), text(TEXT_NEW), this, SLOT(newGroup()));
 
-	if (shareKeyType()) {
-        action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_SHARE), tr("Share publish permissions..."), this, SLOT(sharePublishKey()));
-		action->setEnabled(!mGroupId.isNull() && isPublisher);
+			action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_INFO), tr("Show Details"), this, SLOT(showGroupDetails()));
+			action->setEnabled (!mGroupId.isNull());
+
+			action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EDIT), tr("Edit Details"), this, SLOT(editGroupDetails()));
+			action->setEnabled (!mGroupId.isNull() && isAdmin);
+
+			uint32_t current_store_time = checkDelay(mInterface->getStoragePeriod(mGroupId))/86400 ;
+			uint32_t current_sync_time  = checkDelay(mInterface->getSyncPeriod(mGroupId))/86400 ;
+
+			std::cerr << "Got sync=" << current_sync_time << ". store=" << current_store_time << std::endl;
+			QAction *actnn = NULL;
+
+			QMenu *ctxMenu2 = contextMnu.addMenu(tr("Synchronise posts of last...")) ;
+			actnn = ctxMenu2->addAction(tr(" 5 days"     ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(  5)) ; if(current_sync_time ==  5) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr(" 2 weeks"    ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 15)) ; if(current_sync_time == 15) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr(" 1 month"    ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 30)) ; if(current_sync_time == 30) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr(" 3 months"   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 90)) ; if(current_sync_time == 90) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr(" 6 months"   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(180)) ; if(current_sync_time ==180) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(365)) ; if(current_sync_time ==365) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_sync_time ==  0) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			ctxMenu2->setEnabled(isSubscribed);
+
+			ctxMenu2 = contextMnu.addMenu(tr("Store posts for at most...")) ;
+			actnn = ctxMenu2->addAction(tr(" 5 days"     ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  5)) ; if(current_store_time ==  5) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr(" 2 weeks"    ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 15)) ; if(current_store_time == 15) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr(" 1 month"    ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 30)) ; if(current_store_time == 30) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr(" 3 months"   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 90)) ; if(current_store_time == 90) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr(" 6 months"   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(180)) ; if(current_store_time ==180) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(365)) ; if(current_store_time ==365) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_store_time ==  0) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			ctxMenu2->setEnabled(isSubscribed);
+
+			if (shareKeyType()) {
+				action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_SHARE), tr("Share publish permissions..."), this, SLOT(sharePublishKey()));
+				action->setEnabled(!mGroupId.isNull() && isPublisher);
+			}
+
+			if (getLinkType() != RetroShareLink::TYPE_UNKNOWN) {
+				action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyGroupLink()));
+				action->setEnabled(!mGroupId.isNull());
+			}
+
+			contextMnu.addSeparator();
+
+			action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/message-mail-read.png"), tr("Mark all as read"), this, SLOT(markMsgAsRead()));
+			action->setEnabled (!mGroupId.isNull() && isSubscribed);
+
+			action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/message-mail.png"), tr("Mark all as unread"), this, SLOT(markMsgAsUnread()));
+			action->setEnabled (!mGroupId.isNull() && isSubscribed);
+
+			/* Add special actions */
+			QList<QAction*> actions;
+			groupTreeCustomActions(mGroupId, subscribeFlags, actions);
+			if (!actions.isEmpty()) {
+				contextMnu.addSeparator();
+				contextMnu.addActions(actions);
+			}
+		}
 	}
-
-	if (getLinkType() != RetroShareLink::TYPE_UNKNOWN) {
-        action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyGroupLink()));
-		action->setEnabled(!mGroupId.isNull());
-	}
-
-	contextMnu.addSeparator();
-
-    action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/message-mail-read.png"), tr("Mark all as read"), this, SLOT(markMsgAsRead()));
-	action->setEnabled (!mGroupId.isNull() && isSubscribed);
-
-    action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/message-mail.png"), tr("Mark all as unread"), this, SLOT(markMsgAsUnread()));
-	action->setEnabled (!mGroupId.isNull() && isSubscribed);
-
-	/* Add special actions */
-	QList<QAction*> actions;
-	groupTreeCustomActions(mGroupId, subscribeFlags, actions);
-	if (!actions.isEmpty()) {
-		contextMnu.addSeparator();
-		contextMnu.addActions(actions);
-	}
-
 	//Add Standard Menu
 	ui->groupTreeWidget->treeWidget()->createStandardContextMenu(&contextMnu);
 
@@ -731,10 +723,10 @@ void GxsGroupFrameDialog::loadComment(const RsGxsGroupId &grpId, const QVector<R
 		if (title.length() > MAX_COMMENT_TITLE)
 		{
 			comments.truncate(MAX_COMMENT_TITLE - 3);
-			comments += "...";
+			comments += "…";
 		}
 
-        commentDialog = new GxsCommentDialog(this,RsGxsId(), mInterface->getTokenService(), commentService);
+		commentDialog = new GxsCommentDialog(this,RsGxsId(), mInterface->getTokenService(), commentService);
 
 		QWidget *commentHeader = createCommentHeaderWidget(grpId, most_recent_msgId);
 		if (commentHeader) {
@@ -1025,13 +1017,13 @@ void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGxsGenericGroupData
 
 	/* now we can add them in as a tree! */
 	ui->groupTreeWidget->fillGroupItems(mYourGroups, adminList);
-	mYourGroups->setText(2, QString::number(mYourGroups->childCount())); 
+	mYourGroups->setText(GTW_COLUMN_POPULARITY, QString::number(mYourGroups->childCount()));
 	ui->groupTreeWidget->fillGroupItems(mSubscribedGroups, subList);
-	mSubscribedGroups->setText(2, QString::number(mSubscribedGroups->childCount())); // 1 COLUMN_UNREAD 2 COLUMN_POPULARITY
+	mSubscribedGroups->setText(GTW_COLUMN_POPULARITY, QString::number(mSubscribedGroups->childCount())); // 1 COLUMN_UNREAD 2 COLUMN_POPULARITY
 	ui->groupTreeWidget->fillGroupItems(mPopularGroups, popList);
-	mPopularGroups->setText(2, QString::number(mPopularGroups->childCount()));
+	mPopularGroups->setText(GTW_COLUMN_POPULARITY, QString::number(mPopularGroups->childCount()));
 	ui->groupTreeWidget->fillGroupItems(mOtherGroups, otherList);
-	mOtherGroups->setText(2, QString::number(mOtherGroups->childCount()));
+	mOtherGroups->setText(GTW_COLUMN_POPULARITY, QString::number(mOtherGroups->childCount()));
 
 	mInFill = false;
 
@@ -1061,7 +1053,7 @@ void GxsGroupFrameDialog::updateMessageSummaryListReal(RsGxsGroupId groupId)
 	}
 
 	if (groupId.isNull())
-    {
+	{
 		QTreeWidgetItem *items[2] = { mYourGroups, mSubscribedGroups };
 		for (int item = 0; item < 2; ++item) {
 			int child;
@@ -1076,7 +1068,7 @@ void GxsGroupFrameDialog::updateMessageSummaryListReal(RsGxsGroupId groupId)
 			}
 		}
 	}
-    else
+	else
 		updateGroupStatistics(groupId);
 }
 
@@ -1190,18 +1182,18 @@ void GxsGroupFrameDialog::getServiceStatistics(GxsServiceStatistic& stats) const
 {
 	stats = GxsServiceStatistic(); // clears everything
 
-   for(auto it:  mCachedGroupStats)
-   {
-       const GxsGroupStatistic& s(it.second);
+	for(auto& it:  mCachedGroupStats)
+	{
+		const GxsGroupStatistic& s(it.second);
 
-	   stats.mNumMsgs             += s.mNumMsgs;
-	   stats.mNumGrps             += 1;
-	   stats.mSizeOfMsgs          += s.mTotalSizeOfMsgs;
-	   stats.mNumThreadMsgsNew    += s.mNumThreadMsgsNew;
-	   stats.mNumThreadMsgsUnread += s.mNumThreadMsgsUnread;
-	   stats.mNumChildMsgsNew     += s.mNumChildMsgsNew ;
-	   stats.mNumChildMsgsUnread  += s.mNumChildMsgsUnread ;
-   }
+		stats.mNumMsgs             += s.mNumMsgs;
+		stats.mNumGrps             += 1;
+		stats.mSizeOfMsgs          += s.mTotalSizeOfMsgs;
+		stats.mNumThreadMsgsNew    += s.mNumThreadMsgsNew;
+		stats.mNumThreadMsgsUnread += s.mNumThreadMsgsUnread;
+		stats.mNumChildMsgsNew     += s.mNumChildMsgsNew ;
+		stats.mNumChildMsgsUnread  += s.mNumChildMsgsUnread ;
+	}
 }
 
 TurtleRequestId GxsGroupFrameDialog::distantSearch(const QString& search_string)   // this should be overloaded in the child class
