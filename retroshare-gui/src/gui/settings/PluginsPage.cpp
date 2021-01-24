@@ -42,6 +42,7 @@ settings::PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
 	ui.wireBox->hide();
 	ui.wikiBox->hide();
 	ui.photosBox->hide();
+	ui.serviceGroupBox->hide();
 
 	 QString text ;
 
@@ -169,12 +170,15 @@ settings::PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
 	
 #ifdef RS_USE_WIRE
 	ui.wireBox->show();
+	ui.serviceGroupBox->show();
 #endif
 #ifdef RS_USE_WIKI
 	ui.wikiBox->show();
+	ui.serviceGroupBox->show();
 #endif
 #ifdef RS_USE_PHOTO
 	ui.photosBox->show();
+	ui.serviceGroupBox->show();
 #endif
 }
 
