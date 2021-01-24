@@ -795,12 +795,12 @@ void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
 
     // 2 - then call the async methods
 
-    RsThread::async([pairs, read_status]()
-    {
-        for(uint32_t i=0;i<pairs.size();++i)
-            if(!rsGxsChannels->markRead(pairs[i],read_status))
-                 RsErr() << "setAllMsgReadStatus: failed to change status of msg " << pairs[i].first << " in group " << pairs[i].second << " to status " << read_status << std::endl;
-    });
+    for(uint32_t i=0;i<pairs.size();++i)
+        RsThread::async([p=pairs[i], read_status]()
+        {
+            if(!rsGxsChannels->markRead(p,read_status))
+                RsErr() << "setAllMsgReadStatus: failed to change status of msg " << p.first << " in group " << p.second << " to status " << read_status << std::endl;
+        });
 }
 
 void RsGxsChannelPostsModel::setMsgReadStatus(const QModelIndex& i,bool read_status)
