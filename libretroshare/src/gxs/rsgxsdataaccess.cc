@@ -29,7 +29,6 @@
 /***********
  * #define DATA_DEBUG	1
  **********/
-#define DATA_DEBUG	1
 
 // Debug system to allow to print only for some services (group, Peer, etc)
 
@@ -92,7 +91,7 @@ bool RsGxsDataAccess::requestGroupInfo( uint32_t &token, uint32_t ansType, const
 {
 	if(groupIds.empty())
 	{
-        GXSDATADEBUG << __PRETTY_FUNCTION__ << " (WW) Group Id list is empty!" << std::endl;
+        std::cerr << __PRETTY_FUNCTION__ << " (WW) Group Id list is empty!" << std::endl;
 		return false;
 	}
 
@@ -1847,6 +1846,7 @@ bool RsGxsDataAccess::disposeOfPublicToken(uint32_t token)
         return false;
 }
 
+#ifdef DATA_DEBUG
 void RsGxsDataAccess::dumpTokenQueues()
 {
     RS_STACK_MUTEX(mDataMutex);
@@ -1864,6 +1864,8 @@ void RsGxsDataAccess::dumpTokenQueues()
 
     GXSDATADEBUG << std::endl;
 }
+#endif
+
 bool RsGxsDataAccess::checkGrpFilter(const RsTokReqOptions &opts, const std::shared_ptr<RsGxsGrpMetaData>& meta) const
 {
 

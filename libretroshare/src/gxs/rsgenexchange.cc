@@ -67,7 +67,6 @@ static const uint32_t INTEGRITY_CHECK_PERIOD = 60*31; // 31 minutes
 /*
  *  #define GEN_EXCH_DEBUG	1
  */
-#define GEN_EXCH_DEBUG	1
 
 #if defined(GEN_EXCH_DEBUG)
 static const uint32_t service_to_print  = RS_SERVICE_GXS_TYPE_FORUMS;// use this to allow to this service id only, or 0 for all services
@@ -91,7 +90,7 @@ static std::ostream& gxsgenexchangedebug(uint32_t service_type)
     static nullstream null ;
 
     if (service_to_print==0 || service_type == 0 || (service_type == service_to_print))
-        return std::cerr << time(NULL) << ":GXSDATASERVICE service " << std::hex << service_type << std::dec << ": " ;
+        return std::cerr << time(NULL) << ":RSGENEXCHANGE service " << std::hex << service_type << std::dec << ": " ;
     else
         return null ;
 }
@@ -281,8 +280,6 @@ void RsGenExchange::threadTick()
 
 void RsGenExchange::tick()
 {
-    GXSGENEXCHANGEDEBUG << "RsGenExchange::tick(): mGrpNotify size=" << mGrpNotify.size() << ", mMsgNotify size=" << mMsgNotify.size() << std::endl;
-
 	// Meta Changes should happen first.
 	// This is important, as services want to change Meta, then get results.
 	// Services shouldn't rely on this ordering - but some do.
@@ -541,7 +538,7 @@ uint8_t RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& keySet)
 
     if(!privKeyFound)
     {
-        GXSGENEXCHANGEDEBUG << "RsGenExchange::createGroup() Missing private ADMIN Key" << std::endl;
+        std::cerr << "RsGenExchange::createGroup() Missing private ADMIN Key" << std::endl;
 
     	return false;
     }
