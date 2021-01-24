@@ -101,7 +101,7 @@ JsonApiServer::corsOptionsHeaders =
 	ss << jAns; \
 	std::string&& ans(ss.str()); \
 	auto headers = corsHeaders; \
-	headers.insert({ "Content-Type", "text/json" }); \
+	headers.insert({ "Content-Type", "application/json" }); \
 	headers.insert({ "Content-Length", std::to_string(ans.length()) }); \
 	session->close(RET_CODE, ans, headers)
 
