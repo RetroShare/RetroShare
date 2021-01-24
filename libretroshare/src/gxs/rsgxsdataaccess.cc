@@ -1690,7 +1690,7 @@ bool RsGxsDataAccess::checkRequestStatus( uint32_t token, GxsRequestStatus& stat
     GxsRequest* req = locked_retrieveCompletedRequest(token);
 
 #ifdef DATA_DEBUG
-    GXSDATADEBUG << "CheckRequestStatus: token=" << token ;
+    GXSDATADEBUG << "CheckRequestStatus: token=" << token << std::endl ;
 #endif
 
     if(req != nullptr)
@@ -1700,7 +1700,7 @@ bool RsGxsDataAccess::checkRequestStatus( uint32_t token, GxsRequestStatus& stat
 		status = COMPLETE;
 		ts = req->reqTime;
 #ifdef DATA_DEBUG
-        GXSDATADEBUG << __PRETTY_FUNCTION__ << " Returning status = COMPLETE" << std::endl;
+        GXSDATADEBUG << " Returning status = COMPLETE" << std::endl;
 #endif
 		return true;
 	}
@@ -1711,7 +1711,7 @@ bool RsGxsDataAccess::checkRequestStatus( uint32_t token, GxsRequestStatus& stat
     {
 		status = it->second;
 #ifdef DATA_DEBUG
-        GXSDATADEBUG << __PRETTY_FUNCTION__ << " Returning status = " << status << std::endl;
+        GXSDATADEBUG << " Returning status = " << status << std::endl;
 #endif
         return true;
     }

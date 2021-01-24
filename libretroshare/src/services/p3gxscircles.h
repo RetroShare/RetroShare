@@ -346,6 +346,8 @@ protected:
     bool locked_processMembershipMessages(RsGxsCircleCache& cache,const std::vector<RsGxsMsgItem*>& items, GxsMsgReq& messages_to_delete,const std::set<RsGxsId>& own_ids);
     bool locked_processLoadingCacheEntry(RsGxsCircleCache &cache);
 	bool locked_checkCircleCacheForMembershipUpdate(RsGxsCircleCache &cache);
+    bool locked_setGroupUnprocessedStatus(RsGxsCircleCache& cache,bool unprocessed);
+    bool locked_subscribeToCircle(const RsGxsCircleId &grpId, bool subscribe);
 
 	p3IdService *mIdentities; // Needed for constructing Circle Info,
 	PgpAuxUtils *mPgpUtils;

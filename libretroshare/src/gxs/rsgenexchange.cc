@@ -69,6 +69,37 @@ static const uint32_t INTEGRITY_CHECK_PERIOD = 60*31; // 31 minutes
  */
 #define GEN_EXCH_DEBUG	1
 
+#if defined(GEN_EXCH_DEBUG)
+static const uint32_t service_to_print  = RS_SERVICE_GXS_TYPE_GXSCIRCLE;// use this to allow to this service id only, or 0 for all services
+                                                                        // warning. Numbers should be SERVICE IDS (see serialiser/rsserviceids.h. E.g. 0x0215 for forums)
+class nullstream: public std::ostream {};
+
+// static std::string nice_time_stamp(rstime_t now,rstime_t TS)
+// {
+//     if(TS == 0)
+//         return "Never" ;
+//     else
+//     {
+//         std::ostringstream s;
+//         s << now - TS << " secs ago" ;
+//         return s.str() ;
+//     }
+// }
+
+static std::ostream& gxsgenexchangedebug(uint32_t service_type)
+{
+    static nullstream null ;
+
+    if (service_to_print==0 || service_type == 0 || (service_type == service_to_print))
+        return std::cerr << time(NULL) << ":GXSDATASERVICE service " << std::hex << service_type << std::dec << ": " ;
+    else
+        return null ;
+}
+
+#define GXSGENEXCHANGEDEBUG gxsgenexchangedebug(serviceType())
+
+#endif
+
 // Data flow in RsGenExchange
 //
 //     publishGroup()
@@ -250,6 +281,8 @@ void RsGenExchange::threadTick()
 
 void RsGenExchange::tick()
 {
+    GXSGENEXCHANGEDEBUG << "RsGenExchange::tick(): mGrpNotify size=" << mGrpNotify.size() << ", mMsgNotify size=" << mMsgNotify.size() << std::endl;
+
 	// Meta Changes should happen first.
 	// This is important, as services want to change Meta, then get results.
 	// Services shouldn't rely on this ordering - but some do.
@@ -387,20 +420,19 @@ bool RsGenExchange::messagePublicationTest(const RsGxsMsgMetaData& meta)
 	return meta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP_FOREVER || st == 0 || storageTimeLimit >= time(NULL);
 }
 
-bool RsGenExchange::acknowledgeTokenMsg(const uint32_t& token,
-                RsGxsGrpMsgIdPair& msgId)
+bool RsGenExchange::acknowledgeTokenMsg(const uint32_t& token, RsGxsGrpMsgIdPair& msgId)
 {
 	RS_STACK_MUTEX(mGenMtx) ;
 
 #ifdef GEN_EXCH_DEBUG
-	std::cerr << "RsGenExchange::acknowledgeTokenMsg(). token=" << token << std::endl;
+    GXSGENEXCHANGEDEBUG << "RsGenExchange::acknowledgeTokenMsg(). token=" << token << std::endl;
 #endif
 	std::map<uint32_t, RsGxsGrpMsgIdPair >::iterator mit = mMsgNotify.find(token);
 
 	if(mit == mMsgNotify.end())
 	{
 #ifdef GEN_EXCH_DEBUG
-		std::cerr << "  no notification found for this token." << std::endl;
+        GXSGENEXCHANGEDEBUG << "  no notification found for this token." << std::endl;
 #endif
 		return false;
 	}
@@ -413,8 +445,7 @@ bool RsGenExchange::acknowledgeTokenMsg(const uint32_t& token,
     mMsgNotify.erase(mit);
 
 #ifdef GEN_EXCH_DEBUG
-	std::cerr << "  found grpId=" << msgId.first <<", msgId=" << msgId.second << std::endl;
-	std::cerr << "  disposing token from mDataAccess" << std::endl;
+    GXSGENEXCHANGEDEBUG << "  found grpId=" << msgId.first <<", msgId=" << msgId.second << "  disposing token from mDataAccess" << std::endl;
 #endif
 	return true;
 }
@@ -426,15 +457,14 @@ bool RsGenExchange::acknowledgeTokenGrp(const uint32_t& token, RsGxsGroupId& grp
 	RS_STACK_MUTEX(mGenMtx) ;
 
 #ifdef GEN_EXCH_DEBUG
-	std::cerr << "RsGenExchange::acknowledgeTokenGrp(). token=" << token << std::endl;
+    GXSGENEXCHANGEDEBUG << "RsGenExchange::acknowledgeTokenGrp(). token=" << token << std::endl;
 #endif
-	std::map<uint32_t, RsGxsGroupId >::iterator mit =
-                        mGrpNotify.find(token);
+    std::map<uint32_t, RsGxsGroupId >::iterator mit = mGrpNotify.find(token);
 
 	if(mit == mGrpNotify.end())
 	{
 #ifdef GEN_EXCH_DEBUG
-		std::cerr << "  no notification found for this token." << std::endl;
+        GXSGENEXCHANGEDEBUG << "  no notification found for this token." << std::endl;
 #endif
 		return false;
 	}
@@ -446,8 +476,7 @@ bool RsGenExchange::acknowledgeTokenGrp(const uint32_t& token, RsGxsGroupId& grp
     mGrpNotify.erase(mit);
 
 #ifdef GEN_EXCH_DEBUG
-	std::cerr << "  found grpId=" << grpId << std::endl;
-	std::cerr << "  disposing token from mDataAccess" << std::endl;
+    GXSGENEXCHANGEDEBUG << "  found grpId=" << grpId << ".  Disposing token from mDataAccess" << std::endl;
 #endif
 	return true;
 }
@@ -487,8 +516,7 @@ void RsGenExchange::generateGroupKeys(RsTlvSecurityKeySet& keySet, bool genPubli
 uint8_t RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& keySet)
 {
 #ifdef GEN_EXCH_DEBUG
-    std::cerr << "RsGenExchange::createGroup()";
-    std::cerr << std::endl;
+    GXSGENEXCHANGEDEBUG << "RsGenExchange::createGroup()"<< std::endl;
 #endif
 
     RsGxsGrpMetaData* meta = grp->metaData;
@@ -513,8 +541,7 @@ uint8_t RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& keySet)
 
     if(!privKeyFound)
     {
-        std::cerr << "RsGenExchange::createGroup() Missing private ADMIN Key";
-	std::cerr << std::endl;
+        GXSGENEXCHANGEDEBUG << "RsGenExchange::createGroup() Missing private ADMIN Key" << std::endl;
 
     	return false;
     }
@@ -556,8 +583,7 @@ uint8_t RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& keySet)
 
     if (!ok)
     {
-        std::cerr << "RsGenExchange::createGroup() ERROR !okay (getSignature error)";
-		std::cerr << std::endl;
+        std::cerr << "RsGenExchange::createGroup() ERROR !okay (getSignature error)" << std::endl;
 		return CREATE_FAIL;
     }
 
@@ -590,8 +616,7 @@ int RsGenExchange::createGroupSignatures(RsTlvKeySignatureSet& signSet, RsTlvBin
     {
         needIdentitySign = true;
 #ifdef GEN_EXCH_DEBUG
-        std::cerr << "Needs Identity sign! (Service Flags)";
-        std::cerr << std::endl;
+        GXSGENEXCHANGEDEBUG << "Needs Identity sign! (Service Flags)"<< std::endl;
 #endif
     }
 
@@ -663,8 +688,7 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
     bool publishSignSuccess = false;
 
 #ifdef GEN_EXCH_DEBUG
-    std::cerr << "RsGenExchange::createMsgSignatures() for Msg.mMsgName: " << msgMeta.mMsgName;
-    std::cerr << std::endl;
+    GXSGENEXCHANGEDEBUG << "RsGenExchange::createMsgSignatures() for Msg.mMsgName: " << msgMeta.mMsgName<< std::endl;
 #endif
 
 
@@ -701,8 +725,7 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
     {
         needPublishSign = true;
 #ifdef GEN_EXCH_DEBUG
-        std::cerr << "Needs Publish sign! (Service Flags)";
-        std::cerr << std::endl;
+        GXSGENEXCHANGEDEBUG << "Needs Publish sign! (Service Flags)"<< std::endl;
 #endif
     }
 
@@ -711,8 +734,7 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
     {
         needIdentitySign = true;
 #ifdef GEN_EXCH_DEBUG
-        std::cerr << "Needs Identity sign! (Service Flags)";
-        std::cerr << std::endl;
+        GXSGENEXCHANGEDEBUG << "Needs Identity sign! (Service Flags)"<< std::endl;
 #endif
     }
 
@@ -720,8 +742,7 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
     {
         needIdentitySign = true;
 #ifdef GEN_EXCH_DEBUG
-        std::cerr << "Needs Identity sign! (AuthorId Exists)";
-        std::cerr << std::endl;
+        GXSGENEXCHANGEDEBUG << "Needs Identity sign! (AuthorId Exists)"<< std::endl;
 #endif
     }
 
@@ -2041,7 +2062,7 @@ void RsGenExchange::setGroupSubscribeFlags(uint32_t& token, const RsGxsGroupId& 
 void RsGenExchange::setGroupStatusFlags(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& status, const uint32_t& mask)
 {
 	/* TODO APPLY MASK TO FLAGS */
-					RS_STACK_MUTEX(mGenMtx) ;
+    RS_STACK_MUTEX(mGenMtx) ;
     token = mDataAccess->generatePublicToken();
 
     GrpLocMetaData g;
@@ -2161,8 +2182,7 @@ void RsGenExchange::processMsgMetaChanges()
 
         {
             RS_STACK_MUTEX(mGenMtx);
-            //mMsgNotify.insert(std::make_pair(token, m.msgId));// (csoler) Is that needed??
-            mDataAccess->disposeOfPublicToken(token);
+            mMsgNotify.insert(std::make_pair(token, m.msgId));
         }
     }
 
@@ -2198,6 +2218,9 @@ void RsGenExchange::processGrpMetaChanges()
         GrpLocMetaData& g = mit->second;
         uint32_t token = mit->first;
 
+#ifdef GEN_EXCH_DEBUG
+        RsDbg() << " Processing GrpMetaChange for token " << token << std::endl;
+#endif
         // process mask
         bool ok = processGrpMask(g.grpId, g.val);
 
@@ -2207,15 +2230,18 @@ void RsGenExchange::processGrpMetaChanges()
         {
             mDataAccess->updatePublicRequestStatus(token, RsTokenService::COMPLETE);
             grpChanged.push_back(g.grpId);
-        }else
+        }
+        else
         {
             mDataAccess->updatePublicRequestStatus(token, RsTokenService::FAILED);
         }
 
         {
             RS_STACK_MUTEX(mGenMtx);
-            mDataAccess->disposeOfPublicToken(token);
-            //mGrpNotify.insert(std::make_pair(token, g.grpId));	// (csoler) I'm not sure that is even useful
+            mGrpNotify.insert(std::make_pair(token, g.grpId));
+#ifdef GEN_EXCH_DEBUG
+            RsDbg() << " Processing GrpMetaChange Adding token " << token << " to mGrpNotify" << std::endl;
+#endif
         }
     }
 
