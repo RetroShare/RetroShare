@@ -70,7 +70,7 @@ static const uint32_t INTEGRITY_CHECK_PERIOD = 60*31; // 31 minutes
 #define GEN_EXCH_DEBUG	1
 
 #if defined(GEN_EXCH_DEBUG)
-static const uint32_t service_to_print  = RS_SERVICE_GXS_TYPE_GXSCIRCLE;// use this to allow to this service id only, or 0 for all services
+static const uint32_t service_to_print  = RS_SERVICE_GXS_TYPE_FORUMS;// use this to allow to this service id only, or 0 for all services
                                                                         // warning. Numbers should be SERVICE IDS (see serialiser/rsserviceids.h. E.g. 0x0215 for forums)
 class nullstream: public std::ostream {};
 

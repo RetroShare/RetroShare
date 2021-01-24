@@ -34,7 +34,7 @@
 // Debug system to allow to print only for some services (group, Peer, etc)
 
 #if defined(DATA_DEBUG)
-static const uint32_t     service_to_print  = RS_SERVICE_GXS_TYPE_GXSCIRCLE;// use this to allow to this service id only, or 0 for all services
+static const uint32_t     service_to_print  = RS_SERVICE_GXS_TYPE_FORUMS;// use this to allow to this service id only, or 0 for all services
                                                                             // warning. Numbers should be SERVICE IDS (see serialiser/rsserviceids.h. E.g. 0x0215 for forums)
 
 class nullstream: public std::ostream {};
