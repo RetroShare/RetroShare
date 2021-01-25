@@ -463,7 +463,7 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
 #endif
 	uint flags = Settings->getNewsFeedFlags();
 
-	if(e.mErrorCode == RsAuthSslError::PEER_REFUSED_CONNECTION)
+	if(e.mErrorCode == RsAuthSslError::PEER_REFUSED_CONNECTION && (flags & RS_FEED_TYPE_SECURITY_IP))
 	{
 		addFeedItemIfUnique(new PeerItem(this, NEWSFEED_PEERLIST, e.mSslId, PEER_TYPE_HELLO, false), true );
 		return;
