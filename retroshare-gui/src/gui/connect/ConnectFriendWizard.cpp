@@ -1179,6 +1179,7 @@ void ConnectFriendWizard::toggleAdvanced()
 	{
 		ui->cp_Frame->show();
 		ui->toggleadvancedButton->setText("Hide advanced options");
+		resize(sizeHint());
 		AdvancedVisible=true;
 	}
 }
