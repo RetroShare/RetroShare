@@ -499,6 +499,7 @@ private:
      */
     bool getMsgIdList(const GxsMsgReq& msgIds, const RsTokReqOptions& opts, GxsMsgReq& msgIdsOut);
 
+    void dumpTokenQueues();
 private:
     bool locked_clearRequest(const uint32_t &token);
 

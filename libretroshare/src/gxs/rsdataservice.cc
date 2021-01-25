@@ -1308,7 +1308,12 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
                     auto meta = locked_getMsgMeta(*c, 0);
 
                     if(meta)
+                    {
                         metaSet.push_back(meta);
+
+                        if(mUseCache)
+                            mMsgMetaDataCache[grpId].updateMeta(msgId,meta);
+                    }
 
                     delete c;
 				}
@@ -1438,7 +1443,12 @@ int RsDataService::retrieveGxsGrpMetaData(std::map<RsGxsGroupId,std::shared_ptr<
                 auto meta = locked_getGrpMeta(*c, 0);
 
                 if(meta)
+                {
                     mit->second = meta;
+
+                    if(mUseCache)
+                        mGrpMetaDataCache.updateMeta(grpId,meta);
+                }
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
 				++resultCount;
@@ -1503,9 +1513,30 @@ int RsDataService::updateGroupMetaData(const GrpLocMetaData& meta)
     std::cerr << (void*)this << ": erasing old entry from cache." << std::endl;
 #endif
 
-    mGrpMetaDataCache.clear(meta.grpId);
+    if( mDb->sqlUpdate(GRP_TABLE_NAME,  KEY_GRP_ID+ "='" + grpId.toStdString() + "'", meta.val))
+    {
+        // If we use the cache, update the meta data immediately.
 
-    return mDb->sqlUpdate(GRP_TABLE_NAME,  KEY_GRP_ID+ "='" + grpId.toStdString() + "'", meta.val) ? 1 : 0;
+        if(mUseCache)
+        {
+            RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, mGrpMetaColumns, "grpId='" + grpId.toStdString() + "'", "");
+
+            c->moveToFirst();
+
+            // temporarily disable the cache so that we get the value from the DB itself.
+            mUseCache=false;
+            auto meta = locked_getGrpMeta(*c, 0);
+            mUseCache=true;
+
+            if(meta)
+                mGrpMetaDataCache.updateMeta(grpId,meta);
+
+            delete c;
+        }
+
+        return 1;
+    }
+    return 0;
 }
 
 int RsDataService::updateMessageMetaData(const MsgLocMetaData& metaData)
@@ -1518,9 +1549,30 @@ int RsDataService::updateMessageMetaData(const MsgLocMetaData& metaData)
     const RsGxsGroupId& grpId = metaData.msgId.first;
     const RsGxsMessageId& msgId = metaData.msgId.second;
 
-    mMsgMetaDataCache[grpId].clear(msgId);
+    if(mDb->sqlUpdate(MSG_TABLE_NAME,  KEY_GRP_ID+ "='" + grpId.toStdString() + "' AND " + KEY_MSG_ID + "='" + msgId.toStdString() + "'", metaData.val) )
+    {
+        // If we use the cache, update the meta data immediately.
 
-    return mDb->sqlUpdate(MSG_TABLE_NAME,  KEY_GRP_ID+ "='" + grpId.toStdString() + "' AND " + KEY_MSG_ID + "='" + msgId.toStdString() + "'", metaData.val) ? 1 : 0;
+        if(mUseCache)
+        {
+            RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, mMsgMetaColumns, KEY_GRP_ID+ "='" + grpId.toStdString() + "' AND " + KEY_MSG_ID + "='" + msgId.toStdString() + "'", "");
+
+            c->moveToFirst();
+
+            // temporarily disable the cache so that we get the value from the DB itself.
+            mUseCache=false;
+            auto meta = locked_getMsgMeta(*c, 0);
+            mUseCache=true;
+
+            if(meta)
+                mMsgMetaDataCache[grpId].updateMeta(msgId,meta);
+
+            delete c;
+        }
+
+        return 1;
+    }
+    return 0;
 }
 
 int RsDataService::removeMsgs(const GxsMsgReq& msgIds)

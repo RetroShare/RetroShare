@@ -647,7 +647,8 @@ uint64_t InternalFileHierarchyStorage::recursUpdateCumulatedSize(const Directory
     uint64_t local_cumulative_size = 0;
 
     for(uint32_t i=0;i<d.subfiles.size();++i)
-        local_cumulative_size += static_cast<FileEntry*>(mNodes[d.subfiles[i]])->file_size;
+        if(mNodes[d.subfiles[i]])		// normally not needed, but an extra-security
+            local_cumulative_size += static_cast<FileEntry*>(mNodes[d.subfiles[i]])->file_size;
 
     for(uint32_t i=0;i<d.subdirs.size();++i)
         local_cumulative_size += recursUpdateCumulatedSize(d.subdirs[i]);

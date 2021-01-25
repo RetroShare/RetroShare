@@ -1256,17 +1256,22 @@ void RsGxsForumModel::recursSetMsgReadStatus(ForumModelIndex i,bool read_status,
 	if (bChanged)
 	{
 		//Don't recurs post versions as this should be done before, if no change.
-		uint32_t token;
 		auto s = getPostVersions(mPosts[i].mMsgId) ;
 
 		if(!s.empty())
 			for(auto it(s.begin());it!=s.end();++it)
 			{
-				rsGxsForums->setMessageReadStatus(token,std::make_pair( mForumGroup.mMeta.mGroupId, it->second ), read_status);
-				std::cerr << "Setting version " << it->second << " of post " << mPosts[i].mMsgId << " as read." << std::endl;
+                RsThread::async( [grpId=mForumGroup.mMeta.mGroupId,msgId=it->second,original_msg_id=mPosts[i].mMsgId,read_status]()
+                {
+                    rsGxsForums->markRead(std::make_pair( grpId, msgId ), read_status);
+                    std::cerr << "Setting version " << msgId << " of post " << original_msg_id << " as read." << std::endl;
+                });
 			}
 		else
-			rsGxsForums->setMessageReadStatus(token,std::make_pair( mForumGroup.mMeta.mGroupId, mPosts[i].mMsgId ), read_status);
+            RsThread::async( [grpId=mForumGroup.mMeta.mGroupId,original_msg_id=mPosts[i].mMsgId,read_status]()
+            {
+                rsGxsForums->markRead(std::make_pair( grpId, original_msg_id), read_status);
+            });
 
         void *ref ;
         convertTabEntryToRefPointer(i,ref);	// we dont use i+1 here because i is not a row, but an index in the mPosts tab

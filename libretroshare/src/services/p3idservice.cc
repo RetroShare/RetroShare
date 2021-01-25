@@ -680,6 +680,26 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 					{
 						uint32_t token;
 						RsGenExchange::subscribeToGroup(token, gid, true);
+
+                        // we need to acknowledge the token in a async process
+
+                        RsThread::async( [this,token]()
+                        {
+                            std::chrono::milliseconds maxWait = std::chrono::milliseconds(10000);
+                            std::chrono::milliseconds checkEvery = std::chrono::milliseconds(100);
+
+                            auto timeout = std::chrono::steady_clock::now() + maxWait;	// wait for 10 secs at most
+                            auto st = requestStatus(token);
+
+                            while( !(st == RsTokenService::FAILED || st >= RsTokenService::COMPLETE) && std::chrono::steady_clock::now() < timeout )
+                            {
+                                std::this_thread::sleep_for(checkEvery);
+                                st = requestStatus(token);
+                            }
+
+                            RsGxsGroupId grpId;
+                            acknowledgeGrp(token,grpId);
+                        });
 					}
 
                 }

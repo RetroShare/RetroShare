@@ -1777,12 +1777,13 @@ bool p3GxsChannels::createComment(RsGxsComment& comment) // deprecated
 	return true;
 }
 
-bool p3GxsChannels::subscribeToChannel(
-        const RsGxsGroupId& groupId, bool subscribe )
+bool p3GxsChannels::subscribeToChannel( const RsGxsGroupId& groupId, bool subscribe )
 {
 	uint32_t token;
-	if( !subscribeToGroup(token, groupId, subscribe)
-	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+    if( !subscribeToGroup(token, groupId, subscribe) || waitToken(token) != RsTokenService::COMPLETE ) return false;
+
+    RsGxsGroupId grpId;
+    acknowledgeGrp(token,grpId);
 	return true;
 }
 
@@ -1791,6 +1792,10 @@ bool p3GxsChannels::markRead(const RsGxsGrpMsgIdPair& msgId, bool read)
 	uint32_t token;
 	setMessageReadStatus(token, msgId, read);
 	if(waitToken(token) != RsTokenService::COMPLETE ) return false;
+
+    RsGxsGrpMsgIdPair p;
+    acknowledgeMsg(token,p);
+
 	return true;
 }
 

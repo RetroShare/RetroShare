@@ -603,7 +603,7 @@ void PostedItem::fill()
 	ui->scoreLabel->setText(score);
 
 	// FIX THIS UP LATER.
-	ui->notes->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+    ui->notes->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), /* RSHTML_FORMATTEXT_EMBED_SMILEYS |*/ RSHTML_FORMATTEXT_EMBED_LINKS));
 
 	QTextDocument doc;
 	doc.setHtml(ui->notes->text());
