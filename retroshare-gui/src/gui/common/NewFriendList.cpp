@@ -33,6 +33,7 @@
 #include "gui/chat/ChatDialog.h"
 #include "gui/common/AvatarDefs.h"
 #include "gui/common/FilesDefs.h"
+#include "gui/common/RSElidedItemDelegate.h"
 
 #include "gui/connect/ConfCertDialog.h"
 #include "gui/connect/PGPKeyDialog.h"
@@ -106,44 +107,45 @@ Q_DECLARE_METATYPE(ElidedLabel*)
 class FriendListSortFilterProxyModel: public QSortFilterProxyModel
 {
 public:
-    FriendListSortFilterProxyModel(const QHeaderView *header,QObject *parent = NULL): QSortFilterProxyModel(parent),
-        	m_header(header),
-            m_sortingEnabled(false),
-    		m_showOfflineNodes(true) {}
+	explicit FriendListSortFilterProxyModel(const QHeaderView *header,QObject *parent = NULL)
+	    : QSortFilterProxyModel(parent)
+	    , m_header(header)
+	    , m_sortingEnabled(false), m_sortByState(false)
+	    , m_showOfflineNodes(true) {}
 
-    bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
-    {
-        bool is_group_1 = left.data(RsFriendListModel::TypeRole).toUInt() == (uint)RsFriendListModel::ENTRY_TYPE_GROUP;
-        bool is_group_2 = right.data(RsFriendListModel::TypeRole).toUInt() == (uint)RsFriendListModel::ENTRY_TYPE_GROUP;
+	bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
+	{
+		bool is_group_1 = left.data(RsFriendListModel::TypeRole).toUInt() == (uint)RsFriendListModel::ENTRY_TYPE_GROUP;
+		bool is_group_2 = right.data(RsFriendListModel::TypeRole).toUInt() == (uint)RsFriendListModel::ENTRY_TYPE_GROUP;
 
-        if(is_group_1 ^ is_group_2)	// if the two are different, put the group first.
-            return is_group_1 ;
+		if(is_group_1 ^ is_group_2)	// if the two are different, put the group first.
+			return is_group_1 ;
 
-        bool online1 = left .data(RsFriendListModel::OnlineRole).toBool();
-        bool online2 = right.data(RsFriendListModel::OnlineRole).toBool();
+		bool online1 = (left .data(RsFriendListModel::OnlineRole).toInt() != RS_STATUS_OFFLINE);
+		bool online2 = (right.data(RsFriendListModel::OnlineRole).toInt() != RS_STATUS_OFFLINE);
 
-        if(online1 != online2 && m_sortByState)
-            return (m_header->sortIndicatorOrder()==Qt::AscendingOrder)?online1:online2 ;	// always put online nodes first
+		if(online1 != online2 && m_sortByState)
+			return (m_header->sortIndicatorOrder()==Qt::AscendingOrder)?online1:online2 ;    // always put online nodes first
 
 		return left.data(RsFriendListModel::SortRole) < right.data(RsFriendListModel::SortRole) ;
-    }
+	}
 
-    bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override
-    {
-        // do not show empty groups
+	bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override
+	{
+		// do not show empty groups
 
-        QModelIndex index = sourceModel()->index(source_row,0,source_parent);
+		QModelIndex index = sourceModel()->index(source_row,0,source_parent);
 
-        if(index.data(RsFriendListModel::TypeRole) == RsFriendListModel::ENTRY_TYPE_GROUP)	// always show groups, so we can delete them even when empty
-            return true;
+		if(index.data(RsFriendListModel::TypeRole) == RsFriendListModel::ENTRY_TYPE_GROUP)  // always show groups, so we can delete them even when empty
+			return true;
 
-        // Filter offline friends
+		// Filter offline friends
 
-        if(!m_showOfflineNodes && !index.data(RsFriendListModel::OnlineRole).toBool())
-            return false;
+		if(!m_showOfflineNodes && (index.data(RsFriendListModel::OnlineRole).toInt() == RS_STATUS_OFFLINE))
+			return false;
 
-        return index.data(RsFriendListModel::FilterRole).toString() == RsFriendListModel::FilterString ;
-    }
+		return index.data(RsFriendListModel::FilterRole).toString() == RsFriendListModel::FilterString ;
+	}
 
 	void sort( int column, Qt::SortOrder order = Qt::AscendingOrder ) override
 	{
@@ -187,7 +189,9 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
 	mProxyModel->setFilterRole(RsFriendListModel::FilterRole);
 	mProxyModel->setFilterRegExp(QRegExp(RsFriendListModel::FilterString));
 
-    ui->peerTreeWidget->setModel(mProxyModel);
+	ui->peerTreeWidget->setModel(mProxyModel);
+	ui->peerTreeWidget->setItemDelegate(new RSElidedItemDelegate());
+	ui->peerTreeWidget->setWordWrap(false);
 
     /* Add filter actions */
     QString headerText = mModel->headerData(RsFriendListModel::COLUMN_THREAD_NAME,Qt::Horizontal,Qt::DisplayRole).toString();
@@ -1255,7 +1259,7 @@ bool NewFriendList::exportFriendlist(QString &fileName)
 
     QDomElement pgpIDs = doc.createElement("pgpIDs");
     RsPeerDetails detailPGP;
-    for(std::list<RsPgpId>::iterator list_iter = gpg_ids.begin(); list_iter !=  gpg_ids.end(); list_iter++)	{
+    for(std::list<RsPgpId>::iterator list_iter = gpg_ids.begin(); list_iter !=  gpg_ids.end(); ++list_iter)	{
         rsPeers->getGPGDetails(*list_iter, detailPGP);
         QDomElement pgpID = doc.createElement("pgpID");
         // these values aren't used and just stored for better human readability
@@ -1264,9 +1268,9 @@ bool NewFriendList::exportFriendlist(QString &fileName)
 
         std::list<RsPeerId> ssl_ids;
         rsPeers->getAssociatedSSLIds(*list_iter, ssl_ids);
-        for(std::list<RsPeerId>::iterator list_iter = ssl_ids.begin(); list_iter !=  ssl_ids.end(); list_iter++) {
+        for(std::list<RsPeerId>::iterator list_iter2 = ssl_ids.begin(); list_iter2 !=  ssl_ids.end(); ++list_iter2) {
             RsPeerDetails detailSSL;
-            if (!rsPeers->getPeerDetails(*list_iter, detailSSL))
+            if (!rsPeers->getPeerDetails(*list_iter2, detailSSL))
                 continue;
 
             std::string certificate = rsPeers->GetRetroshareInvite(detailSSL.id, RetroshareInviteFlags::CURRENT_IP | RetroshareInviteFlags::DNS | RetroshareInviteFlags::RADIX_FORMAT);
@@ -1291,7 +1295,7 @@ bool NewFriendList::exportFriendlist(QString &fileName)
     root.appendChild(pgpIDs);
 
     QDomElement groups = doc.createElement("groups");
-    for(std::list<RsGroupInfo>::iterator list_iter = group_info_list.begin(); list_iter !=  group_info_list.end(); list_iter++)	{
+    for(std::list<RsGroupInfo>::iterator list_iter = group_info_list.begin(); list_iter !=  group_info_list.end(); ++list_iter)	{
         RsGroupInfo group_info = *list_iter;
 
         //skip groups without peers
@@ -1303,7 +1307,7 @@ bool NewFriendList::exportFriendlist(QString &fileName)
         group.setAttribute("name", QString::fromUtf8(group_info.name.c_str()));
         group.setAttribute("flag", group_info.flag);
 
-        for(std::set<RsPgpId>::iterator i = group_info.peerIds.begin(); i !=  group_info.peerIds.end(); i++) {
+        for(std::set<RsPgpId>::iterator i = group_info.peerIds.begin(); i !=  group_info.peerIds.end(); ++i) {
             QDomElement pgpID = doc.createElement("pgpID");
             std::string pid = i->toStdString();
             pgpID.setAttribute("id", QString::fromStdString(pid));
@@ -1344,6 +1348,9 @@ static void showXMLParsingError()
  */
 bool NewFriendList::importFriendlist(QString &fileName, bool &errorPeers, bool &errorGroups)
 {
+	errorPeers = false;
+	errorGroups = false;
+
     QDomDocument doc;
     // load from file
     {
@@ -1375,10 +1382,6 @@ bool NewFriendList::importFriendlist(QString &fileName, bool &errorPeers, bool &
         return false;
     }
 
-    errorPeers = false;
-    errorGroups = false;
-
-    std::string error_string;
     RsPeerDetails rsPeerDetails;
     RsPeerId rsPeerID;
     RsPgpId rsPgpID;

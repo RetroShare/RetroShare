@@ -849,11 +849,12 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
 }
 
 NewFriendList {
-    qproperty-textColorStatusAway: lightgray;
-    qproperty-textColorStatusBusy: lightgray;
-    qproperty-textColorStatusOnline: green;
-    qproperty-textColorStatusInactive: lightgray;
+    qproperty-textColorStatusAway: #4040A0;
+    qproperty-textColorStatusBusy: #A04040;
+    qproperty-textColorStatusOnline: #40A040;
+    qproperty-textColorStatusInactive: #A0A040;
     qproperty-textColorStatusOffline: gray;
+    qproperty-textColorGroup: rgb(123, 123, 123);
 }
 
 QTreeView, QListView

@@ -48,11 +48,7 @@ const uint32_t RS_STATUS_COUNT    = 0x0005; // count of status
 class StatusInfo
 {
 	public:
-	StatusInfo()
-	{
-		status = 0;
-		time_stamp = 0;
-	}
+	StatusInfo() : status(RS_STATUS_OFFLINE), time_stamp(0)	{}
 
 	public:
 	RsPeerId id;
