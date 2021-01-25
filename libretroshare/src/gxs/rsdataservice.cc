@@ -1530,6 +1530,8 @@ int RsDataService::updateGroupMetaData(const GrpLocMetaData& meta)
 
             if(meta)
                 mGrpMetaDataCache.updateMeta(grpId,meta);
+
+            delete c;
         }
 
         return 1;
@@ -1564,6 +1566,8 @@ int RsDataService::updateMessageMetaData(const MsgLocMetaData& metaData)
 
             if(meta)
                 mMsgMetaDataCache[grpId].updateMeta(msgId,meta);
+
+            delete c;
         }
 
         return 1;

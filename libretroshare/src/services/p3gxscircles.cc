@@ -1512,8 +1512,6 @@ bool p3GxsCircles::locked_setGroupUnprocessedStatus(RsGxsCircleCache& cache,bool
 
     RsGenExchange::setGroupStatusFlags(token2, RsGxsGroupId(cache.mCircleId), unprocessed, GXS_SERV::GXS_GRP_STATUS_UNPROCESSED);
 
-    std::cerr << "********** new token for setGrpStatusFlags: " << token2 << std::endl;
-
     // Now we need to async acknowledge the token when the job is finished. We cannot do this sync because it's the
     // current thread that takes care of calling the handling of group processing.
 
