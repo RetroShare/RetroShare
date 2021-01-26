@@ -41,6 +41,7 @@ class BandwidthGraph : public RWindow
 public:
     enum { AreaGraph=0,LineGraph=1 } ;
     enum { DefaultColor=0,DarkColor=1 } ;
+    enum { DefaultDirection=0,Download=1 } ;
 
   /** Default constructor */
   BandwidthGraph(QWidget *parent = 0, Qt::WindowFlags flags = 0);
