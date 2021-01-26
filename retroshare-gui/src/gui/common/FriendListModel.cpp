@@ -406,14 +406,14 @@ QVariant RsFriendListModel::data(const QModelIndex &index, int role) const
 
 QVariant RsFriendListModel::textColorRole(const EntryIndex& fmpe,int column) const
 {
-    switch(fmpe.type)
-    {
-    case ENTRY_TYPE_GROUP: return QVariant(QBrush(mTextColorGroup));
-    case ENTRY_TYPE_PROFILE:
-    case ENTRY_TYPE_NODE:  return QVariant(QBrush(mTextColorStatus[ onlineRole(fmpe,column).toBool() ?RS_STATUS_ONLINE:RS_STATUS_OFFLINE]));
-    default:
+	switch(fmpe.type)
+	{
+		case ENTRY_TYPE_GROUP: return QVariant(QBrush(mTextColorGroup));
+		case ENTRY_TYPE_PROFILE:
+		case ENTRY_TYPE_NODE:  return QVariant(QBrush(mTextColorStatus[onlineRole(fmpe,column).toInt()]));
+		default:
 		return QVariant();
-    }
+	}
 }
 
 QVariant RsFriendListModel::statusRole(const EntryIndex& /*fmpe*/,int /*column*/) const
@@ -545,47 +545,51 @@ QVariant RsFriendListModel::sortRole(const EntryIndex& entry,int column) const
 
 QVariant RsFriendListModel::onlineRole(const EntryIndex& e, int /*col*/) const
 {
-    switch(e.type)
+	switch(e.type)
 	{
-    default:
-	case ENTRY_TYPE_GROUP:
-    {
-        const HierarchicalGroupInformation& g(mGroups[e.group_index]);
-
-        for(uint32_t j=0;j<g.child_profile_indices.size();++j)
+		default:
+		case ENTRY_TYPE_GROUP:
 		{
-			const HierarchicalProfileInformation& prof = mProfiles[g.child_profile_indices[j]];
+			const HierarchicalGroupInformation& g(mGroups[e.group_index]);
 
-			for(uint32_t i=0;i<prof.child_node_indices.size();++i)
-				if(mLocations[prof.child_node_indices[i]].node_info.state & RS_PEER_STATE_CONNECTED)
-					return QVariant(true);
+			for(uint32_t j=0;j<g.child_profile_indices.size();++j)
+			{
+				const HierarchicalProfileInformation& prof = mProfiles[g.child_profile_indices[j]];
+
+				for(uint32_t i=0;i<prof.child_node_indices.size();++i)
+					if(mLocations[prof.child_node_indices[i]].node_info.state & RS_PEER_STATE_CONNECTED)
+						return QVariant(RS_STATUS_ONLINE);
+			}
+			break;
 		}
-        return QVariant(false);
-    }
 
-	case ENTRY_TYPE_PROFILE:
-    {
-		const HierarchicalProfileInformation *prof = getProfileInfo(e);
+		case ENTRY_TYPE_PROFILE:
+		{
+			const HierarchicalProfileInformation *prof = getProfileInfo(e);
 
-        if(!prof)
-            return QVariant();
+			if(prof)
+			{
+				for(uint32_t i=0;i<prof->child_node_indices.size();++i)
+					if(mLocations[prof->child_node_indices[i]].node_info.state & RS_PEER_STATE_CONNECTED)
+						return QVariant(RS_STATUS_ONLINE);
+			}
+		}
+		break;
 
-        for(uint32_t i=0;i<prof->child_node_indices.size();++i)
-            if(mLocations[prof->child_node_indices[i]].node_info.state & RS_PEER_STATE_CONNECTED)
-                return QVariant(true);
+		case ENTRY_TYPE_NODE:
+		{
+			const HierarchicalNodeInformation *node = getNodeInfo(e);
 
-        return QVariant();
-    }
-        break;
+			if(node)
+			{
+				StatusInfo status;
+				rsStatus->getStatus(node->node_info.id, status);
 
-	case ENTRY_TYPE_NODE:
-        const HierarchicalNodeInformation *node = getNodeInfo(e);
-
-        if(!node)
-            return QVariant();
-
-        return QVariant(bool(node->node_info.state & RS_PEER_STATE_CONNECTED));
+				return QVariant(status.status);
+			}
+		}
 	}
+	return QVariant(RS_STATUS_OFFLINE);
 }
 
 QVariant RsFriendListModel::fontRole(const EntryIndex& e, int col) const
@@ -594,17 +598,23 @@ QVariant RsFriendListModel::fontRole(const EntryIndex& e, int col) const
 	std::cerr << "  font role " << e.type << ", (" << (int)e.group_index << ","<< (int)e.profile_index << ","<< (int)e.node_index << ") col="<< col<<": " << std::endl;
 #endif
 
-    bool b = onlineRole(e,col).toBool();
+	int status = onlineRole(e,col).toInt();
 
-    if(b)
-    {
-        QFont font ;
-		font.setBold(b);
+	switch (status)
+	{
+		case RS_STATUS_AWAY:
+		case RS_STATUS_BUSY:
+		case RS_STATUS_ONLINE:
+		case RS_STATUS_INACTIVE:
+		{
+			QFont font ;
+			font.setBold(true);
 
-        return QVariant(font);
-    }
-    else
-        return QVariant();
+			return QVariant(font);
+		}
+		default:
+		return QVariant();
+	}
 }
 
 class AutoEndel
@@ -617,7 +627,6 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 {
 #ifdef DEBUG_MODEL_INDEX
 	std::cerr << "  Display role " << e.type << ", (" << (int)e.group_index << ","<< (int)e.profile_index << ","<< (int)e.node_index << ") col="<< col<<": ";
-	AutoEndel x;
 #endif
 
 	switch(e.type)
@@ -651,7 +660,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 					else
 						return QVariant(QString::fromUtf8(group->group_info.name.c_str()));
 
-				case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(group->group_info.id.toStdString()));
+				//case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(group->group_info.id.toStdString()));
 				default:
 				return QVariant();
 			}
@@ -724,8 +733,15 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 				{
 					std::string css = rsMsgs->getCustomStateString(node->node_info.id);
 
-					if(!css.empty() && mDisplayStatusString)
-						return QVariant(QString::fromUtf8(node->node_info.location.c_str())+"\n"+QString::fromUtf8(css.c_str()));
+					if (mDisplayStatusString)
+						if(!css.empty())
+							return QVariant(QString::fromUtf8(node->node_info.location.c_str())+"\n"
+						                + QString::fromUtf8(css.c_str()));
+						else
+						{
+							return QVariant(QString::fromUtf8(node->node_info.location.c_str())+"\n"
+						                + "(" + StatusDefs::name(onlineRole(e,col).toInt()) + ")");
+						}
 					else
 						return QVariant(QString::fromUtf8(node->node_info.location.c_str()));
 				}
