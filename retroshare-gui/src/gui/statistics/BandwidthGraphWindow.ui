@@ -78,13 +78,13 @@
       </property>
       <property name="minimumSize">
        <size>
-        <width>400</width>
+        <width>450</width>
         <height>82</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>400</width>
+        <width>450</width>
         <height>82</height>
        </size>
       </property>
@@ -190,7 +190,53 @@
          </item>
         </layout>
        </item>
-       <item row="0" column="1" rowspan="2">
+       <item row="0" column="4" rowspan="2">
+        <layout class="QVBoxLayout" name="_7">
+         <property name="spacing">
+          <number>1</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="btnSaveSettings">
+           <property name="text">
+            <string>Save</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnCancelSettings">
+           <property name="text">
+            <string>Cancel</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="0" column="3">
+        <spacer>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>21</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="1" rowspan="2" colspan="2">
         <layout class="QVBoxLayout" name="_3">
          <property name="spacing">
           <number>1</number>
@@ -276,6 +322,20 @@
              <item>
               <property name="text">
                <string>Dark</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="cmbDownUp">
+             <item>
+              <property name="text">
+               <string>Upload</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Download</string>
               </property>
              </item>
             </widget>
@@ -450,52 +510,6 @@
           </spacer>
          </item>
         </layout>
-       </item>
-       <item row="0" column="4" rowspan="2">
-        <layout class="QVBoxLayout" name="_7">
-         <property name="spacing">
-          <number>1</number>
-         </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QPushButton" name="btnSaveSettings">
-           <property name="text">
-            <string>Save</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="btnCancelSettings">
-           <property name="text">
-            <string>Cancel</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="0" column="3">
-        <spacer>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>21</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>
