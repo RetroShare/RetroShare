@@ -236,8 +236,12 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 
 			QString key = it.next();
 			QPushButton *button = new QPushButton("", tabGrpWidget);
+			QFont font = button->font();
+			font.setPointSize(22);
+			button->setFont(font);
 			button->setIconSize(QSize(buttonWidth, buttonHeight));
 			button->setFixedSize(QSize(buttonWidth, buttonHeight));
+            button->setText((group.value(key)));
             button->setIcon(FilesDefs::getIconFromQtResourcePath(group.value(key)));
 			button->setToolTip(key);
 			button->setStyleSheet("QPushButton:hover {border: 3px solid #0099cc; border-radius: 3px;}");
