@@ -57,7 +57,7 @@ class ChatWidget;
 class ChatWidgetHolder
 {
 public:
-	ChatWidgetHolder(ChatWidget *chatWidget) : mChatWidget(chatWidget) {}
+	explicit ChatWidgetHolder(ChatWidget *chatWidget) : mChatWidget(chatWidget) {}
 	virtual ~ChatWidgetHolder() {}
 
 	// status comes from notifyPeerStatusChanged
