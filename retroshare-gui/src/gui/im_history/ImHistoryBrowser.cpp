@@ -392,7 +392,7 @@ void ImHistoryBrowser::customContextMenuRequested(QPoint /*pos*/)
 
     QAction *sendItem = NULL;
     if (textEdit) {
-        sendItem = new QAction(tr("Send"), &contextMnu);
+        sendItem = new QAction(tr("Quote"), &contextMnu);
         if (currentItem) {
             connect(sendItem, SIGNAL(triggered()), this, SLOT(sendMessage()));
         } else {
@@ -427,23 +427,7 @@ void ImHistoryBrowser::customContextMenuRequested(QPoint /*pos*/)
 
 void ImHistoryBrowser::copyMessage()
 {
-	QListWidgetItem *currentItem = ui.listWidget->currentItem();
-	if (currentItem) {
-		uint32_t msgId = currentItem->data(ROLE_MSGID).toString().toInt();
-		HistoryMsg msg;
-		if (rsHistory->getMessage(msgId, msg)) {
-			RsIdentityDetails details;
-			QString name = (rsIdentity->getIdDetails(RsGxsId(msg.peerName), details))
-			        ? QString::fromUtf8(details.mNickname.c_str())
-			        : QString::fromUtf8(msg.peerName.c_str());
-			QDateTime date = msg.incoming
-			        ? QDateTime::fromTime_t(msg.sendTime)
-			        : QDateTime::fromTime_t(msg.recvTime);
-			QTextDocument doc;
-			doc.setHtml(QString::fromUtf8(msg.message.c_str()));
-			QApplication::clipboard()->setText("> " + date.toString() + " " + name + ":" + doc.toPlainText());
-		}
-	}
+	QApplication::clipboard()->setText(getCurrentItemsQuotedText());
 }
 
 void ImHistoryBrowser::removeMessages()
@@ -461,20 +445,37 @@ void ImHistoryBrowser::clearHistory()
 
 void ImHistoryBrowser::sendMessage()
 {
-    if (textEdit) {
-        QListWidgetItem *currentItem = ui.listWidget->currentItem();
-        if (currentItem) {
-            uint32_t msgId = currentItem->data(ROLE_MSGID).toString().toInt();
-            HistoryMsg msg;
-            if (rsHistory->getMessage(msgId, msg)) {
-                textEdit->clear();
-                textEdit->setText(QString::fromUtf8(msg.message.c_str()));
-                textEdit->setFocus();
-                QTextCursor cursor = textEdit->textCursor();
-                cursor.movePosition(QTextCursor::End);
-                textEdit->setTextCursor(cursor);
-                close();
-            }
-        }
-    }
+	if (textEdit) {
+		QString msg =getCurrentItemsQuotedText();
+		QTextCursor cursor = textEdit->textCursor();
+		cursor.movePosition(QTextCursor::End);
+		if (cursor.columnNumber()>0)
+			cursor.insertText("\n");
+		cursor.insertText(msg);
+		textEdit->setFocus();
+		close();
+	}
+}
+
+QString ImHistoryBrowser::getCurrentItemsQuotedText()
+{
+	QListWidgetItem *currentItem = ui.listWidget->currentItem();
+	if (currentItem) {
+		uint32_t msgId = currentItem->data(ROLE_MSGID).toString().toInt();
+		HistoryMsg msg;
+		if (rsHistory->getMessage(msgId, msg)) {
+			RsIdentityDetails details;
+			QString name = (rsIdentity->getIdDetails(RsGxsId(msg.peerName), details))
+			        ? QString::fromUtf8(details.mNickname.c_str())
+			        : QString::fromUtf8(msg.peerName.c_str());
+			QDateTime date = msg.incoming
+			        ? QDateTime::fromTime_t(msg.sendTime)
+			        : QDateTime::fromTime_t(msg.recvTime);
+			QTextDocument doc;
+			doc.setHtml(QString::fromUtf8(msg.message.c_str()));
+
+			return "> " + date.toString() + " " + name + ":" + doc.toPlainText().replace("\n","\n> ");
+		}
+	}
+	return  QString();
 }
