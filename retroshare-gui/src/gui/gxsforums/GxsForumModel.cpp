@@ -338,6 +338,7 @@ QVariant RsGxsForumModel::headerData(int section, Qt::Orientation /*orientation*
 		switch(section)
 		{
 		case COLUMN_THREAD_TITLE:        return tr("Title");
+		case COLUMN_THREAD_READ:         return tr("UnRead");
 		case COLUMN_THREAD_DATE:         return tr("Date");
 		case COLUMN_THREAD_AUTHOR:       return tr("Author");
 		default:
@@ -347,9 +348,8 @@ QVariant RsGxsForumModel::headerData(int section, Qt::Orientation /*orientation*
 	if(role == Qt::DecorationRole)
 		switch(section)
 		{
-        case COLUMN_THREAD_DISTRIBUTION: return FilesDefs::getIconFromQtResourcePath(":/icons/flag-green.png");
-		case COLUMN_THREAD_READ:         return FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png");
-		default:
+			case COLUMN_THREAD_DISTRIBUTION: return FilesDefs::getIconFromQtResourcePath(":/icons/flag-green.png");
+			default:
 			return QVariant();
 		}
 
@@ -969,12 +969,11 @@ void RsGxsForumModel::computeMessagesHierarchy(const RsGxsForumGroup& forum_grou
 #ifdef DEBUG_FORUMS
 	std::cerr << "GxsForumsFillThread::run() Collecting post versions" << std::endl;
 #endif
-    mPostVersions.clear();
-    std::list<RsGxsMessageId> msg_stack ;
+	mPostVersions.clear();
 
 	for ( auto msgIt = msgs.begin(); msgIt != msgs.end();++msgIt)
-    {
-        if(!msgIt->second.mOrigMsgId.isNull() && msgIt->second.mOrigMsgId != msgIt->second.mMsgId)
+	{
+		if(!msgIt->second.mOrigMsgId.isNull() && msgIt->second.mOrigMsgId != msgIt->second.mMsgId)
 		{
 #ifdef DEBUG_FORUMS
 			std::cerr << "  Post " << msgIt->second.mMeta.mMsgId << " is a new version of " << msgIt->second.mMeta.mOrigMsgId << std::endl;
@@ -1381,8 +1380,8 @@ void RsGxsForumModel::debug_dump()
                   << QString("%1").arg((uint32_t)e.mPostFlags,8,16,QChar('0')).toStdString() << " "
                   << QString("%1").arg((uint32_t)e.mMsgStatus,8,16,QChar('0')).toStdString() << " ";
 
-    	for(uint32_t i=0;i<e.mChildren.size();++i)
-            std::cerr << " " << e.mChildren[i] ;
+		for(uint32_t j=0;j<e.mChildren.size();++j)
+			std::cerr << " " << e.mChildren[j] ;
 
 		QDateTime qtime;
 		qtime.setTime_t(e.mPublishTs);
