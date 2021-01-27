@@ -498,7 +498,7 @@ private:
 	/* MUTEX PROTECTED DATA (mIdMtx - maybe should use a 2nd?) */
 
 	std::map<RsPgpId, RsPgpFingerprint> mPgpFingerprintMap;
-    std::vector<RsGxsIdGroup> mGroupsToProcess;
+    std::map<RsGxsGroupId,RsGxsIdGroup> mGroupsToProcess;
 
 	/************************************************************************
  * recogn processing.
