@@ -3886,9 +3886,7 @@ bool p3IdService::pgphash_process()
 #endif // DEBUG_IDS
 		}
 		else
-		{
 			isDone = true;
-		}
 	}
 
 	if (isDone)
@@ -3960,7 +3958,14 @@ bool p3IdService::pgphash_process()
     return true;
 }
 
-
+// This method allows to have a null issuer ID in the signature, in which case the signature is anonymous.
+// The correct PGP key to check is looked for by bruteforcing
+//
+//                grp.mPgpIdHash == SHA1( GroupId | PgpFingerPrint )
+//
+// For now, this is probably never used because signed IDs use a clear signature. The advntage of hiding the
+// ID has not been clearly demonstrated anyway, which allows to directly look for the ID in the list of
+// known keys instead of computing tons of hashes.
 
 bool p3IdService::checkId(const RsGxsIdGroup &grp, RsPgpId &pgpId,bool& error)
 {
@@ -3980,98 +3985,96 @@ bool p3IdService::checkId(const RsGxsIdGroup &grp, RsPgpId &pgpId,bool& error)
 #endif // DEBUG_IDS
 
 	/* iterate through and check hash */
-	Sha1CheckSum ans = grp.mPgpIdHash;
-    
+    Sha1CheckSum hash;
+
 #ifdef DEBUG_IDS
     std::string esign ;
     Radix64::encode((unsigned char *) grp.mPgpIdSign.c_str(), grp.mPgpIdSign.length(),esign) ;
     std::cerr << "Checking group signature " << esign << std::endl;
 #endif
     RsPgpId issuer_id ;
+    RsPgpFingerprint pgp_fingerprint;
+    pgpId.clear() ;
 
-    if(mPgpUtils->parseSignature((unsigned char *) grp.mPgpIdSign.c_str(), grp.mPgpIdSign.length(),issuer_id))
+    if(mPgpUtils->parseSignature((unsigned char *) grp.mPgpIdSign.c_str(), grp.mPgpIdSign.length(),issuer_id) && !issuer_id.isNull())
     {
+        RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+        pgpId = issuer_id ;
+
+        auto mit = mPgpFingerprintMap.find(issuer_id);
+
+        if(mit == mPgpFingerprintMap.end())
+        {
 #ifdef DEBUG_IDS
-	    std::cerr << "Issuer found: " << issuer_id << std::endl;
+            std::cerr << "Issuer Id: " << issuer_id << " is not known. Key will be marked as non verified." << std::endl;
 #endif
-	    pgpId = issuer_id ;
+            error = false;
+            return false;
+        }
+        calcPGPHash(RsGxsId(grp.mMeta.mGroupId), mit->second, hash);
+#ifdef DEBUG_IDS
+        std::cerr << "Issuer from PGP signature: " << issuer_id << " is known. Computed corresponding hash: " << hash << std::endl;
+#endif
+        if(grp.mPgpIdHash != hash)
+        {
+            std::cerr << "(EE) Unexpected situation: GxsId signature hash (" << hash << ") doesn't correspond to what's listed in the mPgpIdHash field (" << grp.mPgpIdHash << ")." << std::endl;
+            error = true;
+            return false;
+        }
+        pgp_fingerprint = mit->second;
     }
     else
     {
-	    std::cerr << "Signature parsing failed!!" << std::endl;
-	    pgpId.clear() ;
+        RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+
+#ifdef DEBUG_IDS
+        std::cerr << "Bruteforcing PGP hash from GxsId mPgpHash: " << grp.mPgpIdHash << std::endl;
+#endif
+        for(auto mit = mPgpFingerprintMap.begin(); mit != mPgpFingerprintMap.end(); ++mit)
+        {
+            calcPGPHash(RsGxsId(grp.mMeta.mGroupId), mit->second, hash);
+
+            std::cerr << "   profile key " << mit->first << " (" << mit->second << ") : ";
+
+            if (grp.mPgpIdHash == hash)
+            {
+#ifdef DEBUG_IDS
+                std::cerr << "MATCH!" << std::endl;
+#endif
+                pgpId = mit->first;
+                pgp_fingerprint = mit->second;
+                break;
+            }
+#ifdef DEBUG_IDS
+            else
+                std::cerr << "fails" << std::endl;
+#endif
+        }
     }
 
+    // Look for the PGP id given by the signature
+
 #ifdef DEBUG_IDS
-	std::cerr << "\tExpected Answer: " << ans.toStdString();
-	std::cerr << std::endl;
-#endif // DEBUG_IDS
-
-	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-
-	std::map<RsPgpId, PGPFingerprintType>::iterator mit;
-	for(mit = mPgpFingerprintMap.begin(); mit != mPgpFingerprintMap.end(); ++mit)
-	{
-		Sha1CheckSum hash;
-        calcPGPHash(RsGxsId(grp.mMeta.mGroupId), mit->second, hash);
-
-               
-		if (ans == hash)
-		{
-#ifdef DEBUG_IDS
-			std::cerr << "p3IdService::checkId() HASH MATCH!";
-			std::cerr << std::endl;
-			std::cerr << "p3IdService::checkId() Hash : " << hash.toStdString();
-			std::cerr << std::endl;
+    std::cerr << "Now checking the signature: ";
 #endif
 
-			/* miracle match! */
-			/* check signature too */
-			if (mPgpUtils->VerifySignBin((void *) hash.toByteArray(), hash.SIZE_IN_BYTES, 
-				(unsigned char *) grp.mPgpIdSign.c_str(), grp.mPgpIdSign.length(), 
-				mit->second))
-			{
+    if (mPgpUtils->VerifySignBin((void *) hash.toByteArray(), hash.SIZE_IN_BYTES,  (unsigned char *) grp.mPgpIdSign.c_str(), grp.mPgpIdSign.length(),  pgp_fingerprint))
+    {
 #ifdef DEBUG_IDS
-				std::cerr << "p3IdService::checkId() Signature Okay too!";
-				std::cerr << std::endl;
+        std::cerr << " Signature validates!" << std::endl;
 #endif
-
-				pgpId = mit->first;
-				return true;
-			}
-
-			/* error */
-			std::cerr << "p3IdService::checkId() ERROR Signature Failed";
-			std::cerr << std::endl;
-
-			std::cerr << "p3IdService::checkId() Matched PGPID: " << mit->first.toStdString();
-			std::cerr << " Fingerprint: " << mit->second.toStdString();
-			std::cerr << std::endl;
-
-			std::cerr << "p3IdService::checkId() Signature: ";
-			std::string strout;
-
-			/* push binary into string -> really bad! */
-			for(unsigned int i = 0; i < grp.mPgpIdSign.length(); i++)
-			{
-				rs_sprintf_append(strout, "%02x", (uint32_t) ((uint8_t) grp.mPgpIdSign[i]));
-			}
-			std::cerr << strout;
-            std::cerr << std::endl;
-
-            error = true ;
-            return false ;
-		}
-	}
-
+        error = false;
+        return true;
+    }
+    else
+    {
 #ifdef DEBUG_IDS
-	std::cerr << "p3IdService::checkId() Checked " << mPgpFingerprintMap.size() << " Hashes without Match";
-	std::cerr << std::endl;
-#endif // DEBUG_IDS
-
-	return false;
+        std::cerr << " Signature fails!" << std::endl;
+#endif
+        error = true;
+        return false;
+    }
 }
-
 
 /* worker functions */
 void p3IdService::getPgpIdList()
