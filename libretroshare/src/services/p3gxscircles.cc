@@ -1700,6 +1700,20 @@ bool p3GxsCircles::locked_checkCircleCacheForAutoSubscribe(RsGxsCircleCache& cac
     return true;
 }
 
+rstime_t p3GxsCircles::service_getLastGroupUsageTs(const RsGxsGroupId& gid)
+{
+    rstime_t now = time(nullptr);
+
+    RS_STACK_MUTEX(mKnownCirclesMtx);
+
+    auto it = mKnownCircles.find(gid);
+    bool unknown_posted = (it == mKnownCircles.end());
+
+    if(unknown_posted)
+        return now;
+    else
+        return it->second;
+}
 bool p3GxsCircles::service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta)
 {
 #ifdef GXSFORUMS_CHANNELS

@@ -666,7 +666,7 @@ protected:
      * 			that the group is always in use.
      */
     virtual bool service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& /* meta */) { return true; }	// see RsGenExchange
-
+    virtual rstime_t service_getLastGroupUsageTs(const RsGxsGroupId&) { return 0; }
 public:
 
     /*!

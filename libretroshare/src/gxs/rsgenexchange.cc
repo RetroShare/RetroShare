@@ -1379,7 +1379,12 @@ bool RsGenExchange::getGroupMeta(const uint32_t &token, std::list<RsGroupMetaDat
 		{
 			m.mPop= 0 ;
 			m.mVisibleMsgCount = 0 ;
-		}
+        }
+
+        // We could save this in the net service, but it's a bit more than that since some services have
+        // specific usage footprints for their groups.
+
+        m.mLastSeen = (IS_GROUP_SUBSCRIBED(gMeta.mSubscribeFlags)) ? time(nullptr) : service_getLastGroupUsageTs(gMeta.mGroupId);
 
 		groupInfo.push_back(m);
 	}
