@@ -290,7 +290,7 @@ public:
 	virtual void updateGroup(uint32_t &token, RsGxsCircleGroup &group) override;
 
 	virtual bool service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta) override;
-    virtual rstime_t service_getLastGroupUsageTs(const RsGxsGroupId&) override;
+    virtual rstime_t service_getLastGroupSeenTs(const RsGxsGroupId&) override;
 
 	/* membership management for external circles */
 
