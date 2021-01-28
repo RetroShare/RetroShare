@@ -50,7 +50,6 @@
  * #define DEBUG_SERVICE_STRING 1
  * #define GXSID_GEN_DUMMY_DATA	1
  ****/
- #define DEBUG_IDS	1
 
 #define ID_REQUEST_LIST		    0x0001
 #define ID_REQUEST_IDENTITY	    0x0002
