@@ -1386,7 +1386,9 @@ bool RsGenExchange::getGroupMeta(const uint32_t &token, std::list<RsGroupMetaDat
 
         m.mLastSeen = (IS_GROUP_SUBSCRIBED(gMeta.mSubscribeFlags)) ? time(nullptr) : service_getLastGroupSeenTs(gMeta.mGroupId);
 
+#ifdef GEN_EXCH_DEBUG
         std::cerr << "Group: " << gMeta.mGroupId << " name \"" << gMeta.mGroupName << "\" last seen=" << m.mLastSeen << " now=" << time(nullptr) << std::endl;
+#endif
 
 		groupInfo.push_back(m);
 	}
@@ -1576,7 +1578,9 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 
                     gItem->meta.mLastSeen = (IS_GROUP_SUBSCRIBED(gItem->meta.mSubscribeFlags)) ? time(nullptr) : service_getLastGroupSeenTs(gItem->meta.mGroupId);
 
+#ifdef GEN_EXCH_DEBUG
                     std::cerr << "Group: " << gItem->meta.mGroupId << " name \"" << gItem->meta.mGroupName << "\" last seen=" << gItem->meta.mLastSeen << " now=" << time(nullptr) << std::endl;
+#endif
 
                     // Also check the group privacy flags. A while ago, it as possible to publish a group without privacy flags. Now it is not possible anymore.
                     // As a consequence, it's important to supply a correct value in this flag before the data can be edited/updated.
