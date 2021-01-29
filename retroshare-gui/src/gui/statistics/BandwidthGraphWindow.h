@@ -51,6 +51,10 @@ public slots:
   void showWindow();
 
 private slots:
+    void switchGraphColor();
+    void toggleReceiveRate(bool b);
+    void toggleSendRate(bool b);
+
   /** Called when settings button is toggled */
   void showSettingsFrame(bool show);
   /** Called when the settings button is toggled */
