@@ -112,15 +112,18 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="forumName">
+           <widget class="StyledElidedLabel" name="forumName">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="toolTip">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click here to clear current selected thread and display more information about this forum.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
-             <string>PushButton</string>
-            </property>
-            <property name="flat">
-             <bool>true</bool>
+             <string>Forum Name</string>
             </property>
            </widget>
           </item>
@@ -130,11 +133,11 @@
              <enum>Qt::Horizontal</enum>
             </property>
             <property name="sizeType">
-             <enum>QSizePolicy::MinimumExpanding</enum>
+             <enum>QSizePolicy::Fixed</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>0</width>
+              <width>1</width>
               <height>0</height>
              </size>
             </property>
@@ -528,6 +531,11 @@
    <header>gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
+   <class>StyledElidedLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledElidedLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>SubscribeToolButton</class>
    <extends>QToolButton</extends>
    <header>gui/common/SubscribeToolButton.h</header>
@@ -545,8 +553,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>
