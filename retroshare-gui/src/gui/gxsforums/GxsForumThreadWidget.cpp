@@ -274,7 +274,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     connect(ui->versions_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(changedVersion()));
     connect(ui->threadTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(threadListCustomPopupMenu(QPoint)));
     connect(ui->postText, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuTextBrowser(QPoint)));
-    connect(ui->forumName, SIGNAL(clicked()), this, SLOT(showForumInfo()));
+    connect(ui->forumName, SIGNAL(clicked(QPoint)), this, SLOT(showForumInfo()));
 
     ui->subscribeToolButton->hide() ;
     connect(ui->subscribeToolButton, SIGNAL(subscribe(bool)), this, SLOT(subscribeGroup(bool)));
