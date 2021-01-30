@@ -250,7 +250,7 @@ QMenu *RSTreeWidget::createStandardContextMenu(QMenu *contextMenu)
 		contextMenu->addSeparator();
 	}
 
-	if(!mContextMenuActions.isEmpty() || mEnableColumnCustomize ||!mContextMenuActions.isEmpty() || !mContextMenuMenus.isEmpty()) {
+	if(!mContextMenuActions.isEmpty() || !mContextMenuMenus.isEmpty() || mEnableColumnCustomize) {
 		QWidget *widget = new QWidget(contextMenu);
 		widget->setStyleSheet( ".QWidget{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FEFEFE, stop:1 #E8E8E8); border: 1px solid #CCCCCC;}");
 
@@ -279,22 +279,28 @@ QMenu *RSTreeWidget::createStandardContextMenu(QMenu *contextMenu)
 	}
 
 	if (mEnableColumnCustomize) {
+		QAction *actShowHeader = contextMenu->addAction(QIcon(), tr("Show Header"), this, SLOT(headerVisible()));
+		actShowHeader->setCheckable(true);
+		actShowHeader->setChecked(!isHeaderHidden());
+
 		QMenu *headerMenu = contextMenu->addMenu(QIcon(),tr("Show column..."));
 
 		QTreeWidgetItem *item = headerItem();
 		int columnCount = item->columnCount();
 		for (int column = 0; column < columnCount; ++column)
-        {
+		{
 			QMap<int, bool>::const_iterator it = mColumnCustomizable.find(column);
 			if (it != mColumnCustomizable.end() && *it == false) {
 				continue;
 			}
-            QString txt = item->text(column) ;
-            if(txt == "")
-                txt = item->data(column,Qt::UserRole).toString() ;
+			QString txt = item->text(column) ;
+			if(txt == "")
+				txt = item->data(column,Qt::UserRole).toString() ;
+			if(txt == "")
+				txt = item->data(column,Qt::ToolTipRole).toString() ;
 
-            if(txt=="")
-                txt = tr("[no title]") ;
+			if(txt=="")
+				txt = tr("[no title]") ;
 
 			QAction *action = headerMenu->addAction(QIcon(), txt, this, SLOT(columnVisible()));
 			action->setCheckable(true);
@@ -341,6 +347,19 @@ void RSTreeWidget::headerContextMenuRequested(const QPoint &pos)
 
 	contextMenu->exec(mapToGlobal(pos));
 	delete contextMenu;
+}
+
+void RSTreeWidget::headerVisible()
+{
+	QAction *action = dynamic_cast<QAction*>(sender());
+	if (!action) {
+		return;
+	}
+
+	bool visible = action->isChecked();
+	setHeaderHidden(!visible);
+
+	emit headerVisibleChanged(visible);
 }
 
 void RSTreeWidget::columnVisible()

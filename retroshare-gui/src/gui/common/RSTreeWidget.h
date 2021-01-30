@@ -58,6 +58,7 @@ public:
 
 signals:
 	void signalMouseMiddleButtonClicked(QTreeWidgetItem *item);
+	void headerVisibleChanged(bool visible);
 	void columnVisibleChanged(int column, bool visible);
 
 private:
@@ -66,6 +67,7 @@ private:
 
 private slots:
 	void headerContextMenuRequested(const QPoint &pos);
+	void headerVisible();
 	void columnVisible();
 
 protected:

@@ -140,7 +140,6 @@ private slots:
 	void filterChanged();
 	void distantSearch();
 
-	void showHeader(bool toShow);
 	void sort();
 
 private:
@@ -152,7 +151,6 @@ private:
 
 private:
 	QMenu *displayMenu;
-	QAction *actionShowHeader;
 	QAction *actionSortAscending;
 	QAction *actionSortDescending;
 	QAction *actionSortByName;
