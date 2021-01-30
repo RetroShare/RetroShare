@@ -488,7 +488,8 @@ private:
  *
  */
 	bool pgphash_start();
-	bool pgphash_handlerequest(uint32_t token);
+    bool pgphash_load_group_data(uint32_t token);
+    bool pgphash_handlerequest(uint32_t token);
 	bool pgphash_process();
 
 	bool checkId(const RsGxsIdGroup &grp, RsPgpId &pgp_id, bool &error);
@@ -497,7 +498,7 @@ private:
 	/* MUTEX PROTECTED DATA (mIdMtx - maybe should use a 2nd?) */
 
 	std::map<RsPgpId, RsPgpFingerprint> mPgpFingerprintMap;
-	std::list<RsGxsIdGroup> mGroupsToProcess;
+    std::map<RsGxsGroupId,RsGxsIdGroup> mGroupsToProcess;
 
 	/************************************************************************
  * recogn processing.
@@ -625,7 +626,7 @@ private:
 	 */
 
 	PgpAuxUtils *mPgpUtils;
-
+    rstime_t mLastPGPHashProcessTime ;
 	rstime_t mLastKeyCleaningTime ;
 	rstime_t mLastConfigUpdate ;
 
