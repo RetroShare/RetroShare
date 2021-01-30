@@ -53,6 +53,7 @@ protected:
     virtual bool loadList(std::list<RsItem *>& loadList) override;               // @see p3Config::loadList(std::list<RsItem *>&)
 
     virtual bool service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta) override;
+    virtual rstime_t service_getLastGroupSeenTs(const RsGxsGroupId&) override;
 public:
 	/// @see RsGxsForums::createForumV2
 	bool createForumV2(

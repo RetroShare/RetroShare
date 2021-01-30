@@ -667,6 +667,14 @@ protected:
      */
     virtual bool service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& /* meta */) { return true; }	// see RsGenExchange
 
+    /*!
+     * \brief service_getLastGroupSeenTs
+     * \return
+     * 			returns the last time a friend sent information (statistics) about this group. That practically means when the
+     * 			group was still being subscribed by at least one friend. This is used by service_checkIfGroupIsStillUsed() to
+     * 			help getting rid of dead groups.
+     */
+    virtual rstime_t service_getLastGroupSeenTs(const RsGxsGroupId&) { return 0; }
 public:
 
     /*!
