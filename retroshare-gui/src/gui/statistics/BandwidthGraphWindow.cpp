@@ -105,7 +105,11 @@ BandwidthGraph::BandwidthGraph(QWidget *parent, Qt::WindowFlags flags)
    ui.chkReceiveRate->setIcon(FilesDefs::getIconFromQtResourcePath(IMG_RECEIVE));
    ui.chkReceiveRate->setText("");
 
+   ui.btnGraphColor->setIcon(FilesDefs::getIconFromQtResourcePath(IMG_GRAPH_LIGHT));
+   ui.frmGraph->setFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
+
    ui.frmGraph->setToolTip("Use Ctrl+mouse wheel to change line width, Shift+wheel to time-filter the curve.");
+   ui.frmGraph->setDirection(BWGraphSource::DIRECTION_UP | BWGraphSource::DIRECTION_DOWN);
 
   loadSettings();
 
@@ -119,21 +123,13 @@ BandwidthGraph::BandwidthGraph(QWidget *parent, Qt::WindowFlags flags)
 
 void BandwidthGraph::toggleSendRate(bool b)
 {
-    whileBlocking(ui.chkReceiveRate)->setChecked(!b);
-
-    if(b)
-      ui.frmGraph->setDirection(BWGraphSource::DIRECTION_UP) ;
-    else
-      ui.frmGraph->setDirection(BWGraphSource::DIRECTION_DOWN) ;
+    ui.frmGraph->setShowEntry(0,b);
+    saveSettings();
 }
 void BandwidthGraph::toggleReceiveRate(bool b)
 {
-    whileBlocking(ui.chkSendRate)->setChecked(!b);
-
-    if(b)
-      ui.frmGraph->setDirection(BWGraphSource::DIRECTION_DOWN) ;
-    else
-      ui.frmGraph->setDirection(BWGraphSource::DIRECTION_UP) ;
+    ui.frmGraph->setShowEntry(1,b);
+    saveSettings();
 }
 
 
@@ -149,6 +145,8 @@ void BandwidthGraph::switchGraphColor()
       ui.frmGraph->setFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
       ui.btnGraphColor->setIcon(FilesDefs::getIconFromQtResourcePath(IMG_GRAPH_DARK));
    }
+
+   saveSettings();
 }
 
 /** Loads the saved Bandwidth Graph settings. */
@@ -159,60 +157,29 @@ BandwidthGraph::loadSettings()
   ui.sldrOpacity->setValue(getSetting(SETTING_OPACITY, DEFAULT_OPACITY).toInt());
   setOpacity(ui.sldrOpacity->value());
 
-  /* Set the line filter checkboxes accordingly */
-  uint filter = getSetting(SETTING_FILTER, DEFAULT_FILTER).toUInt();
-  ui.chkReceiveRate->setChecked(filter & BWGRAPH_LINE_RECV);
-  ui.chkSendRate->setChecked(filter & BWGRAPH_LINE_SEND);
-
   /* Set whether we are plotting bandwidth as area graphs or not */
-  int graphStyle = getSetting(SETTING_STYLE, DEFAULT_STYLE).toInt();
-
-//  if (graphStyle < 0 || graphStyle >= ui.cmbGraphStyle->count()) {
-//    graphStyle = DEFAULT_STYLE;
-//  }
-//  ui.cmbGraphStyle->setCurrentIndex(graphStyle);
-
-  if(graphStyle==0)
-      ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_PLAIN);
-  else
-      ui.frmGraph->setFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_PLAIN);
- 
-   /* Set whether we are plotting bandwidth as area graphs or not */
   int graphColor = getSetting(SETTING_GRAPHCOLOR, DEFAULT_GRAPHCOLOR).toInt();
 
   if(graphColor>0)
   {
-      ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
+      ui.frmGraph->setFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
       ui.btnGraphColor->setIcon(FilesDefs::getIconFromQtResourcePath(IMG_GRAPH_DARK));
   }
   else
   {
       ui.btnGraphColor->setIcon(FilesDefs::getIconFromQtResourcePath(IMG_GRAPH_LIGHT));
-      ui.frmGraph->setFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
+      ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
   }
 
   /* Download & Upload */
   int defaultdirection = getSetting(SETTING_DIRECTION, DEFAULT_DIRECTION).toInt();
 
-//  if (defaultdirection < 0 || defaultdirection >= ui.cmbDownUp->count()) {
-//    defaultdirection = DEFAULT_DIRECTION;
-//  }
-//  ui.cmbDownUp->setCurrentIndex(graphColor);
-  
-  if(defaultdirection>0)
-  {
-      ui.frmGraph->setDirection(BWGraphSource::DIRECTION_DOWN) ;
-      whileBlocking(ui.chkSendRate)->setChecked(false);
-      whileBlocking(ui.chkReceiveRate)->setChecked(true);
-  }
-  else
-  {
-      ui.frmGraph->setDirection(BWGraphSource::DIRECTION_UP) ;
-      whileBlocking(ui.chkSendRate)->setChecked(true);
-      whileBlocking(ui.chkReceiveRate)->setChecked(false);
-  }
+  whileBlocking(ui.chkSendRate   )->setChecked(bool(defaultdirection & BWGraphSource::DIRECTION_UP  ));
+  whileBlocking(ui.chkReceiveRate)->setChecked(bool(defaultdirection & BWGraphSource::DIRECTION_DOWN));
   
   /* Default Settings for the Graph */
+  ui.frmGraph->setDirection(BWGraphSource::DIRECTION_UP | BWGraphSource::DIRECTION_DOWN);
+
   ui.frmGraph->setSelector(BWGraphSource::SELECTOR_TYPE_FRIEND,BWGraphSource::GRAPH_TYPE_SUM) ;
   ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_LOG_SCALE_Y) ;
 
@@ -230,56 +197,41 @@ void BandwidthGraph::reset()
   ui.frmGraph->resetGraph();
 }
 
-/** Saves the Bandwidth Graph settings and adjusts the graph if necessary. */
-void BandwidthGraph::saveChanges()
+BandwidthGraph::~BandwidthGraph()
 {
-  /* Hide the settings frame and reset toggle button */
-  showSettingsFrame(false);
-  
-  /* Save the opacity and graph style */
-  saveSetting(SETTING_OPACITY, ui.sldrOpacity->value());
-//  saveSetting(SETTING_STYLE, ui.cmbGraphStyle->currentIndex());
-  saveSetting(SETTING_GRAPHCOLOR, ui.btnGraphColor->isChecked());
+    saveSettings();
+}
+/** Saves the Bandwidth Graph settings and adjusts the graph if necessary. */
+void BandwidthGraph::saveSettings()
+{
+    /* Save the opacity and graph style */
+    saveSetting(SETTING_OPACITY, ui.sldrOpacity->value());
+    saveSetting(SETTING_GRAPHCOLOR, ui.btnGraphColor->isChecked());
 
-  /* Save the Always On Top setting */
-  saveSetting(SETTING_ALWAYS_ON_TOP, ui.chkAlwaysOnTop->isChecked());
-  if (ui.chkAlwaysOnTop->isChecked()) {
-    setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
-  } else {
-    setWindowFlags(windowFlags() & ~Qt::WindowStaysOnTopHint);
-  }
-  setOpacity(ui.sldrOpacity->value());
+    /* Save the Always On Top setting */
+    saveSetting(SETTING_ALWAYS_ON_TOP, ui.chkAlwaysOnTop->isChecked());
 
-  /* Save the line filter values */
-  uint filter = 0;
-  ADD_TO_FILTER(filter, BWGRAPH_LINE_RECV, ui.chkReceiveRate->isChecked());
-  ADD_TO_FILTER(filter, BWGRAPH_LINE_SEND, ui.chkSendRate->isChecked());
-  saveSetting(SETTING_FILTER, filter);
+    /* Save the line filter values */
+    saveSetting(SETTING_DIRECTION, ui.frmGraph->direction());
 
+    /* Update the graph frame settings */
+    // ui.frmGraph->setShowEntry(0,ui.chkReceiveRate->isChecked()) ;
+    // ui.frmGraph->setShowEntry(1,ui.chkSendRate->isChecked()) ;
+    // ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_PLAIN);
 
-  /* Update the graph frame settings */
-  ui.frmGraph->setShowEntry(0,ui.chkReceiveRate->isChecked()) ;
-  ui.frmGraph->setShowEntry(1,ui.chkSendRate->isChecked()) ;
-  ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_PLAIN);
+    // if(ui.btnGraphColor->isChecked()==0)
+    //     ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
+    // else
+    //     ui.frmGraph->setFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
 
-//  if(ui.cmbGraphStyle->currentIndex()==0)
-//      ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_PLAIN);
-//  else
-//      ui.frmGraph->setFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_PLAIN);
+    //  if(ui.cmbDownUp->currentIndex()==0)
+    //      ui.frmGraph->setDirection(BWGraphSource::DIRECTION_UP) ;
+    //  else
+    //      ui.frmGraph->setDirection(BWGraphSource::DIRECTION_DOWN) ;
 
-  if(ui.btnGraphColor->isChecked()==0)
-      ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
-  else
-      ui.frmGraph->setFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
-  
-//  if(ui.cmbDownUp->currentIndex()==0)
-//      ui.frmGraph->setDirection(BWGraphSource::DIRECTION_UP) ;
-//  else
-//      ui.frmGraph->setDirection(BWGraphSource::DIRECTION_DOWN) ;
-
-  /* A change in window flags causes the window to disappear, so make sure
+    /* A change in window flags causes the window to disappear, so make sure
    * it's still visible. */
-  showNormal();
+    showNormal();
 }
 
 /** Simply restores the previously saved settings. */
