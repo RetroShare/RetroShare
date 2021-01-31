@@ -1,0 +1,4 @@
+#include <winver.h>
+#include "retroshare-service_win.rc.h"
+
+IDI_ICON1               ICON    "logo.ico"
