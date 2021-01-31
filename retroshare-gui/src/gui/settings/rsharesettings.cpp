@@ -266,7 +266,7 @@ int RshareSettings::getToolButtonSize()
 {
     static int sizes[6] = { 8,16,24,32,64,128 } ;
     
-    return value(SETTING_TOOLBUTTONSIZE, computeBestIconSize(6,sizes,24)).toInt();
+    return value(SETTING_TOOLBUTTONSIZE, computeBestIconSize(6,sizes,32)).toInt();
 }
 
 /** Sets the tool button's size.*/
@@ -281,10 +281,10 @@ void RshareSettings::setToolButtonSize(int size)
 		setValue(SETTING_TOOLBUTTONSIZE, 16);
 		break;
 	case 24:
-	default:
 		setValue(SETTING_TOOLBUTTONSIZE, 24);
 		break;
 	case 32:
+		default:
 		setValue(SETTING_TOOLBUTTONSIZE, 32);
         break;
     case 64:
