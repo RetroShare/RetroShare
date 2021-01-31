@@ -760,7 +760,7 @@ bool ftServer::handleTunnelRequest(const RsFileHash& hash,const RsPeerId& peer_i
 			// share the file!
 
 			FileChunksInfo info2 ;
-			if(rsFiles->FileDownloadChunksDetails(hash, info2))
+			if(rsFiles->FileDownloadChunksDetails(real_hash, info2))
 				for(uint32_t i=0;i<info2.chunks.size();++i)
 					if(info2.chunks[i] == FileChunksInfo::CHUNK_DONE)
 					{
