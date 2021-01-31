@@ -368,6 +368,7 @@ void BoardsCommentsItem::setup()
 	//ui->titleLabel->setText(tr("Loading"));
 	ui->datetimeLabel->clear();
 	ui->replyFrame->hide();
+	ui->commentButton->hide();
 
 	ui->commentButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/comment.png"));
 	ui->copyLinkButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/copy.png"));
@@ -472,7 +473,7 @@ void BoardsCommentsItem::fill()
 	{
 		// feed.
 		//frame_comment->show();
-		ui->commentButton->show();
+		//ui->commentButton->show();
 
 		if (mPost.mComments)
 		{

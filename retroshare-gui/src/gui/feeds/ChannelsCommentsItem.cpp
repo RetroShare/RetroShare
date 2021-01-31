@@ -475,7 +475,7 @@ void ChannelsCommentsItem::fill()
 	// differences between Feed or Top of Comment.
 	if (mFeedHolder)
 	{
-		ui->commentButton->show();
+		//ui->commentButton->show();
 
 		// Not yet functional
 		/*if (mPost.mCommentCount)
