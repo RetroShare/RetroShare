@@ -162,8 +162,8 @@ void AvatarDialog::loadAvatarWidget()
 
 	if(stickerTabs.count() == 0) {
 		ui->nostickersLabel->setText("");
-		QString message = "No stickers installed.\nYou can install them by putting images into one of these folders:\n" /*+ stickerFolders.join('\n')*/;
-		message += "RetroShare/stickers\n RetroShare/Data/stickers\n RetroShare/Data/Location/stickers";
+		QString message = "No Avatars or Stickers installed.\nYou can install them by putting images into one of these folders:\n" + stickerFolders.join('\n');
+		message += "\n RetroShare/stickers\n RetroShare/Data/stickers\n RetroShare/Data/Location/stickers";
 		ui->nostickersLabel->setText(message);
 	} else {
 		ui->infoframe->hide();
