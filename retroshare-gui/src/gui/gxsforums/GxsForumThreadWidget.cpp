@@ -257,6 +257,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     mThreadModel = new RsGxsForumModel(this);
     mThreadProxyModel = new ForumPostSortFilterProxyModel(ui->threadTreeWidget->header(),this);
     mThreadProxyModel->setSourceModel(mThreadModel);
+    mThreadProxyModel->setDynamicSortFilter(false);	// causes crashes when true.
     mThreadProxyModel->setSortRole(RsGxsForumModel::SortRole);
     ui->threadTreeWidget->setModel(mThreadProxyModel);
 
