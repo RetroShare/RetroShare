@@ -285,6 +285,64 @@ are marked with the custom doxygen command +@jsonapi{RS_VERSION,manualwrapper}+
 and their wrappers are not automatically generated but written manually into
 +JsonApiServer::JsonApiServer(...)+.
 
+== Quirks
+
+=== 64 bits integers handling
+
+While JSON doesn't have problems representing 64 bits integers JavaScript, Dart
+and other languages are not capable to handle those numbers natively.
+To overcome this limitation JSON API output 64 bit integers as an object with
+two keys, one as proper integer and one as string representation.
+
+.JSON API 64 bit integer output example
+[source,json]
+--------------------------------------------------------------------------------
+"lobby_id": { "xint64": 6215642878098695544, "xstr64": "6215642878098695544" }
+--------------------------------------------------------------------------------
+
+So from languages that have proper 64bit integers support like Python or C++ one
+better read from `xint64` which is represented as a JSON integer, from languages
+where there is no proper 64bit integers support like JavaScriptone can read from
+`xstr64` which is represented as JSON string (note that the first is not wrapped
+in "" while the latter is).
+
+When one input a 64bit integer into the JSON API it first try to parse it as if
+it was sent the old way for retrocompatibility.
+
+.JSON API 64 bit integer deprecated format input example
+[source,json]
+--------------------------------------------------------------------------------
+"lobby_id":6215642878098695544
+--------------------------------------------------------------------------------
+
+This way is *DEPRECATED* and may disappear in the future, it is TEMPORALLY kept
+only for retrocompatibiliy with old clients.
+
+If retrocompatible parsing attempt fail then it try to parse with the new way
+with proper JSON integer format.
+
+.JSON API 64 bit integer new proper integer format input example
+[source,json]
+--------------------------------------------------------------------------------
+lobby_id": { "xint64": 6215642878098695544 }
+--------------------------------------------------------------------------------
+
+If this fails then it try to parse with the new way with JSON string format.
+
+.JSON API 64 bit integer new string format input example
+[source,json]
+--------------------------------------------------------------------------------
+"lobby_id": { "xstr64": "6215642878098695544" }
+--------------------------------------------------------------------------------
+
+[WARNING]
+================================================================================
+Clients written in languages without proper 64bit integers support must
+use *ONLY* the string format otherwise they will send approximated values and
+get unexpected results from the JSON API, because parsing will success but the
+value will not be exactly the one you believe you sent.
+================================================================================
+
 
 == A bit of history
 
