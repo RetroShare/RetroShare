@@ -1045,6 +1045,8 @@ bool RsGxsNetTunnelService::receiveSearchRequest(unsigned char *search_request_d
             search_result_data_size = RsGxsNetTunnelSerializer().size(&search_result_item) ;
 			search_result_data = (unsigned char*)rs_malloc(search_result_data_size) ;
 
+            delete item;
+
 			if(search_result_data == NULL)
 				return false ;
 
@@ -1082,10 +1084,12 @@ bool RsGxsNetTunnelService::receiveSearchRequest(unsigned char *search_request_d
 
 			RsGxsNetTunnelSerializer().serialise(&search_result_item,search_result_data,&search_result_data_size);
 
+            delete item;
 			return true ;
         }
     }
 
+    delete item;
     return false ;
 }
 
