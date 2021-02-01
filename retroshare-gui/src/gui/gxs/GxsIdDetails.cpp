@@ -56,6 +56,8 @@
 #define REPUTATION_REMOTELY_NEGATIVE_ICON     ":/icons/biohazard_yellow.png"
 #define REPUTATION_LOCALLY_NEGATIVE_ICON      ":/icons/biohazard_red.png"
 #define REPUTATION_VOID                       ":/icons/void_128.png"
+#define REPUTATION_HAS_DOWNVOTES              ":/icons/bullet_yellow_128.png"
+#define REPUTATION_HAS_DOWNVOTES_NEUTRAL      ":/icons/bullet_red_128.png"
 
 #define TIMER_INTERVAL              500
 #define MAX_ATTEMPTS                10
@@ -95,11 +97,13 @@ void ReputationItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem
 	// get pixmap
 	unsigned int icon_index = qvariant_cast<unsigned int>(index.data(Qt::DecorationRole));
 
+	bool downvoted = qvariant_cast<bool>(index.data(Qt::UserRole));
+
 	if(icon_index > mMaxLevelToDisplay)
 		return ;
 
 	QIcon icon = GxsIdDetails::getReputationIcon(
-	            RsReputationLevel(icon_index), 0xff );
+	            RsReputationLevel(icon_index), 0xff, downvoted );
 
 	QPixmap pix = icon.pixmap(r.size());
 
@@ -1081,7 +1085,7 @@ QString nickname ;
 }
 
 QIcon GxsIdDetails::getReputationIcon(
-        RsReputationLevel icon_index, uint32_t min_reputation )
+        RsReputationLevel icon_index, uint32_t min_reputation,bool has_downvotes )
 {
 	if( static_cast<uint32_t>(icon_index) >= min_reputation )
         return FilesDefs::getIconFromQtResourcePath(REPUTATION_VOID);
@@ -1093,11 +1097,21 @@ QIcon GxsIdDetails::getReputationIcon(
 	case RsReputationLevel::LOCALLY_POSITIVE:
         return FilesDefs::getIconFromQtResourcePath(REPUTATION_LOCALLY_POSITIVE_ICON);
 	case RsReputationLevel::REMOTELY_POSITIVE:
-        return FilesDefs::getIconFromQtResourcePath(REPUTATION_REMOTELY_POSITIVE_ICON);
+	{
+		if(has_downvotes)
+			return FilesDefs::getIconFromQtResourcePath(REPUTATION_HAS_DOWNVOTES);
+		else
+			return FilesDefs::getIconFromQtResourcePath(REPUTATION_REMOTELY_POSITIVE_ICON);
+	}
 	case RsReputationLevel::REMOTELY_NEGATIVE:
         return FilesDefs::getIconFromQtResourcePath(REPUTATION_REMOTELY_NEGATIVE_ICON);
 	case RsReputationLevel::NEUTRAL:
-        return FilesDefs::getIconFromQtResourcePath(REPUTATION_NEUTRAL_ICON);
+	{
+		if(has_downvotes)
+			return FilesDefs::getIconFromQtResourcePath(REPUTATION_HAS_DOWNVOTES_NEUTRAL);
+		else
+			return FilesDefs::getIconFromQtResourcePath(REPUTATION_NEUTRAL_ICON);
+	}
 	default:
 		std::cerr << "Asked for unidentified icon index "
 		          << static_cast<uint32_t>(icon_index) << std::endl;
@@ -1118,7 +1132,7 @@ void GxsIdDetails::getIcons(const RsIdentityDetails &details, QList<QIcon> &icon
     }
 
 	if(icon_types & ICON_TYPE_REPUTATION)
-        icons.push_back(getReputationIcon(details.mReputation.mOverallReputationLevel,minimal_required_reputation)) ;
+        icons.push_back(getReputationIcon(details.mReputation.mOverallReputationLevel,minimal_required_reputation,details.mReputation.mFriendsNegativeVotes>0)) ;
 
     if(icon_types & ICON_TYPE_AVATAR)
     {
