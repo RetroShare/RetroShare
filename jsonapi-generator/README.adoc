@@ -302,7 +302,7 @@ two keys, one as proper integer and one as string representation.
 
 So from languages that have proper 64bit integers support like Python or C++ one
 better read from `xint64` which is represented as a JSON integer, from languages
-where there is no proper 64bit integers support like JavaScriptone can read from
+where there is no proper 64bit integers support like JavaScript one can read from
 `xstr64` which is represented as JSON string (note that the first is not wrapped
 in "" while the latter is).
 
