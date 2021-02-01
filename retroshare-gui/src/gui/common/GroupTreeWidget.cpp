@@ -556,7 +556,10 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 			item->setData(GTW_COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_STANDARD);
 			item->setData(GTW_COLUMN_NAME, Qt::BackgroundRole, QVariant());
 		}
-
+		if (!IS_GROUP_SUBSCRIBED(itemInfo.subscribeFlags)) {
+			if (itemInfo.max_visible_posts)
+				item->setText(GTW_COLUMN_UNREAD, QString::number(itemInfo.max_visible_posts));
+		}
 		/* Calculate score */
 		calculateScore(item, filterText);
 	}
