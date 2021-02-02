@@ -36,13 +36,15 @@ class RSTreeWidget;
 #define GROUPTREEWIDGET_COLOR_PRIVATEKEY 1
 #define GROUPTREEWIDGET_COLOR_COUNT      2
 
-#define GTW_COLUMN_NAME        0
-#define GTW_COLUMN_UNREAD      1
-#define GTW_COLUMN_POSTS       2
-#define GTW_COLUMN_POPULARITY  3
-#define GTW_COLUMN_LAST_POST   4
-#define GTW_COLUMN_COUNT       5
-#define GTW_COLUMN_DATA        GTW_COLUMN_NAME
+#define GTW_COLUMN_NAME         0
+#define GTW_COLUMN_UNREAD       1
+#define GTW_COLUMN_POSTS        2
+#define GTW_COLUMN_POPULARITY   3
+#define GTW_COLUMN_LAST_POST    4
+#define GTW_COLUMN_SEARCH_SCORE 5
+#define GTW_COLUMN_DESCRIPTION  6
+#define GTW_COLUMN_COUNT        7
+#define GTW_COLUMN_DATA         GTW_COLUMN_NAME
 
 namespace Ui {
 	class GroupTreeWidget;
@@ -143,23 +145,10 @@ private slots:
 	void sort();
 
 private:
-	// Initialize the display menu for sorting
-	void initDisplayMenu(QToolButton *toolButton);
 	void calculateScore(QTreeWidgetItem *item, const QString &filterText);
-	void resort(QTreeWidgetItem *categoryItem);
 	void updateColors();
 
 private:
-	QMenu *displayMenu;
-	QAction *actionSortAscending;
-	QAction *actionSortDescending;
-	QAction *actionSortByName;
-	QAction *actionSortByPopularity;
-	QAction *actionSortByLastPost;
-	QAction *actionSortByPosts;
-	QAction *actionSortByUnread;
-
-	RSTreeWidgetItemCompareRole *compareRole;
 
 	/* Color definitions (for standard see qss.default) */
 	QColor mTextColor[GROUPTREEWIDGET_COLOR_COUNT];

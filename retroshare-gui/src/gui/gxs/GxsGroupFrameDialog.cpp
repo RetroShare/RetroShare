@@ -1019,7 +1019,7 @@ void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGxsGenericGroupData
 	ui->groupTreeWidget->fillGroupItems(mYourGroups, adminList);
 	mYourGroups->setText(GTW_COLUMN_POPULARITY, QString::number(mYourGroups->childCount()));
 	ui->groupTreeWidget->fillGroupItems(mSubscribedGroups, subList);
-	mSubscribedGroups->setText(GTW_COLUMN_POPULARITY, QString::number(mSubscribedGroups->childCount())); // 1 COLUMN_UNREAD 2 COLUMN_POPULARITY
+	mSubscribedGroups->setText(GTW_COLUMN_POPULARITY, QString::number(mSubscribedGroups->childCount()));
 	ui->groupTreeWidget->fillGroupItems(mPopularGroups, popList);
 	mPopularGroups->setText(GTW_COLUMN_POPULARITY, QString::number(mPopularGroups->childCount()));
 	ui->groupTreeWidget->fillGroupItems(mOtherGroups, otherList);

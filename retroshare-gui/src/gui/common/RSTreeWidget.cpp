@@ -206,11 +206,13 @@ void RSTreeWidget::processSettings(bool load)
 			// Compare version, because Qt can crash in restoreState after column changes
 			header()->restoreState(Settings->value(objectName()).toByteArray());
 		}
+		header()->setHidden(Settings->value(objectName()+"HiddenHeader", false).toBool());
 	} else {
 		// Save settings
 
 		// state of tree widget
 		Settings->setValue(objectName(), header()->saveState());
+		Settings->setValue(objectName()+"HiddenHeader", header()->isHidden());
 
 		// Save version
 		if (mSettingsVersion) {
@@ -283,13 +285,57 @@ QMenu *RSTreeWidget::createStandardContextMenu(QMenu *contextMenu)
 		actShowHeader->setCheckable(true);
 		actShowHeader->setChecked(!isHeaderHidden());
 
-		QMenu *headerMenu = contextMenu->addMenu(QIcon(),tr("Show column..."));
-
 		QTreeWidgetItem *item = headerItem();
 		int columnCount = item->columnCount();
+
+		if (isSortingEnabled() && isHeaderHidden())
+		{
+			QMenu *headerMenuSort = contextMenu->addMenu(QIcon(),tr("Sort by column …"));
+
+			QActionGroup *actionGroupAsc = new QActionGroup(headerMenuSort);
+
+			QAction *actionSortDescending = headerMenuSort->addAction(FilesDefs::getIconFromQtResourcePath(":/images/sort_decrease.png")
+			                                                          , tr("Sort Descending Order"), this, SLOT(changeSortOrder()));
+			actionSortDescending->setData("SortDesc");
+			actionSortDescending->setCheckable(true);
+			actionSortDescending->setChecked(header()->sortIndicatorOrder()==Qt::DescendingOrder);
+			actionSortDescending->setActionGroup(actionGroupAsc);
+
+			QAction *actionSortAscending = headerMenuSort->addAction(FilesDefs::getIconFromQtResourcePath(":/images/sort_incr.png")
+			                                                         , tr("Sort Ascending Order"), this, SLOT(changeSortOrder()));
+			actionSortAscending->setData("SortAsc");
+			actionSortAscending->setCheckable(true);
+			actionSortAscending->setChecked(header()->sortIndicatorOrder()==Qt::AscendingOrder);
+			actionSortAscending->setActionGroup(actionGroupAsc);
+
+			headerMenuSort->addSeparator();
+
+			QActionGroup *actionGroupSort = new QActionGroup(headerMenuSort);
+
+			for (int column = 0; column < columnCount; ++column)
+			{
+				QString txt = item->text(column) ;
+				if(txt == "")
+					txt = item->data(column,Qt::UserRole).toString() ;
+				if(txt == "")
+					txt = item->data(column,Qt::ToolTipRole).toString() ;
+
+				if(txt=="")
+					txt = QString::number(column) + tr(" [no title]") ;
+
+				QAction *action = headerMenuSort->addAction(QIcon(), txt, this, SLOT(changeSortColumn()));
+				action->setData(column);
+				action->setCheckable(true);
+				action->setChecked(header()->sortIndicatorSection() == column);
+				action->setActionGroup(actionGroupSort);
+			}
+		}
+
+		QMenu *headerMenuShowCol = contextMenu->addMenu(QIcon(),tr("Show column …"));
+
 		for (int column = 0; column < columnCount; ++column)
 		{
-			QMap<int, bool>::const_iterator it = mColumnCustomizable.find(column);
+			QMap<int, bool>::iterator it = mColumnCustomizable.find(column);
 			if (it != mColumnCustomizable.end() && *it == false) {
 				continue;
 			}
@@ -300,9 +346,9 @@ QMenu *RSTreeWidget::createStandardContextMenu(QMenu *contextMenu)
 				txt = item->data(column,Qt::ToolTipRole).toString() ;
 
 			if(txt=="")
-				txt = tr("[no title]") ;
+				txt = QString::number(column) + tr(" [no title]") ;
 
-			QAction *action = headerMenu->addAction(QIcon(), txt, this, SLOT(columnVisible()));
+			QAction *action = headerMenuShowCol->addAction(QIcon(), txt, this, SLOT(columnVisible()));
 			action->setCheckable(true);
 			action->setData(column);
 			action->setChecked(!isColumnHidden(column));
@@ -380,5 +426,34 @@ void RSTreeWidget::resort()
 {
 	if (isSortingEnabled()) {
 		sortItems(header()->sortIndicatorSection(), header()->sortIndicatorOrder());
+	}
+}
+
+void RSTreeWidget::changeSortColumn()
+{
+	QAction *action = dynamic_cast<QAction*>(sender());
+	if (!action) {
+		return;
+	}
+
+	if (action->data().canConvert<int>())
+	{
+		header()->setSortIndicator(action->data().toInt(),header()->sortIndicatorOrder());
+	}
+}
+
+void RSTreeWidget::changeSortOrder()
+{
+	QAction *action = dynamic_cast<QAction*>(sender());
+	if (!action) {
+		return;
+	}
+
+	if (action->data().canConvert<QString>())
+	{
+		if (action->data().toString() == "SortDesc")
+			header()->setSortIndicator(header()->sortIndicatorSection(),Qt::DescendingOrder);
+		else
+			header()->setSortIndicator(header()->sortIndicatorSection(),Qt::AscendingOrder);
 	}
 }

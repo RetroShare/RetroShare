@@ -329,7 +329,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_AUTHOR, 150*f);
 
     ui->threadTreeWidget->resizeColumnToContents(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION);
-    ui->threadTreeWidget->resizeColumnToContents(RsGxsForumModel::COLUMN_THREAD_READ);
+    //ui->threadTreeWidget->resizeColumnToContents(RsGxsForumModel::COLUMN_THREAD_READ);
 
     QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_TITLE,        QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_DATE,         QHeaderView::Interactive);
