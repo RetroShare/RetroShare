@@ -380,11 +380,11 @@ ChatPage::load()
     whileBlocking(ui.loadEmbeddedImages)->setChecked(Settings->getChatLoadEmbeddedImages());
     whileBlocking(ui.DontSendTyping)->setChecked(Settings->getChatDoNotSendIsTyping());
 
-	std::string advsetting;
+	/*std::string advsetting;
 	if(rsConfig->getConfigurationOption(RS_CONFIG_ADVANCED, advsetting) && (advsetting == "YES"))
 	{ }
 	else
-		ui.DontSendTyping->hide();
+		ui.DontSendTyping->hide();*/
 
     whileBlocking(ui.sbSearch_CharToStart)->setValue(Settings->getChatSearchCharToStartSearch());
     whileBlocking(ui.cbSearch_CaseSensitively)->setChecked(Settings->getChatSearchCaseSensitively());
