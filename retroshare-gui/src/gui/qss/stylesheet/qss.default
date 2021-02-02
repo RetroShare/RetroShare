@@ -154,7 +154,6 @@ GxsForumThreadWidget StyledElidedLabel#forumName
 	padding: 2px;
 	font: bold;
 	font-size: 15px;
-	text-decoration: underline;
 }
 
 GroupTreeWidget
