@@ -137,7 +137,6 @@ void ChannelsCommentsItem::setup()
     ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
     ui->voteUpButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/vote_up.png"));
     ui->voteDownButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/vote_down.png"));
-    ui->commentButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/comment.png"));
     ui->copyLinkButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/copy.png"));
     ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/down-arrow.png"));
     ui->readAndClearButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/correct.png"));
@@ -150,8 +149,7 @@ void ChannelsCommentsItem::setup()
 	mLoaded = false;
 
 	/* clear ui */
-	//ui->titleLabel->setText(tr("Loading..."));
-	ui->datetimelabel->clear();
+	ui->datetimeLabel->clear();
 
 	/* general ones */
 	connect(ui->expandButton, SIGNAL(clicked()), this, SLOT(toggle()));
@@ -159,13 +157,10 @@ void ChannelsCommentsItem::setup()
 
 	/* specific */
 	connect(ui->readAndClearButton, SIGNAL(clicked()), this, SLOT(readAndClearItem()));
-	connect(ui->unsubscribeButton, SIGNAL(clicked()), this, SLOT(unsubscribeChannel()));
 
 	// HACK FOR NOW.
-	ui->commentButton->hide();// hidden until properly enabled.
-	connect(ui->commentButton, SIGNAL(clicked()), this, SLOT(loadComments()));
+	//connect(ui->commentButton, SIGNAL(clicked()), this, SLOT(loadComments()));
 	connect(ui->copyLinkButton, SIGNAL(clicked()), this, SLOT(copyMessageLink()));
-
 	connect(ui->readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
 
 	// hide voting buttons, backend is not implemented yet
@@ -178,9 +173,6 @@ void ChannelsCommentsItem::setup()
 
 	// hide expand button, replies is not implemented yet
 	ui->expandButton->hide();
-	ui->unsubscribeButton->hide();
-
-	//ui->titleLabel->setMinimumWidth(100);
 
 	ui->mainFrame->setProperty("new", false);
 	ui->mainFrame->style()->unpolish(ui->mainFrame);
@@ -312,12 +304,12 @@ void ChannelsCommentsItem::loadMessage()
 
 			RsQThreadUtils::postToObject( [cmt,this]()
 			{
-				uint32_t autorized_lines = (int)floor((ui->logoLabel->height() - ui->titleLabel->height() - ui->buttonHLayout->sizeHint().height())/QFontMetricsF(ui->subjectLabel->font()).height());
+				uint32_t autorized_lines = (int)floor((ui->logoLabel->height() - ui->buttonHLayout->sizeHint().height())/QFontMetricsF(ui->subjectLabel->font()).height());
 
 				ui->commLabel->setText(RsHtml().formatText(NULL, RsStringUtil::CopyLines(QString::fromUtf8(cmt.mComment.c_str()), autorized_lines), RSHTML_FORMATTEXT_EMBED_LINKS));
 
 				ui->nameLabel->setId(cmt.mMeta.mAuthorId);
-				ui->datetimelabel->setText(DateTime::formatLongDateTime(cmt.mMeta.mPublishTs));
+				ui->datetimeLabel->setText(DateTime::formatLongDateTime(cmt.mMeta.mPublishTs));
 
 				RsIdentityDetails idDetails ;
 				rsIdentity->getIdDetails(cmt.mMeta.mAuthorId,idDetails);
@@ -381,7 +373,7 @@ void ChannelsCommentsItem::loadComment()
 			else if(comNb > 1)
 				sComButText = tr("Comments ").append("(%1)").arg(comNb);
 
-			ui->commentButton->setText(sComButText);
+			//ui->commentButton->setText(sComButText);
 
 		}, this );
 	});
@@ -403,7 +395,7 @@ void ChannelsCommentsItem::fill()
 
 	mInFill = true;
 
-	QString title;
+	//QString title;
 	//float f = QFontMetricsF(font()).height()/14.0 ;
 
 	if (!mIsHome)
@@ -421,14 +413,14 @@ void ChannelsCommentsItem::fill()
 
 		if (IS_GROUP_SUBSCRIBED(mGroupMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroupMeta.mSubscribeFlags))
 		{
-			ui->unsubscribeButton->setEnabled(true);
+			//ui->unsubscribeButton->setEnabled(true);
 		}
 		else 
 		{
-			ui->unsubscribeButton->setEnabled(false);
+			//ui->unsubscribeButton->setEnabled(false);
 		}
 		ui->readButton->hide();
-		ui->titleLabel->hide();
+		//ui->titleLabel->hide();
 
 		if (IS_MSG_NEW(mPost.mMeta.mMsgStatus)) {
 			mCloseOnRead = true;
@@ -439,7 +431,7 @@ void ChannelsCommentsItem::fill()
 		/* subject */
 		//ui->titleLabel->setText(QString::fromUtf8(mPost.mMeta.mMsgName.c_str()));
 
-		uint32_t autorized_lines = (int)floor((ui->logoLabel->height() - ui->titleLabel->height() - ui->buttonHLayout->sizeHint().height())/QFontMetricsF(ui->subjectLabel->font()).height());
+		uint32_t autorized_lines = (int)floor((ui->logoLabel->height() - ui->buttonHLayout->sizeHint().height())/QFontMetricsF(ui->subjectLabel->font()).height());
 
 		// fill first 4 lines of message. (csoler) Disabled the replacement of smileys and links, because the cost is too crazy
 		//ui->subjectLabel->setText(RsHtml().formatText(NULL, RsStringUtil::CopyLines(QString::fromUtf8(mPost.mMsg.c_str()), autorized_lines), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
@@ -451,12 +443,10 @@ void ChannelsCommentsItem::fill()
 
 		/* disable buttons: deletion facility not enabled with cache services yet */
 		ui->clearButton->setEnabled(false);
-		ui->unsubscribeButton->setEnabled(false);
 		ui->clearButton->hide();
 		ui->readAndClearButton->hide();
-		ui->unsubscribeButton->hide();
 		ui->copyLinkButton->show();
-		ui->titleLabel->hide();
+		//ui->titleLabel->hide();
 
 		if (IS_GROUP_SUBSCRIBED(mGroupMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroupMeta.mSubscribeFlags))
 		{
@@ -493,7 +483,7 @@ void ChannelsCommentsItem::fill()
 	}
 	else
 	{
-		ui->commentButton->hide();
+		//ui->commentButton->hide();
 	}
 	
 	// disable voting buttons - if they have already voted.
