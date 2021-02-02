@@ -111,7 +111,10 @@ public:
 	    : QSortFilterProxyModel(parent)
 	    , m_header(header)
 	    , m_sortingEnabled(false), m_sortByState(false)
-	    , m_showOfflineNodes(true) {}
+        , m_showOfflineNodes(true)
+    {
+        setDynamicSortFilter(false);  // causes crashes when true.
+    }
 
 	bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
 	{
@@ -184,7 +187,6 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
 
     mProxyModel->setSourceModel(mModel);
     mProxyModel->setSortRole(RsFriendListModel::SortRole);
-    mProxyModel->setDynamicSortFilter(false);
     mProxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
 	mProxyModel->setFilterRole(RsFriendListModel::FilterRole);
 	mProxyModel->setFilterRegExp(QRegExp(RsFriendListModel::FilterString));

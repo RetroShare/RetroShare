@@ -206,7 +206,10 @@ public:
 class ForumPostSortFilterProxyModel: public QSortFilterProxyModel
 {
 public:
-    explicit ForumPostSortFilterProxyModel(const QHeaderView *header,QObject *parent = NULL): QSortFilterProxyModel(parent),m_header(header) {}
+    explicit ForumPostSortFilterProxyModel(const QHeaderView *header,QObject *parent = NULL): QSortFilterProxyModel(parent),m_header(header)
+    {
+        setDynamicSortFilter(false); // causes crashes when true
+    }
 
     bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
     {
@@ -257,7 +260,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     mThreadModel = new RsGxsForumModel(this);
     mThreadProxyModel = new ForumPostSortFilterProxyModel(ui->threadTreeWidget->header(),this);
     mThreadProxyModel->setSourceModel(mThreadModel);
-    mThreadProxyModel->setDynamicSortFilter(false);	// causes crashes when true.
     mThreadProxyModel->setSortRole(RsGxsForumModel::SortRole);
     ui->threadTreeWidget->setModel(mThreadProxyModel);
 

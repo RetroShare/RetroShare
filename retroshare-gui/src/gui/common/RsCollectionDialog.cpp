@@ -64,7 +64,9 @@ class FSMSortFilterProxyModel : public QSortFilterProxyModel
 {
 public:
 	FSMSortFilterProxyModel( QObject *parent) : QSortFilterProxyModel(parent)
-	{}
+    {
+        setDynamicSortFilter(false);	// essential to avoid random crashes
+    }
 
 protected:
 	virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const
@@ -201,7 +203,6 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName
 	connect(_dirModel, SIGNAL(directoryLoaded(QString)), this, SLOT(directoryLoaded(QString)));
 
 	_tree_proxyModel = new FSMSortFilterProxyModel(this);
-	_tree_proxyModel->setDynamicSortFilter(true);
 	_tree_proxyModel->setSourceModel(_dirModel);
 	_tree_proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
 	_tree_proxyModel->setSortRole(Qt::DisplayRole);
