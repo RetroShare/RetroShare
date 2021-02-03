@@ -38,131 +38,9 @@
 #include <stdio.h>
 #include "util/rstime.h"
 
-const uint32_t MAX_IP_STORE =	300; /* seconds ip address timeout */
+const uint32_t MAX_IP_STORE = 300; /* seconds ip address timeout */
 
 //#define EXTADDRSEARCH_DEBUG
-
-static const std::string ADDR_AGENT  = "Mozilla/5.0";
-
-static std::string scan_ip(const std::string& text)
-{
-	std::set<unsigned char> digits ;
-	digits.insert('0') ; digits.insert('3') ; digits.insert('6') ;
-	digits.insert('1') ; digits.insert('4') ; digits.insert('7') ;
-	digits.insert('2') ; digits.insert('5') ; digits.insert('8') ;
-	digits.insert('9') ; 
-
-	for(int i=0;i<(int)text.size();++i)
-	{
-		while(i < (int)text.size() && digits.find(text[i])==digits.end()) ++i ;
-
-		if(i>=(int)text.size())
-			return "" ;
-
-		unsigned int a,b,c,d ;
-
-		if(sscanf(text.c_str()+i,"%u.%u.%u.%u",&a,&b,&c,&d) != 4)
-			continue ;
-
-		if(a < 256 && b<256 && c<256 && d<256)
-		{
-			std::string s ;
-			rs_sprintf(s, "%u.%u.%u.%u", a, b, c, d) ;
-			return s;
-		}
-	}
-	return "" ;
-}
-
-static void getPage(const std::string& server_name,std::string& page)
-{
-	page = "" ;
-	int sockfd,n=0;                   // socket descriptor
-	struct sockaddr_in serveur;       // server's parameters
-	memset(&serveur.sin_zero, 0, sizeof(serveur.sin_zero));
-
-	char buf[1024];
-	char request[1024];
-#ifdef EXTADDRSEARCH_DEBUG
-	std::cout << "ExtAddrFinder: connecting to " << server_name << std::endl ;
-#endif
-	// socket creation
-
-	sockfd = unix_socket(PF_INET,SOCK_STREAM,0);
-	if (sockfd < 0)
-	{
-		std::cerr << "ExtAddrFinder: Failed to create socket" << std::endl;
-		return ;
-	}
-
-	serveur.sin_family = AF_INET;
-
-	// get server's ipv4 adress
-
-    	in_addr in ;
-        
-	if(!rsGetHostByName(server_name.c_str(),in))  /* l'hôte n'existe pas */
-	{
-		std::cerr << "ExtAddrFinder: Unknown host " << server_name << std::endl;
-		unix_close(sockfd);
-		return ;
-	}
-	serveur.sin_addr = in ;
-	serveur.sin_port = htons(80);
-
-#ifdef EXTADDRSEARCH_DEBUG
-	printf("Connection attempt\n");
-#endif
-    	std::cerr << "ExtAddrFinder: resolved hostname " << server_name << " to " << rs_inet_ntoa(in) << std::endl;
-
-	sockaddr_storage server;
-	sockaddr_storage_setipv4(server, &serveur);
-	sockaddr_storage_setport(server, 80);
-	if(unix_connect(sockfd, server) == -1)
-	{
-		std::cerr << "ExtAddrFinder: Connection error to " << server_name << std::endl ;
-		unix_close(sockfd);
-		return ;
-	}
-#ifdef EXTADDRSEARCH_DEBUG
-	std::cerr << "ExtAddrFinder: Connection established to " << server_name << std::endl ;
-#endif
-
-	// envoi 
-	if(snprintf( request, 
-			1024,
-			"GET / HTTP/1.0\r\n"
-			"Host: %s:%d\r\n"
-			"Connection: Close\r\n"
-			"\r\n", 
-			server_name.c_str(), 80) > 1020)
-	{
-		std::cerr << "ExtAddrFinder: buffer overrun. The server name \"" << server_name << "\" is too long. This is quite unexpected." << std::endl;
-		unix_close(sockfd);
-		return ;
-	}
-
-	if(send(sockfd,request,strlen(request),0)== -1)
-	{
-		std::cerr << "ExtAddrFinder: Could not send request to " << server_name << std::endl ;
-		unix_close(sockfd);
-		return ;
-	}
-	// recéption 
-
-	while((n = recv(sockfd, buf, sizeof buf - 1, 0)) > 0)
-	{
-		buf[n] = '\0';
-		page += std::string(buf,n) ;
-	}
-	// fermeture de la socket
-
-	unix_close(sockfd);
-#ifdef EXTADDRSEARCH_DEBUG
-	std::cerr << "ExtAddrFinder: Got full page from " << server_name << std::endl ;
-#endif
-}
-
 
 void* doExtAddrSearch(void *p)
 {
@@ -173,15 +51,12 @@ void* doExtAddrSearch(void *p)
 
 	for(std::list<std::string>::const_iterator it(af->_ip_servers.begin());it!=af->_ip_servers.end();++it)
 	{
-		std::string page ;
-
-		getPage(*it,page) ;
-		std::string ip = scan_ip(page) ;
-
+		std::string ip = "";
+		rsGetHostByNameSpecDNS(*it,"myip.opendns.com",ip);
 		if(ip != "")
 			res.push_back(ip) ;
 #ifdef EXTADDRSEARCH_DEBUG
-		std::cout << "ip found through " << *it << ": \"" << ip << "\"" << std::endl ;
+		std::cout << "ip found through DNS " << *it << ": \"" << ip << "\"" << std::endl ;
 #endif
 	}
 
@@ -315,9 +190,15 @@ ExtAddrFinder::ExtAddrFinder() : mAddrMtx("ExtAddrFinder")
 	mFoundTS = time(NULL) - MAX_IP_STORE;
 	sockaddr_storage_clear(mAddr);
 
-	_ip_servers.push_back(std::string( "checkip.dyndns.org" )) ;
-	_ip_servers.push_back(std::string( "www.myip.dk"   )) ;
-	_ip_servers.push_back(std::string( "showip.net"         )) ;
-	_ip_servers.push_back(std::string( "www.displaymyip.com")) ;
+//https://unix.stackexchange.com/questions/22615/how-can-i-get-my-external-ip-address-in-a-shell-script
+	//Enter direct ip so local DNS cannot change it.
+	//DNS servers must recognize "myip.opendns.com"
+	_ip_servers.push_back(std::string( "208.67.222.222" )) ;//resolver1.opendns.com
+	_ip_servers.push_back(std::string( "208.67.220.220" )) ;//resolver2.opendns.com
+	_ip_servers.push_back(std::string( "208.67.222.220" )) ;//resolver3.opendns.com
+	_ip_servers.push_back(std::string( "208.67.220.222" )) ;//resolver4.opendns.com
+	//Ipv6 server disabled as Current ip only manage ipv4 for now.
+	//_ip_servers.push_back(std::string( "2620:119:35::35" )) ;//resolver1.opendns.com
+	//_ip_servers.push_back(std::string( "2620:119:53::53" )) ;//resolver2.opendns.com
 }
 
