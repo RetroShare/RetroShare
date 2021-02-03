@@ -358,8 +358,17 @@
          <string notr="true"/>
         </property>
         <layout class="QGridLayout" name="gridLayout">
+         <property name="leftMargin">
+          <number>3</number>
+         </property>
          <property name="topMargin">
           <number>3</number>
+         </property>
+         <property name="rightMargin">
+          <number>9</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
          </property>
          <item row="0" column="0">
           <widget class="QLabel" name="avatarLabel">
@@ -428,6 +437,9 @@
            </property>
            <property name="text">
             <string notr="true">DateTime</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
            </property>
           </widget>
          </item>

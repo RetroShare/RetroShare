@@ -510,28 +510,6 @@ GxsCircleItem QLabel#nameLabel, QLabel#titleLabel {
 	font: bold italic;
 }
 
-
-ForumNewItem > QFrame#frame, ForumMsgItem > QFrame#frame {
-	border: 2px solid #CCCCCC;
-	background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #EEEEEE, stop: 1 #CCCCCC);
-	border-radius: 10px;
-}
-
-ForumNewItem > QLabel#nextNameLabel, ForumMsgItem > QLabel#nameLabel {
-	color: rgb(59, 89, 152);
-}
-
-ForumMsgItem QLabel#iconLabel {
-	border: 2px solid #CCCCCC;
-	background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #EEEEEE, stop: 1 #CCCCCC);
-	border-radius: 10px
-}
-
-ForumMsgItem QFrame#prevFrame {
-	border: 2px solid black;
-	border-radius: 10px;
-}
-
 SubFileItem QProgressBar#progressBar {
 	border: 1px solid black;
 	text-align: center;
@@ -884,7 +862,7 @@ GxsForumThreadWidget QToolButton#subscribeToolButton:hover {
 	border-radius: 4px;
 }
 
-GxsForumMsgItem QFrame#mainFrame{
+GxsForumMsgItem QFrame#mainFrame, PeerItem QFrame#mainFrame{
 	background-color: white;
 }
 
@@ -1181,13 +1159,19 @@ ChannelsCommentsItem QLabel#newCommentLabel, BoardsCommentsItem QLabel#newCommen
 	font: bold;
 }
 
-ChannelsCommentsItem QLabel#subjectLabel, ChannelsCommentsItem QLabel#titleLabel , QLabel#nameLabel {
+ChannelsCommentsItem QLabel#subjectLabel, ChannelsCommentsItem QLabel#titleLabel {
 	font: 14px;
 	font: bold;
 }
 
-BoardsCommentsItem QLabel#subjectLabel, QLabel#titleLabel , QLabel#nameLabel {
+BoardsCommentsItem QLabel#subjectLabel, QLabel#titleLabel {
 	font: 14px;
+	font: bold;
+}
+
+BoardsCommentsItem QLabel#nameLabel, ChannelsCommentsItem QLabel#nameLabel {
+	padding: 2px;
+	font: 15px;
 	font: bold;
 }
 
