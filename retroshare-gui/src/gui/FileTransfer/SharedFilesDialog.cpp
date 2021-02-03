@@ -99,6 +99,12 @@ public:
     SFDSortFilterProxyModel(RetroshareDirModel *dirModel, QObject *parent) : QSortFilterProxyModel(parent)
     {
         m_dirModel = dirModel;
+
+        // Mr.Alice: I removed this because it causes a crash for some obscur reason. Apparently when the model is changed, the proxy model cannot
+        // deal with the change by itself. Should I call something specific? I've no idea. Removing this does not seem to cause any harm either.
+        //Ghibli: set false because by default in qt5 is true and makes rs crash when sorting, all this decided by Cyril not me :D it works
+
+        setDynamicSortFilter(false);
     }
 
 protected:
@@ -192,12 +198,6 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
     flat_proxyModel->sort(COLUMN_NAME);
     flat_proxyModel->setFilterRole(RetroshareDirModel::FilterRole);
     flat_proxyModel->setFilterRegExp(QRegExp(QString(RETROSHARE_DIR_MODEL_FILTER_STRING))) ;
-
-    // Mr.Alice: I removed this because it causes a crash for some obscur reason. Apparently when the model is changed, the proxy model cannot
-    // deal with the change by itself. Should I call something specific? I've no idea. Removing this does not seem to cause any harm either.
-    //Ghibli: set false because by default in qt5 is true and makes rs crash when sorting, all this decided by Cyril not me :D it works
-    tree_proxyModel->setDynamicSortFilter(false);
-    flat_proxyModel->setDynamicSortFilter(false);
 
     connect(ui.filterClearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
     connect(ui.filterStartButton, SIGNAL(clicked()), this, SLOT(startFilter()));

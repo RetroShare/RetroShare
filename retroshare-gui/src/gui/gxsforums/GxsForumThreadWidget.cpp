@@ -206,7 +206,10 @@ public:
 class ForumPostSortFilterProxyModel: public QSortFilterProxyModel
 {
 public:
-    explicit ForumPostSortFilterProxyModel(const QHeaderView *header,QObject *parent = NULL): QSortFilterProxyModel(parent),m_header(header) {}
+    explicit ForumPostSortFilterProxyModel(const QHeaderView *header,QObject *parent = NULL): QSortFilterProxyModel(parent),m_header(header)
+    {
+        setDynamicSortFilter(false); // causes crashes when true
+    }
 
     bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
     {

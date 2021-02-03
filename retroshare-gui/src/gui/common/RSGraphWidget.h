@@ -180,7 +180,8 @@ public:
 
 	void setFiltering(bool b) ;
 
-	void setFlags(uint32_t flag) { _flags |= flag ; }
+    uint32_t getFlags() const { return _flags ; }
+    void setFlags(uint32_t flag) { _flags |= flag ; }
 	void resetFlags(uint32_t flag) { _flags &= ~flag ; }
 protected:
 	/** Overloaded QWidget::paintEvent() */

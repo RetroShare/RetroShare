@@ -45,18 +45,21 @@ public:
 
   /** Default constructor */
   BandwidthGraph(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+  virtual ~BandwidthGraph();
 
 public slots:
   /** Overloaded QWidget.show */
   void showWindow();
 
 private slots:
+    void switchGraphColor();
+    void toggleReceiveRate(bool b);
+    void toggleSendRate(bool b);
+
   /** Called when settings button is toggled */
   void showSettingsFrame(bool show);
   /** Called when the settings button is toggled */
   void setOpacity(int value);
-  /** Called when the user saves settings */
-  void saveChanges();
   /** Called when the user cancels changes settings */
   void cancelChanges();
   /** Called when the reset button is pressed */
@@ -67,6 +70,7 @@ private:
   void createActions();
   /** Loads the saved Bandwidth Graph settings */
   void loadSettings();
+  void saveSettings();
 
   /** Qt Designer generated object */
   Ui::BandwidthGraph ui;

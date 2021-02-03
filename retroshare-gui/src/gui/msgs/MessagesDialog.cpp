@@ -98,7 +98,10 @@
 class MessageSortFilterProxyModel: public QSortFilterProxyModel
 {
 public:
-    MessageSortFilterProxyModel(QObject *parent = NULL): QSortFilterProxyModel(parent), m_sortingEnabled(false) {}
+    MessageSortFilterProxyModel(QObject *parent = NULL): QSortFilterProxyModel(parent), m_sortingEnabled(false)
+    {
+        setDynamicSortFilter(false); // causes crashes when true
+    }
 
     bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
     {
@@ -145,7 +148,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     mMessageProxyModel = new MessageSortFilterProxyModel(this);
     mMessageProxyModel->setSourceModel(mMessageModel);
     mMessageProxyModel->setSortRole(RsMessageModel::SortRole);
-    mMessageProxyModel->setDynamicSortFilter(false);
     mMessageProxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
 	mMessageProxyModel->setFilterRole(RsMessageModel::FilterRole);
 	mMessageProxyModel->setFilterRegExp(QRegExp(RsMessageModel::FilterString));

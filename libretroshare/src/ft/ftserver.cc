@@ -819,8 +819,7 @@ bool  ftServer::ExtraFileAdd(std::string fname, const RsFileHash& hash, uint64_t
 bool ftServer::ExtraFileRemove(const RsFileHash& hash)
 { return mFileDatabase->removeExtraFile(hash); }
 
-bool ftServer::ExtraFileHash(
-        std::string localpath, rstime_t period, TransferRequestFlags flags )
+bool ftServer::ExtraFileHash( std::string localpath, rstime_t period, TransferRequestFlags flags )
 {
 	constexpr rstime_t uintmax = std::numeric_limits<uint32_t>::max();
 	if(period > uintmax)

@@ -19,11 +19,13 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <rshare.h>
-#include <control/bandwidthevent.h>
-#include <gui/statistics/BandwidthGraphWindow.h>
-#include <retroshare-gui/RsAutoUpdatePage.h>
-#include <retroshare/rsconfig.h>
+#include "rshare.h"
+#include "control/bandwidthevent.h"
+#include "gui/statistics/BandwidthGraphWindow.h"
+#include "gui/common/FilesDefs.h"
+#include "util/misc.h"
+#include "retroshare-gui/RsAutoUpdatePage.h"
+#include "retroshare/rsconfig.h"
 
 #include <iomanip>
 #include <unistd.h>
@@ -51,6 +53,12 @@
 /* Images used in the graph style drop-down */
 #define IMG_AREA_GRAPH    ":/images/16x16/graph-area.png"
 #define IMG_LINE_GRAPH    ":/images/16x16/graph-line.png"
+#define IMG_SETTINGS      ":/icons/system_128.png"
+#define IMG_CLEANUP       ":/images/global_switch_off.png"
+#define IMG_SEND          ":/images/go-up.png"
+#define IMG_RECEIVE       ":/images/go-down.png"
+#define IMG_GRAPH_DARK    ":/images/graph-line.png"
+#define IMG_GRAPH_LIGHT   ":/images/graph-line-inverted.png"
 
 
 /** Default constructor */
@@ -65,9 +73,6 @@ BandwidthGraph::BandwidthGraph(QWidget *parent, Qt::WindowFlags flags)
   setShortcut("Ctrl+W", SLOT(close()));
 #endif
 
-  /* Bind events to actions */
-  createActions();
-
   /* Ask RetroShare core to notify us about bandwidth updates */
   //_rsControl = RetroShare::rsControl();
   //_rsControl->setEvent(REvents::Bandwidth, this, true);
@@ -77,7 +82,6 @@ BandwidthGraph::BandwidthGraph(QWidget *parent, Qt::WindowFlags flags)
   /* Hide Bandwidth Graph Settings frame */
   showSettingsFrame(false);
   /* Load the previously saved settings */
-  loadSettings();
 
    /* Turn off opacity group on unsupported platforms */
  #if defined(Q_OS_WIN)
@@ -88,18 +92,61 @@ BandwidthGraph::BandwidthGraph(QWidget *parent, Qt::WindowFlags flags)
 
  #if defined(Q_OS_LINUX)
    ui.frmOpacity->setVisible(false);
+   ui.chkAlwaysOnTop->setVisible(false);
+   ui.btnToggleSettings->setVisible(false); // this is only windows settings anyway
  #endif
+
+   ui.btnToggleSettings->setIcon(FilesDefs::getIconFromQtResourcePath(IMG_SETTINGS));
+   ui.btnToggleSettings->setText("");
+   ui.btnReset->setIcon(FilesDefs::getIconFromQtResourcePath(IMG_CLEANUP));
+   ui.btnReset->setText("");
+   ui.chkSendRate->setIcon(FilesDefs::getIconFromQtResourcePath(IMG_SEND));
+   ui.chkSendRate->setText("");
+   ui.chkReceiveRate->setIcon(FilesDefs::getIconFromQtResourcePath(IMG_RECEIVE));
+   ui.chkReceiveRate->setText("");
+
+   ui.btnGraphColor->setIcon(FilesDefs::getIconFromQtResourcePath(IMG_GRAPH_LIGHT));
+   ui.frmGraph->setFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
+
+   ui.frmGraph->setToolTip("Use Ctrl+mouse wheel to change line width, Shift+wheel to time-filter the curve.");
+   ui.frmGraph->setDirection(BWGraphSource::DIRECTION_UP | BWGraphSource::DIRECTION_DOWN);
+
+  loadSettings();
+
+   connect(ui.btnToggleSettings,SIGNAL(toggled(bool)),this,SLOT(showSettingsFrame(bool)));
+   connect(ui.btnReset, SIGNAL(clicked()), this, SLOT(reset()));
+   connect(ui.sldrOpacity, SIGNAL(valueChanged(int)), this, SLOT(setOpacity(int)));
+   connect(ui.btnGraphColor, SIGNAL(clicked()), this, SLOT(switchGraphColor()));
+   connect(ui.chkSendRate, SIGNAL(toggled(bool)), this, SLOT(toggleSendRate(bool)));
+   connect(ui.chkReceiveRate, SIGNAL(toggled(bool)), this, SLOT(toggleReceiveRate(bool)));
 }
 
-/** Binds events to actions. */
-void
-BandwidthGraph::createActions()
+void BandwidthGraph::toggleSendRate(bool b)
 {
-    connect(ui.btnToggleSettings, SIGNAL(toggled(bool)), this, SLOT(showSettingsFrame(bool)));
-    connect(ui.btnReset, SIGNAL(clicked()), this, SLOT(reset()));
-    connect(ui.btnSaveSettings, SIGNAL(clicked()), this, SLOT(saveChanges()));
-    connect(ui.btnCancelSettings, SIGNAL(clicked()), this, SLOT(cancelChanges()));
-    connect(ui.sldrOpacity, SIGNAL(valueChanged(int)), this, SLOT(setOpacity(int)));
+    ui.frmGraph->setShowEntry(0,b);
+    saveSettings();
+}
+void BandwidthGraph::toggleReceiveRate(bool b)
+{
+    ui.frmGraph->setShowEntry(1,b);
+    saveSettings();
+}
+
+
+void BandwidthGraph::switchGraphColor()
+{
+   if(ui.frmGraph->getFlags() & RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE)
+   {
+      ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
+      ui.btnGraphColor->setIcon(FilesDefs::getIconFromQtResourcePath(IMG_GRAPH_LIGHT));
+   }
+  else
+   {
+      ui.frmGraph->setFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
+      ui.btnGraphColor->setIcon(FilesDefs::getIconFromQtResourcePath(IMG_GRAPH_DARK));
+   }
+
+   saveSettings();
 }
 
 /** Loads the saved Bandwidth Graph settings. */
@@ -110,60 +157,29 @@ BandwidthGraph::loadSettings()
   ui.sldrOpacity->setValue(getSetting(SETTING_OPACITY, DEFAULT_OPACITY).toInt());
   setOpacity(ui.sldrOpacity->value());
 
-  /* Set whether the window appears on top. */
-  ui.chkAlwaysOnTop->setChecked(getSetting(SETTING_ALWAYS_ON_TOP, DEFAULT_ALWAYS_ON_TOP).toBool());
-
-  if (ui.chkAlwaysOnTop->isChecked()) {
-    setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
-  } else {
-    setWindowFlags(windowFlags() & ~Qt::WindowStaysOnTopHint);
-  }
-
-  /* Set the line filter checkboxes accordingly */
-  uint filter = getSetting(SETTING_FILTER, DEFAULT_FILTER).toUInt();
-  ui.chkReceiveRate->setChecked(filter & BWGRAPH_LINE_RECV);
-  ui.chkSendRate->setChecked(filter & BWGRAPH_LINE_SEND);
-
   /* Set whether we are plotting bandwidth as area graphs or not */
-  int graphStyle = getSetting(SETTING_STYLE, DEFAULT_STYLE).toInt();
-
-  if (graphStyle < 0 || graphStyle >= ui.cmbGraphStyle->count()) {
-    graphStyle = DEFAULT_STYLE;
-  }
-  ui.cmbGraphStyle->setCurrentIndex(graphStyle);
-
-  if(graphStyle==0)
-      ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_PLAIN);
-  else
-      ui.frmGraph->setFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_PLAIN);
- 
-   /* Set whether we are plotting bandwidth as area graphs or not */
   int graphColor = getSetting(SETTING_GRAPHCOLOR, DEFAULT_GRAPHCOLOR).toInt();
 
-  if (graphColor < 0 || graphColor >= ui.cmbGraphColor->count()) {
-    graphColor = DEFAULT_GRAPHCOLOR;
-  }
-  ui.cmbGraphColor->setCurrentIndex(graphColor);
-
-  if(graphColor==0)
-      ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
-  else
+  if(graphColor>0)
+  {
       ui.frmGraph->setFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
+      ui.btnGraphColor->setIcon(FilesDefs::getIconFromQtResourcePath(IMG_GRAPH_DARK));
+  }
+  else
+  {
+      ui.btnGraphColor->setIcon(FilesDefs::getIconFromQtResourcePath(IMG_GRAPH_LIGHT));
+      ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
+  }
 
   /* Download & Upload */
   int defaultdirection = getSetting(SETTING_DIRECTION, DEFAULT_DIRECTION).toInt();
-  
-  if (defaultdirection < 0 || defaultdirection >= ui.cmbDownUp->count()) {
-    defaultdirection = DEFAULT_DIRECTION;
-  }
-  ui.cmbDownUp->setCurrentIndex(graphColor);
-  
-  if(defaultdirection==0)
-      ui.frmGraph->setDirection(BWGraphSource::DIRECTION_UP) ;
-  else
-      ui.frmGraph->setDirection(BWGraphSource::DIRECTION_DOWN) ;
+
+  whileBlocking(ui.chkSendRate   )->setChecked(bool(defaultdirection & BWGraphSource::DIRECTION_UP  ));
+  whileBlocking(ui.chkReceiveRate)->setChecked(bool(defaultdirection & BWGraphSource::DIRECTION_DOWN));
   
   /* Default Settings for the Graph */
+  ui.frmGraph->setDirection(BWGraphSource::DIRECTION_UP | BWGraphSource::DIRECTION_DOWN);
+
   ui.frmGraph->setSelector(BWGraphSource::SELECTOR_TYPE_FRIEND,BWGraphSource::GRAPH_TYPE_SUM) ;
   ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_LOG_SCALE_Y) ;
 
@@ -172,66 +188,50 @@ BandwidthGraph::loadSettings()
   ui.frmGraph->setShowEntry(1,ui.chkSendRate->isChecked()) ;
 }
 
-
-
 /** Resets the log start time. */
 void BandwidthGraph::reset()
 {
   /* Set to current time */
-  ui.statusbar->showMessage(tr("Since:") + " " +  QDateTime::currentDateTime() .toString(DATETIME_FMT));
+  ui.displayTime_LB->setText(tr("Since:") + " " +  QDateTime::currentDateTime() .toString(DATETIME_FMT));
   /* Reset the graph */
   ui.frmGraph->resetGraph();
 }
 
-/** Saves the Bandwidth Graph settings and adjusts the graph if necessary. */
-void BandwidthGraph::saveChanges()
+BandwidthGraph::~BandwidthGraph()
 {
-  /* Hide the settings frame and reset toggle button */
-  showSettingsFrame(false);
-  
-  /* Save the opacity and graph style */
-  saveSetting(SETTING_OPACITY, ui.sldrOpacity->value());
-  saveSetting(SETTING_STYLE, ui.cmbGraphStyle->currentIndex());
-  saveSetting(SETTING_GRAPHCOLOR, ui.cmbGraphColor->currentIndex());
+    saveSettings();
+}
+/** Saves the Bandwidth Graph settings and adjusts the graph if necessary. */
+void BandwidthGraph::saveSettings()
+{
+    /* Save the opacity and graph style */
+    saveSetting(SETTING_OPACITY, ui.sldrOpacity->value());
+    saveSetting(SETTING_GRAPHCOLOR, ui.btnGraphColor->isChecked());
 
-  /* Save the Always On Top setting */
-  saveSetting(SETTING_ALWAYS_ON_TOP, ui.chkAlwaysOnTop->isChecked());
-  if (ui.chkAlwaysOnTop->isChecked()) {
-    setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
-  } else {
-    setWindowFlags(windowFlags() & ~Qt::WindowStaysOnTopHint);
-  }
-  setOpacity(ui.sldrOpacity->value());
+    /* Save the Always On Top setting */
+    saveSetting(SETTING_ALWAYS_ON_TOP, ui.chkAlwaysOnTop->isChecked());
 
-  /* Save the line filter values */
-  uint filter = 0;
-  ADD_TO_FILTER(filter, BWGRAPH_LINE_RECV, ui.chkReceiveRate->isChecked());
-  ADD_TO_FILTER(filter, BWGRAPH_LINE_SEND, ui.chkSendRate->isChecked());
-  saveSetting(SETTING_FILTER, filter);
+    /* Save the line filter values */
+    saveSetting(SETTING_DIRECTION, ui.frmGraph->direction());
 
+    /* Update the graph frame settings */
+    // ui.frmGraph->setShowEntry(0,ui.chkReceiveRate->isChecked()) ;
+    // ui.frmGraph->setShowEntry(1,ui.chkSendRate->isChecked()) ;
+    // ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_PLAIN);
 
-  /* Update the graph frame settings */
-  ui.frmGraph->setShowEntry(0,ui.chkReceiveRate->isChecked()) ;
-  ui.frmGraph->setShowEntry(1,ui.chkSendRate->isChecked()) ;
+    // if(ui.btnGraphColor->isChecked()==0)
+    //     ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
+    // else
+    //     ui.frmGraph->setFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
 
-  if(ui.cmbGraphStyle->currentIndex()==0)
-      ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_PLAIN);
-  else
-      ui.frmGraph->setFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_PLAIN);
+    //  if(ui.cmbDownUp->currentIndex()==0)
+    //      ui.frmGraph->setDirection(BWGraphSource::DIRECTION_UP) ;
+    //  else
+    //      ui.frmGraph->setDirection(BWGraphSource::DIRECTION_DOWN) ;
 
-  if(ui.cmbGraphColor->currentIndex()==0)
-      ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
-  else
-      ui.frmGraph->setFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
-  
-  if(ui.cmbDownUp->currentIndex()==0)
-      ui.frmGraph->setDirection(BWGraphSource::DIRECTION_UP) ;
-  else
-      ui.frmGraph->setDirection(BWGraphSource::DIRECTION_DOWN) ;
-
-  /* A change in window flags causes the window to disappear, so make sure
+    /* A change in window flags causes the window to disappear, so make sure
    * it's still visible. */
-  showNormal();
+    showNormal();
 }
 
 /** Simply restores the previously saved settings. */
@@ -255,16 +255,16 @@ BandwidthGraph::showSettingsFrame(bool show)
   if (show) {
     /* Extend the bottom of the bandwidth graph and show the settings */
     ui.frmSettings->setVisible(true);
-    ui.btnToggleSettings->setChecked(true);
-    ui.btnToggleSettings->setText(tr("Hide Settings"));
+//    ui.btnToggleSettings->setChecked(true);
+//    ui.btnToggleSettings->setText(tr("Hide Settings"));
 
     /* 6 = vertical spacing between the settings frame and graph frame */
     newSize.setHeight(newSize.height() + ui.frmSettings->height() + 6);
   } else {
     /* Shrink the height of the bandwidth graph and hide the settings */
     ui.frmSettings->setVisible(false);
-    ui.btnToggleSettings->setChecked(false);
-    ui.btnToggleSettings->setText(tr("Show Settings"));
+//    ui.btnToggleSettings->setChecked(false);
+//    ui.btnToggleSettings->setText(tr("Show Settings"));
     
     /* 6 = vertical spacing between the settings frame and graph frame */
     newSize.setHeight(newSize.height() - ui.frmSettings->height() - 6);
