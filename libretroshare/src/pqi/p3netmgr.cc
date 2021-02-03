@@ -464,7 +464,31 @@ void p3NetMgrIMPL::netStatusTick()
 		netStatus = mNetStatus;
 		age = time(NULL) - mNetInitTS;
 
-	}
+    }
+
+    if(netStatus <= RS_NET_UPNP_SETUP && mUseExtAddrFinder)
+    {
+        sockaddr_storage tmpip;
+
+        if(mExtAddrFinder->hasValidIP(tmpip) && sockaddr_storage_ipv6_to_ipv4(tmpip))
+        {
+#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
+            std::cerr << "p3NetMgrIMPL::netExtCheck() Ext supplied by ExtAddrFinder" << std::endl;
+#endif
+            sockaddr_storage_setport(tmpip, guessNewExtPort());
+
+#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
+            std::cerr << "p3NetMgrIMPL::netExtCheck() ";
+            std::cerr << "ExtAddr: " << sockaddr_storage_tostring(tmpip);
+            std::cerr << std::endl;
+#endif
+            /* XXX HACK TO FIX drbob: ALLOWING
+                     * ExtAddrFinder -> ExtAddrStableOk = true
+                     * (which it is not normally) */
+
+            setExtAddress(tmpip);
+        }
+    }
 
 	switch(netStatus)
 	{
@@ -514,14 +538,18 @@ void p3NetMgrIMPL::netStatusTick()
 			break;
 
 
-		case RS_NET_EXT_SETUP:
+        case RS_NET_EXT_SETUP:
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-			std::cerr << "p3NetMgrIMPL::netTick() STATUS: EXT_SETUP" << std::endl;
+            std::cerr << "p3NetMgrIMPL::netTick() STATUS: EXT_SETUP" << std::endl;
 #endif
-			netExtCheck();
-			break;
+            // This could take a lot of time on some systems to get there:
+            // (e.g. 10 mins to get passed upnp on windows), so it would be better to call it right away, so other external address finding
+            // systems still have a chance to run early.
 
-		case RS_NET_DONE:
+            netExtCheck();
+            break;
+
+        case RS_NET_DONE:
 #ifdef NETMGR_DEBUG_TICK
 			std::cerr << "p3NetMgrIMPL::netTick() STATUS: DONE" << std::endl;
 #endif
