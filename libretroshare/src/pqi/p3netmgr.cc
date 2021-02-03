@@ -482,10 +482,6 @@ void p3NetMgrIMPL::netStatusTick()
             std::cerr << "ExtAddr: " << sockaddr_storage_tostring(tmpip);
             std::cerr << std::endl;
 #endif
-            /* XXX HACK TO FIX drbob: ALLOWING
-                     * ExtAddrFinder -> ExtAddrStableOk = true
-                     * (which it is not normally) */
-
             setExtAddress(tmpip);
         }
     }
@@ -1152,7 +1148,8 @@ bool    p3NetMgrIMPL::setLocalAddress(const struct sockaddr_storage &addr)
 		}
 
 		mLocalAddr = addr;
-	}
+        mPeerMgr->UpdateOwnAddress(mLocalAddr, mExtAddr);
+    }
 
 	if (changed)
 	{
@@ -1188,7 +1185,8 @@ bool    p3NetMgrIMPL::setExtAddress(const struct sockaddr_storage &addr)
 		}
 
 		mExtAddr = addr;
-	}
+        mPeerMgr->UpdateOwnAddress(mLocalAddr, mExtAddr);
+    }
 
 	if (changed)
 	{
