@@ -77,8 +77,10 @@ void TS_dumpState() ;
 //    - The total number of TR per second emmited from self will be MAX_TUNNEL_REQS_PER_SECOND / TIME_BETWEEN_TUNNEL_MANAGEMENT_CALLS = 0.5
 //    - I updated forward probabilities to higher values, and min them to 1/nb_connected_friends to prevent blocking tunnels.
 //
-static const rstime_t TUNNEL_REQUESTS_LIFE_TIME                = 240 ; /// life time for tunnel requests in the cache.
-static const rstime_t SEARCH_REQUESTS_LIFE_TIME                = 240 ; /// life time for search requests in the cache
+static const rstime_t TUNNEL_REQUESTS_LIFE_TIME                = 600 ; /// life time for tunnel requests in the cache.
+static const rstime_t TUNNEL_REQUESTS_RESULT_TIME              =  10 ; /// maximum time during which we process/forward results for known tunnel requests
+static const rstime_t SEARCH_REQUESTS_LIFE_TIME                = 600 ; /// life time for search requests in the cache
+static const rstime_t SEARCH_REQUESTS_RESULT_TIME              =  10 ; /// maximum time during which we process/forward results for known search requests
 static const rstime_t REGULAR_TUNNEL_DIGGING_TIME              = 300 ; /// maximum interval between two tunnel digging campaigns.
 static const rstime_t MAXIMUM_TUNNEL_IDLE_TIME                 =  60 ; /// maximum life time of an unused tunnel.
 static const rstime_t EMPTY_TUNNELS_DIGGING_TIME               =  50 ; /// look into tunnels regularly every 50 sec.
@@ -1163,6 +1165,15 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 			return ;
 		}
 
+		// Is this result too old?
+		// Search Requests younger than SEARCH_REQUESTS_LIFE_TIME are kept in the cache, so that they are not duplicated if they bounce in the network
+		// Nevertheless results received for Search Requests older than SEARCH_REQUESTS_RESULT_TIME are considered obsolete and discarded
+		if (time(NULL) > it->second.time_stamp + SEARCH_REQUESTS_RESULT_TIME)
+		{
+			RsDbg() << "TURTLE p3turtle::handleSearchResult Search Request is known, but result arrives too late, dropping";
+			return;
+		}
+
 		// Is this result's target actually ours ?
 
 		if(it->second.origin == _own_id)
@@ -1871,6 +1882,15 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 #ifdef P3TURTLE_DEBUG
 			std::cerr << "  storing tunnel info. src=" << tunnel.local_src << ", dst=" << tunnel.local_dst << ", id=" << item->tunnel_id << std::endl ;
 #endif
+		}
+
+		// Is this result too old?
+		// Tunnel Requests younger than TUNNEL_REQUESTS_LIFE_TIME are kept in the cache, so that they are not duplicated if they bounce in the network
+		// Nevertheless results received for Tunnel Requests older than TUNNEL_REQUESTS_RESULT_TIME are considered obsolete and discarded
+		if (time(NULL) > it->second.time_stamp + TUNNEL_REQUESTS_RESULT_TIME)
+		{
+			RsDbg() << "TURTLE p3turtle::handleTunnelResult Tunnel Request is known, but result arrives too late, dropping";
+			return;
 		}
 
 		// Is this result's target actually ours ?
