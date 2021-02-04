@@ -450,7 +450,8 @@ void BoardsCommentsItem::setCommentsSize(int comNb)
 void BoardsCommentsItem::fill()
 {
 
-	ui->logoLabel->setPixmap( FilesDefs::getPixmapFromQtResourcePath(":/icons/png/comment.png"));
+	ui->logoLabel->hide();
+	//ui->logoLabel->setPixmap( FilesDefs::getPixmapFromQtResourcePath(":/icons/png/comment.png"));
 
 	//RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_POSTED, mGroupMeta.mGroupId, groupName());
 	//ui->titleLabel->setText(link.toHtml());

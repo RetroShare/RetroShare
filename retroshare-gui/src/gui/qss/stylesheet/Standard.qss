@@ -862,7 +862,8 @@ GxsForumThreadWidget QToolButton#subscribeToolButton:hover {
 	border-radius: 4px;
 }
 
-GxsForumMsgItem QFrame#mainFrame, PeerItem QFrame#mainFrame{
+GxsForumMsgItem QFrame#mainFrame, PeerItem QFrame#mainFrame, GxsForumGroupItem QFrame#mainFrame,
+GxsChannelGroupItem QFrame#mainFrame {
 	background-color: white;
 }
 

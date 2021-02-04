@@ -133,7 +133,8 @@ void ChannelsCommentsItem::setup()
     // This is particularly important here because a channel may contain many posts, so duplicating the QImages here is deadly for the
     // memory.
 
-    ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/comment.png"));
+	ui->logoLabel->hide();
+    //ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/comment.png"));
     ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
     ui->voteUpButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/vote_up.png"));
     ui->voteDownButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/vote_down.png"));
