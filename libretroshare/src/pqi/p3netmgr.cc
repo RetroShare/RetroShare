@@ -469,13 +469,13 @@ void p3NetMgrIMPL::netStatusTick()
     if(netStatus <= RS_NET_UPNP_SETUP && mUseExtAddrFinder)
     {
         sockaddr_storage tmpip;
+        sockaddr_storage_setport(tmpip, guessNewExtPort());
 
-        if(mExtAddrFinder->hasValidIP(tmpip) && sockaddr_storage_ipv6_to_ipv4(tmpip))
+        if(mExtAddrFinder->hasValidIP(tmpip) && sockaddr_storage_ipv6_to_ipv4(tmpip) && !sockaddr_storage_same(tmpip,mExtAddr))
         {
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
             std::cerr << "p3NetMgrIMPL::netExtCheck() Ext supplied by ExtAddrFinder" << std::endl;
 #endif
-            sockaddr_storage_setport(tmpip, guessNewExtPort());
 
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
             std::cerr << "p3NetMgrIMPL::netExtCheck() ";
