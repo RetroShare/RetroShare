@@ -33,6 +33,7 @@
 #include "pqi/authssl.h"
 #include "pqi/p3linkmgr.h"
 #include "retroshare/rspeers.h"
+#include <retroshare/rsgxsdistsync.h>
 
 #include "ft/ftserver.h"
 #include "ft/ftdatamultiplex.h"
@@ -2330,6 +2331,9 @@ void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 
 	for(std::map<TurtleFileHash,TurtleHashInfo>::const_iterator it(_incoming_file_hashes.begin());it!=_incoming_file_hashes.end();++it)
 	{
+		if(rsGxsDistSync->isGXSHash(it->first))
+			continue;
+
 		hashes_info.push_back(std::vector<std::string>()) ;
 
 		std::vector<std::string>& hashes(hashes_info.back()) ;
@@ -2339,12 +2343,50 @@ void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 		hashes.push_back("Name not available") ;
 		hashes.push_back(printNumber(it->second.tunnels.size())) ;
 		//hashes.push_back(printNumber(now - it->second.time_stamp)+" secs ago") ;
+		hashes.push_back(GetFilenameForHash(it->first,it->second.service)); // [3] fn
+	}
+
+	for(std::map<TurtleTunnelId,RsTurtleClientService *>::const_iterator it(_outgoing_tunnel_client_services.begin());it!=_outgoing_tunnel_client_services.end();++it)
+	{
+		RsFileHash h;
+		for(std::map<TurtleTunnelId,TurtleTunnel>::const_iterator it3(_local_tunnels.begin());it3!=_local_tunnels.end();++it3)
+		{
+			if(it3->first == it->first)
+			{
+				h = it3->second.hash;
+				break;
+			}
+		}
+		if(rsGxsDistSync->isGXSHash(h))
+			continue;
+
+		bool have = false;
+		for(uint16_t i=0;i<hashes_info.size();++i)
+		{
+			if(hashes_info[i][0] == h.toStdString())
+			{
+				have = true;
+				break;
+			}
+		}
+		if(!have)
+		{
+			hashes_info.push_back(std::vector<std::string>()) ;
+			std::vector<std::string>& hashes(hashes_info.back()) ;
+			hashes.push_back(h.toStdString()) ; // [0] hash
+			hashes.push_back("---") ; // [1] name - unused
+			hashes.push_back("---") ; // [2] tun.count - unused
+			hashes.push_back(GetFilenameForHash(h,it->second)); // [3] fn
+		}
 	}
 
 	tunnels_info.clear();
 
 	for(std::map<TurtleTunnelId,TurtleTunnel>::const_iterator it(_local_tunnels.begin());it!=_local_tunnels.end();++it)
 	{
+		if(rsGxsDistSync->isGXSHash(it->second.hash))
+			continue;
+
 		tunnels_info.push_back(std::vector<std::string>()) ;
 		std::vector<std::string>& tunnel(tunnels_info.back()) ;
 
@@ -2364,6 +2406,7 @@ void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
         tunnel.push_back(it->second.hash.toStdString()) ;
 		tunnel.push_back(printNumber(now-it->second.time_stamp) + " secs ago") ;
 		tunnel.push_back(printFloatNumber(it->second.speed_Bps,false)) ; //
+
 	}
 
 	search_reqs_info.clear();
@@ -2490,3 +2533,27 @@ void p3turtle::TS_dumpState()
 	}
 }
 #endif
+
+std::string p3turtle::GetFilenameForHash(TurtleFileHash hash, RsTurtleClientService *service) const
+{
+	ftServer *client = dynamic_cast<ftServer*>(service) ;
+	if(!client)
+	{	std::cerr << "(EE) turtle getInfo -- client not a ftServer!!" << std::endl;
+		return 0;
+	}
+	bool encr = false;
+	RsFileHash real_hash ;
+	if(client->findRealHash(hash,real_hash))
+	{	hash = real_hash;
+		encr = true;
+	}
+	FileInfo fileInfo;
+	std::string fn = "n/a";
+	if(rsFiles->FileDetails(hash, RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_DOWNLOAD | RS_FILE_HINTS_UPLOAD, fileInfo))
+		fn = fileInfo.fname;
+	else
+		fn = std::string("-");
+	if(encr)
+		fn += std::string("  - e2ee");
+	return fn;
+}

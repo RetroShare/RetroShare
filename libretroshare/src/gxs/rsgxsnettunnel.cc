@@ -1155,22 +1155,7 @@ void RsGxsNetTunnelService::getStatistics(std::map<RsGxsGroupId,RsGxsNetTunnelGr
     bias = mRandomBias ;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+bool RsGxsNetTunnelService::isGXSHash(RsFileHash hash) const
+{
+	return mHandledHashes.find(hash) != mHandledHashes.end();
+}
