@@ -551,24 +551,25 @@ void ConnectFriendWizard::initializePage(int id)
 
 			ui->nodeEdit->setText(loc);
 
-            std::string s;
+            QString s;
+
             if(peerDetails.isHiddenNode)
-                s += peerDetails.hiddenNodeAddress;
+                s += QString::fromStdString(peerDetails.hiddenNodeAddress);
             else
             {
                 if(peerDetails.localAddr!="0.0.0.0")// This is not so nice, but because we deal we string there's no way
-                    s += peerDetails.localAddr;		// to ask about if the ip is null. We really need a proper IP class.
+                    s += QString::fromStdString(peerDetails.localAddr)+":"+QString::number(peerDetails.localPort);		// to ask about if the ip is null. We really need a proper IP class.
 
                 if(peerDetails.extAddr!="0.0.0.0")
                 {
-                    if(!s.empty()) s += " / " ;
-                    s += peerDetails.extAddr;
+                    if(!s.isNull()) s += " / " ;
+                    s += QString::fromStdString(peerDetails.extAddr) + ":"+QString::number(peerDetails.extPort);
                 }
 
                 if(!peerDetails.dyndns.empty())
-                    s += "(" + peerDetails.dyndns + ")" ;
+                    s += " (" + QString::fromStdString(peerDetails.dyndns) + ")" ;
             }
-            ui->ipEdit->setText(QString::fromStdString(s));
+            ui->ipEdit->setText(s);
 			ui->signersEdit->setPlainText(ts);
 
 			fillGroups(this, ui->groupComboBox, groupId);
