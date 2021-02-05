@@ -802,20 +802,8 @@ HomePage QPlainTextEdit#userCertEdit {
 	background: transparent;
 }
 
-HomePage QFrame#addframe{
-	border: 2px solid #0099cc;
-	border-radius: 6px;
-	background: white;
-}
-
 ConnectFriendWizard QFrame#friendFrame {
 	border: 2px solid #0099cc;
-	border-radius: 6px;
-	background: white;
-}
-
-HomePage QFrame#helpframe{
-	border: 2px solid #009933;
 	border-radius: 6px;
 	background: white;
 }
@@ -1191,3 +1179,20 @@ BoardsCommentsItem QLabel#subjectLabel, QLabel#titleLabel , QLabel#nameLabel {
 	font: bold;
 }
 
+HomePage QToolButton#addButton {
+	font: bold;
+	font-size: 15pt;
+	color: white;
+	background: #0099cc;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+HomePage QToolButton#addButton:hover {
+	background: #03b1f3;
+	border-radius: 4px;
+	min-width: 4em;
+	padding: 2px;
+}

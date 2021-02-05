@@ -58,6 +58,7 @@ HomePage::HomePage(QWidget *parent) :
     updateCertificate();
 
     connect(ui->addButton, SIGNAL(clicked()), this, SLOT(addFriend()));
+    connect(ui->copyIDButton, SIGNAL(clicked()), this, SLOT(copyId()));
 
     QAction *WebMailAction = new QAction(QIcon(),tr("Invite via WebMail"), this);
     connect(WebMailAction, SIGNAL(triggered()), this, SLOT(webMail()));
@@ -343,7 +344,7 @@ void HomePage::webMail()
 
 void HomePage::openWebHelp()
 {
-    QDesktopServices::openUrl(QUrl(QString("https://retroshare.readthedocs.io")));
+    QDesktopServices::openUrl(QUrl(QString("https://retroshare.readthedocs.io/en/latest/")));
 }
 
 void HomePage::toggleUseOldFormat()
