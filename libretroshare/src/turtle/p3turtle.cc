@@ -1170,7 +1170,9 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 		// Nevertheless results received for Search Requests older than SEARCH_REQUESTS_RESULT_TIME are considered obsolete and discarded
 		if (time(NULL) > it->second.time_stamp + SEARCH_REQUESTS_RESULT_TIME)
 		{
+#ifdef P3TURTLE_DEBUG
 			RsDbg() << "TURTLE p3turtle::handleSearchResult Search Request is known, but result arrives too late, dropping";
+#endif
 			return;
 		}
 
@@ -1889,7 +1891,9 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 		// Nevertheless results received for Tunnel Requests older than TUNNEL_REQUESTS_RESULT_TIME are considered obsolete and discarded
 		if (time(NULL) > it->second.time_stamp + TUNNEL_REQUESTS_RESULT_TIME)
 		{
+#ifdef P3TURTLE_DEBUG
 			RsDbg() << "TURTLE p3turtle::handleTunnelResult Tunnel Request is known, but result arrives too late, dropping";
+#endif
 			return;
 		}
 
