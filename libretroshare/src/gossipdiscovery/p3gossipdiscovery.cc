@@ -379,7 +379,23 @@ void p3discovery2::recvOwnContactInfo(const RsPeerId &fromId, const RsDiscContac
 	mPeerMgr->setLocation(fromId, item->location);
 	mPeerMgr->setVisState(fromId, item->vs_disc, item->vs_dht);
 
-	setPeerVersion(fromId, item->version);
+    if(!det.localAddr.empty())
+    {
+        if(sockaddr_storage_isValidNet(item->localAddrV4.addr))
+            mPeerMgr->setLocalAddress(fromId,item->localAddrV4.addr);
+        else if(sockaddr_storage_isValidNet(item->localAddrV6.addr))
+            mPeerMgr->setLocalAddress(fromId,item->localAddrV6.addr);
+    }
+
+    if(!det.extAddr.empty())
+    {
+        if(sockaddr_storage_isValidNet(item->extAddrV4.addr))
+            mPeerMgr->setExtAddress(fromId,item->extAddrV4.addr);
+        else if(sockaddr_storage_isValidNet(item->extAddrV6.addr))
+            mPeerMgr->setExtAddress(fromId,item->extAddrV6.addr);
+    }
+
+    setPeerVersion(fromId, item->version);
 
     // Hidden nodes do not need IP information. So that information is dropped.
     // However, that doesn't mean hidden nodes do not know that information. Normally

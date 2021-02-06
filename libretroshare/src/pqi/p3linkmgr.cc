@@ -472,6 +472,17 @@ void p3LinkMgrIMPL::tickMonitors()
 				std::cerr << std::endl;
 #endif
 
+//                if(peer.actions & RS_PEER_CONNECTED)
+//                {
+//                    pqiIpAddress ip;
+//                    ip.mAddr = it->second.currentConnAddrAttempt.addr;
+//                    ip.mSeenTime = time(NULL);
+//                    ip.mSrc = time(NULL);
+//
+//                    mPeerMgr->updateCurrentAddress(it->second.id,)
+//                    std::cerr << "Peer " << it->second.id << " connected with IP " << sockaddr_storage_tostring(it->second.currentConnAddrAttempt.addr) << std::endl;
+//                }
+
 				/* notify GUI */
 				if (rsEvents && (peer.actions & RS_PEER_CONNECTED))
 				{
@@ -787,6 +798,8 @@ bool p3LinkMgrIMPL::connectResult(const RsPeerId &id, bool success, bool isIncom
 	bool doDhtAssist = false ;
 	bool updatePeerAddr = false;
 	bool updateLastContact = false;
+
+    std::cerr << "Connection result with peer " << id << ": " << success << ". Is incoming: " << isIncomingConnection << ", remote addr: " << sockaddr_storage_tostring(remote_peer_address) << std::endl;
 
 	{
 		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
