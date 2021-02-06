@@ -33,6 +33,7 @@
 #include "pqi/authssl.h"
 #include "pqi/p3linkmgr.h"
 #include "retroshare/rspeers.h"
+#include <retroshare/rsgxsdistsync.h>
 
 #include "ft/ftserver.h"
 #include "ft/ftdatamultiplex.h"
@@ -2330,6 +2331,9 @@ void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 
 	for(std::map<TurtleFileHash,TurtleHashInfo>::const_iterator it(_incoming_file_hashes.begin());it!=_incoming_file_hashes.end();++it)
 	{
+		if(rsGxsDistSync->isGXSHash(it->first))
+			continue;
+
 		hashes_info.push_back(std::vector<std::string>()) ;
 
 		std::vector<std::string>& hashes(hashes_info.back()) ;
@@ -2345,6 +2349,9 @@ void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 
 	for(std::map<TurtleTunnelId,TurtleTunnel>::const_iterator it(_local_tunnels.begin());it!=_local_tunnels.end();++it)
 	{
+		if(rsGxsDistSync->isGXSHash(it->second.hash))
+			continue;
+
 		tunnels_info.push_back(std::vector<std::string>()) ;
 		std::vector<std::string>& tunnel(tunnels_info.back()) ;
 
