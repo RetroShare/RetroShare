@@ -108,9 +108,9 @@ HomePage::HomePage(QWidget *parent) :
                             <div align=center>\
                     <IMG align=\"center\" width=\"%2\" src=\":/images/network_map.png\"/> \
                     </div>\
-                    <p>To do so, copy your certificate on this page and send it to friends, and add your friends' certificate.</p> \
+                    <p>To do so, copy your RetroShare ID on this page and send it to friends, and add your friends' RetroShare ID.</p> \
                             <p>Another option is to search the internet for \"Retroshare chat servers\" (independently administrated). These servers allow you to exchange \
-                            certificates with a dedicated Retroshare node, through which\
+                            RetroShare ID with a dedicated Retroshare node, through which\
                             you will be able to anonymously meet other people.</p> ").arg(QString::number(2*S)).arg(width()*0.5);
                             registerHelpButton(ui->helpButton,help_str,"HomePage") ;
 
