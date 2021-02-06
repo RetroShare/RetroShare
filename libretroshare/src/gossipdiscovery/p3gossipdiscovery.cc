@@ -373,26 +373,30 @@ void p3discovery2::recvOwnContactInfo(const RsPeerId &fromId, const RsDiscContac
 	}
 
 	// Peer Own Info replaces the existing info, because the
-	// peer is the primary source of his own IPs.
+    // peer is the primary source of his own IPs, except for hidden nodes
+    // that normally send nothing. We still ignore it as a double security.
 
 	mPeerMgr->setNetworkMode(fromId, item->netMode);
 	mPeerMgr->setLocation(fromId, item->location);
 	mPeerMgr->setVisState(fromId, item->vs_disc, item->vs_dht);
 
-    if(!det.localAddr.empty())
+    if(!mPeerMgr->isHiddenNode(fromId))
     {
-        if(sockaddr_storage_isValidNet(item->localAddrV4.addr))
-            mPeerMgr->setLocalAddress(fromId,item->localAddrV4.addr);
-        else if(sockaddr_storage_isValidNet(item->localAddrV6.addr))
-            mPeerMgr->setLocalAddress(fromId,item->localAddrV6.addr);
-    }
+        if(!det.localAddr.empty())
+        {
+            if(sockaddr_storage_isValidNet(item->localAddrV4.addr))
+                mPeerMgr->setLocalAddress(fromId,item->localAddrV4.addr);
+            else if(sockaddr_storage_isValidNet(item->localAddrV6.addr))
+                mPeerMgr->setLocalAddress(fromId,item->localAddrV6.addr);
+        }
 
-    if(!det.extAddr.empty())
-    {
-        if(sockaddr_storage_isValidNet(item->extAddrV4.addr))
-            mPeerMgr->setExtAddress(fromId,item->extAddrV4.addr);
-        else if(sockaddr_storage_isValidNet(item->extAddrV6.addr))
-            mPeerMgr->setExtAddress(fromId,item->extAddrV6.addr);
+        if(!det.extAddr.empty())
+        {
+            if(sockaddr_storage_isValidNet(item->extAddrV4.addr))
+                mPeerMgr->setExtAddress(fromId,item->extAddrV4.addr);
+            else if(sockaddr_storage_isValidNet(item->extAddrV6.addr))
+                mPeerMgr->setExtAddress(fromId,item->extAddrV6.addr);
+        }
     }
 
     setPeerVersion(fromId, item->version);
