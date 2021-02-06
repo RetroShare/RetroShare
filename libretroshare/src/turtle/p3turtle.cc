@@ -78,9 +78,9 @@ void TS_dumpState() ;
 //    - I updated forward probabilities to higher values, and min them to 1/nb_connected_friends to prevent blocking tunnels.
 //
 static const rstime_t TUNNEL_REQUESTS_LIFE_TIME                = 600 ; /// life time for tunnel requests in the cache.
-static const rstime_t TUNNEL_REQUESTS_RESULT_TIME              =  10 ; /// maximum time during which we process/forward results for known tunnel requests
+static const rstime_t TUNNEL_REQUESTS_RESULT_TIME              =  20 ; /// maximum time during which we process/forward results for known tunnel requests
 static const rstime_t SEARCH_REQUESTS_LIFE_TIME                = 600 ; /// life time for search requests in the cache
-static const rstime_t SEARCH_REQUESTS_RESULT_TIME              =  10 ; /// maximum time during which we process/forward results for known search requests
+static const rstime_t SEARCH_REQUESTS_RESULT_TIME              =  20 ; /// maximum time during which we process/forward results for known search requests
 static const rstime_t REGULAR_TUNNEL_DIGGING_TIME              = 300 ; /// maximum interval between two tunnel digging campaigns.
 static const rstime_t MAXIMUM_TUNNEL_IDLE_TIME                 =  60 ; /// maximum life time of an unused tunnel.
 static const rstime_t EMPTY_TUNNELS_DIGGING_TIME               =  50 ; /// look into tunnels regularly every 50 sec.
