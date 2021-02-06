@@ -388,6 +388,15 @@ void p3discovery2::recvOwnContactInfo(const RsPeerId &fromId, const RsDiscContac
     if(!mPeerMgr->isHiddenNode(rsPeers->getOwnId()))
         updatePeerAddresses(item);
 
+    if(rsEvents)
+    {
+        auto ev = std::make_shared<RsGossipDiscoveryEvent>();
+        ev->mGossipDiscoveryEventType = RsGossipDiscoveryEventType::FRIEND_PEER_INFO_RECEIVED;
+        ev->mFromId = fromId;
+        ev->mAboutId = item->sslId;
+        rsEvents->postEvent(ev);
+    }
+
     // if the peer is not validated, we stop the exchange here
 
     if(det.skip_pgp_signature_validation)
@@ -977,7 +986,18 @@ void p3discovery2::processContactInfo(const RsPeerId &fromId, const RsDiscContac
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_NEIGHBOURS, NOTIFY_TYPE_MOD);
 
 	if(should_notify_discovery)
-		RsServer::notify()->notifyDiscInfoChanged();
+    {
+        RsServer::notify()->notifyDiscInfoChanged();
+
+        if(rsEvents)
+        {
+            auto ev = std::make_shared<RsGossipDiscoveryEvent>();
+            ev->mGossipDiscoveryEventType = RsGossipDiscoveryEventType::FRIEND_PEER_INFO_RECEIVED;
+            ev->mFromId = fromId;
+            ev->mAboutId = item->sslId;
+            rsEvents->postEvent(ev);
+        }
+    }
 }
 
 /* we explictly request certificates, instead of getting them all the time
