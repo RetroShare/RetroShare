@@ -242,7 +242,7 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 		{
 			if(_f2f_TW->topLevelItem(i)->text(0).left(40).toStdString() == hashes_info[j][0])
 			{
-				_f2f_TW->topLevelItem(i)->setText(0,QString::fromStdString(hashes_info[j][0]) + "\t file: " + QString::fromStdString(hashes_info[j][3]));
+				_f2f_TW->topLevelItem(i)->setText(0,QString("%1 \t file: %2").arg(QString::fromStdString(hashes_info[j][0]),0,45).arg(QString::fromStdString(hashes_info[j][3])));
 				found=true ;
 				break;
 			}
