@@ -42,7 +42,7 @@ void RSTreeView::mouseMoveEvent(QMouseEvent *e)
 {
     QModelIndex idx = indexAt(e->pos());
 
-    if(idx != selectionModel()->currentIndex())
+    if(idx.isValid() && idx != selectionModel()->currentIndex())
         selectionModel()->setCurrentIndex(idx,QItemSelectionModel::ClearAndSelect);
 
     QTreeView::mouseMoveEvent(e);
