@@ -470,9 +470,9 @@ void GxsForumMsgItem::toggle()
 
 void GxsForumMsgItem::setReadStatus(bool isNew, bool /*isUnread*/)
 {
-	ui->frame->setProperty("new", isNew);
-	ui->frame->style()->unpolish(ui->frame);
-	ui->frame->style()->polish(  ui->frame);
+	ui->mainFrame->setProperty("new", isNew);
+	ui->mainFrame->style()->unpolish(ui->mainFrame);
+	ui->mainFrame->style()->polish(  ui->mainFrame);
 }
 
 /*********** SPECIFIC FUNCTIONS ***********************/
