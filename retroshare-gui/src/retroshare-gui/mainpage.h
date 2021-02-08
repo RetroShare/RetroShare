@@ -37,7 +37,7 @@ class MainPage : public QWidget
 
 public:
 	/** Default Constructor */
-	MainPage(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+	MainPage(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
 
 	// Icon to be used to display the main page.
 	//
@@ -47,12 +47,12 @@ public:
 	// Name of the page, to put in the leftside list and action name
 	//
 	virtual QString pageName() const { return mName ; }
-	void setPageName(QString name) { mName = name; }
+	void setPageName(const QString& name) { mName = name; }
 
 	// Text to be used to display in the help browser
 	//
 	virtual QString helpText() const { return mHelp ; }
-	void setHelpText(QString help) { mHelp = help; }
+	void setHelpText(const QString& help) { mHelp = help; }
 
 	virtual void retranslateUi() {}
 

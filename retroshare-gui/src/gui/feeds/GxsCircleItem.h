@@ -32,16 +32,6 @@ class GxsCircleItem;
 
 class FeedHolder;
 
-struct CircleUpdateOrder
-{
-    enum { UNKNOWN_ACTION=0x00, GRANT_MEMBERSHIP=0x01, REVOKE_MEMBERSHIP=0x02 };
-
-    uint32_t token ;
-    RsGxsId  gxs_id ;
-    uint32_t action ;
-};
-
-
 class GxsCircleItem : public FeedItem
 {
 	Q_OBJECT
@@ -57,7 +47,7 @@ public:
 
 protected:
 	/* FeedItem */
-	virtual void doExpand(bool /*open*/) {}
+	virtual void doExpand(bool /*open*/) override {}
 
 	void updateCircleGroup(const uint32_t& token);
 
