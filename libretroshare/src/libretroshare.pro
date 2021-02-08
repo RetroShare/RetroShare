@@ -636,7 +636,6 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsexpr.cc \
 			util/smallobject.cc \
 			util/rsdir.cc \
-			util/rsmemory.cc \
 			util/rsdiscspace.cc \
 			util/rsnet.cc \
 			util/rsnet_ss.cc \
@@ -715,7 +714,8 @@ SOURCES += rsitems/rsnxsitems.cc \
 	gxs/gxstokenqueue.cc \
 	gxs/rsgxsnetutils.cc \
 	gxs/rsgxsutil.cc \
-	gxs/rsgxsrequesttypes.cc
+        gxs/rsgxsrequesttypes.cc \
+        gxs/rsnxsobserver.cpp
 
 # gxs tunnels
 HEADERS += gxstunnel/p3gxstunnel.h \
@@ -937,6 +937,14 @@ rs_jsonapi {
 
     HEADERS += jsonapi/jsonapi.h jsonapi/jsonapiitems.h retroshare/rsjsonapi.h
     SOURCES += jsonapi/jsonapi.cpp
+}
+
+rs_deep_forums_index {
+    HEADERS *= deep_search/commonutils.hpp
+    SOURCES *= deep_search/commonutils.cpp
+
+    HEADERS += deep_search/forumsindex.hpp
+    SOURCES += deep_search/forumsindex.cpp
 }
 
 rs_deep_channels_index {
