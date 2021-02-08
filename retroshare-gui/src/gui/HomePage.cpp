@@ -190,6 +190,7 @@ void HomePage::toggleIncludeAllIPs()
 
 HomePage::~HomePage()
 {
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
     delete ui;
 }
 
