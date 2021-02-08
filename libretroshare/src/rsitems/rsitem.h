@@ -86,9 +86,8 @@ struct RsItem : RsMemoryManagement::SmallObject, RsSerializable
 	virtual void serial_process(RsGenericSerializer::SerializeJob,
 	                            RsGenericSerializer::SerializeContext&)// = 0;
 	{
-		std::cerr << "(EE) RsItem::serial_process(...) called by an item using"
-		          << "new serialization classes, but not derived! Class is "
-		          << typeid(*this).name() << std::endl;
+		RS_ERR( "called by an item using new serialization system without "
+		        "overriding Class is: ", typeid(*this).name() );
 		print_stacktrace();
 	}
 

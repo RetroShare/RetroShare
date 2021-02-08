@@ -3,8 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2012 Cyril Soler <csoler@users.sourceforge.net>                   *
- * Copyright 2019-2020 Gioacchino Mazzurco <gio@altermundi.net>                *
+ * Copyright (C) 2012  Cyril Soler <csoler@users.sourceforge.net>              *
+ * Copyright (C) 2019-2021  Gioacchino Mazzurco <gio@altermundi.net>           *
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -25,8 +26,10 @@
 #include <cstdlib>
 #include <iostream>
 #include <memory>
+#include <system_error>
 
 #include "util/stacktrace.h"
+#include "util/rsdebug.h"
 
 /**
  * @brief Shorthand macro to declare optional functions output parameters
@@ -108,7 +111,66 @@ template<typename T> using rs_view_ptr = T*;
  * @see http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1408r0.pdf */
 template<typename T> using rs_owner_ptr = T*;
 
-void *rs_malloc(size_t size) ;
+
+/// 1Gb should be enough for everything!
+static constexpr size_t SAFE_MEMALLOC_THRESHOLD = 1024*1024*1024;
+
+/** Comfortable templated safer malloc, just use it specifing the type of the
+ * pointer to be returned without need of ugly casting the returned pointer
+ * `uint8_t* ptr = rs_malloc<uint8_t>(40);`
+ * @param[in] size number of bytes to allocate
+ * @param[out] ec optional storage for error details. Value is meaningful only
+ *	whem nullptr is returned.
+ * @return nullptr on error, pointer to the allocated chuck of memory on success
+ */
+template<typename T = void> rs_owner_ptr<T> rs_malloc(
+        size_t size,
+        rs_view_ptr<std::error_condition> ec = nullptr )
+{
+	if(size == 0)
+	{
+		if(!ec)
+		{
+			RS_ERR("A chunk of size 0 was requested");
+			print_stacktrace();
+			exit(static_cast<int>(std::errc::invalid_argument));
+		}
+
+		*ec = std::errc::invalid_argument;
+		return nullptr;
+	}
+
+	if(size > SAFE_MEMALLOC_THRESHOLD)
+	{
+		if(!ec)
+		{
+			RS_ERR( "A chunk of size larger than ", SAFE_MEMALLOC_THRESHOLD,
+			        " was requested" );
+			exit(static_cast<int>(std::errc::argument_out_of_domain));
+		}
+
+		*ec = std::errc::argument_out_of_domain;
+		return nullptr;
+	}
+
+	void* mem = malloc(size);
+	if(!mem)
+	{
+		if(!ec)
+		{
+			RS_ERR( "Allocation failed for a chunk of ", size,
+			        " bytes with: ", errno);
+			print_stacktrace();
+			exit(errno);
+		}
+
+		*ec = rs_errno_to_condition(errno);
+		return nullptr;
+	}
+
+	return static_cast<rs_owner_ptr<T>>(mem);
+}
+
 
 /** @deprecated use std::unique_ptr instead
 // This is a scope guard to release the memory block when going of of the current scope.
@@ -128,7 +190,7 @@ void *rs_malloc(size_t size) ;
 //
 // }	// mem gets freed automatically
 */
-class RsTemporaryMemory
+class RS_DEPRECATED_FOR("std::unique_ptr") RsTemporaryMemory
 {
 public:
 	explicit RsTemporaryMemory(size_t s)

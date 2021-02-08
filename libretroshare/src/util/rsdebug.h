@@ -2,8 +2,8 @@
  * RetroShare debugging utilities                                              *
  *                                                                             *
  * Copyright (C) 2004-2008  Robert Fernie <retroshare@lunamutt.com>            *
- * Copyright (C) 2019-2020 Gioacchino Mazzurco <gio@eigenlab.org>              *
- * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>       *
+ * Copyright (C) 2019-2021 Gioacchino Mazzurco <gio@eigenlab.org>              *
+ * Copyright (C) 2020-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -64,6 +64,12 @@ std::ostream &operator<<(std::ostream& out, const std::error_condition& err);
 /** Provide unkown error message for all error categories to avoid duplicating
  * the message around */
 std::string rsErrorNotInCategory(int errNum, const std::string& categoryName);
+
+/** Convert C errno codes to modern C++11 std::error_condition, this is quite
+ * useful to use toghether with C functions used around the code like `malloc`,
+ * `socket` etc to let errors bubble up comprensibly to upper layers C++11 code
+ */
+std::error_condition rs_errno_to_condition(int errno_code);
 
 
 template <RsLoggerCategories CATEGORY>

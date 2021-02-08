@@ -4,8 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2012  Robert Fernie <retroshare@lunamutt.com>                 *
- * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
- * Copyright (C) 2019-2020  Asociación Civil Altermundi <info@altermundi.net>  *
+ * Copyright (C) 2018-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -45,6 +45,11 @@ class RsGxsChannels;
  */
 extern RsGxsChannels* rsGxsChannels;
 
+
+/* TODO: At this abstraction level that turtle is used for distant searches
+ * should be an hidden implementation detail. As of today a bit of those
+ * implementation details leaks around because we use TurtleRequestId in this
+ * interface */
 
 struct RsGxsChannelGroup : RsSerializable, RsGxsGenericGroupData
 {
@@ -108,29 +113,38 @@ struct RsGxsChannelPost : RsSerializable, RsGxsGenericMsgData
 enum class RsChannelEventCode: uint8_t
 {
 	UNKNOWN                         = 0x00,
-	NEW_CHANNEL                     = 0x01, // emitted when new channel is received
-	UPDATED_CHANNEL                 = 0x02, // emitted when existing channel is updated
-	NEW_MESSAGE                     = 0x03, // new message reeived in a particular channel (group and msg id)
-	UPDATED_MESSAGE                 = 0x04, // existing message has been updated in a particular channel
-	RECEIVED_PUBLISH_KEY            = 0x05, // publish key for this channel has been received
-	SUBSCRIBE_STATUS_CHANGED        = 0x06, // subscription for channel mChannelGroupId changed.
-	READ_STATUS_CHANGED             = 0x07, // existing message has been read or set to unread
-	RECEIVED_DISTANT_SEARCH_RESULT  = 0x08, // result for the given group id available for the given turtle request id
-	STATISTICS_CHANGED              = 0x09, // stats (nb of supplier friends, how many msgs they have etc) has changed
-    SYNC_PARAMETERS_UPDATED         = 0x0a, // sync and storage times have changed
-    NEW_COMMENT                     = 0x0b, // new comment arrived/published. mChannelThreadId gives the ID of the commented message
-    NEW_VOTE                        = 0x0c, // new vote arrived/published. mChannelThreadId gives the ID of the votes message comment
-    DELETED_CHANNEL                 = 0x0d, // channel was deleted by auto-cleaning system
+	NEW_CHANNEL                     = 0x01, /// emitted when new channel is received
+	UPDATED_CHANNEL                 = 0x02, /// emitted when existing channel is updated
+	NEW_MESSAGE                     = 0x03, /// new message reeived in a particular channel (group and msg id)
+	UPDATED_MESSAGE                 = 0x04, /// existing message has been updated in a particular channel
+	RECEIVED_PUBLISH_KEY            = 0x05, /// publish key for this channel has been received
+	SUBSCRIBE_STATUS_CHANGED        = 0x06, /// subscription for channel mChannelGroupId changed.
+	READ_STATUS_CHANGED             = 0x07, /// existing message has been read or set to unread
+
+	/** Result for the given group id available for the given turtle request id
+	 * @deprecated kept for retrocompatibility with old search system new code
+	 * should use @see DISTANT_SEARCH_RESULT instead */
+	RECEIVED_TURTLE_SEARCH_RESULT   = 0x08,
+
+	STATISTICS_CHANGED              = 0x09, /// stats (nb of supplier friends, how many msgs they have etc) has changed
+	SYNC_PARAMETERS_UPDATED         = 0x0a, /// sync and storage times have changed
+	NEW_COMMENT                     = 0x0b, /// new comment arrived/published. mChannelThreadId gives the ID of the commented message
+	NEW_VOTE                        = 0x0c, /// new vote arrived/published. mChannelThreadId gives the ID of the votes message comment
+	DELETED_CHANNEL                 = 0x0d, /// channel was deleted by auto-cleaning system
+	DELETED_POST                    = 0x0e, /// Post deleted (usually by cleaning)
+	DISTANT_SEARCH_RESULT           = 0x0f  /// Distant search result received
 };
 
 struct RsGxsChannelEvent: RsEvent
 {
-	RsGxsChannelEvent(): RsEvent(RsEventType::GXS_CHANNELS), mChannelEventCode(RsChannelEventCode::UNKNOWN) {}
+	RsGxsChannelEvent():
+	    RsEvent(RsEventType::GXS_CHANNELS),
+	    mChannelEventCode(RsChannelEventCode::UNKNOWN) {}
 
 	RsChannelEventCode mChannelEventCode;
 	RsGxsGroupId mChannelGroupId;
 	RsGxsMessageId mChannelMsgId;
-    RsGxsMessageId mChannelThreadId;
+	RsGxsMessageId mChannelThreadId;
 
 	///* @see RsEvent @see RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override
@@ -143,13 +157,14 @@ struct RsGxsChannelEvent: RsEvent
 	}
 };
 
-// This event is used to factor multiple search results notifications in a single event.
-
-struct RsGxsChannelSearchResultEvent: RsEvent
+/** This event is used to factor multiple search results notifications in a
+ * single event.*/
+struct RS_DEPRECATED_FOR(RsGxsChannelDistantSearchResultEvent)
+RsGxsChannelSearchResultEvent: RsEvent
 {
 	RsGxsChannelSearchResultEvent():
 	    RsEvent(RsEventType::GXS_CHANNELS),
-	    mChannelEventCode(RsChannelEventCode::RECEIVED_DISTANT_SEARCH_RESULT) {}
+        mChannelEventCode(RsChannelEventCode::RECEIVED_TURTLE_SEARCH_RESULT) {}
 
 	RsChannelEventCode mChannelEventCode;
 	std::map<TurtleRequestId,std::set<RsGxsGroupId> > mSearchResultsMap;
@@ -161,6 +176,29 @@ struct RsGxsChannelSearchResultEvent: RsEvent
 
 		RS_SERIAL_PROCESS(mChannelEventCode);
 		RS_SERIAL_PROCESS(mSearchResultsMap);
+	}
+};
+
+/** This event is fired once distant search results are received */
+struct RsGxsChannelDistantSearchResultEvent: RsEvent
+{
+	RsGxsChannelDistantSearchResultEvent():
+	    RsEvent(RsEventType::GXS_CHANNELS),
+	    mChannelEventCode(RsChannelEventCode::DISTANT_SEARCH_RESULT) {}
+
+	RsChannelEventCode mChannelEventCode;
+	TurtleRequestId mSearchId;
+	std::vector<RsGxsSearchResult> mSearchResults;
+
+	///* @see RsEvent @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx ) override
+	{
+		RsEvent::serial_process(j, ctx);
+
+		RS_SERIAL_PROCESS(mChannelEventCode);
+		RS_SERIAL_PROCESS(mSearchId);
+		RS_SERIAL_PROCESS(mSearchResults);
 	}
 };
 
@@ -386,11 +424,15 @@ public:
 	 * @brief Get channel content summaries
 	 * @jsonapi{development}
 	 * @param[in] channelId id of the channel of which the content is requested
+	 * @param[in] contentIds ids of requested contents, if empty summaries of
+	 *	all messages are reqeusted
 	 * @param[out] summaries storage for summaries
 	 * @return false if something failed, true otherwhise
 	 */
-	virtual bool getContentSummaries( const RsGxsGroupId& channelId,
-	                                  std::vector<RsMsgMetaData>& summaries ) = 0;
+	virtual std::error_condition getContentSummaries(
+	        const RsGxsGroupId& channelId,
+	        const std::set<RsGxsMessageId>& contentIds,
+	        std::vector<RsMsgMetaData>& summaries ) = 0;
 
 	/**
 	 * @brief Toggle post read status. Blocking API.
@@ -422,22 +464,23 @@ public:
 	virtual bool subscribeToChannel( const RsGxsGroupId& channelId,
 	                                 bool subscribe ) = 0;
 
-    /**
-     * \brief Retrieve statistics about the channel service
+	/**
+	 * @brief Retrieve statistics about the channel service
 	 * @jsonapi{development}
-     * \param[out] stat       Statistics structure
-     * \return
-     */
-    virtual bool getChannelServiceStatistics(GxsServiceStatistic& stat) =0;
+	 * @param[out] stat storage for statistics
+	 * @return true on success false otherwise
+	 */
+	virtual bool getChannelServiceStatistics(GxsServiceStatistic& stat) =0;
 
-    /**
-     * \brief Retrieve statistics about the given channel
+	/**
+	 * @brief Retrieve statistics about the given channel
 	 * @jsonapi{development}
-     * \param[in]  channelId  Id of the channel group
-     * \param[out] stat       Statistics structure
-     * \return
-     */
-    virtual bool getChannelStatistics(const RsGxsGroupId& channelId,GxsGroupStatistic& stat) =0;
+	 * @param[in] channelId Id of the channel group
+	 * @param[out] stat  storage for statistics
+	 * @return true on success false otherwise
+	 */
+	virtual bool getChannelStatistics(
+	        const RsGxsGroupId& channelId, GxsGroupStatistic& stat ) =0;
 
 	/// default base URL used for channels links @see exportChannelLink
 	static const std::string DEFAULT_CHANNEL_BASE_URL;
@@ -496,14 +539,18 @@ public:
 	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string) ) = 0;
 
 	/**
-	 * @brief Search the turtle reachable network for matching channels
+	 * @brief Search the whole reachable network for matching channels and
+	 *	contents
 	 * @jsonapi{development}
-	 * An @see RsGxsChannelSearchResultEvent is emitted when matching channels
-	 * arrives from the network
+	 * An @see RsGxsChannelSearchResultEvent is emitted when matching results
+	 *	arrives from the network
 	 * @param[in] matchString string to search into the channels
-	 * @return search id
+	 * @param[out] searchId storage for search id, useful to track search events
+	 *	and retrieve search results
+	 * @return success or error details
 	 */
-	virtual TurtleRequestId turtleSearchRequest(const std::string& matchString)=0;
+	virtual std::error_condition distantSearchRequest(
+	        const std::string& matchString, TurtleRequestId& searchId ) = 0;
 
 	/**
 	 * @brief Retrieve available search results
@@ -533,16 +580,18 @@ public:
 	 * @param[out] distantGroup storage for group data
 	 * @return false on error, true otherwise
 	 */
-    virtual bool getDistantSearchResultGroupData(const RsGxsGroupId& groupId, RsGxsChannelGroup& distantGroup ) = 0;
+	virtual bool getDistantSearchResultGroupData(
+	        const RsGxsGroupId& groupId, RsGxsChannelGroup& distantGroup ) = 0;
 
-    /**
-     * @brief getDistantSearchStatus
-     * 			Returns the status of ongoing search: unknown (probably not even searched), known as a search result,
-     *          data request ongoing and data available
-     */
-    virtual DistantSearchGroupStatus getDistantSearchStatus(const RsGxsGroupId& group_id) =0;
+	/**
+	 * @brief Get the status of ongoing search
+	 * @return unknown (probably not even searched), known as a search result,
+	 * data request ongoing and data available
+	 */
+	virtual DistantSearchGroupStatus getDistantSearchStatus(
+	        const RsGxsGroupId& group_id ) =0;
 
-    /**
+	/**
 	 * @brief Clear accumulated search results
 	 * @jsonapi{development}
 	 * @param[in] reqId search id
