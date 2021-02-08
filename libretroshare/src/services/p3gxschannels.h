@@ -4,7 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2012  Robert Fernie <retroshare@lunamutt.com>                 *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2018-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -22,6 +23,8 @@
  *******************************************************************************/
 #pragma once
 
+#include <map>
+#include <string>
 
 #include "retroshare/rsgxschannels.h"
 #include "services/p3gxscommon.h"
@@ -30,9 +33,7 @@
 #include "util/rsmemory.h"
 #include "util/rsdebug.h"
 #include "util/rstickevent.h"
-
-#include <map>
-#include <string>
+#include "deep_search/channelsindex.hpp"
 
 
 // This class is only a helper to parse the channel group service string.
@@ -56,6 +57,11 @@ class p3GxsChannels: public RsGenExchange, public RsGxsChannels,
 public:
 	p3GxsChannels( RsGeneralDataService* gds, RsNetworkExchangeService* nes,
 	               RsGixs* gixs );
+
+	/// @see RsGxsChannels
+	std::error_condition distantSearchRequest(
+	        const std::string& matchString, TurtleRequestId& searchId ) override;
+
     virtual RsServiceInfo getServiceInfo() override;
 
     virtual void service_tick() override;
@@ -69,7 +75,7 @@ protected:
     virtual bool loadList(std::list<RsItem *>& loadList) override;               // @see p3Config::loadList(std::list<RsItem *>&)
 
     virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id) override;
-    virtual TurtleRequestId turtleSearchRequest(const std::string& match_string) override;
+
     virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSearchResults> &results)  override;
     virtual bool clearDistantSearchResults(TurtleRequestId req) override;
     virtual bool getDistantSearchResultGroupData(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group) override;
@@ -111,24 +117,6 @@ virtual bool setChannelAutoDownload(const RsGxsGroupId &groupId, bool enabled) o
 virtual	bool getChannelAutoDownload(const RsGxsGroupId &groupid, bool& enabled) override;
 virtual bool setChannelDownloadDirectory(const RsGxsGroupId &groupId, const std::string& directory) override;
 virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::string& directory) override;
-
-#ifdef TO_REMOVE
-	/// @see RsGxsChannels::turtleSearchRequest
-	virtual bool turtleSearchRequest(const std::string& matchString,
-	        const std::function<void (const RsGxsGroupSummary&)>& multiCallback,
-	        rstime_t maxWait = 300 ) override;
-
-	/// @see RsGxsChannels::turtleChannelRequest
-	virtual bool turtleChannelRequest(
-	        const RsGxsGroupId& channelId,
-	        const std::function<void (const RsGxsChannelGroup& result)>& multiCallback,
-	        rstime_t maxWait = 300 ) override;
-
-	/// @see RsGxsChannels::localSearchRequest
-	virtual bool localSearchRequest(const std::string& matchString,
-	        const std::function<void (const RsGxsGroupSummary& result)>& multiCallback,
-	        rstime_t maxWait = 30 ) override;
-#endif
 
 	/**
 	 * Receive results from turtle search @see RsGenExchange @see RsNxsObserver
@@ -215,9 +203,10 @@ virtual bool ExtraFileRemove(const RsFileHash &hash) override;
 	                                const std::set<RsGxsMessageId> &contentIds,
 	                                std::vector<RsGxsComment> &comments) override;
 
-	/// Implementation of @see RsGxsChannels::getContentSummaries
-	bool getContentSummaries(
+	/// @see RsGxsChannels
+	std::error_condition getContentSummaries(
 	        const RsGxsGroupId& channelId,
+	        const std::set<RsGxsMessageId>& contentIds,
 	        std::vector<RsMsgMetaData>& summaries ) override;
 
     /// Implementation of @see RsGxsChannels::getChannelStatistics
@@ -297,6 +286,17 @@ virtual bool ExtraFileRemove(const RsFileHash &hash) override;
 	virtual bool shareChannelKeys(
 	        const RsGxsGroupId& channelId, const std::set<RsPeerId>& peers ) override;
 
+#ifdef RS_DEEP_CHANNEL_INDEX
+	/// @see RsNxsObserver
+	std::error_condition handleDistantSearchRequest(
+	        rs_view_ptr<uint8_t> requestData, uint32_t requestSize,
+	        rs_owner_ptr<uint8_t>& resultData, uint32_t& resultSize ) override;
+
+	std::error_condition receiveDistantSearchResult(
+	        const TurtleRequestId requestId,
+	        rs_owner_ptr<uint8_t>& resultData, uint32_t& resultSize ) override;
+#endif
+
 	/// Implementation of @see RsGxsChannels::createChannel
 	RS_DEPRECATED_FOR(createChannelV2)
 	bool createChannel(RsGxsChannelGroup& channel) override;
@@ -313,7 +313,6 @@ virtual bool ExtraFileRemove(const RsFileHash &hash) override;
 	RS_DEPRECATED_FOR(createVoteV2)
 	bool createVote(RsGxsVote& vote) override;
 
-
 protected:
 	// Overloaded from GxsTokenQueue for Request callbacks.
 	virtual void handleResponse(uint32_t token, uint32_t req_type
@@ -329,7 +328,6 @@ static uint32_t channelsAuthenPolicy();
 	void request_SpecificSubscribedGroups(const std::list<RsGxsGroupId> &groups);
 	void load_SubscribedGroups(const uint32_t &token);
 
-	void request_SpecificUnprocessedPosts(std::list<std::pair<RsGxsGroupId, RsGxsMessageId> > &ids);
 	void request_GroupUnprocessedPosts(const std::list<RsGxsGroupId> &grouplist);
 	void load_unprocessedPosts(uint32_t token);
 
@@ -390,26 +388,8 @@ bool generateGroup(uint32_t &token, std::string groupName);
     rstime_t mLastDistantSearchNotificationTS;
 
     std::map<TurtleRequestId,std::set<RsGxsGroupId> > mSearchResultsToNotify;
-#ifdef TO_REMOVE
-	/** Store search callbacks with timeout*/
-	std::map<
-	    TurtleRequestId,
-	    std::pair<
-	        std::function<void (const RsGxsGroupSummary&)>,
-	        std::chrono::system_clock::time_point >
-	 > mSearchCallbacksMap;
-	RsMutex mSearchCallbacksMapMutex;
 
-	/** Store distant channels requests callbacks with timeout*/
-	std::map<
-	    TurtleRequestId,
-	    std::pair<
-	        std::function<void (const RsGxsChannelGroup&)>,
-	        std::chrono::system_clock::time_point >
-	 > mDistantChannelsCallbacksMap;
-	RsMutex mDistantChannelsCallbacksMapMutex;
-
-	/// Cleanup mSearchCallbacksMap and mDistantChannelsCallbacksMap
-	void cleanTimedOutCallbacks();
+#ifdef RS_DEEP_CHANNEL_INDEX
+	DeepChannelsIndex mDeepIndex;
 #endif
 };

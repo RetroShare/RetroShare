@@ -105,7 +105,7 @@ public:
 	 * @param[in] requestData search query
 	 * @param[in] requestSize search query size
 	 * @param[out] resultData results data storage for a pointer to search
-	 * result reply data or nullptr if no mathing results where found
+	 * result reply data or nullptr if no matching results where found
 	 * @param[out] resultSize storage for results data size or 0 if no matching
 	 * results where found
 	 * @return Error details or success, NOT_OVERRIDDEN_BY_OBSERVER is
