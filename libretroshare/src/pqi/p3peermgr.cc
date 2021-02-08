@@ -1597,9 +1597,7 @@ bool p3PeerMgrIMPL::setLocalAddress( const RsPeerId &id,
 	std::map<RsPeerId, peerState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
-#ifdef PEER_DEBUG
-			std::cerr << "p3PeerMgrIMPL::setLocalAddress() cannot add addres " << "info : peer id not found in friend list  id: " << id << std::endl;
-#endif
+            std::cerr << "(EE) p3PeerMgrIMPL::setLocalAddress() cannot add addres " << "info : peer id not found in friend list  id: " << id << std::endl;
 			return false;
 	}
 
@@ -1658,9 +1656,7 @@ bool p3PeerMgrIMPL::setExtAddress( const RsPeerId &id,
 	std::map<RsPeerId, peerState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
-#ifdef PEER_DEBUG
-            std::cerr << "p3PeerMgrIMPL::setExtAddress() cannot add addres " << "info : peer id not found in friend list  id: " << id << std::endl;
-#endif
+            std::cerr << "(EE) p3PeerMgrIMPL::setExtAddress() cannot add addres " << "info : peer id not found in friend list  id: " << id << std::endl;
 			return false;
 	}
 

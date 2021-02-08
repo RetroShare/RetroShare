@@ -250,7 +250,7 @@ bool ExtAddrFinder::hasValidIP(struct sockaddr_storage &addr)
 #ifdef EXTADDRSEARCH_DEBUG
 			std::cerr << "ExtAddrFinder: Has stored ip: responding with this ip." << std::endl ;
 #endif
-			addr = mAddr;
+            sockaddr_storage_copyip(addr,mAddr);	// just copy the IP so we dont erase the port.
 		}
 	}
 	rstime_t delta;

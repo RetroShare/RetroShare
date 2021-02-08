@@ -121,7 +121,8 @@ private:
 
 	// Settings for peer list display
 	bool mShowState;
-    RsEventsHandlerId_t mEventHandlerId;
+    RsEventsHandlerId_t mEventHandlerId_peer;
+    RsEventsHandlerId_t mEventHandlerId_gssp;
 
 	std::set<RsNodeGroupId> openGroups;
 	std::set<RsPgpId>   openPeers;

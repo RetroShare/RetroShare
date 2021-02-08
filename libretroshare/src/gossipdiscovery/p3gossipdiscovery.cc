@@ -373,13 +373,33 @@ void p3discovery2::recvOwnContactInfo(const RsPeerId &fromId, const RsDiscContac
 	}
 
 	// Peer Own Info replaces the existing info, because the
-	// peer is the primary source of his own IPs.
+    // peer is the primary source of his own IPs, except for hidden nodes
+    // that normally send nothing. We still ignore it as a double security.
 
 	mPeerMgr->setNetworkMode(fromId, item->netMode);
 	mPeerMgr->setLocation(fromId, item->location);
 	mPeerMgr->setVisState(fromId, item->vs_disc, item->vs_dht);
 
-	setPeerVersion(fromId, item->version);
+    if(!mPeerMgr->isHiddenNode(fromId))
+    {
+        if(!det.localAddr.empty())
+        {
+            if(sockaddr_storage_isValidNet(item->localAddrV4.addr))
+                mPeerMgr->setLocalAddress(fromId,item->localAddrV4.addr);
+            else if(sockaddr_storage_isValidNet(item->localAddrV6.addr))
+                mPeerMgr->setLocalAddress(fromId,item->localAddrV6.addr);
+        }
+
+        if(!det.extAddr.empty())
+        {
+            if(sockaddr_storage_isValidNet(item->extAddrV4.addr))
+                mPeerMgr->setExtAddress(fromId,item->extAddrV4.addr);
+            else if(sockaddr_storage_isValidNet(item->extAddrV6.addr))
+                mPeerMgr->setExtAddress(fromId,item->extAddrV6.addr);
+        }
+    }
+
+    setPeerVersion(fromId, item->version);
 
     // Hidden nodes do not need IP information. So that information is dropped.
     // However, that doesn't mean hidden nodes do not know that information. Normally
@@ -387,6 +407,15 @@ void p3discovery2::recvOwnContactInfo(const RsPeerId &fromId, const RsDiscContac
 
     if(!mPeerMgr->isHiddenNode(rsPeers->getOwnId()))
         updatePeerAddresses(item);
+
+    if(rsEvents)
+    {
+        auto ev = std::make_shared<RsGossipDiscoveryEvent>();
+        ev->mGossipDiscoveryEventType = RsGossipDiscoveryEventType::FRIEND_PEER_INFO_RECEIVED;
+        ev->mFromId = fromId;
+        ev->mAboutId = item->sslId;
+        rsEvents->postEvent(ev);
+    }
 
     // if the peer is not validated, we stop the exchange here
 
@@ -977,7 +1006,18 @@ void p3discovery2::processContactInfo(const RsPeerId &fromId, const RsDiscContac
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_NEIGHBOURS, NOTIFY_TYPE_MOD);
 
 	if(should_notify_discovery)
-		RsServer::notify()->notifyDiscInfoChanged();
+    {
+        RsServer::notify()->notifyDiscInfoChanged();
+
+        if(rsEvents)
+        {
+            auto ev = std::make_shared<RsGossipDiscoveryEvent>();
+            ev->mGossipDiscoveryEventType = RsGossipDiscoveryEventType::FRIEND_PEER_INFO_RECEIVED;
+            ev->mFromId = fromId;
+            ev->mAboutId = item->sslId;
+            rsEvents->postEvent(ev);
+        }
+    }
 }
 
 /* we explictly request certificates, instead of getting them all the time

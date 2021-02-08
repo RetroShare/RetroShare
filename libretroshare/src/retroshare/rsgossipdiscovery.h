@@ -47,8 +47,8 @@ extern std::shared_ptr<RsGossipDiscovery> rsGossipDiscovery;
  */
 
 enum class RsGossipDiscoveryEventType: uint32_t {
-    UNKNOWN              = 0x00,
-    PEER_INVITE_RECEIVED = 0x01
+    UNKNOWN                     = 0x00,
+    FRIEND_PEER_INFO_RECEIVED   = 0x01,
 };
 
 struct RsGossipDiscoveryEvent : RsEvent
@@ -57,7 +57,8 @@ struct RsGossipDiscoveryEvent : RsEvent
 	virtual ~RsGossipDiscoveryEvent() override {}
 
 	RsGossipDiscoveryEventType mGossipDiscoveryEventType;
-	std::string mInvite;
+        RsPeerId mFromId;
+        RsPeerId mAboutId;
 
 	/// @see RsSerializable
 	virtual void serial_process( RsGenericSerializer::SerializeJob j,
@@ -65,8 +66,9 @@ struct RsGossipDiscoveryEvent : RsEvent
 	{
 		RsEvent::serial_process(j,ctx);
 		RS_SERIAL_PROCESS(mGossipDiscoveryEventType);
-		RS_SERIAL_PROCESS(mInvite);
-	}
+                RS_SERIAL_PROCESS(mFromId);
+                RS_SERIAL_PROCESS(mAboutId);
+        }
 };
 
 class RsGossipDiscovery

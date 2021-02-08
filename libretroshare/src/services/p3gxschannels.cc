@@ -2654,90 +2654,9 @@ void p3GxsChannels::receiveDistantSearchResults( TurtleRequestId id, const RsGxs
     // So we put some data in there and will send an event with all of them at once every 1 sec at most.
 
     mSearchResultsToNotify[id].insert(grpId);
-
-#ifdef TO_REMOVE
-	std::cerr << __PRETTY_FUNCTION__ << "(" << id << ", " << grpId << ")" << std::endl;
-
-	{
-		RsGenExchange::receiveDistantSearchResults(id, grpId);
-		RsGxsGroupSearchResults gs;
-		netService()->retrieveDistantGroupSummary(grpId, gs);
-
-		{
-			RS_STACK_MUTEX(mSearchCallbacksMapMutex);
-			auto cbpt = mSearchCallbacksMap.find(id);
-			if(cbpt != mSearchCallbacksMap.end())
-			{
-				cbpt->second.first(gs);
-				return;
-			}
-		} // end RS_STACK_MUTEX(mSearchCallbacksMapMutex);
-	}
-
-	{
-		RS_STACK_MUTEX(mDistantChannelsCallbacksMapMutex);
-		auto cbpt = mDistantChannelsCallbacksMap.find(id);
-		if(cbpt != mDistantChannelsCallbacksMap.end())
-		{
-			std::function<void (const RsGxsChannelGroup&)> callback =
-			        cbpt->second.first;
-			RsThread::async([this, callback, grpId]()
-			{
-				std::list<RsGxsGroupId> chanIds({grpId});
-				std::vector<RsGxsChannelGroup> channelsInfo;
-				if(!getChannelsInfo(chanIds, channelsInfo))
-				{
-					std::cerr << __PRETTY_FUNCTION__ << " Error! Received "
-					          << "distant channel result grpId: " << grpId
-					          << " but failed getting channel info"
-					          << std::endl;
-					return;
-				}
-
-				for(const RsGxsChannelGroup& chan : channelsInfo)
-					callback(chan);
-			} );
-
-			return;
-		}
-	} // RS_STACK_MUTEX(mDistantChannelsCallbacksMapMutex);
-#endif
 }
 
-#ifdef TO_REMOVE
-void p3GxsChannels::cleanTimedOutCallbacks()
-{
-	auto now = std::chrono::system_clock::now();
-
-	{
-		RS_STACK_MUTEX(mSearchCallbacksMapMutex);
-		for( auto cbpt = mSearchCallbacksMap.begin();
-		     cbpt != mSearchCallbacksMap.end(); )
-			if(cbpt->second.second <= now)
-			{
-				clearDistantSearchResults(cbpt->first);
-				cbpt = mSearchCallbacksMap.erase(cbpt);
-			}
-			else ++cbpt;
-	} // RS_STACK_MUTEX(mSearchCallbacksMapMutex);
-
-	{
-		RS_STACK_MUTEX(mDistantChannelsCallbacksMapMutex);
-		for( auto cbpt = mDistantChannelsCallbacksMap.begin();
-		     cbpt != mDistantChannelsCallbacksMap.end(); )
-			if(cbpt->second.second <= now)
-			{
-				clearDistantSearchResults(cbpt->first);
-				cbpt = mDistantChannelsCallbacksMap.erase(cbpt);
-			}
-			else ++cbpt;
-	} // RS_STACK_MUTEX(mDistantChannelsCallbacksMapMutex)
-}
-#endif
-
-bool p3GxsChannels::exportChannelLink(
-        std::string& link, const RsGxsGroupId& chanId, bool includeGxsData,
-        const std::string& baseUrl, std::string& errMsg )
+bool p3GxsChannels::exportChannelLink( std::string& link, const RsGxsGroupId& chanId, bool includeGxsData, const std::string& baseUrl, std::string& errMsg )
 {
 	constexpr auto fname = __PRETTY_FUNCTION__;
 	const auto failure = [&](const std::string& err)
@@ -2773,8 +2692,7 @@ bool p3GxsChannels::exportChannelLink(
 	return true;
 }
 
-bool p3GxsChannels::importChannelLink(
-        const std::string& link, RsGxsGroupId& chanId, std::string& errMsg )
+bool p3GxsChannels::importChannelLink( const std::string& link, RsGxsGroupId& chanId, std::string& errMsg )
 {
 	constexpr auto fname = __PRETTY_FUNCTION__;
 	const auto failure = [&](const std::string& err)
@@ -2801,18 +2719,12 @@ bool p3GxsChannels::importChannelLink(
 	return true;
 }
 
-/*static*/ const std::string RsGxsChannels::DEFAULT_CHANNEL_BASE_URL =
-        "retroshare:///channels";
-/*static*/ const std::string RsGxsChannels::CHANNEL_URL_NAME_FIELD =
-        "chanName";
-/*static*/ const std::string RsGxsChannels::CHANNEL_URL_ID_FIELD =
-        "chanId";
-/*static*/ const std::string RsGxsChannels::CHANNEL_URL_DATA_FIELD =
-        "chanData";
-/*static*/ const std::string RsGxsChannels::CHANNEL_URL_MSG_TITLE_FIELD =
-        "chanMsgTitle";
-/*static*/ const std::string RsGxsChannels::CHANNEL_URL_MSG_ID_FIELD =
-        "chanMsgId";
+/*static*/ const std::string RsGxsChannels::DEFAULT_CHANNEL_BASE_URL    = "retroshare:///channels";
+/*static*/ const std::string RsGxsChannels::CHANNEL_URL_NAME_FIELD      = "chanName";
+/*static*/ const std::string RsGxsChannels::CHANNEL_URL_ID_FIELD        = "chanId";
+/*static*/ const std::string RsGxsChannels::CHANNEL_URL_DATA_FIELD      = "chanData";
+/*static*/ const std::string RsGxsChannels::CHANNEL_URL_MSG_TITLE_FIELD = "chanMsgTitle";
+/*static*/ const std::string RsGxsChannels::CHANNEL_URL_MSG_ID_FIELD    = "chanMsgId";
 
 RsGxsChannelGroup::~RsGxsChannelGroup() = default;
 RsGxsChannelPost::~RsGxsChannelPost() = default;

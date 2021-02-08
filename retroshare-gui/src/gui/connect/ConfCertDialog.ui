@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>658</width>
-    <height>400</height>
+    <height>419</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -442,15 +442,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>RSTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>gui/common/RSTextBrowser.h</header>
+  </customwidget>
+  <customwidget>
    <class>HeaderFrame</class>
    <extends>QFrame</extends>
    <header>gui/common/HeaderFrame.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>RSTextBrowser</class>
-   <extends>QTextBrowser</extends>
-   <header>gui/common/RSTextBrowser.h</header>
   </customwidget>
   <customwidget>
    <class>AvatarWidget</class>

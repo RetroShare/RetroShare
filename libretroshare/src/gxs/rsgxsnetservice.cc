@@ -5368,14 +5368,13 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req,const unsig
 #endif
     uint32_t used_size = clear_group_data_len;
     RsItem *item = RsNxsSerialiser(mServType).deserialise(clear_group_data,&used_size) ;
-    RsNxsGrp *nxs_identity_grp=nullptr;
 
     if(used_size < clear_group_data_len)
     {
         uint32_t remaining_size = clear_group_data_len-used_size ;
         RsItem *item2 = RsNxsSerialiser(RS_SERVICE_GXS_TYPE_GXSID).deserialise(clear_group_data+used_size,&remaining_size) ;
 
-        nxs_identity_grp = dynamic_cast<RsNxsGrp*>(item2);
+        auto nxs_identity_grp = dynamic_cast<RsNxsGrp*>(item2);
 
         if(!nxs_identity_grp)
             std::cerr << "(EE) decrypted item contains more data that cannot be deserialized as a GxsId. Unexpected!" << std::endl;
@@ -5383,6 +5382,9 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req,const unsig
         // We should probably check that the identity that is sent corresponds to the group author and don't add
         // it otherwise. But in any case, this won't harm to add a new public identity. If that identity is banned,
         // the group will be discarded in RsGenExchange anyway.
+
+        if(nxs_identity_grp)
+            mGixs->receiveNewIdentity(nxs_identity_grp);
     }
 
 	free(clear_group_data);
@@ -5413,9 +5415,6 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req,const unsig
 #endif
 	mObserver->receiveNewGroups(new_grps);
 	mObserver->receiveDistantSearchResults(req, grpId);
-
-    if(nxs_identity_grp)
-        mGixs->receiveNewIdentity(nxs_identity_grp);
 }
 
 bool RsGxsNetService::search( const std::string& substring,

@@ -1165,7 +1165,8 @@ enum class RsShortInviteFieldType : uint8_t
 	 * trasport layer will be implemented */
 	HIDDEN_LOCATOR  = 0x90,
 	DNS_LOCATOR     = 0x91,
-	EXT4_LOCATOR    = 0x92
+    EXT4_LOCATOR    = 0x92,		// external IPv4 address
+    LOC4_LOCATOR    = 0x93		// local IPv4 address
 };
 
 static void addPacketHeader(RsShortInviteFieldType ptag, size_t size, unsigned char *& buf, uint32_t& offset, uint32_t& buf_size)
@@ -1213,7 +1214,7 @@ bool p3Peers::getShortInvite(std::string& invite, const RsPeerId& _sslId, Retros
     offset += tDetails.name.size();
 
     /* If it is a hidden node, always use hidden address and port as locator */
-    sockaddr_storage tExt;
+
     if(tDetails.isHiddenNode)
     {
         addPacketHeader(RsShortInviteFieldType::HIDDEN_LOCATOR,4 + 2 + tDetails.hiddenNodeAddress.size(),buf,offset,buf_size);
@@ -1243,24 +1244,6 @@ bool p3Peers::getShortInvite(std::string& invite, const RsPeerId& _sslId, Retros
         offset += 2 + tDetails.dyndns.size();
     }
 
-    if( !!(invite_flags & RetroshareInviteFlags::CURRENT_IP) && sockaddr_storage_inet_pton(tExt, tDetails.extAddr)
-                    && sockaddr_storage_isValidNet(tExt) && sockaddr_storage_ipv6_to_ipv4(tExt) && tDetails.extPort )
-    {
-        uint32_t t4Addr = reinterpret_cast<sockaddr_in&>(tExt).sin_addr.s_addr;
-
-        addPacketHeader(RsShortInviteFieldType::EXT4_LOCATOR, 4 + 2,buf,offset,buf_size);
-
-        buf[offset+0] = (uint8_t)((t4Addr >> 24) & 0xff);
-        buf[offset+1] = (uint8_t)((t4Addr >> 16) & 0xff);
-        buf[offset+2] = (uint8_t)((t4Addr >>  8) & 0xff);
-        buf[offset+3] = (uint8_t)((t4Addr      ) & 0xff);
-
-        buf[offset+4] = (uint8_t)((tDetails.extPort >> 8) & 0xff);
-        buf[offset+5] = (uint8_t)((tDetails.extPort     ) & 0xff);
-
-        offset += 4+2;
-    }
-
     if( !!(invite_flags & RetroshareInviteFlags::FULL_IP_HISTORY) && (!tDetails.ipAddressList.empty()))
         for(auto& s: tDetails.ipAddressList)
         {
@@ -1272,6 +1255,69 @@ bool p3Peers::getShortInvite(std::string& invite, const RsPeerId& _sslId, Retros
 
             offset += tLocator.size();
         }
+    else if( !!(invite_flags & RetroshareInviteFlags::CURRENT_IP) )	// only add at least the local and external IPs
+    {
+#ifdef USE_NEW_LOCATOR_SYSTEM
+        // This new locator system as some advantages, but here it also has major drawbacks: (1) it cannot differentiate local and external addresses,
+        // and (2) it's quite larger than the old system, which tends to make certificates more than 1 line long.
+
+        sockaddr_storage tLocal;
+
+        if(sockaddr_storage_inet_pton(tLocal, tDetails.localAddr) && sockaddr_storage_isValidNet(tLocal) && tDetails.localPort )
+        {
+            addPacketHeader(RsShortInviteFieldType::LOCATOR, tDetails.localAddr.size(),buf,offset,buf_size);
+            memcpy(&buf[offset],tDetails.localAddr.c_str(),tDetails.localAddr.size());
+
+            offset += tDetails.localAddr.size();
+        }
+        sockaddr_storage tExt;
+
+        if(sockaddr_storage_inet_pton(tExt, tDetails.extAddr) && sockaddr_storage_isValidNet(tExt) && tDetails.extPort )
+        {
+            addPacketHeader(RsShortInviteFieldType::LOCATOR, tDetails.extAddr.size(),buf,offset,buf_size);
+            memcpy(&buf[offset],tDetails.extAddr.c_str(),tDetails.extAddr.size());
+
+            offset += tDetails.extAddr.size();
+        }
+#else
+        sockaddr_storage tLocal;
+        if(sockaddr_storage_inet_pton(tLocal, tDetails.localAddr) && sockaddr_storage_isValidNet(tLocal)  && sockaddr_storage_ipv6_to_ipv4(tLocal) && tDetails.localPort )
+        {
+            uint32_t t4Addr = reinterpret_cast<sockaddr_in&>(tLocal).sin_addr.s_addr;
+
+            addPacketHeader(RsShortInviteFieldType::LOC4_LOCATOR, 4 + 2,buf,offset,buf_size);
+
+            buf[offset+0] = (uint8_t)((t4Addr >> 24) & 0xff);
+            buf[offset+1] = (uint8_t)((t4Addr >> 16) & 0xff);
+            buf[offset+2] = (uint8_t)((t4Addr >>  8) & 0xff);
+            buf[offset+3] = (uint8_t)((t4Addr      ) & 0xff);
+
+            buf[offset+4] = (uint8_t)((tDetails.localPort >> 8) & 0xff);
+            buf[offset+5] = (uint8_t)((tDetails.localPort     ) & 0xff);
+
+            offset += 4+2;
+        }
+
+        sockaddr_storage tExt;
+        if(sockaddr_storage_inet_pton(tExt, tDetails.extAddr) && sockaddr_storage_isValidNet(tExt)  && sockaddr_storage_ipv6_to_ipv4(tExt) && tDetails.extPort )
+        {
+            uint32_t t4Addr = reinterpret_cast<sockaddr_in&>(tExt).sin_addr.s_addr;
+
+            addPacketHeader(RsShortInviteFieldType::EXT4_LOCATOR, 4 + 2,buf,offset,buf_size);
+
+            buf[offset+0] = (uint8_t)((t4Addr >> 24) & 0xff);
+            buf[offset+1] = (uint8_t)((t4Addr >> 16) & 0xff);
+            buf[offset+2] = (uint8_t)((t4Addr >>  8) & 0xff);
+            buf[offset+3] = (uint8_t)((t4Addr      ) & 0xff);
+
+            buf[offset+4] = (uint8_t)((tDetails.extPort >> 8) & 0xff);
+            buf[offset+5] = (uint8_t)((tDetails.extPort     ) & 0xff);
+
+            offset += 4+2;
+        }
+#endif
+
+    }
 
     uint32_t computed_crc = PGPKeyManagement::compute24bitsCRC(buf,offset) ;
 
@@ -1373,6 +1419,17 @@ bool p3Peers::parseShortInvite(const std::string& inviteStrUrl, RsPeerDetails& d
 			details.extPort = (((int)buf[0]) << 8) + buf[1];
 			details.dyndns = std::string((char*)&buf[2],s-2);
             break;
+
+        case RsShortInviteFieldType::LOC4_LOCATOR:
+        {
+            uint32_t t4Addr = (((uint32_t)buf[0]) << 24)+(((uint32_t)buf[1])<<16)+(((uint32_t)buf[2])<<8) + (uint32_t)buf[3];
+            sockaddr_in tLocalAddr;
+            tLocalAddr.sin_addr.s_addr = t4Addr;
+
+            details.localAddr = rs_inet_ntoa(tLocalAddr.sin_addr);
+            details.localPort = (((uint32_t)buf[4])<<8) + (uint32_t)buf[5];
+        }
+        break;
 
 		case RsShortInviteFieldType::EXT4_LOCATOR:
 		{

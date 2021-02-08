@@ -1295,13 +1295,13 @@ void GxsChannelPostsWidgetWithModel::setSubscribeButtonText(const RsGxsGroupId& 
             ui->subscribeToolButton->setEnabled(true);
             break;
         case DistantSearchGroupStatus::CAN_BE_REQUESTED:  	// means no search ongoing. This is not a distant search
-            ui->subscribeToolButton->setText(tr("Subscribe"));
-            ui->subscribeToolButton->setToolTip(tr("Hit this button to retrieve the data you need to subscribe to this channel") );
+            ui->subscribeToolButton->setText(tr("Channel info missing"));
+            ui->subscribeToolButton->setToolTip(tr("To subscribe, first request the channel information by right-clicking Request Data in the search results.") );
             ui->subscribeToolButton->setSubscribed(false);
             ui->subscribeToolButton->setEnabled(false);
             break;
         case DistantSearchGroupStatus::ONGOING_REQUEST:
-            ui->subscribeToolButton->setText(tr("Subscribe"));
+            ui->subscribeToolButton->setText(tr("Channel info requested..."));
             ui->subscribeToolButton->setToolTip("");
             ui->subscribeToolButton->setSubscribed(true);
             ui->subscribeToolButton->setEnabled(false);
