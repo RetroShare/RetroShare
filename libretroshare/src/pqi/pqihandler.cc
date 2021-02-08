@@ -470,18 +470,11 @@ int     pqihandler::UpdateRates()
 
 		// for our up bandwidth we take into account the max down provided by peers via BwCtrl
 		// because we don't want to clog our outqueues, the TCP buffers, and the peers inbound queues
+		mod -> pqi -> setMaxRate(false, out_max_bw);
 		if ((rateMap_it = rateMap.find(mod->pqi->PeerId())) != rateMap.end())
-		{
 			if (rateMap_it->second.mAllowedOut > 0)
-			{	
 				if (out_max_bw > rateMap_it->second.mAllowedOut)
         	                        mod -> pqi -> setMaxRate(false, rateMap_it->second.mAllowedOut);
-				else
-					mod -> pqi -> setMaxRate(false, out_max_bw);
-			}
-			else
-				mod -> pqi -> setMaxRate(false, out_max_bw);
-		}
 	}
 
 #ifdef UPDATE_RATES_DEBUG
