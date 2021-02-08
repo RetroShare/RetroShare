@@ -175,7 +175,7 @@ void PostedPostDelegate::expandItem(RsGxsMessageId msgId,bool expanded)
     else
         mExpandedItems.erase(msgId);
 
-    mPostListWidget->forceRedraw();
+    mPostListWidget->redraw();
 }
 
 uint8_t PostedPostDelegate::displayFlags(const RsGxsMessageId &id) const
@@ -659,7 +659,11 @@ void PostedListWidgetWithModel::forceRedraw()
     if(mPostedPostsModel)
         mPostedPostsModel->deepUpdate();
 }
-
+void PostedListWidgetWithModel::redraw()
+{
+    if(mPostedPostsModel)
+        mPostedPostsModel->triggerRedraw();
+}
 void PostedListWidgetWithModel::updateDisplay(bool complete)
 {
 #ifdef DEBUG_CHANNEL

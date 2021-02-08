@@ -99,7 +99,8 @@ public:
     virtual bool navigate(const RsGxsMessageId&) override;
 
 	void updateDisplay(bool complete) ;
-    void forceRedraw(); // does not re-load the data, but makes sure the underlying model triggers a full redraw, recomputes sizes, etc.
+    void forceRedraw(); // does not re-load the data, but makes sure the underlying model triggers a full redraw, recomputes indexes, etc.
+    void redraw(); // does not re-load the data, but makes sure the underlying model triggers a full redraw, recomputes only sizes.
 
 #ifdef TODO
 	/* FeedHolder */
