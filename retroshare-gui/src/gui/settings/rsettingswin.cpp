@@ -70,6 +70,14 @@ SettingsPage::SettingsPage(QWidget *parent)
     /* Initialize help browser */
     mHelpBrowser = new FloatingHelpBrowser(this, ui.helpButton);
 
+    /* set initial size the splitter */
+    ui.splitter->setStretchFactor(0, 0);
+    ui.splitter->setStretchFactor(1, 1);
+
+    QList<int> sizes;
+    sizes << 200 << width(); // Qt calculates the right sizes
+    ui.splitter->setSizes(sizes);
+
     /* Add own item delegate to get item width*/
     RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
     itemDelegate->setSpacing(QSize(0, ITEM_SPACING));
@@ -82,6 +90,8 @@ SettingsPage::SettingsPage(QWidget *parent)
     if (geometry.isEmpty() == false) {
       restoreGeometry(geometry);
     }
+    // state of splitter
+    ui.splitter->restoreState(Settings->valueFromGroup("SettingDialog", "Splitter", QByteArray()).toByteArray());
 
     connect(ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(setNewPage(int)));
     connect(this, SIGNAL(finished(int)), this, SLOT(dialogFinished(int)));
@@ -91,7 +101,9 @@ SettingsPage::~SettingsPage()
 {
     /* Save window position */
     Settings->setValueToGroup("SettingDialog", "Geometry", saveGeometry());
-    lastPage = ui.stackedWidget->currentIndex ();
+    // state of splitter
+    Settings->setValueToGroup("SettingDialog", "Splitter", ui.splitter->saveState());
+    //lastPage = ui.stackedWidget->currentIndex ();
     //_instance = NULL;
 }
 
@@ -197,13 +209,8 @@ void SettingsPage::addPage(ConfigPage *page)
 {
 	ui.stackedWidget->addWidget(page) ;
 
-	QListWidgetItem *item = new QListWidgetItem(QIcon(page->iconPixmap()),page->pageName(),ui.listWidget) ;
-	QFontMetrics fontMetrics = ui.listWidget->fontMetrics();
-	int w = ITEM_SPACING*8;
-	w += ui.listWidget->iconSize().width();
-	w += fontMetrics.width(item->text());
-	if (w > ui.listWidget->maximumWidth())
-		ui.listWidget->setMaximumWidth(w);
+	QListWidgetItem *item = new QListWidgetItem(QIcon(page->iconPixmap()),page->pageName());
+	ui.listWidget->addItem(item);
 }
 
 void

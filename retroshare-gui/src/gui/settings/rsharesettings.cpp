@@ -154,7 +154,7 @@ QString RshareSettings::getLanguageCode()
 }
 
 /** Sets the preferred language code. */
-void RshareSettings::setLanguageCode(QString languageCode)
+void RshareSettings::setLanguageCode(const QString& languageCode)
 {
 	setValue(SETTING_LANGUAGE, languageCode);
 }
@@ -162,11 +162,11 @@ void RshareSettings::setLanguageCode(QString languageCode)
 /** Gets the interface style key (e.g., "windows", "motif", etc.) */
 QString RshareSettings::getInterfaceStyle()
 {
-	return value(SETTING_STYLE).toString();
+	return value(SETTING_STYLE, "fusion").toString();
 }
 
 /** Sets the interface style key. */
-void RshareSettings::setInterfaceStyle(QString styleKey)
+void RshareSettings::setInterfaceStyle(const QString& styleKey)
 {
 	setValue(SETTING_STYLE, styleKey);
 }
@@ -177,7 +177,7 @@ QString RshareSettings::getSheetName()
 	return value(SETTING_SHEETNAME).toString();
 }
 /** Sets the sheetname.*/
-void RshareSettings::setSheetName(QString sheet)                                  
+void RshareSettings::setSheetName(const QString& sheet)
 { 
 	setValue(SETTING_SHEETNAME, sheet);
 }
@@ -865,7 +865,7 @@ bool RshareSettings::setRetroShareProtocol(bool value, QString &error)
 
 		QSettings command("HKEY_CURRENT_USER\\Software\\Classes\\retroshare\\shell\\open\\command", QSettings::NativeFormat);
 		command.setValue("Default", getAppPathForProtocol());
-		state = command.status();
+		//state = command.status();
 	} else {
 		QSettings classRoot("HKEY_CURRENT_USER\\Software\\Classes", QSettings::NativeFormat);
 		classRoot.remove("retroshare");
