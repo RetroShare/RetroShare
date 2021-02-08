@@ -29,6 +29,11 @@ ChatWidget QLabel#titleLabel, ChatWidget QLabel#statusLabel
 	qproperty-fontSizeFactor: 125;
 }
 
+ChatWidget QFrame#pluginTitleFrame, QFrame#pluginTopFrame
+{
+	background: transparent;
+}
+
 FriendsDialog QLabel#nicknameLabel
 {
 	qproperty-fontSizeFactor: 200;
