@@ -99,15 +99,15 @@ public:
 	/** Gets the currently preferred language code for RShare. */
 	QString getLanguageCode();
 	/** Saves the preferred language code. */
-	void setLanguageCode(QString languageCode);
+	void setLanguageCode(const QString& languageCode);
 
 	/** Gets the interface style key (e.g., "windows", "motif", etc.) */
 	QString getInterfaceStyle();
 	/** Sets the interface style key. */
-	void setInterfaceStyle(QString styleKey);
+	void setInterfaceStyle(const QString& styleKey);
 
 	/** Sets the stylesheet */
-	void setSheetName(QString sheet);
+	void setSheetName(const QString& sheet);
 	/** Gets the stylesheet */
 	QString getSheetName();
 
