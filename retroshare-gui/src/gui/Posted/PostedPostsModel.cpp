@@ -495,20 +495,21 @@ void RsPostedPostsModel::setPostsInterval(int start,int nb_posts)
 
 	preMods();
 
-	uint32_t old_nb_rows = rowCount() ;
+    int old_nb_rows = rowCount() ;
+    int new_nb_rows = (uint32_t)std::min(nb_posts,(int)mFilteredPosts.size() - start);
 
-    mDisplayedNbPosts = (uint32_t)std::min(nb_posts,(int)mFilteredPosts.size() - start);
-	mDisplayedStartIndex = start;
-
-    if(old_nb_rows > mDisplayedNbPosts)
+    if(old_nb_rows > new_nb_rows)
     {
-        beginRemoveRows(QModelIndex(),mDisplayedNbPosts,old_nb_rows-1);
+        beginRemoveRows(QModelIndex(),new_nb_rows,old_nb_rows-1);
         endRemoveRows();
     }
 
-    if(mDisplayedNbPosts > old_nb_rows)
+    mDisplayedStartIndex = start;
+    mDisplayedNbPosts = new_nb_rows;
+
+    if(new_nb_rows > old_nb_rows)
     {
-        beginInsertRows(QModelIndex(),old_nb_rows,mDisplayedNbPosts-1);
+        beginInsertRows(QModelIndex(),old_nb_rows,new_nb_rows-1);
         endInsertRows();
     }
 
