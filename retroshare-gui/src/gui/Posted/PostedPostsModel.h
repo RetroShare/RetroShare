@@ -92,7 +92,7 @@ class RsPostedPostsModel : public QAbstractItemModel
 	Q_OBJECT
 
 public:
-	explicit RsPostedPostsModel(QObject *parent = NULL);
+    explicit RsPostedPostsModel(int default_chunk_size,QObject *parent = NULL);
 	virtual ~RsPostedPostsModel() override;
 
 	static const uint32_t COLUMN_THREAD_NB_COLUMNS   = 0x01;
@@ -159,6 +159,7 @@ public:
     void setFilter(const QStringList &strings, uint32_t &count) ;
 	void setSortingStrategy(SortingStrategy s);
 	void setPostsInterval(int start,int nb_posts);
+    void setPostsDefaultInterval(int size);
 
 #ifdef TODO
 	void setAuthorOpinion(const QModelIndex& indx,RsOpinion op);
@@ -246,6 +247,7 @@ private:
     std::vector<int> mFilteredPosts;
     uint32_t mDisplayedStartIndex;
     uint32_t mDisplayedNbPosts;
+    uint32_t mDefaultDisplayedNbPosts;
     SortingStrategy mSortingStrategy;
 
 	RsEventsHandlerId_t mEventHandlerId ;

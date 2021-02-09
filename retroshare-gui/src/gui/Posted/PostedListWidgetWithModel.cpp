@@ -244,7 +244,7 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
 
-    ui->postsTree->setModel(mPostedPostsModel = new RsPostedPostsModel());
+    ui->postsTree->setModel(mPostedPostsModel = new RsPostedPostsModel(POSTS_CHUNK_SIZE));
     ui->postsTree->setItemDelegate(mPostedPostsDelegate = new PostedPostDelegate(this));
     ui->postsTree->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);	// prevents bug on w10, since row size depends on widget width
     ui->postsTree->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);// more beautiful if we scroll at pixel level
