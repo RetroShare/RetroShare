@@ -797,11 +797,6 @@ ConnectFriendWizard QPlainTextEdit#friendCertEdit {
 	background: white;
 }
 
-HomePage QPlainTextEdit#userCertEdit {
-
-	background: transparent;
-}
-
 ConnectFriendWizard QFrame#friendFrame {
 	border: 2px solid #0099cc;
 	border-radius: 6px;
@@ -947,6 +942,35 @@ GxsChannelGroupItem QFrame#frame, GxsForumGroupItem QFrame#frame,
 PostedGroupItem QFrame#frame {
 	background-color: white;
 }
+
+HomePage QLabel#userCertLabel {
+	color: #0099cc;
+	font: bold;
+}
+
+HomePage QPlainTextEdit#userCertEdit {
+
+	background: transparent;
+}
+
+HomePage QToolButton#addButton {
+	font: bold;
+	font-size: 15pt;
+	color: white;
+	background: #0099cc;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+HomePage QToolButton#addButton:hover {
+	background: #03b1f3;
+	border-radius: 4px;
+	min-width: 4em;
+	padding: 2px;
+}
+
 
 PostedItem QFrame#mainFrame {
 	background-color: white;
@@ -1179,22 +1203,4 @@ ChannelsCommentsItem QLabel#subjectLabel, ChannelsCommentsItem QLabel#titleLabel
 BoardsCommentsItem QLabel#subjectLabel, QLabel#titleLabel , QLabel#nameLabel {
 	font: 14px;
 	font: bold;
-}
-
-HomePage QToolButton#addButton {
-	font: bold;
-	font-size: 15pt;
-	color: white;
-	background: #0099cc;
-	border-radius: 4px;
-	max-height: 27px;
-	min-width: 4em;
-	padding: 2px;
-}
-
-HomePage QToolButton#addButton:hover {
-	background: #03b1f3;
-	border-radius: 4px;
-	min-width: 4em;
-	padding: 2px;
 }
