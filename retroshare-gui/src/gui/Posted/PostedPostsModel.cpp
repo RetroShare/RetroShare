@@ -149,7 +149,8 @@ void RsPostedPostsModel::postMods()
 }
 void RsPostedPostsModel::update()
 {
-	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mDisplayedNbPosts,0,(void*)NULL));
+    if(mDisplayedNbPosts > 0)
+        emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mDisplayedNbPosts-1,0,(void*)NULL));
 }
 void RsPostedPostsModel::triggerRedraw()
 {
@@ -496,14 +497,20 @@ void RsPostedPostsModel::setPostsInterval(int start,int nb_posts)
 
 	uint32_t old_nb_rows = rowCount() ;
 
-	mDisplayedNbPosts = (uint32_t)std::min(nb_posts,(int)mFilteredPosts.size() - (start+1));
+    mDisplayedNbPosts = (uint32_t)std::min(nb_posts,(int)mFilteredPosts.size() - start);
 	mDisplayedStartIndex = start;
 
-	beginRemoveRows(QModelIndex(),mDisplayedNbPosts,old_nb_rows);
-	endRemoveRows();
+    if(old_nb_rows > mDisplayedNbPosts)
+    {
+        beginRemoveRows(QModelIndex(),mDisplayedNbPosts,old_nb_rows-1);
+        endRemoveRows();
+    }
 
-	beginInsertRows(QModelIndex(),old_nb_rows,mDisplayedNbPosts);
-	endInsertRows();
+    if(mDisplayedNbPosts > old_nb_rows)
+    {
+        beginInsertRows(QModelIndex(),old_nb_rows,mDisplayedNbPosts-1);
+        endInsertRows();
+    }
 
 	postMods();
 }
