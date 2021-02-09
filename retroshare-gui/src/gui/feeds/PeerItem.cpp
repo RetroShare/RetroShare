@@ -206,7 +206,7 @@ void PeerItem::updateItem()
 
 		/* do buttons */
 		chatButton->setEnabled(details.state & RS_PEER_STATE_CONNECTED);
-		if (details.state & RS_PEER_STATE_FRIEND)
+		if (details.state & RS_PEER_STATE_CONNECTED)
 		{
 			sendmsgButton->setEnabled(true);
 		}
