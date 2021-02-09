@@ -366,6 +366,7 @@ IdDialog::IdDialog(QWidget *parent) : MainPage(parent), ui(new Ui::IdDialog)
 	/* Set header resize modes and initial section sizes */
 	QHeaderView * idheader = ui->idTreeWidget->header();
 	QHeaderView_setSectionResizeModeColumn(idheader, RSID_COL_VOTES, QHeaderView::ResizeToContents);
+	idheader->setStretchLastSection(true);
 
 	mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
     mStateHelper->setActive(IDDIALOG_REPLIST, false);
@@ -695,7 +696,12 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 		if(am_I_subscribed)
 			tooltip += tr("subscribed (Receive/forward membership requests from others and invite list).") ;
 		else
-			tooltip += tr("unsubscribed (Only receive invite list).") ;
+        {
+            if(vit->mLastSeen>0)
+                tooltip += tr("unsubscribed (Only receive invite list). Last seen: %1 days ago.").arg( (time(nullptr)-vit->mLastSeen)/86400 );
+            else
+                tooltip += tr("unsubscribed (Only receive invite list).");
+        }
 
 		tooltip += "\n"+tr("Your status: ") ;
 

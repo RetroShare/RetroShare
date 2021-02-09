@@ -2,7 +2,7 @@
 #include "retroshare_win.rc.h"
 #include "retroshare/rsversion.h"
 
-IDI_ICON1               ICON    "logo/logo_64.ico"
+IDI_ICON1               ICON    "logo/logo_256.ico"
 
 #define STRINGIZER(version) #version
 #define VERSION_STRING(major,minor,mini,extra) STRINGIZER(major) "." STRINGIZER(minor) "." STRINGIZER(mini) STRINGIZER(extra)

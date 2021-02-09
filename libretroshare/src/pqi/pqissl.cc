@@ -863,10 +863,10 @@ int 	pqissl::Basic_Connection_Complete()
 	{
 		// error - reset socket.
 		// this is a definite bad socket!.
-		
+#ifdef PQISSL_LOG_DEBUG2
   		rslog(RSL_WARNING, pqisslzone, 
 	  	  "pqissl::Basic_Connection_Complete() Select ERROR(2)");
-		
+#endif
 		net_internal_close(sockfd);
 		sockfd=-1;
 		//reset();
@@ -1598,7 +1598,9 @@ int pqissl::readdata(void *data, int len)
 					reset_locked();
 				}
 
+#ifdef PQISSL_LOG_DEBUG2
 				rslog(RSL_ALERT, pqisslzone, out);
+#endif
 				//std::cerr << out << std::endl ;
 				return -1;
 			}

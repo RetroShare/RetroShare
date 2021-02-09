@@ -365,11 +365,9 @@ void BoardsCommentsItem::setup()
 	mInFill = false;
 
 	/* clear ui */
-	//ui->titleLabel->setText(tr("Loading"));
 	ui->datetimeLabel->clear();
 	ui->replyFrame->hide();
 
-	ui->commentButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/comment.png"));
 	ui->copyLinkButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/copy.png"));
 	ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/down-arrow.png"));
 	ui->readAndClearButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/correct.png"));
@@ -379,7 +377,6 @@ void BoardsCommentsItem::setup()
 	connect(ui->clearButton, SIGNAL(clicked()), this, SLOT(removeItem()));
 
 	/* specific */
-	connect(ui->commentButton, SIGNAL( clicked()), this, SLOT(loadComments()));
 	connect(ui->voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
 	connect(ui->voteDownButton, SIGNAL(clicked()), this, SLOT( makeDownVote()));
 	connect(ui->expandButton, SIGNAL(clicked()), this, SLOT( toggle()));
@@ -394,7 +391,6 @@ void BoardsCommentsItem::setup()
 
 	// hide expand button, replies is not implemented yet
 	ui->expandButton->hide();
-	ui->unsubscribeButton->hide();
 
 	ui->clearButton->hide();
 	ui->readAndClearButton->hide();
@@ -448,13 +444,14 @@ void BoardsCommentsItem::setCommentsSize(int comNb)
 	else if(comNb > 1)
 		sComButText = tr("Comments ").append("(%1)").arg(comNb);
 
-	ui->commentButton->setText(sComButText);
+	//ui->commentButton->setText(sComButText);
 }
 
 void BoardsCommentsItem::fill()
 {
 
-	ui->logoLabel->setPixmap( FilesDefs::getPixmapFromQtResourcePath(":/icons/png/comment.png"));
+	ui->logoLabel->hide();
+	//ui->logoLabel->setPixmap( FilesDefs::getPixmapFromQtResourcePath(":/icons/png/comment.png"));
 
 	//RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_POSTED, mGroupMeta.mGroupId, groupName());
 	//ui->titleLabel->setText(link.toHtml());
@@ -472,9 +469,9 @@ void BoardsCommentsItem::fill()
 	{
 		// feed.
 		//frame_comment->show();
-		ui->commentButton->show();
+		//ui->commentButton->show();
 
-		if (mPost.mComments)
+		/*if (mPost.mComments)
 		{
 			QString commentText = QString::number(mPost.mComments);
 			commentText += " ";
@@ -484,7 +481,7 @@ void BoardsCommentsItem::fill()
 		else
 		{
 			ui->commentButton->setText(tr("Comment"));
-		}
+		}*/
 
 		//setReadStatus(IS_MSG_NEW(mPost.mMeta.mMsgStatus), IS_MSG_UNREAD(mPost.mMeta.mMsgStatus) || IS_MSG_NEW(mPost.mMeta.mMsgStatus));
 	}
@@ -492,7 +489,6 @@ void BoardsCommentsItem::fill()
 	{
 		// no feed.
 		//frame_comment->hide();
-		ui->commentButton->hide();
 
 		ui->readButton->hide();
 	}
@@ -506,7 +502,6 @@ void BoardsCommentsItem::fill()
 	{
 		ui->clearButton->show();
 		ui->readAndClearButton->show();
-		ui->titleLabel->hide();
 	}
 	
 	// hide read button not yet functional

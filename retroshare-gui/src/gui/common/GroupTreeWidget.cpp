@@ -97,11 +97,11 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 
 	QTreeWidgetItem *headerItem = ui->treeWidget->headerItem();
 	headerItem->setText(GTW_COLUMN_NAME, tr("Name"));
-	headerItem->setText(GTW_COLUMN_UNREAD, tr("Unread"));
-	headerItem->setText(GTW_COLUMN_POSTS, tr("F Posts"));
-	headerItem->setText(GTW_COLUMN_POPULARITY, tr("Popularity"));
-	headerItem->setText(GTW_COLUMN_LAST_POST, tr("Last Post"));
-	headerItem->setToolTip(GTW_COLUMN_NAME, tr("Name"));
+	headerItem->setText(GTW_COLUMN_UNREAD, "");
+	headerItem->setText(GTW_COLUMN_POSTS, "");
+	headerItem->setText(GTW_COLUMN_POPULARITY, "");
+	headerItem->setText(GTW_COLUMN_LAST_POST, "");
+	headerItem->setToolTip(GTW_COLUMN_NAME, tr("Group Name"));
 	headerItem->setToolTip(GTW_COLUMN_UNREAD, tr("Number of Unread message"));
 	headerItem->setToolTip(GTW_COLUMN_POSTS, tr("Friend's Posts"));
 	headerItem->setToolTip(GTW_COLUMN_POPULARITY, tr("Popularity"));
@@ -109,9 +109,9 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 
 	/* Set header resize modes and initial section sizes */
 	QHeaderView *header = ui->treeWidget->header ();
-	header->setStretchLastSection(false);
-	QHeaderView_setSectionResizeModeColumn(header, GTW_COLUMN_NAME, QHeaderView::Stretch);
-	header->resizeSection(GTW_COLUMN_NAME, 10*W) ;
+	header->setStretchLastSection(true);
+	QHeaderView_setSectionResizeModeColumn(header, GTW_COLUMN_NAME, QHeaderView::Interactive);
+	header->resizeSection(GTW_COLUMN_NAME, 40*W) ;
 	QHeaderView_setSectionResizeModeColumn(header, GTW_COLUMN_UNREAD, QHeaderView::Interactive);
 	header->resizeSection(GTW_COLUMN_UNREAD, 3*W+4) ;
 	QHeaderView_setSectionResizeModeColumn(header, GTW_COLUMN_POSTS, QHeaderView::Interactive);
@@ -191,8 +191,6 @@ void GroupTreeWidget::processSettings(bool load)
 
 	if (load) {
 		// load Settings
-		bool showHeader = Settings->value("GroupShowHeader", false).toBool();
-		actionShowHeader->setChecked(showHeader);
 
 		// state of order
 		bool ascSort = Settings->value("GroupAscSort", true).toBool();
@@ -230,7 +228,6 @@ void GroupTreeWidget::processSettings(bool load)
 		}
 	} else {
 		// save Settings
-		Settings->setValue("GroupShowHeader", !(actionShowHeader && actionShowHeader->isChecked())); //False by default
 
 		// state of order
 		Settings->setValue("GroupAscSort", !(actionSortDescending && actionSortDescending->isChecked())); //True by default
@@ -256,10 +253,6 @@ void GroupTreeWidget::initDisplayMenu(QToolButton *toolButton)
 {
 	displayMenu = new QMenu();
 	QActionGroup *actionGroupAsc = new QActionGroup(displayMenu);
-
-	actionShowHeader = displayMenu->addAction(tr("Show Header"));
-	connect(actionShowHeader, SIGNAL(toggled(bool)), this, SLOT(showHeader(bool)));
-	actionShowHeader->setCheckable(true);
 
 	actionSortDescending = displayMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/sort_decrease.png"), tr("Sort Descending Order"), this, SLOT(sort()));
 	actionSortDescending->setCheckable(true);
@@ -775,11 +768,6 @@ void GroupTreeWidget::distantSearch()
     emit distantSearchRequested(ui->distantSearchLineEdit->text());
 
     ui->distantSearchLineEdit->clear();
-}
-
-void GroupTreeWidget::showHeader(bool toShow)
-{
-	ui->treeWidget->header()->setVisible(toShow);
 }
 
 void GroupTreeWidget::sort()

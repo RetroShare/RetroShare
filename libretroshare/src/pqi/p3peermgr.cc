@@ -2430,7 +2430,6 @@ void    p3PeerMgrIMPL::saveDone()
 
 bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 {
-
     // DEFAULTS.
     bool useExtAddrFinder = true;
     std::string proxyIpAddressTor = kConfigDefaultProxyServerIpAddr;
@@ -2679,13 +2678,31 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 
                 groupList[info.id] = info;
 		    }
+
+        // Also filter out profiles in groups that are not friends. Normally this shouldn't be needed, but it's a precaution
+
+        for(auto group_pair:groupList)
+        {
+            for(auto profileIdIt(group_pair.second.peerIds.begin());profileIdIt!=group_pair.second.peerIds.end();)
+                if(AuthGPG::getAuthGPG()->isGPGAccepted(*profileIdIt) || *profileIdIt == AuthGPG::getAuthGPG()->getGPGOwnId())
+                    ++profileIdIt;
+                else
+                {
+                    std::cerr << "(WW) filtering out profile " << profileIdIt->toStdString() << " from group " << group_pair.first.toStdString() << " because it is not a friend anymore" << std::endl;
+
+                    auto tmp = profileIdIt;
+                    ++tmp;
+                    group_pair.second.peerIds.erase(profileIdIt);
+                    profileIdIt=tmp;
+
+                    IndicateConfigChanged();
+                }
+        }
     }
 
     // If we are hidden - don't want ExtAddrFinder - ever!
     if (isHidden())
-    {
 	    useExtAddrFinder = false;
-    }
 
     mNetMgr->setIPServersEnabled(useExtAddrFinder);
 

@@ -136,6 +136,8 @@ win32-g++|win32-clang-g++ {
 	} else {
 		QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib || $(MKDIR) lib
 	}
+	
+	RC_FILE = retroshare-service_win.rc
 }
 
 ################################### COMMON stuff ##################################

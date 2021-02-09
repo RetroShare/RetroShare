@@ -34,10 +34,10 @@ ElidedLabel::ElidedLabel(const QString &text, QWidget *parent)
   , mElided(false)
   , mOnlyPlainText(false)
   , mContent(text)
+  , mRectElision(QRect())
   , mTextColor(QColor())
 {
-	setStyleSheet("background-color: rgba(0,0,0,0%)");
-	mRectElision = QRect();
+	setStyleSheet("ElidedLabel{background-color: rgba(0,0,0,0%)}");
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 }
 
@@ -46,10 +46,10 @@ ElidedLabel::ElidedLabel(QWidget *parent)
   , mElided(false)
   , mOnlyPlainText(false)
   , mContent("")
+  , mRectElision(QRect())
   , mTextColor(QColor())
 {
-	setStyleSheet("background-color: rgba(0,0,0,0%)");
-	mRectElision = QRect();
+	setStyleSheet("ElidedLabel{background-color: rgba(0,0,0,0%)}");
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 }
 
@@ -256,6 +256,7 @@ void ElidedLabel::mousePressEvent(QMouseEvent *ev)
 		return; // eat event
 	}
 	QLabel::mousePressEvent(ev);
+	emit clicked(ev->pos());
 }
 
 void ElidedLabel::setTextColor(const QColor &color)

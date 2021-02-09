@@ -88,9 +88,10 @@ struct RsGroupMetaData : RsSerializable
 
     uint32_t    mSubscribeFlags;
 
-    uint32_t    mPop; 			// Popularity = number of friend subscribers
-    uint32_t    mVisibleMsgCount; 	// Max messages reported by friends
-    rstime_t      mLastPost; 		// Timestamp for last message. Not used yet.
+    uint32_t    mPop; 			   // Popularity = number of friend subscribers
+    uint32_t    mVisibleMsgCount;  // Max messages reported by friends
+    rstime_t    mLastPost; 		   // Timestamp for last message. Not used yet.
+    rstime_t    mLastSeen; 		   // Last time the group was advertised by friends.
 
     uint32_t    mGroupStatus;
 

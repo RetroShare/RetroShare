@@ -417,6 +417,24 @@ void	p3GxsForums::service_tick()
 	return;
 }
 
+rstime_t p3GxsForums::service_getLastGroupSeenTs(const RsGxsGroupId& gid)
+{
+     rstime_t now = time(nullptr);
+
+    RS_STACK_MUTEX(mKnownForumsMutex);
+
+    auto it = mKnownForums.find(gid);
+    bool unknown_forum = it == mKnownForums.end();
+
+    if(unknown_forum)
+    {
+        mKnownForums[gid] = now;
+        IndicateConfigChanged();
+        return now;
+    }
+    else
+        return it->second;
+}
 bool p3GxsForums::service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta)
 {
 #ifdef GXSFORUMS_DEBUG

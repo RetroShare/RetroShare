@@ -24,7 +24,7 @@
     <number>1</number>
    </property>
    <item row="0" column="0">
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="mainFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -35,7 +35,7 @@
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This warning is here to protect you against traffic forwarding attacks. In such a case, the friend you're connected to will not see your external IP, but the attacker's IP. &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;However, if you just changed IPs for some reason (some ISPs regularly force change IPs) this warning just tells you that a friend connected to the new IP before Retroshare figured out the IP changed. Nothing's wrong in this case.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;You can easily suppress false warnings by white-listing your own IPs (e.g. the range of your ISP), or by completely disabling these warnings in Options-&amp;gt;Notify-&amp;gt;News Feed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="autoFillBackground">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="frameShape">
       <enum>QFrame::Box</enum>

@@ -140,15 +140,17 @@ public:
 	QVariant textColorRole (const Rs::Msgs::MsgInfoSummary& fmpe, int col) const;
 	QVariant backgroundRole(const Rs::Msgs::MsgInfoSummary& fmpe, int col) const;
 
-    /*!
-     * \brief debug_dump
-     * 			Dumps the hierarchy of posts in the terminal, to allow checking whether the internal representation is correct.
-     */
-    void debug_dump() const;
+#ifdef DEBUG_MESSAGE_MODEL
+	/*!
+	 * \brief debug_dump
+	 * Dumps the hierarchy of posts in the terminal, to allow checking whether the internal representation is correct.
+	 */
+	void debug_dump() const;
+#endif
 
-    // control over message flags and so on. This is handled by the model because it will allow it to update accordingly
+	// control over message flags and so on. This is handled by the model because it will allow it to update accordingly
 	void setMsgReadStatus(const QModelIndex& i, bool read_status);
-    void setMsgStar(const QModelIndex& index,bool star) ;
+	void setMsgStar(const QModelIndex& index,bool star) ;
 	void setMsgJunk(const QModelIndex& index,bool junk) ;
 
 public slots:

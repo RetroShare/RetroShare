@@ -2305,3 +2305,21 @@ BoardsCommentsItem QLabel#subjectLabel, QLabel#titleLabel , QLabel#nameLabel {
 	font: 14px;
 	font: bold;
 }
+
+HomePage QToolButton#addButton {
+	font: bold;
+	font-size: 15pt;
+	color: white;
+	background: #0099cc;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+HomePage QToolButton#addButton:hover {
+	background: #03b1f3;
+	border-radius: 4px;
+	min-width: 4em;
+	padding: 2px;
+}
