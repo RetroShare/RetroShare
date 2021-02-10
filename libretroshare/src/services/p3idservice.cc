@@ -969,16 +969,14 @@ bool p3IdService::createIdentity(
 	{
 		if(!rsNotify->cachePgpPassphrase(pgpPassword))
 		{
-			RsErr() << __PRETTY_FUNCTION__ << " Failure caching password"
-			        << std::endl;
+            RsErr() << __PRETTY_FUNCTION__ << " Failure caching password" << std::endl;
 			ret = false;
 			goto LabelCreateIdentityCleanup;
 		}
 
 		if(!rsNotify->setDisableAskPassword(true))
 		{
-			RsErr() << __PRETTY_FUNCTION__ << " Failure disabling password user"
-			        << " request" << std::endl;
+            RsErr() << __PRETTY_FUNCTION__ << " Failure disabling password user request" << std::endl;
 			ret = false;
 			goto LabelCreateIdentityCleanup;
 		}
@@ -990,8 +988,7 @@ bool p3IdService::createIdentity(
 
 	if(!createIdentity(token, params))
 	{
-		RsErr() << __PRETTY_FUNCTION__ << " Failed creating GXS group."
-		        << std::endl;
+        RsErr() << __PRETTY_FUNCTION__ << " Failed creating GXS group." << std::endl;
 		ret = false;
 		goto LabelCreateIdentityCleanup;
 	}
@@ -1003,16 +1000,14 @@ bool p3IdService::createIdentity(
 	         token, std::chrono::seconds(10), std::chrono::milliseconds(20) ))
 	        != RsTokenService::COMPLETE )
 	{
-		RsErr() << __PRETTY_FUNCTION__ << " waitToken("<< token
-		        << ") failed with: " << wtStatus << std::endl;
+        RsErr() << __PRETTY_FUNCTION__ << " waitToken("<< token << ") failed with: " << wtStatus << std::endl;
 		ret = false;
 		goto LabelCreateIdentityCleanup;
 	}
 
 	if(!RsGenExchange::getPublishedGroupMeta(token, meta))
 	{
-		RsErr() << __PRETTY_FUNCTION__ << " Failure getting updated group data."
-		        << std::endl;
+        RsErr() << __PRETTY_FUNCTION__ << " Failure getting updated group data." << std::endl;
 		ret = false;
 		goto LabelCreateIdentityCleanup;
 	}

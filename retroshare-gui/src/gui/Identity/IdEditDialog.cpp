@@ -547,18 +547,20 @@ void IdEditDialog::createId()
     params.nickname = groupname.toUtf8().constData();
 	params.isPgpLinked = (ui->radioButton_GpgId->isChecked());
 
-	if (!mAvatar.isNull())
-	{
-		QByteArray ba;
-		QBuffer buffer(&ba);
+    mAvatar = ui->avatarLabel->extractCroppedScaledPicture();
 
-		buffer.open(QIODevice::WriteOnly);
-		mAvatar.save(&buffer, "PNG"); // writes image into ba in PNG format
+    if (!mAvatar.isNull())
+    {
+        QByteArray ba;
+        QBuffer buffer(&ba);
 
-		params.mImage.copy((uint8_t *) ba.data(), ba.size());
-	}
-	else
-		params.mImage.clear();
+        buffer.open(QIODevice::WriteOnly);
+        mAvatar.save(&buffer, "PNG"); // writes image into ba in PNG format
+
+        params.mImage.copy((uint8_t *) ba.data(), ba.size());
+    }
+    else
+        params.mImage.clear();
 
     RsGxsId keyId;
     std::string gpg_password;
