@@ -209,10 +209,10 @@ void IdEditDialog::setAvatar(const QPixmap &avatar)
 	mAvatar = avatar;
 
 	if (!mAvatar.isNull()) {
-		ui->avatarLabel->setPixmap(mAvatar);
-	} else {
+        ui->avatarLabel->setPicture(avatar);
+    } else {
 		// we need to use the default pixmap here, generated from the ID
-		ui->avatarLabel->setPixmap(GxsIdDetails::makeDefaultIcon(RsGxsId(mEditGroup.mMeta.mGroupId)));
+        ui->avatarLabel->setPicture(GxsIdDetails::makeDefaultIcon(RsGxsId(mEditGroup.mMeta.mGroupId)));
 	}
 }
 
