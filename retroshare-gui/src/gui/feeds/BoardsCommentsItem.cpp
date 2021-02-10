@@ -434,6 +434,8 @@ void BoardsCommentsItem::setComment(const RsGxsComment& cmt)
 	if(idDetails.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idDetails.mAvatar.mData, idDetails.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
 		pixmap = GxsIdDetails::makeDefaultIcon(cmt.mMeta.mAuthorId,GxsIdDetails::SMALL);
 		ui->avatarLabel->setPixmap(pixmap);
+	
+	emit sizeChanged(this);
 
 }
 void BoardsCommentsItem::setCommentsSize(int comNb)

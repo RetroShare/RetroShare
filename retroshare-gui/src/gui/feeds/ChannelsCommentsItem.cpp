@@ -337,6 +337,8 @@ void ChannelsCommentsItem::loadMessage()
 			RsQThreadUtils::postToObject( [this]() {  removeItem(); }, this );
 		}
 	});
+	
+	emit sizeChanged(this);
 }
 
 void ChannelsCommentsItem::loadComment()
