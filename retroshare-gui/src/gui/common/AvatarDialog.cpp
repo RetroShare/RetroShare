@@ -132,7 +132,7 @@ void AvatarDialog::getAvatar(QPixmap &avatar)
 
 void AvatarDialog::getAvatar(QByteArray &avatar)
 {
-	const QPixmap *pixmap = ui->avatarLabel->pixmap();
+	pixmap = ui->avatarLabel->extractCroppedScaledPicture();
 	if (!pixmap) {
 		avatar.clear();
 		return;
@@ -141,7 +141,7 @@ void AvatarDialog::getAvatar(QByteArray &avatar)
 	QBuffer buffer(&avatar);
 
 	buffer.open(QIODevice::WriteOnly);
-	pixmap->save(&buffer, "PNG"); // writes image into ba in PNG format
+	pixmap.save(&buffer, "PNG"); // writes image into ba in PNG format
 }
 
 void AvatarDialog::load()
@@ -331,6 +331,6 @@ void AvatarDialog::addAvatar()
 	QString sticker = qobject_cast<QPushButton*>(sender())->statusTip();
 	QPixmap pixmap(sticker);
 
-	ui->avatarLabel->setPixmap(pixmap);
+	ui->avatarLabel->setPicture(pixmap);
 	updateInterface();
 }
