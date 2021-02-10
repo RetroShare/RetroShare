@@ -2017,6 +2017,7 @@ bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> 
                 }
 
                 group.mIsAContact =  (mContacts.find(RsGxsId(group.mMeta.mGroupId)) != mContacts.end());
+                group.mPgpLinked = (!!(group.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)) || !!(group.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID);
 
                 groups.push_back(group);
                 delete(item);

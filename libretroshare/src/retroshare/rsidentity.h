@@ -143,6 +143,7 @@ struct RsGxsIdGroup : RsSerializable
     rstime_t mLastUsageTS ;
 
     // Not Serialised - for GUI's benefit.
+    bool mPgpLinked;
     bool mPgpKnown;
     bool mIsAContact;	// change that into flags one day
     RsPgpId mPgpId;

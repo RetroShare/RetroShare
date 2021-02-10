@@ -637,7 +637,7 @@ void IdEditDialog::updateId()
     RsGxsId keyId;
     std::string gpg_password;
 
-    if(!mEditGroup.mPgpId.isNull())
+    if(mEditGroup.mPgpLinked)
     {
         std::string gpg_name = rsPeers->getGPGName(rsPeers->getGPGOwnId());
         bool cancelled;
