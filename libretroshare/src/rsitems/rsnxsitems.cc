@@ -164,8 +164,9 @@ void RsNxsEncryptedDataItem::serial_process(RsGenericSerializer::SerializeJob j,
 }
 
 int RsNxsGrp::refcount = 0;
-/** print and clear functions **/
 int RsNxsMsg::refcount = 0;
+
+/** print and clear functions **/
 void RsNxsMsg::clear()
 {
 
@@ -197,8 +198,8 @@ void RsNxsSyncGrpReqItem::clear()
 {
     flag = 0;
     createdSince = 0;
-    syncHash.clear();
     updateTS = 0;
+    syncHash.clear();
 }
 void RsNxsGroupPublishKeyItem::clear()
 {
@@ -209,8 +210,8 @@ void RsNxsSyncMsgReqItem::clear()
     grpId.clear();
     flag = 0;
     createdSinceTS = 0;
-    syncHash.clear();
     updateTS = 0;
+    syncHash.clear();
 }
 void RsNxsSyncGrpItem::clear()
 {
@@ -223,8 +224,8 @@ void RsNxsSyncGrpItem::clear()
 void RsNxsSyncMsgItem::clear()
 {
     flag = 0;
-    msgId.clear();
     grpId.clear();
+    msgId.clear();
     authorId.clear();
 }
 
