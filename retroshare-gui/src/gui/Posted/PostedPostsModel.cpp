@@ -194,7 +194,7 @@ void RsPostedPostsModel::setFilter(const QStringList& strings, uint32_t& count)
 	count = mFilteredPosts.size();
 
 	mDisplayedStartIndex = 0;
-    mDisplayedNbPosts = std::min(count,mDisplayedNbPosts) ;
+    mDisplayedNbPosts = std::min(count,mDefaultDisplayedNbPosts) ;
 
 	std::cerr << "After filtering: " << count << " posts remain." << std::endl;
 
@@ -494,6 +494,8 @@ void RsPostedPostsModel::setPostsInterval(int start,int nb_posts)
 {
 	if(start >= (int)mFilteredPosts.size())
 		return;
+	if(start < 0)
+		start = 0;
 
 	preMods();
 
@@ -542,7 +544,7 @@ void RsPostedPostsModel::setPosts(const RsPostedGroup& group, std::vector<RsPost
 	uint32_t tmpval;
 	setFilter(QStringList(),tmpval);
 
-    mDisplayedNbPosts = std::min((uint32_t)mFilteredPosts.size(),mDisplayedNbPosts);
+    mDisplayedNbPosts = std::min((uint32_t)mFilteredPosts.size(),mDefaultDisplayedNbPosts);
 	mDisplayedStartIndex = 0;
 
 	if (rowCount()>0)
