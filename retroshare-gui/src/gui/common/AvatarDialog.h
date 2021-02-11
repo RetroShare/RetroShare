@@ -62,6 +62,7 @@ private slots:
 
 private:
 	void updateInterface();
+	QPixmap pixmap;
 
 private:
 	Ui::AvatarDialog *ui;

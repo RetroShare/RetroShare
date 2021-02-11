@@ -151,8 +151,14 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="maximumSize">
+             <size>
+              <width>96</width>
+              <height>96</height>
+             </size>
+            </property>
             <property name="scaledContents">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -171,7 +177,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="images.qrc">
+             <iconset>
               <normaloff>:/images/edit_16.png</normaloff>:/images/edit_16.png</iconset>
             </property>
             <property name="toolButtonStyle">
@@ -264,7 +270,7 @@
   </action>
   <action name="actionSet_your_Avatar">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
    </property>
    <property name="text">
