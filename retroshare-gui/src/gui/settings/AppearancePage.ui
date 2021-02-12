@@ -249,40 +249,9 @@
          <enum>QFrame::NoFrame</enum>
         </property>
         <layout class="QGridLayout" name="frameToolListStyleGLayout">
-         <item row="1" column="0">
-          <widget class="QComboBox" name="cmboTollButtonsSize">
-           <item>
-            <property name="text">
-             <string>Icon Size = 8x8</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Icon Size = 16x16</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Icon Size = 24x24</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Icon Size = 32x32</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Icon Size = 64x64</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Icon Size = 128x128</string>
-            </property>
-           </item>
-          </widget>
-         </item>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
          <item row="2" column="0">
           <widget class="QComboBox" name="cmboTollButtonsStyle">
            <item>
@@ -329,6 +298,53 @@
             <size>
              <width>20</width>
              <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="1" column="0">
+          <widget class="QComboBox" name="cmboTollButtonsSize">
+           <item>
+            <property name="text">
+             <string>Icon Size = 8x8</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Icon Size = 16x16</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Icon Size = 24x24</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Icon Size = 32x32</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Icon Size = 64x64</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Icon Size = 128x128</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="1" column="1" rowspan="2">
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
             </size>
            </property>
           </spacer>
