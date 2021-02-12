@@ -981,7 +981,7 @@ void CreateGxsChannelMsg::toggle()
 
 void CreateGxsChannelMsg::on_removeButton_clicked()
 {
-	preview_W->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ChannelPostThumbnailView::CHAN_DEFAULT_IMAGE),true);
+	preview_W->setPixmap(QPixmap(), false);
 	removeButton->hide();
 }
 
