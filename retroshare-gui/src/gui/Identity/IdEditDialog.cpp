@@ -95,6 +95,7 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
 	ui->pushButton_Tag->hide(); // unfinished
 	ui->plainTextEdit_Tag->hide();
 	ui->label_TagCheck->hide();
+	ui->frame_Tags->setHidden(true);
 }
 
 IdEditDialog::~IdEditDialog() {}
@@ -263,6 +264,9 @@ void IdEditDialog::setupExistingId(const RsGxsGroupId& keyId)
 
 		}, this );
 	});
+
+    // force resize of dialog, to hide empty space from the hidden recogn tags area
+    adjustSize();
 }
 
 void IdEditDialog::enforceNoAnonIds()
