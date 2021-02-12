@@ -21,6 +21,7 @@
 
 #include "AboutDialog.h"
 #include "HelpDialog.h"
+#include "qmake_info.h"
 #include "rshare.h"
 
 #ifdef RS_JSONAPI
@@ -302,17 +303,13 @@ void AWidget::drawBitField()
 	p.end() ;
 }
 
-AWidget::AWidget() {
-    setMouseTracking(true);
-
-	density = 5;
-    page = 0;
-    mMaxStep = QFontMetricsF(font()).width(' ') ;
-    mStep = 1.0f ;
-    mState = 0 ;
-    mImagesReady = false ;
-
-//    startTimer(15);
+AWidget::AWidget()
+    : page(0), density(5)
+    , mImagesReady(false), mState(0), mTimerId(0)
+    , mStep(1.0f), mMaxStep(QFontMetricsF(font()).width(' '))
+{
+	setMouseTracking(true);
+	//startTimer(15);
 }
 
 void AWidget::computeNextState()
@@ -937,62 +934,63 @@ static QString addLibraries(const std::string &name, const std::list<RsLibraryIn
 
 void AboutWidget::on_copy_button_clicked()
 {
-    QString verInfo;
-    QString rsVerString = "RetroShare Version: ";
-    rsVerString+=Rshare::retroshareVersion(true);
-    verInfo+=rsVerString;
+	QString verInfo;
+	QString rsVerString = "RetroShare Version: ";
+	rsVerString+=Rshare::retroshareVersion(true);
+	verInfo+=rsVerString;
 #ifdef RS_ONLYHIDDENNODE
-    verInfo+=" " + tr("Only Hidden Node");
+	verInfo+=" " + tr("Only Hidden Node");
 #endif
-    verInfo+="\n";
-
+	verInfo+="\n";
 
 #if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
-	#if QT_VERSION >= QT_VERSION_CHECK (5, 4, 0)
-		verInfo+=QSysInfo::prettyProductName();
-	#endif
+#if QT_VERSION >= QT_VERSION_CHECK (5, 4, 0)
+	verInfo+=QSysInfo::prettyProductName();
+#endif
 #else
-	#ifdef Q_OS_LINUX
+#ifdef Q_OS_LINUX
 	verInfo+="Linux";
-	#endif
-	#ifdef Q_OS_WIN
+#endif
+#ifdef Q_OS_WIN
 	verInfo+="Windows";
-	#endif
-	#ifdef Q_OS_MAC
+#endif
+#ifdef Q_OS_MAC
 	verInfo+="Mac";
-	#endif
+#endif
 #endif
 	verInfo+=" ";
-    QString qtver = QString("QT ")+QT_VERSION_STR;
-    verInfo+=qtver;
-    verInfo+="\n\n";
+	QString qtver = QString("QT ")+QT_VERSION_STR;
+	verInfo+=qtver;
+	verInfo+="\n\n";
 
-    /* Add version numbers of libretroshare */
-    std::list<RsLibraryInfo> libraries;
-    RsControl::instance()->getLibraries(libraries);
-    verInfo+=addLibraries("libretroshare", libraries);
+	/* Add version numbers of libretroshare */
+	std::list<RsLibraryInfo> libraries;
+	RsControl::instance()->getLibraries(libraries);
+	verInfo+=addLibraries("libretroshare", libraries);
 
 #ifdef RS_JSONAPI
-// Disabled because I could not find how to get restbed version number
-//    /* Add version numbers of RetroShare */
-//    // Add versions here. Find a better place.
-//    libraries.clear();
-//    libraries.push_back(RsLibraryInfo("RestBed", restbed::get_version()));
-//    verInfo+=addLibraries("RetroShare", libraries);
+	// Disabled because I could not find how to get restbed version number
+	//    /* Add version numbers of RetroShare */
+	//    // Add versions here. Find a better place.
+	//    libraries.clear();
+	//    libraries.push_back(RsLibraryInfo("RestBed", restbed::get_version()));
+	//    verInfo+=addLibraries("RetroShare", libraries);
 #endif
 
-    /* Add version numbers of plugins */
-    if (rsPlugins) {
-        for (int i = 0; i < rsPlugins->nbPlugins(); ++i) {
-            RsPlugin *plugin = rsPlugins->plugin(i);
-            if (plugin) {
-                libraries.clear();
-                plugin->getLibraries(libraries);
-                verInfo+=addLibraries(plugin->getPluginName(), libraries);
-            }
-        }
-    }
+	/* Add version numbers of plugins */
+	if (rsPlugins) {
+		for (int i = 0; i < rsPlugins->nbPlugins(); ++i) {
+			RsPlugin *plugin = rsPlugins->plugin(i);
+			if (plugin) {
+				libraries.clear();
+				plugin->getLibraries(libraries);
+				verInfo+=addLibraries(plugin->getPluginName(), libraries);
+			}
+		}
+	}
 
+	verInfo+= "DEFINES:" + Rs_qmake_DEFINES + "\n";
+	verInfo+= "CONFIG:" + Rs_qmake_CONFIG + "\n";
 
-    QApplication::clipboard()->setText(verInfo);
+	QApplication::clipboard()->setText(verInfo);
 }

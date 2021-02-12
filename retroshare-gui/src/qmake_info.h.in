@@ -1,0 +1,8 @@
+#ifndef INFO_H
+#define INFO_H
+
+#include <QString>
+
+static const QString Rs_qmake_DEFINES = QStringLiteral(\"$$RS_QMAKE_DEFINES\");
+static const QString Rs_qmake_CONFIG = QStringLiteral(\"$$RS_QMAKE_CONFIG\");
+#endif // INFO_H

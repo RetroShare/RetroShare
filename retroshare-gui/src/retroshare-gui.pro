@@ -1514,3 +1514,18 @@ wikipoos {
 		gui/gxs/RsGxsUpdateBroadcastWidget.cpp \
 		gui/gxs/RsGxsUpdateBroadcastPage.cpp \
 }
+
+################################################################
+#Define qmake_info.h file so GUI can get wath was used to compil
+#         This must be at end to get all informations
+################################################################
+RS_QMAKE_DEFINES=\\\"$${DEFINES}\\\"
+RS_QMAKE_CONFIG=\\\"$${CONFIG}\\\"
+
+INCLUDEPATH += $$OUT_PWD/include
+info_file.input = $$PWD/qmake_info.h.in
+info_file.output = $$OUT_PWD/include/qmake_info.h
+
+QMAKE_SUBSTITUTES += info_file
+OTHER_FILES += \
+    qmake_info.h.in
