@@ -27,6 +27,7 @@
 #include "PluginItem.h"
 #include "rshare.h"
 #include "rsharesettings.h"
+#include "util/misc.h"
 
 #include <retroshare/rsplugin.h>
 
@@ -37,6 +38,11 @@ settings::PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
 {
     ui.setupUi(this);
     setAttribute(Qt::WA_QuitOnClose, false);
+
+	ui.wireBox->hide();
+	ui.wikiBox->hide();
+	ui.photosBox->hide();
+	ui.serviceGroupBox->hide();
 
 	 QString text ;
 
@@ -157,7 +163,29 @@ settings::PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
     ui.enableAll->setEnabled(false);
 
 	QObject::connect(ui.enableAll,SIGNAL(toggled(bool)),this,SLOT(toggleEnableAll(bool))) ;
+	
+	connect(ui.wireBox,     SIGNAL(toggled(bool)),          this,SLOT(enableWire()  ));
+	connect(ui.wikiBox,     SIGNAL(toggled(bool)),          this,SLOT(enableWiki()  ));
+	connect(ui.photosBox,   SIGNAL(toggled(bool)),          this,SLOT(enablePhotos()  ));
+	
+#ifdef RS_USE_WIRE
+	ui.wireBox->show();
+	ui.serviceGroupBox->show();
+#endif
+#ifdef RS_USE_WIKI
+	ui.wikiBox->show();
+	ui.serviceGroupBox->show();
+#endif
+#ifdef RS_USE_PHOTO
+	ui.photosBox->show();
+	ui.serviceGroupBox->show();
+#endif
 }
+
+void settings::PluginsPage::enableWire()       { Settings->setWireService(ui.wireBox->isChecked()); }
+void settings::PluginsPage::enableWiki()       { Settings->setWikiService(ui.wikiBox->isChecked()); }
+void settings::PluginsPage::enablePhotos()     { Settings->setPhotosService(ui.photosBox->isChecked()); }
+
 QString settings::PluginsPage::helpText() const
 {
    return tr("<h1><img width=\"24\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Plugins</h1>     \
@@ -204,7 +232,6 @@ void settings::PluginsPage::disablePlugin(const QString& hash)
         rsPlugins->disablePlugin(RsFileHash(hash.toStdString())) ;
 }
 
-
 settings::PluginsPage::~PluginsPage()
 {
 }
@@ -212,4 +239,11 @@ settings::PluginsPage::~PluginsPage()
 /** Loads the settings for this page */
 void settings::PluginsPage::load()
 {
+    Settings->beginGroup(QString("Services"));
+
+    whileBlocking(ui.wireBox)->setChecked(Settings->getWikiService());
+    whileBlocking(ui.wikiBox)->setChecked(Settings->getWireService());
+    whileBlocking(ui.photosBox)->setChecked(Settings->getPhotosService());
+
+    Settings->endGroup();
 }

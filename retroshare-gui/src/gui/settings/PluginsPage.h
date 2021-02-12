@@ -50,6 +50,10 @@ class PluginsPage : public ConfigPage
 		void aboutPlugin(int i) ;
 		void toggleEnableAll(bool) ;
 
+	void enableWire();
+	void enableWiki() ;
+	void enablePhotos() ;
+
 	private:
 			Ui::PluginsPage ui;
 };
