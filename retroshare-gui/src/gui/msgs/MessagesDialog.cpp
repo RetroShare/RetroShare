@@ -1047,7 +1047,6 @@ void MessagesDialog::markWithJunk(bool checked)
 void MessagesDialog::insertMsgTxtAndFiles(const QModelIndex& proxy_index)
 {
     /* get its Ids */
-    std::string cid;
     std::string mid;
 
     QModelIndex real_index = mMessageProxyModel->mapToSource(proxy_index);
@@ -1129,6 +1128,7 @@ void MessagesDialog::removemessage()
 
     mMessageModel->updateMessages();
     updateMessageSummaryList();
+	lastSelectedIndex = QModelIndex();
 	messageRemoved();
 }
 
@@ -1382,24 +1382,24 @@ void MessagesDialog::updateMessageSummaryList()
     /* set tag counts */
     int rowCount = ui.quickViewWidget->count();
     for (int row = 0; row < rowCount; ++row) {
-        QListWidgetItem *item = ui.quickViewWidget->item(row);
-        switch (item->data(ROLE_QUICKVIEW_TYPE).toInt()) {
+        QListWidgetItem *qv_item = ui.quickViewWidget->item(row);
+        switch (qv_item->data(ROLE_QUICKVIEW_TYPE).toInt()) {
         case QUICKVIEW_TYPE_TAG:
             {
-                int count = tagCount[item->data(ROLE_QUICKVIEW_ID).toInt()];
+                int count = tagCount[qv_item->data(ROLE_QUICKVIEW_ID).toInt()];
 
-                QString text = item->data(ROLE_QUICKVIEW_TEXT).toString();
+                QString text = qv_item->data(ROLE_QUICKVIEW_TEXT).toString();
                 if (count) {
                     text += " (" + QString::number(count) + ")";
                 }
 
-                item->setText(text);
+                qv_item->setText(text);
             }
             break;
         case QUICKVIEW_TYPE_STATIC:
             {
-                QString text = item->data(ROLE_QUICKVIEW_TEXT).toString();
-                switch (item->data(ROLE_QUICKVIEW_ID).toInt()) {
+                QString text = qv_item->data(ROLE_QUICKVIEW_TEXT).toString();
+                switch (qv_item->data(ROLE_QUICKVIEW_ID).toInt()) {
                 case QUICKVIEW_STATIC_ID_STARRED:
                     text += " (" + QString::number(starredCount) + ")";
                     break;
@@ -1414,7 +1414,7 @@ void MessagesDialog::updateMessageSummaryList()
                     break;
                 }
 
-                item->setText(text);
+                qv_item->setText(text);
             }
             break;
         }
