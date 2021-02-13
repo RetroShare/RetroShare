@@ -1049,7 +1049,12 @@ int RsDataService::updateGroupKeys(const RsGxsGroupId& grpId,const RsTlvSecurity
     mDb->sqlUpdate(GRP_TABLE_NAME, "grpId='" + grpId.toStdString() + "'", cv);
 
     // finish transaction
-    return  mDb->commitTransaction();
+    bool res = mDb->commitTransaction();
+
+    mGrpMetaDataCache.clear(grpId);
+    mGrpMetaDataCache.setCacheUpToDate(false);	// this is needed because clear() doesn't do it (on purpose)
+
+    return res;
 }
 
 bool RsDataService::validSize(RsNxsGrp* grp) const
