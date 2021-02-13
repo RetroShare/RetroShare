@@ -251,20 +251,6 @@
              </property>
             </widget>
            </item>
-           <item row="8" column="0">
-            <widget class="QLabel" name="statusIcon">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item row="8" column="1">
-            <widget class="QLabel" name="statusTitle">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
            <item row="3" column="1">
             <spacer name="verticalSpacer">
              <property name="orientation">
@@ -280,6 +266,36 @@
               </size>
              </property>
             </spacer>
+           </item>
+           <item row="8" column="2">
+            <widget class="QLabel" name="statusTitle">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="1">
+            <widget class="QProgressBar" name="statusprogressBar">
+             <property name="value">
+              <number>100</number>
+             </property>
+             <property name="textVisible">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="0">
+            <widget class="QLabel" name="statusLabel">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Status</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
