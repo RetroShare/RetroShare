@@ -437,6 +437,10 @@ void PostedItem::setup()
 	ui->clearButton->hide();
 	ui->readAndClearButton->hide();
 	ui->nameLabel->hide();
+
+	//hide read & new not used
+	ui->readButton->hide();
+	ui->newLabel->hide();
 }
 
 void PostedItem::makeDownVote()
@@ -699,7 +703,7 @@ void PostedItem::setReadStatus(bool isNew, bool isUnread)
 		ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png"));
 	}
 
-	ui->newLabel->setVisible(isNew);
+	//ui->newLabel->setVisible(isNew);
 
 	ui->mainFrame->setProperty("new", isNew);
 	ui->mainFrame->style()->unpolish(ui->mainFrame);
