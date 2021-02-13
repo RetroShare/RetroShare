@@ -311,8 +311,18 @@ void ConfCertDialog::loadInvitePage()
 QString ConfCertDialog::getCertificateDescription(const RsPeerDetails& detail,bool signatures_included,bool use_short_format,bool include_additional_locators)
 {
     //infotext += tr("<p>Use this certificate to make new friends. Send it by email, or give it hand to hand.</p>") ;
-    QString infotext = QObject::tr("<p>This certificate contains:") ;
-    infotext += "<UL>" ;
+    QString infotext;
+
+	if(use_short_format)
+	{
+		infotext += tr("<p>This Retroshare ID contains:") ;
+	}
+	else
+	{
+		infotext += tr("<p>This certificate contains:") ;
+	}
+	
+	infotext += "<UL>" ;
 
     if(use_short_format)
     {
@@ -350,6 +360,9 @@ QString ConfCertDialog::getCertificateDescription(const RsPeerDetails& detail,bo
     infotext += QString("</p>") ;
 
     if(rsPeers->getOwnId() == detail.id)
+		if(use_short_format)
+        infotext += tr("<p>You can use this Retroshare ID to make new friends. Send it by email, or give it hand to hand.</p>") ;
+		else
         infotext += tr("<p>You can use this certificate to make new friends. Send it by email, or give it hand to hand.</p>") ;
 
     return infotext;
