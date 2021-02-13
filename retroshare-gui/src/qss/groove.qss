@@ -65,3 +65,30 @@ QTreeWidget::item:selected { /* when user selects item using mouse or keyboard *
 
 }
 
+HomePage QToolButton#addButton {
+	font: bold;
+	font-size: 15pt;
+	color: white;
+   	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+								   stop: 0 #6799B3, stop: 0.3 #377a90, 
+								   stop: 0.31 #0e5e73, stop: 1 #4b8598);
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+HomePage QToolButton#addButton:hover {
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+								   stop: 0 #719cb2, stop: 0.3 #5e9bab, 
+								   stop: 0.31 #0e5e69, stop: 1 #4b9897);
+	border-radius: 4px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+MainWindow QListWidget {
+	font-size: 12pt;
+}
+
+
