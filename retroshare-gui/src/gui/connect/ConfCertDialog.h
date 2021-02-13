@@ -32,7 +32,8 @@ class ConfCertDialog : public QDialog
     Q_OBJECT
 
 public:
-    enum enumPage { PageDetails, PageTrust, PageCertificate };
+
+	enum enumPage { PageDetails = 0, PageTrust = 1, PageCertificate = 2 };
 
     template<class ID_CLASS> static void showIt(const ID_CLASS& id, enumPage page)
     {
@@ -40,13 +41,13 @@ public:
 
         switch (page) {
         case PageDetails:
-            confdialog->ui.stabWidget->setCurrentIndex(0);
+            confdialog->ui.stabWidget->setCurrentIndex(PageDetails);
             break;
         case PageTrust:
-            confdialog->ui.stabWidget->setCurrentIndex(1);
+            confdialog->ui.stabWidget->setCurrentIndex(PageTrust);
             break;
         case PageCertificate:
-            confdialog->ui.stabWidget->setCurrentIndex(2);
+            confdialog->ui.stabWidget->setCurrentIndex(PageCertificate);
             break;
         }
 
@@ -65,7 +66,7 @@ signals:
 
 private:
     /** Default constructor */
-    ConfCertDialog(const RsPeerId &id,const RsPgpId& pgp_id, QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    ConfCertDialog(const RsPeerId &id,const RsPgpId& pgp_id, QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
     /** Default destructor */
     ~ConfCertDialog();
 
@@ -87,6 +88,9 @@ private:
     RsPgpId  pgpId;
 
     QString nameAndLocation;
+
+	static QMap<RsPeerId, ConfCertDialog*> instances_ssl;
+	static QMap<RsPgpId,  ConfCertDialog*> instances_pgp;
 
     /** Qt Designer generated object */
     Ui::ConfCertDialog ui;

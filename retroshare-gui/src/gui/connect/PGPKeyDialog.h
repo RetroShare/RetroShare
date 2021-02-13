@@ -30,7 +30,7 @@ class PGPKeyDialog : public QDialog
     Q_OBJECT
 
 public:
-    enum enumPage { PageDetails=0x0 };
+	enum enumPage { PageDetails = 0, PageKey = 1, PageOption = 2};
 
     template<class ID_CLASS> static void showIt(const ID_CLASS& id, enumPage page)
     {
@@ -38,7 +38,13 @@ public:
 
         switch (page) {
         case PageDetails:
-            confdialog->ui.stabWidget->setCurrentIndex(0);
+            confdialog->ui.stabWidget->setCurrentIndex(PageDetails);
+            break;
+        case PageKey:
+            confdialog->ui.stabWidget->setCurrentIndex(PageKey);
+            break;
+        case PageOption:
+            confdialog->ui.stabWidget->setCurrentIndex(PageOption);
             break;
         }
 
@@ -56,7 +62,7 @@ signals:
 
 private:
     /** Default constructor */
-    PGPKeyDialog(const RsPeerId &id,const RsPgpId& pgp_id, QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    PGPKeyDialog(const RsPeerId &id,const RsPgpId& pgp_id, QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
     /** Default destructor */
     ~PGPKeyDialog();
 
@@ -79,6 +85,8 @@ private slots:
 private:
     RsPeerId peerId;
     RsPgpId  pgpId;
+
+	static QMap<RsPgpId, PGPKeyDialog*> instances_pgp;
 
     /** Qt Designer generated object */
     Ui::PGPKeyDialog ui;
