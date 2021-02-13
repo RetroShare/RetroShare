@@ -42,10 +42,12 @@ const uint32_t RsPostedPostsModel::DEFAULT_DISPLAYED_NB_POSTS = 10;
 
 std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsewhere
 
-RsPostedPostsModel::RsPostedPostsModel(QObject *parent)
+RsPostedPostsModel::RsPostedPostsModel(int default_chunk_size, QObject *parent)
     : QAbstractItemModel(parent), mTreeMode(TREE_MODE_PLAIN)
 {
-	initEmptyHierarchy();
+    mDefaultDisplayedNbPosts = default_chunk_size;
+
+    initEmptyHierarchy();
 
 	mEventHandlerId = 0;
     mSortingStrategy = SORT_NEW_SCORE;
@@ -132,7 +134,7 @@ void RsPostedPostsModel::initEmptyHierarchy()
 
     mPosts.clear();
     mFilteredPosts.clear();
-    mDisplayedNbPosts = DEFAULT_DISPLAYED_NB_POSTS;
+    mDisplayedNbPosts = mDefaultDisplayedNbPosts;
     mDisplayedStartIndex = 0;
 
     postMods();
@@ -149,7 +151,8 @@ void RsPostedPostsModel::postMods()
 }
 void RsPostedPostsModel::update()
 {
-	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mDisplayedNbPosts,0,(void*)NULL));
+    if(mDisplayedNbPosts > 0)
+        emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mDisplayedNbPosts-1,0,(void*)NULL));
 }
 void RsPostedPostsModel::triggerRedraw()
 {
@@ -191,7 +194,7 @@ void RsPostedPostsModel::setFilter(const QStringList& strings, uint32_t& count)
 	count = mFilteredPosts.size();
 
 	mDisplayedStartIndex = 0;
-	mDisplayedNbPosts = std::min(count,DEFAULT_DISPLAYED_NB_POSTS) ;
+    mDisplayedNbPosts = std::min(count,mDefaultDisplayedNbPosts) ;
 
 	std::cerr << "After filtering: " << count << " posts remain." << std::endl;
 
@@ -491,19 +494,28 @@ void RsPostedPostsModel::setPostsInterval(int start,int nb_posts)
 {
 	if(start >= (int)mFilteredPosts.size())
 		return;
+	if(start < 0)
+		start = 0;
 
 	preMods();
 
-	uint32_t old_nb_rows = rowCount() ;
+    int old_nb_rows = rowCount() ;
+    int new_nb_rows = (uint32_t)std::min(nb_posts,(int)mFilteredPosts.size() - start);
 
-	mDisplayedNbPosts = (uint32_t)std::min(nb_posts,(int)mFilteredPosts.size() - (start+1));
-	mDisplayedStartIndex = start;
+    if(old_nb_rows > new_nb_rows)
+    {
+        beginRemoveRows(QModelIndex(),new_nb_rows,old_nb_rows-1);
+        endRemoveRows();
+    }
 
-	beginRemoveRows(QModelIndex(),mDisplayedNbPosts,old_nb_rows);
-	endRemoveRows();
+    mDisplayedStartIndex = start;
+    mDisplayedNbPosts = new_nb_rows;
 
-	beginInsertRows(QModelIndex(),old_nb_rows,mDisplayedNbPosts);
-	endInsertRows();
+    if(new_nb_rows > old_nb_rows)
+    {
+        beginInsertRows(QModelIndex(),old_nb_rows,new_nb_rows-1);
+        endInsertRows();
+    }
 
 	postMods();
 }
@@ -532,7 +544,7 @@ void RsPostedPostsModel::setPosts(const RsPostedGroup& group, std::vector<RsPost
 	uint32_t tmpval;
 	setFilter(QStringList(),tmpval);
 
-	mDisplayedNbPosts = std::min((uint32_t)mFilteredPosts.size(),DEFAULT_DISPLAYED_NB_POSTS);
+    mDisplayedNbPosts = std::min((uint32_t)mFilteredPosts.size(),mDefaultDisplayedNbPosts);
 	mDisplayedStartIndex = 0;
 
 	if (rowCount()>0)

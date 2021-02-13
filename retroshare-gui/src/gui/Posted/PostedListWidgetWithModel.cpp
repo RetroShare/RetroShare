@@ -175,7 +175,7 @@ void PostedPostDelegate::expandItem(RsGxsMessageId msgId,bool expanded)
     else
         mExpandedItems.erase(msgId);
 
-    mPostListWidget->forceRedraw();
+    mPostListWidget->redraw();
 }
 
 uint8_t PostedPostDelegate::displayFlags(const RsGxsMessageId &id) const
@@ -244,7 +244,7 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
 
-    ui->postsTree->setModel(mPostedPostsModel = new RsPostedPostsModel());
+    ui->postsTree->setModel(mPostedPostsModel = new RsPostedPostsModel(POSTS_CHUNK_SIZE));
     ui->postsTree->setItemDelegate(mPostedPostsDelegate = new PostedPostDelegate(this));
     ui->postsTree->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);	// prevents bug on w10, since row size depends on widget width
     ui->postsTree->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);// more beautiful if we scroll at pixel level
@@ -351,31 +351,45 @@ void PostedListWidgetWithModel::handlePostsTreeSizeChange(QSize size)
     mPostedPostsModel->triggerRedraw();
 }
 
+void PostedListWidgetWithModel::updateShowLabel()
+{
+	if (mPostedPostsModel->rowCount() > 0)
+		whileBlocking(ui->showLabel)->setText(QString::number(mPostedPostsModel->displayedStartPostIndex()+1)
+		                       +" - "+QString::number(mPostedPostsModel->displayedStartPostIndex()+mPostedPostsModel->rowCount()));
+	else
+		whileBlocking(ui->showLabel)->setText(tr("Empty"));
+
+	ui->nextButton->setEnabled(mPostedPostsModel->displayedStartPostIndex() + POSTS_CHUNK_SIZE < mPostedPostsModel->filteredPostsCount());
+	ui->prevButton->setEnabled(mPostedPostsModel->displayedStartPostIndex() > 0);
+}
+
 void PostedListWidgetWithModel::filterItems(QString text)
 {
 	QStringList lst = text.split(" ",QString::SkipEmptyParts) ;
 
     uint32_t count;
 	mPostedPostsModel->setFilter(lst,count) ;
-
-    ui->showLabel->setText(QString::number(mPostedPostsModel->displayedStartPostIndex()+1)+" - "+QString::number(std::min(mPostedPostsModel->filteredPostsCount(),mPostedPostsModel->displayedStartPostIndex()+POSTS_CHUNK_SIZE+1)));
+	updateShowLabel();
 }
 
 void PostedListWidgetWithModel::nextPosts()
 {
+	ui->postsTree->selectionModel()->clear();
     if(mPostedPostsModel->displayedStartPostIndex() + POSTS_CHUNK_SIZE < mPostedPostsModel->filteredPostsCount())
     {
         mPostedPostsModel->setPostsInterval(POSTS_CHUNK_SIZE+mPostedPostsModel->displayedStartPostIndex(),POSTS_CHUNK_SIZE);
-        ui->showLabel->setText(QString::number(mPostedPostsModel->displayedStartPostIndex()+1)+" - "+QString::number(std::min(mPostedPostsModel->filteredPostsCount(),mPostedPostsModel->displayedStartPostIndex()+POSTS_CHUNK_SIZE+1)));
+		updateShowLabel();
     }
 }
 
 void PostedListWidgetWithModel::prevPosts()
 {
-    if((int)mPostedPostsModel->displayedStartPostIndex() - POSTS_CHUNK_SIZE >= 0)
+    ui->postsTree->selectionModel()->clear();
+
+    if((int)mPostedPostsModel->displayedStartPostIndex() > 0)
     {
-        mPostedPostsModel->setPostsInterval(mPostedPostsModel->displayedStartPostIndex()-POSTS_CHUNK_SIZE,POSTS_CHUNK_SIZE);
-        ui->showLabel->setText(QString::number(mPostedPostsModel->displayedStartPostIndex()+1)+" - "+QString::number(std::min(mPostedPostsModel->filteredPostsCount(),mPostedPostsModel->displayedStartPostIndex()+POSTS_CHUNK_SIZE+1)));
+        mPostedPostsModel->setPostsInterval((int)mPostedPostsModel->displayedStartPostIndex()-POSTS_CHUNK_SIZE,POSTS_CHUNK_SIZE);
+        updateShowLabel();
     }
 }
 
@@ -651,7 +665,7 @@ void PostedListWidgetWithModel::postPostLoad()
 	else
 		std::cerr << "No pre-selected channel post." << std::endl;
 
-	whileBlocking(ui->showLabel)->setText(QString::number(mPostedPostsModel->displayedStartPostIndex()+1)+" - "+QString::number(std::min(mPostedPostsModel->filteredPostsCount(),mPostedPostsModel->displayedStartPostIndex()+POSTS_CHUNK_SIZE+1)));
+	updateShowLabel();
 }
 
 void PostedListWidgetWithModel::forceRedraw()
@@ -659,7 +673,11 @@ void PostedListWidgetWithModel::forceRedraw()
     if(mPostedPostsModel)
         mPostedPostsModel->deepUpdate();
 }
-
+void PostedListWidgetWithModel::redraw()
+{
+    if(mPostedPostsModel)
+        mPostedPostsModel->triggerRedraw();
+}
 void PostedListWidgetWithModel::updateDisplay(bool complete)
 {
 #ifdef DEBUG_CHANNEL

@@ -2039,7 +2039,7 @@ void RsGxsNetService::debugDump()
     for(ServerMsgMap::const_iterator it(mServerMsgUpdateMap.begin());it!=mServerMsgUpdateMap.end();++it)
     {
         RsGxsGrpMetaTemporaryMap::const_iterator it2 = grpMetas.find(it->first) ;
-        RsGxsGrpMetaData *grpMeta = (it2 != grpMetas.end())? it2->second : NULL;
+        auto grpMeta = (it2 != grpMetas.end())? it2->second : (std::shared_ptr<RsGxsGrpMetaData>()) ;
         std::string subscribe_string = (grpMeta==NULL)?"Unknown" :  ((grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)?" Subscribed":" NOT Subscribed") ;
 
 	GXSNETDEBUG__G(it->first) << "    Grp:" << it->first << " last local modification (secs ago): " << nice_time_stamp(time(NULL),it->second.msgUpdateTS) << ", " << subscribe_string  << std::endl;
@@ -5368,13 +5368,14 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req,const unsig
 #endif
     uint32_t used_size = clear_group_data_len;
     RsItem *item = RsNxsSerialiser(mServType).deserialise(clear_group_data,&used_size) ;
+    RsNxsGrp *nxs_identity_grp=nullptr;
 
     if(used_size < clear_group_data_len)
     {
         uint32_t remaining_size = clear_group_data_len-used_size ;
         RsItem *item2 = RsNxsSerialiser(RS_SERVICE_GXS_TYPE_GXSID).deserialise(clear_group_data+used_size,&remaining_size) ;
 
-        auto nxs_identity_grp = dynamic_cast<RsNxsGrp*>(item2);
+        nxs_identity_grp = dynamic_cast<RsNxsGrp*>(item2);
 
         if(!nxs_identity_grp)
             std::cerr << "(EE) decrypted item contains more data that cannot be deserialized as a GxsId. Unexpected!" << std::endl;
