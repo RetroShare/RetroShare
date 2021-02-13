@@ -76,10 +76,8 @@
 /********************************************************************************/
 
 p3GxsChannels::p3GxsChannels(
-        RsGeneralDataService *gds, RsNetworkExchangeService *nes,
-        RsGixs* gixs ) :
-    RsGenExchange( gds, nes, new RsGxsChannelSerialiser(),
-                   RS_SERVICE_GXS_TYPE_CHANNELS, gixs, channelsAuthenPolicy() ),
+        RsGeneralDataService *gds, RsNetworkExchangeService *nes, RsGixs* gixs ) :
+    RsGenExchange( gds, nes, new RsGxsChannelSerialiser(), RS_SERVICE_GXS_TYPE_CHANNELS, gixs, channelsAuthenPolicy() ),
     RsGxsChannels(static_cast<RsGxsIface&>(*this)), GxsTokenQueue(this),
     mSubscribedGroupsMutex("GXS channels subscribed groups cache"),
     mKnownChannelsMutex("GXS channels known channels timestamp cache")
@@ -752,28 +750,25 @@ bool p3GxsChannels::getChannelAutoDownload(const RsGxsGroupId &groupId, bool& en
     return autoDownloadEnabled(groupId,enabled);
 }
 	
-bool p3GxsChannels::setChannelDownloadDirectory(
-        const RsGxsGroupId &groupId, const std::string& directory )
+bool p3GxsChannels::setChannelDownloadDirectory( const RsGxsGroupId &groupId, const std::string& directory )
 {
 #ifdef GXSCHANNELS_DEBUG
 	std::cerr << __PRETTY_FUNCTION__ << " id: " << groupId << " to: "
 	          << directory << std::endl;
 #endif
+    RsGroupMetaData meta;
+    if(!getChannelSummary(groupId,meta))
+        return false;
 
-	RS_STACK_MUTEX(mSubscribedGroupsMutex);
-
-    std::map<RsGxsGroupId, RsGroupMetaData>::iterator it;
-	it = mSubscribedGroups.find(groupId);
-	if (it == mSubscribedGroups.end())
-	{
-		std::cerr << __PRETTY_FUNCTION__ << " Error! Unknown groupId: "
-		          << groupId.toStdString() << std::endl;
-		return false;
-	}
+    if(! (meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED))
+    {
+        RsErr() << "Requesting autoDownloadEnabled for a non subscribed channel!" << std::endl;
+        return false;
+    }
 
     /* extract from ServiceString */
     GxsChannelGroupInfo ss;
-    ss.load(it->second.mServiceString);
+    ss.load(meta.mServiceString);
 
 	if (directory == ss.mDownloadDirectory)
 	{
@@ -785,23 +780,27 @@ bool p3GxsChannels::setChannelDownloadDirectory(
 
     ss.mDownloadDirectory = directory;
     std::string serviceString = ss.save();
-    uint32_t token;
 
-    it->second.mServiceString = serviceString; // update Local Cache.
+    uint32_t token;
     RsGenExchange::setGroupServiceString(token, groupId, serviceString); // update dbase.
 
 	if(waitToken(token) != RsTokenService::COMPLETE)
 	{
-		std::cerr << __PRETTY_FUNCTION__ << " Error! Feiled setting group "
-		          << " service string" << std::endl;
+        std::cerr << __PRETTY_FUNCTION__ << " Error! Failed setting group service string" << std::endl;
 		return false;
 	}
 
-    /* now reload it */
+    // now update the cache
+    meta.mServiceString = serviceString;
+    updateSubscribedGroup(meta);
+
+#ifdef REMOVED
+    /* now reload it in the local cache */
     std::list<RsGxsGroupId> groups;
     groups.push_back(groupId);
 
     request_SpecificSubscribedGroups(groups);
+#endif
 
     return true;
 }
@@ -812,21 +811,19 @@ bool p3GxsChannels::getChannelDownloadDirectory(const RsGxsGroupId & groupId,std
     std::cerr << "p3GxsChannels::getChannelDownloadDirectory(" << id << ")" << std::endl;
 #endif
 
-	RS_STACK_MUTEX(mSubscribedGroupsMutex);
+    RsGroupMetaData meta;
+    if(!getChannelSummary(groupId,meta))
+        return false;
 
-    std::map<RsGxsGroupId, RsGroupMetaData>::iterator it;
-
-	it = mSubscribedGroups.find(groupId);
-	if (it == mSubscribedGroups.end())
-	{
-		std::cerr << __PRETTY_FUNCTION__ << " Error! Unknown groupId: "
-		          << groupId.toStdString() << std::endl;
-		return false;
-	}
+    if(! (meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED))
+    {
+        RsErr() << "Requesting autoDownloadEnabled for a non subscribed channel!" << std::endl;
+        return false;
+    }
 
     /* extract from ServiceString */
     GxsChannelGroupInfo ss;
-    ss.load(it->second.mServiceString);
+    ss.load(meta.mServiceString);
     directory = ss.mDownloadDirectory;
 
 	return true;
@@ -1169,8 +1166,7 @@ void p3GxsChannels::handleResponse(uint32_t token, uint32_t req_type
 /// Blocking API implementation begin
 ////////////////////////////////////////////////////////////////////////////////
 
-bool p3GxsChannels::getChannelsSummaries(
-        std::list<RsGroupMetaData>& channels )
+bool p3GxsChannels::getChannelsSummaries( std::list<RsGroupMetaData>& channels )
 {
 	uint32_t token;
 	RsTokReqOptions opts;
@@ -1180,6 +1176,22 @@ bool p3GxsChannels::getChannelsSummaries(
 	return getGroupSummary(token, channels);
 }
 
+bool p3GxsChannels::getChannelSummary(const RsGxsGroupId& grpId,RsGroupMetaData& meta)
+{
+    uint32_t token;
+    RsTokReqOptions opts;
+    opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+    if( !requestGroupInfo(token, opts, std::list<RsGxsGroupId>{ grpId }) || waitToken(token) != RsTokenService::COMPLETE ) return false;
+
+    std::list<RsGroupMetaData> channels;
+    bool res = getGroupSummary(token, channels);
+
+    if(!res || channels.size() != 1)
+        return false;
+
+    meta = channels.front();
+    return true;
+}
 bool p3GxsChannels::getChannelsInfo( const std::list<RsGxsGroupId>& chanIds, std::vector<RsGxsChannelGroup>& channelsInfo )
 {
 	uint32_t token;
@@ -1822,19 +1834,19 @@ bool p3GxsChannels::autoDownloadEnabled(const RsGxsGroupId &groupId,bool& enable
 	std::cerr << std::endl;
 #endif
 
-	RS_STACK_MUTEX(mSubscribedGroupsMutex);
-	std::map<RsGxsGroupId, RsGroupMetaData>::iterator it;
-	it = mSubscribedGroups.find(groupId);
-	if (it == mSubscribedGroups.end())
-	{
-		std::cerr << __PRETTY_FUNCTION__ << " WARNING requested channel: "
-		          << groupId << " is not subscribed" << std::endl;
-		return false;
-	}
+    RsGroupMetaData meta;
+    if(!getChannelSummary(groupId,meta))
+        return false;
 
-	/* extract from ServiceString */
+    if(! (meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED))
+    {
+        RsErr() << "Requesting autoDownloadEnabled for a non subscribed channel!" << std::endl;
+        return false;
+    }
+
+    /* extract from ServiceString */
     GxsChannelGroupInfo ss;
-	ss.load(it->second.mServiceString);
+    ss.load(meta.mServiceString);
 	enabled = ss.mAutoDownload;
 
 	return true;
@@ -1919,20 +1931,20 @@ bool p3GxsChannels::setAutoDownload(const RsGxsGroupId& groupId, bool enabled)
 	std::cerr << __PRETTY_FUNCTION__ << " id: " << groupId
 	          << " enabled: " << enabled << std::endl;
 #endif
+    RsGroupMetaData meta;
+    if(!getChannelSummary(groupId,meta))
+        return false;
 
-	RS_STACK_MUTEX(mSubscribedGroupsMutex);
-	std::map<RsGxsGroupId, RsGroupMetaData>::iterator it;
-	it = mSubscribedGroups.find(groupId);
-	if (it == mSubscribedGroups.end())
-	{
-		std::cerr << __PRETTY_FUNCTION__ << " ERROR requested channel: "
-		          << groupId.toStdString() << " is not subscribed!" << std::endl;
-		return false;
-	}
+    if(! (meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED))
+    {
+        RsErr() << "Requesting autoDownloadEnabled for a non subscribed channel!" << std::endl;
+        return false;
+    }
 
 	/* extract from ServiceString */
     GxsChannelGroupInfo ss;
-	ss.load(it->second.mServiceString);
+    ss.load(meta.mServiceString);
+
 	if (enabled == ss.mAutoDownload)
 	{
 		std::cerr << __PRETTY_FUNCTION__ << " WARNING mAutoDownload was already"
@@ -1949,7 +1961,7 @@ bool p3GxsChannels::setAutoDownload(const RsGxsGroupId& groupId, bool enabled)
 
 	if(waitToken(token) != RsTokenService::COMPLETE) return false;
 
-	it->second.mServiceString = serviceString; // update Local Cache.
+    updateSubscribedGroup(meta);
 
 	return true;
 }

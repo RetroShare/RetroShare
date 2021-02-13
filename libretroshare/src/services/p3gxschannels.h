@@ -192,7 +192,10 @@ virtual bool ExtraFileRemove(const RsFileHash &hash) override;
 	/// Implementation of @see RsGxsChannels::getChannelsSummaries
 	bool getChannelsSummaries(std::list<RsGroupMetaData>& channels) override;
 
-	/// Implementation of @see RsGxsChannels::getChannelsInfo
+    /// get the metadata of a single channel
+    bool getChannelSummary(const RsGxsGroupId& grpId,RsGroupMetaData& meta);
+
+    /// Implementation of @see RsGxsChannels::getChannelsInfo
 	bool getChannelsInfo(
 	        const std::list<RsGxsGroupId>& chanIds,
 	        std::vector<RsGxsChannelGroup>& channelsInfo ) override;
