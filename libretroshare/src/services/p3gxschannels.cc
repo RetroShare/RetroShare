@@ -96,7 +96,7 @@ p3GxsChannels::p3GxsChannels(
     // This is not needed since it just loads all channel data ever 5 mins which takes a lot
     // of useless CPU/memory.
     //
-    //     RsTickEvent::schedule_in(CHANNEL_PROCESS, 0);
+    RsTickEvent::schedule_in(CHANNEL_PROCESS, 0);
     //
 	// Test Data disabled in repo.
     //
@@ -306,7 +306,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 		RsGxsGroupChange *grpChange = dynamic_cast<RsGxsGroupChange*>(*it);
 
-		if (grpChange && rsEvents)
+        if (grpChange && rsEvents)
 		{
 #ifdef GXSCHANNEL_DEBUG
             RsDbg() << " Grp Change Event or type " << grpChange->getType() << ":" << std::endl;
@@ -319,17 +319,21 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				auto ev = std::make_shared<RsGxsChannelEvent>();
 				ev->mChannelGroupId = grpChange->mGroupId;
 				ev->mChannelEventCode = RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED;
-				rsEvents->postEvent(ev);
-			}
+                rsEvents->postEvent(ev);
+
+                unprocessedGroups.insert(grpChange->mGroupId);
+            }
 				break;
 
-        case RsGxsNotify::TYPE_GROUP_SYNC_PARAMETERS_UPDATED:
-        {
-            auto ev = std::make_shared<RsGxsChannelEvent>();
-            ev->mChannelGroupId = grpChange->mGroupId;
-            ev->mChannelEventCode = RsChannelEventCode::SYNC_PARAMETERS_UPDATED;
-            rsEvents->postEvent(ev);
-        }
+            case RsGxsNotify::TYPE_GROUP_SYNC_PARAMETERS_UPDATED:
+            {
+                auto ev = std::make_shared<RsGxsChannelEvent>();
+                ev->mChannelGroupId = grpChange->mGroupId;
+                ev->mChannelEventCode = RsChannelEventCode::SYNC_PARAMETERS_UPDATED;
+                rsEvents->postEvent(ev);
+
+                unprocessedGroups.insert(grpChange->mGroupId);
+            }
             break;
 
 			case RsGxsNotify::TYPE_STATISTICS_CHANGED:
@@ -344,7 +348,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
                 mKnownChannels[grpChange->mGroupId] = time(NULL);
                 IndicateConfigChanged();
             }
-                break;
+            break;
 
             case RsGxsNotify::TYPE_UPDATED:
             {
@@ -352,8 +356,10 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
                 ev->mChannelGroupId = grpChange->mGroupId;
                 ev->mChannelEventCode = RsChannelEventCode::UPDATED_CHANNEL;
                 rsEvents->postEvent(ev);
+
+                unprocessedGroups.insert(grpChange->mGroupId);
             }
-                break;
+            break;
 
             case RsGxsNotify::TYPE_PUBLISHED:
 			case RsGxsNotify::TYPE_RECEIVED_NEW:
@@ -386,8 +392,10 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				else
                     RsDbg() << "    Not notifying already known channel " << grpChange->mGroupId << std::endl;
 #endif
-			}
-				break;
+
+                unprocessedGroups.insert(grpChange->mGroupId);
+            }
+            break;
 
             case RsGxsNotify::TYPE_GROUP_DELETED:
             {
@@ -395,8 +403,10 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
                     ev->mChannelGroupId = grpChange->mGroupId;
                     ev->mChannelEventCode = RsChannelEventCode::DELETED_CHANNEL;
                     rsEvents->postEvent(ev);
+
+                unprocessedGroups.insert(grpChange->mGroupId);
             }
-                break;
+            break;
 
             case RsGxsNotify::TYPE_RECEIVED_PUBLISHKEY:
 			{
@@ -406,15 +416,16 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				ev->mChannelEventCode = RsChannelEventCode::RECEIVED_PUBLISH_KEY;
 
 				rsEvents->postEvent(ev);
-			}
-				break;
+
+                unprocessedGroups.insert(grpChange->mGroupId);
+            }
+            break;
 
 			default:
 				RsErr() << " Got a GXS event of type " << grpChange->getType() << " Currently not handled." << std::endl;
 				break;
 			}
-
-		}
+        }
 
 		/* shouldn't need to worry about groups - as they need to be subscribed to */
         delete *it;
@@ -422,11 +433,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 	std::list<RsGxsGroupId> grps;
 	for(auto& grp_id:unprocessedGroups)
-	{
-		bool enabled = false;
-		if (autoDownloadEnabled(grp_id, enabled) && enabled)	// costly call, that's why it's packed down here.
-			grps.push_back(grp_id);
-	}
+        grps.push_back(grp_id);
 
 	if(!grps.empty())
 		request_SpecificSubscribedGroups(grps);
@@ -848,8 +855,8 @@ void p3GxsChannels::request_AllSubscribedGroups()
 	RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts);
 	GxsTokenQueue::queueRequest(token, GXSCHANNELS_SUBSCRIBED_META);
 
-#define PERIODIC_ALL_PROCESS	300 // TESTING every 5 minutes.
-	RsTickEvent::schedule_in(CHANNEL_PROCESS, PERIODIC_ALL_PROCESS);
+//#define PERIODIC_ALL_PROCESS	300 // This
+//	RsTickEvent::schedule_in(CHANNEL_PROCESS, PERIODIC_ALL_PROCESS);
 }
 
 
