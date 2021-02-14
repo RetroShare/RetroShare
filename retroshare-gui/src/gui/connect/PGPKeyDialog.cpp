@@ -45,7 +45,7 @@
 #include "util/DateTime.h"
 #include "util/misc.h"
 
-static QMap<RsPgpId, PGPKeyDialog*> instances_pgp;
+QMap<RsPgpId, PGPKeyDialog*> PGPKeyDialog::instances_pgp;
 
 PGPKeyDialog *PGPKeyDialog::instance(const RsPgpId& pgp_id)
 {
@@ -148,9 +148,6 @@ void PGPKeyDialog::load()
     ui.name->setText(QString::fromUtf8(detail.name.c_str()));
     ui.pgpfingerprint->setText(misc::fingerPrintStyleSplit(QString::fromStdString(detail.fpr.toStdString())));
 
-    ui.pgpfingerprint->show();
-    ui.pgpfingerprint_label->show();
-
     ui._direct_transfer_CB->setChecked(  detail.service_perm_flags & RS_NODE_PERM_DIRECT_DL ) ;
 	//Add warning to direct source checkbox depends general setting.
 	switch (rsFiles->filePermDirectDL())
@@ -183,7 +180,7 @@ void PGPKeyDialog::load()
         ui.signKeyButton->hide();
         ui.denyFriendButton->hide();
 
-        ui.web_of_trust_label->hide();
+        ui.label_trustlevel->hide();
         ui.trustlevel_CB->hide();
 
         ui.is_signing_me->hide();
@@ -192,7 +189,7 @@ void PGPKeyDialog::load()
     }
     else
     {
-        ui.web_of_trust_label->show();
+        ui.label_trustlevel->show();
         ui.trustlevel_CB->show();
         ui.is_signing_me->show();
         ui.signersLabel->setText(tr("This key is signed by :")+" ");
@@ -279,14 +276,14 @@ void PGPKeyDialog::loadKeyPage()
 
      std::string pgp_key = rsPeers->getPGPKey(detail.gpg_id,ui._shouldAddSignatures_CB_2->isChecked()) ; // this needs to be a SSL id
 
-    ui.userCertificateText_2->setReadOnly(true);
-    ui.userCertificateText_2->setMinimumHeight(200);
-    ui.userCertificateText_2->setMinimumWidth(530);
+    ui.userCertificateText->setReadOnly(true);
+    ui.userCertificateText->setMinimumHeight(200);
+    ui.userCertificateText->setMinimumWidth(530);
     QFont font("Courier New",10,50,false);
     font.setStyleHint(QFont::TypeWriter,QFont::PreferMatch);
     font.setStyle(QFont::StyleNormal);
-    ui.userCertificateText_2->setFont(font);
-    ui.userCertificateText_2->setText(QString::fromUtf8(pgp_key.c_str()));
+    ui.userCertificateText->setFont(font);
+    ui.userCertificateText->setText(QString::fromUtf8(pgp_key.c_str()));
 
     QString helptext ;
     helptext += tr("<p>This PGP key (ID=")+detail.gpg_id.toStdString().c_str()+")" + " authenticates one or more retroshare nodes.</p> ";
@@ -299,7 +296,7 @@ void PGPKeyDialog::loadKeyPage()
 
     helptext += "</p>" ;
 
-    ui.userCertificateText_2->setToolTip(helptext) ;
+    ui.userCertificateText->setToolTip(helptext) ;
 }
 
 void PGPKeyDialog::applyDialog()
