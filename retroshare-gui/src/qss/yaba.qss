@@ -14,6 +14,13 @@ HeaderFrame {
 	border: 0px;
 }
 
+FriendsDialog QFrame#headFrame {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                       stop:0 #FBC957, stop:1 #D79704);
+	border: 1px;
+	border-radius: 4px;
+}
+
 QFrame#titleBarFrame, QFrame#toolBarFrame {
     background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                        stop:0 #FBC957, stop:1 #D79704);
@@ -204,5 +211,18 @@ QLabel#fromText{
 QToolBar#chattoolBar{
         border-image: url(%THISPATH%/yaba/yaba.png);
 
+}
+
+HomePage QToolButton#addButton {
+	font: bold;
+	font-size: 15pt;
+	color: #979797;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+MainWindow QListWidget {
+	font-size: 12pt;
 }
 

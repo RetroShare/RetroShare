@@ -288,3 +288,34 @@ QLabel#threadTitle{
     color: black;
 }
 
+HomePage QToolButton#addButton {
+	font: bold;
+	font-size: 15pt;
+	color: white;
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+								   stop: 0 #F55332, stop: 0.5 #C82B18, 
+								   stop: 0.51 #B71502, stop: 1 #900907);
+    border: 1px solid #7A3C37;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+HomePage QToolButton#addButton:hover {
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+								   stop: 0 #F55332, stop: 0.5 #C82B18, 
+								   stop: 0.51 #ca1b06, stop: 1 #ac0c0a);
+    border: 1px solid #7A3C37;
+	border-radius: 4px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+MainWindow QListWidget {
+	font-size: 12pt;
+}
+
+MainWindow QToolButton {
+	color: white;
+}
