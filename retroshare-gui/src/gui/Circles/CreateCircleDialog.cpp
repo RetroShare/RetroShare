@@ -51,7 +51,10 @@
 CreateCircleDialog::CreateCircleDialog()
 	: QDialog(NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint)
 {
-	/* Invoke the Qt Designer generated object setup routine */
+    mIdentitiesLoading = false;
+    mCloseAfterIdentitiesLoaded = false;
+
+    /* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
 
     setAttribute(Qt::WA_DeleteOnClose, false);
@@ -112,10 +115,21 @@ CreateCircleDialog::CreateCircleDialog()
     QObject::connect(ui.radioButton_Public, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
     QObject::connect(ui.radioButton_Self, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
     QObject::connect(ui.radioButton_Restricted, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
+
 }
 
 CreateCircleDialog::~CreateCircleDialog()
 {
+}
+void CreateCircleDialog::closeEvent(QCloseEvent *e)
+{
+    if(mIdentitiesLoading)
+    {
+        mCloseAfterIdentitiesLoaded = true;
+        return;
+    }
+    else
+        QDialog::closeEvent(e);
 }
 
 void CreateCircleDialog::editExistingId(const RsGxsGroupId &circleId, const bool &clearList /*= true*/,bool readonly)
@@ -700,6 +714,8 @@ void CreateCircleDialog::loadIdentities()
 {
     std::cerr << "Loading identities..." << std::endl;
 
+    mIdentitiesLoading = true;
+
 	RsThread::async([this]()
 	{
 		std::list<RsGroupMetaData> ids_meta;
@@ -735,7 +751,13 @@ void CreateCircleDialog::loadIdentities()
 			fillIdentitiesList(*id_groups);
 
             delete id_groups;
-		}, this );
+
+            mIdentitiesLoading = false;
+
+            if(mCloseAfterIdentitiesLoaded)
+                close();
+
+        }, this );
 	});
 
 }
