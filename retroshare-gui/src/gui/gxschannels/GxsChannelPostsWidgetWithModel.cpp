@@ -758,6 +758,7 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
         case RsChannelEventCode::UPDATED_CHANNEL: // [[fallthrough]];
 		case RsChannelEventCode::NEW_MESSAGE:     // [[fallthrough]];
 		case RsChannelEventCode::UPDATED_MESSAGE:
+        case RsChannelEventCode::RECEIVED_PUBLISH_KEY:
         case RsChannelEventCode::SYNC_PARAMETERS_UPDATED:
         {
 			if(e->mChannelGroupId == groupId())
