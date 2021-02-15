@@ -27,6 +27,8 @@
 
 #include "retroshare/rsconfig.h"
 #include "retroshare/rsinit.h"
+#include "retroshare/rspeers.h"
+#include <QTcpSocket>
 #include "util/misc.h"
 
 #include "TorControl/TorManager.h"
@@ -51,6 +53,7 @@ TorStatus::TorStatus(QWidget *parent)
     hbox->addWidget(torstatusLabel);
     
     _compactMode = false;
+    _updated = false;
 
     setLayout( hbox );
 }
@@ -135,7 +138,54 @@ void TorStatus::getTorStatus()
 	}
 	else
 	{
-        torstatusLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/tor-stopping.png").scaledToHeight(S,Qt::SmoothTransformation));
-		torstatusLabel->setToolTip( text + tr("Tor is currently offline"));
+		if(!_updated)
+		{
+			RsPeerDetails pd;
+			uint32_t hiddentype;
+			if (rsPeers->getPeerDetails(rsPeers->getOwnId(), pd)) {
+				if(pd.netMode == RS_NETMODE_HIDDEN)
+				{
+					hiddentype = pd.hiddenType;
+				}
+			}
+			std::string proxyaddr;
+			uint16_t proxyport;
+			uint32_t status ;
+			QTcpSocket socket ;
+			if(hiddentype == RS_HIDDEN_TYPE_TOR)
+			{
+				rsPeers->getProxyServer(RS_HIDDEN_TYPE_TOR, proxyaddr, proxyport, status);
+				socket.connectToHost(QString::fromStdString(proxyaddr),quint16(proxyport));
+				if(socket.waitForConnected(500))
+				{
+					socket.disconnectFromHost();
+					torstatusLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/tor-on.png").scaledToHeight(S,Qt::SmoothTransformation));
+					torstatusLabel->setToolTip( text + tr("Tor proxy is OK"));
+				}
+				else
+				{
+					torstatusLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/tor-off.png").scaledToHeight(S,Qt::SmoothTransformation));
+					torstatusLabel->setToolTip( text + tr("Tor proxy is not available"));
+				}
+			}
+			if(hiddentype == RS_HIDDEN_TYPE_I2P)
+			{
+				statusTor->setText("<strong>" + tr("I2P") + ":</strong>");
+				rsPeers->getProxyServer(RS_HIDDEN_TYPE_I2P, proxyaddr, proxyport, status);
+				socket.connectToHost(QString::fromStdString(proxyaddr),quint16(proxyport));
+				if(socket.waitForConnected(500))
+				{
+					socket.disconnectFromHost();
+					torstatusLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/i2p-128.png").scaledToHeight(S,Qt::SmoothTransformation));
+					torstatusLabel->setToolTip( text + tr("i2p proxy is OK"));
+				}
+				else
+				{
+					torstatusLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/tile_downloading_48.png").scaledToHeight(S,Qt::SmoothTransformation));
+					torstatusLabel->setToolTip( text + tr("i2p proxy is not available"));
+				}
+			}
+			_updated = true;
+		}
 	}
 }

@@ -243,6 +243,7 @@
         <file>icons/no-tor.png</file>
         <file>icons/tor-starting.png</file>
         <file>icons/tor-stopping.png</file>
+        <file>icons/i2p-128.png</file>
         <file>icons/user-away_64.png</file>
         <file>icons/user-away-extended_64.png</file>
         <file>icons/user-busy_64.png</file>

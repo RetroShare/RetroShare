@@ -1232,6 +1232,8 @@ void MainWindow::toggleVisibility(QSystemTrayIcon::ActivationReason e)
             }
             raise();
             activateWindow();
+            if(torstatus)
+                torstatus->reset();
         } else {
             hide();
         }
