@@ -104,6 +104,7 @@ void SecurityItem::updateItemStatic()
 		case RS_FEED_ITEM_SEC_CONNECT_ATTEMPT:
 			title = tr("Connect Attempt");
 			requestLabel->show();
+			friendRequesttoolButton->show();
 			avatar->setDefaultAvatar(":images/avatar_request.png");
 			break;
 		case RS_FEED_ITEM_SEC_AUTH_DENIED:
@@ -137,6 +138,9 @@ void SecurityItem::updateItemStatic()
 			else
 				title = tr("Missing/Damaged certificate. Not a real Retroshare user.");
 			requestLabel->hide();
+			friendRequesttoolButton->hide();
+			peerNameLabel->setText(tr("SSL request"));
+			peerDetailsButton->hide();
 			}
 			break;
 		case RS_FEED_ITEM_SEC_INTERNAL_ERROR:
