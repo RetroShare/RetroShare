@@ -257,4 +257,9 @@ void HashBox::checkAttachmentReady()
 	updateGeometry();
 
 	emit fileHashingFinished(hashedFiles);
+
+	auto ev = std::make_shared<RsSharedDirectoriesEvent>();
+	ev->mEventCode = RsSharedDirectoriesEventCode::DIRECTORY_SWEEP_ENDED;
+	if(rsEvents)
+		rsEvents->postEvent(ev);
 }
