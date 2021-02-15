@@ -90,8 +90,16 @@ public:
 	// Load and save settings (group must be started from the caller)
 	void processSettings(bool load);
 
-	// Add a new category item
-	QTreeWidgetItem *addCategoryItem(const QString &name, const QIcon &icon, bool expand);
+	///
+	/// \brief addCategoryItem: Add a new category item
+	/// \param name: Name shown on item
+	/// \param icon: Icon used for item
+	/// \param expand: If it is expanded by default
+	/// \param sortOrder: To asc sort them in tree
+	/// \return
+	///
+	QTreeWidgetItem *addCategoryItem(const QString &name, const QIcon &icon, bool expand, int sortOrder = -1);
+
     // Add a new search item
     void setDistSearchVisible(bool) ; // shows/hides distant search UI parts.
 	QTreeWidgetItem *addSearchItem(const QString& search_string, uint32_t id, const QIcon &icon) ;
@@ -152,6 +160,9 @@ private:
 
 	/* Color definitions (for standard see qss.default) */
 	QColor mTextColor[GROUPTREEWIDGET_COLOR_COUNT];
+
+	// Compare role used for each column
+	RSTreeWidgetItemCompareRole *compareRole;
 
 	Ui::GroupTreeWidget *ui;
 };

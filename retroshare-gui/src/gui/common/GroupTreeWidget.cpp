@@ -42,10 +42,10 @@ Q_GUI_EXPORT int qt_defaultDpi();
 #define ROLE_ID              Qt::UserRole
 #define ROLE_NAME            Qt::UserRole + 1
 #define ROLE_DESCRIPTION     Qt::UserRole + 2
-#define ROLE_POPULARITY      Qt::UserRole + 3
-#define ROLE_SUBSCRIBE_FLAGS Qt::UserRole + 4
-#define ROLE_COLOR           Qt::UserRole + 5
-#define ROLE_REQUEST_ID      Qt::UserRole + 6
+#define ROLE_SUBSCRIBE_FLAGS Qt::UserRole + 3
+#define ROLE_COLOR           Qt::UserRole + 4
+#define ROLE_REQUEST_ID      Qt::UserRole + 5
+#define ROLE_SORT            Qt::UserRole + 6
 
 #define FILTER_NAME_INDEX  0
 #define FILTER_DESC_INDEX  1
@@ -71,6 +71,14 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
 	itemDelegate->setSpacing(QSize(0, 2));
 	ui->treeWidget->setItemDelegate(itemDelegate);
+
+	/* Set compare role for each column */
+	compareRole = new RSTreeWidgetItemCompareRole(QMap<int, QList<int>>({ {GTW_COLUMN_UNREAD,      {ROLE_SORT}}
+	                                                                    , {GTW_COLUMN_POSTS,       {ROLE_SORT}}
+	                                                                    , {GTW_COLUMN_POPULARITY,  {ROLE_SORT}}
+	                                                                    , {GTW_COLUMN_LAST_POST,   {ROLE_SORT}}
+	                                                                    , {GTW_COLUMN_SEARCH_SCORE,{ROLE_SORT}}
+	                                                                    }));
 
 	/* Initialize tree widget */
 	ui->treeWidget->setColumnCount(GTW_COLUMN_COUNT);
@@ -236,10 +244,10 @@ void GroupTreeWidget::itemActivated(QTreeWidgetItem *item, int column)
 	emit treeItemActivated(id);
 }
 
-QTreeWidgetItem *GroupTreeWidget::addCategoryItem(const QString &name, const QIcon &icon, bool expand)
+QTreeWidgetItem *GroupTreeWidget::addCategoryItem(const QString &name, const QIcon &icon, bool expand, int sortOrder /*= -1*/)
 {
 	QFont font;
-	QTreeWidgetItem *item = new QTreeWidgetItem();
+	RSTreeWidgetItem *item = new RSTreeWidgetItem();
 	ui->treeWidget->addTopLevelItem(item);
 	// To get StyleSheet for Items
 	ui->treeWidget->style()->unpolish(ui->treeWidget);
@@ -259,6 +267,12 @@ QTreeWidgetItem *GroupTreeWidget::addCategoryItem(const QString &name, const QIc
 	item->setData(GTW_COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_CATEGORY);
 
 	item->setExpanded(expand);
+
+	item->setNoOrder(true, ROLE_SORT);
+	if (sortOrder>=0)
+		item->setData(0, ROLE_SORT, sortOrder);
+	else
+		item->setData(0, ROLE_SORT, ui->treeWidget->topLevelItemCount());
 
 	return item;
 }
@@ -369,8 +383,9 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		}
 
 		if (item == NULL) {
-			item = new RSTreeWidgetItem();
+			item = new RSTreeWidgetItem(compareRole);
 			item->setData(GTW_COLUMN_DATA, ROLE_ID, itemInfo.id);
+			//static_cast<RSTreeWidgetItem*>(item)->setNoDataAsLast(true); //Uncomment this to sort data with QVariant() always at end.
 			categoryItem->addChild(item);
 		}
 
@@ -392,13 +407,20 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 
 		/* Set last post */
 		if(itemInfo.lastpost == QDateTime::fromTime_t(0))
+		{
 			item->setText(GTW_COLUMN_LAST_POST, tr("Never"));
+			item->setData(GTW_COLUMN_LAST_POST, ROLE_SORT, QVariant());// To allow them not be sorted with ->setNoDataAsLast(true)
+		}
 		else
+		{
 			item->setText(GTW_COLUMN_LAST_POST, itemInfo.lastpost.toString(Qt::ISODate).replace("T"," "));
+			item->setData(GTW_COLUMN_LAST_POST, ROLE_SORT, itemInfo.lastpost.toTime_t());
+		}
 
 
 		/* Set visible posts */
 		item->setText(GTW_COLUMN_POSTS, QString::number(itemInfo.max_visible_posts));
+		item->setData(GTW_COLUMN_POSTS, ROLE_SORT, itemInfo.max_visible_posts);
 
 		/* Set icon */
 		item->setIcon(GTW_COLUMN_NAME, itemInfo.icon);
@@ -407,7 +429,7 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		QString tooltip = PopularityDefs::tooltip(itemInfo.popularity);
 
 		item->setIcon(GTW_COLUMN_POPULARITY, PopularityDefs::icon(itemInfo.popularity));
-		item->setData(GTW_COLUMN_DATA, ROLE_POPULARITY, -itemInfo.popularity); // negative for correct sorting
+		item->setData(GTW_COLUMN_POPULARITY, ROLE_SORT, itemInfo.popularity);
 
 		/* Set tooltip */
 		if (itemInfo.adminKey)
@@ -493,6 +515,7 @@ void GroupTreeWidget::setUnreadCount(QTreeWidgetItem *item, int unreadCount)
 		item->setText(GTW_COLUMN_UNREAD, "");
 		font.setBold(false);
 	}
+	item->setData(GTW_COLUMN_UNREAD, ROLE_SORT, unreadCount);
 
 	item->setFont(GTW_COLUMN_NAME, font);
 }
@@ -601,6 +624,7 @@ void GroupTreeWidget::calculateScore(QTreeWidgetItem *item, const QString &filte
 		}
 
 		item->setText(GTW_COLUMN_SEARCH_SCORE, QString::number(score));
+		item->setData(GTW_COLUMN_SEARCH_SCORE, ROLE_SORT, score);
 
 		return;
 	}
