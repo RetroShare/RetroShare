@@ -14,8 +14,8 @@
    <string>RetroShare Help</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>:/images/help.png</normaloff>:/images/help.png</iconset>
+   <iconset resource="../../images.qrc">
+    <normaloff>:/images/logo/logo_24.png</normaloff>:/images/logo/logo_24.png</iconset>
   </property>
   <property name="autoFillBackground">
    <bool>true</bool>

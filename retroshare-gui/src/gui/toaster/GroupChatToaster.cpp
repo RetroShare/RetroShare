@@ -37,7 +37,7 @@ GroupChatToaster::GroupChatToaster(const RsPeerId &peerId, const QString &messag
 	/* set informations */
 	ui.textLabel->setText(RsHtml().formatText(NULL, message, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_CLEANSTYLE));
 	ui.toasterLabel->setText(QString::fromUtf8(rsPeers->getPeerName(peerId).c_str()));
-	ui.avatarWidget->setFrameType(AvatarWidget::NO_FRAME);
+	ui.avatarWidget->setFrameType(AvatarWidget::NORMAL_FRAME);
 	ui.avatarWidget->setDefaultAvatar(":/images/user/personal64.png");
     ui.avatarWidget->setId(ChatId(peerId));
 }

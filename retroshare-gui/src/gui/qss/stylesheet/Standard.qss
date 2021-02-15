@@ -869,7 +869,7 @@ GxsForumThreadWidget QToolButton#subscribeToolButton:hover {
 
 GxsForumMsgItem QFrame#mainFrame, PeerItem QFrame#mainFrame, GxsForumGroupItem QFrame#mainFrame,
 GxsChannelGroupItem QFrame#mainFrame, MsgItem QFrame#mainFrame, ChatMsgItem QFrame#mainFrame
-SecurityIpItem QFrame#mainFrame {
+SecurityIpItem QFrame#mainFrame, MsgItem QFrame#msgFrame{
 	background-color: white;
 }
 
@@ -1191,16 +1191,21 @@ ChannelsCommentsItem QFrame#mainFrame, BoardsCommentsItem QFrame#mainFrame {
 }
 
 ChannelsCommentsItem QLabel#newCommentLabel, BoardsCommentsItem QLabel#newCommentLabel {
-	font: 14px;
+	font-size: 14px;
 	font: bold;
 }
 
 ChannelsCommentsItem QLabel#subjectLabel, ChannelsCommentsItem QLabel#titleLabel , QLabel#nameLabel {
-	font: 14px;
+	font-size: 14px;
 	font: bold;
 }
 
 BoardsCommentsItem QLabel#subjectLabel, QLabel#titleLabel , QLabel#nameLabel {
-	font: 14px;
+	font-size: 14px;
 	font: bold;
 }
+
+NewFriendList QTreeView#peerTreeWidget::item:selected {
+	background-color: #cde8ff;
+}
+
