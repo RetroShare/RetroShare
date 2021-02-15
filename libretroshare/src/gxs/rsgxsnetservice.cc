@@ -2175,15 +2175,19 @@ void RsGxsNetService::updateServerSyncTS()
 #ifdef NXS_NET_DEBUG_0
                             GXSNETDEBUG__G(mit->first) << "  Group " << mit->first << " is conditionned to circle " << mit->second->mCircleId << ". local Grp TS=" << time(NULL) - mGrpServerUpdate.grpUpdateTS << " secs ago, circle grp server update TS=" << time(NULL) - circle_group_server_ts << " secs ago";
 #endif
+                            // We use a max here between grp and msg TS because membership is driven by invite list (grp data) crossed with
+                            // membership requests messages (msg data).
 
-                            if(circle_group_server_ts > mGrpServerUpdate.grpUpdateTS)
+                            auto circle_membership_ts = std::max(circle_group_server_ts,circle_msg_server_ts);
+
+                            if(circle_membership_ts > mGrpServerUpdate.grpUpdateTS)
 							{
 #ifdef NXS_NET_DEBUG_0
 								GXSNETDEBUG__G(mit->first) << " - Updating local Grp Server update TS to follow changes in circles." << std::endl;
 #endif
 
 								RS_STACK_MUTEX(mNxsMutex) ;
-								mGrpServerUpdate.grpUpdateTS = circle_group_server_ts ;
+                                mGrpServerUpdate.grpUpdateTS = circle_membership_ts ;
 							}
 #ifdef NXS_NET_DEBUG_0
                             else
