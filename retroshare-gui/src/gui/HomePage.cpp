@@ -345,7 +345,7 @@ void HomePage::webMail()
 
 void HomePage::openWebHelp()
 {
-    QDesktopServices::openUrl(QUrl(QString("https://retroshare.readthedocs.io/en/latest/")));
+    QDesktopServices::openUrl(QUrl(QString("https://retrosharedocs.readthedocs.io/en/latest/")));
 }
 
 void HomePage::toggleUseOldFormat()
