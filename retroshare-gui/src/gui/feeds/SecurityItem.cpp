@@ -104,7 +104,6 @@ void SecurityItem::updateItemStatic()
 		case RS_FEED_ITEM_SEC_CONNECT_ATTEMPT:
 			title = tr("Connect Attempt");
 			requestLabel->show();
-			friendRequesttoolButton->show();
 			avatar->setDefaultAvatar(":images/avatar_request.png");
 			break;
 		case RS_FEED_ITEM_SEC_AUTH_DENIED:
@@ -137,11 +136,12 @@ void SecurityItem::updateItemStatic()
                 title = tr("Missing/Damaged SSL certificate for key")+" " + QString::fromStdString(mGpgId.toStdString()) ;
 			else
 				title = tr("Missing/Damaged certificate. Not a real Retroshare user.");
+			}
+			peerNameLabel->setText(tr("SSL request"));
 			requestLabel->hide();
 			friendRequesttoolButton->hide();
-			peerNameLabel->setText(tr("SSL request"));
 			peerDetailsButton->hide();
-			}
+			avatar->setDefaultAvatar(":icons/ssl.png");
 			break;
 		case RS_FEED_ITEM_SEC_INTERNAL_ERROR:
 			title = tr("Certificate caused an internal error.");
