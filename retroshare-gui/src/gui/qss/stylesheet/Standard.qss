@@ -869,7 +869,7 @@ GxsForumThreadWidget QToolButton#subscribeToolButton:hover {
 
 GxsForumMsgItem QFrame#mainFrame, PeerItem QFrame#mainFrame, GxsForumGroupItem QFrame#mainFrame,
 GxsChannelGroupItem QFrame#mainFrame, MsgItem QFrame#mainFrame, ChatMsgItem QFrame#mainFrame
-SecurityIpItem QFrame#mainFrame, MsgItem QFrame#msgFrame{
+SecurityIpItem QFrame#mainFrame, MsgItem QFrame#msgFrame, SecurityItem QFrame#mainFrame{
 	background-color: white;
 }
 
