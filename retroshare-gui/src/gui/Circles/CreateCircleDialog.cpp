@@ -125,11 +125,15 @@ void CreateCircleDialog::closeEvent(QCloseEvent *e)
 {
     if(mIdentitiesLoading)
     {
+        std::cerr << "Close() called. Identities currently loading => not actually closing." << std::endl;
         mCloseAfterIdentitiesLoaded = true;
         return;
     }
     else
+    {
+        std::cerr << "Close() called. Identities not currently loading => closing." << std::endl;
         QDialog::closeEvent(e);
+    }
 }
 
 void CreateCircleDialog::editExistingId(const RsGxsGroupId &circleId, const bool &clearList /*= true*/,bool readonly)
@@ -752,10 +756,14 @@ void CreateCircleDialog::loadIdentities()
 
             delete id_groups;
 
+            std::cerr << "Identities finished loading." << std::endl;
             mIdentitiesLoading = false;
 
             if(mCloseAfterIdentitiesLoaded)
+            {
+                std::cerr << "Close() previously called, so closing now." << std::endl;
                 close();
+            }
 
         }, this );
 	});
@@ -778,6 +786,8 @@ void CreateCircleDialog::fillIdentitiesList(const std::vector<RsGxsIdGroup>& id_
 
 	for(const auto& idGroup:id_groups)
 	{
+        //usleep(20*1000);
+
 		bool isSigned = !idGroup.mPgpId.isNull();
 		bool isSignedByFriendNode = isSigned && rsPeers->isPgpFriend(idGroup.mPgpId);
 
