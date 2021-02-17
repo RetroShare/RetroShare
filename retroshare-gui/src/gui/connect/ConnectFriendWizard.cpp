@@ -881,7 +881,11 @@ void ConnectFriendWizard::cleanFriendCert()
 
 				ui->friendCertCleanLabel->setStyleSheet("");
 			}
-			errorMsg = tr("Valid certificate") + (mIsShortInvite?" (Short format)":" (plain format with profile key)");
+			
+			if (mIsShortInvite)
+				errorMsg = tr("Valid Retroshare ID") + (mIsShortInvite?" (Short format)":" (plain format with profile key)");
+			else
+				errorMsg = tr("Valid certificate") ;
 
             ui->friendCertCleanLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/accepted16.png"));
 		} else {
@@ -899,7 +903,7 @@ void ConnectFriendWizard::cleanFriendCert()
 
 				default:
 					errorMsg = tr("Not a valid Retroshare certificate!") ;
-					ui->friendCertCleanLabel->setStyleSheet("QLabel#friendCertCleanLabel {border: 2px solid red; border-radius: 6px;}");
+					ui->friendCertCleanLabel->setStyleSheet("QLabel#friendCertCleanLabel {border: 1px solid #DCDC41; border-radius: 6px; background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);}");
 				}
 			}
             ui->friendCertCleanLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/delete.png"));
