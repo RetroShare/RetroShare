@@ -69,6 +69,8 @@ private slots:
 	void headerContextMenuRequested(const QPoint &pos);
 	void headerVisible();
 	void columnVisible();
+	void changeSortColumn();
+	void changeSortOrder();
 
 protected:
 	void paintEvent(QPaintEvent *event);

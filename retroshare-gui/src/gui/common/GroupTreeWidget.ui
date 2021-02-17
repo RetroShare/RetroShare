@@ -56,32 +56,6 @@
       <item>
        <widget class="LineEditClear" name="filterLineEdit"/>
       </item>
-      <item>
-       <widget class="QToolButton" name="displayButton">
-        <property name="focusPolicy">
-         <enum>Qt::NoFocus</enum>
-        </property>
-        <property name="toolTip">
-         <string>Display</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../icons.qrc">
-          <normaloff>:/icons/svg/display_options.svg</normaloff>:/icons/svg/display_options.svg</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="popupMode">
-         <enum>QToolButton::InstantPopup</enum>
-        </property>
-        <property name="autoRaise">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
      </layout>
     </widget>
    </item>
@@ -111,12 +85,6 @@
      <property name="allColumnsShowFocus">
       <bool>true</bool>
      </property>
-     <attribute name="headerVisible">
-      <bool>false</bool>
-     </attribute>
-     <attribute name="headerStretchLastSection">
-      <bool>false</bool>
-     </attribute>
      <column>
       <property name="text">
        <string notr="true">1</string>
@@ -145,8 +113,6 @@
    <header>gui/common/RSTreeWidget.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../icons.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
