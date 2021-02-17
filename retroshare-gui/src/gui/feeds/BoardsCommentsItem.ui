@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>755</width>
-    <height>144</height>
+    <height>157</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
@@ -452,6 +452,9 @@
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
            </property>
            <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+           <property name="openExternalLinks">
             <bool>true</bool>
            </property>
            <property name="textInteractionFlags">

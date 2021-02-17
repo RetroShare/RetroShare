@@ -54,7 +54,7 @@
 #define IMG_AREA_GRAPH    ":/images/16x16/graph-area.png"
 #define IMG_LINE_GRAPH    ":/images/16x16/graph-line.png"
 #define IMG_SETTINGS      ":/icons/system_128.png"
-#define IMG_CLEANUP       ":/images/global_switch_off.png"
+#define IMG_CLEANUP       ":/images/reset.png"
 #define IMG_SEND          ":/images/go-up.png"
 #define IMG_RECEIVE       ":/images/go-down.png"
 #define IMG_GRAPH_DARK    ":/images/graph-line.png"
