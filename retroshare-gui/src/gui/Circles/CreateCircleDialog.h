@@ -75,7 +75,8 @@ private:
 	bool mIsExternalCircle;
     bool mReadOnly;
     bool mIdentitiesLoading;
-    bool mCloseAfterIdentitiesLoaded;
+    bool mCircleLoading;
+    bool mCloseRequested;
 
 	void loadCircle(const RsGxsGroupId& groupId);
 	void loadIdentities();

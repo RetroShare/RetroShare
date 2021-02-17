@@ -52,7 +52,8 @@ CreateCircleDialog::CreateCircleDialog()
 	: QDialog(NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint)
 {
     mIdentitiesLoading = false;
-    mCloseAfterIdentitiesLoaded = false;
+    mCircleLoading = false;
+    mCloseRequested = false;
 
     /* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -123,10 +124,10 @@ CreateCircleDialog::~CreateCircleDialog()
 }
 void CreateCircleDialog::closeEvent(QCloseEvent *e)
 {
-    if(mIdentitiesLoading)
+    if(mIdentitiesLoading || mCircleLoading)
     {
-        std::cerr << "Close() called. Identities currently loading => not actually closing." << std::endl;
-        mCloseAfterIdentitiesLoaded = true;
+        std::cerr << "Close() called. Identities or circle currently loading => not actually closing." << std::endl;
+        mCloseRequested = true;
         return;
     }
     else
@@ -684,6 +685,9 @@ void CreateCircleDialog::loadCircle(const RsGxsGroupId& groupId)
 	QTreeWidget *tree = ui.treeWidget_membership;
 	if (mClearList) tree->clear();
 
+    std::cerr << "Loading circle..."<< std::endl;
+    mCircleLoading = true;
+
 	RsThread::async([groupId,this]()
 	{
 		std::vector<RsGxsCircleGroup> circlesInfo ;
@@ -709,7 +713,17 @@ void CreateCircleDialog::loadCircle(const RsGxsGroupId& groupId)
 #endif
 			updateCircleGUI();
 
-		}, this );
+            mCircleLoading = false;
+
+            std::cerr << "finished loading circle..."<< std::endl;
+
+            if(mCloseRequested && !mIdentitiesLoading)
+            {
+                std::cerr << "Close() previously called, so closing now." << std::endl;
+                close();
+            }
+
+        }, this );
 	});
 
 }
@@ -759,7 +773,7 @@ void CreateCircleDialog::loadIdentities()
             std::cerr << "Identities finished loading." << std::endl;
             mIdentitiesLoading = false;
 
-            if(mCloseAfterIdentitiesLoaded)
+            if(mCloseRequested && !mCircleLoading)
             {
                 std::cerr << "Close() previously called, so closing now." << std::endl;
                 close();
