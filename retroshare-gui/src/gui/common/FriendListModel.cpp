@@ -608,6 +608,10 @@ QVariant RsFriendListModel::fontRole(const EntryIndex& e, int col) const
 		case RS_STATUS_INACTIVE:
 		{
 			QFont font ;
+			QTreeView* myParent = dynamic_cast<QTreeView*>(QAbstractItemModel::parent());
+			if (myParent)
+				font = myParent->font();
+
 			font.setBold(true);
 
 			return QVariant(font);

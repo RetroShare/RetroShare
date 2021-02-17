@@ -1205,7 +1205,10 @@ BoardsCommentsItem QLabel#subjectLabel, QLabel#titleLabel , QLabel#nameLabel {
 	font: bold;
 }
 
-NewFriendList QTreeView#peerTreeWidget::item:selected {
+NewFriendList QTreeView#peerTreeWidget::item:selected, QTreeView#peerTreeWidget::branch:selected {
 	background-color: #cde8ff;
 }
 
+NewFriendList QTreeView#peerTreeWidget {
+	font-size: 1.2em;
+}

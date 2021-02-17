@@ -183,7 +183,7 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId_peer, RsEventType::PEER_CONNECTION );
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId_gssp, RsEventType::GOSSIP_DISCOVERY );
 
-    mModel = new RsFriendListModel();
+    mModel = new RsFriendListModel(ui->peerTreeWidget);
 	mProxyModel = new FriendListSortFilterProxyModel(ui->peerTreeWidget->header(),this);
 
     mProxyModel->setSourceModel(mModel);
