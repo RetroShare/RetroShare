@@ -21,6 +21,7 @@
  *******************************************************************************/
 
 #include <QMessageBox>
+#include <QCloseEvent>
 #include <QMenu>
 
 #include <algorithm>
@@ -128,6 +129,7 @@ void CreateCircleDialog::closeEvent(QCloseEvent *e)
     {
         std::cerr << "Close() called. Identities or circle currently loading => not actually closing." << std::endl;
         mCloseRequested = true;
+        e->ignore();
         return;
     }
     else
