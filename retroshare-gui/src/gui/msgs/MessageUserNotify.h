@@ -30,14 +30,17 @@ class MessageUserNotify : public UserNotify
 public:
 	MessageUserNotify(QObject *parent = 0);
 
-	virtual bool hasSetting(QString *name, QString *group);
-    virtual QString textInfo() const override { return tr("new mail(s)"); }
+	virtual bool hasSetting(QString *name, QString *group) override;
 
 private:
-	virtual QIcon getIcon();
-	virtual QIcon getMainIcon(bool hasNew);
-	virtual unsigned int getNewCount();
-	virtual void iconClicked();
+	virtual QIcon getIcon() override;
+	virtual QIcon getMainIcon(bool hasNew) override;
+	virtual unsigned int getNewCount() override;
+
+	virtual QString getTrayMessage(bool plural) override;
+	virtual QString getNotifyMessage(bool plural) override;
+
+	virtual void iconClicked() override;
 };
 
 #endif // MESSAGEUSERNOTIFY_H

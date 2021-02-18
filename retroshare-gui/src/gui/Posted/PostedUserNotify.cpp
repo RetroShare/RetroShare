@@ -46,6 +46,16 @@ QIcon PostedUserNotify::getMainIcon(bool hasNew)
     return hasNew ? FilesDefs::getIconFromQtResourcePath(":/icons/png/posted-notify.png") : FilesDefs::getIconFromQtResourcePath(":/icons/png/posted.png");
 }
 
+QString PostedUserNotify::getTrayMessage(bool plural)
+{
+	return plural ? tr("You have %1 new board posts") : tr("You have %1 new board post");
+}
+
+QString PostedUserNotify::getNotifyMessage(bool plural)
+{
+	return plural ? tr("%1 new board post") : tr("%1 new board post");
+}
+
 void PostedUserNotify::iconClicked()
 {
 	MainWindow::showWindow(MainWindow::Posted);

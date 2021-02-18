@@ -45,3 +45,14 @@ unsigned int NewsFeedUserNotify::getNewCount()
 {
 	return mNewFeedCount;
 }
+
+
+QString NewsFeedUserNotify::getTrayMessage(bool plural)
+{
+	return plural ? tr("You have %1 logged events") : tr("You have %1 logged event");
+}
+
+QString NewsFeedUserNotify::getNotifyMessage(bool plural)
+{
+	return plural ? tr("%1 logged events") : tr("%1 logged event");
+}
