@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="/">
+    <file>images/arrow-right.png</file>
+    <file>images/arrow-down.png</file>
     <file>images/logo/background.png</file>
     <file>images/logo/background_lessblue.png</file>
     <file>images/logo/logo_spash2.png</file>
