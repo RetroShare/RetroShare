@@ -44,7 +44,7 @@
 #define IMAGE_CHAT_DELETE   ":/images/deletemail24.png"
 #define IMAGE_CHAT_COPY     ":/images/copyrslink.png"
 
-QString ChatPage::loadStyleInfo(ChatStyle::enumStyleType type, QComboBox *style_CB, QComboBox *comboBox, QString &styleVariant)
+QString ChatPage::loadStyleInfo(ChatStyle::enumStyleType type, QComboBox *style_CB, QComboBox *var_CB, QString &styleVariant)
 {
     QList<ChatStyleInfo> styles;
     QList<ChatStyleInfo>::iterator style;
@@ -96,13 +96,13 @@ QString ChatPage::loadStyleInfo(ChatStyle::enumStyleType type, QComboBox *style_
 
     /* now the combobox should be filled */
 
-    int index = comboBox->findText(styleVariant);
+    int index = var_CB->findText(styleVariant);
 
     if (index != -1) {
-        whileBlocking(comboBox)->setCurrentIndex(index);
+        whileBlocking(var_CB)->setCurrentIndex(index);
     } else {
-        if (comboBox->count()) {
-            whileBlocking(comboBox)->setCurrentIndex(0);
+        if (var_CB->count()) {
+            whileBlocking(var_CB)->setCurrentIndex(0);
         }
     }
     return stylePath;
@@ -183,7 +183,7 @@ void ChatPage::updateHistoryParams()
 
 void ChatPage::updatePublicStyle()
 {
-	ChatStyleInfo info = ui.publicStyle->itemData(ui.historyStyle->currentIndex(),Qt::UserRole).value<ChatStyleInfo>();
+	ChatStyleInfo info = ui.publicStyle->itemData(ui.publicStyle->currentIndex(),Qt::UserRole).value<ChatStyleInfo>();
 
 	if (publicStylePath != info.stylePath || publicStyleVariant != ui.publicComboBoxVariant->currentText()) {
 		Settings->setPublicChatStyle(info.stylePath, ui.publicComboBoxVariant->currentText());
@@ -193,7 +193,7 @@ void ChatPage::updatePublicStyle()
 
 void ChatPage::updatePrivateStyle()
 {
-	ChatStyleInfo info = ui.privateStyle->itemData(ui.historyStyle->currentIndex(),Qt::UserRole).value<ChatStyleInfo>();
+	ChatStyleInfo info = ui.privateStyle->itemData(ui.privateStyle->currentIndex(),Qt::UserRole).value<ChatStyleInfo>();
 
 	if (privateStylePath != info.stylePath || privateStyleVariant != ui.privateComboBoxVariant->currentText()) {
 		Settings->setPrivateChatStyle(info.stylePath, ui.privateComboBoxVariant->currentText());
@@ -211,7 +211,7 @@ void ChatPage::updateHistoryStyle()
 	}
 }
 
-void ChatPage::updateHistoryStorage() { rsHistory->setMaxStorageDuration(ui.max_storage_period->value() * 86400) ; }
+void ChatPage::updateHistoryStorage() { rsHistory->setMaxStorageDuration(ui.max_storage_period->value() * 86400) ; } //24H
 
 
 /** Constructor */
@@ -303,7 +303,7 @@ ChatPage::ChatPage(QWidget * parent, Qt::WindowFlags flags)
 
     for (it = userNotifyList.begin(); it != userNotifyList.end(); ++it)
     {
-        UserNotify *userNotify = *it;
+        //UserNotify *userNotify = *it;
 
         //To get ChatLobbyUserNotify Settings
 
@@ -419,7 +419,7 @@ ChatPage::load()
     whileBlocking(ui.labelChatFontPreview)->setText(fontname[0]);
     whileBlocking(ui.labelChatFontPreview)->setFont(fontTempChat);
 
-	whileBlocking(ui.max_storage_period)->setValue(rsHistory->getMaxStorageDuration()/86400) ;
+	whileBlocking(ui.max_storage_period)->setValue(rsHistory->getMaxStorageDuration()/86400) ;//24H
 
     /* Load styles */
     publicStylePath = loadStyleInfo(ChatStyle::TYPE_PUBLIC, ui.publicStyle, ui.publicComboBoxVariant, publicStyleVariant);
@@ -545,8 +545,8 @@ void ChatPage::on_publicList_currentRowChanged(int currentRow)
             whileBlocking(ui.publicComboBoxVariant)->setCurrentIndex(0);
         }
     } else {
-        whileBlocking(ui.publicAuthor)->clear();
-        whileBlocking(ui.publicDescription)->clear();
+        ui.publicAuthor->clear();
+        ui.publicDescription->clear();
         whileBlocking(ui.publicComboBoxVariant)->clear();
         whileBlocking(ui.publicComboBoxVariant)->setDisabled(true);
     }
@@ -557,14 +557,14 @@ void ChatPage::on_publicList_currentRowChanged(int currentRow)
 void ChatPage::on_privateList_currentRowChanged(int currentRow)
 {
     if (currentRow != -1) {
-        ChatStyleInfo info = ui.privateStyle->itemData(ui.privateStyle->currentIndex(),Qt::UserRole).value<ChatStyleInfo>();
+        ChatStyleInfo info = ui.privateStyle->itemData(currentRow,Qt::UserRole).value<ChatStyleInfo>();
 
         QString author = info.authorName;
         if (info.authorEmail.isEmpty() == false) {
             author += " (" + info.authorEmail + ")";
         }
-        whileBlocking(ui.privateAuthor)->setText(author);
-        whileBlocking(ui.privateDescription)->setText(info.styleDescription);
+        ui.privateAuthor->setText(author);
+        ui.privateDescription->setText(info.styleDescription);
 
         QStringList variants;
         ChatStyle::getAvailableVariants(info.stylePath, variants);
@@ -580,8 +580,8 @@ void ChatPage::on_privateList_currentRowChanged(int currentRow)
             whileBlocking(ui.privateComboBoxVariant)->setCurrentIndex(0);
         }
     } else {
-        whileBlocking(ui.privateAuthor)->clear();
-        whileBlocking(ui.privateDescription)->clear();
+        ui.privateAuthor->clear();
+        ui.privateDescription->clear();
         whileBlocking(ui.privateComboBoxVariant)->clear();
         whileBlocking(ui.privateComboBoxVariant)->setDisabled(true);
     }
@@ -592,14 +592,14 @@ void ChatPage::on_privateList_currentRowChanged(int currentRow)
 void ChatPage::on_historyList_currentRowChanged(int currentRow)
 {
     if (currentRow != -1) {
-        ChatStyleInfo info = ui.historyStyle->itemData(ui.historyStyle->currentIndex(),Qt::UserRole).value<ChatStyleInfo>();
+        ChatStyleInfo info = ui.historyStyle->itemData(currentRow,Qt::UserRole).value<ChatStyleInfo>();
 
         QString author = info.authorName;
         if (info.authorEmail.isEmpty() == false) {
             author += " (" + info.authorEmail + ")";
         }
-        whileBlocking(ui.historyAuthor)->setText(author);
-        whileBlocking(ui.historyDescription)->setText(info.styleDescription);
+        ui.historyAuthor->setText(author);
+        ui.historyDescription->setText(info.styleDescription);
 
         QStringList variants;
         ChatStyle::getAvailableVariants(info.stylePath, variants);
@@ -615,8 +615,8 @@ void ChatPage::on_historyList_currentRowChanged(int currentRow)
             whileBlocking(ui.historyComboBoxVariant)->setCurrentIndex(0);
         }
     } else {
-        whileBlocking(ui.historyAuthor)->clear();
-        whileBlocking(ui.historyDescription)->clear();
+        ui.historyAuthor->clear();
+        ui.historyDescription->clear();
         whileBlocking(ui.historyComboBoxVariant)->clear();
         whileBlocking(ui.historyComboBoxVariant)->setDisabled(true);
     }
@@ -661,15 +661,15 @@ void ChatPage::distantChatComboBoxChanged(int i)
 {
 	switch(i)
 	{
-		default: 
-		case 0: rsMsgs->setDistantChatPermissionFlags(RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NONE) ;           
-				  break ;
-				  
-		case 1:  rsMsgs->setDistantChatPermissionFlags(RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NON_CONTACTS) ;
-				  break ;
+		default:
+		case 0: rsMsgs->setDistantChatPermissionFlags(RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NONE) ;
+		break ;
 
-		case 2:  rsMsgs->setDistantChatPermissionFlags(RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_EVERYBODY) ;
-				  break ;
+		case 1: rsMsgs->setDistantChatPermissionFlags(RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NON_CONTACTS) ;
+		break ;
+
+		case 2: rsMsgs->setDistantChatPermissionFlags(RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_EVERYBODY) ;
+		break ;
 	}
 
 }
