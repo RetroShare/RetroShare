@@ -37,16 +37,12 @@ public:
 	UserNotify(QObject *parent = 0);
 	virtual ~UserNotify();
 
-	void initialize(QToolBar *mainToolBar, QAction *mainAction, QListWidgetItem *listItem,const QString& subtext);
+	void initialize(QToolBar *mainToolBar, QAction *mainAction, QListWidgetItem *listItem);
 	void createIcons(QMenu *notifyMenu);
 	QSystemTrayIcon* getTrayIcon(){ return mTrayIcon;}
 	QAction* getNotifyIcon(){ return mNotifyIcon;}
 
 	virtual bool hasSetting(QString */*name*/, QString */*group*/) { return false; }
-
-    // UserNotify is used to display tooltips when some services have no messages and so on, in the format of "Name (43242 new messages)"
-    // This method is used to pass the string that comes after the number.
-    virtual QString textInfo() const { return QString() ; }
 
 	bool notifyEnabled();
 	bool notifyCombined();
@@ -87,7 +83,6 @@ private:
 	QAction *mNotifyIcon;
 	unsigned int mNewCount;
 	QString mButtonText;
-	QString mButtonText2;
 	bool mLastBlinking;
 };
 

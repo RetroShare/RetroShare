@@ -58,6 +58,16 @@ unsigned int MessageUserNotify::getNewCount()
 	return newInboxCount;
 }
 
+QString MessageUserNotify::getTrayMessage(bool plural)
+{
+	return plural ? tr("You have %1 new mails") : tr("You have %1 new mail");
+}
+
+QString MessageUserNotify::getNotifyMessage(bool plural)
+{
+	return plural ? tr("%1 new mails") : tr("%1 new mail");
+}
+
 void MessageUserNotify::iconClicked()
 {
 	MainWindow::showWindow(MainWindow::Messages);

@@ -63,7 +63,6 @@ public:
 	QString textToNotify() { return _textToNotify.join("\n");}
 	void setTextCaseSensitive(bool value);
 	bool isTextCaseSensitive() {return _bTextCaseSensitive;}
-    virtual QString textInfo() const override { return tr("mention(s)"); }
 
 signals:
 	void countChanged(ChatLobbyId id, unsigned int count);

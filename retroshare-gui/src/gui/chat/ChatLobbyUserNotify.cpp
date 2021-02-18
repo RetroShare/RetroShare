@@ -136,12 +136,12 @@ unsigned int ChatLobbyUserNotify::getNewCount()
 
 QString ChatLobbyUserNotify::getTrayMessage(bool plural)
 {
-	return plural ? tr("You have %1 new messages") : tr("You have %1 new message");
+	return plural ? tr("You have %1 mentions") : tr("You have %1 mention");
 }
 
 QString ChatLobbyUserNotify::getNotifyMessage(bool plural)
 {
-	return plural ? tr("%1 new messages") : tr("%1 new message");
+	return plural ? tr("%1 mentions") : tr("%1 mention");
 }
 
 void ChatLobbyUserNotify::iconClicked()

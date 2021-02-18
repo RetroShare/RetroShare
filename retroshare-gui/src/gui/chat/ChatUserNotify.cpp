@@ -94,6 +94,16 @@ unsigned int ChatUserNotify::getNewCount()
     return sum;
 }
 
+QString ChatUserNotify::getTrayMessage(bool plural)
+{
+	return plural ? tr("You have %1 mentions") : tr("You have %1 mention");
+}
+
+QString ChatUserNotify::getNotifyMessage(bool plural)
+{
+	return plural ? tr("%1 mentions") : tr("%1 mention");
+}
+
 void ChatUserNotify::iconClicked()
 {
 	ChatDialog *chatDialog = NULL;
