@@ -152,7 +152,7 @@ void CreateCircleDialog::reject()
 
 void CreateCircleDialog::keyPressEvent(QKeyEvent *e)
 {
-    if(e->key() != Qt::Key_Escape)
+    if(e->key() != Qt::Key_Escape || tryClose())
         QDialog::keyPressEvent(e);
 }
 
