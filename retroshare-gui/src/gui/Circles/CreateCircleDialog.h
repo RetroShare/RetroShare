@@ -62,8 +62,11 @@ private slots:
 	void MembershipListCustomPopupMenu( QPoint point);
 
 protected:
-    virtual void closeEvent(QCloseEvent *) override;
+    virtual void keyPressEvent(QKeyEvent *e) override;
+    virtual void accept() override;
+    virtual void reject() override;
 
+    bool tryClose();
 private:
 
 	void updateCircleGUI();

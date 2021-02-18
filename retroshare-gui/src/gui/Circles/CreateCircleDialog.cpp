@@ -123,21 +123,39 @@ CreateCircleDialog::CreateCircleDialog()
 CreateCircleDialog::~CreateCircleDialog()
 {
 }
-void CreateCircleDialog::closeEvent(QCloseEvent *e)
+
+bool CreateCircleDialog::tryClose()
 {
     if(mIdentitiesLoading || mCircleLoading)
     {
         std::cerr << "Close() called. Identities or circle currently loading => not actually closing." << std::endl;
         mCloseRequested = true;
-        e->ignore();
-        return;
+        return false;
     }
     else
     {
         std::cerr << "Close() called. Identities not currently loading => closing." << std::endl;
-        QDialog::closeEvent(e);
+        return true;
     }
 }
+
+void CreateCircleDialog::accept()
+{
+    if(tryClose())
+        QDialog::accept();
+}
+void CreateCircleDialog::reject()
+{
+    if(tryClose())
+        QDialog::reject();
+}
+
+void CreateCircleDialog::keyPressEvent(QKeyEvent *e)
+{
+    if(e->key() != Qt::Key_Escape)
+        QDialog::keyPressEvent(e);
+}
+
 
 void CreateCircleDialog::editExistingId(const RsGxsGroupId &circleId, const bool &clearList /*= true*/,bool readonly)
 {
