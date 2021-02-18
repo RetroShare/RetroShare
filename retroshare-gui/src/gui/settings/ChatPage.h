@@ -33,7 +33,7 @@ class ChatPage : public ConfigPage
 
   public:
       /** Default Constructor */
-      ChatPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
+      ChatPage(QWidget * parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
       /** Default Destructor */
       ~ChatPage() {}
 
@@ -74,7 +74,7 @@ class ChatPage : public ConfigPage
   private:
       void setPreviewMessages(QString &stylePath, QString styleVariant, QTextBrowser *textBrowser);
       void fillPreview(QComboBox *listWidget, QComboBox *comboBox, QTextBrowser *textBrowser);
-	  QString loadStyleInfo(ChatStyle::enumStyleType type, QComboBox *style_CB, QComboBox *comboBox, QString &styleVariant);
+	  QString loadStyleInfo(ChatStyle::enumStyleType type, QComboBox *style_CB, QComboBox *var_CB, QString &styleVariant);
 
       QFont fontTempChat;
 
