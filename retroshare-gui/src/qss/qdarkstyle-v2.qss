@@ -2323,3 +2323,7 @@ HomePage QToolButton#addButton:hover {
 	min-width: 4em;
 	padding: 2px;
 }
+
+NewFriendList QTreeView#peerTreeWidget {
+	font-size: 12pt;
+}
