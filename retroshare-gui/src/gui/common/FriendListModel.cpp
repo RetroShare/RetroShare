@@ -60,11 +60,10 @@ static const uint32_t NODE_DETAILS_UPDATE_DELAY = 5;	// update each node every 5
 
 RsFriendListModel::RsFriendListModel(QObject *parent)
     : QAbstractItemModel(parent)
+    , mDisplayGroups(true), mDisplayStatusString(true)
+    , mLastInternalDataUpdate(0), mLastNodeUpdate(0)
 {
-    mDisplayGroups = true;
-    mFilterStrings.clear();
-    mLastNodeUpdate=0;
-    mLastInternalDataUpdate=0;
+	mFilterStrings.clear();
 }
 
 RsFriendListModel::EntryIndex::EntryIndex()
