@@ -98,30 +98,34 @@
 class MessageSortFilterProxyModel: public QSortFilterProxyModel
 {
 public:
-    MessageSortFilterProxyModel(QObject *parent = NULL): QSortFilterProxyModel(parent), m_sortingEnabled(false)
-    {
-        setDynamicSortFilter(false); // causes crashes when true
-    }
-
-    bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
-    {
-		return left.data(RsMessageModel::SortRole) < right.data(RsMessageModel::SortRole) ;
-    }
-
-    bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override
-    {
-        return sourceModel()->index(source_row,0,source_parent).data(RsMessageModel::FilterRole).toString() == RsMessageModel::FilterString ;
-    }
+	MessageSortFilterProxyModel(QObject *parent = NULL)
+	    : QSortFilterProxyModel(parent), m_sortingEnabled(false)
+	{
+		setDynamicSortFilter(false); // causes crashes when true
+	}
 
 	void sort( int column, Qt::SortOrder order = Qt::AscendingOrder ) override
 	{
-        if(m_sortingEnabled)
-            return QSortFilterProxyModel::sort(column,order) ;
+		if(m_sortingEnabled)
+			return QSortFilterProxyModel::sort(column,order) ;
 	}
 
-    void setSortingEnabled(bool b) { m_sortingEnabled = b ; }
+	void setSortingEnabled(bool b) { m_sortingEnabled = b ; }
+
+protected:
+	bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
+	{
+		return sourceModel()->data(left, RsMessageModel::SortRole) < sourceModel()->data(right, RsMessageModel::SortRole) ;
+	}
+
+	bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override
+	{
+		//No need Column as Model filter check with filter selection
+		return sourceModel()->index(source_row,0,source_parent).data(RsMessageModel::FilterRole).toString() == RsMessageModel::FilterString ;
+	}
+
 private:
-    bool m_sortingEnabled;
+	bool m_sortingEnabled;
 };
 
 /** Constructor */
@@ -260,7 +264,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
  <p>Generally, you may use messages to recommend files to your friends by pasting file links, \
  or recommend friend nodes to other friend nodes, in order to strengthen your network, or send feedback \
  to a channel's owner.</p>                   \
- ").arg(QString::number(2*S)).arg(QString::number(S)) ;
+ ").arg(QString::number(2*S), QString::number(S)) ;
 
 	 registerHelpButton(ui.helpButton,help_str,"MessagesDialog") ;
 
@@ -538,14 +542,14 @@ int MessagesDialog::getSelectedMsgCount (QList<QModelIndex> *items, QList<QModel
 {
 	QModelIndexList qmil = ui.messageTreeWidget->selectionModel()->selectedRows();
 
-    if (items) items->clear();
-    if (itemsRead) itemsRead->clear();
-    if (itemsUnread) itemsUnread->clear();
-    if (itemsStar) itemsStar->clear();
-    if (itemsJunk) itemsJunk->clear();
+	if (items) items->clear();
+	if (itemsRead) itemsRead->clear();
+	if (itemsUnread) itemsUnread->clear();
+	if (itemsStar) itemsStar->clear();
+	if (itemsJunk) itemsJunk->clear();
 
-    foreach(const QModelIndex& m, qmil)
-    {
+	foreach(const QModelIndex& m, qmil)
+	{
 		if (items)
 			items->append(m);
 
@@ -556,9 +560,12 @@ int MessagesDialog::getSelectedMsgCount (QList<QModelIndex> *items, QList<QModel
 
 		if (itemsStar && m.data(RsMessageModel::MsgFlagsRole).toInt() & RS_MSG_STAR)
 			itemsStar->append(m);
-    }
 
-    return qmil.size();
+ 		if (itemsJunk && m.data(RsMessageModel::MsgFlagsRole).toInt() & RS_MSG_SPAM)
+			itemsJunk->append(m);
+	}
+
+	return qmil.size();
 }
 
 bool MessagesDialog::isMessageRead(const QModelIndex& real_index)
@@ -653,7 +660,7 @@ void MessagesDialog::messageTreeWidgetCustomPopupMenu(QPoint /*point*/)
 
     action = contextMnu.addAction(tr("Mark as Junk"));
     action->setCheckable(true);
-    action->setChecked(itemsStar.size());
+    action->setChecked(itemsJunk.size());
     connect(action, SIGNAL(triggered(bool)), this, SLOT(markWithJunk(bool)));
 
     contextMnu.addSeparator();
@@ -1008,40 +1015,34 @@ void MessagesDialog::updateCurrentMessage()
 
 void MessagesDialog::markAsRead()
 {
-    QList<QModelIndex> itemsUnread;
-    getSelectedMsgCount (NULL, NULL, &itemsUnread, NULL, NULL);
+	QModelIndexList lst = ui.messageTreeWidget->selectionModel()->selectedRows();
 
-    foreach(const QModelIndex& index,itemsUnread)
-        mMessageModel->setMsgReadStatus(index,true);
+	mMessageModel->setMsgsReadStatus(lst,true);
 
-    updateMessageSummaryList();
+	updateMessageSummaryList();
 }
 
 void MessagesDialog::markAsUnread()
 {
-    QList<QModelIndex> itemsRead;
-    getSelectedMsgCount (NULL, &itemsRead, NULL, NULL, NULL);
+	QModelIndexList lst = ui.messageTreeWidget->selectionModel()->selectedRows();
 
-    foreach(const QModelIndex& index,itemsRead)
-        mMessageModel->setMsgReadStatus(index,false);
+	mMessageModel->setMsgsReadStatus(lst,false);
 
-    updateMessageSummaryList();
+	updateMessageSummaryList();
 }
 
 void MessagesDialog::markWithStar(bool checked)
 {
-    QModelIndexList lst = ui.messageTreeWidget->selectionModel()->selectedRows();
+	QModelIndexList lst = ui.messageTreeWidget->selectionModel()->selectedRows();
 
-    foreach(const QModelIndex& index,lst)
-		mMessageModel->setMsgStar(index, checked);
+	mMessageModel->setMsgsStar(lst, checked);
 }
 
 void MessagesDialog::markWithJunk(bool checked)
 {
-    QModelIndexList lst = ui.messageTreeWidget->selectionModel()->selectedRows();
+	QModelIndexList lst = ui.messageTreeWidget->selectionModel()->selectedRows();
 
-    foreach(const QModelIndex& index,lst)
-		mMessageModel->setMsgJunk(index, checked);
+	mMessageModel->setMsgsJunk(lst, checked);
 }
 
 void MessagesDialog::insertMsgTxtAndFiles(const QModelIndex& proxy_index)

@@ -150,8 +150,11 @@ public:
 
 	// control over message flags and so on. This is handled by the model because it will allow it to update accordingly
 	void setMsgReadStatus(const QModelIndex& i, bool read_status);
-	void setMsgStar(const QModelIndex& index,bool star) ;
-	void setMsgJunk(const QModelIndex& index,bool junk) ;
+	void setMsgsReadStatus(const QModelIndexList& mil, bool read_status);
+	void setMsgStar(const QModelIndex& i,bool star) ;
+	void setMsgsStar(const QModelIndexList& mil,bool star) ;
+	void setMsgJunk(const QModelIndex& i,bool junk) ;
+	void setMsgsJunk(const QModelIndexList& mil,bool junk) ;
 
 public slots:
 	void updateMessages();
