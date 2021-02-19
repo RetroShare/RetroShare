@@ -1205,10 +1205,22 @@ BoardsCommentsItem QLabel#subjectLabel, QLabel#titleLabel , QLabel#nameLabel {
 	font: bold;
 }
 
-NewFriendList QTreeView#peerTreeWidget::item:selected/*, QTreeView#peerTreeWidget::branch:selected:active */{
-	background-color: #cde8ff;
+NewFriendList QTreeView#peerTreeWidget::item:selected, QTreeView#peerTreeWidget::branch:selected:active {
+	background: #cde8ff;
 }
 
 NewFriendList QTreeView#peerTreeWidget {
 	font-size: 12pt;
+}
+
+NewFriendList QTreeView::branch:has-children:!has-siblings:closed,
+NewFriendList QTreeView::branch:closed:has-children:has-siblings {
+        border-image: none;
+        image: url(:/images/arrow-right.png);
+}
+
+NewFriendList QTreeView::branch:open:has-children:!has-siblings,
+NewFriendList QTreeView::branch:open:has-children:has-siblings  {
+        border-image: none;
+        image: url(:/images/arrow-down.png);
 }
