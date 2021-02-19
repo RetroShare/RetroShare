@@ -1523,7 +1523,7 @@ void ChatWidget::chooseFont()
 			text += " font-family:" + font.family() + ";";
 			text += font.bold() ? " font-weight: bold;" : "";
 			text += font.italic() ? " font-style: italic;" : "";
-			text += " font-size:" + QString::number(font.pointSize()) + "px;";
+			text += " font-size:" + QString::number(font.pointSize()) + "pt;";
 			text += font.strikeOut() ? " text-decoration: line-through;" : "";
 			text += font.underline() ? " text-decoration: underline;" : "";
 			text += "\">" + cursor.selectedText().toHtmlEscaped() + "</p>";

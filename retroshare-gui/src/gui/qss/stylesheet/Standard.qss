@@ -48,7 +48,7 @@ GenCertDialog QLabel#no_node_label, GenCertDialog QLabel#no_gpg_key_label {
 	background: #FFEECC;
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFEECC, stop:1 #FFE3AB);
 	padding: 4px;
-	font-size: 14px;
+	font-size: 14pt;
 }
 
 GenCertDialog > QFrame#headerFrame > QLabel#headerLabel {
@@ -109,7 +109,7 @@ GxsCreateCommentDialog QTextEdit#commentTextEdit {
 }
 
 GxsCreateCommentDialog QLabel#titleLabel {
-	font-size: 12px;
+	font-size: 12pt;
 	font-weight: 600;
 	color: black;
 }
@@ -125,7 +125,7 @@ GxsCreateCommentDialog QFrame#frame {
 
 CreateGxsChannelMsg QPushButton#postButton {
 	font: bold;
-	font-size: 15px;
+	font-size: 15pt;
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
@@ -147,7 +147,7 @@ GxsCreateCommentDialog QPushButton#postButton, GxsGroupDialog QPushButton#create
 PulseAddDialog QPushButton#pushButton_Post, PulseTopLevel QToolButton#toolButton_follow,
 PulseViewGroup QToolButton#toolButton_follow, WikiEditDialog QPushButton#pushButton_Submit{
 	font: bold;
-	font-size: 15px;
+	font-size: 15pt;
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
@@ -174,7 +174,7 @@ WikiEditDialog QPushButton#pushButton_Submit:hover{
 
 ShareManager QPushButton#closeButton {
 	font: bold;
-	font-size: 15px;
+	font-size: 15pt;
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
@@ -187,7 +187,7 @@ ShareManager QPushButton#closeButton {
 
 ShareManager QPushButton#addButton{
 	font: bold;
-	font-size: 15px;
+	font-size: 15pt;
 	color: white;
 	background: #32CD32;
 	border-radius: 4px;
@@ -205,7 +205,7 @@ ShareManager QPushButton#addButton:hover{
 
 SearchDialog QPushButton#pushButtonSearch {
 	font: bold;
-	font-size: 15px;
+	font-size: 15pt;
 	color: white;
 	background: #32CD32;
 	border-radius: 4px;
@@ -225,7 +225,7 @@ CreateGxsForumMsg QPushButton#postButton:disabled, PostedCreatePostDialog QPushB
 CreateGxsChannelMsg QPushButton#postButton:disabled, GxsCreateCommentDialog QPushButton#postButton:disabled,
 PulseAddDialog QPushButton#pushButton_Post:disabled, WikiEditDialog QPushButton#pushButton_Submit:disabled {
 	font: bold;
-	font-size: 15px;
+	font-size: 15pt;
 	color: white;
 	background: #d40000;
 	border-radius: 4px;
@@ -240,7 +240,7 @@ PulseAddDialog QPushButton#pushButton_Post:disabled, WikiEditDialog QPushButton#
 GxsForumThreadWidget QPushButton#forumName
 {
 	font: bold;
-	font-size: 14px;
+	font-size: 14pt;
 }
 
 CreateForumMsg > QToolBar#toolBar, CreateForumV2Msg > QToolBar#toolBar {
@@ -282,7 +282,7 @@ ChatLobbyWidget QLabel#lobbyinfo_label
 ChatLobbyWidget QLabel#lobbyname_lineEdit
 {
 	font: bold;
-	font-size: 16px;
+	font-size: 16pt;
 }
 
 ChatLobbyWidget QGroupBox#lobbyinfo_groupBox
@@ -294,7 +294,7 @@ ChatLobbyWidget QGroupBox#lobbyinfo_groupBox
 	border: 1px solid #CCCCCC;
 
 	padding: 14 6px;
-	font-size: 12px;
+	font-size: 12pt;
 	font-weight: bold;
 
 }
@@ -783,13 +783,13 @@ GenCertDialog QPushButton#genButton:hover {
 
 GenCertDialog QPushButton#genButton:disabled {
 	border-image: url(:/images/btn_27.png) 4;
-/*  font-size: 16px; */
+/*  font-size: 16pt; */
 	font: bold;
 	color: black;
 }
 
 ConnectFriendWizard QRadioButton {
-	font-size: 16px;
+	font-size: 16pt;
 }
 
 ConnectFriendWizard QPlainTextEdit#friendCertEdit {
@@ -836,7 +836,7 @@ GxsForumThreadWidget QToolButton#newthreadButton {
 
 PostedListWidgetWithModel QToolButton#subscribeToolButton {
 	font: bold;
-	font-size: 15px;
+	font-size: 15pt;
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
@@ -855,7 +855,7 @@ PostedListWidgetWithModel QFrame#headerFrame {
 
 GxsForumThreadWidget QToolButton#subscribeToolButton {
 	font: bold;
-	font-size: 14px;
+	font-size: 14pt;
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
@@ -875,7 +875,7 @@ SecurityIpItem QFrame#mainFrame, MsgItem QFrame#msgFrame, SecurityItem QFrame#ma
 
 GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton {
 	font: bold;
-	font-size: 14px;
+	font-size: 14pt;
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
@@ -1041,7 +1041,7 @@ BoardPostDisplayWidget_card > QFrame#mainFrame[new=true] {
 
 BoardPostDisplayWidget_compact QLabel#titleLabel,
 BoardPostDisplayWidget_card QLabel#titleLabel{
-	font-size: 14px;
+	font-size: 14pt;
 	font: bold;
 }
 
@@ -1057,7 +1057,7 @@ PostedListWidgetWithModel QTextBrowser#infoDescription {
 
 PostedCreatePostDialog QPushButton#submitButton {
 	font: bold;
-	font-size: 15px;
+	font-size: 15pt;
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
@@ -1191,17 +1191,17 @@ ChannelsCommentsItem QFrame#mainFrame, BoardsCommentsItem QFrame#mainFrame {
 }
 
 ChannelsCommentsItem QLabel#newCommentLabel, BoardsCommentsItem QLabel#newCommentLabel {
-	font-size: 14px;
+	font-size: 14pt;
 	font: bold;
 }
 
 ChannelsCommentsItem QLabel#subjectLabel, ChannelsCommentsItem QLabel#titleLabel , QLabel#nameLabel {
-	font-size: 14px;
+	font-size: 14pt;
 	font: bold;
 }
 
 BoardsCommentsItem QLabel#subjectLabel, QLabel#titleLabel , QLabel#nameLabel {
-	font-size: 14px;
+	font-size: 14pt;
 	font: bold;
 }
 
