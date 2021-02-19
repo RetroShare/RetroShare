@@ -104,8 +104,10 @@ public:
 	 * requests there.
 	 * @param[in] requestData search query
 	 * @param[in] requestSize search query size
-	 * @param[out] resultData results data
-	 * @param[out] resultSize results data size
+	 * @param[out] resultData results data storage for a pointer to search
+	 * result reply data or nullptr if no mathing results where found
+	 * @param[out] resultSize storage for results data size or 0 if no matching
+	 * results where found
 	 * @return Error details or success, NOT_OVERRIDDEN_BY_OBSERVER is
 	 * returned to inform the caller that this method was not overridden by the
 	 * observer so do not use it for other meanings. */
@@ -113,6 +115,8 @@ public:
 	        rs_view_ptr<uint8_t> requestData, uint32_t requestSize,
 	        rs_owner_ptr<uint8_t>& resultData, uint32_t& resultSize )
 	{
+		/* Avoid unused paramethers warning this way so doxygen can still parse
+		 * paramethers documentation */
 		(void) requestData; (void) requestSize;
 		(void) resultData; (void) resultSize;
 		return RsNxsObserverErrorNum::NOT_OVERRIDDEN_BY_OBSERVER;

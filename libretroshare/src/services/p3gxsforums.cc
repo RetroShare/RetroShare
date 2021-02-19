@@ -4,8 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2012-2014  Robert Fernie <retroshare@lunamutt.com>            *
- * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
- * Copyright (C) 2019-2020  Asociación Civil Altermundi <info@altermundi.net>  *
+ * Copyright (C) 2018-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -59,7 +59,11 @@ p3GxsForums::p3GxsForums( RsGeneralDataService *gds,
     RsGenExchange( gds, nes, new RsGxsForumSerialiser(),
                    RS_SERVICE_GXS_TYPE_FORUMS, gixs, forumsAuthenPolicy()),
     RsGxsForums(static_cast<RsGxsIface&>(*this)), mGenToken(0),
-    mGenActive(false), mGenCount(0), mKnownForumsMutex("GXS forums known forums timestamp cache")
+    mGenActive(false), mGenCount(0),
+    mKnownForumsMutex("GXS forums known forums timestamp cache")
+#ifdef RS_DEEP_FORUMS_INDEX
+    , mDeepIndex(DeepForumsIndex::dbDefaultPath())
+#endif
 {
 	// Test Data disabled in Repo.
 	//RsTickEvent::schedule_in(FORUM_TESTEVENT_DUMMYDATA, DUMMYDATA_PERIOD);
@@ -190,31 +194,61 @@ RsSerialiser* p3GxsForums::setupSerialiser()
 	return rss;
 }
 
-void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
+void p3GxsForums::notifyChanges(std::vector<RsGxsNotify*>& changes)
 {
 	RS_DBG2(changes.size(), " changes to notify");
 
-	std::vector<RsGxsNotify *>::iterator it;
-	for(it = changes.begin(); it != changes.end(); ++it)
+	for(RsGxsNotify* gxsChange: changes)
 	{
-		RsGxsNotify* gxsChange = *it;
+		// Let the compiler delete the change for us
+		std::unique_ptr<RsGxsNotify> gxsChangeDeleter(gxsChange);
+
 		switch(gxsChange->getType())
 		{
 		case RsGxsNotify::TYPE_RECEIVED_NEW: // [[fallthrough]]
 		case RsGxsNotify::TYPE_PUBLISHED:
 		{
-			RsGxsMsgChange* msgChange = dynamic_cast<RsGxsMsgChange*>(*it);
-			RsGxsGroupChange* groupChange = dynamic_cast<RsGxsGroupChange*>(*it);
+			auto msgChange = dynamic_cast<RsGxsMsgChange*>(gxsChange);
 
-			if(msgChange) /* Message received*/
+			if(msgChange) /* Message received */
 			{
-				auto ev = std::make_shared<RsGxsForumEvent>();
-				ev->mForumMsgId = msgChange->mMsgId;
-				ev->mForumGroupId = msgChange->mGroupId;
-				ev->mForumEventCode = RsForumEventCode::NEW_MESSAGE;
-				rsEvents->postEvent(ev);
+				uint8_t msgSubtype = msgChange->mNewMsgItem->PacketSubType();
+				switch(static_cast<RsGxsForumsItems>(msgSubtype))
+				{
+				case RsGxsForumsItems::MESSAGE_ITEM:
+				{
+					auto newForumMessageItem =
+					        dynamic_cast<RsGxsForumMsgItem*>(
+					            msgChange->mNewMsgItem );
+
+					if(!newForumMessageItem)
+					{
+						RS_ERR("Received message change with mNewMsgItem type "
+						       "mismatching or null");
+						print_stacktrace();
+						return;
+					}
+
+#ifdef RS_DEEP_FORUMS_INDEX
+					RsGxsForumMsg tmpPost = newForumMessageItem->mMsg;
+					tmpPost.mMeta = newForumMessageItem->meta;
+					mDeepIndex.indexForumPost(tmpPost);
+#endif
+					auto ev = std::make_shared<RsGxsForumEvent>();
+					ev->mForumMsgId = msgChange->mMsgId;
+					ev->mForumGroupId = msgChange->mGroupId;
+					ev->mForumEventCode = RsForumEventCode::NEW_MESSAGE;
+					rsEvents->postEvent(ev);
+					break;
+				}
+				default:
+					RS_WARN("Got unknown gxs message subtype: ", msgSubtype);
+					break;
+				}
 			}
-			else if(groupChange) /* Group received */
+
+			auto groupChange = dynamic_cast<RsGxsGroupChange*>(gxsChange);
+			if(groupChange) /* Group received */
 			{
 				bool unknown;
 				{
@@ -232,9 +266,25 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 					ev->mForumEventCode = RsForumEventCode::NEW_FORUM;
 					rsEvents->postEvent(ev);
 				}
-				else
-					RS_DBG1( " Not notifying already known forum ",
-					         gxsChange->mGroupId );
+
+#ifdef RS_DEEP_FORUMS_INDEX
+				uint8_t itemType = groupChange->mNewGroupItem->PacketSubType();
+				switch(static_cast<RsGxsForumsItems>(itemType))
+				{
+				case RsGxsForumsItems::GROUP_ITEM:
+				{
+					auto newForumGroupItem =
+					        static_cast<RsGxsForumGroupItem*>(
+					            groupChange->mNewGroupItem );
+					mDeepIndex.indexForumGroup(newForumGroupItem->mGroup);
+					break;
+				}
+				default:
+					RS_WARN("Got unknown gxs group subtype: ", itemType);
+					break;
+				}
+#endif // def RS_DEEP_FORUMS_INDEX
+
 			}
 			break;
 		}
@@ -256,25 +306,31 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 		}
 		case RsGxsNotify::TYPE_MESSAGE_DELETED:
 		{
-			RsGxsMsgDeletedChange* delChange =
-			        dynamic_cast<RsGxsMsgDeletedChange*>(gxsChange);
-
+			auto delChange = dynamic_cast<RsGxsMsgDeletedChange*>(gxsChange);
 			if(!delChange)
 			{
 				RS_ERR( "Got mismatching notification type: ",
 				        gxsChange->getType() );
 				print_stacktrace();
-				goto cleanup;
+				break;
 			}
 
+#ifdef RS_DEEP_FORUMS_INDEX
+			mDeepIndex.removeForumPostFromIndex(
+			            delChange->mGroupId, delChange->messageId);
+#endif
+
 			auto ev = std::make_shared<RsGxsForumEvent>();
-			ev->mForumEventCode = RsForumEventCode::DELETED_POSTS;
+			ev->mForumEventCode = RsForumEventCode::DELETED_POST;
 			ev->mForumGroupId = delChange->mGroupId;
 			ev->mForumMsgId = delChange->messageId;
 			break;
 		}
 		case RsGxsNotify::TYPE_GROUP_DELETED:
 		{
+#ifdef RS_DEEP_FORUMS_INDEX
+			mDeepIndex.removeForumFromIndex(gxsChange->mGroupId);
+#endif
 			auto ev = std::make_shared<RsGxsForumEvent>();
 			ev->mForumGroupId = gxsChange->mGroupId;
 			ev->mForumEventCode = RsForumEventCode::DELETED_FORUM;
@@ -299,7 +355,7 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 			 * analyse the old and new group in order to detect possible
 			 * notifications for clients */
 
-			RsGxsGroupChange* grpChange = dynamic_cast<RsGxsGroupChange*>(*it);
+			auto grpChange = dynamic_cast<RsGxsGroupChange*>(gxsChange);
 
 			RsGxsForumGroupItem* old_forum_grp_item =
 			        dynamic_cast<RsGxsForumGroupItem*>(grpChange->mOldGroupItem);
@@ -312,8 +368,12 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				        "mNewGroup not of type RsGxsForumGroupItem or NULL. "
 				        "This is inconsistent!");
 				print_stacktrace();
-				goto cleanup;
+				break;
 			}
+
+#ifdef RS_DEEP_FORUMS_INDEX
+			mDeepIndex.indexForumGroup(new_forum_grp_item->mGroup);
+#endif
 
 			/* First of all, we check if there is a difference between the old
 			 * and new list of moderators */
@@ -382,9 +442,6 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 			        " Currently not handled." );
 			break;
 		}
-
-cleanup:
-		delete *it;
 	}
 }
 
@@ -1347,6 +1404,254 @@ bool RsGxsForumGroup::canEditPosts(const RsGxsId& id) const
 	return mAdminList.ids.find(id) != mAdminList.ids.end() ||
 	        id == mMeta.mAuthorId;
 }
+
+std::error_condition p3GxsForums::getContentSummaries(
+        const RsGxsGroupId& forumId,
+        const std::set<RsGxsMessageId>& contentIds,
+        std::vector<RsMsgMetaData>& summaries )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_META;
+
+	GxsMsgReq msgReq;
+	msgReq[forumId] = contentIds;
+
+
+	if(!requestMsgInfo(token, opts, msgReq))
+	{
+		RS_ERR("requestMsgInfo failed");
+		return std::errc::invalid_argument;
+	}
+
+	switch(waitToken(token, std::chrono::seconds(5)))
+	{
+	case RsTokenService::COMPLETE:
+	{
+		GxsMsgMetaMap metaMap;
+		if(!RsGenExchange::getMsgMeta(token, metaMap))
+			return std::errc::result_out_of_range;
+		summaries = metaMap[forumId];
+		return std::error_condition();
+	}
+	case RsTokenService::PARTIAL: // [[fallthrough]];
+	case RsTokenService::PENDING:
+		return std::errc::timed_out;
+	default:
+		return std::errc::not_supported;
+	}
+}
+
+#ifdef RS_DEEP_FORUMS_INDEX
+std::error_condition p3GxsForums::handleDistantSearchRequest(
+        rs_view_ptr<uint8_t> requestData, uint32_t requestSize,
+        rs_owner_ptr<uint8_t>& resultData, uint32_t& resultSize )
+{
+	RS_DBG1("");
+
+	RsGxsForumsSearchRequest request;
+	{
+		RsGenericSerializer::SerializeContext ctx(requestData, requestSize);
+		RsGenericSerializer::SerializeJob j =
+		        RsGenericSerializer::SerializeJob::DESERIALIZE;
+		RS_SERIAL_PROCESS(request);
+	}
+
+	if(request.mType != RsGxsForumsItems::SEARCH_REQUEST)
+	{
+		// If more types are implemented we would put a switch on mType instead
+		RS_WARN( "Got search request with unkown type: ",
+		         static_cast<uint32_t>(request.mType) );
+		return std::errc::bad_message;
+	}
+
+	RsGxsForumsSearchReply reply;
+	auto mErr = prepareSearchResults(request.mQuery, true, reply.mResults);
+	if(mErr || reply.mResults.empty()) return mErr;
+
+	{
+		RsGenericSerializer::SerializeContext ctx;
+		RsGenericSerializer::SerializeJob j =
+		        RsGenericSerializer::SerializeJob::SIZE_ESTIMATE;
+		RS_SERIAL_PROCESS(reply);
+		resultSize = ctx.mOffset;
+	}
+
+	resultData = rs_malloc<uint8_t>(resultSize);
+	RsGenericSerializer::SerializeContext ctx(resultData, resultSize);
+	RsGenericSerializer::SerializeJob j =
+	        RsGenericSerializer::SerializeJob::SERIALIZE;
+	RS_SERIAL_PROCESS(reply);
+
+	return std::error_condition();
+}
+
+std::error_condition p3GxsForums::distantSearchRequest(
+        const std::string& matchString, TurtleRequestId& searchId )
+{
+	RsGxsForumsSearchRequest request;
+	request.mQuery = matchString;
+
+	uint32_t requestSize;
+	{
+		RsGenericSerializer::SerializeContext ctx;
+		RsGenericSerializer::SerializeJob j =
+		        RsGenericSerializer::SerializeJob::SIZE_ESTIMATE;
+		RS_SERIAL_PROCESS(request);
+		requestSize = ctx.mOffset;
+	}
+
+	std::error_condition ec;
+	auto requestData = rs_malloc<uint8_t>(requestSize, &ec);
+	if(!requestData) return ec;
+	{
+		RsGenericSerializer::SerializeContext ctx(requestData, requestSize);
+		RsGenericSerializer::SerializeJob j =
+		        RsGenericSerializer::SerializeJob::SERIALIZE;
+		RS_SERIAL_PROCESS(request);
+	}
+
+	return netService()->distantSearchRequest(
+	            requestData, requestSize,
+	            static_cast<RsServiceType>(serviceType()), searchId );
+}
+
+std::error_condition p3GxsForums::localSearch(
+        const std::string& matchString,
+        std::vector<RsGxsSearchResult>& searchResults )
+{ return prepareSearchResults(matchString, false, searchResults); }
+
+std::error_condition p3GxsForums::prepareSearchResults(
+        const std::string& matchString, bool publicOnly,
+        std::vector<RsGxsSearchResult>& searchResults )
+{
+	std::vector<DeepForumsSearchResult> results;
+	auto mErr = mDeepIndex.search(matchString, results);
+	if(mErr) return mErr;
+
+	searchResults.clear();
+	for(auto uRes: results)
+	{
+		RsUrl resUrl(uRes.mUrl);
+		const auto forumIdStr = resUrl.getQueryV(RsGxsForums::FORUM_URL_ID_FIELD);
+		if(!forumIdStr)
+		{
+			RS_ERR( "Forum URL retrieved from deep index miss ID. ",
+			        "Should never happen! ", uRes.mUrl );
+			print_stacktrace();
+			return std::errc::address_not_available;
+		}
+
+		std::vector<RsGxsForumGroup> forumsInfo;
+		RsGxsGroupId forumId(*forumIdStr);
+		if(forumId.isNull())
+		{
+			RS_ERR( "Forum ID retrieved from deep index is invalid. ",
+			        "Should never happen! ", uRes.mUrl );
+			print_stacktrace();
+			return std::errc::bad_address;
+		}
+
+		if( !getForumsInfo(std::list<RsGxsGroupId>{forumId}, forumsInfo) ||
+		        forumsInfo.empty() )
+		{
+			RS_ERR( "Forum just parsed from deep index link not found. "
+			        "Should never happen! ", forumId, " ", uRes.mUrl );
+			print_stacktrace();
+			return std::errc::identifier_removed;
+		}
+
+		RsGroupMetaData& fMeta(forumsInfo[0].mMeta);
+
+		// Avoid leaking sensitive information to unkown peers
+		if( publicOnly &&
+		        !(fMeta.mGroupFlags & GXS_SERV::FLAG_PRIVACY_PUBLIC) ) continue;
+
+		RsGxsSearchResult res;
+		res.mGroupId = forumId;
+		res.mGroupName = fMeta.mGroupName;
+		res.mAuthorId = fMeta.mAuthorId;
+		res.mPublishTs = fMeta.mPublishTs;
+		res.mSearchContext = uRes.mSnippet;
+
+		auto postIdStr =
+		        resUrl.getQueryV(RsGxsForums::FORUM_URL_MSG_ID_FIELD);
+		if(postIdStr)
+		{
+			RsGxsMessageId msgId(*postIdStr);
+			if(msgId.isNull())
+			{
+				RS_ERR( "Post just parsed from deep index link is invalid. "
+				        "Should never happen! ", postIdStr, " ", uRes.mUrl );
+				print_stacktrace();
+				return std::errc::bad_address;
+			}
+
+			std::vector<RsMsgMetaData> msgSummaries;
+			auto errc = getContentSummaries(
+			            forumId, std::set<RsGxsMessageId>{msgId}, msgSummaries);
+			if(errc) return errc;
+
+			if(msgSummaries.size() != 1)
+			{
+				RS_ERR( "getContentSummaries returned: ", msgSummaries.size(),
+				        "should never happen!" );
+				return std::errc::result_out_of_range;
+			}
+
+			RsMsgMetaData& msgMeta(msgSummaries[0]);
+			res.mMsgId = msgMeta.mMsgId;
+			res.mMsgName = msgMeta.mMsgName;
+			res.mAuthorId = msgMeta.mAuthorId;
+		}
+
+		RS_DBG4(res);
+		searchResults.push_back(res);
+	}
+
+	return std::error_condition();
+}
+
+std::error_condition p3GxsForums::receiveDistantSearchResult(
+        const TurtleRequestId requestId,
+        rs_owner_ptr<uint8_t>& resultData, uint32_t& resultSize )
+{
+	RsGxsForumsSearchReply reply;
+	{
+		RsGenericSerializer::SerializeContext ctx(resultData, resultSize);
+		RsGenericSerializer::SerializeJob j =
+		        RsGenericSerializer::SerializeJob::DESERIALIZE;
+		RS_SERIAL_PROCESS(reply);
+	}
+	free(resultData);
+
+	if(reply.mType != RsGxsForumsItems::SEARCH_REPLY)
+	{
+		// If more types are implemented we would put a switch on mType instead
+		RS_WARN( "Got search request with unkown type: ",
+		         static_cast<uint32_t>(reply.mType) );
+		return std::errc::bad_message;
+	}
+
+	auto event = std::make_shared<RsGxsForumsDistantSearchEvent>();
+	event->mSearchId = requestId;
+	event->mSearchResults = reply.mResults;
+	rsEvents->postEvent(event);
+	return std::error_condition();
+}
+
+#else  // def RS_DEEP_FORUMS_INDEX
+
+std::error_condition p3GxsForums::distantSearchRequest(
+        const std::string&, TurtleRequestId& )
+{ return std::errc::function_not_supported; }
+
+std::error_condition p3GxsForums::localSearch(
+        const std::string&,
+        std::vector<RsGxsSearchResult>& )
+{ return std::errc::function_not_supported; }
+
+#endif // def RS_DEEP_FORUMS_INDEX
 
 /*static*/ const std::string RsGxsForums::DEFAULT_FORUM_BASE_URL =
         "retroshare:///forums";

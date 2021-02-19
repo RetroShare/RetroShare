@@ -427,7 +427,7 @@ public:
 	 * @param[in] contentIds ids of requested contents, if empty summaries of
 	 *	all messages are reqeusted
 	 * @param[out] summaries storage for summaries
-	 * @return false if something failed, true otherwhise
+	 * @return success or error details if something failed
 	 */
 	virtual std::error_condition getContentSummaries(
 	        const RsGxsGroupId& channelId,
