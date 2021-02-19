@@ -954,10 +954,7 @@ bool p3IdService::deserialiseIdentityFromMemory(const std::string& radix_string,
 	return true;
 }
 
-bool p3IdService::createIdentity(
-        RsGxsId& id,
-        const std::string& name, const RsGxsImage& avatar,
-        bool pseudonimous, const std::string& pgpPassword)
+bool p3IdService::createIdentity( RsGxsId& id, const std::string& name, const RsGxsImage& avatar, bool pseudonimous, const std::string& pgpPassword)
 {
 	bool ret = true;
 	RsIdentityParameters params;
@@ -1061,6 +1058,20 @@ bool p3IdService::createIdentity(uint32_t& token, RsIdentityParameters &params)
     }
     else
         id.mMeta.mGroupFlags |= GXS_SERV::FLAG_PRIVACY_PUBLIC;
+
+    // Anticipate signature validation, since we're creating the signature ourselves.
+
+    SSGxsIdGroup ssdata;
+    ssdata.pgp.validatedSignature = params.isPgpLinked;
+
+    if(params.isPgpLinked)
+    {
+        ssdata.pgp.pgpId = AuthGPG::getAuthGPG()->getGPGOwnId();
+        ssdata.pgp.lastCheckTs = time(nullptr);
+    }
+
+    /* save string */
+    id.mMeta.mServiceString = ssdata.save();
 
     createGroup(token, id);
 
