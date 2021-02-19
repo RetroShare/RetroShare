@@ -264,6 +264,11 @@ void SecurityItem::updateItem()
 			removeFriendButton->setEnabled(true);
 			removeFriendButton->show();
 		}
+		else if(RS_FEED_ITEM_SEC_BAD_CERTIFICATE)
+		{
+			friendRequesttoolButton->hide();
+			requestLabel->hide();
+		}
 		else
 		{
 			friendRequesttoolButton->show();
