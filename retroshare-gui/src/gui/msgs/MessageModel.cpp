@@ -680,28 +680,93 @@ void RsMessageModel::setMsgReadStatus(const QModelIndex& i,bool read_status)
 	if(!i.isValid())
 		return ;
 
-    preMods();
-    rsMsgs->MessageRead(i.data(MsgIdRole).toString().toStdString(),!read_status);
+	preMods();
+	rsMsgs->MessageRead(i.data(MsgIdRole).toString().toStdString(),!read_status);
 
-    emit dataChanged(i.sibling(i.row(),0),i.sibling(i.row(),COLUMN_THREAD_NB_COLUMNS-1));
+	emit dataChanged(i,i);
+}
+
+void RsMessageModel::setMsgsReadStatus(const QModelIndexList& mil,bool read_status)
+{
+	//Get all msgId before changing model else Index are invalid and provoc SIGSEGV
+	QVector<std::string> list;
+	int start = rowCount(), stop = 0;
+	for(auto& it : mil)
+		if (it.isValid())
+		{
+			list.append(it.data(MsgIdRole).toString().toStdString());
+			start = std::min(start, it.row());
+			stop = std::max(stop, it.row());
+		}
+
+	preMods();
+	for(auto& it : list)
+		rsMsgs->MessageRead(it,!read_status);
+
+	emit dataChanged(createIndex(start,0),createIndex(stop,RsMessageModel::columnCount()-1));
 }
 
 void RsMessageModel::setMsgStar(const QModelIndex& i,bool star)
 {
-    preMods();
-    rsMsgs->MessageStar(i.data(MsgIdRole).toString().toStdString(),star);
+	if(!i.isValid())
+		return ;
 
-    emit dataChanged(i.sibling(i.row(),0),i.sibling(i.row(),COLUMN_THREAD_NB_COLUMNS-1));
+	preMods();
+	rsMsgs->MessageStar(i.data(MsgIdRole).toString().toStdString(),star);
+
+	emit dataChanged(i,i);
+}
+
+void RsMessageModel::setMsgsStar(const QModelIndexList& mil,bool star)
+{
+	//Get all msgId before changing model else Index are invalid and provoc SIGSEGV
+	QVector<std::string> list;
+	int start = rowCount(), stop = 0;
+	for(auto& it : mil)
+		if (it.isValid())
+		{
+			list.append(it.data(MsgIdRole).toString().toStdString());
+			start = std::min(start, it.row());
+			stop = std::max(stop, it.row());
+		}
+
+	preMods();
+	for(auto& it : list)
+		rsMsgs->MessageStar(it,star);
+
+	emit dataChanged(createIndex(start,0),createIndex(stop,RsMessageModel::columnCount()-1));
 }
 
 void RsMessageModel::setMsgJunk(const QModelIndex& i,bool junk)
 {
-    preMods();
-    rsMsgs->MessageJunk(i.data(MsgIdRole).toString().toStdString(),junk);
+	if(!i.isValid())
+		return ;
 
-    emit dataChanged(i.sibling(i.row(),0),i.sibling(i.row(),COLUMN_THREAD_NB_COLUMNS-1));
+	preMods();
+	rsMsgs->MessageJunk(i.data(MsgIdRole).toString().toStdString(),junk);
+
+	emit dataChanged(i,i);
 }
 
+void RsMessageModel::setMsgsJunk(const QModelIndexList& mil,bool junk)
+{
+	//Get all msgId before changing model else Index are invalid and provoc SIGSEGV
+	QVector<std::string> list;
+	int start = rowCount(), stop = 0;
+	for(auto& it : mil)
+		if (it.isValid())
+		{
+			list.append(it.data(MsgIdRole).toString().toStdString());
+			start = std::min(start, it.row());
+			stop = std::max(stop, it.row());
+		}
+
+	preMods();
+	for(auto& it : list)
+		rsMsgs->MessageJunk(it,junk);
+
+	emit dataChanged(createIndex(start,0),createIndex(stop,RsMessageModel::columnCount()-1));
+}
 
 QModelIndex RsMessageModel::getIndexOfMessage(const std::string& mid) const
 {
