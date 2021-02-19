@@ -21,6 +21,7 @@
  *******************************************************************************/
 
 #include <QMessageBox>
+#include <QCloseEvent>
 #include <QMenu>
 
 #include <algorithm>
@@ -51,7 +52,11 @@
 CreateCircleDialog::CreateCircleDialog()
 	: QDialog(NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint)
 {
-	/* Invoke the Qt Designer generated object setup routine */
+    mIdentitiesLoading = false;
+    mCircleLoading = false;
+    mCloseRequested = false;
+
+    /* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
 
     setAttribute(Qt::WA_DeleteOnClose, false);
@@ -112,11 +117,45 @@ CreateCircleDialog::CreateCircleDialog()
     QObject::connect(ui.radioButton_Public, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
     QObject::connect(ui.radioButton_Self, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
     QObject::connect(ui.radioButton_Restricted, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
+
 }
 
 CreateCircleDialog::~CreateCircleDialog()
 {
 }
+
+bool CreateCircleDialog::tryClose()
+{
+    if(mIdentitiesLoading || mCircleLoading)
+    {
+        std::cerr << "Close() called. Identities or circle currently loading => not actually closing." << std::endl;
+        mCloseRequested = true;
+        return false;
+    }
+    else
+    {
+        std::cerr << "Close() called. Identities not currently loading => closing." << std::endl;
+        return true;
+    }
+}
+
+void CreateCircleDialog::accept()
+{
+    if(tryClose())
+        QDialog::accept();
+}
+void CreateCircleDialog::reject()
+{
+    if(tryClose())
+        QDialog::reject();
+}
+
+void CreateCircleDialog::keyPressEvent(QKeyEvent *e)
+{
+    if(e->key() != Qt::Key_Escape || tryClose())
+        QDialog::keyPressEvent(e);
+}
+
 
 void CreateCircleDialog::editExistingId(const RsGxsGroupId &circleId, const bool &clearList /*= true*/,bool readonly)
 {
@@ -666,6 +705,9 @@ void CreateCircleDialog::loadCircle(const RsGxsGroupId& groupId)
 	QTreeWidget *tree = ui.treeWidget_membership;
 	if (mClearList) tree->clear();
 
+    std::cerr << "Loading circle..."<< std::endl;
+    mCircleLoading = true;
+
 	RsThread::async([groupId,this]()
 	{
 		std::vector<RsGxsCircleGroup> circlesInfo ;
@@ -691,7 +733,17 @@ void CreateCircleDialog::loadCircle(const RsGxsGroupId& groupId)
 #endif
 			updateCircleGUI();
 
-		}, this );
+            mCircleLoading = false;
+
+            std::cerr << "finished loading circle..."<< std::endl;
+
+            if(mCloseRequested && !mIdentitiesLoading)
+            {
+                std::cerr << "Close() previously called, so closing now." << std::endl;
+                close();
+            }
+
+        }, this );
 	});
 
 }
@@ -699,6 +751,8 @@ void CreateCircleDialog::loadCircle(const RsGxsGroupId& groupId)
 void CreateCircleDialog::loadIdentities()
 {
     std::cerr << "Loading identities..." << std::endl;
+
+    mIdentitiesLoading = true;
 
 	RsThread::async([this]()
 	{
@@ -735,7 +789,17 @@ void CreateCircleDialog::loadIdentities()
 			fillIdentitiesList(*id_groups);
 
             delete id_groups;
-		}, this );
+
+            std::cerr << "Identities finished loading." << std::endl;
+            mIdentitiesLoading = false;
+
+            if(mCloseRequested && !mCircleLoading)
+            {
+                std::cerr << "Close() previously called, so closing now." << std::endl;
+                close();
+            }
+
+        }, this );
 	});
 
 }
@@ -756,6 +820,8 @@ void CreateCircleDialog::fillIdentitiesList(const std::vector<RsGxsIdGroup>& id_
 
 	for(const auto& idGroup:id_groups)
 	{
+        //usleep(20*1000);
+
 		bool isSigned = !idGroup.mPgpId.isNull();
 		bool isSignedByFriendNode = isSigned && rsPeers->isPgpFriend(idGroup.mPgpId);
 
