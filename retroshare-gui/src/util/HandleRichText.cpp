@@ -281,7 +281,7 @@ void RsHtml::anchorStylesheetForImg(QDomDocument &/*doc*/, QDomElement &/*elemen
 		break;
 
 	case RetroShareLink::TYPE_CERTIFICATE:
-		styleSheet = "QPushButton{ border-image: url(:/images/btn_blue.png) ;border-width: 4;padding: 0px 6px;font-size: 12px;color: white;} QPushButton:hover{ border-image: url(:/images/btn_blue_hover.png) ;}";
+		styleSheet = "QPushButton{ border-image: url(:/images/btn_blue.png) ;border-width: 4;padding: 0px 6px;font-size: 12pt;color: white;} QPushButton:hover{ border-image: url(:/images/btn_blue_hover.png) ;}";
 		break;
 	}
 }
