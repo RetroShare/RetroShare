@@ -168,13 +168,33 @@ std::string simpleTextHtmlExtract(const std::string& rsHtmlDoc)
 
 	std::string retVal(rsHtmlDoc.substr(bodyTagEnd+1));
 
+	// strip also CSS inside <style></style>
+	oSize = retVal.size();
+	auto styleTagBegin(retVal.find("<style"));
+	if(styleTagBegin < oSize)
+	{
+		auto styleEnd(retVal.find("</style>", styleTagBegin));
+		if(styleEnd < oSize)
+			retVal.erase(styleTagBegin, 8+styleEnd-styleTagBegin);
+	}
+
 	std::string::size_type oPos;
 	std::string::size_type cPos;
+	int itCount = 0;
 	while((oPos = retVal.find("<")) < retVal.size())
 	{
 		if((cPos = retVal.find(">")) <= retVal.size())
 			retVal.erase(oPos, 1+cPos-oPos);
 		else break;
+
+		// Avoid infinite loop with crafty input
+		if(itCount > 1000)
+		{
+			RS_WARN( "Breaking stripping loop due to max allowed iterations ",
+			         "rsHtmlDoc: ", rsHtmlDoc, " retVal: ", retVal );
+			break;
+		}
+		++itCount;
 	}
 
 	return retVal;

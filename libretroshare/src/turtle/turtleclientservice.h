@@ -19,23 +19,25 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-
-// This class is the parent class for any service that will use the turtle router to distribute its packets.
-// Typical representative clients include:
-//
-// 	p3ChatService:		opens tunnels to distant peers for chatting
-// 	ftServer:			searches and open tunnels to distant sources for file transfer
-//
 #pragma once
 
 #include <string>
 #include <stdlib.h>
-#include <serialiser/rsserial.h>
-#include <turtle/rsturtleitem.h>
+
+#include "serialiser/rsserial.h"
+#include "turtle/rsturtleitem.h"
+#include "util/rsdebug.h"
 
 struct RsItem;
 class p3turtle ;
 
+/** This class is the parent class for any service that will use the turtle
+ * router to distribute its packets.
+ * Typical representative clients include:
+ * 	p3ChatService: opens tunnels to distant peers for chatting
+ * 	ftServer:      searches and open tunnels to distant sources for file
+ * 	               transfer
+ */
 class RsTurtleClientService
 {
 	public:
@@ -87,30 +89,35 @@ class RsTurtleClientService
 			std::cerr << "!!!!!! Received Data from turtle router, but the client service is not handling it !!!!!!!!!!" << std::endl ; 
 		}
 
-    	/*!
-         * \brief receiveSearchRequest
-         * 			This method is called by the turtle router to notify the client of a search request in the form generic data. The returned
-         * 			result contains the serialised generic result returned by the client.
-         *
-         * 			The turtle router keeps the memory ownership over search_request_data
-         *
-         * \param search_request_data      generic serialized search data
-         * \param search_request_data_len  length of the serialized search data
-         * \param search_result_data       generic serialized search result data
-         * \param search_result_data_len   length of the serialized search result data
-         * \param max_allowed_hits         max number of hits allowed to be sent back and forwarded
-         *
-         * \return true if the search is successful.
-         */
-    	virtual bool receiveSearchRequest(unsigned char */*search_request_data*/,
-                                          uint32_t /*search_request_data_len*/,
-                                          unsigned char *& /*search_result_data*/,
-                                          uint32_t& /*search_result_data_len*/,
-                                          uint32_t& /* max_allows_hits */)
-		{
-			std::cerr << "!!!!!! Received search result from turtle router, but the client service who requested it is not handling it !!!!!!!!!!" << std::endl ;
-            return false;
-		}
+	/*!
+	* This method is called by the turtle router to notify the client of a
+	* search request in the form generic data.
+	* The returned result contains the serialised generic result returned by the
+	* client service.
+	* The turtle router keeps the memory ownership over search_request_data
+	* \param search_request_data generic serialized search data
+	* \param search_request_data_len  length of the serialized search data
+	* \param search_result_data generic serialized search result data
+	* \param search_result_data_len length of the serialized search result data
+	* \param max_allowed_hits max number of hits allowed to be sent back and
+	* forwarded
+	* \return true if matching results are available, false otherwise.
+	*/
+	virtual bool receiveSearchRequest(
+	        unsigned char *search_request_data, uint32_t search_request_data_len,
+	        unsigned char *& search_result_data, uint32_t& search_result_data_len,
+	        uint32_t& max_allows_hits )
+	{
+		/* Suppress unused warning this way and not commenting the param names
+		 * so doxygen match documentation against params */
+		(void) search_request_data; (void) search_request_data_len;
+		(void) search_result_data; (void) search_result_data_len;
+		(void) max_allows_hits;
+
+		RS_WARN( "Received search request from turtle router, but the client "
+		         "is not handling it!" );
+		return false;
+	}
 
     	/*!
          * \brief receiveSearchResult

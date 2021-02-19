@@ -5420,6 +5420,12 @@ std::error_condition RsGxsNetService::distantSearchRequest(
         rs_owner_ptr<uint8_t> searchData, uint32_t dataSize,
         RsServiceType serviceType, TurtleRequestId& requestId )
 {
+	if(!mGxsNetTunnel)
+	{
+		free(searchData);
+		return std::errc::function_not_supported;
+	}
+
 	return mGxsNetTunnel->turtleSearchRequest(
 	            searchData, dataSize, serviceType, requestId );
 }

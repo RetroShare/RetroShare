@@ -141,6 +141,11 @@ rs_macos10.15:CONFIG -= rs_macos10.11
 CONFIG *= no_rs_jsonapi
 rs_jsonapi:CONFIG -= no_rs_jsonapi
 
+# To enable forums indexing append the following assignation to qmake command
+# line "CONFIG+=rs_deep_forums_index"
+CONFIG *= no_rs_deep_forums_index
+rs_deep_forums_index:CONFIG -= no_rs_deep_forums_index
+
 # To enable channel indexing append the following assignation to qmake command
 # line "CONFIG+=rs_deep_channels_index"
 CONFIG *= no_rs_deep_channels_index
@@ -561,6 +566,7 @@ rs_webui {
     DEFINES *= RS_WEBUI
 }
 
+rs_deep_forums_index:DEFINES *= RS_DEEP_FORUMS_INDEX
 rs_deep_channels_index:DEFINES *= RS_DEEP_CHANNEL_INDEX
 
 rs_deep_files_index:DEFINES *= RS_DEEP_FILES_INDEX
