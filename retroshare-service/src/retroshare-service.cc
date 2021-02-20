@@ -234,14 +234,19 @@ int main(int argc, char* argv[])
 	{
 		if(prefUserString == "list")
 		{
-			std::cout << std::endl << std::endl
-			          << "Available accounts:" << std::endl;
-
 			std::vector<RsLoginHelper::Location> locations;
 			rsLoginHelper->getLocations(locations);
 
-			int accountCountDigits = static_cast<int>(
-			            ceil(log(locations.size())/log(10.0)) );
+            if(locations.size() == 0)
+            {
+                RsErr() << "No available accounts. You cannot use option -U list" << std::endl;
+                return -RsInit::ERR_NO_AVAILABLE_ACCOUNT;
+            }
+
+            std::cout << std::endl << std::endl
+                      << "Available accounts:" << std::endl;
+
+            int accountCountDigits = static_cast<int>( ceil(log(locations.size())/log(10.0)) );
 
 			for( uint32_t i=0; i<locations.size(); ++i )
 				std::cout << "[" << std::setw(accountCountDigits)
