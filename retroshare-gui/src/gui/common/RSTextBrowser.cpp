@@ -51,6 +51,14 @@ RSTextBrowser::RSTextBrowser(QWidget *parent) :
 	connect(this, SIGNAL(anchorClicked(QUrl)), this, SLOT(linkClicked(QUrl)));
 }
 
+void RSTextBrowser::append(const QString &text)
+{
+	//In Win RSTextBrowser don't recognize file:///
+	QString fileText = text;
+	QTextBrowser::append(fileText.replace("file:///","file://"));
+
+}
+
 void RSTextBrowser::linkClicked(const QUrl &url)
 {
 	if (!mLinkClickActive) {
@@ -128,14 +136,22 @@ QVariant RSTextBrowser::loadResource(int type, const QUrl &name)
 
 	// case 2: always trust the image if it comes from local Config or Data directories.
 
-	if(type == QTextDocument::ImageResource) {
+	if(type == QTextDocument::ImageResource)
+	{
 		QFileInfo fi = QFileInfo(name.path());
-		if(fi.exists() && fi.isFile()) {
+		if(fi.exists() && fi.isFile())
+		{
 			QString cpath = fi.canonicalFilePath();
-			if (cpath.startsWith(QDir(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str())).canonicalPath(),Qt::CaseInsensitive)
-					|| cpath.startsWith(QDir(QString::fromUtf8(RsAccounts::systemDataDirectory().c_str())).canonicalPath(),Qt::CaseInsensitive))
-				return QTextBrowser::loadResource(type, name);
-		}}
+			QStringList autPath = { QDir(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str())).canonicalPath()
+			                      , QDir(QString::fromUtf8(RsAccounts::systemDataDirectory().c_str())).canonicalPath()
+			                      , QDir(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str())+"/stylesheets/").canonicalPath() //May be link
+			                      , QDir(QString::fromUtf8(RsAccounts::systemDataDirectory().c_str())+"/stylesheets/").canonicalPath() //May be link
+			                      };
+			for(auto& it : autPath)
+				if (!it.isEmpty() && cpath.startsWith(it, Qt::CaseInsensitive))
+					return QPixmap(fi.absoluteFilePath());
+		}
+	}
 
 	// case 3: only display if the user allows it. Data resources can be bad (svg bombs) but we filter them out globally at the network layer.
 	//         It would be good to add here a home-made resource loader that only loads images and not svg crap, just in case.
@@ -285,10 +301,10 @@ QString RSTextBrowser::anchorForPosition(const QPoint &pos) const
 		rx.setMinimal(true);
 		QString sel = cursor.selection().toHtml();
 		QStringList anchors;
-		int pos=0;
-		while ((pos = rx.indexIn(sel,pos)) != -1) {
+		int posX=0;
+		while ((posX = rx.indexIn(sel,posX)) != -1) {
 			anchors << rx.cap(1);
-			pos += rx.matchedLength();
+			posX += rx.matchedLength();
 		}
 		if (!anchors.isEmpty()){
 			anchor = anchors.at(0);
