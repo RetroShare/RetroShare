@@ -385,7 +385,7 @@ bool DistributedChatService::locked_bouncingObjectCheck(RsChatLobbyBouncingObjec
 	// max objects per second: lobby_count * 1/MAX_DELAY_BETWEEN_LOBBY_KEEP_ALIVE objects per second.
 	// So in cache, there is in average that number times MAX_MESSAGES_PER_SECONDS_PERIOD
 	//
-	float max_cnt = std::max(10.0f, 4*lobby_count / (float)MAX_DELAY_BETWEEN_LOBBY_KEEP_ALIVE * MAX_MESSAGES_PER_SECONDS_PERIOD) ;
+    float max_cnt = std::max(10.0f, 10*lobby_count / (float)MAX_DELAY_BETWEEN_LOBBY_KEEP_ALIVE * MAX_MESSAGES_PER_SECONDS_PERIOD) ;
 
 #ifdef DEBUG_CHAT_LOBBIES
 	std::cerr << "lobby_count=" << lobby_count << std::endl;
@@ -406,7 +406,7 @@ bool DistributedChatService::locked_bouncingObjectCheck(RsChatLobbyBouncingObjec
 
 	if(lst.size() > max_cnt)
 	{
-		std::cerr << "Too many messages from peer " << pid << ". Someone (name=" << obj->nick << ") is trying to flood this lobby. Message will not be forwarded." << std::endl;
+        std::cerr << "(WW) more than " << max_cnt << " messages forwarded by peer " << pid << ". Message from \"" << obj->nick << "\" will not be forwarded." << std::endl;
 		return false;
 	}
 	else
