@@ -432,7 +432,7 @@ void BoardsCommentsItem::setComment(const RsGxsComment& cmt)
 	QPixmap pixmap;
 
 	if(idDetails.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idDetails.mAvatar.mData, idDetails.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
-		pixmap = GxsIdDetails::makeDefaultIcon(cmt.mMeta.mAuthorId,GxsIdDetails::SMALL);
+		pixmap = GxsIdDetails::makeDefaultIcon(cmt.mMeta.mAuthorId,GxsIdDetails::LARGE);
 		ui->avatarLabel->setPixmap(pixmap);
 	
 	emit sizeChanged(this);
