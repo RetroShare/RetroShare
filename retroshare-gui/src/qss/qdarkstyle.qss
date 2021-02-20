@@ -1159,7 +1159,7 @@ OpModeStatus[opMode="Minimal"] {
 
 PostedListWidgetWithModel QToolButton#subscribeToolButton {
 	font: bold;
-	font-size: 15pt;
+	font-size: 12pt;
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
@@ -1201,7 +1201,7 @@ GxsForumThreadWidget QWidget#threadTreeWidget::item:selected:!active {
 
 GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton {
 	font: bold;
-	font-size: 14pt;
+	font-size: 12pt;
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
@@ -1259,7 +1259,7 @@ GxsChannelPostItem QLabel#subjectLabel, GxsChannelPostItem QLabel#titleLabel {
 
 CreateGxsChannelMsg QPushButton#postButton {
 	font: bold;
-	font-size: 15pt;
+	font-size: 12pt;
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
@@ -1281,7 +1281,7 @@ GxsCreateCommentDialog QPushButton#postButton, GxsGroupDialog QPushButton#create
 PulseAddDialog QPushButton#pushButton_Post, PulseTopLevel QToolButton#toolButton_follow,
 PulseViewGroup QToolButton#toolButton_follow {
 	font: bold;
-	font-size: 15pt;
+	font-size: 12pt;
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
@@ -1308,7 +1308,7 @@ CreateGxsForumMsg QPushButton#postButton:disabled, PostedCreatePostDialog QPushB
 CreateGxsChannelMsg QPushButton#postButton:disabled, GxsCreateCommentDialog QPushButton#postButton:disabled,
 PulseAddDialog QPushButton#pushButton_Post:disabled {
 	font: bold;
-	font-size: 15pt;
+	font-size: 12pt;
 	color: white;
 	background: #d40000;
 	border-radius: 4px;
@@ -1321,7 +1321,7 @@ PulseAddDialog QPushButton#pushButton_Post:disabled {
 
 ShareManager QPushButton#closeButton {
 	font: bold;
-	font-size: 15pt;
+	font-size: 12pt;
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
@@ -1334,7 +1334,7 @@ ShareManager QPushButton#closeButton {
 
 ShareManager QPushButton#addButton {
 	font: bold;
-	font-size: 15pt;
+	font-size: 12pt;
 	color: white;
 	background: #32CD32;
 	border-radius: 4px;
@@ -1362,7 +1362,7 @@ QLabel#avatarLabel{
 
 PostedCreatePostDialog QPushButton#submitButton {
 	font: bold;
-	font-size: 15pt;
+	font-size: 12pt;
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
@@ -1381,7 +1381,7 @@ GxsForumThreadWidget QPushButton#forumName
 {
 	qproperty-fontSizeFactor: 140;
 	color: #0099cc;
-	font-size: 15pt;
+	font-size: 14pt;
 	font: bold;
 }
 
@@ -1521,17 +1521,17 @@ ChannelsCommentsItem QFrame#mainFrame, BoardsCommentsItem QFrame#mainFrame {
 }
 
 ChannelsCommentsItem QLabel#newCommentLabel, BoardsCommentsItem QLabel#newCommentLabel {
-	font: 14px;
+	font: 12pt;
 	font: bold;
 }
 
 ChannelsCommentsItem QLabel#subjectLabel, ChannelsCommentsItem QLabel#titleLabel , QLabel#nameLabel {
-	font: 14px;
+	font: 12pt;
 	font: bold;
 }
 
 BoardsCommentsItem QLabel#subjectLabel, QLabel#titleLabel , QLabel#nameLabel {
-	font: 14px;
+	font: 12pt;
 	font: bold;
 }
 
