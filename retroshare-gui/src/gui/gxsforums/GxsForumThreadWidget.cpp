@@ -280,6 +280,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     connect(ui->forumName, SIGNAL(clicked(QPoint)), this, SLOT(showForumInfo()));
 
     ui->subscribeToolButton->hide() ;
+    ui->newthreadButton->hide() ;
     connect(ui->subscribeToolButton, SIGNAL(subscribe(bool)), this, SLOT(subscribeGroup(bool)));
     connect(ui->newmessageButton, SIGNAL(clicked()), this, SLOT(replytoforummessage()));
     connect(ui->newthreadButton, SIGNAL(clicked()), this, SLOT(createthread()));
@@ -1042,7 +1043,8 @@ void GxsForumThreadWidget::updateForumDescription(bool success)
 
     const RsGxsForumGroup& group = mForumGroup;
 
-    ui->newthreadButton->show();
+    ui->newthreadButton->setVisible(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags));
+
     ui->forumName->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
     ui->viewBox->setEnabled(true);
     ui->filterLineEdit->setEnabled(true);
@@ -1952,7 +1954,7 @@ void GxsForumThreadWidget::postForumLoading()
 		// we also need to restore expanded threads
 	}
 
-	ui->newthreadButton->show();
+	//ui->newthreadButton->show();
 	ui->forumName->setText(QString::fromUtf8(mForumGroup.mMeta.mGroupName.c_str()));
 	ui->threadTreeWidget->sortByColumn(RsGxsForumModel::COLUMN_THREAD_DATE, Qt::DescendingOrder);
 	ui->threadTreeWidget->update();
@@ -2012,6 +2014,7 @@ void GxsForumThreadWidget::updateGroupData()
 
                 ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
                 ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) ;
+                ui->newthreadButton->setVisible(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags));
 
                 updateForumDescription(true);
 
@@ -2079,6 +2082,8 @@ void GxsForumThreadWidget::updateMessageData(const RsGxsMessageId& msgId)
 
                 ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
                 ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) ;
+                ui->newthreadButton->setVisible(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags));
+
             }, this );
         }
         else
