@@ -216,11 +216,11 @@ void SecurityItem::updateItem()
 				peerNameLabel->setText(tr("SSL request"));
 				friendRequesttoolButton->hide();
 				requestLabel->hide();
-				peerDetailsButton->hide;
+				peerDetailsButton->hide();
 			}
 			else 
 			{
-				peerNameLabel->setText(tr("A unknown peer"));
+				peerNameLabel->setText(tr("An unknown peer"));
 				friendRequesttoolButton->show();
 				requestLabel->show();
 				peerDetailsButton->show();
