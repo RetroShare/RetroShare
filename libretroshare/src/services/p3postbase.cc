@@ -38,7 +38,6 @@
 /****
  * #define POSTBASE_DEBUG 1
  ****/
-#define POSTBASE_DEBUG 1
 
 #define POSTBASE_BACKGROUND_PROCESSING	0x0002
 #define PROCESSING_START_PERIOD		30
@@ -630,8 +629,7 @@ void p3PostBase::background_loadMsgs(const uint32_t &token, bool unprocessed)
 			else
 			{
 				/* unknown! */
-				std::cerr << "p3PostBase::background_processNewMessages() ERROR Strange NEW Message:";
-				std::cerr << std::endl;
+                std::cerr << "p3PostBase::background_processNewMessages() ERROR Strange NEW Message:" << std::endl;
 				std::cerr << "\t" << (*vit)->meta;
 				std::cerr << std::endl;
 	
