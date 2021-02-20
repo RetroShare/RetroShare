@@ -799,7 +799,9 @@ bool p3LinkMgrIMPL::connectResult(const RsPeerId &id, bool success, bool isIncom
 	bool updatePeerAddr = false;
 	bool updateLastContact = false;
 
+#ifdef LINKMGR_DEBUG
     std::cerr << "Connection result with peer " << id << ": " << success << ". Is incoming: " << isIncomingConnection << ", remote addr: " << sockaddr_storage_tostring(remote_peer_address) << std::endl;
+#endif
 
 	{
 		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
