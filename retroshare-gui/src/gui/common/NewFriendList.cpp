@@ -239,11 +239,6 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
     connect(mActionSortByState, SIGNAL(toggled(bool)), this, SLOT(toggleSortByState(bool)));
     connect(ui->peerTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(peerTreeWidgetCustomPopupMenu()));
 
-    // Using Queued connections here is pretty important since the notifications may come from a different thread.
-
-    // connect(NotifyQt::getInstance(), SIGNAL(friendsChanged())                , this, SLOT(forceUpdateDisplay()),Qt::QueuedConnection);
-    // connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int))              , this, SLOT(forceUpdateDisplay()),Qt::QueuedConnection);
-
     connect(ui->actionShowOfflineFriends, SIGNAL(triggered(bool)), this, SLOT(setShowUnconnected(bool)));
     connect(ui->actionShowState,          SIGNAL(triggered(bool)), this, SLOT(setShowState(bool))      );
     connect(ui->actionShowGroups,         SIGNAL(triggered(bool)), this, SLOT(setShowGroups(bool))     );
@@ -1029,11 +1024,6 @@ void NewFriendList::forceUpdateDisplay()
 {
     checkInternalData(true);
 }
-
-// void NewFriendList::updateDisplay()
-// {
-//     checkInternalData(false);
-// }
 
 void NewFriendList::moveToGroup()
 {
