@@ -83,7 +83,7 @@ NetworkDialog::NetworkDialog(QWidget */*parent*/)
     ui.connectTreeWidget->setUpdatesEnabled(true);
     ui.connectTreeWidget->setSortingEnabled(true);
     ui.connectTreeWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui.connectTreeWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui.connectTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
     connect(ui.connectTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( connectTreeWidgetCostumPopupMenu( QPoint ) ) );
     connect(ui.connectTreeWidget, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(peerdetails()));
 
@@ -117,24 +117,11 @@ void NetworkDialog::connectTreeWidgetCostumPopupMenu( QPoint /*point*/ )
 	{
 		return;
 	}
-
 	QMenu *contextMnu = new QMenu;
-
-	RsPgpId peer_id(ui.connectTreeWidget->model()->data(ui.connectTreeWidget->model()->index(l.begin()->row(), COLUMN_PEERID)).toString().toStdString()) ;
-
-	// That's what context menus are made for
-	RsPeerDetails detail;
-	if(!rsPeers->getGPGDetails(peer_id, detail))		// that is not suppose to fail.
-		return ;
-
-	if(peer_id == rsPeers->getGPGOwnId())
-		contextMnu->addAction(QIcon(), tr("Export/create a new node"), this, SLOT(on_actionExportKey_activated()));
-
 	contextMnu->addAction(QIcon(IMAGE_PEERDETAILS), tr("Profile details..."), this, SLOT(peerdetails()));
 	contextMnu->addSeparator() ;
 	contextMnu->addAction(QIcon(), tr("Remove unused keys..."), this, SLOT(removeUnusedKeys()));
 	contextMnu->addAction(QIcon(), tr("Remove this key"), this, SLOT(removeSelectedKeys()));
-
 	contextMnu->exec(QCursor::pos());
 }
 
@@ -177,11 +164,32 @@ void NetworkDialog::removeSelectedKeys()
 	QModelIndexList l = ui.connectTreeWidget->selectionModel()->selection().indexes();
 	if(l.empty())
 		return;
-
 	std::set<RsPgpId> selected;
-	selected.insert(RsPgpId(ui.connectTreeWidget->model()->data(ui.connectTreeWidget->model()->index(l.begin()->row(), COLUMN_PEERID)).toString().toStdString()));
-
-	removeKeys(selected);
+	std::set<RsPgpId> friends;
+	for (int i = 0; i < l.size(); i++)
+	{
+		RsPgpId peer_id = RsPgpId(ui.connectTreeWidget->model()->data(ui.connectTreeWidget->model()->index(l[i].row(), COLUMN_PEERID)).toString().toStdString());
+		RsPeerDetails details ;
+		if(rsPeers->getGPGDetails(peer_id,details))
+		{
+			if(details.accept_connection)
+				friends.insert(peer_id);
+			else
+				selected.insert(peer_id);
+		}
+	}
+	if(!friends.empty())
+	{
+		if ((QMessageBox::question(this, "RetroShare", tr("You have selected %1 accepted peers among others,\n Are you sure you want to un-friend them?").arg(friends.size()), QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes)
+		{
+			for(std::set<RsPgpId>::const_iterator it(friends.begin());it!=friends.end();++it)
+				rsPeers->removeFriend(*it);
+			selected.insert(friends.begin(),friends.end());
+		}
+	}
+	if(!selected.empty())
+		removeKeys(selected);
+	updateDisplay();
 }
 
 void NetworkDialog::removeKeys(std::set<RsPgpId> selected)
