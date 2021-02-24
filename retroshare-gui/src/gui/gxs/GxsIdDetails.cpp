@@ -405,6 +405,9 @@ const QPixmap GxsIdDetails::makeDefaultIcon(const RsGxsId& id, AvatarSize size)
 
     // now look for the icon
 
+    if(id.isNull())
+        std::cerr << "Weird: null ID" << std::endl;
+
     QMutexLocker lock(&mIconCacheMutex);
     auto& it = mDefaultIconCache[id];
 
@@ -432,6 +435,31 @@ const QPixmap GxsIdDetails::makeDefaultIcon(const RsGxsId& id, AvatarSize size)
     return image;
 }
 
+void GxsIdDetails::debug_dumpImagesCache()
+{
+    QMutexLocker lock(&mIconCacheMutex);
+
+    std::cerr << "Current icon cache:" << std::endl;
+
+    for(auto it:mDefaultIconCache)
+    {
+        std::cerr << "  Identity " << it.first << ":" << std::endl;
+
+        for(uint32_t i=0;i<4;++i)
+        {
+            std::cerr << "    Size #" << i << ": " ;
+
+            if(it.second[i].first>0)
+            {
+                int s = it.second[i].second.width()*it.second[i].second.height()*4;
+                std::cerr << " Present. Size=" << s << " bytes. Age: " << time(nullptr)-it.second[i].first << " secs. ago. Used: " << !it.second[i].second.isDetached() << std::endl;
+            }
+            else
+                std::cerr << " None." << std::endl;
+        }
+    }
+}
+
 void GxsIdDetails::checkCleanImagesCache()
 {
     time_t now = time(NULL);
@@ -450,26 +478,35 @@ void GxsIdDetails::checkCleanImagesCache()
         for(auto it(mDefaultIconCache.begin());it!=mDefaultIconCache.end();)
         {
             bool all_empty = true ;
+            std::cerr << "  Examining pixmaps sizes for " << it->first << "." << std::endl;
 
             for(int i=0;i<4;++i)
-				if(it->second[i].first + ICON_CACHE_STORAGE_TIME < now && it->second[i].second.isDetached())
-				{
-                    int s = it->second[i].second.width()*it->second[i].second.height()*4;
-
-					std::cerr << "Deleting pixmap " << it->first << " size " << i << " " << s << " bytes." << std::endl;
-
-                    it->second[i].second = QPixmap();
-					++nb_deleted;
-                    size_deleted += s;
-				}
-				else
+                if(it->second[i].first>0)
                 {
-					all_empty = false;
-                    total_size += it->second[i].second.width()*it->second[i].second.height()*4;
+                    if(it->second[i].first + ICON_CACHE_STORAGE_TIME < now && it->second[i].second.isDetached())
+                    {
+                        int s = it->second[i].second.width()*it->second[i].second.height()*4;
+
+                        std::cerr << "    Deleting pixmap " << it->first << " size " << i << " " << s << " bytes." << std::endl;
+
+                        it->second[i].second = QPixmap();
+                        it->second[i].first = 0;
+                        ++nb_deleted;
+                        size_deleted += s;
+                    }
+                    else
+                    {
+                        all_empty = false;
+                        total_size += it->second[i].second.width()*it->second[i].second.height()*4;
+                        std::cerr << "    Keeking " << it->first << " size " << i << std::endl;
+                    }
                 }
 
             if(all_empty)
-				it = mDefaultIconCache.erase(it);
+            {
+                std::cerr << "    Deleting entry " << it->first << " because no pixmaps are stored here. " << std::endl;
+                it = mDefaultIconCache.erase(it);
+            }
 			else
 				++it;
         }
@@ -490,10 +527,14 @@ bool GxsIdDetails::loadPixmapFromData(const unsigned char *data,size_t data_len,
     Sha1CheckSum chksum = RsDirUtil::sha1sum(data,data_len);
     RsGxsId id(chksum.toByteArray());
 
+    if(id.isNull())
+        std::cerr << "Weird: null ID" << std::endl;
+
     // We use a cache for images. QImage has its own smart pointer system, but it does not prevent
     // the same image to be allocated many times. We do this using a cache. The cache is also cleaned-up
     // on a regular time basis so as to get rid of unused images.
 
+    debug_dumpImagesCache();
     checkCleanImagesCache();
 
     // now look for the icon
