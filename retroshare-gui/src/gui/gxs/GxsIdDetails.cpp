@@ -441,7 +441,7 @@ void GxsIdDetails::debug_dumpImagesCache()
 
     std::cerr << "Current icon cache:" << std::endl;
 
-    for(auto it:mDefaultIconCache)
+    for(const auto& it:mDefaultIconCache)	// the & is important here, otherwise pairs are copied and isDetached() is always false!
     {
         std::cerr << "  Identity " << it.first << ":" << std::endl;
 
