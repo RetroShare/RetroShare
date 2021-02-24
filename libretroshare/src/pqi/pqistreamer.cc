@@ -304,17 +304,13 @@ int 	pqistreamer::tick_bio()
 
 int 	pqistreamer::tick_recv(uint32_t timeout)
 {
-//      Apart from a few exceptions that are atomic (mLastIncomingTs, mIncomingSize), only this pqi thread reads/writes mIncoming queue and related counters.
-//      The lock of pqistreamer mutex is thus not needed here.
-//      The mutex lock is still needed before calling locked_addTrafficClue because this method is also used by the thread pushing packets in mOutPkts.
-//	Locks around rates are provided internally.
-
 	if (mBio->moretoread(timeout))
 	{
 		handleincoming();
 	}
 	if(!(mBio->isactive()))
 	{
+		RsStackMutex stack(mStreamerMtx);
 		free_pend();
 	}
 	return 1;
@@ -325,6 +321,7 @@ int 	pqistreamer::tick_send(uint32_t timeout)
 	/* short circuit everything if bio isn't active */
 	if (!(mBio->isactive()))
 	{
+		RsStackMutex stack(mStreamerMtx);
 		free_pend();
 		return 0;
 	}
@@ -720,6 +717,7 @@ int pqistreamer::handleincoming()
 
     if(!(mBio->isactive()))
     {
+	    RsStackMutex stack(mStreamerMtx);
 	    mReading_state = reading_state_initial ;
 	    free_pend();
 	    return 0;
