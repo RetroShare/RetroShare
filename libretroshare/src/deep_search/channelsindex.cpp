@@ -1,8 +1,8 @@
 /*******************************************************************************
  * RetroShare full text indexing and search implementation based on Xapian     *
  *                                                                             *
- * Copyright (C) 2018-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
- * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License version 3 as    *
@@ -20,23 +20,16 @@
 
 #include "deep_search/channelsindex.hpp"
 #include "deep_search/commonutils.hpp"
-#include "retroshare/rsinit.h"
-#include "util/rsdebuglevel3.h"
 
-/*static*/ std::string DeepChannelsIndex::dbDefaultPath()
-{ return RsAccounts::AccountDirectory() + "/deep_channels_xapian_db"; }
-
-std::error_condition DeepChannelsIndex::search(
+uint32_t DeepChannelsIndex::search(
         const std::string& queryStr,
         std::vector<DeepChannelsSearchResult>& results, uint32_t maxResults )
 {
-	RS_DBG3(queryStr);
-
 	results.clear();
 
 	std::unique_ptr<Xapian::Database> dbPtr(
-	            DeepSearch::openReadOnlyDatabase(mDbPath) );
-	if(!dbPtr) return std::errc::bad_file_descriptor;
+	            DeepSearch::openReadOnlyDatabase(dbPath()) );
+	if(!dbPtr) return 0;
 
 	Xapian::Database& db(*dbPtr);
 
@@ -70,13 +63,17 @@ std::error_condition DeepChannelsIndex::search(
 		results.push_back(s);
 	}
 
-	return std::error_condition();
+	return static_cast<uint32_t>(results.size());
 }
 
-std::error_condition DeepChannelsIndex::indexChannelGroup(
-        const RsGxsChannelGroup& chan )
+void DeepChannelsIndex::indexChannelGroup(const RsGxsChannelGroup& chan)
 {
-	RS_DBG4(chan);
+	std::unique_ptr<Xapian::WritableDatabase> dbPtr(
+	            DeepSearch::openWritableDatabase(
+	                dbPath(), Xapian::DB_CREATE_OR_OPEN ) );
+	if(!dbPtr) return;
+
+	Xapian::WritableDatabase& db(*dbPtr);
 
 	// Set up a TermGenerator that we'll use in indexing.
 	Xapian::TermGenerator termgenerator;
@@ -97,8 +94,21 @@ std::error_condition DeepChannelsIndex::indexChannelGroup(
 	termgenerator.increase_termpos();
 	termgenerator.index_text(chan.mDescription);
 
+	RsUrl chanUrl; chanUrl
+	        .setScheme("retroshare").setPath("/channel")
+	        .setQueryKV("id", chan.mMeta.mGroupId.toStdString());
+	const std::string idTerm("Q" + chanUrl.toString());
+
+	chanUrl.setQueryKV("publishTs", std::to_string(chan.mMeta.mPublishTs));
+	chanUrl.setQueryKV("name", chan.mMeta.mGroupName);
+	if(!chan.mMeta.mAuthorId.isNull())
+		chanUrl.setQueryKV("authorId", chan.mMeta.mAuthorId.toStdString());
+	if(chan.mMeta.mSignFlags)
+		chanUrl.setQueryKV( "signFlags",
+		                    std::to_string(chan.mMeta.mSignFlags) );
+	std::string rsLink(chanUrl.toString());
+
 	// store the RS link so we are able to retrive it on matching search
-	const std::string rsLink(channelIndexId(chan.mMeta.mGroupId));
 	doc.add_value(URL_VALUENO, rsLink);
 
 	// Store some fields for display purposes.
@@ -107,32 +117,35 @@ std::error_condition DeepChannelsIndex::indexChannelGroup(
 	// We use the identifier to ensure each object ends up in the
 	// database only once no matter how many times we run the
 	// indexer. "Q" prefix is a Xapian convention for unique id term.
-	const std::string idTerm("Q" + rsLink);
 	doc.add_boolean_term(idTerm);
-
-	mWriteQueue.push( [idTerm, doc](Xapian::WritableDatabase& db)
-	{ db.replace_document(idTerm, doc); } );
-
-	return std::error_condition();
+	db.replace_document(idTerm, doc);
 }
 
-std::error_condition DeepChannelsIndex::removeChannelFromIndex(
-        const RsGxsGroupId& grpId )
+void DeepChannelsIndex::removeChannelFromIndex(RsGxsGroupId grpId)
 {
-	RS_DBG3(grpId);
-
 	// "Q" prefix is a Xapian convention for unique id term.
-	const std::string idTerm("Q" + channelIndexId(grpId));
-	mWriteQueue.push( [idTerm](Xapian::WritableDatabase& db)
-	{ db.delete_document(idTerm); } );
+	RsUrl chanUrl; chanUrl
+	        .setScheme("retroshare").setPath("/channel")
+	        .setQueryKV("id", grpId.toStdString());
+	std::string idTerm("Q" + chanUrl.toString());
 
-	return std::error_condition();
+	std::unique_ptr<Xapian::WritableDatabase> dbPtr(
+	            DeepSearch::openWritableDatabase(
+	                dbPath(), Xapian::DB_CREATE_OR_OPEN ) );
+	if(!dbPtr) return;
+
+	Xapian::WritableDatabase& db(*dbPtr);
+	db.delete_document(idTerm);
 }
 
-std::error_condition DeepChannelsIndex::indexChannelPost(
-        const RsGxsChannelPost& post )
+void DeepChannelsIndex::indexChannelPost(const RsGxsChannelPost& post)
 {
-	RS_DBG4(post);
+	std::unique_ptr<Xapian::WritableDatabase> dbPtr(
+	            DeepSearch::openWritableDatabase(
+	                dbPath(), Xapian::DB_CREATE_OR_OPEN ) );
+	if(!dbPtr) return;
+
+	Xapian::WritableDatabase& db(*dbPtr);
 
 	// Set up a TermGenerator that we'll use in indexing.
 	Xapian::TermGenerator termgenerator;
@@ -147,16 +160,21 @@ std::error_condition DeepChannelsIndex::indexChannelPost(
 	termgenerator.index_text(
 	            DeepSearch::timetToXapianDate(post.mMeta.mPublishTs), 1, "D" );
 
-	// Avoid indexing RetroShare-gui HTML tags
-	const std::string cleanMsg = DeepSearch::simpleTextHtmlExtract(post.mMsg);
-	termgenerator.index_text(
-	            DeepSearch::simpleTextHtmlExtract(post.mMsg), 1, "XD" );
+	// TODO: we should strip out HTML tags instead of skipping indexing
+	// Avoid indexing HTML
+	bool isPlainMsg =
+	        post.mMsg[0] != '<' || post.mMsg[post.mMsg.size() - 1] != '>';
+
+	if(isPlainMsg)
+		termgenerator.index_text(post.mMsg, 1, "XD");
 
 	// Index fields without prefixes for general search.
 	termgenerator.index_text(post.mMeta.mMsgName);
-
-	termgenerator.increase_termpos();
-	termgenerator.index_text(cleanMsg);
+	if(isPlainMsg)
+	{
+		termgenerator.increase_termpos();
+		termgenerator.index_text(post.mMsg);
+	}
 
 	for(const RsGxsFile& attachment : post.mFiles)
 	{
@@ -166,50 +184,47 @@ std::error_condition DeepChannelsIndex::indexChannelPost(
 		termgenerator.index_text(attachment.mName);
 	}
 
-	// store the RS link so we are able to retrive it on matching search
-	const std::string rsLink(postIndexId(post.mMeta.mGroupId, post.mMeta.mMsgId));
-	doc.add_value(URL_VALUENO, rsLink);
-
-	// Store some fields for display purposes.
-	doc.set_data(post.mMeta.mMsgName + "\n" + cleanMsg);
-
 	// We use the identifier to ensure each object ends up in the
 	// database only once no matter how many times we run the
 	// indexer.
-	const std::string idTerm("Q" + rsLink);
+	RsUrl postUrl; postUrl
+	        .setScheme("retroshare").setPath("/channel")
+	        .setQueryKV("id", post.mMeta.mGroupId.toStdString())
+	        .setQueryKV("msgid", post.mMeta.mMsgId.toStdString());
+	std::string idTerm("Q" + postUrl.toString());
+
+	postUrl.setQueryKV("publishTs", std::to_string(post.mMeta.mPublishTs));
+	postUrl.setQueryKV("name", post.mMeta.mMsgName);
+	postUrl.setQueryKV("authorId", post.mMeta.mAuthorId.toStdString());
+	std::string rsLink(postUrl.toString());
+
+	// store the RS link so we are able to retrive it on matching search
+	doc.add_value(URL_VALUENO, rsLink);
+
+	// Store some fields for display purposes.
+	if(isPlainMsg)
+		doc.set_data(post.mMeta.mMsgName + "\n" + post.mMsg);
+	else doc.set_data(post.mMeta.mMsgName);
+
 	doc.add_boolean_term(idTerm);
-
-	mWriteQueue.push( [idTerm, doc](Xapian::WritableDatabase& db)
-	{ db.replace_document(idTerm, doc); } );
-
-	return std::error_condition();
+	db.replace_document(idTerm, doc);
 }
 
-std::error_condition DeepChannelsIndex::removeChannelPostFromIndex(
-        const RsGxsGroupId& grpId, const RsGxsMessageId& msgId )
-{
-	RS_DBG3(grpId, msgId);
-
-	std::string idTerm("Q" + postIndexId(grpId, msgId));
-	mWriteQueue.push( [idTerm](Xapian::WritableDatabase& db)
-	{ db.delete_document(idTerm); } );
-
-	return std::error_condition();
-}
-
-/*static*/ std::string DeepChannelsIndex::channelIndexId(RsGxsGroupId grpId)
-{
-	RsUrl channelIndexId(RsGxsChannels::DEFAULT_CHANNEL_BASE_URL);
-	channelIndexId.setQueryKV(
-	            RsGxsChannels::CHANNEL_URL_ID_FIELD, grpId.toStdString() );
-	return channelIndexId.toString();
-}
-
-/*static*/ std::string DeepChannelsIndex::postIndexId(
+void DeepChannelsIndex::removeChannelPostFromIndex(
         RsGxsGroupId grpId, RsGxsMessageId msgId )
 {
-	RsUrl postIndexId(RsGxsChannels::DEFAULT_CHANNEL_BASE_URL);
-	postIndexId.setQueryKV(RsGxsChannels::CHANNEL_URL_ID_FIELD, grpId.toStdString());
-	postIndexId.setQueryKV(RsGxsChannels::CHANNEL_URL_MSG_ID_FIELD, msgId.toStdString());
-	return postIndexId.toString();
+	RsUrl postUrl; postUrl
+	        .setScheme("retroshare").setPath("/channel")
+	        .setQueryKV("id", grpId.toStdString())
+	        .setQueryKV("msgid", msgId.toStdString());
+	// "Q" prefix is a Xapian convention for unique id term.
+	std::string idTerm("Q" + postUrl.toString());
+
+	std::unique_ptr<Xapian::WritableDatabase> dbPtr(
+	            DeepSearch::openWritableDatabase(
+	                dbPath(), Xapian::DB_CREATE_OR_OPEN ) );
+	if(!dbPtr) return;
+
+	Xapian::WritableDatabase& db(*dbPtr);
+	db.delete_document(idTerm);
 }
