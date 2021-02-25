@@ -1,8 +1,8 @@
 /*******************************************************************************
  * RetroShare full text indexing and search implementation based on Xapian     *
  *                                                                             *
- * Copyright (C) 2018-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
- * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License version 3 as    *
@@ -24,8 +24,8 @@
 
 #include "util/rstime.h"
 #include "retroshare/rsgxschannels.h"
+#include "retroshare/rsinit.h"
 #include "util/rsurl.h"
-#include "deep_search/commonutils.hpp"
 
 struct DeepChannelsSearchResult
 {
@@ -36,34 +36,28 @@ struct DeepChannelsSearchResult
 
 struct DeepChannelsIndex
 {
-	explicit DeepChannelsIndex(const std::string& dbPath) :
-	    mDbPath(dbPath), mWriteQueue(dbPath) {}
-
 	/**
 	 * @brief Search indexed GXS groups and messages
 	 * @param[in] maxResults maximum number of acceptable search results, 0 for
 	 * no limits
 	 * @return search results count
 	 */
-	std::error_condition search(
-	        const std::string& queryStr,
-	        std::vector<DeepChannelsSearchResult>& results,
-	        uint32_t maxResults = 100 );
+	static uint32_t search( const std::string& queryStr,
+	                        std::vector<DeepChannelsSearchResult>& results,
+	                        uint32_t maxResults = 100 );
 
-	std::error_condition indexChannelGroup(const RsGxsChannelGroup& chan);
+	static void indexChannelGroup(const RsGxsChannelGroup& chan);
 
-	std::error_condition removeChannelFromIndex(const RsGxsGroupId& grpId);
+	static void removeChannelFromIndex(RsGxsGroupId grpId);
 
-	std::error_condition indexChannelPost(const RsGxsChannelPost& post);
+	static void indexChannelPost(const RsGxsChannelPost& post);
 
-	std::error_condition removeChannelPostFromIndex(
-	        const RsGxsGroupId& grpId, const RsGxsMessageId& msgId );
+	static void removeChannelPostFromIndex(
+	        RsGxsGroupId grpId, RsGxsMessageId msgId );
 
-	static std::string dbDefaultPath();
+	static uint32_t indexFile(const std::string& path);
 
 private:
-	static std::string channelIndexId(RsGxsGroupId grpId);
-	static std::string postIndexId(RsGxsGroupId grpId, RsGxsMessageId msgId);
 
 	enum : Xapian::valueno
 	{
@@ -74,7 +68,10 @@ private:
 		BAD_VALUENO = Xapian::BAD_VALUENO
 	};
 
-	const std::string mDbPath;
-
-	DeepSearch::StubbornWriteOpQueue mWriteQueue;
+	static const std::string& dbPath()
+	{
+		static const std::string dbDir =
+		        RsAccounts::AccountDirectory() + "/deep_channels_xapian_db";
+		return dbDir;
+	}
 };

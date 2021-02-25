@@ -411,9 +411,7 @@ void GxsChannelDialog::clearDistantSearchResults(TurtleRequestId id)
 
 TurtleRequestId GxsChannelDialog::distantSearch(const QString& search_string)
 {
-	TurtleRequestId searchId;
-	rsGxsChannels->distantSearchRequest(search_string.toStdString(), searchId);
-	return searchId;
+    return rsGxsChannels->turtleSearchRequest(search_string.toStdString()) ;
 }
 
 bool GxsChannelDialog::getDistantSearchResults(TurtleRequestId id, std::map<RsGxsGroupId,RsGxsGroupSearchResults>& group_infos)
