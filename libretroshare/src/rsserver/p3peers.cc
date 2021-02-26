@@ -121,15 +121,21 @@ p3Peers::p3Peers(p3LinkMgr *lm, p3PeerMgr *pm, p3NetMgr *nm)
         :mLinkMgr(lm), mPeerMgr(pm), mNetMgr(nm) {}
 
 	/* Updates ... */
-bool p3Peers::FriendsChanged(bool add)
+bool p3Peers::FriendsChanged(const RsPeerId& pid,bool add)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::FriendsChanged()" << std::endl;
+    std::cerr << "p3Peers::FriendsChanged()" << std::endl;
 #endif
-	RsServer::notify()->notifyListChange(NOTIFY_LIST_FRIENDS, add? NOTIFY_TYPE_ADD : NOTIFY_TYPE_DEL);
+    if(rsEvents)
+    {
+        auto ev = std::make_shared<RsPeerStateChangedEvent>();
+        ev->mSslId = pid;
+        rsEvents->postEvent(ev);
+    }
+    RsServer::notify()->notifyListChange(NOTIFY_LIST_FRIENDS, add? NOTIFY_TYPE_ADD : NOTIFY_TYPE_DEL); // this is meant to disappear
 
-	/* TODO */
-	return false;
+    /* TODO */
+    return false;
 }
 
 bool p3Peers::OthersChanged()
@@ -769,7 +775,7 @@ bool 	p3Peers::addFriend(const RsPeerId &ssl_id, const RsPgpId &gpg_id,ServicePe
 		return true;
 	} 
 
-	FriendsChanged(true);
+    FriendsChanged(ssl_id,true);
 
 	/* otherwise - we install as ssl_id.....
 	 * If we are adding an SSL certificate. we flag lastcontact as now. 
@@ -783,7 +789,7 @@ bool p3Peers::addSslOnlyFriend( const RsPeerId& sslId, const RsPgpId& pgp_id,con
 {
     if( mPeerMgr->addSslOnlyFriend(sslId, pgp_id,details))
     {
-		FriendsChanged(true);
+        FriendsChanged(sslId,true);
         return true;
     }
     else
@@ -802,8 +808,9 @@ bool 	p3Peers::removeFriendLocation(const RsPeerId &sslId)
 #endif
 		//will remove if it's a ssl id
         mPeerMgr->removeFriend(sslId, false);
-        return true;
 
+        FriendsChanged(sslId,false);
+        return true;
 }
 
 bool 	p3Peers::removeFriend(const RsPgpId& gpgId)
@@ -1641,7 +1648,7 @@ bool p3Peers::loadCertificateFromString(
     if(res)
     {
 		mPeerMgr->notifyPgpKeyReceived(gpgid);
-        FriendsChanged(true);
+        FriendsChanged(ssl_id,true);
     }
 
 	return res;
