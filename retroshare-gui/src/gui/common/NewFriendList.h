@@ -123,6 +123,7 @@ private:
 	bool mShowState;
     RsEventsHandlerId_t mEventHandlerId_peer;
     RsEventsHandlerId_t mEventHandlerId_gssp;
+    RsEventsHandlerId_t mEventHandlerId_pssc;
 
 	std::set<RsNodeGroupId> openGroups;
 	std::set<RsPgpId>   openPeers;
