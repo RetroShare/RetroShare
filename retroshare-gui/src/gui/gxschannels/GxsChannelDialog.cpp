@@ -207,7 +207,7 @@ GxsGroupDialog *GxsChannelDialog::createGroupDialog(GxsGroupDialog::Mode mode, R
 
 int GxsChannelDialog::shareKeyType()
 {
-	return CHANNEL_KEY_SHARE;
+    return GroupShareKey::CHANNEL_KEY_SHARE;
 }
 
 GxsMessageFrameWidget *GxsChannelDialog::createMessageFrameWidget(const RsGxsGroupId &groupId)
