@@ -1041,7 +1041,7 @@ BoardPostDisplayWidget_card > QFrame#mainFrame[new=true] {
 
 BoardPostDisplayWidget_compact QLabel#titleLabel,
 BoardPostDisplayWidget_card QLabel#titleLabel{
-	font-size: 14pt;
+	font-size: 12pt;
 	font: bold;
 }
 
