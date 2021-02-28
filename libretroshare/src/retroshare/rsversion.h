@@ -56,7 +56,7 @@
  * Customize it trough qmake command line @see retroshare.pri
  */
 #ifndef RS_EXTRA_VERSION
-#	define RS_EXTRA_VERSION "-RC2"
+#	define RS_EXTRA_VERSION ""
 #endif
 
 
