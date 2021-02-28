@@ -99,7 +99,10 @@
 
 /******
  * #define FRIENDS_DEBUG 1
+ * #define DEBUG_NEW_FRIEND_LIST 1
  *****/
+
+#define DEBUG_NEW_FRIEND_LIST 1
 
 Q_DECLARE_METATYPE(ElidedLabel*)
 
@@ -284,21 +287,6 @@ void NewFriendList::itemCollapsed(const QModelIndex& index)
     mModel->collapseItem(mProxyModel->mapToSource(index));
 }
 
-void NewFriendList::sortColumn(int col,Qt::SortOrder so)
-{
-    std::set<QString> expanded_indexes;
-	std::set<QString> selected_indexes;
-
-	saveExpandedPathsAndSelection(expanded_indexes, selected_indexes);
-    mProxyModel->setSortingEnabled(true);
-    mProxyModel->sort(col,so);
-    mProxyModel->setSortingEnabled(false);
-	restoreExpandedPathsAndSelection(expanded_indexes, selected_indexes);
-
-    mLastSortColumn = col;
-    mLastSortOrder = so;
-}
-
 void NewFriendList::headerContextMenuRequested(QPoint /*p*/)
 {
 	QMenu displayMenu(tr("Show Items"), this);
@@ -381,75 +369,109 @@ void NewFriendList::addToolButton(QToolButton *toolButton)
     ui->titleBarFrame->layout()->addWidget(toolButton);
 }
 
-void NewFriendList::saveExpandedPathsAndSelection(std::set<QString>& expanded_indexes, std::set<QString>& selected_indexes)
+void NewFriendList::saveExpandedPathsAndSelection(std::set<QString>& expanded_indexes, QString& sel)
 {
+    QModelIndexList selectedIndexes = ui->peerTreeWidget->selectionModel()->selectedIndexes();
+    QModelIndex current_index = selectedIndexes.empty()?QModelIndex():(*selectedIndexes.begin());
+
 #ifdef DEBUG_NEW_FRIEND_LIST
     std::cerr << "Saving expended paths and selection..." << std::endl;
 #endif
 
     for(int row = 0; row < mProxyModel->rowCount(); ++row)
-        recursSaveExpandedItems(mProxyModel->index(row,0),QString(),expanded_indexes,selected_indexes);
+        recursSaveExpandedItems(mProxyModel->index(row,0),current_index,QString(),expanded_indexes,sel);
+
+#ifdef DEBUG_NEW_FRIEND_LIST
+    std::cerr << "  selected index: \"" << sel.toStdString() << "\"" << std::endl;
+#endif
 }
 
-void NewFriendList::restoreExpandedPathsAndSelection(const std::set<QString>& expanded_indexes, const std::set<QString>& selected_indexes)
+void NewFriendList::restoreExpandedPathsAndSelection(const std::set<QString>& expanded_indexes,const QString& index_to_select,QModelIndex& selected_index)
 {
 #ifdef DEBUG_NEW_FRIEND_LIST
     std::cerr << "Restoring expended paths and selection..." << std::endl;
+    std::cerr << "  index to select: \"" << index_to_select.toStdString() << "\"" << std::endl;
 #endif
 
     ui->peerTreeWidget->blockSignals(true) ;
 
     for(int row = 0; row < mProxyModel->rowCount(); ++row)
-        recursRestoreExpandedItems(mProxyModel->index(row,0),QString(),expanded_indexes,selected_indexes);
+        recursRestoreExpandedItems(mProxyModel->index(row,0),QString(),expanded_indexes,index_to_select,selected_index);
 
     ui->peerTreeWidget->blockSignals(false) ;
 }
 
-void NewFriendList::recursSaveExpandedItems(const QModelIndex& index,const QString& parent_path,std::set<QString>& exp, std::set<QString>& sel)
+void NewFriendList::recursSaveExpandedItems(const QModelIndex& index,const QModelIndex& current_index,const QString& parent_path,std::set<QString>& exp, QString& sel)
 {
     QString local_path = parent_path + index.sibling(index.row(),RsFriendListModel::COLUMN_THREAD_ID).data(Qt::DisplayRole).toString() + " ";
 
-    if(ui->peerTreeWidget->selectionModel()->selection().contains(index))
-        sel.insert(local_path) ;
-
+#ifdef DEBUG_NEW_FRIEND_LIST
+    std::cerr << "  At index " << index.row() << ". data[1]=" << local_path.toStdString() ;
+#endif
     if(ui->peerTreeWidget->isExpanded(index))
     {
 #ifdef DEBUG_NEW_FRIEND_LIST
-        std::cerr << "Index " << local_path.toStdString() << " is expanded." << std::endl;
+        std::cerr << "  Index is expanded." ;
 #endif
         if(index.isValid())
             exp.insert(local_path) ;
 
         for(int row=0;row<mProxyModel->rowCount(index);++row)
-            recursSaveExpandedItems(index.child(row,0),local_path,exp,sel) ;
+            recursSaveExpandedItems(index.child(row,0),current_index,local_path,exp,sel) ;
     }
 #ifdef DEBUG_NEW_FRIEND_LIST
     else
-        std::cerr << "Index " << local_path.toStdString() << " is not expanded." << std::endl;
+        std::cerr << " not expanded." ;
 #endif
+
+    if(index == current_index)
+    {
+#ifdef DEBUG_NEW_FRIEND_LIST
+        std::cerr << "  adding to selection!" << std::endl;
+#endif
+        sel = local_path ;
+    }
+#ifdef DEBUG_NEW_FRIEND_LIST
+    else
+        std::cerr << std::endl;
+#endif
+
+
 }
 
-void NewFriendList::recursRestoreExpandedItems(const QModelIndex& index, const QString& parent_path, const std::set<QString>& exp, const std::set<QString> &sel)
+void NewFriendList::recursRestoreExpandedItems(const QModelIndex& index, const QString& parent_path, const std::set<QString>& exp, const QString& sel,QModelIndex& selected_index)
 {
     QString local_path = parent_path + index.sibling(index.row(),RsFriendListModel::COLUMN_THREAD_ID).data(Qt::DisplayRole).toString() + " ";
 #ifdef DEBUG_NEW_FRIEND_LIST
-    std::cerr << "at index " << index.row() << ". data[1]=" << local_path.toStdString() << std::endl;
+    std::cerr << "  At index " << index.row() << ". data[1]=" << local_path.toStdString() ;
 #endif
-
-    if(sel.find(local_path) != sel.end())
-        ui->peerTreeWidget->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
 
     if(exp.find(local_path) != exp.end())
     {
 #ifdef DEBUG_NEW_FRIEND_LIST
-        std::cerr << "re expanding index " << local_path.toStdString() << std::endl;
+        std::cerr << "  re expanding " << std::endl;
 #endif
 
         ui->peerTreeWidget->setExpanded(index,true) ;
 
         for(int row=0;row<mProxyModel->rowCount(index);++row)
-            recursRestoreExpandedItems(index.child(row,0),local_path,exp,sel) ;
+            recursRestoreExpandedItems(index.child(row,0),local_path,exp,sel,selected_index) ;
     }
+
+    if(sel == local_path)
+    {
+#ifdef DEBUG_NEW_FRIEND_LIST
+        std::cerr << "  selecting index \"" << local_path.toStdString() << "\"" << std::endl;
+#endif
+        ui->peerTreeWidget->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+        selected_index = index;
+    }
+#ifdef DEBUG_NEW_FRIEND_LIST
+    else
+        std::cerr << std::endl;
+#endif
+
+
 }
 
 
@@ -1101,9 +1123,14 @@ void NewFriendList::removeGroup()
 void NewFriendList::applyWhileKeepingTree(std::function<void()> predicate)
 {
     std::set<QString> expanded_indexes;
-    std::set<QString> selected_indexes;
+    QString selected;
 
-    saveExpandedPathsAndSelection(expanded_indexes, selected_indexes);
+    saveExpandedPathsAndSelection(expanded_indexes, selected);
+
+#ifdef DEBUG_NEW_FRIEND_LIST
+    std::cerr << "After collecting selection, selected paths is: \"" << selected.toStdString() << "\"" << std::endl;
+#endif
+    whileBlocking(ui->peerTreeWidget)->clearSelection();
 
     // This is a hack to avoid crashes on windows while calling endInsertRows(). I'm not sure wether these crashes are
     // due to a Qt bug, or a misuse of the proxy model on my side. Anyway, this solves them for good.
@@ -1124,8 +1151,9 @@ void NewFriendList::applyWhileKeepingTree(std::function<void()> predicate)
 
     predicate();
 
+    QModelIndex selected_index;
     mProxyModel->setSourceModel(mModel);
-    restoreExpandedPathsAndSelection(expanded_indexes, selected_indexes);
+    restoreExpandedPathsAndSelection(expanded_indexes,selected,selected_index);
 
     // restore hidden columns
     for(uint32_t i=0;i<RsFriendListModel::COLUMN_THREAD_NB_COLUMNS;++i)
@@ -1135,8 +1163,35 @@ void NewFriendList::applyWhileKeepingTree(std::function<void()> predicate)
     }
 
     // restore sorting
-    sortColumn(mLastSortColumn,mLastSortOrder);
+    // sortColumn(mLastSortColumn,mLastSortOrder);
+    mProxyModel->sort(mLastSortColumn,mLastSortOrder);
+
+    if(selected_index.isValid())
+        ui->peerTreeWidget->scrollTo(selected_index);
 }
+
+void NewFriendList::sortColumn(int col,Qt::SortOrder so)
+{
+    std::set<QString> expanded_indexes;
+    QString selected;
+    QModelIndex selected_index;
+
+    saveExpandedPathsAndSelection(expanded_indexes, selected);
+    whileBlocking(ui->peerTreeWidget)->clearSelection();
+
+    mProxyModel->setSortingEnabled(true);
+    mProxyModel->sort(col,so);
+    mProxyModel->setSortingEnabled(false);
+
+    restoreExpandedPathsAndSelection(expanded_indexes,selected,selected_index);
+
+    if(selected_index.isValid())
+        ui->peerTreeWidget->scrollTo(selected_index);
+
+    mLastSortColumn = col;
+    mLastSortOrder = so;
+}
+
 
 void NewFriendList::checkInternalData(bool force)
 {
