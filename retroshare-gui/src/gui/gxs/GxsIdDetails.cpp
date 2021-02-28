@@ -61,6 +61,8 @@
 #define MAX_ATTEMPTS                10
 #define MAX_PROCESS_COUNT_PER_TIMER 50
 
+// #define DEBUG_GXSIDDETAILS 1
+
 //const int kRecognTagClass_DEVELOPMENT = 1;
 //
 //const int kRecognTagType_Dev_Ambassador 	= 1;
@@ -468,7 +470,9 @@ void GxsIdDetails::checkCleanImagesCache()
 
     if(mLastIconCacheCleaning + DELAY_BETWEEN_ICON_CACHE_CLEANING < now)
     {
+#ifdef DEBUG_GXSIDDETAILS
         std::cerr << "(II) Cleaning the icons cache." << std::endl;
+#endif
         int nb_deleted = 0;
         uint32_t size_deleted = 0;
         uint32_t total_size = 0;
@@ -478,7 +482,9 @@ void GxsIdDetails::checkCleanImagesCache()
         for(auto it(mDefaultIconCache.begin());it!=mDefaultIconCache.end();)
         {
             bool all_empty = true ;
+#ifdef DEBUG_GXSIDDETAILS
             std::cerr << "  Examining pixmaps sizes for " << it->first << "." << std::endl;
+#endif
 
             for(int i=0;i<4;++i)
                 if(it->second[i].first>0)
@@ -487,7 +493,9 @@ void GxsIdDetails::checkCleanImagesCache()
                     {
                         int s = it->second[i].second.width()*it->second[i].second.height()*4;
 
+#ifdef DEBUG_GXSIDDETAILS
                         std::cerr << "    Deleting pixmap " << it->first << " size " << i << " " << s << " bytes." << std::endl;
+#endif
 
                         it->second[i].second = QPixmap();
                         it->second[i].first = 0;
@@ -498,13 +506,17 @@ void GxsIdDetails::checkCleanImagesCache()
                     {
                         all_empty = false;
                         total_size += it->second[i].second.width()*it->second[i].second.height()*4;
+#ifdef DEBUG_GXSIDDETAILS
                         std::cerr << "    Keeking " << it->first << " size " << i << std::endl;
+#endif
                     }
                 }
 
             if(all_empty)
             {
+#ifdef DEBUG_GXSIDDETAILS
                 std::cerr << "    Deleting entry " << it->first << " because no pixmaps are stored here. " << std::endl;
+#endif
                 it = mDefaultIconCache.erase(it);
             }
 			else
@@ -534,7 +546,9 @@ bool GxsIdDetails::loadPixmapFromData(const unsigned char *data,size_t data_len,
     // the same image to be allocated many times. We do this using a cache. The cache is also cleaned-up
     // on a regular time basis so as to get rid of unused images.
 
+#ifdef DEBUG_GXSIDDETAILS
     debug_dumpImagesCache();
+#endif
     checkCleanImagesCache();
 
     // now look for the icon
