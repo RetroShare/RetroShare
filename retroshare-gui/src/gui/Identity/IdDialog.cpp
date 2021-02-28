@@ -252,10 +252,12 @@ IdDialog::IdDialog(QWidget *parent)
 	connect(ui->ownOpinion_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(modifyReputation()));
 	
 	connect(ui->inviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
+	connect(ui->editButton, SIGNAL(clicked()), this, SLOT(editIdentity()));
 
 	connect( ui->idTreeWidget, &RSTreeWidget::itemDoubleClicked,
 	         this, &IdDialog::chatIdentityItem );
 
+	ui->editButton->hide();
 
     ui->avlabel_Circles->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/circles.png"));
 
@@ -1810,7 +1812,8 @@ void IdDialog::loadIdentity(RsGxsIdGroup data)
         // ui->editIdentity->setEnabled(true);
         // ui->removeIdentity->setEnabled(true);
 		ui->chatIdentity->setEnabled(false);
-		ui->inviteButton->setEnabled(false);
+		ui->inviteButton->hide();
+		ui->editButton->show();
 	}
 	else
 	{
@@ -1820,7 +1823,8 @@ void IdDialog::loadIdentity(RsGxsIdGroup data)
         // ui->editIdentity->setEnabled(false);
         // ui->removeIdentity->setEnabled(false);
 		ui->chatIdentity->setEnabled(true);
-		ui->inviteButton->setEnabled(true);
+		ui->inviteButton->show();
+		ui->editButton->hide();
 	}
 
     ui->autoBanIdentities_CB->setChecked(rsReputations->isNodeBanned(data.mPgpId));

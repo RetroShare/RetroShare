@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>987</width>
+    <width>800</width>
     <height>584</height>
    </rect>
   </property>
@@ -287,7 +287,7 @@
           <widget class="QWidget" name="scrollAreaWidgetContents">
            <property name="geometry">
             <rect>
-             <x>0</x>
+             <x>-155</x>
              <y>0</y>
              <width>634</width>
              <height>523</height>
@@ -606,6 +606,13 @@ border-image: url(:/images/closepressed.png)
                   <widget class="QPushButton" name="inviteButton">
                    <property name="text">
                     <string>Send Invite</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="editButton">
+                   <property name="text">
+                    <string>Edit Identity</string>
                    </property>
                   </widget>
                  </item>

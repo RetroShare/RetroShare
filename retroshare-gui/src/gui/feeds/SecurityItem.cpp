@@ -138,6 +138,7 @@ void SecurityItem::updateItemStatic()
 				title = tr("Missing/Damaged certificate. Not a real Retroshare user.");
 			requestLabel->hide();
 			}
+			avatar->setDefaultAvatar(":icons/ssl.png");
 			break;
 		case RS_FEED_ITEM_SEC_INTERNAL_ERROR:
 			title = tr("Certificate caused an internal error.");
@@ -186,7 +187,7 @@ void SecurityItem::updateItem()
 				 */
 
 			/* set peer name */
-			peerNameLabel->setText(tr("A unknown peer"));
+			//peerNameLabel->setText(tr("A unknown peer"));
 
 			nameLabel->setText(tr("Unknown") + " (" + tr("Profile ID: ") + QString::fromStdString(mGpgId.toStdString()) + ")");
 			idLabel->setText(QString::fromStdString(mSslId.toStdString()));
@@ -205,15 +206,25 @@ void SecurityItem::updateItem()
 			connLeftLabel->hide();
 
 			chatButton->hide();
-			//quickmsgButton->hide();
-			requestLabel->hide();
 
 			removeFriendButton->setEnabled(false);
 			removeFriendButton->hide();
 			peerDetailsButton->setEnabled(false);
-
-			friendRequesttoolButton->show();
-			requestLabel->show();
+			
+			if(mType == RS_FEED_ITEM_SEC_BAD_CERTIFICATE)
+			{
+				peerNameLabel->setText(tr("SSL request"));
+				friendRequesttoolButton->hide();
+				requestLabel->hide();
+				peerDetailsButton->hide();
+			}
+			else 
+			{
+				peerNameLabel->setText(tr("An unknown peer"));
+				friendRequesttoolButton->show();
+				requestLabel->show();
+				peerDetailsButton->show();
+			}
 
 			return;
 		}
