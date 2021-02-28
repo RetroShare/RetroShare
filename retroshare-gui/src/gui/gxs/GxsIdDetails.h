@@ -113,7 +113,8 @@ public:
 
     static const QPixmap makeDefaultIcon(const RsGxsId& id, AvatarSize size = MEDIUM);
 	static bool loadPixmapFromData(const unsigned char *data, size_t data_len, QPixmap& pix, AvatarSize size = MEDIUM);
-	static void  checkCleanImagesCache();
+    static void checkCleanImagesCache();
+    static void debug_dumpImagesCache();
 
 	/* Processing */
 	static void enableProcess(bool enable);

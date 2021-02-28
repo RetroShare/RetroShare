@@ -25,9 +25,6 @@
 
 #include "ui_GxsGroupShareKey.h"
 
-#define CHANNEL_KEY_SHARE 0x00000001
-#define FORUM_KEY_SHARE	  0x00000002
-#define POSTED_KEY_SHARE  0x00000003
 
 class GroupShareKey : public QDialog
 {
@@ -39,6 +36,13 @@ public:
 	 */
     GroupShareKey(QWidget *parent = 0, const RsGxsGroupId& grpId = RsGxsGroupId(), int grpType = 0);
     ~GroupShareKey();
+
+    enum KeyShareType: uint8_t {
+        NO_KEY_SHARE      = 0x00000000,
+        CHANNEL_KEY_SHARE = 0x00000001,
+        FORUM_KEY_SHARE	  = 0x00000002,
+        POSTED_KEY_SHARE  = 0x00000003,
+    };
 
 protected:
 	void changeEvent(QEvent *e);

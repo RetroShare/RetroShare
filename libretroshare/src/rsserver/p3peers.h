@@ -48,7 +48,7 @@ public:
 	virtual ~p3Peers() {}
 
 	/* Updates ... */
-	virtual bool FriendsChanged(bool add);
+    virtual bool FriendsChanged(const RsPeerId &pid, bool add);
 	virtual bool OthersChanged();
 
 	/* Peer Details (Net & Auth) */

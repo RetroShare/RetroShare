@@ -54,7 +54,7 @@ static const uint16_t UNDEFINED_PROFILE_INDEX_VALUE = (sizeof(uintptr_t)==4)?0xf
 
 const QString RsFriendListModel::FilterString("filtered");
 const uint32_t MAX_INTERNAL_DATA_UPDATE_DELAY = 300 ; 	// re-update the internal data every 5 mins. Should properly cover sleep/wake-up changes.
-const uint32_t MAX_NODE_UPDATE_DELAY = 1 ; 				// re-update the internal data every 5 mins. Should properly cover sleep/wake-up changes.
+const uint32_t MAX_NODE_UPDATE_DELAY = 10 ; 			// re-update the internal data every 5 mins. Should properly cover sleep/wake-up changes.
 
 static const uint32_t NODE_DETAILS_UPDATE_DELAY = 5;	// update each node every 5 secs.
 
@@ -771,24 +771,29 @@ void RsFriendListModel::checkInternalData(bool force)
 {
 	rstime_t now = time(NULL);
 
-	if(mLastInternalDataUpdate + MAX_INTERNAL_DATA_UPDATE_DELAY < now || force)
+    if( (mLastInternalDataUpdate + MAX_INTERNAL_DATA_UPDATE_DELAY < now) || force)
 		updateInternalData();
-
-	if(mLastNodeUpdate + MAX_NODE_UPDATE_DELAY < now)
-	{
-		for(uint32_t i=0;i<mLocations.size();++i)
-			if(mLocations[i].last_update_ts + NODE_DETAILS_UPDATE_DELAY < now)
-			{
-#ifdef DEBUG_MODEL
-				std::cerr << "Updating ID " << mLocations[i].node_info.id << std::endl;
-#endif
-				RsPeerId id(mLocations[i].node_info.id);				// this avoids zeroing the id field when writing the node data
-				rsPeers->getPeerDetails(id,mLocations[i].node_info);
-				mLocations[i].last_update_ts = now;
-			}
-
-		mLastNodeUpdate = now;
-	}
+//    else
+//    {
+//        preMods();
+//
+//        if(mLastNodeUpdate + MAX_NODE_UPDATE_DELAY < now)
+//        {
+//            for(uint32_t i=0;i<mLocations.size();++i)
+//                if(mLocations[i].last_update_ts + NODE_DETAILS_UPDATE_DELAY < now)
+//                {
+//#ifdef DEBUG_MODEL
+//                    std::cerr << "Updating ID " << mLocations[i].node_info.id << std::endl;
+//#endif
+//                    RsPeerId id(mLocations[i].node_info.id);				// this avoids zeroing the id field when writing the node data
+//                    rsPeers->getPeerDetails(id,mLocations[i].node_info);
+//                    mLocations[i].last_update_ts = now;
+//                }
+//
+//            mLastNodeUpdate = now;
+//        }
+//        postMods();
+//    }
 }
 
 const RsFriendListModel::HierarchicalGroupInformation *RsFriendListModel::getGroupInfo(const EntryIndex& e) const
