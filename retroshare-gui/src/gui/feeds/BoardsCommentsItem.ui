@@ -44,6 +44,9 @@
       <property name="topMargin">
        <number>9</number>
       </property>
+      <property name="verticalSpacing">
+       <number>3</number>
+      </property>
       <item row="2" column="1">
        <layout class="QHBoxLayout" name="buttonHLayout">
         <property name="spacing">
@@ -279,7 +282,7 @@
           <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
-            <height>10</height>
+            <height>6</height>
            </size>
           </property>
          </spacer>
@@ -376,6 +379,9 @@
          </property>
          <property name="bottomMargin">
           <number>0</number>
+         </property>
+         <property name="verticalSpacing">
+          <number>3</number>
          </property>
          <item row="0" column="2">
           <spacer name="horizontalSpacer_3">
