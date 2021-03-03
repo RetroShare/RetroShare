@@ -154,7 +154,6 @@ private:
 	RsEventsHandlerId_t mEventHandlerId_circles;
 
 	QTimer updateIdTimer;
-	QTimer updateCircleTimer;
 	bool needUpdateIdsOnNextShow;
 	bool needUpdateCirclesOnNextShow;
 
