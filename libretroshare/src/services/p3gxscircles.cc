@@ -194,95 +194,110 @@ bool p3GxsCircles::createCircle(
 {
     // 1 - Check consistency of the request data
 
-	if(circleName.empty())
-	{
-		RsErr() << __PRETTY_FUNCTION__ << " Circle name is empty" << std::endl;
-		return false;
-	}
-
-	switch(circleType)
-	{
-	case RsGxsCircleType::PUBLIC:
-		if(!restrictedId.isNull())
-		{
-			RsErr() << __PRETTY_FUNCTION__ << " restrictedId: " << restrictedId
-			        << " must be null with RsGxsCircleType::PUBLIC"
-			        << std::endl;
-			return false;
-		}
-		break;
-	case RsGxsCircleType::EXTERNAL:
-		if(restrictedId.isNull())
-		{
-			RsErr() << __PRETTY_FUNCTION__ << " restrictedId can't be null "
-			        << "with RsGxsCircleType::EXTERNAL" << std::endl;
-			return false;
-		}
-		break;
-	case RsGxsCircleType::NODES_GROUP:
-		if(localMembers.empty())
-		{
-			RsErr() << __PRETTY_FUNCTION__ << " localMembers can't be empty "
-			        << "with RsGxsCircleType::NODES_GROUP" << std::endl;
-			return false;
-		}
-		break;
-	case RsGxsCircleType::LOCAL:
-		break;
-	case RsGxsCircleType::EXT_SELF:
-		if(!restrictedId.isNull())
-		{
-			RsErr() << __PRETTY_FUNCTION__ << " restrictedId: " << restrictedId
-			        << " must be null with RsGxsCircleType::EXT_SELF"
-			        << std::endl;
-			return false;
-		}
-		if(gxsIdMembers.empty())
-		{
-			RsErr() << __PRETTY_FUNCTION__ << " gxsIdMembers can't be empty "
-			        << "with RsGxsCircleType::EXT_SELF" << std::endl;
-			return false;
-		}
-		break;
-	case RsGxsCircleType::YOUR_EYES_ONLY:
-		break;
-	default:
-		RsErr() << __PRETTY_FUNCTION__ << " Invalid circle type: "
-		        << static_cast<uint32_t>(circleType) << std::endl;
-		return false;
-	}
+    if(!checkCircleParamConsistency(circleName,circleType,restrictedId,authorId,gxsIdMembers,localMembers))
+    {
+        RsErr() << __PRETTY_FUNCTION__ << " Circle name is empty" << std::endl;
+        return false;
+    }
 
     // 2 - Create the actual request
 
-	RsGxsCircleGroup cData;
-	cData.mMeta.mGroupName = circleName;
-	cData.mMeta.mAuthorId = authorId;
-	cData.mMeta.mCircleType = static_cast<uint32_t>(circleType);
-	cData.mMeta.mGroupFlags = GXS_SERV::FLAG_PRIVACY_PUBLIC;
-	cData.mMeta.mCircleId = restrictedId;
-	cData.mLocalFriends = localMembers;
-	cData.mInvitedMembers = gxsIdMembers;
+    RsGxsCircleGroup cData;
+    cData.mMeta.mGroupName = circleName;
+    cData.mMeta.mAuthorId = authorId;
+    cData.mMeta.mCircleType = static_cast<uint32_t>(circleType);
+    cData.mMeta.mGroupFlags = GXS_SERV::FLAG_PRIVACY_PUBLIC;
+    cData.mMeta.mCircleId = restrictedId;
+    cData.mMeta.mSignFlags = GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_NONEREQ | GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_REQUIRED;
+    cData.mLocalFriends = localMembers;
+    cData.mInvitedMembers = gxsIdMembers;
+
 
     // 3 - Send it and wait, for a sync response.
 
-	uint32_t token;
-	createGroup(token, cData);
+    uint32_t token;
+    createGroup(token, cData);
 
-	if(waitToken(token) != RsTokenService::COMPLETE)
-	{
-		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed." << std::endl;
-		return false;
-	}
+    if(waitToken(token) != RsTokenService::COMPLETE)
+    {
+        std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed." << std::endl;
+        return false;
+    }
 
-	if(!RsGenExchange::getPublishedGroupMeta(token, cData.mMeta))
-	{
-		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting created" << " group data." << std::endl;
-		return false;
-	}
+    if(!RsGenExchange::getPublishedGroupMeta(token, cData.mMeta))
+    {
+        std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting created" << " group data." << std::endl;
+        return false;
+    }
 
-	circleId = static_cast<RsGxsCircleId>(cData.mMeta.mGroupId);
-	return true;
+    circleId = static_cast<RsGxsCircleId>(cData.mMeta.mGroupId);
+    return true;
 };
+
+bool p3GxsCircles::checkCircleParamConsistency( const std::string& circleName, RsGxsCircleType circleType,
+                                          const RsGxsCircleId& restrictedId,
+                                          const RsGxsId& authorId, const std::set<RsGxsId>& gxsIdMembers,
+                                          const std::set<RsPgpId>& localMembers ) const
+{
+    if(circleName.empty())
+    {
+        RsErr() << __PRETTY_FUNCTION__ << " Circle name is empty" << std::endl;
+        return false;
+    }
+
+    switch(circleType)
+    {
+    case RsGxsCircleType::PUBLIC:
+        if(!restrictedId.isNull())
+        {
+            RsErr() << __PRETTY_FUNCTION__ << " restrictedId: " << restrictedId
+                    << " must be null with RsGxsCircleType::PUBLIC"
+                    << std::endl;
+            return false;
+        }
+        break;
+    case RsGxsCircleType::EXTERNAL:
+        if(restrictedId.isNull())
+        {
+            RsErr() << __PRETTY_FUNCTION__ << " restrictedId can't be null "
+                    << "with RsGxsCircleType::EXTERNAL" << std::endl;
+            return false;
+        }
+        break;
+    case RsGxsCircleType::NODES_GROUP:
+        if(localMembers.empty())
+        {
+            RsErr() << __PRETTY_FUNCTION__ << " localMembers can't be empty "
+                    << "with RsGxsCircleType::NODES_GROUP" << std::endl;
+            return false;
+        }
+        break;
+    case RsGxsCircleType::LOCAL:
+        break;
+    case RsGxsCircleType::EXT_SELF:
+        if(!restrictedId.isNull())
+        {
+            RsErr() << __PRETTY_FUNCTION__ << " restrictedId: " << restrictedId
+                    << " must be null with RsGxsCircleType::EXT_SELF"
+                    << std::endl;
+            return false;
+        }
+        if(gxsIdMembers.empty())
+        {
+            RsErr() << __PRETTY_FUNCTION__ << " gxsIdMembers can't be empty "
+                    << "with RsGxsCircleType::EXT_SELF" << std::endl;
+            return false;
+        }
+        break;
+    case RsGxsCircleType::YOUR_EYES_ONLY:
+        break;
+    default:
+        RsErr() << __PRETTY_FUNCTION__ << " Invalid circle type: "
+                << static_cast<uint32_t>(circleType) << std::endl;
+        return false;
+    }
+    return true;
+}
 
 bool p3GxsCircles::editCircle(RsGxsCircleGroup& cData)
 {
@@ -305,6 +320,52 @@ bool p3GxsCircles::editCircle(RsGxsCircleGroup& cData)
 
 	return true;
 }
+
+bool p3GxsCircles::editCircle(const RsGxsCircleId &circleId, const std::string& circleName, RsGxsCircleType circleType, const RsGxsCircleId& restrictedId,
+                               const RsGxsId& authorId, const std::set<RsGxsId>& gxsIdMembers,
+                               const std::set<RsPgpId>& localMembers )
+{
+    // 1 - Check consistency of the request data
+
+    if(!checkCircleParamConsistency(circleName,circleType,restrictedId,authorId,gxsIdMembers,localMembers))
+    {
+        RsErr() << __PRETTY_FUNCTION__ << " Circle data is not consistent." << std::endl;
+        return false;
+    }
+
+    // 2 - Create the actual request
+
+    RsGxsCircleGroup cData;
+    cData.mMeta.mGroupId = RsGxsGroupId(circleId);
+    cData.mMeta.mGroupName = circleName;
+    cData.mMeta.mAuthorId = authorId;
+    cData.mMeta.mCircleType = static_cast<uint32_t>(circleType);
+    cData.mMeta.mGroupFlags = GXS_SERV::FLAG_PRIVACY_PUBLIC;
+    cData.mMeta.mCircleId = restrictedId;
+    cData.mLocalFriends = localMembers;
+    cData.mInvitedMembers = gxsIdMembers;
+
+    // 3 - Send it and wait, for a sync response.
+
+    uint32_t token;
+    updateGroup(token, cData);
+
+    if(waitToken(token) != RsTokenService::COMPLETE)
+    {
+        std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
+                  << std::endl;
+        return false;
+    }
+
+    if(!RsGenExchange::getPublishedGroupMeta(token, cData.mMeta))
+    {
+        std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting updated"
+                  << " group data." << std::endl;
+        return false;
+    }
+
+    return true;
+};
 
 bool p3GxsCircles::getCirclesSummaries(std::list<RsGroupMetaData>& circles)
 {
