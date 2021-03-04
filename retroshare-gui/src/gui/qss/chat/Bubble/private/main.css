@@ -37,39 +37,59 @@ color: #FF0000;
 }
 
 .bubble-orange { float: right; }
-.bubble-orangeTC { background-image: url(%style-dir%/img/bubble-orange/bubble_TC.png); }
+.bubble-orangeTL { background-image: url(%style-dir%/img/bubble-orange/bubble_TL.png); font-size: 9px; }
+.bubble-orangeTC { background-image: url(%style-dir%/img/bubble-orange/bubble_TC.png); font-size: 9px; }
+.bubble-orangeTR { background-image: url(%style-dir%/img/bubble-orange/bubble_TR.png); font-size: 9px; }
+.bubble-orangeCL { background-image: url(%style-dir%/img/bubble-orange/bubble_CL.png); }
 .bubble-orangeCC { background-image: url(%style-dir%/img/bubble-orange/bubble_CC.png); }
 .bubble-orangeCR { background-image: url(%style-dir%/img/bubble-orange/bubble_CR.png); }
-.bubble-orangeCL { background-image: url(%style-dir%/img/bubble-orange/bubble_CL.png); }
-.bubble-orangeBC { background-image: url(%style-dir%/img/bubble-orange/bubble_BC.png); }
+.bubble-orangeBL { background-image: url(%style-dir%/img/bubble-orange/bubble_BL.png); font-size: 9px; }
+.bubble-orangeBC { background-image: url(%style-dir%/img/bubble-orange/bubble_BC.png); font-size: 9px; }
+.bubble-orangeBR { background-image: url(%style-dir%/img/bubble-orange/bubble_BR.png); font-size: 9px; }
 
 .bubble-grey { float: right; color: #666; }
-.bubble-greyTC { background-image: url(%style-dir%/img/bubble-grey/bubble_TC.png); }
+.bubble-greyTL { background-image: url(%style-dir%/img/bubble-grey/bubble_TL.png); font-size: 9px; }
+.bubble-greyTC { background-image: url(%style-dir%/img/bubble-grey/bubble_TC.png); font-size: 9px; }
+.bubble-greyTR { background-image: url(%style-dir%/img/bubble-grey/bubble_TR.png); font-size: 9px; }
+.bubble-greyCL { background-image: url(%style-dir%/img/bubble-grey/bubble_CL.png); }
 .bubble-greyCC { background-image: url(%style-dir%/img/bubble-grey/bubble_CC.png); }
 .bubble-greyCR { background-image: url(%style-dir%/img/bubble-grey/bubble_CR.png); }
-.bubble-greyCL { background-image: url(%style-dir%/img/bubble-grey/bubble_CL.png); }
-.bubble-greyBC { background-image: url(%style-dir%/img/bubble-grey/bubble_BC.png); }
+.bubble-greyBL { background-image: url(%style-dir%/img/bubble-grey/bubble_BL.png); font-size: 9px; }
+.bubble-greyBC { background-image: url(%style-dir%/img/bubble-grey/bubble_BC.png); font-size: 9px; }
+.bubble-greyBR { background-image: url(%style-dir%/img/bubble-grey/bubble_BR.png); font-size: 9px; }
 
 .bubble-red { float: right; color: #B33; }
-.bubble-redTC { background-image: url(%style-dir%/img/bubble-red/bubble_TC.png); }
+.bubble-redTL { background-image: url(%style-dir%/img/bubble-red/bubble_TL.png); font-size: 9px; }
+.bubble-redTC { background-image: url(%style-dir%/img/bubble-red/bubble_TC.png); font-size: 9px; }
+.bubble-redTR { background-image: url(%style-dir%/img/bubble-red/bubble_TR.png); font-size: 9px; }
+.bubble-redCL { background-image: url(%style-dir%/img/bubble-red/bubble_CL.png); }
 .bubble-redCC { background-image: url(%style-dir%/img/bubble-red/bubble_CC.png); }
 .bubble-redCR { background-image: url(%style-dir%/img/bubble-red/bubble_CR.png); }
-.bubble-redCL { background-image: url(%style-dir%/img/bubble-red/bubble_CL.png); }
-.bubble-redBC { background-image: url(%style-dir%/img/bubble-red/bubble_BC.png); }
+.bubble-redBL { background-image: url(%style-dir%/img/bubble-red/bubble_BL.png); font-size: 9px; }
+.bubble-redBC { background-image: url(%style-dir%/img/bubble-red/bubble_BC.png); font-size: 9px; }
+.bubble-redBR { background-image: url(%style-dir%/img/bubble-red/bubble_BR.png); font-size: 9px; }
 
-.bubble-green { float: right;}
-.bubble-greenTC { background-image: url(%style-dir%/img/bubble-green/bubble_TC.png); }
+.bubble-green { float: right; }
+.bubble-greenTL { background-image: url(%style-dir%/img/bubble-green/bubble_TL.png); font-size: 9px;}
+.bubble-greenTC { background-image: url(%style-dir%/img/bubble-green/bubble_TC.png); font-size: 9px; }
+.bubble-greenTR { background-image: url(%style-dir%/img/bubble-green/bubble_TR.png); font-size: 9px;}
+.bubble-greenCL { background-image: url(%style-dir%/img/bubble-green/bubble_CL.png); }
 .bubble-greenCC { background-image: url(%style-dir%/img/bubble-green/bubble_CC.png); }
 .bubble-greenCR { background-image: url(%style-dir%/img/bubble-green/bubble_CR.png); }
-.bubble-greenCL { background-image: url(%style-dir%/img/bubble-green/bubble_CL.png); }
-.bubble-greenBC { background-image: url(%style-dir%/img/bubble-green/bubble_BC.png); }
+.bubble-greenBL { background-image: url(%style-dir%/img/bubble-green/bubble_BL.png); font-size: 9px; }
+.bubble-greenBC { background-image: url(%style-dir%/img/bubble-green/bubble_BC.png); font-size: 9px; }
+.bubble-greenBR { background-image: url(%style-dir%/img/bubble-green/bubble_BR.png); font-size: 9px; }
 
 .bubble-blue { float: right;}
-.bubble-blueTC { background-image: url(%style-dir%/img/bubble-blue/bubble_TC.png); }
+.bubble-blueTL { background-image: url(%style-dir%/img/bubble-blue/bubble_TL.png); font-size: 9px; }
+.bubble-blueTC { background-image: url(%style-dir%/img/bubble-blue/bubble_TC.png); font-size: 9px; }
+.bubble-blueTR { background-image: url(%style-dir%/img/bubble-blue/bubble_TR.png); font-size: 9px; }
+.bubble-blueCL { background-image: url(%style-dir%/img/bubble-blue/bubble_CL.png); }
 .bubble-blueCC { background-image: url(%style-dir%/img/bubble-blue/bubble_CC.png); }
 .bubble-blueCR { background-image: url(%style-dir%/img/bubble-blue/bubble_CR.png); }
-.bubble-blueCL { background-image: url(%style-dir%/img/bubble-blue/bubble_CL.png); }
-.bubble-blueBC { background-image: url(%style-dir%/img/bubble-blue/bubble_BC.png); }
+.bubble-blueBL { background-image: url(%style-dir%/img/bubble-blue/bubble_BL.png); font-size: 9px; }
+.bubble-blueBC { background-image: url(%style-dir%/img/bubble-blue/bubble_BC.png); font-size: 9px; }
+.bubble-blueBR { background-image: url(%style-dir%/img/bubble-blue/bubble_BR.png); font-size: 9px; }
 
 .bubbleFooter { background-color: none; width:100%; }
 

@@ -39,6 +39,8 @@ class RSTextBrowser : public QTextBrowser
 public:
 	explicit RSTextBrowser(QWidget *parent = 0);
 
+	void append(const QString &text);
+
 	void setPlaceholderText(const QString &text);
 	void setImageBlockWidget(RSImageBlockWidget *widget);
 	void resetImagesStatus(bool load);
