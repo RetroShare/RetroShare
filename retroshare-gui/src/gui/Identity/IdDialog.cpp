@@ -58,6 +58,10 @@
 #include <algorithm>
 #include <memory>
 
+#ifdef RS_USE_CIRCLES
+#include "gui/People/PeopleDialog.h"
+#endif
+
 /******
  * #define ID_DEBUG 1
  *****/
@@ -380,6 +384,11 @@ IdDialog::IdDialog(QWidget *parent)
 
 	mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
     mStateHelper->setActive(IDDIALOG_REPLIST, false);
+
+#ifdef RS_USE_NEW_PEOPLE_DIALOG
+	PeopleDialog *peopleDialog = NULL;
+	ui->rightTabWidget->addTab(peopleDialog = new PeopleDialog(),QIcon(FilesDefs::getIconFromQtResourcePath(":icons/svg/gridlayout.svg")), tr("Grid View"));
+#endif
 
 	QString hlp_str = tr(
 			" <h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Identities</h1>    \
