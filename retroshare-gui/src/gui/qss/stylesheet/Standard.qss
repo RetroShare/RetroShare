@@ -1224,3 +1224,20 @@ NewFriendList QTreeView::branch:open:has-children:has-siblings  {
         border-image: none;
         image: url(:/images/arrow-down.png);
 }
+
+WikiEditDialog QPushButton#pushButton_History {
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #5bb62b;
+	border-radius: 4px;
+	max-height: 20px;
+	min-width: 4em;
+	padding: 2px;
+	padding-left: 6px;
+	padding-right: 6px;
+}
+
+WikiEditDialog QPushButton#pushButton_History:hover {
+	background: #57af29;
+}
