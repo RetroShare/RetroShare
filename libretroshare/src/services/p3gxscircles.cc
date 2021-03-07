@@ -196,7 +196,7 @@ bool p3GxsCircles::createCircle(
 
     if(!checkCircleParamConsistency(circleName,circleType,restrictedId,authorId,gxsIdMembers,localMembers))
     {
-        RsErr() << __PRETTY_FUNCTION__ << " Circle name is empty" << std::endl;
+        RsErr() << __PRETTY_FUNCTION__ << " Circle parameters are inconsistent" << std::endl;
         return false;
     }
 
