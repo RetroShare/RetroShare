@@ -1213,14 +1213,3 @@ NewFriendList QTreeView#peerTreeWidget {
 	font-size: 12pt;
 }
 
-NewFriendList QTreeView::branch:has-children:!has-siblings:closed,
-NewFriendList QTreeView::branch:closed:has-children:has-siblings {
-        border-image: none;
-        image: url(:/images/arrow-right.png);
-}
-
-NewFriendList QTreeView::branch:open:has-children:!has-siblings,
-NewFriendList QTreeView::branch:open:has-children:has-siblings  {
-        border-image: none;
-        image: url(:/images/arrow-down.png);
-}
