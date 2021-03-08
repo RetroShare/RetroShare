@@ -449,7 +449,9 @@ void CreateCircleDialog::createCircle()
     case GxsIdChooser::KnowId:
     case GxsIdChooser::UnKnowId:
 	    circle.mMeta.mAuthorId = authorId;
-#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
+        circle.mMeta.mAuthenFlags = GXS_SERV::GRP_OPTION_AUTHEN_AUTHOR_SIGN;
+
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG
 	    std::cerr << "CreateCircleDialog::createCircle() AuthorId: " << authorId;
 	    std::cerr << std::endl;
 #endif
@@ -457,6 +459,8 @@ void CreateCircleDialog::createCircle()
 	    break;
     case GxsIdChooser::NoId:
     case GxsIdChooser::None:
+        circle.mMeta.mAuthorId.clear();
+        circle.mMeta.mAuthenFlags = 0;
     default: ;
 #ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 	    std::cerr << "CreateCircleDialog::createCircle() No AuthorId Chosen!";

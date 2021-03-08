@@ -1139,6 +1139,7 @@ bool p3IdService::updateIdentity( const RsGxsId& id, const std::string& name, co
             goto LabelUpdateIdentityCleanup;
         }
     }
+    mKeyCache.erase(id);
 
     if(!updateGroup(token, group))
 	{
@@ -1153,6 +1154,9 @@ bool p3IdService::updateIdentity( const RsGxsId& id, const std::string& name, co
         ret = false;
         goto LabelUpdateIdentityCleanup;
 	}
+
+    // clean the Identity cache as well
+    cache_request_load(id);
 
 LabelUpdateIdentityCleanup:
     if(!pseudonimous && !pgpPassword.empty())

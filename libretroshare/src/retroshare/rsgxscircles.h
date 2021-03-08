@@ -301,14 +301,35 @@ public:
 	        const std::set<RsGxsId>& gxsIdMembers = std::set<RsGxsId>(),
 	        const std::set<RsPgpId>& localMembers = std::set<RsPgpId>() ) = 0;
 
-	/**
-	 * @brief Edit own existing circle
-	 * @jsonapi{development}
-	 * @param[inout] cData Circle data with modifications, storage for data
-	 *	updatedad during the operation.
-	 * @return false if something failed, true otherwhise
-	 */
-	virtual bool editCircle(RsGxsCircleGroup& cData) = 0;
+// TODO. If so, remove the other editCircle that has the same name, otherwise jsonapi will crash
+//
+//    /**
+//     * @brief Edit an existing circle
+//     * @jsonapi{development}
+//     * @param[in] circleId Optional storage to output created circle id
+//     * @param[in] circleName String containing cirlce name
+//     * @param[in] circleType Circle type
+//     * @param[in] restrictedId Optional id of a pre-existent circle that see the
+//     *	created circle. Meaningful only if circleType == EXTERNAL, must be null
+//     *	in all other cases.
+//     * @param[in] authorId Optional author of the circle.
+//     * @param[in] gxsIdMembers GXS ids of the members of the circle.
+//     * @param[in] localMembers PGP ids of the members if the circle.
+//     * @return false if something failed, true otherwhise
+//     */
+//    virtual bool editCircle( const RsGxsCircleId& circleId, const std::string& circleName, RsGxsCircleType circleType,
+//                     const RsGxsCircleId& restrictedId,
+//                     const RsGxsId& authorId, const std::set<RsGxsId>& gxsIdMembers,
+//                     const std::set<RsPgpId>& localMembers ) =0;
+
+    /**
+     * @brief Edit own existing circle
+     * @jsonapi{development}
+     * @param[inout] cData Circle data with modifications, storage for data
+     *	updatedad during the operation.
+     * @return false if something failed, true otherwhise
+     */
+    virtual bool editCircle(RsGxsCircleGroup& cData) = 0;
 
 	/**
 	 * @brief Get circle details. Memory cached

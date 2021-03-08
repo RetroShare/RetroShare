@@ -227,7 +227,12 @@ public:
 	        const std::set<RsPgpId>& localMembers = std::set<RsPgpId>()
 	        ) override;
 
-	/// @see RsGxsCircles
+    bool editCircle( const RsGxsCircleId& circleId,const std::string& circleName, RsGxsCircleType circleType,
+                     const RsGxsCircleId& restrictedId,
+                     const RsGxsId& authorId, const std::set<RsGxsId>& gxsIdMembers,
+                     const std::set<RsPgpId>& localMembers ) ;
+
+    /// @see RsGxsCircles
 	bool editCircle(RsGxsCircleGroup& cData) override;
 
 	/// @see RsGxsCircles
@@ -303,6 +308,10 @@ public:
 	virtual void service_tick() override;
 
 protected:
+    bool checkCircleParamConsistency( const std::string& circleName, RsGxsCircleType circleType,
+                     const RsGxsCircleId& restrictedId,
+                     const RsGxsId& authorId, const std::set<RsGxsId>& gxsIdMembers,
+                     const std::set<RsPgpId>& localMembers ) const ;
 
 	// overloads p3Config
 	virtual bool saveList(bool &cleanup, std::list<RsItem *>&saveList) override;
