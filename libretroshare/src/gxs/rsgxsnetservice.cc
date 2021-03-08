@@ -256,10 +256,8 @@
 #include "util/rstime.h"
 #include "util/rsmemory.h"
 #include "util/stacktrace.h"
-
-#ifdef RS_DEEP_CHANNEL_INDEX
-#	include "deep_search/channelsindex.hpp"
-#endif
+#include "util/rsdebug.h"
+#include "util/cxx17retrocompat.h"
 
 /***
  * Use the following defines to debug:
@@ -4806,43 +4804,40 @@ uint32_t RsGxsNetService::getKeepAge(const RsGxsGroupId& grpId)
 	return locked_getGrpConfig(grpId).msg_keep_delay ;
 }
 
-int RsGxsNetService::requestGrp(const std::list<RsGxsGroupId>& grpId, const RsPeerId& peerId)
+int RsGxsNetService::requestGrp(
+        const std::list<RsGxsGroupId>& grpIds, const RsPeerId& peerId )
 {
-	RS_STACK_MUTEX(mNxsMutex) ;
 #ifdef NXS_NET_DEBUG_0
-    GXSNETDEBUG_P_(peerId) << "RsGxsNetService::requestGrp(): adding explicit group requests to peer " << peerId << std::endl;
-
-    for(std::list<RsGxsGroupId>::const_iterator it(grpId.begin());it!=grpId.end();++it)
-        GXSNETDEBUG_PG(peerId,*it) << "   Group ID: " << *it << std::endl;
+	RS_DBG("Adding explicit groups requests to peer: ", peerId);
+	for(auto& grpId: std::as_const(grpIds)) RS_DBG("\t Group ID: ", grpId);
 #endif
-    mExplicitRequest[peerId].assign(grpId.begin(), grpId.end());
+
+	RS_STACK_MUTEX(mNxsMutex);
+	mExplicitRequest[peerId].insert(grpIds.begin(), grpIds.end());
 	return 1;
 }
 
 void RsGxsNetService::processExplicitGroupRequests()
 {
-	RS_STACK_MUTEX(mNxsMutex) ;
+	RS_STACK_MUTEX(mNxsMutex);
 
-	std::map<RsPeerId, std::list<RsGxsGroupId> >::const_iterator cit = mExplicitRequest.begin();
-
-	for(; cit != mExplicitRequest.end(); ++cit)
+	for(auto& cit: std::as_const(mExplicitRequest))
 	{
 #ifdef NXS_NET_DEBUG_0
-        GXSNETDEBUG_P_(cit->first) << "RsGxsNetService::sending pending explicit group requests to peer " << cit->first << std::endl;
+		RS_DBG("sending pending explicit group requests to peer ", cit.first);
 #endif
-        const RsPeerId& peerId = cit->first;
-		const std::list<RsGxsGroupId>& groupIdList = cit->second;
+		const RsPeerId& peerId = cit.first;
+		const std::set<RsGxsGroupId>& groupIdList = cit.second;
 
 		std::list<RsNxsItem*> grpSyncItems;
-		std::list<RsGxsGroupId>::const_iterator git = groupIdList.begin();
 		uint32_t transN = locked_getTransactionId();
-		for(; git != groupIdList.end(); ++git)
+		for(auto& grpId: std::as_const(groupIdList))
 		{
 #ifdef NXS_NET_DEBUG_0
-            GXSNETDEBUG_P_(peerId) << "   group request for grp ID " << *git << " to peer " << peerId << std::endl;
+			RS_DBG("\t group request for group ID: ", grpId);
 #endif
-            RsNxsSyncGrpItem* item = new RsNxsSyncGrpItem(mServType);
-			item->grpId = *git;
+			RsNxsSyncGrpItem* item = new RsNxsSyncGrpItem(mServType);
+			item->grpId = grpId;
 			item->PeerId(peerId);
 			item->flag = RsNxsSyncGrpItem::FLAG_REQUEST;
 			item->transactionNumber = transN;

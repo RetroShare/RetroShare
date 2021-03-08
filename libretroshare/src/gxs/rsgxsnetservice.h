@@ -584,7 +584,7 @@ private:
     std::vector<AuthorPending*> mPendingResp;
     std::vector<GrpCircleVetting*> mPendingCircleVets;
     std::map<RsGxsGroupId,std::set<RsPeerId> > mPendingPublishKeyRecipients ;
-    std::map<RsPeerId, std::list<RsGxsGroupId> > mExplicitRequest;
+	std::map<RsPeerId, std::set<RsGxsGroupId> > mExplicitRequest;
     std::map<RsPeerId, std::set<RsGxsGroupId> > mPartialMsgUpdates ;
 
     // nxs sync optimisation
