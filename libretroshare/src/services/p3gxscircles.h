@@ -230,7 +230,7 @@ public:
     bool editCircle( const RsGxsCircleId& circleId,const std::string& circleName, RsGxsCircleType circleType,
                      const RsGxsCircleId& restrictedId,
                      const RsGxsId& authorId, const std::set<RsGxsId>& gxsIdMembers,
-                     const std::set<RsPgpId>& localMembers ) override;
+                     const std::set<RsPgpId>& localMembers ) ;
 
     /// @see RsGxsCircles
 	bool editCircle(RsGxsCircleGroup& cData) override;
