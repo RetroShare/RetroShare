@@ -1173,7 +1173,7 @@ PostedListWidgetWithModel QToolButton#subscribeToolButton:hover {
 
 GxsForumThreadWidget QToolButton#subscribeToolButton {
 	font: bold;
-	font-size: 14pt;
+	font-size: 12pt;
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
@@ -1473,7 +1473,7 @@ BoardPostDisplayWidget_card QLabel#newLabel {
 
 BoardPostDisplayWidget_compact QLabel#titleLabel,
 BoardPostDisplayWidget_card QLabel#titleLabel{
-	font-size: 14pt;
+	font-size: 12pt;
 	font: bold;
 }
 

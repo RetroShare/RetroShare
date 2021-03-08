@@ -43,11 +43,13 @@ int RS_pthread_setname_np(pthread_t /*__target_thread*/, const char *__buf) {
 	return pthread_setname_np(__buf);
 }
 #else
+#ifndef __WIN64__
 int __attribute__((weak)) pthread_setname_np(pthread_t __target_thread, const char *__buf) ;
+#endif //__WIN64__
 int RS_pthread_setname_np(pthread_t __target_thread, const char *__buf) {
 	return pthread_setname_np(__target_thread, __buf);
 }
-#endif
+#endif //__APPLE__
 
 
 /*******

@@ -618,13 +618,13 @@ QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulo
 
 	QString errorMsg; int errorLine; int errorColumn;
 
-  QDomDocument doc;
+	QDomDocument doc;
 	if (doc.setContent(formattedText, &errorMsg, &errorLine, &errorColumn) == false) {
 
-		// convert text with QTextBrowser
-		QTextBrowser textBrowser;
-		textBrowser.setText(text);
-		formattedText=textBrowser.toHtml();
+		// convert text with QTextDocument
+		QTextDocument textDoc;
+		textDoc.setPlainText(text);
+		formattedText=textDoc.toHtml();
 		formattedText.remove(0,formattedText.indexOf("<"));
 		formattedText=saveSpace(formattedText);
 		doc.setContent(formattedText, &errorMsg, &errorLine, &errorColumn);

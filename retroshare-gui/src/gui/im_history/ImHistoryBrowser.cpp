@@ -44,12 +44,8 @@
 #define ROLE_PLAINTEXT Qt::UserRole + 1
 
 ImHistoryBrowserCreateItemsThread::ImHistoryBrowserCreateItemsThread(ImHistoryBrowser *parent, const ChatId& peerId)
-    : QThread(parent)
-{
-    m_chatId = peerId;
-    m_historyBrowser = parent;
-    stopped = false;
-}
+    : QThread(parent), m_historyBrowser(parent), m_chatId(peerId), stopped(false)
+{}
 
 ImHistoryBrowserCreateItemsThread::~ImHistoryBrowserCreateItemsThread()
 {
@@ -285,10 +281,12 @@ void ImHistoryBrowser::fillItem(QListWidgetItem *itemWidget, HistoryMsg& msg)
     QString name;
     if (m_chatId.isLobbyId() || m_chatId.isDistantChatId()) {
         RsIdentityDetails details;
-        if (rsIdentity->getIdDetails(RsGxsId(msg.peerName), details))
+        if (rsIdentity->getIdDetails(RsGxsId(msg.peerId), details))
             name = QString::fromUtf8(details.mNickname.c_str());
-        else
+        else if(!msg.peerName.empty())
             name = QString::fromUtf8(msg.peerName.c_str());
+        else
+            name = QString::fromUtf8(msg.peerId.toStdString().c_str());
     } else {
         name = QString::fromUtf8(msg.peerName.c_str());
     }

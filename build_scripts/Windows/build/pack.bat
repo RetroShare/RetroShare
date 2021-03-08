@@ -139,7 +139,6 @@ echo copy stylesheets
 xcopy /S "%SourcePath%\retroshare-gui\src\gui\qss\chat" "%RsDeployPath%\stylesheets" %Quite%
 rmdir /S /Q "%RsDeployPath%\stylesheets\compact" %Quite%
 rmdir /S /Q "%RsDeployPath%\stylesheets\standard" %Quite%
-rmdir /S /Q "%RsDeployPath%\stylesheets\__MACOSX__Bubble" %Quite%
 
 echo copy sounds
 xcopy /S "%SourcePath%\retroshare-gui\src\sounds" "%RsDeployPath%\sounds" %Quite%
