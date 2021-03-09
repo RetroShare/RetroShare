@@ -36,7 +36,7 @@ function define_default_value()
 	VAR_NAME="${1}"
 	DEFAULT_VALUE="${2}"
 
-	[ -z "${!VAR_NAME}" ] && export ${VAR_NAME}="${DEFAULT_VALUE}"
+	[ -z "${!VAR_NAME}" ] && export ${VAR_NAME}="${DEFAULT_VALUE}" || true
 }
 
 define_default_value ANDROID_APK_PACKAGE "org.retroshare.service"
