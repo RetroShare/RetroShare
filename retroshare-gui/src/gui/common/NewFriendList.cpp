@@ -213,7 +213,7 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
 
     /* Set sort */
     sortColumn(RsFriendListModel::COLUMN_THREAD_NAME, Qt::AscendingOrder);
-    toggleSortByState(false);
+
      // workaround for Qt bug, should be solved in next Qt release 4.7.0
     // http://bugreports.qt.nokia.com/browse/QTBUG-8270
     QShortcut *Shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->peerTreeWidget, 0, 0, Qt::WidgetShortcut);
@@ -235,6 +235,8 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
 
 	QHeaderView *h = ui->peerTreeWidget->header();
 	h->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    processSettings(true);
 
 	connect(ui->peerTreeWidget->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumn(int,Qt::SortOrder)));
 
@@ -473,20 +475,26 @@ void NewFriendList::processSettings(bool load)
     if (load) // load settings
     {
         std::cerr <<"Re-loading settings..." << std::endl;
+        // sort
+        mProxyModel->setSortByState( Settings->value("sortByState", mProxyModel->sortByState()).toBool());
+        mProxyModel->setShowOfflineNodes(!Settings->value("hideUnconnected", !mProxyModel->showOfflineNodes()).toBool());
+
+#ifdef DEBUG_NEW_FRIEND_LIST
+        std::cerr << "Loading sortByState=" << mProxyModel->sortByState() << std::endl;
+#endif
+
         // states
         setShowUnconnected(!Settings->value("hideUnconnected", !mProxyModel->showOfflineNodes()).toBool());
-        setShowState(Settings->value("showState", mModel->getDisplayStatusString()).toBool());
-        setShowGroups(Settings->value("showGroups", mModel->getDisplayGroups()).toBool());
+
+        mModel->setDisplayStatusString(Settings->value("showState", mModel->getDisplayStatusString()).toBool());
+        mModel->setDisplayGroups(Settings->value("showGroups", mModel->getDisplayGroups()).toBool());
 
         setColumnVisible(RsFriendListModel::COLUMN_THREAD_IP,Settings->value("showIP", isColumnVisible(RsFriendListModel::COLUMN_THREAD_IP)).toBool());
         setColumnVisible(RsFriendListModel::COLUMN_THREAD_ID,Settings->value("showID", isColumnVisible(RsFriendListModel::COLUMN_THREAD_ID)).toBool());
         setColumnVisible(RsFriendListModel::COLUMN_THREAD_LAST_CONTACT,Settings->value("showLastContact", isColumnVisible(RsFriendListModel::COLUMN_THREAD_LAST_CONTACT)).toBool());
         ui->peerTreeWidget->header()->restoreState(Settings->value("headers").toByteArray());
 
-        // sort
-        toggleSortByState(Settings->value("sortByState", mProxyModel->sortByState()).toBool());
-
-        // open groups
+       // open groups
         int arrayIndex = Settings->beginReadArray("Groups");
         for (int index = 0; index < arrayIndex; ++index) {
             Settings->setArrayIndex(index);
@@ -511,8 +519,9 @@ void NewFriendList::processSettings(bool load)
 
         // sort
         Settings->setValue("sortByState", mProxyModel->sortByState());
-
-        Settings->endArray();
+#ifdef DEBUG_NEW_FRIEND_LIST
+        std::cerr << "Saving sortByState=" << mProxyModel->sortByState() << std::endl;
+#endif
     }
 }
 
@@ -520,6 +529,7 @@ void NewFriendList::toggleSortByState(bool sort)
 {
     mProxyModel->setSortByState(sort);
 	mProxyModel->setFilterRegExp(QRegExp(QString(RsFriendListModel::FilterString))) ;// triggers a re-display.
+    processSettings(false);
 }
 
 void NewFriendList::changeEvent(QEvent *e)
@@ -1605,11 +1615,13 @@ void NewFriendList::toggleColumnVisible()
 void NewFriendList::setShowState(bool show)
 {
     applyWhileKeepingTree([show,this]() { mModel->setDisplayStatusString(show) ; });
+    processSettings(false);
 }
 
 void NewFriendList::setShowGroups(bool show)
 {
     applyWhileKeepingTree([show,this]() { mModel->setDisplayGroups(show) ; });
+    processSettings(false);
 }
 
 /**
