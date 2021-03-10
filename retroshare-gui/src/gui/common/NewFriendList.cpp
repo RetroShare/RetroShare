@@ -119,7 +119,7 @@ public:
 
 	bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
 	{
-		bool is_group_1 = left.data(RsFriendListModel::TypeRole).toUInt() == (uint)RsFriendListModel::ENTRY_TYPE_GROUP;
+        bool is_group_1 =  left.data(RsFriendListModel::TypeRole).toUInt() == (uint)RsFriendListModel::ENTRY_TYPE_GROUP;
 		bool is_group_2 = right.data(RsFriendListModel::TypeRole).toUInt() == (uint)RsFriendListModel::ENTRY_TYPE_GROUP;
 
 		if(is_group_1 ^ is_group_2)	// if the two are different, put the group first.
@@ -128,10 +128,10 @@ public:
 		bool online1 = (left .data(RsFriendListModel::OnlineRole).toInt() != RS_STATUS_OFFLINE);
 		bool online2 = (right.data(RsFriendListModel::OnlineRole).toInt() != RS_STATUS_OFFLINE);
 
-		if(online1 != online2 && m_sortByState)
+        if((online1 != online2) && m_sortByState)
 			return (m_header->sortIndicatorOrder()==Qt::AscendingOrder)?online1:online2 ;    // always put online nodes first
 
-		return left.data(RsFriendListModel::SortRole) < right.data(RsFriendListModel::SortRole) ;
+        return QSortFilterProxyModel::lessThan(left,right);
 	}
 
 	bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override
@@ -1123,6 +1123,7 @@ void NewFriendList::applyWhileKeepingTree(std::function<void()> predicate)
     std::cerr << "expanded paths are: " << std::endl;
     for(auto path:expanded_indexes)
         std::cerr << "        \"" << path.toStdString() << "\"" << std::endl;
+    std::cerr << "Current sort column is: " << mLastSortColumn << " and order is " << mLastSortOrder << std::endl;
 #endif
     whileBlocking(ui->peerTreeWidget)->clearSelection();
 
@@ -1140,7 +1141,9 @@ void NewFriendList::applyWhileKeepingTree(std::function<void()> predicate)
         col_sizes[i] = ui->peerTreeWidget->columnWidth(i);
     }
 
-
+#ifdef DEBUG_NEW_FRIEND_LIST
+    std::cerr << "Applying predicate..." << std::endl;
+#endif
     mProxyModel->setSourceModel(nullptr);
 
     predicate();
@@ -1158,6 +1161,9 @@ void NewFriendList::applyWhileKeepingTree(std::function<void()> predicate)
 
     // restore sorting
     // sortColumn(mLastSortColumn,mLastSortOrder);
+#ifdef DEBUG_NEW_FRIEND_LIST
+    std::cerr << "Sorting again with sort column: " << mLastSortColumn << " and order " << mLastSortOrder << std::endl;
+#endif
     mProxyModel->sort(mLastSortColumn,mLastSortOrder);
 
     if(selected_index.isValid())
@@ -1166,6 +1172,9 @@ void NewFriendList::applyWhileKeepingTree(std::function<void()> predicate)
 
 void NewFriendList::sortColumn(int col,Qt::SortOrder so)
 {
+#ifdef DEBUG_NEW_FRIEND_LIST
+    std::cerr << "Sorting with column=" << col << " and order=" << so << std::endl;
+#endif
     std::set<QString> expanded_indexes;
     QString selected;
     QModelIndex selected_index;
