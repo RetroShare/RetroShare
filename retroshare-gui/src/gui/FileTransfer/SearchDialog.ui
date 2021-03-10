@@ -223,6 +223,9 @@
       <property name="sortingEnabled">
        <bool>true</bool>
       </property>
+      <property name="animated">
+       <bool>false</bool>
+      </property>
       <column>
        <property name="text">
         <string>KeyWords</string>
@@ -260,6 +263,9 @@
          </property>
          <property name="sortingEnabled">
           <bool>true</bool>
+         </property>
+         <property name="animated">
+          <bool>false</bool>
          </property>
          <column>
           <property name="text">
