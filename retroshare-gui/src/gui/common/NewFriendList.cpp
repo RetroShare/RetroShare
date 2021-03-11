@@ -105,6 +105,13 @@
 
 Q_DECLARE_METATYPE(ElidedLabel*)
 
+#ifdef DEBUG_NEW_FRIEND_LIST
+static std::ostream& operator<<(std::ostream& o,const QModelIndex& i)
+{
+    return o << "(" << i.row() << "," << i.column() << ")";
+}
+#endif
+
 class FriendListSortFilterProxyModel: public QSortFilterProxyModel
 {
 public:
@@ -131,6 +138,9 @@ public:
         if((online1 != online2) && m_sortByState)
 			return (m_header->sortIndicatorOrder()==Qt::AscendingOrder)?online1:online2 ;    // always put online nodes first
 
+#ifdef DEBUG_NEW_FRIEND_LIST
+        std::cerr << "Comparing index " << left << " with index " << right << std::endl;
+#endif
         return QSortFilterProxyModel::lessThan(left,right);
 	}
 
@@ -1174,7 +1184,9 @@ void NewFriendList::applyWhileKeepingTree(std::function<void()> predicate)
 #ifdef DEBUG_NEW_FRIEND_LIST
     std::cerr << "Sorting again with sort column: " << mLastSortColumn << " and order " << mLastSortOrder << std::endl;
 #endif
+    mProxyModel->setSortingEnabled(true);
     mProxyModel->sort(mLastSortColumn,mLastSortOrder);
+    mProxyModel->setSortingEnabled(false);
 
     if(selected_index.isValid())
         ui->peerTreeWidget->scrollTo(selected_index);
