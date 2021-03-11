@@ -101,7 +101,6 @@
  * #define FRIENDS_DEBUG 1
  * #define DEBUG_NEW_FRIEND_LIST 1
  *****/
-#define DEBUG_NEW_FRIEND_LIST 1
 
 Q_DECLARE_METATYPE(ElidedLabel*)
 
