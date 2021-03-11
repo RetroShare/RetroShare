@@ -621,10 +621,10 @@ QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulo
 	QDomDocument doc;
 	if (doc.setContent(formattedText, &errorMsg, &errorLine, &errorColumn) == false) {
 
-		// convert text with QTextDocument
-		QTextDocument textDoc;
-		textDoc.setPlainText(text);
-		formattedText=textDoc.toHtml();
+		// convert text with QTextBrowser
+		QTextBrowser textBrowser;
+		textBrowser.setText(text);
+		formattedText=textBrowser.toHtml();
 		formattedText.remove(0,formattedText.indexOf("<"));
 		formattedText=saveSpace(formattedText);
 		doc.setContent(formattedText, &errorMsg, &errorLine, &errorColumn);
