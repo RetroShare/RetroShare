@@ -663,7 +663,8 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 					else
 						return QVariant(QString::fromUtf8(group->group_info.name.c_str()));
 
-				//case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(group->group_info.id.toStdString()));
+                case COLUMN_THREAD_ID:  return QVariant(QString::fromStdString(group->group_info.id.toStdString()));
+
 				default:
 				return QVariant();
 			}
