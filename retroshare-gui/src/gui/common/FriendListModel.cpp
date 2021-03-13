@@ -236,7 +236,8 @@ RsFriendListModel::EntryIndex RsFriendListModel::EntryIndex::parent() const
 			i.node_index = UNDEFINED_NODE_INDEX_VALUE;
 		break;
 		case ENTRY_TYPE_UNKNOWN:
-			RS_ERR("Unknown Entry type for parent.");
+			//Can be when request root index.
+		break;
 	}
 
 	return i;
