@@ -325,4 +325,20 @@ public:
 				return RsReputationLevel::NEUTRAL;
 		}
 	}
+
+	/**
+	 * @brief Pull new stuff from peers
+	 * @param peers peers to pull from, if empty all available peers are pulled
+	 */
+	virtual void pullFromPeers(
+	        std::set<RsPeerId> peers = std::set<RsPeerId>() ) = 0;
+
+	/**
+	 * @brief request online peers to pull updates from our node ASAP
+	 * @param peers peers to which request pull from, if empty all available
+	 * peers are requested to pull
+	 * @return success or error details
+	 */
+	virtual std::error_condition requestPull(
+	        std::set<RsPeerId> peers = std::set<RsPeerId>() ) = 0;
 };

@@ -41,6 +41,7 @@
 #include "rsserver/p3face.h"
 #include "retroshare/rsevents.h"
 #include "util/radix64.h"
+#include "util/cxx17retrocompat.h"
 
 #define PUB_GRP_MASK     0x000f
 #define RESTR_GRP_MASK   0x00f0
@@ -2723,7 +2724,8 @@ bool RsGenExchange::checkKeys(const RsTlvSecurityKeySet& keySet)
 
 void RsGenExchange::publishGrps()
 {
-    std::list<RsGxsGroupId> groups_to_subscribe ;
+	bool atLeastOneGroupCreatedSuccessfully = false;
+	std::list<RsGxsGroupId> groups_to_subscribe;
     
     {
 	    RS_STACK_MUTEX(mGenMtx) ;
@@ -2954,6 +2956,8 @@ void RsGenExchange::publishGrps()
 
 			    // add to published to allow acknowledgement
                 toNotify.insert(std::make_pair(token, GrpNote(true,ggps.mIsUpdate,grpId)));
+
+				atLeastOneGroupCreatedSuccessfully = true;
 		    }
 	    }
 
@@ -2972,9 +2976,14 @@ void RsGenExchange::publishGrps()
 
     // This is done off-mutex to avoid possible cross deadlocks with the net service.
     
-    if(mNetService!=NULL)
-		for(std::list<RsGxsGroupId>::const_iterator it(groups_to_subscribe.begin());it!=groups_to_subscribe.end();++it)
-			mNetService->subscribeStatusChanged((*it),true) ;
+	if(mNetService != nullptr)
+	{
+		for(auto& grpId : std::as_const(groups_to_subscribe))
+			mNetService->subscribeStatusChanged(grpId, true);
+
+		if(atLeastOneGroupCreatedSuccessfully)
+			mNetService->requestPull();
+	}
 }
 
 uint32_t RsGenExchange::generatePublicToken()

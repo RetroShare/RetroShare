@@ -250,6 +250,14 @@ public:
 
 	void threadTick() override; /// @see RsTickingThread
 
+
+	/// @see RsNetworkExchangeService
+	void pullFromPeers(std::set<RsPeerId> peers = std::set<RsPeerId>()) override;
+
+	/// @see RsNetworkExchangeService
+	std::error_condition requestPull(
+	        std::set<RsPeerId> peers = std::set<RsPeerId>() ) override;
+
 private:
 
     /*!
@@ -461,22 +469,6 @@ private:
     void locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, const RsPeerId& sslId, const RsGxsGroupId &grp_id, const uint32_t& transN);
     
 	void checkDistantSyncState();
-
-	/**
-	 * @brief Pull new stuff from peers
-	 * @param peers peers to pull from, if empty all available peers are pulled
-	 */
-	void pullFromPeers(std::set<RsPeerId> peers = std::set<RsPeerId>());
-
-	/**
-	 * @brief request online peers to pull updates from our node ASAP
-	 * @param peers peers to which request pull from, if empty all available
-	 * peers are requested to pull
-	 * @return success or error details
-	 * TODO: should this be exposed via RsNetworkExchangeService?
-	 */
-	std::error_condition requestPull(
-	        std::set<RsPeerId> peers = std::set<RsPeerId>() );
 
     void syncGrpStatistics();
     void addGroupItemToList(NxsTransaction*& tr,
