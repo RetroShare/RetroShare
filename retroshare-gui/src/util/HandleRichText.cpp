@@ -623,7 +623,11 @@ QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulo
 
 		// convert text with QTextDocument
 		QTextDocument textDoc;
-		textDoc.setPlainText(text);
+		if (Qt::mightBeRichText(formattedText))
+			textDoc.setHtml(formattedText);
+		else
+			textDoc.setPlainText(text);
+
 		formattedText=textDoc.toHtml();
 		formattedText.remove(0,formattedText.indexOf("<"));
 		formattedText=saveSpace(formattedText);
