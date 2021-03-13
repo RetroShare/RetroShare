@@ -3,8 +3,10 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2011-2011 by Robert Fernie <retroshare.project@gmail.com>         *
- * Copyright 2011-2011 by Christopher Evi-Parker                               *
+ * Copyright (C) 2011  Robert Fernie <retroshare.project@gmail.com>            *
+ * Copyright (C) 2011  Christopher Evi-Parker                                  *
+ * Copyright (C) 2021  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -62,8 +64,8 @@ class RsNetworkExchangeService
 {
 public:
 
-	RsNetworkExchangeService(){ return;}
-    virtual ~RsNetworkExchangeService() {}
+	RsNetworkExchangeService() = default;
+	virtual ~RsNetworkExchangeService() = default;
 
     virtual uint16_t serviceType() const =0;
     /*!
@@ -305,6 +307,22 @@ public:
 				return RsReputationLevel::NEUTRAL;
 		}
 	}
+
+	/**
+	 * @brief Pull new stuff from peers
+	 * @param peers peers to pull from, if empty all available peers are pulled
+	 */
+	virtual void pullFromPeers(
+	        std::set<RsPeerId> peers = std::set<RsPeerId>() ) = 0;
+
+	/**
+	 * @brief request online peers to pull updates from our node ASAP
+	 * @param peers peers to which request pull from, if empty all available
+	 * peers are requested to pull
+	 * @return success or error details
+	 */
+	virtual std::error_condition requestPull(
+	        std::set<RsPeerId> peers = std::set<RsPeerId>() ) = 0;
 };
 
 #endif // RSGNP_H
