@@ -96,14 +96,18 @@ void RSPermissionMatrixWidget::updateDisplay()
 
 void RSPermissionMatrixWidget::mousePressEvent(QMouseEvent *e)
 {
+#ifdef DEBUG_PERMISSION_MATRIX
     std::cerr << "mouse pressed at x=" << e->x() << ", y=" << e->y() << std::endl;
+#endif
 
     uint32_t service_id ;
     RsPeerId peer_id ;
 
     if(computeServiceAndPeer(e->x(),e->y(),service_id,peer_id))
     {
+#ifdef DEBUG_PERMISSION_MATRIX
         std::cerr << "Peer id: " << peer_id << ", service: " << service_id << std::endl;
+#endif
 
         // Make sure the service is not globally disabled
 
