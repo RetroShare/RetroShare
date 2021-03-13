@@ -35,7 +35,7 @@
 //    |
 //    +----------- sharePublishKeys()
 //    |
-//    +----------- syncWithPeers()
+//    +----------- pullFromPeers()
 //    |              |
 //    |              +--if AutoSync--- send global UpdateTS of each peer to itself => the peer knows the last
 //    |              |                 time current peer has received an updated from himself
@@ -127,14 +127,14 @@
 //                                                        (Set at server side to be mGrpServerUpdateItem->grpUpdateTS)
 //
 //                                                        Only updated in processCompletedIncomingTransaction() from Grp list transaction.
-//                                                        Used in syncWithPeers() sending in RsNxsSyncGrp once to all peers: peer will send data if
+//                                                        Used in pullFromPeers() sending in RsNxsSyncGrp once to all peers: peer will send data if
 //                                                        has something new. All time comparisons are in the friends' clock time.
 //
 //     mClientMsgUpdateMap: map< RsPeerId, map<grpId,TimeStamp > >
 //
 //                                                        Last msg list modification time sent by that peer Id
 //                                                        Updated in processCompletedIncomingTransaction() from Grp list trans.
-//                                                        Used in syncWithPeers() sending in RsNxsSyncGrp once to all peers.
+//                                                        Used in pullFromPeers() sending in RsNxsSyncGrp once to all peers.
 //                                                        Set at server to be mServerMsgUpdateMap[grpId]->msgUpdateTS
 //
 //     mGrpServerUpdateItem:  TimeStamp                   Last group local modification timestamp over all groups
@@ -150,7 +150,7 @@
 //
 //    tick()                                                                                                    tick()
 //      |                                                                                                         |
-//      +---- SyncWithPeers                                                                                       +-- recvNxsItemQueue()
+//      +---- pullFromPeers                                                                                       +-- recvNxsItemQueue()
 //                 |                                                                                                   |
 //                 +---------------- Send global UpdateTS of each peer to itself => the peer knows        +--------->  +------ handleRecvSyncGroup( RsNxsSyncGrp*)
 //                 |                 the last msg sent (stored in mClientGrpUpdateMap[peer_id]),          |            |            - parse all subscribed groups. For each, send a RsNxsSyncGrpItem with publish TS
@@ -457,7 +457,7 @@ int RsGxsNetService::tick()
 
     if((elapsed) < now)
     {
-        syncWithPeers();
+		pullFromPeers();
         syncGrpStatistics();
 		checkDistantSyncState();
 
@@ -570,39 +570,39 @@ RsGxsGroupId RsGxsNetService::hashGrpId(const RsGxsGroupId& gid,const RsPeerId& 
     return RsGxsGroupId( RsDirUtil::sha1sum(tmpmem,SIZE).toByteArray() );
 }
 
-void RsGxsNetService::syncWithPeers()
+void RsGxsNetService::pullFromPeers(std::set<RsPeerId> peers)
 {
 #ifdef NXS_NET_DEBUG_0
-    GXSNETDEBUG___ << "RsGxsNetService::syncWithPeers() this=" << (void*)this << ". serviceInfo=" << mServiceInfo << std::endl;
+	RS_DBG("this=", (void*)this, ". serviceInfo=", mServiceInfo);
 #endif
 
-    static RsNxsSerialiser ser(mServType) ;	// this is used to estimate bandwidth.
-
-    RS_STACK_MUTEX(mNxsMutex) ;
-
-    std::set<RsPeerId> peers;
-    mNetMgr->getOnlineList(mServiceInfo.mServiceType, peers);
-
-	if(mAllowDistSync && mGxsNetTunnel != NULL)
+	/* If specific peers are passed as paramether ask only to them */
+	if(peers.empty())
 	{
-		// Grab all online virtual peers of distant tunnels for the current service.
+		mNetMgr->getOnlineList(mServiceInfo.mServiceType, peers);
 
-		std::list<RsGxsNetTunnelVirtualPeerId> vpids ;
-		mGxsNetTunnel->getVirtualPeers(vpids);
+		if(mAllowDistSync && mGxsNetTunnel != nullptr)
+		{
+			/* Grab all online virtual peers of distant tunnels for the current
+			 * service. */
 
-		for(auto it(vpids.begin());it!=vpids.end();++it)
-			peers.insert(RsPeerId(*it)) ;
+			std::list<RsGxsNetTunnelVirtualPeerId> vpids ;
+			mGxsNetTunnel->getVirtualPeers(vpids);
+
+			for(auto it(vpids.begin());it!=vpids.end();++it)
+				peers.insert(RsPeerId(*it)) ;
+		}
 	}
 
-    if (peers.empty()) {
-        // nothing to do
-        return;
-    }
+	// Still empty? Then nothing to do
+	if (peers.empty()) return;
+
+
+	RS_STACK_MUTEX(mNxsMutex);
 
 	// for now just grps
 	for(auto sit = peers.begin(); sit != peers.end(); ++sit)
 	{
-
 		const RsPeerId peerId = *sit;
 
 		ClientGrpMap::const_iterator cit = mClientGrpUpdateMap.find(peerId);
@@ -624,8 +624,7 @@ void RsGxsNetService::syncWithPeers()
 		generic_sendItem(grp);
 	}
 
-    if(!mAllowMsgSync)
-        return ;
+	if(!mAllowMsgSync) return;
 
 #ifndef GXS_DISABLE_SYNC_MSGS
 
@@ -746,7 +745,7 @@ void RsGxsNetService::syncWithPeers()
 #endif
 }
 
-void RsGxsNetService::generic_sendItem(RsNxsItem *si)
+void RsGxsNetService::generic_sendItem(rs_owner_ptr<RsItem> si)
 {
 	// check if the item is to be sent to a distant peer or not
 
@@ -1718,13 +1717,25 @@ RsItem *RsGxsNetService::generic_recvItem()
 
 void RsGxsNetService::recvNxsItemQueue()
 {
-    RsItem *item ;
+	RsItem* item;
 
-    while(NULL != (item=generic_recvItem()))
-    {
+	while(nullptr != (item=generic_recvItem()))
+	{
 #ifdef NXS_NET_DEBUG_1
-        GXSNETDEBUG_P_(item->PeerId()) << "Received RsGxsNetService Item:" << (void*)item << " type=" << std::hex << item->PacketId() << std::dec << std::endl ;
+		RS_DBG( "Received RsGxsNetService Item: ", (void*)item, " type=",
+		        item->PacketId() );
 #endif
+		/* Handle pull request and other new items here to not mess with all the
+		 * old nested code and items hell */
+		switch(static_cast<RsNxsSubtype>(item->PacketSubType()))
+		{
+		case RsNxsSubtype::PULL_REQUEST:
+			std::unique_ptr<RsNxsPullRequestItem> pullItem(
+			            static_cast<RsNxsPullRequestItem*>(item) );
+			handlePullRequest(std::move(pullItem));
+			continue;
+		}
+
         // RsNxsItem needs dynamic_cast, since they have derived siblings.
         //
         RsNxsItem *ni = dynamic_cast<RsNxsItem*>(item) ;
@@ -5073,6 +5084,46 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 	{
 		std::cerr << "(EE) could not update database. Something went wrong." << std::endl;
 	}
+}
+
+std::error_condition RsGxsNetService::requestPull(std::set<RsPeerId> peers)
+{
+	/* If specific peers are passed as paramether ask only to them */
+	if(peers.empty())
+	{
+		mNetMgr->getOnlineList(mServiceInfo.mServiceType, peers);
+
+		if(mAllowDistSync && mGxsNetTunnel != nullptr)
+		{
+			/* Grab all online virtual peers of distant tunnels for the current
+			 * service. */
+
+			std::list<RsGxsNetTunnelVirtualPeerId> vpids ;
+			mGxsNetTunnel->getVirtualPeers(vpids);
+
+			for(auto it(vpids.begin());it!=vpids.end();++it)
+				peers.insert(RsPeerId(*it)) ;
+		}
+	}
+
+	// Still empty? Reports there are no available peers
+	if (peers.empty()) return std::errc::network_down;
+
+	for(auto& peerId: std::as_const(peers))
+	{
+		auto item = new RsNxsPullRequestItem(
+		            static_cast<RsServiceType>(mServType) );
+		item->PeerId(peerId);
+		generic_sendItem(item);
+	}
+
+	return std::error_condition();
+}
+
+void RsGxsNetService::handlePullRequest(
+        std::unique_ptr<RsNxsPullRequestItem> item )
+{
+	pullFromPeers(std::set<RsPeerId>{item->PeerId()});
 }
 
 bool RsGxsNetService::getGroupServerUpdateTS(const RsGxsGroupId& gid,rstime_t& group_server_update_TS, rstime_t& msg_server_update_TS)

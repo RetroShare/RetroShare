@@ -507,7 +507,8 @@ HEADERS +=	util/folderiterator.h \
     util/cxx11retrocompat.h \
     util/cxx14retrocompat.h \
     util/cxx17retrocompat.h \
-            util/rsurl.h
+    util/cxx23retrocompat.h \
+    util/rsurl.h
 
 SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftcontroller.cc \
