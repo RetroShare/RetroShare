@@ -35,8 +35,12 @@
 #include "serialiser/rstlvkeys.h"
 #include "gxs/rsgxsdata.h"
 
-// These items have "flag type" numbers, but this is not used.
+enum class RsNxsSubtype : uint8_t
+{
+	PULL_REQUEST = 0x90 /// @see RsNxsPullRequestItem
+};
 
+// These items have "flag type" numbers, but this is not used.
 // TODO: refactor as C++11 enum class
 const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_GRP_REQ_ITEM    = 0x01;
 const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_GRP_ITEM        = 0x02;
@@ -50,10 +54,6 @@ const uint8_t RS_PKT_SUBTYPE_NXS_MSG_ITEM             = 0x20;
 const uint8_t RS_PKT_SUBTYPE_NXS_TRANSAC_ITEM         = 0x40;
 const uint8_t RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY_ITEM = 0x80;
 
-enum class RsNxsSubtype : uint8_t
-{
-	PULL_REQUEST = 0x90 /// @see RsNxsPullRequestItem
-};
 
 #ifdef RS_DEAD_CODE
 // possibility create second service to deal with this functionality
@@ -525,8 +525,9 @@ class RsNxsSerialiser : public RsServiceSerializer
 {
 public:
 
-	explicit RsNxsSerialiser(uint16_t servtype) : RsServiceSerializer(servtype), SERVICE_TYPE(servtype) {}
-	virtual ~RsNxsSerialiser() {}
+	explicit RsNxsSerialiser(uint16_t servtype):
+	    RsServiceSerializer(servtype), SERVICE_TYPE(servtype) {}
+	virtual ~RsNxsSerialiser() = default;
 
 
     virtual RsItem *create_item(uint16_t service_id,uint8_t item_subtype) const ;
