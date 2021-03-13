@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2012-2012 by Christopher Evi-Parker                               *
+ * Copyright (C) 2012  Christopher Evi-Parker                                  *
+ * Copyright (C) 2021  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -19,8 +21,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef RSGXSNETSERVICE_H
-#define RSGXSNETSERVICE_H
+#pragma once
 
 #include <list>
 #include <queue>
@@ -387,6 +388,8 @@ private:
      */
     void handleRecvPublishKeys(RsNxsGroupPublishKeyItem*) ;
 
+	void handlePullRequest(std::unique_ptr<RsNxsPullRequestItem> item);
+
     /** E: item handlers **/
 
 
@@ -423,7 +426,23 @@ private:
     void locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, const RsPeerId& sslId, const RsGxsGroupId &grp_id, const uint32_t& transN);
     
 	void checkDistantSyncState();
-    void syncWithPeers();
+
+	/**
+	 * @brief Pull new stuff from peers
+	 * @param peers peers to pull from, if empty all available peers are pulled
+	 */
+	void pullFromPeers(std::set<RsPeerId> peers = std::set<RsPeerId>());
+
+	/**
+	 * @brief request online peers to pull updates from our node ASAP
+	 * @param peers peers to which request pull from, if empty all available
+	 * peers are requested to pull
+	 * @return success or error details
+	 * TODO: should this be exposed via RsNetworkExchangeService?
+	 */
+	std::error_condition requestPull(
+	        std::set<RsPeerId> peers = std::set<RsPeerId>() );
+
     void syncGrpStatistics();
     void addGroupItemToList(NxsTransaction*& tr,
     		const RsGxsGroupId& grpId, uint32_t& transN,
@@ -523,7 +542,7 @@ private:
     void cleanRejectedMessages();
     void processObserverNotifications();
 
-	void generic_sendItem(RsNxsItem *si);
+	void generic_sendItem(rs_owner_ptr<RsItem> si);
 	RsItem *generic_recvItem();
 
 private:
@@ -629,5 +648,3 @@ private:
 
     bool mUseMetaCache;
 };
-
-#endif // RSGXSNETSERVICE_H

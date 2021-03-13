@@ -3,7 +3,10 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2012 Christopher Evi-Parker,Robert Fernie<retroshare@lunamutt.com>*
+ * Copyright (C) 2012  Christopher Evi-Parker                                  *
+ * Copyright (C) 2012  Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2021  Gioacchino Mazzurco <gio@altermundi.net>                *
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -19,8 +22,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef RSNXSITEMS_H
-#define RSNXSITEMS_H
+#pragma once
 
 #include <map>
 #include <openssl/ssl.h>
@@ -35,6 +37,7 @@
 
 // These items have "flag type" numbers, but this is not used.
 
+// TODO: refactor as C++11 enum class
 const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_GRP_REQ_ITEM    = 0x01;
 const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_GRP_ITEM        = 0x02;
 const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_GRP_STATS_ITEM  = 0x03;
@@ -47,14 +50,19 @@ const uint8_t RS_PKT_SUBTYPE_NXS_MSG_ITEM             = 0x20;
 const uint8_t RS_PKT_SUBTYPE_NXS_TRANSAC_ITEM         = 0x40;
 const uint8_t RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY_ITEM = 0x80;
 
-// possibility create second service to deal with this functionality
+enum class RsNxsSubtype : uint8_t
+{
+	PULL_REQUEST = 0x90 /// @see RsNxsPullRequestItem
+};
 
+#ifdef RS_DEAD_CODE
+// possibility create second service to deal with this functionality
 const uint8_t RS_PKT_SUBTYPE_EXT_SEARCH_GRP   = 0x0001;
 const uint8_t RS_PKT_SUBTYPE_EXT_SEARCH_MSG   = 0x0002;
 const uint8_t RS_PKT_SUBTYPE_EXT_DELETE_GRP   = 0x0004;
 const uint8_t RS_PKT_SUBTYPE_EXT_DELETE_MSG   = 0x0008;
 const uint8_t RS_PKT_SUBTYPE_EXT_SEARCH_REQ   = 0x0010;
-
+#endif // def RS_DEAD_CODE
 
 /*!
  * Base class for Network exchange service
@@ -65,17 +73,14 @@ const uint8_t RS_PKT_SUBTYPE_EXT_SEARCH_REQ   = 0x0010;
  */
 class RsNxsItem : public RsItem
 {
-
 public:
-    RsNxsItem(uint16_t servtype, uint8_t subtype) : RsItem(RS_PKT_VERSION_SERVICE, servtype, subtype), transactionNumber(0)
-    {
-        setPriorityLevel(QOS_PRIORITY_RS_GXS_NET);
-        return;
-    }
-    virtual ~RsNxsItem(){}
-    virtual void clear() = 0;
+	RsNxsItem(uint16_t servtype, uint8_t subtype):
+	    RsItem(RS_PKT_VERSION_SERVICE, servtype, subtype), transactionNumber(0)
+	{ setPriorityLevel(QOS_PRIORITY_RS_GXS_NET); }
 
-    uint32_t transactionNumber; // set to zero if this is not a transaction item
+	virtual ~RsNxsItem() = default;
+
+	uint32_t transactionNumber; // set to zero if this is not a transaction item
 };
 
 
@@ -362,6 +367,22 @@ public:
 
 };
 
+/*!
+ * Used to request to a peer pull updates from us ASAP without waiting GXS sync
+ * timer */
+struct RsNxsPullRequestItem: RsItem
+{
+	explicit RsNxsPullRequestItem(RsServiceType servtype):
+	    RsItem( RS_PKT_VERSION_SERVICE,
+	            servtype,
+	            static_cast<uint8_t>(RsNxsSubtype::PULL_REQUEST),
+	            QOS_PRIORITY_RS_GXS_NET ) {}
+
+	/// @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob,
+	                     RsGenericSerializer::SerializeContext& ) override {}
+};
+
 
 /*!
  * Used to respond to a RsGrpMsgsReq
@@ -401,6 +422,7 @@ struct RsNxsMsg : RsNxsItem
 	RsGxsMsgMetaData* metaData;
 };
 
+#ifdef RS_DEAD_CODE
 /*!
  * Used to request a search of user data
  */
@@ -422,7 +444,7 @@ public:
     RsTlvBinaryData serviceSearchItem; // service aware of item class
     uint32_t expiration; // expiration date
 };
-
+#endif //def RS_DEAD_CODE
 
 #ifdef UNUSED_CODE
 
@@ -511,6 +533,3 @@ public:
 protected:
     const uint16_t SERVICE_TYPE;
 };
-
-
-#endif // RSNXSITEMS_H
