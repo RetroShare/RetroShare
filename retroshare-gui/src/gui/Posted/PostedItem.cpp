@@ -437,6 +437,10 @@ void PostedItem::setup()
 	ui->clearButton->hide();
 	ui->readAndClearButton->hide();
 	ui->nameLabel->hide();
+
+	//hide read & new not used
+	ui->readButton->hide();
+	ui->newLabel->hide();
 }
 
 void PostedItem::makeDownVote()
@@ -603,7 +607,7 @@ void PostedItem::fill()
 	ui->scoreLabel->setText(score);
 
 	// FIX THIS UP LATER.
-	ui->notes->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+    ui->notes->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), /* RSHTML_FORMATTEXT_EMBED_SMILEYS |*/ RSHTML_FORMATTEXT_EMBED_LINKS));
 
 	QTextDocument doc;
 	doc.setHtml(ui->notes->text());
@@ -652,6 +656,7 @@ void PostedItem::fill()
 		ui->clearButton->show();
 		ui->readAndClearButton->show();
 		ui->nameLabel->show();
+		ui->voteFrame->hide();
 	}
 
 	// disable voting buttons - if they have already voted.
@@ -698,7 +703,7 @@ void PostedItem::setReadStatus(bool isNew, bool isUnread)
 		ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png"));
 	}
 
-	ui->newLabel->setVisible(isNew);
+	//ui->newLabel->setVisible(isNew);
 
 	ui->mainFrame->setProperty("new", isNew);
 	ui->mainFrame->style()->unpolish(ui->mainFrame);

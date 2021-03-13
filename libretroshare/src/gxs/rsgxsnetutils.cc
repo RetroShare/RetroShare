@@ -287,16 +287,20 @@ bool MsgCircleIdsRequestVetting::cleared()
 	    return false ;
     }
     
+    uint32_t filtered_out_msgs=0;
+
     for(uint32_t i=0;i<mMsgs.size();)
         if(!mCircles->isRecipient(mCircleId,mGrpId,mMsgs[i].mAuthorId))
         {
-            std::cerr << "(WW) MsgCircleIdsRequestVetting::cleared() filtering out message " << mMsgs[i].mMsgId << " because it's signed by author " << mMsgs[i].mAuthorId << " which is not in circle " << mCircleId << std::endl;
-            
+            ++filtered_out_msgs;
             mMsgs[i] = mMsgs[mMsgs.size()-1] ;
             mMsgs.pop_back();
         }
         else
             ++i ;
+
+    if(filtered_out_msgs>0)
+        std::cerr << "(WW) " << filtered_out_msgs << " messages not sent because they are signed by author(s) not member of that circle " << mCircleId << std::endl;
     
     RsPgpId pgpId = mPgpUtils->getPGPId(mPeerId);
     bool can_send_res = mCircles->canSend(mCircleId, pgpId,mShouldEncrypt);

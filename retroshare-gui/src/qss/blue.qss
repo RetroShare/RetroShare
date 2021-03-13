@@ -173,3 +173,27 @@ QSplitter#splitter{
 
 }
 
+HomePage QToolButton#addButton {
+	font: bold;
+	font-size: 15pt;
+	color: white;
+	background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #E3EFFF, stop: 1 #87ADE4);
+	border: 1px solid #87ADE4;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+HomePage QToolButton#addButton:hover {
+	background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #e3e5ff, stop: 1 #879ae4);
+	border: 1px solid #879ae4;
+	border-radius: 4px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+MainWindow QListWidget {
+	font-size: 12pt;
+}
+

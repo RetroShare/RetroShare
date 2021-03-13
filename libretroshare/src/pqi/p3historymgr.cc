@@ -41,23 +41,14 @@
 RsHistory *rsHistory = NULL;
 
 p3HistoryMgr::p3HistoryMgr()
-	: p3Config(), mHistoryMtx("p3HistoryMgr")
+    : p3Config()
+    , nextMsgId(1)
+    , mPublicEnable(false), mLobbyEnable(true), mPrivateEnable(true), mDistantEnable(true)
+    , mPublicSaveCount(0), mLobbySaveCount(0), mPrivateSaveCount(0), mDistantSaveCount(0)
+    , mMaxStorageDurationSeconds(10*86400) // store for 10 days at most.
+    , mLastCleanTime(0)
+    , mHistoryMtx("p3HistoryMgr")
 {
-	nextMsgId = 1;
-
-	mPublicEnable = false;
-	mPrivateEnable = true;
-	mLobbyEnable = true;
-	mDistantEnable = true;
-
-	mPublicSaveCount  = 0;
-	mLobbySaveCount   = 0;
-	mPrivateSaveCount = 0;
-	mDistantSaveCount = 0;
-
-	mLastCleanTime = 0 ;
-
-	mMaxStorageDurationSeconds = 10*86400 ; // store for 10 days at most.
 }
 
 p3HistoryMgr::~p3HistoryMgr()
@@ -66,7 +57,6 @@ p3HistoryMgr::~p3HistoryMgr()
 
 /***** p3HistoryMgr *****/
 
-//void p3HistoryMgr::addMessage(bool incoming, const RsPeerId &chatPeerId, const RsPeerId &msgPeerId, const RsChatMsgItem *chatItem)
 void p3HistoryMgr::addMessage(const ChatMessage& cm)
 {
 	uint32_t addMsgId = 0;
@@ -82,49 +72,48 @@ void p3HistoryMgr::addMessage(const ChatMessage& cm)
 	{
 		RsStackMutex stack(mHistoryMtx); /********** STACK LOCKED MTX ******/
 
-
 		RsPeerId msgPeerId; // id of sending peer
 		RsPeerId chatPeerId; // id of chat endpoint
 		std::string peerName; //name of sending peer
 
-		bool enabled = false;
 		if (cm.chat_id.isBroadcast() && mPublicEnable == true) {
 			peerName = rsPeers->getPeerName(cm.broadcast_peer_id);
-			enabled = true;
 		}
-		if (cm.chat_id.isPeerId() && mPrivateEnable == true) {
+		else if (cm.chat_id.isPeerId() && mPrivateEnable == true) {
 			msgPeerId = cm.incoming ? cm.chat_id.toPeerId() : rsPeers->getOwnId();
 			peerName = rsPeers->getPeerName(msgPeerId);
-			enabled = true;
 		}
-		if (cm.chat_id.isLobbyId() && mLobbyEnable == true) {
-			peerName = cm.lobby_peer_gxs_id.toStdString();
-			enabled = true;
+		else if (cm.chat_id.isLobbyId() && mLobbyEnable == true) {
+			msgPeerId = RsPeerId(cm.lobby_peer_gxs_id);
+			RsIdentityDetails details;
+			if (rsIdentity->getIdDetails(cm.lobby_peer_gxs_id, details))
+				peerName = details.mNickname;
+			else
+				peerName = cm.lobby_peer_gxs_id.toStdString();
 		}
-
-		if(cm.chat_id.isDistantChatId()&& mDistantEnable == true)
+		else if(cm.chat_id.isDistantChatId()&& mDistantEnable == true)
 		{
 			DistantChatPeerInfo dcpinfo;
 			if (rsMsgs->getDistantChatStatus(cm.chat_id.toDistantChatId(), dcpinfo))
-            {
-                RsIdentityDetails det;
-                RsGxsId writer_id = cm.incoming?(dcpinfo.to_id):(dcpinfo.own_id);
+			{
+				RsIdentityDetails det;
+				RsGxsId writer_id = cm.incoming?(dcpinfo.to_id):(dcpinfo.own_id);
 
-                if(rsIdentity->getIdDetails(writer_id,det))
+				if(rsIdentity->getIdDetails(writer_id,det))
 					peerName = det.mNickname;
-                else
+				else
 					peerName = writer_id.toStdString();
-            }
-            else
-            {
-                RsErr() << "Cannot retrieve friend name for distant chat " << cm.chat_id.toDistantChatId() << std::endl;
+
+				msgPeerId = cm.incoming?RsPeerId(dcpinfo.own_id):RsPeerId(dcpinfo.to_id);
+			}
+			else
+			{
+				RS_ERR( "Cannot retrieve friend name for distant chat ", cm.chat_id.toDistantChatId() );
 				peerName = "";
-            }
+			}
 
-			enabled = true;
 		}
-
-		if(enabled == false)
+		else
 			return;
 
 		if(!chatIdToVirtualPeerId(cm.chat_id, chatPeerId))

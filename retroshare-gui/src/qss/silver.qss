@@ -136,3 +136,29 @@ QLabel#fromText{
 
 }
 
+HomePage QToolButton#addButton {
+	font: bold;
+	font-size: 15pt;
+	color: white;
+	background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #F9F9FF, stop: 1 #9F9DB9);
+	border: 1px solid #9F9DB9;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+HomePage QToolButton#addButton:hover {
+	background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #eaeaff, stop: 1 #9f9dbc);
+	border: 1px solid #9F9DB9;
+	border-radius: 4px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+MainWindow QListWidget {
+	font-size: 12pt;
+}
+

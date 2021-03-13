@@ -82,6 +82,7 @@ void updateCommentCounts( std::vector<RsGxsChannelPost>& posts, std::vector<RsGx
     {
         post_indices[posts[i].mMeta.mMsgId] = i;
         posts[i].mCommentCount = 0;	// should be 0 already, but we secure that value.
+        posts[i].mUnreadCommentCount = 0;
     }
 
     // now look into comments and increase the count
@@ -100,6 +101,9 @@ void updateCommentCounts( std::vector<RsGxsChannelPost>& posts, std::vector<RsGx
             continue;
 
         ++posts[it->second].mCommentCount;
+
+        if(IS_MSG_NEW(comments[i].mMeta.mMsgStatus))
+            ++posts[it->second].mUnreadCommentCount;
     }
 }
 
@@ -129,21 +133,42 @@ void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEve
             RsThread::async([this, E]()
 			{
                 // 1 - get message data from p3GxsChannels. No need for pointers here, because we send only a single post to postToObject()
+                //     At this point we dont know what kind of msg id we have. It can be a vote, a comment or an actual message.
 
 				std::vector<RsGxsChannelPost> posts;
 				std::vector<RsGxsComment>     comments;
 				std::vector<RsGxsVote>        votes;
+                std::set<RsGxsMessageId>      msg_ids{ E.mChannelMsgId };
 
-                if(!rsGxsChannels->getChannelContent(E.mChannelGroupId,std::set<RsGxsMessageId>{ E.mChannelMsgId }, posts,comments,votes))
+                if(!rsGxsChannels->getChannelContent(E.mChannelGroupId,msg_ids, posts,comments,votes))
 				{
                     std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel message data for channel/msg " << E.mChannelGroupId << "/" << E.mChannelMsgId << std::endl;
 					return;
 				}
 
+                // Check if what we have actually is a comment or a vote. If so we need to update the actual message they refer to
+
+                if(posts.empty())	// means we have a comment or a vote
+                {
+                    msg_ids.clear();
+
+                    for(auto c:comments) msg_ids.insert(c.mMeta.mThreadId);
+                    for(auto v:votes   ) msg_ids.insert(v.mMeta.mThreadId);
+
+                    comments.clear();
+                    votes.clear();
+
+                    if(!rsGxsChannels->getChannelContent(E.mChannelGroupId,msg_ids,posts,comments,votes))
+                    {
+                        std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel message data for channel/msg " << E.mChannelGroupId << "/" << E.mChannelMsgId << std::endl;
+                        return;
+                    }
+                }
+
                 // Need to call this in order to get the actuall comment count. The previous call only retrieves the message, since we supplied the message ID.
                 // another way to go would be to save the comment ids of the existing message and re-insert them before calling getChannelContent.
 
-                if(!rsGxsChannels->getChannelComments(E.mChannelGroupId,std::set<RsGxsMessageId>{ E.mChannelMsgId },comments))
+                if(!rsGxsChannels->getChannelComments(E.mChannelGroupId,msg_ids,comments))
                 {
                     std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve message comment data for channel/msg " << E.mChannelGroupId << "/" << E.mChannelMsgId << std::endl;
                     return;
@@ -178,23 +203,22 @@ void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEve
 
 void RsGxsChannelPostsModel::initEmptyHierarchy()
 {
-    preMods();
+	beginResetModel();
 
-    mPosts.clear();
-    mFilteredPosts.clear();
+	mPosts.clear();
+	mFilteredPosts.clear();
 
-    postMods();
+	endResetModel();
 }
 
 void RsGxsChannelPostsModel::preMods()
 {
-	beginResetModel();
+	emit layoutAboutToBeChanged();
 }
 void RsGxsChannelPostsModel::postMods()
 {
-	endResetModel();
-
-    triggerViewUpdate();
+	triggerViewUpdate();
+	emit layoutChanged();
 }
 void RsGxsChannelPostsModel::triggerViewUpdate()
 {
@@ -219,13 +243,13 @@ void RsGxsChannelPostsModel::getFilesList(std::list<ChannelPostFileInfo>& files)
 
 void RsGxsChannelPostsModel::setFilter(const QStringList& strings,bool only_unread, uint32_t& count)
 {
-    preMods();
+	preMods();
 
-	beginRemoveRows(QModelIndex(),0,rowCount()-1);
-    endRemoveRows();
+	beginResetModel();
 
-    mFilteredPosts.clear();
-    //mFilteredPosts.push_back(0);
+	mFilteredPosts.clear();
+	//mFilteredPosts.push_back(0);
+	endResetModel();
 
     for(size_t i=0;i<mPosts.size();++i)
     {
@@ -243,8 +267,11 @@ void RsGxsChannelPostsModel::setFilter(const QStringList& strings,bool only_unre
 
     count = mFilteredPosts.size();
 
-    beginInsertRows(QModelIndex(),0,rowCount()-1);
-    endInsertRows();
+	if (rowCount()>0)
+	{
+		beginInsertRows(QModelIndex(),0,rowCount()-1);
+		endInsertRows();
+	}
 
 	postMods();
 }
@@ -296,8 +323,8 @@ bool RsGxsChannelPostsModel::getPostData(const QModelIndex& i,RsGxsChannelPost& 
 
 bool RsGxsChannelPostsModel::hasChildren(const QModelIndex &parent) const
 {
-    if(!parent.isValid())
-        return true;
+	if(!parent.isValid())
+		return true;
 
 	return false;	// by default, no channel post has children
 }
@@ -349,45 +376,45 @@ QModelIndex RsGxsChannelPostsModel::index(int row, int column, const QModelIndex
 	return createIndex(row,column,ref) ;
 }
 
-QModelIndex RsGxsChannelPostsModel::parent(const QModelIndex& index) const
+QModelIndex RsGxsChannelPostsModel::parent(const QModelIndex& /*index*/) const
 {
-    if(!index.isValid())
-        return QModelIndex();
-
 	return QModelIndex();	// there's no hierarchy here. So nothing to do!
 }
 
 Qt::ItemFlags RsGxsChannelPostsModel::flags(const QModelIndex& index) const
 {
     if (!index.isValid())
-        return 0;
+        return Qt::ItemFlags();
 
     return QAbstractItemModel::flags(index);
 }
 
 bool RsGxsChannelPostsModel::setNumColumns(int n)
 {
-    if(n < 1)
-    {
-        RsErr() << __PRETTY_FUNCTION__ << " Attempt to set a number of column of 0. This is wrong." << std::endl;
-        return false;
-    }
-    if((int)mColumns == n)
-        return false;
+	if(n < 1)
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Attempt to set a number of column of 0. This is wrong." << std::endl;
+		return false;
+	}
+	if((int)mColumns == n)
+		return false;
 
 	preMods();
 
-	beginRemoveRows(QModelIndex(),0,rowCount()-1);
-    endRemoveRows();
+	beginResetModel();
+	endResetModel();
 
-    mColumns = n;
+	mColumns = n;
 
-	beginInsertRows(QModelIndex(),0,rowCount()-1);
-    endInsertRows();
+	if (rowCount()>0)
+	{
+		beginInsertRows(QModelIndex(),0,rowCount()-1);
+		endInsertRows();
+	}
 
 	postMods();
 
-    return true;
+	return true;
 }
 
 quintptr RsGxsChannelPostsModel::getChildRef(quintptr ref,int index) const
@@ -425,8 +452,8 @@ quintptr RsGxsChannelPostsModel::getParentRow(quintptr ref,int& row) const
 
 int RsGxsChannelPostsModel::getChildrenCount(quintptr ref) const
 {
-    if(ref == quintptr(0))
-        return rowCount()-1;
+	if(ref == quintptr(0))
+		return rowCount()-1;
 
 	return 0;
 }
@@ -524,10 +551,9 @@ void RsGxsChannelPostsModel::updateChannel(const RsGxsGroupId& channel_group_id)
 
 void RsGxsChannelPostsModel::clear()
 {
-    preMods();
+	preMods();
 
-    mPosts.clear();
-    initEmptyHierarchy();
+	initEmptyHierarchy();
 
 	postMods();
 	emit channelPostsLoaded();
@@ -540,28 +566,27 @@ bool operator<(const RsGxsChannelPost& p1,const RsGxsChannelPost& p2)
 
 void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vector<RsGxsChannelPost>& posts)
 {
-    preMods();
+	preMods();
 
-	beginRemoveRows(QModelIndex(),0,rowCount()-1);
-    endRemoveRows();
+	initEmptyHierarchy();
+	mChannelGroup = group;
 
-    mPosts.clear();
-    mChannelGroup = group;
+	createPostsArray(posts);
 
-    createPostsArray(posts);
+	std::sort(mPosts.begin(),mPosts.end());
 
-    std::sort(mPosts.begin(),mPosts.end());
-
-    mFilteredPosts.clear();
-    for(uint32_t i=0;i<mPosts.size();++i)
-        mFilteredPosts.push_back(i);
+	for(uint32_t i=0;i<mPosts.size();++i)
+		mFilteredPosts.push_back(i);
 
 #ifdef DEBUG_CHANNEL_MODEL
-   // debug_dump();
+	// debug_dump();
 #endif
 
-	beginInsertRows(QModelIndex(),0,rowCount()-1);
-    endInsertRows();
+	if (rowCount()>0)
+	{
+		beginInsertRows(QModelIndex(),0,rowCount()-1);
+		endInsertRows();
+	}
 
 	postMods();
 
@@ -570,8 +595,8 @@ void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vecto
 
 void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
 {
-    if(group_id.isNull())
-        return;
+	if(group_id.isNull())
+		return;
 
 	RsThread::async([this, group_id]()
 	{
@@ -770,12 +795,12 @@ void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
 
     // 2 - then call the async methods
 
-    RsThread::async([pairs, read_status]()
-    {
-        for(uint32_t i=0;i<pairs.size();++i)
-            if(!rsGxsChannels->markRead(pairs[i],read_status))
-                 RsErr() << "setAllMsgReadStatus: failed to change status of msg " << pairs[i].first << " in group " << pairs[i].second << " to status " << read_status << std::endl;
-    });
+    for(uint32_t i=0;i<pairs.size();++i)
+        RsThread::async([p=pairs[i], read_status]()	// use async because each markRead() waits for the token to complete in order to properly acknowledge it.
+        {
+            if(!rsGxsChannels->markRead(p,read_status))
+                RsErr() << "setAllMsgReadStatus: failed to change status of msg " << p.first << " in group " << p.second << " to status " << read_status << std::endl;
+        });
 }
 
 void RsGxsChannelPostsModel::setMsgReadStatus(const QModelIndex& i,bool read_status)

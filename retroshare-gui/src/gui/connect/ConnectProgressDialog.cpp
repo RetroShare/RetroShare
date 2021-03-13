@@ -875,32 +875,28 @@ void ConnectProgressDialog::setStatusMessage(uint32_t status, const QString &tit
 	{
 		case MESSAGE_STATUS_INPROGRESS:
 			{
-				QPixmap pm(":/images/graph-blue.png");
-				ui->statusIcon->setPixmap(pm.scaledToWidth(40));
+				ui->statusprogressBar->setStyleSheet("QProgressBar::chunk {background: #ffca18; }");
 			}
 			break;
 		case MESSAGE_STATUS_SUCCESS:
 			{
-				QPixmap pm(":/images/graph-downloaded.png");
-				ui->statusIcon->setPixmap(pm.scaledToWidth(40));
+				ui->statusprogressBar->setStyleSheet("QProgressBar::chunk {background: #0ed145; }");
 			}
 			break;
 		case MESSAGE_STATUS_CONFIG_ERROR:
 			{
-				QPixmap pm(":/images/graph-downloading.png");
-				ui->statusIcon->setPixmap(pm.scaledToWidth(40));
+				ui->statusprogressBar->setStyleSheet("QProgressBar::chunk {background: #800000; }");
 			}
 			break;
 		case MESSAGE_STATUS_PEER_ERROR:
 			{
-				QPixmap pm(":/images/graph-checking.png");
-				ui->statusIcon->setPixmap(pm.scaledToWidth(40));
+				ui->statusprogressBar->setStyleSheet("QProgressBar::chunk {background: #c3c3c3; }");
+				ui->statusprogressBar->setValue(0);
 			}
 			break;
 		case MESSAGE_STATUS_UNKNOWN_ERROR:
 			{
-				QPixmap pm(":/images/graph-checking.png");
-				ui->statusIcon->setPixmap(pm.scaledToWidth(40));
+				ui->statusprogressBar->setStyleSheet("QProgressBar::chunk {background: #ffca18; }");
 			}
 			break;
 	}

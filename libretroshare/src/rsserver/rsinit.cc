@@ -1927,20 +1927,26 @@ RsInit::LoadCertificateStatus RsLoginHelper::attemptLogin(const RsPeerId& accoun
 {
 	if(isLoggedIn()) return RsInit::ERR_ALREADY_RUNNING;
 
-    if(!password.empty())
-	{
-		if(!rsNotify->cachePgpPassphrase(password)) return RsInit::ERR_UNKNOWN;
-		if(!rsNotify->setDisableAskPassword(true)) return RsInit::ERR_UNKNOWN;
-	}
-	if(!RsAccounts::SelectAccount(account)) return RsInit::ERR_UNKNOWN;
-	std::string _ignore_lockFilePath;
-	RsInit::LoadCertificateStatus ret = RsInit::LockAndLoadCertificates(false, _ignore_lockFilePath);
+    {
+        if(!RsAccounts::SelectAccount(account))
+            return RsInit::ERR_UNKNOWN;
 
-	if(!rsNotify->setDisableAskPassword(false)) return RsInit::ERR_UNKNOWN;
-	if(!rsNotify->clearPgpPassphrase()) return RsInit::ERR_UNKNOWN;
-	if(ret != RsInit::OK) return ret;
-	if(RsControl::instance()->StartupRetroShare() == 1) return RsInit::OK;
-	return RsInit::ERR_UNKNOWN;
+        if(!password.empty())
+        {
+            rsNotify->cachePgpPassphrase(password);
+            rsNotify->setDisableAskPassword(true);
+        }
+        std::string _ignore_lockFilePath;
+        RsInit::LoadCertificateStatus ret = RsInit::LockAndLoadCertificates(false, _ignore_lockFilePath);
+
+        rsNotify->setDisableAskPassword(false) ;
+        rsNotify->clearPgpPassphrase() ;
+
+        if(ret == RsInit::OK && RsControl::instance()->StartupRetroShare() == 1)
+            return RsInit::OK;
+
+        return ret;
+    }
 }
 
 /*static*/ bool RsLoginHelper::collectEntropy(uint32_t bytes)

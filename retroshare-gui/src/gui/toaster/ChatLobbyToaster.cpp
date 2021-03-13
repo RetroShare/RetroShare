@@ -38,7 +38,7 @@ ChatLobbyToaster::ChatLobbyToaster(const ChatLobbyId &lobby_id, const RsGxsId &s
 	//ui.textLabel->setText(RsHtml().formatText(NULL, message, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_CLEANSTYLE));
     // Disabled, because emoticon replacement kills performance
 	ui.textLabel->setText(RsHtml().formatText(NULL, message, RSHTML_FORMATTEXT_CLEANSTYLE));
-	ui.avatarWidget->setFrameType(AvatarWidget::NORMAL_FRAME);
+	ui.avatarWidget->setFrameType(AvatarWidget::NO_FRAME);
 	ui.avatarWidget->setDefaultAvatar(":images/chat_64.png");
 
 	/* Get sender info */

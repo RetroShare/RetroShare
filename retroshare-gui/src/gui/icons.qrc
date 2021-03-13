@@ -53,6 +53,7 @@
         <file>icons/gmail.png</file>
         <file>icons/help_128.png</file>
         <file>icons/help_64.png</file>
+        <file>icons/identities.png</file>
         <file>icons/information_128.png</file>
         <file>icons/internet_128.png</file>
         <file>icons/invite64.png</file>
@@ -62,6 +63,7 @@
         <file>icons/logo_2_connected_128.png</file>
         <file>icons/outlook.png</file>
         <file>icons/question.png</file>
+        <file>icons/ssl.png</file>
         <file>icons/plugins_128.png</file>
         <file>icons/png/add.png</file>
         <file>icons/png/add-identity.png</file>
@@ -91,6 +93,7 @@
         <file>icons/png/forums.png</file>
         <file>icons/png/fullscreen_arrows.png</file>
         <file>icons/png/highlight.png</file>
+        <file>icons/png/history-clock-white.png</file>
         <file>icons/png/help.png</file>
         <file>icons/png/home.png</file>
         <file>icons/png/info.png</file>
@@ -242,6 +245,7 @@
         <file>icons/no-tor.png</file>
         <file>icons/tor-starting.png</file>
         <file>icons/tor-stopping.png</file>
+        <file>icons/i2p-128.png</file>
         <file>icons/user-away_64.png</file>
         <file>icons/user-away-extended_64.png</file>
         <file>icons/user-busy_64.png</file>

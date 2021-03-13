@@ -202,7 +202,7 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 			moOption.decorationPosition = QStyleOptionViewItem::Left;
 			moOption.decorationSize = QSize();
 			moOption.displayAlignment = Qt::AlignLeft | Qt::AlignTop;
-			moOption.features=0;
+			moOption.features=QStyleOptionViewItem::ViewItemFeatures();
 			moOption.font = QFont();
 			moOption.icon = QIcon();
 			moOption.index = QModelIndex();
@@ -217,7 +217,8 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 			moOption.palette = QPalette();
 			moOption.styleObject = nullptr;
 		}
-		QStyledItemDelegate::paint(&moPnt, moOption, QModelIndex());
+		//QStyledItemDelegate::paint(&moPnt, moOption, QModelIndex(index));//This update option now.
+		ownStyle->drawControl(QStyle::CE_ItemViewItem, &moOption, &moPnt, widget);
 
 		//// But these lines doesn't works.
 		{
@@ -300,29 +301,29 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 	{
 		QStyleOptionViewItem tstOption = option;
 		// Reduce rect to get this item bg color external and base internal
-		tstOption.rect.adjust(3,3,-6,-6);
+		tstOption.rect.adjust(2,2,-2,-2);
 		// To draw with base for debug purpose
-		QStyledItemDelegate::paint(painter, tstOption, index);
+		RSStyledItemDelegate::paint(painter, tstOption, index);
 	}
 #endif
 
 	// draw the check mark
 	if (ownOption.features & QStyleOptionViewItem::HasCheckIndicator) {
-		QStyleOptionViewItem option(*&ownOption);
-		option.rect = checkRect;
-		option.state = option.state & ~QStyle::State_HasFocus;
+		QStyleOptionViewItem cmOption(*&ownOption);
+		cmOption.rect = checkRect;
+		cmOption.state = cmOption.state & ~QStyle::State_HasFocus;
 		switch (ownOption.checkState) {
 			case Qt::Unchecked:
-				option.state |= QStyle::State_Off;
+				cmOption.state |= QStyle::State_Off;
 			break;
 			case Qt::PartiallyChecked:
-				option.state |= QStyle::State_NoChange;
+				cmOption.state |= QStyle::State_NoChange;
 			break;
 			case Qt::Checked:
-				option.state |= QStyle::State_On;
+				cmOption.state |= QStyle::State_On;
 			break;
 		}
-		ownStyle->drawPrimitive(QStyle::PE_IndicatorItemViewItemCheck, &option, painter, widget);
+		ownStyle->drawPrimitive(QStyle::PE_IndicatorItemViewItemCheck, &cmOption, painter, widget);
 	}
 	// draw the icon
 	{
@@ -339,7 +340,7 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 					mode = QIcon::Disabled;
 				else if (ownOption.state & QStyle::State_Selected)
 					mode = QIcon::Selected;
-				QIcon::State state = ownOption.state & QStyle::State_Open ? QIcon::On : QIcon::Off;
+				QIcon::State state = (ownOption.state & QStyle::State_Open) ? QIcon::On : QIcon::Off;
 				ownOption.icon.paint(painter, iconRect, ownOption.decorationAlignment, mode, state);
 			}
 			// Then overlay with waiting
@@ -379,7 +380,12 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 
 		QTextLayout textLayout(ownOption.text, painter->font());
 		QTextOption to = textLayout.textOption();
-		StyledElidedLabel::paintElidedLine(painter,ownOption.text,textRect,ownOption.font,ownOption.displayAlignment,to.wrapMode()&QTextOption::WordWrap,mPaintRoundedRect);
+		to.setWrapMode((ownOption.features & QStyleOptionViewItem::WrapText) ? QTextOption::WordWrap : QTextOption::NoWrap);
+		const int textHMargin = ownStyle->pixelMetric(QStyle::PM_FocusFrameHMargin, nullptr, widget) + 1;
+		const int textVMargin = ownStyle->pixelMetric(QStyle::PM_FocusFrameVMargin, nullptr, widget) + 1;
+		textRect = textRect.adjusted(textHMargin, textVMargin, -textHMargin, -textVMargin); // remove width padding
+
+		StyledElidedLabel::paintElidedLine(painter,ownOption.text,textRect,ownOption.font,ownOption.displayAlignment,to.wrapMode(),mPaintRoundedRect);
 	}
 	painter->restore();
 #ifdef DEBUG_EID_PAINT
@@ -393,7 +399,10 @@ bool RSElidedItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 		QMouseEvent *ev = static_cast<QMouseEvent *>(event);
 		if (ev) {
 			if (ev->buttons()==Qt::LeftButton) {
+#ifdef DEBUG_EID_PAINT
 				QVariant var = index.data();
+				Q_UNUSED(var);
+#endif
 				if (index.data().type() == QVariant::String) {
 					QString text = index.data().toString();
 					if (!text.isEmpty()) {
@@ -417,13 +426,17 @@ bool RSElidedItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 							ownOption.fontMetrics = QFontMetrics(font);
 						}
 						QRect textRect = ownStyle->subElementRect(QStyle::SE_ItemViewItemText, &ownOption, widget);
+						const int textHMargin = ownStyle->pixelMetric(QStyle::PM_FocusFrameHMargin, nullptr, widget) + 1;
+						const int textVMargin = ownStyle->pixelMetric(QStyle::PM_FocusFrameVMargin, nullptr, widget) + 1;
+						textRect = textRect.adjusted(textHMargin, textVMargin, -textHMargin, -textVMargin); // remove width padding
 
 						QTextLayout textLayout(text, ownOption.font);
 						QTextOption to = textLayout.textOption();
+						to.setWrapMode((ownOption.features & QStyleOptionViewItem::WrapText) ? QTextOption::WordWrap : QTextOption::NoWrap);
 
 						//Update RSElidedItemDelegate as only one delegate for all items
 						QRect rectElision;
-						bool elided = StyledElidedLabel::paintElidedLine(nullptr,text,textRect,ownOption.font,ownOption.displayAlignment,to.wrapMode()&QTextOption::WordWrap,true,&rectElision);
+						bool elided = StyledElidedLabel::paintElidedLine(nullptr,text,textRect,ownOption.font,ownOption.displayAlignment,to.wrapMode(),true,&rectElision);
 						if (elided && (rectElision.contains(ev->pos()))){
 							QToolTip::showText(ev->globalPos(),QString("<FONT>") + text + QString("</FONT>"));
 							return true; // eat event

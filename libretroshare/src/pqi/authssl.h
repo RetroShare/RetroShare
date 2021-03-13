@@ -161,6 +161,8 @@ public:
 
 	/** Initialisation Functions (Unique) */
 	AuthSSLimpl();
+	virtual ~AuthSSLimpl();
+
 	bool validateOwnCertificate(X509 *x509, EVP_PKEY *pkey) override;
 
 	bool active() override;

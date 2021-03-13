@@ -907,7 +907,7 @@
               </font>
              </property>
              <property name="text">
-              <string>Chatlobbies</string>
+              <string>Chat rooms</string>
              </property>
             </widget>
            </item>
@@ -920,7 +920,7 @@
               </font>
              </property>
              <property name="text">
-              <string>Private chat</string>
+              <string>Node-to-node chat</string>
              </property>
             </widget>
            </item>
@@ -933,7 +933,7 @@
               </font>
              </property>
              <property name="text">
-              <string>Group chat</string>
+              <string>Broadcast</string>
              </property>
             </widget>
            </item>

@@ -38,7 +38,6 @@
 /****
  * #define POSTBASE_DEBUG 1
  ****/
-#define POSTBASE_DEBUG 1
 
 #define POSTBASE_BACKGROUND_PROCESSING	0x0002
 #define PROCESSING_START_PERIOD		30
@@ -630,8 +629,7 @@ void p3PostBase::background_loadMsgs(const uint32_t &token, bool unprocessed)
 			else
 			{
 				/* unknown! */
-				std::cerr << "p3PostBase::background_processNewMessages() ERROR Strange NEW Message:";
-				std::cerr << std::endl;
+                std::cerr << "p3PostBase::background_processNewMessages() ERROR Strange NEW Message:" << std::endl;
 				std::cerr << "\t" << (*vit)->meta;
 				std::cerr << std::endl;
 	
@@ -849,12 +847,14 @@ bool p3PostBase::background_cleanup()
 
 
 	// Overloaded from GxsTokenQueue for Request callbacks.
-void p3PostBase::handleResponse(uint32_t token, uint32_t req_type)
+void p3PostBase::handleResponse(uint32_t token, uint32_t req_type
+                                , RsTokenService::GxsRequestStatus status)
 {
 #ifdef POSTBASE_DEBUG
-    std::cerr << "p3PostBase::handleResponse(" << token << "," << req_type << ")";
-    std::cerr << std::endl;
+	std::cerr << "p3PostBase::handleResponse(" << token << "," << req_type << "," << status << ")" << std::endl;
 #endif
+	if (status != RsTokenService::COMPLETE)
+		return; //For now, only manage Complete request
 
 	// stuff.
 	switch(req_type)

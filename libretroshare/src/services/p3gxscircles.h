@@ -227,7 +227,12 @@ public:
 	        const std::set<RsPgpId>& localMembers = std::set<RsPgpId>()
 	        ) override;
 
-	/// @see RsGxsCircles
+    bool editCircle( const RsGxsCircleId& circleId,const std::string& circleName, RsGxsCircleType circleType,
+                     const RsGxsCircleId& restrictedId,
+                     const RsGxsId& authorId, const std::set<RsGxsId>& gxsIdMembers,
+                     const std::set<RsPgpId>& localMembers ) ;
+
+    /// @see RsGxsCircles
 	bool editCircle(RsGxsCircleGroup& cData) override;
 
 	/// @see RsGxsCircles
@@ -250,10 +255,10 @@ public:
 	bool revokeIdsFromCircle( const std::set<RsGxsId>& identities,
 	                        const RsGxsCircleId& circleId ) override;
 
-    /// @see RsGxsCircles
+	/// @see RsGxsCircles
 	bool getCircleRequest(const RsGxsGroupId& circleId,
-                          const RsGxsMessageId& msgId,
-                          RsGxsCircleMsg& msg) override;
+	                      const RsGxsMessageId& msgId,
+	                      RsGxsCircleMsg& msg) override;
 
 	/// @see RsGxsCircles
 	bool exportCircleLink(
@@ -270,58 +275,64 @@ public:
 	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
 	        ) override;
 
-    virtual bool getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails &details) override;
-    virtual bool getCircleExternalIdList(std::set<RsGxsCircleId> &circleIds) override;
+	virtual bool getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails &details) override;
+	virtual bool getCircleExternalIdList(std::set<RsGxsCircleId> &circleIds) override;
 
-    virtual bool isLoaded(const RsGxsCircleId &circleId) override;
-    virtual bool loadCircle(const RsGxsCircleId &circleId) override;
+	virtual bool isLoaded(const RsGxsCircleId &circleId) override;
+	virtual bool loadCircle(const RsGxsCircleId &circleId) override;
 
-    virtual int canSend(const RsGxsCircleId &circleId, const RsPgpId &id, bool &should_encrypt) override;
-    virtual int canReceive(const RsGxsCircleId &circleId, const RsPgpId &id) override;
-    
-    virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist)  override;
-    virtual bool recipients(const RsGxsCircleId &circleId, const RsGxsGroupId& dest_group, std::list<RsGxsId> &gxs_ids)  override;
-        virtual bool isRecipient(const RsGxsCircleId &circleId, const RsGxsGroupId& destination_group, const RsGxsId& id)  override;
+	virtual int canSend(const RsGxsCircleId &circleId, const RsPgpId &id, bool &should_encrypt) override;
+	virtual int canReceive(const RsGxsCircleId &circleId, const RsPgpId &id) override;
+
+	virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist) override;
+	virtual bool recipients(const RsGxsCircleId &circleId, const RsGxsGroupId& dest_group, std::list<RsGxsId> &gxs_ids) override;
+	virtual bool isRecipient(const RsGxsCircleId &circleId, const RsGxsGroupId& destination_group, const RsGxsId& id) override;
 
 
-    virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsCircleGroup> &groups) override;
-    virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsCircleMsg> &msgs) override;
-    virtual void createGroup(uint32_t& token, RsGxsCircleGroup &group) override;
-    virtual void updateGroup(uint32_t &token, RsGxsCircleGroup &group) override;
+	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsCircleGroup> &groups) override;
+	virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsCircleMsg> &msgs) override;
+	virtual void createGroup(uint32_t& token, RsGxsCircleGroup &group) override;
+	virtual void updateGroup(uint32_t &token, RsGxsCircleGroup &group) override;
 
-    virtual bool service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta) override;
+	virtual bool service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta) override;
+    virtual rstime_t service_getLastGroupSeenTs(const RsGxsGroupId&) override;
 
-    	/* membership management for external circles */
-    
-        virtual bool requestCircleMembership(const RsGxsId &own_gxsid, const RsGxsCircleId& circle_id)  override;
-        virtual bool cancelCircleMembership(const RsGxsId &own_gxsid, const RsGxsCircleId& circle_id)  override;
-    
+	/* membership management for external circles */
+
+	virtual bool requestCircleMembership(const RsGxsId &own_gxsid, const RsGxsCircleId& circle_id) override;
+	virtual bool cancelCircleMembership(const RsGxsId &own_gxsid, const RsGxsCircleId& circle_id) override;
+
 	/**********************************************/
 
-    // needed for background processing.
-    virtual void service_tick() override;
+	// needed for background processing.
+	virtual void service_tick() override;
 
 protected:
+    bool checkCircleParamConsistency( const std::string& circleName, RsGxsCircleType circleType,
+                     const RsGxsCircleId& restrictedId,
+                     const RsGxsId& authorId, const std::set<RsGxsId>& gxsIdMembers,
+                     const std::set<RsPgpId>& localMembers ) const ;
 
-    // overloads p3Config
-    virtual bool saveList(bool &cleanup, std::list<RsItem *>&saveList) override;
-    virtual bool loadList(std::list<RsItem *>& loadList) override;
-    virtual RsSerialiser *setupSerialiser() override;
+	// overloads p3Config
+	virtual bool saveList(bool &cleanup, std::list<RsItem *>&saveList) override;
+	virtual bool loadList(std::list<RsItem *>& loadList) override;
+	virtual RsSerialiser *setupSerialiser() override;
 
-    bool pushCircleMembershipRequest(const RsGxsId& own_gxsid, const RsGxsCircleId& circle_id, RsGxsCircleSubscriptionType request_type) ;
+	bool pushCircleMembershipRequest(const RsGxsId& own_gxsid, const RsGxsCircleId& circle_id, RsGxsCircleSubscriptionType request_type) ;
 	static uint32_t circleAuthenPolicy();
 
 	/** Notifications **/
-    virtual void notifyChanges(std::vector<RsGxsNotify*>& changes) override;
+	virtual void notifyChanges(std::vector<RsGxsNotify*>& changes) override;
 
 	/** Overloaded to add PgpIdHash to Group Definition **/
-    virtual ServiceCreate_Return service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet) override;
+	virtual ServiceCreate_Return service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet) override;
 
 	// Overloaded from GxsTokenQueue for Request callbacks.
-    virtual void handleResponse(uint32_t token, uint32_t req_type) override;
+	virtual void handleResponse(uint32_t token, uint32_t req_type
+	                            , RsTokenService::GxsRequestStatus status) override;
 
 	// Overloaded from RsTickEvent.
-    virtual void handle_event(uint32_t event_type, const std::string &elabel) override;
+	virtual void handle_event(uint32_t event_type, const std::string &elabel) override;
 
 	private:
 
@@ -345,6 +356,8 @@ protected:
     bool locked_processMembershipMessages(RsGxsCircleCache& cache,const std::vector<RsGxsMsgItem*>& items, GxsMsgReq& messages_to_delete,const std::set<RsGxsId>& own_ids);
     bool locked_processLoadingCacheEntry(RsGxsCircleCache &cache);
 	bool locked_checkCircleCacheForMembershipUpdate(RsGxsCircleCache &cache);
+    bool locked_setGroupUnprocessedStatus(RsGxsCircleCache& cache,bool unprocessed);
+    bool locked_subscribeToCircle(const RsGxsCircleId &grpId, bool subscribe);
 
 	p3IdService *mIdentities; // Needed for constructing Circle Info,
 	PgpAuxUtils *mPgpUtils;

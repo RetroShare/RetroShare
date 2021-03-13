@@ -45,7 +45,7 @@
 #include "util/DateTime.h"
 #include "util/misc.h"
 
-static QMap<RsPgpId, PGPKeyDialog*> instances_pgp;
+QMap<RsPgpId, PGPKeyDialog*> PGPKeyDialog::instances_pgp;
 
 PGPKeyDialog *PGPKeyDialog::instance(const RsPgpId& pgp_id)
 {
@@ -87,8 +87,6 @@ PGPKeyDialog::PGPKeyDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidget *p
     connect(ui.make_friend_button, SIGNAL(clicked()), this, SLOT(makeFriend()));
     connect(ui.denyFriendButton, SIGNAL(clicked()), this, SLOT(denyFriend()));
     connect(ui.signKeyButton, SIGNAL(clicked()), this, SLOT(signGPGKey()));
-    //connect(ui.trusthelpButton, SIGNAL(clicked()), this, SLOT(showHelpDialog()));
-    //connect(ui._shouldAddSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
     connect(ui._shouldAddSignatures_CB_2, SIGNAL(toggled(bool)), this, SLOT(loadKeyPage()));
 
     //ui.avatar->setFrameType(AvatarWidget::NORMAL_FRAME);
@@ -150,9 +148,6 @@ void PGPKeyDialog::load()
     ui.name->setText(QString::fromUtf8(detail.name.c_str()));
     ui.pgpfingerprint->setText(misc::fingerPrintStyleSplit(QString::fromStdString(detail.fpr.toStdString())));
 
-    ui.pgpfingerprint->show();
-    ui.pgpfingerprint_label->show();
-
     ui._direct_transfer_CB->setChecked(  detail.service_perm_flags & RS_NODE_PERM_DIRECT_DL ) ;
 	//Add warning to direct source checkbox depends general setting.
 	switch (rsFiles->filePermDirectDL())
@@ -182,11 +177,10 @@ void PGPKeyDialog::load()
     if (detail.gpg_id == rsPeers->getGPGOwnId())
     {
         ui.make_friend_button->hide();
-        ui.signGPGKeyCheckBox->hide();
         ui.signKeyButton->hide();
         ui.denyFriendButton->hide();
 
-        ui.web_of_trust_label->hide();
+        ui.label_trustlevel->hide();
         ui.trustlevel_CB->hide();
 
         ui.is_signing_me->hide();
@@ -195,66 +189,53 @@ void PGPKeyDialog::load()
     }
     else
     {
-        ui.web_of_trust_label->show();
+        ui.label_trustlevel->show();
         ui.trustlevel_CB->show();
         ui.is_signing_me->show();
         ui.signersLabel->setText(tr("This key is signed by :")+" ");
+        ui.signKeyButton->setEnabled(!detail.ownsign);
 
         if (detail.accept_connection)
         {
             ui.make_friend_button->hide();
             ui.denyFriendButton->show();
-            ui.signGPGKeyCheckBox->hide();
-            //connection already accepted, propose to sign gpg key
-            if (!detail.ownsign) {
-                ui.signKeyButton->show();
-            } else {
-                ui.signKeyButton->hide();
-            }
         }
         else
         {
             ui.make_friend_button->show();
             ui.denyFriendButton->hide();
-            ui.signKeyButton->hide();
-            if (!detail.ownsign) {
-                ui.signGPGKeyCheckBox->show();
-                ui.signGPGKeyCheckBox->setChecked(false);
-            } else {
-                ui.signGPGKeyCheckBox->hide();
-            }
         }
 
         //web of trust
 
-            ui.trustlevel_CB->setCurrentIndex(detail.trustLvl) ;
+        ui.trustlevel_CB->setCurrentIndex(detail.trustLvl) ;
 
 
-    QString truststring = "<p>" ;
-    truststring += tr("The trust level is a way to express your own trust in this key. It is not used by the software nor shared, but can be useful to you in order to remember good/bad keys.") ;
-    truststring += "</p>" ;
-    truststring += "<p>" ;
+        QString truststring = "<p>" ;
+        truststring += tr("The trust level is a way to express your own trust in this key. It is not used by the software nor shared, but can be useful to you in order to remember good/bad keys.") ;
+        truststring += "</p>" ;
+        truststring += "<p>" ;
         switch(detail.trustLvl)
-    {
-    case  RS_TRUST_LVL_ULTIMATE:
-        //trust is ultimate, it means it's one of our own keys
-        truststring += tr("Your trust in this peer is ultimate");
-        break ;
-    case RS_TRUST_LVL_FULL:
-        truststring += tr("Your trust in this peer is full.");
-        break ;
-    case RS_TRUST_LVL_MARGINAL:
-        truststring += tr("Your trust in this peer is marginal.");
-        break ;
-    case RS_TRUST_LVL_NEVER:
-        truststring += tr("Your trust in this peer is none.");
-        break ;
+        {
+        case  RS_TRUST_LVL_ULTIMATE:
+            //trust is ultimate, it means it's one of our own keys
+            truststring += tr("Your trust in this peer is ultimate");
+            break ;
+        case RS_TRUST_LVL_FULL:
+            truststring += tr("Your trust in this peer is full.");
+            break ;
+        case RS_TRUST_LVL_MARGINAL:
+            truststring += tr("Your trust in this peer is marginal.");
+            break ;
+        case RS_TRUST_LVL_NEVER:
+            truststring += tr("Your trust in this peer is none.");
+            break ;
 
-    default:
-        truststring += tr("You haven't set a trust level for this key.");
-        break ;
-    }
-    truststring += "</p>" ;
+        default:
+            truststring += tr("You haven't set a trust level for this key.");
+            break ;
+        }
+        truststring += "</p>" ;
         ui.trustlevel_CB->setToolTip(truststring) ;
 
         if (detail.hasSignedMe) {
@@ -295,14 +276,14 @@ void PGPKeyDialog::loadKeyPage()
 
      std::string pgp_key = rsPeers->getPGPKey(detail.gpg_id,ui._shouldAddSignatures_CB_2->isChecked()) ; // this needs to be a SSL id
 
-    ui.userCertificateText_2->setReadOnly(true);
-    ui.userCertificateText_2->setMinimumHeight(200);
-    ui.userCertificateText_2->setMinimumWidth(530);
+    ui.userCertificateText->setReadOnly(true);
+    ui.userCertificateText->setMinimumHeight(200);
+    ui.userCertificateText->setMinimumWidth(530);
     QFont font("Courier New",10,50,false);
     font.setStyleHint(QFont::TypeWriter,QFont::PreferMatch);
     font.setStyle(QFont::StyleNormal);
-    ui.userCertificateText_2->setFont(font);
-    ui.userCertificateText_2->setText(QString::fromUtf8(pgp_key.c_str()));
+    ui.userCertificateText->setFont(font);
+    ui.userCertificateText->setText(QString::fromUtf8(pgp_key.c_str()));
 
     QString helptext ;
     helptext += tr("<p>This PGP key (ID=")+detail.gpg_id.toStdString().c_str()+")" + " authenticates one or more retroshare nodes.</p> ";
@@ -315,7 +296,7 @@ void PGPKeyDialog::loadKeyPage()
 
     helptext += "</p>" ;
 
-    ui.userCertificateText_2->setToolTip(helptext) ;
+    ui.userCertificateText->setToolTip(helptext) ;
 }
 
 void PGPKeyDialog::applyDialog()
@@ -358,12 +339,7 @@ void PGPKeyDialog::applyDialog()
 
 void PGPKeyDialog::makeFriend()
 {
-    if (ui.signGPGKeyCheckBox->isChecked()) {
-        rsPeers->signGPGCertificate(pgpId);
-    } 
-	
     rsPeers->addFriend(peerId, pgpId);
-//	 setServiceFlags() ;
     loadAll();
 
     emit configChanged();
@@ -379,12 +355,21 @@ void PGPKeyDialog::denyFriend()
 
 void PGPKeyDialog::signGPGKey()
 {
-    if (!rsPeers->signGPGCertificate(pgpId)) {
-                 QMessageBox::warning ( NULL,
-                                tr("Signature Failure"),
-                                tr("Maybe password is wrong"),
-                                QMessageBox::Ok);
+    std::string gpg_name = rsPeers->getGPGName(rsPeers->getGPGOwnId());
+    bool cancelled;
+    std::string gpg_password;
+
+    if(!NotifyQt::getInstance()->askForPassword(tr("Profile password needed.").toStdString(), gpg_name + " (" + rsPeers->getOwnId().toStdString() + ")", false, gpg_password,cancelled))
+    {
+        QMessageBox::critical(NULL,tr("Identity creation failed"),tr("Cannot create an identity linked to your profile without your profile password."));
+        return;
     }
+
+    rsNotify->clearPgpPassphrase(); // just in case
+
+    if(!rsPeers->signGPGCertificate(pgpId,gpg_password))
+        QMessageBox::warning ( NULL, tr("Signature Failure"), tr("Check the password!"), QMessageBox::Ok);
+
     loadAll();
 
     emit configChanged();

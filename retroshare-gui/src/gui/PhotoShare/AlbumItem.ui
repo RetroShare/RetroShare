@@ -17,10 +17,7 @@
    <item>
     <widget class="QFrame" name="albumFrame">
      <property name="styleSheet">
-      <string notr="true">QFrame#albumFrame{border: 2px solid #CCCCCC;
-background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                     stop: 0 #EEEEEE, stop: 1 #CCCCCC);
-border-radius: 10px}</string>
+      <string notr="true"/>
      </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -51,6 +48,9 @@ border-radius: 10px}</string>
          <widget class="QLabel" name="label_Thumbnail">
           <property name="text">
            <string>TextLabel</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>

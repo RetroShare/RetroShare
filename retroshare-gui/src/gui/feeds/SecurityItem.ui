@@ -24,7 +24,7 @@
     <number>1</number>
    </property>
    <item row="0" column="0">
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="mainFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -221,6 +221,35 @@
             </widget>
            </item>
            <item>
+            <widget class="QToolButton" name="chatButton">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
+             <property name="toolTip">
+              <string>Chat</string>
+             </property>
+             <property name="text">
+              <string>Start Chat</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../icons.qrc">
+               <normaloff>:/icons/png/chats.png</normaloff>:/icons/png/chats.png</iconset>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QToolButton" name="removeFriendButton">
              <property name="focusPolicy">
               <enum>Qt::NoFocus</enum>
@@ -261,35 +290,6 @@
               </size>
              </property>
             </spacer>
-           </item>
-           <item>
-            <widget class="QToolButton" name="chatButton">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="focusPolicy">
-              <enum>Qt::NoFocus</enum>
-             </property>
-             <property name="toolTip">
-              <string>Chat</string>
-             </property>
-             <property name="text">
-              <string>Start Chat</string>
-             </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>:/images/chat_24.png</normaloff>:/images/chat_24.png</iconset>
-             </property>
-             <property name="toolButtonStyle">
-              <enum>Qt::ToolButtonTextBesideIcon</enum>
-             </property>
-             <property name="autoRaise">
-              <bool>true</bool>
-             </property>
-            </widget>
            </item>
            <item>
             <spacer name="horizontalSpacer_3">

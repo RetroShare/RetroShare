@@ -25,6 +25,8 @@
 
 #include <retroshare/rsidentity.h>
 
+#include <QTimer>
+
 #define IMAGE_IDDIALOG          ":/icons/png/people.png"
 
 namespace Ui {
@@ -34,15 +36,6 @@ class IdDialog;
 class UIStateHelper;
 class QTreeWidgetItem;
 
-struct CircleUpdateOrder
-{
-    enum { UNKNOWN_ACTION=0x00, GRANT_MEMBERSHIP=0x01, REVOKE_MEMBERSHIP=0x02 };
-         
-    uint32_t token ;
-    RsGxsId  gxs_id ;
-    uint32_t action ;
-};
-
 class IdDialog : public MainPage
 {
 	Q_OBJECT
@@ -51,31 +44,35 @@ public:
 	IdDialog(QWidget *parent = 0);
 	~IdDialog();
 
-	virtual QIcon iconPixmap() const { return QIcon(IMAGE_IDDIALOG) ; } //MainPage
-	virtual QString pageName() const { return tr("People") ; } //MainPage
-	virtual QString helpText() const { return ""; } //MainPage
+	virtual QIcon iconPixmap() const override { return QIcon(IMAGE_IDDIALOG) ; } //MainPage
+	virtual QString pageName() const override { return tr("People") ; } //MainPage
+	virtual QString helpText() const override { return ""; } //MainPage
 
-    void navigate(const RsGxsId& gxs_id) ; // shows the info about this particular ID
+	void navigate(const RsGxsId& gxs_id) ; // shows the info about this particular ID
 protected:
 	virtual void updateDisplay(bool complete);
 
-	void updateIdList();
 	void loadIdentities(const std::map<RsGxsGroupId, RsGxsIdGroup> &ids_set);
 
 	void updateIdentity();
 	void loadIdentity(RsGxsIdGroup id_data);
 
-	void updateCircles();
 	void loadCircles(const std::list<RsGroupMetaData>& circle_metas);
 
 	//void requestCircleGroupData(const RsGxsCircleId& circle_id);
 	bool getItemCircleId(QTreeWidgetItem *item,RsGxsCircleId& id) ;
 
+	virtual void showEvent(QShowEvent *) override;
+
+
 private slots:
+	void updateIdList();
+	void updateCircles();
+
 	void createExternalCircle();
 	void showEditExistingCircle();
 	void updateCirclesDisplay();
-    void toggleAutoBanIdentities(bool b);
+	void toggleAutoBanIdentities(bool b);
 
 	void acceptCircleSubscription() ;
 	void cancelCircleSubscription() ;
@@ -148,17 +145,19 @@ private:
 	void saveExpandedCircleItems(std::vector<bool> &expanded_root_items, std::set<RsGxsCircleId>& expanded_circle_items) const;
 	void restoreExpandedCircleItems(const std::vector<bool>& expanded_root_items,const std::set<RsGxsCircleId>& expanded_circle_items);
 
-	std::map<uint32_t, CircleUpdateOrder> mCircleUpdates ;
-
 	RsGxsGroupId mId;
 	RsGxsGroupId mIdToNavigate;
 	int filter;
 
-    void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
-    RsEventsHandlerId_t mEventHandlerId_identity;
-    RsEventsHandlerId_t mEventHandlerId_circles;
+	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+	RsEventsHandlerId_t mEventHandlerId_identity;
+	RsEventsHandlerId_t mEventHandlerId_circles;
 
-    /* UI -  Designer */
+	QTimer updateIdTimer;
+	bool needUpdateIdsOnNextShow;
+	bool needUpdateCirclesOnNextShow;
+
+	/* UI -  Designer */
 	Ui::IdDialog *ui;
 };
 

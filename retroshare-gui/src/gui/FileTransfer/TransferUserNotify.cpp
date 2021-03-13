@@ -66,12 +66,12 @@ unsigned int TransferUserNotify::getNewCount()
 
 QString TransferUserNotify::getTrayMessage(bool plural)
 {
-	return plural ? tr("You have %1 completed downloads") : tr("You have %1 completed download");
+	return plural ? tr("You have %1 completed transfers") : tr("You have %1 completed transfer");
 }
 
 QString TransferUserNotify::getNotifyMessage(bool plural)
 {
-	return plural ? tr("%1 completed downloads") : tr("%1 completed download");
+	return plural ? tr("%1 completed transfers") : tr("%1 completed transfer");
 }
 
 void TransferUserNotify::iconClicked()

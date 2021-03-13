@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>401</height>
+    <height>452</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Retroshare profile</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_4">
+  <layout class="QGridLayout" name="PGPKeyDialog_GL">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -37,7 +37,7 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_3">
+     <layout class="QGridLayout" name="frame_GL">
       <property name="topMargin">
        <number>3</number>
       </property>
@@ -56,11 +56,11 @@
         <property name="currentIndex">
          <number>0</number>
         </property>
-        <widget class="QWidget" name="tab">
+        <widget class="QWidget" name="info_Tab">
          <attribute name="title">
           <string>Profile info</string>
          </attribute>
-         <layout class="QGridLayout" name="gridLayout_2">
+         <layout class="QGridLayout" name="info_Tab_GL">
           <property name="bottomMargin">
            <number>0</number>
           </property>
@@ -68,9 +68,9 @@
            <number>6</number>
           </property>
           <item row="0" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <layout class="QHBoxLayout" name="info_Top_HL">
             <item>
-             <layout class="QGridLayout" name="gridLayout">
+             <layout class="QGridLayout" name="info_Top_GL">
               <item row="0" column="1">
                <widget class="QLineEdit" name="name">
                 <property name="readOnly">
@@ -89,7 +89,7 @@
                </widget>
               </item>
               <item row="1" column="0">
-               <widget class="QLabel" name="pgpfingerprint_label">
+               <widget class="QLabel" name="label_pgpfingerprint">
                 <property name="text">
                  <string>Fingerprint :</string>
                 </property>
@@ -164,7 +164,7 @@
                </widget>
               </item>
               <item row="2" column="0">
-               <widget class="QLabel" name="web_of_trust_label">
+               <widget class="QLabel" name="label_trustlevel">
                 <property name="text">
                  <string>Trust level:</string>
                 </property>
@@ -174,14 +174,14 @@
                </widget>
               </item>
               <item row="3" column="0">
-               <widget class="QLabel" name="label_5">
+               <widget class="QLabel" name="label_signKey">
                 <property name="text">
                  <string>Keysigning:</string>
                 </property>
                </widget>
               </item>
               <item row="3" column="1">
-               <layout class="QHBoxLayout" name="horizontalLayout_4">
+               <layout class="QHBoxLayout" name="signKey_HL">
                 <item>
                  <widget class="QToolButton" name="signKeyButton">
                   <property name="toolTip">
@@ -206,17 +206,7 @@ p, li { white-space: pre-wrap; }
                  </widget>
                 </item>
                 <item>
-                 <widget class="QCheckBox" name="signGPGKeyCheckBox">
-                  <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. It helps them to decide whether to allow connections from that key based on your own trust. Signing a key is absolutely optional and cannot be undone, so do it wisely.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                  </property>
-                  <property name="text">
-                   <string>Sign PGP key</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_2">
+                 <spacer name="signKey_HSpacer">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
@@ -249,7 +239,7 @@ p, li { white-space: pre-wrap; }
              <number>6</number>
             </property>
             <item>
-             <spacer name="horizontalSpacer">
+             <spacer name="friendAndSign_HSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -322,7 +312,7 @@ p, li { white-space: pre-wrap; }
            </layout>
           </item>
           <item row="2" column="0">
-           <layout class="QVBoxLayout" name="verticalLayout">
+           <layout class="QVBoxLayout" name="signer_VL">
             <item>
              <widget class="QLabel" name="signersLabel">
               <property name="text">
@@ -360,13 +350,13 @@ p, li { white-space: pre-wrap; }
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="widget">
+        <widget class="QWidget" name="key_Tab">
          <attribute name="title">
           <string>PGP key</string>
          </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
+         <layout class="QVBoxLayout" name="key_Tab_VL">
           <item>
-           <widget class="QLabel" name="label_4">
+           <widget class="QLabel" name="label_userCert">
             <property name="text">
              <string>Below is the node's profile key in PGP ASCII format. It identifies all nodes of the same profile. A &quot;Retroshare certificate&quot; that you can exchange in order to make friends, is in the the &quot;details&quot; of each separate node.</string>
             </property>
@@ -376,7 +366,7 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item>
-           <widget class="QTextEdit" name="userCertificateText_2">
+           <widget class="QTextEdit" name="userCertificateText">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
               <horstretch>0</horstretch>
@@ -386,7 +376,7 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout">
+           <layout class="QHBoxLayout" name="key_HL">
             <item>
              <widget class="QCheckBox" name="_shouldAddSignatures_CB_2">
               <property name="toolTip">
@@ -401,13 +391,13 @@ p, li { white-space: pre-wrap; }
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="tab_2">
+        <widget class="QWidget" name="option_Tab">
          <attribute name="title">
           <string>Options</string>
          </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_6">
+         <layout class="QVBoxLayout" name="option_Tab_VL">
           <item>
-           <widget class="QLabel" name="label_3">
+           <widget class="QLabel" name="label_option_Tab">
             <property name="text">
              <string>These options apply to all nodes of the profile:</string>
             </property>
@@ -444,11 +434,11 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <layout class="QHBoxLayout" name="option_Speed_HL">
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout_5">
+             <layout class="QVBoxLayout" name="option_Speed_Left_VL">
               <item>
-               <widget class="QLabel" name="label">
+               <widget class="QLabel" name="label_maxUploadSpeed">
                 <property name="text">
                  <string>Max upload speed (0=unlimited)</string>
                 </property>
@@ -458,7 +448,7 @@ p, li { white-space: pre-wrap; }
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label_2">
+               <widget class="QLabel" name="label_maxDownloadSpeed">
                 <property name="text">
                  <string>Max download speed (0=unlimited)</string>
                 </property>
@@ -470,7 +460,7 @@ p, li { white-space: pre-wrap; }
              </layout>
             </item>
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout_4">
+             <layout class="QVBoxLayout" name="option_Speed_Right_VL">
               <item>
                <widget class="QSpinBox" name="maxUploadSpeed_SB">
                 <property name="suffix">
@@ -496,7 +486,7 @@ p, li { white-space: pre-wrap; }
            </layout>
           </item>
           <item>
-           <spacer name="verticalSpacer_4">
+           <spacer name="option_Tab_VSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -529,15 +519,15 @@ p, li { white-space: pre-wrap; }
  </widget>
  <customwidgets>
   <customwidget>
+   <class>RSTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>gui/common/RSTextBrowser.h</header>
+  </customwidget>
+  <customwidget>
    <class>HeaderFrame</class>
    <extends>QFrame</extends>
    <header>gui/common/HeaderFrame.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>RSTextBrowser</class>
-   <extends>QTextBrowser</extends>
-   <header>gui/common/RSTextBrowser.h</header>
   </customwidget>
  </customwidgets>
  <resources>

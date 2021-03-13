@@ -281,7 +281,7 @@ void RsHtml::anchorStylesheetForImg(QDomDocument &/*doc*/, QDomElement &/*elemen
 		break;
 
 	case RetroShareLink::TYPE_CERTIFICATE:
-		styleSheet = "QPushButton{ border-image: url(:/images/btn_blue.png) ;border-width: 4;padding: 0px 6px;font-size: 12px;color: white;} QPushButton:hover{ border-image: url(:/images/btn_blue_hover.png) ;}";
+		styleSheet = "QPushButton{ border-image: url(:/images/btn_blue.png) ;border-width: 4;padding: 0px 6px;font-size: 12pt;color: white;} QPushButton:hover{ border-image: url(:/images/btn_blue_hover.png) ;}";
 		break;
 	}
 }
@@ -618,13 +618,13 @@ QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulo
 
 	QString errorMsg; int errorLine; int errorColumn;
 
-  QDomDocument doc;
+	QDomDocument doc;
 	if (doc.setContent(formattedText, &errorMsg, &errorLine, &errorColumn) == false) {
 
-		// convert text with QTextBrowser
-		QTextBrowser textBrowser;
-		textBrowser.setText(text);
-		formattedText=textBrowser.toHtml();
+		// convert text with QTextDocument
+		QTextDocument textDoc;
+		textDoc.setPlainText(text);
+		formattedText=textDoc.toHtml();
 		formattedText.remove(0,formattedText.indexOf("<"));
 		formattedText=saveSpace(formattedText);
 		doc.setContent(formattedText, &errorMsg, &errorLine, &errorColumn);

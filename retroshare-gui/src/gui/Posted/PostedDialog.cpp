@@ -62,6 +62,7 @@ void PostedDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 		{
 		case RsPostedEventCode::NEW_MESSAGE:
 		case RsPostedEventCode::UPDATED_MESSAGE:        // [[fallthrough]];
+		case RsPostedEventCode::NEW_COMMENT:            // [[fallthrough]];
 		case RsPostedEventCode::READ_STATUS_CHANGED:   // [[fallthrough]];
 			updateGroupStatisticsReal(e->mPostedGroupId); // update the list immediately
             break;
@@ -191,7 +192,8 @@ GxsGroupDialog *PostedDialog::createGroupDialog(GxsGroupDialog::Mode mode, RsGxs
 
 int PostedDialog::shareKeyType()
 {
-    return POSTED_KEY_SHARE;
+    //return POSTED_KEY_SHARE;
+    return GroupShareKey::NO_KEY_SHARE; // Boards are public. By the time we offer the possibility to make them restricted, we need to not show the 'share publish permission' entry in the drop menu.
 }
 
 GxsMessageFrameWidget *PostedDialog::createMessageFrameWidget(const RsGxsGroupId &groupId)

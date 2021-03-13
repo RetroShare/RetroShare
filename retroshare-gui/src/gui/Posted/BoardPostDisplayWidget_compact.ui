@@ -457,6 +457,9 @@
            <property name="wordWrap">
             <bool>true</bool>
            </property>
+           <property name="openExternalLinks">
+            <bool>true</bool>
+           </property>
            <property name="textInteractionFlags">
             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
            </property>
@@ -472,14 +475,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>GxsIdLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/gxs/GxsIdLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>StyledLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GxsIdLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/gxs/GxsIdLabel.h</header>
   </customwidget>
   <customwidget>
    <class>ZoomableLabel</class>
@@ -488,8 +491,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="Posted_images.qrc"/>
   <include location="../images.qrc"/>
+  <include location="Posted_images.qrc"/>
  </resources>
  <connections/>
 </ui>

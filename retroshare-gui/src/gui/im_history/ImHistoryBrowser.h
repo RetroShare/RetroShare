@@ -73,6 +73,7 @@ private:
     void filterItems(const QString &text, QListWidgetItem *item = NULL);
 
     void getSelectedItems(std::list<uint32_t> &items);
+    QString getCurrentItemsQuotedText();
 
     ImHistoryBrowserCreateItemsThread *m_createThread;
 

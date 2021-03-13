@@ -551,24 +551,25 @@ void ConnectFriendWizard::initializePage(int id)
 
 			ui->nodeEdit->setText(loc);
 
-            std::string s;
+            QString s;
+
             if(peerDetails.isHiddenNode)
-                s += peerDetails.hiddenNodeAddress;
+                s += QString::fromStdString(peerDetails.hiddenNodeAddress);
             else
             {
                 if(peerDetails.localAddr!="0.0.0.0")// This is not so nice, but because we deal we string there's no way
-                    s += peerDetails.localAddr;		// to ask about if the ip is null. We really need a proper IP class.
+                    s += QString::fromStdString(peerDetails.localAddr)+":"+QString::number(peerDetails.localPort);		// to ask about if the ip is null. We really need a proper IP class.
 
                 if(peerDetails.extAddr!="0.0.0.0")
                 {
-                    if(!s.empty()) s += " / " ;
-                    s += peerDetails.extAddr;
+                    if(!s.isNull()) s += " / " ;
+                    s += QString::fromStdString(peerDetails.extAddr) + ":"+QString::number(peerDetails.extPort);
                 }
 
                 if(!peerDetails.dyndns.empty())
-                    s += "(" + peerDetails.dyndns + ")" ;
+                    s += " (" + QString::fromStdString(peerDetails.dyndns) + ")" ;
             }
-            ui->ipEdit->setText(QString::fromStdString(s));
+            ui->ipEdit->setText(s);
 			ui->signersEdit->setPlainText(ts);
 
 			fillGroups(this, ui->groupComboBox, groupId);
@@ -740,6 +741,38 @@ void ConnectFriendWizard::accept()
 	{
 		std::cerr << "ConclusionPage::validatePage() accepting GPG key for connection." << std::endl;
 
+        if(sign)
+        {
+            std::cerr << "ConclusionPage::validatePage() signing GPG key." << std::endl;
+            bool prev_is_bad = false;
+
+            for(int i=0;i<3;++i)
+            {
+                std::string pgp_name = rsPeers->getGPGName(rsPeers->getGPGOwnId());
+                bool cancelled;
+                std::string pgp_password;
+
+                if(!NotifyQt::getInstance()->askForPassword(tr("Profile password needed.").toStdString(), pgp_name + " (" + rsPeers->getOwnId().toStdString() + ")", prev_is_bad, pgp_password,cancelled))
+                {
+                    QMessageBox::critical(NULL,tr("Identity creation failed"),tr("Cannot create an identity linked to your profile without your profile password."));
+                    return;
+                }
+
+                if(rsPeers->signGPGCertificate(peerDetails.gpg_id,pgp_password))
+                {
+                    prev_is_bad = false;
+                    break;
+                }
+                else
+                    prev_is_bad = true;
+            }
+
+            if(prev_is_bad)
+            {
+                QMessageBox::warning(nullptr,tr("Signature failed"),tr("Signature failed. Uncheck the key signature box if you want to make friends without signing the friends' certificate"));
+                return;
+            }
+        }
         if(peerDetails.skip_pgp_signature_validation)
 			rsPeers->addSslOnlyFriend(peerDetails.id, peerDetails.gpg_id,peerDetails);
 		else
@@ -757,12 +790,7 @@ void ConnectFriendWizard::accept()
 			}
 		}
 
-		if(sign)
-		{
-			std::cerr << "ConclusionPage::validatePage() signing GPG key." << std::endl;
-			rsPeers->signGPGCertificate(peerDetails.gpg_id); //bye default sign set accept_connection to true;
-			rsPeers->setServicePermissionFlags(peerDetails.gpg_id,serviceFlags()) ;
-		}
+
 
 		if (!groupId.isEmpty())
 			rsPeers->assignPeerToGroup(RsNodeGroupId(groupId.toStdString()), peerDetails.gpg_id, true);
@@ -853,7 +881,11 @@ void ConnectFriendWizard::cleanFriendCert()
 
 				ui->friendCertCleanLabel->setStyleSheet("");
 			}
-			errorMsg = tr("Valid certificate") + (mIsShortInvite?" (Short format)":" (plain format with profile key)");
+			
+			if (mIsShortInvite)
+				errorMsg = tr("Valid Retroshare ID") + (mIsShortInvite?" (Short format)":" (plain format with profile key)");
+			else
+				errorMsg = tr("Valid certificate") ;
 
             ui->friendCertCleanLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/accepted16.png"));
 		} else {
@@ -871,7 +903,7 @@ void ConnectFriendWizard::cleanFriendCert()
 
 				default:
 					errorMsg = tr("Not a valid Retroshare certificate!") ;
-					ui->friendCertCleanLabel->setStyleSheet("QLabel#friendCertCleanLabel {border: 2px solid red; border-radius: 6px;}");
+					ui->friendCertCleanLabel->setStyleSheet("QLabel#friendCertCleanLabel {border: 1px solid #DCDC41; border-radius: 6px; background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);}");
 				}
 			}
             ui->friendCertCleanLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/delete.png"));
@@ -1152,6 +1184,7 @@ void ConnectFriendWizard::toggleAdvanced()
 	{
 		ui->cp_Frame->show();
 		ui->toggleadvancedButton->setText("Hide advanced options");
+		resize(sizeHint());
 		AdvancedVisible=true;
 	}
 }

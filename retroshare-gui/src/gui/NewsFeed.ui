@@ -69,7 +69,7 @@
       <item>
        <widget class="StyledLabel" name="titleBarLabel">
         <property name="text">
-         <string>Log entries</string>
+         <string>Activity Stream</string>
         </property>
        </widget>
       </item>

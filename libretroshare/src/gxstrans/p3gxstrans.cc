@@ -137,11 +137,15 @@ void p3GxsTrans::registerGxsTransClient(
 	mServClients[serviceType] = service;
 }
 
-void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
+void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type
+                                , RsTokenService::GxsRequestStatus status)
 {
 #ifdef DEBUG_GXSTRANS
-	std::cout << "p3GxsTrans::handleResponse(" << token << ", " << req_type << ")" << std::endl;
+	std::cout << "p3GxsTrans::handleResponse(" << token << ", " << req_type << ", " << status << ")" << std::endl;
 #endif
+	if (status != RsTokenService::COMPLETE)
+		return; //For now, only manage Complete request
+
 	bool changed = false ;
 
 	switch (req_type)
@@ -361,7 +365,7 @@ void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
     // first take out all the groups
 
     std::map<RsGxsGroupId, RsNxsGrp*> grp;
-    mDs->retrieveNxsGrps(grp, true, true);
+    mDs->retrieveNxsGrps(grp, true);
 
 #ifdef DEBUG_GXSTRANS
     std::cerr << "GxsTransIntegrityCleanupThread::run()" << std::endl;
@@ -389,7 +393,7 @@ void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
     std::list<RsGxsTransId> received_msgs ;
 
     GxsMsgResult msgs;
-    mDs->retrieveNxsMsgs(grps, msgs, false, true);
+    mDs->retrieveNxsMsgs(grps, msgs, true);
 
     for(GxsMsgResult::iterator mit = msgs.begin();mit != msgs.end(); ++mit)
     {

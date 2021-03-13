@@ -29,6 +29,11 @@ ChatWidget QLabel#titleLabel, ChatWidget QLabel#statusLabel
 	qproperty-fontSizeFactor: 125;
 }
 
+ChatWidget QFrame#pluginTitleFrame, QFrame#pluginTopFrame
+{
+	background: transparent;
+}
+
 FriendsDialog QLabel#nicknameLabel
 {
 	qproperty-fontSizeFactor: 200;
@@ -147,6 +152,13 @@ ForumsDialog, GxsForumThreadWidget
 
 	qproperty-backgroundColorPinned: rgb(255, 200, 180);
 	qproperty-backgroundColorFiltered: rgb(255, 240, 210);
+}
+
+GxsForumThreadWidget StyledElidedLabel#forumName
+{
+	padding: 2px;
+	font: bold;
+	font-size: 15pt;
 }
 
 GroupTreeWidget

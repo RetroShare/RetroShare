@@ -92,9 +92,9 @@ public:
 	static const uint8_t FLAG_ONLY_CURRENT; // only send most current version of grps / ignores sync hash
 
 	explicit RsNxsSyncGrpReqItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_GRP_REQ_ITEM) { clear();}
-	virtual void clear();
+	virtual void clear() override;
 
-	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override;
 
 	uint8_t flag; // advises whether to use sync hash
 	uint32_t createdSince; // how far back to sync data
@@ -114,12 +114,12 @@ public:
 	  , request_type(0), number_of_posts(0), last_post_TS(0)
 	{}
 
-    virtual void clear() {}
+    virtual void clear() override {}
 
     static const uint8_t GROUP_INFO_TYPE_REQUEST  = 0x01;
     static const uint8_t GROUP_INFO_TYPE_RESPONSE = 0x02; 
     
-	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override;
 
     uint32_t request_type;	// used to determine the type of request
     RsGxsGroupId grpId;		// id of the group
@@ -137,9 +137,9 @@ class RsNxsGroupPublishKeyItem : public RsNxsItem
 public:
 	explicit RsNxsGroupPublishKeyItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY_ITEM) { clear(); }
 
-    virtual void clear();
+    virtual void clear() override;
 
-	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override;
 
     RsGxsGroupId grpId ;
     RsTlvPrivateRSAKey private_key ;
@@ -181,9 +181,9 @@ public:
     explicit RsNxsTransacItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_TRANSAC_ITEM) { clear(); }
     virtual ~RsNxsTransacItem() {}
 
-    virtual void clear();
+    virtual void clear() override;
 
-	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override;
 
     uint16_t transactFlag;
     uint32_t nItems;
@@ -209,9 +209,9 @@ public:
     explicit RsNxsSyncGrpItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_GRP_ITEM) { clear();}
     virtual ~RsNxsSyncGrpItem() {}
 
-    virtual void clear();
+    virtual void clear() override;
 
-	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override;
 
     uint8_t flag; // request or response
     uint32_t publishTs; // to compare to Ts of receiving peer's grp of same id
@@ -235,7 +235,7 @@ public:
     explicit RsNxsSessionKeyItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SESSION_KEY_ITEM) { clear(); }
     virtual ~RsNxsSessionKeyItem() {}
 
-    virtual void clear();
+    virtual void clear() override;
 
     /// Session key encrypted for the whole group
     /// 
@@ -258,9 +258,9 @@ public:
 		clear();
 	}
     virtual ~RsNxsEncryptedDataItem() {}
-    virtual void clear();
+    virtual void clear() override;
 
-	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override;
 
     /// grpId of grp held by sending peer
     /// 
@@ -279,35 +279,36 @@ class RsNxsGrp : public RsNxsItem
 public:
 
 	explicit RsNxsGrp(uint16_t servtype)
-	  : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_GRP_ITEM), grp(servtype)
-	  , meta(servtype), metaData(NULL)
+	    : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_GRP_ITEM)
+	    , pos(0), count(0), meta(servtype), grp(servtype), metaData(NULL)
 	{ clear(); }
 	virtual ~RsNxsGrp() { delete metaData; }
 
-    RsNxsGrp* clone() const;
+	RsNxsGrp* clone() const;
 
-    virtual void clear();
+	virtual void clear() override;
 
 	virtual void serial_process( RsGenericSerializer::SerializeJob j,
-	                             RsGenericSerializer::SerializeContext& ctx );
+	                             RsGenericSerializer::SerializeContext& ctx ) override;
 
-    RsGxsGroupId grpId; /// group Id, needed to complete version Id (ncvi)
-    static int refcount;
-    RsTlvBinaryData grp; /// actual group data
-    uint8_t pos; /// used for splitting up grp
-    uint8_t count; /// number of split up messages
+	uint8_t pos; /// used for splitting up grp
+	uint8_t count; /// number of split up messages
+	RsGxsGroupId grpId; /// group Id, needed to complete version Id (ncvi)
+	static int refcount;
 
-    /*!
-     * This should contains all data
-     * which is not specific to the Gxs service data
-     */
-    // This is the binary data for the group meta that is sent to friends. It *should not* contain any private
-    // key parts. This is ensured in RsGenExchange
-    
-    RsTlvBinaryData meta;
+	/*!
+	 * This should contains all data
+	 * which is not specific to the Gxs service data
+	 */
+	// This is the binary data for the group meta that is sent to friends. It *should not* contain any private
+	// key parts. This is ensured in RsGenExchange
 
-    // Deserialised metaData, this is not serialised by the serialize() method. So it may contain private key parts in some cases.
-    RsGxsGrpMetaData* metaData;
+	RsTlvBinaryData meta;
+
+	RsTlvBinaryData grp; /// actual group data
+
+	// Deserialised metaData, this is not serialised by the serialize() method. So it may contain private key parts in some cases.
+	RsGxsGrpMetaData* metaData;
 };
 
 /*!
@@ -326,9 +327,9 @@ public:
 
     explicit RsNxsSyncMsgReqItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_MSG_REQ_ITEM) { clear(); }
 
-    virtual void clear();
+    virtual void clear() override;
 
-	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override;
 
     RsGxsGroupId grpId;
     uint8_t flag;
@@ -350,9 +351,9 @@ public:
     static const uint8_t FLAG_USE_SYNC_HASH;
     explicit RsNxsSyncMsgItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_MSG_ITEM) { clear(); }
 
-    virtual void clear();
+    virtual void clear() override;
 
-	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override;
 
     uint8_t flag; // response/req
     RsGxsGroupId grpId;
@@ -374,10 +375,10 @@ struct RsNxsMsg : RsNxsItem
 	{ clear(); }
 	virtual ~RsNxsMsg() { delete metaData; }
 
-	virtual void serial_process( RsGenericSerializer::SerializeJob j,
-	                             RsGenericSerializer::SerializeContext& ctx );
+	virtual void clear() override;
 
-	virtual void clear();
+	virtual void serial_process( RsGenericSerializer::SerializeJob j,
+	                             RsGenericSerializer::SerializeContext& ctx ) override;
 
 	uint8_t pos; /// used for splitting up msg
 	uint8_t count; /// number of split up messages
@@ -411,10 +412,10 @@ public:
 	  : RsNxsItem(servtype, RS_PKT_SUBTYPE_EXT_SEARCH_REQ)
 	  , nHops(0), token(0), serviceSearchItem(servtype), expiration(0)
 	{}
-    virtual ~RsNxsSearchReqItem() {}
-    virtual void clear() {}
+	virtual ~RsNxsSearchReqItem() {}
+	virtual void clear() override {}
 
-	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override;
 
     uint8_t nHops; /// how many peers to jump to
     uint32_t token; // search token
@@ -422,6 +423,8 @@ public:
     uint32_t expiration; // expiration date
 };
 
+
+#ifdef UNUSED_CODE
 
 /*!
  * Used to respond to a RsGrpSearchReq
@@ -471,8 +474,6 @@ public:
     uint32_t expiration; // expiration date
 };
 
-
-#ifndef UNUSED_CODE
 class RsNxsDeleteMsg
 {
 public:

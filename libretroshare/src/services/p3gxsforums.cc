@@ -417,6 +417,24 @@ void	p3GxsForums::service_tick()
 	return;
 }
 
+rstime_t p3GxsForums::service_getLastGroupSeenTs(const RsGxsGroupId& gid)
+{
+     rstime_t now = time(nullptr);
+
+    RS_STACK_MUTEX(mKnownForumsMutex);
+
+    auto it = mKnownForums.find(gid);
+    bool unknown_forum = it == mKnownForums.end();
+
+    if(unknown_forum)
+    {
+        mKnownForums[gid] = now;
+        IndicateConfigChanged();
+        return now;
+    }
+    else
+        return it->second;
+}
 bool p3GxsForums::service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta)
 {
 #ifdef GXSFORUMS_DEBUG
@@ -804,8 +822,7 @@ bool p3GxsForums::getForumContent(
 	GxsMsgReq msgIds;
 	msgIds[forumId] = msgs_to_request;
 
-	if( !requestMsgInfo(token, opts, msgIds) ||
-	        waitToken(token,std::chrono::seconds(5)) != RsTokenService::COMPLETE )
+    if( !requestMsgInfo(token, opts, msgIds) || waitToken(token,std::chrono::seconds(5)) != RsTokenService::COMPLETE )
 		return false;
 
 	return getMsgData(token, msgs);
@@ -836,15 +853,21 @@ bool p3GxsForums::markRead(const RsGxsGrpMsgIdPair& msgId, bool read)
 	uint32_t token;
 	setMessageReadStatus(token, msgId, read);
 	if(waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE ) return false;
+
+    RsGxsGrpMsgIdPair p;
+    acknowledgeMsg(token,p);
+
 	return true;
 }
 
-bool p3GxsForums::subscribeToForum(
-        const RsGxsGroupId& groupId, bool subscribe )
+bool p3GxsForums::subscribeToForum(const RsGxsGroupId& groupId, bool subscribe )
 {
 	uint32_t token;
-	if( !RsGenExchange::subscribeToGroup(token, groupId, subscribe)
-	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+    if( !RsGenExchange::subscribeToGroup(token, groupId, subscribe) || waitToken(token) != RsTokenService::COMPLETE ) return false;
+
+    RsGxsGroupId grp;
+    acknowledgeGrp(token,grp);
+
 	return true;
 }
 

@@ -69,6 +69,7 @@ PeopleDialog::PeopleDialog(QWidget *parent)
 	tabWidget->removeTab(1);
 	//hide circle flow widget not functional yet
 	pictureFlowWidgetExternal->hide();
+	widgetExternal->hide();
 
 	//need erase QtCreator Layout first(for Win)
 	delete idExternal->layout();

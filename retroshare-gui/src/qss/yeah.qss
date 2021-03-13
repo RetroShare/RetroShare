@@ -169,3 +169,15 @@ QLabel#fromText{
 
 }
 
+HomePage QToolButton#addButton {
+	font: bold;
+	font-size: 15pt;
+	color: #979797;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+MainWindow QListWidget {
+	font-size: 12pt;
+}

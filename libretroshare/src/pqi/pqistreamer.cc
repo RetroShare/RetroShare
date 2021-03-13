@@ -304,17 +304,13 @@ int 	pqistreamer::tick_bio()
 
 int 	pqistreamer::tick_recv(uint32_t timeout)
 {
-//      Apart from a few exceptions that are atomic (mLastIncomingTs, mIncomingSize), only this pqi thread reads/writes mIncoming queue and related counters.
-//      The lock of pqistreamer mutex is thus not needed here.
-//      The mutex lock is still needed before calling locked_addTrafficClue because this method is also used by the thread pushing packets in mOutPkts.
-//	Locks around rates are provided internally.
-
 	if (mBio->moretoread(timeout))
 	{
 		handleincoming();
 	}
 	if(!(mBio->isactive()))
 	{
+		RsStackMutex stack(mStreamerMtx);
 		free_pend();
 	}
 	return 1;
@@ -325,6 +321,7 @@ int 	pqistreamer::tick_send(uint32_t timeout)
 	/* short circuit everything if bio isn't active */
 	if (!(mBio->isactive()))
 	{
+		RsStackMutex stack(mStreamerMtx);
 		free_pend();
 		return 0;
 	}
@@ -550,14 +547,12 @@ int	pqistreamer::handleoutgoing_locked()
 
 	    if ((!(mBio->cansend(0))) || (maxbytes < sentbytes))
 	    {
-
-#ifdef DEBUG_PACKET_SLICING
-		    if (maxbytes < sentbytes)
-			    std::cerr << "pqistreamer::handleoutgoing_locked() Stopped sending: bio not ready. maxbytes=" << maxbytes << ", sentbytes=" << sentbytes << std::endl;
-		    else
-			    std::cerr << "pqistreamer::handleoutgoing_locked() Stopped sending: sentbytes=" << sentbytes << ", max=" << maxbytes << std::endl;
+#ifdef DEBUG_PQISTREAMER
+		if (sentbytes > maxbytes)
+			RsDbg() << "PQISTREAMER pqistreamer::handleoutgoing_locked() stopped sending max reached, sentbytes " << std::dec << sentbytes << " maxbytes " << maxbytes;
+		else
+			RsDbg() << "PQISTREAMER pqistreamer::handleoutgoing_locked() stopped sending bio not ready, sentbytes " << std::dec << sentbytes << " maxbytes " << maxbytes;
 #endif
-
 		    return 0;
 	    }
 	    // send a out_pkt., else send out_data. unless there is a pending packet. The strategy is to
@@ -722,6 +717,7 @@ int pqistreamer::handleincoming()
 
     if(!(mBio->isactive()))
     {
+	    RsStackMutex stack(mStreamerMtx);
 	    mReading_state = reading_state_initial ;
 	    free_pend();
 	    return 0;
@@ -1019,12 +1015,11 @@ continue_packet:
     if(maxin > readbytes && mBio->moretoread(0))
 	    goto start_packet_read ;
 
-#ifdef DEBUG_TRANSFERS
-    if (readbytes >= maxin)
-    {
-	    std::cerr << "pqistreamer::handleincoming() Stopped reading as readbytes >= maxin. Read " << readbytes << " bytes ";
-	    std::cerr << std::endl;
-    }
+#ifdef DEBUG_PQISTREAMER
+	if (readbytes > maxin)
+		RsDbg() << "PQISTREAMER pqistreamer::handleincoming() stopped reading max reached, readbytes " << std::dec << readbytes << " maxin " << maxin;
+	else
+		RsDbg() << "PQISTREAMER pqistreamer::handleincoming() stopped reading no more to read, readbytes " << std::dec << readbytes << " maxin " << maxin;
 #endif
 
     return 0;
@@ -1157,18 +1152,19 @@ int     pqistreamer::outAllowedBytes_locked()
 	// this is used to take into account a possible excess of data sent during the previous round
 	mCurrSent -= int(dt * maxout);
 
+	// we dont allow negative value, any quota not used during the previous round is therefore lost
 	if (mCurrSent < 0)
 		mCurrSent = 0;
 
 	mCurrSentTS = t;
 
-	// now calculate the max amount of data allowed to be sent during the next round
-	// we limit this quota to what should be sent at most during mAvgDtOut, taking into account the excess of data possibly sent during the previous round
+	// now calculate the amount of data allowed to be sent during the next round
+	// we take into account the possible excess (but not deficit) of the previous round
+	// (this is handled differently when reading data, see below)
 	double quota = mAvgDtOut * maxout - mCurrSent;
 
 #ifdef DEBUG_PQISTREAMER
-	uint64_t t_now = 1000 * getCurrentTS();
-	std::cerr << std::dec << t_now << " DEBUG_PQISTREAMER pqistreamer::outAllowedBytes_locked PeerId " << this->PeerId().toStdString() << " dt " << (int)(1000 * dt) << "ms, mAvgDtOut " << (int)(1000 * mAvgDtOut) << "ms, maxout " << (int)(maxout) << " bytes/s, mCurrSent " << mCurrSent << " bytes, quota " << (int)(quota) << " bytes" << std::endl;
+	RsDbg() << "PQISTREAMER pqistreamer::outAllowedBytes_locked() dt " << std::dec << (int)(1000 * dt) << "ms, mAvgDtOut " << (int)(1000 * mAvgDtOut) << "ms, maxout " << (int)(maxout) << " bytes/s, mCurrSent " << mCurrSent << " bytes, quota " << (int)(quota) << " bytes";
 #endif
 
 	return quota;
@@ -1198,26 +1194,26 @@ int     pqistreamer::inAllowedBytes()
 
 	double maxin = getMaxRate(true) * 1024.0;
 
-	// this is used to take into account a possible excess of data received during the previous round
+	// this is used to take into account a possible excess/deficit of data received during the previous round
 	mCurrRead -= int(dt * maxin);
 
-	if (mCurrRead < 0)
-		mCurrRead = 0;
+	// we allow negative value up to the average amount of data received during one round
+	// in that case we will use this credit during the next around
+	if (mCurrRead < - mAvgDtIn * maxin)
+		mCurrRead = - mAvgDtIn * maxin;
 
 	mCurrReadTS = t;
 
-	// now calculate the max amount of data allowed to be received during the next round
-	// we limit this quota to what should be received at most during mAvgDtOut, taking into account the excess of data possibly received during the previous round
+	// we now calculate the max amount of data allowed to be received during the next round
+	// we take into account the excess/deficit of the previous round
 	double quota = mAvgDtIn * maxin - mCurrRead;
 
 #ifdef DEBUG_PQISTREAMER
-	uint64_t t_now = 1000 * getCurrentTS();
-	std::cerr << std::dec << t_now << " DEBUG_PQISTREAMER pqistreamer::inAllowedBytes PeerId " << this->PeerId().toStdString() << " dt " << (int)(1000 * dt) << "ms, mAvgDtIn " << (int)(1000 * mAvgDtIn) << "ms, maxin " << (int)(maxin) << " bytes/s, mCurrRead " << mCurrRead << " bytes, quota " << (int)(quota) << " bytes" << std::endl;
+	RsDbg() << "PQISTREAMER pqistreamer::inAllowedBytes() dt " << std::dec << (int)(1000 * dt) << "ms, mAvgDtIn " << (int)(1000 * mAvgDtIn) << "ms, maxin " << (int)(maxin) << " bytes/s, mCurrRead " << mCurrRead << " bytes, quota " << (int)(quota) << " bytes";
 #endif
 
 	return quota;
 }
-
 
 void    pqistreamer::outSentBytes_locked(uint32_t outb)
 {

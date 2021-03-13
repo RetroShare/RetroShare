@@ -202,7 +202,14 @@ TurtleRouterStatistics::TurtleRouterStatistics(QWidget *parent)
 	float fact = fontHeight/14.0;
 
     frmGraph->setMinimumHeight(200*fact);
-	
+
+	int graphColor = Settings->valueFromGroup("BandwidthStatsWidget", "cmbGraphColor", 0).toInt();
+
+	if(graphColor==0)
+		frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
+	else
+		frmGraph->setFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
+
 	// load settings
     processSettings(true);
 }
@@ -224,12 +231,12 @@ void TurtleRouterStatistics::processSettings(bool bLoad)
         // load settings
 
         // state of splitter
-        //splitter->restoreState(Settings->value("Splitter").toByteArray());
+        splitter->restoreState(Settings->value("Splitter").toByteArray());
     } else {
         // save settings
 
         // state of splitter
-        //Settings->setValue("Splitter", splitter->saveState());
+        Settings->setValue("Splitter", splitter->saveState());
 
     }
 

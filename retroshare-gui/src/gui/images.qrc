@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="/">
+    <file>images/arrow-right.png</file>
+    <file>images/arrow-down.png</file>
     <file>images/logo/background.png</file>
     <file>images/logo/background_lessblue.png</file>
     <file>images/logo/logo_spash2.png</file>
@@ -181,6 +183,7 @@
     <file>images/go-bottom.png</file>
     <file>images/graph-area.png</file>
     <file>images/graph-line.png</file>
+    <file>images/graph-line-inverted.png</file>
     <file>images/gpgp_key_generate.png</file>
     <file>images/hide_toolbox_frame.png</file>
     <file>images/hide_frame.png</file>

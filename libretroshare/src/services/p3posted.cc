@@ -494,6 +494,8 @@ bool p3Posted::setPostReadStatus(const RsGxsGrpMsgIdPair& msgId, bool read)
         std::cerr << __PRETTY_FUNCTION__ << " Error! GXS operation failed." << std::endl;
         return false;
     }
+    RsGxsGrpMsgIdPair p;
+    acknowledgeMsg(token,p);
     return true;
 }
 bool p3Posted::editBoard(RsPostedGroup& board)

@@ -23,19 +23,22 @@
 #define R_GXS_TOKEN_QUEUE_H
 
 #include "gxs/rsgenexchange.h"
+#include "retroshare/rsservicecontrol.h"
 #include "util/rsthreads.h"
 
 
 struct GxsTokenQueueItem
 {
+public:
 
 	GxsTokenQueueItem(const uint32_t token, const uint32_t req_type) :
-	    mToken(token), mReqType(req_type) {}
+	    mToken(token), mReqType(req_type), mStatus(RsTokenService::PENDING) {}
 
-	GxsTokenQueueItem(): mToken(0), mReqType(0) {}
+	GxsTokenQueueItem(): mToken(0), mReqType(0), mStatus(RsTokenService::PENDING) {}
 
 	uint32_t mToken;
 	uint32_t mReqType;
+	RsTokenService::GxsRequestStatus mStatus;
 };
 
 
@@ -54,7 +57,8 @@ public:
 protected:
 
 	/// This must be overloaded to complete the functionality.
-	virtual void handleResponse(uint32_t token, uint32_t req_type) = 0;
+	virtual void handleResponse(uint32_t token, uint32_t req_type
+	                            , RsTokenService::GxsRequestStatus status) = 0;
 
 private:
 	RsGenExchange *mGenExchange;

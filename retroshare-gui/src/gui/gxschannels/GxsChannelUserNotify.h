@@ -29,15 +29,15 @@ class GxsChannelUserNotify : public GxsUserNotify
 	Q_OBJECT
 
 public:
-	GxsChannelUserNotify(RsGxsIfaceHelper *ifaceImpl, const GxsGroupFrameDialog *g, QObject *parent = 0);
+	explicit GxsChannelUserNotify(RsGxsIfaceHelper *ifaceImpl, const GxsGroupFrameDialog *g, QObject *parent = 0);
 
-	virtual bool hasSetting(QString *name, QString *group);
-    virtual QString textInfo() const override { return tr("new message(s)"); }
+	virtual bool hasSetting(QString *name, QString *group) override;
 
 private:
-	virtual QIcon getIcon();
-	virtual QIcon getMainIcon(bool hasNew);
-	virtual void iconClicked();
+	virtual QIcon getIcon() override;
+	virtual QIcon getMainIcon(bool hasNew) override;
+
+	virtual void iconClicked() override;
 };
 
 #endif // GXSCHANNELUSERNOTIFY_H

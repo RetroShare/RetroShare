@@ -256,10 +256,8 @@
 #include "util/rstime.h"
 #include "util/rsmemory.h"
 #include "util/stacktrace.h"
-
-#ifdef RS_DEEP_CHANNEL_INDEX
-#	include "deep_search/channelsindex.hpp"
-#endif
+#include "util/rsdebug.h"
+#include "util/cxx17retrocompat.h"
 
 /***
  * Use the following defines to debug:
@@ -637,7 +635,7 @@ void RsGxsNetService::syncWithPeers()
 
     for(RsGxsGrpMetaTemporaryMap::iterator mit = grpMeta.begin(); mit != grpMeta.end(); ++mit)
     {
-	    RsGxsGrpMetaData* meta = mit->second;
+        const auto& meta = mit->second;
 
 	    // This was commented out because we want to know how many messages are available for unsubscribed groups.
 
@@ -674,7 +672,7 @@ void RsGxsNetService::syncWithPeers()
         RsGxsGrpMetaTemporaryMap::const_iterator mmit = toRequest.begin();
         for(; mmit != toRequest.end(); ++mmit)
         {
-            const RsGxsGrpMetaData* meta = mmit->second;
+            const auto& meta = mmit->second;
             const RsGxsGroupId& grpId = mmit->first;
             RsGxsCircleId encrypt_to_this_circle_id ;
 
@@ -926,9 +924,9 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStatsItem *grs)
 	RsGxsGrpMetaTemporaryMap grpMetas;
 	    grpMetas[grs->grpId] = NULL;
 
-	    mDataStore->retrieveGxsGrpMetaData(grpMetas);
+        mDataStore->retrieveGxsGrpMetaData(grpMetas);
 
-	    const RsGxsGrpMetaData* grpMeta = grpMetas[grs->grpId];
+        const auto& grpMeta = grpMetas[grs->grpId];
 
 	if(grpMeta == NULL)
             {
@@ -957,9 +955,9 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStatsItem *grs)
 #ifdef NXS_NET_DEBUG_6
 	    GXSNETDEBUG_PG(grs->PeerId(),grs->grpId) << "  retrieving message information." << std::endl;
 #endif
-	    mDataStore->retrieveGxsMsgMetaData(reqIds, result);
+        mDataStore->retrieveGxsMsgMetaData(reqIds, result);
 
-	    const std::vector<const RsGxsMsgMetaData*>& vec(result[grs->grpId]) ;
+        const auto& vec(result[grs->grpId]) ;
 
 	    if(vec.empty())	// that means we don't have any, or there isn't any, but since the default is always 0, no need to send.
 		    return ;
@@ -2039,7 +2037,7 @@ void RsGxsNetService::debugDump()
     for(ServerMsgMap::const_iterator it(mServerMsgUpdateMap.begin());it!=mServerMsgUpdateMap.end();++it)
     {
         RsGxsGrpMetaTemporaryMap::const_iterator it2 = grpMetas.find(it->first) ;
-        RsGxsGrpMetaData *grpMeta = (it2 != grpMetas.end())? it2->second : NULL;
+        auto grpMeta = (it2 != grpMetas.end())? it2->second : (std::shared_ptr<RsGxsGrpMetaData>()) ;
         std::string subscribe_string = (grpMeta==NULL)?"Unknown" :  ((grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)?" Subscribed":" NOT Subscribed") ;
 
 	GXSNETDEBUG__G(it->first) << "    Grp:" << it->first << " last local modification (secs ago): " << nice_time_stamp(time(NULL),it->second.msgUpdateTS) << ", " << subscribe_string  << std::endl;
@@ -2115,7 +2113,7 @@ void RsGxsNetService::updateServerSyncTS()
 	{
 		RS_STACK_MUTEX(mNxsMutex) ;
 		// retrieve all grps and update TS
-		mDataStore->retrieveGxsGrpMetaData(gxsMap);
+        mDataStore->retrieveGxsGrpMetaData(gxsMap);
 
 		// (cyril) This code was previously removed because it sounded inconsistent: the list of grps normally does not need to be updated when
 		// new posts arrive. The two (grp list and msg list) are handled independently. Still, when group meta data updates are received,
@@ -2175,15 +2173,19 @@ void RsGxsNetService::updateServerSyncTS()
 #ifdef NXS_NET_DEBUG_0
                             GXSNETDEBUG__G(mit->first) << "  Group " << mit->first << " is conditionned to circle " << mit->second->mCircleId << ". local Grp TS=" << time(NULL) - mGrpServerUpdate.grpUpdateTS << " secs ago, circle grp server update TS=" << time(NULL) - circle_group_server_ts << " secs ago";
 #endif
+                            // We use a max here between grp and msg TS because membership is driven by invite list (grp data) crossed with
+                            // membership requests messages (msg data).
 
-                            if(circle_group_server_ts > mGrpServerUpdate.grpUpdateTS)
+                            auto circle_membership_ts = std::max(circle_group_server_ts,circle_msg_server_ts);
+
+                            if(circle_membership_ts > mGrpServerUpdate.grpUpdateTS)
 							{
 #ifdef NXS_NET_DEBUG_0
 								GXSNETDEBUG__G(mit->first) << " - Updating local Grp Server update TS to follow changes in circles." << std::endl;
 #endif
 
 								RS_STACK_MUTEX(mNxsMutex) ;
-								mGrpServerUpdate.grpUpdateTS = circle_group_server_ts ;
+                                mGrpServerUpdate.grpUpdateTS = circle_membership_ts ;
 							}
 #ifdef NXS_NET_DEBUG_0
                             else
@@ -2196,7 +2198,7 @@ void RsGxsNetService::updateServerSyncTS()
 
 		RS_STACK_MUTEX(mNxsMutex) ;
 
-		const RsGxsGrpMetaData* grpMeta = mit->second;
+        const auto& grpMeta = mit->second;
 #ifdef TO_REMOVE
 		// That accounts for modification of the meta data.
 
@@ -2924,7 +2926,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
     grpMetaMap[grpId] = NULL;
 
     mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
-    const RsGxsGrpMetaData* grpMeta = grpMetaMap[grpId];
+    const auto& grpMeta = grpMetaMap[grpId];
 
     if(grpMeta == NULL) // this should not happen, but just in case...
     {
@@ -2956,17 +2958,16 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
     reqIds[grpId] = std::set<RsGxsMessageId>();
     GxsMsgMetaResult result;
     mDataStore->retrieveGxsMsgMetaData(reqIds, result);
-    std::vector<const RsGxsMsgMetaData*> &msgMetaV = result[grpId];
+    auto& msgMetaV = result[grpId];
 
 #ifdef NXS_NET_DEBUG_1
     GXSNETDEBUG_PG(item->PeerId(),grpId) << "  retrieving grp message list..." << std::endl;
     GXSNETDEBUG_PG(item->PeerId(),grpId) << "  grp locally contains " << msgMetaV.size() << " messsages." << std::endl;
 #endif
-    std::vector<const RsGxsMsgMetaData*>::const_iterator vit = msgMetaV.begin();
     std::set<RsGxsMessageId> msgIdSet;
 
     // put ids in set for each searching
-    for(; vit != msgMetaV.end(); ++vit)
+    for(auto vit=msgMetaV.begin(); vit != msgMetaV.end(); ++vit)
         msgIdSet.insert((*vit)->mMsgId);
 
     msgMetaV.clear();
@@ -3230,7 +3231,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
         RsNxsSyncGrpItem*& grpSyncItem = *llit;
         const RsGxsGroupId& grpId = grpSyncItem->grpId;
 
-		std::map<RsGxsGroupId, RsGxsGrpMetaData*>::const_iterator metaIter = grpMetaMap.find(grpId);
+        auto metaIter = grpMetaMap.find(grpId);
         bool haveItem = false;
         bool latestVersion = false;
 
@@ -3312,7 +3313,7 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 	}
 
 	if(!grps.empty())
-		mDataStore->retrieveNxsGrps(grps, false, false);
+        mDataStore->retrieveNxsGrps(grps, false);
 	else
 	{
 #ifdef NXS_NET_DEBUG_1
@@ -3552,7 +3553,7 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
 #endif
 #endif
 
-    mDataStore->retrieveNxsMsgs(msgIds, msgs, false, false);
+    mDataStore->retrieveNxsMsgs(msgIds, msgs, false);
 
     NxsTransaction* newTr = new NxsTransaction();
     newTr->mFlag = NxsTransaction::FLAG_STATE_WAITING_CONFIRM;
@@ -4050,7 +4051,7 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrpReqItem *item)
 
     for(auto mit = grp.begin(); mit != grp.end(); ++mit)
     {
-	    const RsGxsGrpMetaData* grpMeta = mit->second;
+        const auto& grpMeta = mit->second;
 
 	    // Only send info about subscribed groups.
 
@@ -4369,7 +4370,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
     grpMetas[item->grpId] = NULL;
 
     mDataStore->retrieveGxsGrpMetaData(grpMetas);
-    const RsGxsGrpMetaData* grpMeta = grpMetas[item->grpId];
+    const auto& grpMeta = grpMetas[item->grpId];
 
     if(grpMeta == NULL)
     {
@@ -4402,7 +4403,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
 
     GxsMsgMetaResult metaResult;
     mDataStore->retrieveGxsMsgMetaData(req, metaResult);
-    std::vector<const RsGxsMsgMetaData*>& msgMetas = metaResult[item->grpId];
+    auto& msgMetas = metaResult[item->grpId];
 
 #ifdef NXS_NET_DEBUG_0
     GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "   retrieving message meta data." << std::endl;
@@ -4432,7 +4433,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
     {
 	    for(auto vit = msgMetas.begin();vit != msgMetas.end(); ++vit)
 		{
-			const RsGxsMsgMetaData* m = *vit;
+            const auto& m = *vit;
 
             // Check reputation
 
@@ -4577,7 +4578,7 @@ void RsGxsNetService::locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, c
 	}
 }
 
-bool RsGxsNetService::canSendMsgIds(std::vector<const RsGxsMsgMetaData*>& msgMetas, const RsGxsGrpMetaData& grpMeta, const RsPeerId& sslId,RsGxsCircleId& should_encrypt_id)
+bool RsGxsNetService::canSendMsgIds(std::vector<std::shared_ptr<RsGxsMsgMetaData> >& msgMetas, const RsGxsGrpMetaData& grpMeta, const RsPeerId& sslId,RsGxsCircleId& should_encrypt_id)
 {
 #ifdef NXS_NET_DEBUG_4
     GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "RsGxsNetService::canSendMsgIds() CIRCLE VETTING" << std::endl;
@@ -4803,43 +4804,40 @@ uint32_t RsGxsNetService::getKeepAge(const RsGxsGroupId& grpId)
 	return locked_getGrpConfig(grpId).msg_keep_delay ;
 }
 
-int RsGxsNetService::requestGrp(const std::list<RsGxsGroupId>& grpId, const RsPeerId& peerId)
+int RsGxsNetService::requestGrp(
+        const std::list<RsGxsGroupId>& grpIds, const RsPeerId& peerId )
 {
-	RS_STACK_MUTEX(mNxsMutex) ;
 #ifdef NXS_NET_DEBUG_0
-    GXSNETDEBUG_P_(peerId) << "RsGxsNetService::requestGrp(): adding explicit group requests to peer " << peerId << std::endl;
-
-    for(std::list<RsGxsGroupId>::const_iterator it(grpId.begin());it!=grpId.end();++it)
-        GXSNETDEBUG_PG(peerId,*it) << "   Group ID: " << *it << std::endl;
+	RS_DBG("Adding explicit groups requests to peer: ", peerId);
+	for(auto& grpId: std::as_const(grpIds)) RS_DBG("\t Group ID: ", grpId);
 #endif
-    mExplicitRequest[peerId].assign(grpId.begin(), grpId.end());
+
+	RS_STACK_MUTEX(mNxsMutex);
+	mExplicitRequest[peerId].insert(grpIds.begin(), grpIds.end());
 	return 1;
 }
 
 void RsGxsNetService::processExplicitGroupRequests()
 {
-	RS_STACK_MUTEX(mNxsMutex) ;
+	RS_STACK_MUTEX(mNxsMutex);
 
-	std::map<RsPeerId, std::list<RsGxsGroupId> >::const_iterator cit = mExplicitRequest.begin();
-
-	for(; cit != mExplicitRequest.end(); ++cit)
+	for(auto& cit: std::as_const(mExplicitRequest))
 	{
 #ifdef NXS_NET_DEBUG_0
-        GXSNETDEBUG_P_(cit->first) << "RsGxsNetService::sending pending explicit group requests to peer " << cit->first << std::endl;
+		RS_DBG("sending pending explicit group requests to peer ", cit.first);
 #endif
-        const RsPeerId& peerId = cit->first;
-		const std::list<RsGxsGroupId>& groupIdList = cit->second;
+		const RsPeerId& peerId = cit.first;
+		const std::set<RsGxsGroupId>& groupIdList = cit.second;
 
 		std::list<RsNxsItem*> grpSyncItems;
-		std::list<RsGxsGroupId>::const_iterator git = groupIdList.begin();
 		uint32_t transN = locked_getTransactionId();
-		for(; git != groupIdList.end(); ++git)
+		for(auto& grpId: std::as_const(groupIdList))
 		{
 #ifdef NXS_NET_DEBUG_0
-            GXSNETDEBUG_P_(peerId) << "   group request for grp ID " << *git << " to peer " << peerId << std::endl;
+			RS_DBG("\t group request for group ID: ", grpId);
 #endif
-            RsNxsSyncGrpItem* item = new RsNxsSyncGrpItem(mServType);
-			item->grpId = *git;
+			RsNxsSyncGrpItem* item = new RsNxsSyncGrpItem(mServType);
+			item->grpId = grpId;
 			item->PeerId(peerId);
 			item->flag = RsNxsSyncGrpItem::FLAG_REQUEST;
 			item->transactionNumber = transN;
@@ -4929,7 +4927,7 @@ void RsGxsNetService::sharePublishKeysPending()
 
         // Find the publish keys in the retrieved info
 
-        const RsGxsGrpMetaData *grpMeta = grpMetaMap[mit->first] ;
+        const auto& grpMeta = grpMetaMap[mit->first] ;
 
         if(grpMeta == NULL)
         {
@@ -5014,7 +5012,7 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 
 	// update the publish keys in this group meta info
 
-	const RsGxsGrpMetaData *grpMeta = grpMetaMap[item->grpId] ;
+    const auto& grpMeta = grpMetaMap[item->grpId] ;
 	if (!grpMeta) {
 		std::cerr << "(EE) RsGxsNetService::handleRecvPublishKeys() grpMeta not found." << std::endl;
 		return ;
@@ -5384,6 +5382,9 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req,const unsig
         // We should probably check that the identity that is sent corresponds to the group author and don't add
         // it otherwise. But in any case, this won't harm to add a new public identity. If that identity is banned,
         // the group will be discarded in RsGenExchange anyway.
+
+        if(nxs_identity_grp)
+            mGixs->receiveNewIdentity(nxs_identity_grp);
     }
 
 	free(clear_group_data);
@@ -5414,9 +5415,6 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req,const unsig
 #endif
 	mObserver->receiveNewGroups(new_grps);
 	mObserver->receiveDistantSearchResults(req, grpId);
-
-    if(nxs_identity_grp)
-        mGixs->receiveNewIdentity(nxs_identity_grp);
 }
 
 bool RsGxsNetService::search( const std::string& substring,
@@ -5425,6 +5423,12 @@ bool RsGxsNetService::search( const std::string& substring,
 	group_infos.clear();
 
 #ifdef RS_DEEP_CHANNEL_INDEX
+
+#warning TODO: filter deep index search result to non circle-restricted groups.
+//    /!\
+//    /!\   These results should be filtered to only return results coming from a non restricted group!
+//    /!\
+
 	std::vector<DeepChannelsSearchResult> results;
 	DeepChannelsIndex::search(substring, results);
 
@@ -5471,7 +5475,7 @@ bool RsGxsNetService::search( const std::string& substring,
 
 	RsGroupNetworkStats stats;
 	for(auto it(grpMetaMap.begin());it!=grpMetaMap.end();++it)
-		if(termSearch(it->second->mGroupName,substring))
+        if(it->second->mCircleType==GXS_CIRCLE_TYPE_PUBLIC  &&  termSearch(it->second->mGroupName,substring))
 		{
 			getGroupNetworkStats(it->first,stats);
 
@@ -5526,7 +5530,7 @@ bool RsGxsNetService::search(const Sha1CheckSum& hashed_group_id,unsigned char *
 		RsNxsGrpDataTemporaryMap grpDataMap;
 		{
 			RS_STACK_MUTEX(mNxsMutex) ;
-			mDataStore->retrieveNxsGrps(grpDataMap, true, true);
+            mDataStore->retrieveNxsGrps(grpDataMap, true);
             mLastCacheReloadTS = time(NULL);
 		}
 

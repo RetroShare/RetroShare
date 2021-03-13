@@ -40,7 +40,6 @@
 #include "retroshare/rsevents.h"
 #include "services/rseventsservice.h"
 
-
 /*******************
 #define TICK_DEBUG 1
 *******************/
@@ -110,14 +109,15 @@ RsServer::RsServer() :
 	mStatusSrv = NULL;
 	mGxsTunnels = NULL;
 
+	/* timers */
 	mLastts = getCurrentTS();
 	mTickInterval = maxTickInterval ;
 	mAvgRunDuration = 0;
 	mLastRunDuration = 0;
-	mCycle1 = 0;
-	mCycle2 = 0;
-	mCycle3 = 0;
-	mCycle4 = 0;
+	mCycle1 = mLastts;
+	mCycle2 = mLastts;
+	mCycle3 = mLastts;
+	mCycle4 = mLastts;
 
 	/* caches (that need ticking) */
 
@@ -136,10 +136,10 @@ RsServer::~RsServer()
 void RsServer::threadTick()
 {
 #ifdef TICK_DEBUG
-	RsDbg() << "TICK_DEBUG ticking interval "<< mTickInterval << std::endl;
+	RsDbg() << "TICK_DEBUG ticking interval " << std::dec << (int) (1000 * mTickInterval) << " ms";
 #endif
 
-// we try to tick at a regular interval which depends on the load 
+// we try to tick at a regular interval depending on the load 
 // if there is time left, we sleep
 	double timeToSleep = mTickInterval - mAvgRunDuration;
 
@@ -148,7 +148,7 @@ void RsServer::threadTick()
 		timeToSleep = 0.050;
 
 #ifdef TICK_DEBUG
-	RsDbg() << "TICK_DEBUG will sleep " << (int) (1000 * timeToSleep) << " ms" << std::endl;
+	RsDbg() << "TICK_DEBUG will sleep " << std::dec << (int) (1000 * timeToSleep) << " ms";
 #endif
 	rstime::rs_usleep(timeToSleep * 1000000);
 
@@ -156,24 +156,24 @@ void RsServer::threadTick()
 	mLastts = ts;
 
 // stuff we do always
-// tick the core
+	// tick the core
 #ifdef TICK_DEBUG
-	RsDbg() << "TICK_DEBUG ticking server" << std::endl;
+	RsDbg() << "TICK_DEBUG ticking RS core";
 #endif
 	lockRsCore();
 	int moreToTick = pqih->tick();
 	unlockRsCore();
-// tick the managers
+	// tick the managers
 #ifdef TICK_DEBUG
-	RsDbg() << "TICK_DEBUG ticking mPeerMgr" << std::endl;
+	RsDbg() << "TICK_DEBUG ticking mPeerMgr";
 #endif
 	mPeerMgr->tick();
 #ifdef TICK_DEBUG
-	RsDbg() << "TICK_DEBUG ticking mLinkMgr" << std::endl;
+	RsDbg() << "TICK_DEBUG ticking mLinkMgr";
 #endif
 	mLinkMgr->tick();
 #ifdef TICK_DEBUG
-	RsDbg() << "TICK_DEBUG ticking mNetMgr" << std::endl;
+	RsDbg() << "TICK_DEBUG ticking mNetMgr";
 #endif
 	mNetMgr->tick();
 
@@ -182,11 +182,16 @@ void RsServer::threadTick()
 	if (ts - mCycle1 > 1)
 	{
 #ifdef TICK_DEBUG
-		RsDbg() << "TICK_DEBUG every second" << std::endl;
+		RsDbg() << "TICK_DEBUG every second";
 #endif
 		// slow services
 		if (rsPlugins)
+		{
+#ifdef TICK_DEBUG
+			RsDbg() << "TICK_DEBUG ticking slow tick plugins";
+#endif
 			rsPlugins->slowTickPlugins((rstime_t)ts);
+		}
 		// UDP keepalive
 		// tou_tick_stunkeepalive();
 		// other stuff to tick
@@ -198,10 +203,8 @@ void RsServer::threadTick()
 	if (ts - mCycle2 > 5)
 	{
 #ifdef TICK_DEBUG
-		RsDbg() << "TICK_DEBUG every 5 seconds" << std::endl;
+		RsDbg() << "TICK_DEBUG every 5 seconds";
 #endif
-		// save stuff
-		mConfigMgr->tick();
 		mCycle2 = ts;
 	}
 
@@ -209,7 +212,7 @@ void RsServer::threadTick()
 	if (ts - mCycle3 > 60)
 	{
 #ifdef TICK_DEBUG
-		RsDbg() << "TICK_DEBUG every 60 seconds" << std::endl;
+		RsDbg() << "TICK_DEBUG every 60 seconds";
 #endif
 		// force saving FileTransferStatus TODO
 		// ftserver->saveFileTransferStatus();
@@ -222,8 +225,13 @@ void RsServer::threadTick()
 	if (ts - mCycle4 > 3600)
 	{
 #ifdef TICK_DEBUG
-		RsDbg() << "TICK_DEBUG every hour" << std::endl;
+		RsDbg() << "TICK_DEBUG every hour";
 #endif
+		// save configuration files
+#ifdef TICK_DEBUG
+		RsDbg() << "TICK_DEBUG ticking mConfigMgr";
+#endif
+		mConfigMgr->tick();
 		mCycle4 = ts;
 	}
 
@@ -237,22 +245,22 @@ void RsServer::threadTick()
 		mAvgRunDuration = maxTickInterval;
 
 #ifdef TICK_DEBUG
-	RsDbg() << "TICK_DEBUG new mLastRunDuration " << mLastRunDuration << " mAvgRunDuration " << mAvgRunDuration << std::endl;
+	RsDbg() << "TICK_DEBUG mLastRunDuration " << std::dec << (int) (1000 * mLastRunDuration) << " ms,  mAvgRunDuration " << (int) (1000 * mAvgRunDuration) << " ms";
 	if (mLastRunDuration > WARN_BIG_CYCLE_TIME)
-		RsDbg() << "TICK_DEBUG excessively long cycle time " << mLastRunDuration << std::endl;
+		RsDbg() << "TICK_DEBUG excessively long cycle time " << std::dec << (int) (1000 * mLastRunDuration) << " ms";
 #endif
 	
-// if the core has returned that there is more to tick we decrease the ticking interval, else we increse it
-// this should be studied closer as I dont think that the core ever returns 1
+// if the core has returned that there is more to tick we decrease the ticking interval, else we increase it
+// TODO: this should be investigated as it seems that the core never returns 1
 #ifdef TICK_DEBUG
-	RsDbg() << "TICK_DEBUG moreToTick " << moreToTick << std::endl;
+	RsDbg() << "TICK_DEBUG moreToTick " << moreToTick;
 #endif
 	if (moreToTick == 1)
 		mTickInterval = 0.9 * mTickInterval;
 	else
 		mTickInterval = 1.1 * mTickInterval;
 #ifdef TICK_DEBUG
-	RsDbg() << "TICK_DEBUG new tick interval " << mTickInterval << std::endl;
+	RsDbg() << "TICK_DEBUG new tick interval " << std::dec << (int) (1000 * mTickInterval) << " ms";
 #endif
 
 // keep the tick interval target within allowed limits
@@ -261,7 +269,7 @@ void RsServer::threadTick()
 	else if (mTickInterval > maxTickInterval)
 		mTickInterval = maxTickInterval;
 #ifdef TICK_DEBUG
-	RsDbg() << "TICK_DEBUG new tick interval after limiter " << mTickInterval << std::endl;
+	RsDbg() << "TICK_DEBUG new tick interval after limiter " << std::dec << (int) (1000 * mTickInterval) << " ms";
 #endif
 }
 

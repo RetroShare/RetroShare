@@ -33,13 +33,13 @@
 #include "gui/chat/ChatDialog.h"
 #include "gui/common/AvatarDefs.h"
 #include "gui/common/FilesDefs.h"
+#include "gui/common/RSElidedItemDelegate.h"
 
 #include "gui/connect/ConfCertDialog.h"
 #include "gui/connect/PGPKeyDialog.h"
 #include "gui/connect/ConnectFriendWizard.h"
 #include "gui/groups/CreateGroup.h"
 #include "gui/msgs/MessageComposer.h"
-#include "gui/notifyqt.h"
 #include "gui/RetroShareLink.h"
 #include "retroshare-gui/RsAutoUpdatePage.h"
 #ifdef UNFINISHED_FD
@@ -99,51 +99,66 @@
 
 /******
  * #define FRIENDS_DEBUG 1
+ * #define DEBUG_NEW_FRIEND_LIST 1
  *****/
 
 Q_DECLARE_METATYPE(ElidedLabel*)
 
+#ifdef DEBUG_NEW_FRIEND_LIST
+static std::ostream& operator<<(std::ostream& o,const QModelIndex& i)
+{
+    return o << "(" << i.row() << "," << i.column() << ")";
+}
+#endif
+
 class FriendListSortFilterProxyModel: public QSortFilterProxyModel
 {
 public:
-    FriendListSortFilterProxyModel(const QHeaderView *header,QObject *parent = NULL): QSortFilterProxyModel(parent),
-        	m_header(header),
-            m_sortingEnabled(false),
-    		m_showOfflineNodes(true) {}
-
-    bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
+	explicit FriendListSortFilterProxyModel(const QHeaderView *header,QObject *parent = NULL)
+	    : QSortFilterProxyModel(parent)
+	    , m_header(header)
+	    , m_sortingEnabled(false), m_sortByState(false)
+        , m_showOfflineNodes(true)
     {
-        bool is_group_1 = left.data(RsFriendListModel::TypeRole).toUInt() == (uint)RsFriendListModel::ENTRY_TYPE_GROUP;
-        bool is_group_2 = right.data(RsFriendListModel::TypeRole).toUInt() == (uint)RsFriendListModel::ENTRY_TYPE_GROUP;
-
-        if(is_group_1 ^ is_group_2)	// if the two are different, put the group first.
-            return is_group_1 ;
-
-        bool online1 = left .data(RsFriendListModel::OnlineRole).toBool();
-        bool online2 = right.data(RsFriendListModel::OnlineRole).toBool();
-
-        if(online1 != online2 && m_sortByState)
-            return (m_header->sortIndicatorOrder()==Qt::AscendingOrder)?online1:online2 ;	// always put online nodes first
-
-		return left.data(RsFriendListModel::SortRole) < right.data(RsFriendListModel::SortRole) ;
+        setDynamicSortFilter(false);  // causes crashes when true.
     }
 
-    bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override
-    {
-        // do not show empty groups
+	bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
+	{
+        bool is_group_1 =  left.data(RsFriendListModel::TypeRole).toUInt() == (uint)RsFriendListModel::ENTRY_TYPE_GROUP;
+		bool is_group_2 = right.data(RsFriendListModel::TypeRole).toUInt() == (uint)RsFriendListModel::ENTRY_TYPE_GROUP;
 
-        QModelIndex index = sourceModel()->index(source_row,0,source_parent);
+		if(is_group_1 ^ is_group_2)	// if the two are different, put the group first.
+			return is_group_1 ;
 
-        if(index.data(RsFriendListModel::TypeRole) == RsFriendListModel::ENTRY_TYPE_GROUP)	// always show groups, so we can delete them even when empty
-            return true;
+		bool online1 = (left .data(RsFriendListModel::OnlineRole).toInt() != RS_STATUS_OFFLINE);
+		bool online2 = (right.data(RsFriendListModel::OnlineRole).toInt() != RS_STATUS_OFFLINE);
 
-        // Filter offline friends
+        if((online1 != online2) && m_sortByState)
+			return (m_header->sortIndicatorOrder()==Qt::AscendingOrder)?online1:online2 ;    // always put online nodes first
 
-        if(!m_showOfflineNodes && !index.data(RsFriendListModel::OnlineRole).toBool())
-            return false;
+#ifdef DEBUG_NEW_FRIEND_LIST
+        std::cerr << "Comparing index " << left << " with index " << right << std::endl;
+#endif
+        return QSortFilterProxyModel::lessThan(left,right);
+	}
 
-        return index.data(RsFriendListModel::FilterRole).toString() == RsFriendListModel::FilterString ;
-    }
+	bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override
+	{
+		// do not show empty groups
+
+		QModelIndex index = sourceModel()->index(source_row,0,source_parent);
+
+		if(index.data(RsFriendListModel::TypeRole) == RsFriendListModel::ENTRY_TYPE_GROUP)  // always show groups, so we can delete them even when empty
+			return true;
+
+		// Filter offline friends
+
+		if(!m_showOfflineNodes && (index.data(RsFriendListModel::OnlineRole).toInt() == RS_STATUS_OFFLINE))
+			return false;
+
+		return index.data(RsFriendListModel::FilterRole).toString() == RsFriendListModel::FilterString ;
+	}
 
 	void sort( int column, Qt::SortOrder order = Qt::AscendingOrder ) override
 	{
@@ -172,22 +187,26 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
     ui->filterLineEdit->setPlaceholderText(tr("Search")) ;
     ui->filterLineEdit->showFilterIcon();
 
-	mEventHandlerId=0; // forces initialization
-	rsEvents->registerEventsHandler(
-	            [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); },
-	            mEventHandlerId, RsEventType::PEER_CONNECTION );
+    mEventHandlerId_peer=0; // forces initialization
+    mEventHandlerId_gssp=0; // forces initialization
+    mEventHandlerId_pssc=0; // forces initialization
 
-    mModel = new RsFriendListModel();
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId_pssc, RsEventType::PEER_STATE_CHANGED );
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId_peer, RsEventType::PEER_CONNECTION );
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId_gssp, RsEventType::GOSSIP_DISCOVERY );
+
+    mModel = new RsFriendListModel(ui->peerTreeWidget);
 	mProxyModel = new FriendListSortFilterProxyModel(ui->peerTreeWidget->header(),this);
 
     mProxyModel->setSourceModel(mModel);
     mProxyModel->setSortRole(RsFriendListModel::SortRole);
-    mProxyModel->setDynamicSortFilter(false);
     mProxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
 	mProxyModel->setFilterRole(RsFriendListModel::FilterRole);
 	mProxyModel->setFilterRegExp(QRegExp(RsFriendListModel::FilterString));
 
-    ui->peerTreeWidget->setModel(mProxyModel);
+	ui->peerTreeWidget->setModel(mProxyModel);
+	ui->peerTreeWidget->setItemDelegate(new RSElidedItemDelegate());
+	ui->peerTreeWidget->setWordWrap(false);
 
     /* Add filter actions */
     QString headerText = mModel->headerData(RsFriendListModel::COLUMN_THREAD_NAME,Qt::Horizontal,Qt::DisplayRole).toString();
@@ -203,7 +222,7 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
 
     /* Set sort */
     sortColumn(RsFriendListModel::COLUMN_THREAD_NAME, Qt::AscendingOrder);
-    toggleSortByState(false);
+
      // workaround for Qt bug, should be solved in next Qt release 4.7.0
     // http://bugreports.qt.nokia.com/browse/QTBUG-8270
     QShortcut *Shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->peerTreeWidget, 0, 0, Qt::WidgetShortcut);
@@ -226,17 +245,14 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
 	QHeaderView *h = ui->peerTreeWidget->header();
 	h->setContextMenuPolicy(Qt::CustomContextMenu);
 
+    processSettings(true);
+
 	connect(ui->peerTreeWidget->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumn(int,Qt::SortOrder)));
 
 	connect(ui->peerTreeWidget, SIGNAL(expanded(const QModelIndex&)), this, SLOT(itemExpanded(const QModelIndex&)));
 	connect(ui->peerTreeWidget, SIGNAL(collapsed(const QModelIndex&)), this, SLOT(itemCollapsed(const QModelIndex&)));
     connect(mActionSortByState, SIGNAL(toggled(bool)), this, SLOT(toggleSortByState(bool)));
     connect(ui->peerTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(peerTreeWidgetCustomPopupMenu()));
-
-    // Using Queued connections here is pretty important since the notifications may come from a different thread.
-
-	connect(NotifyQt::getInstance(), SIGNAL(friendsChanged())                , this, SLOT(forceUpdateDisplay()),Qt::QueuedConnection);
-    connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int))              , this, SLOT(forceUpdateDisplay()),Qt::QueuedConnection);
 
     connect(ui->actionShowOfflineFriends, SIGNAL(triggered(bool)), this, SLOT(setShowUnconnected(bool)));
     connect(ui->actionShowState,          SIGNAL(triggered(bool)), this, SLOT(setShowState(bool))      );
@@ -263,7 +279,10 @@ void NewFriendList::handleEvent(std::shared_ptr<const RsEvent> /*e*/)
 
 NewFriendList::~NewFriendList()
 {
-    rsEvents->unregisterEventsHandler(mEventHandlerId);
+    rsEvents->unregisterEventsHandler(mEventHandlerId_peer);
+    rsEvents->unregisterEventsHandler(mEventHandlerId_gssp);
+    rsEvents->unregisterEventsHandler(mEventHandlerId_pssc);
+
     delete mModel;
     delete mProxyModel;
     delete ui;
@@ -276,21 +295,6 @@ void NewFriendList::itemExpanded(const QModelIndex& index)
 void NewFriendList::itemCollapsed(const QModelIndex& index)
 {
     mModel->collapseItem(mProxyModel->mapToSource(index));
-}
-
-void NewFriendList::sortColumn(int col,Qt::SortOrder so)
-{
-    std::set<QString> expanded_indexes;
-	std::set<QString> selected_indexes;
-
-	saveExpandedPathsAndSelection(expanded_indexes, selected_indexes);
-    mProxyModel->setSortingEnabled(true);
-    mProxyModel->sort(col,so);
-    mProxyModel->setSortingEnabled(false);
-	restoreExpandedPathsAndSelection(expanded_indexes, selected_indexes);
-
-    mLastSortColumn = col;
-    mLastSortOrder = so;
 }
 
 void NewFriendList::headerContextMenuRequested(QPoint /*p*/)
@@ -375,74 +379,100 @@ void NewFriendList::addToolButton(QToolButton *toolButton)
     ui->titleBarFrame->layout()->addWidget(toolButton);
 }
 
-void NewFriendList::saveExpandedPathsAndSelection(std::set<QString>& expanded_indexes, std::set<QString>& selected_indexes)
+void NewFriendList::saveExpandedPathsAndSelection(std::set<QString>& expanded_indexes, QString& sel)
 {
+    QModelIndexList selectedIndexes = ui->peerTreeWidget->selectionModel()->selectedIndexes();
+    QModelIndex current_index = selectedIndexes.empty()?QModelIndex():(*selectedIndexes.begin());
+
 #ifdef DEBUG_NEW_FRIEND_LIST
     std::cerr << "Saving expended paths and selection..." << std::endl;
 #endif
 
     for(int row = 0; row < mProxyModel->rowCount(); ++row)
-        recursSaveExpandedItems(mProxyModel->index(row,0),QString(),expanded_indexes,selected_indexes);
+        recursSaveExpandedItems(mProxyModel->index(row,0),current_index,QString(),expanded_indexes,sel,0);
+
+#ifdef DEBUG_NEW_FRIEND_LIST
+    std::cerr << "  selected index: \"" << sel.toStdString() << "\"" << std::endl;
+#endif
 }
 
-void NewFriendList::restoreExpandedPathsAndSelection(const std::set<QString>& expanded_indexes, const std::set<QString>& selected_indexes)
+void NewFriendList::restoreExpandedPathsAndSelection(const std::set<QString>& expanded_indexes,const QString& index_to_select,QModelIndex& selected_index)
 {
 #ifdef DEBUG_NEW_FRIEND_LIST
     std::cerr << "Restoring expended paths and selection..." << std::endl;
+    std::cerr << "  index to select: \"" << index_to_select.toStdString() << "\"" << std::endl;
 #endif
 
     ui->peerTreeWidget->blockSignals(true) ;
 
     for(int row = 0; row < mProxyModel->rowCount(); ++row)
-        recursRestoreExpandedItems(mProxyModel->index(row,0),QString(),expanded_indexes,selected_indexes);
+        recursRestoreExpandedItems(mProxyModel->index(row,0),QString(),expanded_indexes,index_to_select,selected_index,0);
 
     ui->peerTreeWidget->blockSignals(false) ;
 }
 
-void NewFriendList::recursSaveExpandedItems(const QModelIndex& index,const QString& parent_path,std::set<QString>& exp, std::set<QString>& sel)
+void NewFriendList::recursSaveExpandedItems(const QModelIndex& index,const QModelIndex& current_index,const QString& parent_path,std::set<QString>& exp, QString& sel,int indx)
 {
-    QString local_path = parent_path + index.sibling(index.row(),RsFriendListModel::COLUMN_THREAD_ID).data(Qt::DisplayRole).toString() + " ";
+    QString local_path = parent_path + (parent_path.isNull()?"":"/") + index.sibling(index.row(),RsFriendListModel::COLUMN_THREAD_ID).data(Qt::DisplayRole).toString() ;
 
-    if(ui->peerTreeWidget->selectionModel()->selection().contains(index))
-        sel.insert(local_path) ;
+#ifdef DEBUG_NEW_FRIEND_LIST
+    for(int i=0;i<indx;++i) std::cerr << "  " ;
+    std::cerr << "  At index " << index.row() << ". local index path=\"" << local_path.toStdString() << "\"";
 
+    if(index == current_index)
+        std::cerr << "  adding to selection" ;
+#endif
     if(ui->peerTreeWidget->isExpanded(index))
     {
 #ifdef DEBUG_NEW_FRIEND_LIST
-        std::cerr << "Index " << local_path.toStdString() << " is expanded." << std::endl;
+        std::cerr << "  expanded." << std::endl;
 #endif
         if(index.isValid())
             exp.insert(local_path) ;
 
         for(int row=0;row<mProxyModel->rowCount(index);++row)
-            recursSaveExpandedItems(index.child(row,0),local_path,exp,sel) ;
+            recursSaveExpandedItems(index.child(row,0),current_index,local_path,exp,sel,indx+1) ;
     }
 #ifdef DEBUG_NEW_FRIEND_LIST
     else
-        std::cerr << "Index " << local_path.toStdString() << " is not expanded." << std::endl;
+        std::cerr << " not expanded." << std::endl;
 #endif
+
+    if(index == current_index)
+        sel = local_path ;
 }
 
-void NewFriendList::recursRestoreExpandedItems(const QModelIndex& index, const QString& parent_path, const std::set<QString>& exp, const std::set<QString> &sel)
+void NewFriendList::recursRestoreExpandedItems(const QModelIndex& index, const QString& parent_path, const std::set<QString>& exp, const QString& sel,QModelIndex& selected_index,int indx)
 {
-    QString local_path = parent_path + index.sibling(index.row(),RsFriendListModel::COLUMN_THREAD_ID).data(Qt::DisplayRole).toString() + " ";
+    QString local_path = parent_path + (parent_path.isNull()?"":"/") + index.sibling(index.row(),RsFriendListModel::COLUMN_THREAD_ID).data(Qt::DisplayRole).toString() ;
 #ifdef DEBUG_NEW_FRIEND_LIST
-    std::cerr << "at index " << index.row() << ". data[1]=" << local_path.toStdString() << std::endl;
-#endif
+    for(int i=0;i<indx;++i) std::cerr << "  " ;
+    std::cerr << "  At index " << index.row() << ". local index path=\"" << local_path.toStdString() << "\"";
 
-    if(sel.find(local_path) != sel.end())
-        ui->peerTreeWidget->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+    if(sel == local_path)
+        std::cerr << " selecting" ;
+#endif
 
     if(exp.find(local_path) != exp.end())
     {
 #ifdef DEBUG_NEW_FRIEND_LIST
-        std::cerr << "re expanding index " << local_path.toStdString() << std::endl;
+        std::cerr << "  re expanding " << std::endl;
 #endif
 
         ui->peerTreeWidget->setExpanded(index,true) ;
 
         for(int row=0;row<mProxyModel->rowCount(index);++row)
-            recursRestoreExpandedItems(index.child(row,0),local_path,exp,sel) ;
+            recursRestoreExpandedItems(index.child(row,0),local_path,exp,sel,selected_index,indx+1) ;
+    }
+#ifdef DEBUG_NEW_FRIEND_LIST
+    else
+        std::cerr << std::endl;
+#endif
+
+    if(sel == local_path)
+    {
+        ui->peerTreeWidget->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+        selected_index = index;
     }
 }
 
@@ -454,20 +484,26 @@ void NewFriendList::processSettings(bool load)
     if (load) // load settings
     {
         std::cerr <<"Re-loading settings..." << std::endl;
+        // sort
+        mProxyModel->setSortByState( Settings->value("sortByState", mProxyModel->sortByState()).toBool());
+        mProxyModel->setShowOfflineNodes(!Settings->value("hideUnconnected", !mProxyModel->showOfflineNodes()).toBool());
+
+#ifdef DEBUG_NEW_FRIEND_LIST
+        std::cerr << "Loading sortByState=" << mProxyModel->sortByState() << std::endl;
+#endif
+
         // states
         setShowUnconnected(!Settings->value("hideUnconnected", !mProxyModel->showOfflineNodes()).toBool());
-        setShowState(Settings->value("showState", mModel->getDisplayStatusString()).toBool());
-        setShowGroups(Settings->value("showGroups", mModel->getDisplayGroups()).toBool());
+
+        mModel->setDisplayStatusString(Settings->value("showState", mModel->getDisplayStatusString()).toBool());
+        mModel->setDisplayGroups(Settings->value("showGroups", mModel->getDisplayGroups()).toBool());
 
         setColumnVisible(RsFriendListModel::COLUMN_THREAD_IP,Settings->value("showIP", isColumnVisible(RsFriendListModel::COLUMN_THREAD_IP)).toBool());
         setColumnVisible(RsFriendListModel::COLUMN_THREAD_ID,Settings->value("showID", isColumnVisible(RsFriendListModel::COLUMN_THREAD_ID)).toBool());
         setColumnVisible(RsFriendListModel::COLUMN_THREAD_LAST_CONTACT,Settings->value("showLastContact", isColumnVisible(RsFriendListModel::COLUMN_THREAD_LAST_CONTACT)).toBool());
         ui->peerTreeWidget->header()->restoreState(Settings->value("headers").toByteArray());
 
-        // sort
-        toggleSortByState(Settings->value("sortByState", mProxyModel->sortByState()).toBool());
-
-        // open groups
+       // open groups
         int arrayIndex = Settings->beginReadArray("Groups");
         for (int index = 0; index < arrayIndex; ++index) {
             Settings->setArrayIndex(index);
@@ -492,8 +528,9 @@ void NewFriendList::processSettings(bool load)
 
         // sort
         Settings->setValue("sortByState", mProxyModel->sortByState());
-
-        Settings->endArray();
+#ifdef DEBUG_NEW_FRIEND_LIST
+        std::cerr << "Saving sortByState=" << mProxyModel->sortByState() << std::endl;
+#endif
     }
 }
 
@@ -501,6 +538,7 @@ void NewFriendList::toggleSortByState(bool sort)
 {
     mProxyModel->setSortByState(sort);
 	mProxyModel->setFilterRegExp(QRegExp(QString(RsFriendListModel::FilterString))) ;// triggers a re-display.
+    processSettings(false);
 }
 
 void NewFriendList::changeEvent(QEvent *e)
@@ -1022,11 +1060,6 @@ void NewFriendList::forceUpdateDisplay()
     checkInternalData(true);
 }
 
-// void NewFriendList::updateDisplay()
-// {
-//     checkInternalData(false);
-// }
-
 void NewFriendList::moveToGroup()
 {
     RsFriendListModel::RsProfileDetails pinfo;
@@ -1100,9 +1133,18 @@ void NewFriendList::removeGroup()
 void NewFriendList::applyWhileKeepingTree(std::function<void()> predicate)
 {
     std::set<QString> expanded_indexes;
-    std::set<QString> selected_indexes;
+    QString selected;
 
-    saveExpandedPathsAndSelection(expanded_indexes, selected_indexes);
+    saveExpandedPathsAndSelection(expanded_indexes, selected);
+
+#ifdef DEBUG_NEW_FRIEND_LIST
+    std::cerr << "After collecting selection, selected paths is: \"" << selected.toStdString() << "\", " ;
+    std::cerr << "expanded paths are: " << std::endl;
+    for(auto path:expanded_indexes)
+        std::cerr << "        \"" << path.toStdString() << "\"" << std::endl;
+    std::cerr << "Current sort column is: " << mLastSortColumn << " and order is " << mLastSortOrder << std::endl;
+#endif
+    whileBlocking(ui->peerTreeWidget)->clearSelection();
 
     // This is a hack to avoid crashes on windows while calling endInsertRows(). I'm not sure wether these crashes are
     // due to a Qt bug, or a misuse of the proxy model on my side. Anyway, this solves them for good.
@@ -1118,13 +1160,16 @@ void NewFriendList::applyWhileKeepingTree(std::function<void()> predicate)
         col_sizes[i] = ui->peerTreeWidget->columnWidth(i);
     }
 
-
+#ifdef DEBUG_NEW_FRIEND_LIST
+    std::cerr << "Applying predicate..." << std::endl;
+#endif
     mProxyModel->setSourceModel(nullptr);
 
     predicate();
 
+    QModelIndex selected_index;
     mProxyModel->setSourceModel(mModel);
-    restoreExpandedPathsAndSelection(expanded_indexes, selected_indexes);
+    restoreExpandedPathsAndSelection(expanded_indexes,selected,selected_index);
 
     // restore hidden columns
     for(uint32_t i=0;i<RsFriendListModel::COLUMN_THREAD_NB_COLUMNS;++i)
@@ -1134,8 +1179,43 @@ void NewFriendList::applyWhileKeepingTree(std::function<void()> predicate)
     }
 
     // restore sorting
-    sortColumn(mLastSortColumn,mLastSortOrder);
+    // sortColumn(mLastSortColumn,mLastSortOrder);
+#ifdef DEBUG_NEW_FRIEND_LIST
+    std::cerr << "Sorting again with sort column: " << mLastSortColumn << " and order " << mLastSortOrder << std::endl;
+#endif
+    mProxyModel->setSortingEnabled(true);
+    mProxyModel->sort(mLastSortColumn,mLastSortOrder);
+    mProxyModel->setSortingEnabled(false);
+
+    if(selected_index.isValid())
+        ui->peerTreeWidget->scrollTo(selected_index);
 }
+
+void NewFriendList::sortColumn(int col,Qt::SortOrder so)
+{
+#ifdef DEBUG_NEW_FRIEND_LIST
+    std::cerr << "Sorting with column=" << col << " and order=" << so << std::endl;
+#endif
+    std::set<QString> expanded_indexes;
+    QString selected;
+    QModelIndex selected_index;
+
+    saveExpandedPathsAndSelection(expanded_indexes, selected);
+    whileBlocking(ui->peerTreeWidget)->clearSelection();
+
+    mProxyModel->setSortingEnabled(true);
+    mProxyModel->sort(col,so);
+    mProxyModel->setSortingEnabled(false);
+
+    restoreExpandedPathsAndSelection(expanded_indexes,selected,selected_index);
+
+    if(selected_index.isValid())
+        ui->peerTreeWidget->scrollTo(selected_index);
+
+    mLastSortColumn = col;
+    mLastSortOrder = so;
+}
+
 
 void NewFriendList::checkInternalData(bool force)
 {
@@ -1255,7 +1335,7 @@ bool NewFriendList::exportFriendlist(QString &fileName)
 
     QDomElement pgpIDs = doc.createElement("pgpIDs");
     RsPeerDetails detailPGP;
-    for(std::list<RsPgpId>::iterator list_iter = gpg_ids.begin(); list_iter !=  gpg_ids.end(); list_iter++)	{
+    for(std::list<RsPgpId>::iterator list_iter = gpg_ids.begin(); list_iter !=  gpg_ids.end(); ++list_iter)	{
         rsPeers->getGPGDetails(*list_iter, detailPGP);
         QDomElement pgpID = doc.createElement("pgpID");
         // these values aren't used and just stored for better human readability
@@ -1264,9 +1344,9 @@ bool NewFriendList::exportFriendlist(QString &fileName)
 
         std::list<RsPeerId> ssl_ids;
         rsPeers->getAssociatedSSLIds(*list_iter, ssl_ids);
-        for(std::list<RsPeerId>::iterator list_iter = ssl_ids.begin(); list_iter !=  ssl_ids.end(); list_iter++) {
+        for(std::list<RsPeerId>::iterator list_iter2 = ssl_ids.begin(); list_iter2 !=  ssl_ids.end(); ++list_iter2) {
             RsPeerDetails detailSSL;
-            if (!rsPeers->getPeerDetails(*list_iter, detailSSL))
+            if (!rsPeers->getPeerDetails(*list_iter2, detailSSL))
                 continue;
 
             std::string certificate = rsPeers->GetRetroshareInvite(detailSSL.id, RetroshareInviteFlags::CURRENT_IP | RetroshareInviteFlags::DNS | RetroshareInviteFlags::RADIX_FORMAT);
@@ -1291,7 +1371,7 @@ bool NewFriendList::exportFriendlist(QString &fileName)
     root.appendChild(pgpIDs);
 
     QDomElement groups = doc.createElement("groups");
-    for(std::list<RsGroupInfo>::iterator list_iter = group_info_list.begin(); list_iter !=  group_info_list.end(); list_iter++)	{
+    for(std::list<RsGroupInfo>::iterator list_iter = group_info_list.begin(); list_iter !=  group_info_list.end(); ++list_iter)	{
         RsGroupInfo group_info = *list_iter;
 
         //skip groups without peers
@@ -1303,7 +1383,7 @@ bool NewFriendList::exportFriendlist(QString &fileName)
         group.setAttribute("name", QString::fromUtf8(group_info.name.c_str()));
         group.setAttribute("flag", group_info.flag);
 
-        for(std::set<RsPgpId>::iterator i = group_info.peerIds.begin(); i !=  group_info.peerIds.end(); i++) {
+        for(std::set<RsPgpId>::iterator i = group_info.peerIds.begin(); i !=  group_info.peerIds.end(); ++i) {
             QDomElement pgpID = doc.createElement("pgpID");
             std::string pid = i->toStdString();
             pgpID.setAttribute("id", QString::fromStdString(pid));
@@ -1344,6 +1424,9 @@ static void showXMLParsingError()
  */
 bool NewFriendList::importFriendlist(QString &fileName, bool &errorPeers, bool &errorGroups)
 {
+	errorPeers = false;
+	errorGroups = false;
+
     QDomDocument doc;
     // load from file
     {
@@ -1375,10 +1458,6 @@ bool NewFriendList::importFriendlist(QString &fileName, bool &errorPeers, bool &
         return false;
     }
 
-    errorPeers = false;
-    errorGroups = false;
-
-    std::string error_string;
     RsPeerDetails rsPeerDetails;
     RsPeerId rsPeerID;
     RsPgpId rsPgpID;
@@ -1547,11 +1626,13 @@ void NewFriendList::toggleColumnVisible()
 void NewFriendList::setShowState(bool show)
 {
     applyWhileKeepingTree([show,this]() { mModel->setDisplayStatusString(show) ; });
+    processSettings(false);
 }
 
 void NewFriendList::setShowGroups(bool show)
 {
     applyWhileKeepingTree([show,this]() { mModel->setDisplayGroups(show) ; });
+    processSettings(false);
 }
 
 /**

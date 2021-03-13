@@ -58,6 +58,7 @@ HomePage::HomePage(QWidget *parent) :
     updateCertificate();
 
     connect(ui->addButton, SIGNAL(clicked()), this, SLOT(addFriend()));
+    connect(ui->copyIDButton, SIGNAL(clicked()), this, SLOT(copyId()));
 
     QAction *WebMailAction = new QAction(QIcon(),tr("Invite via WebMail"), this);
     connect(WebMailAction, SIGNAL(triggered()), this, SLOT(webMail()));
@@ -107,9 +108,9 @@ HomePage::HomePage(QWidget *parent) :
                             <div align=center>\
                     <IMG align=\"center\" width=\"%2\" src=\":/images/network_map.png\"/> \
                     </div>\
-                    <p>To do so, copy your certificate on this page and send it to friends, and add your friends' certificate.</p> \
+                    <p>To do so, copy your Retroshare ID on this page and send it to friends, and add your friends' Retroshare ID.</p> \
                             <p>Another option is to search the internet for \"Retroshare chat servers\" (independently administrated). These servers allow you to exchange \
-                            certificates with a dedicated Retroshare node, through which\
+                            Retroshare ID with a dedicated Retroshare node, through which\
                             you will be able to anonymously meet other people.</p> ").arg(QString::number(2*S)).arg(width()*0.5);
                             registerHelpButton(ui->helpButton,help_str,"HomePage") ;
 
@@ -190,6 +191,7 @@ void HomePage::toggleIncludeAllIPs()
 
 HomePage::~HomePage()
 {
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
     delete ui;
 }
 
@@ -343,7 +345,7 @@ void HomePage::webMail()
 
 void HomePage::openWebHelp()
 {
-    QDesktopServices::openUrl(QUrl(QString("https://retroshare.readthedocs.io")));
+    QDesktopServices::openUrl(QUrl(QString("https://retrosharedocs.readthedocs.io/en/latest/")));
 }
 
 void HomePage::toggleUseOldFormat()

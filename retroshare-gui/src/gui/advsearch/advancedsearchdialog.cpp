@@ -21,6 +21,7 @@
  *******************************************************************************/
 
 #include "advancedsearchdialog.h"
+#include "gui/common/FilesDefs.h"
 
 AdvancedSearchDialog::AdvancedSearchDialog(QWidget * parent) : QDialog (parent) 
 {
@@ -50,6 +51,8 @@ AdvancedSearchDialog::AdvancedSearchDialog(QWidget * parent) : QDialog (parent)
              this, SLOT(reset()));
     connect(this->executeButton, SIGNAL(clicked()),
             this, SLOT(prepareSearch()));
+
+	addExprButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/add.png"));
 }
 
 

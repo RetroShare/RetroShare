@@ -38,7 +38,7 @@ class ElidedLabel : public QLabel
 	Q_PROPERTY(QColor textColor READ textColor WRITE setTextColor)
 
 public:
-	ElidedLabel(const QString &text, QWidget *parent = 0);
+	explicit ElidedLabel(const QString &text, QWidget *parent = 0);
 	ElidedLabel(QWidget *parent = 0);
 
 	const QString & text() const { return mContent; }
@@ -77,6 +77,7 @@ protected:
 
 signals:
 	void elisionChanged(bool elided);
+	void clicked(QPoint pos);
 
 private:
 	bool mElided;

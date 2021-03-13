@@ -116,3 +116,26 @@ QStatusBar{
        border-image: url(%THISPATH%/qlive/qb.png);
 }
 
+HomePage QToolButton#addButton {
+	font: bold;
+	font-size: 15pt;
+	color: white;
+	background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #77AEF1, stop: 0.4 #86BBF7);
+	border: 1px solid #86BBF7;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+HomePage QToolButton#addButton:hover {
+	background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #7fb0ec, stop: 1 #90a1e2);
+	border: 1px solid #90a1e2;
+	border-radius: 4px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+MainWindow QListWidget {
+	font-size: 12pt;
+}

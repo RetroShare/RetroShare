@@ -44,7 +44,8 @@ public:
 	void addCircle(const RsGxsCircleDetails &cirDetails);
 
 private slots:
-	void addMember();
+
+    void addMember();
 	void removeMember();
 
 	void updateCircleType(bool b);
@@ -60,6 +61,12 @@ private slots:
 	void IdListCustomPopupMenu( QPoint point );
 	void MembershipListCustomPopupMenu( QPoint point);
 
+protected:
+    virtual void keyPressEvent(QKeyEvent *e) override;
+    virtual void accept() override;
+    virtual void reject() override;
+
+    bool tryClose();
 private:
 
 	void updateCircleGUI();
@@ -69,7 +76,10 @@ private:
 
 	bool mIsExistingCircle;
 	bool mIsExternalCircle;
-    	bool mReadOnly;
+    bool mReadOnly;
+    bool mIdentitiesLoading;
+    bool mCircleLoading;
+    bool mCloseRequested;
 
 	void loadCircle(const RsGxsGroupId& groupId);
 	void loadIdentities();

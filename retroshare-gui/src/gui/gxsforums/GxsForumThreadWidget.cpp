@@ -48,6 +48,7 @@
 #include "util/imageutil.h"
 
 #include <retroshare/rsgxsforums.h>
+#include <retroshare/rsgxscircles.h>
 #include <retroshare/rsgrouter.h>
 #include <retroshare/rspeers.h>
 // These should be in retroshare/ folder.
@@ -205,7 +206,10 @@ public:
 class ForumPostSortFilterProxyModel: public QSortFilterProxyModel
 {
 public:
-    ForumPostSortFilterProxyModel(const QHeaderView *header,QObject *parent = NULL): QSortFilterProxyModel(parent),m_header(header) {}
+    explicit ForumPostSortFilterProxyModel(const QHeaderView *header,QObject *parent = NULL): QSortFilterProxyModel(parent),m_header(header)
+    {
+        setDynamicSortFilter(false); // causes crashes when true
+    }
 
     bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
     {
@@ -273,7 +277,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     connect(ui->versions_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(changedVersion()));
     connect(ui->threadTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(threadListCustomPopupMenu(QPoint)));
     connect(ui->postText, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuTextBrowser(QPoint)));
-    connect(ui->forumName, SIGNAL(clicked()), this, SLOT(showForumInfo()));
+    connect(ui->forumName, SIGNAL(clicked(QPoint)), this, SLOT(showForumInfo()));
 
     ui->subscribeToolButton->hide() ;
     connect(ui->subscribeToolButton, SIGNAL(subscribe(bool)), this, SLOT(subscribeGroup(bool)));
@@ -325,12 +329,12 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_AUTHOR, 150*f);
 
     ui->threadTreeWidget->resizeColumnToContents(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION);
-    ui->threadTreeWidget->resizeColumnToContents(RsGxsForumModel::COLUMN_THREAD_READ);
+    //ui->threadTreeWidget->resizeColumnToContents(RsGxsForumModel::COLUMN_THREAD_READ);
 
     QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_TITLE,        QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_DATE,         QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_AUTHOR,       QHeaderView::Interactive);
-    QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_READ,         QHeaderView::Fixed);
+    QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_READ,         QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, QHeaderView::Fixed);
 
     ttheader->setCascadingSectionResizes(true);
@@ -468,12 +472,13 @@ void GxsForumThreadWidget::processSettings(bool load)
 
 void GxsForumThreadWidget::changedSelection(const QModelIndex& current,const QModelIndex& last)
 {
-    if (current!=last
-        && ( ( last.row()>=0 && last.column()>=0) //Double call when retrieve focus.
-            || mThreadId.isNull() //For first click
-           )
-       )
-        changedThread(current);
+	if (current!=last
+	    && ( ( last.row()>=0 && last.column()>=0) //Double call when retrieve focus.
+	         || mThreadId.isNull() //For first click
+	       )
+	    && (current.column() != RsGxsForumModel::COLUMN_THREAD_READ) //clickedThread will changedThread after.
+	    )
+		changedThread(current);
 }
 
 void GxsForumThreadWidget::groupIdChanged()
@@ -603,8 +608,8 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
     QAction *editAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MESSAGEEDIT), tr("Edit"), &contextMnu);
     connect(editAct, SIGNAL(triggered()), this, SLOT(editforummessage()));
 
-    bool is_pinned = mForumGroup.mPinnedPosts.ids.find(mThreadId) != mForumGroup.mPinnedPosts.ids.end();
-    QAction *pinUpPostAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PINPOST), (is_pinned?tr("Un-pin this post"):tr("Pin this post up")), &contextMnu);
+    bool this_is_pinned = mForumGroup.mPinnedPosts.ids.find(mThreadId) != mForumGroup.mPinnedPosts.ids.end();
+    QAction *pinUpPostAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PINPOST), (this_is_pinned?tr("Un-pin this post"):tr("Pin this post up")), &contextMnu);
     connect(pinUpPostAct , SIGNAL(triggered()), this, SLOT(togglePinUpPost()));
 
     QAction *replyAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_REPLY), tr("Reply"), &contextMnu);
@@ -698,10 +703,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 #endif
         markMsgAsReadChildren->setVisible(has_children);
         markMsgAsUnreadChildren->setVisible(has_children);
-    }
 
-    if(has_current_post)
-    {
         bool is_pinned = mForumGroup.mPinnedPosts.ids.find( current_post.mMsgId ) != mForumGroup.mPinnedPosts.ids.end();
 
         if(!is_pinned)
@@ -868,7 +870,6 @@ bool GxsForumThreadWidget::eventFilter(QObject *obj, QEvent *event)
         }
     }
     // pass the event on to the parent class
-    return RsGxsUpdateBroadcastWidget::eventFilter(obj, event);
     return RsGxsUpdateBroadcastWidget::eventFilter(obj, event);
 }
 #endif
@@ -1058,22 +1059,27 @@ void GxsForumThreadWidget::updateForumDescription(bool success)
     forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Posts (at neighbor nodes)")).arg(group.mMeta.mVisibleMsgCount);
 
     if(group.mMeta.mLastPost==0)
-        forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Last post")).arg(tr("Never"));
+        forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Last post"),tr("Never"));
     else
-        forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Last post")).arg(DateTime::formatLongDateTime(group.mMeta.mLastPost));
+        forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Last post"),DateTime::formatLongDateTime(group.mMeta.mLastPost));
 
     if(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
     {
-        forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Synchronization")).arg(getDurationString( rsGxsForums->getSyncPeriod(group.mMeta.mGroupId)/86400 )) ;
-        forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Storage")).arg(getDurationString( rsGxsForums->getStoragePeriod(group.mMeta.mGroupId)/86400));
+        forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Synchronization"),getDurationString( rsGxsForums->getSyncPeriod(group.mMeta.mGroupId)/86400 )) ;
+        forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Storage"),getDurationString( rsGxsForums->getStoragePeriod(group.mMeta.mGroupId)/86400));
+    }
+    else
+    {
+        if(group.mMeta.mLastSeen > 0)
+            forum_description += QString("<b>%1: \t</b>%2 days ago<br/>").arg(tr("Last seen at friends:"),QString::number((time(nullptr) - group.mMeta.mLastSeen)/86400));
     }
 
     QString distrib_string = tr("[unknown]");
-    switch(group.mMeta.mCircleType)
+    switch(static_cast<RsGxsCircleType>(group.mMeta.mCircleType))
     {
-    case GXS_CIRCLE_TYPE_PUBLIC: distrib_string = tr("Public") ;
+    case RsGxsCircleType::PUBLIC: distrib_string = tr("Public");
         break ;
-    case GXS_CIRCLE_TYPE_EXTERNAL:
+    case RsGxsCircleType::EXTERNAL:
     {
         RsGxsCircleDetails det ;
 
@@ -1085,7 +1091,7 @@ void GxsForumThreadWidget::updateForumDescription(bool success)
             distrib_string = tr("Restricted to members of circle ")+QString::fromStdString(group.mMeta.mCircleId.toStdString()) ;
     }
         break ;
-    case GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY:
+    case RsGxsCircleType::NODES_GROUP:
     {
         distrib_string = tr("Only friends nodes in group ") ;
 
@@ -1098,7 +1104,7 @@ void GxsForumThreadWidget::updateForumDescription(bool success)
     }
         break ;
 
-    case GXS_CIRCLE_TYPE_LOCAL: distrib_string = tr("Your eyes only");	// this is not yet supported. If you see this, it is a bug!
+    case RsGxsCircleType::LOCAL: distrib_string = tr("Your eyes only");	// this is not yet supported. If you see this, it is a bug!
         break ;
     default:
         std::cerr << "(EE) badly initialised group distribution ID = " << group.mMeta.mCircleType << std::endl;
@@ -1108,7 +1114,7 @@ void GxsForumThreadWidget::updateForumDescription(bool success)
     forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Owner"), author);
 
        if(!anti_spam_features1.isNull())
-            forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Anti-spam")).arg(anti_spam_features1);
+            forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Anti-spam"),anti_spam_features1);
 
     ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags));
     ui->newthreadButton->setEnabled(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags));
@@ -1579,9 +1585,9 @@ void GxsForumThreadWidget::togglePinUpPost()
         return ;
     }
 
-    QString thread_title = index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_TITLE).data(Qt::DisplayRole).toString();
 
 #ifdef DEBUG_FORUMS
+    QString thread_title = index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_TITLE).data(Qt::DisplayRole).toString();
     std::cerr << "Toggling Pin-up state of post " << mThreadId.toStdString() << ": \"" << thread_title.toStdString() << "\"" << std::endl;
 #endif
 

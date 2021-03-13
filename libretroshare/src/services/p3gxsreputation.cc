@@ -390,7 +390,7 @@ void p3GxsReputation::cleanup()
 #ifdef DEBUG_REPUTATION
                 std::cerr << "  ID " << it->first << ": own is negative for more than " << mMaxPreventReloadBannedIds/86400 << " days. Reseting it!" << std::endl;
 #endif
-                mChanged = true ;
+                should_delete = true;
             }
 
             // Delete slots with basically no information

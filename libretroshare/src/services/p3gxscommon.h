@@ -82,7 +82,8 @@ static double calculateBestScore(int upVotes, int downVotes);
 	protected:
 
 	// Overloaded from GxsTokenQueue for Request callbacks.
-virtual void handleResponse(uint32_t token, uint32_t req_type);
+	virtual void handleResponse(uint32_t token, uint32_t req_type
+	                            , RsTokenService::GxsRequestStatus status) override;
 
 	private:
 

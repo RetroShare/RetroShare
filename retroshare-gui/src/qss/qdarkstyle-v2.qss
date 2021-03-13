@@ -1945,11 +1945,12 @@ PlotWidget {
 }
 
 NewFriendList {
-    qproperty-textColorStatusAway: lightgray;
-    qproperty-textColorStatusBusy: lightgray;
-    qproperty-textColorStatusOnline: green;
-    qproperty-textColorStatusInactive: lightgray;
+    qproperty-textColorStatusAway: #4040A0;
+    qproperty-textColorStatusBusy: #A04040;
+    qproperty-textColorStatusOnline: #40A040;
+    qproperty-textColorStatusInactive: #A0A040;
     qproperty-textColorStatusOffline: gray;
+    qproperty-textColorGroup: rgb(123, 123, 123);
 }
 
 NetworkDialog {
@@ -1973,7 +1974,7 @@ GxsForumThreadWidget QPushButton#forumName
 {
 	qproperty-fontSizeFactor: 140;
 	color: #0099cc;
-	font-size: 15px;
+	font-size: 14pt;
 	font: bold;
 }
 
@@ -2013,7 +2014,7 @@ QTreeView [new=true]{
 
 PostedListWidgetWithModel QToolButton#subscribeToolButton {
 	font: bold;
-	font-size: 15px;
+	font-size: 12pt;
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
@@ -2027,7 +2028,7 @@ PostedListWidgetWithModel QToolButton#subscribeToolButton:hover {
 
 GxsForumThreadWidget QToolButton#subscribeToolButton {
 	font: bold;
-	font-size: 14px;
+	font-size: 12pt;
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
@@ -2041,7 +2042,7 @@ GxsForumThreadWidget QToolButton#subscribeToolButton:hover {
 
 GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton {
 	font: bold;
-	font-size: 14px;
+	font-size: 12pt;
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
@@ -2082,7 +2083,7 @@ GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton::menu-button {
 
 CreateGxsChannelMsg QPushButton#postButton {
 	font: bold;
-	font-size: 15px;
+	font-size: 12pt;
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
@@ -2102,7 +2103,7 @@ CreateCircleDialog QPushButton#createButton, CreateLobbyDialog QPushButton#creat
 IdEditDialog QPushButton#createButton, CreateGxsForumMsg QPushButton#postButton,
 GxsCreateCommentDialog QPushButton#postButton, GxsGroupDialog QPushButton#createButton {
 	font: bold;
-	font-size: 15px;
+	font-size: 12pt;
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
@@ -2123,7 +2124,7 @@ GxsCreateCommentDialog QPushButton#postButton:hover, GxsGroupDialog QPushButton#
 CreateGxsForumMsg QPushButton#postButton:disabled, PostedCreatePostDialog QPushButton#submitButton:disabled,
 CreateGxsChannelMsg QPushButton#postButton:disabled, GxsCreateCommentDialog QPushButton#postButton:disabled {
 	font: bold;
-	font-size: 15px;
+	font-size: 12pt;
 	color: white;
 	background: #d40000;
 	border-radius: 4px;
@@ -2144,7 +2145,7 @@ QLabel#avatarLabel{
 
 PostedCreatePostDialog QPushButton#submitButton {
 	font: bold;
-	font-size: 15px;
+	font-size: 12pt;
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
@@ -2242,7 +2243,7 @@ BoardPostDisplayWidget_card  QFrame#mainFrame[new=true] {
 
 BoardPostDisplayWidget_compact QLabel#titleLabel,
 BoardPostDisplayWidget_card QLabel#titleLabel{
-	font-size: 14px;
+	font-size: 12pt;
 	font: bold;
 }
 
@@ -2284,4 +2285,45 @@ ChatLobbyWidget QTreeWidget#lobbyTreeWidget{
 
 NewFriendList QTreeView#peerTreeWidget {
 		font-size: 12pt;
+}
+
+ChannelsCommentsItem QFrame#mainFrame, BoardsCommentsItem QFrame#mainFrame {
+	background: #19232D;
+}
+
+ChannelsCommentsItem QLabel#newCommentLabel, BoardsCommentsItem QLabel#newCommentLabel {
+	font: 12pt;
+	font: bold;
+}
+
+ChannelsCommentsItem QLabel#subjectLabel, ChannelsCommentsItem QLabel#titleLabel , QLabel#nameLabel {
+	font: 12pt;
+	font: bold;
+}
+
+BoardsCommentsItem QLabel#subjectLabel, QLabel#titleLabel , QLabel#nameLabel {
+	font: 12pt;
+	font: bold;
+}
+
+HomePage QToolButton#addButton {
+	font: bold;
+	font-size: 15pt;
+	color: white;
+	background: #0099cc;
+	border-radius: 4px;
+	max-height: 27px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+HomePage QToolButton#addButton:hover {
+	background: #03b1f3;
+	border-radius: 4px;
+	min-width: 4em;
+	padding: 2px;
+}
+
+NewFriendList QTreeView#peerTreeWidget {
+	font-size: 12pt;
 }

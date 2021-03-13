@@ -623,9 +623,11 @@ HEADERS +=  rshare.h \
             gui/elastic/arrow.h \
             gui/elastic/elnode.h \
             gui/NewsFeed.h \
+            gui/feeds/BoardsCommentsItem.h \
             gui/feeds/FeedItem.h \
             gui/feeds/FeedHolder.h \
             gui/feeds/GxsCircleItem.h \
+            gui/feeds/ChannelsCommentsItem.h \
             gui/feeds/PeerItem.h \
             gui/feeds/MsgItem.h \
             gui/feeds/ChatMsgItem.h \
@@ -733,7 +735,9 @@ FORMS +=    gui/StartDialog.ui \
             gui/advsearch/AdvancedSearchDialog.ui \
             gui/advsearch/expressionwidget.ui \
             gui/NewsFeed.ui \
+            gui/feeds/BoardsCommentsItem.ui \
             gui/feeds/GxsCircleItem.ui \
+            gui/feeds/ChannelsCommentsItem.ui \
             gui/feeds/PeerItem.ui \
             gui/feeds/MsgItem.ui \
             gui/feeds/ChatMsgItem.ui \
@@ -980,9 +984,11 @@ SOURCES +=  main.cpp \
             gui/elastic/arrow.cpp \
             gui/elastic/elnode.cpp \
             gui/NewsFeed.cpp \
+            gui/feeds/BoardsCommentsItem.cpp \
             gui/feeds/FeedItem.cpp \
             gui/feeds/FeedHolder.cpp \
             gui/feeds/GxsCircleItem.cpp \
+            gui/feeds/ChannelsCommentsItem.cpp \
             gui/feeds/PeerItem.cpp \
             gui/feeds/MsgItem.cpp \
             gui/feeds/ChatMsgItem.cpp \
@@ -1508,3 +1514,18 @@ wikipoos {
 		gui/gxs/RsGxsUpdateBroadcastWidget.cpp \
 		gui/gxs/RsGxsUpdateBroadcastPage.cpp \
 }
+
+################################################################
+#Define qmake_info.h file so GUI can get wath was used to compil
+#         This must be at end to get all informations
+################################################################
+RS_QMAKE_DEFINES=\\\"$${DEFINES}\\\"
+RS_QMAKE_CONFIG=\\\"$${CONFIG}\\\"
+
+INCLUDEPATH += $$OUT_PWD/include
+info_file.input = $$PWD/qmake_info.h.in
+info_file.output = $$OUT_PWD/include/qmake_info.h
+
+QMAKE_SUBSTITUTES += info_file
+OTHER_FILES += \
+    qmake_info.h.in

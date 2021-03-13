@@ -379,8 +379,10 @@ void p3NetMgrIMPL::netStartup()
 			break;
 
 		case RS_NET_MODE_TRY_LOOPBACK:
-			std::cerr << "p3NetMgrIMPL::netStartup() TRY_LOOPBACK mode";
+#ifdef NETMGR_DEBUG_RESET
+            std::cerr << "p3NetMgrIMPL::netStartup() TRY_LOOPBACK mode";
 			std::cerr << std::endl;
+#endif
 			mNetMode |= RS_NET_MODE_HIDDEN;
 			mNetStatus = RS_NET_LOOPBACK;
 			break;
@@ -464,7 +466,29 @@ void p3NetMgrIMPL::netStatusTick()
 		netStatus = mNetStatus;
 		age = time(NULL) - mNetInitTS;
 
-	}
+    }
+
+    if(netStatus <= RS_NET_UPNP_SETUP && mUseExtAddrFinder)
+    {
+        sockaddr_storage tmpip = mLocalAddr;	// copies local port and correctly inits the IP family
+#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
+        std::cerr << "Asking ExtAddrFinder for IP. Initializing port with " << sockaddr_storage_port(tmpip) << std::endl;
+#endif
+
+        if(mExtAddrFinder->hasValidIP(tmpip) && sockaddr_storage_ipv6_to_ipv4(tmpip) && !sockaddr_storage_same(tmpip,mExtAddr))
+        {
+#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
+            std::cerr << "p3NetMgrIMPL::netExtCheck() Ext supplied by ExtAddrFinder" << std::endl;
+#endif
+
+#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
+            std::cerr << "p3NetMgrIMPL::netExtCheck() ";
+            std::cerr << "ExtAddr: " << sockaddr_storage_tostring(tmpip);
+            std::cerr << std::endl;
+#endif
+            setExtAddress(tmpip);
+        }
+    }
 
 	switch(netStatus)
 	{
@@ -514,14 +538,18 @@ void p3NetMgrIMPL::netStatusTick()
 			break;
 
 
-		case RS_NET_EXT_SETUP:
+        case RS_NET_EXT_SETUP:
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-			std::cerr << "p3NetMgrIMPL::netTick() STATUS: EXT_SETUP" << std::endl;
+            std::cerr << "p3NetMgrIMPL::netTick() STATUS: EXT_SETUP" << std::endl;
 #endif
-			netExtCheck();
-			break;
+            // This could take a lot of time on some systems to get there:
+            // (e.g. 10 mins to get passed upnp on windows), so it would be better to call it right away, so other external address finding
+            // systems still have a chance to run early.
 
-		case RS_NET_DONE:
+            netExtCheck();
+            break;
+
+        case RS_NET_DONE:
 #ifdef NETMGR_DEBUG_TICK
 			std::cerr << "p3NetMgrIMPL::netTick() STATUS: DONE" << std::endl;
 #endif
@@ -719,7 +747,10 @@ void p3NetMgrIMPL::netExtCheck()
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 				std::cerr << "p3NetMgrIMPL::netExtCheck() checking ExtAddrFinder" << std::endl;
 #endif
-				bool extFinderOk = mExtAddrFinder->hasValidIP(tmpip);
+                sockaddr_storage tmpip = mLocalAddr;	// copies local port and correctly inits the IP family
+
+                bool extFinderOk = mExtAddrFinder->hasValidIP(tmpip);
+
 				if (extFinderOk && sockaddr_storage_ipv6_to_ipv4(tmpip))
 				{
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
@@ -759,11 +790,10 @@ void p3NetMgrIMPL::netExtCheck()
 			uint8_t isstable; // unused
 			sockaddr_storage tmpaddr;
 
-			if ( mPeerMgr->getExtAddressReportedByFriends(tmpaddr, isstable) &&
-			     sockaddr_storage_ipv6_to_ipv4(tmpaddr) )
+            if ( mPeerMgr->getExtAddressReportedByFriends(tmpaddr, isstable) && sockaddr_storage_ipv6_to_ipv4(tmpaddr) )
 			{
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-				std::cerr << "p3NetMgrIMPL::netExtCheck() Ext supplied by ExtAddrFinder" << std::endl;
+                std::cerr << "p3NetMgrIMPL::netExtCheck() Ext supplied by friends" << std::endl;
 #endif
 				sockaddr_storage_setport(tmpaddr, guessNewExtPort());
 
@@ -964,7 +994,7 @@ void p3NetMgrIMPL::netExtCheck()
 bool p3NetMgrIMPL::checkNetAddress()
 {
 	bool addrChanged = false;
-	bool validAddr = false;
+    bool validAddr = false;
 	
 	sockaddr_storage prefAddr;
 	sockaddr_storage oldAddr;
@@ -1063,25 +1093,27 @@ bool p3NetMgrIMPL::checkNetAddress()
 			/* Using same port as external may make some NAT happier */
 			uint16_t port = sockaddr_storage_port(mExtAddr);
 
-			/* Avoid to automatically set a local port to a reserved one < 1024
+            /* Avoid to automatically set a local port to a reserved one < 1024
 			 * that needs special permissions or root access.
 			 * This do not impede the user to set a reserved port manually,
 			 * which make sense in some cases. */
-			while (port < 1025)
+
+            std::cerr << __PRETTY_FUNCTION__ << " local port is 0. Ext port is " << port ;
+
+            while (port < 1025)
 				port = static_cast<uint16_t>(RsRandom::random_u32());
 
-			sockaddr_storage_setport(mLocalAddr, htons(port));
-			addrChanged = true;
+            std::cerr << " new ext port is " << port << ": using these for local/ext ports" << std::endl;
 
-			RsWarn() << __PRETTY_FUNCTION__ << " local port was 0, corrected "
-			         <<"to: " << port << std::endl;
+            sockaddr_storage_setport(mLocalAddr, port);
+            sockaddr_storage_setport(mExtAddr, port);	// this accounts for when the port was updated
+            addrChanged = true;
 		}
 	} // RS_STACK_MUTEX(mNetMtx);
 
-	if (addrChanged)
-	{
-		RsInfo() << __PRETTY_FUNCTION__ << " local address changed, resetting"
-		         <<" network." << std::endl;
+    if (addrChanged)
+    {
+        RsInfo() << __PRETTY_FUNCTION__ << " local address changed, resetting network." << std::endl;
 
         if(rsEvents)
         {
@@ -1091,10 +1123,10 @@ bool p3NetMgrIMPL::checkNetAddress()
             rsEvents->postEvent(ev);
         }
 
-		if (mPeerMgr) mPeerMgr->UpdateOwnAddress(mLocalAddr, mExtAddr);
+        if (mPeerMgr) mPeerMgr->UpdateOwnAddress(mLocalAddr, mExtAddr);
 
-		netReset();
-	}
+        netReset();
+    }
 
 	return true;
 }
@@ -1124,7 +1156,8 @@ bool    p3NetMgrIMPL::setLocalAddress(const struct sockaddr_storage &addr)
 		}
 
 		mLocalAddr = addr;
-	}
+        mPeerMgr->UpdateOwnAddress(mLocalAddr, mExtAddr);
+    }
 
 	if (changed)
 	{
@@ -1160,7 +1193,8 @@ bool    p3NetMgrIMPL::setExtAddress(const struct sockaddr_storage &addr)
 		}
 
 		mExtAddr = addr;
-	}
+        mPeerMgr->UpdateOwnAddress(mLocalAddr, mExtAddr);
+    }
 
 	if (changed)
 	{
@@ -1745,19 +1779,19 @@ void p3NetMgrIMPL::updateNetStateBox_temporal()
 	{
 		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 
-		uint32_t netstate = mNetStateBox.getNetStateMode();
-		uint32_t netMode = mNetStateBox.getNetworkMode();
-		uint32_t natType = mNetStateBox.getNatTypeMode();
-		uint32_t natHole = mNetStateBox.getNatHoleMode();
-		uint32_t connect = mNetStateBox.getConnectModes();
+        auto netstate = mNetStateBox.getNetStateMode();
+        auto netMode = mNetStateBox.getNetworkMode();
+        auto natType = mNetStateBox.getNatTypeMode();
+        auto natHole = mNetStateBox.getNatHoleMode();
+        auto connect = mNetStateBox.getConnectModes();
+#ifdef SUSPENDED
+        auto netstatestr = NetStateNetStateString(netstate);
+        auto connectstr = NetStateConnectModesString(connect);
+        auto natholestr = NetStateNatHoleString(natHole);
+        auto nattypestr = NetStateNatTypeString(natType);
+        auto netmodestr = NetStateNetworkModeString(netMode);
 
-		std::string netstatestr = NetStateNetStateString(netstate);
-		std::string connectstr = NetStateConnectModesString(connect);
-		std::string natholestr = NetStateNatHoleString(natHole);
-		std::string nattypestr = NetStateNatTypeString(natType);
-		std::string netmodestr = NetStateNetworkModeString(netMode);
-
-		std::cerr << "p3NetMgrIMPL::updateNetStateBox_temporal() NetStateBox Thinking";
+        std::cerr << "p3NetMgrIMPL::updateNetStateBox_temporal() NetStateBox Thinking";
 		std::cerr << std::endl;
 		std::cerr << "\tNetState: " << netstatestr;
 		std::cerr << std::endl;
@@ -1768,7 +1802,8 @@ void p3NetMgrIMPL::updateNetStateBox_temporal()
 		std::cerr << "\tNatHole: " << natholestr;
 		std::cerr << std::endl;
 		std::cerr << "\tNatType: " << nattypestr;
-		std::cerr << std::endl;
+        std::cerr << std::endl;
+#endif
 
 	}
 #endif
@@ -1800,8 +1835,8 @@ void p3NetMgrIMPL::updateNatSetting()
 			
 #ifdef	NETMGR_DEBUG_STATEBOX
 			std::cerr << "p3NetMgrIMPL::updateNetStateBox_temporal() NatType Change!";
-			std::cerr << "\tNatType: " << NetStateNatTypeString(natType);
-			std::cerr << "\tNatHole: " << NetStateNatHoleString(natHole);
+//			std::cerr << "\tNatType: " << NetStateNatTypeString(natType);
+//			std::cerr << "\tNatHole: "k << NetStateNatHoleString(natHole);
 
 			std::cerr << std::endl;
 #endif
@@ -1938,7 +1973,9 @@ void p3NetMgrIMPL::updateNetStateBox_startup()
 		/* ExtAddrFinder */
 		if (mUseExtAddrFinder)
 		{
-			bool extFinderOk = mExtAddrFinder->hasValidIP(tmpip);
+            tmpip = mLocalAddr;
+            bool extFinderOk = mExtAddrFinder->hasValidIP(tmpip);
+
 			if (extFinderOk)
 			{
 				sockaddr_storage_setport(tmpip, guessNewExtPort());

@@ -48,9 +48,9 @@ public:
   /** Default Destructor */
   ~MessagesDialog();
 
-  virtual QIcon iconPixmap() const { return QIcon(IMAGE_MESSAGES) ; } //MainPage
-  virtual QString pageName() const { return tr("Mail") ; } //MainPage
-  virtual QString helpText() const { return ""; } //MainPage
+  virtual QIcon iconPixmap() const override { return QIcon(IMAGE_MESSAGES) ; } //MainPage
+  virtual QString pageName() const override { return tr("Mail") ; } //MainPage
+  virtual QString helpText() const override { return ""; } //MainPage
 
 // replaced by shortcut
 //  virtual void keyPressEvent(QKeyEvent *) ;
@@ -60,8 +60,8 @@ public:
   void setTextColorInbox(QColor color) { mTextColorInbox = color; }
 
 protected:
-  virtual UserNotify *createUserNotify(QObject *parent) override;
-  bool eventFilter(QObject *obj, QEvent *ev);
+  virtual UserNotify *createUserNotify(QObject *parent) override; //MainPage
+  bool eventFilter(QObject *obj, QEvent *ev) override; //MainPage
   int getSelectedMessages(QList<QString>& mid);
 
 public slots:

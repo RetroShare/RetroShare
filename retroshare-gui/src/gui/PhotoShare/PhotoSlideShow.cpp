@@ -21,6 +21,7 @@
 #include "gui/PhotoShare/PhotoSlideShow.h"
 #include "gui/PhotoShare/PhotoDrop.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/common/FilesDefs.h"
 
 #define IMAGE_FULLSCREEN          ":/icons/fullscreen.png"
 #define IMAGE_FULLSCREENEXIT      ":/icons/fullscreen-exit.png"
@@ -33,23 +34,31 @@ PhotoSlideShow::PhotoSlideShow(const RsPhotoAlbum& album, QWidget *parent)
 {
 	ui.setupUi(this);
 
-	connect(ui.pushButton_ShiftLeft, SIGNAL( clicked( void ) ), this, SLOT( moveLeft( void ) ) );
-	connect(ui.pushButton_ShiftRight, SIGNAL( clicked( void ) ), this, SLOT( moveRight( void ) ) );
+	connect(ui.toolButton_ShiftLeft, SIGNAL( clicked( void ) ), this, SLOT( moveLeft( void ) ) );
+	connect(ui.toolButton_ShiftRight, SIGNAL( clicked( void ) ), this, SLOT( moveRight( void ) ) );
 	connect(ui.pushButton_ShowDetails, SIGNAL( clicked( void ) ), this, SLOT( showPhotoDetails( void ) ) );
 	connect(ui.pushButton_StartStop, SIGNAL( clicked( void ) ), this, SLOT( StartStop( void ) ) );
 	connect(ui.pushButton_Close, SIGNAL( clicked( void ) ), this, SLOT( closeShow( void ) ) );
 	connect(ui.fullscreenButton, SIGNAL(clicked()),this, SLOT(setFullScreen()));
 
-        mPhotoQueue = new TokenQueue(rsPhoto->getTokenService(), this);
+	ui.toolButton_ShiftLeft->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/arrow-left.png")));
+	ui.toolButton_ShiftRight->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/arrow-right.png")));
+
+	ui.albumLabel->setText(QString::fromStdString(mAlbum.mMeta.mGroupName));
+
+	mPhotoQueue = new TokenQueue(rsPhoto->getTokenService(), this);
 
 	mRunning = true;
 	mShotActive = true;
 
 	mImageIdx = 0;
 
-        requestPhotos();
-        loadImage();
-        //QTimer::singleShot(5000, this, SLOT(timerEvent()));
+	requestPhotos();
+	loadImage();
+	//QTimer::singleShot(5000, this, SLOT(timerEvent()));
+
+	// not yet functional
+	ui.pushButton_ShowDetails->hide();
 }
 
 PhotoSlideShow::~PhotoSlideShow()
@@ -199,20 +208,20 @@ void PhotoSlideShow::updateMoveButtons(uint32_t status)
 	switch(status)
 	{
 		case PHOTO_SHIFT_NO_BUTTONS:
-                	ui.pushButton_ShiftLeft->setEnabled(false);
-                	ui.pushButton_ShiftRight->setEnabled(false);
+                	ui.toolButton_ShiftLeft->setEnabled(false);
+                	ui.toolButton_ShiftRight->setEnabled(false);
 			break;
 		case PHOTO_SHIFT_LEFT_ONLY:
-                	ui.pushButton_ShiftLeft->setEnabled(true);
-                	ui.pushButton_ShiftRight->setEnabled(false);
+                	ui.toolButton_ShiftLeft->setEnabled(true);
+                	ui.toolButton_ShiftRight->setEnabled(false);
 			break;
 		case PHOTO_SHIFT_RIGHT_ONLY:
-                	ui.pushButton_ShiftLeft->setEnabled(false);
-                	ui.pushButton_ShiftRight->setEnabled(true);
+                	ui.toolButton_ShiftLeft->setEnabled(false);
+                	ui.toolButton_ShiftRight->setEnabled(true);
 			break;
 		case PHOTO_SHIFT_BOTH:
-                	ui.pushButton_ShiftLeft->setEnabled(true);
-                	ui.pushButton_ShiftRight->setEnabled(true);
+                	ui.toolButton_ShiftLeft->setEnabled(true);
+                	ui.toolButton_ShiftRight->setEnabled(true);
 			break;
 	}
 }

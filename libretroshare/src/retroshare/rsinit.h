@@ -155,10 +155,11 @@ class RsInit
 public:
 	enum RS_DEPRECATED_FOR(RsInitErrorNum) LoadCertificateStatus : uint8_t
 	{
-		OK,                     /// Everything go as expected, no error occurred
-		ERR_ALREADY_RUNNING,    /// Another istance is running already
-		ERR_CANT_ACQUIRE_LOCK,  /// Another istance is already running?
-		ERR_UNKNOWN              /// Unkown error, maybe password is wrong?
+        OK,                      	/// Everything go as expected, no error occurred
+        ERR_ALREADY_RUNNING,     	/// Another istance is running already
+        ERR_CANT_ACQUIRE_LOCK,   	/// Another istance is already running?
+        ERR_NO_AVAILABLE_ACCOUNT,	/// Used in retroshare-service -U list when no account is available
+        ERR_UNKNOWN              	/// Unkown error, maybe password is wrong?
 	};
 
 	/* reorganised RsInit system */

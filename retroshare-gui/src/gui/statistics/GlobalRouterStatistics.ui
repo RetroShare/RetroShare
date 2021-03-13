@@ -6,19 +6,96 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1468</width>
-    <height>659</height>
+    <width>800</width>
+    <height>429</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Router Statistics</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0">
+   <item row="0" column="0">
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string>GroupBox</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QTreeWidget" name="treeWidget">
+         <property name="contextMenuPolicy">
+          <enum>Qt::CustomContextMenu</enum>
+         </property>
+         <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+         <column>
+          <property name="text">
+           <string>ID</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Identity Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Destinaton</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Data status</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Tunnel status</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Stored data size</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Data hash</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Receive time</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Sending time</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Branching factor</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Receive time (secs ago)</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Sending time (secs ago)</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </widget>
      <widget class="QScrollArea" name="_router_F">
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
@@ -34,91 +111,12 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1450</width>
-         <height>317</height>
+         <width>782</width>
+         <height>69</height>
         </rect>
        </property>
       </widget>
      </widget>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QGroupBox" name="groupBox">
-     <property name="title">
-      <string>GroupBox</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QTreeWidget" name="treeWidget">
-        <property name="contextMenuPolicy">
-         <enum>Qt::CustomContextMenu</enum>
-        </property>
-        <property name="sortingEnabled">
-         <bool>true</bool>
-        </property>
-        <column>
-         <property name="text">
-          <string>ID</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Identity Name</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Destinaton</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Data status</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Tunnel status</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Stored data size</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Data hash</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Receive time</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Sending time</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Branching factor</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Receive time (secs ago)</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Sending time (secs ago)</string>
-         </property>
-        </column>
-       </widget>
-      </item>
-     </layout>
     </widget>
    </item>
   </layout>

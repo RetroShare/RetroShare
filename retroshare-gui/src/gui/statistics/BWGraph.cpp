@@ -80,14 +80,26 @@ void BWGraphSource::update()
     std::cerr << "  visible service: " << std::dec << mVisibleServices.size() << std::endl;
 #endif
 
-    // now, convert data to current curve points.
+    // Now, convert latest data measurement into points. convertTrafficToValues() returns
+    // a map of values corresponding to the latest point in time, doing all the requested calculations
+    // (sum over friends, sum over services, etc).
+    //
 
     std::map<std::string,float> vals ;
-    
-    if(_current_direction == BWGraphSource::DIRECTION_UP)
-	    convertTrafficClueToValues(thc.out_rstcl,vals) ;
+
+    if(_current_direction == (DIRECTION_UP | DIRECTION_DOWN))
+    {
+        std::map<std::string,float> vals1,vals2 ;
+        convertTrafficClueToValues(thc.out_rstcl,vals1) ;
+        convertTrafficClueToValues(thc.in_rstcl,vals2) ;
+
+        for(auto it:vals1) vals[it.first + " (sent)"] = it.second;
+        for(auto it:vals2) vals[it.first + " (received)"] = it.second;
+    }
+    else if(_current_direction & DIRECTION_UP)
+        convertTrafficClueToValues(thc.out_rstcl,vals) ;
     else
-	    convertTrafficClueToValues(thc.in_rstcl,vals) ;
+        convertTrafficClueToValues(thc.in_rstcl,vals) ;
 
     qint64 ms = getTime() ;
 
@@ -217,8 +229,6 @@ std::string BWGraphSource::makeSubItemName(uint16_t service_id,uint8_t sub_item_
 
 void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& lst,std::map<std::string,float>& vals) const
 {
-	vals.clear() ;
-
 	switch(_friend_graph_type)
 	{
 	case GRAPH_TYPE_SINGLE:
@@ -555,9 +565,18 @@ void BWGraphSource::recomputeCurrentCurves()
 
 	    std::set<std::string> unused_values = used_values_ref ;
 
-	    if(_current_direction==DIRECTION_UP)
-		    convertTrafficClueToValues((*it).out_rstcl,vals) ;
-	    else
+        if(_current_direction == (DIRECTION_UP | DIRECTION_DOWN))
+        {
+            std::map<std::string,float> vals1,vals2 ;
+            convertTrafficClueToValues((*it).out_rstcl,vals1) ;
+            convertTrafficClueToValues((*it).in_rstcl,vals2) ;
+
+            for(auto it:vals1) vals[it.first + " (sent)"] = it.second;
+            for(auto it:vals2) vals[it.first + " (received)"] = it.second;
+        }
+        else if(_current_direction & DIRECTION_UP)
+            convertTrafficClueToValues((*it).out_rstcl,vals) ;
+        else
 		    convertTrafficClueToValues((*it).in_rstcl,vals) ;
 
 	    for(std::map<std::string,float>::iterator it2=vals.begin();it2!=vals.end();++it2)
@@ -602,6 +621,6 @@ BWGraph::BWGraph(QWidget *parent) : RSGraphWidget(parent)
 
 BWGraph::~BWGraph()
 {
-    delete _local_source ;
+    //delete _local_source ;//Will be deleted by RSGraphWidget destructor
 }
 

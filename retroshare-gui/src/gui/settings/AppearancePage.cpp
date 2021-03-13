@@ -136,6 +136,14 @@ void AppearancePage::updateRbtPageOnToolBar()
 {
     Settings->setPageButtonLoc(!ui.mainPageButtonType_CB->currentIndex());
     Settings->setActionButtonLoc(!ui.mainPageButtonType_CB->currentIndex());
+	
+	int index = ui.mainPageButtonType_CB->currentIndex();
+	if (index != 0) {
+		ui.cmboTollButtonsStyle->hide();
+	}else {
+		ui.cmboTollButtonsStyle->show();
+	}
+
     NotifyQt::getInstance()->notifySettingsChanged();
 }
 void AppearancePage::updateStatusToolTip()    { MainWindow::getInstance()->toggleStatusToolTip(ui.checkBoxDisableSysTrayToolTip->isChecked()); }
@@ -173,11 +181,11 @@ void AppearancePage::updateCmboToolButtonSize()
 			Settings->setListItemIconSize(16);
 		break;
 		case 2:
-		default:
 			Settings->setToolButtonSize(24);
 			Settings->setListItemIconSize(24);
 		break;
 		case 3:
+		default:
 			Settings->setToolButtonSize(32);
 			Settings->setListItemIconSize(32);
         break;
@@ -234,6 +242,13 @@ void AppearancePage::load()
 		index = ui.cmboStyleSheet->findData("");
 	}
 	whileBlocking(ui.cmboStyleSheet)->setCurrentIndex(index);
+	
+	index = ui.mainPageButtonType_CB->findData(Settings->getPageButtonLoc());
+	if (index != 0) {
+		ui.cmboTollButtonsStyle->hide();
+	}else {
+		ui.cmboTollButtonsStyle->show();
+	}
 
 	whileBlocking(ui.mainPageButtonType_CB)->setCurrentIndex(!Settings->getPageButtonLoc());
 //	ui.menuItemsButtonType_CB->setCurrentIndex(!Settings->getActionButtonLoc());
@@ -262,10 +277,10 @@ void AppearancePage::load()
 			whileBlocking(ui.cmboTollButtonsSize)->setCurrentIndex(1);
 		break;
 		case 24:
-		default:
 			whileBlocking(ui.cmboTollButtonsSize)->setCurrentIndex(2);
 		break;
 		case 32:
+		default:
 			whileBlocking(ui.cmboTollButtonsSize)->setCurrentIndex(3);
         break;
         case 64:

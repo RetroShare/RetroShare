@@ -34,23 +34,26 @@ class ChatUserNotify : public UserNotify
 	Q_OBJECT
 
 public:
-    static void getPeersWithWaitingChat(std::vector<RsPeerId>& peers);
-    static void clearWaitingChat(ChatId id);
+	static void getPeersWithWaitingChat(std::vector<RsPeerId>& peers);
+	static void clearWaitingChat(ChatId id);
 
 	ChatUserNotify(QObject *parent = 0);
-    ~ChatUserNotify();
+	~ChatUserNotify();
 
-	virtual bool hasSetting(QString *name, QString *group);
-    virtual QString textInfo() const override { return tr("mention(s)"); }
+	virtual bool hasSetting(QString *name, QString *group) override;
 
 private slots:
-    void chatMessageReceived(ChatMessage msg);
+	void chatMessageReceived(ChatMessage msg);
 
 private:
-	virtual QIcon getIcon();
-	virtual QIcon getMainIcon(bool hasNew);
-	virtual unsigned int getNewCount();
-	virtual void iconClicked();
+	virtual QIcon getIcon() override;
+	virtual QIcon getMainIcon(bool hasNew) override;
+	virtual unsigned int getNewCount() override;
+
+	virtual QString getTrayMessage(bool plural) override;
+	virtual QString getNotifyMessage(bool plural) override;
+
+	virtual void iconClicked() override;
 };
 
 #endif // CHATUSERNOTIFY_H

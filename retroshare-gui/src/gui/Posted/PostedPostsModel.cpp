@@ -42,10 +42,12 @@ const uint32_t RsPostedPostsModel::DEFAULT_DISPLAYED_NB_POSTS = 10;
 
 std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsewhere
 
-RsPostedPostsModel::RsPostedPostsModel(QObject *parent)
+RsPostedPostsModel::RsPostedPostsModel(int default_chunk_size, QObject *parent)
     : QAbstractItemModel(parent), mTreeMode(TREE_MODE_PLAIN)
 {
-	initEmptyHierarchy();
+    mDefaultDisplayedNbPosts = default_chunk_size;
+
+    initEmptyHierarchy();
 
 	mEventHandlerId = 0;
     mSortingStrategy = SORT_NEW_SCORE;
@@ -72,55 +74,57 @@ void RsPostedPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEvent> 
 
 	switch(e->mPostedEventCode)
 	{
-	case RsPostedEventCode::UPDATED_MESSAGE:
-    case RsPostedEventCode::READ_STATUS_CHANGED:
-    case RsPostedEventCode::MESSAGE_VOTES_UPDATED:
-    case RsPostedEventCode::NEW_MESSAGE:
-	{
-		// Normally we should just emit dataChanged() on the index of the data that has changed:
-		//
-		// We need to update the data!
+		case RsPostedEventCode::UPDATED_MESSAGE:
+		case RsPostedEventCode::READ_STATUS_CHANGED:
+		case RsPostedEventCode::MESSAGE_VOTES_UPDATED:
+		case RsPostedEventCode::NEW_MESSAGE:
+		{
+			// Normally we should just emit dataChanged() on the index of the data that has changed:
+			//
+			// We need to update the data!
 
-		if(e->mPostedGroupId == mPostedGroup.mMeta.mGroupId)
-			RsThread::async([this, e]()
-			{
-				// 1 - get message data from p3GxsChannels
+			RsGxsPostedEvent E(*e);
 
-				std::vector<RsPostedPost> posts;
-				std::vector<RsGxsComment> comments;
-				std::vector<RsGxsVote>    votes;
-
-                if(!rsPosted->getBoardContent(mPostedGroup.mMeta.mGroupId,std::set<RsGxsMessageId>{ e->mPostedMsgId }, posts,comments,votes))
+			if(E.mPostedGroupId == mPostedGroup.mMeta.mGroupId)
+				RsThread::async([this, E]()
 				{
-					std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel message data for channel/msg " << e->mPostedGroupId << "/" << e->mPostedMsgId << std::endl;
-					return;
-				}
+					// 1 - get message data from p3GxsChannels
 
-				// 2 - update the model in the UI thread.
+					std::vector<RsPostedPost> posts;
+					std::vector<RsGxsComment> comments;
+					std::vector<RsGxsVote>    votes;
 
-				RsQThreadUtils::postToObject( [posts,comments,votes,this]()
-				{
-					for(uint32_t i=0;i<posts.size();++i)
+					if(!rsPosted->getBoardContent(mPostedGroup.mMeta.mGroupId,std::set<RsGxsMessageId>{ E.mPostedMsgId }, posts,comments,votes))
 					{
-						// linear search. Not good at all, but normally this is for a single post.
-
-						for(uint32_t j=0;j<mPosts.size();++j)
-							if(mPosts[j].mMeta.mMsgId == posts[i].mMeta.mMsgId)
-							{
-								mPosts[j] = posts[i];
-
-                                //emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFilteredPosts.size(),0,(void*)NULL));
-
-                                preMods();
-                                postMods();
-							}
+						RS_ERR(" failed to retrieve channel message data for channel/msg ", E.mPostedGroupId, "/", E.mPostedMsgId);
+						return;
 					}
-				},this);
-            });
 
-	default:
-			break;
+					// 2 - update the model in the UI thread.
+
+					RsQThreadUtils::postToObject( [posts,comments,votes,this]()
+					{
+						for(uint32_t i=0;i<posts.size();++i)
+						{
+							// linear search. Not good at all, but normally this is for a single post.
+
+							for(uint32_t j=0;j<mPosts.size();++j)
+								if(mPosts[j].mMeta.mMsgId == posts[i].mMeta.mMsgId)
+								{
+									mPosts[j] = posts[i];
+
+									//emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFilteredPosts.size(),0,(void*)NULL));
+
+									preMods();
+									postMods();
+								}
+						}
+					},this);
+				});
+
 		}
+		default:
+		break;
 	}
 }
 
@@ -130,7 +134,7 @@ void RsPostedPostsModel::initEmptyHierarchy()
 
     mPosts.clear();
     mFilteredPosts.clear();
-    mDisplayedNbPosts = DEFAULT_DISPLAYED_NB_POSTS;
+    mDisplayedNbPosts = mDefaultDisplayedNbPosts;
     mDisplayedStartIndex = 0;
 
     postMods();
@@ -138,42 +142,39 @@ void RsPostedPostsModel::initEmptyHierarchy()
 
 void RsPostedPostsModel::preMods()
 {
-	beginResetModel();
+	emit layoutAboutToBeChanged();
 }
 void RsPostedPostsModel::postMods()
 {
-	endResetModel();
-
-	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mDisplayedNbPosts,0,(void*)NULL));
+	update();
+	emit layoutChanged();
 }
 void RsPostedPostsModel::update()
 {
-    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mDisplayedNbPosts,0,(void*)NULL));
+    if(mDisplayedNbPosts > 0)
+        emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mDisplayedNbPosts-1,0,(void*)NULL));
 }
 void RsPostedPostsModel::triggerRedraw()
 {
-    preMods();
-    postMods();
+	preMods();
+	postMods();
 }
 
 void RsPostedPostsModel::setFilter(const QStringList& strings, uint32_t& count)
 {
 	preMods();
 
-	beginRemoveRows(QModelIndex(),0,rowCount()-1);
-	endRemoveRows();
+	beginResetModel();
+	mFilteredPosts.clear();
+	endResetModel();
 
 	if(strings.empty())
 	{
-		mFilteredPosts.clear();
 		for(int i=0;i<(int)(mPosts.size());++i)
 			mFilteredPosts.push_back(i);
 	}
 	else
 	{
-		mFilteredPosts.clear();
-		//mFilteredPosts.push_back(0);
-
 		for(int i=0;i<static_cast<int>(mPosts.size());++i)
 		{
 			bool passes_strings = true;
@@ -193,12 +194,15 @@ void RsPostedPostsModel::setFilter(const QStringList& strings, uint32_t& count)
 	count = mFilteredPosts.size();
 
 	mDisplayedStartIndex = 0;
-	mDisplayedNbPosts = std::min(count,DEFAULT_DISPLAYED_NB_POSTS) ;
+    mDisplayedNbPosts = std::min(count,mDefaultDisplayedNbPosts) ;
 
 	std::cerr << "After filtering: " << count << " posts remain." << std::endl;
 
-	beginInsertRows(QModelIndex(),0,rowCount()-1);
-	endInsertRows();
+	if (rowCount()>0)
+	{
+		beginInsertRows(QModelIndex(),0,rowCount()-1);
+		endInsertRows();
+	}
 
 	postMods();
 }
@@ -208,11 +212,11 @@ int RsPostedPostsModel::rowCount(const QModelIndex& parent) const
     if(parent.column() > 0)
         return 0;
 
-    if(mFilteredPosts.empty())	// security. Should never happen.
+    if(mFilteredPosts.empty())  // rowCount is called by internal Qt so maybe before posts are populated.
         return 0;
 
     if(!parent.isValid())
-		return mDisplayedNbPosts;
+        return mDisplayedNbPosts;
 
     RsErr() << __PRETTY_FUNCTION__ << " rowCount cannot figure out the porper number of rows." << std::endl;
     return 0;
@@ -471,7 +475,7 @@ private:
 Qt::ItemFlags RsPostedPostsModel::flags(const QModelIndex& index) const
 {
 	if (!index.isValid())
-		return 0;
+		return Qt::ItemFlags();
 
 	return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
 }
@@ -490,19 +494,28 @@ void RsPostedPostsModel::setPostsInterval(int start,int nb_posts)
 {
 	if(start >= (int)mFilteredPosts.size())
 		return;
+	if(start < 0)
+		start = 0;
 
 	preMods();
 
-    uint32_t old_nb_rows = rowCount() ;
+    int old_nb_rows = rowCount() ;
+    int new_nb_rows = (uint32_t)std::min(nb_posts,(int)mFilteredPosts.size() - start);
 
-    mDisplayedNbPosts = (uint32_t)std::min(nb_posts,(int)mFilteredPosts.size() - (start+1));
+    if(old_nb_rows > new_nb_rows)
+    {
+        beginRemoveRows(QModelIndex(),new_nb_rows,old_nb_rows-1);
+        endRemoveRows();
+    }
+
     mDisplayedStartIndex = start;
+    mDisplayedNbPosts = new_nb_rows;
 
-	beginRemoveRows(QModelIndex(),mDisplayedNbPosts,old_nb_rows);
-    endRemoveRows();
-
-	beginInsertRows(QModelIndex(),old_nb_rows,mDisplayedNbPosts);
-    endInsertRows();
+    if(new_nb_rows > old_nb_rows)
+    {
+        beginInsertRows(QModelIndex(),old_nb_rows,new_nb_rows-1);
+        endInsertRows();
+    }
 
 	postMods();
 }
@@ -515,26 +528,30 @@ void RsPostedPostsModel::deepUpdate()
 
 void RsPostedPostsModel::setPosts(const RsPostedGroup& group, std::vector<RsPostedPost>& posts)
 {
-    preMods();
+	preMods();
 
-	beginRemoveRows(QModelIndex(),0,rowCount()-1);
-    endRemoveRows();
+	beginResetModel();
 
-    mPosts.clear();
-    mPostedGroup = group;
+	mPosts.clear();
+	mPostedGroup = group;
 
-    createPostsArray(posts);
+	endResetModel();
 
-    std::sort(mPosts.begin(),mPosts.end(), PostSorter(mSortingStrategy));
+	createPostsArray(posts);
 
-    uint32_t tmpval;
-    setFilter(QStringList(),tmpval);
+	std::sort(mPosts.begin(),mPosts.end(), PostSorter(mSortingStrategy));
 
-    mDisplayedNbPosts = std::min((uint32_t)mFilteredPosts.size(),DEFAULT_DISPLAYED_NB_POSTS);
-    mDisplayedStartIndex = 0;
+	uint32_t tmpval;
+	setFilter(QStringList(),tmpval);
 
-	beginInsertRows(QModelIndex(),0,rowCount()-1);
-    endInsertRows();
+    mDisplayedNbPosts = std::min((uint32_t)mFilteredPosts.size(),mDefaultDisplayedNbPosts);
+	mDisplayedStartIndex = 0;
+
+	if (rowCount()>0)
+	{
+		beginInsertRows(QModelIndex(),0,rowCount()-1);
+		endInsertRows();
+	}
 
 	postMods();
 
@@ -596,8 +613,6 @@ void RsPostedPostsModel::update_posts(const RsGxsGroupId& group_id)
 
     });
 }
-
-//static bool decreasing_time_comp(const std::pair<time_t,RsGxsMessageId>& e1,const std::pair<time_t,RsGxsMessageId>& e2) { return e2.first < e1.first ; }
 
 void RsPostedPostsModel::createPostsArray(std::vector<RsPostedPost>& posts)
 {
@@ -729,13 +744,13 @@ void RsPostedPostsModel::setAllMsgReadStatus(bool read)
     for(uint32_t i=0;i<mPosts.size();++i)
         pairs.push_back(RsGxsGrpMsgIdPair(mPosts[i].mMeta.mGroupId,mPosts[i].mMeta.mMsgId));
 
-    RsThread::async([read,pairs]()
-    {
         // Call blocking API
 
-        for(auto& p:pairs)
+    for(auto& p:pairs)
+        RsThread::async([read,p]()
+        {
             rsPosted->setPostReadStatus(p,read);
-    } );
+        } );
 }
 void RsPostedPostsModel::setMsgReadStatus(const QModelIndex& i,bool read_status)
 {

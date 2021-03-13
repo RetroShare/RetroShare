@@ -32,9 +32,14 @@ public:
 
     void getTorStatus( );
     void setCompactMode(bool compact) {_compactMode = compact; }
+	void reset()
+	{
+		_updated = false;
+	}
 
 private:
     QLabel *torstatusLabel, *statusTor;
     bool _compactMode;
+    bool _updated;
 };
 

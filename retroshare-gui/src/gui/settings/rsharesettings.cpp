@@ -137,7 +137,7 @@ void RshareSettings::initSettings()
 	// This is not default... RS_CHAT_FOCUS.
 
 	uint defNotify = (RS_POPUP_CONNECT | RS_POPUP_MSG);
-    uint defNewsFeed = (RS_FEED_TYPE_MSG | RS_FEED_TYPE_FILES | RS_FEED_TYPE_SECURITY | RS_FEED_TYPE_SECURITY_IP);
+    uint defNewsFeed = (RS_FEED_TYPE_MSG | RS_FEED_TYPE_FILES | RS_FEED_TYPE_SECURITY | RS_FEED_TYPE_SECURITY_IP | RS_FEED_TYPE_CIRCLE | RS_FEED_TYPE_CHANNEL |RS_FEED_TYPE_FORUM | RS_FEED_TYPE_POSTED);
 
 	setDefault(SETTING_NEWSFEED_FLAGS, defNewsFeed);
 	setDefault(SETTING_CHAT_FLAGS, defChat);
@@ -154,7 +154,7 @@ QString RshareSettings::getLanguageCode()
 }
 
 /** Sets the preferred language code. */
-void RshareSettings::setLanguageCode(QString languageCode)
+void RshareSettings::setLanguageCode(const QString& languageCode)
 {
 	setValue(SETTING_LANGUAGE, languageCode);
 }
@@ -162,11 +162,11 @@ void RshareSettings::setLanguageCode(QString languageCode)
 /** Gets the interface style key (e.g., "windows", "motif", etc.) */
 QString RshareSettings::getInterfaceStyle()
 {
-	return value(SETTING_STYLE).toString();
+	return value(SETTING_STYLE, "fusion").toString();
 }
 
 /** Sets the interface style key. */
-void RshareSettings::setInterfaceStyle(QString styleKey)
+void RshareSettings::setInterfaceStyle(const QString& styleKey)
 {
 	setValue(SETTING_STYLE, styleKey);
 }
@@ -177,7 +177,7 @@ QString RshareSettings::getSheetName()
 	return value(SETTING_SHEETNAME).toString();
 }
 /** Sets the sheetname.*/
-void RshareSettings::setSheetName(QString sheet)                                  
+void RshareSettings::setSheetName(const QString& sheet)
 { 
 	setValue(SETTING_SHEETNAME, sheet);
 }
@@ -266,7 +266,7 @@ int RshareSettings::getToolButtonSize()
 {
     static int sizes[6] = { 8,16,24,32,64,128 } ;
     
-    return value(SETTING_TOOLBUTTONSIZE, computeBestIconSize(6,sizes,24)).toInt();
+    return value(SETTING_TOOLBUTTONSIZE, computeBestIconSize(6,sizes,32)).toInt();
 }
 
 /** Sets the tool button's size.*/
@@ -281,10 +281,10 @@ void RshareSettings::setToolButtonSize(int size)
 		setValue(SETTING_TOOLBUTTONSIZE, 16);
 		break;
 	case 24:
-	default:
 		setValue(SETTING_TOOLBUTTONSIZE, 24);
 		break;
 	case 32:
+		default:
 		setValue(SETTING_TOOLBUTTONSIZE, 32);
         break;
     case 64:
@@ -865,7 +865,7 @@ bool RshareSettings::setRetroShareProtocol(bool value, QString &error)
 
 		QSettings command("HKEY_CURRENT_USER\\Software\\Classes\\retroshare\\shell\\open\\command", QSettings::NativeFormat);
 		command.setValue("Default", getAppPathForProtocol());
-		state = command.status();
+		//state = command.status();
 	} else {
 		QSettings classRoot("HKEY_CURRENT_USER\\Software\\Classes", QSettings::NativeFormat);
 		classRoot.remove("retroshare");

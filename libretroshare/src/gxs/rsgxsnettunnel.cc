@@ -766,7 +766,12 @@ void RsGxsNetTunnelService::threadTick()
 	}
 #endif
 
-	rstime::rs_usleep(1*1000*1000) ; // 1 sec
+    for(uint32_t i=0;i<2;++i)
+    {
+        if(shouldStop())
+            return;
+        rstime::rs_usleep(500*1000) ; // 1 sec
+    }
 }
 
 const Bias20Bytes& RsGxsNetTunnelService::locked_randomBias()
@@ -1040,6 +1045,8 @@ bool RsGxsNetTunnelService::receiveSearchRequest(unsigned char *search_request_d
             search_result_data_size = RsGxsNetTunnelSerializer().size(&search_result_item) ;
 			search_result_data = (unsigned char*)rs_malloc(search_result_data_size) ;
 
+            delete item;
+
 			if(search_result_data == NULL)
 				return false ;
 
@@ -1077,10 +1084,12 @@ bool RsGxsNetTunnelService::receiveSearchRequest(unsigned char *search_request_d
 
 			RsGxsNetTunnelSerializer().serialise(&search_result_item,search_result_data,&search_result_data_size);
 
+            delete item;
 			return true ;
         }
     }
 
+    delete item;
     return false ;
 }
 
