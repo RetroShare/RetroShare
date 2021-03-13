@@ -1781,7 +1781,7 @@ rstime_t p3GxsCircles::service_getLastGroupSeenTs(const RsGxsGroupId& gid)
 }
 bool p3GxsCircles::service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta)
 {
-#ifdef GXSFORUMS_CHANNELS
+#ifdef GXSFORUMS_CIRCLES
     std::cerr << "p3gxsChannels: Checking unused circles: called by GxsCleaning." << std::endl;
 #endif
 
@@ -1794,7 +1794,7 @@ bool p3GxsCircles::service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta)
     auto it = mKnownCircles.find(meta.mGroupId);
     bool unknown_posted = (it == mKnownCircles.end());
 
-#ifdef GXSFORUMS_CHANNELS
+#ifdef GXSFORUMS_CIRCLES
     std::cerr << "  Circle " << meta.mGroupId ;
 #endif
 
@@ -1803,7 +1803,7 @@ bool p3GxsCircles::service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta)
         // This case should normally not happen. It does because this board was never registered since it may
         // arrived before this code was here
 
-#ifdef GXSFORUMS_CHANNELS
+#ifdef GXSFORUMS_CIRCLES
         std::cerr << ". Not known yet. Adding current time as new TS." << std::endl;
 #endif
         mKnownCircles[meta.mGroupId] = now;
@@ -1816,18 +1816,20 @@ bool p3GxsCircles::service_checkIfGroupIsStillUsed(const RsGxsGrpMetaData& meta)
         bool used_by_friends = (now < it->second + CIRCLES_UNUSED_BY_FRIENDS_DELAY);
         bool subscribed = static_cast<bool>(meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
 
+#ifdef GXSFORUMS_CIRCLES
         std::cerr << ". subscribed: " << subscribed << ", used_by_friends: " << used_by_friends << " last TS: " << now - it->second << " secs ago (" << (now-it->second)/86400 << " days)";
+#endif
 
         if(!subscribed && !used_by_friends)
         {
-#ifdef GXSFORUMS_CHANNELS
+#ifdef GXSFORUMS_CIRCLES
             std::cerr << ". Scheduling for deletion" << std::endl;
 #endif
             return false;
         }
         else
         {
-#ifdef GXSFORUMS_CHANNELS
+#ifdef GXSFORUMS_CIRCLES
             std::cerr << ". Keeping!" << std::endl;
 #endif
             return true;

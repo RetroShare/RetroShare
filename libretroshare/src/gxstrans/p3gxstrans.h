@@ -272,8 +272,7 @@ private:
 	{
 		if(mPreferredGroupId < potentialGrId)
 		{
-			std::cerr << "supersedePreferredGroup(...) " << potentialGrId
-			          << " supersed " << mPreferredGroupId << std::endl;
+            // std::cerr << "supersedePreferredGroup(...) " << potentialGrId << " supersed " << mPreferredGroupId << std::endl;
 			mPreferredGroupId = potentialGrId;
 			return true;
 		}
