@@ -26,7 +26,7 @@
 
 #include <set>
 #include <string>
-#include <stdlib.h>
+#include <cstdlib>
 #include <list>
 #include <map>
 
