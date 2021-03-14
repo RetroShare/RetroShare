@@ -22,17 +22,15 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-
-#ifndef RSGNP_H
-#define RSGNP_H
+#pragma once
 
 #include <set>
 #include <string>
-#include "util/rstime.h"
-#include <stdlib.h>
+#include <cstdlib>
 #include <list>
 #include <map>
 
+#include "util/rstime.h"
 #include "services/p3service.h"
 #include "retroshare/rsreputations.h"
 #include "retroshare/rsidentity.h"
@@ -324,5 +322,3 @@ public:
 	virtual std::error_condition requestPull(
 	        std::set<RsPeerId> peers = std::set<RsPeerId>() ) = 0;
 };
-
-#endif // RSGNP_H
