@@ -2327,8 +2327,9 @@ bool RsGenExchange::processGrpMask(const RsGxsGroupId& grpId, ContentValue &grpC
 
 void RsGenExchange::publishMsgs()
 {
+	bool atLeastOneMessageCreatedSuccessfully = false;
 
-	RS_STACK_MUTEX(mGenMtx) ;
+	RS_STACK_MUTEX(mGenMtx);
 
 	rstime_t now = time(NULL);
 
@@ -2505,6 +2506,8 @@ void RsGenExchange::publishMsgs()
 				// add to published to allow acknowledgement
 				mMsgNotify.insert(std::make_pair(mit->first, std::make_pair(grpId, msgId)));
 				mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::COMPLETE);
+
+				atLeastOneMessageCreatedSuccessfully = true;
 			}
 			else
 			{
@@ -2538,6 +2541,8 @@ void RsGenExchange::publishMsgs()
 
 			mNotifications.push_back(ch);
 		}
+
+	if(atLeastOneMessageCreatedSuccessfully) mNetService->requestPull();
 }
 
 RsGenExchange::ServiceCreate_Return RsGenExchange::service_CreateGroup(RsGxsGrpItem* /* grpItem */,
