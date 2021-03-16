@@ -132,8 +132,14 @@ del /Q "%RsDeployPath%\imageformats\*d?.dll" %Quite%
 
 if "%ParamTor%"=="1" (
 	echo copy tor
-	copy "%RsMinGWPath%\bin\tor.exe" "%RsDeployPath%" %Quite%
-	copy "%RsMinGWPath%\bin\tor-gencert.exe" "%RsDeployPath%" %Quite%
+	if not exist "%RsDeployPath%\tor" mkdir "%RsDeployPath%\tor"
+	copy "%RsMinGWPath%\bin\tor.exe" "%RsDeployPath%\tor" %Quite%
+	copy "%RsMinGWPath%\bin\tor-gencert.exe" "%RsDeployPath%\tor" %Quite%
+
+	echo copy tor dependencies
+	for /R "%RsDeployPath%\tor" %%D in (*.exe) do (
+		call :copy_dependencies "%%D" "%RsDeployPath%\tor"
+	)
 )
 
 echo copy dependencies
