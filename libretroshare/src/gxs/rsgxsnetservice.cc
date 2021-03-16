@@ -1021,32 +1021,32 @@ void RsGxsNetService::locked_resetClientTS(const RsGxsGroupId& grpId)
         it->second.msgUpdateInfos.erase(grpId) ;
 }
 
-void RsGxsNetService::subscribeStatusChanged(const RsGxsGroupId& grpId,bool subscribed)
+void RsGxsNetService::subscribeStatusChanged(
+        const RsGxsGroupId& grpId, bool subscribed )
 {
-    RS_STACK_MUTEX(mNxsMutex) ;
-
-    if(!subscribed)
-        return ;
+	if(!subscribed) return;
 
     // When we subscribe, we reset the time stamps, so that the entire group list
     // gets requested once again, for a proper update.
 
+	RS_STACK_MUTEX(mNxsMutex);
+
 #ifdef NXS_NET_DEBUG_0
-    GXSNETDEBUG__G(grpId) << "Changing subscribe status for grp " << grpId << " to " << subscribed << ": reseting all server msg time stamps for this group, and server global TS." << std::endl;
-    std::map<RsGxsGroupId,RsGxsServerMsgUpdate>::iterator it = mServerMsgUpdateMap.find(grpId) ;
+	RS_DBG( "Changing subscribe status for grp", grpId, " to ", subscribed,
+	        ": reseting all server msg time stamps for this group, and "
+	        "server global TS." );
 #endif
 
-    RsGxsServerMsgUpdate& item(mServerMsgUpdateMap[grpId]) ;
+	RsGxsServerMsgUpdate& item(mServerMsgUpdateMap[grpId]);
+	item.msgUpdateTS = static_cast<uint32_t>(time(nullptr));
 
-	item.msgUpdateTS = time(NULL) ;
+	/* We also update mGrpServerUpdateItem so as to trigger a new grp list
+	 * exchange with friends (friends will send their known ClientTS which
+	 * will be lower than our own grpUpdateTS, triggering our sending of the
+	 * new subscribed grp list. */
+	mGrpServerUpdate.grpUpdateTS = static_cast<uint32_t>(time(nullptr));
 
-    // We also update mGrpServerUpdateItem so as to trigger a new grp list exchange with friends (friends will send their known ClientTS which
-    // will be lower than our own grpUpdateTS, triggering our sending of the new subscribed grp list.
-
-    mGrpServerUpdate.grpUpdateTS = time(NULL) ;
-
-    if(subscribed)
-        locked_resetClientTS(grpId) ;
+	locked_resetClientTS(grpId);
 }
 
 bool RsGxsNetService::fragmentMsg(RsNxsMsg& msg, MsgFragments& msgFragments) const
