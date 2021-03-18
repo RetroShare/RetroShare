@@ -316,28 +316,32 @@ RSButtonOnText* ChatWidget::getNewButtonOnTextBrowser(QString text)
 
 void ChatWidget::init(const ChatId &chat_id, const QString &title)
 {
-    this->chatId = chat_id;
+	this->chatId = chat_id;
 	this->title = title;
 
 	ui->titleLabel->setText(RsHtml::plainText(title));
 	ui->chatTextEdit->setMaxBytes(this->maxMessageSize() - 200);
 
-    RsPeerId ownId = rsPeers->getOwnId();
+	RsPeerId ownId = rsPeers->getOwnId();
 	setName(QString::fromUtf8(rsPeers->getPeerName(ownId).c_str()));
 
-    if(chatId.isPeerId() || chatId.isDistantChatId())
-        chatStyle.setStyleFromSettings(ChatStyle::TYPE_PRIVATE);
-    if(chatId.isBroadcast() || chatId.isLobbyId())
-        chatStyle.setStyleFromSettings(ChatStyle::TYPE_PUBLIC);
+	if(chatId.isPeerId() || chatId.isDistantChatId())
+		chatStyle.setStyleFromSettings(ChatStyle::TYPE_PRIVATE);
+	if(chatId.isBroadcast() || chatId.isLobbyId())
+		chatStyle.setStyleFromSettings(ChatStyle::TYPE_PUBLIC);
 
-    currentColor.setNamedColor(PeerSettings->getPrivateChatColor(chatId));
-    currentFont.fromString(PeerSettings->getPrivateChatFont(chatId));
+	//int desiredMinimumFontSize = Settings->valueFromGroup("Chat", "MinimumFontSize", 10).toInt();
+	currentColor.setNamedColor(PeerSettings->getPrivateChatColor(chatId));
+	currentFont.fromString(PeerSettings->getPrivateChatFont(chatId));
+	//currentFont.setPointSize(desiredMinimumFontSize);
+
+	//ui->textBrowser->document()->setDefaultFont(currentFont); This force font for all block !!!
 
 	colorChanged();
-	setColorAndFont(true);
+	setColorAndFont();
 
 	// load style
-    PeerSettings->getStyle(chatId, "ChatWidget", style);
+	PeerSettings->getStyle(chatId, "ChatWidget", style);
 
 	/* Add plugin functions */
 	int pluginCount = rsPlugins->nbPlugins();
@@ -975,6 +979,7 @@ void ChatWidget::scrollToAnchor(QString anchor)
 void ChatWidget::setWelcomeMessage(QString &text)
 {
 	ui->textBrowser->setText(text);
+	checkFontSize();
 }
 
 void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, MsgType chatType)
@@ -1081,10 +1086,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 		formatMsg.replace(QString("<a name=\"name\">"),"");
 	}
 
-	QTextCursor textCursor = QTextCursor(ui->textBrowser->textCursor());
-	textCursor.movePosition(QTextCursor::End);
-	textCursor.setBlockFormat(QTextBlockFormat ());
-	ui->textBrowser->append(formatMsg);
+	ui->textBrowser->append(formatMsg, desiredMinimumFontSize);
 
 	if (ui->leSearch->isVisible()) {
 		QString qsTextToFind=ui->leSearch->text();
@@ -1117,7 +1119,7 @@ void ChatWidget::pasteText(const QString& S)
 {
 	//std::cerr << "In paste link" << std::endl;
 	ui->chatTextEdit->insertHtml(S);
-	setColorAndFont(false);
+	setColorAndFont();
 }
 
 //void ChatWidget::pasteCreateMsgLink()
@@ -1185,7 +1187,7 @@ void ChatWidget::chatCharFormatChanged()
 	// Reset font and color before inserting a character if edit box is empty
 	// (color info disappears when the user deletes all text)
 	if (ui->chatTextEdit->toPlainText().isEmpty()) {
-		setColorAndFont(false);
+		setColorAndFont();
 	}
 
 	inChatCharFormatChanged = false;
@@ -1494,7 +1496,7 @@ void ChatWidget::chooseColor()
 		currentColor = QColor(color);
 		PeerSettings->setPrivateChatColor(chatId, currentColor.name());
 		colorChanged();
-		setColorAndFont(false);
+		setColorAndFont();
 	}
 }
 
@@ -1541,34 +1543,52 @@ void ChatWidget::resetFont()
 void ChatWidget::resetFonts()
 {
 	currentFont.fromString(Settings->getChatScreenFont());
-	setColorAndFont(true);
+	setColorAndFont();
+	checkFontSize();
 	PeerSettings->setPrivateChatFont(chatId, currentFont.toString());
 }
 
-void ChatWidget::setColorAndFont(bool both)
+void ChatWidget::setColorAndFont()
 {
 	QTextCharFormat format;
 	format.setForeground(currentColor);
 	format.setFont(currentFont);
 	ui->chatTextEdit->mergeCurrentCharFormat(format);
 
-	if (both)
-	{
-		QStringList fontdata=currentFont.toString().split(",");
-		QString stylesheet="font-family: '"+fontdata[0]+"'; font-size: "+fontdata[1]+"pt;";
-		if (currentFont.bold()) stylesheet+=" font-weight: bold;";
-		if (currentFont.italic()) stylesheet+=" font-style: italic;";
-		if (currentFont.underline()) stylesheet+=" text-decoration: underline;";
-		ui->textBrowser->setStyleSheet(stylesheet);
-	}
-
 	ui->chatTextEdit->setFocus();
 }
 
 void ChatWidget::setFont()
 {
-	setColorAndFont(false);
+	setColorAndFont();
 	PeerSettings->setPrivateChatFont(chatId, currentFont.toString());
+}
+
+void ChatWidget::checkFontSize()
+{
+	int desiredMinimumFontSize = Settings->valueFromGroup("Chat", "MinimumFontSize", 10).toInt();
+	for(int curs = 0; curs < ui->textBrowser->document()->blockCount(); ++curs)
+	{
+		// Locate the 1st block
+		QTextBlock block = ui->textBrowser->document()->findBlockByNumber(curs);
+		QTextCursor cursor(block);
+		// Set minimum font size
+		for (QTextBlock::iterator it = cursor.block().begin(); !(it.atEnd()); ++it)
+		{
+			QTextCharFormat charFormat = it.fragment().charFormat();
+			//RS_ERR(curs, ":", it.fragment().text().toStdString(),"\n", charFormat.fontPointSize());
+
+			if(charFormat.fontPointSize() < desiredMinimumFontSize)
+			{
+				charFormat.setFontPointSize(desiredMinimumFontSize);
+
+				QTextCursor tempCursor = cursor;
+				tempCursor.setPosition(it.fragment().position());
+				tempCursor.setPosition(it.fragment().position() + it.fragment().length(), QTextCursor::KeepAnchor);
+				tempCursor.setCharFormat(charFormat);
+			}
+		}
+	}
 }
 
 void ChatWidget::smileyWidget()

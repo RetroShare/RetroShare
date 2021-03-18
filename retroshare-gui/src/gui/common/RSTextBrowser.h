@@ -39,7 +39,7 @@ class RSTextBrowser : public QTextBrowser
 public:
 	explicit RSTextBrowser(QWidget *parent = 0);
 
-	void append(const QString &text);
+	void append(const QString &text, const int desiredMinimumFontSize = -1);
 
 	void setPlaceholderText(const QString &text);
 	void setImageBlockWidget(RSImageBlockWidget *widget);
