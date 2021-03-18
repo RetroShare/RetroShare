@@ -403,7 +403,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 					continue;
 
 				QString name;
-				if (chatId.isLobbyId() || chatId.isDistantChatId() || chatId.isPeerId())
+				if (!chatId.isNotSet())
 				{
 					RsIdentityDetails details;
 
