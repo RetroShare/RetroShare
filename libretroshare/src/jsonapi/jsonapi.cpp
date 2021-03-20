@@ -361,11 +361,9 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 	        [this](const std::shared_ptr<rb::Session> session)
 	{
 		const std::weak_ptr<rb::Service> weakService(mService);
-		const std::multimap<std::string, std::string> headers
-		{
-			{ "Connection", "keep-alive" },
-			{ "Content-Type", "text/event-stream" }
-		};
+		auto headers = corsHeaders;
+		headers.insert({ "Connection", "keep-alive" });
+		headers.insert({ "Content-Type", "text/event-stream" });
 		session->yield(rb::OK, headers);
 
 		size_t reqSize = static_cast<size_t>(
