@@ -1122,6 +1122,12 @@ std::error_condition p3GxsForums::setPostKeepForever(
 	}
 }
 
+std::error_condition p3GxsForums::requestSynchronization()
+{
+	RsGenExchange::netService()->pullFromPeers();
+	return RsGenExchange::netService()->requestPull();
+}
+
 /* so we need the same tick idea as wiki for generating dummy forums
  */
 
