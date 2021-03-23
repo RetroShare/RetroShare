@@ -28,7 +28,9 @@
 
 enum class RsServiceType : uint16_t
 {
-	NONE                       = 0, /// To detect non-initialized reads
+	/// To detect non-initialized items
+	NONE                       = 0,
+
 	GOSSIP_DISCOVERY           = 0x0011,
 	CHAT                       = 0x0012,
 	MSG                        = 0x0013,
@@ -46,7 +48,10 @@ enum class RsServiceType : uint16_t
 	GWEMAIL_MAIL               = 0x0025,
 	SERVICE_CONTROL            = 0x0026,
 	DISTANT_CHAT               = 0x0027,
+
+	/// For GXS identity authenticated tunnels, do not confuse with @GXS_DISTANT
 	GXS_TUNNEL                 = 0x0028,
+
 	BANLIST                    = 0x0101,
 	STATUS                     = 0x0102,
 	NXS                        = 0x0200,
@@ -58,6 +63,7 @@ enum class RsServiceType : uint16_t
 	POSTED                     = 0x0216,
 	CHANNELS                   = 0x0217,
 	GXSCIRCLE                  = 0x0218,
+
 	/// not gxs, but used with identities.
 	REPUTATION                 = 0x0219,
 	GXS_RECOGN                 = 0x0220,
@@ -68,12 +74,12 @@ enum class RsServiceType : uint16_t
 	CHANNELS_CONFIG            = 0x0317,
 	RTT                        = 0x1011, /// Round Trip Time
 
-
-	/***************** IDS ALLOCATED FOR PLUGINS ******************/
-	// 2000+
 	PLUGIN_ARADO_ID            = 0x2001,
 	PLUGIN_QCHESS_ID           = 0x2002,
 	PLUGIN_FEEDREADER          = 0x2003,
+
+	/// GXS distant sync and search do not confuse with @see GXS_TUNNEL
+	GXS_DISTANT                = 0x2233,
 
 	/// Reserved for packet slicing probes.
 	PACKET_SLICING_PROBE       = 0xAABB,

@@ -3,9 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright (C) 2004-2008 by Robert Fernie   <retroshare@lunamutt.com>        *
- * Copyright (C) 2020  Gioacchino Mazzurco <gio@eigenlab.org>                  *
- * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>       *
+ * Copyright (C) 2004-2008  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2020-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2020-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -35,6 +35,9 @@ std::string rsErrorNotInCategory(int errNum, const std::string& categoryName)
 	return "Error message for error: " + std::to_string(errNum) +
 	        " not available in category: " + categoryName;
 }
+
+std::error_condition rs_errno_to_condition(int errno_code)
+{ return std::make_error_condition(static_cast<std::errc>(errno_code)); }
 
 
 ////////////////////////////////////////////////////////////////////////////////

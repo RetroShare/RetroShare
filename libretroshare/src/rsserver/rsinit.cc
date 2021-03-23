@@ -2,7 +2,8 @@
  * libretroshare/src/retroshare: rsinit.cc                                     *
  *                                                                             *
  * Copyright (C) 2004-2014  Robert Fernie <retroshare@lunamutt.com>            *
- * Copyright (C) 2016-2019  Gioacchino Mazzurco <gio@altermundi.net>           *
+ * Copyright (C) 2016-2021  Gioacchino Mazzurco <gio@altermundi.net>           *
+ * Copyright (C) 2021       Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -1336,22 +1337,26 @@ int RsServer::StartupRetroShare()
     mWiki->setNetworkExchangeService(wiki_ns) ;
 #endif
 
-        /**** Forum GXS service ****/
+	/************************* Forum GXS service ******************************/
 
-        RsGeneralDataService* gxsforums_ds = new RsDataService(currGxsDir + "/", "gxsforums_db",
-                                                            RS_SERVICE_GXS_TYPE_FORUMS, NULL, rsInitConfig->gxs_passwd);
+	RsGeneralDataService* gxsforums_ds = new RsDataService(
+	            currGxsDir + "/", "gxsforums_db", RS_SERVICE_GXS_TYPE_FORUMS,
+	            nullptr, rsInitConfig->gxs_passwd );
 
+	p3GxsForums* mGxsForums = new p3GxsForums(
+	            gxsforums_ds, nullptr, mGxsIdService );
 
-        p3GxsForums *mGxsForums = new p3GxsForums(gxsforums_ds, NULL, mGxsIdService);
+	RsGxsNetTunnelService* gxsForumsTunnelService = nullptr;
+#ifdef RS_DEEP_FORUMS_INDEX
+	gxsForumsTunnelService = mGxsNetTunnel;
+#endif
 
-        // create GXS photo service
-        RsGxsNetService* gxsforums_ns = new RsGxsNetService(
-                        RS_SERVICE_GXS_TYPE_FORUMS, gxsforums_ds, nxsMgr,
-                        mGxsForums, mGxsForums->getServiceInfo(),
-			mReputations, mGxsCircles,mGxsIdService,
-		    pgpAuxUtils);//,mGxsNetTunnel,true,true,true);
+	RsGxsNetService* gxsforums_ns = new RsGxsNetService(
+	            RS_SERVICE_GXS_TYPE_FORUMS, gxsforums_ds, nxsMgr, mGxsForums,
+	            mGxsForums->getServiceInfo(), mReputations, mGxsCircles,
+	            mGxsIdService, pgpAuxUtils, gxsForumsTunnelService );
+	mGxsForums->setNetworkExchangeService(gxsforums_ns);
 
-    mGxsForums->setNetworkExchangeService(gxsforums_ns) ;
 
         /**** Channel GXS service ****/
 
@@ -1598,7 +1603,10 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
     // Turtle search for GXS services
 
-    mGxsNetTunnel->registerSearchableService(gxschannels_ns) ;
+	mGxsNetTunnel->registerSearchableService(gxschannels_ns);
+#ifdef RS_DEEP_FORUMS_INDEX
+	mGxsNetTunnel->registerSearchableService(gxsforums_ns);
+#endif
 
 	/**************************************************************************/
 

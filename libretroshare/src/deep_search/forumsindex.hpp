@@ -1,8 +1,8 @@
 /*******************************************************************************
  * RetroShare full text indexing and search implementation based on Xapian     *
  *                                                                             *
- * Copyright (C) 2018-2021 Gioacchino Mazzurco <gio@eigenlab.org>              *
- * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
+ * Copyright (C) 2021  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License version 3 as    *
@@ -19,77 +19,57 @@
  *******************************************************************************/
 #pragma once
 
-#include <string>
-#include <cstdint>
+#include <system_error>
 #include <vector>
 #include <xapian.h>
-#include <map>
-#include <functional>
 
-#include "retroshare/rstypes.h"
+#include "util/rstime.h"
+#include "retroshare/rsgxsforums.h"
+#include "retroshare/rsevents.h"
 #include "deep_search/commonutils.hpp"
 
-struct DeepFilesSearchResult
+struct DeepForumsSearchResult
 {
-	DeepFilesSearchResult() : mWeight(0) {}
-
-	RsFileHash mFileHash;
+	std::string mUrl;
 	double mWeight;
 	std::string mSnippet;
 };
 
-class DeepFilesIndex
+struct DeepForumsIndex
 {
-public:
-	explicit DeepFilesIndex(const std::string& dbPath):
+	explicit DeepForumsIndex(const std::string& dbPath) :
 	    mDbPath(dbPath), mWriteQueue(dbPath) {}
 
 	/**
-	 * @brief Search indexed files
+	 * @brief Search indexed GXS groups and messages
 	 * @param[in] maxResults maximum number of acceptable search results, 0 for
 	 * no limits
 	 * @return search results count
 	 */
 	std::error_condition search( const std::string& queryStr,
-	                 std::vector<DeepFilesSearchResult>& results,
-	                 uint32_t maxResults = 100 );
+	                             std::vector<DeepForumsSearchResult>& results,
+	                             uint32_t maxResults = 100 );
 
-	/**
-	 * @return false if file could not be indexed because of error or
-	 *	unsupported type, true otherwise.
-	 */
-	std::error_condition indexFile(
-	        const std::string& path, const std::string& name,
-	        const RsFileHash& hash );
+	std::error_condition indexForumGroup(const RsGxsForumGroup& chan);
 
-	/**
-	 * @brief Remove file entry from database
-	 * @return false on error, true otherwise.
-	 */
-	std::error_condition removeFileFromIndex(const RsFileHash& hash);
+	std::error_condition removeForumFromIndex(const RsGxsGroupId& grpId);
+
+	std::error_condition indexForumPost(const RsGxsForumMsg& post);
+
+	std::error_condition removeForumPostFromIndex(
+	        RsGxsGroupId grpId, RsGxsMessageId msgId );
 
 	static std::string dbDefaultPath();
 
-	using IndexerFunType = std::function<
-	uint32_t( const std::string& path, const std::string& name,
-	Xapian::TermGenerator& xTG, Xapian::Document& xDoc ) >;
-
-	static bool registerIndexer(
-	        int order, const IndexerFunType& indexerFun );
-
 private:
+	static std::string forumIndexId(const RsGxsGroupId& grpId);
+	static std::string postIndexId(
+	        const RsGxsGroupId& grpId, const RsGxsMessageId& msgId );
+
 	enum : Xapian::valueno
 	{
-		/// Used to store RsFileHash of indexed documents
-		FILE_HASH_VALUENO,
-
-		/** Used to check if some file need reindex because was indexed with an
-		 * older version of the indexer */
-		INDEXER_VERSION_VALUENO,
-
-		/** Used to check if some file need reindex because was indexed with an
-		 * older version of the indexer */
-		INDEXERS_COUNT_VALUENO,
+		/// Used to store retroshare url of indexed documents
+		URL_VALUENO,
 
 		/// @see Xapian::BAD_VALUENO
 		BAD_VALUENO = Xapian::BAD_VALUENO
@@ -98,7 +78,4 @@ private:
 	const std::string mDbPath;
 
 	DeepSearch::StubbornWriteOpQueue mWriteQueue;
-
-	/** Storage for indexers function by order */
-	static std::multimap<int, IndexerFunType> indexersRegister;
 };

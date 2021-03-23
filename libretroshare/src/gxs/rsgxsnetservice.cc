@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2012-2012 by Christopher Evi-Parker                               *
+ * Copyright (C) 2012  Christopher Evi-Parker                                  *
+ * Copyright (C) 2018-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -5204,13 +5206,14 @@ TurtleRequestId RsGxsNetService::turtleSearchRequest(const std::string& match_st
     return mGxsNetTunnel->turtleSearchRequest(match_string,this) ;
 }
 
-#ifndef RS_DEEP_CHANNEL_INDEX
 static bool termSearch(const std::string& src, const std::string& substring)
 {
-		/* always ignore case */
-	return src.end() != std::search( src.begin(), src.end(), substring.begin(), substring.end(), RsRegularExpression::CompareCharIC() );
+	/* always ignore case */
+	return src.end() != std::search(
+	            src.begin(), src.end(), substring.begin(), substring.end(),
+	            RsRegularExpression::CompareCharIC() );
 }
-#endif // ndef RS_DEEP_CHANNEL_INDEX
+
 
 bool RsGxsNetService::retrieveDistantSearchResults(TurtleRequestId req,std::map<RsGxsGroupId,RsGxsGroupSearchResults>& group_infos)
 {
@@ -5246,7 +5249,8 @@ bool RsGxsNetService::clearDistantSearchResults(const TurtleRequestId& id)
     return true ;
 }
 
-void RsGxsNetService::receiveTurtleSearchResults( TurtleRequestId req, const std::list<RsGxsGroupSummary>& group_infos )
+void RsGxsNetService::receiveTurtleSearchResults(
+        TurtleRequestId req, const std::list<RsGxsGroupSummary>& group_infos )
 {
 	std::set<RsGxsGroupId> groupsToNotifyResults;
 
@@ -5276,26 +5280,20 @@ void RsGxsNetService::receiveTurtleSearchResults( TurtleRequestId req, const std
 
 		for (const RsGxsGroupSummary& gps : group_infos)
 		{
-#ifndef RS_DEEP_CHANNEL_INDEX
+#ifdef TO_REMOVE
+			/* Because of deep search is enabled search results may bring more
+			 * info then we already have also about post that are indexed by
+			 * xapian, so we don't apply this filter anymore. */
+
 			/* Only keep groups that are not locally known, and groups that are
 			 * not already in the mDistantSearchResults structure.
-			 * mDataStore may in some situations allocate an empty group meta data, so it's important
-			 * to test that the group meta is both non null and actually corresponds to the group id we seek. */
+			 * mDataStore may in some situations allocate an empty group meta
+			 * data, so it's important to test that the group meta is both non
+			 * null and actually corresponds to the group id we seek. */
+			auto& meta(grpMeta[gps.mGroupId]);
+			if(meta != nullptr && meta->mGroupId == gps.mGroupId) continue;
+#endif // def TO_REMOVE
 
-            auto& meta(grpMeta[gps.mGroupId]);
-
-			if(meta != nullptr && meta->mGroupId == gps.mGroupId)
-                continue;
-
-#ifdef NXS_NET_DEBUG_9
-            std::cerr << "  group " << gps.mGroupId << " is not known. Adding it to search results..." << std::endl;
-#endif
-
-#else // ndef RS_DEEP_CHANNEL_INDEX
-			/* When deep search is enabled search results may bring more info
-			 * then we already have also about post that are indexed by xapian,
-			 * so we don't apply this filter in this case. */
-#endif
 			const RsGxsGroupId& grpId(gps.mGroupId);
 
 			groupsToNotifyResults.insert(grpId);
@@ -5332,18 +5330,19 @@ void RsGxsNetService::receiveTurtleSearchResults( TurtleRequestId req, const std
 		mObserver->receiveDistantSearchResults(req, grpId);
 }
 
-void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req,const unsigned char *encrypted_group_data,uint32_t encrypted_group_data_len)
+void RsGxsNetService::receiveTurtleSearchResults(
+        TurtleRequestId req,
+        const uint8_t* encrypted_group_data, uint32_t encrypted_group_data_len )
 {
 #ifdef NXS_NET_DEBUG_8
 	GXSNETDEBUG___ << " received encrypted group data for turtle search request " << std::hex << req << std::dec << ": " << RsUtil::BinToHex(encrypted_group_data,encrypted_group_data_len,50) << std::endl;
 #endif
-    auto it = mSearchRequests.find(req);
-
-    if(mSearchRequests.end() == it)
-    {
-        std::cerr << "(EE) received search results for unknown request " << std::hex << req << std::dec ;
-        return;
-    }
+	auto it = mSearchRequests.find(req);
+	if(mSearchRequests.end() == it)
+	{
+		RS_WARN("Received search results for unknown request: ", req);
+		return;
+	}
     RsGxsGroupId grpId = it->second;
 
     uint8_t encryption_master_key[32];
@@ -5417,56 +5416,42 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req,const unsig
 	mObserver->receiveDistantSearchResults(req, grpId);
 }
 
+std::error_condition RsGxsNetService::distantSearchRequest(
+        rs_owner_ptr<uint8_t> searchData, uint32_t dataSize,
+        RsServiceType serviceType, TurtleRequestId& requestId )
+{
+	if(!mGxsNetTunnel)
+	{
+		free(searchData);
+		return std::errc::function_not_supported;
+	}
+
+	return mGxsNetTunnel->turtleSearchRequest(
+	            searchData, dataSize, serviceType, requestId );
+}
+
+std::error_condition RsGxsNetService::handleDistantSearchRequest(
+        rs_view_ptr<uint8_t> requestData, uint32_t requestSize,
+        rs_owner_ptr<uint8_t>& resultData, uint32_t& resultSize )
+{
+	RS_DBG("");
+	return mObserver->handleDistantSearchRequest(
+	            requestData, requestSize, resultData, resultSize );
+}
+
+std::error_condition RsGxsNetService::receiveDistantSearchResult(
+        const TurtleRequestId requestId,
+        rs_owner_ptr<uint8_t>& resultData, uint32_t& resultSize )
+{
+	return mObserver->receiveDistantSearchResult(
+	            requestId, resultData, resultSize );
+}
+
 bool RsGxsNetService::search( const std::string& substring,
                               std::list<RsGxsGroupSummary>& group_infos )
 {
 	group_infos.clear();
 
-#ifdef RS_DEEP_CHANNEL_INDEX
-
-#warning TODO: filter deep index search result to non circle-restricted groups.
-//    /!\
-//    /!\   These results should be filtered to only return results coming from a non restricted group!
-//    /!\
-
-	std::vector<DeepChannelsSearchResult> results;
-	DeepChannelsIndex::search(substring, results);
-
-	for(auto dsr : results)
-	{
-		RsUrl rUrl(dsr.mUrl);
-		const auto& uQ(rUrl.query());
-		auto rit = uQ.find("id");
-		if(rit != rUrl.query().end())
-		{
-			RsGroupNetworkStats stats;
-			RsGxsGroupId grpId(rit->second);
-			if( !grpId.isNull() && getGroupNetworkStats(grpId, stats) )
-			{
-				RsGxsGroupSummary s;
-
-				s.mGroupId = grpId;
-
-				if((rit = uQ.find("name")) != uQ.end())
-					s.mGroupName = rit->second;
-				if((rit = uQ.find("signFlags")) != uQ.end())
-					s.mSignFlags = static_cast<uint32_t>(std::stoul(rit->second));
-				if((rit = uQ.find("publishTs")) != uQ.end())
-					s.mPublishTs = static_cast<rstime_t>(std::stoll(rit->second));
-				if((rit = uQ.find("authorId")) != uQ.end())
-					s.mAuthorId  = RsGxsId(rit->second);
-
-				s.mSearchContext = dsr.mSnippet;
-
-				s.mNumberOfMessages = stats.mMaxVisibleCount;
-				s.mLastMessageTs    = stats.mLastGroupModificationTS;
-				s.mPopularity       = stats.mSuppliers;
-
-				group_infos.push_back(s);
-			}
-		}
-	}
-#else // RS_DEEP_CHANNEL_INDEX
 	RsGxsGrpMetaTemporaryMap grpMetaMap;
 	{
 		RS_STACK_MUTEX(mNxsMutex) ;
@@ -5492,12 +5477,11 @@ bool RsGxsNetService::search( const std::string& substring,
 
 			group_infos.push_back(s);
 		}
-#endif // RS_DEEP_CHANNEL_INDEX
 
 #ifdef NXS_NET_DEBUG_8
 	GXSNETDEBUG___ << "  performing local substring search in response to distant request. Found " << group_infos.size() << " responses." << std::endl;
 #endif
-    return !group_infos.empty();
+	return !group_infos.empty();
 }
 
 bool RsGxsNetService::search(const Sha1CheckSum& hashed_group_id,unsigned char *& encrypted_group_data,uint32_t& encrypted_group_data_len)

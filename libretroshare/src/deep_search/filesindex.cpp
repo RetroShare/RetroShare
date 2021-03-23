@@ -1,8 +1,8 @@
 /*******************************************************************************
  * RetroShare full text indexing and search implementation based on Xapian     *
  *                                                                             *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
- * Copyright (C) 2019  Asociación Civil Altermundi <info@altermundi.net>       *
+ * Copyright (C) 2018-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License version 3 as    *
@@ -18,47 +18,47 @@
  *                                                                             *
  *******************************************************************************/
 
-#include "deep_search/filesindex.hpp"
-#include "deep_search/commonutils.hpp"
-#include "util/rsdebug.h"
-#include "retroshare/rsinit.h"
-#include "retroshare/rsversion.h"
 
 #include <utility>
+
+#include "deep_search/filesindex.hpp"
+#include "deep_search/commonutils.hpp"
+#include "util/rsdebuglevel1.h"
+#include "retroshare/rsinit.h"
+#include "retroshare/rsversion.h"
 
 /*static*/ std::multimap<int, DeepFilesIndex::IndexerFunType>
 DeepFilesIndex::indexersRegister = {};
 
-bool DeepFilesIndex::indexFile(
+std::error_condition DeepFilesIndex::indexFile(
         const std::string& path, const std::string& name,
         const RsFileHash& hash )
 {
-	auto dbPtr = DeepSearch::openWritableDatabase(
-	            mDbPath, Xapian::DB_CREATE_OR_OPEN );
-	if(!dbPtr) return false;
-	Xapian::WritableDatabase& db(*dbPtr);
-
 	const std::string hashString = hash.toStdString();
 	const std::string idTerm("Q" + hashString);
 
-	Xapian::Document oldDoc;
-	Xapian::PostingIterator pIt = db.postlist_begin(idTerm);
-	if( pIt != db.postlist_end(idTerm) )
+	auto db = DeepSearch::openReadOnlyDatabase(mDbPath);
+	if(db)
 	{
-		oldDoc = db.get_document(*pIt);
-		if( oldDoc.get_value(INDEXER_VERSION_VALUENO) ==
-		        RS_HUMAN_READABLE_VERSION &&
-		    std::stoull(oldDoc.get_value(INDEXERS_COUNT_VALUENO)) ==
-		        indexersRegister.size() )
+		Xapian::Document oldDoc;
+		Xapian::PostingIterator pIt = db->postlist_begin(idTerm);
+		if( pIt != db->postlist_end(idTerm) )
 		{
-			/* Looks like this file has already been indexed by this RetroShare
-			 * exact version, so we can skip it. If the version was different it
-			 * made sense to reindex it as better indexers might be available
-			 * since last time it was indexed */
-			Dbg3() << __PRETTY_FUNCTION__ << " skipping laready indexed file: "
-			       << hash << " " << name << std::endl;
-			return true;
+			oldDoc = db->get_document(*pIt);
+			if( oldDoc.get_value(INDEXER_VERSION_VALUENO) ==
+			        RS_HUMAN_READABLE_VERSION &&
+			    std::stoull(oldDoc.get_value(INDEXERS_COUNT_VALUENO)) ==
+			        indexersRegister.size() )
+			{
+				/* Looks like this file has already been indexed by this
+				 * RetroShare exact version, so we can skip it. If the version
+				 * was different it made sense to reindex it as better indexers
+				 * might be available since last time it was indexed */
+				RS_DBG3("skipping laready indexed file: ", hash, " ", name);
+				return std::error_condition();
+			}
 		}
+		db.reset(); // Release DB read lock ASAP
 	}
 
 	Xapian::Document doc;
@@ -80,22 +80,21 @@ bool DeepFilesIndex::indexFile(
 	doc.add_value(
 	            INDEXERS_COUNT_VALUENO,
 	            std::to_string(indexersRegister.size()) );
-	db.replace_document(idTerm, doc);
 
-	return true;
+	mWriteQueue.push([idTerm, doc](Xapian::WritableDatabase& db)
+	{ db.replace_document(idTerm, doc); });
+
+	return std::error_condition();
 }
 
-bool DeepFilesIndex::removeFileFromIndex(const RsFileHash& hash)
+std::error_condition DeepFilesIndex::removeFileFromIndex(const RsFileHash& hash)
 {
-	Dbg3() << __PRETTY_FUNCTION__ << " removing file from index: "
-	       << hash << std::endl;
+	RS_DBG3(hash);
 
-	std::unique_ptr<Xapian::WritableDatabase> db =
-	        DeepSearch::openWritableDatabase(mDbPath, Xapian::DB_CREATE_OR_OPEN);
-	if(!db) return false;
+	mWriteQueue.push([hash](Xapian::WritableDatabase& db)
+	{ db.delete_document("Q" + hash.toStdString()); });
 
-	db->delete_document("Q" + hash.toStdString());
-	return true;
+	return std::error_condition();
 }
 
 /*static*/ std::string DeepFilesIndex::dbDefaultPath()
@@ -104,20 +103,20 @@ bool DeepFilesIndex::removeFileFromIndex(const RsFileHash& hash)
 /*static*/ bool DeepFilesIndex::registerIndexer(
         int order, const DeepFilesIndex::IndexerFunType& indexerFun )
 {
-	Dbg1() << __PRETTY_FUNCTION__ << " " << order << std::endl;
+	RS_DBG1(order);
 
 	indexersRegister.insert(std::make_pair(order, indexerFun));
 	return true;
 }
 
-uint32_t DeepFilesIndex::search(
+std::error_condition DeepFilesIndex::search(
         const std::string& queryStr,
         std::vector<DeepFilesSearchResult>& results, uint32_t maxResults )
 {
 	results.clear();
 
 	auto dbPtr = DeepSearch::openReadOnlyDatabase(mDbPath);
-	if(!dbPtr) return 0;
+	if(!dbPtr) return std::errc::bad_file_descriptor;
 	Xapian::Database& db(*dbPtr);
 
 	// Set up a QueryParser with a stemmer and suitable prefixes.
@@ -151,7 +150,7 @@ uint32_t DeepFilesIndex::search(
 		results.push_back(s);
 	}
 
-	return static_cast<uint32_t>(results.size());
+	return std::error_condition();
 }
 
 
