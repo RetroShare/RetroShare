@@ -59,7 +59,7 @@ linux-* {
     mLibs += dl
 }
 
-rs_deep_channels_index | rs_deep_files_index {
+rs_deep_channels_index | rs_deep_files_index | rs_deep_forums_index {
     mLibs += xapian
     win32-g++|win32-clang-g++:mLibs += rpcrt4
 }

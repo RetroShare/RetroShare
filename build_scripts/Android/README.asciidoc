@@ -75,7 +75,7 @@ deployment)
 
 [source,makefile]
 -------------------------------------------------------------------------------
-CONFIG+=retroshare_service CONFIG+=rs_jsonapi CONFIG+=rs_deep_search
+CONFIG+=retroshare_service CONFIG+=rs_jsonapi CONFIG+=no_keywords
 RS_UPNP_LIB=miniupnpc
 JSONAPI_GENERATOR_EXE=Your_Path/jsonapi-generator/src/jsonapi-generator
 NATIVE_LIBS_TOOLCHAIN_PATH=Your_Path/retroshare-android-16-arm/
@@ -391,8 +391,8 @@ https://gitlab.com/elRepo.io/elRepo.io-android/-/blob/master/android/app/build.g
 
 == License
 
-Copyright (C) 2016-2020  Gioacchino Mazzurco <gio@eigenlab.org> +
-Copyright (C) 2020       Asociación Civil Altermundi <info@altermundi.net> +
+Copyright (C) 2016-2021  Gioacchino Mazzurco <gio@eigenlab.org> +
+Copyright (C) 2020-2021  Asociación Civil Altermundi <info@altermundi.net> +
 
 This work is licensed under a Creative Commons Attribution-Share Alike 4.0 International License.
 
