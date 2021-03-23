@@ -117,7 +117,7 @@ std::error_condition StubbornWriteOpQueue::flush(
 			if(maxRemaining > 0)
 			{
 				std::chrono::milliseconds interval(
-				            std::max(50l, maxRemaining*1000/5) );
+				            std::max(rstime_t(50), maxRemaining*1000/5) );
 				RS_DBG3( "Cannot acquire database write lock, retrying in:",
 				         interval.count(), "ms" );
 				RsThread::async([this, acceptDelay, callTS, interval]()
