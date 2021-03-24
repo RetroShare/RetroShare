@@ -156,7 +156,7 @@ struct RsGxsForumEvent: RsEvent
 struct RsGxsForumsDistantSearchEvent: RsEvent
 {
 	RsGxsForumsDistantSearchEvent():
-	    RsEvent(RsEventType::GXS_CHANNELS),
+	    RsEvent(RsEventType::GXS_FORUMS),
 	    mForumEventCode(RsForumEventCode::DISTANT_SEARCH_RESULT) {}
 
 	RsForumEventCode mForumEventCode;
