@@ -73,6 +73,10 @@ In QtCreator Option Git add this path:
 
 select "Pull" with "Rebase"
 
+In QtCreator Projects -> Build Settings -> Build Steps -> Add Additional arguments:
+
+       "CONFIG+=rs_autologin" "CONFIG+=rs_use_native_dialogs" 
+
 ## Set your Mac OS SDK version
 
 Edit RetroShare.pro  
