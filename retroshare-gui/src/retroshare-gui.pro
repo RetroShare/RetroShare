@@ -280,6 +280,14 @@ macx {
 	mac_icon.files = $$files($$PWD/rsMacIcon.icns)
 	mac_icon.path = Contents/Resources
 	QMAKE_BUNDLE_DATA += mac_icon
+	dplQSS.files = $$PWD/qss
+	dplQSS.path = Contents/Resources
+	QMAKE_BUNDLE_DATA += dplQSS
+	dplChatStyles.files = \
+		$$PWD/gui/qss/chat/Bubble \
+		$$PWD/gui/qss/chat/Bubble_Compact
+	dplChatStyles.path = Contents/Resources/stylesheets
+	QMAKE_BUNDLE_DATA += dplChatStyles 
 #	mac_webui.files = $$files($$PWD/../../libresapi/src/webui)
 #	mac_webui.path = Contents/Resources
 #	QMAKE_BUNDLE_DATA += mac_webui
