@@ -67,7 +67,7 @@ Get Your OSX SDK if missing: [MacOSX-SDKs](https://github.com/phracker/MacOSX-SD
 
 ## Last Settings
 
-In QtCreator Option Git add his path:
+In QtCreator Option Git add this path:
 
        /usr/local/bin
 
