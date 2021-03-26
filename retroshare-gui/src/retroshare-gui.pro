@@ -292,9 +292,10 @@ macx {
 #	mac_webui.path = Contents/Resources
 #	QMAKE_BUNDLE_DATA += mac_webui
 
+	OBJECTS_DIR = temp/obj
+
 	CONFIG += version_detail_bash_script
-        LIBS += -lssl -lcrypto -lz 
-        #LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error -lassuan
+	LIBS += -lssl -lcrypto -lz 
 	for(lib, LIB_DIR):exists($$lib/libminiupnpc.a){ LIBS += $$lib/libminiupnpc.a}
 	LIBS += -framework CoreFoundation
 	LIBS += -framework Security
