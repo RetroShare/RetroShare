@@ -76,21 +76,21 @@ public:
 
 		std::string resource_filename = _base_directory + "/" + directory + filename;
 		RsDbg() << "Reading file: \"" << resource_filename << "\"" << std::endl;
-		std::ifstream stream( resource_filename, std::ifstream::in );
+		std::ifstream stream( resource_filename, std::ifstream::binary);
 
 		if(stream.is_open())
 		{
-			const std::string body = std::string(
+			const std::vector<uint8_t> body = std::vector<uint8_t>(
 			            std::istreambuf_iterator<char>(stream),
 			            std::istreambuf_iterator<char>() );
 
 			RsDbg() << __PRETTY_FUNCTION__
-			        << " body length=" << body.length() << std::endl;
+					<< " body length=" << body.size() << std::endl;
 
 			const std::multimap<std::string, std::string> headers
 			{
 				{ "Content-Type", mime_types[MIME_TYPE_INDEX] },
-				{ "Content-Length", std::to_string(body.length()) }
+				{ "Content-Length", std::to_string(body.size()) }
 			};
 
 			session->close(restbed::OK, body, headers);
