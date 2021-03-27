@@ -399,10 +399,10 @@ QVariant RsMessageModel::toolTipRole(const Rs::Msgs::MsgInfoSummary& fmpe,int co
 			return QVariant();
 
 		int S = QFontMetricsF(QApplication::font()).height();
-		QImage pix( (*icons.begin()).pixmap(QSize(4*S,4*S)).toImage());
+		QImage pix( (*icons.begin()).pixmap(QSize(5*S,5*S)).toImage());
 
 		QString embeddedImage;
-		if(RsHtml::makeEmbeddedImage(pix.scaled(QSize(4*S,4*S), Qt::KeepAspectRatio, Qt::SmoothTransformation), embeddedImage, 8*S * 8*S))
+		if(RsHtml::makeEmbeddedImage(pix.scaled(QSize(5*S,5*S), Qt::KeepAspectRatio, Qt::SmoothTransformation), embeddedImage, -1))
 		{
 			embeddedImage.insert(embeddedImage.indexOf("src="), "style=\"float:left\" ");
 			comment = "<table><tr><td>" + embeddedImage + "</td><td>" + comment + "</td></table>";
