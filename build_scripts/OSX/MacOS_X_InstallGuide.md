@@ -8,7 +8,7 @@ Use default options. And add Qt Script support.
 
 Add to the PATH environment variable by editing your *~/.profile* file.
 
-       export PATH="/users/$USER/Qt/5.14.1/clang_64/bin:$PATH."
+       export PATH="/users/$USER/Qt/5.14.1/clang_64/bin:$PATH"
 
 Depends on which version of Qt you use.
 
@@ -63,6 +63,10 @@ For VOIP Plugin:
        $ brew install homebrew/science/opencv
        $ brew install ffmpeg
 
+For FeedReader Plugin:
+
+       $ brew install libxml2
+
 Get Your OSX SDK if missing: [MacOSX-SDKs](https://github.com/phracker/MacOSX-SDKs)
 
 ## Last Settings
@@ -108,6 +112,9 @@ alternative via Terminal
 
 $ qmake INCLUDEPATH+="/usr/local/opt/openssl/include" QMAKE_LIBDIR+="/usr/local/opt/openssl/lib" QMAKE_LIBDIR+="/usr/local/opt/sqlcipher/lib" QMAKE_LIBDIR+="/usr/local/opt/miniupnpc/lib"
 
+For FeedReader Plugin:
+
+    INCLUDEPATH += "/usr/local/Cellar/libxml2/2.9.10_2/include/libxml2"
 
 You can now compile RS into Qt Creator or with terminal
 
