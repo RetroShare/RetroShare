@@ -46,6 +46,7 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
     ui(new(Ui::IdEditDialog))
 {
 	mIsNew = true;
+    mAvatarIsSet = false;
 
 	ui->setupUi(this);
 
@@ -126,6 +127,7 @@ void IdEditDialog::changeAvatar()
     ui->avatarLabel->setPicture(QPixmap::fromImage(img));
     ui->avatarLabel->setEnableZoom(true);
     ui->avatarLabel->setToolTip(tr("Use the mouse to zoom and adjust the image for your avatar."));
+    mAvatarIsSet = true;
 
     // shows the tooltip for a while
     QToolTip::showText( ui->avatarLabel->mapToGlobal( QPoint( 0, 0 ) ), ui->avatarLabel->toolTip() );
@@ -211,10 +213,12 @@ void IdEditDialog::setAvatar(const QPixmap &avatar)
 
 	if (!mAvatar.isNull()) {
         ui->avatarLabel->setPicture(avatar);
+        mAvatarIsSet = true;
     } else {
 		// we need to use the default pixmap here, generated from the ID
-        ui->avatarLabel->setPicture(GxsIdDetails::makeDefaultIcon(RsGxsId(mEditGroup.mMeta.mGroupId)));
-	}
+        ui->avatarLabel->setText(tr("No avatar chosen\ndefault will\nbe used"));
+        mAvatarIsSet = false;
+    }
 }
 
 void IdEditDialog::setupExistingId(const RsGxsGroupId& keyId)
@@ -517,13 +521,9 @@ void IdEditDialog::loadRecognTags()
 void IdEditDialog::submit()
 {
 	if (mIsNew)
-	{
 		createId();
-	}
 	else
-	{
 		updateId();
-	}
 }
 
 void IdEditDialog::createId()
@@ -551,10 +551,10 @@ void IdEditDialog::createId()
     params.nickname = groupname.toUtf8().constData();
 	params.isPgpLinked = (ui->radioButton_GpgId->isChecked());
 
-    mAvatar = ui->avatarLabel->extractCroppedScaledPicture();
-
-    if (!mAvatar.isNull())
+    if(mAvatarIsSet)
     {
+        mAvatar = ui->avatarLabel->extractCroppedScaledPicture();
+
         QByteArray ba;
         QBuffer buffer(&ba);
 
