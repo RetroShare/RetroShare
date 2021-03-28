@@ -84,6 +84,7 @@ protected:
 	RsGxsGroupId mGroupId;
 
 	QPixmap mAvatar; // Avatar from identity (not calculated)
+    bool mAvatarIsSet;
 };
 
 #endif
