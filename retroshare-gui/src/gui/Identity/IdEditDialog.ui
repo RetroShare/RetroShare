@@ -310,6 +310,9 @@
               <height>128</height>
              </size>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::StrongFocus</enum>
+            </property>
             <property name="frameShape">
              <enum>QFrame::Box</enum>
             </property>

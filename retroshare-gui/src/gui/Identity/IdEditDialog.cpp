@@ -89,6 +89,11 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
 	connect(ui->toolButton_Tag5, SIGNAL(clicked(bool)), this, SLOT(rmTag5()));
 	connect(ui->avatarButton, SIGNAL(clicked(bool)), this, SLOT(changeAvatar()));
 
+    connect(ui->avatarLabel,SIGNAL(cleared()),this,SLOT(avatarCleared()));
+
+    ui->avatarLabel->setEnableClear(true);
+    ui->avatarLabel->setToolTip(tr("No Avatar chosen. A default image will be automatically displayed from your new identity."));
+
 	/* Initialize ui */
 	ui->lineEdit_Nickname->setMaxLength(RSID_MAXIMUM_NICKNAME_SIZE);
 
@@ -126,7 +131,7 @@ void IdEditDialog::changeAvatar()
 
     ui->avatarLabel->setPicture(QPixmap::fromImage(img));
     ui->avatarLabel->setEnableZoom(true);
-    ui->avatarLabel->setToolTip(tr("Use the mouse to zoom and adjust the image for your avatar."));
+        ui->avatarLabel->setToolTip(tr("Use the mouse to zoom and adjust the image for your avatar. Hit Del to remove it."));
     mAvatarIsSet = true;
 
     // shows the tooltip for a while
@@ -207,6 +212,11 @@ void IdEditDialog::updateIdType(bool pseudo)
 	}
 }
 
+void IdEditDialog::avatarCleared()
+{
+    setAvatar(QPixmap());
+}
+
 void IdEditDialog::setAvatar(const QPixmap &avatar)
 {
 	mAvatar = avatar;
@@ -214,10 +224,12 @@ void IdEditDialog::setAvatar(const QPixmap &avatar)
 	if (!mAvatar.isNull()) {
         ui->avatarLabel->setPicture(avatar);
         mAvatarIsSet = true;
+        ui->avatarLabel->setToolTip(tr("Use the mouse to zoom and adjust the image for your avatar. Hit Del to remove it."));
     } else {
 		// we need to use the default pixmap here, generated from the ID
-        ui->avatarLabel->setText(tr("No avatar chosen\ndefault will\nbe used"));
+        ui->avatarLabel->setText(tr("No avatar chosen"));	// This clears up the image
         mAvatarIsSet = false;
+        ui->avatarLabel->setToolTip(tr("No Avatar chosen. A default image will be automatically displayed from your new identity."));
     }
 }
 

@@ -217,6 +217,25 @@ float ChannelPostThumbnailView::thumbnail_h() const
     }
 }
 
+void ZoomableLabel::keyPressEvent(QKeyEvent *e)
+{
+    switch(e->key())
+    {
+    case Qt::Key_Delete:
+
+        if(mClearEnabled)
+        {
+            mFullImage = QPixmap();
+            emit cleared();
+            e->accept();
+            updateView();
+        }
+        break;
+    default:
+        QLabel::keyPressEvent(e);
+    }
+}
+
 void ZoomableLabel::reset()
 {
     mCenterX = mFullImage.width()/2.0;

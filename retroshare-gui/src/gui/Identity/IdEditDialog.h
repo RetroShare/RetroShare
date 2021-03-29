@@ -51,6 +51,7 @@ public:
 private slots:
 	void idTypeToggled(bool checked);
 	void submit();
+    void avatarCleared();
 
 	void changeAvatar();
 
