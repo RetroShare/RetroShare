@@ -608,7 +608,8 @@ linux-* {
     isEmpty(RS_DATA_DIR)   : RS_DATA_DIR    = "$${PREFIX}/share/retroshare"
     isEmpty(RS_PLUGIN_DIR) : RS_PLUGIN_DIR  = "$${PREFIX}/lib/retroshare/extensions6"
 
-    QMAKE_LIBDIR *= "$$RS_LIB_DIR"
+    MULTILIB_VARIANT = $$system($$QMAKE_CXX -dumpmachine)
+    QMAKE_LIBDIR *= "$$RS_LIB_DIR/$$MULTILIB_VARIANT"
 
     rs_autologin {
         # try libsecret first since it is not limited to gnome keyring and libgnome-keyring is deprecated
