@@ -66,7 +66,7 @@ For VOIP Plugin:
 
 For FeedReader Plugin:
 
-       $ brew install libxml2
+       $ brew install libxslt
 
 Get Your OSX SDK if missing: [MacOSX-SDKs](https://github.com/phracker/MacOSX-SDKs)
 
@@ -115,7 +115,7 @@ alternative via Terminal
 
 For FeedReader Plugin:
 
-    INCLUDEPATH += "/usr/local/Cellar/libxml2/2.9.10_2/include/libxml2"
+    INCLUDEPATH += "/usr/local/opt/libxml2/include/libxml2"
 
 For building RetroShare with plugins:
 
@@ -147,3 +147,11 @@ You can now compile RetroShare into Qt Creator or with Terminal
 You can change Target and SDK in *./retroshare.pri:82* changing value of QMAKE_MACOSX_DEPLOYMENT_TARGET and QMAKE_MAC_SDK
 
 You can find the compiled application at *./retroshare/retroshare-gui/src/retroshare.app*
+
+## Copy Plugins
+
+    $ cp \
+    ./plugins/FeedReader/lib/libFeedReader.dylib \
+    ./plugins/VOIP/lib/libVOIP.dylib \
+    ./plugins/RetroChess/lib/libRetroChess.dylib \
+    ./retroshare-gui/src/RetroShare.app/Contents/Resources/
