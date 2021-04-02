@@ -60,7 +60,7 @@ For VOIP Plugin:
 
        $ brew install speex
        $ brew install speexdsp
-       $ brew install homebrew/science/opencv
+       $ brew install opencv
        $ brew install ffmpeg
 
 For FeedReader Plugin:
@@ -116,7 +116,27 @@ For FeedReader Plugin:
 
     INCLUDEPATH += "/usr/local/Cellar/libxml2/2.9.10_2/include/libxml2"
 
-You can now compile RS into Qt Creator or with terminal
+For building RetroShare with plugins:
+
+    $ qmake \
+    INCLUDEPATH+="/usr/local/opt/openssl/include" QMAKE_LIBDIR+="/usr/local/opt/openssl/lib" \
+    QMAKE_LIBDIR+="/usr/local/opt/sqlcipher/lib" \
+    QMAKE_LIBDIR+="/usr/local/opt/miniupnpc/lib" \
+    INCLUDEPATH+="/usr/local/opt/opencv/include/opencv4" QMAKE_LIBDIR+="/usr/local/opt/opencv/lib" \
+    INCLUDEPATH+="/usr/local/opt/speex/include" QMAKE_LIBDIR+="/usr/local/opt/speex/lib/" \
+    INCLUDEPATH+="/usr/local/opt/speexdsp/include" QMAKE_LIBDIR+="/usr/local/opt/speexdsp/lib/" \
+    INCLUDEPATH+="/usr/local/opt/libxslt/include" QMAKE_LIBDIR+="/usr/local/opt/libxslt/lib" \
+    QMAKE_LIBDIR+="/usr/local/opt/ffmpeg/lib" \
+    LIBS+=-lopencv_videoio \
+    CONFIG+=retroshare_plugins \
+    CONFIG+=rs_autologin \
+    CONFIG+=rs_use_native_dialogs \
+    CONFIG+=release \
+    ..
+
+## Compile RetroShare 
+
+You can now compile RetroShare into Qt Creator or with Terminal
 
        cd <your development directory>
        git clone https://github.com/RetroShare/RetroShare.git retroshare
