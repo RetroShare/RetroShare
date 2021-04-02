@@ -31,6 +31,7 @@ For VOIP Plugin:
 
        $ sudo port install speex-devel
        $ sudo port install opencv
+       $ sudo port install ffmpeg
 
 Get Your OSX SDK if missing: [MacOSX-SDKs](https://github.com/phracker/MacOSX-SDKs)
 
@@ -60,12 +61,12 @@ For VOIP Plugin:
 
        $ brew install speex
        $ brew install speexdsp
-       $ brew install homebrew/science/opencv
+       $ brew install opencv
        $ brew install ffmpeg
 
 For FeedReader Plugin:
 
-       $ brew install libxml2
+       $ brew install libxslt
 
 Get Your OSX SDK if missing: [MacOSX-SDKs](https://github.com/phracker/MacOSX-SDKs)
 
@@ -110,13 +111,33 @@ Edit your retroshare.pri and add to macx-*  section
 
 alternative via Terminal
 
-$ qmake INCLUDEPATH+="/usr/local/opt/openssl/include" QMAKE_LIBDIR+="/usr/local/opt/openssl/lib" QMAKE_LIBDIR+="/usr/local/opt/sqlcipher/lib" QMAKE_LIBDIR+="/usr/local/opt/miniupnpc/lib"
+    $ qmake INCLUDEPATH+="/usr/local/opt/openssl/include" QMAKE_LIBDIR+="/usr/local/opt/openssl/lib" QMAKE_LIBDIR+="/usr/local/opt/sqlcipher/lib" QMAKE_LIBDIR+="/usr/local/opt/miniupnpc/lib"
 
 For FeedReader Plugin:
 
-    INCLUDEPATH += "/usr/local/Cellar/libxml2/2.9.10_2/include/libxml2"
+    INCLUDEPATH += "/usr/local/opt/libxml2/include/libxml2"
 
-You can now compile RS into Qt Creator or with terminal
+For building RetroShare with plugins:
+
+    $ qmake \
+    INCLUDEPATH+="/usr/local/opt/openssl/include" QMAKE_LIBDIR+="/usr/local/opt/openssl/lib" \
+    QMAKE_LIBDIR+="/usr/local/opt/sqlcipher/lib" \
+    QMAKE_LIBDIR+="/usr/local/opt/miniupnpc/lib" \
+    INCLUDEPATH+="/usr/local/opt/opencv/include/opencv4" QMAKE_LIBDIR+="/usr/local/opt/opencv/lib" \
+    INCLUDEPATH+="/usr/local/opt/speex/include" QMAKE_LIBDIR+="/usr/local/opt/speex/lib/" \
+    INCLUDEPATH+="/usr/local/opt/speexdsp/include" QMAKE_LIBDIR+="/usr/local/opt/speexdsp/lib/" \
+    INCLUDEPATH+="/usr/local/opt/libxslt/include" QMAKE_LIBDIR+="/usr/local/opt/libxslt/lib" \
+    QMAKE_LIBDIR+="/usr/local/opt/ffmpeg/lib" \
+    LIBS+=-lopencv_videoio \
+    CONFIG+=retroshare_plugins \
+    CONFIG+=rs_autologin \
+    CONFIG+=rs_use_native_dialogs \
+    CONFIG+=release \
+    ..
+
+## Compile RetroShare 
+
+You can now compile RetroShare into Qt Creator or with Terminal
 
        cd <your development directory>
        git clone https://github.com/RetroShare/RetroShare.git retroshare
@@ -126,3 +147,11 @@ You can now compile RS into Qt Creator or with terminal
 You can change Target and SDK in *./retroshare.pri:82* changing value of QMAKE_MACOSX_DEPLOYMENT_TARGET and QMAKE_MAC_SDK
 
 You can find the compiled application at *./retroshare/retroshare-gui/src/retroshare.app*
+
+## Copy Plugins
+
+    $ cp \
+    ./plugins/FeedReader/lib/libFeedReader.dylib \
+    ./plugins/VOIP/lib/libVOIP.dylib \
+    ./plugins/RetroChess/lib/libRetroChess.dylib \
+    ./retroshare-gui/src/RetroShare.app/Contents/Resources/
