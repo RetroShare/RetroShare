@@ -31,6 +31,7 @@ For VOIP Plugin:
 
        $ sudo port install speex-devel
        $ sudo port install opencv
+       $ sudo port install ffmpeg
 
 Get Your OSX SDK if missing: [MacOSX-SDKs](https://github.com/phracker/MacOSX-SDKs)
 
