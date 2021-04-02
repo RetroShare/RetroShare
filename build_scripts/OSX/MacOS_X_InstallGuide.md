@@ -12,6 +12,24 @@ Add to the PATH environment variable by editing your *~/.profile* file.
 
 Depends on which version of Qt you use.
 
+## Get RetroShare
+
+In Qt Creator Projects -> New -> Import Project -> Git Clone -> Choose
+Add Repository and Continoue
+
+       Repository: https://github.com/RetroShare/RetroShare.git 
+
+via Terminal:
+
+       cd <your development directory>
+       git clone https://github.com/RetroShare/RetroShare.git retroshare
+
+via GitHub Desktop: [GitHub Desktop Download](https://central.github.com/deployments/desktop/desktop/latest/darwin)
+
+In GitHub Desktop -> Clone Repository -> URL
+
+       Add Repository URL: https://github.com/RetroShare/RetroShare.git and Clone
+
 ## ***Choose if you use MacPort or HomeBrew***
 
 ### MacPort Installation
@@ -139,8 +157,6 @@ For building RetroShare with plugins:
 
 You can now compile RetroShare into Qt Creator or with Terminal
 
-       cd <your development directory>
-       git clone https://github.com/RetroShare/RetroShare.git retroshare
        cd retroshare
        qmake; make
 
