@@ -90,13 +90,15 @@ Get Your OSX SDK if missing: [MacOSX-SDKs](https://github.com/phracker/MacOSX-SD
 
 ## Last Settings
 
-In QtCreator Option Git add this path:
+In QtCreator Projects -> Manage Kits > Version Control > Git:
+
+       select "Pull with rebase"
+
+In QtCreator Projects -> Build -> Build Settings -> Build Environment -> Add this path:
 
        /usr/local/bin
 
-select "Pull" with "Rebase"
-
-In QtCreator Projects -> Build Settings -> Build Steps -> Add Additional arguments:
+In QtCreator Projects -> Build -> Build Settings -> Build Steps -> Add Additional arguments:
 
        "CONFIG+=rs_autologin" "CONFIG+=rs_use_native_dialogs" 
 
