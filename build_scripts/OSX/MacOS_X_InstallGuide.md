@@ -12,6 +12,24 @@ Add to the PATH environment variable by editing your *~/.profile* file.
 
 Depends on which version of Qt you use.
 
+## Get RetroShare
+
+In Qt Creator Projects -> New -> Import Project -> Git Clone -> Choose
+Add Repository and Continoue
+
+       Repository: https://github.com/RetroShare/RetroShare.git 
+
+via Terminal:
+
+       cd <your development directory>
+       git clone https://github.com/RetroShare/RetroShare.git retroshare
+
+via GitHub Desktop: [GitHub Desktop Download](https://central.github.com/deployments/desktop/desktop/latest/darwin)
+
+In GitHub Desktop -> Clone Repository -> URL
+
+       Add Repository URL: https://github.com/RetroShare/RetroShare.git and Clone
+
 ## ***Choose if you use MacPort or HomeBrew***
 
 ### MacPort Installation
@@ -72,13 +90,15 @@ Get Your OSX SDK if missing: [MacOSX-SDKs](https://github.com/phracker/MacOSX-SD
 
 ## Last Settings
 
-In QtCreator Option Git add this path:
+In QtCreator Projects -> Manage Kits > Version Control > Git:
+
+       select "Pull with rebase"
+
+In QtCreator Projects -> Build -> Build Settings -> Build Environment -> Add this path:
 
        /usr/local/bin
 
-select "Pull" with "Rebase"
-
-In QtCreator Projects -> Build Settings -> Build Steps -> Add Additional arguments:
+In QtCreator Projects -> Build -> Build Settings -> Build Steps -> Add Additional arguments:
 
        "CONFIG+=rs_autologin" "CONFIG+=rs_use_native_dialogs" 
 
@@ -139,8 +159,6 @@ For building RetroShare with plugins:
 
 You can now compile RetroShare into Qt Creator or with Terminal
 
-       cd <your development directory>
-       git clone https://github.com/RetroShare/RetroShare.git retroshare
        cd retroshare
        qmake; make
 
