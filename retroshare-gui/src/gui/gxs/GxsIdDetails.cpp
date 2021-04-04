@@ -1104,7 +1104,7 @@ QString nickname ;
             nickname = QString::fromUtf8(details.mNickname.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE) ;
 
                             
-    comment = QString("%1:%2<br/>%3:%4").arg(QApplication::translate("GxsIdDetails", "Identity&nbsp;name"),
+	comment = QString("%1: %2<br/>%3: %4").arg(QApplication::translate("GxsIdDetails", "Identity&nbsp;name"),
                                              nickname,
                                             QApplication::translate("GxsIdDetails", "Identity&nbsp;Id"),
 	                                        QString::fromStdString(details.mId.toStdString()));
