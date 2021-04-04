@@ -83,16 +83,16 @@ NewsFeed::NewsFeed(QWidget *parent) : MainPage(parent), ui(new Ui::NewsFeed),
         RsEventType::MAIL_STATUS
     })
 {
-	for(uint32_t i=0;i<mEventTypes.size();++i)
+    /* Invoke the Qt Designer generated object setup routine */
+    ui->setupUi(this);
+
+    for(uint32_t i=0;i<mEventTypes.size();++i)
 	{
 		mEventHandlerIds.push_back(0); // needed to force intialization by registerEventsHandler()
 		rsEvents->registerEventsHandler(
 		            [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); },
 		            mEventHandlerIds.back(), mEventTypes[i] );
 	}
-
-	/* Invoke the Qt Designer generated object setup routine */
-	ui->setupUi(this);
 
 	if (!instance) {
 		instance = this;
