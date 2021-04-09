@@ -113,7 +113,7 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
           ui.hiddenpage_outHeader->setText(tr("Tor has been automatically configured by Retroshare. You shouldn't need to change anything here.")) ;
 		  ui.hiddenpage_inHeader->setText(tr("Tor has been automatically configured by Retroshare. You shouldn't need to change anything here.")) ;
 
-          ui.hiddenServiceTab->removeTab(TAB_HIDDEN_SERVICE_I2P_BOB);	// warning: the order of operation here is very important.
+		  ui.hiddenServiceTab->removeTab(TAB_HIDDEN_SERVICE_I2P);	// warning: the order of operation here is very important.
       }
   }
   else
