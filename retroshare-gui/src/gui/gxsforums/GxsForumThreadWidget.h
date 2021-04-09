@@ -214,7 +214,7 @@ private:
 	unsigned int mNewCount;
 	bool mDisplayBannedText;
 
-	/* Color definitions (for standard see qss.default) */
+	/* Color definitions (for standard see default.qss) */
 	QColor mTextColorRead;
 	QColor mTextColorUnread;
 	QColor mTextColorUnreadChildren;

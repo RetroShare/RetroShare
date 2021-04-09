@@ -259,7 +259,7 @@ IdDialog::IdDialog(QWidget *parent)
 
 	ui->editButton->hide();
 
-    ui->avlabel_Circles->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/circles.png"));
+	ui->avLabel_Circles->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/circles.png"));
 
 	ui->headerTextLabel_Circles->setText(tr("Circles"));
 
@@ -475,10 +475,10 @@ void IdDialog::clearPerson()
 {
 	QFontMetricsF f(ui->avLabel_Person->font()) ;
 
-    ui->avLabel_Person->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/people.png").scaled(f.height()*4,f.height()*4,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+	ui->avLabel_Person->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/people.png").scaled(f.height()*4,f.height()*4,Qt::KeepAspectRatio,Qt::SmoothTransformation));
 	ui->headerTextLabel_Person->setText(tr("People"));
 
-	ui->inviteFrame->hide();
+	ui->info_Frame_Invite->hide();
 	ui->avatarLabel->clear();
 
 	whileBlocking(ui->ownOpinion_CB)->setCurrentIndex(1);
@@ -2490,7 +2490,7 @@ void IdDialog::sendInvite()
 	{
         MessageComposer::sendInvite(id,false);
 
-        ui->inviteFrame->show();
+        ui->info_Frame_Invite->show();
         ui->inviteButton->setEnabled(false);
 	}
     
@@ -2572,9 +2572,9 @@ void IdDialog::removefromContacts()
 	updateIdList();
 }
 
-void IdDialog::on_closeInfoFrameButton_clicked()
+void IdDialog::on_closeInfoFrameButton_Invite_clicked()
 {
-	ui->inviteFrame->setVisible(false);
+	ui->info_Frame_Invite->setVisible(false);
 }
 
 // We need to use indexes here because saving items is not possible since they can be re-created.

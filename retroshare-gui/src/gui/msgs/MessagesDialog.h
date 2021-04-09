@@ -152,7 +152,7 @@ private:
   RsMessageModel *mMessageModel;
   MessageSortFilterProxyModel *mMessageProxyModel;
 
-  /* Color definitions (for standard see qss.default) */
+  /* Color definitions (for standard see default.qss) */
   QColor mTextColorInbox;
 
   /** Qt Designer generated object */

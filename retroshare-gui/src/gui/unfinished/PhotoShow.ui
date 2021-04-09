@@ -68,7 +68,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="sizeComboBox">
+        <widget class="RSComboBox" name="sizeComboBox">
          <item>
           <property name="text">
            <string>320 x 320</string>
@@ -94,7 +94,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="speedComboBox">
+        <widget class="RSComboBox" name="speedComboBox">
          <item>
           <property name="text">
            <string>1 Sec</string>
@@ -243,8 +243,15 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
-  <include location="images.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -53,10 +53,10 @@ PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGrou
 	ui->setupUi(this);
 	Settings->loadWidgetInformation(this);
 
-	connect(ui->submitButton, SIGNAL(clicked()), this, SLOT(createPost()));
+	connect(ui->postButton, SIGNAL(clicked()), this, SLOT(createPost()));
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 	connect(ui->addPicButton, SIGNAL(clicked() ), this , SLOT(addPicture()));
-	connect(ui->RichTextEditWidget, SIGNAL(textSizeOk(bool)),ui->submitButton, SLOT(setEnabled(bool)));
+	connect(ui->RichTextEditWidget, SIGNAL(textSizeOk(bool)),ui->postButton, SLOT(setEnabled(bool)));
 
 	ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/postedlinks.png"));
 	ui->headerFrame->setHeaderText(tr("Create a new Post"));
@@ -74,13 +74,13 @@ PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGrou
     ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, default_author);
 
 	QSignalMapper *signalMapper = new QSignalMapper(this);
-	connect(ui->postButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
-	connect(ui->imageButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
-	connect(ui->linkButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
+	connect(ui->viewPostButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
+	connect(ui->viewImageButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
+	connect(ui->viewLinkButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
 
-	signalMapper->setMapping(ui->postButton, VIEW_POST);
-	signalMapper->setMapping(ui->imageButton, VIEW_IMAGE);
-	signalMapper->setMapping(ui->linkButton, VIEW_LINK);
+	signalMapper->setMapping(ui->viewPostButton, VIEW_POST);
+	signalMapper->setMapping(ui->viewImageButton, VIEW_IMAGE);
+	signalMapper->setMapping(ui->viewLinkButton, VIEW_LINK);
 	connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(setPage(int)));
 	
 	ui->removeButton->hide();
@@ -189,7 +189,7 @@ void PostedCreatePostDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
 		link = RetroShareLink::createFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash.toStdString()));
 		ui->linkEdit->setText(link.toString());
 	}
-	ui->submitButton->setEnabled(true);
+	ui->postButton->setEnabled(true);
 	ui->addPicButton->setEnabled(true);
 }
 
@@ -233,7 +233,7 @@ void PostedCreatePostDialog::addPicture()
 
 	//If still yes then link it
 	if(answer == QMessageBox::Yes) {
-		ui->submitButton->setEnabled(false);
+		ui->postButton->setEnabled(false);
 		ui->addPicButton->setEnabled(false);
 		QStringList files;
 		files.append(imagefilename);
@@ -245,11 +245,11 @@ void PostedCreatePostDialog::addPicture()
 
 int PostedCreatePostDialog::viewMode()
 {
-	if (ui->postButton->isChecked()) {
+	if (ui->viewPostButton->isChecked()) {
 		return VIEW_POST;
-	} else if (ui->imageButton->isChecked()) {
+	} else if (ui->viewImageButton->isChecked()) {
 		return VIEW_IMAGE;
-	} else if (ui->linkButton->isChecked()) {
+	} else if (ui->viewLinkButton->isChecked()) {
 		return VIEW_LINK;
 	}
 
@@ -263,25 +263,25 @@ void PostedCreatePostDialog::setPage(int viewMode)
 	case VIEW_POST:
 		ui->stackedWidget->setCurrentIndex(0);
 
-		ui->postButton->setChecked(true);
-		ui->imageButton->setChecked(false);
-		ui->linkButton->setChecked(false);
+		ui->viewPostButton->setChecked(true);
+		ui->viewImageButton->setChecked(false);
+		ui->viewLinkButton->setChecked(false);
 
 		break;
 	case VIEW_IMAGE:
 		ui->stackedWidget->setCurrentIndex(1);
 
-		ui->imageButton->setChecked(true);
-		ui->postButton->setChecked(false);
-		ui->linkButton->setChecked(false);
+		ui->viewImageButton->setChecked(true);
+		ui->viewPostButton->setChecked(false);
+		ui->viewLinkButton->setChecked(false);
 
 		break;
 	case VIEW_LINK:
 		ui->stackedWidget->setCurrentIndex(2);
 
-		ui->linkButton->setChecked(true);
-		ui->postButton->setChecked(false);
-		ui->imageButton->setChecked(false);
+		ui->viewLinkButton->setChecked(true);
+		ui->viewPostButton->setChecked(false);
+		ui->viewImageButton->setChecked(false);
 
 		break;
 	default:

@@ -158,7 +158,7 @@ private:
 
 private:
 
-	/* Color definitions (for standard see qss.default) */
+	/* Color definitions (for standard see default.qss) */
 	QColor mTextColor[GROUPTREEWIDGET_COLOR_COUNT];
 
 	// Compare role used for each column

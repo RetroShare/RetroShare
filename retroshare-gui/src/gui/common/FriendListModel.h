@@ -156,7 +156,7 @@ public:
 
 	void clear() ;
 
-	/* Color definitions (for standard see qss.default) */
+	/* Color definitions (for standard see default.qss) */
 	QColor mTextColorGroup;
 	QColor mTextColorStatus[RS_STATUS_COUNT];
 

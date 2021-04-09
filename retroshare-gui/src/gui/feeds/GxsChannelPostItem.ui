@@ -10,7 +10,7 @@
     <height>231</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="gxsChannelPostItem_GLayout">
+  <layout class="QGridLayout" name="GxsChannelPostItem_GL">
    <property name="leftMargin">
     <number>1</number>
    </property>
@@ -30,7 +30,7 @@
     <number>1</number>
    </property>
    <item row="0" column="0">
-    <widget class="QFrame" name="mainFrame">
+    <widget class="QFrame" name="feedFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -46,11 +46,11 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QVBoxLayout" name="mainFrameVLayout">
+     <layout class="QVBoxLayout" name="feedFrame_VL">
       <item>
        <layout class="QHBoxLayout" name="mainTopHLayout">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout">
+         <layout class="QVBoxLayout" name="logo_VLayout">
           <item>
            <widget class="ZoomableLabel" name="logoLabel">
             <property name="sizePolicy">
@@ -86,6 +86,7 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>11</pointsize>
                 <weight>75</weight>
                 <italic>true</italic>
                 <bold>true</bold>
@@ -125,7 +126,7 @@
            </layout>
           </item>
           <item>
-           <spacer name="verticalSpacer_2">
+           <spacer name="subject_VSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -139,6 +140,14 @@
           </item>
           <item>
            <widget class="QLabel" name="subjectLabel">
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+              <weight>75</weight>
+              <italic>false</italic>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string notr="true">TextLabel</string>
             </property>
@@ -317,7 +326,7 @@
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer_2">
+             <spacer name="buttons_HSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -385,7 +394,7 @@
       </item>
       <item>
        <widget class="QFrame" name="expandFrame">
-        <layout class="QVBoxLayout" name="expandFrameVLayout">
+        <layout class="QVBoxLayout" name="expandFrame_VL">
          <property name="leftMargin">
           <number>0</number>
          </property>
@@ -406,7 +415,7 @@
            <property name="frameShadow">
             <enum>QFrame::Sunken</enum>
            </property>
-           <layout class="QVBoxLayout" name="msgFrameVLayout">
+           <layout class="QVBoxLayout" name="msgFrame_VL">
             <property name="leftMargin">
              <number>5</number>
             </property>
@@ -451,7 +460,7 @@
        </widget>
       </item>
       <item>
-       <spacer name="verticalSpacer">
+       <spacer name="feedFrame_VSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -472,7 +481,7 @@
   <customwidget>
    <class>ElidedLabel</class>
    <extends>QLabel</extends>
-   <header location="global">gui/common/ElidedLabel.h</header>
+   <header>gui/common/ElidedLabel.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

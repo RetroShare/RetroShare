@@ -46,7 +46,14 @@
        </widget>
       </item>
       <item>
-       <widget class="StyledLabel" name="titleBarLabel">
+       <widget class="QLabel" name="titleBarLabel">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
          <string>Comment Container</string>
         </property>
@@ -87,12 +94,7 @@
    <header>gui/common/RSTabWidget.h</header>
    <container>1</container>
   </customwidget>
-  <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
- </customwidgets>
+	</customwidgets>
  <resources>
   <include location="../Posted/Posted_images.qrc"/>
  </resources>

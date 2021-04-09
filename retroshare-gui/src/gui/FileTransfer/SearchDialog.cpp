@@ -121,10 +121,10 @@ SearchDialog::SearchDialog(QWidget *parent)
     connect( ui.searchSummaryWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( searchSummaryWidgetCustomPopupMenu( QPoint ) ) );
     connect( ui.showBannedFiles_TB, SIGNAL( clicked() ), this, SLOT( openBannedFiles() ) );
 
-    connect( ui.lineEdit, SIGNAL( returnPressed ( void ) ), this, SLOT( searchKeywords( void ) ) );
+    connect( ui.lineEdit, SIGNAL( returnPressed () ), this, SLOT( searchKeywords() ) );
     connect( ui.lineEdit, SIGNAL( textChanged ( const QString& ) ), this, SLOT( checkText( const QString& ) ) );
-    connect( ui.pushButtonSearch, SIGNAL( released ( void ) ), this, SLOT( searchKeywords( void ) ) );
-    connect( ui.pushButtonDownload, SIGNAL( released ( void ) ), this, SLOT( download( void ) ) );
+    connect( ui.searchButton, SIGNAL( released () ), this, SLOT( searchKeywords() ) );
+    connect( ui.pushButtonDownload, SIGNAL( released () ), this, SLOT( download() ) );
     connect( ui.cloaseallsearchresultsButton, SIGNAL(clicked()), this, SLOT(searchRemoveAll()));
 
     connect( ui.searchResultWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(download()));
@@ -188,8 +188,8 @@ SearchDialog::SearchDialog(QWidget *parent)
 
     // set header text aligment
     QTreeWidgetItem * headerItem = ui.searchResultWidget->headerItem();
-    headerItem->setTextAlignment(SR_NAME_COL, Qt::AlignRight   | Qt::AlignRight);
-    headerItem->setTextAlignment(SR_SIZE_COL, Qt::AlignRight | Qt::AlignRight);
+    headerItem->setTextAlignment(SR_NAME_COL, Qt::AlignRight);
+    headerItem->setTextAlignment(SR_SIZE_COL, Qt::AlignRight);
 
     ui.searchResultWidget->sortItems(SR_NAME_COL, Qt::AscendingOrder);
 
@@ -393,11 +393,10 @@ void SearchDialog::download()
 	/* should also be able to handle multi-selection  */
 	QList<QTreeWidgetItem*> itemsForDownload = ui.searchResultWidget->selectedItems() ;
 	int numdls = itemsForDownload.size() ;
-	QTreeWidgetItem * item ;
 	bool attemptDownloadLocal = false ;
 
 	for (int i = 0; i < numdls; ++i) {
-		item = itemsForDownload.at(i) ;
+		QTreeWidgetItem *item = itemsForDownload.at(i) ;
 		 //  call the download
 		// *
 		if (item->text(SR_HASH_COL).isEmpty()) { // we have a folder
@@ -421,8 +420,8 @@ void SearchDialog::download()
 					std::cout << *it << "-" << std::endl;
 
 				QColor foreground = textColorDownloading();
-				for (int i = 0; i < item->columnCount(); ++i)
-					item->setData(i, Qt::ForegroundRole, foreground );
+				for (int j = 0; j < item->columnCount(); ++j)
+					item->setData(j, Qt::ForegroundRole, foreground );
 			}
 		}
 	}
@@ -1209,17 +1208,16 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 	//
 	bool found = false ;
 	bool altname = false ;
-	int sources;
-	int friendSource = 0;
-	int anonymousSource = 0;
 	QString modifiedResult;
 
-    QList<QTreeWidgetItem*> itms = ui.searchResultWidget->findItems(QString::fromStdString(file.hash.toStdString()),Qt::MatchExactly,SR_HASH_COL) ;
+	QList<QTreeWidgetItem*> itms = ui.searchResultWidget->findItems(QString::fromStdString(file.hash.toStdString()),Qt::MatchExactly,SR_HASH_COL) ;
 
-	for(QList<QTreeWidgetItem*>::const_iterator it(itms.begin());it!=itms.end();++it)
-		if((*it)->text(SR_SEARCH_ID_COL) == sid_hexa)
+	for(auto &it : itms)
+		if(it->text(SR_SEARCH_ID_COL) == sid_hexa)
 		{
-			QString resultCount = (*it)->text(SR_SOURCES_COL);
+			int friendSource = 0;
+			int anonymousSource = 0;
+			QString resultCount = it->text(SR_SOURCES_COL);
 			QStringList modifiedResultCount = resultCount.split("/", QString::SkipEmptyParts);
 			if(searchType == FRIEND_SEARCH)
 			{
@@ -1233,13 +1231,13 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 			}
 			modifiedResult = QString::number(friendSource) + "/" + QString::number(anonymousSource);
 			float fltRes = friendSource + (float)anonymousSource/1000;
-			(*it)->setText(SR_SOURCES_COL,modifiedResult);
-			(*it)->setData(SR_SOURCES_COL, ROLE_SORT, fltRes);
-			QTreeWidgetItem *item = (*it);
+			it->setText(SR_SOURCES_COL,modifiedResult);
+			it->setData(SR_SOURCES_COL, ROLE_SORT, fltRes);
+			QTreeWidgetItem *item = it;
 			
 			found = true ;
 			
-			if(QString::compare((*it)->text(SR_NAME_COL), QString::fromUtf8(file.name.c_str()), Qt::CaseSensitive)!=0)
+			if(QString::compare(it->text(SR_NAME_COL), QString::fromUtf8(file.name.c_str()), Qt::CaseSensitive)!=0)
 				altname = true;
 
 			if (!item->data(SR_DATA_COL, SR_ROLE_LOCAL).toBool()) {
@@ -1280,18 +1278,17 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 				}
 			}
 
-		if(altname)
-		{
-			QTreeWidgetItem *item = new RSTreeWidgetItem(compareResultRole);
-			item->setText(SR_NAME_COL, QString::fromUtf8(file.name.c_str()));
-			item->setText(SR_HASH_COL, QString::fromStdString(file.hash.toStdString()));
-			setIconAndType(item, QString::fromUtf8(file.name.c_str()));
-			item->setText(SR_SIZE_COL, QString::number(file.size));
-			setIconAndType(item, QString::fromUtf8(file.name.c_str()));
-			(*it)->addChild(item);
+			if(altname)
+			{
+				QTreeWidgetItem *altItem = new RSTreeWidgetItem(compareResultRole);
+				altItem->setText(SR_NAME_COL, QString::fromUtf8(file.name.c_str()));
+				altItem->setText(SR_HASH_COL, QString::fromStdString(file.hash.toStdString()));
+				setIconAndType(altItem, QString::fromUtf8(file.name.c_str()));
+				altItem->setText(SR_SIZE_COL, QString::number(file.size));
+				setIconAndType(altItem, QString::fromUtf8(file.name.c_str()));
+				it->addChild(altItem);
+			}
 		}
-	
-	}
 	
 	if(!found)
 	{
@@ -1301,7 +1298,7 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 		
 		QTreeWidgetItem *item = new RSTreeWidgetItem(compareResultRole);
 		item->setText(SR_NAME_COL, QString::fromUtf8(file.name.c_str()));
-        item->setText(SR_HASH_COL, QString::fromStdString(file.hash.toStdString()));
+		item->setText(SR_HASH_COL, QString::fromStdString(file.hash.toStdString()));
 
 		setIconAndType(item, QString::fromUtf8(file.name.c_str()));
 
@@ -1314,6 +1311,8 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 		item->setText(SR_AGE_COL, QString::number(file.age));
 		item->setData(SR_AGE_COL, ROLE_SORT, file.age);
 		item->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
+		int friendSource = 0;
+		int anonymousSource = 0;
 		if(searchType == FRIEND_SEARCH)
 		{
 			friendSource = 1;
@@ -1344,7 +1343,7 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 		} else {
 			item->setData(SR_DATA_COL, SR_ROLE_LOCAL, false);
 
-			sources = item->text(SR_SOURCES_COL).toInt();
+			int sources = item->text(SR_SOURCES_COL).toInt();
 			if (sources == 1)
 			{
 				foreground = ui.searchResultWidget->palette().color(QPalette::Text);
@@ -1369,11 +1368,8 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 
 		/* hide/show this search result */
 		hideOrShowSearchResult(item);
-	}
 
-	/* update the summary as well */
-	if(!found)		// only increment result when it's a new item.
-	{
+		// only increment result when it's a new item.
 		int s = ui.searchSummaryWidget->topLevelItem(summaryItemIndex)->text(SS_RESULTS_COL).toInt() ;
 		ui.searchSummaryWidget->topLevelItem(summaryItemIndex)->setText(SS_RESULTS_COL, QString::number(s+1));
 		ui.searchSummaryWidget->topLevelItem(summaryItemIndex)->setData(SS_RESULTS_COL, ROLE_SORT, s+1);

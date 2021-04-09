@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Change Avatar</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_4">
+  <layout class="QGridLayout" name="AvatarDialog_GL">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -37,14 +37,14 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="gradFrame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
+     <layout class="QGridLayout" name="gradFrame_GL">
       <property name="topMargin">
        <number>3</number>
       </property>
@@ -52,14 +52,14 @@
        <number>0</number>
       </property>
       <item row="0" column="0">
-       <widget class="QFrame" name="infoframe">
+       <widget class="QFrame" name="info_Frame">
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
         </property>
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QGridLayout" name="gridLayout_3">
+        <layout class="QGridLayout" name="info_Frame_GL">
          <item row="0" column="0">
           <widget class="QLabel" name="nostickersLabel">
            <property name="text">
@@ -74,7 +74,7 @@
        </widget>
       </item>
       <item row="0" column="1" rowspan="2">
-       <layout class="QVBoxLayout" name="verticalLayout">
+       <layout class="QVBoxLayout" name="avatar_VL">
         <item>
          <widget class="ZoomableLabel" name="avatarLabel">
           <property name="minimumSize">
@@ -121,7 +121,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="verticalSpacer_2">
+         <spacer name="avatar_VSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -146,7 +146,7 @@
            <x>0</x>
            <y>0</y>
            <width>431</width>
-           <height>359</height>
+           <height>356</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout">
@@ -180,7 +180,7 @@
     </widget>
    </item>
    <item row="2" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QHBoxLayout" name="buttons_HL">
      <property name="leftMargin">
       <number>9</number>
      </property>
@@ -194,7 +194,7 @@
       <number>9</number>
      </property>
      <item>
-      <spacer name="horizontalSpacer">
+      <spacer name="buttons_HSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -219,7 +219,7 @@
     </layout>
    </item>
   </layout>
-  <zorder>frame</zorder>
+  <zorder>gradFrame</zorder>
   <zorder>headerFrame</zorder>
  </widget>
  <customwidgets>
@@ -235,9 +235,7 @@
    <header>gui/gxschannels/GxsChannelPostThumbnail.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../images.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>

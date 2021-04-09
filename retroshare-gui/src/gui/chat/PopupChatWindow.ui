@@ -43,7 +43,7 @@
    </layout>
   </widget>
   <widget class="QStatusBar" name="chatstatusbar"/>
-  <widget class="QToolBar" name="chattoolBar">
+  <widget class="QToolBar" name="headerToolBar">
    <property name="movable">
     <bool>false</bool>
    </property>

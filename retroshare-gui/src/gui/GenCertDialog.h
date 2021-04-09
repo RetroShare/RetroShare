@@ -31,7 +31,7 @@ class GenCertDialog : public QDialog
 
 public:
 	/** Default constructor */
-	GenCertDialog(bool onlyGenerateIdentity, QWidget *parent = 0);
+	explicit GenCertDialog(bool onlyGenerateIdentity, QWidget *parent = 0);
 
 	virtual ~GenCertDialog() ;
 	virtual void mouseMoveEvent(QMouseEvent *e) ;

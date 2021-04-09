@@ -13,7 +13,7 @@
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
-  <layout class="QGridLayout" name="PeerItemGLayout">
+  <layout class="QGridLayout" name="PeerItem_GL">
    <property name="leftMargin">
     <number>1</number>
    </property>
@@ -27,7 +27,7 @@
     <number>1</number>
    </property>
    <item row="0" column="0">
-    <widget class="QFrame" name="mainFrame">
+    <widget class="QFrame" name="feedFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -43,13 +43,13 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QGridLayout" name="frameGLayout">
+     <layout class="QGridLayout" name="feedFrame_gL">
       <property name="verticalSpacing">
        <number>0</number>
       </property>
       <item row="0" column="0">
        <widget class="QFrame" name="peerFrame">
-        <layout class="QGridLayout" name="peerFrameGLayout">
+        <layout class="QGridLayout" name="peerFrame_GL">
          <property name="leftMargin">
           <number>0</number>
          </property>
@@ -60,7 +60,7 @@
           <number>0</number>
          </property>
          <item row="0" column="0" rowspan="2">
-          <widget class="AvatarWidget" name="avatar">
+          <widget class="AvatarWidget" name="avatar" native="true">
            <property name="minimumSize">
             <size>
              <width>70</width>
@@ -76,9 +76,14 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <layout class="QGridLayout" name="peerNameGLayout">
+          <layout class="QGridLayout" name="peerName_GL">
            <item row="0" column="0">
-            <widget class="StyledLabel" name="peerNameLabel">
+            <widget class="QLabel" name="peerNameLabel">
+             <property name="font">
+              <font>
+               <pointsize>17</pointsize>
+              </font>
+             </property>
              <property name="text">
               <string notr="true">Peer Name</string>
              </property>
@@ -97,6 +102,7 @@
              </property>
              <property name="font">
               <font>
+               <pointsize>11</pointsize>
                <weight>75</weight>
                <italic>true</italic>
                <bold>true</bold>
@@ -113,9 +119,9 @@
           </layout>
          </item>
          <item row="0" column="2">
-          <layout class="QHBoxLayout" name="lastHLayout">
+          <layout class="QHBoxLayout" name="last_HL">
            <item>
-            <spacer name="lastHSpacer">
+            <spacer name="last_HSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -152,7 +158,7 @@
           </layout>
          </item>
          <item row="1" column="1" colspan="2">
-          <layout class="QHBoxLayout" name="buttonHLayout">
+          <layout class="QHBoxLayout" name="buttons_HL">
            <item>
             <widget class="QToolButton" name="sendmsgButton">
              <property name="focusPolicy">
@@ -203,7 +209,7 @@
             </widget>
            </item>
            <item>
-            <spacer name="buttonHSpacer">
+            <spacer name="buttons_HSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -265,11 +271,11 @@
       </item>
       <item row="1" column="0">
        <widget class="QFrame" name="expandFrame">
-        <layout class="QGridLayout" name="expandFrameGLayout">
+        <layout class="QGridLayout" name="expandFrame_GL">
          <item row="0" column="0">
-          <layout class="QHBoxLayout" name="expandFrameHLayout">
+          <layout class="QHBoxLayout" name="expandFrame_HL">
            <item>
-            <layout class="QVBoxLayout" name="textVLayout">
+            <layout class="QVBoxLayout" name="texts_VL">
              <item>
               <widget class="QLabel" name="nameText">
                <property name="font">
@@ -397,7 +403,7 @@
             </layout>
            </item>
            <item>
-            <layout class="QVBoxLayout" name="labelVLayout">
+            <layout class="QVBoxLayout" name="labels_VL">
              <item>
               <widget class="QLabel" name="nameLabel">
                <property name="sizePolicy">
@@ -405,6 +411,14 @@
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>11</pointsize>
+                 <weight>75</weight>
+                 <italic>true</italic>
+                 <bold>true</bold>
+                </font>
                </property>
                <property name="text">
                 <string notr="true">TextLabel</string>
@@ -508,18 +522,12 @@
  <customwidgets>
   <customwidget>
    <class>AvatarWidget</class>
-   <extends>QLabel</extends>
+   <extends>QWidget</extends>
    <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
   </customwidget>
-  <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
  </resources>
  <connections/>

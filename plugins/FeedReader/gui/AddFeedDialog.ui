@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>715</width>
-    <height>605</height>
+    <width>1068</width>
+    <height>880</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,14 +37,14 @@
     <widget class="HeaderFrame" name="headerFrame"/>
    </item>
    <item>
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="gradFrame">
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_7">
+     <layout class="QGridLayout" name="gradFrame_GL">
       <item row="3" column="0">
        <widget class="QGroupBox" name="typeGroupBox">
         <property name="title">
@@ -73,7 +73,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="forumComboBox"/>
+            <widget class="RSComboBox" name="forumComboBox"/>
            </item>
           </layout>
          </item>
@@ -306,6 +306,14 @@
         </item>
         <item row="1" column="0">
          <widget class="QLabel" name="nameLabel">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <weight>75</weight>
+            <italic>true</italic>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="text">
            <string>Name:</string>
           </property>
@@ -404,6 +412,11 @@
    <extends>QFrame</extends>
    <header>gui/common/HeaderFrame.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

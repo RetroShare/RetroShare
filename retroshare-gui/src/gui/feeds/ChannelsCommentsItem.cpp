@@ -175,9 +175,9 @@ void ChannelsCommentsItem::setup()
 	// hide expand button, replies is not implemented yet
 	ui->expandButton->hide();
 
-	ui->mainFrame->setProperty("new", false);
-	ui->mainFrame->style()->unpolish(ui->mainFrame);
-	ui->mainFrame->style()->polish(  ui->mainFrame);
+	ui->feedFrame->setProperty("new", false);
+	ui->feedFrame->style()->unpolish(ui->feedFrame);
+	ui->feedFrame->style()->polish(  ui->feedFrame);
 
 	ui->expandFrame->hide();
 }
@@ -305,7 +305,8 @@ void ChannelsCommentsItem::loadMessage()
 
 			RsQThreadUtils::postToObject( [cmt,this]()
 			{
-				uint32_t autorized_lines = (int)floor((ui->avatarLabel->height() - ui->buttonHLayout->sizeHint().height())/QFontMetricsF(ui->subjectLabel->font()).height());
+				uint32_t autorized_lines = (int)floor( (ui->avatarLabel->height() - ui->button_HL->sizeHint().height())
+				                                      / QFontMetricsF(ui->subjectLabel->font()).height());
 
 				ui->commLabel->setText(RsHtml().formatText(NULL, RsStringUtil::CopyLines(QString::fromUtf8(cmt.mComment.c_str()), autorized_lines), RSHTML_FORMATTEXT_EMBED_LINKS));
 
@@ -368,7 +369,7 @@ void ChannelsCommentsItem::loadComment()
 
 		int comNb = comments.size();
 
-		RsQThreadUtils::postToObject( [comNb,this]()
+		RsQThreadUtils::postToObject( [comNb]()
 		{
 			QString sComButText = tr("Comment");
 			if (comNb == 1)
@@ -434,7 +435,8 @@ void ChannelsCommentsItem::fill()
 		/* subject */
 		//ui->titleLabel->setText(QString::fromUtf8(mPost.mMeta.mMsgName.c_str()));
 
-		uint32_t autorized_lines = (int)floor((ui->avatarLabel->height() - ui->buttonHLayout->sizeHint().height())/QFontMetricsF(ui->subjectLabel->font()).height());
+		//uint32_t autorized_lines = (int)floor( (ui->avatarLabel->height() - ui->button_HL->sizeHint().height())
+		//                                      / QFontMetricsF(ui->subjectLabel->font()).height());
 
 		// fill first 4 lines of message. (csoler) Disabled the replacement of smileys and links, because the cost is too crazy
 		//ui->subjectLabel->setText(RsHtml().formatText(NULL, RsStringUtil::CopyLines(QString::fromUtf8(mPost.mMsg.c_str()), autorized_lines), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
@@ -534,9 +536,9 @@ void ChannelsCommentsItem::setReadStatus(bool isNew, bool isUnread)
 		ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png"));
 	}
 
-	ui->mainFrame->setProperty("new", isNew);
-	ui->mainFrame->style()->unpolish(ui->mainFrame);
-	ui->mainFrame->style()->polish(  ui->mainFrame);
+	ui->feedFrame->setProperty("new", isNew);
+	ui->feedFrame->style()->unpolish(ui->feedFrame);
+	ui->feedFrame->style()->polish(  ui->feedFrame);
 }
 
 void ChannelsCommentsItem::doExpand(bool open)

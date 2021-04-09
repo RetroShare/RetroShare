@@ -49,7 +49,14 @@
        </widget>
       </item>
       <item>
-       <widget class="StyledLabel" name="titleBarLabel">
+       <widget class="QLabel" name="titleBarLabel">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
          <string>Circles</string>
         </property>
@@ -247,13 +254,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="../images.qrc"/>
   <include location="../icons.qrc"/>

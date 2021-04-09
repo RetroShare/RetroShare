@@ -536,9 +536,9 @@ void BoardsCommentsItem::setReadStatus(bool isNew, bool isUnread)
 		ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png"));
 	}
 
-	ui->mainFrame->setProperty("new", isNew);
-	ui->mainFrame->style()->unpolish(ui->mainFrame);
-	ui->mainFrame->style()->polish(  ui->mainFrame);
+	ui->feedFrame->setProperty("new", isNew);
+	ui->feedFrame->style()->unpolish(ui->feedFrame);
+	ui->feedFrame->style()->polish(  ui->feedFrame);
 }
 
 void BoardsCommentsItem::toggle()

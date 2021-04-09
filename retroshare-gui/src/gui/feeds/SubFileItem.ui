@@ -10,7 +10,7 @@
     <height>128</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="gridLayout_4">
+  <layout class="QGridLayout" name="SubFileItem_GL">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -27,16 +27,16 @@
     <number>0</number>
    </property>
    <item row="0" column="0">
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="gradFrame">
      <property name="frameShape">
       <enum>QFrame::Box</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
+     <layout class="QGridLayout" name="gradFrame_GL">
       <item row="1" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="buttons_HL">
         <item>
          <widget class="QProgressBar" name="progressBar">
           <property name="sizePolicy">
@@ -215,7 +215,7 @@
        </layout>
       </item>
       <item row="0" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <layout class="QHBoxLayout" name="file_HL">
         <item>
          <widget class="QLabel" name="fileLabel">
           <property name="font">

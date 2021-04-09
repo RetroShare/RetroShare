@@ -35,7 +35,7 @@ PulseAddDialog::PulseAddDialog(QWidget *parent)
 {
 	ui.setupUi(this);
 
-	connect(ui.pushButton_Post, SIGNAL( clicked( void ) ), this, SLOT( postPulse( void ) ) );
+	connect(ui.postButton, SIGNAL( clicked( void ) ), this, SLOT( postPulse( void ) ) );
 	connect(ui.pushButton_AddURL, SIGNAL( clicked( void ) ), this, SLOT( addURL( void ) ) );
 	connect(ui.pushButton_ClearDisplayAs, SIGNAL( clicked( void ) ), this, SLOT( clearDisplayAs( void ) ) );
 	connect(ui.pushButton_Cancel, SIGNAL( clicked( void ) ), this, SLOT( cancelPulse( void ) ) );
@@ -98,10 +98,9 @@ void PulseAddDialog::cleanup()
 		QLayout *layout = ui.widget_replyto->layout();
 		// completely delete layout and sublayouts
 		QLayoutItem * item;
-		QWidget * widget;
 		while ((item = layout->takeAt(0)))
 		{
-			if ((widget = item->widget()) != 0)
+			if (QWidget *widget = item->widget())
 			{
 				std::cerr << "PulseAddDialog::cleanup() removing widget";
 				std::cerr << std::endl;
@@ -129,8 +128,8 @@ void PulseAddDialog::cleanup()
 	ui.frame_URL->setEnabled(false);
 	ui.frame_URL->hide();
 
-	ui.pushButton_Post->setEnabled(false);
-	ui.pushButton_Post->setText(tr("Post"));
+	ui.postButton->setEnabled(false);
+	ui.postButton->setText(tr("Post"));
 	ui.textEdit_Pulse->setPlaceholderText(tr("Whats happening?"));
 	ui.frame_input->setVisible(true);
 	ui.widget_sentiment->setVisible(true);
@@ -163,12 +162,12 @@ void PulseAddDialog::pulseTextChanged()
 {
 	std::string pulseText = ui.textEdit_Pulse->toPlainText().toStdString();
 	bool enable = (pulseText.size() > 0) && (pulseText.size() < PULSE_MAX_SIZE);
-	ui.pushButton_Post->setEnabled(enable);
+	ui.postButton->setEnabled(enable);
 }
 
 // Old Interface, deprecate / make internal.
 // TODO: Convert mReplyToPulse to be an SPtr, and remove &pulse parameter.
-void PulseAddDialog::setReplyTo(RsWirePulse &pulse, RsWirePulseSPtr pPulse, std::string &groupName, uint32_t replyType)
+void PulseAddDialog::setReplyTo(const RsWirePulse &pulse, RsWirePulseSPtr pPulse, std::string &/*groupName*/, uint32_t replyType)
 {
 	mIsReply = true;
 	mReplyToPulse = pulse;
@@ -191,21 +190,21 @@ void PulseAddDialog::setReplyTo(RsWirePulse &pulse, RsWirePulseSPtr pPulse, std:
 
 	if (mReplyType & WIRE_PULSE_TYPE_REPLY)
 	{
-		ui.pushButton_Post->setText(tr("Reply to Pulse"));
+		ui.postButton->setText(tr("Reply to Pulse"));
 		ui.textEdit_Pulse->setPlaceholderText(tr("Pulse your reply"));
 	}
 	else
 	{
 		// cannot add msg for like / republish.
-		ui.pushButton_Post->setEnabled(true);
+		ui.postButton->setEnabled(true);
 		ui.frame_input->setVisible(false);
 		ui.widget_sentiment->setVisible(false);
 		if (mReplyType & WIRE_PULSE_TYPE_REPUBLISH) {
-			ui.pushButton_Post->setText(tr("Republish Pulse"));
+			ui.postButton->setText(tr("Republish Pulse"));
 			ui.pushButton_picture->hide();
 		}
 		else if (mReplyType & WIRE_PULSE_TYPE_LIKE) {
-			ui.pushButton_Post->setText(tr("Like Pulse"));
+			ui.postButton->setText(tr("Like Pulse"));
 			ui.pushButton_picture->hide();
 		}
 	}

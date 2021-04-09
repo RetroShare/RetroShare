@@ -102,7 +102,7 @@ PostedListWidget::PostedListWidget(const RsGxsGroupId &postedId, QWidget *parent
 	                                        available posts from your subscribed friends, and make the \
 	                                        links visible to all other friends.</p><p>Afterwards you can unsubscribe from the context menu of the links list at left.</p>"));
 											
-	ui->infoframe->hide();
+	ui->infoFrame->hide();
 
 	/* load settings */
 	processSettings(true);
@@ -417,7 +417,7 @@ void PostedListWidget::insertPostedDetails(const RsPostedGroup &group)
 	
 	if (IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags)) {
 		
-		ui->infoframe->hide();										
+		ui->infoFrame->hide();
 
 	} else {
 		
@@ -472,7 +472,7 @@ void PostedListWidget::insertPostedDetails(const RsPostedGroup &group)
  
 		ui->infoDistribution->setText(distrib_string);
 		
-		ui->infoframe->show();										
+		ui->infoFrame->show();
 		
 	}
 }
@@ -771,7 +771,7 @@ void PostedListWidget::applyRanking()
 void PostedListWidget::blank()
 {
 	clearPosts();
-	ui->infoframe->hide();
+	ui->infoFrame->hide();
 }
 void PostedListWidget::clearPosts()
 {

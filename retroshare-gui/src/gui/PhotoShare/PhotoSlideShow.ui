@@ -24,6 +24,11 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>Album Name</string>
        </property>
@@ -155,8 +160,6 @@
   </layout>
  </widget>
  <resources>
-  <include location="Photo_images.qrc"/>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
  </resources>
  <connections/>

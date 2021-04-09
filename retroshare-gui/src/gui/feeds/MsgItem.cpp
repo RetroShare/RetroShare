@@ -67,7 +67,7 @@ MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, const std::string &msgId, 
 
 
   expandFrame->hide();
-  inviteFrame->hide();
+  info_Frame_Invite->hide();
 
   updateItemStatic();
   updateItem();
@@ -122,14 +122,14 @@ void MsgItem::updateItemStatic()
 			title = QString::fromUtf8(mi.title.c_str()) + " " + tr("from") + " " + srcName;
 			replyButton->setText(tr("Reply to invite"));
 			subjectLabel->hide();
-			inviteFrame->show();
+			info_Frame_Invite->show();
 		}
 		else if ((mi.msgflags & RS_MSG_USER_REQUEST) && mi.rsgxsid_srcId.isNull())
 		{
 			title = QString::fromUtf8(mi.title.c_str()) + " " + " " + srcName;
 			subjectLabel->hide();
-			inviteFrame->show();
-			infoLabel->setText(tr("This message invites you to make friend! You may accept this request."));
+			info_Frame_Invite->show();
+			infoLabel_Invite->setText(tr("This message invites you to make friend! You may accept this request."));
 			sendinviteButton->hide();
 			replyButton->hide();
 		}
@@ -137,7 +137,7 @@ void MsgItem::updateItemStatic()
 		{
 			title = tr("Message From") + ": " + srcName;
 			sendinviteButton->hide();
-			inviteFrame->hide();
+			info_Frame_Invite->hide();
 		}
 	}
 	else

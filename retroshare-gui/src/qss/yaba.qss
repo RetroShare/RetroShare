@@ -38,14 +38,6 @@ QWidget#chatcentralwidget{
 }
 
 
-/* Channels */
-
-ChannelFeed QFrame#headerFrame {
-  background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                       stop:0 #FBC957, stop:1 #D79704);
-	border: 1px solid #CCCCCC;
-}
-
 /* Customize the toolbar. */
 QToolBar#toolBarAction {
     border-image: url(%THISPATH%/yaba/yaba.png);

@@ -20,15 +20,15 @@
 
 #include "GxsCircleChooser.h"
 
-#include <algorithm>
 
 #include <retroshare/rspeers.h>
 
+#include <algorithm>
 #include <iostream>
 
 /** Constructor */
 GxsCircleChooser::GxsCircleChooser(QWidget *parent)
-: QComboBox(parent)
+    : RSComboBox(parent)
 {
 	return;
 }

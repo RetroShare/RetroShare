@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>793</width>
+    <width>783</width>
     <height>511</height>
    </rect>
   </property>
@@ -16,7 +16,7 @@
     <verstretch>1</verstretch>
    </sizepolicy>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="SearchDialog_VL">
    <item>
     <widget class="QFrame" name="titleBarFrame">
      <property name="sizePolicy">
@@ -31,7 +31,7 @@
      <property name="frameShadow">
       <enum>QFrame::Plain</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <layout class="QHBoxLayout" name="titleBarFrame_HL">
       <property name="leftMargin">
        <number>3</number>
       </property>
@@ -45,7 +45,7 @@
        <number>3</number>
       </property>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="searchButton_HL">
         <property name="spacing">
          <number>2</number>
         </property>
@@ -63,7 +63,7 @@
             <height>22</height>
            </size>
           </property>
-          <layout class="QGridLayout" name="gridLayout">
+          <layout class="QGridLayout" name="searchLineFrame_GL">
            <property name="leftMargin">
             <number>0</number>
            </property>
@@ -93,7 +93,14 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButtonSearch">
+         <widget class="QPushButton" name="searchButton">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="focusPolicy">
            <enum>Qt::NoFocus</enum>
           </property>
@@ -336,7 +343,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="FileTypeComboBox">
+          <widget class="RSComboBox" name="FileTypeComboBox">
            <item>
             <property name="text">
              <string>Any</string>
@@ -461,14 +468,19 @@
    <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
+  </customwidget>
+  <customwidget>
    <class>SearchTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>gui/SearchTreeWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../icons.qrc"/>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

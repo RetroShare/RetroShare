@@ -61,7 +61,7 @@
          <string>Edit Album Details</string>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
+         <iconset>
           <normaloff>:/images/edit_16.png</normaloff>:/images/edit_16.png</iconset>
         </property>
         <property name="iconSize">
@@ -186,6 +186,11 @@
       </property>
       <item>
        <widget class="QPushButton" name="pushButton_YourAlbums">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>My Albums</string>
         </property>
@@ -212,6 +217,11 @@
       </item>
       <item>
        <widget class="QPushButton" name="pushButton_SubscribedAlbums">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Subscribed Albums</string>
         </property>
@@ -238,6 +248,11 @@
       </item>
       <item>
        <widget class="QPushButton" name="pushButton_SharedAlbums">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Shared Albums</string>
         </property>
@@ -286,7 +301,7 @@
          <x>0</x>
          <y>0</y>
          <width>804</width>
-         <height>208</height>
+         <height>205</height>
         </rect>
        </property>
        <property name="styleSheet">
@@ -322,7 +337,7 @@
          <x>0</x>
          <y>0</y>
          <width>804</width>
-         <height>208</height>
+         <height>205</height>
         </rect>
        </property>
        <property name="styleSheet">

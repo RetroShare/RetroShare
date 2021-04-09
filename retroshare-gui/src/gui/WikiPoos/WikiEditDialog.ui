@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string/>
   </property>
-  <layout class="QGridLayout" name="gridLayout_3">
+  <layout class="QGridLayout" name="WikiEditDialog_GL">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -40,14 +40,14 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="gradFrame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <layout class="QVBoxLayout" name="gradFrame_VL">
       <item>
        <widget class="QSplitter" name="splitter_History">
         <property name="sizePolicy">
@@ -63,7 +63,7 @@
          <property name="title">
           <string>Page Edit History</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
+         <layout class="QVBoxLayout" name="groupBox_History_VL">
           <item>
            <widget class="QCheckBox" name="checkBox_OldHistory">
             <property name="text">
@@ -109,18 +109,18 @@
           </item>
          </layout>
         </widget>
-        <widget class="QFrame" name="frame_3">
+        <widget class="QFrame" name="edit_Frame">
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0,10,0">
+         <layout class="QVBoxLayout" name="edit_Frame_VL" stretch="0,0,10,0">
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout">
+             <layout class="QVBoxLayout" name="hide_show_VL">
               <property name="topMargin">
                <number>6</number>
               </property>
@@ -132,7 +132,7 @@
                </widget>
               </item>
               <item>
-               <spacer name="verticalSpacer">
+               <spacer name="hide_show_VSpacer">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
                 </property>
@@ -157,7 +157,7 @@
              </layout>
             </item>
             <item>
-             <widget class="QFrame" name="frame">
+             <widget class="QFrame" name="formFrame">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
                 <horstretch>0</horstretch>
@@ -177,7 +177,7 @@
                   <string>Wiki Group:</string>
                  </property>
                  <property name="buddy">
-                  <cstring>frame</cstring>
+                  <cstring>formFrame</cstring>
                  </property>
                 </widget>
                </item>
@@ -254,16 +254,23 @@
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <layout class="QHBoxLayout" name="status_HL">
             <item>
              <widget class="QPushButton" name="pushButton_History">
+              <property name="font">
+               <font>
+                <pointsize>15</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="text">
                <string>History</string>
               </property>
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer">
+             <spacer name="status_HSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -298,7 +305,7 @@
            <widget class="QTextEdit" name="textEdit"/>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout">
+           <layout class="QHBoxLayout" name="bottom_HL">
             <item>
              <widget class="QPushButton" name="pushButton_Cancel">
               <property name="text">
@@ -314,7 +321,7 @@
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer_2">
+             <spacer name="bottom_HL_HSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -327,7 +334,14 @@
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton_Submit">
+             <widget class="QPushButton" name="postButton">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="text">
                <string>Submit</string>
               </property>
@@ -357,8 +371,6 @@
    <header>gui/gxs/GxsIdChooser.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="Wiki_images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

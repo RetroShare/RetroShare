@@ -41,7 +41,7 @@
        </widget>
       </item>
       <item row="0" column="1" colspan="2">
-       <widget class="QComboBox" name="qcbTransmit">
+       <widget class="RSComboBox" name="qcbTransmit">
         <property name="toolTip">
          <string>When to transmit your speech</string>
         </property>
@@ -461,6 +461,11 @@
    <extends>QFrame</extends>
    <header>gui/AudioInputConfig.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

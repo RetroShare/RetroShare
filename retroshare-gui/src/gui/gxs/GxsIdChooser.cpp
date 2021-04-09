@@ -19,18 +19,19 @@
  *******************************************************************************/
 
 #include "GxsIdChooser.h"
+
 #include "GxsIdDetails.h"
 #include "RsGxsUpdateBroadcastBase.h"
-#include "gui/Identity/IdEditDialog.h"
 #include "gui/common/FilesDefs.h"
+#include "gui/Identity/IdEditDialog.h"
 #include "util/misc.h"
 
 #include <retroshare/rspeers.h>
 
 #include <QSortFilterProxyModel>
 #include <QStandardItemModel>
-#include <algorithm>
 
+#include <algorithm>
 #include <iostream>
 
 #define ROLE_SORT Qt::UserRole + 1 // Qt::UserRole is reserved for data
@@ -50,7 +51,7 @@
 
 /** Constructor */
 GxsIdChooser::GxsIdChooser(QWidget *parent)
-    : QComboBox(parent), mFlags(IDCHOOSER_ANON_DEFAULT)
+    : RSComboBox(parent), mFlags(IDCHOOSER_ANON_DEFAULT)
 {
 //	mBase = new RsGxsUpdateBroadcastBase(rsIdentity, this);
 //	connect(mBase, SIGNAL(fillDisplay(bool)), this, SLOT(fillDisplay(bool)));

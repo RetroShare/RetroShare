@@ -299,6 +299,10 @@ QVariant pgpid_item_model::data(const QModelIndex &index, int role) const
             }
         }
     }
+    else if(role == Qt::ForegroundRole)
+    {
+        return QBrush(mTextColor);
+    }
     return QVariant();
 }
 

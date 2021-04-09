@@ -396,6 +396,78 @@
             </widget>
            </item>
            <item>
+            <layout class="QHBoxLayout" name="systemSize_HL">
+             <item>
+              <widget class="QLabel" name="info_Label_SystemSize">
+               <property name="text">
+                <string>If your system is set up correctly, this next square should measure 1 cm.</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QFrame" name="systemSize_Frame">
+               <property name="minimumSize">
+                <size>
+                 <width>64</width>
+                 <height>64</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>64</width>
+                 <height>64</height>
+                </size>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::Box</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Plain</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="systemFontSize_HL">
+             <item>
+              <widget class="QLabel" name="info_Label_SystemFontSize">
+               <property name="text">
+                <string>This next square is scaled accordingly to your system font size.</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QFrame" name="systemFontSize_Frame">
+               <property name="minimumSize">
+                <size>
+                 <width>64</width>
+                 <height>64</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>64</width>
+                 <height>64</height>
+                </size>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::Box</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Plain</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
             <spacer name="rightVSpacer">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
@@ -527,7 +599,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="publicStyle"/>
+            <widget class="RSComboBox" name="publicStyle"/>
            </item>
            <item>
             <widget class="QLabel" name="publicLabelVariant">
@@ -543,7 +615,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="publicComboBoxVariant">
+            <widget class="RSComboBox" name="publicComboBoxVariant">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -644,7 +716,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="distantChatComboBox">
+          <widget class="RSComboBox" name="distantChatComboBox">
            <item>
             <property name="text">
              <string>Everyone</string>
@@ -725,7 +797,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="privateStyle"/>
+          <widget class="RSComboBox" name="privateStyle"/>
          </item>
          <item>
           <widget class="QLabel" name="privateLabelVariant">
@@ -741,7 +813,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="privateComboBoxVariant">
+          <widget class="RSComboBox" name="privateComboBoxVariant">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1176,7 +1248,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="historyStyle"/>
+          <widget class="RSComboBox" name="historyStyle"/>
          </item>
          <item>
           <widget class="QLabel" name="historyLabelVariant">
@@ -1192,7 +1264,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="historyComboBoxVariant">
+          <widget class="RSComboBox" name="historyComboBoxVariant">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1284,6 +1356,11 @@
    <class>GxsIdChooser</class>
    <extends>QComboBox</extends>
    <header>gui/gxs/GxsIdChooser.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

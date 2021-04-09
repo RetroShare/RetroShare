@@ -31,7 +31,7 @@
     <number>0</number>
    </property>
    <item row="0" column="0">
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="gradFrame">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -44,7 +44,7 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="gradFrame_GL">
       <item row="0" column="0">
        <widget class="QGroupBox" name="searchCriteriaBox">
         <property name="sizePolicy">
@@ -68,7 +68,7 @@
         <property name="alignment">
          <set>Qt::AlignJustify|Qt::AlignTop</set>
         </property>
-        <layout class="QVBoxLayout">
+        <layout class="QVBoxLayout" name="searchCriteriaBox_VL">
          <property name="spacing">
           <number>0</number>
          </property>
@@ -104,7 +104,7 @@
           </widget>
          </item>
          <item>
-          <spacer name="verticalSpacer">
+          <spacer name="searchCriteriaBox_VSpacer">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
@@ -120,7 +120,7 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <layout class="QHBoxLayout" name="_2">
+       <layout class="QHBoxLayout" name="buttons_HL">
         <property name="spacing">
          <number>6</number>
         </property>
@@ -174,7 +174,7 @@
          </widget>
         </item>
         <item>
-         <spacer>
+         <spacer name="buttons_HSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -203,7 +203,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="executeButton">
+         <widget class="QPushButton" name="searchButton">
           <property name="minimumSize">
            <size>
             <width>0</width>

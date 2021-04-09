@@ -35,10 +35,10 @@ ServicePermissionsPage::ServicePermissionsPage(QWidget * parent, Qt::WindowFlags
 
 	ui.cb_hideOffline->setChecked(true);
 
-	connect(ui.cb_hideOffline, SIGNAL(toggled(bool)), ui.frame, SLOT(setHideOffline(bool)));
+	connect(ui.cb_hideOffline, SIGNAL(toggled(bool)), ui.gradFrame, SLOT(setHideOffline(bool)));
 	//QObject::connect(ui.tableWidget,SIGNAL(itemChanged(QTableWidgetItem *)),  this, SLOT(tableItemChanged(QTableWidgetItem *)));
 
-	ui.frame->setHideOffline(ui.cb_hideOffline->isChecked());
+	ui.gradFrame->setHideOffline(ui.cb_hideOffline->isChecked());
 
 	// Not implemented?
 	ui.pushButton->hide();

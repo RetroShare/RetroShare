@@ -382,7 +382,7 @@
               </widget>
              </item>
              <item row="1" column="1" colspan="3">
-              <widget class="QComboBox" name="comboBoxToasterPosition">
+              <widget class="RSComboBox" name="comboBoxToasterPosition">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -495,6 +495,13 @@
   <tabstop>systray_ChatLobby</tabstop>
   <tabstop>pushButtonDisableAll</tabstop>
  </tabstops>
+ <customwidgets>
+  <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
