@@ -21,17 +21,18 @@
 #ifndef _GXS_CIRCLES_CHOOSER_H
 #define _GXS_CIRCLES_CHOOSER_H
 
-#include <QComboBox>
+#include "gui/common/RSComboBox.h"
+
 #include <retroshare/rsgxscircles.h>
 
-class GxsCircleChooser : public QComboBox
+class GxsCircleChooser : public RSComboBox
 {
-        Q_OBJECT
+	Q_OBJECT
 
 public:
-	GxsCircleChooser(QWidget *parent = NULL);
+	GxsCircleChooser(QWidget *parent = nullptr);
 
-    void loadCircles(const RsGxsCircleId &defaultId);
+	void loadCircles(const RsGxsCircleId &defaultId);
 	bool getChosenCircle(RsGxsCircleId &id);
 
 private:

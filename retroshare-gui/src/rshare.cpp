@@ -174,17 +174,17 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, const QString &dir)
     if(args.empty())
         sendArgsToRunningInstance = false;
     // if we find non-forwardable args, start a new instance
-    for(int i = 0; i < args.size(); ++i)
+    for(int iCurs = 0; iCurs < args.size(); ++iCurs)
     {
         const char* const* argit = forwardableArgs;
         bool found = false;
-        while(*argit && i < args.size())
+        while(*argit && iCurs < args.size())
         {
-            if(args.value(i) == "-"+QString(*argit) || args.value(i) == "--"+QString(*argit))
+            if(args.value(iCurs) == "-"+QString(*argit) || args.value(iCurs) == "--"+QString(*argit))
             {
                 found = true;
                 if(argNeedsValue(*argit))
-                    i++;
+                    iCurs++;
             }
             argit++;
         }
@@ -464,12 +464,12 @@ Rshare::showUsageMessageBox()
 
 /** Returns true if the specified argument expects a value. */
 bool
-Rshare::argNeedsValue(QString argName)
+Rshare::argNeedsValue(const QString &argName)
 {
 	return (
 	        argName == ARG_DATADIR  ||
 	        argName == ARG_LOGFILE  ||
-          argName == ARG_LOGLEVEL ||
+	        argName == ARG_LOGLEVEL ||
 	        argName == ARG_GUISTYLE ||
 	        argName == ARG_GUISTYLESHEET ||
 	        argName == ARG_LANGUAGE ||
@@ -486,25 +486,26 @@ Rshare::argNeedsValue(QString argName)
 void
 Rshare::parseArguments(QStringList args, bool firstRun)
 {
-	QString arg, value;
+	QString arg, argl, value;
 
 	/* Loop through all command-line args/values and put them in a map */
-	for (int i = 0; i < args.size(); ++i) {
+	for (int iCurs = 0; iCurs < args.size(); ++iCurs) {
 		/* Get the argument name and set a blank value */
-		arg = args.at(i);//.toLower(); Need Upper case for file name.
-		if (arg.toLower() == "empty") continue;
+		arg = args.at(iCurs);//.toLower(); Need Upper case for file name.
+		argl = arg.toLower();
+		if (argl == "empty") continue;
 		value = "";
 
 		/* Check if it starts with a - or -- */
 		if (arg.startsWith("-")) {
 			arg = arg.mid((arg.startsWith("--") ? 2 : 1));
 			/* Check if it takes a value and there is one on the command-line */
-			if (i < args.size()-1 && argNeedsValue(arg.toLower())) {
-				value = args.at(++i);
+			if (iCurs < args.size()-1 && argNeedsValue(arg)) {
+				value = args.at(++iCurs);
 			}
 		} else {
 			/* Check if links or files without arg */
-			if (arg.toLower().startsWith("retroshare://")) {
+			if (argl.startsWith("retroshare://")) {
 				value = arg;
 				arg = ARG_RSLINK_L;
 			} else {
@@ -518,8 +519,8 @@ Rshare::parseArguments(QStringList args, bool firstRun)
 		/* handle opmode that could be change while running.*/
 		QString omValue = QString(value).prepend(";").append(";").toLower();
 		QString omValues = QString(";full;noturtle;gaming;minimal;");
-		if ((arg == ARG_OPMODE_S || arg == ARG_OPMODE_L ) &&
-		    omValues.contains(omValue)) {
+		if ((arg == ARG_OPMODE_S || arg == ARG_OPMODE_L )
+		    && omValues.contains(omValue)) {
 			_opmode = value;
 		}
 
@@ -542,8 +543,8 @@ Rshare::validateArguments(QString &errmsg)
   /* Check for a writable log file */
   if (_args.contains(ARG_LOGFILE) && !_log.isOpen()) {
     errmsg = tr("Unable to open log file '%1': %2")
-                           .arg(_args.value(ARG_LOGFILE))
-                           .arg(_log.errorString());
+                           .arg(  _args.value(ARG_LOGFILE)
+                                , _log.errorString());
     return false;
   }
   /* Check for a valid log level */
@@ -688,8 +689,8 @@ void Rshare::resetLanguageAndStyle()
 
 // RetroShare:
 //   Default:
-//     :/qss/stylesheet/qss.default
-//     :/qss/stylesheet/qss.<locale>
+//     :/qss/stylesheet/default.qss
+//     :/qss/stylesheet/<locale>.qss
 //   Internal:
 //     :/qss/stylesheet/<name>.qss
 //   External:
@@ -699,8 +700,8 @@ void Rshare::resetLanguageAndStyle()
 //
 // Plugin:
 //   Default:
-//     :/qss/stylesheet/<plugin>/<plugin>_qss.default
-//     :/qss/stylesheet/<plugin>/<plugin>_qss.<locale>
+//     :/qss/stylesheet/<plugin>/<plugin>_default.qss
+//     :/qss/stylesheet/<plugin>/<plugin>_<locale>.qss
 //   Internal:
 //     :/qss/stylesheet/<plugin>/<plugin>_<name>.qss
 //   External:
@@ -719,8 +720,8 @@ void Rshare::loadStyleSheet(const QString &sheetName)
     /* Get stylesheet from plugins */
     if (rsPlugins) {
         int count = rsPlugins->nbPlugins();
-        for (int i = 0; i < count; ++i) {
-            RsPlugin* plugin = rsPlugins->plugin(i);
+        for (int iCurs = 0; iCurs < count; ++iCurs) {
+            RsPlugin* plugin = rsPlugins->plugin(iCurs);
             if (plugin) {
                 QString pluginStyleSheetName = QString::fromUtf8(plugin->qt_stylesheet().c_str());
                 if (!pluginStyleSheetName.isEmpty()) {
@@ -732,22 +733,22 @@ void Rshare::loadStyleSheet(const QString &sheetName)
 
     foreach (QString name, names) {
         /* load the default stylesheet */
-        QFile file(QString(":/qss/stylesheet/%1qss.default").arg(name));
+        QFile file(QString(":/qss/stylesheet/%1default.qss").arg(name));
         if (file.open(QFile::ReadOnly)) {
             styleSheet += QLatin1String(file.readAll()) + "\n";
             file.close();
         }
 
         /* load locale depended default stylesheet */
-        file.setFileName(QString(":/qss/stylesheet/%1qss.%2").arg(name, locale));
+        file.setFileName(QString(":/qss/stylesheet/%1%2.qss").arg(name, locale));
         if (file.open(QFile::ReadOnly)) {
             styleSheet += QLatin1String(file.readAll()) + "\n";
             file.close();
         }
 
-        if (!sheetName.isEmpty()) {
+        if (!sheetName.isEmpty() && (sheetName != ":default")) {
             /* load stylesheet */
-            if (sheetName.left(1) == ":") {
+            if (sheetName.at(0) == ":") {
                 /* internal stylesheet */
                 file.setFileName(QString(":/qss/stylesheet/%1%2.qss").arg(name, sheetName.mid(1)));
             } else {
@@ -786,7 +787,7 @@ void Rshare::getAvailableStyleSheets(QMap<QString, QString> &styleSheets)
 	foreach (fileInfo, fileInfoList) {
 		if (fileInfo.isFile()) {
 			QString name = fileInfo.baseName();
-			styleSheets.insert(QString("%1 (%2)").arg(name, tr("built-in")), ":" + name);
+			styleSheets.insert(QString(" %1 (%2)").arg(name, tr("built-in")), ":" + name);//Add space to name to get them up because QMap sort by Key.
 		}
 	}
 	fileInfoList = QDir(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()) + "/qss/").entryInfoList(QStringList("*.qss"));
@@ -880,7 +881,7 @@ Rshare::createDataDirectory(QString *errmsg)
 }
 
 /** Set Rshare's data directory - externally */
-bool Rshare::setConfigDirectory(QString dir)
+bool Rshare::setConfigDirectory(const QString& dir)
 {
   useConfigDir = true;
   configDir = dir;

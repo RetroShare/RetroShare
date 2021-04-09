@@ -50,7 +50,7 @@ void PulseReply::setup()
 	// connect(pushButton_tmpViewGroup, SIGNAL(clicked()), this, SLOT(actionViewGroup()));
 	// connect(pushButton_tmpViewParent, SIGNAL(clicked()), this, SLOT(actionViewParent()));
 
-	connect(toolButton_follow, SIGNAL(clicked()), this, SLOT(actionFollow()));
+	connect(followButton, SIGNAL(clicked()), this, SLOT(actionFollow()));
 	// connect(toolButton_rate, SIGNAL(clicked()), this, SLOT(rate()));
 
 	connect(toolButton_reply, SIGNAL(clicked()), this, SLOT(actionReply()));
@@ -118,7 +118,7 @@ void PulseReply::setPulseStatus(PulseStatus status)
 {
 	widget_actions->setVisible(status == PulseStatus::FULL);
 	widget_follow->setVisible(status != PulseStatus::FULL);
-	toolButton_follow->setEnabled(status == PulseStatus::UNSUBSCRIBED);
+	followButton->setEnabled(status == PulseStatus::UNSUBSCRIBED);
 
 	switch(status)
 	{

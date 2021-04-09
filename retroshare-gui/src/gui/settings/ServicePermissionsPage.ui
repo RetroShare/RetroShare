@@ -10,7 +10,7 @@
     <height>331</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="ServicePermissionsPage_VL">
    <item>
     <widget class="QScrollArea" name="scrollArea">
      <property name="frameShape">
@@ -45,16 +45,16 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="RSPermissionMatrixWidget" name="frame"/>
+        <widget class="RSPermissionMatrixWidget" name="gradFrame"/>
        </item>
       </layout>
      </widget>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="buttons_HL">
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="sp_Label">
        <property name="text">
         <string>ServicePermissions</string>
        </property>
@@ -71,7 +71,7 @@
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer">
+      <spacer name="buttons_HSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>

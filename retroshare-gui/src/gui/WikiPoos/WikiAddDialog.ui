@@ -51,7 +51,7 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QComboBox" name="comboBox_Category">
+       <widget class="RSComboBox" name="comboBox_Category">
         <item>
          <property name="text">
           <string>Travel</string>
@@ -110,7 +110,7 @@
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
-       <widget class="QComboBox" name="comboBox_3">
+       <widget class="RSComboBox" name="comboBox_3">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -135,7 +135,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QComboBox" name="comboBox_4">
+       <widget class="RSComboBox" name="comboBox_4">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -170,7 +170,7 @@
        </widget>
       </item>
       <item row="1" column="0" colspan="2">
-       <widget class="QComboBox" name="comboBox_6">
+       <widget class="RSComboBox" name="comboBox_6">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -195,7 +195,7 @@
        </widget>
       </item>
       <item row="2" column="0" colspan="2">
-       <widget class="QComboBox" name="comboBox">
+       <widget class="RSComboBox" name="comboBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -266,6 +266,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="Wiki_images.qrc"/>
  </resources>

@@ -106,7 +106,7 @@ void GxsForumMsgItem::setup()
 	connect(ui->subjectLabel, SIGNAL(linkActivated(QString)), this, SLOT(on_linkActivated(QString)));
 	ui->timestamplabel->clear();
 	ui->parentNameLabel->clear();
-	ui->nameLabel->clear();
+	ui->currNameLabel->clear();
 
 	/* general ones */
 	connect(ui->expandButton, SIGNAL(clicked()), this, SLOT(toggle()));
@@ -347,12 +347,12 @@ void GxsForumMsgItem::fillMessage()
     if(idDetails.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idDetails.mAvatar.mData, idDetails.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
                 pixmap = GxsIdDetails::makeDefaultIcon(mMessage.mMeta.mAuthorId,GxsIdDetails::SMALL);
 
-    ui->avatar->setPixmap(pixmap);
+    ui->currAvatar->setPixmap(pixmap);
 
-    ui->nameLabel->setId(mMessage.mMeta.mAuthorId);
+    ui->currNameLabel->setId(mMessage.mMeta.mAuthorId);
 
     RetroShareLink msgLink = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_FORUM, mMessage.mMeta.mGroupId, mMessage.mMeta.mMsgId, messageName());
-    ui->subLabel->setText(msgLink.toHtml());
+    ui->currSubLabel->setText(msgLink.toHtml());
     if (wasExpanded() || ui->expandFrame->isVisible())
         fillExpandFrame();
 
@@ -386,7 +386,7 @@ void GxsForumMsgItem::fillGroup()
 
 void GxsForumMsgItem::fillExpandFrame()
 {
-	ui->msgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mMessage.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+	ui->currMsgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mMessage.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 }
 
 QString GxsForumMsgItem::messageName()
@@ -445,9 +445,9 @@ void GxsForumMsgItem::toggle()
 
 void GxsForumMsgItem::setReadStatus(bool isNew, bool /*isUnread*/)
 {
-	ui->mainFrame->setProperty("new", isNew);
-	ui->mainFrame->style()->unpolish(ui->mainFrame);
-	ui->mainFrame->style()->polish(  ui->mainFrame);
+	ui->feedFrame->setProperty("new", isNew);
+	ui->feedFrame->style()->unpolish(ui->feedFrame);
+	ui->feedFrame->style()->polish(  ui->feedFrame);
 }
 
 /*********** SPECIFIC FUNCTIONS ***********************/

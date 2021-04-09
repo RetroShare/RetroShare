@@ -20,15 +20,16 @@
 
 #include "GroupChooser.h"
 
+#include <gui/common/GroupDefs.h>
+
+#include <retroshare/rspeers.h>
+
 #include <algorithm>
 #include <iostream>
 
-#include <retroshare/rspeers.h>
-#include <gui/common/GroupDefs.h>
-
 /** Constructor */
 GroupChooser::GroupChooser(QWidget *parent)
-: QComboBox(parent), mFlags(0)
+    : RSComboBox(parent), mFlags(0)
 {
 	return;
 }

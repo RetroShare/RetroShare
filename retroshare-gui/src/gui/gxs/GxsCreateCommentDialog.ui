@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>505</width>
-    <height>367</height>
+    <height>406</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Make Comment</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
+  <layout class="QGridLayout" name="GxsCreateCommentDialog_GL">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -30,7 +30,7 @@
     <number>0</number>
    </property>
    <item row="0" column="0">
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="plainFrame_Title">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -58,9 +58,9 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="plainFrame_Title_GL">
       <item row="0" column="0" rowspan="2">
-       <widget class="AvatarWidget" name="avatarLabel">
+       <widget class="AvatarWidget" name="avatarLabel" native="true">
         <property name="minimumSize">
          <size>
           <width>52</width>
@@ -73,16 +73,24 @@
           <height>52</height>
          </size>
         </property>
-        <property name="text">
+        <property name="text" stdset="0">
          <string/>
         </property>
-        <property name="scaledContents">
+        <property name="scaledContents" stdset="0">
          <bool>true</bool>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
        <widget class="GxsIdLabel" name="titleLabel">
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <weight>75</weight>
+          <italic>true</italic>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -121,7 +129,7 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item row="2" column="0">
-       <spacer name="verticalSpacer">
+       <spacer name="title_VSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -138,12 +146,12 @@ p, li { white-space: pre-wrap; }
    </item>
    <item row="1" column="0">
     <widget class="QFrame" name="messageframe">
-     <layout class="QGridLayout" name="gridLayout_3">
+     <layout class="QGridLayout" name="messageframe_GL">
       <property name="topMargin">
        <number>6</number>
       </property>
       <item row="5" column="0">
-       <spacer name="horizontalSpacer">
+       <spacer name="buttons_HSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -176,14 +184,14 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item row="3" column="0">
-       <widget class="QLabel" name="infoLabel">
+       <widget class="QLabel" name="info_Label">
         <property name="text">
          <string>TextLabel</string>
         </property>
        </widget>
       </item>
       <item row="4" column="0" colspan="3">
-       <layout class="QHBoxLayout" name="signedHLayout">
+       <layout class="QHBoxLayout" name="signed_HL">
         <item>
          <widget class="QLabel" name="signedLabel">
           <property name="text">
@@ -208,21 +216,31 @@ p, li { white-space: pre-wrap; }
       </item>
       <item row="5" column="1">
        <widget class="QPushButton" name="postButton">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
          <string>Post</string>
         </property>
        </widget>
       </item>
       <item row="0" column="0" colspan="3">
-       <widget class="GxsIdLabel" name="replaytolabel">
+       <widget class="GxsIdLabel" name="replyToLabel">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="styleSheet">
-         <string notr="true"/>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
         </property>
         <property name="text">
          <string/>
@@ -241,6 +259,12 @@ p, li { white-space: pre-wrap; }
    <header>gui/gxs/GxsIdLabel.h</header>
   </customwidget>
   <customwidget>
+   <class>AvatarWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/common/AvatarWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>GxsIdChooser</class>
    <extends>QComboBox</extends>
    <header>gui/gxs/GxsIdChooser.h</header>
@@ -249,12 +273,6 @@ p, li { white-space: pre-wrap; }
    <class>MimeTextEdit</class>
    <extends>QTextEdit</extends>
    <header location="global">gui/common/MimeTextEdit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>AvatarWidget</class>
-   <extends>QLabel</extends>
-   <header>gui/common/AvatarWidget.h</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

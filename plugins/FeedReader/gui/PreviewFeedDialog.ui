@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>521</height>
+    <height>564</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,7 +16,7 @@
   <property name="sizeGripEnabled">
    <bool>true</bool>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="PreviewFeedDialog_VL">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -28,7 +28,7 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_4">
+     <layout class="QVBoxLayout" name="titleFrame_VL">
       <property name="spacing">
        <number>0</number>
       </property>
@@ -56,6 +56,14 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <weight>75</weight>
+            <italic>true</italic>
+            <bold>true</bold>
+           </font>
           </property>
           <property name="text">
            <string>Name:</string>
@@ -284,7 +292,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="transformationTypeComboBox"/>
+         <widget class="RSComboBox" name="transformationTypeComboBox"/>
         </item>
         <item>
          <spacer name="horizontalSpacer">
@@ -323,6 +331,14 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <weight>75</weight>
+            <italic>true</italic>
+            <bold>true</bold>
+           </font>
           </property>
           <property name="text">
            <string>Title:</string>
@@ -365,7 +381,7 @@
       <bool>false</bool>
      </property>
      <widget class="QFrame" name="msgFrame">
-      <layout class="QHBoxLayout" name="horizontalLayout">
+      <layout class="QHBoxLayout" name="msgFrame_HL">
        <property name="leftMargin">
         <number>0</number>
        </property>
@@ -387,7 +403,7 @@
       </layout>
      </widget>
      <widget class="QFrame" name="structureTreeFrame">
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <layout class="QHBoxLayout" name="structureTreeFrame_HL">
        <property name="leftMargin">
         <number>0</number>
        </property>
@@ -451,7 +467,7 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="transformationFrame_VL">
        <property name="leftMargin">
         <number>0</number>
        </property>
@@ -472,7 +488,7 @@
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
+         <layout class="QVBoxLayout" name="xsltFrame_VL">
           <property name="leftMargin">
            <number>0</number>
           </property>
@@ -499,7 +515,7 @@
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <layout class="QHBoxLayout" name="xpathFrame_HL">
           <property name="leftMargin">
            <number>0</number>
           </property>
@@ -513,7 +529,7 @@
            <number>0</number>
           </property>
           <item>
-           <layout class="QVBoxLayout" name="xpathUserLayout">
+           <layout class="QVBoxLayout" name="xpathUseLayout">
             <item>
              <widget class="QLabel" name="xpathUseLabel">
               <property name="text">
@@ -572,11 +588,13 @@
     </widget>
    </item>
   </layout>
-  <zorder>titleFrame</zorder>
-  <zorder>splitter</zorder>
-  <zorder>buttonBox</zorder>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
+  </customwidget>
   <customwidget>
    <class>RSPlainTextEdit</class>
    <extends>QPlainTextEdit</extends>

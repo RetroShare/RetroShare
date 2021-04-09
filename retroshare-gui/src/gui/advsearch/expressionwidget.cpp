@@ -21,107 +21,60 @@
  *******************************************************************************/
 #include "expressionwidget.h"
 
-ExpressionWidget::ExpressionWidget(QWidget * parent, bool initial) : QWidget(parent)
+ExpressionWidget::ExpressionWidget(QWidget * parent, bool initial)
+    : QWidget(parent)
+    , isFirst (initial), inRangedConfig(false)
+    , searchType (NameSearch) // the default search type
 {
-    setupUi(this);
-    
-    inRangedConfig = false;
-    
-    // the default search type
-    searchType = NameSearch;
-    
-    exprLayout = this->layout();
-    
-    exprOpFrame->setLayout          (createLayout());
-    exprTermFrame->setLayout        (createLayout());
-    exprConditionFrame->setLayout   (createLayout());
-    exprParamFrame->setLayout       (createLayout());
-    exprParamFrame->setSizePolicy(QSizePolicy::MinimumExpanding, 
-                                  QSizePolicy::Fixed);
-        
-    elements = new QList<GuiExprElement*>();
-    
-    exprOpElem = new ExprOpElement();
-    exprOpFrame->layout()->addWidget(exprOpElem);
-    elements->append(exprOpElem);
-        
-    exprTermElem = new ExprTermsElement();
-    exprTermFrame->layout()->addWidget(exprTermElem);
-    elements->append(exprTermElem);
-    connect (exprTermElem, SIGNAL(currentIndexChanged(int)),
-             this, SLOT (adjustExprForTermType(int)));
-    
-    exprCondElem = new ExprConditionElement(searchType);
-    exprConditionFrame->layout()->addWidget(exprCondElem);
-    elements->append(exprCondElem);
-    connect (exprCondElem, SIGNAL (currentIndexChanged(int)),
-             this, SLOT (adjustExprForConditionType(int)));
-             
-    exprParamElem= new ExprParamElement(searchType);
-    exprParamFrame->layout()->addWidget(exprParamElem);
-    elements->append(exprParamElem);
-    
-    // set up the default search: a search on name
-    adjustExprForTermType(searchType);
-    isFirst = initial;
-    deleteExprButton    ->setVisible(!isFirst);
-    exprOpElem         ->setVisible(!isFirst);
-    exprTermFrame       ->show();
-    exprConditionFrame  ->show();
-    exprParamFrame      ->show();
-    
-    // connect the delete button signal        
-    connect (deleteExprButton, SIGNAL (clicked()),
-                this, SLOT(deleteExpression()));
-    
-    this->show();
-}
+	setupUi(this);
 
-QLayout * ExpressionWidget::createLayout(QWidget * parent)
-{
-    QHBoxLayout * hboxLayout;
-    if (parent == 0) 
-    {
-        hboxLayout = new QHBoxLayout();
-    } else {
-        hboxLayout = new QHBoxLayout(parent);
-    }
-    hboxLayout->setSpacing(0);
-    hboxLayout->setMargin(0);
-    return hboxLayout;
+	connect (exprTermElem, SIGNAL(currentIndexChanged(int)),
+	         this, SLOT (adjustExprForTermType(int)));
+
+	connect (exprCondElem, SIGNAL (currentIndexChanged(int)),
+	         this, SLOT (adjustExprForConditionType(int)));
+
+	// set up the default search: a search on name
+	adjustExprForTermType(searchType);
+	exprOpElem         ->setVisible(!isFirst);
+	deleteExprButton   ->setVisible(!isFirst);
+
+	// connect the delete button signal
+	connect (deleteExprButton, SIGNAL (clicked()),
+	         this, SLOT(deleteExpression()) );
+
+	this->show();
 }
 
 bool ExpressionWidget::isStringSearchExpression()
 {
-    return (searchType == NameSearch || searchType == PathSearch 
-		|| searchType == ExtSearch || searchType == HashSearch);
+	return (   searchType == NameSearch || searchType == PathSearch
+	        || searchType == ExtSearch  || searchType == HashSearch);
 }
 
 void ExpressionWidget::adjustExprForTermType(int index)
 {
-    ExprSearchType type = GuiExprElement::TermsIndexMap[index];
-    searchType = type;
-    
-    // now adjust the relevant elements
-    // the condition combobox
-    exprCondElem->adjustForSearchType(type);
-    
-    // the parameter expression: can be a date, 1-2 edit fields
-    //    or a size with units etc
-    exprParamElem->adjustForSearchType(type);
-    exprParamFrame->adjustSize();
-    
-    exprLayout->invalidate();
-    this->adjustSize();
+	ExprSearchType type = GuiExprElement::TermsIndexMap[index];
+	searchType = type;
+
+	// now adjust the relevant elements
+	// the condition combobox
+	exprCondElem->adjustForSearchType(type);
+
+	// the parameter expression: can be a date, 1-2 edit fields
+	//    or a size with units etc
+	exprParamElem->adjustForSearchType(type);
+
+	this->setMinimumWidth( exprOpElem->width()+exprTermElem->width()
+	                     + exprCondElem->width()+exprParamElem->width()
+	                     + deleteExprButton->width() );
 }
 
 void ExpressionWidget::adjustExprForConditionType(int newCondition)
 {
-    // we adjust the appearance for a ranged selection
-    inRangedConfig = (newCondition == GuiExprElement::RANGE_INDEX);
-    exprParamElem->setRangedSearch(inRangedConfig);
-    exprParamFrame->layout()->invalidate();
-    exprParamFrame->adjustSize();
+	// we adjust the appearance for a ranged selection
+	inRangedConfig = (newCondition == GuiExprElement::RANGE_INDEX);
+	exprParamElem->setRangedSearch(inRangedConfig);
 }
 
 void ExpressionWidget::deleteExpression() 
@@ -156,7 +109,11 @@ RsRegularExpression::Expression* ExpressionWidget::getRsExpression()
     if (isStringSearchExpression()) 
     {
         QString txt = exprParamElem->getStrSearchValue();
+#if QT_VERSION < QT_VERSION_CHECK(5,15,0)
         QStringList words = txt.split(" ", QString::SkipEmptyParts);
+#else
+        QStringList words = txt.split(" ", Qt::SkipEmptyParts);
+#endif
         for (int i = 0; i < words.size(); ++i)
             wordList.push_back(words.at(i).toUtf8().constData());
     } else if (inRangedConfig){
@@ -170,7 +127,7 @@ RsRegularExpression::Expression* ExpressionWidget::getRsExpression()
             lowVal  = lowVal^highVal;
         }
     }
-            
+
     switch (searchType)
     {
         case NameSearch:
@@ -208,20 +165,20 @@ RsRegularExpression::Expression* ExpressionWidget::getRsExpression()
             break;
         case SizeSearch:
             if (inRangedConfig) 
-				{    
-						if(lowVal >= (uint64_t)(1024*1024*1024) || highVal >= (uint64_t)(1024*1024*1024)) 
-                                 expr = new RsRegularExpression::SizeExpressionMB(exprCondElem->getRelOperator(), (int)(lowVal / (1024*1024)), (int)(highVal / (1024*1024)));
-						else
-                            expr = new RsRegularExpression::SizeExpression(exprCondElem->getRelOperator(),  lowVal, highVal);
-            } 
-				else 
-				{
-					uint64_t s = exprParamElem->getIntValue() ;
+            {
+                if(lowVal >= (uint64_t)(1024*1024*1024) || highVal >= (uint64_t)(1024*1024*1024))
+                    expr = new RsRegularExpression::SizeExpressionMB(exprCondElem->getRelOperator(), (int)(lowVal / (1024*1024)), (int)(highVal / (1024*1024)));
+                else
+                    expr = new RsRegularExpression::SizeExpression(exprCondElem->getRelOperator(),  lowVal, highVal);
+            }
+            else
+            {
+                uint64_t s = exprParamElem->getIntValue() ;
 
-					if(s >= (uint64_t)(1024*1024*1024))
-                        expr = new RsRegularExpression::SizeExpressionMB(exprCondElem->getRelOperator(), (int)(s/(1024*1024))) ;
-					else
-                        expr = new RsRegularExpression::SizeExpression(exprCondElem->getRelOperator(), (int)s) ;
+                if(s >= (uint64_t)(1024*1024*1024))
+                    expr = new RsRegularExpression::SizeExpressionMB(exprCondElem->getRelOperator(), (int)(s/(1024*1024))) ;
+                else
+                    expr = new RsRegularExpression::SizeExpression(exprCondElem->getRelOperator(), (int)s) ;
             }
             break;
     };
