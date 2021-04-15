@@ -90,6 +90,10 @@ rs_broadcast_discovery {
     win32-g++|win32-clang-g++:dLibs *= wsock32
 }
 
+rs_perceptual_hash {
+    mLibs += pHash tiff jpeg png z
+}
+
 static {
     sLibs *= $$mLibs
 } else {
