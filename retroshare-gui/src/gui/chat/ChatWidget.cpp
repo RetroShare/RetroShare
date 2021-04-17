@@ -1511,23 +1511,43 @@ void ChatWidget::chooseFont()
 	//Use NULL as parent as with this QFontDialog don't take care of title nether options.
 	QFont font = misc::getFont(&ok, currentFont, nullptr, tr("Choose your font."));
 
-	QTextCursor cursor = ui->chatTextEdit->textCursor();
 	if (ok) {
+		QTextCursor cursor = ui->chatTextEdit->textCursor();
+
 		if (cursor.selection().isEmpty()){
 			currentFont = font;
 			setFont();
 		} else {
-			//Merge Format doesn't works for only selection so add a new block.
-			QString text = "<p style=\"";
-			text += " color: " + currentColor.name() + ";";
-			text += " font-family:" + font.family() + ";";
-			text += font.bold() ? " font-weight: bold;" : "";
-			text += font.italic() ? " font-style: italic;" : "";
-			text += " font-size:" + QString::number(font.pointSize()) + "pt;";
-			text += font.strikeOut() ? " text-decoration: line-through;" : "";
-			text += font.underline() ? " text-decoration: underline;" : "";
-			text += "\">" + cursor.selectedText().toHtmlEscaped() + "</p>";
- 			cursor.insertHtml(text);
+			// Merge Format doesn't works for only selection.
+			// and charFormat() get format for last char.
+			QTextCursor selCurs = cursor;
+			QTextCursor lastCurs = cursor;
+			int pos = cursor.selectionStart();
+			lastCurs.setPosition(pos);
+			do
+			{
+				// Get format block in selection iterating char one by one
+				selCurs.setPosition(++pos);
+				if (selCurs.charFormat() != lastCurs.charFormat())
+				{
+					// New char format, format last block.
+					QTextCharFormat charFormat = lastCurs.charFormat();
+					charFormat.setFont(font);
+					lastCurs.setCharFormat(charFormat);
+					// Last block formated, start it to current char.
+					lastCurs.setPosition(pos-1);
+				}
+				// Add current char.
+				lastCurs.setPosition(pos, QTextCursor::KeepAnchor);
+			} while (pos < cursor.selectionEnd());
+
+			// Now format last block
+			if (lastCurs.selectionStart() != lastCurs.selectionEnd())
+			{
+				QTextCharFormat charFormat = lastCurs.charFormat();
+				charFormat.setFont(font);
+				lastCurs.setCharFormat(charFormat);
+			}
 		}
 	}
 }
