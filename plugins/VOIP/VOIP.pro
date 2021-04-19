@@ -53,7 +53,11 @@ linux-* {
 
 	PKGCONFIG += libavcodec libavutil
 	PKGCONFIG += speex speexdsp
-	PKGCONFIG += opencv4
+	
+# this has to be opencv or opencv4 depending on what version is available
+# right now it is opencv4 for Ubuntu and opencv for everything else
+# uncomment when most major distributions have opencv4 available	
+#	PKGCONFIG += opencv4
 } else {
 	LIBS += -lspeex -lspeexdsp -lavcodec -lavutil
 }
