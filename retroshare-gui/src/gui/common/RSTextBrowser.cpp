@@ -51,12 +51,38 @@ RSTextBrowser::RSTextBrowser(QWidget *parent) :
 	connect(this, SIGNAL(anchorClicked(QUrl)), this, SLOT(linkClicked(QUrl)));
 }
 
-void RSTextBrowser::append(const QString &text)
+void RSTextBrowser::append(const QString &text, const int desiredMinimumFontSize/*=-1*/)
 {
 	//In Win RSTextBrowser don't recognize file:///
 	QString fileText = text;
+	QTextCursor endTextCursor = QTextCursor(textCursor());
+	endTextCursor.movePosition(QTextCursor::End);
+	endTextCursor.setBlockFormat(QTextBlockFormat ());
+	int anchor = document()->characterCount()-1;
 	QTextBrowser::append(fileText.replace("file:///","file://"));
+	if (desiredMinimumFontSize>0)
+	{
+		QTextCursor cursor(document());
+		cursor.setPosition(anchor);
+		cursor.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
+		// Set minimum font size
+		//int curs = 0;
+		for (QTextBlock::iterator it = cursor.block().begin(); !(it.atEnd()); ++it)
+		{
+			QTextCharFormat charFormat = it.fragment().charFormat();
+			//RS_ERR(curs++, ":", it.fragment().text().toStdString(),"\n", charFormat.fontPointSize());
 
+			if(charFormat.fontPointSize() < desiredMinimumFontSize)
+			{
+				charFormat.setFontPointSize(desiredMinimumFontSize);
+
+				QTextCursor tempCursor = cursor;
+				tempCursor.setPosition(it.fragment().position());
+				tempCursor.setPosition(it.fragment().position() + it.fragment().length(), QTextCursor::KeepAnchor);
+				tempCursor.setCharFormat(charFormat);
+			}
+		}
+	}
 }
 
 void RSTextBrowser::linkClicked(const QUrl &url)

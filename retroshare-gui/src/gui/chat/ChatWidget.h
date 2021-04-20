@@ -207,7 +207,8 @@ private:
 	void setCurrentFileName(const QString &fileName);
 
 	void colorChanged();
-	void setColorAndFont(bool both);
+	void setColorAndFont();
+	void checkFontSize();
 	void processSettings(bool load);
 
 	uint32_t maxMessageSize();
