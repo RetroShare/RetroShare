@@ -1021,6 +1021,11 @@ rs_broadcast_discovery {
     }
 }
 
+rs_perceptual_hash {
+    HEADERS += perceptual_search/perceptualsearch.hpp
+    SOURCES += perceptual_search/perceptualsearch.cpp
+}
+
 ###########################################################################################################
 # OLD CONFIG OPTIONS.
 # Not used much - but might be useful one day.

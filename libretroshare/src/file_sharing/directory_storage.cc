@@ -38,6 +38,10 @@
 #	include "deep_search/filesindex.hpp"
 #endif // def RS_DEEP_FILES_INDEX
 
+#ifdef RS_PERCEPTUAL_FILE_SEARCH
+#	include "perceptual_search/perceptualsearch.hpp"
+#endif //  RS_PERCEPTUAL_FILE_SEARCH
+
 //#define DEBUG_REMOTE_DIRECTORY_STORAGE 1
 
 /******************************************************************************************************************/
@@ -544,14 +548,29 @@ bool LocalDirectoryStorage::updateHash(
 	} // RS_STACK_MUTEX(mDirStorageMtx);
 
 #ifdef RS_DEEP_FILES_INDEX
-	FileInfo fInfo;
-	if( ret && getFileInfo(index, fInfo) &&
-	        fInfo.storage_permission_flags & DIR_FLAGS_ANONYMOUS_SEARCH )
 	{
-		DeepFilesIndex dfi(DeepFilesIndex::dbDefaultPath());
-		ret &= !dfi.indexFile(fInfo.path, fInfo.fname, hash);
+		FileInfo fInfo;
+		if( ret && getFileInfo(index, fInfo) &&
+		        fInfo.storage_permission_flags & DIR_FLAGS_ANONYMOUS_SEARCH )
+		{
+			DeepFilesIndex dfi(DeepFilesIndex::dbDefaultPath());
+			ret &= !dfi.indexFile(fInfo.path, fInfo.fname, hash);
+		}
 	}
 #endif // def RS_DEEP_FILES_INDEX
+
+#ifdef RS_PERCEPTUAL_FILE_SEARCH
+	{
+		FileInfo fInfo;
+		if( ret && getFileInfo(index, fInfo) &&
+		        fInfo.storage_permission_flags & DIR_FLAGS_ANONYMOUS_SEARCH )
+		{
+			auto errc = RetroShare::PerceptualFileIndex::instance().
+			        indexFile(fInfo.path, hash);
+			if(errc) RS_DBG("perceptual hashing failed with: ", errc);
+		}
+	}
+#endif // def RS_PERCEPTUAL_FILE_SEARCH
 
 	return ret;
 }

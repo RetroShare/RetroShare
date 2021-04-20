@@ -37,6 +37,10 @@
 #	include "deep_search/filesindex.hpp"
 #endif // def RS_DEEP_FILES_INDEX
 
+#ifdef RS_PERCEPTUAL_FILE_SEARCH
+#	include "perceptual_search/perceptualsearch.hpp"
+#endif
+
 //#define DEBUG_DIRECTORY_STORAGE 1
 
 typedef FileListIO::read_error read_error;
@@ -422,6 +426,10 @@ void InternalFileHierarchyStorage::deleteFileNode(uint32_t index)
 #ifdef RS_DEEP_FILES_INDEX
 		DeepFilesIndex tfi(DeepFilesIndex::dbDefaultPath());
 		tfi.removeFileFromIndex(fe.file_hash);
+#endif
+
+#ifdef RS_PERCEPTUAL_FILE_SEARCH
+	RetroShare::PerceptualFileIndex::instance().removeFileFromIndex(fe.file_hash);
 #endif
 
         if(mTotalSize >= fe.file_size)

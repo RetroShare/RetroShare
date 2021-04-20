@@ -209,6 +209,11 @@ no_rs_service_terminal_login:CONFIG -= rs_service_terminal_login
 CONFIG+=rs_dh_init_check
 no_rs_dh_init_check:CONFIG -= rs_dh_init_check
 
+# To perceptual hashing and search append the following assignation
+# to qmake command line "CONFIG+=no_rs_perceptual_hash"
+CONFIG+=rs_perceptual_hash
+no_rs_perceptual_hash:CONFIG -= rs_perceptual_hash
+
 # To export all symbols for the plugins on Windows build we need to build libretroshare as
 # shared library. Fix linking error (ld.exe: Error: export ordinal too large) due to too
 # many exported symbols.
@@ -575,6 +580,8 @@ rs_deep_files_index:DEFINES *= RS_DEEP_FILES_INDEX
 rs_deep_files_index_ogg:DEFINES *= RS_DEEP_FILES_INDEX_OGG
 rs_deep_files_index_flac:DEFINES *= RS_DEEP_FILES_INDEX_FLAC
 rs_deep_files_index_taglib:DEFINES *= RS_DEEP_FILES_INDEX_TAGLIB
+
+rs_perceptual_hash:DEFINES *= RS_PERCEPTUAL_FILE_SEARCH
 
 rs_use_native_dialogs:DEFINES *= RS_NATIVEDIALOGS
 
