@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2013-2018 by Cyril Soler <csoler@users.sourceforge.net>           *
+ * Copyright (C) 2013-2018 by Cyril Soler <csoler@users.sourceforge.net>       *
+ * Copyright (C) 2021  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -40,19 +42,14 @@ class p3turtle ;
  */
 class RsTurtleClientService
 {
-	public:
-    	/*!
-         * \brief serviceId
-         * 			Returns the ID of the client service. This is used to pass the ID to search requests, from the client services
-         * \return
-         * 			The service ID.
-         */
+public:
 
-    	virtual uint16_t serviceId() const
-		{
-			std::cerr << "!!!!!! Received request for service ID in turtle router client, but the client service is not handling it !!!!!!!" << std::endl ;
-            return 0 ;
-    	}
+	/*!
+	 * Returns the ID of the client service. This is used to pass the ID to
+	 * search requests, from the client services
+	 * @return The service ID.
+	 */
+	virtual uint16_t serviceId() const = 0;
 
 		/*!
 		 * \brief handleTunnelRequest
@@ -95,6 +92,7 @@ class RsTurtleClientService
 	* The returned result contains the serialised generic result returned by the
 	* client service.
 	* The turtle router keeps the memory ownership over search_request_data
+	* The turtle router takes the memory ownership over search_result_data
 	* \param search_request_data generic serialized search data
 	* \param search_request_data_len  length of the serialized search data
 	* \param search_result_data generic serialized search result data
@@ -104,8 +102,10 @@ class RsTurtleClientService
 	* \return true if matching results are available, false otherwise.
 	*/
 	virtual bool receiveSearchRequest(
-	        unsigned char *search_request_data, uint32_t search_request_data_len,
-	        unsigned char *& search_result_data, uint32_t& search_result_data_len,
+	        rs_view_ptr<uint8_t> search_request_data,
+	        uint32_t search_request_data_len,
+	        unsigned char *& search_result_data,
+	        uint32_t& search_result_data_len,
 	        uint32_t& max_allows_hits )
 	{
 		/* Suppress unused warning this way and not commenting the param names
@@ -119,17 +119,29 @@ class RsTurtleClientService
 		return false;
 	}
 
-    	/*!
-         * \brief receiveSearchResult
-         * 			This method is called by the turtle router to notify the client of a search result. The result is serialized for the current class to read.
-         *
-         * \param search_result_data  result data. Memory ownership is owned by the turtle router. So do not delete!
-         * \param search_result_data  length of result data
-         */
-    	virtual void receiveSearchResult(TurtleSearchRequestId /* request_id */,unsigned char * /*search_result_data*/,uint32_t  /*search_result_data_len*/)
-		{
-			std::cerr << "!!!!!! Received search result from turtle router, but the client service who requested it is not handling it !!!!!!!!!!" << std::endl ;
-		}
+	/*!
+	 * This method is called by the turtle router to notify the client of a
+	 * new search results.
+	 *
+	 * @param[in] request_id is corresponding to the search request made by the
+	 *	client service.
+	 * @param[in] search_result_data result data. Memory is owned by the turtle
+	 * router. So do not delete!
+	 * @param[in] search_result_data length of result data
+	 */
+	virtual void receiveSearchResult(
+	        TurtleSearchRequestId request_id,
+	        rs_view_ptr<uint8_t> search_result_data,
+	        uint32_t search_result_data_len )
+	{
+		/* Suppress unused warning this way and not commenting the param names
+		 * so doxygen match documentation against params */
+		(void) request_id;
+		(void) search_result_data; (void) search_result_data_len;
+
+		RS_WARN( "Received search result from turtle router, but the client "
+		         "service who requested it is not handling it !" );
+	}
 
 	    /*!
 		 * \brief serializer

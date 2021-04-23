@@ -32,7 +32,7 @@ PerceptualFileIndex::~PerceptualFileIndex() = default;
 
 std::error_condition PerceptualFileIndex::search(
         PHash center, uint32_t radius,
-        std::vector<PerceptualSearchResult> results, uint32_t maxResults )
+        std::vector<PerceptualSearchResult>& results, uint32_t maxResults )
 {
 	radius = radius < MAX_SEARCH_RADIUS ? radius : MAX_SEARCH_RADIUS;
 

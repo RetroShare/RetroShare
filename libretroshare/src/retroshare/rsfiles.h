@@ -4,8 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2008  Robert Fernie <retroshare@lunamutt.com>                 *
- * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
- * Copyright (C) 2019-2020  Asociación Civil Altermundi <info@altermundi.net>  *
+ * Copyright (C) 2018-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -178,7 +178,8 @@ const TransferRequestFlags RS_FILE_REQ_NO_SEARCH           ( 0x02000000 );	// di
 // const uint32_t RS_FILE_HINTS_SHARE_FLAGS_MASK	 = 	RS_FILE_HINTS_NETWORK_WIDE_OTHERS | RS_FILE_HINTS_BROWSABLE_OTHERS
 // 																	 | RS_FILE_HINTS_NETWORK_WIDE_GROUPS | RS_FILE_HINTS_BROWSABLE_GROUPS ;
 
-enum class RsSharedDirectoriesEventCode: uint8_t {
+enum class RsSharedDirectoriesEventCode: uint8_t
+{
     UNKNOWN                     = 0x00,
     STARTING_DIRECTORY_SWEEP    = 0x01, // (void)
     HASHING_FILE                = 0x02, // mMessage: full path and hashing speed of the file being hashed
@@ -188,10 +189,11 @@ enum class RsSharedDirectoriesEventCode: uint8_t {
     EXTRA_LIST_FILE_REMOVED     = 0x06, // (void)
 };
 
-enum class RsFileTransferEventCode: uint8_t {
-    UNKNOWN                     = 0x00,
-    DOWNLOAD_COMPLETE           = 0x01,	// mHash: hash of the complete file
-    COMPLETED_FILES_REMOVED     = 0x02,	//
+enum class RsFileTransferEventCode: uint8_t
+{
+	UNKNOWN                     = 0x00,
+	DOWNLOAD_COMPLETE           = 0x01,	/// mHash: hash of the complete file
+	COMPLETED_FILES_REMOVED     = 0x02,
 };
 
 struct RS_DEPRECATED_FOR("Packing arbitrary data into an std::string is bad idea")
@@ -240,7 +242,9 @@ struct RsFileHashingCompletedEvent: RsEvent
 
 struct RsFileTransferEvent: RsEvent
 {
-	RsFileTransferEvent()  : RsEvent(RsEventType::FILE_TRANSFER), mFileTransferEventCode(RsFileTransferEventCode::UNKNOWN) {}
+	RsFileTransferEvent(
+	        RsFileTransferEventCode eType = RsFileTransferEventCode::UNKNOWN):
+	    RsEvent(RsEventType::FILE_TRANSFER), mFileTransferEventCode(eType) {}
 	~RsFileTransferEvent() override = default;
 
 	///* @see RsEvent @see RsSerializable
@@ -498,6 +502,27 @@ struct RsPerceptualSearchFileInfo : RsSerializable
 	~RsPerceptualSearchFileInfo() override;
 };
 
+struct RsPerceptualSearchResultEvent : RsEvent
+{
+	RsPerceptualSearchResultEvent():
+	    RsEvent(RsEventType::FILE_PERCEPTUAL_SEARCH_RESULT_RECEIVED),
+	    mSearchId(0) {}
+	~RsPerceptualSearchResultEvent() override;
+
+	///* @see RsEvent @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx ) override
+	{
+		RsEvent::serial_process(j, ctx);
+
+		RS_SERIAL_PROCESS(mSearchId);
+		RS_SERIAL_PROCESS(mResults);
+	}
+
+	TurtleRequestId mSearchId;
+	std::vector<RsPerceptualSearchFileInfo> mResults;
+};
+
 }
 
 class RsFiles
@@ -682,6 +707,23 @@ public:
 	        const std::string& matchString,
 	        const std::function<void (const std::vector<TurtleFileInfoV2>& results)>& multiCallback,
 	        rstime_t maxWait = 300 ) = 0;
+
+	/**
+	 * @brief Search the whole reachable network for similar file
+	 * @jsonapi{development}
+	 * An @see RsPerceptualSearchResultEvent is emitted when matching results
+	 *	arrives from the network
+	 * @param[in] localFilePath path of local file to search for similarity on
+	 *	the network
+	 * @param[in] distance maximum hamming distance tolerated to consider a file
+	 *	similar
+	 * @param[out] searchId storage for search id, useful to track search events
+	 *	and retrieve search results
+	 * @return success or error details
+	 */
+	virtual std::error_condition perceptualSearchRequest(
+	        const std::string& localFilePath, uint32_t distance,
+	        TurtleRequestId& searchId ) = 0;
 
 	virtual TurtleRequestId turtleSearch(const std::string& string_to_match) = 0;
 	virtual TurtleRequestId turtleSearch(

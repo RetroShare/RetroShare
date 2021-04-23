@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2008 by Robert Fernie <retroshare@lunamutt.com>                   *
+ * Copyright (C) 2008  Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2021  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -19,9 +21,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-
-#ifndef FT_SERVER_HEADER
-#define FT_SERVER_HEADER
+#pragma once
 
 /*
  * ftServer.
@@ -195,13 +195,15 @@ public:
 
 	/// @see RsTurtleClientService
 	bool receiveSearchRequest(
-	        unsigned char* searchRequestData, uint32_t searchRequestDataLen,
+	        rs_view_ptr<uint8_t> searchRequestData,
+	        uint32_t searchRequestDataLen,
 	        unsigned char*& search_result_data, uint32_t& searchResultDataLen,
 	        uint32_t& maxAllowsHits ) override;
 
 	/// @see RsTurtleClientService
 	void receiveSearchResult(
-	        TurtleSearchRequestId requestId, unsigned char* searchResultData,
+	        TurtleSearchRequestId requestId,
+	        rs_view_ptr<uint8_t> searchResultData,
 	        uint32_t  searchResultDataLen ) override;
 
     virtual RsItem *create_item(uint16_t service,uint8_t item_type) const ;
@@ -263,6 +265,11 @@ public:
 	        const std::string& matchString,
 	        const std::function<void (const std::vector<TurtleFileInfoV2>& results)>& multiCallback,
 	        rstime_t maxWait = 300 ) override;
+
+	/// @see RsFiles
+	std::error_condition perceptualSearchRequest(
+	        const std::string& localFilePath, uint32_t distance,
+	        TurtleRequestId& searchId ) override;
 
 	virtual TurtleSearchRequestId turtleSearch(const std::string& string_to_match) ;
 	virtual TurtleSearchRequestId turtleSearch(const RsRegularExpression::LinearizedExpression& expr) ;
@@ -477,7 +484,3 @@ private:
 
 	RS_SET_CONTEXT_DEBUG_LEVEL(1)
 };
-
-
-
-#endif

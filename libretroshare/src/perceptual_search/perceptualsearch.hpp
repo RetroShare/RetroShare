@@ -64,7 +64,7 @@ public:
 	 */
 	std::error_condition search(
 	        PHash center, uint32_t radius,
-	        std::vector<PerceptualSearchResult> results,
+	        std::vector<PerceptualSearchResult>& results,
 	        uint32_t maxResults = 100 );
 
 	/**
