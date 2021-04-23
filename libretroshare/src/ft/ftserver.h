@@ -51,6 +51,10 @@
 #include "pqi/pqi.h"
 #include "pqi/p3cfgmgr.h"
 
+#ifdef RS_PERCEPTUAL_FILE_SEARCH
+#	include "perceptual_search/perceptualsearch.hpp"
+#endif
+
 class p3ConnectMgr;
 class p3FileDatabase;
 
@@ -70,9 +74,11 @@ class p3FileDatabase;
 
 enum class RsFileItemType : uint8_t
 {
-	NONE =                     0x00, /// Only to detect ununitialized
-	FILE_SEARCH_REQUEST =      0x57,
-	FILE_SEARCH_RESULT =       0x58
+	NONE =                            0x00, /// Only to detect ununitialized
+	FILE_SEARCH_REQUEST =             0x57,
+	FILE_SEARCH_RESULT =              0x58,
+	PERCEPTUAL_SEARCH_REQUEST =       0x59,
+	PERCEPTUAL_SEARCH_RESULTS =       0x5a
 };
 
 struct RsFileItem : RsItem
@@ -111,6 +117,44 @@ struct RsFileSearchResultItem : RsFileItem
 	void clear() override;
 };
 
+namespace RetroShare
+{
+struct RsPerceptualSearchRequestItem : RsFileItem
+{
+	RsPerceptualSearchRequestItem():
+	    RsFileItem(RsFileItemType::PERCEPTUAL_SEARCH_REQUEST),
+	    mCenter(0), mRadius(0)
+	{ setPriorityLevel(QOS_PRIORITY_RS_TURTLE_SEARCH_REQUEST); }
+
+	PHash mCenter;
+	uint32_t mRadius;
+
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx ) override
+	{
+		RS_SERIAL_PROCESS(mCenter);
+		RS_SERIAL_PROCESS(mRadius);
+	}
+
+	void clear() override;
+};
+
+struct RsPerceptualSearchResultsItem : RsFileItem
+{
+	RsPerceptualSearchResultsItem():
+	    RsFileItem(RsFileItemType::PERCEPTUAL_SEARCH_RESULTS)
+	{ setPriorityLevel(QOS_PRIORITY_RS_TURTLE_SEARCH_RESULT); }
+
+	std::vector<RsPerceptualSearchFileInfo> mResults;
+
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx ) override
+	{ RS_SERIAL_PROCESS(mResults); }
+
+	void clear() override;
+};
+
+}
 
 class ftServer :
         public p3Service, public RsFiles, public ftDataSend,

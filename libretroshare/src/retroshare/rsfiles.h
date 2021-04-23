@@ -470,6 +470,36 @@ struct TurtleFileInfoV2 : RsSerializable
 	~TurtleFileInfoV2() override;
 };
 
+namespace RetroShare
+{
+
+struct RsPerceptualSearchFileInfo : RsSerializable
+{
+	RsPerceptualSearchFileInfo() : fSize(0), distance(0) {}
+
+	uint64_t fSize;    /// File size
+	RsFileHash fHash;  /// File hash
+	std::string fName; /// File name
+
+	/** @brief Perceptual distance between the query and the file which matched
+	 * the search criteria. */
+	uint32_t distance;
+
+	/// @see RsSerializable::serial_process
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx ) override
+	{
+		RS_SERIAL_PROCESS(fSize);
+		RS_SERIAL_PROCESS(fHash);
+		RS_SERIAL_PROCESS(fName);
+		RS_SERIAL_PROCESS(distance);
+	}
+
+	~RsPerceptualSearchFileInfo() override;
+};
+
+}
+
 class RsFiles
 {
 public:
