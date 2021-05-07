@@ -21,14 +21,14 @@
 #ifndef _GXS_ID_CHOOSER_H
 #define _GXS_ID_CHOOSER_H
 
-#include <QComboBox>
-#include <retroshare/rsgxsifacetypes.h>
+#include "gui/common/RSComboBox.h"
+
+#include "retroshare/rsgxsifacetypes.h"
 
 // This class implement a basic RS functionality which is that ComboBox displaying Id
 // should update regularly. They also should update only when visible, to save CPU time.
 //
 
-struct RsGxsIfaceHelper;
 class RsGxsUpdateBroadcastBase;
 
 #define IDCHOOSER_ID_REQUIRED   0x0001
@@ -36,13 +36,12 @@ class RsGxsUpdateBroadcastBase;
 #define IDCHOOSER_NO_CREATE     0x0004
 #define IDCHOOSER_NON_ANONYMOUS 0x0008
 
-class GxsIdChooser : public QComboBox
+class GxsIdChooser : public RSComboBox
 {
 	Q_OBJECT
 
 public:
-	GxsIdChooser(RsGxsIfaceHelper* ifaceImpl, QWidget *parent = NULL);
-	GxsIdChooser(QWidget *parent = NULL);
+	GxsIdChooser(QWidget *parent = nullptr);
 	virtual ~GxsIdChooser();
 
 	void setFlags(uint32_t flags) ;

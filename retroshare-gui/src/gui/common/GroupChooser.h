@@ -20,13 +20,14 @@
 
 #pragma once
 
-#include <QComboBox>
+#include "gui/common/RSComboBox.h"
+
 #include <retroshare/rspeers.h>
 
-class GroupChooser : public QComboBox
+class GroupChooser : public RSComboBox
 {
 public:
-    GroupChooser(QWidget *parent = NULL);
+	GroupChooser(QWidget *parent = nullptr);
 
     void loadGroups(uint32_t chooserFlags, const RsNodeGroupId& defaultId);
     bool getChosenGroup(RsNodeGroupId& id);

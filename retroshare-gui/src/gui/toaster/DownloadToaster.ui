@@ -22,30 +22,48 @@
     <height>100</height>
    </size>
   </property>
-  <layout class="QHBoxLayout">
+  <layout class="QHBoxLayout" name="DownloadToaster_HL">
    <property name="spacing">
     <number>0</number>
    </property>
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
-    <widget class="QFrame" name="windowFrame">
+    <widget class="QFrame" name="toasterFrame">
      <property name="frameShape">
       <enum>QFrame::WinPanel</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout">
-      <property name="margin">
+     <layout class="QGridLayout" name="toasterFrame_GL">
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
        <number>2</number>
       </property>
       <property name="spacing">
        <number>2</number>
       </property>
       <item row="0" column="0">
-       <layout class="QHBoxLayout">
+       <layout class="QHBoxLayout" name="toaster_HL">
         <property name="spacing">
          <number>6</number>
         </property>
@@ -82,13 +100,20 @@
         </item>
         <item>
          <widget class="QLabel" name="toasterLabel">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="text">
            <string notr="true">Download completed</string>
           </property>
          </widget>
         </item>
         <item>
-         <spacer>
+         <spacer name="toaster_HSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -126,7 +151,7 @@
        </layout>
       </item>
       <item row="1" column="0">
-       <layout class="QHBoxLayout">
+       <layout class="QHBoxLayout" name="buttons_HL">
         <item>
          <widget class="QLabel" name="textLabel">
           <property name="minimumSize">

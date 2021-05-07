@@ -49,7 +49,7 @@ AdvancedSearchDialog::AdvancedSearchDialog(QWidget * parent) : QDialog (parent)
              this, SLOT(addNewExpression()));
     connect (this->resetButton, SIGNAL(clicked()),
              this, SLOT(reset()));
-    connect(this->executeButton, SIGNAL(clicked()),
+    connect(this->searchButton, SIGNAL(clicked()),
             this, SLOT(prepareSearch()));
 
 	addExprButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/add.png"));
@@ -106,12 +106,8 @@ void AdvancedSearchDialog::deleteExpression(ExpressionWidget* expr)
 
 void AdvancedSearchDialog::reset()
 {
-    ExpressionWidget *expr;
     while (!expressions->isEmpty())
-    {
-        expr = expressions->takeLast();
-        deleteExpression(expr);
-    }
+        deleteExpression(expressions->takeLast());
     
     // now add a new default expressions
     addNewExpression();

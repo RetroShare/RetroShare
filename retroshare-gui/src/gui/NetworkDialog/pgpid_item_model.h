@@ -60,6 +60,7 @@ public:
     void setBackgroundColorAcceptConnection(QColor color) { mBackgroundColorAcceptConnection = color; }
     void setBackgroundColorHasSignedMe(QColor color) { mBackgroundColorHasSignedMe = color; }
     void setBackgroundColorDenied(QColor color) { mBackgroundColorDenied = color; }
+    void setTextColor(QColor color) { mTextColor = color; }
 
 
 public slots:
@@ -73,6 +74,7 @@ private:
     QColor mBackgroundColorAcceptConnection;
     QColor mBackgroundColorHasSignedMe;
     QColor mBackgroundColorDenied;
+    QColor mTextColor;
 };
 
 #endif // KEY_ITEM_MODEL_H

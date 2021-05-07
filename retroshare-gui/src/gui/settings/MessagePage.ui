@@ -24,7 +24,7 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
       <item row="0" column="2">
-       <widget class="QComboBox" name="comboBox">
+       <widget class="RSComboBox" name="comboBox">
         <item>
          <property name="text">
           <string>Everyone</string>
@@ -75,7 +75,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="openComboBox"/>
+         <widget class="RSComboBox" name="openComboBox"/>
         </item>
        </layout>
       </item>
@@ -174,6 +174,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

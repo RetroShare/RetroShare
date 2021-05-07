@@ -89,6 +89,8 @@
         <property name="font">
          <font>
           <pointsize>11</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
          </font>
         </property>
         <property name="text">
@@ -105,7 +107,7 @@
          <string>...</string>
         </property>
         <property name="icon">
-         <iconset resource="icons.qrc">
+         <iconset resource="images.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -289,6 +291,13 @@ private and secure decentralized communication platform.
       </item>
       <item row="1" column="1">
        <widget class="QToolButton" name="addButton">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
          <string>Add friend</string>
         </property>
@@ -415,8 +424,8 @@ private and secure decentralized communication platform.
   </layout>
  </widget>
  <resources>
-  <include location="icons.qrc"/>
   <include location="images.qrc"/>
+  <include location="icons.qrc"/>
  </resources>
  <connections/>
 </ui>

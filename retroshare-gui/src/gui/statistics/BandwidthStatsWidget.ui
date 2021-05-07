@@ -49,7 +49,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="friend_CB">
+       <widget class="RSComboBox" name="friend_CB">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -69,7 +69,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="updn_CB">
+       <widget class="RSComboBox" name="updn_CB">
         <item>
          <property name="text">
           <string>Up</string>
@@ -90,7 +90,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="service_CB">
+       <widget class="RSComboBox" name="service_CB">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -110,7 +110,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="unit_CB"/>
+       <widget class="RSComboBox" name="unit_CB"/>
       </item>
       <item>
        <widget class="QLabel" name="label_5">
@@ -120,7 +120,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="legend_CB">
+       <widget class="RSComboBox" name="legend_CB">
         <item>
          <property name="text">
           <string>Current</string>
@@ -141,7 +141,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="cmbGraphColor">
+       <widget class="RSComboBox" name="cmbGraphColor">
         <item>
          <property name="text">
           <string>Default</string>
@@ -178,6 +178,11 @@
    <extends>QWidget</extends>
    <header location="global">gui/statistics/BWGraph.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

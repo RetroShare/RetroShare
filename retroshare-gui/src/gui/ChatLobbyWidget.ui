@@ -70,7 +70,14 @@
        </widget>
       </item>
       <item>
-       <widget class="StyledLabel" name="titleBarLabel">
+       <widget class="QLabel" name="titleBarLabel">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
          <string>Chat rooms</string>
         </property>
@@ -183,7 +190,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QTreeWidget" name="lobbyTreeWidget">
+        <widget class="RSTreeWidget" name="lobbyTreeWidget">
          <property name="iconSize">
           <size>
            <width>16</width>
@@ -228,6 +235,13 @@
         </property>
         <item row="0" column="0">
          <widget class="QGroupBox" name="lobbyinfo_groupBox">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="styleSheet">
            <string notr="true"/>
           </property>
@@ -244,6 +258,7 @@
               <widget class="QLabel" name="lobbyname_label">
                <property name="font">
                 <font>
+                 <pointsize>12</pointsize>
                  <weight>75</weight>
                  <bold>true</bold>
                 </font>
@@ -261,6 +276,13 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="font">
+                <font>
+                 <pointsize>16</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
                <property name="text">
                 <string>TextLabel</string>
                </property>
@@ -270,6 +292,7 @@
               <widget class="QLabel" name="lobbyid_label">
                <property name="font">
                 <font>
+                 <pointsize>12</pointsize>
                  <weight>75</weight>
                  <bold>true</bold>
                 </font>
@@ -296,6 +319,7 @@
               <widget class="QLabel" name="lobbytopic_label">
                <property name="font">
                 <font>
+                 <pointsize>12</pointsize>
                  <weight>75</weight>
                  <bold>true</bold>
                 </font>
@@ -325,6 +349,7 @@
               <widget class="QLabel" name="lobbytype_label">
                <property name="font">
                 <font>
+                 <pointsize>12</pointsize>
                  <weight>75</weight>
                  <bold>true</bold>
                 </font>
@@ -351,6 +376,7 @@
               <widget class="QLabel" name="lobbysec_label">
                <property name="font">
                 <font>
+                 <pointsize>12</pointsize>
                  <weight>75</weight>
                  <bold>true</bold>
                 </font>
@@ -371,6 +397,7 @@
               <widget class="QLabel" name="lobbypeers_label">
                <property name="font">
                 <font>
+                 <pointsize>12</pointsize>
                  <weight>75</weight>
                  <bold>true</bold>
                 </font>
@@ -396,7 +423,7 @@
             </layout>
            </item>
            <item row="1" column="0">
-            <widget class="QLabel" name="lobbyInfoLabel">
+            <widget class="QLabel" name="info_Label_Lobby">
              <property name="text">
               <string notr="true">TextLabel</string>
              </property>
@@ -432,12 +459,12 @@
   <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
-   <header location="global">gui/common/LineEditClear.h</header>
+   <header>gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
+   <class>RSTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>gui/common/RSTreeWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

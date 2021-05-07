@@ -98,7 +98,7 @@ CreateCircleDialog::CreateCircleDialog()
     connect(ui.addButton, SIGNAL(clicked()), this, SLOT(addMember()));
     connect(ui.removeButton, SIGNAL(clicked()), this, SLOT(removeMember()));
 
-    connect(ui.createButton, SIGNAL(clicked()), this, SLOT(createCircle()));
+    connect(ui.postButton, SIGNAL(clicked()), this, SLOT(createCircle()));
     connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(close()));
 
     connect(ui.treeWidget_membership, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(selectedMember(QTreeWidgetItem*, QTreeWidgetItem*)));
@@ -187,14 +187,14 @@ void CreateCircleDialog::editExistingId(const RsGxsGroupId &circleId, const bool
 	    ui.idChooser->setVisible(true) ;
     }
     
-    ui.createButton->setText(tr("Update"));
+    ui.postButton->setText(tr("Update"));
     
 	ui.addButton->setEnabled(!readonly) ;
 	ui.removeButton->setEnabled(!readonly) ;
     
     if(readonly)
 	{
-		ui.createButton->hide() ;
+		ui.postButton->hide() ;
 		ui.cancelButton->setText(tr("Close"));
 		ui.peersSelection_GB->hide() ;
 		ui.addButton->hide() ;
@@ -216,7 +216,7 @@ void CreateCircleDialog::editNewId(bool isExternal)
 	{
 		setupForExternalCircle();
 		ui.headerFrame->setHeaderText(tr("Create New Circle"));	
-		ui.createButton->setText(tr("Create"));
+		ui.postButton->setText(tr("Create"));
 	}
 	else
 	{

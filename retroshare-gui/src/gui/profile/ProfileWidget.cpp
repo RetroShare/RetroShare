@@ -45,7 +45,7 @@ ProfileWidget::ProfileWidget(QWidget *parent, Qt::WindowFlags flags)
     connect(ui.CopyCertButton,SIGNAL(clicked()), this, SLOT(copyCert()));
     connect(ui.profile_Button,SIGNAL(clicked()), this, SLOT(profilemanager()));
 
-    ui.onlinesince->setText(DateTime::formatLongDateTime(Rshare::startupTime()));
+    ui.onLineSince->setText(DateTime::formatLongDateTime(Rshare::startupTime()));
 }
 
 void ProfileWidget::showEvent ( QShowEvent * /*event*/ )
@@ -59,7 +59,7 @@ void ProfileWidget::showEvent ( QShowEvent * /*event*/ )
         ui.name->setText(QString::fromUtf8(detail.name.c_str()));
         ui.country->setText(QString::fromUtf8(detail.location.c_str()));
 
-        ui.peerid->setText(QString::fromStdString(detail.id.toStdString()));
+        ui.peerId->setText(QString::fromStdString(detail.id.toStdString()));
 
         ui.ipAddressList->clear();
         for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)

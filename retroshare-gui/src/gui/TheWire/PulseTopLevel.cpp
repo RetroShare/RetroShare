@@ -48,7 +48,7 @@ void PulseTopLevel::setup()
 {
 	connect(toolButton_viewGroup, SIGNAL(clicked()), this, SLOT(actionViewGroup()));
 	connect(toolButton_viewParent, SIGNAL(clicked()), this, SLOT(actionViewParent()));
-	connect(toolButton_follow, SIGNAL(clicked()), this, SLOT(actionFollow()));
+	connect(followButton, SIGNAL(clicked()), this, SLOT(actionFollow()));
 	connect(toolButton_followParent, SIGNAL(clicked()), this, SLOT(actionFollowParent()));
 	// connect(toolButton_rate, SIGNAL(clicked()), this, SLOT(rate()));
 
@@ -58,7 +58,7 @@ void PulseTopLevel::setup()
 	connect(toolButton_view, SIGNAL(clicked()), this, SLOT(actionViewPulse()));
 }
 
-void PulseTopLevel::setRefMessage(QString msg, uint32_t image_count)
+void PulseTopLevel::setRefMessage(QString /*msg*/, uint32_t /*image_count*/)
 {
 	// This should never happen.
 	//widget_message->setRefMessage(msg, image_count);
@@ -149,7 +149,7 @@ void PulseTopLevel::setReferenceString(QString ref)
 	}
 }
 	
-void PulseTopLevel::mousePressEvent(QMouseEvent *event)
+void PulseTopLevel::mousePressEvent(QMouseEvent */*event*/)
 {
 }
 

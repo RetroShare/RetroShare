@@ -78,8 +78,8 @@ protected slots:
     virtual QLabel      *notes() =0;
     virtual QLabel      *pictureLabel()=0;
     virtual QToolButton *readButton() =0;
-    virtual QPushButton *shareButton() =0;
-    virtual QFrame      *mainFrame() =0;
+    virtual QToolButton *shareButton() =0;
+    virtual QFrame      *feedFrame() =0;
 
     void loadComments(bool e);
     void readToggled();
@@ -126,8 +126,8 @@ public:
     QLabel      *notes()          override;
     QLabel      *pictureLabel()   override;
     QToolButton *readButton()     override;
-    QPushButton *shareButton()    override;
-    QFrame      *mainFrame()      override;
+    QToolButton *shareButton()    override;
+    QFrame      *feedFrame()      override;
 
 public slots:
     void viewPicture() ;
@@ -164,9 +164,9 @@ public:
     QLabel      *scoreLabel()     override;
     QLabel      *notes()          override;
     QToolButton *readButton()     override;
-    QPushButton *shareButton()    override;
+    QToolButton *shareButton()    override;
     QLabel      *pictureLabel()   override;
-    QFrame      *mainFrame()      override;
+    QFrame      *feedFrame()      override;
 
 protected slots:
     /* GxsGroupFeedItem */

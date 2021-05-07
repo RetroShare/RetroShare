@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>658</width>
-    <height>419</height>
+    <width>666</width>
+    <height>522</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -47,14 +47,14 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="gradFrame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="frame_GL">
+     <layout class="QGridLayout" name="gradFrame_GL">
       <item row="1" column="0">
        <layout class="QGridLayout" name="buttons_GL">
         <item row="0" column="0">

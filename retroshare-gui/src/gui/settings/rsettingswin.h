@@ -30,7 +30,7 @@
 
 class FloatingHelpBrowser;
 
-#define IMAGE_PREFERENCES       ":/icons/png/options.png"
+#define PREF_IMAGE_PREFERENCES       ":/icons/png/options.png"
 
 class SettingsPage: public MainPage
 {
@@ -46,7 +46,7 @@ public:
 
 	void postModDirectories(bool update_local);
 
-    virtual QIcon iconPixmap() const { return FilesDefs::getIconFromQtResourcePath(IMAGE_PREFERENCES) ; } //MainPage
+    virtual QIcon iconPixmap() const { return FilesDefs::getIconFromQtResourcePath(PREF_IMAGE_PREFERENCES) ; } //MainPage
 	virtual QString pageName() const { return tr("Preferences") ; } //MainPage
 
 protected:

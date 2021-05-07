@@ -221,9 +221,9 @@ void GxsChannelPostItem::setup()
 	//ui->subjectLabel->setMinimumWidth(100);
     //ui->warning_label->setMinimumWidth(100);
 
-	ui->mainFrame->setProperty("new", false);
-	ui->mainFrame->style()->unpolish(ui->mainFrame);
-	ui->mainFrame->style()->polish(  ui->mainFrame);
+	ui->feedFrame->setProperty("new", false);
+	ui->feedFrame->style()->unpolish(ui->feedFrame);
+	ui->feedFrame->style()->polish(  ui->feedFrame);
 
 	ui->expandFrame->hide();
 }
@@ -647,9 +647,9 @@ void GxsChannelPostItem::setReadStatus(bool isNew, bool isUnread)
 
 	ui->newLabel->setVisible(isNew);
 
-	ui->mainFrame->setProperty("new", isNew);
-	ui->mainFrame->style()->unpolish(ui->mainFrame);
-	ui->mainFrame->style()->polish(  ui->mainFrame);
+	ui->feedFrame->setProperty("new", isNew);
+	ui->feedFrame->style()->unpolish(ui->feedFrame);
+	ui->feedFrame->style()->polish(  ui->feedFrame);
 }
 
 // void GxsChannelPostItem::setFileCleanUpWarning(uint32_t time_left)

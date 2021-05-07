@@ -43,6 +43,7 @@ class NetworkDialog : public RsAutoUpdatePage
   Q_PROPERTY(QColor backgroundColorAcceptConnection READ backgroundColorAcceptConnection WRITE setBackgroundColorAcceptConnection)
   Q_PROPERTY(QColor backgroundColorHasSignedMe READ backgroundColorHasSignedMe WRITE setBackgroundColorHasSignedMe)
   Q_PROPERTY(QColor backgroundColorDenied READ backgroundColorDenied WRITE setBackgroundColorDenied)
+  Q_PROPERTY(QColor textColor READ textColor WRITE setTextColor)
 
 public:
   /** Default Constructor */
@@ -55,12 +56,14 @@ public:
   QColor backgroundColorAcceptConnection() const { return mBackgroundColorAcceptConnection; }
   QColor backgroundColorHasSignedMe() const { return mBackgroundColorHasSignedMe; }
   QColor backgroundColorDenied() const { return mBackgroundColorDenied; }
+  QColor textColor() const { return mTextColor; }
 
   void setBackgroundColorSelf(QColor color) { PGPIdItemModel->setBackgroundColorSelf(color); mBackgroundColorSelf = color; }
   void setBackgroundColorOwnSign(QColor color) { PGPIdItemModel->setBackgroundColorOwnSign(color); mBackgroundColorOwnSign = color; }
   void setBackgroundColorAcceptConnection(QColor color) { PGPIdItemModel->setBackgroundColorAcceptConnection(color); mBackgroundColorAcceptConnection = color; }
   void setBackgroundColorHasSignedMe(QColor color) { PGPIdItemModel->setBackgroundColorHasSignedMe(color); mBackgroundColorHasSignedMe = color; }
   void setBackgroundColorDenied(QColor color) { PGPIdItemModel->setBackgroundColorDenied(color); mBackgroundColorDenied = color; }
+  void setTextColor(QColor color) { PGPIdItemModel->setTextColor(color); mTextColor = color; }
 
 protected:
   void changeEvent(QEvent *e);
@@ -89,12 +92,13 @@ private:
 
   void removeKeys(std::set<RsPgpId> selected) ;
 
-  /* Color definitions (for standard see qss.default) */
+  /* Color definitions (for standard see default.qss) */
   QColor mBackgroundColorSelf;
   QColor mBackgroundColorOwnSign;
   QColor mBackgroundColorAcceptConnection;
   QColor mBackgroundColorHasSignedMe;
   QColor mBackgroundColorDenied;
+  QColor mTextColor;
 
   RSTreeWidgetItemCompareRole *compareNetworkRole ;
 

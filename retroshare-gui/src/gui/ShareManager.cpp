@@ -66,7 +66,7 @@ ShareManager::ShareManager()
     Settings->loadWidgetInformation(this);
 
     connect(ui.addButton, SIGNAL(clicked( bool ) ), this , SLOT( addShare() ) );
-    connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(applyAndClose()));
+    connect(ui.applyButton, SIGNAL(clicked()), this, SLOT(applyAndClose()));
     connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(cancel()));
 
     connect(ui.shareddirList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(shareddirListCustomPopupMenu(QPoint)));

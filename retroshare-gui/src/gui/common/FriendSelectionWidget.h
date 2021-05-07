@@ -162,7 +162,7 @@ private:
 	QAction *mActionSortByState;
 	QAction *mActionFilterConnected;
 
-	/* Color definitions (for standard see qss.default) */
+	/* Color definitions (for standard see default.qss) */
 	QColor mTextColorOnline;
 
 	Ui::FriendSelectionWidget *ui;

@@ -97,7 +97,13 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="sortBox">
+      <widget class="RSComboBox" name="sortBox">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
        <property name="toolTip">
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol'; font-size:14px; color:#24292e; background-color:#ffffff;&quot;&gt;sort by&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
@@ -175,14 +181,19 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>GxsCommentTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>gui/gxs/GxsCommentTreeWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>GxsIdChooser</class>
    <extends>QComboBox</extends>
    <header>gui/gxs/GxsIdChooser.h</header>
   </customwidget>
   <customwidget>
-   <class>GxsCommentTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>gui/gxs/GxsCommentTreeWidget.h</header>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
   </customwidget>
  </customwidgets>
  <resources>

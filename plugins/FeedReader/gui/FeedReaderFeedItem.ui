@@ -10,7 +10,7 @@
     <height>123</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="gridLayout_4">
+  <layout class="QGridLayout" name="FeedReaderFeedItem_GL">
    <property name="leftMargin">
     <number>1</number>
    </property>
@@ -30,7 +30,7 @@
     <number>1</number>
    </property>
    <item row="0" column="0">
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="feedFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -46,9 +46,9 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
+     <layout class="QVBoxLayout" name="feedFrame_VL">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <layout class="QHBoxLayout" name="Top_HL">
         <item>
          <widget class="QLabel" name="logoLabel">
           <property name="maximumSize">
@@ -66,9 +66,9 @@
          </widget>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
+         <layout class="QVBoxLayout" name="TopRight_VL">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <layout class="QHBoxLayout" name="title_HL">
             <item>
              <widget class="QLabel" name="feedIconLabel">
               <property name="minimumSize">
@@ -92,7 +92,7 @@
              </widget>
             </item>
             <item>
-             <widget class="StyledLabel" name="titleLabel">
+             <widget class="QLabel" name="titleLabel">
               <property name="sizePolicy">
                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                 <horstretch>0</horstretch>
@@ -101,7 +101,9 @@
               </property>
               <property name="font">
                <font>
+                <pointsize>11</pointsize>
                 <weight>75</weight>
+                <italic>true</italic>
                 <bold>true</bold>
                </font>
               </property>
@@ -127,7 +129,7 @@
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <layout class="QHBoxLayout" name="msgTitle_HL">
             <property name="spacing">
              <number>8</number>
             </property>
@@ -195,7 +197,7 @@ p, li { white-space: pre-wrap; }
                <string>Expand</string>
               </property>
               <property name="icon">
-               <iconset resource="../../../retroshare-gui/src/gui/icons.qrc">
+               <iconset>
                 <normaloff>:/icons/png/down-arrow.png</normaloff>:/icons/png/down-arrow.png</iconset>
               </property>
              </widget>
@@ -221,7 +223,7 @@ p, li { white-space: pre-wrap; }
                <string>Set as read and remove item</string>
               </property>
               <property name="icon">
-               <iconset resource="../../../retroshare-gui/src/gui/icons.qrc">
+               <iconset>
                 <normaloff>:/icons/png/correct.png</normaloff>:/icons/png/correct.png</iconset>
               </property>
              </widget>
@@ -247,7 +249,7 @@ p, li { white-space: pre-wrap; }
                <string>Remove Item</string>
               </property>
               <property name="icon">
-               <iconset resource="../../../retroshare-gui/src/gui/icons.qrc">
+               <iconset>
                 <normaloff>:/icons/png/exit2.png</normaloff>:/icons/png/exit2.png</iconset>
               </property>
              </widget>
@@ -260,7 +262,7 @@ p, li { white-space: pre-wrap; }
       </item>
       <item>
        <widget class="QFrame" name="expandFrame">
-        <layout class="QVBoxLayout">
+        <layout class="QVBoxLayout" name="expandFrame_VL">
          <property name="leftMargin">
           <number>0</number>
          </property>
@@ -287,7 +289,7 @@ p, li { white-space: pre-wrap; }
            <property name="frameShadow">
             <enum>QFrame::Sunken</enum>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout">
+           <layout class="QVBoxLayout" name="msgFrame_VL">
             <property name="leftMargin">
              <number>5</number>
             </property>
@@ -336,16 +338,8 @@ p, li { white-space: pre-wrap; }
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="FeedReader_images.qrc"/>
-  <include location="../../../retroshare-gui/src/gui/icons.qrc"/>
  </resources>
  <connections/>
 </ui>

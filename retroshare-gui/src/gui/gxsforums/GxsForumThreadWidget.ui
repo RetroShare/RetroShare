@@ -74,6 +74,13 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string notr="true">Subscribe</string>
             </property>
@@ -84,6 +91,12 @@
           </item>
           <item>
            <widget class="QToolButton" name="newthreadButton">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="focusPolicy">
              <enum>Qt::NoFocus</enum>
             </property>
@@ -112,18 +125,28 @@
            </widget>
           </item>
           <item>
-           <widget class="StyledElidedLabel" name="forumName">
+           <widget class="ElidedLabel" name="forumName">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="toolTip">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click here to clear current selected thread and display more information about this forum.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
              <string>Forum Name</string>
+            </property>
+            <property name="margin">
+             <number>2</number>
             </property>
            </widget>
           </item>
@@ -173,7 +196,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="viewBox">
+           <widget class="RSComboBox" name="viewBox">
             <item>
              <property name="text">
               <string>Lastest post in thread</string>
@@ -405,7 +428,7 @@
           </widget>
          </item>
          <item row="0" column="8">
-          <widget class="QComboBox" name="versions_CB"/>
+          <widget class="RSComboBox" name="versions_CB"/>
          </item>
          <item row="0" column="9">
           <widget class="Line" name="lineRight">
@@ -521,24 +544,10 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>RSTextBrowser</class>
-   <extends>QTextBrowser</extends>
-   <header>gui/common/RSTextBrowser.h</header>
-  </customwidget>
-  <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
-  </customwidget>
-  <customwidget>
-   <class>StyledElidedLabel</class>
+   <class>ElidedLabel</class>
    <extends>QLabel</extends>
-   <header>gui/common/StyledElidedLabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>SubscribeToolButton</class>
-   <extends>QToolButton</extends>
-   <header>gui/common/SubscribeToolButton.h</header>
+   <header>gui/common/ElidedLabel.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>GxsIdLabel</class>
@@ -546,15 +555,35 @@
    <header>gui/gxs/GxsIdLabel.h</header>
   </customwidget>
   <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header>gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
    <class>RSImageBlockWidget</class>
    <extends>QWidget</extends>
    <header>gui/common/RSImageBlockWidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>RSTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>gui/common/RSTextBrowser.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SubscribeToolButton</class>
+   <extends>QToolButton</extends>
+   <header>gui/common/SubscribeToolButton.h</header>
+  </customwidget>
  </customwidgets>
  <resources>
-  <include location="../icons.qrc"/>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

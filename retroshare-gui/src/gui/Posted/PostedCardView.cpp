@@ -104,12 +104,12 @@ void PostedCardView::setReadStatus(bool isNew, bool isUnread)
 
 	ui->newLabel->setVisible(isNew);
 
-	ui->mainFrame->setProperty("new", isNew);
-	ui->mainFrame->style()->unpolish(ui->mainFrame);
-	ui->mainFrame->style()->polish(  ui->mainFrame);
+	ui->feedFrame->setProperty("new", isNew);
+	ui->feedFrame->style()->unpolish(ui->feedFrame);
+	ui->feedFrame->style()->polish(  ui->feedFrame);
 }
 
-void PostedCardView::setComment(const RsGxsComment& cmt) {}
+void PostedCardView::setComment(const RsGxsComment& /*cmt*/) {}
 
 PostedCardView::~PostedCardView()
 {
@@ -192,11 +192,11 @@ void PostedCardView::fill()
 		ui->dateLabel->setText(timestamp);
 	} else {
 
-		QPixmap sqpixmap2 = FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default.png");
+		//QPixmap sqpixmap2 = FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default.png");
 
 		mInFill = true;
-		int desired_height = 1.5*(ui->voteDownButton->height() + ui->voteUpButton->height() + ui->scoreLabel->height());
-		int desired_width =  sqpixmap2.width()*desired_height/(float)sqpixmap2.height();
+		//int desired_height = 1.5*(ui->voteDownButton->height() + ui->voteUpButton->height() + ui->scoreLabel->height());
+		//int desired_width =  sqpixmap2.width()*desired_height/(float)sqpixmap2.height();
 
 		QDateTime qtime;
 		qtime.setTime_t(mPost.mMeta.mPublishTs);
@@ -211,7 +211,6 @@ void PostedCardView::fill()
 		// The only combination that seems to work: load as EncodedUrl, extract toEncoded().
 		QByteArray urlarray(mPost.mLink.c_str());
 		QUrl url = QUrl::fromEncoded(urlarray.trimmed());
-		QString urlstr = "Invalid Link";
 		QString sitestr = "Invalid Link";
 
 		bool urlOkay = url.isValid();
@@ -230,7 +229,7 @@ void PostedCardView::fill()
 		
 		if (urlOkay)
 		{
-			urlstr =  QString("<a href=\"");
+			QString urlstr =  QString("<a href=\"");
 			urlstr += QString(url.toEncoded());
 			urlstr += QString("\" ><span style=\" text-decoration: underline; color:#2255AA;\"> ");
 			urlstr += messageName();
@@ -259,7 +258,6 @@ void PostedCardView::fill()
 			GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
 			// Wiping data - as its been passed to thumbnail.
 			
-			QPixmap scaledpixmap;
 			if(pixmap.width() > 800){
 				QPixmap scaledpixmap = pixmap.scaledToWidth(800, Qt::SmoothTransformation);
 				ui->pictureLabel->setPixmap(scaledpixmap);
@@ -267,14 +265,14 @@ void PostedCardView::fill()
 				ui->pictureLabel->setPixmap(pixmap);
 			}
 		}
-		else if (mPost.mImage.mData == NULL)
+		else //if (mPost.mImage.mData == NULL)
 		{
 			ui->picture_frame->hide();
 		}
-		else
-		{
-			ui->picture_frame->show();
-		}
+		//else
+		//{
+		//	ui->picture_frame->show();
+		//}
 	}
 
 	//QString score = "Hot" + QString::number(post.mHotScore);

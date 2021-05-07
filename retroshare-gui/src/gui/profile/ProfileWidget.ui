@@ -16,17 +16,35 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <layout class="QGridLayout" name="gridLayout_7">
-   <property name="verticalSpacing">
+  <layout class="QGridLayout" name="ProfileWidget_GL">
+   <property name="leftMargin">
     <number>0</number>
    </property>
-   <property name="margin">
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <property name="verticalSpacing">
     <number>0</number>
    </property>
    <item row="0" column="0">
     <widget class="QFrame" name="toolBarFrame">
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <property name="margin">
+     <layout class="QHBoxLayout" name="toolBarFrame_HL">
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
        <number>2</number>
       </property>
       <item>
@@ -41,7 +59,7 @@
          <string>Edit status message</string>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
+         <iconset>
           <normaloff>:/images/edit_16.png</normaloff>:/images/edit_16.png</iconset>
         </property>
         <property name="toolButtonStyle">
@@ -61,7 +79,7 @@
          <string>Copy Certificate</string>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
+         <iconset>
           <normaloff>:/images/view-certificate-copy-32.png</normaloff>:/images/view-certificate-copy-32.png</iconset>
         </property>
         <property name="toolButtonStyle">
@@ -81,7 +99,7 @@
          <string>Profile Manager</string>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
+         <iconset>
           <normaloff>:/images/contact_new.png</normaloff>:/images/contact_new.png</iconset>
         </property>
         <property name="iconSize">
@@ -99,7 +117,7 @@
        </widget>
       </item>
       <item>
-       <spacer name="horizontalSpacer">
+       <spacer name="toolBarFrame_HSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -128,18 +146,18 @@
         <height>569</height>
        </rect>
       </property>
-      <layout class="QGridLayout" name="gridLayout_5">
+      <layout class="QGridLayout" name="scrollAreaWidgetContents_GL">
        <item row="0" column="0">
-        <widget class="QFrame" name="frame_1">
+        <widget class="QFrame" name="plainBFrame_Public">
          <property name="frameShape">
           <enum>QFrame::Box</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
          </property>
-         <layout class="QGridLayout" name="gridLayout_4">
+         <layout class="QGridLayout" name="plainBFrame_Public_GL">
           <item row="0" column="0" colspan="3">
-           <layout class="QGridLayout" name="gridLayout_3">
+           <layout class="QGridLayout" name="public_GL">
             <item row="0" column="0">
              <widget class="QLabel" name="publicIcon">
               <property name="maximumSize">
@@ -154,9 +172,10 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="StyledLabel" name="publicLabel">
+             <widget class="QLabel" name="publicLabel">
               <property name="font">
                <font>
+                <pointsize>12</pointsize>
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
@@ -169,7 +188,7 @@
            </layout>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label_10">
+           <widget class="QLabel" name="nameText">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -207,7 +226,7 @@
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="label_8">
+           <widget class="QLabel" name="countryText">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -245,7 +264,7 @@
            </widget>
           </item>
           <item row="3" column="0">
-           <widget class="QLabel" name="label_6">
+           <widget class="QLabel" name="peerIdText">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -264,7 +283,7 @@
            </widget>
           </item>
           <item row="3" column="1" colspan="2">
-           <widget class="QLabel" name="peerid">
+           <widget class="QLabel" name="peerId">
             <property name="sizePolicy">
              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -286,16 +305,16 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QFrame" name="frame_2">
+        <widget class="QFrame" name="plainBFrame_Other">
          <property name="frameShape">
           <enum>QFrame::Box</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
          </property>
-         <layout class="QGridLayout" name="gridLayout_6" columnstretch="0,0,0" columnminimumwidth="0,0,0">
+         <layout class="QGridLayout" name="plainBFrame_Other_GL" columnstretch="0,0,0" columnminimumwidth="0,0,0">
           <item row="2" column="0">
-           <widget class="QLabel" name="label_9">
+           <widget class="QLabel" name="friendText">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -333,7 +352,7 @@
            </widget>
           </item>
           <item row="3" column="0">
-           <widget class="QLabel" name="label_3">
+           <widget class="QLabel" name="versionText">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -352,7 +371,7 @@
            </widget>
           </item>
           <item row="4" column="0">
-           <widget class="QLabel" name="label_16">
+           <widget class="QLabel" name="onLineSinceText">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -390,7 +409,7 @@
            </widget>
           </item>
           <item row="4" column="1" colspan="2">
-           <widget class="QLabel" name="onlinesince">
+           <widget class="QLabel" name="onLineSince">
             <property name="sizePolicy">
              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -409,7 +428,7 @@
            </widget>
           </item>
           <item row="1" column="0" colspan="3">
-           <layout class="QGridLayout" name="gridLayout">
+           <layout class="QGridLayout" name="other_GL">
             <item row="0" column="0">
              <widget class="QLabel" name="otherIcon">
               <property name="maximumSize">
@@ -427,9 +446,10 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="StyledLabel" name="otherLabel">
+             <widget class="QLabel" name="otherLabel">
               <property name="font">
                <font>
+                <pointsize>12</pointsize>
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
@@ -445,16 +465,16 @@
         </widget>
        </item>
        <item row="12" column="0">
-        <widget class="QFrame" name="frame_3">
+        <widget class="QFrame" name="plainBFrame_MyAdd">
          <property name="frameShape">
           <enum>QFrame::Box</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
          </property>
-         <layout class="QGridLayout" name="gridLayout_2">
+         <layout class="QGridLayout" name="plainBFrame_MyAdd_GL">
           <item row="0" column="0" colspan="4">
-           <layout class="QGridLayout" name="gridLayout_8">
+           <layout class="QGridLayout" name="my_GL">
             <item row="0" column="0">
              <widget class="QLabel" name="myIcon">
               <property name="maximumSize">
@@ -472,9 +492,10 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="StyledLabel" name="myLabel">
+             <widget class="QLabel" name="myLabel">
               <property name="font">
                <font>
+                <pointsize>12</pointsize>
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
@@ -487,7 +508,7 @@
            </layout>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label_14">
+           <widget class="QLabel" name="localText">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -547,7 +568,7 @@
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="label_2">
+           <widget class="QLabel" name="extText">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -566,7 +587,7 @@
            </widget>
           </item>
           <item row="1" column="3">
-           <spacer name="horizontalSpacer_4">
+           <spacer name="local_HSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -620,7 +641,7 @@
            </widget>
           </item>
           <item row="2" column="3">
-           <spacer name="horizontalSpacer_7">
+           <spacer name="ext_HSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -633,7 +654,7 @@
            </spacer>
           </item>
           <item row="3" column="3">
-           <spacer name="horizontalSpacer_9">
+           <spacer name="dyndns_HSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -646,7 +667,7 @@
            </spacer>
           </item>
           <item row="3" column="0">
-           <widget class="QLabel" name="label_11">
+           <widget class="QLabel" name="dyndnsText">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -675,7 +696,7 @@
            </widget>
           </item>
           <item row="4" column="0">
-           <widget class="QLabel" name="label_7">
+           <widget class="QLabel" name="ipAddressListText">
             <property name="minimumSize">
              <size>
               <width>100</width>
@@ -722,13 +743,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="../images.qrc"/>
  </resources>

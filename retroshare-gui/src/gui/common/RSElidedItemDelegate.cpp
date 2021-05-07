@@ -20,7 +20,7 @@
 
 #include "RSElidedItemDelegate.h"
 
-#include "gui/common/StyledElidedLabel.h"
+#include "gui/common/ElidedLabel.h"
 #include "util/rsdebug.h"
 
 #include <QAbstractItemView>
@@ -385,7 +385,7 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 		const int textVMargin = ownStyle->pixelMetric(QStyle::PM_FocusFrameVMargin, nullptr, widget) + 1;
 		textRect = textRect.adjusted(textHMargin, textVMargin, -textHMargin, -textVMargin); // remove width padding
 
-		StyledElidedLabel::paintElidedLine(painter,ownOption.text,textRect,ownOption.font,ownOption.displayAlignment,to.wrapMode(),mPaintRoundedRect);
+		ElidedLabel::paintElidedLine(painter,ownOption.text,textRect,ownOption.font,ownOption.displayAlignment,to.wrapMode(),mPaintRoundedRect);
 	}
 	painter->restore();
 #ifdef DEBUG_EID_PAINT
@@ -436,7 +436,7 @@ bool RSElidedItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 
 						//Update RSElidedItemDelegate as only one delegate for all items
 						QRect rectElision;
-						bool elided = StyledElidedLabel::paintElidedLine(nullptr,text,textRect,ownOption.font,ownOption.displayAlignment,to.wrapMode(),true,&rectElision);
+						bool elided = ElidedLabel::paintElidedLine(nullptr,text,textRect,ownOption.font,ownOption.displayAlignment,to.wrapMode(),true,&rectElision);
 						if (elided && (rectElision.contains(ev->pos()))){
 							QToolTip::showText(ev->globalPos(),QString("<FONT>") + text + QString("</FONT>"));
 							return true; // eat event

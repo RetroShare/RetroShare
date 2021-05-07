@@ -103,10 +103,10 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 		  ui.hiddenpage_proxyPort_i2p->hide() ;
 		  ui.label_i2p_outgoing->hide() ;
 		  ui.iconlabel_i2p_outgoing->hide() ;
-		  ui.plainTextEdit->hide() ;
+		  ui.info_SocksProxy->hide() ;
 		  ui.hiddenpage_configuration->hide() ;
 		  ui.l_hiddenpage_configuration->hide() ;
-		  ui.hiddenpageInHelpPlainTextEdit->hide() ;
+		  ui.info_HiddenPageInHelp->hide() ;
 
           ui.hiddenpage_outHeader->setText(tr("Tor has been automatically configured by Retroshare. You shouldn't need to change anything here.")) ;
 		  ui.hiddenpage_inHeader->setText(tr("Tor has been automatically configured by Retroshare. You shouldn't need to change anything here.")) ;
@@ -1098,7 +1098,7 @@ void ServerPage::loadHiddenNode()
     ui.iconlabel_upnp->hide();
     ui.label_nat->hide();
 
-	ui.label_warningBandwidth->hide();
+	ui.info_warningBandwidth->hide();
 	ui.iconlabel_netLimited->hide();
 	ui.textlabel_netLimited->hide();
 	ui.iconlabel_ext->hide();
@@ -1798,7 +1798,7 @@ void ServerPage::updateStatusBob()
         break;
 
     }
-    ui.pteBobSimple->setPlainText(bobSimpleText);
+    ui.info_BobSimple->setPlainText(bobSimpleText);
 
     // disable elements when BOB is not accessible
     if (!mBobAccessible) {

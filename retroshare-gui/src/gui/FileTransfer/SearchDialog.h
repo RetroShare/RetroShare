@@ -159,7 +159,7 @@ private:
     QAbstractItemDelegate *mAgeColumnDelegate;
     QAbstractItemDelegate *mSizeColumnDelegate;
 
-	/* Color definitions (for standard see qss.default) */
+	/* Color definitions (for standard see default.qss) */
 	QColor mTextColorLocal;
 	QColor mTextColorDownloading;
 	QColor mTextColorNoSources;

@@ -18,20 +18,13 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <QCheckBox>
-#include <QDir>
-#include <QFileInfo>
-#include <QGroupBox>
-#include <QStatusBar>
-#include <QStyleFactory>
-
-#include "lang/languagesupport.h"
-#include <rshare.h>
 #include "AppearancePage.h"
-#include "rsharesettings.h"
-#include "util/misc.h"
+
+#include "rshare.h"
 #include "gui/MainWindow.h"
 #include "gui/notifyqt.h"
+#include "gui/common/FilesDefs.h"
+#include "gui/settings/rsharesettings.h"
 #include "gui/statusbar/peerstatus.h"
 #include "gui/statusbar/natstatus.h"
 #include "gui/statusbar/dhtstatus.h"
@@ -42,7 +35,18 @@
 #include "gui/statusbar/SoundStatus.h"
 #include "gui/statusbar/ToasterDisable.h"
 #include "gui/statusbar/SysTrayStatus.h"
-#include "gui/common/FilesDefs.h"
+#include "lang/languagesupport.h"
+#include "util/misc.h"
+
+#include <QAbstractItemView>
+#include <QComboBox>
+#include <QCheckBox>
+#include <QDir>
+#include <QFileInfo>
+#include <QGroupBox>
+#include <QStatusBar>
+#include <QStyledItemDelegate>
+#include <QStyleFactory>
 
 /** Constructor */
 AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
@@ -70,14 +74,11 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 
 	/* Populate combo boxes */
 	foreach (QString code, LanguageSupport::languageCodes()) {
-        ui.cmboLanguage->addItem(FilesDefs::getIconFromQtResourcePath(":/images/flags/" + code + ".png"), LanguageSupport::languageName(code), code);
+		ui.cmboLanguage->addItem(FilesDefs::getIconFromQtResourcePath(":/images/flags/" + code + ".png"), LanguageSupport::languageName(code), code);
 	}
 	foreach (QString style, QStyleFactory::keys()) {
 		ui.cmboStyle->addItem(style, style.toLower());
 	}
-
-	// add empty entry representing "no style sheet"
-	ui.cmboStyleSheet->addItem("", "");
 
 	QMap<QString, QString> styleSheets;
 	Rshare::getAvailableStyleSheets(styleSheets);

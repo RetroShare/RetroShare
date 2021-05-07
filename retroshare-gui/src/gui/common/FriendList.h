@@ -125,7 +125,7 @@ private:
     std::set<RsNodeGroupId> openGroups;
     std::set<RsPgpId>   openPeers;
 
-    /* Color definitions (for standard see qss.default) */
+    /* Color definitions (for standard see default.qss) */
     QColor mTextColorGroup;
     QColor mTextColorStatus[RS_STATUS_COUNT];
 

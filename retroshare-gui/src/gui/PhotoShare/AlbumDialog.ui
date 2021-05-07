@@ -138,14 +138,14 @@
     </layout>
    </item>
    <item row="2" column="0" colspan="2">
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="plainFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>1</verstretch>
       </sizepolicy>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="plainFrame_GL">
       <property name="topMargin">
        <number>0</number>
       </property>
@@ -185,8 +185,8 @@ p, li { white-space: pre-wrap; }
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>757</width>
-           <height>395</height>
+           <width>741</width>
+           <height>316</height>
           </rect>
          </property>
          <property name="sizePolicy">

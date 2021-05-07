@@ -88,7 +88,7 @@ PopupChatWindow::PopupChatWindow(bool tabbed, QWidget *parent, Qt::WindowFlags f
 //    ui.actionSetOnTop->setVisible(false);// removed, because the window manager should handle this already.
 //    ui.actionColor->setVisible(false);// moved to the context menu
 
-	ui.chattoolBar->hide();	// no widgets left!
+	ui.headerToolBar->hide();	// no widgets left!
 
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
@@ -440,7 +440,7 @@ void PopupChatWindow::calculateStyle(ChatDialog *dialog)
 		}
 	}
 
-	ui.chattoolBar->setStyleSheet(toolSheet);
+	ui.headerToolBar->setStyleSheet(toolSheet);
 	ui.chatstatusbar->setStyleSheet(statusSheet);
 	ui.chatcentralwidget->setStyleSheet(widgetSheet);
 }

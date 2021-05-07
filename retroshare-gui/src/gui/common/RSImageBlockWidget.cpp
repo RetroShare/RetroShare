@@ -31,7 +31,7 @@ RSImageBlockWidget::RSImageBlockWidget(QWidget *parent) :
 	ui->setupUi(this);
 	mDefaultRect = this->geometry();
 
-	ui->infoFrame->installEventFilter(this);
+	ui->info_Frame->installEventFilter(this);
 
 	mTimer = new RsProtectedTimer(this);
 	mTimer->setSingleShot(true);

@@ -211,9 +211,10 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="StyledLabel" name="publicLabel">
+             <widget class="QLabel" name="publicLabel">
               <property name="font">
                <font>
+                <pointsize>12</pointsize>
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
@@ -302,9 +303,10 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="StyledLabel" name="otherLabel">
+             <widget class="QLabel" name="otherLabel">
               <property name="font">
                <font>
+                <pointsize>12</pointsize>
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
@@ -396,9 +398,10 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="StyledLabel" name="otherLabel_2">
+             <widget class="QLabel" name="otherLabel_2">
               <property name="font">
                <font>
+                <pointsize>12</pointsize>
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
@@ -638,13 +641,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="../images.qrc"/>
  </resources>

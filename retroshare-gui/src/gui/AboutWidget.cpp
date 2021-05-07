@@ -52,8 +52,8 @@ AboutWidget::AboutWidget(QWidget* parent)
     l->setMargin(0);
     l->addStretch(1);
     l->addStretch(1);
-    frame->setContentsMargins(0, 0, 0, 0);
-    frame->setLayout(l);
+    specialFrame->setContentsMargins(0, 0, 0, 0);
+    specialFrame->setLayout(l);
     tWidget = NULL;
     aWidget = NULL;
     installAWidget();
@@ -67,7 +67,7 @@ AboutWidget::AboutWidget(QWidget* parent)
 void AboutWidget::installAWidget() {
     assert(tWidget == NULL);
     aWidget = new AWidget();
-    QVBoxLayout* l = (QVBoxLayout*)frame->layout();
+    QVBoxLayout* l = (QVBoxLayout*)specialFrame->layout();
     l->insertWidget(0, aWidget);
     l->setStretchFactor(aWidget, 100);
     aWidget->setFocus();
@@ -96,10 +96,10 @@ void AboutWidget::installTWidget() {
     vl->addWidget(levelLabel);
     vl->addStretch();
 
-    QHBoxLayout* l = (QHBoxLayout*)frame->layout();
+    QHBoxLayout* l = (QHBoxLayout*)specialFrame->layout();
     l->insertWidget(0, pan);
     l->insertWidget(0, tWidget);
-    QRect cRect = frame->contentsRect();
+    QRect cRect = specialFrame->contentsRect();
     int height = tWidget->heightForWidth(cRect.width());
     tWidget->setFixedSize(cRect.width() * cRect.height() / height, cRect.height());
     npLabel->setFixedSize(tWidget->squareWidth()*4, tWidget->squareHeight()*5);
@@ -117,7 +117,7 @@ void AboutWidget::installTWidget() {
 
 void AboutWidget::switchPages() {
     QLayoutItem* li = NULL;
-    QLayout* l = frame->layout();
+    QLayout* l = specialFrame->layout();
     while ((li = l->takeAt(0)) && li->widget()) {
         li->widget()->deleteLater();
     }
@@ -158,9 +158,9 @@ void AboutWidget::updateTitle()
 void AboutWidget::mousePressEvent(QMouseEvent *e)
 {
     QPoint globalPos = mapToGlobal(e->pos());
-    QPoint framePos = frame->mapFromGlobal(globalPos);
+    QPoint framePos = specialFrame->mapFromGlobal(globalPos);
 
-    if (frame->contentsRect().contains(framePos)) {
+    if (specialFrame->contentsRect().contains(framePos)) {
 		{
     	if(e->modifiers() & Qt::ControlModifier)
 			switchPages();

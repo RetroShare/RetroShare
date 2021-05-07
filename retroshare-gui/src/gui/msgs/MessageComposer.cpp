@@ -136,8 +136,8 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
 
     m_completer = NULL;
     
-    ui.distantFrame->hide();
-    ui.sizeLimitFrame->hide();
+    ui.info_Frame_Distant->hide();
+    ui.info_Frame_SizeLimit->hide();
     ui.respond_to_CB->hide();
     ui.fromLabel->hide();
 
@@ -148,7 +148,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     ui.hashBox->hide();
 
     // connect up the buttons.
-    connect( ui.actionSend, SIGNAL( triggered (bool)), this, SLOT( sendMessage( ) ) );
+    connect( ui.actionSend, SIGNAL( triggered(bool)), this, SLOT( sendMessage() ) );
     //connect( ui.actionReply, SIGNAL( triggered (bool)), this, SLOT( replyMessage( ) ) );
     connect(ui.boldbtn, SIGNAL(clicked()), this, SLOT(textBold()));
     connect(ui.underlinebtn, SIGNAL(clicked()), this, SLOT(textUnderline()));
@@ -162,16 +162,16 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     connect(ui.actionContactsView, SIGNAL(triggered()), this, SLOT(toggleContacts()));
     connect(ui.actionSaveas, SIGNAL(triggered()), this, SLOT(saveasDraft()));
     connect(ui.actionAttach, SIGNAL(triggered()), this, SLOT(attachFile()));
-    connect(ui.titleEdit, SIGNAL(textChanged(const QString &)), this, SLOT(titleChanged()));
+    connect(ui.titleEdit, SIGNAL(textChanged(QString)), this, SLOT(titleChanged()));
 
     connect(ui.sizeincreaseButton, SIGNAL (clicked()), this, SLOT (fontSizeIncrease()));
     connect(ui.sizedecreaseButton, SIGNAL (clicked()), this, SLOT (fontSizeDecrease()));
     connect(ui.actionQuote, SIGNAL(triggered()), this, SLOT(blockQuote()));
     connect(ui.codeButton, SIGNAL (clicked()), this, SLOT (toggleCode()));
 
-    connect(ui.msgText, SIGNAL( checkSpellingChanged( bool ) ), this, SLOT( spellChecking( bool ) ) );
+    connect(ui.msgText, SIGNAL( checkSpellingChanged(bool) ), this, SLOT( spellChecking(bool) ) );
 
-    connect(ui.msgText, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)), this, SLOT(currentCharFormatChanged(const QTextCharFormat &)));
+    connect(ui.msgText, SIGNAL(currentCharFormatChanged(QTextCharFormat)), this, SLOT(currentCharFormatChanged(QTextCharFormat)));
     connect(ui.msgText, SIGNAL(cursorPositionChanged()), this, SLOT(cursorPositionChanged()));
 
     connect(ui.msgText->document(), SIGNAL(modificationChanged(bool)), actionSave, SLOT(setEnabled(bool)));
@@ -206,12 +206,12 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     
     connect(ui.filterComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterComboBoxChanged(int)));
 
-    connect(ui.addToButton, SIGNAL(clicked(void)), this, SLOT(addTo()));
-    connect(ui.addCcButton, SIGNAL(clicked(void)), this, SLOT(addCc()));
-    connect(ui.addBccButton, SIGNAL(clicked(void)), this, SLOT(addBcc()));
-    connect(ui.addRecommendButton, SIGNAL(clicked(void)), this, SLOT(addRecommend()));
+    connect(ui.addToButton, SIGNAL(clicked()), this, SLOT(addTo()));
+    connect(ui.addCcButton, SIGNAL(clicked()), this, SLOT(addCc()));
+    connect(ui.addBccButton, SIGNAL(clicked()), this, SLOT(addBcc()));
+    connect(ui.addRecommendButton, SIGNAL(clicked()), this, SLOT(addRecommend()));
 
-    connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&,int)), this, SLOT(peerStatusChanged(const QString&,int)));
+    connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(peerStatusChanged(QString,int)));
     connect(ui.friendSelectionWidget, SIGNAL(contentChanged()), this, SLOT(buildCompleter()));
     connect(ui.friendSelectionWidget, SIGNAL(doubleClicked(int,QString)), this, SLOT(addTo()));
     connect(ui.friendSelectionWidget, SIGNAL(itemSelectionChanged()), this, SLOT(friendSelectionChanged()));
@@ -232,7 +232,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     ui.friendSelectionWidget->start();
 
     QActionGroup *grp = new QActionGroup(this);
-    connect(grp, SIGNAL(triggered(QAction *)), this, SLOT(textAlign(QAction *)));
+    connect(grp, SIGNAL(triggered(QAction*)), this, SLOT(textAlign(QAction*)));
 
     actionAlignLeft = new QAction(QIcon(""), tr("&Left"), grp);
     actionAlignLeft->setShortcut(Qt::CTRL + Qt::Key_L);
@@ -248,7 +248,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     actionAlignJustify->setCheckable(true);
     
     QActionGroup *grp2 = new QActionGroup(this);
-    connect(grp2, SIGNAL(triggered(QAction *)), this, SLOT(textStyle(QAction *)));
+    connect(grp2, SIGNAL(triggered(QAction*)), this, SLOT(textStyle(QAction*)));
     
     actionDisc = new QAction(QIcon(""), tr("Bullet list (disc)"), grp2);
     actionDisc->setCheckable(true);
@@ -283,7 +283,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     	ui.filterComboBox->setCurrentIndex(3);
 
     connect(ui.comboStyle, SIGNAL(activated(int)),this, SLOT(changeFormatType(int)));
-    connect(ui.comboFont,  SIGNAL(activated(const QString &)), this, SLOT(textFamily(const QString &)));
+    connect(ui.comboFont,  SIGNAL(activated(QString)), this, SLOT(textFamily(QString)));
 
     ui.comboSize->setEditable(true);
 
@@ -291,7 +291,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     foreach(int size, db.standardSizes())
     ui.comboSize->addItem(QString::number(size));
 
-    connect(ui.comboSize, SIGNAL(activated(const QString &)),this, SLOT(textSize(const QString &)));
+    connect(ui.comboSize, SIGNAL(activated(QString)),this, SLOT(textSize(QString)));
     ui.comboSize->setCurrentIndex(ui.comboSize->findText(QString::number(QApplication::font().pointSize())));
 
     QMenu * alignmentmenu = new QMenu();
@@ -369,7 +369,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     // create tag menu
     TagsMenu *menu = new TagsMenu (tr("Tags"), this);
     connect(menu, SIGNAL(aboutToShow()), this, SLOT(tagAboutToShow()));
-    connect(menu, SIGNAL(tagSet(int, bool)), this, SLOT(tagSet(int, bool)));
+    connect(menu, SIGNAL(tagSet(int,bool)), this, SLOT(tagSet(int,bool)));
     connect(menu, SIGNAL(tagRemoveAll()), this, SLOT(tagRemoveAll()));
 
     ui.tagButton->setMenu(menu);
@@ -408,21 +408,21 @@ void MessageComposer::updateCells(int,int)
     if(has_gxs)
     {
         ui.respond_to_CB->show();
-        ui.distantFrame->show();
+        ui.info_Frame_Distant->show();
         ui.fromLabel->show();
         checkLength();
     }
     else
     {
         ui.respond_to_CB->hide();
-        ui.distantFrame->hide() ;
+        ui.info_Frame_Distant->hide() ;
         ui.fromLabel->hide();
     }
 
     if(rowCount > 20)
-        ui.sizeLimitFrame->show();
+        ui.info_Frame_SizeLimit->show();
     else
-        ui.sizeLimitFrame->hide();
+        ui.info_Frame_SizeLimit->hide();
 }
 
 void MessageComposer::processSettings(bool bLoad)
@@ -619,7 +619,7 @@ void MessageComposer::addConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId 
     // PGPId+SslId are always here.  But if the peer is not a friend the SSL id cannot be used.
     // (todo) If the PGP id doesn't get us a PGP key from the keyring, we need to create a short invite
 
-	RetroShareLink link = RetroShareLink::createUnknownSslCertificate(sslId, gpgId);
+    RetroShareLink link = RetroShareLink::createUnknownSslCertificate(sslId, gpgId);
 
     if (!link.valid())
         return;
@@ -772,7 +772,6 @@ void MessageComposer::buildCompleter()
     std::list<RsPeerId>::iterator peerIt;
     rsPeers->getFriendList(peers);
     
-    std::list<RsGxsId> gxsIds;
     QList<QTreeWidgetItem*> gxsitems ;
 
     ui.friendSelectionWidget->items(gxsitems,FriendSelectionWidget::IDTYPE_GXS) ;
@@ -781,9 +780,9 @@ void MessageComposer::buildCompleter()
     QStringList completerList;
     QStringList completerGroupList;
     
-    for (QList<QTreeWidgetItem*>::const_iterator idIt = gxsitems.begin(); idIt != gxsitems.end(); ++idIt)
+    for (auto &idIt : gxsitems)
     {
-        RsGxsId id ( ui.friendSelectionWidget->idFromItem( *idIt ) );
+        RsGxsId id ( ui.friendSelectionWidget->idFromItem( idIt ) );
         RsIdentityDetails detail;
 
         if(rsIdentity->getIdDetails(id, detail))
@@ -1038,8 +1037,8 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
         std::list<RsGroupInfo> groupInfoList;
         rsPeers->getGroupInfoList(groupInfoList);
 
-        std::list<std::string> groupIds;
-        std::list<std::string>::iterator groupIt;
+    //    std::list<std::string> groupIds;
+    //    std::list<std::string>::iterator groupIt;
 
     //       calculateGroupsOfSslIds(groupInfoList, msgInfo.msgto, groupIds);
     //       for (groupIt = groupIds.begin(); groupIt != groupIds.end(); ++groupIt ) {
@@ -1281,7 +1280,7 @@ MessageComposer *MessageComposer::forwardMsg(const std::string &msgId)
     msgComposer->setTitleText(QString::fromUtf8(msgInfo.title.c_str()), FORWARD);
     msgComposer->setQuotedMsg(QString::fromUtf8(msgInfo.msg.c_str()), buildReplyHeader(msgInfo));
 
-    std::list<FileInfo>& files_info = msgInfo.files;
+    const std::list<FileInfo>& files_info = msgInfo.files;
 
     msgComposer->setFileList(files_info);
 
@@ -1599,16 +1598,16 @@ bool MessageComposer::getRecipientFromRow(int row, enumType &type, destinationTy
 
 QString MessageComposer::getRecipientEmailAddress(const RsGxsId& id,const RsIdentityDetails& detail)
 {
-    return (QString("%2 <")+tr("Distant identity:")+" %2@%1>").arg(QString::fromStdString(id.toStdString())).arg(QString::fromUtf8(detail.mNickname.c_str())) ;
+    return (QString("%2 <")+tr("Distant identity:")+" %2@%1>").arg(QString::fromStdString(id.toStdString()), QString::fromUtf8(detail.mNickname.c_str())) ;
 }
 
 QString MessageComposer::getRecipientEmailAddress(const RsPeerId& /* id */,const RsPeerDetails& detail)
 {
-    QString location_name = detail.location.empty()?tr("[Missing]"):QString::fromUtf8(detail.location.c_str()) ;
+	QString location_name = detail.location.empty()?tr("[Missing]"):QString::fromUtf8(detail.location.c_str()) ;
 
-    return (QString("%1 (")+tr("Node name & id:")+" %2, %3)").arg(QString::fromUtf8(detail.name.c_str()))
-                 .arg(location_name)
-                 .arg(QString::fromUtf8(detail.id.toStdString().c_str())) ;
+	return (QString("%1 (")+tr("Node name & id:")+" %2, %3)").arg(QString::fromUtf8(detail.name.c_str())
+	                                                              , location_name
+	                                                              , QString::fromUtf8(detail.id.toStdString().c_str())) ;
 }
 
 void MessageComposer::setRecipientToRow(int row, enumType type, destinationType dest_type, const std::string &id)
@@ -1789,7 +1788,7 @@ void MessageComposer::editingRecipientFinished()
     if (row >= rowCount)  // not found
         return;
 
-    enumType type;
+    enumType type = TO;
     std::string id; // dummy
     destinationType dtype ;
 
@@ -1818,13 +1817,13 @@ void MessageComposer::editingRecipientFinished()
     ui.friendSelectionWidget->items(gxsitems,FriendSelectionWidget::IDTYPE_GXS) ;
     RsIdentityDetails detail;
 
-    for (QList<QTreeWidgetItem*>::const_iterator idIt = gxsitems.begin(); idIt != gxsitems.end(); ++idIt)
+    for (auto &idIt : gxsitems)
     {
-        RsGxsId id ( ui.friendSelectionWidget->idFromItem( *idIt ) );
+        RsGxsId gxsId ( ui.friendSelectionWidget->idFromItem( idIt ) );
 
-        if(rsIdentity->getIdDetails(id, detail) && text == getRecipientEmailAddress(id,detail))
+        if(rsIdentity->getIdDetails(gxsId, detail) && text == getRecipientEmailAddress(gxsId,detail))
     {
-            setRecipientToRow(row, type, PEER_TYPE_GXS, id.toStdString());
+            setRecipientToRow(row, type, PEER_TYPE_GXS, gxsId.toStdString());
         return ;
     }
     }
@@ -2271,7 +2270,8 @@ void MessageComposer::addSmileys()
 	// add trailing space
 	smiley += QString(" ");
 	// add preceding space when needed (not at start of text or preceding space already exists)
-	if(!ui.msgText->textCursor().atStart() && ui.msgText->toPlainText()[ui.msgText->textCursor().position() - 1] != QChar(' '))
+	QString plainText = ui.msgText->toPlainText();
+	if(!ui.msgText->textCursor().atStart() && plainText[ui.msgText->textCursor().position() - 1] != QChar(' '))
 		smiley = QString(" ") + smiley;
 	ui.msgText->textCursor().insertText(smiley);
 }
@@ -2820,13 +2820,14 @@ void MessageComposer::showTagLabels()
 		ui.tagLayout->addStretch();
 	}
 }
-void MessageComposer::on_closeSizeLimitFrameButton_clicked()
+
+void MessageComposer::on_closeInfoFrameButton_Distant_clicked()
 {
-    ui.sizeLimitFrame->setVisible(false);
+	ui.info_Frame_Distant->setVisible(false);
 }
-void MessageComposer::on_closeInfoFrameButton_clicked()
+void MessageComposer::on_closeInfoFrameButton_SizeLimit_clicked()
 {
-	ui.distantFrame->setVisible(false);
+	ui.info_Frame_SizeLimit->setVisible(false);
 }
 
 QString MessageComposer::inviteMessage()
