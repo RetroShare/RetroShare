@@ -18,12 +18,13 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <opencv2/opencv.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgproc/types_c.h>
-
 #include <QTimer>
 #include <QPainter>
+#include <QImageReader>
+#include <QBuffer>
+#include <QCamera>
+#include <QCameraInfo>
+#include <QCameraImageCapture>
 #include "QVideoDevice.h"
 #include "VideoProcessor.h"
 
@@ -36,6 +37,16 @@ QVideoInputDevice::QVideoInputDevice(QWidget *parent)
 	_echo_output_device = NULL ;
 }
 
+QVideoInputDevice::~QVideoInputDevice()
+{
+    stop() ;
+    _video_processor = NULL ;
+
+    delete _image_capture;
+    delete _capture_device;
+    delete _timer;
+}
+
 bool QVideoInputDevice::stopped()
 {
     return _timer == NULL ;
@@ -45,7 +56,7 @@ void QVideoInputDevice::stop()
 {
 	if(_timer != NULL)
 	{
-		QObject::disconnect(_timer,SIGNAL(timeout()),this,SLOT(grabFrame())) ;
+        _capture_device->stop();
 		_timer->stop() ;
 		delete _timer ;
 		_timer = NULL ;
@@ -53,10 +64,12 @@ void QVideoInputDevice::stop()
 	if(_capture_device != NULL)
 	{
 		// the camera will be deinitialized automatically in VideoCapture destructor
-		_capture_device->release();
-		delete _capture_device ;
+        delete _image_capture ;
+        delete _capture_device ;
+
 		_capture_device = NULL ;
-	}
+        _image_capture = NULL ;
+    }
 }
 void QVideoInputDevice::start()
 {
@@ -65,45 +78,78 @@ void QVideoInputDevice::start()
 	stop() ;
 
 	// Initialise la capture
-	static const int cam_id = 0 ;
-	_capture_device = new cv::VideoCapture(cam_id);
+    QCameraInfo caminfo = QCameraInfo::defaultCamera();
 
-	if(!_capture_device->isOpened())
-	{
-		std::cerr << "Cannot initialise camera. Something's wrong." << std::endl;
-		return ;
-	}
+    if(caminfo.isNull())
+    {
+        std::cerr << "No video camera available in this system!" << std::endl;
+        return ;
+    }
+    _capture_device = new QCamera(caminfo);
 
-	_timer = new QTimer ;
-	QObject::connect(_timer,SIGNAL(timeout()),this,SLOT(grabFrame())) ;
+    if(_capture_device->error() != QCamera::NoError)
+    {
+        emit cameraCaptureInfo(CANNOT_INITIALIZE_CAMERA,_capture_device->error());
+        std::cerr << "Cannot initialise camera. Something's wrong." << std::endl;
+        return;
+    }
+    _capture_device->setCaptureMode(QCamera::CaptureStillImage);
 
-	_timer->start(50) ;	// 10 images per second.
+    if(_capture_device->error() == QCamera::NoError)
+        emit cameraCaptureInfo(CAMERA_IS_READY,QCamera::NoError);
+
+    _image_capture = new QCameraImageCapture(_capture_device);
+
+    if(!_image_capture->isCaptureDestinationSupported(QCameraImageCapture::CaptureToBuffer))
+    {
+        emit cameraCaptureInfo(CAMERA_IS_READY,QCamera::NoError);
+
+        delete _capture_device;
+        delete _image_capture;
+        return;
+    }
+
+    _image_capture->setCaptureDestination(QCameraImageCapture::CaptureToBuffer);
+
+    QObject::connect(_image_capture,SIGNAL(imageAvailable(int,QVideoFrame)),this,SLOT(grabFrame(int,QVideoFrame)));
+    QObject::connect(this,SIGNAL(cameraCaptureInfo(CameraStatus,QCamera::Error)),this,SLOT(errorHandling(CameraStatus,QCamera::Error)));
+
+    _timer = new QTimer ;
+    QObject::connect(_timer,SIGNAL(timeout()),_image_capture,SLOT(capture())) ;
+
+    _timer->start(50) ;	// 10 images per second.
+
+    _capture_device->start();
 }
 
-void QVideoInputDevice::grabFrame()
+void QVideoInputDevice::errorHandling(CameraStatus status,QCamera::Error error)
 {
-    if(!_timer)
-        return ;
+    std::cerr << "Received msg from camera capture: status=" << (int)status << " error=" << (int)error << std::endl;
 
-    cv::Mat frame;
-    if(!_capture_device->read(frame))
+    if(status == CANNOT_INITIALIZE_CAMERA)
     {
-        std::cerr << "(EE) Cannot capture image from camera. Something's wrong." << std::endl;
-        return ;
+        std::cerr << "Cannot initialize camera. Make sure to install package libqt5multimedia5-plugins, as this is a common cause for camera not being found." << std::endl;
+    }
+}
+
+void QVideoInputDevice::grabFrame(int id,QVideoFrame frame)
+{
+    if(frame.size().isEmpty())
+    {
+        std::cerr << "Empty frame!" ;
+        return;
     }
 
-    // get the image data
+    frame.map(QAbstractVideoBuffer::ReadOnly);
+    QByteArray data((const char *)frame.bits(), frame.mappedBytes());
+    QBuffer buffer;
+    buffer.setData(data);
+    buffer.open(QIODevice::ReadOnly);
+    QImageReader reader(&buffer, "JPG");
+    reader.setScaledSize(QSize(640,480));
+    QImage image(reader.read());
 
-    if(frame.channels() != 3)
-    {
-        std::cerr << "(EE) expected 3 channels. Got " << frame.channels() << std::endl;
-        return ;
-    }
-
-    // convert to RGB and copy to new buffer, because cvQueryFrame tells us to not modify the buffer
-    cv::Mat img_rgb;
-    cv::cvtColor(frame, img_rgb, CV_BGR2RGB);
-    QImage image = QImage(img_rgb.data,img_rgb.cols,img_rgb.rows,QImage::Format_RGB888);
+    std::cerr << "Frame " << id << ". Pixel format: " << frame.pixelFormat() << ". Size: " << image.size().width() << " x " << image.size().height() << std::endl; // if(frame.pixelFormat() != QVideoFrame::Format_Jpeg)
 
     if(_video_processor != NULL)
     {
@@ -130,13 +176,6 @@ uint32_t QVideoInputDevice::currentBandwidth() const
 {
     return _video_processor->currentBandwidthOut() ;
 }
-
-QVideoInputDevice::~QVideoInputDevice()
-{
-    stop() ;
-    _video_processor = NULL ;
-}
-
 
 QVideoOutputDevice::QVideoOutputDevice(QWidget *parent)
     : QLabel(parent)

@@ -21,13 +21,13 @@
 #pragma once
 
 #include <QLabel>
+#include <QCamera>
 #include "interface/rsVOIP.h"
-
-#include "opencv2/opencv.hpp"
 
 #include "gui/VideoProcessor.h"
 
 class VideoEncoder ;
+class QCameraImageCapture;
 
 // Responsible from displaying the video. The source of the video is
 // a VideoDecoder object, which uses a codec.
@@ -74,16 +74,26 @@ class QVideoInputDevice: public QObject
 		void start() ;
 		void stop() ;
 		bool stopped();
+
+        enum CameraStatus {
+            CAMERA_IS_READY           = 0x00,
+            CANNOT_INITIALIZE_CAMERA  = 0x01,
+            CAMERA_CANNOT_GRAB_FRAMES = 0x02
+        };
+
 protected slots:
-		void grabFrame() ;
+        void grabFrame(int id, QVideoFrame f) ;
+        void errorHandling(CameraStatus status,QCamera::Error error);
 
 	signals:
 		void networkPacketReady() ;
+        void cameraCaptureInfo(CameraStatus status,QCamera::Error qt_cam_err_code);
 
 	private:
 		VideoProcessor *_video_processor ;
 		QTimer *_timer ;
-		cv::VideoCapture *_capture_device ;
+        QCamera *_capture_device;
+        QCameraImageCapture *_image_capture;
 
 		QVideoOutputDevice *_echo_output_device ;
 

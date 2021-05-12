@@ -38,7 +38,6 @@
 #include "gui/SoundManager.h"
 #include "gui/chat/ChatWidget.h"
 
-#include <opencv2/opencv.hpp>
 #include <speex/speex.h>
 
 #define IMAGE_VOIP ":/images/talking_on.svg"
@@ -188,8 +187,6 @@ std::string VOIPPlugin::getPluginName() const
 
 void VOIPPlugin::getLibraries(std::list<RsLibraryInfo> &libraries)
 {
-	libraries.push_back(RsLibraryInfo("OpenCV", CV_VERSION));
-
 	const char *speexVersion = NULL;
 	if (speex_lib_ctl(SPEEX_LIB_GET_VERSION_STRING, &speexVersion) == 0 && speexVersion) {
 		libraries.push_back(RsLibraryInfo("Speex", speexVersion));
