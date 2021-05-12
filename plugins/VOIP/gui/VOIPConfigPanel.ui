@@ -53,7 +53,7 @@
       <item row="1" column="0" colspan="3">
        <widget class="QStackedWidget" name="qswTransmit">
         <property name="currentIndex">
-         <number>2</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="qwPTT">
          <layout class="QGridLayout">
@@ -242,13 +242,39 @@
         <string>Audio</string>
        </property>
        <layout class="QGridLayout">
-        <item row="0" column="0">
-         <widget class="QLabel" name="qliNoise">
+        <item row="1" column="2">
+         <widget class="QLabel" name="qlAmp">
+          <property name="minimumSize">
+           <size>
+            <width>30</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="text">
-           <string>Noise Suppression</string>
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="qliAmp">
+          <property name="text">
+           <string>Amplification</string>
           </property>
           <property name="buddy">
-           <cstring>qsNoise</cstring>
+           <cstring>qsAmp</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QLabel" name="qlNoise">
+          <property name="minimumSize">
+           <size>
+            <width>30</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
           </property>
          </widget>
         </item>
@@ -277,26 +303,23 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="2">
-         <widget class="QLabel" name="qlNoise">
-          <property name="minimumSize">
-           <size>
-            <width>30</width>
-            <height>0</height>
-           </size>
-          </property>
+        <item row="2" column="0">
+         <widget class="QCheckBox" name="qcbEchoCancel">
           <property name="text">
-           <string/>
+           <string>Echo Cancellation Processing</string>
+          </property>
+          <property name="tristate">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="qliAmp">
+        <item row="0" column="0">
+         <widget class="QLabel" name="qliNoise">
           <property name="text">
-           <string>Amplification</string>
+           <string>Noise Suppression</string>
           </property>
           <property name="buddy">
-           <cstring>qsAmp</cstring>
+           <cstring>qsNoise</cstring>
           </property>
          </widget>
         </item>
@@ -322,28 +345,8 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="2">
-         <widget class="QLabel" name="qlAmp">
-          <property name="minimumSize">
-           <size>
-            <width>30</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QCheckBox" name="qcbEchoCancel">
-          <property name="text">
-           <string>Echo Cancellation Processing</string>
-          </property>
-          <property name="tristate">
-           <bool>false</bool>
-          </property>
-         </widget>
+        <item row="3" column="0" colspan="2">
+         <widget class="AudioBar" name="abSpeech" native="true"/>
         </item>
        </layout>
       </widget>
@@ -459,7 +462,13 @@
   <customwidget>
    <class>voipGraph</class>
    <extends>QFrame</extends>
-   <header>gui/AudioInputConfig.h</header>
+   <header>gui/VOIPConfigPanel.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>AudioBar</class>
+   <extends>QWidget</extends>
+   <header>gui/AudioStats.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

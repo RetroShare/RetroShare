@@ -19,7 +19,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#pragma once
 
 #include "AudioStats.h"
 #include "VOIPConfigPanel.h"
@@ -92,19 +91,15 @@ VOIPConfigPanel::VOIPConfigPanel(QWidget * parent, Qt::WindowFlags flags)
 
     inputAudioProcessor = NULL;
     inputAudioDevice = NULL;
-    abSpeech = NULL;
     qtTick = NULL;
 
     ui.qcbTransmit->addItem(tr("Continuous"), RsVOIP::AudioTransmitContinous);
     ui.qcbTransmit->addItem(tr("Voice Activity"), RsVOIP::AudioTransmitVAD);
     ui.qcbTransmit->addItem(tr("Push To Talk"), RsVOIP::AudioTransmitPushToTalk);
 
-    abSpeech = new AudioBar();
-    abSpeech->qcBelow = Qt::red;
-    abSpeech->qcInside = Qt::yellow;
-    abSpeech->qcAbove = Qt::green;
-    //abSpeech->setGeometry(9,20,50,10);
-    ui.qwVadLayout_2->addWidget(abSpeech,0,0,1,0);
+    ui.abSpeech->qcBelow = Qt::red;
+    ui.abSpeech->qcInside = Qt::yellow;
+    ui.abSpeech->qcAbove = Qt::green;
 
     connect( ui.qsTransmitHold, SIGNAL( valueChanged ( int ) ), this, SLOT( on_qsTransmitHold_valueChanged(int) ) );
     connect( ui.qsNoise, SIGNAL( valueChanged ( int ) ), this, SLOT( on_qsNoise_valueChanged(int) ) );
@@ -332,16 +327,16 @@ void VOIPConfigPanel::on_Tick_timeout()
 {
     // update the sound capture bar
 
-    abSpeech->iBelow = ui.qsTransmitMin->value();
-    abSpeech->iAbove = ui.qsTransmitMax->value();
+    ui.abSpeech->iBelow = ui.qsTransmitMin->value();
+    ui.abSpeech->iAbove = ui.qsTransmitMax->value();
 
     if (loaded) {
         rsVOIP->setVoipfVADmin(ui.qsTransmitMin->value());
         rsVOIP->setVoipfVADmax(ui.qsTransmitMax->value());
     }
 
-    abSpeech->iValue = iroundf(inputAudioProcessor->dVoiceAcivityLevel * 32767.0f + 0.5f);
-    abSpeech->update();
+    ui.abSpeech->iValue = iroundf(inputAudioProcessor->dVoiceAcivityLevel * 32767.0f + 0.5f);
+    ui.abSpeech->update();
 
     // also transmit encoded video
 

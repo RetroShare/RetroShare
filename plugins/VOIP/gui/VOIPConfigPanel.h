@@ -19,7 +19,6 @@
  *                                                                             *
  *******************************************************************************/
 #pragma once
-#pragma once
 
 #include <QAudioInput>
 #include <QWidget>
@@ -46,9 +45,9 @@ private:
     voipGraphSource *_src ;
 };
 
-#include "ui_AudioInputConfig.h"
+#include "ui_VOIPConfigPanel.h"
 
-class VOIPConfigPanel : public ConfigPage 
+class VOIPConfigPanel : public ConfigPage
 {
 	Q_OBJECT
 
