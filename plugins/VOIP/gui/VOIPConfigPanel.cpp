@@ -22,7 +22,7 @@
 #pragma once
 
 #include "AudioStats.h"
-#include "AudioInputConfig.h"
+#include "VOIPConfigPanel.h"
 #include "audiodevicehelper.h"
 #include "AudioWizard.h"
 #include "gui/VideoProcessor.h"
@@ -95,16 +95,47 @@ VOIPConfigPanel::VOIPConfigPanel(QWidget * parent, Qt::WindowFlags flags)
     abSpeech = NULL;
     qtTick = NULL;
 
+    ui.qcbTransmit->addItem(tr("Continuous"), RsVOIP::AudioTransmitContinous);
+    ui.qcbTransmit->addItem(tr("Voice Activity"), RsVOIP::AudioTransmitVAD);
+    ui.qcbTransmit->addItem(tr("Push To Talk"), RsVOIP::AudioTransmitPushToTalk);
+
+    abSpeech = new AudioBar();
+    abSpeech->qcBelow = Qt::red;
+    abSpeech->qcInside = Qt::yellow;
+    abSpeech->qcAbove = Qt::green;
+    //abSpeech->setGeometry(9,20,50,10);
+    ui.qwVadLayout_2->addWidget(abSpeech,0,0,1,0);
+
+    connect( ui.qsTransmitHold, SIGNAL( valueChanged ( int ) ), this, SLOT( on_qsTransmitHold_valueChanged(int) ) );
+    connect( ui.qsNoise, SIGNAL( valueChanged ( int ) ), this, SLOT( on_qsNoise_valueChanged(int) ) );
+    connect( ui.qsAmp, SIGNAL( valueChanged ( int ) ), this, SLOT( on_qsAmp_valueChanged(int) ) );
+    connect( ui.qcbTransmit, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( on_qcbTransmit_currentIndexChanged(int) ) );
+}
+
+void VOIPConfigPanel::showEvent(QShowEvent *)
+{
+    std::cerr << "Creating the audio pipeline" << std::endl;
+
+    inputAudioProcessor = new QtSpeex::SpeexInputProcessor();
+    inputAudioProcessor->open(QIODevice::WriteOnly | QIODevice::Unbuffered);
+
+    inputAudioDevice = AudioDeviceHelper::getPreferedInputDevice();
+    inputAudioDevice->start(inputAudioProcessor);
+
+    connect(inputAudioProcessor, SIGNAL(networkPacketReady()), this, SLOT(emptyBuffer()));
+
+    std::cerr << "Creating the video pipeline" << std::endl;
+
     // Create the video pipeline.
     //
+
     videoInput = new QVideoInputDevice(this) ;
-    videoInput->setEchoVideoTarget(ui.videoDisplay) ;
 
     videoProcessor = new VideoProcessor() ;
     videoProcessor->setDisplayTarget(NULL) ;
 
     videoProcessor->setMaximumBandwidth(ui.availableBW_SB->value()) ;
-                                        
+
     videoInput->setVideoProcessor(videoProcessor) ;
 
     graph_source = new voipGraphSource ;
@@ -114,8 +145,34 @@ VOIPConfigPanel::VOIPConfigPanel(QWidget * parent, Qt::WindowFlags flags)
     graph_source->setCollectionTimeLimit(1000*300) ;
     graph_source->start() ;
 
+    if(ui.showEncoded_CB->isChecked())
+    {
+        videoInput->setEchoVideoTarget(nullptr) ;
+        videoProcessor->setDisplayTarget(ui.videoDisplay) ;
+    }
+    else
+    {
+        videoInput->setEchoVideoTarget(ui.videoDisplay) ;
+        videoProcessor->setDisplayTarget(nullptr);
+    }
+
     QObject::connect(ui.showEncoded_CB,SIGNAL(toggled(bool)),this,SLOT(togglePreview(bool))) ;
     QObject::connect(ui.availableBW_SB,SIGNAL(valueChanged(double)),this,SLOT(updateAvailableBW(double))) ;
+
+    loadSettings();
+
+    qtTick = new RsProtectedTimer(this);
+    connect( qtTick, SIGNAL( timeout ( ) ), this, SLOT( on_Tick_timeout() ) );
+    qtTick->start(20);
+
+    videoInput->start();
+}
+
+void VOIPConfigPanel::hideEvent(QHideEvent *)
+{
+    std::cerr << "Deleting the video pipeline" << std::endl;
+
+    clearPipeline();
 }
 
 void VOIPConfigPanel::updateAvailableBW(double r)
@@ -140,136 +197,86 @@ void VOIPConfigPanel::togglePreview(bool b)
 
 VOIPConfigPanel::~VOIPConfigPanel()
 {
-    disconnect( qtTick, SIGNAL( timeout ( ) ), this, SLOT( on_Tick_timeout() ) );
-    
-        graph_source->stop() ;
-        graph_source->setVideoInput(NULL) ;
-        
+    clearPipeline();
+}
+
+void VOIPConfigPanel::clearPipeline()
+{
+    delete qtTick;
+
+    graph_source->stop() ;
+    graph_source->setVideoInput(NULL) ;
+    graph_source=nullptr; // is deleted by setSource below. This is a bad design.
+
+    ui.voipBwGraph->setSource(nullptr);
+
 	std::cerr << "Deleting audioInputConfig object" << std::endl;
 	if(videoInput != NULL)
 	{
 		videoInput->stop() ;
 		delete videoInput ;
+
+        videoInput = nullptr;
 	}
+    delete videoProcessor;
+    videoProcessor = nullptr;
 
     if (inputAudioDevice) {
         inputAudioDevice->stop();
 		  delete inputAudioDevice ;
-		  inputAudioDevice = NULL ;
+          inputAudioDevice = nullptr ;
     }
 
 	 if(inputAudioProcessor)
 	 {
 		 delete inputAudioProcessor ;
-		 inputAudioProcessor = NULL ;
+         inputAudioProcessor = nullptr ;
 	 }
 }
 
-/** Loads the settings for this page */
 void VOIPConfigPanel::load()
 {
-    //connect( ui.allowIpDeterminationCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleIpDetermination(bool) ) );
-    //connect( ui.allowTunnelConnectionCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleTunnelConnection(bool) ) );
-
-    qtTick = new RsProtectedTimer(this);
-    connect( qtTick, SIGNAL( timeout ( ) ), this, SLOT( on_Tick_timeout() ) );
-    qtTick->start(20);
-    /*if (AudioInputRegistrar::qmNew) {
-            QList<QString> keys = AudioInputRegistrar::qmNew->keys();
-            foreach(QString key, keys) {
-                    qcbSystem->addItem(key);
-            }
-    }
-    qcbSystem->setEnabled(qcbSystem->count() > 1);*/
-
-    ui.qcbTransmit->addItem(tr("Continuous"), RsVOIP::AudioTransmitContinous);
-    ui.qcbTransmit->addItem(tr("Voice Activity"), RsVOIP::AudioTransmitVAD);
-    ui.qcbTransmit->addItem(tr("Push To Talk"), RsVOIP::AudioTransmitPushToTalk);
-
-    abSpeech = new AudioBar();
-    abSpeech->qcBelow = Qt::red;
-    abSpeech->qcInside = Qt::yellow;
-    abSpeech->qcAbove = Qt::green;
-    //abSpeech->setGeometry(9,20,50,10);
-    ui.qwVadLayout_2->addWidget(abSpeech,0,0,1,0);
-
-    //on_qcbPushClick_clicked(g.s.bPushClick);
-    //ui.on_Tick_timeout();
-    loadSettings();
 }
 
+/** Loads the settings for this page */
 
-void VOIPConfigPanel::loadSettings() {
-        /*QList<QString> keys;
+void VOIPConfigPanel::loadSettings()
+{
+    ui.qcbTransmit->setCurrentIndex(rsVOIP->getVoipATransmit());
+    on_qcbTransmit_currentIndexChanged(rsVOIP->getVoipATransmit());
+    ui.qsTransmitHold->setValue(rsVOIP->getVoipVoiceHold());
+    on_qsTransmitHold_valueChanged(rsVOIP->getVoipVoiceHold());
+    ui.qsTransmitMin->setValue(rsVOIP->getVoipfVADmin());
+    ui.qsTransmitMax->setValue(rsVOIP->getVoipfVADmax());
+    ui.qcbEchoCancel->setChecked(rsVOIP->getVoipEchoCancel());
 
-        if (AudioInputRegistrar::qmNew)
-		keys=AudioInputRegistrar::qmNew->keys();
-	else
-		keys.clear();
-	i=keys.indexOf(AudioInputRegistrar::current);
-	if (i >= 0)
-                loadComboBox(qcbSystem, i);
+    if (rsVOIP->getVoipiNoiseSuppress() != 0)
+        ui.qsNoise->setValue(-rsVOIP->getVoipiNoiseSuppress());
+    else
+        ui.qsNoise->setValue(14);
 
-        loadCheckBox(qcbExclusive, r.bExclusiveInput);*/
+    on_qsNoise_valueChanged(-rsVOIP->getVoipiNoiseSuppress());
 
-        //qlePushClickPathOn->setText(r.qsPushClickOn);
-        //qlePushClickPathOff->setText(r.qsPushClickOff);
+    ui.qsAmp->setValue(20000 - rsVOIP->getVoipiMinLoudness());
+    on_qsAmp_valueChanged(20000 - rsVOIP->getVoipiMinLoudness());
 
-        /*loadComboBox(qcbTransmit, r.atTransmit);
-	loadSlider(qsTransmitHold, r.iVoiceHold);
-	loadSlider(qsTransmitMin, iroundf(r.fVADmin * 32767.0f + 0.5f));
-	loadSlider(qsTransmitMax, iroundf(r.fVADmax * 32767.0f + 0.5f));
-	loadSlider(qsFrames, (r.iFramesPerPacket == 1) ? 1 : (r.iFramesPerPacket/2 + 1));
-        loadSlider(qsDoublePush, iroundf(static_cast<float>(r.uiDoublePush) / 1000.f + 0.5f));*/
-        ui.qcbTransmit->setCurrentIndex(rsVOIP->getVoipATransmit());
-        on_qcbTransmit_currentIndexChanged(rsVOIP->getVoipATransmit());
-        ui.qsTransmitHold->setValue(rsVOIP->getVoipVoiceHold());
-        on_qsTransmitHold_valueChanged(rsVOIP->getVoipVoiceHold());
-        ui.qsTransmitMin->setValue(rsVOIP->getVoipfVADmin());
-        ui.qsTransmitMax->setValue(rsVOIP->getVoipfVADmax());
-        ui.qcbEchoCancel->setChecked(rsVOIP->getVoipEchoCancel());
-        //ui.qsDoublePush->setValue(iroundf(static_cast<float>(r.uiDoublePush) / 1000.f + 0.5f));
-
-        //loadCheckBox(qcbPushClick, r.bPushClick);
-        //loadSlider(qsQuality, r.iQuality);
-        if (rsVOIP->getVoipiNoiseSuppress() != 0)
-                ui.qsNoise->setValue(-rsVOIP->getVoipiNoiseSuppress());
-	else
-                ui.qsNoise->setValue(14);
-
-        on_qsNoise_valueChanged(-rsVOIP->getVoipiNoiseSuppress());
-
-        ui.qsAmp->setValue(20000 - rsVOIP->getVoipiMinLoudness());
-        on_qsAmp_valueChanged(20000 - rsVOIP->getVoipiMinLoudness());
-        //loadSlider(qsIdle, r.iIdleTime);
-
-        /*int echo = 0;
-	if (r.bEcho)
-		echo = r.bEchoMulti ? 2 : 1;
-
-        loadComboBox(qcbEcho, echo);*/
-        connect( ui.qsTransmitHold, SIGNAL( valueChanged ( int ) ), this, SLOT( on_qsTransmitHold_valueChanged(int) ) );
-        connect( ui.qsNoise, SIGNAL( valueChanged ( int ) ), this, SLOT( on_qsNoise_valueChanged(int) ) );
-        connect( ui.qsAmp, SIGNAL( valueChanged ( int ) ), this, SLOT( on_qsAmp_valueChanged(int) ) );
-        connect( ui.qcbTransmit, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( on_qcbTransmit_currentIndexChanged(int) ) );
-        loaded = true;
-
-		  std::cerr << "AudioInputConfig:: starting video." << std::endl;
-		  videoInput->start() ;
+    loaded = true;
 }
 
-bool VOIPConfigPanel::save(QString &/*errmsg*/) {//mainly useless beacause saving occurs in realtime
-        //s.iQuality = qsQuality->value();
-        rsVOIP->setVoipiNoiseSuppress((ui.qsNoise->value() == 14) ? 0 : - ui.qsNoise->value());
-        rsVOIP->setVoipiMinLoudness(20000 - ui.qsAmp->value());
-        rsVOIP->setVoipVoiceHold(ui.qsTransmitHold->value());
-        rsVOIP->setVoipfVADmin(ui.qsTransmitMin->value());
-        rsVOIP->setVoipfVADmax(ui.qsTransmitMax->value());
-        /*s.uiDoublePush = qsDoublePush->value() * 1000;*/
-        rsVOIP->setVoipATransmit(static_cast<RsVOIP::enumAudioTransmit>(ui.qcbTransmit->currentIndex() ));
-        rsVOIP->setVoipEchoCancel(ui.qcbEchoCancel->isChecked());
+bool VOIPConfigPanel::save(QString &/*errmsg*/)
+{
+    //mainly useless beacause saving occurs in realtime
+    //s.iQuality = qsQuality->value();
+    rsVOIP->setVoipiNoiseSuppress((ui.qsNoise->value() == 14) ? 0 : - ui.qsNoise->value());
+    rsVOIP->setVoipiMinLoudness(20000 - ui.qsAmp->value());
+    rsVOIP->setVoipVoiceHold(ui.qsTransmitHold->value());
+    rsVOIP->setVoipfVADmin(ui.qsTransmitMin->value());
+    rsVOIP->setVoipfVADmax(ui.qsTransmitMax->value());
+    /*s.uiDoublePush = qsDoublePush->value() * 1000;*/
+    rsVOIP->setVoipATransmit(static_cast<RsVOIP::enumAudioTransmit>(ui.qcbTransmit->currentIndex() ));
+    rsVOIP->setVoipEchoCancel(ui.qcbEchoCancel->isChecked());
 
-        return true;
+    return true;
 }
 
 void VOIPConfigPanel::on_qsTransmitHold_valueChanged(int v) {
@@ -323,32 +330,23 @@ void VOIPConfigPanel::on_qcbTransmit_currentIndexChanged(int v) {
 
 void VOIPConfigPanel::on_Tick_timeout()
 {
-        if (!inputAudioProcessor) 
-        {
-            inputAudioProcessor = new QtSpeex::SpeexInputProcessor();
-            inputAudioProcessor->open(QIODevice::WriteOnly | QIODevice::Unbuffered);
+    // update the sound capture bar
 
-            if (!inputAudioDevice) {
-                inputAudioDevice = AudioDeviceHelper::getPreferedInputDevice();
-            }
-            inputAudioDevice->start(inputAudioProcessor);
-            connect(inputAudioProcessor, SIGNAL(networkPacketReady()), this, SLOT(emptyBuffer()));
-        }
+    abSpeech->iBelow = ui.qsTransmitMin->value();
+    abSpeech->iAbove = ui.qsTransmitMax->value();
 
-        abSpeech->iBelow = ui.qsTransmitMin->value();
-        abSpeech->iAbove = ui.qsTransmitMax->value();
-        if (loaded) {
-            rsVOIP->setVoipfVADmin(ui.qsTransmitMin->value());
-            rsVOIP->setVoipfVADmax(ui.qsTransmitMax->value());
-        }
+    if (loaded) {
+        rsVOIP->setVoipfVADmin(ui.qsTransmitMin->value());
+        rsVOIP->setVoipfVADmax(ui.qsTransmitMax->value());
+    }
 
-        abSpeech->iValue = iroundf(inputAudioProcessor->dVoiceAcivityLevel * 32767.0f + 0.5f);
+    abSpeech->iValue = iroundf(inputAudioProcessor->dVoiceAcivityLevel * 32767.0f + 0.5f);
+    abSpeech->update();
 
-        abSpeech->update();
-        
-        // also transmit encoded video
+    // also transmit encoded video
+
     RsVOIPDataChunk chunk ;
-    
+
     while((!videoInput->stopped()) && videoInput->getNextEncodedPacket(chunk))
     {
         videoProcessor->receiveEncodedData(chunk) ;

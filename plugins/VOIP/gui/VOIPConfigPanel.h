@@ -67,9 +67,8 @@ class VOIPConfigPanel : public ConfigPage
 
 	protected:
 		QTimer *qtTick;
-		/*void hideEvent(QHideEvent *event);
-		  void showEvent(QShowEvent *event);*/
 
+        void clearPipeline();
 	public:
 		/** Default Constructor */
 		VOIPConfigPanel(QWidget * parent = 0, Qt::WindowFlags flags = 0);
@@ -77,14 +76,16 @@ class VOIPConfigPanel : public ConfigPage
 		~VOIPConfigPanel();
 
 		/** Saves the changes on this page */
-		virtual bool save(QString &errmsg);
+        virtual bool save(QString &errmsg)override ;
 		/** Loads the settings for this page */
-		virtual void load();
+        virtual void load()override ;
 
-		virtual QPixmap iconPixmap() const { return QPixmap(":/images/talking_on.svg") ; }
-		virtual QString pageName() const { return tr("VOIP") ; }
-		virtual QString helpText() const { return ""; }
+        virtual QPixmap iconPixmap() const override { return QPixmap(":/images/talking_on.svg") ; }
+        virtual QString pageName() const override { return tr("VOIP") ; }
+        virtual QString helpText() const override { return ""; }
         
+        virtual void showEvent(QShowEvent *) override;
+        virtual void hideEvent(QHideEvent *event) override;
 private slots:
 	void updateAvailableBW(double r);
 		void loadSettings();

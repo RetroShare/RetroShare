@@ -239,7 +239,7 @@
      <item>
       <widget class="QGroupBox" name="qgbAudio">
        <property name="title">
-        <string>Audio Processing</string>
+        <string>Audio</string>
        </property>
        <layout class="QGridLayout">
         <item row="0" column="0">
@@ -353,7 +353,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Video Processing</string>
+      <string>Video</string>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
