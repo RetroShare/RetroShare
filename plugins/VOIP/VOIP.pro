@@ -86,9 +86,9 @@ QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS
 QMAKE_CXXFLAGS *= -Wall
 
 SOURCES = VOIPPlugin.cpp               \
+          gui/VOIPConfigPanel.cpp \
           services/p3VOIP.cc           \
           services/rsVOIPItems.cc      \
-          gui/AudioInputConfig.cpp     \
           gui/AudioStats.cpp           \
           gui/AudioWizard.cpp          \
           gui/SpeexProcessor.cpp       \
@@ -102,9 +102,9 @@ SOURCES = VOIPPlugin.cpp               \
           gui/VOIPToasterNotify.cpp
 
 HEADERS = VOIPPlugin.h                 \
+          gui/VOIPConfigPanel.h \
           services/p3VOIP.h            \
           services/rsVOIPItems.h       \
-          gui/AudioInputConfig.h       \
           gui/AudioStats.h             \
           gui/AudioWizard.h            \
           gui/SpeexProcessor.h         \
@@ -118,9 +118,10 @@ HEADERS = VOIPPlugin.h                 \
           gui/VOIPToasterNotify.h     \
           interface/rsVOIP.h
 
-FORMS   = gui/AudioInputConfig.ui      \
+FORMS   =      \
           gui/AudioStats.ui            \
           gui/AudioWizard.ui           \
+          gui/VOIPConfigPanel.ui \
           gui/VOIPToasterItem.ui
 
 TARGET = VOIP

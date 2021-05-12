@@ -48,7 +48,7 @@ private:
 
 #include "ui_AudioInputConfig.h"
 
-class AudioInputConfig : public ConfigPage 
+class VOIPConfigPanel : public ConfigPage 
 {
 	Q_OBJECT
 
@@ -72,9 +72,9 @@ class AudioInputConfig : public ConfigPage
 
 	public:
 		/** Default Constructor */
-		AudioInputConfig(QWidget * parent = 0, Qt::WindowFlags flags = 0);
+		VOIPConfigPanel(QWidget * parent = 0, Qt::WindowFlags flags = 0);
 		/** Default Destructor */
-		~AudioInputConfig();
+		~VOIPConfigPanel();
 
 		/** Saves the changes on this page */
 		virtual bool save(QString &errmsg);

@@ -80,7 +80,7 @@ voipGraph::voipGraph(QWidget *parent)
 }
 
 /** Constructor */
-AudioInputConfig::AudioInputConfig(QWidget * parent, Qt::WindowFlags flags)
+VOIPConfigPanel::VOIPConfigPanel(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
 {
     std::cerr << "Creating audioInputConfig object" << std::endl;
@@ -118,13 +118,13 @@ AudioInputConfig::AudioInputConfig(QWidget * parent, Qt::WindowFlags flags)
     QObject::connect(ui.availableBW_SB,SIGNAL(valueChanged(double)),this,SLOT(updateAvailableBW(double))) ;
 }
 
-void AudioInputConfig::updateAvailableBW(double r)
+void VOIPConfigPanel::updateAvailableBW(double r)
 {
     std::cerr << "Setting max bandwidth to " << r << " KB/s" << std::endl;
     videoProcessor->setMaximumBandwidth((uint32_t)(r*1024)) ;
 }
 
-void AudioInputConfig::togglePreview(bool b)
+void VOIPConfigPanel::togglePreview(bool b)
 {
     if(b)
     {
@@ -138,7 +138,7 @@ void AudioInputConfig::togglePreview(bool b)
     }
 }
 
-AudioInputConfig::~AudioInputConfig()
+VOIPConfigPanel::~VOIPConfigPanel()
 {
     disconnect( qtTick, SIGNAL( timeout ( ) ), this, SLOT( on_Tick_timeout() ) );
     
@@ -166,7 +166,7 @@ AudioInputConfig::~AudioInputConfig()
 }
 
 /** Loads the settings for this page */
-void AudioInputConfig::load()
+void VOIPConfigPanel::load()
 {
     //connect( ui.allowIpDeterminationCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleIpDetermination(bool) ) );
     //connect( ui.allowTunnelConnectionCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleTunnelConnection(bool) ) );
@@ -199,7 +199,7 @@ void AudioInputConfig::load()
 }
 
 
-void AudioInputConfig::loadSettings() {
+void VOIPConfigPanel::loadSettings() {
         /*QList<QString> keys;
 
         if (AudioInputRegistrar::qmNew)
@@ -258,7 +258,7 @@ void AudioInputConfig::loadSettings() {
 		  videoInput->start() ;
 }
 
-bool AudioInputConfig::save(QString &/*errmsg*/) {//mainly useless beacause saving occurs in realtime
+bool VOIPConfigPanel::save(QString &/*errmsg*/) {//mainly useless beacause saving occurs in realtime
         //s.iQuality = qsQuality->value();
         rsVOIP->setVoipiNoiseSuppress((ui.qsNoise->value() == 14) ? 0 : - ui.qsNoise->value());
         rsVOIP->setVoipiMinLoudness(20000 - ui.qsAmp->value());
@@ -272,14 +272,14 @@ bool AudioInputConfig::save(QString &/*errmsg*/) {//mainly useless beacause savi
         return true;
 }
 
-void AudioInputConfig::on_qsTransmitHold_valueChanged(int v) {
+void VOIPConfigPanel::on_qsTransmitHold_valueChanged(int v) {
         float val = static_cast<float>(v * FRAME_SIZE);
         val = val / SAMPLING_RATE;
         ui.qlTransmitHold->setText(tr("%1 s").arg(val, 0, 'f', 2));
         rsVOIP->setVoipVoiceHold(v);
 }
 
-void AudioInputConfig::on_qsNoise_valueChanged(int v) {
+void VOIPConfigPanel::on_qsNoise_valueChanged(int v) {
 	QPalette pal;
 
 	if (v < 15) {
@@ -292,19 +292,19 @@ void AudioInputConfig::on_qsNoise_valueChanged(int v) {
         rsVOIP->setVoipiNoiseSuppress(- ui.qsNoise->value());
 }
 
-void AudioInputConfig::on_qsAmp_valueChanged(int v) {
+void VOIPConfigPanel::on_qsAmp_valueChanged(int v) {
         v = 20000 - v;
 	float d = 20000.0f/static_cast<float>(v);
         ui.qlAmp->setText(QString::fromLatin1("%1").arg(d, 0, 'f', 2));
         rsVOIP->setVoipiMinLoudness(20000 - ui.qsAmp->value());
 }
 
-void AudioInputConfig::on_qcbEchoCancel_clicked() {
+void VOIPConfigPanel::on_qcbEchoCancel_clicked() {
     rsVOIP->setVoipEchoCancel(ui.qcbEchoCancel->isChecked());
 }
 
 
-void AudioInputConfig::on_qcbTransmit_currentIndexChanged(int v) {
+void VOIPConfigPanel::on_qcbTransmit_currentIndexChanged(int v) {
 	switch (v) {
 		case 0:
                         ui.qswTransmit->setCurrentWidget(ui.qwContinuous);
@@ -321,7 +321,7 @@ void AudioInputConfig::on_qcbTransmit_currentIndexChanged(int v) {
 }
 
 
-void AudioInputConfig::on_Tick_timeout() 
+void VOIPConfigPanel::on_Tick_timeout()
 {
         if (!inputAudioProcessor) 
         {
@@ -356,13 +356,13 @@ void AudioInputConfig::on_Tick_timeout()
     }
 }
 
-void AudioInputConfig::emptyBuffer() {
+void VOIPConfigPanel::emptyBuffer() {
     while(inputAudioProcessor->hasPendingPackets()) {
         inputAudioProcessor->getNetworkPacket(); //that will purge the buffer
     }
 }
 
-void AudioInputConfig::on_qpbAudioWizard_clicked() {
+void VOIPConfigPanel::on_qpbAudioWizard_clicked() {
     AudioWizard aw(this);
     aw.exec();
     loadSettings();

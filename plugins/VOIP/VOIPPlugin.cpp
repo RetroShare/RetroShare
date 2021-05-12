@@ -31,7 +31,7 @@
 #include "VOIPPlugin.h"
 #include "interface/rsVOIP.h"
 
-#include "gui/AudioInputConfig.h"
+#include "gui/VOIPConfigPanel.h"
 #include "gui/VOIPChatWidgetHolder.h"
 #include "gui/VOIPGUIHandler.h"
 #include "gui/VOIPNotify.h"
@@ -112,7 +112,7 @@ ConfigPage *VOIPPlugin::qt_config_page() const
 	// The config pages are deleted when config is closed, so it's important not to static the
 	// created object.
 	//
-	return new AudioInputConfig() ;
+	return new VOIPConfigPanel() ;
 }
 
 QDialog *VOIPPlugin::qt_about_page() const
