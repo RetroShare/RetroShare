@@ -49,7 +49,7 @@ class QVideoInputDevice: public QObject
 	Q_OBJECT
 
 	public:
-		QVideoInputDevice(QWidget *parent = 0) ;
+        QVideoInputDevice(QWidget *parent = 0) ;
 		~QVideoInputDevice() ;
 
 		// Captured images are sent to this encoder. Can be NULL.
@@ -71,7 +71,7 @@ class QVideoInputDevice: public QObject
         
         	// control
         
-		void start() ;
+        void start(const QString &description = QString()) ;
 		void stop() ;
 		bool stopped();
 
@@ -80,6 +80,10 @@ class QVideoInputDevice: public QObject
             CANNOT_INITIALIZE_CAMERA  = 0x01,
             CAMERA_CANNOT_GRAB_FRAMES = 0x02
         };
+
+        // Gets the list of available devices. The id string for each device can be used when creating a QVideoDevice
+
+        static void getAvailableDevices(QList<QString>& device_desc);
 
 protected slots:
         void grabFrame(int id, QVideoFrame f) ;

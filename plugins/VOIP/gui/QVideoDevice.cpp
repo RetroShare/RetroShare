@@ -71,14 +71,34 @@ void QVideoInputDevice::stop()
         _image_capture = NULL ;
     }
 }
-void QVideoInputDevice::start()
+void QVideoInputDevice::getAvailableDevices(QList<QString>& device_desc)
+{
+    device_desc.clear();
+
+    QList<QCameraInfo> dev_list = QCameraInfo::availableCameras();
+
+    for(auto& cam:dev_list)
+        device_desc.push_back(cam.deviceName());
+}
+
+void QVideoInputDevice::start(const QString& description)
 {
 	// make sure everything is re-initialised
 	//
 	stop() ;
 
-	// Initialise la capture
-    QCameraInfo caminfo = QCameraInfo::defaultCamera();
+    QCameraInfo caminfo ;
+
+    if(description.isNull())
+        caminfo = QCameraInfo::defaultCamera();
+    else
+    {
+        auto cam_list = QCameraInfo::availableCameras();
+
+        for(auto& s:cam_list)
+            if(s.deviceName() == description)
+                caminfo = s;
+    }
 
     if(caminfo.isNull())
     {

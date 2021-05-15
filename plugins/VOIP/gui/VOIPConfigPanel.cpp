@@ -101,10 +101,17 @@ VOIPConfigPanel::VOIPConfigPanel(QWidget * parent, Qt::WindowFlags flags)
     ui.abSpeech->qcInside = Qt::yellow;
     ui.abSpeech->qcAbove = Qt::green;
 
+    QList<QString> input_devices;
+    QVideoInputDevice::getAvailableDevices(input_devices);
+    ui.inputDevice_CB->clear();
+    for(auto& s:input_devices)
+        ui.inputDevice_CB->addItem(s,QVariant(s));
+
     connect( ui.qsTransmitHold, SIGNAL( valueChanged ( int ) ), this, SLOT( on_qsTransmitHold_valueChanged(int) ) );
     connect( ui.qsNoise, SIGNAL( valueChanged ( int ) ), this, SLOT( on_qsNoise_valueChanged(int) ) );
     connect( ui.qsAmp, SIGNAL( valueChanged ( int ) ), this, SLOT( on_qsAmp_valueChanged(int) ) );
     connect( ui.qcbTransmit, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( on_qcbTransmit_currentIndexChanged(int) ) );
+    connect( ui.inputDevice_CB, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( on_changedCurrentInputDevice(int) ) );
 }
 
 void VOIPConfigPanel::showEvent(QShowEvent *)
