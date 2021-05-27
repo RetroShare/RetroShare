@@ -49,7 +49,7 @@ QVideoInputDevice::~QVideoInputDevice()
     delete _timer;
 }
 
-bool QVideoInputDevice::stopped()
+bool QVideoInputDevice::stopped() const
 {
     return _timer == NULL ;
 }
@@ -204,7 +204,10 @@ bool QVideoInputDevice::getNextEncodedPacket(RsVOIPDataChunk& chunk)
 
 uint32_t QVideoInputDevice::currentBandwidth() const
 {
-    return _video_processor->currentBandwidthOut() ;
+    if(stopped())
+        return 0;
+    else
+        return _video_processor->currentBandwidthOut() ;
 }
 
 QVideoOutputDevice::QVideoOutputDevice(QWidget *parent)

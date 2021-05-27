@@ -74,7 +74,7 @@ class QVideoInputDevice: public QObject
         
         void start(const QString &description = QString()) ;
 		void stop() ;
-		bool stopped();
+        bool stopped() const;
 
         enum CameraStatus {
             CAMERA_IS_READY           = 0x00,
