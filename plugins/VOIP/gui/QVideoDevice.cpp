@@ -28,6 +28,8 @@
 #include "QVideoDevice.h"
 #include "VideoProcessor.h"
 
+// #define DEBUG_QVIDEODEVICE 1
+
 QVideoInputDevice::QVideoInputDevice(QWidget *parent)
   :QObject(parent)
 {
@@ -54,6 +56,8 @@ bool QVideoInputDevice::stopped()
 
 void QVideoInputDevice::stop()
 {
+    _capture_device_info = QCameraInfo();
+
 	if(_timer != NULL)
 	{
         _capture_device->stop();
@@ -70,6 +74,8 @@ void QVideoInputDevice::stop()
 		_capture_device = NULL ;
         _image_capture = NULL ;
     }
+    if(_echo_output_device != NULL)
+        _echo_output_device->showFrameOff() ;
 }
 void QVideoInputDevice::getAvailableDevices(QList<QString>& device_desc)
 {
@@ -105,6 +111,7 @@ void QVideoInputDevice::start(const QString& description)
         std::cerr << "No video camera available in this system!" << std::endl;
         return ;
     }
+    _capture_device_info = caminfo;
     _capture_device = new QCamera(caminfo);
 
     if(_capture_device->error() != QCamera::NoError)
@@ -144,8 +151,9 @@ void QVideoInputDevice::start(const QString& description)
 
 void QVideoInputDevice::errorHandling(CameraStatus status,QCamera::Error error)
 {
+#ifdef DEBUG_QVIDEODEVICE
     std::cerr << "Received msg from camera capture: status=" << (int)status << " error=" << (int)error << std::endl;
-
+#endif
     if(status == CANNOT_INITIALIZE_CAMERA)
     {
         std::cerr << "Cannot initialize camera. Make sure to install package libqt5multimedia5-plugins, as this is a common cause for camera not being found." << std::endl;
@@ -169,7 +177,9 @@ void QVideoInputDevice::grabFrame(int id,QVideoFrame frame)
     reader.setScaledSize(QSize(640,480));
     QImage image(reader.read());
 
+#ifdef DEBUG_QVIDEODEVICE
     std::cerr << "Frame " << id << ". Pixel format: " << frame.pixelFormat() << ". Size: " << image.size().width() << " x " << image.size().height() << std::endl; // if(frame.pixelFormat() != QVideoFrame::Format_Jpeg)
+#endif
 
     if(_video_processor != NULL)
     {
@@ -211,7 +221,9 @@ void QVideoOutputDevice::showFrameOff()
 
 void QVideoOutputDevice::showFrame(const QImage& img)
 {
+#ifdef DEBUG_QVIDEODEVICE
     std::cerr << "img.size = " << img.width() << " x " << img.height() << std::endl;
+#endif
     setPixmap(QPixmap::fromImage(img).scaled( QSize(height()*4/3,height()),Qt::IgnoreAspectRatio,Qt::SmoothTransformation)) ;
 }
 

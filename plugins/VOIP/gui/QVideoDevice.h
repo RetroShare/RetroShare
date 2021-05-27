@@ -22,6 +22,7 @@
 
 #include <QLabel>
 #include <QCamera>
+#include <QCameraInfo>
 #include "interface/rsVOIP.h"
 
 #include "gui/VideoProcessor.h"
@@ -85,6 +86,7 @@ class QVideoInputDevice: public QObject
 
         static void getAvailableDevices(QList<QString>& device_desc);
 
+        QString currentCameraDescriptionString() const { return _capture_device_info.deviceName(); }
 protected slots:
         void grabFrame(int id, QVideoFrame f) ;
         void errorHandling(CameraStatus status,QCamera::Error error);
@@ -98,6 +100,7 @@ protected slots:
 		QTimer *_timer ;
         QCamera *_capture_device;
         QCameraImageCapture *_image_capture;
+        QCameraInfo _capture_device_info;
 
 		QVideoOutputDevice *_echo_output_device ;
 

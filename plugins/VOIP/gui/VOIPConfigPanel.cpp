@@ -25,7 +25,8 @@
 #include "audiodevicehelper.h"
 #include "AudioWizard.h"
 #include "gui/VideoProcessor.h"
-#include "gui/common/RSGraphWidget.h"
+#include "gui/VideoProcessor.h"
+#include "util/misc.h"
 #include "util/RsProtectedTimer.h"
 
 #include <interface/rsVOIP.h>
@@ -104,8 +105,12 @@ VOIPConfigPanel::VOIPConfigPanel(QWidget * parent, Qt::WindowFlags flags)
     QList<QString> input_devices;
     QVideoInputDevice::getAvailableDevices(input_devices);
     ui.inputDevice_CB->clear();
+    ui.inputDevice_CB->addItem(tr("[No video]"),QString(""));
     for(auto& s:input_devices)
         ui.inputDevice_CB->addItem(s,QVariant(s));
+
+    if(!input_devices.empty())
+        whileBlocking(ui.inputDevice_CB)->setCurrentIndex(1);	// select default cam
 
     connect( ui.qsTransmitHold, SIGNAL( valueChanged ( int ) ), this, SLOT( on_qsTransmitHold_valueChanged(int) ) );
     connect( ui.qsNoise, SIGNAL( valueChanged ( int ) ), this, SLOT( on_qsNoise_valueChanged(int) ) );
@@ -367,3 +372,92 @@ void VOIPConfigPanel::on_qpbAudioWizard_clicked() {
     aw.exec();
     loadSettings();
 }
+
+void VOIPConfigPanel::on_changedCurrentInputDevice(int i)
+{
+    QString s = dynamic_cast<QComboBox*>(sender())->itemData(i).toString();
+
+    videoInput->stop();
+
+    // check that the camera still exists
+
+    QList<QString> input_devices;
+    QVideoInputDevice::getAvailableDevices(input_devices);
+
+    for(const QString& cams:input_devices)
+        if(s == cams)
+        {
+            std::cerr << "Switching to camera \"" << s.toStdString() << "\"" << std::endl;
+
+            videoInput->start(s);
+
+            return;
+        }
+
+    // if not, re-create the ComboBox
+
+    checkAvailableCameras();
+}
+
+void VOIPConfigPanel::checkAvailableCameras()
+{
+    // save current camera
+    QString current_cam = videoInput->currentCameraDescriptionString();
+
+    // Check that the list of cams we had previously is the same than the list of available camera.
+
+    QList<QString> input_devices;
+    QVideoInputDevice::getAvailableDevices(input_devices);
+
+    bool same = true;
+    if(input_devices.size() != ui.inputDevice_CB->count())
+        same = false;
+
+    if(same)
+    {
+        int n=0;
+        for(auto& s:input_devices)
+        {
+            if(ui.inputDevice_CB->itemData(n).toString() != s)
+            {
+                same = false;
+                break;
+            }
+            n++;
+        }
+    }
+
+    // If not, re-add them to the comboBox and make sure to re-select the same camera.
+
+    if(!same)
+    {
+        whileBlocking(ui.inputDevice_CB)->clear();	// remove existing entries
+        whileBlocking(ui.inputDevice_CB)->addItem(tr("[No video]"),QString(""));
+        int n=0;
+        int found_index = -1;
+
+        for(auto& s:input_devices)
+        {
+            whileBlocking(ui.inputDevice_CB)->addItem(s,QVariant(s));
+
+            if(s == current_cam)
+                found_index = n;
+
+            n++;
+        }
+
+        if(found_index >= 0)
+            ui.inputDevice_CB->setCurrentIndex(found_index);
+        else
+            ui.inputDevice_CB->setCurrentIndex(0);	// no video
+    }
+}
+
+
+
+
+
+
+
+
+

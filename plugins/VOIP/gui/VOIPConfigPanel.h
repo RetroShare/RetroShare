@@ -59,8 +59,9 @@ class VOIPConfigPanel : public ConfigPage
 		//VideoDecoder *videoDecoder ;
 		//VideoEncoder *videoEncoder ;
 		QVideoInputDevice *videoInput ;
-        	VideoProcessor *videoProcessor ;
+        VideoProcessor *videoProcessor ;
 		bool loaded;
+        QString currentCameraDescription;
 
         voipGraphSource *graph_source ;
 
@@ -86,7 +87,9 @@ class VOIPConfigPanel : public ConfigPage
         virtual void showEvent(QShowEvent *) override;
         virtual void hideEvent(QHideEvent *event) override;
 private slots:
-	void updateAvailableBW(double r);
+        void on_changedCurrentInputDevice(int i);
+        void checkAvailableCameras();
+        void updateAvailableBW(double r);
 		void loadSettings();
 		void emptyBuffer();
 		void togglePreview(bool) ;
