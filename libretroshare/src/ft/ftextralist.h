@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2008 by Robert Fernie <retroshare@lunamutt.com>                   *
+ * Copyright (C) 2008  Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2021  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -20,8 +22,7 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef FT_FILE_EXTRA_LIST_HEADER
-#define FT_FILE_EXTRA_LIST_HEADER
+#pragma once
 
 /* 
  * ftFileExtraList
@@ -50,7 +51,7 @@
  *
  */
 
-#include <list>
+#include <queue>
 #include <map>
 #include <string>
 
@@ -159,7 +160,7 @@ public:
 
 protected:
 	virtual RsSerialiser *setupSerialiser();
-	virtual bool saveList(bool &cleanup, std::list<RsItem*>&);
+	virtual bool saveList(bool& cleanup, std::list<RsItem*>&);
 	virtual bool    loadList(std::list<RsItem *>& load);
 
 	static RsFileHash makeEncryptedHash(const RsFileHash& hash);
@@ -172,16 +173,11 @@ private:
 
 	mutable RsMutex extMutex;
 
-	std::list<FileDetails> mToHash;
+	std::queue<FileDetails> mToHash;
 
 	std::map<std::string, RsFileHash> mHashedList; /* path -> hash ( not saved ) */
 	std::map<RsFileHash, FileDetails> mFiles;
 	std::map<RsFileHash, RsFileHash>  mHashOfHash;	/* sha1(hash) map so as to answer requests to encrypted transfers */
 
-	rstime_t cleanup ;
+	rstime_t mNextCleanupTS;
 };
-
-
-
-
-#endif
