@@ -1,5 +1,5 @@
 /* Ricochet - https://ricochet.im/
- * Copyright (C) 2014, John Brooks <john.brooks@dereferenced.net>
+ * Copyright (C) 2016, John Brooks <john.brooks@dereferenced.net>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,41 +30,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TORCONTROLCOMMAND_H
-#define TORCONTROLCOMMAND_H
+#ifndef ADDONIONCOMMAND_H
+#define ADDONIONCOMMAND_H
 
-#include <QObject>
-#include <QByteArray>
+#include "TorControlCommand.h"
+#include <list>
 
 namespace Tor
 {
 
-class TorControlCommand : public QObject
-{
-    Q_OBJECT
-    Q_DISABLE_COPY(TorControlCommand)
+class HiddenService;
 
-    friend class TorControlSocket;
+class AddOnionCommand : public TorControlCommand
+{
+#ifdef NO_TOR_CONTROL_PROPERTIES
+    Q_PROPERTY(std::string errorMessage READ errorMessage CONSTANT)
+    Q_PROPERTY(bool successful READ isSuccessful CONSTANT)
+#endif
 
 public:
-    TorControlCommand();
+    AddOnionCommand(HiddenService *service);
 
-    int statusCode() const { return m_finalStatus; }
+    QByteArray build();
 
+    std::string errorMessage() const { return m_errorMessage; }
+    bool isSuccessful() const;
+
+#ifdef NO_TOR_CONTROL_SIGNALS
 signals:
-    void replyLine(int statusCode, const QByteArray &data);
-    void finished();
+    void succeeded();
+    void failed(int code);
+#endif
 
 protected:
+    HiddenService *m_service;
+    std::string m_errorMessage;
+
     virtual void onReply(int statusCode, const QByteArray &data);
     virtual void onFinished(int statusCode);
-    virtual void onDataLine(const QByteArray &data);
-    virtual void onDataFinished();
-
-private:
-    int m_finalStatus;
 };
 
 }
 
-#endif // TORCONTROLCOMMAND_H
+#endif // ADDONIONCOMMAND_H
+

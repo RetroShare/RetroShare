@@ -90,7 +90,7 @@ void HiddenService::addTarget(quint16 servicePort, QHostAddress targetAddress, q
     m_targets.append(t);
 }
 
-void HiddenService::setServiceId(const QByteArray& sid)
+void HiddenService::setServiceId(const TorByteArray &sid)
 {
     m_service_id = sid;
     m_hostname = sid + ".onion";

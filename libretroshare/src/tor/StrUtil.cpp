@@ -32,14 +32,14 @@
 
 #include "StrUtil.h"
 
-QByteArray quotedString(const QByteArray &string)
+QByteArray quotedString(const QByteArray& string)
 {
     QByteArray out;
     out.reserve(string.size() * 2);
 
-    out.append('"');
+    out += '"';
 
-    for (int i = 0; i < string.size(); ++i)
+    for (uint32_t i = 0; i < string.size(); ++i)
     {
         switch (string[i])
         {
@@ -67,7 +67,7 @@ QByteArray unquotedString(const QByteArray &string)
     QByteArray out;
     out.reserve(string.size() - 2);
 
-    for (int i = 1; i < string.size(); ++i)
+    for (uint32_t i = 1; i < string.size(); ++i)
     {
         switch (string[i])
         {
@@ -85,9 +85,9 @@ QByteArray unquotedString(const QByteArray &string)
     return out;
 }
 
-QList<QByteArray> splitQuotedStrings(const QByteArray &input, char separator)
+std::list<QByteArray> splitQuotedStrings(const QByteArray &input, char separator)
 {
-    QList<QByteArray> out;
+    std::list<QByteArray> out;
     bool inquote = false;
     int start = 0;
 

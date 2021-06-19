@@ -33,14 +33,14 @@
 #ifndef STRINGUTIL_H
 #define STRINGUTIL_H
 
-#include <QByteArray>
-#include <QList>
+#include "TorTypes.h"
+#include <list>
 
 QByteArray quotedString(const QByteArray &string);
 
 /* Return the unquoted contents of a string, either until an end quote or an unescaped separator character. */
 QByteArray unquotedString(const QByteArray &string);
 
-QList<QByteArray> splitQuotedStrings(const QByteArray &input, char separator);
+std::list<QByteArray> splitQuotedStrings(const QByteArray &input, char separator);
 
 #endif // STRINGUTIL_H
