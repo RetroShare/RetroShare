@@ -31,13 +31,13 @@
  */
 
 #include <iostream>
-#include <stdio.h>
 
 #include "CryptoKey.h"
 #include "SecureRNG.h"
 #include "Useful.h"
-#include "TorTypes.h"
-
+#include <QtDebug>
+#include <QFile>
+#include <QByteArray>
 #include <openssl/bn.h>
 #include <openssl/bio.h>
 #include <openssl/pem.h>
@@ -120,23 +120,17 @@ bool CryptoKey::loadFromData(const QByteArray &data, KeyType type, KeyFormat for
 }
 #endif
 
-bool CryptoKey::loadFromFile(const std::string &path)
+bool CryptoKey::loadFromFile(const QString& path)
 {
-    FILE *f = fopen(path.c_str(),"r");
-
-    if(!f)
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly))
     {
-        std::cerr << "Failed to open Tor key file " << path << std::endl;
+        qWarning() << "Failed to open Tor key file " << path << ": " << file.errorString();
         return false;
     }
 
-    Tor::TorByteArray data ;
-    int c;
-
-    while( EOF != (c=fgetc(f)))
-        data += (unsigned char)c;
-
-    fclose(f);
+    QByteArray data = file.readAll();
+    file.close();
 
     if(data.contains("-----BEGIN RSA PRIVATE KEY-----"))
     {
@@ -152,14 +146,14 @@ bool CryptoKey::loadFromFile(const std::string &path)
     }
 
     std::cerr << "Have read the following key: " << std::endl;
-    std::cerr << data.toStdString() << std::endl;
+    std::cerr << QString(data).toStdString() << std::endl;
 
     key_data = data;
 
     return true;
 }
 
-bool CryptoKey::loadFromTorMessage(const Tor::TorByteArray& b)
+bool CryptoKey::loadFromTorMessage(const QByteArray& b)
 {
     // note: We should probably check the structure a bit more, for security.
 
@@ -169,7 +163,7 @@ bool CryptoKey::loadFromTorMessage(const Tor::TorByteArray& b)
         std::cerr << "  type: RSA-1024 (Tor v2)" << std::endl;
     else if(b.startsWith("ED25519-V3"))
         std::cerr << "  type: ED25519-V3 (Tor v3)" << std::endl;
-    else if(b.indexOf(':') >= 0)
+    else if(b.indexOf(':'))
     {
         std::cerr << "  unknown type, or bad syntax in key: \"" << b.left(b.indexOf(':')).toStdString() << "\". Not accepted." << std::endl;
         return false;
@@ -180,22 +174,22 @@ bool CryptoKey::loadFromTorMessage(const Tor::TorByteArray& b)
 }
 
 /* Cryptographic hash of a password as expected by Tor's HashedControlPassword */
-Tor::TorByteArray torControlHashedPassword(const Tor::TorByteArray& password)
+QByteArray torControlHashedPassword(const QByteArray &password)
 {
-    Tor::TorByteArray salt = SecureRNG::random(8);
+    QByteArray salt = SecureRNG::random(8);
     if (salt.isNull())
-        return Tor::TorByteArray();
+        return QByteArray();
 
     int count = ((quint32)16 + (96 & 15)) << ((96 >> 4) + 6);
 
     SHA_CTX hash;
     SHA1_Init(&hash);
 
-    Tor::TorByteArray tmp = salt + password;
+    QByteArray tmp = salt + password;
     while (count)
     {
-        int c = std::min(count, tmp.size());
-        SHA1_Update(&hash, reinterpret_cast<const void*>(tmp.data()), c);
+        int c = qMin(count, tmp.size());
+        SHA1_Update(&hash, reinterpret_cast<const void*>(tmp.constData()), c);
         count -= c;
     }
 
@@ -203,8 +197,8 @@ Tor::TorByteArray torControlHashedPassword(const Tor::TorByteArray& password)
     SHA1_Final(md, &hash);
 
     /* 60 is the hex-encoded value of 96, which is a constant used by Tor's algorithm. */
-    return Tor::TorByteArray("16:") + salt.toHex().toUpper() + Tor::TorByteArray("60") +
-           Tor::TorByteArray::fromRawData(reinterpret_cast<const char*>(md), 20).toHex().toUpper();
+    return QByteArray("16:") + salt.toHex().toUpper() + QByteArray("60") +
+           QByteArray::fromRawData(reinterpret_cast<const char*>(md), 20).toHex().toUpper();
 }
 
 

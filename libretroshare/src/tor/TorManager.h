@@ -35,6 +35,8 @@
 #ifndef TORMANAGER_H
 #define TORMANAGER_H
 
+#include "retroshare/rstor.h"
+
 #include <QObject>
 #include <QStringList>
 #include <QHostAddress>
@@ -48,7 +50,8 @@ class TorManagerPrivate;
 
 /* Run/connect to an instance of Tor according to configuration, and manage
  * UI interaction, first time configuration, etc. */
-class TorManager : public QObject
+
+class TorManager : public QObject, public RsTor
 {
     Q_OBJECT
 
@@ -61,7 +64,6 @@ class TorManager : public QObject
     Q_PROPERTY(QString torDataDirectory READ torDataDirectory WRITE setTorDataDirectory)
 
 public:
-    static bool isTorAvailable() ;
     static TorManager *instance();
 
     TorProcess *process();
@@ -103,6 +105,7 @@ signals:
 private:
     explicit TorManager(QObject *parent = 0);
     TorManagerPrivate *d;
+    friend class RsTor;
 };
 
 }

@@ -30,11 +30,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdexcept>
-
-#include "TorTypes.h"
 #include "GetConfCommand.h"
 #include "StrUtil.h"
+#include <QDebug>
 
 using namespace Tor;
 
@@ -45,28 +43,27 @@ GetConfCommand::GetConfCommand(Type t)
 
 QByteArray GetConfCommand::build(const QByteArray &key)
 {
-    return build(std::list<QByteArray>{key});
+    return build(QList<QByteArray>() << key);
 }
 
-QByteArray GetConfCommand::build(const std::list<QByteArray> &keys)
+QByteArray GetConfCommand::build(const QList<QByteArray> &keys)
 {
     QByteArray out;
     if (type == GetConf) {
-        out = QByteArray("GETCONF");
+        out = "GETCONF";
     } else if (type == GetInfo) {
-        out = QByteArray("GETINFO");
+        out = "GETINFO";
     } else {
-        throw std::runtime_error("Unsupported build type in GetConfCommand");
+        Q_ASSERT(false);
         return out;
     }
 
-    for(const QByteArray& key: keys)
-    {
-        out += (' ');
-        out += key;
+    foreach (const QByteArray &key, keys) {
+        out.append(' ');
+        out.append(key);
     }
 
-    out += std::string("\r\n");
+    out.append("\r\n");
     return out;
 }
 
@@ -77,7 +74,7 @@ void GetConfCommand::onReply(int statusCode, const QByteArray &data)
         return;
 
     int kep = data.indexOf('=');
-    std::string key = QString::fromLatin1(data.mid(0, kep));
+    QString key = QString::fromLatin1(data.mid(0, kep));
     QVariant value;
     if (kep >= 0)
         value = QString::fromLatin1(unquotedString(data.mid(kep + 1)));

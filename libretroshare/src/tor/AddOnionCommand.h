@@ -34,7 +34,9 @@
 #define ADDONIONCOMMAND_H
 
 #include "TorControlCommand.h"
-#include <list>
+#include <QList>
+#include <QPair>
+#include <QVariant>
 
 namespace Tor
 {
@@ -43,28 +45,27 @@ class HiddenService;
 
 class AddOnionCommand : public TorControlCommand
 {
-#ifdef NO_TOR_CONTROL_PROPERTIES
-    Q_PROPERTY(std::string errorMessage READ errorMessage CONSTANT)
+    Q_OBJECT
+    Q_DISABLE_COPY(AddOnionCommand)
+
+    Q_PROPERTY(QString errorMessage READ errorMessage CONSTANT)
     Q_PROPERTY(bool successful READ isSuccessful CONSTANT)
-#endif
 
 public:
     AddOnionCommand(HiddenService *service);
 
     QByteArray build();
 
-    std::string errorMessage() const { return m_errorMessage; }
+    QString errorMessage() const { return m_errorMessage; }
     bool isSuccessful() const;
 
-#ifdef NO_TOR_CONTROL_SIGNALS
 signals:
     void succeeded();
     void failed(int code);
-#endif
 
 protected:
     HiddenService *m_service;
-    std::string m_errorMessage;
+    QString m_errorMessage;
 
     virtual void onReply(int statusCode, const QByteArray &data);
     virtual void onFinished(int statusCode);

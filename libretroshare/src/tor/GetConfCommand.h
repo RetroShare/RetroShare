@@ -34,16 +34,18 @@
 #define GETCONFCOMMAND_H
 
 #include "TorControlCommand.h"
-#include <list>
+#include <QList>
+#include <QVariantMap>
 
 namespace Tor
 {
 
 class GetConfCommand : public TorControlCommand
 {
-#ifdef NO_TOR_CONTROL_PROPERTIES
+    Q_OBJECT
+    Q_DISABLE_COPY(GetConfCommand)
+
     Q_PROPERTY(QVariantMap results READ results CONSTANT)
-#endif
 
 public:
     enum Type {
@@ -55,10 +57,10 @@ public:
     GetConfCommand(Type type);
 
     QByteArray build(const QByteArray &key);
-    QByteArray build(const std::list<QByteArray> &keys);
+    QByteArray build(const QList<QByteArray> &keys);
 
-    const QVariantMap& results() const { return m_results; }
-    QVariant get(const QByteArray& key) const;
+    const QVariantMap &results() const { return m_results; }
+    QVariant get(const QByteArray &key) const;
 
 protected:
     virtual void onReply(int statusCode, const QByteArray &data);
@@ -67,7 +69,7 @@ protected:
 
 private:
     QVariantMap m_results;
-    std::string m_lastKey;
+    QString m_lastKey;
 };
 
 }

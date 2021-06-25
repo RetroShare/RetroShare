@@ -33,25 +33,28 @@
 #ifndef HIDDENSERVICE_H
 #define HIDDENSERVICE_H
 
-#include <string>
-#include <list>
-
-#include "tor/CryptoKey.h"
-#include "tor/TorTypes.h"
+#include <QObject>
+#include <QHostAddress>
+#include <QList>
+#include "CryptoKey.h"
 
 namespace Tor
 {
+
 class TorSocket;
 
-class HiddenService : public NonCopiable
+class HiddenService : public QObject
 {
+    Q_OBJECT
+    Q_DISABLE_COPY(HiddenService)
+
     friend class TorControlPrivate;
 
 public:
     struct Target
     {
-        TorHostAddress targetAddress;
-        unsigned short servicePort, targetPort;
+        QHostAddress targetAddress;
+        quint16 servicePort, targetPort;
     };
 
     enum Status
@@ -61,25 +64,24 @@ public:
         Online /* Published */
     };
 
-    HiddenService();
-    HiddenService(const std::string& dataPath);
-    HiddenService(const CryptoKey& privateKey, const std::string& dataPath = std::string());
+    HiddenService(QObject *parent = 0);
+    HiddenService(const QString &dataPath, QObject *parent = 0);
+    HiddenService(const CryptoKey &privateKey, const QString &dataPath = QString(), QObject *parent = 0);
 
     Status status() const { return m_status; }
 
-    const std::string&  hostname()  const { return m_hostname; }
-    const std::string   serviceId() const { return std::string(m_service_id.data()); }
-    const std::string&  dataPath()  const { return m_dataPath; }
+    const QString& hostname() const { return m_hostname; }
+    const QString  serviceId() const { return QString(m_service_id); }
+    const QString& dataPath() const { return m_dataPath; }
 
     CryptoKey privateKey() { return m_privateKey; }
     void setPrivateKey(const CryptoKey &privateKey);
-    void setServiceId(const TorByteArray& sid);
+    void setServiceId(const QByteArray& sid);
 
-    const std::list<Target>& targets() const { return m_targets; }
+    const QList<Target> &targets() const { return m_targets; }
     void addTarget(const Target &target);
-    void addTarget(unsigned short servicePort, TorHostAddress targetAddress, unsigned short targetPort);
+    void addTarget(quint16 servicePort, QHostAddress targetAddress, quint16 targetPort);
 
-#ifdef NO_TOR_CONTROL_SIGNALS
 signals:
     void statusChanged(int newStatus, int oldStatus);
     void serviceOnline();
@@ -88,15 +90,14 @@ signals:
 
 private slots:
     void servicePublished();
-#endif
 
 private:
-    std::string m_dataPath;
-    std::list<Target> m_targets;
-    std::string m_hostname;
+    QString m_dataPath;
+    QList<Target> m_targets;
+    QString m_hostname;
     Status m_status;
     CryptoKey m_privateKey;
-    TorByteArray m_service_id;
+    QByteArray m_service_id;
 
     void loadPrivateKey();
     void setStatus(Status newStatus);

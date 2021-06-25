@@ -33,19 +33,19 @@
 #ifndef SECURERNG_H
 #define SECURERNG_H
 
-#include "TorTypes.h"
+#include <QByteArray>
 
 class SecureRNG
 {
 public:
     static bool seed();
 
-    static void random(unsigned char *buf, int size);
-    static Tor::TorByteArray random(int size);
+    static void random(char *buf, int size);
+    static QByteArray random(int size);
 
-    static Tor::TorByteArray randomPrintable(int length);
+    static QByteArray randomPrintable(int length);
     static unsigned randomInt(unsigned max);
-    static uint64_t randomInt64(uint64_t max);
+    static quint64 randomInt64(quint64 max);
 };
 
 #endif // SECURERNG_H

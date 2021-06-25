@@ -31,12 +31,10 @@
  */
 
 #include "SecureRNG.h"
-
+#include <QtDebug>
 #include <openssl/rand.h>
 #include <openssl/err.h>
 #include <limits.h>
-#include <iostream>
-#include <sstream>
 
 #ifdef Q_OS_WIN
 #include <wtypes.h>
@@ -84,7 +82,7 @@ bool SecureRNG::seed()
 #else
     if (!RAND_poll())
     {
-        std::cerr << "OpenSSL RNG seed failed:" << ERR_get_error();
+        qWarning() << "OpenSSL RNG seed failed:" << ERR_get_error();
         return false;
     }
 #endif
@@ -96,16 +94,11 @@ bool SecureRNG::seed()
     return true;
 }
 
-void SecureRNG::random(unsigned char *buf, int size)
+void SecureRNG::random(char *buf, int size)
 {
-    int r = RAND_bytes(buf, size);
-
+    int r = RAND_bytes(reinterpret_cast<unsigned char*>(buf), size);
     if (r <= 0)
-    {
-        std::ostringstream s;
-        s << "RNG failed: " << ERR_get_error() ;
-        throw std::runtime_error(s.str());
-    }
+        qFatal("RNG failed: %lu", ERR_get_error());
 }
 
 QByteArray SecureRNG::random(int size)
@@ -118,7 +111,7 @@ QByteArray SecureRNG::random(int size)
 QByteArray SecureRNG::randomPrintable(int length)
 {
     QByteArray re(length, 0);
-    for (uint32_t i = 0; i < re.size(); i++)
+    for (int i = 0; i < re.size(); i++)
         re[i] = randomInt(95) + 32;
     return re;
 }
@@ -130,24 +123,24 @@ unsigned SecureRNG::randomInt(unsigned max)
 
     for (;;)
     {
-        random(reinterpret_cast<unsigned char*>(&value), sizeof(value));
+        random(reinterpret_cast<char*>(&value), sizeof(value));
         if (value < cutoff)
             return value % max;
     }
 }
 
 #ifndef UINT64_MAX
-#define UINT64_MAX ((uint64_t)-1)
+#define UINT64_MAX ((quint64)-1)
 #endif
 
-uint64_t SecureRNG::randomInt64(uint64_t max)
+quint64 SecureRNG::randomInt64(quint64 max)
 {
-    uint64_t cutoff = UINT64_MAX - (UINT64_MAX % max);
-    uint64_t value = 0;
+    quint64 cutoff = UINT64_MAX - (UINT64_MAX % max);
+    quint64 value = 0;
 
     for (;;)
     {
-        random(reinterpret_cast<unsigned char*>(value), sizeof(value));
+        random(reinterpret_cast<char*>(value), sizeof(value));
         if (value < cutoff)
             return value % max;
     }

@@ -66,7 +66,7 @@ CrashStackTrace gCrashStackTrace;
 #	include "gui/settings/JsonApiPage.h"
 #endif // RS_JSONAPI
 
-#include "TorControl/TorManager.h"
+#include "retroshare/rstor.h"
 #include "TorControl/TorControlWindow.h"
 
 #include "retroshare/rsidentity.h"

@@ -33,15 +33,15 @@
 
 #include <rshare.h>
 #include "gui/settings/rsharesettings.h"
-#include "TorControl/TorManager.h"
 #include "util/misc.h"
 #include "gui/common/FilesDefs.h"
 
-#include <retroshare/rsidentity.h>
-#include <retroshare/rsinit.h>
-#include <retroshare/rsnotify.h>
-#include <rsserver/rsaccounts.h>
-#include <util/rsrandom.h>
+#include "retroshare/rstor.h"
+#include "retroshare/rsidentity.h"
+#include "retroshare/rsinit.h"
+#include "retroshare/rsnotify.h"
+#include "rsserver/rsaccounts.h"
+#include "util/rsrandom.h"
 
 #include <time.h>
 #include <math.h>

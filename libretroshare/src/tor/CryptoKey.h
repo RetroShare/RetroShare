@@ -33,7 +33,9 @@
 #ifndef CRYPTOKEY_H
 #define CRYPTOKEY_H
 
-#include "tor/TorTypes.h"
+#include <QString>
+#include <QSharedData>
+#include <QExplicitlySharedDataPointer>
 
 class CryptoKey
 {
@@ -55,13 +57,12 @@ public:
     bool loadFromData(const QByteArray &data, KeyType type, KeyFormat format = PEM);
     bool loadFromFile(const QString &path, KeyType type, KeyFormat format = PEM);
 #endif
-    bool loadFromFile(const std::string& path);
+    bool loadFromFile(const QString &path);
     void clear();
 
-    const Tor::TorByteArray& bytes() const { return key_data; }
-    bool loadFromTorMessage(const Tor::TorByteArray& b);
-    bool isLoaded() const { return !key_data.empty(); }
-
+    const QByteArray bytes() const { return key_data; }
+    bool loadFromTorMessage(const QByteArray& b);
+    bool isLoaded() const { return !key_data.isNull(); }
 #ifdef TO_REMOVE
     bool isPrivate() const;
 
@@ -100,6 +101,6 @@ private:
 #endif
 };
 
-Tor::TorByteArray torControlHashedPassword(const Tor::TorByteArray& password);
+QByteArray torControlHashedPassword(const QByteArray &password);
 
 #endif // CRYPTOKEY_H

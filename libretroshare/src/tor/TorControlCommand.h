@@ -33,31 +33,32 @@
 #ifndef TORCONTROLCOMMAND_H
 #define TORCONTROLCOMMAND_H
 
-#include <vector>
-#include "tor/TorTypes.h"
+#include <QObject>
+#include <QByteArray>
 
 namespace Tor
 {
-class TorControlCommand : public NonCopiable
+
+class TorControlCommand : public QObject
 {
+    Q_OBJECT
+    Q_DISABLE_COPY(TorControlCommand)
+
     friend class TorControlSocket;
 
 public:
     TorControlCommand();
-    virtual ~TorControlCommand() {}
 
     int statusCode() const { return m_finalStatus; }
 
-#ifdef NO_TOR_CONTROL_SIGNALS
 signals:
-    void replyLine(int statusCode, const TorByteArray& data);
+    void replyLine(int statusCode, const QByteArray &data);
     void finished();
-#endif
 
 protected:
-    virtual void onReply(int statusCode, const TorByteArray& data);
+    virtual void onReply(int statusCode, const QByteArray &data);
     virtual void onFinished(int statusCode);
-    virtual void onDataLine(const TorByteArray& data);
+    virtual void onDataLine(const QByteArray &data);
     virtual void onDataFinished();
 
 private:

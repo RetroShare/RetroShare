@@ -118,11 +118,6 @@ TorProcess *TorManager::process()
     return d->process;
 }
 
-bool TorManager::isTorAvailable()
-{
-    return !instance()->d->torExecutablePath().isNull();
-}
-
 QString TorManager::torDataDirectory() const
 {
     return d->dataDir;
@@ -524,3 +519,47 @@ void TorManagerPrivate::setError(const QString &message)
 
 #include "TorManager.moc"
 
+bool RsTor::isTorAvailable()
+{
+    return !instance()->d->torExecutablePath().isNull();
+}
+
+bool RsTor::getHiddenServiceInfo(std::string& service_id,
+                                 std::string& service_onion_address,
+                                 uint16_t& service_port,
+                                 std::string& service_target_address,
+                                 uint16_t& target_port)
+{
+    QString sid;
+    QString soa;
+    QHostAddress sta;
+
+    if(!instance()->getHiddenServiceInfo(sid,soa,service_port,sta,target_port))
+        return false;
+
+    service_id = sid.toStdString();
+    service_onion_address = soa.toStdString();
+    service_target_address = sta.toString().toStdString();
+
+    return true;
+}
+
+std::list<std::string> RsTor::logMessages()
+{
+    QStringList qs = instance()->logMessages();
+
+    std::list<std::string> s;
+    for(auto& ss:qs)
+        s.push_back(ss.toStdString());
+
+    return s;
+}
+
+std::string RsTor::socksAddress()
+{
+    return instance()->control()->socksAddress().toString().toStdString();
+}
+uint16_t RsTor::socksPort()
+{
+    return instance()->control()->socksPort();
+}

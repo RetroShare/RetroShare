@@ -9,12 +9,17 @@ libretroshare_shared {
 } else {
 	CONFIG += staticlib
 }
-CONFIG -= qt
+CONFIG += qt
+
+QT += network
+
 TARGET = retroshare
 TARGET_PRL = libretroshare
 DESTDIR = lib
 
 !include("use_libretroshare.pri"):error("Including")
+
+QMAKE_CXXFLAGS += -fPIC
 
 # treat warnings as error for better removing
 #QMAKE_CFLAGS += -Werror
@@ -720,6 +725,8 @@ SOURCES += rsitems/rsnxsitems.cc \
 	gxs/rsgxsrequesttypes.cc
 
 # Tor
+HEADERS += 	retroshare/rstor.h 
+
 HEADERS += 	tor/AddOnionCommand.h \
            	tor/AuthenticateCommand.h \
            	tor/CryptoKey.h \
