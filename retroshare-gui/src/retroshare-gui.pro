@@ -280,13 +280,22 @@ macx {
 	mac_icon.files = $$files($$PWD/rsMacIcon.icns)
 	mac_icon.path = Contents/Resources
 	QMAKE_BUNDLE_DATA += mac_icon
+	dplQSS.files = $$PWD/qss
+	dplQSS.path = Contents/Resources
+	QMAKE_BUNDLE_DATA += dplQSS
+	dplChatStyles.files = \
+		$$PWD/gui/qss/chat/Bubble \
+		$$PWD/gui/qss/chat/Bubble_Compact
+	dplChatStyles.path = Contents/Resources/stylesheets
+	QMAKE_BUNDLE_DATA += dplChatStyles 
 #	mac_webui.files = $$files($$PWD/../../libresapi/src/webui)
 #	mac_webui.path = Contents/Resources
 #	QMAKE_BUNDLE_DATA += mac_webui
 
+	OBJECTS_DIR = temp/obj
+
 	CONFIG += version_detail_bash_script
-        LIBS += -lssl -lcrypto -lz 
-        #LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error -lassuan
+	LIBS += -lssl -lcrypto -lz 
 	for(lib, LIB_DIR):exists($$lib/libminiupnpc.a){ LIBS += $$lib/libminiupnpc.a}
 	LIBS += -framework CoreFoundation
 	LIBS += -framework Security

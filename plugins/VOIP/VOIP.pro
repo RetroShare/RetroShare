@@ -53,7 +53,7 @@ linux-* {
 
 	PKGCONFIG += libavcodec libavutil
 	PKGCONFIG += speex speexdsp
-	PKGCONFIG += opencv
+	PKGCONFIG += opencv4
 } else {
 	LIBS += -lspeex -lspeexdsp -lavcodec -lavutil
 }

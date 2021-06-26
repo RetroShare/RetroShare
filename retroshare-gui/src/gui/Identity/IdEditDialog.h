@@ -51,6 +51,7 @@ public:
 private slots:
 	void idTypeToggled(bool checked);
 	void submit();
+    void avatarCleared();
 
 	void changeAvatar();
 
@@ -84,6 +85,7 @@ protected:
 	RsGxsGroupId mGroupId;
 
 	QPixmap mAvatar; // Avatar from identity (not calculated)
+    bool mAvatarIsSet;
 };
 
 #endif

@@ -4,7 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2004-2006  Robert Fernie <retroshare@lunamutt.com>            *
- * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2015-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -30,14 +31,13 @@
 #	include <android/api-level.h>
 #endif // def __ANDROID__
 
-#include "pqi/pqinetwork.h"
-#include "util/rsnet.h"
-
-#include <errno.h>
+#include <cerrno>
 #include <iostream>
-#include <stdio.h>
+#include <cstdio>
 #include <unistd.h>
 
+#include "pqi/pqinetwork.h"
+#include "util/rsnet.h"
 #include "util/rsdebug.h"
 #include "util/rsstring.h"
 #include "util/rsnet.h"
@@ -325,7 +325,7 @@ bool getLocalAddresses(std::vector<sockaddr_storage>& addrs)
 	}
 	free(adapter_addresses);
 #elif defined(__ANDROID__) && __ANDROID_API__ < 24
-	foreach(QHostAddress qAddr, QNetworkInterface::allAddresses())
+	for(auto& qAddr: QNetworkInterface::allAddresses())
 	{
 		sockaddr_storage tmpAddr;
 		sockaddr_storage_clear(tmpAddr);

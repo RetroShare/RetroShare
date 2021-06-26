@@ -4,7 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2008  Robert Fernie <retroshare@lunamutt.com>                 *
- * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2018-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -42,49 +43,34 @@
  * #define DEBUG_ELIST	1
  *****/
 
-ftExtraList::ftExtraList()
-	:p3Config(), extMutex("p3Config")
-{
-    cleanup = 0;
-    return;
-}
-
+ftExtraList::ftExtraList(): p3Config(), extMutex("p3Config"), mNextCleanupTS(0)
+{}
 
 void ftExtraList::threadTick()
 {
-    bool todo = false;
-    rstime_t now = time(NULL);
+	bool haveFilesToHash = false;
+	rstime_t now = time(nullptr);
 
-    {
-        RsStackMutex stack(extMutex);
+	{
+		RS_STACK_MUTEX(extMutex);
+		haveFilesToHash = !mToHash.empty();
+	}
 
-        todo = (mToHash.size() > 0);
-    }
+	if (haveFilesToHash)
+	{
+		hashAFile();
+		std::this_thread::sleep_for(std::chrono::microseconds(10));
+	}
+	else
+	{
+		if (mNextCleanupTS < now)
+		{
+			cleanupOldFiles();
+			mNextCleanupTS = now + CLEANUP_PERIOD;
+		}
 
-    if (todo)
-    {
-        /* Hash a file */
-        hashAFile();
-
-        /* microsleep */
-        rstime::rs_usleep(10);
-    }
-    else
-    {
-        /* cleanup */
-        if (cleanup < now)
-        {
-            cleanupOldFiles();
-            cleanup = now + CLEANUP_PERIOD;
-        }
-
-        /* sleep */
-#ifdef WIN32
-        Sleep(1000);
-#else
-        sleep(1);
-#endif
-    }
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+	}
 }
 
 
@@ -98,15 +84,11 @@ void ftExtraList::hashAFile()
 
 	/* extract entry from the queue */
 	FileDetails details;
-
 	{
 		RS_STACK_MUTEX(extMutex);
-
-		if (mToHash.empty())
-			return;
-
+		if (mToHash.empty()) return;
 		details = mToHash.front();
-		mToHash.pop_front();
+		mToHash.pop();
 	}
 
 #ifdef  DEBUG_ELIST
@@ -114,26 +96,24 @@ void ftExtraList::hashAFile()
 	std::cerr << std::endl;
 #endif
 
-	/* hash it! */
-	std::string name, hash;
-	//uint64_t size;
-	if (RsDirUtil::hashFile(details.info.path, details.info.fname,  details.info.hash, details.info.size))
+	if(RsDirUtil::hashFile(
+	            details.info.path, details.info.fname, details.info.hash,
+	            details.info.size ))
 	{
 		RS_STACK_MUTEX(extMutex);
 
 		/* stick it in the available queue */
 		mFiles[details.info.hash] = details;
-        mHashOfHash[makeEncryptedHash(details.info.hash)] = details.info.hash ;
+		mHashOfHash[makeEncryptedHash(details.info.hash)] = details.info.hash;
 
 		/* add to the path->hash map */
 		mHashedList[details.info.path] = details.info.hash;
 	
 		IndicateConfigChanged();
 
-        auto ev = std::make_shared<RsSharedDirectoriesEvent>();
-        ev->mEventCode = RsSharedDirectoriesEventCode::EXTRA_LIST_FILE_ADDED;
-        if(rsEvents)
-            rsEvents->postEvent(ev);
+		auto ev = std::make_shared<RsSharedDirectoriesEvent>();
+		ev->mEventCode = RsSharedDirectoriesEventCode::EXTRA_LIST_FILE_ADDED;
+		rsEvents->postEvent(ev);
 	}
 }
 
@@ -304,7 +284,7 @@ bool ftExtraList::hashExtraFile(
 
 	{
 		RS_STACK_MUTEX(extMutex);
-		mToHash.push_back(details); /* add into queue */
+		mToHash.push(details); /* add into queue */
 	}
 
 	return true;
@@ -420,8 +400,6 @@ RsSerialiser *ftExtraList::setupSerialiser()
 
 bool ftExtraList::saveList(bool &cleanup, std::list<RsItem *>& sList)
 {
-
-
 	cleanup = true;
 
 	/* called after each item is added */

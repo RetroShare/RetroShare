@@ -161,7 +161,11 @@ QVariant RSTextBrowser::loadResource(int type, const QUrl &name)
 
 	// case 4: otherwise, do not display
 
-	std::cerr << "TEXTBROWSER: refusing load ressource request: type=" << type << " scheme=" << name.scheme().toStdString() << ", url=" << name.toString().toStdString() << std::endl;
+    std::cerr << "TEXTBROWSER: refusing load ressource request: type=" << type << " scheme="
+              << name.scheme().toStdString() << ", url="
+              << name.toString().left(50).toStdString()
+              << ((name.toString().length()>50)?"...":"")
+              << std::endl;
 
 	if (mImageBlockWidget)
 		mImageBlockWidget->show();

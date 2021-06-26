@@ -46,6 +46,7 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
     ui(new(Ui::IdEditDialog))
 {
 	mIsNew = true;
+    mAvatarIsSet = false;
 
 	ui->setupUi(this);
 
@@ -88,6 +89,11 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
 	connect(ui->toolButton_Tag5, SIGNAL(clicked(bool)), this, SLOT(rmTag5()));
 	connect(ui->avatarButton, SIGNAL(clicked(bool)), this, SLOT(changeAvatar()));
 
+    connect(ui->avatarLabel,SIGNAL(cleared()),this,SLOT(avatarCleared()));
+
+    ui->avatarLabel->setEnableClear(true);
+    ui->avatarLabel->setToolTip(tr("No Avatar chosen. A default image will be automatically displayed from your new identity."));
+
 	/* Initialize ui */
 	ui->lineEdit_Nickname->setMaxLength(RSID_MAXIMUM_NICKNAME_SIZE);
 
@@ -125,7 +131,8 @@ void IdEditDialog::changeAvatar()
 
     ui->avatarLabel->setPicture(QPixmap::fromImage(img));
     ui->avatarLabel->setEnableZoom(true);
-    ui->avatarLabel->setToolTip(tr("Use the mouse to zoom and adjust the image for your avatar."));
+        ui->avatarLabel->setToolTip(tr("Use the mouse to zoom and adjust the image for your avatar. Hit Del to remove it."));
+    mAvatarIsSet = true;
 
     // shows the tooltip for a while
     QToolTip::showText( ui->avatarLabel->mapToGlobal( QPoint( 0, 0 ) ), ui->avatarLabel->toolTip() );
@@ -205,16 +212,25 @@ void IdEditDialog::updateIdType(bool pseudo)
 	}
 }
 
+void IdEditDialog::avatarCleared()
+{
+    setAvatar(QPixmap());
+}
+
 void IdEditDialog::setAvatar(const QPixmap &avatar)
 {
 	mAvatar = avatar;
 
 	if (!mAvatar.isNull()) {
         ui->avatarLabel->setPicture(avatar);
+        mAvatarIsSet = true;
+        ui->avatarLabel->setToolTip(tr("Use the mouse to zoom and adjust the image for your avatar. Hit Del to remove it."));
     } else {
 		// we need to use the default pixmap here, generated from the ID
-        ui->avatarLabel->setPicture(GxsIdDetails::makeDefaultIcon(RsGxsId(mEditGroup.mMeta.mGroupId)));
-	}
+        ui->avatarLabel->setText(tr("No avatar chosen"));	// This clears up the image
+        mAvatarIsSet = false;
+        ui->avatarLabel->setToolTip(tr("No Avatar chosen. A default image will be automatically displayed from your new identity."));
+    }
 }
 
 void IdEditDialog::setupExistingId(const RsGxsGroupId& keyId)
@@ -517,13 +533,9 @@ void IdEditDialog::loadRecognTags()
 void IdEditDialog::submit()
 {
 	if (mIsNew)
-	{
 		createId();
-	}
 	else
-	{
 		updateId();
-	}
 }
 
 void IdEditDialog::createId()
@@ -551,10 +563,10 @@ void IdEditDialog::createId()
     params.nickname = groupname.toUtf8().constData();
 	params.isPgpLinked = (ui->radioButton_GpgId->isChecked());
 
-    mAvatar = ui->avatarLabel->extractCroppedScaledPicture();
-
-    if (!mAvatar.isNull())
+    if(mAvatarIsSet)
     {
+        mAvatar = ui->avatarLabel->extractCroppedScaledPicture();
+
         QByteArray ba;
         QBuffer buffer(&ba);
 

@@ -173,7 +173,8 @@ if exist "%SourcePath%\libresapi\src\webui" (
 
 if "%ParamTor%"=="1" (
 	echo copy tor
-	echo n | copy /-y "%EnvTorPath%\Tor\*.*" "%RsDeployPath%" %Quite%
+	if not exist "%RsDeployPath%\tor" mkdir "%RsDeployPath%\tor"
+	echo n | copy /-y "%EnvTorPath%\Tor\*.*" "%RsDeployPath%\tor" %Quite%
 )
 
 rem pack files

@@ -1028,12 +1028,18 @@ bool RsGxsNetTunnelService::receiveSearchRequest(unsigned char *search_request_d
         max_allowed_hits = RS_GXS_NET_TUNNEL_MAX_ALLOWED_HITS_GROUP_SEARCH ;
 
         std::list<RsGxsGroupSummary> results ;
+        RsNetworkExchangeService *service = nullptr;
 
-		RS_STACK_MUTEX(mGxsNetTunnelMtx);
+        {
+            RS_STACK_MUTEX(mGxsNetTunnelMtx);
 
-        auto it = mSearchableServices.find(substring_sr->service) ;
+            auto it = mSearchableServices.find(substring_sr->service) ;
 
-        if(it != mSearchableServices.end() && it->second->search(substring_sr->substring_match,results))
+            if(it != mSearchableServices.end())
+                service = it->second;
+        }
+
+        if(service != nullptr && service->search(substring_sr->substring_match,results))
         {
 			RsGxsNetTunnelTurtleSearchGroupSummaryItem search_result_item ;
 

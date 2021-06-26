@@ -465,7 +465,7 @@ QString TorManagerPrivate::torExecutablePath() const
         return path;
 
 #ifdef Q_OS_WIN
-    QString filename(QStringLiteral("/tor.exe"));
+    QString filename(QStringLiteral("/tor/tor.exe"));
 #else
     QString filename(QStringLiteral("/tor"));
 #endif
