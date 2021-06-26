@@ -178,10 +178,10 @@ void TorControlPrivate::setStatus(TorControl::Status n)
     {
         auto ev = std::make_shared<RsTorManagerEvent>();
 
-        ev->mTorManagerEventType    = RsTorManagerEventCode::TOR_CONTROL_STATUS_CHANGED;
+        ev->mTorManagerEventType    = RsTorManagerEventCode::TOR_STATUS_CHANGED;
         ev->mTorConnectivityStatus  = torConnectivityStatus(status);
 
-        rsEvents->postEvent(ev);
+        rsEvents->sendEvent(ev);
     }
 #ifdef TO_REMOVE
     emit q->statusChanged(status, old);
@@ -200,9 +200,19 @@ void TorControlPrivate::setTorStatus(TorControl::TorStatus n)
 
     TorControl::TorStatus old = torStatus;
     torStatus = n;
+#ifdef TO_REMOVE
     emit q->torStatusChanged(torStatus, old);
     emit q->connectivityChanged();
+#endif
 
+    if(rsEvents)
+    {
+        auto ev = std::make_shared<RsTorManagerEvent>();
+
+        ev->mTorManagerEventType = RsTorManagerEventCode::TOR_STATUS_CHANGED;
+        ev->mTorStatus = ::torStatus(torStatus);
+        rsEvents->sendEvent(ev);
+    }
     if (torStatus == TorControl::TorReady && socksAddress.isNull()) {
         // Request info again to read the SOCKS port
         getTorInfo();
@@ -460,7 +470,14 @@ void TorControlPrivate::getTorInfo()
         torCtrlDebug() << "torctrl: Using manually specified SOCKS connection settings";
         socksAddress = forceAddress;
         socksPort = port;
-        emit q->connectivityChanged();
+
+        if(rsEvents)
+        {
+            auto ev = std::make_shared<RsTorManagerEvent>();
+
+            ev->mTorManagerEventType = RsTorManagerEventCode::TOR_CONNECTIVITY_CHANGED;
+            rsEvents->sendEvent(ev);
+        }
     } else
         keys << QByteArray("net/listeners/socks");
 
@@ -496,7 +513,14 @@ void TorControlPrivate::getTorInfoReply()
      * is reached. */
     if (!socksAddress.isNull()) {
         torCtrlDebug() << "torctrl: SOCKS address is " << socksAddress.toString().toStdString() << ":" << socksPort << std::endl;
-        emit q->connectivityChanged();
+
+        if(rsEvents)
+        {
+            auto ev = std::make_shared<RsTorManagerEvent>();
+
+            ev->mTorManagerEventType = RsTorManagerEventCode::TOR_CONNECTIVITY_CHANGED;
+            rsEvents->sendEvent(ev);
+        }
     }
 
     if (command->get(QByteArray("status/circuit-established")).toInt() == 1) {
@@ -657,7 +681,7 @@ void TorControlPrivate::updateBootstrap(const QList<QByteArray> &data)
         auto ev = std::make_shared<RsTorManagerEvent>();
 
         ev->mTorManagerEventType = RsTorManagerEventCode::BOOTSTRAP_STATUS_CHANGED;
-        rsEvents->postEvent(ev);
+        rsEvents->sendEvent(ev);
     }
 }
 
