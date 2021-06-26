@@ -32,6 +32,7 @@
 
 #include <time.h>
 
+#include "retroshare/rstor.h"
 #include "TorControl.h"
 #include "TorControlSocket.h"
 #include "HiddenService.h"
@@ -139,6 +140,29 @@ QNetworkProxy TorControl::connectionProxy()
     return QNetworkProxy(QNetworkProxy::Socks5Proxy, d->socksAddress.toString(), d->socksPort);
 }
 
+static RsTorConnectivityStatus torConnectivityStatus(Tor::TorControl::Status t)
+{
+    switch(t)
+    {
+    default:
+    case TorControl::Error:          return RsTorConnectivityStatus::ERROR;
+    case TorControl::NotConnected:   return RsTorConnectivityStatus::NOT_CONNECTED;
+    case TorControl::Connecting:     return RsTorConnectivityStatus::CONNECTING;
+    case TorControl::Authenticating: return RsTorConnectivityStatus::AUTHENTICATING;
+    case TorControl::Connected:      return RsTorConnectivityStatus::CONNECTED;
+    }
+}
+static RsTorStatus torStatus(Tor::TorControl::TorStatus t)
+{
+    switch(t)
+    {
+    default:
+    case TorControl::TorUnknown:   return RsTorStatus::UNKNOWN;
+    case TorControl::TorOffline:   return RsTorStatus::OFFLINE;
+    case TorControl::TorReady:     return RsTorStatus::READY;
+    }
+}
+
 void TorControlPrivate::setStatus(TorControl::Status n)
 {
     if (n == status)
@@ -150,12 +174,23 @@ void TorControlPrivate::setStatus(TorControl::Status n)
     if (old == TorControl::Error)
         errorMessage.clear();
 
+    if(rsEvents)
+    {
+        auto ev = std::make_shared<RsTorManagerEvent>();
+
+        ev->mTorManagerEventType    = RsTorManagerEventCode::TOR_CONTROL_STATUS_CHANGED;
+        ev->mTorConnectivityStatus  = torConnectivityStatus(status);
+
+        rsEvents->postEvent(ev);
+    }
+#ifdef TO_REMOVE
     emit q->statusChanged(status, old);
 
     if (status == TorControl::Connected && old < TorControl::Connected)
         emit q->connected();
     else if (status < TorControl::Connected && old >= TorControl::Connected)
         emit q->disconnected();
+#endif
 }
 
 void TorControlPrivate::setTorStatus(TorControl::TorStatus n)
@@ -617,7 +652,13 @@ void TorControlPrivate::updateBootstrap(const QList<QByteArray> &data)
 
     //torCtrlDebug() << bootstrapStatus << std::endl;
 
-    emit q->bootstrapStatusChanged();
+    if(rsEvents)
+    {
+        auto ev = std::make_shared<RsTorManagerEvent>();
+
+        ev->mTorManagerEventType = RsTorManagerEventCode::BOOTSTRAP_STATUS_CHANGED;
+        rsEvents->postEvent(ev);
+    }
 }
 
 QObject *TorControl::getConfiguration(const QString &options)

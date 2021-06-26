@@ -578,18 +578,18 @@ RsTorStatus RsTor::torStatus()
     }
 }
 
-RsTorControlStatus RsTor::torControlStatus()
+RsTorConnectivityStatus RsTor::torConnectivityStatus()
 {
     TorControl::Status ts = instance()->control()->status();
 
     switch(ts)
     {
     default:
-    case Tor::TorControl::Error :          return RsTorControlStatus::ERROR;
-    case Tor::TorControl::NotConnected :   return RsTorControlStatus::NOT_CONNECTED;
-    case Tor::TorControl::Authenticating:  return RsTorControlStatus::AUTHENTICATING;
-    case Tor::TorControl::Connecting:      return RsTorControlStatus::CONNECTING;
-    case Tor::TorControl::Connected :      return RsTorControlStatus::CONNECTED;
+    case Tor::TorControl::Error :          return RsTorConnectivityStatus::ERROR;
+    case Tor::TorControl::NotConnected :   return RsTorConnectivityStatus::NOT_CONNECTED;
+    case Tor::TorControl::Authenticating:  return RsTorConnectivityStatus::AUTHENTICATING;
+    case Tor::TorControl::Connecting:      return RsTorConnectivityStatus::CONNECTING;
+    case Tor::TorControl::Connected :      return RsTorConnectivityStatus::CONNECTED;
     }
 }
 

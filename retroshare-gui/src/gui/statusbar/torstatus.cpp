@@ -91,7 +91,7 @@ void TorStatus::getTorStatus()
     if(RsAccounts::isTorAuto())
 	{
 		// get Tor status
-        RsTorControlStatus tor_control_status = RsTor::torControlStatus();
+        RsTorConnectivityStatus tor_control_status = RsTor::torConnectivityStatus();
         RsTorStatus torstatus = RsTor::torStatus();
 
 		QString tor_control_status_str,torstatus_str ;
@@ -100,11 +100,11 @@ void TorStatus::getTorStatus()
 		switch(tor_control_status)
 		{
 		default:
-        case RsTorControlStatus::ERROR :			tor_control_ok = false ; tor_control_status_str = "Error" ; break ;
-        case RsTorControlStatus::NOT_CONNECTED:		tor_control_ok = false ; tor_control_status_str = "Not connected" ; break ;
-        case RsTorControlStatus::CONNECTING:		tor_control_ok = false ; tor_control_status_str = "Connecting" ; break ;
-        case RsTorControlStatus::AUTHENTICATING:	tor_control_ok = false ; tor_control_status_str = "Authenticating" ; break ;
-        case RsTorControlStatus::CONNECTED:			tor_control_ok = true  ; tor_control_status_str = "Connected" ; break ;
+        case RsTorConnectivityStatus::ERROR :			tor_control_ok = false ; tor_control_status_str = "Error" ; break ;
+        case RsTorConnectivityStatus::NOT_CONNECTED:	tor_control_ok = false ; tor_control_status_str = "Not connected" ; break ;
+        case RsTorConnectivityStatus::CONNECTING:		tor_control_ok = false ; tor_control_status_str = "Connecting" ; break ;
+        case RsTorConnectivityStatus::AUTHENTICATING:	tor_control_ok = false ; tor_control_status_str = "Authenticating" ; break ;
+        case RsTorConnectivityStatus::CONNECTED:		tor_control_ok = true  ; tor_control_status_str = "Connected" ; break ;
 		}
 
 		switch(torstatus)
