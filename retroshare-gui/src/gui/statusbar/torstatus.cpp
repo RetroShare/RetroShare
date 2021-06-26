@@ -28,11 +28,10 @@
 #include "retroshare/rsconfig.h"
 #include "retroshare/rsinit.h"
 #include "retroshare/rspeers.h"
+#include "retroshare/rstor.h"
 #include <QTcpSocket>
 #include "util/misc.h"
 
-#include "TorControl/TorManager.h"
-#include "TorControl/TorControl.h"
 #include "gui/common/FilesDefs.h"
 
 #include <iomanip>
@@ -92,8 +91,8 @@ void TorStatus::getTorStatus()
     if(RsAccounts::isTorAuto())
 	{
 		// get Tor status
-		int tor_control_status = Tor::TorManager::instance()->control()->status();
-		int torstatus = Tor::TorManager::instance()->control()->torStatus();
+        RsTorControlStatus tor_control_status = RsTor::torControlStatus();
+        RsTorStatus torstatus = RsTor::torStatus();
 
 		QString tor_control_status_str,torstatus_str ;
 		bool tor_control_ok ;
@@ -101,30 +100,30 @@ void TorStatus::getTorStatus()
 		switch(tor_control_status)
 		{
 		default:
-		case Tor::TorControl::Error :			tor_control_ok = false ; tor_control_status_str = "Error" ; break ;
-		case Tor::TorControl::NotConnected:		tor_control_ok = false ; tor_control_status_str = "Not connected" ; break ;
-		case Tor::TorControl::Connecting:		tor_control_ok = false ; tor_control_status_str = "Connecting" ; break ;
-		case Tor::TorControl::Authenticating:	tor_control_ok = false ; tor_control_status_str = "Authenticating" ; break ;
-		case Tor::TorControl::Connected:		tor_control_ok = true  ; tor_control_status_str = "Connected" ; break ;
+        case RsTorControlStatus::ERROR :			tor_control_ok = false ; tor_control_status_str = "Error" ; break ;
+        case RsTorControlStatus::NOT_CONNECTED:		tor_control_ok = false ; tor_control_status_str = "Not connected" ; break ;
+        case RsTorControlStatus::CONNECTING:		tor_control_ok = false ; tor_control_status_str = "Connecting" ; break ;
+        case RsTorControlStatus::AUTHENTICATING:	tor_control_ok = false ; tor_control_status_str = "Authenticating" ; break ;
+        case RsTorControlStatus::CONNECTED:			tor_control_ok = true  ; tor_control_status_str = "Connected" ; break ;
 		}
 
 		switch(torstatus)
 		{
 		default:
-		case Tor::TorControl::TorUnknown: 	torstatus_str = "Unknown" ; break ;
-		case Tor::TorControl::TorOffline: 	torstatus_str = "Tor offline" ; break ;
-		case Tor::TorControl::TorReady: 	torstatus_str = "Tor ready" ; break ;
+        case RsTorStatus::UNKNOWN: 	torstatus_str = "Unknown" ; break ;
+        case RsTorStatus::OFFLINE: 	torstatus_str = "Tor offline" ; break ;
+        case RsTorStatus::READY: 	torstatus_str = "Tor ready" ; break ;
 		}
 
 #define MIN_RS_NET_SIZE		10
 
-		if(torstatus == Tor::TorControl::TorOffline || !online || !tor_control_ok)
+        if(torstatus == RsTorStatus::OFFLINE || !online || !tor_control_ok)
 		{
 			// RED - some issue.
             torstatusLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/tor-stopping.png").scaledToHeight(1.5*S,Qt::SmoothTransformation));
 			torstatusLabel->setToolTip( text + tr("Tor is currently offline"));
 		}
-		else if(torstatus == Tor::TorControl::TorReady && online && tor_control_ok)
+        else if(torstatus == RsTorStatus::READY && online && tor_control_ok)
 		{
             torstatusLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/tor-on.png").scaledToHeight(1.5*S,Qt::SmoothTransformation));
 			torstatusLabel->setToolTip( text + tr("Tor is OK"));

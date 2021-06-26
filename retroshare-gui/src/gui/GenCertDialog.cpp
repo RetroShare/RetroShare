@@ -528,7 +528,7 @@ void GenCertDialog::genPerson()
 	bool isHiddenLoc = (ui.nodeType_CB->currentIndex()>0);
     bool isAutoTor = (ui.nodeType_CB->currentIndex()==1);
 
-    if(isAutoTor && !Tor::TorManager::isTorAvailable())
+    if(isAutoTor && !RsTor::isTorAvailable())
     {
         QMessageBox::critical(this,tr("Tor is not available"),tr("No Tor executable has been found on your system. You need to install Tor before creating a hidden identity.")) ;
         return ;

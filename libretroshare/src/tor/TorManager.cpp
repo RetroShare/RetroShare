@@ -563,3 +563,110 @@ uint16_t RsTor::socksPort()
 {
     return instance()->control()->socksPort();
 }
+
+RsTorStatus RsTor::torStatus()
+{
+    TorControl::TorStatus ts = instance()->control()->torStatus();
+
+    switch(ts)
+    {
+    case TorControl::TorOffline: return RsTorStatus::OFFLINE;
+    case TorControl::TorReady:   return RsTorStatus::READY;
+
+    default:
+    case TorControl::TorUnknown: return RsTorStatus::UNKNOWN;
+    }
+}
+
+RsTorControlStatus RsTor::torControlStatus()
+{
+    TorControl::Status ts = instance()->control()->status();
+
+    switch(ts)
+    {
+    default:
+    case Tor::TorControl::Error :          return RsTorControlStatus::ERROR;
+    case Tor::TorControl::NotConnected :   return RsTorControlStatus::NOT_CONNECTED;
+    case Tor::TorControl::Authenticating:  return RsTorControlStatus::AUTHENTICATING;
+    case Tor::TorControl::Connecting:      return RsTorControlStatus::CONNECTING;
+    case Tor::TorControl::Connected :      return RsTorControlStatus::CONNECTED;
+    }
+}
+
+bool RsTor::setupHiddenService()
+{
+    return instance()->setupHiddenService();
+}
+
+RsTorHiddenServiceStatus RsTor::getHiddenServiceStatus(std::string& service_id)
+{
+    service_id.clear();
+    auto list = instance()->control()->hiddenServices();
+
+    if(list.empty())
+        return RsTorHiddenServiceStatus::NOT_CREATRED;
+
+    service_id = (*list.begin())->serviceId().toStdString();
+
+    switch((*list.begin())->status())
+    {
+    default:
+    case Tor::HiddenService::NotCreated: return RsTorHiddenServiceStatus::NOT_CREATRED;
+    case Tor::HiddenService::Offline   : return RsTorHiddenServiceStatus::OFFLINE;
+    case Tor::HiddenService::Online    : return RsTorHiddenServiceStatus::ONLINE;
+    }
+}
+
+std::map<std::string,std::string> RsTor::bootstrapStatus()
+{
+    QVariantMap m = instance()->control()->bootstrapStatus();
+    std::map<std::string,std::string> res;
+
+    for(auto it(m.begin());it!=m.end();++it)
+        res.insert(std::make_pair(it.key().toStdString(),it.value().toString().toStdString()));
+
+    return res;
+}
+
+bool RsTor::hasError()
+{
+    return instance()->hasError();
+}
+std::string RsTor::errorMessage()
+{
+    return instance()->errorMessage().toStdString();
+}
+
+void RsTor::getProxyServerInfo(std::string& server_address,  uint16_t& server_port)
+{
+    QHostAddress qserver_address;
+    instance()->getProxyServerInfo(qserver_address,server_port);
+
+    server_address = qserver_address.toString().toStdString();
+}
+
+bool RsTor::start()
+{
+    return instance()->start();
+}
+
+void RsTor::setTorDataDirectory(const std::string& dir)
+{
+    instance()->setTorDataDirectory(QString::fromStdString(dir));
+}
+void RsTor::setHiddenServiceDirectory(const std::string& dir)
+{
+    instance()->setHiddenServiceDirectory(QString::fromStdString(dir));
+}
+
+TorManager *RsTor::instance()
+{
+    assert(getpid() == gettid());	// make sure we're not in a thread
+
+    static TorManager *rsTor = nullptr;
+
+    if(rsTor == nullptr)
+        rsTor = new TorManager;
+
+    return rsTor;
+}
