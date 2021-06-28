@@ -22,7 +22,10 @@
 #include "util/stacktrace.h"
 #include "util/argstream.h"
 #include "util/rskbdinput.h"
+#include "util/rsdir.h"
 #include "retroshare/rsinit.h"
+#include "retroshare/rstor.h"
+#include "retroshare/rspeers.h"
 
 #ifdef RS_JSONAPI
 #include "retroshare/rsjsonapi.h"
@@ -47,6 +50,7 @@ static CrashStackTrace gCrashStackTrace;
 
 #	include "util/androiddebug.h"
 #endif // def __ANDROID__
+#include <QCoreApplication>
 
 #include "retroshare/rsinit.h"
 #include "retroshare/rsiface.h"
@@ -95,7 +99,9 @@ int main(int argc, char* argv[])
 #ifdef __ANDROID__
 	AndroidStdIOCatcher dbg; (void) dbg;
 	QAndroidService app(argc, argv);
-#endif // def __ANDROID__
+#else // def __ANDROID__
+    QCoreApplication app(argc,argv);	// needed for TorManaer (that uses QDir). To be removed when TorManager doesn't use Qt anymore.
+#endif
 
 	signal(SIGINT,   signalHandler);
 	signal(SIGTERM,  signalHandler);
@@ -311,6 +317,35 @@ int main(int argc, char* argv[])
 			        << std::endl;
 			return -result;
 		}
+
+        if(RsAccounts::isTorAuto())
+        {
+
+            std::cerr << "(II) Hidden service is ready:" << std::endl;
+
+            std::string service_id ;
+            std::string onion_address ;
+            uint16_t service_port ;
+            uint16_t service_target_port ;
+            uint16_t proxy_server_port ;
+            std::string service_target_address ;
+            std::string proxy_server_address ;
+
+            RsTor::getHiddenServiceInfo(service_id,onion_address,service_port,service_target_address,service_target_port);
+            RsTor::getProxyServerInfo(proxy_server_address,proxy_server_port) ;
+
+            std::cerr << "  onion address  : " << onion_address << std::endl;
+            std::cerr << "  service_id     : " << service_id << std::endl;
+            std::cerr << "  service port   : " << service_port << std::endl;
+            std::cerr << "  target port    : " << service_target_port << std::endl;
+            std::cerr << "  target address : " << service_target_address << std::endl;
+
+            std::cerr << "Setting proxy server to " << service_target_address << ":" << service_target_port << std::endl;
+
+            rsPeers->setLocalAddress(rsPeers->getOwnId(), service_target_address, service_target_port);
+            rsPeers->setHiddenNode(rsPeers->getOwnId(), onion_address, service_port);
+            rsPeers->setProxyServer(RS_HIDDEN_TYPE_TOR, proxy_server_address,proxy_server_port) ;
+        }
 	}
 #endif // def RS_SERVICE_TERMINAL_LOGIN
 

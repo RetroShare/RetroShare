@@ -604,14 +604,14 @@ RsTorHiddenServiceStatus RsTor::getHiddenServiceStatus(std::string& service_id)
     auto list = instance()->control()->hiddenServices();
 
     if(list.empty())
-        return RsTorHiddenServiceStatus::NOT_CREATRED;
+        return RsTorHiddenServiceStatus::NOT_CREATED;
 
     service_id = (*list.begin())->serviceId().toStdString();
 
     switch((*list.begin())->status())
     {
     default:
-    case Tor::HiddenService::NotCreated: return RsTorHiddenServiceStatus::NOT_CREATRED;
+    case Tor::HiddenService::NotCreated: return RsTorHiddenServiceStatus::NOT_CREATED;
     case Tor::HiddenService::Offline   : return RsTorHiddenServiceStatus::OFFLINE;
     case Tor::HiddenService::Online    : return RsTorHiddenServiceStatus::ONLINE;
     }

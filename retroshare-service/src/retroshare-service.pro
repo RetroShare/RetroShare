@@ -22,7 +22,9 @@
 
 TARGET = retroshare-service
 
-QT += core
+CONFIG += qt
+
+QT += core network
 QT -= gui
 
 !include("../../libretroshare/src/use_libretroshare.pri"):error("Including")
