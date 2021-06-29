@@ -276,6 +276,10 @@ public:
 	 * @return true on success, false otherwise
 	 */
 	static int GetPGPLogins(std::list<RsPgpId> &pgpIds);
+     /**
+	  * @jsonapi{development}
+	  * 
+	  */
 	static int     GetPGPLoginDetails(const RsPgpId& id, std::string &name, std::string &email);
 	static bool    GeneratePGPCertificate(const std::string&, const std::string& email, const std::string& passwd, RsPgpId &pgpId, const int keynumbits, std::string &errString);
 
