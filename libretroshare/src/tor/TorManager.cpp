@@ -357,6 +357,11 @@ bool TorManager::start()
             emit configurationNeededChanged();
         }
 
+        std::cerr << "Starting Tor process:" << std::endl;
+        std::cerr << "  Tor executable path: " << executable.toStdString() << std::endl;
+        std::cerr << "  Tor data directory : " << d->dataDir.toStdString() << std::endl;
+        std::cerr << "  Tor default torrc  : " << defaultTorrc.toStdString() << std::endl;
+
         d->process->setExecutable(executable);
         d->process->setDataDir(d->dataDir);
         d->process->setDefaultTorrc(defaultTorrc);

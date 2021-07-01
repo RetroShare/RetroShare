@@ -35,6 +35,8 @@
 #	include <QString> // for QString::fromStdString(...)
 #endif
 
+#include <QCoreApplication>
+
 #include "util/argstream.h"
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
@@ -1960,6 +1962,9 @@ bool RsInit::startAutoTor()
             std::cerr << "(EE) Tor hidden service cannot be started: " << error_msg << std::endl;
             return false;
         }
+        // process Qt event loop to deal with messages of online/offline info
+
+        QCoreApplication::processEvents();
     }
     return true;
 }
