@@ -4,7 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2012  Robert Fernie <retroshare@lunamutt.com>                 *
- * Copyright (C) 2019  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2019-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -131,23 +132,25 @@ struct RsGxsIdGroup : RsSerializable
 	//                                 ???                 160 bits.
 
 	Sha1CheckSum mPgpIdHash;
-	// Need a signature as proof - otherwise anyone could add others Hashes.
-	// This is a string, as the length is variable.
-	std::string mPgpIdSign;   
 
-	// Recognition Strings. MAX# defined above.
+	/** Need a signature as proof - otherwise anyone could add others Hashes.
+	 * This is a string, as the length is variable.
+	 * TODO: Thing like this should actually be a byte array (pointer+size),
+	 * using an std::string breaks the JSON serialization, as a workaround this
+	 * field is ignored by JSON serial operations */
+	std::string mPgpIdSign;
+
+	/// Unused
 	RS_DEPRECATED std::list<std::string> mRecognTags;
 
-    // Avatar
-    RsGxsImage mImage ;
-    rstime_t mLastUsageTS ;
+	RsGxsImage mImage; /// Avatar
+	rstime_t mLastUsageTS;
 
-    // Not Serialised - for GUI's benefit.
-    bool mPgpLinked;
-    bool mPgpKnown;
-    bool mIsAContact;	// change that into flags one day
-    RsPgpId mPgpId;
-    GxsReputation mReputation;
+	bool mPgpLinked;
+	bool mPgpKnown;
+	bool mIsAContact;
+	RsPgpId mPgpId;
+	GxsReputation mReputation;
 
 	/// @see RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,
