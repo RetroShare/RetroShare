@@ -102,7 +102,12 @@ public:
      */
 	virtual bool getMessage(uint32_t msgId, HistoryMsg &msg) = 0;
 
-	virtual void removeMessages(const std::list<uint32_t> &msgIds) = 0;
+    /*!
+     * @brief Remove messages from the history
+     * @jsonapi{development}
+     * @param[in] msgIds list of messages to remove
+     */
+    virtual void removeMessages(const std::list<uint32_t>& msgIds) = 0;
 
     /*!
      * @brief clears the message history for a given chat peer
@@ -111,15 +116,46 @@ public:
      */
     virtual void clear(const ChatId &chatPeerId) = 0;
 
-	virtual bool getEnable(uint32_t chat_type) = 0;
-	virtual void setEnable(uint32_t chat_type, bool enable) = 0;
+    /*!
+     * @brief Get whether chat history is enabled or not
+     * @jsonapi{development}
+     * @param[in]  chat_type    Type of chat (see list of constants above)
+     * @return true when the information is available
+     */
+    virtual bool getEnable(uint32_t chat_type) = 0;
 
+    /*!
+     * @brief Set whether chat history is enabled or not
+     * @jsonapi{development}
+     * @param[in]  chat_type    Type of chat (see list of constants above)
+     * @param[in]  enabled      Desired state of the variable
+     */
+    virtual void setEnable(uint32_t chat_type, bool enable) = 0;
+
+    /*!
+     * @brief Retrieves the maximum storage time period for messages in history
+     * @return max storage duration of chat.
+     */
 	virtual uint32_t getMaxStorageDuration() = 0;
-	virtual void     setMaxStorageDuration(uint32_t seconds) = 0;
+    /*!
+     * @brief Sets the maximum storage time period for messages in history
+     * @param[in] seconds max storage duration time in seconds
+     */
+    virtual void     setMaxStorageDuration(uint32_t seconds) = 0;
 
-	// 0 = no limit, >0 count of saved messages
-	virtual uint32_t getSaveCount(uint32_t chat_type) = 0;
-	virtual void     setSaveCount(uint32_t chat_type, uint32_t count) = 0;
+    /*!
+     * @brief Gets the maximum number of messages to save
+     * @param[in] chat_type Type of chat for that number limit
+     * @return maximum number of messages to save
+     */
+    virtual uint32_t getSaveCount(uint32_t chat_type) = 0;
+
+    /*!
+     * @brief Sets the maximum number of messages to save
+     * @param[in] chat_type Type of chat for that number limit
+     * @param[in] count     Max umber of messages, 0 meaning indefinitly
+     */
+    virtual void     setSaveCount(uint32_t chat_type, uint32_t count) = 0;
 };
 
 #endif
