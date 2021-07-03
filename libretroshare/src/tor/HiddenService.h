@@ -43,6 +43,18 @@ namespace Tor
 
 class TorSocket;
 
+// This class is used to receive synchroneous notifications from the hidden service.
+// Each client should implement its own notification handling.
+
+class HiddenServiceClient
+{
+public:
+    virtual void hiddenServiceStatusChanged(int /* newStatus */, int /* oldStatus */) =0;
+    virtual void hiddenServiceOnline() =0;
+    virtual void hiddenServicePrivateKeyChanged() =0;
+    virtual void hiddenServiceHostnameChanged() =0;
+};
+
 class HiddenService : public QObject
 {
     Q_OBJECT
@@ -64,9 +76,9 @@ public:
         Online /* Published */
     };
 
-    HiddenService(QObject *parent = 0);
-    HiddenService(const QString &dataPath, QObject *parent = 0);
-    HiddenService(const CryptoKey &privateKey, const QString &dataPath = QString(), QObject *parent = 0);
+    HiddenService(HiddenServiceClient *client);
+    HiddenService(HiddenServiceClient *client,const QString &dataPath);
+    HiddenService(HiddenServiceClient *client,const CryptoKey &privateKey, const QString &dataPath = QString());
 
     Status status() const { return m_status; }
 
@@ -82,12 +94,6 @@ public:
     void addTarget(const Target &target);
     void addTarget(quint16 servicePort, QHostAddress targetAddress, quint16 targetPort);
 
-signals:
-    void statusChanged(int newStatus, int oldStatus);
-    void serviceOnline();
-    void privateKeyChanged();
-    void hostnameChanged();
-
 private slots:
     void servicePublished();
 
@@ -101,6 +107,8 @@ private:
 
     void loadPrivateKey();
     void setStatus(Status newStatus);
+
+    HiddenServiceClient *m_client;
 };
 
 }

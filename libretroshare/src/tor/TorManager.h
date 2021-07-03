@@ -36,6 +36,7 @@
 #define TORMANAGER_H
 
 #include "retroshare/rstor.h"
+#include "HiddenService.h"
 
 #include <QObject>
 #include <QStringList>
@@ -51,7 +52,7 @@ class TorManagerPrivate;
 /* Run/connect to an instance of Tor according to configuration, and manage
  * UI interaction, first time configuration, etc. */
 
-class TorManager : public QObject, public RsTor
+class TorManager : public QObject, public HiddenServiceClient, public RsTor
 {
     Q_OBJECT
 
@@ -90,13 +91,14 @@ public:
 	bool getHiddenServiceInfo(QString& service_id,QString& service_onion_address,uint16_t& service_port, QHostAddress& service_target_address,uint16_t& target_port);
 	bool getProxyServerInfo(QHostAddress& proxy_server_adress,uint16_t& proxy_server_port);
 
-public slots:
+//public slots:
     bool start();
 
-private slots:
-	void hiddenServicePrivateKeyChanged();
-    void hiddenServiceHostnameChanged();
-    void hiddenServiceStatusChanged(int old_status,int new_status);
+//private slots:
+    virtual void hiddenServiceOnline() override {} // do nothing here.
+    virtual void hiddenServicePrivateKeyChanged() override;
+    virtual void hiddenServiceHostnameChanged() override;
+    virtual void hiddenServiceStatusChanged(int old_status,int new_status) override;
 
 signals:
     void configurationNeededChanged();

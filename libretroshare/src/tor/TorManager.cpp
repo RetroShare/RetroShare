@@ -175,23 +175,24 @@ bool TorManager::setupHiddenService()
             return false;
         }
 
-		d->hiddenService = new Tor::HiddenService(key, legacyDir, this);
+        d->hiddenService = new Tor::HiddenService(this,key, legacyDir);
 
 		std::cerr << "Got key from legacy dir: " << std::endl;
         std::cerr << key.bytes().toStdString() << std::endl;
     }
     else
     {
-        d->hiddenService = new Tor::HiddenService(legacyDir, this);
+        d->hiddenService = new Tor::HiddenService(this,legacyDir);
 
 		std::cerr << "Creating new hidden service." << std::endl;
 
-        connect(d->hiddenService, SIGNAL(privateKeyChanged()), this, SLOT(hiddenServicePrivateKeyChanged())) ;
-        connect(d->hiddenService, SIGNAL(hostnameChanged()), this, SLOT(hiddenServiceHostnameChanged())) ;
+        // connect(d->hiddenService, SIGNAL(privateKeyChanged()), this, SLOT(hiddenServicePrivateKeyChanged())) ;
+        // connect(d->hiddenService, SIGNAL(hostnameChanged()), this, SLOT(hiddenServiceHostnameChanged())) ;
     }
 
-    Q_ASSERT(d->hiddenService);
-    connect(d->hiddenService, SIGNAL(statusChanged(int,int)), this, SLOT(hiddenServiceStatusChanged(int,int)));
+    assert(d->hiddenService);
+
+    // connect(d->hiddenService, SIGNAL(statusChanged(int,int)), this, SLOT(hiddenServiceStatusChanged(int,int)));
 
     // Generally, these are not used, and we bind to localhost and port 0
     // for an automatic (and portable) selection.
@@ -225,6 +226,9 @@ void TorManager::hiddenServiceStatusChanged(int old_status,int new_status)
 
 void TorManager::hiddenServicePrivateKeyChanged()
 {
+    if(!d->hiddenService)
+        return ;
+
     QString key = QString::fromLatin1(d->hiddenService->privateKey().bytes());
 
 	QFile outfile(d->hiddenServiceDir + QLatin1String("/private_key")) ;
@@ -249,6 +253,9 @@ void TorManager::hiddenServicePrivateKeyChanged()
 
 void TorManager::hiddenServiceHostnameChanged()
 {
+    if(!d->hiddenService)
+        return ;
+
     QFile outfile2(d->hiddenServiceDir + QLatin1String("/hostname")) ;
     outfile2.open( QIODevice::WriteOnly | QIODevice::Text );
     QTextStream t(&outfile2);
