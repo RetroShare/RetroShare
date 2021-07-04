@@ -30,6 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <syscall.h>
 #include <iostream>
 
 #include "TorManager.h"
@@ -673,7 +674,7 @@ void RsTor::setHiddenServiceDirectory(const std::string& dir)
 
 TorManager *RsTor::instance()
 {
-    assert(getpid() == gettid());	// make sure we're not in a thread
+    assert(getpid() == syscall(SYS_gettid));// make sure we're not in a thread
 
     static TorManager *rsTor = nullptr;
 
