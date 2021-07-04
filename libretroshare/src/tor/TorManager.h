@@ -38,7 +38,6 @@
 #include "retroshare/rstor.h"
 #include "HiddenService.h"
 
-#include <QObject>
 #include <QStringList>
 #include <QHostAddress>
 
@@ -52,17 +51,17 @@ class TorManagerPrivate;
 /* Run/connect to an instance of Tor according to configuration, and manage
  * UI interaction, first time configuration, etc. */
 
-class TorManager : public QObject, public HiddenServiceClient, public RsTor
+class TorManager : public HiddenServiceClient, public RsTor
 {
-    Q_OBJECT
+    // Q_OBJECT
 
-    Q_PROPERTY(bool configurationNeeded READ configurationNeeded NOTIFY configurationNeededChanged)
-    Q_PROPERTY(QStringList logMessages READ logMessages CONSTANT)
-    Q_PROPERTY(Tor::TorProcess* process READ process CONSTANT)
-    Q_PROPERTY(Tor::TorControl* control READ control CONSTANT)
-    Q_PROPERTY(bool hasError READ hasError NOTIFY errorChanged)
-    Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorChanged)
-    Q_PROPERTY(QString torDataDirectory READ torDataDirectory WRITE setTorDataDirectory)
+    // Q_PROPERTY(bool configurationNeeded READ configurationNeeded NOTIFY configurationNeededChanged)
+    // Q_PROPERTY(QStringList logMessages READ logMessages CONSTANT)
+    // Q_PROPERTY(Tor::TorProcess* process READ process CONSTANT)
+    // Q_PROPERTY(Tor::TorControl* control READ control CONSTANT)
+    // Q_PROPERTY(bool hasError READ hasError NOTIFY errorChanged)
+    // Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorChanged)
+    // Q_PROPERTY(QString torDataDirectory READ torDataDirectory WRITE setTorDataDirectory)
 
 public:
     static TorManager *instance();
@@ -100,12 +99,12 @@ public:
     virtual void hiddenServiceHostnameChanged() override;
     virtual void hiddenServiceStatusChanged(int old_status,int new_status) override;
 
-signals:
-    void configurationNeededChanged();
-    void errorChanged();
+//signals:
+//    void configurationNeededChanged();
+//    void errorChanged();
 
 private:
-    explicit TorManager(QObject *parent = 0);
+    explicit TorManager();
     TorManagerPrivate *d;
     friend class RsTor;
 };

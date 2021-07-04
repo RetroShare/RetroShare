@@ -39,8 +39,8 @@
 
 using namespace Tor;
 
-TorProcess::TorProcess(QObject *parent)
-    : QObject(parent), d(new TorProcessPrivate(this))
+TorProcess::TorProcess(TorProcessClient *client,QObject *parent)
+    : d(new TorProcessPrivate(this)),m_client(client)
 {
 }
 
@@ -51,7 +51,7 @@ TorProcess::~TorProcess()
 }
 
 TorProcessPrivate::TorProcessPrivate(TorProcess *q)
-    : QObject(q), q(q), state(TorProcess::NotStarted), controlPort(0), controlPortAttempts(0)
+    : q(q), state(TorProcess::NotStarted), controlPort(0), controlPortAttempts(0)
 {
     connect(&process, &QProcess::started, this, &TorProcessPrivate::processStarted);
     connect(&process, (void (QProcess::*)(int, QProcess::ExitStatus))&QProcess::finished,
@@ -124,15 +124,16 @@ void TorProcess::start()
     if (d->executable.isEmpty() || d->dataDir.isEmpty()) {
         d->errorMessage = QStringLiteral("Tor executable and data directory not specified");
         d->state = Failed;
-        emit errorMessageChanged(d->errorMessage);
-        emit stateChanged(d->state);
+
+        if(m_client) m_client->processStateChanged(d->state); // emit stateChanged(d->state);
+        if(m_client) m_client->processErrorChanged(d->errorMessage); // emit errorMessageChanged(d->errorMessage);
         return;
     }
 
     if (!d->ensureFilesExist()) {
         d->state = Failed;
-        emit errorMessageChanged(d->errorMessage);
-        emit stateChanged(d->state);
+        if(m_client) m_client->processErrorChanged(d->errorMessage);// emit errorMessageChanged(d->errorMessage);
+        if(m_client) m_client->processStateChanged(d->state);// emit stateChanged(d->state);
         return;
     }
 
@@ -141,8 +142,8 @@ void TorProcess::start()
     if (password.isEmpty() || hashedPassword.isEmpty()) {
         d->errorMessage = QStringLiteral("Random password generation failed");
         d->state = Failed;
-        emit errorMessageChanged(d->errorMessage);
-        emit stateChanged(d->state);
+        if(m_client) m_client->processErrorChanged(d->errorMessage);// emit errorMessageChanged(d->errorMessage);
+        if(m_client) m_client->processStateChanged(d->state); // emit stateChanged(d->state);
     }
 
     QStringList args;
@@ -157,7 +158,8 @@ void TorProcess::start()
     args << d->extraSettings;
 
     d->state = Starting;
-    emit stateChanged(d->state);
+
+    if(m_client) m_client->processStateChanged(d->state);// emit stateChanged(d->state);
 
     if (QFile::exists(d->controlPortFilePath()))
         QFile::remove(d->controlPortFilePath());
@@ -194,7 +196,23 @@ void TorProcess::stop()
     }
 #endif
 
-    emit stateChanged(d->state);
+    if(m_client) m_client->processStateChanged(d->state);// emit stateChanged(d->state);
+}
+
+void TorProcess::stateChanged(int newState)
+{
+    if(m_client)
+        m_client->processStateChanged(newState);
+}
+void TorProcess::errorMessageChanged(const QString &errorMessage)
+{
+    if(m_client)
+        m_client->processErrorChanged(errorMessage);
+}
+void TorProcess::logMessage(const QString &message)
+{
+    if(m_client)
+        m_client->processLogMessage(message);
 }
 
 QByteArray TorProcess::controlPassword()
@@ -246,7 +264,9 @@ QString TorProcessPrivate::controlPortFilePath() const
 void TorProcessPrivate::processStarted()
 {
     state = TorProcess::Connecting;
-    emit q->stateChanged(state);
+
+    /*emit*/ q->stateChanged(state);
+    /*emit*/ q->stateChanged(state);
 
     controlPortAttempts = 0;
     controlPortTimer.start();
@@ -262,8 +282,8 @@ void TorProcessPrivate::processFinished()
     if (errorMessage.isEmpty())
         errorMessage = QStringLiteral("Process exited unexpectedly (code %1)").arg(process.exitCode());
     state = TorProcess::Failed;
-    emit q->errorMessageChanged(errorMessage);
-    emit q->stateChanged(state);
+    /*emit*/ q->errorMessageChanged(errorMessage);
+    /*emit*/ q->stateChanged(state);
 }
 
 void TorProcessPrivate::processError(QProcess::ProcessError error)
@@ -277,7 +297,7 @@ void TorProcessPrivate::processReadable()
     while (process.bytesAvailable() > 0) {
         QByteArray line = process.readLine(2048).trimmed();
         if (!line.isEmpty())
-            emit q->logMessage(QString::fromLatin1(line));
+            /*emit*/ q->logMessage(QString::fromLatin1(line));
     }
 }
 
@@ -295,7 +315,7 @@ void TorProcessPrivate::tryReadControlPort()
             if (!controlHost.isNull() && controlPort > 0) {
                 controlPortTimer.stop();
                 state = TorProcess::Ready;
-                emit q->stateChanged(state);
+                /*emit*/ q->stateChanged(state);
                 return;
             }
         }
@@ -304,8 +324,8 @@ void TorProcessPrivate::tryReadControlPort()
     if (++controlPortAttempts * controlPortTimer.interval() > 10000) {
         errorMessage = QStringLiteral("No control port available after launching process");
         state = TorProcess::Failed;
-        emit q->errorMessageChanged(errorMessage);
-        emit q->stateChanged(state);
+        /*emit*/ q->errorMessageChanged(errorMessage);
+        /*emit*/ q->stateChanged(state);
     }
 }
 

@@ -33,6 +33,8 @@
 #include <syscall.h>
 #include <iostream>
 
+#include <QObject>
+
 #include "TorManager.h"
 #include "TorProcess.h"
 #include "TorControl.h"
@@ -51,7 +53,7 @@ using namespace Tor;
 namespace Tor
 {
 
-class TorManagerPrivate : public QObject
+class TorManagerPrivate : public QObject, public TorProcessClient
 {
     Q_OBJECT
 
@@ -75,23 +77,24 @@ public:
 
     void setError(const QString &errorMessage);
 
+    virtual void processStateChanged(int state) override;
+    virtual void processErrorChanged(const QString &errorMessage) override;
+    virtual void processLogMessage(const QString &message) override;
+
 public slots:
-    void processStateChanged(int state);
-    void processErrorChanged(const QString &errorMessage);
-    void processLogMessage(const QString &message);
     void controlStatusChanged(int status);
     void getConfFinished();
 };
 
 }
 
-TorManager::TorManager(QObject *parent)
-    : QObject(parent), d(new TorManagerPrivate(this))
+TorManager::TorManager()
+    : d(new TorManagerPrivate(this))
 {
 }
 
 TorManagerPrivate::TorManagerPrivate(TorManager *parent)
-    : QObject(parent)
+    : QObject(nullptr)
     , q(parent)
     , process(0)
     , control(new TorControl(this))
@@ -105,7 +108,7 @@ TorManager *TorManager::instance()
 {
     static TorManager *p = 0;
     if (!p)
-        p = new TorManager(qApp);
+        p = new TorManager();
     return p;
 }
 
@@ -293,7 +296,8 @@ bool TorManager::start()
 {
     if (!d->errorMessage.isEmpty()) {
         d->errorMessage.clear();
-        emit errorChanged();
+
+        //emit errorChanged(); // not needed because there's no error to handle
     }
 
     SettingsObject settings(QStringLiteral("tor"));
@@ -341,11 +345,11 @@ bool TorManager::start()
         }
 
         if (!d->process) {
-            d->process = new TorProcess(this);
-            connect(d->process, SIGNAL(stateChanged(int)), d, SLOT(processStateChanged(int)));
-            connect(d->process, SIGNAL(errorMessageChanged(QString)), d,
-                    SLOT(processErrorChanged(QString)));
-            connect(d->process, SIGNAL(logMessage(QString)), d, SLOT(processLogMessage(QString)));
+            d->process = new TorProcess(d);
+
+            // QObject::connect(d->process, SIGNAL(stateChanged(int)), d, SLOT(processStateChanged(int)));
+            // QObject::connect(d->process, SIGNAL(errorMessageChanged(QString)), d, SLOT(processErrorChanged(QString)));
+            // QObject::connect(d->process, SIGNAL(logMessage(QString)), d, SLOT(processLogMessage(QString)));
         }
 
         if (!QFile::exists(d->dataDir) && !d->createDataDir(d->dataDir)) {
@@ -362,7 +366,14 @@ bool TorManager::start()
         QFile torrc(d->dataDir + QStringLiteral("torrc"));
         if (!torrc.exists() || torrc.size() == 0) {
             d->configNeeded = true;
-            emit configurationNeededChanged();
+
+            if(rsEvents)
+            {
+                auto ev = std::make_shared<RsTorManagerEvent>();
+                ev->mTorManagerEventType = RsTorManagerEventCode::CONFIGURATION_NEEDED;
+                rsEvents->sendEvent(ev);
+            }
+            //emit configurationNeededChanged();
         }
 
         std::cerr << "Starting Tor process:" << std::endl;
@@ -460,7 +471,14 @@ void TorManagerPrivate::getConfFinished()
 
     if (command->get("DisableNetwork").toInt() == 1 && !configNeeded) {
         configNeeded = true;
-        emit q->configurationNeededChanged();
+        //emit q->configurationNeededChanged();
+
+        if(rsEvents)
+        {
+            auto ev = std::make_shared<RsTorManagerEvent>();
+            ev->mTorManagerEventType = RsTorManagerEventCode::CONFIGURATION_NEEDED;
+            rsEvents->sendEvent(ev);
+        }
     }
 }
 
@@ -527,7 +545,16 @@ bool TorManagerPrivate::createDefaultTorrc(const QString &path)
 void TorManagerPrivate::setError(const QString &message)
 {
     errorMessage = message;
-    emit q->errorChanged();
+
+    if(rsEvents)
+    {
+        auto ev = std::make_shared<RsTorManagerEvent>();
+
+        ev->mTorManagerEventType = RsTorManagerEventCode::TOR_MANAGER_ERROR;
+        ev->mErrorMessage = message.toStdString();
+        rsEvents->sendEvent(ev);
+    }
+    //emit q->errorChanged();
 }
 
 #include "TorManager.moc"

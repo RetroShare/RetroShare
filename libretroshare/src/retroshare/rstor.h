@@ -36,6 +36,8 @@ enum class RsTorManagerEventCode: uint8_t
     TOR_STATUS_CHANGED        = 0x01,
     BOOTSTRAP_STATUS_CHANGED  = 0x02,
     TOR_CONNECTIVITY_CHANGED  = 0x03,
+    TOR_MANAGER_ERROR         = 0x04,
+    CONFIGURATION_NEEDED      = 0x05,
 };
 
 // Status of the Tor hidden service setup/loaded by RS
@@ -75,6 +77,7 @@ struct RsTorManagerEvent: public RsEvent
 
     RsTorConnectivityStatus mTorConnectivityStatus;
     RsTorStatus             mTorStatus;
+    std::string             mErrorMessage;
 
     ///* @see RsEvent @see RsSerializable
     void serial_process( RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx ) override
@@ -83,6 +86,7 @@ struct RsTorManagerEvent: public RsEvent
         RS_SERIAL_PROCESS(mTorManagerEventType);
         RS_SERIAL_PROCESS(mTorConnectivityStatus);
         RS_SERIAL_PROCESS(mTorStatus);
+        RS_SERIAL_PROCESS(mErrorMessage);
     }
 
     ~RsTorManagerEvent() = default;
