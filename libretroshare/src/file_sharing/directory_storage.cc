@@ -30,6 +30,7 @@
 #include "directory_storage.h"
 #include "dir_hierarchy.h"
 #include "filelist_io.h"
+#include "util/cxx17retrocompat.h"
 
 #ifdef RS_DEEP_FILES_INDEX
 #	include "deep_search/filesindex.hpp"
@@ -617,48 +618,78 @@ bool LocalDirectoryStorage::getFileSharingPermissions(const EntryIndex& indx,Fil
     return locked_getFileSharingPermissions(indx,flags,parent_groups) ;
 }
 
-bool LocalDirectoryStorage::locked_getFileSharingPermissions(const EntryIndex& indx, FileStorageFlags& flags, std::list<RsNodeGroupId> &parent_groups)
+bool LocalDirectoryStorage::locked_getFileSharingPermissions(
+        const EntryIndex& indx, FileStorageFlags& flags,
+        std::list<RsNodeGroupId>& parent_groups )
 {
-    flags.clear() ;
-    parent_groups.clear();
+	flags.clear();
+	parent_groups.clear();
 
-    std::string base_dir;
+	/* We got a request for root directory no need to do anything more after
+	 * clearing outputs */
+	if(!indx) return true;
 
-    const InternalFileHierarchyStorage::FileStorageNode *n = mFileHierarchy->getNode(indx) ;
+	using FileStorageNode = InternalFileHierarchyStorage::FileStorageNode;
+	using EntryIndex = DirectoryStorage::EntryIndex;
 
-    if(n == NULL)
-        return false ;
+	rs_view_ptr<const FileStorageNode> n = mFileHierarchy->getNode(indx);
+	if(!n)
+	{
+		RS_ERR("Node for index: ", indx, "not found");
+		print_stacktrace();
+		return false;
+	}
 
-    for(DirectoryStorage::EntryIndex i=((n->type()==InternalFileHierarchyStorage::FileStorageNode::TYPE_FILE)?((intptr_t)n->parent_index):indx);;)
-    {
-        const InternalFileHierarchyStorage::DirEntry *e = mFileHierarchy->getDirEntry(i) ;
+	// Climb down node tree up to root + 1
+	EntryIndex curIndex = indx;
+	while (n->parent_index)
+	{
+		curIndex = n->parent_index;
+		n = mFileHierarchy->getNode(curIndex);
+	}
 
-        if(e == NULL)
-            break ;
+	// Retrieve base name
+	std::string tBaseName;
+	switch (n->type())
+	{
+	// Handle single file shared case
+	case InternalFileHierarchyStorage::FileStorageNode::TYPE_FILE:
+		tBaseName = mFileHierarchy->getFileEntry(curIndex)->file_name;
+		break;
+	// Handle shared directory case
+	case InternalFileHierarchyStorage::FileStorageNode::TYPE_DIR:
+		tBaseName = mFileHierarchy->getDirEntry(curIndex)->dir_name;
+		break;
+	default:
+		RS_ERR("Got unhandled node type: ", n->type());
+		print_stacktrace();
+		return false;
+	}
 
-        if(e->parent_index == 0)
-        {
-            base_dir = e->dir_name ;
-            break ;
-        }
-        i = e->parent_index ;
-    }
+	// Use base name to retrieve sharing permissions
+	if(!tBaseName.empty())
+	{
+		auto it = std::as_const(mLocalDirs).find(tBaseName);
 
-    if(!base_dir.empty())
-    {
-        std::map<std::string,SharedDirInfo>::const_iterator it = mLocalDirs.find(base_dir) ;
+		if(it == mLocalDirs.end())
+		{
+			RS_ERR( "base name \"", tBaseName,
+			        "\" for index: ", indx, " not found in shared dir list." );
+			print_stacktrace();
+			return false;
+		}
 
-        if(it == mLocalDirs.end())
-        {
-            std::cerr << "(II) base directory \"" << base_dir << "\" not found in shared dir list." << std::endl;
-            return false ;
-        }
+		flags = it->second.shareflags;
+		parent_groups = it->second.parent_groups;
+	}
+	else
+	{
+		RS_ERR("base name for indx: ", indx, " is empty");
+		print_stacktrace();
+		return false;
+	}
 
-        flags = it->second.shareflags;
-        parent_groups = it->second.parent_groups;
-    }
-
-    return true;
+	return true;
 }
 
 std::string LocalDirectoryStorage::locked_getVirtualDirName(EntryIndex indx) const
