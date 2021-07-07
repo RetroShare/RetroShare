@@ -15,3 +15,5 @@ Thumbs.db
 *.pro.user
 .kdev4
 *.kdev4
+
+!supportlibs/libsam3/Makefile

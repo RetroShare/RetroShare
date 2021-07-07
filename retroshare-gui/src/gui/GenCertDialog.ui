@@ -496,7 +496,7 @@
              <item>
               <widget class="QCheckBox" name="cbUseBob">
                <property name="text">
-                <string>Use BOB</string>
+                <string>Use I2P</string>
                </property>
               </widget>
              </item>
@@ -764,8 +764,8 @@
   <tabstop>importIdentity_PB</tabstop>
  </tabstops>
  <resources>
-  <include location="icons.qrc"/>
   <include location="images.qrc"/>
+  <include location="icons.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -186,8 +186,8 @@ public:
 	virtual int finaliseConnection(int fd, SSL *ssl, const RsPeerId& peerId,
 								   const sockaddr_storage &raddr);
 
+	RS_SET_CONTEXT_DEBUG_LEVEL(2)
+
 private:
 	std::map<RsPeerId, pqissl*> listenaddr;
-
-	RS_SET_CONTEXT_DEBUG_LEVEL(2)
 };

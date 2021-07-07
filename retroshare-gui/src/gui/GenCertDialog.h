@@ -44,7 +44,7 @@ private slots:
     void switchReuseExistingNode();
 	void grabMouse();
 	void updateCheckLabels();
-	void useBobChecked(bool checked);
+	void useI2pChecked(bool checked);
 
 private:
 	void initKeyList();

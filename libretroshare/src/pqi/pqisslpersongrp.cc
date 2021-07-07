@@ -46,7 +46,7 @@ static struct RsLog::logInfo pqipersongrpzoneInfo = {RsLog::Default, "pqipersong
 #endif
 
 #include "pqi/pqisslproxy.h"
-#include "pqi/pqissli2pbob.h"
+#include "pqi/pqissli2psam3.h"
 
 pqilistener * pqisslpersongrp::locked_createListener(const struct sockaddr_storage &laddr)
 {
@@ -74,25 +74,25 @@ pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener
         std::cerr << std::endl;
 #endif
 
-		// Use pqicI2PBOB for I2P
-		pqiconnect *pqicSOCKSProxy, *pqicI2PBOB;
+		// Use pqicI2P for I2P
+		pqiconnect *pqicSOCKSProxy, *pqicI2P;
 		{
 			pqisslproxy  *pqis = new pqisslproxy((pqissllistener *) listener, pqip, mLinkMgr);
 			RsSerialiser *rss  = new RsSerialiser();
 			rss->addSerialType(new RsRawSerialiser());
 			pqicSOCKSProxy = new pqiconnect(pqip, rss, pqis);
 		}
-		if (rsAutoProxyMonitor::instance()->isEnabled(autoProxyType::I2PBOB))
+
+		if (rsAutoProxyMonitor::instance()->isEnabled(autoProxyType::I2PSAM3))
 		{
-			pqissli2pbob *pqis = new pqissli2pbob((pqissllistener *) listener, pqip, mLinkMgr);
+			pqissli2psam3 *pqis = new pqissli2psam3((pqissllistener *) listener, pqip, mLinkMgr);
 			RsSerialiser *rss  = new RsSerialiser();
 			rss->addSerialType(new RsRawSerialiser());
 
-			pqicI2PBOB = new pqiconnect(pqip, rss, pqis);
+			pqicI2P = new pqiconnect(pqip, rss, pqis);
 		} else {
-			pqicI2PBOB = pqicSOCKSProxy;
+			pqicI2P = pqicSOCKSProxy;
 		}
-
 
 		/* first select type based on peer */
 		uint32_t typePeer = mPeerMgr->getHiddenType(id);
@@ -101,7 +101,7 @@ pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener
 			pqip -> addChildInterface(PQI_CONNECT_HIDDEN_TOR_TCP, pqicSOCKSProxy);
 			break;
 		case RS_HIDDEN_TYPE_I2P:
-			pqip -> addChildInterface(PQI_CONNECT_HIDDEN_I2P_TCP, pqicI2PBOB);
+			pqip -> addChildInterface(PQI_CONNECT_HIDDEN_I2P_TCP, pqicI2P);
 			break;
 		default:
 			/* peer is not a hidden one but we are */
@@ -109,7 +109,7 @@ pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener
 			uint32_t typeOwn = mPeerMgr->getHiddenType(AuthSSL::getAuthSSL()->OwnId());
 			switch (typeOwn) {
 			case RS_HIDDEN_TYPE_I2P:
-				pqip -> addChildInterface(PQI_CONNECT_HIDDEN_I2P_TCP, pqicI2PBOB);
+				pqip -> addChildInterface(PQI_CONNECT_HIDDEN_I2P_TCP, pqicI2P);
 				break;
 			default:
 				/* this case shouldn't happen! */
