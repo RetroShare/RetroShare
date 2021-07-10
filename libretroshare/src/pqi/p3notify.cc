@@ -212,6 +212,7 @@ bool p3Notify::ClearFeedItems(uint32_t type)
 
 #define FOR_ALL_NOTIFY_CLIENTS for(std::list<NotifyClient*>::const_iterator it(notifyClients.begin());it!=notifyClients.end();++it)
 
+void p3Notify::notifyReputationChange(RsGxsId id) { FOR_ALL_NOTIFY_CLIENTS (*it)-> notifyReputationChange(id); }
 void p3Notify::notifyChatLobbyEvent(uint64_t lobby_id, uint32_t event_type,const RsGxsId& nickname,const std::string& any_string) { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChatLobbyEvent(lobby_id,event_type,nickname,any_string) ; }
 
 void p3Notify::notifyListPreChange(int list, int type) { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyListPreChange(list,type) ; }
