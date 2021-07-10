@@ -85,6 +85,7 @@ class RsGxsDistSync
             std::map<TurtleVirtualPeerId,RsGxsNetTunnelVirtualPeerId>& turtle_vpid_to_net_tunnel_vpid,
 		    Bias20Bytes& bias
 		) const =0;
+		virtual bool isGXSHash(RsFileHash hash) const =0;
 };
 
 extern RsGxsDistSync *rsGxsDistSync ;
