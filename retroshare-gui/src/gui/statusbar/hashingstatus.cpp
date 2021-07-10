@@ -78,6 +78,7 @@ void HashingStatus::handleEvent_main_thread(std::shared_ptr<const RsEvent> event
 		info = tr("Examining shared files...");
 		break;
     case RsSharedDirectoriesEventCode::DIRECTORY_SWEEP_ENDED:
+    case RsSharedDirectoriesEventCode::EXTRA_LIST_FILE_REMOVED:
 		break;
 	case RsSharedDirectoriesEventCode::HASHING_FILE:
 		info = tr("Hashing file") + " " + QString::fromUtf8(fe->mMessage.c_str());

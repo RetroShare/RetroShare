@@ -67,6 +67,10 @@ void LocalDirectoryUpdater::threadTick()
         {
             bool some_files_not_ready = false ;
 
+            auto ev = std::make_shared<RsSharedDirectoriesEvent>();
+            ev->mEventCode = RsSharedDirectoriesEventCode::STARTING_DIRECTORY_SWEEP;
+            if(rsEvents)
+                rsEvents->postEvent(ev);
             if(sweepSharedDirectories(some_files_not_ready))
             {
                 if(some_files_not_ready)
@@ -172,6 +176,10 @@ bool LocalDirectoryUpdater::sweepSharedDirectories(bool& some_files_not_ready)
 
     RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
     mIsChecking = false ;
+    auto ev = std::make_shared<RsSharedDirectoriesEvent>();
+    ev->mEventCode = RsSharedDirectoriesEventCode::DIRECTORY_SWEEP_ENDED;
+    if(rsEvents)
+        rsEvents->postEvent(ev);
 
     return true ;
 }
