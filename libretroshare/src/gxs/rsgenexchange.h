@@ -758,10 +758,11 @@ public:
 
     virtual uint32_t getStoragePeriod(const RsGxsGroupId& grpId) override;
     virtual void     setStoragePeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) override;
-
+    virtual void     setStoragePeriodAll(uint32_t age_in_secs) ;
     virtual uint32_t getDefaultSyncPeriod()override;
     virtual uint32_t getSyncPeriod(const RsGxsGroupId& grpId) override;
     virtual void     setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) override;
+    virtual void     setSyncPeriodAll(uint32_t age_in_secs) ;
     virtual bool     getGroupNetworkStats(const RsGxsGroupId& grpId,RsGroupNetworkStats& stats);
 
     uint16_t serviceType() const override { return mServType ; }

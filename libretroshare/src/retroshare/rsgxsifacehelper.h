@@ -236,6 +236,10 @@ public:
     {
 		mGxs.setStoragePeriod(grpId,age_in_secs);
     }
+    void setStoragePeriodAll(uint32_t age_in_secs)
+    {
+		mGxs.setStoragePeriodAll(age_in_secs);
+    }
     uint32_t getDefaultSyncPeriod()
     {
 		return mGxs.getDefaultSyncPeriod();
@@ -247,6 +251,10 @@ public:
     void setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs)
     {
 		mGxs.setSyncPeriod(grpId,age_in_secs);
+    }
+    void setSyncPeriodAll(uint32_t age_in_secs)
+    {
+		mGxs.setSyncPeriodAll(age_in_secs);
     }
 
 	RsReputationLevel minReputationForForwardingMessages(

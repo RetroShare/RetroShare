@@ -73,6 +73,9 @@ public:
     virtual void setSyncAge(const RsGxsGroupId& id,uint32_t age_in_secs) =0;
     virtual void setKeepAge(const RsGxsGroupId& id,uint32_t age_in_secs) =0;
 
+    virtual void setKeepAgeAll(uint32_t age_in_secs) =0;
+    virtual void setSyncAgeAll(uint32_t age_in_secs) =0;
+
     virtual uint32_t getSyncAge(const RsGxsGroupId& id) =0;
     virtual uint32_t getKeepAge(const RsGxsGroupId& id) =0;
 
