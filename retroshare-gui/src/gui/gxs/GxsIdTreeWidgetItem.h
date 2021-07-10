@@ -61,6 +61,9 @@ public:
     	void updateBannedState() ;				// checks reputation, and update is needed
 
         bool autoTooltip() const { return mAutoTooltip; }
+	bool mBannedState ;
+	bool isBanned(const RsGxsId &id);
+	
 private slots:
 	void startProcess();
 
@@ -70,7 +73,6 @@ private:
 	RsGxsId mId;
 	int mColumn;
 	bool mIdFound;
-	bool mBannedState ;
 	bool mRetryWhenFailed;
 	bool mAutoTooltip;
 	RsReputationLevel mReputationLevel;

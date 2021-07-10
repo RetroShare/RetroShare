@@ -1019,7 +1019,8 @@ QString GxsIdDetails::getNameForType(GxsIdDetailsType type, const RsIdentityDeta
 		return getName(details);
 
 	case GXS_ID_DETAILS_TYPE_BANNED:
-		return tr("[Banned]") ;
+		//return tr("[Banned]") ;
+		return getName(details);
 
 	case GXS_ID_DETAILS_TYPE_FAILED:
 		return getFailedText(details.mId);
@@ -1073,9 +1074,9 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, QLi
 
 QString GxsIdDetails::getName(const RsIdentityDetails &details)
 {
-	if( details.mReputation.mOverallReputationLevel ==
+	/*if( details.mReputation.mOverallReputationLevel ==
 	         RsReputationLevel::LOCALLY_NEGATIVE )
-		return tr("[Banned]");
+		return tr("[Banned]");*/
     
     	QString name = QString::fromUtf8(details.mNickname.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE);
 
@@ -1093,13 +1094,9 @@ QString GxsIdDetails::getComment(const RsIdentityDetails &details)
 	QString comment;
 QString nickname ;
 
-    bool banned = ( details.mReputation.mOverallReputationLevel ==
-	                RsReputationLevel::LOCALLY_NEGATIVE );
         
     	if(details.mNickname.empty())
             nickname = tr("[Unknown]") ;
-        else if(banned)
-            nickname = tr("[Banned]") ;
         else
             nickname = QString::fromUtf8(details.mNickname.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE) ;
 
@@ -1132,6 +1129,10 @@ QString nickname ;
 		if(details.mReputation.mFriendsPositiveVotes > 0) comment += " <b>+" + QString::number(details.mReputation.mFriendsPositiveVotes) + "</b>";
 		if(details.mReputation.mFriendsNegativeVotes > 0) comment += " <b>-" + QString::number(details.mReputation.mFriendsNegativeVotes) + "</b>";
     }
+	if(details.mReputation.mOverallReputationLevel == RsReputationLevel::LOCALLY_NEGATIVE)
+		comment += QString("<br/>" + tr("Negative (Banned by you)") );
+	if(details.mReputation.mOverallReputationLevel == RsReputationLevel::REMOTELY_NEGATIVE)
+		comment += QString("<br/>" + tr("Negative (according to your friends)") );
 	return comment;
 }
 
@@ -1164,13 +1165,13 @@ void GxsIdDetails::getIcons(const RsIdentityDetails &details, QList<QIcon> &icon
 {
     QPixmap pix ;
 
-	if( details.mReputation.mOverallReputationLevel ==
+	/*if( details.mReputation.mOverallReputationLevel ==
 	         RsReputationLevel::LOCALLY_NEGATIVE )
     {
         icons.clear() ;
         icons.push_back(FilesDefs::getIconFromQtResourcePath(IMAGE_BANNED)) ;
         return ;
-    }
+    }*/
 
 	if(icon_types & ICON_TYPE_REPUTATION)
         icons.push_back(getReputationIcon(details.mReputation.mOverallReputationLevel,minimal_required_reputation)) ;
