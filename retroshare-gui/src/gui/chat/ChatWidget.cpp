@@ -1024,6 +1024,9 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 	if (!Settings->valueFromGroup("Chat", "EnableCustomFontSize", true).toBool()) {
 		formatTextFlag |= RSHTML_FORMATTEXT_REMOVE_FONT_SIZE;
 	}
+	if (!Settings->valueFromGroup("Chat", "EnableCustomFontColor", true).toBool()) {
+		formatTextFlag |= RSHTML_FORMATTEXT_REMOVE_COLOR;
+	}
 	int desiredMinimumFontSize = Settings->valueFromGroup("Chat", "MinimumFontSize", 10).toInt();
 	if (!Settings->valueFromGroup("Chat", "EnableBold", true).toBool()) {
 		formatTextFlag |= RSHTML_FORMATTEXT_REMOVE_FONT_WEIGHT;
@@ -1031,7 +1034,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 	if (!Settings->valueFromGroup("Chat", "EnableItalics", true).toBool()) {
 		formatTextFlag |= RSHTML_FORMATTEXT_REMOVE_FONT_STYLE;
 	}
-
+	
 	ChatStyle::enumFormatMessage type;
 	if (chatType == MSGTYPE_OFFLINE) {
 		type = ChatStyle::FORMATMSG_OOUTGOING;
@@ -1050,12 +1053,18 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 
 	QString formattedMessage = RsHtml().formatText(ui->textBrowser->document(), message, formatTextFlag, backgroundColor, desiredContrast, desiredMinimumFontSize);
 	QDateTime dtTimestamp=incoming ? sendTime : recvTime;
-	QString formatMsg = chatStyle.formatMessage(type, name, dtTimestamp, formattedMessage, formatFlag, backgroundColor);
+	
+	QString strGxsId = "";
+	if (!gxsId.isNull())
+		strGxsId = QString::fromStdString(gxsId.toStdString());
+
+	QString formatMsg = chatStyle.formatMessage(type, name, strGxsId, dtTimestamp, formattedMessage, formatFlag, backgroundColor);
 	QString timeStamp = dtTimestamp.toString(Qt::ISODate);
 
 	//replace Date and Time anchors
 	formatMsg.replace(QString("<a name=\"date\">"),QString("<a name=\"%1\">").arg(timeStamp));
 	formatMsg.replace(QString("<a name=\"time\">"),QString("<a name=\"%1\">").arg(timeStamp));
+	
 	//replace Name anchors with GXS Id
 	if (!gxsId.isNull()) {
 		RsIdentityDetails details;
@@ -1079,8 +1088,8 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 		                  ,QString(strPreName).append("<a name=\"").append(PERSONID).append("%1 %2\">").arg(strGxsId, isUnsigned ? tr(" Unsigned"):""));
 	} else {
 		formatMsg.replace(QString("<a name=\"name\">"),"");
-	}
-
+  }
+	
 	QTextCursor textCursor = QTextCursor(ui->textBrowser->textCursor());
 	textCursor.movePosition(QTextCursor::End);
 	textCursor.setBlockFormat(QTextBlockFormat ());
