@@ -194,7 +194,8 @@ enum class RsFileTransferEventCode: uint8_t {
     COMPLETED_FILES_REMOVED     = 0x02,	//
 };
 
-struct RsSharedDirectoriesEvent: RsEvent
+struct RS_DEPRECATED_FOR("Packing arbitrary data into an std::string is bad idea")
+RsSharedDirectoriesEvent: RsEvent
 {
 	RsSharedDirectoriesEvent()  : RsEvent(RsEventType::SHARED_DIRECTORIES), mEventCode(RsSharedDirectoriesEventCode::UNKNOWN) {}
 	~RsSharedDirectoriesEvent() override = default;
@@ -210,6 +211,31 @@ struct RsSharedDirectoriesEvent: RsEvent
 
     RsSharedDirectoriesEventCode mEventCode;
     std::string mMessage;
+};
+
+struct RsFileHashingCompletedEvent: RsEvent
+{
+	RsFileHashingCompletedEvent():
+	    RsEvent(RsEventType::FILE_HASHING_COMPLETED), mHashingSpeed(0) {}
+
+	///* @see RsEvent @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx ) override
+	{
+		RsEvent::serial_process(j, ctx);
+		RS_SERIAL_PROCESS(mFilePath);
+		RS_SERIAL_PROCESS(mFileHash);
+		RS_SERIAL_PROCESS(mHashingSpeed);
+	}
+
+	/// Complete path of the file being hashed
+	std::string mFilePath;
+
+	/// File hash, null if error occurred
+	RsFileHash mFileHash;
+
+	/// Hashing speed in MB/s
+	double mHashingSpeed;
 };
 
 struct RsFileTransferEvent: RsEvent

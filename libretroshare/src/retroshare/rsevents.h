@@ -91,8 +91,8 @@ enum class RsEventType : uint32_t
     /// @see RsGxsPostedEvent
     GXS_IDENTITY                                            = 12,
 
-    /// @see RsFiles
-    SHARED_DIRECTORIES                                      = 13,
+	/// @see RsFiles @deprecated
+	SHARED_DIRECTORIES                                      = 13,
 
     /// @see RsFiles
     FILE_TRANSFER                                           = 14,
@@ -100,8 +100,11 @@ enum class RsEventType : uint32_t
 	/// @see RsMsgs
 	CHAT_MESSAGE                                            = 15,
 
-    /// @see rspeers.h
-    NETWORK                                                 = 16,
+	/// @see rspeers.h
+	NETWORK                                                 = 16,
+
+	/** Emitted to update library clients about file hashing being completed */
+	FILE_HASHING_COMPLETED                                  = 20,
 
 	__MAX /// Used internally, keep last
 };

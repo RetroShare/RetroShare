@@ -187,9 +187,10 @@ void HashStorage::threadTick()
 			else
 				rs_sprintf(tmpout, "%lu/%lu (%s - %d%%) : %s", (unsigned long int)mHashCounter+1, (unsigned long int)mTotalFilesToHash, friendlyUnit(mTotalHashedSize).c_str(), int(mTotalHashedSize/double(mTotalSizeToHash)*100.0), job.full_path.c_str()) ;
 
-            //RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_HASH_FILE, tmpout) ;
-            if(rsEvents)
 			{
+				/* Emit deprecated event only for retrocompatibility
+				 * TODO: create a proper event with structured data instead of a
+				 * formatted string */
 				auto ev = std::make_shared<RsSharedDirectoriesEvent>();
 				ev->mEventCode = RsSharedDirectoriesEventCode::HASHING_FILE;
 				ev->mMessage = tmpout;
@@ -198,7 +199,7 @@ void HashStorage::threadTick()
 
 			double seconds_origin = rstime::RsScopeTimer::currentTime() ;
 
-			if(RsDirUtil::getFileHash(job.full_path, hash,size, this))
+			if(RsDirUtil::getFileHash(job.full_path, hash, size, this))
 			{
 				// store the result
 
@@ -218,8 +219,7 @@ void HashStorage::threadTick()
 				mChanged = true ;
 				mTotalHashedSize += size ;
 			}
-			else
-				std::cerr << "ERROR: cannot hash file " << job.full_path << std::endl;
+			else RS_ERR("Failure hashing file: ", job.full_path);
 
 			mHashingTime += rstime::RsScopeTimer::currentTime() - seconds_origin ;
 			mHashedBytes += size ;
@@ -233,11 +233,18 @@ void HashStorage::threadTick()
 
             ++mHashCounter ;
         }
-    }
-    // call the client
+	}
 
-    if(!hash.isNull())
-        job.client->hash_callback(job.client_param, job.full_path, hash, size);
+	// call the client
+	if(!hash.isNull())
+		job.client->hash_callback(job.client_param, job.full_path, hash, size);
+
+	/* Notify we completed hashing a file */
+	auto ev = std::make_shared<RsFileHashingCompletedEvent>();
+	ev->mFilePath = job.full_path;
+	ev->mHashingSpeed = mCurrentHashingSpeed;
+	ev->mFileHash = hash;
+	rsEvents->postEvent(ev);
 }
 
 bool HashStorage::requestHash(const std::string& full_path,uint64_t size,rstime_t mod_time,RsFileHash& known_hash,HashStorageClient *c,uint32_t client_param)
