@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2016 by Mr.Alice <mralice@users.sourceforge.net>                  *
+ * Copyright (C) 2016  Mr.Alice <mralice@users.sourceforge.net>                *
+ * Copyright (C) 2021  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -29,6 +31,7 @@
 #include "dir_hierarchy.h"
 #include "filelist_io.h"
 #include "file_sharing_defaults.h"
+#include "util/cxx17retrocompat.h"
 
 #ifdef RS_DEEP_FILES_INDEX
 #	include "deep_search/filesindex.hpp"
@@ -784,27 +787,43 @@ int InternalFileHierarchyStorage::searchTerms(
         const std::list<std::string>& terms,
         std::list<DirectoryStorage::EntryIndex>& results ) const
 {
-    // most entries are likely to be files, so we could do a linear search over the entries tab.
-    // instead we go through the table of hashes.
+	/* most entries are likely to be files, so we could do a linear search over
+	 * the entries tab. Instead we go through the table of hashes.*/
 
-    for(std::map<RsFileHash,DirectoryStorage::EntryIndex>::const_iterator it(mFileHashes.begin());it!=mFileHashes.end();++it)
-        if(mNodes[it->second] != NULL)
-        {
-            const std::string &str1 = static_cast<FileEntry*>(mNodes[it->second])->file_name;
+	for(auto& it : std::as_const(mFileHashes))
+	{
+		// node may be null for some hash waiting to be deleted
+		if(mNodes[it.second])
+		{
+			rs_view_ptr<FileEntry> tFileEntry =
+			        static_cast<FileEntry*>(mNodes[it.second]);
 
-            for(std::list<std::string>::const_iterator iter(terms.begin()); iter != terms.end(); ++iter)
-            {
-                /* always ignore case */
-                const std::string &str2 = (*iter);
+			/* Most file will just have file name stored, but single file shared
+			 * without a shared dir will contain full path instead of just the
+			 * name, so purify it to perform the search */
+			std::string tFilename = tFileEntry->file_name;
+			if(tFileEntry->file_name.find("/") != std::string::npos)
+			{
+				std::string _tParentDir;
+				RsDirUtil::splitDirFromFile(
+				            tFileEntry->file_name, _tParentDir, tFilename );
+			}
 
-                if(str1.end() != std::search( str1.begin(), str1.end(), str2.begin(), str2.end(), RsRegularExpression::CompareCharIC() ))
-                {
-                    results.push_back(it->second);
-                    break;
-                }
-            }
-        }
-    return 0 ;
+			for(auto& termIt : std::as_const(terms))
+			{
+				/* always ignore case */
+				if(tFilename.end() != std::search(
+				            tFilename.begin(), tFilename.end(),
+				            termIt.begin(), termIt.end(),
+				            RsRegularExpression::CompareCharIC() ))
+				{
+					results.push_back(it.second);
+					break;
+				}
+			}
+		}
+	}
+	return 0;
 }
 
 bool InternalFileHierarchyStorage::check(std::string& error_string) // checks consistency of storage.

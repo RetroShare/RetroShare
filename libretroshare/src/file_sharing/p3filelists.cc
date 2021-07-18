@@ -30,7 +30,7 @@
 #include "retroshare/rsids.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsinit.h"
-
+#include "util/cxx17retrocompat.h"
 #include "rsserver/p3face.h"
 
 #define P3FILELISTS_DEBUG() std::cerr << time(NULL)    << " : FILE_LISTS : " << __FUNCTION__ << " : "
@@ -1476,7 +1476,9 @@ bool p3FileDatabase::search(
     return false;
 }
 
-int p3FileDatabase::filterResults(const std::list<void*>& firesults,std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& peer_id) const
+int p3FileDatabase::filterResults(
+        const std::list<void*>& firesults, std::list<DirDetails>& results,
+        FileSearchFlags flags, const RsPeerId& peer_id ) const
 {
     results.clear();
 
@@ -1484,29 +1486,33 @@ int p3FileDatabase::filterResults(const std::list<void*>& firesults,std::list<Di
 
     /* translate/filter results */
 
-    for(std::list<void*>::const_iterator rit(firesults.begin()); rit != firesults.end(); ++rit)
-    {
-        DirDetails cdetails ;
+	for(void* rit: std::as_const(firesults))
+	{
+		DirDetails cdetails;
 
-        if(!RequestDirDetails (*rit,cdetails,RS_FILE_HINTS_LOCAL))
-        {
-            P3FILELISTS_ERROR() << "(EE) Cannot get dir details for entry " << *rit << std::endl;
-            continue ;
-        }
+		if(!RequestDirDetails(rit, cdetails, RS_FILE_HINTS_LOCAL))
+		{
+			RS_ERR("Cannot retrieve dir details for entry: ", rit);
+			print_stacktrace();
+			continue ;
+		}
+
+		RS_DBG( "Filtering candidate: ", rit,
+		        ", name: ", cdetails.name, ", path: ", cdetails.path,
+		        ", flags: ", cdetails.flags, ", peer: ", peer_id );
+
+		if(!peer_id.isNull())
+		{
+			FileSearchFlags permission_flags =
+			        rsPeers->computePeerPermissionFlags(
+			            peer_id, cdetails.flags, cdetails.parent_groups );
+
+			if (cdetails.type == DIR_TYPE_FILE && ( permission_flags & flags ))
+			{
+				cdetails.id.clear();
+				results.push_back(cdetails);
 #ifdef DEBUG_P3FILELISTS
-        P3FILELISTS_DEBUG() << "Filtering candidate " << *rit << ", flags=" << cdetails.flags << ", peer=" << peer_id ;
-#endif
-
-        if(!peer_id.isNull())
-        {
-            FileSearchFlags permission_flags = rsPeers->computePeerPermissionFlags(peer_id,cdetails.flags,cdetails.parent_groups) ;
-
-            if (cdetails.type == DIR_TYPE_FILE && ( permission_flags & flags ))
-            {
-                cdetails.id.clear() ;
-                results.push_back(cdetails);
-#ifdef DEBUG_P3FILELISTS
-                std::cerr << ": kept" << std::endl ;
+				std::cerr << ": kept" << std::endl ;
 #endif
             }
 #ifdef DEBUG_P3FILELISTS
@@ -1518,7 +1524,19 @@ int p3FileDatabase::filterResults(const std::list<void*>& firesults,std::list<Di
             results.push_back(cdetails);
     }
 
-    return !results.empty() ;
+	for(auto& res: results)
+	{
+		/* Most file will just have file name stored, but single file shared
+		 * without a shared dir will contain full path instead of just the
+		 * name, so purify it to perform the search */
+		if(res.name.find("/") != std::string::npos )
+		{
+			std::string _tDirPath;
+			RsDirUtil::splitDirFromFile(res.name, _tDirPath, res.name);
+		}
+	}
+
+	return !results.empty();
 }
 
 bool p3FileDatabase::convertSharedFilePath(const std::string& path,std::string& fullpath)
