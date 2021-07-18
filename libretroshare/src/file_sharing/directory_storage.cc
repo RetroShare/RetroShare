@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2016 by Mr.Alice <mralice@users.sourceforge.net>                  *
+ * Copyright (C) 2016  Mr.Alice <mralice@users.sourceforge.net>                *
+ * Copyright (C) 2021  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -736,134 +738,214 @@ std::string LocalDirectoryStorage::locked_getVirtualPath(EntryIndex indx) const
    return it->second.virtualname + "/" + res;
 }
 
-bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinaryData& bindata,const RsPeerId& client_id)
+bool LocalDirectoryStorage::serialiseDirEntry(
+        const EntryIndex& indx, RsTlvBinaryData& bindata,
+        const RsPeerId& client_id )
 {
-    RS_STACK_MUTEX(mDirStorageMtx) ;
+	RS_STACK_MUTEX(mDirStorageMtx);
 
-    const InternalFileHierarchyStorage::DirEntry *dir = mFileHierarchy->getDirEntry(indx);
+	const InternalFileHierarchyStorage::DirEntry* dir =
+	        mFileHierarchy->getDirEntry(indx);
 
 #ifdef DEBUG_LOCAL_DIRECTORY_STORAGE
     std::cerr << "Serialising Dir entry " << std::hex << indx << " for client id " << client_id << std::endl;
 #endif
-    if(dir == NULL)
-    {
-        std::cerr << "(EE) serialiseDirEntry: ERROR. Cannot find entry " << (void*)(intptr_t)indx << std::endl;
-        return false;
-    }
 
-    // compute list of allowed subdirs
-    std::vector<RsFileHash> allowed_subdirs ;
-    FileStorageFlags node_flags ;
-    std::list<RsNodeGroupId> node_groups ;
+	if(!dir)
+	{
+		RS_ERR("Cannot find entry ", indx);
+		return false;
+	}
 
-    // for each subdir, compute the node flags and groups, then ask rsPeers to compute the mask that result from these flags for the particular peer supplied in parameter
+	// compute list of allowed subdirs
+	std::vector<RsFileHash> allowed_subdirs;
+	FileStorageFlags node_flags;
+	std::list<RsNodeGroupId> node_groups;
 
-    for(uint32_t i=0;i<dir->subdirs.size();++i)
-        if(indx != 0 || (locked_getFileSharingPermissions(dir->subdirs[i],node_flags,node_groups) && (rsPeers->computePeerPermissionFlags(client_id,node_flags,node_groups) & RS_FILE_HINTS_BROWSABLE)))
-        {
-            RsFileHash hash ;
-            if(!mFileHierarchy->getDirHashFromIndex(dir->subdirs[i],hash))
-            {
-              std::cerr << "(EE) Cannot get hash from subdir index " << dir->subdirs[i] << ". Weird bug." << std::endl ;
-              return false;
-            }
-            allowed_subdirs.push_back(hash) ;
+	/* for each subdir, compute the node flags and groups, then ask rsPeers to
+	 * compute the mask that result from these flags for the particular peer
+	 * supplied in parameter */
+
+	for(uint32_t i=0;i<dir->subdirs.size();++i)
+		if(indx != 0 || (
+		            locked_getFileSharingPermissions(
+		                dir->subdirs[i], node_flags, node_groups ) &&
+		            ( rsPeers->computePeerPermissionFlags(
+		                  client_id, node_flags, node_groups ) &
+		              RS_FILE_HINTS_BROWSABLE ) ))
+		{
+			RsFileHash hash;
+			if(!mFileHierarchy->getDirHashFromIndex(dir->subdirs[i],hash))
+			{
+				RS_ERR( "Cannot get hash from subdir index: ",
+				        dir->subdirs[i], ". Weird bug." );
+				print_stacktrace();
+				return false;
+			}
+			allowed_subdirs.push_back(hash);
+
 #ifdef DEBUG_LOCAL_DIRECTORY_STORAGE
             std::cerr << "  pushing subdir " << hash << ", array position=" << i << " indx=" << dir->subdirs[i] << std::endl;
 #endif
-        }
+		}
 #ifdef DEBUG_LOCAL_DIRECTORY_STORAGE
         else
             std::cerr << "  not pushing subdir " << hash << ", array position=" << i << " indx=" << dir->subdirs[i] << ": permission denied for this peer." << std::endl;
 #endif
 
-    // now count the files that do not have a null hash (meaning the hash has indeed been computed)
+	/* now count the files that do not have a null hash (meaning the hash has
+	 * indeed been computed), also in case files are shared singularly (without
+	 * a shared directory) so they are child of root check browsability
+	 * permission */
+	uint32_t allowed_subfiles = 0;
+	for(uint32_t i=0; i<dir->subfiles.size(); ++i)
+	{
+		const InternalFileHierarchyStorage::FileEntry* file =
+		        mFileHierarchy->getFileEntry(dir->subfiles[i]);
+		if(file != nullptr && !file->file_hash.isNull()
+		        && ( indx !=0 || (
+		                 locked_getFileSharingPermissions(
+		                     dir->subfiles[i], node_flags, node_groups ) &&
+		                 rsPeers->computePeerPermissionFlags(
+		                     client_id, node_flags, node_groups ) &
+		                 RS_FILE_HINTS_BROWSABLE ) ))
+			allowed_subfiles++;
+	}
 
-    uint32_t allowed_subfiles = 0 ;
+	unsigned char* section_data = (unsigned char *)
+	        rs_malloc(FL_BASE_TMP_SECTION_SIZE);
+	if(!section_data) return false;
 
-    for(uint32_t i=0;i<dir->subfiles.size();++i)
-    {
-        const InternalFileHierarchyStorage::FileEntry *file = mFileHierarchy->getFileEntry(dir->subfiles[i]) ;
-        if(file != NULL && !file->file_hash.isNull())
-            allowed_subfiles++ ;
-    }
+	uint32_t section_size = FL_BASE_TMP_SECTION_SIZE;
+	uint32_t section_offset = 0;
 
-    unsigned char *section_data = (unsigned char *)rs_malloc(FL_BASE_TMP_SECTION_SIZE) ;
+	/* we need to send:
+	 *  - the name of the directory, its TS
+	 *  - the index entry for each subdir (the updte TS are exchanged at a
+	 *    higher level)
+	 *  - the file info for each subfile */
 
-    if(!section_data)
-        return false ;
+	std::string virtual_dir_name = locked_getVirtualDirName(indx);
 
-    uint32_t section_size = FL_BASE_TMP_SECTION_SIZE;
-    uint32_t section_offset = 0;
+	/* Manual serialization AGAIN! This is terrible and should be ported to the
+	 * new serialization system ASAP! */
+	if(!FileListIO::writeField(
+	            section_data, section_size, section_offset,
+	            FILE_LIST_IO_TAG_DIR_NAME, virtual_dir_name ))
+	{ free(section_data); return false; }
+	if(!FileListIO::writeField(
+	            section_data, section_size, section_offset,
+	            FILE_LIST_IO_TAG_RECURS_MODIF_TS,
+	            (uint32_t)dir->dir_most_recent_time ))
+	{ free(section_data); return false; }
+	if(!FileListIO::writeField(
+	            section_data, section_size, section_offset,
+	            FILE_LIST_IO_TAG_MODIF_TS, (uint32_t)dir->dir_modtime ))
+	{ free(section_data); return false;}
 
-    // we need to send:
-    //	- the name of the directory, its TS
-    //	- the index entry for each subdir (the updte TS are exchanged at a higher level)
-    //	- the file info for each subfile
-    //
-    std::string virtual_dir_name = locked_getVirtualDirName(indx) ;
+	// serialise number of subdirs and number of subfiles
+	if(!FileListIO::writeField(
+	            section_data, section_size, section_offset,
+	            FILE_LIST_IO_TAG_RAW_NUMBER, (uint32_t)allowed_subdirs.size() ))
+	{ free(section_data); return false; }
+	if(!FileListIO::writeField(
+	            section_data, section_size, section_offset,
+	            FILE_LIST_IO_TAG_RAW_NUMBER, (uint32_t)allowed_subfiles ))
+	{ free(section_data); return false; }
 
-    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_DIR_NAME       ,virtual_dir_name                   )) { free(section_data); return false ;}
-    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RECURS_MODIF_TS,(uint32_t)dir->dir_most_recent_time)) { free(section_data); return false ;}
-    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_MODIF_TS       ,(uint32_t)dir->dir_modtime         )) { free(section_data); return false ;}
+	// serialise subdirs entry indexes
+	for(uint32_t i=0; i<allowed_subdirs.size(); ++i)
+		if(!FileListIO::writeField(
+		            section_data, section_size, section_offset,
+		            FILE_LIST_IO_TAG_ENTRY_INDEX, allowed_subdirs[i] ))
+		{ free(section_data); return false; }
 
-    // serialise number of subdirs and number of subfiles
+	// serialise directory subfiles, with info for each of them
 
-    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,(uint32_t)allowed_subdirs.size()  )) { free(section_data); return false ;}
-    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,(uint32_t)allowed_subfiles        )) { free(section_data); return false ;}
+	unsigned char* file_section_data =
+	        (unsigned char *) rs_malloc(FL_BASE_TMP_SECTION_SIZE);
+	if(!file_section_data)
+	{
+		free(section_data);
+		return false;
+	}
 
-    // serialise subdirs entry indexes
+	uint32_t file_section_size = FL_BASE_TMP_SECTION_SIZE;
 
-    for(uint32_t i=0;i<allowed_subdirs.size();++i)
-        if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_ENTRY_INDEX ,allowed_subdirs[i]  )) { free(section_data); return false ;}
+	for(uint32_t i=0; i<dir->subfiles.size(); ++i)
+	{
+		uint32_t file_section_offset = 0;
 
-    // serialise directory subfiles, with info for each of them
+		const InternalFileHierarchyStorage::FileEntry* file =
+		        mFileHierarchy->getFileEntry(dir->subfiles[i]);
 
-    unsigned char *file_section_data = (unsigned char *)rs_malloc(FL_BASE_TMP_SECTION_SIZE) ;
+		if(file == nullptr || file->file_hash.isNull())
+		{
+			RS_INFO( "skipping unhashed or Null file entry ",
+			         dir->subfiles[i], " to get/send file info." );
+			continue;
+		}
 
-    if(!file_section_data)
-    {
-        free(section_data);
-        return false ;
-    }
+		if(indx == 0)
+		{
+			if(!locked_getFileSharingPermissions(
+			            dir->subfiles[i], node_flags, node_groups ))
+			{
+				RS_ERR( "Failure getting sharing permission for single file: ",
+				        dir->subfiles[i] );
+				print_stacktrace();
+				continue;
+			}
 
-    uint32_t file_section_size = FL_BASE_TMP_SECTION_SIZE ;
+			if(!( rsPeers->computePeerPermissionFlags(
+			          client_id, node_flags, node_groups ) &
+			      RS_FILE_HINTS_BROWSABLE ))
+			{
+				RS_INFO( "Skipping single file shared without browse "
+				         "permission" );
+				continue;
+			}
+		}
 
-    for(uint32_t i=0;i<dir->subfiles.size();++i)
-    {
-        uint32_t file_section_offset = 0 ;
+		if(!FileListIO::writeField(
+		            file_section_data, file_section_size, file_section_offset,
+		            FILE_LIST_IO_TAG_FILE_NAME, file->file_name ))
+		{ free(section_data); free(file_section_data); return false; }
+		if(!FileListIO::writeField(
+		            file_section_data, file_section_size, file_section_offset,
+		            FILE_LIST_IO_TAG_FILE_SIZE, file->file_size ))
+		{ free(section_data); free(file_section_data); return false; }
+		if(!FileListIO::writeField(
+		            file_section_data, file_section_size, file_section_offset,
+		            FILE_LIST_IO_TAG_FILE_SHA1_HASH, file->file_hash ))
+		{ free(section_data); free(file_section_data); return false; }
+		if(!FileListIO::writeField(
+		            file_section_data, file_section_size, file_section_offset,
+		            FILE_LIST_IO_TAG_MODIF_TS, (uint32_t)file->file_modtime ))
+		{ free(section_data); free(file_section_data); return false; }
 
-        const InternalFileHierarchyStorage::FileEntry *file = mFileHierarchy->getFileEntry(dir->subfiles[i]) ;
-
-        if(file == NULL || file->file_hash.isNull())
-        {
-            std::cerr << "(II) skipping unhashed or Null file entry " << dir->subfiles[i] << " to get/send file info." << std::endl;
-            continue ;
-        }
-
-        if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_FILE_NAME     ,file->file_name   )) { free(section_data);free(file_section_data);return false ;}
-        if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_FILE_SIZE     ,file->file_size   )) { free(section_data);free(file_section_data);return false ;}
-        if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_FILE_SHA1_HASH,file->file_hash   )) { free(section_data);free(file_section_data);return false ;}
-        if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_MODIF_TS      ,(uint32_t)file->file_modtime)) { free(section_data);free(file_section_data);return false ;}
-
-        // now write the whole string into a single section in the file
-
-        if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_REMOTE_FILE_ENTRY,file_section_data,file_section_offset)) { free(section_data); free(file_section_data);return false ;}
+		// now write the whole string into a single section in the file
+		if(!FileListIO::writeField(
+		            section_data, section_size, section_offset,
+		            FILE_LIST_IO_TAG_REMOTE_FILE_ENTRY,
+		            file_section_data, file_section_offset ))
+		{ free(section_data); free(file_section_data); return false; }
 
 #ifdef DEBUG_LOCAL_DIRECTORY_STORAGE
         std::cerr << "  pushing subfile " << file->hash << ", array position=" << i << " indx=" << dir->subfiles[i] << std::endl;
 #endif
-    }
-	free(file_section_data) ;
+	}
+	free(file_section_data);
 
 #ifdef DEBUG_LOCAL_DIRECTORY_STORAGE
     std::cerr << "Serialised dir entry to send for entry index " << (void*)(intptr_t)indx << ". Data size is " << section_size << " bytes" << std::endl;
 #endif
 
-    bindata.bin_data = realloc(section_data,section_offset) ;	// This discards the possibly unused trailing bytes in the end of section_data
-    bindata.bin_len = section_offset ;
+	// Discards the possibly unused trailing bytes in the end of section_data
+	bindata.bin_data = realloc(section_data,section_offset);
+	bindata.bin_len = section_offset;
 
-    return true ;
+	return true;
 }
 
 
