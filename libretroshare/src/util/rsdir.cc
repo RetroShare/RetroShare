@@ -458,13 +458,14 @@ rstime_t RsDirUtil::lastWriteTime(
 	if ( 0 == stat64(path.c_str(), &buf))
 #endif
 	{
-		/* errc is meaningful only if retval is 0
-		 * so it is not necessary but we clean it just in case */
+		/* errc output param is guaranted to be meaningful only if an error
+		 * happens so is not strictly necessary but we clean it anyway just
+		 * in case */
 		errc = std::error_condition();
 		return buf.st_mtime;
 	}
 
-	errc = std::errc::io_error;
+	errc = std::error_condition(errno, std::generic_category());
 	return 0;
 }
 
