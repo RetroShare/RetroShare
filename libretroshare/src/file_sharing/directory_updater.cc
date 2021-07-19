@@ -3,7 +3,7 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright (C) 2016 by Mr.Alice <mralice@users.sourceforge.net>              *
+ * Copyright (C) 2016  Mr.Alice <mralice@users.sourceforge.net>                *
  * Copyright (C) 2021  Gioacchino Mazzurco <gio@eigenlab.org>                  *
  * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
@@ -404,7 +404,8 @@ void LocalDirectoryUpdater::hash_callback(uint32_t client_param, const std::stri
 
 bool LocalDirectoryUpdater::hash_confirm(uint32_t client_param)
 {
-    return mSharedDirectories->getEntryType(DirectoryStorage::EntryIndex(client_param)) == DIR_TYPE_FILE ;
+	return mSharedDirectories->getEntryType(
+	            DirectoryStorage::EntryIndex(client_param) ) == DIR_TYPE_FILE;
 }
 
 void LocalDirectoryUpdater::setFileWatchPeriod(int seconds)

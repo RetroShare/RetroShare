@@ -81,10 +81,11 @@ const char *scanf_string_for_uint(int bytes) ;
 
 int     	breakupDirList(const std::string& path, std::list<std::string> &subdirs);
 
-// Splits the path into parent directory and file. File can be empty if full_path is a dir ending with '/'
-// if full_path does not contain a directory, then dir will be "." and file will be full_path.
-
-bool        splitDirFromFile(const std::string& full_path,std::string& dir, std::string& file);
+/** Splits the path into parent directory and file. File can be empty if
+ * full_path is a dir ending with '/' if full_path does not contain a directory,
+ * then dir will be "." and file will be full_path */
+bool splitDirFromFile( const std::string& full_path,
+                       std::string& dir, std::string& file );
 
 bool 		copyFile(const std::string& source,const std::string& dest);
 

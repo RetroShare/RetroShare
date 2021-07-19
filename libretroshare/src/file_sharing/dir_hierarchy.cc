@@ -73,7 +73,8 @@ InternalFileHierarchyStorage::InternalFileHierarchyStorage() : mRoot(0)
     mTotalFiles = 0 ;
 }
 
-bool InternalFileHierarchyStorage::getDirHashFromIndex(const DirectoryStorage::EntryIndex& index,RsFileHash& hash) const
+bool InternalFileHierarchyStorage::getDirHashFromIndex(
+        const DirectoryStorage::EntryIndex& index, RsFileHash& hash ) const
 {
     if(!checkIndex(index,FileStorageNode::TYPE_DIR))
         return false ;
@@ -82,6 +83,7 @@ bool InternalFileHierarchyStorage::getDirHashFromIndex(const DirectoryStorage::E
 
     return true;
 }
+
 bool InternalFileHierarchyStorage::getIndexFromDirHash(const RsFileHash& hash,DirectoryStorage::EntryIndex& index)
 {
     std::map<RsFileHash,DirectoryStorage::EntryIndex>::iterator it = mDirHashes.find(hash) ;
@@ -91,35 +93,39 @@ bool InternalFileHierarchyStorage::getIndexFromDirHash(const RsFileHash& hash,Di
 
     index = it->second;
 
-    // make sure the hash actually points to some existing file. If not, remove it. This is a lazy update of dir hashes: when we need them, we check them.
-    if(!checkIndex(index, FileStorageNode::TYPE_DIR) || static_cast<DirEntry*>(mNodes[index])->dir_hash != hash)
-    {
-        std::cerr << "(II) removing non existing hash from dir hash list: " << hash << std::endl;
-
-        mDirHashes.erase(it) ;
-        return false ;
-    }
+	/* make sure the hash actually points to some existing directory. If not,
+	 * remove it. This is an opportunistic update of dir hashes: when we need
+	 * them, we check them. */
+	if( !checkIndex(index, FileStorageNode::TYPE_DIR) ||
+	        static_cast<DirEntry*>(mNodes[index])->dir_hash != hash )
+	{
+		RS_INFO("removing non existing dir hash: ", hash, " from dir hash list");
+		mDirHashes.erase(it);
+		return false;
+	}
     return true;
 }
-bool InternalFileHierarchyStorage::getIndexFromFileHash(const RsFileHash& hash,DirectoryStorage::EntryIndex& index)
+
+bool InternalFileHierarchyStorage::getIndexFromFileHash(
+        const RsFileHash& hash, DirectoryStorage::EntryIndex& index )
 {
-    std::map<RsFileHash,DirectoryStorage::EntryIndex>::iterator it = mFileHashes.find(hash) ;
+	auto it = std::as_const(mFileHashes).find(hash);
+	if(it == mFileHashes.end()) return false;
 
-    if(it == mFileHashes.end())
-        return false;
+	index = it->second;
 
-    index = it->second;
+	/* make sure the hash actually points to some existing file. If not, remove
+	 * it. This is an opportunistic update of file hashes: when we need them,
+	 * we check them. */
+	if( !checkIndex(it->second, FileStorageNode::TYPE_FILE) ||
+	        static_cast<FileEntry*>(mNodes[index])->file_hash != hash )
+	{
+		RS_INFO("removing non existing file hash: ", hash, " from file hash list");
+		mFileHashes.erase(it);
+		return false;
+	}
 
-    // make sure the hash actually points to some existing file. If not, remove it. This is a lazy update of file hashes: when we need them, we check them.
-    if(!checkIndex(it->second, FileStorageNode::TYPE_FILE) || static_cast<FileEntry*>(mNodes[index])->file_hash != hash)
-    {
-        std::cerr << "(II) removing non existing hash from file hash list: " << hash << std::endl;
-
-        mFileHashes.erase(it) ;
-        return false ;
-    }
-
-    return true;
+	return true;
 }
 
 bool InternalFileHierarchyStorage::getChildIndex(DirectoryStorage::EntryIndex e,int row,DirectoryStorage::EntryIndex& c) const
@@ -158,10 +164,13 @@ bool InternalFileHierarchyStorage::isIndexValid(DirectoryStorage::EntryIndex e) 
     return e < mNodes.size() && mNodes[e] != NULL ;
 }
 
-bool InternalFileHierarchyStorage::updateSubDirectoryList(const DirectoryStorage::EntryIndex& indx, const std::set<std::string>& subdirs, const RsFileHash& random_hash_seed)
+bool InternalFileHierarchyStorage::updateSubDirectoryList(
+        const DirectoryStorage::EntryIndex& indx,
+        const std::set<std::string>& subdirs,
+        const RsFileHash& random_hash_seed )
 {
-    if(!checkIndex(indx,FileStorageNode::TYPE_DIR))
-        return false;
+	if(!checkIndex(indx,FileStorageNode::TYPE_DIR))
+		return false;
 
     DirEntry& d(*static_cast<DirEntry*>(mNodes[indx])) ;
 
@@ -287,10 +296,17 @@ bool InternalFileHierarchyStorage::checkIndex(DirectoryStorage::EntryIndex indx,
     return true;
 }
 
-bool InternalFileHierarchyStorage::updateSubFilesList(const DirectoryStorage::EntryIndex& indx,const std::map<std::string,DirectoryStorage::FileTS>& subfiles,std::map<std::string,DirectoryStorage::FileTS>& new_files)
+bool InternalFileHierarchyStorage::updateSubFilesList(
+        const DirectoryStorage::EntryIndex& indx,
+        const std::map<std::string,DirectoryStorage::FileTS>& subfiles,
+        std::map<std::string,DirectoryStorage::FileTS>& new_files )
 {
-    if(!checkIndex(indx,FileStorageNode::TYPE_DIR))
-        return false;
+	if(!checkIndex(indx, FileStorageNode::TYPE_DIR))
+	{
+		RS_ERR("indx: ", indx, std::errc::not_a_directory);
+		print_stacktrace();
+		return false;
+	}
 
     DirEntry& d(*static_cast<DirEntry*>(mNodes[indx])) ;
     new_files = subfiles ;
@@ -315,9 +331,11 @@ bool InternalFileHierarchyStorage::updateSubFilesList(const DirectoryStorage::En
             continue;
         }
 
-        if(it->second.modtime != f.file_modtime || it->second.size != f.file_size)	// file is newer and/or has different size
+		// file is newer and/or has different size
+		if(it->second.modtime != f.file_modtime || it->second.size != f.file_size)
         {
-            f.file_hash.clear();																// hash needs recomputing
+			// hash needs recomputing
+			f.file_hash.clear();
             f.file_modtime = it->second.modtime;
             f.file_size = it->second.size;
 
@@ -345,13 +363,16 @@ bool InternalFileHierarchyStorage::updateSubFilesList(const DirectoryStorage::En
     }
     return true;
 }
-bool InternalFileHierarchyStorage::updateHash(const DirectoryStorage::EntryIndex& file_index,const RsFileHash& hash)
+bool InternalFileHierarchyStorage::updateHash(
+        const DirectoryStorage::EntryIndex& file_index, const RsFileHash& hash )
 {
-    if(!checkIndex(file_index,FileStorageNode::TYPE_FILE))
-    {
-        std::cerr << "[directory storage] (EE) cannot update file at index " << file_index << ". Not a valid index, or not a file." << std::endl;
-        return false;
-    }
+	if(!checkIndex(file_index, FileStorageNode::TYPE_FILE))
+	{
+		RS_ERR( "Cannot update file at index ", file_index,
+		        ". Not a valid index, or not a file." );
+		print_stacktrace();
+		return false;
+	}
 #ifdef DEBUG_DIRECTORY_STORAGE
     std::cerr << "[directory storage] updating hash at index " << file_index << ", hash=" << hash << std::endl;
 #endif
@@ -439,14 +460,20 @@ DirectoryStorage::EntryIndex InternalFileHierarchyStorage::allocateNewIndex()
 	return mNodes.size()-1 ;
 }
 
-bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryIndex& indx,const std::string& dir_name,rstime_t most_recent_time,rstime_t dir_modtime,const std::vector<RsFileHash>& subdirs_hash,const std::vector<FileEntry>& subfiles_array)
+bool InternalFileHierarchyStorage::updateDirEntry(
+        const DirectoryStorage::EntryIndex& indx, const std::string& dir_name,
+        rstime_t most_recent_time, rstime_t dir_modtime,
+        const std::vector<RsFileHash>& subdirs_hash,
+        const std::vector<FileEntry>& subfiles_array )
 {
-    if(!checkIndex(indx,FileStorageNode::TYPE_DIR))
-    {
-        std::cerr << "[directory storage] (EE) cannot update dir at index " << indx << ". Not a valid index, or not an existing dir." << std::endl;
-        return false;
-    }
-    DirEntry& d(*static_cast<DirEntry*>(mNodes[indx])) ;
+	if(!checkIndex(indx,FileStorageNode::TYPE_DIR))
+	{
+		RS_ERR( "cannot update dir at index ", indx, ". Not a valid index, or "
+		        "not an existing dir." );
+		return false;
+	}
+
+	DirEntry& d(*static_cast<DirEntry*>(mNodes[indx]));
 
 #ifdef DEBUG_DIRECTORY_STORAGE
     std::cerr << "Updating dir entry: name=\"" << dir_name << "\", most_recent_time=" << most_recent_time << ", modtime=" << dir_modtime << std::endl;
@@ -706,14 +733,14 @@ const InternalFileHierarchyStorage::FileStorageNode *InternalFileHierarchyStorag
         return NULL ;
 }
 
-const InternalFileHierarchyStorage::DirEntry *InternalFileHierarchyStorage::getDirEntry(DirectoryStorage::EntryIndex indx) const
+const InternalFileHierarchyStorage::DirEntry*
+InternalFileHierarchyStorage::getDirEntry(DirectoryStorage::EntryIndex indx) const
 {
-    if(!checkIndex(indx,FileStorageNode::TYPE_DIR))
-        return NULL ;
-
-    return static_cast<DirEntry*>(mNodes[indx]) ;
+	if(!checkIndex(indx,FileStorageNode::TYPE_DIR)) return nullptr;
+	return static_cast<DirEntry*>(mNodes[indx]);
 }
-const InternalFileHierarchyStorage::FileEntry *InternalFileHierarchyStorage::getFileEntry(DirectoryStorage::EntryIndex indx) const
+const InternalFileHierarchyStorage::FileEntry*
+InternalFileHierarchyStorage::getFileEntry(DirectoryStorage::EntryIndex indx) const
 {
     if(!checkIndex(indx,FileStorageNode::TYPE_FILE))
         return NULL ;
@@ -757,7 +784,10 @@ bool InternalFileHierarchyStorage::searchHash(const RsFileHash& hash,DirectorySt
 class DirectoryStorageExprFileEntry: public RsRegularExpression::ExpFileEntry
 {
 public:
-    DirectoryStorageExprFileEntry(const InternalFileHierarchyStorage::FileEntry& fe,const InternalFileHierarchyStorage::DirEntry& parent) : mFe(fe),mDe(parent) {}
+	DirectoryStorageExprFileEntry(
+	        const InternalFileHierarchyStorage::FileEntry& fe,
+	        const InternalFileHierarchyStorage::DirEntry& parent ) :
+	    mFe(fe), mDe(parent) {}
 
     inline virtual const std::string& file_name()       const { return mFe.file_name ; }
     inline virtual uint64_t           file_size()       const { return mFe.file_size ; }
@@ -771,14 +801,18 @@ private:
     const InternalFileHierarchyStorage::DirEntry& mDe ;
 };
 
-int InternalFileHierarchyStorage::searchBoolExp(RsRegularExpression::Expression * exp, std::list<DirectoryStorage::EntryIndex> &results) const
+int InternalFileHierarchyStorage::searchBoolExp(
+        RsRegularExpression::Expression* exp,
+        std::list<DirectoryStorage::EntryIndex>& results ) const
 {
-    for(std::map<RsFileHash,DirectoryStorage::EntryIndex>::const_iterator it(mFileHashes.begin());it!=mFileHashes.end();++it)
-        if(mNodes[it->second] != NULL && exp->eval(
-                    DirectoryStorageExprFileEntry(*static_cast<const FileEntry*>(mNodes[it->second]),
-                                                  *static_cast<const DirEntry*>(mNodes[mNodes[it->second]->parent_index])
-                                                  )))
-            results.push_back(it->second);
+	for(auto& it: std::as_const(mFileHashes))
+		if(mNodes[it.second])
+			if(exp->eval(
+			            DirectoryStorageExprFileEntry(
+			                *static_cast<const FileEntry*>(mNodes[it.second]),
+			                *static_cast<const DirEntry*>(mNodes[mNodes[it.second]->parent_index])
+			                                      ) ))
+			results.push_back(it.second);
 
     return 0;
 }
@@ -977,8 +1011,9 @@ void InternalFileHierarchyStorage::recursPrint(int depth,DirectoryStorage::Entry
 
 bool InternalFileHierarchyStorage::nodeAccessError(const std::string& s)
 {
-    std::cerr << "(EE) InternalDirectoryStructure: ERROR: " << s << std::endl;
-    return false ;
+	RS_ERR(s);
+	print_stacktrace();
+	return false;
 }
 
 // Removes the given subdirectory from the parent node and all its pendign subdirs and files.

@@ -70,8 +70,11 @@ DirectoryStorage::FileIterator& DirectoryStorage::FileIterator::operator++()
 
     return *this;
 }
-DirectoryStorage::EntryIndex DirectoryStorage::FileIterator::operator*() const { return mStorage->getSubFileIndex(mParentIndex,mFileTabIndex) ; }
-DirectoryStorage::EntryIndex DirectoryStorage::DirIterator ::operator*() const { return mStorage->getSubDirIndex(mParentIndex,mDirTabIndex) ; }
+DirectoryStorage::EntryIndex DirectoryStorage::FileIterator::operator*() const
+{ return mStorage->getSubFileIndex(mParentIndex, mFileTabIndex); }
+
+DirectoryStorage::EntryIndex DirectoryStorage::DirIterator::operator*() const
+{ return mStorage->getSubDirIndex(mParentIndex, mDirTabIndex); }
 
 DirectoryStorage::FileIterator::operator bool() const { return **this != DirectoryStorage::NO_INDEX; }
 DirectoryStorage::DirIterator ::operator bool() const { return **this != DirectoryStorage::NO_INDEX; }
@@ -142,7 +145,9 @@ bool DirectoryStorage::updateSubDirectoryList(const EntryIndex& indx, const std:
     mChanged = true ;
     return res ;
 }
-bool DirectoryStorage::updateSubFilesList(const EntryIndex& indx,const std::map<std::string,FileTS>& subfiles,std::map<std::string,FileTS>& new_files)
+bool DirectoryStorage::updateSubFilesList(
+        const EntryIndex& indx, const std::map<std::string,FileTS>& subfiles,
+        std::map<std::string,FileTS>& new_files )
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
     bool res = mFileHierarchy->updateSubFilesList(indx,subfiles,new_files) ;
@@ -351,7 +356,8 @@ int LocalDirectoryStorage::searchHash(const RsFileHash& hash, RsFileHash& real_h
     return false ;
 }
 
-void LocalDirectoryStorage::setSharedDirectoryList(const std::list<SharedDirInfo>& lst)
+void LocalDirectoryStorage::setSharedDirectoryList(
+        const std::list<SharedDirInfo>& lst )
 {
 	std::set<std::string> dirs_with_new_virtualname ;
     bool dirs_with_changed_flags = false ;
@@ -382,7 +388,9 @@ void LocalDirectoryStorage::setSharedDirectoryList(const std::list<SharedDirInfo
 			virtual_names.insert(candidate_virtual_name) ;
 		}
 
-		// now for each member of the processed list, check if it is an existing shared directory that has been changed. If so, we need to update the dir TS of that directory
+		/* now for each member of the processed list, check if it is an existing
+		 * shared directory that has been changed. If so, we need to update the
+		 * dir TS of that directory */
 
 		std::map<std::string,SharedDirInfo> new_dirs ;
 
@@ -532,7 +540,7 @@ bool LocalDirectoryStorage::updateHash(
 #endif
 
 		ret = (!update_internal_hierarchy) ||
-		        mFileHierarchy->updateHash(index,hash);
+		        mFileHierarchy->updateHash(index, hash);
 	} // RS_STACK_MUTEX(mDirStorageMtx);
 
 #ifdef RS_DEEP_FILES_INDEX

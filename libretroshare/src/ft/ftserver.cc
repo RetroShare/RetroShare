@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2008 by Robert Fernie <retroshare@lunamutt.com>                   *
+ * Copyright (C) 2008  Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2018-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2020-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -873,9 +875,11 @@ int ftServer::SearchKeywords(std::list<std::string> keywords, std::list<DirDetai
 {
 	return mFileDatabase->SearchKeywords(keywords, results,flags,RsPeerId());
 }
-int ftServer::SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id)
+int ftServer::SearchKeywords(
+        std::list<std::string> keywords, std::list<DirDetails> &results,
+        FileSearchFlags flags, const RsPeerId& peer_id )
 {
-	return mFileDatabase->SearchKeywords(keywords, results,flags,peer_id);
+	return mFileDatabase->SearchKeywords(keywords, results, flags, peer_id);
 }
 
 int ftServer::SearchBoolExp(RsRegularExpression::Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags)
