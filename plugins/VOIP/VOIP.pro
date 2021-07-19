@@ -63,12 +63,6 @@ win32 {
 
 	DEPENDPATH += . $$INC_DIR
 	INCLUDEPATH += . $$INC_DIR
-
-	USE_PRECOMPILED_LIBS =
-
-	# Should we keep these after removing opencv??
-	LIBS += -lole32 -loleaut32 -luuid -lvfw32
-	LIBS += -llibjpeg-turbo -lzlib
 }
 
 #################################### MacOSX #####################################
