@@ -386,6 +386,18 @@ public:
 	        bool keepForever ) = 0;
 
 	/**
+	 * @brief Request Synchronization with available peers
+	 * Usually syncronization already happen automatically so be carefull
+	 * to call this method only if necessary.
+	 * It has been thinked for use cases like mobile phone where internet
+	 * connection is intermittent and calling this may be useful when a system
+	 * event about connection being available or about to go offline is received
+	 * @jsonapi{development}
+	 * @return Success or error details
+	 */
+	virtual std::error_condition requestSynchronization() = 0;
+
+	/**
 	 * @brief Create forum. Blocking API.
 	 * @jsonapi{development}
 	 * @param[inout] forum Forum data (name, description...)

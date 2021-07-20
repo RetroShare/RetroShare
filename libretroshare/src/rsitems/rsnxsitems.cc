@@ -64,6 +64,12 @@ RsItem *RsNxsSerialiser::create_item(uint16_t service_id,uint8_t item_subtype) c
     if(service_id != SERVICE_TYPE)
         return NULL ;
 
+	switch(static_cast<RsNxsSubtype>(item_subtype))
+	{
+	case RsNxsSubtype::PULL_REQUEST:
+		return new RsNxsPullRequestItem(static_cast<RsServiceType>(service_id));
+	}
+
     switch(item_subtype)
     {
         case RS_PKT_SUBTYPE_NXS_SYNC_GRP_REQ_ITEM:   return new RsNxsSyncGrpReqItem(SERVICE_TYPE) ;

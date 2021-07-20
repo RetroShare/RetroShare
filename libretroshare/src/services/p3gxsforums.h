@@ -142,7 +142,10 @@ public:
 	/// @see RsGxsForums
 	std::error_condition setPostKeepForever(
 	        const RsGxsGroupId& forumId, const RsGxsMessageId& postId,
-            bool keepForever ) override;
+	        bool keepForever ) override;
+
+	/// @see RsGxsForums
+	std::error_condition requestSynchronization() override;
 
     /// implementation of rsGxsGorums
     ///

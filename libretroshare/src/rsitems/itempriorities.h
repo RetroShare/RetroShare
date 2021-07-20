@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2011-2011 by Cyril Soler <csoler@users.sourceforge.net>           *
+ * Copyright (C) 2011-2018 Cyril Soler <csoler@users.sourceforge.net>          *
+ * Copyright (C) 2021  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -21,7 +23,9 @@
  *******************************************************************************/
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
+
+using RsItemPriority = uint8_t;
 
 // This file centralises QoS priorities for all transfer RsItems
 //
