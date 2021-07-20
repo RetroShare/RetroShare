@@ -103,7 +103,10 @@ enum class RsEventType : uint32_t
     /// @see rspeers.h
     NETWORK                                                 = 16,
 
-	__MAX /// Used internally, keep last
+    /// @see rspeers.h
+    TOR_MANAGER                                             = 17,
+
+    __MAX /// Used internally, keep last
 };
 
 enum class RsEventsErrorNum : int32_t

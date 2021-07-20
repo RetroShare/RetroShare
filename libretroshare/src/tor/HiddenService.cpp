@@ -42,13 +42,13 @@
 
 using namespace Tor;
 
-HiddenService::HiddenService(QObject *parent)
-    : QObject(parent), m_status(NotCreated)
+HiddenService::HiddenService(HiddenServiceClient *client)
+    : m_status(NotCreated), m_client(client)
 {
 }
 
-HiddenService::HiddenService(const QString &path, QObject *parent)
-    : QObject(parent), m_dataPath(path), m_status(NotCreated)
+HiddenService::HiddenService(HiddenServiceClient *client,const QString &path)
+    : m_dataPath(path), m_status(NotCreated), m_client(client)
 {
     /* Set the initial status and, if possible, load the hostname */
     if (QDir(m_dataPath).exists(QLatin1String("private_key"))) {
@@ -58,8 +58,8 @@ HiddenService::HiddenService(const QString &path, QObject *parent)
     }
 }
 
-HiddenService::HiddenService(const CryptoKey &privateKey, const QString &path, QObject *parent)
-    : QObject(parent), m_dataPath(path), m_status(NotCreated)
+HiddenService::HiddenService(HiddenServiceClient *client,const CryptoKey &privateKey, const QString &path)
+    : m_dataPath(path), m_status(NotCreated), m_client(client)
 {
     setPrivateKey(privateKey);
     m_status = Offline;
@@ -73,10 +73,12 @@ void HiddenService::setStatus(Status newStatus)
     Status old = m_status;
     m_status = newStatus;
 
-    emit statusChanged(m_status, old);
+    if(m_client)
+        m_client->hiddenServiceStatusChanged(m_status,old); //emit statusChanged(m_status, old);
 
     if (m_status == Online)
-        emit serviceOnline();
+        if(m_client)
+            m_client->hiddenServiceOnline(); //emit serviceOnline();
 }
 
 void HiddenService::addTarget(const Target &target)
@@ -95,7 +97,8 @@ void HiddenService::setServiceId(const QByteArray& sid)
     m_service_id = sid;
     m_hostname = sid + ".onion";
 
-    emit hostnameChanged();
+    if(m_client)
+        m_client->hiddenServiceHostnameChanged(); // emit hostnameChanged();
 }
 void HiddenService::setPrivateKey(const CryptoKey &key)
 {
@@ -113,7 +116,8 @@ void HiddenService::setPrivateKey(const CryptoKey &key)
 
     m_privateKey = key;
 
-    emit privateKeyChanged();
+    if(m_client)
+        m_client->hiddenServicePrivateKeyChanged(); //emit privateKeyChanged();
 }
 
 void HiddenService::loadPrivateKey()
@@ -128,7 +132,8 @@ void HiddenService::loadPrivateKey()
         return;
     }
 
-    emit privateKeyChanged();
+    if(m_client)
+        m_client->hiddenServicePrivateKeyChanged(); // emit privateKeyChanged();
 }
 
 void HiddenService::servicePublished()

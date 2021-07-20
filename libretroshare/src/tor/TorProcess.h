@@ -41,15 +41,25 @@ namespace Tor
 
 class TorProcessPrivate;
 
+// This class is used to inherit calls from the TorProcess
+
+class TorProcessClient
+{
+public:
+    virtual void processStateChanged(int) = 0;
+    virtual void processErrorChanged(const QString&) = 0;
+    virtual void processLogMessage(const QString&) = 0;
+};
+
 /* Launches and controls a Tor instance with behavior suitable for bundling
  * an instance with the application. */
-class TorProcess : public QObject
+class TorProcess
 {
-    Q_OBJECT
-    Q_ENUMS(State)
+    //Q_OBJECT
+    //Q_ENUMS(State)
 
-    Q_PROPERTY(State state READ state NOTIFY stateChanged)
-    Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorMessageChanged)
+    //Q_PROPERTY(State state READ state NOTIFY stateChanged)
+    //Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorMessageChanged)
 
 public:
     enum State {
@@ -60,7 +70,7 @@ public:
         Ready
     };
 
-    explicit TorProcess(QObject *parent = 0);
+    explicit TorProcess(TorProcessClient *client,QObject *parent = 0);
     virtual ~TorProcess();
 
     QString executable() const;
@@ -81,17 +91,18 @@ public:
     quint16 controlPort();
     QByteArray controlPassword();
 
-public slots:
-    void start();
-    void stop();
-
-signals:
+//signals:
     void stateChanged(int newState);
     void errorMessageChanged(const QString &errorMessage);
     void logMessage(const QString &message);
 
+//public slots:
+    void start();
+    void stop();
+
 private:
     TorProcessPrivate *d;
+    TorProcessClient *m_client;
 };
 
 }

@@ -35,7 +35,9 @@
 #ifndef TORMANAGER_H
 #define TORMANAGER_H
 
-#include <QObject>
+#include "retroshare/rstor.h"
+#include "HiddenService.h"
+
 #include <QStringList>
 #include <QHostAddress>
 
@@ -48,20 +50,20 @@ class TorManagerPrivate;
 
 /* Run/connect to an instance of Tor according to configuration, and manage
  * UI interaction, first time configuration, etc. */
-class TorManager : public QObject
-{
-    Q_OBJECT
 
-    Q_PROPERTY(bool configurationNeeded READ configurationNeeded NOTIFY configurationNeededChanged)
-    Q_PROPERTY(QStringList logMessages READ logMessages CONSTANT)
-    Q_PROPERTY(Tor::TorProcess* process READ process CONSTANT)
-    Q_PROPERTY(Tor::TorControl* control READ control CONSTANT)
-    Q_PROPERTY(bool hasError READ hasError NOTIFY errorChanged)
-    Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorChanged)
-    Q_PROPERTY(QString torDataDirectory READ torDataDirectory WRITE setTorDataDirectory)
+class TorManager : public HiddenServiceClient, public RsTor
+{
+    // Q_OBJECT
+
+    // Q_PROPERTY(bool configurationNeeded READ configurationNeeded NOTIFY configurationNeededChanged)
+    // Q_PROPERTY(QStringList logMessages READ logMessages CONSTANT)
+    // Q_PROPERTY(Tor::TorProcess* process READ process CONSTANT)
+    // Q_PROPERTY(Tor::TorControl* control READ control CONSTANT)
+    // Q_PROPERTY(bool hasError READ hasError NOTIFY errorChanged)
+    // Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorChanged)
+    // Q_PROPERTY(QString torDataDirectory READ torDataDirectory WRITE setTorDataDirectory)
 
 public:
-    static bool isTorAvailable() ;
     static TorManager *instance();
 
     TorProcess *process();
@@ -88,21 +90,23 @@ public:
 	bool getHiddenServiceInfo(QString& service_id,QString& service_onion_address,uint16_t& service_port, QHostAddress& service_target_address,uint16_t& target_port);
 	bool getProxyServerInfo(QHostAddress& proxy_server_adress,uint16_t& proxy_server_port);
 
-public slots:
+//public slots:
     bool start();
 
-private slots:
-	void hiddenServicePrivateKeyChanged();
-    void hiddenServiceHostnameChanged();
-    void hiddenServiceStatusChanged(int old_status,int new_status);
+//private slots:
+    virtual void hiddenServiceOnline() override {} // do nothing here.
+    virtual void hiddenServicePrivateKeyChanged() override;
+    virtual void hiddenServiceHostnameChanged() override;
+    virtual void hiddenServiceStatusChanged(int old_status,int new_status) override;
 
-signals:
-    void configurationNeededChanged();
-    void errorChanged();
+//signals:
+//    void configurationNeededChanged();
+//    void errorChanged();
 
 private:
-    explicit TorManager(QObject *parent = 0);
+    explicit TorManager();
     TorManagerPrivate *d;
+    friend class RsTor;
 };
 
 }

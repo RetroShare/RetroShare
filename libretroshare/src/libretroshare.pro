@@ -9,12 +9,17 @@ libretroshare_shared {
 } else {
 	CONFIG += staticlib
 }
-CONFIG -= qt
+CONFIG += qt
+
+QT += network
+
 TARGET = retroshare
 TARGET_PRL = libretroshare
 DESTDIR = lib
 
 !include("use_libretroshare.pri"):error("Including")
+
+QMAKE_CXXFLAGS += -fPIC
 
 # treat warnings as error for better removing
 #QMAKE_CFLAGS += -Werror
@@ -441,7 +446,7 @@ HEADERS +=	rsitems/rsitem.h \
 			serialiser/rstlvkeyvalue.h \
 			serialiser/rstlvgenericparam.h \
 			serialiser/rstlvgenericmap.h \
-			serialiser/rstlvgenericmap.inl \
+                        serialiser/rstlvgenericmap.inl \
 			serialiser/rstlvlist.h \
 			serialiser/rstlvmaps.h \
 			serialiser/rstlvbanlist.h \
@@ -716,6 +721,48 @@ SOURCES += rsitems/rsnxsitems.cc \
 	gxs/rsgxsnetutils.cc \
 	gxs/rsgxsutil.cc \
 	gxs/rsgxsrequesttypes.cc
+
+# Tor
+HEADERS += 	retroshare/rstor.h 
+
+HEADERS += 	tor/AddOnionCommand.h \
+           	tor/AuthenticateCommand.h \
+           	tor/CryptoKey.h \
+           	tor/GetConfCommand.h \
+           	tor/HiddenService.h \
+           	tor/PendingOperation.h  \
+           	tor/ProtocolInfoCommand.h \
+           	tor/SecureRNG.h \
+                tor/TorTypes.h \
+                tor/SetConfCommand.h \
+           	tor/Settings.h \
+           	tor/StrUtil.h \
+           	tor/TorControl.h \
+           	tor/TorControlCommand.h \
+           	tor/TorControlSocket.h \
+           	tor/TorManager.h \
+           	tor/TorProcess.h \
+           	tor/TorProcess_p.h \
+           	tor/TorSocket.h \
+           	tor/Useful.h
+
+SOURCES += 	tor/AddOnionCommand.cpp \
+		tor/AuthenticateCommand.cpp \
+		tor/GetConfCommand.cpp \
+		tor/HiddenService.cpp \
+		tor/ProtocolInfoCommand.cpp \
+		tor/SetConfCommand.cpp \
+		tor/TorControlCommand.cpp \
+		tor/TorControl.cpp \
+		tor/TorControlSocket.cpp \
+		tor/TorManager.cpp \
+		tor/TorProcess.cpp \
+		tor/TorSocket.cpp \
+		tor/CryptoKey.cpp         \
+		tor/PendingOperation.cpp  \
+		tor/SecureRNG.cpp         \
+		tor/Settings.cpp          \
+		tor/StrUtil.cpp        
 
 # gxs tunnels
 HEADERS += gxstunnel/p3gxstunnel.h \
