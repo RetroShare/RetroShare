@@ -44,8 +44,10 @@ namespace librs { namespace util {
 class FolderIterator
 {
 public:
-    FolderIterator(const std::string& folderName,bool allow_symlinks,bool allow_files_from_the_future = true);
-    ~FolderIterator();
+	FolderIterator(
+	        const std::string& folderName, bool allow_symlinks,
+	        bool allow_files_from_the_future = true );
+	~FolderIterator();
 
     enum { TYPE_UNKNOWN = 0x00,
            TYPE_FILE    = 0x01,

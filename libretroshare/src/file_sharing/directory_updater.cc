@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2016 by Mr.Alice <mralice@users.sourceforge.net>                  *
+ * Copyright (C) 2016  Mr.Alice <mralice@users.sourceforge.net>                *
+ * Copyright (C) 2021  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -19,13 +21,15 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  ******************************************************************************/
+
+#include "util/cxx17retrocompat.h"
 #include "util/folderiterator.h"
 #include "util/rstime.h"
 #include "rsserver/p3face.h"
-
 #include "directory_storage.h"
 #include "directory_updater.h"
 #include "file_sharing_defaults.h"
+#include "util/rsdebuglevel3.h"
 
 //#define DEBUG_LOCAL_DIR_UPDATER 1
 
@@ -121,185 +125,238 @@ void LocalDirectoryUpdater::forceUpdate(bool add_safe_delay)
 
 bool LocalDirectoryUpdater::sweepSharedDirectories(bool& some_files_not_ready)
 {
-    if(mHashSalt.isNull())
-    {
-        std::cerr << "(EE) no salt value in LocalDirectoryUpdater. Is that a bug?" << std::endl;
-        return false;
-    }
+	if(mHashSalt.isNull())
+	{
+		RS_ERR("no salt value in LocalDirectoryUpdater");
+		print_stacktrace();
+		return false;
+	}
 
-    mIsChecking = true ;
+	mIsChecking = true;
 
-    RsServer::notify()->notifyListPreChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
-#ifdef DEBUG_LOCAL_DIR_UPDATER
-    std::cerr << "[directory storage] LocalDirectoryUpdater::sweep()" << std::endl;
-#endif
+	RsServer::notify()->notifyListPreChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 
-    // recursive update algorithm works that way:
-    // 	- the external loop starts on the shared directory list and goes through sub-directories
-    // 	- at the same time, it updates the local list of shared directories.  A single sweep is performed over the whole directory structure.
-    // 	- the information that is costly to compute (the hash) is store externally into a separate structure.
-    // 	- doing so, changing directory names or moving files between directories does not cause a re-hash of the content.
-    //
-    std::list<SharedDirInfo> shared_directory_list ;
-    mSharedDirectories->getSharedDirectoryList(shared_directory_list);
+	/* recursive update algorithm works that way:
+	 * - the external loop starts on the shared directory list and goes through
+	 *   sub-directories
+	 * - at the same time, it updates the local list of shared directories.
+	 *   A single sweep is performed over the whole directory structure.
+	 * - the information that is costly to compute (the hash) is stored
+	 *   externally into a separate structure.
+	 * - doing so, changing directory names or moving files between directories
+	 * does not cause a re-hash of the content. */
+	std::list<SharedDirInfo> shared_directory_list;
+	mSharedDirectories->getSharedDirectoryList(shared_directory_list);
+	std::set<std::string> sub_dir_list;
 
-    std::set<std::string> sub_dir_list ;
+	/* Support also single files sharing as it make much more sense on some
+	 * platforms like Android */
+	std::map<std::string, DirectoryStorage::FileTS> singleFilesMap;
 
-    // We re-check that each dir actually exists. It might have been removed from the disk.
+	/* We re-check that each dir actually exists. It might have been removed
+	 * from the disk. Accept also single files not just directories. */
+	for(auto& realDir: std::as_const(shared_directory_list))
+	{
+		const auto& fPath = realDir.filename;
+		if(RsDirUtil::checkDirectory(fPath))
+			sub_dir_list.insert(fPath);
+		else if (RsDirUtil::fileExists(fPath))
+		{
+			rstime_t lastWrite= RsDirUtil::lastWriteTime(fPath);
+			if(time(nullptr) >= lastWrite + MIN_TIME_AFTER_LAST_MODIFICATION)
+			{
+				uint64_t fSize = 0;
+				RsDirUtil::checkFile(fPath,fSize);
 
-    for(std::list<SharedDirInfo>::const_iterator real_dir_it(shared_directory_list.begin());real_dir_it!=shared_directory_list.end();++real_dir_it)
-        if(RsDirUtil::checkDirectory( (*real_dir_it).filename ) )
-		        sub_dir_list.insert( (*real_dir_it).filename ) ;
+				singleFilesMap[fPath].modtime = lastWrite;
+				singleFilesMap[fPath].size = fSize;
+			}
+			else
+			{
+				some_files_not_ready = true;
+				RS_INFO( "file: \"", fPath, "\" is "
+				         "probably being written to. Keep it for later");
+			}
+		}
+		else RS_WARN( "Got non existent file \"", fPath,
+		              "\" in shared directories list. Ignored." );
+	}
 
-    // make sure that entries in stored_dir_it are the same than paths in real_dir_it, and in the same order.
+	{
+		const auto tRoot = mSharedDirectories->root();
+		std::map<std::string, DirectoryStorage::FileTS> needsUpdate;
+		mSharedDirectories->updateSubFilesList(
+		            tRoot, singleFilesMap, needsUpdate);
 
-    mSharedDirectories->updateSubDirectoryList(mSharedDirectories->root(),sub_dir_list,mHashSalt) ;
+		for( DirectoryStorage::FileIterator storedSingleFilesIt(
+		         mSharedDirectories, mSharedDirectories->root() );
+		     storedSingleFilesIt; ++storedSingleFilesIt )
+		{
+			const auto& it = storedSingleFilesIt;
+			RsFileHash hash;
+			if( mHashCache->requestHash(
+			            it.name(), it.size(), it.modtime(), hash,
+			            this, *it ) )
+				mSharedDirectories->updateHash(*it, hash, it.hash() != hash);
+		}
+	}
 
-    // now for each of them, go recursively and match both files and dirs
+	/* make sure that entries in stored_dir_it are the same than paths in
+	 * real_dir_it, and in the same order. */
+	mSharedDirectories->updateSubDirectoryList(
+	            mSharedDirectories->root(), sub_dir_list, mHashSalt );
 
-    std::set<std::string> existing_dirs ;
+	// now for each of them, go recursively and match both files and dirs
+	std::set<std::string> existing_dirs;
+	for( DirectoryStorage::DirIterator stored_dir_it(
+	         mSharedDirectories, mSharedDirectories->root() );
+	     stored_dir_it; ++stored_dir_it )
+	{
+		RS_DBG4("recursing into \"", stored_dir_it.name());
 
-    for(DirectoryStorage::DirIterator stored_dir_it(mSharedDirectories,mSharedDirectories->root()) ; stored_dir_it;++stored_dir_it)
-    {
-#ifdef DEBUG_LOCAL_DIR_UPDATER
-        std::cerr << "[directory storage]   recursing into " << stored_dir_it.name() << std::endl;
-#endif
 		existing_dirs.insert(RsDirUtil::removeSymLinks(stored_dir_it.name()));
+		recursUpdateSharedDir(
+		            stored_dir_it.name(), *stored_dir_it,
+		            existing_dirs, 1, some_files_not_ready );
+		/* here we need to use the list that was stored, instead of the shared
+		 * dir list, because the two are not necessarily in the same order. */
+	}
 
-        recursUpdateSharedDir(stored_dir_it.name(), *stored_dir_it,existing_dirs,1,some_files_not_ready) ;		// here we need to use the list that was stored, instead of the shared dir list, because the two
-                                                                            									// are not necessarily in the same order.
-    }
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
+	mIsChecking = false;
 
-    RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
-    mIsChecking = false ;
-
-    return true ;
+	return true;
 }
 
-void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_path, DirectoryStorage::EntryIndex indx,std::set<std::string>& existing_directories,uint32_t current_depth,bool& some_files_not_ready)
+void LocalDirectoryUpdater::recursUpdateSharedDir(
+        const std::string& cumulated_path, DirectoryStorage::EntryIndex indx,
+        std::set<std::string>& existing_directories, uint32_t current_depth,
+        bool& some_files_not_ready )
 {
-#ifdef DEBUG_LOCAL_DIR_UPDATER
-    std::cerr << "[directory storage]   parsing directory " << cumulated_path << ", index=" << indx << std::endl;
-#endif
+	RS_DBG4("parsing directory \"", cumulated_path, "\" index: ", indx);
 
-    // make sure list of subdirs is the same
-    // make sure list of subfiles is the same
-    // request all hashes to the hashcache
+	/* make sure list of subdirs is the same
+	 * make sure list of subfiles is the same
+	 * request all hashes to the hashcache */
 
-    librs::util::FolderIterator dirIt(cumulated_path,mFollowSymLinks,false);	// disallow symbolic links and files from the future.
+	// disallow symbolic links and files from the future.
+	librs::util::FolderIterator dirIt(cumulated_path, mFollowSymLinks, false);
 
-    rstime_t dir_local_mod_time ;
-    if(!mSharedDirectories->getDirectoryLocalModTime(indx,dir_local_mod_time))
-    {
-        std::cerr << "(EE) Cannot get local mod time for dir index " << indx << std::endl;
-        return;
-    }
+	rstime_t dir_local_mod_time;
+	if(!mSharedDirectories->getDirectoryLocalModTime(indx,dir_local_mod_time))
+	{
+		RS_ERR("Cannot get local mod time for dir index: ", indx);
+		print_stacktrace();
+		return;
+	}
 
-    rstime_t now = time(NULL) ;
+	rstime_t now = time(nullptr);
+	/* the > is because we may have changed the virtual name, and therefore the
+	 * TS wont match. We only want to detect when the directory has changed on
+	 * the disk */
+	if(mNeedsFullRecheck || dirIt.dir_modtime() > dir_local_mod_time)
+	{
+		// collect subdirs and subfiles
+		std::map<std::string, DirectoryStorage::FileTS> subfiles;
+		std::set<std::string> subdirs;
 
-    if(mNeedsFullRecheck || dirIt.dir_modtime() > dir_local_mod_time)	// the > is because we may have changed the virtual name, and therefore the TS wont match.
-																		// we only want to detect when the directory has changed on the disk
-    {
-       // collect subdirs and subfiles
+		for( ; dirIt.isValid(); dirIt.next() )
+			if(filterFile(dirIt.file_name()))
+			{
+				const auto fType = dirIt.file_type();
+				switch(fType)
+				{
+				case librs::util::FolderIterator::TYPE_FILE:
+					if(now >= dirIt.file_modtime() + MIN_TIME_AFTER_LAST_MODIFICATION)
+					{
+						subfiles[dirIt.file_name()].modtime = dirIt.file_modtime();
+						subfiles[dirIt.file_name()].size = dirIt.file_size();
+						RS_DBG4("adding sub-file \"", dirIt.file_name(), "\"");
+					}
+					else
+					{
+						some_files_not_ready = true;
+						RS_INFO( "file: \"", dirIt.file_fullpath(), "\" is "
+						         "probably being written to. Keep it for later");
+					}
+					break;
+				case librs::util::FolderIterator::TYPE_DIR:
+				{
+					bool dir_is_accepted = true;
+					/* 64 is here as a safe limit, to make infinite loops
+					 * impossible.
+					 * TODO: Make it a visible constexpr in the header */
+					if( (mMaxShareDepth > 0u && current_depth > mMaxShareDepth)
+					        || (mMaxShareDepth == 0 && current_depth >= 64) )
+						dir_is_accepted = false;
 
-       std::map<std::string,DirectoryStorage::FileTS> subfiles ;
-       std::set<std::string> subdirs ;
+					if(dir_is_accepted && mFollowSymLinks && mIgnoreDuplicates)
+					{
+						std::string real_path = RsDirUtil::removeSymLinks(
+						            cumulated_path + "/" + dirIt.file_name() );
 
-       for(;dirIt.isValid();dirIt.next())
-		   if(filterFile(dirIt.file_name()))
-		   {
-			   switch(dirIt.file_type())
-			   {
-			   case librs::util::FolderIterator::TYPE_FILE:
+						if( existing_directories.end() !=
+						        existing_directories.find(real_path) )
+						{
+							RS_WARN( "Directory: \"", cumulated_path,
+							         "\" has real path: \"", real_path,
+							         "\" which already belongs to another "
+							         "shared directory. Ignoring" );
+							dir_is_accepted = false;
+						}
+						else existing_directories.insert(real_path);
+					}
 
-                   if(dirIt.file_modtime() + MIN_TIME_AFTER_LAST_MODIFICATION < now)
-				   {
-					   subfiles[dirIt.file_name()].modtime = dirIt.file_modtime() ;
-					   subfiles[dirIt.file_name()].size = dirIt.file_size();
-#ifdef DEBUG_LOCAL_DIR_UPDATER
-					   std::cerr << "  adding sub-file \"" << dirIt.file_name() << "\"" << std::endl;
-#endif
-				   }
-                   else
-                   {
-                       some_files_not_ready = true ;
+					if(dir_is_accepted) subdirs.insert(dirIt.file_name());
 
-                       std::cerr << "(WW) file " << dirIt.file_fullpath() << " is probably being written to. Keeping it for later." << std::endl;
-                   }
+					RS_DBG4("adding sub-dir \"", dirIt.file_name(), "\"");
 
-				   break;
+					break;
+				}
+				default:
+					RS_ERR( "Got Dir entry of unknown type:", fType,
+					        "with path \"", cumulated_path, "/",
+					        dirIt.file_name(), "\"" );
+					print_stacktrace();
+					break;
+				}
+			}
 
-			   case librs::util::FolderIterator::TYPE_DIR:
-			   {
-				   bool dir_is_accepted = true ;
+		/* update folder modificatoin time, which is the only way to detect
+		 * e.g. removed or renamed files. */
+		mSharedDirectories->setDirectoryLocalModTime(indx,dirIt.dir_modtime());
 
-				   if( (mMaxShareDepth > 0u && current_depth > mMaxShareDepth) || (mMaxShareDepth==0 && current_depth >= 64))	// 64 is here as a safe limit, to make loops impossible.
-					   dir_is_accepted = false ;
+		// update file and dir lists for current directory.
+		mSharedDirectories->updateSubDirectoryList(indx,subdirs,mHashSalt);
 
-				   if(dir_is_accepted && mFollowSymLinks && mIgnoreDuplicates)
-				   {
-					   std::string real_path = RsDirUtil::removeSymLinks(cumulated_path + "/" + dirIt.file_name()) ;
+		std::map<std::string, DirectoryStorage::FileTS> new_files;
+		mSharedDirectories->updateSubFilesList(indx, subfiles, new_files);
 
-					   if(existing_directories.end() != existing_directories.find(real_path))
-					   {
-						   std::cerr << "(WW) Directory " << cumulated_path << " has real path " << real_path << " which already belongs to another shared directory. Ignoring" << std::endl;
-						   dir_is_accepted = false ;
-					   }
-					   else
-						   existing_directories.insert(real_path) ;
-				   }
-
-				   if(dir_is_accepted)
-					   subdirs.insert(dirIt.file_name());
-
-#ifdef DEBUG_LOCAL_DIR_UPDATER
-				   std::cerr << "  adding sub-dir \"" << dirIt.file_name() << "\"" << std::endl;
-#endif
-			   }
-				   break;
-			   default:
-				   std::cerr << "(EE) Dir entry of unknown type with path \"" << cumulated_path << "/" << dirIt.file_name() << "\"" << std::endl;
-			   }
-		   }
-       // update folder modificatoin time, which is the only way to detect e.g. removed or renamed files.
-
-       mSharedDirectories->setDirectoryLocalModTime(indx,dirIt.dir_modtime()) ;
-
-       // update file and dir lists for current directory.
-
-       mSharedDirectories->updateSubDirectoryList(indx,subdirs,mHashSalt) ;
-
-       std::map<std::string,DirectoryStorage::FileTS> new_files ;
-       mSharedDirectories->updateSubFilesList(indx,subfiles,new_files) ;
-
-       // now go through list of subfiles and request the hash to hashcache
-
-       for(DirectoryStorage::FileIterator dit(mSharedDirectories,indx);dit;++dit)
-	   {
-		   // ask about the hash. If not present, ask HashCache. If not present, or different, the callback will update it.
-
-		   RsFileHash hash ;
-
-		   // mSharedDirectories does two things: store H(F), and compute H(H(F)), which is used in FT. The later is always needed.
-
-		   if(mHashCache->requestHash(cumulated_path + "/" + dit.name(),dit.size(),dit.modtime(),hash,this,*dit))
-			   mSharedDirectories->updateHash(*dit,hash,hash != dit.hash());
-	   }
-    }
-#ifdef DEBUG_LOCAL_DIR_UPDATER
-    else
-        std::cerr << "  directory is unchanged. Keeping existing files and subdirs list." << std::endl;
-#endif
-
-    // go through the list of sub-dirs and recursively update
-
-		for(DirectoryStorage::DirIterator stored_dir_it(mSharedDirectories,indx) ; stored_dir_it; ++stored_dir_it)
+		// now go through list of subfiles and request the hash to hashcache
+		for( DirectoryStorage::FileIterator dit(mSharedDirectories,indx);
+		     dit; ++dit )
 		{
-#ifdef DEBUG_LOCAL_DIR_UPDATER
-			std::cerr << "  recursing into " << stored_dir_it.name() << std::endl;
-#endif
-			recursUpdateSharedDir(cumulated_path + "/" + stored_dir_it.name(), *stored_dir_it,existing_directories,current_depth+1,some_files_not_ready) ;
+			/* ask about the hash. If not present, ask HashCache.
+			 * If not present, or different, the callback will update it. */
+			RsFileHash hash;
+
+			/* mSharedDirectories does two things: store H(F), and
+			 * compute H(H(F)), which is used in FT.
+			 * The later is always needed. */
+
+			if( mHashCache->requestHash(
+			            cumulated_path + "/" + dit.name(),
+			            dit.size(), dit.modtime(), hash, this, *dit ) )
+				mSharedDirectories->updateHash(*dit, hash, hash != dit.hash());
 		}
+	}
+
+	// go through the list of sub-dirs and recursively update
+	for( DirectoryStorage::DirIterator stored_dir_it(mSharedDirectories, indx);
+	     stored_dir_it; ++stored_dir_it )
+		recursUpdateSharedDir( cumulated_path + "/" + stored_dir_it.name(),
+		                       *stored_dir_it, existing_directories,
+		                       current_depth+1, some_files_not_ready );
 }
 
 bool LocalDirectoryUpdater::filterFile(const std::string& fname) const
@@ -347,7 +404,8 @@ void LocalDirectoryUpdater::hash_callback(uint32_t client_param, const std::stri
 
 bool LocalDirectoryUpdater::hash_confirm(uint32_t client_param)
 {
-    return mSharedDirectories->getEntryType(DirectoryStorage::EntryIndex(client_param)) == DIR_TYPE_FILE ;
+	return mSharedDirectories->getEntryType(
+	            DirectoryStorage::EntryIndex(client_param) ) == DIR_TYPE_FILE;
 }
 
 void LocalDirectoryUpdater::setFileWatchPeriod(int seconds)

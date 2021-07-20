@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2018 by Mr.Alice <mralice@users.sourceforge.net>                  *
+ * Copyright (C) 2018  Mr.Alice <mralice@users.sourceforge.net>                *
+ * Copyright (C) 2021  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -30,7 +32,7 @@
 #include "retroshare/rsids.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsinit.h"
-
+#include "util/cxx17retrocompat.h"
 #include "rsserver/p3face.h"
 
 #define P3FILELISTS_DEBUG() std::cerr << time(NULL)    << " : FILE_LISTS : " << __FUNCTION__ << " : "
@@ -1044,31 +1046,36 @@ void p3FileDatabase::getExtraFilesDirDetails(void *ref,DirectoryStorage::EntryIn
 }
 
 // This function converts a pointer into directory details, to be used by the AbstractItemModel for browsing the files.
-int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags flags) const
+int p3FileDatabase::RequestDirDetails(
+        void* ref, DirDetails& d, FileSearchFlags flags ) const
 {
-    RS_STACK_MUTEX(mFLSMtx) ;
+	RS_STACK_MUTEX(mFLSMtx);
 
-    d.children.clear();
+	d.children.clear();
 
-    // Case where the pointer is NULL, which means we're at the top of the list of shared directories for all friends (including us)
-    // or at the top of our own list of shared directories, depending on the flags.
+	/* Case where the pointer is NULL, which means we're at the top of the list
+	 * of shared directories for all friends (including us) or at the top of our
+	 * own list of shared directories, depending on the flags.
+	 *
+	 * Friend index is used as follows:
+	 *  0		: own id
+	 *  1...n	: other friends
+	 *
+	 *  entry_index: starts at 0.
+	 *
+	 * The point is: we cannot use (0,0) because it encodes to NULL. No existing
+	 * combination should encode to NULL.
+	 * So we need to properly convert the friend index into 0 or into a friend
+	 * tab index in mRemoteDirectories.
+	 *
+	 * We should also check the consistency between flags and the content of ref.
+	 */
 
-    // Friend index is used as follows:
-    //	0		: own id
-    //  1...n	: other friends
-    //
-    // entry_index: starts at 0.
-    //
-    // The point is: we cannot use (0,0) because it encodes to NULL. No existing combination should encode to NULL.
-    // So we need to properly convert the friend index into 0 or into a friend tab index in mRemoteDirectories.
-    //
-    // We should also check the consistency between flags and the content of ref.
-
-    if (ref == NULL)
-    {
-        d.ref = NULL ;
-        d.type = DIR_TYPE_ROOT;
-        d.parent = NULL;
+	if (ref == nullptr)
+	{
+		d.ref = nullptr;
+		d.type = DIR_TYPE_ROOT;
+		d.parent = nullptr;
         d.prow = -1;
         d.name = "root";
         d.hash.clear() ;
@@ -1078,12 +1085,13 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
         d.max_mtime = 0 ;
 
         if(flags & RS_FILE_HINTS_LOCAL)
-        {
-            void *p;
+		{
+			void *p = nullptr;
 
-            {
-			convertEntryIndexToPointer<sizeof(void*)>(0,0,p);	// root of own directories
-            DirStub stub;
+			{
+				// root of own directories
+				convertEntryIndexToPointer<sizeof(void*)>(0, 0, p);
+				DirStub stub;
             stub.type = DIR_TYPE_PERSON;
             stub.name = mServCtrl->getOwnId().toStdString();
             stub.ref  = p;
@@ -1092,9 +1100,11 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
 
             if(mExtraFiles->size() > 0)
             {
-            convertEntryIndexToPointer<sizeof(void*)>(0,1,p);	// local shared files from extra list
-            DirStub stub;
-            stub.type = DIR_TYPE_PERSON;						// not totally exact, but used as a trick.
+				// local shared files from extra list
+				convertEntryIndexToPointer<sizeof(void*)>(0, 1, p);
+				DirStub stub;
+				// not totally exact, but used as a trick.
+				stub.type = DIR_TYPE_PERSON;
             stub.name = "[Extra List]";
             stub.ref  = p;
 
@@ -1127,18 +1137,19 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
     }
 
     uint32_t fi;
-    DirectoryStorage::EntryIndex e ;
+	DirectoryStorage::EntryIndex e;
 
     convertPointerToEntryIndex<sizeof(void*)>(ref,e,fi);
 
-    // check consistency
-    if( (fi == 0 && !(flags & RS_FILE_HINTS_LOCAL)) ||  (fi > 1 && (flags & RS_FILE_HINTS_LOCAL)))
-    {
-        P3FILELISTS_ERROR() << "(EE) remote request on local index or local request on remote index. This should not happen." << std::endl;
-        return false ;
-    }
+	// check consistency
+	if( (fi == 0 && !(flags & RS_FILE_HINTS_LOCAL)) ||
+	        (fi > 1 && (flags & RS_FILE_HINTS_LOCAL)))
+	{
+		RS_ERR("Remote request on local index or local request on remote index");
+		return false;
+	}
 
-    if((flags & RS_FILE_HINTS_LOCAL) && fi == 1) // extra list
+	if((flags & RS_FILE_HINTS_LOCAL) && fi == 1) // extra list
     {
         getExtraFilesDirDetails(ref,e,d);
 
@@ -1150,25 +1161,28 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
     }
 
 
-    DirectoryStorage *storage = (flags & RS_FILE_HINTS_LOCAL)? ((DirectoryStorage*)mLocalSharedDirs) : ((DirectoryStorage*)mRemoteDirectories[fi-1]);
+	DirectoryStorage* storage =
+	        (flags & RS_FILE_HINTS_LOCAL) ?
+	            ((DirectoryStorage*) mLocalSharedDirs) :
+	            ((DirectoryStorage*) mRemoteDirectories[fi-1]);
 
-    // Case where the index is the top of a single person. Can be us, or a friend.
+	/* Case where the index is the top of a single person.
+	 * Can be us, or a friend. */
+	if(!storage || !storage->extractData(e,d))
+	{
+		RS_WARN( "request on index; ", e, ", for directory ID:",
+		         ( (!storage)? ("[NULL]") : (storage->peerId().toStdString()) ),
+		         " failed" );
+		return false;
+	}
 
-    if(storage==NULL || !storage->extractData(e,d))
-    {
-#ifdef DEBUG_FILE_HIERARCHY
-        P3FILELISTS_DEBUG() << "(WW) request on index " << e << ", for directory ID=" << ((storage==NULL)?("[NULL]"):(storage->peerId().toStdString())) << " failed. This should not happen." << std::endl;
-#endif
-        return false ;
-    }
+	/* update indexes. This is a bit hacky, but does the job. The cast to
+	 * intptr_t is the proper way to convert a pointer into an int. */
+	convertEntryIndexToPointer<sizeof(void*)>((intptr_t)d.ref,fi,d.ref);
 
-    // update indexes. This is a bit hacky, but does the job. The cast to intptr_t is the proper way to convert
-    // a pointer into an int.
-
-    convertEntryIndexToPointer<sizeof(void*)>((intptr_t)d.ref,fi,d.ref) ;
-
-    for(uint32_t i=0;i<d.children.size();++i)
-        convertEntryIndexToPointer<sizeof(void*)>((intptr_t)d.children[i].ref,fi,d.children[i].ref);
+	for(uint32_t i=0; i<d.children.size(); ++i)
+		convertEntryIndexToPointer<sizeof(void*)>(
+		            (intptr_t) d.children[i].ref, fi, d.children[i].ref );
 
     if(e == 0)	// root
     {
@@ -1178,9 +1192,9 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
     else
     {
         if(d.parent == 0)	 // child of root node
-            d.prow = (flags & RS_FILE_HINTS_LOCAL)?0:(fi-1);
+			d.prow = (flags & RS_FILE_HINTS_LOCAL) ? 0 : (fi-1);
         else
-            d.prow = storage->parentRow(e) ;
+			d.prow = storage->parentRow(e);
 
         convertEntryIndexToPointer<sizeof(void*)>((intptr_t)d.parent,fi,d.parent) ;
     }
@@ -1307,7 +1321,9 @@ uint32_t p3FileDatabase::watchPeriod()
     return mLocalDirWatcher->fileWatchPeriod();
 }
 
-int p3FileDatabase::SearchKeywords(const std::list<std::string>& keywords, std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& client_peer_id)
+int p3FileDatabase::SearchKeywords(
+        const std::list<std::string>& keywords, std::list<DirDetails>& results,
+        FileSearchFlags flags, const RsPeerId& client_peer_id )
 {
     if(flags & RS_FILE_HINTS_LOCAL)
     {
@@ -1319,15 +1335,15 @@ int p3FileDatabase::SearchKeywords(const std::list<std::string>& keywords, std::
 
             mLocalSharedDirs->searchTerms(keywords,firesults) ;
 
-            for(std::list<EntryIndex>::iterator it(firesults.begin());it!=firesults.end();++it)
-            {
-                void *p=NULL;
-                convertEntryIndexToPointer<sizeof(void*)>(*it,0,p);
-				pointers.push_back(p) ;
-            }
+			for(auto& it: std::as_const(firesults))
+			{
+				void *p = nullptr;
+				convertEntryIndexToPointer<sizeof(void*)>(it, 0, p);
+				pointers.push_back(p);
+			}
         }
 
-        filterResults(pointers,results,flags,client_peer_id) ;
+		filterResults(pointers, results, flags, client_peer_id);
     }
 
     if(flags & RS_FILE_HINTS_REMOTE)
@@ -1476,7 +1492,9 @@ bool p3FileDatabase::search(
     return false;
 }
 
-int p3FileDatabase::filterResults(const std::list<void*>& firesults,std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& peer_id) const
+int p3FileDatabase::filterResults(
+        const std::list<void*>& firesults, std::list<DirDetails>& results,
+        FileSearchFlags flags, const RsPeerId& peer_id ) const
 {
     results.clear();
 
@@ -1484,29 +1502,33 @@ int p3FileDatabase::filterResults(const std::list<void*>& firesults,std::list<Di
 
     /* translate/filter results */
 
-    for(std::list<void*>::const_iterator rit(firesults.begin()); rit != firesults.end(); ++rit)
-    {
-        DirDetails cdetails ;
+	for(void* rit: std::as_const(firesults))
+	{
+		DirDetails cdetails;
 
-        if(!RequestDirDetails (*rit,cdetails,RS_FILE_HINTS_LOCAL))
-        {
-            P3FILELISTS_ERROR() << "(EE) Cannot get dir details for entry " << *rit << std::endl;
-            continue ;
-        }
+		if(!RequestDirDetails(rit, cdetails, RS_FILE_HINTS_LOCAL))
+		{
+			RS_ERR("Cannot retrieve dir details for entry: ", rit);
+			print_stacktrace();
+			continue ;
+		}
+
+		RS_DBG( "Filtering candidate: ", rit,
+		        ", name: ", cdetails.name, ", path: ", cdetails.path,
+		        ", flags: ", cdetails.flags, ", peer: ", peer_id );
+
+		if(!peer_id.isNull())
+		{
+			FileSearchFlags permission_flags =
+			        rsPeers->computePeerPermissionFlags(
+			            peer_id, cdetails.flags, cdetails.parent_groups );
+
+			if (cdetails.type == DIR_TYPE_FILE && ( permission_flags & flags ))
+			{
+				cdetails.id.clear();
+				results.push_back(cdetails);
 #ifdef DEBUG_P3FILELISTS
-        P3FILELISTS_DEBUG() << "Filtering candidate " << *rit << ", flags=" << cdetails.flags << ", peer=" << peer_id ;
-#endif
-
-        if(!peer_id.isNull())
-        {
-            FileSearchFlags permission_flags = rsPeers->computePeerPermissionFlags(peer_id,cdetails.flags,cdetails.parent_groups) ;
-
-            if (cdetails.type == DIR_TYPE_FILE && ( permission_flags & flags ))
-            {
-                cdetails.id.clear() ;
-                results.push_back(cdetails);
-#ifdef DEBUG_P3FILELISTS
-                std::cerr << ": kept" << std::endl ;
+				std::cerr << ": kept" << std::endl ;
 #endif
             }
 #ifdef DEBUG_P3FILELISTS
@@ -1518,7 +1540,19 @@ int p3FileDatabase::filterResults(const std::list<void*>& firesults,std::list<Di
             results.push_back(cdetails);
     }
 
-    return !results.empty() ;
+	for(auto& res: results)
+	{
+		/* Most file will just have file name stored, but single file shared
+		 * without a shared dir will contain full path instead of just the
+		 * name, so purify it to perform the search */
+		if(res.name.find("/") != std::string::npos )
+		{
+			std::string _tDirPath;
+			RsDirUtil::splitDirFromFile(res.name, _tDirPath, res.name);
+		}
+	}
+
+	return !results.empty();
 }
 
 bool p3FileDatabase::convertSharedFilePath(const std::string& path,std::string& fullpath)
@@ -1592,78 +1626,90 @@ void p3FileDatabase::tickSend()
 
 void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncRequestItem *item)
 {
-    RsFileListsSyncResponseItem *ritem = new RsFileListsSyncResponseItem;
+	RsFileListsSyncResponseItem* ritem = new RsFileListsSyncResponseItem;
 
-    // look at item TS. If local is newer, send the full directory content.
-    {
-        RS_STACK_MUTEX(mFLSMtx) ;
+	// look at item TS. If local is newer, send the full directory content.
+	{
+		RS_STACK_MUTEX(mFLSMtx);
 
-#ifdef DEBUG_P3FILELISTS
-        P3FILELISTS_DEBUG() << "Received directory sync request from peer " << item->PeerId() << ". hash=" << item->entry_hash << ", flags=" << (void*)(intptr_t)item->flags << ", request id: " << std::hex << item->request_id << std::dec << ", last known TS: " << item->last_known_recurs_modf_TS << std::endl;
-#endif
+		RS_DBG( "Received directory sync request from peer ", item->PeerId(),
+		        ". hash=", item->entry_hash, ", flags=", item->flags,
+		        ", request id: ", item->request_id, ", last known TS: ",
+		        item->last_known_recurs_modf_TS );
 
-        EntryIndex entry_index = DirectoryStorage::NO_INDEX;
+		EntryIndex entry_index = DirectoryStorage::NO_INDEX;
+		if(!mLocalSharedDirs->getIndexFromDirHash(item->entry_hash,entry_index))
+		{
+			RS_DBG("Cannot find entry index for hash ", item->entry_hash,
+			       " cannot respond to sync request." );
+			return;
+		}
 
-        if(!mLocalSharedDirs->getIndexFromDirHash(item->entry_hash,entry_index))
-        {
-#ifdef DEBUG_P3FILELISTS
-            P3FILELISTS_DEBUG() << "  (EE) Cannot find entry index for hash " << item->entry_hash << ": cannot respond to sync request." << std::endl;
-#endif
-            return;
-        }
+		uint32_t entry_type = mLocalSharedDirs->getEntryType(entry_index);
+		ritem->PeerId(item->PeerId());
+		ritem->request_id = item->request_id;
+		ritem->entry_hash = item->entry_hash;
 
-        uint32_t entry_type = mLocalSharedDirs->getEntryType(entry_index) ;
-        ritem->PeerId(item->PeerId()) ;
-        ritem->request_id = item->request_id;
-        ritem->entry_hash = item->entry_hash ;
+		std::list<RsNodeGroupId> node_groups;
+		FileStorageFlags node_flags;
 
-        std::list<RsNodeGroupId> node_groups;
-        FileStorageFlags node_flags;
+		if(entry_type != DIR_TYPE_DIR)
+		{
+			RS_DBG( "Directory does not exist anymore, or is not a directory, "
+			        "or permission denied. Answering with proper flags." );
+			ritem->flags = RsFileListsItem::FLAGS_SYNC_RESPONSE |
+			        RsFileListsItem::FLAGS_ENTRY_WAS_REMOVED;
+		}
+		else if( entry_index != 0 &&
+		         (!mLocalSharedDirs->getFileSharingPermissions(
+		              entry_index, node_flags,node_groups ) ||
+		          !(rsPeers->computePeerPermissionFlags(
+		                item->PeerId(), node_flags, node_groups ) &
+		            RS_FILE_HINTS_BROWSABLE)) )
+		{
+			RS_ERR("cannot get file permissions for entry index: ", entry_index,
+			       ", or permission denied." );
+			ritem->flags = RsFileListsItem::FLAGS_SYNC_RESPONSE |
+			        RsFileListsItem::FLAGS_ENTRY_WAS_REMOVED;
+		}
+		else
+		{
+			rstime_t local_recurs_max_time;
+			mLocalSharedDirs->getDirectoryRecursModTime(
+			            entry_index, local_recurs_max_time );
 
-        if(entry_type != DIR_TYPE_DIR)
-        {
-#ifdef DEBUG_P3FILELISTS
-            P3FILELISTS_DEBUG() << "  Directory does not exist anymore, or is not a directory, or permission denied. Answering with proper flags." << std::endl;
-#endif
-            ritem->flags = RsFileListsItem::FLAGS_SYNC_RESPONSE | RsFileListsItem::FLAGS_ENTRY_WAS_REMOVED ;
-        }
-        else if(entry_index != 0 && (!mLocalSharedDirs->getFileSharingPermissions(entry_index,node_flags,node_groups) || !(rsPeers->computePeerPermissionFlags(item->PeerId(),node_flags,node_groups) & RS_FILE_HINTS_BROWSABLE)))
-        {
-            P3FILELISTS_ERROR() << "(EE) cannot get file permissions for entry index " << (void*)(intptr_t)entry_index << ", or permission denied." << std::endl;
-            ritem->flags = RsFileListsItem::FLAGS_SYNC_RESPONSE | RsFileListsItem::FLAGS_ENTRY_WAS_REMOVED ;
-        }
-        else
-        {
-            rstime_t local_recurs_max_time ;
-            mLocalSharedDirs->getDirectoryRecursModTime(entry_index,local_recurs_max_time) ;
+			/* normally, should be "<", but since we provided the TS it should
+			 * be equal, so != is more robust. */
+			if(item->last_known_recurs_modf_TS != local_recurs_max_time)
+			{
+				RS_DBG( "Directory is more recent than what the friend knows. "
+				        "Sending full dir content as response.");
 
-            if(item->last_known_recurs_modf_TS != local_recurs_max_time)	// normally, should be "<", but since we provided the TS it should be equal, so != is more robust.
-            {
-#ifdef DEBUG_P3FILELISTS
-                P3FILELISTS_DEBUG() << "  Directory is more recent than what the friend knows. Sending full dir content as response." << std::endl;
-#endif
+				ritem->flags = RsFileListsItem::FLAGS_SYNC_RESPONSE |
+				        RsFileListsItem::FLAGS_SYNC_DIR_CONTENT;
+				ritem->last_known_recurs_modf_TS = local_recurs_max_time;
 
-                ritem->flags = RsFileListsItem::FLAGS_SYNC_RESPONSE | RsFileListsItem::FLAGS_SYNC_DIR_CONTENT;
-                ritem->last_known_recurs_modf_TS = local_recurs_max_time;
+				/* We supply the peer id, in order to possibly remove some
+				 * subdirs, if entries are not allowed to be seen by this peer.
+				 */
+				mLocalSharedDirs->serialiseDirEntry(
+				            entry_index, ritem->directory_content_data,
+				            item->PeerId() );
+			}
+			else
+			{
+				RS_DBG3( "Directory is up to date w.r.t. what the friend knows."
+				         " Sending ACK." );
 
-                // We supply the peer id, in order to possibly remove some subdirs, if entries are not allowed to be seen by this peer.
-                mLocalSharedDirs->serialiseDirEntry(entry_index,ritem->directory_content_data,item->PeerId()) ;
-            }
-            else
-            {
-#ifdef DEBUG_P3FILELISTS
-                P3FILELISTS_DEBUG() << "  Directory is up to date w.r.t. what the friend knows. Sending ACK." << std::endl;
-#endif
+				ritem->flags = RsFileListsItem::FLAGS_SYNC_RESPONSE |
+				        RsFileListsItem::FLAGS_ENTRY_UP_TO_DATE;
+				ritem->last_known_recurs_modf_TS = local_recurs_max_time;
+			}
+		}
+	}
 
-                ritem->flags = RsFileListsItem::FLAGS_SYNC_RESPONSE | RsFileListsItem::FLAGS_ENTRY_UP_TO_DATE ;
-                ritem->last_known_recurs_modf_TS = local_recurs_max_time ;
-            }
-        }
-    }
-
-    // sends the response.
-
-    splitAndSendItem(ritem) ;
+	// sends the response.
+	splitAndSendItem(ritem);
 }
 
 void p3FileDatabase::splitAndSendItem(RsFileListsSyncResponseItem *ritem)

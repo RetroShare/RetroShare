@@ -4,8 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2004-2007  Robert Fernie <retroshare@lunamutt.com>            *
- * Copyright (C) 2020  Gioacchino Mazzurco <gio@eigenlab.org>                  *
- * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>       *
+ * Copyright (C) 2020-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2020-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -438,6 +438,36 @@ bool	RsDirUtil::checkFile(const std::string& filename,uint64_t& file_size,bool d
 	return true;
 }
 
+rstime_t RsDirUtil::lastWriteTime(
+        const std::string& path,
+        std::error_condition& errc )
+{
+	if(!fileExists(path))
+	{
+		errc = std::errc::no_such_file_or_directory;
+		return 0;
+	}
+
+#ifdef WINDOWS_SYS
+	struct _stati64 buf;
+	std::wstring wPath;
+	librs::util::ConvertUtf8ToUtf16(path, wPath);
+	if ( 0 == _wstati64(wPath.c_str(), &buf))
+#else
+	struct stat64 buf;
+	if ( 0 == stat64(path.c_str(), &buf))
+#endif
+	{
+		/* errc output param is guaranted to be meaningful only if an error
+		 * happens so is not strictly necessary but we clean it anyway just
+		 * in case */
+		errc = std::error_condition();
+		return buf.st_mtime;
+	}
+
+	errc = std::error_condition(errno, std::generic_category());
+	return 0;
+}
 
 bool RsDirUtil::checkDirectory(const std::string& dir)
 {

@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2009-2018 by Cyril Soler <csoler@users.sourceforge.net>           *
+ * Copyright (C) 2009-2018  Cyril Soler <csoler@users.sourceforge.net>         *
+ * Copyright (C) 2018-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -26,6 +28,10 @@
 #include <stdexcept>
 #include <stdlib.h>
 #include <assert.h>
+#include <iostream>
+#include <cerrno>
+#include <cmath>
+#include <cstdio>
 
 #include "rsserver/p3face.h"
 #include "crypto/rscrypto.h"
@@ -39,13 +45,7 @@
 #include "ft/ftcontroller.h"
 
 #include "p3turtle.h"
-
-#include <iostream>
-#include <errno.h>
-#include <cmath>
-
-#include <stdio.h>
-
+#include "util/cxx17retrocompat.h"
 #include "util/rsdebug.h"
 #include "util/rsprint.h"
 #include "util/rsrandom.h"
@@ -1975,7 +1975,8 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 //
 
 
-void RsTurtleStringSearchRequestItem::search(std::list<TurtleFileInfo>& result) const
+void RsTurtleStringSearchRequestItem::search(
+        std::list<TurtleFileInfo>& result ) const
 {
 	/* call to core */
 	std::list<DirDetails> initialResults;
@@ -1988,17 +1989,19 @@ void RsTurtleStringSearchRequestItem::search(std::list<TurtleFileInfo>& result) 
 	std::cerr << "Performing rsFiles->search()" << std::endl ;
 #endif
 	// now, search!
-    rsFiles->SearchKeywords(words, initialResults,RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_SEARCHABLE,PeerId());
+	rsFiles->SearchKeywords(
+	            words, initialResults,
+	            RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_SEARCHABLE, PeerId() );
 
 #ifdef P3TURTLE_DEBUG
 	std::cerr << initialResults.size() << " matches found." << std::endl ;
 #endif
 	result.clear() ;
 
-	for(std::list<DirDetails>::const_iterator it(initialResults.begin());it!=initialResults.end();++it)
+	for(auto& it: std::as_const(initialResults))
 	{
 		// retain only file type
-		if (it->type == DIR_TYPE_DIR)
+		if (it.type == DIR_TYPE_DIR)
 		{
 #ifdef P3TURTLE_DEBUG
 			std::cerr << "  Skipping directory " << it->name << std::endl ;
@@ -2006,12 +2009,12 @@ void RsTurtleStringSearchRequestItem::search(std::list<TurtleFileInfo>& result) 
 			continue;
 		}
 
-		TurtleFileInfo i ;
-		i.hash = it->hash ;
-        i.size = it->size ;
-		i.name = it->name ;
+		TurtleFileInfo i;
+		i.hash = it.hash;
+		i.size = it.size;
+		i.name = it.name;
 
-		result.push_back(i) ;
+		result.push_back(i);
 	}
 }
 void RsTurtleRegExpSearchRequestItem::search(std::list<TurtleFileInfo>& result) const
