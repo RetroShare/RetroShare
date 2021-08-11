@@ -34,7 +34,7 @@
 
 #include "util/rsthreads.h"
 #include "pqi/p3cfgmgr.h"
-#include "pgp/pgphandler.h"
+#include "pgp/openpgpsdkhandler.h"
 
 #define MAX_GPG_SIGNATURE_SIZE  4096
 
@@ -89,7 +89,9 @@ public:
     virtual void setGPGOperation(AuthGPGOperation *operation) = 0;
 };
 
-class AuthGPG: public p3Config, public RsTickingThread, public PGPHandler
+// Note: replace OpenPGPSDKHandler with your own PGP handler class when needed.
+
+class AuthGPG: public p3Config, public RsTickingThread, public OpenPGPSDKHandler
 {
 public:
 	static void init(const std::string& path_to_pubring,

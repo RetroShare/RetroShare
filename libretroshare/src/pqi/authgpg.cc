@@ -126,7 +126,7 @@ void AuthGPG::exit()
 
 AuthGPG::AuthGPG(const std::string& path_to_public_keyring,const std::string& path_to_secret_keyring,const std::string& path_to_trustdb,const std::string& pgp_lock_file)
         :p3Config(),
-	PGPHandler(path_to_public_keyring,path_to_secret_keyring,path_to_trustdb,pgp_lock_file),
+    OpenPGPSDKHandler(path_to_public_keyring,path_to_secret_keyring,path_to_trustdb,pgp_lock_file),
 	gpgMtxService("AuthGPG-service"),
 	gpgMtxEngine("AuthGPG-engine"),
 	gpgMtxData("AuthGPG-data"),

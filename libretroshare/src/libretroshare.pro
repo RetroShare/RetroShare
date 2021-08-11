@@ -364,6 +364,7 @@ HEADERS += chat/distantchat.h \
 HEADERS +=	pqi/authssl.h \
 			pqi/authgpg.h \
 			pgp/pgphandler.h \
+			pgp/openpgpsdkhandler.h \
 			pgp/pgpkeyutil.h \
 			pgp/rscertificate.h \
 			pgp/pgpauxutils.h \
@@ -538,6 +539,7 @@ SOURCES += chat/distantchat.cc \
 SOURCES +=	pqi/authgpg.cc \
 			pqi/authssl.cc \
 			pgp/pgphandler.cc \
+			pgp/openpgpsdkhandler.cc \
 			pgp/pgpkeyutil.cc \
 			pgp/rscertificate.cc \
 			pgp/pgpauxutils.cc \
