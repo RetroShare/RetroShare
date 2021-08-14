@@ -701,10 +701,10 @@ static bool checkAccount(const std::string &accountdir, AccountDetails &account,
 		if(! RsAccounts::GetPGPLoginDetails(account.mPgpId, account.mPgpName, account.mPgpEmail))
 			return false ;
 
-		if(!AuthGPG::getAuthGPG()->haveSecretKey(account.mPgpId))
+        if(!AuthGPG::haveSecretKey(account.mPgpId))
 			return false ;
 
-		if(!AuthGPG::getAuthGPG()->isKeySupported(account.mPgpId))
+        if(!AuthGPG::isKeySupported(account.mPgpId))
 		{
 			std::string keystring = account.mPgpId.toStdString() + " " + account.mPgpName + "&#60;" + account.mPgpEmail ;
 			unsupported_keys[keystring].push_back("Location: " + account.mLocation + "&nbsp;&nbsp;(" + account.mSslId.toStdString() + ")") ;
@@ -851,9 +851,10 @@ static bool checkAccount(const std::string &accountdir, AccountDetails &account,
 
 
                 /* Generating GPGme Account */
-int      RsAccountsDetail::GetPGPLogins(std::list<RsPgpId> &pgpIds) {
-        AuthGPG::getAuthGPG()->availableGPGCertificatesWithPrivateKeys(pgpIds);
-	return 1;
+int      RsAccountsDetail::GetPGPLogins(std::list<RsPgpId>& pgpIds)
+{
+    AuthGPG::availableGPGCertificatesWithPrivateKeys(pgpIds);
+    return 1;
 }
 
 int      RsAccountsDetail::GetPGPLoginDetails(const RsPgpId& id, std::string &name, std::string &email)
@@ -863,10 +864,10 @@ int      RsAccountsDetail::GetPGPLoginDetails(const RsPgpId& id, std::string &na
         #endif
 
 		  bool ok = true ;
-        name = AuthGPG::getAuthGPG()->getGPGName(id,&ok);
+        name = AuthGPG::getGPGName(id,&ok);
 		  if(!ok)
 			  return 0 ;
-        email = AuthGPG::getAuthGPG()->getGPGEmail(id,&ok);
+        email = AuthGPG::getGPGEmail(id,&ok);
 		  if(!ok)
 			  return 0 ;
 
@@ -886,7 +887,7 @@ bool RsAccountsDetail::SelectPGPAccount(const RsPgpId& pgpId)
 {
 	bool retVal = false;
 
-	if (0 < AuthGPG::getAuthGPG() -> GPGInit(pgpId))
+    if (0 < AuthGPG::GPGInit(pgpId))
 	{
 		retVal = true;
 #ifdef DEBUG_ACCOUNTS
@@ -906,7 +907,7 @@ bool RsAccountsDetail::SelectPGPAccount(const RsPgpId& pgpId)
 
 bool     RsAccountsDetail::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, const int keynumbits, std::string &errString)
 {
-	return AuthGPG::getAuthGPG()->GeneratePGPCertificate(name, email, passwd, pgpId, keynumbits, errString);
+    return AuthGPG::GeneratePGPCertificate(name, email, passwd, pgpId, keynumbits, errString);
 }
 
 		// PGP Support Functions.
@@ -918,24 +919,24 @@ void RsAccountsDetail::getUnsupportedKeys(std::map<std::string,std::vector<std::
 
 bool RsAccountsDetail::exportIdentity(const std::string& fname,const RsPgpId& id)
 {
-	return AuthGPG::getAuthGPG()->exportProfile(fname,id);
+    return AuthGPG::exportProfile(fname,id);
 }
 
 bool RsAccountsDetail::importIdentity(const std::string& fname,RsPgpId& id,std::string& import_error)
 {
-	return AuthGPG::getAuthGPG()->importProfile(fname,id,import_error);
+    return AuthGPG::importProfile(fname,id,import_error);
 }
 
 bool RsAccountsDetail::importIdentityFromString(const std::string &data, RsPgpId &imported_pgp_id, std::string &import_error)
 {
-    return AuthGPG::getAuthGPG()->importProfileFromString(data, imported_pgp_id, import_error);
+    return AuthGPG::importProfileFromString(data, imported_pgp_id, import_error);
 }
 
 bool RsAccountsDetail::exportIdentityToString(
         std::string& data, const RsPgpId& pgpId, bool includeSignatures,
         std::string& errorMsg )
 {
-	return AuthGPG::getAuthGPG()->exportIdentityToString(
+    return AuthGPG::exportIdentityToString(
 	            data, pgpId, includeSignatures, errorMsg );
 }
 
@@ -1020,7 +1021,7 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const s
 
 	int nbits = 4096;
 
-	//std::string pgp_name = AuthGPG::getAuthGPG()->getGPGName(pgp_id);
+    //std::string pgp_name = AuthGPG::getGPGName(pgp_id);
 
 	// Create the filename .....
 	// Temporary Directory for creating files....

@@ -1066,7 +1066,7 @@ bool p3IdService::createIdentity(uint32_t& token, RsIdentityParameters &params)
 
     if(params.isPgpLinked)
     {
-        ssdata.pgp.pgpId = AuthGPG::getAuthGPG()->getGPGOwnId();
+        ssdata.pgp.pgpId = AuthGPG::getGPGOwnId();
         ssdata.pgp.lastCheckTs = time(nullptr);
     }
 
@@ -3618,7 +3618,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(
 		unsigned int sign_size = MAX_SIGN_SIZE;
         memset(signarray,0,MAX_SIGN_SIZE) ;	// just in case.
 
-		int	result = AuthGPG::getAuthGPG()->SignDataBin(
+        int	result = AuthGPG::SignDataBin(
 			            static_cast<const void*>(hash.toByteArray()),
 			            hash.SIZE_IN_BYTES, signarray, &sign_size,
 			            __PRETTY_FUNCTION__ )

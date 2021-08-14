@@ -34,7 +34,7 @@ PgpAuxUtilsImpl::PgpAuxUtilsImpl()
 
 const RsPgpId& PgpAuxUtilsImpl::getPGPOwnId() 
 {
-	return AuthGPG::getAuthGPG()->getGPGOwnId();
+    return AuthGPG::getGPGOwnId();
 }
 
 RsPgpId PgpAuxUtilsImpl::getPGPId(const RsPeerId& sslid)
@@ -44,7 +44,7 @@ RsPgpId PgpAuxUtilsImpl::getPGPId(const RsPeerId& sslid)
 
 bool PgpAuxUtilsImpl::getKeyFingerprint(const RsPgpId& id,PGPFingerprintType& fp) const
 {
-	return AuthGPG::getAuthGPG()->getKeyFingerprint(id, fp);
+    return AuthGPG::getKeyFingerprint(id, fp);
 }
 
 bool PgpAuxUtilsImpl::VerifySignBin(const void *data, 
@@ -54,17 +54,17 @@ bool PgpAuxUtilsImpl::VerifySignBin(const void *data,
 		const PGPFingerprintType& withfingerprint)
 
 {
-	return AuthGPG::getAuthGPG()->VerifySignBin(data, len, sign, signlen, withfingerprint);
+    return AuthGPG::VerifySignBin(data, len, sign, signlen, withfingerprint);
 }
 
 bool PgpAuxUtilsImpl::getGPGAllList(std::list<RsPgpId> &ids)
 {
-	return AuthGPG::getAuthGPG()->getGPGAllList(ids);
+    return AuthGPG::getGPGAllList(ids);
 }
 
 bool PgpAuxUtilsImpl::parseSignature(unsigned char *sign, unsigned int signlen, RsPgpId& issuer) const 
 {
-	return AuthGPG::getAuthGPG()->parseSignature(sign,signlen,issuer);
+    return AuthGPG::parseSignature(sign,signlen,issuer);
 }
 
 

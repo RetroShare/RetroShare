@@ -759,8 +759,7 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
         //long version = 0x00;
         unsigned long chtype = MBSTRING_UTF8;
         X509_NAME *issuer_name = X509_NAME_new();
-        X509_NAME_add_entry_by_txt(issuer_name, "CN", chtype,
-                        (unsigned char *) AuthGPG::getAuthGPG()->getGPGOwnId().toStdString().c_str(), -1, -1, 0);
+        X509_NAME_add_entry_by_txt(issuer_name, "CN", chtype, (unsigned char *) AuthGPG::getGPGOwnId().toStdString().c_str(), -1, -1, 0);
 /****
         X509_NAME_add_entry_by_NID(issuer_name, 48, 0,
                         (unsigned char *) "email@email.com", -1, -1, 0);
@@ -770,7 +769,7 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
                         (unsigned char *) "loc", -1, -1, 0);
 ****/
 
-        std::cerr << "AuthSSLimpl::SignX509Req() Issuer name: " << AuthGPG::getAuthGPG()->getGPGOwnId().toStdString() << std::endl;
+        std::cerr << "AuthSSLimpl::SignX509Req() Issuer name: " << AuthGPG::getGPGOwnId().toStdString() << std::endl;
 
 #ifdef V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
 		static const uint64_t CERTIFICATE_SERIAL_NUMBER = RS_CERTIFICATE_VERSION_NUMBER_07_0001 ;
@@ -945,7 +944,7 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
         std::cerr << "Buffers Allocated" << std::endl;
 
         /* NOW Sign via GPG Functions */
-        if (!AuthGPG::getAuthGPG()->SignDataBin(buf_in, inl, buf_sigout, (unsigned int *) &sigoutl,"AuthSSLimpl::SignX509ReqWithGPG()"))
+        if (!AuthGPG::SignDataBin(buf_in, inl, buf_sigout, (unsigned int *) &sigoutl,"AuthSSLimpl::SignX509ReqWithGPG()"))
         {
                 sigoutl = 0;
                 goto err;
@@ -1040,7 +1039,7 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,bool verbose, uint32_t& diagnostic)
 {
 	RsPgpId issuer = RsX509Cert::getCertIssuer(*x509);
 	RsPeerDetails pd;
-	if (!AuthGPG::getAuthGPG()->getGPGDetails(issuer, pd))
+    if (!AuthGPG::getGPGDetails(issuer, pd))
 	{
 		RsInfo() << __PRETTY_FUNCTION__ << " X509 NOT authenticated : "
 		         << "AuthGPG::getAuthGPG()->getGPGDetails(" << issuer
@@ -1185,9 +1184,7 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,bool verbose, uint32_t& diagnostic)
 
 		// passed, verify the signature itself
 
-		if (!AuthGPG::getAuthGPG()->VerifySignBin(
-		            signed_data, signed_data_length, signature->data,
-		            static_cast<unsigned int>(signature->length), pd.fpr ))
+        if (!AuthGPG::VerifySignBin( signed_data, signed_data_length, signature->data, static_cast<unsigned int>(signature->length), pd.fpr ))
 		{
 			diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_WRONG_SIGNATURE;
 			goto err;
@@ -1383,7 +1380,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
     std::cerr << "******* VerifyX509Callback cert: " << std::hex << ctx->cert <<std::dec << std::endl;
 #endif
 
-	if ( !isSslOnlyFriend && pgpId != AuthGPG::getAuthGPG()->getGPGOwnId() && !AuthGPG::getAuthGPG()->isGPGAccepted(pgpId) )
+    if ( !isSslOnlyFriend && pgpId != AuthGPG::getGPGOwnId() && !AuthGPG::isGPGAccepted(pgpId) )
 	{
 		std::string errMsg = "Connection attempt signed by PGP key id: " +
 		        pgpId.toStdString() + " not accepted because it is not"
