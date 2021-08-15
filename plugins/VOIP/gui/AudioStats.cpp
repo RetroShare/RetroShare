@@ -25,7 +25,7 @@
 #include <QPainter>
 
 #include "AudioStats.h"
-#include "AudioInputConfig.h"
+#include "VOIPConfigPanel.h"
 //#include "Global.h"
 //#include "smallft.h"
 

@@ -19,7 +19,6 @@
  *                                                                             *
  *******************************************************************************/
 #pragma once
-#pragma once
 
 #include <QAudioInput>
 #include <QWidget>
@@ -46,9 +45,9 @@ private:
     voipGraphSource *_src ;
 };
 
-#include "ui_AudioInputConfig.h"
+#include "ui_VOIPConfigPanel.h"
 
-class AudioInputConfig : public ConfigPage 
+class VOIPConfigPanel : public ConfigPage
 {
 	Q_OBJECT
 
@@ -60,33 +59,37 @@ class AudioInputConfig : public ConfigPage
 		//VideoDecoder *videoDecoder ;
 		//VideoEncoder *videoEncoder ;
 		QVideoInputDevice *videoInput ;
-        	VideoProcessor *videoProcessor ;
+        VideoProcessor *videoProcessor ;
 		bool loaded;
+        QString currentCameraDescription;
 
         voipGraphSource *graph_source ;
 
 	protected:
 		QTimer *qtTick;
-		/*void hideEvent(QHideEvent *event);
-		  void showEvent(QShowEvent *event);*/
 
+        void clearPipeline();
 	public:
 		/** Default Constructor */
-		AudioInputConfig(QWidget * parent = 0, Qt::WindowFlags flags = 0);
+		VOIPConfigPanel(QWidget * parent = 0, Qt::WindowFlags flags = 0);
 		/** Default Destructor */
-		~AudioInputConfig();
+		~VOIPConfigPanel();
 
 		/** Saves the changes on this page */
-		virtual bool save(QString &errmsg);
+        virtual bool save(QString &errmsg)override ;
 		/** Loads the settings for this page */
-		virtual void load();
+        virtual void load()override ;
 
-		virtual QPixmap iconPixmap() const { return QPixmap(":/images/talking_on.svg") ; }
-		virtual QString pageName() const { return tr("VOIP") ; }
-		virtual QString helpText() const { return ""; }
+        virtual QPixmap iconPixmap() const override { return QPixmap(":/images/talking_on.svg") ; }
+        virtual QString pageName() const override { return tr("VOIP") ; }
+        virtual QString helpText() const override { return ""; }
         
+        virtual void showEvent(QShowEvent *) override;
+        virtual void hideEvent(QHideEvent *event) override;
 private slots:
-	void updateAvailableBW(double r);
+        void on_changedCurrentInputDevice(int i);
+        void checkAvailableCameras();
+        void updateAvailableBW(double r);
 		void loadSettings();
 		void emptyBuffer();
 		void togglePreview(bool) ;

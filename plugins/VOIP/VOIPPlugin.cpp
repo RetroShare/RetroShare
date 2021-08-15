@@ -31,14 +31,13 @@
 #include "VOIPPlugin.h"
 #include "interface/rsVOIP.h"
 
-#include "gui/AudioInputConfig.h"
+#include "gui/VOIPConfigPanel.h"
 #include "gui/VOIPChatWidgetHolder.h"
 #include "gui/VOIPGUIHandler.h"
 #include "gui/VOIPNotify.h"
 #include "gui/SoundManager.h"
 #include "gui/chat/ChatWidget.h"
 
-#include <opencv2/opencv.hpp>
 #include <speex/speex.h>
 
 #define IMAGE_VOIP ":/images/talking_on.svg"
@@ -113,7 +112,7 @@ ConfigPage *VOIPPlugin::qt_config_page() const
 	// The config pages are deleted when config is closed, so it's important not to static the
 	// created object.
 	//
-	return new AudioInputConfig() ;
+	return new VOIPConfigPanel() ;
 }
 
 QDialog *VOIPPlugin::qt_about_page() const
@@ -188,8 +187,6 @@ std::string VOIPPlugin::getPluginName() const
 
 void VOIPPlugin::getLibraries(std::list<RsLibraryInfo> &libraries)
 {
-	libraries.push_back(RsLibraryInfo("OpenCV", CV_VERSION));
-
 	const char *speexVersion = NULL;
 	if (speex_lib_ctl(SPEEX_LIB_GET_VERSION_STRING, &speexVersion) == 0 && speexVersion) {
 		libraries.push_back(RsLibraryInfo("Speex", speexVersion));

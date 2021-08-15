@@ -1583,7 +1583,12 @@ void ChatWidget::addSmiley()
 	smiley += QString(" ");
 	// add preceding space when needed (not at start of text or preceding space already exists)
 	QString plainText = ui->chatTextEdit->toPlainText();
-	QChar start = plainText[ui->chatTextEdit->textCursor().position() - 1];
+
+        int startPosition = ui->chatTextEdit->textCursor().position();
+        if (startPosition > 0)
+            startPosition -= 1;
+
+        QChar start = plainText[startPosition];
 	if(!ui->chatTextEdit->textCursor().atStart() && start != QChar(' '))
 		smiley = QString(" ") + smiley;
 
