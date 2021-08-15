@@ -235,38 +235,42 @@ void ConnectProgressDialog::initDialog()
 void ConnectProgressDialog::updateStatus()
 {
 
-	if (time(NULL) > mInitTS + CONNECT_TIMEOUT_PERIOD)
-	{
-		sayConnectTimeout();
-		mState = CONNECT_STATE_FAILED;
-	}
+    if (time(NULL) > mInitTS + CONNECT_TIMEOUT_PERIOD)
+    {
+        sayConnectTimeout();
+        mState = CONNECT_STATE_FAILED;
+    }
 
-	switch(mState)
-	{
-		case CONNECT_STATE_PROGRESS:
+    switch(mState)
+    {
+    case CONNECT_STATE_PROGRESS:
 
-			updateNetworkStatus();
-			updateContactStatus();
+        updateNetworkStatus();
+        updateContactStatus();
+
+        if(!mIsPeerHiddenNode && !mAmIHiddenNode)
+        {
 #ifdef RS_USE_BITDHT
-			updateDhtStatus();
+            updateDhtStatus();
 #endif
-			updateLookupStatus();
-			updateUdpStatus();
+            updateLookupStatus();
+            updateUdpStatus();
+        }
 
-			return;
-			break;
+        return;
+        break;
 
-		default:
-		case CONNECT_STATE_CLOSED:
-		case CONNECT_STATE_FAILED:
-		case CONNECT_STATE_DENIED:
-		case CONNECT_STATE_CONNECTED:
-			break;
-	}
+    default:
+    case CONNECT_STATE_CLOSED:
+    case CONNECT_STATE_FAILED:
+    case CONNECT_STATE_DENIED:
+    case CONNECT_STATE_CONNECTED:
+        break;
+    }
 
-	/* shutdown actions */
-	ui->progressFrame->setEnabled(false);
-	mTimer->stop();
+    /* shutdown actions */
+    ui->progressFrame->setEnabled(false);
+    mTimer->stop();
 }
 
 
@@ -282,42 +286,70 @@ void ConnectProgressDialog::stopAndClose()
 
 void ConnectProgressDialog::updateNetworkStatus()
 {
-	RsNetState netState = rsConfig->getNetState();
+        QLabel *label = ui->NetResult;
 
-	QLabel *label = ui->NetResult;
-	switch(netState)
-	{
-	    case RsNetState::BAD_UNKNOWN:
-			label->setText(tr("Unknown State"));
-			break;
-	    case RsNetState::BAD_OFFLINE:
-			label->setText(tr("Offline"));
-			break;
-	    case RsNetState::BAD_NATSYM:
-			label->setText(tr("Behind Symmetric NAT"));
-			break;
-	    case RsNetState::BAD_NODHT_NAT:
-			label->setText(tr("Behind NAT & No DHT"));
-			break;
-	    case RsNetState::WARNING_RESTART:
-			label->setText(tr("NET Restart"));
-			break;
-	    case RsNetState::WARNING_NATTED:
-			label->setText(tr("Behind NAT"));
-			break;
-	    case RsNetState::WARNING_NODHT:
-			label->setText(tr("No DHT"));
-			break;
-	    case RsNetState::GOOD:
-			label->setText(tr("NET STATE GOOD!"));
-			break;
-	    case RsNetState::ADV_FORWARD:
-			label->setText(tr("UNVERIFIABLE FORWARD!"));
-			break;
-	    case RsNetState::ADV_DARK_FORWARD:
-			label->setText(tr("UNVERIFIABLE FORWARD & NO DHT"));
-			break;
-	}
+    if(mAmIHiddenNode || mIsPeerHiddenNode)
+        switch(rsConfig->getNetState())
+        {
+        case RsNetState::BAD_UNKNOWN:
+            label->setText(tr("Unknown State"));
+            break;
+        case RsNetState::BAD_OFFLINE:
+            label->setText(tr("Offline"));
+            break;
+        case RsNetState::BAD_NATSYM:
+            label->setText(tr("Behind Symmetric NAT"));
+            break;
+        case RsNetState::WARNING_RESTART:
+            label->setText(tr("NET Restart"));
+            break;
+        case RsNetState::BAD_NODHT_NAT:
+        case RsNetState::WARNING_NATTED:
+            label->setText(tr("Behind NAT"));
+            break;
+        case RsNetState::WARNING_NODHT:
+        case RsNetState::GOOD:
+            label->setText(tr("NET STATE GOOD!"));
+            break;
+        case RsNetState::ADV_DARK_FORWARD:
+        case RsNetState::ADV_FORWARD:
+            label->setText(tr("UNVERIFIABLE FORWARD!"));
+            break;
+        }
+    else
+        switch(rsConfig->getNetState())
+        {
+        case RsNetState::BAD_UNKNOWN:
+            label->setText(tr("Unknown State"));
+            break;
+        case RsNetState::BAD_OFFLINE:
+            label->setText(tr("Offline"));
+            break;
+        case RsNetState::BAD_NATSYM:
+            label->setText(tr("Behind Symmetric NAT"));
+            break;
+        case RsNetState::BAD_NODHT_NAT:
+            label->setText(tr("Behind NAT & No DHT"));
+            break;
+        case RsNetState::WARNING_RESTART:
+            label->setText(tr("NET Restart"));
+            break;
+        case RsNetState::WARNING_NATTED:
+            label->setText(tr("Behind NAT"));
+            break;
+        case RsNetState::WARNING_NODHT:
+            label->setText(tr("No DHT"));
+            break;
+        case RsNetState::GOOD:
+            label->setText(tr("NET STATE GOOD!"));
+            break;
+        case RsNetState::ADV_FORWARD:
+            label->setText(tr("UNVERIFIABLE FORWARD!"));
+            break;
+        case RsNetState::ADV_DARK_FORWARD:
+            label->setText(tr("UNVERIFIABLE FORWARD & NO DHT"));
+            break;
+        }
 }
 
 void ConnectProgressDialog::updateContactStatus()
@@ -454,13 +486,9 @@ void ConnectProgressDialog::updateLookupStatus()
 				mState = CONNECT_STATE_FAILED;
 
 				if (mLookupStatus == CONNECT_LOOKUP_NODHTCONFIG)
-				{
 					sayPeerNoDhtConfig();
-				}
 				else
-				{
 					sayPeerOffline();
-				}
 			}
 
 		case CONNECT_LOOKUP_FAIL:
