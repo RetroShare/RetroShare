@@ -51,7 +51,7 @@ public:
         //                                Implemented API from PGPHandler                                 //
         //================================================================================================//
 
-        virtual std::string makeRadixEncodedPGPKey(uint32_t key_index,bool include_signatures) override;
+        //virtual std::string makeRadixEncodedPGPKey(uint32_t key_index,bool include_signatures) override;
         virtual bool removeKeysFromPGPKeyring(const std::set<RsPgpId>& key_ids,std::string& backup_file,uint32_t& error_code) override;
         virtual bool availableGPGCertificatesWithPrivateKeys(std::list<RsPgpId>& ids) override;
         virtual bool GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passphrase, RsPgpId& pgpId, const int keynumbits, std::string& errString) override;

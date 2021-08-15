@@ -61,8 +61,6 @@ static const uint32_t PGP_CERTIFICATE_LIMIT_MAX_PASSWD_SIZE = 1024 ;
 //#define DEBUG_PGPHANDLER 1
 //#define PGPHANDLER_DSA_SUPPORT
 
-PassphraseCallback PGPHandler::_passphrase_callback = NULL ;
-
 ops_keyring_t *OpenPGPSDKHandler::allocateOPSKeyring()
 {
 	ops_keyring_t *kr = (ops_keyring_t*)rs_malloc(sizeof(ops_keyring_t)) ;

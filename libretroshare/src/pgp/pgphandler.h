@@ -91,7 +91,7 @@ public:
         // and given pack for proper display.
         //
         virtual bool removeKeysFromPGPKeyring(const std::set<RsPgpId>& key_ids,std::string& backup_file,uint32_t& error_code) =0;
-        virtual std::string makeRadixEncodedPGPKey(uint32_t key_index,bool include_signatures) =0;
+        //virtual std::string makeRadixEncodedPGPKey(uint32_t key_index,bool include_signatures) =0;
 
         virtual bool availableGPGCertificatesWithPrivateKeys(std::list<RsPgpId>& ids)=0;
         virtual bool GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId& pgpId, const int keynumbits, std::string& errString) =0;
