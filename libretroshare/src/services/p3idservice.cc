@@ -2,7 +2,8 @@
  * libretroshare/src/services: p3idservice.cc                                  *
  *                                                                             *
  * Copyright (C) 2012-2014  Robert Fernie <retroshare@lunamutt.com>            *
- * Copyright (C) 2017-2019  Gioacchino Mazzurco <gio@altermundi.net>           *
+ * Copyright (C) 2017-2021  Gioacchino Mazzurco <gio@altermundi.net>           *
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -4960,7 +4961,21 @@ void RsGxsIdGroup::serial_process(
 {
 	RS_SERIAL_PROCESS(mMeta);
 	RS_SERIAL_PROCESS(mPgpIdHash);
-	RS_SERIAL_PROCESS(mPgpIdSign);
+	switch(j)
+	{
+	/* mPgpIdSign is declared as std::string but it is a disguised raw memory
+	 * chunk, serializing it as plain string breaks JSON and eventually
+	 * teminals if it get printed, it should have been declared as a raw memory
+	 * chunk in the first place, but as of today just ignoring it in *JSON and
+	 * PRINT operations seems a reasonable workaround */
+	case RsGenericSerializer::SerializeJob::PRINT: // [[fallthrough]]
+	case RsGenericSerializer::SerializeJob::TO_JSON: // [[fallthrough]]
+	case RsGenericSerializer::SerializeJob::FROM_JSON:
+		break;
+	default:
+		RS_SERIAL_PROCESS(mPgpIdSign);
+		break;
+	}
 	RS_SERIAL_PROCESS(mImage);
 	RS_SERIAL_PROCESS(mLastUsageTS);
 	RS_SERIAL_PROCESS(mPgpKnown);

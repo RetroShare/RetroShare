@@ -137,7 +137,6 @@ PUBLIC_HEADERS =	retroshare/rsdisc.h \
 					retroshare/rsmsgs.h \
 					retroshare/rsnotify.h \
 					retroshare/rspeers.h \
-					retroshare/rsrank.h \
 					retroshare/rsstatus.h \
 					retroshare/rsturtle.h \
 					retroshare/rsbanlist.h \
@@ -348,13 +347,13 @@ HEADERS +=	ft/ftchunkmap.h \
 			ft/ftturtlefiletransferitem.h 
 
 HEADERS += crypto/chacha20.h \
-			  crypto/rsaes.h \
-				crypto/hashstream.h \
-				crypto/rscrypto.h
+           crypto/rsaes.h \
+           crypto/hashstream.h \
+           crypto/rscrypto.h
 
-HEADERS += directory_updater.h \
-				directory_list.h \
-				p3filelists.h
+HEADERS += file_sharing/directory_updater.h \
+           file_sharing/directory_list.h \
+           file_sharing/p3filelists.h
 
 HEADERS += chat/distantchat.h \
 			  chat/p3chatservice.h \
@@ -417,7 +416,7 @@ HEADERS +=  grouter/groutercache.h \
 				retroshare/rsgrouter.h \
 				grouter/grouteritems.h \
 				grouter/p3grouter.h \
-				grouter/rsgroutermatrix.h \
+                                grouter/groutermatrix.h \
 				grouter/groutertypes.h \
 				grouter/grouterclientservice.h
 
@@ -430,7 +429,6 @@ HEADERS +=	rsitems/rsitem.h \
 			rsitems/rsmsgitems.h \
 			serialiser/rsserial.h \
 			rsitems/rsserviceids.h \
-			serialiser/rsserviceitems.h \
 			rsitems/rsstatusitems.h \
 			serialiser/rstlvaddrs.h \
 			serialiser/rstlvbase.h \

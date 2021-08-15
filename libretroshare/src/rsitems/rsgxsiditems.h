@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2012-2012 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2012  Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2021  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -19,8 +21,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef RS_GXS_IDENTITY_ITEMS_H
-#define RS_GXS_IDENTITY_ITEMS_H
+#pragma once
 
 #include <map>
 
@@ -57,15 +58,20 @@ public:
     bool toGxsIdGroup(RsGxsIdGroup &group, bool moveImage);
 
     Sha1CheckSum mPgpIdHash;
-    // Need a signature as proof - otherwise anyone could add others Hashes.
-    // This is a string, as the length is variable.
-    std::string mPgpIdSign;
 
-    // Recognition Strings. MAX# defined above.
-    std::list<std::string> mRecognTags;
+	/** Need a signature as proof - otherwise anyone could add others Hashes.
+	 * This is a string, as the length is variable.
+	 * TODO: this should actually be a byte array (pointer+size), using an
+	 * std::string breaks the JSON serialization.
+	 * Be careful refactoring this as it may break retrocompatibility as this
+	 * item is sent over the network */
+	std::string mPgpIdSign;
 
-    // Avatar
-    RsTlvImage mImage ;
+	/// Unused
+	RS_DEPRECATED std::list<std::string> mRecognTags;
+
+	/// Avatar
+	RsTlvImage mImage;
 };
 
 struct RsGxsIdLocalInfoItem : public RsGxsIdItem
@@ -89,5 +95,3 @@ public:
 
     virtual RsItem *create_item(uint16_t service_id,uint8_t item_subtype) const ;
 };
-
-#endif /* RS_GXS_IDENTITY_ITEMS_H */
