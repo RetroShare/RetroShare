@@ -30,8 +30,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <syscall.h>
 #include <iostream>
+
+#if defined(_WIN32) || defined(__MINGW32__)
+#include <windows.h>
+#else
+#include <sys/syscall.h>
+#endif
 
 #include <QObject>
 
