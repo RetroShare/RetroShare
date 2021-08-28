@@ -32,9 +32,10 @@
 
 #include <iostream>
 
-#if defined(_WIN32) || defined(__MINGW32__)
-#include <windows.h>
-#else
+// This works on linux only. I have no clue how to do that on windows. Anyway, this
+// is only needed for an assert that should normaly never be triggered.
+
+#if !defined(_WIN32) && !defined(__MINGW32__)
 #include <sys/syscall.h>
 #endif
 
@@ -706,7 +707,9 @@ void RsTor::setHiddenServiceDirectory(const std::string& dir)
 
 TorManager *RsTor::instance()
 {
+#if !defined(_WIN32) && !defined(__MINGW32__)
     assert(getpid() == syscall(SYS_gettid));// make sure we're not in a thread
+#endif
 
     static TorManager *rsTor = nullptr;
 
