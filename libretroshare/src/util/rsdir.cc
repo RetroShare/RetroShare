@@ -4,8 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2004-2007  Robert Fernie <retroshare@lunamutt.com>            *
- * Copyright (C) 2020  Gioacchino Mazzurco <gio@eigenlab.org>                  *
- * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>       *
+ * Copyright (C) 2020-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2020-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -63,6 +63,26 @@
 /****
  * #define RSDIR_DEBUG 1
  ****/
+
+#if __cplusplus < 201703L
+bool std::filesystem::create_directories(const std::string& path)
+{
+	for( std::string::size_type lastIndex = 0; lastIndex < std::string::npos;
+	     lastIndex = path.find('/', lastIndex) )
+	{
+		std::string&& curDir = path.substr(0, ++lastIndex);
+		if(!RsDirUtil::checkCreateDirectory(curDir))
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " failure creating: " << curDir
+			        << " of: " << path << std::endl;
+			return false;
+		}
+	}
+	return true;
+}
+#else
+#	include <filesystem>
+#endif // __cplusplus < 201703L
 
 std::string 	RsDirUtil::getTopDir(const std::string& dir)
 {
@@ -527,24 +547,6 @@ bool RsDirUtil::checkCreateDirectory(const std::string& dir)
 
 	return true;
 }
-
-#if __cplusplus < 201703L
-bool std::filesystem::create_directories(const std::string& path)
-{
-	for( std::string::size_type lastIndex = 0; lastIndex < std::string::npos;
-	     lastIndex = path.find('/', lastIndex) )
-	{
-		std::string&& curDir = path.substr(0, ++lastIndex);
-		if(!RsDirUtil::checkCreateDirectory(curDir))
-		{
-			RsErr() << __PRETTY_FUNCTION__ << " failure creating: " << curDir
-			        << " of: " << path << std::endl;
-			return false;
-		}
-	}
-	return true;
-}
-#endif // __cplusplus < 201703L
 
 std::string RsDirUtil::removeSymLinks(const std::string& path)
 {
