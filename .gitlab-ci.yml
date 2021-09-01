@@ -51,3 +51,59 @@ build-and-test:
           docker exec retroshare
           curl --verbose http://127.0.0.1:9092/rsMsgs/getChatLobbyList | jq
         - docker container stop retroshare
+
+build-android-arm-apk:
+    script:
+        - >
+          if [ -n "$CI_MERGE_REQUEST_ID" ]; then
+          REPO_ARGS="--build-arg REPO_URL=$CI_MERGE_REQUEST_SOURCE_PROJECT_URL" ;
+          REPO_ARGS="$REPO_ARGS --build-arg REPO_BRANCH=$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" ;
+          else
+          REPO_ARGS="--build-arg REPO_URL=$CI_REPOSITORY_URL" ;
+          REPO_ARGS="$REPO_ARGS --build-arg REPO_BRANCH=$CI_COMMIT_BRANCH" ;
+          fi ;
+          export REPO_ARGS ;
+          echo REPO_ARGS=$REPO_ARGS ;
+        - mkdir Dockercontext
+        - >
+          docker build -t retroshare:android_arm_latest $REPO_ARGS
+          --build-arg ANDROID_PLATFORM_VER=16
+          --build-arg ANDROID_NDK_ARCH=arm
+          --file $CI_PROJECT_DIR/build_scripts/GitlabCI/Android.Dockerfile
+          Dockercontext
+# see https://stackoverflow.com/a/59055906
+        - >
+          docker cp
+          $(docker create --rm retroshare:android_arm_latest):/retroshare-service-android-build/android-build/build/outputs/apk/debug/android-build-debug.apk
+          $CI_PROJECT_DIR/RetroShare_Android_Service-arm.apk
+    artifacts:
+      paths:
+        - RetroShare_Android_Service-arm.apk
+
+# Use separate runner to avoid no space left on device
+build-android-arm64-apk:
+    script:
+        - >
+          if [ -n "$CI_MERGE_REQUEST_ID" ]; then
+          REPO_ARGS="--build-arg REPO_URL=$CI_MERGE_REQUEST_SOURCE_PROJECT_URL" ;
+          REPO_ARGS="$REPO_ARGS --build-arg REPO_BRANCH=$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" ;
+          else
+          REPO_ARGS="--build-arg REPO_URL=$CI_REPOSITORY_URL" ;
+          REPO_ARGS="$REPO_ARGS --build-arg REPO_BRANCH=$CI_COMMIT_BRANCH" ;
+          fi ;
+          export REPO_ARGS ;
+          echo REPO_ARGS=$REPO_ARGS ;
+        - mkdir Dockercontext
+        - >
+          docker build -t retroshare:android_arm64_latest $REPO_ARGS
+          --build-arg ANDROID_PLATFORM_VER=21
+          --build-arg ANDROID_NDK_ARCH=arm64
+          --file $CI_PROJECT_DIR/build_scripts/GitlabCI/Android.Dockerfile
+          Dockercontext
+        - >
+          docker cp
+          $(docker create --rm retroshare:android_arm64_latest):/retroshare-service-android-build/android-build/build/outputs/apk/debug/android-build-debug.apk
+          $CI_PROJECT_DIR/RetroShare_Android_Service-arm64.apk
+    artifacts:
+      paths:
+        - RetroShare_Android_Service-arm64.apk
