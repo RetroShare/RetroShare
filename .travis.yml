@@ -8,10 +8,10 @@ language: cpp
 
 matrix:
   include:
-    - os: linux
-      dist: bionic
-      sudo: required
-      compiler: gcc
+#    - os: linux
+#      dist: bionic
+#      sudo: required
+#      compiler: gcc
     - os: osx
       osx_image: xcode10.2
       compiler: clang
