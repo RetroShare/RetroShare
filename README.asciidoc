@@ -10,7 +10,7 @@ RetroShare provides file sharing, chat, messages, forums, channels and more.
 .Build Status
 |===============================================================================
 |GNU/Linux, Android (via Gitlab CI) | image:https://gitlab.com/RetroShare/RetroShare/badges/master/pipeline.svg[link="https://gitlab.com/RetroShare/RetroShare/-/commits/master",title="pipeline status"]
-|GNU/Linux, macOS, (via Travis CI) | image:https://travis-ci.org/RetroShare/RetroShare.svg?branch=master[link="https://travis-ci.org/RetroShare/RetroShare"]
+|GNU/Linux, macOS, (via Travis CI) | image:https://travis-ci.com/RetroShare/RetroShare.svg?branch=master[link="https://travis-ci.com/RetroShare/RetroShare"]
 |Windows (via AppVeyor) | image:https://ci.appveyor.com/api/projects/status/github/RetroShare/RetroShare?svg=true[link="https://ci.appveyor.com/project/RetroShare58622/retroshare"]
 |===============================================================================
 
