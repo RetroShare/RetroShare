@@ -1,32 +1,49 @@
 image: docker:stable
 
 services:
-    - docker:stable-dind
+  - docker:stable-dind
+
+stages:
+  - build
+  - test
 
 workflow:
   rules:
     - if: $CI_MERGE_REQUEST_ID
     - if: $CI_COMMIT_BRANCH
 
-build-and-test:
+variables:
+  REPO_ARGS_CMD: '[ -n "$CI_MERGE_REQUEST_ID" ] && echo --build-arg REPO_URL=\"$CI_MERGE_REQUEST_SOURCE_PROJECT_URL\" --build-arg REPO_BRANCH=\"$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME\" || echo --build-arg REPO_URL=\"$CI_REPOSITORY_URL\" --build-arg REPO_BRANCH=\"$CI_COMMIT_BRANCH\"'
+  UBUNTU_TESTING_IMAGE_TAG: "$CI_REGISTRY_IMAGE/gitlabci_outputs/ubuntu_testing:$CI_COMMIT_SHA"
+        
+build-ubuntu-test-image:
+    stage: build
     script:
-        - >
-          if [ -n "$CI_MERGE_REQUEST_ID" ]; then
-          REPO_ARGS="--build-arg REPO_URL=$CI_MERGE_REQUEST_SOURCE_PROJECT_URL" ;
-          REPO_ARGS="$REPO_ARGS --build-arg REPO_BRANCH=$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" ;
-          else
-          REPO_ARGS="--build-arg REPO_URL=$CI_REPOSITORY_URL" ;
-          REPO_ARGS="$REPO_ARGS --build-arg REPO_BRANCH=$CI_COMMIT_BRANCH" ;
-          fi ;
-          export REPO_ARGS ;
-          echo REPO_ARGS=$REPO_ARGS ;
+        - > 
+          docker login "$CI_REGISTRY"
+          --username "$CI_REGISTRY_USER"
+          --password "$CI_REGISTRY_PASSWORD"
         - mkdir Dockercontext
         - >
-          docker build -t retroshare:testing $REPO_ARGS
+          docker build
+          -t $UBUNTU_TESTING_IMAGE_TAG
+          $($REPO_ARGS_CMD)
           --file $CI_PROJECT_DIR/build_scripts/GitlabCI/gitlabCI.Dockerfile
           Dockercontext
+        - docker push $UBUNTU_TESTING_IMAGE_TAG
+        - echo UBUNTU_TESTING_IMAGE_TAG=$UBUNTU_TESTING_IMAGE_TAG
+
+test-ubuntu:
+    stage: test
+    script:
+        - > 
+          docker login "$CI_REGISTRY"
+          --username "$CI_REGISTRY_USER"
+          --password "$CI_REGISTRY_PASSWORD"
+        - echo UBUNTU_TESTING_IMAGE_TAG=$UBUNTU_TESTING_IMAGE_TAG
+        - docker pull $UBUNTU_TESTING_IMAGE_TAG
         - >
-          docker run --name retroshare --detach --tty retroshare:testing
+          docker run --name retroshare --detach --tty $UBUNTU_TESTING_IMAGE_TAG
           retroshare-service --jsonApiPort 9092
         - apk add jq
         - >
@@ -51,24 +68,13 @@ build-and-test:
           docker exec retroshare
           curl --verbose http://127.0.0.1:9092/rsMsgs/getChatLobbyList | jq
         - docker container stop retroshare
-
+          
 build-android-arm-apk:
+    stage: build
     script:
-        - >
-          if [ -n "$CI_MERGE_REQUEST_ID" ]; then
-          REPO_ARGS="--build-arg REPO_URL=$CI_MERGE_REQUEST_SOURCE_PROJECT_URL" ;
-          REPO_ARGS="$REPO_ARGS --build-arg REPO_BRANCH=$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" ;
-          else
-          REPO_ARGS="--build-arg REPO_URL=$CI_REPOSITORY_URL" ;
-          REPO_ARGS="$REPO_ARGS --build-arg REPO_BRANCH=$CI_COMMIT_BRANCH" ;
-          fi ;
-          export REPO_ARGS ;
-          echo REPO_ARGS=$REPO_ARGS ;
         - mkdir Dockercontext
         - >
-          docker build -t retroshare:android_arm_latest $REPO_ARGS
-          --build-arg ANDROID_PLATFORM_VER=16
-          --build-arg ANDROID_NDK_ARCH=arm
+          docker build -t retroshare:android_arm_latest $($REPO_ARGS_CMD)
           --file $CI_PROJECT_DIR/build_scripts/GitlabCI/Android.Dockerfile
           Dockercontext
 # see https://stackoverflow.com/a/59055906
@@ -82,20 +88,11 @@ build-android-arm-apk:
 
 # Use separate runner to avoid no space left on device
 build-android-arm64-apk:
+    stage: build
     script:
-        - >
-          if [ -n "$CI_MERGE_REQUEST_ID" ]; then
-          REPO_ARGS="--build-arg REPO_URL=$CI_MERGE_REQUEST_SOURCE_PROJECT_URL" ;
-          REPO_ARGS="$REPO_ARGS --build-arg REPO_BRANCH=$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" ;
-          else
-          REPO_ARGS="--build-arg REPO_URL=$CI_REPOSITORY_URL" ;
-          REPO_ARGS="$REPO_ARGS --build-arg REPO_BRANCH=$CI_COMMIT_BRANCH" ;
-          fi ;
-          export REPO_ARGS ;
-          echo REPO_ARGS=$REPO_ARGS ;
         - mkdir Dockercontext
         - >
-          docker build -t retroshare:android_arm64_latest $REPO_ARGS
+          docker build -t retroshare:android_arm64_latest $($REPO_ARGS_CMD)
           --build-arg ANDROID_PLATFORM_VER=21
           --build-arg ANDROID_NDK_ARCH=arm64
           --file $CI_PROJECT_DIR/build_scripts/GitlabCI/Android.Dockerfile
