@@ -63,17 +63,7 @@ WORKDIR /bCache
 
 RUN $PREPARE_TOOLCHAIN install_android_sdk
 RUN $PREPARE_TOOLCHAIN install_android_ndk
-RUN $PREPARE_TOOLCHAIN bootstrap_toolchain
-RUN $PREPARE_TOOLCHAIN build_bzlib
-RUN $PREPARE_TOOLCHAIN build_openssl
-RUN $PREPARE_TOOLCHAIN build_sqlite
-RUN $PREPARE_TOOLCHAIN build_sqlcipher
-RUN $PREPARE_TOOLCHAIN build_rapidjson
-RUN $PREPARE_TOOLCHAIN build_restbed
-RUN $PREPARE_TOOLCHAIN build_udp-discovery-cpp
-RUN $PREPARE_TOOLCHAIN build_xapian
-RUN $PREPARE_TOOLCHAIN build_miniupnpc
-RUN $PREPARE_TOOLCHAIN deduplicate_includes
+RUN $PREPARE_TOOLCHAIN
 
 ARG QT_INSTALLER_JWT_TOKEN
 RUN $PREPARE_TOOLCHAIN install_qt_android

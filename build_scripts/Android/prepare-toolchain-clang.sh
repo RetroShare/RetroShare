@@ -68,7 +68,7 @@ define_default_value QT_ANDROID_VIA_INSTALLER "false"
 define_default_value QT_VERSION "5.12.11"
 define_default_value QT_INSTALLER_VERSION "4.1.1"
 define_default_value QT_INSTALLER_SHA256 1266ffd0d1b0e466244e3bc8422975c1aa9d96745b6bb28d422f7f92df11f34c
-define_default_value QT_INSTALLER_JWT_TOKEN "Need a QT account JWT token to use the insaller see https://wiki.qt.io/Online_Installer_4.x"
+define_default_value QT_INSTALLER_JWT_TOKEN ""
 define_default_value QT_INSTALL_PATH "${NATIVE_LIBS_TOOLCHAIN_PATH}/Qt/"
 
 define_default_value QT_ANDROID_INSTALLER_SHA256 a214084e2295c9a9f8727e8a0131c37255bf724bfc69e80f7012ba3abeb1f763
@@ -416,6 +416,13 @@ get_qt_dir()
 task_register install_qt_android
 install_qt_android()
 {
+	[ "$QT_INSTALLER_JWT_TOKEN" == "" ] &&
+	{
+		echo "To run Qt installer QT_INSTALLER_JWT_TOKEN environement variable \
+need to be set to a valid JWT token see https://wiki.qt.io/Online_Installer_4.x"
+		return -1
+	}
+
 	QT_VERSION_CODE="$(echo $QT_VERSION | tr -d .)"
 	QT_INSTALLER="qt-unified-linux-x86_64-${QT_INSTALLER_VERSION}-online.run"
 	tMajDotMinVer="$(echo $QT_INSTALLER_VERSION | awk -F. '{print $1"."$2}')"
@@ -855,7 +862,6 @@ build_default_toolchain()
 	task_run build_xapian || return $?
 	task_run build_miniupnpc || return $?
 	task_run build_phash || return $?
-	task_run build_mvptree || return $?
 	task_run deduplicate_includes || return $?
 	task_run get_native_libs_toolchain_path || return $?
 }
