@@ -4,7 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2011  Christopher Evi-Parker                                  *
- * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2018-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -209,6 +210,58 @@ public:
 	}
 
 	/*!
+	 * @brief Get default maximum storage time for GXS messages
+	 * @jsonapi{development}
+	 * @return storage time in seconds
+	 */
+	uint32_t getDefaultStoragePeriod()
+	{ return mGxs.getDefaultStoragePeriod(); }
+
+	/*!
+	 * @brief Get maximum storage time of GXS messages for the given group
+	 * @jsonapi{development}
+	 * @param[in] groupId Id of the group
+	 * @return storage time in seconds
+	 */
+	uint32_t getStoragePeriod(const RsGxsGroupId& groupId)
+	{ return mGxs.getStoragePeriod(groupId); }
+
+	/*!
+	 * @brief Set GXS messages maximum storage time for the given group
+	 * @jsonapi{development}
+	 * @param[in] groupId Id of the group
+	 * @param[in] storageSecs storage time in seconds
+	 */
+	void setStoragePeriod(const RsGxsGroupId& groupId, uint32_t storageSecs)
+	{ mGxs.setStoragePeriod(groupId, storageSecs); }
+
+	/*!
+	 * @brief Get default maximum syncronization age for GXS messages
+	 * @jsonapi{development}
+	 * @return age in seconds
+	 */
+	uint32_t getDefaultSyncPeriod()
+	{ return mGxs.getDefaultSyncPeriod(); }
+
+	/*!
+	 * @brief Get maximum syncronization age of GXS messages for the given group
+	 * @jsonapi{development}
+	 * @param[in] groupId Id of the group
+	 * @return age in seconds
+	 */
+	uint32_t getSyncPeriod(const RsGxsGroupId& groupId)
+	{ return mGxs.getSyncPeriod(groupId); }
+
+	/*!
+	 * @brief Set GXS messages maximum syncronization age for the given group
+	 * @jsonapi{development}
+	 * @param[in] groupId Id of the group
+	 * @param[in] syncAge age in seconds
+	 */
+	void setSyncPeriod(const RsGxsGroupId& groupId, uint32_t syncAge)
+	{ mGxs.setSyncPeriod(groupId, syncAge); }
+
+	/*!
 	 * This determines the reputation threshold messages need to surpass in order
 	 * for it to be accepted by local user from remote source
 	 * NOTE: threshold only enforced if service require author signature
@@ -220,34 +273,6 @@ public:
 	{
 		return mGxs.setGroupReputationCutOff(token, grpId, CutOff);
 	}
-
-    /*!
-     * @return storage/sync time of messages in secs
-     */
-    uint32_t getDefaultStoragePeriod()
-    {
-		return mGxs.getDefaultStoragePeriod();
-    }
-    uint32_t getStoragePeriod(const RsGxsGroupId& grpId)
-    {
-		return mGxs.getStoragePeriod(grpId);
-    }
-    void setStoragePeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs)
-    {
-		mGxs.setStoragePeriod(grpId,age_in_secs);
-    }
-    uint32_t getDefaultSyncPeriod()
-    {
-		return mGxs.getDefaultSyncPeriod();
-    }
-    uint32_t getSyncPeriod(const RsGxsGroupId& grpId)
-    {
-		return mGxs.getSyncPeriod(grpId);
-    }
-    void setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs)
-    {
-		mGxs.setSyncPeriod(grpId,age_in_secs);
-    }
 
 	RsReputationLevel minReputationForForwardingMessages(
 	        uint32_t group_sign_flags, uint32_t identity_flags )
