@@ -407,7 +407,7 @@ void GenCertDialog::updateCheckLabels()
 		ui.node_name_check_LB   ->setPixmap(bad) ;
     }
 
-    if(!generate_new || ui.name_input->text().length() >= 3)
+    if(!generate_new || ui.name_input->text().trimmed().length() >= 3)
 		ui.profile_name_check_LB   ->setPixmap(good) ;
     else
     {
