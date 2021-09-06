@@ -906,8 +906,9 @@ virtual void getOwnAvatarData(unsigned char *& data,int& size) = 0 ;
 	 * @brief denyLobbyInvite deny a chat lobby invite
 	 * @jsonapi{development}
 	 * @param[in] id chat lobby id you were invited into
-	 */
-	virtual void denyLobbyInvite(const ChatLobbyId &id) = 0 ;
+     * @return true on success
+     */
+    virtual bool denyLobbyInvite(const ChatLobbyId &id) = 0 ;
 
 	/**
 	 * @brief getPendingChatLobbyInvites get a list of all pending chat lobby invites
