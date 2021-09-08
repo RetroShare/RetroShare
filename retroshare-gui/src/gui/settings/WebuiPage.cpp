@@ -65,6 +65,9 @@ void WebuiPage::selectWebInterfaceDirectory()
         return;
 
 	whileBlocking(ui.webInterfaceFiles_LE)->setText(dirname);
+
+    QString S;
+    updateParams(S);
 }
 
 bool WebuiPage::updateParams(QString &errmsg)
@@ -82,6 +85,8 @@ bool WebuiPage::updateParams(QString &errmsg)
         // store config
         Settings->setWebinterfaceEnabled(ui.enableWebUI_CB->isChecked());
         Settings->setWebinterfaceFilesDirectory(ui.webInterfaceFiles_LE->text());
+
+        rsWebUi->setHtmlFilesDirectory(ui.webInterfaceFiles_LE->text().toStdString());
     }
     return ok;
 }
@@ -195,6 +200,9 @@ void WebuiPage::onAllIPCBClicked(bool /*checked*/)
 void WebuiPage::onApplyClicked()
 {
 	rsWebUi->setUserPassword(ui.password_LE->text().toStdString());
+
+    QString errmsg;
+    updateParams(errmsg);
 
     if(!restart())
     {
