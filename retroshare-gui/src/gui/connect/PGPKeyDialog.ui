@@ -393,7 +393,7 @@ p, li { white-space: pre-wrap; }
         </widget>
         <widget class="QWidget" name="option_Tab">
          <attribute name="title">
-          <string>Options</string>
+          <string>Friend options</string>
          </attribute>
          <layout class="QVBoxLayout" name="option_Tab_VL">
           <item>
