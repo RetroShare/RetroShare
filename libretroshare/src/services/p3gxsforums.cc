@@ -653,6 +653,8 @@ bool p3GxsForums::createForumV2(
 	forum.mMeta.mSignFlags = GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_NONEREQ
 	        | GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_REQUIRED;
 
+	/* This flag have always this value even for circle restricted forums due to
+	 * how GXS distribute/verify groups */
 	forum.mMeta.mGroupFlags = GXS_SERV::FLAG_PRIVACY_PUBLIC;
 
 	forum.mMeta.mCircleId.clear();
@@ -1565,7 +1567,8 @@ std::error_condition p3GxsForums::prepareSearchResults(
 
 		// Avoid leaking sensitive information to unkown peers
 		if( publicOnly &&
-		        !(fMeta.mGroupFlags & GXS_SERV::FLAG_PRIVACY_PUBLIC) ) continue;
+		        ( static_cast<RsGxsCircleType>(fMeta.mCircleType) !=
+		          RsGxsCircleType::PUBLIC ) ) continue;
 
 		RsGxsSearchResult res;
 		res.mGroupId = forumId;
