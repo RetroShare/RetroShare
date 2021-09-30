@@ -25,7 +25,8 @@ RUN apt-get update -y && apt-get upgrade -y -qq && \
 
 RUN git clone --depth 1 https://github.com/aetilius/pHash.git && \
 	rm -rf pHash-build && mkdir pHash-build && cd pHash-build && \
-	cmake -B. -H../pHash && make -j$(nproc) && make install && cd .. && \
+	cmake -B. -H../pHash -DCMAKE_INSTALL_PREFIX=/usr && \
+	make -j$(nproc) && make install && cd .. && \
 	rm -rf pHash-build pHash
 
 ARG FRESHCLONE=0
