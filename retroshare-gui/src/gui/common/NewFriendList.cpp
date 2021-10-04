@@ -697,7 +697,7 @@ void NewFriendList::peerTreeWidgetCustomPopupMenu()
 								mModel->getGroupData(parent,info);
 
 								QAction *removeFromGroup = groupsMenu->addAction(tr("Remove from group ")+QString::fromUtf8(info.name.c_str()));
-								removeFromGroup->setData(parent.sibling(parent.row(),RsFriendListModel::COLUMN_THREAD_ID).data(Qt::DisplayRole));
+								removeFromGroup->setData(QString::fromStdString(info.id.toStdString()));
 								connect(removeFromGroup, SIGNAL(triggered()), this, SLOT(removeFromGroup()));
 							}
 
@@ -767,6 +767,7 @@ void NewFriendList::createNewGroup()
 {
     CreateGroup createGrpDialog (RsNodeGroupId(), this);
     createGrpDialog.exec();
+    checkInternalData(true);
 }
 
 #ifdef NOT_USED
