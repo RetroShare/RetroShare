@@ -1541,6 +1541,11 @@ std::string ftController::getPartialsDirectory()
 	return mPartialsPath;
 }
 
+bool  ftController::FileServerCancel(const RsFileHash& hash)
+{
+    RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+    return mDataplex->deleteServer(hash);
+}
 bool ftController::setDestinationDirectory(const RsFileHash& hash,const std::string& dest_dir)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
