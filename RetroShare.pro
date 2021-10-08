@@ -55,6 +55,12 @@ retroshare_service {
     retroshare_service.target = retroshare_service
 }
 
+retroshare_friendserver {
+    SUBDIRS += retroshare_friendserver
+    retroshare_friendserver.file = retroshare-friendserver/src/retroshare-friendserver.pro
+    retroshare_friendserver.depends = libretroshare
+    retroshare_friendserver.target = retroshare_friendserver
+}
 retroshare_plugins {
     SUBDIRS += plugins
     plugins.file = plugins/plugins.pro
