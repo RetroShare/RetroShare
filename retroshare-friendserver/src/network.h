@@ -24,39 +24,45 @@
 #include "util/rsthreads.h"
 #include "pqi/pqi_base.h"
 
-class FsNetworkInterface: public BinInterface
+class FsNetworkInterface: public BinInterface, public RsTickingThread
 {
 public:
     FsNetworkInterface() ;
 
-    void start() ;
+    // Implements RsTickingThread
+
+    void threadTick() override;
 
     // Implements BinInterface methods
 
-    virtual int tick() override;
+    int tick() override;
 
-    virtual int senddata(void *data, int len) override;
-    virtual int readdata(void *data, int len) override;
+    int senddata(void *data, int len) override;
+    int readdata(void *data, int len) override;
 
-    virtual int netstatus() override;
-    virtual int isactive() override;
-    virtual bool moretoread(uint32_t usec) override;
-    virtual bool cansend(uint32_t usec) override;
+    int netstatus() override;
+    int isactive() override;
+    bool moretoread(uint32_t usec) override;
+    bool cansend(uint32_t usec) override;
 
-    virtual int close() override;
+    int close() override;
 
     /**
      * If hashing data
      **/
-    virtual RsFileHash gethash() override { return RsFileHash() ; }
-    virtual uint64_t bytecount() override { return mTotalBytes; }
+    RsFileHash gethash() override { return RsFileHash() ; }
+    uint64_t bytecount() override { return mTotalReadBytes; }
 
-    virtual bool bandwidthLimited() override { return false; }
+    bool bandwidthLimited() override { return false; }
 private:
+    RsMutex mFsNiMtx;
 
     void initListening();
     void stopListening();
 
     int mClintListn ;
-    uint64_t mTotalBytes;
+    uint64_t mTotalReadBytes;
+    uint64_t mTotalBufferBytes;
+
+    std::list<std::pair<void *,int> > in_buffer;
 };
