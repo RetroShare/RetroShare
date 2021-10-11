@@ -26,17 +26,23 @@
 
 #include "network.h"
 
+class RsFriendServerClientRemoveItem;
+class RsFriendServerClientPublishItem;
+
 class FriendServer : public RsTickingThread
 {
-	public:
-		FriendServer(const std::string& base_directory);
+public:
+    FriendServer(const std::string& base_directory);
 
-	private:
-        virtual void threadTick() override;
-        virtual void run() override;
+private:
+    virtual void threadTick() override;
+    virtual void run() override;
 
-        FsNetworkInterface *mni;
-        pqistreamer *pqi;
+    void handleClientRemove(const RsFriendServerClientRemoveItem *item);
+    void handleClientPublish(const RsFriendServerClientPublishItem *item);
 
-		std::string mBaseDirectory;
+    FsNetworkInterface *mni;
+    pqistreamer *pqi;
+
+    std::string mBaseDirectory;
 };
