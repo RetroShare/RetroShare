@@ -30,6 +30,7 @@ class NetworkDialog;
 class NetworkView;
 class IdDialog;
 class CirclesDialog;
+class FriendServerControl;
 
 class FriendsDialog : public MainPage
 {
@@ -64,7 +65,8 @@ public:
 
 	 NetworkDialog *networkDialog ;
 	 NetworkView *networkView ;
-	 
+     FriendServerControl *friendServerControl ;
+
 	 IdDialog *idDialog;
 	 
 private slots:
