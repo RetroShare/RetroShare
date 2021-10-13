@@ -17,9 +17,8 @@ public:
 	{
 		setPriorityLevel(QOS_PRIORITY_DEFAULT) ;
 	}
-    virtual void clear()  override;
-
     virtual ~RsFriendServerItem() {}
+    virtual void clear()  override {}
 };
 
 class RsFriendServerClientPublishItem: public RsFriendServerItem

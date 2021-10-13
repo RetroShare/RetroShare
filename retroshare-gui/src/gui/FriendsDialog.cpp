@@ -89,9 +89,9 @@ FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
     ui.avatar->setFrameType(AvatarWidget::STATUS_FRAME);
 
     ui.tabWidget->setTabPosition(QTabWidget::North);
+    ui.tabWidget->addTab(friendServerControl = new FriendServerControl(),QIcon(IMAGE_PEERS), tr("Friend Server"));
     ui.tabWidget->addTab(networkView = new NetworkView(),QIcon(IMAGE_NETWORK2), tr("Network graph"));
     ui.tabWidget->addTab(networkDialog = new NetworkDialog(),QIcon(IMAGE_PEERS), tr("Keyring"));
-    ui.tabWidget->addTab(friendServerControl = new FriendServerControl(),QIcon(IMAGE_PEERS), tr("Friend Server"));
 
     ui.tabWidget->hideCloseButton(0);
     ui.tabWidget->hideCloseButton(1);

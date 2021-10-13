@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>712</width>
-    <height>502</height>
+    <width>738</width>
+    <height>540</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="ServerPageVLayout">

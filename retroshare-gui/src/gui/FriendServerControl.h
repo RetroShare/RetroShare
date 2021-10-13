@@ -26,9 +26,21 @@
 
 class FriendServerControl : public QWidget, public Ui::FriendServerControl
 {
-	Q_OBJECT
+    Q_OBJECT
 
-	public:
-        FriendServerControl(QWidget *parent = 0);
-        virtual ~FriendServerControl();
+public:
+    FriendServerControl(QWidget *parent = 0);
+    virtual ~FriendServerControl();
+
+protected slots:
+    void onOnOffClick(bool b);
+    void onOnionAddressEdit(const QString&);
+    void onNbFriendsToRequestsChanged(int n);
+    void checkServerAddress();
+
+private:
+    void updateFriendServerStatusIcon(bool ok);
+
+    QTimer *mConnectionCheckTimer;
+    QMovie *mCheckingServerMovie;
 };
