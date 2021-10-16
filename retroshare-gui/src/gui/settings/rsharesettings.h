@@ -163,6 +163,11 @@ public:
 	/** Sets whether to run Local Server */
 	void setUseLocalServer(bool value);
 
+	QString getAltBrowser();
+	void setAltBrowser(QString value);
+	bool getAltBrowserUseAlways();
+	void setAltBrowserUseAlways(bool value);
+	
 	/* Get the destination log file. */
 	QString getLogFile();
 	/** Set the destination log file. */

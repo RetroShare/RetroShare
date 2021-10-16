@@ -646,6 +646,26 @@ void RshareSettings::setToasterMargin(QPoint margin)
 	setValue("ToasterMargin", margin);
 }
 
+QString RshareSettings::getAltBrowser()
+{
+	return value("AltBrowser").toString();
+}
+
+void RshareSettings::setAltBrowser(QString value)
+{
+	setValue("AltBrowser", value);
+}
+
+bool RshareSettings::getAltBrowserUseAlways()
+{
+	return value("AltBrowserUseAlways", false).toBool();
+}
+
+void RshareSettings::setAltBrowserUseAlways(bool value)
+{
+	setValue("AltBrowserUseAlways", value);
+}	
+
 QString RshareSettings::getChatScreenFont()
 {
 	return valueFromGroup("Chat", "ChatScreenFont").toString();

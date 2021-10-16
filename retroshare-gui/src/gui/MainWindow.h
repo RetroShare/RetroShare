@@ -192,6 +192,8 @@ public:
     }
 
     static bool hiddenmode;
+    static QString altbrowser;
+    static bool altbrowserUseAlways;
 	
 public slots:
     void receiveNewArgs(QStringList args);
