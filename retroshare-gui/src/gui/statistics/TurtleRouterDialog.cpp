@@ -227,17 +227,27 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 	for(int i=2;i<_f2f_TW->topLevelItemCount();)
 	{
 		bool found = false ;
+		bool skip = false;
 
 		if(_f2f_TW->topLevelItem(i)->text(0).left(14) == tr("Unknown hashes") && unknown_hash_found)
+		{
 			found = true ;
-
+			skip = true;
+		}
+		
 		if(_f2f_TW->topLevelItem(i)->childCount() > 0)	// this saves uploading hashes
 			found = true ;
 
-		for(uint j=0;j<hashes_info.size() && !found;++j)
-			if(_f2f_TW->topLevelItem(i)->text(0).toStdString() == hashes_info[j][0]) 
+		for(uint j=0;j<hashes_info.size() && !skip;++j)
+		{
+			if(_f2f_TW->topLevelItem(i)->text(0).left(40).toStdString() == hashes_info[j][0])
+			{
+				_f2f_TW->topLevelItem(i)->setText(0,QString("%1 \t file: %2").arg(QString::fromStdString(hashes_info[j][0]),0,45).arg(QString::fromStdString(hashes_info[j][3])));
 				found=true ;
-
+				break;
+			}
+		}
+		
 		if(!found)
 			delete _f2f_TW->takeTopLevelItem(i) ;
 		else

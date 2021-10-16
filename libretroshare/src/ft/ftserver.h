@@ -369,7 +369,8 @@ public:
     bool	ResumeTransfers();
 
     /*************************** p3 Config Overload ********************/
-
+	bool findRealHash(const RsFileHash& hash, RsFileHash& real_hash);
+	
 protected:
     int handleIncoming() ;
     bool handleCacheData() ;
@@ -386,7 +387,7 @@ protected:
     bool sendTurtleItem(const RsPeerId& peerId,const RsFileHash& hash,RsTurtleGenericTunnelItem *item);
 
     // fnds out what is the real hash of encrypted hash hash
-    bool findRealHash(const RsFileHash& hash, RsFileHash& real_hash);
+    //bool findRealHash(const RsFileHash& hash, RsFileHash& real_hash);
     bool findEncryptedHash(const RsPeerId& virtual_peer_id, RsFileHash& encrypted_hash);
 
 	bool checkUploadLimit(const RsPeerId& pid,const RsFileHash& hash);

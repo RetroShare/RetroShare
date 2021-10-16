@@ -212,6 +212,7 @@ public:
 	  		std::map<RsGxsNetTunnelVirtualPeerId, RsGxsNetTunnelVirtualPeerInfo>& virtual_peers,     // current virtual peers, which group they provide, and how to talk to them through turtle
             std::map<TurtleVirtualPeerId,RsGxsNetTunnelVirtualPeerId>& turtle_vpid_to_net_tunnel_vpid,
 		    Bias20Bytes& bias) const;
+	  bool isGXSHash(RsFileHash hash) const;
 
 protected:
 	  // interaction with turtle router

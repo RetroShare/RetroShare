@@ -292,6 +292,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 									std::vector<std::vector<std::string> >&,
 									std::vector<TurtleSearchRequestDisplayInfo >&,
 									std::vector<TurtleTunnelRequestDisplayInfo >&) const ;
+		std::string GetFilenameForHash(TurtleFileHash hash, RsTurtleClientService *service) const;
 		
 		virtual void getTrafficStatistics(TurtleTrafficStatisticsInfo& info) const ;
 
