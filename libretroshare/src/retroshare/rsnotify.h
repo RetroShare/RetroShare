@@ -227,6 +227,7 @@ public:
 	virtual void notifyChatLobbyEvent             (uint64_t           /* lobby id */, uint32_t           /* event type    */ ,const RsGxsId& /* nickname */,const std::string& /* any string */) {}
 	virtual void notifyChatLobbyTimeShift         (int                /* time_shift*/) {}
 	virtual void notifyCustomState                (const std::string& /* peer_id   */, const std::string&               /* status_string */) {}
+  virtual void notifyReputationChange           (RsGxsId id) {}
 	virtual void notifyHashingInfo                (uint32_t           /* type      */, const std::string&               /* fileinfo      */) {}
 	virtual void notifyTurtleSearchResult         (const RsPeerId&    /* pid       */, uint32_t                         /* search_id     */, const std::list<TurtleFileInfo>& /* files         */) {}
 	virtual void notifyPeerHasNewAvatar           (std::string        /* peer_id   */) {}

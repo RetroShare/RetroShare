@@ -351,8 +351,9 @@ void ChatLobbyDialog::voteParticipant()
 		rsReputations->setOwnOpinion(*item, op);
 		std::cerr << "Giving opinion to GXS id " << *item << " to "
 		          << static_cast<uint32_t>(op) << std::endl;
+   if (op == RsOpinion::NEGATIVE)
+	  ui.chatWidget->eraseBannedMessages(*item);
 	}
-
 	updateParticipantsList();
 }
 
