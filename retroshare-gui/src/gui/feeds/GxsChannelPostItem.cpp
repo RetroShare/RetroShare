@@ -595,17 +595,22 @@ void GxsChannelPostItem::fill()
 		SubFileItem *fi = new SubFileItem(it->mHash, it->mName, path, it->mSize, SFI_STATE_REMOTE | SFI_TYPE_CHANNEL, RsPeerId());
 		mFileItems.push_back(fi);
 		
+		/* check if the file is a picture file */
+		if (!misc::isPicture(QFileInfo(QString::fromUtf8(it->mName.c_str())).suffix()))
+			fi->picturetype();
+		
 		/* check if the file is a media file */
 		if (!misc::isPreviewable(QFileInfo(QString::fromUtf8(it->mName.c_str())).suffix()))
 		{ 
-        fi->mediatype();
-				/* check if the file is not a media file and change text */
-        ui->playButton->setText(tr("Open"));
-        ui->playButton->setToolTip(tr("Open File"));
-    } else {
-        ui->playButton->setText(tr("Play"));
-        ui->playButton->setToolTip(tr("Play Media"));
-    }
+			fi->nomediatype();
+			/* check if the file is not a media file and change text */
+			ui->playButton->setText(tr("Open"));
+			ui->playButton->setToolTip(tr("Open File"));
+		} else {
+			fi->mediatype();
+			ui->playButton->setText(tr("Play"));
+			ui->playButton->setToolTip(tr("Play Media"));
+		}
 
 		QLayout *layout = ui->expandFrame->layout();
 		layout->addWidget(fi);

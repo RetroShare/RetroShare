@@ -22,6 +22,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QUrl>
+#include <QMovie>
 
 #include "SubFileItem.h"
 
@@ -710,16 +711,31 @@ bool SubFileItem::isPlayable(bool &startable)
 	/* Check buttons. Not good, but it works. */
 	bool visible = playButton->isVisibleTo(this);
 	startable = visible && playButton->isEnabled();
-
+	loadpicture();
+	
 	return visible;
 }
 
 void SubFileItem::mediatype()
 {
+	/* check if the file is a media file and change text */
+	playButton->setText(tr("Play"));
+	playButton->setToolTip(tr("Play Media"));
+	playButton->setIcon(QIcon(":/icons/png/play.png"));
+}
+
+void SubFileItem::nomediatype()
+{
 	/* check if the file is not a media file and change text */
 	playButton->setText(tr("Open"));
 	playButton->setToolTip(tr("Open File"));
 	playButton->setIcon(QIcon());
+}
+
+void SubFileItem::picturetype()
+{
+	/* check if the file is not a picture & hide it */
+	imageFrame->hide();
 }
 
 void SubFileItem::copyLink()
@@ -733,5 +749,40 @@ void SubFileItem::copyLink()
 		QList<RetroShareLink> urls;
 		urls.push_back(link);
 		RSLinkClipboard::copyLinks(urls);
+	}
+}
+
+void SubFileItem::loadpicture()
+{
+	FileInfo info;
+	FileSearchFlags flags = RS_FILE_HINTS_DOWNLOAD | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_NETWORK_WIDE;
+
+
+	if (!rsFiles->FileDetails( mFileHash, flags, info))
+		return;
+
+	if (done()) {
+
+		/* display the picture into the label */
+		QFileInfo qinfo;
+		qinfo.setFile(info.path.c_str());
+		QString extension = qinfo.suffix().toUpper(); 
+		QImageReader reader(qinfo.absoluteFilePath());
+		int count = reader.imageCount();
+		
+		if (qinfo.exists()) {
+			
+			if((extension == "GIF" || extension == "WEBP" ) && count > 1){
+				movie = new QMovie(qinfo.absoluteFilePath());
+				//imageLabel->setAttribute(Qt::WA_NoSystemBackground);
+				imageLabel->setMovie(movie);
+				movie->start();
+			}else{
+				QPixmap pixmap = QPixmap(qinfo.absoluteFilePath());
+				QPixmap scaledpixmap = pixmap.scaled(640,480, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+				imageLabel->setPixmap(scaledpixmap);
+			}
+		}
 	}
 }

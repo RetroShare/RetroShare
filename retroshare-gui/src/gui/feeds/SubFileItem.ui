@@ -29,13 +29,34 @@
    <item row="0" column="0">
     <widget class="QFrame" name="frame">
      <property name="frameShape">
-      <enum>QFrame::Box</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
+     <layout class="QGridLayout" name="gridLayout">
       <item row="1" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="fileLabel">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <italic>true</italic>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string notr="true">File Name</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="2" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <widget class="QProgressBar" name="progressBar">
@@ -215,25 +236,46 @@
        </layout>
       </item>
       <item row="0" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QLabel" name="fileLabel">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <italic>true</italic>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string notr="true">File Name</string>
-          </property>
-          <property name="wordWrap">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       <widget class="QFrame" name="imageFrame">
+        <layout class="QHBoxLayout" name="imageLayout">
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>230</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="imageLabel">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="scaledContents">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>230</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
       </item>
      </layout>
     </widget>
