@@ -9,11 +9,9 @@ void FriendServer::threadTick()
 
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
-    pqi->tick();
-
     RsItem *item;
 
-    while(nullptr != (item = pqi->GetItem()))
+    while(nullptr != (item = mni->GetItem()))
     {
         RsFriendServerItem *fsitem = dynamic_cast<RsFriendServerItem*>(item);
 
@@ -23,6 +21,7 @@ void FriendServer::threadTick()
 
             continue;
         }
+        std::cerr << "Received item: " << std::endl << *fsitem << std::endl;
 
         switch(fsitem->PacketSubType())
         {
@@ -56,11 +55,6 @@ void FriendServer::run()
 
     mni = new FsNetworkInterface;
     mni->start();
-
-    RsSerialiser *rss = new RsSerialiser ;
-    rss->addSerialType(new FsSerializer) ;
-
-    pqi = new pqistreamer(rss, RsPeerId(), mni,BIN_FLAGS_READABLE);
 
     while(!shouldStop()) { threadTick() ; }
 }

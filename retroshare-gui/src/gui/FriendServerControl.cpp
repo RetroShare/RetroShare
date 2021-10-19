@@ -48,6 +48,7 @@ FriendServerControl::FriendServerControl(QWidget *parent)
     QObject::connect(torServerAddress_LE,SIGNAL(textChanged(const QString&)),this,SLOT(onOnionAddressEdit(const QString&)));
 
     mCheckingServerMovie = new QMovie(":/images/loader/circleball-16.gif");
+    serverStatusCheckResult_LB->setMovie(mCheckingServerMovie);
 
     updateFriendServerStatusIcon(false);
 }
@@ -70,21 +71,26 @@ void FriendServerControl::onOnionAddressEdit(const QString&)
 {
     // Setup timer to auto-check the friend server address
 
-    mConnectionCheckTimer->stop();
     mConnectionCheckTimer->setSingleShot(true);
     mConnectionCheckTimer->setInterval(5000); // check in 5 secs unless something is changed in the mean time.
 
     mConnectionCheckTimer->start();
 
-    serverStatusCheckResult_LB->setMovie(mCheckingServerMovie);
-    mCheckingServerMovie->start();
+    if(mCheckingServerMovie->fileName() != QString(":/images/loader/circleball-16.gif" ))
+    {
+        mCheckingServerMovie->setFileName(":/images/loader/circleball-16.gif");
+        mCheckingServerMovie->start();
+    }
 }
 
 void FriendServerControl::checkServerAddress()
 {
     rsFriendServer->checkServerAddress_async(torServerAddress_LE->text().toStdString(),torServerPort_SB->value(),
-                                       [this](bool test_result)
+                                       [this](const std::string& address,bool test_result)
                                         {
+                                            if(test_result)
+                                                rsFriendServer->setServerAddress(address,1729);
+
                                             RsQThreadUtils::postToObject( [=]() { updateFriendServerStatusIcon(test_result); },this);
                                         }
     );
@@ -97,17 +103,19 @@ void FriendServerControl::onNbFriendsToRequestsChanged(int n)
 
 void FriendServerControl::updateFriendServerStatusIcon(bool ok)
 {
+    mCheckingServerMovie->stop();
+
     if(ok)
     {
-        torServerStatus_LB->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_OK)) ;
         torServerStatus_LB->setToolTip(tr("Friend server is currently reachable.")) ;
+        mCheckingServerMovie->setFileName(ICON_STATUS_OK);
     }
     else
     {
-        torServerStatus_LB->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_UNKNOWN)) ;
         torServerStatus_LB->setToolTip(tr("The proxy is not enabled or broken.\nAre all services up and running fine??\nAlso check your ports!")) ;
+        mCheckingServerMovie->setFileName(ICON_STATUS_UNKNOWN);
     }
-    mCheckingServerMovie->stop();
+    mCheckingServerMovie->start();
 }
 
 

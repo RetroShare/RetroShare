@@ -8,10 +8,10 @@ public:
     void start() {}
     void stop() {}
 
-    void checkServerAddress_async(const std::string&,uint16_t,  const std::function<void (bool result_status)>& callback)
+    void checkServerAddress_async(const std::string& addr,uint16_t,  const std::function<void (const std::string& address,bool result_status)>& callback)
     {
         std::this_thread::sleep_for(std::chrono::seconds(1));
-        callback(true);
+        callback(addr,true);
     }
     void setServerAddress(const std::string&,uint16_t) {}
     void setFriendsToRequest(uint32_t) {}

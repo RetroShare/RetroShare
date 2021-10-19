@@ -42,7 +42,6 @@ private:
     void handleClientPublish(const RsFriendServerClientPublishItem *item);
 
     FsNetworkInterface *mni;
-    pqistreamer *pqi;
 
     std::string mBaseDirectory;
 };

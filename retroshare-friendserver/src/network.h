@@ -24,16 +24,21 @@
 #include "util/rsthreads.h"
 #include "pqi/pqi_base.h"
 
-class FsNetworkInterface: public BinInterface, public RsTickingThread
+class pqistreamer;
+
+struct ConnectionData
+{
+    sockaddr client_address;
+    int socket;
+    pqistreamer *pqi;
+};
+
+class FsBioInterface: public BinInterface
 {
 public:
-    FsNetworkInterface() ;
+    FsBioInterface(int socket);
 
-    // Implements RsTickingThread
-
-    void threadTick() override;
-
-    // Implements BinInterface methods
+     // Implements BinInterface methods
 
     int tick() override;
 
@@ -54,15 +59,58 @@ public:
     uint64_t bytecount() override { return mTotalReadBytes; }
 
     bool bandwidthLimited() override { return false; }
+
+private:
+    int mCLintConnt;
+    uint32_t mTotalReadBytes;
+    uint32_t mTotalBufferBytes;
+
+    std::list<std::pair<void *,int> > in_buffer;
+};
+
+// This class handles multiple connections to the server and supplies RsItem elements
+
+class FsNetworkInterface: public RsTickingThread
+{
+public:
+    FsNetworkInterface() ;
+
+    // basic functionality
+
+    RsItem *GetItem();
+
+    // Implements RsTickingThread
+
+    void threadTick() override;
+
+protected:
+    bool checkForNewConnections();
+
 private:
     RsMutex mFsNiMtx;
 
     void initListening();
     void stopListening();
 
-    int mClintListn ;
-    uint64_t mTotalReadBytes;
-    uint64_t mTotalBufferBytes;
-
-    std::list<std::pair<void *,int> > in_buffer;
+    int mClintListn ;	// listening socket
+    std::map<RsPeerId,ConnectionData> mConnections;
 };
+
+// This class runs a client connection to the friend server. It opens a socket at each connection.
+
+class FsClient
+{
+public:
+    FsClient(const std::string& address);
+
+    bool sendItem(RsItem *item);
+
+private:
+    std::string mServerAddress;
+};
+
+
+
+
+
+
