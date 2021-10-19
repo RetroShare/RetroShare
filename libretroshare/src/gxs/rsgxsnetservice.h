@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2012-2012 by Christopher Evi-Parker                               *
+ * Copyright (C) 2012  Christopher Evi-Parker                                  *
+ * Copyright (C) 2018-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -19,8 +21,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef RSGXSNETSERVICE_H
-#define RSGXSNETSERVICE_H
+#pragma once
 
 #include <list>
 #include <queue>
@@ -130,18 +131,53 @@ public:
 
     virtual bool msgAutoSync() const override { return mAllowMsgSync; }
     virtual bool grpAutoSync() const override { return mGrpAutoSync; }
-    /*!
-     * \brief Search methods.
-     * 			These four methods are used to request distant search and receive the results.
-     * \param group_id
-     */
-    virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id)override ;
-    virtual TurtleRequestId turtleSearchRequest(const std::string& match_string)override ;
 
-    virtual bool search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos) override ;
+	/// @see RsNetworkExchangeService
+	std::error_condition distantSearchRequest(
+	        rs_owner_ptr<uint8_t> searchData, uint32_t dataSize,
+	        RsServiceType serviceType, TurtleRequestId& requestId ) override;
+
+	/// @see RsNetworkExchangeService
+	std::error_condition handleDistantSearchRequest(
+	        rs_view_ptr<uint8_t> requestData, uint32_t requestSize,
+	        rs_owner_ptr<uint8_t>& resultData, uint32_t& resultSize ) override;
+
+	/// @see RsNetworkExchangeService
+	std::error_condition receiveDistantSearchResult(
+	        const TurtleRequestId requestId,
+	        rs_owner_ptr<uint8_t>& resultData, uint32_t& resultSize ) override;
+
+	/** Request group data via turtle search
+	 * @param group_id */
+	TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id) override;
+
+	/**
+	 * @brief Search for matching groups names over turtle search.
+	 * @deprecated this method is kept mostly for retrocompatibility with older
+	 * peers, newly implemented search functions should instead be based on the
+	 * service generic search.
+	 * @see RsNetworkExchangeService
+	 */
+	RS_DEPRECATED_FOR(distantSearchRequest)
+	TurtleRequestId turtleSearchRequest(const std::string& match_string) override;
+
+	/** @see RsNetworkExchangeService
+	 * @deprecated kept for retrocompatibility with older peers, new code should
+	 * instead be based on the service generic search */
+	RS_DEPRECATED_FOR(receiveDistantSearchResult)
+	void receiveTurtleSearchResults(
+	        TurtleRequestId req,
+	        const uint8_t* encrypted_group_data,
+	        uint32_t encrypted_group_data_len ) override;
+
+	/**
+	 * @deprecated kept for retrocompatibility with older peers, new code should
+	 * instead be based on the service generic search */
+	RS_DEPRECATED_FOR(handleRemoteSearchRequest)
+	virtual bool search( const std::string& substring,
+	                     std::list<RsGxsGroupSummary>& group_infos) override;
     virtual bool search(const Sha1CheckSum& hashed_group_id,unsigned char *& encrypted_group_data,uint32_t& encrypted_group_data_len)override ;
     virtual void receiveTurtleSearchResults(TurtleRequestId req,const std::list<RsGxsGroupSummary>& group_infos)override ;
-    virtual void receiveTurtleSearchResults(TurtleRequestId req,const unsigned char *encrypted_group_data,uint32_t encrypted_group_data_len)override ;
 
     virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSearchResults> &group_infos)override ;
     virtual bool clearDistantSearchResults(const TurtleRequestId& id)override ;
@@ -213,6 +249,14 @@ public:
     int tick()override ;
 
 	void threadTick() override; /// @see RsTickingThread
+
+
+	/// @see RsNetworkExchangeService
+	void pullFromPeers(std::set<RsPeerId> peers = std::set<RsPeerId>()) override;
+
+	/// @see RsNetworkExchangeService
+	std::error_condition requestPull(
+	        std::set<RsPeerId> peers = std::set<RsPeerId>() ) override;
 
 private:
 
@@ -387,6 +431,8 @@ private:
      */
     void handleRecvPublishKeys(RsNxsGroupPublishKeyItem*) ;
 
+	void handlePullRequest(std::unique_ptr<RsNxsPullRequestItem> item);
+
     /** E: item handlers **/
 
 
@@ -423,7 +469,7 @@ private:
     void locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, const RsPeerId& sslId, const RsGxsGroupId &grp_id, const uint32_t& transN);
     
 	void checkDistantSyncState();
-    void syncWithPeers();
+
     void syncGrpStatistics();
     void addGroupItemToList(NxsTransaction*& tr,
     		const RsGxsGroupId& grpId, uint32_t& transN,
@@ -523,7 +569,7 @@ private:
     void cleanRejectedMessages();
     void processObserverNotifications();
 
-	void generic_sendItem(RsNxsItem *si);
+	void generic_sendItem(rs_owner_ptr<RsItem> si);
 	RsItem *generic_recvItem();
 
 private:
@@ -629,5 +675,3 @@ private:
 
     bool mUseMetaCache;
 };
-
-#endif // RSGXSNETSERVICE_H

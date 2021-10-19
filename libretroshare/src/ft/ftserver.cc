@@ -5,7 +5,7 @@
  *                                                                             *
  * Copyright (C) 2008  Robert Fernie <retroshare@lunamutt.com>                 *
  * Copyright (C) 2018-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
- * Copyright (C) 2020-2021  Asociación Civil Altermundi <info@altermundi.net>  *
+ * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -651,6 +651,8 @@ RsItem *ftServer::create_item(uint16_t service, uint8_t item_type) const
 
 	try
 	{
+		using namespace RetroShare;
+
 		switch(item_type)
 		{
 		case RS_TURTLE_SUBTYPE_FILE_REQUEST 			:	return new RsTurtleFileRequestItem();
@@ -663,6 +665,10 @@ RsItem *ftServer::create_item(uint16_t service, uint8_t item_type) const
 			return new RsFileSearchRequestItem();
 		case static_cast<uint8_t>(RsFileItemType::FILE_SEARCH_RESULT):
 			return new RsFileSearchResultItem();
+		case static_cast<uint8_t>(RsFileItemType::PERCEPTUAL_SEARCH_REQUEST):
+			return new RsPerceptualSearchRequestItem();
+		case static_cast<uint8_t>(RsFileItemType::PERCEPTUAL_SEARCH_RESULTS):
+			return new RsPerceptualSearchResultsItem();
 		default:
 			return nullptr;
 		}
@@ -2007,57 +2013,119 @@ void ftServer::ftReceiveSearchResult(RsTurtleFTSearchResultItem *item)
 }
 
 bool ftServer::receiveSearchRequest(
-        unsigned char* searchRequestData, uint32_t searchRequestDataLen,
+        rs_view_ptr<uint8_t> searchRequestData,
+        uint32_t searchRequestDataLen,
         unsigned char*& searchResultData, uint32_t& searchResultDataLen,
         uint32_t& maxAllowsHits )
 {
-#ifdef RS_DEEP_FILES_INDEX
+	auto failure = [&]()
+	{
+		searchResultData = nullptr;
+		searchResultDataLen = 0;
+		return false;
+	};
+
 	std::unique_ptr<RsItem> recvItem(
 	            RsServiceSerializer::deserialise(
 	                searchRequestData, &searchRequestDataLen ) );
-
 	if(!recvItem)
 	{
-		RsWarn() << __PRETTY_FUNCTION__ << " Search request deserialization "
-		         << "failed" << std::endl;
-		return false;
+		RS_WARN("Search request deserialization failed");
+		return failure();
 	}
 
-	std::unique_ptr<RsFileSearchRequestItem> sReqItPtr(
-	            dynamic_cast<RsFileSearchRequestItem*>(recvItem.get()) );
-	if(!sReqItPtr)
+	uint32_t subtu = recvItem->PacketSubType();
+	switch(static_cast<RsFileItemType>(subtu))
 	{
-		RsWarn() << __PRETTY_FUNCTION__ << " Received an invalid search request"
-		         << " " << *recvItem << std::endl;
-		return false;
+	case RsFileItemType::FILE_SEARCH_REQUEST:
+	{
+#ifdef RS_DEEP_FILES_INDEX
+		auto sReqIt = dynamic_cast<RsFileSearchRequestItem*>(recvItem.get());
+		if(!sReqIt)
+		{
+			RS_WARN("Received an invalid search request: ", *recvItem);
+			return failure();
+		}
+		RsFileSearchRequestItem& searchReq(*sReqIt);
+
+		std::vector<DeepFilesSearchResult> dRes;
+		DeepFilesIndex dfi(DeepFilesIndex::dbDefaultPath());
+		if(!dfi.search(searchReq.queryString, dRes, maxAllowsHits) > 0)
+		{
+			RsFileSearchResultItem resIt;
+
+			for(const auto& dMatch : dRes)
+				resIt.mResults.push_back(TurtleFileInfoV2(dMatch));
+
+			searchResultDataLen = RsServiceSerializer::size(&resIt);
+			searchResultData = rs_malloc<uint8_t>(searchResultDataLen);
+			return RsServiceSerializer::serialise(
+			            &resIt, searchResultData, &searchResultDataLen );
+		}
+#endif // def RS_DEEP_FILES_INDEX
+		break;
 	}
-	recvItem.release();
-
-	RsFileSearchRequestItem& searchReq(*sReqItPtr);
-
-	std::vector<DeepFilesSearchResult> dRes;
-	DeepFilesIndex dfi(DeepFilesIndex::dbDefaultPath());
-	if(dfi.search(searchReq.queryString, dRes, maxAllowsHits) > 0)
+	case RsFileItemType::PERCEPTUAL_SEARCH_REQUEST:
 	{
-		RsFileSearchResultItem resIt;
+#ifdef RS_PERCEPTUAL_FILE_SEARCH
+		using namespace RetroShare;
+		auto reqIt = dynamic_cast<RsPerceptualSearchRequestItem*>(recvItem.get());
+		if(!reqIt)
+		{
+			RS_WARN("Received an invalid perceptual search request: ", *recvItem);
+			return failure();
+		}
 
-		for(const auto& dMatch : dRes)
-			resIt.mResults.push_back(TurtleFileInfoV2(dMatch));
+		std::vector<PerceptualSearchResult> resv;
+		auto ec = PerceptualFileIndex::instance().search(
+		            reqIt->mCenter, reqIt->mRadius, resv, maxAllowsHits );
+		if(ec)
+		{
+			RS_ERR( "Failure running perceptual search for: ", reqIt->mCenter,
+			        " radius: ", reqIt->mRadius, ec );
+			return failure();
+		}
+
+		RsPerceptualSearchResultsItem resIt;
+		for(const auto& mRes: resv)
+		{
+			FileInfo fInfo;
+			if(!FileDetails(mRes.hash, RS_FILE_HINTS_LOCAL, fInfo))
+			{
+				RS_ERR("Failure retrieving file info for: ", mRes.hash);
+				continue;
+			}
+
+			RsPerceptualSearchFileInfo pfInfo;
+			pfInfo.fSize = fInfo.size;
+			pfInfo.fHash = mRes.hash;
+			pfInfo.fName = fInfo.fname;
+			pfInfo.distance = mRes.distance;
+
+			resIt.mResults.push_back(pfInfo);
+		}
+
+		if(resIt.mResults.empty()) break;
 
 		searchResultDataLen = RsServiceSerializer::size(&resIt);
-		searchResultData = static_cast<uint8_t*>(malloc(searchResultDataLen));
+		searchResultData = rs_malloc<uint8_t>(searchResultDataLen);
 		return RsServiceSerializer::serialise(
 		            &resIt, searchResultData, &searchResultDataLen );
+#else
+		break;
+#endif // def RS_PERCEPTUAL_FILE_SEARCH
 	}
-#endif // def RS_DEEP_FILES_INDEX
+	default:
+		RS_DBG("Discarding unhandled search request, type: ", subtu);
+		break;
+	}
 
-	searchResultData = nullptr;
-	searchResultDataLen = 0;
-	return false;
+	return failure();
 }
 
 void ftServer::receiveSearchResult(
-        TurtleSearchRequestId requestId, unsigned char* searchResultData,
+        TurtleSearchRequestId requestId,
+        rs_view_ptr<uint8_t> searchResultData,
         uint32_t searchResultDataLen )
 {
 	if(!searchResultData || !searchResultDataLen)
@@ -2070,32 +2138,61 @@ void ftServer::receiveSearchResult(
 		return;
 	}
 
-	RS_STACK_MUTEX(mSearchCallbacksMapMutex);
-	auto cbpt = mSearchCallbacksMap.find(requestId);
-	if(cbpt != mSearchCallbacksMap.end())
+	std::unique_ptr<RsItem> recvItem(
+	            RsServiceSerializer::deserialise(
+	                searchResultData, &searchResultDataLen ) );
+	if(!recvItem)
 	{
-		RsItem* recvItem = RsServiceSerializer::deserialise(
-		            searchResultData, &searchResultDataLen );
+		RS_WARN("Search result deserialization failed");
+		return;
+	}
 
-		if(!recvItem)
-		{
-			RsWarn() << __PRETTY_FUNCTION__ << " Search result deserialization "
-			         << "failed" << std::endl;
-			return;
-		}
-
-		std::unique_ptr<RsFileSearchResultItem> resItPtr(
-		            dynamic_cast<RsFileSearchResultItem*>(recvItem) );
-
+	uint32_t subtu = recvItem->PacketSubType();
+	switch(static_cast<RsFileItemType>(subtu))
+	{
+	case RsFileItemType::FILE_SEARCH_RESULT:
+	{
+		auto resItPtr = dynamic_cast<RsFileSearchResultItem*>(recvItem.get());
 		if(!resItPtr)
 		{
-			RsWarn() << __PRETTY_FUNCTION__ << " Received invalid search result"
-			         << std::endl;
-			delete recvItem;
+			RS_ERR("Serializer returned mismatching type item for: ", subtu);
 			return;
 		}
 
+		RS_STACK_MUTEX(mSearchCallbacksMapMutex);
+		auto cbpt = mSearchCallbacksMap.find(requestId);
+		if(cbpt == mSearchCallbacksMap.end())
+		{
+			RS_DBG("Got search result for unkown search request: ", requestId);
+			return;
+		}
 		cbpt->second.first(resItPtr->mResults);
+
+		break;
+	}
+	case RsFileItemType::PERCEPTUAL_SEARCH_RESULTS:
+	{
+#ifdef RS_PERCEPTUAL_FILE_SEARCH
+		using namespace RetroShare;
+
+		auto resItPtr = dynamic_cast<RsPerceptualSearchResultsItem*>(
+		            recvItem.get());
+		if(!resItPtr)
+		{
+			RS_ERR("Serializer returned mismatching type item for: ", subtu);
+			return;
+		}
+
+		auto event = std::make_shared<RsPerceptualSearchResultEvent>();
+		event->mSearchId = requestId;
+		event->mResults = resItPtr->mResults;
+		rsEvents->postEvent(event);
+#endif // def RS_PERCEPTUAL_FILE_SEARCH
+		break;
+	}
+	default:
+		RS_DBG("Discarding unhandled search result, type: ", subtu);
+		break;
 	}
 }
 
@@ -2194,6 +2291,37 @@ void ftServer::cleanTimedOutSearches()
 		else ++cbpt;
 }
 
+
+std::error_condition ftServer::perceptualSearchRequest(
+        const std::string& localFilePath, uint32_t distance,
+        TurtleRequestId& searchId )
+{
+#ifdef RS_PERCEPTUAL_FILE_SEARCH
+	using namespace RetroShare;
+
+	PHash pHash;
+	auto errc = PerceptualFileIndex::instance().
+	        perceptualHash(localFilePath, pHash);
+	if(errc) return errc;
+
+	RsPerceptualSearchRequestItem sItem;
+	sItem.mCenter = pHash;
+	sItem.mRadius = distance;
+
+	uint32_t iSize = RsServiceSerializer::size(&sItem);
+	uint8_t* iBuf = rs_malloc<uint8_t>(iSize);
+	RsServiceSerializer::serialise(&sItem, iBuf, &iSize);
+
+	searchId = mTurtleRouter->turtleSearch(iBuf, iSize, this);
+
+	return std::error_condition();
+
+#else
+	(void) localFilePath; (void) distance; (void) searchId;
+	return std::errc::function_not_supported;
+#endif
+}
+
 // Offensive content file filtering
 
 int ftServer::banFile(const RsFileHash& real_file_hash, const std::string& filename, uint64_t file_size)
@@ -2225,6 +2353,28 @@ void RsFileSearchRequestItem::clear() { queryString.clear(); }
 
 void RsFileSearchResultItem::clear() { mResults.clear(); }
 
+
+#ifdef RS_PERCEPTUAL_FILE_SEARCH
+namespace RetroShare
+{
+void RsPerceptualSearchRequestItem::clear()
+{
+	mCenter = 0;
+	mRadius = 0;
+
+	RS_DBG("Is RsItem::clear() ever called?");
+	print_stacktrace();
+}
+
+void RsPerceptualSearchResultsItem::clear()
+{
+	mResults.clear();
+
+	RS_DBG("Is RsItem::clear() ever called?");
+	print_stacktrace();
+}
+}
+#endif // def RS_PERCEPTUAL_FILE_SEARCH
 
 std::error_condition RsFilesErrorCategory::default_error_condition(int ev)
 const noexcept
@@ -2365,3 +2515,11 @@ std::error_condition ftServer::parseFilesLink(
 	if(tft) collection = *tft;
 	return ec;
 }
+
+namespace RetroShare
+{
+RsPerceptualSearchFileInfo::~RsPerceptualSearchFileInfo() = default;
+RsPerceptualSearchResultEvent::~RsPerceptualSearchResultEvent() = default;
+}
+
+

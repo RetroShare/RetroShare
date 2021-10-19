@@ -145,6 +145,11 @@ rs_jsonapi:CONFIG -= no_rs_jsonapi
 CONFIG *= rs_bob
 no_rs_bob:CONFIG -= rs_bob
 
+# To enable forums indexing append the following assignation to qmake command
+# line "CONFIG+=rs_deep_forums_index"
+CONFIG *= no_rs_deep_forums_index
+rs_deep_forums_index:CONFIG -= no_rs_deep_forums_index
+
 # To enable channel indexing append the following assignation to qmake command
 # line "CONFIG+=rs_deep_channels_index"
 CONFIG *= no_rs_deep_channels_index
@@ -203,6 +208,11 @@ no_rs_service_terminal_login:CONFIG -= rs_service_terminal_login
 # most phone users
 CONFIG+=rs_dh_init_check
 no_rs_dh_init_check:CONFIG -= rs_dh_init_check
+
+# To perceptual hashing and search append the following assignation
+# to qmake command line "CONFIG+=no_rs_perceptual_hash"
+CONFIG+=rs_perceptual_hash
+no_rs_perceptual_hash:CONFIG -= rs_perceptual_hash
 
 # To export all symbols for the plugins on Windows build we need to build libretroshare as
 # shared library. Fix linking error (ld.exe: Error: export ordinal too large) due to too
@@ -563,12 +573,15 @@ rs_bob {
     DEFINES *= RS_USE_I2P_BOB
 }
 
+rs_deep_forums_index:DEFINES *= RS_DEEP_FORUMS_INDEX
 rs_deep_channels_index:DEFINES *= RS_DEEP_CHANNEL_INDEX
 
 rs_deep_files_index:DEFINES *= RS_DEEP_FILES_INDEX
 rs_deep_files_index_ogg:DEFINES *= RS_DEEP_FILES_INDEX_OGG
 rs_deep_files_index_flac:DEFINES *= RS_DEEP_FILES_INDEX_FLAC
 rs_deep_files_index_taglib:DEFINES *= RS_DEEP_FILES_INDEX_TAGLIB
+
+rs_perceptual_hash:DEFINES *= RS_PERCEPTUAL_FILE_SEARCH
 
 rs_use_native_dialogs:DEFINES *= RS_NATIVEDIALOGS
 
