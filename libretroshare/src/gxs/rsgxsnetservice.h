@@ -250,6 +250,14 @@ public:
 
 	void threadTick() override; /// @see RsTickingThread
 
+
+	/// @see RsNetworkExchangeService
+	void pullFromPeers(std::set<RsPeerId> peers = std::set<RsPeerId>()) override;
+
+	/// @see RsNetworkExchangeService
+	std::error_condition requestPull(
+	        std::set<RsPeerId> peers = std::set<RsPeerId>() ) override;
+
 private:
 
     /*!
@@ -423,6 +431,8 @@ private:
      */
     void handleRecvPublishKeys(RsNxsGroupPublishKeyItem*) ;
 
+	void handlePullRequest(std::unique_ptr<RsNxsPullRequestItem> item);
+
     /** E: item handlers **/
 
 
@@ -459,7 +469,7 @@ private:
     void locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, const RsPeerId& sslId, const RsGxsGroupId &grp_id, const uint32_t& transN);
     
 	void checkDistantSyncState();
-    void syncWithPeers();
+
     void syncGrpStatistics();
     void addGroupItemToList(NxsTransaction*& tr,
     		const RsGxsGroupId& grpId, uint32_t& transN,
@@ -559,7 +569,7 @@ private:
     void cleanRejectedMessages();
     void processObserverNotifications();
 
-	void generic_sendItem(RsNxsItem *si);
+	void generic_sendItem(rs_owner_ptr<RsItem> si);
 	RsItem *generic_recvItem();
 
 private:
