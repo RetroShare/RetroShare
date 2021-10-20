@@ -248,7 +248,8 @@ int FsBioInterface::readdata(void *data, int len)
 
 int FsBioInterface::senddata(void *data, int len)
 {
-    return isactive();
+    int written = write(mCLintConnt, data, len);
+    return written;
 }
 int FsBioInterface::netstatus()
 {
@@ -281,7 +282,8 @@ FsClient::FsClient(const std::string& address)
 
 bool FsClient::sendItem(RsItem *item)
 {
-    // request a connection
+    // open a connection
+
     int CreateSocket = 0,n = 0;
     char dataReceived[1024];
     struct sockaddr_in ipOfServer;
@@ -300,24 +302,48 @@ bool FsClient::sendItem(RsItem *item)
 
     if(connect(CreateSocket, (struct sockaddr *)&ipOfServer, sizeof(ipOfServer))<0)
     {
-        printf("Connection failed due to port and ip problems\n");
-        return 1;
+        printf("Connection failed due to port and ip problems, or server is not available\n");
+        return false;
     }
 
-    while((n = read(CreateSocket, dataReceived, sizeof(dataReceived)-1)) > 0)
+    // Serialise the item and send it.
+
+    uint32_t size = RsSerialiser::MAX_SERIAL_SIZE;
+    RsTemporaryMemory data(size);
+
+    if(!data)
     {
-        dataReceived[n] = 0;
-        if(fputs(dataReceived, stdout) == EOF)
+        RsErr() << "Cannot allocate memory to send item!" << std::endl;
+        return false;
+    }
+
+    FsSerializer *fss = new FsSerializer;
+    RsSerialiser rss;
+    rss.addSerialType(fss);
+
+    FsSerializer().serialise(item,data,&size);
+
+    write(CreateSocket,data,size);
+
+    // Now attempt to read and deserialize anything that comes back from that connexion
+
+    FsBioInterface bio(CreateSocket);
+    pqistreamer pqi(&rss,RsPeerId(),&bio,BIN_FLAGS_READABLE);
+    pqithreadstreamer p(&pqi,&rss,RsPeerId(),&bio,BIN_FLAGS_READABLE);
+    p.start();
+
+    while(true)
+    {
+        RsItem *item = p.GetItem();
+
+        if(!item)
         {
-            printf("\nStandard output error");
+            rstime::rs_usleep(1000*200);
+            continue;
         }
 
-        printf("\n");
-    }
-
-    if( n < 0)
-    {
-        printf("Standard input error \n");
+        std::cerr << "Got a response item: " << std::endl;
+        std::cerr << *item << std::endl;
     }
 
     return 0;
