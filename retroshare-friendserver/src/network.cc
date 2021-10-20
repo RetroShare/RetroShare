@@ -46,22 +46,44 @@ FsNetworkInterface::FsNetworkInterface()
 
     mClintListn = 0;
 
-    struct sockaddr_in ipOfServer;
-
     mClintListn = socket(AF_INET, SOCK_STREAM, 0); // creating socket
 
+    int flags = fcntl(mClintListn, F_GETFL);
+    fcntl(mClintListn, F_SETFL, flags | O_NONBLOCK);
+
+    struct sockaddr_in ipOfServer;
     memset(&ipOfServer, '0', sizeof(ipOfServer));
 
     ipOfServer.sin_family = AF_INET;
-    ipOfServer.sin_addr.s_addr = htonl(INADDR_ANY);
     ipOfServer.sin_port = htons(2017); // this is the port number of running server
+    ipOfServer.sin_addr.s_addr = htonl(INADDR_ANY);
 
-    bind(mClintListn, (struct sockaddr*)&ipOfServer , sizeof(ipOfServer));
-    listen(mClintListn , 40);
+    if(bind(mClintListn, (struct sockaddr*)&ipOfServer , sizeof(ipOfServer)) < 0)
+    {
+        RsErr() << "Error while binding: errno=" << errno ;
+        return;
+    }
+
+    if(listen(mClintListn , 40) < 0)
+    {
+        RsErr() << "Error while calling listen: errno=" << errno ;
+        return;
+    }
 
     RsDbg() << "Network interface now listening for TCP on " << sockaddr_storage_tostring( *(sockaddr_storage*)&ipOfServer) ;
 }
 
+FsNetworkInterface::~FsNetworkInterface()
+{
+    for(auto& it:mConnections)
+    {
+        delete it.second.pqi;
+        std::cerr << "Releasing socket " << it.second.socket << std::endl;
+        close(it.second.socket);
+    }
+    std::cerr << "Releasing listening socket " << mClintListn << std::endl;
+    close(mClintListn);
+}
 void FsNetworkInterface::threadTick()
 {
     // 1 - check for new connections
@@ -72,6 +94,8 @@ void FsNetworkInterface::threadTick()
 
     for(auto& it:mConnections)
         it.second.pqi->tick();
+
+    rstime::rs_usleep(1000*200);
 }
 
 static RsPeerId makePeerId(int t)
@@ -84,40 +108,36 @@ bool FsNetworkInterface::checkForNewConnections()
 {
     // look for incoming data
 
-//    fd_set ReadFDs, WriteFDs, ExceptFDs;
-//    FD_ZERO(&ReadFDs);
-//    FD_ZERO(&WriteFDs);
-//    FD_ZERO(&ExceptFDs);
-//
-//    FD_SET(mClintListn, &ReadFDs);
-//    FD_SET(mClintListn, &ExceptFDs);
-//
-//    struct timeval timeout;
-//    timeout.tv_sec = 0;
-//    timeout.tv_usec = 500000; // 200 ms timeout
-//    int status = select(mClintListn+1, &ReadFDs, &WriteFDs, &ExceptFDs, &timeout);
-//
-//    if(status <= 0)		// if no incoming data, return. Each tick waits for 200 ms anyway.
-//        return false;
-
     struct sockaddr addr;
+    socklen_t addr_len = sizeof(sockaddr);
 
-    //socklen_t addr_len = sizeof(sockaddr);
-    //int clintConnt = accept(mClintListn, &addr, &addr_len); // accept is a blocking call!
-    int clintConnt = accept(mClintListn, nullptr, nullptr); // accept is a blocking call!
+    int clintConnt = accept(mClintListn, &addr, &addr_len); // accept is a blocking call!
 
     if(clintConnt < 0)
     {
-        RsErr()<< "Incoming connection with nothing to read!" << std::endl;
+        if(errno == EWOULDBLOCK)
+            ;//RsErr()<< "Incoming connection with nothing to read!" << std::endl;
+        else
+            RsErr()<< "Error when accepting connection." << std::endl;
+
         return false;
     }
     RsDbg() << "Got incoming connection from " << sockaddr_storage_tostring( *(sockaddr_storage*)&addr);
+
+    // Make the socket non blocking so that we can read from it and return if nothing comes
+
+    int flags = fcntl(clintConnt, F_GETFL);
+    fcntl(clintConnt, F_SETFL, flags | O_NONBLOCK);
+
+    // Create connection info
 
     ConnectionData c;
     c.socket = clintConnt;
     c.client_address = addr;
 
     RsPeerId pid = makePeerId(clintConnt);
+
+    // Setup a pqistreamer to deserialize whatever comes from this connection
 
     RsSerialiser *rss = new RsSerialiser ;
     rss->addSerialType(new FsSerializer) ;
@@ -167,8 +187,18 @@ int FsBioInterface::tick()
 
     int readbytes = read(mCLintConnt, inBuffer, sizeof(inBuffer));
 
+    if(readbytes == 0)
+    {
+        std::cerr << "Reached END of the stream!" << std::endl;
+        return 0;
+    }
     if(readbytes < 0)
-        RsErr() << "read() failed. Errno=" << errno ;
+    {
+        if(errno != EWOULDBLOCK && errno != EAGAIN)
+            RsErr() << "read() failed. Errno=" << errno ;
+
+        return false;
+    }
 
     std::cerr << "clintConnt: " << mCLintConnt << ", readbytes: " << readbytes << std::endl;
 
@@ -179,7 +209,7 @@ int FsBioInterface::tick()
     if(readbytes > 0)
     {
         RsDbg() << "Received the following bytes: " << RsUtil::BinToHex( reinterpret_cast<unsigned char*>(inBuffer),readbytes,50) << std::endl;
-        RsDbg() << "Received the following bytes: " << std::string(inBuffer,readbytes) << std::endl;
+        //RsDbg() << "Received the following bytes: " << std::string(inBuffer,readbytes) << std::endl;
 
         void *ptr = malloc(readbytes);
 
@@ -190,13 +220,9 @@ int FsBioInterface::tick()
 
         in_buffer.push_back(std::make_pair(ptr,readbytes));
         mTotalBufferBytes += readbytes;
-
         mTotalReadBytes += readbytes;
 
-        std::cerr << "Total bytes:" << mTotalReadBytes << std::endl;
-        std::cerr << "Connections:" << std::endl;
-
-        RsDbg() << "socket: " << mCLintConnt << ". Total read: " << mTotalReadBytes << ". Buffer size: " << mTotalBufferBytes << std::endl ;
+        std::cerr << "Socket: " << mCLintConnt << ". Total read: " << mTotalReadBytes << ". Buffer size: " << mTotalBufferBytes << std::endl ;
     }
 
     return true;
@@ -248,8 +274,9 @@ int FsBioInterface::readdata(void *data, int len)
 
 int FsBioInterface::senddata(void *data, int len)
 {
-    int written = write(mCLintConnt, data, len);
-    return written;
+//    int written = write(mCLintConnt, data, len);
+//    return written;
+    return len;
 }
 int FsBioInterface::netstatus()
 {

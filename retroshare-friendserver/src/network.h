@@ -74,6 +74,7 @@ class FsNetworkInterface: public RsTickingThread
 {
 public:
     FsNetworkInterface() ;
+    virtual ~FsNetworkInterface() ;
 
     // basic functionality
 
