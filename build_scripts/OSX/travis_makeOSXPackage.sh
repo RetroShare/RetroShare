@@ -19,6 +19,9 @@ rm -rf qrc
 # fi
 
 # This automatically creates retroshare.dmg
+/usr/libexec/PlistBuddy -c "Delete :CFBundleGetInfoString" retroshare.app/Contents/Info.plist
+/usr/libexec/PlistBuddy -c "Add :CFBundleVersion string 0.6.7" retroshare.app/Contents/Info.plist
+/usr/libexec/PlistBuddy -c "Add :CFBundleShortVersionString string 0.6.7" retroshare.app/Contents/Info.plist
 
 echo "Creating dmg archive..."
 macdeployqt retroshare.app -dmg
