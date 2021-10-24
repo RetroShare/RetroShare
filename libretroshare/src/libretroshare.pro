@@ -1030,8 +1030,8 @@ rs_sam3_libsam3 {
         cd $${RS_SRC_PATH} && ( \
         git submodule update --init supportlibs/libsam3 || \
         true ) && \
-        mkdir -p $${UDP_DISCOVERY_BUILD_PATH} && \
-        cp -r $${LIBSAM3_SRC_PATH}/* $${LIBSAM3_BUILD_PATH} && \
+        mkdir -p $${LIBSAM3_BUILD_PATH} && \
+        (cp -r $${LIBSAM3_SRC_PATH}/* $${LIBSAM3_BUILD_PATH} || true) && \
         cd $${LIBSAM3_BUILD_PATH} && \
         $(MAKE) build
     QMAKE_EXTRA_COMPILERS += libsam3
