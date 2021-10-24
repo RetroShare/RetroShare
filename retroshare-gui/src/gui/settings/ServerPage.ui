@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>712</width>
-    <height>502</height>
+    <width>726</width>
+    <height>579</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="ServerPageVLayout">
@@ -908,9 +908,9 @@ If you have issues connecting over Tor check the Tor logs too.</string>
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="hiddenServiceTabI2PBOB">
+         <widget class="QWidget" name="hiddenServiceTabI2P">
           <attribute name="title">
-           <string>Automatic I2P/BOB</string>
+           <string>Automatic I2P</string>
           </attribute>
           <layout class="QVBoxLayout" name="hiddenServiceTabI2PBOBVLayout">
            <item>
@@ -918,7 +918,7 @@ If you have issues connecting over Tor check the Tor logs too.</string>
              <item>
               <widget class="QCheckBox" name="cb_enableBob">
                <property name="text">
-                <string>Enable I2P BOB - changing this requires a restart to fully take effect</string>
+                <string>Enable I2P SAMv3 - changing this requires a restart to fully take effect</string>
                </property>
               </widget>
              </item>
@@ -950,7 +950,7 @@ If you have issues connecting over Tor check the Tor logs too.</string>
            <item>
             <widget class="QGroupBox" name="gbBob">
              <property name="title">
-              <string>I2P Basic Open Bridge</string>
+              <string>I2P Simple Anonymous Messaging</string>
              </property>
              <layout class="QVBoxLayout" name="gbBobVLayout">
               <item>
@@ -982,21 +982,17 @@ If you have issues connecting over Tor check the Tor logs too.</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="i2pProxyPortLabel">
-                  <property name="text">
-                   <string>I2P proxy port</string>
+                 <spacer name="horizontalSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
                   </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="hiddenpage_proxyPort_i2p_2">
-                  <property name="minimum">
-                   <number>10</number>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
                   </property>
-                  <property name="maximum">
-                   <number>65535</number>
-                  </property>
-                 </widget>
+                 </spacer>
                 </item>
                 <item>
                  <layout class="QHBoxLayout" name="bobAccHLayout">
@@ -1016,7 +1012,7 @@ If you have issues connecting over Tor check the Tor logs too.</string>
                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This led is green when the port listen on the left is active on your computer. It does not&lt;/p&gt;&lt;p&gt;mean that your Retroshare traffic transits though I2P. It will do so only if &lt;/p&gt;&lt;p&gt;you connect to Hidden nodes, or if you are running a Hidden node yourself.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                     </property>
                     <property name="text">
-                     <string>BOB accessible</string>
+                     <string>SAM accessible</string>
                     </property>
                    </widget>
                   </item>
@@ -1304,6 +1300,13 @@ If you have issues connecting over Tor check the Tor logs too.</string>
                       </property>
                      </widget>
                     </item>
+                    <item>
+                     <widget class="QLabel" name="samKeyInfo">
+                      <property name="text">
+                       <string notr="true">&lt;key info&gt;</string>
+                      </property>
+                     </widget>
+                    </item>
                    </layout>
                   </item>
                  </layout>
@@ -1359,7 +1362,7 @@ If you have issues connecting over Tor check the Tor logs too.</string>
                 <item>
                  <widget class="QLabel" name="lBobStatus">
                   <property name="text">
-                   <string>BOB status</string>
+                   <string>SAM status</string>
                   </property>
                  </widget>
                 </item>
