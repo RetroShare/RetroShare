@@ -22,7 +22,7 @@
 #pragma once
 
 #include "util/rsthreads.h"
-#include "pqi/pqi_base.h"
+#include "retroshare/rspeers.h"
 
 class pqistreamer;
 

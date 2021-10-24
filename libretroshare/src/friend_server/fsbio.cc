@@ -1,3 +1,28 @@
+/*******************************************************************************
+ * libretroshare/src/file_sharing: fsbio.cc                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2021 by retroshare team <retroshare.project@gmail.com>            *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ ******************************************************************************/
+
+#include "util/rsprint.h"
+#include "fsbio.h"
+
 FsBioInterface::FsBioInterface(int socket)
     : mCLintConnt(socket)
 {
@@ -111,10 +136,12 @@ int FsBioInterface::netstatus()
 {
     return 1; // dummy response.
 }
+
 int FsBioInterface::isactive()
 {
     return mCLintConnt > 0;
 }
+
 bool FsBioInterface::moretoread(uint32_t /* usec */)
 {
     return mTotalBufferBytes > 0;

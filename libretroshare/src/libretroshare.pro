@@ -406,6 +406,7 @@ HEADERS +=	pqi/authssl.h \
 
 SOURCES += friend_server/fsclient.h \
 	   friend_server/fsbio.h \
+	   friend_server/fsitem.h \
 	   friend_server/fsmanager.h 
 
 HEADERS +=	rsserver/p3face.h \

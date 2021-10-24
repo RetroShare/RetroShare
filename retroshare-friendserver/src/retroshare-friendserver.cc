@@ -27,7 +27,8 @@
 #include "friendserver.h"
 
 // debug
-#include "fsitem.h"
+#include "friend_server/fsitem.h"
+#include "friend_server/fsclient.h"
 
 int main(int argc, char* argv[])
 {

@@ -1,7 +1,7 @@
 #include "util/rsdebug.h"
 
 #include "friendserver.h"
-#include "fsitem.h"
+#include "friend_server/fsitem.h"
 
 void FriendServer::threadTick()
 {

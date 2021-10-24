@@ -38,7 +38,7 @@
 #include "friend_server/fsbio.h"
 
 #include "network.h"
-#include "fsitem.h"
+#include "friend_server/fsitem.h"
 
 FsNetworkInterface::FsNetworkInterface()
     : mFsNiMtx(std::string("FsNetworkInterface"))
