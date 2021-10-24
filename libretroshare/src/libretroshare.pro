@@ -404,6 +404,10 @@ HEADERS +=	pqi/authssl.h \
 			pqi/pqinetstatebox.h \
                         pqi/p3servicecontrol.h
 
+SOURCES += friend_server/fsclient.h \
+	   friend_server/fsbio.h \
+	   friend_server/fsmanager.h 
+
 HEADERS +=	rsserver/p3face.h \
 			rsserver/p3history.h \
 			rsserver/p3msgs.h \
@@ -568,6 +572,10 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/sslfns.cc \
 			pqi/pqinetstatebox.cc \
                         pqi/p3servicecontrol.cc
+
+SOURCES += friend_server/fsclient.cc \
+	   friend_server/fsbio.cc \
+	   friend_server/fsmanager.cc 
 
 SOURCES += 		rsserver/p3face-config.cc \
 			rsserver/p3face-server.cc \
