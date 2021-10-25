@@ -82,7 +82,7 @@ pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener
 			rss->addSerialType(new RsRawSerialiser());
 			pqicSOCKSProxy = new pqiconnect(pqip, rss, pqis);
 		}
-
+#ifdef RS_USE_I2P_SAM3
 		if (rsAutoProxyMonitor::instance()->isEnabled(autoProxyType::I2PSAM3))
 		{
 			pqissli2psam3 *pqis = new pqissli2psam3((pqissllistener *) listener, pqip, mLinkMgr);
@@ -90,9 +90,11 @@ pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener
 			rss->addSerialType(new RsRawSerialiser());
 
 			pqicI2P = new pqiconnect(pqip, rss, pqis);
-		} else {
-			pqicI2P = pqicSOCKSProxy;
 		}
+		else
+#endif // def RS_USE_I2P_SAM3
+			pqicI2P = pqicSOCKSProxy;
+
 
 		/* first select type based on peer */
 		uint32_t typePeer = mPeerMgr->getHiddenType(id);
