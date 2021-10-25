@@ -1,7 +1,8 @@
 # RetroShare common qmake build script
 #
-# Copyright (C) 2004-2019, Retroshare Team <contact@retroshare.cc>
-# Copyright (C) 2016-2019, Gioacchino Mazzurco <gio@eigenlab.org>
+# Copyright (C) 2004-2021  Retroshare Team <contact@retroshare.cc>
+# Copyright (C) 2016-2021  Gioacchino Mazzurco <gio@eigenlab.org>
+# Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>
 #
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU Lesser General Public License as published by the
@@ -199,13 +200,16 @@ no_rs_service_terminal_login:CONFIG -= rs_service_terminal_login
 CONFIG+=rs_dh_init_check
 no_rs_dh_init_check:CONFIG -= rs_dh_init_check
 
-# To export all symbols for the plugins on Windows build we need to build libretroshare as
-# shared library. Fix linking error (ld.exe: Error: export ordinal too large) due to too
-# many exported symbols.
-retroshare_plugins:win32:CONFIG *= libretroshare_shared
+# To disable I2P sam3 support append the following assignation to qmake command
+# line "CONFIG+=no_rs_sam3"
+CONFIG *= rs_sam3
+no_rs_sam3:CONFIG -= rs_sam3
 
-CONFIG+=rs_sam3
-CONFIG+=rs_sam3_libsam3
+# To disable I2P sam3 library submodule build append the following assignation
+# to qmake command line "CONFIG+=no_rs_sam3_libsam3"
+CONFIG *= rs_sam3_libsam3
+no_rs_sam3_libsam3:CONFIG -= rs_sam3_libsam3
+
 
 # Specify host precompiled jsonapi-generator path, appending the following
 # assignation to qmake command line
@@ -648,6 +652,11 @@ android-* {
     # See https://stackoverflow.com/a/31277163
     RS_THREAD_LIB =
 }
+
+# To export all symbols for the plugins on Windows build we need to build
+# libretroshare as shared library. Fix linking error (ld.exe: Error: export
+# ordinal too large) due to too many exported symbols.
+retroshare_plugins:win32:CONFIG *= libretroshare_shared
 
 win32-g++|win32-clang-g++ {
     !isEmpty(EXTERNAL_LIB_DIR) {
