@@ -26,6 +26,14 @@
 #include "util/rsthreads.h"
 #include "util/rsdebuglevel0.h"
 
+#ifndef XAPIAN_AT_LEAST
+/// Added in Xapian 1.4.2.
+#define XAPIAN_AT_LEAST(A,B,C) \
+	(XAPIAN_MAJOR_VERSION > (A) || \
+	(XAPIAN_MAJOR_VERSION == (A) && \
+	(XAPIAN_MINOR_VERSION > (B) || \
+	(XAPIAN_MINOR_VERSION == (B) && XAPIAN_REVISION >= (C)))))
+#endif
 
 namespace DeepSearch
 {
@@ -34,8 +42,17 @@ std::unique_ptr<Xapian::Database> openReadOnlyDatabase(
 {
 	try
 	{
+#if XAPIAN_AT_LEAST(1,3,2)
 		std::unique_ptr<Xapian::Database> dbPtr(
 		        new Xapian::Database(path, flags) );
+#else
+		std::unique_ptr<Xapian::Database> dbPtr(new Xapian::Database(path));
+		if(flags)
+		{
+			RS_WARN( "Xapian DB flags: ", flags, " ignored due to old Xapian "
+			         "library version: ", XAPIAN_VERSION, " < 1.3.2" );
+		}
+#endif
 		return dbPtr;
 	}
 	catch(Xapian::DatabaseOpeningError& e)
