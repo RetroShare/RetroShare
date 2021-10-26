@@ -209,10 +209,10 @@ no_rs_service_terminal_login:CONFIG -= rs_service_terminal_login
 CONFIG+=rs_dh_init_check
 no_rs_dh_init_check:CONFIG -= rs_dh_init_check
 
-# To perceptual hashing and search append the following assignation
-# to qmake command line "CONFIG+=no_rs_perceptual_hash"
-CONFIG+=rs_perceptual_hash
-no_rs_perceptual_hash:CONFIG -= rs_perceptual_hash
+# To enable perceptual hashing and search append the following assignation
+# to qmake command line "CONFIG+=rs_perceptual_hash"
+CONFIG+=no_rs_perceptual_hash
+rs_perceptual_hash:CONFIG -= no_rs_perceptual_hash
 
 # To export all symbols for the plugins on Windows build we need to build libretroshare as
 # shared library. Fix linking error (ld.exe: Error: export ordinal too large) due to too

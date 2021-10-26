@@ -665,10 +665,12 @@ RsItem *ftServer::create_item(uint16_t service, uint8_t item_type) const
 			return new RsFileSearchRequestItem();
 		case static_cast<uint8_t>(RsFileItemType::FILE_SEARCH_RESULT):
 			return new RsFileSearchResultItem();
+#ifdef RS_PERCEPTUAL_FILE_SEARCH
 		case static_cast<uint8_t>(RsFileItemType::PERCEPTUAL_SEARCH_REQUEST):
 			return new RsPerceptualSearchRequestItem();
 		case static_cast<uint8_t>(RsFileItemType::PERCEPTUAL_SEARCH_RESULTS):
 			return new RsPerceptualSearchResultsItem();
+#endif // def RS_PERCEPTUAL_FILE_SEARCH
 		default:
 			return nullptr;
 		}

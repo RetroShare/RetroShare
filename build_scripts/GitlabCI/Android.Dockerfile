@@ -31,6 +31,7 @@ RUN $($PREPARE_TOOLCHAIN get_qt_dir | head -n 1)/bin/qmake ../RetroShare \
 	RS_UPNP_LIB=miniupnpc \
 	JSONAPI_GENERATOR_EXE=/jsonapi-generator-build/jsonapi-generator \
 	NATIVE_LIBS_TOOLCHAIN_PATH=$NATIVE_LIBS_TOOLCHAIN_PATH \
+	CONFIG+=rs_perceptual_hash \
 	CONFIG+=no_retroshare_gui CONFIG+=no_rs_service_webui_terminal_password \
 	CONFIG+=no_rs_service_terminal_login
 RUN	make -j$(nproc)

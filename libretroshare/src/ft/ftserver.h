@@ -117,6 +117,7 @@ struct RsFileSearchResultItem : RsFileItem
 	void clear() override;
 };
 
+#ifdef RS_PERCEPTUAL_FILE_SEARCH
 namespace RetroShare
 {
 struct RsPerceptualSearchRequestItem : RsFileItem
@@ -155,6 +156,7 @@ struct RsPerceptualSearchResultsItem : RsFileItem
 };
 
 }
+#endif // def RS_PERCEPTUAL_FILE_SEARCH
 
 class ftServer :
         public p3Service, public RsFiles, public ftDataSend,
