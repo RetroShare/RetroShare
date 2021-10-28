@@ -4,8 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2016  Mr.Alice <mralice@users.sourceforge.net>                *
- * Copyright (C) 2021  Gioacchino Mazzurco <gio@eigenlab.org>                  *
- * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
+ * Copyright (C) 2018-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -549,7 +549,7 @@ bool LocalDirectoryStorage::updateHash(
 	        fInfo.storage_permission_flags & DIR_FLAGS_ANONYMOUS_SEARCH )
 	{
 		DeepFilesIndex dfi(DeepFilesIndex::dbDefaultPath());
-		ret &= dfi.indexFile(fInfo.path, fInfo.fname, hash);
+		ret &= !dfi.indexFile(fInfo.path, fInfo.fname, hash);
 	}
 #endif // def RS_DEEP_FILES_INDEX
 

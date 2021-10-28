@@ -4,7 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2012  Christopher Evi-Parker                                  *
- * Copyright (C) 2019  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2019-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -32,12 +33,62 @@
 #include "retroshare/rsevents.h"
 
 /*!
+ * This structure is used to transport GXS search results.
+ * It contains the group information as well as a context string to tell where
+ * the information was found.
+ * Keep it small as to make search responses as light as possible.
+ * It differs from RsGxsGroupSearchResults because it supports also results from
+ * message matches not just groups.
+ */
+struct RsGxsSearchResult : RsSerializable
+{
+	RsGxsSearchResult(): mPublishTs(0) {}
+
+	/** Id of the group which match*/
+	RsGxsGroupId mGroupId;
+
+	/** Title of the group which match */
+	std::string mGroupName;
+
+	/** Optional message id if the search match is against a message */
+	RsGxsMessageId mMsgId;
+
+	/** Optional message title if the search match is against a message */
+	std::string mMsgName;
+
+	/** Author id of the element which matched (group or message) */
+	RsGxsId mAuthorId;
+
+	/** Publish timestamp of the element which matched (group or message) */
+	rstime_t mPublishTs;
+
+	/** A snippet of content around the exact match */
+	std::string mSearchContext;
+
+	/// @see RsSerializable::serial_process
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_SERIAL_PROCESS(mGroupId);
+		RS_SERIAL_PROCESS(mGroupName);
+		RS_SERIAL_PROCESS(mMsgId);
+		RS_SERIAL_PROCESS(mMsgName);
+		RS_SERIAL_PROCESS(mAuthorId);
+		RS_SERIAL_PROCESS(mPublishTs);
+		RS_SERIAL_PROCESS(mSearchContext);
+	}
+
+	virtual ~RsGxsSearchResult() = default;
+};
+
+/*!
  * This structure is used to transport group summary information when a GXS
  * service is searched. It contains the group information as well as a context
  * string to tell where the information was found. It is more compact than a
  * GroupMeta object, so as to make search responses as light as possible.
  */
-struct RsGxsGroupSummary : RsSerializable
+struct RS_DEPRECATED_FOR(RsGxsSearchResult)
+RsGxsGroupSummary : RsSerializable
 {
 	RsGxsGroupSummary() :
 	    mPublishTs(0), mNumberOfMessages(0),mLastMessageTs(0),
@@ -78,8 +129,12 @@ struct RsGxsGroupSummary : RsSerializable
  * strings to tell where the information was found. It is more compact than a
  * GroupMeta object, so as to make search responses as light as possible.
  */
-struct RsGxsGroupSearchResults : RsSerializable
+struct RS_DEPRECATED_FOR(RsGxsSearchResult)
+RsGxsGroupSearchResults : RsSerializable
 {
+	/* TODO: This seems exactly the same as RsGxsGroupSummary + mSearchContexts
+	 * do we really need both? */
+
 	RsGxsGroupSearchResults()
         : mPublishTs(0), mNumberOfMessages(0),mLastMessageTs(0), mSignFlags(0),mPopularity(0)
     {}
@@ -112,6 +167,7 @@ struct RsGxsGroupSearchResults : RsSerializable
 
 	virtual ~RsGxsGroupSearchResults() = default;
 };
+
 
 /*!
  * Stores ids of changed gxs groups and messages.

@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2018 by Cyril Soler <retroshare.project@gmail.com>                *
+ * Copyright (C) 2018  Cyril Soler <retroshare.project@gmail.com>              *
+ * Copyright (C) 2019-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -27,6 +29,8 @@
 #include "gxs/rsnxs.h"
 #include "rsgxsnettunnel.h"
 
+/*extern*/ RsGxsDistSync* rsGxsDistSync = nullptr;
+
 //#define DEBUG_RSGXSNETTUNNEL 1
 
 #define GXS_NET_TUNNEL_NOT_IMPLEMENTED() { std::cerr << __PRETTY_FUNCTION__ << ": not yet implemented." << std::endl; }
@@ -36,42 +40,93 @@
 static const uint32_t RS_GXS_NET_TUNNEL_MAX_ALLOWED_HITS_GROUP_DATA    =   1;
 static const uint32_t RS_GXS_NET_TUNNEL_MAX_ALLOWED_HITS_GROUP_SEARCH  = 100;
 
-RsGxsDistSync *rsGxsDistSync = NULL;
 
 RsGxsNetTunnelService::RsGxsNetTunnelService(): mGxsNetTunnelMtx("GxsNetTunnel")
 {
 	mRandomBias.clear();
 
-	mLastKeepAlive = time(NULL) + (RSRandom::random_u32()%20);	// adds some variance in order to avoid doing all this tasks at once across services
-	mLastAutoWash = time(NULL) + (RSRandom::random_u32()%20);
-	mLastDump = time(NULL) + (RSRandom::random_u32()%20);
+	/* adds some variance in order to avoid doing all this tasks at once across
+	 * services */
+	auto now = time(nullptr);
+	mLastKeepAlive = now + (RsRandom::random_u32()%20);
+	mLastAutoWash = now + (RsRandom::random_u32()%20);
+	mLastDump = now + (RsRandom::random_u32()%20);
 }
 
-//===========================================================================================================================================//
-//                                                               Transport Items                                                             //
-//===========================================================================================================================================//
+//============================================================================//
+//                         Transport Items                                    //
+//============================================================================//
 
-const uint16_t RS_SERVICE_TYPE_GXS_NET_TUNNEL = 0x2233 ;
+enum class RsGxsNetTunnelItemSubtypes : uint8_t
+{
+	VIRTUAL_PEER             = 0x01,
 
+	KEEP_ALIVE               = 0x02,
+
+	RANDOM_BIAS              = 0x03,
+
+	/// @deprecated kept only for retrocompatibility @see SERVICE_SEARCH_REQUEST
+	SEARCH_SUBSTRING         = 0x04,
+
+	SEARCH_GROUP_REQUEST     = 0x05,
+
+	// SEARCH_GROUP_SUMMARY  = 0x06, removed
+
+	SEARCH_GROUP_DATA        = 0x07,
+
+	/// @deprecated kept only for retrocompatibility @see SERVICE_SEARCH_REPLY
+	SEARCH_GROUP_SUMMARY     = 0x08,
+
+	/** Generic search request generated and handled by specific service
+	 * (channels, forums...) */
+	SERVICE_SEARCH_REQUEST   = 0x09,
+
+	/** Generic search reply generated and handled by specific service
+	 * (channels, forums...) */
+	SERVICE_SEARCH_REPLY     = 0x0a
+};
+
+RS_DEPRECATED_FOR(RsServiceType::GXS_DISTANT)
+constexpr uint16_t RS_SERVICE_TYPE_GXS_NET_TUNNEL =
+        static_cast<uint16_t>(RsServiceType::GXS_DISTANT);
+
+RS_DEPRECATED_FOR(RsGxsNetTunnelItemSubtypes)
 const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_VIRTUAL_PEER                = 0x01 ;
+RS_DEPRECATED_FOR(RsGxsNetTunnelItemSubtypes)
 const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_KEEP_ALIVE                  = 0x02 ;
+RS_DEPRECATED_FOR(RsGxsNetTunnelItemSubtypes)
 const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_RANDOM_BIAS                 = 0x03 ;
+RS_DEPRECATED_FOR(RsGxsNetTunnelItemSubtypes)
 const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_SUBSTRING     = 0x04 ;
+RS_DEPRECATED_FOR(RsGxsNetTunnelItemSubtypes)
 const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_GROUP_REQUEST = 0x05 ;
-// const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_GROUP_SUMMARY = 0x06; // DEPRECATED
+RS_DEPRECATED_FOR(RsGxsNetTunnelItemSubtypes)
 const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_GROUP_DATA    = 0x07 ;
+RS_DEPRECATED_FOR(RsGxsNetTunnelItemSubtypes)
 const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_GROUP_SUMMARY = 0x08;
+// Do not add new subitems types as const, use RsGxsNetTunnelItemSubtypes instead
 
-class RsGxsNetTunnelItem: public RsItem
+struct RsGxsNetTunnelItem: RsItem
 {
 public:
-	explicit RsGxsNetTunnelItem(uint8_t item_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_GXS_NET_TUNNEL,item_subtype)
+	explicit RsGxsNetTunnelItem(RsGxsNetTunnelItemSubtypes subtype):
+	    RsItem( RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_GXS_NET_TUNNEL,
+	            static_cast<uint8_t>(subtype) )
+	{
+		/* no priority. All items are encapsulated into generic Turtle items
+		 * anyway. */
+	}
+
+	virtual ~RsGxsNetTunnelItem() = default;
+	virtual void clear() {}
+
+	RS_DEPRECATED_FOR("RsGxsNetTunnelItem(RsGxsNetTunnelItemSubtypes subtype)")
+	explicit RsGxsNetTunnelItem(uint8_t item_subtype):
+	    RsItem( RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_GXS_NET_TUNNEL,
+	            item_subtype )
 	{
 		// no priority. All items are encapsulated into generic Turtle items anyway.
 	}
-
-	virtual ~RsGxsNetTunnelItem() {}
-	virtual void clear() {}
 };
 
 class RsGxsNetTunnelVirtualPeerItem: public RsGxsNetTunnelItem
@@ -113,7 +168,86 @@ public:
 	Bias20Bytes mRandomBias; // Cannot be a simple char[] because of serialization.
 };
 
-class RsGxsNetTunnelTurtleSearchSubstringItem: public RsGxsNetTunnelItem
+struct RsGxsServiceTurtleSearchReqItem: RsGxsNetTunnelItem
+{
+	RsGxsServiceTurtleSearchReqItem():
+	    RsGxsNetTunnelItem(RsGxsNetTunnelItemSubtypes::SERVICE_SEARCH_REQUEST),
+	    mServiceType(RsServiceType::NONE), mSearchData(nullptr),
+	    mSearchDataSize(0) {}
+
+	explicit RsGxsServiceTurtleSearchReqItem(RsServiceType service):
+	    RsGxsNetTunnelItem(RsGxsNetTunnelItemSubtypes::SERVICE_SEARCH_REQUEST),
+	    mServiceType(service), mSearchData(nullptr), mSearchDataSize(0) {}
+
+	/// Type of the service which originated the search request
+	RsServiceType mServiceType;
+
+	uint8_t* mSearchData; /// Service search request data
+	uint32_t mSearchDataSize; /// Search data size
+
+	/// @see RsSerializable
+	void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext& ctx ) override
+	{
+		RS_SERIAL_PROCESS(mServiceType);
+
+		RsTypeSerializer::RawMemoryWrapper prox(mSearchData, mSearchDataSize);
+		RsTypeSerializer::serial_process(j, ctx, prox, "mSearchData");
+	}
+
+	/// @see RsItem
+	void clear() override
+	{
+		free(mSearchData);
+		mSearchData = nullptr;
+		mSearchDataSize = 0;
+	}
+
+	~RsGxsServiceTurtleSearchReqItem() override { clear(); }
+};
+
+struct RsGxsServiceTurtleSearchReplyItem: RsGxsNetTunnelItem
+{
+	RsGxsServiceTurtleSearchReplyItem():
+	    RsGxsNetTunnelItem(RsGxsNetTunnelItemSubtypes::SERVICE_SEARCH_REPLY),
+	    mServiceType(RsServiceType::NONE), mReplyData(nullptr),
+	    mReplyDataSize(0) {}
+
+	explicit RsGxsServiceTurtleSearchReplyItem(RsServiceType service):
+	    RsGxsNetTunnelItem(RsGxsNetTunnelItemSubtypes::SERVICE_SEARCH_REPLY),
+	    mServiceType(service), mReplyData(nullptr), mReplyDataSize(0) {}
+
+	/// Type of the service which originated the search request
+	RsServiceType mServiceType;
+
+	uint8_t* mReplyData; /// Service search reply data
+	uint32_t mReplyDataSize; /// Search reply data size
+
+	/// @see RsSerializable
+	void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext& ctx ) override
+	{
+		RS_SERIAL_PROCESS(mServiceType);
+
+		RsTypeSerializer::RawMemoryWrapper prox(mReplyData, mReplyDataSize);
+		RsTypeSerializer::serial_process(j, ctx, prox, "mSearchData");
+	}
+
+	/// @see RsItem
+	void clear() override
+	{
+		free(mReplyData);
+		mReplyData = nullptr;
+		mReplyDataSize = 0;
+	}
+
+	~RsGxsServiceTurtleSearchReplyItem() override { clear(); }
+};
+
+class RS_DEPRECATED_FOR(RsGxsServiceTurtleSearchItem)
+RsGxsNetTunnelTurtleSearchSubstringItem: public RsGxsNetTunnelItem
 {
 public:
     explicit RsGxsNetTunnelTurtleSearchSubstringItem(): RsGxsNetTunnelItem(RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_SUBSTRING) {}
@@ -164,6 +298,7 @@ public:
 		RsTypeSerializer::serial_process(j,ctx,group_infos,"group_infos") ;
 	}
 };
+
 class RsGxsNetTunnelTurtleSearchGroupDataItem: public RsGxsNetTunnelItem
 {
 public:
@@ -193,28 +328,41 @@ public:
 class RsGxsNetTunnelSerializer: public RsServiceSerializer
 {
 public:
-	RsGxsNetTunnelSerializer() :RsServiceSerializer(RS_SERVICE_TYPE_GXS_NET_TUNNEL) {}
+	RsGxsNetTunnelSerializer():
+	    RsServiceSerializer(RS_SERVICE_TYPE_GXS_NET_TUNNEL) {}
 
 	virtual RsItem *create_item(uint16_t service,uint8_t item_subtype) const
 	{
 		if(service != RS_SERVICE_TYPE_GXS_NET_TUNNEL)
 		{
-			GXS_NET_TUNNEL_ERROR() << "received item with wrong service ID " << std::hex << service << std::dec << std::endl;
-			return NULL ;
+			RS_ERR( "received item with wrong service ID ", service);
+			print_stacktrace();
+			return nullptr;
 		}
 
-		switch(item_subtype)
+		switch(static_cast<RsGxsNetTunnelItemSubtypes>(item_subtype))
 		{
-		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_VIRTUAL_PEER                : return new RsGxsNetTunnelVirtualPeerItem ;
-		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_KEEP_ALIVE                  : return new RsGxsNetTunnelKeepAliveItem ;
-		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_RANDOM_BIAS                 : return new RsGxsNetTunnelRandomBiasItem ;
-		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_SUBSTRING     : return new RsGxsNetTunnelTurtleSearchSubstringItem;
-		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_GROUP_REQUEST : return new RsGxsNetTunnelTurtleSearchGroupRequestItem;
-		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_GROUP_SUMMARY : return new RsGxsNetTunnelTurtleSearchGroupSummaryItem;
-		case RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_GROUP_DATA    : return new RsGxsNetTunnelTurtleSearchGroupDataItem;
+		case RsGxsNetTunnelItemSubtypes::VIRTUAL_PEER:
+			return new RsGxsNetTunnelVirtualPeerItem;
+		case RsGxsNetTunnelItemSubtypes::KEEP_ALIVE:
+			return new RsGxsNetTunnelKeepAliveItem;
+		case RsGxsNetTunnelItemSubtypes::RANDOM_BIAS:
+			return new RsGxsNetTunnelRandomBiasItem;
+		case RsGxsNetTunnelItemSubtypes::SEARCH_SUBSTRING:
+			return new RsGxsNetTunnelTurtleSearchSubstringItem;
+		case RsGxsNetTunnelItemSubtypes::SEARCH_GROUP_REQUEST:
+			return new RsGxsNetTunnelTurtleSearchGroupRequestItem;
+		case RsGxsNetTunnelItemSubtypes::SEARCH_GROUP_SUMMARY:
+			return new RsGxsNetTunnelTurtleSearchGroupSummaryItem;
+		case RsGxsNetTunnelItemSubtypes::SEARCH_GROUP_DATA:
+			return new RsGxsNetTunnelTurtleSearchGroupDataItem;
+		case RsGxsNetTunnelItemSubtypes::SERVICE_SEARCH_REQUEST:
+			return new RsGxsServiceTurtleSearchReqItem;
+		case RsGxsNetTunnelItemSubtypes::SERVICE_SEARCH_REPLY:
+			return new RsGxsServiceTurtleSearchReplyItem;
 		default:
-			GXS_NET_TUNNEL_ERROR() << "type ID " << std::hex << (int)item_subtype << std::dec << " is not handled!" << std::endl;
-			return NULL ;
+			RS_ERR("Unkonown item type: ", static_cast<int>(item_subtype));
+			return nullptr;
 		}
 	}
 };
@@ -993,7 +1141,9 @@ TurtleRequestId RsGxsNetTunnelService::turtleGroupRequest(const RsGxsGroupId& gr
     return mTurtle->turtleSearch(mem,size,this) ;
 }
 
-TurtleRequestId RsGxsNetTunnelService::turtleSearchRequest(const std::string& match_string,RsNetworkExchangeService *client_service)
+TurtleRequestId RsGxsNetTunnelService::turtleSearchRequest(
+        const std::string& match_string,
+        RsNetworkExchangeService* client_service )
 {
     GXS_NET_TUNNEL_DEBUG() << ": starting a turtle search request for string \"" << match_string << "\"" << std::endl;
 
@@ -1002,7 +1152,7 @@ TurtleRequestId RsGxsNetTunnelService::turtleSearchRequest(const std::string& ma
 	search_item.service = client_service->serviceType() ;
 
     uint32_t size = RsGxsNetTunnelSerializer().size(&search_item) ;
-    unsigned char *mem = (unsigned char*)rs_malloc(size) ;
+	uint8_t* mem = rs_malloc<uint8_t>(size);
 
     if(mem == NULL)
         return 0 ;
@@ -1013,151 +1163,304 @@ TurtleRequestId RsGxsNetTunnelService::turtleSearchRequest(const std::string& ma
     return mTurtle->turtleSearch(mem,size,this) ;
 }
 
-bool RsGxsNetTunnelService::receiveSearchRequest(unsigned char *search_request_data,uint32_t search_request_data_len,unsigned char *& search_result_data,uint32_t& search_result_data_size,uint32_t& max_allowed_hits)
+std::error_condition RsGxsNetTunnelService::turtleSearchRequest(
+        rs_owner_ptr<uint8_t> searchData, uint32_t dataSize,
+        RsServiceType serviceType, TurtleRequestId& requestId )
 {
-	GXS_NET_TUNNEL_DEBUG() << ": received a request." << std::endl;
+	if(!searchData || !dataSize || serviceType == RsServiceType::NONE)
+		return std::errc::invalid_argument;
 
-	RsItem *item = RsGxsNetTunnelSerializer().deserialise(search_request_data,&search_request_data_len) ;
+	RsGxsServiceTurtleSearchReqItem searchItem(serviceType);
+	searchItem.mSearchDataSize = dataSize;
+	searchItem.mSearchData = searchData;
 
-    RsGxsNetTunnelTurtleSearchSubstringItem *substring_sr = dynamic_cast<RsGxsNetTunnelTurtleSearchSubstringItem *>(item) ;
+	RsGxsNetTunnelSerializer tSerializer;
 
-    if(substring_sr != NULL)
-    {
-		GXS_NET_TUNNEL_DEBUG() << "  : type is substring for service " << std::hex << (int)substring_sr->service << std::dec << std::endl;
+	uint32_t size = tSerializer.size(&searchItem);
+	uint8_t* buf = rs_malloc<uint8_t>(size);
 
-        max_allowed_hits = RS_GXS_NET_TUNNEL_MAX_ALLOWED_HITS_GROUP_SEARCH ;
+	tSerializer.serialise(&searchItem, buf, &size);
 
-        std::list<RsGxsGroupSummary> results ;
-        RsNetworkExchangeService *service = nullptr;
+	requestId = mTurtle->turtleSearch(buf, size, this);
+	if(!requestId) return std::errc::result_out_of_range;
 
-        {
-            RS_STACK_MUTEX(mGxsNetTunnelMtx);
-
-            auto it = mSearchableServices.find(substring_sr->service) ;
-
-            if(it != mSearchableServices.end())
-                service = it->second;
-        }
-
-        if(service != nullptr && service->search(substring_sr->substring_match,results))
-        {
-			RsGxsNetTunnelTurtleSearchGroupSummaryItem search_result_item ;
-
-			GXS_NET_TUNNEL_DEBUG() << "  : " << results.size() << " result found. Sending back." << std::endl;
-
-            search_result_item.service = substring_sr->service ;
-            search_result_item.group_infos = results ;
-
-            search_result_data_size = RsGxsNetTunnelSerializer().size(&search_result_item) ;
-			search_result_data = (unsigned char*)rs_malloc(search_result_data_size) ;
-
-            delete item;
-
-			if(search_result_data == NULL)
-				return false ;
-
-			RsGxsNetTunnelSerializer().serialise(&search_result_item,search_result_data,&search_result_data_size);
-
-			return true ;
-        }
-    }
-
-    RsGxsNetTunnelTurtleSearchGroupRequestItem *substring_gr = dynamic_cast<RsGxsNetTunnelTurtleSearchGroupRequestItem *>(item) ;
-
-    if(substring_gr != NULL)
-    {
-		RS_STACK_MUTEX(mGxsNetTunnelMtx);
-		auto it = mSearchableServices.find(substring_gr->service) ;
-
-        max_allowed_hits = RS_GXS_NET_TUNNEL_MAX_ALLOWED_HITS_GROUP_DATA ;
-
-        unsigned char *encrypted_group_data = NULL ;
-        uint32_t encrypted_group_data_len = 0 ;
-
-        if(it != mSearchableServices.end() && it->second->search(substring_gr->hashed_group_id,encrypted_group_data,encrypted_group_data_len))
-        {
-			RsGxsNetTunnelTurtleSearchGroupDataItem search_result_item ;
-
-            search_result_item.service = substring_gr->service ;
-            search_result_item.encrypted_group_data = encrypted_group_data ;
-            search_result_item.encrypted_group_data_len = encrypted_group_data_len;
-
-            search_result_data_size = RsGxsNetTunnelSerializer().size(&search_result_item) ;
-			search_result_data = (unsigned char*)rs_malloc(search_result_data_size) ;
-
-			if(search_result_data == NULL)
-				return false ;
-
-			RsGxsNetTunnelSerializer().serialise(&search_result_item,search_result_data,&search_result_data_size);
-
-            delete item;
-			return true ;
-        }
-    }
-
-    delete item;
-    return false ;
+	return std::error_condition();
 }
 
-void RsGxsNetTunnelService::receiveSearchResult(TurtleSearchRequestId request_id,unsigned char *search_result_data,uint32_t search_result_data_len)
+rs_view_ptr<RsNetworkExchangeService>
+RsGxsNetTunnelService::retrievieSearchableServiceLocking(uint16_t serviceType)
 {
-    RsItem *item = RsGxsNetTunnelSerializer().deserialise(search_result_data,&search_result_data_len);
+	RS_STACK_MUTEX(mGxsNetTunnelMtx);
+	auto it = mSearchableServices.find(serviceType);
+	if( it != mSearchableServices.end()) return it->second;
+	return nullptr;
+}
 
-	GXS_NET_TUNNEL_DEBUG() << "  : received search result for search request " << std::hex << request_id << "" << std::endl;
+bool RsGxsNetTunnelService::receiveSearchRequest(
+        uint8_t* search_request_data, uint32_t search_request_data_len,
+        uint8_t*& search_result_data, uint32_t& search_result_data_size,
+        uint32_t& max_allowed_hits )
+{
+	/* Must return true only if there are matching results available, false in
+	 * all other cases. @see RsTurleClientService */
 
-    RsGxsNetTunnelTurtleSearchGroupSummaryItem *result_gs = dynamic_cast<RsGxsNetTunnelTurtleSearchGroupSummaryItem *>(item) ;
+	RS_DBG3("");
 
-    if(result_gs != NULL)
+	RsGxsNetTunnelSerializer tSerializer;
+
+	std::unique_ptr<RsItem> item;
+	item.reset(tSerializer.deserialise(
+	               search_request_data, &search_request_data_len ));
+
+	if(!item)
 	{
-		GXS_NET_TUNNEL_DEBUG() << "  : result is of type group summary result for service " << result_gs->service << std::dec << ": " << std::endl;
-
-#ifdef DEBUG_RSGXSNETTUNNEL
-		for(auto it(result_gs->group_infos.begin());it!=result_gs->group_infos.end();++it)
-			std::cerr << "   group " << (*it).mGroupId << ": " << (*it).mGroupName << ", " << (*it).mNumberOfMessages << " messages, last is " << time(NULL)-(*it).mLastMessageTs << " secs ago." << std::endl;
-#endif
-
-		auto it = mSearchableServices.find(result_gs->service) ;
-
-		if(it == mSearchableServices.end())
-		{
-			GXS_NET_TUNNEL_ERROR() << ": deserialized item is for service " << std::hex << result_gs->service << std::dec << " that is not in the searchable services list." << std::endl;
-            delete item;
-			return ;
-		}
-
-		it->second->receiveTurtleSearchResults(request_id,result_gs->group_infos) ;
-
-		delete item;
-		return ;
+		RS_ERR( "Deserialization failed: ",
+		        search_request_data, search_request_data_len, item.get() );
+		print_stacktrace();
+		return false;
 	}
 
-    RsGxsNetTunnelTurtleSearchGroupDataItem *result_gd = dynamic_cast<RsGxsNetTunnelTurtleSearchGroupDataItem *>(item) ;
-
-    if(result_gd != NULL)
-    {
-		GXS_NET_TUNNEL_DEBUG() << "  : result is of type group data for service " << result_gd->service << std::dec << ": " << std::endl;
-
-		auto it = mSearchableServices.find(result_gd->service) ;
-
-		if(it == mSearchableServices.end())
+	switch(static_cast<RsGxsNetTunnelItemSubtypes>(item->PacketSubType()))
+	{
+	case RsGxsNetTunnelItemSubtypes::SEARCH_SUBSTRING:
+	{
+		if(!search_result_data)
 		{
-			GXS_NET_TUNNEL_ERROR() << ": deserialized item is for service " << std::hex << result_gd->service << std::dec << " that is not in the searchable services list." << std::endl;
-            delete item;
-			return ;
+			RS_ERR( "Got item with TURTLE_SEARCH_SUBSTRING without space for "
+			        "results!" );
+			print_stacktrace();
+			break;
 		}
 
-		it->second->receiveTurtleSearchResults(request_id,result_gd->encrypted_group_data,result_gd->encrypted_group_data_len) ;
+		auto substring_sr =
+		        dynamic_cast<RsGxsNetTunnelTurtleSearchSubstringItem*>(item.get());
+		if(!substring_sr)
+		{
+			RS_WARN( "Got item with TURTLE_SEARCH_SUBSTRING subtype: ",
+			         item->PacketSubType(), " but casting failed!");
+			break;
+		}
 
-        result_gd->encrypted_group_data = NULL ; // prevents deletion
-		delete item;
+		max_allowed_hits = RS_GXS_NET_TUNNEL_MAX_ALLOWED_HITS_GROUP_SEARCH;
+		std::list<RsGxsGroupSummary> results;
+		auto tService = retrievieSearchableServiceLocking(substring_sr->service);
+		if(tService && tService->search(substring_sr->substring_match, results))
+		{
+			RsGxsNetTunnelTurtleSearchGroupSummaryItem search_result_item;
+			search_result_item.service = substring_sr->service;
+			search_result_item.group_infos = results;
+			search_result_data_size = tSerializer.size(&search_result_item);
+			search_result_data = rs_malloc<uint8_t>(search_result_data_size);
 
-		return ;
-    }
+			tSerializer.serialise(
+			            &search_result_item, search_result_data,
+			            &search_result_data_size );
 
-	GXS_NET_TUNNEL_ERROR() << ": deserialized item is of unknown type. Dropping!" << std::endl;
+			return true;
+		}
+
+		break;
+	}
+	case RsGxsNetTunnelItemSubtypes::SEARCH_GROUP_REQUEST:
+	{
+		auto *substring_gr =
+		        dynamic_cast<RsGxsNetTunnelTurtleSearchGroupRequestItem*>(item.get());
+
+		if(!substring_gr)
+		{
+			RS_WARN( "Got item with TURTLE_SEARCH_GROUP_REQUEST subtype: ",
+			         item->PacketSubType(), " but casting failed!" );
+			break;
+		}
+
+		max_allowed_hits = RS_GXS_NET_TUNNEL_MAX_ALLOWED_HITS_GROUP_DATA;
+		uint8_t* encrypted_group_data = nullptr;
+		uint32_t encrypted_group_data_len = 0;
+
+		auto tService = retrievieSearchableServiceLocking(substring_gr->service);
+		if(tService && tService->search(
+		            substring_gr->hashed_group_id,
+		            encrypted_group_data, encrypted_group_data_len ))
+		{
+			RsGxsNetTunnelTurtleSearchGroupDataItem search_result_item;
+			search_result_item.service = substring_gr->service;
+			search_result_item.encrypted_group_data = encrypted_group_data;
+			search_result_item.encrypted_group_data_len = encrypted_group_data_len;
+			search_result_data_size = tSerializer.size(&search_result_item);
+			search_result_data = rs_malloc<uint8_t>(search_result_data_size);
+
+			tSerializer.serialise(
+			            &search_result_item,
+			            search_result_data, &search_result_data_size );
+			return true;
+		}
+		break;
+	}
+	case RsGxsNetTunnelItemSubtypes::SERVICE_SEARCH_REQUEST:
+	{
+		RS_DBG3("SERVICE_SEARCH_REQUEST");
+
+		auto searchItem =
+		        static_cast<RsGxsServiceTurtleSearchReqItem*>(item.get());
+
+		max_allowed_hits = RS_GXS_NET_TUNNEL_MAX_ALLOWED_HITS_GROUP_SEARCH;
+
+		uint16_t sType = static_cast<uint16_t>(searchItem->mServiceType);
+		auto sService = retrievieSearchableServiceLocking(sType);
+		if(!sService)
+		{
+			RS_WARN("Got search request for non searchable service: ", sType);
+			break;
+		}
+
+		RsGxsServiceTurtleSearchReplyItem replyItem(searchItem->mServiceType);
+
+		auto errc = sService->handleDistantSearchRequest(
+		            searchItem->mSearchData, searchItem->mSearchDataSize,
+		            replyItem.mReplyData, replyItem.mReplyDataSize );
+		if(errc)
+		{
+			// Some error has been reported by the searchable service
+			RS_WARN("searchable service: ", sType , " reported: ", errc);
+			break;
+		}
+
+		if( (!replyItem.mReplyData && replyItem.mReplyDataSize) ||
+		    (replyItem.mReplyData && !replyItem.mReplyDataSize) )
+		{
+			// Inconsistent behaviour from searcheable service
+			RS_ERR( "searchable service: ", sType , " silently failed handling "
+			        "inconsistent result mReplyData: ", replyItem.mReplyData,
+			        " mReplyDataSize: ", replyItem.mReplyDataSize );
+			break;
+		}
+
+		/* Our node have 0 matching results */
+		if(!replyItem.mReplyData && !replyItem.mReplyDataSize)
+			break;
+
+		search_result_data_size = tSerializer.size(&replyItem);
+		search_result_data = rs_malloc<uint8_t>(search_result_data_size);
+
+		tSerializer.serialise(
+		            &replyItem, search_result_data, &search_result_data_size );
+
+		return true;
+	}
+	default:
+		RS_WARN("Got unknown item type: ", item->PacketSubType());
+		break;
+	}
+
+	return false;
 }
 
-void RsGxsNetTunnelService::getStatistics(std::map<RsGxsGroupId,RsGxsNetTunnelGroupInfo>& groups, std::map<RsGxsNetTunnelVirtualPeerId, RsGxsNetTunnelVirtualPeerInfo>& virtual_peers, std::map<TurtleVirtualPeerId, RsGxsNetTunnelVirtualPeerId> &turtle_vpid_to_net_tunnel_vpid, Bias20Bytes& bias      ) const
+void RsGxsNetTunnelService::receiveSearchResult(
+        TurtleSearchRequestId request_id,
+        uint8_t* search_result_data, uint32_t search_result_data_len )
+{
+	RS_DBG3(request_id);
+
+	std::unique_ptr<RsItem> item;
+	item.reset(RsGxsNetTunnelSerializer().deserialise(
+	               search_result_data,&search_result_data_len ));
+
+	auto castFailedWarn = [](const uint8_t subtype)
+	{
+		RS_WARN( "Got item with subtype: ", subtype,
+		         " but cast failed!" );
+	};
+
+	auto searchableServiceGet = [this](const auto pservice)
+	{
+		auto service = static_cast<uint16_t>(pservice);
+		auto it = mSearchableServices.find(service);
+		if(it == mSearchableServices.end())
+		{
+			RS_WARN( "got item for service ", service,
+			         " which is not in the searchable services list." );
+			return static_cast<RsNetworkExchangeService*>(nullptr);
+		}
+
+		return it->second;
+	};
+
+	const auto tSubtype = item->PacketSubType();
+	switch (static_cast<RsGxsNetTunnelItemSubtypes>(tSubtype))
+	{
+	case RsGxsNetTunnelItemSubtypes::SEARCH_GROUP_SUMMARY:
+	{
+		auto result_gs =
+		        dynamic_cast<RsGxsNetTunnelTurtleSearchGroupSummaryItem*>(
+		            item.get() );
+
+		if(!result_gs)
+		{
+			castFailedWarn(tSubtype);
+			break;
+		}
+
+		RS_DBG2( " got result is of type group summary result for service ",
+		         result_gs->service );
+
+		auto service = searchableServiceGet(result_gs->service);
+		if(service)
+			service->receiveTurtleSearchResults(
+			            request_id, result_gs->group_infos );
+		return;
+	}
+	case RsGxsNetTunnelItemSubtypes::SEARCH_GROUP_DATA:
+	{
+		auto result_gd =
+		        dynamic_cast<RsGxsNetTunnelTurtleSearchGroupDataItem*>(item.get());
+
+		if(!result_gd)
+		{
+			castFailedWarn(tSubtype);
+			break;
+		}
+
+		RS_DBG2("got group data result for service: ", result_gd->service);
+
+		auto service = searchableServiceGet(result_gd->service);
+		if(service)
+			service->receiveTurtleSearchResults(
+			        request_id,
+			        result_gd->encrypted_group_data,
+			        result_gd->encrypted_group_data_len );
+
+		/* Ensure ownershipt is passed down preventing deletion */
+		result_gd->encrypted_group_data = nullptr;
+		break;
+	}
+	case RsGxsNetTunnelItemSubtypes::SERVICE_SEARCH_REPLY:
+	{
+		auto searchReply =
+		        static_cast<RsGxsServiceTurtleSearchReplyItem*>(item.get());
+
+		auto service = searchableServiceGet(searchReply->mServiceType);
+		if(service)
+			service->receiveDistantSearchResult(
+			        request_id,
+			        searchReply->mReplyData,
+			        searchReply->mReplyDataSize );
+
+		/* Ensure memory ownership is passed down preventing deletion */
+		searchReply->mReplyData = nullptr;
+		break;
+	}
+	default:
+		RS_WARN("got item of unknown type: ", item->PacketSubType());
+		break;
+	}
+}
+
+void RsGxsNetTunnelService::getStatistics(
+        std::map<RsGxsGroupId,RsGxsNetTunnelGroupInfo>& groups,
+        std::map<RsGxsNetTunnelVirtualPeerId,
+        RsGxsNetTunnelVirtualPeerInfo>& virtual_peers,
+        std::map<TurtleVirtualPeerId, RsGxsNetTunnelVirtualPeerId>&
+        turtle_vpid_to_net_tunnel_vpid, Bias20Bytes& bias ) const
 {
     groups = mGroups ;
     virtual_peers = mVirtualPeers ;
