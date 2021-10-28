@@ -21,6 +21,7 @@
 #ifndef _MainWindow_H
 #define _MainWindow_H
 
+#include <QLineEdit>
 #include <QSystemTrayIcon>
 #include <set>
 
@@ -73,6 +74,14 @@ class MessengerWindow;
 #ifdef UNFINISHED
 class ApplicationWindow;
 #endif
+
+
+struct Gui_InputDialogReturn
+{
+	int execReturn;
+	QString textValue;
+};
+Q_DECLARE_METATYPE(Gui_InputDialogReturn);
 
 class MainWindow : public RWindow
 {
@@ -192,7 +201,7 @@ public:
     }
 
     static bool hiddenmode;
-	
+
 public slots:
     void receiveNewArgs(QStringList args);
     void displayErrorMessage(int,int,const QString&) ;
@@ -210,9 +219,35 @@ public slots:
     void showBandwidthGraph();
 
     void toggleStatusToolTip(bool toggle);
+
+	/**
+	 * @brief Create a QInputDialog. This must be called in MainWindow thread because Widgets must be created in the GUI thread.
+	 * Here an exemple how to call it:
+	 *
+	 * bool sameThread = QThread::currentThread() == qApp->thread();
+	 * Gui_InputDialogReturn ret;
+	 * qRegisterMetaType<Gui_InputDialogReturn>("Gui_InputDialogReturn");
+	 * QMetaObject::invokeMethod( MainWindow::getInstance()
+	 *                          , "guiInputDialog"
+	 *                          , sameThread ? Qt::DirectConnection : Qt::BlockingQueuedConnection
+	 *                          , Q_RETURN_ARG(Gui_InputDialogReturn, ret)
+	 *                          , Q_ARG(QString,             windowTitle)
+	 *                          , Q_ARG(QString,             labelText)
+	 *                          , Q_ARG(QLineEdit::EchoMode, textEchoMode)
+	 *                          , Q_ARG(bool,                modal)
+	 *                           );
+	 *
+	 * @param windowTitle: the window title (caption).
+	 * @param labelText: label's text which describes what needs to be input.
+	 * @param textEchoMode: the echo mode for the text value.
+	 * @param modal: pop up the dialog as modal or modeless.
+	 * @return Gui_InputDialogReturn ( Accepted(1)|Rejected(0), text value for the input dialog)
+	 */
+	Gui_InputDialogReturn guiInputDialog(const QString& windowTitle, const QString& labelText, QLineEdit::EchoMode textEchoMode, bool modal);
+
 protected:
     /** Default Constructor */
-    MainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    MainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
 
     void closeEvent(QCloseEvent *);
     

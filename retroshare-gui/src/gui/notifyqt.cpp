@@ -21,12 +21,6 @@
 #include "gui/common/FilesDefs.h"
 #include <retroshare/rsgxsifacehelper.h>
 
-#include <QInputDialog>
-#include <QMessageBox>
-#include <QTimer>
-//#include <QMutexLocker>
-#include <QDesktopWidget>
-
 #include "notifyqt.h"
 #include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
@@ -54,6 +48,13 @@
 #include "SoundManager.h"
 
 #include "retroshare/rsplugin.h"
+
+#include <QDesktopWidget>
+#include <QInputDialog>
+#include <QMessageBox>
+//#include <QMutexLocker>
+#include <QThread>
+#include <QTimer>
 
 /*****
  * #define NOTIFY_DEBUG
@@ -223,37 +224,51 @@ bool NotifyQt::askForPassword(const std::string& title, const std::string& key_d
 {
 	RsAutoUpdatePage::lockAllEvents() ;
 
-	QInputDialog dialog;
+	QString windowTitle;
 	if (title == "") {
-		dialog.setWindowTitle(tr("Passphrase required"));
+		windowTitle = tr("Passphrase required");
 	} else if (title == "AuthSSLimpl::SignX509ReqWithGPG()") {
-		dialog.setWindowTitle(tr("You need to sign your node's certificate."));
+		windowTitle = tr("You need to sign your node's certificate.");
 	} else if (title == "p3IdService::service_CreateGroup()") {
-		dialog.setWindowTitle(tr("You need to sign your forum/chatrooms identity."));
+		windowTitle = tr("You need to sign your forum/chatrooms identity.");
 	} else {
-		dialog.setWindowTitle(QString::fromStdString(title));
+		windowTitle = QString::fromStdString(title);
 	}
 
-	dialog.setLabelText((prev_is_bad ? QString("%1<br/><br/>").arg(tr("Wrong password !")) : QString()) + QString("<b>%1</b><br/>Profile: <i>%2</i>\n").arg(tr("Please enter your Retroshare passphrase"), QString::fromUtf8(key_details.c_str())));
-	dialog.setTextEchoMode(QLineEdit::Password);
-	dialog.setModal(true);
+	QString labelText = ( prev_is_bad ? QString("%1<br/><br/>").arg(tr("Wrong password !")) : QString() )
+	                    + QString("<b>%1</b><br/>Profile: <i>%2</i>\n")
+	                             .arg( tr("Please enter your Retroshare passphrase")
+	                                 , QString::fromUtf8(key_details.c_str()) );
+	QLineEdit::EchoMode textEchoMode = QLineEdit::Password;
+	bool modal = true;
 
-	int ret = dialog.exec();
+	bool sameThread = QThread::currentThread() == qApp->thread();
+	Gui_InputDialogReturn ret;
+	qRegisterMetaType<Gui_InputDialogReturn>("Gui_InputDialogReturn");
+	QMetaObject::invokeMethod( MainWindow::getInstance()
+	                         , "guiInputDialog"
+	                         , sameThread ? Qt::DirectConnection : Qt::BlockingQueuedConnection
+	                         , Q_RETURN_ARG(Gui_InputDialogReturn, ret)
+	                         , Q_ARG(QString,             windowTitle)
+	                         , Q_ARG(QString,             labelText)
+	                         , Q_ARG(QLineEdit::EchoMode, textEchoMode)
+	                         , Q_ARG(bool,                modal)
+	                          );
 
-    cancelled = false ;
+	cancelled = false ;
 
 	RsAutoUpdatePage::unlockAllEvents() ;
 
-    if (ret == QDialog::Rejected) {
-        password.clear() ;
-        cancelled = true ;
-        return true ;
-    }
+	if (ret.execReturn == QDialog::Rejected) {
+		password.clear() ;
+		cancelled = true ;
+		return true ;
+	}
 
-    if (ret == QDialog::Accepted) {
-		 password = dialog.textValue().toUtf8().constData();
-		 return true;
-    }
+	if (ret.execReturn == QDialog::Accepted) {
+		password = ret.textValue.toUtf8().constData();
+		return true;
+	}
 
 	return false;
 }

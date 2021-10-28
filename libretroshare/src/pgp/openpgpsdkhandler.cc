@@ -1322,15 +1322,19 @@ bool OpenPGPSDKHandler::decryptTextFromFile(const RsPgpId&,std::string& text,con
 
 bool OpenPGPSDKHandler::SignDataBin(const RsPgpId& id,const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,bool use_raw_signature, std::string reason /* = "" */)
 {
-	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 	// need to find the key and to decrypt it.
-	
-	const ops_keydata_t *key = locked_getSecretKey(id) ;
-
-	if(!key)
+	ops_keydata_t *key = nullptr;
 	{
-        RsErr() << "Cannot sign: no secret key with id " << id.toStdString() ;
-		return false ;
+		RS_STACK_MUTEX(pgphandlerMtx); // lock access to PGP memory structures.
+		const ops_keydata_t *test_key = locked_getSecretKey(id);
+		if(!test_key)
+		{
+			RsErr("Cannot sign: no secret key with id ", id.toStdString() );
+			return false ;
+		}
+		// Copy key as it may take time for user to respond.
+		key = ops_keydata_new();
+		ops_keydata_copy(key, test_key);
 	}
 
 	std::string uid_hint ;
@@ -1345,34 +1349,41 @@ bool OpenPGPSDKHandler::SignDataBin(const RsPgpId& id,const void *data, const ui
 	PGPFingerprintType fp(f.fingerprint) ;
 #endif
 
-    bool last_passwd_was_wrong = false ;
-ops_secret_key_t *secret_key = NULL ;
+	bool last_passwd_was_wrong = false ;
+	ops_secret_key_t *secret_key = nullptr ;
 
-    for(int i=0;i<3;++i)
-    {
-        bool cancelled =false;
-        std::string passphrase = _passphrase_callback(NULL,reason.c_str(),uid_hint.c_str(),"Please enter passwd for encrypting your key : ",last_passwd_was_wrong,&cancelled) ;//TODO reason
+	for(int i=0;i<3;++i)
+	{
+		bool cancelled =false;
+		// Need to be outside of mutex to not block GUI.
+		std::string passphrase = _passphrase_callback(NULL,reason.c_str(),uid_hint.c_str(),"Please enter password for encrypting your key : ",last_passwd_was_wrong,&cancelled) ;//TODO reason
 
-        secret_key = ops_decrypt_secret_key_from_data(key,passphrase.c_str()) ;
+		secret_key = ops_decrypt_secret_key_from_data(key,passphrase.c_str()) ;
 
-        if(cancelled)
-        {
-            RsErr() << "Key entering cancelled" ;
-            return false ;
-        }
-        if(secret_key)
-            break ;
+		if(cancelled)
+		{
+			RsErr() << "Key entering cancelled" ;
+			ops_keydata_free(key);
+			return false ;
+		}
+		if(secret_key)
+			break ;
 
-        RsErr() << "Key decryption went wrong. Wrong passwd?" ;
-        last_passwd_was_wrong = true ;
-    }
-    if(!secret_key)
-    {
-        RsErr() << "Could not obtain secret key. Signature cancelled." ;
-        return false ;
-    }
+		RsErr() << "Key decryption went wrong. Wrong password?" ;
+		last_passwd_was_wrong = true ;
+	}
+	// No more need of key, free it.
+	ops_keydata_free(key);
+
+	if(!secret_key)
+	{
+		RsErr() << "Could not obtain secret key. Signature cancelled." ;
+		return false ;
+	}
 
 	// then do the signature.
+
+	RS_STACK_MUTEX(pgphandlerMtx); // lock access to PGP memory structures.
 
 	ops_boolean_t not_raw = !use_raw_signature ;
 #ifdef V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
