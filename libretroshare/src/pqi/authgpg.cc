@@ -425,18 +425,18 @@ std::string AuthPGP::getGPGEmail(const RsPgpId& id,bool *success)
 
 /**** GPG versions ***/
 
-const RsPgpId& AuthPGP::getGPGOwnId()
+const RsPgpId& AuthPGP::getPGPOwnId()
 {
     RsStackMutex stack(instance()->gpgMtxData); /******* LOCKED ******/
     return instance()->mOwnGpgId ;
 }
 
-std::string AuthPGP::getGPGOwnName()
+std::string AuthPGP::getPGPOwnName()
 {
     return getGPGName(instance()->mOwnGpgId) ;
 }
 
-bool	AuthPGP::getGPGAllList(std::list<RsPgpId> &ids)
+bool	AuthPGP::getPGPAllList(std::list<RsPgpId> &ids)
 {
     RsStackMutex stack(instance()->gpgMtxData); /******* LOCKED ******/
 
@@ -470,7 +470,7 @@ bool AuthPGP::isKeySupported(const RsPgpId& id)
 	return !(pc->_flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_UNSUPPORTED_ALGORITHM) ;
 }
 
-bool AuthPGP::getGPGDetails(const RsPgpId& pgp_id, RsPeerDetails &d)
+bool AuthPGP::getPGPDetails(const RsPgpId& pgp_id, RsPeerDetails &d)
 {
     RsStackMutex stack(instance()->gpgMtxData); /******* LOCKED ******/
 
@@ -510,17 +510,17 @@ static bool filter_Validity(const PGPCertificateInfo& /*info*/) { return true ; 
 static bool filter_Accepted(const PGPCertificateInfo& info) { return info._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_ACCEPT_CONNEXION ; }
 static bool filter_OwnSigned(const PGPCertificateInfo& info) { return info._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE ; }
 
-bool	AuthPGP::getGPGValidList(std::list<RsPgpId> &ids)
+bool	AuthPGP::getPGPValidList(std::list<RsPgpId> &ids)
 {
 	return getGPGFilteredList(ids,&filter_Validity);
 }
 
-bool	AuthPGP::getGPGAcceptedList(std::list<RsPgpId> &ids)
+bool	AuthPGP::getPGPAcceptedList(std::list<RsPgpId> &ids)
 {
 	return getGPGFilteredList(ids,&filter_Accepted);
 }
 
-bool	AuthPGP::getGPGSignedList(std::list<RsPgpId> &ids)
+bool	AuthPGP::getPGPSignedList(std::list<RsPgpId> &ids)
 {
 	return getGPGFilteredList(ids,&filter_OwnSigned);
 }
@@ -739,7 +739,7 @@ bool AuthPGP::saveList(bool& cleanup, std::list<RsItem*>& lst)
 	std::cerr << "AuthGPG::saveList() called" << std::endl ;
 #endif
 	std::list<RsPgpId> ids ;
-	getGPGAcceptedList(ids) ;				// needs to be done before the lock
+    getPGPAcceptedList(ids) ;				// needs to be done before the lock
 
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
 

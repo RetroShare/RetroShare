@@ -1067,7 +1067,7 @@ bool p3IdService::createIdentity(uint32_t& token, RsIdentityParameters &params)
 
     if(params.isPgpLinked)
     {
-        ssdata.pgp.pgpId = AuthPGP::getGPGOwnId();
+        ssdata.pgp.pgpId = AuthPGP::getPGPOwnId();
         ssdata.pgp.lastCheckTs = time(nullptr);
     }
 

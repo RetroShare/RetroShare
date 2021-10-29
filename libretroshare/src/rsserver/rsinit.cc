@@ -910,8 +910,8 @@ int RsServer::StartupRetroShare()
 	/* History Manager */
 	mHistoryMgr = new p3HistoryMgr();
 	mPeerMgr = new p3PeerMgrIMPL( AuthSSL::getAuthSSL()->OwnId(),
-                AuthPGP::getGPGOwnId(),
-                AuthPGP::getGPGOwnName(),
+                AuthPGP::getPGPOwnId(),
+                AuthPGP::getPGPOwnName(),
 				AuthSSL::getAuthSSL()->getOwnLocation());
 	mNetMgr = new p3NetMgrIMPL();
 	mLinkMgr = new p3LinkMgrIMPL(mPeerMgr, mNetMgr);

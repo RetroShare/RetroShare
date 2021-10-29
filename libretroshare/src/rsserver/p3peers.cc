@@ -273,7 +273,7 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 	if (id == sOwnId)
 	{
 		mPeerMgr->getOwnNetStatus(ps);
-        ps.gpg_id = AuthPGP::getGPGOwnId();
+        ps.gpg_id = AuthPGP::getPGPOwnId();
 	}
 	else if (!mPeerMgr->getFriendNetStatus(id, ps))
 	{
@@ -597,7 +597,7 @@ std::string p3Peers::getPeerName(const RsPeerId& ssl)
 #endif
 	std::string name;
 	if (ssl == AuthSSL::getAuthSSL()->OwnId()) 
-        return AuthPGP::getGPGOwnName();
+        return AuthPGP::getPGPOwnName();
 	
 	if (mPeerMgr->getPeerName(ssl, name)) 
 	{
@@ -617,7 +617,7 @@ bool	p3Peers::getGPGAllList(std::list<RsPgpId> &ids)
 #endif
 
         /* get from mAuthMgr */
-        AuthPGP::getGPGAllList(ids);
+        AuthPGP::getPGPAllList(ids);
         return true;
 }
 
@@ -628,7 +628,7 @@ bool	p3Peers::getGPGValidList(std::list<RsPgpId> &ids)
 #endif
 
         /* get from mAuthMgr */
-        AuthPGP::getGPGValidList(ids);
+        AuthPGP::getPGPValidList(ids);
         return true;
 }
 
@@ -639,14 +639,14 @@ bool	p3Peers::getGPGSignedList(std::list<RsPgpId> &ids)
 #endif
 
         /* get from mAuthMgr */
-        AuthPGP::getGPGSignedList(ids);
+        AuthPGP::getPGPSignedList(ids);
         return true;
 }
 
 bool p3Peers::getPgpFriendList(std::vector<RsPgpId>& pgpIds)
 {
 	std::list<RsPgpId> ids;
-    if(AuthPGP::getGPGAcceptedList(ids))
+    if(AuthPGP::getPGPAcceptedList(ids))
 	{
 		pgpIds.clear();
 		std::copy(ids.begin(), ids.end(), std::back_inserter(pgpIds));
@@ -660,7 +660,7 @@ bool	p3Peers::getGPGAcceptedList(std::list<RsPgpId> &ids)
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getGPGAcceptedList()" << std::endl;
 #endif
-        AuthPGP::getGPGAcceptedList(ids);
+        AuthPGP::getPGPAcceptedList(ids);
         return true;
 }
 
@@ -691,7 +691,7 @@ bool	p3Peers::getGPGDetails(const RsPgpId &pgp_id, RsPeerDetails &d)
 #endif
 
 	/* get from mAuthMgr */
-    bool res = AuthPGP::getGPGDetails(pgp_id, d);
+    bool res = AuthPGP::getPGPDetails(pgp_id, d);
 
 	d.isOnlyGPGdetail = true ;
 	d.service_perm_flags = mPeerMgr->servicePermissionFlags(pgp_id) ;
@@ -706,7 +706,7 @@ const RsPgpId& p3Peers::getGPGOwnId()
 #endif
 
 	/* get from mAuthMgr */
-        return AuthPGP::getGPGOwnId();
+        return AuthPGP::getPGPOwnId();
 }
 
 RsPgpId p3Peers::getGPGId(const RsPeerId& sslid)
@@ -718,7 +718,7 @@ RsPgpId p3Peers::getGPGId(const RsPeerId& sslid)
 	/* get from mAuthMgr */
 	if (sslid == AuthSSL::getAuthSSL()->OwnId()) 
 	{
-        return AuthPGP::getGPGOwnId();
+        return AuthPGP::getPGPOwnId();
 	}
 	peerState pcs;
 	if (mPeerMgr->getFriendNetStatus(sslid, pcs))
@@ -817,7 +817,7 @@ bool 	p3Peers::removeFriend(const RsPgpId& gpgId)
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::removeFriend() " << gpgId << std::endl;
 #endif
-    if (gpgId == AuthPGP::getGPGOwnId()) {
+    if (gpgId == AuthPGP::getPGPOwnId()) {
         std::cerr << "p3Peers::removeFriend() ERROR  we're not going to remove our own GPG id."  << std::endl;
 		return false;
 	}

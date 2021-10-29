@@ -152,19 +152,19 @@ public:
         static bool exportPublicKey( const RsPgpId& id, unsigned char*& mem_block, size_t& mem_size, bool armoured, bool include_signatures );
 
         /* PGP web of trust management */
-        static const RsPgpId& getGPGOwnId();
-        static std::string getGPGOwnName();
+        static const RsPgpId& getPGPOwnId();
+        static std::string getPGPOwnName();
 
         //virtual std::string getGPGOwnEmail();
         static bool getKeyFingerprint(const RsPgpId& id,PGPFingerprintType& fp) ;
         static bool isKeySupported(const RsPgpId &id) ;
         static bool isPgpPubKeyAvailable(const RsPgpId& pgp_id);
         static bool haveSecretKey(const RsPgpId &id) ;
-        static bool getGPGDetails(const RsPgpId& id, RsPeerDetails &d);
-        static bool getGPGAllList(std::list<RsPgpId> &ids);
-        static bool getGPGValidList(std::list<RsPgpId> &ids);
-        static bool getGPGAcceptedList(std::list<RsPgpId> &ids);
-        static bool getGPGSignedList(std::list<RsPgpId> &ids);
+        static bool getPGPDetails(const RsPgpId& id, RsPeerDetails &d);
+        static bool getPGPAllList(std::list<RsPgpId> &ids);
+        static bool getPGPValidList(std::list<RsPgpId> &ids);
+        static bool getPGPAcceptedList(std::list<RsPgpId> &ids);
+        static bool getPGPSignedList(std::list<RsPgpId> &ids);
         static bool importProfile(const std::string& filename,RsPgpId& gpg_id,std::string& import_error) ;
         static bool importProfileFromString(const std::string& data,RsPgpId& gpg_id,std::string& import_error) ;
         static bool exportProfile(const std::string& filename,const RsPgpId& gpg_id) ;
