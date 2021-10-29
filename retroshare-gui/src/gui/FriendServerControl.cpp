@@ -31,8 +31,6 @@
 
 #include <iostream>
 
-RsFriendServer *rsFriendServer = new RsFriendServer;
-
 #define ICON_STATUS_UNKNOWN ":/images/ledoff1.png"
 #define ICON_STATUS_OK      ":/images/ledon1.png"
 
@@ -44,6 +42,7 @@ FriendServerControl::FriendServerControl(QWidget *parent)
 
     mConnectionCheckTimer = new QTimer;
 
+    QObject::connect(friendServerOnOff_CB,SIGNAL(toggled(bool)),this,SLOT(onOnOffClick(bool)));
     QObject::connect(mConnectionCheckTimer,SIGNAL(timeout()),this,SLOT(checkServerAddress()));
     QObject::connect(torServerAddress_LE,SIGNAL(textChanged(const QString&)),this,SLOT(onOnionAddressEdit(const QString&)));
 
@@ -62,9 +61,9 @@ FriendServerControl::~FriendServerControl()
 void FriendServerControl::onOnOffClick(bool b)
 {
     if(b)
-        rsFriendServer->start();
+        rsFriendServer->startServer();
     else
-        rsFriendServer->stop();
+        rsFriendServer->stopServer();
 }
 
 void FriendServerControl::onOnionAddressEdit(const QString&)

@@ -12,7 +12,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QCheckBox" name="torServerOnOff_CB">
+    <widget class="QCheckBox" name="friendServerOnOff_CB">
      <property name="text">
       <string>On/Off</string>
      </property>
