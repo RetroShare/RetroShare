@@ -970,7 +970,7 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
 
 		//Authentication is now tested at connection time, we don't store the ssl cert anymore
 		//
-        if (!AuthPGP::isGPGAccepted(gpg_id) &&  gpg_id != AuthPGP::getGPGOwnId())
+        if (!AuthPGP::isPGPAccepted(gpg_id) &&  gpg_id != AuthPGP::getGPGOwnId())
 		{
 #ifdef PEER_DEBUG
 			std::cerr << "p3PeerMgrIMPL::addFriend() gpg is not accepted" << std::endl;
@@ -2642,7 +2642,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 #endif
 
 		    for(uint32_t i=0;i<sitem->pgp_ids.size();++i)
-                if(AuthPGP::isGPGAccepted(sitem->pgp_ids[i]) || sitem->pgp_ids[i] == AuthPGP::getGPGOwnId())
+                if(AuthPGP::isPGPAccepted(sitem->pgp_ids[i]) || sitem->pgp_ids[i] == AuthPGP::getGPGOwnId())
 			    {
 				    mFriendsPermissionFlags[sitem->pgp_ids[i]] = sitem->service_flags[i] ;
 #ifdef PEER_DEBUG
@@ -2684,7 +2684,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
         for(auto group_pair:groupList)
         {
             for(auto profileIdIt(group_pair.second.peerIds.begin());profileIdIt!=group_pair.second.peerIds.end();)
-                if(AuthPGP::isGPGAccepted(*profileIdIt) || *profileIdIt == AuthPGP::getGPGOwnId())
+                if(AuthPGP::isPGPAccepted(*profileIdIt) || *profileIdIt == AuthPGP::getGPGOwnId())
                     ++profileIdIt;
                 else
                 {

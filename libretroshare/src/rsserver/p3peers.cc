@@ -569,7 +569,7 @@ std::string p3Peers::getGPGName(const RsPgpId &gpg_id)
 }
 
 bool p3Peers::isPgpFriend(const RsPgpId& pgpId)
-{ return AuthPGP::isGPGAccepted(pgpId); }
+{ return AuthPGP::isPGPAccepted(pgpId); }
 
 bool p3Peers::isSslOnlyFriend(const RsPeerId& sslId)
 {

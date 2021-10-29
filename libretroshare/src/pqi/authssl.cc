@@ -1380,7 +1380,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
     std::cerr << "******* VerifyX509Callback cert: " << std::hex << ctx->cert <<std::dec << std::endl;
 #endif
 
-    if ( !isSslOnlyFriend && pgpId != AuthPGP::getGPGOwnId() && !AuthPGP::isGPGAccepted(pgpId) )
+    if ( !isSslOnlyFriend && pgpId != AuthPGP::getGPGOwnId() && !AuthPGP::isPGPAccepted(pgpId) )
 	{
 		std::string errMsg = "Connection attempt signed by PGP key id: " +
 		        pgpId.toStdString() + " not accepted because it is not"

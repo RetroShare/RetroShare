@@ -219,7 +219,7 @@ void p3discovery2::removeFriend(const RsPeerId &sslId)
 		std::cerr << std::endl;
 #endif
 		/* pgp peer without any ssl entries -> check if they are still a real friend */
-        if (!(AuthPGP::isGPGAccepted(pgpId)))
+        if (!(AuthPGP::isPGPAccepted(pgpId)))
 		{
 #ifdef P3DISC_DEBUG
 			std::cerr << "p3discovery2::addFriend() pgpId is no longer a friend, removing";
@@ -1062,7 +1062,7 @@ void p3discovery2::recvPGPCertificateRequest( const RsPeerId& fromId, const RsDi
 	for(const RsPgpId& pgpId : item->pgpIdSet.ids)
 		if (pgpId == ownPgpId)
 			sendPGPCertificate(pgpId, fromId);
-        else if(ps.vs_disc != RS_VS_DISC_OFF && AuthPGP::isGPGAccepted(pgpId))
+        else if(ps.vs_disc != RS_VS_DISC_OFF && AuthPGP::isPGPAccepted(pgpId))
 			sendPGPCertificate(pgpId, fromId);
 		else
             std::cerr << "(WW) not sending certificate " << pgpId << " asked by friend " << fromId << " because this either this cert is not a friend, or discovery is off" << std::endl;

@@ -155,8 +155,6 @@ public:
         static const RsPgpId& getGPGOwnId();
         static std::string getGPGOwnName();
 
-        static bool isGPGAccepted(const RsPgpId& id);
-
         //virtual std::string getGPGOwnEmail();
         static bool getKeyFingerprint(const RsPgpId& id,PGPFingerprintType& fp) ;
         static bool isKeySupported(const RsPgpId &id) ;

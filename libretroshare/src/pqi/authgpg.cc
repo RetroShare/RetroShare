@@ -405,10 +405,6 @@ bool AuthPGP::isPGPId(const RsPgpId& id)
 {
     return instance()->mPgpHandler->isGPGId(id);
 }
-bool AuthPGP::isPGPAccepted(const RsPgpId& id)
-{
-    return instance()->mPgpHandler->isGPGAccepted(id);
-}
 /**** These Two are common */
 std::string AuthPGP::getGPGEmail(const RsPgpId& id,bool *success)
 {
@@ -714,7 +710,7 @@ int	AuthPGP::privateTrustCertificate(const RsPgpId& id, int trustlvl)
 	//         The trust level is only a user-defined property that has nothing to
 	//         do with the fact that we allow connections or not.
 
-	if(!isGPGAccepted(id))
+    if(!isPGPAccepted(id))
 		return 0;
 
     int res = instance()->mPgpHandler->privateTrustCertificate(id,trustlvl) ;
@@ -732,7 +728,7 @@ RsSerialiser *AuthPGP::setupSerialiser()
         rss->addSerialType(new RsGeneralConfigSerialiser());
         return rss ;
 }
-bool AuthPGP::isGPGAccepted(const RsPgpId& id)
+bool AuthPGP::isPGPAccepted(const RsPgpId& id)
 {
     return instance()->mPgpHandler->isGPGAccepted(id);
 }
