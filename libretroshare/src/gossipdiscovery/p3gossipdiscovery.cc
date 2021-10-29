@@ -107,7 +107,7 @@ p3discovery2::p3discovery2(
 	addSerialType(new RsDiscSerialiser());
 
 	// Add self into PGP FriendList.
-    mFriendList[AuthPGP::getPGPOwnId()] = DiscPgpInfo();
+    mFriendList[AuthPGP::getPgpOwnId()] = DiscPgpInfo();
 }
 
 
@@ -604,8 +604,8 @@ void p3discovery2::updatePgpFriendList()
 	std::list<RsPgpId>::iterator lit;
 	std::map<RsPgpId, DiscPgpInfo>::iterator it;
 	
-    RsPgpId ownPgpId = AuthPGP::getPGPOwnId();
-    AuthPGP::getPGPAcceptedList(pgpList);
+    RsPgpId ownPgpId = AuthPGP::getPgpOwnId();
+    AuthPGP::getPgpAcceptedList(pgpList);
 	pgpList.push_back(ownPgpId);
 	
 	// convert to set for ordering.
@@ -1058,7 +1058,7 @@ void p3discovery2::recvPGPCertificateRequest( const RsPeerId& fromId, const RsDi
 		return;
     }
 
-    RsPgpId ownPgpId = AuthPGP::getPGPOwnId();
+    RsPgpId ownPgpId = AuthPGP::getPgpOwnId();
 	for(const RsPgpId& pgpId : item->pgpIdSet.ids)
 		if (pgpId == ownPgpId)
 			sendPGPCertificate(pgpId, fromId);

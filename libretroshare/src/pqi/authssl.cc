@@ -759,7 +759,7 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
         //long version = 0x00;
         unsigned long chtype = MBSTRING_UTF8;
         X509_NAME *issuer_name = X509_NAME_new();
-        X509_NAME_add_entry_by_txt(issuer_name, "CN", chtype, (unsigned char *) AuthPGP::getPGPOwnId().toStdString().c_str(), -1, -1, 0);
+        X509_NAME_add_entry_by_txt(issuer_name, "CN", chtype, (unsigned char *) AuthPGP::getPgpOwnId().toStdString().c_str(), -1, -1, 0);
 /****
         X509_NAME_add_entry_by_NID(issuer_name, 48, 0,
                         (unsigned char *) "email@email.com", -1, -1, 0);
@@ -769,7 +769,7 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
                         (unsigned char *) "loc", -1, -1, 0);
 ****/
 
-        std::cerr << "AuthSSLimpl::SignX509Req() Issuer name: " << AuthPGP::getPGPOwnId().toStdString() << std::endl;
+        std::cerr << "AuthSSLimpl::SignX509Req() Issuer name: " << AuthPGP::getPgpOwnId().toStdString() << std::endl;
 
 #ifdef V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
 		static const uint64_t CERTIFICATE_SERIAL_NUMBER = RS_CERTIFICATE_VERSION_NUMBER_07_0001 ;
@@ -1039,7 +1039,7 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,bool verbose, uint32_t& diagnostic)
 {
 	RsPgpId issuer = RsX509Cert::getCertIssuer(*x509);
 	RsPeerDetails pd;
-    if (!AuthPGP::getPGPDetails(issuer, pd))
+    if (!AuthPGP::getPgpDetails(issuer, pd))
 	{
 		RsInfo() << __PRETTY_FUNCTION__ << " X509 NOT authenticated : "
 		         << "AuthGPG::getAuthGPG()->getGPGDetails(" << issuer
@@ -1380,7 +1380,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
     std::cerr << "******* VerifyX509Callback cert: " << std::hex << ctx->cert <<std::dec << std::endl;
 #endif
 
-    if ( !isSslOnlyFriend && pgpId != AuthPGP::getPGPOwnId() && !AuthPGP::isPGPAccepted(pgpId) )
+    if ( !isSslOnlyFriend && pgpId != AuthPGP::getPgpOwnId() && !AuthPGP::isPGPAccepted(pgpId) )
 	{
 		std::string errMsg = "Connection attempt signed by PGP key id: " +
 		        pgpId.toStdString() + " not accepted because it is not"

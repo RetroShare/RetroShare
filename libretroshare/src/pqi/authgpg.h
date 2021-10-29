@@ -146,25 +146,25 @@ public:
 		 * provide access to details in cache list.
 		 *
 		 ****/
-        static std::string getGPGName(const RsPgpId &pgp_id,bool *success = NULL);
-        static std::string getGPGEmail(const RsPgpId &pgp_id,bool *success = NULL);
+        static std::string getPgpName(const RsPgpId &pgp_id,bool *success = NULL);
+        static std::string getPgpEmail(const RsPgpId &pgp_id,bool *success = NULL);
 
         static bool exportPublicKey( const RsPgpId& id, unsigned char*& mem_block, size_t& mem_size, bool armoured, bool include_signatures );
 
         /* PGP web of trust management */
-        static const RsPgpId& getPGPOwnId();
-        static std::string getPGPOwnName();
+        static const RsPgpId& getPgpOwnId();
+        static std::string getPgpOwnName();
 
         //virtual std::string getGPGOwnEmail();
         static bool getKeyFingerprint(const RsPgpId& id,PGPFingerprintType& fp) ;
         static bool isKeySupported(const RsPgpId &id) ;
         static bool isPgpPubKeyAvailable(const RsPgpId& pgp_id);
         static bool haveSecretKey(const RsPgpId &id) ;
-        static bool getPGPDetails(const RsPgpId& id, RsPeerDetails &d);
-        static bool getPGPAllList(std::list<RsPgpId> &ids);
-        static bool getPGPValidList(std::list<RsPgpId> &ids);
-        static bool getPGPAcceptedList(std::list<RsPgpId> &ids);
-        static bool getPGPSignedList(std::list<RsPgpId> &ids);
+        static bool getPgpDetails(const RsPgpId& id, RsPeerDetails &d);
+        static bool getPgpAllList(std::list<RsPgpId> &ids);
+        static bool getPgpValidList(std::list<RsPgpId> &ids);
+        static bool getPgpAcceptedList(std::list<RsPgpId> &ids);
+        static bool getPgpSignedList(std::list<RsPgpId> &ids);
         static bool importProfile(const std::string& filename,RsPgpId& gpg_id,std::string& import_error) ;
         static bool importProfileFromString(const std::string& data,RsPgpId& gpg_id,std::string& import_error) ;
         static bool exportProfile(const std::string& filename,const RsPgpId& gpg_id) ;

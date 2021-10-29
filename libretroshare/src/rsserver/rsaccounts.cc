@@ -864,10 +864,10 @@ int      RsAccountsDetail::GetPGPLoginDetails(const RsPgpId& id, std::string &na
         #endif
 
 		  bool ok = true ;
-        name = AuthPGP::getGPGName(id,&ok);
+        name = AuthPGP::getPgpName(id,&ok);
 		  if(!ok)
 			  return 0 ;
-        email = AuthPGP::getGPGEmail(id,&ok);
+        email = AuthPGP::getPgpEmail(id,&ok);
 		  if(!ok)
 			  return 0 ;
 

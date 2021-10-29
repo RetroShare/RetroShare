@@ -373,7 +373,7 @@ bool    AuthPGP::GeneratePGPCertificate(const std::string& name, const std::stri
 }
 
 /**** These Two are common */
-std::string AuthPGP::getGPGName(const RsPgpId& id,bool *success)
+std::string AuthPGP::getPgpName(const RsPgpId& id,bool *success)
 {
     RsStackMutex stack(instance()->gpgMtxData); /******* LOCKED ******/
 
@@ -406,7 +406,7 @@ bool AuthPGP::isPGPId(const RsPgpId& id)
     return instance()->mPgpHandler->isGPGId(id);
 }
 /**** These Two are common */
-std::string AuthPGP::getGPGEmail(const RsPgpId& id,bool *success)
+std::string AuthPGP::getPgpEmail(const RsPgpId& id,bool *success)
 {
     RsStackMutex stack(instance()->gpgMtxData); /******* LOCKED ******/
     const PGPCertificateInfo *info = instance()->mPgpHandler->getCertificateInfo(id) ;
@@ -425,18 +425,18 @@ std::string AuthPGP::getGPGEmail(const RsPgpId& id,bool *success)
 
 /**** GPG versions ***/
 
-const RsPgpId& AuthPGP::getPGPOwnId()
+const RsPgpId& AuthPGP::getPgpOwnId()
 {
     RsStackMutex stack(instance()->gpgMtxData); /******* LOCKED ******/
     return instance()->mOwnGpgId ;
 }
 
-std::string AuthPGP::getPGPOwnName()
+std::string AuthPGP::getPgpOwnName()
 {
-    return getGPGName(instance()->mOwnGpgId) ;
+    return getPgpName(instance()->mOwnGpgId) ;
 }
 
-bool	AuthPGP::getPGPAllList(std::list<RsPgpId> &ids)
+bool	AuthPGP::getPgpAllList(std::list<RsPgpId> &ids)
 {
     RsStackMutex stack(instance()->gpgMtxData); /******* LOCKED ******/
 
@@ -470,7 +470,7 @@ bool AuthPGP::isKeySupported(const RsPgpId& id)
 	return !(pc->_flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_UNSUPPORTED_ALGORITHM) ;
 }
 
-bool AuthPGP::getPGPDetails(const RsPgpId& pgp_id, RsPeerDetails &d)
+bool AuthPGP::getPgpDetails(const RsPgpId& pgp_id, RsPeerDetails &d)
 {
     RsStackMutex stack(instance()->gpgMtxData); /******* LOCKED ******/
 
@@ -510,17 +510,17 @@ static bool filter_Validity(const PGPCertificateInfo& /*info*/) { return true ; 
 static bool filter_Accepted(const PGPCertificateInfo& info) { return info._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_ACCEPT_CONNEXION ; }
 static bool filter_OwnSigned(const PGPCertificateInfo& info) { return info._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE ; }
 
-bool	AuthPGP::getPGPValidList(std::list<RsPgpId> &ids)
+bool	AuthPGP::getPgpValidList(std::list<RsPgpId> &ids)
 {
 	return getGPGFilteredList(ids,&filter_Validity);
 }
 
-bool	AuthPGP::getPGPAcceptedList(std::list<RsPgpId> &ids)
+bool	AuthPGP::getPgpAcceptedList(std::list<RsPgpId> &ids)
 {
 	return getGPGFilteredList(ids,&filter_Accepted);
 }
 
-bool	AuthPGP::getPGPSignedList(std::list<RsPgpId> &ids)
+bool	AuthPGP::getPgpSignedList(std::list<RsPgpId> &ids)
 {
 	return getGPGFilteredList(ids,&filter_OwnSigned);
 }
@@ -739,7 +739,7 @@ bool AuthPGP::saveList(bool& cleanup, std::list<RsItem*>& lst)
 	std::cerr << "AuthGPG::saveList() called" << std::endl ;
 #endif
 	std::list<RsPgpId> ids ;
-    getPGPAcceptedList(ids) ;				// needs to be done before the lock
+    getPgpAcceptedList(ids) ;				// needs to be done before the lock
 
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
 

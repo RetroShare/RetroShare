@@ -797,7 +797,7 @@ int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 		exit(failure);
 	}
 
-    if( !isSslOnlyFriend && pgpId != AuthPGP::getPGPOwnId() && !AuthPGP::isPGPAccepted(pgpId) )
+    if( !isSslOnlyFriend && pgpId != AuthPGP::getPgpOwnId() && !AuthPGP::isPGPAccepted(pgpId) )
 	{
 		RsFatal() << __PRETTY_FUNCTION__ << " pgpId: " << pgpId
 		          << " is not friend. It is very unlikely to happen at this "
