@@ -37,7 +37,7 @@ const RsPgpId& PgpAuxUtilsImpl::getPGPOwnId()
     return AuthPGP::getPgpOwnId();
 }
 
-RsPgpId PgpAuxUtilsImpl::getPGPId(const RsPeerId& sslid)
+RsPgpId PgpAuxUtilsImpl::getPgpId(const RsPeerId& sslid)
 {
 	return rsPeers->getGPGId(sslid);
 }
@@ -57,7 +57,7 @@ bool PgpAuxUtilsImpl::VerifySignBin(const void *data,
     return AuthPGP::VerifySignBin(data, len, sign, signlen, withfingerprint);
 }
 
-bool PgpAuxUtilsImpl::getGPGAllList(std::list<RsPgpId> &ids)
+bool PgpAuxUtilsImpl::getPgpAllList(std::list<RsPgpId> &ids)
 {
     return AuthPGP::getPgpAllList(ids);
 }

@@ -853,7 +853,7 @@ static bool checkAccount(const std::string &accountdir, AccountDetails &account,
                 /* Generating GPGme Account */
 int      RsAccountsDetail::GetPGPLogins(std::list<RsPgpId>& pgpIds)
 {
-    AuthPGP::availableGPGCertificatesWithPrivateKeys(pgpIds);
+    AuthPGP::availablePgpCertificatesWithPrivateKeys(pgpIds);
     return 1;
 }
 
@@ -887,7 +887,7 @@ bool RsAccountsDetail::SelectPGPAccount(const RsPgpId& pgpId)
 {
 	bool retVal = false;
 
-    if (0 < AuthPGP::GPGInit(pgpId))
+    if (0 < AuthPGP::PgpInit(pgpId))
 	{
 		retVal = true;
 #ifdef DEBUG_ACCOUNTS
@@ -907,7 +907,7 @@ bool RsAccountsDetail::SelectPGPAccount(const RsPgpId& pgpId)
 
 bool     RsAccountsDetail::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, const int keynumbits, std::string &errString)
 {
-    return AuthPGP::GeneratePGPCertificate(name, email, passwd, pgpId, keynumbits, errString);
+    return AuthPGP::GeneratePgpCertificate(name, email, passwd, pgpId, keynumbits, errString);
 }
 
 		// PGP Support Functions.

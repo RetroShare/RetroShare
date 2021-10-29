@@ -1670,7 +1670,7 @@ bool p3Peers::loadDetailsFromStringCert( const std::string &certstr,
 
 	RsCertificate& cert = *certPtr;
 
-    if(!AuthPGP::getGPGDetailsFromBinaryBlock( cert.pgp_key(), cert.pgp_key_size(), pd.gpg_id, pd.name, pd.gpgSigners ))
+    if(!AuthPGP::getPgpDetailsFromBinaryBlock( cert.pgp_key(), cert.pgp_key_size(), pd.gpg_id, pd.name, pd.gpgSigners ))
 		return false;
 
 	Dbg4() << __PRETTY_FUNCTION__ << " Parsing cert for sslid, location, ext "

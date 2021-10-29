@@ -54,11 +54,11 @@ void cleanupZombies(int numkill); // function to cleanup zombies under OSX.
 
 /* Function to sign X509_REQ via GPGme.  */
 
-int AuthPGP::availableGPGCertificatesWithPrivateKeys(std::list<RsPgpId>& pgpIds)
+int AuthPGP::availablePgpCertificatesWithPrivateKeys(std::list<RsPgpId>& pgpIds)
 {
     return instance()->mPgpHandler->availableGPGCertificatesWithPrivateKeys(pgpIds);
 }
-bool AuthPGP::getGPGDetailsFromBinaryBlock(const unsigned char *mem,size_t mem_size,RsPgpId& key_id, std::string& name, std::list<RsPgpId>& signers)
+bool AuthPGP::getPgpDetailsFromBinaryBlock(const unsigned char *mem,size_t mem_size,RsPgpId& key_id, std::string& name, std::list<RsPgpId>& signers)
 {
     return instance()->mPgpHandler->getGPGDetailsFromBinaryBlock(mem,mem_size,key_id,name,signers);
 }
@@ -178,7 +178,7 @@ AuthPGP::AuthPGP(const std::string& path_to_public_keyring,const std::string& pa
  * This function must be called successfully (return == 1)
  * before anything else can be done. (except above fn).
  */
-int AuthPGP::GPGInit(const RsPgpId &ownId)
+int AuthPGP::PgpInit(const RsPgpId &ownId)
 {
 #ifdef DEBUG_AUTHGPG
 	std::cerr << "AuthGPG::GPGInit() called with own gpg id : " << ownId.toStdString() << std::endl;
@@ -365,7 +365,7 @@ bool   AuthPGP::active()
         return instance()->gpgKeySelected;
 }
 
-bool    AuthPGP::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId& pgpId, const int keynumbits, std::string& errString)
+bool    AuthPGP::GeneratePgpCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId& pgpId, const int keynumbits, std::string& errString)
 {
     RsStackMutex stack(instance()->gpgMtxEngine); /******* LOCKED ******/
 

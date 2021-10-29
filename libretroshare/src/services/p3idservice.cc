@@ -4096,7 +4096,7 @@ void p3IdService::getPgpIdList()
 #endif // DEBUG_IDS
 
  	std::list<RsPgpId> list;
-	mPgpUtils->getGPGAllList(list);
+	mPgpUtils->getPgpAllList(list);
 
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
@@ -4593,7 +4593,7 @@ void p3IdService::generateDummy_FriendPGP()
 	// Now Generate for friends.
 	std::list<RsPgpId> gpgids;
 	std::list<RsPgpId>::const_iterator it;
-	mPgpUtils->getGPGAllList(gpgids);
+	mPgpUtils->getPgpAllList(gpgids);
 
 	RsGxsIdGroup id;
 

@@ -1098,7 +1098,7 @@ void p3discovery2::recvPGPCertificate(const RsPeerId& fromId, RsDiscPgpKeyItem* 
 	std::string cert_name;
 	std::list<RsPgpId> cert_signers;
 
-    if(!AuthPGP::getGPGDetailsFromBinaryBlock( (unsigned char*)item->bin_data,item->bin_len, cert_pgp_id, cert_name, cert_signers ))
+    if(!AuthPGP::getPgpDetailsFromBinaryBlock( (unsigned char*)item->bin_data,item->bin_len, cert_pgp_id, cert_name, cert_signers ))
 	{
 		std::cerr << "(EE) cannot parse own PGP key sent by " << fromId << std::endl;
 		return;

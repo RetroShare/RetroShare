@@ -164,8 +164,8 @@ namespace rs_nxs_test
 
 		virtual ~RsDummyPgpUtils(){}
 		const RsPgpId &getPGPOwnId() ;
-		RsPgpId getPGPId(const RsPeerId& sslid) ;
-		bool getGPGAllList(std::list<RsPgpId> &ids) ;
+		RsPgpId getPgpId(const RsPeerId& sslid) ;
+		bool getPgpAllList(std::list<RsPgpId> &ids) ;
 		bool getKeyFingerprint(const RsPgpId& id,PGPFingerprintType& fp) const;
 
 		bool parseSignature(unsigned char *sign, unsigned int signlen, RsPgpId& issuer) const;

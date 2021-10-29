@@ -24,7 +24,7 @@
 
 FakePgpAuxUtils::FakePgpAuxUtils(const RsPeerId& ownId)
 {
-	mOwnId = getPGPId(ownId);
+	mOwnId = getPgpId(ownId);
 	addPeerIdToPgpList(ownId);
 }
 
@@ -39,7 +39,7 @@ void FakePgpAuxUtils::addPeerListToPgpList(const std::list<RsPeerId> &ids)
 
 void FakePgpAuxUtils::addPeerIdToPgpList(const RsPeerId &id)
 {
-	RsPgpId pgpId = getPGPId(id);
+	RsPgpId pgpId = getPgpId(id);
 	if (mPgpList.end() == std::find(mPgpList.begin(), mPgpList.end(), pgpId))
 	{
 		mPgpList.push_back(pgpId);
@@ -51,7 +51,7 @@ const RsPgpId & FakePgpAuxUtils::getPGPOwnId()
 	return mOwnId;
 }
 
-RsPgpId FakePgpAuxUtils::getPGPId(const RsPeerId& sslid)
+RsPgpId FakePgpAuxUtils::getPgpId(const RsPeerId& sslid)
 {
 	/* convert an sslId */
 	std::string idstring = sslid.toStdString();
@@ -95,7 +95,7 @@ bool FakePgpAuxUtils::VerifySignBin(const void* /*data*/, uint32_t /*len*/, unsi
 	return true;
 }
 
-bool FakePgpAuxUtils::getGPGAllList(std::list<RsPgpId> &ids)
+bool FakePgpAuxUtils::getPgpAllList(std::list<RsPgpId> &ids)
 {
 	ids = mPgpList;
 	return true;

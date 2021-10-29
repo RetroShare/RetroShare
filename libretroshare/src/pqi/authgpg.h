@@ -129,11 +129,11 @@ public:
 
 		/* Init by generating new Own PGP Cert, or selecting existing PGP Cert */
 
-        static int  GPGInit(const RsPgpId &ownId);
-        static bool GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, const int keynumbits, std::string &errString);
+        static int  PgpInit(const RsPgpId &ownId);
+        static bool GeneratePgpCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, const int keynumbits, std::string &errString);
 
-        static bool getGPGDetailsFromBinaryBlock(const unsigned char *mem,size_t mem_size,RsPgpId& key_id, std::string& name, std::list<RsPgpId>& signers) ;
-        static int availableGPGCertificatesWithPrivateKeys(std::list<RsPgpId>& pgpIds);
+        static bool getPgpDetailsFromBinaryBlock(const unsigned char *mem,size_t mem_size,RsPgpId& key_id, std::string& name, std::list<RsPgpId>& signers) ;
+        static int availablePgpCertificatesWithPrivateKeys(std::list<RsPgpId>& pgpIds);
 
         /*********************************************************************************/
 		/************************* STAGE 3 ***********************************************/

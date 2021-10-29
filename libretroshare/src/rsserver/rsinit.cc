@@ -510,7 +510,7 @@ RsInit::LoadCertificateStatus RsInit::LockAndLoadCertificates(
 		if(!RsAccounts::GetAccountDetails(accountId, pgpId, pgpName, pgpEmail, location))
 			throw RsInit::ERR_UNKNOWN; // invalid PreferredAccount;
 
-        if(0 == AuthPGP::GPGInit(pgpId))
+        if(0 == AuthPGP::PgpInit(pgpId))
 			throw RsInit::ERR_UNKNOWN; // PGP Error.
 
 		LoadCertificateStatus retVal =
