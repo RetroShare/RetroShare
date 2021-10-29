@@ -118,7 +118,7 @@ void RsServer::rsGlobalShutDown()
 //         if(mWire) mWire->join();
 // #endif
 
-	AuthGPG::exit();
+	AuthPGP::exit();
 
 	mShutdownCallback(0);
 }

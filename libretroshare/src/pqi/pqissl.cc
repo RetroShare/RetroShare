@@ -1213,7 +1213,7 @@ int pqissl::Authorise_SSL_Connection()
 	}
 
 	RsPgpId pgpId = RsX509Cert::getCertIssuer(*peercert);
-    if( !isSslOnlyFriend && pgpId != AuthGPG::getGPGOwnId() && !AuthGPG::isGPGAccepted(pgpId) )
+    if( !isSslOnlyFriend && pgpId != AuthPGP::getGPGOwnId() && !AuthPGP::isGPGAccepted(pgpId) )
 	{
 		RsFatal() << __PRETTY_FUNCTION__ << " pgpId: " << pgpId
 		          << " is not friend. It is very unlikely to happen at this "

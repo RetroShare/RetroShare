@@ -140,7 +140,7 @@ bool p3ServerConfig::setConfigurationOption(uint32_t key, const std::string &opt
 int 	p3ServerConfig::getConfigNetStatus(RsConfigNetStatus &status)
 {
 	status.ownId = AuthSSL::getAuthSSL()->OwnId();
-    status.ownName = AuthGPG::getGPGOwnName();
+    status.ownName = AuthPGP::getGPGOwnName();
 
 	// Details from PeerMgr.
 	peerState pstate;

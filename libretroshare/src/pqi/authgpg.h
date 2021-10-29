@@ -89,7 +89,7 @@ public:
     virtual void setGPGOperation(AuthGPGOperation *operation) = 0;
 };
 
-class AuthGPG: public p3Config, public RsTickingThread
+class AuthPGP: public p3Config, public RsTickingThread
 {
 public:
     static void init(const std::string& path_to_pubring,
@@ -237,11 +237,11 @@ public:
         static bool addService(AuthGPGService *service) ;
 
 		// This is for debug purpose only. Don't use it !!
-		static void setAuthGPG_debug(AuthGPG *auth_gpg) { _instance = auth_gpg ; } 
+        static void setAuthGPG_debug(AuthPGP *auth_gpg) { _instance = auth_gpg ; }
 
 	protected:
-		AuthGPG(const std::string& path_to_pubring, const std::string& path_to_secring,const std::string& path_to_trustdb,const std::string& pgp_lock_file);
-		virtual ~AuthGPG();
+        AuthPGP(const std::string& path_to_pubring, const std::string& path_to_secring,const std::string& path_to_trustdb,const std::string& pgp_lock_file);
+        virtual ~AuthPGP();
 
 		/*****************************************************************/
 		/***********************  p3config  ******************************/
@@ -286,7 +286,7 @@ private:
 	void threadTick() override; /// @see RsTickingThread
 
 private:
-        static AuthGPG *instance();
+        static AuthPGP *instance();
 
 		RsMutex gpgMtxService;
 		RsMutex gpgMtxEngine;
@@ -310,7 +310,7 @@ private:
 
 		std::list<AuthGPGService*> services ;
 
-		static AuthGPG *_instance ;
+        static AuthPGP *_instance ;
 };
 
 #endif
