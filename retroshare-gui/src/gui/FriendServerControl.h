@@ -35,10 +35,11 @@ public:
 protected slots:
     void onOnOffClick(bool b);
     void onOnionAddressEdit(const QString&);
+    void onOnionPortEdit(int);
     void onNbFriendsToRequestsChanged(int n);
-    void checkServerAddress();
 
 private:
+    void checkServerAddress();
     void updateFriendServerStatusIcon(bool ok);
 
     QTimer *mConnectionCheckTimer;

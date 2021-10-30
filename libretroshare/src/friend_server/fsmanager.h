@@ -15,11 +15,14 @@ struct FriendServerPeerInfo
     };
 
     uint32_t status ;
+    rstime_t received_TS;
 };
 
 class FriendServerManager: public RsFriendServer, public RsTickingThread
 {
 public:
+    FriendServerManager();
+
     virtual void startServer() override ;
     virtual void stopServer() override ;
 
@@ -27,11 +30,15 @@ public:
     virtual void setServerAddress(const std::string&,uint16_t) override ;
     virtual void setFriendsToRequest(uint32_t) override ;
 
+    virtual uint32_t friendsToRequest() override { return mFriendsToRequest ; }
+    virtual uint16_t friendsServerPort() override { return mServerPort ; }
+    virtual std::string friendsServerAddress() override { return mServerAddress ; }
 protected:
     virtual void threadTick() override;
 
 private:
     uint32_t mFriendsToRequest;
+    rstime_t mLastFriendReqestCampain;
 
     // encode the current list of friends obtained through the friendserver and their status
 

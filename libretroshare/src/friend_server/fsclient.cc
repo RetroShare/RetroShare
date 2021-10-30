@@ -21,18 +21,59 @@
  ******************************************************************************/
 
 #include "pqi/pqithreadstreamer.h"
+#include "retroshare/rspeers.h"
 
 #include "fsclient.h"
 #include "fsbio.h"
 
-FsClient::FsClient(const std::string& address)
-    : mServerAddress(address)
+bool FsClient::requestFriends(const std::string& address,uint16_t port,uint32_t reqs,std::map<std::string,bool>& friend_certificates)
 {
+    // send our own certificate to publish and expects response frmo the server , decrypts it and reutnrs friend list
+
+    RsFriendServerClientPublishItem *pitem = new RsFriendServerClientPublishItem();
+
+    pitem->n_requested_friends = reqs;
+    pitem->long_invite = rsPeers->GetRetroshareInvite();
+
+    std::list<RsItem*> response;
+
+    sendItem(address,port,pitem,response);
+
+    // now decode the response
+
+    friend_certificates.clear();
+
+    for(auto item:response)
+    {
+        auto *encrypted_response_item = dynamic_cast<RsFriendServerEncryptedServerResponseItem*>(item);
+
+        if(!encrypted_response_item)
+        {
+            delete item;
+            continue;
+        }
+
+        // For now, also handle unencrypted response items. Will be disabled in production
+
+        auto *response_item = dynamic_cast<RsFriendServerServerResponseItem*>(item);
+
+        if(!response_item)
+        {
+            delete item;
+            continue;
+        }
+
+        for(const auto& it:response_item->friend_invites)
+            friend_certificates.insert(it);
+    }
+    return friend_certificates.size();
 }
 
-bool FsClient::sendItem(RsItem *item)
+bool FsClient::sendItem(const std::string& address,uint16_t port,RsItem *item,std::list<RsItem*>& response)
 {
     // open a connection
+
+    RsDbg() << "Sending item to friend server at \"" << address << ":" << port ;
 
     int CreateSocket = 0,n = 0;
     char dataReceived[1024];
@@ -47,8 +88,8 @@ bool FsClient::sendItem(RsItem *item)
     }
 
     ipOfServer.sin_family = AF_INET;
-    ipOfServer.sin_port = htons(2017);
-    ipOfServer.sin_addr.s_addr = inet_addr("127.0.0.1");
+    ipOfServer.sin_port = htons(port);
+    ipOfServer.sin_addr.s_addr = inet_addr(address.c_str());
 
     if(connect(CreateSocket, (struct sockaddr *)&ipOfServer, sizeof(ipOfServer))<0)
     {
@@ -89,7 +130,7 @@ bool FsClient::sendItem(RsItem *item)
 
         if(!item)
         {
-            rstime::rs_usleep(1000*200);
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
             continue;
         }
 

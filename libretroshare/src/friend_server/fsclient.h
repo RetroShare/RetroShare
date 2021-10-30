@@ -28,11 +28,11 @@
 class FsClient
 {
 public:
-    FsClient(const std::string& address);
+    FsClient() {}
 
-    bool sendItem(RsItem *item);
+    bool requestFriends(const std::string& address,uint16_t port,uint32_t reqs,std::map<std::string,bool>& friend_certificates);
 
 private:
-    std::string mServerAddress;
+    bool sendItem(const std::string &address, uint16_t port, RsItem *item, std::list<RsItem *> &response);
 };
 

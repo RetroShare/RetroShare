@@ -40,11 +40,27 @@ FriendServerControl::FriendServerControl(QWidget *parent)
     /* Invoke the Qt Designer generated object setup routine */
     setupUi(this);
 
+    if(!rsFriendServer)
+    {
+        setEnabled(false);
+        return;
+    }
+
     mConnectionCheckTimer = new QTimer;
 
+    // init values
+
+    torServerFriendsToRequest_SB->setValue(rsFriendServer->friendsToRequest());
+    torServerAddress_LE->setText(QString::fromStdString(rsFriendServer->friendsServerAddress().c_str()));
+    torServerPort_SB->setValue(rsFriendServer->friendsServerPort());
+
+    // connect slignals/slots
+
     QObject::connect(friendServerOnOff_CB,SIGNAL(toggled(bool)),this,SLOT(onOnOffClick(bool)));
-    QObject::connect(mConnectionCheckTimer,SIGNAL(timeout()),this,SLOT(checkServerAddress()));
+    QObject::connect(torServerFriendsToRequest_SB,SIGNAL(valueChanged(int)),this,SLOT(onFriendsToRequestChanged(int)));
     QObject::connect(torServerAddress_LE,SIGNAL(textChanged(const QString&)),this,SLOT(onOnionAddressEdit(const QString&)));
+
+    QObject::connect(mConnectionCheckTimer,SIGNAL(timeout()),this,SLOT(checkServerAddress()));
 
     mCheckingServerMovie = new QMovie(":/images/loader/circleball-16.gif");
     serverStatusCheckResult_LB->setMovie(mCheckingServerMovie);
@@ -64,6 +80,21 @@ void FriendServerControl::onOnOffClick(bool b)
         rsFriendServer->startServer();
     else
         rsFriendServer->stopServer();
+}
+void FriendServerControl::onOnionPortEdit(int)
+{
+    // Setup timer to auto-check the friend server address
+
+    mConnectionCheckTimer->setSingleShot(true);
+    mConnectionCheckTimer->setInterval(5000); // check in 5 secs unless something is changed in the mean time.
+
+    mConnectionCheckTimer->start();
+
+    if(mCheckingServerMovie->fileName() != QString(":/images/loader/circleball-16.gif" ))
+    {
+        mCheckingServerMovie->setFileName(":/images/loader/circleball-16.gif");
+        mCheckingServerMovie->start();
+    }
 }
 
 void FriendServerControl::onOnionAddressEdit(const QString&)
