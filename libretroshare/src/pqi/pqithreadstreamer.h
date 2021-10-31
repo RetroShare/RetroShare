@@ -31,8 +31,8 @@ public:
     pqithreadstreamer(PQInterface *parent, RsSerialiser *rss, const RsPeerId& peerid, BinInterface *bio_in, int bio_flagsin);
 
     // from pqistreamer
-    virtual bool RecvItem(RsItem *item);
-    virtual int  tick();
+    virtual bool RecvItem(RsItem *item) override;
+    virtual int  tick() override;
 
 protected:
 	void threadTick() override; /// @see RsTickingThread
