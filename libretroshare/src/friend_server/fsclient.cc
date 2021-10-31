@@ -117,7 +117,7 @@ bool FsClient::sendItem(const std::string& address,uint16_t port,RsItem *item,st
     // TODO: we should write in multiple chunks just in case the socket is not fully ready
     write(CreateSocket,data,size);
 
-    // Now attempt to read and deserialize anything that comes back from that connexion
+    // Now attempt to read and deserialize anything that comes back from that connexion until it gets closed by the server.
 
     FsBioInterface bio(CreateSocket);
     pqistreamer pqi(&rss,RsPeerId(),&bio,BIN_FLAGS_READABLE);
@@ -128,14 +128,26 @@ bool FsClient::sendItem(const std::string& address,uint16_t port,RsItem *item,st
     {
         RsItem *item = p.GetItem();
 
-        if(!item)
+        if(item)
+        {
+            response.push_back(item);
+            std::cerr << "Got a response item: " << std::endl;
+            std::cerr << *item << std::endl;
+        }
+        else
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(200));
             continue;
         }
 
-        std::cerr << "Got a response item: " << std::endl;
-        std::cerr << *item << std::endl;
+        if(!bio.isactive())	// socket has probably closed
+        {
+            RsDbg() << "(client side) Socket has been closed by server. Killing pqistreamer and closing socket." ;
+            p.fullstop();
+
+            close(CreateSocket);
+            CreateSocket=0;
+        }
     }
 
     return 0;

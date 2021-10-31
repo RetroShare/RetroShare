@@ -51,6 +51,7 @@ public:
 
 private:
     int mCLintConnt;
+    bool mIsActive;
     uint32_t mTotalReadBytes;
     uint32_t mTotalBufferBytes;
 

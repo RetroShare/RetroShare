@@ -24,7 +24,7 @@
 #include "fsbio.h"
 
 FsBioInterface::FsBioInterface(int socket)
-    : mCLintConnt(socket)
+    : mCLintConnt(socket),mIsActive(true)
 {
     mTotalReadBytes=0;
     mTotalBufferBytes=0;
@@ -43,20 +43,21 @@ int FsBioInterface::tick()
 
     if(readbytes == 0)
     {
-        std::cerr << "Reached END of the stream!" << std::endl;
-        return 0;
+        RsDbg() << "Reached END of the stream!" << std::endl;
+        RsDbg() << "Closing!" << std::endl;
+
+        mIsActive = false;
+        return mTotalBufferBytes;
     }
     if(readbytes < 0)
     {
         if(errno != EWOULDBLOCK && errno != EAGAIN)
             RsErr() << "read() failed. Errno=" << errno ;
 
-        return false;
+        return mTotalBufferBytes;
     }
 
     std::cerr << "clintConnt: " << mCLintConnt << ", readbytes: " << readbytes << std::endl;
-
-    //::close(clintConnt);
 
     // display some debug info
 
@@ -79,7 +80,7 @@ int FsBioInterface::tick()
         std::cerr << "Socket: " << mCLintConnt << ". Total read: " << mTotalReadBytes << ". Buffer size: " << mTotalBufferBytes << std::endl ;
     }
 
-    return true;
+    return mTotalBufferBytes;
 }
 
 int FsBioInterface::readdata(void *data, int len)
@@ -134,7 +135,7 @@ int FsBioInterface::senddata(void *data, int len)
 }
 int FsBioInterface::netstatus()
 {
-    return 1; // dummy response.
+    return mIsActive; // dummy response.
 }
 
 int FsBioInterface::isactive()
@@ -154,6 +155,7 @@ bool FsBioInterface::cansend(uint32_t)
 int FsBioInterface::close()
 {
     RsDbg() << "Stopping network interface" << std::endl;
+    mIsActive = false;
     return 1;
 }
 

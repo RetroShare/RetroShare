@@ -41,12 +41,11 @@
 #include "friend_server/fsitem.h"
 
 FsNetworkInterface::FsNetworkInterface()
-    : mFsNiMtx(std::string("FsNetworkInterface"))
+    : PQInterface(RsPeerId()),mFsNiMtx(std::string("FsNetworkInterface"))
 {
     RS_STACK_MUTEX(mFsNiMtx);
 
     mClintListn = 0;
-
     mClintListn = socket(AF_INET, SOCK_STREAM, 0); // creating socket
 
     int flags = fcntl(mClintListn, F_GETFL);
@@ -76,9 +75,10 @@ FsNetworkInterface::FsNetworkInterface()
 
 FsNetworkInterface::~FsNetworkInterface()
 {
+    RS_STACK_MUTEX(mFsNiMtx);
     for(auto& it:mConnections)
     {
-        delete it.second.pqi;
+        delete it.second.pqi_thread;
         std::cerr << "Releasing socket " << it.second.socket << std::endl;
         close(it.second.socket);
     }
@@ -93,8 +93,11 @@ void FsNetworkInterface::threadTick()
 
     // 2 - tick all streamers
 
+    RS_STACK_MUTEX(mFsNiMtx);
     for(auto& it:mConnections)
-        it.second.pqi->tick();
+    {
+        it.second.pqi_thread->tick();
+    }
 
     rstime::rs_usleep(1000*200);
 }
@@ -102,6 +105,8 @@ void FsNetworkInterface::threadTick()
 static RsPeerId makePeerId(int t)
 {
     unsigned char s[RsPeerId::SIZE_IN_BYTES];
+    memset(s,0,sizeof(s));
+
     *reinterpret_cast<int*>(&s) = t;
     return RsPeerId::fromBufferUnsafe(s);
 }
@@ -145,15 +150,33 @@ bool FsNetworkInterface::checkForNewConnections()
 
     FsBioInterface *bio = new FsBioInterface(clintConnt);
 
-    auto p = new pqistreamer(rss, pid, bio,BIN_FLAGS_READABLE | BIN_FLAGS_WRITEABLE);
-    auto pqi = new pqithreadstreamer(p,rss, pid, bio,BIN_FLAGS_READABLE | BIN_FLAGS_WRITEABLE);
-    c.pqi = pqi;
+    auto pqi = new pqithreadstreamer(this,rss, pid, bio,BIN_FLAGS_READABLE | BIN_FLAGS_WRITEABLE);
+
+    c.pqi_thread = pqi;
+    c.bio = bio;
 
     pqi->start();
 
     RS_STACK_MUTEX(mFsNiMtx);
-    mConnections[makePeerId(clintConnt)] = c;
+    mConnections[pid] = c;
 
+    return true;
+}
+
+bool FsNetworkInterface::RecvItem(RsItem *item)
+{
+    RS_STACK_MUTEX(mFsNiMtx);
+
+    auto it = mConnections.find(item->PeerId());
+
+    if(it == mConnections.end())
+    {
+        RsErr() << "Receiving an item for peer ID " << item->PeerId() << " but no connection is known for that peer." << std::endl;
+        delete item;
+        return false;
+    }
+
+    it->second.incoming_items.push_back(item);
     return true;
 }
 
@@ -163,10 +186,74 @@ RsItem *FsNetworkInterface::GetItem()
 
     for(auto& it:mConnections)
     {
-        RsItem *item = it.second.pqi->GetItem();
-        if(item)
+        if(!it.second.incoming_items.empty())
+        {
+            RsItem *item = it.second.incoming_items.front();
+            it.second.incoming_items.pop_front();
+
             return item;
+        }
     }
     return nullptr;
 }
+
+int FsNetworkInterface::SendItem(RsItem *item)
+{
+    RS_STACK_MUTEX(mFsNiMtx);
+
+    const auto& it = mConnections.find(item->PeerId());
+
+    if(it == mConnections.end())
+    {
+        RsErr() << "Cannot send item to peer " << item->PeerId() << ": no pending sockets available." ;
+        delete item;
+        return 0;
+    }
+
+    return it->second.pqi_thread->SendItem(item);
+}
+
+void FsNetworkInterface::closeConnection(const RsPeerId& peer_id)
+{
+    const auto& it = mConnections.find(peer_id);
+
+    if(it == mConnections.end())
+    {
+        RsErr() << "Cannot close connection to peer " << peer_id << ": no pending sockets available." ;
+        return;
+    }
+
+    if(!it->second.incoming_items.empty())
+    {
+        RsErr() << "Trying to close an incoming connection with incoming items still pending! The items will be lost." << std::endl;
+
+        for(auto& item:it->second.incoming_items)
+            delete item;
+
+        it->second.incoming_items.clear();
+    }
+    // Close the socket and delete everything.
+
+    it->second.pqi_thread->fullstop();
+    it->second.bio->close();
+
+    close(it->second.socket);
+
+    delete it->second.pqi_thread;
+    delete it->second.bio;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

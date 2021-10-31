@@ -37,7 +37,15 @@ void FriendServer::threadTick()
 
 void FriendServer::handleClientPublish(const RsFriendServerClientPublishItem *item)
 {
-    RsDbg() << "Received a client publish item:" << *item ;
+    RsDbg() << "Received a client publish item from " << item->PeerId() << ":" << *item ;
+
+    // Respond with a list of potential friends
+
+    // Close client connection from server side, to tell the client that nothing more is coming.
+
+    RsDbg() << "Closing client connection." ;
+
+    mni->closeConnection(item->PeerId());
 }
 void FriendServer::handleClientRemove(const RsFriendServerClientRemoveItem *item)
 {

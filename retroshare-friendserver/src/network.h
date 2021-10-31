@@ -22,20 +22,25 @@
 #pragma once
 
 #include "util/rsthreads.h"
+#include "pqi/pqi_base.h"
 #include "retroshare/rspeers.h"
 
-class pqistreamer;
+class pqithreadstreamer;
+class FsBioInterface;
 
 struct ConnectionData
 {
     sockaddr client_address;
     int socket;
-    pqistreamer *pqi;
+    pqithreadstreamer *pqi_thread;
+    FsBioInterface *bio;
+
+    std::list<RsItem*> incoming_items;
 };
 
 // This class handles multiple connections to the server and supplies RsItem elements
 
-class FsNetworkInterface: public RsTickingThread
+class FsNetworkInterface: public RsTickingThread, public PQInterface
 {
 public:
     FsNetworkInterface() ;
@@ -43,7 +48,13 @@ public:
 
     // basic functionality
 
-    RsItem *GetItem();
+    void closeConnection(const RsPeerId& peer_id);
+
+    // Implements PQInterface
+
+    bool RecvItem(RsItem *item) override;
+    int  SendItem(RsItem *item) override;
+    RsItem *GetItem() override;
 
     // Implements RsTickingThread
 
