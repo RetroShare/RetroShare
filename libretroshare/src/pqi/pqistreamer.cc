@@ -683,7 +683,7 @@ int	pqistreamer::handleoutgoing_locked()
             outSentBytes_locked(mPkt_wpending_size);	// this is the only time where we know exactly what was sent.
 
 #ifdef DEBUG_TRANSFERS
-		    std::cerr << "pqistreamer::handleoutgoing_locked() Sent Packet len: " << mPkt_wpending_size << " @ " << RsUtil::AccurateTimeString();
+            std::cerr << "pqistreamer::handleoutgoing_locked() Sent Packet len: " << mPkt_wpending_size << " @ " << getCurrentTS();
 		    std::cerr << std::endl;
 #endif
 
@@ -693,7 +693,7 @@ int	pqistreamer::handleoutgoing_locked()
 		    mPkt_wpending = NULL;
 		    mPkt_wpending_size = 0 ;
 
-		    sent = true;
+            sent = true;
 	    }
     }
 #ifdef DEBUG_PQISTREAMER
