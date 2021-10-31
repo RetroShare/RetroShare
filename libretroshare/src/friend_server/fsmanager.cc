@@ -96,6 +96,8 @@ void FriendServerManager::threadTick()
 
     if(mLastFriendReqestCampain + delay_for_request < now)
     {
+        mLastFriendReqestCampain = now;
+
         std::cerr << "Requesting new friends to friend server..." << std::endl;
 
         std::map<std::string,bool> friend_certificates;

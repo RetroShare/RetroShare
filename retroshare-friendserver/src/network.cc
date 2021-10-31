@@ -215,6 +215,8 @@ int FsNetworkInterface::SendItem(RsItem *item)
 
 void FsNetworkInterface::closeConnection(const RsPeerId& peer_id)
 {
+    RS_STACK_MUTEX(mFsNiMtx);
+
     const auto& it = mConnections.find(peer_id);
 
     if(it == mConnections.end())
@@ -240,7 +242,8 @@ void FsNetworkInterface::closeConnection(const RsPeerId& peer_id)
     close(it->second.socket);
 
     delete it->second.pqi_thread;
-    delete it->second.bio;
+
+    mConnections.erase(it);
 }
 
 

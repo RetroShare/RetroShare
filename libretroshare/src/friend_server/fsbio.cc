@@ -43,10 +43,10 @@ int FsBioInterface::tick()
 
     if(readbytes == 0)
     {
-        RsDbg() << "Reached END of the stream!" << std::endl;
-        RsDbg() << "Closing!" << std::endl;
+        RsDbg() << "Reached END of the stream!" ;
+        RsDbg() << "Closing!" ;
 
-        mIsActive = false;
+        close();
         return mTotalBufferBytes;
     }
     if(readbytes < 0)
@@ -140,7 +140,7 @@ int FsBioInterface::netstatus()
 
 int FsBioInterface::isactive()
 {
-    return mCLintConnt > 0;
+    return mIsActive ;
 }
 
 bool FsBioInterface::moretoread(uint32_t /* usec */)

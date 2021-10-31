@@ -113,31 +113,30 @@ bool FsClient::sendItem(const std::string& address,uint16_t port,RsItem *item,st
     rss.addSerialType(fss);
 
     FsSerializer().serialise(item,data,&size);
+    write(CreateSocket,data,size);				// shouldn't we use the pqistreamer in R/W mode instead?
 
-    // TODO: we should write in multiple chunks just in case the socket is not fully ready
-    write(CreateSocket,data,size);
+    RsDbg() << "Item sent. Waiting for response..." ;
 
     // Now attempt to read and deserialize anything that comes back from that connexion until it gets closed by the server.
 
     FsBioInterface bio(CreateSocket);
-    pqistreamer pqi(&rss,RsPeerId(),&bio,BIN_FLAGS_READABLE);
-    pqithreadstreamer p(&pqi,&rss,RsPeerId(),&bio,BIN_FLAGS_READABLE);
+    pqithreadstreamer p(this,&rss,RsPeerId(),&bio,BIN_FLAGS_READABLE | BIN_FLAGS_NO_DELETE);
     p.start();
+
+    uint32_t ss;
+    p.SendItem(item,ss);
 
     while(true)
     {
-        RsItem *item = p.GetItem();
+        p.tick();
+
+        RsItem *item = GetItem();
 
         if(item)
         {
             response.push_back(item);
             std::cerr << "Got a response item: " << std::endl;
             std::cerr << *item << std::endl;
-        }
-        else
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(200));
-            continue;
         }
 
         if(!bio.isactive())	// socket has probably closed
@@ -147,11 +146,28 @@ bool FsClient::sendItem(const std::string& address,uint16_t port,RsItem *item,st
 
             close(CreateSocket);
             CreateSocket=0;
+            break;
         }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
 
-    return 0;
-
-    // if ok, stream the item through it
+    return true;
 }
 
+bool FsClient::RecvItem(RsItem *item)
+{
+    mIncomingItems.push_back(item);
+    return true;
+}
+
+RsItem *FsClient::GetItem()
+{
+    if(mIncomingItems.empty())
+        return nullptr;
+
+    RsItem *item = mIncomingItems.front();
+    mIncomingItems.pop_front();
+
+    return item;
+}
