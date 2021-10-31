@@ -29,19 +29,36 @@
 class RsFriendServerClientRemoveItem;
 class RsFriendServerClientPublishItem;
 
+struct PeerInfo
+{
+    std::string short_certificate;
+    rstime_t last_connection_TS;
+};
+
 class FriendServer : public RsTickingThread
 {
 public:
     FriendServer(const std::string& base_directory);
 
 private:
+    // overloads RsTickingThread
+
     virtual void threadTick() override;
     virtual void run() override;
+
+    // Own algorithmics
 
     void handleClientRemove(const RsFriendServerClientRemoveItem *item);
     void handleClientPublish(const RsFriendServerClientPublishItem *item);
 
+    void autoWash();
+    void debugPrint();
+
+    // Local members
+
     FsNetworkInterface *mni;
 
     std::string mBaseDirectory;
+
+    std::map<RsPeerId, PeerInfo> mCurrentClientPeers;
 };

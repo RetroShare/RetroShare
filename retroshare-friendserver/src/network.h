@@ -49,6 +49,7 @@ public:
     // basic functionality
 
     void closeConnection(const RsPeerId& peer_id);
+    void debugPrint();
 
     // Implements PQInterface
 

@@ -4,9 +4,9 @@
 
 RsFriendServer *rsFriendServer = nullptr;
 
-static const rstime_t MIN_DELAY_BETWEEN_FS_REQUESTS =  30;
+static const rstime_t MIN_DELAY_BETWEEN_FS_REQUESTS =   30;
 static const rstime_t MAX_DELAY_BETWEEN_FS_REQUESTS = 3600;
-static const uint32_t DEFAULT_FRIENDS_TO_REQUEST    =  10;
+static const uint32_t DEFAULT_FRIENDS_TO_REQUEST    =   10;
 
 static const std::string DEFAULT_FRIEND_SERVER_ADDRESS = "127.0.0.1";
 static const uint16_t    DEFAULT_FRIEND_SERVER_PORT    = 2017;

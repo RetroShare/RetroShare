@@ -109,8 +109,8 @@ bool FsClient::sendItem(const std::string& address,uint16_t port,RsItem *item,st
     }
 
     FsSerializer *fss = new FsSerializer;
-    RsSerialiser rss;
-    rss.addSerialType(fss);
+    RsSerialiser *rss = new RsSerialiser();	// deleted by ~pqistreamer()
+    rss->addSerialType(fss);
 
     FsSerializer().serialise(item,data,&size);
     write(CreateSocket,data,size);				// shouldn't we use the pqistreamer in R/W mode instead?
@@ -119,8 +119,9 @@ bool FsClient::sendItem(const std::string& address,uint16_t port,RsItem *item,st
 
     // Now attempt to read and deserialize anything that comes back from that connexion until it gets closed by the server.
 
-    FsBioInterface bio(CreateSocket);
-    pqithreadstreamer p(this,&rss,RsPeerId(),&bio,BIN_FLAGS_READABLE | BIN_FLAGS_NO_DELETE);
+    FsBioInterface *bio = new FsBioInterface(CreateSocket);	// deleted by ~pqistreamer()
+
+    pqithreadstreamer p(this,rss,RsPeerId(),bio,BIN_FLAGS_READABLE | BIN_FLAGS_NO_DELETE | BIN_FLAGS_NO_CLOSE);
     p.start();
 
     uint32_t ss;
@@ -139,13 +140,17 @@ bool FsClient::sendItem(const std::string& address,uint16_t port,RsItem *item,st
             std::cerr << *item << std::endl;
         }
 
-        if(!bio.isactive())	// socket has probably closed
+        if(!bio->isactive())	// socket has probably closed
         {
-            RsDbg() << "(client side) Socket has been closed by server. Killing pqistreamer and closing socket." ;
+            RsDbg() << "(client side) Socket has been closed by server.";
+            RsDbg() << "  Stopping/killing pqistreamer" ;
             p.fullstop();
 
+            RsDbg() << "  Closing socket." ;
             close(CreateSocket);
             CreateSocket=0;
+
+            RsDbg() << "  Exiting loop." ;
             break;
         }
 

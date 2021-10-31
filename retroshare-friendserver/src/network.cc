@@ -246,6 +246,16 @@ void FsNetworkInterface::closeConnection(const RsPeerId& peer_id)
     mConnections.erase(it);
 }
 
+void FsNetworkInterface::debugPrint()
+{
+    RsDbg() << "    " << mClintListn ;	// listening socket
+    RsDbg() << "    Connections: " << mConnections.size() ;
+
+    for(auto& it:mConnections)
+        RsDbg() << "      " << it.first << ": from \"" << sockaddr_storage_tostring(*(sockaddr_storage*)(&it.second.client_address)) << "\", socket=" << it.second.socket ;
+
+    std::map<RsPeerId,ConnectionData> mConnections;
+}
 
 
 

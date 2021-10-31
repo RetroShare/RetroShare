@@ -3,6 +3,10 @@
 #include "friendserver.h"
 #include "friend_server/fsitem.h"
 
+static const rstime_t MAXIMUM_PEER_INACTIVE_DELAY    = 600;
+static const rstime_t DELAY_BETWEEN_TWO_AUTOWASH     =  60;
+static const rstime_t DELAY_BETWEEN_TWO_DEBUG_PRINT  =  10;
+
 void FriendServer::threadTick()
 {
     // Listen to the network interface, capture incoming data etc.
@@ -32,6 +36,23 @@ void FriendServer::threadTick()
         default: ;
         }
         delete item;
+    }
+
+    static rstime_t last_autowash_TS = time(nullptr);
+    rstime_t now = time(nullptr);
+
+    if(last_autowash_TS + DELAY_BETWEEN_TWO_AUTOWASH < now)
+    {
+        last_autowash_TS = now;
+        autoWash();
+    }
+
+    static rstime_t last_debugprint_TS = time(nullptr);
+
+    if(last_debugprint_TS + DELAY_BETWEEN_TWO_DEBUG_PRINT < now)
+    {
+        last_debugprint_TS = now;
+        debugPrint();
     }
 }
 
@@ -66,4 +87,40 @@ void FriendServer::run()
 
     while(!shouldStop()) { threadTick() ; }
 }
+
+void FriendServer::autoWash()
+{
+    rstime_t now = time(nullptr);
+
+    for(std::map<RsPeerId,PeerInfo>::iterator it(mCurrentClientPeers.begin());it!=mCurrentClientPeers.end();)
+    {
+        if(it->second.last_connection_TS + MAXIMUM_PEER_INACTIVE_DELAY < now)
+        {
+            RsDbg() << "Removing client peer " << it->first << " because it's inactive for more than " << MAXIMUM_PEER_INACTIVE_DELAY << " seconds." ;
+            auto tmp = it;
+            ++tmp;
+            mCurrentClientPeers.erase(it);
+            it = tmp;
+        }
+    }
+}
+
+void FriendServer::debugPrint()
+{
+    RsDbg() << "========== FriendServer statistics ============";
+    RsDbg() << "  Base directory: "<< mBaseDirectory;
+    RsDbg() << "  Network interface: ";
+    RsDbg() << "  Current peers: " << mCurrentClientPeers.size() ;
+
+    rstime_t now = time(nullptr);
+
+    for(auto& it:mCurrentClientPeers)
+        RsDbg() << "   " << it.first << ": " << "last contact: " << now - it.second.last_connection_TS;
+
+    RsDbg() << "===============================================";
+
+}
+
+
+
 

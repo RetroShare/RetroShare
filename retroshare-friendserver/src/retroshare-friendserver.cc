@@ -58,20 +58,8 @@ int main(int argc, char* argv[])
     fs.start();
 
     while(fs.isRunning())
-    {
         std::this_thread::sleep_for(std::chrono::seconds(2));
 
-//        // send one request for testing to see what happens
-//
-//        RsFriendServerClientPublishItem *item = new RsFriendServerClientPublishItem();
-//        item->long_invite = std::string("[Long Invite]");
-//        item->n_requested_friends = 10;
-//
-//        std::cerr << "Sending fake request item for testing..." << std::endl;
-//        FsClient(std::string("127.0.0.1")).sendItem(item);
-//
-//        std::this_thread::sleep_for(std::chrono::seconds(4));
-    }
 	return 0;
 }
 
