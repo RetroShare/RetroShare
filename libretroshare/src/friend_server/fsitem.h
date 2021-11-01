@@ -26,6 +26,7 @@
 #include "serialiser/rsserializer.h"
 
 #include "rsitems/rsitem.h"
+#include "serialiser/rstlvbinary.h"
 #include "rsitems/rsserviceids.h"
 #include "rsitems/itempriorities.h"
 
@@ -53,18 +54,21 @@ public:
     void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override
     {
         RS_SERIAL_PROCESS(n_requested_friends);
-        RS_SERIAL_PROCESS(long_invite);
+        RS_SERIAL_PROCESS(short_invite);
+        RS_SERIAL_PROCESS(pgp_public_key_b64);
     }
     virtual void clear()  override
     {
-        long_invite = std::string();
+        pgp_public_key_b64.clear();
+        short_invite.clear();
         n_requested_friends=0;
     }
 
     // specific members for that item
 
     uint32_t    n_requested_friends;
-    std::string long_invite;
+    std::string short_invite;
+    std::string pgp_public_key_b64;
 };
 
 class RsFriendServerClientRemoveItem: public RsFriendServerItem

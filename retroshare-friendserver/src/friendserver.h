@@ -23,6 +23,7 @@
 
 #include "util/rsthreads.h"
 #include "pqi/pqistreamer.h"
+#include "pgp/pgphandler.h"
 
 #include "network.h"
 
@@ -57,6 +58,7 @@ private:
     // Local members
 
     FsNetworkInterface *mni;
+    PGPHandler *mPgpHandler;
 
     std::string mBaseDirectory;
 

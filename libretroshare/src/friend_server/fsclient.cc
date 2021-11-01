@@ -33,10 +33,20 @@ bool FsClient::requestFriends(const std::string& address,uint16_t port,uint32_t 
     RsFriendServerClientPublishItem *pitem = new RsFriendServerClientPublishItem();
 
     pitem->n_requested_friends = reqs;
-    pitem->long_invite = rsPeers->GetRetroshareInvite();
+
+    std::string pgp_base64_string,pgp_base64_checksum,short_invite;
+    rsPeers->GetPGPBase64StringAndCheckSum(rsPeers->getGPGOwnId(),pgp_base64_string,pgp_base64_checksum);
+
+    if(!rsPeers->getShortInvite(short_invite,RsPeerId(),RetroshareInviteFlags::RADIX_FORMAT | RetroshareInviteFlags::DNS))
+    {
+        RsErr() << "Cannot request own short invite! Something's very wrong." ;
+        return false;
+    }
+
+    pitem->pgp_public_key_b64 = pgp_base64_string;
+    pitem->short_invite = short_invite;
 
     std::list<RsItem*> response;
-
     sendItem(address,port,pitem,response);
 
     // now decode the response

@@ -1,4 +1,8 @@
 #include "util/rsdebug.h"
+#include "util/rsprint.h"
+#include "util/rsdir.h"
+#include "util/rsbase64.h"
+#include "util/radix64.h"
 
 #include "friendserver.h"
 #include "friend_server/fsitem.h"
@@ -58,9 +62,68 @@ void FriendServer::threadTick()
 
 void FriendServer::handleClientPublish(const RsFriendServerClientPublishItem *item)
 {
-    RsDbg() << "Received a client publish item from " << item->PeerId() << ":" << *item ;
+    try
+    {
+        RsDbg() << "Received a client publish item from " << item->PeerId() ;
+        RsDbg() << *item ;
 
-    // Respond with a list of potential friends
+        // First of all, read PGP key and short invites, parse them, and check that they contain the same information
+
+        RsDbg() << "  Checking item data...";
+
+        std::string error_string;
+        RsPgpId pgp_id ;
+        std::vector<uint8_t> key_binary_data ;
+
+        key_binary_data = Radix64::decode(item->pgp_public_key_b64);
+
+        if(key_binary_data.empty())
+            throw std::runtime_error("  Cannot decode client pgp public key: \"" + item->pgp_public_key_b64 + "\". Wrong format??");
+//        if(!RsBase64::decode(item->pgp_public_key_b64,key_binary_data))
+//            throw std::runtime_error("  Cannot decode client pgp public key: \"" + item->pgp_public_key_b64 + "\". Wrong format??");
+
+        RsDbg() << "    Public key radix is fine." ;
+
+        if(!mPgpHandler->LoadCertificateFromBinaryData(key_binary_data.data(),key_binary_data.size(), pgp_id, error_string))
+            throw std::runtime_error("Cannot load client's pgp public key into keyring: " + error_string) ;
+
+        RsDbg() << "    Public key added to keyring.";
+
+        RsPeerDetails shortInviteDetails;
+        uint32_t errorCode = 0;
+
+        if(item->short_invite.empty() || !rsPeers->parseShortInvite(item->short_invite, shortInviteDetails,errorCode ))
+            throw std::runtime_error("Could not parse short certificate. Error = " + RsUtil::NumberToString(errorCode));
+
+        RsDbg() << "    Short invite is fine. PGP fingerprint: " << shortInviteDetails.fpr ;
+
+        RsPgpFingerprint fpr_test;
+        if(!mPgpHandler->getKeyFingerprint(pgp_id,fpr_test))
+            throw std::runtime_error("Cannot get fingerprint from keyring for client public key. Something's really wrong.") ;
+
+        if(fpr_test != shortInviteDetails.fpr)
+            throw std::runtime_error("Cannot get fingerprint from keyring for client public key. Something's really wrong.") ;
+
+        RsDbg() << "    Short invite PGP fingerprint matches the public key fingerprint." ;
+
+        // Check the item's data signature
+
+        // All good.
+#warning TODO
+
+        // Store/update the peer info
+
+        auto& pi(mCurrentClientPeers[shortInviteDetails.id]);
+
+        pi.short_certificate = item->short_invite;
+        pi.last_connection_TS = time(nullptr);
+
+        // Respond with a list of potential friends
+    }
+    catch(std::exception& e)
+    {
+        RsErr() << e.what() ;
+    }
 
     // Close client connection from server side, to tell the client that nothing more is coming.
 
@@ -68,6 +131,7 @@ void FriendServer::handleClientPublish(const RsFriendServerClientPublishItem *it
 
     mni->closeConnection(item->PeerId());
 }
+
 void FriendServer::handleClientRemove(const RsFriendServerClientRemoveItem *item)
 {
     RsDbg() << "Received a client remove item:" << *item ;
@@ -76,6 +140,16 @@ FriendServer::FriendServer(const std::string& base_dir)
 {
     RsDbg() << "Creating friend server." ;
     mBaseDirectory = base_dir;
+
+    // Create a PGP Handler
+
+    std::string pgp_public_keyring_path  = RsDirUtil::makePath(base_dir,"pgp_public_keyring") ;
+    std::string pgp_lock_path            = RsDirUtil::makePath(base_dir,"pgp_lock") ;
+
+    std::string pgp_private_keyring_path = RsDirUtil::makePath(base_dir,"pgp_private_keyring") ;	// not used.
+    std::string pgp_trustdb_path         = RsDirUtil::makePath(base_dir,"pgp_trustdb") ;	        // not used.
+
+    mPgpHandler = new PGPHandler(pgp_public_keyring_path,pgp_private_keyring_path,pgp_trustdb_path,pgp_lock_path);
 }
 
 void FriendServer::run()

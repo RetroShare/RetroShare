@@ -20,6 +20,7 @@
  */
 
 #include "util/stacktrace.h"
+#include "util/rsdir.h"
 #include "util/argstream.h"
 #include "util/rstime.h"
 #include "util/rsdebug.h"
@@ -43,15 +44,22 @@ int main(int argc, char* argv[])
 	//RsInit::InitRsConfig();
 	//RsControl::earlyInitNotificationSystem();
 
-	std::string base_directory;
+    std::string base_directory = "FSData";
 
 	argstream as(argc,argv);
 
-	as >> parameter( 'c',"base-dir", base_directory, "directory", "Set base directory.", false )
+    as >> parameter( 'c',"base-dir", base_directory, "set base directory to store data files (keys, etc)", false )
 	   >> help( 'h', "help", "Display this Help" );
 
 	as.defaultErrorHandling(true, true);
 
+    // Create the base directory if needed
+
+    if(!RsDirUtil::checkCreateDirectory(base_directory))
+    {
+        RsErr() << "Cannot create base directory \"" << base_directory << "\". Check permissions, paths, etc." ;
+        return 1;
+    }
     // Now start the real thing.
 
     FriendServer fs(base_directory);
