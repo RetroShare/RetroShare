@@ -48,6 +48,7 @@
 
 #include "pqi/authssl.h"
 
+typedef RsCertificate::RsShortInviteFieldType RsShortInviteFieldType;	// locally in this file to avoid renaming everything.
 
 RsPeers *rsPeers = NULL;
 
@@ -1159,22 +1160,6 @@ bool p3Peers::GetPGPBase64StringAndCheckSum(
 	return true;
 }
 
-enum class RsShortInviteFieldType : uint8_t
-{
-	SSL_ID          = 0x00,
-	PEER_NAME       = 0x01,
-	LOCATOR         = 0x02,
-	PGP_FINGERPRINT = 0x03,
-	CHECKSUM        = 0x04,
-
-	/* The following will be deprecated, and ported to LOCATOR when generic
-	 * trasport layer will be implemented */
-	HIDDEN_LOCATOR  = 0x90,
-	DNS_LOCATOR     = 0x91,
-    EXT4_LOCATOR    = 0x92,		// external IPv4 address
-    LOC4_LOCATOR    = 0x93		// local IPv4 address
-};
-
 static void addPacketHeader(RsShortInviteFieldType ptag, size_t size, unsigned char *& buf, uint32_t& offset, uint32_t& buf_size)
 {
 	// Check that the buffer has sufficient size. If not, increase it.
@@ -1351,136 +1336,23 @@ bool p3Peers::getShortInvite(std::string& invite, const RsPeerId& _sslId, Retros
 
 bool p3Peers::parseShortInvite(const std::string& inviteStrUrl, RsPeerDetails& details, uint32_t &err_code )
 {
-	if(inviteStrUrl.empty())
-	{
-		RsErr() << __PRETTY_FUNCTION__ << " can't parse empty invite"
-		        << std::endl;
-		return false;
-	}
-	std::string rsInvite = inviteStrUrl;
+    if(inviteStrUrl.empty())
+    {
+        RsErr() << __PRETTY_FUNCTION__ << " can't parse empty invite"
+                << std::endl;
+        return false;
+    }
+    std::string rsInvite = inviteStrUrl;
 
-	RsUrl inviteUrl(inviteStrUrl);
+    RsUrl inviteUrl(inviteStrUrl);
 
-	if(inviteUrl.hasQueryK("rsInvite"))
-		rsInvite = *inviteUrl.getQueryV("rsInvite");
+    if(inviteUrl.hasQueryK("rsInvite"))
+        rsInvite = *inviteUrl.getQueryV("rsInvite");
 
-    std::vector<uint8_t> bf = Radix64::decode(rsInvite);
-	size_t size = bf.size();
+    if(!RsCertificate::decodeRadix64ShortInvite(rsInvite, details, err_code))
+        return false;
 
-	unsigned char* buf = bf.data();
-	size_t total_s = 0;
-    bool CRC_ok = false ; // not checked yet
-
-	while(total_s < size)
-	{
-		RsShortInviteFieldType ptag = RsShortInviteFieldType(buf[0]);
-		buf = &buf[1];
-
-		unsigned char *buf2 = buf;
-		uint32_t s = 0;
-
-		try { s = PGPKeyParser::read_125Size(buf); }
-		catch (...)
-		{
-			err_code = CERTIFICATE_PARSING_ERROR_SIZE_ERROR;
-			return false;
-		}
-
-		total_s += 1 + ( reinterpret_cast<size_t>(buf) - reinterpret_cast<size_t>(buf2) );
-
-		if(total_s > size)
-		{
-			err_code = CERTIFICATE_PARSING_ERROR_SIZE_ERROR;
-			return false;
-		}
-
-		Dbg3() << __PRETTY_FUNCTION__ << " Read ptag: "
-		       << static_cast<uint32_t>(ptag)
-		       << ", size " << s << ", total_s = " << total_s
-		       << ", expected total = " << size << std::endl;
-
-		switch(ptag)
-		{
-        case RsShortInviteFieldType::SSL_ID:
-			details.id = RsPeerId::fromBufferUnsafe(buf) ;
-			break;
-
-		case RsShortInviteFieldType::PEER_NAME:
-			details.name = std::string((char*)buf,s);
-			break;
-
-		case RsShortInviteFieldType::PGP_FINGERPRINT:
-			details.fpr = RsPgpFingerprint::fromBufferUnsafe(buf);
-            details.gpg_id = PGPHandler::pgpIdFromFingerprint(details.fpr);
-            break;
-
-		case RsShortInviteFieldType::LOCATOR:
-        {
-			std::string locatorStr((char*)buf,s);
-			details.ipAddressList.push_back(locatorStr);
-        }
-            break;
-
-		case RsShortInviteFieldType::DNS_LOCATOR:
-			details.extPort = (((int)buf[0]) << 8) + buf[1];
-			details.dyndns = std::string((char*)&buf[2],s-2);
-            break;
-
-        case RsShortInviteFieldType::LOC4_LOCATOR:
-        {
-            uint32_t t4Addr = (((uint32_t)buf[0]) << 24)+(((uint32_t)buf[1])<<16)+(((uint32_t)buf[2])<<8) + (uint32_t)buf[3];
-            sockaddr_in tLocalAddr;
-            tLocalAddr.sin_addr.s_addr = t4Addr;
-
-            details.localAddr = rs_inet_ntoa(tLocalAddr.sin_addr);
-            details.localPort = (((uint32_t)buf[4])<<8) + (uint32_t)buf[5];
-        }
-        break;
-
-		case RsShortInviteFieldType::EXT4_LOCATOR:
-		{
-			uint32_t t4Addr = (((uint32_t)buf[0]) << 24)+(((uint32_t)buf[1])<<16)+(((uint32_t)buf[2])<<8) + (uint32_t)buf[3];
-			sockaddr_in tExtAddr;
-			tExtAddr.sin_addr.s_addr = t4Addr;
-
-			details.extAddr = rs_inet_ntoa(tExtAddr.sin_addr);
-			details.extPort = (((uint32_t)buf[4])<<8) + (uint32_t)buf[5];
-        }
-            break;
-
-  		case RsShortInviteFieldType::HIDDEN_LOCATOR:
-			details.hiddenType = (((uint32_t)buf[0]) << 24)+(((uint32_t)buf[1])<<16)+(((uint32_t)buf[2])<<8) + (uint32_t)buf[3];
-			details.hiddenNodePort = (((uint32_t)buf[4]) << 8)+ (uint32_t)buf[5];
-            details.isHiddenNode = true;
-			details.hiddenNodeAddress = std::string((char*)&buf[6],s-6);
-			break;
-
-		case RsShortInviteFieldType::CHECKSUM:
-		{
-			if(s != 3 || total_s+3 != size)	// make sure the checksum is the last section
-			{
-				err_code = CERTIFICATE_PARSING_ERROR_INVALID_CHECKSUM_SECTION;
-				return false;
-			}
-			uint32_t computed_crc = PGPKeyManagement::compute24bitsCRC(bf.data(),size-5);
-			uint32_t certificate_crc = static_cast<uint32_t>( buf[0] + (buf[1] << 8) + (buf[2] << 16) );
-
-			if(computed_crc != certificate_crc)
-			{
-				err_code = CERTIFICATE_PARSING_ERROR_CHECKSUM_ERROR;
-				return false;
-			}
-            CRC_ok = true;
-			break;
-		}
-
-		}
-
-		buf = &buf[s];
-		total_s += s;
-	}
-
-    // now check if the PGP key is available. If so, add it in the PeerDetails:
+    // Also check if the PGP key is available. If so, add it in the PeerDetails:
 
     RsPeerDetails pgp_det ;
     if(getGPGDetails(PGPHandler::pgpIdFromFingerprint(details.fpr),pgp_det) && pgp_det.fpr == details.fpr)
@@ -1497,23 +1369,13 @@ bool p3Peers::parseShortInvite(const std::string& inviteStrUrl, RsPeerDetails& d
     else
         details.skip_pgp_signature_validation = true;
 
-    if(!CRC_ok)
-    {
-        err_code = CERTIFICATE_PARSING_ERROR_CHECKSUM_ERROR;
-        return false;
-    }
     if(details.gpg_id.isNull())
     {
 		err_code = CERTIFICATE_PARSING_ERROR_MISSING_PGP_FINGERPRINT;
         return false;
     }
-    if(details.id.isNull())
-    {
-		err_code = CERTIFICATE_PARSING_ERROR_MISSING_LOCATION_ID;
-        return false;
-    }
-	err_code = CERTIFICATE_PARSING_ERROR_NO_ERROR;
-	return true;
+    err_code = CERTIFICATE_PARSING_ERROR_NO_ERROR;
+    return true;
 }
 
 bool p3Peers::acceptInvite( const std::string& invite,

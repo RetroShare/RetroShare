@@ -4,6 +4,8 @@
 #include "util/rsbase64.h"
 #include "util/radix64.h"
 
+#include "pgp/rscertificate.h"
+
 #include "friendserver.h"
 #include "friend_server/fsitem.h"
 
@@ -92,7 +94,7 @@ void FriendServer::handleClientPublish(const RsFriendServerClientPublishItem *it
         RsPeerDetails shortInviteDetails;
         uint32_t errorCode = 0;
 
-        if(item->short_invite.empty() || !rsPeers->parseShortInvite(item->short_invite, shortInviteDetails,errorCode ))
+        if(item->short_invite.empty() || !RsCertificate::decodeRadix64ShortInvite(item->short_invite, shortInviteDetails,errorCode ))
             throw std::runtime_error("Could not parse short certificate. Error = " + RsUtil::NumberToString(errorCode));
 
         RsDbg() << "    Short invite is fine. PGP fingerprint: " << shortInviteDetails.fpr ;
