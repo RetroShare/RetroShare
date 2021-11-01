@@ -32,6 +32,7 @@ class RsFriendServerClientPublishItem;
 
 struct PeerInfo
 {
+    RsPgpFingerprint pgp_fingerprint;
     std::string short_certificate;
     rstime_t last_connection_TS;
     uint64_t last_nonce;
@@ -53,7 +54,11 @@ private:
     void handleClientRemove(const RsFriendServerClientRemoveItem *item);
     void handleClientPublish(const RsFriendServerClientPublishItem *item);
 
-    bool handleIncomingClientData(const std::string& pgp_public_key_b64,const std::string& short_invite_b64);
+    // Adds the incoming peer data to the list of current clients and returns the
+    std::map<RsPeerId,PeerInfo>::iterator handleIncomingClientData(const std::string& pgp_public_key_b64,const std::string& short_invite_b64);
+
+    // Computes the appropriate list of short invites to send to a given peer.
+    std::map<std::string,bool> computeListOfFriendInvites(uint32_t nb_reqs_invites,const RsPeerId& pid,const RsPgpFingerprint& fpr);
 
     void autoWash();
     void debugPrint();

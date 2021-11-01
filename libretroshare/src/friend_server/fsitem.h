@@ -123,15 +123,18 @@ public:
 
     void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override
     {
+        RS_SERIAL_PROCESS(nonce);
         RS_SERIAL_PROCESS(friend_invites);
     }
 
     virtual void clear() override
     {
         friend_invites.clear();
+        nonce = 0;
     }
     // specific members for that item
 
+    uint64_t nonce;
     std::map<std::string,bool> friend_invites;
 };
 

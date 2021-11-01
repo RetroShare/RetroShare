@@ -70,12 +70,21 @@ void FriendServer::handleClientPublish(const RsFriendServerClientPublishItem *it
         RsDbg() << *item ;
 
         // First of all, read PGP key and short invites, parse them, and check that they contain the same information
+        RsPeerId pid;
+        RsPgpFingerprint fpr;
 
-        FriendServer::handleIncomingClientData(item->pgp_public_key_b64,item->short_invite);
+        std::map<RsPeerId,PeerInfo>::iterator pi = handleIncomingClientData(item->pgp_public_key_b64,item->short_invite);
 
+        // No need to test for it==mCurrentClients.end() because it will be directly caught by the exception handling below even before.
         // Respond with a list of potential friends
 
+        RsFriendServerServerResponseItem *sr_item = new RsFriendServerServerResponseItem;
 
+        sr_item->nonce = pi->second.last_nonce;
+        sr_item->friend_invites = computeListOfFriendInvites(item->n_requested_friends,pi->first,pi->second.pgp_fingerprint);
+        sr_item->PeerId(item->PeerId());
+
+        mni->SendItem(sr_item);
     }
     catch(std::exception& e)
     {
@@ -89,7 +98,27 @@ void FriendServer::handleClientPublish(const RsFriendServerClientPublishItem *it
     mni->closeConnection(item->PeerId());
 }
 
-bool FriendServer::handleIncomingClientData(const std::string& pgp_public_key_b64,const std::string& short_invite_b64)
+std::map<std::string, bool> FriendServer::computeListOfFriendInvites(uint32_t nb_reqs_invites, const RsPeerId &pid, const RsPgpFingerprint &fpr)
+{
+    // For now, returns the first nb_reqs_invites from the currently known peer, that would not be the peer who's asking
+
+    std::map<std::string,bool> res;
+
+    for(auto it:mCurrentClientPeers)
+    {
+        if(it.first == pid)
+            continue;
+
+        res.insert(std::make_pair(it.second.short_certificate,false));	// for now we say that peers havn't been warned already
+
+        if(res.size() >= nb_reqs_invites)
+            break;
+    }
+
+    return res;
+}
+
+std::map<RsPeerId,PeerInfo>::iterator FriendServer::handleIncomingClientData(const std::string& pgp_public_key_b64,const std::string& short_invite_b64)
 {
         RsDbg() << "  Checking item data...";
 
@@ -146,9 +175,11 @@ bool FriendServer::handleIncomingClientData(const std::string& pgp_public_key_b6
 
         pi.short_certificate = short_invite_b64;
         pi.last_connection_TS = time(nullptr);
-        pi.last_nonce = RsRandom::random_u64();
 
-        return true;
+        while(pi.last_nonce == 0)					// reuse the same identifier (so it's not really a nonce, but it's kept secret whatsoever).
+            pi.last_nonce = RsRandom::random_u64();
+
+        return mCurrentClientPeers.find(shortInviteDetails.id);
 }
 
 
