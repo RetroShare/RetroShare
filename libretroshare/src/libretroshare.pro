@@ -1034,14 +1034,24 @@ rs_sam3_libsam3 {
     libsam3.output = $$clean_path($${LIBSAM3_BUILD_PATH}/libsam3.a)
     libsam3.CONFIG += target_predeps combine
     libsam3.variable_out = PRE_TARGETDEPS
-    libsam3.commands = \
-        cd $${RS_SRC_PATH} && ( \
-        git submodule update --init supportlibs/libsam3 || \
-        true ) && \
-        mkdir -p $${LIBSAM3_BUILD_PATH} && \
-        (cp -r $${LIBSAM3_SRC_PATH}/* $${LIBSAM3_BUILD_PATH} || true) && \
-        cd $${LIBSAM3_BUILD_PATH} && \
-        $(MAKE) build
+    win32-g++:isEmpty(QMAKE_SH) {
+        LIBSAM3_MAKE_PARAMS = CC=gcc
+        libsam3.commands = \
+            cd /D $$shell_path($${RS_SRC_PATH}) && git submodule update --init supportlibs/libsam3 || cd . $$escape_expand(\\n\\t) \
+            $(CHK_DIR_EXISTS) $$shell_path($$LIBSAM3_BUILD_PATH) $(MKDIR) $$shell_path($${LIBSAM3_BUILD_PATH}) $$escape_expand(\\n\\t) \
+            $(COPY_DIR) $$shell_path($${LIBSAM3_SRC_PATH}) $$shell_path($${LIBSAM3_BUILD_PATH}) || cd . $$escape_expand(\\n\\t)
+    } else {
+        LIBSAM3_MAKE_PARAMS =
+        libsam3.commands = \
+            cd $${RS_SRC_PATH} && ( \
+            git submodule update --init supportlibs/libsam3 || \
+            true ) && \
+            mkdir -p $${LIBSAM3_BUILD_PATH} && \
+            (cp -r $${LIBSAM3_SRC_PATH}/* $${LIBSAM3_BUILD_PATH} || true) &&
+    }
+    libsam3.commands += \
+        cd $$shell_path($${LIBSAM3_BUILD_PATH}) && \
+        $(MAKE) build $${LIBSAM3_MAKE_PARAMS}
     QMAKE_EXTRA_COMPILERS += libsam3
 }
 
