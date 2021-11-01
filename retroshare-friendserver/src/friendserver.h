@@ -34,6 +34,7 @@ struct PeerInfo
 {
     std::string short_certificate;
     rstime_t last_connection_TS;
+    uint64_t last_nonce;
 };
 
 class FriendServer : public RsTickingThread
@@ -51,6 +52,8 @@ private:
 
     void handleClientRemove(const RsFriendServerClientRemoveItem *item);
     void handleClientPublish(const RsFriendServerClientPublishItem *item);
+
+    bool handleIncomingClientData(const std::string& pgp_public_key_b64,const std::string& short_invite_b64);
 
     void autoWash();
     void debugPrint();

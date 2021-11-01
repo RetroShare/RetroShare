@@ -66,21 +66,44 @@ void FriendServer::handleClientPublish(const RsFriendServerClientPublishItem *it
 {
     try
     {
-        RsDbg() << "Received a client publish item from " << item->PeerId() ;
+        RsDbg() << "Received a client publish item from " << item->PeerId() << ":";
         RsDbg() << *item ;
 
         // First of all, read PGP key and short invites, parse them, and check that they contain the same information
 
+        FriendServer::handleIncomingClientData(item->pgp_public_key_b64,item->short_invite);
+
+        // Respond with a list of potential friends
+
+
+    }
+    catch(std::exception& e)
+    {
+        RsErr() << "ERROR: " << e.what() ;
+    }
+
+    // Close client connection from server side, to tell the client that nothing more is coming.
+
+    RsDbg() << "Closing client connection." ;
+
+    mni->closeConnection(item->PeerId());
+}
+
+bool FriendServer::handleIncomingClientData(const std::string& pgp_public_key_b64,const std::string& short_invite_b64)
+{
         RsDbg() << "  Checking item data...";
 
         std::string error_string;
         RsPgpId pgp_id ;
         std::vector<uint8_t> key_binary_data ;
 
-        key_binary_data = Radix64::decode(item->pgp_public_key_b64);
+        key_binary_data = Radix64::decode(pgp_public_key_b64);
 
         if(key_binary_data.empty())
-            throw std::runtime_error("  Cannot decode client pgp public key: \"" + item->pgp_public_key_b64 + "\". Wrong format??");
+            throw std::runtime_error("  Cannot decode client pgp public key: \"" + pgp_public_key_b64 + "\". Wrong format??");
+
+// Apparently RsBase64 doesn't work correctly.
+//
 //        if(!RsBase64::decode(item->pgp_public_key_b64,key_binary_data))
 //            throw std::runtime_error("  Cannot decode client pgp public key: \"" + item->pgp_public_key_b64 + "\". Wrong format??");
 
@@ -94,7 +117,7 @@ void FriendServer::handleClientPublish(const RsFriendServerClientPublishItem *it
         RsPeerDetails shortInviteDetails;
         uint32_t errorCode = 0;
 
-        if(item->short_invite.empty() || !RsCertificate::decodeRadix64ShortInvite(item->short_invite, shortInviteDetails,errorCode ))
+        if(short_invite_b64.empty() || !RsCertificate::decodeRadix64ShortInvite(short_invite_b64, shortInviteDetails,errorCode ))
             throw std::runtime_error("Could not parse short certificate. Error = " + RsUtil::NumberToString(errorCode));
 
         RsDbg() << "    Short invite is fine. PGP fingerprint: " << shortInviteDetails.fpr ;
@@ -106,38 +129,53 @@ void FriendServer::handleClientPublish(const RsFriendServerClientPublishItem *it
         if(fpr_test != shortInviteDetails.fpr)
             throw std::runtime_error("Cannot get fingerprint from keyring for client public key. Something's really wrong.") ;
 
-        RsDbg() << "    Short invite PGP fingerprint matches the public key fingerprint." ;
+        RsDbg() << "    Short invite PGP fingerprint matches the public key fingerprint.";
+        RsDbg() << "    Sync-ing the PGP keyring on disk";
 
-        // Check the item's data signature
+        mPgpHandler->syncDatabase();
+
+        // Check the item's data signature. Is that needed? Not sure, since the data is sent PGP-encrypted, so only the owner
+        // of the secret PGP key can actually use it.
+#warning TODO
 
         // All good.
-#warning TODO
 
         // Store/update the peer info
 
         auto& pi(mCurrentClientPeers[shortInviteDetails.id]);
 
-        pi.short_certificate = item->short_invite;
+        pi.short_certificate = short_invite_b64;
         pi.last_connection_TS = time(nullptr);
+        pi.last_nonce = RsRandom::random_u64();
 
-        // Respond with a list of potential friends
-    }
-    catch(std::exception& e)
-    {
-        RsErr() << e.what() ;
-    }
-
-    // Close client connection from server side, to tell the client that nothing more is coming.
-
-    RsDbg() << "Closing client connection." ;
-
-    mni->closeConnection(item->PeerId());
+        return true;
 }
+
 
 void FriendServer::handleClientRemove(const RsFriendServerClientRemoveItem *item)
 {
     RsDbg() << "Received a client remove item:" << *item ;
+
+    auto it = mCurrentClientPeers.find(item->peer_id);
+
+    if(it == mCurrentClientPeers.end())
+    {
+        RsErr() << "  ERROR: Client " << item->peer_id << " is not known to the server." ;
+        return;
+    }
+
+    if(it->second.last_nonce != item->nonce)
+    {
+        RsErr() << "  ERROR: Client supplied a nonce " << std::hex << item->nonce << std::dec << " that is not correct (expected "
+                << std::hex << it->second.last_nonce << std::dec << ")";
+        return;
+    }
+
+    RsDbg() << "  Nonce is correct: " << std::hex << item->nonce << std::dec << ". Removing peer " << item->peer_id ;
+
+    mCurrentClientPeers.erase(it);
 }
+
 FriendServer::FriendServer(const std::string& base_dir)
 {
     RsDbg() << "Creating friend server." ;
@@ -191,7 +229,7 @@ void FriendServer::debugPrint()
     rstime_t now = time(nullptr);
 
     for(auto& it:mCurrentClientPeers)
-        RsDbg() << "   " << it.first << ": " << "last contact: " << now - it.second.last_connection_TS;
+        RsDbg() << "   " << it.first << ": nonce=" << std::hex << it.second.last_nonce << std::dec << ", last contact: " << now - it.second.last_connection_TS << " secs ago.";
 
     RsDbg() << "===============================================";
 

@@ -76,10 +76,23 @@ class RsFriendServerClientRemoveItem: public RsFriendServerItem
 public:
     RsFriendServerClientRemoveItem() : RsFriendServerItem(RS_PKT_SUBTYPE_FS_CLIENT_REMOVE) {}
 
-    void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */)
+    void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
     {
+        RS_SERIAL_PROCESS(peer_id);
+        RS_SERIAL_PROCESS(nonce);
     }
+
+    // Peer ID for the peer to remove.
+
+    RsPeerId peer_id;
+
+    // Nonce that was returned by the server after the last client request. Should match in order to proceed. This prevents
+    // a malicious actor from removing peers from the server. Since the nonce is sent through Tor tunnels, it cannot be known by
+    // anyone else than the client.
+
+    uint64_t nonce;
 };
+
 class RsFriendServerEncryptedServerResponseItem: public RsFriendServerItem
 {
 public:
