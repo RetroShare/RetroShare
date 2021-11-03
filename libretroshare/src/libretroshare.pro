@@ -635,6 +635,7 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsdiscspace.cc \
 			util/rsnet.cc \
 			util/rsnet_ss.cc \
+			util/rsdnsutils.cc \
 			util/extaddrfinder.cc \
 			util/dnsresolver.cc \
 			util/rsprint.cc \

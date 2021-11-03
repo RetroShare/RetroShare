@@ -94,7 +94,6 @@ std::ostream& operator<<(std::ostream& o, const sockaddr_storage&);
 
 /* thread-safe version of inet_ntoa */
 std::string rs_inet_ntoa(struct in_addr in);
-std::string rs_inet_ntoa(const in6_addr &in);
 
 
 /***************************/
