@@ -92,11 +92,11 @@ void RsThread::resetTid()
 #ifdef WINDOWS_SYS
 	memset (&mTid, 0, sizeof(mTid));
 #else
-	mTid = 0;
+	mTid = pthread_t(); //Thread identifiers should be considered opaque and can be null.
 #endif
 }
 
-RsThread::RsThread() : mHasStopped(true), mShouldStop(false), mLastTid()
+RsThread::RsThread() : mInitMtx("RsThread"), mHasStopped(true), mShouldStop(false), mLastTid()
 #ifdef RS_THREAD_FORCE_STOP
   , mStopTimeout(0)
 #endif
@@ -115,6 +115,7 @@ void RsThread::askForStop()
 
 void RsThread::wrapRun()
 {
+	{RS_STACK_MUTEX(mInitMtx);} // Waiting Init done.
 	run();
 	resetTid();
 	mHasStopped = true;
@@ -184,6 +185,8 @@ bool RsThread::start(const std::string& threadName)
 	// Atomically check if the thread was already started and set it as running
 	if(mHasStopped.exchange(false))
 	{
+		RS_STACK_MUTEX(mInitMtx); // Block thread starting to run
+
 		mShouldStop = false;
 		int pError = pthread_create(
 		            &mTid, nullptr, &rsthread_init, static_cast<void*>(this) );
@@ -191,15 +194,6 @@ bool RsThread::start(const std::string& threadName)
 		{
 			RsErr() << __PRETTY_FUNCTION__ << " pthread_create could not create"
 			        << " new thread: " << threadName << " pError: " << pError
-			        << std::endl;
-			mHasStopped = true;
-			print_stacktrace();
-			return false;
-		}
-		if(!mTid)
-		{
-			RsErr() << __PRETTY_FUNCTION__ << " pthread_create could not create"
-			        << " new thread: " << threadName << " mTid: " << mTid
 			        << std::endl;
 			mHasStopped = true;
 			print_stacktrace();
