@@ -168,7 +168,7 @@ bool rsGetHostByName(const std::string& hostname, in_addr& returned_addr)
 	return ok;
 }
 
-bool rsGetHostByNameSpecDNS(const std::string& servername, const std::string& hostname, std::string& returned_addr)
+bool rsGetHostByNameSpecDNS(const std::string& servername, const std::string& hostname, std::string& returned_addr, int timeout_s /*= -1*/)
 {
 #ifdef DEBUG_SPEC_DNS
 	RsDbg()<<__PRETTY_FUNCTION__<<" servername="<< servername << " hostname=" << hostname << std::endl;
@@ -265,6 +265,18 @@ bool rsGetHostByNameSpecDNS(const std::string& servername, const std::string& ho
 #endif
 	int s = isIPV4 ? socket(AF_INET  , SOCK_DGRAM , IPPROTO_UDP)
 	               : socket(AF_INET6 , SOCK_DGRAM , IPPROTO_UDP) ; //UDP packet for DNS queries
+	if (timeout_s > -1)
+	{
+#ifdef WINDOWS_SYS
+		DWORD timeout = timeout_s * 1000;
+		setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof timeout);
+#else
+		struct timeval tv;
+		tv.tv_sec = timeout_s;
+		tv.tv_usec = 0;
+		setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
+#endif
+	}
 	ssize_t send_size = sendto(s, (char*)buf, curSendSize, 0
 	                          ,isIPV4 ? (struct sockaddr*)&dest4
 	                                  : (struct sockaddr*)&dest6

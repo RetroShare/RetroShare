@@ -704,7 +704,7 @@ connecting when you have few friends. It also helps if you're
 behind a firewall or a VPN.</string>
          </property>
          <property name="text">
-          <string>Allow RetroShare to ask my ip to these websites:</string>
+          <string>Allow RetroShare to ask my ip to these DNS servers:</string>
          </property>
          <property name="checked">
           <bool>true</bool>

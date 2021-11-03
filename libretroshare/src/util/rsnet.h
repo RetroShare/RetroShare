@@ -87,7 +87,7 @@ bool rsGetHostByName(const std::string& hostname, in_addr& returned_addr) ;
 // Get hostName address using specific DNS server
 // Using it allow to direct ask our Address to IP, so no need to have a DNS (IPv4 or IPv6 ???).
 // If we ask to a IPv6 DNS Server, it respond for our IPv6 address.
-bool rsGetHostByNameSpecDNS(const std::string& servername, const std::string& hostname, std::string& returned_addr);
+bool rsGetHostByNameSpecDNS(const std::string& servername, const std::string& hostname, std::string& returned_addr, int timeout_s = -1);
 
 std::ostream& operator<<(std::ostream& o, const sockaddr_in&);
 std::ostream& operator<<(std::ostream& o, const sockaddr_storage&);

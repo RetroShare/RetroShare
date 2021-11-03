@@ -55,6 +55,7 @@ const uint32_t RS_NET_EXT_SETUP =  	0x0004;
 const uint32_t RS_NET_DONE =    	0x0005;
 const uint32_t RS_NET_LOOPBACK =    	0x0006;
 //const uint32_t RS_NET_DOWN =    	0x0007;
+const uint32_t RS_NET_SHUTDOWN =    0x00FF; //Highest value to not restart UPnP nor ExtAddrFinder
 
 /* Stun modes (TODO) */
 //const uint32_t RS_STUN_DHT =      	0x0001;
@@ -67,6 +68,8 @@ const uint32_t MAX_UPNP_COMPLETE = 	600; /* 10 min... seems to take a while */
 //const uint32_t MAX_NETWORK_INIT =	70; /* timeout before network reset */
 
 //const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		5;
+
+const uint32_t MIN_TIME_EXT_FINDER_UPDATE = 300; /* 5min to check if external IP is changed */
 
 /****
  * #define NETMGR_DEBUG 1
@@ -107,19 +110,17 @@ void pqiNetStatus::print(std::ostream &out)
 }
 
 
-p3NetMgrIMPL::p3NetMgrIMPL() : mPeerMgr(nullptr), mLinkMgr(nullptr),
-    mNetMtx("p3NetMgr"), mNetStatus(RS_NET_UNKNOWN), mStatusChanged(false),
-    mDoNotNetCheckUntilTs(0)
+p3NetMgrIMPL::p3NetMgrIMPL()
+    : mPeerMgr(nullptr), mLinkMgr(nullptr)
+    , mNetMtx("p3NetMgr"), mNetMode(RS_NET_MODE_UDP), mVsDisc(RS_VS_DISC_FULL), mVsDht(RS_VS_DHT_FULL)// default to full.
+    , mNetInitTS(0), mNetStatus(RS_NET_UNKNOWN), mStatusChanged(false)
+    , mUseExtAddrFinder(true), mNetExtAddrFinderTs(0), mDoNotNetCheckUntilTs(0)
 {
 
 	{
 		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 
-		mNetMode = RS_NET_MODE_UDP;
-
-		mUseExtAddrFinder = true;
 		mExtAddrFinder = new ExtAddrFinder();
-		mNetInitTS = 0;
 	
 		mNetFlags = pqiNetStatus();
 		mOldNetFlags = pqiNetStatus();
@@ -132,10 +133,6 @@ p3NetMgrIMPL::p3NetMgrIMPL() : mPeerMgr(nullptr), mLinkMgr(nullptr),
 		// force to IPv4 for the moment.
 		mLocalAddr.ss_family = AF_INET;
 		mExtAddr.ss_family = AF_INET;
-
-		// default to full.
-		mVsDisc = RS_VS_DISC_FULL;
-		mVsDht = RS_VS_DHT_FULL;
 
 	}
 	
@@ -235,6 +232,10 @@ void p3NetMgrIMPL::netReset()
 	rslog(RSL_ALERT, p3netmgrzone, "p3NetMgr::netReset() Called");
 
 	shutdown(); /* blocking shutdown call */
+	{
+		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+		mNetStatus = RS_NET_UNKNOWN;
+	}
 
 	// Will initiate a new call for determining the external ip.
 	if (mUseExtAddrFinder)
@@ -242,7 +243,7 @@ void p3NetMgrIMPL::netReset()
 #ifdef NETMGR_DEBUG_RESET
 		std::cerr << "p3NetMgrIMPL::netReset() restarting AddrFinder" << std::endl;
 #endif
-		mExtAddrFinder->reset() ;
+		mExtAddrFinder->reset(true) ;
 	}
 	else
 	{
@@ -284,7 +285,6 @@ void p3NetMgrIMPL::netReset()
 
 	{
 		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
-        	mNetStatus = RS_NET_UNKNOWN;
 		netStatusReset_locked();
 	}
 
@@ -312,7 +312,7 @@ bool p3NetMgrIMPL::shutdown() /* blocking shutdown call */
 #endif
 	{
 		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
-		mNetStatus = RS_NET_UNKNOWN;
+		mNetStatus = RS_NET_SHUTDOWN;
 		mNetInitTS = time(NULL);
 		netStatusReset_locked();
 	}
@@ -460,35 +460,50 @@ void p3NetMgrIMPL::netStatusTick()
 
 	uint32_t netStatus = 0;
 	rstime_t   age = 0;
+	bool needExtFinderUpdate = false;
 	{
 		RsStackMutex stack(mNetMtx);   /************** LOCK MUTEX ***************/
 
 		netStatus = mNetStatus;
 		age = time(NULL) - mNetInitTS;
 
-    }
+		needExtFinderUpdate = netStatus == RS_NET_DONE;
+		needExtFinderUpdate &= mNetExtAddrFinderTs < time(nullptr);
+		if(needExtFinderUpdate)
+			mNetExtAddrFinderTs = time(nullptr) + MIN_TIME_EXT_FINDER_UPDATE;
+	}
 
-    if(netStatus <= RS_NET_UPNP_SETUP && mUseExtAddrFinder)
-    {
-        sockaddr_storage tmpip = mLocalAddr;	// copies local port and correctly inits the IP family
+	if( mUseExtAddrFinder
+	   && ( netStatus <= RS_NET_UPNP_SETUP
+	        || needExtFinderUpdate) )
+	{
+		sockaddr_storage tmpip = mLocalAddr;	// copies local port and correctly inits the IP family
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-        std::cerr << "Asking ExtAddrFinder for IP. Initializing port with " << sockaddr_storage_port(tmpip) << std::endl;
+		RsDbg(__PRETTY_FUNCTION__, " Asking ExtAddrFinder for IP. Initializing port with ", sockaddr_storage_port(tmpip));
 #endif
 
-        if(mExtAddrFinder->hasValidIP(tmpip) && sockaddr_storage_ipv6_to_ipv4(tmpip) && !sockaddr_storage_same(tmpip,mExtAddr))
-        {
+		if(mExtAddrFinder->hasValidIPV4(tmpip))
+		{
+			if(!sockaddr_storage_same(tmpip,mExtAddr))
+			{
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-            std::cerr << "p3NetMgrIMPL::netExtCheck() Ext supplied by ExtAddrFinder" << std::endl;
+				RsDbg(__PRETTY_FUNCTION__, " Ext supplied by ExtAddrFinder", " ExtAddr: ", sockaddr_storage_tostring(tmpip));
 #endif
-
+				setExtAddress(tmpip);
+			}
+		}
+		else if(mExtAddrFinder->hasValidIPV6(tmpip))
+		{
+			if(!sockaddr_storage_same(tmpip,mExtAddr))
+			{
+				//Only if no IPv4 else, reset connections on setExtAddress()
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-            std::cerr << "p3NetMgrIMPL::netExtCheck() ";
-            std::cerr << "ExtAddr: " << sockaddr_storage_tostring(tmpip);
-            std::cerr << std::endl;
+				RsDbg(__PRETTY_FUNCTION__, " Ext supplied by ExtAddrFinder", " ExtAddr: ", sockaddr_storage_tostring(tmpip));
 #endif
-            setExtAddress(tmpip);
-        }
-    }
+				setExtAddress(tmpip);
+			}
+		}
+	}
 
 	switch(netStatus)
 	{
@@ -745,24 +760,17 @@ void p3NetMgrIMPL::netExtCheck()
 			if (mUseExtAddrFinder)
 			{
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-				std::cerr << "p3NetMgrIMPL::netExtCheck() checking ExtAddrFinder" << std::endl;
+				RsDbg(__PRETTY_FUNCTION__, " checking ExtAddrFinder");
 #endif
-                sockaddr_storage tmpip = mLocalAddr;	// copies local port and correctly inits the IP family
+				sockaddr_storage tmpip = mLocalAddr;	// copies local port and correctly inits the IP family
 
-                bool extFinderOk = mExtAddrFinder->hasValidIP(tmpip);
-
-				if (extFinderOk && sockaddr_storage_ipv6_to_ipv4(tmpip))
+				// Test for IPv4 first to be compatible with older versions.
+				if (mExtAddrFinder->hasValidIPV4(tmpip))
 				{
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-					std::cerr << "p3NetMgrIMPL::netExtCheck() Ext supplied by ExtAddrFinder" << std::endl;
+					RsDbg(__PRETTY_FUNCTION__, " Ext IPv4 supplied by ExtAddrFinder", sockaddr_storage_tostring(tmpip));
 #endif
 					sockaddr_storage_setport(tmpip, guessNewExtPort());
-
-#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-					std::cerr << "p3NetMgrIMPL::netExtCheck() ";
-					std::cerr << "ExtAddr: " << sockaddr_storage_tostring(tmpip);
-					std::cerr << std::endl;
-#endif
 
 					mNetFlags.mExtAddrOk = true;
 
@@ -773,10 +781,25 @@ void p3NetMgrIMPL::netExtCheck()
 					 * (which it is not normally) */
 					mNetFlags.mExtAddrStableOk = true;
 
-					std::cerr << __PRETTY_FUNCTION__ << " ExtAddrFinder "
-					          << " reported external address "
-					          << sockaddr_storage_iptostring(tmpip)
-					          << std::endl;
+					RsErr(__PRETTY_FUNCTION__, " reported external IPv4 address ", sockaddr_storage_iptostring(tmpip));
+				}
+				else if (mExtAddrFinder->hasValidIPV6(tmpip))
+				{
+#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
+					RsDbg(__PRETTY_FUNCTION__, " Ext IPv6 supplied by ExtAddrFinder", sockaddr_storage_tostring(tmpip));
+#endif
+					sockaddr_storage_setport(tmpip, guessNewExtPort());
+
+					mNetFlags.mExtAddrOk = true;
+
+					address_votes[tmpip].n++ ;
+
+					/* XXX HACK TO FIX drbob: ALLOWING
+					 * ExtAddrFinder -> ExtAddrStableOk = true
+					 * (which it is not normally) */
+					mNetFlags.mExtAddrStableOk = true;
+
+					RsErr(__PRETTY_FUNCTION__, " reported external IPv6 address ", sockaddr_storage_iptostring(tmpip));
 				}
 			}
 		}
@@ -967,7 +990,7 @@ void p3NetMgrIMPL::netExtCheck()
 
 	if (netSetupDone)
 	{
-		std::cerr << "p3NetMgrIMPL::netExtCheck() netSetupDone" << std::endl;
+		RsDbg(__PRETTY_FUNCTION__, " netSetupDone");
 
 		/* Setup NetStateBox with this info */
 		updateNetStateBox_startup();
@@ -978,12 +1001,14 @@ void p3NetMgrIMPL::netExtCheck()
 			mPeerMgr->UpdateOwnAddress(mLocalAddr, mExtAddr);
 		}
 
-		/* inform DHT about our external address */
-		RsPeerId fakeId;
-		netAssistKnownPeer(fakeId, mExtAddr, NETASSIST_KNOWN_PEER_SELF | NETASSIST_KNOWN_PEER_ONLINE);
+		/* inform DHT about our external IPV4 address, it doesn't support IPv6 for now.*/
+		if(sockaddr_storage_ipv6_to_ipv4(mExtAddr))
+		{
+			RsPeerId fakeId;
+			netAssistKnownPeer(fakeId, mExtAddr, NETASSIST_KNOWN_PEER_SELF | NETASSIST_KNOWN_PEER_ONLINE);
+		}
 
-		std::cerr << __PRETTY_FUNCTION__ << " Network Setup Complete"
-		          << std::endl;
+		RsDbg(__PRETTY_FUNCTION__, " Network Setup Complete");
 	}
 }
 
@@ -994,7 +1019,8 @@ void p3NetMgrIMPL::netExtCheck()
 bool p3NetMgrIMPL::checkNetAddress()
 {
 	bool addrChanged = false;
-    bool validAddr = false;
+	bool validAddr = false;
+	bool needOwnAddrUpdate = false;
 	
 	sockaddr_storage prefAddr;
 	sockaddr_storage oldAddr;
@@ -1109,6 +1135,7 @@ bool p3NetMgrIMPL::checkNetAddress()
             sockaddr_storage_setport(mExtAddr, port);	// this accounts for when the port was updated
             addrChanged = true;
 		}
+
 	} // RS_STACK_MUTEX(mNetMtx);
 
     if (addrChanged)
@@ -1123,10 +1150,23 @@ bool p3NetMgrIMPL::checkNetAddress()
             rsEvents->postEvent(ev);
         }
 
-        if (mPeerMgr) mPeerMgr->UpdateOwnAddress(mLocalAddr, mExtAddr);
+        needOwnAddrUpdate = true;
 
         netReset();
     }
+
+	if (mPeerMgr)
+	{
+		// Retrieve last known IP, if none, update own addresse to get current.
+		peerState ps;
+		mPeerMgr->getOwnNetStatus(ps);
+		needOwnAddrUpdate |= ps.ipAddrs.mLocal.mAddrs.empty();
+		needOwnAddrUpdate |= ps.ipAddrs.mExt.mAddrs.empty();
+		if (needOwnAddrUpdate)
+		{
+			mPeerMgr->UpdateOwnAddress(mLocalAddr, mExtAddr);
+		}
+	}
 
 	return true;
 }
@@ -1661,15 +1701,32 @@ void  p3NetMgrIMPL::getIPServersList(std::list<std::string>& ip_servers)
 	mExtAddrFinder->getIPServersList(ip_servers);
 }
 
+void  p3NetMgrIMPL::getCurrentExtIPList(std::list<std::string>& ip_list)
+{
+	ip_list.clear();
+	sockaddr_storage addr;
+	if(mExtAddrFinder->hasValidIPV4(addr))
+		ip_list.push_back(sockaddr_storage_iptostring(addr));
+	if(mExtAddrFinder->hasValidIPV6(addr))
+		ip_list.push_back(sockaddr_storage_iptostring(addr));
+}
+
 void p3NetMgrIMPL::setIPServersEnabled(bool b)
 {
+	if (mUseExtAddrFinder != b)
+	{
+		mExtAddrFinder->reset(true);
+		if (b)
+			mExtAddrFinder->start_request();
+	}
+
 	{
 		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 		mUseExtAddrFinder = b;
 	}
 
 #ifdef NETMGR_DEBUG
-	std::cerr << "p3NetMgr: setIPServers to " << b << std::endl ; 
+	RsDbg(__PRETTY_FUNCTION__, " set mUseExtAddrFinder to ", b);
 #endif
 
 }
@@ -1973,8 +2030,8 @@ void p3NetMgrIMPL::updateNetStateBox_startup()
 		/* ExtAddrFinder */
 		if (mUseExtAddrFinder)
 		{
-            tmpip = mLocalAddr;
-            bool extFinderOk = mExtAddrFinder->hasValidIP(tmpip);
+			tmpip = mLocalAddr;
+			bool extFinderOk = mExtAddrFinder->hasValidIPV4(tmpip);
 
 			if (extFinderOk)
 			{

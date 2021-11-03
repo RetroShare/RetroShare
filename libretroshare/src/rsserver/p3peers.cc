@@ -373,7 +373,7 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 			sockaddr_storage_ipv6_to_ipv4(it->mAddr);
 			std::string toto;
 			toto += sockaddr_storage_tostring(it->mAddr);
-			rs_sprintf_append(toto, "    %ld sec", time(NULL) - it->mSeenTime);
+			rs_sprintf_append(toto, "    %ld sec loc", time(NULL) - it->mSeenTime);
 			d.ipAddressList.push_back(toto);
 		}
 		for(it = ps.ipAddrs.mExt.mAddrs.begin(); it != ps.ipAddrs.mExt.mAddrs.end(); ++it)
@@ -381,7 +381,7 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 			sockaddr_storage_ipv6_to_ipv4(it->mAddr);
 			std::string toto;
 			toto += sockaddr_storage_tostring(it->mAddr);
-			rs_sprintf_append(toto, "    %ld sec", time(NULL) - it->mSeenTime);
+			rs_sprintf_append(toto, "    %ld sec ext", time(NULL) - it->mSeenTime);
 			d.ipAddressList.push_back(toto);
 		}
 	}
@@ -859,9 +859,15 @@ void p3Peers::getIPServersList(std::list<std::string>& ip_servers)
 {
 	mNetMgr->getIPServersList(ip_servers) ;
 }
+void p3Peers::getCurrentExtIPList(std::list<std::string>& ip_list)
+{
+	mNetMgr->getCurrentExtIPList(ip_list) ;
+}
 bool p3Peers::resetOwnExternalAddressList()
 {
-    return mPeerMgr->resetOwnExternalAddressList();
+	//TODO Phenom 2021-10-30: Need to call something like mNetMgr->netReset();
+	// to update this addresslist.
+	return mPeerMgr->resetOwnExternalAddressList();
 }
 void p3Peers::allowServerIPDetermination(bool b)
 {
@@ -1305,6 +1311,7 @@ bool p3Peers::getShortInvite(std::string& invite, const RsPeerId& _sslId, Retros
         }
 
         sockaddr_storage tExt;
+        struct in6_addr sin6_addr;
         if(sockaddr_storage_inet_pton(tExt, tDetails.extAddr) && sockaddr_storage_isValidNet(tExt)  && sockaddr_storage_ipv6_to_ipv4(tExt) && tDetails.extPort )
         {
             uint32_t t4Addr = reinterpret_cast<sockaddr_in&>(tExt).sin_addr.s_addr;
@@ -1320,6 +1327,16 @@ bool p3Peers::getShortInvite(std::string& invite, const RsPeerId& _sslId, Retros
             buf[offset+5] = (uint8_t)((tDetails.extPort     ) & 0xff);
 
             offset += 4+2;
+        }
+        else if(inet_pton(AF_INET6, tDetails.extAddr.c_str(), &(sin6_addr)))
+        {
+            // External address is IPv6, save it on LOCATOR
+            std::string tLocator = "ipv6://[" + tDetails.extAddr + "]:" + std::to_string(tDetails.extPort);
+
+            addPacketHeader(RsShortInviteFieldType::LOCATOR, tLocator.size(),buf,offset,buf_size);
+            memcpy(&buf[offset],tLocator.c_str(),tLocator.size());
+
+            offset += tLocator.size();
         }
 #endif
 
@@ -1595,13 +1612,24 @@ std::string p3Peers::GetRetroshareInvite( const RsPeerId& sslId, RetroshareInvit
 
 	if (getPeerDetails(ssl_id, detail))
 	{
-        if(!(invite_flags & RetroshareInviteFlags::FULL_IP_HISTORY) || detail.isHiddenNode)
-            detail.ipAddressList.clear();
+		if(!(invite_flags & RetroshareInviteFlags::FULL_IP_HISTORY) || detail.isHiddenNode)
+			detail.ipAddressList.clear();
+
+		//Check if external address is IPv6, then move it to ipAddressList as RsCertificate only allow 4 numbers.
+		struct in6_addr sin6_addr;
+		if( inet_pton(AF_INET6, detail.extAddr.c_str(), &(sin6_addr))
+		   && !(invite_flags & RetroshareInviteFlags::FULL_IP_HISTORY)
+		   && !detail.isHiddenNode)
+		{
+			detail.ipAddressList.push_front("ipv6://[" + detail.extAddr + "]:" + std::to_string(detail.extPort) + " ");
+			detail.extAddr = ""; //Clear it to not trigg error.
+			detail.extPort = 0;
+		}
 
 		unsigned char *mem_block = nullptr;
 		size_t mem_block_size = 0;
 
-        if(!AuthGPG::getAuthGPG()->exportPublicKey( RsPgpId(detail.gpg_id), mem_block, mem_block_size, false, !!(invite_flags & RetroshareInviteFlags::PGP_SIGNATURES) ))
+		if(!AuthGPG::getAuthGPG()->exportPublicKey( RsPgpId(detail.gpg_id), mem_block, mem_block_size, false, !!(invite_flags & RetroshareInviteFlags::PGP_SIGNATURES) ))
 		{
 			std::cerr << "Cannot output certificate for id \"" << detail.gpg_id
 			          << "\". Sorry." << std::endl;
