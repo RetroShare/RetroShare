@@ -63,7 +63,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="inputDevice_CB"/>
+         <widget class="RSComboBox" name="inputDevice_CB"/>
         </item>
         <item>
          <widget class="QLabel" name="label_2">
@@ -257,7 +257,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="qcbTransmit">
+           <widget class="RSComboBox" name="qcbTransmit">
             <property name="toolTip">
              <string>When to transmit your speech</string>
             </property>
@@ -509,6 +509,11 @@
    <extends>QWidget</extends>
    <header>gui/AudioStats.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

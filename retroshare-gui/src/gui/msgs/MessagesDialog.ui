@@ -10,7 +10,7 @@
     <height>485</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="MessagesDialog_VL">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -36,7 +36,7 @@
       <attribute name="title">
        <string notr="true">Messages</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_2">
+      <layout class="QGridLayout" name="tab_GL">
        <property name="leftMargin">
         <number>0</number>
        </property>
@@ -55,7 +55,7 @@
           <enum>Qt::Horizontal</enum>
          </property>
          <widget class="QFrame" name="sideBarFrame">
-          <layout class="QGridLayout" name="sideBarFrameGLayout">
+          <layout class="QGridLayout" name="sideBarFrame_GL">
            <property name="leftMargin">
             <number>0</number>
            </property>
@@ -72,11 +72,11 @@
             <number>0</number>
            </property>
            <item row="0" column="0">
-            <widget class="QFrame" name="folderFrame">
+            <widget class="QFrame" name="trans_Frame_Folders">
              <property name="autoFillBackground">
               <bool>true</bool>
              </property>
-             <layout class="QHBoxLayout" name="folderFrameHLayout">
+             <layout class="QHBoxLayout" name="trans_Frame_Folders_HL">
               <property name="topMargin">
                <number>3</number>
               </property>
@@ -139,6 +139,11 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
               <property name="contextMenuPolicy">
                <enum>Qt::CustomContextMenu</enum>
               </property>
@@ -188,23 +193,17 @@
                </property>
               </item>
              </widget>
-             <widget class="QWidget" name="layoutWidget">
-              <layout class="QVBoxLayout" name="verticalLayout_3">
+             <widget class="QWidget" name="quickView_layoutWidget">
+              <layout class="QVBoxLayout" name="quickView_VL">
                <property name="spacing">
                 <number>0</number>
                </property>
                <item>
-                <widget class="QFrame" name="quickViewFrame">
+                <widget class="QFrame" name="trans_Frame_QuickView">
                  <property name="autoFillBackground">
                   <bool>true</bool>
                  </property>
-                 <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
-                 </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Raised</enum>
-                 </property>
-                 <layout class="QHBoxLayout" name="quickViewFrameHLayout">
+                 <layout class="QHBoxLayout" name="trans_Frame_QuickView_HL">
                   <property name="leftMargin">
                    <number>3</number>
                   </property>
@@ -254,6 +253,11 @@
                    <height>0</height>
                   </size>
                  </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
+                 </property>
                 </widget>
                </item>
               </layout>
@@ -275,13 +279,13 @@
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="layoutWidget">
-          <layout class="QVBoxLayout" name="verticalLayout_2">
+         <widget class="QWidget" name="msgs_layoutWidget">
+          <layout class="QVBoxLayout" name="msgs_VL">
            <property name="spacing">
             <number>0</number>
            </property>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout">
+            <layout class="QHBoxLayout" name="msgsButtons_HL">
              <property name="topMargin">
               <number>3</number>
              </property>
@@ -321,7 +325,7 @@
               </widget>
              </item>
              <item>
-              <spacer name="horizontalSpacer">
+              <spacer name="msgsButtons_HSpacer">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
@@ -352,7 +356,7 @@
                 <enum>Qt::NoFocus</enum>
                </property>
                <property name="icon">
-                <iconset resource="../images.qrc">
+                <iconset resource="../icons.qrc">
                  <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
                </property>
                <property name="checkable">
@@ -476,8 +480,8 @@
   <tabstop>listWidget</tabstop>
  </tabstops>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -1,6 +1,6 @@
 <RCC>
   <qresource prefix="/qss/stylesheet/FeedReader">
-    <file>FeedReader_qss.default</file>
+    <file>FeedReader_default.qss</file>
     <file>FeedReader_Standard.qss</file>
   </qresource>
 </RCC>

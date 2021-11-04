@@ -45,7 +45,7 @@
      </property>
      <layout class="QGridLayout" name="grpLanguageGLayout">
       <item row="1" column="0">
-       <widget class="QComboBox" name="cmboLanguage">
+       <widget class="RSComboBox" name="cmboLanguage">
         <property name="minimumSize">
          <size>
           <width>150</width>
@@ -105,7 +105,7 @@
      </property>
      <layout class="QGridLayout" name="grpStyleGLayout">
       <item row="0" column="0">
-       <widget class="QComboBox" name="cmboStyle">
+       <widget class="RSComboBox" name="cmboStyle">
         <property name="minimumSize">
          <size>
           <width>150</width>
@@ -146,7 +146,7 @@
      </property>
      <layout class="QGridLayout" name="grpStyleSheetGLayout">
       <item row="0" column="0">
-       <widget class="QComboBox" name="cmboStyleSheet">
+       <widget class="RSComboBox" name="cmboStyleSheet">
         <property name="minimumSize">
          <size>
           <width>150</width>
@@ -209,7 +209,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="mainPageButtonType_CB">
+         <widget class="RSComboBox" name="mainPageButtonType_CB">
           <item>
            <property name="text">
             <string>Buttons</string>
@@ -253,7 +253,7 @@
           <number>0</number>
          </property>
          <item row="2" column="0">
-          <widget class="QComboBox" name="cmboTollButtonsStyle">
+          <widget class="RSComboBox" name="cmboTollButtonsStyle">
            <item>
             <property name="text">
              <string>Icon Only</string>
@@ -303,7 +303,7 @@
           </spacer>
          </item>
          <item row="1" column="0">
-          <widget class="QComboBox" name="cmboTollButtonsSize">
+          <widget class="RSComboBox" name="cmboTollButtonsSize">
            <item>
             <property name="text">
              <string>Icon Size = 8x8</string>
@@ -466,6 +466,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

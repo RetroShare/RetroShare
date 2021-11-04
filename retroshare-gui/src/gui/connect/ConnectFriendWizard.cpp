@@ -107,8 +107,8 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	//ui->foffRadioButton->hide();
 	//ui->rsidRadioButton->hide();
 	
-	ui->cp_Label->hide();
-	ui->requestinfolabel->hide();
+	ui->info_Label_FrdReq->hide();
+	ui->info_Label_Request->hide();
 	
     connect(ui->acceptNoSignGPGCheckBox,SIGNAL(toggled(bool)), ui->_options_GB,SLOT(setEnabled(bool))) ;
     connect(ui->addKeyToKeyring_CB,SIGNAL(toggled(bool)), ui->acceptNoSignGPGCheckBox,SLOT(setChecked(bool))) ;
@@ -295,8 +295,8 @@ void ConnectFriendWizard::setCertificate(const QString &certificate, bool friend
 
 			setStartId(Page_Conclusion);
 			if (friendRequest){
-				ui->cp_Label->show();
-				ui->requestinfolabel->show();
+				ui->info_Label_FrdReq->show();
+				ui->info_Label_Request->show();
 				setTitleText(ui->ConclusionPage, tr("Friend request"));
 				ui->ConclusionPage->setSubTitle(tr("Details about the request"));
 				setButtonText(QWizard::FinishButton	, tr("Accept"));
@@ -320,8 +320,8 @@ void ConnectFriendWizard::setCertificate(const QString &certificate, bool friend
 			setStartId(Page_Conclusion);
 
 			if (friendRequest){
-				ui->cp_Label->show();
-				ui->requestinfolabel->show();
+				ui->info_Label_FrdReq->show();
+				ui->info_Label_Request->show();
 				setTitleText(ui->ConclusionPage, tr("Friend request"));
 				ui->ConclusionPage->setSubTitle(tr("Details about the request"));
 				setButtonText(QWizard::FinishButton	, tr("Accept"));
@@ -358,8 +358,8 @@ void ConnectFriendWizard::setGpgId(const RsPgpId &gpgId, const RsPeerId &sslId, 
 		setStartId(Page_Conclusion);
 
 		if (friendRequest){
-			ui->cp_Label->show();
-			ui->requestinfolabel->show();
+			ui->info_Label_FrdReq->show();
+			ui->info_Label_Request->show();
 			setTitleText(ui->ConclusionPage, tr("Friend request"));
 			ui->ConclusionPage->setSubTitle(tr("Details about the request"));
 			setButtonText(QWizard::FinishButton	, tr("Accept"));
@@ -374,8 +374,8 @@ void ConnectFriendWizard::setGpgId(const RsPgpId &gpgId, const RsPeerId &sslId, 
 		//setStartId(friendRequest ? Page_FriendRequest : Page_Conclusion);
 		setStartId(Page_Conclusion);
 		if (friendRequest){
-			ui->cp_Label->show();
-			ui->requestinfolabel->show();
+			ui->info_Label_FrdReq->show();
+			ui->info_Label_Request->show();
 			setTitleText(ui->ConclusionPage,tr("Friend request"));
 			ui->ConclusionPage->setSubTitle(tr("Details about the request"));
 			setButtonText(QWizard::FinishButton	, tr("Accept"));
@@ -530,7 +530,7 @@ void ConnectFriendWizard::initializePage(int id)
 				}
 			}
 
-			ui->cp_Label->setText(tr("You have a friend request from") + " " + QString::fromUtf8(peerDetails.name.c_str()));
+			ui->info_Label_FrdReq->setText(tr("You have a friend request from") + " " + QString::fromUtf8(peerDetails.name.c_str()));
 			ui->nameEdit->setText(QString::fromUtf8(peerDetails.name.c_str()));
 			ui->trustEdit->setText(trustString);
 			ui->profileIdEdit->setText(QString::fromStdString(peerDetails.gpg_id.toStdString()));

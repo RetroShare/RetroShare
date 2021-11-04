@@ -22,7 +22,7 @@
   <property name="styleSheet">
    <string notr="true"/>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_3">
+  <layout class="QHBoxLayout" name="BoardPostDisplayWidget_card_HL">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -42,7 +42,7 @@
     <number>2</number>
    </property>
    <item>
-    <widget class="QFrame" name="mainFrame">
+    <widget class="QFrame" name="feedFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
        <horstretch>0</horstretch>
@@ -55,7 +55,7 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <layout class="QVBoxLayout" name="feedFrame_VL">
       <property name="spacing">
        <number>2</number>
       </property>
@@ -127,10 +127,10 @@
             </widget>
            </item>
            <item>
-            <widget class="StyledLabel" name="scoreLabel">
+            <widget class="QLabel" name="scoreLabel">
              <property name="font">
               <font>
-               <pointsize>9</pointsize>
+               <pointsize>14</pointsize>
               </font>
              </property>
              <property name="text">
@@ -177,9 +177,9 @@
          </widget>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout">
+         <layout class="QVBoxLayout" name="right_VL">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <layout class="QHBoxLayout" name="from_HL">
             <property name="spacing">
              <number>5</number>
             </property>
@@ -199,8 +199,8 @@
               </property>
               <property name="font">
                <font>
-                <weight>50</weight>
-                <bold>false</bold>
+                <weight>75</weight>
+                <bold>true</bold>
                </font>
               </property>
               <property name="text">
@@ -277,7 +277,7 @@
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer_4">
+             <spacer name="from_HSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -295,7 +295,7 @@
            </layout>
           </item>
           <item>
-           <widget class="StyledLabel" name="titleLabel">
+           <widget class="QLabel" name="titleLabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -304,9 +304,9 @@
             </property>
             <property name="font">
              <font>
-              <family>Arial</family>
-              <pointsize>10</pointsize>
+              <pointsize>12</pointsize>
               <weight>75</weight>
+              <italic>true</italic>
               <bold>true</bold>
              </font>
             </property>
@@ -340,7 +340,7 @@
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer">
+             <spacer name="pictureLabel_HSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -371,7 +371,7 @@
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout">
+           <layout class="QHBoxLayout" name="buttons_HL">
             <item>
              <widget class="QToolButton" name="commentButton">
               <property name="text">
@@ -393,7 +393,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="shareButton">
+             <widget class="QToolButton" name="shareButton">
               <property name="text">
                <string>Share</string>
               </property>
@@ -401,13 +401,16 @@
                <iconset resource="Posted_images.qrc">
                 <normaloff>:/images/share.png</normaloff>:/images/share.png</iconset>
               </property>
-              <property name="flat">
+              <property name="autoRaise">
                <bool>true</bool>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextBesideIcon</enum>
               </property>
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer_2">
+             <spacer name="buttons_HSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -436,15 +439,10 @@
    <extends>QLabel</extends>
    <header>gui/gxs/GxsIdLabel.h</header>
   </customwidget>
-  <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
  </customwidgets>
  <resources>
-  <include location="Posted_images.qrc"/>
   <include location="../images.qrc"/>
+  <include location="Posted_images.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -16,8 +16,17 @@
   <property name="sizeGripEnabled">
    <bool>true</bool>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
-   <property name="margin">
+  <layout class="QGridLayout" name="ServicePermissionDialog_GL">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <property name="spacing">
@@ -37,14 +46,14 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="gradFrame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="gradFrame_GL">
       <item row="0" column="0">
        <widget class="FriendSelectionWidget" name="servicePermissionList" native="true">
         <property name="sizePolicy">
@@ -69,7 +78,7 @@
     </widget>
    </item>
   </layout>
-  <zorder>frame</zorder>
+  <zorder>gradFrame</zorder>
   <zorder>headerFrame</zorder>
  </widget>
  <customwidgets>

@@ -334,7 +334,7 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QComboBox" name="netModeComboBox">
+             <widget class="RSComboBox" name="netModeComboBox">
               <item>
                <property name="text">
                 <string>Automatic (UPnP)</string>
@@ -360,7 +360,7 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QComboBox" name="discoveryComboBox">
+             <widget class="RSComboBox" name="discoveryComboBox">
               <item>
                <property name="text">
                 <string>Public: DHT &amp; Discovery</string>
@@ -1071,6 +1071,11 @@ p, li { white-space: pre-wrap; }
    <extends>QFrame</extends>
    <header>gui/common/HeaderFrame.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
   </customwidget>
  </customwidgets>
  <resources>

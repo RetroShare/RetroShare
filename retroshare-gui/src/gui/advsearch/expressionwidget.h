@@ -21,14 +21,16 @@
  *******************************************************************************/
 #ifndef _ExpressionWidget_h_
 #define _ExpressionWidget_h_
-#include <iostream>
-#include <QWidget>
-#include <QLabel>
 
-#include <retroshare/rsexpr.h>
-#include "guiexprelement.h"
 #include "ui_expressionwidget.h"
 
+#include "guiexprelement.h"
+
+#include <retroshare/rsexpr.h>
+
+#include <QWidget>
+
+#include <iostream>
 
 /**
     Represents an Advanced Search GUI Expression object which acts as a container
@@ -74,20 +76,10 @@ private slots:
 
 
 private:
-    QLayout * createLayout(QWidget* parent = 0);
-    
     bool isStringSearchExpression();
-    
-    QList <GuiExprElement *> * elements;
-    QLayout * exprLayout;
 
-    ExprOpElement *        exprOpElem;
-    ExprTermsElement *     exprTermElem;
-    ExprConditionElement * exprCondElem;
-    ExprParamElement*      exprParamElem;
-    
-    bool inRangedConfig;
     bool isFirst;
+    bool inRangedConfig;
     ExprSearchType searchType;
 };
 

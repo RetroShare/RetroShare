@@ -18,25 +18,26 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "ChatPage.h"
+
+#include "rsharesettings.h"
+#include "gui/MainWindow.h"
+#include "gui/notifyqt.h"
+#include "gui/RetroShareLink.h"
+#include "gui/chat/ChatDialog.h"
+#include "util/misc.h"
+
+#include "retroshare/rsconfig.h"
+#include "retroshare/rshistory.h"
+#include "retroshare/rsmsgs.h"
+#include "retroshare/rsnotify.h"
+#include "retroshare/rspeers.h"
+
 #include <QColorDialog>
 #include <QMenu>
 #include <QMessageBox>
+
 #include <time.h>
-
-#include <retroshare/rsnotify.h>
-#include <retroshare/rsmsgs.h>
-#include <retroshare/rspeers.h>
-#include "ChatPage.h"
-#include "gui/MainWindow.h"
-#include <gui/RetroShareLink.h>
-#include "gui/chat/ChatDialog.h"
-#include "gui/notifyqt.h"
-#include "rsharesettings.h"
-#include "util/misc.h"
-#include <retroshare/rsconfig.h>
-
-#include <retroshare/rshistory.h>
-#include <retroshare/rsmsgs.h>
 
 #define VARIANT_STANDARD    "Standard"
 #define IMAGE_CHAT_CREATE   ":/icons/png/add.png"
@@ -294,6 +295,29 @@ ChatPage::ChatPage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.publicStyle,                SIGNAL(currentIndexChanged(int)), this,SLOT(on_publicList_currentRowChanged(int)));
 	connect(ui.privateStyle,               SIGNAL(currentIndexChanged(int)), this,SLOT(on_privateList_currentRowChanged(int)));
 	connect(ui.historyStyle,               SIGNAL(currentIndexChanged(int)), this,SLOT(on_historyList_currentRowChanged(int)));
+
+	//Resize system size square
+	qreal logicalPPCX = ui.systemSize_Frame->logicalDpiX()/2.54;
+	qreal logicalPPCY = ui.systemSize_Frame->logicalDpiY()/2.54;
+
+	ui.systemSize_Frame->setMinimumSize(logicalPPCX,logicalPPCY);
+	ui.systemSize_Frame->setMaximumSize(logicalPPCX,logicalPPCY);
+	ui.systemSize_Frame->setToolTip(QString("Your system reports a screen with %1 DPI (Dots Per Inches) = %2 PPC (Pixels Per Centimeters).")
+	                                .arg(ui.systemSize_Frame->logicalDpiX()).arg(logicalPPCX));
+
+	//Resize system font size square
+	qreal ptFontSize = (qreal)QApplication::font().pointSize();
+	qreal pxFontSize = (qreal)QFontMetrics(QApplication::font()).height();
+	qreal px1ptSize = pxFontSize / ptFontSize;
+	//1 pt = 1/72 inch = 2.54/72 cm
+	qreal px1cmSize = (px1ptSize * 72.0) / 2.54;
+
+	ui.systemFontSize_Frame->setMinimumSize(px1cmSize,px1cmSize);
+	ui.systemFontSize_Frame->setMaximumSize(px1cmSize,px1cmSize);
+
+	ui.systemFontSize_Frame->setToolTip(QString("Your default font is %1 points high = %2 mm. Qt print it with %3 pixels.\nSo Font use %4 PPC (Pixels Per Centimeters).")
+	                                    .arg(ptFontSize).arg((ptFontSize*25.4)/72.0).arg(pxFontSize).arg(px1cmSize));
+
 
     /* Add user notify */
     const QList<UserNotify*> &userNotifyList = MainWindow::getInstance()->getUserNotifyList() ;

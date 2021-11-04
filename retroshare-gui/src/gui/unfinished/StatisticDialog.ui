@@ -486,7 +486,16 @@
    <property name="spacing">
     <number>6</number>
    </property>
-   <property name="margin" >
+   <property name="leftMargin">
+    <number>9</number>
+   </property>
+   <property name="topMargin">
+    <number>9</number>
+   </property>
+   <property name="rightMargin">
+    <number>9</number>
+   </property>
+   <property name="bottomMargin">
     <number>9</number>
    </property>
    <item>
@@ -496,7 +505,7 @@
      </property>
      <widget class="QTreeWidget" name="treeWidget">
       <property name="sizePolicy">
-       <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
@@ -862,9 +871,9 @@
        </item>
       </item>
      </widget>
-     <widget class="QFrame" name="frame">
+     <widget class="QFrame" name="gradFrame">
       <property name="sizePolicy">
-       <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
         <horstretch>1</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
@@ -879,11 +888,20 @@
        <property name="spacing">
         <number>6</number>
        </property>
-       <property name="margin" >
+       <property name="leftMargin">
+        <number>9</number>
+       </property>
+       <property name="topMargin">
+        <number>9</number>
+       </property>
+       <property name="rightMargin">
+        <number>9</number>
+       </property>
+       <property name="bottomMargin">
         <number>9</number>
        </property>
        <item>
-        <widget class="GraphFrame" native="1" name="frmGraph" >
+        <widget class="GraphFrame" name="frmGraph" native="true">
          <property name="minimumSize">
           <size>
            <width>120</width>
@@ -900,7 +918,16 @@
          <property name="spacing">
           <number>6</number>
          </property>
-         <property name="margin" >
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <item>
@@ -938,7 +965,7 @@
        <item>
         <widget class="QFrame" name="frmSettings">
          <property name="sizePolicy">
-          <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -968,7 +995,16 @@
           <property name="spacing">
            <number>6</number>
           </property>
-          <property name="margin" >
+          <property name="leftMargin">
+           <number>9</number>
+          </property>
+          <property name="topMargin">
+           <number>9</number>
+          </property>
+          <property name="rightMargin">
+           <number>9</number>
+          </property>
+          <property name="bottomMargin">
            <number>9</number>
           </property>
           <item>
@@ -976,7 +1012,16 @@
             <property name="spacing">
              <number>6</number>
             </property>
-            <property name="margin" >
+            <property name="leftMargin">
+             <number>3</number>
+            </property>
+            <property name="topMargin">
+             <number>3</number>
+            </property>
+            <property name="rightMargin">
+             <number>3</number>
+            </property>
+            <property name="bottomMargin">
              <number>3</number>
             </property>
             <item>
@@ -1060,7 +1105,16 @@
              <property name="spacing">
               <number>3</number>
              </property>
-             <property name="margin" >
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
               <number>0</number>
              </property>
              <item>
@@ -1068,7 +1122,16 @@
                <property name="spacing">
                 <number>0</number>
                </property>
-               <property name="margin" >
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
                 <number>0</number>
                </property>
                <item>
@@ -1173,7 +1236,16 @@
             <property name="spacing">
              <number>1</number>
             </property>
-            <property name="margin" >
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
              <number>0</number>
             </property>
             <item>

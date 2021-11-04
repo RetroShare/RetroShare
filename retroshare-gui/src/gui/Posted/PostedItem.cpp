@@ -705,9 +705,9 @@ void PostedItem::setReadStatus(bool isNew, bool isUnread)
 
 	//ui->newLabel->setVisible(isNew);
 
-	ui->mainFrame->setProperty("new", isNew);
-	ui->mainFrame->style()->unpolish(ui->mainFrame);
-	ui->mainFrame->style()->polish(  ui->mainFrame);
+	ui->feedFrame->setProperty("new", isNew);
+	ui->feedFrame->style()->unpolish(ui->feedFrame);
+	ui->feedFrame->style()->polish(  ui->feedFrame);
 }
 
 

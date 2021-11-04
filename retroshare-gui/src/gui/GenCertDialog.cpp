@@ -53,7 +53,7 @@
 class EntropyCollectorWidget: public QTextBrowser
 {
 	public:
-		EntropyCollectorWidget(QProgressBar *pr,QWidget *p = NULL)
+		explicit EntropyCollectorWidget(QProgressBar *pr,QWidget *p = NULL)
 			: QTextBrowser(p) 
 		{
 			progress = pr ;
@@ -288,8 +288,6 @@ void GenCertDialog::setupState()
         break;
     }
 
-	//ui.no_node_label->setVisible(false);
-
 	setWindowTitle(generate_new?tr("Create new profile and new Retroshare node"):tr("Create new Retroshare node"));
 	//ui.headerFrame->setHeaderText(generate_new?tr("Create a new profile and node"):tr("Create a new node"));
 
@@ -300,14 +298,8 @@ void GenCertDialog::setupState()
 
     ui.genPGPuser->setVisible(adv_state && haveGPGKeys && !generate_new) ;
 
-	//ui.genprofileinfo_label->setVisible(false);
-	//ui.no_gpg_key_label->setText(tr("Welcome to Retroshare. Before you can proceed you need to create a profile and associate a node with it. To do so please fill out this form.\nAlternatively you can import a (previously exported) profile. Just uncheck \"Create a new profile\""));
-	//no_gpg_key_label->setVisible(false);
-
 	ui.name_label->setVisible(true);
 	ui.name_input->setVisible(generate_new);
-
-    //ui.header_label->setVisible(false) ;
 
 	ui.nickname_label->setVisible(adv_state && !mOnlyGenerateIdentity);
 	ui.nickname_input->setVisible(adv_state && !mOnlyGenerateIdentity);
@@ -352,8 +344,8 @@ void GenCertDialog::setupState()
 
 		ui.genButton->setVisible(false) ;
 		ui.generate_label->setVisible(false) ;
-		ui.info_label->setText("Please choose a profile name and password...") ;
-		ui.info_label->setVisible(true) ;
+		ui.info_Label->setText("Please choose a profile name and password...") ;
+		ui.info_Label->setVisible(true) ;
 	}
 	else if(!mEntropyOk)
 	{
@@ -361,8 +353,8 @@ void GenCertDialog::setupState()
 
 		ui.genButton->setVisible(false) ;
 		ui.generate_label->setVisible(false) ;
-		ui.info_label->setText("Please move your mouse randomly to generate enough random data to create your profile.") ;
-		ui.info_label->setVisible(true) ;
+		ui.info_Label->setText("Please move your mouse randomly to generate enough random data to create your profile.") ;
+		ui.info_Label->setVisible(true) ;
 	}
 	else
 	{
@@ -371,7 +363,7 @@ void GenCertDialog::setupState()
 		ui.genButton->setToolTip(tr("Click to create your node and/or profile")) ;
 		ui.genButton->setVisible(true) ;
 		ui.generate_label->setVisible(false) ;
-		ui.info_label->setVisible(false) ;
+		ui.info_Label->setVisible(false) ;
 	}
 }
 
@@ -591,7 +583,6 @@ void GenCertDialog::genPerson()
 		//generate a new gpg key
 		std::string err_string;
 		//_key_label->setText(tr("Generating new node key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. \n\nFill in your password when asked, to sign your new key."));
-		//ui.no_gpg_key_label->show();
 		//ui.reuse_existing_node_CB->hide();
 		ui.name_label->hide();
 		ui.name_input->hide();
@@ -609,7 +600,6 @@ void GenCertDialog::genPerson()
 		ui.node_input->hide();
 		ui.genButton->hide();
 		ui.importIdentity_PB->hide();
-		//ui.genprofileinfo_label->hide();
 		ui.nodeType_CB->hide();
 		//ui.adv_checkbox->hide();
 		ui.keylength_label->hide();
