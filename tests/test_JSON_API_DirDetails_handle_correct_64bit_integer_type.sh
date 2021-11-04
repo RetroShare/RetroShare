@@ -39,7 +39,15 @@ function tLog()
 	echo "$mCategory $(date) $@" >&2
 }
 
-mReply="$(curl -u "$API_TOKEN" "$API_BASE_URL/rsFiles/requestDirDetails")"
+mCmd="curl -u $API_TOKEN $API_BASE_URL/rsFiles/requestDirDetails"
+
+mReply="$($mCmd)"
+mCurlRet="$?"
+
+if [ "$mCurlRet" != 0 ]; then
+	tLog E "$mCmd failed: $mCurlRet '$mReply'"
+	exit -3
+fi
 
 [ "$(echo "$mReply" | jq '.retval')" == "true" ] ||
 {
