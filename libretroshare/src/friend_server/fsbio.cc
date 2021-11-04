@@ -129,9 +129,14 @@ int FsBioInterface::readdata(void *data, int len)
 
 int FsBioInterface::senddata(void *data, int len)
 {
-//    int written = write(mCLintConnt, data, len);
-//    return written;
-    return len;
+    // shouldn't we better send in multiple packets, similarly to how we read?
+
+    RsDbg() << "FsBioInterface: sending data packet of size " << len ;
+
+    int written = write(mCLintConnt, data, len);
+    RsDbg() << "FsBioInterface: done.";
+
+    return written;
 }
 int FsBioInterface::netstatus()
 {

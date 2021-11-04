@@ -55,28 +55,33 @@ bool FsClient::requestFriends(const std::string& address,uint16_t port,uint32_t 
 
     for(auto item:response)
     {
-        auto *encrypted_response_item = dynamic_cast<RsFriendServerEncryptedServerResponseItem*>(item);
+        // auto *encrypted_response_item = dynamic_cast<RsFriendServerEncryptedServerResponseItem*>(item);
 
-        if(!encrypted_response_item)
-        {
-            delete item;
-            continue;
-        }
+        // if(!encrypted_response_item)
+        // {
+        //     delete item;
+        //     continue;
+        // }
 
         // For now, also handle unencrypted response items. Will be disabled in production
 
         auto *response_item = dynamic_cast<RsFriendServerServerResponseItem*>(item);
 
-        if(!response_item)
-        {
-            delete item;
-            continue;
-        }
+        if(response_item)
+            handleServerResponse(response_item);
 
-        for(const auto& it:response_item->friend_invites)
-            friend_certificates.insert(it);
+        delete item;
     }
     return friend_certificates.size();
+}
+
+void FsClient::handleServerResponse(RsFriendServerServerResponseItem *item)
+{
+    std::cerr << "Received a response item from server: " << std::endl;
+    std::cerr << *item << std::endl;
+
+    //     for(const auto& it:response_item->friend_invites)
+    //        friend_certificates.insert(it);
 }
 
 bool FsClient::sendItem(const std::string& address,uint16_t port,RsItem *item,std::list<RsItem*>& response)
@@ -131,40 +136,54 @@ bool FsClient::sendItem(const std::string& address,uint16_t port,RsItem *item,st
 
     FsBioInterface *bio = new FsBioInterface(CreateSocket);	// deleted by ~pqistreamer()
 
-    pqithreadstreamer p(this,rss,RsPeerId(),bio,BIN_FLAGS_READABLE | BIN_FLAGS_NO_DELETE | BIN_FLAGS_NO_CLOSE);
+    pqithreadstreamer p(this,rss,RsPeerId(),bio,BIN_FLAGS_READABLE | BIN_FLAGS_WRITEABLE | BIN_FLAGS_NO_CLOSE);
     p.start();
 
     uint32_t ss;
     p.SendItem(item,ss);
+    bool should_close = false;
 
     while(true)
     {
-        p.tick();
+        p.tick(); // ticks bio
 
         RsItem *item = GetItem();
+
+        RsDbg() << "Ticking for response...";
 
         if(item)
         {
             response.push_back(item);
             std::cerr << "Got a response item: " << std::endl;
             std::cerr << *item << std::endl;
+
+            if(dynamic_cast<RsFriendServerStatusItem*>(item) != nullptr)
+            {
+                RsDbg() << "End of transmission. " ;
+                should_close = true;
+                break;
+            }
+
+            if(!bio->isactive())	// socket has probably closed
+            {
+                RsDbg() << "(client side) Socket has been closed by server.";
+                should_close =true;
+                break;
+            }
         }
-
-        if(!bio->isactive())	// socket has probably closed
-        {
-            RsDbg() << "(client side) Socket has been closed by server.";
-            RsDbg() << "  Stopping/killing pqistreamer" ;
-            p.fullstop();
-
-            RsDbg() << "  Closing socket." ;
-            close(CreateSocket);
-            CreateSocket=0;
-
-            RsDbg() << "  Exiting loop." ;
-            break;
-        }
-
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    }
+
+    if(should_close)
+    {
+        RsDbg() << "  Stopping/killing pqistreamer" ;
+        p.fullstop();
+
+        RsDbg() << "  Closing socket." ;
+        close(CreateSocket);
+        CreateSocket=0;
+
+        RsDbg() << "  Exiting loop." ;
     }
 
     return true;

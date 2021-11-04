@@ -42,6 +42,7 @@ protected:
 
 private:
     bool sendItem(const std::string &address, uint16_t port, RsItem *item, std::list<RsItem *> &response);
+    void handleServerResponse(RsFriendServerServerResponseItem *item);
 
     std::list<RsItem*> mIncomingItems;
 };

@@ -95,9 +95,7 @@ void FsNetworkInterface::threadTick()
 
     RS_STACK_MUTEX(mFsNiMtx);
     for(auto& it:mConnections)
-    {
         it.second.pqi_thread->tick();
-    }
 
     rstime::rs_usleep(1000*200);
 }
@@ -210,7 +208,8 @@ int FsNetworkInterface::SendItem(RsItem *item)
         return 0;
     }
 
-    return it->second.pqi_thread->SendItem(item);
+    uint32_t ss;
+    return it->second.pqi_thread->SendItem(item,ss);
 }
 
 void FsNetworkInterface::closeConnection(const RsPeerId& peer_id)

@@ -17,8 +17,6 @@ void FriendServer::threadTick()
 {
     // Listen to the network interface, capture incoming data etc.
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
-
     RsItem *item;
 
     while(nullptr != (item = mni->GetItem()))
@@ -43,6 +41,7 @@ void FriendServer::threadTick()
         }
         delete item;
     }
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
     static rstime_t last_autowash_TS = time(nullptr);
     rstime_t now = time(nullptr);
@@ -78,6 +77,8 @@ void FriendServer::handleClientPublish(const RsFriendServerClientPublishItem *it
         // No need to test for it==mCurrentClients.end() because it will be directly caught by the exception handling below even before.
         // Respond with a list of potential friends
 
+        RsDbg() << "Sending response item to " << item->PeerId() ;
+
         RsFriendServerServerResponseItem *sr_item = new RsFriendServerServerResponseItem;
 
         sr_item->nonce = pi->second.last_nonce;
@@ -85,17 +86,30 @@ void FriendServer::handleClientPublish(const RsFriendServerClientPublishItem *it
         sr_item->PeerId(item->PeerId());
 
         mni->SendItem(sr_item);
+
     }
     catch(std::exception& e)
     {
         RsErr() << "ERROR: " << e.what() ;
+
+        RsFriendServerStatusItem *status_item = new RsFriendServerStatusItem;
+        status_item->status = RsFriendServerStatusItem::END_OF_TRANSMISSION;
+        status_item->PeerId(item->PeerId());
+        mni->SendItem(status_item);
+        return;
     }
 
     // Close client connection from server side, to tell the client that nothing more is coming.
+    //RsDbg() << "Closing client connection." ;
+    //mni->closeConnection(item->PeerId());
 
-    RsDbg() << "Closing client connection." ;
+    RsDbg() << "Sending end-of-stream item to " << item->PeerId() ;
 
-    mni->closeConnection(item->PeerId());
+    RsFriendServerStatusItem *status_item = new RsFriendServerStatusItem;
+    status_item->status = RsFriendServerStatusItem::END_OF_TRANSMISSION;
+    status_item->PeerId(item->PeerId());
+
+    mni->SendItem(status_item);
 }
 
 std::map<std::string, bool> FriendServer::computeListOfFriendInvites(uint32_t nb_reqs_invites, const RsPeerId &pid, const RsPgpFingerprint &fpr)
@@ -126,15 +140,10 @@ std::map<RsPeerId,PeerInfo>::iterator FriendServer::handleIncomingClientData(con
         RsPgpId pgp_id ;
         std::vector<uint8_t> key_binary_data ;
 
-        key_binary_data = Radix64::decode(pgp_public_key_b64);
+        // key_binary_data = Radix64::decode(pgp_public_key_b64);
 
-        if(key_binary_data.empty())
+        if(RsBase64::decode(pgp_public_key_b64,key_binary_data))
             throw std::runtime_error("  Cannot decode client pgp public key: \"" + pgp_public_key_b64 + "\". Wrong format??");
-
-// Apparently RsBase64 doesn't work correctly.
-//
-//        if(!RsBase64::decode(item->pgp_public_key_b64,key_binary_data))
-//            throw std::runtime_error("  Cannot decode client pgp public key: \"" + item->pgp_public_key_b64 + "\". Wrong format??");
 
         RsDbg() << "    Public key radix is fine." ;
 
@@ -236,9 +245,9 @@ void FriendServer::run()
 void FriendServer::autoWash()
 {
     rstime_t now = time(nullptr);
+    RsDbg() << "autoWash..." ;
 
     for(std::map<RsPeerId,PeerInfo>::iterator it(mCurrentClientPeers.begin());it!=mCurrentClientPeers.end();)
-    {
         if(it->second.last_connection_TS + MAXIMUM_PEER_INACTIVE_DELAY < now)
         {
             RsDbg() << "Removing client peer " << it->first << " because it's inactive for more than " << MAXIMUM_PEER_INACTIVE_DELAY << " seconds." ;
@@ -247,7 +256,10 @@ void FriendServer::autoWash()
             mCurrentClientPeers.erase(it);
             it = tmp;
         }
-    }
+        else
+            ++it;
+
+    RsDbg() << "done." ;
 }
 
 void FriendServer::debugPrint()

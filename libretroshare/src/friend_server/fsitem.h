@@ -34,6 +34,7 @@ const uint8_t RS_PKT_SUBTYPE_FS_CLIENT_PUBLISH             = 0x01 ;
 const uint8_t RS_PKT_SUBTYPE_FS_CLIENT_REMOVE              = 0x02 ;
 const uint8_t RS_PKT_SUBTYPE_FS_SERVER_RESPONSE            = 0x03 ;
 const uint8_t RS_PKT_SUBTYPE_FS_SERVER_ENCRYPTED_RESPONSE  = 0x04 ;
+const uint8_t RS_PKT_SUBTYPE_FS_SERVER_STATUS              = 0x05 ;
 
 class RsFriendServerItem: public RsItem
 {
@@ -69,6 +70,27 @@ public:
     uint32_t    n_requested_friends;
     std::string short_invite;
     std::string pgp_public_key_b64;
+};
+
+class RsFriendServerStatusItem: public RsFriendServerItem
+{
+public:
+    RsFriendServerStatusItem() : RsFriendServerItem(RS_PKT_SUBTYPE_FS_SERVER_STATUS) {}
+
+    void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override
+    {
+        RS_SERIAL_PROCESS(status);
+    }
+
+    enum ConnectionStatus: uint8_t
+    {
+        UNKNOWN             = 0x00,
+        END_OF_TRANSMISSION = 0x01
+    };
+
+    // specific members for that item
+
+    ConnectionStatus status;
 };
 
 class RsFriendServerClientRemoveItem: public RsFriendServerItem
@@ -152,6 +174,7 @@ struct FsSerializer : RsServiceSerializer
         case RS_PKT_SUBTYPE_FS_CLIENT_REMOVE:             return new RsFriendServerClientRemoveItem();
         case RS_PKT_SUBTYPE_FS_CLIENT_PUBLISH:            return new RsFriendServerClientPublishItem();
         case RS_PKT_SUBTYPE_FS_SERVER_RESPONSE:           return new RsFriendServerServerResponseItem();
+        case RS_PKT_SUBTYPE_FS_SERVER_STATUS:             return new RsFriendServerStatusItem();
         case RS_PKT_SUBTYPE_FS_SERVER_ENCRYPTED_RESPONSE: return new RsFriendServerEncryptedServerResponseItem();
         default:
             RsErr() << "Unknown subitem type " << item_sub_id << " in FsSerialiser" ;
