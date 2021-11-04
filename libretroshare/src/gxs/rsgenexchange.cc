@@ -322,12 +322,12 @@ void RsGenExchange::tick()
 			{
 				mIntegrityCheck = new RsGxsIntegrityCheck( mDataStore, this,
 				                                           *mSerialiser, mGixs);
-				mIntegrityCheck->start("gxs integrity");
-				mChecking = true;
+				std::string thisName = typeid(*this).name();
+				mChecking = mIntegrityCheck->start("gxs IC4 "+thisName);
 			}
 		}
 
-		if(mIntegrityCheck->isDone())
+		if(mIntegrityCheck->isDone() || !mChecking)
 		{
             std::vector<RsGxsGroupId> grpIds;
             GxsMsgReq msgIds;

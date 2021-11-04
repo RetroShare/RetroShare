@@ -261,6 +261,9 @@ private:
 	/** Call @see run() setting the appropriate flags around it*/
 	void wrapRun();
 
+	// To be sure Init (pthread_setname_np) is done before continue thread. Else can finish before and crash.
+	RsMutex mInitMtx;
+
 	/// True if thread is stopped, false otherwise
 	std::atomic<bool> mHasStopped;
 
