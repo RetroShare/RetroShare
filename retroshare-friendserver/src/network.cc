@@ -93,11 +93,19 @@ void FsNetworkInterface::threadTick()
 
     // 2 - tick all streamers
 
+    std::list<RsPeerId> to_close;
+
     RS_STACK_MUTEX(mFsNiMtx);
     for(auto& it:mConnections)
-        it.second.pqi_thread->tick();
+        if(it.second.bio->isactive())
+            it.second.pqi_thread->tick();
+    else
+            to_close.push_back(it.first);
 
-    rstime::rs_usleep(1000*200);
+    for(const auto& pid:to_close)
+        closeConnection(pid);
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
 }
 
 static RsPeerId makePeerId(int t)
@@ -216,17 +224,19 @@ void FsNetworkInterface::closeConnection(const RsPeerId& peer_id)
 {
     RS_STACK_MUTEX(mFsNiMtx);
 
+    RsDbg() << "Closing connection to virtual peer " << peer_id ;
+
     const auto& it = mConnections.find(peer_id);
 
     if(it == mConnections.end())
     {
-        RsErr() << "Cannot close connection to peer " << peer_id << ": no pending sockets available." ;
+        RsErr() << "  Cannot close connection to peer " << peer_id << ": no pending sockets available." ;
         return;
     }
 
     if(!it->second.incoming_items.empty())
     {
-        RsErr() << "Trying to close an incoming connection with incoming items still pending! The items will be lost." << std::endl;
+        RsErr() << "  Trying to close an incoming connection with incoming items still pending! The items will be lost." << std::endl;
 
         for(auto& item:it->second.incoming_items)
             delete item;

@@ -157,6 +157,8 @@ bool FsClient::sendItem(const std::string& address,uint16_t port,RsItem *item,st
             std::cerr << "Got a response item: " << std::endl;
             std::cerr << *item << std::endl;
 
+            should_close = true; // always close the socket after one packet
+
             if(dynamic_cast<RsFriendServerStatusItem*>(item) != nullptr)
             {
                 RsDbg() << "End of transmission. " ;
@@ -171,7 +173,8 @@ bool FsClient::sendItem(const std::string& address,uint16_t port,RsItem *item,st
                 break;
             }
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        else
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
 
     if(should_close)

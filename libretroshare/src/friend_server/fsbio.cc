@@ -39,7 +39,7 @@ int FsBioInterface::tick()
     char inBuffer[1025];
     memset(inBuffer,0,1025);
 
-    int readbytes = read(mCLintConnt, inBuffer, sizeof(inBuffer));
+    ssize_t readbytes = recv(mCLintConnt, inBuffer, sizeof(inBuffer),MSG_DONTWAIT);
 
     if(readbytes == 0)
     {
