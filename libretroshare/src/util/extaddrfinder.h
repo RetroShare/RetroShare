@@ -30,7 +30,7 @@
 
 struct sockaddr ;
 
-class ExtAddrFinder
+class ExtAddrFinder: public RsThread
 {
 	public:
 		ExtAddrFinder() ;
@@ -45,7 +45,7 @@ class ExtAddrFinder
 		void reset(bool firstTime = false) ;
 
 	private:
-		friend void* doExtAddrSearch(void *p);
+		virtual void run();
 		void testTimeOut();
 
 		RsMutex mAddrMtx;

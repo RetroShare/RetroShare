@@ -459,6 +459,7 @@ void ServerPage::load()
 
 
         whileBlocking(ui.ipAddressList)->clear();
+        detail.ipAddressList.sort();
         for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
             whileBlocking(ui.ipAddressList)->addItem(QString::fromStdString(*it));
 
@@ -827,7 +828,7 @@ void ServerPage::ipWhiteListContextMenu(const QPoint& /* point */)
 //    QString range0 = RsNetUtil::printAddrRange(addr,0) ;
 //    QString range1 = RsNetUtil::printAddrRange(addr,1) ;
 //    QString range2 = RsNetUtil::printAddrRange(addr,2) ;
-
+//
 //    contextMenu.addAction(QObject::tr("Whitelist only IP "          )+range0,this,SLOT(enableBannedIp()))->setEnabled(false) ;
 //#warning UNIMPLEMENTED CODE
 //    contextMenu.addAction(QObject::tr("Whitelist entire range ")+range1,this,SLOT(enableBannedIp()))->setEnabled(false) ;
@@ -1180,6 +1181,7 @@ void ServerPage::loadHiddenNode()
 
     // show what we have in ipAddresses. (should be nothing!)
     ui.ipAddressList->clear();
+    detail.ipAddressList.sort();
     for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
         whileBlocking(ui.ipAddressList)->addItem(QString::fromStdString(*it));
 

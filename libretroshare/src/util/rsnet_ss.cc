@@ -233,8 +233,7 @@ bool sockaddr_storage_setport(struct sockaddr_storage &addr, uint16_t port)
 bool sockaddr_storage_setipv4(struct sockaddr_storage &addr, const sockaddr_in *addr_ipv4)
 {
 #ifdef SS_DEBUG
-	std::cerr << "sockaddr_storage_setipv4()";
-	std::cerr << std::endl;
+	RS_ERR();
 #endif
 
 	sockaddr_storage_clear(addr);
@@ -249,7 +248,9 @@ bool sockaddr_storage_setipv4(struct sockaddr_storage &addr, const sockaddr_in *
 
 bool sockaddr_storage_setipv6(struct sockaddr_storage &addr, const sockaddr_in6 *addr_ipv6)
 {
-	std::cerr << "sockaddr_storage_setipv6()" << std::endl;
+#ifdef SS_DEBUG
+	RS_ERR();
+#endif
 
 	sockaddr_storage_clear(addr);
 	struct sockaddr_in6 *ipv6_ptr = to_ipv6_ptr(addr);

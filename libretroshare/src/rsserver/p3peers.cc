@@ -1293,7 +1293,11 @@ bool p3Peers::getShortInvite(std::string& invite, const RsPeerId& _sslId, Retros
         }
 #else
         sockaddr_storage tLocal;
-        if(sockaddr_storage_inet_pton(tLocal, tDetails.localAddr) && sockaddr_storage_isValidNet(tLocal)  && sockaddr_storage_ipv6_to_ipv4(tLocal) && tDetails.localPort )
+        bool validLoc =   sockaddr_storage_inet_pton(tLocal, tDetails.localAddr)
+                       && sockaddr_storage_isValidNet(tLocal)
+                       && tDetails.localPort;
+        bool isLocIpv4 = sockaddr_storage_ipv6_to_ipv4(tLocal);
+        if(validLoc && isLocIpv4)
         {
             uint32_t t4Addr = reinterpret_cast<sockaddr_in&>(tLocal).sin_addr.s_addr;
 
@@ -1311,8 +1315,11 @@ bool p3Peers::getShortInvite(std::string& invite, const RsPeerId& _sslId, Retros
         }
 
         sockaddr_storage tExt;
-        struct in6_addr sin6_addr;
-        if(sockaddr_storage_inet_pton(tExt, tDetails.extAddr) && sockaddr_storage_isValidNet(tExt)  && sockaddr_storage_ipv6_to_ipv4(tExt) && tDetails.extPort )
+        bool validExt =   sockaddr_storage_inet_pton(tExt, tDetails.extAddr)
+                       && sockaddr_storage_isValidNet(tExt)
+                       && tDetails.extPort;
+        bool isExtIpv4 = sockaddr_storage_ipv6_to_ipv4(tExt);
+        if(validExt && isExtIpv4)
         {
             uint32_t t4Addr = reinterpret_cast<sockaddr_in&>(tExt).sin_addr.s_addr;
 
@@ -1328,10 +1335,11 @@ bool p3Peers::getShortInvite(std::string& invite, const RsPeerId& _sslId, Retros
 
             offset += 4+2;
         }
-        else if(inet_pton(AF_INET6, tDetails.extAddr.c_str(), &(sin6_addr)))
+        else if(validExt && !isExtIpv4)
         {
             // External address is IPv6, save it on LOCATOR
-            std::string tLocator = "ipv6://[" + tDetails.extAddr + "]:" + std::to_string(tDetails.extPort);
+            sockaddr_storage_setport(tExt,tDetails.extPort);
+            std::string tLocator = sockaddr_storage_tostring(tExt);
 
             addPacketHeader(RsShortInviteFieldType::LOCATOR, tLocator.size(),buf,offset,buf_size);
             memcpy(&buf[offset],tLocator.c_str(),tLocator.size());
@@ -1612,16 +1620,23 @@ std::string p3Peers::GetRetroshareInvite( const RsPeerId& sslId, RetroshareInvit
 
 	if (getPeerDetails(ssl_id, detail))
 	{
-		if(!(invite_flags & RetroshareInviteFlags::FULL_IP_HISTORY) || detail.isHiddenNode)
+		if(   !(invite_flags & RetroshareInviteFlags::FULL_IP_HISTORY)
+		   || detail.isHiddenNode)
 			detail.ipAddressList.clear();
 
 		//Check if external address is IPv6, then move it to ipAddressList as RsCertificate only allow 4 numbers.
-		struct in6_addr sin6_addr;
-		if( inet_pton(AF_INET6, detail.extAddr.c_str(), &(sin6_addr))
-		   && !(invite_flags & RetroshareInviteFlags::FULL_IP_HISTORY)
-		   && !detail.isHiddenNode)
+		sockaddr_storage tExt;
+		bool validExt =   sockaddr_storage_inet_pton(tExt, detail.extAddr)
+		               && sockaddr_storage_isValidNet(tExt)
+		               && detail.extPort;
+		bool isExtIpv4 = sockaddr_storage_ipv6_to_ipv4(tExt);
+
+		if(   !(invite_flags & RetroshareInviteFlags::FULL_IP_HISTORY)
+		   && !detail.isHiddenNode
+		   && validExt && !isExtIpv4)
 		{
-			detail.ipAddressList.push_front("ipv6://[" + detail.extAddr + "]:" + std::to_string(detail.extPort) + " ");
+			sockaddr_storage_setport(tExt,detail.extPort);
+			detail.ipAddressList.push_front(sockaddr_storage_tostring(tExt) + " "); // Space needed to later parse.
 			detail.extAddr = ""; //Clear it to not trigg error.
 			detail.extPort = 0;
 		}

@@ -21,6 +21,7 @@
  *******************************************************************************/
 
 //#define DEBUG_SPEC_DNS 1
+
 #include "util/rsnet.h"
 
 #include "util/rsdebug.h"
@@ -101,51 +102,49 @@ struct RR_DATA
 bool rsGetHostByNameSpecDNS(const std::string& servername, const std::string& hostname, std::string& returned_addr, int timeout_s /*= -1*/)
 {
 #ifdef DEBUG_SPEC_DNS
-	RsDbg()<<__PRETTY_FUNCTION__<<" servername="<< servername << " hostname=" << hostname << std::endl;
+	RS_DBG("servername=", servername, " hostname=", hostname);
 #endif
 
 	if (strlen(servername.c_str()) > 256)
 	{
-		RsErr()<<__PRETTY_FUNCTION__<<": servername is too long > 256 chars:"<<servername<<std::endl;
+		RS_ERR("servername is too long > 256 chars: ", servername);
 		return false;
 	}
 	if (strlen(hostname.c_str()) > 256)
 	{
-		RsErr()<<__PRETTY_FUNCTION__<<": hostname is too long > 256 chars:"<<hostname<<std::endl;
+		RS_ERR("hostname is too long > 256 chars: ", hostname);
 		return false;
 	}
 
-	bool isIPV4 = false;
-	in_addr dns_server_4; in6_addr dns_server_6;
-	if (inet_pton(AF_INET, servername.c_str(), &dns_server_4))
-		isIPV4 = true;
-	else if (inet_pton(AF_INET6, servername.c_str(), &dns_server_6))
-		isIPV4 = false;
-	else if (rsGetHostByName(servername, dns_server_4))
-		isIPV4 = true;
-	else
+	sockaddr_storage serverAddr;
+	bool validServer =   sockaddr_storage_inet_pton(serverAddr, servername)
+	                  && sockaddr_storage_isValidNet(serverAddr);
+	bool isIPV4 = validServer && sockaddr_storage_ipv6_to_ipv4(serverAddr);
+
+	if (!validServer)
 	{
-		RsErr()<<__PRETTY_FUNCTION__<<": servername is on an unknow format: "<<servername<<std::endl;
-		return false;
+		in_addr in ;
+		if (!rsGetHostByName(servername, in))
+		{
+			RS_ERR("servername is on an unknow format: ", servername);
+			return false;
+		}
+
+		validServer =   sockaddr_storage_inet_pton(serverAddr, rs_inet_ntoa(in))
+		             && sockaddr_storage_isValidNet(serverAddr);
+		isIPV4 = validServer && sockaddr_storage_ipv6_to_ipv4(serverAddr);
+
+		if (!validServer)
+		{
+			RS_ERR("rsGetHostByName return bad answer: ", rs_inet_ntoa(in));
+			return false;
+		}
 	}
 
-	unsigned char buf[65536];
-
-	struct sockaddr_in dest4;struct sockaddr_in6 dest6;
-	if (isIPV4)
-	{
-		dest4.sin_family = AF_INET;
-		dest4.sin_port = htons(53);
-		dest4.sin_addr.s_addr = dns_server_4.s_addr;
-	} else {
-		dest6.sin6_family = AF_INET6;
-		dest6.sin6_port = htons(53);
-		dest6.sin6_flowinfo = 0;
-		dest6.sin6_addr = dns_server_6;
-		dest6.sin6_scope_id = 0;
-	}
+	sockaddr_storage_setport( serverAddr, 53);
 
 	//Set the DNS structure to standard queries
+	unsigned char buf[65536];
 	struct DNS_HEADER* dns = (struct DNS_HEADER *)&buf;
 	dns->id = static_cast<unsigned short>(htons(getpid())); //Transaction Id
 	//dns flags = 0x0100 Standard Query
@@ -191,86 +190,81 @@ bool rsGetHostByNameSpecDNS(const std::string& servername, const std::string& ho
 	curSendSize += sizeof(struct QUESTION);
 
 #ifdef DEBUG_SPEC_DNS
-	RsDbg()<<__PRETTY_FUNCTION__<< " Sending Packet: " << std::endl << hexDump(buf, curSendSize) << std::endl;
+	RS_DBG("Sending Packet:\n", hexDump(buf, curSendSize));
 #endif
-	int s = isIPV4 ? socket(AF_INET  , SOCK_DGRAM , IPPROTO_UDP)
-	               : socket(AF_INET6 , SOCK_DGRAM , IPPROTO_UDP) ; //UDP packet for DNS queries
+	int s = socket(serverAddr.ss_family , SOCK_DGRAM , IPPROTO_UDP); //UDP packet for DNS queries
+
 	if (timeout_s > -1)
-	{
-#ifdef WINDOWS_SYS
-		DWORD timeout = timeout_s * 1000;
-		setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof timeout);
-#else
-		struct timeval tv;
-		tv.tv_sec = timeout_s;
-		tv.tv_usec = 0;
-		setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
-#endif
-	}
-	ssize_t send_size = sendto(s, (char*)buf, curSendSize, 0
-	                          ,isIPV4 ? (struct sockaddr*)&dest4
-	                                  : (struct sockaddr*)&dest6
-	                          ,isIPV4 ? sizeof(dest4)
-	                                  : sizeof(dest6)
+		rs_setSockTimeout(s, true, timeout_s);
+
+	ssize_t send_size = sendto( s, (char*)buf, curSendSize, 0
+	                          , (struct sockaddr*)&serverAddr
+	                          , isIPV4 ? sizeof(sockaddr_in)
+	                                   : sizeof(sockaddr_in6)
 	                          );
 	if( send_size < 0)
 	{
-		RsErr()<<__PRETTY_FUNCTION__<<": Send Failed with size = " << send_size << std::endl;
+		RS_ERR("Send Failed with size = ", send_size);
 		return false;
 	}
 
 #ifdef DEBUG_SPEC_DNS
-	RsDbg()<<__PRETTY_FUNCTION__<< " Waiting answer..." << std::endl;
+	RS_DBG("Waiting answer...");
 #endif
 	//****************************************************************************************//
 	//---                          Receive the answer                                      ---//
 	//****************************************************************************************//
-	socklen_t dest_size = static_cast<socklen_t>(sizeof dest4);
-	ssize_t rec_size=recvfrom(s,(char*)buf , 65536 , 0 , (struct sockaddr*)&dest4 , &dest_size );
+	socklen_t sa_size = static_cast<socklen_t>(isIPV4 ? sizeof(sockaddr_in)
+	                                                  : sizeof(sockaddr_in6)
+	                                          );
+	ssize_t rec_size=recvfrom( s,(char*)buf , 65536 , 0
+	                         , (struct sockaddr*)&serverAddr
+	                         , &sa_size
+	                         );
 	if(rec_size <= 0)
 	{
-		RsErr()<<__PRETTY_FUNCTION__<<": Receive Failed"<<std::endl;
+		RS_ERR("Receive Failed");
 		return false;
 	}
 #ifdef DEBUG_SPEC_DNS
-	RsDbg()<<__PRETTY_FUNCTION__<< " Received: " << hexDump(buf, rec_size) << std::endl;
+	RS_DBG("Received:\n", hexDump(buf, rec_size));
 #endif
 
 
 	if (rec_size< static_cast<ssize_t>(sizeof(struct DNS_HEADER)) )
 	{
-		RsErr()<<__PRETTY_FUNCTION__<<": Request received too small to get DNSHeader."<<std::endl;
+		RS_ERR("Request received too small to get DNSHeader.");
 		return false;
 	}
 #ifdef DEBUG_SPEC_DNS
 	//Point to the header portion
 	dns = (struct DNS_HEADER*) buf;
-	RsDbg()<<__PRETTY_FUNCTION__<<" The response contains : " << std::endl
-	       <<ntohs(dns->q_count)    << " Questions." << std::endl
-	       <<ntohs(dns->ans_count)  << " Answers." << std::endl
-	       <<ntohs(dns->auth_count) << " Authoritative Servers." << std::endl
-	       <<ntohs(dns->add_count)  << " Additional records." << std::endl;
+	RS_DBG("The response contains :\n"
+	       ,ntohs(dns->q_count)    , " Questions.\n"
+	       ,ntohs(dns->ans_count)  , " Answers.\n"
+	       ,ntohs(dns->auth_count) , " Authoritative Servers.\n"
+	       ,ntohs(dns->add_count)  , " Additional records.");
 #endif
 	size_t curRecSize = sizeof(struct DNS_HEADER);
 
 
 	if (rec_size< static_cast<ssize_t>(curRecSize + 1 + sizeof(struct QUESTION)) )
 	{
-		RsErr()<<__PRETTY_FUNCTION__<<": Request received too small to get Question return."<<std::endl;
+		RS_ERR("Request received too small to get Question return.");
 		return false;
 	}
 	//Point to the query portion
 	unsigned char* qnameRecv =static_cast<unsigned char*>(&buf[curRecSize]);
 	if (memcmp(qname,qnameRecv,qnameSize + 1 + sizeof(struct QUESTION)) )
 	{
-		RsErr()<<__PRETTY_FUNCTION__<<": Request received different from that sent."<<std::endl;
+		RS_ERR("Request received different from that sent.");
 		return false;
 	}
 	curRecSize += qnameSize + 1 + sizeof(struct QUESTION);
 
 	if (rec_size< static_cast<ssize_t>(curRecSize + 2) )
 	{
-		RsErr()<<__PRETTY_FUNCTION__<<": Request received too small to get Answer return."<<std::endl;
+		RS_ERR("Request received too small to get Answer return.");
 		return false;
 	}
 	//Point to the Answer portion
@@ -290,33 +284,33 @@ bool rsGetHostByNameSpecDNS(const std::string& servername, const std::string& ho
 	}
 	else
 	{
-		RsErr()<<__PRETTY_FUNCTION__<<": Answer received with unmanaged label format."<<std::endl;
+		RS_ERR("Answer received with unmanaged label format.");
 		return false;
 	}
 	curRecSize += 2 + rLabelSize;
 
 	if (rec_size< static_cast<ssize_t>(curRecSize + sizeof(struct RR_DATA)) )
 	{
-		RsErr()<<__PRETTY_FUNCTION__<<": Request received too small to get Data return."<<std::endl;
+		RS_ERR("Request received too small to get Data return.");
 		return false;
 	}
 	//Point to the query portion
 	struct RR_DATA* rec_data = (struct RR_DATA *)&buf[curRecSize];
 	if (rec_data->rtype!=qinfo->qtype)
 	{
-		RsErr()<<__PRETTY_FUNCTION__<<": Answer's type received different from query sent."<<std::endl;
+		RS_ERR("Answer's type received different from query sent.");
 		return false;
 	}
 	if (rec_data->rclass!=qinfo->qclass)
 	{
-		RsErr()<<__PRETTY_FUNCTION__<<": Answer's class received different from query sent."<<std::endl;
+		RS_ERR("Answer's class received different from query sent.");
 		return false;
 	}
 	curRecSize += sizeof(struct RR_DATA);
 
 	if (rec_size< static_cast<ssize_t>(curRecSize + ntohs(rec_data->data_len)) )
 	{
-		RsErr()<<__PRETTY_FUNCTION__<<": Request received too small to get Full Data return."<<std::endl;
+		RS_ERR("Request received too small to get Full Data return.");
 		return false;
 	}
 
@@ -328,7 +322,7 @@ bool rsGetHostByNameSpecDNS(const std::string& servername, const std::string& ho
 			in_addr ipv4Add;
 			ipv4Add.s_addr=*(in_addr_t*)&buf[curRecSize];
 #ifdef DEBUG_SPEC_DNS
-			RsDbg()<<__PRETTY_FUNCTION__<< " Retrieve address: " << rs_inet_ntoa(ipv4Add) << std::endl;
+			RS_DBG("Retrieve address: ", rs_inet_ntoa(ipv4Add));
 #endif
 			returned_addr = rs_inet_ntoa(ipv4Add);
 			return true;
@@ -348,13 +342,13 @@ bool rsGetHostByNameSpecDNS(const std::string& servername, const std::string& ho
 			sockaddr_storage_setipv6(ss,&addr_ipv6);
 
 #ifdef DEBUG_SPEC_DNS
-			RsDbg()<<__PRETTY_FUNCTION__<< " Retrieve address: " << sockaddr_storage_iptostring(ss).c_str() << std::endl;
+			RS_DBG("Retrieve address: ", sockaddr_storage_iptostring(ss).c_str());
 #endif
 			returned_addr = sockaddr_storage_iptostring(ss);
 			return true;
 		}
 	}
 
-	RsErr()<<__PRETTY_FUNCTION__<< " Retrieve unmanaged data size=" << ntohs(rec_data->data_len) << std::endl;
+	RS_ERR("Retrieve unmanaged data size=", ntohs(rec_data->data_len));
 	return false;
 }
