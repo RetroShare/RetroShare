@@ -4,8 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2004-2006  Robert Fernie <retroshare@lunamutt.com>            *
- * Copyright (C) 2016-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
- * Copyright (C) 2019-2020  Asociación Civil Altermundi <info@altermundi.net>  *
+ * Copyright (C) 2016-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -261,7 +261,11 @@ private:
 	/** Call @see run() setting the appropriate flags around it*/
 	void wrapRun();
 
-	// To be sure Init (pthread_setname_np) is done before continue thread. Else can finish before and crash.
+	/** Wait the thread while it is stopping */
+	void waitWhileStopping();
+
+	/** To be sure Init (pthread_setname_np) is done before continue thread.
+	 * Else can finish before and crash. */
 	RsMutex mInitMtx;
 
 	/// True if thread is stopped, false otherwise

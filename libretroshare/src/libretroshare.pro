@@ -507,8 +507,7 @@ HEADERS +=	util/folderiterator.h \
     util/cxx11retrocompat.h \
     util/cxx14retrocompat.h \
     util/cxx17retrocompat.h \
-            util/rsurl.h \
-    util/rserrno.h
+            util/rsurl.h
 
 SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftcontroller.cc \
@@ -646,8 +645,7 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsrecogn.cc \
             util/rstime.cc \
             util/rsurl.cc \
-            util/rsbase64.cc \
-    util/rserrno.cc
+            util/rsbase64.cc
 
 equals(RS_UPNP_LIB, miniupnpc) {
         HEADERS += rs_upnp/upnputil.h rs_upnp/upnphandler_miniupnp.h
