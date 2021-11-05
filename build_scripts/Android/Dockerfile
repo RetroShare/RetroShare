@@ -16,6 +16,11 @@
 # docker login registry.gitlab.com
 # docker push ${CI_IMAGE_NAME}
 
+## To extract the generated APK easily you can run after the build complete
+# docker cp \
+#	$(docker create --rm ${CI_IMAGE_NAME}):/retroshare-service-android-build/android-build/build/outputs/apk/debug/android-build-debug.apk \
+#	/tmp/RetroShare_Android_Service.apk
+
 
 FROM ubuntu:20.04
 
@@ -85,6 +90,7 @@ RUN qmake ../RetroShare/jsonapi-generator/src/ \
 
 RUN mkdir /retroshare-service-android-build
 WORKDIR /retroshare-service-android-build
+ARG RS_SERVICE_QMAKE_EXTRA_OPTS
 RUN $($PREPARE_TOOLCHAIN get_qt_dir | head -n 1)/bin/qmake ../RetroShare \
 	-spec android-clang \
 	CONFIG+=retroshare_service CONFIG+=rs_jsonapi \
@@ -93,7 +99,8 @@ RUN $($PREPARE_TOOLCHAIN get_qt_dir | head -n 1)/bin/qmake ../RetroShare \
 	NATIVE_LIBS_TOOLCHAIN_PATH=$NATIVE_LIBS_TOOLCHAIN_PATH \
 	CONFIG+=no_retroshare_gui CONFIG+=no_rs_service_webui_terminal_password \
 	CONFIG+=no_rs_service_terminal_login \
-	CONFIG+=no_rs_sam3 CONFIG+=no_rs_sam3_libsam3
+	CONFIG+=no_rs_sam3 CONFIG+=no_rs_sam3_libsam3 \
+	$RS_SERVICE_QMAKE_EXTRA_OPTS
 RUN	make -j$(nproc)
 RUN make install INSTALL_ROOT=/retroshare-service-android-build/android-build/
 RUN $($PREPARE_TOOLCHAIN get_qt_dir | head -n 1)/bin/androiddeployqt \
