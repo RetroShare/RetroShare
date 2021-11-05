@@ -105,7 +105,7 @@ class RsStackMutex
 {
 public:
 
-	RsStackMutex(RsMutex &mtx) : mMtx(mtx)
+	explicit RsStackMutex(RsMutex& mtx): mMtx(mtx)
 	{
 		mMtx.lock();
 #ifdef RS_MUTEX_DEBUG
