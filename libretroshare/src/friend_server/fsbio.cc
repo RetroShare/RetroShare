@@ -32,8 +32,6 @@ FsBioInterface::FsBioInterface(int socket)
 
 int FsBioInterface::tick()
 {
-    std::cerr << "ticking FsNetworkInterface" << std::endl;
-
     // 2 - read incoming data pending on existing connections
 
     char inBuffer[1025];
@@ -57,7 +55,7 @@ int FsBioInterface::tick()
         return mTotalBufferBytes;
     }
 
-    std::cerr << "clintConnt: " << mCLintConnt << ", readbytes: " << readbytes << std::endl;
+    RsDbg() << "clintConnt: " << mCLintConnt << ", readbytes: " << readbytes ;
 
     // display some debug info
 
@@ -77,7 +75,7 @@ int FsBioInterface::tick()
         mTotalBufferBytes += readbytes;
         mTotalReadBytes += readbytes;
 
-        std::cerr << "Socket: " << mCLintConnt << ". Total read: " << mTotalReadBytes << ". Buffer size: " << mTotalBufferBytes << std::endl ;
+        RsDbg() << "Socket: " << mCLintConnt << ". Total read: " << mTotalReadBytes << ". Buffer size: " << mTotalBufferBytes ;
     }
 
     return mTotalBufferBytes;

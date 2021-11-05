@@ -168,6 +168,15 @@ struct t_RsGenericIdType
 		return ret;
 	}
 
+    inline Id_t operator^ (const Id_t& fp) const
+    {
+        Id_t ret;
+        for(uint32_t i=0; i < ID_SIZE_IN_BYTES; ++i)
+            ret.bytes[i] = bytes[i] ^ fp.bytes[i];
+        return ret;
+    }
+
+
 	inline bool isNull() const
 	{
 		for(uint32_t i=0; i < SIZE_IN_BYTES; ++i)

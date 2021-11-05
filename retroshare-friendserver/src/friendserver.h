@@ -32,10 +32,14 @@ class RsFriendServerClientPublishItem;
 
 struct PeerInfo
 {
+    typedef RsPgpFingerprint PeerDistance;
+
     RsPgpFingerprint pgp_fingerprint;
     std::string short_certificate;
     rstime_t last_connection_TS;
     uint64_t last_nonce;
+
+    std::map<PeerDistance,RsPeerId> closest_peers;
 };
 
 class FriendServer : public RsTickingThread
@@ -54,11 +58,17 @@ private:
     void handleClientRemove(const RsFriendServerClientRemoveItem *item);
     void handleClientPublish(const RsFriendServerClientPublishItem *item);
 
+    // Updates for each peer in the database, the list of closest peers w.r.t. some arbitrary distance.
+    void updateClosestPeers(const RsPeerId& pid,const RsPgpFingerprint& fpr);
+
     // Adds the incoming peer data to the list of current clients and returns the
     std::map<RsPeerId,PeerInfo>::iterator handleIncomingClientData(const std::string& pgp_public_key_b64,const std::string& short_invite_b64);
 
     // Computes the appropriate list of short invites to send to a given peer.
     std::map<std::string,bool> computeListOfFriendInvites(uint32_t nb_reqs_invites,const RsPeerId& pid,const RsPgpFingerprint& fpr);
+
+    // Compute the distance between peers using the random bias (It's not really a distance though. I'm not sure about the triangular inequality).
+    PeerInfo::PeerDistance computePeerDistance(const RsPgpFingerprint &p1, const RsPgpFingerprint &p2);
 
     void autoWash();
     void debugPrint();
@@ -69,6 +79,7 @@ private:
     PGPHandler *mPgpHandler;
 
     std::string mBaseDirectory;
+    RsPgpFingerprint mRandomPeerBias;
 
     std::map<RsPeerId, PeerInfo> mCurrentClientPeers;
 };
