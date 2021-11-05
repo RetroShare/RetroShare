@@ -102,6 +102,9 @@ win32 {
 	for(lib, LIB_DIR):LIBS += -L"$$lib"
 	for(bin, BIN_DIR):LIBS += -L"$$bin"
 	LIBS += -lpthread
+
+	# Do not add for MinGW
+	!isEmpty(QMAKE_SH): QMAKE_LFLAGS += -Wl,--end-group
 }
 
 macx {
