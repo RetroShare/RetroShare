@@ -148,9 +148,9 @@ bool FsClient::sendItem(const std::string& address,uint16_t port,RsItem *item,st
         p.tick(); // ticks bio
 
         RsItem *item = GetItem();
-
+#ifdef DEBUG_FSCLIENT
         RsDbg() << "Ticking for response...";
-
+#endif
         if(item)
         {
             response.push_back(item);

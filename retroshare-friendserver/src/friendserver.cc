@@ -84,6 +84,13 @@ void FriendServer::handleClientPublish(const RsFriendServerClientPublishItem *it
         sr_item->friend_invites = computeListOfFriendInvites(item->n_requested_friends,pi->first,pi->second.pgp_fingerprint);
         sr_item->PeerId(item->PeerId());
 
+        // Update the have_added_as_friend for the list of each peer. We do that before sending because sending destroys
+        // the item.
+
+        for(auto& it:mCurrentClientPeers)
+            it.second.have_added_this_peer[computePeerDistance(it.second.pgp_fingerprint,pi->second.pgp_fingerprint)] = pi->first;
+
+        // Send the item.
         mni->SendItem(sr_item);
 
         // Update the list of closest peers for all peers currently in the database.
@@ -102,8 +109,6 @@ void FriendServer::handleClientPublish(const RsFriendServerClientPublishItem *it
     }
 
     // Close client connection from server side, to tell the client that nothing more is coming.
-    //RsDbg() << "Closing client connection." ;
-    //mni->closeConnection(item->PeerId());
 
     RsDbg() << "Sending end-of-stream item to " << item->PeerId() ;
 
@@ -112,6 +117,9 @@ void FriendServer::handleClientPublish(const RsFriendServerClientPublishItem *it
     status_item->PeerId(item->PeerId());
 
     mni->SendItem(status_item);
+
+    RsDbg() << "Closing client connection." ;
+    mni->closeConnection(item->PeerId());
 }
 
 std::map<std::string, bool> FriendServer::computeListOfFriendInvites(uint32_t nb_reqs_invites, const RsPeerId &pid, const RsPgpFingerprint &fpr)
@@ -239,14 +247,25 @@ void FriendServer::handleClientRemove(const RsFriendServerClientRemoveItem *item
 
     RsDbg() << "  Nonce is correct: " << std::hex << item->nonce << std::dec << ". Removing peer " << item->peer_id ;
 
-    mCurrentClientPeers.erase(it);
+    removePeer(item->peer_id);
+}
 
-    // Also remove that peer from all n-closest lists
+void FriendServer::removePeer(const RsPeerId& peer_id)
+{
+    auto it = mCurrentClientPeers.find(peer_id);
+
+    if(it != mCurrentClientPeers.end())
+        mCurrentClientPeers.erase(it);
 
     for(auto& it:mCurrentClientPeers)
+    {
+        // Also remove that peer from all n-closest lists
+
         for(auto pit(it.second.closest_peers.begin());pit!=it.second.closest_peers.end();)
-            if(pit->second == item->peer_id)
+            if(pit->second == peer_id)
             {
+                RsDbg() << "  Removing from n-closest peers of peer " << pit->first ;
+
                 auto tmp(pit);
                 ++tmp;
                 it.second.closest_peers.erase(pit);
@@ -254,6 +273,22 @@ void FriendServer::handleClientRemove(const RsFriendServerClientRemoveItem *item
             }
             else
                 ++pit;
+
+        // Also remove that peer from peers that have accepted each peer
+
+        for(auto fit(it.second.have_added_this_peer.begin());fit!=it.second.have_added_this_peer.end();)
+            if(fit->second == peer_id)
+            {
+                RsDbg() << "  Removing from have_added_as_friend peers of peer " << fit->first ;
+
+                auto tmp(fit);
+                ++tmp;
+                it.second.closest_peers.erase(fit);
+                fit=tmp;
+            }
+            else
+                ++fit;
+    }
 }
 
 PeerInfo::PeerDistance FriendServer::computePeerDistance(const RsPgpFingerprint& p1,const RsPgpFingerprint& p2)
@@ -295,17 +330,17 @@ void FriendServer::autoWash()
     rstime_t now = time(nullptr);
     RsDbg() << "autoWash..." ;
 
+    std::list<RsPeerId> to_remove;
+
     for(std::map<RsPeerId,PeerInfo>::iterator it(mCurrentClientPeers.begin());it!=mCurrentClientPeers.end();)
         if(it->second.last_connection_TS + MAXIMUM_PEER_INACTIVE_DELAY < now)
         {
             RsDbg() << "Removing client peer " << it->first << " because it's inactive for more than " << MAXIMUM_PEER_INACTIVE_DELAY << " seconds." ;
-            auto tmp = it;
-            ++tmp;
-            mCurrentClientPeers.erase(it);
-            it = tmp;
+            to_remove.push_back(it->first);
         }
-        else
-            ++it;
+
+    for(auto peer_id:to_remove)
+        removePeer(peer_id);
 
     RsDbg() << "done." ;
 }

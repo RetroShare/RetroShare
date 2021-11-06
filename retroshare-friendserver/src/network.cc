@@ -103,7 +103,7 @@ void FsNetworkInterface::threadTick()
             to_close.push_back(it.first);
 
     for(const auto& pid:to_close)
-        closeConnection(pid);
+        locked_closeConnection(pid);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
 }
@@ -224,6 +224,10 @@ void FsNetworkInterface::closeConnection(const RsPeerId& peer_id)
 {
     RS_STACK_MUTEX(mFsNiMtx);
 
+    locked_closeConnection(peer_id);
+}
+void FsNetworkInterface::locked_closeConnection(const RsPeerId& peer_id)
+{
     RsDbg() << "Closing connection to virtual peer " << peer_id ;
 
     const auto& it = mConnections.find(peer_id);

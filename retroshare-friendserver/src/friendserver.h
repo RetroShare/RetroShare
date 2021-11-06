@@ -40,6 +40,7 @@ struct PeerInfo
     uint64_t last_nonce;
 
     std::map<PeerDistance,RsPeerId> closest_peers;
+    std::map<PeerDistance,RsPeerId> have_added_this_peer;
 };
 
 class FriendServer : public RsTickingThread
@@ -60,6 +61,9 @@ private:
 
     // Updates for each peer in the database, the list of closest peers w.r.t. some arbitrary distance.
     void updateClosestPeers(const RsPeerId& pid,const RsPgpFingerprint& fpr);
+
+    // removes a single peer from all lists.
+    void removePeer(const RsPeerId& peer_id);
 
     // Adds the incoming peer data to the list of current clients and returns the
     std::map<RsPeerId,PeerInfo>::iterator handleIncomingClientData(const std::string& pgp_public_key_b64,const std::string& short_invite_b64);

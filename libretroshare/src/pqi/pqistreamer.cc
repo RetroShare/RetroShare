@@ -376,9 +376,9 @@ int	pqistreamer::queue_outpqi_locked(RsItem *pqi,uint32_t& pktsize)
     	if(ptr == NULL)
             return 0 ;
 
-//#ifdef DEBUG_PQISTREAMER
+#ifdef DEBUG_PQISTREAMER
 	std::cerr << "pqistreamer::queue_outpqi() serializing packet with packet size : " << pktsize << std::endl;
-//#endif
+#endif
 
         /*******************************************************************************************/
     	// keep info for stats for a while. Only keep the items for the last two seconds. sec n is ongoing and second n-1

@@ -48,7 +48,6 @@ public:
 
     // basic functionality
 
-    void closeConnection(const RsPeerId& peer_id);
     void debugPrint();
 
     // Implements PQInterface
@@ -57,12 +56,15 @@ public:
     int  SendItem(RsItem *item) override;
     RsItem *GetItem() override;
 
+    void closeConnection(const RsPeerId& peer_id);
+
     // Implements RsTickingThread
 
     void threadTick() override;
 
 protected:
     bool checkForNewConnections();
+    void locked_closeConnection(const RsPeerId& peer_id);
 
 private:
     RsMutex mFsNiMtx;
