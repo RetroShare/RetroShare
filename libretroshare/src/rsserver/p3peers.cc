@@ -1758,11 +1758,11 @@ bool p3Peers::loadDetailsFromStringCert( const std::string &certstr,
 	return true;
 }
 
-bool p3Peers::cleanCertificate(const std::string &certstr, std::string &cleanCert,bool& is_short_format,uint32_t& error_code)
+bool p3Peers::cleanCertificate(const std::string &certstr, std::string &cleanCert,bool& is_short_format,uint32_t& error_code,RsPeerDetails& details)
 {
 	RsCertificate::Format format ;
 
-	bool res = RsCertificate::cleanCertificate(certstr,cleanCert,format,error_code,true) ;
+	bool res = RsCertificate::cleanCertificate(certstr,cleanCert,format,error_code,true,details) ;
 
     if(format == RsCertificate::RS_CERTIFICATE_RADIX)
         is_short_format = false;
