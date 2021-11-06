@@ -22,6 +22,8 @@
  *                                                                             *
  *******************************************************************************/
 
+#include <iomanip>
+
 #include "util/rsdebug.h"
 
 std::ostream &operator<<(std::ostream& out, const std::error_condition& err)
