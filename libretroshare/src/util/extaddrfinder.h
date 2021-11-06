@@ -30,26 +30,31 @@
 
 struct sockaddr ;
 
-class ExtAddrFinder
+class ExtAddrFinder: public RsThread
 {
 	public:
 		ExtAddrFinder() ;
 		~ExtAddrFinder() ;
 
-		bool hasValidIP(struct sockaddr_storage &addr) ;
+		bool hasValidIPV4(struct sockaddr_storage &addr) ;
+		bool hasValidIPV6(struct sockaddr_storage &addr) ;
 		void getIPServersList(std::list<std::string>& ip_servers) { ip_servers = _ip_servers ; }
 
 		void start_request() ;
 
-		void reset() ;
+		void reset(bool firstTime = false) ;
 
 	private:
-		friend void* doExtAddrSearch(void *p) ;
+		virtual void run();
+		void testTimeOut();
 
-		RsMutex mAddrMtx ;
-		rstime_t   mFoundTS;
-		struct sockaddr_storage mAddr;
-		bool mFound ;
-		bool mSearching ;
-		std::list<std::string> _ip_servers ;
+		RsMutex mAddrMtx;
+		bool mSearching;
+		bool mFoundV4;
+		bool mFoundV6;
+		bool mFirstTime;
+		rstime_t mFoundTS;
+		struct sockaddr_storage mAddrV4;
+		struct sockaddr_storage mAddrV6;
+		std::list<std::string> _ip_servers;
 };

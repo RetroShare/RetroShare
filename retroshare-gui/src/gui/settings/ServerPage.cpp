@@ -66,11 +66,11 @@
 ///
 
 // Tabs numbers *after* non relevant tabs are removed. So do not use them to add/remove tabs!!
-const static uint32_t TAB_HIDDEN_SERVICE_OUTGOING = 0;
+//nst static uint32_t TAB_HIDDEN_SERVICE_OUTGOING = 0;
 const static uint32_t TAB_HIDDEN_SERVICE_INCOMING = 1;
 const static uint32_t TAB_HIDDEN_SERVICE_I2P	  = 2;
 
-const static uint32_t TAB_NETWORK                 = 0;
+//nst static uint32_t TAB_NETWORK                 = 0;
 const static uint32_t TAB_HIDDEN_SERVICE          = 1;
 const static uint32_t TAB_IP_FILTERS              = 2;
 const static uint32_t TAB_RELAYS                  = 3;
@@ -155,8 +155,8 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     ui.leBobB32Addr->hide();
     ui.pbBobGenAddr->hide();
 
-    QObject::connect(ui.filteredIpsTable,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(ipFilterContextMenu(const QPoint&))) ;
-    QObject::connect(ui.whiteListIpsTable,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(ipWhiteListContextMenu(const QPoint&))) ;
+    QObject::connect(ui.filteredIpsTable,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(ipFilterContextMenu(QPoint))) ;
+    QObject::connect(ui.whiteListIpsTable,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(ipWhiteListContextMenu(QPoint))) ;
     QObject::connect(ui.denyAll_CB,SIGNAL(toggled(bool)),this,SLOT(toggleIpFiltering(bool)));
     QObject::connect(ui.includeFromDHT_CB,SIGNAL(toggled(bool)),this,SLOT(toggleAutoIncludeDHT(bool)));
     QObject::connect(ui.includeFromFriends_CB,SIGNAL(toggled(bool)),this,SLOT(toggleAutoIncludeFriends(bool)));
@@ -164,7 +164,7 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     QObject::connect(ui.groupIPRanges_SB,SIGNAL(valueChanged(int)),this,SLOT(setGroupIpLimit(int)));
     QObject::connect(ui.ipInputAddBlackList_PB,SIGNAL(clicked()),this,SLOT(addIpRangeToBlackList()));
     QObject::connect(ui.ipInputAddWhiteList_PB,SIGNAL(clicked()),this,SLOT(addIpRangeToWhiteList()));
-    QObject::connect(ui.ipInput_LE,SIGNAL(textChanged(const QString&)),this,SLOT(checkIpRange(const QString&)));
+    QObject::connect(ui.ipInput_LE,SIGNAL(textChanged(QString)),this,SLOT(checkIpRange(QString)));
     QObject::connect(ui.filteredIpsTable,SIGNAL(currentCellChanged(int,int,int,int)),this,SLOT(updateSelectedBlackListIP(int,int,int,int)));
     QObject::connect(ui.whiteListIpsTable,SIGNAL(currentCellChanged(int,int,int,int)),this,SLOT(updateSelectedWhiteListIP(int,int,int,int)));
 
@@ -193,10 +193,10 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     QObject::connect(ui.localPort,SIGNAL(valueChanged(int)),this,SLOT(saveAddresses()));
     QObject::connect(ui.extPort,SIGNAL(valueChanged(int)),this,SLOT(saveAddresses()));
 
-    connect( ui.netModeComboBox, SIGNAL( activated ( int ) ), this, SLOT( toggleUPnP( ) ) );
-    connect( ui.allowIpDeterminationCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleIpDetermination(bool) ) );
-    connect( ui.cleanKnownIPs_PB, SIGNAL( clicked( ) ), this, SLOT( clearKnownAddressList() ) );
-    connect( ui.testIncoming_PB, SIGNAL( clicked( ) ), this, SLOT( saveAndTestInProxy() ) );
+    connect( ui.netModeComboBox, SIGNAL( activated(int) ), this, SLOT( toggleUPnP() ) );
+    connect( ui.allowIpDeterminationCB, SIGNAL( toggled(bool) ), this, SLOT( toggleIpDetermination(bool) ) );
+    connect( ui.cleanKnownIPs_PB, SIGNAL( clicked() ), this, SLOT( clearKnownAddressList() ) );
+    connect( ui.testIncoming_PB, SIGNAL( clicked() ), this, SLOT( saveAndTestInProxy() ) );
 
 #ifdef SERVER_DEBUG
     std::cerr << "ServerPage::ServerPage() called";
@@ -228,7 +228,7 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
 	QObject::connect(ui.addPushButton,SIGNAL(clicked()),this,SLOT(addServer()));
 	QObject::connect(ui.removePushButton,SIGNAL(clicked()),this,SLOT(removeServer()));
-	QObject::connect(ui.DhtLineEdit,SIGNAL(textChanged(const QString &)),this,SLOT(checkKey()));
+	QObject::connect(ui.DhtLineEdit,SIGNAL(textChanged(QString)),this,SLOT(checkKey()));
 
 	QObject::connect(ui.enableCheckBox,SIGNAL(stateChanged(int)),this,SLOT(updateEnabled()));
 	QObject::connect(ui.serverCheckBox,SIGNAL(stateChanged(int)),this,SLOT(updateEnabled()));
@@ -433,8 +433,8 @@ void ServerPage::load()
         {
             if (detail.vs_disc != RS_VS_DISC_OFF)
                 netIndex = 1; // PRIVATE
-            else
-                netIndex = 3; // NONE
+            //else //Use default value
+            //    netIndex = 3; // NONE
         }
 
         whileBlocking(ui.discComboBox)->setCurrentIndex(netIndex);
@@ -459,6 +459,7 @@ void ServerPage::load()
 
 
         whileBlocking(ui.ipAddressList)->clear();
+        detail.ipAddressList.sort();
         for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
             whileBlocking(ui.ipAddressList)->addItem(QString::fromStdString(*it));
 
@@ -824,10 +825,10 @@ void ServerPage::ipWhiteListContextMenu(const QPoint& /* point */)
         return ;
     }
 
-    QString range0 = RsNetUtil::printAddrRange(addr,0) ;
-    QString range1 = RsNetUtil::printAddrRange(addr,1) ;
-    QString range2 = RsNetUtil::printAddrRange(addr,2) ;
-
+//    QString range0 = RsNetUtil::printAddrRange(addr,0) ;
+//    QString range1 = RsNetUtil::printAddrRange(addr,1) ;
+//    QString range2 = RsNetUtil::printAddrRange(addr,2) ;
+//
 //    contextMenu.addAction(QObject::tr("Whitelist only IP "          )+range0,this,SLOT(enableBannedIp()))->setEnabled(false) ;
 //#warning UNIMPLEMENTED CODE
 //    contextMenu.addAction(QObject::tr("Whitelist entire range ")+range1,this,SLOT(enableBannedIp()))->setEnabled(false) ;
@@ -930,6 +931,28 @@ void ServerPage::updateStatus()
     else
         ui.iconlabel_ext->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/ledoff1.png"));
 
+    if (ui.ipAddressList->isEnabled() )
+	{
+		whileBlocking(ui.ipAddressList)->clear();
+		detail.ipAddressList.sort();
+		for(auto& it : detail.ipAddressList)
+			whileBlocking(ui.ipAddressList)->addItem(QString::fromStdString(it).replace("sec",tr("sec")).replace("loc",tr("local")).replace("ext",tr("external")));
+	}
+
+		QString toolTip = tr("List of OpenDns servers used.");
+	if (ui.IPServersLV->isEnabled() )
+	{
+		std::list<std::string> ip_list;
+		rsPeers->getCurrentExtIPList(ip_list);
+		if ( !ip_list.empty() )
+		{
+			toolTip += tr("\n\nList of found external IP:\n");
+			for(std::list<std::string>::const_iterator it(ip_list.begin());it!=ip_list.end();++it)
+				toolTip += "  " + QString::fromStdString(*it) +"\n" ;
+		}
+	}
+	if(ui.IPServersLV->toolTip() != toolTip)
+		ui.IPServersLV->setToolTip(toolTip);
 }
 
 void ServerPage::toggleUPnP()
@@ -1158,6 +1181,7 @@ void ServerPage::loadHiddenNode()
 
     // show what we have in ipAddresses. (should be nothing!)
     ui.ipAddressList->clear();
+    detail.ipAddressList.sort();
     for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
         whileBlocking(ui.ipAddressList)->addItem(QString::fromStdString(*it));
 

@@ -704,7 +704,7 @@ connecting when you have few friends. It also helps if you're
 behind a firewall or a VPN.</string>
          </property>
          <property name="text">
-          <string>Allow RetroShare to ask my ip to these websites:</string>
+          <string>Allow RetroShare to ask my ip to these DNS servers:</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -718,6 +718,9 @@ behind a firewall or a VPN.</string>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>List of OpenDns servers used.</string>
          </property>
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
