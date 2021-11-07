@@ -64,6 +64,8 @@ void FriendServer::threadTick()
 
 void FriendServer::handleClientPublish(const RsFriendServerClientPublishItem *item)
 {
+    // We always respond with exactly one item, be it an error item or a list of friends to connect to.
+
     try
     {
         RsDbg() << "Received a client publish item from " << item->PeerId() << ":";
@@ -107,19 +109,6 @@ void FriendServer::handleClientPublish(const RsFriendServerClientPublishItem *it
         mni->SendItem(status_item);
         return;
     }
-
-    // Close client connection from server side, to tell the client that nothing more is coming.
-
-    RsDbg() << "Sending end-of-stream item to " << item->PeerId() ;
-
-    RsFriendServerStatusItem *status_item = new RsFriendServerStatusItem;
-    status_item->status = RsFriendServerStatusItem::END_OF_TRANSMISSION;
-    status_item->PeerId(item->PeerId());
-
-    mni->SendItem(status_item);
-
-    RsDbg() << "Closing client connection." ;
-    mni->closeConnection(item->PeerId());
 }
 
 std::map<std::string, bool> FriendServer::computeListOfFriendInvites(uint32_t nb_reqs_invites, const RsPeerId &pid, const RsPgpFingerprint &fpr)
@@ -332,7 +321,7 @@ void FriendServer::autoWash()
 
     std::list<RsPeerId> to_remove;
 
-    for(std::map<RsPeerId,PeerInfo>::iterator it(mCurrentClientPeers.begin());it!=mCurrentClientPeers.end();)
+    for(std::map<RsPeerId,PeerInfo>::iterator it(mCurrentClientPeers.begin());it!=mCurrentClientPeers.end();++it)
         if(it->second.last_connection_TS + MAXIMUM_PEER_INACTIVE_DELAY < now)
         {
             RsDbg() << "Removing client peer " << it->first << " because it's inactive for more than " << MAXIMUM_PEER_INACTIVE_DELAY << " seconds." ;

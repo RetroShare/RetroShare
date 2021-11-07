@@ -240,19 +240,21 @@ void FsNetworkInterface::locked_closeConnection(const RsPeerId& peer_id)
 
     if(!it->second.incoming_items.empty())
     {
-        RsErr() << "  Trying to close an incoming connection with incoming items still pending! The items will be lost." << std::endl;
+        RsErr() << "  Trying to close an incoming connection with incoming items still pending! The items will be lost:" << std::endl;
 
         for(auto& item:it->second.incoming_items)
+        {
+            RsErr() << *item;
             delete item;
+        }
 
         it->second.incoming_items.clear();
     }
     // Close the socket and delete everything.
 
+    close(it->second.socket);
     it->second.pqi_thread->fullstop();
     it->second.bio->close();
-
-    close(it->second.socket);
 
     delete it->second.pqi_thread;
 

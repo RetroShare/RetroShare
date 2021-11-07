@@ -127,12 +127,8 @@ bool FsClient::sendItem(const std::string& address,uint16_t port,RsItem *item,st
     RsSerialiser *rss = new RsSerialiser();	// deleted by ~pqistreamer()
     rss->addSerialType(fss);
 
-    FsSerializer().serialise(item,data,&size);
-    write(CreateSocket,data,size);				// shouldn't we use the pqistreamer in R/W mode instead?
-
-    RsDbg() << "Item sent. Waiting for response..." ;
-
-    // Now attempt to read and deserialize anything that comes back from that connexion until it gets closed by the server.
+//    FsSerializer().serialise(item,data,&size);
+//    write(CreateSocket,data,size);				// shouldn't we use the pqistreamer in R/W mode instead?
 
     FsBioInterface *bio = new FsBioInterface(CreateSocket);	// deleted by ~pqistreamer()
 
@@ -141,7 +137,10 @@ bool FsClient::sendItem(const std::string& address,uint16_t port,RsItem *item,st
 
     uint32_t ss;
     p.SendItem(item,ss);
-    bool should_close = false;
+
+    RsDbg() << "Item sent. Waiting for response..." ;
+
+    // Now attempt to read and deserialize anything that comes back from that connexion until it gets closed by the server.
 
     while(true)
     {
@@ -157,37 +156,21 @@ bool FsClient::sendItem(const std::string& address,uint16_t port,RsItem *item,st
             std::cerr << "Got a response item: " << std::endl;
             std::cerr << *item << std::endl;
 
-            should_close = true; // always close the socket after one packet
-
-            if(dynamic_cast<RsFriendServerStatusItem*>(item) != nullptr)
-            {
-                RsDbg() << "End of transmission. " ;
-                should_close = true;
-                break;
-            }
-
-            if(!bio->isactive())	// socket has probably closed
-            {
-                RsDbg() << "(client side) Socket has been closed by server.";
-                should_close =true;
-                break;
-            }
+            RsDbg() << "End of transmission. " ;
+            break;
         }
         else
             std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
 
-    if(should_close)
-    {
-        RsDbg() << "  Stopping/killing pqistreamer" ;
-        p.fullstop();
+    RsDbg() << "  Stopping/killing pqistreamer" ;
+    p.fullstop();
 
-        RsDbg() << "  Closing socket." ;
-        close(CreateSocket);
-        CreateSocket=0;
+    RsDbg() << "  Closing socket." ;
+    close(CreateSocket);
+    CreateSocket=0;
 
-        RsDbg() << "  Exiting loop." ;
-    }
+    RsDbg() << "  Exiting loop." ;
 
     return true;
 }
