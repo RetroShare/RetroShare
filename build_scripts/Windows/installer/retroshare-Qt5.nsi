@@ -334,7 +334,7 @@ Section $(Section_Data) Section_Data
 
   ; Stylesheets
   SetOutPath "$INSTDIR\qss"
-  File /r "${SOURCEDIR}\retroshare-gui\src\gui\qss\stylesheet\*.*"
+  File /nonfatal /r "${SOURCEDIR}\retroshare-gui\src\qss\*.*"
 SectionEnd
 
 ;Section $(Section_Link) Section_Link

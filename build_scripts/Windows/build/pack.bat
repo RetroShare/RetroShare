@@ -132,8 +132,10 @@ if exist "%QtPath%\..\plugins\styles\qwindowsvistastyle.dll" (
 copy "%QtPath%\..\plugins\imageformats\*.dll" "%RsDeployPath%\imageformats" %Quite%
 del /Q "%RsDeployPath%\imageformats\*d?.dll" %Quite%
 
-echo copy qss
-xcopy /S "%SourcePath%\retroshare-gui\src\gui\qss\stylesheet" "%RsDeployPath%\qss" %Quite%
+if exist "%SourcePath%\retroshare-gui\src\qss" (
+	echo copy qss
+	xcopy /S "%SourcePath%\retroshare-gui\src\qss" "%RsDeployPath%\qss" %Quite%
+)
 
 echo copy stylesheets
 xcopy /S "%SourcePath%\retroshare-gui\src\gui\qss\chat" "%RsDeployPath%\stylesheets" %Quite%
