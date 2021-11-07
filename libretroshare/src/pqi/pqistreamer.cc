@@ -803,11 +803,14 @@ start_packet_read:
 
 	    if(!memcmp(block,PACKET_SLICING_PROBE_BYTES,8))
 	    {
-                    mAcceptsPacketSlicing = !DISABLE_PACKET_SLICING;
+            mAcceptsPacketSlicing = !DISABLE_PACKET_SLICING;
 #ifdef DEBUG_PACKET_SLICING
 		    std::cerr << "(II) Enabling packet slicing!" << std::endl;
 #endif
-	    }
+            mReading_state = reading_state_initial ;	// restart at state 1.
+            mFailed_read_attempts = 0 ;
+            return 0;
+        }
     }
 continue_packet:
     {
