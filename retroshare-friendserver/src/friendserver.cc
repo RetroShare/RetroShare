@@ -82,15 +82,19 @@ void FriendServer::handleClientPublish(const RsFriendServerClientPublishItem *it
 
         RsFriendServerServerResponseItem *sr_item = new RsFriendServerServerResponseItem;
 
+        std::map<RsPeerId,RsPgpFingerprint> friends;
         sr_item->nonce = pi->second.last_nonce;
-        sr_item->friend_invites = computeListOfFriendInvites(item->n_requested_friends,pi->first,pi->second.pgp_fingerprint);
+        sr_item->friend_invites = computeListOfFriendInvites(item->n_requested_friends,pi->first,friends);
         sr_item->PeerId(item->PeerId());
 
         // Update the have_added_as_friend for the list of each peer. We do that before sending because sending destroys
         // the item.
 
-        for(auto& it:mCurrentClientPeers)
-            it.second.have_added_this_peer[computePeerDistance(it.second.pgp_fingerprint,pi->second.pgp_fingerprint)] = pi->first;
+        for(const auto& pid:friends)
+        {
+            auto& p(mCurrentClientPeers[pid.first]);
+            p.have_added_this_peer[computePeerDistance(p.pgp_fingerprint, pi->second.pgp_fingerprint)] = pi->first;
+        }
 
         // Send the item.
         mni->SendItem(sr_item);
@@ -111,23 +115,8 @@ void FriendServer::handleClientPublish(const RsFriendServerClientPublishItem *it
     }
 }
 
-std::map<std::string, bool> FriendServer::computeListOfFriendInvites(uint32_t nb_reqs_invites, const RsPeerId &pid, const RsPgpFingerprint &fpr)
+std::map<std::string, bool> FriendServer::computeListOfFriendInvites(uint32_t nb_reqs_invites, const RsPeerId &pid, std::map<RsPeerId,RsPgpFingerprint>& friends)
 {
-    // For now, returns the first nb_reqs_invites from the currently known peer, that would not be the peer who's asking
-
-    std::map<std::string,bool> res;
-
-    for(auto it:mCurrentClientPeers)
-    {
-        if(it.first == pid)
-            continue;
-
-        res.insert(std::make_pair(it.second.short_certificate,false));	// for now we say that peers havn't been warned already
-
-        if(res.size() >= nb_reqs_invites)
-            break;
-    }
-
     // Strategy: we want to return the same set of friends for a given PGP profile key.
     // Still, using some closest distance strategy, the n-closest peers for profile A is not the
     // same set than the n-closest peers for profile B. We have multiple options:
@@ -148,9 +137,32 @@ std::map<std::string, bool> FriendServer::computeListOfFriendInvites(uint32_t nb
     //   When a peer asks for k friends, read from (2) first, then (1), until the number of collected peers
     //   reaches the requested value.
     //
-    //   Drawbacks: it's not clear which list of friends you're going to get eventually, but in the end the peers that will be
-    //      sent that are not in the n-closest list will need to be checked, so they will be known whatsoever.
-    //
+    // So we choose Option 2.
+
+    std::map<std::string,bool> res;
+
+    auto add_from = [&res,&friends,nb_reqs_invites,this](bool added,const std::map<PeerInfo::PeerDistance,RsPeerId>& lst) -> bool
+    {
+        for(const auto& pid:lst)
+        {
+            const auto p = mCurrentClientPeers.find(pid.second);
+            res.insert(std::make_pair(p->second.short_certificate,added));
+            friends.insert(std::make_pair(p->first,p->second.pgp_fingerprint));
+
+            if(res.size() >= nb_reqs_invites)
+                return true;
+        }
+        return false;
+    };
+
+    const auto& pinfo(mCurrentClientPeers[pid]);
+
+    // First add from peers who already added the current peer as friend, and leave if we already have enough
+
+    if(add_from(true,pinfo.have_added_this_peer))
+        return res;
+
+    add_from(false,pinfo.closest_peers);
 
     return res;
 }
@@ -207,6 +219,7 @@ std::map<RsPeerId,PeerInfo>::iterator FriendServer::handleIncomingClientData(con
 
         pi.short_certificate = short_invite_b64;
         pi.last_connection_TS = time(nullptr);
+        pi.pgp_fingerprint = fpr_test;
 
         while(pi.last_nonce == 0)					// reuse the same identifier (so it's not really a nonce, but it's kept secret whatsoever).
             pi.last_nonce = RsRandom::random_u64();
@@ -282,6 +295,7 @@ void FriendServer::removePeer(const RsPeerId& peer_id)
 
 PeerInfo::PeerDistance FriendServer::computePeerDistance(const RsPgpFingerprint& p1,const RsPgpFingerprint& p2)
 {
+    std::cerr << "Computing peer distance: p1=" << p1 << " p2=" << p2 << " p1^p2=" << (p1^p2) << " distance=" << ((p1^p2)^mRandomPeerBias) << std::endl;
     return (p1 ^ p2)^mRandomPeerBias;
 }
 FriendServer::FriendServer(const std::string& base_dir)
@@ -337,14 +351,15 @@ void FriendServer::autoWash()
 void FriendServer::updateClosestPeers(const RsPeerId& pid,const RsPgpFingerprint& fpr)
 {
     for(auto& it:mCurrentClientPeers)
-    {
-        PeerInfo::PeerDistance d = computePeerDistance(fpr,it.second.pgp_fingerprint);
+        if(it.first != pid)
+        {
+            PeerInfo::PeerDistance d = computePeerDistance(fpr,it.second.pgp_fingerprint);
 
-        it.second.closest_peers.insert(std::make_pair(d,pid));
+            it.second.closest_peers.insert(std::make_pair(d,pid));
 
-        if(it.second.closest_peers.size() > MAXIMUM_PEERS_TO_REQUEST)
-            it.second.closest_peers.erase(std::prev(it.second.closest_peers.end()));
-    }
+            if(it.second.closest_peers.size() > MAXIMUM_PEERS_TO_REQUEST)
+                it.second.closest_peers.erase(std::prev(it.second.closest_peers.end()));
+        }
 }
 
 void FriendServer::debugPrint()
@@ -360,10 +375,16 @@ void FriendServer::debugPrint()
 
     for(const auto& it:mCurrentClientPeers)
     {
-        RsDbg() << "   " << it.first << ": nonce=" << std::hex << it.second.last_nonce << std::dec << ", last contact: " << now - it.second.last_connection_TS << " secs ago.";
+        RsDbg() << "   " << it.first << ": nonce=" << std::hex << it.second.last_nonce << std::dec << " fpr: " << it.second.pgp_fingerprint << ", last contact: " << now - it.second.last_connection_TS << " secs ago.";
+        RsDbg() << "   Closest peers:" ;
 
         for(const auto& pit:it.second.closest_peers)
-            RsDbg() << "    " << pit.second << " distance=" << pit.first ;
+            RsDbg() << "      " << pit.second << " distance=" << pit.first ;
+
+        RsDbg() << "   Have added this peer:" ;
+
+        for(const auto& pit:it.second.have_added_this_peer)
+            RsDbg() << "      " << pit.second << " distance=" << pit.first ;
     }
 
     RsDbg() << "===============================================";
