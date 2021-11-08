@@ -193,6 +193,11 @@ bool rsGetHostByNameSpecDNS(const std::string& servername, const std::string& ho
 	RS_DBG("Sending Packet:\n", hexDump(buf, curSendSize));
 #endif
 	int s = socket(serverAddr.ss_family , SOCK_DGRAM , IPPROTO_UDP); //UDP packet for DNS queries
+	if(s<0)
+	{
+		RS_ERR("Could not open socket.");
+		return false;
+	}
 
 	if (timeout_s > -1)
 		rs_setSockTimeout(s, true, timeout_s);
@@ -205,6 +210,7 @@ bool rsGetHostByNameSpecDNS(const std::string& servername, const std::string& ho
 	if( send_size < 0)
 	{
 		RS_ERR("Send Failed with size = ", send_size);
+		close(s);
 		return false;
 	}
 
@@ -221,6 +227,7 @@ bool rsGetHostByNameSpecDNS(const std::string& servername, const std::string& ho
 	                         , (struct sockaddr*)&serverAddr
 	                         , &sa_size
 	                         );
+	close(s); // No more need of this socket, close it.
 	if(rec_size <= 0)
 	{
 		RS_ERR("Receive Failed");
