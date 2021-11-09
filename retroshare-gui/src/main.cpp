@@ -99,10 +99,6 @@ __declspec(dllexport) __cdecl BOOL _OPENSSL_isservice(void)
 #endif
 #endif
 
-/*** WINDOWS DON'T LIKE THIS - REDEFINES VER numbers.
-#include <gui/qskinobject/qskinobject.h>
-****/
-
 #include <util/stringutil.h>
 #include <retroshare/rsinit.h>
 #include <retroshare/rsiface.h>
