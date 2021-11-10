@@ -75,6 +75,7 @@ build-android-arm-apk:
         - >
           docker build -t retroshare:android_arm_latest
           $($CI_PROJECT_DIR/build_scripts/GitlabCI/getRepoArgs.sh)
+          --build-arg RS_SERVICE_QMAKE_EXTRA_OPTS="$RS_SERVICE_QMAKE_EXTRA_OPTS"
           --file $CI_PROJECT_DIR/build_scripts/GitlabCI/Android.Dockerfile
           Dockercontext
 # see https://stackoverflow.com/a/59055906
@@ -96,6 +97,7 @@ build-android-arm64-apk:
           $($CI_PROJECT_DIR/build_scripts/GitlabCI/getRepoArgs.sh)
           --build-arg ANDROID_PLATFORM_VER=21
           --build-arg ANDROID_NDK_ARCH=arm64
+          --build-arg RS_SERVICE_QMAKE_EXTRA_OPTS="$RS_SERVICE_QMAKE_EXTRA_OPTS"
           --file $CI_PROJECT_DIR/build_scripts/GitlabCI/Android.Dockerfile
           Dockercontext
         - >
