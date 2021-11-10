@@ -81,6 +81,16 @@ public:
 	uint8_t  hash_algorithm ;
 };
 
+class PGPKeyInfo
+{
+public:
+    PGPKeyInfo() {}
+
+    std::string   user_id;
+    unsigned char fingerprint[20];
+};
+
+
 // This class handles GPG keys. For now we only clean them from signatures, but
 // in the future, we might cache them to avoid unnecessary calls to gpgme.
 //
@@ -107,6 +117,8 @@ class PGPKeyManagement
 		static uint32_t compute24bitsCRC(unsigned char *data,size_t len) ;
         
 		static bool parseSignature(const unsigned char *signature, size_t sign_len, PGPSignatureInfo& info) ;
+
+        static bool parsePGPPublicKey(const unsigned char *keydata, size_t keylen, PGPKeyInfo& info);
 };
 
 // This class handles the parsing of PGP packet headers under various (old and new) formats.
@@ -126,7 +138,7 @@ class PGPKeyParser
 		static uint64_t read_KeyID(unsigned char *& data) ;
 		static uint32_t read_125Size(unsigned char *& data) ;
 		static uint32_t read_partialBodyLength(unsigned char *& data) ;
-		static void     read_packetHeader(unsigned char *& data,uint8_t& packet_tag,uint32_t& packet_length) ;
+        static void     read_packetHeader(unsigned char *&data, uint8_t& packet_tag, uint32_t& packet_length) ;
 
 		// These functions write, and indicate how many bytes where written.
 		//

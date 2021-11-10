@@ -21,6 +21,7 @@
  *******************************************************************************/
 #include <stdint.h>
 #include <util/radix64.h>
+#include <crypto/hashstream.h>
 #include "pgpkeyutil.h"
 
 #include <iostream>
@@ -181,6 +182,59 @@ uint32_t PGPKeyManagement::compute24bitsCRC(unsigned char *octets, size_t len)
     return crc & 0xFFFFFFL;
 }
 
+bool PGPKeyManagement::parsePGPPublicKey(const unsigned char *keydata, size_t keylen, PGPKeyInfo& info)
+{
+#ifdef DEBUG_PGPUTIL
+    std::cerr << "Total size: " << keylen << std::endl;
+#endif
+    unsigned char *data = (unsigned char*)keydata;
+
+    uint8_t packet_tag;
+    uint32_t packet_length ;
+
+    PGPKeyParser::read_packetHeader(data,packet_tag,packet_length) ;
+
+#ifdef DEBUG_PGPUTIL
+    std::cerr << "Packet tag : " << (int)packet_tag << ", length=" << packet_length << std::endl;
+#endif
+    if(packet_tag != PGPKeyParser::PGP_PACKET_TAG_PUBLIC_KEY)
+    {
+        std::cerr << "(EE) Parsing error in PGP public key. Expected a public key tag (6). Found " << (int)packet_tag << " instead." << std::endl;
+        return false;
+    }
+    librs::crypto::HashStream H(librs::crypto::HashStream::SHA1);
+
+    H << (uint8_t)0x99;	// RFC_4880
+
+    std::cerr << "Packet length = " << packet_length << std::endl;
+
+    H << (uint8_t)(packet_length >> 8);
+    H << (uint8_t)(packet_length);
+    H << std::make_pair(data,packet_length) ;
+
+    auto hash = H.hash();
+
+    memcpy(info.fingerprint, hash.toByteArray(),hash.SIZE_IN_BYTES);
+
+    data += packet_length;
+
+    // Read user ID.
+
+    PGPKeyParser::read_packetHeader(data,packet_tag,packet_length) ;
+
+    if(packet_tag != PGPKeyParser::PGP_PACKET_TAG_USER_ID)
+    {
+        std::cerr << "(EE) Parsing error in PGP public key. Expected a user ID key tag (13). Found " << (int)packet_tag << " instead." << std::endl;
+        return false;
+    }
+
+    info.user_id.clear();
+
+    for(uint32_t i=0;i<packet_length;++i)
+        info.user_id += (char)(data[i]);
+
+    return true ;
+}
 bool PGPKeyManagement::parseSignature(const unsigned char *signature, size_t sign_len, PGPSignatureInfo& info)
 {
     unsigned char *data = (unsigned char *)signature ;

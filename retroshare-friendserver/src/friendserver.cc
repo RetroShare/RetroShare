@@ -4,6 +4,7 @@
 #include "util/rsbase64.h"
 #include "util/radix64.h"
 
+#include "pgp/pgpkeyutil.h"
 #include "pgp/rscertificate.h"
 
 #include "friendserver.h"
@@ -34,9 +35,9 @@ void FriendServer::threadTick()
 
         switch(fsitem->PacketSubType())
         {
-        case RS_PKT_SUBTYPE_FS_CLIENT_REMOVE: handleClientRemove(dynamic_cast<RsFriendServerClientRemoveItem*>(fsitem));
-            break;
         case RS_PKT_SUBTYPE_FS_CLIENT_PUBLISH: handleClientPublish(dynamic_cast<RsFriendServerClientPublishItem*>(fsitem));
+            break;
+        case RS_PKT_SUBTYPE_FS_CLIENT_REMOVE: handleClientRemove(dynamic_cast<RsFriendServerClientRemoveItem*>(fsitem));
             break;
         default: ;
         }
@@ -169,23 +170,27 @@ std::map<std::string, bool> FriendServer::computeListOfFriendInvites(uint32_t nb
 
 std::map<RsPeerId,PeerInfo>::iterator FriendServer::handleIncomingClientData(const std::string& pgp_public_key_b64,const std::string& short_invite_b64)
 {
+    // 1 - Check that the incoming data is sound.
+
         RsDbg() << "  Checking item data...";
 
         std::string error_string;
-        RsPgpId pgp_id ;
         std::vector<uint8_t> key_binary_data ;
-
-        // key_binary_data = Radix64::decode(pgp_public_key_b64);
 
         if(RsBase64::decode(pgp_public_key_b64,key_binary_data))
             throw std::runtime_error("  Cannot decode client pgp public key: \"" + pgp_public_key_b64 + "\". Wrong format??");
 
-        RsDbg() << "    Public key radix is fine." ;
+        RsDbg() << "    Parsing public key:" ;
 
-        if(!mPgpHandler->LoadCertificateFromBinaryData(key_binary_data.data(),key_binary_data.size(), pgp_id, error_string))
-            throw std::runtime_error("Cannot load client's pgp public key into keyring: " + error_string) ;
+        PGPKeyInfo received_key_info;
 
-        RsDbg() << "    Public key added to keyring.";
+        if(!PGPKeyManagement::parsePGPPublicKey(key_binary_data.data(),key_binary_data.size(),received_key_info))
+            throw std::runtime_error("Cannot parse received pgp public key.") ;
+
+        RsDbg() << "      Issuer     : \"" << received_key_info.user_id << "\"" ;
+        RsDbg() << "      Fingerprint: " << RsPgpFingerprint::fromBufferUnsafe(received_key_info.fingerprint) ;
+
+        RsDbg() << "    Parsing short invite:" ;
 
         RsPeerDetails shortInviteDetails;
         uint32_t errorCode = 0;
@@ -193,19 +198,30 @@ std::map<RsPeerId,PeerInfo>::iterator FriendServer::handleIncomingClientData(con
         if(short_invite_b64.empty() || !RsCertificate::decodeRadix64ShortInvite(short_invite_b64, shortInviteDetails,errorCode ))
             throw std::runtime_error("Could not parse short certificate. Error = " + RsUtil::NumberToString(errorCode));
 
-        RsDbg() << "    Short invite is fine. PGP fingerprint: " << shortInviteDetails.fpr ;
+        RsDbg() << "      Fingerprint: " << shortInviteDetails.fpr ;
+        RsDbg() << "      Peer ID:     " << shortInviteDetails.id ;
 
+        if(shortInviteDetails.fpr != RsPgpFingerprint::fromBufferUnsafe(received_key_info.fingerprint))
+            throw std::runtime_error("Fingerpring from short invite and public key are different! Very unexpected! Message will be ignored.");
+
+        // 3 - if the key is not already here, add it to keyring.
+
+        {
         RsPgpFingerprint fpr_test;
-        if(!mPgpHandler->getKeyFingerprint(pgp_id,fpr_test))
-            throw std::runtime_error("Cannot get fingerprint from keyring for client public key. Something's really wrong.") ;
+        if(mPgpHandler->isPgpPubKeyAvailable(RsPgpId::fromBufferUnsafe(received_key_info.fingerprint+12)))
+            RsDbg() << "    PGP Key is already into keyring.";
+        else
+        {
+            RsPgpId pgp_id;
+            if(!mPgpHandler->LoadCertificateFromBinaryData(key_binary_data.data(),key_binary_data.size(), pgp_id, error_string))
+                throw std::runtime_error("Cannot load client's pgp public key into keyring: " + error_string) ;
 
-        if(fpr_test != shortInviteDetails.fpr)
-            throw std::runtime_error("Cannot get fingerprint from keyring for client public key. Something's really wrong.") ;
+            RsDbg() << "    Public key added to keyring.";
+            RsDbg() << "    Sync-ing the PGP keyring on disk";
 
-        RsDbg() << "    Short invite PGP fingerprint matches the public key fingerprint.";
-        RsDbg() << "    Sync-ing the PGP keyring on disk";
-
-        mPgpHandler->syncDatabase();
+            mPgpHandler->syncDatabase();
+        }
+        }
 
         // Check the item's data signature. Is that needed? Not sure, since the data is sent PGP-encrypted, so only the owner
         // of the secret PGP key can actually use it.
@@ -219,7 +235,7 @@ std::map<RsPeerId,PeerInfo>::iterator FriendServer::handleIncomingClientData(con
 
         pi.short_certificate = short_invite_b64;
         pi.last_connection_TS = time(nullptr);
-        pi.pgp_fingerprint = fpr_test;
+        pi.pgp_fingerprint = shortInviteDetails.fpr;
 
         while(pi.last_nonce == 0)					// reuse the same identifier (so it's not really a nonce, but it's kept secret whatsoever).
             pi.last_nonce = RsRandom::random_u64();

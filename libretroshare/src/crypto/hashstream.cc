@@ -54,7 +54,12 @@ namespace librs
 
 		return Sha1CheckSum(h);
 	}
-
+    template<>
+    HashStream& operator<<(HashStream& u,const std::pair<unsigned char *,uint32_t>& p)
+    {
+        EVP_DigestUpdate(u.mdctx,p.first,p.second) ;
+        return u;
+    }
 	template<>
 	HashStream& operator<<(HashStream& u,const std::string& s)
 	{
