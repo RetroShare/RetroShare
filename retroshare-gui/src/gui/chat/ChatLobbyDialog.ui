@@ -62,9 +62,6 @@
        </size>
       </property>
       <layout class="QVBoxLayout" name="trans_Frame_Participants_VL">
-       <property name="spacing">
-        <number>2</number>
-       </property>
        <property name="leftMargin">
         <number>0</number>
        </property>
