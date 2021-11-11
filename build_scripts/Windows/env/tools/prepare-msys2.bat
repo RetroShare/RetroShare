@@ -25,8 +25,11 @@ if exist "%EnvMSYS2Path%\msys%MSYS2Base%\usr\bin\pacman.exe" (
 	)
 )
 
-set MSYS2Install=msys2-base-%MSYS2Architecture%-20190524.tar.xz
-set MSYS2Url=http://sourceforge.net/projects/msys2/files/Base/%MSYS2Architecture%/%MSYS2Install%/download
+if "%MSYS2Architecture%"=="i686" set MSYS2Version=20210705
+if "%MSYS2Architecture%"=="x86_64" set MSYS2Version=20210725
+
+set MSYS2Install=msys2-base-%MSYS2Architecture%-%MSYS2Version%.tar.xz
+set MSYS2Url=https://repo.msys2.org/distrib/%MSYS2Architecture%/%MSYS2Install%
 set CMakeInstall=cmake-3.19.0-win32-x86.zip
 set CMakeUrl=https://github.com/Kitware/CMake/releases/download/v3.19.0/%CMakeInstall%
 set CMakeUnpackPath=%EnvMSYS2Path%\msys%MSYS2Base%
@@ -64,17 +67,11 @@ if "%FoundProfile%"=="0" (
 
 set MSYS2SH=%EnvMSYS2Path%\msys%MSYS2Base%\usr\bin\sh
 
-%cecho% info "Update keyring"
-"%MSYS2SH%" -lc "curl -O http://repo.msys2.org/msys/x86_64/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz"
-"%MSYS2SH%" -lc "pacman --noconfirm -U msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz"
-
 %cecho% info "Initialize MSYS2"
-"%MSYS2SH%" -lc "pacman -Sy"
-"%MSYS2SH%" -lc "pacman --noconfirm --needed -S bash pacman pacman-mirrors msys2-runtime"
+"%MSYS2SH%" -lc "yes | pacman --noconfirm -Syuu msys2-keyring"
+"%MSYS2SH%" -lc "pacman --noconfirm -Su"
 
 call "%EnvMSYS2Path%\msys%MSYS2Base%\autorebase.bat"
-call "%EnvRootPath%\update-msys2.bat"
-call "%EnvRootPath%\update-msys2.bat"
 
 :exit
 endlocal

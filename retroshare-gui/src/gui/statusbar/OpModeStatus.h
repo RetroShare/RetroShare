@@ -21,9 +21,9 @@
 #ifndef OP_MODE_STATUS_H
 #define OP_MODE_STATUS_H
 
-#include <QComboBox>
+#include "gui/common/RSComboBox.h"
 
-class OpModeStatus : public QComboBox
+class OpModeStatus : public RSComboBox
 {
 	Q_OBJECT
 	Q_PROPERTY(QColor opMode_Full_Color READ getOpMode_Full_Color WRITE setOpMode_Full_Color DESIGNABLE true)

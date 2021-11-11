@@ -30,7 +30,7 @@
 #include <iostream>
 
 OpModeStatus::OpModeStatus(QWidget *parent)
-	: QComboBox(parent)
+	: RSComboBox(parent)
 {
 	onUpdate = false;
 	opMode_Full_Color = QColor("#CCFFCC");

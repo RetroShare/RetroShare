@@ -401,7 +401,7 @@ p, li { white-space: pre-wrap; }
                <widget class="QSpinBox" name="_max_up_SB"/>
               </item>
               <item>
-               <widget class="QComboBox" name="_defaultStrategy_CB">
+               <widget class="RSComboBox" name="_defaultStrategy_CB">
                 <property name="enabled">
                  <bool>true</bool>
                 </property>
@@ -467,7 +467,7 @@ p, li { white-space: pre-wrap; }
                </widget>
               </item>
               <item>
-               <widget class="QComboBox" name="_e2e_encryption_CB">
+               <widget class="RSComboBox" name="_e2e_encryption_CB">
                 <property name="toolTip">
                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Anonymous tunnels can be end-o-end encrypted. In order to maintain backward compatibility, this can be made optional (choosing &amp;quot;Accepted&amp;quot;), but in the end, all Retroshare nodes will be switched to &amp;quot;Enforced&amp;quot;, meaning that all anonymous transfers will be end-to-end encrypted. With &amp;quot;Accepted&amp;quot;, it is likely that you will transfer using twice as many tunnels, since there is no way to know that an encrypted and a clear tunnel actually transfer from the same source.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
@@ -484,7 +484,7 @@ p, li { white-space: pre-wrap; }
                </widget>
               </item>
               <item>
-               <widget class="QComboBox" name="_filePermDirectDL_CB">
+               <widget class="RSComboBox" name="_filePermDirectDL_CB">
                 <property name="toolTip">
                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;How RS manage direct download setting.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
@@ -538,6 +538,13 @@ p, li { white-space: pre-wrap; }
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../images.qrc"/>
  </resources>

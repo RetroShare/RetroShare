@@ -74,7 +74,7 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 	connect(addFileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
     connect(removeAllFilesButton, SIGNAL(clicked() ), this , SLOT(clearAllAttachments()));
     //connect(addfilepushButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
-	connect(subjectEdit,SIGNAL(textChanged(const QString&)),this,SLOT(updatePreviewText(const QString&)));
+	connect(subjectEdit,SIGNAL(textChanged(QString)),this,SLOT(updatePreviewText(QString)));
 	connect(expandButton, SIGNAL(clicked()), this, SLOT( toggle()));
 
 	connect(addThumbnailButton, SIGNAL(clicked() ), this , SLOT(addThumbnail()));
@@ -183,8 +183,8 @@ void CreateGxsChannelMsg::contextMenu(QPoint /*point*/)
 
 	int n_file = 0 ;
 
-	for(QList<RetroShareLink>::const_iterator it(links.begin());it!=links.end();++it)
-		if((*it).type() == RetroShareLink::TYPE_FILE)
+	for(auto &it : links)
+		if(it.type() == RetroShareLink::TYPE_FILE)
 			++n_file ;
 
 	QMenu contextMnu(this) ;
@@ -203,42 +203,42 @@ void CreateGxsChannelMsg::pasteLink()
 {
 	std::cerr << "Pasting links: " << std::endl;
 
-    QList<RetroShareLink> links;
+	QList<RetroShareLink> links;
 	RSLinkClipboard::pasteLinks(links) ;
 
-	for(QList<RetroShareLink>::const_iterator it(links.begin());it!=links.end();++it)
-		if((*it).type() == RetroShareLink::TYPE_FILE)
+	for(auto &it : links)
+		if(it.type() == RetroShareLink::TYPE_FILE)
 		{
 			// 0 - check that we actually have the file!
 			//
 
-			std::cerr << "Pasting " << (*it).toString().toStdString() << std::endl;
+			std::cerr << "Pasting " << it.toString().toStdString() << std::endl;
 
-            FileInfo info ;
-            RsFileHash hash( (*it).hash().toStdString()) ;
+			FileInfo info ;
+			RsFileHash hash( it.hash().toStdString()) ;
 
 #ifdef TO_REMOVE
-            if(rsFiles->alreadyHaveFile( hash,info ) )
+			if(rsFiles->alreadyHaveFile( hash,info ) )
 #endif
-                addAttachment(hash, (*it).name().toUtf8().constData(), (*it).size(), rsFiles->alreadyHaveFile( hash,info ), RsPeerId()) ;
+				addAttachment(hash, it.name().toUtf8().constData(), it.size(), rsFiles->alreadyHaveFile( hash,info ), RsPeerId()) ;
 #ifdef TO_REMOVE
-            else
-                not_have.push_back( *it ) ;
+			else
+				not_have.push_back( *it ) ;
 #endif
-        }
+		}
 
 #ifdef TO_REMOVE
-    if(!not_have.empty())
-    {
-        QString msg = tr("You are about to add files you're not actually sharing. Do you still want this to happen?")+"<br><br>" ;
+	if(!not_have.empty())
+	{
+		QString msg = tr("You are about to add files you're not actually sharing. Do you still want this to happen?")+"<br><br>" ;
 
-        for(QList<RetroShareLink>::const_iterator it(not_have.begin());it!=not_have.end();++it)
-            msg += (*it).toString() + "<br>" ;
+		for(QList<RetroShareLink>::const_iterator it(not_have.begin());it!=not_have.end();++it)
+			msg += (*it).toString() + "<br>" ;
 
-        if(QMessageBox::YesToAll == QMessageBox::question(NULL,tr("About to post un-owned files to a channel."),msg,QMessageBox::YesToAll | QMessageBox::No))
-            for(QList<RetroShareLink>::const_iterator it(not_have.begin());it!=not_have.end();++it)
-                addAttachment(RsFileHash((*it).hash().toStdString()), (*it).name().toUtf8().constData(), (*it).size(), false, RsPeerId()) ;
-    }
+		if(QMessageBox::YesToAll == QMessageBox::question(NULL,tr("About to post un-owned files to a channel."),msg,QMessageBox::YesToAll | QMessageBox::No))
+			for(QList<RetroShareLink>::const_iterator it(not_have.begin());it!=not_have.end();++it)
+				addAttachment(RsFileHash((*it).hash().toStdString()), (*it).name().toUtf8().constData(), (*it).size(), false, RsPeerId()) ;
+	}
 #endif
 }
 
@@ -818,9 +818,9 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
 			post.mThumbnail.copy((uint8_t *) ba.data(), ba.size());
 		}
 
-		int generateCount = 0;
 
 #ifdef ENABLE_GENERATE
+		int generateCount = 0;
 		if (generateCheckBox->isChecked()) {
 			generateCount = generateSpinBox->value();
 			if (QMessageBox::question(this, tr("Generate mass data"), tr("Do you really want to generate %1 messages ?").arg(generateCount), QMessageBox::Yes|QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
@@ -830,18 +830,20 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
 #endif
 
 		uint32_t token;
-		if (generateCount) {
 #ifdef ENABLE_GENERATE
+		if (generateCount) {
 			for (int count = 0; count < generateCount; ++count) {
 				RsGxsChannelPost generatePost = post;
 				generatePost.mMeta.mMsgName = QString("%1 %2").arg(QString::fromUtf8(post.mMeta.mMsgName.c_str())).arg(count + 1, 3, 10, QChar('0')).toUtf8().constData();
 
 				rsGxsChannels->createPost(token, generatePost);
 			}
-#endif
 		} else {
+#endif
 			rsGxsChannels->createPost(token, post);
+#ifdef ENABLE_GENERATE
 		}
+#endif
 	}
 
 	accept();
@@ -966,14 +968,14 @@ void CreateGxsChannelMsg::toggle()
 	if (expandButton->isChecked())
 	{
 		thumbnailFrame->hide();
-		gridLayoutTextEdit->setContentsMargins(0,9,0,0);
+		subject_HL->setContentsMargins(0,9,0,0);
 		expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/down-arrow.png")));
 		expandButton->setToolTip(tr("Show"));
 	}
 	else
 	{
 		thumbnailFrame->show();
-		gridLayoutTextEdit->setContentsMargins(0,0,0,0);
+		subject_HL->setContentsMargins(0,0,0,0);
 		expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/up-arrow.png")));
 		expandButton->setToolTip(tr("Hide"));
 	}

@@ -20,7 +20,7 @@
    <iconset resource="../images.qrc">
     <normaloff>:/images/logo/logo_16.png</normaloff>:/images/logo/logo_16.png</iconset>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout" name="CreateGxsChannelMsg_GL">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -40,14 +40,14 @@
     <number>0</number>
    </property>
    <item row="1" column="0">
-    <widget class="QFrame" name="mainFrame">
+    <widget class="QFrame" name="gradFrame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_4">
+     <layout class="QGridLayout" name="gradFrame_GL">
       <property name="topMargin">
        <number>3</number>
       </property>
@@ -77,7 +77,7 @@
        </widget>
       </item>
       <item row="2" column="0" colspan="4">
-       <layout class="QHBoxLayout" name="buttonHLayout">
+       <layout class="QHBoxLayout" name="buttons_HL">
         <property name="spacing">
          <number>9</number>
         </property>
@@ -99,7 +99,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer_3">
+         <spacer name="buttons_HSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -113,6 +113,13 @@
         </item>
         <item>
          <widget class="QPushButton" name="postButton">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="text">
            <string>Post</string>
           </property>
@@ -141,8 +148,8 @@
         <property name="currentIndex">
          <number>0</number>
         </property>
-        <widget class="QWidget" name="stackedWidgetPage1">
-         <layout class="QGridLayout" name="gridLayout_5">
+        <widget class="QWidget" name="channelPage">
+         <layout class="QGridLayout" name="channelPage_GL">
           <property name="leftMargin">
            <number>0</number>
           </property>
@@ -163,7 +170,7 @@
             <property name="frameShadow">
              <enum>QFrame::Plain</enum>
             </property>
-            <layout class="QGridLayout" name="gridLayout_3">
+            <layout class="QGridLayout" name="thumbnailFrame_GL">
              <property name="leftMargin">
               <number>6</number>
              </property>
@@ -193,7 +200,7 @@ p, li { white-space: pre-wrap; }
               </widget>
              </item>
              <item row="1" column="1">
-              <layout class="QHBoxLayout" name="horizontalLayout">
+              <layout class="QHBoxLayout" name="thumbnailButtons_HL">
                <item>
                 <widget class="QPushButton" name="addThumbnailButton">
                  <property name="text">
@@ -208,7 +215,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="aspectRatio_CB">
+                <widget class="RSComboBox" name="aspectRatio_CB">
                  <property name="toolTip">
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose aspect ratio policy. In 'Auto' mode, the most suitable aspect ratio is chosen for you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
@@ -254,7 +261,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <spacer name="horizontalSpacer_2">
+                <spacer name="thumbnailButtons_HSpacer">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
@@ -272,7 +279,7 @@ p, li { white-space: pre-wrap; }
               </layout>
              </item>
              <item row="0" column="1">
-              <layout class="QHBoxLayout" name="channelNameHLayout">
+              <layout class="QHBoxLayout" name="channelName_HL">
                <property name="spacing">
                 <number>9</number>
                </property>
@@ -317,7 +324,7 @@ p, li { white-space: pre-wrap; }
               </layout>
              </item>
              <item row="0" column="0" rowspan="4">
-              <layout class="QVBoxLayout" name="verticalLayout_2">
+              <layout class="QVBoxLayout" name="preview_VL">
                <property name="spacing">
                 <number>6</number>
                </property>
@@ -332,7 +339,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <spacer name="verticalSpacer_2">
+                <spacer name="preview_VSpacer">
                  <property name="orientation">
                   <enum>Qt::Vertical</enum>
                  </property>
@@ -350,7 +357,7 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item row="1" column="0">
-           <layout class="QGridLayout" name="gridLayoutTextEdit">
+           <layout class="QGridLayout" name="subject_HL">
             <property name="topMargin">
              <number>6</number>
             </property>
@@ -388,10 +395,10 @@ p, li { white-space: pre-wrap; }
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="stackedWidgetPage2">
+        <widget class="QWidget" name="attachementsPage">
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <layout class="QHBoxLayout" name="attachments_HL">
             <item>
              <widget class="QPushButton" name="addFileButton">
               <property name="sizePolicy">
@@ -481,7 +488,7 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item>
-             <spacer name="attachmentsHSpacer">
+             <spacer name="attachments_HSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -518,7 +525,7 @@ p, li { white-space: pre-wrap; }
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <layout class="QVBoxLayout" name="scrollAreaWidgetContentsVLayout">
+             <layout class="QVBoxLayout" name="scrollAreaWidgetContents_VL">
               <property name="spacing">
                <number>3</number>
               </property>
@@ -548,7 +555,7 @@ p, li { white-space: pre-wrap; }
                 <property name="toolTip">
                  <string>Drag and Drop Files from Search Results</string>
                 </property>
-                <layout class="QGridLayout" name="fileFrameGLayout"/>
+                <layout class="QGridLayout" name="fileFrame_GL"/>
                </widget>
               </item>
              </layout>
@@ -579,7 +586,7 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item row="0" column="2">
-       <spacer name="horizontalSpacer">
+       <spacer name="top_HSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -605,6 +612,12 @@ p, li { white-space: pre-wrap; }
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ChannelPostThumbnailView</class>
+   <extends>QWidget</extends>
+   <header>gui/gxschannels/GxsChannelPostThumbnail.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>HeaderFrame</class>
    <extends>QFrame</extends>
    <header>gui/common/HeaderFrame.h</header>
@@ -617,10 +630,9 @@ p, li { white-space: pre-wrap; }
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ChannelPostThumbnailView</class>
-   <extends>QWidget</extends>
-   <header>gui/gxschannels/GxsChannelPostThumbnail.h</header>
-   <container>1</container>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
   </customwidget>
  </customwidgets>
  <resources>

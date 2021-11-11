@@ -2,7 +2,8 @@
  * libretroshare/src/retroshare: rsinit.cc                                     *
  *                                                                             *
  * Copyright (C) 2004-2014  Robert Fernie <retroshare@lunamutt.com>            *
- * Copyright (C) 2016-2019  Gioacchino Mazzurco <gio@altermundi.net>           *
+ * Copyright (C) 2016-2021  Gioacchino Mazzurco <gio@altermundi.net>           *
+ * Copyright (C) 2021       Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -171,7 +172,7 @@ struct RsInitConfig
 		std::string hiddenNodeAddress;
 		uint16_t    hiddenNodePort;
 
-		bool        hiddenNodeI2PBOB;
+		bool        hiddenNodeI2P;
 
 		/* Logging */
 		bool haveLogFile;
@@ -665,13 +666,13 @@ void RsInit::setAutoLogin(bool autoLogin){
 }
 
 /* Setup Hidden Location; */
-void RsInit::SetHiddenLocation(const std::string& hiddenaddress, uint16_t port, bool useBob)
+void RsInit::SetHiddenLocation(const std::string& hiddenaddress, uint16_t port, bool useI2p)
 {
 	/* parse the bugger (todo) */
 	rsInitConfig->hiddenNodeSet = true;
 	rsInitConfig->hiddenNodeAddress = hiddenaddress;
 	rsInitConfig->hiddenNodePort = port;
-	rsInitConfig->hiddenNodeI2PBOB = useBob;
+	rsInitConfig->hiddenNodeI2P = useI2p;
 }
 
 
@@ -718,7 +719,7 @@ RsGRouter *rsGRouter = NULL ;
 #	include "rs_upnp/upnphandler_miniupnp.h"
 #endif // def RS_USE_LIBUPNP
 
-#include "services/autoproxy/p3i2pbob.h"
+#include "services/autoproxy/p3i2psam3.h"
 #include "services/autoproxy/rsautoproxymonitor.h"
 
 #include "services/p3gxsreputation.h"
@@ -924,9 +925,9 @@ int RsServer::StartupRetroShare()
 	mNetMgr->setManagers(mPeerMgr, mLinkMgr);
 
 	rsAutoProxyMonitor *autoProxy = rsAutoProxyMonitor::instance();
-#ifdef RS_USE_I2P_BOB
-	mI2pBob = new p3I2pBob(mPeerMgr);
-	autoProxy->addProxy(autoProxyType::I2PBOB, mI2pBob);
+#ifdef RS_USE_I2P_SAM3
+	mI2pSam3 = new p3I2pSam3(mPeerMgr);
+	autoProxy->addProxy(autoProxyType::I2PSAM3, mI2pSam3);
 #endif
 
 	//load all the SSL certs as friends
@@ -1340,22 +1341,26 @@ int RsServer::StartupRetroShare()
     mWiki->setNetworkExchangeService(wiki_ns) ;
 #endif
 
-        /**** Forum GXS service ****/
+	/************************* Forum GXS service ******************************/
 
-        RsGeneralDataService* gxsforums_ds = new RsDataService(currGxsDir + "/", "gxsforums_db",
-                                                            RS_SERVICE_GXS_TYPE_FORUMS, NULL, rsInitConfig->gxs_passwd);
+	RsGeneralDataService* gxsforums_ds = new RsDataService(
+	            currGxsDir + "/", "gxsforums_db", RS_SERVICE_GXS_TYPE_FORUMS,
+	            nullptr, rsInitConfig->gxs_passwd );
 
+	p3GxsForums* mGxsForums = new p3GxsForums(
+	            gxsforums_ds, nullptr, mGxsIdService );
 
-        p3GxsForums *mGxsForums = new p3GxsForums(gxsforums_ds, NULL, mGxsIdService);
+	RsGxsNetTunnelService* gxsForumsTunnelService = nullptr;
+#ifdef RS_DEEP_FORUMS_INDEX
+	gxsForumsTunnelService = mGxsNetTunnel;
+#endif
 
-        // create GXS photo service
-        RsGxsNetService* gxsforums_ns = new RsGxsNetService(
-                        RS_SERVICE_GXS_TYPE_FORUMS, gxsforums_ds, nxsMgr,
-                        mGxsForums, mGxsForums->getServiceInfo(),
-			mReputations, mGxsCircles,mGxsIdService,
-		    pgpAuxUtils);//,mGxsNetTunnel,true,true,true);
+	RsGxsNetService* gxsforums_ns = new RsGxsNetService(
+	            RS_SERVICE_GXS_TYPE_FORUMS, gxsforums_ds, nxsMgr, mGxsForums,
+	            mGxsForums->getServiceInfo(), mReputations, mGxsCircles,
+	            mGxsIdService, pgpAuxUtils, gxsForumsTunnelService );
+	mGxsForums->setNetworkExchangeService(gxsforums_ns);
 
-    mGxsForums->setNetworkExchangeService(gxsforums_ns) ;
 
         /**** Channel GXS service ****/
 
@@ -1602,7 +1607,10 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
     // Turtle search for GXS services
 
-    mGxsNetTunnel->registerSearchableService(gxschannels_ns) ;
+	mGxsNetTunnel->registerSearchableService(gxschannels_ns);
+#ifdef RS_DEEP_FORUMS_INDEX
+	mGxsNetTunnel->registerSearchableService(gxsforums_ns);
+#endif
 
 	/**************************************************************************/
 
@@ -1659,8 +1667,9 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("wire.cfg", wire_ns);
 #endif
 #endif //RS_ENABLE_GXS
-#ifdef RS_USE_I2P_BOB
-	mConfigMgr->addConfiguration("I2PBOB.cfg", mI2pBob);
+#ifdef RS_USE_I2P_SAM3
+	// to make migration easiert, SAM will use BOBs configuration, as they are compatible / the same.
+	mConfigMgr->addConfiguration("I2PBOB.cfg", mI2pSam3);
 #endif
 
 	mPluginsManager->addConfigurations(mConfigMgr) ;
@@ -1713,34 +1722,33 @@ int RsServer::StartupRetroShare()
 	{
 		std::cout << "RsServer::StartupRetroShare setting up hidden locations" << std::endl;
 
-		if (rsInitConfig->hiddenNodeI2PBOB) {
-			std::cout << "RsServer::StartupRetroShare setting up BOB" << std::endl;
+		if (rsInitConfig->hiddenNodeI2P) {
+			std::cout << "RsServer::StartupRetroShare setting up SAMv3" << std::endl;
 
 			// we need a local port!
 			mNetMgr->checkNetAddress();
 
 			// add i2p proxy
-			// bob will use this address
 			sockaddr_storage i2pInstance;
 			sockaddr_storage_ipv4_aton(i2pInstance, rsInitConfig->hiddenNodeAddress.c_str());
 			mPeerMgr->setProxyServerAddress(RS_HIDDEN_TYPE_I2P, i2pInstance);
 
 			std::string addr; // will be set by auto proxy service
-			uint16_t port = rsInitConfig->hiddenNodePort; // unused by bob
+			uint16_t port; // unused by SAM
 
-			bool r = autoProxy->initialSetup(autoProxyType::I2PBOB, addr, port);
+			bool r = autoProxy->initialSetup(autoProxyType::I2PSAM3, addr, port);
 
 			if (r && !addr.empty()) {
 				mPeerMgr->setupHiddenNode(addr, port);
 
-				// now enable bob
-				bobSettings bs;
-				autoProxy->taskSync(autoProxyType::I2PBOB, autoProxyTask::getSettings, &bs);
-				bs.enable = true;
-				autoProxy->taskSync(autoProxyType::I2PBOB, autoProxyTask::setSettings, &bs);
+				// now enable SAM
+				samSettings ss;
+				autoProxy->taskSync(autoProxyType::I2PSAM3, autoProxyTask::getSettings, &ss);
+				ss.enable = true;
+				autoProxy->taskSync(autoProxyType::I2PSAM3, autoProxyTask::setSettings, &ss);
 			} else {
 				std::cerr << "RsServer::StartupRetroShare failed to receive keys" << std::endl;
-				/// TODO add notify for failed bob setup
+				/// TODO add notify for failed i2p setup
 			}
 		} else {
 			mPeerMgr->setupHiddenNode(rsInitConfig->hiddenNodeAddress, rsInitConfig->hiddenNodePort);
@@ -1762,19 +1770,17 @@ int RsServer::StartupRetroShare()
 	if (rsInitConfig->hiddenNodeSet) {
 		// newly created location
 		// mNetMgr->checkNetAddress() will setup ports for us
+
+#if 0 // this was used for BOB but is not requires for SAMv3
 		// trigger updates for auto proxy services
 		std::vector<autoProxyType::autoProxyType_enum> types;
-
-		// i2p bob need to rebuild its command map
-		types.push_back(autoProxyType::I2PBOB);
-
 		rsAutoProxyMonitor::taskSync(types, autoProxyTask::reloadConfig);
+#endif
 	}
 
 	/**************************************************************************/
 	/* startup (stuff dependent on Ids/peers is after this point) */
 	/**************************************************************************/
-
 	autoProxy->startAll();
 
 	pqih->init_listener();
@@ -1807,8 +1813,8 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
 
 	// auto proxy threads
-#ifdef RS_USE_I2P_BOB
-	startServiceThread(mI2pBob, "I2P-BOB");
+#ifdef RS_USE_I2P_SAM3
+	startServiceThread(mI2pSam3, "I2P-SAM3");
 #endif
 
 #ifdef RS_ENABLE_GXS

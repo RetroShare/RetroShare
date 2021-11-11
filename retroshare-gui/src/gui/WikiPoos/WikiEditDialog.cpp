@@ -56,18 +56,18 @@ WikiEditDialog::WikiEditDialog(QWidget *parent)
 {
 	ui.setupUi(this);
 
-	connect(ui.pushButton_Cancel, SIGNAL( clicked( void ) ), this, SLOT( cancelEdit( void ) ) );
-	connect(ui.pushButton_Revert, SIGNAL( clicked( void ) ), this, SLOT( revertEdit( void ) ) );
-	connect(ui.pushButton_Submit, SIGNAL( clicked( void ) ), this, SLOT( submitEdit( void ) ) );
-	connect(ui.pushButton_Preview, SIGNAL( clicked( void ) ), this, SLOT( previewToggle( void ) ) );
-	connect(ui.pushButton_History, SIGNAL( clicked( void ) ), this, SLOT( historyToggle( void ) ) );
-	connect(ui.toolButton_Show, SIGNAL( clicked( void ) ), this, SLOT( detailsToggle( void ) ) );
-	connect(ui.toolButton_Hide, SIGNAL( clicked( void ) ), this, SLOT( detailsToggle( void ) ) );
-	connect(ui.textEdit, SIGNAL( textChanged( void ) ), this, SLOT( textChanged( void ) ) );
-	connect(ui.checkBox_OldHistory, SIGNAL( clicked( void ) ), this, SLOT( oldHistoryChanged( void ) ) );
-	connect(ui.checkBox_Merge, SIGNAL( clicked( void ) ), this, SLOT( mergeModeToggle( void ) ) );
-	connect(ui.pushButton_Merge, SIGNAL( clicked( void ) ), this, SLOT( generateMerge( void ) ) );
-	connect(ui.treeWidget_History, SIGNAL( itemSelectionChanged( void ) ), this, SLOT( historySelected( void ) ) );
+	connect(ui.pushButton_Cancel, SIGNAL( clicked() ), this, SLOT( cancelEdit() ) );
+	connect(ui.pushButton_Revert, SIGNAL( clicked() ), this, SLOT( revertEdit() ) );
+	connect(ui.postButton, SIGNAL( clicked() ), this, SLOT( submitEdit() ) );
+	connect(ui.pushButton_Preview, SIGNAL( clicked() ), this, SLOT( previewToggle() ) );
+	connect(ui.pushButton_History, SIGNAL( clicked() ), this, SLOT( historyToggle() ) );
+	connect(ui.toolButton_Show, SIGNAL( clicked() ), this, SLOT( detailsToggle() ) );
+	connect(ui.toolButton_Hide, SIGNAL( clicked() ), this, SLOT( detailsToggle() ) );
+	connect(ui.textEdit, SIGNAL( textChanged() ), this, SLOT( textChanged() ) );
+	connect(ui.checkBox_OldHistory, SIGNAL( clicked() ), this, SLOT( oldHistoryChanged() ) );
+	connect(ui.checkBox_Merge, SIGNAL( clicked() ), this, SLOT( mergeModeToggle() ) );
+	connect(ui.pushButton_Merge, SIGNAL( clicked() ), this, SLOT( generateMerge() ) );
+	connect(ui.treeWidget_History, SIGNAL( itemSelectionChanged() ), this, SLOT( historySelected() ) );
 
 	mWikiQueue = new TokenQueue(rsWiki->getTokenService(), this);
 
@@ -125,7 +125,7 @@ void WikiEditDialog::textChanged()
 
 	mTextChanged = true;
 	ui.pushButton_Revert->setEnabled(true);
-	ui.pushButton_Submit->setEnabled(true);
+	ui.postButton->setEnabled(true);
 	ui.label_Status->setText("Modified");
 
 	// Disable Selection in Edit History.
@@ -142,7 +142,7 @@ void WikiEditDialog::textReset()
 
 	mTextChanged = false;
 	ui.pushButton_Revert->setEnabled(false);
-	ui.pushButton_Submit->setEnabled(false);
+	ui.postButton->setEnabled(false);
 	ui.label_Status->setText("Original");
 
 	// Enable Selection in Edit History.
@@ -434,11 +434,11 @@ void WikiEditDialog::setNewPage()
 
 void WikiEditDialog::setRepublishMode(RsGxsMessageId &origMsgId)
 {
-        mRepublishMode = true;
-        mRepublishOrigId = origMsgId;
-	ui.pushButton_Submit->setText(tr("Republish"));
+	mRepublishMode = true;
+	mRepublishOrigId = origMsgId;
+	ui.postButton->setText(tr("Republish"));
 	/* No need for for REQUIRED ID */
-        ui.comboBox_IdChooser->loadIds(0, RsGxsId());
+	ui.comboBox_IdChooser->loadIds(0, RsGxsId());
 }
 
 

@@ -4,8 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2004-2007  Robert Fernie <retroshare@lunamutt.com>            *
- * Copyright (C) 2016-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
- * Copyright (C) 2019-2020  Asociación Civil Altermundi <info@altermundi.net>  *
+ * Copyright (C) 2016-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -25,7 +25,6 @@
 #include "rsthreads.h"
 
 #include "util/rsdebug.h"
-#include "util/rserrno.h"
 
 #include <chrono>
 #include <ctime>
@@ -92,11 +91,12 @@ void RsThread::resetTid()
 #ifdef WINDOWS_SYS
 	memset (&mTid, 0, sizeof(mTid));
 #else
-	mTid = 0;
+	mTid = pthread_t(); //Thread identifiers should be considered opaque and can be null.
 #endif
 }
 
-RsThread::RsThread() : mHasStopped(true), mShouldStop(false), mLastTid()
+RsThread::RsThread() : mInitMtx("RsThread"), mHasStopped(true),
+    mShouldStop(false), mLastTid()
 #ifdef RS_THREAD_FORCE_STOP
   , mStopTimeout(0)
 #endif
@@ -115,6 +115,7 @@ void RsThread::askForStop()
 
 void RsThread::wrapRun()
 {
+	{RS_STACK_MUTEX(mInitMtx);} // Waiting Init done.
 	run();
 	resetTid();
 	mHasStopped = true;
@@ -122,11 +123,15 @@ void RsThread::wrapRun()
 
 void RsThread::fullstop()
 {
+	askForStop();
+	waitWhileStopping();
+}
+
+void RsThread::waitWhileStopping()
+{
 #ifdef RS_THREAD_FORCE_STOP
 	const rstime_t stopRequTS = time(nullptr);
 #endif
-
-	askForStop();
 
 	const pthread_t callerTid = pthread_self();
 	if(pthread_equal(mTid, callerTid))
@@ -169,7 +174,8 @@ void RsThread::fullstop()
 			{
 				RsErr() << __PRETTY_FUNCTION__ << " pthread_cancel("
 				        << std::hex << mTid << std::dec <<") returned "
-				        << terr << " " << rsErrnoName(terr) << std::endl;
+				        << terr << " " << rs_errno_to_condition(terr)
+				        << std::endl;
 				print_stacktrace();
 			}
 
@@ -184,23 +190,15 @@ bool RsThread::start(const std::string& threadName)
 	// Atomically check if the thread was already started and set it as running
 	if(mHasStopped.exchange(false))
 	{
+		RS_STACK_MUTEX(mInitMtx); // Block thread starting to run
+
 		mShouldStop = false;
 		int pError = pthread_create(
 		            &mTid, nullptr, &rsthread_init, static_cast<void*>(this) );
 		if(pError)
 		{
-			RsErr() << __PRETTY_FUNCTION__ << " pthread_create could not create"
-			        << " new thread: " << threadName << " pError: " << pError
-			        << std::endl;
-			mHasStopped = true;
-			print_stacktrace();
-			return false;
-		}
-		if(!mTid)
-		{
-			RsErr() << __PRETTY_FUNCTION__ << " pthread_create could not create"
-			        << " new thread: " << threadName << " mTid: " << mTid
-			        << std::endl;
+			RS_ERR( "pthread_create could not create new thread: ", threadName,
+			        rs_errno_to_condition(pError) );
 			mHasStopped = true;
 			print_stacktrace();
 			return false;
@@ -281,7 +279,7 @@ void RsMutex::lock()
 	if( err != 0)
 	{
 		RsErr() << __PRETTY_FUNCTION__ << "pthread_mutex_lock returned: "
-		        << rsErrnoName(err)
+		        << rs_errno_to_condition(err)
 #ifdef RS_MUTEX_DEBUG
 		        << " name: " << name()
 #endif
@@ -325,7 +323,11 @@ RsThread::~RsThread()
 		        << "likely to crash because of this." << std::endl;
 		print_stacktrace();
 
-		fullstop();
+		/* Last resort attempt to stop the thread in a less pathological state.
+		 * Don't call fullstop() as it rely on virtual methods that at this
+		 * point are not anymore the one from inerithing classes causing
+		 * compilers to output a warning */
+		waitWhileStopping();
 	}
 }
 

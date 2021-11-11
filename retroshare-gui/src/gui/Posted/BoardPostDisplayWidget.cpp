@@ -108,15 +108,15 @@ void BoardPostDisplayWidgetBase::makeUpVote()
 void BoardPostDisplayWidgetBase::setReadStatus(bool isNew, bool isUnread)
 {
 	if (isUnread)
-        readButton()->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
+		readButton()->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
 	else
-        readButton()->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png"));
+		readButton()->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png"));
 
-    newLabel()->setVisible(isNew);
+	newLabel()->setVisible(isNew);
 
-    mainFrame()->setProperty("new", isNew);
-    mainFrame()->style()->unpolish(mainFrame());
-    mainFrame()->style()->polish(mainFrame());
+	feedFrame()->setProperty("new", isNew);
+	feedFrame()->style()->unpolish(feedFrame());
+	feedFrame()->style()->polish(  feedFrame());
 }
 
 void BoardPostDisplayWidget_compact::doExpand(bool e)
@@ -174,8 +174,9 @@ void BoardPostDisplayWidgetBase::setup()
     menu->addAction(CopyLinkAction);
     menu->addSeparator();
     shareButton()->setMenu(menu);
+    shareButton()->setPopupMode(QToolButton::InstantPopup);
 
-    connect(shareButton(),SIGNAL(pressed()),this,SLOT(handleShareButtonClicked()));
+    connect(menu,SIGNAL(aboutToShow()),this,SLOT(handleShareButtonClicked()));
 
     RsReputationLevel overall_reputation = rsReputations->overallReputationLevel(mPost.mMeta.mAuthorId);
     bool redacted = (overall_reputation == RsReputationLevel::LOCALLY_NEGATIVE);
@@ -293,17 +294,17 @@ void BoardPostDisplayWidgetBase::handleCopyLinkClicked()
 BoardPostDisplayWidget_compact::BoardPostDisplayWidget_compact(const RsPostedPost& post, uint8_t display_flags,QWidget *parent=nullptr)
     : BoardPostDisplayWidgetBase(post,display_flags,parent), ui(new Ui::BoardPostDisplayWidget_compact())
 {
-    ui->setupUi(this);
-    setup();
+	ui->setupUi(this);
+	setup();
 
-    ui->verticalLayout->addStretch();
-    ui->verticalLayout->setAlignment(Qt::AlignTop);
-    ui->topLayout->setAlignment(Qt::AlignTop);
-    ui->arrowsLayout->addStretch();
-    ui->arrowsLayout->setAlignment(Qt::AlignTop);
-    ui->verticalLayout_2->addStretch();
+	ui->right_VL->addStretch();
+	ui->right_VL->setAlignment(Qt::AlignTop);
+	ui->topLayout->setAlignment(Qt::AlignTop);
+	ui->arrowsLayout->addStretch();
+	ui->arrowsLayout->setAlignment(Qt::AlignTop);
+	ui->feedFrame_VL->addStretch();
 
-    adjustSize();
+	adjustSize();
 }
 
 BoardPostDisplayWidget_compact::~BoardPostDisplayWidget_compact()
@@ -414,9 +415,9 @@ QLabel         *BoardPostDisplayWidget_compact::dateLabel()      { return ui->da
 QLabel         *BoardPostDisplayWidget_compact::titleLabel()     { return ui->titleLabel; }
 QLabel         *BoardPostDisplayWidget_compact::scoreLabel()     { return ui->scoreLabel; }
 QLabel         *BoardPostDisplayWidget_compact::notes()          { return ui->notes; }
-QPushButton    *BoardPostDisplayWidget_compact::shareButton()    { return ui->shareButton; }
+QToolButton    *BoardPostDisplayWidget_compact::shareButton()    { return ui->shareButton; }
 QLabel         *BoardPostDisplayWidget_compact::pictureLabel()   { return ui->pictureLabel; }
-QFrame         *BoardPostDisplayWidget_compact::mainFrame()      { return ui->mainFrame; }
+QFrame         *BoardPostDisplayWidget_compact::feedFrame()      { return ui->feedFrame; }
 
 //===================================================================================================================================
 //==                                                 class BoardPostDisplayWidget_card                                             ==
@@ -425,17 +426,17 @@ QFrame         *BoardPostDisplayWidget_compact::mainFrame()      { return ui->ma
 BoardPostDisplayWidget_card::BoardPostDisplayWidget_card(const RsPostedPost& post, uint8_t display_flags, QWidget *parent)
     : BoardPostDisplayWidgetBase(post,display_flags,parent), ui(new Ui::BoardPostDisplayWidget_card())
 {
-    ui->setupUi(this);
-    setup();
+	ui->setupUi(this);
+	setup();
 
-    ui->verticalLayout->addStretch();
-    ui->verticalLayout->setAlignment(Qt::AlignTop);
-    ui->topLayout->setAlignment(Qt::AlignTop);
-    ui->arrowsLayout->addStretch();
-    ui->arrowsLayout->setAlignment(Qt::AlignTop);
-    ui->verticalLayout_2->addStretch();
+	ui->right_VL->addStretch();
+	ui->right_VL->setAlignment(Qt::AlignTop);
+	ui->topLayout->setAlignment(Qt::AlignTop);
+	ui->arrowsLayout->addStretch();
+	ui->arrowsLayout->setAlignment(Qt::AlignTop);
+	ui->feedFrame_VL->addStretch();
 
-    adjustSize();
+	adjustSize();
 }
 
 BoardPostDisplayWidget_card::~BoardPostDisplayWidget_card()
@@ -493,7 +494,7 @@ QLabel         *BoardPostDisplayWidget_card::dateLabel()      { return ui->dateL
 QLabel         *BoardPostDisplayWidget_card::titleLabel()     { return ui->titleLabel; }
 QLabel         *BoardPostDisplayWidget_card::scoreLabel()     { return ui->scoreLabel; }
 QLabel         *BoardPostDisplayWidget_card::notes()          { return ui->notes; }
-QPushButton    *BoardPostDisplayWidget_card::shareButton()    { return ui->shareButton; }
+QToolButton    *BoardPostDisplayWidget_card::shareButton()    { return ui->shareButton; }
 QLabel         *BoardPostDisplayWidget_card::pictureLabel()   { return ui->pictureLabel; }
-QFrame         *BoardPostDisplayWidget_card::mainFrame()      { return ui->mainFrame; }
+QFrame         *BoardPostDisplayWidget_card::feedFrame()      { return ui->feedFrame; }
 

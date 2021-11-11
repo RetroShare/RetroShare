@@ -132,6 +132,7 @@ public:
 	virtual bool isProxyAddress(const uint32_t type, const sockaddr_storage &addr);
 
     virtual void getIPServersList(std::list<std::string>& ip_servers) override;
+    virtual void getCurrentExtIPList(std::list<std::string>& ip_list) override;
     virtual void allowServerIPDetermination(bool) override;
     virtual bool getAllowServerIPDetermination() override;
     virtual bool resetOwnExternalAddressList() override;

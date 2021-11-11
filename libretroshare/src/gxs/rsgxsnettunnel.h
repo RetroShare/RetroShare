@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2018 by Cyril Soler <retroshare.project@gmail.com>                *
+ * Copyright (C) 2018  Cyril Soler <retroshare.project@gmail.com>              *
+ * Copyright (C) 2021  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -23,6 +25,7 @@
 #pragma once
 
 #include <map>
+#include <system_error>
 
 #include "turtle/p3turtle.h"
 #include "retroshare/rsgxsdistsync.h"
@@ -100,7 +103,7 @@
 //        and there is no way to prevent it. We therefore rely on GXS data integrity system to prevent this to happen.
 //
 
-class RsGxsNetTunnelItem ;
+struct RsGxsNetTunnelItem;
 class RsNetworkExchangeService ;
 
 class RsGxsNetTunnelService:
@@ -108,8 +111,8 @@ class RsGxsNetTunnelService:
         public RsGxsDistSync
 {
 public:
-	  RsGxsNetTunnelService() ;
-	  virtual ~RsGxsNetTunnelService() ;
+	RsGxsNetTunnelService();
+	~RsGxsNetTunnelService() override;
 
       /*!
        * \brief registerSearchableService
@@ -181,24 +184,38 @@ public:
 	   */
 	  void dump() const;
 
-      /*!
-       * \brief connectToTurtleRouter
-       * 			Should be called after allocating a RsGxsNetTunnelService
-       * \param tr turtle router object
-       */
-	  virtual void connectToTurtleRouter(p3turtle *tr) ;
+	/*!
+	* Should be called after allocating a RsGxsNetTunnelService
+	* \param tr turtle router object
+	*/
+	void connectToTurtleRouter(p3turtle *tr) override;
 
-      TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id, RsNetworkExchangeService *client_service) ;
-      TurtleRequestId turtleSearchRequest(const std::string& match_string,RsNetworkExchangeService *client_service) ;
+	/** Gxs services (channels, forums...) are supposed to use this to request
+	 * searches on distant peers */
+	std::error_condition turtleSearchRequest(
+	        rs_owner_ptr<uint8_t> searchData, uint32_t dataSize,
+	        RsServiceType serviceType, TurtleRequestId& requestId );
 
-      /*!
-       * \brief receiveSearchRequest
-       * 			See RsTurtleClientService::@
-       */
-	  virtual bool receiveSearchRequest(unsigned char *search_request_data, uint32_t search_request_data_len, unsigned char *& search_result_data, uint32_t& search_result_data_len, uint32_t &max_allowed_hits);
-	  virtual void receiveSearchResult(TurtleSearchRequestId request_id,unsigned char *search_result_data,uint32_t search_result_data_len);
+	///@see RsTurtleClientService
+	bool receiveSearchRequest(
+	        unsigned char* search_request_data,
+	        uint32_t search_request_data_len,
+	        unsigned char*& search_result_data,
+	        uint32_t& search_result_data_len,
+	        uint32_t& max_allowed_hits ) override;
 
-	void threadTick() override; /// @see RsTickingThread
+	///@see RsTurtleClientService
+	virtual void receiveSearchResult(
+	        TurtleSearchRequestId request_id,
+	        unsigned char* search_result_data,
+	        uint32_t search_result_data_len ) override;
+
+	TurtleRequestId turtleGroupRequest(
+	        const RsGxsGroupId& group_id,
+	        RsNetworkExchangeService* client_service );
+
+	/// @see RsTickingThread
+	void threadTick() override;
 
 	  // Overloads p3Config
 
@@ -212,6 +229,11 @@ public:
 	  		std::map<RsGxsNetTunnelVirtualPeerId, RsGxsNetTunnelVirtualPeerInfo>& virtual_peers,     // current virtual peers, which group they provide, and how to talk to them through turtle
             std::map<TurtleVirtualPeerId,RsGxsNetTunnelVirtualPeerId>& turtle_vpid_to_net_tunnel_vpid,
 		    Bias20Bytes& bias) const;
+
+	RS_DEPRECATED
+	TurtleRequestId turtleSearchRequest(
+	        const std::string& match_string,
+	        RsNetworkExchangeService* client_service );
 
 protected:
 	  // interaction with turtle router
@@ -233,6 +255,8 @@ private:
 	  void sendKeepAlivePackets() ;
 	  void handleIncoming(RsGxsNetTunnelItem *item) ;
 	  void flush_pending_items();
+	rs_view_ptr<RsNetworkExchangeService> retrievieSearchableServiceLocking(
+	        uint16_t serviceType );
 
 	  std::map<RsGxsGroupId,RsGxsNetTunnelGroupInfo> mGroups ;	// groups on the client and server side
 

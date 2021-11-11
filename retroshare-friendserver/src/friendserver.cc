@@ -97,6 +97,10 @@ void FriendServer::handleClientPublish(const RsFriendServerClientPublishItem *it
             p.have_added_this_peer[computePeerDistance(p.pgp_fingerprint, pi->second.pgp_fingerprint)] = pi->first;
         }
 
+        // Now encrypt the item with the public PGP key of the destination. This prevents the wrong person to request for
+        // someone else's data.
+#warning TODO
+
         // Send the item.
         mni->SendItem(sr_item);
 
@@ -222,10 +226,6 @@ std::map<RsPeerId,PeerInfo>::iterator FriendServer::handleIncomingClientData(con
             mPgpHandler->syncDatabase();
         }
         }
-
-        // Check the item's data signature. Is that needed? Not sure, since the data is sent PGP-encrypted, so only the owner
-        // of the secret PGP key can actually use it.
-#warning TODO
 
         // All good.
 

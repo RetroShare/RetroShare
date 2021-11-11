@@ -4,7 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2012-2014  Robert Fernie <retroshare@lunamutt.com>            *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2018-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -46,7 +47,7 @@ extern RsGxsCircles* rsGxsCircles;
 enum class RsGxsCircleType : uint32_t // 32 bit overkill, just for retrocompat
 {
 	UNKNOWN            = 0,	/// Used to detect uninizialized values.
-	PUBLIC             = 1,	/// Public distribution, based on GxsIds
+	PUBLIC             = 1,	/// Public distribution
 	EXTERNAL           = 2,	/// Restricted to an external circle, based on GxsIds
 
 	NODES_GROUP        = 3,	/// Restricted to a group of friend nodes, the administrator of the circle behave as a hub for them

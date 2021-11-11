@@ -237,7 +237,7 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
     ui->peerTreeWidget->setColumnWidth(RsFriendListModel::COLUMN_THREAD_ID          , 32 * fontWidth);
     ui->peerTreeWidget->setColumnWidth(RsFriendListModel::COLUMN_THREAD_LAST_CONTACT, 12 * fontWidth);
 
-    int avatarHeight = fontMetrics.height() * 3;
+    int avatarHeight = fontMetrics.height() * 2;
     ui->peerTreeWidget->setIconSize(QSize(avatarHeight, avatarHeight));
 
     mModel->checkInternalData(true);
@@ -376,7 +376,7 @@ void NewFriendList::addToolButton(QToolButton *toolButton)
     toolButton->setIconSize(QSize(S*1.5,S*1.5));
     toolButton->setFocusPolicy(Qt::NoFocus);
 
-    ui->titleBarFrame->layout()->addWidget(toolButton);
+    ui->toolBarFrame->layout()->addWidget(toolButton);
 }
 
 void NewFriendList::saveExpandedPathsAndSelection(std::set<QString>& expanded_indexes, QString& sel)

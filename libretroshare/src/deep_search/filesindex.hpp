@@ -1,8 +1,8 @@
 /*******************************************************************************
  * RetroShare full text indexing and search implementation based on Xapian     *
  *                                                                             *
- * Copyright (C) 2018-2019 Gioacchino Mazzurco <gio@eigenlab.org>              *
- * Copyright (C) 2019  Asociación Civil Altermundi <info@altermundi.net>       *
+ * Copyright (C) 2018-2021 Gioacchino Mazzurco <gio@eigenlab.org>              *
+ * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License version 3 as    *
@@ -19,15 +19,15 @@
  *******************************************************************************/
 #pragma once
 
-#include "retroshare/rstypes.h"
-#include "util/rsdebug.h"
-
 #include <string>
 #include <cstdint>
 #include <vector>
 #include <xapian.h>
 #include <map>
 #include <functional>
+
+#include "retroshare/rstypes.h"
+#include "deep_search/commonutils.hpp"
 
 struct DeepFilesSearchResult
 {
@@ -41,7 +41,8 @@ struct DeepFilesSearchResult
 class DeepFilesIndex
 {
 public:
-	DeepFilesIndex(const std::string& dbPath) : mDbPath(dbPath) {}
+	explicit DeepFilesIndex(const std::string& dbPath):
+	    mDbPath(dbPath), mWriteQueue(dbPath) {}
 
 	/**
 	 * @brief Search indexed files
@@ -49,7 +50,7 @@ public:
 	 * no limits
 	 * @return search results count
 	 */
-	uint32_t search( const std::string& queryStr,
+	std::error_condition search( const std::string& queryStr,
 	                 std::vector<DeepFilesSearchResult>& results,
 	                 uint32_t maxResults = 100 );
 
@@ -57,7 +58,7 @@ public:
 	 * @return false if file could not be indexed because of error or
 	 *	unsupported type, true otherwise.
 	 */
-	bool indexFile(
+	std::error_condition indexFile(
 	        const std::string& path, const std::string& name,
 	        const RsFileHash& hash );
 
@@ -65,7 +66,7 @@ public:
 	 * @brief Remove file entry from database
 	 * @return false on error, true otherwise.
 	 */
-	bool removeFileFromIndex(const RsFileHash& hash);
+	std::error_condition removeFileFromIndex(const RsFileHash& hash);
 
 	static std::string dbDefaultPath();
 
@@ -96,8 +97,8 @@ private:
 
 	const std::string mDbPath;
 
+	DeepSearch::StubbornWriteOpQueue mWriteQueue;
+
 	/** Storage for indexers function by order */
 	static std::multimap<int, IndexerFunType> indexersRegister;
-
-	RS_SET_CONTEXT_DEBUG_LEVEL(1)
 };

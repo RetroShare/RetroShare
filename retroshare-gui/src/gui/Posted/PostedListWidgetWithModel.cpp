@@ -923,7 +923,7 @@ void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
 
 	formatDescription = RsHtml().formatText(NULL, formatDescription, formatFlag);
 
-	ui->infoDescription->setText(formatDescription);
+	ui->trans_Description->setText(formatDescription);
 	ui->infoAdministrator->setId(group.mMeta.mAuthorId) ;
 
 	link = RetroShareLink::createMessage(group.mMeta.mAuthorId, "");

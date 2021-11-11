@@ -22,13 +22,10 @@
 #ifndef _AdvancedSearch_h_
 #define _AdvancedSearch_h_
 
-#include <QFontMetrics>
-#include <QDialog>
-#include <QList>
-#include <QScrollArea>
-#include <QSizePolicy>
 #include "ui_AdvancedSearchDialog.h"
+
 #include "expressionwidget.h"
+
 #include <retroshare/rsexpr.h>
 
 class AdvancedSearchDialog : public QDialog, public Ui::AdvancedSearchDialog 
@@ -49,10 +46,7 @@ private slots:
     void prepareSearch();
     
 private:
-    QLayout * dialogLayout;
-    QVBoxLayout * expressionsLayout;
     QList<ExpressionWidget*> * expressions;
-    QFontMetrics * metrics;
 };
 
 #endif // _AdvancedSearch_h_
