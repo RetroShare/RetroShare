@@ -84,6 +84,18 @@ bool isExternalNet(const struct in_addr *addr);
 // uses a re-entrant version of gethostbyname
 bool rsGetHostByName(const std::string& hostname, in_addr& returned_addr) ;
 
+/**
+ * @brief Get hostName address using specific DNS server.
+ * Using it allow to direct ask our Address to IP, so no need to have a DNS (IPv4 or IPv6).
+ * If we ask to a IPv6 DNS Server, it respond for our IPv6 address.
+ * @param servername: Address or name of DNS Server.
+ * @param hostname: HosteName to get IP ("myip.opendns.com" to get own).
+ * @param returned_addr: returned IP of hostname.
+ * @param timeout_s: Timeout in sec to wait server response.
+ * @return True in success.
+ */
+bool rsGetHostByNameSpecDNS(const std::string& servername, const std::string& hostname, std::string& returned_addr, int timeout_s = -1);
+
 std::ostream& operator<<(std::ostream& o, const sockaddr_in&);
 std::ostream& operator<<(std::ostream& o, const sockaddr_storage&);
 
@@ -158,5 +170,15 @@ bool sockaddr_storage_inet_ntop(const sockaddr_storage &addr, std::string &dst);
 
 int rs_setsockopt( int sockfd, int level, int optname,
                    const uint8_t *optval, uint32_t optlen );
+
+/**
+ * @brief Set socket Timeout.
+ * @param sockfd: The socket to manage.
+ * @param forReceive: True for Receive, False for Send.
+ * @param timeout_Sec: Timeout second part.
+ * @param timeout_uSec: Timeout micro second part.
+ * @return 0 on success, -1 for errors.
+ */
+int rs_setSockTimeout( int sockfd, bool forReceive = true, int timeout_Sec = 0, int timeout_uSec = 0);
 
 #endif /* RS_UNIVERSAL_NETWORK_HEADER */

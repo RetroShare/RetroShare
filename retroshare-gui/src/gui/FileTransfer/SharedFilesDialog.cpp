@@ -213,15 +213,20 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
 
     /* Set header resize modes and initial section sizes  */
     QHeaderView * header = ui.dirTreeView->header () ;
+#if QT_VERSION < QT_VERSION_CHECK(5,11,0)
+    int charWidth = ui.dirTreeView->fontMetrics().width("_");
+#else
+    int charWidth = ui.dirTreeView->fontMetrics().horizontalAdvance("_");
+#endif
 
-    header->resizeSection ( COLUMN_NAME, 490 );
-    header->resizeSection ( COLUMN_FILENB, 70  );
-    header->resizeSection ( COLUMN_SIZE, 70  );
-    header->resizeSection ( COLUMN_AGE, 100  );
-    header->resizeSection ( COLUMN_FRIEND_ACCESS,100);
-    header->resizeSection ( COLUMN_WN_VISU_DIR, 100  );
+    header->resizeSection ( COLUMN_NAME         , charWidth*100 );
+    header->resizeSection ( COLUMN_FILENB       , charWidth*15 );
+    header->resizeSection ( COLUMN_SIZE         , charWidth*10 );
+    header->resizeSection ( COLUMN_AGE          , charWidth*6 );
+    header->resizeSection ( COLUMN_FRIEND_ACCESS, charWidth*10 );
+    header->resizeSection ( COLUMN_WN_VISU_DIR  , charWidth*20 );
 
-    header->setStretchLastSection(false);
+    header->setStretchLastSection(true);
 
     /* Set Multi Selection */
     ui.dirTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);

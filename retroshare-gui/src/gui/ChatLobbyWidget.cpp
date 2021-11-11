@@ -94,14 +94,14 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	myInviteIdChooser = NULL;
 
 	QObject::connect( NotifyQt::getInstance(), SIGNAL(lobbyListChanged()), SLOT(lobbyChanged()));
-    QObject::connect( NotifyQt::getInstance(), SIGNAL(chatLobbyEvent(qulonglong,int,const RsGxsId&,const QString&)), this, SLOT(displayChatLobbyEvent(qulonglong,int,const RsGxsId&,const QString&)));
+	QObject::connect( NotifyQt::getInstance(), SIGNAL(chatLobbyEvent(qulonglong,int,RsGxsId,QString)), this, SLOT(displayChatLobbyEvent(qulonglong,int,RsGxsId,QString)));
 	QObject::connect( NotifyQt::getInstance(), SIGNAL(chatLobbyInviteReceived()), this, SLOT(readChatLobbyInvites()));
 
 	QObject::connect( ui.lobbyTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(lobbyTreeWidgetCustomPopupMenu(QPoint)));
 	QObject::connect( ui.lobbyTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(itemDoubleClicked(QTreeWidgetItem*,int)));
 	QObject::connect( ui.lobbyTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(updateCurrentLobby()));
 
-	QObject::connect( ui.filterLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterItems(QString)));
+	QObject::connect( ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
 	QObject::connect( ui.filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
 	QObject::connect( ui.createLobbyToolButton, SIGNAL(clicked()), this, SLOT(createChatLobby()));
 
@@ -194,25 +194,25 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	// load settings
 	processSettings(true);
 
-    int S = QFontMetricsF(font()).height();
-    QString help_str = tr("\
-                          <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Chat Rooms</h1>                              \
-	                      <p>Chat rooms work pretty much like IRC.                                      \
-	                      They allow you to talk anonymously with tons of people without the need to make friends.</p>                    \
-	                      <p>A chat room can be public (your friends see it) or private (your friends can't see it, unless you           \
-                          invite them with <img src=\":/icons/png/add.png\" width=%2/>). \
-	                      Once you have been invited to a private room, you will be able to see it when your friends   \
-	                      are using it.</p>                                                                                               \
-	                      <p>The list at left shows                                                                                     \
-	                      chat lobbies your friends are participating in. You can either                                 \
-		  <ul>                                                                                                            \
-			  <li>Right click to create a new chat room</li>                                                              \
-		     <li>Double click a chat room to enter, chat, and show it to your friends</li>                      \
-	                      </ul> \
-	                      Note: For the chat rooms to work properly, your computer needs be on time.  So check your system clock!\
-	                      </p>                                      \
+	int S = QFontMetricsF(font()).height();
+	QString help_str = tr("\
+	                      <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Chat Rooms</h1>                           \
+	                      <p>Chat rooms work pretty much like IRC.                                                                \
+	                       They allow you to talk anonymously with tons of people without the need to make friends.</p>           \
+	                      <p>A chat room can be public (your friends see it) or private (your friends can't see it, unless you    \
+	                       invite them with <img src=\":/icons/png/add.png\" width=%2/>).                                         \
+	                       Once you have been invited to a private room, you will be able to see it when your friends             \
+	                       are using it.</p>                                                                                      \
+	                      <p>The list at left shows                                                                               \
+	                       chat lobbies your friends are participating in. You can either                                         \
+	                       <ul>                                                                                                   \
+	                        <li>Right click to create a new chat room</li>                                                        \
+	                        <li>Double click a chat room to enter, chat, and show it to your friends</li>                         \
+	                       </ul>                                                                                                  \
+	                       Note: For the chat rooms to work properly, your computer needs be on time.  So check your system clock!\
+	                      </p>                                                                                                    \
 	                      "
-                          ).arg(QString::number(2*S)).arg(QString::number(S)) ;
+	                      ).arg(QString::number(2*S), QString::number(S)) ;
 
 	    registerHelpButton(ui.helpButton,help_str,"ChatLobbyDialog") ;
 		
@@ -232,7 +232,7 @@ ChatLobbyWidget::~ChatLobbyWidget()
 UserNotify *ChatLobbyWidget::createUserNotify(QObject *parent)
 {
 	myChatLobbyUserNotify = new ChatLobbyUserNotify(parent);
-	connect(myChatLobbyUserNotify, SIGNAL(countChanged(ChatLobbyId, unsigned int)), this, SLOT(updateNotify(ChatLobbyId, unsigned int)));
+	connect(myChatLobbyUserNotify, SIGNAL(countChanged(ChatLobbyId, uint)), this, SLOT(updateNotify(ChatLobbyId, uint)));
 
 	return myChatLobbyUserNotify;
 }
@@ -920,7 +920,7 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id, bool subscribed /*= false*/)
 				}
 			}
 
-			ui.lobbyInfoLabel->setText(text);
+			ui.info_Label_Lobby->setText(text);
 			return ;
 		}
 
@@ -932,7 +932,7 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id, bool subscribed /*= false*/)
 	ui.lobbysec_lineEdit->clear();
 
 	QString text = tr("No chat room selected. \nSelect chat rooms at left to show details.\nDouble click a chat room to enter and chat.") ;
-	ui.lobbyInfoLabel->setText(text) ;
+	ui.info_Label_Lobby->setText(text) ;
 }
 
 void ChatLobbyWidget::subscribeItem()
@@ -1116,6 +1116,7 @@ void ChatLobbyWidget::updateCurrentLobby()
 		filterItems(ui.filterLineEdit->text());
 	}
 }
+
 void ChatLobbyWidget::updateMessageChanged(bool incoming, ChatLobbyId id, QDateTime time, QString senderName, QString msg)
 {
 	QTreeWidgetItem *current_item = ui.lobbyTreeWidget->currentItem();
@@ -1174,9 +1175,11 @@ void ChatLobbyWidget::readChatLobbyInvites()
 		if(found)
 			continue ;
 
-        QMessageBox mb(QObject::tr("Join chat room"),
-                       tr("%1 invites you to chat room named %2").arg(QString::fromUtf8(rsPeers->getPeerName((*it).peer_id).c_str())).arg(RsHtml::plainText(it->lobby_name)),
-                       QMessageBox::Question, QMessageBox::Yes,QMessageBox::No, 0);
+		QMessageBox mb(QObject::tr("Join chat room")
+		               , tr("%1 invites you to chat room named %2")
+		                   .arg(QString::fromUtf8(rsPeers->getPeerName((*it).peer_id).c_str())
+		                        , RsHtml::plainText(it->lobby_name))
+		               , QMessageBox::Question, QMessageBox::Yes,QMessageBox::No, 0);
 
 
 		QLabel *label;

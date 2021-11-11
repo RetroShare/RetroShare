@@ -197,7 +197,7 @@ public:
 	/*
 	 * Setup Hidden Location;
 	 */
-	static void SetHiddenLocation(const std::string& hiddenaddress, uint16_t port, bool useBob);
+	static void SetHiddenLocation(const std::string& hiddenaddress, uint16_t port, bool useI2p);
 
 	static bool LoadPassword(const std::string& passwd) ;
 

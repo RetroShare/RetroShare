@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>838</width>
-    <height>130</height>
+    <width>297</width>
+    <height>138</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <iconset resource="../images.qrc">
     <normaloff>:/images/logo/logo_16.png</normaloff>:/images/logo/logo_16.png</iconset>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
+  <layout class="QGridLayout" name="AdvancedSearchDialog_GL">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -31,20 +31,14 @@
     <number>0</number>
    </property>
    <item row="0" column="0">
-    <widget class="QFrame" name="frame">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>130</height>
-      </size>
-     </property>
+    <widget class="QFrame" name="gradFrame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="gradFrame_GL">
       <item row="0" column="0">
        <widget class="QGroupBox" name="searchCriteriaBox">
         <property name="sizePolicy">
@@ -52,12 +46,6 @@
           <horstretch>1</horstretch>
           <verstretch>1</verstretch>
          </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>800</width>
-          <height>60</height>
-         </size>
         </property>
         <property name="autoFillBackground">
          <bool>false</bool>
@@ -68,59 +56,15 @@
         <property name="alignment">
          <set>Qt::AlignJustify|Qt::AlignTop</set>
         </property>
-        <layout class="QVBoxLayout">
+        <layout class="QVBoxLayout" name="searchCriteriaBox_VL">
          <property name="spacing">
           <number>0</number>
          </property>
-         <property name="leftMargin">
-          <number>2</number>
-         </property>
-         <property name="topMargin">
-          <number>2</number>
-         </property>
-         <property name="rightMargin">
-          <number>2</number>
-         </property>
-         <property name="bottomMargin">
-          <number>2</number>
-         </property>
-         <item>
-          <widget class="QFrame" name="expressionsFrame">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-             <horstretch>1</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>600</width>
-             <height>26</height>
-            </size>
-           </property>
-           <property name="autoFillBackground">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>9</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
         </layout>
        </widget>
       </item>
       <item row="1" column="0">
-       <layout class="QHBoxLayout" name="_2">
+       <layout class="QHBoxLayout" name="buttons_HL">
         <property name="spacing">
          <number>6</number>
         </property>
@@ -142,8 +86,8 @@
            <string>Add a further search criterion.</string>
           </property>
           <property name="icon">
-           <iconset>
-            <normaloff>:/images/add_24x24.png</normaloff>:/images/add_24x24.png</iconset>
+           <iconset resource="../icons.qrc">
+            <normaloff>:/icons/png/add.png</normaloff>:/icons/png/add.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -174,15 +118,9 @@
          </widget>
         </item>
         <item>
-         <spacer>
+         <spacer name="buttons_HSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>381</width>
-            <height>27</height>
-           </size>
           </property>
          </spacer>
         </item>
@@ -203,7 +141,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="executeButton">
+         <widget class="QPushButton" name="searchButton">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -227,6 +165,7 @@
  </widget>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections>
   <connection>

@@ -147,8 +147,10 @@ for /R "%RsDeployPath%" %%D in (*.dll, *.exe) do (
 	call :copy_dependencies "%%D" "%RsDeployPath%"
 )
 
-echo copy qss
-xcopy /S "%SourcePath%\retroshare-gui\src\qss" "%RsDeployPath%\qss" %Quite%
+if exist "%SourcePath%\retroshare-gui\src\qss" (
+	echo copy qss
+	xcopy /S "%SourcePath%\retroshare-gui\src\qss" "%RsDeployPath%\qss" %Quite%
+)
 
 echo copy stylesheets
 xcopy /S "%SourcePath%\retroshare-gui\src\gui\qss\chat" "%RsDeployPath%\stylesheets" %Quite%

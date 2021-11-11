@@ -53,19 +53,19 @@ GetStartedDialog::GetStartedDialog(QWidget *parent)
 
 	mFirstShow = true;
 
-	connect(ui.inviteCheckBox, SIGNAL(stateChanged( int )), this, SLOT(tickInviteChanged()));
-	connect(ui.addCheckBox, SIGNAL(stateChanged( int )), this, SLOT(tickAddChanged()));
-	connect(ui.connectCheckBox, SIGNAL(stateChanged( int )), this, SLOT(tickConnectChanged()));
-	connect(ui.firewallCheckBox, SIGNAL(stateChanged( int )), this, SLOT(tickFirewallChanged()));
+	connect(ui.inviteCheckBox, SIGNAL(stateChanged(int)), this, SLOT(tickInviteChanged()));
+	connect(ui.addCheckBox, SIGNAL(stateChanged(int)), this, SLOT(tickAddChanged()));
+	connect(ui.connectCheckBox, SIGNAL(stateChanged(int)), this, SLOT(tickConnectChanged()));
+	connect(ui.firewallCheckBox, SIGNAL(stateChanged(int)), this, SLOT(tickFirewallChanged()));
 
-	connect(ui.pushButton_InviteFriends, SIGNAL(clicked( bool )), this, SLOT(inviteFriends()));
-	connect(ui.pushButton_AddFriend, SIGNAL(clicked( bool )), this, SLOT(addFriends()));
+	connect(ui.pushButton_InviteFriends, SIGNAL(clicked(bool)), this, SLOT(inviteFriends()));
+	connect(ui.pushButton_AddFriend, SIGNAL(clicked(bool)), this, SLOT(addFriends()));
 
-	connect(ui.pushButton_FAQ, SIGNAL(clicked( bool )), this, SLOT(OpenFAQ()));
-	connect(ui.pushButton_Forums, SIGNAL(clicked( bool )), this, SLOT(OpenForums()));
-	connect(ui.pushButton_Website, SIGNAL(clicked( bool )), this, SLOT(OpenWebsite()));
-	connect(ui.pushButton_EmailFeedback, SIGNAL(clicked( bool )), this, SLOT(emailFeedback()));
-	connect(ui.pushButton_EmailSupport, SIGNAL(clicked( bool )), this, SLOT(emailSupport()));
+	connect(ui.pushButton_FAQ, SIGNAL(clicked(bool)), this, SLOT(OpenFAQ()));
+	connect(ui.pushButton_Forums, SIGNAL(clicked(bool)), this, SLOT(OpenForums()));
+	connect(ui.pushButton_Website, SIGNAL(clicked(bool)), this, SLOT(OpenWebsite()));
+	connect(ui.pushButton_EmailFeedback, SIGNAL(clicked(bool)), this, SLOT(emailFeedback()));
+	connect(ui.pushButton_EmailSupport, SIGNAL(clicked(bool)), this, SLOT(emailSupport()));
 }
 
 GetStartedDialog::~GetStartedDialog()
@@ -105,8 +105,7 @@ void GetStartedDialog::showEvent ( QShowEvent * /*event*/ )
 
 void GetStartedDialog::updateFromUserLevel()
 {
-	RsConfigUserLvl userLevel = RsConfigUserLvl::NEW;
-	userLevel = rsConfig->getUserLevel();
+	RsConfigUserLvl userLevel = rsConfig->getUserLevel();
 
 	ui.inviteCheckBox->setChecked(false);
 	ui.addCheckBox->setChecked(false);
@@ -185,17 +184,12 @@ void GetStartedDialog::tickFirewallChanged()
 	}
 }
 
-static void sendMail(const QString &address, const QString &subject, QString body)
+static void sendMail(const QString &address, const QString &subject, const QString &body)
 {
-	/* Only under windows do we need to do this! */
-#ifdef Q_OS_WIN
-	/* search and replace the end of lines with: "%0D%0A" */
-	body.replace("\n", "%0D%0A");
-#endif
 
 	QString mailstr = "mailto:" + address;
-	mailstr += "?subject=" + subject;
-	mailstr += "&body=" + body;
+	mailstr += "?subject=" + QUrl::toPercentEncoding(subject);
+	mailstr += "&body=" + QUrl::toPercentEncoding(body);
 
 	std::cerr << "MAIL STRING:" << mailstr.toStdString() << std::endl;
 
@@ -240,7 +234,7 @@ void GetStartedDialog::inviteFriends()
 		RsAutoUpdatePage::unlockAllEvents() ;
 	}
 
-	QString text = QString("%1\n%2\n\n%3\n").arg(GetInviteText()).arg(GetCutBelowText()).arg(QString::fromUtf8(cert.c_str()));
+	QString text = QString("%1\n%2\n\n%3\n").arg(GetInviteText(), GetCutBelowText(), QString::fromUtf8(cert.c_str()));
 
 	sendMail("", tr("RetroShare Invitation"), text);
 }
@@ -427,8 +421,10 @@ void GetStartedDialog::emailSupport()
 	sysVersion = "Linux";
   #endif
 #endif
-	text += QString("My RetroShare Configuration is: (%1, %2, %3)").arg(Rshare::retroshareVersion(true)).arg(sysVersion).arg(static_cast<typename std::underlying_type<RsConfigUserLvl>::type>(userLevel)) + "\n";
-    text += "\n";
+	text += QString("My RetroShare Configuration is: (%1, %2, %3)").arg(Rshare::retroshareVersion(true)
+	                                                                    , sysVersion
+	                                                                    ).arg(static_cast<typename std::underlying_type<RsConfigUserLvl>::type>(userLevel)) + "\n";
+	text += "\n";
 
 	text += QString("I am having trouble with RetroShare.");
 	text += QString(" Can you help me with....") + "\n";

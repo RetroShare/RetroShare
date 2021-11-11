@@ -22,7 +22,7 @@
     <height>102</height>
    </size>
   </property>
-  <layout class="QHBoxLayout">
+  <layout class="QHBoxLayout" name="VOIPToasterItem_HL">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -39,14 +39,14 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QFrame" name="windowFrame">
+    <widget class="QFrame" name="toasterFrame">
      <property name="frameShape">
       <enum>QFrame::WinPanel</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
+     <layout class="QGridLayout" name="toasterFrame_GL">
       <property name="leftMargin">
        <number>2</number>
       </property>
@@ -63,7 +63,7 @@
        <number>2</number>
       </property>
       <item row="0" column="0">
-       <layout class="QHBoxLayout">
+       <layout class="QHBoxLayout" name="toaster_HL">
         <property name="spacing">
          <number>6</number>
         </property>
@@ -97,13 +97,20 @@
         </item>
         <item>
          <widget class="QLabel" name="toasterLabel">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="text">
            <string notr="true">RetroShare</string>
           </property>
          </widget>
         </item>
         <item>
-         <spacer>
+         <spacer name="toaster_HSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -141,7 +148,7 @@
        </layout>
       </item>
       <item row="1" column="0">
-       <layout class="QGridLayout" name="gridLayout">
+       <layout class="QGridLayout" name="buttons_GL">
         <property name="spacing">
          <number>6</number>
         </property>
@@ -240,7 +247,7 @@ background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67,
          </widget>
         </item>
         <item row="0" column="1" colspan="2">
-         <widget class="StyledLabel" name="textLabel">
+         <widget class="QLabel" name="textLabel">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -255,6 +262,7 @@ background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67,
           </property>
           <property name="font">
            <font>
+            <pointsize>12</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -272,11 +280,6 @@ background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67,
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
   <customwidget>
    <class>AvatarWidget</class>
    <extends>QLabel</extends>

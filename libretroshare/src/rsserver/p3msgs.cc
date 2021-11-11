@@ -530,9 +530,9 @@ bool p3Msgs::acceptLobbyInvite(const ChatLobbyId& id,const RsGxsId& gxs_id)
 {
     return mChatSrv->acceptLobbyInvite(id,gxs_id) ;
 }
-void p3Msgs::denyLobbyInvite(const ChatLobbyId& id) 
+bool p3Msgs::denyLobbyInvite(const ChatLobbyId& id)
 {
-	mChatSrv->denyLobbyInvite(id) ;
+    return mChatSrv->denyLobbyInvite(id) ;
 }
 void p3Msgs::getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites) 
 {

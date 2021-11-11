@@ -25,12 +25,12 @@
 #include <set>
 
 #include "gui/common/rwindow.h"
+#include "gui/common/RSComboBox.h"
 
 namespace Ui {
 class MainWindow;
 }
 
-class QComboBox;
 class QLabel;
 class QActionGroup;
 class QListWidgetItem;
@@ -174,7 +174,7 @@ public:
     void removeStatusObject(QObject *pObject);
     void setStatus(QObject *pObject, int nStatus);
 
-    QComboBox *statusComboBoxInstance();
+    RSComboBox *statusComboBoxInstance();
     PeerStatus *peerstatusInstance();
     NATStatus *natstatusInstance();
     DHTStatus *dhtstatusInstance();
@@ -294,7 +294,7 @@ private:
     QAction *toggleVisibilityAction, *toolAct;
     QList<UserNotify*> userNotifyList;
 
-    QComboBox *statusComboBox;
+    RSComboBox *statusComboBox;
     PeerStatus *peerstatus;
     NATStatus *natstatus;
     DHTStatus *dhtstatus;

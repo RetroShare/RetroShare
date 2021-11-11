@@ -48,7 +48,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QComboBox" name="f_paragraph">
+       <widget class="RSComboBox" name="f_paragraph">
         <property name="focusPolicy">
          <enum>Qt::ClickFocus</enum>
         </property>
@@ -61,7 +61,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="f_fontsize">
+       <widget class="RSComboBox" name="f_fontsize">
         <property name="font">
          <font>
           <family>MS Sans Serif</family>
@@ -594,6 +594,11 @@
    <class>MimeTextEdit</class>
    <extends>QTextEdit</extends>
    <header>gui/common/MimeTextEdit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

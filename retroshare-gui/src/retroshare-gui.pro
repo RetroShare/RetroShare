@@ -113,7 +113,6 @@ CONFIG += gxscircles
 
 # Other Disabled Bits.
 #CONFIG += framecatcher
-#CONFIG += blogs
 
 ## To enable unfinished services
 #CONFIG += wikipoos
@@ -531,6 +530,7 @@ HEADERS +=  rshare.h \
             gui/common/TagDefs.h \
             gui/common/GroupDefs.h \
             gui/common/Emoticons.h \
+            gui/common/RSComboBox.h \
             gui/common/RSListWidgetItem.h \
             gui/common/RSTextEdit.h \
             gui/common/RSPlainTextEdit.h \
@@ -566,8 +566,6 @@ HEADERS +=  rshare.h \
             gui/common/RsBanListToolButton.h \
             gui/common/FlowLayout.h \
             gui/common/PictureFlow.h \
-            gui/common/StyledLabel.h \
-            gui/common/StyledElidedLabel.h \
             gui/common/ToasterNotify.h \
             gui/style/RSStyle.h \
             gui/style/StyleDialog.h \
@@ -860,6 +858,7 @@ SOURCES +=  main.cpp \
             gui/common/TagDefs.cpp \
             gui/common/GroupDefs.cpp \
             gui/common/Emoticons.cpp \
+            gui/common/RSComboBox.cpp \
             gui/common/RSListWidgetItem.cpp \
             gui/common/RSTextEdit.cpp \
             gui/common/RSPlainTextEdit.cpp \
@@ -895,8 +894,6 @@ SOURCES +=  main.cpp \
             gui/common/RsBanListToolButton.cpp \
             gui/common/FlowLayout.cpp \
             gui/common/PictureFlow.cpp \
-            gui/common/StyledLabel.cpp \
-            gui/common/StyledElidedLabel.cpp \
             gui/common/ToasterNotify.cpp \
             gui/style/RSStyle.cpp \
             gui/style/StyleDialog.cpp \
@@ -1007,7 +1004,9 @@ SOURCES +=  main.cpp \
 #            gui/feeds/ChanNewItem.cpp \
 #            gui/feeds/ChanMsgItem.cpp \
 
-RESOURCES += gui/images.qrc gui/icons.qrc lang/lang.qrc gui/help/content/content.qrc gui/emojione.qrc
+RESOURCES += gui/images.qrc gui/icons.qrc lang/lang.qrc gui/help/content/content.qrc gui/emojione.qrc \
+  gui/qss/stylesheet/qdarkstyle/dark/Standard_Dark.qrc \
+  gui/qss/stylesheet/qdarkstyle/light/Standard_Light.qrc
 
 TRANSLATIONS +=  \
             lang/retroshare_ca_ES.ts \

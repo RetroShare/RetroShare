@@ -24,6 +24,7 @@
        <family>MS Sans Serif</family>
        <pointsize>11</pointsize>
        <weight>75</weight>
+       <italic>true</italic>
        <bold>true</bold>
       </font>
      </property>
@@ -36,14 +37,14 @@
     </widget>
    </item>
    <item row="1" column="0" colspan="2">
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="plainFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="plainFrame_GL">
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -133,7 +134,10 @@
        <property name="font">
         <font>
          <family>MS Sans Serif</family>
-         <pointsize>9</pointsize>
+         <pointsize>11</pointsize>
+         <weight>75</weight>
+         <italic>true</italic>
+         <bold>true</bold>
         </font>
        </property>
        <property name="text">

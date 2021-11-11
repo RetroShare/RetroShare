@@ -120,6 +120,7 @@ virtual bool	shutdown() = 0; /* blocking shutdown call */
 virtual bool  getIPServersEnabled() = 0;
 virtual void  setIPServersEnabled(bool b)  = 0;
 virtual void  getIPServersList(std::list<std::string>& ip_servers)  = 0;
+virtual void  getCurrentExtIPList(std::list<std::string>& ip_list)  = 0;
 
 	// ONLY USED by p3face-config.cc WHICH WILL BE REMOVED.
 virtual void 	getNetStatus(pqiNetStatus &status) = 0;
@@ -171,6 +172,7 @@ virtual bool	shutdown(); /* blocking shutdown call */
 virtual bool  getIPServersEnabled();
 virtual void  setIPServersEnabled(bool b);
 virtual void  getIPServersList(std::list<std::string>& ip_servers);
+virtual void  getCurrentExtIPList(std::list<std::string>& ip_list);
 
 	// ONLY USED by p3face-config.cc WHICH WILL BE REMOVED.
 virtual void 	getNetStatus(pqiNetStatus &status);
@@ -307,12 +309,13 @@ void 	netStatusReset_locked();
 	uint16_t mVsDisc;
 	uint16_t mVsDht;
 
-	rstime_t   mNetInitTS;
+	rstime_t mNetInitTS;
 	uint32_t mNetStatus;
 
 	bool     mStatusChanged;
 
-	bool mUseExtAddrFinder;
+	bool     mUseExtAddrFinder;
+	rstime_t mNetExtAddrFinderTs;
 
 	/* network status flags (read by rsiface) */
 	pqiNetStatus mNetFlags;

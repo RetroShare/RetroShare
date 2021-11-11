@@ -375,7 +375,7 @@ void VOIPConfigPanel::on_qpbAudioWizard_clicked() {
 
 void VOIPConfigPanel::on_changedCurrentInputDevice(int i)
 {
-    QString s = dynamic_cast<QComboBox*>(sender())->itemData(i).toString();
+    QString s = dynamic_cast<RSComboBox*>(sender())->itemData(i).toString();
 
     videoInput->stop();
 

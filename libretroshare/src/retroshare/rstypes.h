@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2004-2006 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2004-2006  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2018-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2020-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -135,17 +137,10 @@ struct PeerBandwidthLimits : RsSerializable
 	}
 };
 
-//class SearchRequest // unused stuff.
-//{
-//	public:
-//	int searchId;
-//	RsCertId toId;  /* all zeros for everyone! */
-//	std::list<Condition> tests;
-//};
-
-
 /********************** For FileCache Interface *****************/
 
+/* G10h4ck: Having this kind of stuff on public headers is pretty dangerous for
+ * name space pollution, a C++11 enum class should be used instad ASAP */
 #define DIR_TYPE_UNKNOWN	    0x00
 #define DIR_TYPE_ROOT		0x01
 #define DIR_TYPE_PERSON  	0x02
@@ -258,7 +253,10 @@ struct DirStub : RsSerializable
 
 	uint8_t type;
 	std::string name;
-	void *ref;
+
+	/* G10h4ck do we still need to keep this as void* instead of uint64_t for
+	 * retroshare-gui sake? */
+	void* ref;
 
 	/// @see RsSerializable
 	void serial_process(RsGenericSerializer::SerializeJob j,
@@ -267,29 +265,12 @@ struct DirStub : RsSerializable
 		RS_SERIAL_PROCESS(type);
 		RS_SERIAL_PROCESS(name);
 
-#if defined(__GNUC__) && !defined(__clang__)
-#	pragma GCC diagnostic ignored "-Wstrict-aliasing"
-#endif // defined(__GNUC__) && !defined(__clang__)
-		// (Cyril) We have to do this because on some systems (MacOS) uintptr_t is unsigned long which is not well defined. It is always
-        // preferable to force type serialization to the correct size rather than letting the compiler choose for us.
-        // /!\ This structure cannot be sent over the network. The serialization would be inconsistent.
-
-		if(sizeof(ref) == 4)
-		{
-			std::uint32_t& handle(reinterpret_cast<std::uint32_t&>(ref));
-			RS_SERIAL_PROCESS(handle);
-		}
-		else if(sizeof(ref) == 8)
-		{
-			std::uint64_t& handle(reinterpret_cast<std::uint64_t&>(ref));
-			RS_SERIAL_PROCESS(handle);
-		}
-		else
-			std::cerr << __PRETTY_FUNCTION__ << ": cannot serialize raw pointer of size " << sizeof(ref) << std::endl;
-
-#if defined(__GNUC__) && !defined(__clang__)
-#	pragma GCC diagnostic pop
-#endif // defined(__GNUC__) && !defined(__clang__)
+		/* Enforce serialization as uint64_t because void* changes size (usually
+		 * 4 bytes on 32bit arch and 8 bytes on 64bit archs) depending on
+		 * architectures and make JSON API behave inconsistenly. */
+		uint64_t handle = reinterpret_cast<uint64_t>(ref);
+		RS_SERIAL_PROCESS(handle);
+		ref = reinterpret_cast<void*>(handle);
 	}
 };
 
@@ -330,9 +311,9 @@ struct DirDetails : RsSerializable
 	void serial_process(RsGenericSerializer::SerializeJob j,
 	                    RsGenericSerializer::SerializeContext& ctx) override
 	{
-		/* Enforce serialization as uint64_t because void* changes size
-		 * depending (usually 4 bytes on 32bit arch and 8 bytes on 64bit archs)
-		 */
+		/* Enforce serialization as uint64_t because void* changes size (usually
+		 * 4 bytes on 32bit arch and 8 bytes on 64bit archs) depending on
+		 * architectures and make JSON API behave inconsistenly. */
 		uint64_t handle = reinterpret_cast<uint64_t>(ref);
 		RS_SERIAL_PROCESS(handle);
 		ref = reinterpret_cast<void*>(handle);
@@ -347,7 +328,7 @@ struct DirDetails : RsSerializable
 		RS_SERIAL_PROCESS(name);
 		RS_SERIAL_PROCESS(hash);
 		RS_SERIAL_PROCESS(path);
-        RS_SERIAL_PROCESS(size);
+		RS_SERIAL_PROCESS(size);
 		RS_SERIAL_PROCESS(mtime);
 		RS_SERIAL_PROCESS(flags);
 		RS_SERIAL_PROCESS(max_mtime);

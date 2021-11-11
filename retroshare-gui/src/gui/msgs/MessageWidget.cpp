@@ -65,7 +65,7 @@
 class RsHtmlMsg : public RsHtml
 {
 public:
-	RsHtmlMsg(uint msgFlags) : RsHtml()
+	explicit RsHtmlMsg(uint msgFlags) : RsHtml()
 	{
 		this->msgFlags = msgFlags;
 	}
@@ -192,13 +192,13 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	QFont font = QFont("Arial", 10, QFont::Bold);
 	ui.subjectText->setFont(font);
 
-	ui.toText->setMaximumHeight(ui.toText->fontMetrics().lineSpacing()*1.5);
+	ui.trans_ToText->setMaximumHeight(ui.trans_ToText->fontMetrics().lineSpacing()*1.5);
 	ui.ccLabel->setVisible(false);
-	ui.ccText->setVisible(false);
-	ui.ccText->setMaximumHeight(ui.ccText->fontMetrics().lineSpacing()*1.5);
+	ui.trans_CCText->setVisible(false);
+	ui.trans_CCText->setMaximumHeight(ui.trans_CCText->fontMetrics().lineSpacing()*1.5);
 	ui.bccLabel->setVisible(false);
-	ui.bccText->setVisible(false);
-	ui.bccText->setMaximumHeight(ui.bccText->fontMetrics().lineSpacing()*1.5);
+	ui.trans_BCCText->setVisible(false);
+	ui.trans_BCCText->setMaximumHeight(ui.trans_BCCText->fontMetrics().lineSpacing()*1.5);
 
 	ui.tagsLabel->setVisible(false);
 
@@ -210,7 +210,7 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 
 	ui.dateText-> setText("");
 	
-	ui.inviteFrame->hide();
+	ui.info_Frame_Invite->hide();
 }
 
 MessageWidget::~MessageWidget()
@@ -355,18 +355,18 @@ void MessageWidget::getcurrentrecommended()
 
 	std::map<int,FileInfo> files ;
 
-	for (QModelIndexList::const_iterator it(list.begin());it!=list.end();++it) {
-		FileInfo& fi(files[it->row()]) ;
+	for (auto &it : list) {
+		FileInfo& fi(files[it.row()]) ;
 
-		switch (it->column()) {
+		switch (it.column()) {
 		case COLUMN_FILE_NAME:
-			fi.fname = it->data().toString().toUtf8().constData();
+			fi.fname = it.data().toString().toUtf8().constData();
 			break ;
 		case COLUMN_FILE_SIZE:
-			fi.size = it->data(Qt::UserRole).toULongLong() ;
+			fi.size = it.data(Qt::UserRole).toULongLong() ;
 			break ;
 		case COLUMN_FILE_HASH:
-			fi.hash = RsFileHash(it->data().toString().toStdString()) ;
+			fi.hash = RsFileHash(it.data().toString().toStdString()) ;
 			break ;
 		}
 	}
@@ -491,17 +491,17 @@ void MessageWidget::fill(const std::string &msgId)
 	if (currMsgId.empty()) {
 		/* blank it */
 		ui.dateText-> setText("");
-		ui.toText->setText("");
+		ui.trans_ToText->setText("");
 		ui.fromText->setText("");
 		ui.filesText->setText("");
 
 		ui.ccLabel->setVisible(false);
-		ui.ccText->setVisible(false);
-		ui.ccText->clear();
+		ui.trans_CCText->setVisible(false);
+		ui.trans_CCText->clear();
 
 		ui.bccLabel->setVisible(false);
-		ui.bccText->setVisible(false);
-		ui.bccText->clear();
+		ui.trans_BCCText->setVisible(false);
+		ui.trans_BCCText->clear();
 
 		ui.subjectText->setText("");
 		ui.msgList->clear();
@@ -511,7 +511,7 @@ void MessageWidget::fill(const std::string &msgId)
 		clearTagLabels();
 		checkLength();
 
-		ui.inviteFrame->hide();
+		ui.info_Frame_Invite->hide();
 		ui.expandFilesButton->setChecked(false);
 		ui.downloadButton->setEnabled(false);
 		togglefileview(true);
@@ -543,15 +543,15 @@ void MessageWidget::fill(const std::string &msgId)
 	}
 	
 	if ((msgInfo.msgflags & RS_MSG_USER_REQUEST) && msgInfo.rsgxsid_srcId.isNull()){
-		ui.inviteFrame->show();
+		ui.info_Frame_Invite->show();
 		ui.sendInviteButton->hide();
-		ui.infoLabel->setText(tr("You got an invite to make friend! You may accept this request."));
+		ui.infoLabel_Invite->setText(tr("You got an invite to make friend! You may accept this request."));
 	} else if ((msgInfo.msgflags & RS_MSG_USER_REQUEST) && (!msgInfo.rsgxsid_srcId.isNull())){
-		ui.inviteFrame->show();
+		ui.info_Frame_Invite->show();
 		ui.sendInviteButton->show();
-		ui.infoLabel->setText(tr("You got an invite to make friend! You may accept this request and send your own Certificate back"));
+		ui.infoLabel_Invite->setText(tr("You got an invite to make friend! You may accept this request and send your own Certificate back"));
 	} else {
-		ui.inviteFrame->hide();
+		ui.info_Frame_Invite->hide();
 	}
 
 	const std::list<FileInfo> &recList = msgInfo.files;
@@ -594,12 +594,12 @@ void MessageWidget::fill(const std::string &msgId)
 			text += link.toHtml() + "   ";
 	}
 
-	ui.toText->setText(text);
+	ui.trans_ToText->setText(text);
 
-    if (!msgInfo.rspeerid_msgcc.empty() || !msgInfo.rsgxsid_msgcc.empty())
-    {
+	if (!msgInfo.rspeerid_msgcc.empty() || !msgInfo.rsgxsid_msgcc.empty())
+	{
 		ui.ccLabel->setVisible(true);
-		ui.ccText->setVisible(true);
+		ui.trans_CCText->setVisible(true);
 
 		text.clear();
 		for(std::set<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgcc.begin(); pit != msgInfo.rspeerid_msgcc.end(); ++pit) {
@@ -613,17 +613,17 @@ void MessageWidget::fill(const std::string &msgId)
 				text += link.toHtml() + "   ";
 		}
 
-		ui.ccText->setText(text);
+		ui.trans_CCText->setText(text);
 	} else {
 		ui.ccLabel->setVisible(false);
-		ui.ccText->setVisible(false);
-		ui.ccText->clear();
+		ui.trans_CCText->setVisible(false);
+		ui.trans_CCText->clear();
 	}
 
 	if (!msgInfo.rspeerid_msgbcc.empty() || !msgInfo.rsgxsid_msgbcc.empty())
 	{
 		ui.bccLabel->setVisible(true);
-		ui.bccText->setVisible(true);
+		ui.trans_BCCText->setVisible(true);
 
 		text.clear();
 		for(std::set<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgbcc.begin(); pit != msgInfo.rspeerid_msgbcc.end(); ++pit) {
@@ -637,11 +637,11 @@ void MessageWidget::fill(const std::string &msgId)
 				text += link.toHtml() + "   ";
 		}
 
-		ui.bccText->setText(text);
+		ui.trans_BCCText->setText(text);
 	} else {
 		ui.bccLabel->setVisible(false);
-		ui.bccText->setVisible(false);
-		ui.bccText->clear();
+		ui.trans_BCCText->setVisible(false);
+		ui.trans_BCCText->clear();
 	}
 
 	ui.dateText->setText(DateTime::formatDateTime(msgInfo.ts));

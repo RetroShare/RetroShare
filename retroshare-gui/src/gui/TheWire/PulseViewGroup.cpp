@@ -42,7 +42,7 @@ PulseViewGroup::PulseViewGroup(PulseViewHolder *holder, RsWireGroupSPtr group)
 void PulseViewGroup::setup()
 {
 	if (mGroup) {
-		connect(toolButton_follow, SIGNAL(clicked()), this, SLOT(actionFollow()));
+		connect(followButton, SIGNAL(clicked()), this, SLOT(actionFollow()));
 
 		label_groupName->setText("@" + QString::fromStdString(mGroup->mMeta.mGroupName));
 		label_authorName->setText(BoldString(QString::fromStdString(mGroup->mMeta.mAuthorId.toStdString())));

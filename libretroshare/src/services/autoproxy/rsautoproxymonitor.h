@@ -31,23 +31,27 @@ class autoProxyCallback;
 
 namespace autoProxyType {
     enum autoProxyType_enum {
-		I2PBOB
+//		I2PBOB,
+		I2PSAM3
 	};
 }
 
 namespace autoProxyTask {
     enum autoProxyTask_enum {
 		/* async tasks */
-		start,				///< start up proxy
-		stop,				///< shut down proxy
-		receiveKey,			///< renew proxy key (if any)
-		proxyStatusCheck,	///< use to check if the proxy is still running
+		start,               ///< start up proxy
+		stop,                ///< shut down proxy
+		receiveKey,          ///< renew proxy key (if any)
+		lookupKey,           ///< look up a base32 addr
+		proxyStatusCheck,    ///< use to check if the proxy is still running
+		establishConnection, ///< create a connection to a given public key or base32 address
+		closeConnection,	 ///< closes a connection
 		/* sync tasks */
-		status,				///< get status from auto proxy
-		getSettings,		///< get setting from auto proxy
-		setSettings,		///< set setting of auto proxy
-		reloadConfig,		///< signal config reload/rebuild
-		getErrorInfo		///< get error information from auto proxy
+		status,       ///< get status from auto proxy
+		getSettings,  ///< get setting from auto proxy
+		setSettings,  ///< set setting of auto proxy
+		reloadConfig, ///< signal config reload/rebuild
+		getErrorInfo  ///< get error information from auto proxy
 	};
 }
 

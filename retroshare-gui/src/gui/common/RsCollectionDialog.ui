@@ -23,7 +23,7 @@
   <property name="sizeGripEnabled">
    <bool>true</bool>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
+  <layout class="QGridLayout" name="RsCollectionDialog_GL">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -50,14 +50,14 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="gradFrame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="gradFrame_GL">
       <item row="0" column="0">
        <widget class="QSplitter" name="_mainSplitter">
         <property name="orientation">
@@ -70,7 +70,7 @@
          <property name="frameShadow">
           <enum>QFrame::Plain</enum>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout">
+         <layout class="QVBoxLayout" name="_FrameEdit_VL">
           <item>
            <widget class="QFrame" name="_frameInfo">
             <property name="sizePolicy">
@@ -88,7 +88,7 @@
             <property name="lineWidth">
              <number>0</number>
             </property>
-            <layout class="QHBoxLayout">
+            <layout class="QHBoxLayout" name="_frameInfo_HL">
              <property name="spacing">
               <number>0</number>
              </property>
@@ -334,7 +334,7 @@
                       <string notr="true"/>
                      </property>
                      <property name="icon">
-                      <iconset resource="../images.qrc">
+                      <iconset>
                        <normaloff>:/images/deletemail24.png</normaloff>:/images/deletemail24.png</iconset>
                      </property>
                     </widget>
@@ -410,7 +410,7 @@
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout">
+           <layout class="QHBoxLayout" name="buttons_HL">
             <item>
              <widget class="QCheckBox" name="_removeDuplicate_CB">
               <property name="text">
@@ -419,7 +419,7 @@
              </widget>
             </item>
             <item>
-             <spacer>
+             <spacer name="buttons_HSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -498,7 +498,7 @@
     </widget>
    </item>
   </layout>
-  <zorder>frame</zorder>
+  <zorder>gradFrame</zorder>
   <zorder>headerFrame</zorder>
  </widget>
  <customwidgets>

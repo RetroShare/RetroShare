@@ -161,7 +161,7 @@ rs_webui {
 
 HEADERS += plugins/pluginmanager.h \
 		plugins/dlfcn_win32.h \
-		rsitems/rspluginitems.h \
+    rsitems/rspluginitems.h \
     util/i2pcommon.h \
     util/rsinitedptr.h
 
@@ -398,7 +398,6 @@ HEADERS +=	pqi/authssl.h \
 			pqi/pqissl.h \
 			pqi/pqissllistener.h \
 			pqi/pqisslpersongrp.h \
-                        pqi/pqissli2pbob.h \
 			pqi/pqisslproxy.h \
 			pqi/pqistore.h \
 			pqi/pqistreamer.h \
@@ -459,7 +458,7 @@ HEADERS +=	rsitems/rsitem.h \
 			rsitems/rsgxsupdateitems.h \
 			rsitems/rsserviceinfoitems.h \
 
-HEADERS +=  services/autoproxy/p3i2pbob.h \
+HEADERS +=  \
             services/rseventsservice.h \
             services/autoproxy/rsautoproxymonitor.h \
             services/p3msgservice.h \
@@ -513,8 +512,7 @@ HEADERS +=	util/folderiterator.h \
     util/cxx11retrocompat.h \
     util/cxx14retrocompat.h \
     util/cxx17retrocompat.h \
-            util/rsurl.h \
-    util/rserrno.h
+            util/rsurl.h
 
 SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftcontroller.cc \
@@ -563,7 +561,6 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/pqissl.cc \
 			pqi/pqissllistener.cc \
 			pqi/pqisslpersongrp.cc \
-                        pqi/pqissli2pbob.cpp \
 			pqi/pqisslproxy.cc \
 			pqi/pqistore.cc \
 			pqi/pqistreamer.cc \
@@ -621,7 +618,6 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 
 SOURCES +=  services/autoproxy/rsautoproxymonitor.cc \
     services/rseventsservice.cc \
-            services/autoproxy/p3i2pbob.cc \
             services/p3msgservice.cc \
 			services/p3service.cc \
 			services/p3statusservice.cc \
@@ -641,10 +637,10 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsexpr.cc \
 			util/smallobject.cc \
 			util/rsdir.cc \
-			util/rsmemory.cc \
 			util/rsdiscspace.cc \
 			util/rsnet.cc \
 			util/rsnet_ss.cc \
+			util/rsdnsutils.cc \
 			util/extaddrfinder.cc \
 			util/dnsresolver.cc \
 			util/rsprint.cc \
@@ -655,8 +651,7 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsrecogn.cc \
             util/rstime.cc \
             util/rsurl.cc \
-            util/rsbase64.cc \
-    util/rserrno.cc
+            util/rsbase64.cc
 
 equals(RS_UPNP_LIB, miniupnpc) {
         HEADERS += rs_upnp/upnputil.h rs_upnp/upnphandler_miniupnp.h
@@ -720,7 +715,8 @@ SOURCES += rsitems/rsnxsitems.cc \
 	gxs/gxstokenqueue.cc \
 	gxs/rsgxsnetutils.cc \
 	gxs/rsgxsutil.cc \
-	gxs/rsgxsrequesttypes.cc
+        gxs/rsgxsrequesttypes.cc \
+        gxs/rsnxsobserver.cpp
 
 # Tor
 HEADERS += 	retroshare/rstor.h 
@@ -986,6 +982,14 @@ rs_jsonapi {
     SOURCES += jsonapi/jsonapi.cpp
 }
 
+rs_deep_forums_index {
+    HEADERS *= deep_search/commonutils.hpp
+    SOURCES *= deep_search/commonutils.cpp
+
+    HEADERS += deep_search/forumsindex.hpp
+    SOURCES += deep_search/forumsindex.cpp
+}
+
 rs_deep_channels_index {
     HEADERS *= deep_search/commonutils.hpp
     SOURCES *= deep_search/commonutils.cpp
@@ -1057,6 +1061,44 @@ rs_broadcast_discovery {
             $(MAKE)
         QMAKE_EXTRA_COMPILERS += udpdiscoverycpplib
     }
+}
+
+rs_sam3 {
+    SOURCES += \
+        services/autoproxy/p3i2psam3.cpp \
+        pqi/pqissli2psam3.cpp \
+
+    HEADERS += \
+        services/autoproxy/p3i2psam3.h \
+        pqi/pqissli2psam3.h \
+}
+
+rs_sam3_libsam3 {
+    DUMMYQMAKECOMPILERINPUT = FORCE
+    libsam3.name = Generating libsam3.
+    libsam3.input = DUMMYQMAKECOMPILERINPUT
+    libsam3.output = $$clean_path($${LIBSAM3_BUILD_PATH}/libsam3.a)
+    libsam3.CONFIG += target_predeps combine
+    libsam3.variable_out = PRE_TARGETDEPS
+    win32-g++:isEmpty(QMAKE_SH) {
+        LIBSAM3_MAKE_PARAMS = CC=gcc
+        libsam3.commands = \
+            cd /D $$shell_path($${RS_SRC_PATH}) && git submodule update --init supportlibs/libsam3 || cd . $$escape_expand(\\n\\t) \
+            $(CHK_DIR_EXISTS) $$shell_path($$LIBSAM3_BUILD_PATH) $(MKDIR) $$shell_path($${LIBSAM3_BUILD_PATH}) $$escape_expand(\\n\\t) \
+            $(COPY_DIR) $$shell_path($${LIBSAM3_SRC_PATH}) $$shell_path($${LIBSAM3_BUILD_PATH}) || cd . $$escape_expand(\\n\\t)
+    } else {
+        LIBSAM3_MAKE_PARAMS =
+        libsam3.commands = \
+            cd $${RS_SRC_PATH} && ( \
+            git submodule update --init supportlibs/libsam3 || \
+            true ) && \
+            mkdir -p $${LIBSAM3_BUILD_PATH} && \
+            (cp -r $${LIBSAM3_SRC_PATH}/* $${LIBSAM3_BUILD_PATH} || true) &&
+    }
+    libsam3.commands += \
+        cd $$shell_path($${LIBSAM3_BUILD_PATH}) && \
+        $(MAKE) build $${LIBSAM3_MAKE_PARAMS}
+    QMAKE_EXTRA_COMPILERS += libsam3
 }
 
 ###########################################################################################################

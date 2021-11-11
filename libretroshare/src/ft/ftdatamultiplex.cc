@@ -1039,6 +1039,23 @@ void ftDataMultiplex::handlePendingCrcRequests()
 			}
 }
 
+bool ftDataMultiplex::deleteServer(const RsFileHash& hash)
+{
+    RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
+
+    auto sit = mServers.find(hash);
+
+    if(sit == mServers.end())
+        return false;
+
+    // We don't delete servers that are clients at the same time !
+    if(dynamic_cast<ftFileCreator*>(sit->second) == NULL)
+        delete sit->second;
+
+    mServers.erase(sit);
+    return true;
+}
+
 void ftDataMultiplex::deleteUnusedServers()
 {
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/

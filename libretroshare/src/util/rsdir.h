@@ -4,8 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2004-2007  Robert Fernie <retroshare@lunamutt.com>            *
- * Copyright (C) 2020  Gioacchino Mazzurco <gio@eigenlab.org>                  *
- * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>       *
+ * Copyright (C) 2020-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2020-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -27,11 +27,13 @@
 #include <string>
 #include <list>
 #include <set>
-#include <stdint.h>
+#include <cstdint>
+#include <system_error>
 
 class RsThread;
 
-#include <retroshare/rstypes.h>
+#include "retroshare/rstypes.h"
+#include "util/rsmemory.h"
 
 #ifndef WINDOWS_SYS
 typedef int rs_lock_handle_t;
@@ -79,10 +81,11 @@ const char *scanf_string_for_uint(int bytes) ;
 
 int     	breakupDirList(const std::string& path, std::list<std::string> &subdirs);
 
-// Splits the path into parent directory and file. File can be empty if full_path is a dir ending with '/'
-// if full_path does not contain a directory, then dir will be "." and file will be full_path.
-
-bool        splitDirFromFile(const std::string& full_path,std::string& dir, std::string& file);
+/** Splits the path into parent directory and file. File can be empty if
+ * full_path is a dir ending with '/' if full_path does not contain a directory,
+ * then dir will be "." and file will be full_path */
+bool splitDirFromFile( const std::string& full_path,
+                       std::string& dir, std::string& file );
 
 bool 		copyFile(const std::string& source,const std::string& dest);
 
@@ -92,6 +95,17 @@ bool moveFile(const std::string& source, const std::string& dest);
 bool 		removeFile(const std::string& file);
 bool 		fileExists(const std::string& file);
 bool    	checkFile(const std::string& filename,uint64_t& file_size,bool disallow_empty_file = false);
+
+/**
+ * @brief Retrieve file last modification time
+ * @param path path of the file
+ * @param errc optional storage for error details
+ * @return 0 on error, file modification time represented as unix epoch otherwise.
+ */
+rstime_t lastWriteTime(
+        const std::string& path,
+        std::error_condition& errc = RS_DEFAULT_STORAGE_PARAM(std::error_condition) );
+
 bool    	checkDirectory(const std::string& dir);
 bool    	checkCreateDirectory(const std::string& dir);
 
