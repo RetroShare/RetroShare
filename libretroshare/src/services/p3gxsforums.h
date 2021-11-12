@@ -175,6 +175,8 @@ public:
 	        rs_owner_ptr<uint8_t>& resultData, uint32_t& resultSize ) override;
 #endif
 
+	std::error_condition requestSynchronization() override;
+
     /// implementation of rsGxsGorums
     ///
 	bool getGroupData(const uint32_t &token, std::vector<RsGxsForumGroup> &groups) override;
