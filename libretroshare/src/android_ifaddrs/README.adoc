@@ -1,0 +1,45 @@
+= README Android ifaddrs
+
+Android API level < 24 doesn't provide `getifaddrs` and related functions, we
+have tested multiple ways to overcome this issue.
+
+
+== Non Weorking alternative implementations
+
+https://github.com/kmackay/android-ifaddrs
+https://github.com/morristech/android-ifaddrs
+https://www.openhub.net/p/android-ifaddrs/
+
+Compiles but then segfault at runtime.
+
+
+== Qt implementation
+
+Using `QNetworkInterface::allAddresses()` provided by Qt works but at time of
+writing (Q4 2021) on newer Android the log is flooded by warnings as we reported
+here
+https://bugreports.qt.io/browse/QTBUG-78659
+plus depending on Qt networking module just for this is frustrating.
+
+Update: the warning flood seems have been fixed in later Qt versions
+https://bugreports.qt.io/browse/QTBUG-86394
+
+This solution is the first working we implemented in our code it is disabled by
+default but can be enabled passing `DEFINES+=LIBRETROSHARE_ANDROID_IFADDRS_QT`
+when running `qmake` command.
+
+
+== Code copied from Android Gingerbread release
+
+As explained here
+https://stackoverflow.com/a/57112520
+
+even older Android have `getifaddrs` implementations but doesn't make them
+accessible in the API, in particular the one included in Android Gingerbread
+
+https://android.googlesource.com/platform/libcore/+/refs/heads/gingerbread-release/luni/src/main/native/ifaddrs-android.h
+https://android.googlesource.com/platform/libcore/+/refs/heads/gingerbread-release/
+
+is particularly easy to include in our code base and compile.
+
+This solution seems the best fitting and doesn't introduce dependency on Qt.
