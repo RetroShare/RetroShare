@@ -32,7 +32,7 @@
       <enum>QLayout::SetMaximumSize</enum>
      </property>
      <item>
-      <widget class="QFrame" name="titleBarFrame">
+      <widget class="QFrame" name="headerBFrame">
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -51,7 +51,7 @@
        <property name="frameShadow">
         <enum>QFrame::Plain</enum>
        </property>
-       <layout class="QHBoxLayout" name="titleBarFrameHLayout">
+       <layout class="QHBoxLayout" name="headerBFrameHLayout">
         <property name="leftMargin">
          <number>2</number>
         </property>
