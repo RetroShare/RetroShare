@@ -907,12 +907,12 @@ bool p3GxsForums::subscribeToForum(const RsGxsGroupId& groupId, bool subscribe )
 	acknowledgeGrp(token, grp);
 
 	/* Since subscribe has been requested, the caller is most probably
-	 * interested in getting the group messages ASAP so pull from peers without
-	 * waiting GXS sync timer.
+	 * interested in getting the group messages ASAP so check updates from peers
+	 * without waiting GXS sync timer.
 	 * Do it here as this is meaningful or not depending on the service.
 	 * Do it only after the token has been completed otherwise the pull have no
 	 * effect. */
-	if(subscribe) RsGenExchange::netService()->pullFromPeers();
+	if(subscribe) RsGenExchange::netService()->checkUpdatesFromPeers();
 
 	return true;
 }
@@ -1161,7 +1161,8 @@ std::error_condition p3GxsForums::setPostKeepForever(
 
 std::error_condition p3GxsForums::requestSynchronization()
 {
-	RsGenExchange::netService()->pullFromPeers();
+	auto errc = RsGenExchange::netService()->checkUpdatesFromPeers();
+	if(errc) return errc;
 	return RsGenExchange::netService()->requestPull();
 }
 

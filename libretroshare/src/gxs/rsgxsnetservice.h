@@ -252,7 +252,8 @@ public:
 
 
 	/// @see RsNetworkExchangeService
-	void pullFromPeers(std::set<RsPeerId> peers = std::set<RsPeerId>()) override;
+	std::error_condition checkUpdatesFromPeers(
+	        std::set<RsPeerId> peers = std::set<RsPeerId>() ) override;
 
 	/// @see RsNetworkExchangeService
 	std::error_condition requestPull(

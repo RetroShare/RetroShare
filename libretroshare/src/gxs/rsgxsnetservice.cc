@@ -35,7 +35,7 @@
 //    |
 //    +----------- sharePublishKeys()
 //    |
-//    +----------- pullFromPeers()
+//    +----------- checkUpdatesFromPeers()
 //    |              |
 //    |              +--if AutoSync--- send global UpdateTS of each peer to itself => the peer knows the last
 //    |              |                 time current peer has received an updated from himself
@@ -127,14 +127,14 @@
 //                                                        (Set at server side to be mGrpServerUpdateItem->grpUpdateTS)
 //
 //                                                        Only updated in processCompletedIncomingTransaction() from Grp list transaction.
-//                                                        Used in pullFromPeers() sending in RsNxsSyncGrp once to all peers: peer will send data if
+//                                                        Used in checkUpdatesFromPeers() sending in RsNxsSyncGrp once to all peers: peer will send data if
 //                                                        has something new. All time comparisons are in the friends' clock time.
 //
 //     mClientMsgUpdateMap: map< RsPeerId, map<grpId,TimeStamp > >
 //
 //                                                        Last msg list modification time sent by that peer Id
 //                                                        Updated in processCompletedIncomingTransaction() from Grp list trans.
-//                                                        Used in pullFromPeers() sending in RsNxsSyncGrp once to all peers.
+//                                                        Used in checkUpdatesFromPeers() sending in RsNxsSyncGrp once to all peers.
 //                                                        Set at server to be mServerMsgUpdateMap[grpId]->msgUpdateTS
 //
 //     mGrpServerUpdateItem:  TimeStamp                   Last group local modification timestamp over all groups
@@ -150,7 +150,7 @@
 //
 //    tick()                                                                                                    tick()
 //      |                                                                                                         |
-//      +---- pullFromPeers                                                                                       +-- recvNxsItemQueue()
+//      +---- checkUpdatesFromPeers()                                                                             +-- recvNxsItemQueue()
 //                 |                                                                                                   |
 //                 +---------------- Send global UpdateTS of each peer to itself => the peer knows        +--------->  +------ handleRecvSyncGroup( RsNxsSyncGrp*)
 //                 |                 the last msg sent (stored in mClientGrpUpdateMap[peer_id]),          |            |            - parse all subscribed groups. For each, send a RsNxsSyncGrpItem with publish TS
@@ -457,7 +457,7 @@ int RsGxsNetService::tick()
 
     if((elapsed) < now)
     {
-		pullFromPeers();
+		checkUpdatesFromPeers();
         syncGrpStatistics();
 		checkDistantSyncState();
 
@@ -570,7 +570,8 @@ RsGxsGroupId RsGxsNetService::hashGrpId(const RsGxsGroupId& gid,const RsPeerId& 
     return RsGxsGroupId( RsDirUtil::sha1sum(tmpmem,SIZE).toByteArray() );
 }
 
-void RsGxsNetService::pullFromPeers(std::set<RsPeerId> peers)
+std::error_condition RsGxsNetService::checkUpdatesFromPeers(
+        std::set<RsPeerId> peers )
 {
 #ifdef NXS_NET_DEBUG_0
 	RS_DBG("this=", (void*)this, ". serviceInfo=", mServiceInfo);
@@ -594,8 +595,8 @@ void RsGxsNetService::pullFromPeers(std::set<RsPeerId> peers)
 		}
 	}
 
-	// Still empty? Then nothing to do
-	if (peers.empty()) return;
+	// Still empty? Reports there are no available peers
+	if (peers.empty()) return std::errc::network_down;
 
 
 	RS_STACK_MUTEX(mNxsMutex);
@@ -624,7 +625,7 @@ void RsGxsNetService::pullFromPeers(std::set<RsPeerId> peers)
 		generic_sendItem(grp);
 	}
 
-	if(!mAllowMsgSync) return;
+	if(!mAllowMsgSync) return std::error_condition();
 
 #ifndef GXS_DISABLE_SYNC_MSGS
 
@@ -742,7 +743,9 @@ void RsGxsNetService::pullFromPeers(std::set<RsPeerId> peers)
         }
     }
 
-#endif
+#endif // ndef GXS_DISABLE_SYNC_MSGS
+
+	return std::error_condition();
 }
 
 void RsGxsNetService::generic_sendItem(rs_owner_ptr<RsItem> si)
@@ -5123,7 +5126,7 @@ std::error_condition RsGxsNetService::requestPull(std::set<RsPeerId> peers)
 void RsGxsNetService::handlePullRequest(
         std::unique_ptr<RsNxsPullRequestItem> item )
 {
-	pullFromPeers(std::set<RsPeerId>{item->PeerId()});
+	checkUpdatesFromPeers(std::set<RsPeerId>{item->PeerId()});
 }
 
 bool RsGxsNetService::getGroupServerUpdateTS(const RsGxsGroupId& gid,rstime_t& group_server_update_TS, rstime_t& msg_server_update_TS)

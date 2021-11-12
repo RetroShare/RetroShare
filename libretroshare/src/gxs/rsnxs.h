@@ -327,10 +327,10 @@ public:
 	}
 
 	/**
-	 * @brief Pull new stuff from peers
-	 * @param peers peers to pull from, if empty all available peers are pulled
+	 * @brief Check if new stuff is available from peers
+	 * @param peers peers to check, if empty all available peers are checked
 	 */
-	virtual void pullFromPeers(
+	virtual std::error_condition checkUpdatesFromPeers(
 	        std::set<RsPeerId> peers = std::set<RsPeerId>() ) = 0;
 
 	/**
