@@ -156,6 +156,7 @@ rs_webui {
 }
 
 HEADERS += plugins/pluginmanager.h \
+    friend_server/socketbio.h \
 		plugins/dlfcn_win32.h \
     rsitems/rspluginitems.h \
     util/i2pcommon.h \
@@ -404,9 +405,10 @@ HEADERS +=	pqi/authssl.h \
                         pqi/p3servicecontrol.h
 
 SOURCES += friend_server/fsclient.h \
-	   friend_server/fsbio.h \
 	   friend_server/fsitem.h \
-	   friend_server/fsmanager.h 
+	   friend_server/fsmanager.h \
+	   friend_server/socketbio.cc \
+	   friend_server/tcpsocket.h
 
 HEADERS +=	rsserver/p3face.h \
 			rsserver/p3history.h \
@@ -572,8 +574,8 @@ SOURCES +=	pqi/authgpg.cc \
                         pqi/p3servicecontrol.cc
 
 SOURCES += friend_server/fsclient.cc \
-	   friend_server/fsbio.cc \
-	   friend_server/fsmanager.cc 
+	   friend_server/fsmanager.cc \
+	   friend_server/tcpsocket.cc
 
 SOURCES += 		rsserver/p3face-config.cc \
 			rsserver/p3face-server.cc \

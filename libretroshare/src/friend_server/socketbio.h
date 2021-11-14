@@ -26,12 +26,19 @@ class FsBioInterface: public BinInterface
 {
 public:
     FsBioInterface(int socket);
+    ~FsBioInterface();
 
      // Implements BinInterface methods
 
     int tick() override;
 
+    // Schedule data to be sent at the next tick(). The caller keeps memory ownership.
+    //
     int senddata(void *data, int len) override;
+
+    // Obtains new data from the interface. "data" needs to be initialized for room
+    // to len bytes. The returned value is the actual size of what was read.
+    //
     int readdata(void *data, int len) override;
 
     int netstatus() override;
@@ -49,12 +56,22 @@ public:
 
     bool bandwidthLimited() override { return false; }
 
+protected:
+    void setSocket(int s);
+    void clean();
+
 private:
+    int read_pending();
+    int write_pending();
+
     int mCLintConnt;
     bool mIsActive;
     uint32_t mTotalReadBytes;
-    uint32_t mTotalBufferBytes;
+    uint32_t mTotalInBufferBytes;
+    uint32_t mTotalWrittenBytes;
+    uint32_t mTotalOutBufferBytes;
 
     std::list<std::pair<void *,int> > in_buffer;
+    std::list<std::pair<void *,int> > out_buffer;
 };
 

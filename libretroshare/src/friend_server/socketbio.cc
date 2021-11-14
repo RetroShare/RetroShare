@@ -24,16 +24,43 @@
 #include "fsbio.h"
 
 FsBioInterface::FsBioInterface(int socket)
-    : mCLintConnt(socket),mIsActive(true)
+    : mCLintConnt(socket),mIsActive(socket!=0)
 {
     mTotalReadBytes=0;
-    mTotalBufferBytes=0;
+    mTotalInBufferBytes=0;
+    mTotalWrittenBytes=0;
+    mTotalOutBufferBytes=0;
 }
 
+void FsBioInterface::setSocket(int s)
+{
+        if(mIsActive != 0)
+        {
+            RsErr() << "Changing socket to active FsBioInterface! Canceling all pending R/W data." ;
+            close();
+        }
+    mCLintConnt = s;
+    mIsActive = (s!=0);
+}
 int FsBioInterface::tick()
 {
+    if(!mIsActive)
+    {
+        RsErr() << "Ticking a non active FsBioInterface!" ;
+        return 0;
+    }
     // 2 - read incoming data pending on existing connections
 
+    int res=0;
+
+    res += read_pending();
+    res += write_pending();
+
+    return res;
+}
+
+int FsBioInterface::read_pending()
+{
     char inBuffer[1025];
     memset(inBuffer,0,1025);
 
@@ -45,14 +72,14 @@ int FsBioInterface::tick()
         RsDbg() << "Closing!" ;
 
         close();
-        return mTotalBufferBytes;
+        return mTotalInBufferBytes;
     }
     if(readbytes < 0)
     {
         if(errno != EWOULDBLOCK && errno != EAGAIN)
             RsErr() << "read() failed. Errno=" << errno ;
 
-        return mTotalBufferBytes;
+        return mTotalInBufferBytes;
     }
 
     RsDbg() << "clintConnt: " << mCLintConnt << ", readbytes: " << readbytes ;
@@ -72,15 +99,80 @@ int FsBioInterface::tick()
         memcpy(ptr,inBuffer,readbytes);
 
         in_buffer.push_back(std::make_pair(ptr,readbytes));
-        mTotalBufferBytes += readbytes;
+        mTotalInBufferBytes += readbytes;
         mTotalReadBytes += readbytes;
 
-        RsDbg() << "Socket: " << mCLintConnt << ". Total read: " << mTotalReadBytes << ". Buffer size: " << mTotalBufferBytes ;
+        RsDbg() << "Socket: " << mCLintConnt << ". Total read: " << mTotalReadBytes << ". Buffer size: " << mTotalInBufferBytes ;
     }
-
-    return mTotalBufferBytes;
+    return mTotalInBufferBytes;
 }
 
+int FsBioInterface::write_pending()
+{
+    if(out_buffer.empty())
+        return mTotalOutBufferBytes;
+
+    auto& p = out_buffer.front();
+    int written = write(mCLintConnt, p.first, p.second);
+
+    if(written < 0)
+    {
+        if(errno != EWOULDBLOCK && errno != EAGAIN)
+            RsErr() << "write() failed. Errno=" << errno ;
+
+        return mTotalOutBufferBytes;
+    }
+
+    if(written == 0)
+    {
+        RsErr() << "write() failed. Nothing sent.";
+        return mTotalOutBufferBytes;
+    }
+
+    RsDbg() << "clintConnt: " << mCLintConnt << ", written: " << written ;
+
+    // display some debug info
+
+    RsDbg() << "Sent the following bytes: " << RsUtil::BinToHex( reinterpret_cast<unsigned char*>(p.first),written,50) << std::endl;
+
+    if(written < p.second)
+    {
+        void *ptr = malloc(p.second - written);
+
+        if(!ptr)
+            throw std::runtime_error("Cannot allocate memory! Go buy some RAM!");
+
+        memcpy(ptr,static_cast<unsigned char *>(p.first) + written,p.second - written);
+        free(p.first);
+
+        out_buffer.front().first = ptr;
+        out_buffer.front().second = p.second - written;
+    }
+    else
+    {
+        free(p.first);
+        out_buffer.pop_front();
+    }
+
+    mTotalOutBufferBytes -= written;
+    mTotalWrittenBytes += written;
+
+    return mTotalOutBufferBytes;
+}
+
+FsBioInterface::~FsBioInterface()
+{
+    clean();
+}
+
+void FsBioInterface::clean()
+{
+    for(auto p:in_buffer) free(p.first);
+    for(auto p:out_buffer) free(p.first);
+
+    in_buffer.clear();
+    out_buffer.clear();
+}
 int FsBioInterface::readdata(void *data, int len)
 {
     // read incoming bytes in the buffer
@@ -91,7 +183,7 @@ int FsBioInterface::readdata(void *data, int len)
     {
         if(in_buffer.empty())
         {
-            mTotalBufferBytes -= total_len;
+            mTotalInBufferBytes -= total_len;
             return total_len;
         }
 
@@ -108,7 +200,7 @@ int FsBioInterface::readdata(void *data, int len)
             in_buffer.front().first = ptr;
             in_buffer.front().second -= len-total_len;
 
-            mTotalBufferBytes -= len;
+            mTotalInBufferBytes -= len;
             return len;
         }
         else // copy everything
@@ -121,7 +213,7 @@ int FsBioInterface::readdata(void *data, int len)
             in_buffer.pop_front();
         }
     }
-    mTotalBufferBytes -= len;
+    mTotalInBufferBytes -= len;
     return len;
 }
 
@@ -129,12 +221,24 @@ int FsBioInterface::senddata(void *data, int len)
 {
     // shouldn't we better send in multiple packets, similarly to how we read?
 
-    RsDbg() << "FsBioInterface: sending data packet of size " << len ;
+    if(len == 0)
+    {
+        RsErr() << "Calling FsBioInterface::senddata() with null size or null data pointer";
+        return 0;
+    }
+    void *ptr = malloc(len);
 
-    int written = write(mCLintConnt, data, len);
-    RsDbg() << "FsBioInterface: done.";
+    if(!ptr)
+    {
+        RsErr() << "Cannot allocate data of size " << len ;
+        return 0;
+    }
 
-    return written;
+    memcpy(ptr,data,len);
+    out_buffer.push_back(std::make_pair(ptr,len));
+
+    mTotalOutBufferBytes += len;
+    return len;
 }
 int FsBioInterface::netstatus()
 {
@@ -148,7 +252,7 @@ int FsBioInterface::isactive()
 
 bool FsBioInterface::moretoread(uint32_t /* usec */)
 {
-    return mTotalBufferBytes > 0;
+    return mTotalInBufferBytes > 0;
 }
 bool FsBioInterface::cansend(uint32_t)
 {
@@ -159,6 +263,9 @@ int FsBioInterface::close()
 {
     RsDbg() << "Stopping network interface" << std::endl;
     mIsActive = false;
+    mCLintConnt = 0;
+    clean();
+
     return 1;
 }
 
