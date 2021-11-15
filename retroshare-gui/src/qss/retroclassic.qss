@@ -1,0 +1,454 @@
+/* Default stylesheet
+   This file is used as default for all stylesheets and can be overloaded
+   Don't use font-size or font-weight, they are defined in .ui files.
+   Icon size are defined in .cpp files.
+
+   For decoration, use px (pixel or dot)
+   For horizontal size, use em (width of M char)
+   For vertical size, use ex (height of x char to respect DotPerInch of your system)
+   See: https://doc.qt.io/qt-5/stylesheet-reference.html#length
+   https://doc.qt.io/qt-5/stylesheet-syntax.html
+   */
+
+/**** Standard rules ****/
+
+/* Transparent background objects = name starting by trans_*/
+QObject[objectName^="trans_"] {
+	background: transparent;
+}
+/* Specific for scrollarea contents */
+QScrollArea[objectName^="trans_"] > QWidget > QWidget {
+	background: transparent;
+}
+
+/* Informatives background objects = name starting by info*/
+QObject[objectName^="info_"]:enabled {/*enabled is needed for not be overrided :https://doc.qt.io/qt-5/stylesheet-syntax.html#conflict-resolution*/
+	color: black;
+	border: 1px solid #DCDC41;
+	border-radius: 6px;
+	background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
+}
+/* For label inside informative frame */
+QFrame[objectName^="info_"] > QLabel
+{
+	color: black;
+	background: transparent;
+}
+
+/* Specifics Buttons */
+QPushButton#applyButton:enabled,/*enabled is needed for not be overrided :https://doc.qt.io/qt-5/stylesheet-syntax.html#conflict-resolution*/
+QPushButton#createButton:enabled,
+QPushButton#postButton:enabled,
+QToolButton#addButton:enabled,
+QToolButton#followButton:enabled {
+	color: white;
+	background: #0099cc;
+	border-radius: 4px;
+	min-height: 4ex;
+	/*max-height: 4ex; This doesn't work on windows*/
+	min-width: 4em;
+	padding-left: 6px;
+	padding-right: 6px;
+}
+
+QPushButton#applyButton:disabled,
+QPushButton#createButton:disabled,
+QPushButton#postButton:disabled,
+QToolButton#addButton:disabled,
+QToolButton#followButton:disabled {
+	color: white;
+	background: #d40000;
+	border-radius: 4px;
+	padding-left: 6px;
+	padding-right: 6px;
+}
+
+QPushButton#applyButton:hover,
+QPushButton#createButton:hover,
+QPushButton#postButton:hover,
+QToolButton#addButton:hover,
+QToolButton#followButton:hover {
+	color: white;
+	background: #03b1f3;
+	border-radius: 4px;
+	padding-left: 6px;
+	padding-right: 6px;
+}
+
+QPushButton#searchButton:enabled,
+QPushButton#addButton:enabled {
+	color: white;
+	background: #32CD32;
+	border-radius: 4px;
+	min-height: 4ex;
+	/*max-height: 4ex; This doesn't work on windows*/
+	min-width: 4em;
+	padding: 4px;
+}
+
+QPushButton#searchButton:hover,
+QPushButton#addButton:hover {
+	color: white;
+	background: #5AD75A;
+	border-radius: 4px;
+	padding: 4px;
+}
+
+QToolButton#subscribeToolButton:enabled {
+	color: white;
+	background: #0099cc;
+	border-radius: 4px;
+	min-height: 4ex;
+	/*max-height: 4ex; This doesn't work on windows*/
+}
+
+QToolButton#subscribeToolButton:disabled {
+	background: gray;
+	border-radius: 4px;
+	border: 1px solid gray;
+	color: lightgray;
+}
+
+QToolButton#subscribeToolButton:hover {
+	background: #03b1f3;
+	border-radius: 4px;
+}
+
+QToolButton#subscribeToolButton:pressed {
+	background: #03b1f3;
+	border-radius: 4px;
+	border: 1px solid gray;
+}
+
+QToolButton#subscribeToolButton[popupMode="1"]{
+	padding-right: 0px;
+}
+
+QToolButton#subscribeToolButton::menu-arrow{
+	image: none;
+}
+
+QToolButton#subscribeToolButton::menu-button{
+	image: none;
+}
+
+
+QLabel#newLabel:enabled {
+	border: 1px solid #167BE7;
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #2291E0, stop: 1 #3EB3FF);
+	border-radius: 3px;
+	color: black;
+}
+
+
+/* StartDialog
+   To get the same style for all user and not use last connected one. */
+
+StartDialog QFrame#loginframe{
+	border-image: url(:/images/logo/background_lessblue.png) 0 0 0 0 stretch stretch;
+	border-width: 0px;
+}
+StartDialog QFrame#loginframe QCheckBox,
+StartDialog QFrame#loginframe QLabel {
+	background: transparent;
+}
+StartDialog QGroupBox#profilGBox {
+	background: rgba(0,0,0,10%);
+	border-radius: 3px;
+	border-width: 0px;
+}
+
+StartDialog QGroupBox#profilGBox * {
+	background-color: white;
+	color: black;
+}
+
+StartDialog QPushButton#loadButton {
+	background: transparent;
+	border-image: url(:/images/btn_blue.png) 4;
+	border-width: 4;
+	color: white;
+}
+StartDialog QPushButton#loadButton:hover {
+	background: transparent;
+	border-image: url(:/images/btn_blue_hover.png) 4;
+}
+
+
+
+/* GenCertDialog
+   Change colors here because GUI is not started yet so no user StyleSheet loads */
+
+GenCertDialog QFrame#profileframe{
+	border-image: url(:/images/logo/background.png) 0 0 0 0 stretch stretch;
+	border-width: 0px;
+}
+GenCertDialog QFrame#profileframe QCheckBox,
+GenCertDialog QFrame#profileframe QLabel {
+	background: transparent;
+}
+
+GenCertDialog QLabel#info_Label:enabled {
+	color: black;
+	border: 1px solid #DCDC41;
+	border-radius: 6px;
+	background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
+}
+
+GenCertDialog QGroupBox#groupBox,
+GenCertDialog QGroupBox#profile_groupBox {
+	background: rgba(0,0,0,10%);
+}
+GenCertDialog QGroupBox#profile_groupBox QComboBox,
+GenCertDialog QGroupBox#profile_groupBox QSpinBox,
+GenCertDialog QGroupBox#profile_groupBox QLineEdit,
+GenCertDialog QComboBox#genPGPuser {
+	border: 2px solid #0099cc;
+	border-radius: 6px;
+	background: white;
+	color: black;
+}
+
+GenCertDialog QPushButton#genButton {
+	border-image: url(:/images/btn_blue.png) 4;
+	border-width: 4;
+	color: white;
+}
+GenCertDialog QPushButton#genButton:hover {
+	border-image: url(:/images/btn_blue_hover.png) 4;
+}
+GenCertDialog QPushButton#genButton:disabled {
+	border-image: url(:/images/btn_27.png) 4;
+	color: black;
+}
+
+
+/* AvatarWidget */
+
+AvatarWidget{border-width: 10px;}
+AvatarWidget[frameState="NORMAL"]{border-image:url(:/images/avatarstatus-bg-116.png);}
+AvatarWidget[frameState="OFFLINE"]{border-image:url(:/images/avatarstatus-bg-offline-116.png);}
+AvatarWidget[frameState="INACTIVE"]{border-image:url(:/images/avatarstatus-bg-idle-116.png);}
+AvatarWidget[frameState="ONLINE"]{border-image:url(:/images/avatarstatus-bg-online-116.png);}
+AvatarWidget[frameState="AWAY"]{border-image:url(:/images/avatarstatus-bg-away-116.png);}
+AvatarWidget[frameState="BUSY"]{border-image:url(:/images/avatarstatus-bg-busy-116.png);}
+
+
+/* ConnectFriendWizard */
+
+ConnectFriendWizard {
+/* QWizard cannot be resized horizontal when banner pixmap is set
+	qproperty-bannerPixmap: url(:/images/connect/connectFriendBanner1.png);*/
+	qproperty-titleFontSize: 16;
+	qproperty-titleFontWeight: 500;
+/*	qproperty-titleColor: white; */
+}
+
+
+/* GxsChannelFilesStatusWidget */
+
+GxsChannelFilesStatusWidget QToolButton#openFolderToolButton[popupMode="0"] {
+	padding-right: 0px;
+}
+
+GxsChannelFilesStatusWidget QToolButton#openFolderToolButton::menu-indicator {
+	image: none;
+}
+
+
+/* Forums */
+
+GxsForumThreadWidget QLabel#forumName
+{
+	color: #0099cc;
+}
+
+
+/* Posted */
+
+BoardPostDisplayWidget_compact QFrame#voteFrame,
+BoardPostDisplayWidget_card QFrame#voteFrame,
+PostedItem QFrame#voteFrame {
+	background: rgba( 20, 20, 20, 20% );
+}
+
+BoardPostDisplayWidget_card QToolButton#voteUpButton,
+BoardPostDisplayWidget_compact QToolButton#voteUpButton {
+	background: rgba(50,205,50,50%);
+	border: none;
+	border-radius: 4px;
+}
+BoardPostDisplayWidget_card QToolButton#voteDownButton,
+BoardPostDisplayWidget_compact QToolButton#voteDownButton {
+	background: rgba(205,50,50,50%);
+	border: none;
+	border-radius: 4px;
+}
+
+BoardPostDisplayWidget_card QToolButton#voteUpButton:hover,
+BoardPostDisplayWidget_compact QToolButton#voteUpButton:hover {
+	background: rgba(50,205,50,75%);
+	border: 2px solid #808080;
+	border-radius: 4px;
+}
+BoardPostDisplayWidget_card QToolButton#voteDownButton:hover,
+BoardPostDisplayWidget_compact QToolButton#voteDownButton:hover {
+	background: rgba(205,50,50,75%);
+	border: 2px solid #808080;
+	border-radius: 4px;
+}
+
+BoardPostDisplayWidget_card QToolButton#voteUpButton:disabled,
+BoardPostDisplayWidget_compact QToolButton#voteUpButton:disabled,
+BoardPostDisplayWidget_card QToolButton#voteDownButton:disabled,
+BoardPostDisplayWidget_compact QToolButton#voteDownButton:disabled {
+	background: transparent;
+	border: none;
+}
+
+
+/**** Color definitions ****/
+
+ForumsDialog, GxsForumThreadWidget
+{
+	qproperty-textColorRead: darkgray;
+	qproperty-textColorUnread: black; 
+	qproperty-textColorUnreadChildren: darkgray;
+	qproperty-textColorNotSubscribed: black;
+	qproperty-textColorMissing: darkRed;
+	qproperty-textColorPinned: darkOrange;
+
+	qproperty-backgroundColorPinned: rgb(255, 200, 180);
+	qproperty-backgroundColorFiltered: rgb(255, 240, 210);
+}
+
+FriendSelectionWidget
+{
+	qproperty-textColorOnline: blue;
+}
+
+GroupTreeWidget
+{
+	qproperty-textColorCategory: rgb(79, 79, 79);
+	qproperty-textColorPrivateKey: rgb(35,91,159);
+}
+
+MessagesDialog
+{
+	qproperty-textColorInbox: rgb(49, 106, 197);
+}
+
+NetworkDialog
+{
+	qproperty-backgroundColorSelf: yellow;
+	qproperty-backgroundColorOwnSign: rgb(69, 255, 69);
+	qproperty-backgroundColorAcceptConnection: rgb(67, 192, 67);
+	qproperty-backgroundColorHasSignedMe: rgb(178, 66, 178);
+	qproperty-backgroundColorDenied: lightGray;
+	qproperty-textColor: black;
+}
+
+NewFriendList
+{
+	qproperty-textColorStatusOffline: black;
+	qproperty-textColorStatusAway: gray;
+	qproperty-textColorStatusBusy: gray;
+	qproperty-textColorStatusOnline: darkGreen;
+	qproperty-textColorStatusInactive: gray;
+	qproperty-textColorGroup: rgb(123, 123, 123);
+}
+
+SearchDialog
+{
+	qproperty-textColorLocal: red;
+	qproperty-textColorDownloading: green;
+	qproperty-textColorNoSources: rgb(0, 0, 19);
+	qproperty-textColorLowSources: rgb(0, 0, 38);
+	qproperty-textColorHighSources: rgb(0, 0, 228);
+}
+
+RSTextBrowser, MimeTextEdit
+{
+	/*qproperty-textColorQuote: rgb(120, 153, 34);*/
+	qproperty-textColorQuotes: ColorList(#789922 #039bd5 #800000 #800080 #008080 #b10dc9 #85144b #3d9970);
+}
+
+/* OpModeStatus need to be at end to overload other values*/
+
+OpModeStatus {
+	qproperty-opMode_Full_Color: #CCFFCC;
+	qproperty-opMode_NoTurtle_Color: #CCCCFF;
+	qproperty-opMode_Gaming_Color: #FFFFCC;
+	qproperty-opMode_Minimal_Color: #FFCCCC;
+}
+OpModeStatus[opMode="Full"] {
+	color: black;
+	background: #CCFFCC;
+}
+OpModeStatus[opMode="NoTurtle"] {
+	color: black;
+	background: #CCCCFF;
+}
+OpModeStatus[opMode="Gaming"] {
+	color: black;
+	background: #FFFFCC;
+}
+OpModeStatus[opMode="Minimal"] {
+	color: black;
+	background: #FFCCCC;
+}
+
+/*Property Values at end to overwrite other settings*/
+
+[new=false] {
+	/*background: rgba(248,248,248,75%);*/
+}
+[new=true] {
+	background: rgba(220,236,253,75%);
+}
+
+[valid=true] {
+	background: rgba(0,255,0,15%);
+}
+
+[valid=false] {
+	background: rgba(255,0,0,15%);
+}
+
+[WrongValue="true"] {
+	background-color: #FF8080;
+}
+
+/* HeaderFrame & TitleBarFrame */
+
+QFrame[objectName^="headerFrame"],
+QFrame[objectName^="headerBFrame"] {
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
+	border: 1px;
+	border-radius: 4px;
+}
+QFrame[objectName^="#headerBFrame"] {
+	border: 1px;
+	border-radius: 4px;
+}
+QFrame[objectName^="headerFrame"] > *:!hover,
+QFrame[objectName^="headerBFrame"] > *:!hover{
+	background: transparent;
+	color: white;
+}
+
+QFrame[objectName^="toolBarFrame"],
+QFrame[objectName^="toolBarFrameTop"] {
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
+	border: 1px solid #CCCCCC;
+}
+
+ChatWidget QFrame#titleBarFrame {
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
+	border: 1px solid #CCCCCC;
+}
+
+ChatWidget QFrame#titleBarFrame > *:!hover {
+	background: transparent;
+	color: black;
+}
