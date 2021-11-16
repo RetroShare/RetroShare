@@ -46,7 +46,9 @@ std::error_condition DeepForumsIndex::search(
 	// End of prefix configuration.
 
 	// And parse the query.
-	Xapian::Query query = queryparser.parse_query(queryStr);
+	using XQP = Xapian::QueryParser;
+	Xapian::Query query = queryparser.parse_query(
+	            queryStr, XQP::FLAG_WILDCARD | XQP::FLAG_DEFAULT );
 
 	// Use an Enquire object on the database to run the query.
 	Xapian::Enquire enquire(db);
