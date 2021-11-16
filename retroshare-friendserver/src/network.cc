@@ -35,7 +35,7 @@
 #include "util/rsdebug.h"
 
 #include "pqi/pqithreadstreamer.h"
-#include "friend_server/fsbio.h"
+#include "pqi/pqifdbin.h"
 
 #include "network.h"
 #include "friend_server/fsitem.h"
@@ -154,7 +154,7 @@ bool FsNetworkInterface::checkForNewConnections()
     RsSerialiser *rss = new RsSerialiser ;
     rss->addSerialType(new FsSerializer) ;
 
-    FsBioInterface *bio = new FsBioInterface(clintConnt);
+    RsFdBinInterface *bio = new RsFdBinInterface(clintConnt);
 
     auto pqi = new pqithreadstreamer(this,rss, pid, bio,BIN_FLAGS_READABLE | BIN_FLAGS_WRITEABLE);
 

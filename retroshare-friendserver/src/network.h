@@ -26,14 +26,14 @@
 #include "retroshare/rspeers.h"
 
 class pqithreadstreamer;
-class FsBioInterface;
+class RsFdBinInterface;
 
 struct ConnectionData
 {
     sockaddr client_address;
     int socket;
     pqithreadstreamer *pqi_thread;
-    FsBioInterface *bio;
+    RsFdBinInterface *bio;
 
     std::list<RsItem*> incoming_items;
 };

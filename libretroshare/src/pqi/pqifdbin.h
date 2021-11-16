@@ -22,11 +22,11 @@
 
 #include "pqi/pqi_base.h"
 
-class FsBioInterface: public BinInterface
+class RsFdBinInterface: public BinInterface
 {
 public:
-    FsBioInterface(int socket);
-    ~FsBioInterface();
+    RsFdBinInterface(int file_descriptor);
+    ~RsFdBinInterface();
 
      // Implements BinInterface methods
 

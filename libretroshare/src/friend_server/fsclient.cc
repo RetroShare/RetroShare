@@ -24,7 +24,7 @@
 #include "retroshare/rspeers.h"
 
 #include "fsclient.h"
-#include "fsbio.h"
+#include "pqi/pqifdbin.h"
 
 bool FsClient::requestFriends(const std::string& address,uint16_t port,uint32_t reqs,std::map<std::string,bool>& friend_certificates)
 {
@@ -130,7 +130,7 @@ bool FsClient::sendItem(const std::string& address,uint16_t port,RsItem *item,st
 //    FsSerializer().serialise(item,data,&size);
 //    write(CreateSocket,data,size);				// shouldn't we use the pqistreamer in R/W mode instead?
 
-    FsBioInterface *bio = new FsBioInterface(CreateSocket);	// deleted by ~pqistreamer()
+    RsFdBinInterface *bio = new RsFdBinInterface(CreateSocket);	// deleted by ~pqistreamer()
 
     pqithreadstreamer p(this,rss,RsPeerId(),bio,BIN_FLAGS_READABLE | BIN_FLAGS_WRITEABLE | BIN_FLAGS_NO_CLOSE);
     p.start();

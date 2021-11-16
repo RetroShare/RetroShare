@@ -1,11 +1,11 @@
 #include <string>
 #include "util/rsthreads.h"
-#include "friend_server/fsbio.h"
+#include "pqi/pqifdbin.h"
 
-class TcpSocket: public FsBioInterface
+class RsTcpSocket: public RsFdBinInterface
 {
 public:
-    TcpSocket(const std::string& tcp_address,uint16_t tcp_port);
+    RsTcpSocket(const std::string& tcp_address,uint16_t tcp_port);
 
     enum State: uint8_t {
         UNKNOWN      = 0x00,
@@ -30,11 +30,11 @@ private:
     int         mSocket;
 };
 
-class ThreadedTcpSocket: public TcpSocket, public RsThread
+class RsThreadedTcpSocket: public RsTcpSocket, public RsThread
 {
 public:
-    ThreadedTcpSocket(const std::string& tcp_address,uint16_t tcp_port);
-    virtual ~ThreadedTcpSocket();
+    RsThreadedTcpSocket(const std::string& tcp_address,uint16_t tcp_port);
+    virtual ~RsThreadedTcpSocket();
 
     virtual void run() override;
 };

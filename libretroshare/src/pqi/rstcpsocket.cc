@@ -4,13 +4,13 @@
 #include <string.h>
 #include <iostream>
 
-#include "tcpsocket.h"
+#include "rstcpsocket.h"
 
-TcpSocket::TcpSocket(const std::string& tcp_address,uint16_t tcp_port)
-    :FsBioInterface(0),mState(DISCONNECTED),mConnectAddress(tcp_address),mConnectPort(tcp_port),mSocket(0)
+RsTcpSocket::RsTcpSocket(const std::string& tcp_address,uint16_t tcp_port)
+    :RsFdBinInterface(0),mState(DISCONNECTED),mConnectAddress(tcp_address),mConnectPort(tcp_port),mSocket(0)
 {
 }
-int TcpSocket::connect()
+int RsTcpSocket::connect()
 {
     int CreateSocket = 0;
     char dataReceived[1024];
@@ -39,19 +39,19 @@ int TcpSocket::connect()
     return true;
 }
 
-int TcpSocket::close()
+int RsTcpSocket::close()
 {
-    FsBioInterface::close();
+    RsFdBinInterface::close();
 
     return !::close(mSocket);
 }
 
-ThreadedTcpSocket::ThreadedTcpSocket(const std::string& tcp_address,uint16_t tcp_port)
-    : TcpSocket(tcp_address,tcp_port)
+RsThreadedTcpSocket::RsThreadedTcpSocket(const std::string& tcp_address,uint16_t tcp_port)
+    : RsTcpSocket(tcp_address,tcp_port)
 {
 }
 
-void ThreadedTcpSocket::run()
+void RsThreadedTcpSocket::run()
 {
     if(!connect())
     {
@@ -67,7 +67,7 @@ void ThreadedTcpSocket::run()
     RsWarn() << "Connection to " << connectAddress() << ":" << connectPort() << " is now closed.";
 }
 
-ThreadedTcpSocket::~ThreadedTcpSocket()
+RsThreadedTcpSocket::~RsThreadedTcpSocket()
 {
     fullstop();   // fully wait for stopping.
 

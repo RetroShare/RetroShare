@@ -21,10 +21,10 @@
  ******************************************************************************/
 
 #include "util/rsprint.h"
-#include "fsbio.h"
+#include "pqi/pqifdbin.h"
 
-FsBioInterface::FsBioInterface(int socket)
-    : mCLintConnt(socket),mIsActive(socket!=0)
+RsFdBinInterface::RsFdBinInterface(int file_descriptor)
+    : mCLintConnt(file_descriptor),mIsActive(file_descriptor!=0)
 {
     mTotalReadBytes=0;
     mTotalInBufferBytes=0;
@@ -32,7 +32,7 @@ FsBioInterface::FsBioInterface(int socket)
     mTotalOutBufferBytes=0;
 }
 
-void FsBioInterface::setSocket(int s)
+void RsFdBinInterface::setSocket(int s)
 {
         if(mIsActive != 0)
         {
@@ -42,7 +42,7 @@ void FsBioInterface::setSocket(int s)
     mCLintConnt = s;
     mIsActive = (s!=0);
 }
-int FsBioInterface::tick()
+int RsFdBinInterface::tick()
 {
     if(!mIsActive)
     {
@@ -59,7 +59,7 @@ int FsBioInterface::tick()
     return res;
 }
 
-int FsBioInterface::read_pending()
+int RsFdBinInterface::read_pending()
 {
     char inBuffer[1025];
     memset(inBuffer,0,1025);
@@ -107,7 +107,7 @@ int FsBioInterface::read_pending()
     return mTotalInBufferBytes;
 }
 
-int FsBioInterface::write_pending()
+int RsFdBinInterface::write_pending()
 {
     if(out_buffer.empty())
         return mTotalOutBufferBytes;
@@ -160,12 +160,12 @@ int FsBioInterface::write_pending()
     return mTotalOutBufferBytes;
 }
 
-FsBioInterface::~FsBioInterface()
+RsFdBinInterface::~RsFdBinInterface()
 {
     clean();
 }
 
-void FsBioInterface::clean()
+void RsFdBinInterface::clean()
 {
     for(auto p:in_buffer) free(p.first);
     for(auto p:out_buffer) free(p.first);
@@ -173,7 +173,7 @@ void FsBioInterface::clean()
     in_buffer.clear();
     out_buffer.clear();
 }
-int FsBioInterface::readdata(void *data, int len)
+int RsFdBinInterface::readdata(void *data, int len)
 {
     // read incoming bytes in the buffer
 
@@ -217,7 +217,7 @@ int FsBioInterface::readdata(void *data, int len)
     return len;
 }
 
-int FsBioInterface::senddata(void *data, int len)
+int RsFdBinInterface::senddata(void *data, int len)
 {
     // shouldn't we better send in multiple packets, similarly to how we read?
 
@@ -240,26 +240,26 @@ int FsBioInterface::senddata(void *data, int len)
     mTotalOutBufferBytes += len;
     return len;
 }
-int FsBioInterface::netstatus()
+int RsFdBinInterface::netstatus()
 {
     return mIsActive; // dummy response.
 }
 
-int FsBioInterface::isactive()
+int RsFdBinInterface::isactive()
 {
     return mIsActive ;
 }
 
-bool FsBioInterface::moretoread(uint32_t /* usec */)
+bool RsFdBinInterface::moretoread(uint32_t /* usec */)
 {
     return mTotalInBufferBytes > 0;
 }
-bool FsBioInterface::cansend(uint32_t)
+bool RsFdBinInterface::cansend(uint32_t)
 {
     return isactive();
 }
 
-int FsBioInterface::close()
+int RsFdBinInterface::close()
 {
     RsDbg() << "Stopping network interface" << std::endl;
     mIsActive = false;
