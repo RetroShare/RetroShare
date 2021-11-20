@@ -35,6 +35,40 @@ QFrame[objectName^="info_"] > QLabel
 	background: transparent;
 }
 
+/* HeaderFrame & TitleBarFrame */
+
+QFrame[objectName^="headerFrame"],
+QFrame[objectName^="headerBFrame"] {
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
+	border: 1px;
+	border-radius: 4px;
+}
+QFrame[objectName^="#headerBFrame"] {
+	border: 1px;
+	border-radius: 4px;
+}
+QFrame[objectName^="headerFrame"] > *:!hover,
+QFrame[objectName^="headerBFrame"] > *:!hover{
+	background: transparent;
+	color: white;
+}
+
+QFrame[objectName^="toolBarFrame"],
+QFrame[objectName^="toolBarFrameTop"] {
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
+	border: 1px solid #CCCCCC;
+}
+
+ChatWidget QFrame#titleBarFrame {
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
+	border: 1px solid #CCCCCC;
+}
+
+ChatWidget QFrame#titleBarFrame > *:!hover {
+	background: transparent;
+	color: black;
+}
+
 /* Specifics Buttons */
 QPushButton#applyButton:enabled,/*enabled is needed for not be overrided :https://doc.qt.io/qt-5/stylesheet-syntax.html#conflict-resolution*/
 QPushButton#createButton:enabled,
@@ -417,38 +451,4 @@ OpModeStatus[opMode="Minimal"] {
 
 [WrongValue="true"] {
 	background-color: #FF8080;
-}
-
-/* HeaderFrame & TitleBarFrame */
-
-QFrame[objectName^="headerFrame"],
-QFrame[objectName^="headerBFrame"] {
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
-	border: 1px;
-	border-radius: 4px;
-}
-QFrame[objectName^="#headerBFrame"] {
-	border: 1px;
-	border-radius: 4px;
-}
-QFrame[objectName^="headerFrame"] > *:!hover,
-QFrame[objectName^="headerBFrame"] > *:!hover{
-	background: transparent;
-	color: white;
-}
-
-QFrame[objectName^="toolBarFrame"],
-QFrame[objectName^="toolBarFrameTop"] {
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
-	border: 1px solid #CCCCCC;
-}
-
-ChatWidget QFrame#titleBarFrame {
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
-	border: 1px solid #CCCCCC;
-}
-
-ChatWidget QFrame#titleBarFrame > *:!hover {
-	background: transparent;
-	color: black;
 }
