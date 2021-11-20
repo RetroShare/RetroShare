@@ -2248,13 +2248,13 @@ QTreeView:branch:selected:!active {
 /**** Fix QSplitter ****/
 
 QSplitter {
-  background-color: #19232D;
+  background-color: rgba(0,0,0,0);
 }
-
 QSplitter::handle {
-  background-color: #455364;
-  border: 0px solid #455364;
-  border-radius: 4px;
+  background-color: rgba(0,0,0,0);
+  border: 0px;
+  border-radius: 2px;
+  padding: 0px;
 }
 
 
@@ -2286,7 +2286,7 @@ QFrame#bottomFrame,/* Frame used at the bottom of dialog*/
 QFrame#toasterFrame,/* Frame used in Toasters*/
 QFrame#toolBarFrame {/* Frame used for buttons*/
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #19232D, stop:1 #32414B);
-	border: 1px solid #CCCCCC;
+	border: 1px solid #455364;
 }
 QFrame#toolBarFrame > LineEditClear {
 	background-color: #29333D;
