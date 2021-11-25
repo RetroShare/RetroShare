@@ -33,14 +33,15 @@
 #ifndef STRINGUTIL_H
 #define STRINGUTIL_H
 
-#include <QByteArray>
-#include <QList>
+#include <list>
 
-QByteArray quotedString(const QByteArray &string);
+#include "bytearray.h"
+
+ByteArray quotedString(const ByteArray &string);
 
 /* Return the unquoted contents of a string, either until an end quote or an unescaped separator character. */
-QByteArray unquotedString(const QByteArray &string);
+ByteArray unquotedString(const ByteArray &string);
 
-QList<QByteArray> splitQuotedStrings(const QByteArray &input, char separator);
+std::list<ByteArray> splitQuotedStrings(const ByteArray& input, char separator);
 
 #endif // STRINGUTIL_H

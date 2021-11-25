@@ -37,6 +37,8 @@
 #include <QSharedData>
 #include <QExplicitlySharedDataPointer>
 
+#include "bytearray.h"
+
 class CryptoKey
 {
 public:
@@ -53,54 +55,17 @@ public:
     CryptoKey();
     ~CryptoKey();
 
-#ifdef TO_REMOVE
-    bool loadFromData(const QByteArray &data, KeyType type, KeyFormat format = PEM);
-    bool loadFromFile(const QString &path, KeyType type, KeyFormat format = PEM);
-#endif
-    bool loadFromFile(const QString &path);
+    bool loadFromFile(const std::string &path);
     void clear();
 
-    const QByteArray bytes() const { return key_data; }
-    bool loadFromTorMessage(const QByteArray& b);
+    const ByteArray bytes() const { return key_data; }
+    bool loadFromTorMessage(const ByteArray& b);
     bool isLoaded() const { return !key_data.isNull(); }
-#ifdef TO_REMOVE
-    bool isPrivate() const;
-
-    QByteArray publicKeyDigest() const;
-    QByteArray encodedPublicKey(KeyFormat format) const;
-    QByteArray encodedPrivateKey(KeyFormat format) const;
-    QString torServiceID() const;
-    int bits() const;
-
-    // Calculate and sign SHA-256 digest of data using this key and PKCS #1 v2.0 padding
-    QByteArray signData(const QByteArray &data) const;
-    // Verify a signature as per signData
-    bool verifyData(const QByteArray &data, QByteArray signature) const;
-
-    // Sign the input SHA-256 digest using this key and PKCS #1 v2.0 padding
-    QByteArray signSHA256(const QByteArray &digest) const;
-    // Verify a signature as per signSHA256
-    bool verifySHA256(const QByteArray &digest, QByteArray signature) const;
-#endif
 
 private:
-#ifdef TO_REMOVE
-    struct Data : public QSharedData
-    {
-        typedef struct rsa_st RSA;
-        RSA *key;
-
-        Data(RSA *k = 0) : key(k) { }
-        ~Data();
-    };
-#endif
-
-    QByteArray key_data;
-#ifdef TO_REMOVE
-    QExplicitlySharedDataPointer<Data> d;
-#endif
+    ByteArray key_data;
 };
 
-QByteArray torControlHashedPassword(const QByteArray &password);
+ByteArray torControlHashedPassword(const ByteArray &password);
 
 #endif // CRYPTOKEY_H

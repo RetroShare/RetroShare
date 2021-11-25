@@ -54,11 +54,10 @@ public:
 
     void setResetMode(bool resetMode);
 
-    QByteArray build(const QByteArray &key, const QByteArray &value);
-    QByteArray build(const QVariantMap &data);
-    QByteArray build(const QList<QPair<QByteArray, QByteArray> > &data);
+    ByteArray build(const ByteArray &key, const ByteArray &value);
+    ByteArray build(const std::list<std::pair<ByteArray, ByteArray> > &data);
 
-    QString errorMessage() const { return m_errorMessage; }
+    std::string errorMessage() const { return m_errorMessage; }
     bool isSuccessful() const;
 
 signals:
@@ -66,10 +65,10 @@ signals:
     void setConfFailed(int code);
 
 protected:
-    QString m_errorMessage;
+    std::string m_errorMessage;
     bool m_resetMode;
 
-    virtual void onReply(int statusCode, const QByteArray &data);
+    virtual void onReply(int statusCode, const ByteArray &data);
     virtual void onFinished(int statusCode);
 };
 

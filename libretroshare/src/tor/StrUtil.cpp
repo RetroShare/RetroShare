@@ -32,14 +32,14 @@
 
 #include "StrUtil.h"
 
-QByteArray quotedString(const QByteArray &string)
+ByteArray quotedString(const ByteArray &string)
 {
-    QByteArray out;
+    ByteArray out;
     out.reserve(string.size() * 2);
 
     out.append('"');
 
-    for (int i = 0; i < string.size(); ++i)
+    for (uint i = 0; i < string.size(); ++i)
     {
         switch (string[i])
         {
@@ -59,15 +59,15 @@ QByteArray quotedString(const QByteArray &string)
     return out;
 }
 
-QByteArray unquotedString(const QByteArray &string)
+ByteArray unquotedString(const ByteArray &string)
 {
     if (string.size() < 2 || string[0] != '"')
         return string;
 
-    QByteArray out;
+    ByteArray out;
     out.reserve(string.size() - 2);
 
-    for (int i = 1; i < string.size(); ++i)
+    for (uint i = 1; i < string.size(); ++i)
     {
         switch (string[i])
         {
@@ -85,13 +85,13 @@ QByteArray unquotedString(const QByteArray &string)
     return out;
 }
 
-QList<QByteArray> splitQuotedStrings(const QByteArray &input, char separator)
+std::list<ByteArray> splitQuotedStrings(const ByteArray &input, char separator)
 {
-    QList<QByteArray> out;
+    std::list<ByteArray> out;
     bool inquote = false;
-    int start = 0;
+    uint start = 0;
 
-    for (int i = 0; i < input.size(); ++i)
+    for (uint i = 0; i < input.size(); ++i)
     {
         switch (input[i])
         {
@@ -106,13 +106,13 @@ QList<QByteArray> splitQuotedStrings(const QByteArray &input, char separator)
 
         if (!inquote && input[i] == separator)
         {
-            out.append(input.mid(start, i - start));
+            out.push_back(input.mid(start, i - start));
             start = i+1;
         }
     }
 
     if (start < input.size())
-        out.append(input.mid(start));
+        out.push_back(input.mid(start));
 
     return out;
 }

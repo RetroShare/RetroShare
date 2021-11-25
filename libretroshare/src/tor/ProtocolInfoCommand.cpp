@@ -42,12 +42,12 @@ ProtocolInfoCommand::ProtocolInfoCommand(TorControl *m)
 {
 }
 
-QByteArray ProtocolInfoCommand::build()
+ByteArray ProtocolInfoCommand::build()
 {
-    return QByteArray("PROTOCOLINFO 1\r\n");
+    return ByteArray("PROTOCOLINFO 1\r\n");
 }
 
-void ProtocolInfoCommand::onReply(int statusCode, const QByteArray &data)
+void ProtocolInfoCommand::onReply(int statusCode, const ByteArray &data)
 {
     TorControlCommand::onReply(statusCode, data);
     if (statusCode != 250)
@@ -55,14 +55,14 @@ void ProtocolInfoCommand::onReply(int statusCode, const QByteArray &data)
 
     if (data.startsWith("AUTH "))
     {
-        QList<QByteArray> tokens = splitQuotedStrings(data.mid(5), ' ');
+        QList<ByteArray> tokens = splitQuotedStrings(data.mid(5), ' ');
 
-        foreach (QByteArray token, tokens)
+        foreach (ByteArray token, tokens)
         {
             if (token.startsWith("METHODS="))
             {
-                QList<QByteArray> textMethods = unquotedString(token.mid(8)).split(',');
-                for (QList<QByteArray>::Iterator it = textMethods.begin(); it != textMethods.end(); ++it)
+                QList<ByteArray> textMethods = unquotedString(token.mid(8)).split(',');
+                for (QList<ByteArray>::Iterator it = textMethods.begin(); it != textMethods.end(); ++it)
                 {
                     if (*it == "NULL")
                         m_authMethods |= AuthNull;
@@ -80,6 +80,6 @@ void ProtocolInfoCommand::onReply(int statusCode, const QByteArray &data)
     }
     else if (data.startsWith("VERSION Tor="))
     {
-        m_torVersion = QString::fromLatin1(unquotedString(data.mid(12, data.indexOf(' ', 12))));
+        m_torVersion = std::string(unquotedString(data.mid(12, data.indexOf(' ', 12))));
     }
 }

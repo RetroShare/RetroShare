@@ -57,14 +57,14 @@ public:
     Q_DECLARE_FLAGS(AuthMethods, AuthMethod)
 
     ProtocolInfoCommand(TorControl *manager);
-    QByteArray build();
+    ByteArray build();
 
     AuthMethods authMethods() const { return m_authMethods; }
     QString torVersion() const { return m_torVersion; }
     QString cookieFile() const { return m_cookieFile; }
 
 protected:
-    virtual void onReply(int statusCode, const QByteArray &data);
+    virtual void onReply(int statusCode, const ByteArray &data);
 
 private:
     TorControl *manager;

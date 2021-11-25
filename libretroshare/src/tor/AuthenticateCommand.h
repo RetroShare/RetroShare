@@ -33,6 +33,7 @@
 #ifndef AUTHENTICATECOMMAND_H
 #define AUTHENTICATECOMMAND_H
 
+#include "bytearray.h"
 #include "TorControlCommand.h"
 
 namespace Tor
@@ -45,17 +46,17 @@ class AuthenticateCommand : public TorControlCommand
 public:
     AuthenticateCommand();
 
-    QByteArray build(const QByteArray &data = QByteArray());
+    ByteArray build(const ByteArray& data = ByteArray());
 
     bool isSuccessful() const { return statusCode() == 250; }
-    QString errorMessage() const { return m_statusMessage; }
+    std::string errorMessage() const { return m_statusMessage; }
 
 protected:
-    virtual void onReply(int statusCode, const QByteArray &data);
+    virtual void onReply(int statusCode, const ByteArray &data);
     virtual void onFinished(int statusCode);
 
 private:
-    QString m_statusMessage;
+    std::string m_statusMessage;
 };
 
 }

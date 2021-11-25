@@ -38,27 +38,29 @@ AuthenticateCommand::AuthenticateCommand()
 {
 }
 
-QByteArray AuthenticateCommand::build(const QByteArray &data)
+ByteArray AuthenticateCommand::build(const ByteArray& data)
 {
     if (data.isNull())
-        return QByteArray("AUTHENTICATE\r\n");
+        return ByteArray("AUTHENTICATE\r\n");
 
-    return QByteArray("AUTHENTICATE ") + data.toHex() + "\r\n";
+    return ByteArray("AUTHENTICATE ") + data.toHex() + "\r\n";
 }
 
-void AuthenticateCommand::onReply(int statusCode, const QByteArray &data)
+void AuthenticateCommand::onReply(int statusCode, const ByteArray &data)
 {
     TorControlCommand::onReply(statusCode, data);
-    m_statusMessage = QString::fromLatin1(data);
+    m_statusMessage = data.toString();
 }
 
 void AuthenticateCommand::onFinished(int statusCode)
 {
     if (statusCode == 515) {
-        m_statusMessage = QStringLiteral("Authentication failed - incorrect password");
-    } else if (statusCode != 250) {
-        if (m_statusMessage.isEmpty())
-            m_statusMessage = QStringLiteral("Authentication failed (error %1").arg(statusCode);
+        m_statusMessage = "Authentication failed - incorrect password";
+    }
+    else if (statusCode != 250)
+    {
+        if (m_statusMessage.empty())
+            m_statusMessage = "Authentication failed (error " + RsUtil::NumberToString(statusCode) + ")";
     }
     TorControlCommand::onFinished(statusCode);
 }

@@ -38,10 +38,10 @@
 #include <QList>
 #include "CryptoKey.h"
 
+#include "bytearray.h"
+
 namespace Tor
 {
-
-class TorSocket;
 
 // This class is used to receive synchroneous notifications from the hidden service.
 // Each client should implement its own notification handling.
@@ -77,20 +77,20 @@ public:
     };
 
     HiddenService(HiddenServiceClient *client);
-    HiddenService(HiddenServiceClient *client,const QString &dataPath);
-    HiddenService(HiddenServiceClient *client,const CryptoKey &privateKey, const QString &dataPath = QString());
+    HiddenService(HiddenServiceClient *client, const std::string &dataPath);
+    HiddenService(HiddenServiceClient *client, const CryptoKey &privateKey, const std::string &dataPath = QString());
 
     Status status() const { return m_status; }
 
-    const QString& hostname() const { return m_hostname; }
-    const QString  serviceId() const { return QString(m_service_id); }
-    const QString& dataPath() const { return m_dataPath; }
+    const std::string& hostname() const { return m_hostname; }
+    const std::string  serviceId() const { return m_service_id.toString(); }
+    const std::string& dataPath() const { return m_dataPath; }
 
     CryptoKey privateKey() { return m_privateKey; }
     void setPrivateKey(const CryptoKey &privateKey);
-    void setServiceId(const QByteArray& sid);
+    void setServiceId(const ByteArray &sid);
 
-    const QList<Target> &targets() const { return m_targets; }
+    const std::list<Target> &targets() const { return m_targets; }
     void addTarget(const Target &target);
     void addTarget(quint16 servicePort, QHostAddress targetAddress, quint16 targetPort);
 
@@ -98,12 +98,12 @@ private slots:
     void servicePublished();
 
 private:
-    QString m_dataPath;
-    QList<Target> m_targets;
-    QString m_hostname;
+    std::string m_dataPath;
+    std::list<Target> m_targets;
+    std::string m_hostname;
     Status m_status;
     CryptoKey m_privateKey;
-    QByteArray m_service_id;
+    ByteArray m_service_id;
 
     void loadPrivateKey();
     void setStatus(Status newStatus);

@@ -85,7 +85,7 @@ public:
     QHostAddress torAddress;
     QString errorMessage;
     QString torVersion;
-    QByteArray authPassword;
+    ByteArray authPassword;
     QHostAddress socksAddress;
     QList<HiddenService*> services;
     quint16 controlPort, socksPort;
@@ -112,8 +112,8 @@ public slots:
     void getTorInfoReply();
     void setError(const QString &message);
 
-    void statusEvent(int code, const QByteArray &data);
-    void updateBootstrap(const QList<QByteArray> &data);
+    void statusEvent(int code, const ByteArray &data);
+    void updateBootstrap(const QList<ByteArray> &data);
 };
 
 }
@@ -276,7 +276,7 @@ QVariantMap TorControl::bootstrapStatus() const
     return d->bootstrapStatus;
 }
 
-void TorControl::setAuthPassword(const QByteArray &password)
+void TorControl::setAuthPassword(const ByteArray &password)
 {
     d->authPassword = password;
 }
@@ -385,7 +385,7 @@ void TorControlPrivate::protocolInfoReply()
         AuthenticateCommand *auth = new AuthenticateCommand;
         connect(auth, &TorControlCommand::finished, this, &TorControlPrivate::authenticateReply);
 
-        QByteArray data;
+        ByteArray data;
         ProtocolInfoCommand::AuthMethods methods = info->authMethods();
 
         if (methods.testFlag(ProtocolInfoCommand::AuthNull))
@@ -402,7 +402,7 @@ void TorControlPrivate::protocolInfoReply()
             QFile file(cookieFile);
             if (file.open(QIODevice::ReadOnly))
             {
-                QByteArray cookie = file.readAll();
+                ByteArray cookie = file.readAll();
                 file.close();
 
                 /* Simple test to avoid a vulnerability where any process listening on what we think is
@@ -458,8 +458,8 @@ void TorControlPrivate::getTorInfo()
     GetConfCommand *command = new GetConfCommand(GetConfCommand::GetInfo);
     connect(command, &TorControlCommand::finished, this, &TorControlPrivate::getTorInfoReply);
 
-    QList<QByteArray> keys;
-    keys << QByteArray("status/circuit-established") << QByteArray("status/bootstrap-phase");
+    QList<ByteArray> keys;
+    keys << ByteArray("status/circuit-established") << ByteArray("status/bootstrap-phase");
 
     /* If these are set in the config, they override the automatic behavior. */
     SettingsObject settings(QStringLiteral("tor"));
@@ -479,7 +479,7 @@ void TorControlPrivate::getTorInfo()
             rsEvents->sendEvent(ev);
         }
     } else
-        keys << QByteArray("net/listeners/socks");
+        keys << ByteArray("net/listeners/socks");
 
     socket->sendCommand(command, command->build(keys));
 }
@@ -490,9 +490,9 @@ void TorControlPrivate::getTorInfoReply()
     if (!command || !q->isConnected())
         return;
 
-    QList<QByteArray> listenAddresses = splitQuotedStrings(command->get(QByteArray("net/listeners/socks")).toString().toLatin1(), ' ');
-    for (QList<QByteArray>::Iterator it = listenAddresses.begin(); it != listenAddresses.end(); ++it) {
-        QByteArray value = unquotedString(*it);
+    QList<ByteArray> listenAddresses = splitQuotedStrings(command->get(ByteArray("net/listeners/socks")).toString().toLatin1(), ' ');
+    for (QList<ByteArray>::Iterator it = listenAddresses.begin(); it != listenAddresses.end(); ++it) {
+        ByteArray value = unquotedString(*it);
         int sepp = value.indexOf(':');
         QHostAddress address(QString::fromLatin1(value.mid(0, sepp)));
         quint16 port = (quint16)value.mid(sepp+1).toUInt();
@@ -523,14 +523,14 @@ void TorControlPrivate::getTorInfoReply()
         }
     }
 
-    if (command->get(QByteArray("status/circuit-established")).toInt() == 1) {
+    if (command->get(ByteArray("status/circuit-established")).toInt() == 1) {
         torCtrlDebug() << "torctrl: Tor indicates that circuits have been established; state is TorReady" << std::endl;
         setTorStatus(TorControl::TorReady);
     } else {
         setTorStatus(TorControl::TorOffline);
     }
 
-    QByteArray bootstrap = command->get(QByteArray("status/bootstrap-phase")).toString().toLatin1();
+    ByteArray bootstrap = command->get(ByteArray("status/bootstrap-phase")).toString().toLatin1();
     if (!bootstrap.isEmpty())
         updateBootstrap(splitQuotedStrings(bootstrap, ' '));
 }
@@ -580,7 +580,7 @@ void TorControlPrivate::publishServices()
     } else {
         torCtrlDebug() << "torctrl: Using legacy SETCONF hidden service configuration for tor" << torVersion.toStdString() << std::endl;
         SetConfCommand *command = new SetConfCommand;
-        QList<QPair<QByteArray,QByteArray> > torConfig;
+        QList<QPair<ByteArray,ByteArray> > torConfig;
 
         foreach (HiddenService *service, services)
         {
@@ -596,7 +596,7 @@ void TorControlPrivate::publishServices()
             torCtrlDebug() << "torctrl: Configuring hidden service at" << service->dataPath().toStdString() << std::endl;
 
             QDir dir(service->dataPath());
-            torConfig.append(qMakePair(QByteArray("HiddenServiceDir"), dir.absolutePath().toLocal8Bit()));
+            torConfig.append(qMakePair(ByteArray("HiddenServiceDir"), dir.absolutePath().toLocal8Bit()));
 
             const QList<HiddenService::Target> &targets = service->targets();
             for (QList<HiddenService::Target>::ConstIterator tit = targets.begin(); tit != targets.end(); ++tit)
@@ -604,7 +604,7 @@ void TorControlPrivate::publishServices()
                 QString target = QString::fromLatin1("%1 %2:%3").arg(tit->servicePort)
                                  .arg(tit->targetAddress.toString())
                                  .arg(tit->targetPort);
-                torConfig.append(qMakePair(QByteArray("HiddenServicePort"), target.toLatin1()));
+                torConfig.append(qMakePair(ByteArray("HiddenServicePort"), target.toLatin1()));
             }
 
             QObject::connect(command, &SetConfCommand::setConfSucceeded, service, &HiddenService::servicePublished);
@@ -640,11 +640,11 @@ void TorControl::shutdownSync()
     }
 }
 
-void TorControlPrivate::statusEvent(int code, const QByteArray &data)
+void TorControlPrivate::statusEvent(int code, const ByteArray &data)
 {
     Q_UNUSED(code);
 
-    QList<QByteArray> tokens = splitQuotedStrings(data.trimmed(), ' ');
+    QList<ByteArray> tokens = splitQuotedStrings(data.trimmed(), ' ');
     if (tokens.size() < 3)
         return;
 
@@ -660,7 +660,7 @@ void TorControlPrivate::statusEvent(int code, const QByteArray &data)
     }
 }
 
-void TorControlPrivate::updateBootstrap(const QList<QByteArray> &data)
+void TorControlPrivate::updateBootstrap(const QList<ByteArray> &data)
 {
     bootstrapStatus.clear();
     // WARN or NOTICE
@@ -721,7 +721,7 @@ public:
         Q_ASSERT(!command);
         command = new GetConfCommand(GetConfCommand::GetInfo);
         QObject::connect(command, &TorControlCommand::finished, this, &SaveConfigOperation::configTextReply);
-        socket->sendCommand(command, command->build(QList<QByteArray>() << "config-text" << "config-file"));
+        socket->sendCommand(command, command->build(QList<ByteArray>() << "config-text" << "config-file"));
     }
 
 private slots:
@@ -763,7 +763,7 @@ private slots:
 
         QVariantList configText = command->get("config-text").toList();
         foreach (const QVariant &value, configText) {
-            QByteArray line = value.toByteArray();
+            ByteArray line = value.toByteArray();
 
             bool skip = false;
             for (const char **key = bannedKeys; *key; key++) {

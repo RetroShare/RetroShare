@@ -34,12 +34,11 @@
 
 #include "TorControlSocket.h"
 #include "TorControlCommand.h"
-#include <QDebug>
 
 using namespace Tor;
 
-TorControlSocket::TorControlSocket(QObject *parent)
-    : QTcpSocket(parent), currentCommand(0), inDataReply(false)
+TorControlSocket::TorControlSocket()
+    : currentCommand(0), inDataReply(false)
 {
     connect(this, SIGNAL(readyRead()), this, SLOT(process()));
     connect(this, SIGNAL(disconnected()), this, SLOT(clear()));
@@ -54,7 +53,7 @@ void TorControlSocket::sendCommand(TorControlCommand *command, const QByteArray 
 {
     Q_ASSERT(data.endsWith("\r\n"));
 
-    commandQueue.append(command);
+    commandQueue.push_back(command);
     write(data);
 
     std::cerr << "[TOR CTRL] Sent: \"" << QString(data.trimmed()).toStdString() << "\"" << std::endl;
@@ -84,7 +83,7 @@ void TorControlSocket::clear()
     currentCommand = 0;
 }
 
-void TorControlSocket::setError(const QString &message)
+void TorControlSocket::setError(const std::string &message)
 {
     m_errorMessage = message;
     emit error(message);

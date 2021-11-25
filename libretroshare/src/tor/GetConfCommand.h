@@ -56,20 +56,20 @@ public:
 
     GetConfCommand(Type type);
 
-    QByteArray build(const QByteArray &key);
-    QByteArray build(const QList<QByteArray> &keys);
+    ByteArray build(const ByteArray &key);
+    ByteArray build(const QList<ByteArray> &keys);
 
-    const QVariantMap &results() const { return m_results; }
-    QVariant get(const QByteArray &key) const;
+    const std::map<std::string,std::list<std::string> > &results() const { return m_results; }
+    std::list<std::string> get(const ByteArray &key) const;
 
 protected:
-    virtual void onReply(int statusCode, const QByteArray &data);
-    virtual void onDataLine(const QByteArray &data);
+    virtual void onReply(int statusCode, const ByteArray &data);
+    virtual void onDataLine(const ByteArray &data);
     virtual void onDataFinished();
 
 private:
-    QVariantMap m_results;
-    QString m_lastKey;
+    std::map<std::string,std::list<std::string> > m_results;
+    std::string m_lastKey;
 };
 
 }

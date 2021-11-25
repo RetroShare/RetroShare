@@ -37,7 +37,6 @@
 #include <QJsonValue>
 #include <QJsonObject>
 #include <QJsonArray>
-#include <QStringList>
 #include <QDateTime>
 
 class SettingsObject;

@@ -40,7 +40,7 @@ TorControlCommand::TorControlCommand()
 {
 }
 
-void TorControlCommand::onReply(int statusCode, const QByteArray &data)
+void TorControlCommand::onReply(int statusCode, const ByteArray &data)
 {
     emit replyLine(statusCode, data);
 }
@@ -51,7 +51,7 @@ void TorControlCommand::onFinished(int statusCode)
     emit finished();
 }
 
-void TorControlCommand::onDataLine(const QByteArray &data)
+void TorControlCommand::onDataLine(const ByteArray &data)
 {
     Q_UNUSED(data);
 }

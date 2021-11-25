@@ -369,6 +369,8 @@ HEADERS +=	pqi/authssl.h \
 			pqi/authgpg.h \
 			pgp/pgphandler.h \
 			pgp/pgpkeyutil.h \
+			pqi/pqifdbin.h \
+			pqi/rstcpsocket.h \
 			pgp/rscertificate.h \
 			pgp/pgpauxutils.h \
 			pqi/p3cfgmgr.h \
@@ -545,6 +547,8 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/p3cfgmgr.cc \
 			pqi/p3peermgr.cc \
 			pqi/p3linkmgr.cc \
+			pqi/pqifdbin.cc \
+			pqi/rstcpsocket.cc \
 			pqi/p3netmgr.cc \
 			pqi/p3notify.cc \
 			pqi/pqiqos.cc \
@@ -733,6 +737,7 @@ HEADERS += 	tor/AddOnionCommand.h \
                 tor/SetConfCommand.h \
            	tor/Settings.h \
            	tor/StrUtil.h \
+           	tor/bytearray.h \
            	tor/TorControl.h \
            	tor/TorControlCommand.h \
            	tor/TorControlSocket.h \

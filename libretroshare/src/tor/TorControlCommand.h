@@ -34,7 +34,8 @@
 #define TORCONTROLCOMMAND_H
 
 #include <QObject>
-#include <QByteArray>
+
+#include "bytearray.h"
 
 namespace Tor
 {
@@ -52,13 +53,13 @@ public:
     int statusCode() const { return m_finalStatus; }
 
 signals:
-    void replyLine(int statusCode, const QByteArray &data);
+    void replyLine(int statusCode, const ByteArray &data);
     void finished();
 
 protected:
-    virtual void onReply(int statusCode, const QByteArray &data);
+    virtual void onReply(int statusCode, const ByteArray &data);
     virtual void onFinished(int statusCode);
-    virtual void onDataLine(const QByteArray &data);
+    virtual void onDataLine(const ByteArray &data);
     virtual void onDataFinished();
 
 private:

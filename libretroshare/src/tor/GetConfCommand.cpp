@@ -41,14 +41,14 @@ GetConfCommand::GetConfCommand(Type t)
 {
 }
 
-QByteArray GetConfCommand::build(const QByteArray &key)
+ByteArray GetConfCommand::build(const ByteArray &key)
 {
-    return build(QList<QByteArray>() << key);
+    return build(QList<ByteArray>() << key);
 }
 
-QByteArray GetConfCommand::build(const QList<QByteArray> &keys)
+ByteArray GetConfCommand::build(const QList<ByteArray> &keys)
 {
-    QByteArray out;
+    ByteArray out;
     if (type == GetConf) {
         out = "GETCONF";
     } else if (type == GetInfo) {
@@ -58,7 +58,7 @@ QByteArray GetConfCommand::build(const QList<QByteArray> &keys)
         return out;
     }
 
-    foreach (const QByteArray &key, keys) {
+    foreach (const ByteArray &key, keys) {
         out.append(' ');
         out.append(key);
     }
@@ -67,49 +67,29 @@ QByteArray GetConfCommand::build(const QList<QByteArray> &keys)
     return out;
 }
 
-void GetConfCommand::onReply(int statusCode, const QByteArray &data)
+void GetConfCommand::onReply(int statusCode, const ByteArray &data)
 {
     TorControlCommand::onReply(statusCode, data);
     if (statusCode != 250)
         return;
 
     int kep = data.indexOf('=');
-    QString key = QString::fromLatin1(data.mid(0, kep));
-    QVariant value;
+    std::string key = data.mid(0, kep).toString();
+    std::string value;
     if (kep >= 0)
-        value = QString::fromLatin1(unquotedString(data.mid(kep + 1)));
+        value = unquotedString(data.mid(kep + 1)).toString();
 
     m_lastKey = key;
-    QVariantMap::iterator it = m_results.find(key);
-    if (it != m_results.end()) {
-        // Make a list of values
-        QVariantList results = it->toList();
-        if (results.isEmpty())
-            results.append(*it);
-        results.append(value);
-        *it = QVariant(results);
-    } else {
-        m_results.insert(key, value);
-    }
+    m_results[key].push_back(value);
 }
 
-void GetConfCommand::onDataLine(const QByteArray &data)
+void GetConfCommand::onDataLine(const ByteArray &data)
 {
-    if (m_lastKey.isEmpty()) {
+    if (m_lastKey.empty()) {
         qWarning() << "torctrl: Unexpected data line in GetConf command";
         return;
     }
-
-    QVariantMap::iterator it = m_results.find(m_lastKey);
-    if (it != m_results.end()) {
-        QVariantList results = it->toList();
-        if (results.isEmpty() && !it->toByteArray().isEmpty())
-            results.append(*it);
-        results.append(data);
-        *it = QVariant(results);
-    } else {
-        m_results.insert(m_lastKey, QVariantList() << data);
-    }
+    m_results[m_lastKey].push_back(data.toString());
 }
 
 void GetConfCommand::onDataFinished()
@@ -117,8 +97,13 @@ void GetConfCommand::onDataFinished()
     m_lastKey.clear();
 }
 
-QVariant GetConfCommand::get(const QByteArray &key) const
+std::list<std::string> GetConfCommand::get(const ByteArray& key) const
 {
-    return m_results.value(QString::fromLatin1(key));
+    auto it = m_results.find(key.toString());
+
+    if(it != m_results.end())
+        return it->second;
+    else
+        return std::list<std::string>();
 }
 

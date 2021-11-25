@@ -50,49 +50,55 @@ bool SetConfCommand::isSuccessful() const
     return statusCode() == 250;
 }
 
-QByteArray SetConfCommand::build(const QByteArray &key, const QByteArray &value)
+ByteArray SetConfCommand::build(const ByteArray &key, const ByteArray &value)
 {
-    return build(QList<QPair<QByteArray, QByteArray> >() << qMakePair(key, value));
+    return build(std::list<std::pair<ByteArray, ByteArray> > { std::make_pair(key, value) } );
 }
 
-QByteArray SetConfCommand::build(const QVariantMap &data)
+// ByteArray SetConfCommand::build(const std::list<std::pair<ByteArray,ByteArray> > &data)
+// {
+//     QList<QPair<QByteArray, QByteArray> > out;
+//
+//     for (QVariantMap::ConstIterator it = data.begin(); it != data.end(); it++) {
+//         QByteArray key = it.key().toLatin1();
+//
+//         if (static_cast<QMetaType::Type>(it.value().type()) == QMetaType::QVariantList) {
+//             QVariantList values = it.value().value<QVariantList>();
+//             foreach (const QVariant &value, values)
+//                 out.append(qMakePair(key, value.toString().toLatin1()));
+//         } else {
+//             out.append(qMakePair(key, it.value().toString().toLatin1()));
+//         }
+//     }
+//
+//     return build(out);
+// }
+
+ByteArray SetConfCommand::build(const std::list<std::pair<ByteArray, ByteArray> >& data)
 {
-    QList<QPair<QByteArray, QByteArray> > out;
+    ByteArray out(m_resetMode ? "RESETCONF" : "SETCONF");
 
-    for (QVariantMap::ConstIterator it = data.begin(); it != data.end(); it++) {
-        QByteArray key = it.key().toLatin1();
+    for (auto& p:data)
+    {
+        out += " " ;
+        out += p.first;
 
-        if (static_cast<QMetaType::Type>(it.value().type()) == QMetaType::QVariantList) {
-            QVariantList values = it.value().value<QVariantList>();
-            foreach (const QVariant &value, values)
-                out.append(qMakePair(key, value.toString().toLatin1()));
-        } else {
-            out.append(qMakePair(key, it.value().toString().toLatin1()));
+        if (!p.second.empty())
+        {
+            out += "=" ;
+            out += quotedString(p.second);
         }
-    }
-
-    return build(out);
-}
-
-QByteArray SetConfCommand::build(const QList<QPair<QByteArray, QByteArray> > &data)
-{
-    QByteArray out(m_resetMode ? "RESETCONF" : "SETCONF");
-
-    for (int i = 0; i < data.size(); i++) {
-        out += " " + data[i].first;
-        if (!data[i].second.isEmpty())
-            out += "=" + quotedString(data[i].second);
     }
 
     out.append("\r\n");
     return out;
 }
 
-void SetConfCommand::onReply(int statusCode, const QByteArray &data)
+void SetConfCommand::onReply(int statusCode, const ByteArray &data)
 {
     TorControlCommand::onReply(statusCode, data);
     if (statusCode != 250)
-        m_errorMessage = QString::fromLatin1(data);
+        m_errorMessage = data.toString();
 }
 
 void SetConfCommand::onFinished(int statusCode)

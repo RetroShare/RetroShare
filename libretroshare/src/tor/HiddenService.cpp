@@ -32,11 +32,9 @@
 
 #include "HiddenService.h"
 #include "TorControl.h"
-#include "TorSocket.h"
 #include "CryptoKey.h"
 #include "Useful.h"
 #include <QDir>
-#include <QFile>
 #include <QTimer>
 #include <QDebug>
 
@@ -47,7 +45,7 @@ HiddenService::HiddenService(HiddenServiceClient *client)
 {
 }
 
-HiddenService::HiddenService(HiddenServiceClient *client,const QString &path)
+HiddenService::HiddenService(HiddenServiceClient *client,const std::string& path)
     : m_dataPath(path), m_status(NotCreated), m_client(client)
 {
     /* Set the initial status and, if possible, load the hostname */
@@ -58,7 +56,7 @@ HiddenService::HiddenService(HiddenServiceClient *client,const QString &path)
     }
 }
 
-HiddenService::HiddenService(HiddenServiceClient *client,const CryptoKey &privateKey, const QString &path)
+HiddenService::HiddenService(HiddenServiceClient *client,const CryptoKey &privateKey, const std::string &path)
     : m_dataPath(path), m_status(NotCreated), m_client(client)
 {
     setPrivateKey(privateKey);
@@ -92,7 +90,7 @@ void HiddenService::addTarget(quint16 servicePort, QHostAddress targetAddress, q
     m_targets.append(t);
 }
 
-void HiddenService::setServiceId(const QByteArray& sid)
+void HiddenService::setServiceId(const ByteArray& sid)
 {
     m_service_id = sid;
     m_hostname = sid + ".onion";

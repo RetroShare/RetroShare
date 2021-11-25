@@ -30,29 +30,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TORCONTROLSOCKET_H
-#define TORCONTROLSOCKET_H
+#pragma once
 
-#include <QTcpSocket>
-#include <QQueue>
+#include "pqi/rstcpsocket.h"
 
 namespace Tor
 {
 
 class TorControlCommand;
 
-class TorControlSocket : public QTcpSocket
+class TorControlSocket : public RsTcpSocket
 {
-Q_OBJECT
 public:
-    explicit TorControlSocket(QObject *parent = 0);
+    explicit TorControlSocket();
     virtual ~TorControlSocket();
 
-    QString errorMessage() const { return m_errorMessage; }
+    std::string errorMessage() const { return m_errorMessage; }
 
     void registerEvent(const QByteArray &event, TorControlCommand *handler);
 
-    void sendCommand(const QByteArray &data) { sendCommand(0, data); }
+    void sendCommand(const std::string& data) { sendCommand(0, data); }
     void sendCommand(TorControlCommand *command, const QByteArray &data);
 
 signals:
@@ -63,13 +60,13 @@ private slots:
     void clear();
 
 private:
-    QQueue<TorControlCommand*> commandQueue;
+    std::list<TorControlCommand*> commandQueue;
     QHash<QByteArray,TorControlCommand*> eventCommands;
-    QString m_errorMessage;
+    std::string m_errorMessage;
     TorControlCommand *currentCommand;
     bool inDataReply;
 
-    void setError(const QString &message);
+    void setError(const std::string& message);
 };
 
 }

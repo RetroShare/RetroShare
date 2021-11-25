@@ -48,8 +48,8 @@ class SettingsFilePrivate : public QObject
 
 public:
     SettingsFile *q;
-    QString filePath;
-    QString errorMessage;
+    std::string filePath;
+    std::string errorMessage;
     QTimer syncTimer;
     QJsonObject jsonRoot;
     SettingsObject *rootObject;
@@ -58,17 +58,17 @@ public:
     virtual ~SettingsFilePrivate();
 
     void reset();
-    void setError(const QString &message);
-    bool checkDirPermissions(const QString &path);
+    void setError(const std::string &message);
+    bool checkDirPermissions(const std::string &path);
     bool readFile();
     bool writeFile();
 
-    static QStringList splitPath(const QString &input, bool &ok);
-    QJsonValue read(const QJsonObject &base, const QStringList &path);
-    bool write(const QStringList &path, const QJsonValue &value);
+    static std::list<std::string> splitPath(const std::string& input, bool &ok);
+    QJsonValue read(const QJsonObject &base, const std::list<std::string> &path);
+    bool write(const std::list<std::string> &path, const QJsonValue &value);
 
 signals:
-    void modified(const QStringList &path, const QJsonValue &value);
+    void modified(const std::list<std::string> &path, const QJsonValue &value);
 
 private slots:
     void sync();
