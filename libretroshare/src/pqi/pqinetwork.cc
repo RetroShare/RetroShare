@@ -27,6 +27,7 @@
 #	include <ws2tcpip.h>
 #endif // WINDOWS_SYS
 
+/// @See: android_ifaddrs/README.adoc
 #ifdef __ANDROID__
 #	include <android/api-level.h>
 #endif // def __ANDROID__
@@ -276,11 +277,17 @@ int inet_aton(const char *name, struct in_addr *addr)
 #	include <winsock2.h>
 #	include <iphlpapi.h>
 #	pragma comment(lib, "IPHLPAPI.lib")
-#elif defined(__ANDROID__) && __ANDROID_API__ < 24
+#elif defined(__ANDROID__) && __ANDROID_API__ < 24 && \
+	defined(LIBRETROSHARE_ANDROID_IFADDRS_QT)
+/// @See: android_ifaddrs/README.adoc
 #	include <string>
 #	include <QString>
 #	include <QHostAddress>
 #	include <QNetworkInterface>
+#elif defined(__ANDROID__) && __ANDROID_API__ < 24 && \
+	!defined(LIBRETROSHARE_ANDROID_IFADDRS_QT)
+/// @See: android_ifaddrs/README.adoc
+#	include "android_ifaddrs/ifaddrs-android.h"
 #else // not __ANDROID__ nor WINDOWS => Linux and other unixes
 #	include <ifaddrs.h>
 #	include <net/if.h>
@@ -324,7 +331,9 @@ bool getLocalAddresses(std::vector<sockaddr_storage>& addrs)
 		}
 	}
 	free(adapter_addresses);
-#elif defined(__ANDROID__) && __ANDROID_API__ < 24
+#elif defined(__ANDROID__) && __ANDROID_API__ < 24 && \
+	defined(LIBRETROSHARE_ANDROID_IFADDRS_QT)
+/// @See: android_ifaddrs/README.adoc
 	for(auto& qAddr: QNetworkInterface::allAddresses())
 	{
 		sockaddr_storage tmpAddr;
@@ -336,8 +345,8 @@ bool getLocalAddresses(std::vector<sockaddr_storage>& addrs)
 	struct ifaddrs *ifsaddrs, *ifa;
 	if(getifaddrs(&ifsaddrs) != 0) 
 	{
-		std::cerr << __PRETTY_FUNCTION__ << " FATAL ERROR: " << errno << " "
-		          << strerror(errno) << std::endl;
+		RS_ERR( "getifaddrs failed with: ", errno, " ",
+		        rs_errno_to_condition(errno) );
 		print_stacktrace();
 		return false;
 	}

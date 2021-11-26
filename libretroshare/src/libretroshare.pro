@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: (C) 2004-2019 Retroshare Team <contact@retroshare.cc>
+# SPDX-FileCopyrightText: (C) 2004-2021 Retroshare Team <contact@retroshare.cc>
 # SPDX-License-Identifier: CC0-1.0
 
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
@@ -1092,12 +1092,23 @@ test_bitdht {
 ################################# Android #####################################
 
 android-* {
+    lessThan(ANDROID_API_VERSION, 24) {
+
 ## TODO: This probably disable largefile support and maybe is not necessary with
 ## __ANDROID_API__ >= 24 hence should be made conditional or moved to a
 ## compatibility header
     DEFINES *= "fopen64=fopen"
     DEFINES *= "fseeko64=fseeko"
     DEFINES *= "ftello64=ftello"
+
+        ## @See: android_ifaddrs/README.adoc
+        !contains(DEFINES, LIBRETROSHARE_ANDROID_IFADDRS_QT) {
+            HEADERS += \
+                android_ifaddrs/ifaddrs-android.h \
+                android_ifaddrs/LocalArray.h \
+                android_ifaddrs/ScopedFd.h
+        }
+    }
 
 ## Static library are very susceptible to order in command line
     sLibs = bz2 $$RS_UPNP_LIB $$RS_SQL_LIB ssl crypto
