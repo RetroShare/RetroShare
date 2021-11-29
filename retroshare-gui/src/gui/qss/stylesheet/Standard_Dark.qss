@@ -2316,7 +2316,7 @@ QFrame#titleBarFrame {
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #455364, stop: 0.5 #54687A,stop: 0.6 #44586A, stop:1 #455364);
 	border: 0px;
 }
-QFrame[objectName^="#headerBFrame"] {
+QFrame[objectName^="headerBFrame"] {
 	border: 1px;
 	border-radius: 4px;
 }

@@ -90,7 +90,10 @@
         </property>
         <item>
          <widget class="QFrame" name="voteFrame">
-          <layout class="QVBoxLayout" name="arrowsLayout">
+          <layout class="QVBoxLayout" name="voteFrame_VL">
+           <property name="spacing">
+            <number>0</number>
+           </property>
            <property name="leftMargin">
             <number>0</number>
            </property>
@@ -172,6 +175,13 @@
               <bool>true</bool>
              </property>
             </widget>
+           </item>
+           <item>
+            <spacer name="voteFrame_VS">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+            </spacer>
            </item>
           </layout>
          </widget>
@@ -277,7 +287,7 @@
              </widget>
             </item>
             <item>
-             <spacer name="from_HSpacer">
+             <spacer name="from_HS">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -340,7 +350,7 @@
              </widget>
             </item>
             <item>
-             <spacer name="pictureLabel_HSpacer">
+             <spacer name="pictureLabel_HS">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -401,16 +411,16 @@
                <iconset resource="Posted_images.qrc">
                 <normaloff>:/images/share.png</normaloff>:/images/share.png</iconset>
               </property>
-              <property name="autoRaise">
-               <bool>true</bool>
-              </property>
               <property name="toolButtonStyle">
                <enum>Qt::ToolButtonTextBesideIcon</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
             <item>
-             <spacer name="buttons_HSpacer">
+             <spacer name="buttons_HS">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -424,9 +434,29 @@
             </item>
            </layout>
           </item>
+          <item>
+           <spacer name="right_VS">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
          </layout>
         </item>
        </layout>
+      </item>
+      <item>
+       <spacer name="feedFrame_VS">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </spacer>
       </item>
      </layout>
     </widget>
