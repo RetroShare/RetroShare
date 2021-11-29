@@ -66,9 +66,9 @@ public:
     virtual ~SettingsFile();
 
     QString filePath() const;
-    bool setFilePath(const QString &filePath);
+    bool setFilePath(const std::string &filePath);
 
-    QString errorMessage() const;
+    std::string errorMessage() const;
     bool hasError() const;
 
     SettingsObject *root();
@@ -136,38 +136,38 @@ public:
     static SettingsFile *defaultFile();
     static void setDefaultFile(SettingsFile *file);
 
-    QString path() const;
-    void setPath(const QString &path);
+    std::string path() const;
+    void setPath(const std::string &path);
 
     QJsonObject data() const;
     void setData(const QJsonObject &data);
 
-    Q_INVOKABLE QJsonValue read(const QString &key, const QJsonValue &defaultValue = QJsonValue::Undefined) const;
-    template<typename T> T read(const QString &key) const;
-    Q_INVOKABLE void write(const QString &key, const QJsonValue &value);
-    template<typename T> void write(const QString &key, const T &value);
-    Q_INVOKABLE void unset(const QString &key);
+    Q_INVOKABLE QJsonValue read(const std::string &key, const QJsonValue &defaultValue = QJsonValue::Undefined) const;
+    template<typename T> T read(const std::string &key) const;
+    Q_INVOKABLE void write(const std::string &key, const QJsonValue &value);
+    template<typename T> void write(const std::string &key, const T &value);
+    Q_INVOKABLE void unset(const std::string &key);
 
     // const char* key overloads
     QJsonValue read(const char *key, const QJsonValue &defaultValue = QJsonValue::Undefined) const
     {
-        return read(QString::fromLatin1(key), defaultValue);
+        return read(std::string(key), defaultValue);
     }
     template<typename T> T read(const char *key) const
     {
-        return read<T>(QString::fromLatin1(key));
+        return read<T>(std::string(key));
     }
     void write(const char *key, const QJsonValue &value)
     {
-        write(QString::fromLatin1(key), value);
+        write(std::string(key), value);
     }
     template<typename T> void write(const char *key, const T &value)
     {
-        write<T>(QString::fromLatin1(key), value);
+        write<T>(std::string(key), value);
     }
     void unset(const char *key)
     {
-        unset(QString::fromLatin1(key));
+        unset(std::string(key));
     }
 
     Q_INVOKABLE void undefine();
@@ -176,56 +176,56 @@ signals:
     void pathChanged();
     void dataChanged();
 
-    void modified(const QString &path, const QJsonValue &value);
+    void modified(const std::string &path, const QJsonValue &value);
 
 private:
     SettingsObjectPrivate *d;
 };
 
-template<typename T> inline void SettingsObject::write(const QString &key, const T &value)
+template<typename T> inline void SettingsObject::write(const std::string &key, const T &value)
 {
     write(key, QJsonValue(value));
 }
 
-template<> inline QString SettingsObject::read<QString>(const QString &key) const
+template<> inline std::string SettingsObject::read<std::string>(const std::string &key) const
 {
     return read(key).toString();
 }
 
-template<> inline QJsonArray SettingsObject::read<QJsonArray>(const QString &key) const
+template<> inline QJsonArray SettingsObject::read<QJsonArray>(const std::string &key) const
 {
     return read(key).toArray();
 }
 
-template<> inline QJsonObject SettingsObject::read<QJsonObject>(const QString &key) const
+template<> inline QJsonObject SettingsObject::read<QJsonObject>(const std::string &key) const
 {
     return read(key).toObject();
 }
 
-template<> inline double SettingsObject::read<double>(const QString &key) const
+template<> inline double SettingsObject::read<double>(const std::string &key) const
 {
     return read(key).toDouble();
 }
 
-template<> inline int SettingsObject::read<int>(const QString &key) const
+template<> inline int SettingsObject::read<int>(const std::string &key) const
 {
     return read(key).toInt();
 }
 
-template<> inline bool SettingsObject::read<bool>(const QString &key) const
+template<> inline bool SettingsObject::read<bool>(const std::string &key) const
 {
     return read(key).toBool();
 }
 
-template<> inline QDateTime SettingsObject::read<QDateTime>(const QString &key) const
+template<> inline QDateTime SettingsObject::read<QDateTime>(const std::string &key) const
 {
-    QString value = read(key).toString();
+    std::string value = read(key).toString();
     if (value.isEmpty())
         return QDateTime();
     return QDateTime::fromString(value, Qt::ISODate).toLocalTime();
 }
 
-template<> inline void SettingsObject::write<QDateTime>(const QString &key, const QDateTime &value)
+template<> inline void SettingsObject::write<QDateTime>(const std::string &key, const QDateTime &value)
 {
     write(key, QJsonValue(value.toUTC().toString(Qt::ISODate)));
 }
@@ -242,14 +242,14 @@ private:
     QByteArray d;
 };
 
-template<> inline Base64Encode SettingsObject::read<Base64Encode>(const QString &key) const
+template<> inline Base64Encode SettingsObject::read<Base64Encode>(const std::string &key) const
 {
     return Base64Encode(QByteArray::fromBase64(read(key).toString().toLatin1()));
 }
 
-template<> inline void SettingsObject::write<Base64Encode>(const QString &key, const Base64Encode &value)
+template<> inline void SettingsObject::write<Base64Encode>(const std::string &key, const Base64Encode &value)
 {
-    write(key, QJsonValue(QString::fromLatin1(value.encoded())));
+    write(key, QJsonValue(std::string(value.encoded())));
 }
 
 #endif

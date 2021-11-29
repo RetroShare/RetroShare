@@ -50,9 +50,9 @@ bool SetConfCommand::isSuccessful() const
     return statusCode() == 250;
 }
 
-ByteArray SetConfCommand::build(const ByteArray &key, const ByteArray &value)
+ByteArray SetConfCommand::build(const std::string &key, const std::string &value)
 {
-    return build(std::list<std::pair<ByteArray, ByteArray> > { std::make_pair(key, value) } );
+    return build(std::list<std::pair<std::string, std::string> > { std::make_pair(key, value) } );
 }
 
 // ByteArray SetConfCommand::build(const std::list<std::pair<ByteArray,ByteArray> > &data)
@@ -74,7 +74,7 @@ ByteArray SetConfCommand::build(const ByteArray &key, const ByteArray &value)
 //     return build(out);
 // }
 
-ByteArray SetConfCommand::build(const std::list<std::pair<ByteArray, ByteArray> >& data)
+ByteArray SetConfCommand::build(const std::list<std::pair<std::string, std::string> >& data)
 {
     ByteArray out(m_resetMode ? "RESETCONF" : "SETCONF");
 

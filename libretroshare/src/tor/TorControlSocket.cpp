@@ -49,24 +49,27 @@ TorControlSocket::~TorControlSocket()
     clear();
 }
 
-void TorControlSocket::sendCommand(TorControlCommand *command, const QByteArray &data)
+void TorControlSocket::sendCommand(TorControlCommand *command, const ByteArray &data)
 {
-    Q_ASSERT(data.endsWith("\r\n"));
+    assert(data.endsWith(ByteArray("\r\n")));
 
     commandQueue.push_back(command);
     write(data);
 
-    std::cerr << "[TOR CTRL] Sent: \"" << QString(data.trimmed()).toStdString() << "\"" << std::endl;
+    std::cerr << "[TOR CTRL] Sent: \"" << data.trimmed().toString() << "\"" << std::endl;
 }
 
-void TorControlSocket::registerEvent(const QByteArray &event, TorControlCommand *command)
+void TorControlSocket::registerEvent(const ByteArray &event, TorControlCommand *command)
 {
-    eventCommands.insert(event, command);
+    eventCommands.insert(std::make_pair(event, command));
 
-    QByteArray data("SETEVENTS");
-    foreach (const QByteArray &key, eventCommands.keys()) {
+    ByteArray data("SETEVENTS");
+    for(auto it:eventCommands)
+    {
+        //const ByteArray &key, eventCommands.keys()) {
+        //data += key;
         data += ' ';
-        data += key;
+        data += it.first;
     }
     data += "\r\n";
 
@@ -96,9 +99,9 @@ void TorControlSocket::process()
         if (!canReadLine())
             return;
 
-        QByteArray line = readLine(5120);
-        if (!line.endsWith("\r\n")) {
-            setError(QStringLiteral("Invalid control message syntax"));
+        ByteArray line = readLine(5120);
+        if (!line.endsWith(ByteArray("\r\n"))) {
+            setError("Invalid control message syntax");
             return;
         }
         line.chop(2);
@@ -117,7 +120,7 @@ void TorControlSocket::process()
         }
 
         if (line.size() < 4) {
-            setError(QStringLiteral("Invalid control message syntax"));
+            setError("Invalid control message syntax");
             return;
         }
 
@@ -130,7 +133,7 @@ void TorControlSocket::process()
         line = line.mid(4);
 
         if (!isFinalReply && !inDataReply && type != '-') {
-            setError(QStringLiteral("Invalid control message syntax"));
+            setError("Invalid control message syntax");
             return;
         }
 
@@ -142,7 +145,7 @@ void TorControlSocket::process()
                     currentCommand = eventCommands.value(line.mid(0, space));
 
                 if (!currentCommand) {
-                    qWarning() << "torctrl: Ignoring unknown event";
+                    RsWarn() << "torctrl: Ignoring unknown event";
                     continue;
                 }
             }
@@ -155,19 +158,19 @@ void TorControlSocket::process()
             continue;
         }
 
-        if (commandQueue.isEmpty()) {
-            qWarning() << "torctrl: Received unexpected data";
+        if (commandQueue.empty()) {
+            RsWarn() << "torctrl: Received unexpected data";
             continue;
         }
 
-        TorControlCommand *command = commandQueue.first();
+        TorControlCommand *command = commandQueue.front();
         if (command)
             command->onReply(statusCode, line);
 
         if (inDataReply) {
             currentCommand = command;
         } else if (isFinalReply) {
-            commandQueue.takeFirst();
+            commandQueue.pop_front();
             if (command) {
                 command->onFinished(statusCode);
                 command->deleteLater();

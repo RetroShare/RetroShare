@@ -31,6 +31,7 @@
  */
 
 #include <iostream>
+#include <fstream>
 
 // This works on linux only. I have no clue how to do that on windows. Anyway, this
 // is only needed for an assert that should normaly never be triggered.
@@ -67,25 +68,25 @@ public:
     TorManager *q;
     TorProcess *process;
     TorControl *control;
-    QString dataDir;
-    QString hiddenServiceDir;
-    QStringList logMessages;
-    QString errorMessage;
+    std::string dataDir;
+    std::string hiddenServiceDir;
+    std::list<std::string> logMessages;
+    std::string errorMessage;
     bool configNeeded;
 
 	HiddenService *hiddenService ;
 
     explicit TorManagerPrivate(TorManager *parent = 0);
 
-    QString torExecutablePath() const;
-    bool createDataDir(const QString &path);
-    bool createDefaultTorrc(const QString &path);
+    std::string torExecutablePath() const;
+    bool createDataDir(const std::string &path);
+    bool createDefaultTorrc(const std::string &path);
 
-    void setError(const QString &errorMessage);
+    void setError(const std::string &errorMessage);
 
     virtual void processStateChanged(int state) override;
-    virtual void processErrorChanged(const QString &errorMessage) override;
-    virtual void processLogMessage(const QString &message) override;
+    virtual void processErrorChanged(const std::string &errorMessage) override;
+    virtual void processLogMessage(const std::string &message) override;
 
 public slots:
     void controlStatusChanged(int status);
@@ -128,12 +129,12 @@ TorProcess *TorManager::process()
     return d->process;
 }
 
-QString TorManager::torDataDirectory() const
+std::string TorManager::torDataDirectory() const
 {
     return d->dataDir;
 }
 
-void TorManager::setTorDataDirectory(const QString &path)
+void TorManager::setTorDataDirectory(const std::string &path)
 {
     d->dataDir = QDir::fromNativeSeparators(path);
 
@@ -141,16 +142,16 @@ void TorManager::setTorDataDirectory(const QString &path)
         d->dataDir.append(QLatin1Char('/'));
 }
 
-QString TorManager::hiddenServiceDirectory() const
+std::string TorManager::hiddenServiceDirectory() const
 {
     return d->hiddenServiceDir;
 }
-void TorManager::setHiddenServiceDirectory(const QString &path)
+void TorManager::setHiddenServiceDirectory(const std::string &path)
 {
     d->hiddenServiceDir = QDir::fromNativeSeparators(path);
 
-    if (!d->hiddenServiceDir.isEmpty() && !d->hiddenServiceDir.endsWith(QLatin1Char('/')))
-        d->hiddenServiceDir.append(QLatin1Char('/'));
+    if (!d->hiddenServiceDir.empty() && !(d->hiddenServiceDir.back() == '/'))
+        d->hiddenServiceDir += '/';
 }
 
 bool TorManager::setupHiddenService()
@@ -161,34 +162,34 @@ bool TorManager::setupHiddenService()
 		return true ;
 	}
 
-    QString keyData   ;//= m_settings->read("serviceKey").toString();
-    QString legacyDir = d->hiddenServiceDir;
+    std::string keyData   ;//= m_settings->read("serviceKey").toString();
+    std::string legacyDir = d->hiddenServiceDir;
 
 	std::cerr << "TorManager: setting up hidden service." << std::endl;
 
-	if(legacyDir.isNull())
+    if(legacyDir.empty())
 	{
 		std::cerr << "legacy dir not set! Cannot proceed." << std::endl;
 		return false ;
 	}
 
-	std::cerr << "Using legacy dir: " << legacyDir.toStdString() << std::endl;
+    std::cerr << "Using legacy dir: " << legacyDir << std::endl;
 
-	if (!legacyDir.isEmpty() && QFile::exists(legacyDir + QLatin1String("/private_key")))
+    if (!legacyDir.empty() && QFile::exists(legacyDir.c_str() + QLatin1String("/private_key")))
     {
-        std::cerr << "Attempting to load key from legacy filesystem format in " << legacyDir.toStdString() << std::endl;
+        std::cerr << "Attempting to load key from legacy filesystem format in " << legacyDir << std::endl;
 
         CryptoKey key;
-        if (!key.loadFromFile(legacyDir + QLatin1String("/private_key")))
+        if (!key.loadFromFile(legacyDir + "/private_key"))
         {
-            qWarning() << "Cannot load legacy format key from" << legacyDir << "for conversion";
+            RsWarn() << "Cannot load legacy format key from" << legacyDir << "for conversion";
             return false;
         }
 
         d->hiddenService = new Tor::HiddenService(this,key, legacyDir);
 
 		std::cerr << "Got key from legacy dir: " << std::endl;
-        std::cerr << key.bytes().toStdString() << std::endl;
+        std::cerr << key.bytes().toHex().toString() << std::endl;
     }
     else
     {
@@ -239,11 +240,9 @@ void TorManager::hiddenServicePrivateKeyChanged()
     if(!d->hiddenService)
         return ;
 
-    QString key = QString::fromLatin1(d->hiddenService->privateKey().bytes());
+    std::string key = d->hiddenService->privateKey().bytes().toString();
 
-	QFile outfile(d->hiddenServiceDir + QLatin1String("/private_key")) ;
-    outfile.open( QIODevice::WriteOnly | QIODevice::Text );
-    QTextStream s(&outfile);
+    std::ofstream s(d->hiddenServiceDir + "/private_key");
 
 #ifdef TO_REMOVE
 	s << "-----BEGIN RSA PRIVATE KEY-----" << endl;
@@ -255,10 +254,10 @@ void TorManager::hiddenServicePrivateKeyChanged()
 #endif
     s << key ;
 
-    outfile.close();
+    s.close();
 
 	std::cerr << "Hidden service private key changed!" << std::endl;
-	std::cerr << key.toStdString() << std::endl;
+    std::cerr << key << std::endl;
 }
 
 void TorManager::hiddenServiceHostnameChanged()
@@ -270,7 +269,7 @@ void TorManager::hiddenServiceHostnameChanged()
     outfile2.open( QIODevice::WriteOnly | QIODevice::Text );
     QTextStream t(&outfile2);
 
-    QString hostname(d->hiddenService->hostname());
+    std::string hostname(d->hiddenService->hostname());
 
     t << hostname << endl;
     outfile2.close();
@@ -283,7 +282,7 @@ bool TorManager::configurationNeeded() const
     return d->configNeeded;
 }
 
-QStringList TorManager::logMessages() const
+std::string TorManager::logMessages() const
 {
     return d->logMessages;
 }
@@ -293,7 +292,7 @@ bool TorManager::hasError() const
     return !d->errorMessage.isEmpty();
 }
 
-QString TorManager::errorMessage() const
+std::string TorManager::errorMessage() const
 {
     return d->errorMessage;
 }
@@ -306,7 +305,7 @@ bool TorManager::start()
         //emit errorChanged(); // not needed because there's no error to handle
     }
 
-    SettingsObject settings(QStringLiteral("tor"));
+    SettingsObject settings("tor");
 
     // If a control port is defined by config or environment, skip launching tor
     if (!settings.read("controlPort").isUndefined() ||
@@ -317,7 +316,7 @@ bool TorManager::start()
         QByteArray password = settings.read("controlPassword").toString().toLatin1();
 
         if (!qEnvironmentVariableIsEmpty("TOR_CONTROL_HOST"))
-            address = QHostAddress(QString::fromLatin1(qgetenv("TOR_CONTROL_HOST")));
+            address = QHostAddress(qgetenv("TOR_CONTROL_HOST"));
 
         if (!qEnvironmentVariableIsEmpty("TOR_CONTROL_PORT")) {
             bool ok = false;
@@ -330,7 +329,7 @@ bool TorManager::start()
             password = qgetenv("TOR_CONTROL_PASSWD");
 
         if (!port) {
-            d->setError(QStringLiteral("Invalid control port settings from environment or configuration"));
+            d->setError("Invalid control port settings from environment or configuration");
             return false;
         }
 
@@ -341,12 +340,12 @@ bool TorManager::start()
         d->control->connect(address, port);
     } else {
         // Launch a bundled Tor instance
-        QString executable = d->torExecutablePath();
+        std::string executable = d->torExecutablePath();
 
         std::cerr << "Executable path: " << executable.toStdString() << std::endl;
 
         if (executable.isEmpty()) {
-            d->setError(QStringLiteral("Cannot find tor executable"));
+            d->setError("Cannot find tor executable");
             return false;
         }
 
@@ -354,22 +353,23 @@ bool TorManager::start()
             d->process = new TorProcess(d);
 
             // QObject::connect(d->process, SIGNAL(stateChanged(int)), d, SLOT(processStateChanged(int)));
-            // QObject::connect(d->process, SIGNAL(errorMessageChanged(QString)), d, SLOT(processErrorChanged(QString)));
-            // QObject::connect(d->process, SIGNAL(logMessage(QString)), d, SLOT(processLogMessage(QString)));
+            // QObject::connect(d->process, SIGNAL(errorMessageChanged(std::string)), d, SLOT(processErrorChanged(std::string)));
+            // QObject::connect(d->process, SIGNAL(logMessage(std::string)), d, SLOT(processLogMessage(std::string)));
         }
 
         if (!QFile::exists(d->dataDir) && !d->createDataDir(d->dataDir)) {
-            d->setError(QStringLiteral("Cannot write data location: %1").arg(d->dataDir));
+            d->setError(std::string("Cannot write data location: ") + d->dataDir);
             return false;
         }
 
-        QString defaultTorrc = d->dataDir + QStringLiteral("default_torrc");
-        if (!QFile::exists(defaultTorrc) && !d->createDefaultTorrc(defaultTorrc)) {
-            d->setError(QStringLiteral("Cannot write data files: %1").arg(defaultTorrc));
+        std::string defaultTorrc = d->dataDir + "default_torrc";
+        if (!QFile::exists(defaultTorrc) && !d->createDefaultTorrc(defaultTorrc))
+        {
+            d->setError("Cannot write data files: ")+defaultTorrc);
             return false;
         }
 
-        QFile torrc(d->dataDir + QStringLiteral("torrc"));
+        QFile torrc(d->dataDir + "torrc");
         if (!torrc.exists() || torrc.size() == 0) {
             d->configNeeded = true;
 
@@ -403,7 +403,7 @@ bool TorManager::getProxyServerInfo(QHostAddress& proxy_server_adress,uint16_t& 
 	return proxy_server_port > 1023 ;
 }
 
-bool TorManager::getHiddenServiceInfo(QString& service_id,QString& service_onion_address,uint16_t& service_port, QHostAddress& service_target_address,uint16_t& target_port)
+bool TorManager::getHiddenServiceInfo(std::string& service_id,std::string& service_onion_address,uint16_t& service_port, QHostAddress& service_target_address,uint16_t& target_port)
 {
 	QList<Tor::HiddenService*> hidden_services = control()->hiddenServices();
 
@@ -431,7 +431,7 @@ bool TorManager::getHiddenServiceInfo(QString& service_id,QString& service_onion
 
 void TorManagerPrivate::processStateChanged(int state)
 {
-    std::cerr << Q_FUNC_INFO << "state: " << state << " passwd=\"" << QString(process->controlPassword()).toStdString() << "\" " << process->controlHost().toString().toStdString()
+    std::cerr << Q_FUNC_INFO << "state: " << state << " passwd=\"" << std::string(process->controlPassword()).toStdString() << "\" " << process->controlHost().toString().toStdString()
 	         << ":" << process->controlPort() << std::endl;
     if (state == TorProcess::Ready) {
         control->setAuthPassword(process->controlPassword());
@@ -439,18 +439,18 @@ void TorManagerPrivate::processStateChanged(int state)
     }
 }
 
-void TorManagerPrivate::processErrorChanged(const QString &errorMessage)
+void TorManagerPrivate::processErrorChanged(const std::string &errorMessage)
 {
-    std::cerr << "tor error:" << errorMessage.toStdString() << std::endl;
+    std::cerr << "tor error:" << errorMessage << std::endl;
     setError(errorMessage);
 }
 
-void TorManagerPrivate::processLogMessage(const QString &message)
+void TorManagerPrivate::processLogMessage(const std::string &message)
 {
-    std::cerr << "tor:" << message.toStdString() << std::endl;
+    std::cerr << "tor:" << message << std::endl;
     if (logMessages.size() >= 50)
-        logMessages.takeFirst();
-    logMessages.append(message);
+        logMessages.pop_front();
+    logMessages.push_back(message);
 }
 
 void TorManagerPrivate::controlStatusChanged(int status)
@@ -458,7 +458,7 @@ void TorManagerPrivate::controlStatusChanged(int status)
     if (status == TorControl::Connected) {
         if (!configNeeded) {
             // If DisableNetwork is 1, trigger configurationNeeded
-            connect(control->getConfiguration(QStringLiteral("DisableNetwork")),
+            connect(control->getConfiguration("DisableNetwork"),
                     SIGNAL(finished()), SLOT(getConfFinished()));
         }
 
@@ -488,18 +488,18 @@ void TorManagerPrivate::getConfFinished()
     }
 }
 
-QString TorManagerPrivate::torExecutablePath() const
+std::string TorManagerPrivate::torExecutablePath() const
 {
-    SettingsObject settings(QStringLiteral("tor"));
-    QString path = settings.read("executablePath").toString();
+    SettingsObject settings("tor");
+    std::string path = settings.read("executablePath").toString();
 
     if (!path.isEmpty() && QFile::exists(path))
         return path;
 
 #ifdef Q_OS_WIN
-    QString filename(QStringLiteral("/tor/tor.exe"));
+    std::string filename("/tor/tor.exe");
 #else
-    QString filename(QStringLiteral("/tor"));
+    std::string filename("/tor");
 #endif
 
     path = qApp->applicationDirPath();
@@ -508,7 +508,7 @@ QString TorManagerPrivate::torExecutablePath() const
         return path + filename;
 
 #ifdef BUNDLED_TOR_PATH
-    path = QStringLiteral(BUNDLED_TOR_PATH);
+    path = BUNDLED_TOR_PATH;
     if (QFile::exists(path + filename))
         return path + filename;
 #endif
@@ -516,7 +516,7 @@ QString TorManagerPrivate::torExecutablePath() const
 #ifdef __APPLE__
     // on MacOS, try traditional brew installation path
 
-    path = QStringLiteral("/usr/local/opt/tor/bin") ;
+    path = "/usr/local/opt/tor/bin" ;
 
     if (QFile::exists(path + filename))
         return path + filename;
@@ -526,13 +526,13 @@ QString TorManagerPrivate::torExecutablePath() const
     return filename.mid(1);
 }
 
-bool TorManagerPrivate::createDataDir(const QString &path)
+bool TorManagerPrivate::createDataDir(const std::string &path)
 {
     QDir dir(path);
-    return dir.mkpath(QStringLiteral("."));
+    return dir.mkpath(".");
 }
 
-bool TorManagerPrivate::createDefaultTorrc(const QString &path)
+bool TorManagerPrivate::createDefaultTorrc(const std::string &path)
 {
     static const char defaultTorrcContent[] =
         "SocksPort auto\n"
@@ -548,7 +548,7 @@ bool TorManagerPrivate::createDefaultTorrc(const QString &path)
     return true;
 }
 
-void TorManagerPrivate::setError(const QString &message)
+void TorManagerPrivate::setError(const std::string &message)
 {
     errorMessage = message;
 
@@ -557,7 +557,7 @@ void TorManagerPrivate::setError(const QString &message)
         auto ev = std::make_shared<RsTorManagerEvent>();
 
         ev->mTorManagerEventType = RsTorManagerEventCode::TOR_MANAGER_ERROR;
-        ev->mErrorMessage = message.toStdString();
+        ev->mErrorMessage = message;
         rsEvents->sendEvent(ev);
     }
     //emit q->errorChanged();
@@ -567,7 +567,7 @@ void TorManagerPrivate::setError(const QString &message)
 
 bool RsTor::isTorAvailable()
 {
-    return !instance()->d->torExecutablePath().isNull();
+    return !instance()->d->torExecutablePath().empty();
 }
 
 bool RsTor::getHiddenServiceInfo(std::string& service_id,
@@ -576,15 +576,15 @@ bool RsTor::getHiddenServiceInfo(std::string& service_id,
                                  std::string& service_target_address,
                                  uint16_t& target_port)
 {
-    QString sid;
-    QString soa;
+    std::string sid;
+    std::string soa;
     QHostAddress sta;
 
     if(!instance()->getHiddenServiceInfo(sid,soa,service_port,sta,target_port))
         return false;
 
-    service_id = sid.toStdString();
-    service_onion_address = soa.toStdString();
+    service_id = sid;
+    service_onion_address = soa;
     service_target_address = sta.toString().toStdString();
 
     return true;
@@ -592,13 +592,7 @@ bool RsTor::getHiddenServiceInfo(std::string& service_id,
 
 std::list<std::string> RsTor::logMessages()
 {
-    QStringList qs = instance()->logMessages();
-
-    std::list<std::string> s;
-    for(auto& ss:qs)
-        s.push_back(ss.toStdString());
-
-    return s;
+    return instance()->logMessages();
 }
 
 std::string RsTor::socksAddress()
@@ -652,7 +646,7 @@ RsTorHiddenServiceStatus RsTor::getHiddenServiceStatus(std::string& service_id)
     if(list.empty())
         return RsTorHiddenServiceStatus::NOT_CREATED;
 
-    service_id = (*list.begin())->serviceId().toStdString();
+    service_id = (*list.begin())->serviceId();
 
     switch((*list.begin())->status())
     {
@@ -680,7 +674,7 @@ bool RsTor::hasError()
 }
 std::string RsTor::errorMessage()
 {
-    return instance()->errorMessage().toStdString();
+    return instance()->errorMessage();
 }
 
 void RsTor::getProxyServerInfo(std::string& server_address,  uint16_t& server_port)
@@ -698,11 +692,11 @@ bool RsTor::start()
 
 void RsTor::setTorDataDirectory(const std::string& dir)
 {
-    instance()->setTorDataDirectory(QString::fromStdString(dir));
+    instance()->setTorDataDirectory(dir);
 }
 void RsTor::setHiddenServiceDirectory(const std::string& dir)
 {
-    instance()->setHiddenServiceDirectory(QString::fromStdString(dir));
+    instance()->setHiddenServiceDirectory(dir);
 }
 
 TorManager *RsTor::instance()

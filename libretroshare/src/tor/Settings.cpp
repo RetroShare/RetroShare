@@ -115,7 +115,7 @@ QString SettingsFile::filePath() const
     return d->filePath;
 }
 
-bool SettingsFile::setFilePath(const QString &filePath)
+bool SettingsFile::setFilePath(const std::string& filePath)
 {
     if (d->filePath == filePath)
         return hasError();
@@ -125,8 +125,8 @@ bool SettingsFile::setFilePath(const QString &filePath)
 
     QFileInfo fileInfo(filePath);
     QDir dir(fileInfo.path());
-    if (!dir.exists() && !dir.mkpath(QStringLiteral("."))) {
-        d->setError(QStringLiteral("Cannot create directory: %1").arg(dir.path()));
+    if (!dir.exists() && !dir.mkpath(".")) {
+        d->setError("Cannot create directory: " + dir.path()));
         return false;
     }
     d->checkDirPermissions(fileInfo.path());
@@ -137,7 +137,7 @@ bool SettingsFile::setFilePath(const QString &filePath)
     return true;
 }
 
-QString SettingsFile::errorMessage() const
+std::string SettingsFile::errorMessage() const
 {
     return d->errorMessage;
 }

@@ -36,6 +36,8 @@
 #include <QObject>
 #include <QHostAddress>
 
+#include "bytearray.h"
+
 namespace Tor
 {
 
@@ -47,8 +49,8 @@ class TorProcessClient
 {
 public:
     virtual void processStateChanged(int) = 0;
-    virtual void processErrorChanged(const QString&) = 0;
-    virtual void processLogMessage(const QString&) = 0;
+    virtual void processErrorChanged(const std::string&) = 0;
+    virtual void processLogMessage(const std::string&) = 0;
 };
 
 /* Launches and controls a Tor instance with behavior suitable for bundling
@@ -59,7 +61,7 @@ class TorProcess
     //Q_ENUMS(State)
 
     //Q_PROPERTY(State state READ state NOTIFY stateChanged)
-    //Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorMessageChanged)
+    //Q_PROPERTY(std::string errorMessage READ errorMessage NOTIFY errorMessageChanged)
 
 public:
     enum State {
@@ -73,28 +75,28 @@ public:
     explicit TorProcess(TorProcessClient *client,QObject *parent = 0);
     virtual ~TorProcess();
 
-    QString executable() const;
-    void setExecutable(const QString &path);
+    std::string executable() const;
+    void setExecutable(const std::string &path);
 
-    QString dataDir() const;
-    void setDataDir(const QString &path);
+    std::string dataDir() const;
+    void setDataDir(const std::string &path);
 
-    QString defaultTorrc() const;
-    void setDefaultTorrc(const QString &path);
+    std::string defaultTorrc() const;
+    void setDefaultTorrc(const std::string &path);
 
-    QStringList extraSettings() const;
-    void setExtraSettings(const QStringList &settings);
+    std::list<std::string> extraSettings() const;
+    void setExtraSettings(const std::list<std::string> &settings);
 
     State state() const;
-    QString errorMessage() const;
+    std::string errorMessage() const;
     QHostAddress controlHost();
     quint16 controlPort();
-    QByteArray controlPassword();
+    ByteArray controlPassword();
 
 //signals:
     void stateChanged(int newState);
-    void errorMessageChanged(const QString &errorMessage);
-    void logMessage(const QString &message);
+    void errorMessageChanged(const std::string &errorMessage);
+    void logMessage(const std::string &message);
 
 //public slots:
     void start();

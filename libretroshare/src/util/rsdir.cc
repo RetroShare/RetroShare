@@ -84,6 +84,25 @@ bool std::filesystem::create_directories(const std::string& path)
 #	include <filesystem>
 #endif // __cplusplus < 201703L
 
+bool RsDirUtil::fileExists(const std::string& file_path)
+{
+    FILE *f = fopen(file_path.c_str(),"r");
+
+    if(!f)
+        return false;
+
+    fclose(f);
+    return true;
+}
+std::string 	RsDirUtil::getFileName(const std::string& full_file_path)
+{
+    size_t n = full_file_path.find_last_of('/');
+
+    if(n == std::string::npos)
+        return full_file_path;
+    else
+        return full_file_path.substr(n+1);
+}
 std::string 	RsDirUtil::getTopDir(const std::string& dir)
 {
 	std::string top;

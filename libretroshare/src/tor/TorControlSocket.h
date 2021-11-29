@@ -33,6 +33,7 @@
 #pragma once
 
 #include "pqi/rstcpsocket.h"
+#include "bytearray.h"
 
 namespace Tor
 {
@@ -47,10 +48,10 @@ public:
 
     std::string errorMessage() const { return m_errorMessage; }
 
-    void registerEvent(const QByteArray &event, TorControlCommand *handler);
+    void registerEvent(const ByteArray &event, TorControlCommand *handler);
 
     void sendCommand(const std::string& data) { sendCommand(0, data); }
-    void sendCommand(TorControlCommand *command, const QByteArray &data);
+    void sendCommand(TorControlCommand *command, const ByteArray &data);
 
 signals:
     void error(const QString &message);
@@ -61,7 +62,7 @@ private slots:
 
 private:
     std::list<TorControlCommand*> commandQueue;
-    QHash<QByteArray,TorControlCommand*> eventCommands;
+    std::map<ByteArray,TorControlCommand*> eventCommands;
     std::string m_errorMessage;
     TorControlCommand *currentCommand;
     bool inDataReply;
@@ -70,5 +71,3 @@ private:
 };
 
 }
-
-#endif // TORCONTROLSOCKET_H

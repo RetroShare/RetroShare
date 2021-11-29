@@ -63,11 +63,14 @@ std::string 	getRootDir(const std::string&);
 std::string 	removeRootDir(const std::string& path);
 void 			removeTopDir(const std::string& dir, std::string &path);
 std::string 	removeRootDirs(const std::string& path, const std::string& root);
+std::string 	getFileName(const std::string& full_file_path);
 
 // Renames file from to file to. Files should be on the same file system.
 //	returns true if succeed, false otherwise.
 bool		renameFile(const std::string& from,const std::string& to) ;
 //bool		createBackup (const std::string& sFilename, unsigned int nCount = 5);
+
+bool fileExists(const std::string& file_path);
 
 // returns the CRC32 of the data of length len
 //
@@ -107,6 +110,12 @@ rstime_t lastWriteTime(
         std::error_condition& errc = RS_DEFAULT_STORAGE_PARAM(std::error_condition) );
 
 bool    	checkDirectory(const std::string& dir);
+
+/*!
+ * \brief checkCreateDirectory
+ * \param dir
+ * \return false when the directory does not exist and could not be created.
+ */
 bool    	checkCreateDirectory(const std::string& dir);
 
 // Removes all symbolic links along the path and computes the actual location of the file/dir passed as argument.

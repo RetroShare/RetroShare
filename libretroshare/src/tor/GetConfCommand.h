@@ -56,11 +56,11 @@ public:
 
     GetConfCommand(Type type);
 
-    ByteArray build(const ByteArray &key);
-    ByteArray build(const QList<ByteArray> &keys);
+    ByteArray build(const std::string &key);
+    ByteArray build(const std::list<std::string> &keys);
 
     const std::map<std::string,std::list<std::string> > &results() const { return m_results; }
-    std::list<std::string> get(const ByteArray &key) const;
+    std::list<std::string> get(const std::string &key) const;
 
 protected:
     virtual void onReply(int statusCode, const ByteArray &data);

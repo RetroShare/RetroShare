@@ -38,6 +38,7 @@
 #include <QObject>
 #include <QHostAddress>
 #include "PendingOperation.h"
+#include "bytearray.h"
 
 class QNetworkProxy;
 
@@ -86,9 +87,9 @@ public:
     /* Information */
     Status status() const;
     TorStatus torStatus() const;
-    QString torVersion() const;
-    bool torVersionAsNewAs(const QString &version) const;
-    QString errorMessage() const;
+    std::string torVersion() const;
+    bool torVersionAsNewAs(const std::string &version) const;
+    std::string errorMessage() const;
 
     bool hasConnectivity() const;
     QHostAddress socksAddress() const;
@@ -96,7 +97,7 @@ public:
     QNetworkProxy connectionProxy();
 
     /* Authentication */
-    void setAuthPassword(const QByteArray &password);
+    void setAuthPassword(const ByteArray& password);
 
     /* Connection */
     bool isConnected() const { return status() == Connected; }
@@ -111,9 +112,9 @@ public:
     QList<HiddenService*> hiddenServices() const;
     void addHiddenService(HiddenService *service);
 
-    QVariantMap bootstrapStatus() const;
-    Q_INVOKABLE QObject *getConfiguration(const QString &options);
-    Q_INVOKABLE QObject *setConfiguration(const QVariantMap &options);
+    std::map<std::string, std::string> bootstrapStatus() const;
+    Q_INVOKABLE QObject *getConfiguration(const std::string &options);
+    Q_INVOKABLE QObject *setConfiguration(const std::list<std::pair<std::string, std::string> > &options);
     Q_INVOKABLE PendingOperation *saveConfiguration();
 
 signals:

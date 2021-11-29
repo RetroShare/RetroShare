@@ -54,8 +54,8 @@ public:
 
     void setResetMode(bool resetMode);
 
-    ByteArray build(const ByteArray &key, const ByteArray &value);
-    ByteArray build(const std::list<std::pair<ByteArray, ByteArray> > &data);
+    ByteArray build(const std::string &key, const std::string &value);
+    ByteArray build(const std::list<std::pair<std::string, std::string> > &data);
 
     std::string errorMessage() const { return m_errorMessage; }
     bool isSuccessful() const;

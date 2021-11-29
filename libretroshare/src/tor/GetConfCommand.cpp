@@ -41,12 +41,12 @@ GetConfCommand::GetConfCommand(Type t)
 {
 }
 
-ByteArray GetConfCommand::build(const ByteArray &key)
+ByteArray GetConfCommand::build(const std::string &key)
 {
-    return build(QList<ByteArray>() << key);
+    return build(std::list<std::string> { key } );
 }
 
-ByteArray GetConfCommand::build(const QList<ByteArray> &keys)
+ByteArray GetConfCommand::build(const std::list<std::string> &keys)
 {
     ByteArray out;
     if (type == GetConf) {
@@ -97,9 +97,9 @@ void GetConfCommand::onDataFinished()
     m_lastKey.clear();
 }
 
-std::list<std::string> GetConfCommand::get(const ByteArray& key) const
+std::list<std::string> GetConfCommand::get(const std::string& key) const
 {
-    auto it = m_results.find(key.toString());
+    auto it = m_results.find(key);
 
     if(it != m_results.end())
         return it->second;

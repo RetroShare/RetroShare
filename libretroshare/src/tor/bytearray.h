@@ -1,8 +1,11 @@
+#pragma once
+
 #include <stdlib.h>
 #include <string.h>
 
 #include <string>
 #include <vector>
+#include <list>
 
 #include "util/rsprint.h"
 #include "util/rsdebug.h"
@@ -32,8 +35,10 @@ public:
     ByteArray& operator+=(const char *b) { for(uint32_t n=0;b[n]!=0;++n) push_back(b[n]); return *this;}
 
     ByteArray left(uint32_t l) const { auto res = *this; res.resize(std::min((uint32_t)size(),l)); return res; }
-    ByteArray toUpper() const { auto res = *this; for(uint32_t i=0;i<size();++i) if( res[i]<='z' && res[i]>='a') res[i] += 'A'-'a'; return res; }
+    ByteArray toUpper() const { auto res = *this; for(uint32_t i=0;i<size();++i) if( res[i]<='z' && res[i]>='a') res[i] += int('A')-int('a'); return res; }
+    ByteArray toLower() const { auto res = *this; for(uint32_t i=0;i<size();++i) if( res[i]<='Z' && res[i]>='A') res[i] += int('a')-int('A'); return res; }
 
+    bool endsWidth(const ByteArray& b) const { return size() >= b.size() && !memcmp(&data()[size()-b.size()],b.data(),b.size()); }
     bool startsWith(const char *b) const
     {
         for(uint32_t n=0;b[n]!=0;++n)
@@ -87,5 +92,60 @@ public:
                 res.push_back((*this)[i++]);
 
         return res;
+    }
+
+    std::list<ByteArray> split(unsigned char sep)
+    {
+        std::list<ByteArray> res;
+        ByteArray current_block;
+
+        for(uint32_t i=0;i<size();++i)
+            if(operator[](i) == sep)
+            {
+                res.push_back(current_block);
+                current_block.clear();
+            }
+            else
+                current_block += operator[](i);
+
+        return res;
+    }
+
+    // Removes the following characters from the beginning and from the end of the array:
+    //    '\t', '\n', '\v', '\f', '\r', and ' '.
+
+    ByteArray trimmed() const
+    {
+        auto res(*this);
+
+        while(!res.empty() && (    res.back() == '\t' || res.back() == '\n' || res.back() == '\v'
+                                   || res.back() == '\f' || res.back() == '\r' || res.back() == ' ' ) )
+            res.pop_back();
+
+        uint32_t i=0;
+
+        for(;i<res.size();++i)
+            if(res[i] != '\t' && res[i] != '\n' && res[i] != '\v'  && res[i] != '\f' && res[i] != '\r' && res[i] != ' ')
+                break;
+
+        return res.mid(i);
+    }
+    
+    // Removes n bytes from the end of the array
+    
+    void chop(uint32_t n)
+    {
+        resize(std::max(0,(int)size() - (int)n));
+    }
+    
+    // Returns the last index of a given byte, -1 if not found.
+    
+    int lastIndexOf(unsigned char s)
+    {
+        for(int i=size()-1;i>=0;--i)
+            if(operator[](i) == s)
+                return i;
+        
+        return -1;
     }
 };

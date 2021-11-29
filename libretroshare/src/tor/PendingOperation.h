@@ -55,7 +55,7 @@ class PendingOperation : public QObject
     Q_PROPERTY(bool isFinished READ isFinished NOTIFY finished FINAL)
     Q_PROPERTY(bool isSuccess READ isSuccess NOTIFY success FINAL)
     Q_PROPERTY(bool isError READ isError NOTIFY error FINAL)
-    Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY finished FINAL)
+    Q_PROPERTY(std::string errorMessage READ errorMessage NOTIFY finished FINAL)
 
 public:
     PendingOperation(QObject *parent = 0);
@@ -63,23 +63,23 @@ public:
     bool isFinished() const;
     bool isSuccess() const;
     bool isError() const;
-    QString errorMessage() const;
+    std::string errorMessage() const;
 
 signals:
     // Always emitted once when finished, regardless of status
     void finished();
 
     // One of error() or success() is emitted once
-    void error(const QString &errorMessage);
+    void error(const std::string &errorMessage);
     void success();
 
 protected slots:
-    void finishWithError(const QString &errorMessage);
+    void finishWithError(const std::string &errorMessage);
     void finishWithSuccess();
 
 private:
     bool m_finished;
-    QString m_errorMessage;
+    std::string m_errorMessage;
 };
 
 Q_DECLARE_METATYPE(PendingOperation*)

@@ -744,7 +744,6 @@ HEADERS += 	tor/AddOnionCommand.h \
            	tor/TorManager.h \
            	tor/TorProcess.h \
            	tor/TorProcess_p.h \
-           	tor/TorSocket.h \
            	tor/Useful.h
 
 SOURCES += 	tor/AddOnionCommand.cpp \
@@ -758,7 +757,6 @@ SOURCES += 	tor/AddOnionCommand.cpp \
 		tor/TorControlSocket.cpp \
 		tor/TorManager.cpp \
 		tor/TorProcess.cpp \
-		tor/TorSocket.cpp \
 		tor/CryptoKey.cpp         \
 		tor/PendingOperation.cpp  \
 		tor/SecureRNG.cpp         \

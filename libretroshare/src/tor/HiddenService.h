@@ -35,9 +35,7 @@
 
 #include <QObject>
 #include <QHostAddress>
-#include <QList>
 #include "CryptoKey.h"
-
 #include "bytearray.h"
 
 namespace Tor
@@ -78,7 +76,7 @@ public:
 
     HiddenService(HiddenServiceClient *client);
     HiddenService(HiddenServiceClient *client, const std::string &dataPath);
-    HiddenService(HiddenServiceClient *client, const CryptoKey &privateKey, const std::string &dataPath = QString());
+    HiddenService(HiddenServiceClient *client, const CryptoKey &privateKey, const std::string &dataPath = std::string());
 
     Status status() const { return m_status; }
 

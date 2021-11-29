@@ -48,15 +48,15 @@ class AddOnionCommand : public TorControlCommand
     Q_OBJECT
     Q_DISABLE_COPY(AddOnionCommand)
 
-    Q_PROPERTY(QString errorMessage READ errorMessage CONSTANT)
+    Q_PROPERTY(std::string errorMessage READ errorMessage CONSTANT)
     Q_PROPERTY(bool successful READ isSuccessful CONSTANT)
 
 public:
     AddOnionCommand(HiddenService *service);
 
-    QByteArray build();
+    ByteArray build();
 
-    QString errorMessage() const { return m_errorMessage; }
+    std::string errorMessage() const { return m_errorMessage; }
     bool isSuccessful() const;
 
 signals:
@@ -65,9 +65,9 @@ signals:
 
 protected:
     HiddenService *m_service;
-    QString m_errorMessage;
+    std::string m_errorMessage;
 
-    virtual void onReply(int statusCode, const QByteArray &data);
+    virtual void onReply(int statusCode, const ByteArray &data);
     virtual void onFinished(int statusCode);
 };
 

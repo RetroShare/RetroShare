@@ -31,6 +31,8 @@
  */
 
 #include <time.h>
+#include <fstream>
+#include "util/rsdir.h"
 
 #include "retroshare/rstor.h"
 #include "TorControl.h"
@@ -83,15 +85,15 @@ public:
 
     TorControlSocket *socket;
     QHostAddress torAddress;
-    QString errorMessage;
-    QString torVersion;
+    std::string errorMessage;
+    std::string torVersion;
     ByteArray authPassword;
     QHostAddress socksAddress;
     QList<HiddenService*> services;
     quint16 controlPort, socksPort;
     TorControl::Status status;
     TorControl::TorStatus torStatus;
-    QVariantMap bootstrapStatus;
+    std::map<std::string,std::string> bootstrapStatus;
     bool hasOwnership;
 
     TorControlPrivate(TorControl *parent);
@@ -110,10 +112,10 @@ public slots:
     void authenticateReply();
     void protocolInfoReply();
     void getTorInfoReply();
-    void setError(const QString &message);
+    void setError(const std::string &message);
 
     void statusEvent(int code, const ByteArray &data);
-    void updateBootstrap(const QList<ByteArray> &data);
+    void updateBootstrap(const std::list<ByteArray> &data);
 };
 
 }
@@ -219,12 +221,12 @@ void TorControlPrivate::setTorStatus(TorControl::TorStatus n)
     }
 }
 
-void TorControlPrivate::setError(const QString &message)
+void TorControlPrivate::setError(const std::string &message)
 {
     errorMessage = message;
     setStatus(TorControl::Error);
 
-    qWarning() << "torctrl: Error:" << errorMessage;
+    RsWarn() << "torctrl: Error:" << errorMessage;
 
     socket->abort();
 
@@ -241,12 +243,12 @@ TorControl::TorStatus TorControl::torStatus() const
     return d->torStatus;
 }
 
-QString TorControl::torVersion() const
+std::string TorControl::torVersion() const
 {
     return d->torVersion;
 }
 
-QString TorControl::errorMessage() const
+std::string TorControl::errorMessage() const
 {
     return d->errorMessage;
 }
@@ -271,7 +273,7 @@ QList<HiddenService*> TorControl::hiddenServices() const
     return d->services;
 }
 
-QVariantMap TorControl::bootstrapStatus() const
+std::map<std::string,std::string> TorControl::bootstrapStatus() const
 {
     return d->bootstrapStatus;
 }
@@ -369,7 +371,7 @@ void TorControlPrivate::socketDisconnected()
 
 void TorControlPrivate::socketError()
 {
-    setError(QStringLiteral("Connection failed: %1").arg(socket->errorString()));
+    setError("Connection failed: " + socket->errorString()));
 }
 
 void TorControlPrivate::protocolInfoReply()
@@ -393,11 +395,11 @@ void TorControlPrivate::protocolInfoReply()
             torCtrlDebug() << "torctrl: Using null authentication" << std::endl;
             data = auth->build();
         }
-        else if (methods.testFlag(ProtocolInfoCommand::AuthCookie) && !info->cookieFile().isEmpty())
+        else if (methods.testFlag(ProtocolInfoCommand::AuthCookie) && !info->cookieFile().empty())
         {
-            QString cookieFile = info->cookieFile();
-            QString cookieError;
-            torCtrlDebug() << "torctrl: Using cookie authentication with file" << cookieFile.toStdString() << std::endl;
+            std::string cookieFile = info->cookieFile();
+            std::string cookieError;
+            torCtrlDebug() << "torctrl: Using cookie authentication with file" << cookieFile << std::endl;
 
             QFile file(cookieFile);
             if (file.open(QIODevice::ReadOnly))
@@ -410,28 +412,28 @@ void TorControlPrivate::protocolInfoReply()
                 if (cookie.size() == 32)
                     data = auth->build(cookie);
                 else
-                    cookieError = QStringLiteral("Unexpected file size");
+                    cookieError = "Unexpected file size";
             }
             else
                 cookieError = file.errorString();
 
-            if (!cookieError.isNull() || data.isNull())
+            if (!cookieError.empty() || data.isNull())
             {
                 /* If we know a password and password authentication is allowed, try using that instead.
                  * This is a strange corner case that will likely never happen in a normal configuration,
                  * but it has happened. */
-                if (methods.testFlag(ProtocolInfoCommand::AuthHashedPassword) && !authPassword.isEmpty())
+                if (methods.testFlag(ProtocolInfoCommand::AuthHashedPassword) && !authPassword.empty())
                 {
-                    torCtrlDebug() << "torctrl: Unable to read authentication cookie file:" << cookieError.toStdString() << std::endl;
+                    torCtrlDebug() << "torctrl: Unable to read authentication cookie file:" << cookieError << std::endl;
                     goto usePasswordAuth;
                 }
 
-                setError(QStringLiteral("Unable to read authentication cookie file: %1").arg(cookieError));
+                setError("Unable to read authentication cookie file: " + cookieError);
                 delete auth;
                 return;
             }
         }
-        else if (methods.testFlag(ProtocolInfoCommand::AuthHashedPassword) && !authPassword.isEmpty())
+        else if (methods.testFlag(ProtocolInfoCommand::AuthHashedPassword) && !authPassword.empty())
         {
             usePasswordAuth:
             torCtrlDebug() << "torctrl: Using hashed password authentication" << std::endl;
@@ -440,9 +442,9 @@ void TorControlPrivate::protocolInfoReply()
         else
         {
             if (methods.testFlag(ProtocolInfoCommand::AuthHashedPassword))
-                setError(QStringLiteral("Tor requires a control password to connect, but no password is configured."));
+                setError("Tor requires a control password to connect, but no password is configured.");
             else
-                setError(QStringLiteral("Tor is not configured to accept any supported authentication methods."));
+                setError("Tor is not configured to accept any supported authentication methods.");
             delete auth;
             return;
         }
@@ -458,11 +460,10 @@ void TorControlPrivate::getTorInfo()
     GetConfCommand *command = new GetConfCommand(GetConfCommand::GetInfo);
     connect(command, &TorControlCommand::finished, this, &TorControlPrivate::getTorInfoReply);
 
-    QList<ByteArray> keys;
-    keys << ByteArray("status/circuit-established") << ByteArray("status/bootstrap-phase");
+    std::list<std::string> keys{ "status/circuit-established","status/bootstrap-phase" };
 
     /* If these are set in the config, they override the automatic behavior. */
-    SettingsObject settings(QStringLiteral("tor"));
+    SettingsObject settings("tor");
     QHostAddress forceAddress(settings.read("socksAddress").toString());
     quint16 port = (quint16)settings.read("socksPort").toInt();
 
@@ -478,8 +479,9 @@ void TorControlPrivate::getTorInfo()
             ev->mTorManagerEventType = RsTorManagerEventCode::TOR_CONNECTIVITY_CHANGED;
             rsEvents->sendEvent(ev);
         }
-    } else
-        keys << ByteArray("net/listeners/socks");
+    }
+    else
+        keys .push_back("net/listeners/socks");
 
     socket->sendCommand(command, command->build(keys));
 }
@@ -490,11 +492,12 @@ void TorControlPrivate::getTorInfoReply()
     if (!command || !q->isConnected())
         return;
 
-    QList<ByteArray> listenAddresses = splitQuotedStrings(command->get(ByteArray("net/listeners/socks")).toString().toLatin1(), ' ');
-    for (QList<ByteArray>::Iterator it = listenAddresses.begin(); it != listenAddresses.end(); ++it) {
-        ByteArray value = unquotedString(*it);
+    std::list<ByteArray> listenAddresses = splitQuotedStrings(command->get("net/listeners/socks").front(), ' ');
+
+    for (const auto& add:listenAddresses) {
+        ByteArray value = unquotedString(add);
         int sepp = value.indexOf(':');
-        QHostAddress address(QString::fromLatin1(value.mid(0, sepp)));
+        QHostAddress address(value.mid(0, sepp));
         quint16 port = (quint16)value.mid(sepp+1).toUInt();
 
         /* Use the first address that matches the one used for this control connection. If none do,
@@ -523,16 +526,16 @@ void TorControlPrivate::getTorInfoReply()
         }
     }
 
-    if (command->get(ByteArray("status/circuit-established")).toInt() == 1) {
+    if (command->get("status/circuit-established").toInt() == 1) {
         torCtrlDebug() << "torctrl: Tor indicates that circuits have been established; state is TorReady" << std::endl;
         setTorStatus(TorControl::TorReady);
     } else {
         setTorStatus(TorControl::TorOffline);
     }
 
-    ByteArray bootstrap = command->get(ByteArray("status/bootstrap-phase")).toString().toLatin1();
-    if (!bootstrap.isEmpty())
-        updateBootstrap(splitQuotedStrings(bootstrap, ' '));
+    auto bootstrap = command->get("status/bootstrap-phase");
+    if (!bootstrap.empty())
+        updateBootstrap(splitQuotedStrings(bootstrap.front(), ' '));
 }
 
 void TorControl::addHiddenService(HiddenService *service)
@@ -555,7 +558,7 @@ void TorControlPrivate::publishServices()
 	}
 	std::cerr << std::endl;
 
-    SettingsObject settings(QStringLiteral("tor"));
+    SettingsObject settings("tor");
     if (settings.read("neverPublishServices").toBool())
     {
         torCtrlDebug() << "torctrl: Skipping service publication because neverPublishService is enabled" << std::endl;
@@ -567,12 +570,12 @@ void TorControlPrivate::publishServices()
         return;
     }
 
-    if (q->torVersionAsNewAs(QStringLiteral("0.2.7"))) {
+    if (q->torVersionAsNewAs("0.2.7")) {
         foreach (HiddenService *service, services) {
-            if (service->hostname().isEmpty())
+            if (service->hostname().empty())
                 torCtrlDebug() << "torctrl: Creating a new hidden service" << std::endl;
             else
-                torCtrlDebug() << "torctrl: Publishing hidden service: " << service->hostname().toStdString() << std::endl;
+                torCtrlDebug() << "torctrl: Publishing hidden service: " << service->hostname() << std::endl;
             AddOnionCommand *onionCommand = new AddOnionCommand(service);
             QObject::connect(onionCommand, &AddOnionCommand::succeeded, service, &HiddenService::servicePublished);
             socket->sendCommand(onionCommand, onionCommand->build());
@@ -580,37 +583,37 @@ void TorControlPrivate::publishServices()
     } else {
         torCtrlDebug() << "torctrl: Using legacy SETCONF hidden service configuration for tor" << torVersion.toStdString() << std::endl;
         SetConfCommand *command = new SetConfCommand;
-        QList<QPair<ByteArray,ByteArray> > torConfig;
+        std::list<std::pair<std::string,std::string> > torConfig;
 
         foreach (HiddenService *service, services)
         {
-            if (service->dataPath().isEmpty())
+            if (service->dataPath().empty())
                 continue;
 
-            if (service->privateKey().isLoaded() && !QFile::exists(service->dataPath() + QStringLiteral("/private_key"))) {
+            if (service->privateKey().isLoaded() && !RsDirUtil::fileExists(service->dataPath() + "/private_key")) {
                 // This case can happen if tor is downgraded after the profile is created
-                qWarning() << "Cannot publish ephemeral hidden services with this version of tor; skipping";
+                RsWarn() << "Cannot publish ephemeral hidden services with this version of tor; skipping";
                 continue;
             }
 
-            torCtrlDebug() << "torctrl: Configuring hidden service at" << service->dataPath().toStdString() << std::endl;
+            torCtrlDebug() << "torctrl: Configuring hidden service at" << service->dataPath() << std::endl;
 
             QDir dir(service->dataPath());
             torConfig.append(qMakePair(ByteArray("HiddenServiceDir"), dir.absolutePath().toLocal8Bit()));
 
-            const QList<HiddenService::Target> &targets = service->targets();
-            for (QList<HiddenService::Target>::ConstIterator tit = targets.begin(); tit != targets.end(); ++tit)
+            const std::list<HiddenService::Target> &targets = service->targets();
+            for (auto tit:targets)
             {
-                QString target = QString::fromLatin1("%1 %2:%3").arg(tit->servicePort)
-                                 .arg(tit->targetAddress.toString())
-                                 .arg(tit->targetPort);
-                torConfig.append(qMakePair(ByteArray("HiddenServicePort"), target.toLatin1()));
+                std::string target = RsUtil::NumberToString(tit.servicePort) + " "
+                                    +tit.targetAddress + ":"
+                                    +RsUtil::NumberToString(tit.targetPort);
+                torConfig.append(qMakePair(ByteArray("HiddenServicePort"), target));
             }
 
             QObject::connect(command, &SetConfCommand::setConfSucceeded, service, &HiddenService::servicePublished);
         }
 
-        if (!torConfig.isEmpty())
+        if (!torConfig.empty())
             socket->sendCommand(command, command->build(torConfig));
     }
 }
@@ -644,34 +647,41 @@ void TorControlPrivate::statusEvent(int code, const ByteArray &data)
 {
     Q_UNUSED(code);
 
-    QList<ByteArray> tokens = splitQuotedStrings(data.trimmed(), ' ');
+    std::list<ByteArray> tokens = splitQuotedStrings(data.trimmed(), ' ');
     if (tokens.size() < 3)
         return;
 
-    torCtrlDebug() << "torctrl: status event:" << QString(data.trimmed()).toStdString() << std::endl;
+    torCtrlDebug() << "torctrl: status event:" << data.trimmed().toString() << std::endl;
+    const ByteArray& tok2 = *(++tokens.begin());
 
-    if (tokens[2] == "CIRCUIT_ESTABLISHED") {
+    if (tok2 == "CIRCUIT_ESTABLISHED") {
         setTorStatus(TorControl::TorReady);
-    } else if (tokens[2] == "CIRCUIT_NOT_ESTABLISHED") {
+    } else if (tok2 == "CIRCUIT_NOT_ESTABLISHED") {
         setTorStatus(TorControl::TorOffline);
-    } else if (tokens[2] == "BOOTSTRAP") {
-        tokens.takeFirst();
+    } else if (tok2 == "BOOTSTRAP") {
+        tokens.pop_front();
         updateBootstrap(tokens);
     }
 }
 
-void TorControlPrivate::updateBootstrap(const QList<ByteArray> &data)
+void TorControlPrivate::updateBootstrap(const std::list<ByteArray> &data)
 {
     bootstrapStatus.clear();
     // WARN or NOTICE
-    bootstrapStatus[QStringLiteral("severity")] = data.value(0);
-    for (int i = 1; i < data.size(); i++) {
-        int equals = data[i].indexOf('=');
-        QString key = QString::fromLatin1(data[i].mid(0, equals));
-        QString value;
+    bootstrapStatus["severity"] = (*data.begin()).toString();
+
+    auto dat = data.begin();
+    ++dat;
+
+    for(;dat!=data.end();++dat) {               // for(int i = 1; i < data.size(); i++) {
+        int equals = (*dat).indexOf('=');
+        ByteArray key = (*dat).mid(0, equals);
+        ByteArray value;
+
         if (equals >= 0)
-            value = QString::fromLatin1(unquotedString(data[i].mid(equals + 1)));
-        bootstrapStatus[key.toLower()] = value;
+            value = unquotedString((*dat).mid(equals + 1));
+
+        bootstrapStatus[key.toLower().toString()] = value.toString();
     }
 
     //torCtrlDebug() << bootstrapStatus << std::endl;
@@ -685,16 +695,16 @@ void TorControlPrivate::updateBootstrap(const QList<ByteArray> &data)
     }
 }
 
-QObject *TorControl::getConfiguration(const QString &options)
+QObject *TorControl::getConfiguration(const std::string& options)
 {
     GetConfCommand *command = new GetConfCommand(GetConfCommand::GetConf);
-    d->socket->sendCommand(command, command->build(options.toLatin1()));
+    d->socket->sendCommand(command, command->build(options));
 
     //QQmlEngine::setObjectOwnership(command, QQmlEngine::CppOwnership);
     return command;
 }
 
-QObject *TorControl::setConfiguration(const QVariantMap &options)
+QObject *TorControl::setConfiguration(const std::list<std::pair<std::string,std::string> >& options)
 {
     SetConfCommand *command = new SetConfCommand;
     command->setResetMode(true);
@@ -721,7 +731,8 @@ public:
         Q_ASSERT(!command);
         command = new GetConfCommand(GetConfCommand::GetInfo);
         QObject::connect(command, &TorControlCommand::finished, this, &SaveConfigOperation::configTextReply);
-        socket->sendCommand(command, command->build(QList<ByteArray>() << "config-text" << "config-file"));
+
+        socket->sendCommand(command, command->build(std::list<std::string> { "config-text" , "config-file" } ));
     }
 
 private slots:
@@ -731,23 +742,29 @@ private slots:
         if (!command)
             return;
 
-        QString path = QFile::decodeName(command->get("config-file").toByteArray());
-        if (path.isEmpty()) {
-            finishWithError(QStringLiteral("Cannot write torrc without knowing its path"));
+        auto lpath = command->get("config-file");
+        std::string path = (lpath.empty()?std::string():lpath.front());
+
+        if (path.empty()) {
+            finishWithError("Cannot write torrc without knowing its path");
             return;
         }
 
         // Out of paranoia, refuse to write any file not named 'torrc', or if the
         // file doesn't exist
-        QFileInfo fileInfo(path);
-        if (fileInfo.fileName() != QStringLiteral("torrc") || !fileInfo.exists()) {
-            finishWithError(QStringLiteral("Refusing to write torrc to unacceptable path %1").arg(path));
+
+        auto filename = RsDirUtil::getFileName(path);
+
+        if(filename != "torrc" || !RsDirUtil::fileExists(path))
+        {
+            finishWithError("Refusing to write torrc to unacceptable path " + path);
             return;
         }
 
-        QSaveFile file(path);
-        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            finishWithError(QStringLiteral("Failed opening torrc file for writing: %1").arg(file.errorString()));
+        std::ofstream file(path);
+
+        if (!file.is_open()) {
+            finishWithError("Failed opening torrc file for writing: permissions error?");
             return;
         }
 
@@ -761,9 +778,11 @@ private slots:
             0
         };
 
-        QVariantList configText = command->get("config-text").toList();
-        foreach (const QVariant &value, configText) {
-            ByteArray line = value.toByteArray();
+        auto configText = command->get("config-text") ;
+
+        for(const auto& value: configText)
+        {
+            ByteArray line(value);
 
             bool skip = false;
             for (const char **key = bannedKeys; *key; key++) {
@@ -775,14 +794,10 @@ private slots:
             if (skip)
                 continue;
 
-            file.write(line);
-            file.write("\n");
+            file << line.toString() << std::endl;
         }
 
-        if (!file.commit()) {
-            finishWithError(QStringLiteral("Failed writing torrc: %1").arg(file.errorString()));
-            return;
-        }
+        file.close();
 
         torCtrlDebug() << "torctrl: Wrote torrc file" << std::endl;
         finishWithSuccess();
@@ -820,12 +835,12 @@ void TorControl::takeOwnership()
     d->socket->sendCommand("TAKEOWNERSHIP\r\n");
 
     // Reset PID-based polling
-    QVariantMap options;
-    options[QStringLiteral("__OwningControllerProcess")] = QVariant();
+    std::list<std::pair<std::string,std::string> > options;
+    options.push_back(std::make_pair("__OwningControllerProcess",std::string()));
     setConfiguration(options);
 }
 
-bool TorControl::torVersionAsNewAs(const QString &match) const
+bool TorControl::torVersionAsNewAs(const std::string& match) const
 {
     QRegularExpression r(QStringLiteral("[.-]"));
     QStringList split = torVersion().split(r);

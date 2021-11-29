@@ -45,12 +45,12 @@ AddOnionCommand::AddOnionCommand(HiddenService *service)
 
 bool AddOnionCommand::isSuccessful() const
 {
-    return statusCode() == 250 && m_errorMessage.isEmpty();
+    return statusCode() == 250 && m_errorMessage.empty();
 }
 
-QByteArray AddOnionCommand::build()
+ByteArray AddOnionCommand::build()
 {
-    QByteArray out("ADD_ONION");
+    ByteArray out("ADD_ONION");
 
     if (m_service->privateKey().isLoaded()) {
         out += " ";
@@ -74,11 +74,11 @@ QByteArray AddOnionCommand::build()
     return out;
 }
 
-void AddOnionCommand::onReply(int statusCode, const QByteArray &data)
+void AddOnionCommand::onReply(int statusCode, const ByteArray &data)
 {
     TorControlCommand::onReply(statusCode, data);
     if (statusCode != 250) {
-        m_errorMessage = QString::fromLatin1(data);
+        m_errorMessage = data.toString();
         return;
     }
 
@@ -86,17 +86,17 @@ void AddOnionCommand::onReply(int statusCode, const QByteArray &data)
     const QByteArray sidPrefix("ServiceID=");
 
     if(data.startsWith("ServiceID=")){
-        QByteArray service_id = data.mid(sidPrefix.size());
+        ByteArray service_id = data.mid(sidPrefix.size());
         m_service->setServiceId(service_id);
     }
 
     if (data.startsWith(keyPrefix)) {
 
-        QByteArray keyData(data.mid(keyPrefix.size()));
+        ByteArray keyData(data.mid(keyPrefix.size()));
         CryptoKey key;
 
         if (!key.loadFromTorMessage(keyData)) {
-            m_errorMessage = QStringLiteral("Key structure check failed");
+            m_errorMessage = "Key structure check failed";
             return;
         }
 

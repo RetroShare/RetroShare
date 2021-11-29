@@ -59,7 +59,7 @@ ByteArray quotedString(const ByteArray &string)
     return out;
 }
 
-ByteArray unquotedString(const ByteArray &string)
+ByteArray unquotedString(const ByteArray& string)
 {
     if (string.size() < 2 || string[0] != '"')
         return string;

@@ -33,7 +33,6 @@
 #include "ProtocolInfoCommand.h"
 #include "TorControl.h"
 #include "StrUtil.h"
-#include <QList>
 
 using namespace Tor;
 
@@ -55,14 +54,15 @@ void ProtocolInfoCommand::onReply(int statusCode, const ByteArray &data)
 
     if (data.startsWith("AUTH "))
     {
-        QList<ByteArray> tokens = splitQuotedStrings(data.mid(5), ' ');
+        std::list<ByteArray> tokens = splitQuotedStrings(data.mid(5), ' ');
 
         foreach (ByteArray token, tokens)
         {
             if (token.startsWith("METHODS="))
             {
-                QList<ByteArray> textMethods = unquotedString(token.mid(8)).split(',');
-                for (QList<ByteArray>::Iterator it = textMethods.begin(); it != textMethods.end(); ++it)
+                std::list<ByteArray> textMethods = unquotedString(token.mid(8)).split(',');
+
+                for (std::list<ByteArray>::iterator it = textMethods.begin(); it != textMethods.end(); ++it)
                 {
                     if (*it == "NULL")
                         m_authMethods |= AuthNull;
@@ -74,12 +74,12 @@ void ProtocolInfoCommand::onReply(int statusCode, const ByteArray &data)
             }
             else if (token.startsWith("COOKIEFILE="))
             {
-                m_cookieFile = QString::fromLatin1(unquotedString(token.mid(11)));
+                m_cookieFile = unquotedString(token.mid(11)).toString();
             }
         }
     }
     else if (data.startsWith("VERSION Tor="))
     {
-        m_torVersion = std::string(unquotedString(data.mid(12, data.indexOf(' ', 12))));
+        m_torVersion = unquotedString(data.mid(12, data.indexOf(' ', 12))).toString();
     }
 }

@@ -44,23 +44,23 @@ bool PendingOperation::isFinished() const
 
 bool PendingOperation::isSuccess() const
 {
-    return m_finished && m_errorMessage.isNull();
+    return m_finished && m_errorMessage.empty();
 }
 
 bool PendingOperation::isError() const
 {
-    return m_finished && !m_errorMessage.isNull();
+    return m_finished && !m_errorMessage.empty();
 }
 
-QString PendingOperation::errorMessage() const
+std::string PendingOperation::errorMessage() const
 {
     return m_errorMessage;
 }
 
-void PendingOperation::finishWithError(const QString &message)
+void PendingOperation::finishWithError(const std::string &message)
 {
-    if (message.isEmpty())
-        m_errorMessage = QStringLiteral("Unknown Error");
+    if (message.empty())
+        m_errorMessage = "Unknown Error";
     m_errorMessage = message;
 
     if (!m_finished) {
@@ -72,7 +72,7 @@ void PendingOperation::finishWithError(const QString &message)
 
 void PendingOperation::finishWithSuccess()
 {
-    Q_ASSERT(m_errorMessage.isNull());
+    Q_ASSERT(m_errorMessage.empty());
 
     if (!m_finished) {
         m_finished = true;

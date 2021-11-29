@@ -30,6 +30,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <sys/types.h>
+#include <unistd.h>
+#include <stdio.h>
+
+#include "util/rsdir.h"
+
 #include "TorProcess_p.h"
 #include "CryptoKey.h"
 #include "SecureRNG.h"
@@ -64,42 +70,42 @@ TorProcessPrivate::TorProcessPrivate(TorProcess *q)
     connect(&controlPortTimer, &QTimer::timeout, this, &TorProcessPrivate::tryReadControlPort);
 }
 
-QString TorProcess::executable() const
+std::string TorProcess::executable() const
 {
     return d->executable;
 }
 
-void TorProcess::setExecutable(const QString &path)
+void TorProcess::setExecutable(const std::string &path)
 {
     d->executable = path;
 }
 
-QString TorProcess::dataDir() const
+std::string TorProcess::dataDir() const
 {
     return d->dataDir;
 }
 
-void TorProcess::setDataDir(const QString &path)
+void TorProcess::setDataDir(const std::string &path)
 {
     d->dataDir = path;
 }
 
-QString TorProcess::defaultTorrc() const
+std::string TorProcess::defaultTorrc() const
 {
     return d->defaultTorrc;
 }
 
-void TorProcess::setDefaultTorrc(const QString &path)
+void TorProcess::setDefaultTorrc(const std::string &path)
 {
     d->defaultTorrc = path;
 }
 
-QStringList TorProcess::extraSettings() const
+std::list<std::string> TorProcess::extraSettings() const
 {
     return d->extraSettings;
 }
 
-void TorProcess::setExtraSettings(const QStringList &settings)
+void TorProcess::setExtraSettings(const std::list<std::string> &settings)
 {
     d->extraSettings = settings;
 }
@@ -109,7 +115,7 @@ TorProcess::State TorProcess::state() const
     return d->state;
 }
 
-QString TorProcess::errorMessage() const
+std::string TorProcess::errorMessage() const
 {
     return d->errorMessage;
 }
@@ -121,8 +127,8 @@ void TorProcess::start()
 
     d->errorMessage.clear();
 
-    if (d->executable.isEmpty() || d->dataDir.isEmpty()) {
-        d->errorMessage = QStringLiteral("Tor executable and data directory not specified");
+    if (d->executable.empty() || d->dataDir.empty()) {
+        d->errorMessage = "Tor executable and data directory not specified";
         d->state = Failed;
 
         if(m_client) m_client->processStateChanged(d->state); // emit stateChanged(d->state);
@@ -137,32 +143,50 @@ void TorProcess::start()
         return;
     }
 
-    QByteArray password = controlPassword();
-    QByteArray hashedPassword = torControlHashedPassword(password);
-    if (password.isEmpty() || hashedPassword.isEmpty()) {
-        d->errorMessage = QStringLiteral("Random password generation failed");
+    ByteArray password = controlPassword();
+    ByteArray hashedPassword = torControlHashedPassword(password);
+    if (password.empty() || hashedPassword.empty()) {
+        d->errorMessage = "Random password generation failed";
         d->state = Failed;
         if(m_client) m_client->processErrorChanged(d->errorMessage);// emit errorMessageChanged(d->errorMessage);
         if(m_client) m_client->processStateChanged(d->state); // emit stateChanged(d->state);
     }
 
-    QStringList args;
-    if (!d->defaultTorrc.isEmpty())
-        args << QStringLiteral("--defaults-torrc") << d->defaultTorrc;
-    args << QStringLiteral("-f") << d->torrcPath();
-    args << QStringLiteral("DataDirectory") << d->dataDir;
-    args << QStringLiteral("HashedControlPassword") << QString::fromLatin1(hashedPassword);
-    args << QStringLiteral("ControlPort") << QStringLiteral("auto");
-    args << QStringLiteral("ControlPortWriteToFile") << d->controlPortFilePath();
-    args << QStringLiteral("__OwningControllerProcess") << QString::number(qApp->applicationPid());
-    args << d->extraSettings;
+    std::list<std::string> args;
+    if (!d->defaultTorrc.empty())
+    {
+        args.push_back("--defaults-torrc");
+        args.push_back(d->defaultTorrc);
+    }
+
+    args.push_back("-f");
+    args.push_back(d->torrcPath());
+
+    args.push_back("DataDirectory") ;
+    args.push_back(d->dataDir);
+
+    args.push_back("HashedControlPassword") ;
+    args.push_back(hashedPassword.toString());
+
+    args.push_back("ControlPort") ;
+    args.push_back("auto");
+
+    args.push_back("ControlPortWriteToFile");
+    args.push_back(d->controlPortFilePath());
+
+    args.push_back("__OwningControllerProcess") ;
+    args.push_back(RsUtil::NumberToString(getpid()));
+
+    for(auto s:d->extraSettings)
+        args.push_back(s);
 
     d->state = Starting;
 
     if(m_client) m_client->processStateChanged(d->state);// emit stateChanged(d->state);
 
-    if (QFile::exists(d->controlPortFilePath()))
-        QFile::remove(d->controlPortFilePath());
+    if (RsDirUtil::fileExists(d->controlPortFilePath()))
+        RsDirUtil::removeFile(d->controlPortFilePath());
+
     d->controlPort = 0;
     d->controlHost.clear();
 
@@ -204,21 +228,22 @@ void TorProcess::stateChanged(int newState)
     if(m_client)
         m_client->processStateChanged(newState);
 }
-void TorProcess::errorMessageChanged(const QString &errorMessage)
+void TorProcess::errorMessageChanged(const std::string& errorMessage)
 {
     if(m_client)
         m_client->processErrorChanged(errorMessage);
 }
-void TorProcess::logMessage(const QString &message)
+void TorProcess::logMessage(const std::string& message)
 {
     if(m_client)
         m_client->processLogMessage(message);
 }
 
-QByteArray TorProcess::controlPassword()
+ByteArray TorProcess::controlPassword()
 {
-    if (d->controlPassword.isEmpty())
-        d->controlPassword = SecureRNG::randomPrintable(16);
+    if (d->controlPassword.empty())
+        d->controlPassword = RsRandom::printable(16);
+
     return d->controlPassword;
 }
 
@@ -234,29 +259,34 @@ quint16 TorProcess::controlPort()
 
 bool TorProcessPrivate::ensureFilesExist()
 {
-    QFile torrc(torrcPath());
-    if (!torrc.exists()) {
-        QDir dir(dataDir);
-        if (!dir.exists() && !dir.mkpath(QStringLiteral("."))) {
-            errorMessage = QStringLiteral("Cannot create Tor data directory: %1").arg(dataDir);
-            return false;
-        }
+    if(!RsDirUtil::checkCreateDirectory(dataDir))
+    {
+        errorMessage = "Cannot create Tor data directory: " + dataDir;
+        return false;
+    }
 
-        if (!torrc.open(QIODevice::ReadWrite)) {
-            errorMessage = QStringLiteral("Cannot create Tor configuration file: %1").arg(torrcPath());
+    if (!RsDirUtil::fileExists(torrcPath()))
+    {
+        FILE *f = RsDirUtil::rs_fopen(torrcPath().c_str(),"w");
+
+        if(!f)
+        {
+            errorMessage = "Cannot create Tor configuration file: " + torrcPath();
             return false;
         }
+        else
+            fclose(f);
     }
 
     return true;
 }
 
-QString TorProcessPrivate::torrcPath() const
+std::string TorProcessPrivate::torrcPath() const
 {
     return QDir::toNativeSeparators(dataDir) + QDir::separator() + QStringLiteral("torrc");
 }
 
-QString TorProcessPrivate::controlPortFilePath() const
+std::string TorProcessPrivate::controlPortFilePath() const
 {
     return QDir::toNativeSeparators(dataDir) + QDir::separator() + QStringLiteral("control-port");
 }
@@ -278,9 +308,11 @@ void TorProcessPrivate::processFinished()
         return;
 
     controlPortTimer.stop();
-    errorMessage = process.errorString();
-    if (errorMessage.isEmpty())
-        errorMessage = QStringLiteral("Process exited unexpectedly (code %1)").arg(process.exitCode());
+    errorMessage = process.errorString().toStdString();
+
+    if (errorMessage.empty())
+        errorMessage = "Process exited unexpectedly (code " + RsUtil::NumberToString(process.exitCode()) + ")";
+
     state = TorProcess::Failed;
     /*emit*/ q->errorMessageChanged(errorMessage);
     /*emit*/ q->stateChanged(state);
@@ -294,22 +326,30 @@ void TorProcessPrivate::processError(QProcess::ProcessError error)
 
 void TorProcessPrivate::processReadable()
 {
-    while (process.bytesAvailable() > 0) {
-        QByteArray line = process.readLine(2048).trimmed();
-        if (!line.isEmpty())
-            /*emit*/ q->logMessage(QString::fromLatin1(line));
+    while (process.bytesAvailable() > 0)
+    {
+        ByteArray line = process.readLine(2048).trimmed();
+
+        if (!line.empty())
+            /*emit*/ q->logMessage(line.toString()));
     }
 }
 
 void TorProcessPrivate::tryReadControlPort()
 {
-    QFile file(controlPortFilePath());
-    if (file.open(QIODevice::ReadOnly)) {
-        QByteArray data = file.readLine().trimmed();
+    FILE *file = RsDirUtil::rs_fopen(controlPortFilePath().c_str(),"r");
+
+    if(file)
+    {
+        char *line = nullptr;
+
+        size_t size = getline(&line,0,file);
+        ByteArray data = ByteArray((unsigned char*)line,size).trimmed();
+        free(line);
 
         int p;
         if (data.startsWith("PORT=") && (p = data.lastIndexOf(':')) > 0) {
-            controlHost = QHostAddress(QString::fromLatin1(data.mid(5, p - 5)));
+            controlHost = QHostAddress(data.mid(5, p - 5));
             controlPort = data.mid(p+1).toUShort();
 
             if (!controlHost.isNull() && controlPort > 0) {
@@ -322,7 +362,7 @@ void TorProcessPrivate::tryReadControlPort()
     }
 
     if (++controlPortAttempts * controlPortTimer.interval() > 10000) {
-        errorMessage = QStringLiteral("No control port available after launching process");
+        errorMessage = "No control port available after launching process";
         state = TorProcess::Failed;
         /*emit*/ q->errorMessageChanged(errorMessage);
         /*emit*/ q->stateChanged(state);

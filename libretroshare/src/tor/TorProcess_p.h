@@ -46,23 +46,23 @@ class TorProcessPrivate : public QObject
 public:
     TorProcess *q;
     QProcess process;
-    QString executable;
-    QString dataDir;
-    QString defaultTorrc;
-    QStringList extraSettings;
+    std::string executable;
+    std::string dataDir;
+    std::string defaultTorrc;
+    std::list<std::string> extraSettings;
     TorProcess::State state;
-    QString errorMessage;
+    std::string errorMessage;
     QHostAddress controlHost;
     quint16 controlPort;
-    QByteArray controlPassword;
+    ByteArray controlPassword;
 
     QTimer controlPortTimer;
     int controlPortAttempts;
 
     TorProcessPrivate(TorProcess *q);
 
-    QString torrcPath() const;
-    QString controlPortFilePath() const;
+    std::string torrcPath() const;
+    std::string controlPortFilePath() const;
     bool ensureFilesExist();
 
 public slots:

@@ -34,9 +34,7 @@
 #include "TorControl.h"
 #include "CryptoKey.h"
 #include "Useful.h"
-#include <QDir>
-#include <QTimer>
-#include <QDebug>
+#include "util/rsdir.h"
 
 using namespace Tor;
 
@@ -49,9 +47,10 @@ HiddenService::HiddenService(HiddenServiceClient *client,const std::string& path
     : m_dataPath(path), m_status(NotCreated), m_client(client)
 {
     /* Set the initial status and, if possible, load the hostname */
-    if (QDir(m_dataPath).exists(QLatin1String("private_key"))) {
+    if(RsDirUtil::fileExists(m_dataPath + "/private_key"))
+    {
         loadPrivateKey();
-        if (!m_hostname.isEmpty())
+        if (!m_hostname.empty())
             m_status = Offline;
     }
 }
@@ -81,19 +80,19 @@ void HiddenService::setStatus(Status newStatus)
 
 void HiddenService::addTarget(const Target &target)
 {
-    m_targets.append(target);
+    m_targets.push_back(target);
 }
 
 void HiddenService::addTarget(quint16 servicePort, QHostAddress targetAddress, quint16 targetPort)
 {
     Target t = { targetAddress, servicePort, targetPort };
-    m_targets.append(t);
+    m_targets.push_back(t);
 }
 
 void HiddenService::setServiceId(const ByteArray& sid)
 {
     m_service_id = sid;
-    m_hostname = sid + ".onion";
+    m_hostname = sid.toString() + ".onion";
 
     if(m_client)
         m_client->hiddenServiceHostnameChanged(); // emit hostnameChanged();
@@ -105,13 +104,6 @@ void HiddenService::setPrivateKey(const CryptoKey &key)
         return;
     }
 
-#ifdef TO_REMOVE
-    if (!key.isPrivate()) {
-        BUG() << "Cannot create a hidden service with a public key";
-        return;
-    }
-#endif
-
     m_privateKey = key;
 
     if(m_client)
@@ -120,13 +112,13 @@ void HiddenService::setPrivateKey(const CryptoKey &key)
 
 void HiddenService::loadPrivateKey()
 {
-    if (m_privateKey.isLoaded() || m_dataPath.isEmpty())
+    if (m_privateKey.isLoaded() || m_dataPath.empty())
         return;
 
-    bool ok = m_privateKey.loadFromFile(m_dataPath + QLatin1String("/private_key"));
+    bool ok = m_privateKey.loadFromFile(m_dataPath + "/private_key");
 
     if (!ok) {
-        qWarning() << "Failed to load hidden service key";
+        RsWarn() << "Failed to load hidden service key";
         return;
     }
 
@@ -138,7 +130,7 @@ void HiddenService::servicePublished()
 {
     loadPrivateKey();
 
-    if (m_hostname.isEmpty()) {
+    if (m_hostname.empty()) {
         std::cerr << "Failed to read hidden service hostname" << std::endl;
         return;
     }

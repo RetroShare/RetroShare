@@ -34,7 +34,6 @@
 #define PROTOCOLINFOCOMMAND_H
 
 #include "TorControlCommand.h"
-#include <QFlags>
 
 namespace Tor
 {
@@ -60,8 +59,8 @@ public:
     ByteArray build();
 
     AuthMethods authMethods() const { return m_authMethods; }
-    QString torVersion() const { return m_torVersion; }
-    QString cookieFile() const { return m_cookieFile; }
+    std::string torVersion() const { return m_torVersion; }
+    std::string cookieFile() const { return m_cookieFile; }
 
 protected:
     virtual void onReply(int statusCode, const ByteArray &data);
@@ -69,8 +68,8 @@ protected:
 private:
     TorControl *manager;
     AuthMethods m_authMethods;
-    QString m_torVersion;
-    QString m_cookieFile;
+    std::string m_torVersion;
+    std::string m_cookieFile;
 };
 
 }

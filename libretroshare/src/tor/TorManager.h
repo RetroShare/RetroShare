@@ -38,7 +38,6 @@
 #include "retroshare/rstor.h"
 #include "HiddenService.h"
 
-#include <QStringList>
 #include <QHostAddress>
 
 namespace Tor
@@ -70,11 +69,11 @@ public:
     TorControl *control();
 
 
-    QString torDataDirectory() const;
-    void setTorDataDirectory(const QString &path);
+    std::string torDataDirectory() const;
+    void setTorDataDirectory(const std::string &path);
 
-    QString hiddenServiceDirectory() const;
-    void setHiddenServiceDirectory(const QString &path);
+    std::string hiddenServiceDirectory() const;
+    void setHiddenServiceDirectory(const std::string &path);
 
 	// Starts a hidden service, loading it from the config directory that has been set earlier.
 	bool setupHiddenService() ;
@@ -82,12 +81,12 @@ public:
     // True on first run or when the Tor configuration wizard needs to be shown
     bool configurationNeeded() const;
 
-    QStringList logMessages() const;
+    std::list<std::string> logMessages() const;
 
     bool hasError() const;
-    QString errorMessage() const;
+    std::string errorMessage() const;
 
-	bool getHiddenServiceInfo(QString& service_id,QString& service_onion_address,uint16_t& service_port, QHostAddress& service_target_address,uint16_t& target_port);
+    bool getHiddenServiceInfo(std::string& service_id,std::string& service_onion_address,uint16_t& service_port, QHostAddress& service_target_address,uint16_t& target_port);
 	bool getProxyServerInfo(QHostAddress& proxy_server_adress,uint16_t& proxy_server_port);
 
 //public slots:
