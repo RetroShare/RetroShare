@@ -1,7 +1,8 @@
 /*******************************************************************************
  * RetroShare Broadcast Domain Discovery                                       *
  *                                                                             *
- * Copyright (C) 2019  Gioacchino Mazzurco <gio@altermundi.net>                *
+ * Copyright (C) 2019-2021  Gioacchino Mazzurco <gio@altermundi.net>           *
+ * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -25,15 +26,16 @@
 #include <vector>
 #include <iostream>
 
-#ifdef __ANDROID__
-#	include <QtAndroid>
-#endif // def __ANDROID__
-
 #include "services/broadcastdiscoveryservice.h"
 #include "retroshare/rspeers.h"
 #include "serialiser/rsserializable.h"
 #include "serialiser/rsserializer.h"
 #include "retroshare/rsevents.h"
+
+#ifdef __ANDROID__
+#	include "rs_android/retroshareserviceandroid.hpp"
+#endif // def __ANDROID__
+
 
 /*extern*/ RsBroadcastDiscovery* rsBroadcastDiscovery = nullptr;
 
@@ -99,7 +101,7 @@ BroadcastDiscoveryService::BroadcastDiscoveryService(
 	if(mRsPeers.isHiddenNode(mRsPeers.getOwnId())) return;
 
 #ifdef __ANDROID__
-	createMulticastLock();
+	createAndroidMulticastLock();
 #endif // def __ANDROID__
 
 	enableMulticastListening();
@@ -228,19 +230,47 @@ RsBroadcastDiscoveryResult BroadcastDiscoveryService::createResult(
 bool BroadcastDiscoveryService::isMulticastListeningEnabled()
 {
 #ifdef __ANDROID__
-	return assertMulticastLockIsvalid() &&
-	        mWifiMulticastLock.callMethod<jboolean>("isHeld");
-#endif // def __ANDROID__
+	if(!mAndroidWifiMulticastLock)
+	{
+		RS_ERR("Android multicast lock not initialized!");
+		return false;
+	}
 
+	auto uenv = jni::GetAttachedEnv(RsJni::getVM());
+	JNIEnv& env = *uenv;
+	auto& multicastLockClass = jni::Class<AndroidMulticastLock>::Singleton(env);
+
+	auto isHeld =
+	        multicastLockClass.GetMethod<jni::jboolean()>(
+	            env, "isHeld" );
+
+	return mAndroidWifiMulticastLock.Call(env, isHeld);
+#else if // def __ANDROID__
 	return true;
+#endif // def __ANDROID__
 }
 
 bool BroadcastDiscoveryService::enableMulticastListening()
 {
 #ifdef __ANDROID__
-	if(assertMulticastLockIsvalid() && !isMulticastListeningEnabled())
+	if(!mAndroidWifiMulticastLock)
 	{
-		mWifiMulticastLock.callMethod<void>("acquire");
+		RS_ERR("Android multicast lock not initialized!");
+		return false;
+	}
+
+	if(!isMulticastListeningEnabled())
+	{
+		auto uenv = jni::GetAttachedEnv(RsJni::getVM());
+		JNIEnv& env = *uenv;
+		auto& multicastLockClass = jni::Class<AndroidMulticastLock>::Singleton(env);
+
+		auto acquire =
+		        multicastLockClass.GetMethod<void()>(
+		            env, "acquire" );
+
+		mAndroidWifiMulticastLock.Call(env, acquire);
+
 		return true;
 	}
 #endif // def __ANDROID__
@@ -251,9 +281,24 @@ bool BroadcastDiscoveryService::enableMulticastListening()
 bool BroadcastDiscoveryService::disableMulticastListening()
 {
 #ifdef __ANDROID__
-	if(assertMulticastLockIsvalid() && isMulticastListeningEnabled())
+	if(!mAndroidWifiMulticastLock)
 	{
-		mWifiMulticastLock.callMethod<void>("release");
+		RS_ERR("Android multicast lock not initialized!");
+		return false;
+	}
+
+	if(isMulticastListeningEnabled())
+	{
+		auto uenv = jni::GetAttachedEnv(RsJni::getVM());
+		JNIEnv& env = *uenv;
+		auto& multicastLockClass = jni::Class<AndroidMulticastLock>::Singleton(env);
+
+		auto release =
+		        multicastLockClass.GetMethod<void()>(
+		            env, "release" );
+
+		mAndroidWifiMulticastLock.Call(env, release);
+
 		return true;
 	}
 #endif // def __ANDROID__
@@ -262,56 +307,57 @@ bool BroadcastDiscoveryService::disableMulticastListening()
 }
 
 #ifdef __ANDROID__
-bool BroadcastDiscoveryService::createMulticastLock()
+
+bool BroadcastDiscoveryService::createAndroidMulticastLock()
 {
-	Dbg2() << __PRETTY_FUNCTION__ << std::endl;
-
-	constexpr auto fname = __PRETTY_FUNCTION__;
-	const auto failure = [&](const std::string& err)
+	if(mAndroidWifiMulticastLock)
 	{
-		RsErr() << fname << " " << err << std::endl;
-		return false;
-	};
-
-	if(mWifiMulticastLock.isValid())
-		return failure("mWifiMulticastLock is already initialized");
-
-	QAndroidJniObject context = QtAndroid::androidContext();
-	if(!context.isValid())
-		return failure("Cannot retrieve Android context");
-
-	QAndroidJniObject WIFI_SERVICE = QAndroidJniObject::getStaticObjectField(
-	            "android.content.Context", "WIFI_SERVICE", "Ljava/lang/String;");
-	if(!WIFI_SERVICE.isValid())
-		return failure("Cannot retrieve Context.WIFI_SERVICE value");
-
-	QAndroidJniObject wifiManager = context.callObjectMethod(
-	            "getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;",
-	            WIFI_SERVICE.object<jstring>() );
-	if(!wifiManager.isValid())
-		return failure("Cannot retrieve Android Wifi Manager");
-
-	mWifiMulticastLock = wifiManager.callObjectMethod(
-	            "createMulticastLock",
-	            "(Ljava/lang/String;)Landroid/net/wifi/WifiManager$MulticastLock;",
-	            QAndroidJniObject::fromString(fname).object<jstring>() );
-	if(!mWifiMulticastLock.isValid())
-		return failure("Cannot create WifiManager.MulticastLock");
-
-	return true;
-}
-
-bool BroadcastDiscoveryService::assertMulticastLockIsvalid()
-{
-	if(!mWifiMulticastLock.isValid())
-	{
-		RsErr() << __PRETTY_FUNCTION__ << " mWifiMulticastLock is invalid!"
-		        << std::endl;
+		RS_ERR("Android multicast lock is already initialized");
 		print_stacktrace();
 		return false;
 	}
+
+	auto uenv = jni::GetAttachedEnv(RsJni::getVM());
+	JNIEnv& env = *uenv;
+
+	using AContextTag = RetroShareServiceAndroid::Context;
+	using AContext = jni::Class<AContextTag>;
+	static auto& contextClass = AContext::Singleton(env);
+
+	auto wifiServiceField = jni::StaticField<AContextTag, jni::String>(
+	            env, contextClass, "WIFI_SERVICE");
+
+	jni::Local<jni::String> WIFI_SERVICE = contextClass.Get(
+	            env, wifiServiceField );
+
+	auto androidContext = RetroShareServiceAndroid::getAndroidContext(env);
+
+	auto getSystemService =
+	        contextClass.GetMethod<jni::Object<jni::ObjectTag> (jni::String)>(
+	            env, "getSystemService" );
+
+	struct WifiManager
+	{ static constexpr auto Name() { return "android/net/wifi/WifiManager"; } };
+
+	auto& wifiManagerClass = jni::Class<WifiManager>::Singleton(env);
+
+	auto wifiManager = jni::Cast<WifiManager>(
+	            env, wifiManagerClass,
+	            androidContext.Call(env, getSystemService, WIFI_SERVICE) );
+
+	auto createMulticastLock =
+	        wifiManagerClass.GetMethod<jni::Object<AndroidMulticastLock>(jni::String)>(
+	            env, "createMulticastLock" );
+
+	mAndroidWifiMulticastLock = jni::NewGlobal(
+	            env, wifiManager.Call(
+	                env, createMulticastLock,
+	                jni::Make<jni::String>(
+	                    env, "RetroShare BroadcastDiscoveryService" ) ) );
+
 	return true;
 }
+
 #endif // def __ANDROID__
 
 RsBroadcastDiscovery::~RsBroadcastDiscovery() = default;

@@ -24,9 +24,8 @@ plus depending on Qt networking module just for this is frustrating.
 Update: the warning flood seems have been fixed in later Qt versions
 https://bugreports.qt.io/browse/QTBUG-86394
 
-This solution is the first working we implemented in our code it is disabled by
-default but can be enabled passing `DEFINES+=LIBRETROSHARE_ANDROID_IFADDRS_QT`
-when running `qmake` command.
+This solution was the first working we implemented in our code it has been
+removed to avoid dependency on Qt, as lighter alternatives are possible.
 
 
 == Code copied from Android Gingerbread release
@@ -43,3 +42,8 @@ https://android.googlesource.com/platform/libcore/+/refs/heads/gingerbread-relea
 is particularly easy to include in our code base and compile.
 
 This solution seems the best fitting and doesn't introduce dependency on Qt.
+Newer Android releases (expecially 11) have introduced multiple restrictions
+on network information access so we suggest you to prepare different APK for
+different API level in order to use the `getifaddrs` provided by Android NDK
+which deal gracefully with those restrictions as soon as available.
+

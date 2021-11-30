@@ -112,6 +112,9 @@ define_default_value MVPTREE_SOURCE_VERSION origin/master
 
 define_default_value REPORT_DIR "$(pwd)/$(basename ${NATIVE_LIBS_TOOLCHAIN_PATH})_build_report/"
 
+define_default_value RS_SRC_DIR "$(realpath $(dirname $BASH_SOURCE)/../../)"
+
+
 cArch=""
 eABI=""
 cmakeABI=""
@@ -829,6 +832,15 @@ build_phash()
 	popd
 }
 
+task_register fetch_jni_hpp
+fetch_jni_hpp()
+{
+	local rDir="supportlibs/jni.hpp/"
+
+	[ "$(ls "${RS_SRC_DIR}/${rDir}" | wc -l)" -gt "4" ] ||
+		git -C ${RS_SRC_DIR} submodule update --init ${rDir}
+}
+
 task_register build_mvptree
 build_mvptree()
 {
@@ -862,6 +874,7 @@ build_default_toolchain()
 	task_run build_xapian || return $?
 	task_run build_miniupnpc || return $?
 	task_run build_phash || return $?
+	task_run fetch_jni_hpp || return $?
 	task_run deduplicate_includes || return $?
 	task_run get_native_libs_toolchain_path || return $?
 }

@@ -32,8 +32,9 @@
 #endif
 
 #ifdef __ANDROID__
-#	include <QFile> // To install bdboot.txt
-#	include <QString> // for QString::fromStdString(...)
+#	include <jni/jni.hpp>
+#	include "rs_android/rsjni.hpp"
+#	include "rs_android/retroshareserviceandroid.hpp"
 #endif
 
 #include "util/argstream.h"
@@ -194,7 +195,7 @@ static const int SSLPWD_LEN = 64;
 
 void RsInit::InitRsConfig()
 {
-	RsInfo() << " libretroshare version: " << RS_HUMAN_READABLE_VERSION
+	RsInfo() << "libretroshare version: " << RS_HUMAN_READABLE_VERSION
 	         << std::endl;
 
 	rsInitConfig = new RsInitConfig;
@@ -1011,32 +1012,32 @@ int RsServer::StartupRetroShare()
 	uint64_t tmp_size ;
 	if (!RsDirUtil::checkFile(bootstrapfile,tmp_size,true))
 	{
-		std::cerr << "DHT bootstrap file not in ConfigDir: " << bootstrapfile
-		          << std::endl;
-#ifdef __ANDROID__
-		QFile bdbootRF("assets:/values/bdboot.txt");
-		if(!bdbootRF.open(QIODevice::ReadOnly | QIODevice::Text))
-			std::cerr << __PRETTY_FUNCTION__
-			          << " bdbootRF(assets:/values/bdboot.txt).open(...) fail: "
-			          << bdbootRF.errorString().toStdString() << std::endl;
-		else
-		{
-			QFile bdbootCF(QString::fromStdString(bootstrapfile));
-			if(!bdbootCF.open(QIODevice::WriteOnly | QIODevice::Text))
-				std::cerr << __PRETTY_FUNCTION__  << " bdbootCF("
-				          << bootstrapfile << ").open(...) fail: "
-				          << bdbootRF.errorString().toStdString() << std::endl;
-			else
-			{
-				bdbootCF.write(bdbootRF.readAll());
-				bdbootCF.close();
-				std::cerr << "Installed DHT bootstrap file not in ConfigDir: "
-				          << bootstrapfile << std::endl;
-			}
+		RS_INFO("DHT bootstrap file not in ConfigDir: ", bootstrapfile);
 
-			bdbootRF.close();
-		}
-#else
+#ifdef __ANDROID__
+		auto uenv = jni::GetAttachedEnv(RsJni::getVM());
+		JNIEnv& env = *uenv;
+
+		using AContext = RetroShareServiceAndroid::Context;
+
+		auto& assetHelperClass = jni::Class<RsJni::AssetHelper>::Singleton(env);
+
+		static auto copyAsset =
+		        assetHelperClass.GetStaticMethod<
+		        jni::jboolean(jni::Object<AContext>, jni::String, jni::String)>(
+		            env, "copyAsset" );
+
+		auto androidContext = RetroShareServiceAndroid::getAndroidContext(env);
+
+		jni::jboolean result = assetHelperClass.Call(
+		            env, copyAsset,
+		            androidContext,
+		            jni::Make<jni::String>(env, "values/bdboot.txt"),
+		            jni::Make<jni::String>(env, bootstrapfile) );
+
+		if(!result) RS_ERR("Failure installing ", bootstrapfile);
+
+#else // def __ANDROID__
 		std::cerr << "Checking for Installation DHT bootstrap file " << installfile << std::endl;
 		if ((installfile != "") && (RsDirUtil::checkFile(installfile,tmp_size)))
 		{

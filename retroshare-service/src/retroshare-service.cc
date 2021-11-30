@@ -1,6 +1,7 @@
 /*
  * RetroShare Service
- * Copyright (C) 2016-2019  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2016-2021  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -19,38 +20,30 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-#include "util/stacktrace.h"
-#include "util/argstream.h"
-#include "util/rskbdinput.h"
-#include "retroshare/rsinit.h"
-
-#ifdef RS_JSONAPI
-#include "retroshare/rsjsonapi.h"
-
-#ifdef RS_WEBUI
-#include "retroshare/rswebui.h"
-#endif
-#endif
-
-static CrashStackTrace gCrashStackTrace;
 
 #include <cmath>
 #include <csignal>
 #include <iomanip>
 #include <atomic>
 
-#ifdef __ANDROID__
-#	include <QAndroidService>
-#	include <QCoreApplication>
-#	include <QObject>
-#	include <QStringList>
-
-#	include "util/androiddebug.h"
-#endif // def __ANDROID__
-
+#include "util/stacktrace.h"
+#include "util/argstream.h"
+#include "util/rskbdinput.h"
+#include "retroshare/rsinit.h"
 #include "retroshare/rsinit.h"
 #include "retroshare/rsiface.h"
 #include "util/rsdebug.h"
+
+#ifdef RS_JSONAPI
+#	include "retroshare/rsjsonapi.h"
+
+#	ifdef RS_WEBUI
+#		include "retroshare/rswebui.h"
+#	endif // def RS_WEBUI
+#endif // def RS_JSONAPI
+
+static CrashStackTrace gCrashStackTrace;
+
 
 #ifdef RS_SERVICE_TERMINAL_LOGIN
 class RsServiceNotify: public NotifyClient
@@ -74,9 +67,6 @@ public:
 };
 #endif // def RS_SERVICE_TERMINAL_LOGIN
 
-#ifdef __ANDROID__
-void signalHandler(int /*signal*/) { QCoreApplication::exit(0); }
-#else
 static std::atomic<bool> keepRunning(true);
 static int receivedSignal = 0;
 
@@ -87,16 +77,10 @@ void signalHandler(int signal)
 	receivedSignal = signal;
 	keepRunning = false;
 }
-#endif // def __ANDROID__
 
 
 int main(int argc, char* argv[])
 {
-#ifdef __ANDROID__
-	AndroidStdIOCatcher dbg; (void) dbg;
-	QAndroidService app(argc, argv);
-#endif // def __ANDROID__
-
 	signal(SIGINT,   signalHandler);
 	signal(SIGTERM,  signalHandler);
 #ifdef SIGBREAK
@@ -128,7 +112,7 @@ int main(int argc, char* argv[])
 	RsConfigOptions conf;
 
 #ifdef RS_JSONAPI
-	conf.jsonApiPort = RsJsonApi::DEFAULT_PORT;	// enable JSonAPI by default
+	conf.jsonApiPort = RsJsonApi::DEFAULT_PORT;	// enable JSON API by default
 #ifdef RS_WEBUI
 	std::string webui_base_directory = RsWebUi::DEFAULT_BASE_DIRECTORY;
 #endif
@@ -323,22 +307,10 @@ int main(int argc, char* argv[])
     }
 #endif
 
-#ifdef __ANDROID__
-	rsControl->setShutdownCallback(QCoreApplication::exit);
-
-	QObject::connect(
-	            &app, &QCoreApplication::aboutToQuit,
-	            [](){
-		if(RsControl::instance()->isReady())
-			RsControl::instance()->rsGlobalShutDown(); } );
-
-	return app.exec();
-#else // def __ANDROID__
 	rsControl->setShutdownCallback([&](int){keepRunning = false;});
 
 	while(keepRunning)
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
 	return 0;
-#endif
 }
