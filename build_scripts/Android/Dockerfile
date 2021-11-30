@@ -2,7 +2,7 @@
 ## image name must match gitlab repository name, you can play just with the tag
 ## the part after :
 # export CI_IMAGE_NAME="registry.gitlab.com/retroshare/retroshare:android_arm_base"
-# docker build --squash -t "${CI_REGISTRY_IMAGE}" \
+# docker build --squash --tag "${CI_IMAGE_NAME}" \
 # --build-arg QT_INSTALLER_JWT_TOKEN="your qt JWT token goes here"  .
 #
 # To build Android ARMv8 (64 bit) package pass also
