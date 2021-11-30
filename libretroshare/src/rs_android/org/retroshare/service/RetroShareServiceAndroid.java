@@ -29,7 +29,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.app.ActivityManager;
-import java.util.Objects;
+
 
 public class RetroShareServiceAndroid extends Service
 {
@@ -70,8 +70,11 @@ public class RetroShareServiceAndroid extends Service
     public static Context getServiceContext()
     {
         if(sServiceContext == null)
+        {
             Log.e(TAG, "getServiceContext() called before onCreate");
-        return Objects.requireNonNull(sServiceContext);
+            throw new NullPointerException();
+        }
+        return sServiceContext;
     }
 
     @Override
