@@ -38,7 +38,16 @@ public:
     ByteArray toUpper() const { auto res = *this; for(uint32_t i=0;i<size();++i) if( res[i]<='z' && res[i]>='a') res[i] += int('A')-int('a'); return res; }
     ByteArray toLower() const { auto res = *this; for(uint32_t i=0;i<size();++i) if( res[i]<='Z' && res[i]>='A') res[i] += int('a')-int('A'); return res; }
 
-    bool endsWidth(const ByteArray& b) const { return size() >= b.size() && !memcmp(&data()[size()-b.size()],b.data(),b.size()); }
+    int toInt() const
+    {
+        std::istringstream is(toString().c_str());
+
+        int res = 0;
+        is >> res ;
+
+        return res;
+    }
+    bool endsWith(const ByteArray& b) const { return size() >= b.size() && !memcmp(&data()[size()-b.size()],b.data(),b.size()); }
     bool startsWith(const char *b) const
     {
         for(uint32_t n=0;b[n]!=0;++n)

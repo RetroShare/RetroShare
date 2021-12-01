@@ -40,23 +40,29 @@ namespace Tor
 
 class TorControlCommand;
 
-class TorControlSocket : public RsTcpSocket
+class TorControlSocket : public RsThreadedTcpSocket
 {
 public:
-    explicit TorControlSocket();
+    explicit TorControlSocket(const std::string& tcp_address,uint16_t tcp_port);
     virtual ~TorControlSocket();
 
     std::string errorMessage() const { return m_errorMessage; }
 
     void registerEvent(const ByteArray &event, TorControlCommand *handler);
 
-    void sendCommand(const std::string& data) { sendCommand(0, data); }
+    void sendCommand(const ByteArray& data) { sendCommand(0, data); }
     void sendCommand(TorControlCommand *command, const ByteArray &data);
 
-signals:
-    void error(const QString &message);
+    ByteArray readline(int s);
 
-private slots:
+    // threaded TcpSocket
+
+    virtual int tick() override;
+
+//signals:
+    void error(const std::string& message);
+
+//private slots:
     void process();
     void clear();
 

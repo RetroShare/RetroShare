@@ -37,6 +37,7 @@
 #include <QHostAddress>
 
 #include "bytearray.h"
+#include "util/rsthreads.h"
 
 namespace Tor
 {
@@ -55,7 +56,7 @@ public:
 
 /* Launches and controls a Tor instance with behavior suitable for bundling
  * an instance with the application. */
-class TorProcess
+class TorProcess: public RsTickingThread
 {
     //Q_OBJECT
     //Q_ENUMS(State)
@@ -101,6 +102,9 @@ public:
 //public slots:
     void start();
     void stop();
+
+    // implements RsThread / RsTickingThread
+    virtual void run() override;
 
 private:
     TorProcessPrivate *d;

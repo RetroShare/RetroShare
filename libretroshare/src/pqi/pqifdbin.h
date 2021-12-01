@@ -41,6 +41,10 @@ public:
     //
     int readdata(void *data, int len) override;
 
+    // Read at most len bytes only if \n is encountered within that range. Otherwise, nothing is changed.
+    //
+    int readline(void *data, int len) ;
+
     int netstatus() override;
     int isactive() override;
     bool moretoread(uint32_t usec) override;

@@ -462,6 +462,7 @@ void TorControlPrivate::getTorInfo()
 
     std::list<std::string> keys{ "status/circuit-established","status/bootstrap-phase" };
 
+#ifdef TODO
     /* If these are set in the config, they override the automatic behavior. */
     SettingsObject settings("tor");
     QHostAddress forceAddress(settings.read("socksAddress").toString());
@@ -481,6 +482,7 @@ void TorControlPrivate::getTorInfo()
         }
     }
     else
+#endif
         keys .push_back("net/listeners/socks");
 
     socket->sendCommand(command, command->build(keys));
@@ -558,6 +560,7 @@ void TorControlPrivate::publishServices()
 	}
 	std::cerr << std::endl;
 
+#ifdef TODO
     SettingsObject settings("tor");
     if (settings.read("neverPublishServices").toBool())
     {
@@ -569,6 +572,7 @@ void TorControlPrivate::publishServices()
 
         return;
     }
+#endif
 
     if (q->torVersionAsNewAs("0.2.7")) {
         foreach (HiddenService *service, services) {

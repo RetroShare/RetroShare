@@ -34,12 +34,10 @@
 #define TORPROCESS_P_H
 
 #include "TorProcess.h"
-#include <QProcess>
-#include <QTimer>
 
 namespace Tor {
 
-class TorProcessPrivate : public QObject
+class TorProcessPrivate : public RsTickingThread
 {
     Q_OBJECT
 

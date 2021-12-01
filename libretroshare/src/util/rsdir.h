@@ -70,8 +70,6 @@ std::string 	getFileName(const std::string& full_file_path);
 bool		renameFile(const std::string& from,const std::string& to) ;
 //bool		createBackup (const std::string& sFilename, unsigned int nCount = 5);
 
-bool fileExists(const std::string& file_path);
-
 // returns the CRC32 of the data of length len
 //
 uint32_t rs_CRC32(const unsigned char *data,uint32_t len) ;

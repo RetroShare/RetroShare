@@ -32,6 +32,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <stdio.h>
 
 // This works on linux only. I have no clue how to do that on windows. Anyway, this
 // is only needed for an assert that should normaly never be triggered.
@@ -305,6 +306,7 @@ bool TorManager::start()
         //emit errorChanged(); // not needed because there's no error to handle
     }
 
+#ifdef TODO
     SettingsObject settings("tor");
 
     // If a control port is defined by config or environment, skip launching tor
@@ -338,7 +340,10 @@ bool TorManager::start()
 
         d->control->setAuthPassword(password);
         d->control->connect(address, port);
-    } else {
+    }
+    else
+#endif
+    {
         // Launch a bundled Tor instance
         std::string executable = d->torExecutablePath();
 
@@ -490,11 +495,14 @@ void TorManagerPrivate::getConfFinished()
 
 std::string TorManagerPrivate::torExecutablePath() const
 {
+    std::string path;
+#ifdef TODO
     SettingsObject settings("tor");
-    std::string path = settings.read("executablePath").toString();
+    path = settings.read("executablePath").toString();
 
     if (!path.isEmpty() && QFile::exists(path))
         return path;
+#endif
 
 #ifdef Q_OS_WIN
     std::string filename("/tor/tor.exe");
@@ -540,11 +548,14 @@ bool TorManagerPrivate::createDefaultTorrc(const std::string &path)
 //        "DisableNetwork 1\n"	// (cyril) I removed this because it prevents Tor to bootstrap.
         "__ReloadTorrcOnSIGHUP 0\n";
 
-    QFile file(path);
-    if (!file.open(QIODevice::WriteOnly))
+    FILE *f = fopen(path,"w");
+
+    if (!f)
         return false;
-    if (file.write(defaultTorrcContent) < 0)
-        return false;
+
+    fprintf(f,"%s",defaultTorrcContent);
+
+    fclose(f);
     return true;
 }
 
@@ -659,13 +670,7 @@ RsTorHiddenServiceStatus RsTor::getHiddenServiceStatus(std::string& service_id)
 
 std::map<std::string,std::string> RsTor::bootstrapStatus()
 {
-    QVariantMap m = instance()->control()->bootstrapStatus();
-    std::map<std::string,std::string> res;
-
-    for(auto it(m.begin());it!=m.end();++it)
-        res.insert(std::make_pair(it.key().toStdString(),it.value().toString().toStdString()));
-
-    return res;
+    return instance()->control()->bootstrapStatus();
 }
 
 bool RsTor::hasError()

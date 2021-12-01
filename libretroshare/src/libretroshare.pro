@@ -735,7 +735,6 @@ HEADERS += 	tor/AddOnionCommand.h \
            	tor/SecureRNG.h \
                 tor/TorTypes.h \
                 tor/SetConfCommand.h \
-           	tor/Settings.h \
            	tor/StrUtil.h \
            	tor/bytearray.h \
            	tor/TorControl.h \
@@ -760,7 +759,6 @@ SOURCES += 	tor/AddOnionCommand.cpp \
 		tor/CryptoKey.cpp         \
 		tor/PendingOperation.cpp  \
 		tor/SecureRNG.cpp         \
-		tor/Settings.cpp          \
 		tor/StrUtil.cpp        
 
 # gxs tunnels

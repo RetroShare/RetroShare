@@ -37,11 +37,11 @@
 
 using namespace Tor;
 
-TorControlSocket::TorControlSocket()
-    : currentCommand(0), inDataReply(false)
+TorControlSocket::TorControlSocket(const std::string& tcp_address,uint16_t tcp_port)
+    : RsThreadedTcpSocket(tcp_address,tcp_port),currentCommand(0), inDataReply(false)
 {
-    connect(this, SIGNAL(readyRead()), this, SLOT(process()));
-    connect(this, SIGNAL(disconnected()), this, SLOT(clear()));
+    //connect(this, SIGNAL(readyRead()), this, SLOT(process()));
+    //connect(this, SIGNAL(disconnected()), this, SLOT(clear()));
 }
 
 TorControlSocket::~TorControlSocket()
@@ -49,12 +49,12 @@ TorControlSocket::~TorControlSocket()
     clear();
 }
 
-void TorControlSocket::sendCommand(TorControlCommand *command, const ByteArray &data)
+void TorControlSocket::sendCommand(TorControlCommand *command, const ByteArray& data)
 {
     assert(data.endsWith(ByteArray("\r\n")));
 
     commandQueue.push_back(command);
-    write(data);
+    senddata((void*)data.data(),data.size());
 
     std::cerr << "[TOR CTRL] Sent: \"" << data.trimmed().toString() << "\"" << std::endl;
 }
@@ -93,13 +93,28 @@ void TorControlSocket::setError(const std::string &message)
     abort();
 }
 
+ByteArray TorControlSocket::readline(int s)
+{
+    ByteArray b(s);
+    int real_size;
+
+    if(! (real_size = RsTcpSocket::readline(b.data(),s)))
+        return ByteArray();
+    else
+    {
+        b.resize(real_size);
+        return b;
+    }
+}
+
 void TorControlSocket::process()
 {
     for (;;) {
-        if (!canReadLine())
+        if (!moretoread(0))
             return;
 
-        ByteArray line = readLine(5120);
+        ByteArray line = readline(5120);
+
         if (!line.endsWith(ByteArray("\r\n"))) {
             setError("Invalid control message syntax");
             return;
@@ -142,7 +157,12 @@ void TorControlSocket::process()
             if (!currentCommand) {
                 int space = line.indexOf(' ');
                 if (space > 0)
-                    currentCommand = eventCommands.value(line.mid(0, space));
+                {
+                    auto it = eventCommands.find(line.mid(0, space).toString());
+
+                    if(it != eventCommands.end())
+                        currentCommand = it->second;
+                }
 
                 if (!currentCommand) {
                     RsWarn() << "torctrl: Ignoring unknown event";
@@ -177,4 +197,15 @@ void TorControlSocket::process()
             }
         }
     }
+}
+
+int TorControlSocket::tick()
+{
+    bool rw = RsTcpSocket::tick();
+
+    if(moretoread(0))
+        process();
+
+    if(!rw)
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));	// temporisation when nothing happens
 }
