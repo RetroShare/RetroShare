@@ -25,14 +25,16 @@
 FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV APT_UNAT="--assume-yes --quiet"
 
-RUN apt-get update && apt-get upgrade -y && apt-get clean
-RUN apt-get install --no-install-recommends --assume-yes --quiet \
+RUN apt-get update $APT_UNAT && apt-get upgrade --show-upgraded $APT_UNAT && \
+	apt-get clean $APT_UNAT
+RUN apt-get install --no-install-recommends $APT_UNAT \
 	bash build-essential bzip2 cmake curl chrpath doxygen \
 	git p7zip python qt5-default qttools5-dev tclsh unzip wget zip
 
 # Dependencies to create Android pkg
-RUN apt-get install --no-install-recommends --assume-yes --quiet \
+RUN apt-get install --no-install-recommends $APT_UNAT \
 	openjdk-8-jre openjdk-8-jdk openjdk-8-jdk-headless gradle
 
 ARG FRESHCLONE=0
