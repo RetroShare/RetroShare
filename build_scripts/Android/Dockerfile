@@ -27,12 +27,12 @@ FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get upgrade -y && apt-get clean
-RUN apt-get install -y -qq \
+RUN apt-get install --no-install-recommends --assume-yes --quiet \
 	bash build-essential bzip2 cmake curl chrpath doxygen \
 	git p7zip python qt5-default qttools5-dev tclsh unzip wget zip
 
 # Dependencies to create Android pkg
-RUN apt-get install -y -qq \
+RUN apt-get install --no-install-recommends --assume-yes --quiet \
 	openjdk-8-jre openjdk-8-jdk openjdk-8-jdk-headless gradle
 
 ARG FRESHCLONE=0
