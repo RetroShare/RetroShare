@@ -26,7 +26,7 @@ FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get clean
+RUN apt-get update && apt-get upgrade -y && apt-get clean
 RUN apt-get install -y -qq \
 	bash build-essential bzip2 cmake curl chrpath doxygen \
 	git p7zip python qt5-default qttools5-dev tclsh unzip wget zip
@@ -74,11 +74,11 @@ ARG QT_INSTALLER_JWT_TOKEN
 RUN $PREPARE_TOOLCHAIN install_qt_android
 # Avoid Qt account details leak into the image
 RUN rm -f /root/.local/share/Qt/qtaccount.ini
-# Shrink image by removing unneded Qt components
+# Shrink image by removing unneeded Qt components
 RUN rm -r \
 	$NATIVE_LIBS_TOOLCHAIN_PATH/Qt/Docs/ \
 	$NATIVE_LIBS_TOOLCHAIN_PATH/Qt/Examples/ \
-	$NATIVE_LIBS_TOOLCHAIN_PATH/Qt/Tools/ 
+	$NATIVE_LIBS_TOOLCHAIN_PATH/Qt/Tools/
 
 RUN mkdir /jsonapi-generator-build
 WORKDIR /jsonapi-generator-build/
