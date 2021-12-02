@@ -208,4 +208,6 @@ int TorControlSocket::tick()
 
     if(!rw)
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));	// temporisation when nothing happens
+
+    return 0;	// not sure about what we should return here.
 }

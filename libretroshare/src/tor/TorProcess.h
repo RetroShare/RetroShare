@@ -33,7 +33,6 @@
 #ifndef TORPROCESS_H
 #define TORPROCESS_H
 
-#include <QObject>
 #include <QHostAddress>
 
 #include "bytearray.h"
@@ -56,7 +55,7 @@ public:
 
 /* Launches and controls a Tor instance with behavior suitable for bundling
  * an instance with the application. */
-class TorProcess: public RsTickingThread
+class TorProcess: public RsThread
 {
     //Q_OBJECT
     //Q_ENUMS(State)
@@ -73,7 +72,7 @@ public:
         Ready
     };
 
-    explicit TorProcess(TorProcessClient *client,QObject *parent = 0);
+    explicit TorProcess(TorProcessClient *client);
     virtual ~TorProcess();
 
     std::string executable() const;
@@ -103,12 +102,37 @@ public:
     void start();
     void stop();
 
-    // implements RsThread / RsTickingThread
-    virtual void run() override;
+    // Implements RsThread
+    void run() override ;
 
+    // Keeps reading the output of the tor process and so on.
+    void threadTick();
 private:
-    TorProcessPrivate *d;
     TorProcessClient *m_client;
+
+    std::string mExecutable;
+    std::string mDataDir;
+    std::string mDefaultTorrc;
+    std::list<std::string> mExtraSettings;
+    TorProcess::State mState;
+    std::string mErrorMessage;
+    QHostAddress mControlHost;
+    quint16 mControlPort;
+    ByteArray mControlPassword;
+
+    int controlPortAttempts;
+
+    std::string torrcPath() const;
+    std::string controlPortFilePath() const;
+    bool ensureFilesExist();
+
+    pid_t mTorProcessId;
+public slots:
+    void processStarted();
+    void processFinished();
+    void processError(std::string error);
+    void processReadable();
+    void tryReadControlPort();
 };
 
 }

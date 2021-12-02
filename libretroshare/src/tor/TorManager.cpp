@@ -49,7 +49,6 @@
 #include "CryptoKey.h"
 #include "HiddenService.h"
 #include "GetConfCommand.h"
-#include "Settings.h"
 #include <QFile>
 #include <QDir>
 #include <QCoreApplication>

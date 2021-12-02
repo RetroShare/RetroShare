@@ -44,7 +44,6 @@
 #include "GetConfCommand.h"
 #include "AddOnionCommand.h"
 #include "StrUtil.h"
-#include "Settings.h"
 #include "PendingOperation.h"
 #include <QHostAddress>
 #include <QDir>

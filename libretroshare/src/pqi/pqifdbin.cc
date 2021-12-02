@@ -179,8 +179,8 @@ int RsFdBinInterface::readline(void *data, int len)
     int n=0;
 
     for(auto p:in_buffer)
-        for(int i=0;i<p.second && n<len;++i,++n)
-            if(static_cast<unsigned char*>(p.first)[i] == '\n')
+        for(int i=0;i<p.second;++i,++n)
+            if((n+1==len) || static_cast<unsigned char*>(p.first)[i] == '\n')
                 return readdata(data,n+1);
 
     return 0;
