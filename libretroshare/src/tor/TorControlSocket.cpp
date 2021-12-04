@@ -49,6 +49,13 @@ TorControlSocket::~TorControlSocket()
     clear();
 }
 
+std::string TorControlSocket::peerAddress() const
+{
+    if(connectionState() == State::CONNECTED)
+        return connectAddress();
+    else
+        return std::string();
+}
 void TorControlSocket::sendCommand(TorControlCommand *command, const ByteArray& data)
 {
     assert(data.endsWith(ByteArray("\r\n")));
@@ -78,10 +85,12 @@ void TorControlSocket::registerEvent(const ByteArray &event, TorControlCommand *
 
 void TorControlSocket::clear()
 {
-    qDeleteAll(commandQueue);
+    for(auto cmd:commandQueue) delete cmd;
     commandQueue.clear();
-    qDeleteAll(eventCommands);
+
+    for(auto cmd:eventCommands) delete cmd.second;
     eventCommands.clear();
+
     inDataReply = false;
     currentCommand = 0;
 }

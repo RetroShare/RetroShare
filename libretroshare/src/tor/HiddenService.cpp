@@ -83,7 +83,7 @@ void HiddenService::addTarget(const Target &target)
     m_targets.push_back(target);
 }
 
-void HiddenService::addTarget(quint16 servicePort, QHostAddress targetAddress, quint16 targetPort)
+void HiddenService::addTarget(quint16 servicePort, std::string targetAddress, quint16 targetPort)
 {
     Target t = { targetAddress, servicePort, targetPort };
     m_targets.push_back(t);

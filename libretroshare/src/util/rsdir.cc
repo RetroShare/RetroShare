@@ -93,6 +93,16 @@ std::string 	RsDirUtil::getFileName(const std::string& full_file_path)
     else
         return full_file_path.substr(n+1);
 }
+
+std::string 	RsDirUtil::getDirectory(const std::string& full_file_path)
+{
+    size_t n = full_file_path.find_last_of('/');
+
+    if(n == std::string::npos)
+        return std::string();
+    else
+        return full_file_path.substr(0,n);
+}
 std::string 	RsDirUtil::getTopDir(const std::string& dir)
 {
 	std::string top;

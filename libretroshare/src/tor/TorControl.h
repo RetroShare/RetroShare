@@ -101,7 +101,7 @@ public:
 
     /* Connection */
     bool isConnected() const { return status() == Connected; }
-    void connect(const QHostAddress &address, quint16 port);
+    void connect(const std::string &address, quint16 port);
 
     /* Ownership means that tor is managed by this socket, and we
      * can shut it down, own its configuration, etc. */

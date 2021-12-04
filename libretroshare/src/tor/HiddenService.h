@@ -34,7 +34,6 @@
 #define HIDDENSERVICE_H
 
 #include <QObject>
-#include <QHostAddress>
 #include "CryptoKey.h"
 #include "bytearray.h"
 
@@ -63,7 +62,7 @@ class HiddenService : public QObject
 public:
     struct Target
     {
-        QHostAddress targetAddress;
+        std::string targetAddress;
         quint16 servicePort, targetPort;
     };
 
@@ -90,7 +89,7 @@ public:
 
     const std::list<Target> &targets() const { return m_targets; }
     void addTarget(const Target &target);
-    void addTarget(quint16 servicePort, QHostAddress targetAddress, quint16 targetPort);
+    void addTarget(quint16 servicePort, std::string targetAddress, quint16 targetPort);
 
 private slots:
     void servicePublished();

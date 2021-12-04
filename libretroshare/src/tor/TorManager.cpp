@@ -41,6 +41,9 @@
 #include <sys/syscall.h>
 #endif
 
+#include "util/rsdir.h"
+#include "retroshare/rsinit.h"
+
 #include <QObject>
 
 #include "TorManager.h"
@@ -136,10 +139,10 @@ std::string TorManager::torDataDirectory() const
 
 void TorManager::setTorDataDirectory(const std::string &path)
 {
-    d->dataDir = QDir::fromNativeSeparators(path);
+    d->dataDir = path;
 
-    if (!d->dataDir.isEmpty() && !d->dataDir.endsWith(QLatin1Char('/')))
-        d->dataDir.append(QLatin1Char('/'));
+    if (!d->dataDir.empty() && !ByteArray(d->dataDir).endsWith('/'))
+        d->dataDir += '/';
 }
 
 std::string TorManager::hiddenServiceDirectory() const
@@ -148,7 +151,7 @@ std::string TorManager::hiddenServiceDirectory() const
 }
 void TorManager::setHiddenServiceDirectory(const std::string &path)
 {
-    d->hiddenServiceDir = QDir::fromNativeSeparators(path);
+    d->hiddenServiceDir = path;
 
     if (!d->hiddenServiceDir.empty() && !(d->hiddenServiceDir.back() == '/'))
         d->hiddenServiceDir += '/';
@@ -265,16 +268,15 @@ void TorManager::hiddenServiceHostnameChanged()
     if(!d->hiddenService)
         return ;
 
-    QFile outfile2(d->hiddenServiceDir + QLatin1String("/hostname")) ;
-    outfile2.open( QIODevice::WriteOnly | QIODevice::Text );
-    QTextStream t(&outfile2);
+    std::string outfile2_name = RsDirUtil::makePath(d->hiddenServiceDir,"/hostname") ;
+    std::ofstream of(outfile2_name);
 
     std::string hostname(d->hiddenService->hostname());
 
-    t << hostname << endl;
-    outfile2.close();
+    of << hostname << std::endl;
+    of.close();
 
-    std::cerr << "Hidden service hostname changed: " << hostname.toStdString() << std::endl;
+    std::cerr << "Hidden service hostname changed: " << hostname << std::endl;
 }
 
 bool TorManager::configurationNeeded() const
@@ -282,14 +284,14 @@ bool TorManager::configurationNeeded() const
     return d->configNeeded;
 }
 
-std::string TorManager::logMessages() const
+const std::list<std::string>& TorManager::logMessages() const
 {
     return d->logMessages;
 }
 
 bool TorManager::hasError() const
 {
-    return !d->errorMessage.isEmpty();
+    return !d->errorMessage.empty();
 }
 
 std::string TorManager::errorMessage() const
@@ -299,7 +301,7 @@ std::string TorManager::errorMessage() const
 
 bool TorManager::start()
 {
-    if (!d->errorMessage.isEmpty()) {
+    if (!d->errorMessage.empty()) {
         d->errorMessage.clear();
 
         //emit errorChanged(); // not needed because there's no error to handle
@@ -346,9 +348,9 @@ bool TorManager::start()
         // Launch a bundled Tor instance
         std::string executable = d->torExecutablePath();
 
-        std::cerr << "Executable path: " << executable.toStdString() << std::endl;
+        std::cerr << "Executable path: " << executable << std::endl;
 
-        if (executable.isEmpty()) {
+        if (executable.empty()) {
             d->setError("Cannot find tor executable");
             return false;
         }
@@ -361,20 +363,27 @@ bool TorManager::start()
             // QObject::connect(d->process, SIGNAL(logMessage(std::string)), d, SLOT(processLogMessage(std::string)));
         }
 
-        if (!QFile::exists(d->dataDir) && !d->createDataDir(d->dataDir)) {
+        if (!RsDirUtil::checkCreateDirectory(d->dataDir))
+        {
             d->setError(std::string("Cannot write data location: ") + d->dataDir);
             return false;
         }
 
-        std::string defaultTorrc = d->dataDir + "default_torrc";
-        if (!QFile::exists(defaultTorrc) && !d->createDefaultTorrc(defaultTorrc))
+        std::string defaultTorrc = RsDirUtil::makePath(d->dataDir,"default_torrc");
+
+        if (!RsDirUtil::fileExists(defaultTorrc) && !d->createDefaultTorrc(defaultTorrc))
         {
-            d->setError("Cannot write data files: ")+defaultTorrc);
+            d->setError("Cannot write data files: "+defaultTorrc);
             return false;
         }
 
-        QFile torrc(d->dataDir + "torrc");
-        if (!torrc.exists() || torrc.size() == 0) {
+        std::string torrc = RsDirUtil::makePath(d->dataDir,"torrc");
+        uint64_t file_size;
+
+        bool torrc_exists = RsDirUtil::checkFile(torrc,file_size);
+
+        if(!torrc_exists || torrc.size() == 0)
+        {
             d->configNeeded = true;
 
             if(rsEvents)
@@ -387,9 +396,9 @@ bool TorManager::start()
         }
 
         std::cerr << "Starting Tor process:" << std::endl;
-        std::cerr << "  Tor executable path: " << executable.toStdString() << std::endl;
-        std::cerr << "  Tor data directory : " << d->dataDir.toStdString() << std::endl;
-        std::cerr << "  Tor default torrc  : " << defaultTorrc.toStdString() << std::endl;
+        std::cerr << "  Tor executable path: " << executable << std::endl;
+        std::cerr << "  Tor data directory : " << d->dataDir << std::endl;
+        std::cerr << "  Tor default torrc  : " << defaultTorrc << std::endl;
 
         d->process->setExecutable(executable);
         d->process->setDataDir(d->dataDir);
@@ -435,8 +444,9 @@ bool TorManager::getHiddenServiceInfo(std::string& service_id,std::string& servi
 
 void TorManagerPrivate::processStateChanged(int state)
 {
-    std::cerr << Q_FUNC_INFO << "state: " << state << " passwd=\"" << std::string(process->controlPassword()).toStdString() << "\" " << process->controlHost().toString().toStdString()
+    RsInfo() << "state: " << state << " passwd=\"" << process->controlPassword().toString() << "\" " << process->controlHost().toString().toStdString()
 	         << ":" << process->controlPort() << std::endl;
+
     if (state == TorProcess::Ready) {
         control->setAuthPassword(process->controlPassword());
         control->connect(process->controlHost(), process->controlPort());
@@ -479,17 +489,21 @@ void TorManagerPrivate::getConfFinished()
     if (!command)
         return;
 
-    if (command->get("DisableNetwork").toInt() == 1 && !configNeeded) {
-        configNeeded = true;
-        //emit q->configurationNeededChanged();
+    int n;
 
-        if(rsEvents)
+    for(auto str:command->get("DisableNetwork"))
+        if(RsUtil::StringToInt(str,n) && n==1 && !configNeeded)
         {
-            auto ev = std::make_shared<RsTorManagerEvent>();
-            ev->mTorManagerEventType = RsTorManagerEventCode::CONFIGURATION_NEEDED;
-            rsEvents->sendEvent(ev);
+            configNeeded = true;
+            //emit q->configurationNeededChanged();
+
+            if(rsEvents)
+            {
+                auto ev = std::make_shared<RsTorManagerEvent>();
+                ev->mTorManagerEventType = RsTorManagerEventCode::CONFIGURATION_NEEDED;
+                rsEvents->sendEvent(ev);
+            }
         }
-    }
 }
 
 std::string TorManagerPrivate::torExecutablePath() const
@@ -509,34 +523,37 @@ std::string TorManagerPrivate::torExecutablePath() const
     std::string filename("/tor");
 #endif
 
-    path = qApp->applicationDirPath();
+    path = RsDirUtil::getDirectory(RsInit::executablePath());
+    std::string tor_exe_path = RsDirUtil::makePath(path,filename);
 
-    if (QFile::exists(path + filename))
-        return path + filename;
+    if (RsDirUtil::fileExists(tor_exe_path))
+        return tor_exe_path;
 
 #ifdef BUNDLED_TOR_PATH
     path = BUNDLED_TOR_PATH;
-    if (QFile::exists(path + filename))
-        return path + filename;
+    tor_exe_path = RsDirUtil::makePath(path,filename);
+
+    if (RsDirUtil::fileExists(tor_exe_path))
+        return tor_exe_path;
 #endif
 
 #ifdef __APPLE__
     // on MacOS, try traditional brew installation path
 
     path = "/usr/local/opt/tor/bin" ;
+    tor_exe_path = RsDirUtil::makePath(path,filename);
 
-    if (QFile::exists(path + filename))
-        return path + filename;
+    if (RsDirUtil::fileExists(tor_exe_path))
+        return tor_exe_path;
 #endif
 
     // Try $PATH
-    return filename.mid(1);
+    return filename.substr(1);
 }
 
 bool TorManagerPrivate::createDataDir(const std::string &path)
 {
-    QDir dir(path);
-    return dir.mkpath(".");
+    return RsDirUtil::checkCreateDirectory(path);
 }
 
 bool TorManagerPrivate::createDefaultTorrc(const std::string &path)
@@ -547,7 +564,7 @@ bool TorManagerPrivate::createDefaultTorrc(const std::string &path)
 //        "DisableNetwork 1\n"	// (cyril) I removed this because it prevents Tor to bootstrap.
         "__ReloadTorrcOnSIGHUP 0\n";
 
-    FILE *f = fopen(path,"w");
+    FILE *f = fopen(path.c_str(),"w");
 
     if (!f)
         return false;

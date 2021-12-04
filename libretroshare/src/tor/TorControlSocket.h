@@ -48,6 +48,7 @@ public:
 
     std::string errorMessage() const { return m_errorMessage; }
 
+    void connectToHost(const std::string& tcp_address,uint16_t tcp_port);
     void registerEvent(const ByteArray &event, TorControlCommand *handler);
 
     void sendCommand(const ByteArray& data) { sendCommand(0, data); }
@@ -59,6 +60,7 @@ public:
 
     virtual int tick() override;
 
+    std::string peerAddress() const;
 //signals:
     void error(const std::string& message);
 

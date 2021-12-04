@@ -58,12 +58,19 @@ class RsStackFileLock
 
 namespace RsDirUtil {
 
+// Returns the name of the directory on top of the given path (as opposed to the full path to that directory)
 std::string 	getTopDir(const std::string&);
 std::string 	getRootDir(const std::string&);
 std::string 	removeRootDir(const std::string& path);
 void 			removeTopDir(const std::string& dir, std::string &path);
 std::string 	removeRootDirs(const std::string& path, const std::string& root);
+
+// Returns the filename at the end of the path. An empty string is returned if the path is a directory path.
 std::string 	getFileName(const std::string& full_file_path);
+
+// Returns the directory (full path) that contains the given path (filename or directory).
+// If a directory is supplied, the same path is returned.
+std::string 	getDirectory(const std::string& full_file_path);
 
 // Renames file from to file to. Files should be on the same file system.
 //	returns true if succeed, false otherwise.

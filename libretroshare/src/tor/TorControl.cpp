@@ -83,11 +83,11 @@ public:
     TorControl *q;
 
     TorControlSocket *socket;
-    QHostAddress torAddress;
+    std::string torAddress;
     std::string errorMessage;
     std::string torVersion;
     ByteArray authPassword;
-    QHostAddress socksAddress;
+    std::string socksAddress;
     QList<HiddenService*> services;
     quint16 controlPort, socksPort;
     TorControl::Status status;
@@ -282,7 +282,7 @@ void TorControl::setAuthPassword(const ByteArray &password)
     d->authPassword = password;
 }
 
-void TorControl::connect(const QHostAddress &address, quint16 port)
+void TorControl::connect(const std::string &address, quint16 port)
 {
     if (status() > Connecting)
     {
@@ -294,9 +294,9 @@ void TorControl::connect(const QHostAddress &address, quint16 port)
     d->controlPort = port;
     d->setTorStatus(TorUnknown);
 
-    bool b = d->socket->blockSignals(true);
-    d->socket->abort();
-    d->socket->blockSignals(b);
+    //bool b = d->socket->blockSignals(true);
+    d->socket->fullstop();
+    //d->socket->blockSignals(b);
 
     d->setStatus(Connecting);
     d->socket->connectToHost(address, port);
@@ -304,8 +304,9 @@ void TorControl::connect(const QHostAddress &address, quint16 port)
 
 void TorControl::reconnect()
 {
-    Q_ASSERT(!d->torAddress.isNull() && d->controlPort);
-    if (d->torAddress.isNull() || !d->controlPort || status() >= Connecting)
+    assert(!d->torAddress.empty() && d->controlPort);
+
+    if (d->torAddress.empty() || !d->controlPort || status() >= Connecting)
         return;
 
     d->setStatus(Connecting);
@@ -332,7 +333,7 @@ void TorControlPrivate::authenticateReply()
 
     TorControlCommand *clientEvents = new TorControlCommand;
     connect(clientEvents, &TorControlCommand::replyLine, this, &TorControlPrivate::statusEvent);
-    socket->registerEvent("STATUS_CLIENT", clientEvents);
+    socket->registerEvent(ByteArray("STATUS_CLIENT"), clientEvents);
 
     getTorInfo();
     publishServices();
@@ -400,11 +401,15 @@ void TorControlPrivate::protocolInfoReply()
             std::string cookieError;
             torCtrlDebug() << "torctrl: Using cookie authentication with file" << cookieFile << std::endl;
 
-            QFile file(cookieFile);
-            if (file.open(QIODevice::ReadOnly))
+            FILE *f = fopen(cookieFile.c_str(),"r");
+
+            if(f)
             {
-                ByteArray cookie = file.readAll();
-                file.close();
+                std::string cookie;
+                char c;
+                while((c=getc(f))!=EOF)
+                    cookie += c;
+                fclose(f);
 
                 /* Simple test to avoid a vulnerability where any process listening on what we think is
                  * the control port could trick us into sending the contents of an arbitrary file */
@@ -414,7 +419,7 @@ void TorControlPrivate::protocolInfoReply()
                     cookieError = "Unexpected file size";
             }
             else
-                cookieError = file.errorString();
+                cookieError = "Cannot open file " + cookieFile + ". errno=" + RsUtil::NumberToString(errno);
 
             if (!cookieError.empty() || data.isNull())
             {
@@ -498,13 +503,13 @@ void TorControlPrivate::getTorInfoReply()
     for (const auto& add:listenAddresses) {
         ByteArray value = unquotedString(add);
         int sepp = value.indexOf(':');
-        QHostAddress address(value.mid(0, sepp));
-        quint16 port = (quint16)value.mid(sepp+1).toUInt();
+        std::string address(value.mid(0, sepp).toString());
+        quint16 port = (quint16)value.mid(sepp+1).toInt();
 
         /* Use the first address that matches the one used for this control connection. If none do,
          * just use the first address and rely on the user to reconfigure if necessary (not a problem;
          * their setup is already very customized) */
-        if (socksAddress.isNull() || address == socket->peerAddress()) {
+        if (socksAddress.empty() || address == socket->peerAddress()) {
             socksAddress = address;
             socksPort = port;
             if (address == socket->peerAddress())
@@ -515,8 +520,8 @@ void TorControlPrivate::getTorInfoReply()
     /* It is not immediately an error to have no SOCKS address; when DisableNetwork is set there won't be a
      * listener yet. To handle that situation, we'll try to read the socks address again when TorReady state
      * is reached. */
-    if (!socksAddress.isNull()) {
-        torCtrlDebug() << "torctrl: SOCKS address is " << socksAddress.toString().toStdString() << ":" << socksPort << std::endl;
+    if (!socksAddress.empty()) {
+        torCtrlDebug() << "torctrl: SOCKS address is " << socksAddress << ":" << socksPort << std::endl;
 
         if(rsEvents)
         {
@@ -601,8 +606,7 @@ void TorControlPrivate::publishServices()
 
             torCtrlDebug() << "torctrl: Configuring hidden service at" << service->dataPath() << std::endl;
 
-            QDir dir(service->dataPath());
-            torConfig.append(qMakePair(ByteArray("HiddenServiceDir"), dir.absolutePath().toLocal8Bit()));
+            torConfig.push_back(std::make_pair("HiddenServiceDir", service->dataPath()));
 
             const std::list<HiddenService::Target> &targets = service->targets();
             for (auto tit:targets)
@@ -610,7 +614,7 @@ void TorControlPrivate::publishServices()
                 std::string target = RsUtil::NumberToString(tit.servicePort) + " "
                                     +tit.targetAddress + ":"
                                     +RsUtil::NumberToString(tit.targetPort);
-                torConfig.append(qMakePair(ByteArray("HiddenServicePort"), target));
+                torConfig.push_back(std::make_pair("HiddenServicePort", target));
             }
 
             QObject::connect(command, &SetConfCommand::setConfSucceeded, service, &HiddenService::servicePublished);
@@ -628,7 +632,7 @@ void TorControl::shutdown()
         return;
     }
 
-    d->socket->sendCommand("SIGNAL SHUTDOWN\r\n");
+    d->socket->sendCommand(ByteArray("SIGNAL SHUTDOWN\r\n"));
 }
 
 void TorControl::shutdownSync()
@@ -639,11 +643,10 @@ void TorControl::shutdownSync()
     }
 
     shutdown();
-    while (d->socket->bytesToWrite())
-    {
-        if (!d->socket->waitForBytesWritten(5000))
-            return;
-    }
+    while (d->socket->moretowrite())
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    d->socket->close();
 }
 
 void TorControlPrivate::statusEvent(int code, const ByteArray &data)
@@ -835,7 +838,7 @@ bool TorControl::hasOwnership() const
 void TorControl::takeOwnership()
 {
     d->hasOwnership = true;
-    d->socket->sendCommand("TAKEOWNERSHIP\r\n");
+    d->socket->sendCommand(ByteArray("TAKEOWNERSHIP\r\n"));
 
     // Reset PID-based polling
     std::list<std::pair<std::string,std::string> > options;

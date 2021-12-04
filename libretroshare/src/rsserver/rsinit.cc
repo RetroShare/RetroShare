@@ -146,6 +146,7 @@ struct RsInitConfig
     {}
 
 	RsFileHash main_executable_hash;
+    std::string mainExecutablePath;
 
 #ifdef WINDOWS_SYS
 	bool portable;
@@ -307,6 +308,7 @@ int RsInit::InitRetroShare(const RsConfigOptions& conf)
     rsInitConfig->optBaseDir         = conf.optBaseDir;
     rsInitConfig->jsonApiPort        = conf.jsonApiPort;
     rsInitConfig->jsonApiBindAddress = conf.jsonApiBindAddress;
+    rsInitConfig->mainExecutablePath = conf.main_executable_path;
 
 #ifdef PTW32_STATIC_LIB
 	// for static PThreads under windows... we need to init the library...
@@ -1932,6 +1934,10 @@ int RsServer::StartupRetroShare()
 	return 1;
 }
 
+std::string RsInit::executablePath()
+{
+    return rsInitConfig->mainExecutablePath;
+}
 bool RsInit::startAutoTor()
 {
     std::cerr << "(II) node is an automated Tor node => launching Tor auto-configuration." << std::endl;

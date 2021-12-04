@@ -65,7 +65,7 @@ ByteArray AddOnionCommand::build()
         out += " Port=";
         out += QByteArray::number(target.servicePort);
         out += ",";
-        out += target.targetAddress.toString().toLatin1();
+        out += target.targetAddress;
         out += ":";
         out += QByteArray::number(target.targetPort);
     }

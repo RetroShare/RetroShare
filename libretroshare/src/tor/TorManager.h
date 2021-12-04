@@ -81,7 +81,7 @@ public:
     // True on first run or when the Tor configuration wizard needs to be shown
     bool configurationNeeded() const;
 
-    std::list<std::string> logMessages() const;
+    const std::list<std::string>& logMessages() const;
 
     bool hasError() const;
     std::string errorMessage() const;

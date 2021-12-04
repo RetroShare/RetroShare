@@ -38,7 +38,7 @@
 #include "util/rsdir.h"
 #include "pqi/pqifdbin.h"
 
-#include "TorProcess_p.h"
+#include "TorProcess.h"
 #include "CryptoKey.h"
 #include "SecureRNG.h"
 
@@ -105,7 +105,7 @@ std::string TorProcess::errorMessage() const
     return mErrorMessage;
 }
 
-// Does a fopen, but dup all file descriptors (STDIN STDOUT and STDERR) to the
+// Does a popen, but dup all file descriptors (STDIN STDOUT and STDERR) to the
 // FDs supplied by the parent process
 
 int popen3(int fd[3],const char **const cmd,pid_t& pid)
