@@ -182,6 +182,7 @@ void BoardPostDisplayWidgetBase::baseSetup()
     if(redacted)
     {
         commentButton()->setDisabled(true);
+        shareButton()->setDisabled(true);
         voteUpButton()->setDisabled(true);
         voteDownButton()->setDisabled(true);
         fromLabel()->setId(mPost.mMeta.mAuthorId);
