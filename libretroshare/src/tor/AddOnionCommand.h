@@ -34,9 +34,6 @@
 #define ADDONIONCOMMAND_H
 
 #include "TorControlCommand.h"
-#include <QList>
-#include <QPair>
-#include <QVariant>
 
 namespace Tor
 {
@@ -45,11 +42,8 @@ class HiddenService;
 
 class AddOnionCommand : public TorControlCommand
 {
-    Q_OBJECT
-    Q_DISABLE_COPY(AddOnionCommand)
-
-    Q_PROPERTY(std::string errorMessage READ errorMessage CONSTANT)
-    Q_PROPERTY(bool successful READ isSuccessful CONSTANT)
+    // Q_PROPERTY(std::string errorMessage READ errorMessage CONSTANT)
+    // Q_PROPERTY(bool successful READ isSuccessful CONSTANT)
 
 public:
     AddOnionCommand(HiddenService *service);
@@ -59,13 +53,16 @@ public:
     std::string errorMessage() const { return m_errorMessage; }
     bool isSuccessful() const;
 
-signals:
-    void succeeded();
-    void failed(int code);
+// signals:
+    void set_succeeded_callback(const std::function<void(void)>& f) { mSucceeded=f;}
+    void set_failed_callback(const std::function<void(int)>& f) { mFailed=f;}
 
 protected:
     HiddenService *m_service;
     std::string m_errorMessage;
+
+    std::function<void(void)> mSucceeded;
+    std::function<void(int)> mFailed;
 
     virtual void onReply(int statusCode, const ByteArray &data);
     virtual void onFinished(int statusCode);

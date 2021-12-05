@@ -30,24 +30,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SETCONFCOMMAND_H
-#define SETCONFCOMMAND_H
+#pragma once
 
+#include <functional>
 #include "TorControlCommand.h"
-#include <QList>
-#include <QPair>
-#include <QVariant>
 
 namespace Tor
 {
 
 class SetConfCommand : public TorControlCommand
 {
-    Q_OBJECT
-    Q_DISABLE_COPY(SetConfCommand)
-
-    Q_PROPERTY(QString errorMessage READ errorMessage CONSTANT)
-    Q_PROPERTY(bool successful READ isSuccessful CONSTANT)
+    //Q_PROPERTY(QString errorMessage READ errorMessage CONSTANT)
+    //Q_PROPERTY(bool successful READ isSuccessful CONSTANT)
 
 public:
     SetConfCommand();
@@ -60,18 +54,19 @@ public:
     std::string errorMessage() const { return m_errorMessage; }
     bool isSuccessful() const;
 
-signals:
-    void setConfSucceeded();
-    void setConfFailed(int code);
+//signals:
+    void set_ConfSucceeded_callback(const std::function<void(void)>& f) { mConfSucceeded=f; }
+    void set_ConfFailed_callback   (const std::function<void(int code)>& f){ mConfFailed=f; }
 
 protected:
     std::string m_errorMessage;
     bool m_resetMode;
+
+    std::function<void(void)> mConfSucceeded;
+    std::function<void(int code)> mConfFailed;
 
     virtual void onReply(int statusCode, const ByteArray &data);
     virtual void onFinished(int statusCode);
 };
 
 }
-
-#endif // SETCONFCOMMAND_H

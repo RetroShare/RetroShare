@@ -30,33 +30,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TORCONTROLCOMMAND_H
-#define TORCONTROLCOMMAND_H
+#pragma once
 
-#include <QObject>
-
+#include <functional>
 #include "bytearray.h"
 
 namespace Tor
 {
 
-class TorControlCommand : public QObject
-{
-    Q_OBJECT
-    Q_DISABLE_COPY(TorControlCommand)
+class ProtocolInfoCommand;
 
+class TorControlCommand
+{
     friend class TorControlSocket;
 
 public:
     TorControlCommand();
+    virtual ~TorControlCommand()=default;
 
     int statusCode() const { return m_finalStatus; }
 
-signals:
-    void replyLine(int statusCode, const ByteArray &data);
-    void finished();
+//signals:
+    void set_replyLine_callback( const std::function<void(int statusCode, const ByteArray &data)>& f) { mReplyLine=f ; }
+    void set_finished_callback( const std::function<void(TorControlCommand *sender)>& f) { mFinished=f; };
 
-protected:
+public:
     virtual void onReply(int statusCode, const ByteArray &data);
     virtual void onFinished(int statusCode);
     virtual void onDataLine(const ByteArray &data);
@@ -64,8 +62,13 @@ protected:
 
 private:
     int m_finalStatus;
+
+    // Disable copy
+    TorControlCommand(const TorControlCommand&){}
+    TorControlCommand& operator=(const TorControlCommand&){ return *this; }
+
+    std::function<void(int statusCode, const ByteArray &data)> mReplyLine;
+    std::function<void(TorControlCommand *sender)> mFinished;
 };
 
 }
-
-#endif // TORCONTROLCOMMAND_H

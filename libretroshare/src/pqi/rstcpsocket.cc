@@ -10,6 +10,21 @@ RsTcpSocket::RsTcpSocket(const std::string& tcp_address,uint16_t tcp_port)
     :RsFdBinInterface(0),mState(DISCONNECTED),mConnectAddress(tcp_address),mConnectPort(tcp_port),mSocket(0)
 {
 }
+
+RsTcpSocket::RsTcpSocket()
+    :RsFdBinInterface(0),mState(DISCONNECTED),mConnectAddress("0.0.0.0"),mConnectPort(0),mSocket(0)
+{
+}
+
+int RsTcpSocket::connect(const std::string& tcp_address,uint16_t tcp_port)
+{
+    close();
+
+    mConnectPort = tcp_port;
+    mConnectAddress = tcp_address;
+
+    return connect();
+}
 int RsTcpSocket::connect()
 {
     int CreateSocket = 0;
@@ -42,6 +57,7 @@ int RsTcpSocket::connect()
 int RsTcpSocket::close()
 {
     RsFdBinInterface::close();
+    mState = DISCONNECTED;
 
     return !::close(mSocket);
 }
@@ -50,7 +66,9 @@ RsThreadedTcpSocket::RsThreadedTcpSocket(const std::string& tcp_address,uint16_t
     : RsTcpSocket(tcp_address,tcp_port)
 {
 }
-
+RsThreadedTcpSocket::RsThreadedTcpSocket() : RsTcpSocket()
+{
+}
 void RsThreadedTcpSocket::run()
 {
     if(!connect())

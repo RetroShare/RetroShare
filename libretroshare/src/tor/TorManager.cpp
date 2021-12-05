@@ -211,23 +211,22 @@ bool TorManager::setupHiddenService()
     // Generally, these are not used, and we bind to localhost and port 0
     // for an automatic (and portable) selection.
 
-    QHostAddress address = QHostAddress::LocalHost;	// we only listen from localhost
+    std::string address = "127.0.0.1";	// we only listen from localhost
+    unsigned short port = 7934;//(quint16)m_settings->read("localListenPort").toInt();
 
-    quint16 port = 7934;//(quint16)m_settings->read("localListenPort").toInt();
+    std::cerr << "Testing host address: " << address << ":" << port ;
 
-	std::cerr << "Testing host address: " << address.toString().toStdString() << ":" << port ;
-
-    if (!QTcpServer().listen(address, port))
-    {
-        // XXX error case
-		std::cerr << " Failed to open incoming socket" << std::endl;
-        return false;
-    }
+//    if (!QTcpServer().listen(address, port))
+//    {
+//        // XXX error case
+//		std::cerr << " Failed to open incoming socket" << std::endl;
+//        return false;
+//    }
 
 	std::cerr << " OK - Adding hidden service to TorControl." << std::endl;
 
     //d->hiddenService->addTarget(9878, mIncomingServer->serverAddress(), mIncomingServer->serverPort());
-    d->hiddenService->addTarget(9878, QHostAddress::LocalHost,7934);
+    d->hiddenService->addTarget(9878, "127.0.0.1",7934);
     control()->addHiddenService(d->hiddenService);
 
 	return true ;
@@ -408,7 +407,7 @@ bool TorManager::start()
 	return true ;
 }
 
-bool TorManager::getProxyServerInfo(QHostAddress& proxy_server_adress,uint16_t& proxy_server_port)
+bool TorManager::getProxyServerInfo(std::string& proxy_server_adress,uint16_t& proxy_server_port)
 {
 	proxy_server_adress = control()->socksAddress();
 	proxy_server_port   = control()->socksPort();
@@ -416,7 +415,7 @@ bool TorManager::getProxyServerInfo(QHostAddress& proxy_server_adress,uint16_t& 
 	return proxy_server_port > 1023 ;
 }
 
-bool TorManager::getHiddenServiceInfo(std::string& service_id,std::string& service_onion_address,uint16_t& service_port, QHostAddress& service_target_address,uint16_t& target_port)
+bool TorManager::getHiddenServiceInfo(std::string& service_id,std::string& service_onion_address,uint16_t& service_port, std::string& service_target_address,uint16_t& target_port)
 {
 	QList<Tor::HiddenService*> hidden_services = control()->hiddenServices();
 
@@ -444,7 +443,7 @@ bool TorManager::getHiddenServiceInfo(std::string& service_id,std::string& servi
 
 void TorManagerPrivate::processStateChanged(int state)
 {
-    RsInfo() << "state: " << state << " passwd=\"" << process->controlPassword().toString() << "\" " << process->controlHost().toString().toStdString()
+    RsInfo() << "state: " << state << " passwd=\"" << process->controlPassword().toString() << "\" " << process->controlHost()
 	         << ":" << process->controlPort() << std::endl;
 
     if (state == TorProcess::Ready) {
@@ -605,14 +604,14 @@ bool RsTor::getHiddenServiceInfo(std::string& service_id,
 {
     std::string sid;
     std::string soa;
-    QHostAddress sta;
+    std::string sta;
 
     if(!instance()->getHiddenServiceInfo(sid,soa,service_port,sta,target_port))
         return false;
 
     service_id = sid;
     service_onion_address = soa;
-    service_target_address = sta.toString().toStdString();
+    service_target_address = sta;
 
     return true;
 }
@@ -624,7 +623,7 @@ std::list<std::string> RsTor::logMessages()
 
 std::string RsTor::socksAddress()
 {
-    return instance()->control()->socksAddress().toString().toStdString();
+    return instance()->control()->socksAddress();
 }
 uint16_t RsTor::socksPort()
 {
@@ -700,10 +699,10 @@ std::string RsTor::errorMessage()
 
 void RsTor::getProxyServerInfo(std::string& server_address,  uint16_t& server_port)
 {
-    QHostAddress qserver_address;
+    std::string qserver_address;
     instance()->getProxyServerInfo(qserver_address,server_port);
 
-    server_address = qserver_address.toString().toStdString();
+    server_address = qserver_address;
 }
 
 bool RsTor::start()

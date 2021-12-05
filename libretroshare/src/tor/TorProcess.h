@@ -33,8 +33,6 @@
 #ifndef TORPROCESS_H
 #define TORPROCESS_H
 
-#include <QHostAddress>
-
 #include "bytearray.h"
 #include "util/rsthreads.h"
 
@@ -89,8 +87,8 @@ public:
 
     State state() const;
     std::string errorMessage() const;
-    QHostAddress controlHost();
-    quint16 controlPort();
+    std::string controlHost();
+    unsigned short controlPort();
     ByteArray controlPassword();
 
 //signals:
@@ -116,8 +114,8 @@ private:
     std::list<std::string> mExtraSettings;
     TorProcess::State mState;
     std::string mErrorMessage;
-    QHostAddress mControlHost;
-    quint16 mControlPort;
+    std::string mControlHost;
+    unsigned short mControlPort;
     ByteArray mControlPassword;
 
     int controlPortAttempts;
@@ -127,7 +125,7 @@ private:
     bool ensureFilesExist();
 
     pid_t mTorProcessId;
-public slots:
+//public slots:
     void processStarted();
     void processFinished();
     void processError(std::string error);

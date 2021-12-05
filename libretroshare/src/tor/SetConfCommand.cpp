@@ -105,8 +105,8 @@ void SetConfCommand::onFinished(int statusCode)
 {
     TorControlCommand::onFinished(statusCode);
     if (isSuccessful())
-        emit setConfSucceeded();
+        mConfSucceeded();
     else
-        emit setConfFailed(statusCode);
+        mConfFailed(statusCode);
 }
 

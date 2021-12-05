@@ -37,8 +37,8 @@
 
 using namespace Tor;
 
-TorControlSocket::TorControlSocket(const std::string& tcp_address,uint16_t tcp_port)
-    : RsThreadedTcpSocket(tcp_address,tcp_port),currentCommand(0), inDataReply(false)
+TorControlSocket::TorControlSocket(TorControlSocketClient *client)
+    : RsThreadedTcpSocket(),currentCommand(0), inDataReply(false),mClient(client)
 {
     //connect(this, SIGNAL(readyRead()), this, SLOT(process()));
     //connect(this, SIGNAL(disconnected()), this, SLOT(clear()));
@@ -98,7 +98,7 @@ void TorControlSocket::clear()
 void TorControlSocket::setError(const std::string &message)
 {
     m_errorMessage = message;
-    emit error(message);
+    mClient->socketError(message);
     abort();
 }
 
@@ -202,7 +202,7 @@ void TorControlSocket::process()
             commandQueue.pop_front();
             if (command) {
                 command->onFinished(statusCode);
-                command->deleteLater();
+                delete command;		// should we "delete later" ?
             }
         }
     }

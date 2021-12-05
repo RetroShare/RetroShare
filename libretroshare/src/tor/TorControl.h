@@ -35,10 +35,9 @@
 
 #include <iostream>
 
-#include <QObject>
-#include <QHostAddress>
 #include "PendingOperation.h"
 #include "bytearray.h"
+#include "TorControlSocket.h"
 
 class QNetworkProxy;
 
@@ -46,23 +45,23 @@ namespace Tor
 {
 
 class HiddenService;
-class TorControlPrivate;
+class TorControlSocket;
+class TorControlCommand;
 
-class TorControl : public QObject
+class TorControl : public TorControlSocketClient
 {
-    Q_OBJECT
-    Q_ENUMS(Status TorStatus)
-
-    // Status of the control connection
-    Q_PROPERTY(Status status READ status NOTIFY statusChanged)
-    // Status of Tor (and whether it believes it can connect)
-    Q_PROPERTY(TorStatus torStatus READ torStatus NOTIFY torStatusChanged)
-    // Whether it's possible to make a SOCKS connection and connect
-    Q_PROPERTY(bool hasConnectivity READ hasConnectivity NOTIFY connectivityChanged)
-    Q_PROPERTY(QString torVersion READ torVersion NOTIFY connected)
-    Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY statusChanged)
-    Q_PROPERTY(QVariantMap bootstrapStatus READ bootstrapStatus NOTIFY bootstrapStatusChanged)
-    Q_PROPERTY(bool hasOwnership READ hasOwnership NOTIFY hasOwnershipChanged)
+//    Q_ENUMS(Status TorStatus)
+//
+//    // Status of the control connection
+//    Q_PROPERTY(Status status READ status NOTIFY statusChanged)
+//    // Status of Tor (and whether it believes it can connect)
+//    Q_PROPERTY(TorStatus torStatus READ torStatus NOTIFY torStatusChanged)
+//    // Whether it's possible to make a SOCKS connection and connect
+//    Q_PROPERTY(bool hasConnectivity READ hasConnectivity NOTIFY connectivityChanged)
+//    Q_PROPERTY(QString torVersion READ torVersion NOTIFY connected)
+//    Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY statusChanged)
+//    Q_PROPERTY(QVariantMap bootstrapStatus READ bootstrapStatus NOTIFY bootstrapStatusChanged)
+//    Q_PROPERTY(bool hasOwnership READ hasOwnership NOTIFY hasOwnershipChanged)
 
 public:
     enum Status
@@ -81,8 +80,7 @@ public:
         TorReady   = 0x02
     };
 
-
-    explicit TorControl(QObject *parent = 0);
+    explicit TorControl();
 
     /* Information */
     Status status() const;
@@ -92,7 +90,7 @@ public:
     std::string errorMessage() const;
 
     bool hasConnectivity() const;
-    QHostAddress socksAddress() const;
+    std::string socksAddress() const;
     quint16 socksPort() const;
     QNetworkProxy connectionProxy();
 
@@ -109,24 +107,26 @@ public:
     void takeOwnership();
 
     /* Hidden Services */
-    QList<HiddenService*> hiddenServices() const;
+    std::list<HiddenService*> hiddenServices() const;
     void addHiddenService(HiddenService *service);
 
     std::map<std::string, std::string> bootstrapStatus() const;
-    Q_INVOKABLE QObject *getConfiguration(const std::string &options);
-    Q_INVOKABLE QObject *setConfiguration(const std::list<std::pair<std::string, std::string> > &options);
-    Q_INVOKABLE PendingOperation *saveConfiguration();
+    /*Q_INVOKABLE*/ QObject *getConfiguration(const std::string &options);
+    /*Q_INVOKABLE*/ QObject *setConfiguration(const std::list<std::pair<std::string, std::string> > &options);
+    /*Q_INVOKABLE*/ PendingOperation *saveConfiguration();
 
-signals:
-    void statusChanged(int newStatus, int oldStatus);
-    void torStatusChanged(int newStatus, int oldStatus);
-    void connected();
-    void disconnected();
-    void connectivityChanged();
-    void bootstrapStatusChanged();
-    void hasOwnershipChanged();
+//signals:
+//    void statusChanged(int newStatus, int oldStatus);
+//    void torStatusChanged(int newStatus, int oldStatus);
+//    void connected();
+//    void disconnected();
+//    void connectivityChanged();
+//    void bootstrapStatusChanged();
+//    void hasOwnershipChanged();
 
-public slots:
+    virtual void socketError(const std::string &s) override;
+
+//public slots:
     /* Instruct Tor to shutdown */
     void shutdown();
     /* Call shutdown(), and wait synchronously for the command to be written */
@@ -135,7 +135,31 @@ public slots:
     void reconnect();
 
 private:
-    TorControlPrivate *d;
+    TorControlSocket *mSocket;
+    std::string mTorAddress;
+    std::string mErrorMessage;
+    std::string mTorVersion;
+    ByteArray mAuthPassword;
+    std::string mSocksAddress;
+    std::list<HiddenService*> mServices;
+    quint16 mControlPort, mSocksPort;
+    TorControl::Status mStatus;
+    TorControl::TorStatus mTorStatus;
+    std::map<std::string,std::string> mBootstrapStatus;
+    bool mHasOwnership;
+
+    void getTorInfo();
+    void getTorInfoReply();
+    void setStatus(TorControl::Status n);
+    void statusEvent(int code, const ByteArray &data);
+    void setTorStatus(TorControl::TorStatus n);
+    void updateBootstrap(const std::list<ByteArray>& data);
+    void setError(const std::string& message);
+    void publishServices();
+    void protocolInfoReply(TorControlCommand *sender);
+    void socketDisconnected();
+    void socketConnected();
+    void authenticateReply();
 };
 
 }

@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include <string>
+#include <algorithm>
 #include <vector>
 #include <list>
 
@@ -42,7 +43,7 @@ public:
     {
         std::istringstream is(toString().c_str());
 
-        int res = 0;
+        int res = -1;
         is >> res ;
 
         return res;
@@ -103,6 +104,8 @@ public:
         return res;
     }
 
+    // Splits the byte array using sep as separator.
+
     std::list<ByteArray> split(unsigned char sep)
     {
         std::list<ByteArray> res;
@@ -110,6 +113,25 @@ public:
 
         for(uint32_t i=0;i<size();++i)
             if(operator[](i) == sep)
+            {
+                res.push_back(current_block);
+                current_block.clear();
+            }
+            else
+                current_block += operator[](i);
+
+        return res;
+    }
+
+    // Splits the byte array using any of the characters in sep as separators.
+
+    std::list<ByteArray> split(const ByteArray& sep)
+    {
+        std::list<ByteArray> res;
+        ByteArray current_block;
+
+        for(uint32_t i=0;i<size();++i)
+            if(std::find(sep.begin(),sep.end(),operator[](i)) != sep.end())
             {
                 res.push_back(current_block);
                 current_block.clear();

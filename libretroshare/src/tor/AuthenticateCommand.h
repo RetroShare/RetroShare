@@ -30,8 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AUTHENTICATECOMMAND_H
-#define AUTHENTICATECOMMAND_H
+#pragma once
 
 #include "bytearray.h"
 #include "TorControlCommand.h"
@@ -41,8 +40,6 @@ namespace Tor
 
 class AuthenticateCommand : public TorControlCommand
 {
-    Q_OBJECT
-
 public:
     AuthenticateCommand();
 
@@ -60,5 +57,3 @@ private:
 };
 
 }
-
-#endif // AUTHENTICATECOMMAND_H

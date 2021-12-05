@@ -333,12 +333,12 @@ ByteArray TorProcess::controlPassword()
     return mControlPassword;
 }
 
-QHostAddress TorProcess::controlHost()
+std::string TorProcess::controlHost()
 {
     return mControlHost;
 }
 
-quint16 TorProcess::controlPort()
+unsigned short TorProcess::controlPort()
 {
     return mControlPort;
 }

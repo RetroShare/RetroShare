@@ -40,11 +40,19 @@ namespace Tor
 
 class TorControlCommand;
 
+class TorControlSocketClient
+{
+public:
+    virtual void socketError(const std::string& s) = 0;
+};
+
 class TorControlSocket : public RsThreadedTcpSocket
 {
 public:
-    explicit TorControlSocket(const std::string& tcp_address,uint16_t tcp_port);
+    explicit TorControlSocket(TorControlSocketClient *client);
     virtual ~TorControlSocket();
+
+    void connect(const std::string& tcp_address,uint16_t tcp_port);
 
     std::string errorMessage() const { return m_errorMessage; }
 
@@ -62,7 +70,9 @@ public:
 
     std::string peerAddress() const;
 //signals:
-    void error(const std::string& message);
+//    void error(const std::string& message);
+
+    const std::string& errorString() const { return m_errorMessage ;}
 
 //private slots:
     void process();
@@ -74,6 +84,7 @@ private:
     std::string m_errorMessage;
     TorControlCommand *currentCommand;
     bool inDataReply;
+    TorControlSocketClient *mClient;
 
     void setError(const std::string& message);
 };

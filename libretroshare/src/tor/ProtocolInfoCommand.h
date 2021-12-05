@@ -30,10 +30,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PROTOCOLINFOCOMMAND_H
-#define PROTOCOLINFOCOMMAND_H
+#pragma once
 
 #include "TorControlCommand.h"
+#include "retroshare/rsflags.h"
 
 namespace Tor
 {
@@ -42,23 +42,22 @@ class TorControl;
 
 class ProtocolInfoCommand : public TorControlCommand
 {
-    Q_OBJECT
-    Q_DISABLE_COPY(ProtocolInfoCommand)
-
 public:
-    enum AuthMethod
+    enum
     {
-        AuthUnknown = 0,
-        AuthNull = 0x1,
+        AuthUnknown        = 0x0,
+        AuthNull           = 0x1,
         AuthHashedPassword = 0x2,
-        AuthCookie = 0x4
+        AuthCookie         = 0x4
     };
-    Q_DECLARE_FLAGS(AuthMethods, AuthMethod)
+    typedef uint8_t AuthMethod;
+
+    // RS_REGISTER_FLAGS_TYPE(AuthMethod);	// not usable here because we're inside a class (and worse, inside a namespace)
 
     ProtocolInfoCommand(TorControl *manager);
     ByteArray build();
 
-    AuthMethods authMethods() const { return m_authMethods; }
+    AuthMethod authMethods() const { return m_authMethods; }
     std::string torVersion() const { return m_torVersion; }
     std::string cookieFile() const { return m_cookieFile; }
 
@@ -67,11 +66,9 @@ protected:
 
 private:
     TorControl *manager;
-    AuthMethods m_authMethods;
+    AuthMethod m_authMethods;
     std::string m_torVersion;
     std::string m_cookieFile;
 };
 
 }
-
-#endif // PROTOCOLINFOCOMMAND_H

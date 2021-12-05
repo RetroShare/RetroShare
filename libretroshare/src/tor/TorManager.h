@@ -38,8 +38,6 @@
 #include "retroshare/rstor.h"
 #include "HiddenService.h"
 
-#include <QHostAddress>
-
 namespace Tor
 {
 
@@ -86,8 +84,8 @@ public:
     bool hasError() const;
     std::string errorMessage() const;
 
-    bool getHiddenServiceInfo(std::string& service_id,std::string& service_onion_address,uint16_t& service_port, QHostAddress& service_target_address,uint16_t& target_port);
-	bool getProxyServerInfo(QHostAddress& proxy_server_adress,uint16_t& proxy_server_port);
+    bool getHiddenServiceInfo(std::string& service_id,std::string& service_onion_address,uint16_t& service_port, std::string& service_target_address,uint16_t& target_port);
+    bool getProxyServerInfo(std::string &proxy_server_adress, uint16_t& proxy_server_port);
 
 //public slots:
     bool start();

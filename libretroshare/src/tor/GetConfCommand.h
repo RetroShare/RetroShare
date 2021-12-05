@@ -33,19 +33,15 @@
 #ifndef GETCONFCOMMAND_H
 #define GETCONFCOMMAND_H
 
+#include <map>
 #include "TorControlCommand.h"
-#include <QList>
-#include <QVariantMap>
 
 namespace Tor
 {
 
 class GetConfCommand : public TorControlCommand
 {
-    Q_OBJECT
-    Q_DISABLE_COPY(GetConfCommand)
-
-    Q_PROPERTY(QVariantMap results READ results CONSTANT)
+    // Q_PROPERTY(QVariantMap results READ results CONSTANT)
 
 public:
     enum Type {

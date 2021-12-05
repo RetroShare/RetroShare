@@ -108,9 +108,9 @@ void AddOnionCommand::onFinished(int statusCode)
 {
     TorControlCommand::onFinished(statusCode);
     if (isSuccessful())
-        emit succeeded();
+        mSucceeded();
     else
-        emit failed(statusCode);
+        mFailed(statusCode);
 }
 
 

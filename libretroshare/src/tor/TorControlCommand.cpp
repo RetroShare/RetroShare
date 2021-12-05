@@ -31,7 +31,6 @@
  */
 
 #include "TorControlCommand.h"
-#include <QDebug>
 
 using namespace Tor;
 
@@ -42,22 +41,23 @@ TorControlCommand::TorControlCommand()
 
 void TorControlCommand::onReply(int statusCode, const ByteArray &data)
 {
-    emit replyLine(statusCode, data);
+    //emit replyLine(statusCode, data);
+    mReplyLine(statusCode, data);
 }
 
 void TorControlCommand::onFinished(int statusCode)
 {
     m_finalStatus = statusCode;
-    emit finished();
+    //emit finished();
+    mFinished(this);
 }
 
 void TorControlCommand::onDataLine(const ByteArray &data)
 {
-    Q_UNUSED(data);
 }
 
 void TorControlCommand::onDataFinished()
 {
-    qWarning() << "torctrl: Unexpected data response for command";
+    RsWarn() << "torctrl: Unexpected data response for command";
 }
 
