@@ -49,6 +49,7 @@ public:
         return res;
     }
     bool endsWith(const ByteArray& b) const { return size() >= b.size() && !memcmp(&data()[size()-b.size()],b.data(),b.size()); }
+    bool startsWith(const ByteArray& b) const { return b.size() <= size() && !strncmp((char*)b.data(),(char*)data(),std::min(size(),b.size())); }
     bool startsWith(const char *b) const
     {
         for(uint32_t n=0;b[n]!=0;++n)

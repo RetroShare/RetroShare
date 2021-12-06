@@ -30,10 +30,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <assert.h>
 #include "PendingOperation.h"
 
-PendingOperation::PendingOperation(QObject *parent)
-    : QObject(parent), m_finished(false)
+PendingOperation::PendingOperation()
+    : m_finished(false)
 {
 }
 
@@ -65,20 +66,21 @@ void PendingOperation::finishWithError(const std::string &message)
 
     if (!m_finished) {
         m_finished = true;
-        emit finished();
-        emit error(m_errorMessage);
+
+        finished_callback();
+        error_callback(m_errorMessage);
     }
 }
 
 void PendingOperation::finishWithSuccess()
 {
-    Q_ASSERT(m_errorMessage.empty());
+    assert(m_errorMessage.empty());
 
     if (!m_finished) {
         m_finished = true;
-        emit finished();
+        finished_callback();
         if (isSuccess())
-            emit success();
+            success_callback();
     }
 }
 

@@ -56,7 +56,7 @@ void ProtocolInfoCommand::onReply(int statusCode, const ByteArray &data)
     {
         std::list<ByteArray> tokens = splitQuotedStrings(data.mid(5), ' ');
 
-        foreach (ByteArray token, tokens)
+        for(ByteArray token: tokens)
         {
             if (token.startsWith("METHODS="))
             {

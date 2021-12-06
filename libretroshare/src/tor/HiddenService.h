@@ -33,7 +33,6 @@
 #ifndef HIDDENSERVICE_H
 #define HIDDENSERVICE_H
 
-#include <QObject>
 #include "CryptoKey.h"
 #include "bytearray.h"
 
@@ -52,18 +51,15 @@ public:
     virtual void hiddenServiceHostnameChanged() =0;
 };
 
-class HiddenService : public QObject
+class HiddenService
 {
-    Q_OBJECT
-    Q_DISABLE_COPY(HiddenService)
-
-    friend class TorControlPrivate;
+    friend class TorControl;
 
 public:
     struct Target
     {
         std::string targetAddress;
-        quint16 servicePort, targetPort;
+        uint16_t servicePort, targetPort;
     };
 
     enum Status
@@ -89,9 +85,9 @@ public:
 
     const std::list<Target> &targets() const { return m_targets; }
     void addTarget(const Target &target);
-    void addTarget(quint16 servicePort, std::string targetAddress, quint16 targetPort);
+    void addTarget(uint16_t servicePort, std::string targetAddress, uint16_t targetPort);
 
-private slots:
+//private slots:
     void servicePublished();
 
 private:
@@ -106,6 +102,10 @@ private:
     void setStatus(Status newStatus);
 
     HiddenServiceClient *m_client;
+
+    // make the object non copyable
+    HiddenService(const HiddenService& s) {}
+    HiddenService& operator=(const HiddenService& s) { return *this ; }
 };
 
 }

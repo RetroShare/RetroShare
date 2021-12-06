@@ -39,7 +39,6 @@
 #include "bytearray.h"
 #include "TorControlSocket.h"
 
-class QNetworkProxy;
 
 namespace Tor
 {
@@ -91,15 +90,14 @@ public:
 
     bool hasConnectivity() const;
     std::string socksAddress() const;
-    quint16 socksPort() const;
-    QNetworkProxy connectionProxy();
+    uint16_t socksPort() const;
 
     /* Authentication */
     void setAuthPassword(const ByteArray& password);
 
     /* Connection */
     bool isConnected() const { return status() == Connected; }
-    void connect(const std::string &address, quint16 port);
+    void connect(const std::string &address, uint16_t port);
 
     /* Ownership means that tor is managed by this socket, and we
      * can shut it down, own its configuration, etc. */
@@ -111,8 +109,8 @@ public:
     void addHiddenService(HiddenService *service);
 
     std::map<std::string, std::string> bootstrapStatus() const;
-    /*Q_INVOKABLE*/ QObject *getConfiguration(const std::string &options);
-    /*Q_INVOKABLE*/ QObject *setConfiguration(const std::list<std::pair<std::string, std::string> > &options);
+    /*Q_INVOKABLE*/ TorControlCommand *getConfiguration(const std::string &options);
+    /*Q_INVOKABLE*/ TorControlCommand *setConfiguration(const std::list<std::pair<std::string, std::string> > &options);
     /*Q_INVOKABLE*/ PendingOperation *saveConfiguration();
 
 //signals:
@@ -123,6 +121,10 @@ public:
 //    void connectivityChanged();
 //    void bootstrapStatusChanged();
 //    void hasOwnershipChanged();
+
+    void set_statusChanged_callback(const std::function<void(int,int)>& f) { mStatusChanged_callback = f ;}
+    void set_connected_callback(const std::function<void(void)>& f) { mConnected_callback = f ;}
+    void set_disconnected_callback(const std::function<void(void)>& f) { mDisconnected_callback = f ;}
 
     virtual void socketError(const std::string &s) override;
 
@@ -142,14 +144,14 @@ private:
     ByteArray mAuthPassword;
     std::string mSocksAddress;
     std::list<HiddenService*> mServices;
-    quint16 mControlPort, mSocksPort;
+    uint16_t mControlPort, mSocksPort;
     TorControl::Status mStatus;
     TorControl::TorStatus mTorStatus;
     std::map<std::string,std::string> mBootstrapStatus;
     bool mHasOwnership;
 
     void getTorInfo();
-    void getTorInfoReply();
+    void getTorInfoReply(TorControlCommand *sender);
     void setStatus(TorControl::Status n);
     void statusEvent(int code, const ByteArray &data);
     void setTorStatus(TorControl::TorStatus n);
@@ -159,7 +161,11 @@ private:
     void protocolInfoReply(TorControlCommand *sender);
     void socketDisconnected();
     void socketConnected();
-    void authenticateReply();
+    void authenticateReply(TorControlCommand *sender);
+
+    std::function<void(int,int)> mStatusChanged_callback;
+    std::function<void(void)> mConnected_callback;
+    std::function<void(void)> mDisconnected_callback;
 };
 
 }

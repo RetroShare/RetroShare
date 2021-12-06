@@ -30,10 +30,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PENDINGOPERATION_H
-#define PENDINGOPERATION_H
+#pragma once
 
-#include <QObject>
+#include <functional>
 
 /* Represents an asynchronous operation for reporting status
  *
@@ -48,40 +47,41 @@
  * PendingOperation will emit finished() and one of success() or
  * error() when completed.
  */
-class PendingOperation : public QObject
+class PendingOperation
 {
-    Q_OBJECT
-
-    Q_PROPERTY(bool isFinished READ isFinished NOTIFY finished FINAL)
-    Q_PROPERTY(bool isSuccess READ isSuccess NOTIFY success FINAL)
-    Q_PROPERTY(bool isError READ isError NOTIFY error FINAL)
-    Q_PROPERTY(std::string errorMessage READ errorMessage NOTIFY finished FINAL)
+//    Q_PROPERTY(bool isFinished READ isFinished NOTIFY finished FINAL)
+//    Q_PROPERTY(bool isSuccess READ isSuccess NOTIFY success FINAL)
+//    Q_PROPERTY(bool isError READ isError NOTIFY error FINAL)
+//    Q_PROPERTY(std::string errorMessage READ errorMessage NOTIFY finished FINAL)
 
 public:
-    PendingOperation(QObject *parent = 0);
+    PendingOperation();
 
     bool isFinished() const;
     bool isSuccess() const;
     bool isError() const;
     std::string errorMessage() const;
 
-signals:
-    // Always emitted once when finished, regardless of status
-    void finished();
+// signals:
+//     // Always emitted once when finished, regardless of status
+//     void finished();
+//
+//     // One of error() or success() is emitted once
+//     void error(const std::string &errorMessage);
+//     void success();
 
-    // One of error() or success() is emitted once
-    void error(const std::string &errorMessage);
-    void success();
-
-protected slots:
+//protected slots:
     void finishWithError(const std::string &errorMessage);
     void finishWithSuccess();
 
+    void set_finished_callback(const std::function<void(void)>& f) { finished_callback = f; }
 private:
     bool m_finished;
     std::string m_errorMessage;
+
+    std::function<void(void)> finished_callback;
+    std::function<void(void)> success_callback;
+    std::function<void(const std::string&)> error_callback;
+
 };
 
-Q_DECLARE_METATYPE(PendingOperation*)
-
-#endif

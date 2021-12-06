@@ -30,8 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ADDONIONCOMMAND_H
-#define ADDONIONCOMMAND_H
+#pragma once
 
 #include "TorControlCommand.h"
 
@@ -69,6 +68,3 @@ protected:
 };
 
 }
-
-#endif // ADDONIONCOMMAND_H
-

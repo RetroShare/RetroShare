@@ -81,7 +81,7 @@ namespace Tor {
 //     ByteArray authPassword;
 //     std::string socksAddress;
 //     QList<HiddenService*> services;
-//     quint16 controlPort, socksPort;
+//     uint16_t controlPort, socksPort;
 //     TorControl::Status status;
 //     TorControl::TorStatus torStatus;
 //     std::map<std::string,std::string> bootstrapStatus;
@@ -177,14 +177,12 @@ void TorControl::setStatus(TorControl::Status n)
 
         rsEvents->sendEvent(ev);
     }
-#ifdef TO_REMOVE
-    emit statusChanged(status, old);
+    mStatusChanged_callback(mStatus, old);
 
-    if (status == TorControl::Connected && old < TorControl::Connected)
-        emit connected();
-    else if (status < TorControl::Connected && old >= TorControl::Connected)
-        emit disconnected();
-#endif
+    if (mStatus == TorControl::Connected && old < TorControl::Connected)
+        socketConnected();//mConnected_callback();
+    else if (mStatus < TorControl::Connected && old >= TorControl::Connected)
+        socketDisconnected();//mDisconnected_callback();
 }
 
 void TorControl::setTorStatus(TorControl::TorStatus n)
@@ -194,10 +192,6 @@ void TorControl::setTorStatus(TorControl::TorStatus n)
 
     TorControl::TorStatus old = mTorStatus;
     mTorStatus = n;
-#ifdef TO_REMOVE
-    emit torStatusChanged(torStatus, old);
-    emit connectivityChanged();
-#endif
 
     if(rsEvents)
     {
@@ -255,7 +249,7 @@ std::string TorControl::socksAddress() const
     return mSocksAddress;
 }
 
-quint16 TorControl::socksPort() const
+uint16_t TorControl::socksPort() const
 {
     return mSocksPort;
 }
@@ -275,7 +269,7 @@ void TorControl::setAuthPassword(const ByteArray &password)
     mAuthPassword = password;
 }
 
-void TorControl::connect(const std::string &address, quint16 port)
+void TorControl::connect(const std::string &address, uint16_t port)
 {
     if (status() > Connecting)
     {
@@ -306,9 +300,9 @@ void TorControl::reconnect()
     mSocket->connectToHost(mTorAddress, mControlPort);
 }
 
-void TorControl::authenticateReply()
+void TorControl::authenticateReply(TorControlCommand *sender)
 {
-    AuthenticateCommand *command = qobject_cast<AuthenticateCommand*>(sender());
+    AuthenticateCommand *command = dynamic_cast<AuthenticateCommand*>(sender);
     assert(command);
     assert(mStatus == TorControl::Authenticating);
     if (!command)
@@ -384,17 +378,18 @@ void TorControl::protocolInfoReply(TorControlCommand *sender)
     if (mStatus == TorControl::Authenticating)
     {
         AuthenticateCommand *auth = new AuthenticateCommand;
-        connect(auth, &TorControlCommand::finished, this, &TorControl::authenticateReply);
+        //connect(auth, &TorControlCommand::finished, this, &TorControl::authenticateReply);
+        auth->set_finished_callback( [this](TorControlCommand *sender) { authenticateReply(sender); });
 
         ByteArray data;
         ProtocolInfoCommand::AuthMethod methods = info->authMethods();
 
-        if (methods.testFlag(ProtocolInfoCommand::AuthNull))
+        if(methods & ProtocolInfoCommand::AuthNull)
         {
             torCtrlDebug() << "torctrl: Using null authentication" << std::endl;
             data = auth->build();
         }
-        else if (methods.testFlag(ProtocolInfoCommand::AuthCookie) && !info->cookieFile().empty())
+        else if ((methods & ProtocolInfoCommand::AuthCookie) && !info->cookieFile().empty())
         {
             std::string cookieFile = info->cookieFile();
             std::string cookieError;
@@ -425,7 +420,7 @@ void TorControl::protocolInfoReply(TorControlCommand *sender)
                 /* If we know a password and password authentication is allowed, try using that instead.
                  * This is a strange corner case that will likely never happen in a normal configuration,
                  * but it has happened. */
-                if (methods.testFlag(ProtocolInfoCommand::AuthHashedPassword) && !mAuthPassword.empty())
+                if ((methods & ProtocolInfoCommand::AuthHashedPassword) && !mAuthPassword.empty())
                 {
                     torCtrlDebug() << "torctrl: Unable to read authentication cookie file:" << cookieError << std::endl;
                     goto usePasswordAuth;
@@ -436,7 +431,7 @@ void TorControl::protocolInfoReply(TorControlCommand *sender)
                 return;
             }
         }
-        else if (methods.testFlag(ProtocolInfoCommand::AuthHashedPassword) && !mAuthPassword.empty())
+        else if ((methods & ProtocolInfoCommand::AuthHashedPassword) && !mAuthPassword.empty())
         {
             usePasswordAuth:
             torCtrlDebug() << "torctrl: Using hashed password authentication" << std::endl;
@@ -444,7 +439,7 @@ void TorControl::protocolInfoReply(TorControlCommand *sender)
         }
         else
         {
-            if (methods.testFlag(ProtocolInfoCommand::AuthHashedPassword))
+            if (methods & ProtocolInfoCommand::AuthHashedPassword)
                 setError("Tor requires a control password to connect, but no password is configured.");
             else
                 setError("Tor is not configured to accept any supported authentication methods.");
@@ -461,7 +456,8 @@ void TorControl::getTorInfo()
     assert(isConnected());
 
     GetConfCommand *command = new GetConfCommand(GetConfCommand::GetInfo);
-    connect(command, &TorControlCommand::finished, this, &TorControl::getTorInfoReply);
+    //connect(command, &TorControlCommand::finished, this, &TorControl::getTorInfoReply);
+    command->set_finished_callback( [this](TorControlCommand *sender) { getTorInfoReply(sender); });
 
     std::list<std::string> keys{ "status/circuit-established","status/bootstrap-phase" };
 
@@ -469,7 +465,7 @@ void TorControl::getTorInfo()
     /* If these are set in the config, they override the automatic behavior. */
     SettingsObject settings("tor");
     QHostAddress forceAddress(settings.read("socksAddress").toString());
-    quint16 port = (quint16)settings.read("socksPort").toInt();
+    uint16_t port = (uint16_t)settings.read("socksPort").toInt();
 
     if (!forceAddress.isNull() && port) {
         torCtrlDebug() << "torctrl: Using manually specified SOCKS connection settings";
@@ -491,9 +487,9 @@ void TorControl::getTorInfo()
     mSocket->sendCommand(command, command->build(keys));
 }
 
-void TorControl::getTorInfoReply()
+void TorControl::getTorInfoReply(TorControlCommand *sender)
 {
-    GetConfCommand *command = qobject_cast<GetConfCommand*>(sender());
+    GetConfCommand *command = dynamic_cast<GetConfCommand*>(sender);
     if (!command || !isConnected())
         return;
 
@@ -503,7 +499,7 @@ void TorControl::getTorInfoReply()
         ByteArray value = unquotedString(add);
         int sepp = value.indexOf(':');
         std::string address(value.mid(0, sepp).toString());
-        quint16 port = (quint16)value.mid(sepp+1).toInt();
+        uint16_t port = (uint16_t)value.mid(sepp+1).toInt();
 
         /* Use the first address that matches the one used for this control connection. If none do,
          * just use the first address and rely on the user to reconfigure if necessary (not a problem;
@@ -586,7 +582,8 @@ void TorControl::publishServices()
             else
                 torCtrlDebug() << "torctrl: Publishing hidden service: " << service->hostname() << std::endl;
             AddOnionCommand *onionCommand = new AddOnionCommand(service);
-            QObject::connect(onionCommand, &AddOnionCommand::succeeded, service, &HiddenService::servicePublished);
+            //protocolInfoReplyQObject::connect(onionCommand, &AddOnionCommand::succeeded, service, &HiddenService::servicePublished);
+            onionCommand->set_succeeded_callback( [service]() { service->servicePublished(); });
             mSocket->sendCommand(onionCommand, onionCommand->build());
         }
     } else {
@@ -618,7 +615,8 @@ void TorControl::publishServices()
                 torConfig.push_back(std::make_pair("HiddenServicePort", target));
             }
 
-            QObject::connect(command, &SetConfCommand::setConfSucceeded, service, &HiddenService::servicePublished);
+            command->set_ConfSucceeded_callback( [service]() { service->servicePublished(); });
+            //QObject::connect(command, &SetConfCommand::setConfSucceeded, service, &HiddenService::servicePublished);
         }
 
         if (!torConfig.empty())
@@ -650,10 +648,8 @@ void TorControl::shutdownSync()
     mSocket->close();
 }
 
-void TorControl::statusEvent(int code, const ByteArray &data)
+void TorControl::statusEvent(int /* code */, const ByteArray &data)
 {
-    Q_UNUSED(code);
-
     std::list<ByteArray> tokens = splitQuotedStrings(data.trimmed(), ' ');
     if (tokens.size() < 3)
         return;
@@ -673,9 +669,9 @@ void TorControl::statusEvent(int code, const ByteArray &data)
 
 void TorControl::updateBootstrap(const std::list<ByteArray> &data)
 {
-    bootstrapStatus.clear();
+    mBootstrapStatus.clear();
     // WARN or NOTICE
-    bootstrapStatus["severity"] = (*data.begin()).toString();
+    mBootstrapStatus["severity"] = (*data.begin()).toString();
 
     auto dat = data.begin();
     ++dat;
@@ -688,7 +684,7 @@ void TorControl::updateBootstrap(const std::list<ByteArray> &data)
         if (equals >= 0)
             value = unquotedString((*dat).mid(equals + 1));
 
-        bootstrapStatus[key.toLower().toString()] = value.toString();
+        mBootstrapStatus[key.toLower().toString()] = value.toString();
     }
 
     //torCtrlDebug() << bootstrapStatus << std::endl;
@@ -702,7 +698,7 @@ void TorControl::updateBootstrap(const std::list<ByteArray> &data)
     }
 }
 
-QObject *TorControl::getConfiguration(const std::string& options)
+TorControlCommand *TorControl::getConfiguration(const std::string& options)
 {
     GetConfCommand *command = new GetConfCommand(GetConfCommand::GetConf);
     mSocket->sendCommand(command, command->build(options));
@@ -711,7 +707,7 @@ QObject *TorControl::getConfiguration(const std::string& options)
     return command;
 }
 
-QObject *TorControl::setConfiguration(const std::list<std::pair<std::string,std::string> >& options)
+TorControlCommand *TorControl::setConfiguration(const std::list<std::pair<std::string,std::string> >& options)
 {
     SetConfCommand *command = new SetConfCommand;
     command->setResetMode(true);
@@ -725,27 +721,25 @@ namespace Tor {
 
 class SaveConfigOperation : public PendingOperation
 {
-    Q_OBJECT
-
 public:
-    SaveConfigOperation(QObject *parent)
-        : PendingOperation(parent), command(0)
+    SaveConfigOperation()
+        : PendingOperation(), command(0)
     {
     }
 
     void start(TorControlSocket *socket)
     {
-        Q_ASSERT(!command);
+        assert(!command);
         command = new GetConfCommand(GetConfCommand::GetInfo);
-        QObject::connect(command, &TorControlCommand::finished, this, &SaveConfigOperation::configTextReply);
+        //QObject::connect(command, &TorControlCommand::finished, this, &SaveConfigOperation::configTextReply);
+        command->set_finished_callback([this](TorControlCommand *sender){ configTextReply(sender); });
 
         socket->sendCommand(command, command->build(std::list<std::string> { "config-text" , "config-file" } ));
     }
 
-private slots:
-    void configTextReply()
+    void configTextReply(TorControlCommand * /*sender*/)
     {
-        Q_ASSERT(command);
+        assert(command);
         if (!command)
             return;
 
@@ -823,8 +817,10 @@ PendingOperation *TorControl::saveConfiguration()
         return 0;
     }
 
-    SaveConfigOperation *operation = new SaveConfigOperation(this);
-    QObject::connect(operation, &PendingOperation::finished, operation, &QObject::deleteLater);
+    SaveConfigOperation *operation = new SaveConfigOperation();
+
+    //QObject::connect(operation, &PendingOperation::finished, operation, &QObject::deleteLater);
+    operation->set_finished_callback( [operation]() { delete operation; });
     operation->start(mSocket);
 
     //QQmlEngine::setObjectOwnership(operation, QQmlEngine::CppOwnership);

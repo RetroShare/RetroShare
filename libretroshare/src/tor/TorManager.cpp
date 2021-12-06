@@ -44,29 +44,20 @@
 #include "util/rsdir.h"
 #include "retroshare/rsinit.h"
 
-#include <QObject>
-
 #include "TorManager.h"
 #include "TorProcess.h"
 #include "TorControl.h"
 #include "CryptoKey.h"
 #include "HiddenService.h"
 #include "GetConfCommand.h"
-#include <QFile>
-#include <QDir>
-#include <QCoreApplication>
-#include <QTcpServer>
-#include <QTextStream>
 
 using namespace Tor;
 
 namespace Tor
 {
 
-class TorManagerPrivate : public QObject, public TorProcessClient
+class TorManagerPrivate : public TorProcessClient
 {
-    Q_OBJECT
-
 public:
     TorManager *q;
     TorProcess *process;
@@ -91,9 +82,9 @@ public:
     virtual void processErrorChanged(const std::string &errorMessage) override;
     virtual void processLogMessage(const std::string &message) override;
 
-public slots:
+//public slots:
     void controlStatusChanged(int status);
-    void getConfFinished();
+    void getConfFinished(TorControlCommand *sender);
 };
 
 }
@@ -104,14 +95,14 @@ TorManager::TorManager()
 }
 
 TorManagerPrivate::TorManagerPrivate(TorManager *parent)
-    : QObject(nullptr)
-    , q(parent)
+    : q(parent)
     , process(0)
-    , control(new TorControl(this))
+    , control(new TorControl())
     , configNeeded(false)
     , hiddenService(NULL)
 {
-    connect(control, SIGNAL(statusChanged(int,int)), SLOT(controlStatusChanged(int)));
+    //connect(control, SIGNAL(statusChanged(int,int)), SLOT(controlStatusChanged(int)));
+    control->set_statusChanged_callback([this](int new_status,int /*old_status*/) { controlStatusChanged(new_status); });
 }
 
 TorManager *TorManager::instance()
@@ -178,12 +169,12 @@ bool TorManager::setupHiddenService()
 
     std::cerr << "Using legacy dir: " << legacyDir << std::endl;
 
-    if (!legacyDir.empty() && QFile::exists(legacyDir.c_str() + QLatin1String("/private_key")))
+    if (!legacyDir.empty() && RsDirUtil::fileExists(RsDirUtil::makePath(legacyDir,"/private_key")))
     {
         std::cerr << "Attempting to load key from legacy filesystem format in " << legacyDir << std::endl;
 
         CryptoKey key;
-        if (!key.loadFromFile(legacyDir + "/private_key"))
+        if (!key.loadFromFile(RsDirUtil::makePath(legacyDir , "/private_key")))
         {
             RsWarn() << "Cannot load legacy format key from" << legacyDir << "for conversion";
             return false;
@@ -417,7 +408,7 @@ bool TorManager::getProxyServerInfo(std::string& proxy_server_adress,uint16_t& p
 
 bool TorManager::getHiddenServiceInfo(std::string& service_id,std::string& service_onion_address,uint16_t& service_port, std::string& service_target_address,uint16_t& target_port)
 {
-	QList<Tor::HiddenService*> hidden_services = control()->hiddenServices();
+    auto hidden_services = control()->hiddenServices();
 
 	if(hidden_services.empty())
 		return false ;
@@ -471,8 +462,8 @@ void TorManagerPrivate::controlStatusChanged(int status)
     if (status == TorControl::Connected) {
         if (!configNeeded) {
             // If DisableNetwork is 1, trigger configurationNeeded
-            connect(control->getConfiguration("DisableNetwork"),
-                    SIGNAL(finished()), SLOT(getConfFinished()));
+            auto cmd = control->getConfiguration("DisableNetwork");
+            cmd->set_finished_callback( [this](TorControlCommand *sender) { getConfFinished(sender) ; });
         }
 
         if (process) {
@@ -482,9 +473,9 @@ void TorManagerPrivate::controlStatusChanged(int status)
     }
 }
 
-void TorManagerPrivate::getConfFinished()
+void TorManagerPrivate::getConfFinished(TorControlCommand *sender)
 {
-    GetConfCommand *command = qobject_cast<GetConfCommand*>(sender());
+    GetConfCommand *command = dynamic_cast<GetConfCommand*>(sender);
     if (!command)
         return;
 

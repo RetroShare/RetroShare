@@ -40,7 +40,7 @@ using namespace Tor;
 AddOnionCommand::AddOnionCommand(HiddenService *service)
     : m_service(service)
 {
-    Q_ASSERT(m_service);
+    assert(m_service);
 }
 
 bool AddOnionCommand::isSuccessful() const
@@ -61,13 +61,14 @@ ByteArray AddOnionCommand::build()
         out += " NEW:BEST";		// this is v3, but without control of key type. Generates a RSA1024 key on older Tor versions.
     }
 
-    foreach (const HiddenService::Target &target, m_service->targets()) {
+    for(const HiddenService::Target& target: m_service->targets())
+    {
         out += " Port=";
-        out += QByteArray::number(target.servicePort);
+        out += RsUtil::NumberToString(target.servicePort);
         out += ",";
         out += target.targetAddress;
         out += ":";
-        out += QByteArray::number(target.targetPort);
+        out += RsUtil::NumberToString(target.targetPort);
     }
 
     out.append("\r\n");
@@ -82,8 +83,8 @@ void AddOnionCommand::onReply(int statusCode, const ByteArray &data)
         return;
     }
 
-    const QByteArray keyPrefix("PrivateKey=");
-    const QByteArray sidPrefix("ServiceID=");
+    const ByteArray keyPrefix("PrivateKey=");
+    const ByteArray sidPrefix("ServiceID=");
 
     if(data.startsWith("ServiceID=")){
         ByteArray service_id = data.mid(sidPrefix.size());

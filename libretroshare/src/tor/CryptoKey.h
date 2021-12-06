@@ -30,12 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CRYPTOKEY_H
-#define CRYPTOKEY_H
-
-#include <QString>
-#include <QSharedData>
-#include <QExplicitlySharedDataPointer>
+#pragma once
 
 #include "bytearray.h"
 
@@ -67,5 +62,3 @@ private:
 };
 
 ByteArray torControlHashedPassword(const ByteArray &password);
-
-#endif // CRYPTOKEY_H
