@@ -40,7 +40,6 @@
 
 #include "TorProcess.h"
 #include "CryptoKey.h"
-#include "SecureRNG.h"
 
 using namespace Tor;
 

@@ -580,8 +580,6 @@ void TorManagerPrivate::setError(const std::string &message)
     //emit q->errorChanged();
 }
 
-#include "TorManager.moc"
-
 bool RsTor::isTorAvailable()
 {
     return !instance()->d->torExecutablePath().empty();

@@ -30,8 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TORCONTROL_H
-#define TORCONTROL_H
+#pragma once
 
 #include <iostream>
 
@@ -171,5 +170,3 @@ private:
 }
 
 extern Tor::TorControl *torControl;
-
-#endif // TORCONTROLMANAGER_H

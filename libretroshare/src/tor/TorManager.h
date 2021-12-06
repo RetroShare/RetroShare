@@ -32,8 +32,7 @@
 
 // This code has been further modified to fit Retroshare context.
 
-#ifndef TORMANAGER_H
-#define TORMANAGER_H
+#pragma once
 
 #include "retroshare/rstor.h"
 #include "HiddenService.h"
@@ -107,6 +106,3 @@ private:
 };
 
 }
-
-#endif
-#

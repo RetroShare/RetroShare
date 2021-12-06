@@ -30,8 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HIDDENSERVICE_H
-#define HIDDENSERVICE_H
+#pragma once
 
 #include "CryptoKey.h"
 #include "bytearray.h"
@@ -109,5 +108,3 @@ private:
 };
 
 }
-
-#endif // HIDDENSERVICE_H

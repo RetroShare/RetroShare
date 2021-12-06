@@ -874,5 +874,4 @@ bool TorControl::torVersionAsNewAs(const std::string& match) const
     return true;
 }
 
-#include "TorControl.moc"
 

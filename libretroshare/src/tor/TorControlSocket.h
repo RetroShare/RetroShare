@@ -52,8 +52,6 @@ public:
     explicit TorControlSocket(TorControlSocketClient *client);
     virtual ~TorControlSocket();
 
-    void connect(const std::string& tcp_address,uint16_t tcp_port);
-
     std::string errorMessage() const { return m_errorMessage; }
 
     void connectToHost(const std::string& tcp_address,uint16_t tcp_port);

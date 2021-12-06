@@ -7,7 +7,7 @@ class RsTcpSocket: public RsFdBinInterface
 public:
     RsTcpSocket(const std::string& tcp_address,uint16_t tcp_port);
     RsTcpSocket();
-    virtual ~RsTcpSocket();
+    virtual ~RsTcpSocket()=default;
 
     enum State: uint8_t {
         UNKNOWN      = 0x00,

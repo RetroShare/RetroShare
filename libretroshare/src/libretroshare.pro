@@ -9,9 +9,6 @@ libretroshare_shared {
 } else {
 	CONFIG += staticlib
 }
-CONFIG += qt
-
-QT += network
 
 TARGET = retroshare
 TARGET_PRL = libretroshare
@@ -732,7 +729,6 @@ HEADERS += 	tor/AddOnionCommand.h \
            	tor/HiddenService.h \
            	tor/PendingOperation.h  \
            	tor/ProtocolInfoCommand.h \
-           	tor/SecureRNG.h \
                 tor/TorTypes.h \
                 tor/SetConfCommand.h \
            	tor/StrUtil.h \
@@ -757,7 +753,6 @@ SOURCES += 	tor/AddOnionCommand.cpp \
 		tor/TorProcess.cpp \
 		tor/CryptoKey.cpp         \
 		tor/PendingOperation.cpp  \
-		tor/SecureRNG.cpp         \
 		tor/StrUtil.cpp        
 
 # gxs tunnels

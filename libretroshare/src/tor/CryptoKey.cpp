@@ -33,7 +33,6 @@
 #include <iostream>
 
 #include "CryptoKey.h"
-#include "SecureRNG.h"
 #include "Useful.h"
 
 #include <openssl/bn.h>
@@ -134,7 +133,7 @@ ByteArray torControlHashedPassword(const ByteArray &password)
     ByteArray salt(8);
     RsRandom::random_bytes(&salt[0],8);
 
-    uint32_t count = ((quint32)16 + (96 & 15)) << ((96 >> 4) + 6);
+    uint32_t count = ((uint32_t)16 + (96 & 15)) << ((96 >> 4) + 6);
 
     Sha1CheckSum md = RsDirUtil::sha1sum((salt+password).data(),count);
 

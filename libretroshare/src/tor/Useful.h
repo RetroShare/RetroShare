@@ -30,11 +30,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UTILS_USEFUL_H
-#define UTILS_USEFUL_H
+#pragma once
 
-#include <QtGlobal>
-#include <QDebug>
+#include "util/rsdebug.h"
 
 /* Print a warning for bug conditions, and assert on a debug build.
  *
@@ -50,7 +48,7 @@
  * triggered unless the code or logic is wrong.
  */
 #if !defined(QT_NO_DEBUG) || defined(QT_FORCE_ASSERTS)
-# define BUG() Explode(__FILE__,__LINE__), qWarning() << "BUG:"
+# define BUG() Explode(__FILE__,__LINE__), RsWarn() << "BUG:"
 namespace {
 class Explode
 {
@@ -59,13 +57,10 @@ public:
     int line;
     Explode(const char *file, int line) : file(file), line(line) { }
     ~Explode() {
-        qt_assert("something broke!", file, line);
+        RsErr() << "something broke! in file " << file << line;
     }
 };
 }
 #else
 # define BUG() qWarning() << "BUG:"
 #endif
-
-#endif
-
