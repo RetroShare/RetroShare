@@ -125,12 +125,14 @@ private:
     bool ensureFilesExist();
 
     pid_t mTorProcessId;
+    time_t mLastTryReadControlPort ;
+    int mControlPortReadNbTries ;
 //public slots:
     void processStarted();
     void processFinished();
     void processError(std::string error);
     void processReadable();
-    void tryReadControlPort();
+    bool tryReadControlPort();
 };
 
 }

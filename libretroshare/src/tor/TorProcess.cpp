@@ -43,9 +43,12 @@
 
 using namespace Tor;
 
+static const int INTERVAL_BETWEEN_CONTROL_PORT_READ_TRIES = 5; // try every 5 secs.
+
 TorProcess::TorProcess(TorProcessClient *client)
-    : m_client(client)
+    : m_client(client), mLastTryReadControlPort(0)
 {
+    mControlPortReadNbTries=0;
 }
 
 TorProcess::~TorProcess()
@@ -282,6 +285,23 @@ void TorProcess::run()
             RsErr() << "Tor process died. Exiting TorControl process." ;
             return;
         }
+        time_t now = time(nullptr);
+
+        if(mControlPortReadNbTries <= 10 && (mControlPort==0 || mControlHost.empty()) && mLastTryReadControlPort + INTERVAL_BETWEEN_CONTROL_PORT_READ_TRIES < now)
+        {
+            mLastTryReadControlPort = now;
+
+            if(tryReadControlPort())
+            {
+                mState = Ready;
+                // stateChanged(mState);
+            }
+            else if(mControlPortReadNbTries > 10)
+            {
+                //errorMessageChanged(errorMessage);
+                //stateChanged(state);
+            }
+        }
     }
 
     // Kill the Tor process since we've been asked to stop.
@@ -378,6 +398,29 @@ std::string TorProcess::controlPortFilePath() const
     return mDataDir + "/" + "control-port";
 }
 
+bool TorProcess::tryReadControlPort()
+{
+    FILE *file = RsDirUtil::rs_fopen(controlPortFilePath().c_str(),"r");
+
+    if(file)
+    {
+        char *line = nullptr;
+
+        size_t size = getline(&line,0,file);
+        ByteArray data = ByteArray((unsigned char*)line,size).trimmed();
+        free(line);
+
+        int p;
+        if (data.startsWith("PORT=") && (p = data.lastIndexOf(':')) > 0) {
+            mControlHost = data.mid(5, p - 5).toString();
+            mControlPort = data.mid(p+1).toInt();
+
+            if (!mControlHost.empty() && mControlPort > 0)
+                return true;
+        }
+    }
+    return false;
+}
 #ifdef TO_REMOVE
 void TorProcessPrivate::processStarted()
 {
@@ -423,39 +466,7 @@ void TorProcessPrivate::processReadable()
     }
 }
 
-void TorProcessPrivate::tryReadControlPort()
-{
-    FILE *file = RsDirUtil::rs_fopen(controlPortFilePath().c_str(),"r");
 
-    if(file)
-    {
-        char *line = nullptr;
-
-        size_t size = getline(&line,0,file);
-        ByteArray data = ByteArray((unsigned char*)line,size).trimmed();
-        free(line);
-
-        int p;
-        if (data.startsWith("PORT=") && (p = data.lastIndexOf(':')) > 0) {
-            controlHost = QHostAddress(data.mid(5, p - 5));
-            controlPort = data.mid(p+1).toUShort();
-
-            if (!controlHost.isNull() && controlPort > 0) {
-                controlPortTimer.stop();
-                state = TorProcess::Ready;
-                /*emit*/ q->stateChanged(state);
-                return;
-            }
-        }
-    }
-
-    if (++controlPortAttempts * controlPortTimer.interval() > 10000) {
-        errorMessage = "No control port available after launching process";
-        state = TorProcess::Failed;
-        /*emit*/ q->errorMessageChanged(errorMessage);
-        /*emit*/ q->stateChanged(state);
-    }
-}
 TorProcessPrivate::TorProcessPrivate(TorProcess *q)
     : q(q), state(TorProcess::NotStarted), controlPort(0), controlPortAttempts(0)
 {
