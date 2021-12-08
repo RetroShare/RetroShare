@@ -1,9 +1,9 @@
 /*******************************************************************************
- * libretroshare/src/util: androiddebug.h                                      *
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright (C) 2016  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2016-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -36,10 +36,10 @@
  * class at the beginning of the main of your program to get them (stdout and
  * stderr) on logcat output.
  */
-class AndroidStdIOCatcher
+class AndroidCoutCerrCatcher
 {
 public:
-	AndroidStdIOCatcher(const std::string& dTag = "RetroShare",
+	AndroidCoutCerrCatcher(const std::string& dTag = "RetroShare",
 	                    android_LogPriority stdout_pri = ANDROID_LOG_INFO,
 	                    android_LogPriority stderr_pri = ANDROID_LOG_ERROR) :
 	    tag(dTag), cout_pri(stdout_pri), cerr_pri(stderr_pri), should_stop(false)
@@ -63,10 +63,10 @@ public:
 		pthread_detach(thr);
 	}
 
-	~AndroidStdIOCatcher()
+	~AndroidCoutCerrCatcher()
 	{
 		should_stop = true;
-		pthread_join(thr, NULL);
+		pthread_join(thr, nullptr);
 	}
 
 private:
@@ -79,11 +79,13 @@ private:
 	pthread_t thr;
 	std::atomic<bool> should_stop;
 
-	static void *thread_func(void* instance)
+	static void* thread_func(void* instance)
 	{
-		__android_log_write(ANDROID_LOG_INFO, "RetroShare", "Android debugging start");
+		__android_log_write(
+		            ANDROID_LOG_INFO, "RetroShare",
+		            "Android standard I/O catcher start" );
 
-		AndroidStdIOCatcher &i = *static_cast<AndroidStdIOCatcher*>(instance);
+		AndroidCoutCerrCatcher &i = *static_cast<AndroidCoutCerrCatcher*>(instance);
 
 		std::string out_buf;
 		std::string err_buf;
@@ -113,9 +115,11 @@ private:
 			usleep(10000);
 		}
 
-		__android_log_write(ANDROID_LOG_INFO, "RetroShare", "Android debugging stop");
+		__android_log_write(
+		            ANDROID_LOG_INFO, "RetroShare",
+		            "Android standard I/O catcher stop" );
 
-		return NULL;
+		return nullptr;
 	}
 };
 

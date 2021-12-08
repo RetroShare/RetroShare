@@ -1,6 +1,7 @@
 /*
- * RetroShare
- * Copyright (C) 2016-2018  Gioacchino Mazzurco <gio@eigenlab.org>
+ * RetroShare Service Android
+ * Copyright (C) 2021  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -19,22 +20,10 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-/*
-package org.retroshare.service;
+#include "rs_android/rsjni.hpp"
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
-
-public class AppUpdatedReceiver extends BroadcastReceiver
+extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* _reserved)
 {
-	@Override
-	public void onReceive(Context context, Intent intent)
-	{
-		Log.i("AppUpdatedReceiver", "onReceive() Restarting RetroShare Service After Update");
-		RetroShareServiceAndroid.stop(context);
-		RetroShareServiceAndroid.start(context);
-	}
+	RS_DBG(vm);
+	return JNI_OnLoad_retroshare(vm, _reserved);
 }
-*/

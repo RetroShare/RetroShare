@@ -111,14 +111,7 @@ PRE_TARGETDEPS += $$pretargetStaticLibs(sLibs)
 LIBS += $$linkDynamicLibs(dLibs)
 
 android-* {
-    CONFIG *= qt
-
-    lessThan(ANDROID_API_VERSION, 24) {
-        ## @See: android_ifaddrs/README.adoc
-        contains(DEFINES, LIBRETROSHARE_ANDROID_IFADDRS_QT) {
-            QT *= network
-        }
-    }
+    INCLUDEPATH *= $$clean_path($${RS_SRC_PATH}/supportlibs/jni.hpp/include/)
 }
 
 ################################### Pkg-Config Stuff #############################

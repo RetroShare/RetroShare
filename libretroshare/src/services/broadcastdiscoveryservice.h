@@ -1,7 +1,8 @@
 /*******************************************************************************
  * RetroShare Broadcast Domain Discovery                                       *
  *                                                                             *
- * Copyright (C) 2019  Gioacchino Mazzurco <gio@altermundi.net>                *
+ * Copyright (C) 2019-2021  Gioacchino Mazzurco <gio@altermundi.net>           *
+ * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -27,13 +28,15 @@
 
 #include <udp_discovery_peer.hpp>
 
-#ifdef __ANDROID__
-#	include <QtAndroidExtras/QAndroidJniObject>
-#endif // def __ANDROID__
-
 #include "retroshare/rsbroadcastdiscovery.h"
 #include "util/rsthreads.h"
 #include "util/rsdebug.h"
+
+#ifdef __ANDROID__
+#	include <jni/jni.hpp>
+#	include "rs_android/rsjni.hpp"
+#endif // def __ANDROID__
+
 
 namespace UDC = udpdiscovery;
 class RsPeers;
@@ -42,7 +45,7 @@ class BroadcastDiscoveryService :
         public RsBroadcastDiscovery, public RsTickingThread
 {
 public:
-	BroadcastDiscoveryService(RsPeers& pRsPeers);
+	explicit BroadcastDiscoveryService(RsPeers& pRsPeers);
 	~BroadcastDiscoveryService() override;
 
 	/// @see RsBroadcastDiscovery
@@ -71,26 +74,27 @@ protected:
 	std::map<UDC::IpPort, std::string> mDiscoveredData;
 	RsMutex mDiscoveredDataMutex;
 
-	RsPeers& mRsPeers; // TODO: std::shared_ptr<RsPeers> mRsPeers;
+	RsPeers& mRsPeers;
 
 	RsBroadcastDiscoveryResult createResult(
 	        const UDC::IpPort& ipp, const std::string& uData );
 
 #ifdef __ANDROID__
-	/** Android WifiManager.MulticastLock */
-	QAndroidJniObject mWifiMulticastLock;
+	struct AndroidMulticastLock
+	{
+		static constexpr auto Name()
+		{ return "android/net/wifi/WifiManager$MulticastLock"; }
+	};
+
+	jni::Global<jni::Object<AndroidMulticastLock>> mAndroidWifiMulticastLock;
 
 	/** Initialize the wifi multicast lock without acquiring it
 	 * Needed to enable multicast listening in Android, for RetroShare broadcast
 	 * discovery inspired by:
 	 * https://github.com/flutter/flutter/issues/16335#issuecomment-420547860
 	 */
-	bool createMulticastLock();
-
-	/** Return false if mWifiMulticastLock is invalid and print error messages */
-	bool assertMulticastLockIsvalid();
-
-#endif // def __ANDROID__
+	bool createAndroidMulticastLock();
+#endif
 
 	RS_SET_CONTEXT_DEBUG_LEVEL(3)
 };

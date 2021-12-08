@@ -1101,13 +1101,11 @@ android-* {
     DEFINES *= "fseeko64=fseeko"
     DEFINES *= "ftello64=ftello"
 
-        ## @See: android_ifaddrs/README.adoc
-        !contains(DEFINES, LIBRETROSHARE_ANDROID_IFADDRS_QT) {
-            HEADERS += \
-                android_ifaddrs/ifaddrs-android.h \
-                android_ifaddrs/LocalArray.h \
-                android_ifaddrs/ScopedFd.h
-        }
+## @See: rs_android/README-ifaddrs-android.adoc
+    HEADERS += \
+        rs_android/ifaddrs-android.h \
+        rs_android/LocalArray.h \
+        rs_android/ScopedFd.h
     }
 
 ## Static library are very susceptible to order in command line
@@ -1116,6 +1114,13 @@ android-* {
     LIBS += $$linkStaticLibs(sLibs)
     PRE_TARGETDEPS += $$pretargetStaticLibs(sLibs)
 
-    HEADERS += util/androiddebug.h
+    HEADERS += \
+        rs_android/androidcoutcerrcatcher.hpp \
+        rs_android/retroshareserviceandroid.hpp \
+        rs_android/rsjni.hpp
+
+    SOURCES += rs_android/rsjni.cpp \
+        rs_android/retroshareserviceandroid.cpp \
+        rs_android/errorconditionwrap.cpp
 }
 

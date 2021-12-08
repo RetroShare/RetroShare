@@ -1,6 +1,7 @@
 /*
  * RetroShare
- * Copyright (C) 2016-2018  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2021  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -19,22 +20,29 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-/*
 package org.retroshare.service;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
-
-public class AppUpdatedReceiver extends BroadcastReceiver
+public class ErrorConditionWrap
 {
-	@Override
-	public void onReceive(Context context, Intent intent)
-	{
-		Log.i("AppUpdatedReceiver", "onReceive() Restarting RetroShare Service After Update");
-		RetroShareServiceAndroid.stop(context);
-		RetroShareServiceAndroid.start(context);
-	}
+    public ErrorConditionWrap(
+        int value, String message, String categoryName )
+    {
+        mValue = value;
+        mMessage = message;
+        mCategoryName = categoryName;
+    }
+
+    public int value() { return mValue; }
+    public String message() { return mMessage; }
+    public String categoryName() { return mCategoryName; }
+
+    public boolean toBool() { return mValue != 0; }
+
+    @Override
+    public String toString()
+    { return String.format("%d", mValue)+" "+mMessage+" [" + mCategoryName+ "]"; }
+
+    private int mValue = 0;
+    private String mMessage;
+    private String mCategoryName;
 }
-*/

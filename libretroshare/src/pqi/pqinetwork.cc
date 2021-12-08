@@ -21,16 +21,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifdef WINDOWS_SYS
-#	include "util/rswin.h"
-#	include "util/rsmemory.h"
-#	include <ws2tcpip.h>
-#endif // WINDOWS_SYS
-
-/// @See: android_ifaddrs/README.adoc
-#ifdef __ANDROID__
-#	include <android/api-level.h>
-#endif // def __ANDROID__
 
 #include <cerrno>
 #include <iostream>
@@ -44,27 +34,34 @@
 #include "util/rsnet.h"
 #include "util/stacktrace.h"
 
+#ifdef WINDOWS_SYS
+#	include "util/rswin.h"
+#	include "util/rsmemory.h"
+#	include <ws2tcpip.h>
+#endif // WINDOWS_SYS
+
+/// @See: android_ifaddrs/README.adoc
+#ifdef __ANDROID__
+#	include <android/api-level.h>
+#endif // def __ANDROID__
+
+#ifdef WINDOWS_SYS   /* Windows - define errno */
+int errno;
+#else /* Windows - define errno */
+#include <netdb.h>
+#endif
+
+#ifdef __HAIKU__
+#	include <sys/sockio.h>
+#	define IFF_RUNNING 0x0001
+#endif
+
 static struct RsLog::logInfo pqinetzoneInfo = {RsLog::Default, "pqinet"};
 #define pqinetzone &pqinetzoneInfo
 
 /*****
  * #define NET_DEBUG 1
  ****/
-
-#ifdef WINDOWS_SYS   /* Windows - define errno */
-
-int errno;
-
-#else /* Windows - define errno */
-
-#include <netdb.h>
-
-#endif               
-
-#ifdef __HAIKU__
- #include <sys/sockio.h>
- #define IFF_RUNNING 0x0001
-#endif
 
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
@@ -271,24 +268,16 @@ int inet_aton(const char *name, struct in_addr *addr)
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
-
+#include "util/cxx17retrocompat.h"
 #include <sys/types.h>
 #ifdef WINDOWS_SYS
 #	include <winsock2.h>
 #	include <iphlpapi.h>
 #	pragma comment(lib, "IPHLPAPI.lib")
-#elif defined(__ANDROID__) && __ANDROID_API__ < 24 && \
-	defined(LIBRETROSHARE_ANDROID_IFADDRS_QT)
+#elif defined(__ANDROID__) && __ANDROID_API__ < 24
 /// @See: android_ifaddrs/README.adoc
-#	include <string>
-#	include <QString>
-#	include <QHostAddress>
-#	include <QNetworkInterface>
-#elif defined(__ANDROID__) && __ANDROID_API__ < 24 && \
-	!defined(LIBRETROSHARE_ANDROID_IFADDRS_QT)
-/// @See: android_ifaddrs/README.adoc
-#	include "android_ifaddrs/ifaddrs-android.h"
-#else // not __ANDROID__ nor WINDOWS => Linux and other unixes
+#	include "rs_android/ifaddrs-android.h"
+#else // not WINDOWS => Linux and other unixes
 #	include <ifaddrs.h>
 #	include <net/if.h>
 #endif // WINDOWS_SYS
@@ -331,17 +320,7 @@ bool getLocalAddresses(std::vector<sockaddr_storage>& addrs)
 		}
 	}
 	free(adapter_addresses);
-#elif defined(__ANDROID__) && __ANDROID_API__ < 24 && \
-	defined(LIBRETROSHARE_ANDROID_IFADDRS_QT)
-/// @See: android_ifaddrs/README.adoc
-	for(auto& qAddr: QNetworkInterface::allAddresses())
-	{
-		sockaddr_storage tmpAddr;
-		sockaddr_storage_clear(tmpAddr);
-		if(sockaddr_storage_ipv4_aton(tmpAddr, qAddr.toString().toStdString().c_str()))
-			addrs.push_back(tmpAddr);
-	}
-#else // not  WINDOWS_SYS not ANDROID => Linux and other unixes
+#else // not  WINDOWS_SYS => Linux and other unixes
 	struct ifaddrs *ifsaddrs, *ifa;
 	if(getifaddrs(&ifsaddrs) != 0) 
 	{
@@ -355,18 +334,19 @@ bool getLocalAddresses(std::vector<sockaddr_storage>& addrs)
 		{
 			sockaddr_storage tmp;
 			sockaddr_storage_clear(tmp);
-			if (sockaddr_storage_copyip(tmp, *reinterpret_cast<sockaddr_storage*>(ifa->ifa_addr)))
+			if(sockaddr_storage_copyip(
+			            tmp,
+			            *reinterpret_cast<sockaddr_storage*>(ifa->ifa_addr) ))
 				addrs.push_back(tmp);
 		}
 	freeifaddrs(ifsaddrs);
 #endif // WINDOWS_SYS
 
 #ifdef NET_DEBUG
-	std::list<sockaddr_storage>::iterator it;
-	std::cout << "getLocalAddresses(...) returning: <" ;
-	for(it = addrs.begin(); it != addrs.end(); ++it)
-			std::cout << sockaddr_storage_iptostring(*it) << ", ";
-	std::cout << ">" << std::endl;
+	auto&& dbg = RS_DBG("returning: [");
+	for(auto& addr: std::as_const(addrs))
+		dbg << sockaddr_storage_iptostring(addr) << ", ";
+	dbg << "]" << std::endl;
 #endif
 
 	return !addrs.empty();

@@ -796,8 +796,9 @@ void JsonApiServer::run()
 	}
 	catch(std::exception& e)
 	{
-		RsErr() << __PRETTY_FUNCTION__ << " Failure starting JSON API server: "
-		        << e.what() << std::endl;
+		/* TODO: find a way to report back programmatically if failed listening
+		 * port */
+		RS_ERR("Failure starting JSON API server: ", e.what());
 		print_stacktrace();
 		return;
 	}

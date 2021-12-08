@@ -4,7 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2004-2006  Robert Fernie <retroshare@lunamutt.com>            *
- * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2015-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -20,8 +21,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef MRK_PQI_NETWORKING_HEADER
-#define MRK_PQI_NETWORKING_HEADER
+#pragma once
 
 #include <vector>
 
@@ -86,9 +86,13 @@ extern int errno; /* Define extern errno, to duplicate unix behaviour */
 #include <string>
 #include <list>
 
+#include "util/rsdeprecate.h"
+
 // Same def - different functions...
+RS_DEPRECATED_FOR("use std::error_condition instead")
 void showSocketError(std::string &out);
 
+RS_DEPRECATED_FOR("use std::error_condition instead")
 std::string socket_errorType(int err);
 
 bool getLocalAddresses(std::vector<sockaddr_storage> & addrs);
@@ -103,10 +107,6 @@ int unix_getsockopt_error(int sockfd, int *err);
 
 #ifdef WINDOWS_SYS // WINDOWS
 /******************* WINDOWS SPECIFIC PART ******************/
+RS_DEPRECATED_FOR("use std::error_condition instead")
 int     WinToUnixError(int error);
 #endif
-
-
-
-#endif
-
