@@ -245,7 +245,7 @@ bool BroadcastDiscoveryService::isMulticastListeningEnabled()
 	            env, "isHeld" );
 
 	return mAndroidWifiMulticastLock.Call(env, isHeld);
-#else if // def __ANDROID__
+#else // def __ANDROID__
 	return true;
 #endif // def __ANDROID__
 }
