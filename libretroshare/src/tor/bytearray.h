@@ -32,6 +32,8 @@ public:
     void append(const ByteArray& b) { for(auto c:b) push_back(c); }
     void append(const char *b) { for(uint32_t n=0;b[n]!=0;++n) push_back(b[n]); }
 
+    template<class T> void append(const T) = delete;// Prevents any implicit when calling the preceding functions which actually causes real bugs.
+
     ByteArray& operator+=(const ByteArray& b) { for(auto c:b) push_back(c);  return *this; }
     ByteArray& operator+=(const char *b) { for(uint32_t n=0;b[n]!=0;++n) push_back(b[n]); return *this;}
 

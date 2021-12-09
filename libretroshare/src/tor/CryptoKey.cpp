@@ -82,7 +82,7 @@ bool CryptoKey::loadFromFile(const std::string& path)
     ByteArray data ;
     int c;
     while(EOF != (c=fgetc(file)))
-        data.append((unsigned char)c);
+        data.push_back((unsigned char)c);
 
     fclose(file);
 

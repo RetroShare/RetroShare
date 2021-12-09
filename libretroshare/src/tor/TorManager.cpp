@@ -168,13 +168,14 @@ bool TorManager::setupHiddenService()
 	}
 
     std::cerr << "Using legacy dir: " << legacyDir << std::endl;
+    auto key_path = RsDirUtil::makePath(legacyDir,"/private_key");
 
-    if (!legacyDir.empty() && RsDirUtil::fileExists(RsDirUtil::makePath(legacyDir,"/private_key")))
+    if (!legacyDir.empty() && RsDirUtil::fileExists(key_path))
     {
-        std::cerr << "Attempting to load key from legacy filesystem format in " << legacyDir << std::endl;
+        std::cerr << "Attempting to load key from legacy filesystem format from file \"" << key_path << "\"" << std::endl;
 
         CryptoKey key;
-        if (!key.loadFromFile(RsDirUtil::makePath(legacyDir , "/private_key")))
+        if (!key.loadFromFile(key_path))
         {
             RsWarn() << "Cannot load legacy format key from" << legacyDir << "for conversion";
             return false;

@@ -46,9 +46,10 @@ using namespace Tor;
 static const int INTERVAL_BETWEEN_CONTROL_PORT_READ_TRIES = 5; // try every 5 secs.
 
 TorProcess::TorProcess(TorProcessClient *client)
-    : m_client(client), mLastTryReadControlPort(0)
+    : m_client(client),  mState(TorProcess::NotStarted), mControlPort(0), mLastTryReadControlPort(0)
 {
     mControlPortReadNbTries=0;
+
 }
 
 TorProcess::~TorProcess()

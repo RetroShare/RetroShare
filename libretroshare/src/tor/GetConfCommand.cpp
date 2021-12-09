@@ -58,7 +58,7 @@ ByteArray GetConfCommand::build(const std::list<std::string> &keys)
     }
 
     for(const ByteArray &key: keys) {
-        out.append(' ');
+        out.push_back(' ');
         out.append(key);
     }
 

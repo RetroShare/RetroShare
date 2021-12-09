@@ -37,7 +37,7 @@ ByteArray quotedString(const ByteArray &string)
     ByteArray out;
     out.reserve(string.size() * 2);
 
-    out.append('"');
+    out.push_back('"');
 
     for (uint i = 0; i < string.size(); ++i)
     {
@@ -50,12 +50,12 @@ ByteArray quotedString(const ByteArray &string)
             out.append("\\\\");
             break;
         default:
-            out.append(string[i]);
+            out.push_back(string[i]);
             break;
         }
     }
 
-    out.append('"');
+    out.push_back('"');
     return out;
 }
 
@@ -73,12 +73,12 @@ ByteArray unquotedString(const ByteArray& string)
         {
         case '\\':
             if (++i < string.size())
-                out.append(string[i]);
+                out.push_back(string[i]);
             break;
         case '"':
             return out;
         default:
-            out.append(string[i]);
+            out.push_back(string[i]);
         }
     }
 
