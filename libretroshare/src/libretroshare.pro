@@ -205,7 +205,7 @@ linux-* {
     LIBS *= -ldl
 
 	DEFINES *= PLUGIN_DIR=\"\\\"$${PLUGIN_DIR}\\\"\"
-	DEFINES *= DATA_DIR=\"\\\"$${DATA_DIR}\\\"\"
+        DEFINES *= RS_DATA_DIR=\"\\\"$${RS_DATA_DIR}\\\"\"
 }
 
 linux-g++ {
@@ -289,7 +289,7 @@ mac {
 		#LIBS += -lsqlite3
 
 		DEFINES *= PLUGIN_DIR=\"\\\"$${PLUGIN_DIR}\\\"\"
-		DEFINES *= DATA_DIR=\"\\\"$${DATA_DIR}\\\"\"
+                DEFINES *= RS_DATA_DIR=\"\\\"$${RS_DATA_DIR}\\\"\"
 }
 
 ################################# FreeBSD ##########################################

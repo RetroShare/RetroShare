@@ -841,14 +841,15 @@ static bool checkAccount(const std::string &accountdir, AccountDetails &account,
 
 	/* Use RetroShare's exe dir */
 	dataDirectory = ".";
-#elif defined(ANDROID)
+#elif defined(__ANDROID__)
+	// TODO: This is probably not really used on Android
 	dataDirectory = PathBaseDirectory()+"/usr/share/retroshare";
-#elif defined(DATA_DIR)
+#elif defined(RS_DATA_DIR)
 	// cppcheck-suppress ConfigurationNotChecked
-	dataDirectory = DATA_DIR;
+	dataDirectory = RS_DATA_DIR;
 	// For all other OS the data directory must be set in libretroshare.pro
 #else
-#	error "For your target OS automatic data dir discovery is not supported, cannot compile if DATA_DIR variable not set."
+#	error "For your target OS automatic data dir discovery is not supported, cannot compile if RS_DATA_DIR variable not set."
 #endif
 
 	if (!check)
