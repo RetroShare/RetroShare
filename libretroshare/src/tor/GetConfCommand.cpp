@@ -32,7 +32,6 @@
 
 #include "GetConfCommand.h"
 #include "StrUtil.h"
-#include <QDebug>
 
 using namespace Tor;
 
@@ -54,11 +53,11 @@ ByteArray GetConfCommand::build(const std::list<std::string> &keys)
     } else if (type == GetInfo) {
         out = "GETINFO";
     } else {
-        Q_ASSERT(false);
+        assert(false);
         return out;
     }
 
-    foreach (const ByteArray &key, keys) {
+    for(const ByteArray &key: keys) {
         out.append(' ');
         out.append(key);
     }
@@ -86,7 +85,7 @@ void GetConfCommand::onReply(int statusCode, const ByteArray &data)
 void GetConfCommand::onDataLine(const ByteArray &data)
 {
     if (m_lastKey.empty()) {
-        qWarning() << "torctrl: Unexpected data line in GetConf command";
+        RsWarn() << "torctrl: Unexpected data line in GetConf command";
         return;
     }
     m_results[m_lastKey].push_back(data.toString());
