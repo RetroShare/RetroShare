@@ -169,8 +169,6 @@ void TorControlDialog::showLog()
             std::cerr << "[TOR DEBUG LOG] " << *it << std::endl;
 	}
 
-//    torLog_TB->setText(s) ;:
-
     std::cerr << "Connexion Proxy: " << RsTor::socksAddress()  << ":" << QString::number(RsTor::socksPort()).toStdString() << std::endl;
 }
 

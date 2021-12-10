@@ -113,6 +113,8 @@ std::string TorProcess::errorMessage() const
 
 int popen3(int fd[3],const char **const cmd,pid_t& pid)
 {
+    RsErr() << "Launching Tor in background..." ;
+
     int i, e;
     int p[3][2];
     // set all the FDs to invalid
@@ -141,6 +143,7 @@ int popen3(int fd[3],const char **const cmd,pid_t& pid)
     }
     else
     {
+        RsErr() << "Launching sub-process..." ;
         // child
         dup2(p[STDIN_FILENO][0],STDIN_FILENO);
         close(p[STDIN_FILENO][1]);
@@ -148,16 +151,20 @@ int popen3(int fd[3],const char **const cmd,pid_t& pid)
         close(p[STDOUT_FILENO][0]);
         dup2(p[STDERR_FILENO][1],STDERR_FILENO);
         close(p[STDERR_FILENO][0]);
+
         // here we try and run it
+
         execv(*cmd,const_cast<char*const*>(cmd));
+
         // if we are there, then we failed to launch our program
         perror("Could not launch");
         fprintf(stderr," \"%s\"\n",*cmd);
     }
 
 error:
-    // preserve original error
     e = errno;
+    // preserve original error
+    RsErr() << "An error occurred while trying to launch tor in background." ;
     for(i=0; i<3; i++) {
         close(p[i][0]);
         close(p[i][1]);
@@ -253,8 +260,8 @@ void TorProcess::run()
     // We first pushed everything into a vector of strings to save the pointers obtained from string returning methods
     // by the time the process is launched.
 
-    for(auto s:args)
-        arguments[n++]= s.c_str();
+    for(uint32_t i=0;i<args.size();++i)
+        arguments[n++]= args[i].data();
 
     arguments[n] = nullptr;
 
@@ -266,6 +273,10 @@ void TorProcess::run()
         mState = Failed;
         return;	// stop the control thread
     }
+
+    int flags ;
+    flags = fcntl(fd[STDOUT_FILENO], F_GETFL); fcntl(fd[STDOUT_FILENO], F_SETFL, flags | O_NONBLOCK);
+    flags = fcntl(fd[STDERR_FILENO], F_GETFL); fcntl(fd[STDERR_FILENO], F_SETFL, flags | O_NONBLOCK);
 
     RsFdBinInterface stdout_FD(fd[STDOUT_FILENO]);
     RsFdBinInterface stderr_FD(fd[STDERR_FILENO]);
@@ -281,7 +292,7 @@ void TorProcess::run()
         if((s=stdout_FD.readline(buff,1024))) logMessage(std::string((char*)buff,s));
         if((s=stderr_FD.readline(buff,1024))) logMessage(std::string((char*)buff,s));
 
-        if(!stdout_FD.isactive() || !stderr_FD.isactive())
+        if(!stdout_FD.isactive() && !stderr_FD.isactive())
         {
             RsErr() << "Tor process died. Exiting TorControl process." ;
             return;
@@ -390,13 +401,13 @@ bool TorProcess::ensureFilesExist()
 std::string TorProcess::torrcPath() const
 {
     //return QDir::toNativeSeparators(dataDir) + QDir::separator() + QStringLiteral("torrc");
-    return mDataDir + "/" + "torrc";
+    return RsDirUtil::makePath(mDataDir,"torrc");
 }
 
 std::string TorProcess::controlPortFilePath() const
 {
     //return QDir::toNativeSeparators(dataDir) + QDir::separator() + QStringLiteral("control-port");
-    return mDataDir + "/" + "control-port";
+    return RsDirUtil::makePath(mDataDir,"control-port");
 }
 
 bool TorProcess::tryReadControlPort()

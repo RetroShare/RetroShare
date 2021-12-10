@@ -148,6 +148,44 @@ void TorManager::setHiddenServiceDirectory(const std::string &path)
         d->hiddenServiceDir += '/';
 }
 
+static bool test_listening_port(const std::string& address,uint16_t port)
+{
+    int sockfd, portno;
+    struct sockaddr_in serv_addr;
+
+    /* First call to socket() function */
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+
+    if (sockfd < 0)
+       return false;
+
+    /* Initialize socket structure */
+    bzero((char *) &serv_addr, sizeof(serv_addr));
+    portno = 5001;
+
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = INADDR_ANY;
+    serv_addr.sin_port = htons(portno);
+
+    /* Now bind the host address using bind() call.*/
+    if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
+       perror("ERROR on binding");
+       close(sockfd);
+       return false;
+    }
+    int flags = fcntl(sockfd, F_GETFL);
+    fcntl(sockfd, F_SETFL, flags | O_NONBLOCK);
+
+    int res = listen(sockfd,5);
+
+    int err = errno;
+    close(sockfd);
+
+    if(!res)
+        return true;
+
+    return false;
+}
 bool TorManager::setupHiddenService()
 {
 	if(d->hiddenService != NULL)
@@ -208,12 +246,12 @@ bool TorManager::setupHiddenService()
 
     std::cerr << "Testing host address: " << address << ":" << port ;
 
-//    if (!QTcpServer().listen(address, port))
-//    {
-//        // XXX error case
-//		std::cerr << " Failed to open incoming socket" << std::endl;
-//        return false;
-//    }
+    if(!test_listening_port(address,port))
+    {
+        // XXX error case
+        std::cerr << " Failed to open incoming socket" << std::endl;
+        return false;
+    }
 
 	std::cerr << " OK - Adding hidden service to TorControl." << std::endl;
 
@@ -538,6 +576,14 @@ std::string TorManagerPrivate::torExecutablePath() const
         return tor_exe_path;
 #endif
 
+#ifdef __linux__
+    // On linux try system-installed tor /usr/bin/tor
+
+    if(RsDirUtil::fileExists("/usr/bin/tor"))
+        return std::string("/usr/bin/tor");
+#endif
+
+    RsErr() << "Could not find Tor executable anywhere!" ;
     // Try $PATH
     return filename.substr(1);
 }

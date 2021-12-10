@@ -64,7 +64,8 @@ int RsFdBinInterface::read_pending()
     char inBuffer[1025];
     memset(inBuffer,0,1025);
 
-    ssize_t readbytes = recv(mCLintConnt, inBuffer, sizeof(inBuffer),MSG_DONTWAIT);
+    ssize_t readbytes = read(mCLintConnt, inBuffer, sizeof(inBuffer));	// Needs read instead of recv which is only for sockets.
+                                                                        // Sockets should be set to non blocking by the client process.
 
     if(readbytes == 0)
     {
