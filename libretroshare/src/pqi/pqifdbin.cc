@@ -30,6 +30,9 @@ RsFdBinInterface::RsFdBinInterface(int file_descriptor)
     mTotalInBufferBytes=0;
     mTotalWrittenBytes=0;
     mTotalOutBufferBytes=0;
+
+    if(file_descriptor!=0)
+        setSocket(file_descriptor);
 }
 
 void RsFdBinInterface::setSocket(int s)
@@ -39,6 +42,11 @@ void RsFdBinInterface::setSocket(int s)
             RsErr() << "Changing socket to active FsBioInterface! Canceling all pending R/W data." ;
             close();
         }
+    int flags = fcntl(s,F_GETFL);
+
+    if(!(flags & O_NONBLOCK))
+        throw std::runtime_error("Trying to use a blocking file descriptor in RsFdBinInterface. This is not going to work!");
+
     mCLintConnt = s;
     mIsActive = (s!=0);
 }

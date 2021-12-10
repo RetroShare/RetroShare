@@ -413,12 +413,14 @@ std::string TorProcess::controlPortFilePath() const
 bool TorProcess::tryReadControlPort()
 {
     FILE *file = RsDirUtil::rs_fopen(controlPortFilePath().c_str(),"r");
+    std::cerr << "Trying to read control port" << std::endl;
 
     if(file)
     {
         char *line = nullptr;
+        size_t tmp_buffsize = 0;
 
-        size_t size = getline(&line,0,file);
+        size_t size = getline(&line,&tmp_buffsize,file);
         ByteArray data = ByteArray((unsigned char*)line,size).trimmed();
         free(line);
 
@@ -428,7 +430,10 @@ bool TorProcess::tryReadControlPort()
             mControlPort = data.mid(p+1).toInt();
 
             if (!mControlHost.empty() && mControlPort > 0)
+            {
+                std::cerr << "Read control port = " << mControlPort << std::endl;
                 return true;
+            }
         }
     }
     return false;
