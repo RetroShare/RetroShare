@@ -2335,6 +2335,14 @@ QFrame#titleBarFrame QTextEdit {
 
 /**** Special Page tweak ****/
 
+/* Channels */
+
+CreateGxsChannelMsg QPushButton#channelpostButton, QPushButton#attachmentsButton,
+QPushButton#addThumbnailButton {
+	padding: 2px;
+	padding-left: 6px;
+	padding-right: 6px;
+}
 
 /* Forums */
 
@@ -2401,6 +2409,12 @@ BoardPostDisplayWidget_compact QLabel#pictureLabel{
 	border-radius: 3px;
 }
 
+PostedCreatePostDialog QPushButton#viewPostButton, QPushButton#viewImageButton,
+QPushButton#viewLinkButton, QPushButton#addPicButton {
+	padding: 2px;
+	padding-left: 6px;
+	padding-right: 6px;
+}
 
 /*************** Optional ***************/
 

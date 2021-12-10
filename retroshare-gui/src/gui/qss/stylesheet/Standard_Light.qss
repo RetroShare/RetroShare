@@ -2392,6 +2392,14 @@ HomePage QLabel#userCertLabel {
 	color: #0099cc;
 }
 
+/* Channels */
+
+CreateGxsChannelMsg QPushButton#channelpostButton, QPushButton#attachmentsButton,
+QPushButton#addThumbnailButton {
+	padding: 2px;
+	padding-left: 6px;
+	padding-right: 6px;
+}
 
 /* Chat lobby */
 
@@ -2618,6 +2626,12 @@ BoardPostDisplayWidget_card QLabel#siteBoldLabel {
 	color: #787c7e;
 }
 
+PostedCreatePostDialog QPushButton#viewPostButton, QPushButton#viewImageButton, 
+QPushButton#viewLinkButton, QPushButton#addPicButton {
+	padding: 2px;
+	padding-left: 6px;
+	padding-right: 6px;
+}
 
 /* MessengerWindow */
 
