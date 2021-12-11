@@ -1027,6 +1027,8 @@ QPushButton {
   padding: 2px;
   outline: none;
   border: none;
+  padding-left: 6px;
+  padding-right: 6px;
 }
 
 QPushButton:disabled {
@@ -1034,6 +1036,8 @@ QPushButton:disabled {
   color: #9DA9B5;
   border-radius: 4px;
   padding: 2px;
+  padding-left: 6px;
+  padding-right: 6px;
 }
 
 QPushButton:checked {
