@@ -2230,6 +2230,15 @@ PlotWidget {
 /*    RetroShare specific part    */
 /**********************************/
 
+/**** Fix QPushButton ****/
+
+QPushButton,
+QPushButton:disabled,
+QPushButton:checked {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
 /**** Fix QTreeView Items ****/
 
 QTreeView::item,
