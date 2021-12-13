@@ -47,7 +47,7 @@ class TorManagerPrivate;
 /* Run/connect to an instance of Tor according to configuration, and manage
  * UI interaction, first time configuration, etc. */
 
-class TorManager : public HiddenServiceClient, public RsTor
+class TorManager : public HiddenServiceClient, public RsThread, public RsTor
 {
     // Q_OBJECT
 
@@ -64,7 +64,6 @@ public:
 
     TorProcess *process();
     TorControl *control();
-
 
     std::string torDataDirectory() const;
     void setTorDataDirectory(const std::string &path);
@@ -87,7 +86,7 @@ public:
     bool getProxyServerInfo(std::string &proxy_server_adress, uint16_t& proxy_server_port);
 
 //public slots:
-    bool start();
+    bool startTorManager();
 
 //private slots:
     virtual void hiddenServiceOnline() override {} // do nothing here.
@@ -95,9 +94,10 @@ public:
     virtual void hiddenServiceHostnameChanged() override;
     virtual void hiddenServiceStatusChanged(int old_status,int new_status) override;
 
-//signals:
-//    void configurationNeededChanged();
-//    void errorChanged();
+    // Thread stuff
+
+    virtual void run() override;
+    void threadTick() ;
 
 private:
     explicit TorManager();

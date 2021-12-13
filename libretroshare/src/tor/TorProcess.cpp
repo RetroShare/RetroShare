@@ -216,12 +216,7 @@ void TorProcess::start()
     mControlPort = 0;
     mControlHost.clear();
 
-    RsThread::start("TorControl");
-}
-
-void TorProcess::run()
-{
-    // We're inside the process control thread: launch the process,
+    // Launch the process
 
     std::vector<std::string> args;
 
@@ -278,51 +273,44 @@ void TorProcess::run()
     flags = fcntl(fd[STDOUT_FILENO], F_GETFL); fcntl(fd[STDOUT_FILENO], F_SETFL, flags | O_NONBLOCK);
     flags = fcntl(fd[STDERR_FILENO], F_GETFL); fcntl(fd[STDERR_FILENO], F_SETFL, flags | O_NONBLOCK);
 
-    RsFdBinInterface stdout_FD(fd[STDOUT_FILENO]);
-    RsFdBinInterface stderr_FD(fd[STDERR_FILENO]);
+    mStdOutFD = new RsFdBinInterface(fd[STDOUT_FILENO]);
+    mStdErrFD = new RsFdBinInterface(fd[STDERR_FILENO]);
+}
+
+void TorProcess::tick()
+{
+    mStdOutFD->tick();
+    mStdErrFD->tick();
 
     unsigned char buff[1024];
+    int s;
 
-    while(!shouldStop())
+    if((s=mStdOutFD->readline(buff,1024))) logMessage(std::string((char*)buff,s));
+    if((s=mStdErrFD->readline(buff,1024))) logMessage(std::string((char*)buff,s));
+
+    if(!mStdOutFD->isactive() && !mStdErrFD->isactive())
     {
-        stdout_FD.tick();
-        stderr_FD.tick();
-        int s;
+        RsErr() << "Tor process died. Exiting TorControl process." ;
+        stop();
+        return;
+    }
+    time_t now = time(nullptr);
 
-        if((s=stdout_FD.readline(buff,1024))) logMessage(std::string((char*)buff,s));
-        if((s=stderr_FD.readline(buff,1024))) logMessage(std::string((char*)buff,s));
+    if(mControlPortReadNbTries <= 10 && (mControlPort==0 || mControlHost.empty()) && mLastTryReadControlPort + INTERVAL_BETWEEN_CONTROL_PORT_READ_TRIES < now)
+    {
+        mLastTryReadControlPort = now;
 
-        if(!stdout_FD.isactive() && !stderr_FD.isactive())
+        if(tryReadControlPort())
         {
-            RsErr() << "Tor process died. Exiting TorControl process." ;
-            return;
+            mState = Ready;
+            // stateChanged(mState);
         }
-        time_t now = time(nullptr);
-
-        if(mControlPortReadNbTries <= 10 && (mControlPort==0 || mControlHost.empty()) && mLastTryReadControlPort + INTERVAL_BETWEEN_CONTROL_PORT_READ_TRIES < now)
+        else if(mControlPortReadNbTries > 10)
         {
-            mLastTryReadControlPort = now;
-
-            if(tryReadControlPort())
-            {
-                mState = Ready;
-                // stateChanged(mState);
-            }
-            else if(mControlPortReadNbTries > 10)
-            {
-                //errorMessageChanged(errorMessage);
-                //stateChanged(state);
-            }
+            //errorMessageChanged(errorMessage);
+            //stateChanged(state);
         }
     }
-
-    // Kill the Tor process since we've been asked to stop.
-
-    kill(mTorProcessId,SIGTERM);
-    int status=0;
-    wait(&status);
-
-    RsInfo() << "Tor process has been normally terminated. Exiting.";
 }
 
 void TorProcess::stop()
@@ -333,7 +321,9 @@ void TorProcess::stop()
     while(mState == Starting)
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    fullstop();
+    kill(mTorProcessId,SIGTERM);
+
+    RsInfo() << "Tor process has been normally terminated. Exiting.";
 
     mState = NotStarted;
 
@@ -431,7 +421,7 @@ bool TorProcess::tryReadControlPort()
 
             if (!mControlHost.empty() && mControlPort > 0)
             {
-                std::cerr << "Read control port = " << mControlPort << std::endl;
+                std::cerr << "Got control host/port = " << mControlHost << ":" << mControlPort << std::endl;
                 return true;
             }
         }

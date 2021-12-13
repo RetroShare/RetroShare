@@ -36,6 +36,8 @@
 #include "bytearray.h"
 #include "util/rsthreads.h"
 
+class RsFdBinInterface ;
+
 namespace Tor
 {
 
@@ -53,14 +55,8 @@ public:
 
 /* Launches and controls a Tor instance with behavior suitable for bundling
  * an instance with the application. */
-class TorProcess: public RsThread
+class TorProcess
 {
-    //Q_OBJECT
-    //Q_ENUMS(State)
-
-    //Q_PROPERTY(State state READ state NOTIFY stateChanged)
-    //Q_PROPERTY(std::string errorMessage READ errorMessage NOTIFY errorMessageChanged)
-
 public:
     enum State {
         Failed = -1,
@@ -91,20 +87,14 @@ public:
     unsigned short controlPort();
     ByteArray controlPassword();
 
-//signals:
     void stateChanged(int newState);
     void errorMessageChanged(const std::string &errorMessage);
     void logMessage(const std::string &message);
 
-//public slots:
     void start();
     void stop();
+    void tick();
 
-    // Implements RsThread
-    void run() override ;
-
-    // Keeps reading the output of the tor process and so on.
-    void threadTick();
 private:
     TorProcessClient *m_client;
 
@@ -127,12 +117,15 @@ private:
     pid_t mTorProcessId;
     time_t mLastTryReadControlPort ;
     int mControlPortReadNbTries ;
-//public slots:
+
     void processStarted();
     void processFinished();
     void processError(std::string error);
     void processReadable();
     bool tryReadControlPort();
+
+    RsFdBinInterface *mStdOutFD;
+    RsFdBinInterface *mStdErrFD;
 };
 
 }

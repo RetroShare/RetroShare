@@ -38,6 +38,7 @@ enum class RsTorManagerEventCode: uint8_t
     TOR_CONNECTIVITY_CHANGED  = 0x03,
     TOR_MANAGER_ERROR         = 0x04,
     CONFIGURATION_NEEDED      = 0x05,
+    TOR_MANAGER_STOPPED       = 0x06,
 };
 
 // Status of the Tor hidden service setup/loaded by RS

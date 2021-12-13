@@ -328,7 +328,7 @@ std::string TorManager::errorMessage() const
     return d->errorMessage;
 }
 
-bool TorManager::start()
+bool TorManager::startTorManager()
 {
     if (!d->errorMessage.empty()) {
         d->errorMessage.clear();
@@ -432,9 +432,37 @@ bool TorManager::start()
         d->process->setExecutable(executable);
         d->process->setDataDir(d->dataDir);
         d->process->setDefaultTorrc(defaultTorrc);
-        d->process->start();
     }
+
+    std::cerr << "Starting Tor manager thread:" << std::endl;
+    RsThread::start("TorManager");
 	return true ;
+}
+
+void TorManager::run()
+{
+    d->process->start();
+
+    while(!shouldStop())
+    {
+        threadTick();
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    }
+
+    d->control->shutdown();
+    d->process->stop();
+
+    if(rsEvents)
+    {
+        auto ev = std::make_shared<RsTorManagerEvent>();
+        ev->mTorManagerEventType = RsTorManagerEventCode::TOR_MANAGER_STOPPED;
+        rsEvents->sendEvent(ev);
+    }
+}
+
+void TorManager::threadTick()
+{
+    d->process->tick();
 }
 
 bool TorManager::getProxyServerInfo(std::string& proxy_server_adress,uint16_t& proxy_server_port)
@@ -743,7 +771,7 @@ void RsTor::getProxyServerInfo(std::string& server_address,  uint16_t& server_po
 
 bool RsTor::start()
 {
-    return instance()->start();
+    return instance()->startTorManager();
 }
 
 void RsTor::setTorDataDirectory(const std::string& dir)
