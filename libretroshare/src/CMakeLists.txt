@@ -6,6 +6,49 @@
 # SPDX-License-Identifier: CC0-1.0
 
 list(
+	APPEND RS_PUBLIC_HEADERS
+	retroshare/rsexpr.h
+	retroshare/rsgxsdistsync.h
+	retroshare/rsiface.h
+	retroshare/rsrtt.h
+	retroshare/rsbanlist.h
+	retroshare/rsconfig.h
+	retroshare/rsdisc.h
+	retroshare/rsflags.h
+	retroshare/rsgrouter.h
+	retroshare/rsgxsflags.h
+	retroshare/rsgxsservice.h
+	retroshare/rsgxstrans.h
+	retroshare/rsgxstunnel.h
+	retroshare/rsids.h
+	retroshare/rsnotify.h
+	retroshare/rsphoto.h
+	retroshare/rsplugin.h
+	retroshare/rsreputations.h
+	retroshare/rsservicecontrol.h
+	retroshare/rstokenservice.h
+	retroshare/rsturtle.h	
+	retroshare/rsgossipdiscovery.h
+	retroshare/rsgxscommon.h
+	retroshare/rsposted.h
+	retroshare/rsstatus.h
+	retroshare/rsversion.h
+	retroshare/rsgxsifacehelper.h
+	retroshare/rshistory.h
+	retroshare/rsidentity.h
+	retroshare/rsmsgs.h
+	retroshare/rsgxschannels.h
+	retroshare/rsgxscircles.h
+	retroshare/rsgxsiface.h
+	retroshare/rsgxsifacetypes.h
+	retroshare/rstypes.h
+	retroshare/rsgxsforums.h
+	retroshare/rsevents.h
+	retroshare/rsfiles.h
+	retroshare/rsinit.h
+	retroshare/rspeers.h )
+
+list(
 	APPEND RS_SOURCES
 	chat/distantchat.cc
 	chat/p3chatservice.cc
@@ -17,6 +60,10 @@ list(
 	crypto/rscrypto.cpp )
 
 if(RS_BITDHT)
+	list(
+		APPEND RS_PUBLIC_HEADERS
+		retroshare/rsdht.h )
+
 	list(
 		APPEND RS_SOURCES
 		dht/connectstatebox.cc
@@ -80,6 +127,10 @@ list(
 	gxstunnel/p3gxstunnel.cc )
 
 if(RS_JSON_API)
+	list(
+		APPEND RS_PUBLIC_HEADERS
+		retroshare/rsjsonapi.h )
+
 	list(
 		APPEND RS_SOURCES
 		jsonapi/jsonapi.cpp )
@@ -151,6 +202,7 @@ list(
 	rsitems/rsrttitems.cc
 	rsitems/rsserviceinfoitems.cc )
 
+#retroshare/rswiki.h
 #./rsitems/rswikiitems.cc
 #./rsitems/rswikiitems.h
 #./rsitems/rswireitems.h
@@ -167,6 +219,7 @@ list(
 #./rsitems/rsposteditems.cc
 #./rsitems/rsposteditems.h
 #./rsitems/rswireitems.cc
+#retroshare/rswire.h
 
 list(
 	APPEND RS_SOURCES
@@ -244,6 +297,10 @@ list(
 
 if(RS_BRODCAST_DISCOVERY)
 	list(
+		APPEND RS_PUBLIC_HEADERS
+		retroshare/rsbroadcastdiscovery.h )
+
+	list(
 		APPEND RS_SOURCES
 		services/broadcastdiscoveryservice.cc )
 endif(RS_BRODCAST_DISCOVERY)
@@ -255,9 +312,14 @@ list(
 	tcponudp/tou.cc
 	tcponudp/udppeer.cc
 	tcponudp/bss_tou.cc
-	tcponudp/udprelay.cc
-	tcponudp/udpstunner.cc )
-	
+	tcponudp/udprelay.cc )
+
+if(RS_BITDHT_STUNNER)
+	list(
+		APPEND RS_SOURCES
+		tcponudp/udpstunner.cc )
+endif(RS_BITDHT_STUNNER)
+
 list(
 	APPEND RS_SOURCES
 	turtle/rsturtleitem.cc
