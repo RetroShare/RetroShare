@@ -142,7 +142,7 @@ OpenPGPSDKHandler::OpenPGPSDKHandler(const std::string& pubring, const std::stri
             throw std::runtime_error("OpenPGPSDKHandler::readKeyRing(): cannot read pubring. File corrupted.") ;
 	}
 	else
-		std::cerr << "pubring file \"" << pubring << "\" not found. Creating a void keyring." << std::endl;
+        RsErr() << "pubring file \"" << pubring << "\" not found. Creating a void keyring." ;
 
 	const ops_keydata_t *keydata ;
 	int i=0 ;
@@ -161,7 +161,7 @@ OpenPGPSDKHandler::OpenPGPSDKHandler(const std::string& pubring, const std::stri
 		++i ;
 	}
 	_pubring_last_update_time = time(NULL) ;
-	std::cerr << "Pubring read successfully." << std::endl;
+    RsErr() << "Pubring read successfully." ;
 
 	if(secring_exist)
 	{
@@ -169,7 +169,7 @@ OpenPGPSDKHandler::OpenPGPSDKHandler(const std::string& pubring, const std::stri
             throw std::runtime_error("OpenPGPSDKHandler::readKeyRing(): cannot read secring. File corrupted.") ;
 	}
 	else
-		std::cerr << "secring file \"" << secring << "\" not found. Creating a void keyring." << std::endl;
+        RsErr() << "secring file \"" << secring << "\" not found. Creating a void keyring." ;
 
 	i=0 ;
 	while( (keydata = ops_keyring_get_key_by_index(_secring,i)) != NULL )
@@ -179,7 +179,7 @@ OpenPGPSDKHandler::OpenPGPSDKHandler(const std::string& pubring, const std::stri
 	}
 	_secring_last_update_time = time(NULL) ;
 
-	std::cerr << "Secring read successfully." << std::endl;
+    RsErr() << "Secring read successfully." ;
 
 	locked_readPrivateTrustDatabase() ;
 	_trustdb_last_update_time = time(NULL) ;
@@ -255,7 +255,7 @@ bool OpenPGPSDKHandler::validateAndUpdateSignatures(PGPCertificateInfo& cert,con
 		static ops_boolean_t already = 0 ;
 		if(!already)
 		{
-            std::cerr << "(WW) Error in OpenPGPSDKHandler::validateAndUpdateSignatures(). Validation failed for at least some signatures." << std::endl;
+            RsErr() << "(WW) Error in OpenPGPSDKHandler::validateAndUpdateSignatures(). Validation failed for at least some signatures." ;
 			already = 1 ;
 		}
 	}
@@ -286,7 +286,7 @@ OpenPGPSDKHandler::~OpenPGPSDKHandler()
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 #ifdef DEBUG_PGPHANDLER
-    std::cerr << "Freeing OpenPGPSDKHandler. Deleting keyrings." << std::endl;
+    RsErr() << "Freeing OpenPGPSDKHandler. Deleting keyrings." ;
 #endif
 
 	// no need to free the the _map_ elements. They will be freed by the following calls:
@@ -300,7 +300,7 @@ OpenPGPSDKHandler::~OpenPGPSDKHandler()
 
 void OpenPGPSDKHandler::printOPSKeys() const
 {
-    std::cerr << "Public keyring list from OPS:" << std::endl;
+    RsErr() << "Public keyring list from OPS:" ;
     ops_keyring_list(_pubring) ;
 }
 
@@ -331,7 +331,7 @@ bool OpenPGPSDKHandler::availableGPGCertificatesWithPrivateKeys(std::list<RsPgpI
 				ids.push_back(RsPgpId(keydata->key_id)) ;
 #ifdef DEBUG_PGPHANDLER
 			else
-				std::cerr << "Skipping keypair " << RsPgpId(keydata->key_id).toStdString() << ", unsupported algorithm: " <<  keydata->key.pkey.algorithm << std::endl;
+                RsErr() << "Skipping keypair " << RsPgpId(keydata->key_id).toStdString() << ", unsupported algorithm: " <<  keydata->key.pkey.algorithm ;
 #endif
 		}
 
@@ -416,7 +416,7 @@ bool OpenPGPSDKHandler::GeneratePGPCertificate(const std::string& name, const st
 	initCertificateInfo(_secret_keyring_map[ pgpId ],&tmp_secring->keys[0],_secring->nkeys-1) ;
 
 #ifdef DEBUG_PGPHANDLER
-	std::cerr << "Added new secret key with id " << pgpId.toStdString() << " to secret keyring." << std::endl;
+    RsErr() << "Added new secret key with id " << pgpId.toStdString() << " to secret keyring." ;
 #endif
 	ops_keyring_free(tmp_secring) ;
 	free(tmp_secring) ;
@@ -479,7 +479,7 @@ bool OpenPGPSDKHandler::GeneratePGPCertificate(const std::string& name, const st
 	locked_syncPublicKeyring() ;	
 
 #ifdef DEBUG_PGPHANDLER
-	std::cerr << "Added new public key with id " << pgpId.toStdString() << " to public keyring." << std::endl;
+    RsErr() << "Added new public key with id " << pgpId.toStdString() << " to public keyring." ;
 #endif
 
 	// 9 - Update some flags.
@@ -509,7 +509,7 @@ std::string OpenPGPSDKHandler::makeRadixEncodedPGPKey(const ops_keydata_t *key,b
 	else
 	{
         ops_create_info_delete(cinfo);
-		std::cerr << "Unhandled key type " << key->type << std::endl;
+        RsErr() << "Unhandled key type " << key->type ;
 		return "ERROR: Cannot write key. Unhandled key type. " ;
 	}
 
@@ -569,7 +569,7 @@ std::string OpenPGPSDKHandler::SaveCertificateToString(const RsPgpId& id,bool in
 
 	if(key == NULL)
 	{
-		std::cerr << "Cannot output key " << id.toStdString() << ": not found in keyring." << std::endl;
+        RsErr() << "Cannot output key " << id.toStdString() << ": not found in keyring." ;
 		return "" ;
 	}
 
@@ -584,7 +584,7 @@ bool OpenPGPSDKHandler::exportPublicKey( const RsPgpId& id, unsigned char*& mem_
 	{
 		RsErr() << __PRETTY_FUNCTION__ << " should not be used with "
 		        << "armoured=true, because there's a bug in the armoured export"
-		        << " of OPS" << std::endl;
+                << " of OPS" ;
 		print_stacktrace();
 		return false;
 	}
@@ -595,7 +595,7 @@ bool OpenPGPSDKHandler::exportPublicKey( const RsPgpId& id, unsigned char*& mem_
 	if(!key)
 	{
 		RsErr() << __PRETTY_FUNCTION__ << " key id: " << id
-		        << " not found in keyring." << std::endl;
+                << " not found in keyring." ;
 		return false;
 	}
 
@@ -608,7 +608,7 @@ bool OpenPGPSDKHandler::exportPublicKey( const RsPgpId& id, unsigned char*& mem_
 	{
 		RsErr() << __PRETTY_FUNCTION__ << "  This key id " << id
 		        << " cannot be processed by RetroShare because DSA certificates"
-		        << " support is not implemented yet." << std::endl;
+                << " support is not implemented yet." ;
 		return false;
 	}
 
@@ -638,21 +638,21 @@ bool OpenPGPSDKHandler::exportGPGKeyPair(const std::string& filename,const RsPgp
 
 	if(pubkey == NULL)
 	{
-		std::cerr << "Cannot output key " << exported_key_id.toStdString() << ": not found in public keyring." << std::endl;
+        RsErr() << "Cannot output key " << exported_key_id.toStdString() << ": not found in public keyring." ;
 		return false ;
 	}
 	const ops_keydata_t *seckey = locked_getSecretKey(exported_key_id) ;
 
 	if(seckey == NULL)
 	{
-		std::cerr << "Cannot output key " << exported_key_id.toStdString() << ": not found in secret keyring." << std::endl;
+        RsErr() << "Cannot output key " << exported_key_id.toStdString() << ": not found in secret keyring." ;
 		return false ;
 	}
 
 	FILE *f = RsDirUtil::rs_fopen(filename.c_str(),"w") ;
 	if(f == NULL)
 	{
-		std::cerr << "Cannot output key " << exported_key_id.toStdString() << ": file " << filename << " cannot be written. Please check for permissions, quotas, disk space." << std::endl;
+        RsErr() << "Cannot output key " << exported_key_id.toStdString() << ": file " << filename << " cannot be written. Please check for permissions, quotas, disk space." ;
 		return false ;
 	}
 
@@ -704,7 +704,7 @@ bool OpenPGPSDKHandler::getGPGDetailsFromBinaryBlock(const unsigned char *mem_bl
 		ops_memory_release(mem) ;
 		free(mem) ;
 
-		std::cerr << "Could not read key. Format error?" << std::endl;
+        RsErr() << "Could not read key. Format error?" ;
 		//error_string = std::string("Could not read key. Format error?") ;
 		return false ;
 	}
@@ -714,12 +714,12 @@ bool OpenPGPSDKHandler::getGPGDetailsFromBinaryBlock(const unsigned char *mem_bl
 
 	if(tmp_keyring->nkeys != 1)
 	{
-		std::cerr << "No or incomplete/invalid key in supplied pgp block." << std::endl;
+        RsErr() << "No or incomplete/invalid key in supplied pgp block." ;
 		return false ;
 	}
 	if(tmp_keyring->keys[0].uids == NULL)
 	{
-		std::cerr << "No uid in supplied key." << std::endl;
+        RsErr() << "No uid in supplied key." ;
 		return false ;
 	}
 
@@ -737,14 +737,14 @@ bool OpenPGPSDKHandler::getGPGDetailsFromBinaryBlock(const unsigned char *mem_bl
 	}
 
 	if(res == ops_false)
-        std::cerr << "(WW) Error in OpenPGPSDKHandler::validateAndUpdateSignatures(). Validation failed for at least some signatures." << std::endl;
+        RsErr() << "(WW) Error in OpenPGPSDKHandler::validateAndUpdateSignatures(). Validation failed for at least some signatures." ;
 
 	// also add self-signature if any (there should be!).
 	//
 	res = ops_validate_key_signatures(result,&tmp_keyring->keys[0],tmp_keyring,cb_get_passphrase) ;
 
 	if(res == ops_false)
-        std::cerr << "(WW) Error in OpenPGPSDKHandler::validateAndUpdateSignatures(). Validation failed for at least some signatures." << std::endl;
+        RsErr() << "(WW) Error in OpenPGPSDKHandler::validateAndUpdateSignatures(). Validation failed for at least some signatures." ;
 
 	// Parse signers.
 	//
@@ -846,7 +846,7 @@ bool OpenPGPSDKHandler::checkAndImportKeyPair(ops_keyring_t *tmp_keyring, RsPgpI
 	else
 	{
 		import_error = "Unrecognised key type in key file for key #0. Giving up." ;
-		std::cerr << "Unrecognised key type " << tmp_keyring->keys[0].type << " in key file for key #0. Giving up." << std::endl;
+        RsErr() << "Unrecognised key type " << tmp_keyring->keys[0].type << " in key file for key #0. Giving up." ;
 		return false ;
 	}
 	if(tmp_keyring->keys[1].type == OPS_PTAG_CT_PUBLIC_KEY) 
@@ -856,7 +856,7 @@ bool OpenPGPSDKHandler::checkAndImportKeyPair(ops_keyring_t *tmp_keyring, RsPgpI
 	else
 	{
 		import_error = "Unrecognised key type in key file for key #1. Giving up." ;
-		std::cerr << "Unrecognised key type " << tmp_keyring->keys[1].type << " in key file for key #1. Giving up." << std::endl;
+        RsErr() << "Unrecognised key type " << tmp_keyring->keys[1].type << " in key file for key #1. Giving up." ;
 		return false ;
 	}
 
@@ -1003,7 +1003,7 @@ bool OpenPGPSDKHandler::LoadCertificate(const unsigned char *data,uint32_t data_
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 #ifdef DEBUG_PGPHANDLER
-	std::cerr << "Reading new key from string: " << std::endl;
+    RsErr() << "Reading new key from string: " ;
 #endif
 
 	ops_keyring_t *tmp_keyring = allocateOPSKeyring();
@@ -1017,7 +1017,7 @@ bool OpenPGPSDKHandler::LoadCertificate(const unsigned char *data,uint32_t data_
 		ops_memory_release(mem) ;
 		free(mem) ;
 
-		std::cerr << "Could not read key. Format error?" << std::endl;
+        RsErr() << "Could not read key. Format error?" ;
 		error_string = std::string("Could not read key. Format error?") ;
 		return false ;
 	}
@@ -1029,7 +1029,7 @@ bool OpenPGPSDKHandler::LoadCertificate(const unsigned char *data,uint32_t data_
 	//
 	if(tmp_keyring->nkeys != 1)
 	{
-		std::cerr << "Loaded certificate contains more than one PGP key. This is not allowed." << std::endl;
+        RsErr() << "Loaded certificate contains more than one PGP key. This is not allowed." ;
 		error_string = "Loaded certificate contains more than one PGP key. This is not allowed." ;
 		return false ;
 	}
@@ -1041,7 +1041,7 @@ bool OpenPGPSDKHandler::LoadCertificate(const unsigned char *data,uint32_t data_
 	if(keydata->key.pkey.version != 4)
 	{
 		error_string = "Public key is not version 4. Rejected!" ;
-		std::cerr << "Received a key with unhandled version number (" << keydata->key.pkey.version << ")" << std::endl;
+        RsErr() << "Received a key with unhandled version number (" << keydata->key.pkey.version << ")" ;
 		return false ;
 	}
 
@@ -1066,14 +1066,14 @@ bool OpenPGPSDKHandler::LoadCertificate(const unsigned char *data,uint32_t data_
 	if(!found)
 	{
 		error_string = "This key is not self-signed. This is required by Retroshare." ;
-		std::cerr <<   "This key is not self-signed. This is required by Retroshare." << std::endl;
+        RsErr() <<   "This key is not self-signed. This is required by Retroshare." ;
 		ops_validate_result_free(result);
 		return false ;
 	}
 	ops_validate_result_free(result);
 
 #ifdef DEBUG_PGPHANDLER
-	std::cerr << "  Key read correctly: " << std::endl;
+    RsErr() << "  Key read correctly: " ;
 	ops_keyring_list(tmp_keyring) ;
 #endif
 
@@ -1084,11 +1084,11 @@ bool OpenPGPSDKHandler::LoadCertificate(const unsigned char *data,uint32_t data_
 		{
 			_pubring_changed = true ;
 #ifdef DEBUG_PGPHANDLER
-			std::cerr << "  Added the key in the main public keyring." << std::endl;
+            RsErr() << "  Added the key in the main public keyring." ;
 #endif
 		}
 		else
-			std::cerr << "Key already in public keyring." << std::endl;
+            RsErr() << "Key already in public keyring." ;
 	
 	if(tmp_keyring->nkeys > 0)
 		id = RsPgpId(tmp_keyring->keys[0].key_id) ;
@@ -1109,8 +1109,8 @@ bool OpenPGPSDKHandler::locked_addOrMergeKey(ops_keyring_t *keyring,std::map<RsP
 	RsPgpId id(keydata->key_id) ;
 
 #ifdef DEBUG_PGPHANDLER
-	std::cerr << "AddOrMergeKey():" << std::endl;
-	std::cerr << "  id: " << id.toStdString() << std::endl;
+    RsErr() << "AddOrMergeKey():" ;
+    RsErr() << "  id: " << id.toStdString() ;
 #endif
 
 	// See if the key is already in the keyring
@@ -1125,7 +1125,7 @@ bool OpenPGPSDKHandler::locked_addOrMergeKey(ops_keyring_t *keyring,std::map<RsP
 	if(res == kmap.end() || (existing_key = ops_keyring_get_key_by_index(keyring,res->second._key_index)) == NULL)
 	{
 #ifdef DEBUG_PGPHANDLER
-		std::cerr << "  Key is new. Adding it to keyring" << std::endl;
+        RsErr() << "  Key is new. Adding it to keyring" ;
 #endif
 		addNewKeyToOPSKeyring(keyring,*keydata) ; // the key is new.
 		initCertificateInfo(kmap[id],keydata,keyring->nkeys-1) ;
@@ -1138,12 +1138,12 @@ bool OpenPGPSDKHandler::locked_addOrMergeKey(ops_keyring_t *keyring,std::map<RsP
 		           keydata->fingerprint.fingerprint,
 		           RsPgpFingerprint::SIZE_IN_BYTES ))
 		{
-			std::cerr << "(EE) attempt to merge key with identical id, but different fingerprint!" << std::endl;
+            RsErr() << "(EE) attempt to merge key with identical id, but different fingerprint!" ;
 			return false ;
 		}
 
 #ifdef DEBUG_PGPHANDLER
-		std::cerr << "  Key exists. Merging signatures." << std::endl;
+        RsErr() << "  Key exists. Merging signatures." ;
 #endif
 		ret = mergeKeySignatures(const_cast<ops_keydata_t*>(existing_key),keydata) ;
 
@@ -1168,13 +1168,13 @@ bool OpenPGPSDKHandler::encryptTextToFile(const RsPgpId& key_id,const std::strin
 
 	if(public_key == NULL)
 	{
-		std::cerr << "Cannot get public key of id " << key_id.toStdString() << std::endl;
+        RsErr() << "Cannot get public key of id " << key_id.toStdString() ;
 		return false ;
 	}
 
 	if(public_key->type != OPS_PTAG_CT_PUBLIC_KEY)
 	{
-        std::cerr << "OpenPGPSDKHandler::encryptTextToFile(): ERROR: supplied id did not return a public key!" << std::endl;
+        RsErr() << "OpenPGPSDKHandler::encryptTextToFile(): ERROR: supplied id did not return a public key!" ;
 		return false ;
 	}
 
@@ -1185,13 +1185,13 @@ bool OpenPGPSDKHandler::encryptTextToFile(const RsPgpId& key_id,const std::strin
 
 	if (fd < 0)
 	{
-        std::cerr << "OpenPGPSDKHandler::encryptTextToFile(): ERROR: Cannot write to " << outfile_tmp << std::endl;
+        RsErr() << "OpenPGPSDKHandler::encryptTextToFile(): ERROR: Cannot write to " << outfile_tmp ;
 		return false ;
 	}
 
 	if(!ops_encrypt_stream(info, public_key, NULL, ops_false, ops_true))
 	{
-        std::cerr << "OpenPGPSDKHandler::encryptTextToFile(): ERROR: encryption failed." << std::endl;
+        RsErr() << "OpenPGPSDKHandler::encryptTextToFile(): ERROR: encryption failed." ;
 		return false ;
 	}
 
@@ -1200,7 +1200,7 @@ bool OpenPGPSDKHandler::encryptTextToFile(const RsPgpId& key_id,const std::strin
 
 	if(!RsDirUtil::renameFile(outfile_tmp,outfile))
 	{
-        std::cerr << "OpenPGPSDKHandler::encryptTextToFile(): ERROR: Cannot rename " + outfile_tmp + " to " + outfile + ". Disk error?" << std::endl;
+        RsErr() << "OpenPGPSDKHandler::encryptTextToFile(): ERROR: Cannot rename " + outfile_tmp + " to " + outfile + ". Disk error?" ;
 		return false ;
 	}
 
@@ -1215,18 +1215,18 @@ bool OpenPGPSDKHandler::encryptDataBin(const RsPgpId& key_id,const void *data, c
 
 	if(public_key == NULL)
 	{
-		std::cerr << "Cannot get public key of id " << key_id.toStdString() << std::endl;
+        RsErr() << "Cannot get public key of id " << key_id.toStdString() ;
 		return false ;
 	}
 
 	if(public_key->type != OPS_PTAG_CT_PUBLIC_KEY)
 	{
-        std::cerr << "OpenPGPSDKHandler::encryptTextToFile(): ERROR: supplied id did not return a public key!" << std::endl;
+        RsErr() << "OpenPGPSDKHandler::encryptTextToFile(): ERROR: supplied id did not return a public key!" ;
 		return false ;
 	}
 	if(public_key->key.pkey.algorithm != OPS_PKA_RSA)
 	{
-        std::cerr << "OpenPGPSDKHandler::encryptTextToFile(): ERROR: supplied key id " << key_id.toStdString() << " is not an RSA key (DSA for instance, is not supported)!" << std::endl;
+        RsErr() << "OpenPGPSDKHandler::encryptTextToFile(): ERROR: supplied key id " << key_id.toStdString() << " is not an RSA key (DSA for instance, is not supported)!" ;
 		return false ;
 	}
 	ops_create_info_t *info;
@@ -1236,7 +1236,7 @@ bool OpenPGPSDKHandler::encryptDataBin(const RsPgpId& key_id,const void *data, c
 
 	if(!ops_encrypt_stream(info, public_key, NULL, ops_false, ops_false))
 	{
-		std::cerr << "Encryption failed." << std::endl;
+        RsErr() << "Encryption failed." ;
 		res = false ;
 	}
 
@@ -1257,7 +1257,7 @@ bool OpenPGPSDKHandler::encryptDataBin(const RsPgpId& key_id,const void *data, c
 	}
 	else
 	{
-		std::cerr << "Not enough room to fit encrypted data. Size given=" << *encrypted_data_len << ", required=" << tlen << std::endl;
+        RsErr() << "Not enough room to fit encrypted data. Size given=" << *encrypted_data_len << ", required=" << tlen ;
 		res = false ;
 	}
 
@@ -1275,7 +1275,7 @@ bool OpenPGPSDKHandler::decryptDataBin(const RsPgpId& /*key_id*/,const void *enc
 
 	if(*data_len < (unsigned int)out_length)
 	{
-		std::cerr << "Not enough room to store decrypted data! Please give more."<< std::endl;
+        RsErr() << "Not enough room to store decrypted data! Please give more.";
 		return false ;
 	}
 
@@ -1297,7 +1297,7 @@ bool OpenPGPSDKHandler::decryptTextFromFile(const RsPgpId&,std::string& text,con
 
 	if (f == NULL)
 	{
-        std::cerr << "Cannot open file " << inputfile << " for read." << std::endl;
+        RsErr() << "Cannot open file " << inputfile << " for read." ;
 		return false;
 	}
 
@@ -1308,8 +1308,8 @@ bool OpenPGPSDKHandler::decryptTextFromFile(const RsPgpId&,std::string& text,con
 	fclose(f) ;
 
 #ifdef DEBUG_PGPHANDLER
-    std::cerr << "OpenPGPSDKHandler::decryptTextFromFile: read a file of length " << std::dec << buf.length() << std::endl;
-	std::cerr << "buf=\"" << buf << "\"" << std::endl;
+    RsErr() << "OpenPGPSDKHandler::decryptTextFromFile: read a file of length " << std::dec << buf.length() ;
+    RsErr() << "buf=\"" << buf << "\"" ;
 #endif
 
 	int out_length ;
@@ -1329,7 +1329,7 @@ bool OpenPGPSDKHandler::SignDataBin(const RsPgpId& id,const void *data, const ui
 
 	if(!key)
 	{
-		std::cerr << "Cannot sign: no secret key with id " << id.toStdString() << std::endl;
+        RsErr() << "Cannot sign: no secret key with id " << id.toStdString() ;
 		return false ;
 	}
 
@@ -1357,18 +1357,18 @@ ops_secret_key_t *secret_key = NULL ;
 
         if(cancelled)
         {
-            std::cerr << "Key entering cancelled" << std::endl;
+            RsErr() << "Key entering cancelled" ;
             return false ;
         }
         if(secret_key)
             break ;
 
-        std::cerr << "Key decryption went wrong. Wrong passwd?" << std::endl;
+        RsErr() << "Key decryption went wrong. Wrong passwd?" ;
         last_passwd_was_wrong = true ;
     }
     if(!secret_key)
     {
-        std::cerr << "Could not obtain secret key. Signature cancelled." << std::endl;
+        RsErr() << "Could not obtain secret key. Signature cancelled." ;
         return false ;
     }
 
@@ -1396,7 +1396,7 @@ ops_secret_key_t *secret_key = NULL ;
 	}
 	else
 	{
-		std::cerr << "(EE) memory chunk is not large enough for signature packet. Requred size: " << slen << " bytes." << std::endl;
+        RsErr() << "(EE) memory chunk is not large enough for signature packet. Requred size: " << slen << " bytes." ;
 		res = false ;
 	}
 
@@ -1406,13 +1406,13 @@ ops_secret_key_t *secret_key = NULL ;
 	free(secret_key) ;
 
 #ifdef DEBUG_PGPHANDLER
-	std::cerr << "Signed with fingerprint " << fp.toStdString() << ", length " << std::dec << *signlen << ", literal data length = " << len << std::endl;
-	std::cerr << "Signature body: " << std::endl;
+    RsErr() << "Signed with fingerprint " << fp.toStdString() << ", length " << std::dec << *signlen << ", literal data length = " << len ;
+    RsErr() << "Signature body: " ;
 	hexdump( (unsigned char *)data,     len) ;
-	std::cerr << std::endl;
-	std::cerr << "Data: " << std::endl;
+    RsErr() ;
+    RsErr() << "Data: " ;
 	hexdump( (unsigned char *)sign,*signlen) ;
-	std::cerr << std::endl;
+    RsErr() ;
 #endif
 	return res ;
 }
@@ -1425,7 +1425,7 @@ bool OpenPGPSDKHandler::privateSignCertificate(const RsPgpId& ownId,const RsPgpI
 
 	if(key_to_sign == NULL)
 	{
-		std::cerr << "Cannot sign: no public key with id " << id_of_key_to_sign.toStdString() << std::endl;
+        RsErr() << "Cannot sign: no public key with id " << id_of_key_to_sign.toStdString() ;
 		return false ;
 	}
 
@@ -1435,14 +1435,14 @@ bool OpenPGPSDKHandler::privateSignCertificate(const RsPgpId& ownId,const RsPgpI
 
 	if(!skey)
 	{
-		std::cerr << "Cannot sign: no secret key with id " << ownId.toStdString() << std::endl;
+        RsErr() << "Cannot sign: no secret key with id " << ownId.toStdString() ;
 		return false ;
 	}
 	const ops_keydata_t *pkey = locked_getPublicKey(ownId,true) ;
 
 	if(!pkey)
 	{
-		std::cerr << "Cannot sign: no public key with id " << ownId.toStdString() << std::endl;
+        RsErr() << "Cannot sign: no public key with id " << ownId.toStdString() ;
 		return false ;
 	}
 
@@ -1453,12 +1453,12 @@ bool OpenPGPSDKHandler::privateSignCertificate(const RsPgpId& ownId,const RsPgpI
 
     if(cancelled)
     {
-        std::cerr << "Key cancelled by used." << std::endl;
+        RsErr() << "Key cancelled by used." ;
         return false ;
     }
     if(!secret_key)
 	{
-		std::cerr << "Key decryption went wrong. Wrong passwd?" << std::endl;
+        RsErr() << "Key decryption went wrong. Wrong passwd?" ;
 		return false ;
 	}
 
@@ -1466,7 +1466,7 @@ bool OpenPGPSDKHandler::privateSignCertificate(const RsPgpId& ownId,const RsPgpI
 
 	if(!ops_sign_key(key_to_sign,pkey->key_id,secret_key)) 
 	{
-		std::cerr << "Key signature went wrong. Wrong passwd?" << std::endl;
+        RsErr() << "Key signature went wrong. Wrong passwd?" ;
 		return false ;
 	}
 
@@ -1511,7 +1511,7 @@ bool OpenPGPSDKHandler::VerifySignBin(const void *literal_data, uint32_t literal
 
 	if(key == NULL)
 	{
-		std::cerr << "No key returned by fingerprint " << key_fingerprint.toStdString() << ", and ID " << id.toStdString() << ", signature verification failed!" << std::endl;
+        RsErr() << "No key returned by fingerprint " << key_fingerprint.toStdString() << ", and ID " << id.toStdString() << ", signature verification failed!" ;
 		return false ;
 	}
 
@@ -1522,18 +1522,18 @@ bool OpenPGPSDKHandler::VerifySignBin(const void *literal_data, uint32_t literal
 
 	if(key_fingerprint != PGPFingerprintType(fp.fingerprint))
 	{
-		std::cerr << "Key fingerprint does not match " << key_fingerprint.toStdString() << ", for ID " << id.toStdString() << ", signature verification failed!" << std::endl;
+        RsErr() << "Key fingerprint does not match " << key_fingerprint.toStdString() << ", for ID " << id.toStdString() << ", signature verification failed!" ;
 		return false ;
 	}
 
 #ifdef DEBUG_PGPHANDLER
-	std::cerr << "Verifying signature from fingerprint " << key_fingerprint.toStdString() << ", length " << std::dec << sign_len << ", literal data length = " << literal_data_length << std::endl;
-	std::cerr << "Signature body: " << std::endl;
+    RsErr() << "Verifying signature from fingerprint " << key_fingerprint.toStdString() << ", length " << std::dec << sign_len << ", literal data length = " << literal_data_length ;
+    RsErr() << "Signature body: " ;
 	hexdump( (unsigned char *)sign,sign_len) ;
-	std::cerr << std::endl;
-	std::cerr << "Signed data: " << std::endl;
+    RsErr() ;
+    RsErr() << "Signed data: " ;
 	hexdump( (unsigned char *)literal_data,     literal_data_length) ;
-	std::cerr << std::endl;
+    RsErr() ;
 #endif
 
 	return ops_validate_detached_signature(literal_data,literal_data_length,sign,sign_len,key) ;
@@ -1563,7 +1563,7 @@ bool OpenPGPSDKHandler::mergeKeySignatures(ops_keydata_t *dst,const ops_keydata_
 	// First sort all signatures into lists to see which is new, which is not new
 
 #ifdef DEBUG_PGPHANDLER
-	std::cerr << "Merging signatures for key " << RsPgpId(dst->key_id).toStdString() << std::endl;
+    RsErr() << "Merging signatures for key " << RsPgpId(dst->key_id).toStdString() ;
 #endif
 	std::set<ops_packet_t> dst_packets ;
 
@@ -1584,14 +1584,14 @@ bool OpenPGPSDKHandler::mergeKeySignatures(ops_keydata_t *dst,const ops_keydata_
 				to_add.insert(src->packets[i]) ;
 #ifdef DEBUG_PGPHANDLER
 			else
-				std::cerr << "  Packet with tag 0x" << std::hex << (int)(src->packets[i].raw[0]) << std::dec << " not merged, because it is not a signature." << std::endl;
+                RsErr() << "  Packet with tag 0x" << std::hex << (int)(src->packets[i].raw[0]) << std::dec << " not merged, because it is not a signature." ;
 #endif
 		}
 
 	for(std::set<ops_packet_t>::const_iterator it(to_add.begin());it!=to_add.end();++it)
 	{
 #ifdef DEBUG_PGPHANDLER
-		std::cerr << "  Adding packet with tag 0x" << std::hex << (int)(*it).raw[0] << std::dec << std::endl;
+        RsErr() << "  Adding packet with tag 0x" << std::hex << (int)(*it).raw[0] << std::dec ;
 #endif
 		ops_add_packet_to_keydata(dst,&*it) ;
 	}
@@ -1604,7 +1604,7 @@ bool OpenPGPSDKHandler::syncDatabase()
 	RsStackFileLock flck(_pgp_lock_filename) ;	// lock access to PGP directory.
 
 #ifdef DEBUG_PGPHANDLER
-	std::cerr << "Sync-ing keyrings." << std::endl;
+    RsErr() << "Sync-ing keyrings." ;
 #endif
 	locked_syncPublicKeyring() ;
 	//locked_syncSecretKeyring() ;
@@ -1614,7 +1614,7 @@ bool OpenPGPSDKHandler::syncDatabase()
 	locked_syncTrustDatabase() ;
 
 #ifdef DEBUG_PGPHANDLER
-	std::cerr << "Done. " << std::endl;
+    RsErr() << "Done. " ;
 #endif
 	return true ;
 }
@@ -1629,11 +1629,11 @@ bool OpenPGPSDKHandler::locked_syncPublicKeyring()
 #else
 	if(-1 == stat64(_pubring_path.c_str(), &buf))
 #endif
-        std::cerr << "OpenPGPSDKHandler::syncDatabase(): can't stat file " << _pubring_path << ". Can't sync public keyring." << std::endl;
+        RsErr() << "OpenPGPSDKHandler::syncDatabase(): can't stat file " << _pubring_path << ". Can't sync public keyring." ;
 
 	if(_pubring_last_update_time < buf.st_mtime)
 	{
-		std::cerr << "Detected change on disk of public keyring. Merging!" << std::endl ;
+        RsErr() << "Detected change on disk of public keyring. Merging!" << std::endl ;
 
 		locked_mergeKeyringFromDisk(_pubring,_public_keyring_map,_pubring_path) ;
 		_pubring_last_update_time = buf.st_mtime ;
@@ -1644,19 +1644,19 @@ bool OpenPGPSDKHandler::locked_syncPublicKeyring()
 	{
 		std::string tmp_keyring_file = _pubring_path + ".tmp" ;
 
-		std::cerr << "Local changes in public keyring. Writing to disk..." << std::endl;
+        RsErr() << "Local changes in public keyring. Writing to disk..." ;
 		if(!ops_write_keyring_to_file(_pubring,ops_false,tmp_keyring_file.c_str(),ops_true)) 
 		{
-			std::cerr << "Cannot write public keyring tmp file. Disk full? Disk quota exceeded?" << std::endl;
+            RsErr() << "Cannot write public keyring tmp file. Disk full? Disk quota exceeded?" ;
 			return false ;
 		}
 		if(!RsDirUtil::renameFile(tmp_keyring_file,_pubring_path))
 		{
-			std::cerr << "Cannot rename tmp pubring file " << tmp_keyring_file << " into actual pubring file " << _pubring_path << ". Check writing permissions?!?" << std::endl;
+            RsErr() << "Cannot rename tmp pubring file " << tmp_keyring_file << " into actual pubring file " << _pubring_path << ". Check writing permissions?!?" ;
 			return false ;
 		}
 
-		std::cerr << "Done." << std::endl;
+        RsErr() << "Done." ;
 		_pubring_last_update_time = time(NULL) ;	// should we get this value from the disk instead??
 		_pubring_changed = false ;
 	}
@@ -1668,7 +1668,7 @@ void OpenPGPSDKHandler::locked_mergeKeyringFromDisk(ops_keyring_t *keyring,
 													const std::string& keyring_file)
 {
 #ifdef DEBUG_PGPHANDLER
-	std::cerr << "Merging keyring " << keyring_file << " from disk to memory." << std::endl;
+    RsErr() << "Merging keyring " << keyring_file << " from disk to memory." ;
 #endif
 
 	// 1 - load keyring into a temporary keyring list.
@@ -1676,7 +1676,7 @@ void OpenPGPSDKHandler::locked_mergeKeyringFromDisk(ops_keyring_t *keyring,
 
 	if(ops_false == ops_keyring_read_from_file(tmp_keyring, false, keyring_file.c_str()))
 	{
-        std::cerr << "OpenPGPSDKHandler::locked_mergeKeyringFromDisk(): cannot read keyring. File corrupted?" ;
+        RsErr() << "OpenPGPSDKHandler::locked_mergeKeyringFromDisk(): cannot read keyring. File corrupted?" ;
 		ops_keyring_free(tmp_keyring) ;
 		return ;
 	}
@@ -1702,7 +1702,7 @@ bool OpenPGPSDKHandler::removeKeysFromPGPKeyring(const std::set<RsPgpId>& keys_t
     for(std::set<RsPgpId>::const_iterator it(keys_to_remove.begin());it!=keys_to_remove.end();++it)
 		if(locked_getSecretKey(*it) != NULL)
 		{
-            std::cerr << "(EE) OpenPGPSDKHandler:: can't remove key " << (*it).toStdString() << " since its shared by a secret key! Operation cancelled." << std::endl;
+            RsErr() << "(EE) OpenPGPSDKHandler:: can't remove key " << (*it).toStdString() << " since its shared by a secret key! Operation cancelled." ;
 			error_code = PGP_KEYRING_REMOVAL_ERROR_CANT_REMOVE_SECRET_KEYS ;
 			return false ;
 		}
@@ -1723,7 +1723,7 @@ bool OpenPGPSDKHandler::removeKeysFromPGPKeyring(const std::set<RsPgpId>& keys_t
 	if(mktemp(template_name) == NULL)
 #endif
 	{
-        std::cerr << "OpenPGPSDKHandler::removeKeysFromPGPKeyring(): cannot create keyring backup file. Giving up." << std::endl;
+        RsErr() << "OpenPGPSDKHandler::removeKeysFromPGPKeyring(): cannot create keyring backup file. Giving up." ;
 		error_code = PGP_KEYRING_REMOVAL_ERROR_CANNOT_CREATE_BACKUP ;
 		return false ;
 	}
@@ -1733,13 +1733,13 @@ bool OpenPGPSDKHandler::removeKeysFromPGPKeyring(const std::set<RsPgpId>& keys_t
 
 	if(!ops_write_keyring_to_file(_pubring,ops_false,template_name,ops_true)) 
 	{
-        std::cerr << "OpenPGPSDKHandler::removeKeysFromPGPKeyring(): cannot write keyring backup file. Giving up." << std::endl;
+        RsErr() << "OpenPGPSDKHandler::removeKeysFromPGPKeyring(): cannot write keyring backup file. Giving up." ;
 		error_code = PGP_KEYRING_REMOVAL_ERROR_CANNOT_WRITE_BACKUP ;
 		return false ;
 	}
 	backup_file = std::string(template_name,_pubring_path.length()+7) ;
 
-	std::cerr << "Keyring was backed up to file " << backup_file << std::endl;
+    RsErr() << "Keyring was backed up to file " << backup_file ;
 
 	// Remove keys from the keyring, and update the keyring map.
 	//
@@ -1747,7 +1747,7 @@ bool OpenPGPSDKHandler::removeKeysFromPGPKeyring(const std::set<RsPgpId>& keys_t
 	{
 		if(locked_getSecretKey(*it) != NULL)
 		{
-            std::cerr << "(EE) OpenPGPSDKHandler:: can't remove key " << (*it).toStdString() << " since its shared by a secret key!" << std::endl;
+            RsErr() << "(EE) OpenPGPSDKHandler:: can't remove key " << (*it).toStdString() << " since its shared by a secret key!" ;
 			continue ;
 		}
 
@@ -1755,13 +1755,13 @@ bool OpenPGPSDKHandler::removeKeysFromPGPKeyring(const std::set<RsPgpId>& keys_t
 
 		if(res == _public_keyring_map.end())
 		{
-            std::cerr << "(EE) OpenPGPSDKHandler:: can't remove key " << (*it).toStdString() << " from keyring: key not found." << std::endl;
+            RsErr() << "(EE) OpenPGPSDKHandler:: can't remove key " << (*it).toStdString() << " from keyring: key not found." ;
 			continue ;
 		}
 
 		if(res->second._key_index >= (unsigned int)_pubring->nkeys || RsPgpId(_pubring->keys[res->second._key_index].key_id) != *it)
 		{
-            std::cerr << "(EE) OpenPGPSDKHandler:: can't remove key " << (*it).toStdString() << ". Inconsistency found." << std::endl;
+            RsErr() << "(EE) OpenPGPSDKHandler:: can't remove key " << (*it).toStdString() << ". Inconsistency found." ;
 			error_code = PGP_KEYRING_REMOVAL_ERROR_DATA_INCONSISTENCY ;
 			return false ;
 		}

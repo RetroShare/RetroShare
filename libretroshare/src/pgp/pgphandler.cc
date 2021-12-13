@@ -67,33 +67,33 @@ PGPHandler::~PGPHandler()
 bool PGPHandler::printKeys() const
 {
 #ifdef DEBUG_PGPHANDLER
-	std::cerr << "Printing details of all " << std::dec << _public_keyring_map.size() << " keys: " << std::endl;
+    RsErr() << "Printing details of all " << std::dec << _public_keyring_map.size() << " keys: " ;
 #endif
 
 	for(std::map<RsPgpId,PGPCertificateInfo>::const_iterator it(_public_keyring_map.begin()); it != _public_keyring_map.end(); ++it)
 	{
-		std::cerr << "PGP Key: " << it->first.toStdString() << std::endl;
+        RsErr() << "PGP Key: " << it->first.toStdString() ;
 
-		std::cerr << "\tName          : " <<  it->second._name << std::endl;
-		std::cerr << "\tEmail         : " <<  it->second._email << std::endl;
-		std::cerr << "\tOwnSign       : " << (it->second._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE) << std::endl;
-		std::cerr << "\tAccept Connect: " << (it->second._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_ACCEPT_CONNEXION) << std::endl;
-		std::cerr << "\ttrustLvl      : " <<  it->second._trustLvl << std::endl;
-		std::cerr << "\tvalidLvl      : " <<  it->second._validLvl << std::endl;
-		std::cerr << "\tUse time stamp: " <<  it->second._time_stamp << std::endl;
-		std::cerr << "\tfingerprint   : " <<  it->second._fpr.toStdString() << std::endl;
-		std::cerr << "\tSigners       : " << it->second.signers.size() <<  std::endl;
+        RsErr() << "\tName          : " <<  it->second._name ;
+        RsErr() << "\tEmail         : " <<  it->second._email ;
+        RsErr() << "\tOwnSign       : " << (it->second._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE) ;
+        RsErr() << "\tAccept Connect: " << (it->second._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_ACCEPT_CONNEXION) ;
+        RsErr() << "\ttrustLvl      : " <<  it->second._trustLvl ;
+        RsErr() << "\tvalidLvl      : " <<  it->second._validLvl ;
+        RsErr() << "\tUse time stamp: " <<  it->second._time_stamp ;
+        RsErr() << "\tfingerprint   : " <<  it->second._fpr.toStdString() ;
+        RsErr() << "\tSigners       : " << it->second.signers.size() ;
 
 		std::set<RsPgpId>::const_iterator sit;
 		for(sit = it->second.signers.begin(); sit != it->second.signers.end(); ++sit)
 		{
-			std::cerr << "\t\tSigner ID:" << (*sit).toStdString() << ", Name: " ;
+            RsErr() << "\t\tSigner ID:" << (*sit).toStdString() << ", Name: " ;
 			const PGPCertificateInfo *info = PGPHandler::getCertificateInfo(*sit) ;
 
 			if(info != NULL)
-				std::cerr << info->_name ;
+                RsErr() << info->_name ;
 
-			std::cerr << std::endl ;
+            RsErr() << std::endl ;
 		}
 	}
 	return true ;
@@ -117,7 +117,7 @@ void PGPHandler::updateOwnSignatureFlag(const RsPgpId& own_id)
 
     if(_public_keyring_map.find(own_id)==_public_keyring_map.end())
     {
-        std::cerr << __func__ << ": key with id=" << own_id.toStdString() << " not in keyring." << std::endl;
+        RsErr() << __func__ << ": key with id=" << own_id.toStdString() << " not in keyring." ;
         // return now, because the following operation would add an entry to _public_keyring_map
         return;
     }
@@ -135,7 +135,7 @@ void PGPHandler::updateOwnSignatureFlag(const RsPgpId& cert_id,const RsPgpId& ow
 
 	if(it == _public_keyring_map.end())
 	{
-		std::cerr << "updateOwnSignatureFlag: Cannot get certificate for string " << cert_id.toStdString() << ". This is probably a bug." << std::endl; 
+        RsErr() << "updateOwnSignatureFlag: Cannot get certificate for string " << cert_id.toStdString() << ". This is probably a bug." ;
 		return ;
 	}
 
@@ -234,7 +234,7 @@ bool PGPHandler::privateTrustCertificate(const RsPgpId& id,int trustlvl)
 {
 	if(trustlvl < 0 || trustlvl >= 6 || trustlvl == 1)
 	{
-		std::cerr << "Invalid trust level " << trustlvl << " passed to privateTrustCertificate." << std::endl;
+        RsErr() << "Invalid trust level " << trustlvl << " passed to privateTrustCertificate." ;
 		return false ;
 	}
 
@@ -242,7 +242,7 @@ bool PGPHandler::privateTrustCertificate(const RsPgpId& id,int trustlvl)
 
 	if(it == _public_keyring_map.end())
 	{
-		std::cerr << "(EE) Key id " << id.toStdString() << " not in the keyring. Can't setup trust level." << std::endl;
+        RsErr() << "(EE) Key id " << id.toStdString() << " not in the keyring. Can't setup trust level." ;
 		return false ;
 	}
 
@@ -266,12 +266,12 @@ void PGPHandler::locked_readPrivateTrustDatabase()
 {
 	FILE *fdb = RsDirUtil::rs_fopen(_trustdb_path.c_str(),"rb") ;
 #ifdef DEBUG_PGPHANDLER
-	std::cerr << "PGPHandler:  Reading private trust database." << std::endl;
+    RsErr() << "PGPHandler:  Reading private trust database." ;
 #endif
 
 	if(fdb == NULL)
 	{
-		std::cerr << "  private trust database not found. No trust info loaded." << std::endl ;
+        RsErr() << "  private trust database not found. No trust info loaded." << std::endl ;
 		return ;
 	}
 	std::map<RsPgpId,PGPCertificateInfo>::iterator it ;
@@ -284,12 +284,12 @@ void PGPHandler::locked_readPrivateTrustDatabase()
 
 		if(it == _public_keyring_map.end())
 		{
-			std::cerr << "  (WW) Trust packet found for unknown key id " << RsPgpId(trustpacket.user_id).toStdString() << std::endl;
+            RsErr() << "  (WW) Trust packet found for unknown key id " << RsPgpId(trustpacket.user_id).toStdString() ;
 			continue ;
 		}
 		if(trustpacket.trust_level > 6)
 		{
-			std::cerr << "  (WW) Trust packet found with unexpected trust level " << trustpacket.trust_level << std::endl;
+            RsErr() << "  (WW) Trust packet found with unexpected trust level " << trustpacket.trust_level ;
 			continue ;
 		}
 		
@@ -302,19 +302,19 @@ void PGPHandler::locked_readPrivateTrustDatabase()
 
 	fclose(fdb) ;
 
-	std::cerr << "PGPHandler: Successfully read " << std::hex << n_packets << std::dec << " trust packets." << std::endl;
+    RsErr() << "PGPHandler: Successfully read " << std::hex << n_packets << std::dec << " trust packets." ;
 }
 
 bool PGPHandler::locked_writePrivateTrustDatabase()
 {
 	FILE *fdb = RsDirUtil::rs_fopen((_trustdb_path+".tmp").c_str(),"wb") ;
 #ifdef DEBUG_PGPHANDLER
-	std::cerr << "PGPHandler:  Reading private trust database." << std::endl;
+    RsErr() << "PGPHandler:  Reading private trust database." ;
 #endif
 
 	if(fdb == NULL)
 	{
-		std::cerr << "  (EE) Can't open private trust database file " << _trustdb_path << " for write. Giving up!" << std::endl ;
+        RsErr() << "  (EE) Can't open private trust database file " << _trustdb_path << " for write. Giving up!" << std::endl ;
 		return false;
 	}
 	PrivateTrustPacket trustpacket ;
@@ -332,7 +332,7 @@ bool PGPHandler::locked_writePrivateTrustDatabase()
 
 		if(fwrite((void*)&trustpacket,sizeof(PrivateTrustPacket),1,fdb) != 1)
 		{
-			std::cerr << "  (EE) Cannot write to trust database " << _trustdb_path << ". Disc full, or quota exceeded ? Leaving database untouched." << std::endl;
+            RsErr() << "  (EE) Cannot write to trust database " << _trustdb_path << ". Disc full, or quota exceeded ? Leaving database untouched." ;
 			fclose(fdb) ;
 			return false;
 		}
@@ -342,7 +342,7 @@ bool PGPHandler::locked_writePrivateTrustDatabase()
 
 	if(!RsDirUtil::renameFile(_trustdb_path+".tmp",_trustdb_path))
 	{
-		std::cerr << "  (EE) Cannot move temp file " << _trustdb_path+".tmp" << ". Bad write permissions?" << std::endl;
+        RsErr() << "  (EE) Cannot move temp file " << _trustdb_path+".tmp" << ". Bad write permissions?" ;
 		return false ;
 	}
 	else
@@ -360,13 +360,13 @@ bool PGPHandler::locked_syncTrustDatabase()
 		if(-1 == stat64(_trustdb_path.c_str(), &buf))
 #endif
 		{
-			std::cerr << "PGPHandler::syncDatabase(): can't stat file " << _trustdb_path << ". Will force write it." << std::endl;
+            RsErr() << "PGPHandler::syncDatabase(): can't stat file " << _trustdb_path << ". Will force write it." ;
 			_trustdb_changed = true ;	// we force write of trust database if it does not exist.
 		}
 
 	if(_trustdb_last_update_time < buf.st_mtime)
 	{
-		std::cerr << "Detected change on disk of trust database. " << std::endl ;
+        RsErr() << "Detected change on disk of trust database. " << std::endl ;
 
 		locked_readPrivateTrustDatabase();
 		_trustdb_last_update_time = time(NULL) ;
@@ -374,12 +374,12 @@ bool PGPHandler::locked_syncTrustDatabase()
 
 	if(_trustdb_changed)
 	{
-		std::cerr << "Local changes in trust database. Writing to disk..." << std::endl;
+        RsErr() << "Local changes in trust database. Writing to disk..." ;
 		if(!locked_writePrivateTrustDatabase())
-			std::cerr << "Cannot write trust database. Disk full? Disk quota exceeded?" << std::endl;
+            RsErr() << "Cannot write trust database. Disk full? Disk quota exceeded?" ;
 		else
 		{
-			std::cerr << "Done." << std::endl;
+            RsErr() << "Done." ;
 			_trustdb_last_update_time = time(NULL) ;
 			_trustdb_changed = false ;
 		}
