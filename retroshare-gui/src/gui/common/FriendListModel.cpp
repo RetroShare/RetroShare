@@ -1052,7 +1052,12 @@ std::map<RsPgpId,uint32_t>::const_iterator RsFriendListModel::createInvalidatedP
 
     if(rsPeers->getGPGDetails(pgp_id,hprof.profile_info))
     {
-        std::cerr << "(EE) asked to create an invalidated profile that already exists!" << std::endl;
+        std::cerr << "(EE) asked to create an invalidated profile that already exists: " << pgp_id << std::endl;
+
+        pgp_indices[pgp_id] = mProfiles.size();
+        mProfiles.push_back(hprof);
+        it2 = pgp_indices.find(pgp_id);
+
         return it2;
     }
 

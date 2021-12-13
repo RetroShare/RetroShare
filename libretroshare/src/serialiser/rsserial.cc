@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2007-2008 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2007-2008  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2021  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -20,20 +22,19 @@
  *                                                                             *
  *******************************************************************************/
 
-#include "serialiser/rsbaseserial.h"
-
-#include "util/rsthreads.h"
-#include "util/rsstring.h"
-#include "util/rsprint.h"
-
-#include "rsitems/rsitem.h"
-#include "rsitems/itempriorities.h"
-
-#include <math.h>
+#include <cmath>
 #include <map>
 #include <vector>
 #include <iostream>
 #include <typeinfo>
+
+#include "serialiser/rsbaseserial.h"
+#include "util/cxx23retrocompat.h"
+#include "util/rsthreads.h"
+#include "util/rsstring.h"
+#include "util/rsprint.h"
+#include "rsitems/rsitem.h"
+#include "rsitems/itempriorities.h"
 
 
 /***
@@ -166,10 +167,16 @@ uint8_t    RsItem::PacketSubType() const
 	/* For Service Packets */	
 RsItem::RsItem(uint8_t ver, uint16_t service, uint8_t subtype)
 {
-	_priority_level = QOS_PRIORITY_UNKNOWN ;	// This value triggers PQIInterface to complain about undefined priorities
+	// This value triggers PQIInterface to complain about undefined priorities
+	_priority_level = QOS_PRIORITY_UNKNOWN;
 	type = (ver << 24) + (service << 8) + subtype;
-	return;
 }
+
+RsItem::RsItem( uint8_t ver, RsServiceType service, uint8_t subtype,
+        RsItemPriority prio ):
+    type(static_cast<uint32_t>(
+             (ver << 24) + (std::to_underlying(service) << 8) + subtype )),
+    _priority_level(prio) {}
 
 uint16_t    RsItem::PacketService() const
 {

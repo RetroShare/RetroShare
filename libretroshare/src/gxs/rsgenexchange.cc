@@ -4,7 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2012  Christopher Evi-Parker                                  *
- * Copyright (C) 2019  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2019-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -40,6 +41,7 @@
 #include "rsserver/p3face.h"
 #include "retroshare/rsevents.h"
 #include "util/radix64.h"
+#include "util/cxx17retrocompat.h"
 
 #define PUB_GRP_MASK     0x000f
 #define RESTR_GRP_MASK   0x00f0
@@ -193,47 +195,6 @@ RsGenExchange::RsGenExchange(
   VALIDATE_MAX_WAITING_TIME(60)
 {
     mDataAccess = new RsGxsDataAccess(gds);
-
-    // Perform an early checking/cleaning of the db. Will eliminate groups and messages that do not match their hash
-
-#ifdef RS_DEEP_CHANNEL_INDEX
-    // This code is only called because it of deep indexing in channels. But loading
-    // the entire set of messages in order to provide indexing is pretty bad (very costly and slowly
-    // eats memory, as many tests have shown. Not because of leaks, but because new threads are
-    // apparently attributed large stacks and pages of memory are not regained by the system maybe because it thinks
-    // that RS will use them again.
-    //
-    //    * the deep check should be implemented differently, in an incremental way. For instance in notifyChanges() of each
-    //      service (e.g. channels here) should update the index when a new message is received. The question to how old messages
-    //	    are processed is open. I believe that they shouldn't. New users will progressively process them.
-    //
-    //    * integrity check (re-hashing of message data) is not needed. Message signature already ensures that all messages received are
-    //      unalterated. The only problem (possibly very rare) is that a message is locally corrupted and not deleted (because of no check).
-    //      It will therefore never be replaced by the correct one from friends. The cost of re-hashing the whole db data regularly
-    //      doesn't counterbalance such a low risk.
-    //
-    if(mServType == RS_SERVICE_GXS_TYPE_CHANNELS)
-    {
-        std::vector<RsGxsGroupId> grpsToDel;
-        GxsMsgReq msgsToDel;
-
-        RsGxsSinglePassIntegrityCheck::check(mServType,mGixs,mDataStore,
-                                             this, *mSerialiser,
-                                             grpsToDel,msgsToDel);
-
-        for(auto& grpId: grpsToDel)
-        {
-            uint32_t token2=0;
-            deleteGroup(token2,grpId);
-        }
-
-        if(!msgsToDel.empty())
-        {
-            uint32_t token1=0;
-            deleteMsgs(token1,msgsToDel);
-        }
-    }
-#endif
 }
 
 void RsGenExchange::setNetworkExchangeService(RsNetworkExchangeService *ns)
@@ -362,12 +323,12 @@ void RsGenExchange::tick()
 			{
 				mIntegrityCheck = new RsGxsIntegrityCheck( mDataStore, this,
 				                                           *mSerialiser, mGixs);
-				mIntegrityCheck->start("gxs integrity");
-				mChecking = true;
+				std::string thisName = typeid(*this).name();
+				mChecking = mIntegrityCheck->start("gxs IC4 "+thisName);
 			}
 		}
 
-		if(mIntegrityCheck->isDone())
+		if(mIntegrityCheck->isDone() || !mChecking)
 		{
             std::vector<RsGxsGroupId> grpIds;
             GxsMsgReq msgIds;
@@ -2325,8 +2286,9 @@ bool RsGenExchange::processGrpMask(const RsGxsGroupId& grpId, ContentValue &grpC
 
 void RsGenExchange::publishMsgs()
 {
+	bool atLeastOneMessageCreatedSuccessfully = false;
 
-	RS_STACK_MUTEX(mGenMtx) ;
+	RS_STACK_MUTEX(mGenMtx);
 
 	rstime_t now = time(NULL);
 
@@ -2503,6 +2465,8 @@ void RsGenExchange::publishMsgs()
 				// add to published to allow acknowledgement
 				mMsgNotify.insert(std::make_pair(mit->first, std::make_pair(grpId, msgId)));
 				mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::COMPLETE);
+
+				atLeastOneMessageCreatedSuccessfully = true;
 			}
 			else
 			{
@@ -2536,6 +2500,8 @@ void RsGenExchange::publishMsgs()
 
 			mNotifications.push_back(ch);
 		}
+
+	if(atLeastOneMessageCreatedSuccessfully) mNetService->requestPull();
 }
 
 RsGenExchange::ServiceCreate_Return RsGenExchange::service_CreateGroup(RsGxsGrpItem* /* grpItem */,
@@ -2717,10 +2683,15 @@ void RsGenExchange::processMessageDelete()
             msgDeleted.push_back(note.msgIds);
     }
 
-    for(const auto& msgreq:msgDeleted)
-        for(const auto& msgit:msgreq)
-            for(const auto& msg:msgit.second)
-                mNotifications.push_back(new RsGxsMsgChange(RsGxsNotify::TYPE_MESSAGE_DELETED,msgit.first,msg, false));
+	/* Three nested for looks like a performance bomb, but as Cyril says here
+	 * https://github.com/RetroShare/RetroShare/pull/2218#pullrequestreview-565194022
+	 * this should actually not explode at all because it is just one message at
+	 * time that get notified */
+	for(const auto& msd : mMsgDeletePublish)
+		for(auto& msgMap : msd.mMsgs)
+			for(auto& msgId : msgMap.second)
+				mNotifications.push_back(
+				            new RsGxsMsgDeletedChange(msgMap.first, msgId) );
 
 	mMsgDeletePublish.clear();
 }
@@ -2758,7 +2729,8 @@ bool RsGenExchange::checkKeys(const RsTlvSecurityKeySet& keySet)
 
 void RsGenExchange::publishGrps()
 {
-    std::list<RsGxsGroupId> groups_to_subscribe ;
+	bool atLeastOneGroupCreatedSuccessfully = false;
+	std::list<RsGxsGroupId> groups_to_subscribe;
     
     {
 	    RS_STACK_MUTEX(mGenMtx) ;
@@ -2989,6 +2961,8 @@ void RsGenExchange::publishGrps()
 
 			    // add to published to allow acknowledgement
                 toNotify.insert(std::make_pair(token, GrpNote(true,ggps.mIsUpdate,grpId)));
+
+				atLeastOneGroupCreatedSuccessfully = true;
 		    }
 	    }
 
@@ -3007,9 +2981,14 @@ void RsGenExchange::publishGrps()
 
     // This is done off-mutex to avoid possible cross deadlocks with the net service.
     
-    if(mNetService!=NULL)
-		for(std::list<RsGxsGroupId>::const_iterator it(groups_to_subscribe.begin());it!=groups_to_subscribe.end();++it)
-			mNetService->subscribeStatusChanged((*it),true) ;
+	if(mNetService != nullptr)
+	{
+		for(auto& grpId : std::as_const(groups_to_subscribe))
+			mNetService->subscribeStatusChanged(grpId, true);
+
+		if(atLeastOneGroupCreatedSuccessfully)
+			mNetService->requestPull();
+	}
 }
 
 uint32_t RsGenExchange::generatePublicToken()

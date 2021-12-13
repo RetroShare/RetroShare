@@ -1,6 +1,6 @@
 <RCC>
   <qresource prefix="/qss/stylesheet/VOIP">
-    <file>VOIP_qss.default</file>
+    <file>VOIP_default.qss</file>
     <file>VOIP_Standard.qss</file>
   </qresource>
 </RCC>

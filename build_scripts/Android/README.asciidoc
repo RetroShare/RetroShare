@@ -81,6 +81,7 @@ JSONAPI_GENERATOR_EXE=Your_Path/jsonapi-generator/src/jsonapi-generator
 NATIVE_LIBS_TOOLCHAIN_PATH=Your_Path/retroshare-android-16-arm/
 CONFIG+=no_retroshare_gui CONFIG+=no_rs_service_webui_terminal_password
 CONFIG+=no_rs_service_terminal_login
+CONFIG+=no_rs_sam3 CONFIG+=no_rs_sam3_libsam3
 -------------------------------------------------------------------------------
 
 TIP: Some versions of QtCreator try to find the Android SDK in

@@ -90,6 +90,15 @@ rs_broadcast_discovery {
     win32-g++|win32-clang-g++:dLibs *= wsock32
 }
 
+rs_sam3_libsam3 {
+    LIBSAM3_SRC_PATH=$$clean_path($${RS_SRC_PATH}/supportlibs/libsam3/)
+    LIBSAM3_BUILD_PATH=$$clean_path($${RS_BUILD_PATH}/supportlibs/libsam3/)
+    INCLUDEPATH *= $$clean_path($${LIBSAM3_SRC_PATH}/src/libsam3/)
+    DEPENDPATH *= $$clean_path($${LIBSAM3_BUILD_PATH})
+    QMAKE_LIBDIR *= $$clean_path($${LIBSAM3_BUILD_PATH})
+    LIBS *= -L$$clean_path($${LIBSAM3_BUILD_PATH}) -lsam3
+}
+
 static {
     sLibs *= $$mLibs
 } else {
@@ -102,11 +111,7 @@ PRE_TARGETDEPS += $$pretargetStaticLibs(sLibs)
 LIBS += $$linkDynamicLibs(dLibs)
 
 android-* {
-## ifaddrs is missing on Android to add them don't use the one from
-## https://github.com/morristech/android-ifaddrs
-## because it crash, use QNetworkInterface from Qt instead
-    CONFIG *= qt
-    QT *= network
+    INCLUDEPATH *= $$clean_path($${RS_SRC_PATH}/supportlibs/jni.hpp/include/)
 }
 
 ################################### Pkg-Config Stuff #############################

@@ -183,7 +183,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 	connect(ui->chatTextEdit, SIGNAL(currentCharFormatChanged(QTextCharFormat)), this, SLOT(chatCharFormatChanged()));
 	connect(ui->chatTextEdit, SIGNAL(textChanged()), this, SLOT(updateLenOfChatTextEdit()));
 
-	ui->infoFrame->setVisible(false);
+	ui->info_Frame->setVisible(false);
 	ui->statusMessageLabel->hide();
 
 	setAcceptDrops(true);
@@ -290,12 +290,12 @@ void ChatWidget::addChatBarWidget(QWidget *w)
 
 void ChatWidget::addTitleBarWidget(QWidget *w)
 {
-	ui->pluginTitleFrame->layout()->addWidget(w) ;
+	ui->trans_Frame_PluginTitle->layout()->addWidget(w) ;
 }
 
 void ChatWidget::addTopBarWidget(QWidget *w)
 {
-	ui->pluginTopFrame->layout()->addWidget(w) ;
+	ui->trans_Frame_PluginTop->layout()->addWidget(w) ;
 }
 
 void ChatWidget::hideChatText(bool hidden)
@@ -381,7 +381,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
         hist_chat_type = RS_HISTORY_TYPE_PUBLIC;
         messageCount = Settings->getPublicChatHistoryCount();
 
-        ui->titleBarFrame->setVisible(false);
+        ui->headerBFrame->setVisible(false);
     }
 
 	if (rsHistory->getEnable(hist_chat_type))
@@ -642,7 +642,7 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 			}
 		}
 
-    } else if (obj == ui->chatTextEdit) {
+	} else if (obj == ui->chatTextEdit) {
 		if (event->type() == QEvent::KeyPress) {
 
 			QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
@@ -1286,7 +1286,7 @@ void ChatWidget::sendChat()
 
 void ChatWidget::on_closeInfoFrameButton_clicked()
 {
-	ui->infoFrame->setVisible(false);
+	ui->info_Frame->setVisible(false);
 }
 
 void ChatWidget::on_searchButton_clicked(bool bValue)
@@ -1804,27 +1804,27 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 
 	    switch (status) {
 	    case RS_STATUS_OFFLINE:
-		    ui->infoFrame->setVisible(true);
+		    ui->info_Frame->setVisible(true);
 		    ui->infoLabel->setText(peerName + " " + tr("appears to be Offline.") +"\n" + tr("Messages you send will be delivered after Friend is again Online."));
 		    break;
 
 	    case RS_STATUS_INACTIVE:
-		    ui->infoFrame->setVisible(true);
+		    ui->info_Frame->setVisible(true);
 		    ui->infoLabel->setText(peerName + " " + tr("is Idle and may not reply"));
 		    break;
 
 	    case RS_STATUS_ONLINE:
-		    ui->infoFrame->setVisible(false);
+		    ui->info_Frame->setVisible(false);
 		    break;
 
 	    case RS_STATUS_AWAY:
 		    ui->infoLabel->setText(peerName + " " + tr("is Away and may not reply"));
-		    ui->infoFrame->setVisible(true);
+		    ui->info_Frame->setVisible(true);
 		    break;
 
 	    case RS_STATUS_BUSY:
 		    ui->infoLabel->setText(peerName + " " + tr("is Busy and may not reply"));
-		    ui->infoFrame->setVisible(true);
+		    ui->info_Frame->setVisible(true);
 		    break;
 	    }
 

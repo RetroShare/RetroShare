@@ -270,7 +270,10 @@ void NewsFeed::handleForumEvent(std::shared_ptr<const RsEvent> event)
 
 	case RsForumEventCode::UPDATED_MESSAGE:
 	case RsForumEventCode::NEW_MESSAGE:
-		addFeedItem(new GxsForumMsgItem(this, NEWSFEED_NEW_FORUM, pe->mForumGroupId, pe->mForumMsgId, false, true));
+			addFeedItem(new GxsForumMsgItem(
+			                this, NEWSFEED_NEW_FORUM,
+			                pe->mForumGroupId, pe->mForumMsgId,
+			                false, true ));
 		break;
 
 	default: break;
@@ -501,7 +504,7 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
 		MessageComposer::addConnectAttemptMsg(e.mPgpId, e.mSslId, QString::fromStdString(det.name + "(" + det.location + ")"));
 }
 
-void NewsFeed::testFeeds(uint notifyFlags)
+void NewsFeed::testFeeds(uint /*notifyFlags*/)
 {
 #ifdef TO_REMOVE
 	if (!instance) {

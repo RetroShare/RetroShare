@@ -4,8 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2012-2014  Robert Fernie <retroshare@lunamutt.com>            *
- * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
- * Copyright (C) 2019-2020  Asociación Civil Altermundi <info@altermundi.net>  *
+ * Copyright (C) 2018-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -115,9 +115,13 @@ enum class RsForumEventCode: uint8_t
 	READ_STATUS_CHANGED      = 0x06, /// msg was read or marked unread
 	STATISTICS_CHANGED       = 0x07, /// suppliers and how many messages they have changed
 	MODERATOR_LIST_CHANGED   = 0x08, /// forum moderation list has changed.
-    SYNC_PARAMETERS_UPDATED  = 0x0a, /// sync and storage times have changed
-    PINNED_POSTS_CHANGED     = 0x0b, /// some posts where pinned or un-pinned
-    DELETED_FORUM            = 0x0c, /// forum was deleted by cleaning
+	SYNC_PARAMETERS_UPDATED  = 0x0a, /// sync and storage times have changed
+	PINNED_POSTS_CHANGED     = 0x0b, /// some posts where pinned or un-pinned
+	DELETED_FORUM            = 0x0c, /// forum was deleted by cleaning
+	DELETED_POST             = 0x0d,  /// Post deleted (usually by cleaning)
+
+	/// Distant search result received
+	DISTANT_SEARCH_RESULT    = 0x0e
 };
 
 struct RsGxsForumEvent: RsEvent
@@ -129,8 +133,8 @@ struct RsGxsForumEvent: RsEvent
 	RsForumEventCode mForumEventCode;
 	RsGxsGroupId mForumGroupId;
 	RsGxsMessageId mForumMsgId;
-    std::list<RsGxsId> mModeratorsAdded;
-    std::list<RsGxsId> mModeratorsRemoved;
+	std::list<RsGxsId> mModeratorsAdded;
+	std::list<RsGxsId> mModeratorsRemoved;
 
 	///* @see RsEvent @see RsSerializable
 	void serial_process(
@@ -141,12 +145,34 @@ struct RsGxsForumEvent: RsEvent
 		RS_SERIAL_PROCESS(mForumEventCode);
 		RS_SERIAL_PROCESS(mForumGroupId);
 		RS_SERIAL_PROCESS(mForumMsgId);
-		RS_SERIAL_PROCESS(mForumMsgId);
 		RS_SERIAL_PROCESS(mModeratorsAdded);
 		RS_SERIAL_PROCESS(mModeratorsRemoved);
 	}
 
 	~RsGxsForumEvent() override;
+};
+
+/** This event is fired once distant search results are received */
+struct RsGxsForumsDistantSearchEvent: RsEvent
+{
+	RsGxsForumsDistantSearchEvent():
+	    RsEvent(RsEventType::GXS_FORUMS),
+	    mForumEventCode(RsForumEventCode::DISTANT_SEARCH_RESULT) {}
+
+	RsForumEventCode mForumEventCode;
+	TurtleRequestId mSearchId;
+	std::vector<RsGxsSearchResult> mSearchResults;
+
+	///* @see RsEvent @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx ) override
+	{
+		RsEvent::serial_process(j, ctx);
+
+		RS_SERIAL_PROCESS(mForumEventCode);
+		RS_SERIAL_PROCESS(mSearchId);
+		RS_SERIAL_PROCESS(mSearchResults);
+	}
 };
 
 class RsGxsForums: public RsGxsIfaceHelper
@@ -384,6 +410,61 @@ public:
 	virtual std::error_condition setPostKeepForever(
 	        const RsGxsGroupId& forumId, const RsGxsMessageId& postId,
 	        bool keepForever ) = 0;
+
+	/**
+	 * @brief Get forum content summaries
+	 * @jsonapi{development}
+	 * @param[in] forumId id of the forum of which the content is requested
+	 * @param[in] contentIds ids of requested contents, if empty summaries of
+	 *	all messages are reqeusted
+	 * @param[out] summaries storage for summaries
+	 * @return success or error details if something failed
+	 */
+	virtual std::error_condition getContentSummaries(
+	        const RsGxsGroupId& forumId,
+	        const std::set<RsGxsMessageId>& contentIds,
+	        std::vector<RsMsgMetaData>& summaries ) = 0;
+
+	/**
+	 * @brief Search the whole reachable network for matching forums and
+	 *	posts
+	 * @jsonapi{development}
+	 * An @see RsGxsForumsDistantSearchEvent is emitted when matching results
+	 *	arrives from the network
+	 * @param[in] matchString string to search into the forum and posts
+	 * @param[out] searchId storage for search id, useful to track search events
+	 *	and retrieve search results
+	 * @return success or error details
+	 */
+	virtual std::error_condition distantSearchRequest(
+	        const std::string& matchString, TurtleRequestId& searchId ) = 0;
+
+	/**
+	 * @brief Search the local index for matching forums and posts
+	 * @jsonapi{development}
+	 * @param[in] matchString string to search into the index
+	 * @param[out] searchResults storage for searchr esults
+	 * @return success or error details
+	 */
+	virtual std::error_condition localSearch(
+	        const std::string& matchString,
+	        std::vector<RsGxsSearchResult>& searchResults ) = 0;
+
+	/**
+	 * @brief Request Synchronization with available peers
+	 * Usually syncronization already happen automatically so be carefull
+	 * to call this method only if necessary.
+	 * It has been thinked for use cases like mobile phone where internet
+	 * connection is intermittent and calling this may be useful when a system
+	 * event about connection being available or about to go offline is received
+	 * @jsonapi{development}
+	 * @return Success or error details
+	 */
+	virtual std::error_condition requestSynchronization() = 0;
+
+	////////////////////////////////////////////////////////////////////////////
+	/* Following functions are deprecated and should not be considered a stable
+	 * to use API */
 
 	/**
 	 * @brief Create forum. Blocking API.

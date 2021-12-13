@@ -21,97 +21,79 @@
  *******************************************************************************/
 
 #include "advancedsearchdialog.h"
+
 #include "gui/common/FilesDefs.h"
+
+#include <QGridLayout>
 
 AdvancedSearchDialog::AdvancedSearchDialog(QWidget * parent) : QDialog (parent) 
 {
-    setupUi(this);
-    dialogLayout = this->layout();
-    metrics = new QFontMetrics(this->font());
+	setupUi(this);
 
-    // the list of expressions
-    expressions = new QList<ExpressionWidget*>();
+	QFontMetrics metrics = QFontMetrics(this->font());
+	searchCriteriaBox_VL->setContentsMargins(2, metrics.height()/2, 2, 2);
+	addExprButton->setIconSize(QSize(metrics.height(),metrics.height())*1.5);
+	resetButton->setIconSize(QSize(metrics.height(),metrics.height())*1.5);
 
-    // a area for holding the objects
-    expressionsLayout = new QVBoxLayout();
-    expressionsLayout->setSpacing(0);
-    expressionsLayout->setMargin(0);
-    expressionsLayout->setObjectName(QString::fromUtf8("expressionsLayout"));
-    expressionsFrame->setSizePolicy(QSizePolicy::MinimumExpanding, 
-                                  QSizePolicy::MinimumExpanding);
-    expressionsFrame->setLayout(expressionsLayout);
-    
-    // we now add the first expression widgets to the dialog via a vertical
-    // layout 
-    reset();//addNewExpression();
+	// Save current default size as minimum to only add expresssions size to it.
+	this->adjustSize();
+	this->setMinimumSize(this->size());
 
-    connect (this->addExprButton, SIGNAL(clicked()),
-             this, SLOT(addNewExpression()));
-    connect (this->resetButton, SIGNAL(clicked()),
-             this, SLOT(reset()));
-    connect(this->executeButton, SIGNAL(clicked()),
-            this, SLOT(prepareSearch()));
+	// the list of expressions
+	expressions = new QList<ExpressionWidget*>();
 
-	addExprButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/add.png"));
+	// we now add the first expression widgets to the dialog
+	reset();//addNewExpression();
+
+	connect (  addExprButton, SIGNAL(clicked())
+	         , this,          SLOT(addNewExpression()));
+	connect (  resetButton,   SIGNAL(clicked())
+	         , this,          SLOT(reset()));
+	connect (  searchButton,  SIGNAL(clicked())
+	         , this,          SLOT(prepareSearch()));
 }
 
 
 void AdvancedSearchDialog::addNewExpression()
 {
-    int sizeChange = metrics->height() + 26;
+	ExpressionWidget *expr = new ExpressionWidget(searchCriteriaBox, (expressions->size() == 0));
+	expressions->append(expr);
 
-    ExpressionWidget *expr;
-    if (expressions->size() == 0)
-    {
-        //create an initial expression
-        expr = new ExpressionWidget(expressionsFrame, true);
-    } else {
-        expr = new ExpressionWidget(expressionsFrame);
-    }
-    
-    expressions->append(expr);
-    expressionsLayout->addWidget(expr, 1, Qt::AlignLeft);
-    
-    
-    connect(expr, SIGNAL(signalDelete(ExpressionWidget*)),
-            this, SLOT(deleteExpression(ExpressionWidget*)));
-    
-    //expressionsLayout->invalidate();
-    //searchCriteriaBox->setMinimumSize(searchCriteriaBox->minimumWidth(), 
-     //                                 searchCriteriaBox->minimumHeight() + sizeChange);
-    //searchCriteriaBox->adjustSize();
-    expressionsFrame->adjustSize();
-    this->setMinimumSize(this->minimumWidth(), this->minimumHeight()+sizeChange);
-    this->adjustSize();
+	searchCriteriaBox_VL->addWidget(expr);
+	searchCriteriaBox_VL->setAlignment(Qt::AlignTop);
+	expr->adjustSize();
+	if (searchCriteriaBox->minimumWidth() < expr->minimumWidth())
+		searchCriteriaBox->setMinimumWidth(expr->minimumWidth());
 
+	QSize exprHeight = QSize(0,expr->height());
+
+	connect(  expr, SIGNAL(signalDelete(ExpressionWidget*))
+	        , this, SLOT(deleteExpression(ExpressionWidget*)) );
+
+	this->setMinimumSize(this->minimumSize() + exprHeight);
+	int marg = gradFrame_GL->contentsMargins().left()+gradFrame_GL->contentsMargins().right();
+	marg += this->contentsMargins().left()+this->contentsMargins().right();
+	if (this->minimumWidth() < (searchCriteriaBox->minimumWidth()+marg))
+		this->setMinimumWidth(searchCriteriaBox->minimumWidth()+marg);
 }
 
 void AdvancedSearchDialog::deleteExpression(ExpressionWidget* expr)
 {
-    int sizeChange = metrics->height() + 26;
-    
-    expressions->removeAll(expr);
-    expr->hide();
-    expressionsLayout->removeWidget(expr);
-    delete expr;
-    
-    expressionsLayout->invalidate();
-    //searchCriteriaBox->setMinimumSize(searchCriteriaBox->minimumWidth(), 
-      //                                searchCriteriaBox->minimumHeight() - sizeChange);
-    //searchCriteriaBox->adjustSize();
-    expressionsFrame->adjustSize();
-    this->setMinimumSize(this->minimumWidth(), this->minimumHeight()-sizeChange);
-    this->adjustSize();
+	QSize exprHeight = QSize(0,expr->height());
+
+	expressions->removeAll(expr);
+	expr->hide();
+	searchCriteriaBox_VL->removeWidget(expr);
+	delete expr;
+
+	this->setMinimumSize(this->minimumSize() - exprHeight);
+	this->resize(this->size() - exprHeight);
 }
 
 void AdvancedSearchDialog::reset()
 {
-    ExpressionWidget *expr;
     while (!expressions->isEmpty())
-    {
-        expr = expressions->takeLast();
-        deleteExpression(expr);
-    }
+        deleteExpression(expressions->takeLast());
     
     // now add a new default expressions
     addNewExpression();
@@ -129,7 +111,6 @@ RsRegularExpression::Expression * AdvancedSearchDialog::getRsExpr()
 
     // process the special case: first expression
     wholeExpression = expressions->at(0)->getRsExpression();
-    
 
     // iterate through the items in elements and
 #warning Phenom (2017-07-21): I don t know if it is a real memLeak for wholeExpression. If not remove this warning and add a comment how it is deleted.
@@ -140,21 +121,20 @@ RsRegularExpression::Expression * AdvancedSearchDialog::getRsExpr()
         wholeExpression = new RsRegularExpression::CompoundExpression(expressions->at(i)->getOperator(),
                                                  wholeExpression,
                                                  expressions->at(i)->getRsExpression());
-    } 
+    }
     return wholeExpression;
 }
 
 QString AdvancedSearchDialog::getSearchAsString()
 {
     QString str = expressions->at(0)->toString();
-    
 
     // iterate through the items in elements and
     for (int i = 1; i < expressions->size(); ++i) {
         // extract the expression information and compound it with the
         // first expression
         str += QString(" ") + expressions->at(i)->toString();
-    } 
+    }
     return str;
 }
 

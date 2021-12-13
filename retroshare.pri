@@ -1,7 +1,8 @@
 # RetroShare common qmake build script
 #
-# Copyright (C) 2004-2019, Retroshare Team <contact@retroshare.cc>
-# Copyright (C) 2016-2019, Gioacchino Mazzurco <gio@eigenlab.org>
+# Copyright (C) 2004-2021  Retroshare Team <contact@retroshare.cc>
+# Copyright (C) 2016-2021  Gioacchino Mazzurco <gio@eigenlab.org>
+# Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>
 #
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU Lesser General Public License as published by the
@@ -140,10 +141,10 @@ rs_macos10.15:CONFIG -= rs_macos10.11
 CONFIG *= no_rs_jsonapi
 rs_jsonapi:CONFIG -= no_rs_jsonapi
 
-# Disable i2p BOB support for automatically setting up an i2p tunnel for RS
-# "CONFIG+=no_rs_bob"
-CONFIG *= rs_bob
-no_rs_bob:CONFIG -= rs_bob
+# To enable forums indexing append the following assignation to qmake command
+# line "CONFIG+=rs_deep_forums_index"
+CONFIG *= no_rs_deep_forums_index
+rs_deep_forums_index:CONFIG -= no_rs_deep_forums_index
 
 # To enable channel indexing append the following assignation to qmake command
 # line "CONFIG+=rs_deep_channels_index"
@@ -204,10 +205,16 @@ no_rs_service_terminal_login:CONFIG -= rs_service_terminal_login
 CONFIG+=rs_dh_init_check
 no_rs_dh_init_check:CONFIG -= rs_dh_init_check
 
-# To export all symbols for the plugins on Windows build we need to build libretroshare as
-# shared library. Fix linking error (ld.exe: Error: export ordinal too large) due to too
-# many exported symbols.
-retroshare_plugins:win32:CONFIG *= libretroshare_shared
+# To disable I2P sam3 support append the following assignation to qmake command
+# line "CONFIG+=no_rs_sam3"
+CONFIG *= rs_sam3
+no_rs_sam3:CONFIG -= rs_sam3
+
+# To disable I2P sam3 library submodule build append the following assignation
+# to qmake command line "CONFIG+=no_rs_sam3_libsam3"
+CONFIG *= rs_sam3_libsam3
+no_rs_sam3_libsam3:CONFIG -= rs_sam3_libsam3
+
 
 # Specify host precompiled jsonapi-generator path, appending the following
 # assignation to qmake command line
@@ -559,10 +566,7 @@ rs_webui {
     DEFINES *= RS_WEBUI
 }
 
-rs_bob {
-    DEFINES *= RS_USE_I2P_BOB
-}
-
+rs_deep_forums_index:DEFINES *= RS_DEEP_FORUMS_INDEX
 rs_deep_channels_index:DEFINES *= RS_DEEP_CHANNEL_INDEX
 
 rs_deep_files_index:DEFINES *= RS_DEEP_FILES_INDEX
@@ -575,6 +579,13 @@ rs_use_native_dialogs:DEFINES *= RS_NATIVEDIALOGS
 rs_broadcast_discovery:DEFINES *= RS_BROADCAST_DISCOVERY
 
 no_rs_dh_init_check:DEFINES *= RS_DISABLE_DIFFIE_HELLMAN_INIT_CHECK
+
+rs_sam3: {
+    DEFINES *= RS_USE_I2P_SAM3
+    # this allows a downgrade from a SAMv3 build to a BOB build, can be removed in the future
+    DEFINES *= RS_I2P_SAM3_BOB_COMPAT
+}
+rs_sam3_libsam3: DEFINES *= RS_USE_I2P_SAM3_LIBSAM3
 
 debug {
     rs_mutex_debug:DEFINES *= RS_MUTEX_DEBUG
@@ -647,6 +658,11 @@ android-* {
     # See https://stackoverflow.com/a/31277163
     RS_THREAD_LIB =
 }
+
+# To export all symbols for the plugins on Windows build we need to build
+# libretroshare as shared library. Fix linking error (ld.exe: Error: export
+# ordinal too large) due to too many exported symbols.
+retroshare_plugins:win32:CONFIG *= libretroshare_shared
 
 win32-g++|win32-clang-g++ {
     !isEmpty(EXTERNAL_LIB_DIR) {
@@ -800,5 +816,4 @@ contains(RS_UPNP_LIB, upnp):DEFINES*=RS_USE_LIBUPNP
 isEmpty(BIN_DIR)   : BIN_DIR   = $${RS_BIN_DIR}
 isEmpty(INC_DIR)   : INC_DIR   = $${RS_INCLUDE_DIR}
 isEmpty(LIBDIR)    : LIBDIR    = $${QMAKE_LIBDIR}
-isEmpty(DATA_DIR)  : DATA_DIR  = $${RS_DATA_DIR}
 isEmpty(PLUGIN_DIR): PLUGIN_DIR= $${RS_PLUGIN_DIR}

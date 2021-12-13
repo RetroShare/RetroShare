@@ -30,14 +30,14 @@
     <number>0</number>
    </property>
    <item row="2" column="0">
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="gradFrame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="frame_GL">
+     <layout class="QGridLayout" name="gradFrame_GL">
       <property name="topMargin">
        <number>3</number>
       </property>
@@ -56,11 +56,11 @@
         <property name="currentIndex">
          <number>0</number>
         </property>
-        <widget class="QWidget" name="info_Tab">
+        <widget class="QWidget" name="infoTab">
          <attribute name="title">
           <string>Profile info</string>
          </attribute>
-         <layout class="QGridLayout" name="info_Tab_GL">
+         <layout class="QGridLayout" name="infoTab_GL">
           <property name="bottomMargin">
            <number>0</number>
           </property>
@@ -68,9 +68,9 @@
            <number>6</number>
           </property>
           <item row="0" column="0">
-           <layout class="QHBoxLayout" name="info_Top_HL">
+           <layout class="QHBoxLayout" name="infoTop_HL">
             <item>
-             <layout class="QGridLayout" name="info_Top_GL">
+             <layout class="QGridLayout" name="infoTop_GL">
               <item row="0" column="1">
                <widget class="QLineEdit" name="name">
                 <property name="readOnly">
@@ -103,7 +103,7 @@
                </widget>
               </item>
               <item row="2" column="1">
-               <widget class="QComboBox" name="trustlevel_CB">
+               <widget class="RSComboBox" name="trustlevel_CB">
                 <property name="toolTip">
                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The trust level is an optional and local parameter that you can set in order to remember your option about a given PGP key. It is not used whatsoever to authorize connections. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
@@ -350,11 +350,11 @@ p, li { white-space: pre-wrap; }
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="key_Tab">
+        <widget class="QWidget" name="keyTab">
          <attribute name="title">
           <string>PGP key</string>
          </attribute>
-         <layout class="QVBoxLayout" name="key_Tab_VL">
+         <layout class="QVBoxLayout" name="keyTab_VL">
           <item>
            <widget class="QLabel" name="label_userCert">
             <property name="text">
@@ -391,11 +391,11 @@ p, li { white-space: pre-wrap; }
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="option_Tab">
+        <widget class="QWidget" name="optionTab">
          <attribute name="title">
-          <string>Options</string>
+          <string>Friend options</string>
          </attribute>
-         <layout class="QVBoxLayout" name="option_Tab_VL">
+         <layout class="QVBoxLayout" name="optionTab_VL">
           <item>
            <widget class="QLabel" name="label_option_Tab">
             <property name="text">
@@ -519,15 +519,20 @@ p, li { white-space: pre-wrap; }
  </widget>
  <customwidgets>
   <customwidget>
-   <class>RSTextBrowser</class>
-   <extends>QTextBrowser</extends>
-   <header>gui/common/RSTextBrowser.h</header>
-  </customwidget>
-  <customwidget>
    <class>HeaderFrame</class>
    <extends>QFrame</extends>
    <header>gui/common/HeaderFrame.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>gui/common/RSTextBrowser.h</header>
   </customwidget>
  </customwidgets>
  <resources>

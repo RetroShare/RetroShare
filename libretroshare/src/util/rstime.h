@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2013-2013 by Cyril Soler <csoler@users.sourceforge.net>           *
+ * Copyright 2013  Cyril Soler <csoler@users.sourceforge.net>                  *
+ * Copyright 2018  Gioacchino Mazzurco <gio@altermundi.net>                    *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *

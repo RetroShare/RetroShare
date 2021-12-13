@@ -1398,11 +1398,11 @@ bool p3PeerMgrIMPL::UpdateOwnAddress( const sockaddr_storage& pLocalAddr,
 	sockaddr_storage_copy(pExtAddr, extAddr);
 	sockaddr_storage_ipv6_to_ipv4(extAddr);
 
-//#ifdef PEER_DEBUG
+#ifdef PEER_DEBUG
 	std::cerr << "p3PeerMgrIMPL::UpdateOwnAddress("
 	          << sockaddr_storage_tostring(localAddr) << ", "
 	          << sockaddr_storage_tostring(extAddr) << ")" << std::endl;
-//#endif
+#endif
 
 	if( rsBanList &&
 	         !rsBanList->isAddressAccepted(localAddr,

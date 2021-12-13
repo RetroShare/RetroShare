@@ -166,7 +166,7 @@ void AvatarDialog::loadAvatarWidget()
 		message += "\n RetroShare/stickers\n RetroShare/Data/stickers\n RetroShare/Data/Location/stickers";
 		ui->nostickersLabel->setText(message);
 	} else {
-		ui->infoframe->hide();
+		ui->info_Frame->hide();
 	}
 
 	bool bOnlyOneGroup = (stickerTabs.count() == 1);
@@ -272,7 +272,7 @@ void AvatarDialog::loadAvatarWidget()
 	loadToolTips(firstpage);
 	
 	//Get widget's size
-	QSize sizeWidget = ui->avatarWidget->sizeHint();
+	//QSize sizeWidget = ui->avatarWidget->sizeHint();
 
 }
 

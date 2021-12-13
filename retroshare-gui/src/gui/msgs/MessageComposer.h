@@ -163,8 +163,8 @@ private slots:
     void tagSet(int tagId, bool set);
     void tagRemoveAll();
     
-    void on_closeInfoFrameButton_clicked();
-    void on_closeSizeLimitFrameButton_clicked();
+    void on_closeInfoFrameButton_Distant_clicked();
+    void on_closeInfoFrameButton_SizeLimit_clicked();
 
     static QString inviteMessage();
 

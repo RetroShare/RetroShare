@@ -1,56 +1,57 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>ProfileEdit</class>
- <widget class="QWidget" name="ProfileEdit" >
-  <property name="geometry" >
+ <widget class="QWidget" name="ProfileEdit">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>540</width>
+    <width>571</width>
     <height>469</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Profile Edit</string>
   </property>
-  <property name="layoutDirection" >
+  <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
   </property>
-  <layout class="QGridLayout" >
-   <item row="0" column="0" >
-    <widget class="QSplitter" name="splitter" >
-     <property name="orientation" >
+  <layout class="QGridLayout">
+   <item row="0" column="0">
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <widget class="QWidget">
-      <layout class="QVBoxLayout" >
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QVBoxLayout">
        <item>
-        <widget class="QLabel" name="label_6" >
-         <property name="font" >
+        <widget class="QLabel" name="label_6">
+         <property name="font">
           <font>
            <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>Profile</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QTreeWidget" name="profileTreeWidget" >
-         <property name="contextMenuPolicy" >
+        <widget class="QTreeWidget" name="profileTreeWidget">
+         <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
-         <property name="rootIsDecorated" >
+         <property name="rootIsDecorated">
           <bool>false</bool>
          </property>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Category</string>
           </property>
          </column>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Thoughts</string>
           </property>
          </column>
@@ -58,99 +59,99 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget">
-      <layout class="QGridLayout" >
-       <item row="0" column="0" colspan="2" >
-        <widget class="QLabel" name="label_7" >
-         <property name="font" >
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QGridLayout">
+       <item row="0" column="0" colspan="2">
+        <widget class="QLabel" name="label_7">
+         <property name="font">
           <font>
            <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>Edit Profile Category</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="0" colspan="2" >
-        <widget class="QComboBox" name="profileComboBox" >
+       <item row="1" column="0" colspan="2">
+        <widget class="RSComboBox" name="profileComboBox">
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Birthday</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>School</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>University</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Phone Number</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Favourite Books</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Favourite Music</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Favourite Films</string>
           </property>
          </item>
         </widget>
        </item>
-       <item row="2" column="0" >
-        <widget class="QCheckBox" name="customCheckBox" >
-         <property name="layoutDirection" >
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="customCheckBox">
+         <property name="layoutDirection">
           <enum>Qt::RightToLeft</enum>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>or Custom Entry</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="1" >
-        <widget class="QLineEdit" name="customLineEdit" />
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="customLineEdit"/>
        </item>
-       <item row="3" column="0" colspan="2" >
-        <widget class="QTextEdit" name="entryTextEdit" />
+       <item row="3" column="0" colspan="2">
+        <widget class="QTextEdit" name="entryTextEdit"/>
        </item>
       </layout>
      </widget>
     </widget>
    </item>
-   <item row="1" column="0" >
-    <layout class="QHBoxLayout" >
+   <item row="1" column="0">
+    <layout class="QHBoxLayout">
      <item>
-      <widget class="QPushButton" name="addButton" >
-       <property name="text" >
+      <widget class="QPushButton" name="addButton">
+       <property name="text">
         <string>Add Entry</string>
        </property>
-       <property name="icon" >
-        <iconset resource="../images.qrc" >
+       <property name="icon">
+        <iconset>
          <normaloff>:/images/add_24x24.png</normaloff>:/images/add_24x24.png</iconset>
        </property>
       </widget>
      </item>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>71</width>
          <height>28</height>
@@ -159,36 +160,36 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="moveDownButton" >
-       <property name="layoutDirection" >
+      <widget class="QPushButton" name="moveDownButton">
+       <property name="layoutDirection">
         <enum>Qt::RightToLeft</enum>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>Move</string>
        </property>
-       <property name="icon" >
-        <iconset resource="../images.qrc" >
+       <property name="icon">
+        <iconset resource="../../images.qrc">
          <normaloff>:/images/down.png</normaloff>:/images/down.png</iconset>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="moveUpButton" >
-       <property name="text" >
+      <widget class="QPushButton" name="moveUpButton">
+       <property name="text">
         <string>Move</string>
        </property>
-       <property name="icon" >
-        <iconset resource="../images.qrc" >
+       <property name="icon">
+        <iconset resource="../../images.qrc">
          <normaloff>:/images/up.png</normaloff>:/images/up.png</iconset>
        </property>
       </widget>
      </item>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>71</width>
          <height>28</height>
@@ -197,15 +198,15 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="closeButton" >
-       <property name="layoutDirection" >
+      <widget class="QPushButton" name="closeButton">
+       <property name="layoutDirection">
         <enum>Qt::RightToLeft</enum>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>Close Editor</string>
        </property>
-       <property name="icon" >
-        <iconset resource="../images.qrc" >
+       <property name="icon">
+        <iconset>
          <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
        </property>
       </widget>
@@ -214,8 +215,15 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
-  <include location="../images.qrc" />
+  <include location="../../images.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -19,9 +19,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
+
+//#define EXTADDRSEARCH_DEBUG
+
 #include "extaddrfinder.h"
 
 #include "pqi/pqinetwork.h"
+#include "rsdebug.h"
 #include "util/rsstring.h"
 #include "util/rsmemory.h"
 
@@ -38,286 +42,237 @@
 #include <stdio.h>
 #include "util/rstime.h"
 
-const uint32_t MAX_IP_STORE =	300; /* seconds ip address timeout */
+#include <map>
 
-//#define EXTADDRSEARCH_DEBUG
+const uint32_t MAX_IP_STORE = 300; /* seconds ip address timeout */
 
-static const std::string ADDR_AGENT  = "Mozilla/5.0";
-
-static std::string scan_ip(const std::string& text)
+class ZeroInt
 {
-	std::set<unsigned char> digits ;
-	digits.insert('0') ; digits.insert('3') ; digits.insert('6') ;
-	digits.insert('1') ; digits.insert('4') ; digits.insert('7') ;
-	digits.insert('2') ; digits.insert('5') ; digits.insert('8') ;
-	digits.insert('9') ; 
+public:
+	ZeroInt() : n(0) {}
+	uint32_t n ;
+};
 
-	for(int i=0;i<(int)text.size();++i)
-	{
-		while(i < (int)text.size() && digits.find(text[i])==digits.end()) ++i ;
-
-		if(i>=(int)text.size())
-			return "" ;
-
-		unsigned int a,b,c,d ;
-
-		if(sscanf(text.c_str()+i,"%u.%u.%u.%u",&a,&b,&c,&d) != 4)
-			continue ;
-
-		if(a < 256 && b<256 && c<256 && d<256)
-		{
-			std::string s ;
-			rs_sprintf(s, "%u.%u.%u.%u", a, b, c, d) ;
-			return s;
-		}
-	}
-	return "" ;
-}
-
-static void getPage(const std::string& server_name,std::string& page)
-{
-	page = "" ;
-	int sockfd,n=0;                   // socket descriptor
-	struct sockaddr_in serveur;       // server's parameters
-	memset(&serveur.sin_zero, 0, sizeof(serveur.sin_zero));
-
-	char buf[1024];
-	char request[1024];
-#ifdef EXTADDRSEARCH_DEBUG
-	std::cout << "ExtAddrFinder: connecting to " << server_name << std::endl ;
-#endif
-	// socket creation
-
-	sockfd = unix_socket(PF_INET,SOCK_STREAM,0);
-	if (sockfd < 0)
-	{
-		std::cerr << "ExtAddrFinder: Failed to create socket" << std::endl;
-		return ;
-	}
-
-	serveur.sin_family = AF_INET;
-
-	// get server's ipv4 adress
-
-    	in_addr in ;
-        
-	if(!rsGetHostByName(server_name.c_str(),in))  /* l'hôte n'existe pas */
-	{
-		std::cerr << "ExtAddrFinder: Unknown host " << server_name << std::endl;
-		unix_close(sockfd);
-		return ;
-	}
-	serveur.sin_addr = in ;
-	serveur.sin_port = htons(80);
-
-#ifdef EXTADDRSEARCH_DEBUG
-	printf("Connection attempt\n");
-#endif
-    	std::cerr << "ExtAddrFinder: resolved hostname " << server_name << " to " << rs_inet_ntoa(in) << std::endl;
-
-	sockaddr_storage server;
-	sockaddr_storage_setipv4(server, &serveur);
-	sockaddr_storage_setport(server, 80);
-	if(unix_connect(sockfd, server) == -1)
-	{
-		std::cerr << "ExtAddrFinder: Connection error to " << server_name << std::endl ;
-		unix_close(sockfd);
-		return ;
-	}
-#ifdef EXTADDRSEARCH_DEBUG
-	std::cerr << "ExtAddrFinder: Connection established to " << server_name << std::endl ;
-#endif
-
-	// envoi 
-	if(snprintf( request, 
-			1024,
-			"GET / HTTP/1.0\r\n"
-			"Host: %s:%d\r\n"
-			"Connection: Close\r\n"
-			"\r\n", 
-			server_name.c_str(), 80) > 1020)
-	{
-		std::cerr << "ExtAddrFinder: buffer overrun. The server name \"" << server_name << "\" is too long. This is quite unexpected." << std::endl;
-		unix_close(sockfd);
-		return ;
-	}
-
-	if(send(sockfd,request,strlen(request),0)== -1)
-	{
-		std::cerr << "ExtAddrFinder: Could not send request to " << server_name << std::endl ;
-		unix_close(sockfd);
-		return ;
-	}
-	// recéption 
-
-	while((n = recv(sockfd, buf, sizeof buf - 1, 0)) > 0)
-	{
-		buf[n] = '\0';
-		page += std::string(buf,n) ;
-	}
-	// fermeture de la socket
-
-	unix_close(sockfd);
-#ifdef EXTADDRSEARCH_DEBUG
-	std::cerr << "ExtAddrFinder: Got full page from " << server_name << std::endl ;
-#endif
-}
-
-
-void* doExtAddrSearch(void *p)
+void ExtAddrFinder::run()
 {
 	
 	std::vector<std::string> res ;
 
-	ExtAddrFinder *af = (ExtAddrFinder*)p ;
-
-	for(std::list<std::string>::const_iterator it(af->_ip_servers.begin());it!=af->_ip_servers.end();++it)
+	for(auto& it : _ip_servers)
 	{
-		std::string page ;
-
-		getPage(*it,page) ;
-		std::string ip = scan_ip(page) ;
-
+		std::string ip = "";
+		rsGetHostByNameSpecDNS(it,"myip.opendns.com",ip,2);
 		if(ip != "")
 			res.push_back(ip) ;
 #ifdef EXTADDRSEARCH_DEBUG
-		std::cout << "ip found through " << *it << ": \"" << ip << "\"" << std::endl ;
+		RS_DBG("ip found through DNS ", it, ": \"", ip, "\"");
 #endif
 	}
 
 	if(res.empty())
 	{
-		// thread safe copy results.
-		//
-		{
-			RsStackMutex mtx(af->mAddrMtx) ;
-
-			af->mFound = false ;
-			af->mFoundTS = time(NULL) ;
-			af->mSearching = false ;
-		}
-		return NULL ;
+		reset();
+		return ;
 	}
 
-	sort(res.begin(),res.end()) ; // eliminates outliers.
+	std::map<sockaddr_storage,ZeroInt> addrV4_votes;
+	std::map<sockaddr_storage,ZeroInt> addrV6_votes;
+	std::string all_addrV4_Found;
+	std::string all_addrV6_Found;
 
-
-
-	if(!sockaddr_storage_ipv4_aton(af->mAddr, res[res.size()/2].c_str()))
+	for(auto curRes : res)
 	{
-		std::cerr << "ExtAddrFinder: Could not convert " << res[res.size()/2] << " into an address." << std::endl ;
+		sockaddr_storage addr;
+		sockaddr_storage_clear(addr);
+		bool validIP =   sockaddr_storage_inet_pton(addr, curRes)
+		              && sockaddr_storage_isValidNet(addr);
+		bool isIPv4 = sockaddr_storage_ipv6_to_ipv4(addr);
+		if( validIP && isIPv4 )
 		{
-			RsStackMutex mtx(af->mAddrMtx) ;
-			af->mFound = false ;
-			af->mFoundTS = time(NULL) ;
-			af->mSearching = false ;
+			addr.ss_family = AF_INET;
+			addrV4_votes[addr].n++ ;
+			all_addrV4_Found += sockaddr_storage_tostring(addr) + "\n";
 		}
-		return NULL ;
+		else if( validIP && !isIPv4)
+		{
+			addr.ss_family = AF_INET6;
+			addrV6_votes[addr].n++ ;
+			all_addrV6_Found += sockaddr_storage_tostring(addr) + "\n";
+		}
+		else
+			RS_ERR("Invalid addresse reported: ", curRes) ;
+
 	}
+
+	if( (0 == addrV4_votes.size()) && (0 == addrV6_votes.size()) )
+	{
+		RS_ERR("Could not find any external address.");
+		reset();
+		return ;
+	}
+
+	if( 1 < addrV4_votes.size() )
+		RS_ERR("Multiple external IPv4 addresses reported: "
+		      , all_addrV4_Found ) ;
+
+	if( 1 < addrV6_votes.size() )
+		RS_ERR("Multiple external IPv6 addresses reported: "
+		      , all_addrV6_Found ) ;
 
 	{
-		RsStackMutex mtx(af->mAddrMtx) ;
-		af->mFound = true ;
-		af->mFoundTS = time(NULL) ;
-		af->mSearching = false ;
+		RS_STACK_MUTEX(mAddrMtx);
+
+		mSearching = false ;
+		mFoundTS = time(NULL) ;
+
+		// Only save more reported address if not only once.
+		uint32_t admax = 0 ;
+		sockaddr_storage_clear(mAddrV4);
+		for (auto it : addrV4_votes)
+			if (admax < it.second.n)
+			{
+				mAddrV4 = it.first ;
+				mFoundV4 = true ;
+				admax = it.second.n ;
+			}
+
+		admax = 0 ;
+		sockaddr_storage_clear(mAddrV6);
+		for (auto it : addrV6_votes)
+			if (admax < it.second.n)
+			{
+				mAddrV6 = it.first ;
+				mFoundV6 = true ;
+				admax = it.second.n ;
+			}
+
 	}
 
-	return NULL ;
+	return ;
 }
-
 
 void ExtAddrFinder::start_request()
 {
-	void *data = (void *)this;
-	pthread_t tid ;
-    
-    	if(! pthread_create(&tid, 0, &doExtAddrSearch, data))
-		pthread_detach(tid); /* so memory is reclaimed in linux */
-        else
-            	std::cerr << "(EE) Could not start ExtAddrFinder thread." << std::endl;
+	if (!isRunning())
+		start("ExtAddrFinder");
 }
 
-bool ExtAddrFinder::hasValidIP(struct sockaddr_storage &addr)
+bool ExtAddrFinder::hasValidIPV4(struct sockaddr_storage &addr)
 {
 #ifdef EXTADDRSEARCH_DEBUG
-	std::cerr << "ExtAddrFinder: Getting ip." << std::endl ;
+	RS_DBG("Getting ip.");
 #endif
 
 	{
-		RsStackMutex mut(mAddrMtx) ;
-		if(mFound)
+		RS_STACK_MUTEX(mAddrMtx) ;
+		if(mFoundV4)
 		{
 #ifdef EXTADDRSEARCH_DEBUG
-			std::cerr << "ExtAddrFinder: Has stored ip: responding with this ip." << std::endl ;
+			RS_DBG("Has stored ip responding with this ip:", sockaddr_storage_iptostring(mAddrV4)) ;
 #endif
-            sockaddr_storage_copyip(addr,mAddr);	// just copy the IP so we dont erase the port.
+			sockaddr_storage_copyip(addr,mAddrV4);	// just copy the IP so we dont erase the port.
 		}
 	}
-	rstime_t delta;
+
+	testTimeOut();
+
+	RS_STACK_MUTEX(mAddrMtx) ;
+	return mFoundV4;
+}
+
+bool ExtAddrFinder::hasValidIPV6(struct sockaddr_storage &addr)
+{
+#ifdef EXTADDRSEARCH_DEBUG
+	RS_DBG("Getting ip.");
+#endif
+
 	{
-		RsStackMutex mut(mAddrMtx) ;
-		//timeout the current ip
-		delta = time(NULL) - mFoundTS;
+		RS_STACK_MUTEX(mAddrMtx) ;
+		if(mFoundV6)
+		{
+#ifdef EXTADDRSEARCH_DEBUG
+			RS_DBG("Has stored ip responding with this ip:", sockaddr_storage_iptostring(mAddrV6)) ;
+#endif
+			sockaddr_storage_copyip(addr,mAddrV6);	// just copy the IP so we dont erase the port.
+		}
 	}
-	if((uint32_t)delta > MAX_IP_STORE) {//launch a research
+
+	testTimeOut();
+
+	RS_STACK_MUTEX(mAddrMtx) ;
+	return mFoundV6;
+}
+
+void ExtAddrFinder::testTimeOut()
+{
+	bool timeOut;
+	{
+		RS_STACK_MUTEX(mAddrMtx) ;
+		//timeout the current ip
+		timeOut = (mFoundTS + MAX_IP_STORE < time(NULL));
+	}
+	if(timeOut || mFirstTime) {//launch a research
 		if( mAddrMtx.trylock())
 		{
 			if(!mSearching)
 			{
 #ifdef EXTADDRSEARCH_DEBUG
-				std::cerr << "ExtAddrFinder: No stored ip: Initiating new search." << std::endl ;
+				RS_DBG("No stored ip: Initiating new search.");
 #endif
 				mSearching = true ;
 				start_request() ;
 			}
 #ifdef EXTADDRSEARCH_DEBUG
 			else
-				std::cerr << "ExtAddrFinder: Already searching." << std::endl ;
+				RS_DBG("Already searching.");
 #endif
+			mFirstTime = false;
 			mAddrMtx.unlock();
 		}
 #ifdef EXTADDRSEARCH_DEBUG
 		else
-			std::cerr << "ExtAddrFinder: (Note) Could not acquire lock. Busy." << std::endl ;
+			RS_DBG("(Note) Could not acquire lock. Busy.");
 #endif
 	}
-
-	RsStackMutex mut(mAddrMtx) ;
-	return mFound ;
 }
 
-void ExtAddrFinder::reset()
+void ExtAddrFinder::reset(bool firstTime /*=false*/)
 {
-	RsStackMutex mut(mAddrMtx) ;
+#ifdef EXTADDRSEARCH_DEBUG
+	RS_DBG("firstTime=", firstTime);
+#endif
+	RS_STACK_MUTEX(mAddrMtx) ;
 
-	mFound = false ;
 	mSearching = false ;
-	mFoundTS = time(NULL) - MAX_IP_STORE;
+	mFoundV4 = false ;
+	mFoundV6 = false ;
+	mFirstTime = firstTime;
+	mFoundTS = time(nullptr);
+	sockaddr_storage_clear(mAddrV4);
+	sockaddr_storage_clear(mAddrV6);
 }
 
 ExtAddrFinder::~ExtAddrFinder()
 {
 #ifdef EXTADDRSEARCH_DEBUG
-	std::cerr << "ExtAddrFinder: Deleting ExtAddrFinder." << std::endl ;
+	RS_DBG("Deleting ExtAddrFinder.");
 #endif
-
 }
 
 ExtAddrFinder::ExtAddrFinder() : mAddrMtx("ExtAddrFinder")
 {
 #ifdef EXTADDRSEARCH_DEBUG
-	std::cerr << "ExtAddrFinder: Creating new ExtAddrFinder." << std::endl ;
+	RS_DBG("Creating new ExtAddrFinder.");
 #endif
-	RsStackMutex mut(mAddrMtx) ;
+	reset( true );
 
-	mFound = false;
-	mSearching = false;
-	mFoundTS = time(NULL) - MAX_IP_STORE;
-	sockaddr_storage_clear(mAddr);
-
-	_ip_servers.push_back(std::string( "checkip.dyndns.org" )) ;
-	_ip_servers.push_back(std::string( "www.myip.dk"   )) ;
-	_ip_servers.push_back(std::string( "showip.net"         )) ;
-	_ip_servers.push_back(std::string( "www.displaymyip.com")) ;
+//https://unix.stackexchange.com/questions/22615/how-can-i-get-my-external-ip-address-in-a-shell-script
+	//Enter direct ip so local DNS cannot change it.
+	//DNS servers must recognize "myip.opendns.com"
+	_ip_servers.push_back(std::string( "208.67.222.222" )) ;//resolver1.opendns.com
+	_ip_servers.push_back(std::string( "208.67.220.220" )) ;//resolver2.opendns.com
+	_ip_servers.push_back(std::string( "208.67.222.220" )) ;//resolver3.opendns.com
+	_ip_servers.push_back(std::string( "208.67.220.222" )) ;//resolver4.opendns.com
+	_ip_servers.push_back(std::string( "2620:119:35::35" )) ;//resolver1.opendns.com
+	_ip_servers.push_back(std::string( "2620:119:53::53" )) ;//resolver2.opendns.com
 }
-

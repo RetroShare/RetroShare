@@ -3,8 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2013-2013 by Christopher Evi-Parker                               *
- * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2013 Christopher Evi-Parker                                   *
+ * Copyright (C) 2018-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -162,18 +163,9 @@ class RsGxsIntegrityCheck : public RsThread
     enum CheckState { CheckStart, CheckChecking };
 
 public:
-
-
-    /*!
-     *
-     * @param dataService
-     * @param mGroupTS
-     * @param chunkSize
-     * @param sleepPeriod
-     */
-    RsGxsIntegrityCheck(RsGeneralDataService* const dataService,
-                         RsGenExchange *genex, RsSerialType&,
-                         RsGixs *gixs);
+	RsGxsIntegrityCheck( RsGeneralDataService* const dataService,
+	                     RsGenExchange* genex, RsSerialType&,
+	                     RsGixs* gixs );
 
     static bool check(uint16_t service_type, RsGixs *mgixs, RsGeneralDataService *mds);
     bool isDone();
@@ -201,19 +193,9 @@ private:
 class RsGxsSinglePassIntegrityCheck
 {
 public:
-
-    /*!
-     *
-     * @param dataService
-     * @param mGroupTS
-     * @param chunkSize
-     * @param sleepPeriod
-     */
-    static bool check(uint16_t service_type, RsGixs *mgixs, RsGeneralDataService *mds
-#ifdef RS_DEEP_CHANNEL_INDEX
-                      , RsGenExchange* mGenExchangeClient, RsSerialType& mSerializer
-#endif
-                      , std::vector<RsGxsGroupId>& grpsToDel, GxsMsgReq& msgsToDel);
+	static bool check(
+	        uint16_t service_type, RsGixs* mgixs, RsGeneralDataService* mds,
+	        std::vector<RsGxsGroupId>& grpsToDel, GxsMsgReq& msgsToDel );
 };
 
 class GroupUpdate

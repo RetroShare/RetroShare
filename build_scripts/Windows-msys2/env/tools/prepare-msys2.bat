@@ -25,8 +25,11 @@ if exist "%EnvMSYS2Path%\msys%MSYS2Base%\usr\bin\pacman.exe" (
 	)
 )
 
-set MSYS2Install=msys2-base-%MSYS2Architecture%-20200720.tar.xz
-set MSYS2Url=http://sourceforge.net/projects/msys2/files/Base/%MSYS2Architecture%/%MSYS2Install%/download
+if "%MSYS2Architecture%"=="i686" set MSYS2Version=20210705
+if "%MSYS2Architecture%"=="x86_64" set MSYS2Version=20210725
+
+set MSYS2Install=msys2-base-%MSYS2Architecture%-%MSYS2Version%.tar.xz
+set MSYS2Url=https://repo.msys2.org/distrib/%MSYS2Architecture%/%MSYS2Install%
 
 %cecho% info "Remove previous MSYS2 version"
 call "%ToolsPath%\remove-dir.bat" "%EnvMSYS2Path%"
@@ -41,12 +44,10 @@ if not exist "%EnvDownloadPath%\%MSYS2Install%" %cecho% error "Cannot download M
 set MSYS2SH=%EnvMSYS2Path%\msys%MSYS2Base%\usr\bin\sh
 
 %cecho% info "Initialize MSYS2"
-"%MSYS2SH%" -lc "pacman -Sy"
-"%MSYS2SH%" -lc "pacman --noconfirm --needed -S bash pacman pacman-mirrors msys2-runtime"
+"%MSYS2SH%" -lc "yes | pacman --noconfirm -Syuu msys2-keyring"
+"%MSYS2SH%" -lc "pacman --noconfirm -Su"
 
 call "%EnvMSYS2Path%\msys%MSYS2Base%\autorebase.bat"
-call "%EnvRootPath%\update-msys2.bat"
-call "%EnvRootPath%\update-msys2.bat"
 
 :exit
 endlocal

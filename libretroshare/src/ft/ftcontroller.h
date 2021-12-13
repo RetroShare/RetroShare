@@ -157,6 +157,7 @@ public:
         bool  getFileDownloadChunksDetails(const RsFileHash& hash,FileChunksInfo& info);
         bool  setDestinationName(const RsFileHash& hash,const std::string& dest_name) ;
         bool  setDestinationDirectory(const RsFileHash& hash,const std::string& dest_name) ;
+        bool  FileServerCancel(const RsFileHash& hash);
 
 		// Download speed
         bool getPriority(const RsFileHash& hash,DwlSpeed& p);

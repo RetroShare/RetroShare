@@ -3,8 +3,10 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2011-2011 by Robert Fernie <retroshare.project@gmail.com>         *
- * Copyright 2011-2011 by Christopher Evi-Parker                               *
+ * Copyright (C) 2011  Robert Fernie <retroshare.project@gmail.com>            *
+ * Copyright (C) 2011  Christopher Evi-Parker                                  *
+ * Copyright (C) 2019-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -20,17 +22,15 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-
-#ifndef RSGNP_H
-#define RSGNP_H
+#pragma once
 
 #include <set>
 #include <string>
-#include "util/rstime.h"
-#include <stdlib.h>
+#include <cstdlib>
 #include <list>
 #include <map>
 
+#include "util/rstime.h"
 #include "services/p3service.h"
 #include "retroshare/rsreputations.h"
 #include "retroshare/rsidentity.h"
@@ -61,9 +61,8 @@
 class RsNetworkExchangeService
 {
 public:
-
-	RsNetworkExchangeService(){ return;}
-    virtual ~RsNetworkExchangeService() {}
+	RsNetworkExchangeService() = default;
+	virtual ~RsNetworkExchangeService() = default;
 
     virtual uint16_t serviceType() const =0;
     /*!
@@ -85,9 +84,24 @@ public:
     virtual bool msgAutoSync() const =0;
     virtual bool grpAutoSync() const =0;
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ///                                          DISTANT SEARCH FUNCTIONS                                           ///
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////
+	///                    DISTANT SEARCH FUNCTIONS                          ///
+	////////////////////////////////////////////////////////////////////////////
+
+	/// Trigger remote generic GXS service search
+	virtual std::error_condition distantSearchRequest(
+	        rs_owner_ptr<uint8_t> searchData, uint32_t dataSize,
+	        RsServiceType serviceType, TurtleRequestId& requestId ) = 0;
+
+	/// Handle remote generic GXS services search requests to specific service
+	virtual std::error_condition handleDistantSearchRequest(
+	        rs_view_ptr<uint8_t> requestData, uint32_t requestSize,
+	        rs_owner_ptr<uint8_t>& resultData, uint32_t& resultSize ) = 0;
+
+	/// Receive remote generic GXS services search result
+	virtual std::error_condition receiveDistantSearchResult(
+	        const TurtleRequestId requestId,
+	        rs_owner_ptr<uint8_t>& resultData, uint32_t& resultSize ) = 0;
 
     /*!
      * \brief turtleGroupRequest
@@ -115,13 +129,17 @@ public:
      */
     virtual void receiveTurtleSearchResults(TurtleRequestId req,const std::list<RsGxsGroupSummary>& group_infos)=0;
 
-    /*!
-     * \brief receiveTurtleSearchResults
-     * 			Called by turtle (through RsGxsNetTunnel) when new data is received
-     * \param req			        Turtle search request ID associated with this result
-     * \param encrypted_group_data  Group data
-     */
-	virtual void receiveTurtleSearchResults(TurtleRequestId req,const unsigned char *encrypted_group_data,uint32_t encrypted_group_data_len)=0;
+	/*!
+	 * \brief receiveTurtleSearchResults
+	 * Called by turtle (through RsGxsNetTunnel) when new data is received
+	 * \param req Turtle search request ID associated with this result
+	 * \param encrypted_group_data  Group data
+	 */
+	RS_DEPRECATED_FOR("receiveDistantSearchResult")
+	virtual void receiveTurtleSearchResults(
+	        TurtleRequestId req,
+	        rs_owner_ptr<const uint8_t> encrypted_group_data,
+	        uint32_t encrypted_group_data_len ) = 0;
 
     /*!
      * \brief retrieveTurtleSearchResults
@@ -141,7 +159,9 @@ public:
     virtual bool clearDistantSearchResults(const TurtleRequestId& id)=0;
     virtual bool retrieveDistantGroupSummary(const RsGxsGroupId&,RsGxsGroupSearchResults&)=0;
 
-    virtual bool search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos) =0;
+	RS_DEPRECATED_FOR("handleDistantSearchRequest and distantSearchRequest")
+	virtual bool search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos) =0;
+
 	virtual bool search(const Sha1CheckSum& hashed_group_id,unsigned char *& encrypted_group_data,uint32_t& encrypted_group_data_len)=0;
 
     /*!
@@ -305,6 +325,20 @@ public:
 				return RsReputationLevel::NEUTRAL;
 		}
 	}
-};
 
-#endif // RSGNP_H
+	/**
+	 * @brief Check if new stuff is available from peers
+	 * @param peers peers to check, if empty all available peers are checked
+	 */
+	virtual std::error_condition checkUpdatesFromPeers(
+	        std::set<RsPeerId> peers = std::set<RsPeerId>() ) = 0;
+
+	/**
+	 * @brief request online peers to pull updates from our node ASAP
+	 * @param peers peers to which request pull from, if empty all available
+	 * peers are requested to pull
+	 * @return success or error details
+	 */
+	virtual std::error_condition requestPull(
+	        std::set<RsPeerId> peers = std::set<RsPeerId>() ) = 0;
+};

@@ -58,9 +58,7 @@
 // number of posts to show at once.
 #define POSTS_CHUNK_SIZE 25
 
-/****
- * #define DEBUG_POSTED
- ***/
+//#define DEBUG_POSTED
 
 static const int POSTED_TABS_POSTS  = 1;
 
@@ -87,8 +85,12 @@ std::ostream& operator<<(std::ostream& o,const QSize& s) { return o << s.width()
 
 void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
+#ifdef DEBUG_POSTED
+	if(option.state & QStyle::State_Selected) RS_DBG("Selected");
+#endif
+
 	if((option.state & QStyle::State_Selected)) // Avoids double display. The selected widget is never exactly the size of the rendered one,
-        return;                                 // so when selected, we only draw the selected one.
+		return;                                 // so when selected, we only draw the selected one.
 
 	// prepare
 	painter->save();
@@ -98,7 +100,7 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
 
 	painter->save();
 
-    painter->fillRect( option.rect, option.palette.background());
+    painter->fillRect( option.rect, option.palette.window());
 	painter->restore();
 
     QPixmap pixmap(option.rect.size());
@@ -109,9 +111,9 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
         BoardPostDisplayWidget_compact w(post,displayFlags(post.mMeta.mMsgId),nullptr);
 
         w.setFixedSize(option.rect.size());
-
         w.updateGeometry();
         w.adjustSize();
+
         w.render(&pixmap,QPoint(0,0),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
     }
     else
@@ -121,6 +123,7 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
         w.setFixedSize(option.rect.size());
         w.updateGeometry();
         w.adjustSize();
+
         w.render(&pixmap,QPoint(0,0),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
     }
 
@@ -145,6 +148,10 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
 
 	painter->save();
 	painter->drawPixmap(option.rect.topLeft(), pixmap /*,.scaled(option.rect.width(),option.rect.width()*w.height()/(float)w.width(),Qt::KeepAspectRatio,Qt::SmoothTransformation)*/);
+#ifdef DEBUG_POSTED
+	painter->drawText(option.rect.bottomLeft(),QString::number(time(nullptr)));
+	RS_DBG("DisplayMode=", mDisplayMode == BoardPostDisplayWidget_compact::DISPLAY_MODE_COMPACT? "Compact":"Card", " Title:", post.mMeta.mMsgName.c_str());
+#endif
 	painter->restore();
 }
 
@@ -193,40 +200,46 @@ uint8_t PostedPostDelegate::displayFlags(const RsGxsMessageId &id) const
 
 QWidget *PostedPostDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex& index) const
 {
-    RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
 
-    if(index.column() == RsPostedPostsModel::COLUMN_POSTS)
-    {
-        QWidget *w ;
+	if (!index.isValid())
+		return nullptr;
 
-        if(mDisplayMode==BoardPostDisplayWidget_compact::DISPLAY_MODE_COMPACT)
-            w = new BoardPostDisplayWidget_compact(post,displayFlags(post.mMeta.mMsgId),parent);
-        else
-            w = new BoardPostDisplayWidget_card(post,displayFlags(post.mMeta.mMsgId),parent);
+	if(index.column() != RsPostedPostsModel::COLUMN_POSTS)
+		return nullptr;
 
-        QObject::connect(w,SIGNAL(vote(RsGxsGrpMsgIdPair,bool)),mPostListWidget,SLOT(voteMsg(RsGxsGrpMsgIdPair,bool)));
-        QObject::connect(w,SIGNAL(expand(RsGxsMessageId,bool)),this,SLOT(expandItem(RsGxsMessageId,bool)));
-        QObject::connect(w,SIGNAL(commentsRequested(const RsGxsMessageId&,bool)),mPostListWidget,SLOT(openComments(const RsGxsMessageId&)));
-        QObject::connect(w,SIGNAL(changeReadStatusRequested(const RsGxsMessageId&,bool)),mPostListWidget,SLOT(changeReadStatus(const RsGxsMessageId&,bool)));
+	QWidget *w ;
+	RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
 
-        // All other interactions with the widget should cause the msg to be set as read.
-        QObject::connect(w,SIGNAL(thumbnailOpenned()),mPostListWidget,SLOT(markCurrentPostAsRead()));
-        QObject::connect(w,SIGNAL(vote(RsGxsGrpMsgIdPair,bool)),mPostListWidget,SLOT(markCurrentPostAsRead()));
-        QObject::connect(w,SIGNAL(expand(RsGxsMessageId,bool)),this,SLOT(markCurrentPostAsRead()));
-        QObject::connect(w,SIGNAL(commentsRequested(const RsGxsMessageId&,bool)),mPostListWidget,SLOT(markCurrentPostAsRead()));
-        QObject::connect(w,SIGNAL(shareButtonClicked()),mPostListWidget,SLOT(markCurrentPostAsRead()));
-        QObject::connect(w,SIGNAL(copylinkClicked()),mPostListWidget,SLOT(copyMessageLink()));
+#ifdef DEBUG_POSTED
+	RS_DBG("Title:", post.mMeta.mMsgName.c_str());
+#endif
 
-        w->setFixedSize(option.rect.size());
-        w->adjustSize();
-        w->updateGeometry();
-        w->adjustSize();
+	if(mDisplayMode==BoardPostDisplayWidget_compact::DISPLAY_MODE_COMPACT)
+		w = new BoardPostDisplayWidget_compact(post,displayFlags(post.mMeta.mMsgId),parent);
+	else
+		w = new BoardPostDisplayWidget_card(post,displayFlags(post.mMeta.mMsgId),parent);
 
-        return w;
-    }
-    else
-        return NULL;
+	QObject::connect(w,SIGNAL(vote(RsGxsGrpMsgIdPair,bool)),mPostListWidget,SLOT(voteMsg(RsGxsGrpMsgIdPair,bool)));
+	QObject::connect(w,SIGNAL(expand(RsGxsMessageId,bool)),this,SLOT(expandItem(RsGxsMessageId,bool)));
+	QObject::connect(w,SIGNAL(commentsRequested(RsGxsMessageId,bool)),mPostListWidget,SLOT(openComments(RsGxsMessageId)));
+	QObject::connect(w,SIGNAL(changeReadStatusRequested(RsGxsMessageId,bool)),mPostListWidget,SLOT(changeReadStatus(RsGxsMessageId,bool)));
+
+	// All other interactions with the widget should cause the msg to be set as read.
+	QObject::connect(w,SIGNAL(thumbnailOpenned()),mPostListWidget,SLOT(markCurrentPostAsRead()));
+	QObject::connect(w,SIGNAL(vote(RsGxsGrpMsgIdPair,bool)),mPostListWidget,SLOT(markCurrentPostAsRead()));
+	QObject::connect(w,SIGNAL(expand(RsGxsMessageId,bool)),this,SLOT(markCurrentPostAsRead()));
+	QObject::connect(w,SIGNAL(commentsRequested(RsGxsMessageId,bool)),mPostListWidget,SLOT(markCurrentPostAsRead()));
+	QObject::connect(w,SIGNAL(shareButtonClicked()),mPostListWidget,SLOT(markCurrentPostAsRead()));
+	QObject::connect(w,SIGNAL(copylinkClicked()),mPostListWidget,SLOT(copyMessageLink()));
+
+	w->setGeometry(option.rect);
+	w->adjustSize();
+	w->updateGeometry();
+	w->adjustSize();
+
+	return w;
 }
+
 void PostedPostDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
 {
 	editor->setGeometry(option.rect);
@@ -264,12 +277,10 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
     connect(ui->nextButton,SIGNAL(clicked()),this,SLOT(nextPosts()));
     connect(ui->prevButton,SIGNAL(clicked()),this,SLOT(prevPosts()));
 
-    connect(ui->postsTree,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(postContextMenu(const QPoint&)));
+    connect(ui->postsTree,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(postContextMenu(QPoint)));
     connect(ui->viewModeButton,SIGNAL(clicked()),this,SLOT(switchDisplayMode()));
 
     connect(mPostedPostsModel,SIGNAL(boardPostsLoaded()),this,SLOT(postPostLoad()));
-
-    QFontMetricsF fm(font());
 
 	/* Setup UI helper */
 
@@ -374,23 +385,20 @@ void PostedListWidgetWithModel::filterItems(QString text)
 
 void PostedListWidgetWithModel::nextPosts()
 {
-	ui->postsTree->selectionModel()->clear();
-    if(mPostedPostsModel->displayedStartPostIndex() + POSTS_CHUNK_SIZE < mPostedPostsModel->filteredPostsCount())
-    {
-        mPostedPostsModel->setPostsInterval(POSTS_CHUNK_SIZE+mPostedPostsModel->displayedStartPostIndex(),POSTS_CHUNK_SIZE);
+	if(mPostedPostsModel->displayedStartPostIndex() + POSTS_CHUNK_SIZE < mPostedPostsModel->filteredPostsCount())
+	{
+		mPostedPostsModel->setPostsInterval(POSTS_CHUNK_SIZE+mPostedPostsModel->displayedStartPostIndex(),POSTS_CHUNK_SIZE);
 		updateShowLabel();
-    }
+	}
 }
 
 void PostedListWidgetWithModel::prevPosts()
 {
-    ui->postsTree->selectionModel()->clear();
-
-    if((int)mPostedPostsModel->displayedStartPostIndex() > 0)
-    {
-        mPostedPostsModel->setPostsInterval((int)mPostedPostsModel->displayedStartPostIndex()-POSTS_CHUNK_SIZE,POSTS_CHUNK_SIZE);
-        updateShowLabel();
-    }
+	if((int)mPostedPostsModel->displayedStartPostIndex() > 0)
+	{
+		mPostedPostsModel->setPostsInterval((int)mPostedPostsModel->displayedStartPostIndex()-POSTS_CHUNK_SIZE,POSTS_CHUNK_SIZE);
+		updateShowLabel();
+	}
 }
 
 void PostedListWidgetWithModel::showAuthorInPeople()
@@ -490,29 +498,30 @@ void PostedListWidgetWithModel::handleEvent_main_thread(std::shared_ptr<const Rs
 
 	switch(e->mPostedEventCode)
 	{
-        case RsPostedEventCode::NEW_COMMENT:     // [[fallthrough]];
-        case RsPostedEventCode::NEW_VOTE:        // [[fallthrough]];
-        {
-            // special treatment here because the message might be a comment, so we need to refresh the comment tab if openned
+		case RsPostedEventCode::NEW_COMMENT:             [[fallthrough]];
+		case RsPostedEventCode::NEW_VOTE:
+		{
+			// special treatment here because the message might be a comment, so we need to refresh the comment tab if openned
 
-            for(int i=2;i<ui->tabWidget->count();++i)
-            {
-                auto *t = dynamic_cast<GxsCommentDialog*>(ui->tabWidget->widget(i));
+			for(int i=2;i<ui->tabWidget->count();++i)
+			{
+				auto *t = dynamic_cast<GxsCommentDialog*>(ui->tabWidget->widget(i));
 
-                if(t->groupId() == e->mPostedGroupId)
-                    t->refresh();
-            }
-        }
-        case RsPostedEventCode::NEW_MESSAGE:          // [[fallthrough]];
-        case RsPostedEventCode::NEW_POSTED_GROUP:     // [[fallthrough]];
-		case RsPostedEventCode::UPDATED_POSTED_GROUP: // [[fallthrough]];
-		case RsPostedEventCode::UPDATED_MESSAGE:
-        case RsPostedEventCode::BOARD_DELETED:
-        case RsPostedEventCode::SYNC_PARAMETERS_UPDATED:
-        {
+				if(t->groupId() == e->mPostedGroupId)
+					t->refresh();
+			}
+		}
+			[[clang::fallthrough]];
+		case RsPostedEventCode::NEW_MESSAGE:             [[fallthrough]];
+		case RsPostedEventCode::NEW_POSTED_GROUP:        [[fallthrough]];
+		case RsPostedEventCode::UPDATED_POSTED_GROUP:    [[fallthrough]];
+		case RsPostedEventCode::UPDATED_MESSAGE:         [[fallthrough]];
+		case RsPostedEventCode::BOARD_DELETED:           [[fallthrough]];
+		case RsPostedEventCode::SYNC_PARAMETERS_UPDATED:
+		{
 			if(e->mPostedGroupId == groupId())
 				updateDisplay(true);
-    	}
+		}
 
 		default:
 		break;
@@ -923,7 +932,7 @@ void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
 
 	formatDescription = RsHtml().formatText(NULL, formatDescription, formatFlag);
 
-	ui->infoDescription->setText(formatDescription);
+	ui->trans_Description->setText(formatDescription);
 	ui->infoAdministrator->setId(group.mMeta.mAuthorId) ;
 
 	link = RetroShareLink::createMessage(group.mMeta.mAuthorId, "");

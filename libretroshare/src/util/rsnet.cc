@@ -174,3 +174,17 @@ std::string rs_inet_ntoa(struct in_addr in)
 	rs_sprintf(str, "%u.%u.%u.%u", (int) bytes[0], (int) bytes[1], (int) bytes[2], (int) bytes[3]);
 	return str;
 }
+
+int rs_setSockTimeout( int sockfd, bool forReceive /*= true*/
+                     , int timeout_Sec /*= 0*/, int timeout_uSec /*= 0*/)
+{
+#ifdef WINDOWS_SYS
+		DWORD timeout = timeout_Sec * 1000 + timeout_uSec;
+#else
+		struct timeval timeout;
+		timeout.tv_sec = timeout_Sec;
+		timeout.tv_usec = timeout_uSec;
+#endif
+		return setsockopt( sockfd, SOL_SOCKET, forReceive ? SO_RCVTIMEO : SO_SNDTIMEO
+		                 , (const char*)&timeout, sizeof timeout);
+}

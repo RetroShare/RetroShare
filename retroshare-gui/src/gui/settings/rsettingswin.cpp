@@ -226,8 +226,8 @@ SettingsPage::setNewPage(int page)
 		mHelpBrowser->clear();
 		return ;
 	}
-	ui.pageName->setText(pagew->pageName());
-	ui.pageicon->setPixmap(pagew->iconPixmap()) ;
+	ui.pageNameLabel->setText(pagew->pageName());
+	ui.pageIconLabel->setPixmap(pagew->iconPixmap()) ;
 
 	ui.stackedWidget->setCurrentIndex(page);
 	ui.listWidget->setCurrentRow(page);

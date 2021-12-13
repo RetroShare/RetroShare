@@ -108,28 +108,28 @@ void BoardPostDisplayWidgetBase::makeUpVote()
 void BoardPostDisplayWidgetBase::setReadStatus(bool isNew, bool isUnread)
 {
 	if (isUnread)
-        readButton()->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
+		readButton()->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
 	else
-        readButton()->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png"));
+		readButton()->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png"));
 
-    newLabel()->setVisible(isNew);
+	newLabel()->setVisible(isNew);
 
-    mainFrame()->setProperty("new", isNew);
-    mainFrame()->style()->unpolish(mainFrame());
-    mainFrame()->style()->polish(mainFrame());
+	feedFrame()->setProperty("new", isNew);
+	feedFrame()->style()->unpolish(feedFrame());
+	feedFrame()->style()->polish(  feedFrame());
 }
 
 void BoardPostDisplayWidget_compact::doExpand(bool e)
 {
 #ifdef DEBUG_BOARDPOSTDISPLAYWIDGET
-     std::cerr << "Expanding" << std::endl;
+	std::cerr << "Expanding" << std::endl;
 #endif
-     if(e)
-         ui->frame_notes->show();
-     else
-         ui->frame_notes->hide();
+	if(e)
+		ui->frame_notes->show();
+	else
+		ui->frame_notes->hide();
 
-    emit expand(mPost.mMeta.mMsgId,e);
+	emit expand(mPost.mMeta.mMsgId,e);
 }
 
 void BoardPostDisplayWidgetBase::loadComments(bool e)
@@ -144,7 +144,7 @@ void BoardPostDisplayWidgetBase::readToggled()
     emit changeReadStatusRequested(mPost.mMeta.mMsgId,s);
 }
 
-void BoardPostDisplayWidgetBase::setup()
+void BoardPostDisplayWidgetBase::baseSetup()
 {
     // show/hide things based on the view type
 
@@ -166,16 +166,15 @@ void BoardPostDisplayWidgetBase::setup()
     QAction *CopyLinkAction = new QAction(QIcon(""),tr("Copy RetroShare Link"), this);
     connect(CopyLinkAction, SIGNAL(triggered()), this, SLOT(handleCopyLinkClicked()));
 
-    int S = QFontMetricsF(font()).height() ;
-
     readButton()->setChecked(false);
 
     QMenu *menu = new QMenu();
     menu->addAction(CopyLinkAction);
     menu->addSeparator();
     shareButton()->setMenu(menu);
+    shareButton()->setPopupMode(QToolButton::InstantPopup);
 
-    connect(shareButton(),SIGNAL(pressed()),this,SLOT(handleShareButtonClicked()));
+    connect(menu,SIGNAL(aboutToShow()),this,SLOT(handleShareButtonClicked()));
 
     RsReputationLevel overall_reputation = rsReputations->overallReputationLevel(mPost.mMeta.mAuthorId);
     bool redacted = (overall_reputation == RsReputationLevel::LOCALLY_NEGATIVE);
@@ -183,6 +182,7 @@ void BoardPostDisplayWidgetBase::setup()
     if(redacted)
     {
         commentButton()->setDisabled(true);
+        shareButton()->setDisabled(true);
         voteUpButton()->setDisabled(true);
         voteDownButton()->setDisabled(true);
         fromLabel()->setId(mPost.mMeta.mAuthorId);
@@ -195,8 +195,6 @@ void BoardPostDisplayWidgetBase::setup()
     }
     else
     {
-        QPixmap sqpixmap2 = FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default.png");
-
         QDateTime qtime;
         qtime.setTime_t(mPost.mMeta.mPublishTs);
         QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
@@ -293,17 +291,8 @@ void BoardPostDisplayWidgetBase::handleCopyLinkClicked()
 BoardPostDisplayWidget_compact::BoardPostDisplayWidget_compact(const RsPostedPost& post, uint8_t display_flags,QWidget *parent=nullptr)
     : BoardPostDisplayWidgetBase(post,display_flags,parent), ui(new Ui::BoardPostDisplayWidget_compact())
 {
-    ui->setupUi(this);
-    setup();
-
-    ui->verticalLayout->addStretch();
-    ui->verticalLayout->setAlignment(Qt::AlignTop);
-    ui->topLayout->setAlignment(Qt::AlignTop);
-    ui->arrowsLayout->addStretch();
-    ui->arrowsLayout->setAlignment(Qt::AlignTop);
-    ui->verticalLayout_2->addStretch();
-
-    adjustSize();
+	ui->setupUi(this);
+	BoardPostDisplayWidget_compact::setup();
 }
 
 BoardPostDisplayWidget_compact::~BoardPostDisplayWidget_compact()
@@ -313,7 +302,7 @@ BoardPostDisplayWidget_compact::~BoardPostDisplayWidget_compact()
 
 void BoardPostDisplayWidget_compact::setup()
 {
-    BoardPostDisplayWidgetBase::setup();
+    baseSetup();
 
     // show/hide things based on the view type
 
@@ -355,7 +344,7 @@ void BoardPostDisplayWidget_compact::setup()
     QObject::connect(ui->expandButton, SIGNAL(toggled(bool)), this, SLOT(doExpand(bool)));
 
     QTextDocument doc;
-    doc.setHtml(notes()->text());
+    doc.setHtml(BoardPostDisplayWidget_compact::notes()->text());
 
     if(mDisplayFlags & SHOW_NOTES)
     {
@@ -414,9 +403,9 @@ QLabel         *BoardPostDisplayWidget_compact::dateLabel()      { return ui->da
 QLabel         *BoardPostDisplayWidget_compact::titleLabel()     { return ui->titleLabel; }
 QLabel         *BoardPostDisplayWidget_compact::scoreLabel()     { return ui->scoreLabel; }
 QLabel         *BoardPostDisplayWidget_compact::notes()          { return ui->notes; }
-QPushButton    *BoardPostDisplayWidget_compact::shareButton()    { return ui->shareButton; }
+QToolButton    *BoardPostDisplayWidget_compact::shareButton()    { return ui->shareButton; }
 QLabel         *BoardPostDisplayWidget_compact::pictureLabel()   { return ui->pictureLabel; }
-QFrame         *BoardPostDisplayWidget_compact::mainFrame()      { return ui->mainFrame; }
+QFrame         *BoardPostDisplayWidget_compact::feedFrame()      { return ui->feedFrame; }
 
 //===================================================================================================================================
 //==                                                 class BoardPostDisplayWidget_card                                             ==
@@ -425,17 +414,8 @@ QFrame         *BoardPostDisplayWidget_compact::mainFrame()      { return ui->ma
 BoardPostDisplayWidget_card::BoardPostDisplayWidget_card(const RsPostedPost& post, uint8_t display_flags, QWidget *parent)
     : BoardPostDisplayWidgetBase(post,display_flags,parent), ui(new Ui::BoardPostDisplayWidget_card())
 {
-    ui->setupUi(this);
-    setup();
-
-    ui->verticalLayout->addStretch();
-    ui->verticalLayout->setAlignment(Qt::AlignTop);
-    ui->topLayout->setAlignment(Qt::AlignTop);
-    ui->arrowsLayout->addStretch();
-    ui->arrowsLayout->setAlignment(Qt::AlignTop);
-    ui->verticalLayout_2->addStretch();
-
-    adjustSize();
+	ui->setupUi(this);
+	BoardPostDisplayWidget_card::setup();
 }
 
 BoardPostDisplayWidget_card::~BoardPostDisplayWidget_card()
@@ -445,7 +425,7 @@ BoardPostDisplayWidget_card::~BoardPostDisplayWidget_card()
 
 void BoardPostDisplayWidget_card::setup()
 {
-    BoardPostDisplayWidgetBase::setup();
+    baseSetup();
 
     RsReputationLevel overall_reputation = rsReputations->overallReputationLevel(mPost.mMeta.mAuthorId);
     bool redacted = (overall_reputation == RsReputationLevel::LOCALLY_NEGATIVE);
@@ -462,7 +442,6 @@ void BoardPostDisplayWidget_card::setup()
 			GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
 			// Wiping data - as its been passed to thumbnail.
 
-			QPixmap scaledpixmap;
 			if(pixmap.width() > 800){
 				QPixmap scaledpixmap = pixmap.scaledToWidth(800, Qt::SmoothTransformation);
 				ui->pictureLabel->setPixmap(scaledpixmap);
@@ -477,10 +456,10 @@ void BoardPostDisplayWidget_card::setup()
 	}
 
     QTextDocument doc;
-    doc.setHtml(notes()->text());
+    doc.setHtml(BoardPostDisplayWidget_card::notes()->text());
 
     if(doc.toPlainText().trimmed().isEmpty())
-        notes()->hide();
+        BoardPostDisplayWidget_card::notes()->hide();
 }
 
 QToolButton    *BoardPostDisplayWidget_card::voteUpButton()   { return ui->voteUpButton; }
@@ -493,7 +472,7 @@ QLabel         *BoardPostDisplayWidget_card::dateLabel()      { return ui->dateL
 QLabel         *BoardPostDisplayWidget_card::titleLabel()     { return ui->titleLabel; }
 QLabel         *BoardPostDisplayWidget_card::scoreLabel()     { return ui->scoreLabel; }
 QLabel         *BoardPostDisplayWidget_card::notes()          { return ui->notes; }
-QPushButton    *BoardPostDisplayWidget_card::shareButton()    { return ui->shareButton; }
+QToolButton    *BoardPostDisplayWidget_card::shareButton()    { return ui->shareButton; }
 QLabel         *BoardPostDisplayWidget_card::pictureLabel()   { return ui->pictureLabel; }
-QFrame         *BoardPostDisplayWidget_card::mainFrame()      { return ui->mainFrame; }
+QFrame         *BoardPostDisplayWidget_card::feedFrame()      { return ui->feedFrame; }
 

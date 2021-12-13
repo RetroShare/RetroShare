@@ -40,21 +40,21 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QFrame" name="mainFrame">
+    <widget class="QFrame" name="gradFrame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="gradFrame_GL">
       <item row="4" column="0" colspan="3">
        <widget class="QStackedWidget" name="stackedWidget">
         <property name="currentIndex">
          <number>0</number>
         </property>
         <widget class="QWidget" name="stackedWidgetPage1">
-         <layout class="QGridLayout" name="gridLayout_5">
+         <layout class="QGridLayout" name="stackedWidgetPage1_GL">
           <property name="leftMargin">
            <number>0</number>
           </property>
@@ -73,7 +73,7 @@
          </layout>
         </widget>
         <widget class="QWidget" name="stackedWidgetPage2">
-         <layout class="QGridLayout" name="gridLayout_2">
+         <layout class="QGridLayout" name="stackedWidgetPage2_GL">
           <property name="leftMargin">
            <number>0</number>
           </property>
@@ -104,7 +104,7 @@
             <property name="title">
              <string>Preview</string>
             </property>
-            <layout class="QGridLayout" name="gridLayout_6">
+            <layout class="QGridLayout" name="groupBox_GL">
              <property name="topMargin">
               <number>0</number>
              </property>
@@ -115,7 +115,7 @@
               <number>0</number>
              </property>
              <item row="0" column="0">
-              <spacer name="horizontalSpacer_2">
+              <spacer name="pictureLeft_HSpacer">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
@@ -128,7 +128,7 @@
               </spacer>
              </item>
              <item row="0" column="2">
-              <spacer name="horizontalSpacer_3">
+              <spacer name="pictureRight_HSpacer">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
@@ -146,14 +146,14 @@
                 <number>0</number>
                </property>
                <widget class="QWidget" name="PageAttach">
-                <layout class="QGridLayout" name="gridLayout_8">
+                <layout class="QGridLayout" name="PageAttach_GL">
                  <item row="0" column="0">
-                  <layout class="QGridLayout" name="gridLayout_7">
+                  <layout class="QGridLayout" name="PageAttachTop_GL">
                    <property name="topMargin">
                     <number>9</number>
                    </property>
                    <item row="1" column="0">
-                    <spacer name="horizontalSpacer_6">
+                    <spacer name="addPicLeft_HSpacer">
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
                      </property>
@@ -190,7 +190,7 @@
                     </widget>
                    </item>
                    <item row="1" column="2">
-                    <spacer name="horizontalSpacer_7">
+                    <spacer name="addPicRight_HSpacer">
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
                      </property>
@@ -203,7 +203,7 @@
                     </spacer>
                    </item>
                    <item row="3" column="0" colspan="3">
-                    <spacer name="verticalSpacer_2">
+                    <spacer name="addPic_VSpacer">
                      <property name="orientation">
                       <enum>Qt::Vertical</enum>
                      </property>
@@ -218,7 +218,7 @@
                   </layout>
                  </item>
                  <item row="1" column="0">
-                  <spacer name="horizontalSpacer_8">
+                  <spacer name="PageAttach_HSpacer">
                    <property name="orientation">
                     <enum>Qt::Horizontal</enum>
                    </property>
@@ -233,7 +233,7 @@
                 </layout>
                </widget>
                <widget class="QWidget" name="PageImage">
-                <layout class="QGridLayout" name="gridLayout_4">
+                <layout class="QGridLayout" name="PageImage_GL">
                  <property name="topMargin">
                   <number>2</number>
                  </property>
@@ -267,7 +267,7 @@
                   </widget>
                  </item>
                  <item row="1" column="1">
-                  <spacer name="horizontalSpacer_5">
+                  <spacer name="PageImage_HSpacer">
                    <property name="orientation">
                     <enum>Qt::Horizontal</enum>
                    </property>
@@ -305,7 +305,7 @@
          </layout>
         </widget>
         <widget class="QWidget" name="stackedWidgetPage3">
-         <layout class="QGridLayout" name="gridLayout_3">
+         <layout class="QGridLayout" name="stackedWidgetPage3_GL">
           <property name="leftMargin">
            <number>0</number>
           </property>
@@ -323,7 +323,7 @@
            </widget>
           </item>
           <item row="1" column="0">
-           <spacer name="verticalSpacer">
+           <spacer name="linkVSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -340,7 +340,7 @@
        </widget>
       </item>
       <item row="5" column="0" colspan="3">
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="signed_HL">
         <item>
          <widget class="QLabel" name="signedLabel">
           <property name="sizePolicy">
@@ -367,12 +367,19 @@
        </layout>
       </item>
       <item row="6" column="1">
-       <widget class="QPushButton" name="submitButton">
+       <widget class="QPushButton" name="postButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
         </property>
         <property name="styleSheet">
          <string notr="true"/>
@@ -399,12 +406,12 @@
        </widget>
       </item>
       <item row="1" column="0" colspan="3">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <layout class="QHBoxLayout" name="view_HL">
         <property name="spacing">
          <number>2</number>
         </property>
         <item>
-         <widget class="QPushButton" name="postButton">
+         <widget class="QPushButton" name="viewPostButton">
           <property name="text">
            <string>Post</string>
           </property>
@@ -424,7 +431,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="imageButton">
+         <widget class="QPushButton" name="viewImageButton">
           <property name="text">
            <string>Image</string>
           </property>
@@ -450,7 +457,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="linkButton">
+         <widget class="QPushButton" name="viewLinkButton">
           <property name="text">
            <string>Link</string>
           </property>
@@ -473,7 +480,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer_4">
+         <spacer name="viewHSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -488,10 +495,19 @@
        </layout>
       </item>
       <item row="0" column="0" colspan="3">
-       <widget class="StyledLabel" name="info_label">
+       <widget class="QLabel" name="info_Label">
         <property name="palette">
          <palette>
           <active>
+           <colorrole role="WindowText">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>0</red>
+              <green>0</green>
+              <blue>0</blue>
+             </color>
+            </brush>
+           </colorrole>
            <colorrole role="Base">
             <brush brushstyle="SolidPattern">
              <color alpha="255">
@@ -512,6 +528,15 @@
            </colorrole>
           </active>
           <inactive>
+           <colorrole role="WindowText">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>0</red>
+              <green>0</green>
+              <blue>0</blue>
+             </color>
+            </brush>
+           </colorrole>
            <colorrole role="Base">
             <brush brushstyle="SolidPattern">
              <color alpha="255">
@@ -532,6 +557,15 @@
            </colorrole>
           </inactive>
           <disabled>
+           <colorrole role="WindowText">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>154</red>
+              <green>154</green>
+              <blue>154</blue>
+             </color>
+            </brush>
+           </colorrole>
            <colorrole role="Base">
             <brush brushstyle="SolidPattern">
              <color alpha="255">
@@ -552,6 +586,11 @@
            </colorrole>
           </disabled>
          </palette>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
         </property>
         <property name="autoFillBackground">
          <bool>true</bool>
@@ -584,7 +623,7 @@
        </spacer>
       </item>
       <item row="2" column="0" colspan="3">
-       <layout class="QVBoxLayout" name="verticalLayout">
+       <layout class="QVBoxLayout" name="title_VL">
         <property name="topMargin">
          <number>6</number>
         </property>
@@ -613,15 +652,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>HashBox</class>
-   <extends>QScrollArea</extends>
-   <header location="global">gui/common/HashBox.h</header>
-   <container>1</container>
+   <class>GxsIdChooser</class>
+   <extends>QComboBox</extends>
+   <header>gui/gxs/GxsIdChooser.h</header>
   </customwidget>
   <customwidget>
    <class>HeaderFrame</class>
@@ -630,20 +663,21 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>GxsIdChooser</class>
-   <extends>QComboBox</extends>
-   <header>gui/gxs/GxsIdChooser.h</header>
-  </customwidget>
-  <customwidget>
    <class>RichTextEdit</class>
    <extends>QWidget</extends>
    <header>util/RichTextEdit.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>HashBox</class>
+   <extends>QScrollArea</extends>
+   <header location="global">gui/common/HashBox.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources>
-  <include location="Posted_images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="Posted_images.qrc"/>
  </resources>
  <connections>
   <connection>

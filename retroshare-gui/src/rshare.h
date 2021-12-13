@@ -38,7 +38,7 @@
 #include "retroshare/rstypes.h"
 
 /** Pointer to this RetroShare application instance. */
-#define rApp  ((Rshare *)qApp)
+#define rApp  (static_cast<Rshare *>(qApp))
 
 #define rDebug(fmt)   (rApp->log(Log::Debug, (fmt)))
 #define rInfo(fmt)    (rApp->log(Log::Info, (fmt)))
@@ -130,7 +130,7 @@ public:
   static Log::LogMessage log(Log::LogLevel level, QString msg);
   
   /** Creates Rshare's data directory, if it doesn't already exist. */
-  static bool setConfigDirectory(QString dir);
+  static bool setConfigDirectory(const QString &dir);
   
   /** Enters the main event loop and waits until exit() is called. The signal
   * running() will be emitted when the event loop has started. */
@@ -177,7 +177,7 @@ private:
   static void customizeDateFormat();
 
   /** Returns true if the specified arguments wants a value. */
-  static bool argNeedsValue(QString argName);
+  static bool argNeedsValue(const QString &argName);
 
   static QMap<QString, QString> _args; /**< List of command-line arguments.  */
   static Log _log;                     /**< Logs debugging messages to file or stdout. */
@@ -185,7 +185,7 @@ private:
   static QString _stylesheet;          /**< The current GUI stylesheet.      */
   static QString _language;            /**< The current language.            */
   static QString _dateformat;          /**< The format for dates in feed items etc. */
-	static QString _opmode;              /**< The operating mode passed by args. */
+  static QString _opmode;              /**< The operating mode passed by args. */
   static QStringList _links;           /**< List of links passed by arguments. */
   static QStringList _files;           /**< List of files passed by arguments. */
   static QDateTime mStartupTime;       // startup time

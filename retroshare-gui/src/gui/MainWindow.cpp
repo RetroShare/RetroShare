@@ -247,12 +247,13 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     statusBar()->setVisible(Settings->valueFromGroup("StatusBar", "ShowStatusBar", QVariant(true)).toBool());
 
     /* initialize combobox in status bar */
-    statusComboBox = new QComboBox(statusBar());
+    statusComboBox = new RSComboBox(statusBar());
     statusComboBox->setVisible(Settings->valueFromGroup("StatusBar", "ShowStatus", QVariant(true)).toBool());
     statusComboBox->setFocusPolicy(Qt::ClickFocus);
     initializeStatusObject(statusComboBox, true);
 
     QWidget *widget = new QWidget();
+    widget->setObjectName("trans_statusComboBoxFrame");
     QHBoxLayout *hbox = new QHBoxLayout();
     hbox->setMargin(0);
     hbox->setSpacing(6);
@@ -1300,7 +1301,7 @@ static void setStatusObject(QObject *pObject, int nStatus)
         }
         return;
     }
-    QComboBox *pComboBox = dynamic_cast<QComboBox*>(pObject);
+    RSComboBox *pComboBox = dynamic_cast<RSComboBox*>(pObject);
     if (pComboBox) {
         /* set index of combobox */
         int nIndex = pComboBox->findData(nStatus, Qt::UserRole);
@@ -1389,7 +1390,7 @@ void MainWindow::initializeStatusObject(QObject *pObject, bool bConnect)
         }
     } else {
         /* initialize combobox */
-        QComboBox *pComboBox = dynamic_cast<QComboBox*>(pObject);
+        RSComboBox *pComboBox = dynamic_cast<RSComboBox*>(pObject);
         if (pComboBox) {
             pComboBox->addItem(QIcon(StatusDefs::imageStatus(RS_STATUS_ONLINE)), StatusDefs::name(RS_STATUS_ONLINE), RS_STATUS_ONLINE);
             pComboBox->addItem(QIcon(StatusDefs::imageStatus(RS_STATUS_BUSY)), StatusDefs::name(RS_STATUS_BUSY), RS_STATUS_BUSY);
@@ -1613,7 +1614,7 @@ void MainWindow::switchVisibilityStatus(StatusElement e,bool b)
 //{
 //    ServicePermissionDialog::showYourself();
 //}
-QComboBox *MainWindow::statusComboBoxInstance()
+RSComboBox *MainWindow::statusComboBoxInstance()
 {
 	return statusComboBox;
 }

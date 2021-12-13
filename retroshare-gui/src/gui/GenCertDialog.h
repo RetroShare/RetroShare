@@ -31,7 +31,7 @@ class GenCertDialog : public QDialog
 
 public:
 	/** Default constructor */
-	GenCertDialog(bool onlyGenerateIdentity, QWidget *parent = 0);
+	explicit GenCertDialog(bool onlyGenerateIdentity, QWidget *parent = 0);
 
 	virtual ~GenCertDialog() ;
 	virtual void mouseMoveEvent(QMouseEvent *e) ;
@@ -44,7 +44,7 @@ private slots:
     void switchReuseExistingNode();
 	void grabMouse();
 	void updateCheckLabels();
-	void useBobChecked(bool checked);
+	void useI2pChecked(bool checked);
 
 private:
 	void initKeyList();

@@ -334,6 +334,29 @@ void RsHtml::replaceAnchorWithImg(QDomDocument &doc, QDomElement &element, QText
 	element.appendChild(img);
 }
 
+void RsHtml::filterEmbeddedImages(QDomDocument &doc, QDomElement &currentElement)
+{
+	QDomNodeList children = currentElement.childNodes();
+	for(uint index = 0; index < (uint)children.length(); index++) {
+		QDomNode node = children.item(index);
+		if(node.isElement()) {
+			QDomElement element = node.toElement();
+			if(element.tagName().toLower() == "img") {
+				if(element.hasAttribute("src")) {
+					QString src = element.attribute("src");
+					// Do not allow things in the image source, except these:
+					// :/          internal resource		needed for emotes
+					// data:image  base64 embedded image	needed for stickers
+					if(!src.startsWith(":/") && !src.startsWith("data:image", Qt::CaseInsensitive)) {
+						element.setAttribute("src", ":/images/imageblocked_24.png");
+					}
+				}
+			}
+			filterEmbeddedImages(doc, element);
+		}
+	}
+}
+
 int RsHtml::indexInWithValidation(QRegExp &rx, const QString &text, EmbedInHtml &embedInfos, int pos)
 {
 	int index = rx.indexIn(text, pos);
@@ -636,6 +659,7 @@ QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulo
 	}
 
 	QDomElement body = doc.documentElement();
+	filterEmbeddedImages(doc, body);	// This should be first, becuse it should not overwrite embedded custom smileys
 	if (flag & RSHTML_FORMATTEXT_EMBED_SMILEYS) {
 		embedHtml(textDocument, doc, body, defEmbedImg, flag);
 	}

@@ -439,7 +439,7 @@ Changes for 0.5.4e
 		- Enabled embedded images in private chat and messages (only for QT version 4.7.0 and higher)
 		- added tooltips to GroupFlagsWidget when buttons are unchecked (Patch from Anonym)
 		- when an unknow user attempt to connect, show the name in the security item (Patch from Anonym)
-		- Load new stylesheets for locale depended things. Loading order: qss.default (internal), qss.<locale> (internal e.g. qss.de_DE)
+		- Load new stylesheets for locale depended things. Loading order: default.qss (internal), <locale>.qss (internal e.g. de_DE.qss)
 			stylesheet.qss (internal or external), stylesheet_<locale>.lqss (parallel to stylesheet)
 		- Added api for news feeds to the plugin interface. Added news feeds to the FeedReader plugin.
 		- Removed toaster for muted participant of a chat lobby.
@@ -586,7 +586,7 @@ Changes for 0.5.4c
      - GUI
         * patch from AC to perform html optimization of forum posts using the canonical function optimizeHtml()
         * fixed bug preventing share manager to modify more than one directory at once
-        * Moved most of the hardcoded colors of lists and trees to the file qss.default (with help from braindead).
+        * Moved most of the hardcoded colors of lists and trees to the file default.qss (with help from braindead).
           Now the stylesheet can redefine these colors.
         * Added multiselective mute/unmute to chat lobby. Added mute/unmute with double click on icon.
         * Added flag for hungarian language.
@@ -790,10 +790,10 @@ Changes for 0.5.4a
         * Set the built-in stylesheet "Standard" as default for new profiles.
         * Removed some unnecessary style sheets.
         * Added two internal stylesheets:
-           - qss.default - This file is used as default for all stylesheets (e.g. the frames of 
+           - default.qss - This file is used as default for all stylesheets (e.g. the frames of 
              the AvatarWidget) and can be overloaded from the selected stylesheet
            - Standard.qss - The standard stylesheet for the current look of RetroShare. More internal stylesheets can be added.
-             The plan is to move nearly all internal stylesheets to the files Standard.qss/qss.default. 
+             The plan is to move nearly all internal stylesheets to the files Standard.qss/default.qss. 
              After that the "empty" stylesheet should represent the system theme of the os.
 
      - Added clear chat history to the context menu of the message text browser

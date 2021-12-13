@@ -39,6 +39,7 @@
 #include "ConnectFriendWizard.h"
 #include "ui_ConnectFriendWizard.h"
 #include "gui/common/PeerDefs.h"
+#include "gui/connect/ConfCertDialog.h"
 #include "gui/notifyqt.h"
 #include "gui/common/GroupDefs.h"
 #include "gui/msgs/MessageComposer.h"
@@ -107,8 +108,8 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	//ui->foffRadioButton->hide();
 	//ui->rsidRadioButton->hide();
 	
-	ui->cp_Label->hide();
-	ui->requestinfolabel->hide();
+	ui->info_Label_FrdReq->hide();
+	ui->info_Label_Request->hide();
 	
     connect(ui->acceptNoSignGPGCheckBox,SIGNAL(toggled(bool)), ui->_options_GB,SLOT(setEnabled(bool))) ;
     connect(ui->addKeyToKeyring_CB,SIGNAL(toggled(bool)), ui->acceptNoSignGPGCheckBox,SLOT(setChecked(bool))) ;
@@ -295,8 +296,8 @@ void ConnectFriendWizard::setCertificate(const QString &certificate, bool friend
 
 			setStartId(Page_Conclusion);
 			if (friendRequest){
-				ui->cp_Label->show();
-				ui->requestinfolabel->show();
+				ui->info_Label_FrdReq->show();
+				ui->info_Label_Request->show();
 				setTitleText(ui->ConclusionPage, tr("Friend request"));
 				ui->ConclusionPage->setSubTitle(tr("Details about the request"));
 				setButtonText(QWizard::FinishButton	, tr("Accept"));
@@ -320,8 +321,8 @@ void ConnectFriendWizard::setCertificate(const QString &certificate, bool friend
 			setStartId(Page_Conclusion);
 
 			if (friendRequest){
-				ui->cp_Label->show();
-				ui->requestinfolabel->show();
+				ui->info_Label_FrdReq->show();
+				ui->info_Label_Request->show();
 				setTitleText(ui->ConclusionPage, tr("Friend request"));
 				ui->ConclusionPage->setSubTitle(tr("Details about the request"));
 				setButtonText(QWizard::FinishButton	, tr("Accept"));
@@ -358,8 +359,8 @@ void ConnectFriendWizard::setGpgId(const RsPgpId &gpgId, const RsPeerId &sslId, 
 		setStartId(Page_Conclusion);
 
 		if (friendRequest){
-			ui->cp_Label->show();
-			ui->requestinfolabel->show();
+			ui->info_Label_FrdReq->show();
+			ui->info_Label_Request->show();
 			setTitleText(ui->ConclusionPage, tr("Friend request"));
 			ui->ConclusionPage->setSubTitle(tr("Details about the request"));
 			setButtonText(QWizard::FinishButton	, tr("Accept"));
@@ -374,8 +375,8 @@ void ConnectFriendWizard::setGpgId(const RsPgpId &gpgId, const RsPeerId &sslId, 
 		//setStartId(friendRequest ? Page_FriendRequest : Page_Conclusion);
 		setStartId(Page_Conclusion);
 		if (friendRequest){
-			ui->cp_Label->show();
-			ui->requestinfolabel->show();
+			ui->info_Label_FrdReq->show();
+			ui->info_Label_Request->show();
 			setTitleText(ui->ConclusionPage,tr("Friend request"));
 			ui->ConclusionPage->setSubTitle(tr("Details about the request"));
 			setButtonText(QWizard::FinishButton	, tr("Accept"));
@@ -530,7 +531,7 @@ void ConnectFriendWizard::initializePage(int id)
 				}
 			}
 
-			ui->cp_Label->setText(tr("You have a friend request from") + " " + QString::fromUtf8(peerDetails.name.c_str()));
+			ui->info_Label_FrdReq->setText(tr("You have a friend request from") + " " + QString::fromUtf8(peerDetails.name.c_str()));
 			ui->nameEdit->setText(QString::fromUtf8(peerDetails.name.c_str()));
 			ui->trustEdit->setText(trustString);
 			ui->profileIdEdit->setText(QString::fromStdString(peerDetails.gpg_id.toStdString()));
@@ -572,6 +573,16 @@ void ConnectFriendWizard::initializePage(int id)
             ui->ipEdit->setText(s);
 			ui->signersEdit->setPlainText(ts);
 
+			ui->knownIpLabel->setHidden(peerDetails.ipAddressList.empty());
+			ui->knownIpEdit->setHidden(peerDetails.ipAddressList.empty());
+			{
+				QString ipList;
+				for(auto& it : peerDetails.ipAddressList)
+					ipList.append(QString::fromStdString(it) + "\n");
+
+				ui->knownIpEdit->setPlainText(ipList);
+			}
+
 			fillGroups(this, ui->groupComboBox, groupId);
 			
 			if(peerDetails.isHiddenNode)
@@ -587,15 +598,16 @@ void ConnectFriendWizard::initializePage(int id)
 			}
 			if(mIsShortInvite)
 			{
-                ui->nameEdit->setText(tr("[Unknown]"));
-                ui->addKeyToKeyring_CB->setChecked(false);
-                ui->addKeyToKeyring_CB->setEnabled(false);
+				if(ui->nameEdit->text().isEmpty())
+					ui->nameEdit->setText(tr("[Unknown]"));
+				ui->addKeyToKeyring_CB->setChecked(false);
+				ui->addKeyToKeyring_CB->setEnabled(false);
 				ui->signersEdit->hide();
 				ui->signersLabel->hide();
-                ui->signGPGCheckBox->setChecked(false);
-                ui->signGPGCheckBox->setEnabled(false);
-                ui->acceptNoSignGPGCheckBox->setChecked(true);
-                ui->acceptNoSignGPGCheckBox->setEnabled(false);
+				ui->signGPGCheckBox->setChecked(false);
+				ui->signGPGCheckBox->setEnabled(false);
+				ui->acceptNoSignGPGCheckBox->setChecked(true);
+				ui->acceptNoSignGPGCheckBox->setEnabled(false);
 			}
 
 			ui->ipEdit->setTextInteractionFlags(Qt::TextSelectableByMouse);
@@ -856,30 +868,30 @@ void ConnectFriendWizard::cleanFriendCert()
 {
 	bool certValid = false;
 	QString errorMsg ;
+	QString certDetail;
 	std::string cert = ui->friendCertEdit->toPlainText().toUtf8().constData();
 
 	if (cert.empty()) {
-        ui->friendCertCleanLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/delete.png"));
 		ui->friendCertCleanLabel->setToolTip("");
-		ui->friendCertCleanLabel->setStyleSheet("");
 		errorMsg = tr("");
 
 	} else {
 		std::string cleanCert;
 		uint32_t error_code;
+		RsPeerDetails details;
 
-		if (rsPeers->cleanCertificate(cert, cleanCert, mIsShortInvite, error_code))
-        {
+		if (rsPeers->cleanCertificate(cert, cleanCert, mIsShortInvite, error_code, details))
+		{
 			certValid = true;
 
 			if (cert != cleanCert)
-            {
+			{
 				QTextCursor textCursor = ui->friendCertEdit->textCursor();
 
 				whileBlocking(ui->friendCertEdit)->setPlainText(QString::fromUtf8(cleanCert.c_str()));
 				whileBlocking(ui->friendCertEdit)->setTextCursor(textCursor);
 
-				ui->friendCertCleanLabel->setStyleSheet("");
+				certDetail = ConfCertDialog::getCertificateDescription(details,false,mIsShortInvite,!details.ipAddressList.empty());
 			}
 			
 			if (mIsShortInvite)
@@ -887,7 +899,7 @@ void ConnectFriendWizard::cleanFriendCert()
 			else
 				errorMsg = tr("Valid certificate") ;
 
-            ui->friendCertCleanLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/accepted16.png"));
+			ui->friendCertCleanLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/accepted16.png"));
 		} else {
 			if (error_code > 0) {
 				switch (error_code) {
@@ -903,16 +915,17 @@ void ConnectFriendWizard::cleanFriendCert()
 
 				default:
 					errorMsg = tr("Not a valid Retroshare certificate!") ;
-					ui->friendCertCleanLabel->setStyleSheet("QLabel#friendCertCleanLabel {border: 1px solid #DCDC41; border-radius: 6px; background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);}");
 				}
 			}
-            ui->friendCertCleanLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/delete.png"));
 		}
 	}
 
-    ui->friendCertCleanLabel->setPixmap(certValid ? FilesDefs::getPixmapFromQtResourcePath(":/images/accepted16.png") : FilesDefs::getPixmapFromQtResourcePath(":/images/delete.png"));
-	ui->friendCertCleanLabel->setToolTip(errorMsg);
+	ui->friendCertCleanLabel->setPixmap(certValid ? FilesDefs::getPixmapFromQtResourcePath(":/images/accepted16.png") : FilesDefs::getPixmapFromQtResourcePath(":/images/delete.png"));
+	ui->friendCertCleanLabel->setToolTip("<p>" + errorMsg + (certValid ? "\n" + certDetail : "") + "</p>");
 	ui->friendCertCleanLabel->setText(errorMsg);
+	ui->friendCertCleanLabel->setProperty("WrongValue", !certValid && !errorMsg.isEmpty());
+	ui->friendCertCleanLabel->style()->unpolish(ui->friendCertCleanLabel);
+	ui->friendCertCleanLabel->style()->polish(  ui->friendCertCleanLabel);
 
 	ui->TextPage->setComplete(certValid);
 }

@@ -62,10 +62,11 @@ public:
 
 	static const char *DEFAULT_BOARD_IMAGE;
 
-protected slots:
+protected:
 	/* GxsGroupFeedItem */
 
-    virtual void setup();    // to be overloaded by the different views
+    void baseSetup();
+    virtual void setup() =0;    // to be overloaded by the different views
 
     virtual QToolButton *voteUpButton() =0;
     virtual QToolButton *commentButton() =0;
@@ -78,9 +79,10 @@ protected slots:
     virtual QLabel      *notes() =0;
     virtual QLabel      *pictureLabel()=0;
     virtual QToolButton *readButton() =0;
-    virtual QPushButton *shareButton() =0;
-    virtual QFrame      *mainFrame() =0;
+    virtual QToolButton *shareButton() =0;
+    virtual QFrame      *feedFrame() =0;
 
+protected slots:
     void loadComments(bool e);
     void readToggled();
     void setReadStatus(bool isNew, bool isUnread) ;
@@ -126,8 +128,8 @@ public:
     QLabel      *notes()          override;
     QLabel      *pictureLabel()   override;
     QToolButton *readButton()     override;
-    QPushButton *shareButton()    override;
-    QFrame      *mainFrame()      override;
+    QToolButton *shareButton()    override;
+    QFrame      *feedFrame()      override;
 
 public slots:
     void viewPicture() ;
@@ -164,9 +166,9 @@ public:
     QLabel      *scoreLabel()     override;
     QLabel      *notes()          override;
     QToolButton *readButton()     override;
-    QPushButton *shareButton()    override;
+    QToolButton *shareButton()    override;
     QLabel      *pictureLabel()   override;
-    QFrame      *mainFrame()      override;
+    QFrame      *feedFrame()      override;
 
 protected slots:
     /* GxsGroupFeedItem */

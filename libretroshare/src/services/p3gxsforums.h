@@ -4,8 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2012-2014  Robert Fernie <retroshare@lunamutt.com>            *
- * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
- * Copyright (C) 2019-2020  Asociación Civil Altermundi <info@altermundi.net>  *
+ * Copyright (C) 2018-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -31,6 +31,10 @@
 #include "retroshare/rsgxscircles.h"
 #include "util/rstickevent.h"
 #include "util/rsdebug.h"
+
+#ifdef RS_DEEP_FORUMS_INDEX
+#include "deep_search/forumsindex.hpp"
+#endif
 
 
 class p3GxsForums: public RsGenExchange, public RsGxsForums, public p3Config,
@@ -142,7 +146,36 @@ public:
 	/// @see RsGxsForums
 	std::error_condition setPostKeepForever(
 	        const RsGxsGroupId& forumId, const RsGxsMessageId& postId,
-            bool keepForever ) override;
+	        bool keepForever ) override;
+
+	/// @see RsGxsForums
+	std::error_condition getContentSummaries(
+	        const RsGxsGroupId& forumId,
+	        const std::set<RsGxsMessageId>& contentIds,
+	        std::vector<RsMsgMetaData>& summaries ) override;
+
+	/// @see RsGxsForums
+	std::error_condition distantSearchRequest(
+	        const std::string& matchString, TurtleRequestId& searchId ) override;
+
+	/// @see RsGxsForums
+	std::error_condition localSearch(
+	        const std::string& matchString,
+	        std::vector<RsGxsSearchResult>& searchResults ) override;
+
+#ifdef RS_DEEP_FORUMS_INDEX
+	/// @see RsNxsObserver
+	std::error_condition handleDistantSearchRequest(
+	        rs_view_ptr<uint8_t> requestData, uint32_t requestSize,
+	        rs_owner_ptr<uint8_t>& resultData, uint32_t& resultSize ) override;
+
+	/// @see RsNxsObserver
+	std::error_condition receiveDistantSearchResult(
+	        const TurtleRequestId requestId,
+	        rs_owner_ptr<uint8_t>& resultData, uint32_t& resultSize ) override;
+#endif
+
+	std::error_condition requestSynchronization() override;
 
     /// implementation of rsGxsGorums
     ///
@@ -154,6 +187,17 @@ public:
 	bool updateGroup(uint32_t &token, const RsGxsForumGroup &group) override;
 
 	bool getMsgMetaData(const uint32_t &token, GxsMsgMetaMap& msg_metas) ;
+
+protected:
+#ifdef RS_DEEP_FORUMS_INDEX
+	/** Internal usage
+	 * @param[in] publicOnly if true is passed only results pertaining to
+	 * publicly shared forums are returned
+	 */
+	std::error_condition prepareSearchResults(
+	        const std::string& matchString, bool publicOnly,
+	        std::vector<RsGxsSearchResult>& searchResults );
+#endif //def RS_DEEP_FORUMS_INDEX
 
 private:
 
@@ -189,4 +233,8 @@ bool generateGroup(uint32_t &token, std::string groupName);
     std::map<RsGxsGroupId,rstime_t> mKnownForums ;
 	
 	RsMutex mKnownForumsMutex;
+
+#ifdef RS_DEEP_FORUMS_INDEX
+	DeepForumsIndex mDeepIndex;
+#endif
 };

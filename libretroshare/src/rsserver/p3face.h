@@ -43,7 +43,7 @@
 
 class p3heartbeat;
 class p3discovery2;
-class p3I2pBob;
+class p3I2pSam3;
 
 /* GXS Classes - just declare the classes.
    so we don't have to totally recompile to switch */
@@ -161,8 +161,8 @@ public:
 		p3ChatService *chatSrv;
 		p3StatusService *mStatusSrv;
 		p3GxsTunnelService *mGxsTunnels;
-#ifdef RS_USE_I2P_BOB
-		p3I2pBob *mI2pBob;
+#ifdef RS_USE_I2P_SAM3
+		p3I2pSam3 *mI2pSam3;
 #endif
 
         // This list contains all threaded services. It will be used to shut them down properly.

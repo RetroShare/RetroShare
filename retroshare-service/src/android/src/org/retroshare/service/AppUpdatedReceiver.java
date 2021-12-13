@@ -19,6 +19,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+/*
 package org.retroshare.service;
 
 import android.content.BroadcastReceiver;
@@ -36,3 +37,4 @@ public class AppUpdatedReceiver extends BroadcastReceiver
 		RetroShareServiceAndroid.start(context);
 	}
 }
+*/

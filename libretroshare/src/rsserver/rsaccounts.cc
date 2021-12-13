@@ -32,12 +32,12 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
-
+#include <system_error>
 #include <iostream>
 
 #include "retroshare/rsinit.h"
 #include "rsaccounts.h"
-
+#include "util/rsdebug.h"
 #include "util/rsdir.h"
 #include "util/rsstring.h"
 #include "util/folderiterator.h"
@@ -47,6 +47,11 @@
 #include "pqi/authgpg.h"
 
 #include <openssl/ssl.h>
+
+#ifdef __ANDROID__
+#	include "rs_android/rsjni.hpp"
+#	include "rs_android/retroshareserviceandroid.hpp"
+#endif
 
 // Global singleton declaration of data.
 RsAccountsDetail* RsAccounts::rsAccountsDetails = nullptr;
@@ -328,22 +333,7 @@ bool RsAccountsDetail::defaultBaseDirectory()
 {
 	std::string basedir;
 
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS
-
-	// unix: homedir + /.retroshare
-	char *h = getenv("HOME");
-	if (h == NULL)
-	{
-		std::cerr << "defaultBaseDirectory() Error: cannot determine $HOME dir"
-		          << std::endl;
-		return false ;
-	}
-
-	basedir = h;
-	basedir += "/.retroshare";
-
-#else
+#ifdef WINDOWS_SYS
 	if (RsInit::isPortable())
 	{
 		// use directory "Data" in portable version
@@ -375,13 +365,53 @@ bool RsAccountsDetail::defaultBaseDirectory()
 		}
 		basedir += "\\RetroShare";
 	}
-#endif
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#elif defined (__ANDROID__) // def WINDOWS_SYS
+
+	struct ApplicationInfo
+	{
+		static constexpr auto Name()
+		{ return "android/content/pm/ApplicationInfo"; }
+	};
+
+	auto uenv = jni::GetAttachedEnv(RsJni::getVM());
+	JNIEnv& env = *uenv;
+	auto androidContext = RetroShareServiceAndroid::getAndroidContext(env);
+	auto& contextClass =
+	        jni::Class<RetroShareServiceAndroid::Context>::Singleton(env);
+
+	auto& applicationInfoClass = jni::Class<ApplicationInfo>::Singleton(env);
+
+	auto getApplicationInfo =
+	        contextClass.GetMethod<jni::Object<ApplicationInfo> ()>(
+				env, "getApplicationInfo" );
+
+	auto applicationInfo = androidContext.Call(env, getApplicationInfo);
+
+	auto dataDirField = jni::Field<ApplicationInfo, jni::String>(
+	            env, applicationInfoClass, "dataDir" );
+
+	jni::Local<jni::String> dataDir = applicationInfo.Get<jni::String>(
+				env, dataDirField );
+
+	basedir = jni::Make<std::string>(env, dataDir) + "/.retroshare/";
+
+#else // def WINDOWS_SYS, if defined (__ANDROID__)
+	// unix: homedir + /.retroshare
+	char* h = getenv("HOME");
+	if(h == nullptr)
+	{
+		RS_ERR("cannot determine $HOME dir");
+		return false ;
+	}
+
+	basedir = h;
+	basedir += "/.retroshare";
+#endif // def WINDOWS_SYS
 
 	/* store to class variable */
 	mBaseDirectory = basedir;
-	std::cerr << "defaultBaseDirectory() = " << mBaseDirectory;
-	std::cerr << std::endl;
+
+	RS_INFO(mBaseDirectory);
 	return true;
 }
 
@@ -811,14 +841,15 @@ static bool checkAccount(const std::string &accountdir, AccountDetails &account,
 
 	/* Use RetroShare's exe dir */
 	dataDirectory = ".";
-#elif defined(ANDROID)
+#elif defined(__ANDROID__)
+	// TODO: This is probably not really used on Android
 	dataDirectory = PathBaseDirectory()+"/usr/share/retroshare";
-#elif defined(DATA_DIR)
+#elif defined(RS_DATA_DIR)
 	// cppcheck-suppress ConfigurationNotChecked
-	dataDirectory = DATA_DIR;
+	dataDirectory = RS_DATA_DIR;
 	// For all other OS the data directory must be set in libretroshare.pro
 #else
-#	error "For your target OS automatic data dir discovery is not supported, cannot compile if DATA_DIR variable not set."
+#	error "For your target OS automatic data dir discovery is not supported, cannot compile if RS_DATA_DIR variable not set."
 #endif
 
 	if (!check)
@@ -942,6 +973,11 @@ bool RsAccountsDetail::exportIdentityToString(
 
 bool RsAccountsDetail::copyGnuPGKeyrings()
 {
+#ifdef __ANDROID__
+	RS_ERR(std::errc::not_supported);
+	print_stacktrace();
+	return false;
+#else
 	std::string pgp_dir = PathPGPDirectory() ;
 
 	if(!RsDirUtil::checkCreateDirectory(pgp_dir))
@@ -993,6 +1029,7 @@ bool RsAccountsDetail::copyGnuPGKeyrings()
 	}
 
 	return true ;
+#endif // def __ANDROID__
 }
 
 

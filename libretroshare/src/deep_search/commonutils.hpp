@@ -1,8 +1,8 @@
 /*******************************************************************************
  * RetroShare full text indexing and search implementation based on Xapian     *
  *                                                                             *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
- * Copyright (C) 2019  Asociación Civil Altermundi <info@altermundi.net>       *
+ * Copyright (C) 2018-2021  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2021  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License version 3 as    *
@@ -21,6 +21,9 @@
 
 #include <xapian.h>
 #include <memory>
+#include <functional>
+#include <queue>
+#include <mutex>
 
 #include "util/rstime.h"
 
@@ -33,13 +36,34 @@
 
 namespace DeepSearch
 {
-
-std::unique_ptr<Xapian::WritableDatabase> openWritableDatabase(
-        const std::string& path, int flags = 0, int blockSize = 0 );
+typedef std::function<void(Xapian::WritableDatabase&)> write_op;
 
 std::unique_ptr<Xapian::Database> openReadOnlyDatabase(
         const std::string& path, int flags = 0 );
 
 std::string timetToXapianDate(const rstime_t& time);
+
+std::string simpleTextHtmlExtract(const std::string& rsHtmlDoc);
+
+struct StubbornWriteOpQueue
+{
+	explicit StubbornWriteOpQueue(const std::string& dbPath):
+	    mDbPath(dbPath) {}
+
+	~StubbornWriteOpQueue();
+
+	void push(write_op op);
+
+	std::error_condition flush(
+	        rstime_t acceptDelay = 20, rstime_t callTS = time(nullptr) );
+
+private:
+	std::queue<write_op> mOpStore;
+	rstime_t mLastFlush;
+
+	std::mutex mQueueMutex;
+
+	const std::string mDbPath;
+};
 
 }

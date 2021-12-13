@@ -418,8 +418,9 @@
     <file>qss/chat/compact/history/main.css</file>
     <file>qss/chat/compact/history/variants/Standard.css</file>
     <file>qss/chat/compact/history/variants/Colored.css</file>
-    <file>qss/stylesheet/qss.default</file>
-    <file>qss/stylesheet/Standard.qss</file>
+    <file>qss/stylesheet/default.qss</file>
+    <file>qss/stylesheet/Standard_Light.qss</file>
+    <file>qss/stylesheet/Standard_Dark.qss</file>
     <file>images/tags/pgp-known.png</file>
     <file>images/tags/pgp-unknown.png</file>
     <file>images/tags/dev-ambassador.png</file>

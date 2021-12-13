@@ -1513,7 +1513,7 @@ ChatLobbyVirtualPeerId DistributedChatService::makeVirtualPeerId(ChatLobbyId lob
 }
 
 
-void DistributedChatService::denyLobbyInvite(const ChatLobbyId& lobby_id) 
+bool DistributedChatService::denyLobbyInvite(const ChatLobbyId& lobby_id)
 {
 	RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
 
@@ -1525,10 +1525,12 @@ void DistributedChatService::denyLobbyInvite(const ChatLobbyId& lobby_id)
 	if(it == _lobby_invites_queue.end())
 	{
 		std::cerr << " (EE) lobby invite not in cache!!" << std::endl;
-		return ;
+        return false;
 	}
 
 	_lobby_invites_queue.erase(it) ;
+
+    return true;
 }
 
 bool DistributedChatService::joinVisibleChatLobby(const ChatLobbyId& lobby_id,const RsGxsId& gxs_id)

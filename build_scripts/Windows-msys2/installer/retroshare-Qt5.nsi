@@ -218,7 +218,7 @@ Section $(Section_Data) Section_Data
 
   ; Stylesheets
   SetOutPath "$INSTDIR\qss"
-  File /r "${DEPLOYDIR}\qss\*.*"
+  File /nonfatal /r "${DEPLOYDIR}\qss\*.*"
 SectionEnd
 
 ;Section $(Section_Link) Section_Link

@@ -788,6 +788,7 @@ public:
 	virtual bool setProxyServer(const uint32_t type, const std::string &addr, const uint16_t port) = 0;
 
 	virtual void getIPServersList(std::list<std::string>& ip_servers) = 0;
+	virtual void getCurrentExtIPList(std::list<std::string>& ip_list) = 0;
 	virtual void allowServerIPDetermination(bool) = 0;
 	virtual bool resetOwnExternalAddressList() = 0;
 	virtual bool getAllowServerIPDetermination() = 0 ;
@@ -886,7 +887,7 @@ public:
 	// Certificate utils
 	virtual	bool cleanCertificate(
 	        const std::string& certstr, std::string& cleanCert,
-	        bool& is_short_format, uint32_t& error_code ) = 0;
+	        bool& is_short_format, uint32_t& error_code, RsPeerDetails& details) = 0;
 	virtual	std::string saveCertificateToString(const RsPeerId &id) = 0;
 
     virtual	bool signGPGCertificate(const RsPgpId &gpg_id,const std::string& gpg_passphrase) = 0;

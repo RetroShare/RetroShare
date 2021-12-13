@@ -112,9 +112,9 @@ class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 		bool    FileDownloads(std::list<RsFileHash> &hashs);
 		bool    FileDetails(const RsFileHash &hash, FileSearchFlags hintsflag, FileInfo &info);
 
-		void		deleteUnusedServers() ;
-		void 	  handlePendingCrcRequests() ;
-
+        void deleteUnusedServers() ;
+        bool deleteServer(const RsFileHash& hash);	// deletes FtServers for the given hash. Used when removing an extra file from shares.
+        void handlePendingCrcRequests() ;
 
 		/*************** SEND INTERFACE (calls ftDataSend) *******************/
 

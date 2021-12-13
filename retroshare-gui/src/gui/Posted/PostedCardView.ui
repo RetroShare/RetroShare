@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>614</width>
-    <height>182</height>
+    <height>198</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,7 +16,7 @@
   <property name="styleSheet">
    <string notr="true"/>
   </property>
-  <layout class="QGridLayout" name="gridLayout_3">
+  <layout class="QGridLayout" name="PostedCardView_GL">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -33,7 +33,7 @@
     <number>0</number>
    </property>
    <item row="0" column="0">
-    <widget class="QFrame" name="mainFrame">
+    <widget class="QFrame" name="feedFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -49,7 +49,7 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
+     <layout class="QGridLayout" name="feedFrame_GL">
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -69,7 +69,7 @@
        <number>6</number>
       </property>
       <item row="1" column="1">
-       <widget class="StyledLabel" name="titleLabel">
+       <widget class="QLabel" name="titleLabel">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -78,9 +78,9 @@
         </property>
         <property name="font">
          <font>
-          <family>Arial</family>
-          <pointsize>10</pointsize>
+          <pointsize>11</pointsize>
           <weight>75</weight>
+          <italic>true</italic>
           <bold>true</bold>
          </font>
         </property>
@@ -118,7 +118,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <layout class="QHBoxLayout" name="from_HL">
         <property name="spacing">
          <number>5</number>
         </property>
@@ -216,7 +216,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer_4">
+         <spacer name="from_HS">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -241,30 +241,27 @@
           <height>0</height>
          </size>
         </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
         <property name="frameShape">
          <enum>QFrame::NoFrame</enum>
         </property>
         <property name="frameShadow">
          <enum>QFrame::Plain</enum>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
+        <layout class="QVBoxLayout" name="voteFrame_VL">
          <property name="spacing">
           <number>0</number>
          </property>
          <property name="leftMargin">
-          <number>3</number>
+          <number>0</number>
          </property>
          <property name="topMargin">
-          <number>3</number>
+          <number>0</number>
          </property>
          <property name="rightMargin">
-          <number>3</number>
+          <number>0</number>
          </property>
          <property name="bottomMargin">
-          <number>3</number>
+          <number>0</number>
          </property>
          <item>
           <widget class="QToolButton" name="voteUpButton">
@@ -290,10 +287,10 @@
           </widget>
          </item>
          <item>
-          <widget class="StyledLabel" name="scoreLabel">
+          <widget class="QLabel" name="scoreLabel">
            <property name="font">
             <font>
-             <pointsize>9</pointsize>
+             <pointsize>14</pointsize>
             </font>
            </property>
            <property name="text">
@@ -337,18 +334,12 @@
           </widget>
          </item>
          <item>
-          <spacer name="verticalSpacer">
+          <spacer name="voteFrame_VS">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
            <property name="sizeType">
             <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>5</height>
-            </size>
            </property>
           </spacer>
          </item>
@@ -356,7 +347,7 @@
        </widget>
       </item>
       <item row="5" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="buttons_HL">
         <item>
          <widget class="QToolButton" name="commentButton">
           <property name="text">
@@ -389,7 +380,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer_3">
+         <spacer name="buttons_HS">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -461,7 +452,7 @@
       </item>
       <item row="4" column="1">
        <widget class="QFrame" name="picture_frame">
-        <layout class="QHBoxLayout" name="horizontalPictureLayout">
+        <layout class="QHBoxLayout" name="picture_frame_HL">
          <property name="leftMargin">
           <number>0</number>
          </property>
@@ -485,7 +476,7 @@
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer">
+          <spacer name="picture_frame_HS">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -507,11 +498,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>GxsIdLabel</class>
    <extends>QLabel</extends>
    <header>gui/gxs/GxsIdLabel.h</header>
@@ -519,8 +505,8 @@
  </customwidgets>
  <resources>
   <include location="Posted_images.qrc"/>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>
