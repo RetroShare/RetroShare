@@ -463,6 +463,29 @@ void TorManager::run()
 void TorManager::threadTick()
 {
     d->process->tick();
+
+    if(d->process->state() != TorProcess::Ready)
+        return;
+
+    switch(d->control->status())
+    {
+    case TorControl::NotConnected:
+        RsDbg() << "Connecting to tor process at " << d->process->controlHost() << ":" << d->process->controlPort() << "..." ;
+        d->control->connect(d->process->controlHost(),d->process->controlPort());
+        break;
+
+    case TorControl::SocketConnected:
+        RsDbg() << "Connection established." ;
+        d->control->authenticate();
+        break;
+
+    case TorControl::Authenticating:
+        RsDbg() << "Authenticating..." ;
+        break;
+
+    case TorControl::Connected:;
+        break;
+    }
 }
 
 bool TorManager::getProxyServerInfo(std::string& proxy_server_adress,uint16_t& proxy_server_port)

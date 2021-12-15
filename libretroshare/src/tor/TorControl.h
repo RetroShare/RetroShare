@@ -67,8 +67,9 @@ public:
         Error = -1,
         NotConnected   = 0x00,
         Connecting     = 0x01,
-        Authenticating = 0x02,
-        Connected      = 0x03
+        SocketConnected= 0x02,
+        Authenticating = 0x03,
+        Connected      = 0x04
     };
 
     enum TorStatus
@@ -97,6 +98,7 @@ public:
     /* Connection */
     bool isConnected() const { return status() == Connected; }
     void connect(const std::string &address, uint16_t port);
+    void authenticate();
 
     /* Ownership means that tor is managed by this socket, and we
      * can shut it down, own its configuration, etc. */
@@ -159,7 +161,6 @@ private:
     void publishServices();
     void protocolInfoReply(TorControlCommand *sender);
     void socketDisconnected();
-    void socketConnected();
     void authenticateReply(TorControlCommand *sender);
 
     std::function<void(int,int)> mStatusChanged_callback;

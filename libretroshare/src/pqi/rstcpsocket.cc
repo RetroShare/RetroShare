@@ -16,16 +16,17 @@ RsTcpSocket::RsTcpSocket()
 {
 }
 
-int RsTcpSocket::connect(const std::string& tcp_address,uint16_t tcp_port)
+bool RsTcpSocket::connect(const std::string& tcp_address,uint16_t tcp_port)
 {
-    close();
+    if(mState == CONNECTED)
+        close();
 
     mConnectPort = tcp_port;
     mConnectAddress = tcp_address;
 
     return connect();
 }
-int RsTcpSocket::connect()
+bool RsTcpSocket::connect()
 {
     int CreateSocket = 0;
     char dataReceived[1024];
@@ -38,18 +39,21 @@ int RsTcpSocket::connect()
         printf("Socket not created \n");
         return false;
     }
-
     ipOfServer.sin_family = AF_INET;
     ipOfServer.sin_port = htons(mConnectPort);
     ipOfServer.sin_addr.s_addr = inet_addr(mConnectAddress.c_str());
 
-    if(::connect(mSocket, (struct sockaddr *)&ipOfServer, sizeof(ipOfServer))<0)
+    if(::connect(CreateSocket, (struct sockaddr *)&ipOfServer, sizeof(ipOfServer))<0)
     {
-        printf("Connection failed due to port and ip problems, or server is not available\n");
+        printf("Connection failed due to port and ip problems, or server is not available. Socket=%d,ConnectPort=%d,ConnectAddress=%s Errno=%d\n",mSocket,mConnectPort,mConnectAddress.c_str(),errno);
         return false;
     }
     mState = CONNECTED;
-    setSocket(mSocket);
+
+    int flags = fcntl(CreateSocket,F_GETFL);
+    fcntl(CreateSocket, F_SETFL, flags | O_NONBLOCK);
+
+    setSocket(CreateSocket);
 
     return true;
 }

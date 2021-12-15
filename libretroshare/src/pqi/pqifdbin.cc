@@ -24,7 +24,7 @@
 #include "pqi/pqifdbin.h"
 
 RsFdBinInterface::RsFdBinInterface(int file_descriptor)
-    : mCLintConnt(file_descriptor),mIsActive(file_descriptor!=0)
+    : mCLintConnt(file_descriptor),mIsActive(false)
 {
     mTotalReadBytes=0;
     mTotalInBufferBytes=0;

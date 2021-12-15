@@ -15,10 +15,10 @@ public:
         CONNECTED    = 0x02
     };
 
-    // Return 1 when OK, 0 otherwise.
-    int connect();
+    // Return true when OK, false otherwise.
+    bool connect();
 
-    int connect(const std::string& tcp_address,uint16_t tcp_port);
+    bool connect(const std::string& tcp_address,uint16_t tcp_port);
 
     // Returns 1 when OK, 0 otherwise.
     int close();

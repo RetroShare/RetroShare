@@ -49,9 +49,9 @@ TorControlSocket::~TorControlSocket()
     clear();
 }
 
-void TorControlSocket::connectToHost(const std::string& tcp_address,uint16_t tcp_port)
+bool TorControlSocket::connectToHost(const std::string& tcp_address,uint16_t tcp_port)
 {
-    RsTcpSocket::connect(tcp_address,tcp_port);
+    return RsTcpSocket::connect(tcp_address,tcp_port);
 }
 std::string TorControlSocket::peerAddress() const
 {

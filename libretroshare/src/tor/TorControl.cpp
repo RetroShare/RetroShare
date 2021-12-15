@@ -179,10 +179,10 @@ void TorControl::setStatus(TorControl::Status n)
     }
     mStatusChanged_callback(mStatus, old);
 
-    if (mStatus == TorControl::Connected && old < TorControl::Connected)
-        socketConnected();//mConnected_callback();
-    else if (mStatus < TorControl::Connected && old >= TorControl::Connected)
-        socketDisconnected();//mDisconnected_callback();
+//    if (mStatus == TorControl::Connected && old < TorControl::Connected)
+//        socketConnected();//mConnected_callback();
+//    else if (mStatus < TorControl::Connected && old >= TorControl::Connected)
+//        socketDisconnected();//mDisconnected_callback();
 }
 
 void TorControl::setTorStatus(TorControl::TorStatus n)
@@ -282,11 +282,14 @@ void TorControl::connect(const std::string &address, uint16_t port)
     setTorStatus(TorUnknown);
 
     //bool b = d->socket->blockSignals(true);
-    mSocket->fullstop();
+    if(mSocket->isRunning())
+        mSocket->fullstop();
     //d->socket->blockSignals(b);
 
     setStatus(Connecting);
-    mSocket->connectToHost(address, port);
+
+    if(mSocket->connectToHost(address, port))
+        setStatus(SocketConnected);
 }
 
 void TorControl::reconnect()
@@ -336,9 +339,9 @@ void TorControl::authenticateReply(TorControlCommand *sender)
 }
 
 
-void TorControl::socketConnected()
+void TorControl::authenticate()
 {
-    assert(mStatus == TorControl::Connecting);
+    assert(mStatus == TorControl::SocketConnected);
 
     torCtrlDebug() << "torctrl: Connected socket; querying information" << std::endl;
     setStatus(TorControl::Authenticating);
