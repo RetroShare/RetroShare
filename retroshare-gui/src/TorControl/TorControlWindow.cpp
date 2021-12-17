@@ -36,7 +36,6 @@ TorControlDialog::TorControlDialog(QWidget *)
         //QTimer::singleShot(2000,this,SLOT(checkForHiddenService())) ;
 
         mIncomingServer = new QTcpServer(this) ;
-        mHiddenServiceStatus = HIDDEN_SERVICE_STATUS_UNKNOWN;
 
         connect(mIncomingServer, SIGNAL(QTcpServer::newConnection()), this, SLOT(onIncomingConnection()));
 
@@ -192,63 +191,33 @@ TorControlDialog::HiddenServiceStatus TorControlDialog::checkForHiddenService()
 {
     std::cerr << "Checking for hidden services:" ;
 
-    switch(mHiddenServiceStatus)
+    std::string service_id;
+
+    RsTorHiddenServiceStatus service_status = RsTor::getHiddenServiceStatus(service_id);
+
+    if(service_id.empty())
     {
-    default:
-    case HIDDEN_SERVICE_STATUS_FAIL: {
-        std::cerr << " Hidden service setup failed. Something's wrong." << std::endl;
-        return mHiddenServiceStatus;
+        std::cerr << "Not ready yet." << std::endl;
+        return HIDDEN_SERVICE_STATUS_REQUESTED ;
     }
-    case HIDDEN_SERVICE_STATUS_UNKNOWN: {
+    else
+    {
+        if(mHiddenService.empty())
+            mHiddenService = service_id ;
 
-        std::cerr << " trying to setup. " ;
+        std::cerr << "New service acquired. Status is " << (int)service_status ;
 
-        if(!RsTor::setupHiddenService())
+        if(service_status == RsTorHiddenServiceStatus::ONLINE)
         {
-            mHiddenServiceStatus = HIDDEN_SERVICE_STATUS_FAIL ;
-            std::cerr << "Failed."  << std::endl;
-            return mHiddenServiceStatus ;
-        }
-        std::cerr << "Done."  << std::endl;
-        mHiddenServiceStatus = HIDDEN_SERVICE_STATUS_REQUESTED ;
-        return mHiddenServiceStatus ;
-    }
+            std::cerr << ": published and running!" << std::endl;
 
-    case HIDDEN_SERVICE_STATUS_REQUESTED: {
-
-        std::string service_id;
-
-        RsTorHiddenServiceStatus service_status = RsTor::getHiddenServiceStatus(service_id);
-
-        if(service_id.empty())
-        {
-            std::cerr << "Not ready yet." << std::endl;
-            return mHiddenServiceStatus ;
+            return HIDDEN_SERVICE_STATUS_OK ;
         }
         else
         {
-            if(mHiddenService.empty())
-                mHiddenService = service_id ;
-
-            std::cerr << "New service acquired. Status is " << (int)service_status ;
-
-            if(service_status == RsTorHiddenServiceStatus::ONLINE)
-            {
-                mHiddenServiceStatus = HIDDEN_SERVICE_STATUS_OK ;
-                std::cerr << ": published and running!" << std::endl;
-
-                return mHiddenServiceStatus ;
-            }
-            else
-            {
-                std::cerr << ": not ready yet." << std::endl;
-                return mHiddenServiceStatus ;
-            }
+            std::cerr << ": not ready yet." << std::endl;
+            return HIDDEN_SERVICE_STATUS_REQUESTED ;
         }
-    }
-    case  HIDDEN_SERVICE_STATUS_OK :
-        std::cerr << "New service acquired." << std::endl;
-        return mHiddenServiceStatus ;
     }
 }
 

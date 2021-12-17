@@ -37,7 +37,7 @@
 using namespace Tor;
 
 ProtocolInfoCommand::ProtocolInfoCommand(TorControl *m)
-    : manager(m)
+    : manager(m),m_authMethods(0)
 {
 }
 

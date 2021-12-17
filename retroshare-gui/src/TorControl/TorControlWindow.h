@@ -42,7 +42,6 @@ protected slots:
         void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 private:
 	QString mErrorMsg ;
-	HiddenServiceStatus mHiddenServiceStatus ;
     std::string mHiddenService;
 
 	QTcpServer *mIncomingServer ;

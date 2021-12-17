@@ -70,7 +70,7 @@ public:
         SocketConnected    = 0x02,
         Authenticating     = 0x03,
         Authenticated      = 0x04,
-        HiddenServiceReady = 0x05,
+        HiddenServiceReady = 0x05
     };
 
     enum TorStatus

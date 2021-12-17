@@ -481,6 +481,13 @@ void TorManager::threadTick()
 
     case TorControl::SocketConnected:
         RsDbg() << "Connection established." ;
+
+        if(d->hiddenService == nullptr)
+        {
+            RsDbg() << "Setting up hidden service" ;
+            setupHiddenService();
+        }
+
         d->control->setAuthPassword(d->process->controlPassword());
         d->control->authenticate();
         break;
@@ -489,15 +496,12 @@ void TorManager::threadTick()
         RsDbg() << "Authenticating..." ;
         break;
 
-    case TorControl::Authenticated:;
+    case TorControl::Authenticated:
 
         RsDbg() << "Authenticated. Looking for hidden services.";
+        break;
 
-        for(auto service:d->control->hiddenServices())
-            if(service->status() == HiddenService::Online)
-            {
-
-            }
+    case TorControl::HiddenServiceReady:
         break;
 
     case TorControl::Error:

@@ -863,15 +863,14 @@ bool TorControl::torVersionAsNewAs(const std::string& match) const
 
     int split_size = split.size();
     int i=0;
-    const auto& b_split(split.begin());
+    auto b_split(split.begin());
+    auto b_matchsplit(matchSplit.begin());
 
-    for(const auto& b_matchsplit:matchSplit)
+    for(int i=0;;)
     {
-        if (i >= split_size)
-            return false;
         int currentVal,matchVal;
         bool ok1 = RsUtil::StringToInt((*b_split).toString(),currentVal);
-        bool ok2 = RsUtil::StringToInt(b_matchsplit.toString(),matchVal);
+        bool ok2 = RsUtil::StringToInt((*b_matchsplit).toString(),matchVal);
 
         if (!ok1 || !ok2)
             return false;
@@ -881,6 +880,12 @@ bool TorControl::torVersionAsNewAs(const std::string& match) const
             return false;
 
         ++i;
+
+        if(i >= split_size)
+            return false;
+
+        ++b_split;
+        ++b_matchsplit;
     }
 
     // Versions are equal, up to the length of match
