@@ -262,9 +262,19 @@ bool TorManager::setupHiddenService()
 	return true ;
 }
 
-void TorManager::hiddenServiceStatusChanged(int old_status,int new_status)
+void TorManager::hiddenServiceStatusChanged(int new_status,int old_status)
 {
 	std::cerr << "Hidden service status changed from " << old_status << " to " << new_status << std::endl;
+
+    if(rsEvents)
+    {
+        auto ev = std::make_shared<RsTorManagerEvent>();
+        ev->mTorManagerEventType = RsTorManagerEventCode::TOR_STATUS_CHANGED;
+        ev->mTorConnectivityStatus  = RsTorConnectivityStatus::HIDDEN_SERVICE_READY;
+        ev->mTorStatus = RsTorStatus::READY;
+
+        rsEvents->sendEvent(ev);
+    }
 }
 
 void TorManager::hiddenServicePrivateKeyChanged()

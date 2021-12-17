@@ -92,7 +92,7 @@ public:
     virtual void hiddenServiceOnline() override {} // do nothing here.
     virtual void hiddenServicePrivateKeyChanged() override;
     virtual void hiddenServiceHostnameChanged() override;
-    virtual void hiddenServiceStatusChanged(int old_status,int new_status) override;
+    virtual void hiddenServiceStatusChanged(int new_status, int old_status) override;
 
     // Thread stuff
 
