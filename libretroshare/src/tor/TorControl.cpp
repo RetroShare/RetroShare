@@ -143,7 +143,7 @@ static RsTorConnectivityStatus torConnectivityStatus(Tor::TorControl::Status t)
     case TorControl::NotConnected:   return RsTorConnectivityStatus::NOT_CONNECTED;
     case TorControl::Connecting:     return RsTorConnectivityStatus::CONNECTING;
     case TorControl::Authenticating: return RsTorConnectivityStatus::AUTHENTICATING;
-    case TorControl::Connected:      return RsTorConnectivityStatus::CONNECTED;
+    case TorControl::Authenticated:      return RsTorConnectivityStatus::AUTHENTICATED;
     }
 }
 static RsTorStatus torStatus(Tor::TorControl::TorStatus t)
@@ -173,6 +173,7 @@ void TorControl::setStatus(TorControl::Status n)
         auto ev = std::make_shared<RsTorManagerEvent>();
 
         ev->mTorManagerEventType    = RsTorManagerEventCode::TOR_STATUS_CHANGED;
+        ev->mTorStatus = ::torStatus(mTorStatus);
         ev->mTorConnectivityStatus  = torConnectivityStatus(mStatus);
 
         rsEvents->sendEvent(ev);
@@ -198,12 +199,9 @@ void TorControl::setTorStatus(TorControl::TorStatus n)
         auto ev = std::make_shared<RsTorManagerEvent>();
 
         ev->mTorManagerEventType = RsTorManagerEventCode::TOR_STATUS_CHANGED;
+        ev->mTorConnectivityStatus  = torConnectivityStatus(mStatus);
         ev->mTorStatus = ::torStatus(mTorStatus);
         rsEvents->sendEvent(ev);
-    }
-    if (mTorStatus == TorControl::TorReady && mSocksAddress.empty()) {
-        // Request info again to read the SOCKS port
-        getTorInfo();
     }
 }
 
@@ -213,10 +211,6 @@ void TorControl::setError(const std::string &message)
     setStatus(TorControl::Error);
 
     RsWarn() << "torctrl: Error:" << mErrorMessage;
-
-    mSocket->fullstop();
-
-    reconnect();
 }
 
 TorControl::Status TorControl::status() const
@@ -317,7 +311,7 @@ void TorControl::authenticateReply(TorControlCommand *sender)
     }
 
     torCtrlDebug() << "torctrl: Authentication successful" << std::endl;
-    setStatus(TorControl::Connected);
+    setStatus(TorControl::Authenticated);
 
     setTorStatus(TorControl::TorUnknown);
 
@@ -343,8 +337,8 @@ void TorControl::authenticate()
 {
     assert(mStatus == TorControl::SocketConnected);
 
-    torCtrlDebug() << "torctrl: Connected socket; querying information" << std::endl;
     setStatus(TorControl::Authenticating);
+    torCtrlDebug() << "torctrl: Connected socket; querying information for authentication" << std::endl;
 
     ProtocolInfoCommand *command = new ProtocolInfoCommand(this);
 
@@ -437,7 +431,7 @@ void TorControl::protocolInfoReply(TorControlCommand *sender)
         else if ((methods & ProtocolInfoCommand::AuthHashedPassword) && !mAuthPassword.empty())
         {
             usePasswordAuth:
-            torCtrlDebug() << "torctrl: Using hashed password authentication" << std::endl;
+            torCtrlDebug() << "torctrl: Using hashed password authentication with AuthPasswd=\"" << mAuthPassword.toString() << "\"" << std::endl;
             data = auth->build(mAuthPassword);
         }
         else
@@ -526,6 +520,8 @@ void TorControl::getTorInfoReply(TorControlCommand *sender)
             auto ev = std::make_shared<RsTorManagerEvent>();
 
             ev->mTorManagerEventType = RsTorManagerEventCode::TOR_CONNECTIVITY_CHANGED;
+            ev->mTorConnectivityStatus  = torConnectivityStatus(mStatus);
+            ev->mTorStatus = ::torStatus(mTorStatus);
             rsEvents->sendEvent(ev);
         }
     }
@@ -586,7 +582,7 @@ void TorControl::publishServices()
                 torCtrlDebug() << "torctrl: Publishing hidden service: " << service->hostname() << std::endl;
             AddOnionCommand *onionCommand = new AddOnionCommand(service);
             //protocolInfoReplyQObject::connect(onionCommand, &AddOnionCommand::succeeded, service, &HiddenService::servicePublished);
-            onionCommand->set_succeeded_callback( [service]() { service->servicePublished(); });
+            onionCommand->set_succeeded_callback( [this,service]() { checkHiddenService(service) ; });
             mSocket->sendCommand(onionCommand, onionCommand->build());
         }
     } else {
@@ -618,12 +614,24 @@ void TorControl::publishServices()
                 torConfig.push_back(std::make_pair("HiddenServicePort", target));
             }
 
-            command->set_ConfSucceeded_callback( [service]() { service->servicePublished(); });
+            command->set_ConfSucceeded_callback( [this,service]() { checkHiddenService(service); });
             //QObject::connect(command, &SetConfCommand::setConfSucceeded, service, &HiddenService::servicePublished);
         }
 
         if (!torConfig.empty())
             mSocket->sendCommand(command, command->build(torConfig));
+    }
+}
+
+void TorControl::checkHiddenService(HiddenService *service)
+{
+    service->servicePublished();
+
+    if(service->status() == HiddenService::Online)
+    {
+        RsDbg() << "Hidden service published and ready!" ;
+
+        setStatus(TorControl::HiddenServiceReady);
     }
 }
 
@@ -697,6 +705,8 @@ void TorControl::updateBootstrap(const std::list<ByteArray> &data)
         auto ev = std::make_shared<RsTorManagerEvent>();
 
         ev->mTorManagerEventType = RsTorManagerEventCode::BOOTSTRAP_STATUS_CHANGED;
+        ev->mTorConnectivityStatus  = torConnectivityStatus(mStatus);
+        ev->mTorStatus = ::torStatus(mTorStatus);
         rsEvents->sendEvent(ev);
     }
 }

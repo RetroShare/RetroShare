@@ -90,7 +90,7 @@ void TorControlDialog::statusChanged(RsTorStatus torstatus, RsTorConnectivitySta
     case RsTorConnectivityStatus::NOT_CONNECTED:	tor_control_status_str = tr("Not connected") ; break ;
     case RsTorConnectivityStatus::CONNECTING:		tor_control_status_str = tr("Connecting") ; break ;
     case RsTorConnectivityStatus::AUTHENTICATING:	tor_control_status_str = tr("Authenticating") ; break ;
-    case RsTorConnectivityStatus::CONNECTED:		tor_control_status_str = tr("Connected") ; break ;
+    case RsTorConnectivityStatus::AUTHENTICATED:	tor_control_status_str = tr("Authenticated") ; break ;
 	}
 
 	switch(torstatus)
@@ -195,6 +195,10 @@ TorControlDialog::HiddenServiceStatus TorControlDialog::checkForHiddenService()
     switch(mHiddenServiceStatus)
     {
     default:
+    case HIDDEN_SERVICE_STATUS_FAIL: {
+        std::cerr << " Hidden service setup failed. Something's wrong." << std::endl;
+        return mHiddenServiceStatus;
+    }
     case HIDDEN_SERVICE_STATUS_UNKNOWN: {
 
         std::cerr << " trying to setup. " ;

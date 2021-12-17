@@ -104,7 +104,7 @@ void TorStatus::getTorStatus()
         case RsTorConnectivityStatus::NOT_CONNECTED:	tor_control_ok = false ; tor_control_status_str = "Not connected" ; break ;
         case RsTorConnectivityStatus::CONNECTING:		tor_control_ok = false ; tor_control_status_str = "Connecting" ; break ;
         case RsTorConnectivityStatus::AUTHENTICATING:	tor_control_ok = false ; tor_control_status_str = "Authenticating" ; break ;
-        case RsTorConnectivityStatus::CONNECTED:		tor_control_ok = true  ; tor_control_status_str = "Connected" ; break ;
+        case RsTorConnectivityStatus::AUTHENTICATED:		tor_control_ok = true  ; tor_control_status_str = "Connected" ; break ;
 		}
 
 		switch(torstatus)

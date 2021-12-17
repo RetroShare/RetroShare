@@ -419,6 +419,8 @@ bool TorManager::startTorManager()
             {
                 auto ev = std::make_shared<RsTorManagerEvent>();
                 ev->mTorManagerEventType = RsTorManagerEventCode::CONFIGURATION_NEEDED;
+                ev->mTorConnectivityStatus  = RsTorConnectivityStatus::UNKNOWN;
+                ev->mTorStatus = RsTorStatus::UNKNOWN;
                 rsEvents->sendEvent(ev);
             }
             //emit configurationNeededChanged();
@@ -469,6 +471,9 @@ void TorManager::threadTick()
 
     switch(d->control->status())
     {
+    case TorControl::Connecting:
+        break;
+
     case TorControl::NotConnected:
         RsDbg() << "Connecting to tor process at " << d->process->controlHost() << ":" << d->process->controlPort() << "..." ;
         d->control->connect(d->process->controlHost(),d->process->controlPort());
@@ -476,6 +481,7 @@ void TorManager::threadTick()
 
     case TorControl::SocketConnected:
         RsDbg() << "Connection established." ;
+        d->control->setAuthPassword(d->process->controlPassword());
         d->control->authenticate();
         break;
 
@@ -483,7 +489,20 @@ void TorManager::threadTick()
         RsDbg() << "Authenticating..." ;
         break;
 
-    case TorControl::Connected:;
+    case TorControl::Authenticated:;
+
+        RsDbg() << "Authenticated. Looking for hidden services.";
+
+        for(auto service:d->control->hiddenServices())
+            if(service->status() == HiddenService::Online)
+            {
+
+            }
+        break;
+
+    case TorControl::Error:
+        d->control->shutdown();
+        d->control->reconnect();
         break;
     }
 }
@@ -549,7 +568,7 @@ void TorManagerPrivate::processLogMessage(const std::string &message)
 
 void TorManagerPrivate::controlStatusChanged(int status)
 {
-    if (status == TorControl::Connected) {
+    if (status == TorControl::Authenticated) {
         if (!configNeeded) {
             // If DisableNetwork is 1, trigger configurationNeeded
             auto cmd = control->getConfiguration("DisableNetwork");
@@ -738,11 +757,12 @@ RsTorConnectivityStatus RsTor::torConnectivityStatus()
     switch(ts)
     {
     default:
-    case Tor::TorControl::Error :          return RsTorConnectivityStatus::ERROR;
-    case Tor::TorControl::NotConnected :   return RsTorConnectivityStatus::NOT_CONNECTED;
-    case Tor::TorControl::Authenticating:  return RsTorConnectivityStatus::AUTHENTICATING;
-    case Tor::TorControl::Connecting:      return RsTorConnectivityStatus::CONNECTING;
-    case Tor::TorControl::Connected :      return RsTorConnectivityStatus::CONNECTED;
+    case Tor::TorControl::Error :               return RsTorConnectivityStatus::ERROR;
+    case Tor::TorControl::NotConnected :        return RsTorConnectivityStatus::NOT_CONNECTED;
+    case Tor::TorControl::Authenticating:       return RsTorConnectivityStatus::AUTHENTICATING;
+    case Tor::TorControl::Connecting:           return RsTorConnectivityStatus::CONNECTING;
+    case Tor::TorControl::Authenticated :       return RsTorConnectivityStatus::AUTHENTICATED;
+    case Tor::TorControl::HiddenServiceReady :  return RsTorConnectivityStatus::HIDDEN_SERVICE_READY;
     }
 }
 

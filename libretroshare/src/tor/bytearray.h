@@ -15,8 +15,8 @@ class ByteArray: public std::vector<unsigned char>
 {
 public:
     ByteArray() =default;
-    ByteArray(int n) : std::vector<unsigned char>(n) {}
-    ByteArray(const unsigned char *d,int n) : std::vector<unsigned char>(n) { memcpy(data(),d,n); }
+    explicit ByteArray(int n) : std::vector<unsigned char>(n) {}
+    explicit ByteArray(const unsigned char *d,int n) : std::vector<unsigned char>(n) { memcpy(data(),d,n); }
     virtual ~ByteArray() =default;
 
     ByteArray(const std::string& c) { resize(c.size()); memcpy(data(),c.c_str(),c.size()); }
@@ -34,6 +34,7 @@ public:
 
     template<class T> void append(const T) = delete;// Prevents any implicit when calling the preceding functions which actually causes real bugs.
 
+    ByteArray& operator+=(char b) { push_back(b);  return *this; }
     ByteArray& operator+=(const ByteArray& b) { for(auto c:b) push_back(c);  return *this; }
     ByteArray& operator+=(const char *b) { for(uint32_t n=0;b[n]!=0;++n) push_back(b[n]); return *this;}
 
@@ -51,6 +52,7 @@ public:
         return res;
     }
     bool endsWith(const ByteArray& b) const { return size() >= b.size() && !memcmp(&data()[size()-b.size()],b.data(),b.size()); }
+    bool endsWith(char b) const { return size() > 0 && back()==b; }
     bool startsWith(const ByteArray& b) const { return b.size() <= size() && !strncmp((char*)b.data(),(char*)data(),std::min(size(),b.size())); }
     bool startsWith(const char *b) const
     {
@@ -121,7 +123,10 @@ public:
                 current_block.clear();
             }
             else
-                current_block += operator[](i);
+                current_block += (*this)[i];
+
+        if(!current_block.empty())
+            res.push_back(current_block);
 
         return res;
     }
@@ -141,6 +146,9 @@ public:
             }
             else
                 current_block += operator[](i);
+
+        if(!current_block.empty())
+            res.push_back(current_block);
 
         return res;
     }

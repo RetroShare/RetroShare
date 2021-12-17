@@ -406,7 +406,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
         RsDirUtil::checkCreateDirectory(std::string(tor_hidden_service_dir)) ;
 
-        RsTor::setupHiddenService();
+        //RsTor::setupHiddenService();
 
         if(! RsTor::start() || RsTor::hasError())
 		{

@@ -36,7 +36,7 @@
 using namespace Tor;
 
 SetConfCommand::SetConfCommand()
-    : m_resetMode(false)
+    : m_resetMode(false), mConfSucceeded([](){}), mConfFailed([](int){})
 {
 }
 

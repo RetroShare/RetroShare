@@ -35,7 +35,9 @@
 using namespace Tor;
 
 TorControlCommand::TorControlCommand()
-    : m_finalStatus(0)
+    : m_finalStatus(0),
+        mReplyLine ( std::function<void(int, const ByteArray &)>([](int, const ByteArray &){})),
+        mFinished  ( std::function<void(TorControlCommand*)>([](TorControlCommand*){}))
 {
 }
 

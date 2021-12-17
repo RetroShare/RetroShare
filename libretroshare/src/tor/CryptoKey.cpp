@@ -135,8 +135,20 @@ ByteArray torControlHashedPassword(const ByteArray &password)
 
     uint32_t count = ((uint32_t)16 + (96 & 15)) << ((96 >> 4) + 6);
 
-    Sha1CheckSum md = RsDirUtil::sha1sum((salt+password).data(),count);
+    SHA_CTX hash;
+    SHA1_Init(&hash);
+
+    ByteArray tmp = salt + password;
+    while (count)
+    {
+        int c = std::min((size_t)count, tmp.size());
+        SHA1_Update(&hash, reinterpret_cast<const void*>(tmp.data()), c);
+        count -= c;
+    }
+
+    unsigned char md[20];
+    SHA1_Final(md, &hash);
 
     /* 60 is the hex-encoded value of 96, which is a constant used by Tor's algorithm. */
-    return ByteArray("16:") + salt.toHex().toUpper() + ByteArray("60") + ByteArray(md.toByteArray(), md.SIZE_IN_BYTES).toHex().toUpper();
+    return ByteArray("16:") + salt.toHex().toUpper() + ByteArray("60") + ByteArray(md, 20).toHex().toUpper();
 }

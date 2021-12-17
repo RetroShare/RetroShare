@@ -97,8 +97,8 @@ int RsFdBinInterface::read_pending()
 
     if(readbytes > 0)
     {
-        RsDbg() << "Received the following bytes: " << RsUtil::BinToHex( reinterpret_cast<unsigned char*>(inBuffer),readbytes,50) << std::endl;
-        //RsDbg() << "Received the following bytes: " << std::string(inBuffer,readbytes) << std::endl;
+        //RsDbg() << "Received the following bytes: " << RsUtil::BinToHex( reinterpret_cast<unsigned char*>(inBuffer),readbytes,50) << std::endl;
+        RsDbg() << "Received the following bytes: " << std::string(inBuffer,readbytes) << std::endl;
 
         void *ptr = malloc(readbytes);
 

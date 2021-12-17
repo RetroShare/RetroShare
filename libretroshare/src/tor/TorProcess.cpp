@@ -205,6 +205,8 @@ void TorProcess::start()
         if(m_client) m_client->processErrorChanged(mErrorMessage);// emit errorMessageChanged(d->errorMessage);
         if(m_client) m_client->processStateChanged(mState); // emit stateChanged(d->state);
     }
+    else
+        RsDbg() << "Using ControlPasswd=\"" << password.toString() << "\", hashed version=\"" << hashedPassword.toString() << "\"" ;
 
     mState = Starting;
 
@@ -235,7 +237,7 @@ void TorProcess::start()
     args.push_back(mDataDir);
 
     args.push_back("HashedControlPassword") ;
-    args.push_back(torControlHashedPassword(mControlPassword).toString());
+    args.push_back(hashedPassword.toString());
 
     args.push_back("ControlPort") ;
     args.push_back("auto");
@@ -303,12 +305,14 @@ void TorProcess::tick()
         if(tryReadControlPort())
         {
             mState = Ready;
-            // stateChanged(mState);
+            m_client->processStateChanged(mState);// stateChanged(mState);
         }
         else if(mControlPortReadNbTries > 10)
         {
             //errorMessageChanged(errorMessage);
             //stateChanged(state);
+            mState = Failed;
+            m_client->processStateChanged(mState);// stateChanged(mState);
         }
     }
 }

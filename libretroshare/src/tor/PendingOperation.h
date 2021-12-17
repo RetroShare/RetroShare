@@ -74,14 +74,14 @@ public:
     void finishWithError(const std::string &errorMessage);
     void finishWithSuccess();
 
-    void set_finished_callback(const std::function<void(void)>& f) { finished_callback = f; }
+    void set_finished_callback(const std::function<void(void)>& f) { mFinishedCallback = f; }
 private:
     bool m_finished;
     std::string m_errorMessage;
 
-    std::function<void(void)> finished_callback;
-    std::function<void(void)> success_callback;
-    std::function<void(const std::string&)> error_callback;
+    std::function<void(void)> mFinishedCallback;
+    std::function<void(void)> mSuccessCallback;
+    std::function<void(const std::string&)> mErrorCallback;
 
 };
 

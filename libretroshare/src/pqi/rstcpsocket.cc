@@ -75,12 +75,6 @@ RsThreadedTcpSocket::RsThreadedTcpSocket() : RsTcpSocket()
 }
 void RsThreadedTcpSocket::run()
 {
-    if(!connect())
-    {
-        RsErr() << "Cannot connect socket to " << connectAddress() << ":" << connectPort() ;
-        return ;
-    }
-
     while(connectionState() == CONNECTED)
     {
         tick();

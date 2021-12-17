@@ -34,7 +34,7 @@
 #include "PendingOperation.h"
 
 PendingOperation::PendingOperation()
-    : m_finished(false)
+    : m_finished(false),mFinishedCallback([](){}), mSuccessCallback([](){}),mErrorCallback([](const std::string&){})
 {
 }
 
@@ -67,8 +67,8 @@ void PendingOperation::finishWithError(const std::string &message)
     if (!m_finished) {
         m_finished = true;
 
-        finished_callback();
-        error_callback(m_errorMessage);
+        mFinishedCallback();
+        mErrorCallback(m_errorMessage);
     }
 }
 
@@ -78,9 +78,9 @@ void PendingOperation::finishWithSuccess()
 
     if (!m_finished) {
         m_finished = true;
-        finished_callback();
+        mFinishedCallback();
         if (isSuccess())
-            success_callback();
+            mSuccessCallback();
     }
 }
 

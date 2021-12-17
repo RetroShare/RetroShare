@@ -65,11 +65,12 @@ public:
     enum Status
     {
         Error = -1,
-        NotConnected   = 0x00,
-        Connecting     = 0x01,
-        SocketConnected= 0x02,
-        Authenticating = 0x03,
-        Connected      = 0x04
+        NotConnected       = 0x00,
+        Connecting         = 0x01,
+        SocketConnected    = 0x02,
+        Authenticating     = 0x03,
+        Authenticated      = 0x04,
+        HiddenServiceReady = 0x05,
     };
 
     enum TorStatus
@@ -96,7 +97,7 @@ public:
     void setAuthPassword(const ByteArray& password);
 
     /* Connection */
-    bool isConnected() const { return status() == Connected; }
+    bool isConnected() const { return status() == Authenticated; }
     void connect(const std::string &address, uint16_t port);
     void authenticate();
 
@@ -137,6 +138,7 @@ public:
 
     void reconnect();
 
+    void getTorInfo();
 private:
     TorControlSocket *mSocket;
     std::string mTorAddress;
@@ -151,7 +153,7 @@ private:
     std::map<std::string,std::string> mBootstrapStatus;
     bool mHasOwnership;
 
-    void getTorInfo();
+    void checkHiddenService(HiddenService *service);
     void getTorInfoReply(TorControlCommand *sender);
     void setStatus(TorControl::Status n);
     void statusEvent(int code, const ByteArray &data);
