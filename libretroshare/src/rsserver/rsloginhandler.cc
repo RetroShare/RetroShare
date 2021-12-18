@@ -60,8 +60,7 @@ bool RsLoginHandler::checkAndStoreSSLPasswdIntoGPGFile(
 		return true ;
 	}
 
-	bool ok = AuthGPG::getAuthGPG()->encryptTextToFile(
-	            ssl_passwd, getSSLPasswdFileName(ssl_id));
+    bool ok = AuthPGP::encryptTextToFile( ssl_passwd, getSSLPasswdFileName(ssl_id));
 
 	if (!ok) std::cerr << "Encrypting went wrong !" << std::endl;
 
@@ -90,7 +89,7 @@ bool RsLoginHandler::getSSLPasswdFromGPGFile(const RsPeerId& ssl_id,std::string&
 #endif
 
 	std::string plain;
-	if ( AuthGPG::getAuthGPG()->decryptTextFromFile( plain, getSSLPasswdFileName(ssl_id)) )
+    if ( AuthPGP::decryptTextFromFile( plain, getSSLPasswdFileName(ssl_id)) )
 	{
 		sslPassword = plain;
 #ifdef DEBUG_RSLOGINHANDLER

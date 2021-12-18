@@ -4704,7 +4704,7 @@ bool RsGxsNetService::checkPermissionsForFriendGroup(const RsPeerId& sslId,const
         if(!grpMeta.mInternalCircle.isNull())
         {
             RsGroupInfo ginfo ;
-                    RsPgpId pgpId = mPgpUtils->getPGPId(sslId) ;
+                    RsPgpId pgpId = mPgpUtils->getPgpId(sslId) ;
 
 #ifdef NXS_NET_DEBUG_4
             GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "   Group internal circle: " << grpMeta.mInternalCircle << ", We're owner. Sending to everyone in the group." << std::endl;

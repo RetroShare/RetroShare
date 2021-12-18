@@ -28,7 +28,7 @@ public:
 	FakePgpAuxUtils(const RsPeerId& ownId);
 
 	virtual const RsPgpId &getPGPOwnId();
-	virtual RsPgpId getPGPId(const RsPeerId& sslid);
+	virtual RsPgpId getPgpId(const RsPeerId& sslid);
 	virtual	bool getKeyFingerprint(const RsPgpId& id,PGPFingerprintType& fp) const;
 
 	virtual bool parseSignature(unsigned char *sign, unsigned int signlen, RsPgpId& issuer) const;
@@ -36,7 +36,7 @@ public:
 
 	virtual void addPeerListToPgpList(const std::list<RsPeerId> &ids);
 	virtual void addPeerIdToPgpList(const RsPeerId &id);
-	virtual bool getGPGAllList(std::list<RsPgpId> &ids);
+	virtual bool getPgpAllList(std::list<RsPgpId> &ids);
 private:
 	RsPgpId mOwnId;
 	std::list<RsPgpId> mPgpList;

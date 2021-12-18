@@ -512,7 +512,7 @@ RsInit::LoadCertificateStatus RsInit::LockAndLoadCertificates(
 		if(!RsAccounts::GetAccountDetails(accountId, pgpId, pgpName, pgpEmail, location))
 			throw RsInit::ERR_UNKNOWN; // invalid PreferredAccount;
 
-		if(0 == AuthGPG::getAuthGPG() -> GPGInit(pgpId))
+        if(0 == AuthPGP::PgpInit(pgpId))
 			throw RsInit::ERR_UNKNOWN; // PGP Error.
 
 		LoadCertificateStatus retVal =
@@ -912,8 +912,8 @@ int RsServer::StartupRetroShare()
 	/* History Manager */
 	mHistoryMgr = new p3HistoryMgr();
 	mPeerMgr = new p3PeerMgrIMPL( AuthSSL::getAuthSSL()->OwnId(),
-				AuthGPG::getAuthGPG()->getGPGOwnId(),
-				AuthGPG::getAuthGPG()->getGPGOwnName(),
+                AuthPGP::getPgpOwnId(),
+                AuthPGP::getPgpOwnName(),
 				AuthSSL::getAuthSSL()->getOwnLocation());
 	mNetMgr = new p3NetMgrIMPL();
 	mLinkMgr = new p3LinkMgrIMPL(mPeerMgr, mNetMgr);
@@ -1613,7 +1613,8 @@ int RsServer::StartupRetroShare()
 
 	//mConfigMgr->addConfiguration("ftserver.cfg", ftserver);
 	//
-	mConfigMgr->addConfiguration("gpg_prefs.cfg"   , AuthGPG::getAuthGPG());
+    AuthPGP::registerToConfigMgr(std::string("gpg_prefs.cfg"),mConfigMgr);
+
 	mConfigMgr->addConfiguration("gxsnettunnel.cfg", mGxsNetTunnel);
 	mConfigMgr->addConfiguration("peers.cfg"       , mPeerMgr);
 	mConfigMgr->addConfiguration("general.cfg"     , mGeneralConfig);
@@ -1799,7 +1800,7 @@ int RsServer::StartupRetroShare()
 	/* Add AuthGPG services */
 	/**************************************************************************/
 
-	//AuthGPG::getAuthGPG()->addService(mDisc);
+    //AuthGPG::addService(mDisc);
 
 	/**************************************************************************/
 	/* Force Any Last Configuration Options */
