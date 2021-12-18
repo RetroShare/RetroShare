@@ -577,7 +577,10 @@ void TorManagerPrivate::processLogMessage(const std::string &message)
     std::cerr << "tor:" << message << std::endl;
     if (logMessages.size() >= 50)
         logMessages.pop_front();
-    logMessages.push_back(message);
+
+    auto p = message.find_first_of('\n');
+
+    logMessages.push_back((p==std::string::npos)?message:message.substr(0,p));
 }
 
 void TorManagerPrivate::controlStatusChanged(int status)

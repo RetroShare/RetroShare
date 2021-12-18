@@ -191,7 +191,6 @@ void TorControl::setTorStatus(TorControl::TorStatus n)
     if (n == mTorStatus)
         return;
 
-    TorControl::TorStatus old = mTorStatus;
     mTorStatus = n;
 
     if(rsEvents)
@@ -316,10 +315,7 @@ void TorControl::authenticateReply(TorControlCommand *sender)
     setTorStatus(TorControl::TorUnknown);
 
     TorControlCommand *clientEvents = new TorControlCommand;
-    clientEvents->set_replyLine_callback([this](int code, const ByteArray &data)
-    {
-        statusEvent(code,data);	// no async needed here.
-    });
+    clientEvents->set_replyLine_callback([this](int code, const ByteArray &data) { statusEvent(code,data);});
 
     mSocket->registerEvent(ByteArray("STATUS_CLIENT"), clientEvents);
 
@@ -343,6 +339,7 @@ void TorControl::authenticate()
     ProtocolInfoCommand *command = new ProtocolInfoCommand(this);
 
     command->set_finished_callback( [this](TorControlCommand *sender) { protocolInfoReply(sender); });
+    command->set_replyLine_callback([this](int code, const ByteArray &data) { statusEvent(code,data); });
     //connect(command, &TorControlCommand::finished, this, &protocolInfoReply);
     mSocket->sendCommand(command, command->build());
 }
@@ -455,6 +452,7 @@ void TorControl::getTorInfo()
     GetConfCommand *command = new GetConfCommand(GetConfCommand::GetInfo);
     //connect(command, &TorControlCommand::finished, this, &TorControl::getTorInfoReply);
     command->set_finished_callback( [this](TorControlCommand *sender) { getTorInfoReply(sender); });
+    command->set_replyLine_callback([this](int code, const ByteArray &data) { statusEvent(code,data); });
 
     std::list<std::string> keys{ "status/circuit-established","status/bootstrap-phase" };
 
@@ -680,6 +678,7 @@ void TorControl::statusEvent(int /* code */, const ByteArray &data)
 
 void TorControl::updateBootstrap(const std::list<ByteArray> &data)
 {
+    std::cerr << "********** Updating bootstrap status ************" << std::endl;
     mBootstrapStatus.clear();
     // WARN or NOTICE
     mBootstrapStatus["severity"] = (*data.begin()).toString();
@@ -714,6 +713,7 @@ void TorControl::updateBootstrap(const std::list<ByteArray> &data)
 TorControlCommand *TorControl::getConfiguration(const std::string& options)
 {
     GetConfCommand *command = new GetConfCommand(GetConfCommand::GetConf);
+    command->set_replyLine_callback([this](int code, const ByteArray &data) { statusEvent(code,data); });
     mSocket->sendCommand(command, command->build(options));
 
     //QQmlEngine::setObjectOwnership(command, QQmlEngine::CppOwnership);
@@ -862,7 +862,6 @@ bool TorControl::torVersionAsNewAs(const std::string& match) const
     auto matchSplit = ByteArray(match).split(ByteArray(".-"));
 
     int split_size = split.size();
-    int i=0;
     auto b_split(split.begin());
     auto b_matchsplit(matchSplit.begin());
 

@@ -42,7 +42,7 @@ TorControlDialog::TorControlDialog(QWidget *)
         QTimer *timer = new QTimer ;
 
         QObject::connect(timer,SIGNAL(timeout()),this,SLOT(showLog())) ;
-        timer->start(500) ;
+        timer->start(300) ;
 
         // Hide some debug output for the released version
 
@@ -143,23 +143,33 @@ void TorControlDialog::showLog()
 
     std::string s ;
     std::list<std::string> logmsgs = RsTor::logMessages() ;
-	bool can_print = false ;
+    bool can_print = false ;
 
     for(auto it(logmsgs.begin());it!=logmsgs.end();++it)
-	{
+    {
         s += *it + "\n" ;
 
-		if(already_seen.find(*it) == already_seen.end())
-		{
-			can_print = true ;
-			already_seen.insert(*it);
-		}
+        if(already_seen.find(*it) == already_seen.end())
+        {
+            can_print = true ;
+            already_seen.insert(*it);
+        }
 
-		if(can_print)
+        if(can_print)
+        {
             std::cerr << "[TOR DEBUG LOG] " << *it << std::endl;
-	}
 
-    std::cerr << "Connexion Proxy: " << RsTor::socksAddress()  << ":" << QString::number(RsTor::socksPort()).toStdString() << std::endl;
+            QString s = QString::fromStdString(*it);
+            int n = s.indexOf(QString("Bootstrapped"));
+
+            if(n >= 0)
+            {
+                torBootstrapStatus_LB->setText(s.mid(n+QString("Bootstrapped").length()));
+                QCoreApplication::processEvents();	// forces update
+            }
+        }
+    }
+    //std::cerr << "Connexion Proxy: " << RsTor::socksAddress()  << ":" << QString::number(RsTor::socksPort()).toStdString() << std::endl;
 }
 
 TorControlDialog::TorStatus TorControlDialog::checkForTor(QString& error_msg)
