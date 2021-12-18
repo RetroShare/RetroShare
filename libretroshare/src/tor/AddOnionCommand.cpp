@@ -38,7 +38,7 @@
 using namespace Tor;
 
 AddOnionCommand::AddOnionCommand(HiddenService *service)
-    : m_service(service)
+    : m_service(service), mSucceeded([](){}), mFailed([](int){})
 {
     assert(m_service);
 }

@@ -487,7 +487,7 @@ void TorControl::getTorInfo()
 void TorControl::getTorInfoReply(TorControlCommand *sender)
 {
     GetConfCommand *command = dynamic_cast<GetConfCommand*>(sender);
-    if (!command || !isConnected())
+    if (!command)// || !isConnected())
         return;
 
     std::list<ByteArray> listenAddresses = splitQuotedStrings(command->get("net/listeners/socks").front(), ' ');

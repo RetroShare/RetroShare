@@ -53,21 +53,13 @@ TorControlDialog::TorControlDialog(QWidget *)
 
 void TorControlDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 {
-        if(event->mType != RsEventType::TOR_MANAGER) return;
+    if(event->mType != RsEventType::TOR_MANAGER) return;
 
-        const RsTorManagerEvent *fe = dynamic_cast<const RsTorManagerEvent*>(event.get());
-        if(!fe)
-                return;
+    const RsTorManagerEvent *fe = dynamic_cast<const RsTorManagerEvent*>(event.get());
+    if(!fe)
+        return;
 
-        switch (fe->mTorManagerEventType)
-        {
-        case RsTorManagerEventCode::BOOTSTRAP_STATUS_CHANGED:
-        case RsTorManagerEventCode::TOR_CONNECTIVITY_CHANGED:
-        case RsTorManagerEventCode::TOR_STATUS_CHANGED:         statusChanged(fe->mTorStatus,fe->mTorConnectivityStatus);
-            break;
-        default:
-                break;
-        }
+    statusChanged(fe->mTorStatus,fe->mTorConnectivityStatus);
 }
 
 void TorControlDialog::onIncomingConnection()
@@ -112,7 +104,6 @@ void TorControlDialog::statusChanged(RsTorStatus torstatus, RsTorConnectivitySta
 
 	std::cerr << "Tor control status: " << tor_control_status_str.toStdString() << std::endl;
 	std::cerr << "Tor status: " << torstatus_str.toStdString() << std::endl;
-
 	std::cerr << "Bootstrap status map: " << std::endl;
 
 	for(auto it(qvm.begin());it!=qvm.end();++it)

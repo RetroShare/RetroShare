@@ -100,12 +100,12 @@ void TorStatus::getTorStatus()
 		switch(tor_control_status)
 		{
 		default:
-        case RsTorConnectivityStatus::ERROR :			tor_control_ok = false ; tor_control_status_str = "Error" ; break ;
-        case RsTorConnectivityStatus::NOT_CONNECTED:	tor_control_ok = false ; tor_control_status_str = "Not connected" ; break ;
-        case RsTorConnectivityStatus::CONNECTING:		tor_control_ok = false ; tor_control_status_str = "Connecting" ; break ;
-        case RsTorConnectivityStatus::AUTHENTICATING:	tor_control_ok = false ; tor_control_status_str = "Authenticating" ; break ;
-        case RsTorConnectivityStatus::AUTHENTICATED:	tor_control_ok = false ; tor_control_status_str = "Connected" ; break ;
-        case RsTorConnectivityStatus::HIDDEN_SERVICE_READY:	tor_control_ok = true  ; tor_control_status_str = "Hidden service ready" ; break ;
+        case RsTorConnectivityStatus::ERROR :                tor_control_ok = false ; tor_control_status_str = "Error" ; break ;
+        case RsTorConnectivityStatus::NOT_CONNECTED:         tor_control_ok = false ; tor_control_status_str = "Not connected" ; break ;
+        case RsTorConnectivityStatus::CONNECTING:            tor_control_ok = false ; tor_control_status_str = "Connecting" ; break ;
+        case RsTorConnectivityStatus::AUTHENTICATING:        tor_control_ok = false ; tor_control_status_str = "Authenticating" ; break ;
+        case RsTorConnectivityStatus::AUTHENTICATED:         tor_control_ok = false ; tor_control_status_str = "Connected" ; break ;
+        case RsTorConnectivityStatus::HIDDEN_SERVICE_READY:  tor_control_ok = true  ; tor_control_status_str = "Hidden service ready" ; break ;
         }
 
 		switch(torstatus)
@@ -141,12 +141,12 @@ void TorStatus::getTorStatus()
 		if(!_updated)
 		{
 			RsPeerDetails pd;
-			uint32_t hiddentype;
-			if (rsPeers->getPeerDetails(rsPeers->getOwnId(), pd)) {
+            uint32_t hiddentype = RS_HIDDEN_TYPE_UNKNOWN;
+
+            if (rsPeers->getPeerDetails(rsPeers->getOwnId(), pd))
+            {
 				if(pd.netMode == RS_NETMODE_HIDDEN)
-				{
 					hiddentype = pd.hiddenType;
-				}
 			}
 			std::string proxyaddr;
 			uint16_t proxyport;

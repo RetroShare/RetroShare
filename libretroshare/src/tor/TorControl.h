@@ -97,7 +97,7 @@ public:
     void setAuthPassword(const ByteArray& password);
 
     /* Connection */
-    bool isConnected() const { return status() == Authenticated; }
+    bool isConnected() const { return status() >= Authenticated; }
     void connect(const std::string &address, uint16_t port);
     void authenticate();
 
