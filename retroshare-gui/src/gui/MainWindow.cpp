@@ -21,6 +21,7 @@
 #include <QColorDialog>
 #include <QDesktopServices>
 #include <QIcon>
+#include <QInputDialog>
 #include <QMessageBox>
 #include <QPixmap>
 #include <QStatusBar>
@@ -1688,4 +1689,20 @@ void MainWindow::setCompactStatusMode(bool compact)
 	hashingstatus->setCompactMode(compact);
 	ratesstatus->setCompactMode(compact);
 	//opModeStatus: TODO Show only ???
+}
+
+Gui_InputDialogReturn MainWindow::guiInputDialog(const QString& windowTitle, const QString& labelText, QLineEdit::EchoMode textEchoMode, bool modal)
+{
+
+	QInputDialog dialog(this);
+	dialog.setWindowTitle(windowTitle);
+	dialog.setLabelText(labelText);
+	dialog.setTextEchoMode(textEchoMode);
+	dialog.setModal(modal);
+
+	Gui_InputDialogReturn ret;
+	ret.execReturn = dialog.exec();
+	ret.textValue = dialog.textValue();
+
+	return ret;
 }
