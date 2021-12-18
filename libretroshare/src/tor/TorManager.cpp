@@ -148,10 +148,13 @@ void TorManager::setHiddenServiceDirectory(const std::string &path)
         d->hiddenServiceDir += '/';
 }
 
-static bool test_listening_port(const std::string& address,uint16_t port)
+static bool test_listening_port(const std::string& /*address*/,uint16_t port)
 {
-    int sockfd, portno;
-    struct sockaddr_in serv_addr;
+//    sockaddr_storage addr;
+//    sockaddr_storage_fromString(address,addr);
+//
+    int sockfd;
+    struct sockaddr_in serv_addr ;
 
     /* First call to socket() function */
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -161,11 +164,10 @@ static bool test_listening_port(const std::string& address,uint16_t port)
 
     /* Initialize socket structure */
     bzero((char *) &serv_addr, sizeof(serv_addr));
-    portno = 5001;
 
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = INADDR_ANY;
-    serv_addr.sin_port = htons(portno);
+    serv_addr.sin_port = htons(port);
 
     /* Now bind the host address using bind() call.*/
     if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
@@ -190,45 +192,43 @@ bool TorManager::setupHiddenService()
 {
 	if(d->hiddenService != NULL)
 	{
-		std::cerr << "TorManager: setupHiddenService() called twice! Not doing anything this time." << std::endl;
+        RsErr() << "TorManager: setupHiddenService() called twice! Not doing anything this time." ;
 		return true ;
 	}
 
     std::string keyData   ;//= m_settings->read("serviceKey").toString();
     std::string legacyDir = d->hiddenServiceDir;
 
-	std::cerr << "TorManager: setting up hidden service." << std::endl;
+    RsDbg() << "TorManager: setting up hidden service." << std::endl;
 
     if(legacyDir.empty())
 	{
-		std::cerr << "legacy dir not set! Cannot proceed." << std::endl;
+        RsErr() << "legacy dir not set! Cannot proceed." ;
 		return false ;
 	}
 
-    std::cerr << "Using legacy dir: " << legacyDir << std::endl;
+    RsDbg() << "Using legacy dir: " << legacyDir ;
     auto key_path = RsDirUtil::makePath(legacyDir,"/private_key");
 
     if (!legacyDir.empty() && RsDirUtil::fileExists(key_path))
     {
         std::cerr << "Attempting to load key from legacy filesystem format from file \"" << key_path << "\"" << std::endl;
 
-        CryptoKey key;
-        if (!key.loadFromFile(key_path))
+        d->hiddenService = new Tor::HiddenService(this,legacyDir);
+
+        if(!d->hiddenService->privateKey().bytes().empty())
         {
-            RsWarn() << "Cannot load legacy format key from" << legacyDir << "for conversion";
-            return false;
+            RsDbg() << "Got key from legacy dir: " ;
+            RsDbg() << d->hiddenService->privateKey().bytes().toHex().toString() ;
         }
-
-        d->hiddenService = new Tor::HiddenService(this,key, legacyDir);
-
-		std::cerr << "Got key from legacy dir: " << std::endl;
-        std::cerr << key.bytes().toHex().toString() << std::endl;
+        else
+            RsWarn() << "Failed to load existing hidden service. Creating a new one." ;
     }
     else
     {
         d->hiddenService = new Tor::HiddenService(this,legacyDir);
 
-		std::cerr << "Creating new hidden service." << std::endl;
+        RsDbg() << "Creating new hidden service." << std::endl;
 
         // connect(d->hiddenService, SIGNAL(privateKeyChanged()), this, SLOT(hiddenServicePrivateKeyChanged())) ;
         // connect(d->hiddenService, SIGNAL(hostnameChanged()), this, SLOT(hiddenServiceHostnameChanged())) ;

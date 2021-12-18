@@ -97,7 +97,7 @@ private:
     CryptoKey m_privateKey;
     ByteArray m_service_id;
 
-    void loadPrivateKey();
+    bool loadPrivateKey();
     void setStatus(Status newStatus);
 
     HiddenServiceClient *m_client;

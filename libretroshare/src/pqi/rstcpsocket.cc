@@ -1,6 +1,17 @@
+/******************************* BEGIN WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef WINDOWS_SYS
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <sys/types.h>
 #include <netinet/in.h>
+#else
+#include <ws2tcpip.h>
+// Missing defines in MinGW
+#ifndef MSG_WAITALL
+#define MSG_WAITALL 8
+#endif
+#endif
+/********************************* END WINDOWS/UNIX SPECIFIC PART ******************/
 #include <string.h>
 #include <iostream>
 

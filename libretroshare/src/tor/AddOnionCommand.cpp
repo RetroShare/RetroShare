@@ -86,13 +86,14 @@ void AddOnionCommand::onReply(int statusCode, const ByteArray &data)
     const ByteArray keyPrefix("PrivateKey=");
     const ByteArray sidPrefix("ServiceID=");
 
-    if(data.startsWith("ServiceID=")){
+    if(data.startsWith(sidPrefix))
+    {
         ByteArray service_id = data.mid(sidPrefix.size());
         m_service->setServiceId(service_id);
     }
 
-    if (data.startsWith(keyPrefix)) {
-
+    if (data.startsWith(keyPrefix))
+    {
         ByteArray keyData(data.mid(keyPrefix.size()));
         CryptoKey key;
 

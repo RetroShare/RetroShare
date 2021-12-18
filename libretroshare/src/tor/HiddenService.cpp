@@ -36,6 +36,8 @@
 #include "Useful.h"
 #include "util/rsdir.h"
 
+#include <fstream>
+
 using namespace Tor;
 
 HiddenService::HiddenService(HiddenServiceClient *client)
@@ -110,20 +112,42 @@ void HiddenService::setPrivateKey(const CryptoKey &key)
         m_client->hiddenServicePrivateKeyChanged(); //emit privateKeyChanged();
 }
 
-void HiddenService::loadPrivateKey()
+bool HiddenService::loadPrivateKey()
 {
     if (m_privateKey.isLoaded() || m_dataPath.empty())
-        return;
+        return false;
 
     bool ok = m_privateKey.loadFromFile(m_dataPath + "/private_key");
 
     if (!ok) {
         RsWarn() << "Failed to load hidden service key";
-        return;
+        return false;
+    }
+
+    // Also load the onion address stored in "hostname" file. This is not needed, except for early display
+    // of the onion address, since the onion address will be re-computed by Tor (to the same value) when the
+    // service is published.
+
+    std::ifstream i((m_dataPath + "/hostname").c_str());
+
+    if(i)
+    {
+        std::string s;
+        i >> s;
+        if(ByteArray(s).endsWith(ByteArray(".onion")))
+        {
+            m_hostname = s;
+            m_service_id = s.substr(0,s.length() - std::string(".onion").length());
+
+            RsDbg() << "Read existing hostname: " << m_hostname;
+        }
+        i.close();
     }
 
     if(m_client)
         m_client->hiddenServicePrivateKeyChanged(); // emit privateKeyChanged();
+
+    return true;
 }
 
 void HiddenService::servicePublished()

@@ -163,10 +163,7 @@ void TorControlDialog::showLog()
             int n = s.indexOf(QString("Bootstrapped"));
 
             if(n >= 0)
-            {
                 torBootstrapStatus_LB->setText(s.mid(n+QString("Bootstrapped").length()));
-                QCoreApplication::processEvents();	// forces update
-            }
         }
     }
     //std::cerr << "Connexion Proxy: " << RsTor::socksAddress()  << ":" << QString::number(RsTor::socksPort()).toStdString() << std::endl;

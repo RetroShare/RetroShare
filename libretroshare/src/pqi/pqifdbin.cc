@@ -91,14 +91,18 @@ int RsFdBinInterface::read_pending()
         return mTotalInBufferBytes;
     }
 
+#ifdef DEBUG_FS_BIN
     RsDbg() << "clintConnt: " << mCLintConnt << ", readbytes: " << readbytes ;
+#endif
 
     // display some debug info
 
     if(readbytes > 0)
     {
-        //RsDbg() << "Received the following bytes: " << RsUtil::BinToHex( reinterpret_cast<unsigned char*>(inBuffer),readbytes,50) << std::endl;
+#ifdef DEBUG_FS_BIN
+        RsDbg() << "Received the following bytes: " << RsUtil::BinToHex( reinterpret_cast<unsigned char*>(inBuffer),readbytes,50) << std::endl;
         RsDbg() << "Received the following bytes: " << std::string(inBuffer,readbytes) << std::endl;
+#endif
 
         void *ptr = malloc(readbytes);
 
@@ -111,7 +115,9 @@ int RsFdBinInterface::read_pending()
         mTotalInBufferBytes += readbytes;
         mTotalReadBytes += readbytes;
 
+#ifdef DEBUG_FS_BIN
         RsDbg() << "Socket: " << mCLintConnt << ". Total read: " << mTotalReadBytes << ". Buffer size: " << mTotalInBufferBytes ;
+#endif
     }
     return mTotalInBufferBytes;
 }
@@ -138,11 +144,15 @@ int RsFdBinInterface::write_pending()
         return mTotalOutBufferBytes;
     }
 
+#ifdef DEBUG_FS_BIN
     RsDbg() << "clintConnt: " << mCLintConnt << ", written: " << written ;
+#endif
 
     // display some debug info
 
+#ifdef DEBUG_FS_BIN
     RsDbg() << "Sent the following bytes: " << RsUtil::BinToHex( reinterpret_cast<unsigned char*>(p.first),written,50) << std::endl;
+#endif
 
     if(written < p.second)
     {
