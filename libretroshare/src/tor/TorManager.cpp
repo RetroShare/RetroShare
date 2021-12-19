@@ -175,14 +175,7 @@ static bool test_listening_port(const std::string& /*address*/,uint16_t port)
        close(sockfd);
        return false;
     }
-#ifndef WINDOWS_SYS
-    int flags = fcntl(sockfd, F_GETFL);
-    fcntl(sockfd, F_SETFL, flags | O_NONBLOCK);
-#else
-    unsigned long int on = 1;
-    ret = ioctlsocket(fd, FIONBIO, &on);
-#endif
-
+    unix_fcntl_nonblock(sockfd);
     int res = listen(sockfd,5);
 
     int err = errno;
