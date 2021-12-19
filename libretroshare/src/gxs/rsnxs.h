@@ -26,7 +26,7 @@
 
 #include <set>
 #include <string>
-#include <stdlib.h>
+#include <cstdlib>
 #include <list>
 #include <map>
 
@@ -325,4 +325,20 @@ public:
 				return RsReputationLevel::NEUTRAL;
 		}
 	}
+
+	/**
+	 * @brief Check if new stuff is available from peers
+	 * @param peers peers to check, if empty all available peers are checked
+	 */
+	virtual std::error_condition checkUpdatesFromPeers(
+	        std::set<RsPeerId> peers = std::set<RsPeerId>() ) = 0;
+
+	/**
+	 * @brief request online peers to pull updates from our node ASAP
+	 * @param peers peers to which request pull from, if empty all available
+	 * peers are requested to pull
+	 * @return success or error details
+	 */
+	virtual std::error_condition requestPull(
+	        std::set<RsPeerId> peers = std::set<RsPeerId>() ) = 0;
 };

@@ -35,8 +35,8 @@ class PgpAuxUtils
 	virtual ~PgpAuxUtils(){}
 
 	virtual const RsPgpId &getPGPOwnId()  = 0;
-	virtual RsPgpId getPGPId(const RsPeerId& sslid) = 0;
-	virtual bool getGPGAllList(std::list<RsPgpId> &ids) = 0;
+    virtual RsPgpId getPgpId(const RsPeerId& sslid) = 0;
+    virtual bool getPgpAllList(std::list<RsPgpId> &ids) = 0;
 	virtual	bool getKeyFingerprint(const RsPgpId& id,PGPFingerprintType& fp) const = 0;
 
 	virtual bool parseSignature(unsigned char *sign, unsigned int signlen, RsPgpId& issuer) const =0;
@@ -49,12 +49,12 @@ public:
 	PgpAuxUtilsImpl();
 
 	virtual const RsPgpId &getPGPOwnId();
-	virtual RsPgpId getPGPId(const RsPeerId& sslid);
+    virtual RsPgpId getPgpId(const RsPeerId& sslid);
 
 	virtual bool parseSignature(unsigned char *sign, unsigned int signlen, RsPgpId& issuer) const ;
 	virtual	bool getKeyFingerprint(const RsPgpId& id,PGPFingerprintType& fp) const;
 	virtual bool VerifySignBin(const void *data, uint32_t len, unsigned char *sign, unsigned int signlen, const PGPFingerprintType& withfingerprint);
-	virtual bool getGPGAllList(std::list<RsPgpId> &ids);
+    virtual bool getPgpAllList(std::list<RsPgpId> &ids);
 };
 
 

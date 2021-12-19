@@ -590,7 +590,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string notr="true">Email</string>
+          <string notr="true">ProfilId</string>
          </property>
         </widget>
        </item>
@@ -629,7 +629,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Signers</string>
+          <string>Signers:</string>
          </property>
         </widget>
        </item>
@@ -674,6 +674,16 @@
           <string>IP-Address</string>
          </property>
         </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QLabel" name="knownIpLabel">
+         <property name="text">
+          <string>Known IP:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1">
+        <widget class="QPlainTextEdit" name="knownIpEdit"/>
        </item>
       </layout>
      </widget>

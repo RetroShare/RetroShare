@@ -1,7 +1,0 @@
-[Skin]
-Blur=false
-Hintergrundfarbe=@Variant(\0\0\0\x43\x1\xff\xff\xd5\xd5\xd5\xd5\xd5\xd5\0\0)
-SkinOn=true
-Skinpfad=skin/Vista/
-Titelfarbe=@Variant(\0\0\0\x43\x1\xff\xff\0\0\0\0\0\0\0\0)
-Titelschrift=@Variant(\0\0\0@\0\0\0\x1a\0\x43\0o\0m\0i\0\x63\0 \0S\0\x61\0n\0s\0 \0M\0S@$\0\0\0\0\0\0\xff\xff\xff\xff\x5\x1\0K\x10)

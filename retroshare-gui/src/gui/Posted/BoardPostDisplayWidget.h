@@ -62,10 +62,11 @@ public:
 
 	static const char *DEFAULT_BOARD_IMAGE;
 
-protected slots:
+protected:
 	/* GxsGroupFeedItem */
 
-    virtual void setup();    // to be overloaded by the different views
+    void baseSetup();
+    virtual void setup() =0;    // to be overloaded by the different views
 
     virtual QToolButton *voteUpButton() =0;
     virtual QToolButton *commentButton() =0;
@@ -81,6 +82,7 @@ protected slots:
     virtual QToolButton *shareButton() =0;
     virtual QFrame      *feedFrame() =0;
 
+protected slots:
     void loadComments(bool e);
     void readToggled();
     void setReadStatus(bool isNew, bool isUnread) ;

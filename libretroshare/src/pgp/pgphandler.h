@@ -29,12 +29,6 @@
 #include <util/rsthreads.h>
 #include <retroshare/rstypes.h>
 
-extern "C" {
-#include <openpgpsdk/types.h>
-#include <openpgpsdk/keyring.h>
-#include <openpgpsdk/keyring_local.h>
-}
-
 typedef std::string (*PassphraseCallback)(void *data, const char *uid_title, const char *uid_hint, const char *passphrase_info, int prev_was_bad,bool *cancelled) ;
 
 class PGPCertificateInfo
@@ -56,9 +50,11 @@ class PGPCertificateInfo
 		mutable rstime_t _time_stamp ;		// last time the key was used (received, used for signature verification, etc)
 
 		PGPFingerprintType _fpr;           /* fingerprint */
-	//	RsPgpId          _key_id ;
 
-		uint32_t _key_index ;			// index to array of keys in the public keyring 
+        // Index to array of keys in the public keyring. Dependign on the specific implementation
+        // of how the keyring is stored, this may be used differently.
+
+        uint32_t _key_index ;
 
 		static const uint32_t PGP_CERTIFICATE_FLAG_ACCEPT_CONNEXION      = 0x0001 ;
 		static const uint32_t PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE     = 0x0002 ;
@@ -80,53 +76,87 @@ class PGPCertificateInfo
 class PGPHandler
 {
 public:
-		PGPHandler(	const std::string& path_to_public_keyring, 
+        PGPHandler(		const std::string& path_to_public_keyring,
 						const std::string& path_to_secret_keyring, 
 						const std::string& path_to_trust_database, 
 						const std::string& pgp_lock_file) ;
 
 		virtual ~PGPHandler() ;
 
-		/**
+        //=======================================================================================//
+        //      Methods that needs to be derived depending on how PGP is implemented             //
+        //=======================================================================================//
+
+        // Removes the given keys from the keyring. Also backup the keyring to a file which name is automatically generated
+        // and given pack for proper display.
+        //
+        virtual bool removeKeysFromPGPKeyring(const std::set<RsPgpId>& key_ids,std::string& backup_file,uint32_t& error_code) =0;
+        //virtual std::string makeRadixEncodedPGPKey(uint32_t key_index,bool include_signatures) =0;
+
+        virtual bool availableGPGCertificatesWithPrivateKeys(std::list<RsPgpId>& ids)=0;
+        virtual bool GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId& pgpId, const int keynumbits, std::string& errString) =0;
+
+        virtual std::string SaveCertificateToString(const RsPgpId& id,bool include_signatures) const=0;
+
+        /** The caller is in charge of freeing `mem` once finished */
+        virtual bool exportPublicKey( const RsPgpId& id, unsigned char*& mem_block, size_t& mem_size, bool armoured, bool include_signatures ) const =0;
+
+        virtual bool exportGPGKeyPair(const std::string& filename,const RsPgpId& exported_key_id) const=0;
+        virtual bool exportGPGKeyPairToString( std::string& data, const RsPgpId& exportedKeyId, bool includeSignatures, std::string& errorMsg ) const =0;
+
+        // Gets info about the key. Who are the signers, what's the owner's name, etc.
+        //
+        virtual bool getGPGDetailsFromBinaryBlock(const unsigned char *mem,size_t mem_size,RsPgpId& key_id, std::string& name, std::list<RsPgpId>& signers) const =0;
+
+        virtual bool importGPGKeyPair(const std::string& filename,RsPgpId& imported_id,std::string& import_error) =0;
+        /**
 		 * @param ids list of gpg certificate ids (note, not the actual certificates)
 		 */
+
+        virtual	bool importGPGKeyPairFromString(const std::string& data,RsPgpId& imported_id,std::string& import_error) =0;
+
+        virtual bool LoadCertificateFromString(const std::string& pem, RsPgpId& gpg_id, std::string& error_string)=0;
+        virtual bool LoadCertificateFromBinaryData(const unsigned char *bin_data,uint32_t bin_data_len, RsPgpId& gpg_id, std::string& error_string)=0;
+
+        virtual bool encryptTextToFile(const RsPgpId& key_id,const std::string& text,const std::string& outfile) =0;
+        virtual bool decryptTextFromFile(const RsPgpId& key_id,std::string& text,const std::string& encrypted_inputfile) =0;
+
+        // The client should supply a memory chunk to store the data. The length will be updated to the real length of the data.
+        //
+        virtual bool encryptDataBin(const RsPgpId& key_id,const void *data, const uint32_t len , unsigned char *encrypted_data, unsigned int *encrypted_data_len) =0;
+        virtual bool decryptDataBin(const RsPgpId& key_id,const void *encrypted_data, const uint32_t encrypted_len , unsigned char *data, unsigned int *data_len) =0;
+
+        virtual bool SignDataBin(const RsPgpId& id, const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen, bool make_raw_signature=false, std::string reason = "") =0;
+        virtual bool privateSignCertificate(const RsPgpId& own_id,const RsPgpId& id_of_key_to_sign) =0;
+        virtual bool VerifySignBin(const void *data, uint32_t data_len, unsigned char *sign, unsigned int sign_len, const PGPFingerprintType& withfingerprint) =0;
+        /**
+         * @brief Get PGP fingerprint for the given key
+         * @param id PGP 64bit key id
+         * @param fp storage for the retrived key fingerpring, the contained value
+         *	is meaningfull only if true is returned
+         * @return true if the key was found, false if not
+         */
+        virtual bool getKeyFingerprint(const RsPgpId& id, RsPgpFingerprint& fp) const=0;
+
+        virtual bool haveSecretKey(const RsPgpId& id) const =0;
+
+        // Syncs the keyrings and trust database between memory and disk. The algorithm is:
+        // 1 - lock the keyrings
+        // 2 - compare file modification dates with last writing date
+        // 		- if file is modified, load it, and merge with memory
+        // 3 - look into memory modification flags
+        // 		- if flag says keyring has changed, write to disk
+        //
+        virtual bool syncDatabase() =0;
+
+
+        //=======================================================================================//
+        //                              Common methods to PGPHandler                             //
+        //=======================================================================================//
+
 		bool getGPGFilteredList(std::list<RsPgpId>& list,bool (*filter)(const PGPCertificateInfo&) = NULL) const ;
-		bool haveSecretKey(const RsPgpId& id) const ;
 
-		bool importGPGKeyPair(const std::string& filename,RsPgpId& imported_id,std::string& import_error) ;
-		bool importGPGKeyPairFromString(const std::string& data,RsPgpId& imported_id,std::string& import_error) ;
-		bool exportGPGKeyPair(const std::string& filename,const RsPgpId& exported_id) const ;
-		bool exportGPGKeyPairToString(
-		        std::string& data, const RsPgpId& exportedKeyId,
-		        bool includeSignatures, std::string& errorMsg ) const;
-
-		bool availableGPGCertificatesWithPrivateKeys(std::list<RsPgpId>& ids);
-		bool GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId& pgpId, const int keynumbits, std::string& errString) ;
-
-		bool LoadCertificateFromString(const std::string& pem, RsPgpId& gpg_id, std::string& error_string);
-		bool LoadCertificateFromBinaryData(const unsigned char *bin_data,uint32_t bin_data_len, RsPgpId& gpg_id, std::string& error_string);
-
-		std::string SaveCertificateToString(const RsPgpId& id,bool include_signatures) const ;
-
-		/** The caller is in charge of freeing `mem` once finished */
-		bool exportPublicKey( const RsPgpId& id,
-		                      unsigned char*& mem, size_t& mem_size,
-		                      bool armoured, bool include_signatures) const;
-
-		bool parseSignature(unsigned char *sign, unsigned int signlen,RsPgpId& issuer_id) ;
-		bool SignDataBin(const RsPgpId& id, const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen, bool make_raw_signature=false, std::string reason = "") ;
-		bool VerifySignBin(const void *data, uint32_t data_len, unsigned char *sign, unsigned int sign_len, const PGPFingerprintType& withfingerprint) ;
-		bool privateSignCertificate(const RsPgpId& own_id,const RsPgpId& id_of_key_to_sign) ;
-
-		// The client should supply a memory chunk to store the data. The length will be updated to the real length of the data.
-		//
-		bool encryptDataBin(const RsPgpId& key_id,const void *data, const uint32_t len
-		                    , unsigned char *encrypted_data, unsigned int *encrypted_data_len) ;
-		bool decryptDataBin(const RsPgpId& key_id,const void *encrypted_data, const uint32_t encrypted_len
-		                    , unsigned char *data, unsigned int *data_len) ;
-
-		bool encryptTextToFile(const RsPgpId& key_id,const std::string& text,const std::string& outfile) ;
-		bool decryptTextFromFile(const RsPgpId& key_id,std::string& text,const std::string& encrypted_inputfile) ;
+        bool parseSignature(unsigned char *sign, unsigned int signlen,RsPgpId& issuer_id) ;
 
 		void setAcceptConnexion(const RsPgpId&,bool) ;
 
@@ -134,11 +164,6 @@ public:
 		void updateOwnSignatureFlag(const RsPgpId& pgp_id,const RsPgpId& ownId) ;
 
 		void locked_updateOwnSignatureFlag(PGPCertificateInfo&, const RsPgpId&, PGPCertificateInfo&, const RsPgpId&) ;
-
-		// Removes the given keys from the keyring. Also backup the keyring to a file which name is automatically generated
-		// and given pack for proper display.
-		//
-		bool removeKeysFromPGPKeyring(const std::set<RsPgpId>& key_ids,std::string& backup_file,uint32_t& error_code) ;
 
 		//bool isKeySupported(const RsPgpId& id) const ;
 
@@ -174,65 +199,17 @@ public:
 	 */
 	static RsPgpId pgpIdFromFingerprint(const RsPgpFingerprint& f);
 
-	/**
-	 * @brief Get PGP fingerprint for the given key
-	 * @param id PGP 64bit key id
-	 * @param fp storage for the retrived key fingerpring, the contained value
-	 *	is meaningfull only if true is returned
-	 * @return true if the key was found, false if not
-	 */
-	bool getKeyFingerprint(const RsPgpId& id, RsPgpFingerprint& fp) const;
-
-		// Gets info about the key. Who are the signers, what's the owner's name, etc.
-		//
-		bool getGPGDetailsFromBinaryBlock(const unsigned char *mem,size_t mem_size,RsPgpId& key_id, std::string& name, std::list<RsPgpId>& signers) const ;
-
 		// Debug stuff.
 		virtual bool printKeys() const ;
 
-		// Syncs the keyrings and trust database between memory and disk. The algorithm is:
-		// 1 - lock the keyrings
-		// 2 - compare file modification dates with last writing date
-		// 		- if file is modified, load it, and merge with memory
-		// 3 - look into memory modification flags
-		// 		- if flag says keyring has changed, write to disk
-		//
-		bool syncDatabase() ;
-
-	private:
-		bool LoadCertificate(const unsigned char *bin_data,uint32_t bin_data_len, bool armoured, RsPgpId& gpg_id, std::string& error_string);
-		void initCertificateInfo(PGPCertificateInfo& cert,const ops_keydata_t *keydata,uint32_t i) ;
-
-		// Returns true if the signatures have been updated
-		//
-		bool validateAndUpdateSignatures(PGPCertificateInfo& cert,const ops_keydata_t *keydata) ;
-
-        /** Check public/private key and import them into the keyring
-         * @param keyring keyring with the new public/private key pair. Will be freed by the function.
-         * @param imported_key_id PGP id of the imported key
-         * @param import_error human readbale error message
-         * @returns true on success
-         * */
-        bool checkAndImportKeyPair(ops_keyring_t *keyring, RsPgpId& imported_key_id,std::string& import_error);
-
-		const ops_keydata_t *locked_getPublicKey(const RsPgpId&,bool stamp_the_key) const;
-		const ops_keydata_t *locked_getSecretKey(const RsPgpId&) const ;
-
+    protected:
 		void locked_readPrivateTrustDatabase() ;
 		bool locked_writePrivateTrustDatabase() ;
-
-		bool locked_syncPublicKeyring() ;
-		bool locked_syncTrustDatabase() ;
-
-		void locked_mergeKeyringFromDisk(ops_keyring_t *keyring, std::map<RsPgpId,PGPCertificateInfo>& kmap, const std::string& keyring_file) ;
-		bool locked_addOrMergeKey(ops_keyring_t *keyring,std::map<RsPgpId,PGPCertificateInfo>& kmap,const ops_keydata_t *keydata) ;
+        bool locked_syncTrustDatabase() ;
 
 		// Members.
 		//
 		mutable RsMutex pgphandlerMtx ;
-
-		ops_keyring_t *_pubring ;
-		ops_keyring_t *_secring ;
 
 		std::map<RsPgpId,PGPCertificateInfo> _public_keyring_map ;	// used for fast access to keys. Gives the index in the keyring.
 		std::map<RsPgpId,PGPCertificateInfo> _secret_keyring_map ;
@@ -249,11 +226,5 @@ public:
 		rstime_t _secring_last_update_time ;
 		rstime_t _trustdb_last_update_time ;
 
-		// Helper functions.
-		//
-		static std::string makeRadixEncodedPGPKey(const ops_keydata_t *key,bool include_signatures) ;
-		static ops_keyring_t *allocateOPSKeyring() ;
-		static void addNewKeyToOPSKeyring(ops_keyring_t*, const ops_keydata_t&) ;
 		static PassphraseCallback _passphrase_callback ;
-		static bool mergeKeySignatures(ops_keydata_t *dst,const ops_keydata_t *src) ;	// returns true if signature lists are different
 };

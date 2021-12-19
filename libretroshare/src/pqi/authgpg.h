@@ -34,7 +34,7 @@
 
 #include "util/rsthreads.h"
 #include "pqi/p3cfgmgr.h"
-#include "pgp/pgphandler.h"
+#include "pgp/openpgpsdkhandler.h"
 
 #define MAX_GPG_SIGNATURE_SIZE  4096
 
@@ -89,16 +89,19 @@ public:
     virtual void setGPGOperation(AuthGPGOperation *operation) = 0;
 };
 
-class AuthGPG: public p3Config, public RsTickingThread, public PGPHandler
+class AuthPGP: public p3Config, public RsTickingThread
 {
 public:
-	static void init(const std::string& path_to_pubring,
-	        const std::string& path_to_secring,
-	        const std::string& path_to_trustdb,
-	        const std::string& pgp_lock_file);
+    static void init(const std::string& path_to_pubring,
+                     const std::string& path_to_secring,
+                     const std::string& path_to_trustdb,
+                     const std::string& pgp_lock_file);
 
-		static void exit();
-		static AuthGPG *getAuthGPG() { return _instance ; }
+    static void registerToConfigMgr(const std::string& fname,p3ConfigMgr *CfgMgr);
+    static void exit();
+
+    static bool isPGPId(const RsPgpId& id) ;
+    static bool isPGPAccepted(const RsPgpId& id) ;
 
 		/**
 		 * @param ids list of gpg certificate ids (note, not the actual certificates)
@@ -118,7 +121,7 @@ public:
 		 * (see storage at the end of the class)
 		 *
 		 ****/
-		virtual bool    active(); 
+        static bool    active();
 
 		// /* Initialize */
 		// virtual bool    InitAuth ();
@@ -126,10 +129,13 @@ public:
 
 		/* Init by generating new Own PGP Cert, or selecting existing PGP Cert */
 
-		virtual int  GPGInit(const RsPgpId &ownId);
-		virtual bool GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, const int keynumbits, std::string &errString);
+        static int  PgpInit(const RsPgpId &ownId);
+        static bool GeneratePgpCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, const int keynumbits, std::string &errString);
 
-		/*********************************************************************************/
+        static bool getPgpDetailsFromBinaryBlock(const unsigned char *mem,size_t mem_size,RsPgpId& key_id, std::string& name, std::list<RsPgpId>& signers) ;
+        static int availablePgpCertificatesWithPrivateKeys(std::list<RsPgpId>& pgpIds);
+
+        /*********************************************************************************/
 		/************************* STAGE 3 ***********************************************/
 		/*********************************************************************************/
 		/*****
@@ -140,29 +146,33 @@ public:
 		 * provide access to details in cache list.
 		 *
 		 ****/
-		virtual std::string getGPGName(const RsPgpId &pgp_id,bool *success = NULL);
-		virtual std::string getGPGEmail(const RsPgpId &pgp_id,bool *success = NULL);
+        static std::string getPgpName(const RsPgpId &pgp_id,bool *success = NULL);
+        static std::string getPgpEmail(const RsPgpId &pgp_id,bool *success = NULL);
 
-		/* PGP web of trust management */
-        virtual const RsPgpId& getGPGOwnId();
-		virtual std::string getGPGOwnName();
+        static bool exportPublicKey( const RsPgpId& id, unsigned char*& mem_block, size_t& mem_size, bool armoured, bool include_signatures );
 
-		//virtual std::string getGPGOwnEmail();
-		virtual bool	isKeySupported(const RsPgpId &id) const ;
-		virtual bool	haveSecretKey(const RsPgpId &id) const ;
-		virtual bool	getGPGDetails(const RsPgpId& id, RsPeerDetails &d);
-		virtual bool	getGPGAllList(std::list<RsPgpId> &ids);
-		virtual bool	getGPGValidList(std::list<RsPgpId> &ids);
-		virtual bool	getGPGAcceptedList(std::list<RsPgpId> &ids);
-		virtual bool	getGPGSignedList(std::list<RsPgpId> &ids);
-		virtual bool   importProfile(const std::string& filename,RsPgpId& gpg_id,std::string& import_error) ;
-        virtual bool   importProfileFromString(const std::string& data,RsPgpId& gpg_id,std::string& import_error) ;
-		virtual bool   exportProfile(const std::string& filename,const RsPgpId& gpg_id) ;
-		virtual bool exportIdentityToString(
+        /* PGP web of trust management */
+        static const RsPgpId& getPgpOwnId();
+        static std::string getPgpOwnName();
+
+        //virtual std::string getGPGOwnEmail();
+        static bool getKeyFingerprint(const RsPgpId& id,PGPFingerprintType& fp) ;
+        static bool isKeySupported(const RsPgpId &id) ;
+        static bool isPgpPubKeyAvailable(const RsPgpId& pgp_id);
+        static bool haveSecretKey(const RsPgpId &id) ;
+        static bool getPgpDetails(const RsPgpId& id, RsPeerDetails &d);
+        static bool getPgpAllList(std::list<RsPgpId> &ids);
+        static bool getPgpValidList(std::list<RsPgpId> &ids);
+        static bool getPgpAcceptedList(std::list<RsPgpId> &ids);
+        static bool getPgpSignedList(std::list<RsPgpId> &ids);
+        static bool importProfile(const std::string& filename,RsPgpId& gpg_id,std::string& import_error) ;
+        static bool importProfileFromString(const std::string& data,RsPgpId& gpg_id,std::string& import_error) ;
+        static bool exportProfile(const std::string& filename,const RsPgpId& gpg_id) ;
+        static bool exportIdentityToString(
 		        std::string& data, const RsPgpId& pgpId, bool includeSignatures,
 		        std::string& errorMsg );
 
-        virtual bool   removeKeysFromPGPKeyring(const std::set<RsPgpId> &pgp_ids,std::string& backup_file,uint32_t& error_code) ;
+        static bool   removeKeysFromPGPKeyring(const std::set<RsPgpId> &pgp_ids,std::string& backup_file,uint32_t& error_code) ;
 
 		/*********************************************************************************/
 		/************************* STAGE 4 ***********************************************/
@@ -171,9 +181,9 @@ public:
 		 * STAGE 4: Loading and Saving Certificates. (Strings and Files)
 		 *
 		 ****/
-		virtual bool LoadCertificateFromString(const std::string &pem, RsPgpId& gpg_id,std::string& error_string);
-		virtual bool LoadPGPKeyFromBinaryData(const unsigned char *data,uint32_t data_len, RsPgpId& gpg_id,std::string& error_string);
-		virtual std::string SaveCertificateToString(const RsPgpId &id,bool include_signatures) ;
+        static bool LoadCertificateFromString(const std::string &pem, RsPgpId& gpg_id,std::string& error_string);
+        static bool LoadPGPKeyFromBinaryData(const unsigned char *data,uint32_t data_len, RsPgpId& gpg_id,std::string& error_string);
+        static std::string SaveCertificateToString(const RsPgpId &id,bool include_signatures) ;
 
 		// Cached certificates.
 		//bool   getCachedGPGCertificate(const RsPgpId &id, std::string &certificate);
@@ -188,12 +198,12 @@ public:
 		 * done in gpgroot already.
 		 *
 		 ****/
-		virtual bool AllowConnection(const RsPgpId &gpg_id, bool accept);
+        static bool AllowConnection(const RsPgpId &gpg_id, bool accept);
 
-		virtual bool SignCertificateLevel0(const RsPgpId &id);
-		virtual bool RevokeCertificate(const RsPgpId &id);  /* Particularly hard - leave for later */
+        static bool SignCertificateLevel0(const RsPgpId &id);
+        static bool RevokeCertificate(const RsPgpId &id);  /* Particularly hard - leave for later */
 
-		virtual bool TrustCertificate(const RsPgpId& id,  int trustlvl); //trustlvl is 2 for none, 3 for marginal and 4 for full trust
+        static bool TrustCertificate(const RsPgpId& id,  int trustlvl); //trustlvl is 2 for none, 3 for marginal and 4 for full trust
 
 		/*********************************************************************************/
 		/************************* STAGE 7 ***********************************************/
@@ -204,39 +214,39 @@ public:
 		 * There should also be Encryption Functions... (do later).
 		 *
 		 ****/
-		virtual bool SignDataBin(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen, std::string reason = "");
-		virtual bool VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int, const PGPFingerprintType& withfingerprint);
-		virtual bool parseSignature(const void *sig, unsigned int siglen, RsPgpId& issuer_id);
+        static bool SignDataBin(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen, std::string reason = "");
+        static bool VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int, const PGPFingerprintType& withfingerprint);
+        static bool parseSignature(const void *sig, unsigned int siglen, RsPgpId& issuer_id);
 
-		virtual bool encryptDataBin(const RsPgpId& pgp_id,const void *data, const uint32_t len, unsigned char *encr, unsigned int *encrlen);
-		virtual bool decryptDataBin(const void *data, const uint32_t len, unsigned char *decr, unsigned int *decrlen);
+        static bool encryptDataBin(const RsPgpId& pgp_id,const void *data, const uint32_t len, unsigned char *encr, unsigned int *encrlen);
+        static bool decryptDataBin(const void *data, const uint32_t len, unsigned char *decr, unsigned int *decrlen);
 
-		virtual bool decryptTextFromFile(      std::string& text,const std::string& filename);
-		virtual bool encryptTextToFile  (const std::string& text,const std::string& filename);
+        static bool decryptTextFromFile(      std::string& text,const std::string& filename);
+        static bool encryptTextToFile  (const std::string& text,const std::string& filename);
 
 //		virtual bool decryptTextFromString(      std::string& encrypted_text,std::string&     clear_string);
 //		virtual bool encryptTextToString  (const std::string& pgp_id,const std::string&     clear_text,std::string& encrypted_string);
 
-		bool getGPGFilteredList(std::list<RsPgpId>& list,bool (*filter)(const PGPCertificateInfo&) = NULL) ;
+        static bool getGPGFilteredList(std::list<RsPgpId>& list,bool (*filter)(const PGPCertificateInfo&) = NULL) ;
 
 		//END of PGP public functions
 
 		/* GPG service */
-		virtual bool addService(AuthGPGService *service) ;
+        static bool addService(AuthGPGService *service) ;
 
 		// This is for debug purpose only. Don't use it !!
-		static void setAuthGPG_debug(AuthGPG *auth_gpg) { _instance = auth_gpg ; } 
+        static void setAuthGPG_debug(AuthPGP *auth_gpg) { _instance = auth_gpg ; }
 
 	protected:
-		AuthGPG(const std::string& path_to_pubring, const std::string& path_to_secring,const std::string& path_to_trustdb,const std::string& pgp_lock_file);
-		virtual ~AuthGPG();
+        AuthPGP(const std::string& path_to_pubring, const std::string& path_to_secring,const std::string& path_to_trustdb,const std::string& pgp_lock_file);
+        virtual ~AuthPGP();
 
 		/*****************************************************************/
 		/***********************  p3config  ******************************/
 		/* Key Functions to be overloaded for Full Configuration */
-		virtual RsSerialiser *setupSerialiser();
-		virtual bool saveList(bool &cleanup, std::list<RsItem *>&);
-		virtual bool    loadList(std::list<RsItem *>& load);
+        virtual RsSerialiser *setupSerialiser() override;
+        virtual bool saveList(bool &cleanup, std::list<RsItem *>&) override;
+        virtual bool    loadList(std::list<RsItem *>& load) override;
 		/*****************************************************************/
 
 private:
@@ -274,8 +284,7 @@ private:
 	void threadTick() override; /// @see RsTickingThread
 
 private:
-
-		static AuthGPG *instance_gpg; // pointeur vers le singleton
+        static AuthPGP *instance();
 
 		RsMutex gpgMtxService;
 		RsMutex gpgMtxEngine;
@@ -290,6 +299,8 @@ private:
 
 		rstime_t mStoreKeyTime;
 
+        PGPHandler *mPgpHandler;
+
 		RsPgpId mOwnGpgId;
 		bool gpgKeySelected;
         bool _force_sync_database ;
@@ -297,7 +308,7 @@ private:
 
 		std::list<AuthGPGService*> services ;
 
-		static AuthGPG *_instance ;
+        static AuthPGP *_instance ;
 };
 
 #endif

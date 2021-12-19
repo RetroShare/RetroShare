@@ -900,10 +900,19 @@ bool p3GxsForums::markRead(const RsGxsGrpMsgIdPair& msgId, bool read)
 bool p3GxsForums::subscribeToForum(const RsGxsGroupId& groupId, bool subscribe )
 {
 	uint32_t token;
-    if( !RsGenExchange::subscribeToGroup(token, groupId, subscribe) || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	if( !RsGenExchange::subscribeToGroup(token, groupId, subscribe) ||
+	        waitToken(token) != RsTokenService::COMPLETE ) return false;
 
-    RsGxsGroupId grp;
-    acknowledgeGrp(token,grp);
+	RsGxsGroupId grp;
+	acknowledgeGrp(token, grp);
+
+	/* Since subscribe has been requested, the caller is most probably
+	 * interested in getting the group messages ASAP so check updates from peers
+	 * without waiting GXS sync timer.
+	 * Do it here as this is meaningful or not depending on the service.
+	 * Do it only after the token has been completed otherwise the pull have no
+	 * effect. */
+	if(subscribe) RsGenExchange::netService()->checkUpdatesFromPeers();
 
 	return true;
 }
@@ -1148,6 +1157,13 @@ std::error_condition p3GxsForums::setPostKeepForever(
 	case RsTokenService::CANCELLED: return std::errc::operation_canceled;
 	default: return std::errc::bad_message;
 	}
+}
+
+std::error_condition p3GxsForums::requestSynchronization()
+{
+	auto errc = RsGenExchange::netService()->checkUpdatesFromPeers();
+	if(errc) return errc;
+	return RsGenExchange::netService()->requestPull();
 }
 
 /* so we need the same tick idea as wiki for generating dummy forums

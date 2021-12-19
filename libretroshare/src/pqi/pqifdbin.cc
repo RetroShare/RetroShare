@@ -46,9 +46,13 @@ void RsFdBinInterface::setSocket(int s)
     int flags = fcntl(s,F_GETFL);
 
     if(!(flags & O_NONBLOCK))
-        throw std::runtime_error("Trying to use a blocking file descriptor in RsFdBinInterface. This is not going to work!");
+    {
+        RsWarn() << "Trying to use a blocking file descriptor in RsFdBinInterface. This is not going to work! Setting the socket to be non blocking.";
+        unix_fcntl_nonblock(s);
+    }
+
 #else
-    // On windows, there is no way to determine whether a socket is blobking or not, so we set it to non blocking whatsoever.
+    // On windows, there is no way to determine whether a socket is blocking or not, so we set it to non blocking whatsoever.
     unsigned long int on = 1;
     ioctlsocket(s, FIONBIO, &on);
 #endif

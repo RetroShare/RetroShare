@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: (C) 2004-2019 Retroshare Team <contact@retroshare.cc>
+# SPDX-FileCopyrightText: (C) 2004-2021 Retroshare Team <contact@retroshare.cc>
 # SPDX-License-Identifier: CC0-1.0
 
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
@@ -207,7 +207,7 @@ linux-* {
     LIBS *= -ldl
 
 	DEFINES *= PLUGIN_DIR=\"\\\"$${PLUGIN_DIR}\\\"\"
-	DEFINES *= DATA_DIR=\"\\\"$${DATA_DIR}\\\"\"
+        DEFINES *= RS_DATA_DIR=\"\\\"$${RS_DATA_DIR}\\\"\"
 }
 
 linux-g++ {
@@ -291,7 +291,7 @@ mac {
 		#LIBS += -lsqlite3
 
 		DEFINES *= PLUGIN_DIR=\"\\\"$${PLUGIN_DIR}\\\"\"
-		DEFINES *= DATA_DIR=\"\\\"$${DATA_DIR}\\\"\"
+                DEFINES *= RS_DATA_DIR=\"\\\"$${RS_DATA_DIR}\\\"\"
 }
 
 ################################# FreeBSD ##########################################
@@ -365,6 +365,7 @@ HEADERS += chat/distantchat.h \
 HEADERS +=	pqi/authssl.h \
 			pqi/authgpg.h \
 			pgp/pgphandler.h \
+			pgp/openpgpsdkhandler.h \
 			pgp/pgpkeyutil.h \
 			pqi/pqifdbin.h \
 			pqi/rstcpsocket.h \
@@ -511,7 +512,8 @@ HEADERS +=	util/folderiterator.h \
     util/cxx11retrocompat.h \
     util/cxx14retrocompat.h \
     util/cxx17retrocompat.h \
-            util/rsurl.h
+    util/cxx23retrocompat.h \
+    util/rsurl.h
 
 SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftcontroller.cc \
@@ -538,6 +540,7 @@ SOURCES += chat/distantchat.cc \
 SOURCES +=	pqi/authgpg.cc \
 			pqi/authssl.cc \
 			pgp/pgphandler.cc \
+			pgp/openpgpsdkhandler.cc \
 			pgp/pgpkeyutil.cc \
 			pgp/rscertificate.cc \
 			pgp/pgpauxutils.cc \
@@ -1132,6 +1135,8 @@ test_bitdht {
 ################################# Android #####################################
 
 android-* {
+    lessThan(ANDROID_API_VERSION, 24) {
+
 ## TODO: This probably disable largefile support and maybe is not necessary with
 ## __ANDROID_API__ >= 24 hence should be made conditional or moved to a
 ## compatibility header
@@ -1139,12 +1144,26 @@ android-* {
     DEFINES *= "fseeko64=fseeko"
     DEFINES *= "ftello64=ftello"
 
+## @See: rs_android/README-ifaddrs-android.adoc
+    HEADERS += \
+        rs_android/ifaddrs-android.h \
+        rs_android/LocalArray.h \
+        rs_android/ScopedFd.h
+    }
+
 ## Static library are very susceptible to order in command line
     sLibs = bz2 $$RS_UPNP_LIB $$RS_SQL_LIB ssl crypto
 
     LIBS += $$linkStaticLibs(sLibs)
     PRE_TARGETDEPS += $$pretargetStaticLibs(sLibs)
 
-    HEADERS += util/androiddebug.h
+    HEADERS += \
+        rs_android/androidcoutcerrcatcher.hpp \
+        rs_android/retroshareserviceandroid.hpp \
+        rs_android/rsjni.hpp
+
+    SOURCES += rs_android/rsjni.cpp \
+        rs_android/retroshareserviceandroid.cpp \
+        rs_android/errorconditionwrap.cpp
 }
 

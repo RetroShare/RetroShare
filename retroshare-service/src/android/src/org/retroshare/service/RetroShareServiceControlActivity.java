@@ -1,6 +1,6 @@
 /*
  * RetroShare
- * Copyright (C) 2016-2018  Gioacchino Mazzurco <gio@altermundi.net>
+ * Copyright (C) 2016-2021  Gioacchino Mazzurco <gio@altermundi.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -50,7 +50,11 @@ public class RetroShareServiceControlActivity extends Activity
 				else
 				{
 					button.setText("Starting...");
-					RetroShareServiceAndroid.start(RetroShareServiceControlActivity.this);
+					RetroShareServiceAndroid.start(
+						RetroShareServiceControlActivity.this,
+						RetroShareServiceAndroid.DEFAULT_JSON_API_PORT,
+						RetroShareServiceAndroid.DEFAULT_JSON_API_BINDING_ADDRESS
+						);
 					serviceStarting = true;
 					serviceStopping = false;
 				}

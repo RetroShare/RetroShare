@@ -17,3 +17,6 @@
 [submodule "supportlibs/libsam3"]
 	path = supportlibs/libsam3
 	url = https://github.com/i2p/libsam3.git
+[submodule "supportlibs/jni.hpp"]
+	path = supportlibs/jni.hpp
+	url = https://github.com/RetroShare/jni.hpp.git
