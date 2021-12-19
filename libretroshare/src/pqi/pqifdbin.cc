@@ -50,7 +50,7 @@ void RsFdBinInterface::setSocket(int s)
 #else
     // On windows, there is no way to determine whether a socket is blobking or not, so we set it to non blocking whatsoever.
     unsigned long int on = 1;
-    ret = ioctlsocket(fd[STDOUT_FILENO], FIONBIO, &on);
+    ioctlsocket(s, FIONBIO, &on);
 #endif
 
     mCLintConnt = s;
