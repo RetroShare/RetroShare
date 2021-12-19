@@ -272,9 +272,14 @@ void TorProcess::start()
     }
 
     int flags ;
+#ifndef WINDOWS_SYS
     flags = fcntl(fd[STDOUT_FILENO], F_GETFL); fcntl(fd[STDOUT_FILENO], F_SETFL, flags | O_NONBLOCK);
     flags = fcntl(fd[STDERR_FILENO], F_GETFL); fcntl(fd[STDERR_FILENO], F_SETFL, flags | O_NONBLOCK);
-
+#else
+    unsigned long int on = 1;
+    ret = ioctlsocket(fd[STDOUT_FILENO], FIONBIO, &on);
+    ret = ioctlsocket(fd[STDERR_FILENO], FIONBIO, &on);
+#endif
     mStdOutFD = new RsFdBinInterface(fd[STDOUT_FILENO]);
     mStdErrFD = new RsFdBinInterface(fd[STDERR_FILENO]);
 }

@@ -37,15 +37,21 @@ RsFdBinInterface::RsFdBinInterface(int file_descriptor)
 
 void RsFdBinInterface::setSocket(int s)
 {
-        if(mIsActive != 0)
-        {
-            RsErr() << "Changing socket to active FsBioInterface! Canceling all pending R/W data." ;
-            close();
-        }
+    if(mIsActive != 0)
+    {
+        RsErr() << "Changing socket to active FsBioInterface! Canceling all pending R/W data." ;
+        close();
+    }
+#ifndef WINDOWS_SYS
     int flags = fcntl(s,F_GETFL);
 
     if(!(flags & O_NONBLOCK))
         throw std::runtime_error("Trying to use a blocking file descriptor in RsFdBinInterface. This is not going to work!");
+#else
+    // On windows, there is no way to determine whether a socket is blobking or not, so we set it to non blocking whatsoever.
+    unsigned long int on = 1;
+    ret = ioctlsocket(fd[STDOUT_FILENO], FIONBIO, &on);
+#endif
 
     mCLintConnt = s;
     mIsActive = (s!=0);

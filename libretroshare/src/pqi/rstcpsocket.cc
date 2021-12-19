@@ -61,8 +61,13 @@ bool RsTcpSocket::connect()
     }
     mState = CONNECTED;
 
+#ifndef WINDOWS_SYS
     int flags = fcntl(CreateSocket,F_GETFL);
     fcntl(CreateSocket, F_SETFL, flags | O_NONBLOCK);
+#else
+    unsigned long int on = 1;
+    ret = ioctlsocket(fd, FIONBIO, &on);
+#endif
 
     setSocket(CreateSocket);
 
