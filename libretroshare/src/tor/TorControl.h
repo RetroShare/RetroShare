@@ -48,19 +48,6 @@ class TorControlCommand;
 
 class TorControl : public TorControlSocketClient
 {
-//    Q_ENUMS(Status TorStatus)
-//
-//    // Status of the control connection
-//    Q_PROPERTY(Status status READ status NOTIFY statusChanged)
-//    // Status of Tor (and whether it believes it can connect)
-//    Q_PROPERTY(TorStatus torStatus READ torStatus NOTIFY torStatusChanged)
-//    // Whether it's possible to make a SOCKS connection and connect
-//    Q_PROPERTY(bool hasConnectivity READ hasConnectivity NOTIFY connectivityChanged)
-//    Q_PROPERTY(QString torVersion READ torVersion NOTIFY connected)
-//    Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY statusChanged)
-//    Q_PROPERTY(QVariantMap bootstrapStatus READ bootstrapStatus NOTIFY bootstrapStatusChanged)
-//    Q_PROPERTY(bool hasOwnership READ hasOwnership NOTIFY hasOwnershipChanged)
-
 public:
     enum Status
     {
@@ -111,18 +98,9 @@ public:
     void addHiddenService(HiddenService *service);
 
     std::map<std::string, std::string> bootstrapStatus() const;
-    /*Q_INVOKABLE*/ TorControlCommand *getConfiguration(const std::string &options);
-    /*Q_INVOKABLE*/ TorControlCommand *setConfiguration(const std::list<std::pair<std::string, std::string> > &options);
-    /*Q_INVOKABLE*/ PendingOperation *saveConfiguration();
-
-//signals:
-//    void statusChanged(int newStatus, int oldStatus);
-//    void torStatusChanged(int newStatus, int oldStatus);
-//    void connected();
-//    void disconnected();
-//    void connectivityChanged();
-//    void bootstrapStatusChanged();
-//    void hasOwnershipChanged();
+    TorControlCommand *getConfiguration(const std::string &options);
+    TorControlCommand *setConfiguration(const std::list<std::pair<std::string, std::string> > &options);
+    PendingOperation *saveConfiguration();
 
     void set_statusChanged_callback(const std::function<void(int,int)>& f) { mStatusChanged_callback = f ;}
     void set_connected_callback(const std::function<void(void)>& f) { mConnected_callback = f ;}
@@ -130,7 +108,6 @@ public:
 
     virtual void socketError(const std::string &s) override;
 
-//public slots:
     /* Instruct Tor to shutdown */
     void shutdown();
     /* Call shutdown(), and wait synchronously for the command to be written */

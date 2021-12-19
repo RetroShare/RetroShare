@@ -101,7 +101,6 @@ TorManagerPrivate::TorManagerPrivate(TorManager *parent)
     , configNeeded(false)
     , hiddenService(NULL)
 {
-    //connect(control, SIGNAL(statusChanged(int,int)), SLOT(controlStatusChanged(int)));
     control->set_statusChanged_callback([this](int new_status,int /*old_status*/) { controlStatusChanged(new_status); });
 }
 
@@ -150,9 +149,6 @@ void TorManager::setHiddenServiceDirectory(const std::string &path)
 
 static bool test_listening_port(const std::string& /*address*/,uint16_t port)
 {
-//    sockaddr_storage addr;
-//    sockaddr_storage_fromString(address,addr);
-//
     int sockfd;
     struct sockaddr_in serv_addr ;
 
@@ -227,9 +223,6 @@ bool TorManager::setupHiddenService()
         d->hiddenService = new Tor::HiddenService(this,legacyDir);
 
         RsDbg() << "Creating new hidden service." << std::endl;
-
-        // connect(d->hiddenService, SIGNAL(privateKeyChanged()), this, SLOT(hiddenServicePrivateKeyChanged())) ;
-        // connect(d->hiddenService, SIGNAL(hostnameChanged()), this, SLOT(hiddenServiceHostnameChanged())) ;
     }
 
     assert(d->hiddenService);

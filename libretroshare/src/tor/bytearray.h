@@ -11,6 +11,8 @@
 #include "util/rsprint.h"
 #include "util/rsdebug.h"
 
+// This class re-implements QByteArray from Qt library.
+
 class ByteArray: public std::vector<unsigned char>
 {
 public:

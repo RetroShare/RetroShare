@@ -33,7 +33,6 @@
 #include "HiddenService.h"
 #include "TorControl.h"
 #include "CryptoKey.h"
-#include "Useful.h"
 #include "util/rsdir.h"
 
 #include <fstream>
@@ -102,7 +101,7 @@ void HiddenService::setServiceId(const ByteArray& sid)
 void HiddenService::setPrivateKey(const CryptoKey &key)
 {
     if (m_privateKey.isLoaded()) {
-        BUG() << "Cannot change the private key on an existing HiddenService";
+        RsErr() << "Cannot change the private key on an existing HiddenService";
         return;
     }
 

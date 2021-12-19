@@ -43,14 +43,12 @@ TorControlCommand::TorControlCommand()
 
 void TorControlCommand::onReply(int statusCode, const ByteArray &data)
 {
-    //emit replyLine(statusCode, data);
     mReplyLine(statusCode, data);
 }
 
 void TorControlCommand::onFinished(int statusCode)
 {
     m_finalStatus = statusCode;
-    //emit finished();
     mFinished(this);
 }
 

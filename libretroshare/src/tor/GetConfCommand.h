@@ -30,8 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GETCONFCOMMAND_H
-#define GETCONFCOMMAND_H
+#pragma once
 
 #include <map>
 #include "TorControlCommand.h"
@@ -41,8 +40,6 @@ namespace Tor
 
 class GetConfCommand : public TorControlCommand
 {
-    // Q_PROPERTY(QVariantMap results READ results CONSTANT)
-
 public:
     enum Type {
         GetConf,
@@ -69,5 +66,3 @@ private:
 };
 
 }
-
-#endif // GETCONFCOMMAND_H

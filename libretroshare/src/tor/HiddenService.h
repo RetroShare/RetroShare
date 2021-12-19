@@ -86,7 +86,6 @@ public:
     void addTarget(const Target &target);
     void addTarget(uint16_t servicePort, std::string targetAddress, uint16_t targetPort);
 
-//private slots:
     void servicePublished();
 
 private:

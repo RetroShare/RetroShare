@@ -737,8 +737,7 @@ HEADERS += 	tor/AddOnionCommand.h \
            	tor/TorControlCommand.h \
            	tor/TorControlSocket.h \
            	tor/TorManager.h \
-           	tor/TorProcess.h \
-           	tor/Useful.h
+                tor/TorProcess.h
 
 SOURCES += 	tor/AddOnionCommand.cpp \
 		tor/AuthenticateCommand.cpp \

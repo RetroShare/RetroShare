@@ -40,9 +40,6 @@ namespace Tor
 
 class SetConfCommand : public TorControlCommand
 {
-    //Q_PROPERTY(QString errorMessage READ errorMessage CONSTANT)
-    //Q_PROPERTY(bool successful READ isSuccessful CONSTANT)
-
 public:
     SetConfCommand();
 
@@ -54,7 +51,6 @@ public:
     std::string errorMessage() const { return m_errorMessage; }
     bool isSuccessful() const;
 
-//signals:
     void set_ConfSucceeded_callback(const std::function<void(void)>& f) { mConfSucceeded=f; }
     void set_ConfFailed_callback   (const std::function<void(int code)>& f){ mConfFailed=f; }
 

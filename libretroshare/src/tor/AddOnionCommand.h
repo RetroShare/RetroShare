@@ -41,9 +41,6 @@ class HiddenService;
 
 class AddOnionCommand : public TorControlCommand
 {
-    // Q_PROPERTY(std::string errorMessage READ errorMessage CONSTANT)
-    // Q_PROPERTY(bool successful READ isSuccessful CONSTANT)
-
 public:
     AddOnionCommand(HiddenService *service);
 
@@ -52,7 +49,6 @@ public:
     std::string errorMessage() const { return m_errorMessage; }
     bool isSuccessful() const;
 
-// signals:
     void set_succeeded_callback(const std::function<void(void)>& f) { mSucceeded=f;}
     void set_failed_callback(const std::function<void(int)>& f) { mFailed=f;}
 

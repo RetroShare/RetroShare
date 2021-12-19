@@ -40,8 +40,6 @@ using namespace Tor;
 TorControlSocket::TorControlSocket(TorControlSocketClient *client)
     : RsThreadedTcpSocket(),currentCommand(0), inDataReply(false),mClient(client)
 {
-    //connect(this, SIGNAL(readyRead()), this, SLOT(process()));
-    //connect(this, SIGNAL(disconnected()), this, SLOT(clear()));
 }
 
 TorControlSocket::~TorControlSocket()
@@ -84,8 +82,6 @@ void TorControlSocket::registerEvent(const ByteArray &event, TorControlCommand *
     ByteArray data("SETEVENTS");
     for(auto it:eventCommands)
     {
-        //const ByteArray &key, eventCommands.keys()) {
-        //data += key;
         data += ' ';
         data += it.first;
     }

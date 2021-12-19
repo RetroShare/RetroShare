@@ -271,7 +271,6 @@ void TorProcess::start()
         return;	// stop the control thread
     }
 
-    int flags ;
     unix_fcntl_nonblock(fd[STDOUT_FILENO]);
     unix_fcntl_nonblock(fd[STDERR_FILENO]);
 
@@ -309,8 +308,6 @@ void TorProcess::tick()
         }
         else if(mControlPortReadNbTries > 10)
         {
-            //errorMessageChanged(errorMessage);
-            //stateChanged(state);
             mState = Failed;
             m_client->processStateChanged(mState);// stateChanged(mState);
         }
@@ -394,20 +391,18 @@ bool TorProcess::ensureFilesExist()
 
 std::string TorProcess::torrcPath() const
 {
-    //return QDir::toNativeSeparators(dataDir) + QDir::separator() + QStringLiteral("torrc");
     return RsDirUtil::makePath(mDataDir,"torrc");
 }
 
 std::string TorProcess::controlPortFilePath() const
 {
-    //return QDir::toNativeSeparators(dataDir) + QDir::separator() + QStringLiteral("control-port");
     return RsDirUtil::makePath(mDataDir,"control-port");
 }
 
 bool TorProcess::tryReadControlPort()
 {
     FILE *file = RsDirUtil::rs_fopen(controlPortFilePath().c_str(),"r");
-    std::cerr << "Trying to read control port" << std::endl;
+    RsDbg() << "Trying to read control port" ;
 
     if(file)
     {
@@ -425,72 +420,10 @@ bool TorProcess::tryReadControlPort()
 
             if (!mControlHost.empty() && mControlPort > 0)
             {
-                std::cerr << "Got control host/port = " << mControlHost << ":" << mControlPort << std::endl;
+                RsDbg() << "Got control host/port = " << mControlHost << ":" << mControlPort ;
                 return true;
             }
         }
     }
     return false;
 }
-#ifdef TO_REMOVE
-void TorProcessPrivate::processStarted()
-{
-    state = TorProcess::Connecting;
-
-    /*emit*/ q->stateChanged(state);
-    /*emit*/ q->stateChanged(state);
-
-    controlPortAttempts = 0;
-    controlPortTimer.start();
-}
-
-void TorProcessPrivate::processFinished()
-{
-    if (state < TorProcess::Starting)
-        return;
-
-    controlPortTimer.stop();
-    errorMessage = process.errorString().toStdString();
-
-    if (errorMessage.empty())
-        errorMessage = "Process exited unexpectedly (code " + RsUtil::NumberToString(process.exitCode()) + ")";
-
-    state = TorProcess::Failed;
-    /*emit*/ q->errorMessageChanged(errorMessage);
-    /*emit*/ q->stateChanged(state);
-}
-
-void TorProcessPrivate::processError(QProcess::ProcessError error)
-{
-    if (error == QProcess::FailedToStart || error == QProcess::Crashed)
-        processFinished();
-}
-
-void TorProcessPrivate::processReadable()
-{
-    while (process.bytesAvailable() > 0)
-    {
-        ByteArray line = process.readLine(2048).trimmed();
-
-        if (!line.empty())
-            /*emit*/ q->logMessage(line.toString()));
-    }
-}
-
-
-TorProcessPrivate::TorProcessPrivate(TorProcess *q)
-    : q(q), state(TorProcess::NotStarted), controlPort(0), controlPortAttempts(0)
-{
-    connect(&process, &QProcess::started, this, &TorProcessPrivate::processStarted);
-    connect(&process, (void (QProcess::*)(int, QProcess::ExitStatus))&QProcess::finished,
-            this, &TorProcessPrivate::processFinished);
-    connect(&process, (void (QProcess::*)(QProcess::ProcessError))&QProcess::error,
-            this, &TorProcessPrivate::processError);
-    connect(&process, &QProcess::readyRead, this, &TorProcessPrivate::processReadable);
-
-    controlPortTimer.setInterval(500);
-    connect(&controlPortTimer, &QTimer::timeout, this, &TorProcessPrivate::tryReadControlPort);
-}
-
-
-#endif

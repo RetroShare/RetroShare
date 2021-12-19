@@ -55,25 +55,6 @@ ByteArray SetConfCommand::build(const std::string &key, const std::string &value
     return build(std::list<std::pair<std::string, std::string> > { std::make_pair(key, value) } );
 }
 
-// ByteArray SetConfCommand::build(const std::list<std::pair<ByteArray,ByteArray> > &data)
-// {
-//     QList<QPair<QByteArray, QByteArray> > out;
-//
-//     for (QVariantMap::ConstIterator it = data.begin(); it != data.end(); it++) {
-//         QByteArray key = it.key().toLatin1();
-//
-//         if (static_cast<QMetaType::Type>(it.value().type()) == QMetaType::QVariantList) {
-//             QVariantList values = it.value().value<QVariantList>();
-//             foreach (const QVariant &value, values)
-//                 out.append(qMakePair(key, value.toString().toLatin1()));
-//         } else {
-//             out.append(qMakePair(key, it.value().toString().toLatin1()));
-//         }
-//     }
-//
-//     return build(out);
-// }
-
 ByteArray SetConfCommand::build(const std::list<std::pair<std::string, std::string> >& data)
 {
     ByteArray out(m_resetMode ? "RESETCONF" : "SETCONF");

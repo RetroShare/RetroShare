@@ -67,12 +67,9 @@ public:
     virtual int tick() override;
 
     std::string peerAddress() const;
-//signals:
-//    void error(const std::string& message);
 
     const std::string& errorString() const { return m_errorMessage ;}
 
-//private slots:
     void process();
     void clear();
 

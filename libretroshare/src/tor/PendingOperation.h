@@ -49,11 +49,6 @@
  */
 class PendingOperation
 {
-//    Q_PROPERTY(bool isFinished READ isFinished NOTIFY finished FINAL)
-//    Q_PROPERTY(bool isSuccess READ isSuccess NOTIFY success FINAL)
-//    Q_PROPERTY(bool isError READ isError NOTIFY error FINAL)
-//    Q_PROPERTY(std::string errorMessage READ errorMessage NOTIFY finished FINAL)
-
 public:
     PendingOperation();
 
@@ -62,15 +57,6 @@ public:
     bool isError() const;
     std::string errorMessage() const;
 
-// signals:
-//     // Always emitted once when finished, regardless of status
-//     void finished();
-//
-//     // One of error() or success() is emitted once
-//     void error(const std::string &errorMessage);
-//     void success();
-
-//protected slots:
     void finishWithError(const std::string &errorMessage);
     void finishWithSuccess();
 

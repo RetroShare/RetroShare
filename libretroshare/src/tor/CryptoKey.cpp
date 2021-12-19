@@ -33,7 +33,6 @@
 #include <iostream>
 
 #include "CryptoKey.h"
-#include "Useful.h"
 
 #include <openssl/bn.h>
 #include <openssl/bio.h>

@@ -52,8 +52,6 @@ public:
     };
     typedef uint8_t AuthMethod;
 
-    // RS_REGISTER_FLAGS_TYPE(AuthMethod);	// not usable here because we're inside a class (and worse, inside a namespace)
-
     ProtocolInfoCommand(TorControl *manager);
     ByteArray build();
 

@@ -49,16 +49,6 @@ class TorManagerPrivate;
 
 class TorManager : public HiddenServiceClient, public RsThread, public RsTor
 {
-    // Q_OBJECT
-
-    // Q_PROPERTY(bool configurationNeeded READ configurationNeeded NOTIFY configurationNeededChanged)
-    // Q_PROPERTY(QStringList logMessages READ logMessages CONSTANT)
-    // Q_PROPERTY(Tor::TorProcess* process READ process CONSTANT)
-    // Q_PROPERTY(Tor::TorControl* control READ control CONSTANT)
-    // Q_PROPERTY(bool hasError READ hasError NOTIFY errorChanged)
-    // Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorChanged)
-    // Q_PROPERTY(QString torDataDirectory READ torDataDirectory WRITE setTorDataDirectory)
-
 public:
     static TorManager *instance();
 
@@ -85,10 +75,8 @@ public:
     bool getHiddenServiceInfo(std::string& service_id,std::string& service_onion_address,uint16_t& service_port, std::string& service_target_address,uint16_t& target_port);
     bool getProxyServerInfo(std::string &proxy_server_adress, uint16_t& proxy_server_port);
 
-//public slots:
     bool startTorManager();
 
-//private slots:
     virtual void hiddenServiceOnline() override {} // do nothing here.
     virtual void hiddenServicePrivateKeyChanged() override;
     virtual void hiddenServiceHostnameChanged() override;

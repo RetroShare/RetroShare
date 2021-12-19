@@ -50,7 +50,6 @@ public:
 
     int statusCode() const { return m_finalStatus; }
 
-//signals:
     void set_replyLine_callback( const std::function<void(int statusCode, const ByteArray &data)>& f) { mReplyLine=f ; }
     void set_finished_callback( const std::function<void(TorControlCommand *sender)>& f) { mFinished=f; };
 
