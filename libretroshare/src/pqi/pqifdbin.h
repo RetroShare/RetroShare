@@ -48,7 +48,7 @@ public:
     int netstatus() override;
     int isactive() override;
     bool moretoread(uint32_t usec) override;
-    bool moretowrite(uint32_t usec) { return mTotalOutBufferBytes > 0 ; }
+    bool moretowrite(uint32_t usec) ;
     bool cansend(uint32_t usec) override;
 
     int close() override;

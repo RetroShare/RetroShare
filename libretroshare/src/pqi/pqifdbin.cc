@@ -295,6 +295,12 @@ bool RsFdBinInterface::moretoread(uint32_t /* usec */)
 {
     return mTotalInBufferBytes > 0;
 }
+
+bool RsFdBinInterface::moretowrite(uint32_t /* usec */)
+{
+    return mTotalOutBufferBytes > 0 ;
+}
+
 bool RsFdBinInterface::cansend(uint32_t)
 {
     return isactive();

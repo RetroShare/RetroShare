@@ -159,7 +159,7 @@ static bool test_listening_port(const std::string& /*address*/,uint16_t port)
        return false;
 
     /* Initialize socket structure */
-    bzero((char *) &serv_addr, sizeof(serv_addr));
+    memset((char *) &serv_addr, 0,sizeof(serv_addr));
 
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = INADDR_ANY;
@@ -174,7 +174,6 @@ static bool test_listening_port(const std::string& /*address*/,uint16_t port)
     unix_fcntl_nonblock(sockfd);
     int res = listen(sockfd,5);
 
-    int err = errno;
     close(sockfd);
 
     if(!res)

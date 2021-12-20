@@ -102,8 +102,8 @@ private:
     HiddenServiceClient *m_client;
 
     // make the object non copyable
-    HiddenService(const HiddenService& s) {}
-    HiddenService& operator=(const HiddenService& s) { return *this ; }
+    HiddenService(const HiddenService&) {}
+    HiddenService& operator=(const HiddenService&) { return *this ; }
 };
 
 }
