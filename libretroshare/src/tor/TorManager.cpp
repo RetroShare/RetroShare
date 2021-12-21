@@ -623,7 +623,7 @@ std::string TorManagerPrivate::torExecutablePath() const
         return path;
 #endif
 
-#ifdef Q_OS_WIN
+#ifdef WINDOWS_SYS
     std::string filename("/tor/tor.exe");
 #else
     std::string filename("/tor");
