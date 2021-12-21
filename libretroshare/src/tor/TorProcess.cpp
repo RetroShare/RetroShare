@@ -409,7 +409,7 @@ bool TorProcess::tryReadControlPort()
         char *line = nullptr;
         size_t tmp_buffsize = 0;
 
-        size_t size = getline(&line,&tmp_buffsize,file);
+        size_t size = RsFileUtil::rs_getline(&line,&tmp_buffsize,file);
         ByteArray data = ByteArray((unsigned char*)line,size).trimmed();
         free(line);
 

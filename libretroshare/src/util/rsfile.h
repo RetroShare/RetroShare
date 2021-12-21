@@ -22,8 +22,11 @@
 
 #pragma once
 
+#include <stdio.h>
+
 namespace RsFileUtil {
 
 int set_fd_nonblock(int fd);
+ssize_t rs_getline(char **lineptr, size_t *n, FILE *stream);
 
 }
