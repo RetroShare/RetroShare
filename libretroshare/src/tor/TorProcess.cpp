@@ -35,6 +35,7 @@
 #include <stdio.h>
 
 #include "util/rsdir.h"
+#include "util/rsfile.h"
 #include "pqi/pqifdbin.h"
 
 #include "TorProcess.h"
@@ -270,8 +271,8 @@ void TorProcess::start()
         return;	// stop the control thread
     }
 
-    unix_fcntl_nonblock(fd[STDOUT_FILENO]);
-    unix_fcntl_nonblock(fd[STDERR_FILENO]);
+    RsFileUtil::set_fd_nonblock(fd[STDOUT_FILENO]);
+    RsFileUtil::set_fd_nonblock(fd[STDERR_FILENO]);
 
     mStdOutFD = new RsFdBinInterface(fd[STDOUT_FILENO]);
     mStdErrFD = new RsFdBinInterface(fd[STDERR_FILENO]);

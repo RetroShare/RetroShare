@@ -347,6 +347,7 @@ list(
 	util/rsurl.cc
 	util/folderiterator.cc
 	util/rsdir.cc
+	util/rsfile.cc
 	util/dnsresolver.cc
 	util/extaddrfinder.cc
 	util/rsdebug.cc
