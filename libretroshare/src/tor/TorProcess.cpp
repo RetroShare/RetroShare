@@ -274,8 +274,8 @@ void TorProcess::start()
     RsFileUtil::set_fd_nonblock(fd[STDOUT_FILENO]);
     RsFileUtil::set_fd_nonblock(fd[STDERR_FILENO]);
 
-    mStdOutFD = new RsFdBinInterface(fd[STDOUT_FILENO]);
-    mStdErrFD = new RsFdBinInterface(fd[STDERR_FILENO]);
+    mStdOutFD = new RsFdBinInterface(fd[STDOUT_FILENO], false);
+    mStdErrFD = new RsFdBinInterface(fd[STDERR_FILENO], false);
 }
 
 void TorProcess::tick()

@@ -25,7 +25,7 @@
 class RsFdBinInterface: public BinInterface
 {
 public:
-    RsFdBinInterface(int file_descriptor);
+    RsFdBinInterface(int file_descriptor, bool is_socket);
     ~RsFdBinInterface();
 
      // Implements BinInterface methods
@@ -70,6 +70,7 @@ private:
     int write_pending();
 
     int mCLintConnt;
+    bool mIsSocket;
     bool mIsActive;
     uint32_t mTotalReadBytes;
     uint32_t mTotalInBufferBytes;
