@@ -412,6 +412,8 @@ bool TorProcess::tryReadControlPort()
         ByteArray data = ByteArray((unsigned char*)line,size).trimmed();
         free(line);
 
+        fclose(file);
+
         int p;
         if (data.startsWith("PORT=") && (p = data.lastIndexOf(':')) > 0) {
             mControlHost = data.mid(5, p - 5).toString();
