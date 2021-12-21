@@ -42,7 +42,12 @@
 
 #define IS_MESSAGE_UNREAD(flags) (flags &  (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER))
 
-#define IMAGE_GROUP24          ":/images/user/group24.png"
+#define IMAGE_COWORKERS        ":/icons/groups/green.png"
+#define IMAGE_FRIENDS          ":/icons/groups/blue.png"
+#define IMAGE_FAMILY           ":/icons/groups/purple.png"
+#define IMAGE_FAVORITES        ":/icons/groups/yellow.png"
+#define IMAGE_OTHERCONTACTS    ":/icons/groups/pink.png"
+#define IMAGE_OTHERGROUPS      ":/icons/groups/red.png"
 #define IMAGE_STAR_ON          ":/images/star-on-16.png"
 #define IMAGE_STAR_OFF         ":/images/star-off-16.png"
 
@@ -871,8 +876,28 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
 
     switch(entry.type)
     {
-    case ENTRY_TYPE_GROUP: return QVariant(FilesDefs::getIconFromQtResourcePath(IMAGE_GROUP24));
+    case ENTRY_TYPE_GROUP: 
+	{
+		const HierarchicalGroupInformation *groupInfo = getGroupInfo(entry);
 
+		if (groupInfo->group_info.id.toStdString() == RS_GROUP_ID_FRIENDS.toStdString()) {
+			return QVariant(FilesDefs::getIconFromQtResourcePath(IMAGE_FRIENDS));
+		}
+		if (groupInfo->group_info.id.toStdString() == RS_GROUP_ID_FAMILY.toStdString()) {
+			return QVariant(FilesDefs::getIconFromQtResourcePath(IMAGE_FAMILY));
+		}
+		if (groupInfo->group_info.id.toStdString() == RS_GROUP_ID_COWORKERS.toStdString()) {
+			return QVariant(FilesDefs::getIconFromQtResourcePath(IMAGE_COWORKERS));
+		}
+		if (groupInfo->group_info.id.toStdString() == RS_GROUP_ID_OTHERS.toStdString()) {
+			return QVariant(FilesDefs::getIconFromQtResourcePath(IMAGE_OTHERCONTACTS));
+		}
+		if (groupInfo->group_info.id.toStdString() == RS_GROUP_ID_FAVORITES.toStdString()) {
+			return QVariant(FilesDefs::getIconFromQtResourcePath(IMAGE_FAVORITES));
+		}
+
+		return QVariant(FilesDefs::getIconFromQtResourcePath(IMAGE_OTHERGROUPS));
+   }
     case ENTRY_TYPE_PROFILE:
     {
         if(!isProfileExpanded(entry))
