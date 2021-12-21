@@ -41,6 +41,13 @@
 #include "TorProcess.h"
 #include "CryptoKey.h"
 
+#ifdef WINDOWS_SYS
+#include "util/rsstring.h"
+
+#include <fcntl.h>
+#define pipe(fds) _pipe(fds, 1024, _O_BINARY)
+#endif
+
 using namespace Tor;
 
 static const int INTERVAL_BETWEEN_CONTROL_PORT_READ_TRIES = 5; // try every 5 secs.
@@ -111,7 +118,7 @@ std::string TorProcess::errorMessage() const
 // Does a popen, but dup all file descriptors (STDIN STDOUT and STDERR) to the
 // FDs supplied by the parent process
 
-int popen3(int fd[3],const char **const cmd,pid_t& pid)
+int popen3(int fd[3],const std::vector<std::string>& args,TorProcessHandle& pid)
 {
     RsErr() << "Launching Tor in background..." ;
 
@@ -124,42 +131,120 @@ int popen3(int fd[3],const char **const cmd,pid_t& pid)
     for(int i=0; i<3; i++)
         if(pipe(p[i]))
             goto error;
-    // and fork
-    pid = fork();
-    if(-1 == pid)
-        goto error;
-    // in the parent?
-    if(pid)
-    {
-        // parent
-        fd[STDIN_FILENO] = p[STDIN_FILENO][1];
-        close(p[STDIN_FILENO][0]);
-        fd[STDOUT_FILENO] = p[STDOUT_FILENO][0];
-        close(p[STDOUT_FILENO][1]);
-        fd[STDERR_FILENO] = p[STDERR_FILENO][0];
-        close(p[STDERR_FILENO][1]);
-        // success
-        return 0;
+
+#ifdef WINDOWS_SYS
+    // Set up members of the PROCESS_INFORMATION structure.
+    PROCESS_INFORMATION pi;
+    ZeroMemory(&pi, sizeof(PROCESS_INFORMATION));
+
+    // Set up members of the STARTUPINFO structure.
+    // This structure specifies the STDIN and STDOUT handles for redirection.
+    STARTUPINFO si;
+    ZeroMemory(&si, sizeof(STARTUPINFO));
+    si.cb = sizeof(STARTUPINFO);
+    si.hStdInput = (HANDLE) _get_osfhandle(p[STDIN_FILENO][0]);
+    si.hStdOutput = (HANDLE) _get_osfhandle(p[STDOUT_FILENO][1]);
+    si.hStdError = (HANDLE) _get_osfhandle(p[STDERR_FILENO][1]);
+    si.dwFlags |= STARTF_USESTDHANDLES;
+
+    if (si.hStdInput != INVALID_HANDLE_VALUE &&
+        si.hStdOutput != INVALID_HANDLE_VALUE &&
+        si.hStdError != INVALID_HANDLE_VALUE) {
+        // build commandline
+        std::string cmd;
+        for (std::vector<std::string>::const_iterator it = args.begin(); it != args.end(); ++it) {
+            if (it != args.begin()) {
+                cmd += " ";
+            }
+            cmd += *it;
+        }
+
+        std::wstring wcmd;
+        if (!librs::util::ConvertUtf8ToUtf16(cmd, wcmd)) {
+            goto error;
+        }
+
+        WINBOOL success = CreateProcess(nullptr,
+              (LPWSTR) wcmd.c_str(), // command line
+              nullptr,               // process security attributes
+              nullptr,               // primary thread security attributes
+              TRUE,                  // handles are inherited
+              0,                     // creation flags
+              nullptr,               // use parent's environment
+              nullptr,               // use parent's current directory
+              &si,                   // STARTUPINFO pointer
+              &pi);                  // receives PROCESS_INFORMATION
+
+        if (success) {
+            pid = pi.hProcess;
+
+            CloseHandle(pi.hThread);
+
+            fd[STDIN_FILENO] = p[STDIN_FILENO][1];
+            close(p[STDIN_FILENO][0]);
+            fd[STDOUT_FILENO] = p[STDOUT_FILENO][0];
+            close(p[STDOUT_FILENO][1]);
+            fd[STDERR_FILENO] = p[STDERR_FILENO][0];
+            close(p[STDERR_FILENO][1]);
+
+            // success
+            return 0;
+        }
     }
-    else
+
+    // fall through error
+
+#else
     {
-        RsErr() << "Launching sub-process..." ;
-        // child
-        dup2(p[STDIN_FILENO][0],STDIN_FILENO);
-        close(p[STDIN_FILENO][1]);
-        dup2(p[STDOUT_FILENO][1],STDOUT_FILENO);
-        close(p[STDOUT_FILENO][0]);
-        dup2(p[STDERR_FILENO][1],STDERR_FILENO);
-        close(p[STDERR_FILENO][0]);
+        const char *arguments[args.size()+1];
+        int n=0;
 
-        // here we try and run it
+        // We first pushed everything into a vector of strings to save the pointers obtained from string returning methods
+        // by the time the process is launched.
 
-        execv(*cmd,const_cast<char*const*>(cmd));
+        for(uint32_t i=0;i<args.size();++i)
+            arguments[n++]= args[i].data();
 
-        // if we are there, then we failed to launch our program
-        perror("Could not launch");
-        fprintf(stderr," \"%s\"\n",*cmd);
+        arguments[n] = nullptr;
+
+        // and fork
+        pid = fork();
+        if(-1 == pid)
+            goto error;
+        // in the parent?
+        if(pid)
+        {
+            // parent
+            fd[STDIN_FILENO] = p[STDIN_FILENO][1];
+            close(p[STDIN_FILENO][0]);
+            fd[STDOUT_FILENO] = p[STDOUT_FILENO][0];
+            close(p[STDOUT_FILENO][1]);
+            fd[STDERR_FILENO] = p[STDERR_FILENO][0];
+            close(p[STDERR_FILENO][1]);
+            // success
+            return 0;
+        }
+        else
+        {
+            RsErr() << "Launching sub-process..." ;
+            // child
+            dup2(p[STDIN_FILENO][0],STDIN_FILENO);
+            close(p[STDIN_FILENO][1]);
+            dup2(p[STDOUT_FILENO][1],STDOUT_FILENO);
+            close(p[STDOUT_FILENO][0]);
+            dup2(p[STDERR_FILENO][1],STDERR_FILENO);
+            close(p[STDERR_FILENO][0]);
+
+            // here we try and run it
+
+            execv(*arguments,const_cast<char*const*>(arguments));
+
+            // if we are there, then we failed to launch our program
+            perror("Could not launch");
+            fprintf(stderr," \"%s\"\n",*arguments);
+        }
     }
+#endif
 
 error:
     e = errno;
@@ -251,20 +336,9 @@ void TorProcess::start()
     for(auto s:mExtraSettings)
         args.push_back(s);
 
-    const char *arguments[args.size()+1];
-    int n=0;
-
-    // We first pushed everything into a vector of strings to save the pointers obtained from string returning methods
-    // by the time the process is launched.
-
-    for(uint32_t i=0;i<args.size();++i)
-        arguments[n++]= args[i].data();
-
-    arguments[n] = nullptr;
-
     int fd[3];  // File descriptors array
 
-    if(popen3(fd,arguments,mTorProcessId))
+    if(popen3(fd,args,mTorProcessId))
     {
         RsErr() << "Could not start Tor process. errno=" << errno ;
         mState = Failed;
@@ -322,7 +396,11 @@ void TorProcess::stop()
     while(mState == Starting)
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
+#ifdef WINDOWS_SYS
+    TerminateProcess (mTorProcessId, 0);
+#else
     kill(mTorProcessId,SIGTERM);
+#endif
 
     RsInfo() << "Tor process has been normally terminated. Exiting.";
 

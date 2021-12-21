@@ -38,6 +38,12 @@
 
 class RsFdBinInterface ;
 
+#ifdef WINDOWS_SYS
+    #define TorProcessHandle HANDLE
+#else
+    #define TorProcessHandle pid_t
+#endif
+
 namespace Tor
 {
 
@@ -114,7 +120,7 @@ private:
     std::string controlPortFilePath() const;
     bool ensureFilesExist();
 
-    pid_t mTorProcessId;
+    TorProcessHandle mTorProcessId;
     time_t mLastTryReadControlPort ;
     int mControlPortReadNbTries ;
 
