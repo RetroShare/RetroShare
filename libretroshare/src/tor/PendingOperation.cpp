@@ -78,9 +78,11 @@ void PendingOperation::finishWithSuccess()
 
     if (!m_finished) {
         m_finished = true;
-        mFinishedCallback();
+
         if (isSuccess())
             mSuccessCallback();
+
+        mFinishedCallback();
     }
 }
 

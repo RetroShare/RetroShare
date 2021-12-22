@@ -65,6 +65,7 @@ static std::ostream& torctrldebug()
 using namespace Tor;
 
 TorControl::TorControl()
+    : mControlPort(0),mSocksPort(0),mStatus(NotConnected), mTorStatus(TorOffline),mHasOwnership(false)
 {
     mSocket = new TorControlSocket(this);
 }
