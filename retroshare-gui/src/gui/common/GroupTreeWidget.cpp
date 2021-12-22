@@ -247,6 +247,7 @@ void GroupTreeWidget::itemActivated(QTreeWidgetItem *item, int column)
 QTreeWidgetItem *GroupTreeWidget::addCategoryItem(const QString &name, const QIcon &icon, bool expand, int sortOrder /*= -1*/)
 {
 	QFont font;
+	font.setPointSize(11);
 	RSTreeWidgetItem *item = new RSTreeWidgetItem();
 	ui->treeWidget->addTopLevelItem(item);
 	// To get StyleSheet for Items
@@ -254,6 +255,7 @@ QTreeWidgetItem *GroupTreeWidget::addCategoryItem(const QString &name, const QIc
 	ui->treeWidget->style()->polish(ui->treeWidget);
 
 	item->setText(GTW_COLUMN_NAME, name);
+	item->setData(GTW_COLUMN_NAME,Qt::FontRole,font);
 	item->setData(GTW_COLUMN_DATA, ROLE_NAME, name);
 	font = item->font(GTW_COLUMN_NAME);
 	font.setBold(true);
@@ -262,7 +264,7 @@ QTreeWidgetItem *GroupTreeWidget::addCategoryItem(const QString &name, const QIc
 
 	int S = QFontMetricsF(font).height();
 
-	item->setSizeHint(GTW_COLUMN_NAME, QSize(S*1.9, S*1.9));
+	item->setSizeHint(GTW_COLUMN_NAME, QSize(S*2.1, S*2.1));
 	item->setData(GTW_COLUMN_NAME, Qt::TextColorRole, textColorCategory());
 	item->setData(GTW_COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_CATEGORY);
 
