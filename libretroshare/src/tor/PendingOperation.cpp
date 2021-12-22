@@ -67,8 +67,8 @@ void PendingOperation::finishWithError(const std::string &message)
     if (!m_finished) {
         m_finished = true;
 
-        mFinishedCallback();
         mErrorCallback(m_errorMessage);
+        mFinishedCallback();
     }
 }
 
