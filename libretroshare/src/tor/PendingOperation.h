@@ -33,6 +33,7 @@
 #pragma once
 
 #include <functional>
+#include <string>
 
 /* Represents an asynchronous operation for reporting status
  *

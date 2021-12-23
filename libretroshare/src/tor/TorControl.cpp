@@ -68,6 +68,11 @@ TorControl::TorControl()
     : mControlPort(0),mSocksPort(0),mStatus(NotConnected), mTorStatus(TorOffline),mHasOwnership(false)
 {
     mSocket = new TorControlSocket(this);
+    mControlPort = 0;
+    mSocksPort = 0;
+    mStatus = NotConnected;
+    mTorStatus = TorUnknown;
+    mHasOwnership = false;
 }
 
 static RsTorConnectivityStatus torConnectivityStatus(Tor::TorControl::Status t)

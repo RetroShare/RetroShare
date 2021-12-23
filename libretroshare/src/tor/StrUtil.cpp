@@ -39,7 +39,7 @@ ByteArray quotedString(const ByteArray &string)
 
     out.push_back('"');
 
-    for (uint i = 0; i < string.size(); ++i)
+    for (ByteArray::size_type i = 0; i < string.size(); ++i)
     {
         switch (string[i])
         {
@@ -67,7 +67,7 @@ ByteArray unquotedString(const ByteArray& string)
     ByteArray out;
     out.reserve(string.size() - 2);
 
-    for (uint i = 1; i < string.size(); ++i)
+    for (ByteArray::size_type i = 1; i < string.size(); ++i)
     {
         switch (string[i])
         {
@@ -89,9 +89,9 @@ std::list<ByteArray> splitQuotedStrings(const ByteArray &input, char separator)
 {
     std::list<ByteArray> out;
     bool inquote = false;
-    uint start = 0;
+    ByteArray::size_type start = 0;
 
-    for (uint i = 0; i < input.size(); ++i)
+    for (ByteArray::size_type i = 0; i < input.size(); ++i)
     {
         switch (input[i])
         {

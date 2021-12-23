@@ -18,12 +18,12 @@
 #include "rstcpsocket.h"
 
 RsTcpSocket::RsTcpSocket(const std::string& tcp_address,uint16_t tcp_port)
-    :RsFdBinInterface(0),mState(DISCONNECTED),mConnectAddress(tcp_address),mConnectPort(tcp_port),mSocket(0)
+    :RsFdBinInterface(0, true),mState(DISCONNECTED),mConnectAddress(tcp_address),mConnectPort(tcp_port),mSocket(0)
 {
 }
 
 RsTcpSocket::RsTcpSocket()
-    :RsFdBinInterface(0),mState(DISCONNECTED),mConnectAddress("0.0.0.0"),mConnectPort(0),mSocket(0)
+    :RsFdBinInterface(0, true),mState(DISCONNECTED),mConnectAddress("0.0.0.0"),mConnectPort(0),mSocket(0)
 {
 }
 

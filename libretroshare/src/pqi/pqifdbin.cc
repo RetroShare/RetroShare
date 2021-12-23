@@ -21,10 +21,11 @@
  ******************************************************************************/
 
 #include "util/rsprint.h"
+#include "util/rsfile.h"
 #include "pqi/pqifdbin.h"
 
-RsFdBinInterface::RsFdBinInterface(int file_descriptor)
-    : mCLintConnt(file_descriptor),mIsActive(false)
+RsFdBinInterface::RsFdBinInterface(int file_descriptor, bool is_socket)
+    : mCLintConnt(file_descriptor),mIsSocket(is_socket),mIsActive(false)
 {
     mTotalReadBytes=0;
     mTotalInBufferBytes=0;
@@ -53,8 +54,11 @@ void RsFdBinInterface::setSocket(int s)
 
 #else
     // On windows, there is no way to determine whether a socket is blocking or not, so we set it to non blocking whatsoever.
-    unsigned long int on = 1;
-    ioctlsocket(s, FIONBIO, &on);
+    if (mIsSocket) {
+        unix_fcntl_nonblock(s);
+    } else {
+        RsFileUtil::set_fd_nonblock(s);
+    }
 #endif
 
     mCLintConnt = s;
@@ -82,8 +86,15 @@ int RsFdBinInterface::read_pending()
     char inBuffer[1025];
     memset(inBuffer,0,1025);
 
-    ssize_t readbytes = read(mCLintConnt, inBuffer, sizeof(inBuffer));	// Needs read instead of recv which is only for sockets.
-                                                                        // Sockets should be set to non blocking by the client process.
+    ssize_t readbytes;
+#if WINDOWS_SYS
+    if (mIsSocket)
+        // Windows needs recv for sockets
+        readbytes = recv(mCLintConnt, inBuffer, sizeof(inBuffer), 0);
+    else
+#endif
+    readbytes = read(mCLintConnt, inBuffer, sizeof(inBuffer));	// Needs read instead of recv which is only for sockets.
+                                                                // Sockets should be set to non blocking by the client process.
 
     if(readbytes == 0)
     {
@@ -95,7 +106,11 @@ int RsFdBinInterface::read_pending()
     }
     if(readbytes < 0)
     {
-        if(errno != EWOULDBLOCK && errno != EAGAIN)
+        if(errno != 0 && errno != EWOULDBLOCK && errno != EAGAIN)
+#ifdef WINDOWS_SYS
+            // A non blocking read to file descriptor gets ERROR_NO_DATA for empty data
+            if (mIsSocket == true || GetLastError() != ERROR_NO_DATA)
+#endif
             RsErr() << "read() failed. Errno=" << errno ;
 
         return mTotalInBufferBytes;
@@ -138,7 +153,14 @@ int RsFdBinInterface::write_pending()
         return mTotalOutBufferBytes;
 
     auto& p = out_buffer.front();
-    int written = write(mCLintConnt, p.first, p.second);
+    int written;
+#if WINDOWS_SYS
+    if (mIsSocket)
+        // Windows needs send for sockets
+        written = send(mCLintConnt, (char*) p.first, p.second, 0);
+    else
+#endif
+    written = write(mCLintConnt, p.first, p.second);
 
     if(written < 0)
     {

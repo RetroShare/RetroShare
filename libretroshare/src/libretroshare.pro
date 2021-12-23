@@ -487,6 +487,7 @@ HEADERS +=	util/folderiterator.h \
 			util/rsmemory.h \
 			util/smallobject.h \
 			util/rsdir.h \
+			util/rsfile.h \
 			util/argstream.h \
 			util/rsdiscspace.h \
 			util/rsnet.h \
@@ -641,6 +642,7 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsexpr.cc \
 			util/smallobject.cc \
 			util/rsdir.cc \
+			util/rsfile.cc \
 			util/rsdiscspace.cc \
 			util/rsnet.cc \
 			util/rsnet_ss.cc \
