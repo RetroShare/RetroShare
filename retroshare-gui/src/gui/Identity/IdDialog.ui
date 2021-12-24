@@ -1046,6 +1046,11 @@ border-image: url(:/images/closepressed.png)
         </item>
         <item>
          <widget class="QTreeWidget" name="treeWidget_membership">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
           <property name="contextMenuPolicy">
            <enum>Qt::CustomContextMenu</enum>
           </property>
