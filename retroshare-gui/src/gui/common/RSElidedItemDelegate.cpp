@@ -51,7 +51,7 @@ QTreeView::item:hover, QTreeWidget::item:hover, QListWidget::item:hover{
 	color: #0000EF;
 	background-color: #FEDCBA;
 }
-QQTreeView::item:selected:hover, TreeWidget::item:selected:hover, QListWidget::item:selected:hover{
+QTreeView::item:selected:hover, QTreeWidget::item:selected:hover, QListWidget::item:selected:hover{
 	color: #ABCDEF;
 	background-color: #FE0000;
 }
@@ -88,7 +88,12 @@ QSize RSElidedItemDelegate::sizeHint(const QStyleOptionViewItem &option, const Q
 
 	QSize contSize = ownStyle->sizeFromContents( QStyle::CT_ItemViewItem,&ownOption
 	                                            ,QSize( checkRect.width()+iconRect.width()+textRect.width()
-	                                                   ,qMax(checkRect.height(),qMax(iconRect.height(),textRect.height()))),widget);
+	                                                  , qMax(checkRect.height(),qMax(iconRect.height(),textRect.height()))
+	                                                  ), widget ) ;
+
+	contSize += QSize( 2*spacing().width()
+	                 , qMax(checkRect.height(),iconRect.height()) > textRect.height()
+	                   ? 0 : 2*spacing().height() );
 
 	return contSize;
 }
@@ -97,7 +102,7 @@ inline QColor getImagePixelColor(QImage img, int x, int y)
 {
 #if QT_VERSION >= QT_VERSION_CHECK(5,6,0)
 #ifdef DEBUG_EID_PAINT
-//	RsDbg() << " RSEID: Found Color " << img.pixelColor(x,y).name(QColor::HexArgb).toStdString() << " at " << x << "," << y << std::endl;
+	//RsDbg(" RSEID: Found Color ", img.pixelColor(x,y).name(QColor::HexArgb).toStdString(), " at ", x, ",", y);
 #endif
 	return img.pixelColor(x,y);
 #else
@@ -109,7 +114,7 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 {
 	if(!index.isValid())
 	{
-		RsErr() << __PRETTY_FUNCTION__ << " attempt to draw an invalid index." << std::endl;
+		RS_ERR(" attempt to draw an invalid index.");
 		return ;
 	}
 	painter->save();
@@ -120,7 +125,7 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 		ownOption.icon = option.icon;
 
 #ifdef DEBUG_EID_PAINT
-	RsDbg() << __PRETTY_FUNCTION__ << std::endl << " RSEID: Enter for item with text:" << ownOption.text.toStdString() << std::endl;
+	RS_DBG("\n RSEID: Enter for item with text:", ownOption.text.toStdString());
 #endif
 
 	const QWidget* widget = option.widget;
@@ -139,16 +144,16 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 		ownOption.fontMetrics = QFontMetrics(font);
 #ifdef DEBUG_EID_PAINT
 		QFontInfo info(font);
-		RsDbg() << " RSEID: Found font in model:" << info.family().toStdString() << std::endl;
+		RsDbg(" RSEID: Found font in model:", info.family().toStdString());
 #endif
 	}
 	// Get Text color from model if one exists
 	QColor textColor;
-	if (index.data(Qt::TextColorRole).isValid()) {
+	if (index.data(Qt::ForegroundRole).isValid()) {
 		//textColor = QColor(index.data(Qt::TextColorRole).toString());//Needs to pass from string else loose RBG format.
-		textColor = index.data(Qt::TextColorRole).value<QColor>();
+		textColor = index.data(Qt::ForegroundRole).value<QColor>();
 #ifdef DEBUG_EID_PAINT
-		RsDbg() << " RSEID: Found text color in model:" << textColor.name().toStdString() << std::endl;
+		RsDbg(" RSEID: Found text color in model:", textColor.name().toStdString());
 #endif
 	}
 	// Get Brush from model if one exists
@@ -157,7 +162,7 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 	if (index.data(Qt::BackgroundRole).isValid()) {
 		bgBrush = index.data(Qt::BackgroundRole).value<QBrush>();
 #ifdef DEBUG_EID_PAINT
-		RsDbg() << " RSEID: Found bg brush in model:" << bgBrush.color().name().toStdString() << std::endl;
+		RsDbg(" RSEID: Found bg brush in model:", bgBrush.color().name().toStdString());
 #endif
 	}
 
@@ -165,10 +170,10 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 	if ( (bgBrush.color().spec()==QColor::Invalid) || (textColor.spec()!=QColor::Invalid) )
 	{
 #ifdef DEBUG_EID_PAINT
-		RsDbg() << " RSEID:"
-		        << ((bgBrush.color().spec()==QColor::Invalid) ? " Brush not defined" : "")
-		        << ((textColor.spec()==QColor::Invalid) ? " Text Color not defined" : "")
-		        << " so get it from base image." << std::endl;
+		RsDbg( " RSEID:"
+		     , ((bgBrush.color().spec()==QColor::Invalid) ? " Brush not defined" : "")
+		     , ((textColor.spec()==QColor::Invalid) ? " Text Color not defined" : "")
+		     , " so get it from base image.");
 #endif
 		// QPalette is not updated by StyleSheet all occurs in internal class. (QRenderRule)
 		// https://code.woboq.org/qt5/qtbase/src/widgets/styles/qstylesheetstyle.cpp.html#4138
@@ -179,7 +184,7 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 		if (moSize.width() <= 20)
 			moSize.setWidth(20);
 #ifdef DEBUG_EID_PAINT
-		RsDbg() << " RSEID: for item size = " << moSize.width() << "x" << moSize.height() << std::endl;
+		RsDbg(" RSEID: for item size = ", moSize.width(), "x", moSize.height());
 #endif
 
 		QImage moImg(moSize,QImage::Format_ARGB32);
@@ -268,14 +273,14 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 			{
 				bgBrush = QBrush(moBGColor);
 #ifdef DEBUG_EID_PAINT
-				RsDbg() << " RSEID: bg brush setted to " << moBGColor.name(QColor::HexArgb).toStdString() << std::endl;
+				RsDbg(" RSEID: bg brush setted to ", moBGColor.name(QColor::HexArgb).toStdString());
 #endif
 			}
 			if (textColor.spec()==QColor::Invalid)
 			{
 				textColor = moColor;
 #ifdef DEBUG_EID_PAINT
-				RsDbg() << " RSEID: text color setted to " << moColor.name(QColor::HexArgb).toStdString() << std::endl;
+				RsDbg(" RSEID: text color setted to ", moColor.name(QColor::HexArgb).toStdString());
 #endif
 			}
 		}
@@ -389,7 +394,7 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 	}
 	painter->restore();
 #ifdef DEBUG_EID_PAINT
-	RsDbg() << " RSEID: Finished" << std::endl;
+	RsDbg(" RSEID: Finished");
 #endif
 }
 

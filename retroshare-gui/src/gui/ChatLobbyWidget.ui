@@ -102,7 +102,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset resource="icons.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -191,6 +191,11 @@
        </item>
        <item>
         <widget class="RSTreeWidget" name="lobbyTreeWidget">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
          <property name="iconSize">
           <size>
            <width>16</width>
@@ -459,7 +464,7 @@
   <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
+   <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
    <class>RSTreeWidget</class>
@@ -468,7 +473,6 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="images.qrc"/>
   <include location="icons.qrc"/>
  </resources>
  <connections/>
