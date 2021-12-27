@@ -173,6 +173,7 @@ bool 		getWideFileHash(std::wstring filepath,                RsFileHash &hash, u
 FILE		*rs_fopen(const char* filename, const char* mode);
 
 std::string convertPathToUnix(std::string path);
+bool        isDirectorySeparator(const char &c);
 
 /** Concatenate two path pieces putting '/' separator between them only if
  * needed */

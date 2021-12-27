@@ -60,6 +60,12 @@
 #define canonicalize_file_name(p) realpath(p, NULL)
 #endif
 
+#ifdef WINDOWS_SYS
+#define FIND_OF_DIRECTORY_SEPARATOR "/\\\0"
+#else
+#define FIND_OF_DIRECTORY_SEPARATOR '/'
+#endif
+
 /****
  * #define RSDIR_DEBUG 1
  ****/
@@ -68,7 +74,7 @@
 bool std::filesystem::create_directories(const std::string& path)
 {
 	for( std::string::size_type lastIndex = 0; lastIndex < std::string::npos;
-	     lastIndex = path.find('/', lastIndex) )
+	     lastIndex = path.find_first_of(FIND_OF_DIRECTORY_SEPARATOR, lastIndex) )
 	{
 		std::string&& curDir = path.substr(0, ++lastIndex);
 		if(!RsDirUtil::checkCreateDirectory(curDir))
@@ -86,7 +92,7 @@ bool std::filesystem::create_directories(const std::string& path)
 
 std::string 	RsDirUtil::getFileName(const std::string& full_file_path)
 {
-    size_t n = full_file_path.find_last_of('/');
+    std::string::size_type n = full_file_path.find_last_of(FIND_OF_DIRECTORY_SEPARATOR);
 
     if(n == std::string::npos)
         return full_file_path;
@@ -96,7 +102,7 @@ std::string 	RsDirUtil::getFileName(const std::string& full_file_path)
 
 std::string 	RsDirUtil::getDirectory(const std::string& full_file_path)
 {
-    size_t n = full_file_path.find_last_of('/');
+    std::string::size_type n = full_file_path.find_last_of(FIND_OF_DIRECTORY_SEPARATOR);
 
     if(n == std::string::npos)
         return std::string();
@@ -111,10 +117,10 @@ std::string 	RsDirUtil::getTopDir(const std::string& dir)
 	 */
 	int i,j;
 	int len = dir.length();
-	for(j = len - 1; (j > 0) && (dir[j] == '/'); j--) ;
-	for(i = j; (i > 0) && (dir[i] != '/'); i--) ;
+	for(j = len - 1; (j > 0) && RsDirUtil::isDirectorySeparator(dir[j]); j--) ;
+	for(i = j; (i > 0) && !RsDirUtil::isDirectorySeparator(dir[i]); i--) ;
 
-	if (dir[i] == '/')
+	if (RsDirUtil::isDirectorySeparator(dir[i]))
 		i++;
 
 	for(; i <= j; i++)
@@ -144,9 +150,9 @@ const char *RsDirUtil::scanf_string_for_uint(int bytes)
 
 bool RsDirUtil::splitDirFromFile(const std::string& full_path,std::string& dir, std::string& file)
 {
-	int i = full_path.rfind('/', full_path.size()-1);
+	std::string::size_type i = full_path.find_last_of(FIND_OF_DIRECTORY_SEPARATOR, full_path.size()-1);
 
-	if(i == full_path.size()-1)	// '/' not found!
+	if(i == std::string::npos)	// '/' not found!
 	{
 		file = full_path ;
 		dir = "." ;
@@ -165,13 +171,13 @@ void RsDirUtil::removeTopDir(const std::string& dir, std::string& path)
 
 	/* remove the subdir: [/][dir1.../]<top>[/]
 	 */
-	int j = dir.find_last_not_of('/');
-	int i = dir.rfind('/', j);
+	int j = dir.find_last_not_of(FIND_OF_DIRECTORY_SEPARATOR);
+	int i = dir.find_last_of(FIND_OF_DIRECTORY_SEPARATOR, j);
 
 	/* remove any more slashes */
 	if (i > 0)
 	{
-		i = dir.find_last_not_of('/', i);
+		i = dir.find_last_not_of(FIND_OF_DIRECTORY_SEPARATOR, i);
 	}
 
 	if (i > 0)
@@ -188,8 +194,8 @@ std::string 	RsDirUtil::getRootDir(const std::string& dir)
 	 */
 	int i,j;
 	int len = dir.length();
-	for(i = 0; (i < len) && (dir[i] == '/'); i++) ;
-	for(j = i; (j < len) && (dir[j] != '/'); j++) ;
+	for(i = 0; (i < len) && RsDirUtil::isDirectorySeparator(dir[i]); i++) ;
+	for(j = i; (j < len) && !RsDirUtil::isDirectorySeparator(dir[j]); j++) ;
 	if (i == j)
 		return root; /* empty */
 	for(; i < j; i++)
@@ -206,12 +212,12 @@ std::string RsDirUtil::removeRootDir(const std::string& path)
 	std::string output;
 
 	/* chew leading '/'s */
-	for(i = 0; (i < len) && (path[i] == '/'); i++) ;
+	for(i = 0; (i < len) && RsDirUtil::isDirectorySeparator(path[i]); i++) ;
 	if (i == len)
 			return output; /*  empty string */
 
-	for(j = i; (j < len) && (path[j] != '/'); j++) ; /* run to next '/' */
-	for(; (j < len) && (path[j] == '/'); j++) ; 	/* chew leading '/'s */
+	for(j = i; (j < len) && !RsDirUtil::isDirectorySeparator(path[j]); j++) ; /* run to next '/' */
+	for(; (j < len) && RsDirUtil::isDirectorySeparator(path[j]); j++) ; 	/* chew leading '/'s */
 
 	for(; j < len; j++)
 	{
@@ -232,7 +238,7 @@ std::string RsDirUtil::removeRootDirs(const std::string& path, const std::string
 	if ((root.length() < 1) || (path.length() < 1))
 		return notroot;
 		
-	if ((path[0] == '/') && (root[0] != '/'))
+	if (RsDirUtil::isDirectorySeparator(path[0]) && !RsDirUtil::isDirectorySeparator(root[0]))
 	{
 		i++;
 	}
@@ -251,7 +257,7 @@ std::string RsDirUtil::removeRootDirs(const std::string& path, const std::string
 		return notroot;
 	}
 
-	if (path[i] == '/')
+	if (RsDirUtil::isDirectorySeparator(path[i]))
 	{
 		i++;
 	}
@@ -275,7 +281,7 @@ int	RsDirUtil::breakupDirList(const std::string& path,
 	unsigned int i;
 	for(i = 0; i < path.length(); i++)
 	{
-		if (path[i] == '/')
+		if (RsDirUtil::isDirectorySeparator(path[i]))
 		{
 			if (i - start > 0)
 			{
@@ -890,11 +896,26 @@ std::string RsDirUtil::convertPathToUnix(std::string path)
 	return path;
 }
 
+bool RsDirUtil::isDirectorySeparator(const char &c)
+{
+	if (c == '/') {
+		return true;
+	}
+
+#ifdef WINDOWS_SYS
+	if (c == '\\') {
+		return true;
+	}
+#endif
+
+	return false;
+}
+
 std::string RsDirUtil::makePath(const std::string &path1, const std::string &path2)
 {
 	std::string path = path1;
 
-	if (path.empty() == false && *path.rbegin() != '/') {
+	if (path.empty() == false && !RsDirUtil::isDirectorySeparator(*path.rbegin())) {
 		path += "/";
 	}
 	path += path2;
@@ -1031,10 +1052,10 @@ std::wstring 	RsDirUtil::getWideTopDir(std::wstring dir)
 	 */
 	int i,j;
 	int len = dir.length();
-	for(j = len - 1; (j > 0) && (dir[j] == '/'); j--);
-	for(i = j; (i > 0) && (dir[i] != '/'); i--);
+	for(j = len - 1; (j > 0) && RsDirUtil::isDirectorySeparator(dir[j]); j--);
+	for(i = j; (i > 0) && !RsDirUtil::isDirectorySeparator(dir[i]); i--);
 
-	if (dir[i] == '/')
+	if (RsDirUtil::isDirectorySeparator(dir[i]))
 		i++;
 
 	for(; i <= j; i++)
@@ -1053,11 +1074,11 @@ std::wstring 	RsDirUtil::removeWideTopDir(std::wstring dir)
 	 */
 	int i,j;
 	int len = dir.length();
-	for(j = len - 1; (j > 0) && (dir[j] == '/'); j--);
-	for(i = j; (i >= 0) && (dir[i] != '/'); i--);
+	for(j = len - 1; (j > 0) && RsDirUtil::isDirectorySeparator(dir[j]); j--);
+	for(i = j; (i >= 0) && !RsDirUtil::isDirectorySeparator(dir[i]); i--);
 
 	/* remove any more slashes */
-	for(; (i >= 0) && (dir[i] == '/'); i--);
+	for(; (i >= 0) && RsDirUtil::isDirectorySeparator(dir[i]); i--);
 
 	for(j = 0; j <= i; j++)
 	{
@@ -1075,8 +1096,8 @@ std::wstring 	RsDirUtil::getWideRootDir(std::wstring dir)
 	 */
 	int i,j;
 	int len = dir.length();
-	for(i = 0; (i < len) && (dir[i] == '/'); i++);
-	for(j = i; (j < len) && (dir[j] != '/'); j++);
+	for(i = 0; (i < len) && RsDirUtil::isDirectorySeparator(dir[i]); i++);
+	for(j = i; (j < len) && !RsDirUtil::isDirectorySeparator(dir[j]); j++);
 	if (i == j)
 		return root; /* empty */
 	for(; i < j; i++)
@@ -1093,12 +1114,12 @@ std::wstring RsDirUtil::removeWideRootDir(std::wstring path)
 	std::wstring output;
 
 	/* chew leading '/'s */
-	for(i = 0; (i < len) && (path[i] == '/'); i++);
+	for(i = 0; (i < len) && RsDirUtil::isDirectorySeparator(path[i]); i++);
 	if (i == len)
 			return output; /*  empty string */
 
-	for(j = i; (j < len) && (path[j] != '/'); j++); /* run to next '/' */
-	for(; (j < len) && (path[j] == '/'); j++); 	/* chew leading '/'s */
+	for(j = i; (j < len) && !RsDirUtil::isDirectorySeparator(path[j]); j++); /* run to next '/' */
+	for(; (j < len) && RsDirUtil::isDirectorySeparator(path[j]); j++); 	/* chew leading '/'s */
 
 	for(; j < len; j++)
 	{
@@ -1119,7 +1140,7 @@ std::wstring RsDirUtil::removeWideRootDirs(std::wstring path, std::wstring root)
 	if ((root.length() < 1) || (path.length() < 1))
 		return notroot;
 		
-	if ((path[0] == '/') && (root[0] != '/'))
+	if (RsDirUtil::isDirectorySeparator(path[0]) && !RsDirUtil::isDirectorySeparator(root[0]))
 	{
 		i++;
 	}
@@ -1138,7 +1159,7 @@ std::wstring RsDirUtil::removeWideRootDirs(std::wstring path, std::wstring root)
 		return notroot;
 	}
 
-	if (path[i] == '/')
+	if (RsDirUtil::isDirectorySeparator(path[i]))
 	{
 		i++;
 	}
@@ -1162,7 +1183,7 @@ int	RsDirUtil::breakupWideDirList(std::wstring path,
 	unsigned int i;
 	for(i = 0; i < path.length(); i++)
 	{
-		if (path[i] == '/')
+		if (RsDirUtil::isDirectorySeparator(path[i]))
 		{
 			if (i - start > 0)
 			{
