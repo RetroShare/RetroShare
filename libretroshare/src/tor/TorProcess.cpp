@@ -145,7 +145,8 @@ int popen3(int fd[3],const std::vector<std::string>& args,TorProcessHandle& pid)
     si.hStdInput = (HANDLE) _get_osfhandle(p[STDIN_FILENO][0]);
     si.hStdOutput = (HANDLE) _get_osfhandle(p[STDOUT_FILENO][1]);
     si.hStdError = (HANDLE) _get_osfhandle(p[STDERR_FILENO][1]);
-    si.dwFlags |= STARTF_USESTDHANDLES;
+    si.wShowWindow = SW_HIDE;
+    si.dwFlags = STARTF_USESTDHANDLES | STARTF_USESHOWWINDOW;
 
     if (si.hStdInput != INVALID_HANDLE_VALUE &&
         si.hStdOutput != INVALID_HANDLE_VALUE &&
