@@ -167,19 +167,30 @@ bool rsGetHostByNameSpecDNS(const std::string& servername, const std::string& ho
 
 	//Point to the query server name portion
 	unsigned char* qname =static_cast<unsigned char*>(&buf[curSendSize]);
-	//First byte is Label Type: https://www.iana.org/assignments/dns-parameters/dns-parameters.xhtml#dns-parameters-10
-	qname[0] = 0x04; //One Label with Normal label lower 6 bits is the length of the label
-	memcpy(&qname[1],hostname.c_str(),strlen(hostname.c_str()));
-	size_t qnameSize = strlen((const char*)qname);
+	size_t qnameSize = strlen(hostname.c_str()) + 1; //+1 for the leading byte
+	memcpy(&qname[1],hostname.c_str(), qnameSize);	//Copy the last 0 too
 	// Format Hostname like www.google.com to 3www6google3com
 	{
 		size_t last = qnameSize;
 		for(size_t i = qnameSize-1 ; i > 0 ; i--)
 			if(qname[i]=='.')
 			{
-				qname[i]=last-i-1;
+				size_t labelsize = last-i-1;
+				if(labelsize > 63){
+					RS_ERR("Labelsize is too long: ", labelsize);
+					return false;
+				}
+				qname[i]=labelsize;
 				last = i;
 			}
+		//First byte
+		size_t labelsize = last-1;
+		if(labelsize > 63){
+			RS_ERR("Labelsize is too long: ", labelsize);
+			return false;
+		}
+		//First byte is Label Type: https://www.iana.org/assignments/dns-parameters/dns-parameters.xhtml#dns-parameters-10
+		qname[0] = labelsize; //One Label with Normal label lower 6 bits is the length of the label
 	}
 	curSendSize += qnameSize +1; //With \0 terminator
 
