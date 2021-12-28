@@ -99,6 +99,30 @@ struct RR_DATA
 };
 #pragma pack()
 
+bool hostnameLength(size_t & length, const unsigned char* hostname, size_t maxlength){
+	size_t len1 = strnlen((const char*)hostname, maxlength); //According to terminating 0
+	size_t len2 = 0;                                   //According to label sizes
+	while((len2 < maxlength) && (hostname[len2] != '\0'))
+	{
+		len2 += hostname[len2] + 1;
+	}
+
+	if (len2 >= maxlength)
+	{
+		RS_ERR("Hostname is too long >", maxlength, " chars: ", len2);
+		return false;
+	}
+
+	if(len1 == len2)
+	{
+		length = len2 + 1;  //Terminating 0
+		return true;
+	}else{
+		RS_ERR("Hostname length mismatch, the DNS server sent some mallicious stuff ", len1, " ", len2);
+		return false;
+	}
+}
+
 bool rsGetHostByNameSpecDNS(const std::string& servername, const std::string& hostname, std::string& returned_addr, int timeout_s /*= -1*/)
 {
 #ifdef DEBUG_SPEC_DNS
@@ -292,20 +316,21 @@ bool rsGetHostByNameSpecDNS(const std::string& servername, const std::string& ho
 	if((reader[0]&0xC0) == 0)
 	{
 		//Normal label lower 6 bits is the length of the label
-		rLabelSize=(reader[0]&~(0xC0)*256) + reader[1];
+		if(!hostnameLength(rLabelSize, reader, rec_size - curRecSize))
+			return false;
 	}
 	else if ((reader[0]&0xC0) == 0xC0)
 	{
 		//Compressed label the lower 6 bits and the 8 bits from next octet form a pointer to the compression target.
 		//Don't need to read it, maybe the same as in Query
-		rLabelSize=0;
+		rLabelSize=2;
 	}
 	else
 	{
 		RS_ERR("Answer received with unmanaged label format.");
 		return false;
 	}
-	curRecSize += 2 + rLabelSize;
+	curRecSize += rLabelSize;
 
 	if (rec_size< static_cast<ssize_t>(curRecSize + sizeof(struct RR_DATA)) )
 	{
