@@ -502,6 +502,11 @@ void TorManager::threadTick()
         break;
 
     case TorControl::HiddenServiceReady:
+        if(d->control->torStatus() < TorControl::TorReady)
+        {
+            d->control->getTorInfo();						// forces TorControl to check its state.
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+        }
         break;
 
     case TorControl::Error:

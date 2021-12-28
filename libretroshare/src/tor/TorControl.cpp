@@ -65,14 +65,9 @@ static std::ostream& torctrldebug()
 using namespace Tor;
 
 TorControl::TorControl()
-    : mControlPort(0),mSocksPort(0),mStatus(NotConnected), mTorStatus(TorOffline),mHasOwnership(false)
+    : mControlPort(0),mSocksPort(0),mStatus(NotConnected), mTorStatus(TorUnknown),mHasOwnership(false)
 {
     mSocket = new TorControlSocket(this);
-    mControlPort = 0;
-    mSocksPort = 0;
-    mStatus = NotConnected;
-    mTorStatus = TorUnknown;
-    mHasOwnership = false;
 }
 
 static RsTorConnectivityStatus torConnectivityStatus(Tor::TorControl::Status t)
@@ -127,6 +122,7 @@ void TorControl::setTorStatus(TorControl::TorStatus n)
     if (n == mTorStatus)
         return;
 
+    RsDbg() << "Setting TorStatus=" << n ;
     mTorStatus = n;
 
     if(rsEvents)
@@ -216,7 +212,10 @@ void TorControl::connect(const std::string &address, uint16_t port)
     setStatus(Connecting);
 
     if(mSocket->connectToHost(address, port))
+    {
         setStatus(SocketConnected);
+        setTorStatus(TorOffline);	// connected and running, but not yet ready
+    }
 }
 
 void TorControl::reconnect()
@@ -245,8 +244,6 @@ void TorControl::authenticateReply(TorControlCommand *sender)
 
     torCtrlDebug() << "torctrl: Authentication successful" << std::endl;
     setStatus(TorControl::Authenticated);
-
-    setTorStatus(TorControl::TorUnknown);
 
     TorControlCommand *clientEvents = new TorControlCommand;
     clientEvents->set_replyLine_callback([this](int code, const ByteArray &data) { statusEvent(code,data);});
@@ -442,8 +439,8 @@ void TorControl::getTorInfoReply(TorControlCommand *sender)
         torCtrlDebug() << "torctrl: Tor indicates that circuits have been established; state is TorReady" << std::endl;
         setTorStatus(TorControl::TorReady);
     }
-    else
-        setTorStatus(TorControl::TorOffline);
+//    else
+//        setTorStatus(TorControl::TorOffline);
 
     auto bootstrap = command->get("status/bootstrap-phase");
     if (!bootstrap.empty())
@@ -562,14 +559,15 @@ void TorControl::statusEvent(int /* code */, const ByteArray &data)
     if (tokens.size() < 3)
         return;
 
-    torCtrlDebug() << "torctrl: status event:" << data.trimmed().toString() << std::endl;
-    const ByteArray& tok2 = *(++tokens.begin());
+    const ByteArray& tok2 = *(++(++tokens.begin()));
+    torCtrlDebug() << "torctrl: status event:" << data.trimmed().toString() << " tok2=\"" << tok2.toString() << "\"" << std::endl;
 
-    if (tok2 == "CIRCUIT_ESTABLISHED") {
+    if (tok2 == "CIRCUIT_ESTABLISHED")
         setTorStatus(TorControl::TorReady);
-    } else if (tok2 == "CIRCUIT_NOT_ESTABLISHED") {
+    else if (tok2 == "CIRCUIT_NOT_ESTABLISHED")
         setTorStatus(TorControl::TorOffline);
-    } else if (tok2 == "BOOTSTRAP") {
+    else if (tok2 == "BOOTSTRAP")
+    {
         tokens.pop_front();
         updateBootstrap(tokens);
     }

@@ -51,7 +51,7 @@ bool TorControlSocket::connectToHost(const std::string& tcp_address,uint16_t tcp
 {
     if(RsTcpSocket::connect(tcp_address,tcp_port))
     {
-        start();
+        start("TorControlSocket");
         return true;
     }
     else
@@ -130,6 +130,12 @@ void TorControlSocket::process()
             return;
 
         ByteArray line = readline(5120);
+
+        if(line.empty())	// This happens when the incoming buffer isn't empty yet doesn't have a full line already.
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            continue;
+        }
 
         if (!line.endsWith(ByteArray("\r\n"))) {
             setError("Invalid control message syntax");
