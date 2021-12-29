@@ -53,6 +53,8 @@
 
 using namespace Tor;
 
+static TorManager *rsTor = nullptr;
+
 namespace Tor
 {
 
@@ -840,6 +842,17 @@ bool RsTor::start()
     return instance()->startTorManager();
 }
 
+void RsTor::stop()
+{
+    if (rsTor) {
+        if (rsTor->isRunning()) {
+            rsTor->fullstop();
+        }
+        delete(rsTor);
+        rsTor= nullptr;
+    }
+}
+
 void RsTor::setTorDataDirectory(const std::string& dir)
 {
     instance()->setTorDataDirectory(dir);
@@ -854,8 +867,6 @@ TorManager *RsTor::instance()
 #if !defined(_WIN32) && !defined(__MINGW32__)
     assert(getpid() == syscall(SYS_gettid));// make sure we're not in a thread
 #endif
-
-    static TorManager *rsTor = nullptr;
 
     if(rsTor == nullptr)
         rsTor = new TorManager;
