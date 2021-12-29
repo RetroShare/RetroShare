@@ -462,7 +462,7 @@ void TorManager::run()
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 
-    d->control->shutdown();
+    d->control->shutdownSync();
     d->process->stop();
 
     if(rsEvents)
