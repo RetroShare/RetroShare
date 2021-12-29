@@ -95,6 +95,11 @@ TorManager::TorManager()
 {
 }
 
+TorManager::~TorManager()
+{
+    delete(d);
+}
+
 TorManagerPrivate::TorManagerPrivate(TorManager *parent)
     : q(parent)
     , process(0)
