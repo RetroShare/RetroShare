@@ -71,6 +71,7 @@ public:
 	HiddenService *hiddenService ;
 
     explicit TorManagerPrivate(TorManager *parent = 0);
+    virtual ~TorManagerPrivate();
 
     std::string torExecutablePath() const;
     bool createDataDir(const std::string &path);
@@ -94,6 +95,11 @@ TorManager::TorManager()
 {
 }
 
+TorManager::~TorManager()
+{
+    delete(d);
+}
+
 TorManagerPrivate::TorManagerPrivate(TorManager *parent)
     : q(parent)
     , process(0)
@@ -102,6 +108,11 @@ TorManagerPrivate::TorManagerPrivate(TorManager *parent)
     , hiddenService(NULL)
 {
     control->set_statusChanged_callback([this](int new_status,int /*old_status*/) { controlStatusChanged(new_status); });
+}
+
+TorManagerPrivate::~TorManagerPrivate()
+{
+    delete(control);
 }
 
 TorManager *TorManager::instance()

@@ -68,6 +68,7 @@ public:
     };
 
     explicit TorControl();
+    virtual ~TorControl();
 
     /* Information */
     Status status() const;
@@ -148,5 +149,3 @@ private:
 };
 
 }
-
-extern Tor::TorControl *torControl;

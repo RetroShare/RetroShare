@@ -46,8 +46,6 @@
 #include "StrUtil.h"
 #include "PendingOperation.h"
 
-Tor::TorControl *torControl = 0;
-
 class nullstream: public std::ostream {};
 
 static std::ostream& torctrldebug()
@@ -68,6 +66,11 @@ TorControl::TorControl()
     : mControlPort(0),mSocksPort(0),mStatus(NotConnected), mTorStatus(TorUnknown),mHasOwnership(false)
 {
     mSocket = new TorControlSocket(this);
+}
+
+TorControl::~TorControl()
+{
+    delete(mSocket);
 }
 
 static RsTorConnectivityStatus torConnectivityStatus(Tor::TorControl::Status t)

@@ -51,6 +51,7 @@ class TorManager : public HiddenServiceClient, public RsThread, public RsTor
 {
 public:
     static TorManager *instance();
+    virtual ~TorManager();
 
     TorProcess *process();
     TorControl *control();
