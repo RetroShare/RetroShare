@@ -68,6 +68,7 @@ public:
     };
 
     explicit TorControl();
+    virtual ~TorControl();
 
     /* Information */
     Status status() const;

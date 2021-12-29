@@ -70,6 +70,11 @@ TorControl::TorControl()
     mSocket = new TorControlSocket(this);
 }
 
+TorControl::~TorControl()
+{
+    delete(mSocket);
+}
+
 static RsTorConnectivityStatus torConnectivityStatus(Tor::TorControl::Status t)
 {
     switch(t)
