@@ -46,8 +46,6 @@
 #include "StrUtil.h"
 #include "PendingOperation.h"
 
-Tor::TorControl *torControl = 0;
-
 class nullstream: public std::ostream {};
 
 static std::ostream& torctrldebug()

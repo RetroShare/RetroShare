@@ -149,5 +149,3 @@ private:
 };
 
 }
-
-extern Tor::TorControl *torControl;
