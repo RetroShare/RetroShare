@@ -84,7 +84,7 @@ RsThreadedTcpSocket::RsThreadedTcpSocket() : RsTcpSocket()
 }
 void RsThreadedTcpSocket::run()
 {
-    while(connectionState() == CONNECTED)
+    while(!shouldStop() && connectionState() == CONNECTED)
     {
         tick();
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
