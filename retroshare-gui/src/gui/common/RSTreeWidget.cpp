@@ -253,8 +253,9 @@ QMenu *RSTreeWidget::createStandardContextMenu(QMenu *contextMenu)
 	}
 
 	if(!mContextMenuActions.isEmpty() || !mContextMenuMenus.isEmpty() || mEnableColumnCustomize) {
-		QWidget *widget = new QWidget(contextMenu);
-		widget->setStyleSheet( ".QWidget{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FEFEFE, stop:1 #E8E8E8); border: 1px solid #CCCCCC;}");
+		QFrame *widget = new QFrame(contextMenu);
+		widget->setObjectName("gradFrame"); //Use qss
+		//widget->setStyleSheet( ".QWidget{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FEFEFE, stop:1 #E8E8E8); border: 1px solid #CCCCCC;}");
 
 		// create menu header
 		QHBoxLayout *hbox = new QHBoxLayout(widget);
@@ -262,12 +263,14 @@ QMenu *RSTreeWidget::createStandardContextMenu(QMenu *contextMenu)
 		hbox->setSpacing(6);
 
 		QLabel *iconLabel = new QLabel(widget);
-        QPixmap pix = FilesDefs::getPixmapFromQtResourcePath(":/images/settings.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
+		iconLabel->setObjectName("trans_Icon");
+		QPixmap pix = FilesDefs::getPixmapFromQtResourcePath(":/images/settings.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
 		iconLabel->setPixmap(pix);
 		iconLabel->setMaximumSize(iconLabel->frameSize().height() + pix.height(), pix.width());
 		hbox->addWidget(iconLabel);
 
 		QLabel *textLabel = new QLabel("<strong>" + tr("Tree View Options") + "</strong>", widget);
+		textLabel->setObjectName("trans_Text");
 		hbox->addWidget(textLabel);
 
 		QSpacerItem *spacerItem = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);

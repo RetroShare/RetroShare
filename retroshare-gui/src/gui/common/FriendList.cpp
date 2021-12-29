@@ -55,6 +55,7 @@
 #include "gui/chat/ChatUserNotify.h"
 #include "gui/connect/ConnectProgressDialog.h"
 #include "gui/common/ElidedLabel.h"
+#include "gui/common/FilesDefs.h"
 
 #include "FriendList.h"
 #include "ui_FriendList.h"
@@ -297,8 +298,9 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
 
     QMenu *contextMenu = new QMenu(this);
 
-    QWidget *widget = new QWidget(contextMenu);
-    widget->setStyleSheet( ".QWidget{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FEFEFE, stop:1 #E8E8E8); border: 1px solid #CCCCCC;}");
+    QFrame *widget = new QFrame(contextMenu);
+    widget->setObjectName("gradFrame"); //Use qss
+    //widget->setStyleSheet( ".QWidget{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FEFEFE, stop:1 #E8E8E8); border: 1px solid #CCCCCC;}");
 
     // create menu header
     QHBoxLayout *hbox = new QHBoxLayout(widget);
@@ -306,12 +308,14 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
     hbox->setSpacing(6);
 
     QLabel *iconLabel = new QLabel(widget);
+    iconLabel->setObjectName("trans_Icon");
     QPixmap pix = FilesDefs::getPixmapFromQtResourcePath(":/images/user/friends24.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
     iconLabel->setPixmap(pix);
     iconLabel->setMaximumSize(iconLabel->frameSize().height() + pix.height(), pix.width());
     hbox->addWidget(iconLabel);
 
     QLabel *textLabel = new QLabel("<strong>RetroShare</strong>", widget);
+    textLabel->setObjectName("trans_Text");
     hbox->addWidget(textLabel);
 
     QSpacerItem *spacerItem = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);

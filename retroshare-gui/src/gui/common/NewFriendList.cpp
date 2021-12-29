@@ -184,6 +184,13 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
 {
 	ui->setupUi(this);
 
+	int H = QFontMetricsF(ui->peerTreeWidget->font()).height();
+#if QT_VERSION < QT_VERSION_CHECK(5,11,0)
+	int W = QFontMetricsF(ui->peerTreeWidget->font()).width("_");
+#else
+	int W = QFontMetricsF(ui->peerTreeWidget->font()).horizontalAdvance("_");
+#endif
+
     ui->filterLineEdit->setPlaceholderText(tr("Search")) ;
     ui->filterLineEdit->showFilterIcon();
 
@@ -205,7 +212,9 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
 	mProxyModel->setFilterRegExp(QRegExp(RsFriendListModel::FilterString));
 
 	ui->peerTreeWidget->setModel(mProxyModel);
-	ui->peerTreeWidget->setItemDelegate(new RSElidedItemDelegate());
+	RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
+	itemDelegate->setSpacing(QSize(W/2, H/4));
+	ui->peerTreeWidget->setItemDelegate(itemDelegate);
 	ui->peerTreeWidget->setWordWrap(false);
 
     /* Add filter actions */
@@ -228,17 +237,13 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
     QShortcut *Shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->peerTreeWidget, 0, 0, Qt::WidgetShortcut);
 	connect(Shortcut, SIGNAL(activated()), this, SLOT(removeItem()),Qt::QueuedConnection);
 
-    QFontMetricsF fontMetrics(ui->peerTreeWidget->font());
+	/* Set initial column width */
+	ui->peerTreeWidget->setColumnWidth(RsFriendListModel::COLUMN_THREAD_NAME        , 22 * W);
+	ui->peerTreeWidget->setColumnWidth(RsFriendListModel::COLUMN_THREAD_IP          , 15 * W);
+	ui->peerTreeWidget->setColumnWidth(RsFriendListModel::COLUMN_THREAD_ID          , 32 * W);
+	ui->peerTreeWidget->setColumnWidth(RsFriendListModel::COLUMN_THREAD_LAST_CONTACT, 12 * W);
 
-    /* Set initial column width */
-    int fontWidth = fontMetrics.width("W");
-    ui->peerTreeWidget->setColumnWidth(RsFriendListModel::COLUMN_THREAD_NAME        , 22 * fontWidth);
-    ui->peerTreeWidget->setColumnWidth(RsFriendListModel::COLUMN_THREAD_IP          , 15 * fontWidth);
-    ui->peerTreeWidget->setColumnWidth(RsFriendListModel::COLUMN_THREAD_ID          , 32 * fontWidth);
-    ui->peerTreeWidget->setColumnWidth(RsFriendListModel::COLUMN_THREAD_LAST_CONTACT, 12 * fontWidth);
-
-    int avatarHeight = fontMetrics.height() * 2;
-    ui->peerTreeWidget->setIconSize(QSize(avatarHeight, avatarHeight));
+	ui->peerTreeWidget->setIconSize(QSize(H*2, H*2));
 
     mModel->checkInternalData(true);
 
@@ -301,8 +306,9 @@ void NewFriendList::headerContextMenuRequested(QPoint /*p*/)
 {
 	QMenu displayMenu(tr("Show Items"), this);
 
-    QWidget *widget = new QWidget(&displayMenu);
-    widget->setStyleSheet( ".QWidget{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FEFEFE, stop:1 #E8E8E8); border: 1px solid #CCCCCC;}");
+	QFrame *widget = new QFrame(&displayMenu);
+	widget->setObjectName("gradFrame"); //Use qss
+	//widget->setStyleSheet( ".QWidget{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FEFEFE, stop:1 #E8E8E8); border: 1px solid #CCCCCC;}");
 
     // create menu header
     QHBoxLayout *hbox = new QHBoxLayout(widget);
@@ -310,12 +316,14 @@ void NewFriendList::headerContextMenuRequested(QPoint /*p*/)
     hbox->setSpacing(6);
 
     QLabel *iconLabel = new QLabel(widget);
+    iconLabel->setObjectName("trans_Icon");
     QPixmap pix = FilesDefs::getPixmapFromQtResourcePath(":/images/user/friends24.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
     iconLabel->setPixmap(pix);
     iconLabel->setMaximumSize(iconLabel->frameSize().height() + pix.height(), pix.width());
     hbox->addWidget(iconLabel);
 
     QLabel *textLabel = new QLabel("<strong>Show/hide...</strong>", widget);
+    textLabel->setObjectName("trans_Text");
     hbox->addWidget(textLabel);
 
     QSpacerItem *spacerItem = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
@@ -564,8 +572,9 @@ void NewFriendList::peerTreeWidgetCustomPopupMenu()
 
     QMenu contextMenu(this);
 
-    QWidget *widget = new QWidget(&contextMenu);
-    widget->setStyleSheet( ".QWidget{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FEFEFE, stop:1 #E8E8E8); border: 1px solid #CCCCCC;}");
+    QFrame *widget = new QFrame();
+    widget->setObjectName("gradFrame"); //Use qss
+    //widget->setStyleSheet( ".QWidget{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FEFEFE, stop:1 #E8E8E8); border: 1px solid #CCCCCC;}");
 
     // create menu header
     QHBoxLayout *hbox = new QHBoxLayout(widget);
@@ -573,12 +582,14 @@ void NewFriendList::peerTreeWidgetCustomPopupMenu()
     hbox->setSpacing(6);
 
     QLabel *iconLabel = new QLabel(widget);
+    iconLabel->setObjectName("trans_Icon");
     QPixmap pix = FilesDefs::getPixmapFromQtResourcePath(":/images/user/friends24.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
     iconLabel->setPixmap(pix);
     iconLabel->setMaximumSize(iconLabel->frameSize().height() + pix.height(), pix.width());
     hbox->addWidget(iconLabel);
 
     QLabel *textLabel = new QLabel("<strong>Friend list</strong>", widget);
+    textLabel->setObjectName("trans_Text");
     hbox->addWidget(textLabel);
 
     QSpacerItem *spacerItem = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);

@@ -59,6 +59,10 @@
 #define COLUMN_COUNT      3
 #define COLUMN_DATA       0
 
+#define COLUMN_NAME_NB_CHAR       30
+#define COLUMN_USER_COUNT_NB_CHAR 4
+#define COLUMN_TOPIC_NB_CHAR      25
+
 #define ROLE_SORT          Qt::UserRole
 #define ROLE_ID            Qt::UserRole + 1
 #define ROLE_SUBSCRIBED    Qt::UserRole + 2
@@ -88,6 +92,13 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 {
 	ui.setupUi(this);
 
+	int H = QFontMetricsF(ui.lobbyTreeWidget->font()).height();
+#if QT_VERSION < QT_VERSION_CHECK(5,11,0)
+	int W = QFontMetricsF(ui.lobbyTreeWidget->font()).width("_");
+#else
+	int W = QFontMetricsF(ui.lobbyTreeWidget->font()).horizontalAdvance("_");
+#endif
+
 	m_bProcessSettings = false;
 	myChatLobbyUserNotify = NULL;
 	myInviteYesButton = NULL;
@@ -107,6 +118,10 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 
 	compareRole = new RSTreeWidgetItemCompareRole;
 	compareRole->setRole(COLUMN_NAME, ROLE_SORT);
+
+	RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
+	itemDelegate->setSpacing(QSize(W/2, H/4));
+	ui.lobbyTreeWidget->setItemDelegate(itemDelegate);
 
 	ui.lobbyTreeWidget->setColumnCount(COLUMN_COUNT);
 	ui.lobbyTreeWidget->sortItems(COLUMN_NAME, Qt::AscendingOrder);
@@ -159,14 +174,11 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	ui.lobbyTreeWidget->setColumnHidden(COLUMN_USER_COUNT,true) ;
 	ui.lobbyTreeWidget->setColumnHidden(COLUMN_TOPIC,true) ;
 	ui.lobbyTreeWidget->setSortingEnabled(true) ;
-	ui.lobbyTreeWidget->setItemDelegateForColumn(COLUMN_NAME, new RSElidedItemDelegate());
 
-    	float fact = QFontMetricsF(font()).height()/14.0f;
-        
 	ui.lobbyTreeWidget->adjustSize();
-	ui.lobbyTreeWidget->setColumnWidth(COLUMN_NAME,100*fact);
-	ui.lobbyTreeWidget->setColumnWidth(COLUMN_USER_COUNT, 50*fact);
-	ui.lobbyTreeWidget->setColumnWidth(COLUMN_TOPIC, 50*fact);
+	ui.lobbyTreeWidget->setColumnWidth(COLUMN_NAME,COLUMN_NAME_NB_CHAR*W);
+	ui.lobbyTreeWidget->setColumnWidth(COLUMN_USER_COUNT, COLUMN_USER_COUNT_NB_CHAR*W);
+	ui.lobbyTreeWidget->setColumnWidth(COLUMN_TOPIC, COLUMN_TOPIC_NB_CHAR*W);
 
 	/** Setup the actions for the header context menu */
 	showUserCountAct= new QAction(headerItem->text(COLUMN_USER_COUNT),this);
@@ -181,7 +193,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	ui.splitter->setStretchFactor(1, 1);
 
 	QList<int> sizes;
-	sizes << 200*fact << width(); // Qt calculates the right sizes
+	sizes << ui.lobbyTreeWidget->columnWidth(COLUMN_NAME) << width(); // Qt calculates the right sizes
 	ui.splitter->setSizes(sizes);
 
 	lobbyChanged();
@@ -194,7 +206,6 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	// load settings
 	processSettings(true);
 
-	int S = QFontMetricsF(font()).height();
 	QString help_str = tr("\
 	                      <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Chat Rooms</h1>                           \
 	                      <p>Chat rooms work pretty much like IRC.                                                                \
@@ -212,11 +223,11 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	                       Note: For the chat rooms to work properly, your computer needs be on time.  So check your system clock!\
 	                      </p>                                                                                                    \
 	                      "
-	                      ).arg(QString::number(2*S), QString::number(S)) ;
+	                      ).arg(QString::number(4*W), QString::number(2*W)) ;
 
-	    registerHelpButton(ui.helpButton,help_str,"ChatLobbyDialog") ;
-		
-	ui.lobbyTreeWidget->setIconSize(QSize(S*1.5,S*1.5));	
+	registerHelpButton(ui.helpButton,help_str,"ChatLobbyDialog") ;
+
+	ui.lobbyTreeWidget->setIconSize(QSize(H*1.5,H*1.5));
 }
 
 ChatLobbyWidget::~ChatLobbyWidget()
@@ -232,7 +243,7 @@ ChatLobbyWidget::~ChatLobbyWidget()
 UserNotify *ChatLobbyWidget::createUserNotify(QObject *parent)
 {
 	myChatLobbyUserNotify = new ChatLobbyUserNotify(parent);
-	connect(myChatLobbyUserNotify, SIGNAL(countChanged(ChatLobbyId, uint)), this, SLOT(updateNotify(ChatLobbyId, uint)));
+	connect(myChatLobbyUserNotify, SIGNAL(countChanged(ChatLobbyId,uint)), this, SLOT(updateNotify(ChatLobbyId,uint)));
 
 	return myChatLobbyUserNotify;
 }
