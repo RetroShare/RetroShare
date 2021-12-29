@@ -35,6 +35,9 @@
       </size>
      </property>
      <layout class="QGridLayout" name="frame_from_GL">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
       <property name="bottomMargin">
        <number>0</number>
       </property>
@@ -232,7 +235,13 @@
    <item row="2" column="0">
     <widget class="QFrame" name="frame_input">
      <layout class="QVBoxLayout" name="frame_input_VL">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
       <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
        <number>0</number>
       </property>
       <item>
