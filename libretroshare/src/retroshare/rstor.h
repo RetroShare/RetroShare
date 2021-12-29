@@ -142,6 +142,12 @@ public:
     static bool start();
 
     /*!
+     * \brief stop
+     * 			Stop the Tor management threads.
+     */
+    static void stop();
+
+    /*!
      * \brief getHiddenServiceInfo
      * 			Gets information about the hidden service setup by RS to run.
      * \param service_id
