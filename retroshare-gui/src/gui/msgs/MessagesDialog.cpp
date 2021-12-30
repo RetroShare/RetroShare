@@ -325,6 +325,12 @@ void MessagesDialog::preModelUpdate()
     mTmpSavedSelectedIds.clear();
     getSelectedMessages(mTmpSavedSelectedIds);
 
+    mTmpSavedCurrentId.clear();
+    const QModelIndex& m = ui.messageTreeWidget->currentIndex();
+    if (m.isValid()) {
+        mTmpSavedCurrentId = m.sibling(m.row(), RsMessageModel::COLUMN_THREAD_MSGID).data(RsMessageModel::MsgIdRole).toString();
+    }
+
     std::cerr << "Pre-change: saving selection for " << mTmpSavedSelectedIds.size() << " indexes" << std::endl;
 }
 
@@ -342,6 +348,13 @@ void MessagesDialog::postModelUpdate()
     }
 
     ui.messageTreeWidget->selectionModel()->select(sel,QItemSelectionModel::SelectCurrent);
+
+    if (!mTmpSavedCurrentId.isEmpty()) {
+        QModelIndex index = mMessageProxyModel->mapFromSource(mMessageModel->getIndexOfMessage(mTmpSavedCurrentId.toStdString()));
+        if (index.isValid()) {
+            ui.messageTreeWidget->selectionModel()->setCurrentIndex(index, QItemSelectionModel::Select);
+        }
+    }
 }
 
 void MessagesDialog::sortColumn(int col,Qt::SortOrder so)

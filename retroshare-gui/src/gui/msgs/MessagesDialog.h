@@ -159,6 +159,7 @@ private:
   Ui::MessagesDialog ui;
 
   QList<QString> mTmpSavedSelectedIds;
+  QString mTmpSavedCurrentId;
   QModelIndex lastSelectedIndex;
 
   RsEventsHandlerId_t mEventHandlerId;
