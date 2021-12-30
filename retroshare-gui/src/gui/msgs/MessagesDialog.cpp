@@ -310,6 +310,7 @@ void MessagesDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> even
     case RsMailStatusEventCode::MESSAGE_SENT:
     case RsMailStatusEventCode::MESSAGE_REMOVED:
     case RsMailStatusEventCode::NEW_MESSAGE:
+        mMessageModel->updateMessages();
         updateMessageSummaryList();
         break;
     default:

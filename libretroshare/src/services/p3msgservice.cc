@@ -1422,6 +1422,7 @@ bool p3MsgService::MessageToDraft(MessageInfo &info, const std::string &msgParen
 
     auto pEvent = std::make_shared<RsMailStatusEvent>();
     pEvent->mMailStatusEventCode = RsMailStatusEventCode::MESSAGE_SENT;
+    pEvent->mChangedMsgIds.insert(std::to_string(msg->msgId));
     rsEvents->postEvent(pEvent);
 
         return true;
