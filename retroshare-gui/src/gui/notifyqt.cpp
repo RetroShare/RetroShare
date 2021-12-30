@@ -563,12 +563,6 @@ void NotifyQt::notifyListChange(int list, int type)
 			break;
 		case NOTIFY_LIST_SEARCHLIST:
 			break;
-		case NOTIFY_LIST_MESSAGE_TAGS:
-#ifdef NOTIFY_DEBUG
-			std::cerr << "received msg tags changed" << std::endl ;
-#endif
-			emit messagesTagsChanged();
-			break;
 		case NOTIFY_LIST_CHANNELLIST:
 			break;
 		case NOTIFY_LIST_TRANSFERLIST:

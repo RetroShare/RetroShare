@@ -134,7 +134,6 @@ const int NOTIFY_LIST_CONFIG                 = 8;
 const int NOTIFY_LIST_DIRLIST_LOCAL          = 9;
 const int NOTIFY_LIST_DIRLIST_FRIENDS        = 10;
 const int NOTIFY_LIST_FORUMLIST_LOCKED       = 11; // use connect with Qt::QueuedConnection
-const int NOTIFY_LIST_MESSAGE_TAGS           = 12;
 const int NOTIFY_LIST_PUBLIC_CHAT            = 13;
 const int NOTIFY_LIST_PRIVATE_INCOMING_CHAT  = 14;
 const int NOTIFY_LIST_PRIVATE_OUTGOING_CHAT  = 15;

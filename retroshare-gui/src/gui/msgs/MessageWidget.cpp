@@ -160,8 +160,6 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	viewsource->setShortcut(QKeySequence("CTRL+O"));
 	connect(viewsource, SIGNAL(triggered()), this, SLOT(viewSource()));
 
-	connect(NotifyQt::getInstance(), SIGNAL(messagesTagsChanged()), this, SLOT(messagesTagsChanged()));
-
 	ui.imageBlockWidget->addButtonAction(tr("Load images always for this message"), this, SLOT(loadImagesAlways()), true);
 	ui.msgText->setImageBlockWidget(ui.imageBlockWidget);
 
@@ -251,6 +249,9 @@ void MessageWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent> event
 				deleteLater();
 			}
 		}
+		break;
+	case RsMailStatusEventCode::TAG_CHANGED:
+		messagesTagsChanged();
 		break;
 	case RsMailStatusEventCode::MESSAGE_SENT:
 	case RsMailStatusEventCode::MESSAGE_CHANGED:

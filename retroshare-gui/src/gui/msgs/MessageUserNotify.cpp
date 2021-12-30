@@ -98,6 +98,7 @@ void MessageUserNotify::handleEvent_main_thread(std::shared_ptr<const RsEvent> e
 		updateIcon();
 		break;
 	case RsMailStatusEventCode::MESSAGE_SENT:
+	case RsMailStatusEventCode::TAG_CHANGED:
 	case RsMailStatusEventCode::MESSAGE_RECEIVED_ACK:
 	case RsMailStatusEventCode::SIGNATURE_FAILED:
 		break;

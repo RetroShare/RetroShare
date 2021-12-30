@@ -66,7 +66,6 @@ protected:
 
 public slots:
   //void insertMessages();
-  void messagesTagsChanged();
   void messageRemoved();
   void preModelUpdate();
   void postModelUpdate();
@@ -112,6 +111,7 @@ private slots:
 
 private:
     void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+    void handleTagEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
   void updateInterface();
 
@@ -163,6 +163,7 @@ private:
   QModelIndex lastSelectedIndex;
 
   RsEventsHandlerId_t mEventHandlerId;
+  RsEventsHandlerId_t mTagEventHandlerId;
 };
 
 #endif

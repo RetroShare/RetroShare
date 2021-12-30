@@ -120,6 +120,7 @@ void MsgItem::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 		break;
 	case RsMailStatusEventCode::MESSAGE_SENT:
 	case RsMailStatusEventCode::NEW_MESSAGE:
+	case RsMailStatusEventCode::TAG_CHANGED:
 	case RsMailStatusEventCode::MESSAGE_RECEIVED_ACK:
 	case RsMailStatusEventCode::SIGNATURE_FAILED:
 		break;

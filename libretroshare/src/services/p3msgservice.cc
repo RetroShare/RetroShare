@@ -1438,7 +1438,7 @@ bool 	p3MsgService::getMessageTagTypes(MsgTagType& tags)
 
 bool  	p3MsgService::setMessageTagType(uint32_t tagId, std::string& text, uint32_t rgb_color)
 {
-	int nNotifyType = 0;
+	auto ev = std::make_shared<RsMailTagEvent>();
 
 	{
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
@@ -1461,7 +1461,8 @@ bool  	p3MsgService::setMessageTagType(uint32_t tagId, std::string& text, uint32
 
 			mTags.insert(std::pair<uint32_t, RsMsgTagType*>(tagId, tagType));
 
-			nNotifyType = NOTIFY_TYPE_ADD;
+			ev->mMailTagEventCode = RsMailTagEventCode::TAG_ADDED;
+			ev->mChangedMsgTagIds.insert(std::to_string(tagId));
 		} else {
 			if (mit->second->text != text || mit->second->rgb_color != rgb_color) {
 				/* modify existing tag */
@@ -1475,17 +1476,18 @@ bool  	p3MsgService::setMessageTagType(uint32_t tagId, std::string& text, uint32
 				}
 				mit->second->rgb_color = rgb_color;
 
-				nNotifyType = NOTIFY_TYPE_MOD;
+				ev->mMailTagEventCode = RsMailTagEventCode::TAG_CHANGED;
+				ev->mChangedMsgTagIds.insert(std::to_string(tagId));
 			}
 		}
 
 	} /* UNLOCKED */
 
-	if (nNotifyType) {
+	if (!ev->mChangedMsgTagIds.empty()) {
 		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
-		RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGE_TAGS, nNotifyType);
-		
+		rsEvents->postEvent(ev);
+
 		return true;
 	}
 
@@ -1498,6 +1500,9 @@ bool    p3MsgService::removeMessageTagType(uint32_t tagId)
 		std::cerr << "p3MsgService::MessageRemoveTagType: Can't delete standard tag type " << tagId << std::endl;
 		return false;
 	}
+
+	auto msgEvent = std::make_shared<RsMailStatusEvent>();
+	msgEvent->mMailStatusEventCode = RsMailStatusEventCode::TAG_CHANGED;
 
 	{
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
@@ -1526,7 +1531,10 @@ bool    p3MsgService::removeMessageTagType(uint32_t tagId)
 					delete(tag);
 
 					mMsgTags.erase(mit1++);
-					continue;
+				}
+
+				if (msgEvent->mChangedMsgIds.find(std::to_string(mit1->first)) == msgEvent->mChangedMsgIds.end()) {
+					msgEvent->mChangedMsgIds.insert(std::to_string(mit1->first));
 				}
 			}
 			++mit1;
@@ -1540,7 +1548,14 @@ bool    p3MsgService::removeMessageTagType(uint32_t tagId)
 
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
-	RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGE_TAGS, NOTIFY_TYPE_DEL);
+	auto ev = std::make_shared<RsMailTagEvent>();
+	ev->mMailTagEventCode = RsMailTagEventCode::TAG_REMOVED;
+	ev->mChangedMsgTagIds.insert(std::to_string(tagId));
+	rsEvents->postEvent(ev);
+
+	if (!msgEvent->mChangedMsgIds.empty()) {
+		rsEvents->postEvent(msgEvent);
+	}
 
 	return true;
 }
@@ -1581,7 +1596,8 @@ bool 	p3MsgService::setMessageTag(const std::string &msgId, uint32_t tagId, bool
 		}
 	}
 	
-	int nNotifyType = 0;
+	auto ev = std::make_shared<RsMailStatusEvent>();
+	ev->mMailStatusEventCode = RsMailStatusEventCode::TAG_CHANGED;
 
 	{
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
@@ -1600,7 +1616,7 @@ bool 	p3MsgService::setMessageTag(const std::string &msgId, uint32_t tagId, bool
 
 				mMsgTags.insert(std::pair<uint32_t, RsMsgTags*>(tag->msgId, tag));
 
-				nNotifyType = NOTIFY_TYPE_ADD;
+				ev->mChangedMsgIds.insert(msgId);
 			}
 		} else {
 			RsMsgTags* tag = mit->second;
@@ -1618,18 +1634,18 @@ bool 	p3MsgService::setMessageTag(const std::string &msgId, uint32_t tagId, bool
 					tag->tagIds.push_back(tagId);
 					/* keep the list sorted */
 					tag->tagIds.sort();
-					nNotifyType = NOTIFY_TYPE_ADD;
+					ev->mChangedMsgIds.insert(msgId);
 				}
 			} else {
 				if (tagId == 0) {
 					/* remove all */
 					delete(tag);
 					mMsgTags.erase(mit);
-					nNotifyType = NOTIFY_TYPE_DEL;
+					ev->mChangedMsgIds.insert(msgId);
 				} else {
 					if (lit != tag->tagIds.end()) {
 						tag->tagIds.erase(lit);
-						nNotifyType = NOTIFY_TYPE_DEL;
+						ev->mChangedMsgIds.insert(msgId);
 
 						if (tag->tagIds.empty()) {
 							/* remove empty tag */
@@ -1643,10 +1659,10 @@ bool 	p3MsgService::setMessageTag(const std::string &msgId, uint32_t tagId, bool
 
 	} /* UNLOCKED */
 
-	if (nNotifyType) {
+	if (!ev->mChangedMsgIds.empty()) {
 		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
-		RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGE_TAGS, nNotifyType);
+		rsEvents->postEvent(ev);
 
 		return true;
 	}
