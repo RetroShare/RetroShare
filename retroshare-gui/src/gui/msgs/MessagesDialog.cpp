@@ -356,6 +356,8 @@ MessagesDialog::~MessagesDialog()
 {
     // save settings
     processSettings(false);
+
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
 
 UserNotify *MessagesDialog::createUserNotify(QObject *parent)
