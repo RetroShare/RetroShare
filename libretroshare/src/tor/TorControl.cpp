@@ -78,11 +78,14 @@ static RsTorConnectivityStatus torConnectivityStatus(Tor::TorControl::Status t)
     switch(t)
     {
     default:
-    case TorControl::Error:          return RsTorConnectivityStatus::ERROR;
-    case TorControl::NotConnected:   return RsTorConnectivityStatus::NOT_CONNECTED;
-    case TorControl::Connecting:     return RsTorConnectivityStatus::CONNECTING;
-    case TorControl::Authenticating: return RsTorConnectivityStatus::AUTHENTICATING;
+    case TorControl::Error:              return RsTorConnectivityStatus::ERROR;
+    case TorControl::NotConnected:       return RsTorConnectivityStatus::NOT_CONNECTED;
+    case TorControl::Connecting:         return RsTorConnectivityStatus::CONNECTING;
+    case TorControl::SocketConnected:    return RsTorConnectivityStatus::SOCKET_CONNECTED;
+    case TorControl::Authenticating:     return RsTorConnectivityStatus::AUTHENTICATING;
     case TorControl::Authenticated:      return RsTorConnectivityStatus::AUTHENTICATED;
+    case TorControl::HiddenServiceReady: return RsTorConnectivityStatus::HIDDEN_SERVICE_READY;
+    case TorControl::Unknown:            return RsTorConnectivityStatus::UNKNOWN;
     }
 }
 static RsTorStatus torStatus(Tor::TorControl::TorStatus t)
@@ -106,6 +109,8 @@ void TorControl::setStatus(TorControl::Status n)
 
     if (old == TorControl::Error)
         mErrorMessage.clear();
+
+    std::cerr << "Setting status to s=" << mStatus << " val=" << (int)torConnectivityStatus(mStatus) << std::endl;
 
     if(rsEvents)
     {
@@ -133,8 +138,9 @@ void TorControl::setTorStatus(TorControl::TorStatus n)
         auto ev = std::make_shared<RsTorManagerEvent>();
 
         ev->mTorManagerEventType = RsTorManagerEventCode::TOR_STATUS_CHANGED;
-        ev->mTorConnectivityStatus  = torConnectivityStatus(mStatus);
         ev->mTorStatus = ::torStatus(mTorStatus);
+        ev->mTorConnectivityStatus  = torConnectivityStatus(mStatus);
+
         rsEvents->sendEvent(ev);
     }
 }

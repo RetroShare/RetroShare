@@ -107,7 +107,7 @@ enum class RsEventType : uint32_t
 	FILE_HASHING_COMPLETED                                  = 20,
 
     /// @see rspeers.h
-    TOR_MANAGER                                             = 17,
+    TOR_MANAGER                                             = 21,
 
     __MAX /// Used internally, keep last
 };

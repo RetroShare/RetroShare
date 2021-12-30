@@ -51,13 +51,14 @@ class TorControl : public TorControlSocketClient
 public:
     enum Status
     {
-        Error = -1,
-        NotConnected       = 0x00,
-        Connecting         = 0x01,
-        SocketConnected    = 0x02,
-        Authenticating     = 0x03,
-        Authenticated      = 0x04,
-        HiddenServiceReady = 0x05
+        Error              = 0x00,
+        NotConnected       = 0x01,
+        Connecting         = 0x02,
+        SocketConnected    = 0x03,
+        Authenticating     = 0x04,
+        Authenticated      = 0x05,
+        HiddenServiceReady = 0x06,
+        Unknown            = 0x07
     };
 
     enum TorStatus

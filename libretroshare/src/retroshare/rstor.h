@@ -56,10 +56,11 @@ enum class RsTorConnectivityStatus: uint8_t {
     ERROR                 = 0x00,
     NOT_CONNECTED         = 0x01,
     CONNECTING            = 0x02,
-    AUTHENTICATING        = 0x03,
-    AUTHENTICATED         = 0x04,
-    HIDDEN_SERVICE_READY  = 0x05,
-    UNKNOWN               = 0x06
+    SOCKET_CONNECTED      = 0x03,
+    AUTHENTICATING        = 0x04,
+    AUTHENTICATED         = 0x05,
+    HIDDEN_SERVICE_READY  = 0x06,
+    UNKNOWN               = 0x07
 };
 
 // Status of the Tor service with which RS is talking.

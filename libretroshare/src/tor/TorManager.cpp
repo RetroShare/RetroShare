@@ -239,8 +239,6 @@ bool TorManager::setupHiddenService()
 
     assert(d->hiddenService);
 
-    // connect(d->hiddenService, SIGNAL(statusChanged(int,int)), this, SLOT(hiddenServiceStatusChanged(int,int)));
-
     // Generally, these are not used, and we bind to localhost and port 0
     // for an automatic (and portable) selection.
 
@@ -257,6 +255,9 @@ bool TorManager::setupHiddenService()
     while(!test_listening_port(address,hidden_service_port));
 
     std::cerr << ": OK - Adding hidden service to TorControl." << std::endl;
+
+    // Note: 9878 is quite arbitrary, but since each RS node generates its own hidden service, all of them
+    // can use the same port without any conflict.
 
     d->hiddenService->addTarget(9878, "127.0.0.1",hidden_service_port);
     control()->addHiddenService(d->hiddenService);
@@ -483,6 +484,7 @@ void TorManager::threadTick()
 
     switch(d->control->status())
     {
+    case TorControl::Unknown:
     case TorControl::Connecting:
         break;
 
@@ -618,12 +620,13 @@ void TorManagerPrivate::getConfFinished(TorControlCommand *sender)
         if(RsUtil::StringToInt(str,n) && n==1 && !configNeeded)
         {
             configNeeded = true;
-            //emit q->configurationNeededChanged();
 
             if(rsEvents)
             {
                 auto ev = std::make_shared<RsTorManagerEvent>();
                 ev->mTorManagerEventType = RsTorManagerEventCode::CONFIGURATION_NEEDED;
+                ev->mTorConnectivityStatus  = RsTorConnectivityStatus::UNKNOWN;
+                ev->mTorStatus = RsTorStatus::UNKNOWN;
                 rsEvents->sendEvent(ev);
             }
         }

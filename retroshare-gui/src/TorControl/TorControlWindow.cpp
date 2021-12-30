@@ -55,7 +55,13 @@ void TorControlDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> ev
     if(!fe)
         return;
 
-    statusChanged(fe->mTorStatus,fe->mTorConnectivityStatus);
+    switch(fe->mTorManagerEventType)
+    {
+    case RsTorManagerEventCode::TOR_STATUS_CHANGED:
+    case RsTorManagerEventCode::TOR_CONNECTIVITY_CHANGED: statusChanged(fe->mTorStatus,fe->mTorConnectivityStatus);
+                                                        break;
+    default: ;
+    }
 }
 
 void TorControlDialog::onIncomingConnection()
@@ -73,12 +79,15 @@ void TorControlDialog::statusChanged(RsTorStatus torstatus, RsTorConnectivitySta
 	switch(tor_control_status)
 	{
 	default:
-    case RsTorConnectivityStatus::ERROR :			tor_control_status_str = tr("Error") ; break ;
+    case RsTorConnectivityStatus::ERROR:			tor_control_status_str = tr("Error") ; break ;
     case RsTorConnectivityStatus::NOT_CONNECTED:	tor_control_status_str = tr("Not connected") ; break ;
     case RsTorConnectivityStatus::CONNECTING:		tor_control_status_str = tr("Connecting") ; break ;
+    case RsTorConnectivityStatus::SOCKET_CONNECTED:	tor_control_status_str = tr("Socket connected") ; break ;
     case RsTorConnectivityStatus::AUTHENTICATING:	tor_control_status_str = tr("Authenticating") ; break ;
     case RsTorConnectivityStatus::AUTHENTICATED:	tor_control_status_str = tr("Authenticated") ; break ;
-	}
+    case RsTorConnectivityStatus::HIDDEN_SERVICE_READY:	tor_control_status_str = tr("Hidden service ready") ; break ;
+    case RsTorConnectivityStatus::UNKNOWN:			tor_control_status_str = tr("Unknown") ; break ;
+    }
 
 	switch(torstatus)
 	{
