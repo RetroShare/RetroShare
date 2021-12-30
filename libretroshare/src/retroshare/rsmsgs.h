@@ -308,6 +308,8 @@ enum class RsMailStatusEventCode: uint8_t
 
 	/// An error occurred attempting to sign the message
 	SIGNATURE_FAILED   = 0x04,
+
+	MESSAGE_CHANGED                 = 0x05,
 };
 
 struct RsMailStatusEvent : RsEvent

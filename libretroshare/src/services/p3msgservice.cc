@@ -2119,7 +2119,7 @@ void p3MsgService::notifyDataStatus( const GRouterMsgPropagationId& id,
 		if(rsEvents)
 		{
 			auto pEvent = std::make_shared<RsMailStatusEvent>();
-			pEvent->mMailStatusEventCode = RsMailStatusEventCode::NEW_MESSAGE;
+			pEvent->mMailStatusEventCode = RsMailStatusEventCode::MESSAGE_CHANGED;
 			pEvent->mChangedMsgIds.insert(std::to_string(msg_id));
 			rsEvents->postEvent(pEvent);
 		}
