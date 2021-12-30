@@ -84,6 +84,24 @@ bool isExternalNet(const struct in_addr *addr);
 // uses a re-entrant version of gethostbyname
 bool rsGetHostByName(const std::string& hostname, in_addr& returned_addr) ;
 
+//https://www.iana.org/assignments/dns-parameters/dns-parameters.xhtml#dns-parameters-4
+constexpr uint16_t DNST_A         =     1; //Ipv4 address
+constexpr uint16_t DNST_AAAA      =    28; //Ipv6 address
+constexpr uint16_t DNST_CNAME     =     5; //Canonical name
+constexpr uint16_t DNST_A_or_AAAA = 65534; //Automatically decide between Ipv6 or Ipv4 address
+
+/**
+ * @brief Get DNS record using specific DNS server.
+ * @param servername: Address or name of DNS Server.
+ * @param serverport: Port of DNS Server, 53 by default.
+ * @param hostname: HosteName to get IP ("myip.opendns.com" to get own).
+ * @param recordtype: Which DNS record do you need.
+ * @param returned_addr: returned IP of hostname.
+ * @param timeout_s: Timeout in sec to wait server response.
+ * @return True in success.
+ */
+bool rsGetRecordByNameSpecDNS(const std::string& servername, unsigned short serverport, const std::string& hostname, unsigned short recordtype, std::string& returned_addr, int timeout_s = -1);
+
 /**
  * @brief Get hostName address using specific DNS server.
  * Using it allow to direct ask our Address to IP, so no need to have a DNS (IPv4 or IPv6).

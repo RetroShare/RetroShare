@@ -35,9 +35,6 @@
 
 //https://www.iana.org/assignments/dns-parameters/dns-parameters.xhtml#dns-parameters-2
 constexpr uint16_t DNSC_IN    = 1; //Internet (IN)
-//https://www.iana.org/assignments/dns-parameters/dns-parameters.xhtml#dns-parameters-4
-constexpr uint16_t DNST_A     = 1; //Ipv4 address
-constexpr uint16_t DNST_AAAA  =28; //Ipv6 address
 
 ///Need to pack as we use sizeof them. (avoid padding)
 #pragma pack(1)
@@ -99,7 +96,7 @@ struct RR_DATA
 };
 #pragma pack()
 
-bool hostnameLength(size_t & length, const unsigned char* hostname, size_t maxlength){
+bool hostnameLength(size_t & retlength, const unsigned char* hostname, size_t maxlength){
 	size_t len1 = strnlen((const char*)hostname, maxlength); //According to terminating 0
 	size_t len2 = 0;                                   //According to label sizes
 	while((len2 < maxlength) && (hostname[len2] != '\0'))
@@ -115,7 +112,7 @@ bool hostnameLength(size_t & length, const unsigned char* hostname, size_t maxle
 
 	if(len1 == len2)
 	{
-		length = len2 + 1;  //Terminating 0
+		retlength = len2 + 1;  //Terminating 0
 		return true;
 	}else{
 		RS_ERR("Hostname length mismatch, the DNS server sent some mallicious stuff ", len1, " ", len2);
@@ -123,7 +120,11 @@ bool hostnameLength(size_t & length, const unsigned char* hostname, size_t maxle
 	}
 }
 
-bool rsGetHostByNameSpecDNS(const std::string& servername, const std::string& hostname, std::string& returned_addr, int timeout_s /*= -1*/)
+bool rsGetHostByNameSpecDNS(const std::string& servername, const std::string& hostname, std::string& returned_addr, int timeout_s){
+	return rsGetRecordByNameSpecDNS(servername, 53, hostname, DNST_A_or_AAAA, returned_addr, timeout_s);
+}
+
+bool rsGetRecordByNameSpecDNS(const std::string& servername, unsigned short serverport, const std::string& hostname, unsigned short recordtype, std::string& returned_addr, int timeout_s /*= -1*/)
 {
 #ifdef DEBUG_SPEC_DNS
 	RS_DBG("servername=", servername, " hostname=", hostname);
@@ -165,7 +166,7 @@ bool rsGetHostByNameSpecDNS(const std::string& servername, const std::string& ho
 		}
 	}
 
-	sockaddr_storage_setport( serverAddr, 53);
+	sockaddr_storage_setport( serverAddr, serverport);
 
 	//Set the DNS structure to standard queries
 	unsigned char buf[65536];
@@ -220,7 +221,10 @@ bool rsGetHostByNameSpecDNS(const std::string& servername, const std::string& ho
 
 	//Point to the query constant portion
 	struct QUESTION* qinfo =(struct QUESTION*)&buf[curSendSize];
-	qinfo->qtype  = htons(isIPV4 ? DNST_A : DNST_AAAA);  //Type: A / AAAA(Host Address)
+	if(recordtype == DNST_A_or_AAAA)
+		qinfo->qtype = htons(isIPV4 ? DNST_A : DNST_AAAA);  //Type: A / AAAA(Host Address)
+	else
+		qinfo->qtype = htons(recordtype);
 	qinfo->qclass = htons(DNSC_IN); //Class: IN
 	curSendSize += sizeof(struct QUESTION);
 
@@ -304,63 +308,66 @@ bool rsGetHostByNameSpecDNS(const std::string& servername, const std::string& ho
 	}
 	curRecSize += qnameSize + 1 + sizeof(struct QUESTION);
 
-	if (rec_size< static_cast<ssize_t>(curRecSize + 2) )
+	for(int i=0; i<ntohs(dns->ans_count); i++)
 	{
-		RS_ERR("Request received too small to get Answer return.");
-		return false;
-	}
-	//Point to the Answer portion
-	unsigned char* reader = &buf[curRecSize];
-
-	size_t rLabelSize=0;
-	if((reader[0]&0xC0) == 0)
-	{
-		//Normal label lower 6 bits is the length of the label
-		if(!hostnameLength(rLabelSize, reader, rec_size - curRecSize))
+		if (rec_size< static_cast<ssize_t>(curRecSize + 2) )
+		{
+			RS_ERR("Request received too small to get Answer return.");
 			return false;
-	}
-	else if ((reader[0]&0xC0) == 0xC0)
-	{
-		//Compressed label the lower 6 bits and the 8 bits from next octet form a pointer to the compression target.
-		//Don't need to read it, maybe the same as in Query
-		rLabelSize=2;
-	}
-	else
-	{
-		RS_ERR("Answer received with unmanaged label format.");
-		return false;
-	}
-	curRecSize += rLabelSize;
+		}
+		//Point to the Answer portion
+		unsigned char* reader = &buf[curRecSize];
 
-	if (rec_size< static_cast<ssize_t>(curRecSize + sizeof(struct RR_DATA)) )
-	{
-		RS_ERR("Request received too small to get Data return.");
-		return false;
-	}
-	//Point to the query portion
-	struct RR_DATA* rec_data = (struct RR_DATA *)&buf[curRecSize];
-	if (rec_data->rtype!=qinfo->qtype)
-	{
-		RS_ERR("Answer's type received different from query sent.");
-		return false;
-	}
-	if (rec_data->rclass!=qinfo->qclass)
-	{
-		RS_ERR("Answer's class received different from query sent.");
-		return false;
-	}
-	curRecSize += sizeof(struct RR_DATA);
+		size_t rLabelSize=0;
+		if((reader[0]&0xC0) == 0)
+		{
+			//Normal label lower 6 bits is the length of the label
+			if(!hostnameLength(rLabelSize, reader, rec_size - curRecSize))
+				return false;
+		}
+		else if ((reader[0]&0xC0) == 0xC0)
+		{
+			//Compressed label the lower 6 bits and the 8 bits from next octet form a pointer to the compression target.
+			//Don't need to read it, maybe the same as in Query
+			rLabelSize=2;
+		}
+		else
+		{
+			RS_ERR("Answer received with unmanaged label format.");
+			return false;
+		}
+		curRecSize += rLabelSize;
 
-	if (rec_size< static_cast<ssize_t>(curRecSize + ntohs(rec_data->data_len)) )
-	{
-		RS_ERR("Request received too small to get Full Data return.");
-		return false;
-	}
+		if (rec_size< static_cast<ssize_t>(curRecSize + sizeof(struct RR_DATA)) )
+		{
+			RS_ERR("Request received too small to get Data return.");
+			return false;
+		}
+		//Point to the query portion
+		struct RR_DATA* rec_data = (struct RR_DATA *)&buf[curRecSize];
+		if (rec_data->rclass!=qinfo->qclass)
+		{
+			RS_ERR("Answer's class received different from query sent.");
+			return false;
+		}
+		curRecSize += sizeof(struct RR_DATA);
 
-	//Retrieve Address
-	if(ntohs(rec_data->data_len)==4)
-	{
-		if (isIPV4)
+		unsigned short data_len = ntohs(rec_data->data_len);
+		unsigned short rtype = ntohs(rec_data->rtype);
+		if (rec_data->rtype!=qinfo->qtype)
+		{
+			RS_INFO("Answer's type received different from query sent, skipping answer.");
+			curRecSize += data_len;
+			continue; //Skip to the next answer record
+		}
+		if (rec_size< static_cast<ssize_t>(curRecSize + data_len) )
+		{
+			RS_ERR("Request received too small to get Full Data return.");
+			return false;
+		}
+
+		//Retrieve Address
+		if(data_len==4 && rtype==DNST_A)
 		{
 			in_addr ipv4Add;
 			ipv4Add.s_addr=*(in_addr_t*)&buf[curRecSize];
@@ -370,10 +377,7 @@ bool rsGetHostByNameSpecDNS(const std::string& servername, const std::string& ho
 			returned_addr = rs_inet_ntoa(ipv4Add);
 			return true;
 		}
-	}
-	else if(ntohs(rec_data->data_len)==16)
-	{
-		if (!isIPV4)
+		else if(data_len==16 && rtype==DNST_AAAA)
 		{
 			in6_addr ipv6Add;
 			ipv6Add =*(in6_addr*)&buf[curRecSize];
@@ -390,8 +394,38 @@ bool rsGetHostByNameSpecDNS(const std::string& servername, const std::string& ho
 			returned_addr = sockaddr_storage_iptostring(ss);
 			return true;
 		}
+		else if(rtype==DNST_CNAME && data_len >=2 && ((buf[curRecSize]&0xC0) == 0)) //Make sure the hostname is not empty, and not compressed
+		{
+			size_t len=0;
+			if(hostnameLength(len, &buf[curRecSize], data_len) && len==data_len)  //Validate hostname length
+			{
+				size_t pos = curRecSize;  //the hostname is already validated by hostnameLength
+				while(buf[pos] != '\0')   //so we can safely decode it in place
+				{
+					size_t prevpos = pos;
+					pos += buf[pos] + 1;
+					buf[prevpos] = '.';
+				}
+				std::string decodedname((char*)&buf[curRecSize+1]);  // +1 skip the first dot
+				returned_addr = decodedname;
+#ifdef DEBUG_SPEC_DNS
+				RS_DBG("Retrieve CNAME: ", decodedname.c_str());
+#endif
+				return true;
+			}else{
+				RS_ERR("Retrieved hostname length != datalength, expected length: ", data_len, ", actual length: ", len);
+				return false;
+			}
+		}
+		else
+		{
+			RS_ERR("Received unknown record type: ", rtype, ", length: ", data_len);
+			return false;
+		}
+
+		curRecSize += data_len; //Check the next answer record
 	}
 
-	RS_ERR("Retrieve unmanaged data size=", ntohs(rec_data->data_len));
+	RS_ERR("Not received answer for the question");
 	return false;
 }
