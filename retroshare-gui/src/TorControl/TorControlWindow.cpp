@@ -26,15 +26,6 @@ TorControlDialog::TorControlDialog(QWidget *)
                 RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this );
         }, mEventHandlerId, RsEventType::TOR_MANAGER );
 
-        //    QObject::connect(tm->control(),SIGNAL(statusChanged(int,int)),this,SLOT(statusChanged())) ;
-        //    QObject::connect(tm->control(),SIGNAL(connected()),this,SLOT(statusChanged()));
-        //    QObject::connect(tm->control(),SIGNAL(disconnected()),this,SLOT(statusChanged()));
-        //    QObject::connect(tm->control(),SIGNAL(bootstrapStatusChanged()),this,SLOT(statusChanged()));
-        //    QObject::connect(tm->control(),SIGNAL(connectivityChanged()),this,SLOT(statusChanged()));
-        //    QObject::connect(tm           ,SIGNAL(errorChanged()),this,SLOT(statusChanged()));
-
-        //QTimer::singleShot(2000,this,SLOT(checkForHiddenService())) ;
-
         mIncomingServer = new QTcpServer(this) ;
 
         connect(mIncomingServer, SIGNAL(QTcpServer::newConnection()), this, SLOT(onIncomingConnection()));

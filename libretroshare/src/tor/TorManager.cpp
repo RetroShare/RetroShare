@@ -232,21 +232,20 @@ bool TorManager::setupHiddenService()
     // for an automatic (and portable) selection.
 
     std::string address = "127.0.0.1";	// we only listen from localhost
-    unsigned short port = 7934;//(quint16)m_settings->read("localListenPort").toInt();
+    unsigned short hidden_service_port = 7934;//(quint16)m_settings->read("localListenPort").toInt();
 
-    std::cerr << "Testing host address: " << address << ":" << port ;
-
-    if(!test_listening_port(address,port))
+    do
     {
-        // XXX error case
-        std::cerr << " Failed to open incoming socket" << std::endl;
-        return false;
+        hidden_service_port = 1025 + (RsRandom::random_u32() >> 17);
+
+        std::cerr << "Testing listening address:port " << address << ":" << hidden_service_port ;
+        std::cerr.flush();
     }
+    while(!test_listening_port(address,hidden_service_port));
 
-	std::cerr << " OK - Adding hidden service to TorControl." << std::endl;
+    std::cerr << ": OK - Adding hidden service to TorControl." << std::endl;
 
-    //d->hiddenService->addTarget(9878, mIncomingServer->serverAddress(), mIncomingServer->serverPort());
-    d->hiddenService->addTarget(9878, "127.0.0.1",7934);
+    d->hiddenService->addTarget(9878, "127.0.0.1",hidden_service_port);
     control()->addHiddenService(d->hiddenService);
 
 	return true ;
