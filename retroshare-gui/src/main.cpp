@@ -591,6 +591,10 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	RsGxsUpdateBroadcast::cleanup();
 #endif
 
+	if (is_auto_tor) {
+		RsTor::stop();
+	}
+
 	RsControl::instance()->rsGlobalShutDown();
 
 	delete(soundManager);

@@ -15,6 +15,7 @@ class TorControlDialog: public QWidget, public Ui::TorControlDialog
 
 public:
     TorControlDialog(QWidget *parent =NULL);
+    virtual ~TorControlDialog();
 
 	enum TorStatus {
 		TOR_STATUS_UNKNOWN = 0x00,

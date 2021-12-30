@@ -42,6 +42,11 @@ TorControlDialog::TorControlDialog(QWidget *)
         adjustSize();
 }
 
+TorControlDialog::~TorControlDialog()
+{
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
+}
+
 void TorControlDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 {
     if(event->mType != RsEventType::TOR_MANAGER) return;

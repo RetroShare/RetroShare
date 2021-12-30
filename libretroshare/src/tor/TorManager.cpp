@@ -53,6 +53,8 @@
 
 using namespace Tor;
 
+static TorManager *rsTor = nullptr;
+
 namespace Tor
 {
 
@@ -71,6 +73,7 @@ public:
 	HiddenService *hiddenService ;
 
     explicit TorManagerPrivate(TorManager *parent = 0);
+    virtual ~TorManagerPrivate();
 
     std::string torExecutablePath() const;
     bool createDataDir(const std::string &path);
@@ -94,6 +97,11 @@ TorManager::TorManager()
 {
 }
 
+TorManager::~TorManager()
+{
+    delete(d);
+}
+
 TorManagerPrivate::TorManagerPrivate(TorManager *parent)
     : q(parent)
     , process(0)
@@ -102,6 +110,11 @@ TorManagerPrivate::TorManagerPrivate(TorManager *parent)
     , hiddenService(NULL)
 {
     control->set_statusChanged_callback([this](int new_status,int /*old_status*/) { controlStatusChanged(new_status); });
+}
+
+TorManagerPrivate::~TorManagerPrivate()
+{
+    delete(control);
 }
 
 TorManager *TorManager::instance()
@@ -450,7 +463,7 @@ void TorManager::run()
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 
-    d->control->shutdown();
+    d->control->shutdownSync();
     d->process->stop();
 
     if(rsEvents)
@@ -828,6 +841,17 @@ bool RsTor::start()
     return instance()->startTorManager();
 }
 
+void RsTor::stop()
+{
+    if (rsTor) {
+        if (rsTor->isRunning()) {
+            rsTor->fullstop();
+        }
+        delete(rsTor);
+        rsTor= nullptr;
+    }
+}
+
 void RsTor::setTorDataDirectory(const std::string& dir)
 {
     instance()->setTorDataDirectory(dir);
@@ -842,8 +866,6 @@ TorManager *RsTor::instance()
 #if !defined(_WIN32) && !defined(__MINGW32__)
     assert(getpid() == syscall(SYS_gettid));// make sure we're not in a thread
 #endif
-
-    static TorManager *rsTor = nullptr;
 
     if(rsTor == nullptr)
         rsTor = new TorManager;
