@@ -563,12 +563,6 @@ void NotifyQt::notifyListChange(int list, int type)
 			break;
 		case NOTIFY_LIST_SEARCHLIST:
 			break;
-		case NOTIFY_LIST_MESSAGELIST:
-#ifdef NOTIFY_DEBUG
-			std::cerr << "received msg changed" << std::endl ;
-#endif
-			emit messagesChanged() ;
-			break;
 		case NOTIFY_LIST_MESSAGE_TAGS:
 #ifdef NOTIFY_DEBUG
 			std::cerr << "received msg tags changed" << std::endl ;
@@ -663,8 +657,6 @@ void NotifyQt::notifyListPreChange(int list, int /*type*/)
 			break;
 		case NOTIFY_LIST_SEARCHLIST:
 			break;
-		case NOTIFY_LIST_MESSAGELIST:
-			break;
 		case NOTIFY_LIST_CHANNELLIST:
 			break;
 		case NOTIFY_LIST_TRANSFERLIST:
@@ -697,7 +689,6 @@ void NotifyQt::UpdateGUI()
 														// the gui is running, then they get updated by callbacks.
 	if(!already_updated)
 	{
-		emit messagesChanged() ;
 		emit neighboursChanged();
 		emit configChanged();
 

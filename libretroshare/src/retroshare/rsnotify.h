@@ -128,7 +128,6 @@ const uint32_t RS_MESSAGE_CONNECT_ATTEMPT    = 0x0001;
 const int NOTIFY_LIST_NEIGHBOURS             = 1;
 const int NOTIFY_LIST_FRIENDS                = 2;
 const int NOTIFY_LIST_SEARCHLIST             = 4;
-const int NOTIFY_LIST_MESSAGELIST            = 5;
 const int NOTIFY_LIST_CHANNELLIST            = 6;
 const int NOTIFY_LIST_TRANSFERLIST           = 7;
 const int NOTIFY_LIST_CONFIG                 = 8;

@@ -268,7 +268,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
 	 registerHelpButton(ui.helpButton,help_str,"MessagesDialog") ;
 
-    connect(NotifyQt::getInstance(), SIGNAL(messagesChanged()), mMessageModel, SLOT(updateMessages()));
     connect(NotifyQt::getInstance(), SIGNAL(messagesTagsChanged()), this, SLOT(messagesTagsChanged()));
 
     connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
@@ -310,10 +309,12 @@ void MessagesDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> even
     case RsMailStatusEventCode::MESSAGE_SENT:
     case RsMailStatusEventCode::MESSAGE_REMOVED:
     case RsMailStatusEventCode::NEW_MESSAGE:
+    case RsMailStatusEventCode::MESSAGE_CHANGED:
         mMessageModel->updateMessages();
         updateMessageSummaryList();
         break;
-    default:
+    case RsMailStatusEventCode::MESSAGE_RECEIVED_ACK:
+    case RsMailStatusEventCode::SIGNATURE_FAILED:
         break;
     }
 }

@@ -21,6 +21,7 @@
 #ifndef MESSAGEUSERNOTIFY_H
 #define MESSAGEUSERNOTIFY_H
 
+#include <retroshare/rsevents.h>
 #include "gui/common/UserNotify.h"
 
 class MessageUserNotify : public UserNotify
@@ -29,6 +30,7 @@ class MessageUserNotify : public UserNotify
 
 public:
 	MessageUserNotify(QObject *parent = 0);
+	virtual ~MessageUserNotify();
 
 	virtual bool hasSetting(QString *name, QString *group) override;
 
@@ -41,6 +43,11 @@ private:
 	virtual QString getNotifyMessage(bool plural) override;
 
 	virtual void iconClicked() override;
+
+	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+
+private:
+	RsEventsHandlerId_t mEventHandlerId;
 };
 
 #endif // MESSAGEUSERNOTIFY_H

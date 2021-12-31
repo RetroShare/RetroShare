@@ -220,8 +220,6 @@ void p3MsgService::processIncomingMsg(RsMsgItem *mi)
         for(std::list<RsTlvFileItem>::const_iterator it(mi->attachment.items.begin());it!=mi->attachment.items.end();++it)
             rsFiles->FileRequest((*it).name,(*it).hash,(*it).filesize,std::string(),RS_FILE_REQ_ANONYMOUS_ROUTING,srcIds) ;
     }
-
-	RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_ADD);
 }
 
 bool p3MsgService::checkAndRebuildPartialMessage(RsMsgItem *ci)
@@ -283,16 +281,11 @@ int p3MsgService::incomingMsgs()
 
 void p3MsgService::handleIncomingItem(RsMsgItem *mi)
 {
-	bool changed = false ;
-
 	// only returns true when a msg is complete.
 	if(checkAndRebuildPartialMessage(mi))
 	{
 		processIncomingMsg(mi);
-		changed = true ;
 	}
-	if(changed)
-		RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
 }
 
 void    p3MsgService::statusChange(const std::list<pqiServicePeer> &plist)
@@ -350,7 +343,6 @@ void p3MsgService::checkSizeAndSendMessage(RsMsgItem *msg)
 
 int p3MsgService::checkOutgoingMessages()
 {
-	bool changed = false;
 	std::list<RsMsgItem*> output_queue;
 
 	auto pEvent = std::make_shared<RsMailStatusEvent>();
@@ -400,7 +392,6 @@ int p3MsgService::checkOutgoingMessages()
 				{
 					(mit->second)->msgFlags &= ~RS_MSG_FLAGS_PENDING;
 					toErase.push_back(mit->first);
-					changed = true;
 				}
 				else
 				{
@@ -441,9 +432,6 @@ int p3MsgService::checkOutgoingMessages()
 			sendDistantMsgItem(*it);
 		else
 			checkSizeAndSendMessage(*it);
-
-	if(changed)
-		RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
 
 	if(rsEvents && !pEvent->mChangedMsgIds.empty())
 		rsEvents->postEvent(pEvent);
@@ -954,8 +942,6 @@ bool    p3MsgService::removeMsgId(const std::string &mid)
 
 		setMessageTag(mid, 0, false);
 		setMsgParentId(msgId, 0);
-
-		RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
 	}
 
 	if(rsEvents && !pEvent->mChangedMsgIds.empty())
@@ -968,7 +954,6 @@ bool    p3MsgService::markMsgIdRead(const std::string &mid, bool unreadByUser)
 {
 	std::map<uint32_t, RsMsgItem *>::iterator mit;
 	uint32_t msgId = atoi(mid.c_str());
-	bool changed = false;
 
 	{
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
@@ -992,17 +977,17 @@ bool    p3MsgService::markMsgIdRead(const std::string &mid, bool unreadByUser)
 
 			if (mi->msgFlags != msgFlags)
 			{
-				changed = true;
 				IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
+				auto pEvent = std::make_shared<RsMailStatusEvent>();
+				pEvent->mMailStatusEventCode = RsMailStatusEventCode::MESSAGE_CHANGED;
+				pEvent->mChangedMsgIds.insert(mid);
+				rsEvents->postEvent(pEvent);
 			}
 		} else {
 			return false;
 		}
 	} /* UNLOCKED */
-
-	if (changed) {
-		RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
-	}
 
 	return true;
 }
@@ -1011,8 +996,6 @@ bool    p3MsgService::setMsgFlag(const std::string &mid, uint32_t flag, uint32_t
 {
   	std::map<uint32_t, RsMsgItem *>::iterator mit;
 	uint32_t msgId = atoi(mid.c_str());
-
-	bool changed = false;
 
 	{
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
@@ -1033,14 +1016,14 @@ bool    p3MsgService::setMsgFlag(const std::string &mid, uint32_t flag, uint32_t
 		mit->second->msgFlags |= flag;
 
 		if (mit->second->msgFlags != oldFlag) {
-			changed = true;
 			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
+			auto pEvent = std::make_shared<RsMailStatusEvent>();
+			pEvent->mMailStatusEventCode = RsMailStatusEventCode::MESSAGE_CHANGED;
+			pEvent->mChangedMsgIds.insert(mid);
+			rsEvents->postEvent(pEvent);
 		}
 	} /* UNLOCKED */
-
-	if (changed) {
-		RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
-	}
 
 	return true;
 }
@@ -1137,7 +1120,10 @@ uint32_t p3MsgService::sendMessage(RsMsgItem* item)
 
     IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
-    RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST, NOTIFY_TYPE_ADD);	// deprecated
+	auto pEvent = std::make_shared<RsMailStatusEvent>();
+	pEvent->mMailStatusEventCode = RsMailStatusEventCode::MESSAGE_SENT;
+	pEvent->mChangedMsgIds.insert(std::to_string(item->msgId));
+	rsEvents->postEvent(pEvent);
 
     return item->msgId;
 }
@@ -1175,8 +1161,11 @@ uint32_t p3MsgService::sendDistantMessage(RsMsgItem *item, const RsGxsId& from)
 
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
-	RsServer::notify()->notifyListChange( NOTIFY_LIST_MESSAGELIST,
-	                                      NOTIFY_TYPE_ADD );
+	auto pEvent = std::make_shared<RsMailStatusEvent>();
+	pEvent->mMailStatusEventCode = RsMailStatusEventCode::MESSAGE_SENT;
+	pEvent->mChangedMsgIds.insert(std::to_string(item->msgId));
+	rsEvents->postEvent(pEvent);
+
 	return item->msgId;
 }
 
@@ -1210,8 +1199,6 @@ bool 	p3MsgService::MessageSend(MessageInfo &info)
 		// Update info for caller
 		info.msgId = std::to_string(msg->msgId);
 		info .msgflags = msg->msgFlags;
-
-        RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_ADD);// deprecated. Should be removed. Oct. 28, 2020
 	}
 
     auto pEvent = std::make_shared<RsMailStatusEvent>();
@@ -1417,8 +1404,6 @@ bool p3MsgService::MessageToDraft(MessageInfo &info, const std::string &msgParen
         setMsgParentId(msg->msgId, atoi(msgParentId.c_str()));
 
         IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-
-    //	  RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
 
     auto pEvent = std::make_shared<RsMailStatusEvent>();
     pEvent->mMailStatusEventCode = RsMailStatusEventCode::MESSAGE_SENT;
@@ -1688,8 +1673,9 @@ bool p3MsgService::MessageToTrash(const std::string &mid, bool bTrash)
     std::map<uint32_t, RsMsgItem *>::iterator mit;
     uint32_t msgId = atoi(mid.c_str());
 
-    bool bChanged = false;
     bool bFound = false;
+    auto pEvent = std::make_shared<RsMailStatusEvent>();
+    pEvent->mMailStatusEventCode = RsMailStatusEventCode::MESSAGE_CHANGED;
 
     {
         RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
@@ -1712,23 +1698,25 @@ bool p3MsgService::MessageToTrash(const std::string &mid, bool bTrash)
             if (bTrash) {
                 if ((mi->msgFlags & RS_MSG_FLAGS_TRASH) == 0) {
                     mi->msgFlags |= RS_MSG_FLAGS_TRASH;
-                    bChanged = true;
+                    pEvent->mChangedMsgIds.insert(std::to_string(mi->msgId));
                 }
             } else {
                 if (mi->msgFlags & RS_MSG_FLAGS_TRASH) {
                     mi->msgFlags &= ~RS_MSG_FLAGS_TRASH;
-                    bChanged = true;
+                    pEvent->mChangedMsgIds.insert(std::to_string(mi->msgId));
                 }
             }
         }
     }
 
-    if (bChanged) {
+    if (!pEvent->mChangedMsgIds.empty()) {
         IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
         checkOutgoingMessages();
 
-		  RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
+        if(rsEvents) {
+            rsEvents->postEvent(pEvent);
+        }
     }
 
     return bFound;
@@ -2112,8 +2100,6 @@ void p3MsgService::notifyDataStatus( const GRouterMsgPropagationId& id,
 		msgOutgoing.erase(it2);
 #endif
 
-		RsServer::notify()->notifyListChange( NOTIFY_LIST_MESSAGELIST,
-		                                      NOTIFY_TYPE_ADD );
 		IndicateConfigChanged();
 
 		if(rsEvents)
@@ -2268,8 +2254,6 @@ bool p3MsgService::notifyGxsTransSendStatus( RsGxsTransId mailId,
 			}
 		}
 
-		RsServer::notify()->notifyListChange( NOTIFY_LIST_MESSAGELIST,
-		                                      NOTIFY_TYPE_ADD );
 		IndicateConfigChanged();
 	}
 	else if( status >= GxsTransSendStatus::FAILED_RECEIPT_SIGNATURE )

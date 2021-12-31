@@ -46,6 +46,7 @@
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
 #include "util/QtVersion.h"
+#include "util/qtthreadsutils.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsfiles.h>
@@ -160,7 +161,6 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	connect(viewsource, SIGNAL(triggered()), this, SLOT(viewSource()));
 
 	connect(NotifyQt::getInstance(), SIGNAL(messagesTagsChanged()), this, SLOT(messagesTagsChanged()));
-	connect(NotifyQt::getInstance(), SIGNAL(messagesChanged()), this, SLOT(messagesChanged()));
 
 	ui.imageBlockWidget->addButtonAction(tr("Load images always for this message"), this, SLOT(loadImagesAlways()), true);
 	ui.msgText->setImageBlockWidget(ui.imageBlockWidget);
@@ -211,12 +211,53 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	ui.dateText-> setText("");
 	
 	ui.info_Frame_Invite->hide();
+
+	mEventHandlerId = 0;
+	rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }); }, mEventHandlerId, RsEventType::MAIL_STATUS );
 }
 
 MessageWidget::~MessageWidget()
 {
 	if (isControlled == false) {
 		processSettings("MessageWidget", false);
+	}
+
+	rsEvents->unregisterEventsHandler(mEventHandlerId);
+}
+
+void MessageWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+	if(event->mType != RsEventType::MAIL_STATUS) {
+		return;
+	}
+
+	const RsMailStatusEvent *fe = dynamic_cast<const RsMailStatusEvent*>(event.get());
+	if (!fe) {
+		return;
+	}
+
+	switch (fe->mMailStatusEventCode) {
+	case RsMailStatusEventCode::MESSAGE_REMOVED:
+		if (fe->mChangedMsgIds.find(currMsgId) != fe->mChangedMsgIds.end()) {
+			if (isControlled) {
+				/* processed by MessagesDialog */
+				return;
+			}
+
+			/* messages was removed */
+			if (isWindow) {
+				window()->close();
+			} else {
+				deleteLater();
+			}
+		}
+		break;
+	case RsMailStatusEventCode::MESSAGE_SENT:
+	case RsMailStatusEventCode::MESSAGE_CHANGED:
+	case RsMailStatusEventCode::NEW_MESSAGE:
+	case RsMailStatusEventCode::MESSAGE_RECEIVED_ACK:
+	case RsMailStatusEventCode::SIGNATURE_FAILED:
+		break;
 	}
 }
 
@@ -405,25 +446,6 @@ void MessageWidget::getallrecommended()
 void MessageWidget::messagesTagsChanged()
 {
     showTagLabels();
-}
-
-void MessageWidget::messagesChanged()
-{
-	if (isControlled) {
-		/* processed by MessagesDialog */
-		return;
-	}
-
-	/* test Message */
-	MessageInfo msgInfo;
-	if (rsMail->getMessage(currMsgId, msgInfo) == false) {
-		/* messages was removed */
-		if (isWindow) {
-			window()->close();
-		} else {
-			deleteLater();
-		}
-	}
 }
 
 void MessageWidget::clearTagLabels()
