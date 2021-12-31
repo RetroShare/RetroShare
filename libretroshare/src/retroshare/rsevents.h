@@ -103,6 +103,9 @@ enum class RsEventType : uint32_t
 	/// @see rspeers.h
 	NETWORK                                                 = 16,
 
+	/// @see RsMailTagEvent
+	MAIL_TAG                                                = 17,
+
 	/** Emitted to update library clients about file hashing being completed */
 	FILE_HASHING_COMPLETED                                  = 20,
 

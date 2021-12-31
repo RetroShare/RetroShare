@@ -268,9 +268,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
 	 registerHelpButton(ui.helpButton,help_str,"MessagesDialog") ;
 
-    connect(NotifyQt::getInstance(), SIGNAL(messagesChanged()), mMessageModel, SLOT(updateMessages()));
-    connect(NotifyQt::getInstance(), SIGNAL(messagesTagsChanged()), this, SLOT(messagesTagsChanged()));
-
     connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
     connect(ui.filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
 
@@ -294,6 +291,9 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     mEventHandlerId=0;
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }); }, mEventHandlerId, RsEventType::MAIL_STATUS );
+
+    mTagEventHandlerId = 0;
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject( [this,event]() { handleTagEvent_main_thread(event); }); }, mEventHandlerId, RsEventType::MAIL_TAG );
 }
 
 void MessagesDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
@@ -310,9 +310,34 @@ void MessagesDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> even
     case RsMailStatusEventCode::MESSAGE_SENT:
     case RsMailStatusEventCode::MESSAGE_REMOVED:
     case RsMailStatusEventCode::NEW_MESSAGE:
+    case RsMailStatusEventCode::MESSAGE_CHANGED:
+    case RsMailStatusEventCode::TAG_CHANGED:
+        mMessageModel->updateMessages();
         updateMessageSummaryList();
         break;
-    default:
+    case RsMailStatusEventCode::MESSAGE_RECEIVED_ACK:
+    case RsMailStatusEventCode::SIGNATURE_FAILED:
+        break;
+    }
+}
+
+void MessagesDialog::handleTagEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+    if (event->mType != RsEventType::MAIL_TAG) {
+        return;
+    }
+
+    const RsMailTagEvent *fe = dynamic_cast<const RsMailTagEvent*>(event.get());
+    if (!fe) {
+        return;
+    }
+
+    switch (fe->mMailTagEventCode) {
+    case RsMailTagEventCode::TAG_ADDED:
+    case RsMailTagEventCode::TAG_CHANGED:
+    case RsMailTagEventCode::TAG_REMOVED:
+        fillQuickView();
+        mMessageModel->updateMessages();
         break;
     }
 }
@@ -323,6 +348,12 @@ void MessagesDialog::preModelUpdate()
 
     mTmpSavedSelectedIds.clear();
     getSelectedMessages(mTmpSavedSelectedIds);
+
+    mTmpSavedCurrentId.clear();
+    const QModelIndex& m = ui.messageTreeWidget->currentIndex();
+    if (m.isValid()) {
+        mTmpSavedCurrentId = m.sibling(m.row(), RsMessageModel::COLUMN_THREAD_MSGID).data(RsMessageModel::MsgIdRole).toString();
+    }
 
     std::cerr << "Pre-change: saving selection for " << mTmpSavedSelectedIds.size() << " indexes" << std::endl;
 }
@@ -341,6 +372,13 @@ void MessagesDialog::postModelUpdate()
     }
 
     ui.messageTreeWidget->selectionModel()->select(sel,QItemSelectionModel::SelectCurrent);
+
+    if (!mTmpSavedCurrentId.isEmpty()) {
+        QModelIndex index = mMessageProxyModel->mapFromSource(mMessageModel->getIndexOfMessage(mTmpSavedCurrentId.toStdString()));
+        if (index.isValid()) {
+            ui.messageTreeWidget->selectionModel()->setCurrentIndex(index, QItemSelectionModel::Select);
+        }
+    }
 }
 
 void MessagesDialog::sortColumn(int col,Qt::SortOrder so)
@@ -356,6 +394,9 @@ MessagesDialog::~MessagesDialog()
 {
     // save settings
     processSettings(false);
+
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
+    rsEvents->unregisterEventsHandler(mTagEventHandlerId);
 }
 
 UserNotify *MessagesDialog::createUserNotify(QObject *parent)
@@ -920,13 +961,6 @@ void MessagesDialog::changeQuickView(int newrow)
 	mMessageModel->setQuickViewFilter(f);
 	mMessageProxyModel->setFilterRegExp(QRegExp(RsMessageModel::FilterString));	// this triggers the update of the proxy model
 }
-
-void MessagesDialog::messagesTagsChanged()
-{
-    fillQuickView();
-    mMessageModel->updateMessages();
-}
-
 
 // click in messageTreeWidget
 void MessagesDialog::currentChanged(const QModelIndex& new_proxy_index,const QModelIndex& /*old_proxy_index*/)

@@ -308,6 +308,9 @@ enum class RsMailStatusEventCode: uint8_t
 
 	/// An error occurred attempting to sign the message
 	SIGNATURE_FAILED   = 0x04,
+
+	MESSAGE_CHANGED                 = 0x05,
+	TAG_CHANGED                     = 0x06,
 };
 
 struct RsMailStatusEvent : RsEvent
@@ -327,6 +330,32 @@ struct RsMailStatusEvent : RsEvent
 	}
 
 	~RsMailStatusEvent() override = default;
+};
+
+enum class RsMailTagEventCode: uint8_t
+{
+	TAG_ADDED   = 0x00,
+	TAG_CHANGED = 0x01,
+	TAG_REMOVED = 0x02,
+};
+
+struct RsMailTagEvent : RsEvent
+{
+	RsMailTagEvent() : RsEvent(RsEventType::MAIL_TAG) {}
+
+	RsMailTagEventCode mMailTagEventCode;
+	std::set<std::string> mChangedMsgTagIds;
+
+	/// @see RsEvent
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx) override
+	{
+		RsEvent::serial_process(j, ctx);
+		RS_SERIAL_PROCESS(mChangedMsgTagIds);
+		RS_SERIAL_PROCESS(mMailTagEventCode);
+	}
+
+	~RsMailTagEvent() override = default;
 };
 
 #define RS_CHAT_PUBLIC 			0x0001
