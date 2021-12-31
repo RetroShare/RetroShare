@@ -126,7 +126,11 @@ bool ElidedLabel::paintElidedLine( QPainter* painter, QString plainText
 	to.setWrapMode(wordWrap ? QTextOption::WrapAtWordBoundaryOrAnywhere : QTextOption::NoWrap);
 	textLayout.setTextOption(to);
 
-	if (painter) painter->save();
+	if (painter)
+	{
+		painter->save();
+		painter->setFont(useFont);
+	}
 	textLayout.beginLayout();
 	forever {
 		//Get new line for text.
@@ -220,10 +224,7 @@ bool ElidedLabel::paintElidedLine( QPainter* painter, QString plainText
 
 		if(width+iTransX+cr.left() <= cr.right())
 			if (painter)
-			{
-				painter->setFont(useFont);
 				painter->drawText(QPoint(iTransX + cr.left(), y + fontMetrics.ascent() + cr.top()), elidedLastLine);
-			}
 
 		//Draw button to get ToolTip
 #if QT_VERSION < QT_VERSION_CHECK(5,11,0)

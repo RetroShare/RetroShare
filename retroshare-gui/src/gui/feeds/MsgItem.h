@@ -24,6 +24,7 @@
 #include "ui_MsgItem.h"
 #include "FeedItem.h"
 #include <stdint.h>
+#include <retroshare/rsevents.h>
 
 class FeedHolder;
 class SubFileItem;
@@ -35,6 +36,7 @@ class MsgItem : public FeedItem, private Ui::MsgItem
 public:
 	/** Default Constructor */
 	MsgItem(FeedHolder *parent, uint32_t feedId, const std::string &msgId, bool isHome);
+	virtual ~MsgItem();
 
 	void updateItemStatic();
 
@@ -46,6 +48,7 @@ protected:
 
 private:
 	void fillExpandFrame();
+	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
 private slots:
 	/* default stuff */
@@ -56,7 +59,6 @@ private slots:
 	void deleteMsg();
 	void replyMsg();
 	void sendInvite();
-	void checkMessageReadStatus();
 
 	void updateItem();
 
@@ -66,6 +68,7 @@ private:
 
 	bool mIsHome;
 	bool mCloseOnRead;
+	RsEventsHandlerId_t mEventHandlerId;
 
 	std::list<SubFileItem *> mFileItems;
 };

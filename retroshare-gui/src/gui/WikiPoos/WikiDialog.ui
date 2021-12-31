@@ -50,7 +50,7 @@
             <height>510</height>
            </rect>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
+          <layout class="QGridLayout" name="gridLayout">
            <property name="leftMargin">
             <number>0</number>
            </property>
@@ -63,33 +63,48 @@
            <property name="bottomMargin">
             <number>0</number>
            </property>
-           <item>
-            <widget class="GroupTreeWidget" name="groupTreeWidget" native="true">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>150</height>
-              </size>
+           <item row="0" column="0">
+            <widget class="QSplitter" name="splitter">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
              </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QTreeWidget" name="treeWidget_Pages">
-             <column>
-              <property name="text">
-               <string>Page Name</string>
+             <widget class="GroupTreeWidget" name="groupTreeWidget" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Page Id</string>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>150</height>
+               </size>
               </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Orig Id</string>
+             </widget>
+             <widget class="QTreeWidget" name="treeWidget_Pages">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
-             </column>
+              <column>
+               <property name="text">
+                <string>Page Name</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Page Id</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Orig Id</string>
+               </property>
+              </column>
+             </widget>
             </widget>
            </item>
           </layout>

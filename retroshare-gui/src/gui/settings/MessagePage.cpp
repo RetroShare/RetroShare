@@ -27,6 +27,7 @@
 #include "gui/common/TagDefs.h"
 #include <algorithm>
 #include "NewTag.h"
+#include "util/qtthreadsutils.h"
 
 MessagePage::MessagePage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
@@ -54,10 +55,14 @@ MessagePage::MessagePage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.loadEmbeddedImages,    SIGNAL(toggled(bool)),          this,SLOT(updateLoadEmbededImages()  ));
 	connect(ui.openComboBox,          SIGNAL(currentIndexChanged(int)),this,SLOT(updateMsgOpen()            ));
 	connect(ui.emoticonscheckBox,     SIGNAL(toggled(bool)),          this,SLOT(updateLoadEmoticons()  ));
+
+    mTagEventHandlerId = 0;
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }); }, mTagEventHandlerId, RsEventType::MAIL_TAG );
 }
 
 MessagePage::~MessagePage()
 {
+    rsEvents->unregisterEventsHandler(mTagEventHandlerId);
      delete(m_pTags);
 }
 
@@ -132,6 +137,27 @@ MessagePage::load()
     // fill items
     rsMail->getMessageTagTypes(*m_pTags);
     fillTags();
+}
+
+void MessagePage::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+    if (event->mType != RsEventType::MAIL_TAG) {
+        return;
+    }
+
+    const RsMailTagEvent *fe = dynamic_cast<const RsMailTagEvent*>(event.get());
+    if (!fe) {
+        return;
+    }
+
+    switch (fe->mMailTagEventCode) {
+    case RsMailTagEventCode::TAG_ADDED:
+    case RsMailTagEventCode::TAG_CHANGED:
+    case RsMailTagEventCode::TAG_REMOVED:
+       rsMail->getMessageTagTypes(*m_pTags);
+       fillTags();
+       break;
+    }
 }
 
 // fill tags
