@@ -29,10 +29,10 @@ PulseMessage::PulseMessage(QWidget *parent)
 {
 	setupUi(this);
 
-	connect(label_image1, SIGNAL(clicked()), this, SLOT(viewPicture()));
-	connect(label_image2, SIGNAL(clicked()), this, SLOT(viewPicture()));
-	connect(label_image3, SIGNAL(clicked()), this, SLOT(viewPicture()));
-	connect(label_image4, SIGNAL(clicked()), this, SLOT(viewPicture()));
+	connect(label_image1, SIGNAL(clicked()), this, SLOT(viewPictureOne()));
+	connect(label_image2, SIGNAL(clicked()), this, SLOT(viewPictureTwo()));
+	connect(label_image3, SIGNAL(clicked()), this, SLOT(viewPictureThree()));
+	connect(label_image4, SIGNAL(clicked()), this, SLOT(viewPictureFour()));
 }
 
 void PulseMessage::setup(RsWirePulseSPtr pulse)
@@ -148,7 +148,7 @@ void PulseMessage::setRefImageCount(uint32_t count)
 	}
 }
 
-void PulseMessage::viewPicture()
+void PulseMessage::viewPictureOne()
 {
 	PhotoView *photoView = new PhotoView(this);
 
@@ -158,21 +158,69 @@ void PulseMessage::viewPicture()
 		pixmap.loadFromData(mPulse->mImage1.mData, mPulse->mImage1.mSize);
 		photoView->setPixmap(pixmap);
 	}
-	
+
+	QString timestamp = misc::timeRelativeToNow(mPulse->mRefPublishTs);
+
+	photoView->setTitle(QString::fromStdString(mPulse->mPulseText));
+	photoView->setGroupNameString(QString::fromStdString(mPulse->mRefGroupName));
+	photoView->setTime(timestamp);
+	//photoView->setGroupId(mPulse->mRefGroupId);
+
+	photoView->show();
+
+	/* window will destroy itself! */
+}
+
+void PulseMessage::viewPictureTwo()
+{
+	PhotoView *photoView = new PhotoView(this);
+
 	if (!mPulse->mImage2.empty()) {
 		// install image.
 		QPixmap pixmap;
 		pixmap.loadFromData(mPulse->mImage2.mData, mPulse->mImage2.mSize);
 		photoView->setPixmap(pixmap);
 	}
-	
+
+	QString timestamp = misc::timeRelativeToNow(mPulse->mRefPublishTs);
+
+	photoView->setTitle(QString::fromStdString(mPulse->mPulseText));
+	photoView->setGroupNameString(QString::fromStdString(mPulse->mRefGroupName));
+	photoView->setTime(timestamp);
+	//photoView->setGroupId(mPulse->mRefGroupId);
+
+	photoView->show();
+
+	/* window will destroy itself! */
+}
+
+void PulseMessage::viewPictureThree()
+{
+	PhotoView *photoView = new PhotoView(this);
+
 	if (!mPulse->mImage3.empty()) {
 		// install image.
 		QPixmap pixmap;
 		pixmap.loadFromData(mPulse->mImage3.mData, mPulse->mImage3.mSize);
 		photoView->setPixmap(pixmap);
 	}
-	
+
+	QString timestamp = misc::timeRelativeToNow(mPulse->mRefPublishTs);
+
+	photoView->setTitle(QString::fromStdString(mPulse->mPulseText));
+	photoView->setGroupNameString(QString::fromStdString(mPulse->mRefGroupName));
+	photoView->setTime(timestamp);
+	//photoView->setGroupId(mPulse->mRefGroupId);
+
+	photoView->show();
+
+	/* window will destroy itself! */
+}
+
+void PulseMessage::viewPictureFour()
+{
+	PhotoView *photoView = new PhotoView(this);
+
 	if (!mPulse->mImage4.empty()) {
 		// install image.
 		QPixmap pixmap;

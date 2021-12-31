@@ -37,7 +37,10 @@ public:
 	void setRefImageCount(uint32_t count);
 
 private slots:
-	void viewPicture();
+	void viewPictureOne();
+	void viewPictureTwo();
+	void viewPictureThree();
+	void viewPictureFour();
 
 private:
 	RsWirePulseSPtr mPulse;
