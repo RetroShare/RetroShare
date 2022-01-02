@@ -52,7 +52,7 @@ private slots:
 	void addPicture();
 	void on_removeButton_clicked();
 	void fileHashingFinished(QList<HashedFile> hashedFiles);
-	void reject();
+	void reject() override; //QDialog
 
 	void setPage(int viewMode);
 private:

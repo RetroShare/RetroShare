@@ -29,26 +29,34 @@ class RSTreeView : public QTreeView
 	Q_OBJECT
 
 public:
-	RSTreeView(QWidget *parent = 0);
+	RSTreeView(QWidget *parent = nullptr);
 
+	/**
+	 * @brief set Placeholder Text
+	 * @param text
+	 */
 	void setPlaceholderText(const QString &text);
 
-    // Use this to make selection automatic based on mouse position. This is useful to trigger selection and therefore editing mode
-    // in trees that show editing widgets using a QStyledItemDelegate
-
-    void setAutoSelect(bool b);
+	/**
+	 * @brief Use this to make selection automatic based on mouse position.
+	 * This is useful to trigger selection and therefore editing mode in trees that show editing widgets using a QStyledItemDelegate.
+	 * @param b
+	 */
+	void setAutoSelect(bool b);
 
 signals:
-    void sizeChanged(QSize);
-    void zoomRequested(bool zoom_or_unzoom);
+	void sizeChanged(QSize);
+	void zoomRequested(bool zoom_or_unzoom);
 
 protected:
 	virtual void mouseMoveEvent(QMouseEvent *e) override; // overriding so as to manage auto-selection
+	virtual void leaveEvent(QEvent *e) override; // overriding so as to manage auto-selection clear
 	virtual void wheelEvent(QWheelEvent *e) override; // overriding so as to manage zoom
-    virtual void resizeEvent(QResizeEvent *e) override;
+	virtual void resizeEvent(QResizeEvent *e) override;
 	virtual void paintEvent(QPaintEvent *event) override;
 
 	QString placeholderText;
+	bool autoSelect;
 };
 
 #endif

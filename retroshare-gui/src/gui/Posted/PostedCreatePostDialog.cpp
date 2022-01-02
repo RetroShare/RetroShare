@@ -41,9 +41,12 @@
 #include "gui/common/FilesDefs.h"
 
 /* View Page */
-#define VIEW_POST  1
-#define VIEW_IMAGE  2
-#define VIEW_LINK  3
+#define VIEW_POST   0
+#define VIEW_IMAGE  1
+#define VIEW_LINK   2
+/* View Image */
+#define IMG_ATTACH  0
+#define IMG_PICTURE 1
 
 PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGroupId& grpId, const RsGxsId& default_author, QWidget *parent):
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint),
@@ -54,7 +57,6 @@ PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGrou
 	Settings->loadWidgetInformation(this);
 
 	connect(ui->postButton, SIGNAL(clicked()), this, SLOT(createPost()));
-	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 	connect(ui->addPicButton, SIGNAL(clicked() ), this , SLOT(addPicture()));
 	connect(ui->RichTextEditWidget, SIGNAL(textSizeOk(bool)),ui->postButton, SLOT(setEnabled(bool)));
 
@@ -84,6 +86,7 @@ PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGrou
 	connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(setPage(int)));
 	
 	ui->removeButton->hide();
+	ui->stackedWidgetPicture->setCurrentIndex(IMG_ATTACH);
 
 	/* load settings */
 	processSettings(true);
@@ -202,7 +205,6 @@ void PostedCreatePostDialog::addPicture()
 
 	// select a picture file
 	if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg *.gif *.webp )", imagefilename)) {
-		QString encodedImage;
 		QImage image;
 		if (image.load(imagefilename) == false) {
 			fprintf (stderr, "RsHtml::makeEmbeddedImage() - image \"%s\" can't be load\n", imagefilename.toLatin1().constData());
@@ -213,7 +215,7 @@ void PostedCreatePostDialog::addPicture()
 		QImage opt;
 		if(ImageUtil::optimizeSizeBytes(imagebytes, image, opt, 640*480, MAXMESSAGESIZE - 2000)) { //Leave space for other stuff
 			ui->imageLabel->setPixmap(QPixmap::fromImage(opt));
-			ui->stackedWidgetPicture->setCurrentIndex(1);
+			ui->stackedWidgetPicture->setCurrentIndex(IMG_PICTURE);
 			ui->removeButton->show();
 		} else {
 			imagefilename = "";
@@ -259,45 +261,24 @@ int PostedCreatePostDialog::viewMode()
 
 void PostedCreatePostDialog::setPage(int viewMode)
 {
-	switch (viewMode) {
-	case VIEW_POST:
-		ui->stackedWidget->setCurrentIndex(0);
+	if( (viewMode < 0) || (viewMode > ui->stackedWidget->count()-1) )
+		viewMode = VIEW_POST;
 
-		ui->viewPostButton->setChecked(true);
-		ui->viewImageButton->setChecked(false);
-		ui->viewLinkButton->setChecked(false);
+	ui->stackedWidget->setCurrentIndex(viewMode);
 
-		break;
-	case VIEW_IMAGE:
-		ui->stackedWidget->setCurrentIndex(1);
+	ui->viewPostButton ->setChecked(viewMode==VIEW_POST);
+	ui->viewImageButton->setChecked(viewMode==VIEW_IMAGE);
+	ui->viewLinkButton ->setChecked(viewMode==VIEW_LINK);
 
-		ui->viewImageButton->setChecked(true);
-		ui->viewPostButton->setChecked(false);
-		ui->viewLinkButton->setChecked(false);
-
-		break;
-	case VIEW_LINK:
-		ui->stackedWidget->setCurrentIndex(2);
-
-		ui->viewLinkButton->setChecked(true);
-		ui->viewPostButton->setChecked(false);
-		ui->viewImageButton->setChecked(false);
-
-		break;
-	default:
-		setPage(VIEW_POST);
-		return;
-	}
 }
 
 void PostedCreatePostDialog::on_removeButton_clicked()
 {
 	imagefilename = "";
 	imagebytes.clear();
-	QPixmap empty;
-	ui->imageLabel->setPixmap(empty);
+	ui->imageLabel->setPixmap(QPixmap());
 	ui->removeButton->hide();
-	ui->stackedWidgetPicture->setCurrentIndex(0);
+	ui->stackedWidgetPicture->setCurrentIndex(IMG_ATTACH);
 }
 
 void PostedCreatePostDialog::reject()

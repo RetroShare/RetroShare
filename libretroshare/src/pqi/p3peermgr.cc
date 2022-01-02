@@ -812,11 +812,11 @@ int p3PeerMgrIMPL::getFriendCount(bool ssl, bool online)
 
 	// count all gpg id's
 	std::list<RsPgpId> gpgIds;
-	AuthGPG::getAuthGPG()->getGPGAcceptedList(gpgIds);
+    AuthPGP::getPgpAcceptedList(gpgIds);
 
 	// add own gpg id, if we have more than one location
 	std::list<RsPeerId> ownSslIds;
-	getAssociatedPeers(AuthGPG::getAuthGPG()->getGPGOwnId(), ownSslIds);
+    getAssociatedPeers(AuthPGP::getPgpOwnId(), ownSslIds);
 
 	return gpgIds.size() + ((ownSslIds.size() > 0) ? 1 : 0);
 }
@@ -962,7 +962,7 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
 
         // check that the PGP key is known
 
-        if(!AuthGPG::getAuthGPG()->isGPGId(gpg_id))
+        if(!AuthPGP::isPGPId(gpg_id))
         {
 			RsErr() << "Trying to add SSL id (" << id << ") to be validated with unknown PGP key (" << gpg_id << ". This is a bug!" << std::endl;
 			return false;
@@ -970,7 +970,7 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
 
 		//Authentication is now tested at connection time, we don't store the ssl cert anymore
 		//
-		if (!AuthGPG::getAuthGPG()->isGPGAccepted(gpg_id) &&  gpg_id != AuthGPG::getAuthGPG()->getGPGOwnId())
+        if (!AuthPGP::isPGPAccepted(gpg_id) &&  gpg_id != AuthPGP::getPgpOwnId())
 		{
 #ifdef PEER_DEBUG
 			std::cerr << "p3PeerMgrIMPL::addFriend() gpg is not accepted" << std::endl;
@@ -1024,7 +1024,7 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
 
 		pstate.id = id;
 		pstate.gpg_id = gpg_id;
-		pstate.name = AuthGPG::getAuthGPG()->getGPGName(gpg_id);
+        pstate.name = AuthPGP::getPgpName(gpg_id);
 
 		pstate.vs_disc = vs_disc;
 		pstate.vs_dht = vs_dht;
@@ -1126,8 +1126,8 @@ bool p3PeerMgrIMPL::addSslOnlyFriend( const RsPeerId& sslId, const RsPgpId& pgp_
 	 * superficially set to true the PGP signature verification would have been
 	 * skipped and the attacker connection would be accepted.
 	 * If the PGP key is available add it as full friend. */
-	if(AuthGPG::getAuthGPG()->isPgpPubKeyAvailable(pgp_id))
-		AuthGPG::getAuthGPG()->AllowConnection(pgp_id, true);
+    if(AuthPGP::isPgpPubKeyAvailable(pgp_id))
+        AuthPGP::AllowConnection(pgp_id, true);
 	else
 		pstate.skip_pgp_signature_validation = true;
 
@@ -1398,11 +1398,11 @@ bool p3PeerMgrIMPL::UpdateOwnAddress( const sockaddr_storage& pLocalAddr,
 	sockaddr_storage_copy(pExtAddr, extAddr);
 	sockaddr_storage_ipv6_to_ipv4(extAddr);
 
-//#ifdef PEER_DEBUG
+#ifdef PEER_DEBUG
 	std::cerr << "p3PeerMgrIMPL::UpdateOwnAddress("
 	          << sockaddr_storage_tostring(localAddr) << ", "
 	          << sockaddr_storage_tostring(extAddr) << ")" << std::endl;
-//#endif
+#endif
 
 	if( rsBanList &&
 	         !rsBanList->isAddressAccepted(localAddr,
@@ -2470,7 +2470,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 			    setOwnNetworkMode(pitem->netMode);
 			    setOwnVisState(pitem->vs_disc, pitem->vs_dht);
 
-			    mOwnState.gpg_id = AuthGPG::getAuthGPG()->getGPGOwnId();
+                mOwnState.gpg_id = AuthPGP::getPgpOwnId();
 			    mOwnState.location = AuthSSL::getAuthSSL()->getOwnLocation();
 		    }
 		    else
@@ -2642,7 +2642,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 #endif
 
 		    for(uint32_t i=0;i<sitem->pgp_ids.size();++i)
-			    if(AuthGPG::getAuthGPG()->isGPGAccepted(sitem->pgp_ids[i]) || sitem->pgp_ids[i] == AuthGPG::getAuthGPG()->getGPGOwnId())
+                if(AuthPGP::isPGPAccepted(sitem->pgp_ids[i]) || sitem->pgp_ids[i] == AuthPGP::getPgpOwnId())
 			    {
 				    mFriendsPermissionFlags[sitem->pgp_ids[i]] = sitem->service_flags[i] ;
 #ifdef PEER_DEBUG
@@ -2684,7 +2684,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
         for(auto group_pair:groupList)
         {
             for(auto profileIdIt(group_pair.second.peerIds.begin());profileIdIt!=group_pair.second.peerIds.end();)
-                if(AuthGPG::getAuthGPG()->isGPGAccepted(*profileIdIt) || *profileIdIt == AuthGPG::getAuthGPG()->getGPGOwnId())
+                if(AuthPGP::isPGPAccepted(*profileIdIt) || *profileIdIt == AuthPGP::getPgpOwnId())
                     ++profileIdIt;
                 else
                 {

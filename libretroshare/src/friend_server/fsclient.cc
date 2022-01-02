@@ -90,7 +90,7 @@ bool FsClient::sendItem(const std::string& address,uint16_t port,RsItem *item,st
 
     RsDbg() << "Sending item to friend server at \"" << address << ":" << port ;
 
-    int CreateSocket = 0,n = 0;
+    int CreateSocket = 0;
     char dataReceived[1024];
     struct sockaddr_in ipOfServer;
 
@@ -130,7 +130,7 @@ bool FsClient::sendItem(const std::string& address,uint16_t port,RsItem *item,st
 //    FsSerializer().serialise(item,data,&size);
 //    write(CreateSocket,data,size);				// shouldn't we use the pqistreamer in R/W mode instead?
 
-    RsFdBinInterface *bio = new RsFdBinInterface(CreateSocket);	// deleted by ~pqistreamer()
+    RsFdBinInterface *bio = new RsFdBinInterface(CreateSocket,true);	// deleted by ~pqistreamer()
 
     pqithreadstreamer p(this,rss,RsPeerId(),bio,BIN_FLAGS_READABLE | BIN_FLAGS_WRITEABLE | BIN_FLAGS_NO_CLOSE);
     p.start();

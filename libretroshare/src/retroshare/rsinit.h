@@ -159,6 +159,7 @@ public:
         ERR_ALREADY_RUNNING,     	/// Another istance is running already
         ERR_CANT_ACQUIRE_LOCK,   	/// Another istance is already running?
         ERR_NO_AVAILABLE_ACCOUNT,	/// Used in retroshare-service -U list when no account is available
+        ERR_CANNOT_CONFIGURE_TOR,	/// cannot start/configure Tor for an auto-tor node
         ERR_UNKNOWN              	/// Unkown error, maybe password is wrong?
 	};
 
@@ -184,6 +185,7 @@ public:
 	static bool isPortable();
 	static bool isWindowsXP();
 	static bool collectEntropy(uint32_t bytes) ;
+    static bool startAutoTor();
 
     /*!
      * \brief lockFilePath
@@ -218,6 +220,7 @@ public:
 	static void setAutoLogin(bool autoLogin);
 	static bool RsClearAutoLogin() ;
 
+    static std::string executablePath() ;
 private:
 	/** @brief Lock profile directory
 	 * param[in] accountDir account directory to lock

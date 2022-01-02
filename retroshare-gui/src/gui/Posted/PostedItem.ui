@@ -16,7 +16,7 @@
   <property name="styleSheet">
    <string notr="true"/>
   </property>
-  <layout class="QGridLayout" name="gridLayout_3">
+  <layout class="QGridLayout" name="PostedItem_GL">
    <property name="leftMargin">
     <number>1</number>
    </property>
@@ -82,21 +82,21 @@
         <property name="frameShadow">
          <enum>QFrame::Plain</enum>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
+        <layout class="QVBoxLayout" name="voteFrame_VL">
          <property name="spacing">
           <number>0</number>
          </property>
          <property name="leftMargin">
-          <number>3</number>
+          <number>0</number>
          </property>
          <property name="topMargin">
-          <number>3</number>
+          <number>0</number>
          </property>
          <property name="rightMargin">
-          <number>3</number>
+          <number>0</number>
          </property>
          <property name="bottomMargin">
-          <number>3</number>
+          <number>0</number>
          </property>
          <item>
           <widget class="QToolButton" name="voteUpButton">
@@ -169,18 +169,12 @@
           </widget>
          </item>
          <item>
-          <spacer name="verticalSpacer">
+          <spacer name="voteFrame_VS">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
            <property name="sizeType">
             <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>5</height>
-            </size>
            </property>
           </spacer>
          </item>
@@ -188,7 +182,7 @@
        </widget>
       </item>
       <item row="0" column="1" rowspan="2">
-       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <layout class="QVBoxLayout" name="thumbnail_VL">
         <property name="leftMargin">
          <number>9</number>
         </property>
@@ -233,7 +227,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="verticalSpacer_2">
+         <spacer name="thumbnail_VS">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -248,7 +242,7 @@
        </layout>
       </item>
       <item row="0" column="2">
-       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <layout class="QVBoxLayout" name="title_VL">
         <property name="topMargin">
          <number>6</number>
         </property>
@@ -286,7 +280,7 @@
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="newCommHLayout">
+         <layout class="QHBoxLayout" name="newComm_HL">
           <property name="topMargin">
            <number>0</number>
           </property>
@@ -312,7 +306,7 @@
        </layout>
       </item>
       <item row="1" column="2">
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <layout class="QVBoxLayout" name="from_VL">
         <property name="spacing">
          <number>0</number>
         </property>
@@ -320,7 +314,7 @@
          <enum>QLayout::SetDefaultConstraint</enum>
         </property>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <layout class="QHBoxLayout" name="from_HL">
           <property name="spacing">
            <number>5</number>
           </property>
@@ -416,7 +410,7 @@
            </widget>
           </item>
           <item>
-           <spacer name="horizontalSpacer_4">
+           <spacer name="from_HS">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -434,7 +428,7 @@
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="buttonHLayout">
+         <layout class="QHBoxLayout" name="buttons_HL">
           <property name="spacing">
            <number>6</number>
           </property>
@@ -567,7 +561,7 @@
            </widget>
           </item>
           <item>
-           <spacer name="horizontalSpacer">
+           <spacer name="buttons_HS">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -631,9 +625,9 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="frame_picture_HL">
       <item>
-       <spacer name="horizontalSpacer_2">
+       <spacer name="frame_picture_LHS">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -659,7 +653,7 @@
        </widget>
       </item>
       <item>
-       <spacer name="horizontalSpacer_3">
+       <spacer name="frame_picture_RHS">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -685,7 +679,7 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="frame_notes_GL">
       <property name="leftMargin">
        <number>3</number>
       </property>
@@ -727,15 +721,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>GxsIdLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/gxs/GxsIdLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>ElidedLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/ElidedLabel.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>GxsIdLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/gxs/GxsIdLabel.h</header>
   </customwidget>
   <customwidget>
    <class>ClickableLabel</class>

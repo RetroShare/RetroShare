@@ -1,7 +1,9 @@
 ARG ANDROID_NDK_ARCH=arm
 FROM registry.gitlab.com/retroshare/retroshare:android_${ANDROID_NDK_ARCH}_base
 
-RUN apt-get update -y && apt-get upgrade -y
+ENV APT_UNAT="--assume-yes --quiet"
+
+RUN apt-get update $APT_UNAT && apt-get upgrade $APT_UNAT --show-upgraded
 
 ARG REPO_URL=https://gitlab.com/RetroShare/RetroShare.git
 ARG REPO_BRANCH=master

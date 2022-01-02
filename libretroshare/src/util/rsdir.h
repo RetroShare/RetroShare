@@ -58,11 +58,19 @@ class RsStackFileLock
 
 namespace RsDirUtil {
 
+// Returns the name of the directory on top of the given path (as opposed to the full path to that directory)
 std::string 	getTopDir(const std::string&);
 std::string 	getRootDir(const std::string&);
 std::string 	removeRootDir(const std::string& path);
 void 			removeTopDir(const std::string& dir, std::string &path);
 std::string 	removeRootDirs(const std::string& path, const std::string& root);
+
+// Returns the filename at the end of the path. An empty string is returned if the path is a directory path.
+std::string 	getFileName(const std::string& full_file_path);
+
+// Returns the directory (full path) that contains the given path (filename or directory).
+// If a directory is supplied, the same path is returned.
+std::string 	getDirectory(const std::string& full_file_path);
 
 // Renames file from to file to. Files should be on the same file system.
 //	returns true if succeed, false otherwise.
@@ -107,6 +115,12 @@ rstime_t lastWriteTime(
         std::error_condition& errc = RS_DEFAULT_STORAGE_PARAM(std::error_condition) );
 
 bool    	checkDirectory(const std::string& dir);
+
+/*!
+ * \brief checkCreateDirectory
+ * \param dir
+ * \return false when the directory does not exist and could not be created.
+ */
 bool    	checkCreateDirectory(const std::string& dir);
 
 // Removes all symbolic links along the path and computes the actual location of the file/dir passed as argument.
@@ -159,6 +173,7 @@ bool 		getWideFileHash(std::wstring filepath,                RsFileHash &hash, u
 FILE		*rs_fopen(const char* filename, const char* mode);
 
 std::string convertPathToUnix(std::string path);
+bool        isDirectorySeparator(const char &c);
 
 /** Concatenate two path pieces putting '/' separator between them only if
  * needed */

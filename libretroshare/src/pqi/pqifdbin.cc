@@ -21,24 +21,46 @@
  ******************************************************************************/
 
 #include "util/rsprint.h"
+#include "util/rsfile.h"
 #include "pqi/pqifdbin.h"
 
-RsFdBinInterface::RsFdBinInterface(int file_descriptor)
-    : mCLintConnt(file_descriptor),mIsActive(file_descriptor!=0)
+RsFdBinInterface::RsFdBinInterface(int file_descriptor, bool is_socket)
+    : mCLintConnt(file_descriptor),mIsSocket(is_socket),mIsActive(false)
 {
     mTotalReadBytes=0;
     mTotalInBufferBytes=0;
     mTotalWrittenBytes=0;
     mTotalOutBufferBytes=0;
+
+    if(file_descriptor!=0)
+        setSocket(file_descriptor);
 }
 
 void RsFdBinInterface::setSocket(int s)
 {
-        if(mIsActive != 0)
-        {
-            RsErr() << "Changing socket to active FsBioInterface! Canceling all pending R/W data." ;
-            close();
-        }
+    if(mIsActive != 0)
+    {
+        RsErr() << "Changing socket to active FsBioInterface! Canceling all pending R/W data." ;
+        close();
+    }
+#ifndef WINDOWS_SYS
+    int flags = fcntl(s,F_GETFL);
+
+    if(!(flags & O_NONBLOCK))
+    {
+        RsWarn() << "Trying to use a blocking file descriptor in RsFdBinInterface. This is not going to work! Setting the socket to be non blocking.";
+        unix_fcntl_nonblock(s);
+    }
+
+#else
+    // On windows, there is no way to determine whether a socket is blocking or not, so we set it to non blocking whatsoever.
+    if (mIsSocket) {
+        unix_fcntl_nonblock(s);
+    } else {
+        RsFileUtil::set_fd_nonblock(s);
+    }
+#endif
+
     mCLintConnt = s;
     mIsActive = (s!=0);
 }
@@ -64,7 +86,15 @@ int RsFdBinInterface::read_pending()
     char inBuffer[1025];
     memset(inBuffer,0,1025);
 
-    ssize_t readbytes = recv(mCLintConnt, inBuffer, sizeof(inBuffer),MSG_DONTWAIT);
+    ssize_t readbytes;
+#if WINDOWS_SYS
+    if (mIsSocket)
+        // Windows needs recv for sockets
+        readbytes = recv(mCLintConnt, inBuffer, sizeof(inBuffer), 0);
+    else
+#endif
+    readbytes = read(mCLintConnt, inBuffer, sizeof(inBuffer));	// Needs read instead of recv which is only for sockets.
+                                                                // Sockets should be set to non blocking by the client process.
 
     if(readbytes == 0)
     {
@@ -76,20 +106,28 @@ int RsFdBinInterface::read_pending()
     }
     if(readbytes < 0)
     {
-        if(errno != EWOULDBLOCK && errno != EAGAIN)
+        if(errno != 0 && errno != EWOULDBLOCK && errno != EAGAIN)
+#ifdef WINDOWS_SYS
+            // A non blocking read to file descriptor gets ERROR_NO_DATA for empty data
+            if (mIsSocket == true || GetLastError() != ERROR_NO_DATA)
+#endif
             RsErr() << "read() failed. Errno=" << errno ;
 
         return mTotalInBufferBytes;
     }
 
+#ifdef DEBUG_FS_BIN
     RsDbg() << "clintConnt: " << mCLintConnt << ", readbytes: " << readbytes ;
+#endif
 
     // display some debug info
 
     if(readbytes > 0)
     {
+#ifdef DEBUG_FS_BIN
         RsDbg() << "Received the following bytes: " << RsUtil::BinToHex( reinterpret_cast<unsigned char*>(inBuffer),readbytes,50) << std::endl;
-        //RsDbg() << "Received the following bytes: " << std::string(inBuffer,readbytes) << std::endl;
+        RsDbg() << "Received the following bytes: " << std::string(inBuffer,readbytes) << std::endl;
+#endif
 
         void *ptr = malloc(readbytes);
 
@@ -102,7 +140,9 @@ int RsFdBinInterface::read_pending()
         mTotalInBufferBytes += readbytes;
         mTotalReadBytes += readbytes;
 
+#ifdef DEBUG_FS_BIN
         RsDbg() << "Socket: " << mCLintConnt << ". Total read: " << mTotalReadBytes << ". Buffer size: " << mTotalInBufferBytes ;
+#endif
     }
     return mTotalInBufferBytes;
 }
@@ -113,7 +153,14 @@ int RsFdBinInterface::write_pending()
         return mTotalOutBufferBytes;
 
     auto& p = out_buffer.front();
-    int written = write(mCLintConnt, p.first, p.second);
+    int written;
+#if WINDOWS_SYS
+    if (mIsSocket)
+        // Windows needs send for sockets
+        written = send(mCLintConnt, (char*) p.first, p.second, 0);
+    else
+#endif
+    written = write(mCLintConnt, p.first, p.second);
 
     if(written < 0)
     {
@@ -129,11 +176,15 @@ int RsFdBinInterface::write_pending()
         return mTotalOutBufferBytes;
     }
 
+#ifdef DEBUG_FS_BIN
     RsDbg() << "clintConnt: " << mCLintConnt << ", written: " << written ;
+#endif
 
     // display some debug info
 
+#ifdef DEBUG_FS_BIN
     RsDbg() << "Sent the following bytes: " << RsUtil::BinToHex( reinterpret_cast<unsigned char*>(p.first),written,50) << std::endl;
+#endif
 
     if(written < p.second)
     {
@@ -173,6 +224,19 @@ void RsFdBinInterface::clean()
     in_buffer.clear();
     out_buffer.clear();
 }
+
+int RsFdBinInterface::readline(void *data, int len)
+{
+    int n=0;
+
+    for(auto p:in_buffer)
+        for(int i=0;i<p.second;++i,++n)
+            if((n+1==len) || static_cast<unsigned char*>(p.first)[i] == '\n')
+                return readdata(data,n+1);
+
+    return 0;
+}
+
 int RsFdBinInterface::readdata(void *data, int len)
 {
     // read incoming bytes in the buffer
@@ -254,6 +318,12 @@ bool RsFdBinInterface::moretoread(uint32_t /* usec */)
 {
     return mTotalInBufferBytes > 0;
 }
+
+bool RsFdBinInterface::moretowrite(uint32_t /* usec */)
+{
+    return mTotalOutBufferBytes > 0 ;
+}
+
 bool RsFdBinInterface::cansend(uint32_t)
 {
     return isactive();

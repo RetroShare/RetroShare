@@ -1,0 +1,21 @@
+/* HeaderFrame & TitleBarFrame */
+
+QFrame[objectName^="headerFrame"] {
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
+}
+QFrame[objectName^="headerBFrame"] {
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
+	border: 1px;
+	border-radius: 4px;
+}
+QFrame[objectName^="headerFrame"] > *:!hover,
+QFrame[objectName^="headerBFrame"] > *:!hover{
+	background: transparent;
+	color: white;
+}
+
+QFrame[objectName^="toolBarFrame"],
+QFrame[objectName^="toolBarFrameTop"] {
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
+	border: 1px solid #CCCCCC;
+}

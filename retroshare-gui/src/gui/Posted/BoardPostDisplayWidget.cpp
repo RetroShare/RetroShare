@@ -122,14 +122,14 @@ void BoardPostDisplayWidgetBase::setReadStatus(bool isNew, bool isUnread)
 void BoardPostDisplayWidget_compact::doExpand(bool e)
 {
 #ifdef DEBUG_BOARDPOSTDISPLAYWIDGET
-     std::cerr << "Expanding" << std::endl;
+	std::cerr << "Expanding" << std::endl;
 #endif
-     if(e)
-         ui->frame_notes->show();
-     else
-         ui->frame_notes->hide();
+	if(e)
+		ui->frame_notes->show();
+	else
+		ui->frame_notes->hide();
 
-    emit expand(mPost.mMeta.mMsgId,e);
+	emit expand(mPost.mMeta.mMsgId,e);
 }
 
 void BoardPostDisplayWidgetBase::loadComments(bool e)
@@ -144,7 +144,7 @@ void BoardPostDisplayWidgetBase::readToggled()
     emit changeReadStatusRequested(mPost.mMeta.mMsgId,s);
 }
 
-void BoardPostDisplayWidgetBase::setup()
+void BoardPostDisplayWidgetBase::baseSetup()
 {
     // show/hide things based on the view type
 
@@ -166,8 +166,6 @@ void BoardPostDisplayWidgetBase::setup()
     QAction *CopyLinkAction = new QAction(QIcon(""),tr("Copy RetroShare Link"), this);
     connect(CopyLinkAction, SIGNAL(triggered()), this, SLOT(handleCopyLinkClicked()));
 
-    int S = QFontMetricsF(font()).height() ;
-
     readButton()->setChecked(false);
 
     QMenu *menu = new QMenu();
@@ -184,6 +182,7 @@ void BoardPostDisplayWidgetBase::setup()
     if(redacted)
     {
         commentButton()->setDisabled(true);
+        shareButton()->setDisabled(true);
         voteUpButton()->setDisabled(true);
         voteDownButton()->setDisabled(true);
         fromLabel()->setId(mPost.mMeta.mAuthorId);
@@ -196,8 +195,6 @@ void BoardPostDisplayWidgetBase::setup()
     }
     else
     {
-        QPixmap sqpixmap2 = FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default.png");
-
         QDateTime qtime;
         qtime.setTime_t(mPost.mMeta.mPublishTs);
         QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
@@ -295,16 +292,7 @@ BoardPostDisplayWidget_compact::BoardPostDisplayWidget_compact(const RsPostedPos
     : BoardPostDisplayWidgetBase(post,display_flags,parent), ui(new Ui::BoardPostDisplayWidget_compact())
 {
 	ui->setupUi(this);
-	setup();
-
-	ui->right_VL->addStretch();
-	ui->right_VL->setAlignment(Qt::AlignTop);
-	ui->topLayout->setAlignment(Qt::AlignTop);
-	ui->arrowsLayout->addStretch();
-	ui->arrowsLayout->setAlignment(Qt::AlignTop);
-	ui->feedFrame_VL->addStretch();
-
-	adjustSize();
+	BoardPostDisplayWidget_compact::setup();
 }
 
 BoardPostDisplayWidget_compact::~BoardPostDisplayWidget_compact()
@@ -314,7 +302,7 @@ BoardPostDisplayWidget_compact::~BoardPostDisplayWidget_compact()
 
 void BoardPostDisplayWidget_compact::setup()
 {
-    BoardPostDisplayWidgetBase::setup();
+    baseSetup();
 
     // show/hide things based on the view type
 
@@ -356,7 +344,7 @@ void BoardPostDisplayWidget_compact::setup()
     QObject::connect(ui->expandButton, SIGNAL(toggled(bool)), this, SLOT(doExpand(bool)));
 
     QTextDocument doc;
-    doc.setHtml(notes()->text());
+    doc.setHtml(BoardPostDisplayWidget_compact::notes()->text());
 
     if(mDisplayFlags & SHOW_NOTES)
     {
@@ -427,16 +415,7 @@ BoardPostDisplayWidget_card::BoardPostDisplayWidget_card(const RsPostedPost& pos
     : BoardPostDisplayWidgetBase(post,display_flags,parent), ui(new Ui::BoardPostDisplayWidget_card())
 {
 	ui->setupUi(this);
-	setup();
-
-	ui->right_VL->addStretch();
-	ui->right_VL->setAlignment(Qt::AlignTop);
-	ui->topLayout->setAlignment(Qt::AlignTop);
-	ui->arrowsLayout->addStretch();
-	ui->arrowsLayout->setAlignment(Qt::AlignTop);
-	ui->feedFrame_VL->addStretch();
-
-	adjustSize();
+	BoardPostDisplayWidget_card::setup();
 }
 
 BoardPostDisplayWidget_card::~BoardPostDisplayWidget_card()
@@ -446,7 +425,7 @@ BoardPostDisplayWidget_card::~BoardPostDisplayWidget_card()
 
 void BoardPostDisplayWidget_card::setup()
 {
-    BoardPostDisplayWidgetBase::setup();
+    baseSetup();
 
     RsReputationLevel overall_reputation = rsReputations->overallReputationLevel(mPost.mMeta.mAuthorId);
     bool redacted = (overall_reputation == RsReputationLevel::LOCALLY_NEGATIVE);
@@ -463,7 +442,6 @@ void BoardPostDisplayWidget_card::setup()
 			GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
 			// Wiping data - as its been passed to thumbnail.
 
-			QPixmap scaledpixmap;
 			if(pixmap.width() > 800){
 				QPixmap scaledpixmap = pixmap.scaledToWidth(800, Qt::SmoothTransformation);
 				ui->pictureLabel->setPixmap(scaledpixmap);
@@ -478,10 +456,10 @@ void BoardPostDisplayWidget_card::setup()
 	}
 
     QTextDocument doc;
-    doc.setHtml(notes()->text());
+    doc.setHtml(BoardPostDisplayWidget_card::notes()->text());
 
     if(doc.toPlainText().trimmed().isEmpty())
-        notes()->hide();
+        BoardPostDisplayWidget_card::notes()->hide();
 }
 
 QToolButton    *BoardPostDisplayWidget_card::voteUpButton()   { return ui->voteUpButton; }

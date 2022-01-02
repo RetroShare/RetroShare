@@ -33,15 +33,15 @@
 
 #include <rshare.h>
 #include "gui/settings/rsharesettings.h"
-#include "TorControl/TorManager.h"
 #include "util/misc.h"
 #include "gui/common/FilesDefs.h"
 
-#include <retroshare/rsidentity.h>
-#include <retroshare/rsinit.h>
-#include <retroshare/rsnotify.h>
-#include <rsserver/rsaccounts.h>
-#include <util/rsrandom.h>
+#include "retroshare/rstor.h"
+#include "retroshare/rsidentity.h"
+#include "retroshare/rsinit.h"
+#include "retroshare/rsnotify.h"
+#include "rsserver/rsaccounts.h"
+#include "util/rsrandom.h"
 
 #include <time.h>
 #include <math.h>
@@ -520,7 +520,7 @@ void GenCertDialog::genPerson()
 	bool isHiddenLoc = (ui.nodeType_CB->currentIndex()>0);
     bool isAutoTor = (ui.nodeType_CB->currentIndex()==1);
 
-    if(isAutoTor && !Tor::TorManager::isTorAvailable())
+    if(isAutoTor && !RsTor::isTorAvailable())
     {
         QMessageBox::critical(this,tr("Tor is not available"),tr("No Tor executable has been found on your system. You need to install Tor before creating a hidden identity.")) ;
         return ;

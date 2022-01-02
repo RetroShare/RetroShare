@@ -1,6 +1,7 @@
 /*
  * RetroShare Service
- * Copyright (C) 2016-2019  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2016-2021  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -19,38 +20,32 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-#include "util/stacktrace.h"
-#include "util/argstream.h"
-#include "util/rskbdinput.h"
-#include "retroshare/rsinit.h"
-
-#ifdef RS_JSONAPI
-#include "retroshare/rsjsonapi.h"
-
-#ifdef RS_WEBUI
-#include "retroshare/rswebui.h"
-#endif
-#endif
-
-static CrashStackTrace gCrashStackTrace;
 
 #include <cmath>
 #include <csignal>
 #include <iomanip>
 #include <atomic>
 
-#ifdef __ANDROID__
-#	include <QAndroidService>
-#	include <QCoreApplication>
-#	include <QObject>
-#	include <QStringList>
-
-#	include "util/androiddebug.h"
-#endif // def __ANDROID__
-
+#include "util/stacktrace.h"
+#include "util/argstream.h"
+#include "util/rskbdinput.h"
+#include "util/rsdir.h"
+#include "retroshare/rsinit.h"
+#include "retroshare/rstor.h"
+#include "retroshare/rspeers.h"
 #include "retroshare/rsinit.h"
 #include "retroshare/rsiface.h"
 #include "util/rsdebug.h"
+
+#ifdef RS_JSONAPI
+#	include "retroshare/rsjsonapi.h"
+
+#	ifdef RS_WEBUI
+#		include "retroshare/rswebui.h"
+#	endif // def RS_WEBUI
+#endif // def RS_JSONAPI
+
+static CrashStackTrace gCrashStackTrace;
 
 #ifdef RS_SERVICE_TERMINAL_LOGIN
 class RsServiceNotify: public NotifyClient
@@ -74,9 +69,6 @@ public:
 };
 #endif // def RS_SERVICE_TERMINAL_LOGIN
 
-#ifdef __ANDROID__
-void signalHandler(int /*signal*/) { QCoreApplication::exit(0); }
-#else
 static std::atomic<bool> keepRunning(true);
 static int receivedSignal = 0;
 
@@ -87,16 +79,10 @@ void signalHandler(int signal)
 	receivedSignal = signal;
 	keepRunning = false;
 }
-#endif // def __ANDROID__
 
 
 int main(int argc, char* argv[])
 {
-#ifdef __ANDROID__
-	AndroidStdIOCatcher dbg; (void) dbg;
-	QAndroidService app(argc, argv);
-#endif // def __ANDROID__
-
 	signal(SIGINT,   signalHandler);
 	signal(SIGTERM,  signalHandler);
 #ifdef SIGBREAK
@@ -128,7 +114,7 @@ int main(int argc, char* argv[])
 	RsConfigOptions conf;
 
 #ifdef RS_JSONAPI
-	conf.jsonApiPort = RsJsonApi::DEFAULT_PORT;	// enable JSonAPI by default
+	conf.jsonApiPort = RsJsonApi::DEFAULT_PORT;	// enable JSON API by default
 #ifdef RS_WEBUI
 	std::string webui_base_directory = RsWebUi::DEFAULT_BASE_DIRECTORY;
 #endif
@@ -311,6 +297,35 @@ int main(int argc, char* argv[])
 			        << std::endl;
 			return -result;
 		}
+
+        if(RsAccounts::isTorAuto())
+        {
+
+            std::cerr << "(II) Hidden service is ready:" << std::endl;
+
+            std::string service_id ;
+            std::string onion_address ;
+            uint16_t service_port ;
+            uint16_t service_target_port ;
+            uint16_t proxy_server_port ;
+            std::string service_target_address ;
+            std::string proxy_server_address ;
+
+            RsTor::getHiddenServiceInfo(service_id,onion_address,service_port,service_target_address,service_target_port);
+            RsTor::getProxyServerInfo(proxy_server_address,proxy_server_port) ;
+
+            std::cerr << "  onion address  : " << onion_address << std::endl;
+            std::cerr << "  service_id     : " << service_id << std::endl;
+            std::cerr << "  service port   : " << service_port << std::endl;
+            std::cerr << "  target port    : " << service_target_port << std::endl;
+            std::cerr << "  target address : " << service_target_address << std::endl;
+
+            std::cerr << "Setting proxy server to " << service_target_address << ":" << service_target_port << std::endl;
+
+            rsPeers->setLocalAddress(rsPeers->getOwnId(), service_target_address, service_target_port);
+            rsPeers->setHiddenNode(rsPeers->getOwnId(), onion_address, service_port);
+            rsPeers->setProxyServer(RS_HIDDEN_TYPE_TOR, proxy_server_address,proxy_server_port) ;
+        }
 	}
 #endif // def RS_SERVICE_TERMINAL_LOGIN
 
@@ -323,22 +338,10 @@ int main(int argc, char* argv[])
     }
 #endif
 
-#ifdef __ANDROID__
-	rsControl->setShutdownCallback(QCoreApplication::exit);
-
-	QObject::connect(
-	            &app, &QCoreApplication::aboutToQuit,
-	            [](){
-		if(RsControl::instance()->isReady())
-			RsControl::instance()->rsGlobalShutDown(); } );
-
-	return app.exec();
-#else // def __ANDROID__
 	rsControl->setShutdownCallback([&](int){keepRunning = false;});
 
 	while(keepRunning)
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
 	return 0;
-#endif
 }

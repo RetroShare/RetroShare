@@ -30,6 +30,7 @@
 #include "gui/common/TagDefs.h"
 #include "gui/settings/NewTag.h"
 #include "gui/notifyqt.h"
+#include "util/qtthreadsutils.h"
 
 #include "gui/msgs/MessageInterface.h"
 
@@ -46,9 +47,16 @@ TagsMenu::TagsMenu(const QString &title, QWidget *parent)
 	: QMenu (title, parent)
 {
 	connect(this, SIGNAL(triggered (QAction*)), this, SLOT(tagTriggered(QAction*)));
-	connect(NotifyQt::getInstance(), SIGNAL(messagesTagsChanged()), this, SLOT(fillTags()));
+
+	mEventHandlerId = 0;
+	rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }); }, mEventHandlerId, RsEventType::MAIL_TAG );
 
 	fillTags();
+}
+
+TagsMenu::~TagsMenu()
+{
+	rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
 
 void TagsMenu::paintEvent(QPaintEvent *e)
@@ -86,6 +94,26 @@ void TagsMenu::paintEvent(QPaintEvent *e)
 
 		opt.rect = adjustedActionRect;
 		style()->drawControl(QStyle::CE_MenuItem, &opt, &p, this);
+	}
+}
+
+void TagsMenu::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+	if (event->mType != RsEventType::MAIL_TAG) {
+		return;
+	}
+
+	const RsMailTagEvent *fe = dynamic_cast<const RsMailTagEvent*>(event.get());
+	if (!fe) {
+		return;
+	}
+
+	switch (fe->mMailTagEventCode) {
+	case RsMailTagEventCode::TAG_ADDED:
+	case RsMailTagEventCode::TAG_CHANGED:
+	case RsMailTagEventCode::TAG_REMOVED:
+		fillTags();
+		break;
 	}
 }
 

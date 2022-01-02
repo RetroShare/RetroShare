@@ -1,16 +1,43 @@
+/******************************* BEGIN WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef WINDOWS_SYS
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <sys/types.h>
 #include <netinet/in.h>
+#else
+#include <ws2tcpip.h>
+// Missing defines in MinGW
+#ifndef MSG_WAITALL
+#define MSG_WAITALL 8
+#endif
+#endif
+/********************************* END WINDOWS/UNIX SPECIFIC PART ******************/
 #include <string.h>
 #include <iostream>
 
 #include "rstcpsocket.h"
 
 RsTcpSocket::RsTcpSocket(const std::string& tcp_address,uint16_t tcp_port)
-    :RsFdBinInterface(0),mState(DISCONNECTED),mConnectAddress(tcp_address),mConnectPort(tcp_port),mSocket(0)
+    :RsFdBinInterface(0, true),mState(DISCONNECTED),mConnectAddress(tcp_address),mConnectPort(tcp_port),mSocket(0)
 {
 }
-int RsTcpSocket::connect()
+
+RsTcpSocket::RsTcpSocket()
+    :RsFdBinInterface(0, true),mState(DISCONNECTED),mConnectAddress("0.0.0.0"),mConnectPort(0),mSocket(0)
+{
+}
+
+bool RsTcpSocket::connect(const std::string& tcp_address,uint16_t tcp_port)
+{
+    if(mState == CONNECTED)
+        close();
+
+    mConnectPort = tcp_port;
+    mConnectAddress = tcp_address;
+
+    return connect();
+}
+bool RsTcpSocket::connect()
 {
     int CreateSocket = 0;
     char dataReceived[1024];
@@ -23,18 +50,19 @@ int RsTcpSocket::connect()
         printf("Socket not created \n");
         return false;
     }
-
     ipOfServer.sin_family = AF_INET;
     ipOfServer.sin_port = htons(mConnectPort);
     ipOfServer.sin_addr.s_addr = inet_addr(mConnectAddress.c_str());
 
-    if(::connect(mSocket, (struct sockaddr *)&ipOfServer, sizeof(ipOfServer))<0)
+    if(::connect(CreateSocket, (struct sockaddr *)&ipOfServer, sizeof(ipOfServer))<0)
     {
-        printf("Connection failed due to port and ip problems, or server is not available\n");
+        printf("Connection failed due to port and ip problems, or server is not available. Socket=%d,ConnectPort=%d,ConnectAddress=%s Errno=%d\n",mSocket,mConnectPort,mConnectAddress.c_str(),errno);
         return false;
     }
     mState = CONNECTED;
-    setSocket(mSocket);
+
+    unix_fcntl_nonblock(CreateSocket);
+    setSocket(CreateSocket);
 
     return true;
 }
@@ -42,6 +70,7 @@ int RsTcpSocket::connect()
 int RsTcpSocket::close()
 {
     RsFdBinInterface::close();
+    mState = DISCONNECTED;
 
     return !::close(mSocket);
 }
@@ -50,16 +79,12 @@ RsThreadedTcpSocket::RsThreadedTcpSocket(const std::string& tcp_address,uint16_t
     : RsTcpSocket(tcp_address,tcp_port)
 {
 }
-
+RsThreadedTcpSocket::RsThreadedTcpSocket() : RsTcpSocket()
+{
+}
 void RsThreadedTcpSocket::run()
 {
-    if(!connect())
-    {
-        RsErr() << "Cannot connect socket to " << connectAddress() << ":" << connectPort() ;
-        return ;
-    }
-
-    while(connectionState() == CONNECTED)
+    while(!shouldStop() && connectionState() == CONNECTED)
     {
         tick();
         std::this_thread::sleep_for(std::chrono::milliseconds(200));

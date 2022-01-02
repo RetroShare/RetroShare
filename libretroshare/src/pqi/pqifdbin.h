@@ -25,7 +25,7 @@
 class RsFdBinInterface: public BinInterface
 {
 public:
-    RsFdBinInterface(int file_descriptor);
+    RsFdBinInterface(int file_descriptor, bool is_socket);
     ~RsFdBinInterface();
 
      // Implements BinInterface methods
@@ -41,9 +41,14 @@ public:
     //
     int readdata(void *data, int len) override;
 
+    // Read at most len bytes only if \n is encountered within that range. Otherwise, nothing is changed.
+    //
+    int readline(void *data, int len) ;
+
     int netstatus() override;
     int isactive() override;
     bool moretoread(uint32_t usec) override;
+    bool moretowrite(uint32_t usec) ;
     bool cansend(uint32_t usec) override;
 
     int close() override;
@@ -65,6 +70,7 @@ private:
     int write_pending();
 
     int mCLintConnt;
+    bool mIsSocket;
     bool mIsActive;
     uint32_t mTotalReadBytes;
     uint32_t mTotalInBufferBytes;

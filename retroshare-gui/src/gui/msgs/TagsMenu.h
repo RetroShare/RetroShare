@@ -24,6 +24,7 @@
 #include <QMenu>
 
 #include <stdint.h>
+#include <retroshare/rsevents.h>
 
 class TagsMenu : public QMenu
 {
@@ -31,6 +32,7 @@ class TagsMenu : public QMenu
 
 public:
 	TagsMenu(const QString &title, QWidget *parent);
+	virtual ~TagsMenu();
 
 	void activateActions(std::list<uint32_t>& tagIds);
 
@@ -42,8 +44,14 @@ protected:
 	virtual void paintEvent(QPaintEvent *e);
 
 private slots:
-	void fillTags();
 	void tagTriggered(QAction *action);
+
+private:
+	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+	void fillTags();
+
+private:
+	RsEventsHandlerId_t mEventHandlerId;
 };
 
 #endif

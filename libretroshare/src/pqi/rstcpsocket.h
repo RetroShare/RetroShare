@@ -6,6 +6,8 @@ class RsTcpSocket: public RsFdBinInterface
 {
 public:
     RsTcpSocket(const std::string& tcp_address,uint16_t tcp_port);
+    RsTcpSocket();
+    virtual ~RsTcpSocket()=default;
 
     enum State: uint8_t {
         UNKNOWN      = 0x00,
@@ -13,8 +15,10 @@ public:
         CONNECTED    = 0x02
     };
 
-    // Return 1 when OK, 0 otherwise.
-    int connect();
+    // Return true when OK, false otherwise.
+    bool connect();
+
+    bool connect(const std::string& tcp_address,uint16_t tcp_port);
 
     // Returns 1 when OK, 0 otherwise.
     int close();
@@ -34,6 +38,7 @@ class RsThreadedTcpSocket: public RsTcpSocket, public RsThread
 {
 public:
     RsThreadedTcpSocket(const std::string& tcp_address,uint16_t tcp_port);
+    RsThreadedTcpSocket();
     virtual ~RsThreadedTcpSocket();
 
     virtual void run() override;

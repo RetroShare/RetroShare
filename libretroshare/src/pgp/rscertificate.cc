@@ -553,26 +553,24 @@ unsigned short RsCertificate::loc_port_us() const
 	return (int)ipv4_internal_ip_and_port[4]*256 + (int)ipv4_internal_ip_and_port[5] ;
 }
 
-bool RsCertificate::cleanCertificate( const std::string& input, std::string& output, Format& format, uint32_t& error_code, bool check_content )
+bool RsCertificate::cleanCertificate( const std::string& input, std::string& output, Format& format, uint32_t& error_code, bool check_content, RsPeerDetails& details)
 {
 	if(cleanRadix64(input,output,error_code))
 	{
-        RsPeerDetails details;
 
-        if(rsPeers->parseShortInvite(output,details,error_code))
-        {
-            format = RS_CERTIFICATE_SHORT_RADIX;
-            return true;
-        }
+		if(rsPeers->parseShortInvite(output,details,error_code))
+		{
+			format = RS_CERTIFICATE_SHORT_RADIX;
+			return true;
+		}
 
+		//Clear details. As parseShortInvite may make it dirty.
+		details = RsPeerDetails();
 		format = RS_CERTIFICATE_RADIX;
 
 		if(!check_content) return true;
 
-		uint32_t errCode;
-		auto crt = RsCertificate::fromString(input, errCode);
-		error_code = static_cast<int>(errCode);
-		return crt != nullptr;
+		return rsPeers->loadDetailsFromStringCert(input,details,error_code);
 	}
 
 	return false;

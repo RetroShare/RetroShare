@@ -36,6 +36,10 @@ std::string BinToHex(const char *arr, const uint32_t len);
 std::string BinToHex(const unsigned char *arr, const uint32_t len, uint32_t max_len=0);
 bool HexToBin(const std::string& input,unsigned char *data, const uint32_t len);
 std::string NumberToString(uint64_t n, bool hex=false);
+
+// Returns in n the int that can be read in the string. Returns false when no int is fond.
+bool StringToInt(const std::string& s,int& n);
+
 std::string HashId(const std::string &id, bool reverse = false);
 std::vector<uint8_t> BinToSha256(const std::vector<uint8_t> &in);
 

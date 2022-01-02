@@ -450,6 +450,17 @@ public:
 	        const std::string& matchString,
 	        std::vector<RsGxsSearchResult>& searchResults ) = 0;
 
+	/**
+	 * @brief Request Synchronization with available peers
+	 * Usually syncronization already happen automatically so be carefull
+	 * to call this method only if necessary.
+	 * It has been thinked for use cases like mobile phone where internet
+	 * connection is intermittent and calling this may be useful when a system
+	 * event about connection being available or about to go offline is received
+	 * @jsonapi{development}
+	 * @return Success or error details
+	 */
+	virtual std::error_condition requestSynchronization() = 0;
 
 	////////////////////////////////////////////////////////////////////////////
 	/* Following functions are deprecated and should not be considered a stable

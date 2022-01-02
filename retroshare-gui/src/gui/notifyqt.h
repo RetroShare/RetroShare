@@ -109,8 +109,6 @@ class NotifyQt: public QObject, public NotifyClient
 		void lobbyListChanged() const ;
         void chatLobbyEvent(qulonglong,int,const RsGxsId&,const QString&) ;
 		void neighboursChanged() const ;
-		void messagesChanged() const ;
-		void messagesTagsChanged() const;
 		void configChanged() const ;
 		void logInfoChanged(const QString&) const ;
 		void chatStatusChanged(const ChatId&,const QString&) const ;

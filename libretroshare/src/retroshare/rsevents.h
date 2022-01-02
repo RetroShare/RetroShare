@@ -103,10 +103,16 @@ enum class RsEventType : uint32_t
 	/// @see rspeers.h
 	NETWORK                                                 = 16,
 
+	/// @see RsMailTagEvent
+	MAIL_TAG                                                = 17,
+
 	/** Emitted to update library clients about file hashing being completed */
 	FILE_HASHING_COMPLETED                                  = 20,
 
-	__MAX /// Used internally, keep last
+    /// @see rspeers.h
+    TOR_MANAGER                                             = 21,
+
+    __MAX /// Used internally, keep last
 };
 
 enum class RsEventsErrorNum : int32_t

@@ -821,5 +821,4 @@ contains(RS_UPNP_LIB, upnp):DEFINES*=RS_USE_LIBUPNP
 isEmpty(BIN_DIR)   : BIN_DIR   = $${RS_BIN_DIR}
 isEmpty(INC_DIR)   : INC_DIR   = $${RS_INCLUDE_DIR}
 isEmpty(LIBDIR)    : LIBDIR    = $${QMAKE_LIBDIR}
-isEmpty(DATA_DIR)  : DATA_DIR  = $${RS_DATA_DIR}
 isEmpty(PLUGIN_DIR): PLUGIN_DIR= $${RS_PLUGIN_DIR}

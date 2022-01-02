@@ -2,7 +2,7 @@
 ## image name must match gitlab repository name, you can play just with the tag
 ## the part after :
 # export CI_IMAGE_NAME="registry.gitlab.com/retroshare/retroshare:android_arm_base"
-# docker build --squash -t "${CI_REGISTRY_IMAGE}" \
+# docker build --squash --tag "${CI_IMAGE_NAME}" \
 # --build-arg QT_INSTALLER_JWT_TOKEN="your qt JWT token goes here"  .
 #
 # To build Android ARMv8 (64 bit) package pass also
@@ -25,14 +25,16 @@
 FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV APT_UNAT="--assume-yes --quiet"
 
-RUN apt-get update && apt-get clean
-RUN apt-get install -y -qq \
+RUN apt-get update $APT_UNAT && apt-get upgrade --show-upgraded $APT_UNAT && \
+	apt-get clean $APT_UNAT
+RUN apt-get install --no-install-recommends $APT_UNAT \
 	bash build-essential bzip2 cmake curl chrpath doxygen \
 	git p7zip python qt5-default qttools5-dev tclsh unzip wget zip
 
 # Dependencies to create Android pkg
-RUN apt-get install -y -qq \
+RUN apt-get install --no-install-recommends $APT_UNAT \
 	openjdk-8-jre openjdk-8-jdk openjdk-8-jdk-headless gradle
 
 ARG FRESHCLONE=0
@@ -74,11 +76,11 @@ ARG QT_INSTALLER_JWT_TOKEN
 RUN $PREPARE_TOOLCHAIN install_qt_android
 # Avoid Qt account details leak into the image
 RUN rm -f /root/.local/share/Qt/qtaccount.ini
-# Shrink image by removing unneded Qt components
+# Shrink image by removing unneeded Qt components
 RUN rm -r \
 	$NATIVE_LIBS_TOOLCHAIN_PATH/Qt/Docs/ \
 	$NATIVE_LIBS_TOOLCHAIN_PATH/Qt/Examples/ \
-	$NATIVE_LIBS_TOOLCHAIN_PATH/Qt/Tools/ 
+	$NATIVE_LIBS_TOOLCHAIN_PATH/Qt/Tools/
 
 RUN mkdir /jsonapi-generator-build
 WORKDIR /jsonapi-generator-build/

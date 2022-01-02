@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: (C) 2004-2019 Retroshare Team <contact@retroshare.cc>
+# SPDX-FileCopyrightText: (C) 2004-2021 Retroshare Team <contact@retroshare.cc>
 # SPDX-License-Identifier: CC0-1.0
 
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
@@ -9,12 +9,14 @@ libretroshare_shared {
 } else {
 	CONFIG += staticlib
 }
-CONFIG -= qt
+
 TARGET = retroshare
 TARGET_PRL = libretroshare
 DESTDIR = lib
 
 !include("use_libretroshare.pri"):error("Including")
+
+QMAKE_CXXFLAGS += -fPIC
 
 # treat warnings as error for better removing
 #QMAKE_CFLAGS += -Werror
@@ -206,7 +208,7 @@ linux-* {
     LIBS *= -ldl
 
 	DEFINES *= PLUGIN_DIR=\"\\\"$${PLUGIN_DIR}\\\"\"
-	DEFINES *= DATA_DIR=\"\\\"$${DATA_DIR}\\\"\"
+        DEFINES *= RS_DATA_DIR=\"\\\"$${RS_DATA_DIR}\\\"\"
 }
 
 linux-g++ {
@@ -290,7 +292,7 @@ mac {
 		#LIBS += -lsqlite3
 
 		DEFINES *= PLUGIN_DIR=\"\\\"$${PLUGIN_DIR}\\\"\"
-		DEFINES *= DATA_DIR=\"\\\"$${DATA_DIR}\\\"\"
+                DEFINES *= RS_DATA_DIR=\"\\\"$${RS_DATA_DIR}\\\"\"
 }
 
 ################################# FreeBSD ##########################################
@@ -364,6 +366,7 @@ HEADERS += chat/distantchat.h \
 HEADERS +=	pqi/authssl.h \
 			pqi/authgpg.h \
 			pgp/pgphandler.h \
+			pgp/openpgpsdkhandler.h \
 			pgp/pgpkeyutil.h \
 			pqi/pqifdbin.h \
 			pqi/rstcpsocket.h \
@@ -447,7 +450,7 @@ HEADERS +=	rsitems/rsitem.h \
 			serialiser/rstlvkeyvalue.h \
 			serialiser/rstlvgenericparam.h \
 			serialiser/rstlvgenericmap.h \
-			serialiser/rstlvgenericmap.inl \
+                        serialiser/rstlvgenericmap.inl \
 			serialiser/rstlvlist.h \
 			serialiser/rstlvmaps.h \
 			serialiser/rstlvbanlist.h \
@@ -489,6 +492,7 @@ HEADERS +=	util/folderiterator.h \
 			util/rsmemory.h \
 			util/smallobject.h \
 			util/rsdir.h \
+			util/rsfile.h \
 			util/argstream.h \
 			util/rsdiscspace.h \
 			util/rsnet.h \
@@ -514,7 +518,8 @@ HEADERS +=	util/folderiterator.h \
     util/cxx11retrocompat.h \
     util/cxx14retrocompat.h \
     util/cxx17retrocompat.h \
-            util/rsurl.h
+    util/cxx23retrocompat.h \
+    util/rsurl.h
 
 SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftcontroller.cc \
@@ -541,6 +546,7 @@ SOURCES += chat/distantchat.cc \
 SOURCES +=	pqi/authgpg.cc \
 			pqi/authssl.cc \
 			pgp/pgphandler.cc \
+			pgp/openpgpsdkhandler.cc \
 			pgp/pgpkeyutil.cc \
 			pgp/rscertificate.cc \
 			pgp/pgpauxutils.cc \
@@ -644,6 +650,7 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsexpr.cc \
 			util/smallobject.cc \
 			util/rsdir.cc \
+			util/rsfile.cc \
 			util/rsdiscspace.cc \
 			util/rsnet.cc \
 			util/rsnet_ss.cc \
@@ -724,6 +731,41 @@ SOURCES += rsitems/rsnxsitems.cc \
 	gxs/rsgxsutil.cc \
         gxs/rsgxsrequesttypes.cc \
         gxs/rsnxsobserver.cpp
+
+# Tor
+HEADERS += 	retroshare/rstor.h 
+
+HEADERS += 	tor/AddOnionCommand.h \
+           	tor/AuthenticateCommand.h \
+           	tor/CryptoKey.h \
+           	tor/GetConfCommand.h \
+           	tor/HiddenService.h \
+           	tor/PendingOperation.h  \
+           	tor/ProtocolInfoCommand.h \
+                tor/TorTypes.h \
+                tor/SetConfCommand.h \
+           	tor/StrUtil.h \
+           	tor/bytearray.h \
+           	tor/TorControl.h \
+           	tor/TorControlCommand.h \
+           	tor/TorControlSocket.h \
+           	tor/TorManager.h \
+                tor/TorProcess.h
+
+SOURCES += 	tor/AddOnionCommand.cpp \
+		tor/AuthenticateCommand.cpp \
+		tor/GetConfCommand.cpp \
+		tor/HiddenService.cpp \
+		tor/ProtocolInfoCommand.cpp \
+		tor/SetConfCommand.cpp \
+		tor/TorControlCommand.cpp \
+		tor/TorControl.cpp \
+		tor/TorControlSocket.cpp \
+		tor/TorManager.cpp \
+		tor/TorProcess.cpp \
+		tor/CryptoKey.cpp         \
+		tor/PendingOperation.cpp  \
+		tor/StrUtil.cpp        
 
 # gxs tunnels
 HEADERS += gxstunnel/p3gxstunnel.h \
@@ -1103,6 +1145,8 @@ test_bitdht {
 ################################# Android #####################################
 
 android-* {
+    lessThan(ANDROID_API_VERSION, 24) {
+
 ## TODO: This probably disable largefile support and maybe is not necessary with
 ## __ANDROID_API__ >= 24 hence should be made conditional or moved to a
 ## compatibility header
@@ -1110,12 +1154,26 @@ android-* {
     DEFINES *= "fseeko64=fseeko"
     DEFINES *= "ftello64=ftello"
 
+## @See: rs_android/README-ifaddrs-android.adoc
+    HEADERS += \
+        rs_android/ifaddrs-android.h \
+        rs_android/LocalArray.h \
+        rs_android/ScopedFd.h
+    }
+
 ## Static library are very susceptible to order in command line
     sLibs = bz2 $$RS_UPNP_LIB $$RS_SQL_LIB ssl crypto
 
     LIBS += $$linkStaticLibs(sLibs)
     PRE_TARGETDEPS += $$pretargetStaticLibs(sLibs)
 
-    HEADERS += util/androiddebug.h
+    HEADERS += \
+        rs_android/androidcoutcerrcatcher.hpp \
+        rs_android/retroshareserviceandroid.hpp \
+        rs_android/rsjni.hpp
+
+    SOURCES += rs_android/rsjni.cpp \
+        rs_android/retroshareserviceandroid.cpp \
+        rs_android/errorconditionwrap.cpp
 }
 

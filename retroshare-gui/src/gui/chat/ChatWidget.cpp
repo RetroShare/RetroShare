@@ -381,7 +381,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
         hist_chat_type = RS_HISTORY_TYPE_PUBLIC;
         messageCount = Settings->getPublicChatHistoryCount();
 
-        ui->titleBarFrame->setVisible(false);
+        ui->headerBFrame->setVisible(false);
     }
 
 	if (rsHistory->getEnable(hist_chat_type))

@@ -2230,6 +2230,15 @@ PlotWidget {
 /*    RetroShare specific part    */
 /**********************************/
 
+/**** Fix QPushButton ****/
+
+QPushButton,
+QPushButton:disabled,
+QPushButton:checked {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
 /**** Fix QTreeView Items ****/
 
 QTreeView::item,
@@ -2248,13 +2257,13 @@ QTreeView:branch:selected:!active {
 /**** Fix QSplitter ****/
 
 QSplitter {
-  background-color: white;
+  background-color: rgba(0,0,0,0);
 }
-
 QSplitter::handle {
-  background-color: #C9CDD0;
-  border: 0px solid #C9CDD0;
-  border-radius: 4px;
+  background-color: rgba(0,0,0,0);
+  border: 0px;
+  border-radius: 2px;
+  padding: 0px;
 }
 
 
@@ -2307,24 +2316,33 @@ QLabel#avatarLabel{
 }
 
 
-/* HeaderFrame & TitleBarFrame */
+/* HeaderFrame */
 
 QFrame[objectName^="headerFrame"],
 QFrame[objectName^="headerBFrame"],
-QToolBar#headerToolBar,
-QFrame#titleBarFrame {
+QToolBar#headerToolBar {
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
 	border: 0px;
 }
-QFrame[objectName^="#headerBFrame"] {
+QFrame[objectName^="headerBFrame"] {
 	border: 1px;
 	border-radius: 4px;
 }
 QFrame[objectName^="headerFrame"] > *:!hover,
-QFrame[objectName^="headerBFrame"] > *:!hover,
-QFrame#titleBarFrame > *:!hover {
+QFrame[objectName^="headerBFrame"] > *:!hover {
 	background: transparent;
 	color: white;
+}
+
+/* TitleBarFrame */
+
+QFrame#titleBarFrame {
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #F0F8FD, stop:1 #E6F2FD);
+	border: 0px;
+}
+QFrame#titleBarFrame > *:!hover {
+	background: transparent;
+	color: black;
 }
 QFrame#titleBarFrame QComboBox,
 QFrame#titleBarFrame QLineEdit,

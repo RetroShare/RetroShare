@@ -111,11 +111,7 @@ PRE_TARGETDEPS += $$pretargetStaticLibs(sLibs)
 LIBS += $$linkDynamicLibs(dLibs)
 
 android-* {
-## ifaddrs is missing on Android to add them don't use the one from
-## https://github.com/morristech/android-ifaddrs
-## because it crash, use QNetworkInterface from Qt instead
-    CONFIG *= qt
-    QT *= network
+    INCLUDEPATH *= $$clean_path($${RS_SRC_PATH}/supportlibs/jni.hpp/include/)
 }
 
 ################################### Pkg-Config Stuff #############################
