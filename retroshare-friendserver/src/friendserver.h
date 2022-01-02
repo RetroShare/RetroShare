@@ -46,7 +46,7 @@ struct PeerInfo
 class FriendServer : public RsTickingThread
 {
 public:
-    FriendServer(const std::string& base_directory);
+    FriendServer(const std::string& base_directory,const std::string& listening_address,uint16_t listening_port);
 
 private:
     // overloads RsTickingThread
@@ -86,4 +86,6 @@ private:
     RsPgpFingerprint mRandomPeerBias;
 
     std::map<RsPeerId, PeerInfo> mCurrentClientPeers;
+    std::string mListeningAddress;
+    uint16_t mListeningPort;
 };

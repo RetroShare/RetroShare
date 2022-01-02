@@ -6,6 +6,7 @@
 
 #include "pgp/pgpkeyutil.h"
 #include "pgp/rscertificate.h"
+#include "pgp/openpgpsdkhandler.h"
 
 #include "friendserver.h"
 #include "friend_server/fsitem.h"
@@ -314,7 +315,8 @@ PeerInfo::PeerDistance FriendServer::computePeerDistance(const RsPgpFingerprint&
     std::cerr << "Computing peer distance: p1=" << p1 << " p2=" << p2 << " p1^p2=" << (p1^p2) << " distance=" << ((p1^p2)^mRandomPeerBias) << std::endl;
     return (p1 ^ p2)^mRandomPeerBias;
 }
-FriendServer::FriendServer(const std::string& base_dir)
+FriendServer::FriendServer(const std::string& base_dir,const std::string& listening_address,uint16_t listening_port)
+    : mListeningAddress(listening_address),mListeningPort(listening_port)
 {
     RsDbg() << "Creating friend server." ;
     mBaseDirectory = base_dir;
@@ -327,7 +329,7 @@ FriendServer::FriendServer(const std::string& base_dir)
     std::string pgp_private_keyring_path = RsDirUtil::makePath(base_dir,"pgp_private_keyring") ;	// not used.
     std::string pgp_trustdb_path         = RsDirUtil::makePath(base_dir,"pgp_trustdb") ;	        // not used.
 
-    mPgpHandler = new PGPHandler(pgp_public_keyring_path,pgp_private_keyring_path,pgp_trustdb_path,pgp_lock_path);
+    mPgpHandler = new OpenPGPSDKHandler(pgp_public_keyring_path,pgp_private_keyring_path,pgp_trustdb_path,pgp_lock_path);
 
     // Random bias. Should be cryptographically safe.
 
@@ -338,7 +340,7 @@ void FriendServer::run()
 {
     // 1 - create network interface.
 
-    mni = new FsNetworkInterface;
+    mni = new FsNetworkInterface(mListeningAddress,mListeningPort);
     mni->start();
 
     while(!shouldStop()) { threadTick() ; }

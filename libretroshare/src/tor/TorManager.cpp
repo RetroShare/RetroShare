@@ -142,6 +142,8 @@ std::string TorManager::torDataDirectory() const
 
 void TorManager::setTorDataDirectory(const std::string &path)
 {
+    assert(RsDirUtil::checkCreateDirectory(std::string(path)));
+
     d->dataDir = path;
 
     if (!d->dataDir.empty() && !ByteArray(d->dataDir).endsWith('/'))

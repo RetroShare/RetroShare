@@ -25,6 +25,9 @@
 #include "util/rstime.h"
 #include "util/rsdebug.h"
 
+#include "retroshare/rstor.h"
+#include "retroshare/rsinit.h"
+
 #include "friendserver.h"
 
 // debug
@@ -41,7 +44,6 @@ int main(int argc, char* argv[])
 	    "+================================================================+"
 	         << std::endl << std::endl;
 
-	//RsInit::InitRsConfig();
 	//RsControl::earlyInitNotificationSystem();
 
     std::string base_directory = "FSData";
@@ -53,6 +55,12 @@ int main(int argc, char* argv[])
 
 	as.defaultErrorHandling(true, true);
 
+    RsConfigOptions conf;
+    conf.main_executable_path = argv[0];
+
+    RsInit::InitRsConfig();
+    RsInit::InitRetroShare(conf);
+
     // Create the base directory if needed
 
     if(!RsDirUtil::checkCreateDirectory(base_directory))
@@ -60,9 +68,34 @@ int main(int argc, char* argv[])
         RsErr() << "Cannot create base directory \"" << base_directory << "\". Check permissions, paths, etc." ;
         return 1;
     }
+    // Create/start TorManager
+
+    RsTor::setTorDataDirectory(RsDirUtil::makePath(base_directory,"tor"));
+    RsTor::setHiddenServiceDirectory(RsDirUtil::makePath(base_directory,"hidden_service"));
+
+    if(! RsTor::start() || RsTor::hasError())
+    {
+        RsErr() << "Tor cannot be started on your system: " << RsTor::errorMessage() ;
+        return 1 ;
+    }
+
+    std::string service_id;
+
+    while(RsTor::torStatus() != RsTorStatus::READY || RsTor::getHiddenServiceStatus(service_id) != RsTorHiddenServiceStatus::ONLINE)
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    std::string onion_address,service_target_address;
+    uint16_t service_port,target_port;
+
+    RsTor::getHiddenServiceInfo(service_id,onion_address,service_port,service_target_address,target_port) ;
+
+    RsDbg() << "Tor properly started: " ;
+    RsDbg() << "  Hidden service address: " << onion_address << ":" << service_port;
+    RsDbg() << "  Target address        : " << service_target_address << ":" << target_port;
+
     // Now start the real thing.
 
-    FriendServer fs(base_directory);
+    FriendServer fs(base_directory,service_target_address,target_port);
     fs.start();
 
     while(fs.isRunning())

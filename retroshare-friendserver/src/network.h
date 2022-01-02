@@ -43,7 +43,7 @@ struct ConnectionData
 class FsNetworkInterface: public RsTickingThread, public PQInterface
 {
 public:
-    FsNetworkInterface() ;
+    FsNetworkInterface(const std::string& listening_address,uint16_t listening_port) ;
     virtual ~FsNetworkInterface() ;
 
     // basic functionality
@@ -74,6 +74,9 @@ private:
 
     int mClintListn ;	// listening socket
     std::map<RsPeerId,ConnectionData> mConnections;
+
+    std::string mListeningAddress;
+    uint16_t mListeningPort;
 };
 
 

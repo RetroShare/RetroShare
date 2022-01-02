@@ -1940,6 +1940,12 @@ int RsServer::StartupRetroShare()
 
 std::string RsInit::executablePath()
 {
+    if(rsInitConfig->mainExecutablePath.empty())
+    {
+        RsErr() << "Main executable path not set! Plz call RsInit::InitRetroShare(conf) with conf.main_executable_path = argv[0]";
+        assert(false);
+    }
+
     return rsInitConfig->mainExecutablePath;
 }
 bool RsInit::startAutoTor()

@@ -40,8 +40,8 @@
 #include "network.h"
 #include "friend_server/fsitem.h"
 
-FsNetworkInterface::FsNetworkInterface()
-    : PQInterface(RsPeerId()),mFsNiMtx(std::string("FsNetworkInterface"))
+FsNetworkInterface::FsNetworkInterface(const std::string& listening_address,uint16_t listening_port)
+    : PQInterface(RsPeerId()),mFsNiMtx(std::string("FsNetworkInterface")),mListeningAddress(listening_address),mListeningPort(listening_port)
 {
     RS_STACK_MUTEX(mFsNiMtx);
 
@@ -54,9 +54,20 @@ FsNetworkInterface::FsNetworkInterface()
     struct sockaddr_in ipOfServer;
     memset(&ipOfServer, '0', sizeof(ipOfServer));
 
+    assert(mListeningPort > 1024);
+
     ipOfServer.sin_family = AF_INET;
-    ipOfServer.sin_port = htons(2017); // this is the port number of running server
-    ipOfServer.sin_addr.s_addr = htonl(INADDR_ANY);
+    ipOfServer.sin_port = htons(mListeningPort); // this is the port number of running server
+
+    int addr[4];
+    if(sscanf(listening_address.c_str(),"%d.%d.%d.%d",&addr[0],&addr[1],&addr[2],&addr[3]) != 4)
+        throw std::runtime_error("Cannot parse a proper IPv4 address in \""+listening_address+"\"");
+
+    for(int i=0;i<4;++i)
+        if(addr[i] < 0 || addr[i] > 255)
+            throw std::runtime_error("Cannot parse a proper IPv4 address in \""+listening_address+"\"");
+
+    ipOfServer.sin_addr.s_addr = htonl( (addr[0] << 24) + (addr[1] << 16) + (addr[2] << 8) + addr[3] );
 
     if(bind(mClintListn, (struct sockaddr*)&ipOfServer , sizeof(ipOfServer)) < 0)
     {
@@ -154,7 +165,7 @@ bool FsNetworkInterface::checkForNewConnections()
     RsSerialiser *rss = new RsSerialiser ;
     rss->addSerialType(new FsSerializer) ;
 
-    RsFdBinInterface *bio = new RsFdBinInterface(clintConnt);
+    RsFdBinInterface *bio = new RsFdBinInterface(clintConnt,true);
 
     auto pqi = new pqithreadstreamer(this,rss, pid, bio,BIN_FLAGS_READABLE | BIN_FLAGS_WRITEABLE);
 
