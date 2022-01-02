@@ -31,7 +31,7 @@
  * #define DEBUG_ITEM	1
  **/
 
-GxsGroupFeedItem::GxsGroupFeedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, RsGxsIfaceHelper *iface, bool autoUpdate) :
+GxsGroupFeedItem::GxsGroupFeedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, RsGxsIfaceHelper *iface, bool /*autoUpdate*/) :
     FeedItem(feedHolder,feedId,NULL)
 {
 #ifdef DEBUG_ITEM
@@ -102,7 +102,7 @@ void GxsGroupFeedItem::copyGroupLink()
 	}
 }
 
-void GxsGroupFeedItem::fillDisplaySlot(bool complete)
+void GxsGroupFeedItem::fillDisplaySlot(bool /*complete*/)
 {
 		requestGroup();
 }

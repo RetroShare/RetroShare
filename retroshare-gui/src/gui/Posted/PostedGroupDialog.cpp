@@ -136,7 +136,7 @@ bool PostedGroupDialog::service_updateGroup(const RsGroupMetaData& editedMeta)
 	return rsPosted->editBoard(grp);
 }
 
-bool PostedGroupDialog::service_loadGroup(const RsGxsGenericGroupData *data, Mode mode, QString& description)
+bool PostedGroupDialog::service_loadGroup(const RsGxsGenericGroupData *data, Mode /*mode*/, QString& description)
 {
 	const RsPostedGroup *pgroup = dynamic_cast<const RsPostedGroup*>(data);
 

@@ -130,7 +130,7 @@ bool RSFeedWidget::eventFilter(QObject *object, QEvent *event)
 	return QWidget::eventFilter(object, event);
 }
 
-void RSFeedWidget::feedAdded(FeedItem *feedItem, QTreeWidgetItem *treeItem)
+void RSFeedWidget::feedAdded(FeedItem */*feedItem*/, QTreeWidgetItem */*treeItem*/)
 {
 }
 
@@ -433,7 +433,6 @@ void RSFeedWidget::feedItemDestroyed(qulonglong id)
 QTreeWidgetItem *RSFeedWidget::findTreeWidgetItem(const FeedItem *w)
 {
  	QTreeWidgetItemIterator it(ui->treeWidget);
- 	QTreeWidgetItem *treeItem=NULL;
 
      // this search could probably be automatised by giving the tree items the identifier as data for some specific role, then calling QTreeWidget::findItems()
  #warning TODO
