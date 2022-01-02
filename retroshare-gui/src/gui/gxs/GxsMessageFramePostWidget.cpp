@@ -371,7 +371,7 @@ void GxsMessageFramePostWidget::loadPosts(const std::set<RsGxsMessageId>& msgIds
 /**************************************************************/
 
 GxsMessageFramePostThread::GxsMessageFramePostThread(const std::vector<RsGxsGenericMsgData*>& posts,GxsMessageFramePostWidget *parent)
-    : mPosts(posts),QThread(parent), mParent(parent)
+    : QThread(parent), mPosts(posts), mParent(parent)
 {
 	mStopped = false;
 }
