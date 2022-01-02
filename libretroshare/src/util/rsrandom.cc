@@ -139,8 +139,12 @@ double RsRandom::random_f64()
 
 /*static*/ std::string RsRandom::printable(uint32_t length)
 {
-	std::string ret(length, 0);
-	random_bytes(reinterpret_cast<uint8_t*>(&ret[0]), length);
-	for(uint32_t i=0; i<length; ++i) ret[i] = (ret[i] % 94) + 33;
-	return ret;
+    std::string res;
+    RsTemporaryMemory mem(length);
+    random_bytes(mem,length);
+
+    for(uint32_t i=0; i<length; ++i)
+        res += (char)(( ((int) ((uint8_t*)mem)[i]) % 94 ) + 33);
+
+    return res;
 }

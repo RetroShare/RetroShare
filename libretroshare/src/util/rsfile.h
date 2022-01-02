@@ -1,9 +1,9 @@
 /*******************************************************************************
- * libretroshare/src/util: rsprint.h                                           *
+ * libretroshare/src/util: rsfile.h                                            *
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2008-2008 Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2021 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -19,32 +19,14 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef RSUTIL_PRINTFNS_H
-#define RSUTIL_PRINTFNS_H
 
-#include <inttypes.h>
-#include <string>
-#include <vector>
+#pragma once
 
-namespace RsUtil {
+#include <stdio.h>
 
-std::string BinToHex(const std::string &bin);
-std::string BinToHex(const char *arr, const uint32_t len);
+namespace RsFileUtil {
 
-// proxy function. When max_len>0 and len>max_len, only the first "max_len" bytes are writen to the string and "..." is happened.
-
-std::string BinToHex(const unsigned char *arr, const uint32_t len, uint32_t max_len=0);
-bool HexToBin(const std::string& input,unsigned char *data, const uint32_t len);
-std::string NumberToString(uint64_t n, bool hex=false);
-
-// Returns in n the int that can be read in the string. Returns false when no int is fond.
-bool StringToInt(const std::string& s,int& n);
-
-std::string HashId(const std::string &id, bool reverse = false);
-std::vector<uint8_t> BinToSha256(const std::vector<uint8_t> &in);
-
-//std::string AccurateTimeString();
+int set_fd_nonblock(int fd);
+ssize_t rs_getline(char **lineptr, size_t *n, FILE *stream);
 
 }
-	
-#endif

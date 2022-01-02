@@ -1,5 +1,3 @@
-#include "retroshare/rsevents.h"
-#include "retroshare/rstor.h"
 #include "ui_TorControlWindow.h"
 
 class QTcpServer ;
@@ -14,8 +12,7 @@ class TorControlDialog: public QWidget, public Ui::TorControlDialog
 	Q_OBJECT
 
 public:
-    TorControlDialog(QWidget *parent =NULL);
-    virtual ~TorControlDialog();
+	TorControlDialog(Tor::TorManager *tm,QWidget *parent =NULL);
 
 	enum TorStatus {
 		TOR_STATUS_UNKNOWN = 0x00,
@@ -37,14 +34,15 @@ public:
 
 protected slots:
 	void showLog();
-    void statusChanged(RsTorStatus torstatus,RsTorConnectivityStatus tor_control_status);
-    void onIncomingConnection();
+	void statusChanged();
+	void onIncomingConnection();
 
-        void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 private:
 	QString mErrorMsg ;
-    std::string mHiddenService;
+	HiddenServiceStatus mHiddenServiceStatus ;
+
+	Tor::TorManager *mTorManager ;
+	Tor::HiddenService *mHiddenService ;
 
 	QTcpServer *mIncomingServer ;
-    RsEventsHandlerId_t mEventHandlerId;
 };

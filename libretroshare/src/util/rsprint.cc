@@ -22,6 +22,7 @@
 
 #include "util/rsprint.h"
 #include "util/rsstring.h"
+#include <stdio.h>
 #include <iomanip>
 #include <sstream>
 #include <openssl/sha.h>
@@ -45,6 +46,13 @@ std::string RsUtil::NumberToString(uint64_t n,bool hex)
     return os.str();
 }
 
+bool RsUtil::StringToInt(const std::string& s,int& n)
+{
+    if(sscanf(s.c_str(),"%d",&n) == 1)
+        return true;
+    else
+        return false;
+}
 std::string RsUtil::BinToHex(const std::string &bin)
 {
 	return BinToHex(bin.c_str(), bin.length());
