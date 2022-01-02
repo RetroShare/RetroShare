@@ -347,5 +347,6 @@
         <file>icons/groups/purple.png</file>
         <file>icons/groups/pink.png</file>
         <file>icons/groups/indigo.png</file>
+        <file>icons/groups/colored.svg</file>
     </qresource>
 </RCC>

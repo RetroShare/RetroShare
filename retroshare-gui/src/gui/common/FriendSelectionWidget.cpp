@@ -382,12 +382,34 @@ void FriendSelectionWidget::secured_fillList()
 			// Add item to the list
 			ui->friendList->addTopLevelItem(groupItem);
 
+			QFontMetricsF fontMetrics(ui->friendList->font());
+			int avatarHeight = fontMetrics.height() * 1.5;
+			ui->friendList->setIconSize(QSize(avatarHeight, avatarHeight));
+
 			groupItem->setFlags(Qt::ItemIsUserCheckable | groupItem->flags());
 			groupItem->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
 			groupItem->setTextAlignment(COLUMN_NAME, Qt::AlignLeft | Qt::AlignVCenter);
-            groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(IMAGE_GROUP16));
 
-            groupItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(groupInfo->id.toStdString()));
+			if (groupInfo->id.toStdString() == RS_GROUP_ID_FRIENDS.toStdString()) {
+				groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(":/icons/groups/blue.png"));
+			}
+			else if (groupInfo->id.toStdString() == RS_GROUP_ID_FAMILY.toStdString()) {
+				groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(":/icons/groups/purple.png"));
+			}
+			else if (groupInfo->id.toStdString() == RS_GROUP_ID_COWORKERS.toStdString()) {
+				groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(":/icons/groups/green.png"));
+			}
+			else if (groupInfo->id.toStdString() == RS_GROUP_ID_OTHERS.toStdString()) {
+				groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(":/icons/groups/pink.png"));
+			}
+			else if (groupInfo->id.toStdString() == RS_GROUP_ID_FAVORITES.toStdString()) {
+				groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(":/icons/groups/yellow.png"));
+			}
+			else {
+				groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(":/icons/groups/red.png"));
+			}
+
+			groupItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(groupInfo->id.toStdString()));
 
 			groupItem->setExpanded(true);
 
