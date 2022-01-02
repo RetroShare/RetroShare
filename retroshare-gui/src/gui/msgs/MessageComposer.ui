@@ -350,7 +350,7 @@
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
-          <widget class="QWidget" name="layoutWidget">
+          <widget class="QWidget" name="layoutWidget_2">
            <layout class="QVBoxLayout" name="verticalLayout">
             <item>
              <widget class="QFrame" name="toolBarFrame">
