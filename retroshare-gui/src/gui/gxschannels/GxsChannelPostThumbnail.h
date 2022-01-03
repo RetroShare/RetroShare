@@ -107,7 +107,7 @@ public:
 	static const int THUMBNAIL_W  = 4;
 	static const int THUMBNAIL_H  = 6;
 
-    static constexpr char *CHAN_DEFAULT_IMAGE = ":images/thumb-default-video.png";
+    static constexpr const char *CHAN_DEFAULT_IMAGE = ":images/thumb-default-video.png";
 
     virtual ~ChannelPostThumbnailView();
     ChannelPostThumbnailView(QWidget *parent=NULL,uint32_t flags=FLAG_ALLOW_PAN | FLAG_SHOW_TEXT | FLAG_SCALE_FONT);
