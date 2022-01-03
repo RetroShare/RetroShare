@@ -34,6 +34,7 @@
 #include <string>
 
 // For win32 systems (tested on MingW+Ubuntu)
+#undef stat64
 #define stat64 _stati64
 
 // Should be in Iphlpapi.h, but mingw doesn't seem to have these
