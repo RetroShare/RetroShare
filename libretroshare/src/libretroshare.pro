@@ -4,6 +4,7 @@
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = lib
+CONFIG -= qt
 libretroshare_shared {
 	CONFIG += shared
 } else {
