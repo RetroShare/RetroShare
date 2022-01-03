@@ -4277,6 +4277,9 @@ bool RsGxsNetService::locked_checkResendingOfUpdates(const RsPeerId& pid,const R
     {
 #ifdef NXS_NET_DEBUG_0
 		GXSNETDEBUG_PG(pid,grpId) << "(II) peer " << pid << " already sent the same TS " << (long int)now-(long int)rec.mTs << " secs ago for that group ID. Will not send msg list again for a while to prevent clogging..." << std::endl;
+#else
+		(void) pid;
+		(void) grpId;
 #endif
 		return false;
     }
@@ -4439,7 +4442,9 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
     uint32_t transN = locked_getTransactionId();
     RsGxsCircleId should_encrypt_to_this_circle_id ;
 
+#ifndef RS_GXS_SEND_ALL
     rstime_t now = time(NULL) ;
+#endif
 
 #ifndef RS_GXS_SEND_ALL
     uint32_t max_send_delay = locked_getGrpConfig(item->grpId).msg_req_delay;	// we should use "sync" but there's only one variable used in the GUI: the req one.

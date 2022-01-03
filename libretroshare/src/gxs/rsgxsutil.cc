@@ -340,7 +340,7 @@ bool RsGxsIntegrityCheck::check(uint16_t service_type, RsGixs *mgixs, RsGeneralD
 }
 
 bool RsGxsSinglePassIntegrityCheck::check(
-        uint16_t service_type, RsGixs* mgixs, RsGeneralDataService* mds,
+        uint16_t /*service_type*/, RsGixs* /*mgixs*/, RsGeneralDataService* mds,
         std::vector<RsGxsGroupId>& grpsToDel, GxsMsgReq& msgsToDel )
 {
 #ifdef DEBUG_GXSUTIL

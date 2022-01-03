@@ -52,7 +52,7 @@ void TorControlCommand::onFinished(int statusCode)
     mFinished(this);
 }
 
-void TorControlCommand::onDataLine(const ByteArray &data)
+void TorControlCommand::onDataLine(const ByteArray &/*data*/)
 {
 }
 
