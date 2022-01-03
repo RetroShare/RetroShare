@@ -1186,6 +1186,7 @@ bool RsGenExchange::checkAuthenFlag(const PrivacyBitPos& pos, const uint8_t& fla
     }
 }
 
+#ifdef TO_REMOVE
 static void addMessageChanged(std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgs, const std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgChanged)
 {
     if (msgs.empty()) {
@@ -1203,7 +1204,6 @@ static void addMessageChanged(std::map<RsGxsGroupId, std::set<RsGxsMessageId> > 
     }
 }
 
-#ifdef TO_REMOVE
 void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
 {
     std::cerr << "***********************************  RsGenExchange::receiveChanges()" << std::endl;
