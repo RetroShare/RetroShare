@@ -236,7 +236,7 @@ bool p3GxsCircles::createCircle(
 
 bool p3GxsCircles::checkCircleParamConsistency( const std::string& circleName, RsGxsCircleType circleType,
                                           const RsGxsCircleId& restrictedId,
-                                          const RsGxsId& authorId, const std::set<RsGxsId>& gxsIdMembers,
+                                          const RsGxsId& /*authorId*/, const std::set<RsGxsId>& gxsIdMembers,
                                           const std::set<RsPgpId>& localMembers ) const
 {
     if(circleName.empty())
