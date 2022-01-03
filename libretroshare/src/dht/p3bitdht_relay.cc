@@ -151,6 +151,10 @@ int p3BitDht::setRelayMode(RsDhtRelayMode mode)
 			pushRelayServers();
 			mUdpBitDht->setDhtMode(BITDHT_MODE_RELAYSERVERS_SERVER);
 			break;
+	    case RsDhtRelayMode::ENABLED:
+	    case RsDhtRelayMode::DISABLED:
+	    case RsDhtRelayMode::MASK:
+			break;
 	}
 
 	{
