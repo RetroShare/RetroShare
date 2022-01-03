@@ -33,7 +33,7 @@ Histogram::Histogram(double start, double end, int bins)
 		std::cerr << "Null histogram created! Please check your parameters" << std::endl;
 }
 
-void Histogram::draw(QPainter *painter) const
+void Histogram::draw(QPainter */*painter*/) const
 {
 }
 

@@ -145,7 +145,7 @@ void HomePage::handleEvent(std::shared_ptr<const RsEvent> e)
         break;
     }
 }
-void HomePage::certContextMenu(QPoint point)
+void HomePage::certContextMenu(QPoint /*point*/)
 {
     QMenu menu(this) ;
 

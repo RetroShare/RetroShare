@@ -99,7 +99,6 @@ void GxsCreateCommentDialog::createComment()
 		return;
 	}
 
-	uint32_t token;
 	mCommentService->createComment(comment);
 	close();
 }

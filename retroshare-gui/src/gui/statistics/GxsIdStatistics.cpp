@@ -44,6 +44,7 @@
 #include "util/misc.h"
 #include "util/qtthreadsutils.h"
 
+#ifdef TODO
 static QColor colorScale(float f)
 {
 	if(f == 0)
@@ -51,6 +52,7 @@ static QColor colorScale(float f)
 	else
 		return QColor::fromHsv((int)((1.0-f)*280),200,255) ;
 }
+#endif
 
 GxsIdStatistics::GxsIdStatistics(QWidget *parent)
     : RsAutoUpdatePage(4000,parent)
