@@ -35,11 +35,6 @@
 #include "serialiser/rstlvkeys.h"
 #include "gxs/rsgxsdata.h"
 
-enum class RsNxsSubtype : uint8_t
-{
-	PULL_REQUEST = 0x90 /// @see RsNxsPullRequestItem
-};
-
 // These items have "flag type" numbers, but this is not used.
 // TODO: refactor as C++11 enum class
 const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_GRP_REQ_ITEM    = 0x01;
@@ -53,6 +48,7 @@ const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_MSG_REQ_ITEM    = 0x10;
 const uint8_t RS_PKT_SUBTYPE_NXS_MSG_ITEM             = 0x20;
 const uint8_t RS_PKT_SUBTYPE_NXS_TRANSAC_ITEM         = 0x40;
 const uint8_t RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY_ITEM = 0x80;
+const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_PULL_REQUEST_ITEM = 0x90;
 
 
 #ifdef RS_DEAD_CODE
@@ -370,13 +366,10 @@ public:
 /*!
  * Used to request to a peer pull updates from us ASAP without waiting GXS sync
  * timer */
-struct RsNxsPullRequestItem: RsItem
+class RsNxsPullRequestItem: public RsNxsItem
 {
-	explicit RsNxsPullRequestItem(RsServiceType servtype):
-	    RsItem( RS_PKT_VERSION_SERVICE,
-	            servtype,
-	            static_cast<uint8_t>(RsNxsSubtype::PULL_REQUEST),
-	            QOS_PRIORITY_RS_GXS_NET ) {}
+public:
+    explicit RsNxsPullRequestItem(uint16_t servtype): RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_PULL_REQUEST_ITEM) {}
 
 	/// @see RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob,
@@ -388,8 +381,9 @@ struct RsNxsPullRequestItem: RsItem
  * Used to respond to a RsGrpMsgsReq
  * with message items satisfying request
  */
-struct RsNxsMsg : RsNxsItem
+class RsNxsMsg : public RsNxsItem
 {
+public:
 	explicit RsNxsMsg(uint16_t servtype)
 	  : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_MSG_ITEM)
 	  , pos(0), count(0), meta(servtype), msg(servtype), metaData(NULL)

@@ -586,9 +586,9 @@ bool pqisslproxy::connect_parameter(uint32_t type, const std::string &value)
 	
 	        if (type == NET_PARAM_CONNECT_DOMAIN_ADDRESS)
 	        {
-	                std::string out;
-	                rs_sprintf(out, "pqisslproxy::connect_parameter() Peer: %s DOMAIN_ADDRESS: %s", PeerId().toStdString().c_str(), value.c_str());
 #ifdef PROXY_DEBUG_LOG
+                    std::string out;
+	                rs_sprintf(out, "pqisslproxy::connect_parameter() Peer: %s DOMAIN_ADDRESS: %s", PeerId().toStdString().c_str(), value.c_str());
 	                rslog(RSL_WARNING, pqisslproxyzone, out);
 #endif
 	                mDomainAddress = value;

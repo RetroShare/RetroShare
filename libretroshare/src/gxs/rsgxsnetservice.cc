@@ -1730,15 +1730,6 @@ void RsGxsNetService::recvNxsItemQueue()
 #endif
 		/* Handle pull request and other new items here to not mess with all the
 		 * old nested code and items hell */
-		switch(static_cast<RsNxsSubtype>(item->PacketSubType()))
-		{
-		case RsNxsSubtype::PULL_REQUEST:
-			std::unique_ptr<RsNxsPullRequestItem> pullItem(
-			            static_cast<RsNxsPullRequestItem*>(item) );
-			handlePullRequest(std::move(pullItem));
-			continue;
-		}
-
         // RsNxsItem needs dynamic_cast, since they have derived siblings.
         //
         RsNxsItem *ni = dynamic_cast<RsNxsItem*>(item) ;
@@ -1781,10 +1772,11 @@ void RsGxsNetService::recvNxsItemQueue()
 
             switch(ni->PacketSubType())
             {
-            case RS_PKT_SUBTYPE_NXS_SYNC_GRP_STATS_ITEM: handleRecvSyncGrpStatistics   (dynamic_cast<RsNxsSyncGrpStatsItem*>(ni)) ; break ;
-            case RS_PKT_SUBTYPE_NXS_SYNC_GRP_REQ_ITEM:   handleRecvSyncGroup           (dynamic_cast<RsNxsSyncGrpReqItem*>(ni)) ; break ;
-            case RS_PKT_SUBTYPE_NXS_SYNC_MSG_REQ_ITEM:   handleRecvSyncMessage         (dynamic_cast<RsNxsSyncMsgReqItem*>(ni),item_was_encrypted) ; break ;
-            case RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY_ITEM:handleRecvPublishKeys         (dynamic_cast<RsNxsGroupPublishKeyItem*>(ni)) ; break ;
+            case RS_PKT_SUBTYPE_NXS_SYNC_GRP_STATS_ITEM:    handleRecvSyncGrpStatistics   (dynamic_cast<RsNxsSyncGrpStatsItem*>(ni)) ; break ;
+            case RS_PKT_SUBTYPE_NXS_SYNC_GRP_REQ_ITEM:      handleRecvSyncGroup           (dynamic_cast<RsNxsSyncGrpReqItem*>(ni)) ; break ;
+            case RS_PKT_SUBTYPE_NXS_SYNC_MSG_REQ_ITEM:      handleRecvSyncMessage         (dynamic_cast<RsNxsSyncMsgReqItem*>(ni),item_was_encrypted) ; break ;
+            case RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY_ITEM:   handleRecvPublishKeys         (dynamic_cast<RsNxsGroupPublishKeyItem*>(ni)) ; break ;
+            case RS_PKT_SUBTYPE_NXS_SYNC_PULL_REQUEST_ITEM: handlePullRequest             (dynamic_cast<RsNxsPullRequestItem*>(ni)) ; break ;
 
             default:
                 if(ni->PacketSubType() != RS_PKT_SUBTYPE_NXS_ENCRYPTED_DATA_ITEM)
@@ -5119,8 +5111,7 @@ std::error_condition RsGxsNetService::requestPull(std::set<RsPeerId> peers)
 
 	for(auto& peerId: std::as_const(peers))
 	{
-		auto item = new RsNxsPullRequestItem(
-		            static_cast<RsServiceType>(mServType) );
+        auto item = new RsNxsPullRequestItem(mServType);
 		item->PeerId(peerId);
 		generic_sendItem(item);
 	}
@@ -5128,8 +5119,7 @@ std::error_condition RsGxsNetService::requestPull(std::set<RsPeerId> peers)
 	return std::error_condition();
 }
 
-void RsGxsNetService::handlePullRequest(
-        std::unique_ptr<RsNxsPullRequestItem> item )
+void RsGxsNetService::handlePullRequest(RsNxsPullRequestItem *item)
 {
 	checkUpdatesFromPeers(std::set<RsPeerId>{item->PeerId()});
 }
