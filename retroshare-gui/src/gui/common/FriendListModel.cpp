@@ -42,12 +42,12 @@
 
 #define IS_MESSAGE_UNREAD(flags) (flags &  (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER))
 
-#define IMAGE_COWORKERS        ":/icons/groups/green.png"
-#define IMAGE_FRIENDS          ":/icons/groups/blue.png"
-#define IMAGE_FAMILY           ":/icons/groups/purple.png"
-#define IMAGE_FAVORITES        ":/icons/groups/yellow.png"
-#define IMAGE_OTHERCONTACTS    ":/icons/groups/pink.png"
-#define IMAGE_OTHERGROUPS      ":/icons/groups/red.png"
+#define IMAGE_COWORKERS        ":/icons/groups/green.svg"
+#define IMAGE_FRIENDS          ":/icons/groups/blue.svg"
+#define IMAGE_FAMILY           ":/icons/groups/purple.svg"
+#define IMAGE_FAVORITES        ":/icons/groups/yellow.svg"
+#define IMAGE_OTHERCONTACTS    ":/icons/groups/pink.svg"
+#define IMAGE_OTHERGROUPS      ":/icons/groups/red.svg"
 #define IMAGE_STAR_ON          ":/images/star-on-16.png"
 #define IMAGE_STAR_OFF         ":/images/star-off-16.png"
 

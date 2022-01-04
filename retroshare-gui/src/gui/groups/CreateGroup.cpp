@@ -41,7 +41,7 @@ CreateGroup::CreateGroup(const RsNodeGroupId &groupId, QWidget *parent)
 
 	mIsStandard = false;
 
-    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/user/add_group256.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/groups/colored.svg"));
 
 	mGroupId = groupId;
 
