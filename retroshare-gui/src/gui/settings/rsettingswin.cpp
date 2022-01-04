@@ -177,7 +177,8 @@ SettingsPage::initStackedWidget()
     addPage(new SoundPage() ); // SOUND
     addPage(new ServicePermissionsPage() ); // PERMISSIONS
 #ifdef RS_JSONAPI
-	addPage(new JsonApiPage());
+    JsonApiPage *jsonapi_p = new JsonApiPage() ;
+	addPage(jsonapi_p);
 #ifdef RS_WEBUI
     WebuiPage *webui_p = new WebuiPage() ;
     addPage(new WebuiPage() );
