@@ -153,6 +153,8 @@ void QVideoInputDevice::errorHandling(CameraStatus status,QCamera::Error error)
 {
 #ifdef DEBUG_QVIDEODEVICE
     std::cerr << "Received msg from camera capture: status=" << (int)status << " error=" << (int)error << std::endl;
+#else
+    Q_UNUSED(error);
 #endif
     if(status == CANNOT_INITIALIZE_CAMERA)
     {
@@ -179,6 +181,8 @@ void QVideoInputDevice::grabFrame(int id,QVideoFrame frame)
 
 #ifdef DEBUG_QVIDEODEVICE
     std::cerr << "Frame " << id << ". Pixel format: " << frame.pixelFormat() << ". Size: " << image.size().width() << " x " << image.size().height() << std::endl; // if(frame.pixelFormat() != QVideoFrame::Format_Jpeg)
+#else
+    Q_UNUSED(id);
 #endif
 
     if(_video_processor != NULL)
