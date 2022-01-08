@@ -23,22 +23,6 @@
 #include "util/rsdebug.h"
 #include "util/rsstring.h"
 
-#include <sstream>
-#include <sys/time.h>
-static double getCurrentTS()
-{
-#ifndef WINDOWS_SYS
-        struct timeval cts_tmp;
-        gettimeofday(&cts_tmp, NULL);
-        double cts =  (cts_tmp.tv_sec) + ((double) cts_tmp.tv_usec) / 1000000.0;
-#else
-        struct _timeb timebuf;
-        _ftime( &timebuf);
-        double cts =  (timebuf.time) + ((double) timebuf.millitm) / 1000.0;
-#endif
-        return cts;
-}
-
 #ifdef  SERVICE_DEBUG
 const int pqiservicezone = 60478;
 #endif
