@@ -28,11 +28,7 @@ DESTDIR = lib
 
 !include("use_libbitdht.pri"):error("Including")
 
-QMAKE_CXXFLAGS *= -Wall -DBE_DEBUG
-
-# treat warnings as error for better removing
-#QMAKE_CFLAGS += -Werror
-#QMAKE_CXXFLAGS += -Werror
+QMAKE_CXXFLAGS *= -DBE_DEBUG
 
 ################################# Linux ##########################################
 linux-* {
@@ -83,10 +79,6 @@ win32 {
         DEFINES *= STATICLIB WIN32_LEAN_AND_MEAN
 		# These have been replaced by _WIN32 && __MINGW32__
 		#DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW
-
-		# Switch on extra warnings
-		QMAKE_CFLAGS += -Wextra
-		QMAKE_CXXFLAGS += -Wextra
 
 		# Switch off optimization for release version
 		QMAKE_CXXFLAGS_RELEASE -= -O2

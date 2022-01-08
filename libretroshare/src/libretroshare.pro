@@ -19,10 +19,6 @@ DESTDIR = lib
 
 QMAKE_CXXFLAGS += -fPIC
 
-# treat warnings as error for better removing
-#QMAKE_CFLAGS += -Werror
-#QMAKE_CXXFLAGS += -Werror
-
 ## Uncomment to enable Unfinished Services.
 #CONFIG += wikipoos
 #CONFIG += gxsthewire
@@ -169,7 +165,7 @@ HEADERS += $$PUBLIC_HEADERS
 linux-* {
     CONFIG += link_pkgconfig
 
-	QMAKE_CXXFLAGS *= -Wall -D_FILE_OFFSET_BITS=64
+	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
 	QMAKE_CC = $${QMAKE_CXX}
 
     no_sqlcipher {
@@ -249,10 +245,6 @@ win32-g++|win32-clang-g++ {
 	OBJECTS_DIR = temp/obj
 	MOC_DIR = temp/moc
     !libretroshare_shared:DEFINES *= STATICLIB
-
-	# Switch on extra warnings
-	QMAKE_CFLAGS += -Wextra
-	QMAKE_CXXFLAGS += -Wextra
 
 	# Switch off optimization for release version
 	QMAKE_CXXFLAGS_RELEASE -= -O2

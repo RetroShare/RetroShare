@@ -89,7 +89,7 @@ linux-* {
 	INCLUDEPATH *= $${OPENPGPSDK_DIR} ../openpgpsdk
 
 	DESTDIR = lib
-	QMAKE_CXXFLAGS *= -Wall -D_FILE_OFFSET_BITS=64
+	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
 	QMAKE_CC = $${QMAKE_CXX}
 
 	SSL_DIR = /usr/include/openssl
@@ -171,10 +171,6 @@ win32 {
 	# This defines the platform to be WinXP or later and is needed for getaddrinfo (_WIN32_WINNT_WINXP)
 	DEFINES *= WINVER=0x0501
 	DESTDIR = lib
-
-	# Switch on extra warnings
-	QMAKE_CFLAGS += -Wextra
-	QMAKE_CXXFLAGS += -Wextra
 
 	# Switch off optimization for release version
 	QMAKE_CXXFLAGS_RELEASE -= -O2
