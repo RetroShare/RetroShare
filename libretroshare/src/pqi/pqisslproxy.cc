@@ -78,19 +78,19 @@ int 	pqisslproxy::Initiate_Connection()
 /********* VERY DIFFERENT **********/
 int 	pqisslproxy::Basic_Connection_Complete()
 {
-	rslog(RSL_DEBUG_BASIC, pqisslproxyzone, 
-	  "pqisslproxy::Basic_Connection_Complete()...");
+    rslog(RSL_DEBUG_BASIC, pqisslproxyzone,
+          "pqisslproxy::Basic_Connection_Complete()...");
 
 #ifdef PROXY_DEBUG
-	std::cerr << "pqisslproxy::Basic_Connection_Complete() STATE: " << mProxyState;
-	std::cerr << std::endl;
+    std::cerr << "pqisslproxy::Basic_Connection_Complete() STATE: " << mProxyState;
+    std::cerr << std::endl;
 #endif
 
-	if (CheckConnectionTimeout())
-	{
-		// calls reset.
-		return -1;
-	}
+    if (CheckConnectionTimeout())
+    {
+        // calls reset.
+        return -1;
+    }
 
     int ret;
 
@@ -103,7 +103,7 @@ int 	pqisslproxy::Basic_Connection_Complete()
         reset_locked();
 
     return ret;
-   }
+}
 
 bool pqisslproxy::connect_parameter(uint32_t type, const std::string &value)
 {

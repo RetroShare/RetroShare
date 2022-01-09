@@ -20,7 +20,9 @@ int pqiproxyconnection::proxy_negotiate_connection(int sockfd)
 
     case PROXY_STATE_WAITING_SOCKS_RESPONSE:
         ret = Proxy_Connection_Complete(sockfd); // wait for ACK.
-        break;
+
+        if(ret < 1)
+            break;
 
     case PROXY_STATE_CONNECTION_COMPLETE:
 
@@ -41,6 +43,8 @@ int pqiproxyconnection::proxy_negotiate_connection(int sockfd)
         return -1;
     }
 
+    if(ret < 0)
+        return -1;
 
 #ifdef PROXY_DEBUG
     std::cerr << "pqisslproxy::Basic_Connection_Complete() IN PROGRESS";
@@ -225,21 +229,19 @@ int	pqiproxyconnection::Proxy_Send_Address(int sockfd)
         return ret; // Method Response not complete.
     }
 
-    char socks_request[MAX_SOCKS_REQUEST_LEN] =
-    { 0x05, // SOCKS VERSION.
-      0x01, // CONNECT (Tor doesn't support BIND or UDP).
-      0x00, // RESERVED.
-      0x03, // ADDRESS TYPE (Domain Name)
-      0x00, // Length of Domain name... the rest is variable so can't hard code it!
+    char socks_request[MAX_SOCKS_REQUEST_LEN] = {
+            0x05, // SOCKS VERSION.
+            0x01, // CONNECT (Tor doesn't support BIND or UDP).
+            0x00, // RESERVED.
+            0x03, // ADDRESS TYPE (Domain Name)
+            0x00, // Length of Domain name... the rest is variable so can't hard code it!
     };
 
     /* get the length of the domain name, pack so we can't overflow uint8_t */
     uint8_t len = mDomainAddress.length();
     socks_request[4] = len;
     for(int i = 0; i < len; i++)
-    {
         socks_request[5 + i] = mDomainAddress[i];
-    }
 
     /* now add the port, being careful with packing */
     uint16_t net_port = htons(mRemotePort);
