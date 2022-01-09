@@ -8,15 +8,17 @@ static const rstime_t MIN_DELAY_BETWEEN_FS_REQUESTS =   30;
 static const rstime_t MAX_DELAY_BETWEEN_FS_REQUESTS = 3600;
 static const uint32_t DEFAULT_FRIENDS_TO_REQUEST    =   10;
 
-static const std::string DEFAULT_FRIEND_SERVER_ADDRESS = "127.0.0.1";
+static const std::string DEFAULT_PROXY_ADDRESS         = "127.0.0.1";
 static const uint16_t    DEFAULT_FRIEND_SERVER_PORT    = 2017;
+static const uint16_t    DEFAULT_PROXY_PORT            = 9050;
 
 FriendServerManager::FriendServerManager()
 {
     mLastFriendReqestCampain = 0;
     mFriendsToRequest = DEFAULT_FRIENDS_TO_REQUEST;
 
-    mServerAddress = DEFAULT_FRIEND_SERVER_ADDRESS;
+    mProxyAddress = DEFAULT_PROXY_ADDRESS;
+    mProxyPort = DEFAULT_PROXY_PORT;
     mServerPort = DEFAULT_FRIEND_SERVER_PORT;
 }
 void FriendServerManager::startServer()
@@ -48,7 +50,11 @@ void FriendServerManager::setServerAddress(const std::string& addr,uint16_t port
     mServerAddress = addr;
     mServerPort = port;
 }
-
+void FriendServerManager::setProxyAddress(const std::string& addr,uint16_t port)
+{
+    mProxyAddress = addr;
+    mProxyPort = port;
+}
 void FriendServerManager::setFriendsToRequest(uint32_t n)
 {
     mFriendsToRequest = n;
@@ -59,6 +65,11 @@ void FriendServerManager::threadTick()
     std::cerr << "Ticking FriendServerManager..." << std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(2));
 
+    if(mServerAddress.empty())
+    {
+        RsErr() << "No friend server address has been setup. This is probably a bug.";
+        return;
+    }
     // Check for requests. Compute how much to wait based on how many friends we have already
 
     std::vector<RsPgpId> friends;
@@ -101,7 +112,7 @@ void FriendServerManager::threadTick()
         std::cerr << "Requesting new friends to friend server..." << std::endl;
 
         std::map<std::string,bool> friend_certificates;
-        FsClient().requestFriends(mServerAddress,mServerPort,mFriendsToRequest,friend_certificates);	// blocking call
+        FsClient().requestFriends(mServerAddress,mServerPort,mProxyAddress,mProxyPort,mFriendsToRequest,friend_certificates);	// blocking call
 
         std::cerr << "Got the following list of friend certificates:" << std::endl;
 

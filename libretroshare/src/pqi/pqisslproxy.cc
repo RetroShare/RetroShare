@@ -97,7 +97,7 @@ int 	pqisslproxy::Basic_Connection_Complete()
     if(proxyConnectionState() == PROXY_STATE_INIT && 1!=(ret=pqissl::Basic_Connection_Complete()))
         return ret; // basic connection not complete.
 
-    ret = proxy_negotiate_connection(sockfd);
+    ret = proxy_negociate_connection(sockfd);
 
     if(ret < 0)
         reset_locked();

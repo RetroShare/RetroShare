@@ -5,7 +5,7 @@
 
 //#define PROXY_DEBUG 1
 
-int pqiproxyconnection::proxy_negotiate_connection(int sockfd)
+int pqiproxyconnection::proxy_negociate_connection(int sockfd)
 {
     int ret = 0;
     switch(mProxyState)

@@ -25,8 +25,11 @@
 
 #include "fsclient.h"
 #include "pqi/pqifdbin.h"
+#include "pqi/pqiproxy.h"
 
-bool FsClient::requestFriends(const std::string& address,uint16_t port,uint32_t reqs,std::map<std::string,bool>& friend_certificates)
+bool FsClient::requestFriends(const std::string& address,uint16_t port,
+                              const std::string& proxy_address,uint16_t proxy_port,
+                              uint32_t reqs,std::map<std::string,bool>& friend_certificates)
 {
     // send our own certificate to publish and expects response frmo the server , decrypts it and reutnrs friend list
 
@@ -47,7 +50,7 @@ bool FsClient::requestFriends(const std::string& address,uint16_t port,uint32_t 
     pitem->short_invite = short_invite;
 
     std::list<RsItem*> response;
-    sendItem(address,port,pitem,response);
+    sendItem(address,port,proxy_address,proxy_port,pitem,response);
 
     // now decode the response
 
@@ -84,11 +87,13 @@ void FsClient::handleServerResponse(RsFriendServerServerResponseItem *item)
     //        friend_certificates.insert(it);
 }
 
-bool FsClient::sendItem(const std::string& address,uint16_t port,RsItem *item,std::list<RsItem*>& response)
+bool FsClient::sendItem(const std::string& server_address,uint16_t server_port,
+                        const std::string& proxy_address,uint16_t proxy_port,
+                        RsItem *item,std::list<RsItem*>& response)
 {
     // open a connection
 
-    RsDbg() << "Sending item to friend server at \"" << address << ":" << port ;
+    RsDbg() << "Sending item to friend server at \"" << server_address << ":" << server_port << " through proxy " << proxy_address << ":" << proxy_port;
 
     int CreateSocket = 0;
     char dataReceived[1024];
@@ -103,25 +108,32 @@ bool FsClient::sendItem(const std::string& address,uint16_t port,RsItem *item,st
     }
 
     ipOfServer.sin_family = AF_INET;
-    ipOfServer.sin_port = htons(port);
-    ipOfServer.sin_addr.s_addr = inet_addr(address.c_str());
+    ipOfServer.sin_port = htons(proxy_port);
+    ipOfServer.sin_addr.s_addr = inet_addr(proxy_address.c_str());
 
     if(connect(CreateSocket, (struct sockaddr *)&ipOfServer, sizeof(ipOfServer))<0)
     {
-        printf("Connection failed due to port and ip problems, or server is not available\n");
+        printf("Connection to proxy failed due to port and ip problems, or proxy is not available\n");
         return false;
     }
+
+    // Now connect to the proxy
+
+    int ret=0;
+    pqiproxyconnection proxy;
+    proxy.setRemoteAddress(server_address);
+    proxy.setRemotePort(server_port);
+
+    while(1 != (ret = proxy.proxy_negociate_connection(CreateSocket)))
+        if(ret < 0)
+        {
+            RsErr() << "FriendServer client: Connection problem to the proxy!" ;
+            return false;
+        }
+        else
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
     // Serialise the item and send it.
-
-    uint32_t size = RsSerialiser::MAX_SERIAL_SIZE;
-    RsTemporaryMemory data(size);
-
-    if(!data)
-    {
-        RsErr() << "Cannot allocate memory to send item!" << std::endl;
-        return false;
-    }
 
     FsSerializer *fss = new FsSerializer;
     RsSerialiser *rss = new RsSerialiser();	// deleted by ~pqistreamer()

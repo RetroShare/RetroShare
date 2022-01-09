@@ -36,6 +36,8 @@ public:
         PROXY_STATE_CONNECTION_COMPLETE		= 0x04
     };
 
+    pqiproxyconnection() : mProxyState(PROXY_STATE_INIT) {}
+
     /*!
      * \brief proxy_negotiate_connection
      * 			Negotiate the connection with the proxy that is connected with openned socket sockfd. The caller needs to
@@ -46,7 +48,7 @@ public:
      * 		 0 : in progress. The function needs to be called again asap.
      * 		 1 : proxy connection is fully negociated. Client can send data to the socket.
      */
-    int proxy_negotiate_connection(int sockfd);
+    int proxy_negociate_connection(int sockfd);
 
     void setRemotePort(uint16_t v) { mRemotePort = v; }
     void setRemoteAddress(const std::string& s) { mDomainAddress = s; }
