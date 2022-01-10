@@ -1,0 +1,226 @@
+/*
+ * libretroshare Android AAR library gradle builder
+ *
+ * Copyright (C) 2022  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2022  Asociación Civil Altermundi <info@altermundi.net>
+ *
+ * SPDX-License-Identifier: CC0-1.0
+ */
+
+buildscript
+{
+	repositories
+	{
+		// The order in which you list these repositories matter.
+		google()
+		mavenCentral()
+	}
+
+	dependencies
+	{
+		classpath 'com.android.tools.build:gradle:7.1.+'
+	}
+}
+
+allprojects
+{
+	repositories
+	{
+		// The order in which you list these repositories matter.
+		google()
+		mavenCentral()
+	}
+}
+
+ext.buildLibretroshareNativeLib =
+{
+	pApiLevel, /* Android API level */
+	pAbi, /* Arch name as seen in AAR native libraries directories */
+	pNdkPath, /* Android NDK path */
+	pReuseToolchain = true /* If true reuse previously built toochain */ ->
+
+	/* Convert pAbi into corresponding prepare toolchain ANDROID_NDK_ARCH */
+	def toolchainArch = "unsupported"
+	def libcxxsharedTriple = "unsupported"
+	switch(pAbi)
+	{
+	case "armeabi-v7a":
+		toolchainArch = "arm";
+		libcxxsharedTriple = "arm-linux-androideabi";
+		break;
+	case "arm64-v8a":
+		toolchainArch = "arm64";
+		libcxxsharedTriple = "aarch64-linux-android";
+		break;
+	default:
+		throw new GradleException(
+			"buildLibretroshareNativeLib unsupported pAbi: $pAbi" );
+		break;
+	}
+
+	def toolchainsWorkdir = "${buildDir}/native_toolchains/"
+	mkdir toolchainsWorkdir
+
+	def currToolchainPath = "$toolchainsWorkdir/$pApiLevel-$toolchainArch/"
+
+	// Todo: use proper way to resolve the script path
+	def toolChainScriptPath = "${projectDir}/../build_scripts/Android/prepare-toolchain-clang.sh"
+
+	if(!pReuseToolchain || !file(currToolchainPath).exists())
+	{
+		exec
+		{
+			workingDir toolchainsWorkdir
+			environment "ANDROID_NDK_PATH", pNdkPath
+			environment "NATIVE_LIBS_TOOLCHAIN_PATH", currToolchainPath
+			environment "ANDROID_PLATFORM_VER", pApiLevel
+			environment "ANDROID_NDK_ARCH", toolchainArch
+			commandLine toolChainScriptPath /*, 'build_libretroshare'*/
+		}
+	}
+	else
+	{/*
+		exec
+		{
+			workingDir toolchainsWorkdir
+			environment "ANDROID_NDK_PATH", pNdkPath
+			environment "NATIVE_LIBS_TOOLCHAIN_PATH", currToolchainPath
+			environment "ANDROID_PLATFORM_VER", pApiLevel
+			environment "ANDROID_NDK_ARCH", toolchainArch
+			commandLine toolChainScriptPath, 'build_libretroshare'
+		}*/
+	}
+
+	def nativeLibsDir = "${buildDir}/native_libs-$pApiLevel/"
+	mkdir nativeLibsDir
+
+	def currAbiLibDir = "${nativeLibsDir}/$pAbi/"
+	mkdir currAbiLibDir
+	copy
+	{
+		from "${currToolchainPath}/sysroot/usr/lib/libretroshare.so"
+		into currAbiLibDir
+	}
+	
+	copy
+	{
+		from "${currToolchainPath}/sysroot/usr/lib/${libcxxsharedTriple}/libc++_shared.so"
+		into currAbiLibDir
+	}
+}
+
+apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
+
+android
+{
+	// see https://stackoverflow.com/questions/27301867/what-is-compilesdkversion
+	compileSdkVersion 21
+
+	sourceSets
+	{
+		main
+		{
+			java.srcDirs = [ 'src/rs_android/' ]
+			manifest.srcFile 'src/rs_android/AndroidManifest.xml'
+			assets.srcDirs = [ "${buildDir}/libretroshare-build/android-assets/" ]
+			jniLibs.srcDirs = [ "${buildDir}/native_libs-16" ]
+		}
+
+		minApi16
+		{
+			jniLibs.srcDirs = [ "${buildDir}/native_libs-16" ]
+		}
+
+		minApi21
+		{
+			jniLibs.srcDirs = [ "${buildDir}/native_libs-21" ]
+		}
+
+		minApi24
+		{
+			jniLibs.srcDirs = [ "${buildDir}/native_libs-24" ]
+		}
+	}
+
+	lintOptions
+	{
+		 disable 'LongLogTag'
+	}
+
+	flavorDimensions 'api'
+	
+	def currNdk = android.getNdkDirectory().getAbsolutePath()
+
+	productFlavors
+	{
+		minApi16
+		{
+			minSdkVersion '16'
+			targetSdkVersion '16'
+
+			def currApi = minSdkVersion.mApiLevel
+			versionNameSuffix "-API_${currApi}"
+
+			buildLibretroshareNativeLib(currApi, "armeabi-v7a", currNdk)
+		}
+
+		minApi21
+		{
+			minSdkVersion '21'
+			targetSdkVersion '21'
+
+			def currApi = minSdkVersion.mApiLevel
+			versionNameSuffix "-API_${currApi}"
+
+			buildLibretroshareNativeLib(currApi, "arm64-v8a", currNdk)
+			buildLibretroshareNativeLib(currApi, "armeabi-v7a", currNdk)
+		}
+
+		minApi24
+		{
+			minSdkVersion '24'
+			targetSdkVersion '28'
+
+			def currApi = minSdkVersion.mApiLevel
+			versionNameSuffix "-API_${currApi}"
+
+			buildLibretroshareNativeLib(currApi, "arm64-v8a", currNdk)
+			buildLibretroshareNativeLib(currApi, "armeabi-v7a", currNdk)
+		}
+	}
+
+	 publishing
+	 {
+		multipleVariants
+		{
+			allVariants()
+		}
+	}
+}
+
+afterEvaluate
+{
+	publishing
+	{
+		// see https://developer.android.com/reference/tools/gradle-api/7.1/com/android/build/api/dsl/LibraryPublishing
+		publications
+		{
+			android.libraryVariants.each
+			{
+				variant ->
+
+				publishing.publications.create(variant.name, MavenPublication)
+				{
+					from components.findByName(variant.name)
+					groupId = 'org.retroshare.service'
+					// -${variant.flavorName}
+					artifactId "${rootProject.name}-${variant.name}"
+					version "0.6.6"
+
+					artifacts = [ "${buildDir}/outputs/aar/${rootProject.name}-${variant.flavorName}-${variant.buildType.name}.aar" ]
+				}
+			}
+		}
+    }
+}

@@ -19,17 +19,20 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifdef WINDOWS_SYS
-#include "util/rswin.h"
-#endif // WINDOWS_SYS
+
+#include <cstdlib>
+#include <cstdio>
 
 #include "ftfileprovider.h"
 #include "ftchunkmap.h"
-
-#include "util/rsdir.h"
-#include <stdlib.h>
-#include <stdio.h>
 #include "util/rstime.h"
+#include "util/rsdir.h"
+#include "rs_android/largefile_retrocompat.hpp"
+
+#ifdef WINDOWS_SYS
+#	include "util/rswin.h"
+#endif // WINDOWS_SYS
+
 
 /********
 * #define DEBUG_FT_FILE_PROVIDER 1

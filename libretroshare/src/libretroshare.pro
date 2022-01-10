@@ -1093,14 +1093,6 @@ test_bitdht {
 
 android-* {
     lessThan(ANDROID_API_VERSION, 24) {
-
-## TODO: This probably disable largefile support and maybe is not necessary with
-## __ANDROID_API__ >= 24 hence should be made conditional or moved to a
-## compatibility header
-    DEFINES *= "fopen64=fopen"
-    DEFINES *= "fseeko64=fseeko"
-    DEFINES *= "ftello64=ftello"
-
 ## @See: rs_android/README-ifaddrs-android.adoc
     HEADERS += \
         rs_android/ifaddrs-android.h \
@@ -1115,6 +1107,7 @@ android-* {
     PRE_TARGETDEPS += $$pretargetStaticLibs(sLibs)
 
     HEADERS += \
+        rs_android/largefile_retrocompat.hpp \
         rs_android/androidcoutcerrcatcher.hpp \
         rs_android/retroshareserviceandroid.hpp \
         rs_android/rsjni.hpp

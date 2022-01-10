@@ -27,6 +27,15 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <iostream>
+#include <algorithm>
+#include <stdio.h>
+#include <dirent.h>
+#include <openssl/sha.h>
+#include <iomanip>
+#include <sstream>
+#include <fstream>
+#include <stdexcept>
 
 #include "util/rsdir.h"
 #include "util/rsstring.h"
@@ -37,16 +46,6 @@
 #include "retroshare/rstypes.h"
 #include "retroshare/rsnotify.h"
 #include "rsthreads.h"
-#include <iostream>
-#include <algorithm>
-#include <stdio.h>
-#include <dirent.h>
-#include <openssl/sha.h>
-#include <iomanip>
-#include <sstream>
-
-#include <fstream>
-#include <stdexcept>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include "util/rsstring.h"
@@ -59,6 +58,8 @@
 #ifndef __GLIBC__
 #define canonicalize_file_name(p) realpath(p, NULL)
 #endif
+
+#include "rs_android/largefile_retrocompat.hpp"
 
 /****
  * #define RSDIR_DEBUG 1
@@ -580,7 +581,7 @@ bool RsDirUtil::checkCreateDirectory(const std::string& dir)
 
 std::string RsDirUtil::removeSymLinks(const std::string& path)
 {
-#if defined(WINDOWS_SYS) || defined(__APPLE__) || defined(__ANDROID__)
+#if defined(WINDOWS_SYS) || defined(__APPLE__) //|| defined(__ANDROID__)
 #warning (Mr.Alice): I don't know how to do this on windows/MacOS/Android. See https://msdn.microsoft.com/en-us/library/windows/desktop/hh707084(v=vs.85).aspx'
     //if(!S_OK == PathCchCanonicalizeEx(tmp,...) ;
     return path ;

@@ -126,6 +126,11 @@ set(
 	CACHE STRING
 	"Path where to install RetroShare system wide data" )
 
+option(
+	RS_EXPORT_JNI_ONLOAD
+	"Export libretroshare JNI_OnLoad. See src/rs_android/rsjni.cpp for details"
+	ON )
+
 ################################################################################
 
 find_package(Git REQUIRED)
@@ -163,6 +168,9 @@ target_include_directories(
 	${PROJECT_NAME}
 	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src )
 
+install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+# TODO: install public headers
 
 find_package(OpenSSL REQUIRED)
 target_include_directories(${PROJECT_NAME} PRIVATE ${OPENSSL_INCLUDE_DIR})
@@ -199,6 +207,7 @@ if(RS_BITDHT)
 			CHECK_PASS
 			"BitDHT submodule found at ${BITDHT_DEVEL_DIR} using it" )
 		add_subdirectory(${BITDHT_DEVEL_DIR} ${CMAKE_BINARY_DIR}/bitdht)
+		set(RS_BITDHT_DIR "${BITDHT_DEVEL_DIR}")
 	else()
 		FetchContent_Declare(
 			bitdht
@@ -209,6 +218,8 @@ if(RS_BITDHT)
 			TIMEOUT 10
 		)
 		FetchContent_MakeAvailable(bitdht)
+
+		set(RS_BITDHT_DIR "${bitdht_SOURCE_DIR}")
 	endif()
 
 	add_compile_definitions(RS_USE_BITDHT)
@@ -229,9 +240,6 @@ endif(RS_BITDHT)
 if(RS_JSON_API)
 	find_package(Doxygen REQUIRED)
 	find_package(Python3 REQUIRED)
-
-	## TODO: execute at build time instead that at cofiguration time see
-	##  add_custom_command or add_custom_target
 
 	set(
 		JSON_API_GENERATOR_WORK_DIR
@@ -379,7 +387,7 @@ if(RS_BRODCAST_DISCOVERY)
 	)
 	FetchContent_MakeAvailable(udp-discovery-cpp)
 
-	target_link_libraries(${PROJECT_NAME} PRIVATE udp-discovery-cpp)
+	target_link_libraries(${PROJECT_NAME} PRIVATE udp-discovery)
 
 	## TODO: Temporary work around target_include_directories should be added
 	## upstream
@@ -407,5 +415,43 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	add_compile_definitions(RS_DATA_DIR="${RS_DATA_DIR}")
 endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
+################################################################################
+
+if(RS_EXPORT_JNI_ONLOAD)
+	add_compile_definitions(RS_LIBRETROSHARE_EXPORT_JNI_ONLOAD)
+endif(RS_EXPORT_JNI_ONLOAD)
+
+################################################################################
+
+#if(CMAKE_SYSTEM_NAME STREQUAL "Android")
+if(RS_ANDROID)
+	FetchContent_Declare(
+		jni-hpp
+		GIT_REPOSITORY "https://gitlab.com/RetroShare/jni-hpp.git"
+		GIT_TAG "origin/master"
+		GIT_SHALLOW TRUE
+		GIT_PROGRESS TRUE
+		TIMEOUT 10
+	)
+	FetchContent_MakeAvailable(jni-hpp)
+
+	include_directories(${jni-hpp_SOURCE_DIR}/include)
+
+	if(RS_BITDHT)
+		set(RS_ANDROID_ASSETS_DIR "${CMAKE_BINARY_DIR}/android-assets")
+		set(RS_ANDROID_VALUES_DIR "${RS_ANDROID_ASSETS_DIR}/values")
+		file(MAKE_DIRECTORY "${RS_ANDROID_VALUES_DIR}")
+		file(
+			COPY "${RS_BITDHT_DIR}/src/bitdht/bdboot.txt"
+			DESTINATION "${RS_ANDROID_VALUES_DIR}" )
+		set(
+			ANDROID_ASSETS_DIRECTORIES
+			"${RS_ANDROID_ASSETS_DIR};${ANDROID_ASSETS_DIRECTORIES}" )
+	endif(RS_BITDHT)
+endif(RS_ANDROID)
+#endif(CMAKE_SYSTEM_NAME STREQUAL "Android")
+
+################################################################################
+
 ## Useful to debug CMake
-#set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
