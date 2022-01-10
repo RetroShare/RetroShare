@@ -90,7 +90,7 @@ void FeedReaderFeedNotify::msgChanged(uint32_t feedId, const QString &msgId, int
 	mMutex->unlock();
 }
 
-FeedItem *FeedReaderFeedNotify::feedItem(FeedHolder *parent)
+FeedItem *FeedReaderFeedNotify::feedItem(FeedHolder */*parent*/)
 {
 	bool msgPending = false;
 	FeedInfo feedInfo;
@@ -119,7 +119,7 @@ FeedItem *FeedReaderFeedNotify::feedItem(FeedHolder *parent)
 	return new FeedReaderFeedItem(mFeedReader, mNotify, feedInfo, msgInfo);
 }
 
-FeedItem *FeedReaderFeedNotify::testFeedItem(FeedHolder *parent)
+FeedItem *FeedReaderFeedNotify::testFeedItem(FeedHolder */*parent*/)
 {
 	FeedInfo feedInfo;
 	feedInfo.name = tr("Test").toUtf8().constData();

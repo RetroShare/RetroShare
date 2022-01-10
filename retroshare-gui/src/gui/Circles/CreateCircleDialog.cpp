@@ -830,7 +830,6 @@ void CreateCircleDialog::fillIdentitiesList(const std::vector<RsGxsIdGroup>& id_
 		bool isSignedByFriendNode = isSigned && rsPeers->isPgpFriend(idGroup.mPgpId);
 
 		/* do filtering */
-		bool ok = false;
 
 		if(!(acceptAll ||(acceptOnlySignedIdentities && isSigned) ||(acceptOnlyIdentitiesSignedByFriend && isSignedByFriendNode)))
 		{

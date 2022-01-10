@@ -77,8 +77,6 @@ macx {
 # ffmpeg (and libavutil: https://github.com/ffms/ffms2/issues/11)
 QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS
 
-QMAKE_CXXFLAGS *= -Wall
-
 SOURCES = VOIPPlugin.cpp               \
           gui/VOIPConfigPanel.cpp \
           services/p3VOIP.cc           \

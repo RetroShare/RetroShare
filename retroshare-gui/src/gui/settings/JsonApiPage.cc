@@ -80,7 +80,6 @@ void JsonApiPage::enableJsonApi(bool checked)
 bool JsonApiPage::updateParams()
 {
 	bool ok = true;
-	bool changed = false;
 
 	uint16_t port = static_cast<uint16_t>(ui.portSpinBox->value());
 	QString listenAddress = ui.listenAddressLineEdit->text();

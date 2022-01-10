@@ -44,6 +44,7 @@
 #include "util/folderiterator.h"
 #include "util/rsstring.h"
 #include "retroshare/rsinit.h"
+#include "retroshare/rstor.h"
 #include "retroshare/rsnotify.h"
 #include "retroshare/rsiface.h"
 #include "plugins/pluginmanager.h"
@@ -144,6 +145,7 @@ struct RsInitConfig
     {}
 
 	RsFileHash main_executable_hash;
+    std::string mainExecutablePath;
 
 #ifdef WINDOWS_SYS
 	bool portable;
@@ -305,6 +307,7 @@ int RsInit::InitRetroShare(const RsConfigOptions& conf)
     rsInitConfig->optBaseDir         = conf.optBaseDir;
     rsInitConfig->jsonApiPort        = conf.jsonApiPort;
     rsInitConfig->jsonApiBindAddress = conf.jsonApiBindAddress;
+    rsInitConfig->mainExecutablePath = conf.main_executable_path;
 
 #ifdef PTW32_STATIC_LIB
 	// for static PThreads under windows... we need to init the library...
@@ -512,7 +515,7 @@ RsInit::LoadCertificateStatus RsInit::LockAndLoadCertificates(
 		if(!RsAccounts::GetAccountDetails(accountId, pgpId, pgpName, pgpEmail, location))
 			throw RsInit::ERR_UNKNOWN; // invalid PreferredAccount;
 
-		if(0 == AuthGPG::getAuthGPG() -> GPGInit(pgpId))
+        if(0 == AuthPGP::PgpInit(pgpId))
 			throw RsInit::ERR_UNKNOWN; // PGP Error.
 
 		LoadCertificateStatus retVal =
@@ -912,8 +915,8 @@ int RsServer::StartupRetroShare()
 	/* History Manager */
 	mHistoryMgr = new p3HistoryMgr();
 	mPeerMgr = new p3PeerMgrIMPL( AuthSSL::getAuthSSL()->OwnId(),
-				AuthGPG::getAuthGPG()->getGPGOwnId(),
-				AuthGPG::getAuthGPG()->getGPGOwnName(),
+                AuthPGP::getPgpOwnId(),
+                AuthPGP::getPgpOwnName(),
 				AuthSSL::getAuthSSL()->getOwnLocation());
 	mNetMgr = new p3NetMgrIMPL();
 	mLinkMgr = new p3LinkMgrIMPL(mPeerMgr, mNetMgr);
@@ -1613,7 +1616,8 @@ int RsServer::StartupRetroShare()
 
 	//mConfigMgr->addConfiguration("ftserver.cfg", ftserver);
 	//
-	mConfigMgr->addConfiguration("gpg_prefs.cfg"   , AuthGPG::getAuthGPG());
+    AuthPGP::registerToConfigMgr(std::string("gpg_prefs.cfg"),mConfigMgr);
+
 	mConfigMgr->addConfiguration("gxsnettunnel.cfg", mGxsNetTunnel);
 	mConfigMgr->addConfiguration("peers.cfg"       , mPeerMgr);
 	mConfigMgr->addConfiguration("general.cfg"     , mGeneralConfig);
@@ -1799,7 +1803,7 @@ int RsServer::StartupRetroShare()
 	/* Add AuthGPG services */
 	/**************************************************************************/
 
-	//AuthGPG::getAuthGPG()->addService(mDisc);
+    //AuthGPG::addService(mDisc);
 
 	/**************************************************************************/
 	/* Force Any Last Configuration Options */
@@ -1930,6 +1934,52 @@ int RsServer::StartupRetroShare()
 	return 1;
 }
 
+std::string RsInit::executablePath()
+{
+    return rsInitConfig->mainExecutablePath;
+}
+bool RsInit::startAutoTor()
+{
+    std::cerr << "(II) node is an automated Tor node => launching Tor auto-configuration." << std::endl;
+    // Now that we know the Tor service running, and we know the SSL id, we can make sure it provides a viable hidden service
+
+    std::string tor_hidden_service_dir = RsAccounts::AccountDirectory() + "/hidden_service/" ;
+
+    RsTor::setTorDataDirectory(RsAccounts::ConfigDirectory() + "/tor/");
+    RsTor::setHiddenServiceDirectory(tor_hidden_service_dir);	// re-set it, because now it's changed to the specific location that is run
+
+    RsDirUtil::checkCreateDirectory(std::string(tor_hidden_service_dir)) ;
+
+    if(! RsTor::start() || RsTor::hasError())
+    {
+        std::cerr << "(EE) Tor cannot be started on your system: "+RsTor::errorMessage() << std::endl ;
+        return false ;
+    }
+    std::cerr << "(II) Tor has been started." << std::endl;
+
+    // now start/create the hidden service as needed.
+
+    std::string service_id;
+    RsTor::setupHiddenService();
+
+    while(RsTor::torStatus() != RsTorStatus::READY && RsTor::getHiddenServiceStatus(service_id) != RsTorHiddenServiceStatus::ONLINE)	// runs until some status is reached: either tor works, or it fails.
+    {
+        rstime::rs_usleep(0.5*1000*1000) ;
+
+        std::cerr << "(II) Hidden service ID: " << service_id << ", status: " << (int)RsTor::getHiddenServiceStatus(service_id) << std::endl;
+        if(RsTor::hasError())
+        {
+            std::string error_msg = RsTor::errorMessage();
+
+            std::cerr << "(EE) Tor hidden service cannot be started: " << error_msg << std::endl;
+            return false;
+        }
+        // process Qt event loop to deal with messages of online/offline info
+        // QCoreApplication::processEvents();
+    }
+    return true;
+}
+
 RsInit::LoadCertificateStatus RsLoginHelper::attemptLogin(const RsPeerId& account, const std::string& password)
 {
 	if(isLoggedIn()) return RsInit::ERR_ALREADY_RUNNING;
@@ -1948,6 +1998,16 @@ RsInit::LoadCertificateStatus RsLoginHelper::attemptLogin(const RsPeerId& accoun
 
         rsNotify->setDisableAskPassword(false) ;
         rsNotify->clearPgpPassphrase() ;
+
+        bool is_hidden_node = false;
+        bool is_auto_tor = false ;
+        bool is_first_time = false ;
+
+        RsAccounts::getCurrentAccountOptions(is_hidden_node,is_auto_tor,is_first_time);
+
+        if(is_auto_tor)
+            if(!RsInit::startAutoTor())
+                return RsInit::ERR_CANNOT_CONFIGURE_TOR;
 
         if(ret == RsInit::OK && RsControl::instance()->StartupRetroShare() == 1)
             return RsInit::OK;

@@ -4,21 +4,20 @@
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = lib
+CONFIG -= qt
 libretroshare_shared {
 	CONFIG += shared
 } else {
 	CONFIG += staticlib
 }
-CONFIG -= qt
+
 TARGET = retroshare
 TARGET_PRL = libretroshare
 DESTDIR = lib
 
 !include("use_libretroshare.pri"):error("Including")
 
-# treat warnings as error for better removing
-#QMAKE_CFLAGS += -Werror
-#QMAKE_CXXFLAGS += -Werror
+QMAKE_CXXFLAGS += -fPIC
 
 ## Uncomment to enable Unfinished Services.
 #CONFIG += wikipoos
@@ -166,7 +165,7 @@ HEADERS += $$PUBLIC_HEADERS
 linux-* {
     CONFIG += link_pkgconfig
 
-	QMAKE_CXXFLAGS *= -Wall -D_FILE_OFFSET_BITS=64
+	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
 	QMAKE_CC = $${QMAKE_CXX}
 
     no_sqlcipher {
@@ -246,10 +245,6 @@ win32-g++|win32-clang-g++ {
 	OBJECTS_DIR = temp/obj
 	MOC_DIR = temp/moc
     !libretroshare_shared:DEFINES *= STATICLIB
-
-	# Switch on extra warnings
-	QMAKE_CFLAGS += -Wextra
-	QMAKE_CXXFLAGS += -Wextra
 
 	# Switch off optimization for release version
 	QMAKE_CXXFLAGS_RELEASE -= -O2
@@ -363,7 +358,10 @@ HEADERS += chat/distantchat.h \
 HEADERS +=	pqi/authssl.h \
 			pqi/authgpg.h \
 			pgp/pgphandler.h \
+			pgp/openpgpsdkhandler.h \
 			pgp/pgpkeyutil.h \
+			pqi/pqifdbin.h \
+			pqi/rstcpsocket.h \
 			pgp/rscertificate.h \
 			pgp/pgpauxutils.h \
 			pqi/p3cfgmgr.h \
@@ -440,7 +438,7 @@ HEADERS +=	rsitems/rsitem.h \
 			serialiser/rstlvkeyvalue.h \
 			serialiser/rstlvgenericparam.h \
 			serialiser/rstlvgenericmap.h \
-			serialiser/rstlvgenericmap.inl \
+                        serialiser/rstlvgenericmap.inl \
 			serialiser/rstlvlist.h \
 			serialiser/rstlvmaps.h \
 			serialiser/rstlvbanlist.h \
@@ -482,6 +480,7 @@ HEADERS +=	util/folderiterator.h \
 			util/rsmemory.h \
 			util/smallobject.h \
 			util/rsdir.h \
+			util/rsfile.h \
 			util/argstream.h \
 			util/rsdiscspace.h \
 			util/rsnet.h \
@@ -535,12 +534,15 @@ SOURCES += chat/distantchat.cc \
 SOURCES +=	pqi/authgpg.cc \
 			pqi/authssl.cc \
 			pgp/pgphandler.cc \
+			pgp/openpgpsdkhandler.cc \
 			pgp/pgpkeyutil.cc \
 			pgp/rscertificate.cc \
 			pgp/pgpauxutils.cc \
 			pqi/p3cfgmgr.cc \
 			pqi/p3peermgr.cc \
 			pqi/p3linkmgr.cc \
+			pqi/pqifdbin.cc \
+			pqi/rstcpsocket.cc \
 			pqi/p3netmgr.cc \
 			pqi/p3notify.cc \
 			pqi/pqiqos.cc \
@@ -633,6 +635,7 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsexpr.cc \
 			util/smallobject.cc \
 			util/rsdir.cc \
+			util/rsfile.cc \
 			util/rsdiscspace.cc \
 			util/rsnet.cc \
 			util/rsnet_ss.cc \
@@ -713,6 +716,41 @@ SOURCES += rsitems/rsnxsitems.cc \
 	gxs/rsgxsutil.cc \
         gxs/rsgxsrequesttypes.cc \
         gxs/rsnxsobserver.cpp
+
+# Tor
+HEADERS += 	retroshare/rstor.h 
+
+HEADERS += 	tor/AddOnionCommand.h \
+           	tor/AuthenticateCommand.h \
+           	tor/CryptoKey.h \
+           	tor/GetConfCommand.h \
+           	tor/HiddenService.h \
+           	tor/PendingOperation.h  \
+           	tor/ProtocolInfoCommand.h \
+                tor/TorTypes.h \
+                tor/SetConfCommand.h \
+           	tor/StrUtil.h \
+           	tor/bytearray.h \
+           	tor/TorControl.h \
+           	tor/TorControlCommand.h \
+           	tor/TorControlSocket.h \
+           	tor/TorManager.h \
+                tor/TorProcess.h
+
+SOURCES += 	tor/AddOnionCommand.cpp \
+		tor/AuthenticateCommand.cpp \
+		tor/GetConfCommand.cpp \
+		tor/HiddenService.cpp \
+		tor/ProtocolInfoCommand.cpp \
+		tor/SetConfCommand.cpp \
+		tor/TorControlCommand.cpp \
+		tor/TorControl.cpp \
+		tor/TorControlSocket.cpp \
+		tor/TorManager.cpp \
+		tor/TorProcess.cpp \
+		tor/CryptoKey.cpp         \
+		tor/PendingOperation.cpp  \
+		tor/StrUtil.cpp        
 
 # gxs tunnels
 HEADERS += gxstunnel/p3gxstunnel.h \

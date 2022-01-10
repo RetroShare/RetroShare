@@ -748,7 +748,7 @@ void Rshare::loadStyleSheet(const QString &sheetName)
 
         if (!sheetName.isEmpty() && (sheetName != ":default")) {
             /* load stylesheet */
-            if (sheetName.at(0) == ":") {
+            if (sheetName.at(0) == ':') {
                 /* internal stylesheet */
                 file.setFileName(QString(":/qss/stylesheet/%1%2.qss").arg(name, sheetName.mid(1)));
             } else {

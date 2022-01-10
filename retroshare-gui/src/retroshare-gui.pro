@@ -217,10 +217,6 @@ win32-g++|win32-clang-g++ {
 		CONFIG -= console
 	}
 
-	# Switch on extra warnings
-	QMAKE_CFLAGS += -Wextra
-	QMAKE_CXXFLAGS += -Wextra
-
 	CONFIG(debug, debug|release) {
 	} else {
 		# Tell linker to use ASLR protection
@@ -362,46 +358,6 @@ wikipoos {
 }
 
 ################################### HEADERS & SOURCES #############################
-
-# Tor controller
-
-HEADERS += 	TorControl/AddOnionCommand.h \
-           	TorControl/AuthenticateCommand.h \
-           	TorControl/CryptoKey.h \
-           	TorControl/GetConfCommand.h \
-           	TorControl/HiddenService.h \
-           	TorControl/PendingOperation.h  \
-           	TorControl/ProtocolInfoCommand.h \
-           	TorControl/SecureRNG.h \
-           	TorControl/SetConfCommand.h \
-           	TorControl/Settings.h \
-           	TorControl/StrUtil.h \
-           	TorControl/TorControl.h \
-           	TorControl/TorControlCommand.h \
-           	TorControl/TorControlSocket.h \
-           	TorControl/TorManager.h \
-           	TorControl/TorProcess.h \
-           	TorControl/TorProcess_p.h \
-           	TorControl/TorSocket.h \
-           	TorControl/Useful.h
-
-SOURCES += 	TorControl/AddOnionCommand.cpp \
-				TorControl/AuthenticateCommand.cpp \
-				TorControl/GetConfCommand.cpp \
-				TorControl/HiddenService.cpp \
-				TorControl/ProtocolInfoCommand.cpp \
-				TorControl/SetConfCommand.cpp \
-				TorControl/TorControlCommand.cpp \
-				TorControl/TorControl.cpp \
-				TorControl/TorControlSocket.cpp \
-				TorControl/TorManager.cpp \
-				TorControl/TorProcess.cpp \
-				TorControl/TorSocket.cpp \
-				TorControl/CryptoKey.cpp         \
-				TorControl/PendingOperation.cpp  \
-				TorControl/SecureRNG.cpp         \
-				TorControl/Settings.cpp          \
-				TorControl/StrUtil.cpp        
 
 # Input
 HEADERS +=  rshare.h \

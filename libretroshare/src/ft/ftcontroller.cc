@@ -657,7 +657,6 @@ bool ftController::completeFile(const RsFileHash& hash)
     uint32_t    period = 0;
 	TransferRequestFlags flags ;
 	TransferRequestFlags extraflags ;
-	uint32_t    completeCount = 0;
 
 	{
 		RS_STACK_MUTEX(ctrlMutex);
@@ -780,7 +779,6 @@ bool ftController::completeFile(const RsFileHash& hash)
 
 		/* switch map */
         mCompleted[fc->mHash] = fc;
-        completeCount = mCompleted.size();
 
 		mDownloads.erase(it);
 

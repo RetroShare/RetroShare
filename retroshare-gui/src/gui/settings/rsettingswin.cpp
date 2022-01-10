@@ -178,7 +178,7 @@ SettingsPage::initStackedWidget()
     addPage(new ServicePermissionsPage() ); // PERMISSIONS
 #ifdef RS_JSONAPI
     JsonApiPage *jsonapi_p = new JsonApiPage() ;
-	addPage(new JsonApiPage());
+	addPage(jsonapi_p);
 #ifdef RS_WEBUI
     WebuiPage *webui_p = new WebuiPage() ;
     addPage(new WebuiPage() );

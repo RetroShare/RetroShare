@@ -2049,6 +2049,10 @@ bool ftServer::receiveSearchRequest(
 		return RsServiceSerializer::serialise(
 		            &resIt, searchResultData, &searchResultDataLen );
 	}
+#else
+	(void) searchRequestData;
+	(void) searchRequestDataLen;
+	(void) maxAllowsHits;
 #endif // def RS_DEEP_FILES_INDEX
 
 	searchResultData = nullptr;

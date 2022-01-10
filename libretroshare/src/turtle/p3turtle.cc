@@ -1043,7 +1043,7 @@ void p3turtle::performLocalSearch(
     }
 }
 
-void p3turtle::performLocalSearch_generic(RsTurtleGenericSearchRequestItem *item, uint32_t& req_result_count, std::list<RsTurtleSearchResultItem*>& result,uint32_t& max_allowed_hits)
+void p3turtle::performLocalSearch_generic(RsTurtleGenericSearchRequestItem *item, uint32_t& /*req_result_count*/, std::list<RsTurtleSearchResultItem*>& result,uint32_t& max_allowed_hits)
 {
     unsigned char *search_result_data = NULL ;
     uint32_t search_result_data_len = 0 ;

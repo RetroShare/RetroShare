@@ -66,6 +66,7 @@ void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> ev
         {
         case RsChannelEventCode::STATISTICS_CHANGED:      // [[fallthrough]];
             updateDisplay(true);                          // no breaks, on purpose!
+            Q_FALLTHROUGH();
 
         case RsChannelEventCode::NEW_MESSAGE:             // [[fallthrough]];
 		case RsChannelEventCode::UPDATED_MESSAGE:         // [[fallthrough]];

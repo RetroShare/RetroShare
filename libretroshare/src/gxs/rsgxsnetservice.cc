@@ -1730,15 +1730,6 @@ void RsGxsNetService::recvNxsItemQueue()
 #endif
 		/* Handle pull request and other new items here to not mess with all the
 		 * old nested code and items hell */
-		switch(static_cast<RsNxsSubtype>(item->PacketSubType()))
-		{
-		case RsNxsSubtype::PULL_REQUEST:
-			std::unique_ptr<RsNxsPullRequestItem> pullItem(
-			            static_cast<RsNxsPullRequestItem*>(item) );
-			handlePullRequest(std::move(pullItem));
-			continue;
-		}
-
         // RsNxsItem needs dynamic_cast, since they have derived siblings.
         //
         RsNxsItem *ni = dynamic_cast<RsNxsItem*>(item) ;
@@ -1781,10 +1772,11 @@ void RsGxsNetService::recvNxsItemQueue()
 
             switch(ni->PacketSubType())
             {
-            case RS_PKT_SUBTYPE_NXS_SYNC_GRP_STATS_ITEM: handleRecvSyncGrpStatistics   (dynamic_cast<RsNxsSyncGrpStatsItem*>(ni)) ; break ;
-            case RS_PKT_SUBTYPE_NXS_SYNC_GRP_REQ_ITEM:   handleRecvSyncGroup           (dynamic_cast<RsNxsSyncGrpReqItem*>(ni)) ; break ;
-            case RS_PKT_SUBTYPE_NXS_SYNC_MSG_REQ_ITEM:   handleRecvSyncMessage         (dynamic_cast<RsNxsSyncMsgReqItem*>(ni),item_was_encrypted) ; break ;
-            case RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY_ITEM:handleRecvPublishKeys         (dynamic_cast<RsNxsGroupPublishKeyItem*>(ni)) ; break ;
+            case RS_PKT_SUBTYPE_NXS_SYNC_GRP_STATS_ITEM:    handleRecvSyncGrpStatistics   (dynamic_cast<RsNxsSyncGrpStatsItem*>(ni)) ; break ;
+            case RS_PKT_SUBTYPE_NXS_SYNC_GRP_REQ_ITEM:      handleRecvSyncGroup           (dynamic_cast<RsNxsSyncGrpReqItem*>(ni)) ; break ;
+            case RS_PKT_SUBTYPE_NXS_SYNC_MSG_REQ_ITEM:      handleRecvSyncMessage         (dynamic_cast<RsNxsSyncMsgReqItem*>(ni),item_was_encrypted) ; break ;
+            case RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY_ITEM:   handleRecvPublishKeys         (dynamic_cast<RsNxsGroupPublishKeyItem*>(ni)) ; break ;
+            case RS_PKT_SUBTYPE_NXS_SYNC_PULL_REQUEST_ITEM: handlePullRequest             (dynamic_cast<RsNxsPullRequestItem*>(ni)) ; break ;
 
             default:
                 if(ni->PacketSubType() != RS_PKT_SUBTYPE_NXS_ENCRYPTED_DATA_ITEM)
@@ -4277,6 +4269,9 @@ bool RsGxsNetService::locked_checkResendingOfUpdates(const RsPeerId& pid,const R
     {
 #ifdef NXS_NET_DEBUG_0
 		GXSNETDEBUG_PG(pid,grpId) << "(II) peer " << pid << " already sent the same TS " << (long int)now-(long int)rec.mTs << " secs ago for that group ID. Will not send msg list again for a while to prevent clogging..." << std::endl;
+#else
+		(void) pid;
+		(void) grpId;
 #endif
 		return false;
     }
@@ -4439,7 +4434,9 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
     uint32_t transN = locked_getTransactionId();
     RsGxsCircleId should_encrypt_to_this_circle_id ;
 
+#ifndef RS_GXS_SEND_ALL
     rstime_t now = time(NULL) ;
+#endif
 
 #ifndef RS_GXS_SEND_ALL
     uint32_t max_send_delay = locked_getGrpConfig(item->grpId).msg_req_delay;	// we should use "sync" but there's only one variable used in the GUI: the req one.
@@ -4704,7 +4701,7 @@ bool RsGxsNetService::checkPermissionsForFriendGroup(const RsPeerId& sslId,const
         if(!grpMeta.mInternalCircle.isNull())
         {
             RsGroupInfo ginfo ;
-                    RsPgpId pgpId = mPgpUtils->getPGPId(sslId) ;
+                    RsPgpId pgpId = mPgpUtils->getPgpId(sslId) ;
 
 #ifdef NXS_NET_DEBUG_4
             GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "   Group internal circle: " << grpMeta.mInternalCircle << ", We're owner. Sending to everyone in the group." << std::endl;
@@ -5114,8 +5111,7 @@ std::error_condition RsGxsNetService::requestPull(std::set<RsPeerId> peers)
 
 	for(auto& peerId: std::as_const(peers))
 	{
-		auto item = new RsNxsPullRequestItem(
-		            static_cast<RsServiceType>(mServType) );
+        auto item = new RsNxsPullRequestItem(mServType);
 		item->PeerId(peerId);
 		generic_sendItem(item);
 	}
@@ -5123,8 +5119,7 @@ std::error_condition RsGxsNetService::requestPull(std::set<RsPeerId> peers)
 	return std::error_condition();
 }
 
-void RsGxsNetService::handlePullRequest(
-        std::unique_ptr<RsNxsPullRequestItem> item )
+void RsGxsNetService::handlePullRequest(RsNxsPullRequestItem *item)
 {
 	checkUpdatesFromPeers(std::set<RsPeerId>{item->PeerId()});
 }

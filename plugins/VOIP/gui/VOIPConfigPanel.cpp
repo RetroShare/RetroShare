@@ -92,6 +92,9 @@ VOIPConfigPanel::VOIPConfigPanel(QWidget * parent, Qt::WindowFlags flags)
 
     inputAudioProcessor = NULL;
     inputAudioDevice = NULL;
+    graph_source = nullptr;
+    videoInput = nullptr;
+    videoProcessor = nullptr;
     qtTick = NULL;
 
     ui.qcbTransmit->addItem(tr("Continuous"), RsVOIP::AudioTransmitContinous);
@@ -209,11 +212,16 @@ VOIPConfigPanel::~VOIPConfigPanel()
 
 void VOIPConfigPanel::clearPipeline()
 {
-    delete qtTick;
+    if (qtTick) {
+        delete qtTick;
+        qtTick = nullptr;
+    }
 
-    graph_source->stop() ;
-    graph_source->setVideoInput(NULL) ;
-    graph_source=nullptr; // is deleted by setSource below. This is a bad design.
+    if (graph_source) {
+        graph_source->stop() ;
+        graph_source->setVideoInput(NULL) ;
+        graph_source=nullptr; // is deleted by setSource below. This is a bad design.
+    }
 
     ui.voipBwGraph->setSource(nullptr);
 
@@ -225,8 +233,10 @@ void VOIPConfigPanel::clearPipeline()
 
         videoInput = nullptr;
 	}
-    delete videoProcessor;
-    videoProcessor = nullptr;
+    if (videoProcessor) {
+        delete videoProcessor;
+        videoProcessor = nullptr;
+    }
 
     if (inputAudioDevice) {
         inputAudioDevice->stop();

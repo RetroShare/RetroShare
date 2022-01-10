@@ -62,11 +62,13 @@ private slots:
 	void updateLoadEmoticons();
 
 private:
+    void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
     void fillTags();
 
     /* Pointer for not include of rsmsgs.h */
     MsgTagType *m_pTags;
     std::list<uint32_t> m_changedTagIds;
+    RsEventsHandlerId_t mTagEventHandlerId;
 
     Ui::MessagePage ui;
 };

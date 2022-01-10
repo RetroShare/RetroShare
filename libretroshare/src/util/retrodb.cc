@@ -184,7 +184,6 @@ bool RetroDb::execSQL(const std::string &query){
     }
 
 
-    uint32_t delta = 3;
     rstime_t stamp = time(NULL);
     bool timeOut = false, ok = false;
 

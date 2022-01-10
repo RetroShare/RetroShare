@@ -22,8 +22,6 @@
 
 TARGET = retroshare-service
 
-CONFIG -= qt
-
 !include("../../libretroshare/src/use_libretroshare.pri"):error("Including")
 
 SOURCES += retroshare-service.cc

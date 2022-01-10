@@ -512,6 +512,9 @@ void p3GRouter::receiveTurtleData(const RsTurtleGenericTunnelItem *gitem, const 
     std::cerr << "  Received data for hash : " << hash << std::endl;
     std::cerr << "  Virtual peer id        : " << virtual_peer_id << std::endl;
     std::cerr << "  Direction              : " << direction << std::endl;
+#else
+    (void) hash;
+    (void) direction;
 #endif
 
     // turtle data is received.

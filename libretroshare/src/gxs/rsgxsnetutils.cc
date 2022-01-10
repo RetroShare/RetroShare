@@ -223,7 +223,7 @@ bool GrpCircleVetting::canSend(
 {
 	if(mCircles->isLoaded(circleId))
 	{
-		const RsPgpId& pgpId = mPgpUtils->getPGPId(peerId);
+		const RsPgpId& pgpId = mPgpUtils->getPgpId(peerId);
 		return mCircles->canSend(circleId, pgpId,should_encrypt);
 	}
 
@@ -302,7 +302,7 @@ bool MsgCircleIdsRequestVetting::cleared()
     if(filtered_out_msgs>0)
         std::cerr << "(WW) " << filtered_out_msgs << " messages not sent because they are signed by author(s) not member of that circle " << mCircleId << std::endl;
     
-    RsPgpId pgpId = mPgpUtils->getPGPId(mPeerId);
+    RsPgpId pgpId = mPgpUtils->getPgpId(mPeerId);
     bool can_send_res = mCircles->canSend(mCircleId, pgpId,mShouldEncrypt);
     
     if(mShouldEncrypt)		// that means the circle is external

@@ -64,12 +64,6 @@ RsItem *RsNxsSerialiser::create_item(uint16_t service_id,uint8_t item_subtype) c
     if(service_id != SERVICE_TYPE)
         return NULL ;
 
-	switch(static_cast<RsNxsSubtype>(item_subtype))
-	{
-	case RsNxsSubtype::PULL_REQUEST:
-		return new RsNxsPullRequestItem(static_cast<RsServiceType>(service_id));
-	}
-
     switch(item_subtype)
     {
         case RS_PKT_SUBTYPE_NXS_SYNC_GRP_REQ_ITEM:   return new RsNxsSyncGrpReqItem(SERVICE_TYPE) ;
@@ -82,6 +76,7 @@ RsItem *RsNxsSerialiser::create_item(uint16_t service_id,uint8_t item_subtype) c
         case RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY_ITEM:return new RsNxsGroupPublishKeyItem(SERVICE_TYPE) ;
         case RS_PKT_SUBTYPE_NXS_ENCRYPTED_DATA_ITEM: return new RsNxsEncryptedDataItem(SERVICE_TYPE) ;
         case RS_PKT_SUBTYPE_NXS_SYNC_GRP_STATS_ITEM: return new RsNxsSyncGrpStatsItem(SERVICE_TYPE) ;
+        case RS_PKT_SUBTYPE_NXS_SYNC_PULL_REQUEST_ITEM: return new RsNxsPullRequestItem(SERVICE_TYPE) ;
 
         default:
                 return NULL;

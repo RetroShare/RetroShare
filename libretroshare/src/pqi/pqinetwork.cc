@@ -273,7 +273,6 @@ int inet_aton(const char *name, struct in_addr *addr)
 #ifdef WINDOWS_SYS
 #	include <winsock2.h>
 #	include <iphlpapi.h>
-#	pragma comment(lib, "IPHLPAPI.lib")
 #elif defined(__ANDROID__) && __ANDROID_API__ < 24
 /// @See: android_ifaddrs/README.adoc
 #	include "rs_android/ifaddrs-android.h"

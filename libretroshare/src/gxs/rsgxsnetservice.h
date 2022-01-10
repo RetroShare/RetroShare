@@ -432,7 +432,11 @@ private:
      */
     void handleRecvPublishKeys(RsNxsGroupPublishKeyItem*) ;
 
-	void handlePullRequest(std::unique_ptr<RsNxsPullRequestItem> item);
+    /*!
+     * Handles a nxs pull request item from a given friend/tunnel
+     * @param item contaims keys/grp info
+     */
+    void handlePullRequest(RsNxsPullRequestItem *item);
 
     /** E: item handlers **/
 

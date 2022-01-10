@@ -107,7 +107,7 @@ p3discovery2::p3discovery2(
 	addSerialType(new RsDiscSerialiser());
 
 	// Add self into PGP FriendList.
-	mFriendList[AuthGPG::getAuthGPG()->getGPGOwnId()] = DiscPgpInfo();
+    mFriendList[AuthPGP::getPgpOwnId()] = DiscPgpInfo();
 }
 
 
@@ -219,7 +219,7 @@ void p3discovery2::removeFriend(const RsPeerId &sslId)
 		std::cerr << std::endl;
 #endif
 		/* pgp peer without any ssl entries -> check if they are still a real friend */
-		if (!(AuthGPG::getAuthGPG()->isGPGAccepted(pgpId)))
+        if (!(AuthPGP::isPGPAccepted(pgpId)))
 		{
 #ifdef P3DISC_DEBUG
 			std::cerr << "p3discovery2::addFriend() pgpId is no longer a friend, removing";
@@ -604,8 +604,8 @@ void p3discovery2::updatePgpFriendList()
 	std::list<RsPgpId>::iterator lit;
 	std::map<RsPgpId, DiscPgpInfo>::iterator it;
 	
-	RsPgpId ownPgpId = AuthGPG::getAuthGPG()->getGPGOwnId();
-    AuthGPG::getAuthGPG()->getGPGAcceptedList(pgpList);
+    RsPgpId ownPgpId = AuthPGP::getPgpOwnId();
+    AuthPGP::getPgpAcceptedList(pgpList);
 	pgpList.push_back(ownPgpId);
 	
 	// convert to set for ordering.
@@ -723,7 +723,7 @@ void p3discovery2::processPGPList(const RsPeerId &fromId, const RsDiscPgpListIte
 		std::set<RsPgpId>::const_iterator fit;
 		for(fit = item->pgpIdSet.ids.begin(); fit != item->pgpIdSet.ids.end(); ++fit)
 		{
-			if (!AuthGPG::getAuthGPG()->isGPGId(*fit))
+            if (!AuthPGP::isPGPId(*fit))
 			{
 #ifdef P3DISC_DEBUG
 				std::cerr << "p3discovery2::processPGPList() requesting certificate for PgpId: " << *fit;
@@ -1058,11 +1058,11 @@ void p3discovery2::recvPGPCertificateRequest( const RsPeerId& fromId, const RsDi
 		return;
     }
 
-	RsPgpId ownPgpId = AuthGPG::getAuthGPG()->getGPGOwnId();
+    RsPgpId ownPgpId = AuthPGP::getPgpOwnId();
 	for(const RsPgpId& pgpId : item->pgpIdSet.ids)
 		if (pgpId == ownPgpId)
 			sendPGPCertificate(pgpId, fromId);
-		else if(ps.vs_disc != RS_VS_DISC_OFF && AuthGPG::getAuthGPG()->isGPGAccepted(pgpId))
+        else if(ps.vs_disc != RS_VS_DISC_OFF && AuthPGP::isPGPAccepted(pgpId))
 			sendPGPCertificate(pgpId, fromId);
 		else
             std::cerr << "(WW) not sending certificate " << pgpId << " asked by friend " << fromId << " because this either this cert is not a friend, or discovery is off" << std::endl;
@@ -1078,7 +1078,7 @@ void p3discovery2::sendPGPCertificate(const RsPgpId &aboutId, const RsPeerId &to
     unsigned char *bin_data;
     size_t bin_len;
 
-	if(!AuthGPG::getAuthGPG()->exportPublicKey(aboutId,bin_data,bin_len,false,true))
+    if(!AuthPGP::exportPublicKey(aboutId,bin_data,bin_len,false,true))
     {
         std::cerr << "(EE) cannot export public key " << aboutId << " requested by peer " << toId << std::endl;
 		return ;
@@ -1098,7 +1098,7 @@ void p3discovery2::recvPGPCertificate(const RsPeerId& fromId, RsDiscPgpKeyItem* 
 	std::string cert_name;
 	std::list<RsPgpId> cert_signers;
 
-	if(!AuthGPG::getAuthGPG()->getGPGDetailsFromBinaryBlock( (unsigned char*)item->bin_data,item->bin_len, cert_pgp_id, cert_name, cert_signers ))
+    if(!AuthPGP::getPgpDetailsFromBinaryBlock( (unsigned char*)item->bin_data,item->bin_len, cert_pgp_id, cert_name, cert_signers ))
 	{
 		std::cerr << "(EE) cannot parse own PGP key sent by " << fromId << std::endl;
 		return;
@@ -1147,7 +1147,7 @@ void p3discovery2::recvPGPCertificate(const RsPeerId& fromId, RsDiscPgpKeyItem* 
     // otherwise the connection should already be accepted. This only happens when the short invite peer sends its own PGP key.
 
     if(det.skip_pgp_signature_validation)
-		AuthGPG::getAuthGPG()->AllowConnection(det.gpg_id,true);
+        AuthPGP::AllowConnection(det.gpg_id,true);
 }
 
         /************* from pqiServiceMonitor *******************/

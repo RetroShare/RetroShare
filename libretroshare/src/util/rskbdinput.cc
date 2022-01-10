@@ -30,7 +30,7 @@
 #define PASS_MAX 512
 
 namespace RsUtil {
-std::string rs_getpass(const std::string& prompt,bool no_echo)
+std::string rs_getpass(const std::string& prompt,bool /*no_echo*/)
 {
     static char getpassbuf [PASS_MAX + 1];
     size_t i = 0;

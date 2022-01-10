@@ -134,11 +134,11 @@ const RsPgpId& rs_nxs_test::RsDummyPgpUtils::getPGPOwnId() {
 	return mOwnId;
 }
 
-RsPgpId rs_nxs_test::RsDummyPgpUtils::getPGPId(const RsPeerId& /*sslid*/) {
+RsPgpId rs_nxs_test::RsDummyPgpUtils::getPgpId(const RsPeerId& /*sslid*/) {
 	return RsPgpId().random();
 }
 
-bool rs_nxs_test::RsDummyPgpUtils::getGPGAllList(std::list<RsPgpId>& /*ids*/) {
+bool rs_nxs_test::RsDummyPgpUtils::getPgpAllList(std::list<RsPgpId>& /*ids*/) {
 	return true;
 }
 

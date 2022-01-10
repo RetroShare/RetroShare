@@ -607,6 +607,18 @@ profiling {
     QMAKE_LFLAGS *= -pg
 }
 
+# Enable all warnings
+QMAKE_CFLAGS *= -Wall -Wextra
+QMAKE_CXXFLAGS *= -Wall -Wextra
+
+# Disable unwanted warnings
+QMAKE_CFLAGS *= -Wno-misleading-indentation -Wno-dangling-else
+QMAKE_CXXFLAGS *= -Wno-misleading-indentation -Wno-dangling-else
+
+# Treat warnings as error for better removing
+#QMAKE_CFLAGS += -Werror
+#QMAKE_CXXFLAGS += -Werror
+
 ################################################################################
 ## Last goes platform specific statements common to all RetroShare subprojects #
 ################################################################################

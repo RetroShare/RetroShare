@@ -8,7 +8,7 @@ CONFIG += staticlib
 
 DEFINES *= OPENSSL_NO_IDEA 
 
-QMAKE_CXXFLAGS *= -Wall -Werror -W
+QMAKE_CXXFLAGS *= -Werror -W
 
 TARGET = ops
 DESTDIR = lib

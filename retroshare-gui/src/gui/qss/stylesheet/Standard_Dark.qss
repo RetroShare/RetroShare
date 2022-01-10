@@ -2230,6 +2230,15 @@ PlotWidget {
 /*    RetroShare specific part    */
 /**********************************/
 
+/**** Fix QPushButton ****/
+
+QPushButton,
+QPushButton:disabled,
+QPushButton:checked {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
 /**** Fix QTreeView Items ****/
 
 QTreeView::item,
@@ -2470,8 +2479,8 @@ ForumsDialog, GxsForumThreadWidget
 
 GroupTreeWidget
 {
-	qproperty-textColorCategory: rgb(99, 99, 99);
-	qproperty-textColorPrivateKey: rgb(85,151,209);
+	qproperty-textColorCategory: rgb(3, 155, 198);
+	qproperty-textColorPrivateKey: rgb(249,185,0);
 }
 
 NetworkDialog {
