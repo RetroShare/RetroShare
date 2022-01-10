@@ -20,3 +20,15 @@
 [submodule "supportlibs/jni.hpp"]
 	path = supportlibs/jni.hpp
 	url = https://github.com/RetroShare/jni.hpp.git
+[submodule "openpgpsdk"]
+	path = openpgpsdk
+	url = ../OpenPGP-SDK
+	branch = master
+[submodule "libbitdht"]
+	path = libbitdht
+	url = ../BitDHT
+	branch = master
+[submodule "libretroshare"]
+	path = libretroshare
+	url = ../libretroshare
+	branch = master
