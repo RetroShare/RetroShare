@@ -44,7 +44,9 @@
 #include "NetworkView.h"
 #include "NetworkDialog.h"
 #include "gui/common/NewFriendList.h"
+#ifdef RS_EMBEDED_FRIEND_SERVER
 #include "gui/FriendServerControl.h"
+#endif
 #include "gui/Identity/IdDialog.h"
 /* Images for Newsfeed icons */
 //#define IMAGE_NEWSFEED           ""
