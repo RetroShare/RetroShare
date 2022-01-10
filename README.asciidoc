@@ -14,6 +14,16 @@ RetroShare provides file sharing, chat, messages, forums, channels and more.
 |macOS, (via Travis CI) | image:https://app.travis-ci.com/RetroShare/RetroShare.svg?branch=master[link="https://app.travis-ci.com/github/RetroShare/RetroShare"]
 |===============================================================================
 
+== Get the source
+
+Clone this repository, enter the directory and then get the submodules with the
+following command
+
+[source,bash]
+--------
+git submodule update --init libbitdht/ libretroshare/ openpgpsdk/
+--------
+
 
 == Compilation
 
