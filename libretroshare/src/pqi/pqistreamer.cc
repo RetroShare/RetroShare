@@ -357,6 +357,7 @@ int	pqistreamer::status()
 // this method is overloaded by pqiqosstreamer
 void pqistreamer::locked_storeInOutputQueue(void *ptr,int,int)
 {
+    RsDbg() << "Storing packet " << std::hex << ptr << std::dec << " in outqueue.";
 	mOutPkts.push_back(ptr);
 }
 
@@ -521,7 +522,7 @@ int	pqistreamer::handleoutgoing_locked()
     {
 	    /* if we are not active - clear anything in the queues. */
 	    locked_clear_out_queue() ;
-#ifdef DEBUG_PACKET_SLICING 
+#ifdef DEBUG_PACKET_SLICING
         	std::cerr << "(II) Switching off packet slicing." << std::endl;
 #endif
         	mAcceptsPacketSlicing = false ;
@@ -683,7 +684,7 @@ int	pqistreamer::handleoutgoing_locked()
             outSentBytes_locked(mPkt_wpending_size);	// this is the only time where we know exactly what was sent.
 
 #ifdef DEBUG_TRANSFERS
-		    std::cerr << "pqistreamer::handleoutgoing_locked() Sent Packet len: " << mPkt_wpending_size << " @ " << RsUtil::AccurateTimeString();
+            std::cerr << "pqistreamer::handleoutgoing_locked() Sent Packet len: " << mPkt_wpending_size << " @ " << getCurrentTS();
 		    std::cerr << std::endl;
 #endif
 
@@ -693,7 +694,7 @@ int	pqistreamer::handleoutgoing_locked()
 		    mPkt_wpending = NULL;
 		    mPkt_wpending_size = 0 ;
 
-		    sent = true;
+            sent = true;
 	    }
     }
 #ifdef DEBUG_PQISTREAMER
@@ -802,11 +803,14 @@ start_packet_read:
 
 	    if(!memcmp(block,PACKET_SLICING_PROBE_BYTES,8))
 	    {
-                    mAcceptsPacketSlicing = !DISABLE_PACKET_SLICING;
+            mAcceptsPacketSlicing = !DISABLE_PACKET_SLICING;
 #ifdef DEBUG_PACKET_SLICING
 		    std::cerr << "(II) Enabling packet slicing!" << std::endl;
 #endif
-	    }
+            mReading_state = reading_state_initial ;	// restart at state 1.
+            mFailed_read_attempts = 0 ;
+            return 0;
+        }
     }
 continue_packet:
     {
@@ -1430,8 +1434,12 @@ void *pqistreamer::locked_pop_out_data(uint32_t /*max_slice_size*/, uint32_t &si
 	{
 		res = *(mOutPkts.begin()); 
 		mOutPkts.pop_front();
+
+        // In pqistreamer, we do not split outgoing packets. For now only pqiQoSStreamer supports packet slicing.
+        size = getRsItemSize(res);
+
 #ifdef DEBUG_TRANSFERS
-		std::cerr << "pqistreamer::locked_pop_out_data() getting next pkt from mOutPkts queue";
+        std::cerr << "pqistreamer::locked_pop_out_data() getting next pkt " << std::hex << res << std::dec << " from mOutPkts queue";
 		std::cerr << std::endl;
 #endif
 	}

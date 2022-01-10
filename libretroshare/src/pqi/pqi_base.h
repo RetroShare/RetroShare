@@ -280,7 +280,8 @@ public:
 	 * Sends data to a prescribed location (implementation dependent)
 	 *@param data what will be sent
 	 *@param len the size of data pointed to in memory
-	 */
+     *@returns total number of bytes actually sent
+     */
 	virtual int senddata(void *data, int len) = 0;
 
 	/**

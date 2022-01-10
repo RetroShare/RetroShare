@@ -24,6 +24,7 @@
 
 // operating system specific network header.
 #include "pqi/pqinetwork.h"
+#include "pqi/pqiproxy.h"
 
 #include <string>
 #include <map>
@@ -39,40 +40,27 @@
  * fns declared here are different -> all others are identical.
  */
 
-class pqisslproxy: public pqissl
+class pqisslproxy: public pqissl, public pqiproxyconnection
 {
 public:
-        pqisslproxy(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm);
-virtual ~pqisslproxy();
+    pqisslproxy(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm);
+    virtual ~pqisslproxy();
 
-	// NetInterface. Is the same.
-	// BinInterface. Is the same.
+    // NetInterface. Is the same.
+    // BinInterface. Is the same.
 
-virtual bool connect_parameter(uint32_t type, const std::string &value);
-virtual bool connect_parameter(uint32_t type, uint32_t value);
+    virtual bool connect_parameter(uint32_t type, const std::string &value);
+    virtual bool connect_parameter(uint32_t type, uint32_t value);
 
 protected:
 
-//Initiate is the same - except it uses the Proxy Address rather than the Peer Address.
-// minor tweaks to setup data state.
-virtual int Initiate_Connection(); 
+    //Initiate is the same - except it uses the Proxy Address rather than the Peer Address.
+    // minor tweaks to setup data state.
+    virtual int Initiate_Connection();
 
-// The real overloading is done in Basic Connection Complete.
-// Instead of just checking for an open socket, we need to communicate with the SOCKS5 proxy.
-virtual int Basic_Connection_Complete();
-
-// These are the internal steps in setting up the Proxy Connection.
-virtual int Proxy_Send_Method();
-virtual int Proxy_Method_Response();
-virtual int Proxy_Send_Address();
-virtual int Proxy_Connection_Complete();
-
-private:
-
-	uint32_t mProxyState;
-
-	std::string mDomainAddress;
-	uint16_t mRemotePort;
+    // The real overloading is done in Basic Connection Complete.
+    // Instead of just checking for an open socket, we need to communicate with the SOCKS5 proxy.
+    virtual int Basic_Connection_Complete();
 };
 
 #endif // MRK_PQI_SSL_PROXY_HEADER

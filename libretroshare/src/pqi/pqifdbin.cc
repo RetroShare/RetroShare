@@ -236,6 +236,7 @@ int RsFdBinInterface::readline(void *data, int len)
 
     return 0;
 }
+
 int RsFdBinInterface::readdata(void *data, int len)
 {
     // read incoming bytes in the buffer

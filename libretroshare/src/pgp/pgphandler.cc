@@ -357,12 +357,13 @@ bool PGPHandler::locked_syncTrustDatabase()
 	librs::util::ConvertUtf8ToUtf16(_trustdb_path, wfullname);
 	if(-1 == _wstati64(wfullname.c_str(), &buf))
 #else
-		if(-1 == stat64(_trustdb_path.c_str(), &buf))
+    if(-1 == stat64(_trustdb_path.c_str(), &buf))
 #endif
-		{
-            RsErr() << "PGPHandler::syncDatabase(): can't stat file " << _trustdb_path << ". Will force write it." ;
-			_trustdb_changed = true ;	// we force write of trust database if it does not exist.
-		}
+    {
+        RsErr() << "PGPHandler::syncDatabase(): can't stat file " << _trustdb_path << ". Will force write it." ;
+        _trustdb_changed = true ;	// we force write of trust database if it does not exist.
+        buf.st_mtime = 0;
+    }
 
 	if(_trustdb_last_update_time < buf.st_mtime)
 	{

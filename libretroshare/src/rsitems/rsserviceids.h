@@ -54,7 +54,8 @@ enum class RsServiceType : uint16_t
 
 	BANLIST                    = 0x0101,
 	STATUS                     = 0x0102,
-	NXS                        = 0x0200,
+    FRIEND_SERVER              = 0x0103,
+    NXS                        = 0x0200,
 	GXSID                      = 0x0211,
 	PHOTO                      = 0x0212,
 	WIKI                       = 0x0213,
@@ -115,6 +116,8 @@ RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_DISTANT_CHAT   =
 RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_GXS_TUNNEL     = 0x0028;
 RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_BANLIST        = 0x0101;
 RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_STATUS         = 0x0102;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_FRIEND_SERVER  = 0x0103;
+
 /// Rs Network Exchange Service
 RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_NXS            = 0x0200;
 RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_GXS_TYPE_GXSID       = 0x0211;

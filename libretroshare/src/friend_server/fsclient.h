@@ -1,9 +1,9 @@
 /*******************************************************************************
- * libretroshare/src/pqi: pqithreadstreamer.h                                  *
+ * libretroshare/src/file_sharing: fsclient.h                                  *
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2004-2013 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright 2021 by retroshare team <retroshare.project@gmail.com>            *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -18,32 +18,37 @@
  * You should have received a copy of the GNU Lesser General Public License    *
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
- *******************************************************************************/
-#ifndef MRK_PQI_THREAD_STREAMER_HEADER
-#define MRK_PQI_THREAD_STREAMER_HEADER
+ ******************************************************************************/
 
-#include "pqi/pqistreamer.h"
-#include "util/rsthreads.h"
+#include <string>
+#include "fsitem.h"
+#include "pqi/pqi_base.h"
 
-class pqithreadstreamer: public pqistreamer, public RsTickingThread
+// This class runs a client connection to the friend server. It opens a socket at each connection.
+
+class FsClient: public PQInterface
 {
 public:
-    pqithreadstreamer(PQInterface *parent, RsSerialiser *rss, const RsPeerId& peerid, BinInterface *bio_in, int bio_flagsin);
+    FsClient() :PQInterface(RsPeerId()) {}
 
-    // from pqistreamer
-    virtual bool RecvItem(RsItem *item) override;
-    virtual int  tick() override;
+    bool requestFriends(const std::string& address, uint16_t port,
+                        const std::string &proxy_address, uint16_t proxy_port,
+                        uint32_t reqs, std::map<std::string,bool>& friend_certificates);
 
 protected:
-	void threadTick() override; /// @see RsTickingThread
+    // Implements PQInterface
 
-    PQInterface *mParent;
-    uint32_t mTimeout;
-    uint32_t mSleepPeriod;
+    bool RecvItem(RsItem *item) override;
+    int  SendItem(RsItem *) override { RsErr() << "FsClient::SendItem() called although it should not." ; return 0;}
+    RsItem *GetItem() override;
 
 private:
-    /* thread variables */
-    RsMutex mThreadMutex;
+    bool sendItem(const std::string &server_address, uint16_t server_port,
+                  const std::string &proxy_address, uint16_t proxy_port,
+                  RsItem *item, std::list<RsItem *> &response);
+
+    void handleServerResponse(RsFriendServerServerResponseItem *item);
+
+    std::list<RsItem*> mIncomingItems;
 };
 
-#endif //MRK_PQI_THREAD_STREAMER_HEADER

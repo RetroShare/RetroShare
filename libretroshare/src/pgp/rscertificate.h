@@ -36,6 +36,21 @@ struct RsPeerDetails;
 class RsCertificate
 {
 public:
+    enum class RsShortInviteFieldType : uint8_t
+    {
+        SSL_ID          = 0x00,
+        PEER_NAME       = 0x01,
+        LOCATOR         = 0x02,
+        PGP_FINGERPRINT = 0x03,
+        CHECKSUM        = 0x04,
+
+        /* The following will be deprecated, and ported to LOCATOR when generic transport layer will be implemented */
+        HIDDEN_LOCATOR  = 0x90,
+        DNS_LOCATOR     = 0x91,
+        EXT4_LOCATOR    = 0x92,		// external IPv4 address
+        LOC4_LOCATOR    = 0x93		// local IPv4 address
+    };
+
 	typedef enum { RS_CERTIFICATE_OLD_FORMAT, RS_CERTIFICATE_RADIX, RS_CERTIFICATE_SHORT_RADIX } Format;
 
 	/**
@@ -63,6 +78,8 @@ public:
 	        size_t binary_pgp_block_size );
 
 	~RsCertificate();
+
+    static bool decodeRadix64ShortInvite(const std::string& short_invite_b64,RsPeerDetails& det,uint32_t& error_code);
 
 	/// Convert to certificate radix string
 	std::string toStdString() const;

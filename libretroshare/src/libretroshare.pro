@@ -391,6 +391,7 @@ HEADERS +=	pqi/authssl.h \
 			pqi/pqissl.h \
 			pqi/pqissllistener.h \
 			pqi/pqisslpersongrp.h \
+			pqi/pqiproxy.h \
 			pqi/pqisslproxy.h \
 			pqi/pqistore.h \
 			pqi/pqistreamer.h \
@@ -559,6 +560,7 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/pqissl.cc \
 			pqi/pqissllistener.cc \
 			pqi/pqisslpersongrp.cc \
+			pqi/pqiproxy.cc \
 			pqi/pqisslproxy.cc \
 			pqi/pqistore.cc \
 			pqi/pqistreamer.cc \
@@ -824,6 +826,22 @@ wikipoos {
 	SOURCES += services/p3wiki.cc \
 		rsitems/rswikiitems.cc \
 }
+
+# Friend server
+
+rs_efs {
+        DEFINES *= RS_EMBEDED_FRIEND_SERVER
+
+        HEADERS += friend_server/fsclient.h \
+                   friend_server/fsitem.h \
+                   friend_server/fsmanager.h \
+                   retroshare/rsfriendserver.h
+
+        SOURCES += friend_server/fsclient.cc \
+                   friend_server/fsmanager.cc
+}
+
+# The Wire
 
 gxsthewire {
 	DEFINES *= RS_USE_WIRE

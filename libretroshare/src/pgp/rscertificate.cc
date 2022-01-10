@@ -28,6 +28,7 @@
 #include <retroshare/rspeers.h>
 #include <util/radix64.h>
 #include <pgp/pgpkeyutil.h>
+#include <pgp/pgphandler.h>
 #include "rscertificate.h"
 #include "util/rsstring.h"
 #include "util/stacktrace.h"
@@ -618,6 +619,140 @@ bool RsCertificate::cleanRadix64(const std::string& instr,std::string& str,uint3
 
 	return true ;
 }
+
+bool RsCertificate::decodeRadix64ShortInvite(const std::string& rsInvite, RsPeerDetails& details, uint32_t& err_code)
+{
+    err_code = 0;
+    std::vector<uint8_t> bf = Radix64::decode(rsInvite);
+    size_t size = bf.size();
+
+    unsigned char* buf = bf.data();
+    size_t total_s = 0;
+    bool CRC_ok = false ; // not checked yet
+
+    while(total_s < size)
+    {
+        RsShortInviteFieldType ptag = RsShortInviteFieldType(buf[0]);
+        buf = &buf[1];
+
+        unsigned char *buf2 = buf;
+        uint32_t s = 0;
+
+        try { s = PGPKeyParser::read_125Size(buf); }
+        catch (...)
+        {
+            err_code = CERTIFICATE_PARSING_ERROR_SIZE_ERROR;
+            return false;
+        }
+
+        total_s += 1 + ( reinterpret_cast<size_t>(buf) - reinterpret_cast<size_t>(buf2) );
+
+        if(total_s > size)
+        {
+            err_code = CERTIFICATE_PARSING_ERROR_SIZE_ERROR;
+            return false;
+        }
+
+        Dbg3() << __PRETTY_FUNCTION__ << " Read ptag: "
+               << static_cast<uint32_t>(ptag)
+               << ", size " << s << ", total_s = " << total_s
+               << ", expected total = " << size << std::endl;
+
+        switch(ptag)
+        {
+        case RsShortInviteFieldType::SSL_ID:
+            details.id = RsPeerId::fromBufferUnsafe(buf) ;
+            break;
+
+        case RsShortInviteFieldType::PEER_NAME:
+            details.name = std::string((char*)buf,s);
+            break;
+
+        case RsShortInviteFieldType::PGP_FINGERPRINT:
+            details.fpr = RsPgpFingerprint::fromBufferUnsafe(buf);
+            details.gpg_id = PGPHandler::pgpIdFromFingerprint(details.fpr);
+            break;
+
+        case RsShortInviteFieldType::LOCATOR:
+        {
+            std::string locatorStr((char*)buf,s);
+            details.ipAddressList.push_back(locatorStr);
+        }
+            break;
+
+        case RsShortInviteFieldType::DNS_LOCATOR:
+            details.extPort = (((int)buf[0]) << 8) + buf[1];
+            details.dyndns = std::string((char*)&buf[2],s-2);
+            break;
+
+        case RsShortInviteFieldType::LOC4_LOCATOR:
+        {
+            uint32_t t4Addr = (((uint32_t)buf[0]) << 24)+(((uint32_t)buf[1])<<16)+(((uint32_t)buf[2])<<8) + (uint32_t)buf[3];
+            sockaddr_in tLocalAddr;
+            tLocalAddr.sin_addr.s_addr = t4Addr;
+
+            details.localAddr = rs_inet_ntoa(tLocalAddr.sin_addr);
+            details.localPort = (((uint32_t)buf[4])<<8) + (uint32_t)buf[5];
+        }
+        break;
+
+        case RsShortInviteFieldType::EXT4_LOCATOR:
+        {
+            uint32_t t4Addr = (((uint32_t)buf[0]) << 24)+(((uint32_t)buf[1])<<16)+(((uint32_t)buf[2])<<8) + (uint32_t)buf[3];
+            sockaddr_in tExtAddr;
+            tExtAddr.sin_addr.s_addr = t4Addr;
+
+            details.extAddr = rs_inet_ntoa(tExtAddr.sin_addr);
+            details.extPort = (((uint32_t)buf[4])<<8) + (uint32_t)buf[5];
+        }
+            break;
+
+        case RsShortInviteFieldType::HIDDEN_LOCATOR:
+            details.hiddenType = (((uint32_t)buf[0]) << 24)+(((uint32_t)buf[1])<<16)+(((uint32_t)buf[2])<<8) + (uint32_t)buf[3];
+            details.hiddenNodePort = (((uint32_t)buf[4]) << 8)+ (uint32_t)buf[5];
+            details.isHiddenNode = true;
+            details.hiddenNodeAddress = std::string((char*)&buf[6],s-6);
+            break;
+
+        case RsShortInviteFieldType::CHECKSUM:
+        {
+            if(s != 3 || total_s+3 != size)	// make sure the checksum is the last section
+            {
+                err_code = CERTIFICATE_PARSING_ERROR_INVALID_CHECKSUM_SECTION;
+                return false;
+            }
+            uint32_t computed_crc = PGPKeyManagement::compute24bitsCRC(bf.data(),size-5);
+            uint32_t certificate_crc = static_cast<uint32_t>( buf[0] + (buf[1] << 8) + (buf[2] << 16) );
+
+            if(computed_crc != certificate_crc)
+            {
+                err_code = CERTIFICATE_PARSING_ERROR_CHECKSUM_ERROR;
+                return false;
+            }
+            CRC_ok = true;
+            break;
+        }
+
+        }
+
+        buf = &buf[s];
+        total_s += s;
+    }
+
+    if(details.id.isNull())
+    {
+        err_code = CERTIFICATE_PARSING_ERROR_MISSING_LOCATION_ID;
+        return false;
+    }
+    if(!CRC_ok)
+    {
+        err_code = CERTIFICATE_PARSING_ERROR_CHECKSUM_ERROR;
+        return false;
+    }
+
+    return true;
+}
+
 
 
 

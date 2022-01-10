@@ -44,6 +44,9 @@
 #include "NetworkView.h"
 #include "NetworkDialog.h"
 #include "gui/common/NewFriendList.h"
+#ifdef RS_EMBEDED_FRIEND_SERVER
+#include "gui/FriendServerControl.h"
+#endif
 #include "gui/Identity/IdDialog.h"
 /* Images for Newsfeed icons */
 //#define IMAGE_NEWSFEED           ""
@@ -88,6 +91,9 @@ FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
     ui.avatar->setFrameType(AvatarWidget::STATUS_FRAME);
 
     ui.tabWidget->setTabPosition(QTabWidget::North);
+#ifdef RS_EMBEDED_FRIEND_SERVER
+    ui.tabWidget->addTab(friendServerControl = new FriendServerControl(),QIcon(IMAGE_PEERS), tr("Friend Server"));
+#endif
     ui.tabWidget->addTab(networkView = new NetworkView(),QIcon(IMAGE_NETWORK2), tr("Network graph"));
     ui.tabWidget->addTab(networkDialog = new NetworkDialog(),QIcon(IMAGE_PEERS), tr("Keyring"));
 

@@ -1642,7 +1642,10 @@ bool OpenPGPSDKHandler::locked_syncPublicKeyring()
 #else
 	if(-1 == stat64(_pubring_path.c_str(), &buf))
 #endif
+    {
         RsErr() << "OpenPGPSDKHandler::syncDatabase(): can't stat file " << _pubring_path << ". Can't sync public keyring." ;
+        buf.st_mtime = 0;
+    }
 
 	if(_pubring_last_update_time < buf.st_mtime)
 	{

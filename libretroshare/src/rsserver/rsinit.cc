@@ -52,6 +52,10 @@
 #include "rsserver/rsloginhandler.h"
 #include "rsserver/rsaccounts.h"
 
+#ifdef RS_EMBEDED_FRIEND_SERVER
+#include "friend_server/fsmanager.h"
+#endif
+
 #include <list>
 #include <string>
 
@@ -1175,6 +1179,11 @@ int RsServer::StartupRetroShare()
 
     serviceCtrl->setServiceServer(pqih) ;
 
+#ifdef RS_EMBEDED_FRIEND_SERVER
+    // setup friend server
+    rsFriendServer = new FriendServerManager();
+#endif
+
 	/****** New Ft Server **** !!! */
     ftServer *ftserver = new ftServer(mPeerMgr, serviceCtrl);
     ftserver->setConfigDirectory(RsAccounts::AccountDirectory());
@@ -1936,6 +1945,12 @@ int RsServer::StartupRetroShare()
 
 std::string RsInit::executablePath()
 {
+    if(rsInitConfig->mainExecutablePath.empty())
+    {
+        RsErr() << "Main executable path not set! Plz call RsInit::InitRetroShare(conf) with conf.main_executable_path = argv[0]";
+        assert(false);
+    }
+
     return rsInitConfig->mainExecutablePath;
 }
 bool RsInit::startAutoTor()

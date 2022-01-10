@@ -1085,6 +1085,13 @@ DEFINES *= CHANNELS_FRAME_CATCHER
 
 }
 
+# Embedded Friend Server
+
+rs_efs {
+        SOURCES += gui/FriendServerControl.cpp
+        HEADERS += gui/FriendServerControl.h
+        FORMS   += gui/FriendServerControl.ui
+}
 
 # BELOW IS GXS Unfinished Services.
 	
