@@ -19,18 +19,21 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifdef WINDOWS_SYS
-#include "util/rsstring.h"
-#include "util/rswin.h"
-#endif
+
+#include <cerrno>
+#include <cstdio>
+#include <sys/stat.h>
 
 #include "ftfilecreator.h"
-#include <errno.h>
-#include <stdio.h>
 #include "util/rstime.h"
-#include <sys/stat.h>
-#include <util/rsdiscspace.h>
-#include <util/rsdir.h>
+#include "util/rsdiscspace.h"
+#include "util/rsdir.h"
+#include "rs_android/largefile_retrocompat.hpp"
+
+#ifdef WINDOWS_SYS
+#	include "util/rsstring.h"
+#	include "util/rswin.h"
+#endif
 
 /*******
  * #define FILE_DEBUG 1

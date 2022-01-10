@@ -391,19 +391,11 @@ endif(RS_MINIUPNPC)
 #./rs_upnp/upnptest.cc
 #./rs_upnp/upnputil.cc
 
-#./rs_android/LocalArray.h
-#./rs_android/README-ifaddrs-android.adoc
-#./rs_android/ScopedFd.h
-#./rs_android/androidcoutcerrcatcher.hpp
-#./rs_android/errorconditionwrap.cpp
-#./rs_android/ifaddrs-android.h
-#./rs_android/org
-#./rs_android/org/retroshare
-#./rs_android/org/retroshare/service
-#./rs_android/org/retroshare/service/AssetHelper.java
-#./rs_android/org/retroshare/service/ErrorConditionWrap.java
-#./rs_android/org/retroshare/service/RetroShareServiceAndroid.java
-#./rs_android/retroshareserviceandroid.cpp
-#./rs_android/retroshareserviceandroid.hpp
-#./rs_android/rsjni.cpp
-#./rs_android/rsjni.hpp
+#if(CMAKE_SYSTEM_NAME STREQUAL "Android")
+if(RS_ANDROID)
+	list(
+		APPEND RS_SOURCES
+		rs_android/errorconditionwrap.cpp
+		rs_android/retroshareserviceandroid.cpp
+		rs_android/rsjni.cpp )
+endif()

@@ -1,7 +1,8 @@
 /*
  * RetroShare
- * Copyright (C) 2016-2021  Gioacchino Mazzurco <gio@eigenlab.org>
- * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>
+ *
+ * Copyright (C) 2016-2022  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2021-2022  Asociación Civil Altermundi <info@altermundi.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -36,7 +37,7 @@ public class RetroShareServiceAndroid extends Service
     public static final int DEFAULT_JSON_API_PORT = 9092;
     public static final String DEFAULT_JSON_API_BINDING_ADDRESS = "127.0.0.1";
 
-    static { System.loadLibrary("retroshare-service"); }
+    static { System.loadLibrary("retroshare"); }
 
     public static void start(
         Context ctx, int jsonApiPort, String jsonApiBindAddress )

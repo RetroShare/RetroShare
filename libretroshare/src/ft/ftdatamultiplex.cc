@@ -33,8 +33,10 @@
 #include "ft/ftsearch.h"
 #include "util/rsdir.h"
 #include "util/rsmemory.h"
-#include <retroshare/rsturtle.h>
+#include "retroshare/rsturtle.h"
 #include "util/rstime.h"
+#include "rs_android/largefile_retrocompat.hpp"
+
 
 /* For Thread Behaviour */
 const uint32_t DMULTIPLEX_MIN	= 10; /* 10 msec sleep */
