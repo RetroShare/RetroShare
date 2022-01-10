@@ -23,6 +23,7 @@
 #include <QTcpSocket>
 
 #include "retroshare/rsfriendserver.h"
+#include "retroshare/rstor.h"
 
 #include "util/qtthreadsutils.h"
 #include "gui/common/FilesDefs.h"
@@ -36,6 +37,7 @@
 
 /** Constructor */
 FriendServerControl::FriendServerControl(QWidget *parent)
+    : QWidget(parent)
 {
     /* Invoke the Qt Designer generated object setup routine */
     setupUi(this);
@@ -66,6 +68,18 @@ FriendServerControl::FriendServerControl(QWidget *parent)
     serverStatusCheckResult_LB->setMovie(mCheckingServerMovie);
 
     updateFriendServerStatusIcon(false);
+    updateTorProxyInfo();
+}
+
+void FriendServerControl::updateTorProxyInfo()
+{
+    std::string friend_proxy_address;
+    uint16_t friend_proxy_port;
+
+    RsTor::getProxyServerInfo(friend_proxy_address,friend_proxy_port);
+
+    torProxyPort_SB->setValue(friend_proxy_port);
+    torProxyAddress_LE->setText(QString::fromStdString(friend_proxy_address));
 }
 
 FriendServerControl::~FriendServerControl()
@@ -83,34 +97,39 @@ void FriendServerControl::onOnOffClick(bool b)
 }
 void FriendServerControl::onOnionPortEdit(int)
 {
-    // Setup timer to auto-check the friend server address
-
-    mConnectionCheckTimer->setSingleShot(true);
-    mConnectionCheckTimer->setInterval(5000); // check in 5 secs unless something is changed in the mean time.
-
-    mConnectionCheckTimer->start();
-
-    if(mCheckingServerMovie->fileName() != QString(":/images/loader/circleball-16.gif" ))
-    {
-        mCheckingServerMovie->setFileName(":/images/loader/circleball-16.gif");
-        mCheckingServerMovie->start();
-    }
+#warning TODO
+//     // Setup timer to auto-check the friend server address
+//
+//     mConnectionCheckTimer->setSingleShot(true);
+//     mConnectionCheckTimer->setInterval(5000); // check in 5 secs unless something is changed in the mean time.
+//
+//     mConnectionCheckTimer->start();
+//
+//     if(mCheckingServerMovie->fileName() != QString(":/images/loader/circleball-16.gif" ))
+//     {
+//         mCheckingServerMovie->setFileName(":/images/loader/circleball-16.gif");
+//         mCheckingServerMovie->start();
+//     }
+    rsFriendServer->setServerAddress(torServerAddress_LE->text().toStdString(),torServerPort_SB->value());
+    rsFriendServer->setProxyAddress(torProxyAddress_LE->text().toStdString(),torProxyPort_SB->value());
 }
 
 void FriendServerControl::onOnionAddressEdit(const QString&)
 {
     // Setup timer to auto-check the friend server address
 
-    mConnectionCheckTimer->setSingleShot(true);
-    mConnectionCheckTimer->setInterval(5000); // check in 5 secs unless something is changed in the mean time.
-
-    mConnectionCheckTimer->start();
-
-    if(mCheckingServerMovie->fileName() != QString(":/images/loader/circleball-16.gif" ))
-    {
-        mCheckingServerMovie->setFileName(":/images/loader/circleball-16.gif");
-        mCheckingServerMovie->start();
-    }
+//     mConnectionCheckTimer->setSingleShot(true);
+//     mConnectionCheckTimer->setInterval(5000); // check in 5 secs unless something is changed in the mean time.
+//
+//     mConnectionCheckTimer->start();
+//
+//     if(mCheckingServerMovie->fileName() != QString(":/images/loader/circleball-16.gif" ))
+//     {
+//         mCheckingServerMovie->setFileName(":/images/loader/circleball-16.gif");
+//         mCheckingServerMovie->start();
+//     }
+    rsFriendServer->setServerAddress(torServerAddress_LE->text().toStdString(),torServerPort_SB->value());
+    rsFriendServer->setProxyAddress(torProxyAddress_LE->text().toStdString(),torProxyPort_SB->value());
 }
 
 void FriendServerControl::checkServerAddress()

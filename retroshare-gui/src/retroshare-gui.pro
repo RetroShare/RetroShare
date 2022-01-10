@@ -383,7 +383,6 @@ HEADERS +=  rshare.h \
             gui/AboutDialog.h \
             gui/AboutWidget.h \
             gui/NetworkView.h \
-            gui/FriendServerControl.h \
             gui/FriendsDialog.h \
             gui/ServicePermissionDialog.h \
             gui/RemoteDirModel.h \
@@ -648,7 +647,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/FileTransfer/BannedFilesDialog.ui \
             gui/MainWindow.ui \
             gui/NetworkView.ui \
-            gui/FriendServerControl.ui \
             gui/FriendsDialog.ui \
             gui/ShareManager.ui \
 #            gui/ShareDialog.ui \
@@ -769,7 +767,6 @@ SOURCES +=  main.cpp \
             gui/mainpagestack.cpp \
             gui/MainWindow.cpp \
             gui/NetworkView.cpp \
-            gui/FriendServerControl.cpp \
             gui/FriendsDialog.cpp \
             gui/ServicePermissionDialog.cpp \
             gui/RemoteDirModel.cpp \
@@ -1092,6 +1089,13 @@ DEFINES *= CHANNELS_FRAME_CATCHER
 
 }
 
+# Embedded Friend Server
+
+rs_efs {
+        SOURCES += gui/FriendServerControl.cpp
+        HEADERS += gui/FriendServerControl.h
+        FORMS   += gui/FriendServerControl.ui
+}
 
 # BELOW IS GXS Unfinished Services.
 	

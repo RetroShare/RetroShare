@@ -147,7 +147,6 @@ PUBLIC_HEADERS =	retroshare/rsdisc.h \
 					retroshare/rsrtt.h \
 					retroshare/rsconfig.h \
 					retroshare/rsversion.h \
-					retroshare/rsfriendserver.h \
 					retroshare/rsservicecontrol.h \
 					retroshare/rsgxsdistsync.h 
 
@@ -409,10 +408,6 @@ HEADERS +=	pqi/authssl.h \
 			pqi/pqinetstatebox.h \
                         pqi/p3servicecontrol.h
 
-SOURCES += friend_server/fsclient.h \
-	   friend_server/fsitem.h \
-	   friend_server/fsmanager.h 
-
 HEADERS +=	rsserver/p3face.h \
 			rsserver/p3history.h \
 			rsserver/p3msgs.h \
@@ -581,9 +576,6 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/sslfns.cc \
 			pqi/pqinetstatebox.cc \
                         pqi/p3servicecontrol.cc
-
-SOURCES += friend_server/fsclient.cc \
-	   friend_server/fsmanager.cc
 
 SOURCES += 		rsserver/p3face-config.cc \
 			rsserver/p3face-server.cc \
@@ -841,6 +833,22 @@ wikipoos {
 	SOURCES += services/p3wiki.cc \
 		rsitems/rswikiitems.cc \
 }
+
+# Friend server
+
+rs_efs {
+        DEFINES *= RS_EMBEDED_FRIEND_SERVER
+
+        HEADERS += friend_server/fsclient.h \
+                   friend_server/fsitem.h \
+                   friend_server/fsmanager.h \
+                   retroshare/rsfriendserver.h
+
+        SOURCES += friend_server/fsclient.cc \
+                   friend_server/fsmanager.cc
+}
+
+# The Wire
 
 gxsthewire {
 	DEFINES *= RS_USE_WIRE

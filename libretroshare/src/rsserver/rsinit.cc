@@ -51,7 +51,10 @@
 #include "retroshare/rsversion.h"
 #include "rsserver/rsloginhandler.h"
 #include "rsserver/rsaccounts.h"
+
+#ifdef RS_EMBEDED_FRIEND_SERVER
 #include "friend_server/fsmanager.h"
+#endif
 
 #include <list>
 #include <string>
@@ -1176,8 +1179,10 @@ int RsServer::StartupRetroShare()
 
     serviceCtrl->setServiceServer(pqih) ;
 
+#ifdef RS_EMBEDED_FRIEND_SERVER
     // setup friend server
     rsFriendServer = new FriendServerManager();
+#endif
 
 	/****** New Ft Server **** !!! */
     ftServer *ftserver = new ftServer(mPeerMgr, serviceCtrl);

@@ -37,6 +37,7 @@ protected slots:
     void onOnionAddressEdit(const QString&);
     void onOnionPortEdit(int);
     void onNbFriendsToRequestsChanged(int n);
+    void updateTorProxyInfo();
 
 private:
     void checkServerAddress();
