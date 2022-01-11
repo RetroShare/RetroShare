@@ -21,7 +21,7 @@ following command
 
 [source,bash]
 --------
-git submodule update --init libbitdht/ libretroshare/ openpgpsdk/
+git submodule update --init --remote --force libbitdht/ libretroshare/ openpgpsdk/
 --------
 
 
