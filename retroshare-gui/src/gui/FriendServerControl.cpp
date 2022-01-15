@@ -61,7 +61,7 @@ FriendServerControl::FriendServerControl(QWidget *parent)
     QObject::connect(friendServerOnOff_CB,SIGNAL(toggled(bool)),this,SLOT(onOnOffClick(bool)));
     QObject::connect(torServerFriendsToRequest_SB,SIGNAL(valueChanged(int)),this,SLOT(onFriendsToRequestChanged(int)));
     QObject::connect(torServerAddress_LE,SIGNAL(textChanged(const QString&)),this,SLOT(onOnionAddressEdit(const QString&)));
-    QObject::connect(torServerPort_SB,SIGNAL(valueChanged(int)),this,SLOT(onOnionAddressEdit(int)));
+    QObject::connect(torServerPort_SB,SIGNAL(valueChanged(int)),this,SLOT(onOnionPortEdit(int)));
 
     QObject::connect(mConnectionCheckTimer,SIGNAL(timeout()),this,SLOT(checkServerAddress()));
 
@@ -116,7 +116,6 @@ void FriendServerControl::onOnionPortEdit(int)
 void FriendServerControl::onOnionAddressEdit(const QString&)
 {
     // Setup timer to auto-check the friend server address
-
     mConnectionCheckTimer->stop();
     mConnectionCheckTimer->setSingleShot(true);
     mConnectionCheckTimer->setInterval(5000); // check in 5 secs unless something is changed in the mean time.
