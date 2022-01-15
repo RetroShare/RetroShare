@@ -18,28 +18,35 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef _EMOTICONS_H
-#define _EMOTICONS_H
+#pragma once
 
+#include <QHash>
 #include <QVector>
 
-class QWidget;
+class QPixmap;
 class QString;
+class QWidget;
 
 class Emoticons
 {
 public:
-    static void load();
-    static void showSmileyWidget(QWidget *parent, QWidget *button, const char *slotAddMethod, bool above);
-    static void showStickerWidget(QWidget *parent, QWidget *button, const char *slotAddMethod, bool above);
-    static QString importedStickerPath();
+	void load();
+	void showSmileyWidget(QWidget *parent, QWidget *button, const char *slotAddMethod, bool above);
+	void showStickerWidget(QWidget *parent, QWidget *button, const char *slotAddMethod, bool above);
+	QString importedStickerPath();
+	Emoticons *operator->() const;
 
 private:
-    static void loadToolTips(QWidget *container);
-    static void loadSmiley();
-    static void refreshStickerTabs(QVector<QString>& stickerTabs, QString foldername);
-    static void refreshStickerTabs(QVector<QString>& stickerTabs);
+	void loadToolTips(QWidget *container);
+	void loadSmiley();
+	void refreshStickerTabs(QVector<QString>& stickerTabs, QString foldername);
+	void refreshStickerTabs(QVector<QString>& stickerTabs);
+
+private:
+	QHash<QString, QPair<QVector<QString>, QHash<QString, QString> > > m_smileys;
+	QVector<QString> m_grpOrdered;
+	QStringList m_filters;
+	QStringList m_stickerFolders;
+	QHash<QString, QString> m_tooltipcache;
+	QHash<QString, QPixmap> m_iconcache;
 };
-
-#endif
-

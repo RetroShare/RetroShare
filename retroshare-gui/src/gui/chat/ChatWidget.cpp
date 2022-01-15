@@ -1617,31 +1617,31 @@ void ChatWidget::setFont()
 
 void ChatWidget::smileyWidget()
 {
-	Emoticons::showSmileyWidget(this, ui->emoteiconButton, SLOT(addSmiley()), true);
+	Emoticons()->showSmileyWidget(this, ui->emoteiconButton, SLOT(addSmiley()), true);
 }
 
 void ChatWidget::addSmiley()
 {
-	QString smiley = qobject_cast<QPushButton*>(sender())->toolTip().split("|").first();
+	QString smiley = QString("<p style=\" font-family:Noto Color Emoji;\">");
+	smiley += qobject_cast<QPushButton*>(sender())->text();
+	smiley += "</p>";
 	// add trailing space
 	smiley += QString(" ");
 	// add preceding space when needed (not at start of text or preceding space already exists)
 	QString plainText = ui->chatTextEdit->toPlainText();
+	if (!ui->chatTextEdit->textCursor().atStart() )
+	{
+		QChar start = plainText[ui->chatTextEdit->textCursor().position() - 1];
+		if(start != QChar(' '))
+			smiley = QString(" ") + smiley;
+	}
 
-        int startPosition = ui->chatTextEdit->textCursor().position();
-        if (startPosition > 0)
-            startPosition -= 1;
-
-        QChar start = plainText[startPosition];
-	if(!ui->chatTextEdit->textCursor().atStart() && start != QChar(' '))
-		smiley = QString(" ") + smiley;
-
-	ui->chatTextEdit->textCursor().insertText(smiley);
+	ui->chatTextEdit->textCursor().insertHtml(smiley);
 }
 
 void ChatWidget::stickerWidget()
 {
-	Emoticons::showStickerWidget(this, ui->stickerButton, SLOT(sendSticker()), true);
+	Emoticons()->showStickerWidget(this, ui->stickerButton, SLOT(sendSticker()), true);
 }
 
 void ChatWidget::sendSticker()
@@ -2008,7 +2008,7 @@ void ChatWidget::saveSticker()
 	QTextCursor cursor = ui->textBrowser->cursorForPosition(point);
 	QString filename = QInputDialog::getText(window(), "Import sticker", "Sticker name");
 	if(filename.isEmpty()) return;
-	filename = Emoticons::importedStickerPath() + "/" + filename + ".png";
+	filename = Emoticons()->importedStickerPath() + "/" + filename + ".png";
 	ImageUtil::extractImage(window(), cursor, filename);
 }
 

@@ -18,12 +18,16 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "Emoticons.h"
+#include "util/HandleRichText.h"
+#include "retroshare/rsinit.h"
+#include "gui/common/FilesDefs.h"
+
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QFile>
 #include <QDir>
 #include <QGridLayout>
-#include <QHash>
 #include <QIcon>
 #include <QPushButton>
 #include <QTabWidget>
@@ -34,48 +38,41 @@
 #include <iostream>
 #include <math.h>
 
-#include "Emoticons.h"
-#include "util/HandleRichText.h"
-#include "retroshare/rsinit.h"
-#include "gui/common/FilesDefs.h"
-
 #define ICONNAME "groupicon.png"
 
-static QHash<QString, QPair<QVector<QString>, QHash<QString, QString> > > Smileys;
-static QVector<QString> grpOrdered;
-static QStringList filters;
-static QStringList stickerFolders;
-static QHash<QString, QString> tooltipcache;
-static QHash<QString, QPixmap> iconcache;
+Q_GLOBAL_STATIC(Emoticons, emoticons)
+
+Emoticons* Emoticons::operator->() const { return emoticons; }
 
 void Emoticons::load()
 {
 	loadSmiley();
-	filters << "*.png" << "*.jpg" << "*.jpeg" << "*.gif" << "*.webp";
-	stickerFolders << (QString::fromStdString(RsAccounts::AccountDirectory()) + "/stickers");		//under account, unique for user
-	stickerFolders << (QString::fromStdString(RsAccounts::ConfigDirectory()) + "/stickers");		//under .retroshare, shared between users
-	stickerFolders << (QString::fromStdString(RsAccounts::systemDataDirectory()) + "/stickers");	//exe's folder, shipped with RS
+	m_filters << "*.png" << "*.jpg" << "*.jpeg" << "*.gif" << "*.webp";
+	m_stickerFolders << (QString::fromStdString(RsAccounts::AccountDirectory()) + "/stickers");		//under account, unique for user
+	m_stickerFolders << (QString::fromStdString(RsAccounts::ConfigDirectory()) + "/stickers");		//under .retroshare, shared between users
+	m_stickerFolders << (QString::fromStdString(RsAccounts::systemDataDirectory()) + "/stickers");	//exe's folder, shipped with RS
 
 	QDir dir(QString::fromStdString(RsAccounts::AccountDirectory()));
 	dir.mkpath("stickers/imported");
 }
 
+//*************************************************************************************
+// TODO: Look at this file: https://unicode.org/Public/emoji/14.0/emoji-sequences.txt
+//*************************************************************************************
+
 void Emoticons::loadSmiley()
 {
 	QString sm_AllLines;
-	bool internalFiles = true;
 
-	// First try external emoticons
-	QFile sm_File(QApplication::applicationDirPath() + "/emoticons/emotes.acs");
-	if(sm_File.open(QIODevice::ReadOnly))
-		internalFiles = false;
-	else
+	// First try external Unicode emoji list
+	QFile sm_File(QApplication::applicationDirPath() + "/fonts/NotoColorEmoji.acs");
+	if(!sm_File.open(QIODevice::ReadOnly))
 	{
-		// Then embedded emotions
-		sm_File.setFileName(":/emojione/emotes.acs");
+		// Then embedded
+		sm_File.setFileName(":/fonts/NotoColorEmoji.acs");
 		if(!sm_File.open(QIODevice::ReadOnly))
 		{
-			std::cout << "error opening ressource file" << std::endl;
+			RS_ERR(" Error opening font ressource file");
 			return;
 		}
 	}
@@ -89,17 +86,17 @@ void Emoticons::loadSmiley()
 	int i = 0 ;
 	QString smGroup;
 	QString smCode;
-	QString smFile;
+	QString smUnicode;
 	while(i < sm_AllLines.length() && sm_AllLines[i] != '{')
 		++i ;//Ignore text before {
 
 	while (i < sm_AllLines.length()-2)
 	{
 		// Type of lines:
-		// "Group"|":code:":"emojione/file.png";
+		// "Group"|":code:":"Unicode";
 		smGroup = "";
 		smCode = "";
-		smFile = "";
+		smUnicode = "";
 
 		//Reading Groupe (First into "")
 		while(sm_AllLines[i] != '\"')
@@ -137,45 +134,41 @@ void Emoticons::loadSmiley()
 
 		++i; //'"'
 		while(sm_AllLines[i] != '\"' && sm_AllLines[i+1] != ';')
-			smFile += sm_AllLines[i++]; //Get file char by char
+			smUnicode += sm_AllLines[i++]; //Get file char by char
 
 		++i; //'"'
 		++i; //';'
 
-		if(!smGroup.isEmpty() && !smCode.isEmpty() && !smFile.isEmpty())
+		if(!smGroup.isEmpty() && !smCode.isEmpty() && !smUnicode.isEmpty())
 		{
 			while (smCode.right(1) == "|")
 				smCode.remove(smCode.length() - 1, 1);
 
-			if (internalFiles)
-			{
-				smFile = ":/" + smFile;
-				if (smGroup.right(4).toLower() == ".png")
-					smGroup = ":/" + smGroup;
-			}
+			if (smGroup.right(4).toLower() == ".png")
+				smGroup = ":/" + smGroup;
 
 			QVector<QString> ordered;
-			if (Smileys.contains(smGroup)) ordered = Smileys[smGroup].first;
+			if (m_smileys.contains(smGroup)) ordered = m_smileys[smGroup].first;
 			ordered.append(smCode);
-			Smileys[smGroup].first = ordered;
-			Smileys[smGroup].second.insert(smCode, smFile);
+			m_smileys[smGroup].first = ordered;
+			m_smileys[smGroup].second.insert(smCode, smUnicode);
 
-			if (!grpOrdered.contains(smGroup)) grpOrdered.append(smGroup);
+			if (!m_grpOrdered.contains(smGroup)) m_grpOrdered.append(smGroup);
 		}
 	}
 
 	// init <img> embedder
-	RsHtml::initEmoticons(Smileys);
+	RsHtml::initEmoticons(m_smileys);
 }
 
-void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *slotAddMethod, bool above)
+void Emoticons::showSmileyWidget(QWidget *parent, QWidget *callerButton, const char *slotAddMethod, bool above)
 {
 	QWidget *smWidget = new QWidget(parent, Qt::Popup) ;
 	smWidget->setAttribute(Qt::WA_DeleteOnClose) ;
 	smWidget->setWindowTitle("Emoticons") ;
 
 	//QTabWidget::setTabBarAutoHide(true) is from QT5.4, no way to hide TabBar before.
-	bool bOnlyOneGroup = (Smileys.count() == 1);
+	bool bOnlyOneGroup = (m_smileys.count() == 1);
 
 	QTabWidget *smTab = NULL;
 	if (! bOnlyOneGroup)
@@ -186,16 +179,19 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 		smGLayout->addWidget(smTab);
 	}
 
-	const int buttonWidth = QFontMetricsF(smWidget->font()).height()*2.6;
-	const int buttonHeight = QFontMetricsF(smWidget->font()).height()*2.6;
+	QFont noto = QFont("Noto Color Emoji",20,QFont::Normal);
+	QFontMetrics fm = QFontMetrics(noto);
+
+	const int buttonHeight = fm.height()+12;
+	const int buttonWidth = buttonHeight;//Generally square
 	int maxRowCount = 0;
 	int maxCountPerLine = 0;
 
-	QVectorIterator<QString> grp(grpOrdered);
+	QVectorIterator<QString> grp(m_grpOrdered);
 	while(grp.hasNext())
 	{
 		QString groupName = grp.next();
-		QHash<QString,QString> group = Smileys.value(groupName).second;
+		QHash<QString,QString> group = m_smileys.value(groupName).second;
 
 		QWidget *tabGrpWidget = NULL;
 		if (! bOnlyOneGroup)
@@ -205,14 +201,14 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 			// (Cyril) Never use an absolute size. It needs to be scaled to the actual font size on the screen.
 			//
 			QFontMetricsF fm(parent->font()) ;
-			QSize size(28*fm.height()/14.0,28*fm.height()/14.0);
+			QSize size(fm.height()*2.0,fm.height()*2.0);
 			smTab->setIconSize(size);
 			smTab->setMinimumWidth(400);
 			smTab->setTabPosition(QTabWidget::South);
 			smTab->setStyleSheet(QString("QTabBar::tab { height: %1px; width: %1px; padding: 0px; margin: 0px;}").arg(size.width()*1.1));
 
 			if (groupName.right(4).toLower() == ".png")
-                smTab->addTab( tabGrpWidget, FilesDefs::getIconFromQtResourcePath(groupName), "");
+				smTab->addTab( tabGrpWidget, FilesDefs::getIconFromQtResourcePath(groupName), "");
 			else
 				smTab->addTab( tabGrpWidget, groupName);
 		} else {
@@ -230,34 +226,45 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 
 		int lin = 0;
 		int col = 0;
-		QVector<QString> ordered = Smileys.value(groupName).first;
+
+		QVector<QString> ordered = m_smileys.value(groupName).first;
 		QVectorIterator<QString> it(ordered);
 		while(it.hasNext())
 		{
-
-			QString key = it.next();
-			QPushButton *button = new QPushButton("", tabGrpWidget);
-			button->setIconSize(QSize(buttonWidth, buttonHeight));
-			button->setFixedSize(QSize(buttonWidth, buttonHeight));
-            button->setIcon(FilesDefs::getIconFromQtResourcePath(group.value(key)));
-			button->setToolTip(key);
-			button->setStyleSheet("QPushButton:hover {border: 3px solid #0099cc; border-radius: 3px;}");
-			button->setFlat(true);
-			tabGLayout->addWidget(button,col,lin);
-			++lin;
-			if(lin >= countPerLine)
+			bool bOK = false;
+			QStringList keys = group.value(it.next()).split("-");
+			uint c[keys.count()];
+			QString tp = "";
+			for (int i = 0 ; i < keys.count(); ++i)
 			{
-				lin = 0;
-				++col;
+				c[i] = keys.at(i).toUInt(&bOK,16);
+				tp += "U+" + QString::number( c[i], 16 ).toUpper() + " ";
 			}
-			QObject::connect(button, SIGNAL(clicked()), parent, slotAddMethod);
-			QObject::connect(button, SIGNAL(clicked()), smWidget, SLOT(close()));
+
+			if (bOK)
+			{
+				QPushButton *pb = new QPushButton(QString::fromUcs4(c,keys.count()), tabGrpWidget);
+				pb->setFont(noto);
+				pb->setFixedSize(QSize(buttonWidth, buttonHeight));
+				pb->setToolTip( tp + "\n" + pb->text());
+				pb->setStyleSheet("QPushButton:hover { subcontrol-origin: margin; subcontrol-position: top left; padding:0; border: 3px solid #0099cc; border-radius: 3px;}");
+				pb->setFlat(true);
+				tabGLayout->addWidget(pb,col,lin);
+				++lin;
+				if(lin >= countPerLine)
+				{
+					lin = 0;
+					++col;
+				}
+				QObject::connect(pb, SIGNAL(clicked()), parent, slotAddMethod);
+				QObject::connect(pb, SIGNAL(clicked()), smWidget, SLOT(close()));
+			}
 		}
 
 	}
 
 	//Get left up pos of button
-	QPoint butTopLeft = button->mapToGlobal(QPoint(0,0));
+	QPoint butTopLeft = callerButton->mapToGlobal(QPoint(0,0));
 	//Get widget's size
 	QSize sizeWidget = smWidget->sizeHint();
 	//Get screen's size
@@ -266,21 +273,21 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 	//Calculate left distance to screen start
 	int distToScreenLeft = butTopLeft.x();
 	//Calculate right distance to screen end
-	int distToRightScreen = sizeScreen.width() - (butTopLeft.x() + button->width());
+	int distToRightScreen = sizeScreen.width() - (butTopLeft.x() + callerButton->width());
 
 	//Calculate left position
 	int x;
 	if (distToScreenLeft >= distToRightScreen) //More distance in left than right in screen
 		x = butTopLeft.x() - sizeWidget.width(); //Place widget on left of button
 	else
-		x = butTopLeft.x() + button->width(); //Place widget on right of button
+		x = butTopLeft.x() + callerButton->width(); //Place widget on right of button
 
 	//Calculate top position
 	int y;
 	if (above) //Widget must be above the button
-		y = butTopLeft.y() + button->height() - sizeWidget.height();
+		y = butTopLeft.y() + callerButton->height() - sizeWidget.height();
 	else
-		y = butTopLeft.y() + button->height()/2 - sizeWidget.height()/2; //Centered on button height
+		y = butTopLeft.y() + callerButton->height()/2 - sizeWidget.height()/2; //Centered on button height
 
 	if (y + sizeWidget.height() > sizeScreen.height()) //Widget will be too low
 		y = sizeScreen.height() - sizeWidget.height(); //Place widget bottom at screen bottom
@@ -294,8 +301,8 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 
 void Emoticons::refreshStickerTabs(QVector<QString>& stickerTabs)
 {
-	for(int i = 0; i < stickerFolders.count(); ++i)
-		refreshStickerTabs(stickerTabs, stickerFolders[i]);
+	for(int i = 0; i < m_stickerFolders.count(); ++i)
+		refreshStickerTabs(stickerTabs, m_stickerFolders[i]);
 }
 
 void Emoticons::refreshStickerTabs(QVector<QString>& stickerTabs, QString foldername)
@@ -304,7 +311,7 @@ void Emoticons::refreshStickerTabs(QVector<QString>& stickerTabs, QString folder
 	if(!dir.exists()) return;
 
 	//If it contains at a least one png then add it as a group
-	QStringList files = dir.entryList(filters, QDir::Files);
+	QStringList files = dir.entryList(m_filters, QDir::Files);
 	if(files.count() > 0)
 		stickerTabs.append(foldername);
 
@@ -314,12 +321,12 @@ void Emoticons::refreshStickerTabs(QVector<QString>& stickerTabs, QString folder
 		refreshStickerTabs(stickerTabs, subfolders[i].filePath());
 }
 
-void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *slotAddMethod, bool above)
+void Emoticons::showStickerWidget(QWidget *parent, QWidget *callerButton, const char *slotAddMethod, bool above)
 {
 	QVector<QString> stickerTabs;
 	refreshStickerTabs(stickerTabs);
 	if(stickerTabs.count() == 0) {
-		QString message = "No stickers installed.\nYou can install them by putting images into one of these folders:\n" + stickerFolders.join('\n');
+		QString message = "No stickers installed.\nYou can install them by putting images into one of these folders:\n" + m_stickerFolders.join('\n');
 		QMessageBox::warning(parent, "Stickers", message);
 		return;
 	}
@@ -350,13 +357,13 @@ void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *
 	{
 		QDir groupDir = QDir(grp.next());
 		QString groupName = groupDir.dirName();
-		groupDir.setNameFilters(filters);
+		groupDir.setNameFilters(m_filters);
 
 		QWidget *tabGrpWidget = nullptr;
 		if (! bOnlyOneGroup)
 		{
 			//Lazy load tooltips for the current tab
-			QObject::connect(smTab, &QTabWidget::currentChanged, [=](int index){
+			QObject::connect(smTab, &QTabWidget::currentChanged, smTab, [=](int index){
 				QWidget* current = smTab->widget(index);
 				loadToolTips(current);
 			});
@@ -373,9 +380,11 @@ void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *
 
 			int index;
 			if (groupDir.exists(ICONNAME)) //use groupicon.png if exists, else the first png as a group icon
-                index = smTab->addTab( tabGrpWidget, FilesDefs::getIconFromQtResourcePath(groupDir.absoluteFilePath(ICONNAME)), "");
-			else
-                index = smTab->addTab( tabGrpWidget, FilesDefs::getIconFromQtResourcePath(groupDir.entryInfoList(QDir::Files)[0].canonicalFilePath()), "");
+				index = smTab->addTab( tabGrpWidget, FilesDefs::getIconFromQtResourcePath(groupDir.absoluteFilePath(ICONNAME)), "");
+			else {
+				QFileInfoList fil = groupDir.entryInfoList(QDir::Files);
+				index = smTab->addTab( tabGrpWidget, FilesDefs::getIconFromQtResourcePath(fil[0].canonicalFilePath()), "");
+			}
 			smTab->setTabToolTip(index, groupName);
 		} else {
 			tabGrpWidget = smWidget;
@@ -401,11 +410,11 @@ void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *
 			QPushButton *button = new QPushButton("", tabGrpWidget);
 			button->setIconSize(QSize(buttonWidth, buttonHeight));
 			button->setFixedSize(QSize(buttonWidth, buttonHeight));
-			if(!iconcache.contains(fi.absoluteFilePath()))
+			if(!m_iconcache.contains(fi.absoluteFilePath()))
 			{
-                iconcache.insert(fi.absoluteFilePath(), FilesDefs::getPixmapFromQtResourcePath(fi.absoluteFilePath()).scaled(buttonWidth, buttonHeight, Qt::KeepAspectRatio));
+				m_iconcache.insert(fi.absoluteFilePath(), FilesDefs::getPixmapFromQtResourcePath(fi.absoluteFilePath()).scaled(buttonWidth, buttonHeight, Qt::KeepAspectRatio));
 			}
-			button->setIcon(iconcache[fi.absoluteFilePath()]);
+			button->setIcon(m_iconcache[fi.absoluteFilePath()]);
 			button->setToolTip(fi.fileName());
 			button->setStatusTip(fi.absoluteFilePath());
 			button->setStyleSheet("QPushButton:hover {border: 3px solid #0099cc; border-radius: 3px;}");
@@ -433,7 +442,7 @@ void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *
 	loadToolTips(firstpage);
 
 	//Get left up pos of button
-	QPoint butTopLeft = button->mapToGlobal(QPoint(0,0));
+	QPoint butTopLeft = callerButton->mapToGlobal(QPoint(0,0));
 	//Get widget's size
 	QSize sizeWidget = smWidget->sizeHint();
 	//Get screen's size
@@ -442,21 +451,21 @@ void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *
 	//Calculate left distance to screen start
 	int distToScreenLeft = butTopLeft.x();
 	//Calculate right distance to screen end
-	int distToRightScreen = sizeScreen.width() - (butTopLeft.x() + button->width());
+	int distToRightScreen = sizeScreen.width() - (butTopLeft.x() + callerButton->width());
 
 	//Calculate left position
 	int x;
 	if (distToScreenLeft >= distToRightScreen) //More distance in left than right in screen
 		x = butTopLeft.x() - sizeWidget.width(); //Place widget on left of button
 	else
-		x = butTopLeft.x() + button->width(); //Place widget on right of button
+		x = butTopLeft.x() + callerButton->width(); //Place widget on right of button
 
 	//Calculate top position
 	int y;
 	if (above) //Widget must be above the button
-		y = butTopLeft.y() + button->height() - sizeWidget.height();
+		y = butTopLeft.y() + callerButton->height() - sizeWidget.height();
 	else
-		y = butTopLeft.y() + button->height()/2 - sizeWidget.height()/2; //Centered on button height
+		y = butTopLeft.y() + callerButton->height()/2 - sizeWidget.height()/2; //Centered on button height
 
 	if (y + sizeWidget.height() > sizeScreen.height()) //Widget will be too low
 		y = sizeScreen.height() - sizeWidget.height(); //Place widget bottom at screen bottom
@@ -471,7 +480,7 @@ void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *
 
 QString Emoticons::importedStickerPath()
 {
-	QDir dir(stickerFolders[0]);
+	QDir dir(m_stickerFolders[0]);
 	return dir.absoluteFilePath("imported");
 }
 
@@ -481,12 +490,12 @@ void Emoticons::loadToolTips(QWidget *container)
 	QList<QPushButton *> children = container->findChildren<QPushButton *>();
 	for(int i = 0; i < children.length(); ++i) {
 		if(!children[i]->toolTip().contains('<')) {
-			if(tooltipcache.contains(children[i]->statusTip())) {
-				children[i]->setToolTip(tooltipcache[children[i]->statusTip()]);
+			if(m_tooltipcache.contains(children[i]->statusTip())) {
+				children[i]->setToolTip(m_tooltipcache[children[i]->statusTip()]);
 			} else {
 				QString tooltip;
 				if(RsHtml::makeEmbeddedImage(children[i]->statusTip(), tooltip, 300*300)) {
-					tooltipcache.insert(children[i]->statusTip(), tooltip);
+					m_tooltipcache.insert(children[i]->statusTip(), tooltip);
 					children[i]->setToolTip(tooltip);
 				}
 

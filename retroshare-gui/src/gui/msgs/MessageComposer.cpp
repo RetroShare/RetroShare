@@ -1632,7 +1632,8 @@ bool MessageComposer::getRecipientFromRow(int row, enumType &type, destinationTy
 
 QString MessageComposer::getRecipientEmailAddress(const RsGxsId& id,const RsIdentityDetails& detail)
 {
-    return (QString("%2 <")+tr("Distant identity:")+" %2@%1>").arg(QString::fromStdString(id.toStdString()), QString::fromUtf8(detail.mNickname.c_str())) ;
+	return (QString("%2 <")+tr("Distant identity:")+" %2@%1>").arg(QString::fromStdString(id.toStdString())
+	                                                               , QString::fromUtf8(detail.mNickname.c_str()));
 }
 
 QString MessageComposer::getRecipientEmailAddress(const RsPeerId& /* id */,const RsPeerDetails& detail)
@@ -1824,10 +1825,10 @@ void MessageComposer::editingRecipientFinished()
         return;
 
     enumType type = TO;
-    std::string id; // dummy
+    std::string strId; // dummy
     destinationType dtype ;
 
-    getRecipientFromRow(row, type, dtype, id);
+    getRecipientFromRow(row, type, dtype, strId);
 
     QString text = lineEdit->text();
 
@@ -2296,7 +2297,7 @@ void MessageComposer::textAlign(QAction *a)
 
 void MessageComposer::smileyWidget()
 {
-    Emoticons::showSmileyWidget(this, ui.emoticonButton, SLOT(addSmileys()), false);
+	Emoticons()->showSmileyWidget(this, ui.emoticonButton, SLOT(addSmileys()), false);
 }
 
 void MessageComposer::addSmileys()

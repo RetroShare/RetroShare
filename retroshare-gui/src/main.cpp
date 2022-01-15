@@ -491,7 +491,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
 	RsharePeerSettings::Create();
 
-	Emoticons::load();
+	Emoticons()->load();
 	AvatarDialog::load();
 
 	if (Settings->value(QString::fromUtf8("FirstRun"), true).toBool()) {

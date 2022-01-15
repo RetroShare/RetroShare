@@ -1001,8 +1001,9 @@ SOURCES +=  main.cpp \
 #            gui/feeds/ChanMsgItem.cpp \
 
 RESOURCES += gui/images.qrc gui/icons.qrc lang/lang.qrc gui/help/content/content.qrc gui/emojione.qrc \
-  gui/qss/stylesheet/qdarkstyle/dark/Standard_Dark.qrc \
-  gui/qss/stylesheet/qdarkstyle/light/Standard_Light.qrc
+             gui/qss/stylesheet/qdarkstyle/dark/Standard_Dark.qrc \
+             gui/qss/stylesheet/qdarkstyle/light/Standard_Light.qrc \
+             gui/fonts.qrc
 
 TRANSLATIONS +=  \
             lang/retroshare_ca_ES.ts \
@@ -1486,6 +1487,9 @@ wikipoos {
 		gui/gxs/RsGxsUpdateBroadcastWidget.cpp \
 		gui/gxs/RsGxsUpdateBroadcastPage.cpp \
 }
+
+DISTFILES += \
+	gui/Fonts/NotoColorEmoji.ttf
 
 ################################################################
 #Define qmake_info.h file so GUI can get wath was used to compil

@@ -206,6 +206,53 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
             hiddenmode = true;
     }
 
+	/* Install own Noto Font */
+	//https://lists.qt-project.org/pipermail/development/2016-May/025878.html
+	//Qt 5.7.0 does support the Google format (CBDT/CBLC) on Android and
+	//Linux, the Apple format (SBIX) on iOS and OSX, and the Microsoft format
+	//(COLR/CPAL) on Windows.
+	//https://github.com/googlefonts/noto-emoji Use (CBDT/CBLC)
+	//https://github.com/DeeDeeG/noto-color-emoji-font SVGinOT
+	//https://github.com/eosrei/twemoji-color-font Use SVGinOT
+	//https://github.com/catmoji/catmoji-colr (COLR/CPAL)
+	//
+	//Tools:
+	// To add SVG to existing font: https://github.com/microsoft/OpenType-SVG-Font-Editor
+	// Cairo modifier: https://github.com/behdad/cairo/commits/color-emoji
+	// Create color fonts from SVGs on the command line: https://github.com/13rac1/scfbuild
+	// A image's converter to font: https://github.com/adjivas/Image3font
+	// Bits'N'Picas is a set of tools for creating and converting bitmap and emoji fonts.: https://github.com/kreativekorp/bitsnpicas
+	// A wee tool to build color fonts, including the proposed COLRv1.:https://github.com/googlefonts/nanoemoji
+	// The nototools python package contains python scripts used to maintain the Noto Fonts project: https://github.com/googlefonts/nototools/
+	// https://github.com/googlefonts/color-fonts
+	// https://github.com/googlefonts/colr-gradients-spec
+	//
+	// Docs:
+	// https://docs.microsoft.com/en-us/typography/opentype/spec/ebdt
+	// https://docs.microsoft.com/en-us/typography/opentype/spec/svg
+	// https://cairographics.org/documentation/
+	// http://unicode.org/emoji/charts/emoji-zwj-sequences.html
+	// https://wiki.archlinux.org/title/fonts
+	// https://glyphsapp.com/learn/creating-a-microsoft-color-font
+	// https://en.wikipedia.org/wiki/Implementation_of_emojis
+	// https://docs.microsoft.com/en-us/windows/win32/directwrite/color-fonts#what-kinds-of-color-fonts-does-windows-support
+	// https://fonttools.readthedocs.io/en/latest/ttx.html
+
+	
+	if(!QFont("Noto Color Emoji").exactMatch())
+	{
+		int ret = QFontDatabase::addApplicationFont(":/fonts/NotoColorEmoji.ttf");
+		if (ret == -1)
+		{
+			RS_ERR("Can't add Noto Font.");
+
+			ret = QFontDatabase::addApplicationFont(":/fonts/NotoColorEmoji-SVGinOT.ttf");
+			if (ret == -1)
+				RS_ERR("Can't add Noto Font Win Comp.");
+		}
+	}
+
+
     setWindowTitle(tr("RetroShare %1 a secure decentralized communication platform").arg(Rshare::retroshareVersion(true)) + " - " + nameAndLocation);
     connect(rApp, SIGNAL(newArgsReceived(QStringList)), this, SLOT(receiveNewArgs(QStringList)));
 

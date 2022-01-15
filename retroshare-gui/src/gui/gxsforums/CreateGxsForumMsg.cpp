@@ -455,9 +455,9 @@ void  CreateGxsForumMsg::createMsg()
 		return;
 	}//if (ui.signBox->isChecked())
 
+#ifdef ENABLE_GENERATE
 	int generateCount = 0;
 
-#ifdef ENABLE_GENERATE
 	if (ui.generateCheckBox->isChecked()) {
 		generateCount = ui.generateSpinBox->value();
 		if (QMessageBox::question(this, tr("Generate mass data"), tr("Do you really want to generate %1 messages ?").arg(generateCount), QMessageBox::Yes|QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
@@ -467,18 +467,20 @@ void  CreateGxsForumMsg::createMsg()
 #endif
 
 	uint32_t token;
-	if (generateCount) {
 #ifdef ENABLE_GENERATE
+	if (generateCount) {
 		for (int count = 0; count < generateCount; ++count) {
 			RsGxsForumMsg generateMsg = msg;
 			generateMsg.mMeta.mMsgName = QString("%1 %2").arg(QString::fromUtf8(msg.mMeta.mMsgName.c_str())).arg(count + 1, 3, 10, QChar('0')).toUtf8().constData();
 
 			rsGxsForums->createMsg(token, generateMsg);
 		}//for (int count = 0
-#endif
 	} else {
+#endif
 		rsGxsForums->createMsg(token, msg);
+#ifdef ENABLE_GENERATE
 	}//if (generateCount)
+#endif
 
 	close();
 }
@@ -511,7 +513,7 @@ void CreateGxsForumMsg::reject()
 
 void CreateGxsForumMsg::smileyWidgetForums()
 {
-	Emoticons::showSmileyWidget(this, ui.emoticonButton, SLOT(addSmileys()), false);
+	Emoticons()->showSmileyWidget(this, ui.emoticonButton, SLOT(addSmileys()), false);
 }
 
 void CreateGxsForumMsg::addSmileys()
@@ -520,7 +522,8 @@ void CreateGxsForumMsg::addSmileys()
 	// add trailing space
 	smiley += QString(" ");
 	// add preceding space when needed (not at start of text or preceding space already exists)
-	if(!ui.forumMessage->textCursor().atStart() && ui.forumMessage->toPlainText()[ui.forumMessage->textCursor().position() - 1] != QChar(' '))
+	QString text = ui.forumMessage->toPlainText();
+	if(!ui.forumMessage->textCursor().atStart() && text[ui.forumMessage->textCursor().position() - 1] != QChar(' '))
 		smiley = QString(" ") + smiley;
 	ui.forumMessage->textCursor().insertText(smiley);
 }

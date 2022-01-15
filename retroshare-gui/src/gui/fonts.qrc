@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file>fonts/NotoColorEmoji.ttf</file>
+        <file>fonts/NotoColorEmoji.acs</file>
+        <file>fonts/nature.png</file>
+        <file>fonts/objects.png</file>
+        <file>fonts/symbols.png</file>
+        <file>fonts/people.png</file>
+        <file>fonts/food.png</file>
+        <file>fonts/people2.png</file>
+        <file>fonts/travel.png</file>
+        <file>fonts/flags2.png</file>
+        <file>fonts/flags.png</file>
+    </qresource>
+</RCC>
