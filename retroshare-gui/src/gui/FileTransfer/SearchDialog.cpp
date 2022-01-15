@@ -150,6 +150,8 @@ SearchDialog::SearchDialog(QWidget *parent)
     connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems()));
     connect(ui.filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterItems()));
 
+    connect(ui.ignore_PB, SIGNAL(clicked(bool)), this, SLOT(ignore_PB_Clicked(bool)));
+
     compareSummaryRole = new RSTreeWidgetItemCompareRole;
     compareSummaryRole->setRole(SS_RESULTS_COL, ROLE_SORT);
 
@@ -215,13 +217,39 @@ SearchDialog::SearchDialog(QWidget *parent)
     //ui.filterLineEdit->addFilter(QIcon(), tr("File Size"), SR_SIZE_COL);
     ui.filterLineEdit->setCurrentFilter(SR_NAME_COL);
 
+    ui.ignore_PB->setAutoRepeat(true);
+    ui.ignore_PB->setAutoRepeatDelay(1000);
+    ui.ignore_PB->setAutoRepeatInterval(1000000);
+    mIgnore_PB_LongPressed = false;
+
+    mIgnoreListFrame = new QFrame(this);
+    mIgnoreListFrame->setObjectName("gradFrame_IgnoreList");
+    mIgnoreListFrame->setFrameShape(QFrame::StyledPanel);
+    mIgnoreListTextEdit = new QPlainTextEdit(mIgnoreListFrame);
+
+    QVBoxLayout *layout = new QVBoxLayout(mIgnoreListFrame);
+    layout->setMargin(2);
+    layout->addWidget(mIgnoreListTextEdit);
+    QPushButton *valid = new QPushButton(mIgnoreListFrame);
+    QPushButton *cancel = new QPushButton(mIgnoreListFrame);
+    valid->setText(tr("Valid"));
+    cancel->setText(tr("Cancel"));
+    connect(valid, SIGNAL(clicked()), this, SLOT(ignoreListValided()));
+    connect(cancel, SIGNAL(clicked()), this, SLOT(ignoreListCanceled()));
+    QHBoxLayout *buttonLayout = new QHBoxLayout(mIgnoreListFrame);
+    buttonLayout->addWidget(valid);
+    buttonLayout->addWidget(cancel);
+    layout->addLayout(buttonLayout);
+    mIgnoreListFrame->setLayout(layout);
+    mIgnoreListFrame->setHidden(true);
+
     // load settings
     processSettings(true);
   
-  	ui._ownFiles_CB->setMinimumWidth(20*f);
-  	ui._friendListsearch_SB->setMinimumWidth(20*f);
+    ui._ownFiles_CB->setMinimumWidth(20*f);
+    ui._friendListsearch_SB->setMinimumWidth(20*f);
     ui._anonF2Fsearch_CB->setMinimumWidth(20*f);
-    ui.label->setMinimumWidth(20*f);
+    ui._max_results_L->setMinimumWidth(20*f);
 
     // workaround for Qt bug, be solved in next Qt release 4.7.0
     // https://bugreports.qt-project.org/browse/QTBUG-8270
@@ -302,6 +330,9 @@ void SearchDialog::processSettings(bool bLoad)
         ui.splitter->restoreState(Settings->value("Splitter").toByteArray());
         
         ui._max_results_SB->setValue(Settings->value("MaxResults").toInt());
+
+        mIgnoreList = Settings->value("IgnoreList",QStringList()).toStringList();
+        updateIgnoreToolTip();
         
     } else {
         // save settings
@@ -313,12 +344,58 @@ void SearchDialog::processSettings(bool bLoad)
         Settings->setValue("Splitter", ui.splitter->saveState());
         
         Settings->setValue("MaxResults",  ui._max_results_SB->value());
+
+        Settings->setValue("IgnoreList", mIgnoreList);
     }
 
     Settings->endGroup();
     m_bProcessSettings = false;
 }
 
+void SearchDialog::updateIgnoreToolTip()
+{
+	ui.ignore_PB->setToolTip(tr("This allow to ignore results containing one of theses text.") + "\n"
+	                         + QString(mIgnoreList.empty() ? "": (mIgnoreList.join(";") + "\n"))
+	                         + tr("Do a long click to edit it."));
+}
+
+void SearchDialog::ignore_PB_Clicked(bool /*checked = true*/)
+{
+	if (ui.ignore_PB->isDown())
+	{
+		mIgnore_PB_LongPressed = true;
+		showIgnoreList();
+	}
+	else
+	{
+		if (!ui.ignore_PB->isChecked() && !mIgnore_PB_LongPressed)
+			mIgnoreListFrame->setHidden(true);
+
+		mIgnore_PB_LongPressed = false;
+	}
+}
+
+void SearchDialog::showIgnoreList()
+{
+	mIgnoreListTextEdit->setPlainText(mIgnoreList.join("\n"));
+	mIgnoreListFrame->ensurePolished();
+	QPoint point = ui.ignore_PB->mapTo(this, QPoint());
+	mIgnoreListFrame->setGeometry( point.x() , point.y() - mIgnoreListFrame->sizeHint().height()
+	                              , mIgnoreListFrame->sizeHint().width(), mIgnoreListFrame->sizeHint().height());
+	mIgnoreListFrame->setVisible(true);
+}
+
+void SearchDialog::ignoreListValided()
+{
+	mIgnoreList = mIgnoreListTextEdit->toPlainText().split("\n");
+	mIgnoreList.removeAll(QString(""));
+	mIgnoreListFrame->setHidden(true);
+	updateIgnoreToolTip();
+}
+void SearchDialog::ignoreListCanceled()
+{
+	mIgnoreListFrame->setHidden(true);
+}
 
 void SearchDialog::checkText(const QString& txt)
 {
@@ -982,6 +1059,11 @@ void SearchDialog::searchKeywords(const QString& keywords)
 
 void SearchDialog::updateFiles(qulonglong search_id,const FileDetail& file)
 {
+	if (ui.ignore_PB->isChecked())
+		foreach( auto ignore, mIgnoreList)
+			if (QString::fromUtf8(file.name.c_str()).contains(ignore, Qt::CaseInsensitive))
+				return;
+
 	searchResultsQueue.push_back(std::pair<qulonglong,FileDetail>(search_id,file)) ;
 
 	if(!_queueIsAlreadyTakenCareOf)

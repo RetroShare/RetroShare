@@ -21,10 +21,14 @@
 #ifndef _SEARCHDIALOG_H
 #define _SEARCHDIALOG_H
 
-#include "retroshare/rstypes.h"
-#include "retroshare/rsevents.h"
 #include "ui_SearchDialog.h"
+
 #include "retroshare-gui/mainpage.h"
+
+#include "retroshare/rsevents.h"
+#include "retroshare/rstypes.h"
+
+#include <QPlainTextEdit>
 
 class AdvancedSearchDialog;
 class RSTreeWidgetItemCompareRole;
@@ -64,7 +68,7 @@ public:
     void setTextColorLowSources(QColor color) { mTextColorLowSources = color; }
     void setTextColorHighSources(QColor color) { mTextColorHighSources = color; }
 
-    void updateFiles(qulonglong request_id, const FileDetail& file) ;
+   void updateFiles(qulonglong request_id, const FileDetail& file) ;
 
 private slots:
 
@@ -116,6 +120,10 @@ private slots:
 
 	void filterItems();
 
+	void ignore_PB_Clicked(bool checked = false);
+	void ignoreListCanceled();
+	void ignoreListValided();
+
 private:
 /** render the results to the tree widget display */
     void initSearchResult(const QString& txt,qulonglong searchId, int fileType, bool advanced) ;
@@ -151,6 +159,9 @@ private:
 
 	bool filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn);
 
+	void updateIgnoreToolTip();
+	void showIgnoreList();
+
     bool m_bProcessSettings;
 
     int nextSearchId;
@@ -178,6 +189,10 @@ private:
 
 	 bool _queueIsAlreadyTakenCareOf ;
 	 std::vector<std::pair<qulonglong,FileDetail> > searchResultsQueue ;
+	QStringList mIgnoreList;
+	bool mIgnore_PB_LongPressed;
+	QFrame *mIgnoreListFrame;
+	QPlainTextEdit *mIgnoreListTextEdit;
 
      RsEventsHandlerId_t mEventHandlerId ;
 };

@@ -235,7 +235,7 @@
       </column>
      </widget>
      <widget class="QWidget" name="layoutWidget">
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="searchResult_VL">
        <item>
         <widget class="SearchTreeWidget" name="searchResultWidget">
          <property name="sizePolicy">
@@ -292,9 +292,9 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <layout class="QHBoxLayout" name="SearchResultTool_HL">
          <item>
-          <widget class="QLabel" name="label_2">
+          <widget class="QLabel" name="filter_L">
            <property name="text">
             <string>Filter:</string>
            </property>
@@ -308,7 +308,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label">
+          <widget class="QLabel" name="_max_results_L">
            <property name="text">
             <string>Max results:</string>
            </property>
@@ -330,6 +330,16 @@
            </property>
            <property name="value">
             <number>1000</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="ignore_PB">
+           <property name="text">
+            <string>Ignore</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
