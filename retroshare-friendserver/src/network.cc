@@ -26,9 +26,6 @@
 #include <time.h>
 #include <unistd.h>
 #include <sys/types.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
 
 #include "util/rsnet.h"
 #include "util/rsprint.h"
@@ -48,8 +45,7 @@ FsNetworkInterface::FsNetworkInterface(const std::string& listening_address,uint
     mClintListn = 0;
     mClintListn = socket(AF_INET, SOCK_STREAM, 0); // creating socket
 
-    int flags = fcntl(mClintListn, F_GETFL);
-    fcntl(mClintListn, F_SETFL, flags | O_NONBLOCK);
+    unix_fcntl_nonblock(mClintListn);
 
     struct sockaddr_in ipOfServer;
     memset(&ipOfServer, '0', sizeof(ipOfServer));
@@ -149,8 +145,7 @@ bool FsNetworkInterface::checkForNewConnections()
 
     // Make the socket non blocking so that we can read from it and return if nothing comes
 
-    int flags = fcntl(clintConnt, F_GETFL);
-    fcntl(clintConnt, F_SETFL, flags | O_NONBLOCK);
+    unix_fcntl_nonblock(clintConnt);
 
     // Create connection info
 
