@@ -340,5 +340,13 @@
         <file>icons/notification.png</file>
         <file>icons/wire.png</file>
         <file>icons/wire-circle.png</file>
+        <file>icons/groups/colored.svg</file>
+        <file>icons/groups/blue.svg</file>
+        <file>icons/groups/green.svg</file>
+        <file>icons/groups/indigo.svg</file>
+        <file>icons/groups/pink.svg</file>
+        <file>icons/groups/purple.svg</file>
+        <file>icons/groups/red.svg</file>
+        <file>icons/groups/yellow.svg</file>
     </qresource>
 </RCC>
