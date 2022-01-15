@@ -51,7 +51,7 @@ static QHash<QString, QPixmap> iconcache;
 void Emoticons::load()
 {
 	loadSmiley();
-	filters << "*.png" << "*.jpg" << "*.gif" << "*.webp";
+	filters << "*.png" << "*.jpg" << "*.gif";
 	stickerFolders << (QString::fromStdString(RsAccounts::AccountDirectory()) + "/stickers");		//under account, unique for user
 	stickerFolders << (QString::fromStdString(RsAccounts::ConfigDirectory()) + "/stickers");		//under .retroshare, shared between users
 	stickerFolders << (QString::fromStdString(RsAccounts::systemDataDirectory()) + "/stickers");	//exe's folder, shipped with RS
