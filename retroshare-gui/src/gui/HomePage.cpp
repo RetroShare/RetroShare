@@ -24,6 +24,7 @@
 #include "retroshare/rsinit.h"
 
 #include "util/qtthreadsutils.h"
+#include "util/misc.h"
 
 #include "gui/notifyqt.h"
 #include "gui/msgs/MessageComposer.h"
@@ -100,21 +101,20 @@ HomePage::HomePage(QWidget *parent) :
 
     connect(ui->openwebhelp,SIGNAL(clicked()), this,SLOT(openWebHelp())) ;
 
-    int S = QFontMetricsF(font()).height();
-    QString help_str = tr(
-                            " <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Welcome to Retroshare!</h1>\
-                            <p>You need to <b>make friends</b>! After you create a network of friends or join an existing network,\
-                            you'll be able to exchange files, chat, talk in forums, etc. </p>\
-                            <div align=center>\
-                    <IMG align=\"center\" width=\"%2\" src=\":/images/network_map.png\"/> \
-                    </div>\
-                    <p>To do so, copy your Retroshare ID on this page and send it to friends, and add your friends' Retroshare ID.</p> \
-                            <p>Another option is to search the internet for \"Retroshare chat servers\" (independently administrated). These servers allow you to exchange \
-                            Retroshare ID with a dedicated Retroshare node, through which\
-                            you will be able to anonymously meet other people.</p> ").arg(QString::number(2*S)).arg(width()*0.5);
-                            registerHelpButton(ui->helpButton,help_str,"HomePage") ;
+	int H = misc::getFontSizeFactor("HelpButton").height();
+	QString help_str = tr(
+	    "<h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Welcome to Retroshare!</h1>"
+	    "<p>You need to <b>make friends</b>! After you create a network of friends or join an existing network,"
+	    "   you'll be able to exchange files, chat, talk in forums, etc. </p>"
+	    "<div align=\"center\"><IMG width=\"%2\" height=\"%3\" src=\":/images/network_map.png\" style=\"display: block; margin-left: auto; margin-right: auto; \"/></div>"
+	    "<p>To do so, copy your Retroshare ID on this page and send it to friends, and add your friends' Retroshare ID.</p>"
+	    "<p>Another option is to search the internet for \"Retroshare chat servers\" (independently administrated). These servers allow you to exchange"
+	    "   Retroshare ID with a dedicated Retroshare node, through which"
+	    "   you will be able to anonymously meet other people.</p>"
+	                     ).arg(QString::number(2*H), QString::number(width()*0.5), QString::number(width()*0.5*(337.0/800.0)));//<img> needs height and width defined.
+	registerHelpButton(ui->helpButton,help_str,"HomePage") ;
 
-                    // register a event handler to catch IP updates
+	// register a event handler to catch IP updates
 
     mEventHandlerId = 0;
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); }, mEventHandlerId, RsEventType::NETWORK );
@@ -249,13 +249,8 @@ void HomePage::updateOwnCert()
     ui->retroshareid->setToolTip(description);
 }
 
-static void sendMail(QString sAddress, QString sSubject, QString sBody)
+static void sendMail(const QString &sAddress, const QString &sSubject, const QString &sBody)
 {
-#ifdef Q_OS_WIN
-    /* search and replace the end of lines with: "%0D%0A" */
-    sBody.replace("\n", "%0D%0A");
-#endif
-
     QUrl url = QUrl("mailto:" + sAddress);
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
@@ -265,7 +260,12 @@ static void sendMail(QString sAddress, QString sSubject, QString sBody)
 #endif
 
     urlQuery.addQueryItem("subject", sSubject);
+#ifdef Q_OS_WIN
+    /* search and replace the end of lines with: "%0D%0A" */
+    urlQuery.addQueryItem("body", QString(sBody).replace("\n", "%0D%0A"));
+#else
     urlQuery.addQueryItem("body", sBody);
+#endif
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
     url.setQuery(urlQuery);

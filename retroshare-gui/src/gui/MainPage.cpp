@@ -18,12 +18,14 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <QToolButton>
-#include <QTimer>
-
 #include <retroshare-gui/mainpage.h>
+
 #include "common/FloatingHelpBrowser.h"
 #include "gui/settings/rsharesettings.h"
+#include "util/misc.h"
+
+#include <QToolButton>
+#include <QTimer>
 
 MainPage::MainPage(QWidget *parent , Qt::WindowFlags flags ) : QWidget(parent, flags)
 {
@@ -44,13 +46,13 @@ UserNotify *MainPage::getUserNotify()
 
 void MainPage::registerHelpButton(QToolButton *button, const QString& help_html_text, const QString &code_name)
 {
-    mHelpCodeName = code_name ;
+	mHelpCodeName = code_name ;
 
-	if (mHelpBrowser == NULL)
+	if (mHelpBrowser == nullptr)
 		mHelpBrowser = new FloatingHelpBrowser(this, button) ;
 	
-	float S = QFontMetricsF(button->font()).height() ;
-	button->setIconSize(QSize(S,S)) ;
+	int H = misc::getFontSizeFactor("HelpButton").height();
+	button->setIconSize(QSize(H, H)) ;//Square Icon
 
 	mHelpBrowser->setHelpText(help_html_text) ;
 }

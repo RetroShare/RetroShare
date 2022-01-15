@@ -22,19 +22,20 @@
 #include "ChatLobbyWidget.h"
 
 #include "notifyqt.h"
+#include "RetroShareLink.h"
 #include "chat/ChatLobbyDialog.h"
 #include "chat/ChatLobbyUserNotify.h"
 #include "chat/ChatTabWidget.h"
 #include "chat/CreateLobbyDialog.h"
+#include "common/FilesDefs.h"
 #include "common/RSTreeWidgetItem.h"
 #include "common/RSElidedItemDelegate.h"
-#include "gui/RetroShareLink.h"
-#include "gui/gxs/GxsIdDetails.h"
-#include "gui/Identity/IdEditDialog.h"
-#include "gui/settings/rsharesettings.h"
+#include "gxs/GxsIdDetails.h"
+#include "Identity/IdEditDialog.h"
+#include "settings/rsharesettings.h"
 #include "util/HandleRichText.h"
+#include "util/misc.h"
 #include "util/QtVersion.h"
-#include "gui/common/FilesDefs.h"
 
 #include "retroshare/rsmsgs.h"
 #include "retroshare/rspeers.h"
@@ -206,28 +207,29 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	// load settings
 	processSettings(true);
 
-	QString help_str = tr("\
-	                      <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Chat Rooms</h1>                           \
-	                      <p>Chat rooms work pretty much like IRC.                                                                \
-	                       They allow you to talk anonymously with tons of people without the need to make friends.</p>           \
-	                      <p>A chat room can be public (your friends see it) or private (your friends can't see it, unless you    \
-	                       invite them with <img src=\":/icons/png/add.png\" width=%2/>).                                         \
-	                       Once you have been invited to a private room, you will be able to see it when your friends             \
-	                       are using it.</p>                                                                                      \
-	                      <p>The list at left shows                                                                               \
-	                       chat lobbies your friends are participating in. You can either                                         \
-	                       <ul>                                                                                                   \
-	                        <li>Right click to create a new chat room</li>                                                        \
-	                        <li>Double click a chat room to enter, chat, and show it to your friends</li>                         \
-	                       </ul>                                                                                                  \
-	                       Note: For the chat rooms to work properly, your computer needs be on time.  So check your system clock!\
-	                      </p>                                                                                                    \
-	                      "
-	                      ).arg(QString::number(4*W), QString::number(2*W)) ;
+	int hbH = misc::getFontSizeFactor("HelpButton").height();
+	QString help_str = tr(
+	    "<h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Chat Rooms</h1>"
+	    "<p>Chat rooms work pretty much like IRC."
+	    "   They allow you to talk anonymously with tons of people without the need to make friends.</p>"
+	    "<p>A chat room can be public (your friends see it) or private (your friends can't see it, unless you"
+	    "   invite them with <img src=\":/icons/png/add.png\" width=%2/>)."
+	    "   Once you have been invited to a private room, you will be able to see it when your friends"
+	    "   are using it.</p>"
+	    "<p>The list at left shows"
+	    "   chat lobbies your friends are participating in. You can either"
+	    "   <ul>"
+	    "     <li>Right click to create a new chat room</li>"
+	    "     <li>Double click a chat room to enter, chat, and show it to your friends</li>"
+	    "   </ul>"
+	    "   Note: For the chat rooms to work properly, your computer needs be on time.  So check your system clock!"
+	    "</p>"
+	                     ).arg(QString::number(2*hbH), QString::number(hbH)) ;
 
 	registerHelpButton(ui.helpButton,help_str,"ChatLobbyDialog") ;
-
-	ui.lobbyTreeWidget->setIconSize(QSize(H*1.5,H*1.5));
+	
+	int ltwH = misc::getFontSizeFactor("LobbyTreeWidget", 1.5).height();
+	ui.lobbyTreeWidget->setIconSize(QSize(ltwH,ltwH));
 }
 
 ChatLobbyWidget::~ChatLobbyWidget()
@@ -293,87 +295,84 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
 	QMenu contextMnu(this);
 
 	if (item && item->type() == TYPE_FOLDER) {
-        QAction *action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_CREATE), tr("Create chat room"), this, SLOT(createChatLobby()));
+		QAction *action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_CREATE), tr("Create chat room"), this, SLOT(createChatLobby()));
 		action->setData(item->data(COLUMN_DATA, ROLE_PRIVACYLEVEL).toInt());
 	}
 
-    if (item && item->type() == TYPE_LOBBY)
-    {
-        std::list<RsGxsId> own_identities ;
-        rsIdentity->getOwnIds(own_identities) ;
+	if (item && item->type() == TYPE_LOBBY)
+	{
+		std::list<RsGxsId> own_identities ;
+		rsIdentity->getOwnIds(own_identities) ;
 
-        if (item->data(COLUMN_DATA, ROLE_SUBSCRIBED).toBool())
-            contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_UNSUBSCRIBE), tr("Leave this room"), this, SLOT(unsubscribeItem()));
-        else
-        {
-            QTreeWidgetItem *item = ui.lobbyTreeWidget->currentItem();
+		if (item->data(COLUMN_DATA, ROLE_SUBSCRIBED).toBool())
+			contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_UNSUBSCRIBE), tr("Leave this room"), this, SLOT(unsubscribeItem()));
+		else
+		{
+			ChatLobbyFlags flags(item->data(COLUMN_DATA, ROLE_FLAGS).toUInt());
 
-	    //ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
-        ChatLobbyFlags flags(item->data(COLUMN_DATA, ROLE_FLAGS).toUInt());
+			bool removed = false ;
+			if(flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED)
+				removed = trimAnonIds(own_identities) ;
 
-            bool removed = false ;
-            if(flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED)
-                removed = trimAnonIds(own_identities) ;
-                        
-            if(own_identities.empty())
-            {
-                if(removed)
-                contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_SUBSCRIBE), tr("Create a non anonymous identity and enter this room"), this, SLOT(createIdentityAndSubscribe()));
-                    else
-                contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_SUBSCRIBE), tr("Create an identity and enter this chat room"), this, SLOT(createIdentityAndSubscribe()));
-            }
-            else if(own_identities.size() == 1)
-            {
-                QAction *action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_SUBSCRIBE), tr("Enter this chat room"), this, SLOT(subscribeChatLobbyAs()));
-                action->setData(QString::fromStdString((own_identities.front()).toStdString())) ;
-            }
-            else
-            {
-                QMenu *mnu = contextMnu.addMenu(FilesDefs::getIconFromQtResourcePath(IMAGE_SUBSCRIBE),tr("Enter this chat room as...")) ;
+			if(own_identities.empty())
+			{
+				if(removed)
+					contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_SUBSCRIBE), tr("Create a non anonymous identity and enter this room"), this, SLOT(createIdentityAndSubscribe()));
+				else
+					contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_SUBSCRIBE), tr("Create an identity and enter this chat room"), this, SLOT(createIdentityAndSubscribe()));
+			}
+			else if(own_identities.size() == 1)
+			{
+				QAction *action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_SUBSCRIBE), tr("Enter this chat room"), this, SLOT(subscribeChatLobbyAs()));
+				action->setData(QString::fromStdString((own_identities.front()).toStdString())) ;
+			}
+			else
+			{
+				QMenu *mnu = contextMnu.addMenu(FilesDefs::getIconFromQtResourcePath(IMAGE_SUBSCRIBE),tr("Enter this chat room as...")) ;
 
-                for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
-                {
-                    RsIdentityDetails idd ;
-                    rsIdentity->getIdDetails(*it,idd) ;
+				for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
+				{
+					RsIdentityDetails idd ;
+					rsIdentity->getIdDetails(*it,idd) ;
 
-                    QPixmap pixmap ;
+					QPixmap pixmap ;
 
-                    if(idd.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idd.mAvatar.mData, idd.mAvatar.mSize, pixmap, GxsIdDetails::SMALL))
-                        pixmap = GxsIdDetails::makeDefaultIcon(*it,GxsIdDetails::SMALL) ;
+					if(idd.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idd.mAvatar.mData, idd.mAvatar.mSize, pixmap, GxsIdDetails::SMALL))
+						pixmap = GxsIdDetails::makeDefaultIcon(*it,GxsIdDetails::SMALL) ;
 
-                    QAction *action = mnu->addAction(QIcon(pixmap), QString("%1 (%2)").arg(QString::fromUtf8(idd.mNickname.c_str()), QString::fromStdString((*it).toStdString())), this, SLOT(subscribeChatLobbyAs()));
-                    action->setData(QString::fromStdString((*it).toStdString())) ;
-                }
-            }
-        }
+					QAction *action = mnu->addAction(QIcon(pixmap), QString("%1 (%2)").arg(QString::fromUtf8(idd.mNickname.c_str()), QString::fromStdString((*it).toStdString())), this, SLOT(subscribeChatLobbyAs()));
+					action->setData(QString::fromStdString((*it).toStdString())) ;
+				}
+			}
+		}
 
 #ifdef TO_BE_REMOVED
-        // This code is not needed anymore because AutoSubscribe is now automatically handled with chat room subscription.
+		// This code is not needed anymore because AutoSubscribe is now automatically handled with chat room subscription.
 
-        if (item->data(COLUMN_DATA, ROLE_AUTOSUBSCRIBE).toBool())
-            contextMnu.addAction(QIcon(IMAGE_AUTOSUBSCRIBE), tr("Remove Auto Subscribe"), this, SLOT(autoSubscribeItem()));
-        else if(!own_identities.empty())
-            contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Add Auto Subscribe"), this, SLOT(autoSubscribeItem()));
+		if (item->data(COLUMN_DATA, ROLE_AUTOSUBSCRIBE).toBool())
+			contextMnu.addAction(QIcon(IMAGE_AUTOSUBSCRIBE), tr("Remove Auto Subscribe"), this, SLOT(autoSubscribeItem()));
+		else if(!own_identities.empty())
+			contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Add Auto Subscribe"), this, SLOT(autoSubscribeItem()));
 #endif
 
-        contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYRSLINK), tr("Copy RetroShare Link"), this, SLOT(copyItemLink()));
-    }
+		contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYRSLINK), tr("Copy RetroShare Link"), this, SLOT(copyItemLink()));
+	}
 
-        contextMnu.addSeparator();//-------------------------------------------------------------------
+	contextMnu.addSeparator();//-------------------------------------------------------------------
 
-        showUserCountAct->setChecked(!ui.lobbyTreeWidget->isColumnHidden(COLUMN_USER_COUNT));
-        showTopicAct->setChecked(!ui.lobbyTreeWidget->isColumnHidden(COLUMN_TOPIC));
+	showUserCountAct->setChecked(!ui.lobbyTreeWidget->isColumnHidden(COLUMN_USER_COUNT));
+	showTopicAct->setChecked(!ui.lobbyTreeWidget->isColumnHidden(COLUMN_TOPIC));
 
-        QMenu *menu = contextMnu.addMenu(tr("Columns"));
-        menu->addAction(showUserCountAct);
-        menu->addAction(showTopicAct);
+	QMenu *menu = contextMnu.addMenu(tr("Columns"));
+	menu->addAction(showUserCountAct);
+	menu->addAction(showTopicAct);
 
-        contextMnu.exec(QCursor::pos());
+	contextMnu.exec(QCursor::pos());
 }
 
 void ChatLobbyWidget::lobbyChanged()
 {
-	updateDisplay();
+	ChatLobbyWidget::updateDisplay();
 }
 
 static void updateItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, ChatLobbyId id, const std::string &name, const std::string &topic, int count, bool subscribed, bool autoSubscribe,ChatLobbyFlags lobby_flags)
@@ -607,7 +606,7 @@ void ChatLobbyWidget::updateDisplay()
 			QTreeWidgetItem *itemLoop = lobby_other_item->child(childIndex);
 			if (itemLoop->type() == TYPE_LOBBY && itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == lobby.lobby_id) {
 				delete(lobby_other_item->takeChild(lobby_other_item->indexOfChild(itemLoop)));
-				childCnt = lobby_other_item->childCount();
+				//childCnt = lobby_other_item->childCount();
 				break;
 			}
 		}

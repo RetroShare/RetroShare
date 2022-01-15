@@ -44,9 +44,10 @@
 #include "gui/settings/rsharesettings.h"
 
 #include "util/DateTime.h"
-#include "util/RsProtectedTimer.h"
+#include "util/misc.h"
 #include "util/QtVersion.h"
 #include "util/qtthreadsutils.h"
+#include "util/RsProtectedTimer.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmsgs.h>
@@ -254,17 +255,17 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 	ui.tabWidget->hideCloseButton(0);
 	ui.tabWidget->setHideTabBarWithOneTab(true);
 
-    int S = QFontMetricsF(font()).height();
- QString help_str = tr(
- " <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Messages</h1>                         \
- <p>Retroshare has its own internal email system. You can send/receive emails to/from connected friend nodes.</p> \
- <p>It is also possible to send messages to other people's Identities using the global routing system. These messages \
-    are always encrypted and signed, and are relayed by intermediate nodes until they reach their final destination. </p>\
-    <p>Distant messages stay into your Outbox until an acknowledgement of receipt has been received.</p>\
- <p>Generally, you may use messages to recommend files to your friends by pasting file links, \
- or recommend friend nodes to other friend nodes, in order to strengthen your network, or send feedback \
- to a channel's owner.</p>                   \
- ").arg(QString::number(2*S), QString::number(S)) ;
+	int H = misc::getFontSizeFactor("HelpButton").height();
+	QString help_str = tr(
+	    "<h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Messages</h1>"
+	    "<p>Retroshare has its own internal email system. You can send/receive emails to/from connected friend nodes.</p>"
+	    "<p>It is also possible to send messages to other people's Identities using the global routing system. These messages"
+	    "   are always encrypted and signed, and are relayed by intermediate nodes until they reach their final destination. </p>"
+	    "<p>Distant messages stay into your Outbox until an acknowledgement of receipt has been received.</p>"
+	    "<p>Generally, you may use messages to recommend files to your friends by pasting file links,"
+	    "   or recommend friend nodes to other friend nodes, in order to strengthen your network, or send feedback"
+	    "   to a channel's owner.</p>"
+	                     ).arg(QString::number(2*H)) ;
 
 	 registerHelpButton(ui.helpButton,help_str,"MessagesDialog") ;
 
