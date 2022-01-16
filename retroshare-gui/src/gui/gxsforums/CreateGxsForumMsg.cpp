@@ -590,10 +590,13 @@ void CreateGxsForumMsg::fileHashingFinished(QList<HashedFile> hashedFiles)
 			if (!image.isEmpty()) {
 				mesgString += QString("<img src=\"%1\">").arg(image);
 			}
-			mesgString += link.toHtmlSize() + "<br>";
-		} else 
-		{
-			mesgString += "<br>" + link.toHtmlSize() + "<br>";
+			if (link.valid()) {
+				mesgString += link.toHtmlSize() + "<br>";
+			}
+		} else {	
+			if (link.valid()) {
+				mesgString += "<br>" + link.toHtmlSize() + "<br>";
+			}
 		}
 
 	}
