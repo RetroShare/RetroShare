@@ -573,36 +573,27 @@ void CreateGxsForumMsg::fileHashingFinished(QList<HashedFile> hashedFiles)
 		RetroShareLink link = RetroShareLink::createFile(hashedFile.filename, hashedFile.size,
 		                                                 QString::fromStdString(hashedFile.hash.toStdString()));
 
-		if (hashedFile.flag & HashedFile::Picture) {
-			mesgString += QString("<img src=\"file:///%1\" width=\"100\" height=\"100\">").arg(hashedFile.filepath);
-			mesgString += "<br>";
-		} else {
-			bool preview = false;
-			if(hashedFiles.size()==1 && (ext == "JPG" || ext == "PNG" || ext == "JPEG" || ext == "GIF" || ext == "WEBP"))
-			{
-				QString encodedImage;
-				uint32_t maxMessageSize = 32000;
-				if (RsHtml::makeEmbeddedImage(hashedFile.filepath, encodedImage, 640*480, maxMessageSize - 200 - link.toHtmlSize().length()))
-				{	QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
-					ui.forumMessage->textCursor().insertFragment(fragment);
-					preview=true;
-				}
+		bool preview = false;
+		if(hashedFiles.size()==1 && (ext == "JPG" || ext == "PNG" || ext == "JPEG" || ext == "GIF" || ext == "WEBP"))
+		{
+			QString encodedImage;
+			uint32_t maxImageSize = 32000;
+			if (RsHtml::makeEmbeddedImage(hashedFile.filepath, encodedImage, 320*240, maxImageSize - 200 - link.toHtmlSize().length()))
+			{	QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
+				ui.forumMessage->textCursor().insertFragment(fragment);
+				preview=true;
 			}
-			if(!preview)
-			{
-				QString image = FilesDefs::getImageFromFilename(hashedFile.filename, false);
-				if (!image.isEmpty()) {
-					mesgString += QString("<img src=\"%1\">").arg(image);
-					//mesgString +="<br>";
-				}
+		}
+		if(!preview)
+		{
+			QString image = FilesDefs::getImageFromFilename(hashedFile.filename, false);
+			if (!image.isEmpty()) {
+				mesgString += QString("<img src=\"%1\">").arg(image);
 			}
-			
-			if (preview) 
-			{
-				mesgString += "<br>" + link.toHtmlSize() + "<br>";
-			} else {
-				mesgString += link.toHtmlSize() + "<br>";
-			}
+			mesgString += link.toHtmlSize() + "<br>";
+		} else 
+		{
+			mesgString += "<br>" + link.toHtmlSize() + "<br>";
 		}
 
 	}
