@@ -98,6 +98,14 @@ int main(int argc, char* argv[])
     FriendServer fs(base_directory,service_target_address,target_port);
     fs.start();
 
+    RsDbg() << "";
+    RsDbg() << "================== Retroshare Friend Server has properly started =====================" ;
+    RsDbg() << "=                                                                                    =";
+    RsDbg() << "= Address:Port " << onion_address << ":" << service_port << ((service_port<10000)?" ":"") << "  =";
+    RsDbg() << "=                                                                                    =";
+    RsDbg() << "======================================================================================" ;
+    RsDbg() << "";
+
     while(fs.isRunning())
         std::this_thread::sleep_for(std::chrono::seconds(2));
 

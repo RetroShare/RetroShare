@@ -61,6 +61,7 @@ FriendServerControl::FriendServerControl(QWidget *parent)
     QObject::connect(friendServerOnOff_CB,SIGNAL(toggled(bool)),this,SLOT(onOnOffClick(bool)));
     QObject::connect(torServerFriendsToRequest_SB,SIGNAL(valueChanged(int)),this,SLOT(onFriendsToRequestChanged(int)));
     QObject::connect(torServerAddress_LE,SIGNAL(textChanged(const QString&)),this,SLOT(onOnionAddressEdit(const QString&)));
+    QObject::connect(torServerPort_SB,SIGNAL(valueChanged(int)),this,SLOT(onOnionPortEdit(int)));
 
     QObject::connect(mConnectionCheckTimer,SIGNAL(timeout()),this,SLOT(checkServerAddress()));
 
@@ -97,50 +98,46 @@ void FriendServerControl::onOnOffClick(bool b)
 }
 void FriendServerControl::onOnionPortEdit(int)
 {
-#warning TODO
-//     // Setup timer to auto-check the friend server address
-//
-//     mConnectionCheckTimer->setSingleShot(true);
-//     mConnectionCheckTimer->setInterval(5000); // check in 5 secs unless something is changed in the mean time.
-//
-//     mConnectionCheckTimer->start();
-//
-//     if(mCheckingServerMovie->fileName() != QString(":/images/loader/circleball-16.gif" ))
-//     {
-//         mCheckingServerMovie->setFileName(":/images/loader/circleball-16.gif");
-//         mCheckingServerMovie->start();
-//     }
-    rsFriendServer->setServerAddress(torServerAddress_LE->text().toStdString(),torServerPort_SB->value());
-    rsFriendServer->setProxyAddress(torProxyAddress_LE->text().toStdString(),torProxyPort_SB->value());
+    // Setup timer to auto-check the friend server address
+
+    mConnectionCheckTimer->stop();
+    mConnectionCheckTimer->setSingleShot(true);
+    mConnectionCheckTimer->setInterval(5000); // check in 5 secs unless something is changed in the mean time.
+
+    mConnectionCheckTimer->start();
+
+    if(mCheckingServerMovie->fileName() != QString(":/images/loader/circleball-16.gif" ))
+    {
+        mCheckingServerMovie->setFileName(":/images/loader/circleball-16.gif");
+        mCheckingServerMovie->start();
+    }
 }
 
 void FriendServerControl::onOnionAddressEdit(const QString&)
 {
     // Setup timer to auto-check the friend server address
+    mConnectionCheckTimer->stop();
+    mConnectionCheckTimer->setSingleShot(true);
+    mConnectionCheckTimer->setInterval(5000); // check in 5 secs unless something is changed in the mean time.
 
-//     mConnectionCheckTimer->setSingleShot(true);
-//     mConnectionCheckTimer->setInterval(5000); // check in 5 secs unless something is changed in the mean time.
-//
-//     mConnectionCheckTimer->start();
-//
-//     if(mCheckingServerMovie->fileName() != QString(":/images/loader/circleball-16.gif" ))
-//     {
-//         mCheckingServerMovie->setFileName(":/images/loader/circleball-16.gif");
-//         mCheckingServerMovie->start();
-//     }
-    rsFriendServer->setServerAddress(torServerAddress_LE->text().toStdString(),torServerPort_SB->value());
-    rsFriendServer->setProxyAddress(torProxyAddress_LE->text().toStdString(),torProxyPort_SB->value());
+    mConnectionCheckTimer->start();
+
+    if(mCheckingServerMovie->fileName() != QString(":/images/loader/circleball-16.gif" ))
+    {
+        mCheckingServerMovie->setFileName(":/images/loader/circleball-16.gif");
+        mCheckingServerMovie->start();
+    }
 }
 
 void FriendServerControl::checkServerAddress()
 {
-    rsFriendServer->checkServerAddress_async(torServerAddress_LE->text().toStdString(),torServerPort_SB->value(),
-                                       [this](const std::string& address,bool test_result)
+    rsFriendServer->checkServerAddress_async(torServerAddress_LE->text().toStdString(),torServerPort_SB->value(),5000,
+                                       [this](const std::string& address,uint16_t port,bool test_result)
                                         {
                                             if(test_result)
-                                                rsFriendServer->setServerAddress(address,1729);
+                                                rsFriendServer->setServerAddress(address,port);
 
-                                            RsQThreadUtils::postToObject( [=]() { updateFriendServerStatusIcon(test_result); },this);
+                                            RsQThreadUtils::postToObject( [=]()  {  updateFriendServerStatusIcon(test_result); },this);
                                         }
     );
 }

@@ -38,9 +38,9 @@ protected slots:
     void onOnionPortEdit(int);
     void onNbFriendsToRequestsChanged(int n);
     void updateTorProxyInfo();
+    void checkServerAddress();
 
 private:
-    void checkServerAddress();
     void updateFriendServerStatusIcon(bool ok);
 
     QTimer *mConnectionCheckTimer;

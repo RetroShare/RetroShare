@@ -1088,6 +1088,7 @@ DEFINES *= CHANNELS_FRAME_CATCHER
 # Embedded Friend Server
 
 rs_efs {
+	DEFINES *= RS_EMBEDED_FRIEND_SERVER
         SOURCES += gui/FriendServerControl.cpp
         HEADERS += gui/FriendServerControl.h
         FORMS   += gui/FriendServerControl.ui
