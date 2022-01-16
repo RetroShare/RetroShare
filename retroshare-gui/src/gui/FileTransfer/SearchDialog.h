@@ -21,9 +21,9 @@
 #ifndef _SEARCHDIALOG_H
 #define _SEARCHDIALOG_H
 
-#include <retroshare/rstypes.h>
+#include "retroshare/rstypes.h"
 #include "ui_SearchDialog.h"
-#include <retroshare-gui/mainpage.h>
+#include "retroshare-gui/mainpage.h"
 
 class AdvancedSearchDialog;
 class RSTreeWidgetItemCompareRole;

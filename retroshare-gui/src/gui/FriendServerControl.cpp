@@ -20,12 +20,14 @@
 
 #include <QTimer>
 #include <QMovie>
+#include <QMessageBox>
 #include <QTcpSocket>
 
 #include "retroshare/rsfriendserver.h"
 #include "retroshare/rstor.h"
 
 #include "util/qtthreadsutils.h"
+#include "util/misc.h"
 #include "gui/common/FilesDefs.h"
 
 #include "FriendServerControl.h"
@@ -37,7 +39,7 @@
 
 /** Constructor */
 FriendServerControl::FriendServerControl(QWidget *parent)
-    : QWidget(parent)
+    : MainPage(parent)
 {
     /* Invoke the Qt Designer generated object setup routine */
     setupUi(this);
@@ -47,6 +49,22 @@ FriendServerControl::FriendServerControl(QWidget *parent)
         setEnabled(false);
         return;
     }
+
+    int H = QFontMetricsF(torServerAddress_LE->font()).height();
+
+    QString help_str = tr("\
+                          <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Friend Server</h1>                           \
+                          <p>This configuration panel allows you to specify the onion address of a                                   \
+                            friend server. Retroshare will talk to that server anonymously through Tor                               \
+                            and use it to acquire a fixed number of friends.</p>                                                     \
+                          <p>The friend server will continue supplying new friends until that number is reached                      \
+                            in particular if you add your own friends manually, the friend server may become useless                 \
+                            and you will save bandwidth disabling it. When disabling it, you will keep existing friends.</p>                                                            \
+                          <p>The friend server only knows your peer ID and profile public key. It doesn't know your IP address.</p>  \
+                          "
+                          ).arg(QString::number(2*H), QString::number(2*H)) ;
+
+    registerHelpButton(helpButton,help_str,"Friend Server") ;
 
     mConnectionCheckTimer = new QTimer;
 
@@ -69,18 +87,6 @@ FriendServerControl::FriendServerControl(QWidget *parent)
     serverStatusCheckResult_LB->setMovie(mCheckingServerMovie);
 
     updateFriendServerStatusIcon(false);
-    updateTorProxyInfo();
-}
-
-void FriendServerControl::updateTorProxyInfo()
-{
-    std::string friend_proxy_address;
-    uint16_t friend_proxy_port;
-
-    RsTor::getProxyServerInfo(friend_proxy_address,friend_proxy_port);
-
-    torProxyPort_SB->setValue(friend_proxy_port);
-    torProxyAddress_LE->setText(QString::fromStdString(friend_proxy_address));
 }
 
 FriendServerControl::~FriendServerControl()
@@ -92,7 +98,16 @@ FriendServerControl::~FriendServerControl()
 void FriendServerControl::onOnOffClick(bool b)
 {
     if(b)
+    {
+        if(passphrase_LE->text().isNull())
+        {
+            QMessageBox::critical(nullptr,tr("Missing profile passphrase."),tr("Your profile passphrase is missing. Please enter is in the field below before enabling the friend server."));
+            whileBlocking(friendServerOnOff_CB)->setCheckState(Qt::Unchecked);
+            return;
+        }
+        rsFriendServer->setProfilePassphrase(passphrase_LE->text().toStdString());
         rsFriendServer->startServer();
+    }
     else
         rsFriendServer->stopServer();
 }
