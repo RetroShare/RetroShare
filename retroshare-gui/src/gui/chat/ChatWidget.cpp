@@ -1698,9 +1698,11 @@ void ChatWidget::fileHashingFinished(QList<HashedFile> hashedFiles)
 				if (!image.isEmpty()) {
 					message += QString("<img src=\"%1\">").arg(image);
 				}
+				message += link.toHtmlSize();
+			} else {
+				message += "<br>" + link.toHtmlSize();
 			}
 		}
-		message += link.toHtmlSize();
 
 		if (it != hashedFiles.end()) {
 			message += "<BR>";
