@@ -4,6 +4,8 @@
 #include "util/rsbase64.h"
 #include "util/radix64.h"
 
+#include "crypto/hashstream.h"
+
 #include "pgp/pgpkeyutil.h"
 #include "pgp/rscertificate.h"
 #include "pgp/openpgpsdkhandler.h"
@@ -60,7 +62,7 @@ void FriendServer::threadTick()
     if(last_debugprint_TS + DELAY_BETWEEN_TWO_DEBUG_PRINT < now)
     {
         last_debugprint_TS = now;
-        debugPrint();
+        debugPrint(false);
     }
 }
 
@@ -82,12 +84,12 @@ void FriendServer::handleClientPublish(const RsFriendServerClientPublishItem *it
 
         RsDbg() << "Sending response item to " << item->PeerId() ;
 
-        RsFriendServerServerResponseItem *sr_item = new RsFriendServerServerResponseItem;
+        RsFriendServerServerResponseItem sr_item;
 
         std::map<RsPeerId,RsPgpFingerprint> friends;
-        sr_item->nonce = pi->second.last_nonce;
-        sr_item->friend_invites = computeListOfFriendInvites(item->n_requested_friends,pi->first,friends);
-        sr_item->PeerId(item->PeerId());
+        sr_item.nonce = pi->second.last_nonce;
+        sr_item.friend_invites = computeListOfFriendInvites(item->n_requested_friends,pi->first,friends);
+        sr_item.PeerId(item->PeerId());
 
         // Update the have_added_as_friend for the list of each peer. We do that before sending because sending destroys
         // the item.
@@ -100,10 +102,29 @@ void FriendServer::handleClientPublish(const RsFriendServerClientPublishItem *it
 
         // Now encrypt the item with the public PGP key of the destination. This prevents the wrong person to request for
         // someone else's data.
-#warning TODO
+        RsFriendServerEncryptedServerResponseItem *encrypted_response_item = new RsFriendServerEncryptedServerResponseItem;
+        uint32_t serialized_clear_size = FsSerializer().size(&sr_item);
+        RsTemporaryMemory serialized_clear_mem(serialized_clear_size);
+        FsSerializer().serialise(&sr_item,serialized_clear_mem,&serialized_clear_size);
+
+        uint32_t encrypted_mem_size = serialized_clear_size+1000;	// leave some extra space
+        RsTemporaryMemory encrypted_mem(encrypted_mem_size);
+
+        if(!mPgpHandler->encryptDataBin(PGPHandler::pgpIdFromFingerprint(pi->second.pgp_fingerprint),
+                                        serialized_clear_mem,serialized_clear_size,
+                                        encrypted_mem,&encrypted_mem_size))
+        {
+            RsErr() << "Cannot encrypt item for PGP Id/FPR " << pi->second.pgp_fingerprint << ". Something went wrong." ;
+            return;
+        }
+        encrypted_response_item->PeerId(item->PeerId());
+        encrypted_response_item->bin_len = encrypted_mem_size;
+        encrypted_response_item->bin_data = malloc(encrypted_mem_size);
+
+        memcpy(encrypted_response_item->bin_data,encrypted_mem,encrypted_mem_size);
 
         // Send the item.
-        mni->SendItem(sr_item);
+        mni->SendItem(encrypted_response_item);
 
         // Update the list of closest peers for all peers currently in the database.
 
@@ -349,8 +370,6 @@ void FriendServer::run()
 void FriendServer::autoWash()
 {
     rstime_t now = time(nullptr);
-    RsDbg() << "autoWash..." ;
-
     std::list<RsPeerId> to_remove;
 
     for(std::map<RsPeerId,PeerInfo>::iterator it(mCurrentClientPeers.begin());it!=mCurrentClientPeers.end();++it)
@@ -380,32 +399,68 @@ void FriendServer::updateClosestPeers(const RsPeerId& pid,const RsPgpFingerprint
         }
 }
 
-void FriendServer::debugPrint()
+Sha1CheckSum FriendServer::computeDataHash()
 {
-    RsDbg() << "========== FriendServer statistics ============";
-    RsDbg() << "  Base directory: "<< mBaseDirectory;
-    RsDbg() << "  Random peer bias: "<< mRandomPeerBias;
-    RsDbg() << "  Network interface: ";
-    RsDbg() << "  Max peers in n-closest list: " << MAXIMUM_PEERS_TO_REQUEST;
-    RsDbg() << "  Current active peers: " << mCurrentClientPeers.size() ;
+    librs::crypto::HashStream s(librs::crypto::HashStream::SHA1);
 
-    rstime_t now = time(nullptr);
-
-    for(const auto& it:mCurrentClientPeers)
+    for(auto p(mCurrentClientPeers.begin());p!=mCurrentClientPeers.end();++p)
     {
-        RsDbg() << "   " << it.first << ": nonce=" << std::hex << it.second.last_nonce << std::dec << " fpr: " << it.second.pgp_fingerprint << ", last contact: " << now - it.second.last_connection_TS << " secs ago.";
-        RsDbg() << "   Closest peers:" ;
+        s << p->first;
 
-        for(const auto& pit:it.second.closest_peers)
-            RsDbg() << "      " << pit.second << " distance=" << pit.first ;
+        const auto& inf(p->second);
 
-        RsDbg() << "   Have added this peer:" ;
+        s << inf.pgp_fingerprint;
+        s << inf.short_certificate;
+        s << (uint64_t)inf.last_connection_TS;
+        s << inf.last_nonce;
 
-        for(const auto& pit:it.second.have_added_this_peer)
-            RsDbg() << "      " << pit.second << " distance=" << pit.first ;
+        for(auto d(inf.closest_peers.begin());d!=inf.closest_peers.end();++d)
+        {
+            s << d->first ;
+            s << d->second;
+        }
+        for(auto d(inf.have_added_this_peer.begin());d!=inf.have_added_this_peer.end();++d)
+        {
+            s << d->first ;
+            s << d->second;
+        }
     }
+    return s.hash();
+}
+void FriendServer::debugPrint(bool force)
+{
+    auto h = computeDataHash();
 
-    RsDbg() << "===============================================";
+    if((h != mCurrentDataHash) || force)
+    {
+        RsDbg() << "========== FriendServer statistics ============";
+        RsDbg() << "  Base directory: "<< mBaseDirectory;
+        RsDbg() << "  Random peer bias: "<< mRandomPeerBias;
+        RsDbg() << "  Current hash: "<< h;
+        RsDbg() << "  Network interface: ";
+        RsDbg() << "  Max peers in n-closest list: " << MAXIMUM_PEERS_TO_REQUEST;
+        RsDbg() << "  Current active peers: " << mCurrentClientPeers.size() ;
+
+        rstime_t now = time(nullptr);
+
+        for(const auto& it:mCurrentClientPeers)
+        {
+            RsDbg() << "   " << it.first << ": nonce=" << std::hex << it.second.last_nonce << std::dec << " fpr: " << it.second.pgp_fingerprint << ", last contact: " << now - it.second.last_connection_TS << " secs ago.";
+            RsDbg() << "   Closest peers:" ;
+
+            for(const auto& pit:it.second.closest_peers)
+                RsDbg() << "      " << pit.second << " distance=" << pit.first ;
+
+            RsDbg() << "   Have added this peer:" ;
+
+            for(const auto& pit:it.second.have_added_this_peer)
+                RsDbg() << "      " << pit.second << " distance=" << pit.first ;
+        }
+
+        RsDbg() << "===============================================";
+
+        mCurrentDataHash = h;
+    }
 
 }
 
