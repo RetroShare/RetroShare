@@ -75,7 +75,8 @@ private:
     PeerInfo::PeerDistance computePeerDistance(const RsPgpFingerprint &p1, const RsPgpFingerprint &p2);
 
     void autoWash();
-    void debugPrint();
+    void debugPrint(bool force);
+    Sha1CheckSum computeDataHash();
 
     // Local members
 
@@ -88,4 +89,6 @@ private:
     std::map<RsPeerId, PeerInfo> mCurrentClientPeers;
     std::string mListeningAddress;
     uint16_t mListeningPort;
+
+    Sha1CheckSum mCurrentDataHash;
 };

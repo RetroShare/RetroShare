@@ -22,9 +22,10 @@
 
 #include <QGraphicsScene>
 
+#include "retroshare-gui/mainpage.h"
 #include "ui_FriendServerControl.h"
 
-class FriendServerControl : public QWidget, public Ui::FriendServerControl
+class FriendServerControl : public MainPage, public Ui::FriendServerControl
 {
     Q_OBJECT
 
@@ -37,7 +38,6 @@ protected slots:
     void onOnionAddressEdit(const QString&);
     void onOnionPortEdit(int);
     void onNbFriendsToRequestsChanged(int n);
-    void updateTorProxyInfo();
     void checkServerAddress();
 
 private:
