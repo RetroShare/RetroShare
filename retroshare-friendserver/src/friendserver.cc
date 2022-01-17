@@ -323,7 +323,7 @@ void FriendServer::removePeer(const RsPeerId& peer_id)
 
                 auto tmp(fit);
                 ++tmp;
-                it.second.closest_peers.erase(fit);
+                it.second.have_added_this_peer.erase(fit);
                 fit=tmp;
             }
             else
@@ -381,8 +381,6 @@ void FriendServer::autoWash()
 
     for(auto peer_id:to_remove)
         removePeer(peer_id);
-
-    RsDbg() << "done." ;
 }
 
 void FriendServer::updateClosestPeers(const RsPeerId& pid,const RsPgpFingerprint& fpr)
