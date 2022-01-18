@@ -578,10 +578,12 @@ void CreateGxsForumMsg::fileHashingFinished(QList<HashedFile> hashedFiles)
 		{
 			QString encodedImage;
 			uint32_t maxImageSize = 32000;
-			if (RsHtml::makeEmbeddedImage(hashedFile.filepath, encodedImage, 320*240, maxImageSize - 200 - link.toHtmlSize().length()))
-			{	QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
-				ui.forumMessage->textCursor().insertFragment(fragment);
-				preview=true;
+			if (link.valid()){
+				if (RsHtml::makeEmbeddedImage(hashedFile.filepath, encodedImage, 320*240, maxImageSize - 200 - link.toHtmlSize().length()))
+				{	QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
+					ui.forumMessage->textCursor().insertFragment(fragment);
+					preview=true;
+				}
 			}
 		}
 		if(!preview)
