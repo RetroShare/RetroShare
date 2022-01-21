@@ -136,7 +136,7 @@ void RetroshareDirModel::treeStyle()
 {
 	categoryIcon.addPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/folder.png"), QIcon::Normal, QIcon::Off);
 	categoryIcon.addPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/folderopen.png"), QIcon::Normal, QIcon::On);
-	peerIcon = FilesDefs::getIconFromQtResourcePath(":/images/user/identity16.png");
+	peerIcon = FilesDefs::getIconFromQtResourcePath(":/icons/folder-account.svg");
 }
 void TreeStyle_RDM::update()
 {
