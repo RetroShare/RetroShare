@@ -127,21 +127,21 @@ FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
         ui.nicknameLabel->setText(QString::fromUtf8(pd.name.c_str()) + " (" + QString::fromUtf8(pd.location.c_str())+")");
     }
 
- QString hlp_str = tr(
-  " <h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Network</h1>                                   \
-    <p>The Network tab shows your friend Retroshare nodes: the neighbor Retroshare nodes that are connected to you. \
-    </p>                                                   \
-    <p>You can group nodes together to allow a finer level of information access, for instance to only allow      \
-    some nodes to see some of your files.</p> \
-    <p>On the right, you will find 3 useful tabs:                                                                   \
-    <ul>                                                                                                          \
-      <li>Broadcast sends messages to all connected nodes at once</li>                             \
-      <li>Local network graph shows the network around you, based on discovery information</li>                 \
-      <li>Keyring contains node keys you collected, mostly forwarded to you by your friend nodes</li>                              \
-    </ul> </p>                                                                                                      \
-  ") ;
+	int H = misc::getFontSizeFactor("HelpButton").height();
+	QString hlp_str = tr(
+	    "<h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Network</h1>"
+	    "<p>The Network tab shows your friend Retroshare nodes: the neighbor Retroshare nodes that are connected to you.</p>"
+	    "<p>You can group nodes together to allow a finer level of information access, for instance to only allow"
+	    "   some nodes to see some of your files.</p>"
+	    "<p>On the right, you will find 3 useful tabs:"
+	    "   <ul>"
+	    "    <li>Broadcast sends messages to all connected nodes at once</li>"
+	    "    <li>Local network graph shows the network around you, based on discovery information</li>"
+	    "    <li>Keyring contains node keys you collected, mostly forwarded to you by your friend nodes</li>"
+	    "   </ul> </p>"
+	                    ).arg(QString::number(2*H));
 
-	 registerHelpButton(ui.helpButton, hlp_str,"FriendsDialog") ;
+	registerHelpButton(ui.helpButton, hlp_str,"FriendsDialog") ;
 }
 
 FriendsDialog::~FriendsDialog ()

@@ -35,6 +35,7 @@
 #include "gui/notifyqt.h"
 #include "gui/common/GroupTreeWidget.h"
 #include "util/qtthreadsutils.h"
+#include "util/misc.h"
 
 // class GxsChannelGroupInfoData : public RsUserdata
 // {
@@ -90,8 +91,8 @@ void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> ev
 
     const RsGxsChannelSearchResultEvent*f = dynamic_cast<const RsGxsChannelSearchResultEvent*>(event.get());
 
-	if(nullptr != f)
-        for(auto it:f->mSearchResultsMap)
+		if(nullptr != f)
+			for(auto &it:f->mSearchResultsMap)
 			updateSearchResults(it.first);
 }
 
@@ -102,18 +103,23 @@ GxsChannelDialog::~GxsChannelDialog()
 
 QString GxsChannelDialog::getHelpString() const
 {
-	QString hlp_str = tr("<h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Channels</h1>    \
-    <p>Channels allow you to post data (e.g. movies, music) that will spread in the network</p>            \
-    <p>You can see the channels your friends are subscribed to, and you automatically forward subscribed channels to \
-    your friends. This promotes good channels in the network.</p>\
-    <p>Only the channel's creator can post on that channel. Other peers                       \
-    in the network can only read from it, unless the channel is private. You can however share \
-	 the posting rights or the reading rights with friend Retroshare nodes.</p>\
-	 <p>Channels can be made anonymous, or attached to a Retroshare identity so that readers can contact you if needed.\
-	 Enable \"Allow Comments\" if you want to let users comment on your posts.</p>\
-    <p>Channel posts are kept for %1 days, and sync-ed over the last %2 days, unless you change this.</p>\
-    <p>UI Tip: use Control + mouse wheel to control image size in the thumbnail view.</p>\
-                ").arg(QString::number(rsGxsChannels->getDefaultStoragePeriod()/86400)).arg(QString::number(rsGxsChannels->getDefaultSyncPeriod()/86400));
+	int H = misc::getFontSizeFactor("HelpButton").height();
+
+	QString hlp_str = tr(
+	    "<h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Channels</h1>"
+	    "<p>Channels allow you to post data (e.g. movies, music) that will spread in the network</p>"
+	    "<p>You can see the channels your friends are subscribed to, and you automatically forward subscribed channels to"
+	    "   your friends. This promotes good channels in the network.</p>"
+	    "<p>Only the channel's creator can post on that channel. Other peers"
+	    "   in the network can only read from it, unless the channel is private. You can however share"
+	    "   the posting rights or the reading rights with friend Retroshare nodes.</p>"
+	    "<p>Channels can be made anonymous, or attached to a Retroshare identity so that readers can contact you if needed."
+	    "   Enable \"Allow Comments\" if you want to let users comment on your posts.</p>"
+	    "<p>Channel posts are kept for %2 days, and sync-ed over the last %3 days, unless you change this.</p>"
+	    "<p>UI Tip: use Control + mouse wheel to control image size in the thumbnail view.</p>"
+	                    ).arg(  QString::number(2*H)
+	                          , QString::number(rsGxsChannels->getDefaultStoragePeriod()/86400)
+	                          , QString::number(rsGxsChannels->getDefaultSyncPeriod()/86400));
 
 	return hlp_str ;
 }
@@ -260,11 +266,13 @@ void GxsChannelDialog::groupTreeCustomActions(RsGxsGroupId grpId, int subscribeF
 
     if (isSubscribed)
     {
-        QAction *action = autoDownload ? (new QAction(FilesDefs::getIconFromQtResourcePath(":/images/redled.png"), tr("Disable Auto-Download"), this))
-                                       : (new QAction(FilesDefs::getIconFromQtResourcePath(":/images/start.png"),tr("Enable Auto-Download"), this));
+        {
+            QAction *action = autoDownload ? (new QAction(FilesDefs::getIconFromQtResourcePath(":/images/redled.png"), tr("Disable Auto-Download"), this))
+                                           : (new QAction(FilesDefs::getIconFromQtResourcePath(":/images/start.png"),tr("Enable Auto-Download"), this));
 
-        connect(action, SIGNAL(triggered()), this, SLOT(toggleAutoDownload()));
-        actions.append(action);
+            connect(action, SIGNAL(triggered()), this, SLOT(toggleAutoDownload()));
+            actions.append(action);
+        }
 
         std::string dl_directory;
         rsGxsChannels->getChannelDownloadDirectory(grpId,dl_directory) ;
@@ -282,20 +290,20 @@ void GxsChannelDialog::groupTreeCustomActions(RsGxsGroupId grpId, int subscribeF
 
         for(std::list<SharedDirInfo>::const_iterator it(lst.begin());it!=lst.end();++it)
         {
-            QAction *action = NULL;
+            QAction *fileAction = NULL;
 
             if(dl_directory == it->filename)
             {
-                action = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/start.png"),QString::fromUtf8(it->filename.c_str()),NULL) ;
+                fileAction = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/start.png"),QString::fromUtf8(it->filename.c_str()),NULL) ;
                 found = true ;
             }
             else
-                action = new QAction(QString::fromUtf8(it->filename.c_str()),NULL) ;
+                fileAction = new QAction(QString::fromUtf8(it->filename.c_str()),NULL) ;
 
-            connect(action,SIGNAL(triggered()),this,SLOT(setDownloadDirectory())) ;
-            action->setData(QString::fromUtf8(it->filename.c_str())) ;
+            connect(fileAction,SIGNAL(triggered()),this,SLOT(setDownloadDirectory())) ;
+            fileAction->setData(QString::fromUtf8(it->filename.c_str())) ;
 
-            mnu->addAction(action) ;
+            mnu->addAction(fileAction) ;
         }
 
         if(!found && !dl_directory.empty())
@@ -368,17 +376,17 @@ bool GxsChannelDialog::getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo
 {
 	std::vector<RsGxsChannelGroup> groups;
 
-    // request all group infos at once
+	// request all group infos at once
 
-    if(! rsGxsChannels->getChannelsInfo(std::list<RsGxsGroupId>(),groups))
-        return false;
+	if(! rsGxsChannels->getChannelsInfo(std::list<RsGxsGroupId>(),groups))
+		return false;
 
- 	/* Save groups to fill icons and description */
+	/* Save groups to fill icons and description */
 
 	for (auto& group: groups)
-       groupInfo.push_back(new RsGxsChannelGroup(group));
+		groupInfo.push_back(new RsGxsChannelGroup(group));
 
-    return true;
+	return true;
 }
 
 void GxsChannelDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupData, GroupItemInfo &groupItemInfo)

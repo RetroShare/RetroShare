@@ -385,20 +385,22 @@ IdDialog::IdDialog(QWidget *parent)
 	mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
     mStateHelper->setActive(IDDIALOG_REPLIST, false);
 
+	int H = misc::getFontSizeFactor("HelpButton").height();
 	QString hlp_str = tr(
-			" <h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Identities</h1>    \
-			<p>In this tab you can create/edit <b>pseudo-anonymous identities</b>, and <b>circles</b>.</p>                \
-			<p><b>Identities</b> are used to securely identify your data: sign messages in chat lobbies, forum and channel posts,\
-				receive feedback using the Retroshare built-in email system, post comments \
-				after channel posts, chat using secured tunnels, etc.</p> \
-			<p>Identities can optionally be <b>signed</b> by your Retroshare node's certificate.   \
-			Signed identities are easier to trust but are easily linked to your node's IP address.</p>  \
-			<p><b>Anonymous identities</b> allow you to anonymously interact with other users. They cannot be   \
-			spoofed, but noone can prove who really owns a given identity.</p> \
-                    <p><b>Circles</b> are groups of identities (anonymous or signed), that are shared at a distance over the network. They can be \
-                		used to restrict the visibility to forums, channels, etc. </p> \
-                    <p>An <b>circle</b> can be restricted to another circle, thereby limiting its visibility to members of that circle \
-                        or even self-restricted, meaning that it is only visible to invited members.</p>") ;
+	    "<h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Identities</h1>"
+	    "<p>In this tab you can create/edit <b>pseudo-anonymous identities</b>, and <b>circles</b>.</p>"
+	    "<p><b>Identities</b> are used to securely identify your data: sign messages in chat lobbies, forum and channel posts,"
+	    "   receive feedback using the Retroshare built-in email system, post comments"
+	    "   after channel posts, chat using secured tunnels, etc.</p>"
+	    "<p>Identities can optionally be <b>signed</b> by your Retroshare node's certificate."
+	    "   Signed identities are easier to trust but are easily linked to your node's IP address.</p>"
+	    "<p><b>Anonymous identities</b> allow you to anonymously interact with other users. They cannot be"
+	    "   spoofed, but noone can prove who really owns a given identity.</p>"
+	    "<p><b>Circles</b> are groups of identities (anonymous or signed), that are shared at a distance over the network. They can be"
+	    "   used to restrict the visibility to forums, channels, etc. </p>"
+	    "<p>An <b>circle</b> can be restricted to another circle, thereby limiting its visibility to members of that circle"
+	    "   or even self-restricted, meaning that it is only visible to invited members.</p>"
+	                    ).arg(QString::number(2*H));
 
 	registerHelpButton(ui->helpButton, hlp_str,"PeopleDialog") ;
 

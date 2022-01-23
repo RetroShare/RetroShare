@@ -26,6 +26,7 @@
 #include "gui/gxs/GxsGroupShareKey.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/common/GroupTreeWidget.h"
+#include "util/misc.h"
 #include "util/qtthreadsutils.h"
 
 #include <retroshare/rsposted.h>
@@ -95,14 +96,19 @@ UserNotify *PostedDialog::createUserNotify(QObject *parent)
 
 QString PostedDialog::getHelpString() const
 {
-	QString hlp_str = tr("<h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Boards</h1>    \
-    <p>The Boards service allows you to share images, blog posts & internet links, that spread among Retroshare nodes like forums and \
-	 channels</p> \
-	 <p>Posts can be commented by subscribed users. A promotion system also gives the opportunity to  \
-	 enlight important links.</p> \
-     <p>There is no restriction on which links are shared. Be careful when clicking on them.</p>\
-    <p>Boards are kept for %1 days, and sync-ed over the last %2 days, unless you change this.</p>\
-                ").arg(QString::number(rsPosted->getDefaultStoragePeriod()/86400)).arg(QString::number(rsPosted->getDefaultSyncPeriod()/86400));
+	int H = misc::getFontSizeFactor("HelpButton").height();
+
+	QString hlp_str = tr(
+	    "<h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Boards</h1>"
+	    "<p>The Boards service allows you to share images, blog posts & internet links, that spread among Retroshare nodes like forums and"
+	    "   channels</p>"
+	    "<p>Posts can be commented by subscribed users. A promotion system also gives the opportunity to"
+	    "   enlight important links.</p>"
+	    "<p>There is no restriction on which links are shared. Be careful when clicking on them.</p>"
+	    "<p>Boards are kept for %2 days, and sync-ed over the last %3 days, unless you change this.</p>"
+	                    ).arg(  QString::number(2*H)
+	                          , QString::number(rsPosted->getDefaultStoragePeriod()/86400)
+	                          , QString::number(rsPosted->getDefaultSyncPeriod()/86400));
 
 	return hlp_str ;
 }

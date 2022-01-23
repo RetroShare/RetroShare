@@ -22,14 +22,15 @@
 #ifndef MISC_H
 #define MISC_H
 
-#include <stdexcept>
+#include "gui/settings/rsharesettings.h"
+
+#include <QFileDialog>
+#include <QLayout>
 #include <QObject>
 #include <QPair>
 #include <QThread>
-#include <QFileDialog>
-#include <QLayout>
 
-#include "gui/settings/rsharesettings.h"
+#include <stdexcept>
 
 /*  Miscellaneaous functions that can be useful */
 class misc : public QObject
@@ -165,15 +166,15 @@ class misc : public QObject
     static QPixmap getOpenThumbnailedPicture(QWidget *parent, const QString &caption, int width, int height);
     static bool getOpenFileName(QWidget *parent, RshareSettings::enumLastDir type
                                 , const QString &caption, const QString &filter
-                                , QString &file, QFileDialog::Options options = 0);
+                                , QString &file, QFileDialog::Options options = QFileDialog::Options());
     static bool getOpenFileNames(QWidget *parent, RshareSettings::enumLastDir type
                                  , const QString &caption, const QString &filter
-                                 , QStringList &files, QFileDialog::Options options = 0);
+                                 , QStringList &files, QFileDialog::Options options = QFileDialog::Options());
 
     static bool getSaveFileName(QWidget *parent, RshareSettings::enumLastDir type
                                 , const QString &caption , const QString &filter
-								, QString &file, QString *selectedFilter = NULL
-                                , QFileDialog::Options options = 0);
+                                , QString &file, QString *selectedFilter = NULL
+                                , QFileDialog::Options options = QFileDialog::Options());
 
 	static QFont getFont(bool *ok
 						 , const QFont &initial
@@ -186,6 +187,9 @@ class misc : public QObject
 
 	//Clear QLayout
 	static void clearLayout(QLayout *layout);
+
+	static QSizeF getFontSizeFactor(const QString &group, const qreal defaultFactor = 1.0);
+	static QSizeF getFontSizeFactor() {return getFontSizeFactor("Main");}
 
 };
 
@@ -201,7 +205,7 @@ class SleeperThread : public QThread{
 template<class T> class SignalsBlocker
 {
 public:
-	SignalsBlocker(T *blocked) : blocked(blocked), previous(blocked->blockSignals(true)) {}
+	explicit SignalsBlocker(T *blocked) : blocked(blocked), previous(blocked->blockSignals(true)) {}
 	~SignalsBlocker() { blocked->blockSignals(previous); }
 
 	T *operator->() { return blocked; }
