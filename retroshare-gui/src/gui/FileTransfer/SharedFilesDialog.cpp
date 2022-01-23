@@ -231,6 +231,10 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
     /* Set Multi Selection */
     ui.dirTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
+	QFontMetricsF fontMetrics(ui.dirTreeView->font());
+	int iconHeight = fontMetrics.height() * 1.5;
+	ui.dirTreeView->setIconSize(QSize(iconHeight, iconHeight));
+
   /* Hide platform specific features */
   copylinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Links to Clipboard" ), this );
   connect( copylinkAct , SIGNAL( triggered() ), this, SLOT( copyLink() ) );
