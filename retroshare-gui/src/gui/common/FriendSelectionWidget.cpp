@@ -53,7 +53,6 @@
 #define ROLE_SORT_STATE             Qt::UserRole + 4
 #define ROLE_FILTER_REASON          Qt::UserRole + 5
 
-#define IMAGE_GROUP16    ":/images/user/group16.png"
 #define IMAGE_FRIENDINFO ":/images/peerdetails_16x16.png"
 
 static bool isSelected(FriendSelectionWidget::Modus modus, QTreeWidgetItem *item)
@@ -382,12 +381,34 @@ void FriendSelectionWidget::secured_fillList()
 			// Add item to the list
 			ui->friendList->addTopLevelItem(groupItem);
 
+			QFontMetricsF fontMetrics(ui->friendList->font());
+			int avatarHeight = fontMetrics.height() * 1.5;
+			ui->friendList->setIconSize(QSize(avatarHeight, avatarHeight));
+
 			groupItem->setFlags(Qt::ItemIsUserCheckable | groupItem->flags());
 			groupItem->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
 			groupItem->setTextAlignment(COLUMN_NAME, Qt::AlignLeft | Qt::AlignVCenter);
-            groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(IMAGE_GROUP16));
 
-            groupItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(groupInfo->id.toStdString()));
+			if (groupInfo->id.toStdString() == RS_GROUP_ID_FRIENDS.toStdString()) {
+				groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(":/icons/groups/blue.svg"));
+			}
+			else if (groupInfo->id.toStdString() == RS_GROUP_ID_FAMILY.toStdString()) {
+				groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(":/icons/groups/purple.svg"));
+			}
+			else if (groupInfo->id.toStdString() == RS_GROUP_ID_COWORKERS.toStdString()) {
+				groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(":/icons/groups/green.svg"));
+			}
+			else if (groupInfo->id.toStdString() == RS_GROUP_ID_OTHERS.toStdString()) {
+				groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(":/icons/groups/pink.svg"));
+			}
+			else if (groupInfo->id.toStdString() == RS_GROUP_ID_FAVORITES.toStdString()) {
+				groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(":/icons/groups/yellow.svg"));
+			}
+			else {
+				groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(":/icons/groups/red.svg"));
+			}
+
+			groupItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(groupInfo->id.toStdString()));
 
 			groupItem->setExpanded(true);
 
