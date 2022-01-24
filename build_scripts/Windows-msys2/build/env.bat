@@ -2,8 +2,6 @@ call "%~dp0env-base.bat" %*
 if errorlevel 2 exit /B 2
 if errorlevel 1 goto error_env
 
-set MSYSTEM=MINGW%RsBit%
-
 set BuildPath=%EnvRootPath%\builds
 set DeployPath=%EnvRootPath%\deploy
 
@@ -14,10 +12,10 @@ if not exist "%DeployPath%" mkdir "%DeployPath%"
 call "%ToolsPath%\get-qt-version.bat" QtVersion
 if "%QtVersion%"=="" %cecho% error "Cannot get Qt version." & exit /B 1
 
-set RsMinGWPath=%EnvMSYS2BasePath%\mingw%RsBit%
+set RsMinGWPath=%EnvMSYS2BasePath%\%RsToolchain%
 
-set RsBuildPath=%BuildPath%\Qt-%QtVersion%-%RsArchitecture%-%RsCompiler%-%RsBuildConfig%
-set RsDeployPath=%DeployPath%\Qt-%QtVersion%%RsType%-%RsArchitecture%-%RsCompiler%-%RsBuildConfig%
+set RsBuildPath=%BuildPath%\Qt-%QtVersion%-%RsToolchain%-%RsCompiler%-%RsBuildConfig%
+set RsDeployPath=%DeployPath%\Qt-%QtVersion%%RsType%-%RsToolchain%-%RsCompiler%-%RsBuildConfig%
 set RsPackPath=%DeployPath%
 set RsArchiveAdd=
 set RsWebuiPath=%RootPath%\%SourceName%-webui

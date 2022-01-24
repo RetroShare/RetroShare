@@ -66,6 +66,7 @@ echo %RS_QMAKE_CONFIG% > buildinfo.txt
 echo %RsBuildConfig% >> buildinfo.txt
 echo %RsArchitecture% >> buildinfo.txt
 echo Qt %QtVersion% >> buildinfo.txt
+echo %RsToolchain% >> buildinfo.txt
 echo %RsCompiler% >> buildinfo.txt
 
 call "%ToolsPath%\msys2-path.bat" "%SourcePath%" MSYS2SourcePath
