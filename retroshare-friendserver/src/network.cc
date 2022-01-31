@@ -134,7 +134,9 @@ bool FsNetworkInterface::checkForNewConnections()
 
     if(clintConnt < 0)
     {
-        if(errno == EWOULDBLOCK)
+        int err = rs_socket_error();
+
+        if(err == EWOULDBLOCK || err == EAGAIN)
             ;//RsErr()<< "Incoming connection with nothing to read!" << std::endl;
         else
             RsErr()<< "Error when accepting connection." << std::endl;
