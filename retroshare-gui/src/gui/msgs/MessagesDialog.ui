@@ -375,6 +375,11 @@
               <enum>Qt::Vertical</enum>
              </property>
              <widget class="RSTreeView" name="messageTreeWidget">
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
               <property name="contextMenuPolicy">
                <enum>Qt::CustomContextMenu</enum>
               </property>

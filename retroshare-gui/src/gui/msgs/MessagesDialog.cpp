@@ -228,6 +228,9 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     /* Set header sizes for the fixed columns and resize modes, must be set after processSettings */
     msgwheader->setStretchLastSection(true);
 
+	QFontMetricsF fontMetrics(ui.messageTreeWidget->font());
+	int iconHeight = fontMetrics.height() * 1.4;
+	ui.messageTreeWidget->setIconSize(QSize(iconHeight, iconHeight));
 
     // fill folder list
     updateMessageSummaryList();

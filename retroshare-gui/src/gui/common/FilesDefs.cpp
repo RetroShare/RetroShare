@@ -156,7 +156,7 @@ QIcon FilesDefs::getIconFromGxsIdCache(const RsGxsId& id,const QIcon& setIcon, b
 	if (setIcon.isNull())
 	{
 		if (id.isNull())
-			return getIconFromQtResourcePath(":/icons/notification.png");
+			return getIconFromQtResourcePath(":/icons/notification.svg");
 
 		auto item = mIconCache.find(id);
 
