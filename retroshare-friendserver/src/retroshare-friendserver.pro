@@ -44,6 +44,7 @@ unix {
 win32-g++|win32-clang-g++ {
     dLib = ws2_32 iphlpapi crypt32
     LIBS *= $$linkDynamicLibs(dLib)
+    CONFIG += console
 }
 
 ################################### COMMON stuff ##################################
