@@ -87,12 +87,7 @@ macx {
 ################################# Windows ##########################################
 
 win32-g++|win32-clang-g++ {
-	CONFIG(debug, debug|release) {
-		# show console output
-		CONFIG += console
-	} else {
-		CONFIG -= console
-	}
+	CONFIG += console
 
 	CONFIG(debug, debug|release) {
 	} else {
