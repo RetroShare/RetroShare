@@ -233,6 +233,11 @@
        </item>
        <item>
         <widget class="QTreeView" name="threadTreeWidget">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
