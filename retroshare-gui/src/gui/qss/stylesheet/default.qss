@@ -311,7 +311,7 @@ BoardPostDisplayWidget_compact QToolButton#voteDownButton:disabled {
 
 ForumsDialog, GxsForumThreadWidget
 {
-	qproperty-textColorRead: darkgray;
+	qproperty-textColorRead: black;
 	qproperty-textColorUnread: black; 
 	qproperty-textColorUnreadChildren: darkgray;
 	qproperty-textColorNotSubscribed: black;
