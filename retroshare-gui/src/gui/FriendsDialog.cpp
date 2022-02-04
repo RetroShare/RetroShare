@@ -27,6 +27,7 @@
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rshistory.h>
+#include <retroshare/rsinit.h>
 
 #include "chat/ChatUserNotify.h"
 #include "connect/ConnectFriendWizard.h"
@@ -92,7 +93,8 @@ FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
 
     ui.tabWidget->setTabPosition(QTabWidget::North);
 #ifdef RS_EMBEDED_FRIEND_SERVER
-    ui.tabWidget->addTab(friendServerControl = new FriendServerControl(),QIcon(IMAGE_PEERS), tr("Friend Server"));
+    if(RsAccounts::isTorAuto())
+        ui.tabWidget->addTab(friendServerControl = new FriendServerControl(),QIcon(IMAGE_PEERS), tr("Friend Server"));
 #endif
     ui.tabWidget->addTab(networkView = new NetworkView(),QIcon(IMAGE_NETWORK2), tr("Network graph"));
     ui.tabWidget->addTab(networkDialog = new NetworkDialog(),QIcon(IMAGE_PEERS), tr("Keyring"));
