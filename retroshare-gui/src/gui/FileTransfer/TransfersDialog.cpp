@@ -449,7 +449,7 @@ public:
 			case COLUMN_SOURCES:
 			{
 				int active = 0;
-				QString fileHash = QString::fromStdString(fileInfo.hash.toStdString());
+				//QString fileHash = QString::fromStdString(fileInfo.hash.toStdString());
 
 				if (fileInfo.downloadStatus != FT_STATE_COMPLETE)
 					for (std::vector<TransferInfo>::const_iterator pit = fileInfo.peers.begin() ; pit != fileInfo.peers.end(); ++pit)
@@ -635,27 +635,27 @@ public:
 		for(auto it(downHashes.begin());it!=downHashes.end();++it,++i)
 		{
 			FileInfo fileInfo(mDownloads[i]);	// we dont update the data itself but only a copy of it....
-			int old_size = fileInfo.peers.size() ;
+			int old_peers_size = fileInfo.peers.size() ;
 
 			rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, fileInfo);
 
 			int new_size = fileInfo.peers.size() ;
 
-			if(old_size < new_size)
+			if(old_peers_size < new_size)
 			{
-				beginInsertRows(index(i,0), old_size, new_size-1);
-				insertRows(old_size, new_size - old_size,index(i,0));
+				beginInsertRows(index(i,0), old_peers_size, new_size-1);
+				insertRows(old_peers_size, new_size - old_peers_size,index(i,0));
 #ifdef DEBUG_DOWNLOADLIST
-				std::cerr << "called insert rows ( " << old_size << ", " << new_size - old_size << ",index(" << index(i,0)<< "))" << std::endl;
+				std::cerr << "called insert rows ( " << old_peers_size << ", " << new_size - old_peers_size << ",index(" << index(i,0)<< "))" << std::endl;
 #endif
 				endInsertRows();
 			}
-			else if(new_size < old_size)
+			else if(new_size < old_peers_size)
 			{
-				beginRemoveRows(index(i,0), new_size, old_size-1);
-				removeRows(new_size, old_size - new_size,index(i,0));
+				beginRemoveRows(index(i,0), new_size, old_peers_size-1);
+				removeRows(new_size, old_peers_size - new_size,index(i,0));
 #ifdef DEBUG_DOWNLOADLIST
-				std::cerr << "called remove rows ( " << old_size << ", " << old_size - new_size << ",index(" << index(i,0)<< "))" << std::endl;
+				std::cerr << "called remove rows ( " << old_peers_size << ", " << old_peers_size - new_size << ",index(" << index(i,0)<< "))" << std::endl;
 #endif
 				endRemoveRows();
 			}
@@ -742,7 +742,7 @@ private:
 class SortByNameItem : public QStandardItem
 {
 public:
-	SortByNameItem(QHeaderView *header) : QStandardItem()
+	explicit SortByNameItem(QHeaderView *header) : QStandardItem()
 	{
 		this->header = header;
 	}
@@ -780,9 +780,9 @@ private:
 class ProgressItem : public SortByNameItem
 {
 public:
-	ProgressItem(QHeaderView *header) : SortByNameItem(header) {}
+	explicit ProgressItem(QHeaderView *header) : SortByNameItem(header) {}
 
-	virtual bool operator<(const QStandardItem &other) const
+	virtual bool operator<(const QStandardItem &other) const override
 	{
 		const int role = model() ? model()->sortRole() : Qt::DisplayRole;
 
@@ -1077,24 +1077,23 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     // load settings
     processSettings(true);
 
-	int S = static_cast<int>(QFontMetricsF(font()).height());
+	int H = misc::getFontSizeFactor("HelpButton").height();
 	QString help_str = tr(
-	            "<h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;"
-	            "File Transfer</h1>"
-	            "<p>Retroshare brings two ways of transferring files: direct "
-	            "transfers from your friends, and distant anonymous tunnelled "
-	            "transfers. In addition, file transfer is multi-source and "
-	            "allows swarming (you can be a source while downloading)</p>"
-	            "<p>You can share files using the "
-	            "<img src=\":/images/directoryadd_24x24_shadow.png\" width=%2 />"
-	            " icon from the left side bar. These files will be listed in "
-	            "the My Files tab. You can decide for each friend group whether"
-	            " they can or not see these files in their Friends Files tab</p>"
-	            "<p>The search tab reports files from your friends' file lists,"
-	            " and distant files that can be reached anonymously using the "
-	            "multi-hop tunnelling system.</p>")
-	        .arg(QString::number(2*S)).arg(QString::number(S)) ;
-
+	    "<h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;"
+	    "    File Transfer</h1>"
+	    "<p>Retroshare brings two ways of transferring files: direct "
+	    "   transfers from your friends, and distant anonymous tunnelled "
+	    "   transfers. In addition, file transfer is multi-source and "
+	    "   allows swarming (you can be a source while downloading)</p>"
+	    "<p>You can share files using the "
+	    "   <img src=\":/images/directoryadd_24x24_shadow.png\" width=%2 />"
+	    "   icon from the left side bar. These files will be listed in "
+	    "   the My Files tab. You can decide for each friend group whether"
+	    "   they can or not see these files in their Friends Files tab</p>"
+	    "<p>The search tab reports files from your friends' file lists,"
+	    "   and distant files that can be reached anonymously using the "
+	    "   multi-hop tunnelling system.</p>"
+	                     ).arg(QString::number(2*H), QString::number(H)) ;
 
 	registerHelpButton(ui.helpButton,help_str,"TransfersDialog") ;
 
@@ -1584,7 +1583,6 @@ int TransfersDialog::addULItem(int row, const FileInfo &fileInfo)
 
 		//unique combination: fileHash + peerId, variant: hash + peerName (too long)
 		QString hashFileAndPeerId = fileHash + QString::fromStdString(transferInfo.peerId.toStdString());
-		qlonglong completed = transferInfo.transfered;
 
 		double peerULSpeed = transferInfo.tfRate * 1024.0;
 
@@ -1602,6 +1600,7 @@ int TransfersDialog::addULItem(int row, const FileInfo &fileInfo)
 		peerpinfo.type = FileProgressInfo::UPLOAD_LINE ;
 		peerpinfo.nb_chunks = peerpinfo.cmap._map.empty()?0:nb_chunks ;
 
+		qlonglong completed = 0;
 		if(filled_chunks > 0 && nb_chunks > 0)
 		{
 			completed = peerpinfo.cmap.computeProgress(fileInfo.size,chunk_size) ;
@@ -1719,9 +1718,6 @@ void TransfersDialog::updateDisplay()
 void TransfersDialog::insertTransfers() 
 {
 	// Since downloads use an AstractItemModel, we just need to update it, while saving the selected and expanded items.
-
-	std::set<QString> expanded_hashes ;
-	std::set<QString> selected_hashes ;
 
 	DLListModel->update_transfers();
 
@@ -1957,16 +1953,16 @@ void TransfersDialog::pasteLink()
 	RsCollection col ;
 	RSLinkClipboard::pasteLinks(links,RetroShareLink::TYPE_FILE_TREE);
 
-	for(QList<RetroShareLink>::const_iterator it(links.begin());it!=links.end();++it)
+	for(auto &it: links)
 	{
-		auto ft = RsFileTree::fromRadix64((*it).radix().toStdString());
+		auto ft = RsFileTree::fromRadix64(it.radix().toStdString());
 		col.merge_in(*ft);
 	}
 	links.clear();
 	RSLinkClipboard::pasteLinks(links,RetroShareLink::TYPE_FILE);
 
-	for(QList<RetroShareLink>::const_iterator it(links.begin());it!=links.end();++it)
-		col.merge_in((*it).name(),(*it).size(),RsFileHash((*it).hash().toStdString())) ;
+	for(auto &it : links)
+		col.merge_in(it.name(),it.size(),RsFileHash(it.hash().toStdString())) ;
 
 	col.downloadFiles();
 }
@@ -1985,7 +1981,7 @@ void TransfersDialog::getDLSelectedItems(std::set<RsFileHash> *ids, std::set<int
 	int i, imax = selectedRows.count();
 	for (i = 0; i < imax; ++i) {
 		QModelIndex index = selectedRows.at(i);
-		if (index.parent().isValid())
+		if (index.parent().isValid() && index.model())
 			index = index.model()->index(index.parent().row(), COLUMN_ID);
 
 		if (ids) {

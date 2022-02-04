@@ -340,5 +340,7 @@
         <file>icons/notification.png</file>
         <file>icons/wire.png</file>
         <file>icons/wire-circle.png</file>
+        <file>icons/folder-account.svg</file>
+        <file>icons/notification.svg</file>
     </qresource>
 </RCC>

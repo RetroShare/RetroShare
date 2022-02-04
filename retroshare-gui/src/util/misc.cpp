@@ -19,17 +19,20 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <QString>
+#include "misc.h"
+
+#include "gui/common/FilesDefs.h"
+#include "util/rsdebug.h"
+
+#include <QApplication>
+#include <QBuffer>
+#include <QByteArray>
 #include <QDir>
 #include <QFileDialog>
-#include <QByteArray>
-#include <QBuffer>
-#include <time.h>
 #include <QFontDialog>
+#include <QString>
 
-#include "misc.h"
-#include "util/rsdebug.h"
-#include "gui/common/FilesDefs.h"
+#include <time.h>
 
 // return best userfriendly storage unit (B, KiB, MiB, GiB, TiB)
 // use Binary prefix standards from IEC 60027-2
@@ -67,46 +70,44 @@ QString misc::fingerPrintStyleSplit(const QString& in)
 bool misc::isPreviewable(QString extension)
 {
     extension = extension.toUpper();
-    if(extension == "AVI") return true;
-    if(extension == "MP3") return true;
-    if(extension == "OGG") return true;
-    if(extension == "OGM") return true;
-    if(extension == "WMV") return true;
-    if(extension == "WMA") return true;
-    if(extension == "MPEG") return true;
-    if(extension == "MPG") return true;
-    if(extension == "ASF") return true;
-    if(extension == "QT") return true;
-    if(extension == "RM") return true;
-    if(extension == "RMVB") return true;
-    if(extension == "RMV") return true;
-    if(extension == "SWF") return true;
-    if(extension == "FLV") return true;
-    if(extension == "WAV") return true;
-    if(extension == "MOV") return true;
-    if(extension == "VOB") return true;
-    if(extension == "MID") return true;
-    if(extension == "AC3") return true;
-    if(extension == "MP4") return true;
-    if(extension == "MP2") return true;
-    if(extension == "AVI") return true;
-    if(extension == "FLAC") return true;
-    if(extension == "AU") return true;
-    if(extension == "MPE") return true;
-    if(extension == "MOV") return true;
-    if(extension == "MKV") return true;
-    if(extension == "AIF") return true;
-    if(extension == "AIFF") return true;
-    if(extension == "AIFC") return true;
-    if(extension == "RA") return true;
-    if(extension == "RAM") return true;
-    if(extension == "M4P") return true;
-    if(extension == "M4A") return true;
     if(extension == "3GP") return true;
     if(extension == "AAC") return true;
-    if(extension == "SWA") return true;
+    if(extension == "AC3") return true;
+    if(extension == "AIF") return true;
+    if(extension == "AIFC") return true;
+    if(extension == "AIFF") return true;
+    if(extension == "ASF") return true;
+    if(extension == "AU") return true;
+    if(extension == "AVI") return true;
+    if(extension == "FLAC") return true;
+    if(extension == "FLV") return true;
+    if(extension == "M4P") return true;
+    if(extension == "M4A") return true;
+    if(extension == "MOV") return true;
+    if(extension == "MID") return true;
+    if(extension == "MKV") return true;
+    if(extension == "MP2") return true;
+    if(extension == "MP3") return true;
+    if(extension == "MP4") return true;
     if(extension == "MPC") return true;
+    if(extension == "MPE") return true;
+    if(extension == "MPEG") return true;
+    if(extension == "MPG") return true;
     if(extension == "MPP") return true;
+    if(extension == "OGG") return true;
+    if(extension == "OGM") return true;
+    if(extension == "QT") return true;
+    if(extension == "RA") return true;
+    if(extension == "RAM") return true;
+    if(extension == "RM") return true;
+    if(extension == "RMV") return true;
+    if(extension == "RMVB") return true;
+    if(extension == "SWA") return true;
+    if(extension == "SWF") return true;
+    if(extension == "VOB") return true;
+    if(extension == "WAV") return true;
+    if(extension == "WMA") return true;
+    if(extension == "WMV") return true;
     return false;
 }
 
@@ -226,8 +227,6 @@ QString misc::userFriendlyUnit(double count, unsigned int decimal, double factor
     if (count <= 0.0) {
         return "0";
     }
-
-    QString output;
 
     int i;
     for (i = 0; i < 5; ++i) {
@@ -434,3 +433,12 @@ void misc::clearLayout(QLayout * layout) {
 		//delete item;//Auto deleted by Qt.
 	}
 }
+
+QSizeF misc::getFontSizeFactor(const QString &group, const qreal defaultFactor /*= 1.0*/)
+{
+	static qreal appFontWidth  = QFontMetrics(QApplication::font()).maxWidth();
+	static qreal appFontHeight = QFontMetrics(QApplication::font()).height();
+	qreal factor = Settings->valueFromGroup("FontHeighFactor",group,defaultFactor).toReal();
+	return QSizeF(appFontWidth*factor,appFontHeight*factor);
+}
+

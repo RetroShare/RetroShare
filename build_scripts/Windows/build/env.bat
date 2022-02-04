@@ -4,10 +4,16 @@ set ParamDebug=0
 set ParamAutologin=0
 set ParamPlugins=0
 set ParamJsonApi=0
+set ParamService=0
+set ParamFriendServer=0
+set ParamEmbeddedFriendServer=0
 set ParamUseNativeDialogs=0
 set ParamTor=0
 set NonInteractive=0
 set CoreCount=%NUMBER_OF_PROCESSORS%
+
+set Module=%~1
+shift /1
 
 :parameter_loop
 if "%~1" NEQ "" (
@@ -20,6 +26,12 @@ if "%~1" NEQ "" (
 			set ParamAutologin=1
 		) else if "%%~a"=="jsonapi" (
 			set ParamJsonApi=1
+		) else if "%%~a"=="service" (
+			set ParamService=1
+		) else if "%%~a"=="friendserver" (
+			set ParamFriendServer=1
+		) else if "%%~a"=="embedded-friendserver" (
+			set ParamEmbeddedFriendServer=1
 		) else if "%%~a"=="plugins" (
 			set ParamPlugins=1
 		) else if "%%~a"=="tor" (
@@ -32,7 +44,7 @@ if "%~1" NEQ "" (
 			set ParamUseNativeDialogs=1
 		) else (
 			echo.
-			echo Unknown parameter %1
+			echo Unknown parameter %1 for %Module%
 			goto :usage
 		)
 	)
@@ -102,21 +114,31 @@ echo.
 echo Usage: release^|debug [^<optional parameters^>]
 echo.
 echo Mandatory parameter
-echo release^|debug      Build release or debug version
+echo release^|debug         Build release or debug version
 echo.
-echo Optional parameter (need clean when changed)
-echo autologin          Build with autologin
-echo jsonapi            Build with jsonapi
-echo plugins            Build plugins
-echo nativedialogs      Build with native dialogs
-echo.
-echo Optional parameter
-echo singlethread       Use only 1 thread for building
-echo.
-echo Parameter for pack
-echo tor                Pack tor version
-echo.
-echo Parameter for git-log
-echo non-interactive    Non-interactive mode
+if "%Module%"=="build" (
+	echo Optional parameter ^(need clean when changed^)
+	echo autologin             Build with autologin
+	echo jsonapi               Build with jsonapi
+	echo service               Build service
+	echo friendserver          Build Friend Server
+	echo embedded-friendserver Build with embedded Friend Server
+	echo plugins               Build plugins
+	echo nativedialogs         Build with native dialogs
+	echo.
+	echo Optional parameter
+	echo singlethread          Use only 1 thread for building
+)
+if "%Module%"=="pack" (
+	echo Optional parameter
+	echo service               Pack service
+	echo friendserver          Pack Friend Server ^(needs Tor^)
+	echo tor                   Pack Tor version
+	echo plugins               Pack plugins
+)
+if "%Module%"=="git-log" (
+	echo Optional parameter
+	echo non-interactive       Non-interactive mode
+)
 echo.
 exit /B 2

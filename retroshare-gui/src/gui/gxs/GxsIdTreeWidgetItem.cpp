@@ -199,7 +199,7 @@ void GxsIdTreeItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
 	if(id.isNull())
 	{
 		if (ownOption.icon.isNull())
-			ownOption.icon = FilesDefs::getIconFromQtResourcePath(":/icons/notification.png");
+			ownOption.icon = FilesDefs::getIconFromQtResourcePath(":/icons/notification.svg");
 	}
 	else
 	{
