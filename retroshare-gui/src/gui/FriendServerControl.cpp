@@ -44,6 +44,8 @@ FriendServerControl::FriendServerControl(QWidget *parent)
     /* Invoke the Qt Designer generated object setup routine */
     setupUi(this);
 
+    friendServerOnOff_CB->setEnabled(false); // until FS is connected.
+
     if(!rsFriendServer)
     {
         setEnabled(false);
@@ -170,11 +172,15 @@ void FriendServerControl::updateFriendServerStatusIcon(bool ok)
     {
         torServerStatus_LB->setToolTip(tr("Friend server is currently reachable.")) ;
         mCheckingServerMovie->setFileName(ICON_STATUS_OK);
+        friendServerOnOff_CB->setEnabled(true);
     }
     else
     {
+        rsFriendServer->stopServer();
         torServerStatus_LB->setToolTip(tr("The proxy is not enabled or broken.\nAre all services up and running fine??\nAlso check your ports!")) ;
         mCheckingServerMovie->setFileName(ICON_STATUS_UNKNOWN);
+        friendServerOnOff_CB->setChecked(false);
+        friendServerOnOff_CB->setEnabled(false);
     }
     mCheckingServerMovie->start();
 }
