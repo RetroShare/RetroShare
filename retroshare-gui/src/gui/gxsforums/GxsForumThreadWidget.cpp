@@ -321,6 +321,10 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
     float f = QFontMetricsF(font()).height()/14.0f ;
 
+    QFontMetricsF fontMetrics(ui->threadTreeWidget->font());
+    int iconHeight = fontMetrics.height() * 1.4;
+    ui->threadTreeWidget->setIconSize(QSize(iconHeight, iconHeight));
+
     /* Set header resize modes and initial section sizes */
 
     QHeaderView * ttheader = ui->threadTreeWidget->header () ;
