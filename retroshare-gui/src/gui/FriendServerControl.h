@@ -35,7 +35,7 @@ public:
 
 protected slots:
     void onOnOffClick(bool b);
-    void onOnionAddressEdit(const QString&);
+    void onOnionAddressEdit();
     void onOnionPortEdit(int);
     void onNbFriendsToRequestsChanged(int n);
     void checkServerAddress();

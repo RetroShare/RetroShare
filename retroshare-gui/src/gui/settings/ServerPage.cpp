@@ -205,9 +205,9 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
     connect(ui.discComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(saveAddresses()));
     connect(ui.netModeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(saveAddresses()));
-    connect(ui.localAddress,   SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
-    connect(ui.extAddress,     SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
-    connect(ui.dynDNS,         SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
+    connect(ui.localAddress,   SIGNAL(editingFinished()),this,SLOT(saveAddresses()));
+    connect(ui.extAddress,     SIGNAL(editingFinished()),this,SLOT(saveAddresses()));
+    connect(ui.dynDNS,         SIGNAL(editingFinished()),this,SLOT(saveAddresses()));
 
     connect(ui.tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
     connect(ui.hiddenpage_proxyAddress_tor, SIGNAL(editingFinished()),this,SLOT(saveAddresses()));
