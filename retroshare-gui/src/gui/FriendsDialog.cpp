@@ -27,6 +27,7 @@
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rshistory.h>
+#include <retroshare/rsinit.h>
 
 #include "chat/ChatUserNotify.h"
 #include "connect/ConnectFriendWizard.h"
@@ -92,7 +93,8 @@ FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
 
     ui.tabWidget->setTabPosition(QTabWidget::North);
 #ifdef RS_EMBEDED_FRIEND_SERVER
-    ui.tabWidget->addTab(friendServerControl = new FriendServerControl(),QIcon(IMAGE_PEERS), tr("Friend Server"));
+    if(RsAccounts::isTorAuto())
+        ui.tabWidget->addTab(friendServerControl = new FriendServerControl(),QIcon(IMAGE_PEERS), tr("Friend Server"));
 #endif
     ui.tabWidget->addTab(networkView = new NetworkView(),QIcon(IMAGE_NETWORK2), tr("Network graph"));
     ui.tabWidget->addTab(networkDialog = new NetworkDialog(),QIcon(IMAGE_PEERS), tr("Keyring"));
@@ -123,9 +125,8 @@ FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
 
     // add self nick and Avatar to Friends.
     RsPeerDetails pd ;
-    if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) {
+    if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd))
         ui.nicknameLabel->setText(QString::fromUtf8(pd.name.c_str()) + " (" + QString::fromUtf8(pd.location.c_str())+")");
-    }
 
 	int H = misc::getFontSizeFactor("HelpButton").height();
 	QString hlp_str = tr(
@@ -258,13 +259,9 @@ void FriendsDialog::loadmypersonalstatus()
 	QString statustring =  QString::fromUtf8(rsMsgs->getCustomStateString().c_str());
 
 	if (statustring.isEmpty())
-	{
 		ui.mypersonalstatusLabel->setText(tr("Set your status message here."));
-	}
 	else
-	{
 		ui.mypersonalstatusLabel->setText(statustring);
-	}
 }
 
 void FriendsDialog::clearChatNotify()
@@ -281,13 +278,11 @@ void FriendsDialog::statusmessage()
 /*static*/ bool FriendsDialog::isGroupChatActive()
 {
 	FriendsDialog *friendsDialog = dynamic_cast<FriendsDialog*>(MainWindow::getPage(MainWindow::Friends));
-	if (!friendsDialog) {
+    if (!friendsDialog)
 		return false;
-	}
 
-    if (friendsDialog->ui.tabWidget->currentWidget() == friendsDialog->ui.groupChatTab) {
+    if (friendsDialog->ui.tabWidget->currentWidget() == friendsDialog->ui.groupChatTab)
         return true;
-    }
 
     return false;
 }

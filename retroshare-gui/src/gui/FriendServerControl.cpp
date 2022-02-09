@@ -44,6 +44,8 @@ FriendServerControl::FriendServerControl(QWidget *parent)
     /* Invoke the Qt Designer generated object setup routine */
     setupUi(this);
 
+    friendServerOnOff_CB->setEnabled(false); // until FS is connected.
+
     if(!rsFriendServer)
     {
         setEnabled(false);
@@ -78,7 +80,7 @@ FriendServerControl::FriendServerControl(QWidget *parent)
 
     QObject::connect(friendServerOnOff_CB,SIGNAL(toggled(bool)),this,SLOT(onOnOffClick(bool)));
     QObject::connect(torServerFriendsToRequest_SB,SIGNAL(valueChanged(int)),this,SLOT(onFriendsToRequestChanged(int)));
-    QObject::connect(torServerAddress_LE,SIGNAL(textChanged(const QString&)),this,SLOT(onOnionAddressEdit(const QString&)));
+    QObject::connect(torServerAddress_LE,SIGNAL(editingFinished()),this,SLOT(onOnionAddressEdit()));
     QObject::connect(torServerPort_SB,SIGNAL(valueChanged(int)),this,SLOT(onOnionPortEdit(int)));
 
     QObject::connect(mConnectionCheckTimer,SIGNAL(timeout()),this,SLOT(checkServerAddress()));
@@ -128,7 +130,7 @@ void FriendServerControl::onOnionPortEdit(int)
     }
 }
 
-void FriendServerControl::onOnionAddressEdit(const QString&)
+void FriendServerControl::onOnionAddressEdit()
 {
     // Setup timer to auto-check the friend server address
     mConnectionCheckTimer->stop();
@@ -170,11 +172,15 @@ void FriendServerControl::updateFriendServerStatusIcon(bool ok)
     {
         torServerStatus_LB->setToolTip(tr("Friend server is currently reachable.")) ;
         mCheckingServerMovie->setFileName(ICON_STATUS_OK);
+        friendServerOnOff_CB->setEnabled(true);
     }
     else
     {
+        rsFriendServer->stopServer();
         torServerStatus_LB->setToolTip(tr("The proxy is not enabled or broken.\nAre all services up and running fine??\nAlso check your ports!")) ;
         mCheckingServerMovie->setFileName(ICON_STATUS_UNKNOWN);
+        friendServerOnOff_CB->setChecked(false);
+        friendServerOnOff_CB->setEnabled(false);
     }
     mCheckingServerMovie->start();
 }

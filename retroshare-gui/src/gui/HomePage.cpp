@@ -136,6 +136,7 @@ void HomePage::handleEvent(std::shared_ptr<const RsEvent> e)
     {
     case RsNetworkEventCode::LOCAL_IP_UPDATED:  // [fallthrough]
     case RsNetworkEventCode::EXTERNAL_IP_UPDATED:  // [fallthrough]
+    case RsNetworkEventCode::DNS_UPDATED:  // [fallthrough]
                 RsQThreadUtils::postToObject( [=]()
                 {
                     updateCertificate();
@@ -213,7 +214,7 @@ void HomePage::updateOwnCert()
     }
 
     QString invite ;
-    RetroshareInviteFlags invite_flags = RetroshareInviteFlags::CURRENT_IP;
+    RetroshareInviteFlags invite_flags = RetroshareInviteFlags::CURRENT_IP | RetroshareInviteFlags::DNS;
 
     if(mIncludeAllIPs)
         invite_flags |= RetroshareInviteFlags::FULL_IP_HISTORY;
