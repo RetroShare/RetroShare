@@ -599,7 +599,7 @@ void ConnectFriendWizard::initializePage(int id)
 			if(mIsShortInvite)
 			{
 				if(ui->nameEdit->text().isEmpty())
-					ui->nameEdit->setText(tr("[Unknown]"));
+					ui->nameEdit->setText(QString::fromUtf8(peerDetails.name.c_str()));
 				ui->addKeyToKeyring_CB->setChecked(false);
 				ui->addKeyToKeyring_CB->setEnabled(false);
 				ui->signersEdit->hide();
