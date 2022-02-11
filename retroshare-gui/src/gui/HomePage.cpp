@@ -93,12 +93,12 @@ HomePage::HomePage(QWidget *parent) :
         menu->addAction(mIncludeIPsAct);
     }
 
-    QAction *useOldFormatAct = new QAction(QIcon(), tr("Use old certificate format"),this);
-    useOldFormatAct->setToolTip(tr("Displays the certificate format used up to version 0.6.5\nOld Retroshare nodes will not understand the\nnew short format"));
-    connect(useOldFormatAct, SIGNAL(triggered()), this, SLOT(updateOwnCert()));
-    useOldFormatAct->setCheckable(true);
-    useOldFormatAct->setChecked(false);
-    menu->addAction(useOldFormatAct);
+    mUseOldFormatAct = new QAction(QIcon(), tr("Use old certificate format"),this);
+    mUseOldFormatAct->setToolTip(tr("Displays the certificate format used up to version 0.6.5\nOld Retroshare nodes will not understand the\nnew short format"));
+    connect(mUseOldFormatAct, SIGNAL(triggered()), this, SLOT(updateOwnCert()));
+    mUseOldFormatAct->setCheckable(true);
+    mUseOldFormatAct->setChecked(false);
+    menu->addAction(mUseOldFormatAct);
 
     ui->shareButton->setMenu(menu);
 

@@ -61,6 +61,10 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WindowFlags flags)
     //connect(ui.exportprofile,SIGNAL(clicked()), this, SLOT(profilemanager()));
     connect(ui.exportprofile,SIGNAL(clicked()), this, SLOT(exportProfile()));
 
+    // Remove this because it duplicates functionality of the HomePage.
+    ui.retroshareId_LB->hide();
+    ui.retroshareId_content_LB->hide();
+    ui.stackPageCertificate->hide();
 
 	ui.onlinesince->setText(DateTime::formatLongDateTime(Rshare::startupTime()));
 }
@@ -104,7 +108,7 @@ void CryptoPage::showEvent ( QShowEvent * /*event*/ )
 
         std::string invite ;
         rsPeers->getShortInvite(invite,rsPeers->getOwnId(),RetroshareInviteFlags::RADIX_FORMAT | RsPeers::defaultCertificateFlags);
-        ui.retroshareid->setText(QString::fromUtf8(invite.c_str()));
+        ui.retroshareId_content_LB->setText(QString::fromUtf8(invite.c_str()));
 		
         /* set retroshare version */
         ui.version->setText(Rshare::retroshareVersion(true));
