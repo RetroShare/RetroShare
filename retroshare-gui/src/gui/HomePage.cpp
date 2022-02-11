@@ -208,7 +208,7 @@ HomePage::~HomePage()
 void HomePage::getOwnCert(QString& invite,QString& description) const
 {
 
-    RsPeerDetails detail;
+    RsPeerDetails detail,parsed_details;
 
     if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
     {
@@ -235,9 +235,19 @@ void HomePage::getOwnCert(QString& invite,QString& description) const
         std::string short_invite;
         rsPeers->getShortInvite(short_invite,rsPeers->getOwnId(),invite_flags | RetroshareInviteFlags::RADIX_FORMAT);
         invite = QString::fromStdString(short_invite);
+        uint32_t err;
+
+        if(!rsPeers->parseShortInvite(short_invite,parsed_details,err))
+            std::cerr << "Something unexpected happenned while re-parsing a cert just created: error " << err << std::endl;
     }
     else
+    {
         invite = QString::fromStdString(rsPeers->GetRetroshareInvite(detail.id,invite_flags));
+        uint32_t err;
+
+        if(!rsPeers->loadDetailsFromStringCert(invite.toStdString(),parsed_details,err))
+            std::cerr << "Something unexpected happenned while re-parsing a cert just created: error " << err << std::endl;
+    }
 
     bool include_extra_locators = mIncludeIPHistoryact->isChecked();
     description = ConfCertDialog::getCertificateDescription(detail,false,!mUseOldFormatact->isChecked(),include_extra_locators);
