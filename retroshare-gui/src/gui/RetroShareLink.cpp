@@ -22,6 +22,7 @@
 
 #include "ChatLobbyWidget.h"
 #include "MainWindow.h"
+#include "HomePage.h"
 #include "chat/ChatDialog.h"
 #include "common/PeerDefs.h"
 #include "common/RsCollection.h"
@@ -551,32 +552,41 @@ RetroShareLink RetroShareLink::createMessage(const RsGxsId& peerId, const QStrin
 
 RetroShareLink RetroShareLink::createCertificate(const RsPeerId& ssl_id)
 {
-	RetroShareLink link;
-	link.clear();
+    RetroShareLink link;
+    link.clear();
 
 #ifndef RS_NO_WARN_CPP
 #pragma message("csoler 2012-08-14: This is baaaaaad code")
 #endif
 
-	// 	- we should not need to parse and re-read a cert in old format.
-	//
-	RsPeerDetails detail;
-	if (rsPeers->getPeerDetails(ssl_id, detail) == false) {
-		std::cerr << "RetroShareLink::createPerson() Couldn't find peer id " << ssl_id << std::endl;
-	} else {
+    // 	- we should not need to parse and re-read a cert in old format.
+    //
+    RsPeerDetails detail;
+    if (rsPeers->getPeerDetails(ssl_id, detail) == false)
+        std::cerr << "RetroShareLink::createPerson() Couldn't find peer id " << ssl_id << std::endl;
+    else
+    {
+        link._type = TYPE_CERTIFICATE;
 
-		link._type = TYPE_CERTIFICATE;
-        link._radix = QString::fromUtf8(rsPeers->GetRetroshareInvite(ssl_id).c_str());
-		link._name = QString::fromUtf8(detail.name.c_str());
-		link._location = QString::fromUtf8(detail.location.c_str());
-		link._radix.replace("\n","");
+        if(rsPeers->getOwnId() == ssl_id)	// in this case, use application-wide parameters set in HomePage
+        {
+            QString invite,description;
+            static_cast<HomePage*>(MainWindow::getPage(MainWindow::Home))->getOwnCert(invite,description);
+            link._radix = invite;
+        }
+        else
+            link._radix = QString::fromUtf8(rsPeers->GetRetroshareInvite(ssl_id).c_str());
 
-		std::cerr << "Found radix                = " << link._radix.toStdString() << std::endl;
-	}
+        link._name = QString::fromUtf8(detail.name.c_str());
+        link._location = QString::fromUtf8(detail.location.c_str());
+        link._radix.replace("\n","");
 
-	link.check();
+        std::cerr << "Found radix                = " << link._radix.toStdString() << std::endl;
+    }
 
-	return link;
+    link.check();
+
+    return link;
 }
 RetroShareLink RetroShareLink::createUnknownSslCertificate(const RsPeerId& sslId, const RsPgpId& gpgId)
 {

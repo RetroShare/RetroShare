@@ -80,25 +80,37 @@ HomePage::HomePage(QWidget *parent) :
 
     if(!RsAccounts::isHiddenNode())
     {
+        mIncludeLocIPact = new QAction(QIcon(), tr("Include current local IP"),this);
+        connect(mIncludeLocIPact, SIGNAL(triggered()), this, SLOT(updateOwnCert()));
+        mIncludeLocIPact->setCheckable(true);
+        mIncludeLocIPact->setChecked(true);
+        menu->addAction(mIncludeLocIPact);
+
+        mIncludeExtIPact = new QAction(QIcon(), tr("Include current external IP"),this);
+        connect(mIncludeExtIPact, SIGNAL(triggered()), this, SLOT(updateOwnCert()));
+        mIncludeExtIPact->setCheckable(true);
+        mIncludeExtIPact->setChecked(true);
+        menu->addAction(mIncludeExtIPact);
+
         mIncludeDNSact = new QAction(QIcon(), tr("Include my DNS"),this);
         connect(mIncludeDNSact, SIGNAL(triggered()), this, SLOT(updateOwnCert()));
         mIncludeDNSact->setCheckable(true);
         mIncludeDNSact->setChecked(true);
         menu->addAction(mIncludeDNSact);
 
-        mIncludeIPsAct = new QAction(QIcon(), tr("Include all your known IPs"),this);
-        connect(mIncludeIPsAct, SIGNAL(triggered()), this, SLOT(updateOwnCert()));
-        mIncludeIPsAct->setCheckable(true);
-        mIncludeIPsAct->setChecked(false);
-        menu->addAction(mIncludeIPsAct);
+        mIncludeIPHistoryact = new QAction(QIcon(), tr("Include all IPs history"),this);
+        connect(mIncludeIPHistoryact, SIGNAL(triggered()), this, SLOT(updateOwnCert()));
+        mIncludeIPHistoryact->setCheckable(true);
+        mIncludeIPHistoryact->setChecked(false);
+        menu->addAction(mIncludeIPHistoryact);
     }
 
-    mUseOldFormatAct = new QAction(QIcon(), tr("Use old certificate format"),this);
-    mUseOldFormatAct->setToolTip(tr("Displays the certificate format used up to version 0.6.5\nOld Retroshare nodes will not understand the\nnew short format"));
-    connect(mUseOldFormatAct, SIGNAL(triggered()), this, SLOT(updateOwnCert()));
-    mUseOldFormatAct->setCheckable(true);
-    mUseOldFormatAct->setChecked(false);
-    menu->addAction(mUseOldFormatAct);
+    mUseOldFormatact = new QAction(QIcon(), tr("Use old certificate format"),this);
+    mUseOldFormatact->setToolTip(tr("Displays the certificate format used up to version 0.6.5\nOld Retroshare nodes will not understand the\nnew short format"));
+    connect(mUseOldFormatact, SIGNAL(triggered()), this, SLOT(updateOwnCert()));
+    mUseOldFormatact->setCheckable(true);
+    mUseOldFormatact->setChecked(false);
+    menu->addAction(mUseOldFormatact);
 
     ui->shareButton->setMenu(menu);
 
@@ -193,9 +205,8 @@ HomePage::~HomePage()
     delete ui;
 }
 
-void HomePage::updateOwnCert()
+void HomePage::getOwnCert(QString& invite,QString& description) const
 {
-    bool include_extra_locators = mIncludeIPsAct->isChecked();
 
     RsPeerDetails detail;
 
@@ -205,23 +216,47 @@ void HomePage::updateOwnCert()
         return ;
     }
 
-    QString invite ;
-    RetroshareInviteFlags invite_flags = RsPeers::defaultCertificateFlags;
+    RetroshareInviteFlags invite_flags = RetroshareInviteFlags::NOTHING;
 
-    if(mIncludeIPsAct->isChecked())
+    if(mIncludeLocIPact->isChecked())
+        invite_flags |= RetroshareInviteFlags::CURRENT_LOCAL_IP;
+
+    if(mIncludeExtIPact->isChecked())
+        invite_flags |= RetroshareInviteFlags::CURRENT_EXTERNAL_IP;
+
+    if(mIncludeDNSact->isChecked())
+        invite_flags |= RetroshareInviteFlags::DNS;
+
+    if(mIncludeIPHistoryact->isChecked())
         invite_flags |= RetroshareInviteFlags::FULL_IP_HISTORY;
 
-    if(!mUseOldFormatAct->isChecked())
+    if(!mUseOldFormatact->isChecked())
     {
         std::string short_invite;
         rsPeers->getShortInvite(short_invite,rsPeers->getOwnId(),invite_flags | RetroshareInviteFlags::RADIX_FORMAT);
+        invite = QString::fromStdString(short_invite);
+    }
+    else
+        invite = QString::fromStdString(rsPeers->GetRetroshareInvite(detail.id,invite_flags));
 
+    bool include_extra_locators = mIncludeIPHistoryact->isChecked();
+    description = ConfCertDialog::getCertificateDescription(detail,false,!mUseOldFormatact->isChecked(),include_extra_locators);
+}
+
+void HomePage::updateOwnCert()
+{
+    QString certificate, description;
+
+    getOwnCert(certificate,description);
+
+    if(!mUseOldFormatact->isChecked())	// in this case we have to split the cert for a bettr display
+    {
         QString S;
         QString txt;
 
-        for(uint32_t i=0;i<short_invite.size();)
+        for(int i=0;i<certificate.size();)
             if(S.length() < 100)
-                S += short_invite[i++];
+                S += certificate[i++];
             else
             {
                 txt += S + "\n";
@@ -229,16 +264,10 @@ void HomePage::updateOwnCert()
             }
 
         txt += S;
-
-        invite = txt;	// the "\n" is here to make some space
+        certificate = txt;	// the "\n" is here to make some space
     }
-    else
-        invite = QString::fromStdString(rsPeers->GetRetroshareInvite(detail.id,invite_flags));
 
-    ui->retroshareid->setText("\n"+invite+"\n");
-
-    QString description = ConfCertDialog::getCertificateDescription(detail,false,!mUseOldFormatAct->isChecked(),include_extra_locators);
-
+    ui->retroshareid->setText("\n"+certificate+"\n");
     ui->retroshareid->setToolTip(description);
 }
 

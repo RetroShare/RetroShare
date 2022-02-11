@@ -46,6 +46,10 @@ public:
 	virtual QString pageName() const { return tr("Home") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 
+    // Returns the certificate along with its description using current options.
+
+    void getOwnCert(QString& invite,QString& description) const;
+
 private slots:
 #ifdef DEAD_CODE
     void certContextMenu(QPoint);
@@ -64,8 +68,10 @@ private:
 	Ui::HomePage *ui;
 
     QAction *mIncludeDNSact;
-    QAction *mIncludeIPsAct;
-    QAction *mUseOldFormatAct;
+    QAction *mIncludeIPHistoryact;
+    QAction *mIncludeExtIPact;
+    QAction *mIncludeLocIPact;
+    QAction *mUseOldFormatact;
 
     RsEventsHandlerId_t mEventHandlerId;
 
