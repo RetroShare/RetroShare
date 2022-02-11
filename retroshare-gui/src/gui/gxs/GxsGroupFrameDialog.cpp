@@ -42,13 +42,11 @@
 
 /* Images for TreeWidget */
 #define IMAGE_SUBSCRIBE      ":/images/edit_add24.png"
-#define IMAGE_UNSUBSCRIBE    ":/images/cancel.png"
+#define IMAGE_UNSUBSCRIBE    ":/icons/cancel.svg"
 #define IMAGE_INFO           ":/images/info16.png"
-//#define IMAGE_GROUPAUTHD     ":/images/konv_message2.png"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
 #define IMAGE_EDIT           ":/icons/png/pencil-edit-button.png"
-#define IMAGE_SHARE          ":/images/share-icon-16.png"
-#define IMAGE_TABNEW         ":/images/tab-new.png"
+#define IMAGE_TABNEW         ":/icons/newtab.svg"
 #define IMAGE_DELETE         ":/images/delete.png"
 #define IMAGE_RETRIEVE       ":/images/edit_add24.png"
 #define IMAGE_COMMENT        ""
@@ -490,7 +488,7 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 			ctxMenu2->setEnabled(isSubscribed);
 
 			if (shareKeyType()) {
-				action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_SHARE), tr("Share publish permissions..."), this, SLOT(sharePublishKey()));
+				action = contextMnu.addAction(QIcon(""), tr("Share publish permissions..."), this, SLOT(sharePublishKey()));
 				action->setEnabled(!mGroupId.isNull() && isPublisher);
 			}
 

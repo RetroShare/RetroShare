@@ -141,7 +141,6 @@
 #define IMAGE_OVERLAY           ":/icons/star_overlay_128.png"
 
 #define IMAGE_BWGRAPH           ":/icons/png/bandwidth.png"
-#define IMAGE_MESSENGER         ":/images/rsmessenger48.png"
 #define IMAGE_COLOR         	":/images/highlight.png"
 #define IMAGE_NEWRSCOLLECTION   ":/images/library.png"
 #define IMAGE_ADDSHARE          ":/images/directoryadd_24x24_shadow.png"
@@ -625,7 +624,7 @@ void MainWindow::createTrayIcon()
 
     trayMenu->addSeparator();
 #ifdef MESSENGER_WINDOW
-    trayMenu->addAction(QIcon(IMAGE_MESSENGER), tr("Open Messenger"), this, SLOT(showMessengerWindow()));
+    trayMenu->addAction(QIcon(), tr("Open Messenger"), this, SLOT(showMessengerWindow()));
 #endif
     trayMenu->addAction(QIcon(IMAGE_MESSAGES), tr("Open Messages"), this, SLOT(showMess()));
 #ifdef RS_JSONAPI

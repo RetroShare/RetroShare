@@ -544,8 +544,8 @@ QVariant RsMessageModel::decorationRole(const Rs::Msgs::MsgInfoSummary& fmpe,int
 		case COLUMN_THREAD_SUBJECT:
 		{
 			if(fmpe.msgflags & RS_MSG_NEW         )  return FilesDefs::getIconFromQtResourcePath(":/images/message-state-new.png");
-			if(fmpe.msgflags & RS_MSG_USER_REQUEST)  return FilesDefs::getIconFromQtResourcePath(":/images/user/user_request16.png");
-			if(fmpe.msgflags & RS_MSG_FRIEND_RECOMMENDATION) return FilesDefs::getIconFromQtResourcePath(":/images/user/friend_suggestion16.png");
+			if(fmpe.msgflags & RS_MSG_USER_REQUEST)  return FilesDefs::getIconFromQtResourcePath(":/images/user/user_request48.png");
+			if(fmpe.msgflags & RS_MSG_FRIEND_RECOMMENDATION) return FilesDefs::getIconFromQtResourcePath(":/images/user/invite24.png");
 			if(fmpe.msgflags & RS_MSG_PUBLISH_KEY) return FilesDefs::getIconFromQtResourcePath(":/images/share-icon-16.png");
 
 			if(fmpe.msgflags & RS_MSG_UNREAD_BY_USER)

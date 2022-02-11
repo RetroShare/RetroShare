@@ -68,15 +68,13 @@
 #define IMAGE_MSG                ":/icons/mail/write-mail.png"
 #define IMAGE_CONNECT            ":/images/connect_friend.png"
 #define IMAGE_COPYLINK           ":/images/copyrslink.png"
-#define IMAGE_GROUP16            ":/images/user/group16.png"
+#define IMAGE_GROUPS             ":/icons/groups/colored.svg"
 #define IMAGE_EDIT               ":/icons/png/pencil-edit-button.png"
-#define IMAGE_REMOVE             ":/images/delete.png"
-#define IMAGE_EXPAND             ":/images/edit_add24.png"
-#define IMAGE_COLLAPSE           ":/images/edit_remove24.png"
+#define IMAGE_REMOVE             ":/icons/cancel.svg"
+#define IMAGE_ADD                ":/icons/png/add.png"
 /* Images for Status icons */
 #define IMAGE_AVAILABLE          ":/images/user/identityavaiblecyan24.png"
 #define IMAGE_PASTELINK          ":/images/pasterslink.png"
-#define IMAGE_GROUP24            ":/images/user/group24.png"
 
 #define COLUMN_DATA     0 // column for storing the userdata id
 
@@ -687,8 +685,8 @@ void NewFriendList::peerTreeWidgetCustomPopupMenu()
 						}
 					}
 
-					QMenu *groupsMenu = contextMenu.addMenu(FilesDefs::getIconFromQtResourcePath(IMAGE_GROUP16), tr("Groups"));
-					groupsMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EXPAND), tr("Create new group"), this, SLOT(createNewGroup()));
+					QMenu *groupsMenu = contextMenu.addMenu(FilesDefs::getIconFromQtResourcePath(IMAGE_GROUPS), tr("Groups"));
+					groupsMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_ADD), tr("Create new group"), this, SLOT(createNewGroup()));
 
 					if (addToGroupMenu || moveToGroupMenu || foundGroup) {
 						if (addToGroupMenu) {
@@ -763,8 +761,8 @@ void NewFriendList::peerTreeWidgetCustomPopupMenu()
     if (RSLinkClipboard::empty(RetroShareLink::TYPE_CERTIFICATE))
         action->setDisabled(true);
 
-    contextMenu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EXPAND), tr("Expand all"), ui->peerTreeWidget, SLOT(expandAll()));
-    contextMenu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COLLAPSE), tr("Collapse all"), ui->peerTreeWidget, SLOT(collapseAll()));
+    contextMenu.addAction(QIcon(""), tr("Expand all"), ui->peerTreeWidget, SLOT(expandAll()));
+    contextMenu.addAction(QIcon(""), tr("Collapse all"), ui->peerTreeWidget, SLOT(collapseAll()));
 
     contextMenu.addSeparator();
 

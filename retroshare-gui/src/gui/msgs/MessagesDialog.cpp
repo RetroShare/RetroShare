@@ -663,13 +663,13 @@ void MessagesDialog::messageTreeWidgetCustomPopupMenu(QPoint /*point*/)
 
     QMenu contextMnu( this );
 
-    QAction *action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/view_split_top_bottom.png"), tr("Open in a new window"), this, SLOT(openAsWindow()));
+    QAction *action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/icons/newwindow.svg"), tr("Open in a new window"), this, SLOT(openAsWindow()));
 
     if (nCount != 1) {
         action->setDisabled(true);
     }
 
-    action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/tab-dock.png"), tr("Open in a new tab"), this, SLOT(openAsTab()));
+    action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/icons/newtab.svg"), tr("Open in a new tab"), this, SLOT(openAsTab()));
     if (nCount != 1) {
         action->setDisabled(true);
     }
