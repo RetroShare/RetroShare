@@ -47,27 +47,25 @@ public:
 	virtual QString helpText() const { return ""; } //MainPage
 
 private slots:
-	void certContextMenu(QPoint);
+#ifdef DEAD_CODE
+    void certContextMenu(QPoint);
+#endif
 	void updateOwnCert();
-    void updateCertificate();
 	void runEmailClient();
 	void copyCert();
 	void copyId();
 	void saveCert();
 	void addFriend();
 	void webMail();
-	//void loadCert();
 	void openWebHelp() ;
-    void toggleUseOldFormat() ;
     void recommendFriends();
-	void toggleIncludeAllIPs();
-	void toggleUseShortFormat();
 
 private:
 	Ui::HomePage *ui;
 
-	bool mIncludeAllIPs;
-	bool mUseShortFormat;
+    QAction *mIncludeDNSact;
+    QAction *mIncludeIPsAct;
+    QAction *mUseOldFormatAct;
 
     RsEventsHandlerId_t mEventHandlerId;
 

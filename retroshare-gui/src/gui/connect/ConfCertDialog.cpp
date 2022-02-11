@@ -264,7 +264,7 @@ void ConfCertDialog::loadInvitePage()
 	ui._shouldAddSignatures_CB->setEnabled(detail.gpgSigners.size() > 1) ;
 
 	std::string invite ;
-	RetroshareInviteFlags flags = RetroshareInviteFlags::DNS | RetroshareInviteFlags::CURRENT_IP | RetroshareInviteFlags::RADIX_FORMAT;
+    RetroshareInviteFlags flags = RsPeers::defaultCertificateFlags | RetroshareInviteFlags::RADIX_FORMAT;
 
 	if(!detail.isHiddenNode && ui._includeIPHistory_CB->isChecked())
 		flags |= RetroshareInviteFlags::FULL_IP_HISTORY;
@@ -346,13 +346,20 @@ QString ConfCertDialog::getCertificateDescription(const RsPeerDetails& detail,bo
 		infotext += "</li>" ;
 	}
 
+    if(!detail.dyndns.empty())
+    {
+        infotext += "<li>" ;
+        infotext += tr("<b>DNS:</b> : ") + QString::fromStdString(detail.dyndns);
+        infotext += "</li>" ;
+    }
+
     infotext += QString("</p>") ;
 
     if(rsPeers->getOwnId() == detail.id)
 		if(use_short_format)
-        infotext += tr("<p>You can use this Retroshare ID to make new friends. Send it by email, or give it hand to hand.</p>") ;
-		else
-        infotext += tr("<p>You can use this certificate to make new friends. Send it by email, or give it hand to hand.</p>") ;
+            infotext += tr("<p>You can use this Retroshare ID to make new friends. Send it by email, or give it hand to hand.</p>") ;
+        else
+            infotext += tr("<p>You can use this certificate to make new friends. Send it by email, or give it hand to hand.</p>") ;
 
     return infotext;
 }

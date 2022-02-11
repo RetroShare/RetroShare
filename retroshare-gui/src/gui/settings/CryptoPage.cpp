@@ -103,7 +103,7 @@ void CryptoPage::showEvent ( QShowEvent * /*event*/ )
         ui.pgpfingerprint->setText(misc::fingerPrintStyleSplit(QString::fromStdString(detail.fpr.toStdString())));
 
         std::string invite ;
-        rsPeers->getShortInvite(invite,rsPeers->getOwnId(),RetroshareInviteFlags::RADIX_FORMAT | RetroshareInviteFlags::DNS | RetroshareInviteFlags::CURRENT_IP);
+        rsPeers->getShortInvite(invite,rsPeers->getOwnId(),RetroshareInviteFlags::RADIX_FORMAT | RsPeers::defaultCertificateFlags);
         ui.retroshareid->setText(QString::fromUtf8(invite.c_str()));
 		
         /* set retroshare version */
@@ -139,7 +139,7 @@ void
 CryptoPage::load()
 {
     std::string cert ;
-    RetroshareInviteFlags flags = RetroshareInviteFlags::DNS | RetroshareInviteFlags::CURRENT_IP;
+    RetroshareInviteFlags flags = RetroshareInviteFlags::DNS | RetroshareInviteFlags::CURRENT_LOCAL_IP | RetroshareInviteFlags::CURRENT_EXTERNAL_IP;
 
     if(ui._shortFormat_CB->isChecked())
     {
