@@ -303,13 +303,9 @@ QString ConfCertDialog::getCertificateDescription(const RsPeerDetails& detail,bo
     QString infotext;
 
 	if(use_short_format)
-	{
 		infotext += tr("<p>This Retroshare ID contains:") ;
-	}
 	else
-	{
 		infotext += tr("<p>This certificate contains:") ;
-	}
 	
 	infotext += "<UL>" ;
 
