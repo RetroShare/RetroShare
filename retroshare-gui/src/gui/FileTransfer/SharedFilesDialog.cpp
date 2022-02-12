@@ -91,7 +91,7 @@
 
 //#define DEBUG_SHARED_FILES_DIALOG 1
 
-const QString Image_AddNewAssotiationForFile = ":/images/kcmsystem24.png";
+const QString Image_AddNewAssotiationForFile = ":/icons/svg/options.svg";
 
 class SFDSortFilterProxyModel : public QSortFilterProxyModel
 {

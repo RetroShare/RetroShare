@@ -353,5 +353,6 @@
         <file>icons/newtab.svg</file>
         <file>icons/newwindow.svg</file>
         <file>icons/cancel.svg</file>
+        <file>icons/connection.svg</file>
     </qresource>
 </RCC>

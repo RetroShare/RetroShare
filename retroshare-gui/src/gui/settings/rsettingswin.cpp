@@ -52,8 +52,6 @@
 #	include "JsonApiPage.h"
 #endif
 
-#define IMAGE_GENERAL       ":/images/kcmsystem24.png"
-
 #define ITEM_SPACING 2
 
 #include "rsettingswin.h"

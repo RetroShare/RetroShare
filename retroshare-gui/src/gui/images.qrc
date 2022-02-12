@@ -35,7 +35,6 @@
     <file>images/help/natgreen.png</file>
     <file>images/help/natred.png</file>
     <file>images/pgp.png</file>
-    <file>images/rs_wizard.png</file>
     <file>images/avatar_request.png</file>
     <file>images/avatar_refused.png</file>
     <file>images/avatar_request_unknown.png</file>
@@ -200,10 +199,7 @@
     <file>images/junk.png</file>
     <file>images/junk_on.png</file>
     <file>images/junk_off.png</file>
-    <file>images/connect_friend.png</file>
     <file>images/kalarm.png</file>
-    <file>images/kbackgammon.png</file>
-    <file>images/kcmsystem24.png</file>
     <file>images/ledoff1.png</file>
     <file>images/ledon1.png</file>
     <file>images/locale.png</file>
@@ -268,7 +264,6 @@
     <file>images/replymailall24-hover.png</file>
     <file>images/reset.png</file>
     <file>images/resume.png</file>
-    <file>images/security-high-16.png</file>
     <file>images/security-high-48.png</file>
     <file>images/security-low-48.png</file>
     <file>images/security-medium-48.png</file>
@@ -277,7 +272,6 @@
     <file>images/security-medium-off-48.png</file>
     <file>images/save24.png</file>
     <file>images/send24.png</file>
-    <file>images/settings.png</file>
     <file>images/show_toolbox_frame.png</file>
     <file>images/start.png</file>
     <file>images/stop.png</file>
@@ -346,7 +340,6 @@
     <file>images/up0down1.png</file>
     <file>images/up1down1.png</file>
     <file>images/up1down0.png</file>
-    <file>images/underconstruction.png</file>
     <file>images/user.png</file>
     <file>qss/chat/standard/private/info.xml</file>
     <file>qss/chat/standard/private/incoming.htm</file>
