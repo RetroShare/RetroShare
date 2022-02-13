@@ -238,8 +238,7 @@ void HomePage::getOwnCert(QString& invite,QString& description) const
     else
         invite = QString::fromStdString(rsPeers->GetRetroshareInvite(detail.id,invite_flags));
 
-    bool include_extra_locators = mIncludeIPHistoryact->isChecked();
-    description = ConfCertDialog::getCertificateDescription(detail,false,!mUseOldFormatact->isChecked(),include_extra_locators);
+    description = ConfCertDialog::getCertificateDescription(detail,false,!mUseOldFormatact->isChecked(),invite_flags);
 }
 
 void HomePage::updateOwnCert()

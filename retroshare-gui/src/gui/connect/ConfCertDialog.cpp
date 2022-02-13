@@ -283,7 +283,7 @@ void ConfCertDialog::loadInvitePage()
 		ui.stabWidget->setTabText(PageCertificate, tr("Retroshare Certificate"));
 	}
 	
-	QString infotext = getCertificateDescription(detail,ui._shouldAddSignatures_CB->isChecked(),ui._shortFormat_CB->isChecked(), ui._includeIPHistory_CB->isChecked() );
+    QString infotext = getCertificateDescription(detail,ui._shouldAddSignatures_CB->isChecked(),ui._shortFormat_CB->isChecked(), flags );
 
 	ui.userCertificateText->setToolTip(infotext) ;
 
@@ -297,7 +297,7 @@ void ConfCertDialog::loadInvitePage()
 	ui.userCertificateText->setText(QString::fromUtf8(invite.c_str()));
 }
 
-QString ConfCertDialog::getCertificateDescription(const RsPeerDetails& detail,bool signatures_included,bool use_short_format,bool include_additional_locators)
+QString ConfCertDialog::getCertificateDescription(const RsPeerDetails& detail, bool signatures_included, bool use_short_format,RetroshareInviteFlags invite_flags)
 {
     //infotext += tr("<p>Use this certificate to make new friends. Send it by email, or give it hand to hand.</p>") ;
     QString infotext;
@@ -330,19 +330,23 @@ QString ConfCertDialog::getCertificateDescription(const RsPeerDetails& detail,bo
 
     if(detail.isHiddenNode)
         infotext += tr("<li> <b>onion address</b> and <b>port</b>") +" (" + detail.hiddenNodeAddress.c_str() + ":" + QString::number(detail.hiddenNodePort)+ ")</li>";
-    else if(!include_additional_locators)
+    else if(!!(invite_flags & RetroshareInviteFlags::FULL_IP_HISTORY))
+        for(auto it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
+        {
+            infotext += "<li>" ;
+            infotext += tr("<b>IP address</b> and <b>port</b>: ") + QString::fromStdString(*it) ;
+            infotext += "</li>" ;
+        }
+    else
     {
-        if(!detail.localAddr.empty()) infotext += tr("<li><b>IP address</b> and <b>port</b>: ") + detail.localAddr.c_str() + ":" + QString::number(detail.localPort)+ "</li>";
-        if(!detail.extAddr.empty()) infotext += tr("<li><b>IP address</b> and <b>port</b>: ") + detail.extAddr.c_str() + ":" + QString::number(detail.extPort)+ "</li>";
-    }
-    else for(auto it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
-	{
-		infotext += "<li>" ;
-		infotext += tr("<b>IP address</b> and <b>port</b>: ") + QString::fromStdString(*it) ;
-		infotext += "</li>" ;
-	}
+        if(!!(invite_flags & RetroshareInviteFlags::CURRENT_LOCAL_IP) && !detail.localAddr.empty())
+            infotext += tr("<li><b>IP address</b> and <b>port</b>: ") + detail.localAddr.c_str() + ":" + QString::number(detail.localPort)+ "</li>";
 
-    if(!detail.dyndns.empty())
+        if(!!(invite_flags & RetroshareInviteFlags::CURRENT_EXTERNAL_IP) && !detail.extAddr.empty())
+            infotext += tr("<li><b>IP address</b> and <b>port</b>: ") + detail.extAddr.c_str() + ":" + QString::number(detail.extPort)+ "</li>";
+    }
+
+    if(!!(invite_flags & RetroshareInviteFlags::DNS) && !detail.dyndns.empty())
     {
         infotext += "<li>" ;
         infotext += tr("<b>DNS:</b> : ") + QString::fromStdString(detail.dyndns);

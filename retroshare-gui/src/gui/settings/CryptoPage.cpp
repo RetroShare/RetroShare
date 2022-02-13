@@ -165,7 +165,7 @@ CryptoPage::load()
     RsPeerDetails detail;
     rsPeers->getPeerDetails(rsPeers->getOwnId(),detail);
 
-    ui.certplainTextEdit->setToolTip(ConfCertDialog::getCertificateDescription(detail, ui._includeSignatures_CB->isChecked(), ui._shortFormat_CB->isChecked(), ui._includeAllIPs_CB->isChecked() ));
+    ui.certplainTextEdit->setToolTip(ConfCertDialog::getCertificateDescription(detail, ui._includeSignatures_CB->isChecked(), ui._shortFormat_CB->isChecked(), flags));
 }
 
 void
