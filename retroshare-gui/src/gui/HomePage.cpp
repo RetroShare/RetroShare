@@ -78,6 +78,13 @@ HomePage::HomePage(QWidget *parent) :
     menu->addAction(RecAction);
     menu->addSeparator();
 
+    mUseOldFormatact = new QAction(QIcon(), tr("Use old certificate format"),this);
+    mUseOldFormatact->setToolTip(tr("Displays the certificate format used up to version 0.6.5\nOld Retroshare nodes will not understand the\nnew short format"));
+    connect(mUseOldFormatact, SIGNAL(triggered()), this, SLOT(switchCertificateFormat()));
+    mUseOldFormatact->setCheckable(true);
+    mUseOldFormatact->setChecked(false);
+    menu->addAction(mUseOldFormatact);
+
     if(!RsAccounts::isHiddenNode())
     {
         mIncludeLocIPact = new QAction(QIcon(), tr("Include current local IP"),this);
@@ -104,13 +111,6 @@ HomePage::HomePage(QWidget *parent) :
         mIncludeIPHistoryact->setChecked(false);
         menu->addAction(mIncludeIPHistoryact);
     }
-
-    mUseOldFormatact = new QAction(QIcon(), tr("Use old certificate format"),this);
-    mUseOldFormatact->setToolTip(tr("Displays the certificate format used up to version 0.6.5\nOld Retroshare nodes will not understand the\nnew short format"));
-    connect(mUseOldFormatact, SIGNAL(triggered()), this, SLOT(updateOwnCert()));
-    mUseOldFormatact->setCheckable(true);
-    mUseOldFormatact->setChecked(false);
-    menu->addAction(mUseOldFormatact);
 
     ui->shareButton->setMenu(menu);
 
@@ -162,6 +162,15 @@ void HomePage::handleEvent(std::shared_ptr<const RsEvent> e)
     default:
         break;
     }
+}
+
+void HomePage::switchCertificateFormat()
+{
+    whileBlocking(mIncludeDNSact)->setVisible(!mUseOldFormatact->isChecked());
+    whileBlocking(mIncludeLocIPact)->setVisible(!mUseOldFormatact->isChecked());
+    whileBlocking(mIncludeExtIPact)->setVisible(!mUseOldFormatact->isChecked());
+
+    updateOwnCert();
 }
 
 #ifdef DEAD_CODE
@@ -247,7 +256,7 @@ void HomePage::updateOwnCert()
 
     getOwnCert(certificate,description);
 
-    if(!mUseOldFormatact->isChecked())	// in this case we have to split the cert for a bettr display
+    if(!mUseOldFormatact->isChecked())	// in this case we have to split the cert for a better display
     {
         QString S;
         QString txt;

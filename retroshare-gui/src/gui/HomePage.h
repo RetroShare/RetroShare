@@ -63,6 +63,7 @@ private slots:
 	void webMail();
 	void openWebHelp() ;
     void recommendFriends();
+    void switchCertificateFormat();
 
 private:
 	Ui::HomePage *ui;
