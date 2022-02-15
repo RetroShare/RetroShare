@@ -80,7 +80,7 @@ HomePage::HomePage(QWidget *parent) :
 
     mUseOldFormatact = new QAction(QIcon(), tr("Use old certificate format"),this);
     mUseOldFormatact->setToolTip(tr("Displays the certificate format used up to version 0.6.5\nOld Retroshare nodes will not understand the\nnew short format"));
-    connect(mUseOldFormatact, SIGNAL(triggered()), this, SLOT(switchCertificateFormat()));
+    connect(mUseOldFormatact, SIGNAL(triggered()), this, SLOT(updateOwnCert()));
     mUseOldFormatact->setCheckable(true);
     mUseOldFormatact->setChecked(false);
     menu->addAction(mUseOldFormatact);
@@ -162,15 +162,6 @@ void HomePage::handleEvent(std::shared_ptr<const RsEvent> e)
     default:
         break;
     }
-}
-
-void HomePage::switchCertificateFormat()
-{
-    whileBlocking(mIncludeDNSact)->setVisible(!mUseOldFormatact->isChecked());
-    whileBlocking(mIncludeLocIPact)->setVisible(!mUseOldFormatact->isChecked());
-    whileBlocking(mIncludeExtIPact)->setVisible(!mUseOldFormatact->isChecked());
-
-    updateOwnCert();
 }
 
 #ifdef DEAD_CODE
