@@ -100,9 +100,10 @@ public:
         Channels           = 6,  /** Channels page. */
         Forums             = 7,  /** Forums page. */
         Search             = 8,  /** Search page. */
-        Posted             = 11,  /** Posted links */
-        People             = 12,   /** People page. */
-        Options            = 13   /** People page. */
+        Posted             = 11, /** Posted links */
+        People             = 12, /** People page. */
+        Options            = 13, /** People page. */
+        Home               = 14  /** Home page. */
     };
 
 

@@ -891,7 +891,9 @@ void ConnectFriendWizard::cleanFriendCert()
 				whileBlocking(ui->friendCertEdit)->setPlainText(QString::fromUtf8(cleanCert.c_str()));
 				whileBlocking(ui->friendCertEdit)->setTextCursor(textCursor);
 
-				certDetail = ConfCertDialog::getCertificateDescription(details,false,mIsShortInvite,!details.ipAddressList.empty());
+                // use dummy flags so that the content of the description is driven by what's in the "details" variable.
+                RetroshareInviteFlags dummy_flags = RetroshareInviteFlags::ALL;
+                certDetail = ConfCertDialog::getCertificateDescription(details,false,mIsShortInvite,dummy_flags);
 			}
 			
 			if (mIsShortInvite)
