@@ -495,7 +495,7 @@ void PostedItem::fill()
 		ui->voteUpButton->setDisabled(true);
 		ui->voteDownButton->setDisabled(true);
 
-        ui->thumbnailLabel->setPixmap( FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default.png"));
+        ui->thumbnailLabel->setPicture( FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default.png"));
 		ui->fromLabel->setId(mPost.mMeta.mAuthorId);
 		ui->titleLabel->setText(tr( "<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(mPost.mMeta.mAuthorId.toStdString()))) ;
 		QDateTime qtime;
@@ -509,8 +509,10 @@ void PostedItem::fill()
 		QPixmap sqpixmap2 = FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default.png");
 
 		mInFill = true;
-		int desired_height = 1.5*(ui->voteDownButton->height() + ui->voteUpButton->height() + ui->scoreLabel->height());
-		int desired_width =  sqpixmap2.width()*desired_height/(float)sqpixmap2.height();
+        int desired_height = ui->voteDownButton->height() + ui->voteUpButton->height() + ui->scoreLabel->height();
+        int desired_width =  16/9.0 * desired_height; //sqpixmap2.width()*desired_height/(float)sqpixmap2.height();
+
+        ui->thumbnailLabel->setFixedSize(desired_width,desired_height);
 
 		QDateTime qtime;
 		qtime.setTime_t(mPost.mMeta.mPublishTs);
@@ -573,17 +575,17 @@ void PostedItem::fill()
 			GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
 			// Wiping data - as its been passed to thumbnail.
 
-			QPixmap sqpixmap = pixmap.scaled(desired_width,desired_height, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
-			ui->thumbnailLabel->setPixmap(sqpixmap);
+//			QPixmap sqpixmap = pixmap.scaled(desired_width,desired_height, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+            ui->thumbnailLabel->setPicture(pixmap);
 			ui->thumbnailLabel->setToolTip(tr("Click to view Picture"));
+            ui->thumbnailLabel->setEnableZoom(false);
 
-			QPixmap scaledpixmap;
-			if(pixmap.width() > 800){
-				QPixmap scaledpixmap = pixmap.scaledToWidth(800, Qt::SmoothTransformation);
-				ui->pictureLabel->setPixmap(scaledpixmap);
-			}else{
-				ui->pictureLabel->setPixmap(pixmap);
-			}
+            QPixmap scaledpixmap;
+            if(pixmap.width() > 800){
+                QPixmap scaledpixmap = pixmap.scaledToWidth(800, Qt::SmoothTransformation);
+                ui->pictureLabel->setPixmap(scaledpixmap);
+            }else
+                ui->pictureLabel->setPixmap(pixmap);
 		}
 		else if (urlOkay && (mPost.mImage.mData == NULL))
 		{
