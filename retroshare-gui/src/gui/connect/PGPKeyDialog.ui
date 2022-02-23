@@ -111,54 +111,30 @@
                  <property name="text">
                   <string>Unset</string>
                  </property>
-                 <property name="icon">
-                  <iconset resource="../images.qrc">
-                   <normaloff>:/images/security-low-off-48.png</normaloff>:/images/security-low-off-48.png</iconset>
-                 </property>
                 </item>
                 <item>
                  <property name="text">
                   <string>Unknown</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="../images.qrc">
-                   <normaloff>:/images/security-low-off-48.png</normaloff>:/images/security-low-off-48.png</iconset>
                  </property>
                 </item>
                 <item>
                  <property name="text">
                   <string>No trust</string>
                  </property>
-                 <property name="icon">
-                  <iconset resource="../images.qrc">
-                   <normaloff>:/images/security-low-48.png</normaloff>:/images/security-low-48.png</iconset>
-                 </property>
                 </item>
                 <item>
                  <property name="text">
                   <string>Marginal</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="../images.qrc">
-                   <normaloff>:/images/security-medium-48.png</normaloff>:/images/security-medium-48.png</iconset>
                  </property>
                 </item>
                 <item>
                  <property name="text">
                   <string>Full</string>
                  </property>
-                 <property name="icon">
-                  <iconset resource="../images.qrc">
-                   <normaloff>:/images/security-high-48.png</normaloff>:/images/security-high-48.png</iconset>
-                 </property>
                 </item>
                 <item>
                  <property name="text">
                   <string>Ultimate</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="../images.qrc">
-                   <normaloff>:/images/security-high-48.png</normaloff>:/images/security-high-48.png</iconset>
                  </property>
                 </item>
                </widget>
