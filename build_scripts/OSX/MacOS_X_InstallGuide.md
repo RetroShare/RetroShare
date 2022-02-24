@@ -94,9 +94,9 @@ In QtCreator Projects -> Manage Kits > Version Control > Git:
 
        select "Pull with rebase"
 
-In QtCreator Projects -> Build -> Build Settings -> Build Environment -> Add this path:
+In QtCreator Projects -> Build -> Build Settings -> Build Environment -> Add this to PATH:
 
-       /usr/local/bin
+       :/usr/local/bin:opt/local/bin
 
 In QtCreator Projects -> Build -> Build Settings -> Build Steps -> Add Additional arguments:
 
@@ -111,13 +111,7 @@ Edit RetroShare.pro
 and then retroshare.pri
 
     macx:CONFIG *= rs_macos11.1
-    rs_macos10.8:CONFIG -= rs_macos11.1
-    rs_macos10.9:CONFIG -= rs_macos11.1
-    rs_macos10.10:CONFIG -= rs_macos11.1
-    rs_macos10.12:CONFIG -= rs_macos11.1
-    rs_macos10.13:CONFIG -= rs_macos11.1
-    rs_macos10.14:CONFIG -= rs_macos11.1
-    rs_macos10.15:CONFIG -= rs_macos11.1
+    rs_macos11.15:CONFIG -= rs_macos11.1
 
 
 ## Link Include & Libraries
@@ -131,7 +125,12 @@ Edit your retroshare.pri and add to macx-*  section
 
 alternative via Terminal
 
-    $ qmake INCLUDEPATH+="/usr/local/opt/openssl/include" QMAKE_LIBDIR+="/usr/local/opt/openssl/lib" QMAKE_LIBDIR+="/usr/local/opt/sqlcipher/lib" QMAKE_LIBDIR+="/usr/local/opt/miniupnpc/lib"
+    $ qmake \
+    INCLUDEPATH+= "/usr/local/opt/openssl/include" \
+    QMAKE_LIBDIR+= "/usr/local/opt/openssl/lib" \
+    QMAKE_LIBDIR+= "/usr/local/opt/sqlcipher/lib" \
+    QMAKE_LIBDIR+= "/usr/local/opt/miniupnpc/lib" \
+    ..
 
 For FeedReader Plugin:
 
@@ -157,7 +156,7 @@ For building RetroShare with plugins:
 
 ## Compile RetroShare 
 
-You can now compile RetroShare into Qt Creator or with Terminal
+You can now compile RetroShare into Qt Creator or via Terminal
 
        cd retroshare
        qmake; make
