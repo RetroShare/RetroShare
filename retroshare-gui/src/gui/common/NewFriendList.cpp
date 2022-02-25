@@ -1359,7 +1359,7 @@ bool NewFriendList::exportFriendlist(QString &fileName)
             if (!rsPeers->getPeerDetails(*list_iter2, detailSSL))
                 continue;
 
-            std::string certificate = rsPeers->GetRetroshareInvite(detailSSL.id, RetroshareInviteFlags::CURRENT_IP | RetroshareInviteFlags::DNS | RetroshareInviteFlags::RADIX_FORMAT);
+            std::string certificate = rsPeers->GetRetroshareInvite(detailSSL.id, RsPeers::defaultCertificateFlags | RetroshareInviteFlags::RADIX_FORMAT);
 
             // remove \n from certificate
             certificate.erase(std::remove(certificate.begin(), certificate.end(), '\n'), certificate.end());

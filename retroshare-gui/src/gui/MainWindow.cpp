@@ -1081,7 +1081,9 @@ void SetForegroundWindowInternal(HWND hWnd)
 			return _instance->gxsforumDialog;
 		case Posted:
 			return _instance->postedDialog;
-	}
+        case Home:
+            return _instance->homePage;
+    }
 
    return NULL;
 }

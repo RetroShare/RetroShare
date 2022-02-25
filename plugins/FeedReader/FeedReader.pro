@@ -121,6 +121,11 @@ win32 {
 	#Have to reorder libs, else got /libs/lib/libcrypto.a(bio_lib.o):bio_lib.c:(.text+0x0): multiple definition of `BIO_new'
 	LIBS = -lcurl -lxml2 -lz -lxslt -lws2_32 -lwldap32 -lssl -lcrypto -lgdi32 $${LIBS}
 
+	isEmpty(QMAKE_SH) {
+		# MinGW
+		LIBS += -lcrypt32
+	}
+
 	# Check for msys2
 	!isEmpty(PREFIX_MSYS2) {
 		message(Use msys2 xml2.)

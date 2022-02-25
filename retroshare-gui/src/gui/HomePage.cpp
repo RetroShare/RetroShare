@@ -50,13 +50,9 @@
 
 HomePage::HomePage(QWidget *parent) :
     MainPage(parent),
-    ui(new Ui::HomePage),
-    mIncludeAllIPs(false),
-    mUseShortFormat(true)
+    ui(new Ui::HomePage)
 {
     ui->setupUi(this);
-
-    updateCertificate();
 
     connect(ui->addButton, SIGNAL(clicked()), this, SLOT(addFriend()));
     connect(ui->copyIDButton, SIGNAL(clicked()), this, SLOT(copyId()));
@@ -73,29 +69,48 @@ HomePage::HomePage(QWidget *parent) :
     QAction *CopyIdAction = new QAction(QIcon(),tr("Copy your Retroshare ID to Clipboard"), this);
     connect(CopyIdAction, SIGNAL(triggered()), this, SLOT(copyId()));
 
-        QMenu *menu = new QMenu();
+    QMenu *menu = new QMenu();
     menu->addAction(CopyIdAction);
-
-    if(!RsAccounts::isHiddenNode())
-    {
-        QAction *includeIPsAct = new QAction(QIcon(), tr("Include all your known IPs"),this);
-        connect(includeIPsAct, SIGNAL(triggered()), this, SLOT(toggleIncludeAllIPs()));
-        includeIPsAct->setCheckable(true);
-        includeIPsAct->setChecked(mIncludeAllIPs);
-
-        menu->addAction(includeIPsAct);
-    }
-    QAction *useOldFormatAct = new QAction(QIcon(), tr("Use old certificate format"),this);
-    useOldFormatAct->setToolTip(tr("Displays the certificate format used up to version 0.6.5\nOld Retroshare nodes will not understand the\nnew short format"));
-    connect(useOldFormatAct, SIGNAL(triggered()), this, SLOT(toggleUseOldFormat()));
-    useOldFormatAct->setCheckable(true);
-    useOldFormatAct->setChecked(!mUseShortFormat);
-    menu->addAction(useOldFormatAct);
 
     menu->addSeparator();
     menu->addAction(SendAction);
     menu->addAction(WebMailAction);
     menu->addAction(RecAction);
+    menu->addSeparator();
+
+    mUseOldFormatact = new QAction(QIcon(), tr("Use old certificate format"),this);
+    mUseOldFormatact->setToolTip(tr("Displays the certificate format used up to version 0.6.5\nOld Retroshare nodes will not understand the\nnew short format"));
+    connect(mUseOldFormatact, SIGNAL(triggered()), this, SLOT(updateOwnCert()));
+    mUseOldFormatact->setCheckable(true);
+    mUseOldFormatact->setChecked(false);
+    menu->addAction(mUseOldFormatact);
+
+    if(!RsAccounts::isHiddenNode())
+    {
+        mIncludeLocIPact = new QAction(QIcon(), tr("Include current local IP"),this);
+        connect(mIncludeLocIPact, SIGNAL(triggered()), this, SLOT(updateOwnCert()));
+        mIncludeLocIPact->setCheckable(true);
+        mIncludeLocIPact->setChecked(true);
+        menu->addAction(mIncludeLocIPact);
+
+        mIncludeExtIPact = new QAction(QIcon(), tr("Include current external IP"),this);
+        connect(mIncludeExtIPact, SIGNAL(triggered()), this, SLOT(updateOwnCert()));
+        mIncludeExtIPact->setCheckable(true);
+        mIncludeExtIPact->setChecked(true);
+        menu->addAction(mIncludeExtIPact);
+
+        mIncludeDNSact = new QAction(QIcon(), tr("Include my DNS"),this);
+        connect(mIncludeDNSact, SIGNAL(triggered()), this, SLOT(updateOwnCert()));
+        mIncludeDNSact->setCheckable(true);
+        mIncludeDNSact->setChecked(true);
+        menu->addAction(mIncludeDNSact);
+
+        mIncludeIPHistoryact = new QAction(QIcon(), tr("Include all IPs history"),this);
+        connect(mIncludeIPHistoryact, SIGNAL(triggered()), this, SLOT(updateOwnCert()));
+        mIncludeIPHistoryact->setCheckable(true);
+        mIncludeIPHistoryact->setChecked(false);
+        menu->addAction(mIncludeIPHistoryact);
+    }
 
     ui->shareButton->setMenu(menu);
 
@@ -118,6 +133,8 @@ HomePage::HomePage(QWidget *parent) :
 
     mEventHandlerId = 0;
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); }, mEventHandlerId, RsEventType::NETWORK );
+
+    updateOwnCert();
 }
 
 void HomePage::handleEvent(std::shared_ptr<const RsEvent> e)
@@ -139,13 +156,15 @@ void HomePage::handleEvent(std::shared_ptr<const RsEvent> e)
     case RsNetworkEventCode::DNS_UPDATED:  // [fallthrough]
                 RsQThreadUtils::postToObject( [=]()
                 {
-                    updateCertificate();
+                    updateOwnCert();
                 },this);
         break;
     default:
         break;
     }
 }
+
+#ifdef DEAD_CODE
 void HomePage::certContextMenu(QPoint /*point*/)
 {
     QMenu menu(this) ;
@@ -178,17 +197,7 @@ void HomePage::certContextMenu(QPoint /*point*/)
 
     menu.exec(QCursor::pos());
 }
-
-void HomePage::toggleUseShortFormat()
-{
-    mUseShortFormat = !mUseShortFormat;
-    updateCertificate();
-}
-void HomePage::toggleIncludeAllIPs()
-{
-    mIncludeAllIPs = !mIncludeAllIPs;
-    updateCertificate();
-}
+#endif
 
 HomePage::~HomePage()
 {
@@ -196,15 +205,8 @@ HomePage::~HomePage()
     delete ui;
 }
 
-void HomePage::updateCertificate()
+void HomePage::getOwnCert(QString& invite,QString& description) const
 {
-    updateOwnCert();
-}
-
-void HomePage::updateOwnCert()
-{
-    bool include_extra_locators = mIncludeAllIPs;
-
     RsPeerDetails detail;
 
     if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
@@ -213,23 +215,46 @@ void HomePage::updateOwnCert()
         return ;
     }
 
-    QString invite ;
-    RetroshareInviteFlags invite_flags = RetroshareInviteFlags::CURRENT_IP | RetroshareInviteFlags::DNS;
+    RetroshareInviteFlags invite_flags = RetroshareInviteFlags::NOTHING;
 
-    if(mIncludeAllIPs)
+    if(mIncludeLocIPact->isChecked())
+        invite_flags |= RetroshareInviteFlags::CURRENT_LOCAL_IP;
+
+    if(mIncludeExtIPact->isChecked())
+        invite_flags |= RetroshareInviteFlags::CURRENT_EXTERNAL_IP;
+
+    if(mIncludeDNSact->isChecked())
+        invite_flags |= RetroshareInviteFlags::DNS;
+
+    if(mIncludeIPHistoryact->isChecked())
         invite_flags |= RetroshareInviteFlags::FULL_IP_HISTORY;
 
-    if(mUseShortFormat)
+    if(!mUseOldFormatact->isChecked())
     {
         std::string short_invite;
         rsPeers->getShortInvite(short_invite,rsPeers->getOwnId(),invite_flags | RetroshareInviteFlags::RADIX_FORMAT);
+        invite = QString::fromStdString(short_invite);
+    }
+    else
+        invite = QString::fromStdString(rsPeers->GetRetroshareInvite(detail.id,invite_flags));
 
+    description = ConfCertDialog::getCertificateDescription(detail,false,!mUseOldFormatact->isChecked(),invite_flags);
+}
+
+void HomePage::updateOwnCert()
+{
+    QString certificate, description;
+
+    getOwnCert(certificate,description);
+
+    if(!mUseOldFormatact->isChecked())	// in this case we have to split the cert for a better display
+    {
         QString S;
         QString txt;
 
-        for(uint32_t i=0;i<short_invite.size();)
+        for(int i=0;i<certificate.size();)
             if(S.length() < 100)
-                S += short_invite[i++];
+                S += certificate[i++];
             else
             {
                 txt += S + "\n";
@@ -237,16 +262,10 @@ void HomePage::updateOwnCert()
             }
 
         txt += S;
-
-        invite = txt;	// the "\n" is here to make some space
+        certificate = txt;	// the "\n" is here to make some space
     }
-    else
-        invite = QString::fromStdString(rsPeers->GetRetroshareInvite(detail.id,invite_flags));
 
-    ui->retroshareid->setText("\n"+invite+"\n");
-
-    QString description = ConfCertDialog::getCertificateDescription(detail,false,mUseShortFormat,include_extra_locators);
-
+    ui->retroshareid->setText("\n"+certificate+"\n");
     ui->retroshareid->setToolTip(description);
 }
 
@@ -347,10 +366,4 @@ void HomePage::webMail()
 void HomePage::openWebHelp()
 {
     QDesktopServices::openUrl(QUrl(QString("https://retrosharedocs.readthedocs.io/en/latest/")));
-}
-
-void HomePage::toggleUseOldFormat()
-{
-    mUseShortFormat = !mUseShortFormat;
-    updateCertificate();
 }

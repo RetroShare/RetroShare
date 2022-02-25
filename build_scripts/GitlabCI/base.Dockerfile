@@ -12,16 +12,26 @@
 ## To run the container
 # docker run -it -p 127.0.0.1:9092:9092 "${CI_REGISTRY_IMAGE}" retroshare-service --jsonApiPort 9092 --jsonApiBindAddress 0.0.0.0
 
-FROM ubuntu
+FROM ubuntu:21.10
 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV APT_UNAT="--assume-yes --quiet"
 
-RUN apt-get update -y && apt-get upgrade -y -qq && \
-	apt-get install -y -qq build-essential cimg-dev libssl-dev libbz2-dev \
-		libsqlite3-dev \
-		libsqlcipher-dev libupnp-dev pkg-config libz-dev \
-		qt5-default libxapian-dev qttools5-dev doxygen rapidjson-dev \
-		git cmake curl
+RUN apt-get update $APT_UNAT && \
+	apt-get upgrade --show-upgraded $APT_UNAT && \
+	apt-get clean $APT_UNAT && \
+	apt-get install --no-install-recommends $APT_UNAT \
+		bash build-essential cimg-dev libssl-dev libbz2-dev \
+		libminiupnpc-dev \
+		libsqlite3-dev libsqlcipher-dev \
+		pkg-config libz-dev \
+		libxapian-dev doxygen rapidjson-dev \
+		git cmake curl python3
+
+## Avoid git cloning spuriously failing with
+#  server certificate verification failed. CAfile: none CRLfile: none
+RUN apt-get install --no-install-recommends $APT_UNAT --reinstall \
+	ca-certificates
 
 RUN git clone --depth 1 https://github.com/aetilius/pHash.git && \
 	rm -rf pHash-build && mkdir pHash-build && cd pHash-build && \
@@ -34,11 +44,14 @@ ARG REPO_URL=https://gitlab.com/RetroShare/RetroShare.git
 ARG REPO_BRANCH=master
 ARG REPO_DEPTH="--depth 2000"
 RUN git clone $REPO_DEPTH $REPO_URL -b $REPO_BRANCH && cd RetroShare && \
-	git fetch --tags && cd ..
-RUN mkdir RetroShare-build && cd RetroShare-build && \
-	qmake ../RetroShare \
-		CONFIG+=no_retroshare_plugins \
-		CONFIG+=retroshare_service CONFIG+=no_retroshare_gui \
-		CONFIG+=rs_jsonapi CONFIG+=rs_deep_search && \
-	(make -j$(nproc) || make -j$(nproc) || make) && make install && \
+	git fetch --tags && \
+	git submodule update --init --remote --force \
+		libbitdht/ libretroshare/ openpgpsdk/ && \
+	cd ..
+
+RUN \
+	mkdir RetroShare-build && cd RetroShare-build && \
+	cmake -B. -S../RetroShare/retroshare-service \
+		-DRS_FORUM_DEEP_INDEX=ON -DRS_JSON_API=ON && \
+	make -j$(nproc) && make install && \
 	cd .. && rm -rf RetroShare-build
