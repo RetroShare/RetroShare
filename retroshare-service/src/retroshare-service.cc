@@ -1,7 +1,7 @@
 /*
  * RetroShare Service
- * Copyright (C) 2016-2021  Gioacchino Mazzurco <gio@eigenlab.org>
- * Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>
+ * Copyright (C) 2016-2022  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2021-2022  Asociación Civil Altermundi <info@altermundi.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -26,15 +26,16 @@
 #include <iomanip>
 #include <atomic>
 
-#include "util/stacktrace.h"
-#include "util/argstream.h"
-#include "util/rskbdinput.h"
-#include "util/rsdir.h"
 #include "retroshare/rsinit.h"
 #include "retroshare/rstor.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsinit.h"
 #include "retroshare/rsiface.h"
+
+#include "util/stacktrace.h"
+#include "util/argstream.h"
+#include "util/rskbdinput.h"
+#include "util/rsdir.h"
 #include "util/rsdebug.h"
 
 #ifdef RS_JSONAPI
@@ -176,7 +177,7 @@ int main(int argc, char* argv[])
 	as.defaultErrorHandling(true, true);
 
 #if (defined(RS_JSONAPI) && defined(RS_WEBUI)) && defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
-	std::string webui_pass1 = "Y";
+	std::string webui_pass1;
 	if(askWebUiPassword)
 	{
 		std::string webui_pass2 = "N";
@@ -210,8 +211,8 @@ int main(int argc, char* argv[])
 	int initResult = RsInit::InitRetroShare(conf);
 	if(initResult != RS_INIT_OK)
 	{
-		RsErr() << "Retroshare core initalization failed with: " << initResult
-		        << std::endl;
+		RsFatal() << "Retroshare core initalization failed with: " << initResult
+		          << std::endl;
 		return -initResult;
 	}
 
@@ -331,11 +332,11 @@ int main(int argc, char* argv[])
 
 #if (defined(RS_JSONAPI) && defined(RS_WEBUI)) && defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
 	if(rsJsonApi && !webui_pass1.empty())
-    {
+	{
 		rsWebUi->setHtmlFilesDirectory(webui_base_directory);
 		rsWebUi->setUserPassword(webui_pass1);
 		rsWebUi->restart();
-    }
+	}
 #endif
 
 	rsControl->setShutdownCallback([&](int){keepRunning = false;});
