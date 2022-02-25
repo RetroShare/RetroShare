@@ -10,6 +10,12 @@ project(retroshare-service)
 
 include(CMakeDependentOption)
 
+set(
+	RS_BIN_INSTALL_DIR
+	"${CMAKE_INSTALL_PREFIX}/bin"
+	CACHE PATH
+	"Path where to install retroshare-service compiled binary" )
+
 option(
 	RS_DEVELOPMENT_BUILD
 	"Disable optimization to speed up build, enable verbose build log. \
@@ -67,7 +73,7 @@ list(
 
 add_executable(${PROJECT_NAME} ${RS_SERVICE_SOURCES})
 
-install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS ${PROJECT_NAME} DESTINATION ${RS_BIN_INSTALL_DIR})
 
 ################################################################################
 
