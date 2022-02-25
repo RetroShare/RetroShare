@@ -96,7 +96,7 @@ In QtCreator Projects -> Manage Kits > Version Control > Git:
 
 In QtCreator Projects -> Build -> Build Settings -> Build Environment -> Add this to PATH:
 
-       :/usr/local/bin:opt/local/bin
+       :/usr/local/bin:/opt/local/bin
 
 In QtCreator Projects -> Build -> Build Settings -> Build Steps -> Add Additional arguments:
 
