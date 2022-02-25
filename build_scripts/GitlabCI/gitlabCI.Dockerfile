@@ -8,11 +8,12 @@ RUN \
 	cd RetroShare && git remote add testing $REPO_URL && \
 	git fetch --tags testing $REPO_BRANCH && \
 	git reset --hard testing/$REPO_BRANCH && \
+	git submodule update --init --remote --force \
+		libbitdht/ libretroshare/ openpgpsdk/ && \
 	git --no-pager log --max-count 1
 RUN \
 	mkdir RetroShare-build && cd RetroShare-build && \
-	qmake ../RetroShare CONFIG+=no_retroshare_gui \
-		CONFIG+=retroshare_service \
-		CONFIG+=rs_jsonapi CONFIG+=rs_deep_search && \
-	(make -j$(nproc) || make -j$(nproc) || make) && make install && \
+	cmake -B. -S../RetroShare/retroshare-service \
+		-DRS_FORUM_DEEP_INDEX=ON -DRS_JSON_API=ON && \
+	make -j$(nproc) && make install && \
 	cd .. && rm -rf RetroShare-build
