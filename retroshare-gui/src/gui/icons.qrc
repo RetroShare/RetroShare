@@ -141,6 +141,7 @@
         <file>icons/search_red_128.png</file>
         <file>icons/security_high_128.png</file>
         <file>icons/security_low_128.png</file>
+        <file>icons/security_low_off_128.png</file>
         <file>icons/security_medium_128.png</file>
         <file>icons/settings/appearance.svg</file>
         <file>icons/settings/channels.svg</file>
@@ -354,5 +355,7 @@
         <file>icons/newwindow.svg</file>
         <file>icons/cancel.svg</file>
         <file>icons/connection.svg</file>
+        <file>icons/plus.svg</file>
+        <file>icons/minus.svg</file>
     </qresource>
 </RCC>

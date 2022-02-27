@@ -70,6 +70,8 @@
 #define IMAGE_COPYLINK           ":/images/copyrslink.png"
 #define IMAGE_GROUPS             ":/icons/groups/colored.svg"
 #define IMAGE_EDIT               ":/icons/png/pencil-edit-button.png"
+#define IMAGE_EXPAND             ":/icons/plus.svg"
+#define IMAGE_COLLAPSE           ":/icons/minus.svg"
 #define IMAGE_REMOVE             ":/icons/cancel.svg"
 #define IMAGE_ADD                ":/icons/png/add.png"
 /* Images for Status icons */
@@ -761,8 +763,8 @@ void NewFriendList::peerTreeWidgetCustomPopupMenu()
     if (RSLinkClipboard::empty(RetroShareLink::TYPE_CERTIFICATE))
         action->setDisabled(true);
 
-    contextMenu.addAction(QIcon(""), tr("Expand all"), ui->peerTreeWidget, SLOT(expandAll()));
-    contextMenu.addAction(QIcon(""), tr("Collapse all"), ui->peerTreeWidget, SLOT(collapseAll()));
+    contextMenu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EXPAND), tr("Expand all"), ui->peerTreeWidget, SLOT(expandAll()));
+    contextMenu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COLLAPSE), tr("Collapse all"), ui->peerTreeWidget, SLOT(collapseAll()));
 
     contextMenu.addSeparator();
 

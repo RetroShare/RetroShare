@@ -111,30 +111,54 @@
                  <property name="text">
                   <string>Unset</string>
                  </property>
+                 <property name="icon">
+                  <iconset resource="../icons.qrc">
+                   <normaloff>:/icons/security_low_off_128.png</normaloff>:/icons/security_low_off_128.png</iconset>
+                 </property>
                 </item>
                 <item>
                  <property name="text">
                   <string>Unknown</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../icons.qrc">
+                   <normaloff>:/icons/security_low_off_128.png</normaloff>:/icons/security_low_off_128.png</iconset>
                  </property>
                 </item>
                 <item>
                  <property name="text">
                   <string>No trust</string>
                  </property>
+                 <property name="icon">
+                  <iconset resource="../icons.qrc">
+                   <normaloff>:/icons/security_low_128.png</normaloff>:/icons/security_low_128.png</iconset>
+                 </property>
                 </item>
                 <item>
                  <property name="text">
                   <string>Marginal</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../icons.qrc">
+                   <normaloff>:/icons/security_medium_128.png</normaloff>:/icons/security_medium_128.png</iconset>
                  </property>
                 </item>
                 <item>
                  <property name="text">
                   <string>Full</string>
                  </property>
+                 <property name="icon">
+                  <iconset resource="../icons.qrc">
+                   <normaloff>:/icons/security_high_128.png</normaloff>:/icons/security_high_128.png</iconset>
+                 </property>
                 </item>
                 <item>
                  <property name="text">
                   <string>Ultimate</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../icons.qrc">
+                   <normaloff>:/icons/security_high_128.png</normaloff>:/icons/security_high_128.png</iconset>
                  </property>
                 </item>
                </widget>
@@ -513,6 +537,7 @@ p, li { white-space: pre-wrap; }
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections>
   <connection>
