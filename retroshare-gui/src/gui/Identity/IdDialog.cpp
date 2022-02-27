@@ -1111,7 +1111,7 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
     static const int CANCEL = 3 ; // Admin list: no          Subscription request:  yes
 
     const QString menu_titles[4] = { tr("Request subscription"), tr("Accept circle invitation"), tr("Quit this circle"),tr("Cancel subscribe request")} ;
-    const QString image_names[4] = { ":/images/edit_add24.png",":/images/accepted16.png",":/icons/png/enter.png",":/images/cancel.png" } ;
+    const QString image_names[4] = { ":/images/edit_add24.png",":/images/accepted16.png",":/icons/png/enter.png",":/icons/cancel.svg" } ;
 
     std::vector< std::vector<RsGxsId> > ids(4) ;
 
@@ -2260,7 +2260,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 				contextMenu->addAction(QIcon(""),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
 
 			if(n_is_not_a_contact == 0)
-                contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/cancel.png"), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
+                contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/cancel.svg"), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
 
 			contextMenu->addSeparator();
 
@@ -2279,8 +2279,8 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 			contextMenu->addSeparator();
 
 			contextMenu->addAction(QIcon(""),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
-			contextMenu->addAction(ui->editIdentity);
-			contextMenu->addAction(ui->removeIdentity);
+			contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EDIT),tr("Edit identity"),this,SLOT(editIdentity())) ;
+			contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/cancel.svg"),tr("Delete identity"),this,SLOT(removeIdentity())) ;
 		}
 
 	}

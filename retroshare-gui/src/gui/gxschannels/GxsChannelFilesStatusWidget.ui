@@ -120,8 +120,8 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
-          <normaloff>:/images/cancel.png</normaloff>:/images/cancel.png</iconset>
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/cancel.svg</normaloff>:/icons/cancel.svg</iconset>
         </property>
        </widget>
       </item>

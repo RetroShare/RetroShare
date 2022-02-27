@@ -141,12 +141,10 @@
 #define IMAGE_OVERLAY           ":/icons/star_overlay_128.png"
 
 #define IMAGE_BWGRAPH           ":/icons/png/bandwidth.png"
-#define IMAGE_MESSENGER         ":/images/rsmessenger48.png"
 #define IMAGE_COLOR         	":/images/highlight.png"
 #define IMAGE_NEWRSCOLLECTION   ":/images/library.png"
 #define IMAGE_ADDSHARE          ":/images/directoryadd_24x24_shadow.png"
 #define IMAGE_OPTIONS           ":/images/settings.png"
-#define IMAGE_UNFINISHED        ":/images/underconstruction.png"
 #define IMAGE_MINIMIZE          ":/icons/fullscreen.png"
 #define IMAGE_MAXIMIZE          ":/icons/fullscreen-exit.png"
 
@@ -507,7 +505,7 @@ void MainWindow::initStackedPage()
 
 
 #ifdef UNFINISHED
-  addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui->toolBar), &MainWindow::showApplWindow, SLOT(showApplWindow()));
+  addAction(new QAction(QIcon(), tr("Unfinished"), ui->toolBar), &MainWindow::showApplWindow, SLOT(showApplWindow()));
   ui->toolBarAction->addSeparator();
   notify += applicationWindow->getNotify();
 #endif
@@ -625,7 +623,7 @@ void MainWindow::createTrayIcon()
 
     trayMenu->addSeparator();
 #ifdef MESSENGER_WINDOW
-    trayMenu->addAction(QIcon(IMAGE_MESSENGER), tr("Open Messenger"), this, SLOT(showMessengerWindow()));
+    trayMenu->addAction(QIcon(), tr("Open Messenger"), this, SLOT(showMessengerWindow()));
 #endif
     trayMenu->addAction(QIcon(IMAGE_MESSAGES), tr("Open Messages"), this, SLOT(showMess()));
 #ifdef RS_JSONAPI
@@ -638,7 +636,7 @@ void MainWindow::createTrayIcon()
 
 
 #ifdef UNFINISHED
-    trayMenu->addAction(QIcon(IMAGE_UNFINISHED), tr("Applications"), this, SLOT(showApplWindow()));
+    trayMenu->addAction(QIcon(), tr("Applications"), this, SLOT(showApplWindow()));
 #endif
     trayMenu->addAction(QIcon(IMAGE_PREFERENCES), tr("Options"), this, SLOT(showSettings()));
     trayMenu->addAction(QIcon(IMG_HELP), tr("Help"), this, SLOT(showHelpDialog()));

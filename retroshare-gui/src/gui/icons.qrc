@@ -141,6 +141,7 @@
         <file>icons/search_red_128.png</file>
         <file>icons/security_high_128.png</file>
         <file>icons/security_low_128.png</file>
+        <file>icons/security_low_off_128.png</file>
         <file>icons/security_medium_128.png</file>
         <file>icons/settings/appearance.svg</file>
         <file>icons/settings/channels.svg</file>
@@ -342,5 +343,19 @@
         <file>icons/wire-circle.png</file>
         <file>icons/folder-account.svg</file>
         <file>icons/notification.svg</file>
+        <file>icons/groups/blue.svg</file>
+        <file>icons/groups/colored.svg</file>
+        <file>icons/groups/green.svg</file>
+        <file>icons/groups/indigo.svg</file>
+        <file>icons/groups/pink.svg</file>
+        <file>icons/groups/purple.svg</file>
+        <file>icons/groups/red.svg</file>
+        <file>icons/groups/yellow.svg</file>
+        <file>icons/newtab.svg</file>
+        <file>icons/newwindow.svg</file>
+        <file>icons/cancel.svg</file>
+        <file>icons/connection.svg</file>
+        <file>icons/plus.svg</file>
+        <file>icons/minus.svg</file>
     </qresource>
 </RCC>

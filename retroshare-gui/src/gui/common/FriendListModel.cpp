@@ -42,7 +42,12 @@
 
 #define IS_MESSAGE_UNREAD(flags) (flags &  (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER))
 
-#define IMAGE_GROUP24          ":/images/user/group24.png"
+#define IMAGE_COWORKERS        ":/icons/groups/green.svg"
+#define IMAGE_FRIENDS          ":/icons/groups/blue.svg"
+#define IMAGE_FAMILY           ":/icons/groups/purple.svg"
+#define IMAGE_FAVORITES        ":/icons/groups/yellow.svg"
+#define IMAGE_OTHERCONTACTS    ":/icons/groups/pink.svg"
+#define IMAGE_OTHERGROUPS      ":/icons/groups/red.svg"
 #define IMAGE_STAR_ON          ":/images/star-on-16.png"
 #define IMAGE_STAR_OFF         ":/images/star-off-16.png"
 
@@ -497,7 +502,7 @@ QVariant RsFriendListModel::sizeHintRole(const EntryIndex& e,int col) const
 		y_factor *= 3.0;
 
 	if(e.type == ENTRY_TYPE_GROUP)
-		y_factor = std::max(y_factor, 24.0f / 14.0f ); // allows to fit the 24 pixels icon for groups in the line
+		y_factor *= 1.5;
 
 	switch(col)
 	{
@@ -871,8 +876,28 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
 
     switch(entry.type)
     {
-    case ENTRY_TYPE_GROUP: return QVariant(FilesDefs::getIconFromQtResourcePath(IMAGE_GROUP24));
+    case ENTRY_TYPE_GROUP: 
+	{
+		const HierarchicalGroupInformation *groupInfo = getGroupInfo(entry);
 
+		if (groupInfo->group_info.id.toStdString() == RS_GROUP_ID_FRIENDS.toStdString()) {
+			return QVariant(FilesDefs::getIconFromQtResourcePath(IMAGE_FRIENDS));
+		}
+		if (groupInfo->group_info.id.toStdString() == RS_GROUP_ID_FAMILY.toStdString()) {
+			return QVariant(FilesDefs::getIconFromQtResourcePath(IMAGE_FAMILY));
+		}
+		if (groupInfo->group_info.id.toStdString() == RS_GROUP_ID_COWORKERS.toStdString()) {
+			return QVariant(FilesDefs::getIconFromQtResourcePath(IMAGE_COWORKERS));
+		}
+		if (groupInfo->group_info.id.toStdString() == RS_GROUP_ID_OTHERS.toStdString()) {
+			return QVariant(FilesDefs::getIconFromQtResourcePath(IMAGE_OTHERCONTACTS));
+		}
+		if (groupInfo->group_info.id.toStdString() == RS_GROUP_ID_FAVORITES.toStdString()) {
+			return QVariant(FilesDefs::getIconFromQtResourcePath(IMAGE_FAVORITES));
+		}
+
+		return QVariant(FilesDefs::getIconFromQtResourcePath(IMAGE_OTHERGROUPS));
+	}
     case ENTRY_TYPE_PROFILE:
     {
         if(!isProfileExpanded(entry))

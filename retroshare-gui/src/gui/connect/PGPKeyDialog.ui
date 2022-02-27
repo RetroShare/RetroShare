@@ -112,8 +112,8 @@
                   <string>Unset</string>
                  </property>
                  <property name="icon">
-                  <iconset resource="../images.qrc">
-                   <normaloff>:/images/security-low-off-48.png</normaloff>:/images/security-low-off-48.png</iconset>
+                  <iconset resource="../icons.qrc">
+                   <normaloff>:/icons/security_low_off_128.png</normaloff>:/icons/security_low_off_128.png</iconset>
                  </property>
                 </item>
                 <item>
@@ -121,8 +121,8 @@
                   <string>Unknown</string>
                  </property>
                  <property name="icon">
-                  <iconset resource="../images.qrc">
-                   <normaloff>:/images/security-low-off-48.png</normaloff>:/images/security-low-off-48.png</iconset>
+                  <iconset resource="../icons.qrc">
+                   <normaloff>:/icons/security_low_off_128.png</normaloff>:/icons/security_low_off_128.png</iconset>
                  </property>
                 </item>
                 <item>
@@ -130,8 +130,8 @@
                   <string>No trust</string>
                  </property>
                  <property name="icon">
-                  <iconset resource="../images.qrc">
-                   <normaloff>:/images/security-low-48.png</normaloff>:/images/security-low-48.png</iconset>
+                  <iconset resource="../icons.qrc">
+                   <normaloff>:/icons/security_low_128.png</normaloff>:/icons/security_low_128.png</iconset>
                  </property>
                 </item>
                 <item>
@@ -139,8 +139,8 @@
                   <string>Marginal</string>
                  </property>
                  <property name="icon">
-                  <iconset resource="../images.qrc">
-                   <normaloff>:/images/security-medium-48.png</normaloff>:/images/security-medium-48.png</iconset>
+                  <iconset resource="../icons.qrc">
+                   <normaloff>:/icons/security_medium_128.png</normaloff>:/icons/security_medium_128.png</iconset>
                  </property>
                 </item>
                 <item>
@@ -148,8 +148,8 @@
                   <string>Full</string>
                  </property>
                  <property name="icon">
-                  <iconset resource="../images.qrc">
-                   <normaloff>:/images/security-high-48.png</normaloff>:/images/security-high-48.png</iconset>
+                  <iconset resource="../icons.qrc">
+                   <normaloff>:/icons/security_high_128.png</normaloff>:/icons/security_high_128.png</iconset>
                  </property>
                 </item>
                 <item>
@@ -157,8 +157,8 @@
                   <string>Ultimate</string>
                  </property>
                  <property name="icon">
-                  <iconset resource="../images.qrc">
-                   <normaloff>:/images/security-high-48.png</normaloff>:/images/security-high-48.png</iconset>
+                  <iconset resource="../icons.qrc">
+                   <normaloff>:/icons/security_high_128.png</normaloff>:/icons/security_high_128.png</iconset>
                  </property>
                 </item>
                </widget>
@@ -537,6 +537,7 @@ p, li { white-space: pre-wrap; }
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections>
   <connection>

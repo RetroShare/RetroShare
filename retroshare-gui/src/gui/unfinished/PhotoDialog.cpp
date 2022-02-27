@@ -42,7 +42,7 @@
 
 /* Images for context menu icons */
 #define IMAGE_REMOVEFRIEND       ":/images/removefriend16.png"
-#define IMAGE_REMOVE             ":/images/cancel.png"
+#define IMAGE_REMOVE             ":/icons/cancel.svg"
 #define IMAGE_CHAT               ":/images/chat.png"
 /* Images for Status icons */
 #define IMAGE_PEER               ":/images/user/identity16.png"

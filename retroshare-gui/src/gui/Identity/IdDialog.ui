@@ -302,7 +302,7 @@
              <x>0</x>
              <y>0</y>
              <width>634</width>
-             <height>523</height>
+             <height>538</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="scrollAreaWidgetContentsVLayout">
@@ -1091,10 +1091,6 @@ border-image: url(:/images/closepressed.png)
    </item>
   </layout>
   <action name="editIdentity">
-   <property name="icon">
-    <iconset>
-     <normaloff>:/images/edit_16.png</normaloff>:/images/edit_16.png</iconset>
-   </property>
    <property name="text">
     <string>Edit identity</string>
    </property>
@@ -1103,19 +1099,11 @@ border-image: url(:/images/closepressed.png)
    </property>
   </action>
   <action name="removeIdentity">
-   <property name="icon">
-    <iconset resource="../images.qrc">
-     <normaloff>:/images/delete.png</normaloff>:/images/delete.png</iconset>
-   </property>
    <property name="text">
     <string>Delete identity</string>
    </property>
   </action>
   <action name="chatIdentity">
-   <property name="icon">
-    <iconset>
-     <normaloff>:/images/toaster/chat.png</normaloff>:/images/toaster/chat.png</iconset>
-   </property>
    <property name="text">
     <string>Chat with this peer</string>
    </property>

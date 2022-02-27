@@ -75,7 +75,7 @@
 #define IMAGE_COLLOPEN       ":/icons/collections.png"
 #define IMAGE_EDITSHARE      ":/icons/png/pencil-edit-button.png"
 #define IMAGE_MYFILES        ":/icons/svg/folders1.svg"
-#define IMAGE_UNSHAREEXTRA   ":/images/button_cancel.png"
+#define IMAGE_UNSHAREEXTRA   ":/icons/cancel.svg"
 
 /*define viewType_CB value */
 #define VIEW_TYPE_TREE       0
@@ -91,7 +91,7 @@
 
 //#define DEBUG_SHARED_FILES_DIALOG 1
 
-const QString Image_AddNewAssotiationForFile = ":/images/kcmsystem24.png";
+const QString Image_AddNewAssotiationForFile = ":/icons/svg/options.svg";
 
 class SFDSortFilterProxyModel : public QSortFilterProxyModel
 {

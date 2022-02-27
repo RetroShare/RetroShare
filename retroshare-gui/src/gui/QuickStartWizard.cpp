@@ -43,7 +43,7 @@ QuickStartWizard::QuickStartWizard(QWidget *parent) :
 {
     ui.setupUi(this);
 
-    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/rs_wizard.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/tools_wizard.png"));
     ui.headerFrame->setHeaderText("RetroShare");
 
 	  ui.pagesWizard->setCurrentIndex(0);

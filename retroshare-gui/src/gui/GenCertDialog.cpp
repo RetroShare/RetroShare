@@ -48,7 +48,7 @@
 #include <iostream>
 
 #define IMAGE_GOOD ":/images/accepted16.png"
-#define IMAGE_BAD  ":/images/cancel.png"
+#define IMAGE_BAD  ":/icons/cancel.svg"
 
 class EntropyCollectorWidget: public QTextBrowser
 {

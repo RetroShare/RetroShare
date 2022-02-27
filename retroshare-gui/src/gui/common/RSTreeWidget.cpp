@@ -264,7 +264,7 @@ QMenu *RSTreeWidget::createStandardContextMenu(QMenu *contextMenu)
 
 		QLabel *iconLabel = new QLabel(widget);
 		iconLabel->setObjectName("trans_Icon");
-		QPixmap pix = FilesDefs::getPixmapFromQtResourcePath(":/images/settings.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
+		QPixmap pix = FilesDefs::getPixmapFromQtResourcePath(":/icons/png/options2.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
 		iconLabel->setPixmap(pix);
 		iconLabel->setMaximumSize(iconLabel->frameSize().height() + pix.height(), pix.width());
 		hbox->addWidget(iconLabel);
@@ -273,7 +273,7 @@ QMenu *RSTreeWidget::createStandardContextMenu(QMenu *contextMenu)
 		textLabel->setObjectName("trans_Text");
 		hbox->addWidget(textLabel);
 
-		QSpacerItem *spacerItem = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+		QSpacerItem *spacerItem = new QSpacerItem(40, 24, QSizePolicy::Expanding, QSizePolicy::Minimum);
 		hbox->addItem(spacerItem);
 
 		widget->setLayout(hbox);
