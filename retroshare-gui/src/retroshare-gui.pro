@@ -146,11 +146,11 @@ unix {
 	target.path = "$${BIN_DIR}"
 	INSTALLS += target
 
-	data_files.path="$${DATA_DIR}/"
+        data_files.path="$${RS_DATA_DIR}/"
 	data_files.files=sounds qss
 	INSTALLS += data_files
 
-	style_files.path="$${DATA_DIR}/stylesheets"
+        style_files.path="$${RS_DATA_DIR}/stylesheets"
 	style_files.files=gui/qss/chat/Bubble gui/qss/chat/Bubble_Compact
 	INSTALLS += style_files
 
