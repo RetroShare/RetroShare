@@ -49,6 +49,7 @@ public:
     // Returns the certificate along with its description using current options.
 
     void getOwnCert(QString& invite,QString& description) const;
+    RetroshareInviteFlags currentInviteFlags() const ;
 
 private slots:
 #ifdef DEAD_CODE
