@@ -69,7 +69,7 @@ private:
     std::map<RsPeerId,PeerInfo>::iterator handleIncomingClientData(const std::string& pgp_public_key_b64,const std::string& short_invite_b64);
 
     // Computes the appropriate list of short invites to send to a given peer.
-    std::map<std::string, bool> computeListOfFriendInvites(uint32_t nb_reqs_invites, const RsPeerId &pid, std::map<RsPeerId,RsPgpFingerprint>& friends);
+    std::map<std::string, bool> computeListOfFriendInvites(uint32_t nb_reqs_invites, const std::set<RsPeerId> &already_received_peers, const RsPeerId &pid, std::map<RsPeerId,RsPgpFingerprint>& friends);
 
     // Compute the distance between peers using the random bias (It's not really a distance though. I'm not sure about the triangular inequality).
     PeerInfo::PeerDistance computePeerDistance(const RsPgpFingerprint &p1, const RsPgpFingerprint &p2);

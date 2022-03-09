@@ -88,7 +88,7 @@ void FriendServer::handleClientPublish(const RsFriendServerClientPublishItem *it
 
         std::map<RsPeerId,RsPgpFingerprint> friends;
         sr_item.nonce = pi->second.last_nonce;
-        sr_item.friend_invites = computeListOfFriendInvites(item->n_requested_friends,pi->first,friends);
+        sr_item.friend_invites = computeListOfFriendInvites(item->n_requested_friends,item->already_received_peers,pi->first,friends);
         sr_item.PeerId(item->PeerId());
 
         // Update the have_added_as_friend for the list of each peer. We do that before sending because sending destroys
@@ -142,7 +142,10 @@ void FriendServer::handleClientPublish(const RsFriendServerClientPublishItem *it
     }
 }
 
-std::map<std::string, bool> FriendServer::computeListOfFriendInvites(uint32_t nb_reqs_invites, const RsPeerId &pid, std::map<RsPeerId,RsPgpFingerprint>& friends)
+std::map<std::string, bool> FriendServer::computeListOfFriendInvites(uint32_t nb_reqs_invites,
+                                                                     const std::set<RsPeerId>& already_known_peers,
+                                                                     const RsPeerId &pid,
+                                                                     std::map<RsPeerId,RsPgpFingerprint>& friends)
 {
     // Strategy: we want to return the same set of friends for a given PGP profile key.
     // Still, using some closest distance strategy, the n-closest peers for profile A is not the
@@ -168,17 +171,20 @@ std::map<std::string, bool> FriendServer::computeListOfFriendInvites(uint32_t nb
 
     std::map<std::string,bool> res;
 
-    auto add_from = [&res,&friends,nb_reqs_invites,this](bool added,const std::map<PeerInfo::PeerDistance,RsPeerId>& lst) -> bool
+    auto add_from = [&res,&friends,nb_reqs_invites,already_known_peers,this](bool added,
+                                                         const std::map<PeerInfo::PeerDistance, RsPeerId>& lst) -> bool
     {
         for(const auto& pid:lst)
-        {
-            const auto p = mCurrentClientPeers.find(pid.second);
-            res.insert(std::make_pair(p->second.short_certificate,added));
-            friends.insert(std::make_pair(p->first,p->second.pgp_fingerprint));
+            if(already_known_peers.find(pid.second) == already_known_peers.end())
+            {
+                const auto p = mCurrentClientPeers.find(pid.second);
+                res.insert(std::make_pair(p->second.short_certificate,added));
+                friends.insert(std::make_pair(p->first,p->second.pgp_fingerprint));
 
-            if(res.size() >= nb_reqs_invites)
-                return true;
-        }
+                if(res.size() + already_known_peers.size() >= nb_reqs_invites)
+                    return true;
+            }
+
         return false;
     };
 
