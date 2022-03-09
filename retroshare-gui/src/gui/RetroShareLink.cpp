@@ -570,9 +570,13 @@ RetroShareLink RetroShareLink::createCertificate(const RsPeerId& ssl_id)
 
         if(rsPeers->getOwnId() == ssl_id)	// in this case, use application-wide parameters set in HomePage
         {
-            QString invite,description;
-            static_cast<HomePage*>(MainWindow::getPage(MainWindow::Home))->getOwnCert(invite,description);
-            link._radix = invite;
+            QString description;
+            auto invite_flags = static_cast<HomePage*>(MainWindow::getPage(MainWindow::Home))->currentInviteFlags();
+
+            invite_flags &= ~RetroshareInviteFlags::SLICE_TO_80_CHARS;
+            invite_flags |=  RetroshareInviteFlags::RADIX_FORMAT;
+
+            link._radix = QString::fromUtf8(rsPeers->GetRetroshareInvite(ssl_id,invite_flags).c_str());
         }
         else
             link._radix = QString::fromUtf8(rsPeers->GetRetroshareInvite(ssl_id).c_str());

@@ -205,17 +205,9 @@ HomePage::~HomePage()
     delete ui;
 }
 
-void HomePage::getOwnCert(QString& invite,QString& description) const
+RetroshareInviteFlags HomePage::currentInviteFlags() const
 {
-    RsPeerDetails detail;
-
-    if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
-    {
-        std::cerr << "(EE) Cannot retrieve information about own certificate. That is a real problem!!" << std::endl;
-        return ;
-    }
-
-    RetroshareInviteFlags invite_flags = RetroshareInviteFlags::NOTHING;
+     RetroshareInviteFlags invite_flags = RetroshareInviteFlags::NOTHING;
 
     if(mIncludeLocIPact->isChecked())
         invite_flags |= RetroshareInviteFlags::CURRENT_LOCAL_IP;
@@ -228,6 +220,21 @@ void HomePage::getOwnCert(QString& invite,QString& description) const
 
     if(mIncludeIPHistoryact->isChecked())
         invite_flags |= RetroshareInviteFlags::FULL_IP_HISTORY;
+
+    return invite_flags;
+}
+void HomePage::getOwnCert(QString& invite,QString& description) const
+{
+    RsPeerDetails detail;
+
+    if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
+    {
+        std::cerr << "(EE) Cannot retrieve information about own certificate. That is a real problem!!" << std::endl;
+        return ;
+    }
+    auto invite_flags = currentInviteFlags();
+
+    invite_flags |= RetroshareInviteFlags::SLICE_TO_80_CHARS;
 
     if(!mUseOldFormatact->isChecked())
     {
