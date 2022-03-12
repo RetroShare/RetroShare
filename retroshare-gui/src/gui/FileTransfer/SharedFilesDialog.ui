@@ -243,8 +243,8 @@ border-image: url(:/images/closepressed.png)
           <string>All</string>
          </property>
          <property name="icon">
-          <iconset resource="../images.qrc">
-           <normaloff>:/images/view_calendar_list.png</normaloff>:/images/view_calendar_list.png</iconset>
+          <iconset resource="../icons.qrc">
+           <normaloff>:/icons/svg/calendar-blank.svg</normaloff>:/icons/svg/calendar-blank.svg</iconset>
          </property>
         </item>
         <item>
@@ -252,8 +252,8 @@ border-image: url(:/images/closepressed.png)
           <string>One day old</string>
          </property>
          <property name="icon">
-          <iconset resource="../images.qrc">
-           <normaloff>:/images/view_calendar_day.png</normaloff>:/images/view_calendar_day.png</iconset>
+          <iconset resource="../icons.qrc">
+           <normaloff>:/icons/svg/calendar-today.svg</normaloff>:/icons/svg/calendar-today.svg</iconset>
          </property>
         </item>
         <item>
@@ -261,8 +261,8 @@ border-image: url(:/images/closepressed.png)
           <string>One Week old</string>
          </property>
          <property name="icon">
-          <iconset resource="../images.qrc">
-           <normaloff>:/images/view_calendar_week.png</normaloff>:/images/view_calendar_week.png</iconset>
+          <iconset resource="../icons.qrc">
+           <normaloff>:/icons/svg/calendar-week.svg</normaloff>:/icons/svg/calendar-week.svg</iconset>
          </property>
         </item>
         <item>
@@ -270,8 +270,8 @@ border-image: url(:/images/closepressed.png)
           <string>One month old</string>
          </property>
          <property name="icon">
-          <iconset resource="../images.qrc">
-           <normaloff>:/images/view_calendar_month.png</normaloff>:/images/view_calendar_month.png</iconset>
+          <iconset resource="../icons.qrc">
+           <normaloff>:/icons/svg/calendar-month.svg</normaloff>:/icons/svg/calendar-month.svg</iconset>
          </property>
         </item>
        </widget>
@@ -287,6 +287,10 @@ border-image: url(:/images/closepressed.png)
        <widget class="QPushButton" name="checkButton">
         <property name="text">
          <string>check files</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/svg/refresh.svg</normaloff>:/icons/svg/refresh.svg</iconset>
         </property>
        </widget>
       </item>
@@ -311,8 +315,8 @@ border-image: url(:/images/closepressed.png)
          <string>Download</string>
         </property>
         <property name="icon">
-         <iconset>
-          <normaloff>:/images/download16.png</normaloff>:/images/download16.png</iconset>
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/png/download.png</normaloff>:/icons/png/download.png</iconset>
         </property>
        </widget>
       </item>

@@ -357,5 +357,10 @@
         <file>icons/connection.svg</file>
         <file>icons/plus.svg</file>
         <file>icons/minus.svg</file>
+        <file>icons/svg/calendar-blank.svg</file>
+        <file>icons/svg/calendar-month.svg</file>
+        <file>icons/svg/calendar-today.svg</file>
+        <file>icons/svg/calendar-week.svg</file>
+        <file>icons/svg/refresh.svg</file>
     </qresource>
 </RCC>
