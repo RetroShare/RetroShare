@@ -362,5 +362,21 @@
         <file>icons/svg/calendar-today.svg</file>
         <file>icons/svg/calendar-week.svg</file>
         <file>icons/svg/refresh.svg</file>
+        <file>icons/filetype/any.svg</file>
+        <file>icons/filetype/archive.svg</file>
+        <file>icons/filetype/audio.svg</file>
+        <file>icons/filetype/document.svg</file>
+        <file>icons/filetype/img.svg</file>
+        <file>icons/filetype/picture.svg</file>
+        <file>icons/filetype/program.svg</file>
+        <file>icons/filetype/video.svg</file>
+        <file>icons/filetype/c.svg</file>
+        <file>icons/filetype/cpp.svg</file>
+        <file>icons/filetype/h.svg</file>
+        <file>icons/filetype/pdf.svg</file>
+        <file>icons/filetype/apk.svg</file>
+        <file>icons/filetype/dll.svg</file>
+        <file>icons/filetype/collection.svg</file>
+        <file>icons/filetype/patch.svg</file>
     </qresource>
 </RCC>
