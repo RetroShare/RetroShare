@@ -1,3 +1,123 @@
+/* QTreeView QListView QTableView -----------------------------------------
+
+https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-qtreeview
+https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-qlistview
+https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-qtableview
+
+--------------------------------------------------------------------------- */
+QTreeView:branch:selected, QTreeView:branch:hover {
+  background: url(":/standard_light/rc/transparent.png");
+}
+
+QTreeView:branch:has-children:!has-siblings:closed, QTreeView:branch:closed:has-children:has-siblings {
+  border-image: none;
+  image: url(":/standard_light/rc/branch_closed.png");
+}
+
+QTreeView:branch:open:has-children:!has-siblings, QTreeView:branch:open:has-children:has-siblings {
+  border-image: none;
+  image: url(":/standard_light/rc/branch_open.png");
+}
+
+QTreeView:branch:has-children:!has-siblings:closed:hover, QTreeView:branch:closed:has-children:has-siblings:hover {
+  image: url(":/standard_light/rc/branch_closed_focus.png");
+}
+
+QTreeView:branch:open:has-children:!has-siblings:hover, QTreeView:branch:open:has-children:has-siblings:hover {
+  image: url(":/standard_light/rc/branch_open_focus.png");
+}
+
+QTreeView,
+QListView,
+QTableView,
+QColumnView {
+  background-color: #FAFAFA;
+  border: 1px solid #C9CDD0;
+  color: #19232D;
+  gridline-color: #C9CDD0;
+  border-radius: 4px;
+}
+
+QTreeView:disabled,
+QListView:disabled,
+QTableView:disabled,
+QColumnView:disabled {
+  background-color: #FAFAFA;
+  color: #788D9C;
+}
+
+QTreeView:selected,
+QListView:selected,
+QTableView:selected,
+QColumnView:selected {
+  background-color: #9FCBFF;
+  color: #C9CDD0;
+}
+
+QTreeView:focus,
+QListView:focus,
+QTableView:focus,
+QColumnView:focus {
+  border: 1px solid #73C7FF;
+}
+
+QTreeView::item:pressed,
+QListView::item:pressed,
+QTableView::item:pressed,
+QColumnView::item:pressed {
+  background-color: #9FCBFF;
+}
+
+QTreeView::item:selected:active,
+QListView::item:selected:active,
+QTableView::item:selected:active,
+QColumnView::item:selected:active {
+  background-color: #9FCBFF;
+}
+
+QTreeView::item:selected:!active,
+QListView::item:selected:!active,
+QTableView::item:selected:!active,
+QColumnView::item:selected:!active {
+  color: #19232D;
+  background-color: #CED1D4;
+}
+
+QTreeView::item:!selected:hover,
+QListView::item:!selected:hover,
+QTableView::item:!selected:hover,
+QColumnView::item:!selected:hover {
+  outline: 0;
+  color: #19232D;
+  background-color: #CED1D4;
+}
+
+QTableCornerButton::section {
+  background-color: #FAFAFA;
+  border: 1px transparent #C9CDD0;
+  border-radius: 0px;
+}
+
+/**** Fix QTreeView Items ****/
+
+QTreeView::item,
+QListView::item,
+QTableView::item,
+QColumnView::item {
+  color: #101010;
+  background: transparent;
+}
+
+QTreeView:branch:selected{
+  background-color: #9FCBFF;
+}
+
+QTreeView:branch:!selected:hover,
+QTreeView:branch:selected:!active {
+  color: #19232D;
+  background-color: #CED1D4;
+}
+
 /* HeaderFrame & TitleBarFrame */
 
 QFrame[objectName^="headerFrame"] {
@@ -18,4 +138,23 @@ QFrame[objectName^="toolBarFrame"],
 QFrame[objectName^="toolBarFrameTop"] {
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
 	border: 1px solid #CCCCCC;
+}
+
+/* Forums */
+
+GxsForumThreadWidget QWidget#threadTreeWidget {
+	selection-background-color: #9FCBFF;
+	show-decoration-selected: 1;
+}
+
+GxsForumThreadWidget QWidget#threadTreeWidget::item:selected:active ,
+GxsForumThreadWidget QWidget#threadTreeWidget::item:selected:!active {
+	background-color: #9FCBFF;
+}
+
+/* People */
+
+IdDialog QWidget#idTreeWidget {
+	selection-background-color: #9FCBFF;
+	show-decoration-selected: 1;
 }
