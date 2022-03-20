@@ -188,6 +188,10 @@ SearchDialog::SearchDialog(QWidget *parent)
 
     ui.searchResultWidget->sortItems(SR_NAME_COL, Qt::AscendingOrder);
 
+    QFontMetricsF fontMetrics(ui.searchResultWidget->font());
+    int iconHeight = fontMetrics.height() * 1.4;
+    ui.searchResultWidget->setIconSize(QSize(iconHeight, iconHeight));
+
     /* Set initial size the splitter */
     QList<int> sizes;
     sizes << 250 << width(); // Qt calculates the right sizes

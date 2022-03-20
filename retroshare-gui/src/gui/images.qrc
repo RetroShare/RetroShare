@@ -85,14 +85,6 @@
     <file>images/closepressed.png</file>
     <file>images/denied16.png</file>
     <file>images/filetype-association.png</file>
-    <file>images/FileTypeAny.png</file>
-    <file>images/FileTypeArchive.png</file>
-    <file>images/FileTypeAudio.png</file>
-    <file>images/FileTypeCDImage.png</file>
-    <file>images/FileTypeDocument.png</file>
-    <file>images/FileTypePicture.png</file>
-    <file>images/FileTypeProgram.png</file>
-    <file>images/FileTypeVideo.png</file>
     <file>images/foldermail.png</file>
     <file>images/folderopen.png</file>
     <file>images/fileopen.png</file>
@@ -284,12 +276,6 @@
     <file>images/loader/indicator-32.gif</file>
     <file>images/loader/circleball-16.gif</file>
     <file>images/loader/progress.gif</file>
-    <file>images/mimetypes/pdf.png</file>
-    <file>images/mimetypes/rscollection-16.png</file>
-    <file>images/mimetypes/patch.png</file>
-    <file>images/mimetypes/source_c.png</file>
-    <file>images/mimetypes/source_cpp.png</file>
-    <file>images/mimetypes/source_h.png</file>
     <file>images/thumb-default-video.png</file>
     <file>images/user/add_user24.png</file>
     <file>images/user/add_user48.png</file>
