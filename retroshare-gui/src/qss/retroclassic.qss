@@ -27,6 +27,26 @@ QTreeView:branch:open:has-children:!has-siblings:hover, QTreeView:branch:open:ha
   image: url(":/standard_light/rc/branch_open_focus.png");
 }
 
+QTreeView::indicator:checked {
+  image: url(":/standard_light/rc/checkbox_checked.png");
+}
+
+QTreeView::indicator:checked:hover, 
+QTreeView::indicator:checked:focus, 
+QTreeView::indicator:checked:pressed {
+  image: url(":/standard_light/rc/checkbox_checked_focus.png");
+}
+
+QTreeView::indicator:unchecked {
+  image: url(":/standard_light/rc/checkbox_unchecked.png");
+}
+
+QTreeView::indicator:unchecked:hover, 
+QTreeView::indicator:unchecked:focus, 
+QTreeView::indicator:unchecked:pressed {
+  image: url(":/standard_light/rc/checkbox_unchecked_focus.png");
+}
+
 QTreeView,
 QListView,
 QTableView,
