@@ -62,6 +62,22 @@ cmake_dependent_option(
 	"RS_JSON_API"
 	ON )
 
+################################ QT FILES #######################################
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
+find_package( Qt5 COMPONENTS Widgets REQUIRED)
+find_package( Qt5 COMPONENTS Xml     REQUIRED)
+find_package( Qt5 COMPONENTS Network REQUIRED)
+find_package( Qt5 COMPONENTS PrintSupport REQUIRED)
+
+list( APPEND RS_LINK_LIBRARIES Qt5::Widgets Qt5::Xml Qt5::Network Qt5::PrintSupport)
+
 ################################################################################
 
 set(FETCHCONTENT_QUIET OFF)
@@ -80,8 +96,7 @@ endif(RS_DEVELOPMENT_BUILD)
 
 include(src/CMakeLists.txt)
 
-add_executable(${PROJECT_NAME} ${RS_SOURCES} ${RS_FORMS} ${RS_QTRESOURCES})
-
+add_executable(${PROJECT_NAME} ${RS_GUI_SOURCES} ${RS_GUI_FORMS} ${RS_GUI_QTRESOURCES})
 install(TARGETS ${PROJECT_NAME} DESTINATION ${RS_BIN_INSTALL_DIR})
 
 ################################################################################
@@ -110,6 +125,8 @@ else()
 	)
 	FetchContent_MakeAvailable(libretroshare)
 endif()
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${LIBRETROSHARE_DEVEL_DIR}/src/)
 
 ################################################################################
 
@@ -161,10 +178,6 @@ endif(RS_JSON_API)
 
 ################################################################################
 
-################################################################################
-#                                    TODO                                      #
-################################################################################
-
 if(RS_GUI_CMARK)
 	set(CMARK_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../supportlibs/cmark/")
 	if(EXISTS "${LIBRETROSHARE_DEVEL_DIR}/.git" )
@@ -183,6 +196,10 @@ if(RS_GUI_CMARK)
 	endif()
 endif(RS_GUI_CMARK)
 
+
+################################################################################
+#                                    TODO                                      #
+################################################################################
 
 #   # Auto detect installed version of cmark
 #   rs_gui_cmark {
@@ -427,23 +444,16 @@ endif(RS_SANITIZE)
 #                       	LIBS *= -lglib-2.0
 #                       }
 
-################################ QT FILES #######################################
-
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
-
-find_package( Qt5 COMPONENTS Widgets REQUIRED)
-
-list( APPEND RS_LINK_LIBRARIES Qt5::Widget )
-
 ################################ GENERAL #######################################
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${RS_LINK_LIBRARIES})
 
-add_dependencies(${PROJECT_NAME} libretroshare)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/)
 
-install(TARGETS ${PROJECT_NAME} DESTINATION ${RS_BIN_INSTALL_DIR})
+set( CMAKE_CXX_FLAGS "-Wno-deprecated-declarations" )
+target_compile_definitions(${PROJECT_NAME} PUBLIC RS_NO_WARN_DEPRECATED )
+
+
+
+#add_dependencies(${PROJECT_NAME} libretroshare)
+

@@ -17,765 +17,762 @@
 ################################################################################
 
 list(
-	APPEND RS_SOURCES
-	TorControl/TorControlWindow.cpp
+	APPEND RS_GUI_SOURCES
+	src/TorControl/TorControlWindow.cpp
 
-	main.cpp 
-	rshare.cpp 
+	src/main.cpp 
+	src/rshare.cpp 
 
-	gui/notifyqt.cpp 
-	gui/AboutDialog.cpp 
-	gui/AboutWidget.cpp 
-	gui/QuickStartWizard.cpp 
-	gui/StartDialog.cpp 
-	gui/HomePage.cpp
-        gui/PluginsPage.cpp 
-	gui/PluginManagerWidget.cpp 
-	gui/PluginManager.cpp
-	gui/ChatLobbyWidget.cpp 
-	gui/GetStartedDialog.cpp 
-	gui/GenCertDialog.cpp 
-	gui/NetworkDialog.cpp 
-	gui/mainpagestack.cpp 
-	gui/MainWindow.cpp 
-	gui/NetworkView.cpp 
-	gui/FriendsDialog.cpp 
-	gui/ServicePermissionDialog.cpp 
-	gui/RemoteDirModel.cpp 
-	gui/RsAutoUpdatePage.cpp 
-	gui/RetroShareLink.cpp 
-	gui/SearchTreeWidget.cpp 
-	gui/ShareManager.cpp 
-	gui/ShareDialog.cpp 
-	gui/NewsFeed.cpp 
-	gui/SFListDelegate.cpp 
-	gui/MainPage.cpp 
-	gui/HelpDialog.cpp 
-	gui/LogoBar.cpp 
-	gui/SoundManager.cpp 
+	src/gui/notifyqt.cpp 
+	src/gui/AboutDialog.cpp 
+	src/gui/AboutWidget.cpp 
+	src/gui/QuickStartWizard.cpp 
+	src/gui/StartDialog.cpp 
+	src/gui/HomePage.cpp
+        src/gui/PluginsPage.cpp 
+	src/gui/PluginManagerWidget.cpp 
+	src/gui/PluginManager.cpp
+	src/gui/ChatLobbyWidget.cpp 
+	src/gui/GetStartedDialog.cpp 
+	src/gui/GenCertDialog.cpp 
+	src/gui/NetworkDialog.cpp 
+	src/gui/mainpagestack.cpp 
+	src/gui/MainWindow.cpp 
+	src/gui/NetworkView.cpp 
+	src/gui/FriendsDialog.cpp 
+	src/gui/ServicePermissionDialog.cpp 
+	src/gui/RemoteDirModel.cpp 
+	src/gui/RsAutoUpdatePage.cpp 
+	src/gui/RetroShareLink.cpp 
+	src/gui/SearchTreeWidget.cpp 
+	src/gui/ShareManager.cpp 
+	#	src/gui/ShareDialog.cpp 
+	src/gui/NewsFeed.cpp 
+	src/gui/MainPage.cpp 
+	src/gui/HelpDialog.cpp 
+	src/gui/LogoBar.cpp 
+	src/gui/SoundManager.cpp 
 
-	gui/im_history/ImHistoryBrowser.cpp 
-	gui/im_history/IMHistoryItemDelegate.cpp 
-	gui/im_history/IMHistoryItemPainter.cpp 
+	src/gui/im_history/ImHistoryBrowser.cpp 
+	src/gui/im_history/IMHistoryItemDelegate.cpp 
+	src/gui/im_history/IMHistoryItemPainter.cpp 
 
-	gui/help/browser/helpbrowser.cpp 
-	gui/help/browser/helptextbrowser.cpp 
+	src/gui/help/browser/helpbrowser.cpp 
+	src/gui/help/browser/helptextbrowser.cpp 
 
-	gui/FileTransfer/SearchDialog.cpp 
-	gui/FileTransfer/SharedFilesDialog.cpp 
-	gui/FileTransfer/TransfersDialog.cpp 
-	gui/FileTransfer/FileTransferInfoWidget.cpp 
-	gui/FileTransfer/DLListDelegate.cpp 
-	gui/FileTransfer/ULListDelegate.cpp 
-	gui/FileTransfer/xprogressbar.cpp 
-	gui/FileTransfer/DetailsDialog.cpp 
-	gui/FileTransfer/TransferUserNotify.cpp 
-	gui/FileTransfer/BannedFilesDialog.cpp 
+	src/gui/FileTransfer/SearchDialog.cpp 
+	src/gui/FileTransfer/SharedFilesDialog.cpp 
+	src/gui/FileTransfer/TransfersDialog.cpp 
+	src/gui/FileTransfer/FileTransferInfoWidget.cpp 
+	src/gui/FileTransfer/DLListDelegate.cpp 
+	src/gui/FileTransfer/ULListDelegate.cpp 
+	src/gui/FileTransfer/xprogressbar.cpp 
+	src/gui/FileTransfer/DetailsDialog.cpp 
+	src/gui/FileTransfer/TransferUserNotify.cpp 
+	src/gui/FileTransfer/BannedFilesDialog.cpp 
 
-	lang/languagesupport.cpp 
+	src/lang/languagesupport.cpp 
 
-	util/RsProtectedTimer.cpp 
-	util/stringutil.cpp 
-	util/RsNetUtil.cpp 
-	util/DateTime.cpp 
-	util/RetroStyleLabel.cpp 
-	util/WidgetBackgroundImage.cpp 
-	util/NonCopyable.cpp 
-	util/PixmapMerging.cpp 
-	util/MouseEventFilter.cpp 
-	util/EventFilter.cpp 
-	util/Widget.cpp 
-	util/RsAction.cpp 
-	util/printpreview.cpp 
-	util/log.cpp 
-	util/misc.cpp 
-	util/HandleRichText.cpp 
-	util/ObjectPainter.cpp 
-	util/RsFile.cpp 
-	util/RichTextEdit.cpp 
-	util/ClickableLabel.cpp 
-	util/AspectRatioPixmapLabel.cpp 
+	src/util/RsProtectedTimer.cpp 
+	src/util/stringutil.cpp 
+	src/util/RsNetUtil.cpp 
+	src/util/DateTime.cpp 
+	src/util/RetroStyleLabel.cpp 
+	src/util/WidgetBackgroundImage.cpp 
+	src/util/PixmapMerging.cpp 
+	src/util/MouseEventFilter.cpp 
+	src/util/EventFilter.cpp 
+	src/util/Widget.cpp 
+	src/util/RsAction.cpp 
+	src/util/printpreview.cpp 
+	src/util/log.cpp 
+	src/util/misc.cpp 
+	src/util/HandleRichText.cpp 
+	src/util/ObjectPainter.cpp 
+	src/util/RsFile.cpp 
+	src/util/RichTextEdit.cpp 
+	src/util/ClickableLabel.cpp 
+	src/util/AspectRatioPixmapLabel.cpp 
 
-	gui/profile/ProfileWidget.cpp 
-	gui/profile/StatusMessage.cpp 
-	gui/profile/ProfileManager.cpp 
+	src/gui/profile/ProfileWidget.cpp 
+	src/gui/profile/StatusMessage.cpp 
+	src/gui/profile/ProfileManager.cpp 
 
-	gui/chat/PopupChatWindow.cpp 
-	gui/chat/PopupChatDialog.cpp 
-	gui/chat/PopupDistantChatDialog.cpp 
-	gui/chat/ChatTabWidget.cpp 
-	gui/chat/ChatWidget.cpp 
-	gui/chat/ChatDialog.cpp 
-	gui/chat/ChatLobbyDialog.cpp 
-	gui/chat/CreateLobbyDialog.cpp 
-	gui/chat/ChatStyle.cpp 
-	gui/chat/ChatUserNotify.cpp 
-	gui/chat/ChatLobbyUserNotify.cpp 
+	src/gui/chat/PopupChatWindow.cpp 
+	src/gui/chat/PopupChatDialog.cpp 
+	src/gui/chat/PopupDistantChatDialog.cpp 
+	src/gui/chat/ChatTabWidget.cpp 
+	src/gui/chat/ChatWidget.cpp 
+	src/gui/chat/ChatDialog.cpp 
+	src/gui/chat/ChatLobbyDialog.cpp 
+	src/gui/chat/CreateLobbyDialog.cpp 
+	src/gui/chat/ChatStyle.cpp 
+	src/gui/chat/ChatUserNotify.cpp 
+	src/gui/chat/ChatLobbyUserNotify.cpp 
 
-	gui/connect/ConfCertDialog.cpp 
-	gui/connect/PGPKeyDialog.cpp 
-	gui/connect/ConnectFriendWizard.cpp 
-	gui/connect/ConnectProgressDialog.cpp 
-	gui/connect/FriendRecommendDialog.cpp 
+	src/gui/connect/ConfCertDialog.cpp 
+	src/gui/connect/PGPKeyDialog.cpp 
+	src/gui/connect/ConnectFriendWizard.cpp 
+	src/gui/connect/ConnectProgressDialog.cpp 
+	src/gui/connect/FriendRecommendDialog.cpp 
 
-	gui/msgs/MessagesDialog.cpp 
-	gui/msgs/MessageComposer.cpp 
-	gui/msgs/MessageWidget.cpp 
-	gui/msgs/MessageWindow.cpp 
-	gui/msgs/MessageModel.cpp 
-	gui/msgs/TagsMenu.cpp 
-	gui/msgs/MessageUserNotify.cpp 
+	src/gui/msgs/MessagesDialog.cpp 
+	src/gui/msgs/MessageComposer.cpp 
+	src/gui/msgs/MessageWidget.cpp 
+	src/gui/msgs/MessageWindow.cpp 
+	src/gui/msgs/MessageModel.cpp 
+	src/gui/msgs/TagsMenu.cpp 
+	src/gui/msgs/MessageUserNotify.cpp 
 
-	gui/common/RsButtonOnText.cpp 
-	gui/common/RSGraphWidget.cpp 
-	gui/common/ElidedLabel.cpp 
-	gui/common/vmessagebox.cpp 
-	gui/common/RsCollectionDialog.cpp 
-	gui/common/RsCollection.cpp 
-	gui/common/RsUrlHandler.cpp 
-	gui/common/rwindow.cpp 
-	gui/common/rshtml.cpp 
-	gui/common/AvatarDefs.cpp 
-	gui/common/AvatarDialog.cpp 
-	gui/common/GroupFlagsWidget.cpp 
-	gui/common/GroupSelectionBox.cpp 
-	gui/common/GroupChooser.cpp 
-	gui/common/StatusDefs.cpp 
-	gui/common/TagDefs.cpp 
-	gui/common/GroupDefs.cpp 
-	gui/common/Emoticons.cpp 
-	gui/common/RSComboBox.cpp 
-	gui/common/RSListWidgetItem.cpp 
-	gui/common/RSTextEdit.cpp 
-	gui/common/RSPlainTextEdit.cpp 
-	gui/common/RSTreeWidget.cpp 
-	gui/common/RSTreeWidgetItem.cpp 
-	gui/common/RSFeedWidget.cpp 
-	gui/common/RSTabWidget.cpp 
-	gui/common/RSElidedItemDelegate.cpp 
-	gui/common/RSItemDelegate.cpp 
-	gui/common/PeerDefs.cpp 
-	gui/common/FilesDefs.cpp 
-	gui/common/PopularityDefs.cpp 
-	gui/common/RsBanListDefs.cpp 
-	gui/common/GroupTreeWidget.cpp 
-	gui/common/RSTreeView.cpp 
-	gui/common/AvatarWidget.cpp 
-	gui/common/FriendListModel.cpp 
-	gui/common/NewFriendList.cpp 
-	gui/common/FriendSelectionWidget.cpp 
-	gui/common/FriendSelectionDialog.cpp 
-	gui/common/HashBox.cpp 
-	gui/common/LineEditClear.cpp 
-	gui/common/DropLineEdit.cpp 
-	gui/common/RSTextBrowser.cpp 
-	gui/common/RSImageBlockWidget.cpp 
-	gui/common/FeedNotify.cpp 
-	gui/common/UserNotify.cpp 
-	gui/common/HeaderFrame.cpp 
-	gui/common/MimeTextEdit.cpp 
-	gui/common/UIStateHelper.cpp 
-	gui/common/FloatingHelpBrowser.cpp 
-	gui/common/SubscribeToolButton.cpp 
-	gui/common/RsBanListToolButton.cpp 
-	gui/common/FlowLayout.cpp 
-	gui/common/PictureFlow.cpp 
-	gui/common/ToasterNotify.cpp 
+	src/gui/common/RsButtonOnText.cpp 
+	src/gui/common/RSGraphWidget.cpp 
+	src/gui/common/ElidedLabel.cpp 
+	src/gui/common/vmessagebox.cpp 
+	src/gui/common/RsCollectionDialog.cpp 
+	src/gui/common/RsCollection.cpp 
+	src/gui/common/RsUrlHandler.cpp 
+	src/gui/common/rwindow.cpp 
+	src/gui/common/rshtml.cpp 
+	src/gui/common/AvatarDefs.cpp 
+	src/gui/common/AvatarDialog.cpp 
+	src/gui/common/GroupFlagsWidget.cpp 
+	src/gui/common/GroupSelectionBox.cpp 
+	src/gui/common/GroupChooser.cpp 
+	src/gui/common/StatusDefs.cpp 
+	src/gui/common/TagDefs.cpp 
+	src/gui/common/GroupDefs.cpp 
+	src/gui/common/Emoticons.cpp 
+	src/gui/common/RSComboBox.cpp 
+	src/gui/common/RSListWidgetItem.cpp 
+	src/gui/common/RSTextEdit.cpp 
+	src/gui/common/RSPlainTextEdit.cpp 
+	src/gui/common/RSTreeWidget.cpp 
+	src/gui/common/RSTreeWidgetItem.cpp 
+	src/gui/common/RSFeedWidget.cpp 
+	src/gui/common/RSTabWidget.cpp 
+	src/gui/common/RSElidedItemDelegate.cpp 
+	src/gui/common/RSItemDelegate.cpp 
+	src/gui/common/PeerDefs.cpp 
+	src/gui/common/FilesDefs.cpp 
+	src/gui/common/PopularityDefs.cpp 
+	src/gui/common/RsBanListDefs.cpp 
+	src/gui/common/GroupTreeWidget.cpp 
+	src/gui/common/RSTreeView.cpp 
+	src/gui/common/AvatarWidget.cpp 
+	src/gui/common/FriendListModel.cpp 
+	src/gui/common/NewFriendList.cpp 
+	src/gui/common/FriendSelectionWidget.cpp 
+	src/gui/common/FriendSelectionDialog.cpp 
+	src/gui/common/HashBox.cpp 
+	src/gui/common/LineEditClear.cpp 
+	src/gui/common/DropLineEdit.cpp 
+	src/gui/common/RSTextBrowser.cpp 
+	src/gui/common/RSImageBlockWidget.cpp 
+	src/gui/common/FeedNotify.cpp 
+	src/gui/common/UserNotify.cpp 
+	src/gui/common/HeaderFrame.cpp 
+	src/gui/common/MimeTextEdit.cpp 
+	src/gui/common/UIStateHelper.cpp 
+	src/gui/common/FloatingHelpBrowser.cpp 
+	src/gui/common/SubscribeToolButton.cpp 
+	src/gui/common/RsBanListToolButton.cpp 
+	src/gui/common/FlowLayout.cpp 
+	src/gui/common/PictureFlow.cpp 
+	src/gui/common/ToasterNotify.cpp 
 
-	gui/style/RSStyle.cpp 
-	gui/style/StyleDialog.cpp 
+	src/gui/style/RSStyle.cpp 
+	src/gui/style/StyleDialog.cpp 
 
-	gui/settings/RSPermissionMatrixWidget.cpp 
-	gui/settings/rsharesettings.cpp 
-	gui/settings/RsharePeerSettings.cpp 
-	gui/settings/rsettings.cpp 
-	gui/settings/rsettingswin.cpp 
-	gui/settings/GeneralPage.cpp 
-	gui/settings/AboutPage.cpp 
-	gui/settings/ServerPage.cpp 
-	gui/settings/NotifyPage.cpp 
-	gui/settings/CryptoPage.cpp 
-	gui/settings/PeoplePage.cpp 
-	gui/settings/MessagePage.cpp 
-	gui/settings/NewTag.cpp 
-	gui/settings/ForumPage.cpp 
-	gui/settings/PluginsPage.cpp 
-	gui/settings/PluginItem.cpp 
-	gui/settings/AppearancePage.cpp 
-	gui/settings/FileAssociationsPage.cpp 
-	gui/settings/SoundPage.cpp 
-	gui/settings/TransferPage.cpp 
-	gui/settings/ChatPage.cpp 
-	gui/settings/ChannelPage.cpp 
-	gui/settings/PostedPage.cpp 
-	gui/settings/ServicePermissionsPage.cpp 
-	gui/settings/AddFileAssociationDialog.cpp 
-	gui/settings/GroupFrameSettingsWidget.cpp 
+	src/gui/settings/RSPermissionMatrixWidget.cpp 
+	src/gui/settings/rsharesettings.cpp 
+	src/gui/settings/RsharePeerSettings.cpp 
+	src/gui/settings/rsettings.cpp 
+	src/gui/settings/rsettingswin.cpp 
+	src/gui/settings/GeneralPage.cpp 
+	src/gui/settings/AboutPage.cpp 
+	src/gui/settings/ServerPage.cpp 
+	src/gui/settings/NotifyPage.cpp 
+	src/gui/settings/CryptoPage.cpp 
+	src/gui/settings/PeoplePage.cpp 
+	src/gui/settings/MessagePage.cpp 
+	src/gui/settings/NewTag.cpp 
+	src/gui/settings/ForumPage.cpp 
+	src/gui/settings/PluginsPage.cpp 
+	src/gui/settings/PluginItem.cpp 
+	src/gui/settings/AppearancePage.cpp 
+	src/gui/settings/FileAssociationsPage.cpp 
+	src/gui/settings/SoundPage.cpp 
+	src/gui/settings/TransferPage.cpp 
+	src/gui/settings/ChatPage.cpp 
+	src/gui/settings/ChannelPage.cpp 
+	src/gui/settings/PostedPage.cpp 
+	src/gui/settings/ServicePermissionsPage.cpp 
+	src/gui/settings/AddFileAssociationDialog.cpp 
+	src/gui/settings/GroupFrameSettingsWidget.cpp 
 
-	gui/statusbar/peerstatus.cpp 
-	gui/statusbar/natstatus.cpp 
-	gui/statusbar/dhtstatus.cpp 
-	gui/statusbar/torstatus.cpp 
-	gui/statusbar/ratesstatus.cpp 
-	gui/statusbar/hashingstatus.cpp 
-	gui/statusbar/discstatus.cpp 
-	gui/statusbar/SoundStatus.cpp 
-	gui/statusbar/OpModeStatus.cpp 
-	gui/statusbar/ToasterDisable.cpp 
-	gui/statusbar/SysTrayStatus.cpp 
+	src/gui/statusbar/peerstatus.cpp 
+	src/gui/statusbar/natstatus.cpp 
+	src/gui/statusbar/dhtstatus.cpp 
+	src/gui/statusbar/torstatus.cpp 
+	src/gui/statusbar/ratesstatus.cpp 
+	src/gui/statusbar/hashingstatus.cpp 
+	src/gui/statusbar/discstatus.cpp 
+	src/gui/statusbar/SoundStatus.cpp 
+	src/gui/statusbar/OpModeStatus.cpp 
+	src/gui/statusbar/ToasterDisable.cpp 
+	src/gui/statusbar/SysTrayStatus.cpp 
 
-	gui/toaster/ToasterItem.cpp 
-	gui/toaster/MessageToaster.cpp 
-	gui/toaster/DownloadToaster.cpp 
-	gui/toaster/OnlineToaster.cpp 
-	gui/toaster/ChatToaster.cpp 
-	gui/toaster/GroupChatToaster.cpp 
-	gui/toaster/ChatLobbyToaster.cpp 
-	gui/toaster/FriendRequestToaster.cpp 
+	src/gui/toaster/ToasterItem.cpp 
+	src/gui/toaster/MessageToaster.cpp 
+	src/gui/toaster/DownloadToaster.cpp 
+	src/gui/toaster/OnlineToaster.cpp 
+	src/gui/toaster/ChatToaster.cpp 
+	src/gui/toaster/GroupChatToaster.cpp 
+	src/gui/toaster/ChatLobbyToaster.cpp 
+	src/gui/toaster/FriendRequestToaster.cpp 
 
-	gui/advsearch/advancedsearchdialog.cpp 
-	gui/advsearch/expressionwidget.cpp 
-	gui/advsearch/guiexprelement.cpp 
+	src/gui/advsearch/advancedsearchdialog.cpp 
+	src/gui/advsearch/expressionwidget.cpp 
+	src/gui/advsearch/guiexprelement.cpp 
 
-	gui/elastic/graphwidget.cpp 
-	gui/elastic/edge.cpp 
-	gui/elastic/arrow.cpp 
-	gui/elastic/elnode.cpp 
+	src/gui/elastic/graphwidget.cpp 
+	src/gui/elastic/edge.cpp 
+	src/gui/elastic/arrow.cpp 
+	src/gui/elastic/elnode.cpp 
 
-	gui/feeds/BoardsCommentsItem.cpp 
-	gui/feeds/FeedItem.cpp 
-	gui/feeds/FeedHolder.cpp 
-	gui/feeds/GxsCircleItem.cpp 
-	gui/feeds/ChannelsCommentsItem.cpp 
-	gui/feeds/PeerItem.cpp 
-	gui/feeds/MsgItem.cpp 
-	gui/feeds/ChatMsgItem.cpp 
-	gui/feeds/SubFileItem.cpp 
-	gui/feeds/AttachFileItem.cpp 
-	gui/feeds/SecurityItem.cpp 
-	gui/feeds/SecurityIpItem.cpp 
-	gui/feeds/NewsFeedUserNotify.cpp 
+	src/gui/feeds/BoardsCommentsItem.cpp 
+	src/gui/feeds/FeedItem.cpp 
+	src/gui/feeds/FeedHolder.cpp 
+	src/gui/feeds/GxsCircleItem.cpp 
+	src/gui/feeds/ChannelsCommentsItem.cpp 
+	src/gui/feeds/PeerItem.cpp 
+	src/gui/feeds/MsgItem.cpp 
+	src/gui/feeds/ChatMsgItem.cpp 
+	src/gui/feeds/SubFileItem.cpp 
+	src/gui/feeds/AttachFileItem.cpp 
+	src/gui/feeds/SecurityItem.cpp 
+	src/gui/feeds/SecurityIpItem.cpp 
+	src/gui/feeds/NewsFeedUserNotify.cpp 
 
-	gui/groups/CreateGroup.cpp 
+	src/gui/groups/CreateGroup.cpp 
 
-	gui/statistics/BandwidthGraphWindow.cpp 
-	gui/statistics/BandwidthStatsWidget.cpp 
-	gui/statistics/DhtWindow.cpp 
-	gui/statistics/Histogram.cpp 
-	gui/statistics/TurtleRouterDialog.cpp 
-	gui/statistics/TurtleRouterStatistics.cpp 
-	gui/statistics/GxsIdStatistics.cpp 
-	gui/statistics/GlobalRouterStatistics.cpp 
-	gui/statistics/GxsTransportStatistics.cpp 
-	gui/statistics/StatisticsWindow.cpp 
-	gui/statistics/BwCtrlWindow.cpp 
-	gui/statistics/RttStatistics.cpp 
-	gui/statistics/BWGraph.cpp 
+	src/gui/statistics/BandwidthGraphWindow.cpp 
+	src/gui/statistics/BandwidthStatsWidget.cpp 
+	src/gui/statistics/DhtWindow.cpp 
+	src/gui/statistics/Histogram.cpp 
+	src/gui/statistics/TurtleRouterDialog.cpp 
+	src/gui/statistics/TurtleRouterStatistics.cpp 
+	src/gui/statistics/GxsIdStatistics.cpp 
+	src/gui/statistics/GlobalRouterStatistics.cpp 
+	src/gui/statistics/GxsTransportStatistics.cpp 
+	src/gui/statistics/StatisticsWindow.cpp 
+	src/gui/statistics/BwCtrlWindow.cpp 
+	src/gui/statistics/RttStatistics.cpp 
+	src/gui/statistics/BWGraph.cpp 
 
-	util/RsSyntaxHighlighter.cpp 
-	util/imageutil.cpp 
-	util/retroshareWin32.cpp
+	src/util/RsSyntaxHighlighter.cpp 
+	src/util/imageutil.cpp 
+	src/util/retroshareWin32.cpp
 
-	gui/NetworkDialog/pgpid_item_model.cpp 
-	gui/NetworkDialog/pgpid_item_proxy.cpp 
+	src/gui/NetworkDialog/pgpid_item_model.cpp 
+	src/gui/NetworkDialog/pgpid_item_proxy.cpp 
 	)
 
 list(
-	APPEND RS_FORMS
-	TorControl/TorControlWindow.ui
+	APPEND RS_GUI_FORMS
+	src/TorControl/TorControlWindow.ui
 
-	gui/StartDialog.ui 
-	gui/HomePage.ui
-	gui/GetStartedDialog.ui 
-	gui/GenCertDialog.ui 
-	gui/AboutDialog.ui 
-	gui/AboutWidget.ui 
-	gui/QuickStartWizard.ui 
-	gui/NetworkDialog.ui 
-	gui/common/AvatarDialog.ui 
-	gui/MainWindow.ui 
-	gui/NetworkView.ui 
-	gui/FriendsDialog.ui 
-	gui/NewsFeed.ui 
-	gui/ShareManager.ui 
-	gui/ShareDialog.ui 
-	gui/help/browser/helpbrowser.ui 
-	gui/HelpDialog.ui 
-	gui/ServicePermissionDialog.ui 
-	gui/ChatLobbyWidget.ui 
+	src/gui/StartDialog.ui 
+	src/gui/HomePage.ui
+	src/gui/GetStartedDialog.ui 
+	src/gui/GenCertDialog.ui 
+	src/gui/AboutDialog.ui 
+	src/gui/AboutWidget.ui 
+	src/gui/QuickStartWizard.ui 
+	src/gui/NetworkDialog.ui 
+	src/gui/common/AvatarDialog.ui 
+	src/gui/MainWindow.ui 
+	src/gui/NetworkView.ui 
+	src/gui/FriendsDialog.ui 
+	src/gui/NewsFeed.ui 
+	src/gui/ShareManager.ui 
+	src/gui/help/browser/helpbrowser.ui 
+	src/gui/HelpDialog.ui 
+	src/gui/ServicePermissionDialog.ui 
+	src/gui/ChatLobbyWidget.ui 
 
-	gui/FileTransfer/TransfersDialog.ui 
-	gui/FileTransfer/DetailsDialog.ui 
-	gui/FileTransfer/SearchDialog.ui 
-	gui/FileTransfer/SharedFilesDialog.ui 
-	gui/FileTransfer/BannedFilesDialog.ui 
+	src/gui/FileTransfer/TransfersDialog.ui 
+	src/gui/FileTransfer/DetailsDialog.ui 
+	src/gui/FileTransfer/SearchDialog.ui 
+	src/gui/FileTransfer/SharedFilesDialog.ui 
+	src/gui/FileTransfer/BannedFilesDialog.ui 
 
-	gui/profile/ProfileWidget.ui 
-	gui/profile/StatusMessage.ui 
-	gui/profile/ProfileManager.ui 
+	src/gui/profile/ProfileWidget.ui 
+	src/gui/profile/StatusMessage.ui 
+	src/gui/profile/ProfileManager.ui 
 
-	gui/chat/PopupChatWindow.ui 
-	gui/chat/PopupChatDialog.ui 
-	gui/chat/ChatTabWidget.ui 
-	gui/chat/ChatWidget.ui 
-	gui/chat/ChatLobbyDialog.ui 
-	gui/chat/CreateLobbyDialog.ui 
+	src/gui/chat/PopupChatWindow.ui 
+	src/gui/chat/PopupChatDialog.ui 
+	src/gui/chat/ChatTabWidget.ui 
+	src/gui/chat/ChatWidget.ui 
+	src/gui/chat/ChatLobbyDialog.ui 
+	src/gui/chat/CreateLobbyDialog.ui 
 
-	gui/connect/ConfCertDialog.ui 
-	gui/connect/PGPKeyDialog.ui 
-	gui/connect/ConnectFriendWizard.ui 
-	gui/connect/ConnectProgressDialog.ui 
-	gui/connect/FriendRecommendDialog.ui 
+	src/gui/connect/ConfCertDialog.ui 
+	src/gui/connect/PGPKeyDialog.ui 
+	src/gui/connect/ConnectFriendWizard.ui 
+	src/gui/connect/ConnectProgressDialog.ui 
+	src/gui/connect/FriendRecommendDialog.ui 
 
-	gui/msgs/MessagesDialog.ui 
-	gui/msgs/MessageComposer.ui 
-	gui/msgs/MessageWindow.ui
-	gui/msgs/MessageWidget.ui
+	src/gui/msgs/MessagesDialog.ui 
+	src/gui/msgs/MessageComposer.ui 
+	src/gui/msgs/MessageWindow.ui
+	src/gui/msgs/MessageWidget.ui
 
-	gui/settings/settingsw.ui 
-	gui/settings/GeneralPage.ui 
-	gui/settings/ServerPage.ui 
-	gui/settings/NotifyPage.ui 
-	gui/settings/PeoplePage.ui 
-	gui/settings/CryptoPage.ui 
-	gui/settings/MessagePage.ui 
-	gui/settings/NewTag.ui 
-	gui/settings/ForumPage.ui 
-	gui/settings/AboutPage.ui 
-	gui/settings/PluginsPage.ui 
-	gui/settings/AppearancePage.ui 
-	gui/settings/TransferPage.ui 
-	gui/settings/SoundPage.ui 
-	gui/settings/ChatPage.ui 
-	gui/settings/ChannelPage.ui 
-	gui/settings/PostedPage.ui 
-	gui/settings/ServicePermissionsPage.ui 
-	gui/settings/PluginItem.ui 
-	gui/settings/GroupFrameSettingsWidget.ui 
+	src/gui/settings/settingsw.ui 
+	src/gui/settings/GeneralPage.ui 
+	src/gui/settings/ServerPage.ui 
+	src/gui/settings/NotifyPage.ui 
+	src/gui/settings/PeoplePage.ui 
+	src/gui/settings/CryptoPage.ui 
+	src/gui/settings/MessagePage.ui 
+	src/gui/settings/NewTag.ui 
+	src/gui/settings/ForumPage.ui 
+	src/gui/settings/AboutPage.ui 
+	src/gui/settings/PluginsPage.ui 
+	src/gui/settings/AppearancePage.ui 
+	src/gui/settings/TransferPage.ui 
+	src/gui/settings/SoundPage.ui 
+	src/gui/settings/ChatPage.ui 
+	src/gui/settings/ChannelPage.ui 
+	src/gui/settings/PostedPage.ui 
+	src/gui/settings/ServicePermissionsPage.ui 
+	src/gui/settings/PluginItem.ui 
+	src/gui/settings/GroupFrameSettingsWidget.ui 
 
-	gui/toaster/MessageToaster.ui 
-	gui/toaster/OnlineToaster.ui 
-	gui/toaster/DownloadToaster.ui 
-	gui/toaster/ChatToaster.ui 
-	gui/toaster/GroupChatToaster.ui 
-	gui/toaster/ChatLobbyToaster.ui 
-	gui/toaster/FriendRequestToaster.ui 
+	src/gui/toaster/MessageToaster.ui 
+	src/gui/toaster/OnlineToaster.ui 
+	src/gui/toaster/DownloadToaster.ui 
+	src/gui/toaster/ChatToaster.ui 
+	src/gui/toaster/GroupChatToaster.ui 
+	src/gui/toaster/ChatLobbyToaster.ui 
+	src/gui/toaster/FriendRequestToaster.ui 
 
-	gui/advsearch/AdvancedSearchDialog.ui 
-	gui/advsearch/expressionwidget.ui 
+	src/gui/advsearch/AdvancedSearchDialog.ui 
+	src/gui/advsearch/expressionwidget.ui 
 
-	gui/feeds/BoardsCommentsItem.ui 
-	gui/feeds/GxsCircleItem.ui 
-	gui/feeds/ChannelsCommentsItem.ui 
-	gui/feeds/PeerItem.ui 
-	gui/feeds/MsgItem.ui 
-	gui/feeds/ChatMsgItem.ui 
-	gui/feeds/SubFileItem.ui 
-	gui/feeds/AttachFileItem.ui 
-	gui/feeds/SecurityItem.ui 
-	gui/feeds/SecurityIpItem.ui 
+	src/gui/feeds/BoardsCommentsItem.ui 
+	src/gui/feeds/GxsCircleItem.ui 
+	src/gui/feeds/ChannelsCommentsItem.ui 
+	src/gui/feeds/PeerItem.ui 
+	src/gui/feeds/MsgItem.ui 
+	src/gui/feeds/ChatMsgItem.ui 
+	src/gui/feeds/SubFileItem.ui 
+	src/gui/feeds/AttachFileItem.ui 
+	src/gui/feeds/SecurityItem.ui 
+	src/gui/feeds/SecurityIpItem.ui 
 
-	gui/im_history/ImHistoryBrowser.ui 
+	src/gui/im_history/ImHistoryBrowser.ui 
 
-	gui/groups/CreateGroup.ui 
+	src/gui/groups/CreateGroup.ui 
 
-	gui/common/GroupTreeWidget.ui 
-	gui/common/AvatarWidget.ui 
-	gui/common/NewFriendList.ui 
-	gui/common/FriendSelectionWidget.ui 
-	gui/common/HashBox.ui 
-	gui/common/RSImageBlockWidget.ui 
-	gui/common/RsCollectionDialog.ui 
-	gui/common/HeaderFrame.ui 
-	gui/common/RSFeedWidget.ui 
+	src/gui/common/GroupTreeWidget.ui 
+	src/gui/common/AvatarWidget.ui 
+	src/gui/common/NewFriendList.ui 
+	src/gui/common/FriendSelectionWidget.ui 
+	src/gui/common/HashBox.ui 
+	src/gui/common/RSImageBlockWidget.ui 
+	src/gui/common/RsCollectionDialog.ui 
+	src/gui/common/HeaderFrame.ui 
+	src/gui/common/RSFeedWidget.ui 
 
-	gui/style/StyleDialog.ui 
+	src/gui/style/StyleDialog.ui 
 
-	gui/statistics/BandwidthGraphWindow.ui 
-	gui/statistics/BandwidthStatsWidget.ui 
-	gui/statistics/DhtWindow.ui 
-	gui/statistics/TurtleRouterDialog.ui 
-	gui/statistics/TurtleRouterStatistics.ui 
-	gui/statistics/GxsIdStatistics.ui 
-	gui/statistics/GlobalRouterStatistics.ui 
-	gui/statistics/GxsTransportStatistics.ui 
-	gui/statistics/StatisticsWindow.ui 
-	gui/statistics/BwCtrlWindow.ui 
-	gui/statistics/RttStatistics.ui 
+	src/gui/statistics/BandwidthGraphWindow.ui 
+	src/gui/statistics/BandwidthStatsWidget.ui 
+	src/gui/statistics/DhtWindow.ui 
+	src/gui/statistics/TurtleRouterDialog.ui 
+	src/gui/statistics/TurtleRouterStatistics.ui 
+	src/gui/statistics/GxsIdStatistics.ui 
+	src/gui/statistics/GlobalRouterStatistics.ui 
+	src/gui/statistics/GxsTransportStatistics.ui 
+	src/gui/statistics/StatisticsWindow.ui 
+	src/gui/statistics/BwCtrlWindow.ui 
+	src/gui/statistics/RttStatistics.ui 
 
-	util/RichTextEdit.ui
+	src/util/RichTextEdit.ui
 	)
 
 list(
 	APPEND RS_IMPLEMENTATION_HEADERS
 
-	TorControl/TorControlWindow.h
+	src/TorControl/TorControlWindow.h
 
-	chat/distantchat.h
-	chat/distributedchat.h
-	chat/p3chatservice.h
-	chat/rschatitems.h 
+	src/chat/distantchat.h
+	src/chat/distributedchat.h
+	src/chat/p3chatservice.h
+	src/chat/rschatitems.h 
 
-	rshare.h 
-	retroshare-gui/configpage.h 
-	retroshare-gui/RsAutoUpdatePage.h 
-	retroshare-gui/mainpage.h 
+	src/rshare.h 
+	src/retroshare-gui/configpage.h 
+	src/retroshare-gui/RsAutoUpdatePage.h 
+	src/retroshare-gui/mainpage.h 
 
-	control/bandwidthevent.h 
-	control/eventtype.h 
+	src/control/bandwidthevent.h 
+	src/control/eventtype.h 
 
-	gui/QuickStartWizard.h 
-	gui/notifyqt.h 
-	gui/GetStartedDialog.h 
-	gui/StartDialog.h 
-	gui/HomePage.h
-	gui/NetworkDialog.h 
-	gui/GenCertDialog.h 
-	gui/linetypes.h 
-	gui/mainpagestack.h 
-	gui/MainWindow.h 
-	gui/RSHumanReadableDelegate.h 
-	gui/AboutDialog.h 
-	gui/AboutWidget.h 
-	gui/NetworkView.h 
-	gui/FriendsDialog.h 
-	gui/ServicePermissionDialog.h 
-	gui/RemoteDirModel.h 
-        gui/PluginsPage.h  
-	gui/PluginManagerWidget.h 
-	gui/PluginManager.h
-	gui/RetroShareLink.h 
-	gui/SearchTreeWidget.h 
-	gui/ShareManager.h 
-	gui/NewsFeed.h 
-	gui/ShareDialog.h 
-	gui/SFListDelegate.h 
-	gui/SoundManager.h 
-	gui/HelpDialog.h 
-	gui/LogoBar.h 
+	src/gui/QuickStartWizard.h 
+	src/gui/notifyqt.h 
+	src/gui/GetStartedDialog.h 
+	src/gui/StartDialog.h 
+	src/gui/HomePage.h
+	src/gui/NetworkDialog.h 
+	src/gui/GenCertDialog.h 
+	src/gui/linetypes.h 
+	src/gui/mainpagestack.h 
+	src/gui/MainWindow.h 
+	src/gui/RSHumanReadableDelegate.h 
+	src/gui/AboutDialog.h 
+	src/gui/AboutWidget.h 
+	src/gui/NetworkView.h 
+	src/gui/FriendsDialog.h 
+	src/gui/ServicePermissionDialog.h 
+	src/gui/RemoteDirModel.h 
+        src/gui/PluginsPage.h  
+	src/gui/PluginManagerWidget.h 
+	src/gui/PluginManager.h
+	src/gui/RetroShareLink.h 
+	src/gui/SearchTreeWidget.h 
+	src/gui/ShareManager.h 
+	src/gui/NewsFeed.h 
+	src/gui/ShareDialog.h 
+	src/gui/SFListDelegate.h 
+	src/gui/SoundManager.h 
+	src/gui/HelpDialog.h 
+	src/gui/LogoBar.h 
 
-	gui/common/AvatarDialog.h 
+	src/gui/common/AvatarDialog.h 
 
-	gui/NetworkDialog/pgpid_item_model.h 
-	gui/NetworkDialog/pgpid_item_proxy.h 
+	src/gui/NetworkDialog/pgpid_item_model.h 
+	src/gui/NetworkDialog/pgpid_item_proxy.h 
 
-	gui/FileTransfer/SearchDialog.h 
-	gui/FileTransfer/SharedFilesDialog.h 
-	gui/FileTransfer/xprogressbar.h 
-	gui/FileTransfer/DetailsDialog.h 
-	gui/FileTransfer/FileTransferInfoWidget.h 
-	gui/FileTransfer/DLListDelegate.h 
-	gui/FileTransfer/ULListDelegate.h 
-	gui/FileTransfer/TransfersDialog.h 
-	gui/FileTransfer/BannedFilesDialog.h 
-	gui/FileTransfer/TransferUserNotify.h 
+	src/gui/FileTransfer/SearchDialog.h 
+	src/gui/FileTransfer/SharedFilesDialog.h 
+	src/gui/FileTransfer/xprogressbar.h 
+	src/gui/FileTransfer/DetailsDialog.h 
+	src/gui/FileTransfer/FileTransferInfoWidget.h 
+	src/gui/FileTransfer/DLListDelegate.h 
+	src/gui/FileTransfer/ULListDelegate.h 
+	src/gui/FileTransfer/TransfersDialog.h 
+	src/gui/FileTransfer/BannedFilesDialog.h 
+	src/gui/FileTransfer/TransferUserNotify.h 
 
-	gui/statistics/TurtleRouterDialog.h 
-	gui/statistics/TurtleRouterStatistics.h 
-	gui/statistics/GxsIdStatistics.h 
-	gui/statistics/dhtgraph.h 
-	gui/statistics/Histogram.h 
-	gui/statistics/BandwidthGraphWindow.h 
-	gui/statistics/turtlegraph.h 
-	gui/statistics/BandwidthStatsWidget.h 
-	gui/statistics/DhtWindow.h 
-	gui/statistics/GlobalRouterStatistics.h 
-	gui/statistics/GxsTransportStatistics.h 
-	gui/statistics/StatisticsWindow.h 
-	gui/statistics/BwCtrlWindow.h 
-	gui/statistics/BWGraph.h 
-	gui/statistics/RttStatistics.h 
+	src/gui/statistics/TurtleRouterDialog.h 
+	src/gui/statistics/TurtleRouterStatistics.h 
+	src/gui/statistics/GxsIdStatistics.h 
+	src/gui/statistics/dhtgraph.h 
+	src/gui/statistics/Histogram.h 
+	src/gui/statistics/BandwidthGraphWindow.h 
+	src/gui/statistics/turtlegraph.h 
+	src/gui/statistics/BandwidthStatsWidget.h 
+	src/gui/statistics/DhtWindow.h 
+	src/gui/statistics/GlobalRouterStatistics.h 
+	src/gui/statistics/GxsTransportStatistics.h 
+	src/gui/statistics/StatisticsWindow.h 
+	src/gui/statistics/BwCtrlWindow.h 
+	src/gui/statistics/BWGraph.h 
+	src/gui/statistics/RttStatistics.h 
 
-	gui/plugins/PluginInterface.h 
+	src/gui/plugins/PluginInterface.h 
 
-	gui/im_history/ImHistoryBrowser.h 
-	gui/im_history/IMHistoryItemDelegate.h 
-	gui/im_history/IMHistoryItemPainter.h 
+	src/gui/im_history/ImHistoryBrowser.h 
+	src/gui/im_history/IMHistoryItemDelegate.h 
+	src/gui/im_history/IMHistoryItemPainter.h 
 
-	lang/languagesupport.h 
+	src/lang/languagesupport.h 
 
-	util/RsSyntaxHighlighter.h 
-	util/imageutil.h 
-	util/RichTextEdit.h 
-	util/retroshareWin32.h
-	util/RsProtectedTimer.h 
-	util/stringutil.h 
-	util/RsNetUtil.h 
-	util/DateTime.h 
-	util/RetroStyleLabel.h 
-	util/dllexport.h 
-	util/NonCopyable.h 
-	util/rsutildll.h 
-	util/dllexport.h 
-	util/global.h 
-	util/rsqtutildll.h 
-	util/Interface.h 
-	util/PixmapMerging.h 
-	util/MouseEventFilter.h 
-	util/EventFilter.h 
-	util/Widget.h 
-	util/RsAction.h 
-	util/RsUserdata.h 
-	util/printpreview.h 
-	util/log.h 
-	util/misc.h 
-	util/HandleRichText.h 
-	util/ObjectPainter.h 
-	util/QtVersion.h 
-	util/RsFile.h 
-	util/qtthreadsutils.h 
-	util/ClickableLabel.h 
-	util/AspectRatioPixmapLabel.h 
+	src/util/RsSyntaxHighlighter.h 
+	src/util/imageutil.h 
+	src/util/RichTextEdit.h 
+	src/util/retroshareWin32.h
+	src/util/RsProtectedTimer.h 
+	src/util/stringutil.h 
+	src/util/RsNetUtil.h 
+	src/util/DateTime.h 
+	src/util/RetroStyleLabel.h 
+	src/util/dllexport.h 
+	src/util/NonCopyable.h 
+	src/util/rsutildll.h 
+	src/util/dllexport.h 
+	src/util/global.h 
+	src/util/rsqtutildll.h 
+	src/util/Interface.h 
+	src/util/PixmapMerging.h 
+	src/util/MouseEventFilter.h 
+	src/util/EventFilter.h 
+	src/util/Widget.h 
+	src/util/RsAction.h 
+	src/util/RsUserdata.h 
+	src/util/printpreview.h 
+	src/util/log.h 
+	src/util/misc.h 
+	src/util/HandleRichText.h 
+	src/util/ObjectPainter.h 
+	src/util/QtVersion.h 
+	src/util/RsFile.h 
+	src/util/qtthreadsutils.h 
+	src/util/ClickableLabel.h 
+	src/util/AspectRatioPixmapLabel.h 
 
-	gui/profile/ProfileWidget.h 
-	gui/profile/ProfileManager.h 
-	gui/profile/StatusMessage.h 
+	src/gui/profile/ProfileWidget.h 
+	src/gui/profile/ProfileManager.h 
+	src/gui/profile/StatusMessage.h 
 
-	gui/chat/PopupChatWindow.h 
-	gui/chat/PopupChatDialog.h 
-	gui/chat/PopupDistantChatDialog.h 
-	gui/chat/ChatTabWidget.h 
-	gui/chat/ChatWidget.h 
-	gui/chat/ChatDialog.h 
-	gui/ChatLobbyWidget.h 
-	gui/chat/ChatLobbyDialog.h 
-	gui/chat/CreateLobbyDialog.h 
-	gui/chat/ChatStyle.h 
-	gui/chat/ChatUserNotify.h 
-	gui/chat/ChatLobbyUserNotify.h 
+	src/gui/chat/PopupChatWindow.h 
+	src/gui/chat/PopupChatDialog.h 
+	src/gui/chat/PopupDistantChatDialog.h 
+	src/gui/chat/ChatTabWidget.h 
+	src/gui/chat/ChatWidget.h 
+	src/gui/chat/ChatDialog.h 
+	src/gui/ChatLobbyWidget.h 
+	src/gui/chat/ChatLobbyDialog.h 
+	src/gui/chat/CreateLobbyDialog.h 
+	src/gui/chat/ChatStyle.h 
+	src/gui/chat/ChatUserNotify.h 
+	src/gui/chat/ChatLobbyUserNotify.h 
 
-	gui/connect/ConfCertDialog.h 
-	gui/connect/PGPKeyDialog.h 
-	gui/connect/FriendRecommendDialog.h 
+	src/gui/connect/ConfCertDialog.h 
+	src/gui/connect/PGPKeyDialog.h 
+	src/gui/connect/FriendRecommendDialog.h 
 
-	gui/msgs/MessagesDialog.h 
-	gui/msgs/MessageInterface.h 
-	gui/msgs/MessageComposer.h 
-	gui/msgs/MessageWindow.h 
-	gui/msgs/MessageWidget.h 
-	gui/msgs/MessageModel.h 
-	gui/msgs/TagsMenu.h 
-	gui/msgs/textformat.h 
-	gui/msgs/MessageUserNotify.h 
+	src/gui/msgs/MessagesDialog.h 
+	src/gui/msgs/MessageInterface.h 
+	src/gui/msgs/MessageComposer.h 
+	src/gui/msgs/MessageWindow.h 
+	src/gui/msgs/MessageWidget.h 
+	src/gui/msgs/MessageModel.h 
+	src/gui/msgs/TagsMenu.h 
+	src/gui/msgs/textformat.h 
+	src/gui/msgs/MessageUserNotify.h 
 
-	gui/images/retroshare_win.rc.h 
+	src/gui/images/retroshare_win.rc.h 
 
-	gui/settings/RSPermissionMatrixWidget.h 
-	gui/settings/rsharesettings.h 
-	gui/settings/RsharePeerSettings.h 
-	gui/settings/rsettings.h 
-	gui/settings/rsettingswin.h 
-	gui/settings/GeneralPage.h 
-	gui/settings/PeoplePage.h 
-	gui/settings/AboutPage.h 
-	gui/settings/ServerPage.h 
-	gui/settings/NotifyPage.h 
-	gui/settings/CryptoPage.h 
-	gui/settings/MessagePage.h 
-	gui/settings/NewTag.h 
-	gui/settings/ForumPage.h 
-	gui/settings/PluginsPage.h 
-	gui/settings/PluginItem.h 
-	gui/settings/AppearancePage.h 
-	gui/settings/FileAssociationsPage.h 
-	gui/settings/SoundPage.h 
-	gui/settings/TransferPage.h 
-	gui/settings/ChatPage.h 
-	gui/settings/ChannelPage.h 
-	gui/settings/PostedPage.h 
-	gui/settings/ServicePermissionsPage.h 
-	gui/settings/AddFileAssociationDialog.h 
-	gui/settings/GroupFrameSettingsWidget.h 
+	src/gui/settings/RSPermissionMatrixWidget.h 
+	src/gui/settings/rsharesettings.h 
+	src/gui/settings/RsharePeerSettings.h 
+	src/gui/settings/rsettings.h 
+	src/gui/settings/rsettingswin.h 
+	src/gui/settings/GeneralPage.h 
+	src/gui/settings/PeoplePage.h 
+	src/gui/settings/AboutPage.h 
+	src/gui/settings/ServerPage.h 
+	src/gui/settings/NotifyPage.h 
+	src/gui/settings/CryptoPage.h 
+	src/gui/settings/MessagePage.h 
+	src/gui/settings/NewTag.h 
+	src/gui/settings/ForumPage.h 
+	src/gui/settings/PluginsPage.h 
+	src/gui/settings/PluginItem.h 
+	src/gui/settings/AppearancePage.h 
+	src/gui/settings/FileAssociationsPage.h 
+	src/gui/settings/SoundPage.h 
+	src/gui/settings/TransferPage.h 
+	src/gui/settings/ChatPage.h 
+	src/gui/settings/ChannelPage.h 
+	src/gui/settings/PostedPage.h 
+	src/gui/settings/ServicePermissionsPage.h 
+	src/gui/settings/AddFileAssociationDialog.h 
+	src/gui/settings/GroupFrameSettingsWidget.h 
 
-	gui/toaster/ToasterItem.h 
-	gui/toaster/MessageToaster.h 
-	gui/toaster/OnlineToaster.h 
-	gui/toaster/DownloadToaster.h 
-	gui/toaster/ChatToaster.h 
-	gui/toaster/GroupChatToaster.h 
-	gui/toaster/ChatLobbyToaster.h 
-	gui/toaster/FriendRequestToaster.h 
+	src/gui/toaster/ToasterItem.h 
+	src/gui/toaster/MessageToaster.h 
+	src/gui/toaster/OnlineToaster.h 
+	src/gui/toaster/DownloadToaster.h 
+	src/gui/toaster/ChatToaster.h 
+	src/gui/toaster/GroupChatToaster.h 
+	src/gui/toaster/ChatLobbyToaster.h 
+	src/gui/toaster/FriendRequestToaster.h 
 
-	gui/common/RsButtonOnText.h 
-	gui/common/RsCollection.h 
-	gui/common/RSGraphWidget.h 
-	gui/common/ElidedLabel.h 
-	gui/common/vmessagebox.h 
-	gui/common/RsUrlHandler.h 
-	gui/common/RsCollectionDialog.h 
-	gui/common/rwindow.h 
-	gui/common/rshtml.h 
-	gui/common/AvatarDefs.h 
-	gui/common/GroupFlagsWidget.h 
-	gui/common/GroupSelectionBox.h 
-	gui/common/GroupChooser.h 
-	gui/common/StatusDefs.h 
-	gui/common/TagDefs.h 
-	gui/common/GroupDefs.h 
-	gui/common/Emoticons.h 
-	gui/common/RSComboBox.h 
-	gui/common/RSListWidgetItem.h 
-	gui/common/RSTextEdit.h 
-	gui/common/RSPlainTextEdit.h 
-	gui/common/RSTreeWidget.h 
-	gui/common/RSTreeWidgetItem.h 
-	gui/common/RSFeedWidget.h 
-	gui/common/RSTabWidget.h 
-	gui/common/RSElidedItemDelegate.h 
-	gui/common/RSItemDelegate.h 
-	gui/common/PeerDefs.h 
-	gui/common/FilesDefs.h 
-	gui/common/PopularityDefs.h 
-	gui/common/RsBanListDefs.h 
-	gui/common/GroupTreeWidget.h 
-	gui/common/RSTreeView.h 
-	gui/common/AvatarWidget.h 
-	gui/common/FriendListModel.h 
-	gui/common/NewFriendList.h 
-	gui/common/FriendSelectionWidget.h 
-	gui/common/FriendSelectionDialog.h 
-	gui/common/HashBox.h 
-	gui/common/LineEditClear.h 
-	gui/common/DropLineEdit.h 
-	gui/common/RSTextBrowser.h 
-	gui/common/RSImageBlockWidget.h 
-	gui/common/FeedNotify.h 
-	gui/common/UserNotify.h 
-	gui/common/HeaderFrame.h 
-	gui/common/MimeTextEdit.h 
-	gui/common/UIStateHelper.h 
-	gui/common/FloatingHelpBrowser.h 
-	gui/common/SubscribeToolButton.h 
-	gui/common/RsBanListToolButton.h 
-	gui/common/FlowLayout.h 
-	gui/common/PictureFlow.h 
-	gui/common/ToasterNotify.h 
+	src/gui/common/RsButtonOnText.h 
+	src/gui/common/RsCollection.h 
+	src/gui/common/RSGraphWidget.h 
+	src/gui/common/ElidedLabel.h 
+	src/gui/common/vmessagebox.h 
+	src/gui/common/RsUrlHandler.h 
+	src/gui/common/RsCollectionDialog.h 
+	src/gui/common/rwindow.h 
+	src/gui/common/rshtml.h 
+	src/gui/common/AvatarDefs.h 
+	src/gui/common/GroupFlagsWidget.h 
+	src/gui/common/GroupSelectionBox.h 
+	src/gui/common/GroupChooser.h 
+	src/gui/common/StatusDefs.h 
+	src/gui/common/TagDefs.h 
+	src/gui/common/GroupDefs.h 
+	src/gui/common/Emoticons.h 
+	src/gui/common/RSComboBox.h 
+	src/gui/common/RSListWidgetItem.h 
+	src/gui/common/RSTextEdit.h 
+	src/gui/common/RSPlainTextEdit.h 
+	src/gui/common/RSTreeWidget.h 
+	src/gui/common/RSTreeWidgetItem.h 
+	src/gui/common/RSFeedWidget.h 
+	src/gui/common/RSTabWidget.h 
+	src/gui/common/RSElidedItemDelegate.h 
+	src/gui/common/RSItemDelegate.h 
+	src/gui/common/PeerDefs.h 
+	src/gui/common/FilesDefs.h 
+	src/gui/common/PopularityDefs.h 
+	src/gui/common/RsBanListDefs.h 
+	src/gui/common/GroupTreeWidget.h 
+	src/gui/common/RSTreeView.h 
+	src/gui/common/AvatarWidget.h 
+	src/gui/common/FriendListModel.h 
+	src/gui/common/NewFriendList.h 
+	src/gui/common/FriendSelectionWidget.h 
+	src/gui/common/FriendSelectionDialog.h 
+	src/gui/common/HashBox.h 
+	src/gui/common/LineEditClear.h 
+	src/gui/common/DropLineEdit.h 
+	src/gui/common/RSTextBrowser.h 
+	src/gui/common/RSImageBlockWidget.h 
+	src/gui/common/FeedNotify.h 
+	src/gui/common/UserNotify.h 
+	src/gui/common/HeaderFrame.h 
+	src/gui/common/MimeTextEdit.h 
+	src/gui/common/UIStateHelper.h 
+	src/gui/common/FloatingHelpBrowser.h 
+	src/gui/common/SubscribeToolButton.h 
+	src/gui/common/RsBanListToolButton.h 
+	src/gui/common/FlowLayout.h 
+	src/gui/common/PictureFlow.h 
+	src/gui/common/ToasterNotify.h 
 
-	gui/style/RSStyle.h 
-	gui/style/StyleDialog.h 
+	src/gui/style/RSStyle.h 
+	src/gui/style/StyleDialog.h 
 
-	gui/help/browser/helpbrowser.h 
-	gui/help/browser/helptextbrowser.h 
+	src/gui/help/browser/helpbrowser.h 
+	src/gui/help/browser/helptextbrowser.h 
 
-	gui/statusbar/peerstatus.h 
-	gui/statusbar/natstatus.h 
-	gui/statusbar/dhtstatus.h 
-	gui/statusbar/torstatus.h 
-	gui/statusbar/ratesstatus.h 
-	gui/statusbar/hashingstatus.h 
-	gui/statusbar/discstatus.h 
-	gui/statusbar/SoundStatus.h 
-	gui/statusbar/OpModeStatus.h 
-	gui/statusbar/ToasterDisable.h 
-	gui/statusbar/SysTrayStatus.h 
+	src/gui/statusbar/peerstatus.h 
+	src/gui/statusbar/natstatus.h 
+	src/gui/statusbar/dhtstatus.h 
+	src/gui/statusbar/torstatus.h 
+	src/gui/statusbar/ratesstatus.h 
+	src/gui/statusbar/hashingstatus.h 
+	src/gui/statusbar/discstatus.h 
+	src/gui/statusbar/SoundStatus.h 
+	src/gui/statusbar/OpModeStatus.h 
+	src/gui/statusbar/ToasterDisable.h 
+	src/gui/statusbar/SysTrayStatus.h 
 
-	gui/advsearch/advancedsearchdialog.h 
-	gui/advsearch/expressionwidget.h 
-	gui/advsearch/guiexprelement.h 
+	src/gui/advsearch/advancedsearchdialog.h 
+	src/gui/advsearch/expressionwidget.h 
+	src/gui/advsearch/guiexprelement.h 
 
-	gui/elastic/graphwidget.h 
-	gui/elastic/edge.h 
-	gui/elastic/arrow.h 
-	gui/elastic/elnode.h 
+	src/gui/elastic/graphwidget.h 
+	src/gui/elastic/edge.h 
+	src/gui/elastic/arrow.h 
+	src/gui/elastic/elnode.h 
 
-	gui/feeds/BoardsCommentsItem.h 
-	gui/feeds/FeedItem.h 
-	gui/feeds/FeedHolder.h 
-	gui/feeds/GxsCircleItem.h 
-	gui/feeds/ChannelsCommentsItem.h 
-	gui/feeds/PeerItem.h 
-	gui/feeds/MsgItem.h 
-	gui/feeds/ChatMsgItem.h 
-	gui/feeds/SubFileItem.h 
-	gui/feeds/AttachFileItem.h 
-	gui/feeds/SecurityItem.h 
-	gui/feeds/SecurityIpItem.h 
-	gui/feeds/NewsFeedUserNotify.h 
+	src/gui/feeds/BoardsCommentsItem.h 
+	src/gui/feeds/FeedItem.h 
+	src/gui/feeds/FeedHolder.h 
+	src/gui/feeds/GxsCircleItem.h 
+	src/gui/feeds/ChannelsCommentsItem.h 
+	src/gui/feeds/PeerItem.h 
+	src/gui/feeds/MsgItem.h 
+	src/gui/feeds/ChatMsgItem.h 
+	src/gui/feeds/SubFileItem.h 
+	src/gui/feeds/AttachFileItem.h 
+	src/gui/feeds/SecurityItem.h 
+	src/gui/feeds/SecurityIpItem.h 
+	src/gui/feeds/NewsFeedUserNotify.h 
 
-	gui/connect/ConnectFriendWizard.h 
-	gui/connect/ConnectProgressDialog.h 
+	src/gui/connect/ConnectFriendWizard.h 
+	src/gui/connect/ConnectProgressDialog.h 
 
-	gui/groups/CreateGroup.h 
+	src/gui/groups/CreateGroup.h 
 	)
 
-if(RS_JSONAPI)
+if(RS_JSON_API)
 	list(
-		APPEND RS_SOURCES
-		gui/settings/JsonApiPage.cc
+		APPEND RS_GUI_SOURCES
+		src/gui/settings/JsonApiPage.cc
 	)
 
 	list(
 		APPEND RS_IMPLEMENTATION_HEADERS
-		gui/settings/JsonApiPage.h
+		src/gui/settings/JsonApiPage.h
 	)
 
 	list(
-		APPEND RS_FORMS
-		gui/settings/JsonApiPage.ui
+		APPEND RS_GUI_FORMS
+		src/gui/settings/JsonApiPage.ui
 	)
-endif(RS_JSONAPI)
+endif(RS_JSON_API)
 
 if(RS_WEBUI)
 	list(
-		APPEND RS_SOURCES
-		gui/settings/WebuiPage.cpp
+		APPEND RS_GUI_SOURCES
+		src/gui/settings/WebuiPage.cpp
 	)
 
 	list(
 		APPEND RS_IMPLEMENTATION_HEADERS
-		jsonapi/p3webui.h 
-		gui/settings/WebuiPage.h 
+		src/jsonapi/p3webui.h 
+		src/gui/settings/WebuiPage.h 
 	)
 
 	list(
-		APPEND RS_FORMS
-		gui/settings/WebuiPage.ui
+		APPEND RS_GUI_FORMS
+		src/gui/settings/WebuiPage.ui
 	)
 endif(RS_WEBUI)
 
 list(
-	APPEND RS_QTRESOURCES
-	gui/images.qrc 
-	gui/icons.qrc 
-	lang/lang.qrc 
-	gui/help/content/content.qrc 
-	gui/emojione.qrc 
-	gui/qss/stylesheet/qdarkstyle/dark/Standard_Dark.qrc 
-	gui/qss/stylesheet/qdarkstyle/light/Standard_Light.qrc
+	APPEND RS_GUI_QTRESOURCES
+	src/gui/images.qrc 
+	src/gui/icons.qrc 
+	src/lang/lang.qrc 
+	src/gui/help/content/content.qrc 
+	src/gui/emojione.qrc 
+	src/gui/qss/stylesheet/qdarkstyle/dark/Standard_Dark.qrc 
+	src/gui/qss/stylesheet/qdarkstyle/light/Standard_Light.qrc
 	)
 
 list(
 	APPEND RS_TRANSLATIONS
-	lang/retroshare_ca_ES.ts 
-	lang/retroshare_cs.ts 
-	lang/retroshare_da.ts
-	lang/retroshare_de.ts
-	lang/retroshare_el.ts
-	lang/retroshare_en.ts
-	lang/retroshare_es.ts
-	lang/retroshare_fi.ts
-	lang/retroshare_fr.ts
-	lang/retroshare_hu.ts
-	lang/retroshare_it.ts
-	lang/retroshare_ja_JP.ts 
-	lang/retroshare_nl.ts 
-	lang/retroshare_ko.ts 
-	lang/retroshare_pl.ts 
-	lang/retroshare_ru.ts 
-	lang/retroshare_sv.ts 
-	lang/retroshare_tr.ts 
-	lang/retroshare_zh_CN.ts
+	src/lang/retroshare_ca_ES.ts 
+	src/lang/retroshare_cs.ts 
+	src/lang/retroshare_da.ts
+	src/lang/retroshare_de.ts
+	src/lang/retroshare_el.ts
+	src/lang/retroshare_en.ts
+	src/lang/retroshare_es.ts
+	src/lang/retroshare_fi.ts
+	src/lang/retroshare_fr.ts
+	src/lang/retroshare_hu.ts
+	src/lang/retroshare_it.ts
+	src/lang/retroshare_ja_JP.ts 
+	src/lang/retroshare_nl.ts 
+	src/lang/retroshare_ko.ts 
+	src/lang/retroshare_pl.ts 
+	src/lang/retroshare_ru.ts 
+	src/lang/retroshare_sv.ts 
+	src/lang/retroshare_tr.ts 
+	src/lang/retroshare_zh_CN.ts
 	)
 
 if(RS_UNFINISHED_TRANSLATIONS)
 	list(
 		APPEND RS_TRANSLATIONS
-		lang/retroshare_bg.ts 
-		lang/retroshare_af.ts 
-		lang/retroshare_pt.ts 
-		lang/retroshare_sl.ts 
-		lang/retroshare_sr.ts 
-		lang/retroshare_zh_TW.ts
+		src/lang/retroshare_bg.ts 
+		src/lang/retroshare_af.ts 
+		src/lang/retroshare_pt.ts 
+		src/lang/retroshare_sl.ts 
+		src/lang/retroshare_sr.ts 
+		src/lang/retroshare_zh_TW.ts
 		)
 endif(RS_UNFINISHED_TRANSLATIONS)
 
@@ -786,42 +783,42 @@ if(RS_MESSENGER)
 		)
 
 	list(
-		APPEND RS_SOURCES
-		gui/MessengerWindow.cpp 
-		gui/common/FriendList.cpp
+		APPEND RS_GUI_SOURCES
+		src/gui/MessengerWindow.cpp 
+		src/gui/common/FriendList.cpp
 		)
 	list(
 		APPEND RS_IMPLEMENTATION_HEADERS
-		gui/MessengerWindow.h 
-		gui/common/FriendList.h 
+		src/gui/MessengerWindow.h 
+		src/gui/common/FriendList.h 
 		)
 	list(
-		APPEND RS_FORMS
-		gui/MessengerWindow.ui 
-		gui/common/FriendList.ui
+		APPEND RS_GUI_FORMS
+		src/gui/MessengerWindow.ui 
+		src/gui/common/FriendList.ui
 		)
 endif(RS_MESSENGER)
 
 if(RS_IDLE)
 	list(
 		APPEND RS_IMPLEMENTATION_HEADERS
-		idle/idle.h
+		src/idle/idle.h
 		)
 	list(
-		APPEND RS_SOURCES
-		idle/idle.cpp 
-		idle/idle_platform.cpp
+		APPEND RS_GUI_SOURCES
+		src/idle/idle.cpp 
+		src/idle/idle_platform.cpp
 		)
 endif(RS_IDLE)
 
 if(RS_FRAMECATCHER)
 	list(
 		APPEND RS_IMPLEMENTATION_HEADERS
-		util/framecatcher.h
+		src/util/framecatcher.h
 		)
 	list(
-		APPEND RS_SOURCES
-		util/framecatcher.cpp
+		APPEND RS_GUI_SOURCES
+		src/util/framecatcher.cpp
 		)
 
 	# TODO: LIBS += -lxine
@@ -838,16 +835,16 @@ if(RS_EFS)
 		${PROJECT_NAME} PUBLIC RS_EMBEDED_FRIEND_SERVER
 		)
 	list(
-		APPEND RS_SOURCES
-		gui/FriendServerControl.cpp
+		APPEND RS_GUI_SOURCES
+		src/gui/FriendServerControl.cpp
 		)
 	list(
 		APPEND RS_IMPLEMENTATION_HEADERS
-		gui/FriendServerControl.h
+		src/gui/FriendServerControl.h
 		)
 	list(
-		APPEND RS_FORMS
-		gui/FriendServerControl.ui
+		APPEND RS_GUI_FORMS
+		src/gui/FriendServerControl.ui
 		)
 endif(RS_EFS)
 
@@ -857,7 +854,7 @@ if(RS_UNFINISHED)
 
 	list(	
 		APPEND RS_IMPLEMENTATION_HEADERS
-		gui/unfinished/ApplicationWindow.h 
+		src/gui/unfinished/ApplicationWindow.h 
 
 		#		gui/unfinished/CalDialog.h 
 		#		gui/unfinished/ExampleDialog.h 
@@ -870,8 +867,8 @@ if(RS_UNFINISHED)
 		)
 
 	list(
-		APPEND RS_FORMS
-		gui/unfinished/ApplicationWindow.ui 
+		APPEND RS_GUI_FORMS
+		src/gui/unfinished/ApplicationWindow.ui 
 
 		#		gui/unfinished/CalDialog.ui 
 		#		gui/unfinished/ExampleDialog.ui 
@@ -884,8 +881,8 @@ if(RS_UNFINISHED)
 		)
 
 	list(
-		APPEND RS_SOURCES 
-		gui/unfinished/ApplicationWindow.cpp 
+		APPEND RS_GUI_SOURCES 
+		src/gui/unfinished/ApplicationWindow.cpp 
 
 		#		gui/unfinished/CalDialog.cpp 
 		#		gui/unfinished/ExampleDialog.cpp 
@@ -909,45 +906,45 @@ if(RS_GXSPHOTOSHARE)
 
 	list(
 		APPEND RS_IMPLEMENTATION_HEADERS
-		gui/PhotoShare/AlbumGroupDialog.h 
-		gui/PhotoShare/AlbumExtra.h 
-		gui/PhotoShare/PhotoDrop.h 
-		gui/PhotoShare/AlbumItem.h 
-		gui/PhotoShare/AlbumDialog.h 
-		gui/PhotoShare/PhotoItem.h 
-		gui/PhotoShare/PhotoShareItemHolder.h 
-		gui/PhotoShare/PhotoShare.h 
-		gui/PhotoShare/PhotoSlideShow.h 
-		gui/PhotoShare/PhotoDialog.h
+		src/gui/PhotoShare/AlbumGroupDialog.h 
+		src/gui/PhotoShare/AlbumExtra.h 
+		src/gui/PhotoShare/PhotoDrop.h 
+		src/gui/PhotoShare/AlbumItem.h 
+		src/gui/PhotoShare/AlbumDialog.h 
+		src/gui/PhotoShare/PhotoItem.h 
+		src/gui/PhotoShare/PhotoShareItemHolder.h 
+		src/gui/PhotoShare/PhotoShare.h 
+		src/gui/PhotoShare/PhotoSlideShow.h 
+		src/gui/PhotoShare/PhotoDialog.h
 		)
 	list(
-		APPEND RS_FORMS
-		gui/PhotoShare/AlbumExtra.ui 
-		gui/PhotoShare/PhotoItem.ui 
-		gui/PhotoShare/PhotoDialog.ui 
-		gui/PhotoShare/AlbumItem.ui 
-		gui/PhotoShare/AlbumDialog.ui 
-		gui/PhotoShare/PhotoShare.ui 
-		gui/PhotoShare/PhotoSlideShow.ui
-		)
-
-	list(
-		APPEND RS_SOURCES
-		gui/PhotoShare/AlbumGroupDialog.cpp 
-		gui/PhotoShare/AlbumExtra.cpp 
-		gui/PhotoShare/PhotoItem.cpp 
-		gui/PhotoShare/PhotoDialog.cpp 
-		gui/PhotoShare/PhotoDrop.cpp 
-		gui/PhotoShare/AlbumItem.cpp 
-		gui/PhotoShare/AlbumDialog.cpp 
-		gui/PhotoShare/PhotoShareItemHolder.cpp 
-		gui/PhotoShare/PhotoShare.cpp 
-		gui/PhotoShare/PhotoSlideShow.cpp
+		APPEND RS_GUI_FORMS
+		src/gui/PhotoShare/AlbumExtra.ui 
+		src/gui/PhotoShare/PhotoItem.ui 
+		src/gui/PhotoShare/PhotoDialog.ui 
+		src/gui/PhotoShare/AlbumItem.ui 
+		src/gui/PhotoShare/AlbumDialog.ui 
+		src/gui/PhotoShare/PhotoShare.ui 
+		src/gui/PhotoShare/PhotoSlideShow.ui
 		)
 
 	list(
-		APPEND RS_QTRESOURCES
-		gui/PhotoShare/Photo_images.qrc
+		APPEND RS_GUI_SOURCES
+		src/gui/PhotoShare/AlbumGroupDialog.cpp 
+		src/gui/PhotoShare/AlbumExtra.cpp 
+		src/gui/PhotoShare/PhotoItem.cpp 
+		src/gui/PhotoShare/PhotoDialog.cpp 
+		src/gui/PhotoShare/PhotoDrop.cpp 
+		src/gui/PhotoShare/AlbumItem.cpp 
+		src/gui/PhotoShare/AlbumDialog.cpp 
+		src/gui/PhotoShare/PhotoShareItemHolder.cpp 
+		src/gui/PhotoShare/PhotoShare.cpp 
+		src/gui/PhotoShare/PhotoSlideShow.cpp
+		)
+
+	list(
+		APPEND RS_GUI_QTRESOURCES
+		src/gui/PhotoShare/Photo_images.qrc
 		)
 endif(RS_GXSPHOTOSHARE)
 
@@ -960,36 +957,36 @@ if(RS_GXSWIKIPOS)
 
 	list(
 		APPEND RS_IMPLEMENTATION_HEADERS
-		gui/WikiPoos/WikiDialog.h 
-		gui/WikiPoos/WikiAddDialog.h 
-		gui/WikiPoos/WikiEditDialog.h 
-		gui/gxs/WikiGroupDialog.h 
-		gui/gxs/RsGxsUpdateBroadcastBase.h 
-		gui/gxs/RsGxsUpdateBroadcastWidget.h 
-		gui/gxs/RsGxsUpdateBroadcastPage.h 
+		src/gui/WikiPoos/WikiDialog.h 
+		src/gui/WikiPoos/WikiAddDialog.h 
+		src/gui/WikiPoos/WikiEditDialog.h 
+		src/gui/gxs/WikiGroupDialog.h 
+		src/gui/gxs/RsGxsUpdateBroadcastBase.h 
+		src/gui/gxs/RsGxsUpdateBroadcastWidget.h 
+		src/gui/gxs/RsGxsUpdateBroadcastPage.h 
 		)
 
 	list(
-		APPEND RS_FORMS
-		gui/WikiPoos/WikiDialog.ui 
-		gui/WikiPoos/WikiAddDialog.ui 
-		gui/WikiPoos/WikiEditDialog.ui 
+		APPEND RS_GUI_FORMS
+		src/gui/WikiPoos/WikiDialog.ui 
+		src/gui/WikiPoos/WikiAddDialog.ui 
+		src/gui/WikiPoos/WikiEditDialog.ui 
 		)
 
 	list(
-		APPEND RS_SOURCES
-		gui/WikiPoos/WikiDialog.cpp 
-		gui/WikiPoos/WikiAddDialog.cpp 
-		gui/WikiPoos/WikiEditDialog.cpp 
-		gui/gxs/WikiGroupDialog.cpp 
-		gui/gxs/RsGxsUpdateBroadcastBase.cpp 
-		gui/gxs/RsGxsUpdateBroadcastWidget.cpp 
-		gui/gxs/RsGxsUpdateBroadcastPage.cpp 
+		APPEND RS_GUI_SOURCES
+		src/gui/WikiPoos/WikiDialog.cpp 
+		src/gui/WikiPoos/WikiAddDialog.cpp 
+		src/gui/WikiPoos/WikiEditDialog.cpp 
+		src/gui/gxs/WikiGroupDialog.cpp 
+		src/gui/gxs/RsGxsUpdateBroadcastBase.cpp 
+		src/gui/gxs/RsGxsUpdateBroadcastWidget.cpp 
+		src/gui/gxs/RsGxsUpdateBroadcastPage.cpp 
 		)
 
 	list(
-		APPEND RS_QTRESOURCES
-		gui/WikiPoos/Wiki_images.qrc
+		APPEND RS_GUI_QTRESOURCES
+		src/gui/WikiPoos/Wiki_images.qrc
 		)
 endif(RS_GXSWIKIPOS)
 	
@@ -1000,73 +997,73 @@ if(RS_GXSTHEWIRE)
 
 	list(
 		APPEND RS_IMPLEMENTATION_HEADERS
-		gui/TheWire/WireDialog.h 
-		gui/TheWire/WireGroupItem.h 
-		gui/TheWire/WireGroupDialog.h 
-		gui/TheWire/WireGroupExtra.h 
-		gui/TheWire/PulseAddDialog.h 
-		gui/TheWire/PulseViewItem.h 
-		gui/TheWire/PulseTopLevel.h 
-		gui/TheWire/PulseViewGroup.h 
-		gui/TheWire/PulseReply.h 
-		gui/TheWire/PulseReplySeperator.h 
-		gui/TheWire/PulseMessage.h 
+		src/gui/TheWire/WireDialog.h 
+		src/gui/TheWire/WireGroupItem.h 
+		src/gui/TheWire/WireGroupDialog.h 
+		src/gui/TheWire/WireGroupExtra.h 
+		src/gui/TheWire/PulseAddDialog.h 
+		src/gui/TheWire/PulseViewItem.h 
+		src/gui/TheWire/PulseTopLevel.h 
+		src/gui/TheWire/PulseViewGroup.h 
+		src/gui/TheWire/PulseReply.h 
+		src/gui/TheWire/PulseReplySeperator.h 
+		src/gui/TheWire/PulseMessage.h 
 		)
 
 	list(
-		APPEND RS_FORMS
-		gui/TheWire/WireDialog.ui 
-		gui/TheWire/WireGroupItem.ui 
-		gui/TheWire/WireGroupExtra.ui 
-		gui/TheWire/PulseAddDialog.ui 
-		gui/TheWire/PulseTopLevel.ui 
-		gui/TheWire/PulseViewGroup.ui 
-		gui/TheWire/PulseReply.ui 
-		gui/TheWire/PulseReplySeperator.ui 
-		gui/TheWire/PulseMessage.ui 
+		APPEND RS_GUI_FORMS
+		src/gui/TheWire/WireDialog.ui 
+		src/gui/TheWire/WireGroupItem.ui 
+		src/gui/TheWire/WireGroupExtra.ui 
+		src/gui/TheWire/PulseAddDialog.ui 
+		src/gui/TheWire/PulseTopLevel.ui 
+		src/gui/TheWire/PulseViewGroup.ui 
+		src/gui/TheWire/PulseReply.ui 
+		src/gui/TheWire/PulseReplySeperator.ui 
+		src/gui/TheWire/PulseMessage.ui 
 		)
 
 	list(
-		APPEND RS_SOURCES
-		gui/TheWire/WireDialog.cpp 
-		gui/TheWire/WireGroupItem.cpp 
-		gui/TheWire/WireGroupDialog.cpp 
-		gui/TheWire/WireGroupExtra.cpp 
-		gui/TheWire/PulseAddDialog.cpp 
-		gui/TheWire/PulseViewItem.cpp 
-		gui/TheWire/PulseTopLevel.cpp 
-		gui/TheWire/PulseViewGroup.cpp 
-		gui/TheWire/PulseReply.cpp 
-		gui/TheWire/PulseReplySeperator.cpp 
-		gui/TheWire/PulseMessage.cpp 
+		APPEND RS_GUI_SOURCES
+		src/gui/TheWire/WireDialog.cpp 
+		src/gui/TheWire/WireGroupItem.cpp 
+		src/gui/TheWire/WireGroupDialog.cpp 
+		src/gui/TheWire/WireGroupExtra.cpp 
+		src/gui/TheWire/PulseAddDialog.cpp 
+		src/gui/TheWire/PulseViewItem.cpp 
+		src/gui/TheWire/PulseTopLevel.cpp 
+		src/gui/TheWire/PulseViewGroup.cpp 
+		src/gui/TheWire/PulseReply.cpp 
+		src/gui/TheWire/PulseReplySeperator.cpp 
+		src/gui/TheWire/PulseMessage.cpp 
 		)
 
 	list(
-		APPEND RS_QTRESOURCES
-		RESOURCES += gui/TheWire/TheWire_images.qrc
+		APPEND RS_GUI_QTRESOURCES
+		RESOURCES += src/gui/TheWire/TheWire_images.qrc
 		)
 endif(RS_GXSTHEWIRE)
 
 if(RS_GXSIDENTITIES)
 	list(
 		APPEND RS_IMPLEMENTATION_HEADERS
-		gui/Identity/IdDialog.h 
-		gui/Identity/IdEditDialog.h 
-		gui/Identity/IdDetailsDialog.h 
+		src/gui/Identity/IdDialog.h 
+		src/gui/Identity/IdEditDialog.h 
+		src/gui/Identity/IdDetailsDialog.h 
 		)
 
 	list(
-		APPEND RS_FORMS
-		gui/Identity/IdDialog.ui 
-		gui/Identity/IdEditDialog.ui 
-		gui/Identity/IdDetailsDialog.ui 
+		APPEND RS_GUI_FORMS
+		src/gui/Identity/IdDialog.ui 
+		src/gui/Identity/IdEditDialog.ui 
+		src/gui/Identity/IdDetailsDialog.ui 
 		)
 
 	list(
-		APPEND RS_SOURCES
-		gui/Identity/IdDialog.cpp 
-		gui/Identity/IdEditDialog.cpp 
-		gui/Identity/IdDetailsDialog.cpp 
+		APPEND RS_GUI_SOURCES
+		src/gui/Identity/IdDialog.cpp 
+		src/gui/Identity/IdEditDialog.cpp 
+		src/gui/Identity/IdDetailsDialog.cpp 
 		)
 endif(RS_GXSIDENTITIES)
 	
@@ -1076,123 +1073,123 @@ if(RS_GXSCIRCLES)
 		)
 
 	list(
-		gui/Circles/CirclesDialog.h 
-		gui/Circles/CreateCircleDialog.h 
-		gui/People/PeopleDialog.h
-		gui/People/CircleWidget.h
-		gui/People/IdentityWidget.h
+		src/gui/Circles/CirclesDialog.h 
+		src/gui/Circles/CreateCircleDialog.h 
+		src/gui/People/PeopleDialog.h
+		src/gui/People/CircleWidget.h
+		src/gui/People/IdentityWidget.h
 		)
 
 	list(
-		gui/Circles/CirclesDialog.ui 
-		gui/Circles/CreateCircleDialog.ui 
-		gui/People/PeopleDialog.ui 
-		gui/People/CircleWidget.ui
-		gui/People/IdentityWidget.ui
+		src/gui/Circles/CirclesDialog.ui 
+		src/gui/Circles/CreateCircleDialog.ui 
+		src/gui/People/PeopleDialog.ui 
+		src/gui/People/CircleWidget.ui
+		src/gui/People/IdentityWidget.ui
 		)
 
 	list(
-		gui/Circles/CirclesDialog.cpp 
-		gui/Circles/CreateCircleDialog.cpp 
-		gui/People/PeopleDialog.cpp 
-		gui/People/CircleWidget.cpp
-		gui/People/IdentityWidget.cpp
+		src/gui/Circles/CirclesDialog.cpp 
+		src/gui/Circles/CreateCircleDialog.cpp 
+		src/gui/People/PeopleDialog.cpp 
+		src/gui/People/CircleWidget.cpp
+		src/gui/People/IdentityWidget.cpp
 		)
 endif(RS_GXSCIRCLES)
 
 if(RS_GXSGUI)
 	list(
 		APPEND RS_IMPLEMENTATION_HEADERS
-		gui/gxs/GxsGroupDialog.h 
-		gui/gxs/GxsIdDetails.h 
-		gui/gxs/GxsIdChooser.h
-		gui/gxs/GxsIdLabel.h 
-		gui/gxs/GxsCircleChooser.h 
-		gui/gxs/GxsCircleLabel.h 
-		gui/gxs/GxsIdTreeWidgetItem.h 
-		gui/gxs/GxsCommentTreeWidget.h 
-		gui/gxs/GxsCommentContainer.h 
-		gui/gxs/GxsCommentDialog.h 
-		gui/gxs/GxsCreateCommentDialog.h 
-		gui/gxs/GxsGroupFrameDialog.h 
-		gui/gxs/GxsMessageFrameWidget.h 
-		gui/gxs/GxsMessageFramePostWidget.h 
-		gui/gxs/GxsGroupFeedItem.h 
-		gui/gxs/GxsFeedItem.h 
-		gui/gxs/GxsGroupShareKey.h 
-		gui/gxs/GxsUserNotify.h 
-		gui/gxs/GxsFeedWidget.h 
-		util/TokenQueue.h 
-		util/RsGxsUpdateBroadcast.h 
+		src/gui/gxs/GxsGroupDialog.h 
+		src/gui/gxs/GxsIdDetails.h 
+		src/gui/gxs/GxsIdChooser.h
+		src/gui/gxs/GxsIdLabel.h 
+		src/gui/gxs/GxsCircleChooser.h 
+		src/gui/gxs/GxsCircleLabel.h 
+		src/gui/gxs/GxsIdTreeWidgetItem.h 
+		src/gui/gxs/GxsCommentTreeWidget.h 
+		src/gui/gxs/GxsCommentContainer.h 
+		src/gui/gxs/GxsCommentDialog.h 
+		src/gui/gxs/GxsCreateCommentDialog.h 
+		src/gui/gxs/GxsGroupFrameDialog.h 
+		src/gui/gxs/GxsMessageFrameWidget.h 
+		src/gui/gxs/GxsMessageFramePostWidget.h 
+		src/gui/gxs/GxsGroupFeedItem.h 
+		src/gui/gxs/GxsFeedItem.h 
+		src/gui/gxs/GxsGroupShareKey.h 
+		src/gui/gxs/GxsUserNotify.h 
+		src/gui/gxs/GxsFeedWidget.h 
+		src/util/TokenQueue.h 
+		src/util/RsGxsUpdateBroadcast.h 
 		)
 
 	list(
-		APPEND RS_FORMS
-		gui/gxs/GxsGroupDialog.ui 
-		gui/gxs/GxsCommentContainer.ui 
-		gui/gxs/GxsCommentDialog.ui 
-		gui/gxs/GxsCreateCommentDialog.ui 
-		gui/gxs/GxsGroupFrameDialog.ui
-		gui/gxs/GxsGroupShareKey.ui 
+		APPEND RS_GUI_FORMS
+		src/gui/gxs/GxsGroupDialog.ui 
+		src/gui/gxs/GxsCommentContainer.ui 
+		src/gui/gxs/GxsCommentDialog.ui 
+		src/gui/gxs/GxsCreateCommentDialog.ui 
+		src/gui/gxs/GxsGroupFrameDialog.ui
+		src/gui/gxs/GxsGroupShareKey.ui 
 		)
 	
 	list(
-		APPEND RS_SOURCES
-		gui/gxs/GxsGroupDialog.cpp 
-		gui/gxs/GxsIdDetails.cpp 
-		gui/gxs/GxsIdChooser.cpp 
-		gui/gxs/GxsIdLabel.cpp 
-		gui/gxs/GxsCircleChooser.cpp 
-		gui/gxs/GxsGroupShareKey.cpp 
-		gui/gxs/GxsCircleLabel.cpp 
-		gui/gxs/GxsIdTreeWidgetItem.cpp 
-		gui/gxs/GxsCommentTreeWidget.cpp 
-		gui/gxs/GxsCommentContainer.cpp 
-		gui/gxs/GxsCommentDialog.cpp 
-		gui/gxs/GxsCreateCommentDialog.cpp 
-		gui/gxs/GxsGroupFrameDialog.cpp 
-		gui/gxs/GxsMessageFrameWidget.cpp 
-		gui/gxs/GxsMessageFramePostWidget.cpp 
-		gui/gxs/GxsGroupFeedItem.cpp 
-		gui/gxs/GxsFeedItem.cpp 
-		gui/gxs/GxsUserNotify.cpp 
-		gui/gxs/GxsFeedWidget.cpp 
-		util/TokenQueue.cpp 
-		util/RsGxsUpdateBroadcast.cpp 
+		APPEND RS_GUI_SOURCES
+		src/gui/gxs/GxsGroupDialog.cpp 
+		src/gui/gxs/GxsIdDetails.cpp 
+		src/gui/gxs/GxsIdChooser.cpp 
+		src/gui/gxs/GxsIdLabel.cpp 
+		src/gui/gxs/GxsCircleChooser.cpp 
+		src/gui/gxs/GxsGroupShareKey.cpp 
+		src/gui/gxs/GxsCircleLabel.cpp 
+		src/gui/gxs/GxsIdTreeWidgetItem.cpp 
+		src/gui/gxs/GxsCommentTreeWidget.cpp 
+		src/gui/gxs/GxsCommentContainer.cpp 
+		src/gui/gxs/GxsCommentDialog.cpp 
+		src/gui/gxs/GxsCreateCommentDialog.cpp 
+		src/gui/gxs/GxsGroupFrameDialog.cpp 
+		src/gui/gxs/GxsMessageFrameWidget.cpp 
+		src/gui/gxs/GxsMessageFramePostWidget.cpp 
+		src/gui/gxs/GxsGroupFeedItem.cpp 
+		src/gui/gxs/GxsFeedItem.cpp 
+		src/gui/gxs/GxsUserNotify.cpp 
+		src/gui/gxs/GxsFeedWidget.cpp 
+		src/util/TokenQueue.cpp 
+		src/util/RsGxsUpdateBroadcast.cpp 
 		)
 endif(RS_GXSGUI)
 	
 if(RS_GXSFORUMS) 
 	list(
 		APPEND RS_IMPLEMENTATION_HEADERS 
-		gui/gxsforums/GxsForumsDialog.h 
-		gui/gxsforums/GxsForumGroupDialog.h 
-		gui/gxsforums/CreateGxsForumMsg.h 
-		gui/gxsforums/GxsForumThreadWidget.h 
-		gui/gxsforums/GxsForumModel.h 
-		gui/gxsforums/GxsForumUserNotify.h 
-		gui/feeds/GxsForumGroupItem.h 
-		gui/feeds/GxsForumMsgItem.h
+		src/gui/gxsforums/GxsForumsDialog.h 
+		src/gui/gxsforums/GxsForumGroupDialog.h 
+		src/gui/gxsforums/CreateGxsForumMsg.h 
+		src/gui/gxsforums/GxsForumThreadWidget.h 
+		src/gui/gxsforums/GxsForumModel.h 
+		src/gui/gxsforums/GxsForumUserNotify.h 
+		src/gui/feeds/GxsForumGroupItem.h 
+		src/gui/feeds/GxsForumMsgItem.h
 		)
 
 	list(
-		APPEND RS_FORMS
-		ui/gxsforums/CreateGxsForumMsg.ui 
-		gui/gxsforums/GxsForumThreadWidget.ui 
-		gui/feeds/GxsForumGroupItem.ui 
-		gui/feeds/GxsForumMsgItem.ui
+		APPEND RS_GUI_FORMS
+		src/gui/gxsforums/CreateGxsForumMsg.ui 
+		src/gui/gxsforums/GxsForumThreadWidget.ui 
+		src/gui/feeds/GxsForumGroupItem.ui 
+		src/gui/feeds/GxsForumMsgItem.ui
 		)
 
 	list(
-		APPEND RS_SOURCES
-		gui/gxsforums/GxsForumsDialog.cpp 
-		gui/gxsforums/GxsForumGroupDialog.cpp 
-		gui/gxsforums/CreateGxsForumMsg.cpp 
-		gui/gxsforums/GxsForumThreadWidget.cpp 
-		gui/gxsforums/GxsForumModel.cpp 
-		gui/gxsforums/GxsForumUserNotify.cpp 
-		gui/feeds/GxsForumGroupItem.cpp 
-		gui/feeds/GxsForumMsgItem.cpp
+		APPEND RS_GUI_SOURCES
+		src/gui/gxsforums/GxsForumsDialog.cpp 
+		src/gui/gxsforums/GxsForumGroupDialog.cpp 
+		src/gui/gxsforums/CreateGxsForumMsg.cpp 
+		src/gui/gxsforums/GxsForumThreadWidget.cpp 
+		src/gui/gxsforums/GxsForumModel.cpp 
+		src/gui/gxsforums/GxsForumUserNotify.cpp 
+		src/gui/feeds/GxsForumGroupItem.cpp 
+		src/gui/feeds/GxsForumMsgItem.cpp
 		)
 endif(RS_GXSFORUMS)
 	
@@ -1200,90 +1197,90 @@ endif(RS_GXSFORUMS)
 if(RS_GXSCHANNELS)
 	list(
 		APPEND RS_IMPLEMENTATION_HEADERS
-		gui/gxschannels/GxsChannelDialog.h 
-		gui/gxschannels/GxsChannelGroupDialog.h 
-		gui/gxschannels/CreateGxsChannelMsg.h 
-		gui/gxschannels/GxsChannelPostsWidgetWithModel.h 
-		gui/gxschannels/GxsChannelPostsModel.h 
-		gui/gxschannels/GxsChannelPostFilesModel.h 
-		gui/gxschannels/GxsChannelPostThumbnail.h 
-		gui/gxschannels/GxsChannelFilesStatusWidget.h 
-		gui/feeds/GxsChannelGroupItem.h 
-		gui/feeds/GxsChannelPostItem.h 
-		gui/gxschannels/GxsChannelUserNotify.h
+		src/gui/gxschannels/GxsChannelDialog.h 
+		src/gui/gxschannels/GxsChannelGroupDialog.h 
+		src/gui/gxschannels/CreateGxsChannelMsg.h 
+		src/gui/gxschannels/GxsChannelPostsWidgetWithModel.h 
+		src/gui/gxschannels/GxsChannelPostsModel.h 
+		src/gui/gxschannels/GxsChannelPostFilesModel.h 
+		src/gui/gxschannels/GxsChannelPostThumbnail.h 
+		src/gui/gxschannels/GxsChannelFilesStatusWidget.h 
+		src/gui/feeds/GxsChannelGroupItem.h 
+		src/gui/feeds/GxsChannelPostItem.h 
+		src/gui/gxschannels/GxsChannelUserNotify.h
 		)
 	
 	list(
-		APPEND RS_FORMS
-		gui/gxschannels/GxsChannelPostsWidgetWithModel.ui 
-		gui/gxschannels/GxsChannelFilesStatusWidget.ui 
-		gui/gxschannels/CreateGxsChannelMsg.ui 
-		gui/feeds/GxsChannelGroupItem.ui 
-		gui/feeds/GxsChannelPostItem.ui
+		APPEND RS_GUI_FORMS
+		src/gui/gxschannels/GxsChannelPostsWidgetWithModel.ui 
+		src/gui/gxschannels/GxsChannelFilesStatusWidget.ui 
+		src/gui/gxschannels/CreateGxsChannelMsg.ui 
+		src/gui/feeds/GxsChannelGroupItem.ui 
+		src/gui/feeds/GxsChannelPostItem.ui
 		)
 	
 	list(
-		APPEND RS_SOURCES
-		gui/gxschannels/GxsChannelDialog.cpp 
-		gui/gxschannels/GxsChannelPostsWidgetWithModel.cpp 
-		gui/gxschannels/GxsChannelPostsModel.cpp 
-		gui/gxschannels/GxsChannelPostFilesModel.cpp 
-		gui/gxschannels/GxsChannelFilesStatusWidget.cpp 
-                gui/gxschannels/GxsChannelPostThumbnail.cpp 
-		gui/gxschannels/GxsChannelGroupDialog.cpp 
-		gui/gxschannels/CreateGxsChannelMsg.cpp 
-		gui/feeds/GxsChannelGroupItem.cpp 
-		gui/feeds/GxsChannelPostItem.cpp 
-		gui/gxschannels/GxsChannelUserNotify.cpp
+		APPEND RS_GUI_SOURCES
+		src/gui/gxschannels/GxsChannelDialog.cpp 
+		src/gui/gxschannels/GxsChannelPostsWidgetWithModel.cpp 
+		src/gui/gxschannels/GxsChannelPostsModel.cpp 
+		src/gui/gxschannels/GxsChannelPostFilesModel.cpp 
+		src/gui/gxschannels/GxsChannelFilesStatusWidget.cpp 
+                src/gui/gxschannels/GxsChannelPostThumbnail.cpp 
+		src/gui/gxschannels/GxsChannelGroupDialog.cpp 
+		src/gui/gxschannels/CreateGxsChannelMsg.cpp 
+		src/gui/feeds/GxsChannelGroupItem.cpp 
+		src/gui/feeds/GxsChannelPostItem.cpp 
+		src/gui/gxschannels/GxsChannelUserNotify.cpp
 		)
 endif(RS_GXSCHANNELS)
 	
 if(RS_GXSPOSTED)
 	list(
 		APPEND RS_IMPLEMENTATION_HEADERS
-		gui/Posted/PostedDialog.h 
-		gui/Posted/PostedListWidgetWithModel.h 
-		gui/Posted/PostedPostsModel.h 
-		gui/Posted/BoardPostDisplayWidget.h 
-		gui/Posted/PostedItem.h 
-		gui/Posted/PostedCardView.h 
-		gui/Posted/PostedGroupDialog.h 
-		gui/feeds/PostedGroupItem.h 
-		gui/Posted/PostedCreatePostDialog.h 
-		gui/Posted/PhotoView.h 
-		gui/Posted/PostedUserNotify.h
+		src/gui/Posted/PostedDialog.h 
+		src/gui/Posted/PostedListWidgetWithModel.h 
+		src/gui/Posted/PostedPostsModel.h 
+		src/gui/Posted/BoardPostDisplayWidget.h 
+		src/gui/Posted/PostedItem.h 
+		src/gui/Posted/PostedCardView.h 
+		src/gui/Posted/PostedGroupDialog.h 
+		src/gui/feeds/PostedGroupItem.h 
+		src/gui/Posted/PostedCreatePostDialog.h 
+		src/gui/Posted/PhotoView.h 
+		src/gui/Posted/PostedUserNotify.h
 		)
 
 	list(
-		APPEND RS_FORMS
-		gui/Posted/PostedListWidgetWithModel.ui 
-		gui/feeds/PostedGroupItem.ui 
-		gui/Posted/BoardPostDisplayWidget_compact.ui 
-		gui/Posted/BoardPostDisplayWidget_card.ui 
-		gui/Posted/PostedItem.ui 
-		gui/Posted/PostedCardView.ui 
-		gui/Posted/PostedCreatePostDialog.ui 
-		gui/Posted/PhotoView.ui 
+		APPEND RS_GUI_FORMS
+		src/gui/Posted/PostedListWidgetWithModel.ui 
+		src/gui/feeds/PostedGroupItem.ui 
+		src/gui/Posted/BoardPostDisplayWidget_compact.ui 
+		src/gui/Posted/BoardPostDisplayWidget_card.ui 
+		src/gui/Posted/PostedItem.ui 
+		src/gui/Posted/PostedCardView.ui 
+		src/gui/Posted/PostedCreatePostDialog.ui 
+		src/gui/Posted/PhotoView.ui 
 		)
 	
 	list(
-		APPEND RS_SOURCES
-		gui/Posted/PostedDialog.cpp 
-		gui/Posted/PostedListWidgetWithModel.cpp 
-		gui/Posted/BoardPostDisplayWidget.cpp 
-		gui/Posted/PostedPostsModel.cpp 
-		gui/feeds/PostedGroupItem.cpp 
-		gui/Posted/PostedItem.cpp 
-		gui/Posted/PostedCardView.cpp 
-		gui/Posted/PostedGroupDialog.cpp 
-		gui/Posted/PostedCreatePostDialog.cpp 
-		gui/Posted/PhotoView.cpp 
-		gui/Posted/PostedUserNotify.cpp
+		APPEND RS_GUI_SOURCES
+		src/gui/Posted/PostedDialog.cpp 
+		src/gui/Posted/PostedListWidgetWithModel.cpp 
+		src/gui/Posted/BoardPostDisplayWidget.cpp 
+		src/gui/Posted/PostedPostsModel.cpp 
+		src/gui/feeds/PostedGroupItem.cpp 
+		src/gui/Posted/PostedItem.cpp 
+		src/gui/Posted/PostedCardView.cpp 
+		src/gui/Posted/PostedGroupDialog.cpp 
+		src/gui/Posted/PostedCreatePostDialog.cpp 
+		src/gui/Posted/PhotoView.cpp 
+		src/gui/Posted/PostedUserNotify.cpp
 		)
 
 	list(
-		APPEND RS_QTRESOURCES
-		gui/Posted/Posted_images.qrc
+		APPEND RS_GUI_QTRESOURCES
+		src/gui/Posted/Posted_images.qrc
 		)
 endif(RS_GXSPOSTED)
 
