@@ -80,7 +80,7 @@ endif(RS_DEVELOPMENT_BUILD)
 
 include(src/CMakeLists.txt)
 
-add_executable(${PROJECT_NAME} ${RS_SERVICE_SOURCES})
+add_executable(${PROJECT_NAME} ${RS_SOURCES} ${RS_FORMS} ${RS_QTRESOURCES})
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${RS_BIN_INSTALL_DIR})
 
@@ -92,26 +92,24 @@ endif(RS_DEVELOPMENT_BUILD)
 
 ################################################################################
 
-set(RETROSHAREGUI_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../retroshare-gui/")
-if(EXISTS "${RETROSHAREGUI_DEVEL_DIR}/.git" )
+set(LIBRETROSHARE_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libretroshare/")
+if(EXISTS "${LIBRETROSHARE_DEVEL_DIR}/.git" )
 	message(
 		STATUS
-		"retroshare-gui submodule found at ${RETROSHAREGUI_DEVEL_DIR} using it" )
+		"libretroshare submodule found at ${LIBRETROSHARE_DEVEL_DIR} using it" )
 	add_subdirectory(
-		"${RETROSHAREGUI_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/retroshare-gui" )
+		"${LIBRETROSHARE_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/libretroshare" )
 else()
 	FetchContent_Declare(
-		retroshare-gui
-		GIT_REPOSITORY "https://gitlab.com/RetroShare/retroshare.git"
+		libretroshare
+		GIT_REPOSITORY "https://gitlab.com/RetroShare/libretroshare.git"
 		GIT_TAG "origin/master"
 		GIT_SHALLOW TRUE
 		GIT_PROGRESS TRUE
 		TIMEOUT 10
 	)
-	FetchContent_MakeAvailable(retroshare-gui)
+	FetchContent_MakeAvailable(libretroshare)
 endif()
-
-target_link_libraries(${PROJECT_NAME} PRIVATE retroshare)
 
 ################################################################################
 
@@ -237,11 +235,12 @@ if(UNIX)
 	pkg_check_modules(X11 REQUIRED x11)
 	pkg_check_modules(XSCRNSAVER REQUIRED xscrnsaver)
 
-	target_link_libraries(${PROJECT_NAME} PRIVATE ${X11_LIBRARIES})
+	list( APPEND RS_LINK_LIBRARIES ${X11_LIBRARIES} )
+	list( APPEND RS_LINK_LIBRARIES ${XSCRNSAVER_LIBRARIES} )
+
 	target_include_directories(${PROJECT_NAME} PRIVATE ${X11_INCLUDE_DIRS})
 	target_compile_options(${PROJECT_NAME} PRIVATE ${X11_CFLAGS_OTHER})
 
-	target_link_libraries(${PROJECT_NAME} ${XSCRNSAVER_LIBRARIES})
 	target_include_directories(retroshare-gui PRIVATE ${XSCRNSAVER_INCLUDE_DIRS})
 	target_compile_options(retroshare-gui PRIVATE ${XSCRNSAVER_CFLAGS_OTHER})
 
@@ -251,8 +250,8 @@ if(UNIX)
 endif(UNIX)
 
 if(RS_SANITIZE)
-	target_link_libraries(${PROJECT_NAME} asan)
-	target_link_libraries(${PROJECT_NAME} ubsan)
+	list( APPEND RS_LINK_LIBRARIES asan )
+	list( APPEND RS_LINK_LIBRARIES ubsan )
 endif(RS_SANITIZE)
 
 #                       #################### Cross compilation for windows under Linux ###################
@@ -428,25 +427,6 @@ endif(RS_SANITIZE)
 #                       	LIBS *= -lglib-2.0
 #                       }
 
-set(LIBRETROSHARE_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libretroshare/")
-if(EXISTS "${LIBRETROSHARE_DEVEL_DIR}/.git" )
-	message(
-		STATUS
-		"libretroshare submodule found at ${LIBRETROSHARE_DEVEL_DIR} using it" )
-	add_subdirectory(
-		"${LIBRETROSHARE_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/libretroshare" )
-else()
-	FetchContent_Declare(
-		libretroshare
-		GIT_REPOSITORY "https://gitlab.com/RetroShare/libretroshare.git"
-		GIT_TAG "origin/master"
-		GIT_SHALLOW TRUE
-		GIT_PROGRESS TRUE
-		TIMEOUT 10
-	)
-	FetchContent_MakeAvailable(libretroshare)
-endif()
-
 ################################ QT FILES #######################################
 
 set(CMAKE_CXX_STANDARD 11)
@@ -458,13 +438,12 @@ set(CMAKE_AUTOUIC ON)
 
 find_package( Qt5 COMPONENTS Widgets REQUIRED)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets)
+list( APPEND RS_LINK_LIBRARIES Qt5::Widget )
 
 ################################ GENERAL #######################################
 
-target_link_libraries(${PROJECT_NAME} PRIVATE retroshare)
-add_dependencies(${PROJECT_NAME} libretroshare)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${RS_LINK_LIBRARIES})
 
-add_executable(${PROJECT_NAME} ${RS_SOURCES} ${RS_FORMS} ${RS_QTRESOURCES})
+add_dependencies(${PROJECT_NAME} libretroshare)
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${RS_BIN_INSTALL_DIR})
