@@ -23,19 +23,6 @@
 
 #include <QAbstractItemDelegate>
 
-// Defines for upload list list columns
-#define COLUMN_UNAME        0
-#define COLUMN_UPEER        1
-#define COLUMN_USIZE        2
-#define COLUMN_UTRANSFERRED 3
-#define COLUMN_ULSPEED      4
-#define COLUMN_UPROGRESS    5
-#define COLUMN_UHASH        6
-#define COLUMN_UCOUNT       7
-
-
-#define MAX_CHAR_TMP 128
-
 class QModelIndex;
 class QPainter;
 

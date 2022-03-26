@@ -32,6 +32,29 @@
 
 Q_DECLARE_METATYPE(FileProgressInfo)
 
+// Defines for download list list columns
+#define DLLISTDELEGATE_COLUMN_NAME         0
+#define DLLISTDELEGATE_COLUMN_SIZE         1
+#define DLLISTDELEGATE_COLUMN_COMPLETED    2
+#define DLLISTDELEGATE_COLUMN_DLSPEED      3
+#define DLLISTDELEGATE_COLUMN_PROGRESS     4
+#define DLLISTDELEGATE_COLUMN_SOURCES      5
+#define DLLISTDELEGATE_COLUMN_STATUS       6
+#define DLLISTDELEGATE_COLUMN_PRIORITY     7
+#define DLLISTDELEGATE_COLUMN_REMAINING    8
+#define DLLISTDELEGATE_COLUMN_DOWNLOADTIME 9
+#define DLLISTDELEGATE_COLUMN_ID          10
+#define DLLISTDELEGATE_COLUMN_LASTDL      11
+#define DLLISTDELEGATE_COLUMN_PATH        12
+#define DLLISTDELEGATE_COLUMN_COUNT       13
+
+#define PRIORITY_NULL     0.0
+#define PRIORITY_FASTER   0.1
+#define PRIORITY_AVERAGE  0.2
+#define PRIORITY_SLOWER   0.3
+
+#define MAX_CHAR_TMP 128
+
 DLListDelegate::DLListDelegate(QObject *parent) : QAbstractItemDelegate(parent)
 {
 }
@@ -69,7 +92,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
         }
 
         // draw the background color if not the progress column or if progress is not displayed
-        if(index.column() != COLUMN_PROGRESS) {
+        if(index.column() != DLLISTDELEGATE_COLUMN_PROGRESS) {
                 if(option.showDecorationSelected && (option.state & QStyle::State_Selected)) {
                         if(cg == QPalette::Normal && !(option.state & QStyle::State_Active)) {
                                 cg = QPalette::Inactive;
@@ -83,7 +106,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
                 }
         }
 	switch(index.column()) {
-        case COLUMN_SIZE:
+        case DLLISTDELEGATE_COLUMN_SIZE:
 			fileSize = index.data().toLongLong();
                         if(fileSize <= 0){
                                 temp = "";
@@ -102,7 +125,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			}
 			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
-        case COLUMN_REMAINING:
+        case DLLISTDELEGATE_COLUMN_REMAINING:
 			remaining = index.data().toLongLong();
 			if(remaining <= 0){
         temp = "";
@@ -121,7 +144,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			}
 			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
-        case COLUMN_COMPLETED:
+        case DLLISTDELEGATE_COLUMN_COMPLETED:
 			completed = index.data().toLongLong();
                         if(completed <= 0){
                                 temp = "";
@@ -140,7 +163,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			}
 			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
-        case COLUMN_DLSPEED:
+        case DLLISTDELEGATE_COLUMN_DLSPEED:
                         dlspeed = index.data().toDouble();
                         if (dlspeed <= 0) {
                             temp = "";
@@ -151,7 +174,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
                         }
 			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
-        case COLUMN_PROGRESS:
+        case DLLISTDELEGATE_COLUMN_PROGRESS:
 			{
 				// create a xProgressBar
 				FileProgressInfo pinfo = index.data(Qt::UserRole).value<FileProgressInfo>() ;
@@ -180,7 +203,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			}
 			painter->drawText(option.rect, Qt::AlignCenter, newopt.text);
 			break;
-		case COLUMN_SOURCES:
+		case DLLISTDELEGATE_COLUMN_SOURCES:
 		{
 			double dblValue = index.data().toDouble();
 
@@ -188,7 +211,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			painter->drawText(option.rect, Qt::AlignCenter, temp);
 		}
 		break;
-		case COLUMN_PRIORITY:
+		case DLLISTDELEGATE_COLUMN_PRIORITY:
 		{
 			double dblValue = index.data().toDouble();
 			if (dblValue == PRIORITY_NULL)
@@ -205,7 +228,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			painter->drawText(option.rect, Qt::AlignCenter, temp);
 		}
 		break;
-		case COLUMN_DOWNLOADTIME:
+		case DLLISTDELEGATE_COLUMN_DOWNLOADTIME:
 			downloadtime = index.data().toLongLong();
 			minutes = downloadtime / 60;
 			seconds = downloadtime % 60;
@@ -225,7 +248,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 				temp = "" ;
 			painter->drawText(option.rect, Qt::AlignCenter, temp);
 			break;
-		case COLUMN_NAME:
+		case DLLISTDELEGATE_COLUMN_NAME:
 		{
 			// decoration
 			int pixOffset = 0;
@@ -254,7 +277,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			painter->drawText(option.rect.translated(pixOffset, 0), Qt::AlignLeft, temp);
 		}
 		break;
-    case COLUMN_LASTDL:
+    case DLLISTDELEGATE_COLUMN_LASTDL:
         if (index.data().value<QString>().isEmpty())
             break;
         qi64Value = index.data().value<qint64>();
