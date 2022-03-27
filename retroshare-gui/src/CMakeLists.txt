@@ -29,9 +29,6 @@ list(
 	src/gui/QuickStartWizard.cpp 
 	src/gui/StartDialog.cpp 
 	src/gui/HomePage.cpp
-        src/gui/PluginsPage.cpp 
-	src/gui/PluginManagerWidget.cpp 
-	src/gui/PluginManager.cpp
 	src/gui/ChatLobbyWidget.cpp 
 	src/gui/GetStartedDialog.cpp 
 	src/gui/GenCertDialog.cpp 
@@ -438,9 +435,6 @@ list(
 	src/gui/FriendsDialog.h 
 	src/gui/ServicePermissionDialog.h 
 	src/gui/RemoteDirModel.h 
-        src/gui/PluginsPage.h  
-	src/gui/PluginManagerWidget.h 
-	src/gui/PluginManager.h
 	src/gui/RetroShareLink.h 
 	src/gui/SearchTreeWidget.h 
 	src/gui/ShareManager.h 
@@ -778,9 +772,7 @@ endif(RS_UNFINISHED_TRANSLATIONS)
 
 if(RS_MESSENGER)
 
-	target_compile_definitions(
-		${PROJECT_NAME} PUBLIC MESSENGER_WINDOW
-		)
+	target_compile_definitions( ${PROJECT_NAME} PUBLIC MESSENGER_WINDOW )
 
 	list(
 		APPEND RS_GUI_SOURCES
@@ -1068,11 +1060,8 @@ if(RS_GXSIDENTITIES)
 endif(RS_GXSIDENTITIES)
 	
 if(RS_GXSCIRCLES)
-	target_compile_definitions(
-		${PROJECT_NAME} PUBLIC RS_USE_CIRCLES 
-		)
-
 	list(
+		APPEND RS_IMPLEMENTATION_HEADERS
 		src/gui/Circles/CirclesDialog.h 
 		src/gui/Circles/CreateCircleDialog.h 
 		src/gui/People/PeopleDialog.h
@@ -1081,6 +1070,7 @@ if(RS_GXSCIRCLES)
 		)
 
 	list(
+		APPEND RS_GUI_FORMS
 		src/gui/Circles/CirclesDialog.ui 
 		src/gui/Circles/CreateCircleDialog.ui 
 		src/gui/People/PeopleDialog.ui 
@@ -1089,6 +1079,7 @@ if(RS_GXSCIRCLES)
 		)
 
 	list(
+		APPEND RS_GUI_SOURCES
 		src/gui/Circles/CirclesDialog.cpp 
 		src/gui/Circles/CreateCircleDialog.cpp 
 		src/gui/People/PeopleDialog.cpp 

@@ -31,12 +31,12 @@ option(
 	RS_DEVELOPMENT_BUILD
 	"Disable optimization to speed up build, enable verbose build log. \
 	 just for development purposes, not suitable for library usage"
-	OFF )
+	 ON )
 
 option(
 	RS_JSON_API
 	"Use restbed to expose libretroshare as JSON API via HTTP"
-	ON )
+	OFF )
 
 option(
 	RS_SERVICE_DESKTOP
@@ -47,6 +47,12 @@ option(
 	RS_SERVICE_TERMINAL_LOGIN
 	"Enable RetroShare login via terminal"
 	ON )
+
+option( RS_GXSGUI      "Enable GXS services in GUI" ON )
+option( RS_GXSCHANNELS "Enable GXS channels in GUI" ON )
+option( RS_GXSFORUMS   "Enable GXS forums in GUI"   ON )
+option( RS_GXSPOSTED   "Enable GXS posted in GUI"   ON )
+option( RS_GXSCIRCLES  "Enable GXS circles in GUI"  ON )
 
 cmake_dependent_option(
 	RS_SERVICE_TERMINAL_WEBUI_PASSWORD
@@ -71,9 +77,11 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package( Qt5 COMPONENTS Widgets REQUIRED)
-find_package( Qt5 COMPONENTS Xml     REQUIRED)
-find_package( Qt5 COMPONENTS Network REQUIRED)
+find_package( Qt5 COMPONENTS Core         REQUIRED)
+find_package( Qt5 COMPONENTS Widgets      REQUIRED)
+find_package( Qt5 COMPONENTS Xml          REQUIRED)
+find_package( Qt5 COMPONENTS Network      REQUIRED)
+find_package( Qt5 COMPONENTS Multimedia   REQUIRED)
 find_package( Qt5 COMPONENTS PrintSupport REQUIRED)
 
 list( APPEND RS_LINK_LIBRARIES Qt5::Widgets Qt5::Xml Qt5::Network Qt5::PrintSupport)
@@ -96,8 +104,12 @@ endif(RS_DEVELOPMENT_BUILD)
 
 include(src/CMakeLists.txt)
 
-add_executable(${PROJECT_NAME} ${RS_GUI_SOURCES} ${RS_GUI_FORMS} ${RS_GUI_QTRESOURCES})
+qt5_wrap_ui(RS_UI_HEADERS ${RS_GUI_FORMS})
+
+add_executable(${PROJECT_NAME} ${RS_GUI_SOURCES} ${RS_UI_HEADERS} ${RS_GUI_QTRESOURCES})
 install(TARGETS ${PROJECT_NAME} DESTINATION ${RS_BIN_INSTALL_DIR})
+
+include_directories( ${CMAKE_BINARY_DIR} )
 
 ################################################################################
 
@@ -452,8 +464,11 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/s
 
 set( CMAKE_CXX_FLAGS "-Wno-deprecated-declarations" )
 target_compile_definitions(${PROJECT_NAME} PUBLIC RS_NO_WARN_DEPRECATED )
+target_compile_definitions(${PROJECT_NAME} PRIVATE TARGET=\"retroshare\")
 
-
+if(RS_GXS_CIRCLES)
+	target_compile_definitions(${PROJECT_NAME} PRIVATE RS_USE_CIRCLES )
+endif(RS_GXS_CIRCLES)
 
 #add_dependencies(${PROJECT_NAME} libretroshare)
 
