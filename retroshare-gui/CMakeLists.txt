@@ -84,7 +84,7 @@ find_package( Qt5 COMPONENTS Network      REQUIRED)
 find_package( Qt5 COMPONENTS Multimedia   REQUIRED)
 find_package( Qt5 COMPONENTS PrintSupport REQUIRED)
 
-list( APPEND RS_LINK_LIBRARIES Qt5::Widgets Qt5::Xml Qt5::Network Qt5::PrintSupport)
+list( APPEND RS_LINK_LIBRARIES Qt5::Multimedia Qt5::Widgets Qt5::Xml Qt5::Network Qt5::PrintSupport)
 
 ################################################################################
 
@@ -188,13 +188,13 @@ if(RS_JSON_API)
 	target_compile_definitions(${PROJECT_NAME} PUBLIC RS_JSONAPI)
 endif(RS_JSON_API)
 
-################################################################################
+################################# CMark ########################################
 
 if(RS_GUI_CMARK)
 	set(CMARK_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../supportlibs/cmark/")
 	if(EXISTS "${LIBRETROSHARE_DEVEL_DIR}/.git" )
 		message( STATUS "cmark submodule found at ${LIBRETROSHARE_DEVEL_DIR} using it" )
-		add_subdirectory( "${LIBRETROSHARE_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/libretroshare" )
+		add_subdirectory( "${LIBRETROSHARE_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/cmark" )
 	else()
 		FetchContent_Declare(
 			cmark
@@ -208,6 +208,23 @@ if(RS_GUI_CMARK)
 	endif()
 endif(RS_GUI_CMARK)
 
+################################# LibSam v3 ####################################
+
+set(SAM3_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../supportlibs/libsam3/")
+if(EXISTS "${SAM3_DEVEL_DIR}/.git" )
+	message( STATUS "libsam3 submodule found at ${SAM3_DEVEL_DIR} using it" )
+	add_subdirectory( "${SAM3_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/libsam3" )
+else()
+	FetchContent_Declare(
+		libsam3
+		GIT_REPOSITORY "https://github.com/i2p/libsam3.git"
+		GIT_TAG "origin/master"
+		GIT_SHALLOW TRUE
+		GIT_PROGRESS TRUE
+		TIMEOUT 10
+		)
+	FetchContent_MakeAvailable(libsam3)
+endif()
 
 ################################################################################
 #                                    TODO                                      #
@@ -463,7 +480,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${RS_LINK_LIBRARIES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/)
 
 set( CMAKE_CXX_FLAGS "-Wno-deprecated-declarations" )
-target_compile_definitions(${PROJECT_NAME} PUBLIC RS_NO_WARN_DEPRECATED )
+target_compile_definitions(${PROJECT_NAME} PUBLIC  RS_NO_WARN_DEPRECATED )
+target_compile_definitions(${PROJECT_NAME} PRIVATE RS_RELEASE_VERSION )
 target_compile_definitions(${PROJECT_NAME} PRIVATE TARGET=\"retroshare\")
 
 if(RS_GXS_CIRCLES)
