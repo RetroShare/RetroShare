@@ -26,17 +26,13 @@
 #include <retroshare/rsdisc.h>
 #include <retroshare/rsmsgs.h>
 
-
-//TODO: set this defines in one place
-// Defines for key list columns
-#define COLUMN_CHECK 0
-#define COLUMN_PEERNAME    1
-#define COLUMN_I_AUTH_PEER 2
-#define COLUMN_PEER_AUTH_ME 3
-#define COLUMN_PEERID      4
-#define COLUMN_LAST_USED   5
-#define COLUMN_COUNT 6
-
+bool pgpid_item_proxy::lessThan(const QModelIndex &left, const QModelIndex &right) const 
+{
+    if(left.column() == pgpid_item_model::PGP_ITEM_MODEL_COLUMN_LAST_USED)
+		return left.data(Qt::EditRole).toUInt() < right.data(Qt::EditRole).toUInt();
+	else
+		return left.data(Qt::DisplayRole).toString().toUpper() < right.data(Qt::DisplayRole).toString().toUpper();
+}
 
 
 pgpid_item_proxy::pgpid_item_proxy(QObject *parent) :
@@ -57,7 +53,7 @@ bool pgpid_item_proxy::filterAcceptsRow(int sourceRow, const QModelIndex &source
     {
         if(!rsPeers)
             return false;
-        RsPgpId peer_id (sourceModel()->data(sourceModel()->index(sourceRow, COLUMN_PEERID, sourceParent)).toString().toStdString());
+        RsPgpId peer_id (sourceModel()->data(sourceModel()->index(sourceRow, pgpid_item_model::PGP_ITEM_MODEL_COLUMN_PEERID, sourceParent)).toString().toStdString());
         RsPeerDetails details;
         if(!rsPeers->getGPGDetails(peer_id, details))
             return false;

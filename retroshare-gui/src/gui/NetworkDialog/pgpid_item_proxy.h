@@ -34,14 +34,7 @@ class pgpid_item_proxy :
 public:
     pgpid_item_proxy(QObject *parent = nullptr);
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
-
-    bool lessThan(const QModelIndex &left, const QModelIndex &right) const override
-    {
-        if(left.column() == COLUMN_LAST_USED)
-		return left.data(Qt::EditRole).toUInt() < right.data(Qt::EditRole).toUInt();
-	else
-		return left.data(Qt::DisplayRole).toString().toUpper() < right.data(Qt::DisplayRole).toString().toUpper();
-    }
+    bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
 
 public slots:
     void use_only_trusted_keys(bool val);

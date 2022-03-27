@@ -18,30 +18,27 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef ULLISTDELEGATE_H
-#define ULLISTDELEGATE_H
+#pragma once
 
 #include <QAbstractItemDelegate>
 
 class QModelIndex;
 class QPainter;
 
+class ULListDelegate: public QAbstractItemDelegate
+{
+public:
+    ULListDelegate(QObject *parent=0);
+    ~ULListDelegate();
+    void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const;
+    QSize sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const;
 
-class ULListDelegate: public QAbstractItemDelegate {
-
-	Q_OBJECT
-
-	public:
-		ULListDelegate(QObject *parent=0);
-		~ULListDelegate();
-		void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const;
-		QSize sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const;
-
-	private:
-
-	public slots:
-
-	signals:
+    static constexpr int COLUMN_UNAME        = 0;
+    static constexpr int COLUMN_UPEER        = 1;
+    static constexpr int COLUMN_USIZE        = 2;
+    static constexpr int COLUMN_UTRANSFERRED = 3;
+    static constexpr int COLUMN_ULSPEED      = 4;
+    static constexpr int COLUMN_UPROGRESS    = 5;
+    static constexpr int COLUMN_UHASH        = 6;
+    static constexpr int COLUMN_UCOUNT       = 7;
 };
-#endif
-

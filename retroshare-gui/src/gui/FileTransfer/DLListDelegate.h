@@ -18,31 +18,41 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef DLLISTDELEGATE_H
-#define DLLISTDELEGATE_H
+#pragma once
 
 #include <QAbstractItemDelegate>
 #include "xprogressbar.h"
+#include "FTListDelegate.h"
 
 class QModelIndex;
 class QPainter;
 
+class DLListDelegate: public QAbstractItemDelegate
+{
+public:
+    DLListDelegate(QObject *parent=0);
+    virtual ~DLListDelegate(){}
+    void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const;
+    QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const;
 
-class DLListDelegate: public QAbstractItemDelegate {
+    static constexpr int COLUMN_NAME        =  0;
+    static constexpr int COLUMN_SIZE        =  1;
+    static constexpr int COLUMN_COMPLETED   =  2;
+    static constexpr int COLUMN_DLSPEED     =  3;
+    static constexpr int COLUMN_PROGRESS    =  4;
+    static constexpr int COLUMN_SOURCES     =  5;
+    static constexpr int COLUMN_STATUS      =  6;
+    static constexpr int COLUMN_PRIORITY    =  7;
+    static constexpr int COLUMN_REMAINING   =  8;
+    static constexpr int COLUMN_DOWNLOADTIME=  9;
+    static constexpr int COLUMN_ID          = 10;
+    static constexpr int COLUMN_LASTDL      = 11;
+    static constexpr int COLUMN_PATH        = 12;
+    static constexpr int COLUMN_COUNT       = 13;
 
-	Q_OBJECT
-
-	public:
-		DLListDelegate(QObject *parent=0);
-        virtual ~DLListDelegate(){}
-		void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const;
-        QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const;
-
-	private:
-
-	public slots:
-
-	signals:
+    static constexpr float PRIORITY_NULL     = 0.0;
+    static constexpr float PRIORITY_FASTER   = 0.1;
+    static constexpr float PRIORITY_AVERAGE  = 0.2;
+    static constexpr float PRIORITY_SLOWER   = 0.3;
 };
-#endif
 

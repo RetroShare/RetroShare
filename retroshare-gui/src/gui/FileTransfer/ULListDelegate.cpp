@@ -25,26 +25,14 @@
 
 Q_DECLARE_METATYPE(FileProgressInfo)
 
-// Defines for upload list list columns
-#define ULLISTDELEGATE_COLUMN_UNAME        0
-#define ULLISTDELEGATE_COLUMN_UPEER        1
-#define ULLISTDELEGATE_COLUMN_USIZE        2
-#define ULLISTDELEGATE_COLUMN_UTRANSFERRED 3
-#define ULLISTDELEGATE_COLUMN_ULSPEED      4
-#define ULLISTDELEGATE_COLUMN_UPROGRESS    5
-#define ULLISTDELEGATE_COLUMN_UHASH        6
-#define ULLISTDELEGATE_COLUMN_UCOUNT       7
-
 #define MAX_CHAR_TMP 128
 
 ULListDelegate::ULListDelegate(QObject *parent) : QAbstractItemDelegate(parent)
 {
-	;
 }
 
 ULListDelegate::~ULListDelegate(void)
 {
-	;
 }
 
 void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
@@ -77,7 +65,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 
 	// draw the background color
 	bool bDrawBackground = true;
-	if(index.column() == ULLISTDELEGATE_COLUMN_UPROGRESS) {
+    if(index.column() == COLUMN_UPROGRESS) {
 		FileProgressInfo pinfo = index.data().value<FileProgressInfo>() ;
 		bDrawBackground = (pinfo.type == FileProgressInfo::UNINIT);
 	}
@@ -96,7 +84,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	}
 
 	switch(index.column()) {
-        case ULLISTDELEGATE_COLUMN_USIZE:
+        case COLUMN_USIZE:
 			fileSize = index.data().toLongLong();
                         if(fileSize <= 0){
                                 temp = "";
@@ -115,7 +103,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			}
 			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
-        case ULLISTDELEGATE_COLUMN_UTRANSFERRED:
+        case COLUMN_UTRANSFERRED:
 			transferred = index.data().toLongLong();
                         if(transferred <= 0){
                                 temp = "";
@@ -134,7 +122,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			}
 			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
-        case ULLISTDELEGATE_COLUMN_ULSPEED:
+        case COLUMN_ULSPEED:
                         ulspeed = index.data().toDouble();
                         if (ulspeed <= 0) {
                             temp = "";
@@ -145,7 +133,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
                         }
 			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
-		case ULLISTDELEGATE_COLUMN_UPROGRESS:
+        case COLUMN_UPROGRESS:
 			{
 				FileProgressInfo pinfo = index.data().value<FileProgressInfo>() ;
 				if (pinfo.type == FileProgressInfo::UNINIT)
@@ -155,7 +143,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 				painter->save() ;
 				xProgressBar progressBar(pinfo,option.rect,painter,0);// the 3rd param is the  color schema (0 is the default value)
 
-				QString ext = QFileInfo(QString::fromStdString(index.sibling(index.row(), ULLISTDELEGATE_COLUMN_UNAME).data().toString().toStdString())).suffix();;
+                QString ext = QFileInfo(QString::fromStdString(index.sibling(index.row(), COLUMN_UNAME).data().toString().toStdString())).suffix();;
 				if (ext == "rsfc" || ext == "rsrl" || ext == "dist" || ext == "rsfb")
 					progressBar.setColorSchema( 9);
 				else
@@ -169,8 +157,8 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			}
 			painter->drawText(option.rect, Qt::AlignCenter, newopt.text);
 			break;
-		case ULLISTDELEGATE_COLUMN_UNAME:
-		case ULLISTDELEGATE_COLUMN_UPEER:
+        case COLUMN_UNAME:
+        case COLUMN_UPEER:
 			// decoration
 			value = index.data(Qt::DecorationRole);
 			pixmap = qvariant_cast<QIcon>(value).pixmap(option.decorationSize, option.state & QStyle::State_Enabled ? QIcon::Normal : QIcon::Disabled, option.state & QStyle::State_Open ? QIcon::On : QIcon::Off);

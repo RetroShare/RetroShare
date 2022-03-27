@@ -28,14 +28,6 @@
 #define IMAGE_DENIED         ":/images/denied16.png"
 #define IMAGE_TRUSTED        ":/images/rs-2.png"
 
-#define PGP_ITEM_MODEL_COLUMN_CHECK        0
-#define PGP_ITEM_MODEL_COLUMN_PEERNAME     1
-#define PGP_ITEM_MODEL_COLUMN_I_AUTH_PEER  2
-#define PGP_ITEM_MODEL_COLUMN_PEER_AUTH_ME 3
-#define PGP_ITEM_MODEL_COLUMN_PEERID       4
-#define PGP_ITEM_MODEL_COLUMN_LAST_USED    5
-#define PGP_ITEM_MODEL_COLUMN_COUNT        6
-
 /*TODO:
  * using list here for internal data storage is not best option
 */
