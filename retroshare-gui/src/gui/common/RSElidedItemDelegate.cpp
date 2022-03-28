@@ -143,8 +143,7 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 		ownOption.font = font;
 		ownOption.fontMetrics = QFontMetrics(font);
 #ifdef DEBUG_EID_PAINT
-		QFontInfo info(font);
-		RsDbg(" RSEID: Found font in model:", info.family().toStdString());
+		RsDbg(" RSEID: Found font in model:", font.family().toStdString(), " size:", font.pointSize());
 #endif
 	}
 	// Get Text color from model if one exists
@@ -383,14 +382,12 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 		ownOption.text = ownOption.text.prepend("__");
 #endif
 
-		QTextLayout textLayout(ownOption.text, painter->font());
-		QTextOption to = textLayout.textOption();
-		to.setWrapMode((ownOption.features & QStyleOptionViewItem::WrapText) ? QTextOption::WordWrap : QTextOption::NoWrap);
+		QTextOption::WrapMode wm = (ownOption.features & QStyleOptionViewItem::WrapText) ? QTextOption::WordWrap : QTextOption::NoWrap;
 		const int textHMargin = ownStyle->pixelMetric(QStyle::PM_FocusFrameHMargin, nullptr, widget) + 1;
 		const int textVMargin = ownStyle->pixelMetric(QStyle::PM_FocusFrameVMargin, nullptr, widget) + 1;
 		textRect = textRect.adjusted(textHMargin, textVMargin, -textHMargin, -textVMargin); // remove width padding
 
-		ElidedLabel::paintElidedLine(painter,ownOption.text,textRect,ownOption.font,ownOption.displayAlignment,to.wrapMode(),mPaintRoundedRect);
+		ElidedLabel::paintElidedLine(painter,ownOption.text,textRect,ownOption.font,ownOption.displayAlignment,wm,mPaintRoundedRect);
 	}
 	painter->restore();
 #ifdef DEBUG_EID_PAINT

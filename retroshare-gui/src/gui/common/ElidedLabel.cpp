@@ -128,6 +128,7 @@ bool ElidedLabel::paintElidedLine( QPainter* painter, QString plainText
 
 	if (painter)
 	{
+		useFont.setPointSize(useFont.pointSize()); //Modify it to be copied in painter. Else painter keep defaut font size.
 		painter->save();
 		painter->setFont(useFont);
 	}
@@ -152,7 +153,7 @@ bool ElidedLabel::paintElidedLine( QPainter* painter, QString plainText
 			QTextLine lineEnd = textLayout.createLine();
 			if (!lineEnd.isValid() && (wordWrap
 #if QT_VERSION < QT_VERSION_CHECK(5,11,0)
-		                               || (fontMetrics.width(lastLine) < cr.width()) ))
+			                           || (fontMetrics.width(lastLine) < cr.width()) ))
 #else
 			                           || (fontMetrics.horizontalAdvance(lastLine) < cr.width()) ))
 #endif
