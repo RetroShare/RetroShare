@@ -73,6 +73,8 @@ list(
 
 add_executable(${PROJECT_NAME} ${RS_SERVICE_SOURCES})
 
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
+
 install(TARGETS ${PROJECT_NAME} DESTINATION ${RS_BIN_INSTALL_DIR})
 
 ################################################################################
@@ -84,10 +86,10 @@ endif(RS_DEVELOPMENT_BUILD)
 ################################################################################
 
 set(LIBRETROSHARE_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libretroshare/")
-if(EXISTS "${LIBRETROSHARE_DEVEL_DIR}/.git" )
+if(EXISTS "${LIBRETROSHARE_DEVEL_DIR}/CMakeLists.txt" )
 	message(
 		STATUS
-		"libretroshare submodule found at ${LIBRETROSHARE_DEVEL_DIR} using it" )
+		"libretroshare source found at ${LIBRETROSHARE_DEVEL_DIR} using it" )
 	add_subdirectory(
 		"${LIBRETROSHARE_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/libretroshare" )
 else()
@@ -138,10 +140,10 @@ endif(RS_SERVICE_TERMINAL_LOGIN)
 
 if(RS_WEBUI)
 	set(RS_WEBUI_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../webui/")
-	if(EXISTS "${RS_WEBUI_DEVEL_DIR}/.git" )
+	if(EXISTS "${RS_WEBUI_DEVEL_DIR}/CMakeLists.txt" )
 		message(
 			STATUS
-			"RetroShare WebUI repository found at ${RS_WEBUI_DEVEL_DIR} using it" )
+			"RetroShare WebUI source found at ${RS_WEBUI_DEVEL_DIR} using it" )
 		add_subdirectory(
 			"${RS_WEBUI_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/webui" )
 	else()
