@@ -1073,11 +1073,13 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, QLi
 
 QString GxsIdDetails::getName(const RsIdentityDetails &details)
 {
-	if( details.mReputation.mOverallReputationLevel ==
-	         RsReputationLevel::LOCALLY_NEGATIVE )
+    if( details.mReputation.mOverallReputationLevel == RsReputationLevel::LOCALLY_NEGATIVE )
 		return tr("[Banned]");
     
-    	QString name = QString::fromUtf8(details.mNickname.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE);
+    if( details.mId.isNull() )
+        return tr("[Nobody]");
+
+        QString name = QString::fromUtf8(details.mNickname.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE);
 
 	std::list<RsRecognTag>::const_iterator it;
 	for (it = details.mRecognTags.begin(); it != details.mRecognTags.end(); ++it)
