@@ -32,6 +32,8 @@
 
 Q_DECLARE_METATYPE(FileProgressInfo)
 
+#define MAX_CHAR_TMP 128
+
 DLListDelegate::DLListDelegate(QObject *parent) : QAbstractItemDelegate(parent)
 {
 }
@@ -180,7 +182,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			}
 			painter->drawText(option.rect, Qt::AlignCenter, newopt.text);
 			break;
-		case COLUMN_SOURCES:
+        case COLUMN_SOURCES:
 		{
 			double dblValue = index.data().toDouble();
 
@@ -188,7 +190,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			painter->drawText(option.rect, Qt::AlignCenter, temp);
 		}
 		break;
-		case COLUMN_PRIORITY:
+        case COLUMN_PRIORITY:
 		{
 			double dblValue = index.data().toDouble();
 			if (dblValue == PRIORITY_NULL)
@@ -205,7 +207,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			painter->drawText(option.rect, Qt::AlignCenter, temp);
 		}
 		break;
-		case COLUMN_DOWNLOADTIME:
+        case COLUMN_DOWNLOADTIME:
 			downloadtime = index.data().toLongLong();
 			minutes = downloadtime / 60;
 			seconds = downloadtime % 60;
@@ -225,7 +227,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 				temp = "" ;
 			painter->drawText(option.rect, Qt::AlignCenter, temp);
 			break;
-		case COLUMN_NAME:
+        case COLUMN_NAME:
 		{
 			// decoration
 			int pixOffset = 0;

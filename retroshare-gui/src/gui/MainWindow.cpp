@@ -466,9 +466,7 @@ void MainWindow::initStackedPage()
  }
 
 #ifndef RS_RELEASE_VERSION
-#ifdef PLUGINMGR
   addPage(pluginsPage = new gui::PluginsPage(ui->stackPages), grp, NULL);
-#endif
 #endif
 
 #undef GETSTARTED_GUI

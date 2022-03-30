@@ -25,14 +25,14 @@
 
 Q_DECLARE_METATYPE(FileProgressInfo)
 
+#define MAX_CHAR_TMP 128
+
 ULListDelegate::ULListDelegate(QObject *parent) : QAbstractItemDelegate(parent)
 {
-	;
 }
 
 ULListDelegate::~ULListDelegate(void)
 {
-	;
 }
 
 void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
@@ -65,7 +65,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 
 	// draw the background color
 	bool bDrawBackground = true;
-	if(index.column() == COLUMN_UPROGRESS) {
+    if(index.column() == COLUMN_UPROGRESS) {
 		FileProgressInfo pinfo = index.data().value<FileProgressInfo>() ;
 		bDrawBackground = (pinfo.type == FileProgressInfo::UNINIT);
 	}
@@ -133,7 +133,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
                         }
 			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
-		case COLUMN_UPROGRESS:
+        case COLUMN_UPROGRESS:
 			{
 				FileProgressInfo pinfo = index.data().value<FileProgressInfo>() ;
 				if (pinfo.type == FileProgressInfo::UNINIT)
@@ -143,7 +143,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 				painter->save() ;
 				xProgressBar progressBar(pinfo,option.rect,painter,0);// the 3rd param is the  color schema (0 is the default value)
 
-				QString ext = QFileInfo(QString::fromStdString(index.sibling(index.row(), COLUMN_UNAME).data().toString().toStdString())).suffix();;
+                QString ext = QFileInfo(QString::fromStdString(index.sibling(index.row(), COLUMN_UNAME).data().toString().toStdString())).suffix();;
 				if (ext == "rsfc" || ext == "rsrl" || ext == "dist" || ext == "rsfb")
 					progressBar.setColorSchema( 9);
 				else
@@ -157,8 +157,8 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			}
 			painter->drawText(option.rect, Qt::AlignCenter, newopt.text);
 			break;
-		case COLUMN_UNAME:
-		case COLUMN_UPEER:
+        case COLUMN_UNAME:
+        case COLUMN_UPEER:
 			// decoration
 			value = index.data(Qt::DecorationRole);
 			pixmap = qvariant_cast<QIcon>(value).pixmap(option.decorationSize, option.state & QStyle::State_Enabled ? QIcon::Normal : QIcon::Disabled, option.state & QStyle::State_Open ? QIcon::On : QIcon::Off);

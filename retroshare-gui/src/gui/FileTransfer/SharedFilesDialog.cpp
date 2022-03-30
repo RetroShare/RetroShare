@@ -55,6 +55,16 @@
 
 #include <set>
 
+#define SHARED_FILES_DIALOG_COLUMN_NAME          0
+#define SHARED_FILES_DIALOG_COLUMN_FILENB        1
+#define SHARED_FILES_DIALOG_COLUMN_SIZE          2
+#define SHARED_FILES_DIALOG_COLUMN_AGE           3
+#define SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS 4
+#define SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR   5
+#define SHARED_FILES_DIALOG_COLUMN_COUNT         6
+
+#define SHARED_FILES_DIALOG_FILTER_STRING "filtered"
+
 /* Images for context menu icons */
 #define IMAGE_DOWNLOAD       ":/icons/png/download.png"
 #define IMAGE_PLAY           ":/images/start.png"
@@ -187,17 +197,17 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
     tree_proxyModel->setSourceModel(tree_model);
     tree_proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
     tree_proxyModel->setSortRole(RetroshareDirModel::SortRole);
-    tree_proxyModel->sort(COLUMN_NAME);
+    tree_proxyModel->sort(SHARED_FILES_DIALOG_COLUMN_NAME);
     tree_proxyModel->setFilterRole(RetroshareDirModel::FilterRole);
-    tree_proxyModel->setFilterRegExp(QRegExp(QString(RETROSHARE_DIR_MODEL_FILTER_STRING))) ;
+    tree_proxyModel->setFilterRegExp(QRegExp(QString(SHARED_FILES_DIALOG_FILTER_STRING))) ;
 
     flat_proxyModel = new SFDSortFilterProxyModel(flat_model, this);
     flat_proxyModel->setSourceModel(flat_model);
     flat_proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
     flat_proxyModel->setSortRole(RetroshareDirModel::SortRole);
-    flat_proxyModel->sort(COLUMN_NAME);
+    flat_proxyModel->sort(SHARED_FILES_DIALOG_COLUMN_NAME);
     flat_proxyModel->setFilterRole(RetroshareDirModel::FilterRole);
-    flat_proxyModel->setFilterRegExp(QRegExp(QString(RETROSHARE_DIR_MODEL_FILTER_STRING))) ;
+    flat_proxyModel->setFilterRegExp(QRegExp(QString(SHARED_FILES_DIALOG_FILTER_STRING))) ;
 
     connect(ui.filterClearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
     connect(ui.filterStartButton, SIGNAL(clicked()), this, SLOT(startFilter()));
@@ -219,12 +229,12 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
     int charWidth = ui.dirTreeView->fontMetrics().horizontalAdvance("_");
 #endif
 
-    header->resizeSection ( COLUMN_NAME         , charWidth*100 );
-    header->resizeSection ( COLUMN_FILENB       , charWidth*15 );
-    header->resizeSection ( COLUMN_SIZE         , charWidth*10 );
-    header->resizeSection ( COLUMN_AGE          , charWidth*6 );
-    header->resizeSection ( COLUMN_FRIEND_ACCESS, charWidth*10 );
-    header->resizeSection ( COLUMN_WN_VISU_DIR  , charWidth*20 );
+    header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_NAME         , charWidth*100 );
+    header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_FILENB       , charWidth*15 );
+    header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_SIZE         , charWidth*10 );
+    header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_AGE          , charWidth*6 );
+    header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS, charWidth*10 );
+    header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR  , charWidth*20 );
 
     header->setStretchLastSection(true);
 
@@ -260,7 +270,7 @@ LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
     : SharedFilesDialog(false,parent)
 {
     // Hide columns after loading the settings
-    ui.dirTreeView->setColumnHidden(COLUMN_WN_VISU_DIR, false) ;
+    ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR, false) ;
     ui.downloadButton->hide() ;
 
     // load settings
@@ -279,14 +289,14 @@ LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
 
     ui.titleBarPixmap->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_MYFILES)) ;
 
-    ui.dirTreeView->setItemDelegateForColumn(COLUMN_FRIEND_ACCESS,new ShareFlagsItemDelegate()) ;
+    ui.dirTreeView->setItemDelegateForColumn(SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS,new ShareFlagsItemDelegate()) ;
 }
 
 RemoteSharedFilesDialog::RemoteSharedFilesDialog(QWidget *parent)
     : SharedFilesDialog(true,parent)
 {
-    ui.dirTreeView->setColumnHidden(COLUMN_FRIEND_ACCESS, false) ;
-    ui.dirTreeView->setColumnHidden(COLUMN_WN_VISU_DIR, true) ;
+    ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS, false) ;
+    ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR, true) ;
     ui.checkButton->hide() ;
 
     connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(downloadRemoteSelected()));
@@ -440,9 +450,9 @@ void SharedFilesDialog::changeCurrentViewModel(int viewTypeIndex)
     restoreExpandedPathsAndSelection(expanded_indexes,hidden_indexes,selected_indexes);
 
     QHeaderView * header = ui.dirTreeView->header () ;
-    QHeaderView_setSectionResizeModeColumn(header, COLUMN_NAME, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(header, SHARED_FILES_DIALOG_COLUMN_NAME, QHeaderView::Interactive);
 
-    ui.dirTreeView->header()->headerDataChanged(Qt::Horizontal, COLUMN_NAME, COLUMN_WN_VISU_DIR) ;
+    ui.dirTreeView->header()->headerDataChanged(Qt::Horizontal, SHARED_FILES_DIALOG_COLUMN_NAME, SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR) ;
 
 //    recursRestoreExpandedItems(ui.dirTreeView->rootIndex(),expanded_indexes);
     FilterItems();
@@ -452,9 +462,9 @@ void LocalSharedFilesDialog::showProperColumns()
 {
     if(model == tree_model)
     {
-        ui.dirTreeView->setColumnHidden(COLUMN_FILENB, false) ;
-        ui.dirTreeView->setColumnHidden(COLUMN_FRIEND_ACCESS, false) ;
-        ui.dirTreeView->setColumnHidden(COLUMN_WN_VISU_DIR, false) ;
+        ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_FILENB, false) ;
+        ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS, false) ;
+        ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR, false) ;
 #ifdef DONT_USE_SEARCH_IN_TREE_VIEW
         ui.filterLabel->hide();
         ui.filterPatternLineEdit->hide();
@@ -464,9 +474,9 @@ void LocalSharedFilesDialog::showProperColumns()
     }
     else
     {
-        ui.dirTreeView->setColumnHidden(COLUMN_FILENB, true) ;
-        ui.dirTreeView->setColumnHidden(COLUMN_FRIEND_ACCESS, true) ;
-        ui.dirTreeView->setColumnHidden(COLUMN_WN_VISU_DIR, false) ;
+        ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_FILENB, true) ;
+        ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS, true) ;
+        ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR, false) ;
 #ifdef DONT_USE_SEARCH_IN_TREE_VIEW
         ui.filterLabel->show();
         ui.filterPatternLineEdit->show();
@@ -477,9 +487,9 @@ void RemoteSharedFilesDialog::showProperColumns()
 {
     if(model == tree_model)
     {
-        ui.dirTreeView->setColumnHidden(COLUMN_FILENB, false) ;
-        ui.dirTreeView->setColumnHidden(COLUMN_FRIEND_ACCESS, true) ;
-        ui.dirTreeView->setColumnHidden(COLUMN_WN_VISU_DIR, true) ;
+        ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_FILENB, false) ;
+        ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS, true) ;
+        ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR, true) ;
 #ifdef DONT_USE_SEARCH_IN_TREE_VIEW
         ui.filterLabel->hide();
         ui.filterPatternLineEdit->hide();
@@ -489,9 +499,9 @@ void RemoteSharedFilesDialog::showProperColumns()
     }
     else
     {
-        ui.dirTreeView->setColumnHidden(COLUMN_FILENB, true) ;
-        ui.dirTreeView->setColumnHidden(COLUMN_FRIEND_ACCESS, false) ;
-        ui.dirTreeView->setColumnHidden(COLUMN_WN_VISU_DIR, false) ;
+        ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_FILENB, true) ;
+        ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS, false) ;
+        ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR, false) ;
 #ifdef DONT_USE_SEARCH_IN_TREE_VIEW
         ui.filterLabel->show();
         ui.filterPatternLineEdit->show();
@@ -1337,9 +1347,9 @@ void SharedFilesDialog::indicatorChanged(int index)
     ui.dirTreeView->update(ui.dirTreeView->rootIndex());
 
     if (correct_indicator[index] != IND_ALWAYS)
-        ui.dirTreeView->sortByColumn(COLUMN_AGE, Qt::AscendingOrder);
+        ui.dirTreeView->sortByColumn(SHARED_FILES_DIALOG_COLUMN_AGE, Qt::AscendingOrder);
     else
-        ui.dirTreeView->sortByColumn(COLUMN_NAME, Qt::AscendingOrder);
+        ui.dirTreeView->sortByColumn(SHARED_FILES_DIALOG_COLUMN_NAME, Qt::AscendingOrder);
 
     updateDisplay() ;
 }

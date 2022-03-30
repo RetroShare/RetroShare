@@ -21,7 +21,7 @@
 
 #include "AboutDialog.h"
 #include "HelpDialog.h"
-#include "qmake_info.h"
+#include "include/qmake_info.h"
 #include "rshare.h"
 
 #ifdef RS_JSONAPI
