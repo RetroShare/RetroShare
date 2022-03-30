@@ -22,7 +22,6 @@
 
 #include <QAbstractItemDelegate>
 #include "xprogressbar.h"
-#include "FTListDelegate.h"
 
 class QModelIndex;
 class QPainter;
