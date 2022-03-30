@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>701</width>
-    <height>529</height>
+    <width>746</width>
+    <height>590</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -44,7 +44,7 @@
       <enum>QFrame::Raised</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="createmode">
       <layout class="QGridLayout" name="createmode_GL">
@@ -575,7 +575,7 @@
           <item row="10" column="0">
            <widget class="QLabel" name="authorLabel">
             <property name="text">
-             <string>Author</string>
+             <string>Author:</string>
             </property>
            </widget>
           </item>
@@ -739,7 +739,11 @@
            </widget>
           </item>
           <item row="4" column="2">
-           <widget class="QLineEdit" name="createdline"/>
+           <widget class="QLineEdit" name="createdline">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
           <item row="4" column="0">
            <widget class="QLabel" name="createdlineLabel">
@@ -821,6 +825,16 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>GxsIdLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/gxs/GxsIdLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
+  </customwidget>
+  <customwidget>
    <class>ClickableLabel</class>
    <extends>QLabel</extends>
    <header>util/ClickableLabel.h</header>
@@ -847,11 +861,6 @@
    <header>gui/gxs/GxsIdChooser.h</header>
   </customwidget>
   <customwidget>
-   <class>GxsIdLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/gxs/GxsIdLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>HeaderFrame</class>
    <extends>QFrame</extends>
    <header>gui/common/HeaderFrame.h</header>
@@ -861,11 +870,6 @@
    <class>MimeTextEdit</class>
    <extends>QTextEdit</extends>
    <header location="global">gui/common/MimeTextEdit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>RSComboBox</class>
-   <extends>QComboBox</extends>
-   <header>gui/common/RSComboBox.h</header>
   </customwidget>
  </customwidgets>
  <resources>
