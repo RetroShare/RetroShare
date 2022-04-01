@@ -156,7 +156,7 @@ void AvatarWidget::setGxsId(const RsGxsId &id)
 void AvatarWidget::setOwnId()
 {
     mFlag.isOwnId = true;
-    setToolTip(tr("Click to change your avatar"));
+    setToolTip(tr("Click to change your node avatar"));
 
     setId(ChatId(rsPeers->getOwnId()));
 }
@@ -274,15 +274,14 @@ void AvatarWidget::updateAvatar(const QString &peerId)
 
 void AvatarWidget::refreshAvatarImage()
 {
-    if (mGxsId.isNull()==false)
+    if (!mGxsId.isNull())
     {
         QPixmap avatar;
 
         AvatarDefs::getAvatarFromGxsId(mGxsId, avatar, defaultAvatar);
         setPixmap(avatar);
-        return;
     }
-    if (mId.isNotSet())
+    else if (mId.isNotSet())
     {
         QPixmap avatar(defaultAvatar);
         setPixmap(avatar);
@@ -291,7 +290,7 @@ void AvatarWidget::refreshAvatarImage()
     else  if (mFlag.isOwnId && mId.isPeerId())
     {
         QPixmap avatar;
-        AvatarDefs::getOwnAvatar(avatar);
+        AvatarDefs::getOwnAvatar(avatar,defaultAvatar);
         setPixmap(avatar);
         return;
     }
