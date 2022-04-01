@@ -2,6 +2,7 @@
     <qresource prefix="/">
         <file>icons/onion.png</file>
         <file>icons/svg/design.svg</file>
+        <file>icons/svg/network2.svg</file>
         <file>icons/svg/hidden.svg</file>
         <file>icons/svg/ratio-auto.svg</file>
         <file>icons/svg/ratio-1-1.svg</file>
