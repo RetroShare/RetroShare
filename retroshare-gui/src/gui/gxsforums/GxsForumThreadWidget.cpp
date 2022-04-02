@@ -291,7 +291,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
     connect(ui->threadTreeWidget, SIGNAL(clicked(QModelIndex)), this, SLOT(clickedThread(QModelIndex)));
     connect(ui->threadTreeWidget->selectionModel(), SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&)), this, SLOT(changedSelection(const QModelIndex&,const QModelIndex&)));
-    connect(ui->viewBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changedViewBox()));
 
     //connect(ui->expandButton, SIGNAL(clicked()), this, SLOT(togglethreadview()));
     ui->expandButton->hide();
@@ -305,6 +304,10 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     connect(ui->filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
 
     connect(ui->actionSave_image, SIGNAL(triggered()), this, SLOT(saveImage()));
+
+    connect(ui->threadedView_TB, SIGNAL(toggled(bool)), this, SLOT(toggleThreadedView(bool)));
+    connect(ui->flatView_TB, SIGNAL(toggled(bool)), this, SLOT(toggleFlatView(bool)));
+    connect(ui->latestPostInThreadView_TB, SIGNAL(toggled(bool)), this, SLOT(toggleLstPostInThreadView(bool)));
 
     /* Set own item delegate */
     RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
@@ -419,7 +422,9 @@ void GxsForumThreadWidget::blank()
     ui->forumName->setText("");
     ui->progressText->hide();
     ui->progressBar->hide();
-    ui->viewBox->setEnabled(false);
+    ui->threadedView_TB->setEnabled(false);
+    ui->flatView_TB->setEnabled(false);
+    ui->latestPostInThreadView_TB->setEnabled(false);
     ui->filterLineEdit->setEnabled(false);
 
     mThreadModel->clear();
@@ -454,7 +459,13 @@ void GxsForumThreadWidget::processSettings(bool load)
         ui->filterLineEdit->setCurrentFilter(Settings->value("filterColumn", RsGxsForumModel::COLUMN_THREAD_TITLE).toInt());
 
         // index of viewBox
-        ui->viewBox->setCurrentIndex(Settings->value("viewBox", VIEW_THREADED).toInt());
+        switch(Settings->value("viewBox", VIEW_THREADED).toInt())
+        {
+        default:
+        case VIEW_THREADED : ui->threadedView_TB->setChecked(true);  break;
+        case VIEW_FLAT     : ui->flatView_TB->setChecked(true);  break;
+        case VIEW_LAST_POST: ui->latestPostInThreadView_TB->setChecked(true);  break;
+        }
 
         // state of thread tree
         header->restoreState(Settings->value("ThreadTree").toByteArray());
@@ -1048,7 +1059,9 @@ void GxsForumThreadWidget::updateForumDescription(bool success)
 
     ui->newthreadButton->show();
     ui->forumName->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
-    ui->viewBox->setEnabled(true);
+    ui->flatView_TB->setEnabled(true);
+    ui->threadedView_TB->setEnabled(true);
+    ui->latestPostInThreadView_TB->setEnabled(true);
     ui->filterLineEdit->setEnabled(true);
 
     QString anti_spam_features1 ;
@@ -1817,21 +1830,25 @@ void GxsForumThreadWidget::saveImage()
     ImageUtil::extractImage(window(), cursor);
 }
 
-void GxsForumThreadWidget::changedViewBox()
+void GxsForumThreadWidget::toggleThreadedView(bool b)        { if(b) changedViewBox(VIEW_THREADED); }
+void GxsForumThreadWidget::toggleFlatView(bool b)            { if(b) changedViewBox(VIEW_FLAT); }
+void GxsForumThreadWidget::toggleLstPostInThreadView(bool b) { if(b) changedViewBox(VIEW_LAST_POST); }
+
+void GxsForumThreadWidget::changedViewBox(int view_mode)
 {
 	ui->threadTreeWidget->selectionModel()->clear();
 	ui->threadTreeWidget->selectionModel()->reset();
 	mThreadId.clear();
 
 	// save index
-	Settings->setValueToGroup("ForumThreadWidget", "viewBox", ui->viewBox->currentIndex());
+    Settings->setValueToGroup("ForumThreadWidget", "viewBox", view_mode);
 
-	if(ui->viewBox->currentIndex() == VIEW_FLAT)
+    if(view_mode == VIEW_FLAT)
 		mThreadModel->setTreeMode(RsGxsForumModel::TREE_MODE_FLAT);
 	else
 		mThreadModel->setTreeMode(RsGxsForumModel::TREE_MODE_TREE);
 
-	if(ui->viewBox->currentIndex() == VIEW_LAST_POST)
+    if(view_mode == VIEW_LAST_POST)
 		mThreadModel->setSortMode(RsGxsForumModel::SORT_MODE_CHILDREN_PUBLISH_TS);
 	else
 		mThreadModel->setSortMode(RsGxsForumModel::SORT_MODE_PUBLISH_TS);
@@ -1960,8 +1977,12 @@ void GxsForumThreadWidget::postForumLoading()
 	ui->forumName->setText(QString::fromUtf8(mForumGroup.mMeta.mGroupName.c_str()));
 	ui->threadTreeWidget->sortByColumn(RsGxsForumModel::COLUMN_THREAD_DATE, Qt::DescendingOrder);
 	ui->threadTreeWidget->update();
-	ui->viewBox->setEnabled(true);
-	ui->filterLineEdit->setEnabled(true);
+    ui->threadedView_TB->setEnabled(true);
+    ui->flatView_TB->setEnabled(true);
+    ui->flatView_TB->setEnabled(true);
+    ui->threadedView_TB->setEnabled(true);
+    ui->latestPostInThreadView_TB->setEnabled(true);
+    ui->filterLineEdit->setEnabled(true);
 
 	recursRestoreExpandedItems(mThreadProxyModel->mapFromSource(mThreadModel->root()),mSavedExpandedMessages);
 	//mUpdating = false;

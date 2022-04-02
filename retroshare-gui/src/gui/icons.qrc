@@ -1,6 +1,9 @@
 <RCC>
     <qresource prefix="/">
         <file>icons/onion.png</file>
+        <file>icons/svg/threaded-view.svg</file>
+        <file>icons/svg/flat-view.svg</file>
+        <file>icons/svg/lastpost-view.svg</file>
         <file>icons/svg/design.svg</file>
         <file>icons/svg/hidden.svg</file>
         <file>icons/svg/ratio-auto.svg</file>
