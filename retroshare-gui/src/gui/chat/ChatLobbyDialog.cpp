@@ -319,6 +319,16 @@ void ChatLobbyDialog::initParticipantsContextMenu(QMenu *contextMnu, QList<RsGxs
 	if (!gxsid.isNull())
 		copyIdAct->setData(QString::fromStdString(gxsid.toStdString()));
 
+	if (!gxsid.isNull() && rsIdentity->isOwnId(gxsid))
+	{
+		distantChatAct->setVisible(false);
+		sendMessageAct->setVisible(false);
+		muteAct->setVisible(false);
+		votePositiveAct->setVisible(false);
+		voteNeutralAct->setVisible(false);
+		voteNegativeAct->setVisible(false);
+	}
+
 	if(!gxsid.isNull() && !rsIdentity->isOwnId(gxsid))
 	{
 		distantChatAct->setEnabled(true);
