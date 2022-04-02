@@ -183,14 +183,18 @@ IdDialog::IdDialog(QWidget *parent)
 	contactsItem->setFont(RSID_COL_NICKNAME, ui->idTreeWidget->font());
 	contactsItem->setData(RSID_COL_VOTES, Qt::DecorationRole,0xff);
 
+	bannedItem = new QTreeWidgetItem();
+	bannedItem->setText(RSID_COL_NICKNAME, tr("Banned"));
+	bannedItem->setFont(RSID_COL_NICKNAME, ui->idTreeWidget->font());
+	bannedItem->setData(RSID_COL_VOTES, Qt::DecorationRole,0xff);
 
 	ui->idTreeWidget->insertTopLevelItem(0, ownItem);
 	ui->idTreeWidget->insertTopLevelItem(0, allItem);
 	ui->idTreeWidget->insertTopLevelItem(0, contactsItem );
+	ui->idTreeWidget->insertTopLevelItem(0, bannedItem );
 
 	ui->treeWidget_membership->clear();
 	ui->treeWidget_membership->setItemDelegateForColumn(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,new GxsIdTreeItemDelegate());
-
 
 	/* Setup UI helper */
     mStateHelper = new UIStateHelper(this);
@@ -321,12 +325,10 @@ IdDialog::IdDialog(QWidget *parent)
 	connect(idTWHAction, SIGNAL(toggled(bool)), this, SLOT(filterToggled(bool)));
 	idTWHMenu->addAction(idTWHAction);
 
-	idTWHAction = new QAction(QIcon(),tr("Banned"), this);
-	idTWHAction->setActionGroup(idTWHActionGroup);
-	idTWHAction->setCheckable(true);
-	idTWHAction->setData(RSID_FILTER_BANNED);
-	connect(idTWHAction, SIGNAL(toggled(bool)), this, SLOT(filterToggled(bool)));
-	idTWHMenu->addAction(idTWHAction);
+	bannedAction = new QAction(QIcon(),tr("Banned"), this);
+	bannedAction->setCheckable(true);
+	connect(bannedAction, SIGNAL(toggled(bool)), this, SLOT(showBanned()));
+	idTWHMenu->addAction(bannedAction);
 	
     QAction *CreateIDAction = new QAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/person.png"),tr("Create new Identity"), this);
 	connect(CreateIDAction, SIGNAL(triggered()), this, SLOT(addIdentity()));
@@ -344,12 +346,12 @@ IdDialog::IdDialog(QWidget *parent)
 	QString headerText = headerItem->text(RSID_COL_NICKNAME);
 	ui->filterLineEdit->addFilter(QIcon(), headerText, RSID_COL_NICKNAME, QString("%1 %2").arg(tr("Search"), headerText));
 
-    headerItem->setData(RSID_COL_VOTES,Qt::UserRole,tr("Reputation"));
+	headerItem->setData(RSID_COL_VOTES,Qt::UserRole,tr("Reputation"));
 
 	/* Set initial section sizes */
-  QHeaderView * circlesheader = ui->treeWidget_membership->header () ;
-  circlesheader->resizeSection (CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QFontMetricsF(ui->idTreeWidget->font()).width("Circle name")*1.5) ;
-  ui->treeWidget_membership->setColumnWidth(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, 270);
+	QHeaderView * circlesheader = ui->treeWidget_membership->header () ;
+	circlesheader->resizeSection (CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QFontMetricsF(ui->idTreeWidget->font()).width("Circle name")*1.5) ;
+	ui->treeWidget_membership->setColumnWidth(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, 270);
 
 	ui->filterLineEdit->addFilter(QIcon(), tr("ID"), RSID_COL_KEYID, tr("Search ID"));
 
@@ -1275,6 +1277,10 @@ void IdDialog::processSettings(bool load)
 		allItem->setExpanded(Settings->value("ExpandAll", QVariant(true)).toBool());
 		ownItem->setExpanded(Settings->value("ExpandOwn", QVariant(true)).toBool());
 		contactsItem->setExpanded(Settings->value("ExpandContacts", QVariant(true)).toBool());
+		bannedItem->setExpanded(Settings->value("ExpandBanned", QVariant(true)).toBool());
+
+		// Banned item
+		bannedAction->setChecked(Settings->value("bannedAction", false).toBool());
 	} else {
 		// save settings
 
@@ -1288,6 +1294,10 @@ void IdDialog::processSettings(bool load)
 		Settings->setValue("ExpandAll", allItem->isExpanded());
 		Settings->setValue("ExpandContacts", contactsItem->isExpanded());
 		Settings->setValue("ExpandOwn", ownItem->isExpanded());
+		Settings->setValue("ExpandBanned", bannedItem->isExpanded());
+
+		// Banned item
+		Settings->setValue("bannedAction", bannedAction->isChecked()); 
 	}
 
 	Settings->endGroup();
@@ -1526,6 +1536,7 @@ void IdDialog::loadIdentities(const std::map<RsGxsGroupId,RsGxsIdGroup>& ids_set
 	Settings->setValue("ExpandAll", allItem->isExpanded());
 	Settings->setValue("ExpandContacts", contactsItem->isExpanded());
 	Settings->setValue("ExpandOwn", ownItem->isExpanded());
+	Settings->setValue("ExpandBanned", bannedItem->isExpanded());
 	Settings->endGroup();
 
 
@@ -1548,7 +1559,7 @@ void IdDialog::loadIdentities(const std::map<RsGxsGroupId,RsGxsIdGroup>& ids_set
 
 		if(it == ids_set.end())
 		{
-			if(item != allItem && item != contactsItem && item != ownItem)
+			if(item != allItem && item != contactsItem && item != ownItem && item != bannedItem)
 				delete(item);
 
 			continue ;
@@ -1559,7 +1570,7 @@ void IdDialog::loadIdentities(const std::map<RsGxsGroupId,RsGxsIdGroup>& ids_set
 //        if(it->second.mMeta.mPublishTs > time(NULL) - 20 || it->second.mMeta.mGroupId == RsGxsGroupId("3de2172503675206b3a23c997e5ee688"))
 //            std::cerr << "Captured ID " <<it->second.mMeta.mGroupId << std::endl;
 
-		if(    (parent_item == allItem && it->second.mIsAContact) || (parent_item == contactsItem && !it->second.mIsAContact))
+		if(    (parent_item == allItem && it->second.mIsAContact) || (parent_item == contactsItem && !it->second.mIsAContact) || (parent_item == bannedItem && !it->second.mIsAContact))
 		{
 			delete item ;	// do not remove from the list, so that it is added again in the correct place.
 			continue ;
@@ -1575,6 +1586,9 @@ void IdDialog::loadIdentities(const std::map<RsGxsGroupId,RsGxsIdGroup>& ids_set
 	for (std::map<RsGxsGroupId,RsGxsIdGroup>::const_iterator vit = ids_set.begin(); vit != ids_set.end(); ++vit)
 	{
 		RsGxsIdGroup data = vit->second ;
+		
+		RsIdentityDetails idd ;
+		rsIdentity->getIdDetails(RsGxsId(data.mMeta.mGroupId),idd) ;
 
 		item = NULL;
 
@@ -1584,6 +1598,8 @@ void IdDialog::loadIdentities(const std::map<RsGxsGroupId,RsGxsIdGroup>& ids_set
 				ownItem->addChild(item);
 			else if(data.mIsAContact)
 				contactsItem->addChild(item);
+			else if(idd.mReputation.mOverallReputationLevel == RsReputationLevel::LOCALLY_NEGATIVE)
+				bannedItem->addChild(item);
 			else
 				allItem->addChild(item);
 
@@ -1591,17 +1607,18 @@ void IdDialog::loadIdentities(const std::map<RsGxsGroupId,RsGxsIdGroup>& ids_set
 	}
 	
 	/* count items */
-	int itemCount = contactsItem->childCount() + allItem->childCount() + ownItem->childCount();
+	int itemCount = contactsItem->childCount() + allItem->childCount() + ownItem->childCount() + bannedItem->childCount();
 	ui->label_count->setText( "(" + QString::number( itemCount ) + ")" );
 	
 	int contactsCount = contactsItem->childCount() ;
 	int allCount = allItem->childCount() ;
 	int ownCount = ownItem->childCount();
+	int bannedCount = bannedItem->childCount() ;
 
 	contactsItem->setText(0, tr("My contacts") + " (" + QString::number( contactsCount ) + ")" );
 	allItem->setText(0, tr("All") + " (" + QString::number( allCount ) + ")" );
 	ownItem->setText(0, tr("My own identities") + " (" +  QString::number( ownCount ) + ")" );
-
+	bannedItem->setText(0, tr("Banned") + " (" +  QString::number( bannedCount ) + ")" );
 
 	//Restore expanding
 	Settings->beginGroup("IdDialog");
@@ -1609,6 +1626,9 @@ void IdDialog::loadIdentities(const std::map<RsGxsGroupId,RsGxsIdGroup>& ids_set
 	ownItem->setExpanded(Settings->value("ExpandOwn", QVariant(true)).toBool());
 	contactsItem->setExpanded(Settings->value("ExpandContacts", QVariant(true)).toBool());
 	Settings->endGroup();
+
+	if(!bannedAction->isChecked())
+		bannedItem->setHidden(true);
 
 	navigate(RsGxsId(oldCurrentId));
 	filterIds();
@@ -2150,7 +2170,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 
 	for(auto& it :selected_items)
 	{
-		if(it == allItem || it == contactsItem || it == ownItem)
+		if(it == allItem || it == contactsItem || it == ownItem || it == bannedItem)
 		{
 			root_node_present = true ;
 			continue ;
@@ -2591,5 +2611,13 @@ void IdDialog::restoreExpandedCircleItems(const std::vector<bool>& expanded_root
     restoreTopLevel(mExternalBelongingCircleItem,0);
     restoreTopLevel(mExternalOtherCircleItem,1);
     restoreTopLevel(mMyCircleItem,2);
+}
+
+void IdDialog::showBanned()
+{
+	if(bannedAction->isChecked())
+		bannedItem->setHidden(false);
+	else
+		bannedItem->setHidden(true);
 }
 
