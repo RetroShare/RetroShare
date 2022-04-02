@@ -62,6 +62,7 @@ private slots:
 	void inviteFriends() ;
 	void filterChanged(const QString &text);
 	void showInPeopleTab();
+	void copyId();
 	void toggleWindowed(){setWindowed(!isWindowed());}
 	void setWindowed(bool windowed);
 
@@ -131,6 +132,7 @@ private:
     QWidgetAction *checkableAction;
     QAction *sendMessageAct;
     QAction *showInPeopleAct;
+    QAction *copyIdAct;
 
     GxsIdChooser *ownIdChooser ;
     //icons cache

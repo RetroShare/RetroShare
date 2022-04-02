@@ -23,6 +23,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QWidgetAction>
+#include <QClipboard>
 
 #include "ChatLobbyDialog.h"
 
@@ -98,6 +99,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     distantChatAct = new QAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/chats.png"), tr("Start private chat"), this);
     sendMessageAct = new QAction(FilesDefs::getIconFromQtResourcePath(":/icons/mail/write-mail.png"), tr("Send Message"), this);
     showInPeopleAct = new QAction(QIcon(), tr("Show author in people tab"), this);
+    copyIdAct = new QAction(QIcon(), tr("Copy ID to clipboard"), this);
 
     QActionGroup *sortgrp = new QActionGroup(this);
     actionSortByName = new QAction(QIcon(), tr("Sort by Name"), this);
@@ -118,6 +120,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     connect(voteNeutralAct, SIGNAL(triggered()), this, SLOT(voteParticipant()));
     connect(voteNegativeAct, SIGNAL(triggered()), this, SLOT(voteParticipant()));
     connect(showInPeopleAct, SIGNAL(triggered()), this, SLOT(showInPeopleTab()));
+    connect(copyIdAct, SIGNAL(triggered()), this, SLOT(copyId()));
 
     connect(actionSortByName, SIGNAL(triggered()), this, SLOT(sortParcipants()));
     connect(actionSortByActivity, SIGNAL(triggered()), this, SLOT(sortParcipants()));
@@ -290,6 +293,7 @@ void ChatLobbyDialog::initParticipantsContextMenu(QMenu *contextMnu, QList<RsGxs
 	contextMnu->addAction(voteNeutralAct);
 	contextMnu->addAction(voteNegativeAct);
 	contextMnu->addAction(showInPeopleAct);
+	contextMnu->addAction(copyIdAct);
 
 	distantChatAct->setEnabled(false);
 	sendMessageAct->setEnabled(false);
@@ -300,6 +304,7 @@ void ChatLobbyDialog::initParticipantsContextMenu(QMenu *contextMnu, QList<RsGxs
 	voteNeutralAct->setEnabled(false);
 	voteNegativeAct->setEnabled(false);
 	showInPeopleAct->setEnabled(idList.count() == 1);
+	copyIdAct->setEnabled(idList.count() == 1);
 
 	distantChatAct->setData(QVariant::fromValue(idList));
 	sendMessageAct->setData(QVariant::fromValue(idList));
@@ -310,6 +315,9 @@ void ChatLobbyDialog::initParticipantsContextMenu(QMenu *contextMnu, QList<RsGxs
 	showInPeopleAct->setData(QVariant::fromValue(idList));
 
 	RsGxsId gxsid = idList.at(0);
+
+	if (!gxsid.isNull())
+		copyIdAct->setData(QString::fromStdString(gxsid.toStdString()));
 
 	if(!gxsid.isNull() && !rsIdentity->isOwnId(gxsid))
 	{
@@ -377,6 +385,13 @@ void ChatLobbyDialog::showInPeopleTab()
 	MainWindow::showWindow(MainWindow::People);
 
 	idDialog->navigate(nickname);
+}
+
+void ChatLobbyDialog::copyId()
+{
+	QAction* the_action = qobject_cast<QAction*>(sender());
+	if (the_action)
+		QApplication::clipboard()->setText(the_action->data().toString()) ;
 }
 
 void ChatLobbyDialog::init(const ChatId &/*id*/, const QString &/*title*/)
