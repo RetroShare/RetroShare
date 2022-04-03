@@ -122,7 +122,11 @@ private slots:
 	void replytoforummessage();
 	void editforummessage();
 
-	void replyMessageData(const RsGxsForumMsg &msg);
+    void toggleThreadedView(bool);
+    void toggleFlatView(bool);
+    void toggleLstPostInThreadView(bool);
+
+    void replyMessageData(const RsGxsForumMsg &msg);
 	void editForumMessageData(const RsGxsForumMsg &msg);
 	void replyForumMessageData(const RsGxsForumMsg &msg);
 	void showAuthorInPeople(const RsGxsForumMsg& msg);
@@ -153,7 +157,7 @@ private slots:
 	void nextUnreadMessage();
 	void downloadAllFiles();
 
-	void changedViewBox();
+    void changedViewBox(int);
 	void flagperson();
 
 	void filterColumnChanged(int column);
