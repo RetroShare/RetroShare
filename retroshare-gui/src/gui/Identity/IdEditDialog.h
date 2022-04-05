@@ -54,6 +54,8 @@ private slots:
     void avatarCleared();
 
 	void changeAvatar();
+	void removeAvatar();
+	void updateInterface();
 
 	void addRecognTag();
 	void checkNewTag();
