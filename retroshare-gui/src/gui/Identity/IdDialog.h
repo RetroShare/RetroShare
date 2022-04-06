@@ -112,7 +112,7 @@ private slots:
 
 	static QString inviteMessage();
 	void sendInvite();
-
+	void showBanned();
 private:
 	void processSettings(bool load);
 	QString createUsageString(const RsIdentityUsage& u) const;
@@ -137,6 +137,7 @@ private:
 	QTreeWidgetItem *contactsItem;
 	QTreeWidgetItem *allItem;
 	QTreeWidgetItem *ownItem;
+	QTreeWidgetItem *bannedItem;
 	QTreeWidgetItem *mExternalBelongingCircleItem;
 	QTreeWidgetItem *mExternalOtherCircleItem;
 	QTreeWidgetItem *mMyCircleItem;
@@ -156,6 +157,8 @@ private:
 	QTimer updateIdTimer;
 	bool needUpdateIdsOnNextShow;
 	bool needUpdateCirclesOnNextShow;
+
+	QAction *bannedAction;
 
 	/* UI -  Designer */
 	Ui::IdDialog *ui;
