@@ -179,7 +179,12 @@ void UserNotify::update()
 	}
 
 	if (mListItem) {
-		mListItem->setIcon(getMainIcon(count > 0));
+		switch (Settings->RshareSettings::getToolButtonStyle()) {
+			case Qt::ToolButtonTextOnly:
+				break;
+			default:
+				mListItem->setIcon(getMainIcon(count > 0));
+		}
 		mListItem->setText((count > 0) ? QString("%1 (%2)").arg(mButtonText).arg(count) : mButtonText);
 
 		QFont font = mListItem->font();
