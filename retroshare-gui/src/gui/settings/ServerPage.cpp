@@ -47,7 +47,9 @@
 #include <QTcpSocket>
 #include <QTimer>
 
+#ifdef RS_USE_I2P_SAM3
 #include <libsam3.h>
+#endif
 
 #define ICON_STATUS_UNKNOWN ":/images/ledoff1.png"
 #define ICON_STATUS_WORKING ":/images/yellowled.png"
@@ -1562,6 +1564,7 @@ void ServerPage::syncI2PProxyAddrSam(QString t)
 
 void ServerPage::taskFinished(taskTicket *&ticket)
 {
+#ifdef RS_USE_I2P_SAM3
 	switch (ticket->task) {
 	case autoProxyTask::receiveKey:
 	{
@@ -1629,6 +1632,7 @@ void ServerPage::taskFinished(taskTicket *&ticket)
 
     delete ticket;
 	ticket = nullptr;
+ #endif //RS_USE_I2P_SAM3
 }
 
 void ServerPage::connectionWithoutCert()
