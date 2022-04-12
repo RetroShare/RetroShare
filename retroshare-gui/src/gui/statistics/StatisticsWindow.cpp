@@ -59,6 +59,7 @@
 #define IMAGE_BWGRAPH       ":/icons/bandwidth128.png"
 #define IMAGE_GLOBALROUTER  ":/icons/GRouter128.png"
 #define IMAGE_GXSTRANSPORT  ":/icons/transport128.png"
+#define IMAGE_QUIT          ":/icons/png/exit.png"
 #define IMAGE_RTT           ":/icons/RTT128.png"
 
 //#define IMAGE_BANDWIDTH     ":images/office-chart-area-stacked.png"
@@ -201,6 +202,9 @@ void StatisticsWindow::initStackedPage()
 
   /* Create the toolbar */
   ui->toolBar->addActions(grp->actions());
+  // commented out per cyril taste
+  // action = ui->toolBar->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_QUIT), tr("Quit"));
+  // connect(action, &QAction::triggered, this, &StatisticsWindow::close);
 
   connect(grp, SIGNAL(triggered(QAction *)), ui->stackPages, SLOT(showPage(QAction *)));
 
