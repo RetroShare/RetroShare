@@ -894,6 +894,12 @@ border-image: url(:/images/closepressed.png)
         </item>
         <item>
          <widget class="HashBox" name="hashBox">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>78</height>
+           </size>
+          </property>
           <property name="widgetResizable">
            <bool>true</bool>
           </property>
