@@ -97,6 +97,7 @@ StatisticsWindow::StatisticsWindow(QWidget *parent) :
     ui(new Ui::StatisticsWindow)
 {
     ui->setupUi(this);
+	setAttribute(Qt::WA_DeleteOnClose, true);
    
 	Settings->loadWidgetInformation(this);
 	
