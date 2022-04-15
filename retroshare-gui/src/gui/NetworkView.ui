@@ -115,6 +115,9 @@
          <height>0</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>Enter name to search</string>
+       </property>
       </widget>
      </item>
     </layout>
