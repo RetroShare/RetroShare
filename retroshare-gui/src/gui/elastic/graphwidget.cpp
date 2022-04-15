@@ -40,6 +40,7 @@ GraphWidget::GraphWidget(QWidget *)
     setRenderHint(QPainter::Antialiasing);
     setTransformationAnchor(AnchorUnderMouse);
     setResizeAnchor(AnchorViewCenter);
+    setDragMode(QGraphicsView::ScrollHandDrag);
 	 _friction_factor = 1.0f ;
 
     scale(qreal(0.8), qreal(0.8));
