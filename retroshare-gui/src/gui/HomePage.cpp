@@ -207,19 +207,22 @@ HomePage::~HomePage()
 
 RetroshareInviteFlags HomePage::currentInviteFlags() const
 {
-     RetroshareInviteFlags invite_flags = RetroshareInviteFlags::NOTHING;
+    RetroshareInviteFlags invite_flags = RetroshareInviteFlags::NOTHING;
 
-    if(mIncludeLocIPact->isChecked())
-        invite_flags |= RetroshareInviteFlags::CURRENT_LOCAL_IP;
+    if(!RsAccounts::isHiddenNode())
+    {
+        if(mIncludeLocIPact->isChecked())
+            invite_flags |= RetroshareInviteFlags::CURRENT_LOCAL_IP;
 
-    if(mIncludeExtIPact->isChecked())
-        invite_flags |= RetroshareInviteFlags::CURRENT_EXTERNAL_IP;
+        if(mIncludeExtIPact->isChecked())
+            invite_flags |= RetroshareInviteFlags::CURRENT_EXTERNAL_IP;
 
-    if(mIncludeDNSact->isChecked())
-        invite_flags |= RetroshareInviteFlags::DNS;
+        if(mIncludeDNSact->isChecked())
+            invite_flags |= RetroshareInviteFlags::DNS;
 
-    if(mIncludeIPHistoryact->isChecked())
-        invite_flags |= RetroshareInviteFlags::FULL_IP_HISTORY;
+        if(mIncludeIPHistoryact->isChecked())
+            invite_flags |= RetroshareInviteFlags::FULL_IP_HISTORY;
+    }
 
     return invite_flags;
 }
