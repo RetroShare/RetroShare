@@ -485,11 +485,11 @@ void MainWindow::initStackedPage()
   addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
 
   //List All notify before Setting was created
-  QList<QPair<MainPage*, QPair<QAction*, QListWidgetItem*> > >::iterator notifyIt;
-  for (notifyIt = notify.begin(); notifyIt != notify.end(); ++notifyIt) {
-      UserNotify *userNotify = notifyIt->first->getUserNotify();
+  for (auto notifyIt:notify)
+  {
+      UserNotify *userNotify = notifyIt.first->getUserNotify();
       if (userNotify) {
-          userNotify->initialize(ui->toolBarPage, notifyIt->second.first, notifyIt->second.second);
+          userNotify->initialize(ui->toolBarPage, notifyIt.second.first, notifyIt.second.second);
           connect(userNotify, SIGNAL(countChanged()), this, SLOT(updateTrayCombine()));
           userNotifyList.push_back(userNotify);
       }
