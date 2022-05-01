@@ -1455,33 +1455,40 @@ void SearchDialog::copyResultLink()
 {
     /* should also be able to handle multi-selection */
     QList<QTreeWidgetItem*> itemsForCopy = ui.searchResultWidget->selectedItems();
-    int numdls = itemsForCopy.size();
     QTreeWidgetItem * item;
 
-	QList<RetroShareLink> urls ;
+    std::map<RsFileHash,RetroShareLink> url_map;
 
-    for (int i = 0; i < numdls; ++i) 
-	 {
-		 item = itemsForCopy.at(i);
-		 // call copy
+    for (auto item:itemsForCopy)
+    {
+        // call copy
 
-		 if (!item->childCount()) 
-		 {
-			 std::cerr << "SearchDialog::copyResultLink() Calling set retroshare link";
-			 std::cerr << std::endl;
+        QString fhash = item->text(SR_HASH_COL);
+        RsFileHash hash(fhash.toStdString());
 
-			 QString fhash = item->text(SR_HASH_COL);
-			 qulonglong fsize = item->text(SR_SIZE_COL).toULongLong();
-			 QString fname = item->text(SR_NAME_COL);
+        if(!hash.isNull())
+        {
+            std::cerr << "SearchDialog::copyResultLink() Calling set retroshare link";
+            std::cerr << std::endl;
 
-			RetroShareLink link = RetroShareLink::createFile(fname, fsize, fhash);
-			if (link.valid()) {
-				std::cerr << "new link added to clipboard: " << link.toString().toStdString() << std::endl ;
-				urls.push_back(link) ;
-			}
-		 } 
-	 }
-	 RSLinkClipboard::copyLinks(urls) ;
+            qulonglong fsize = item->text(SR_SIZE_COL).toULongLong();
+            QString fname = item->text(SR_NAME_COL);
+
+            RetroShareLink link = RetroShareLink::createFile(fname, fsize, fhash);
+
+            if (link.valid())
+                url_map[hash] = link;
+        }
+    }
+    QList<RetroShareLink> urls ;
+
+    for(auto link:url_map)
+    {
+        std::cerr << "new link added to clipboard: " << link.second.toString().toStdString() << std::endl ;
+        urls.push_back(link.second);
+    }
+
+    RSLinkClipboard::copyLinks(urls) ;
 }
 
 void SearchDialog::sendLinkTo( )
