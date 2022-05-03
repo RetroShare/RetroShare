@@ -474,6 +474,7 @@ void ChatWidget::processSettings(bool load)
 		// state of splitter
 		ui->chatVSplitter->restoreState(Settings->value("ChatSplitter").toByteArray());
 	} else {
+		shrinkChatTextEdit(false);
 		// save settings
 
 		// state of splitter
@@ -643,6 +644,16 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 		}
 
 	} else if (obj == ui->chatTextEdit) {
+		if (chatType() == CHATTYPE_LOBBY) {
+		    #define EVENT_IS(q_event) (event->type() == QEvent::q_event)
+			if (EVENT_IS(FocusIn)) {
+				if (was_shrinked) {
+					shrinkChatTextEdit(false);
+				}
+			}
+			#undef EVENT_IS
+		}
+
 		if (event->type() == QEvent::KeyPress) {
 
 			QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
@@ -905,11 +916,19 @@ void ChatWidget::showEvent(QShowEvent */*event*/)
 	QScrollBar *scrollbar = ui->textBrowser->verticalScrollBar();
 	bool is_scrollbar_at_end = scrollbar->value() == scrollbar->maximum();
 	bool is_chat_text_edit_empty = ui->chatTextEdit->toPlainText().isEmpty();
+	// show event will not be called on every change of focus
 	if (is_scrollbar_at_end || !is_chat_text_edit_empty) {
+		if (!firstShow) {
+			shrinkChatTextEdit(false);
+		}
 		focusDialog();
 	} else {
-		// otherwise focus will be get even not chat itself
+		// otherwise, focus will not even be gotten by chat itself
 		ui->textBrowser->setFocus();
+
+		if (!firstShow && !was_shrinked) {
+			shrinkChatTextEdit(true);
+		}
 	}
 	ChatUserNotify::clearWaitingChat(chatId);
 
@@ -923,6 +942,11 @@ void ChatWidget::showEvent(QShowEvent */*event*/)
 
 void ChatWidget::resizeEvent(QResizeEvent */*event*/)
 {
+	// it's about resize all chat window, not about chattextedit
+	// just unshrink it and do not bother
+	if (was_shrinked) {
+		shrinkChatTextEdit(false);
+	}
 	// Workaround: now the scroll position is correct calculated
 	QScrollBar *scrollbar = ui->textBrowser->verticalScrollBar();
 	scrollbar->setValue(scrollbar->maximum());
@@ -1966,4 +1990,51 @@ void ChatWidget::saveSticker()
 	if(filename.isEmpty()) return;
 	filename = Emoticons::importedStickerPath() + "/" + filename + ".png";
 	ImageUtil::extractImage(window(), cursor, filename);
+}
+
+void ChatWidget::shrinkChatTextEdit(bool shrink_me)
+{
+	// here and at eventfiltert check
+	if (chatType() != CHATTYPE_LOBBY)
+		return;
+	if (!Settings->getShrinkChatTextEdit()) {
+		if (was_shrinked) {
+			ui->chatVSplitter->setSizes(_chatvsplitter_saved_size);
+		}
+		_chatvsplitter_saved_size.clear();
+		was_shrinked = false;
+	}
+
+	if (Settings->getShrinkChatTextEdit()) {
+		if (shrink_me) {
+			if (!was_shrinked) {
+				_chatvsplitter_saved_size = ui->chatVSplitter->sizes();
+
+				QList<int> shrinked_v_splitter_size = _chatvsplitter_saved_size;
+				// #define TEXT_BROWSER ui->chatVSplitter->indexOf(ui->textBrowser)
+				#define TEXT_BROWSER 0
+				// when you will update the layout one more time change this appropriately
+				// #define BELOW_TEXT_BROWSER ui->chatVSplitter->indexOf(ui->chatVSplitter->widget(1))
+				#define BELOW_TEXT_BROWSER 1
+				int height_diff = shrinked_v_splitter_size[BELOW_TEXT_BROWSER] - ui->chatTextEdit->minimumHeight(); 
+				shrinked_v_splitter_size[BELOW_TEXT_BROWSER] = ui->chatTextEdit->minimumHeight();
+				shrinked_v_splitter_size[TEXT_BROWSER] += height_diff;
+				ui->chatVSplitter->setSizes( shrinked_v_splitter_size );
+				#undef TEXT_BROWSER
+				#undef BELOW_TEXT_BROWSER
+				was_shrinked = true;
+			}
+		} else { // (!shrink_me)
+			if (was_shrinked) {
+				// to not shrink/unshrink at every entry into chat
+				// when unshrinked state is enough to a browser be scrollable, but shrinked - not
+				QScrollBar *scrollbar = ui->textBrowser->verticalScrollBar();
+				bool is_scrollbar_at_end = scrollbar->value() == scrollbar->maximum();
+				ui->chatVSplitter->setSizes(_chatvsplitter_saved_size);
+				if (is_scrollbar_at_end)
+					scrollbar->setValue(scrollbar->maximum());
+				was_shrinked = false;
+			}
+		}
+	}
 }

@@ -135,6 +135,7 @@ void ChatPage::updateChatParams()
 	Settings->setChatSendAsPlainTextByDef(ui.sendAsPlainTextByDef->isChecked());
 	Settings->setChatLoadEmbeddedImages(ui.loadEmbeddedImages->isChecked());
 	Settings->setChatDoNotSendIsTyping(ui.DontSendTyping->isChecked());
+	Settings->setShrinkChatTextEdit(ui.shrinkChatTextEdit->isChecked());
 }
 
 void ChatPage::updateChatSearchParams()
@@ -248,6 +249,7 @@ ChatPage::ChatPage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.sendAsPlainTextByDef,       SIGNAL(toggled(bool)),            this, SLOT(updateChatParams()));
 	connect(ui.loadEmbeddedImages,         SIGNAL(toggled(bool)),            this, SLOT(updateChatParams()));
 	connect(ui.DontSendTyping,             SIGNAL(toggled(bool)),            this, SLOT(updateChatParams()));
+	connect(ui.shrinkChatTextEdit,         SIGNAL(toggled(bool)),            this, SLOT(updateChatParams()));
 
 	connect(ui.sbSearch_CharToStart,       SIGNAL(valueChanged(int)),        this, SLOT(updateChatSearchParams()));
 	connect(ui.cbSearch_CaseSensitively,   SIGNAL(toggled(bool)),            this, SLOT(updateChatSearchParams()));
@@ -403,6 +405,7 @@ ChatPage::load()
     whileBlocking(ui.sendAsPlainTextByDef)->setChecked(Settings->getChatSendAsPlainTextByDef());
     whileBlocking(ui.loadEmbeddedImages)->setChecked(Settings->getChatLoadEmbeddedImages());
     whileBlocking(ui.DontSendTyping)->setChecked(Settings->getChatDoNotSendIsTyping());
+    whileBlocking(ui.shrinkChatTextEdit)->setChecked(Settings->getShrinkChatTextEdit());
 
 	std::string advsetting;
 	if(rsConfig->getConfigurationOption(RS_CONFIG_ADVANCED, advsetting) && (advsetting == "YES"))
