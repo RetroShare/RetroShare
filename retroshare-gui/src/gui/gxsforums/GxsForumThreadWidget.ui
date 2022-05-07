@@ -433,7 +433,11 @@
           </widget>
          </item>
          <item row="0" column="8">
-          <widget class="RSComboBox" name="versions_CB"/>
+          <widget class="RSComboBox" name="versions_CB">
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToContents</enum>
+           </property>
+          </widget>
          </item>
          <item row="0" column="9">
           <widget class="Line" name="lineRight">
