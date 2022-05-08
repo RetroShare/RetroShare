@@ -27,8 +27,8 @@
 #include "ChatDialog.h"
 #include "PopupChatWindow.h"
 
-Q_DECLARE_METATYPE(RsGxsId)
-Q_DECLARE_METATYPE(QList<RsGxsId>)
+// Q_DECLARE_METATYPE(RsGxsId)
+// Q_DECLARE_METATYPE(QList<RsGxsId>)
 
 class GxsIdChooser ;
 class QToolButton;
@@ -101,7 +101,7 @@ private:
     void muteParticipant(const RsGxsId& id);
     void unMuteParticipant(const RsGxsId& id);
     bool isNicknameInLobby(const RsGxsId& id);
-	
+
 	ChatLobbyId lobbyId;
 	QString _lobby_name ;
 	time_t lastUpdateListTime;
@@ -117,7 +117,7 @@ private:
 
 	/** Qt Designer generated object */
 	Ui::ChatLobbyDialog ui;
-	
+
 	/** Ignored Users in Chatlobby by nickname until we had implemented Peer Ids in ver 0.6 */
     std::set<RsGxsId> mutedParticipants;
 
