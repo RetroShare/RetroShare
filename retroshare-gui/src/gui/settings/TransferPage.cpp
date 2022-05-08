@@ -53,6 +53,7 @@ TransferPage::TransferPage(QWidget * parent, Qt::WindowFlags flags)
 	QObject::connect(ui.partialButton, SIGNAL(clicked( bool ) ), this , SLOT( setPartialsDirectory() ) );
 	QObject::connect(ui.editShareButton, SIGNAL(clicked()), this, SLOT(editDirectories()));
 	QObject::connect(ui.autoCheckDirectories_CB, SIGNAL(clicked(bool)), this, SLOT(toggleAutoCheckDirectories(bool)));
+	QObject::connect(ui.minimumFontSize_SB, SIGNAL(valueChanged(int)), this, SLOT(updateFontSize())) ;
 
 	QObject::connect(ui.autoCheckDirectories_CB,     SIGNAL(toggled(bool)),    this,SLOT(updateAutoCheckDirectories())) ;
 	QObject::connect(ui.autoCheckDirectoriesDelay_SB,SIGNAL(valueChanged(int)),this,SLOT(updateAutoScanDirectoriesPeriod())) ;
@@ -188,6 +189,10 @@ void TransferPage::load()
 	whileBlocking(ui.suffixesIgnoreList_CB)->setChecked( ignore_flags & RS_FILE_SHARE_FLAGS_IGNORE_SUFFIXES ) ;
 	whileBlocking(ui.prefixesIgnoreList_LE)->setText( ignore_prefixes_string );
 	whileBlocking(ui.suffixesIgnoreList_LE)->setText( ignore_suffixes_string );
+
+	Settings->beginGroup(QString("File"));
+	whileBlocking(ui.minimumFontSize_SB)->setValue( Settings->value("MinimumFontSize", 11 ).toInt());
+	Settings->endGroup();
 }
 
 void TransferPage::updateDefaultStrategy(int i)
@@ -288,6 +293,13 @@ void TransferPage::toggleAutoCheckDirectories(bool b)
 void TransferPage::editDirectories()
 {
 	ShareManager::showYourself() ;
+}
+
+void TransferPage::updateFontSize()
+{
+	Settings->beginGroup(QString("File"));
+	Settings->setValue("MinimumFontSize", ui.minimumFontSize_SB->value());
+	Settings->endGroup();
 }
 
 void TransferPage::updateAutoCheckDirectories()       {    rsFiles->setWatchEnabled(ui.autoCheckDirectories_CB->isChecked()) ; }

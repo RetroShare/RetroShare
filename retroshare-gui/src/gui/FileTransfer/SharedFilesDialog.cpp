@@ -241,10 +241,6 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
     /* Set Multi Selection */
     ui.dirTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-	QFontMetricsF fontMetrics(ui.dirTreeView->font());
-	int iconHeight = fontMetrics.height() * 1.5;
-	ui.dirTreeView->setIconSize(QSize(iconHeight, iconHeight));
-
   /* Hide platform specific features */
   copylinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Links to Clipboard" ), this );
   connect( copylinkAct , SIGNAL( triggered() ), this, SLOT( copyLink() ) );
@@ -323,7 +319,7 @@ void SharedFilesDialog::hideEvent(QHideEvent *)
         model->setVisible(false) ;
 }
 
-void SharedFilesDialog::showEvent(QShowEvent *)
+void SharedFilesDialog::showEvent(QShowEvent *event)
 {
     if(model!=NULL)
     {
@@ -335,6 +331,10 @@ void SharedFilesDialog::showEvent(QShowEvent *)
           model->update() ;
 
         restoreExpandedPathsAndSelection(expanded_indexes,hidden_indexes,selected_indexes);
+    }
+
+    if (!event->spontaneous()) {
+        updateFontSize();
     }
 }
 RemoteSharedFilesDialog::~RemoteSharedFilesDialog()
@@ -1686,3 +1686,16 @@ bool SharedFilesDialog::tree_FilterItem(const QModelIndex &index, const QString 
     return (visible || visibleChildCount);
 }
 #endif
+
+void SharedFilesDialog::updateFontSize()
+{
+    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 11).toInt();
+    QFont newFont = ui.dirTreeView->font();
+    if (newFont.pointSize() != customFontSize) {
+        newFont.setPointSize(customFontSize);
+        QFontMetricsF fontMetrics(newFont);
+        int iconHeight = fontMetrics.height();
+        ui.dirTreeView->setFont(newFont);
+        ui.dirTreeView->setIconSize(QSize(iconHeight, iconHeight));
+    }
+}

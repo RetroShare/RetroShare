@@ -58,6 +58,7 @@ class TransferPage: public ConfigPage
 		void updateAutoDLColl();
 		void setPartialsDirectory();
 		void toggleAutoCheckDirectories(bool);
+		void updateFontSize();
 
 		void updateAutoCheckDirectories()       ;
 		void updateAutoScanDirectoriesPeriod()  ;
