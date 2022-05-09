@@ -936,6 +936,12 @@ void GxsForumThreadWidget::changedThread(QModelIndex index)
 #endif
         markMsgAsReadUnread(true, false, false);
     }
+
+    if (Settings->getForumExpandNewMessages())
+    {
+        recursExpandUnread(index);
+    }
+
 }
 
 void GxsForumThreadWidget::clickedThread(QModelIndex index)
@@ -1323,7 +1329,7 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
         else {
             RsIdentityDetails details;
             rsIdentity->getIdDetails(msg.mMeta.mAuthorId, details);
-            QString name = GxsIdDetails::getName(details);
+            QString name = QString::fromUtf8(details.mNickname.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE);
 
             banned_text_info += "<p><font color=\"#e00000\"><b>" + tr( "The author of this message (with ID %1) is banned. And named by name ( %2 )").arg(QString::fromStdString(msg.mMeta.mAuthorId.toStdString()), name) + "</b>";
             banned_text_info += "<ul><li><b><font color=\"#e00000\">" + tr( "Messages from this author are not forwarded.") + "</font></b></li></ul>";
@@ -2106,4 +2112,17 @@ void GxsForumThreadWidget::showAuthorInPeople(const RsGxsForumMsg& msg)
 
     MainWindow::showWindow(MainWindow::People);
     idDialog->navigate(RsGxsId(msg.mMeta.mAuthorId));
+}
+
+void GxsForumThreadWidget::recursExpandUnread(const QModelIndex &index)
+{
+    if (index.isValid()
+        && index.data(RsGxsForumModel::UnreadChildrenRole).toBool()
+        ) {
+            ui->threadTreeWidget->expand(index);
+            for (int row=0; row < mThreadProxyModel->rowCount(index); ++row)
+	        {
+                recursExpandUnread(index.child(row, 0));
+            }
+        }
 }
