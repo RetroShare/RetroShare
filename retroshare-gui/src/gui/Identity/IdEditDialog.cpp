@@ -88,6 +88,7 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
 	connect(ui->toolButton_Tag4, SIGNAL(clicked(bool)), this, SLOT(rmTag4()));
 	connect(ui->toolButton_Tag5, SIGNAL(clicked(bool)), this, SLOT(rmTag5()));
 	connect(ui->avatarButton, SIGNAL(clicked(bool)), this, SLOT(changeAvatar()));
+	connect(ui->removeButton, SIGNAL(clicked(bool)), this, SLOT(removeAvatar()));
 
     connect(ui->avatarLabel,SIGNAL(cleared()),this,SLOT(avatarCleared()));
 
@@ -102,6 +103,8 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
 	ui->plainTextEdit_Tag->hide();
 	ui->label_TagCheck->hide();
 	ui->frame_Tags->setHidden(true);
+
+	updateInterface();
 }
 
 IdEditDialog::~IdEditDialog() {}
@@ -136,6 +139,8 @@ void IdEditDialog::changeAvatar()
 
     // shows the tooltip for a while
     QToolTip::showText( ui->avatarLabel->mapToGlobal( QPoint( 0, 0 ) ), ui->avatarLabel->toolTip() );
+
+	updateInterface();
 }
 
 void IdEditDialog::setupNewId(bool pseudo,bool enable_anon)
@@ -353,6 +358,7 @@ void IdEditDialog::loadExistingId(const RsGxsIdGroup& id_group)
 	ui->frame_Tags->setHidden(true);
 
 	loadRecognTags();
+	updateInterface();
 }
 
 #define MAX_RECOGN_TAGS 	5
@@ -679,3 +685,22 @@ void IdEditDialog::updateId()
 	accept();
 }
 
+void IdEditDialog::removeAvatar()
+{
+	ui->avatarLabel->setPicture(QPixmap());
+	mEditGroup.mImage.clear();
+
+	updateInterface();
+}
+
+void IdEditDialog::updateInterface()
+{
+	const QPixmap *pixmap = ui->avatarLabel->pixmap();
+	if (pixmap && !pixmap->isNull()) {
+		ui->removeButton->setEnabled(true);
+	} else if (mEditGroup.mImage.mSize != NULL) {
+		ui->removeButton->setEnabled(true);
+	} else {
+		ui->removeButton->setEnabled(false);
+	}
+}

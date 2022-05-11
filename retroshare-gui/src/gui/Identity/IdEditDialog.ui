@@ -370,6 +370,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="removeButton">
+            <property name="text">
+             <string>Remove</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer name="avatarVSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
