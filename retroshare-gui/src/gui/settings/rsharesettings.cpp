@@ -537,6 +537,16 @@ void RshareSettings::setChatSendAsPlainTextByDef(bool bValue)
 	setValueToGroup("Chat", "SendAsPlainTextByDef", bValue);
 }
 
+bool RshareSettings::getShrinkChatTextEdit()
+{
+	return valueFromGroup("Chat", "ShrinkChatTextEdit", false).toBool();
+}
+
+void RshareSettings::setShrinkChatTextEdit(bool bValue)
+{
+	setValueToGroup("Chat", "ShrinkChatTextEdit", bValue);
+}
+
 bool RshareSettings::getChatSearchShowBarByDefault()
 {
 	return valueFromGroup("Chat", "SearchShowBarByDefault", false).toBool();

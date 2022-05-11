@@ -27,6 +27,8 @@
 #include "ui_PopupChatWindow.h"
 #include <retroshare/rstypes.h>
 #include <retroshare/rsmsgs.h>
+Q_DECLARE_METATYPE(RsGxsId)
+Q_DECLARE_METATYPE(QList<RsGxsId>)
 
 class ChatDialog;
 
@@ -67,6 +69,7 @@ private slots:
 	void setOnTop();
 	void blink(bool on);
 	void showContextMenu(QPoint p);
+	void voteParticipant();
 
 private:
 	bool tabbedWindow;
@@ -75,6 +78,9 @@ private:
 	ChatDialog *chatDialog;
 	QIcon mBlinkIcon;
 	QIcon *mEmptyIcon;
+	QAction* votePositive;
+	QAction* voteNegative;
+	QAction* voteNeutral;
 
 	ChatDialog *getCurrentDialog();
 	void saveSettings();

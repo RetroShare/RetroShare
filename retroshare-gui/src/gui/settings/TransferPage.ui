@@ -299,6 +299,40 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item row="4" column="0">
+        <layout class="QHBoxLayout" name="minimumFontSizeHLayout">
+         <item>
+          <widget class="QLabel" name="minimumFontSizeLabel">
+           <property name="text">
+            <string>Minimum font size for Shared Files</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="minimumFontSize_SB">
+           <property name="minimum">
+            <number>11</number>
+           </property>
+           <property name="maximum">
+            <number>64</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="minimumFontSizeHSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item row="5" column="0">
         <spacer name="verticalSpacer_2">
          <property name="orientation">
           <enum>Qt::Vertical</enum>

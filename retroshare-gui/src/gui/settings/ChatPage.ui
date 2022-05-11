@@ -95,6 +95,16 @@
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="QCheckBox" name="shrinkChatTextEdit">
+                <property name="toolTip">
+                 <string>When focus on text browser after showing chat room</string>
+                </property>
+                <property name="text">
+                 <string>Shrink text edit field when not needed</string>
+                </property>
+               </widget>
+              </item>
              </layout>
             </widget>
            </item>

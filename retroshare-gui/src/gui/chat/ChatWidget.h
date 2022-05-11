@@ -215,6 +215,8 @@ private:
 	void completeNickname(bool reverse);
     QAbstractItemModel *modelFromPeers();
 
+    void shrinkChatTextEdit(bool shrink_me);
+
     ChatId chatId;
 	QString title;
 	QString name;
@@ -263,6 +265,9 @@ private:
 
 	QCompleter *completer;
 	ImHistoryBrowser* imBrowser;
+
+	QList<int> _chatvsplitter_saved_size;
+	bool was_shrinked = false;
 
 	QList<ChatWidgetHolder*> mChatWidgetHolder;
 	ChatLobbyUserNotify* notify;
