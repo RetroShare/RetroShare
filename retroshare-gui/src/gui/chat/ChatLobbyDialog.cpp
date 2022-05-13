@@ -469,6 +469,7 @@ ChatLobbyDialog::~ChatLobbyDialog()
 
 	// save settings
 	processSettings(false);
+	delete mParticipantCompareRole;
 }
 
 ChatWidget *ChatLobbyDialog::getChatWidget()
