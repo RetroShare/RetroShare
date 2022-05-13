@@ -197,6 +197,7 @@ BwCtrlWindow::BwCtrlWindow(QWidget *parent)
 
 BwCtrlWindow::~BwCtrlWindow()
 {
+	delete BWDelegate;
 }
 
 void BwCtrlWindow::updateDisplay()
