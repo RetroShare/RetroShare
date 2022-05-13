@@ -97,6 +97,7 @@ class DistributionItemDelegate: public QStyledItemDelegate
 {
 public:
     DistributionItemDelegate() {}
+    ~DistributionItemDelegate() {}
 
     virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override
     {
@@ -433,6 +434,9 @@ GxsForumThreadWidget::~GxsForumThreadWidget()
     // save settings
     processSettings(false);
 
+    delete ui->threadTreeWidget->itemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION) ;
+    delete ui->threadTreeWidget->itemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_AUTHOR) ;
+    delete ui->threadTreeWidget->itemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_READ) ;
     delete ui;
 }
 
