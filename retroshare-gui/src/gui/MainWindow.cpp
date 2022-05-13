@@ -378,6 +378,7 @@ MainWindow::~MainWindow()
     delete trayIcon;
     delete trayMenu;
 //  delete notifyMenu; // already deleted by the deletion of trayMenu
+    delete idle;
     StatisticsWindow::releaseInstance();
 
 #ifdef MESSENGER_WINDOW
