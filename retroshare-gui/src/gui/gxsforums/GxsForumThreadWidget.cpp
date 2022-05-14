@@ -437,6 +437,7 @@ GxsForumThreadWidget::~GxsForumThreadWidget()
     delete ui->threadTreeWidget->itemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION) ;
     delete ui->threadTreeWidget->itemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_AUTHOR) ;
     delete ui->threadTreeWidget->itemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_READ) ;
+    delete ui->threadTreeWidget->model();
     delete ui;
 }
 
