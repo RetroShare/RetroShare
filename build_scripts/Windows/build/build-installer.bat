@@ -40,6 +40,7 @@ set NSIS_PARAM=%NSIS_PARAM% /DARCHITECTURE="%GCCArchitecture%"
 set NSIS_PARAM=%NSIS_PARAM% /DDATE="%RsDate%"
 
 if exist "%EnvTorPath%\Tor\tor.exe" set NSIS_PARAM=%NSIS_PARAM% /DTORDIR="%EnvTorPath%\Tor"
+if exist "%RsWebuiBuildPath%" set NSIS_PARAM=%NSIS_PARAM% /DWEBUIDIR="%RsWebuiBuildPath%"
 
 :: Get compiled version
 call "%ToolsPath%\get-rs-version.bat" "%RsBuildPath%\retroshare-gui\src\%RsBuildConfig%\retroshare.exe" RsVersion

@@ -13,7 +13,7 @@ call "%~dp0build-libs\build-libs.bat"
 if errorlevel 1 %cecho% error "Failed to build libraries." & exit /B %ERRORLEVEL%
 
 %cecho% info "Build %SourceName%"
-call "%~dp0build\build.bat" release autologin jsonapi plugins nativedialogs service
+call "%~dp0build\build.bat" release autologin webui plugins nativedialogs service
 if errorlevel 1 %cecho% error "Failed to build %SourceName%." & exit /B %ERRORLEVEL%
 
 %cecho% info "Pack %SourceName%"
