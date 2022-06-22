@@ -530,24 +530,13 @@ void GxsCommentTreeWidget::service_requestComments(const RsGxsGroupId& group_id,
     std::cerr << "GxsCommentTreeWidget::service_requestComments for group " << group_id << std::endl;
 #endif
 
-    std::vector<RsGxsGrpMsgIdPair> ids_to_ask;
-
-    for(std::set<RsGxsMessageId>::const_iterator it(msgIds.begin());it!=msgIds.end();++it)
-    {
-#ifdef DEBUG_GXSCOMMENT_TREEWIDGET
-        std::cerr << "   asking for msg " << *it << std::endl;
-#endif
-
-        ids_to_ask.push_back(std::make_pair(group_id,*it));
-    }
-
    RsThread::async([this,group_id,msgIds]()
     {
         std::vector<RsGxsComment> comments;
 
         if(!mCommentService->getRelatedComments(group_id,msgIds,comments))
         {
-            std::cerr << __PRETTY_FUNCTION__ << " failed to get circles summaries " << std::endl;
+            std::cerr << __PRETTY_FUNCTION__ << " failed to get comments" << std::endl;
             return;
         }
 
