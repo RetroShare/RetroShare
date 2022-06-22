@@ -56,7 +56,7 @@ protected:
 
     /* to be overloaded */
     virtual void service_requestComments(const RsGxsGroupId &group_id, const std::set<RsGxsMessageId> &msgIds);
-    virtual void service_loadThread(const uint32_t &token);
+    virtual void service_loadThread(const std::vector<RsGxsComment>& comments);
 
     virtual QTreeWidgetItem *service_createMissingItem(const RsGxsMessageId& parent);
 
@@ -66,10 +66,12 @@ protected:
     void acknowledgeComment(const uint32_t& token);
     void acknowledgeVote(const uint32_t &token);
 
-    void loadThread(const uint32_t &token);
+    //void loadThread(const uint32_t &token);
 
     void insertComments(const std::vector<RsGxsComment>& comments);
     void addItem(RsGxsMessageId itemId, RsGxsMessageId parentId, QTreeWidgetItem *item);
+
+    static int treeCount(QTreeWidget *tree, QTreeWidgetItem *parent = 0);
 public slots:
     void customPopUpMenu(const QPoint& point);
     void setCurrentCommentMsgId(QTreeWidgetItem* current, QTreeWidgetItem* previous);

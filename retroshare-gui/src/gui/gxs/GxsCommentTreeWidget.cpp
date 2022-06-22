@@ -25,6 +25,7 @@
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/gxs/GxsCreateCommentDialog.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
+#include "util/qtthreadsutils.h"
 
 #include <QAbstractTextDocumentLayout>
 #include <QApplication>
@@ -540,13 +541,85 @@ void GxsCommentTreeWidget::service_requestComments(const RsGxsGroupId& group_id,
         ids_to_ask.push_back(std::make_pair(group_id,*it));
     }
 
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
-	opts.mOptions = RS_TOKREQOPT_MSG_THREAD | RS_TOKREQOPT_MSG_LATEST;
+   RsThread::async([this,group_id,msgIds]()
+    {
+        std::vector<RsGxsComment> comments;
 
-	uint32_t token;
-	mTokenQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, ids_to_ask, GXSCOMMENTS_LOADTHREAD);
+        if(!mCommentService->getRelatedComments(group_id,msgIds,comments))
+        {
+            std::cerr << __PRETTY_FUNCTION__ << " failed to get circles summaries " << std::endl;
+            return;
+        }
+
+        RsQThreadUtils::postToObject( [this,comments]()
+        {
+            /* Here it goes any code you want to be executed on the Qt Gui
+             * thread, for example to update the data model with new information
+             * after a blocking call to RetroShare API complete, note that
+             * Qt::QueuedConnection is important!
+             */
+
+            clearItems();
+
+            service_loadThread(comments);
+
+            completeItems();
+
+            emit commentsLoaded(treeCount(this));
+
+        }, this );
+    });
+    // RsTokReqOptions opts;
+    // opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
+    // opts.mOptions = RS_TOKREQOPT_MSG_THREAD | RS_TOKREQOPT_MSG_LATEST;
+
+    // uint32_t token;
+    // mTokenQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, ids_to_ask, GXSCOMMENTS_LOADTHREAD);
 }
+
+#ifdef TODO
+void GxsCommentTreeWidget::async_msg_action(const CmtMethod &action)
+{
+    RsThread::async([this,action]()
+    {
+        // 1 - get message data from p3GxsForums
+
+        std::set<RsGxsMessageId> msgs_to_request ;
+        std::vector<RsGxsForumMsg> msgs;
+
+        msgs_to_request.insert(mThreadId);
+
+        if(!rsGxsForums->getForumContent(groupId(),msgs_to_request,msgs))
+        {
+            std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum message info for forum " << groupId() << " and thread " << mThreadId << std::endl;
+            return;
+        }
+
+        if(msgs.size() != 1)
+        {
+            std::cerr << __PRETTY_FUNCTION__ << " more than 1 or no msgs selected in forum " << groupId() << std::endl;
+            return;
+        }
+
+        // 2 - sort the messages into a proper hierarchy
+
+        RsGxsForumMsg msg = msgs[0];
+
+        // 3 - update the model in the UI thread.
+
+        RsQThreadUtils::postToObject( [msg,action,this]()
+        {
+            /* Here it goes any code you want to be executed on the Qt Gui
+             * thread, for example to update the data model with new information
+             * after a blocking call to RetroShare API complete */
+
+            (this->*action)(msg);
+
+        }, this );
+
+    });
+}
+#endif
 
 
 /* Generic Handling */
@@ -673,7 +746,7 @@ void GxsCommentTreeWidget::addItem(RsGxsMessageId itemId, RsGxsMessageId parentI
 	}
 }
 
-int treeCount(QTreeWidget *tree, QTreeWidgetItem *parent = 0)
+int GxsCommentTreeWidget::treeCount(QTreeWidget *tree, QTreeWidgetItem *parent)
 {
     int count = 0;
     if (parent == 0)
@@ -694,16 +767,16 @@ int treeCount(QTreeWidget *tree, QTreeWidgetItem *parent = 0)
     }
     return count;
 }
-void GxsCommentTreeWidget::loadThread(const uint32_t &token)
-{
-	clearItems();
-
-	service_loadThread(token);
-
-	completeItems();
-
-    emit commentsLoaded(treeCount(this));
-}
+// void GxsCommentTreeWidget::loadThread(const uint32_t &token)
+// {
+// 	clearItems();
+//
+// 	service_loadThread(token);
+//
+// 	completeItems();
+//
+//     emit commentsLoaded(treeCount(this));
+// }
 
 void GxsCommentTreeWidget::acknowledgeComment(const uint32_t &token)
 {
@@ -725,14 +798,10 @@ void GxsCommentTreeWidget::acknowledgeVote(const uint32_t &token)
 	}
 }
 
-
-void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
+void GxsCommentTreeWidget::service_loadThread(const std::vector<RsGxsComment>& comments)
 {
-	std::cerr << "GxsCommentTreeWidget::service_loadThread() ERROR must be overloaded!";
-	std::cerr << std::endl;
-
-	std::vector<RsGxsComment> comments;
-	mCommentService->getRelatedComments(token, comments);
+    std::cerr << "GxsCommentTreeWidget::service_loadThread() ERROR must be overloaded!";
+    std::cerr << std::endl;
 
     // This is inconsistent since we cannot know here that all comments are for the same thread. However they are only
     // requested in requestComments() where a single MsgId is used.
@@ -750,6 +819,32 @@ void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
 
     insertComments(comments);
 }
+
+
+// void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
+// {
+// 	std::cerr << "GxsCommentTreeWidget::service_loadThread() ERROR must be overloaded!";
+// 	std::cerr << std::endl;
+//
+// 	std::vector<RsGxsComment> comments;
+// 	mCommentService->getRelatedComments(token, comments);
+//
+//     // This is inconsistent since we cannot know here that all comments are for the same thread. However they are only
+//     // requested in requestComments() where a single MsgId is used.
+//
+//     if(mUseCache)
+//     {
+//         QMutexLocker lock(&mCacheMutex);
+//
+//         if(!comments.empty())
+//         {
+//             std::cerr << "Updating cache with " << comments.size() << " for thread " << comments[0].mMeta.mThreadId << std::endl;
+//             mCommentsCache[comments[0].mMeta.mThreadId] = comments;
+//         }
+//     }
+//
+//     insertComments(comments);
+// }
 
 void GxsCommentTreeWidget::insertComments(const std::vector<RsGxsComment>& comments)
 {
@@ -886,9 +981,9 @@ void GxsCommentTreeWidget::loadRequest(const TokenQueue *queue, const TokenReque
 							acknowledgeComment(req.mToken);
 						}
 						break;
-					case RS_TOKREQ_ANSTYPE_DATA:
-						loadThread(req.mToken);
-						break;
+//					case RS_TOKREQ_ANSTYPE_DATA:
+//						loadThread(req.mToken);
+//						break;
 				}
 			}
 			break;
