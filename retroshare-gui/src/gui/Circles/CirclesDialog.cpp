@@ -80,6 +80,7 @@ CirclesDialog::CirclesDialog(QWidget *parent)
 
 CirclesDialog::~CirclesDialog()
 {
+    delete mCircleQueue;
 }
 
 void CirclesDialog::todo()
@@ -583,37 +584,13 @@ void CirclesDialog::requestGroupMeta()
 
         }, this );
     });
-//	std::cerr << "CirclesDialog::requestGroupMeta()";
-//	std::cerr << std::endl;
-//
-//	mCircleQueue->cancelActiveRequestTokens(CIRCLESDIALOG_GROUPMETA);
-//
-//	RsTokReqOptions opts;
-//	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
-//
-//	uint32_t token;
-//	mCircleQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, CIRCLESDIALOG_GROUPMETA);
 }
 
 void CirclesDialog::loadGroupMeta(const std::list<RsGroupMetaData>& groupInfo)
 {
 	mStateHelper->setLoading(CIRCLESDIALOG_GROUPMETA, false);
 
-//	std::cerr << "CirclesDialog::loadGroupMeta()";
-//	std::cerr << std::endl;
-
 	ui.treeWidget_membership->clear();
-
-//	std::list<RsGroupMetaData> groupInfo;
-//	std::list<RsGroupMetaData>::iterator vit;
-
-//	if (!rsGxsCircles->getGroupSummary(token,groupInfo))
-//	{
-//		std::cerr << "CirclesDialog::loadGroupMeta() Error getting GroupMeta";
-//		std::cerr << std::endl;
-//		mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, false);
-//		return;
-//	}
 
 	mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, true);
 
@@ -666,25 +643,3 @@ void CirclesDialog::loadGroupMeta(const std::list<RsGroupMetaData>& groupInfo)
 		}
 	}
 }
-
-// void CirclesDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
-// {
-// 	std::cerr << "CirclesDialog::loadRequest() UserType: " << req.mUserType;
-// 	std::cerr << std::endl;
-//
-// 	if (queue == mCircleQueue)
-// 	{
-// 		/* now switch on req */
-// 		switch(req.mUserType)
-// 		{
-// 			case CIRCLESDIALOG_GROUPMETA:
-// 				loadGroupMeta(req.mToken);
-// 				break;
-//
-// 			default:
-// 				std::cerr << "CirclesDialog::loadRequest() ERROR: INVALID TYPE";
-// 				std::cerr << std::endl;
-// 				break;
-// 		}
-// 	}
-// }
