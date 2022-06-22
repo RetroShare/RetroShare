@@ -80,7 +80,6 @@ CirclesDialog::CirclesDialog(QWidget *parent)
 
 CirclesDialog::~CirclesDialog()
 {
-    delete mCircleQueue;
 }
 
 void CirclesDialog::todo()
