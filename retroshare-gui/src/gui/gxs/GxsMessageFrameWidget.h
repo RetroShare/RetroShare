@@ -22,12 +22,11 @@
 #define GXSMESSAGEFRAMEWIDGET_H
 
 #include "gui/gxs/RsGxsUpdateBroadcastWidget.h"
-#include "util/TokenQueue.h"
 
 struct RsGxsIfaceHelper;
 class UIStateHelper;
 
-class GxsMessageFrameWidget : public QWidget, public TokenResponse
+class GxsMessageFrameWidget : public QWidget
 {
 	Q_OBJECT
 
@@ -49,7 +48,6 @@ public:
 
 	/* GXS functions */
 	uint32_t nextTokenType() { return ++mNextTokenType; }
-	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 signals:
 	void groupChanged(QWidget *widget);
@@ -58,10 +56,9 @@ signals:
     void groupDataLoaded();
 
 protected:
-	virtual void setAllMessagesReadDo(bool read, uint32_t &token) = 0;
+    virtual void setAllMessagesReadDo(bool read) = 0;
 
 protected:
-	TokenQueue *mTokenQueue;
 	UIStateHelper *mStateHelper;
 
 	/* Set read status */

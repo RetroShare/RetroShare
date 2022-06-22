@@ -1432,7 +1432,7 @@ public:
 	uint32_t mLastToken;
 };
 
-void GxsChannelPostsWidgetWithModel::setAllMessagesReadDo(bool read, uint32_t& /*token*/)
+void GxsChannelPostsWidgetWithModel::setAllMessagesReadDo(bool read)
 {
 	if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags))
 		return;

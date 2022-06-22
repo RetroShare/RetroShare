@@ -773,7 +773,7 @@ QIcon PostedListWidgetWithModel::groupIcon()
 	return QIcon(postedImage);
 }
 
-void PostedListWidgetWithModel::setAllMessagesReadDo(bool read, uint32_t &/*token*/)
+void PostedListWidgetWithModel::setAllMessagesReadDo(bool read)
 {
     if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags))
         return;

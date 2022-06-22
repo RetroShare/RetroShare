@@ -137,7 +137,7 @@ protected:
 #endif
 
 	/* GxsMessageFrameWidget */
-    virtual void setAllMessagesReadDo(bool read, uint32_t &token) override;
+    virtual void setAllMessagesReadDo(bool read) override;
 
 private slots:
 	void showPostDetails();
