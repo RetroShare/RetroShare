@@ -28,6 +28,9 @@ if errorlevel 1 exit /B %ERRORLEVEL%
 set PATH=%EnvToolsPath%\MinGit\cmd;%EnvToolsPath%\cmake\bin;%PATH%
 set HOME=%EnvToolsPath%\MinGit\home
 
+:: Add Doxygen to PATH
+set PATH=%EnvToolsPath%\doxygen;%PATH%
+
 exit /B 0
 
 :error_env

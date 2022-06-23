@@ -16,6 +16,9 @@ set NSISInstallPath=%EnvToolsPath%\NSIS
 set MinGitInstall=MinGit-2.28.0-32-bit.zip
 set MinGitUrl=https://github.com/git-for-windows/git/releases/download/v2.28.0.windows.1/%MinGitInstall%
 set MinGitInstallPath=%EnvToolsPath%\MinGit
+set DoxygenInstall=doxygen-1.9.4.windows.x64.bin.zip
+set DoxygenUrl=https://www.doxygen.nl/files/%DoxygenInstall%
+set DoxygenInstallPath=%EnvToolsPath%\doxygen
 set CMakeVersion=cmake-3.19.0-win32-x86
 set CMakeInstall=%CMakeVersion%.zip
 set CMakeUrl=https://github.com/Kitware/CMake/releases/download/v3.19.0/%CMakeInstall%
@@ -133,6 +136,19 @@ if not exist "%MinGitInstallPath%\cmd\git.exe" (
 
 	%cecho% info "Unpack MinGit"
 	"%EnvSevenZipExe%" x -o"%MinGitInstallPath%" "%EnvDownloadPath%\%MinGitInstall%"
+)
+
+if not exist "%EnvDownloadPath%\%DoxygenInstall%" call "%ToolsPath%\remove-dir.bat" "%DoxygenInstallPath%"
+if not exist "%DoxygenInstallPath%\doxygen.exe" (
+	if exist "%DoxygenInstallPath%" call "%ToolsPath%\remove-dir.bat" "%DoxygenInstallPath%"
+
+	%cecho% info "Download Doxygen installation"
+
+	if not exist "%EnvDownloadPath%\%DoxygenInstall%" call "%ToolsPath%\download-file.bat" "%DoxygenUrl%" "%EnvDownloadPath%\%DoxygenInstall%"
+	if not exist "%EnvDownloadPath%\%DoxygenInstall%" %cecho% error "Cannot download doxygen installation" & goto error
+
+	%cecho% info "Unpack Doxygen"
+	"%EnvSevenZipExe%" x -o"%DoxygenInstallPath%" "%EnvDownloadPath%\%DoxygenInstall%"
 )
 
 if not exist "%EnvDownloadPath%\%CMakeInstall%" call "%ToolsPath%\remove-dir.bat" "%CMakeInstallPath%"
