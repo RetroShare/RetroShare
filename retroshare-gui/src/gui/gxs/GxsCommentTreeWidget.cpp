@@ -32,6 +32,7 @@
 #include <QTextEdit>
 #include <QHeaderView>
 #include <QClipboard>
+#include <QMessageBox>
 #include <QDateTime>
 #include <QMenu>
 #include <QMimeData>
@@ -402,35 +403,27 @@ void GxsCommentTreeWidget::setVoteId(const RsGxsId &voterId)
 void GxsCommentTreeWidget::vote(const RsGxsGroupId &groupId, const RsGxsMessageId &threadId, 
 					const RsGxsMessageId &parentId, const RsGxsId &authorId, bool up)
 {
-        RsGxsVote vote;
+    RsThread::async([this,groupId,threadId,parentId,authorId,up]()
+    {
+        std::string error_string;
+        RsGxsMessageId vote_id;
+        RsGxsVoteType tvote = up?(RsGxsVoteType::UP):(RsGxsVoteType::DOWN);
 
-        vote.mMeta.mGroupId = groupId;
-        vote.mMeta.mThreadId = threadId;
-        vote.mMeta.mParentId = parentId;
-        vote.mMeta.mAuthorId = authorId;
+        bool res = mCommentService->voteForComment(groupId, threadId, parentId, authorId,tvote,vote_id, error_string);
 
-	if (up)
-	{
-		vote.mVoteType = GXS_VOTE_UP;
-	}
-	else
-	{
-		vote.mVoteType = GXS_VOTE_DOWN;
-	}
+        RsQThreadUtils::postToObject( [this,res,error_string]()
+        {
 
-#ifdef DEBUG_GXSCOMMENT_TREEWIDGET
-        std::cerr << "GxsCommentTreeWidget::vote()";
-        std::cerr << std::endl;
+            if(res)
+                service_requestComments(mGroupId,mMsgVersions);
+            else
+                QMessageBox::critical(nullptr,tr("Cannot vote"),tr("Error while voting: ")+QString::fromStdString(error_string));
+        });
+    });
 
-        std::cerr << "GroupId : " << vote.mMeta.mGroupId << std::endl;
-        std::cerr << "ThreadId : " << vote.mMeta.mThreadId << std::endl;
-        std::cerr << "ParentId : " << vote.mMeta.mParentId << std::endl;
-        std::cerr << "AuthorId : " << vote.mMeta.mAuthorId << std::endl;
-#endif
-
-	uint32_t token;
-        mCommentService->createNewVote(token, vote);
-        mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, COMMENT_VOTE_ACK);
+    //	uint32_t token;
+    //  mCommentService->createNewVote(token, vote);
+    //  mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, COMMENT_VOTE_ACK);
 }
 
 
@@ -558,12 +551,6 @@ void GxsCommentTreeWidget::service_requestComments(const RsGxsGroupId& group_id,
 
         }, this );
     });
-    // RsTokReqOptions opts;
-    // opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
-    // opts.mOptions = RS_TOKREQOPT_MSG_THREAD | RS_TOKREQOPT_MSG_LATEST;
-
-    // uint32_t token;
-    // mTokenQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, ids_to_ask, GXSCOMMENTS_LOADTHREAD);
 }
 
 #ifdef TODO

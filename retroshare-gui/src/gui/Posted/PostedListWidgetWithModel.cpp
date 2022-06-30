@@ -1204,7 +1204,12 @@ void PostedListWidgetWithModel::voteMsg(RsGxsGrpMsgIdPair msg,bool up_or_down)
         return;
     }
 
-    rsPosted->voteForPost(up_or_down,msg.first,msg.second,voter_id);
+    RsGxsVoteType tvote = up_or_down?(RsGxsVoteType::UP):(RsGxsVoteType::DOWN);
+
+    std::string error_str;
+    RsGxsMessageId vote_id;
+    if(!rsPosted->voteForPost(msg.first,msg.second,voter_id,tvote,vote_id,error_str))
+        QMessageBox::critical(nullptr,tr("Could not vote"), tr("Error occured while voting: ")+QString::fromStdString(error_str));
 }
 
 #ifdef TODO
