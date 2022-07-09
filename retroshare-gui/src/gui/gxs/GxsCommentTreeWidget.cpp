@@ -249,7 +249,7 @@ void GxsCommentTreeWidget::mouseMoveEvent(QMouseEvent *e)
 }
 
 GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
-    :QTreeWidget(parent), mTokenQueue(NULL), mRsTokenService(NULL), mCommentService(NULL)
+    :QTreeWidget(parent), mCommentService(NULL)
 {
     setVerticalScrollMode(ScrollPerPixel);
 	setContextMenuPolicy(Qt::CustomContextMenu);
@@ -299,9 +299,6 @@ void GxsCommentTreeWidget::updateContent()
 }
 GxsCommentTreeWidget::~GxsCommentTreeWidget()
 {
-	if (mTokenQueue) {
-		delete(mTokenQueue);
-	}
 }
 
 void GxsCommentTreeWidget::setCurrentCommentMsgId(QTreeWidgetItem *current, QTreeWidgetItem *previous)
@@ -420,10 +417,6 @@ void GxsCommentTreeWidget::vote(const RsGxsGroupId &groupId, const RsGxsMessageI
                 QMessageBox::critical(nullptr,tr("Cannot vote"),tr("Error while voting: ")+QString::fromStdString(error_string));
         });
     });
-
-    //	uint32_t token;
-    //  mCommentService->createNewVote(token, vote);
-    //  mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, COMMENT_VOTE_ACK);
 }
 
 
@@ -478,12 +471,10 @@ void GxsCommentTreeWidget::copyComment()
 	clipboard->setMimeData(mimeData, QClipboard::Clipboard);
 }
 
-void GxsCommentTreeWidget::setup(RsTokenService *token_service, RsGxsCommentService *comment_service)
+void GxsCommentTreeWidget::setup(RsGxsCommentService *comment_service)
 {
-	mRsTokenService = token_service;
 	mCommentService = comment_service;
-	mTokenQueue = new TokenQueue(token_service, this);
-	connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customPopUpMenu(QPoint)));
+    connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customPopUpMenu(QPoint)));
 	connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(setCurrentCommentMsgId(QTreeWidgetItem*, QTreeWidgetItem*)));
 
 	return;
@@ -743,36 +734,6 @@ int GxsCommentTreeWidget::treeCount(QTreeWidget *tree, QTreeWidgetItem *parent)
     }
     return count;
 }
-// void GxsCommentTreeWidget::loadThread(const uint32_t &token)
-// {
-// 	clearItems();
-//
-// 	service_loadThread(token);
-//
-// 	completeItems();
-//
-//     emit commentsLoaded(treeCount(this));
-// }
-
-void GxsCommentTreeWidget::acknowledgeComment(const uint32_t &token)
-{
-	RsGxsGrpMsgIdPair msgId;
-	mCommentService->acknowledgeComment(token, msgId);
-
-	// simply reload data
-	service_requestComments(mGroupId,mMsgVersions);
-}
-
-
-void GxsCommentTreeWidget::acknowledgeVote(const uint32_t &token)
-{
-	RsGxsGrpMsgIdPair msgId;
-	if (mCommentService->acknowledgeVote(token, msgId))
-	{
-		// reload data if vote was added.
-		service_requestComments(mGroupId,mMsgVersions);
-	}
-}
 
 void GxsCommentTreeWidget::service_loadThread(const std::vector<RsGxsComment>& comments)
 {
@@ -795,32 +756,6 @@ void GxsCommentTreeWidget::service_loadThread(const std::vector<RsGxsComment>& c
 
     insertComments(comments);
 }
-
-
-// void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
-// {
-// 	std::cerr << "GxsCommentTreeWidget::service_loadThread() ERROR must be overloaded!";
-// 	std::cerr << std::endl;
-//
-// 	std::vector<RsGxsComment> comments;
-// 	mCommentService->getRelatedComments(token, comments);
-//
-//     // This is inconsistent since we cannot know here that all comments are for the same thread. However they are only
-//     // requested in requestComments() where a single MsgId is used.
-//
-//     if(mUseCache)
-//     {
-//         QMutexLocker lock(&mCacheMutex);
-//
-//         if(!comments.empty())
-//         {
-//             std::cerr << "Updating cache with " << comments.size() << " for thread " << comments[0].mMeta.mThreadId << std::endl;
-//             mCommentsCache[comments[0].mMeta.mThreadId] = comments;
-//         }
-//     }
-//
-//     insertComments(comments);
-// }
 
 void GxsCommentTreeWidget::insertComments(const std::vector<RsGxsComment>& comments)
 {
@@ -892,10 +827,7 @@ void GxsCommentTreeWidget::insertComments(const std::vector<RsGxsComment>& comme
     // now set all loaded comments as not new, since they have been loaded.
 
     for(auto cid:new_comments)
-    {
-        uint32_t token=0;
-        mCommentService->setCommentAsRead(token,mGroupId,cid);
-    }
+        mCommentService->setCommentReadStatus(RsGxsGrpMsgIdPair(mGroupId,cid),true);
 }
 
 QTreeWidgetItem *GxsCommentTreeWidget::service_createMissingItem(const RsGxsMessageId& parent)
@@ -923,50 +855,3 @@ QTreeWidgetItem *GxsCommentTreeWidget::service_createMissingItem(const RsGxsMess
 	return item;
 }	
 
-
-
-void GxsCommentTreeWidget::loadRequest(const TokenQueue *queue, const TokenRequest &req)
-{
-#ifdef DEBUG_GXSCOMMENT_TREEWIDGET
-	std::cerr << "GxsCommentTreeWidget::loadRequest() UserType: " << req.mUserType;
-	std::cerr << std::endl;
-#endif
-		
-	if (queue != mTokenQueue)
-	{
-		std::cerr << "GxsCommentTreeWidget::loadRequest() Queue ERROR";
-		std::cerr << std::endl;
-		return;
-	}
-		
-	/* now switch on req */
-		switch(req.mType)
-	{
-		
-			case TOKENREQ_MSGINFO:
-			{
-				switch(req.mAnsType)
-				{
-					case RS_TOKREQ_ANSTYPE_ACK:
-						if (req.mUserType == COMMENT_VOTE_ACK)
-						{
-							acknowledgeVote(req.mToken);
-						}
-						else
-						{
-							acknowledgeComment(req.mToken);
-						}
-						break;
-//					case RS_TOKREQ_ANSTYPE_DATA:
-//						loadThread(req.mToken);
-//						break;
-				}
-			}
-			break;
-			default:
-					std::cerr << "GxsCommentTreeWidget::loadRequest() UNKNOWN UserType ";
-					std::cerr << std::endl;
-					break;
-
-	}
-}

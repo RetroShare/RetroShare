@@ -28,6 +28,7 @@
 #include "gui/feeds/FeedHolder.h"
 #include "gui/RetroShareLink.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "util/qtthreadsutils.h"
 #include "util/DateTime.h"
 #include "util/misc.h"
 #include "util/stringutil.h"
@@ -286,12 +287,15 @@ void BaseBoardsCommentsItem::readToggled(bool checked)
 		return;
 	}
 
-	RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
-
-	uint32_t token;
-	rsPosted->setMessageReadStatus(token, msgPair, !checked);
-
-	setReadStatus(false, checked);
+    RsThread::async( [this,checked]() {
+		RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
+        
+        rsPosted->setCommentReadStatus(msgPair, !checked);
+        
+        RsQThreadUtils::postToObject( [this,checked]() {
+			setReadStatus(false, checked);
+        } );
+    });
 }
 
 void BaseBoardsCommentsItem::readAndClearItem()

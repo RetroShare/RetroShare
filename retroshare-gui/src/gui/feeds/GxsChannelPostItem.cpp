@@ -850,7 +850,7 @@ void GxsChannelPostItem::readToggled(bool /*checked*/)
 
 	RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
 
-	rsGxsChannels->markRead(msgPair, isUnread());
+    rsGxsChannels->setMessageReadStatus(msgPair, isUnread());
 
 	//setReadStatus(false, checked); // Updated by events
 }

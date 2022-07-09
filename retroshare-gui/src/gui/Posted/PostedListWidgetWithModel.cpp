@@ -795,7 +795,7 @@ void PostedListWidgetWithModel::openComments(const RsGxsMessageId& msgId)
     ui->idChooser->getChosenId(current_author);
 
     RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
-    auto *commentDialog = new GxsCommentDialog(this,current_author,rsPosted->getTokenService(),rsPosted);
+    auto *commentDialog = new GxsCommentDialog(this,current_author,rsPosted);
 
     std::set<RsGxsMessageId> msg_versions({post.mMeta.mMsgId});
     commentDialog->commentLoad(post.mMeta.mGroupId, msg_versions, post.mMeta.mMsgId);
