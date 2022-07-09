@@ -1190,8 +1190,7 @@ void PostedListWidgetWithModel::subscribeGroup(bool subscribe)
 
 	RsThread::async([=]()
 	{
-        uint32_t token;
-		rsPosted->subscribeToGroup(token,grpId, subscribe);
+		rsPosted->subscribeToBoard(grpId, subscribe);
 	} );
 }
 
@@ -1210,6 +1209,8 @@ void PostedListWidgetWithModel::voteMsg(RsGxsGrpMsgIdPair msg,bool up_or_down)
     RsGxsMessageId vote_id;
     if(!rsPosted->voteForPost(msg.first,msg.second,voter_id,tvote,vote_id,error_str))
         QMessageBox::critical(nullptr,tr("Could not vote"), tr("Error occured while voting: ")+QString::fromStdString(error_str));
+    else
+        updateDisplay(true);
 }
 
 #ifdef TODO
