@@ -39,6 +39,7 @@
 
 #include "util/HandleRichText.h"
 #include "util/misc.h"
+#include "util/qtthreadsutils.h"
 
 #include <sys/stat.h>
 #include <iostream>
@@ -59,10 +60,6 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 	ui.setupUi(this);
 
 	setAttribute(Qt::WA_DeleteOnClose, true);
-
-	/* Setup Queue */
-	mForumQueue = new TokenQueue(rsGxsForums->getTokenService(), this);
-	mCirclesQueue = new TokenQueue(rsGxsCircles->getTokenService(), this);
 
 	/* Setup UI helper */
 	mStateHelper = new UIStateHelper(this);
@@ -133,8 +130,6 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 CreateGxsForumMsg::~CreateGxsForumMsg()
 {
     processSettings(false);
-	delete(mForumQueue);
-	delete(mCirclesQueue);
 }
 
 void CreateGxsForumMsg::processSettings(bool load)
@@ -194,59 +189,109 @@ void  CreateGxsForumMsg::newMsg()
 		return;
 	}
 
-	{/* request Data */
 		mStateHelper->setLoading(CREATEGXSFORUMMSG_FORUMINFO, true);
 
-		RsTokReqOptions opts;
-		opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+        RsThread::async( [this]()
+        {
+            // We only need group Meta information, but forums do not provide it currently
 
-                std::list<RsGxsGroupId> groupIds;
-		groupIds.push_back(mForumId);
+            std::vector<RsGxsForumGroup> forums_info;
+            rsGxsForums->getForumsInfo(std::list<RsGxsGroupId>{ mForumId },forums_info);
 
-		//std::cerr << "ForumsV2Dialog::newMsg() Requesting Group Summary(" << mForumId << ")"<< std::endl;
 
-		uint32_t token;
-		mForumQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, groupIds, CREATEGXSFORUMMSG_FORUMINFO);
-	}/* request Data */
+            RsQThreadUtils::postToObject( [this,forums_info]()
+            {
+                if(forums_info.size() != 1)
+                {
+                    RsErr() << "Cannot retrieve group information for forum " << mForumId ;
+                  mStateHelper->setActive(CREATEGXSFORUMMSG_FORUMINFO, false);
+                  mStateHelper->setLoading(CREATEGXSFORUMMSG_FORUMINFO, false);
+                  return;
+             }
+             auto fg(forums_info.front());
 
-	if (mParentId.isNull()) {
+             const RsGroupMetaData& fi(fg.mMeta);
+             mForumMetaLoaded = true;
+             mForumMeta = fi;
+
+             if(!fi.mCircleId.isNull())
+                  loadCircleInfo(RsGxsGroupId(fi.mCircleId));
+
+             loadFormInformation();
+
+             mStateHelper->setActive(CREATEGXSFORUMMSG_FORUMINFO, false);
+             mStateHelper->setLoading(CREATEGXSFORUMMSG_FORUMINFO, false);
+
+            },this);
+        });
+
+    if (mParentId.isNull())
+    {
 		mStateHelper->setActive(CREATEGXSFORUMMSG_PARENTMSG, true);
 		mParentMsgLoaded = true;
-	} else {
+    }
+    else
+    {
 		mStateHelper->setLoading(CREATEGXSFORUMMSG_PARENTMSG, true);
 
-		RsTokReqOptions opts;
-		opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+        RsThread::async( [this]() {
 
-		GxsMsgReq msgIds;
-		std::set<RsGxsMessageId> &vect = msgIds[mForumId];
-		vect.insert(mParentId);
+            std::vector<RsGxsForumMsg> parent_msgs;
+            rsGxsForums->getForumContent(mForumId,std::set<RsGxsMessageId>{ mParentId },parent_msgs);
 
-		//std::cerr << "ForumsV2Dialog::newMsg() Requesting Parent Summary(" << mParentId << ")";
-		//std::cerr << std::endl;
+            RsQThreadUtils::postToObject( [this,parent_msgs]() {
+                if(parent_msgs.size() != 1)
+                {
+                    RsErr() << "Cannot get parent message from forum." ;
 
-		uint32_t token;
-		mForumQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, CREATEGXSFORUMMSG_PARENTMSG);
-	}
+                    mStateHelper->setActive(CREATEGXSFORUMMSG_PARENTMSG, false);
+                    mStateHelper->setLoading(CREATEGXSFORUMMSG_PARENTMSG, false);
 
-	if (mOrigMsgId.isNull()) {
+                    return ;
+                }
+
+                mParentMsg = parent_msgs.front();
+                mParentMsgLoaded = true;
+
+                loadFormInformation();
+
+            },this);
+        });
+    }
+
+    if (mOrigMsgId.isNull())
+    {
 		mStateHelper->setActive(CREATEGXSFORUMMSG_ORIGMSG, true);
 		mOrigMsgLoaded = true;
-	} else {
-		mStateHelper->setLoading(CREATEGXSFORUMMSG_ORIGMSG, true);
+    }
+    else
+    {
+        mStateHelper->setLoading(CREATEGXSFORUMMSG_ORIGMSG  , true);
 
-		RsTokReqOptions opts;
-		opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+        RsThread::async( [this]() {
 
-		GxsMsgReq msgIds;
-		std::set<RsGxsMessageId> &vect = msgIds[mForumId];
-		vect.insert(mOrigMsgId);
+            std::vector<RsGxsForumMsg> orig_msgs;
+            rsGxsForums->getForumContent(mForumId,std::set<RsGxsMessageId>{ mOrigMsgId },orig_msgs);
 
-		//std::cerr << "ForumsV2Dialog::newMsg() Requesting Parent Summary(" << mParentId << ")";
-		//std::cerr << std::endl;
+            RsQThreadUtils::postToObject( [this,orig_msgs]() {
+                if(orig_msgs.size() != 1)
+                {
+                    RsErr() << "Cannot get parent message from forum." ;
 
-		uint32_t token;
-		mForumQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, CREATEGXSFORUMMSG_ORIGMSG);
+                    mStateHelper->setActive(CREATEGXSFORUMMSG_ORIGMSG, false);
+                    mStateHelper->setLoading(CREATEGXSFORUMMSG_ORIGMSG, false);
+
+                    return ;
+                }
+
+                mOrigMsg = orig_msgs.front();
+                mOrigMsgLoaded = true;
+
+                loadFormInformation();
+
+            },this);
+        });
+
 	}
 }
 
@@ -330,7 +375,7 @@ void  CreateGxsForumMsg::loadFormInformation()
 	else if (!mParentId.isNull())
 	{
 		QString title = QString::fromUtf8(mParentMsg.mMeta.mMsgName.c_str());
-		name += " " + tr("In Reply to") + ": ";
+        name += " - " + tr("In Reply to") + ": ";
 		name += title;
 
 		QString text = title;
@@ -583,181 +628,52 @@ void CreateGxsForumMsg::fileHashingFinished(QList<HashedFile> hashedFiles)
 	ui.hashGroupBox->hide();
 }
 
-void CreateGxsForumMsg::loadForumInfo(const uint32_t &token)
-{
-    //std::cerr << "CreateGxsForumMsg::loadForumInfo()";
-    //std::cerr << std::endl;
-
-    std::list<RsGroupMetaData> groupInfo;
-    rsGxsForums->getGroupSummary(token, groupInfo);
-
-    if (groupInfo.size() == 1)
-    {
-	    RsGroupMetaData fi = groupInfo.front();
-
-	    mForumMeta = fi;
-	    mForumMetaLoaded = true;
-
-	    if(!fi.mCircleId.isNull())
-	    {
-		    //std::cerr << "Circle ID is not null: " << fi.mCircleId << ": loading circle info to add constraint to the GXS ID chooser." << std::endl;
-
-		    RsTokReqOptions opts;
-		    opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-
-		    std::list<RsGxsGroupId> groupIds;
-		    groupIds.push_back(RsGxsGroupId(fi.mCircleId));
-            		uint32_t _token;
-
-		    mCirclesQueue->requestGroupInfo(_token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, CREATEGXSFORUMMSG_CIRCLENFO);
-	    }
-
-	    loadFormInformation();
-    }
-    else
-    {
-	    std::cerr << "CreateGxsForumMsg::loadForumInfo() ERROR INVALID Number of Forums";
-	    std::cerr << std::endl;
-
-	    mStateHelper->setActive(CREATEGXSFORUMMSG_FORUMINFO, false);
-	    mStateHelper->setLoading(CREATEGXSFORUMMSG_FORUMINFO, false);
-    }
-}
-void CreateGxsForumMsg::loadForumCircleInfo(const uint32_t& token)
+void CreateGxsForumMsg::loadCircleInfo(const RsGxsGroupId& circle_id)
 {
     //std::cerr << "Loading forum circle info" << std::endl;
     
-    std::vector<RsGxsCircleGroup> circle_grp_v ;
-    rsGxsCircles->getGroupData(token, circle_grp_v);
-
-    if (circle_grp_v.empty())
+    RsThread::async( [circle_id,this]()
     {
-        std::cerr << "(EE) unexpected empty result from getGroupData. Cannot process circle now!" << std::endl;
-        return ;
-    }
-        
-    if (circle_grp_v.size() != 1)
-    {
-        std::cerr << "(EE) very weird result from getGroupData. Should get exactly one circle" << std::endl;
-        return ;
-    }
-    
-    RsGxsCircleGroup cg = circle_grp_v.front();
+        std::vector<RsGxsCircleGroup> circle_grp_v ;
+        rsGxsCircles->getCirclesInfo(std::list<RsGxsGroupId>{ circle_id }, circle_grp_v);
 
-    mForumCircleData = cg;
-    mForumCircleLoaded = true;
-
-    //std::cerr << "Loaded content of circle " << cg.mMeta.mGroupId << std::endl;
-    
-    //for(std::set<RsGxsId>::const_iterator it(cg.mInvitedMembers.begin());it!=cg.mInvitedMembers.end();++it)
-	//    std::cerr << "  added constraint to circle element " << *it << std::endl;
-    
-    ui.idChooser->setIdConstraintSet(cg.mInvitedMembers) ;
-    ui.idChooser->setFlags(IDCHOOSER_NO_CREATE | ui.idChooser->flags()) ;	// since there's a circle involved, no ID creation can be needed
-    
-    RsGxsId tmpid ;
-    if(ui.idChooser->countEnabledEntries() == 0)
-    {
-        QMessageBox::information(NULL,tr("No compatible ID for this forum"),tr("None of your identities is allowed to post in this forum. This could be due to the forum being limited to a circle that contains none of your identities, or forum flags requiring a PGP-signed identity.")) ;
-        close() ;
-    }
-}
-
-void CreateGxsForumMsg::loadOrigMsg(const uint32_t &token)
-{
-	//std::cerr << "CreateGxsForumMsg::loadParentMsg()";
-	//std::cerr << std::endl;
-
-	// Only grab one.... ignore more (shouldn't be any).
-	std::vector<RsGxsForumMsg> msgs;
-	if (rsGxsForums->getMsgData(token, msgs))
-	{
-		if (msgs.size() != 1)
-		{
-			/* error */
-			std::cerr << "CreateGxsForumMsg::loadOrigMsg() ERROR wrong number of msgs";
-			std::cerr << std::endl;
-
-			mStateHelper->setActive(CREATEGXSFORUMMSG_ORIGMSG, false);
-			mStateHelper->setLoading(CREATEGXSFORUMMSG_ORIGMSG, false);
-
-			return;
-		}
-
-		mOrigMsg = msgs[0];
-		mOrigMsgLoaded = true;
-
-		loadFormInformation();
-	}
-}
-
-
-void CreateGxsForumMsg::loadParentMsg(const uint32_t &token)
-{
-	//std::cerr << "CreateGxsForumMsg::loadParentMsg()";
-	//std::cerr << std::endl;
-
-	// Only grab one.... ignore more (shouldn't be any).
-	std::vector<RsGxsForumMsg> msgs;
-	if (rsGxsForums->getMsgData(token, msgs))
-	{
-		if (msgs.size() != 1)
-		{
-			/* error */
-			std::cerr << "CreateGxsForumMsg::loadParentMsg() ERROR wrong number of msgs";
-			std::cerr << std::endl;
-
-			mStateHelper->setActive(CREATEGXSFORUMMSG_PARENTMSG, false);
-			mStateHelper->setLoading(CREATEGXSFORUMMSG_PARENTMSG, false);
-
-			return;
-		}
-
-		mParentMsg = msgs[0];
-		mParentMsgLoaded = true;
-
-		loadFormInformation();
-	}
-}
-
-void CreateGxsForumMsg::loadRequest(const TokenQueue *queue, const TokenRequest &req)
-{
-	//std::cerr << "CreateGxsForum::loadRequest() UserType: " << req.mUserType;
-	//std::cerr << std::endl;
-
-	if (queue == mForumQueue)
-	{
-		/* now switch on req */
-		switch(req.mUserType)
-		{
-			case CREATEGXSFORUMMSG_FORUMINFO:
-				loadForumInfo(req.mToken);
-				break;
-			case CREATEGXSFORUMMSG_ORIGMSG:
-				loadOrigMsg(req.mToken);
-				break;
-			case CREATEGXSFORUMMSG_PARENTMSG:
-				loadParentMsg(req.mToken);
-				break;
-			default:
-				std::cerr << "CreateGxsForumMsg::loadRequest() UNKNOWN UserType " << req.mUserType << " for token request in mForumQueue";
-				std::cerr << std::endl;
-		}
-	}
-    
-    	if(queue == mCirclesQueue)
+        if (circle_grp_v.empty())
         {
-            switch(req.mUserType)
-            {
-            case CREATEGXSFORUMMSG_CIRCLENFO:
-                loadForumCircleInfo(req.mToken) ;
-                break ;
-            default:
-				std::cerr << "CreateGxsForumMsg::loadRequest() UNKNOWN UserType " << req.mUserType << " for token request in mCirclesQueue";
-				std::cerr << std::endl;
-            }
+            std::cerr << "(EE) unexpected empty result from getGroupData. Cannot process circle now!" << std::endl;
+            return ;
         }
+
+        if (circle_grp_v.size() != 1)
+        {
+            std::cerr << "(EE) very weird result from getGroupData. Should get exactly one circle" << std::endl;
+            return ;
+        }
+
+        RsGxsCircleGroup cg = circle_grp_v.front();
+
+        RsQThreadUtils::postToObject( [cg,this]()
+        {
+            mForumCircleData = cg;
+            mForumCircleLoaded = true;
+
+            //std::cerr << "Loaded content of circle " << cg.mMeta.mGroupId << std::endl;
+
+            //for(std::set<RsGxsId>::const_iterator it(cg.mInvitedMembers.begin());it!=cg.mInvitedMembers.end();++it)
+            //    std::cerr << "  added constraint to circle element " << *it << std::endl;
+
+            ui.idChooser->setIdConstraintSet(cg.mInvitedMembers) ;
+            ui.idChooser->setFlags(IDCHOOSER_NO_CREATE | ui.idChooser->flags()) ;	// since there's a circle involved, no ID creation can be needed
+
+            RsGxsId tmpid ;
+            if(ui.idChooser->countEnabledEntries() == 0)
+            {
+                QMessageBox::information(NULL,tr("No compatible ID for this forum"),tr("None of your identities is allowed to post in this forum. This could be due to the forum being limited to a circle that contains none of your identities, or forum flags requiring a PGP-signed identity.")) ;
+                close() ;
+            }
+        }, this);
+    });
 }
+
 void CreateGxsForumMsg::setSubject(const QString& msg)
 {
 	ui.forumSubject->setText(msg);

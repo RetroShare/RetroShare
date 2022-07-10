@@ -487,7 +487,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     setAutoDownload(false);
 #endif
 
-    ui->commentsDialog->setTokenService(rsGxsChannels);
+    ui->commentsDialog->setGxsService(rsGxsChannels);
 
 	/* Initialize GUI */
 	settingsChanged();

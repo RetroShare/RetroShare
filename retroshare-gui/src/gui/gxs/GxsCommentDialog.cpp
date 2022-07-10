@@ -36,7 +36,7 @@ GxsCommentDialog::GxsCommentDialog(QWidget *parent, const RsGxsId &default_autho
 	/* Invoke the Qt Designer generated QObject setup routine */
 	ui->setupUi(this);
 
-    setTokenService(comment_service);
+    setGxsService(comment_service);
     init(default_author);
 }
 	
@@ -67,7 +67,7 @@ void GxsCommentDialog::init(const RsGxsId& default_author)
 	ui->sortBox->setIconSize(QSize(S*1.5,S*1.5));
 }
 
-void GxsCommentDialog::setTokenService(RsGxsCommentService *comment_service)
+void GxsCommentDialog::setGxsService(RsGxsCommentService *comment_service)
 {
     ui->treeWidget->setup(comment_service);
 }
