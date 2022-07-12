@@ -24,9 +24,8 @@
 #include <QObject>
 #include "gui/common/UserNotify.h"
 #include "gui/gxs/GxsGroupFrameDialog.h"
-#include "util/TokenQueue.h"
 
-struct RsGxsIfaceHelper;
+class RsGxsIfaceHelper;
 class RsGxsUpdateBroadcastBase;
 
 class GxsUserNotify : public UserNotify

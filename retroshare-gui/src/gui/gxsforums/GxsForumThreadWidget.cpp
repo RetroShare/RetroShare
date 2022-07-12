@@ -1503,7 +1503,7 @@ void GxsForumThreadWidget::markMsgAsUnreadChildren()
     markMsgAsReadUnread(false, true, false);
 }
 
-void GxsForumThreadWidget::setAllMessagesReadDo(bool read, uint32_t &/*token*/)
+void GxsForumThreadWidget::setAllMessagesReadDo(bool read)
 {
     markMsgAsReadUnread(read, true, true);
 }

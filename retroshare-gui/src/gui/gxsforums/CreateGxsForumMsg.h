@@ -23,14 +23,12 @@
 
 #include "ui_CreateGxsForumMsg.h"
 
-#include "util/TokenQueue.h"
-
 #include <retroshare/rsgxsforums.h>
 #include <retroshare/rsgxscircles.h>
 
 class UIStateHelper;
 
-class CreateGxsForumMsg : public QDialog, public TokenResponse
+class CreateGxsForumMsg : public QDialog
 {
 	Q_OBJECT
 
@@ -39,7 +37,6 @@ public:
 	~CreateGxsForumMsg();
 
 	void newMsg(); /* cleanup */
-	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 	void insertPastedText(const QString& msg) ;
 	void setSubject(const QString& msg);
 
@@ -58,14 +55,10 @@ private slots:
 protected:
 	void closeEvent (QCloseEvent * event);
     
+    void loadCircleInfo(const RsGxsGroupId& circle_id);
 private:
     void processSettings(bool load);
     void loadFormInformation();
-
-	void loadForumInfo(const uint32_t &token);
-	void loadParentMsg(const uint32_t &token);
-	void loadOrigMsg(const uint32_t &token);
-    	void loadForumCircleInfo(const uint32_t &token);
 
 	 RsGxsGroupId mForumId;
 	 RsGxsCircleId mCircleId ;
@@ -84,9 +77,6 @@ private:
 	RsGroupMetaData mForumMeta;
 	RsGxsCircleGroup mForumCircleData ;
 
-	TokenQueue *mForumQueue;
-	TokenQueue *mCirclesQueue;
-    
 	UIStateHelper *mStateHelper;
 
 	/** Qt Designer generated object */

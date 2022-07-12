@@ -102,7 +102,7 @@ protected:
 	virtual void updateDisplay(bool complete);
 
 	/* GxsMessageFrameWidget */
-	virtual void setAllMessagesReadDo(bool read, uint32_t &token);
+    virtual void setAllMessagesReadDo(bool read);
     
 	void setMessageLoadingError(const QString& error);
 private slots:

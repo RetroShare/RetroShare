@@ -217,34 +217,6 @@ QWidget *PostedDialog::createCommentHeaderWidget(const RsGxsGroupId &grpId, cons
 	return new PostedItem(NULL, 0, grpId, msgId, true, false);
 }
 
-#ifdef TO_REMOVE
-void PostedDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata *&userdata)
-{
-	std::vector<RsPostedGroup> groups;
-	rsPosted->getGroupData(token, groups);
-
-	/* Save groups to fill description */
-	PostedGroupInfoData *postedData = new PostedGroupInfoData;
-	userdata = postedData;
-
-	std::vector<RsPostedGroup>::iterator groupIt;
-	for (groupIt = groups.begin(); groupIt != groups.end(); ++groupIt) {
-		RsPostedGroup &group = *groupIt;
-		groupInfo.push_back(group.mMeta);
-		
-		if (group.mGroupImage.mData != NULL) {
-			QPixmap image;
-			GxsIdDetails::loadPixmapFromData(group.mGroupImage.mData, group.mGroupImage.mSize, image,GxsIdDetails::ORIGINAL);
-			postedData->mIcon[group.mMeta.mGroupId] = image;
-		}
-
-		if (!group.mDescription.empty()) {
-			postedData->mDescription[group.mMeta.mGroupId] = QString::fromUtf8(group.mDescription.c_str());
-		}
-	}
-}
-#endif
-
 void PostedDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupData, GroupItemInfo &groupItemInfo)
 {
 	GxsGroupFrameDialog::groupInfoToGroupItemInfo(groupData, groupItemInfo);

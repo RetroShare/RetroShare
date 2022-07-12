@@ -475,18 +475,21 @@ void GxsForumMsgItem::unsubscribeForum()
 
 void GxsForumMsgItem::setAsRead()
 {
-	if (mInFill) {
-		return;
-	}
+    if (mInFill) {
+        return;
+    }
 
-	mCloseOnRead = false;
+    mCloseOnRead = false;
 
-	RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
+    RsThread::async( [this]() {
+        RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
 
-	uint32_t token;
-	rsGxsForums->setMessageReadStatus(token, msgPair, true);
+        rsGxsForums->markRead(msgPair, true);
 
-	setReadStatus(false, false);
+        RsQThreadUtils::postToObject( [this]() {
+            setReadStatus(false, true);
+        } );
+    });
 }
 
 void GxsForumMsgItem::on_linkActivated(QString link)

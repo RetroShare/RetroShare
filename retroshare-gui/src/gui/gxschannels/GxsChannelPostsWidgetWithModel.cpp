@@ -487,7 +487,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     setAutoDownload(false);
 #endif
 
-    ui->commentsDialog->setTokenService(rsGxsChannels->getTokenService(),rsGxsChannels);
+    ui->commentsDialog->setGxsService(rsGxsChannels);
 
 	/* Initialize GUI */
 	settingsChanged();
@@ -852,7 +852,7 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 		postId.second = post.mMeta.mMsgId;
 		postId.first  = post.mMeta.mGroupId;
 
-		RsThread::async([postId]() { rsGxsChannels->markRead(postId, true) ; } );
+        RsThread::async([postId]() { rsGxsChannels->setMessageReadStatus(postId, true) ; } );
 	}
 
 	updateDAll_PB();
@@ -1432,7 +1432,7 @@ public:
 	uint32_t mLastToken;
 };
 
-void GxsChannelPostsWidgetWithModel::setAllMessagesReadDo(bool read, uint32_t& /*token*/)
+void GxsChannelPostsWidgetWithModel::setAllMessagesReadDo(bool read)
 {
 	if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags))
 		return;

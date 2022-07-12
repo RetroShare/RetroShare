@@ -28,7 +28,6 @@ GxsMessageFrameWidget::GxsMessageFrameWidget(RsGxsIfaceHelper *ifaceImpl, QWidge
 {
 	mNextTokenType = 0;
 
-	mTokenQueue = new TokenQueue(ifaceImpl->getTokenService(), this);
 	mStateHelper = new UIStateHelper(this);
 
 	/* Set read status */
@@ -46,8 +45,6 @@ GxsMessageFrameWidget::~GxsMessageFrameWidget()
 
 		emit waitingChanged(this);
 	}
-
-	delete(mTokenQueue);
 }
 
 const RsGxsGroupId &GxsMessageFrameWidget::groupId()
@@ -95,34 +92,6 @@ void GxsMessageFrameWidget::setGroupId(const RsGxsGroupId &groupId)
 
 void GxsMessageFrameWidget::setAllMessagesRead(bool read)
 {
-	uint32_t token = 0;
-	setAllMessagesReadDo(read, token);
-
-	if (token) {
-		/* Wait for acknowlegde of the token */
-		mAcknowledgeReadStatusToken = token;
-		mTokenQueue->queueRequest(mAcknowledgeReadStatusToken, 0, 0, mTokenTypeAcknowledgeReadStatus);
-		mStateHelper->setLoading(mTokenTypeAcknowledgeReadStatus, true);
-
-		emit waitingChanged(this);
-	}
+    setAllMessagesReadDo(read);
 }
 
-void GxsMessageFrameWidget::loadRequest(const TokenQueue *queue, const TokenRequest &req)
-{
-	if (queue == mTokenQueue)
-	{
-		if (req.mUserType == mTokenTypeAcknowledgeReadStatus) {
-			if (mAcknowledgeReadStatusToken == req.mToken) {
-				/* Set read status is finished */
-				mStateHelper->setLoading(mTokenTypeAcknowledgeReadStatus, false);
-
-				emit waitingChanged(this);
-			}
-			return;
-		}
-	}
-
-	std::cerr << "GxsMessageFrameWidget::loadRequest() ERROR: INVALID TYPE";
-	std::cerr << std::endl;
-}

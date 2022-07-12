@@ -28,6 +28,7 @@
 #include "ui_PostedCreatePostDialog.h"
 
 #include "util/misc.h"
+#include "util/qtthreadsutils.h"
 #include "util/RichTextEdit.h"
 #include "gui/feeds/SubFileItem.h"
 #include "util/rsdir.h"
@@ -178,10 +179,20 @@ void PostedCreatePostDialog::createPost()
 		return;
 	}
 
-	uint32_t token;
-	mPosted->createPost(token, post);
+    RsThread::async([this,post]()
+    {
+        RsGxsMessageId post_id;
 
-	accept();
+        bool res = rsPosted->createPost(post,post_id);
+
+        RsQThreadUtils::postToObject( [res,this]()
+        {
+            if(!res)
+                QMessageBox::information(nullptr,tr("Error while creating post"),tr("An error occurred while creating the post."));
+
+            accept();
+        }, this );
+    });
 }
 
 void PostedCreatePostDialog::fileHashingFinished(QList<HashedFile> hashedFiles)

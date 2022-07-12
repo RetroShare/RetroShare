@@ -24,14 +24,13 @@
 #define MRK_CIRCLE_DIALOG_H
 
 #include "gui/gxs/RsGxsUpdateBroadcastPage.h"
-#include "util/TokenQueue.h"
 #include "ui_CirclesDialog.h"
 
 #define IMAGE_CIRCLES           ":/icons/png/circles.png"
 
 class UIStateHelper;
 
-class CirclesDialog : public MainPage, public TokenResponse
+class CirclesDialog : public MainPage
 {
 	Q_OBJECT
 
@@ -42,8 +41,6 @@ public:
 	virtual QIcon iconPixmap() const { return QIcon(IMAGE_CIRCLES) ; } //MainPage
 	virtual QString pageName() const { return tr("Circles") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
-
-	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 protected:
 	virtual void updateDisplay(bool complete);
@@ -62,9 +59,8 @@ private:
 	void reloadAll();
 
 	void requestGroupMeta();
-	void loadGroupMeta(const uint32_t &token);
+    void loadGroupMeta(const std::list<RsGroupMetaData>& groupInfo);
 
-	TokenQueue *mCircleQueue;
 	UIStateHelper *mStateHelper;
 
 	/* UI - from Designer */

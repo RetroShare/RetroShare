@@ -798,7 +798,7 @@ void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
     for(uint32_t i=0;i<pairs.size();++i)
         RsThread::async([p=pairs[i], read_status]()	// use async because each markRead() waits for the token to complete in order to properly acknowledge it.
         {
-            if(!rsGxsChannels->markRead(p,read_status))
+            if(!rsGxsChannels->setMessageReadStatus(p,read_status))
                 RsErr() << "setAllMsgReadStatus: failed to change status of msg " << p.first << " in group " << p.second << " to status " << read_status << std::endl;
         });
 }
@@ -816,7 +816,7 @@ void RsGxsChannelPostsModel::setMsgReadStatus(const QModelIndex& i,bool read_sta
 	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mFilteredPosts.size())
 		return ;
 
-    rsGxsChannels->markRead(RsGxsGrpMsgIdPair(mPosts[mFilteredPosts[entry]].mMeta.mGroupId,mPosts[mFilteredPosts[entry]].mMeta.mMsgId),read_status);
+    rsGxsChannels->setMessageReadStatus(RsGxsGrpMsgIdPair(mPosts[mFilteredPosts[entry]].mMeta.mGroupId,mPosts[mFilteredPosts[entry]].mMeta.mMsgId),read_status);
 }
 
 QModelIndex RsGxsChannelPostsModel::getIndexOfMessage(const RsGxsMessageId& mid) const

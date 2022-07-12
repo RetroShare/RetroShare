@@ -279,16 +279,20 @@ void BasePostedItem::loadComments()
 }
 void BasePostedItem::readToggled(bool checked)
 {
-	if (mInFill) {
-		return;
-	}
+    if (mInFill) {
+        return;
+    }
 
-	RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
+    RsThread::async([this,checked]()
+    {
+        RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
+        rsPosted->setPostReadStatus(msgPair, !checked);
 
-	uint32_t token;
-	rsPosted->setMessageReadStatus(token, msgPair, !checked);
-
-	setReadStatus(false, checked);
+        RsQThreadUtils::postToObject( [checked,this]()
+        {
+            setReadStatus(false, checked);
+        }, this );
+    });
 }
 
 void BasePostedItem::readAndClearItem()

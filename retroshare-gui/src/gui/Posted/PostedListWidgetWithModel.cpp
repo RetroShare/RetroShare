@@ -773,7 +773,7 @@ QIcon PostedListWidgetWithModel::groupIcon()
 	return QIcon(postedImage);
 }
 
-void PostedListWidgetWithModel::setAllMessagesReadDo(bool read, uint32_t &/*token*/)
+void PostedListWidgetWithModel::setAllMessagesReadDo(bool read)
 {
     if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags))
         return;
@@ -795,7 +795,7 @@ void PostedListWidgetWithModel::openComments(const RsGxsMessageId& msgId)
     ui->idChooser->getChosenId(current_author);
 
     RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
-    auto *commentDialog = new GxsCommentDialog(this,current_author,rsPosted->getTokenService(),rsPosted);
+    auto *commentDialog = new GxsCommentDialog(this,current_author,rsPosted);
 
     std::set<RsGxsMessageId> msg_versions({post.mMeta.mMsgId});
     commentDialog->commentLoad(post.mMeta.mGroupId, msg_versions, post.mMeta.mMsgId);
@@ -1190,8 +1190,7 @@ void PostedListWidgetWithModel::subscribeGroup(bool subscribe)
 
 	RsThread::async([=]()
 	{
-        uint32_t token;
-		rsPosted->subscribeToGroup(token,grpId, subscribe);
+		rsPosted->subscribeToBoard(grpId, subscribe);
 	} );
 }
 
@@ -1204,7 +1203,14 @@ void PostedListWidgetWithModel::voteMsg(RsGxsGrpMsgIdPair msg,bool up_or_down)
         return;
     }
 
-    rsPosted->voteForPost(up_or_down,msg.first,msg.second,voter_id);
+    RsGxsVoteType tvote = up_or_down?(RsGxsVoteType::UP):(RsGxsVoteType::DOWN);
+
+    std::string error_str;
+    RsGxsMessageId vote_id;
+    if(!rsPosted->voteForPost(msg.first,msg.second,voter_id,tvote,vote_id,error_str))
+        QMessageBox::critical(nullptr,tr("Could not vote"), tr("Error occured while voting: ")+QString::fromStdString(error_str));
+    else
+        updateDisplay(true);
 }
 
 #ifdef TODO
