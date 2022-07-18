@@ -23,6 +23,20 @@
   </message> 
 </context> 
 <context> 
+  <name>Section_WebUI</name> 
+  <message> 
+    <source>WebUI</source> 
+    <translation type="unfinished"></translation> 
+  </message> 
+</context> 
+<context> 
+  <name>Section_WebUI_Desc</name> 
+  <message> 
+    <source>Installs WebUI.</source> 
+    <translation type="unfinished"></translation> 
+  </message> 
+</context> 
+<context> 
   <name>Section_Service</name> 
   <message> 
     <source>Service</source> 

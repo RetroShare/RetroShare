@@ -181,10 +181,10 @@ copy "%SourcePath%\libbitdht\src\bitdht\bdboot.txt" "%RsDeployPath%" %Quite%
 echo copy changelog.txt
 copy "%RsBuildPath%\changelog.txt" "%RsDeployPath%" %Quite%
 
-if exist "%SourcePath%\libresapi\src\webui" (
+if exist "%RsWebuiBuildPath%" (
 	echo copy webui
 	mkdir "%RsDeployPath%\webui"
-	xcopy /S "%SourcePath%\libresapi\src\webui" "%RsDeployPath%\webui" %Quite%
+	xcopy /S "%RsWebuiBuildPath%" "%RsDeployPath%\webui" %Quite%
 )
 
 if "%ParamTor%"=="1" (

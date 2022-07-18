@@ -4,6 +4,7 @@ set ParamDebug=0
 set ParamAutologin=0
 set ParamPlugins=0
 set ParamJsonApi=0
+set ParamWebui=0
 set ParamService=0
 set ParamFriendServer=0
 set ParamEmbeddedFriendServer=0
@@ -26,6 +27,9 @@ if "%~1" NEQ "" (
 			set ParamAutologin=1
 		) else if "%%~a"=="jsonapi" (
 			set ParamJsonApi=1
+		) else if "%%~a"=="webui" (
+			set ParamJsonApi=1
+			set ParamWebui=1
 		) else if "%%~a"=="service" (
 			set ParamService=1
 		) else if "%%~a"=="friendserver" (
@@ -101,6 +105,8 @@ set RsBuildPath=%BuildPath%\Qt-%QtVersion%-%GCCArchitecture%-%RsBuildConfig%
 set RsDeployPath=%DeployPath%\Qt-%QtVersion%-%GCCArchitecture%%RsType%-%RsBuildConfig%
 set RsPackPath=%DeployPath%
 set RsArchiveAdd=
+set RsWebuiPath=%RootPath%\%SourceName%-webui
+set RsWebuiBuildPath=%BuildPath%\Qt-%QtVersion%-%GCCArchitecture%-%RsBuildConfig%\webui
 
 if not exist "%~dp0env-mod.bat" goto no_mod
 call "%~dp0env-mod.bat"
@@ -120,6 +126,7 @@ if "%Module%"=="build" (
 	echo Optional parameter ^(need clean when changed^)
 	echo autologin             Build with autologin
 	echo jsonapi               Build with jsonapi
+	echo webui                 Build with jsonapi and webui
 	echo service               Build service
 	echo friendserver          Build Friend Server
 	echo embedded-friendserver Build with embedded Friend Server

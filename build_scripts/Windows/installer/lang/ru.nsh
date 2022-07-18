@@ -2,6 +2,8 @@
 !insertmacro LANG_STRING Section_Main_Desc "Установка ${APPNAME} и необходимых компонентов."
 !insertmacro LANG_STRING Section_Tor "Tor"
 !insertmacro LANG_STRING Section_Tor_Desc "Installs Tor."
+!insertmacro LANG_STRING Section_WebUI "WebUI"
+!insertmacro LANG_STRING Section_WebUI_Desc "Installs WebUI."
 !insertmacro LANG_STRING Section_Service "Service"
 !insertmacro LANG_STRING Section_Service_Desc "Installs Service."
 !insertmacro LANG_STRING Section_FriendServer "Friend Server"

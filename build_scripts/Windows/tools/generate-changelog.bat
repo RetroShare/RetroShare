@@ -18,6 +18,8 @@ copy nul %logfile% > nul
 
 pushd %~1
 
+set Percent=%%
+
 set last=HEAD
 for /f %%t in ('git tag --sort=-taggerdate --merged ^| findstr v') do (
 	echo generating changelog for !last!..%%t	
@@ -30,7 +32,7 @@ for /f %%t in ('git tag --sort=-taggerdate --merged ^| findstr v') do (
 	rem echo !last! ---^> %%t >> %logfile%
 	echo ----------------------------------------------- >> %logfile%
 	echo. >> %logfile%
-	git log %%t..!last! --no-merges "--pretty=format:%%h %%ai %%<(10,trunc)%%an %%s" >> %logfile%
+	git log %%t..!last! --no-merges "--pretty=format:!Percent!h !Percent!ai !Percent!<(10,trunc)!Percent!an !Percent!s" >> %logfile%
 	echo. >> %logfile%
 	echo. >> %logfile%
 	set last=%%t

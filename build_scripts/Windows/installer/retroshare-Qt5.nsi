@@ -71,6 +71,14 @@ ${!defineifexist} TOR_EXISTS "${TORDIR}\tor.exe"
 !endif
 !endif
 
+# WebUI
+!ifdef WEBUIDIR
+${!defineifexist} WEBUI_EXISTS "${WEBUIDIR}\index.html"
+!ifndef WEBUI_EXISTS
+!error "WebUI files not found"
+!endif
+!endif
+
 # Friend Server
 !ifdef TOR_EXISTS
 # Add Friend Server with Tor only
@@ -314,6 +322,14 @@ SectionEnd
   SectionEnd
 !endif
 
+# WebUI
+!ifdef WEBUI_EXISTS
+  Section /o $(Section_WebUI) Section_WebUI
+    SetOutPath "$INSTDIR\webui"
+    File /r "${WEBUIDIR}\*"
+  SectionEnd
+!endif
+
 # Plugins
 ${!defineifexist} PLUGIN_FEEDREADER_EXISTS "${RELEASEDIR}\plugins\FeedReader\lib\FeedReader.dll"
 ${!defineifexist} PLUGIN_VOIP_EXISTS "${RELEASEDIR}\plugins\VOIP\lib\VOIP.dll"
@@ -447,6 +463,7 @@ SectionEnd
 ;  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Link} $(Section_Link_Desc)
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_AutoStart} $(Section_AutoStart_Desc)
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_Tor} $(Section_Tor_Desc)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_WebUI} $(Section_WebUI_Desc)
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_Service} $(Section_Service_Desc)
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_FriendServer} $(Section_FriendServer_Desc)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
