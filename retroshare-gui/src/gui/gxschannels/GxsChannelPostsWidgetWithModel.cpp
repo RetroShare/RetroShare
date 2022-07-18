@@ -901,7 +901,10 @@ void GxsChannelPostsWidgetWithModel::updateGroupData()
             }
 
             mGroup = group;
-			mChannelPostsModel->updateChannel(groupId());
+
+            ui->postsTree->setPlaceholderText(tr("Loading..."));
+
+            mChannelPostsModel->updateChannel(groupId());
             whileBlocking(ui->filterLineEdit)->clear();
             whileBlocking(ui->showUnread_TB)->setChecked(false);
 
@@ -943,6 +946,9 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
 	ui->channelFiles_TV->setAutoSelect(true);
 	ui->channelFiles_TV->sortByColumn(ui->channelFiles_TV->header()->sortIndicatorSection()
 	                                  ,ui->channelFiles_TV->header()->sortIndicatorOrder());
+
+    // if there's no posts, this is what's going to be displayed.
+    ui->postsTree->setPlaceholderText(tr("No posts available in this channel."));
 
     ui->infoPosts->setText(QString::number(mChannelPostsModel->getNumberOfPosts()) + " / " + QString::number(mGroup.mMeta.mVisibleMsgCount));
 

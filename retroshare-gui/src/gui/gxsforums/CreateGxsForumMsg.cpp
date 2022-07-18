@@ -189,172 +189,115 @@ void  CreateGxsForumMsg::newMsg()
 		return;
 	}
 
-		mStateHelper->setLoading(CREATEGXSFORUMMSG_FORUMINFO, true);
-
-        RsThread::async( [this]()
-        {
-            // We only need group Meta information, but forums do not provide it currently
-
-            std::vector<RsGxsForumGroup> forums_info;
-            rsGxsForums->getForumsInfo(std::list<RsGxsGroupId>{ mForumId },forums_info);
-
-
-            RsQThreadUtils::postToObject( [this,forums_info]()
-            {
-                if(forums_info.size() != 1)
-                {
-                    RsErr() << "Cannot retrieve group information for forum " << mForumId ;
-                  mStateHelper->setActive(CREATEGXSFORUMMSG_FORUMINFO, false);
-                  mStateHelper->setLoading(CREATEGXSFORUMMSG_FORUMINFO, false);
-                  return;
-             }
-             auto fg(forums_info.front());
-
-             const RsGroupMetaData& fi(fg.mMeta);
-             mForumMetaLoaded = true;
-             mForumMeta = fi;
-
-             if(!fi.mCircleId.isNull())
-                  loadCircleInfo(RsGxsGroupId(fi.mCircleId));
-
-             loadFormInformation();
-
-             mStateHelper->setActive(CREATEGXSFORUMMSG_FORUMINFO, false);
-             mStateHelper->setLoading(CREATEGXSFORUMMSG_FORUMINFO, false);
-
-            },this);
-        });
+    mStateHelper->setLoading(CREATEGXSFORUMMSG_FORUMINFO, true);
 
     if (mParentId.isNull())
     {
-		mStateHelper->setActive(CREATEGXSFORUMMSG_PARENTMSG, true);
-		mParentMsgLoaded = true;
+        mStateHelper->setActive(CREATEGXSFORUMMSG_PARENTMSG, false);
+        mParentMsgLoaded = true;
     }
     else
     {
-		mStateHelper->setLoading(CREATEGXSFORUMMSG_PARENTMSG, true);
-
-        RsThread::async( [this]() {
-
-            std::vector<RsGxsForumMsg> parent_msgs;
-            rsGxsForums->getForumContent(mForumId,std::set<RsGxsMessageId>{ mParentId },parent_msgs);
-
-            RsQThreadUtils::postToObject( [this,parent_msgs]() {
-                if(parent_msgs.size() != 1)
-                {
-                    RsErr() << "Cannot get parent message from forum." ;
-
-                    mStateHelper->setActive(CREATEGXSFORUMMSG_PARENTMSG, false);
-                    mStateHelper->setLoading(CREATEGXSFORUMMSG_PARENTMSG, false);
-
-                    return ;
-                }
-
-                mParentMsg = parent_msgs.front();
-                mParentMsgLoaded = true;
-
-                loadFormInformation();
-
-            },this);
-        });
+        mStateHelper->setLoading(CREATEGXSFORUMMSG_PARENTMSG, true);
+        mParentMsgLoaded = false;
     }
 
     if (mOrigMsgId.isNull())
     {
-		mStateHelper->setActive(CREATEGXSFORUMMSG_ORIGMSG, true);
-		mOrigMsgLoaded = true;
+        mStateHelper->setActive(CREATEGXSFORUMMSG_ORIGMSG, false);
+        mOrigMsgLoaded = true;
     }
     else
     {
-        mStateHelper->setLoading(CREATEGXSFORUMMSG_ORIGMSG  , true);
+        mStateHelper->setLoading(CREATEGXSFORUMMSG_ORIGMSG, true);
+        mOrigMsgLoaded = false;
+    }
 
-        RsThread::async( [this]() {
+    RsThread::async( [this]()
+    {
+        // We only need group Meta information, but forums do not provide it currently
 
+        std::vector<RsGxsForumGroup> forums_info;
+        rsGxsForums->getForumsInfo(std::list<RsGxsGroupId>{ mForumId },forums_info);
+
+        // Load parent message
+
+        RsGxsForumMsg parent_msg;
+
+        if(!mParentId.isNull())
+        {
+            std::vector<RsGxsForumMsg> parent_msgs;
+            rsGxsForums->getForumContent(mForumId,std::set<RsGxsMessageId>{ mParentId },parent_msgs);
+
+            if(parent_msgs.size() == 1)
+                parent_msg = *parent_msgs.begin();
+            else
+                RsErr() << "Cannot get parent message " << mParentId << " from forum." ;
+        }
+
+        // Load original message (edit mode)
+
+        RsGxsForumMsg orig_msg;
+
+        if(!mOrigMsgId.isNull())
+        {
             std::vector<RsGxsForumMsg> orig_msgs;
             rsGxsForums->getForumContent(mForumId,std::set<RsGxsMessageId>{ mOrigMsgId },orig_msgs);
 
-            RsQThreadUtils::postToObject( [this,orig_msgs]() {
-                if(orig_msgs.size() != 1)
-                {
-                    RsErr() << "Cannot get parent message from forum." ;
+            if(orig_msgs.size() == 1)
+                orig_msg = *orig_msgs.begin();
+            else
+                RsErr() << "Cannot get orig message " << mOrigMsgId << " from forum." ;
+        }
 
-                    mStateHelper->setActive(CREATEGXSFORUMMSG_ORIGMSG, false);
-                    mStateHelper->setLoading(CREATEGXSFORUMMSG_ORIGMSG, false);
+        // Now update GUI with all that nice data
 
-                    return ;
-                }
+        RsQThreadUtils::postToObject( [this,forums_info,parent_msg,orig_msg]()
+        {
+            if(forums_info.size() != 1)
+            {
+                RsErr() << "Cannot retrieve group information for forum " << mForumId ;
 
-                mOrigMsg = orig_msgs.front();
+                return;
+            }
+            auto fg(forums_info.front());
+
+            mForumMetaLoaded = true;
+            mForumMeta = fg.mMeta;
+
+            if(!parent_msg.mMsg.empty())
+            {
+                mParentMsg = parent_msg;
+                mParentMsgLoaded = true;
+            }
+            if(!orig_msg.mMsg.empty())
+            {
+                mOrigMsg = orig_msg;
                 mOrigMsgLoaded = true;
+            }
 
-                loadFormInformation();
+            if(!mForumMeta.mCircleId.isNull())
+                loadCircleInfo(RsGxsGroupId(mForumMeta.mCircleId));
 
-            },this);
-        });
+            // Now update the GUI
 
-	}
+            mStateHelper->setActive(CREATEGXSFORUMMSG_PARENTMSG, mParentMsgLoaded);
+            mStateHelper->setLoading(CREATEGXSFORUMMSG_PARENTMSG, false);
+
+            mStateHelper->setActive(CREATEGXSFORUMMSG_ORIGMSG, mOrigMsgLoaded);
+            mStateHelper->setLoading(CREATEGXSFORUMMSG_ORIGMSG, false);
+
+            mStateHelper->setActive(CREATEGXSFORUMMSG_FORUMINFO, mForumMetaLoaded);
+            mStateHelper->setLoading(CREATEGXSFORUMMSG_FORUMINFO, false);
+
+            loadFormInformation();
+
+        },this);
+    });
 }
 
 void  CreateGxsForumMsg::loadFormInformation()
 {
-	if (!mOrigMsgId.isNull())
-	{
-		if (mOrigMsgLoaded) {
-			mStateHelper->setActive(CREATEGXSFORUMMSG_ORIGMSG, true);
-			mStateHelper->setLoading(CREATEGXSFORUMMSG_ORIGMSG, false);
-		} else {
-			//std::cerr << "CreateGxsForumMsg::loadMsgInformation() ParentMsg not Loaded Yet";
-			//std::cerr << std::endl;
-
-			mStateHelper->setActive(CREATEGXSFORUMMSG_ORIGMSG, false);
-
-			return;
-		}
-	}
-    else
-    {
-		mStateHelper->setActive(CREATEGXSFORUMMSG_ORIGMSG, true);
-		mStateHelper->setLoading(CREATEGXSFORUMMSG_ORIGMSG, false);
-	}
-
-
-	if (!mParentId.isNull())
-	{
-		if (mParentMsgLoaded) {
-			mStateHelper->setActive(CREATEGXSFORUMMSG_PARENTMSG, true);
-			mStateHelper->setLoading(CREATEGXSFORUMMSG_PARENTMSG, false);
-		} else {
-			//std::cerr << "CreateGxsForumMsg::loadMsgInformation() ParentMsg not Loaded Yet";
-			//std::cerr << std::endl;
-
-			mStateHelper->setActive(CREATEGXSFORUMMSG_PARENTMSG, false);
-
-			return;
-		}
-	}
-    else
-    {
-		mStateHelper->setActive(CREATEGXSFORUMMSG_PARENTMSG, true);
-		mStateHelper->setLoading(CREATEGXSFORUMMSG_PARENTMSG, false);
-	}
-
-	if (mForumMetaLoaded) {
-		mStateHelper->setActive(CREATEGXSFORUMMSG_FORUMINFO, true);
-		mStateHelper->setLoading(CREATEGXSFORUMMSG_FORUMINFO, false);
-	} else {
-		//std::cerr << "CreateGxsForumMsg::loadMsgInformation() ForumMeta not Loaded Yet";
-		//std::cerr << std::endl;
-
-		mStateHelper->setActive(CREATEGXSFORUMMSG_FORUMINFO, false);
-
-		return;
-	}
-
-	//std::cerr << "CreateGxsForumMsg::loadMsgInformation() Data Available!";
-	//std::cerr << std::endl;
-
-	//std::cerr << "CreateGxsForumMsg::loadMsgInformation() using signFlags=" << std::hex << mForumMeta.mSignFlags << std::dec << std::endl;
-    
     uint32_t fl = IDCHOOSER_ID_REQUIRED ;
 
 	if( (mForumMeta.mSignFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) || (mForumMeta.mSignFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN))
@@ -369,9 +312,7 @@ void  CreateGxsForumMsg::loadFormInformation()
 	QString subj;
 
     if(!mOrigMsgId.isNull())
-    {
         subj = QString::fromUtf8(mOrigMsg.mMeta.mMsgName.c_str());
-    }
 	else if (!mParentId.isNull())
 	{
 		QString title = QString::fromUtf8(mParentMsg.mMeta.mMsgName.c_str());
@@ -388,6 +329,7 @@ void  CreateGxsForumMsg::loadFormInformation()
 
 	ui.forumName->setText(misc::removeNewLine(name));
 
+    std::cerr << "Setting name to \"" << misc::removeNewLine(name).toStdString() << std::endl;
 	if(!subj.isNull())
 		ui.forumSubject->setText(misc::removeNewLine(subj));
 
