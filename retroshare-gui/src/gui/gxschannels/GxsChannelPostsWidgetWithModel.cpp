@@ -56,8 +56,6 @@
  * #define DEBUG_CHANNEL
  ***/
 
-//static const int mTokenTypeGroupData = 1;
-
 static const int CHANNEL_TABS_DETAILS= 0;
 static const int CHANNEL_TABS_POSTS  = 1;
 static const int CHANNEL_TABS_FILES  = 2;
@@ -1430,12 +1428,10 @@ public:
 	explicit GxsChannelPostsReadData(bool read)
 	{
 		mRead = read;
-		mLastToken = 0;
 	}
 
 public:
 	bool mRead;
-	uint32_t mLastToken;
 };
 
 void GxsChannelPostsWidgetWithModel::setAllMessagesReadDo(bool read)
