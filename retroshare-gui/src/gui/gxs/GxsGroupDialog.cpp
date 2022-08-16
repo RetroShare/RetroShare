@@ -672,15 +672,9 @@ void GxsGroupDialog::createGroup()
 
 	if (service_createGroup(meta))
 	{
-        // now update the UI
 #warning Missing code here!
-#ifdef TODO
-        //
-		// get the Queue to handle response. What is this for?
-		if(mExternalTokenQueue != NULL)
-			mExternalTokenQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, GXSGROUP_NEWGROUPID);
-#endif
-	}
+        // now update the UI
+    }
 
 	close();
 }

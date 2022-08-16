@@ -24,7 +24,6 @@
 #include <retroshare-gui/mainpage.h>
 
 #include "gui/feeds/FeedHolder.h"
-#include "util/TokenQueue.h"
 #include <retroshare-gui/RsAutoUpdatePage.h>
 
 #define IMAGE_NEWSFEED ":/icons/png/newsfeed.png"
