@@ -82,7 +82,7 @@ private:
     void fillParentMessage();
     void fillExpandFrame();
 	void setReadStatus(bool isNew, bool isUnread);
-	void setAsRead();
+	void setAsRead(bool doUpdate);
 
 private:
 	bool mInFill;

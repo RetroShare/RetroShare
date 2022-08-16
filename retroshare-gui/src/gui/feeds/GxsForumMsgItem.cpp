@@ -411,7 +411,7 @@ void GxsForumMsgItem::doExpand(bool open)
 			ui->parentFrame->show();
 		}
 
-		setAsRead();
+		setAsRead(true);
 	}
 	else
 	{
@@ -459,7 +459,7 @@ void GxsForumMsgItem::readAndClearItem()
 	std::cerr << std::endl;
 #endif
 
-	setAsRead();
+	setAsRead(false);
 	removeItem();
 }
 
@@ -473,7 +473,7 @@ void GxsForumMsgItem::unsubscribeForum()
 	unsubscribe();
 }
 
-void GxsForumMsgItem::setAsRead()
+void GxsForumMsgItem::setAsRead(bool doUpdate)
 {
     if (mInFill) {
         return;
@@ -481,14 +481,16 @@ void GxsForumMsgItem::setAsRead()
 
     mCloseOnRead = false;
 
-    RsThread::async( [this]() {
+    RsThread::async( [this, doUpdate]() {
         RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
 
         rsGxsForums->markRead(msgPair, true);
 
-        RsQThreadUtils::postToObject( [this]() {
-            setReadStatus(false, true);
-        } );
+        if (doUpdate) {
+            RsQThreadUtils::postToObject( [this]() {
+                setReadStatus(false, true);
+            } );
+        }
     });
 }
 
