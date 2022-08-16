@@ -584,12 +584,13 @@ void CreateCircleDialog::createCircle()
         circle.mMeta.mCircleType = GXS_CIRCLE_TYPE_LOCAL;
     }
 
+    bool is_existing_circle(mIsExistingCircle);
 
-    RsThread::async([&circle,this]()
+    RsThread::async([circle,is_existing_circle]()
     {
         RsGxsCircleId circleId;
 
-        if(mIsExistingCircle)
+        if(is_existing_circle)
         {
 #ifdef DEBUG_CREATE_CIRCLE_DIALOG
             std::cerr << "CreateCircleDialog::updateCircle() : mCircleType: " << circle.mMeta.mCircleType << std::endl;
@@ -598,7 +599,7 @@ void CreateCircleDialog::createCircle()
 
             std::cerr << "CreateCircleDialog::updateCircle() Checks and Balances Okay - calling service proper.."<< std::endl;
 #endif
-            rsGxsCircles->editCircle(circle);
+            rsGxsCircles->editCircle(*const_cast<RsGxsCircleGroup*>(&circle)); // const_cast: Not nice, but simpler.
 
             circleId = RsGxsCircleId(circle.mMeta.mGroupId);
         }
@@ -619,14 +620,14 @@ void CreateCircleDialog::createCircle()
                                        circle.mLocalFriends);
         }
 
-        RsQThreadUtils::postToObject( [this,circle,circleId]()
-        {
-            if(!mIsExistingCircle)
-                QMessageBox::information(nullptr,tr("Circle created"),
-                                         tr("Your new circle has been created:\n   Name: %1\n   Id: %2.")
-                                            .arg(QString::fromUtf8(circle.mMeta.mGroupName.c_str()))
-                                            .arg(QString::fromStdString(circleId.toStdString())));
-        });
+        if(!is_existing_circle)
+            RsQThreadUtils::postToObject( [circle,circleId]()
+            {
+                    QMessageBox::information(nullptr,tr("Circle created"),
+                                             tr("Your new circle has been created:\n   Name: %1\n   Id: %2.")
+                                                .arg(QString::fromUtf8(circle.mMeta.mGroupName.c_str()))
+                                                .arg(QString::fromStdString(circleId.toStdString())));
+            });
     });
 
     close();
