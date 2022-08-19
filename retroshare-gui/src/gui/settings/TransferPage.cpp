@@ -40,6 +40,12 @@ TransferPage::TransferPage(QWidget * parent, Qt::WindowFlags flags)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
+    int max_tr_low,max_tr_high;
+    rsTurtle->getMaxTRForwardRateLimits(max_tr_low,max_tr_high);
+
+    ui._max_tr_up_per_sec_SB->setMinimum(max_tr_low);
+    ui._max_tr_up_per_sec_SB->setMaximum(max_tr_high);
+
     QObject::connect(ui._queueSize_SB,SIGNAL(valueChanged(int)),this,SLOT(updateQueueSize(int))) ;
     QObject::connect(ui._max_up_SB,SIGNAL(valueChanged(int)),this,SLOT(updateMaxUploadSlots(int))) ;
     QObject::connect(ui._defaultStrategy_CB,SIGNAL(activated(int)),this,SLOT(updateDefaultStrategy(int))) ;
