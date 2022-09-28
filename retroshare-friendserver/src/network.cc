@@ -26,6 +26,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <netinet/tcp.h>
 
 #include "util/rsnet.h"
 #include "util/rsprint.h"
@@ -44,6 +45,9 @@ FsNetworkInterface::FsNetworkInterface(const std::string& listening_address,uint
 
     mClintListn = 0;
     mClintListn = socket(AF_INET, SOCK_STREAM, 0); // creating socket
+
+    int flags=1;
+    setsockopt(mClintListn,SOL_SOCKET,TCP_NODELAY,(char*)&flags,sizeof(flags));
 
     unix_fcntl_nonblock(mClintListn);
 
@@ -104,7 +108,7 @@ void FsNetworkInterface::threadTick()
 
     RS_STACK_MUTEX(mFsNiMtx);
     for(auto& it:mConnections)
-        if(it.second.bio->isactive())
+        if(it.second.bio->isactive() || it.second.bio->moretoread(0))
             it.second.pqi_thread->tick();
     else
             to_close.push_back(it.first);
@@ -146,6 +150,9 @@ bool FsNetworkInterface::checkForNewConnections()
     RsDbg() << "Got incoming connection from " << sockaddr_storage_tostring( *(sockaddr_storage*)&addr);
 
     // Make the socket non blocking so that we can read from it and return if nothing comes
+
+    int flags=1;
+    setsockopt(clintConnt,SOL_SOCKET,TCP_NODELAY,(char*)&flags,sizeof(flags));
 
     unix_fcntl_nonblock(clintConnt);
 
