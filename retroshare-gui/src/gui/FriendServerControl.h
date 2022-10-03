@@ -35,7 +35,7 @@ public:
 
 protected slots:
     void onOnOffClick(bool b);
-    void onOnionAddressEdit();
+    void onOnionAddressEdit(const QString &);
     void onOnionPortEdit(int);
     void onNbFriendsToRequestsChanged(int n);
     void checkServerAddress();
@@ -45,4 +45,5 @@ private:
 
     QTimer *mConnectionCheckTimer;
     QMovie *mCheckingServerMovie;
+    bool 	mCurrentlyCheckingServerAddress;
 };

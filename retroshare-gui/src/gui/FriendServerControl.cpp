@@ -45,6 +45,7 @@ FriendServerControl::FriendServerControl(QWidget *parent)
     setupUi(this);
 
     friendServerOnOff_CB->setEnabled(false); // until FS is connected.
+    mCurrentlyCheckingServerAddress = false;
 
     if(!rsFriendServer)
     {
@@ -80,13 +81,12 @@ FriendServerControl::FriendServerControl(QWidget *parent)
 
     QObject::connect(friendServerOnOff_CB,SIGNAL(toggled(bool)),this,SLOT(onOnOffClick(bool)));
     QObject::connect(torServerFriendsToRequest_SB,SIGNAL(valueChanged(int)),this,SLOT(onFriendsToRequestChanged(int)));
-    QObject::connect(torServerAddress_LE,SIGNAL(editingFinished()),this,SLOT(onOnionAddressEdit()));
+    QObject::connect(torServerAddress_LE,SIGNAL(textEdited(const QString&)),this,SLOT(onOnionAddressEdit(const QString&)));
     QObject::connect(torServerPort_SB,SIGNAL(valueChanged(int)),this,SLOT(onOnionPortEdit(int)));
 
     QObject::connect(mConnectionCheckTimer,SIGNAL(timeout()),this,SLOT(checkServerAddress()));
 
     mCheckingServerMovie = new QMovie(":/images/loader/circleball-16.gif");
-    serverStatusCheckResult_LB->setMovie(mCheckingServerMovie);
 
     updateFriendServerStatusIcon(false);
 }
@@ -130,33 +130,53 @@ void FriendServerControl::onOnionPortEdit(int)
     }
 }
 
-void FriendServerControl::onOnionAddressEdit()
+void FriendServerControl::onOnionAddressEdit(const QString&)
 {
+    while(mCurrentlyCheckingServerAddress)
+    {
+        std::cerr << "  waiting for free slot" << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));	// wait for ongoing check to finish.
+    }
+
+    std::cerr << "Resetting connection proxy timer" << std::endl;
+
     // Setup timer to auto-check the friend server address
-    mConnectionCheckTimer->stop();
     mConnectionCheckTimer->setSingleShot(true);
     mConnectionCheckTimer->setInterval(5000); // check in 5 secs unless something is changed in the mean time.
-
     mConnectionCheckTimer->start();
-
-    if(mCheckingServerMovie->fileName() != QString(":/images/loader/circleball-16.gif" ))
-    {
-        mCheckingServerMovie->setFileName(":/images/loader/circleball-16.gif");
-        mCheckingServerMovie->start();
-    }
 }
 
 void FriendServerControl::checkServerAddress()
 {
-    rsFriendServer->checkServerAddress_async(torServerAddress_LE->text().toStdString(),torServerPort_SB->value(),5000,
-                                       [this](const std::string& address,uint16_t port,bool test_result)
-                                        {
-                                            if(test_result)
-                                                rsFriendServer->setServerAddress(address,port);
+    std::cerr << "In checkServerAddress() ..." << std::endl;
 
-                                            RsQThreadUtils::postToObject( [=]()  {  updateFriendServerStatusIcon(test_result); },this);
-                                        }
-    );
+    mCurrentlyCheckingServerAddress = true;
+
+    serverStatusCheckResult_LB->setMovie(mCheckingServerMovie);
+    serverStatusCheckResult_LB->setToolTip(tr("Friend server is currently reachable.")) ;
+    mCheckingServerMovie->setFileName(":/images/loader/circleball-16.gif");
+    mCheckingServerMovie->start();
+
+    RsThread::async( [this]()
+    {
+        auto port = torServerPort_SB->value();
+        auto addr = torServerAddress_LE->text().toStdString();
+
+        std::cerr << "calling sync test..." << std::endl;
+        bool succeed = rsFriendServer->checkServerAddress(addr,port,5000);
+        std::cerr << "result is " << succeed << std::endl;
+
+        RsQThreadUtils::postToObject( [addr,port,succeed,this]()
+        {
+            if(succeed)
+                rsFriendServer->setServerAddress(addr,port);
+
+            mCheckingServerMovie->stop();
+            updateFriendServerStatusIcon(succeed);
+            mCurrentlyCheckingServerAddress = false;
+
+        },this);
+    });
 }
 
 void FriendServerControl::onNbFriendsToRequestsChanged(int n)
@@ -166,23 +186,22 @@ void FriendServerControl::onNbFriendsToRequestsChanged(int n)
 
 void FriendServerControl::updateFriendServerStatusIcon(bool ok)
 {
-    mCheckingServerMovie->stop();
+    std::cerr << "updating proxy status icon" << std::endl;
 
     if(ok)
     {
-        torServerStatus_LB->setToolTip(tr("Friend server is currently reachable.")) ;
-        mCheckingServerMovie->setFileName(ICON_STATUS_OK);
+        serverStatusCheckResult_LB->setToolTip(tr("Friend server is currently reachable.")) ;
+        serverStatusCheckResult_LB->setPixmap(QPixmap(ICON_STATUS_OK));
         friendServerOnOff_CB->setEnabled(true);
     }
     else
     {
         rsFriendServer->stopServer();
-        torServerStatus_LB->setToolTip(tr("The proxy is not enabled or broken.\nAre all services up and running fine??\nAlso check your ports!")) ;
-        mCheckingServerMovie->setFileName(ICON_STATUS_UNKNOWN);
+        serverStatusCheckResult_LB->setToolTip(tr("The proxy is not enabled or broken.\nAre all services up and running fine??\nAlso check your ports!")) ;
+        serverStatusCheckResult_LB->setPixmap(QPixmap(ICON_STATUS_UNKNOWN));
         friendServerOnOff_CB->setChecked(false);
         friendServerOnOff_CB->setEnabled(false);
     }
-    mCheckingServerMovie->start();
 }
 
 

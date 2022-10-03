@@ -60,13 +60,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="torServerStatus_LB">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -88,7 +81,7 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="icon">
-        <iconset resource="icons.qrc">
+        <iconset resource="images.qrc">
          <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
        </property>
        <property name="checkable">
@@ -205,7 +198,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="images.qrc"/>
  </resources>
  <connections/>
 </ui>
