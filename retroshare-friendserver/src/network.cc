@@ -26,7 +26,14 @@
 #include <time.h>
 #include <unistd.h>
 #include <sys/types.h>
+
+#ifdef WINDOWS_SYS
+#include <windows.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
 #include <netinet/tcp.h>
+#endif
 
 #include "util/rsnet.h"
 #include "util/rsprint.h"
