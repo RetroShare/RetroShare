@@ -153,7 +153,7 @@ void FriendServerControl::checkServerAddress()
     mCurrentlyCheckingServerAddress = true;
 
     serverStatusCheckResult_LB->setMovie(mCheckingServerMovie);
-    serverStatusCheckResult_LB->setToolTip(tr("Friend server is currently reachable.")) ;
+    serverStatusCheckResult_LB->setToolTip(tr("Trying to contact friend server\nThis may take up to 1 min.")) ;
     mCheckingServerMovie->setFileName(":/images/loader/circleball-16.gif");
     mCheckingServerMovie->start();
 
