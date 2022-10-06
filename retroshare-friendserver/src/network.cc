@@ -26,7 +26,14 @@
 #include <time.h>
 #include <unistd.h>
 #include <sys/types.h>
+
+#ifdef WINDOWS_SYS
+#include <windows.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
 #include <netinet/tcp.h>
+#endif
 
 #include "util/rsnet.h"
 #include "util/rsprint.h"
@@ -106,15 +113,19 @@ void FsNetworkInterface::threadTick()
 
     std::list<RsPeerId> to_close;
 
-    RS_STACK_MUTEX(mFsNiMtx);
-    for(auto& it:mConnections)
-        if(it.second.bio->isactive() || it.second.bio->moretoread(0))
+    {
+        RS_STACK_MUTEX(mFsNiMtx);
+        for(auto& it:mConnections)
+        {
             it.second.pqi_thread->tick();
-    else
-            to_close.push_back(it.first);
 
-    for(const auto& pid:to_close)
-        locked_closeConnection(pid);
+            if(!it.second.bio->isactive() && !it.second.bio->moretoread(0))
+                to_close.push_back(it.first);
+        }
+
+        for(const auto& pid:to_close)
+            locked_closeConnection(pid);
+    }
 
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
 }
@@ -158,11 +169,16 @@ bool FsNetworkInterface::checkForNewConnections()
 
     // Create connection info
 
+    RsDbg() << "  Creating connection data." ;
+
     ConnectionData c;
     c.socket = clintConnt;
     c.client_address = addr;
-
     RsPeerId pid = makePeerId(clintConnt);
+
+    RsDbg() << "  socket: " << clintConnt;
+    RsDbg() << "  client address: " <<  sockaddr_storage_tostring(*(sockaddr_storage*)&addr);
+    RsDbg() << "  peer id: " << pid ;
 
     // Setup a pqistreamer to deserialize whatever comes from this connection
 
@@ -176,17 +192,22 @@ bool FsNetworkInterface::checkForNewConnections()
     c.pqi_thread = pqi;
     c.bio = bio;
 
-    pqi->start();
+    {
+        RS_STACK_MUTEX(mFsNiMtx);
+        mConnections[pid] = c;
 
-    RS_STACK_MUTEX(mFsNiMtx);
-    mConnections[pid] = c;
+        pqi->start();
+    }
 
+    RsDbg() << "  streamer has properly started." ;
     return true;
 }
 
 bool FsNetworkInterface::RecvItem(RsItem *item)
 {
     RS_STACK_MUTEX(mFsNiMtx);
+
+    RsDbg() << "FsNetworkInterface: received item " << (void*)item;
 
     auto it = mConnections.find(item->PeerId());
 
@@ -212,6 +233,7 @@ RsItem *FsNetworkInterface::GetItem()
             RsItem *item = it.second.incoming_items.front();
             it.second.incoming_items.pop_front();
 
+            RsDbg() << "FsNetworkInterface: returning item " << (void*)item << " to caller.";
             return item;
         }
     }
