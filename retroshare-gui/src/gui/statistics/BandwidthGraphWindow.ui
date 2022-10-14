@@ -61,7 +61,7 @@
          <string>PushButton</string>
         </property>
         <property name="checkable">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -180,7 +180,15 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>218</width>
+         <height>88</height>
+        </rect>
+       </property>
        <layout class="QVBoxLayout" name="_3">
         <property name="spacing">
          <number>1</number>

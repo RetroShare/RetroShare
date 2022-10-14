@@ -42,7 +42,7 @@
 #define DEFAULT_ALWAYS_ON_TOP   false
 #define DEFAULT_OPACITY         100
 #define DEFAULT_STYLE           LineGraph
-#define DEFAULT_GRAPHCOLOR      DefaultColor
+#define DEFAULT_GRAPHCOLOR      false
 #define DEFAULT_DIRECTION       DefaultDirection
 
 #define ADD_TO_FILTER(f,v,b)  (f = ((b) ? ((f) | (v)) : ((f) & ~(v))))
@@ -135,15 +135,15 @@ void BandwidthGraph::toggleReceiveRate(bool b)
 
 void BandwidthGraph::switchGraphColor()
 {
-   if(ui.frmGraph->getFlags() & RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE)
-   {
-      ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
-      ui.btnGraphColor->setIcon(FilesDefs::getIconFromQtResourcePath(IMG_GRAPH_LIGHT));
-   }
-  else
+   if(ui.btnGraphColor->isChecked())
    {
       ui.frmGraph->setFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
       ui.btnGraphColor->setIcon(FilesDefs::getIconFromQtResourcePath(IMG_GRAPH_DARK));
+   }
+   else
+   {
+      ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
+      ui.btnGraphColor->setIcon(FilesDefs::getIconFromQtResourcePath(IMG_GRAPH_LIGHT));
    }
 
    saveSettings();
@@ -158,9 +158,9 @@ BandwidthGraph::loadSettings()
   setOpacity(ui.sldrOpacity->value());
 
   /* Set whether we are plotting bandwidth as area graphs or not */
-  int graphColor = getSetting(SETTING_GRAPHCOLOR, DEFAULT_GRAPHCOLOR).toInt();
+  ui.btnGraphColor->setChecked(getSetting(SETTING_GRAPHCOLOR, DEFAULT_GRAPHCOLOR).toBool());
 
-  if(graphColor>0)
+  if(ui.btnGraphColor->isChecked())
   {
       ui.frmGraph->setFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
       ui.btnGraphColor->setIcon(FilesDefs::getIconFromQtResourcePath(IMG_GRAPH_DARK));
