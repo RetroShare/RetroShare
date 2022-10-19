@@ -81,7 +81,7 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="icon">
-        <iconset resource="images.qrc">
+        <iconset resource="icons.qrc">
          <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
        </property>
        <property name="checkable">
@@ -179,7 +179,41 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QCheckBox" name="autoAccept_CB">
+        <property name="toolTip">
+         <string>Auto accept received certificates as friends</string>
+        </property>
+        <property name="text">
+         <string>Auto-accept</string>
+        </property>
+       </widget>
+      </item>
      </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="status_TW">
+     <column>
+      <property name="text">
+       <string>Name</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Node ID</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Address</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Status</string>
+      </property>
+     </column>
     </widget>
    </item>
    <item>
@@ -198,7 +232,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="images.qrc"/>
+  <include location="icons.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -22,6 +22,8 @@
 
 #include <QGraphicsScene>
 
+#include "retroshare/rsevents.h"
+
 #include "retroshare-gui/mainpage.h"
 #include "ui_FriendServerControl.h"
 
@@ -39,11 +41,16 @@ protected slots:
     void onOnionPortEdit(int);
     void onNbFriendsToRequestsChanged(int n);
     void checkServerAddress();
+    void onAutoAddFriends(bool b);
 
 private:
+    void updateContactsStatus();
     void updateFriendServerStatusIcon(bool ok);
+    void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
     QTimer *mConnectionCheckTimer;
     QMovie *mCheckingServerMovie;
     bool 	mCurrentlyCheckingServerAddress;
+
+    RsEventsHandlerId_t mEventHandlerId;
 };

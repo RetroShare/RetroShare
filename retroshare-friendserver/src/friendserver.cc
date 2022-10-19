@@ -103,18 +103,29 @@ void FriendServer::handleClientPublish(const RsFriendServerClientPublishItem *it
         sr_item.friend_invites = computeListOfFriendInvites(pi->first,item->n_requested_friends,item->already_received_peers,friends);
         sr_item.PeerId(item->PeerId());
 
+        RsDbg() << "  Got " << sr_item.friend_invites.size() << " closest peers not in the list." ;
+        RsDbg() << "  Updating local information for destination peer." ;
+
         // Update friendship levels of the peer that will receive the new list
 
         for(auto fr:friends)
         {
             auto& p(pi->second.friendship_levels[fr]);
 
+            RsDbg() << "  Already a friend: " << fr << ", with local status " << static_cast<int>(p) ;
+
             if(static_cast<int>(p) < static_cast<int>(RsFriendServer::PeerFriendshipLevel::HAS_KEY))
+            {
                 p = RsFriendServer::PeerFriendshipLevel::HAS_KEY;
+                RsDbg() << "    --> updating status to HAS_KEY" ;
+            }
         }
 
         // Now encrypt the item with the public PGP key of the destination. This prevents the wrong person to request for
         // someone else's data.
+
+        RsDbg() << "  Encrypting item..." ;
+
         RsFriendServerEncryptedServerResponseItem *encrypted_response_item = new RsFriendServerEncryptedServerResponseItem;
         uint32_t serialized_clear_size = FsSerializer().size(&sr_item);
         RsTemporaryMemory serialized_clear_mem(serialized_clear_size);
@@ -137,8 +148,9 @@ void FriendServer::handleClientPublish(const RsFriendServerClientPublishItem *it
         memcpy(encrypted_response_item->bin_data,encrypted_mem,encrypted_mem_size);
 
         // Send the item.
-        mni->SendItem(encrypted_response_item);
 
+        RsDbg() << "  Sending item..." ;
+        mni->SendItem(encrypted_response_item);
     }
     catch(std::exception& e)
     {
@@ -191,8 +203,11 @@ std::map<std::string,RsFriendServer::PeerFriendshipLevel> FriendServer::computeL
     auto pinfo(pinfo_it->second);
 
     for(const auto& pit:pinfo.closest_peers)
+    {
         if(already_known_peers.find(pit.second) == already_known_peers.end())
         {
+            RsDbg() << "  peer " << pit.second << ": not in supplied list => adding it.";
+
             const auto p = mCurrentClientPeers.find(pit.second);
 
             if(p == mCurrentClientPeers.end())	// should not happen, but just an extra security.
@@ -208,6 +223,12 @@ std::map<std::string,RsFriendServer::PeerFriendshipLevel> FriendServer::computeL
             if(res.size() + already_known_peers.size() >= nb_reqs_invites)
                 break;
         }
+        else
+        {
+            auto p = already_known_peers.find(pit.second);
+            RsDbg() << "  peer " << pit.second << ": already in supplied list, with status " << static_cast<int>(p->second) << ". Not adding it.";
+        }
+    }
 
     return res;
 }
