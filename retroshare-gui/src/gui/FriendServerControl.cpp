@@ -37,6 +37,11 @@
 #define ICON_STATUS_UNKNOWN ":/images/ledoff1.png"
 #define ICON_STATUS_OK      ":/images/ledon1.png"
 
+#define NAME_COLUMN 0
+#define NODE_COLUMN 1
+#define ADDR_COLUMN 2
+#define STAT_COLUMN 3
+
 /** Constructor */
 FriendServerControl::FriendServerControl(QWidget *parent)
     : MainPage(parent)
@@ -71,6 +76,8 @@ FriendServerControl::FriendServerControl(QWidget *parent)
 
     mConnectionCheckTimer = new QTimer;
 
+    whileBlocking(autoAccept_CB)->setChecked(rsFriendServer->autoAddFriends());
+
     // init values
 
     torServerFriendsToRequest_SB->setValue(rsFriendServer->friendsToRequest());
@@ -83,18 +90,51 @@ FriendServerControl::FriendServerControl(QWidget *parent)
     QObject::connect(torServerFriendsToRequest_SB,SIGNAL(valueChanged(int)),this,SLOT(onFriendsToRequestChanged(int)));
     QObject::connect(torServerAddress_LE,SIGNAL(textEdited(const QString&)),this,SLOT(onOnionAddressEdit(const QString&)));
     QObject::connect(torServerPort_SB,SIGNAL(valueChanged(int)),this,SLOT(onOnionPortEdit(int)));
+    QObject::connect(autoAccept_CB,SIGNAL(toggled(bool)),this,SLOT(onAutoAddFriends(bool)));
 
     QObject::connect(mConnectionCheckTimer,SIGNAL(timeout()),this,SLOT(checkServerAddress()));
 
     mCheckingServerMovie = new QMovie(":/images/loader/circleball-16.gif");
 
     updateFriendServerStatusIcon(false);
+
+    mEventHandlerId = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
+    {
+        RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this );
+    }, mEventHandlerId, RsEventType::FRIEND_SERVER );
+}
+
+void FriendServerControl::onAutoAddFriends(bool b)
+{
+    rsFriendServer->setAutoAddFriends(b);
+}
+void FriendServerControl::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+    if(event->mType != RsEventType::FRIEND_SERVER) return;
+
+    const RsFriendServerEvent *fe = dynamic_cast<const RsFriendServerEvent*>(event.get());
+    if(!fe)
+        return;
+
+    switch(fe->mFriendServerEventType)
+    {
+    case RsFriendServerEventCode::PEER_INFO_CHANGED: updateContactsStatus();
+        break;
+
+    default:
+    case RsFriendServerEventCode::UNKNOWN: break;
+    }
+
 }
 
 FriendServerControl::~FriendServerControl()
 {
     delete mCheckingServerMovie;
     delete mConnectionCheckTimer;
+
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
 
 void FriendServerControl::onOnOffClick(bool b)
@@ -193,6 +233,7 @@ void FriendServerControl::updateFriendServerStatusIcon(bool ok)
         serverStatusCheckResult_LB->setToolTip(tr("Friend server is currently reachable.")) ;
         serverStatusCheckResult_LB->setPixmap(QPixmap(ICON_STATUS_OK));
         friendServerOnOff_CB->setEnabled(true);
+        status_TW->setEnabled(true);
     }
     else
     {
@@ -201,8 +242,56 @@ void FriendServerControl::updateFriendServerStatusIcon(bool ok)
         serverStatusCheckResult_LB->setPixmap(QPixmap(ICON_STATUS_UNKNOWN));
         friendServerOnOff_CB->setChecked(false);
         friendServerOnOff_CB->setEnabled(false);
+        status_TW->setEnabled(false);
     }
 }
 
+void FriendServerControl::updateContactsStatus()
+{
+    std::map<RsPeerId,RsFriendServer::RsFsPeerInfo> pinfo = rsFriendServer->getPeersInfo();
+
+    status_TW->clear();
+    int row = 0;
+    status_TW->setRowCount(pinfo.size());
+    status_TW->setColumnCount(4);
+
+    status_TW->setHorizontalHeaderItem(NAME_COLUMN,new QTableWidgetItem(QObject::tr("Name")));
+    status_TW->setHorizontalHeaderItem(NODE_COLUMN,new QTableWidgetItem(QObject::tr("Node")));
+    status_TW->setHorizontalHeaderItem(ADDR_COLUMN,new QTableWidgetItem(QObject::tr("Address")));
+    status_TW->setHorizontalHeaderItem(STAT_COLUMN,new QTableWidgetItem(QObject::tr("Status")));
+
+    for(auto it:pinfo)
+    {
+        uint32_t err_code=0;
+        RsPeerDetails details;
+
+        rsPeers->parseShortInvite(it.second.mInvite,details,err_code);
+
+        status_TW->setItem(row,NAME_COLUMN,new QTableWidgetItem(QString::fromStdString(details.name)));
+        status_TW->setItem(row,NODE_COLUMN,new QTableWidgetItem(QString::fromStdString(details.id.toStdString())));
+        status_TW->setItem(row,ADDR_COLUMN,new QTableWidgetItem(QString::fromStdString(details.hiddenNodeAddress)+":"+QString::number(details.hiddenNodePort)));
+
+        QString status_string;
+        if(details.accept_connection)
+            status_string += QString("Friend");
+        else
+            status_string += QString("Not friend");
+
+        status_string += QString(" / ");
+
+        switch(it.second.mPeerLevel)
+        {
+        case RsFriendServer::PeerFriendshipLevel::NO_KEY:   status_string += "Doesn't have my key" ; break;
+        case RsFriendServer::PeerFriendshipLevel::HAS_KEY:  status_string += "Has my key" ; break;
+        case RsFriendServer::PeerFriendshipLevel::HAS_ACCEPTED_KEY:  status_string += "Has friended me" ; break;
+        default:
+        case RsFriendServer::PeerFriendshipLevel::UNKNOWN:  status_string += "Unkn" ; break;
+        }
+
+        status_TW->setItem(row,STAT_COLUMN,new QTableWidgetItem(status_string));
+
+        row++;
+    }
+}
 
 
