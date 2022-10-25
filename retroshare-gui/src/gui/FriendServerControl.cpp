@@ -134,6 +134,9 @@ void FriendServerControl::handleEvent_main_thread(std::shared_ptr<const RsEvent>
             case RsFriendServerEventCode::PEER_INFO_CHANGED: updateContactsStatus();
                 break;
 
+            case RsFriendServerEventCode::FRIEND_SERVER_STATUS_CHANGED: updateFriendServerStatusIcon(fe->mFriendServerStatus == RsFriendServerStatus::ONLINE);
+                break;
+
             default:
             case RsFriendServerEventCode::UNKNOWN: break;
             }
