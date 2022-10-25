@@ -194,6 +194,9 @@
    </item>
    <item>
     <widget class="QTableWidget" name="status_TW">
+     <property name="contextMenuPolicy">
+      <enum>Qt::CustomContextMenu</enum>
+     </property>
      <column>
       <property name="text">
        <string>Name</string>
