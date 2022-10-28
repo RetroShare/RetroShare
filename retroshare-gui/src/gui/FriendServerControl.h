@@ -42,8 +42,11 @@ protected slots:
     void onNbFriendsToRequestsChanged(int n);
     void checkServerAddress();
     void onAutoAddFriends(bool b);
+    void launchStatusContextMenu(QPoint p);
+    void makeFriend();
 
 private:
+    RsPeerId getCurrentPeer();
     void updateContactsStatus();
     void updateFriendServerStatusIcon(bool ok);
     void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
@@ -52,5 +55,11 @@ private:
     QMovie *mCheckingServerMovie;
     bool 	mCurrentlyCheckingServerAddress;
 
-    RsEventsHandlerId_t mEventHandlerId;
+    RsEventsHandlerId_t mEventHandlerId_fs;
+    RsEventsHandlerId_t mEventHandlerId_peer;
+
+    QAction *makeFriend_ACT;
+    QAction *unmakeFriend_ACT;
+    QAction *removePeer_ACT;
+    QAction *removePeerPermanently_ACT;
 };

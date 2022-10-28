@@ -22,6 +22,7 @@
 #include <QMovie>
 #include <QMessageBox>
 #include <QTcpSocket>
+#include <QMenu>
 
 #include "retroshare/rsfriendserver.h"
 #include "retroshare/rstor.h"
@@ -78,13 +79,11 @@ FriendServerControl::FriendServerControl(QWidget *parent)
 
     whileBlocking(autoAccept_CB)->setChecked(rsFriendServer->autoAddFriends());
 
-    // init values
+    // Init values
 
-    torServerFriendsToRequest_SB->setValue(rsFriendServer->friendsToRequest());
-    torServerAddress_LE->setText(QString::fromStdString(rsFriendServer->friendsServerAddress().c_str()));
-    torServerPort_SB->setValue(rsFriendServer->friendsServerPort());
+    whileBlocking(torServerFriendsToRequest_SB)->setValue(rsFriendServer->friendsToRequest());
 
-    // connect slignals/slots
+    // Connect slignals/slots
 
     QObject::connect(friendServerOnOff_CB,SIGNAL(toggled(bool)),this,SLOT(onOnOffClick(bool)));
     QObject::connect(torServerFriendsToRequest_SB,SIGNAL(valueChanged(int)),this,SLOT(onFriendsToRequestChanged(int)));
@@ -93,17 +92,33 @@ FriendServerControl::FriendServerControl(QWidget *parent)
     QObject::connect(autoAccept_CB,SIGNAL(toggled(bool)),this,SLOT(onAutoAddFriends(bool)));
 
     QObject::connect(mConnectionCheckTimer,SIGNAL(timeout()),this,SLOT(checkServerAddress()));
+    QObject::connect(status_TW, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(launchStatusContextMenu(QPoint)));
 
     mCheckingServerMovie = new QMovie(":/images/loader/circleball-16.gif");
 
+    // Do not block signal for these two, since we want to trigger a test to initialise the online status.
+    torServerAddress_LE->setText(QString::fromStdString(rsFriendServer->friendsServerAddress().c_str()));
+    torServerPort_SB->setValue(rsFriendServer->friendsServerPort());
+
     updateFriendServerStatusIcon(false);
 
-    mEventHandlerId = 0;
+    makeFriend_ACT             = new QAction(tr("Make friend"));			// makes SSL-only friend with the peer
+
+    QObject::connect(makeFriend_ACT,SIGNAL(triggered()),this,SLOT(makeFriend()));
+
+    mEventHandlerId_fs = 0;
 
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
     {
         RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this );
-    }, mEventHandlerId, RsEventType::FRIEND_SERVER );
+    }, mEventHandlerId_fs, RsEventType::FRIEND_SERVER );
+
+    mEventHandlerId_peer = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
+    {
+        RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this );
+    }, mEventHandlerId_peer, RsEventType::PEER_CONNECTION );
 }
 
 void FriendServerControl::onAutoAddFriends(bool b)
@@ -112,21 +127,37 @@ void FriendServerControl::onAutoAddFriends(bool b)
 }
 void FriendServerControl::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 {
-    if(event->mType != RsEventType::FRIEND_SERVER) return;
-
-    const RsFriendServerEvent *fe = dynamic_cast<const RsFriendServerEvent*>(event.get());
-    if(!fe)
-        return;
-
-    switch(fe->mFriendServerEventType)
     {
-    case RsFriendServerEventCode::PEER_INFO_CHANGED: updateContactsStatus();
-        break;
+        const RsFriendServerEvent *fe = dynamic_cast<const RsFriendServerEvent*>(event.get());
 
-    default:
-    case RsFriendServerEventCode::UNKNOWN: break;
+        if(fe)
+            switch(fe->mFriendServerEventType)
+            {
+            case RsFriendServerEventCode::PEER_INFO_CHANGED: updateContactsStatus();
+                break;
+
+            case RsFriendServerEventCode::FRIEND_SERVER_STATUS_CHANGED: updateFriendServerStatusIcon(fe->mFriendServerStatus == RsFriendServerStatus::ONLINE);
+                break;
+
+            default:
+            case RsFriendServerEventCode::UNKNOWN: break;
+            }
     }
 
+    {
+        const RsConnectionEvent *pe = dynamic_cast<const RsConnectionEvent*>(event.get());
+
+        if(pe)
+            switch(pe->mConnectionInfoCode)
+            {
+            case RsConnectionEventCode::PEER_ADDED:
+            case RsConnectionEventCode::PEER_REMOVED:
+            case RsConnectionEventCode::PEER_CONNECTED: updateContactsStatus();
+                break;
+
+            default: ;
+            }
+    }
 }
 
 FriendServerControl::~FriendServerControl()
@@ -134,9 +165,23 @@ FriendServerControl::~FriendServerControl()
     delete mCheckingServerMovie;
     delete mConnectionCheckTimer;
 
-    rsEvents->unregisterEventsHandler(mEventHandlerId);
+    rsEvents->unregisterEventsHandler(mEventHandlerId_fs);
+    rsEvents->unregisterEventsHandler(mEventHandlerId_peer);
 }
 
+void FriendServerControl::launchStatusContextMenu(QPoint p)
+{
+    RsPeerId peer_id = getCurrentPeer();
+
+    RsPeerDetails det;
+    if(rsPeers->getPeerDetails(peer_id,det) && det.accept_connection)
+        return;
+
+    QMenu contextMnu(this);
+    contextMnu.addAction(makeFriend_ACT);
+
+    contextMnu.exec(QCursor::pos());
+}
 void FriendServerControl::onOnOffClick(bool b)
 {
     if(b)
@@ -293,5 +338,25 @@ void FriendServerControl::updateContactsStatus()
         row++;
     }
 }
+
+RsPeerId FriendServerControl::getCurrentPeer()
+{
+    QTableWidgetItem *item = status_TW->currentItem();
+
+    if(!item)
+        return RsPeerId();
+
+    return RsPeerId(status_TW->item(item->row(),NODE_COLUMN)->text().toStdString());
+}
+void FriendServerControl::makeFriend()
+{
+    RsPeerId peer_id = getCurrentPeer();
+
+    rsFriendServer->allowPeer(peer_id);
+}
+
+
+
+
 
 
