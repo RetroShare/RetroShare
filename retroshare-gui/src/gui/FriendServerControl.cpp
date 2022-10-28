@@ -82,8 +82,6 @@ FriendServerControl::FriendServerControl(QWidget *parent)
     // Init values
 
     whileBlocking(torServerFriendsToRequest_SB)->setValue(rsFriendServer->friendsToRequest());
-    whileBlocking(torServerAddress_LE)->setText(QString::fromStdString(rsFriendServer->friendsServerAddress().c_str()));
-    whileBlocking(torServerPort_SB)->setValue(rsFriendServer->friendsServerPort());
 
     // Connect slignals/slots
 
@@ -97,6 +95,10 @@ FriendServerControl::FriendServerControl(QWidget *parent)
     QObject::connect(status_TW, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(launchStatusContextMenu(QPoint)));
 
     mCheckingServerMovie = new QMovie(":/images/loader/circleball-16.gif");
+
+    // Do not block signal for these two, since we want to trigger a test to initialise the online status.
+    torServerAddress_LE->setText(QString::fromStdString(rsFriendServer->friendsServerAddress().c_str()));
+    torServerPort_SB->setValue(rsFriendServer->friendsServerPort());
 
     updateFriendServerStatusIcon(false);
 
