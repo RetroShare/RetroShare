@@ -76,13 +76,15 @@ int main(int argc, char* argv[])
 
     // Check the existance of the Tor executable path
 
-    if (!RsDirUtil::fileExists(RsTor::torExecutablePath()))
+    auto tor_path = RsTor::torExecutablePath();
+
+    if (!RsDirUtil::fileExists(tor_path))
     {
-        RsErr() << "Tor executable not found. Try supplying the full path for tor executable with the -t option.";
+        RsErr() << "Tor executable \"" << tor_path << "\" not found. Try supplying the correct full path for a tor executable with the -t option.";
         return 1;
     }
     else
-        RsDbg() << "Using Tor executable: \"" << RsTor::torExecutablePath() << "\"";
+        RsDbg() << "Using Tor executable: \"" << tor_path << "\"";
 
     // Create/start TorManager
 
