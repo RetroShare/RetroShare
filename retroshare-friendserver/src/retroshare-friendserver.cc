@@ -47,16 +47,21 @@ int main(int argc, char* argv[])
 	//RsControl::earlyInitNotificationSystem();
 
     std::string base_directory = "FSData";
+    std::string tor_executable_path ;
 
 	argstream as(argc,argv);
 
     as >> parameter( 'c',"base-dir", base_directory, "set base directory to store data files (keys, etc)", false )
-	   >> help( 'h', "help", "Display this Help" );
+       >> parameter( 't',"tor-executable", tor_executable_path, "set absolute path for tor executable", false )
+       >> help( 'h', "help", "Display this Help" );
 
 	as.defaultErrorHandling(true, true);
 
     RsConfigOptions conf;
     conf.main_executable_path = argv[0];
+
+    if(!tor_executable_path.empty())
+        RsTor::setTorExecutablePath(tor_executable_path);
 
     RsInit::InitRsConfig();
     RsInit::InitRetroShare(conf);
@@ -68,6 +73,19 @@ int main(int argc, char* argv[])
         RsErr() << "Cannot create base directory \"" << base_directory << "\". Check permissions, paths, etc." ;
         return 1;
     }
+
+    // Check the existance of the Tor executable path
+
+    auto tor_path = RsTor::torExecutablePath();
+
+    if (!RsDirUtil::fileExists(tor_path))
+    {
+        RsErr() << "Tor executable \"" << tor_path << "\" not found. Try supplying the correct full path for a tor executable with the -t option.";
+        return 1;
+    }
+    else
+        RsDbg() << "Using Tor executable: \"" << tor_path << "\"";
+
     // Create/start TorManager
 
     RsTor::setTorDataDirectory(RsDirUtil::makePath(base_directory,"tor"));
