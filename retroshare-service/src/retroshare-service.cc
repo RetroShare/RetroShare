@@ -126,19 +126,13 @@ int main(int argc, char* argv[])
 	              "output to stderr instead of log file." )
 	   >> option( 'u',"udp", conf.udpListenerOnly,
 	              "Only listen to UDP." )
-	   >> parameter( 'c',"base-dir", conf.optBaseDir, "directory",
-	                 "Set base directory.", false )
-	   >> parameter( 'l', "log-file", conf.logfname, "logfile",
-	                 "Set Log filename.", false )
-	   >> parameter( 'd', "debug-level", conf.debugLevel, "level",
-	                 "Set debug level.", false )
-	   >> parameter( 'i', "ip-address", conf.forcedInetAddress, "IP",
-	                 "Force IP address to use (if cannot be detected).", false )
-	   >> parameter( 'o', "opmode", conf.opModeStr, "opmode",
-	                 "Set Operating mode (Full, NoTurtle, Gaming, Minimal).",
-	                 false )
-	   >> parameter( 'p', "port", conf.forcedPort, "port",
-	                 "Set listenning port to use.", false );
+       >> parameter( 'c',"base-dir", conf.optBaseDir, "directory", "Set base directory.", false )
+       >> parameter( 'l', "log-file", conf.logfname, "logfile", "Set Log filename.", false )
+       >> parameter( 'd', "debug-level", conf.debugLevel, "level", "Set debug level.", false )
+       >> parameter( 'i', "ip-address", conf.forcedInetAddress, "IP", "Force IP address to use (if cannot be detected).", false )
+       >> parameter( 'o', "opmode", conf.opModeStr, "opmode", "Set Operating mode (Full, NoTurtle, Gaming, Minimal).", false )
+       >> parameter( 'p', "port", conf.forcedPort, "port", "Set listenning port to use.", false )
+       >> parameter( 't', "tor", conf.userSuppliedTorExecutable, "tor", "Set Tor executable full path.", false );
 
 #ifdef RS_SERVICE_TERMINAL_LOGIN
 	as >> parameter( 'U', "user-id", prefUserString, "ID",
@@ -175,6 +169,9 @@ int main(int argc, char* argv[])
 
 	as >> help( 'h', "help", "Display this Help" );
 	as.defaultErrorHandling(true, true);
+
+    if(!conf.userSuppliedTorExecutable.empty())
+        RsTor::setTorExecutablePath(conf.userSuppliedTorExecutable);
 
 #if (defined(RS_JSONAPI) && defined(RS_WEBUI)) && defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
 	std::string webui_pass1;

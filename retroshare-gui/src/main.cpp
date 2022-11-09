@@ -239,7 +239,8 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	        >> parameter('d',"debug-level"   ,conf.debugLevel     ,"level"     ,"Set debug level."                                            ,false)
 	        >> parameter('i',"ip-address"    ,conf.forcedInetAddress,"nnn.nnn.nnn.nnn", "Force IP address to use (if cannot be detected)."    ,false)
 	        >> parameter('p',"port"          ,conf.forcedPort     ,"port"      ,"Set listenning port to use."                                 ,false)
-	        >> parameter('o',"opmode"        ,conf.opModeStr      ,"opmode"    ,"Set Operating mode (Full, NoTurtle, Gaming, Minimal)."       ,false);
+            >> parameter('o',"opmode"        ,conf.opModeStr      ,"opmode"    ,"Set Operating mode (Full, NoTurtle, Gaming, Minimal)."       ,false)
+            >> parameter('t',"opmode"        ,conf.userSuppliedTorExecutable,"tor"    ,"supply full tor eecutable path."       ,false);
 #ifdef RS_JSONAPI
 	as      >> parameter('J', "jsonApiPort", conf.jsonApiPort, "jsonApiPort", "Enable JSON API on the specified port", false )
 	        >> parameter('P', "jsonApiBindAddress", conf.jsonApiBindAddress, "jsonApiBindAddress", "JSON API Bind Address.", false);
@@ -393,6 +394,9 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
     if(is_auto_tor)
 	{
+        if(!conf.userSuppliedTorExecutable.empty())
+            RsTor::setTorExecutablePath(conf.userSuppliedTorExecutable);
+
 		// Now that we know the Tor service running, and we know the SSL id, we can make sure it provides a viable hidden service
 
         std::string tor_hidden_service_dir = RsAccounts::AccountDirectory() + "/hidden_service/" ;
