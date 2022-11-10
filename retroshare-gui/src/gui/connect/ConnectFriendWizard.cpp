@@ -80,6 +80,7 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 {
 	ui->setupUi(this);
 
+    error = 0;
 	mTitleFontSize = 0; // Standard
 	mTitleFontWeight = 0; // Standard
 	
