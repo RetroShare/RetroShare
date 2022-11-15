@@ -146,39 +146,39 @@ void MsgItem::updateItemStatic()
 	/* get peer Id  */
 
 	if (mi.msgflags & RS_MSG_DISTANT)
-		avatar->setGxsId(mi.rsgxsid_srcId) ;
+        avatar->setGxsId(mi.from.toGxsId()) ;
 	else
-		avatar->setId(ChatId(mi.rspeerid_srcId)) ;
+        avatar->setId(ChatId(mi.from.toRsPeerId())) ;
 
 	QString title;
     QString srcName;
 
-    if ((mi.msgflags & RS_MSG_SYSTEM) && mi.rspeerid_srcId == rsPeers->getOwnId())
+    if ((mi.msgflags & RS_MSG_SYSTEM) && mi.from.toRsPeerId() == rsPeers->getOwnId())
 		srcName = "RetroShare";
     else
     {
         if(mi.msgflags & RS_MSG_DISTANT)
         {
             RsIdentityDetails details ;
-            rsIdentity->getIdDetails(mi.rsgxsid_srcId, details) ;
+            rsIdentity->getIdDetails(mi.from.toGxsId(), details) ;
 
             srcName = QString::fromUtf8(details.mNickname.c_str());
         }
         else
-            srcName = QString::fromUtf8(rsPeers->getPeerName(mi.rspeerid_srcId).c_str());
+            srcName = QString::fromUtf8(rsPeers->getPeerName(mi.from.toRsPeerId()).c_str());
     }
 
 
 	if (!mIsHome)
 	{
-		if ((mi.msgflags & RS_MSG_USER_REQUEST) && (!mi.rsgxsid_srcId.isNull()))
+        if ((mi.msgflags & RS_MSG_USER_REQUEST) && mi.from.type()==MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)   // !mi.rsgxsid_srcId.isNull()))
 		{
 			title = QString::fromUtf8(mi.title.c_str()) + " " + tr("from") + " " + srcName;
 			replyButton->setText(tr("Reply to invite"));
 			subjectLabel->hide();
 			info_Frame_Invite->show();
 		}
-		else if ((mi.msgflags & RS_MSG_USER_REQUEST) && mi.rsgxsid_srcId.isNull())
+        else if ((mi.msgflags & RS_MSG_USER_REQUEST) && mi.from.type()!=MsgAddress::MSG_ADDRESS_TYPE_RSGXSID) // mi.rsgxsid_srcId.isNull())
 		{
 			title = QString::fromUtf8(mi.title.c_str()) + " " + " " + srcName;
 			subjectLabel->hide();
@@ -233,7 +233,11 @@ void MsgItem::updateItemStatic()
 	for(it = mi.files.begin(); it != mi.files.end(); ++it)
 	{
 		/* add file */
-        SubFileItem *fi = new SubFileItem(it->hash, it->fname, it->path, it->size, SFI_STATE_REMOTE, mi.rspeerid_srcId);
+        RsPeerId srcId ;
+        if(mi.from.type()==MsgAddress::MSG_ADDRESS_TYPE_RSPEERID)
+            srcId = mi.from.toRsPeerId();
+
+        SubFileItem *fi = new SubFileItem(it->hash, it->fname, it->path, it->size, SFI_STATE_REMOTE, srcId);
 		mFileItems.push_back(fi);
 
 		QLayout *layout = expandFrame->layout();
@@ -395,9 +399,12 @@ void MsgItem::sendInvite()
 	if (!rsMail->getMessage(mMsgId, mi))
 		return;
 
+    if(mi.from.type()!=MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
+        return;
+
     //if ((QMessageBox::question(this, tr("Send invite?"),tr("Do you really want send a invite with your Certificate?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
 	//{
-	MessageComposer::sendInvite(mi.rsgxsid_srcId,false);
+    MessageComposer::sendInvite(mi.from.toGxsId(),false);
 	//}
 
 }

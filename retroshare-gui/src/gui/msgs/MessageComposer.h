@@ -172,6 +172,7 @@ private slots:
 
 private:
     static QString buildReplyHeader(const MessageInfo &msgInfo);
+    bool buildMessage(MessageInfo& mi);
 
     void processSettings(bool bLoad);
 
@@ -264,6 +265,7 @@ private:
 	QLabel *lineLabel;
 
 	bool has_gxs;
+    bool mAlreadySent; // prevents a Qt bug that calls the same action twice.
 
     /** Qt Designer generated object */
     Ui::MessageComposer ui;

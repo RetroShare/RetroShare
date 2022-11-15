@@ -166,6 +166,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     ui.messageTreeWidget->setItemDelegateForColumn(RsMessageModel::COLUMN_THREAD_SUBJECT,itemDelegate);
 
     ui.messageTreeWidget->setItemDelegateForColumn(RsMessageModel::COLUMN_THREAD_AUTHOR,new GxsIdTreeItemDelegate()) ;
+    ui.messageTreeWidget->setItemDelegateForColumn(RsMessageModel::COLUMN_THREAD_TO,new GxsIdTreeItemDelegate()) ;
 
     // workaround for Qt bug, should be solved in next Qt release 4.7.0
     // http://bugreports.qt.nokia.com/browse/QTBUG-8270
@@ -190,6 +191,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     /* add filter actions */
     ui.filterLineEdit->addFilter(QIcon(), tr("Subject"),     RsMessageModel::COLUMN_THREAD_SUBJECT,   tr("Search Subject"));
     ui.filterLineEdit->addFilter(QIcon(), tr("From"),        RsMessageModel::COLUMN_THREAD_AUTHOR,    tr("Search From"));
+    ui.filterLineEdit->addFilter(QIcon(), tr("To"),          RsMessageModel::COLUMN_THREAD_TO,        tr("Search To"));
     ui.filterLineEdit->addFilter(QIcon(), tr("Date"),        RsMessageModel::COLUMN_THREAD_DATE,      tr("Search Date"));
     ui.filterLineEdit->addFilter(QIcon(), tr("Content"),     RsMessageModel::COLUMN_THREAD_CONTENT,   tr("Search Content"));
     ui.filterLineEdit->addFilter(QIcon(), tr("Tags"),        RsMessageModel::COLUMN_THREAD_TAGS,      tr("Search Tags"));
@@ -212,10 +214,12 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_SUBJECT,    fm.width("You have a message")*3.0);
     msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_AUTHOR,     fm.width("[Retroshare]")*1.1);
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_TO,         fm.width("[Retroshare]")*1.1);
     msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_DATE,       fm.width("01/01/1970")*1.1);
 
     QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_SUBJECT,    QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_AUTHOR,     QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_TO,         QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_DATE,       QHeaderView::Interactive);
 
     QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_STAR,       QHeaderView::Fixed);
@@ -749,12 +753,12 @@ void MessagesDialog::messageTreeWidgetCustomPopupMenu(QPoint /*point*/)
     // test if identity is known. If not, no need to call the people tab. Also some mails come from nodes and we wont show that node in the people tab either.
     // The problem here is that the field rsgxsid_srcId is always populated with either the GxsId or the node of the source, which is inconsistent.
 
-    if(nCount==1 && rsIdentity->getIdDetails(msgInfo.rsgxsid_srcId,details))
+    if(nCount==1 && msgInfo.from.type() == MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
 	{
-        std::cerr << "Src ID = " << msgInfo.rsgxsid_srcId << std::endl;
+        std::cerr << "Src ID = " << msgInfo.from.toGxsId() << std::endl;
 
-        contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_AUTHOR_INFO),tr("Show author in People"),this,SLOT(showAuthorInPeopleTab()));
-		contextMnu.addSeparator();
+        contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_AUTHOR_INFO),tr("Show in People"),this,SLOT(showAuthorInPeopleTab()));
+        contextMnu.addSeparator();
 	}
 
     contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MESSAGE), tr("New Message"), this, SLOT(newmessage()));
@@ -774,7 +778,7 @@ void MessagesDialog::showAuthorInPeopleTab()
 	if (!rsMail->getMessage(mid, msgInfo))
 		return;
 
-	if(msgInfo.rsgxsid_srcId.isNull())
+    if(msgInfo.from.type() != MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
 		return ;
 
 	/* window will destroy itself! */
@@ -784,7 +788,7 @@ void MessagesDialog::showAuthorInPeopleTab()
 		return ;
 
 	MainWindow::showWindow(MainWindow::People);
-	idDialog->navigate(RsGxsId(msgInfo.rsgxsid_srcId)) ;
+    idDialog->navigate(RsGxsId(msgInfo.from.toGxsId())) ;
 }
 
 void MessagesDialog::folderlistWidgetCustomPopupMenu(QPoint /*point*/)
@@ -1201,6 +1205,7 @@ void MessagesDialog::filterChanged(const QString& text)
     {
     case RsMessageModel::COLUMN_THREAD_SUBJECT:      f = RsMessageModel::FILTER_TYPE_SUBJECT ; break;
     case RsMessageModel::COLUMN_THREAD_AUTHOR:       f = RsMessageModel::FILTER_TYPE_FROM ; break;
+    case RsMessageModel::COLUMN_THREAD_TO:           f = RsMessageModel::FILTER_TYPE_TO ; break;
     case RsMessageModel::COLUMN_THREAD_DATE:         f = RsMessageModel::FILTER_TYPE_DATE ; break;
     case RsMessageModel::COLUMN_THREAD_CONTENT:      f = RsMessageModel::FILTER_TYPE_CONTENT ; break;
     case RsMessageModel::COLUMN_THREAD_TAGS:         f = RsMessageModel::FILTER_TYPE_TAGS ; break;
@@ -1225,6 +1230,7 @@ void MessagesDialog::filterColumnChanged(int column)
     {
     case RsMessageModel::COLUMN_THREAD_SUBJECT:      f = RsMessageModel::FILTER_TYPE_SUBJECT ; break;
     case RsMessageModel::COLUMN_THREAD_AUTHOR:       f = RsMessageModel::FILTER_TYPE_FROM ; break;
+    case RsMessageModel::COLUMN_THREAD_TO:           f = RsMessageModel::FILTER_TYPE_TO ; break;
     case RsMessageModel::COLUMN_THREAD_DATE:         f = RsMessageModel::FILTER_TYPE_DATE ; break;
     case RsMessageModel::COLUMN_THREAD_CONTENT:      f = RsMessageModel::FILTER_TYPE_CONTENT ; break;
     case RsMessageModel::COLUMN_THREAD_TAGS:         f = RsMessageModel::FILTER_TYPE_TAGS ; break;

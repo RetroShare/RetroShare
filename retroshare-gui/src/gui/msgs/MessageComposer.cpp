@@ -122,6 +122,8 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
+    mAlreadySent = false;
+
     m_msgType = NORMAL;
     // needed to send system flags with reply
     msgFlags = 0;
@@ -149,7 +151,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     ui.hashBox->hide();
 
     // connect up the buttons.
-    connect( ui.actionSend, SIGNAL( triggered(bool)), this, SLOT( sendMessage() ) );
+    connect( ui.actionSend, SIGNAL( triggered(bool)), this, SLOT( sendMessage() ), Qt::UniqueConnection );
     //connect( ui.actionReply, SIGNAL( triggered (bool)), this, SLOT( replyMessage( ) ) );
     connect(ui.boldbtn, SIGNAL(clicked()), this, SLOT(textBold()));
     connect(ui.underlinebtn, SIGNAL(clicked()), this, SLOT(textUnderline()));
@@ -930,6 +932,7 @@ void MessageComposer::addFile(const FileInfo &fileInfo)
 void MessageComposer::titleChanged()
 {
     calculateTitle();
+    std::cerr << "Setting modified 004 = true" << std::endl;
     ui.msgText->document()->setModified(true);
 }
 
@@ -1083,18 +1086,45 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
     //            msgComposer->addRecipient(MessageComposer::BCC, *groupIt, true) ;
     //        }
 
-        for (std::set<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgto.begin();  it != msgInfo.rspeerid_msgto.end(); ++it )  msgComposer->addRecipient(MessageComposer::TO, *it) ;
-        for (std::set<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgcc.begin();  it != msgInfo.rspeerid_msgcc.end(); ++it )  msgComposer->addRecipient(MessageComposer::CC, *it) ;
-        for (std::set<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgbcc.begin(); it != msgInfo.rspeerid_msgbcc.end(); ++it )  msgComposer->addRecipient(MessageComposer::BCC, *it) ;
-        for (std::set<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgto.begin();   it != msgInfo.rsgxsid_msgto.end(); ++it )  msgComposer->addRecipient(MessageComposer::TO, *it) ;
-        for (std::set<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgcc.begin();   it != msgInfo.rsgxsid_msgcc.end(); ++it )  msgComposer->addRecipient(MessageComposer::CC, *it) ;
-        for (std::set<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgbcc.begin();  it != msgInfo.rsgxsid_msgbcc.end(); ++it )  msgComposer->addRecipient(MessageComposer::BCC, *it) ;
+        for(auto m:msgInfo.to)
+        switch(m.mode())
+        {
+        case MsgAddress::MSG_ADDRESS_MODE_TO:
+            if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
+                msgComposer->addRecipient(MessageComposer::TO,m.toGxsId());
+            else if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSPEERID)
+                msgComposer->addRecipient(MessageComposer::TO,m.toRsPeerId());
+            break;
+
+        case MsgAddress::MSG_ADDRESS_MODE_CC:
+            if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
+                msgComposer->addRecipient(MessageComposer::CC,m.toGxsId());
+            else if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSPEERID)
+                msgComposer->addRecipient(MessageComposer::CC,m.toRsPeerId());
+            break;
+
+        case MsgAddress::MSG_ADDRESS_MODE_BCC:
+            if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
+                msgComposer->addRecipient(MessageComposer::BCC,m.toGxsId());
+            else if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSPEERID)
+                msgComposer->addRecipient(MessageComposer::BCC,m.toRsPeerId());
+            break;
+    default:break;
+        }
+
+        // for (std::set<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgto.begin();  it != msgInfo.rspeerid_msgto.end(); ++it )  msgComposer->addRecipient(MessageComposer::TO, *it) ;
+        // for (std::set<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgcc.begin();  it != msgInfo.rspeerid_msgcc.end(); ++it )  msgComposer->addRecipient(MessageComposer::CC, *it) ;
+        // for (std::set<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgbcc.begin(); it != msgInfo.rspeerid_msgbcc.end(); ++it )  msgComposer->addRecipient(MessageComposer::BCC, *it) ;
+        // for (std::set<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgto.begin();   it != msgInfo.rsgxsid_msgto.end(); ++it )  msgComposer->addRecipient(MessageComposer::TO, *it) ;
+        // for (std::set<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgcc.begin();   it != msgInfo.rsgxsid_msgcc.end(); ++it )  msgComposer->addRecipient(MessageComposer::CC, *it) ;
+        // for (std::set<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgbcc.begin();  it != msgInfo.rsgxsid_msgbcc.end(); ++it )  msgComposer->addRecipient(MessageComposer::BCC, *it) ;
 
         MsgTagInfo tagInfo;
         rsMail->getMessageTag(msgId, tagInfo);
 
         msgComposer->m_tagIds = tagInfo.tagIds;
         msgComposer->showTagLabels();
+    std::cerr << "Setting modified 005 = false" << std::endl;
         msgComposer->ui.msgText->document()->setModified(false);
     }
 
@@ -1110,7 +1140,7 @@ QString MessageComposer::buildReplyHeader(const MessageInfo &msgInfo)
 	QString from;
 	if(msgInfo.msgflags & RS_MSG_DISTANT)
 	{
-		link = RetroShareLink::createMessage(msgInfo.rsgxsid_srcId, "");
+        link = RetroShareLink::createMessage(msgInfo.from.toGxsId(), "");
 		if (link.valid())
 		{
 			from += link.toHtml();
@@ -1118,57 +1148,39 @@ QString MessageComposer::buildReplyHeader(const MessageInfo &msgInfo)
 	}
 	else
 	{
-		link = RetroShareLink::createMessage(msgInfo.rspeerid_srcId, "");
+        link = RetroShareLink::createMessage(msgInfo.from.toRsPeerId(), "");
 		if (link.valid())
 		{
 			from += link.toHtml();
 		}
 	}
+    QString to,cc;
 
-    QString to;
-    for ( std::set<RsPeerId>::const_iterator  it = msgInfo.rspeerid_msgto.begin(); it != msgInfo.rspeerid_msgto.end(); ++it)
+    for(auto m:msgInfo.to)
     {
-        link = RetroShareLink::createMessage(*it, "");
+            RetroShareLink link;
+
+        if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
+            link = RetroShareLink::createMessage(m.toGxsId(), "");
+        else
+            link = RetroShareLink::createMessage(m.toRsPeerId(), "");
+
         if (link.valid())
-        {
-            if (!to.isEmpty())
-                to += ", ";
+            if(m.mode()==MsgAddress::MSG_ADDRESS_MODE_TO)
+            {
+                if (!to.isEmpty())
+                    to += ", ";
 
-            to += link.toHtml();
-        }
-    }
-    for ( std::set<RsGxsId>::const_iterator  it = msgInfo.rsgxsid_msgto.begin(); it != msgInfo.rsgxsid_msgto.end(); ++it)
-    {
-        link = RetroShareLink::createMessage(*it, "");
-        if (link.valid())
-        {
-            if (!to.isEmpty())
-                to += ", ";
-
-            to += link.toHtml();
-        }
-    }
-
-    QString cc;
-    for (std::set<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgcc.begin(); it != msgInfo.rspeerid_msgcc.end(); ++it) {
-        link = RetroShareLink::createMessage(*it, "");
-        if (link.valid()) {
-            if (!cc.isEmpty()) {
-                cc += ", ";
+                to += link.toHtml();
             }
-            cc += link.toHtml();
-        }
-    }
-    for (std::set<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgcc.begin(); it != msgInfo.rsgxsid_msgcc.end(); ++it) {
-        link = RetroShareLink::createMessage(*it, "");
-        if (link.valid()) {
-            if (!cc.isEmpty()) {
-                cc += ", ";
-            }
-            cc += link.toHtml();
-        }
-    }
+            else if(m.mode()==MsgAddress::MSG_ADDRESS_MODE_CC)
+            {
+                if (!cc.isEmpty())
+                    cc += ", ";
 
+                cc += link.toHtml();
+            }
+    }
 
     QString header = QString("<span>-----%1-----").arg(tr("Original Message"));
     header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(tr("From"), from);
@@ -1220,6 +1232,7 @@ void MessageComposer::setQuotedMsg(const QString &msg, const QString &header)
     ui.msgText->moveCursor(QTextCursor::Start);
 
     ui.msgText->setUndoRedoEnabled(true);
+    std::cerr << "Setting modified 006 = true" << std::endl;
     ui.msgText->document()->setModified(true);
 
     ui.msgText->setFocus( Qt::OtherFocusReason );
@@ -1241,14 +1254,18 @@ MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
     msgComposer->setTitleText(QString::fromUtf8(msgInfo.title.c_str()), REPLY);
     msgComposer->setQuotedMsg(QString::fromUtf8(msgInfo.msg.c_str()), buildReplyHeader(msgInfo));
 
-    if(!msgInfo.rspeerid_srcId.isNull()) msgComposer->addRecipient(MessageComposer::TO, msgInfo.rspeerid_srcId);
-    if(!msgInfo.rsgxsid_srcId.isNull()) msgComposer->addRecipient(MessageComposer::TO, msgInfo.rsgxsid_srcId);
+    if(msgInfo.from.type()==MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
+        msgComposer->addRecipient(MessageComposer::TO, msgInfo.from.toGxsId());
+    else if(msgInfo.from.type()==MsgAddress::MSG_ADDRESS_TYPE_RSPEERID)
+        msgComposer->addRecipient(MessageComposer::TO, msgInfo.from.toRsPeerId());
 
     // make sure the current ID is among the ones the msg was actually sent to.
-    for(auto it(msgInfo.rsgxsid_msgto.begin());it!=msgInfo.rsgxsid_msgto.end();++it)
-        if(rsIdentity->isOwnId(*it))
+#warning: We do not know here what is the atual destination of the message, since it may have been sent to two of our IDs at once.
+
+    for(auto m:msgInfo.to)
+        if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSGXSID && rsIdentity->isOwnId(m.toGxsId()))
         {
-            msgComposer->ui.respond_to_CB->setDefaultId(*it) ;
+            msgComposer->ui.respond_to_CB->setDefaultId(m.toGxsId()) ;
             break ;
         }
     // Note: another solution is to do
@@ -1259,21 +1276,27 @@ MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
     {
         RsPeerId ownId = rsPeers->getOwnId();
 
-        for (std::set<RsPeerId>::iterator tli = msgInfo.rspeerid_msgto.begin(); tli != msgInfo.rspeerid_msgto.end(); ++tli)
-            if (ownId != *tli)
-                msgComposer->addRecipient(MessageComposer::TO, *tli) ;
+        for(auto m:msgInfo.to)
+            if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
+                msgComposer->addRecipient(MessageComposer::TO,m.toGxsId());
+            else if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSPEERID)
+                msgComposer->addRecipient(MessageComposer::TO,m.toRsPeerId());
 
-        for (std::set<RsPeerId>::iterator tli = msgInfo.rspeerid_msgcc.begin(); tli != msgInfo.rspeerid_msgcc.end(); ++tli)
-            if (ownId != *tli)
-                msgComposer->addRecipient(MessageComposer::TO, *tli) ;
+        // for (std::set<RsPeerId>::iterator tli = msgInfo.rspeerid_msgto.begin(); tli != msgInfo.rspeerid_msgto.end(); ++tli)
+        //     if (ownId != *tli)
+        //         msgComposer->addRecipient(MessageComposer::TO, *tli) ;
 
-        for (std::set<RsGxsId>::iterator tli = msgInfo.rsgxsid_msgto.begin(); tli != msgInfo.rsgxsid_msgto.end(); ++tli)
-            //if (ownId != *tli)
-                msgComposer->addRecipient(MessageComposer::TO, *tli) ;
+        // for (std::set<RsPeerId>::iterator tli = msgInfo.rspeerid_msgcc.begin(); tli != msgInfo.rspeerid_msgcc.end(); ++tli)
+        //     if (ownId != *tli)
+        //         msgComposer->addRecipient(MessageComposer::TO, *tli) ;
 
-        for (std::set<RsGxsId>::iterator tli = msgInfo.rsgxsid_msgcc.begin(); tli != msgInfo.rsgxsid_msgcc.end(); ++tli)
-            //if (ownId != *tli)
-                msgComposer->addRecipient(MessageComposer::TO, *tli) ;
+        // for (std::set<RsGxsId>::iterator tli = msgInfo.rsgxsid_msgto.begin(); tli != msgInfo.rsgxsid_msgto.end(); ++tli)
+        //     //if (ownId != *tli)
+        //         msgComposer->addRecipient(MessageComposer::TO, *tli) ;
+
+        // for (std::set<RsGxsId>::iterator tli = msgInfo.rsgxsid_msgcc.begin(); tli != msgInfo.rsgxsid_msgcc.end(); ++tli)
+        //     //if (ownId != *tli)
+        //         msgComposer->addRecipient(MessageComposer::TO, *tli) ;
     }
 
     // needed to send system flags with reply
@@ -1363,26 +1386,31 @@ void MessageComposer::setMsgText(const QString &msg, bool asHtml)
     c.movePosition(QTextCursor::End);
     ui.msgText->setTextCursor(c);
 
+    std::cerr << "Setting modified 007 = true" << std::endl;
     ui.msgText->document()->setModified(true);
 }
 
 void MessageComposer::sendMessage()
 {
-    if (sendMessage_internal(false)) {
+    /* check for existing title */
+
+    if (ui.titleEdit->text().isNull())
+        if (QMessageBox::warning(this, tr("RetroShare"), tr("Do you want to send the message without a subject ?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
+            ui.titleEdit->setFocus();
+            return ; // Don't send with an empty subject
+        }
+
+    if (sendMessage_internal(false))
         close();
-    }
 }
 
-bool MessageComposer::sendMessage_internal(bool bDraftbox)
+bool MessageComposer::buildMessage(MessageInfo& mi)
 {
-    /* construct a message */
-    MessageInfo mi;
+    // add a GXS signer/from in case the message is to be sent to a distant peer
 
-	 // add a GXS signer/from in case the message is to be sent to a distant peer
+    mi.from = MsgAddress(RsGxsId(ui.respond_to_CB->itemData(ui.respond_to_CB->currentIndex()).toString().toStdString()),MsgAddress::MSG_ADDRESS_MODE_TO) ;
 
-	 mi.rsgxsid_srcId = RsGxsId(ui.respond_to_CB->itemData(ui.respond_to_CB->currentIndex()).toString().toStdString()) ;
-
-	 //std::cerr << "MessageSend: setting 'from' field to GXS id = " << mi.rsgxsid_srcId << std::endl;
+    //std::cerr << "MessageSend: setting 'from' field to GXS id = " << mi.rsgxsid_srcId << std::endl;
 
     mi.title = misc::removeNewLine(ui.titleEdit->text()).toUtf8().constData();
     // needed to send system flags with reply
@@ -1391,14 +1419,6 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
     QString text;
     RsHtml::optimizeHtml(ui.msgText, text);
     mi.msg = text.toUtf8().constData();
-
-    /* check for existing title */
-    if (bDraftbox == false && mi.title.empty()) {
-        if (QMessageBox::warning(this, tr("RetroShare"), tr("Do you want to send the message without a subject ?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
-            ui.titleEdit->setFocus();
-            return false; // Don't send with an empty subject
-        }
-    }
 
     int filesCount = ui.msgFileList->topLevelItemCount();
     for (int i = 0; i < filesCount; ++i) {
@@ -1456,12 +1476,9 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 
                     switch (type)
                     {
-                    case TO: mi.rspeerid_msgto.insert(*sslIt);
-                        break;
-                    case CC: mi.rspeerid_msgcc.insert(*sslIt);
-                        break;
-                    case BCC:mi.rspeerid_msgbcc.insert(*sslIt);
-                        break;
+                    case TO:  mi.to.insert(MsgAddress(*sslIt,MsgAddress::MSG_ADDRESS_MODE_TO)); break;
+                    case CC:  mi.to.insert(MsgAddress(*sslIt,MsgAddress::MSG_ADDRESS_MODE_CC)); break;
+                    case BCC: mi.to.insert(MsgAddress(*sslIt,MsgAddress::MSG_ADDRESS_MODE_BCC)); break;
                     }
                 }
             }
@@ -1473,12 +1490,9 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 
             switch (type)
             {
-            case TO: mi.rspeerid_msgto.insert(pid);
-            break ;
-            case CC: mi.rspeerid_msgcc.insert(pid);
-            break ;
-            case BCC:mi.rspeerid_msgbcc.insert(pid);
-            break ;
+                case TO:  mi.to.insert(MsgAddress(pid,MsgAddress::MSG_ADDRESS_MODE_TO)); break;
+                case CC:  mi.to.insert(MsgAddress(pid,MsgAddress::MSG_ADDRESS_MODE_CC)); break;
+                case BCC: mi.to.insert(MsgAddress(pid,MsgAddress::MSG_ADDRESS_MODE_BCC)); break;
             }
         }
             break ;
@@ -1488,12 +1502,9 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 
             switch (type)
             {
-            case TO: mi.rsgxsid_msgto.insert(gid) ;
-            break ;
-            case CC: mi.rsgxsid_msgcc.insert(gid) ;
-            break ;
-            case BCC:mi.rsgxsid_msgbcc.insert(gid) ;
-            break ;
+                case TO:  mi.to.insert(MsgAddress(gid,MsgAddress::MSG_ADDRESS_MODE_TO)); break;
+                case CC:  mi.to.insert(MsgAddress(gid,MsgAddress::MSG_ADDRESS_MODE_CC)); break;
+                case BCC: mi.to.insert(MsgAddress(gid,MsgAddress::MSG_ADDRESS_MODE_BCC)); break;
             }
         }
             break ;
@@ -1503,6 +1514,26 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
             break ;
         }
     }
+    return true;
+}
+
+bool MessageComposer::sendMessage_internal(bool bDraftbox)
+{
+    if(mAlreadySent)
+    {
+        std::cerr << "Already_sent is true. Giving up." << std::endl;
+        return true;
+    }
+
+    /* construct a message */
+    MessageInfo mi;
+
+    if(!buildMessage(mi))
+        return false;
+
+    std::cerr << "Setting already_sent=true" << std::endl;
+
+    mAlreadySent = true;
 
     if (bDraftbox)
     {
@@ -1527,18 +1558,25 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
     else
     {
         /* check for the recipient */
-        if (mi.rspeerid_msgto.empty() && mi.rspeerid_msgcc.empty() && mi.rspeerid_msgbcc.empty()
-                        && mi.rsgxsid_msgto.empty() && mi.rsgxsid_msgcc.empty() && mi.rsgxsid_msgbcc.empty())
+        if (mi.to.empty())
         {
             QMessageBox::warning(this, tr("RetroShare"), tr("Please insert at least one recipient."), QMessageBox::Ok);
             return false; // Don't send with no recipient
         }
 
-     if(mi.rsgxsid_srcId.isNull() && !(mi.rsgxsid_msgto.empty() && mi.rsgxsid_msgcc.empty() && mi.rsgxsid_msgbcc.empty()))
-     {
+        bool at_least_one_gxsid = false;
+        for(auto m:mi.to)
+            if(m.type() == MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
+            {
+                at_least_one_gxsid=true;
+                break;
+            }
+
+        if(at_least_one_gxsid && mi.from.type() != MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
+        {
             QMessageBox::warning(this, tr("RetroShare"), tr("Please create an identity to sign distant messages, or remove the distant peers from the destination list."), QMessageBox::Ok);
             return false; // Don't send if cannot sign.
-     }
+        }
         if (rsMail->MessageSend(mi) == false) {
             return false;
         }
@@ -1576,6 +1614,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
             rsMail->setMessageTag(mi.msgId, *tag, false);
         }
     }
+    std::cerr << "Setting modified 001 = false" << std::endl;
     ui.msgText->document()->setModified(false);
 
     return true;
@@ -2394,6 +2433,7 @@ bool MessageComposer::fileSave()
     QTextStream ts(&file);
     ts.setCodec(QTextCodec::codecForName("UTF-8"));
     ts << ui.msgText->document()->toHtml("UTF-8");
+    std::cerr << "Setting modified 002 = false" << std::endl;
     ui.msgText->document()->setModified(false);
     return true;
 }
@@ -2448,6 +2488,7 @@ void MessageComposer::filePrintPdf()
 void MessageComposer::setCurrentFileName(const QString &fileName)
 {
     this->fileName = fileName;
+    std::cerr << "Setting modified 003 = false" << std::endl;
     ui.msgText->document()->setModified(false);
 
     setWindowModified(false);

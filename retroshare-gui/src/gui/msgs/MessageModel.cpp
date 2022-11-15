@@ -167,7 +167,8 @@ QVariant RsMessageModel::headerData(int section, Qt::Orientation /*orientation*/
 		{
 		case COLUMN_THREAD_DATE:         return tr("Date");
 		case COLUMN_THREAD_AUTHOR:       return tr("From");
-		case COLUMN_THREAD_SUBJECT:      return tr("Subject");
+        case COLUMN_THREAD_TO:           return tr("To");
+        case COLUMN_THREAD_SUBJECT:      return tr("Subject");
 		case COLUMN_THREAD_TAGS:         return tr("Tags");
 		default:
 			return QVariant();
@@ -189,8 +190,9 @@ QVariant RsMessageModel::headerData(int section, Qt::Orientation /*orientation*/
         {
         case COLUMN_THREAD_ATTACHMENT: return tr("Click to sort by attachments");
         case COLUMN_THREAD_SUBJECT:    return tr("Click to sort by subject");
-        case COLUMN_THREAD_READ:       return tr("Click to sort by read");
-        case COLUMN_THREAD_AUTHOR:     return tr("Click to sort by from");
+        case COLUMN_THREAD_READ:       return tr("Click to sort by read status");
+        case COLUMN_THREAD_AUTHOR:     return tr("Click to sort by author");
+        case COLUMN_THREAD_TO:         return tr("Click to sort by destination");
         case COLUMN_THREAD_DATE:       return tr("Click to sort by date");
         case COLUMN_THREAD_TAGS:       return tr("Click to sort by tags");
         case COLUMN_THREAD_STAR:       return tr("Click to sort by star");
@@ -269,7 +271,7 @@ QVariant RsMessageModel::data(const QModelIndex &index, int role) const
 	case MsgFlagsRole:       return fmpe.msgflags ;
 	case UnreadRole: 		 return fmpe.msgflags & (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER);
 	case MsgIdRole:          return QString::fromStdString(fmpe.msgId) ;
-	case SrcIdRole:          return QString::fromStdString(fmpe.srcId.toStdString()) ;
+    case SrcIdRole:          return QString::fromStdString(fmpe.from.toStdString()) ;
 	default:
 		return QVariant();
 	}
@@ -312,6 +314,11 @@ bool RsMessageModel::passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int /*col
 			if(s.isNull())
 				passes_strings = false;
 			break;
+        case FILTER_TYPE_TO:        s = sortRole(fmpe,COLUMN_THREAD_TO).toString();
+            if(s.isNull())
+                passes_strings = false;
+            break;
+
 		case FILTER_TYPE_DATE:   	s = displayRole(fmpe,COLUMN_THREAD_DATE).toString();
 			break;
 		case FILTER_TYPE_CONTENT:   {
@@ -390,15 +397,18 @@ void RsMessageModel::setFilter(FilterType filter_type, const QStringList& string
 
 QVariant RsMessageModel::toolTipRole(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
 {
-	if(column == COLUMN_THREAD_AUTHOR)
+    if(column == COLUMN_THREAD_AUTHOR || column == COLUMN_THREAD_TO)
 	{
 		QString str,comment ;
 		QList<QIcon> icons;
 
-		if(!GxsIdDetails::MakeIdDesc(RsGxsId(fmpe.srcId.toStdString()), true, str, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
+        if(column == COLUMN_THREAD_AUTHOR && !GxsIdDetails::MakeIdDesc(RsGxsId(fmpe.from.toStdString()), true, str, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
 			return QVariant();
 
-		int S = QFontMetricsF(QApplication::font()).height();
+        if(column == COLUMN_THREAD_TO && !GxsIdDetails::MakeIdDesc(RsGxsId(fmpe.to.begin()->toStdString()), true, str, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
+            return QVariant();
+
+        int S = QFontMetricsF(QApplication::font()).height();
 		QImage pix( (*icons.begin()).pixmap(QSize(5*S,5*S)).toImage());
 
 		QString embeddedImage;
@@ -429,7 +439,8 @@ QVariant RsMessageModel::sizeHintRole(int col) const
 	case COLUMN_THREAD_SUBJECT:      return QVariant( QSize(factor * 170, factor*14 ));
 	case COLUMN_THREAD_DATE:         return QVariant( QSize(factor * 75 , factor*14 ));
 	case COLUMN_THREAD_AUTHOR:       return QVariant( QSize(factor * 75 , factor*14 ));
-	}
+    case COLUMN_THREAD_TO:           return QVariant( QSize(factor * 75 , factor*14 ));
+    }
 }
 
 QVariant RsMessageModel::authorRole(const Rs::Msgs::MsgInfoSummary& /*fmpe*/,int /*column*/) const
@@ -449,10 +460,18 @@ QVariant RsMessageModel::sortRole(const Rs::Msgs::MsgInfoSummary& fmpe,int colum
 
 	case COLUMN_THREAD_SPAM:  return QVariant((fmpe.msgflags & RS_MSG_SPAM)? 1:0);
 
-	case COLUMN_THREAD_AUTHOR:{
+    case COLUMN_THREAD_TO: {
+            QString name;
+
+            if(GxsIdTreeItemDelegate::computeName(RsGxsId(fmpe.to.begin()->toStdString()),name))
+                return name;
+            return ""; //Not Found
+        }
+
+    case COLUMN_THREAD_AUTHOR:{
 			QString name;
 
-			if(GxsIdTreeItemDelegate::computeName(RsGxsId(fmpe.srcId.toStdString()),name))
+            if(GxsIdTreeItemDelegate::computeName(RsGxsId(fmpe.from.toStdString()),name))
 				return name;
 			return ""; //Not Found
 		}
@@ -503,9 +522,20 @@ QVariant RsMessageModel::displayRole(const Rs::Msgs::MsgInfoSummary& fmpe,int co
 			}
 			return text;
 		}
-		case COLUMN_THREAD_AUTHOR:{
+        case COLUMN_THREAD_TO: {
+            QString name;
+            RsGxsId id = RsGxsId(fmpe.to.begin()->toStdString());	// not sure of the type
+
+            if(id.isNull())
+                return QVariant(tr("[Notification]"));
+            if(GxsIdTreeItemDelegate::computeName(id,name))
+                return name;
+            return QVariant(tr("[Unknown]"));
+        }
+
+        case COLUMN_THREAD_AUTHOR:{
 			QString name;
-			RsGxsId id = RsGxsId(fmpe.srcId.toStdString());
+            RsGxsId id = RsGxsId(fmpe.from.toStdString());
 
 			if(id.isNull())
 				return QVariant(tr("[Notification]"));
@@ -525,8 +555,8 @@ QVariant RsMessageModel::userRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col) 
 {
 	switch(col)
     {
-     	case COLUMN_THREAD_AUTHOR:   return QVariant(QString::fromStdString(fmpe.srcId.toStdString()));
-     	case COLUMN_THREAD_MSGID:    return QVariant(QString::fromStdString(fmpe.msgId));
+        case COLUMN_THREAD_AUTHOR:   return QVariant(QString::fromStdString(fmpe.from.toStdString()));
+        case COLUMN_THREAD_MSGID:    return QVariant(QString::fromStdString(fmpe.msgId));
     default:
         return QVariant();
     }
@@ -569,8 +599,10 @@ QVariant RsMessageModel::decorationRole(const Rs::Msgs::MsgInfoSummary& fmpe,int
 		case COLUMN_THREAD_SPAM:
 		return FilesDefs::getIconFromQtResourcePath((fmpe.msgflags & RS_MSG_SPAM) ? (IMAGE_SPAM_ON ): (IMAGE_SPAM_OFF));
 
-		case COLUMN_THREAD_AUTHOR://Return icon as place holder.
-		return FilesDefs::getIconFromGxsIdCache(RsGxsId(fmpe.srcId.toStdString()),QIcon(), exist);
+        case COLUMN_THREAD_TO://Return icon as place holder.
+            return FilesDefs::getIconFromGxsIdCache(RsGxsId(fmpe.to.begin()->toStdString()),QIcon(), exist);
+        case COLUMN_THREAD_AUTHOR://Return icon as place holder.
+            return FilesDefs::getIconFromGxsIdCache(RsGxsId(fmpe.from.toStdString()),QIcon(), exist);
 	}
 	return QVariant();
 }
@@ -641,6 +673,8 @@ void RsMessageModel::getMessageSummaries(BoxName box,std::list<Rs::Msgs::MsgInfo
 {
     rsMsgs->getMessageSummaries(msgs);
 
+    std::cerr << "Get msg summaries. Box=" << box << ":" << std::endl;
+
     // filter out messages that are not in the right box.
 
     for(auto it(msgs.begin());it!=msgs.end();)
@@ -658,6 +692,7 @@ void RsMessageModel::getMessageSummaries(BoxName box,std::list<Rs::Msgs::MsgInfo
             			++it;
                         continue;
 		}
+        std::cerr << "  msg id " << it->msgId << " flags=" << (it->msgflags & RS_MSG_BOXMASK) << " ok: " << ok << std::endl;
 
         if(ok)
             ++it;
