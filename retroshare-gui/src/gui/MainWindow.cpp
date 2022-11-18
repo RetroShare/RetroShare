@@ -1628,6 +1628,10 @@ NATStatus *MainWindow::natstatusInstance()
 	return natstatus;
 }
 
+void MainWindow::torstatusReset()
+{
+	torstatus->reset();
+}
 DHTStatus *MainWindow::dhtstatusInstance()
 {
 	return dhtstatus;
