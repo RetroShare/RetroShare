@@ -405,7 +405,7 @@ QVariant RsMessageModel::toolTipRole(const Rs::Msgs::MsgInfoSummary& fmpe,int co
         if(column == COLUMN_THREAD_AUTHOR && !GxsIdDetails::MakeIdDesc(RsGxsId(fmpe.from.toStdString()), true, str, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
 			return QVariant();
 
-        if(column == COLUMN_THREAD_TO && !GxsIdDetails::MakeIdDesc(RsGxsId(fmpe.to.begin()->toStdString()), true, str, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
+        if(column == COLUMN_THREAD_TO && !GxsIdDetails::MakeIdDesc(RsGxsId(fmpe.to.toStdString()), true, str, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
             return QVariant();
 
         int S = QFontMetricsF(QApplication::font()).height();
@@ -463,7 +463,7 @@ QVariant RsMessageModel::sortRole(const Rs::Msgs::MsgInfoSummary& fmpe,int colum
     case COLUMN_THREAD_TO: {
             QString name;
 
-            if(GxsIdTreeItemDelegate::computeName(RsGxsId(fmpe.to.begin()->toStdString()),name))
+            if(GxsIdTreeItemDelegate::computeName(RsGxsId(fmpe.to.toStdString()),name))
                 return name;
             return ""; //Not Found
         }
@@ -524,7 +524,7 @@ QVariant RsMessageModel::displayRole(const Rs::Msgs::MsgInfoSummary& fmpe,int co
 		}
         case COLUMN_THREAD_TO: {
             QString name;
-            RsGxsId id = RsGxsId(fmpe.to.begin()->toStdString());	// not sure of the type
+            RsGxsId id = RsGxsId(fmpe.to.toStdString());	// not sure of the type
 
             if(id.isNull())
                 return QVariant(tr("[Notification]"));
@@ -600,7 +600,7 @@ QVariant RsMessageModel::decorationRole(const Rs::Msgs::MsgInfoSummary& fmpe,int
 		return FilesDefs::getIconFromQtResourcePath((fmpe.msgflags & RS_MSG_SPAM) ? (IMAGE_SPAM_ON ): (IMAGE_SPAM_OFF));
 
         case COLUMN_THREAD_TO://Return icon as place holder.
-            return FilesDefs::getIconFromGxsIdCache(RsGxsId(fmpe.to.begin()->toStdString()),QIcon(), exist);
+            return FilesDefs::getIconFromGxsIdCache(RsGxsId(fmpe.to.toStdString()),QIcon(), exist);
         case COLUMN_THREAD_AUTHOR://Return icon as place holder.
             return FilesDefs::getIconFromGxsIdCache(RsGxsId(fmpe.from.toStdString()),QIcon(), exist);
 	}

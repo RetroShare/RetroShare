@@ -1068,49 +1068,49 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
         std::list<RsGroupInfo> groupInfoList;
         rsPeers->getGroupInfoList(groupInfoList);
 
-    //    std::list<std::string> groupIds;
-    //    std::list<std::string>::iterator groupIt;
+        //    std::list<std::string> groupIds;
+        //    std::list<std::string>::iterator groupIt;
 
-    //       calculateGroupsOfSslIds(groupInfoList, msgInfo.msgto, groupIds);
-    //       for (groupIt = groupIds.begin(); groupIt != groupIds.end(); ++groupIt ) {
-    //           msgComposer->addRecipient(MessageComposer::TO, *groupIt, true) ;
-    //       }
+        //       calculateGroupsOfSslIds(groupInfoList, msgInfo.msgto, groupIds);
+        //       for (groupIt = groupIds.begin(); groupIt != groupIds.end(); ++groupIt ) {
+        //           msgComposer->addRecipient(MessageComposer::TO, *groupIt, true) ;
+        //       }
 
-    //     calculateGroupsOfSslIds(groupInfoList, msgInfo.msgcc, groupIds);
-    //     for (groupIt = groupIds.begin(); groupIt != groupIds.end(); ++groupIt ) {
-    //         msgComposer->addRecipient(MessageComposer::CC, *groupIt, true) ;
-    //     }
+        //     calculateGroupsOfSslIds(groupInfoList, msgInfo.msgcc, groupIds);
+        //     for (groupIt = groupIds.begin(); groupIt != groupIds.end(); ++groupIt ) {
+        //         msgComposer->addRecipient(MessageComposer::CC, *groupIt, true) ;
+        //     }
 
-    //        calculateGroupsOfSslIds(groupInfoList, msgInfo.msgbcc, groupIds);
-    //        for (groupIt = groupIds.begin(); groupIt != groupIds.end(); ++groupIt ) {
-    //            msgComposer->addRecipient(MessageComposer::BCC, *groupIt, true) ;
-    //        }
+        //        calculateGroupsOfSslIds(groupInfoList, msgInfo.msgbcc, groupIds);
+        //        for (groupIt = groupIds.begin(); groupIt != groupIds.end(); ++groupIt ) {
+        //            msgComposer->addRecipient(MessageComposer::BCC, *groupIt, true) ;
+        //        }
 
-        for(auto m:msgInfo.to)
-        switch(m.mode())
-        {
-        case MsgAddress::MSG_ADDRESS_MODE_TO:
-            if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
-                msgComposer->addRecipient(MessageComposer::TO,m.toGxsId());
-            else if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSPEERID)
-                msgComposer->addRecipient(MessageComposer::TO,m.toRsPeerId());
-            break;
+        for(auto m:msgInfo.destinations)
+            switch(m.mode())
+            {
+            case MsgAddress::MSG_ADDRESS_MODE_TO:
+                if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
+                    msgComposer->addRecipient(MessageComposer::TO,m.toGxsId());
+                else if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSPEERID)
+                    msgComposer->addRecipient(MessageComposer::TO,m.toRsPeerId());
+                break;
 
-        case MsgAddress::MSG_ADDRESS_MODE_CC:
-            if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
-                msgComposer->addRecipient(MessageComposer::CC,m.toGxsId());
-            else if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSPEERID)
-                msgComposer->addRecipient(MessageComposer::CC,m.toRsPeerId());
-            break;
+            case MsgAddress::MSG_ADDRESS_MODE_CC:
+                if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
+                    msgComposer->addRecipient(MessageComposer::CC,m.toGxsId());
+                else if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSPEERID)
+                    msgComposer->addRecipient(MessageComposer::CC,m.toRsPeerId());
+                break;
 
-        case MsgAddress::MSG_ADDRESS_MODE_BCC:
-            if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
-                msgComposer->addRecipient(MessageComposer::BCC,m.toGxsId());
-            else if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSPEERID)
-                msgComposer->addRecipient(MessageComposer::BCC,m.toRsPeerId());
-            break;
-    default:break;
-        }
+            case MsgAddress::MSG_ADDRESS_MODE_BCC:
+                if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
+                    msgComposer->addRecipient(MessageComposer::BCC,m.toGxsId());
+                else if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSPEERID)
+                    msgComposer->addRecipient(MessageComposer::BCC,m.toRsPeerId());
+                break;
+            default:break;
+            }
 
         // for (std::set<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgto.begin();  it != msgInfo.rspeerid_msgto.end(); ++it )  msgComposer->addRecipient(MessageComposer::TO, *it) ;
         // for (std::set<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgcc.begin();  it != msgInfo.rspeerid_msgcc.end(); ++it )  msgComposer->addRecipient(MessageComposer::CC, *it) ;
@@ -1124,7 +1124,7 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
 
         msgComposer->m_tagIds = tagInfo.tagIds;
         msgComposer->showTagLabels();
-    std::cerr << "Setting modified 005 = false" << std::endl;
+        std::cerr << "Setting modified 005 = false" << std::endl;
         msgComposer->ui.msgText->document()->setModified(false);
     }
 
@@ -1156,7 +1156,7 @@ QString MessageComposer::buildReplyHeader(const MessageInfo &msgInfo)
 	}
     QString to,cc;
 
-    for(auto m:msgInfo.to)
+    for(auto m:msgInfo.destinations)
     {
             RetroShareLink link;
 
@@ -1262,7 +1262,7 @@ MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
     // make sure the current ID is among the ones the msg was actually sent to.
 #warning: We do not know here what is the atual destination of the message, since it may have been sent to two of our IDs at once.
 
-    for(auto m:msgInfo.to)
+    for(auto m:msgInfo.destinations)
         if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSGXSID && rsIdentity->isOwnId(m.toGxsId()))
         {
             msgComposer->ui.respond_to_CB->setDefaultId(m.toGxsId()) ;
@@ -1276,7 +1276,7 @@ MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
     {
         RsPeerId ownId = rsPeers->getOwnId();
 
-        for(auto m:msgInfo.to)
+        for(auto m:msgInfo.destinations)
             if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
                 msgComposer->addRecipient(MessageComposer::TO,m.toGxsId());
             else if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSPEERID)
@@ -1476,9 +1476,9 @@ bool MessageComposer::buildMessage(MessageInfo& mi)
 
                     switch (type)
                     {
-                    case TO:  mi.to.insert(MsgAddress(*sslIt,MsgAddress::MSG_ADDRESS_MODE_TO)); break;
-                    case CC:  mi.to.insert(MsgAddress(*sslIt,MsgAddress::MSG_ADDRESS_MODE_CC)); break;
-                    case BCC: mi.to.insert(MsgAddress(*sslIt,MsgAddress::MSG_ADDRESS_MODE_BCC)); break;
+                    case TO:  mi.destinations.insert(MsgAddress(*sslIt,MsgAddress::MSG_ADDRESS_MODE_TO)); break;
+                    case CC:  mi.destinations.insert(MsgAddress(*sslIt,MsgAddress::MSG_ADDRESS_MODE_CC)); break;
+                    case BCC: mi.destinations.insert(MsgAddress(*sslIt,MsgAddress::MSG_ADDRESS_MODE_BCC)); break;
                     }
                 }
             }
@@ -1490,9 +1490,9 @@ bool MessageComposer::buildMessage(MessageInfo& mi)
 
             switch (type)
             {
-                case TO:  mi.to.insert(MsgAddress(pid,MsgAddress::MSG_ADDRESS_MODE_TO)); break;
-                case CC:  mi.to.insert(MsgAddress(pid,MsgAddress::MSG_ADDRESS_MODE_CC)); break;
-                case BCC: mi.to.insert(MsgAddress(pid,MsgAddress::MSG_ADDRESS_MODE_BCC)); break;
+                case TO:  mi.destinations.insert(MsgAddress(pid,MsgAddress::MSG_ADDRESS_MODE_TO)); break;
+                case CC:  mi.destinations.insert(MsgAddress(pid,MsgAddress::MSG_ADDRESS_MODE_CC)); break;
+                case BCC: mi.destinations.insert(MsgAddress(pid,MsgAddress::MSG_ADDRESS_MODE_BCC)); break;
             }
         }
             break ;
@@ -1502,9 +1502,9 @@ bool MessageComposer::buildMessage(MessageInfo& mi)
 
             switch (type)
             {
-                case TO:  mi.to.insert(MsgAddress(gid,MsgAddress::MSG_ADDRESS_MODE_TO)); break;
-                case CC:  mi.to.insert(MsgAddress(gid,MsgAddress::MSG_ADDRESS_MODE_CC)); break;
-                case BCC: mi.to.insert(MsgAddress(gid,MsgAddress::MSG_ADDRESS_MODE_BCC)); break;
+                case TO:  mi.destinations.insert(MsgAddress(gid,MsgAddress::MSG_ADDRESS_MODE_TO)); break;
+                case CC:  mi.destinations.insert(MsgAddress(gid,MsgAddress::MSG_ADDRESS_MODE_CC)); break;
+                case BCC: mi.destinations.insert(MsgAddress(gid,MsgAddress::MSG_ADDRESS_MODE_BCC)); break;
             }
         }
             break ;
@@ -1558,14 +1558,14 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
     else
     {
         /* check for the recipient */
-        if (mi.to.empty())
+        if (mi.destinations.empty())
         {
             QMessageBox::warning(this, tr("RetroShare"), tr("Please insert at least one recipient."), QMessageBox::Ok);
             return false; // Don't send with no recipient
         }
 
         bool at_least_one_gxsid = false;
-        for(auto m:mi.to)
+        for(auto m:mi.destinations)
             if(m.type() == MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
             {
                 at_least_one_gxsid=true;

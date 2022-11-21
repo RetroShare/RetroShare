@@ -614,7 +614,7 @@ void MessageWidget::fill(const std::string &msgId)
 	RetroShareLink link;
     QString to_text,cc_text,bcc_text;
 
-    for(auto m:msgInfo.to)
+    for(auto m:msgInfo.destinations)
     {
         if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
             link = RetroShareLink::createMessage(m.toGxsId(), "");
