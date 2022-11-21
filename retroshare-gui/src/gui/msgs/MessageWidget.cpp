@@ -135,6 +135,8 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	isWindow = false;
 	currMsgFlags = 0;
 	expandFiles = false;
+	ui.expandButton->hide();
+	ui.countLabel->hide();
 
 	ui.actionTextBesideIcon->setData(Qt::ToolButtonTextBesideIcon);
 	ui.actionIconOnly->setData(Qt::ToolButtonIconOnly);
@@ -144,6 +146,7 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(getallrecommended()));
 	connect(ui.msgText, SIGNAL(anchorClicked(QUrl)), this, SLOT(anchorClicked(QUrl)));
 	connect(ui.sendInviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
+	connect(ui.expandButton, SIGNAL(clicked()), this, SLOT(expandTo()));
 	
 	connect(ui.replyButton, SIGNAL(clicked()), this, SLOT(reply()));
 	connect(ui.replyallButton, SIGNAL(clicked()), this, SLOT(replyAll()));
@@ -619,6 +622,18 @@ void MessageWidget::fill(const std::string &msgId)
 
 	ui.trans_ToText->setText(text);
 
+	int recipientsCount = ui.trans_ToText->toPlainText().split(QRegExp("(\\s|\\n|\\r)+"), QString::SkipEmptyParts).count();
+	ui.countLabel->setText( QString::number(recipientsCount));
+
+	if (recipientsCount >=20) {
+		ui.expandButton->show();
+		ui.countLabel->show();
+	} else {
+		ui.expandButton->hide();
+		ui.countLabel->hide();
+	}
+
+
 	if (!msgInfo.rspeerid_msgcc.empty() || !msgInfo.rsgxsid_msgcc.empty())
 	{
 		ui.ccLabel->setVisible(true);
@@ -939,4 +954,17 @@ void MessageWidget::checkLength()
 	text = tr("%1 (%2) ").arg(charlength).arg(misc::friendlyUnit(charlength));
 
 	ui.sizeLabel->setText(text);
+}
+
+void MessageWidget::expandTo()
+{
+	if (ui.expandButton->isChecked()) {
+		ui.expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/up-arrow.png")));
+		ui.trans_ToText->setMaximumHeight(ui.trans_ToText->fontMetrics().lineSpacing()*3.5);
+		ui.expandButton->setToolTip(tr("Minimize"));
+	} else {
+		ui.expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/down-arrow.png")));
+		ui.trans_ToText->setMaximumHeight(ui.trans_ToText->fontMetrics().lineSpacing()*1.5);
+		ui.expandButton->setToolTip(tr("Maximize"));
+	}
 }
