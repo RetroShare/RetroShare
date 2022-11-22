@@ -897,18 +897,18 @@ void MessagesDialog::changeBox(int box_row)
 		QString placeholderText = tr("No message available in your %1.").arg(item->text());
 		switch(box_row)
 		{
-			case ROW_INBOX: mMessageModel->setCurrentBox(RsMessageModel::BOX_INBOX );
+            case ROW_INBOX: mMessageModel->setCurrentBox(Rs::Msgs::BoxName::BOX_INBOX );
 			break;
-			case ROW_OUTBOX: mMessageModel->setCurrentBox(RsMessageModel::BOX_OUTBOX);
+            case ROW_OUTBOX: mMessageModel->setCurrentBox(Rs::Msgs::BoxName::BOX_OUTBOX);
 			break;
-			case ROW_DRAFTBOX: mMessageModel->setCurrentBox(RsMessageModel::BOX_DRAFTS);
+            case ROW_DRAFTBOX: mMessageModel->setCurrentBox(Rs::Msgs::BoxName::BOX_DRAFTS);
 			break;
-			case ROW_SENTBOX: mMessageModel->setCurrentBox(RsMessageModel::BOX_SENT  );
+            case ROW_SENTBOX: mMessageModel->setCurrentBox(Rs::Msgs::BoxName::BOX_SENT  );
 			break;
-			case ROW_TRASHBOX: mMessageModel->setCurrentBox(RsMessageModel::BOX_TRASH );
+            case ROW_TRASHBOX: mMessageModel->setCurrentBox(Rs::Msgs::BoxName::BOX_TRASH );
 			break;
 			default:
-				mMessageModel->setCurrentBox(RsMessageModel::BOX_NONE);
+                mMessageModel->setCurrentBox(Rs::Msgs::BoxName::BOX_NONE);
 		}
 
 		insertMsgTxtAndFiles(ui.messageTreeWidget->currentIndex());
@@ -916,7 +916,7 @@ void MessagesDialog::changeBox(int box_row)
 	}
 	else
 	{
-		mMessageModel->setCurrentBox(RsMessageModel::BOX_NONE);
+        mMessageModel->setCurrentBox(Rs::Msgs::BoxName::BOX_NONE);
 	}
 	inChange = false;
 
@@ -1263,8 +1263,22 @@ void MessagesDialog::updateMessageSummaryList()
 
     /* calculating the new messages */
 
+    Rs::Msgs::BoxName box;
+    int box_row = ui.listWidget->currentRow();
+
+    switch(box_row)
+    {
+    case ROW_INBOX: box = Rs::Msgs::BoxName::BOX_INBOX ; break;
+    case ROW_OUTBOX: box = Rs::Msgs::BoxName::BOX_OUTBOX; break;
+    case ROW_DRAFTBOX: box = Rs::Msgs::BoxName::BOX_DRAFTS; break;
+    case ROW_SENTBOX: box = Rs::Msgs::BoxName::BOX_SENT  ; break;
+    case ROW_TRASHBOX: box = Rs::Msgs::BoxName::BOX_TRASH ; break;
+    default:
+        box = Rs::Msgs::BoxName::BOX_NONE;
+    }
+
     std::list<MsgInfoSummary> msgList;
-    rsMail->getMessageSummaries(msgList);
+    rsMail->getMessageSummaries(box,msgList);
 
     QMap<int, int> tagCount;
 
@@ -1513,7 +1527,7 @@ void MessagesDialog::tagSet(int tagId, bool set)
 void MessagesDialog::emptyTrash()
 {
     std::list<Rs::Msgs::MsgInfoSummary> msgs ;
-    mMessageModel->getMessageSummaries(RsMessageModel::BOX_TRASH,msgs);
+    rsMsgs->getMessageSummaries(Rs::Msgs::BoxName::BOX_TRASH,msgs);
 
     for(auto it(msgs.begin());it!=msgs.end();++it)
 		rsMail->MessageDelete(it->msgId);

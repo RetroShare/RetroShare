@@ -43,15 +43,6 @@ public:
 	explicit RsMessageModel(QObject *parent = NULL);
 	~RsMessageModel(){}
 
-    enum BoxName {
-        BOX_NONE   = 0x00,
-        BOX_INBOX  = 0x01,
-        BOX_OUTBOX = 0x02,
-        BOX_DRAFTS = 0x03,
-        BOX_SENT   = 0x04,
-        BOX_TRASH  = 0x05
-    };
-
 	enum Columns {
 		COLUMN_THREAD_STAR         = 0x00,
 		COLUMN_THREAD_ATTACHMENT   = 0x01,
@@ -105,11 +96,10 @@ public:
 	QModelIndex getIndexOfMessage(const std::string &mid) const;
 
     static const QString FilterString ;
-    static void getMessageSummaries(BoxName box, std::list<Rs::Msgs::MsgInfoSummary>& msgs);
 
     // This method will asynchroneously update the data
 
-    void setCurrentBox(BoxName bn) ;
+    void setCurrentBox(Rs::Msgs::BoxName bn) ;
     void setQuickViewFilter(QuickViewFilter fn) ;
 
     void setFilter(FilterType filter_type, const QStringList& strings) ;
@@ -189,7 +179,7 @@ private:
     QColor mTextColorNotSubscribed ;
     QColor mTextColorMissing       ;
 
-    BoxName mCurrentBox ;
+    Rs::Msgs::BoxName mCurrentBox ;
     QuickViewFilter mQuickViewFilter ;
     QStringList mFilterStrings;
     FilterType  mFilterType;

@@ -53,7 +53,7 @@ const QString RsMessageModel::FilterString("filtered");
 RsMessageModel::RsMessageModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
-    mCurrentBox = BOX_NONE;
+    mCurrentBox = Rs::Msgs::BoxName::BOX_NONE;
     mQuickViewFilter = QUICK_VIEW_ALL;
     mFilterType = FILTER_TYPE_NONE;
     mFilterStrings.clear();
@@ -647,7 +647,7 @@ void RsMessageModel::setMessages(const std::list<Rs::Msgs::MsgInfoSummary>& msgs
 	emit messagesLoaded();
 }
 
-void RsMessageModel::setCurrentBox(BoxName bn)
+void RsMessageModel::setCurrentBox(Rs::Msgs::BoxName bn)
 {
 	if(mCurrentBox != bn)
 	{
@@ -669,45 +669,13 @@ void RsMessageModel::setQuickViewFilter(QuickViewFilter fn)
 	}
 }
 
-void RsMessageModel::getMessageSummaries(BoxName box,std::list<Rs::Msgs::MsgInfoSummary>& msgs)
-{
-    rsMsgs->getMessageSummaries(msgs);
-
-    std::cerr << "Get msg summaries. Box=" << box << ":" << std::endl;
-
-    // filter out messages that are not in the right box.
-
-    for(auto it(msgs.begin());it!=msgs.end();)
-    {
-        bool ok = false;
-
-        switch(box)
-        {
-		case BOX_INBOX  : ok = (it->msgflags & RS_MSG_BOXMASK) == RS_MSG_INBOX     && !(it->msgflags & RS_MSG_TRASH); break ;
-        case BOX_SENT   : ok = (it->msgflags & RS_MSG_BOXMASK) == RS_MSG_SENTBOX   && !(it->msgflags & RS_MSG_TRASH); break ;
-        case BOX_OUTBOX : ok = (it->msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX    && !(it->msgflags & RS_MSG_TRASH); break ;
-        case BOX_DRAFTS : ok = (it->msgflags & RS_MSG_BOXMASK) == RS_MSG_DRAFTBOX  && !(it->msgflags & RS_MSG_TRASH); break ;
-        case BOX_TRASH  : ok = (it->msgflags & RS_MSG_TRASH) ; break ;
-        default:
-            			++it;
-                        continue;
-		}
-        std::cerr << "  msg id " << it->msgId << " flags=" << (it->msgflags & RS_MSG_BOXMASK) << " ok: " << ok << std::endl;
-
-        if(ok)
-            ++it;
-		else
-           it = msgs.erase(it) ;
-    }
-}
-
 void RsMessageModel::updateMessages()
 {
     emit messagesAboutToLoad();
 
     std::list<Rs::Msgs::MsgInfoSummary> msgs;
 
-    getMessageSummaries(mCurrentBox,msgs);
+    rsMsgs->getMessageSummaries(mCurrentBox,msgs);
 	setMessages(msgs);
 
     emit messagesLoaded();

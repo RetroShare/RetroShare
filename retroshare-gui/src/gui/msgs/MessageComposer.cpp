@@ -660,60 +660,19 @@ void MessageComposer::addConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId 
     std::list<MsgInfoSummary> msgList;
     std::list<MsgInfoSummary>::const_iterator it;
 
-    rsMail->getMessageSummaries(msgList);
-    for(it = msgList.begin(); it != msgList.end(); ++it) {
-        if (it->msgflags & RS_MSG_TRASH) {
-            continue;
-        }
-        if ((it->msgflags & RS_MSG_BOXMASK) != RS_MSG_INBOX) {
-            continue;
-        }
-        if ((it->msgflags & RS_MSG_USER_REQUEST) == 0) {
-            continue;
-        }
-        if (it->title == title.toUtf8().constData()) {
+    rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_INBOX,msgList);
+
+    // do not re-add an existing request.
+    // note: the test with name() is very unsecure. We should use the ID instead.
+
+    for(it = msgList.begin(); it != msgList.end(); ++it)
+        if((it->msgflags & RS_MSG_USER_REQUEST) && it->title == title.toUtf8().constData())
             return;
-        }
-    }
 
     /* create a message */
     QString msgText = tr("Hi %1,<br><br>%2 wants to be friends with you on RetroShare.<br><br>Respond now:<br>%3<br><br>Thanks,<br>The RetroShare Team").arg(QString::fromUtf8(rsPeers->getGPGName(rsPeers->getGPGOwnId()).c_str()), link.name(), link.toHtml());
     rsMail->SystemMessage(title.toUtf8().constData(), msgText.toUtf8().constData(), RS_MSG_USER_REQUEST);
 }
-
-#ifdef UNUSED_CODE
-void MessageComposer::sendChannelPublishKey(RsGxsChannelGroup &group)
-{
-//    QString channelName = QString::fromUtf8(group.mMeta.mGroupName.c_str());
-
-//    RetroShareLink link;
-//    if (!link.createGxsGroupLink(RetroShareLink::TYPE_CHANNEL, group.mMeta.mGroupId, channelName)) {
-//        return;
-//    }
-
-//    QString title = tr("Publish key for channel %1").arg(channelName);
-
-//    /* create a message */
-//    QString msgText = tr("... %1 ...<br>%2").arg(channelName, link.toHtml());
-//    rsMail->SystemMessage(title.toUtf8().constData(), msgText.toUtf8().constData(), RS_MSG_PUBLISH_KEY);
-}
-
-void MessageComposer::sendForumPublishKey(RsGxsForumGroup &group)
-{
-//    QString forumName = QString::fromUtf8(group.mMeta.mGroupName.c_str());
-
-//    RetroShareLink link;
-//    if (!link.createGxsGroupLink(RetroShareLink::TYPE_FORUM, group.mMeta.mGroupId, forumName)) {
-//        return;
-//    }
-
-//    QString title = tr("Publish key for forum %1").arg(forumName);
-
-//    /* create a message */
-//    QString msgText = tr("... %1 ...<br>%2").arg(forumName, link.toHtml());
-//    rsMail->SystemMessage(title.toUtf8().constData(), msgText.toUtf8().constData(), RS_MSG_PUBLISH_KEY);
-}
-#endif
 
 void MessageComposer::closeEvent (QCloseEvent * event)
 {
