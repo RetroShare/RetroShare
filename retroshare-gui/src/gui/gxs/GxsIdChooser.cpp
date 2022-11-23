@@ -25,6 +25,7 @@
 #include "gui/common/FilesDefs.h"
 #include "gui/Identity/IdEditDialog.h"
 #include "util/misc.h"
+#include "util/qtthreadsutils.h"
 
 #include <retroshare/rspeers.h>
 
@@ -76,6 +77,24 @@ GxsIdChooser::GxsIdChooser(QWidget *parent)
 	/* Connect signals */
 	connect(this, SIGNAL(currentIndexChanged(int)), this, SLOT(myCurrentIndexChanged(int)));
 	connect(this, SIGNAL(activated(int)), this, SLOT(indexActivated(int)));
+
+    // also capture identity creation/deletion events so as to update the UI accordingly
+
+    mEventHandlerId = 0;
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) {
+        RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }) ;}, mEventHandlerId, RsEventType::GXS_IDENTITY );
+}
+
+void GxsIdChooser::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+    if(event->mType != RsEventType::GXS_IDENTITY) return;
+
+    const RsGxsIdentityEvent *fe = dynamic_cast<const RsGxsIdentityEvent*>(event.get());
+    if(!fe)
+        return;
+
+    updateDisplay(true);
+    update(); // Qt flush
 }
 
 void GxsIdChooser::setFlags(uint32_t flags)
@@ -86,6 +105,7 @@ void GxsIdChooser::setFlags(uint32_t flags)
 
 GxsIdChooser::~GxsIdChooser()
 {
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
 
 void GxsIdChooser::fillDisplay(bool complete)

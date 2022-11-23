@@ -627,6 +627,7 @@ void MessageWidget::fill(const std::string &msgId)
             case MsgAddress::MSG_ADDRESS_MODE_TO: to_text += link.toHtml() + "   "; break;
             case MsgAddress::MSG_ADDRESS_MODE_CC: cc_text += link.toHtml() + "   "; break;
             case MsgAddress::MSG_ADDRESS_MODE_BCC: bcc_text += link.toHtml() + "   "; break;
+            default: break;
             }
     }
 
@@ -880,7 +881,7 @@ void MessageWidget::sendInvite()
     if (!rsMail->getMessage(currMsgId, mi))
         return;
 
-    if(!mi.from.type()==MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
+    if(mi.from.type()!=MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
         return;
 
     if ((QMessageBox::question(this, tr("Send invite?"),tr("Do you really want send a invite with your Certificate?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Cancel))== QMessageBox::Yes)

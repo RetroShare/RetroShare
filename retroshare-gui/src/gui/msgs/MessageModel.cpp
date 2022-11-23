@@ -585,7 +585,7 @@ QVariant RsMessageModel::userRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col) 
 {
 	switch(col)
     {
-        case COLUMN_THREAD_AUTHOR:   return QVariant(QString::fromStdString(fmpe.from.toStdString()));
+        case COLUMN_THREAD_AUTHOR:   return displayRole(fmpe,col);
         case COLUMN_THREAD_MSGID:    return QVariant(QString::fromStdString(fmpe.msgId));
     default:
         return QVariant();
