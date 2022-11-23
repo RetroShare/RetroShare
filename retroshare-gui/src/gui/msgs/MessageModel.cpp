@@ -482,73 +482,103 @@ QVariant RsMessageModel::sortRole(const Rs::Msgs::MsgInfoSummary& fmpe,int colum
 
 QVariant RsMessageModel::displayRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col) const
 {
-	switch(col)
-	{
-		case COLUMN_THREAD_SUBJECT:   return QVariant(QString::fromUtf8(fmpe.title.c_str()));
-		case COLUMN_THREAD_ATTACHMENT:return QVariant(QString::number(fmpe.count));
+    switch(col)
+    {
+    case COLUMN_THREAD_SUBJECT:   return QVariant(QString::fromUtf8(fmpe.title.c_str()));
+    case COLUMN_THREAD_ATTACHMENT:return QVariant(QString::number(fmpe.count));
 
-		case COLUMN_THREAD_STAR:
-		case COLUMN_THREAD_SPAM:
-		case COLUMN_THREAD_READ:return QVariant();
-		case COLUMN_THREAD_DATE:{
-			QDateTime qtime;
-			qtime.setTime_t(fmpe.ts);
+    case COLUMN_THREAD_STAR:
+    case COLUMN_THREAD_SPAM:
+    case COLUMN_THREAD_READ:return QVariant();
+    case COLUMN_THREAD_DATE:{
+        QDateTime qtime;
+        qtime.setTime_t(fmpe.ts);
 
-			return QVariant(DateTime::formatDateTime(qtime));
-		}
+        return QVariant(DateTime::formatDateTime(qtime));
+    }
 
-		case COLUMN_THREAD_TAGS:{
-			// Tags
-			Rs::Msgs::MsgTagInfo tagInfo;
-			rsMsgs->getMessageTag(fmpe.msgId, tagInfo);
+    case COLUMN_THREAD_TAGS:{
+        // Tags
+        Rs::Msgs::MsgTagInfo tagInfo;
+        rsMsgs->getMessageTag(fmpe.msgId, tagInfo);
 
-			Rs::Msgs::MsgTagType Tags;
-			rsMsgs->getMessageTagTypes(Tags);
+        Rs::Msgs::MsgTagType Tags;
+        rsMsgs->getMessageTagTypes(Tags);
 
-			QString text;
+        QString text;
 
-			// build tag names
-			for (auto tagit = tagInfo.tagIds.begin(); tagit != tagInfo.tagIds.end(); ++tagit)
-			{
-				if (!text.isNull())
-					text += ",";
+        // build tag names
+        for (auto tagit = tagInfo.tagIds.begin(); tagit != tagInfo.tagIds.end(); ++tagit)
+        {
+            if (!text.isNull())
+                text += ",";
 
-				auto Tag = Tags.types.find(*tagit);
+            auto Tag = Tags.types.find(*tagit);
 
-				if (Tag != Tags.types.end())
-					text += TagDefs::name(Tag->first, Tag->second.first);
-				else
-					RS_WARN("Unknown tag ", (int)Tag->first, " in message ", fmpe.msgId);
-			}
-			return text;
-		}
-        case COLUMN_THREAD_TO: {
-            QString name;
-            RsGxsId id = RsGxsId(fmpe.to.toStdString());	// not sure of the type
+            if (Tag != Tags.types.end())				if (Tag != Tags.types.end())
 
+                text += TagDefs::name(Tag->first, Tag->second.first);
+            else
+                RS_WARN("Unknown tag ", (int)Tag->first, " in message ", fmpe.msgId);
+        }
+        return text;
+    }
+    case COLUMN_THREAD_TO: {
+        QString name;
+
+        switch(mCurrentBox)
+        {
+        case Rs::Msgs::BoxName::BOX_DRAFTS:	// in this case, we display the full list of destinations
+        case Rs::Msgs::BoxName::BOX_TRASH:	// in this case, we display the full list of destinations
+        case Rs::Msgs::BoxName::BOX_SENT:	// in this case, we display the full list of destinations
+        {
+            for(auto d:fmpe.destinations)
+            {
+                QString tmp;
+                GxsIdTreeItemDelegate::computeName(RsGxsId(d.toStdString()),tmp);	// not nice, but works.
+                if(tmp.isNull())
+                    name += QString(tr("[Notification]") + ", ");
+                else
+                    name += tmp + ", " ;
+            }
+            name.chop(2);
+            return name;
+        }
+            break;
+        case Rs::Msgs::BoxName::BOX_NONE:	// in these cases, we display the actual destination
+        case Rs::Msgs::BoxName::BOX_INBOX:	// in these cases, we display the actual destination
+        case Rs::Msgs::BoxName::BOX_OUTBOX:
+        {
+            RsGxsId id = RsGxsId(fmpe.to.toStdString());	// use "to" field, which is populated in Outbox, .
             if(id.isNull())
                 return QVariant(tr("[Notification]"));
-            if(GxsIdTreeItemDelegate::computeName(id,name))
+            else
+            {
+                GxsIdTreeItemDelegate::computeName(id,name);
                 return name;
-            return QVariant(tr("[Unknown]"));
+            }
         }
+            break;
+        }
+    }
+        break;
 
-        case COLUMN_THREAD_AUTHOR:{
-			QString name;
-            RsGxsId id = RsGxsId(fmpe.from.toStdString());
+    case COLUMN_THREAD_AUTHOR:{
+        QString name;
+        RsGxsId id = RsGxsId(fmpe.from.toStdString());
 
-			if(id.isNull())
-				return QVariant(tr("[Notification]"));
-			if(GxsIdTreeItemDelegate::computeName(id,name))
-				return name;
-			return QVariant(tr("[Unknown]"));
-		}
+        if(id.isNull())
+            return QVariant(tr("[Notification]"));
+        if(GxsIdTreeItemDelegate::computeName(id,name))
+            return name;
+        return QVariant(tr("[Unknown]"));
+    }
 
-		default:
-		return QVariant("[ TODO ]");
-	}
+    default:
+        return QVariant("[ TODO ]");
+    }
 
-	return QVariant("[ERROR]");
+    return QVariant("[ERROR]");
 }
 
 QVariant RsMessageModel::userRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col) const
