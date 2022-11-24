@@ -631,6 +631,9 @@ void MessageWidget::fill(const std::string &msgId)
 	} else {
 		ui.expandButton->hide();
 		ui.countLabel->hide();
+		ui.expandButton->setChecked(false);
+		ui.expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/down-arrow.png")));
+		ui.trans_ToText->setMaximumHeight(ui.trans_ToText->fontMetrics().lineSpacing()*1.5);
 	}
 
 
