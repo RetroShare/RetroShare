@@ -679,10 +679,13 @@ void MessageWidget::fill(const std::string &msgId)
         link = RetroShareLink::createMessage(msgInfo.from.toRsPeerId(), "");
 	}
 
-    if (((msgInfo.msgflags & RS_MSG_SYSTEM) && msgInfo.from.toRsPeerId() == ownId) || msgInfo.from.type()!=MsgAddress::MSG_ADDRESS_TYPE_RSPEERID) {
+    if ((msgInfo.msgflags & RS_MSG_SYSTEM) && msgInfo.from.toRsPeerId() == ownId)
+    {
 		ui.fromText->setText("[Notification]");
 		if (toolButtonReply) toolButtonReply->setEnabled(false);
-	} else {
+    }
+    else
+    {
 		ui.fromText->setText(link.toHtml());
 		ui.fromText->setToolTip(tooltip_string) ;
 		if (toolButtonReply) toolButtonReply->setEnabled(true);

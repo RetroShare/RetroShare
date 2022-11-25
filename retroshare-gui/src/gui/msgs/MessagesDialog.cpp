@@ -379,12 +379,15 @@ void MessagesDialog::postModelUpdate()
         sel.select(i.sibling(i.row(),0),i.sibling(i.row(),RsMessageModel::COLUMN_THREAD_NB_COLUMNS-1));
     }
 
-    ui.messageTreeWidget->selectionModel()->select(sel,QItemSelectionModel::SelectCurrent);
+    // Restoring selection should not trigger anything, especially the re-display of the msg, which
+    // in turn will change the read status.
+
+    whileBlocking(ui.messageTreeWidget->selectionModel())->select(sel,QItemSelectionModel::SelectCurrent);
 
     if (!mTmpSavedCurrentId.isEmpty()) {
         QModelIndex index = mMessageProxyModel->mapFromSource(mMessageModel->getIndexOfMessage(mTmpSavedCurrentId.toStdString()));
         if (index.isValid()) {
-            ui.messageTreeWidget->selectionModel()->setCurrentIndex(index, QItemSelectionModel::Select);
+            whileBlocking(ui.messageTreeWidget->selectionModel())->setCurrentIndex(index, QItemSelectionModel::Select);
         }
     }
 }
@@ -898,7 +901,7 @@ void MessagesDialog::changeBox(int box_row)
 		switch(box_row)
 		{
             case ROW_INBOX: mMessageModel->setCurrentBox(Rs::Msgs::BoxName::BOX_INBOX );
-			break;
+            break;
             case ROW_OUTBOX: mMessageModel->setCurrentBox(Rs::Msgs::BoxName::BOX_OUTBOX);
 			break;
             case ROW_DRAFTBOX: mMessageModel->setCurrentBox(Rs::Msgs::BoxName::BOX_DRAFTS);
@@ -913,7 +916,8 @@ void MessagesDialog::changeBox(int box_row)
 
 		insertMsgTxtAndFiles(ui.messageTreeWidget->currentIndex());
 		ui.messageTreeWidget->setPlaceholderText(placeholderText);
-	}
+        ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_READ,box_row!=ROW_INBOX);
+    }
 	else
 	{
         mMessageModel->setCurrentBox(Rs::Msgs::BoxName::BOX_NONE);
@@ -993,21 +997,16 @@ void MessagesDialog::clicked(const QModelIndex& proxy_index)
 		case RsMessageModel::COLUMN_THREAD_READ:
 		{
 			mMessageModel->setMsgReadStatus(real_index, !isMessageRead(proxy_index));
-			//Already updated by currentChanged
-			//insertMsgTxtAndFiles(proxy_index);
-			updateMessageSummaryList();
 			return;
 		}
 		case RsMessageModel::COLUMN_THREAD_STAR:
 		{
 			mMessageModel->setMsgStar(real_index, !hasMessageStar(proxy_index));
-			updateMessageSummaryList();
 			return;
 		}
 		case RsMessageModel::COLUMN_THREAD_SPAM:
 		{
 			mMessageModel->setMsgJunk(real_index, !hasMessageSpam(proxy_index));
-			updateMessageSummaryList();
 			return;
 		}
 	}
