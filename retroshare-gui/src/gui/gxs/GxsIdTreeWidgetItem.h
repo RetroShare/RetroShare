@@ -109,7 +109,9 @@ public:
         QList<QIcon> icons;
         QString comment;
 
-        if(rsPeers->isFriend(RsPeerId(id)))		// horrible trick because some widgets still use locations as IDs (e.g. messages)
+        if(id.isNull())
+            name = QObject::tr("[System]");
+        else if(RsPeerId(id)==rsPeers->getOwnId() || rsPeers->isFriend(RsPeerId(id)))		// horrible trick because some widgets still use locations as IDs (e.g. messages)
 			name = QString::fromUtf8(rsPeers->getPeerName(RsPeerId(id)).c_str()) ;
         else if(!GxsIdDetails::MakeIdDesc(id, false, name, icons, comment,GxsIdDetails::ICON_TYPE_NONE))
             return false;
@@ -123,8 +125,13 @@ public:
 		bool exist = false;
 
 
-		if(rsPeers->isFriend(RsPeerId(id)))		// horrible trick because some widgets still use locations as IDs (e.g. messages)
-		{
+        if(id.isNull())
+        {
+            name = QObject::tr("[System]");
+            icon = QIcon();
+        }
+        else if(RsPeerId(id)==rsPeers->getOwnId() || rsPeers->isFriend(RsPeerId(id)))		// horrible trick because some widgets still use locations as IDs (e.g. messages)
+        {
 			name = QString::fromUtf8(rsPeers->getPeerName(RsPeerId(id)).c_str()) ;
 			icon = FilesDefs::getIconFromQtResourcePath(":/icons/avatar_128.png");
 		}
