@@ -660,7 +660,7 @@ void RsMessageModel::setMessages(const std::list<Rs::Msgs::MsgInfoSummary>& msgs
 	for(auto it(msgs.begin());it!=msgs.end();++it)
 	{
 		mMessagesMap[(*it).msgId] = mMessages.size();
-		mMessages.push_back(*it);
+        mMessages.push_back(*it);
 	}
 
 	// now update prow for all posts

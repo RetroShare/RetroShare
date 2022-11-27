@@ -917,6 +917,8 @@ void MessagesDialog::changeBox(int box_row)
 		insertMsgTxtAndFiles(ui.messageTreeWidget->currentIndex());
 		ui.messageTreeWidget->setPlaceholderText(placeholderText);
         ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_READ,box_row!=ROW_INBOX);
+        ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_STAR,box_row==ROW_OUTBOX);
+        ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_SPAM,box_row==ROW_OUTBOX);
     }
 	else
 	{
@@ -1152,13 +1154,11 @@ void MessagesDialog::removemessage()
 
     bool doDelete = false;
     int listrow = ui.listWidget->currentRow();
-    if (listrow == ROW_TRASHBOX) {
+    if (listrow == ROW_TRASHBOX || listrow == ROW_OUTBOX)
         doDelete = true;
-    } else {
-        if (QApplication::keyboardModifiers() & Qt::ShiftModifier) {
-            doDelete = true;
-        }
-    }
+
+    if (QApplication::keyboardModifiers() & Qt::ShiftModifier)
+        doDelete = true;
 
     foreach (const QString& m, selectedMessages) {
         if (doDelete) {
