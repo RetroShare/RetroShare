@@ -1204,6 +1204,11 @@ MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
         return NULL;
     }
 
+    if(msgInfo.from.type()==MsgAddress::MSG_ADDRESS_TYPE_RSPEERID && msgInfo.from.toRsPeerId().isNull())
+    {
+        QMessageBox::warning(nullptr,tr("Will not reply"),tr("There is no point in replying to a notification message!"));
+        return nullptr;
+    }
     MessageComposer *msgComposer = MessageComposer::newMsg();
     msgComposer->m_msgParentId = msgId;
     msgComposer->m_msgType = REPLY;
@@ -1233,8 +1238,6 @@ MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
 
     if (all)
     {
-        RsPeerId ownId = rsPeers->getOwnId();
-
         for(auto m:msgInfo.destinations)
             if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
                 msgComposer->addRecipient(MessageComposer::TO,m.toGxsId());

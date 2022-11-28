@@ -919,6 +919,7 @@ void MessagesDialog::changeBox(int box_row)
         ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_READ,box_row!=ROW_INBOX);
         ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_STAR,box_row==ROW_OUTBOX);
         ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_SPAM,box_row==ROW_OUTBOX);
+        ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_TAGS,box_row==ROW_OUTBOX);
     }
 	else
 	{
@@ -1154,8 +1155,14 @@ void MessagesDialog::removemessage()
 
     bool doDelete = false;
     int listrow = ui.listWidget->currentRow();
-    if (listrow == ROW_TRASHBOX || listrow == ROW_OUTBOX)
+    if (listrow == ROW_TRASHBOX)
         doDelete = true;
+
+    if(listrow == ROW_OUTBOX)
+    {
+        QMessageBox::warning(nullptr,tr("Deletion impossible"),tr("Messages in this box are automatically deleted when received."));
+        return ;
+    }
 
     if (QApplication::keyboardModifiers() & Qt::ShiftModifier)
         doDelete = true;
@@ -1267,17 +1274,21 @@ void MessagesDialog::updateMessageSummaryList()
 
     switch(box_row)
     {
-    case ROW_INBOX: box = Rs::Msgs::BoxName::BOX_INBOX ; break;
-    case ROW_OUTBOX: box = Rs::Msgs::BoxName::BOX_OUTBOX; break;
+    case ROW_INBOX:    box = Rs::Msgs::BoxName::BOX_INBOX ; break;
+    case ROW_OUTBOX:   box = Rs::Msgs::BoxName::BOX_OUTBOX; break;
     case ROW_DRAFTBOX: box = Rs::Msgs::BoxName::BOX_DRAFTS; break;
-    case ROW_SENTBOX: box = Rs::Msgs::BoxName::BOX_SENT  ; break;
+    case ROW_SENTBOX:  box = Rs::Msgs::BoxName::BOX_SENT  ; break;
     case ROW_TRASHBOX: box = Rs::Msgs::BoxName::BOX_TRASH ; break;
     default:
         box = Rs::Msgs::BoxName::BOX_NONE;
     }
 
-    std::list<MsgInfoSummary> msgList;
-    rsMail->getMessageSummaries(box,msgList);
+    std::list<MsgInfoSummary> msgList,tmplist;
+    rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_INBOX ,tmplist); msgList.splice(msgList.end(),tmplist);
+    rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_OUTBOX,tmplist); msgList.splice(msgList.end(),tmplist);
+    rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_DRAFTS,tmplist); msgList.splice(msgList.end(),tmplist);
+    rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_SENT  ,tmplist); msgList.splice(msgList.end(),tmplist);
+    rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_TRASH ,tmplist); msgList.splice(msgList.end(),tmplist);
 
     QMap<int, int> tagCount;
 
@@ -1293,17 +1304,14 @@ void MessagesDialog::updateMessageSummaryList()
             tagCount [*tagId] = nCount;
         }
 
-        if (it->msgflags & RS_MSG_STAR) {
+        if (it->msgflags & RS_MSG_STAR) 
             ++starredCount;
-        }
 
-        if (it->msgflags & RS_MSG_SYSTEM) {
+        if (it->msgflags & RS_MSG_SYSTEM) 
             ++systemCount;
-        }
 
-        if (it->msgflags & RS_MSG_SPAM) {
+        if (it->msgflags & RS_MSG_SPAM) 
             ++spamCount;
-        }
 
         /* calculate box */
         if (it->msgflags & RS_MSG_TRASH) {
@@ -1321,7 +1329,7 @@ void MessagesDialog::updateMessageSummaryList()
         case RS_MSG_OUTBOX:
                 ++newOutboxCount;
                 break;
-        case RS_MSG_DRAFTBOX:
+        case RS_MSG_DRAFT:	// not RS_MSG_DRAFTBOX because drafts are not considered outgoing
                 ++newDraftCount;
                 break;
         case RS_MSG_SENTBOX:
@@ -1358,7 +1366,7 @@ void MessagesDialog::updateMessageSummaryList()
             break;
     }
 
-
+std::cerr << "NewInboxCount = " << newInboxCount << " NewDraftCount = " << newDraftCount << std::endl;
     QString textItem;
     /*updating the labels in leftcolumn*/
 
