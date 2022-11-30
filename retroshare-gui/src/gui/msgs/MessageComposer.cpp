@@ -1081,7 +1081,7 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
         MsgTagInfo tagInfo;
         rsMail->getMessageTag(msgId, tagInfo);
 
-        msgComposer->m_tagIds = tagInfo.tagIds;
+        msgComposer->m_tagIds = tagInfo;
         msgComposer->showTagLabels();
         std::cerr << "Setting modified 005 = false" << std::endl;
         msgComposer->ui.msgText->document()->setModified(false);
@@ -1267,7 +1267,7 @@ MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
 	MsgTagInfo tagInfo;
 	rsMail->getMessageTag(msgId, tagInfo);
 
-	msgComposer->m_tagIds = tagInfo.tagIds;
+    msgComposer->m_tagIds = tagInfo;
 	msgComposer->showTagLabels();
 
     msgComposer->calculateTitle();
@@ -1563,18 +1563,15 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 
         /* insert new tags */
         std::list<uint32_t>::iterator tag;
-        for (tag = m_tagIds.begin(); tag != m_tagIds.end(); ++tag) {
-            if (std::find(tagInfo.tagIds.begin(), tagInfo.tagIds.end(), *tag) == tagInfo.tagIds.end()) {
-                rsMail->setMessageTag(mi.msgId, *tag, true);
-            } else {
-                tagInfo.tagIds.remove(*tag);
-            }
-        }
+        for (auto tag:m_tagIds)
+            if (tagInfo.find(tag) == tagInfo.end())
+                rsMail->setMessageTag(mi.msgId, tag, true);
+             else
+                tagInfo.erase(tag);
 
         /* remove deleted tags */
-        for (tag = tagInfo.tagIds.begin(); tag != tagInfo.tagIds.end(); ++tag) {
-            rsMail->setMessageTag(mi.msgId, *tag, false);
-        }
+        for (auto tag:tagInfo)
+            rsMail->setMessageTag(mi.msgId, tag, false);
     }
     std::cerr << "Setting modified 001 = false" << std::endl;
     ui.msgText->document()->setModified(false);
@@ -2801,17 +2798,17 @@ void MessageComposer::tagSet(int tagId, bool set)
 		return;
 	}
 
-	std::list<uint32_t>::iterator tag = std::find(m_tagIds.begin(), m_tagIds.end(), tagId);
-	if (tag == m_tagIds.end()) {
-		if (set) {
-			m_tagIds.push_back(tagId);
-			/* Keep the list sorted */
-			m_tagIds.sort();
-		}
-	} else {
-		if (set == false) {
-			m_tagIds.remove(tagId);
-		}
+    auto tag = m_tagIds.find(tagId);
+
+    if (tag == m_tagIds.end())
+    {
+        if (set)
+            m_tagIds.insert(tagId);
+    }
+    else
+    {
+        if (set == false)
+            m_tagIds.erase(tagId);
 	}
 
 	showTagLabels();
@@ -2838,8 +2835,8 @@ void MessageComposer::showTagLabels()
 		rsMail->getMessageTagTypes(tags);
 
 		std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator tag;
-		for (std::list<uint32_t>::iterator tagId = m_tagIds.begin(); tagId != m_tagIds.end(); ++tagId) {
-			tag = tags.types.find(*tagId);
+        for (auto tagId:m_tagIds) {
+            tag = tags.types.find(tagId);
 			if (tag != tags.types.end()) {
 				QLabel *tagLabel = new QLabel(TagDefs::name(tag->first, tag->second.first), this);
 				tagLabel->setMaximumHeight(QFontMetrics(tagLabel->font()).height()*1.2);

@@ -475,15 +475,17 @@ void MessageWidget::showTagLabels()
 	MsgTagInfo tagInfo;
 	rsMail->getMessageTag(currMsgId, tagInfo);
 
-	if (tagInfo.tagIds.empty() == false) {
+    if (!tagInfo.empty())
+    {
 		ui.tagsLabel->setVisible(true);
 
 		MsgTagType Tags;
 		rsMail->getMessageTagTypes(Tags);
 
 		std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
-		for (std::list<uint32_t>::iterator tagId = tagInfo.tagIds.begin(); tagId != tagInfo.tagIds.end(); ++tagId) {
-			Tag = Tags.types.find(*tagId);
+        for (auto tag:tagInfo)
+        {
+            Tag = Tags.types.find(tag);
 			if (Tag != Tags.types.end()) {
 				QLabel *tagLabel = new QLabel(TagDefs::name(Tag->first, Tag->second.first), this);
 				tagLabel->setMaximumHeight(16);

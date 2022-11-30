@@ -251,7 +251,7 @@ private:
     std::string m_msgParentId; // parent message id
     std::string m_sDraftMsgId; // existing message id
     enumMessageType m_msgType;
-    std::list<uint32_t> m_tagIds;
+    std::set<uint32_t> m_tagIds;
     QList<QLabel*> tagLabels;
 
     // needed to send system flags with reply

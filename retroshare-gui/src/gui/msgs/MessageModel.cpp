@@ -508,15 +508,14 @@ QVariant RsMessageModel::displayRole(const Rs::Msgs::MsgInfoSummary& fmpe,int co
         QString text;
 
         // build tag names
-        for (auto tagit = tagInfo.tagIds.begin(); tagit != tagInfo.tagIds.end(); ++tagit)
+        for (auto tag:tagInfo)
         {
             if (!text.isNull())
                 text += ",";
 
-            auto Tag = Tags.types.find(*tagit);
+            auto Tag = Tags.types.find(tag);
 
-            if (Tag != Tags.types.end())				if (Tag != Tags.types.end())
-
+            if (Tag != Tags.types.end())
                 text += TagDefs::name(Tag->first, Tag->second.first);
             else
                 RS_WARN("Unknown tag ", (int)Tag->first, " in message ", fmpe.msgId);
