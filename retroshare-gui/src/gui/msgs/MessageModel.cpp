@@ -694,8 +694,10 @@ void RsMessageModel::setQuickViewFilter(QuickViewFilter fn)
 		std::cerr << "Changing new quickview filter to " << fn << std::endl;
 #endif
 
-		mQuickViewFilter = fn ;
-		updateMessages();
+        mQuickViewFilter = fn ;
+
+        if(rowCount() > 0)
+            emit dataChanged(createIndex(0,0),createIndex(rowCount()-1,RsMessageModel::columnCount()-1));
 	}
 }
 

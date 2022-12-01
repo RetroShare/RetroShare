@@ -140,6 +140,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     inChange = false;
     lockUpdate = 0;
     lastSelectedIndex = QModelIndex();
+    mLastCurrentQuickViewRow = -1;
 
     msgWidget = new MessageWidget(true, this);
 	ui.msgLayout->addWidget(msgWidget);
@@ -147,7 +148,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     connectActions();
 
-    listMode = LIST_NOTHING;
+    //listMode = LIST_NOTHING;
 
     mMessageModel = new RsMessageModel(this);
     mMessageProxyModel = new MessageSortFilterProxyModel(this);
@@ -284,10 +285,11 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     connect(ui.listWidget,           SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(folderlistWidgetCustomPopupMenu(QPoint)));
     connect(ui.listWidget,           SIGNAL(currentRowChanged(int)), this, SLOT(changeBox(int)));
-    connect(ui.quickViewWidget,      SIGNAL(currentRowChanged(int)), this, SLOT(changeQuickView(int)));
+    //connect(ui.quickViewWidget,      SIGNAL(currentRowChanged(int)), this, SLOT(changeQuickView(int)));
     connect(ui.tabWidget,            SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
     connect(ui.tabWidget,            SIGNAL(tabCloseRequested(int)), this, SLOT(tabCloseRequested(int)));
     connect(ui.newmessageButton,     SIGNAL(clicked()), this, SLOT(newmessage()));
+    connect(ui.quickViewWidget,      SIGNAL(clicked(const QModelIndex&)), this, SLOT(resetQuickView(const QModelIndex&)));
 
     connect(ui.messageTreeWidget,    SIGNAL(clicked(const QModelIndex&)) , this, SLOT(clicked(const QModelIndex&)));
     connect(ui.messageTreeWidget,    SIGNAL(doubleClicked(const QModelIndex&)) , this, SLOT(doubleClicked(const QModelIndex&)));
@@ -504,7 +506,7 @@ void MessagesDialog::fillQuickView()
 	ui.quickViewWidget->clear();
 
 	// add static items
-	item = new QListWidgetItem(tr("Starred"), ui.quickViewWidget);
+    item = new QListWidgetItem(tr("Stared"), ui.quickViewWidget);
     item->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_STAR_ON));
 	item->setData(ROLE_QUICKVIEW_TYPE, QUICKVIEW_TYPE_STATIC);
 	item->setData(ROLE_QUICKVIEW_ID, QUICKVIEW_STATIC_ID_STARRED);
@@ -893,9 +895,9 @@ void MessagesDialog::changeBox(int box_row)
 	if (item)
 	{
 		ui.quickViewWidget->setCurrentItem(NULL);
-		changeQuickView(-1);
 
-		listMode = LIST_BOX;
+        changeQuickView(-1);
+        //listMode = LIST_BOX;
 
 		QString placeholderText = tr("No message available in your %1.").arg(item->text());
 		switch(box_row)
@@ -930,21 +932,36 @@ void MessagesDialog::changeBox(int box_row)
     updateMessageSummaryList();
 }
 
+void MessagesDialog::resetQuickView(const QModelIndex& i)
+{
+    if(!i.isValid())
+        return;
+
+    int n = ui.quickViewWidget->currentRow();
+
+    if(mLastCurrentQuickViewRow == n)
+    {
+        changeQuickView(-1);
+        ui.quickViewWidget->setCurrentRow(-1);
+    }
+    else
+        changeQuickView(n);
+}
 void MessagesDialog::changeQuickView(int newrow)
 {
-
+    mLastCurrentQuickViewRow = newrow;
 	RsMessageModel::QuickViewFilter f = RsMessageModel::QUICK_VIEW_ALL ;
 	QListWidgetItem* item = ui.quickViewWidget->item(newrow);
 
 	if(item )
 	{
-		ui.listWidget->setCurrentItem(NULL);
-		changeBox(-1);
-
-		listMode = LIST_QUICKVIEW;
+        //ui.listWidget->setCurrentItem(NULL);
+        //changeBox(-1);
+        //listMode = LIST_QUICKVIEW;
 
 		QString placeholderText;
-		switch (item->data(ROLE_QUICKVIEW_TYPE).toInt()) {
+        switch (item->data(ROLE_QUICKVIEW_TYPE).toInt())
+        {
 			case QUICKVIEW_TYPE_TAG:
 			{
 				placeholderText = tr("No message using %1 tag available.").arg(item->data(ROLE_QUICKVIEW_TEXT).toString());
@@ -969,12 +986,12 @@ void MessagesDialog::changeQuickView(int newrow)
 			}
 		}
 
-		insertMsgTxtAndFiles(ui.messageTreeWidget->currentIndex());
+        //insertMsgTxtAndFiles(ui.messageTreeWidget->currentIndex());
 		ui.messageTreeWidget->setPlaceholderText(placeholderText);
 	}
 
 	mMessageModel->setQuickViewFilter(f);
-	mMessageProxyModel->setFilterRegExp(QRegExp(RsMessageModel::FilterString));	// this triggers the update of the proxy model
+    mMessageProxyModel->setFilterRegExp(QRegExp(RsMessageModel::FilterString));	// this triggers the update of the proxy model
 }
 
 // click in messageTreeWidget
@@ -1283,12 +1300,13 @@ void MessagesDialog::updateMessageSummaryList()
         box = Rs::Msgs::BoxName::BOX_NONE;
     }
 
-    std::list<MsgInfoSummary> msgList,tmplist;
-    rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_INBOX ,tmplist); msgList.splice(msgList.end(),tmplist);
-    rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_OUTBOX,tmplist); msgList.splice(msgList.end(),tmplist);
-    rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_DRAFTS,tmplist); msgList.splice(msgList.end(),tmplist);
-    rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_SENT  ,tmplist); msgList.splice(msgList.end(),tmplist);
-    rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_TRASH ,tmplist); msgList.splice(msgList.end(),tmplist);
+    std::list<MsgInfoSummary> msgList;
+    rsMail->getMessageSummaries(box ,msgList);
+    // rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_INBOX ,tmplist); msgList.splice(msgList.end(),tmplist);
+    // rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_OUTBOX,tmplist); msgList.splice(msgList.end(),tmplist);
+    // rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_DRAFTS,tmplist); msgList.splice(msgList.end(),tmplist);
+    // rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_SENT  ,tmplist); msgList.splice(msgList.end(),tmplist);
+    // rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_TRASH ,tmplist); msgList.splice(msgList.end(),tmplist);
 
     QMap<int, int> tagCount;
 
@@ -1467,16 +1485,20 @@ std::cerr << "NewInboxCount = " << newInboxCount << " NewDraftCount = " << newDr
                 QString text = qv_item->data(ROLE_QUICKVIEW_TEXT).toString();
                 switch (qv_item->data(ROLE_QUICKVIEW_ID).toInt()) {
                 case QUICKVIEW_STATIC_ID_STARRED:
-                    text += " (" + QString::number(starredCount) + ")";
+                    if(starredCount>0)
+                        text += " (" + QString::number(starredCount) + ")";
                     break;
                 case QUICKVIEW_STATIC_ID_SYSTEM:
-                    text += " (" + QString::number(systemCount) + ")";
+                    if(systemCount > 0)
+                        text += " (" + QString::number(systemCount) + ")";
                     break;
                 case QUICKVIEW_STATIC_ID_SPAM:
-                    text += " (" + QString::number(spamCount) + ")";
+                    if(spamCount > 0)
+                        text += " (" + QString::number(spamCount) + ")";
                     break;
                 case QUICKVIEW_STATIC_ID_ATTACHMENT:
-                    text += " (" + QString::number(attachmentCount) + ")";
+                    if(attachmentCount > 0)
+                        text += " (" + QString::number(attachmentCount) + ")";
                     break;
                 }
 
