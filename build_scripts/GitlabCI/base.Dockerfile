@@ -12,7 +12,7 @@
 ## To run the container
 # docker run -it -p 127.0.0.1:9092:9092 "${CI_REGISTRY_IMAGE}" retroshare-service --jsonApiPort 9092 --jsonApiBindAddress 0.0.0.0
 
-FROM ubuntu:21.10
+FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV APT_UNAT="--assume-yes --quiet"
