@@ -218,15 +218,15 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_TO,         fm.width("[Retroshare]")*1.1);
     msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_DATE,       fm.width("01/01/1970")*1.1);
 
-    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_SUBJECT,    QHeaderView::Interactive);
-    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_AUTHOR,     QHeaderView::Interactive);
-    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_TO,         QHeaderView::Interactive);
-    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_DATE,       QHeaderView::Interactive);
+    msgwheader->setSectionResizeMode(RsMessageModel::COLUMN_THREAD_SUBJECT,    QHeaderView::Interactive);
+    msgwheader->setSectionResizeMode(RsMessageModel::COLUMN_THREAD_AUTHOR,     QHeaderView::Interactive);
+    msgwheader->setSectionResizeMode(RsMessageModel::COLUMN_THREAD_TO,         QHeaderView::Interactive);
+    msgwheader->setSectionResizeMode(RsMessageModel::COLUMN_THREAD_DATE,       QHeaderView::Interactive);
 
-    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_STAR,       QHeaderView::Fixed);
-    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_ATTACHMENT, QHeaderView::Fixed);
-    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_READ,       QHeaderView::Fixed);
-    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_SPAM,       QHeaderView::Fixed);
+    msgwheader->setSectionResizeMode(RsMessageModel::COLUMN_THREAD_STAR,       QHeaderView::Fixed);
+    msgwheader->setSectionResizeMode(RsMessageModel::COLUMN_THREAD_ATTACHMENT, QHeaderView::Fixed);
+    msgwheader->setSectionResizeMode(RsMessageModel::COLUMN_THREAD_READ,       QHeaderView::Fixed);
+    msgwheader->setSectionResizeMode(RsMessageModel::COLUMN_THREAD_SPAM,       QHeaderView::Fixed);
 
 	ui.messageTreeWidget->setSortingEnabled(true);
 
