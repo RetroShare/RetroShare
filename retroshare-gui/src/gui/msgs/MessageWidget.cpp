@@ -670,7 +670,7 @@ void MessageWidget::fill(const std::string &msgId)
 //		link.createMessage(ownId, "");
 //	}
 
-	if(msgInfo.msgflags & RS_MSG_DISTANT)	// distant message
+    if(msgInfo.from.type()==Rs::Msgs::MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)	// distant message
 	{
         tooltip_string = PeerDefs::rsidFromId(msgInfo.from.toGxsId()) ;
         link = RetroShareLink::createMessage(msgInfo.from.toGxsId(), "");

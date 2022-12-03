@@ -1370,25 +1370,6 @@ bool MessageComposer::buildMessage(MessageInfo& mi)
 {
     // add a GXS signer/from in case the message is to be sent to a distant peer
 
-    bool at_least_one_gxsid = false;
-
-    for(auto m:mi.destinations)
-        if(m.type() == MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
-        {
-            at_least_one_gxsid=true;
-            break;
-        }
-
-    if(!at_least_one_gxsid)
-        mi.from = Rs::Msgs::MsgAddress(rsPeers->getOwnId(),MsgAddress::MSG_ADDRESS_MODE_TO);
-    else if(mi.from.type() != MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
-    {
-        QMessageBox::warning(this, tr("RetroShare"), tr("Please create an identity to sign distant messages, or remove the distant peers from the destination list."), QMessageBox::Ok);
-        return false; // Don't send if cannot sign.
-    }
-    else
-        mi.from = MsgAddress(RsGxsId(ui.respond_to_CB->itemData(ui.respond_to_CB->currentIndex()).toString().toStdString()),MsgAddress::MSG_ADDRESS_MODE_TO) ;
-
     //std::cerr << "MessageSend: setting 'from' field to GXS id = " << mi.rsgxsid_srcId << std::endl;
 
     mi.title = misc::removeNewLine(ui.titleEdit->text()).toUtf8().constData();
@@ -1493,6 +1474,29 @@ bool MessageComposer::buildMessage(MessageInfo& mi)
             break ;
         }
     }
+    bool at_least_one_gxsid = false;
+
+    for(auto m:mi.destinations)
+        if(m.type() == MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
+        {
+            at_least_one_gxsid=true;
+            break;
+        }
+
+    if(!at_least_one_gxsid)
+        mi.from = Rs::Msgs::MsgAddress(rsPeers->getOwnId(),MsgAddress::MSG_ADDRESS_MODE_TO);
+    else
+    {
+        auto gxs_id_from = RsGxsId(ui.respond_to_CB->itemData(ui.respond_to_CB->currentIndex()).toString().toStdString());
+
+        if(gxs_id_from.isNull())
+        {
+            QMessageBox::warning(this, tr("RetroShare"), tr("Please create an identity to sign distant messages, or remove the distant peers from the destination list."), QMessageBox::Ok);
+            return false; // Don't send if cannot sign.
+        }
+        mi.from = MsgAddress(RsGxsId(ui.respond_to_CB->itemData(ui.respond_to_CB->currentIndex()).toString().toStdString()),MsgAddress::MSG_ADDRESS_MODE_TO) ;
+    }
+
     return true;
 }
 
