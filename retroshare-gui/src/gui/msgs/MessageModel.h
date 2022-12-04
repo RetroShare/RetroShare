@@ -54,9 +54,9 @@ public:
         COLUMN_THREAD_DATE         = 0x07,
         COLUMN_THREAD_TAGS         = 0x08,
         COLUMN_THREAD_MSGID        = 0x09,
-        COLUMN_THREAD_NB_COLUMNS   = 0x0a,
-        COLUMN_THREAD_CONTENT      = 0x0b
-	};
+        COLUMN_THREAD_CONTENT      = 0x0a,
+        COLUMN_THREAD_NB_COLUMNS   = 0x0b
+    };
 
     enum QuickViewFilter {
         QUICK_VIEW_ALL             = 0x00,

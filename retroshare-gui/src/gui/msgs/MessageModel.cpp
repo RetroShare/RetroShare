@@ -88,7 +88,7 @@ int RsMessageModel::rowCount(const QModelIndex& parent) const
 
 int RsMessageModel::columnCount(const QModelIndex &/*parent*/) const
 {
-	return COLUMN_THREAD_NB_COLUMNS ;
+    return COLUMN_THREAD_NB_COLUMNS;
 }
 
 bool RsMessageModel::getMessageData(const QModelIndex& i,Rs::Msgs::MessageInfo& fmpe) const

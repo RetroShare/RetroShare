@@ -254,9 +254,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
 	sortColumn(RsMessageModel::COLUMN_THREAD_DATE,Qt::DescendingOrder);
 
-    // load settings
-    processSettings(true);
-
     //ui.messageTreeWidget->installEventFilter(this);
 
 	// remove close button of the the first tab
@@ -298,6 +295,11 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     connect(ui.messageTreeWidget->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumn(int,Qt::SortOrder)));
 
     connect(ui.messageTreeWidget->selectionModel(), SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&)), this, SLOT(currentChanged(const QModelIndex&,const QModelIndex&)));
+
+    // load settings
+    processSettings(true);
+
+    ui.listWidget->setCurrentRow(0); // always starts with inbox => allows to setup the proper number of columns
 
     mEventHandlerId=0;
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }); }, mEventHandlerId, RsEventType::MAIL_STATUS );
@@ -917,11 +919,14 @@ void MessagesDialog::changeBox(int box_row)
 		}
 
 		insertMsgTxtAndFiles(ui.messageTreeWidget->currentIndex());
+
 		ui.messageTreeWidget->setPlaceholderText(placeholderText);
         ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_READ,box_row!=ROW_INBOX);
         ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_STAR,box_row==ROW_OUTBOX);
         ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_SPAM,box_row==ROW_OUTBOX);
         ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_TAGS,box_row==ROW_OUTBOX);
+        ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_MSGID,true);
+        ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_CONTENT,true);
     }
 	else
 	{
