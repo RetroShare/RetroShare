@@ -282,7 +282,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     connect(ui.listWidget,           SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(folderlistWidgetCustomPopupMenu(QPoint)));
     connect(ui.listWidget,           SIGNAL(currentRowChanged(int)), this, SLOT(changeBox(int)));
-    //connect(ui.quickViewWidget,      SIGNAL(currentRowChanged(int)), this, SLOT(changeQuickView(int)));
     connect(ui.tabWidget,            SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
     connect(ui.tabWidget,            SIGNAL(tabCloseRequested(int)), this, SLOT(tabCloseRequested(int)));
     connect(ui.newmessageButton,     SIGNAL(clicked()), this, SLOT(newmessage()));
@@ -1517,11 +1516,10 @@ std::cerr << "NewInboxCount = " << newInboxCount << " NewDraftCount = " << newDr
 
 void MessagesDialog::tagAboutToShow()
 {
-#ifdef TODO
 	TagsMenu *menu = dynamic_cast<TagsMenu*>(ui.tagButton->menu());
-	if (menu == NULL) {
+
+    if (menu == NULL)
 		return;
-	}
 
 	// activate actions from the first selected row
 	MsgTagInfo tagInfo;
@@ -1532,8 +1530,7 @@ void MessagesDialog::tagAboutToShow()
     if(!msgids.empty())
 		rsMail->getMessageTag(msgids.front().toStdString(), tagInfo);
 
-	menu->activateActions(tagInfo.tagIds);
-#endif
+    menu->activateActions(tagInfo);
 }
 
 void MessagesDialog::tagRemoveAll()
@@ -1547,9 +1544,8 @@ void MessagesDialog::tagRemoveAll()
 
 void MessagesDialog::tagSet(int tagId, bool set)
 {
-	if (tagId == 0) {
+    if (tagId == 0)
 		return;
-	}
 
     QList<QString> msgids;
     getSelectedMessages(msgids);
