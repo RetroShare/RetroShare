@@ -1290,27 +1290,8 @@ void MessagesDialog::updateMessageSummaryList()
 
     /* calculating the new messages */
 
-    Rs::Msgs::BoxName box;
-    int box_row = ui.listWidget->currentRow();
-
-    switch(box_row)
-    {
-    case ROW_INBOX:    box = Rs::Msgs::BoxName::BOX_INBOX ; break;
-    case ROW_OUTBOX:   box = Rs::Msgs::BoxName::BOX_OUTBOX; break;
-    case ROW_DRAFTBOX: box = Rs::Msgs::BoxName::BOX_DRAFTS; break;
-    case ROW_SENTBOX:  box = Rs::Msgs::BoxName::BOX_SENT  ; break;
-    case ROW_TRASHBOX: box = Rs::Msgs::BoxName::BOX_TRASH ; break;
-    default:
-        box = Rs::Msgs::BoxName::BOX_NONE;
-    }
-
     std::list<MsgInfoSummary> msgList;
-    rsMail->getMessageSummaries(box ,msgList);
-    // rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_INBOX ,tmplist); msgList.splice(msgList.end(),tmplist);
-    // rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_OUTBOX,tmplist); msgList.splice(msgList.end(),tmplist);
-    // rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_DRAFTS,tmplist); msgList.splice(msgList.end(),tmplist);
-    // rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_SENT  ,tmplist); msgList.splice(msgList.end(),tmplist);
-    // rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_TRASH ,tmplist); msgList.splice(msgList.end(),tmplist);
+    rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_ALL,msgList);
 
     QMap<int, int> tagCount;
 
@@ -1422,7 +1403,7 @@ std::cerr << "NewInboxCount = " << newInboxCount << " NewDraftCount = " << newDr
         textItem = tr("Outbox") + " (" + QString::number(newOutboxCount)+")";
         item->setText(textItem);
         QFont qf = item->font();
-        qf.setBold(true);
+        qf.setBold(false);
         item->setFont(qf);
     }
     else
