@@ -1176,17 +1176,18 @@ void MessagesDialog::removemessage()
 
     bool doDelete = false;
     int listrow = ui.listWidget->currentRow();
-    if (listrow == ROW_TRASHBOX)
+
+    if(listrow == ROW_TRASHBOX || (QApplication::keyboardModifiers() & Qt::ShiftModifier))
         doDelete = true;
 
     if(listrow == ROW_OUTBOX)
     {
-        QMessageBox::warning(nullptr,tr("Deletion impossible"),tr("Messages in this box are automatically deleted when received."));
-        return ;
-    }
+        if(QMessageBox::question(nullptr,tr("Deletion is not recommended"),tr("Messages in this box are automatically deleted when received. Manually deleting a message does not guaranty that the message will not be delivered. Messages that cannot be delivered will however stay here indefinitly. Do you want to proceed and delete?"))
+                != QMessageBox::Yes)
+            return ;
 
-    if (QApplication::keyboardModifiers() & Qt::ShiftModifier)
         doDelete = true;
+    }
 
     foreach (const QString& m, selectedMessages) {
         if (doDelete) {
