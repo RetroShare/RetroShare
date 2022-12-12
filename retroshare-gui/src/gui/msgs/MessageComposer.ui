@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
-    <height>750</height>
+    <width>1215</width>
+    <height>825</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,12 +30,6 @@
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>300</width>
-         <height>524287</height>
-        </size>
        </property>
        <property name="sizeIncrement">
         <size>
@@ -84,12 +78,6 @@
             <size>
              <width>20</width>
              <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>300</width>
-             <height>16777215</height>
             </size>
            </property>
            <property name="sizeIncrement">
@@ -1310,8 +1298,8 @@ border-image: url(:/images/closepressed.png)
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1176</width>
-     <height>20</height>
+     <width>1215</width>
+     <height>25</height>
     </rect>
    </property>
   </widget>
@@ -1452,8 +1440,8 @@ border-image: url(:/images/closepressed.png)
   <tabstop>hashBox</tabstop>
  </tabstops>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

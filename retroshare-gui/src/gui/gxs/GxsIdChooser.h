@@ -21,6 +21,7 @@
 #ifndef _GXS_ID_CHOOSER_H
 #define _GXS_ID_CHOOSER_H
 
+#include "retroshare/rsevents.h"
 #include "gui/common/RSComboBox.h"
 
 #include "retroshare/rsgxsifacetypes.h"
@@ -78,6 +79,7 @@ private slots:
 private:
     void loadPrivateIds();
     void setDefaultItem();
+    void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
 	uint32_t mFlags;
 	RsGxsId mDefaultId;
@@ -86,6 +88,8 @@ private:
 
     std::set<RsGxsId> mConstraintIdsSet ; // leave empty if all allowed
 //    RsGxsUpdateBroadcastBase *mBase;
+
+    RsEventsHandlerId_t mEventHandlerId;
 };
 
 #endif

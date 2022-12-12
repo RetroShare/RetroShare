@@ -127,11 +127,45 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent)
 
 	/* Refresh style to have the correct text color */
 	Rshare::refreshStyleSheet(this, false);
+
+    mEventHandlerId_identities = 0;
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) {
+        RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }) ;}, mEventHandlerId_identities, RsEventType::GXS_IDENTITY );
+    mEventHandlerId_peers = 0;
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) {
+        RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }) ;}, mEventHandlerId_peers, RsEventType::PEER_CONNECTION );
 }
+
+void FriendSelectionWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+    const RsGxsIdentityEvent *fe = dynamic_cast<const RsGxsIdentityEvent*>(event.get());
+
+    if(fe)
+    {
+        updateDisplay(true);
+        update(); // Qt flush
+        return;
+    }
+    const RsConnectionEvent *fp = dynamic_cast<const RsConnectionEvent*>(event.get());
+
+    if(fp)
+        switch(fp->mConnectionInfoCode)
+        {
+        case RsConnectionEventCode::PEER_REMOVED:
+        case RsConnectionEventCode::PEER_ADDED:
+            updateDisplay(true);
+            update(); // Qt flush
+            break;
+        default: break ;
+        }
+}
+
 
 FriendSelectionWidget::~FriendSelectionWidget()
 {
-	delete ui;
+    rsEvents->unregisterEventsHandler(mEventHandlerId_peers);
+    rsEvents->unregisterEventsHandler(mEventHandlerId_identities);
+    delete ui;
 }
 
 void FriendSelectionWidget::changeEvent(QEvent *e)

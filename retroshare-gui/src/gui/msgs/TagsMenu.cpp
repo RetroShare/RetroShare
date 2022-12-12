@@ -170,7 +170,7 @@ void TagsMenu::fillTags()
 	addAction(action);
 }
 
-void TagsMenu::activateActions(std::list<uint32_t>& tagIds)
+void TagsMenu::activateActions(std::set<uint32_t>& tagIds)
 {
 	foreach(QObject *object, children()) {
 		QAction *action = qobject_cast<QAction*> (object);
@@ -186,7 +186,7 @@ void TagsMenu::activateActions(std::list<uint32_t>& tagIds)
 			continue;
 		}
 
-		std::list<uint32_t>::iterator tagId = std::find(tagIds.begin(), tagIds.end(), values [ACTION_TAGSINDEX_ID]);
+        auto tagId = std::find(tagIds.begin(), tagIds.end(), values [ACTION_TAGSINDEX_ID]);
 		action->setChecked(tagId != tagIds.end());
 	}
 }
