@@ -72,7 +72,7 @@ private slots:
 	void saveAs();
 	void refill();
 	void sendInvite();
-
+	void expandTo();
 
 	void msgfilelistWidgetCostumPopupMenu(QPoint);
 	void messagesTagsChanged();
