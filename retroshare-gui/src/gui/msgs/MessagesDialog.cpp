@@ -420,7 +420,7 @@ UserNotify *MessagesDialog::createUserNotify(QObject *parent)
 
 void MessagesDialog::processSettings(bool load)
 {
-    int messageTreeVersion = 3; // version number for the settings to solve problems when modifying the column count
+    int messageTreeVersion = 4; // version number for the settings to solve problems when modifying the column count
 
     inProcessSettings = true;
 
