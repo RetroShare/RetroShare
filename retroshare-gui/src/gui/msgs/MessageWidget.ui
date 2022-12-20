@@ -458,10 +458,6 @@
               <property name="text">
                <string/>
               </property>
-              <property name="icon">
-               <iconset resource="../icons.qrc">
-                <normaloff>:/icons/png/down-arrow.png</normaloff>:/icons/png/down-arrow.png</iconset>
-              </property>
               <property name="checkable">
                <bool>true</bool>
               </property>

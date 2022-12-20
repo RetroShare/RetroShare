@@ -553,6 +553,9 @@ void MessageWidget::fill(const std::string &msgId)
 		ui.deleteButton->setEnabled(false);
 		ui.moreButton->setEnabled(false);
 
+		ui.expandButton->hide();
+		ui.trans_ToText->setMaximumHeight(ui.trans_ToText->fontMetrics().lineSpacing()*1.5);
+
 		currMsgFlags = 0;
 
 		return;
@@ -638,14 +641,14 @@ void MessageWidget::fill(const std::string &msgId)
     ui.trans_ToText->setText(to_text);
 
 	int recipientsCount = ui.trans_ToText->toPlainText().split(QRegExp("(\\s|\\n|\\r)+"), QString::SkipEmptyParts).count();
-	ui.expandButton->setText( QString::number(recipientsCount));
+	ui.expandButton->setText( QString::number(recipientsCount)+ " " + tr("more"));
 
 	if (recipientsCount >=20) {
 		ui.expandButton->show();
 	} else {
 		ui.expandButton->hide();
 		ui.expandButton->setChecked(false);
-		ui.expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/down-arrow.png")));
+		//ui.expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/down-arrow.png")));
 		ui.trans_ToText->setMaximumHeight(ui.trans_ToText->fontMetrics().lineSpacing()*1.5);
 	}
 
@@ -955,11 +958,9 @@ void MessageWidget::checkLength()
 void MessageWidget::expandTo()
 {
 	if (ui.expandButton->isChecked()) {
-		ui.expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/up-arrow.png")));
 		ui.trans_ToText->setMaximumHeight(ui.trans_ToText->fontMetrics().lineSpacing()*3.5);
 		ui.expandButton->setToolTip(tr("Show less"));
 	} else {
-		ui.expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/down-arrow.png")));
 		ui.trans_ToText->setMaximumHeight(ui.trans_ToText->fontMetrics().lineSpacing()*1.5);
 		ui.expandButton->setToolTip(tr("Show more"));
 	}
