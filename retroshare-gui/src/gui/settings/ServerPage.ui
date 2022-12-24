@@ -26,7 +26,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabNetConf">
       <attribute name="title">
@@ -759,7 +759,7 @@ behind a firewall or a VPN.</string>
           </sizepolicy>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="hiddenServiceTabManual">
           <attribute name="title">
