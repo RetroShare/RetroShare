@@ -102,11 +102,20 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 	  {
 		  // Here we use absolute numbers instead of consts defined above, because the consts correspond to the tab number *after* this tab removal.
 
-		  ui.hiddenpage_proxyAddress_i2p->hide() ;
-		  ui.hiddenpage_proxyLabel_i2p->hide() ;
-		  ui.hiddenpage_proxyPort_i2p->hide() ;
-		  ui.label_i2p_outgoing->hide() ;
-		  ui.iconlabel_i2p_outgoing->hide() ;
+          ui.hiddenpage_proxyAddress_tor->setEnabled(false) ;
+          ui.hiddenpage_proxyPort_tor->setEnabled(false) ;
+          ui.hiddenpage_localAddress->setEnabled(false) ;
+          ui.hiddenpage_localPort->setEnabled(false) ;
+          ui.testIncoming_PB->hide() ;
+          ui.l_incomingTestResult->hide() ;
+          ui.iconlabel_service_incoming->hide() ;
+
+          // ui.hiddenpage_proxyAddress_i2p->hide() ;
+          // ui.hiddenpage_proxyLabel_i2p->hide() ;
+          // ui.hiddenpage_proxyPort_i2p->hide() ;
+          // ui.label_i2p_outgoing->hide() ;
+          // ui.iconlabel_i2p_outgoing->hide() ;
+
 		  ui.info_SocksProxy->hide() ;
 		  ui.hiddenpage_configuration->hide() ;
 		  ui.l_hiddenpage_configuration->hide() ;
