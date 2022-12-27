@@ -49,7 +49,7 @@
 
 /** Constructor */
 GxsChannelDialog::GxsChannelDialog(QWidget *parent):
-    GxsGroupFrameDialog(rsGxsChannels, parent, true), mEventHandlerId(0)
+    GxsGroupFrameDialog(rsGxsChannels, settingsGroupName(),parent, true), mEventHandlerId(0)
 {
 	// Needs to be asynced because this function is called by another thread!
 	rsEvents->registerEventsHandler(
