@@ -1457,7 +1457,8 @@ void SearchDialog::copyResultLink()
     QList<QTreeWidgetItem*> itemsForCopy = ui.searchResultWidget->selectedItems();
     QTreeWidgetItem * item;
 
-    std::map<RsFileHash,RetroShareLink> url_map;
+    std::set<RsFileHash> already_seen_hashes;
+    QList<RetroShareLink> urls ;
 
     for (auto item:itemsForCopy)
     {
@@ -1466,7 +1467,7 @@ void SearchDialog::copyResultLink()
         QString fhash = item->text(SR_HASH_COL);
         RsFileHash hash(fhash.toStdString());
 
-        if(!hash.isNull())
+        if(!hash.isNull() && (already_seen_hashes.end() == already_seen_hashes.find(hash)))
         {
             std::cerr << "SearchDialog::copyResultLink() Calling set retroshare link";
             std::cerr << std::endl;
@@ -1477,15 +1478,12 @@ void SearchDialog::copyResultLink()
             RetroShareLink link = RetroShareLink::createFile(fname, fsize, fhash);
 
             if (link.valid())
-                url_map[hash] = link;
+            {
+                std::cerr << "new link added to clipboard: " << link.toString().toStdString() << std::endl ;
+                urls.push_back(link);
+                already_seen_hashes.insert(hash);
+            }
         }
-    }
-    QList<RetroShareLink> urls ;
-
-    for(auto link:url_map)
-    {
-        std::cerr << "new link added to clipboard: " << link.second.toString().toStdString() << std::endl ;
-        urls.push_back(link.second);
     }
 
     RSLinkClipboard::copyLinks(urls) ;
