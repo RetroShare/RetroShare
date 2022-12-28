@@ -1486,7 +1486,8 @@ void SearchDialog::copyResultLink()
         }
     }
 
-    RSLinkClipboard::copyLinks(urls) ;
+    if(!urls.empty())
+        RSLinkClipboard::copyLinks(urls) ;
 }
 
 void SearchDialog::sendLinkTo( )
