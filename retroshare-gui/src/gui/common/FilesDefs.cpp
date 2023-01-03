@@ -33,13 +33,15 @@ static QString getInfoFromFilename(const QString& filename, bool anyForUnknown, 
 {
 	QString ext = QFileInfo(filename).suffix().toLower();
 
-	if (ext == "jpg" || ext == "jpeg" || ext == "tif" || ext == "tiff" || ext == "png" || ext == "gif" || ext == "bmp" || ext == "ico" || ext == "svg") {
+	if (ext == "jpg" || ext == "jpeg" || ext == "tif" || ext == "tiff" || ext == "png" || ext == "gif" ||
+        ext == "bmp" || ext == "ico" || ext == "svg" || ext == "webp") {
 		return image ? ":/icons/filetype/picture.svg" : QApplication::translate("FilesDefs", "Picture");
 	} else if (ext == "avi" || ext == "mpg" || ext == "mpeg" || ext == "wmv" || ext == "divx" || ext == "ts" ||
 			   ext == "mkv" || ext == "mp4" || ext == "flv" || ext == "mov" || ext == "asf" || ext == "xvid" ||
-			   ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp" || ext == "ogm") {
+			   ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp" || ext == "ogm" || ext == "webm") {
 		return image ? ":/icons/filetype/video.svg" : QApplication::translate("FilesDefs", "Video");
-	} else if (ext == "ogg" || ext == "mp3" || ext == "mp1" || ext == "mp2" || ext == "wav" || ext == "wma" || ext == "m4a" || ext == "flac" ||ext == "xpm") {
+	} else if (ext == "ogg" || ext == "mp3" || ext == "mp1" || ext == "mp2" || ext == "wav" || ext == "wma" ||
+               ext == "m4a" || ext == "flac" || ext == "xpm" || ext == "weba") {
 		return image ? ":/icons/filetype/audio.svg" : QApplication::translate("FilesDefs", "Audio");
 	} else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz" || ext == "7z" || ext == "msi" ||
 			   ext == "rar" || ext == "rpm" || ext == "ace" || ext == "jar" || ext == "tgz" || ext == "lha" ||
