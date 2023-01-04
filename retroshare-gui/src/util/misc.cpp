@@ -108,6 +108,8 @@ bool misc::isPreviewable(QString extension)
     if(extension == "WAV") return true;
     if(extension == "WMA") return true;
     if(extension == "WMV") return true;
+    if(extension == "WEBM") return true;
+    if(extension == "WEBA") return true;
     return false;
 }
 
