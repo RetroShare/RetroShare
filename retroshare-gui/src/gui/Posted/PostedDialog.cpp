@@ -43,7 +43,7 @@ public:
 
 /** Constructor */
 PostedDialog::PostedDialog(QWidget *parent):
-    GxsGroupFrameDialog(rsPosted, parent), mEventHandlerId(0)
+    GxsGroupFrameDialog(rsPosted, settingsGroupName(),parent), mEventHandlerId(0)
 {
 	// Needs to be asynced because this function is likely to be called by another thread!
 	rsEvents->registerEventsHandler(

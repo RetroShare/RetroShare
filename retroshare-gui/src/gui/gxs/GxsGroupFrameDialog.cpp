@@ -70,8 +70,8 @@ static const uint32_t DELAY_BETWEEN_GROUP_STATISTICS_UPDATE = 120; // do not upd
  */
 
 /** Constructor */
-GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *parent,bool allow_dist_sync)
-: MainPage(parent)
+GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl,const QString& settings_name, QWidget *parent,bool allow_dist_sync)
+: MainPage(parent),mSettingsName(settings_name)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui = new Ui::GxsGroupFrameDialog();
@@ -166,7 +166,6 @@ void GxsGroupFrameDialog::initUi()
 	}
 
 	// load settings
-	mSettingsName = settingsGroupName();
 	processSettings(true);
 
 	if (groupFrameSettingsType() != GroupFrameSettings::Nothing) {
@@ -1178,20 +1177,49 @@ void GxsGroupFrameDialog::updateGroupStatisticsReal(const RsGxsGroupId &groupId)
 
 void GxsGroupFrameDialog::getServiceStatistics(GxsServiceStatistic& stats) const
 {
-	stats = GxsServiceStatistic(); // clears everything
+    if(!mCachedGroupStats.empty())
+    {
+        stats = GxsServiceStatistic(); // clears everything
 
-	for(auto& it:  mCachedGroupStats)
-	{
-		const GxsGroupStatistic& s(it.second);
+        for(auto& it:  mCachedGroupStats)
+        {
+            const GxsGroupStatistic& s(it.second);
 
-		stats.mNumMsgs             += s.mNumMsgs;
-		stats.mNumGrps             += 1;
-		stats.mSizeOfMsgs          += s.mTotalSizeOfMsgs;
-		stats.mNumThreadMsgsNew    += s.mNumThreadMsgsNew;
-		stats.mNumThreadMsgsUnread += s.mNumThreadMsgsUnread;
-		stats.mNumChildMsgsNew     += s.mNumChildMsgsNew ;
-		stats.mNumChildMsgsUnread  += s.mNumChildMsgsUnread ;
-	}
+            stats.mNumMsgs             += s.mNumMsgs;
+            stats.mNumGrps             += 1;
+            stats.mSizeOfMsgs          += s.mTotalSizeOfMsgs;
+            stats.mNumThreadMsgsNew    += s.mNumThreadMsgsNew;
+            stats.mNumThreadMsgsUnread += s.mNumThreadMsgsUnread;
+            stats.mNumChildMsgsNew     += s.mNumChildMsgsNew ;
+            stats.mNumChildMsgsUnread  += s.mNumChildMsgsUnread ;
+        }
+
+        // Also save the service statistics in conf file, so that we can display it right away at start.
+
+        Settings->beginGroup(mSettingsName);
+        Settings->setValue("NumMsgs",            stats.mNumMsgs            );
+        Settings->setValue("NumGrps",            stats.mNumGrps            );
+        Settings->setValue("SizeOfMessages",     stats.mSizeOfMsgs         );
+        Settings->setValue("NumThreadMsgsNew",   stats.mNumThreadMsgsNew   );
+        Settings->setValue("NumThreadMsgsUnread",stats.mNumThreadMsgsUnread);
+        Settings->setValue("NumChildMsgsNew",    stats.mNumChildMsgsNew    );
+        Settings->setValue("NumChildMsgsUnread", stats.mNumChildMsgsUnread );
+        Settings->endGroup();
+    }
+    else	// Get statistics from settings if no cache is already present: allows to display at start.
+    {
+        Settings->beginGroup(mSettingsName);
+
+        stats.mNumMsgs             = Settings->value("NumMsgs",QVariant(0)).toInt();
+        stats.mNumGrps             = Settings->value("NumGrps",QVariant(0)).toInt();
+        stats.mSizeOfMsgs          = Settings->value("SizeOfMessages",QVariant(0)).toInt();
+        stats.mNumThreadMsgsNew    = Settings->value("NumThreadMsgsNew",QVariant(0)).toInt();
+        stats.mNumThreadMsgsUnread = Settings->value("NumThreadMsgsUnread",QVariant(0)).toInt();
+        stats.mNumChildMsgsNew     = Settings->value("NumChildMsgsNew",QVariant(0)).toInt();
+        stats.mNumChildMsgsUnread  = Settings->value("NumChildMsgsUnread",QVariant(0)).toInt();
+
+        Settings->endGroup();
+    }
 }
 
 TurtleRequestId GxsGroupFrameDialog::distantSearch(const QString& search_string)   // this should be overloaded in the child class

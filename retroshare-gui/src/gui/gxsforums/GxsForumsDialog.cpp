@@ -40,7 +40,7 @@ public:
 
 /** Constructor */
 GxsForumsDialog::GxsForumsDialog(QWidget *parent) :
-    GxsGroupFrameDialog(rsGxsForums, parent), mEventHandlerId(0)
+    GxsGroupFrameDialog(rsGxsForums, settingsGroupName(),parent), mEventHandlerId(0)
 {
 	mCountChildMsgs = true;
 
