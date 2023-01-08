@@ -187,21 +187,12 @@ RsRegularExpression::Expression* ExpressionWidget::getRsExpression()
 
                 if(cond == RsRegularExpression::Equals)
                 {
-                    // Now compute a proper interval. For that we look for the largest non significant digit, and add/remove 50% of it.
-                    int i=0;
-                    while(!(s & (1<<i)) && i<32)
-                        i++;
+                    // Now compute a proper interval. There is no optimal solution, so we aim for the simplest: add/remove 20% of the initial value.
 
-                    if(i==0)
-                        if(MB)
-                            expr = new RsRegularExpression::SizeExpressionMB(RsRegularExpression::Equals, (int)s) ;
-                        else
-                            expr = new RsRegularExpression::SizeExpression(RsRegularExpression::Equals, (int)s) ;
+                    if(MB)
+                        expr = new RsRegularExpression::SizeExpressionMB(RsRegularExpression::InRange, (int)(s*0.8) , (int)(s*1.2));
                     else
-                        if(MB)
-                            expr = new RsRegularExpression::SizeExpressionMB(RsRegularExpression::InRange, (int)s - (1<<(i-1)), (int)s + (1<<(i-1)));
-                        else
-                            expr = new RsRegularExpression::SizeExpression(RsRegularExpression::InRange, (int)s - (1<<(i-1)), (int)s + (1<<(i-1)));
+                        expr = new RsRegularExpression::SizeExpression(RsRegularExpression::InRange, (int)(s*0.8) , (int)(s*1.2));
                 }
                 else
                 {
