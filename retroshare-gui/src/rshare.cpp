@@ -947,30 +947,42 @@ bool Rshare::loadCertificate(const RsPeerId &accountId, bool autoLogin)
 	}
 
 	std::string lockFile;
-	int retVal = RsInit::LockAndLoadCertificates(autoLogin, lockFile);
-	switch (retVal) {
-		case 0:	break;
-		case 1:	QMessageBox::warning(	0,
-										QObject::tr("Multiple instances"),
-										QObject::tr("Another RetroShare using the same profile is "
-										"already running on your system. Please close "
-										"that instance first\n Lock file:\n") +
-										QString::fromUtf8(lockFile.c_str()));
-				return false;
-		case 2:	QMessageBox::critical(	0,
-										QObject::tr("Multiple instances"),
-										QObject::tr("An unexpected error occurred when Retroshare "
-										"tried to acquire the single instance lock\n Lock file:\n") +
-										QString::fromUtf8(lockFile.c_str()));
-                return false;
-        case 3:
-//		case 3: QMessageBox::critical(	0,
-//										QObject::tr("Login Failure"),
-//										QObject::tr("Maybe password is wrong") );
-				return false;
-		default: std::cerr << "Rshare::loadCertificate() unexpected switch value " << retVal << std::endl;
-				return false;
-	}
+    RsInit::LoadCertificateStatus retVal = RsInit::LockAndLoadCertificates(autoLogin, lockFile);
+
+    switch (retVal)
+    {
+    case RsInit::OK:
+        break;
+    case RsInit::ERR_ALREADY_RUNNING:	QMessageBox::warning(	nullptr,
+                                                            QObject::tr("Multiple instances"),
+                                                            QObject::tr("Another RetroShare using the same profile is "
+                                                                        "already running on your system. Please close "
+                                                                        "that instance first\n Lock file:\n") +
+                                                            QString::fromUtf8(lockFile.c_str()));
+        return false;
+    case RsInit::ERR_CANT_ACQUIRE_LOCK:	QMessageBox::critical(	nullptr,
+                                                            QObject::tr("Multiple instances"),
+                                                            QObject::tr("An unexpected error occurred when Retroshare "
+                                                                        "tried to acquire the single instance lock\n Lock file:\n") +
+                                                            QString::fromUtf8(lockFile.c_str()));
+        return false;
+    case RsInit::ERR_CERT_CRYPTO_IS_TOO_WEAK: QMessageBox::critical(	nullptr,
+                                                            QObject::tr("Old certificate"),
+                                                            QObject::tr("This node uses old certificate settings that are considered too "
+                                                                        "weak by your current OpenSSL library version. You need to create a new node "
+                                                                        "possibly using the same profile."));
+        return false;
+    case RsInit::ERR_CANNOT_CONFIGURE_TOR: QMessageBox::critical(	nullptr,
+                                                            QObject::tr("Tor error"),
+                                                            QObject::tr("Cannot run/configure Tor. Make sure it is installed on your system."));
+        return false;
+        //		case 3: QMessageBox::critical(	0,
+        //										QObject::tr("Login Failure"),
+        //										QObject::tr("Maybe password is wrong") );
+        return false;
+    default: std::cerr << "Rshare::loadCertificate() unexpected switch value " << retVal << std::endl;
+        return false;
+    }
 
 	return true;
 }
