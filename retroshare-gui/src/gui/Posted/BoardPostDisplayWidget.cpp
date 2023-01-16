@@ -330,7 +330,7 @@ void BoardPostDisplayWidget_compact::setup()
 #ifdef DEBUG_BOARDPOSTDISPLAYWIDGET
             std::cerr << "Got pixmap of size " << pixmap.width() << " x " << pixmap.height() << std::endl;
             std::cerr << "Saving to pix.png" << std::endl;
-            pixmap.save("pix.png","PNG");
+            pixmap.save("pix.png","JPG");
 #endif
 
             ui->pictureLabel->setPicture(pixmap);

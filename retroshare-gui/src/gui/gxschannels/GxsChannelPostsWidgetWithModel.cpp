@@ -164,7 +164,7 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 //        {
 //            QFile file("yourFile.png");
 //            file.open(QIODevice::WriteOnly);
-//            pixmap.save(&file, "PNG");
+//            pixmap.save(&file, "JPG");
 //            file.close();
 //        }
 

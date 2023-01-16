@@ -577,7 +577,7 @@ void IdEditDialog::createId()
         QBuffer buffer(&ba);
 
         buffer.open(QIODevice::WriteOnly);
-        mAvatar.save(&buffer, "PNG"); // writes image into ba in PNG format
+        mAvatar.save(&buffer, "JPG"); // writes image into ba in PNG format
 
         params.mImage.copy((uint8_t *) ba.data(), ba.size());
     }
@@ -649,7 +649,7 @@ void IdEditDialog::updateId()
 		QBuffer buffer(&ba);
 
 		buffer.open(QIODevice::WriteOnly);
-		mAvatar.save(&buffer, "PNG"); // writes image into ba in PNG format
+        mAvatar.save(&buffer, "JPG"); // writes image into ba in PNG format
 
 		mEditGroup.mImage.copy((uint8_t *) ba.data(), ba.size());
 	}

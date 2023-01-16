@@ -350,7 +350,7 @@ void ZoomableLabel::updateView()
     std::cerr << "               Image size: " << mFullImage.width() << " x " << mFullImage.height() << ", window size: " << width() << " x " << height() << std::endl;
     std::cerr << "               cropped image: " << rect.left() << "," << rect.top() << "+" << rect.width() << "+" << rect.height() << std::endl;
     std::cerr << "               saving crop to pix2.png" << std::endl;
-    mFullImage.copy(rect).save("pix2.png","PNG");
+    mFullImage.copy(rect).save("pix2.png","JPG");
 #endif
     QLabel::setPixmap(mFullImage.copy(rect));
 }

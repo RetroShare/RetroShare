@@ -105,7 +105,7 @@ void PostedGroupDialog::preparePostedGroup(RsPostedGroup &group, const RsGroupMe
 		QBuffer buffer(&ba);
 
 		buffer.open(QIODevice::WriteOnly);
-		pixmap.save(&buffer, "PNG"); // writes image into ba in PNG format
+        pixmap.save(&buffer, "JPG"); // writes image into ba in PNG format
 
 		group.mGroupImage.copy((uint8_t *) ba.data(), ba.size());
 	} else {
