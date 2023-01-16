@@ -188,7 +188,7 @@ int ImageUtil::checkSize(QByteArray &bytearray, const QImage &img,const char *fo
 
 	//std::cout << QString("Trying image: format PNG, size %1x%2, colors %3\n").arg(img.width()).arg(img.height()).arg(img.colorCount()).toStdString();
 	if (buffer.open(QIODevice::WriteOnly)) {
-        if (img.save(&buffer, format, 0)) {
+        if (img.save(&buffer, format, 85)) {
 			size = bytearray.length();
 		} else {
 			std::cerr << "ImageUtil: image can't be saved to buffer" << std::endl;
