@@ -145,7 +145,19 @@ bool ImageUtil::optimizeSizeHtml(QString &html, const QImage& original, QImage &
 		if(maxBytes < 1) maxBytes = 1;
 	}
 
-    if(optimizeSizeBytes(bytearray, original, optimized,"PNG",maxPixels, maxBytes))
+    // check for transparency
+    bool has_transparency = false;
+
+    if(original.hasAlphaChannel())
+        for(int i=0;i<original.width();++i)
+            for(int j=0;j<original.height();++j)
+                if(qAlpha(original.pixel(i,j)) < 255)
+                {
+                    has_transparency = true;
+                    break;
+                }
+
+    if(optimizeSizeBytes(bytearray, original, optimized,has_transparency?"PNG":"JPG",maxPixels, maxBytes))
 	{
 		QByteArray encodedByteArray = bytearray.toBase64();
 		html = "<img src=\"data:image/png;base64,";
