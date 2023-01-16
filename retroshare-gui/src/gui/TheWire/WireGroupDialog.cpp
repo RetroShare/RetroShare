@@ -126,7 +126,7 @@ void WireGroupDialog::prepareWireGroup(RsWireGroup &group, const RsGroupMetaData
 		QBuffer buffer(&ba);
 
 		buffer.open(QIODevice::WriteOnly);
-		pixmap.save(&buffer, "JPG");
+        pixmap.save(&buffer, "PNG");
 
 		group.mMasthead.copy((uint8_t *) ba.data(), ba.size());
 	} else {
