@@ -141,7 +141,7 @@ void AvatarDialog::getAvatar(QByteArray &avatar)
 	QBuffer buffer(&avatar);
 
 	buffer.open(QIODevice::WriteOnly);
-    pixmap.save(&buffer, "JPG"); // writes image into ba in PNG format
+    pixmap.save(&buffer, "PNG"); // writes image into ba in PNG format
 }
 
 void AvatarDialog::load()
