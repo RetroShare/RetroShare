@@ -21,10 +21,11 @@
 #include <QBuffer>
 
 #include "gui/gxs/GxsIdDetails.h"
+#include "util/imageutil.h"
 #include "gui/common/FilesDefs.h"
 #include "GxsChannelGroupDialog.h"
 
-#include <retroshare/rsgxschannels.h>
+#include "retroshare/rsgxschannels.h"
 #include <iostream>
 
 // To start with we only have open forums - with distribution controls.
@@ -119,8 +120,10 @@ void GxsChannelGroupDialog::prepareChannelGroup(RsGxsChannelGroup &group, const 
 		QByteArray ba;
 		QBuffer buffer(&ba);
 
-		buffer.open(QIODevice::WriteOnly);
-        pixmap.save(&buffer, "PNG"); // writes image into ba in PNG format
+        bool has_transparency = ImageUtil::hasAlphaContent(pixmap.toImage());
+
+        buffer.open(QIODevice::WriteOnly);
+        pixmap.save(&buffer, has_transparency?"PNG":"JPG"); // writes image into ba in PNG format
 
 		group.mImage.copy((uint8_t *) ba.data(), ba.size());
 	} else {

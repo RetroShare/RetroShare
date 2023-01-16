@@ -34,6 +34,7 @@ public:
 	static void extractImage(QWidget *window, QTextCursor cursor, QString file = "");
     static bool optimizeSizeHtml(QString &html, const QImage& original, QImage &optimized, int maxPixels = -1, int maxBytes = -1);
     static bool optimizeSizeBytes(QByteArray &bytearray, const QImage &original, QImage &optimized, const char *format, int maxPixels, int maxBytes);
+    static bool hasAlphaContent(const QImage& image);
 
 	private:
         static int checkSize(QByteArray& embeddedImage, const QImage& img, const char *format);

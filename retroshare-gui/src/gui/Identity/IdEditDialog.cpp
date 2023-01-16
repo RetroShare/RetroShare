@@ -31,9 +31,10 @@
 #include "util/misc.h"
 #include "gui/notifyqt.h"
 
-#include <retroshare/rsidentity.h>
-#include <retroshare/rspeers.h>
+#include "retroshare/rsidentity.h"
+#include "retroshare/rspeers.h"
 #include "gui/common/FilesDefs.h"
+#include "util/imageutil.h"
 
 #include <iostream>
 
@@ -576,8 +577,10 @@ void IdEditDialog::createId()
         QByteArray ba;
         QBuffer buffer(&ba);
 
+        bool has_transparency = ImageUtil::hasAlphaContent(mAvatar.toImage());
+
         buffer.open(QIODevice::WriteOnly);
-        mAvatar.save(&buffer, "PNG"); // writes image into ba in PNG format
+        mAvatar.save(&buffer, has_transparency?"PNG":"JPG"); // writes image into ba in PNG format
 
         params.mImage.copy((uint8_t *) ba.data(), ba.size());
     }
@@ -648,8 +651,10 @@ void IdEditDialog::updateId()
 		QByteArray ba;
 		QBuffer buffer(&ba);
 
-		buffer.open(QIODevice::WriteOnly);
-        mAvatar.save(&buffer, "PNG"); // writes image into ba in PNG format
+        bool has_transparency = ImageUtil::hasAlphaContent(mAvatar.toImage());
+
+        buffer.open(QIODevice::WriteOnly);
+        mAvatar.save(&buffer, has_transparency?"PNG":"JPG"); // writes image into ba in PNG format
 
 		mEditGroup.mImage.copy((uint8_t *) ba.data(), ba.size());
 	}

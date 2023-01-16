@@ -137,6 +137,25 @@ bool ImageUtil::optimizeSizeBytes(QByteArray &bytearray, const QImage &original,
 	//std::cout << html.toStdString() << std::endl;
 }
 
+bool ImageUtil::hasAlphaContent(const QImage& image)
+{
+    if(!image.hasAlphaChannel())
+    {
+        std::cerr << "Image of size " << image.width() << " x " << image.height() << ": No transparency content detected." << std::endl;
+        return false;
+    }
+
+    for(int i=0;i<image.width();++i)
+        for(int j=0;j<image.height();++j)
+            if(qAlpha(image.pixel(i,j)) < 255)
+            {
+                std::cerr << "Image of size " << image.width() << " x " << image.height() << ": Transparency content detected." << std::endl;
+                return true;
+            }
+
+    std::cerr << "Image of size " << image.width() << " x " << image.height() << ": No transparency content detected." << std::endl;
+    return false;
+}
 bool ImageUtil::optimizeSizeHtml(QString &html, const QImage& original, QImage &optimized, int maxPixels, int maxBytes)
 {
 	QByteArray bytearray;
@@ -146,16 +165,7 @@ bool ImageUtil::optimizeSizeHtml(QString &html, const QImage& original, QImage &
 	}
 
     // check for transparency
-    bool has_transparency = false;
-
-    if(original.hasAlphaChannel())
-        for(int i=0;i<original.width();++i)
-            for(int j=0;j<original.height();++j)
-                if(qAlpha(original.pixel(i,j)) < 255)
-                {
-                    has_transparency = true;
-                    break;
-                }
+    bool has_transparency = hasAlphaContent(original);
 
     if(optimizeSizeBytes(bytearray, original, optimized,has_transparency?"PNG":"JPG",maxPixels, maxBytes))
 	{
