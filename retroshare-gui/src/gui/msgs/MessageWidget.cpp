@@ -135,6 +135,7 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	isWindow = false;
 	currMsgFlags = 0;
 	expandFiles = false;
+	ui.expandButton->hide();
 
 	ui.actionTextBesideIcon->setData(Qt::ToolButtonTextBesideIcon);
 	ui.actionIconOnly->setData(Qt::ToolButtonIconOnly);
@@ -144,7 +145,8 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(getallrecommended()));
 	connect(ui.msgText, SIGNAL(anchorClicked(QUrl)), this, SLOT(anchorClicked(QUrl)));
 	connect(ui.sendInviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
-	
+	connect(ui.expandButton, SIGNAL(clicked()), this, SLOT(expandTo()));
+
 	connect(ui.replyButton, SIGNAL(clicked()), this, SLOT(reply()));
 	connect(ui.replyallButton, SIGNAL(clicked()), this, SLOT(replyAll()));
 	connect(ui.forwardButton, SIGNAL(clicked()), this, SLOT(forward()));
@@ -551,6 +553,9 @@ void MessageWidget::fill(const std::string &msgId)
 		ui.deleteButton->setEnabled(false);
 		ui.moreButton->setEnabled(false);
 
+		ui.expandButton->hide();
+		ui.trans_ToText->setMaximumHeight(ui.trans_ToText->fontMetrics().lineSpacing()*1.5);
+
 		currMsgFlags = 0;
 
 		return;
@@ -634,6 +639,17 @@ void MessageWidget::fill(const std::string &msgId)
     }
 
     ui.trans_ToText->setText(to_text);
+
+	int recipientsCount = ui.trans_ToText->toPlainText().split(QRegExp("(\\s|\\n|\\r)+"), QString::SkipEmptyParts).count();
+	ui.expandButton->setText( QString::number(recipientsCount)+ " " + tr("more"));
+
+	if (recipientsCount >=20) {
+		ui.expandButton->show();
+	} else {
+		ui.expandButton->hide();
+		ui.expandButton->setChecked(false);
+		ui.trans_ToText->setMaximumHeight(ui.trans_ToText->fontMetrics().lineSpacing()*1.5);
+	}
 
     if (!cc_text.isNull())
 	{
@@ -936,4 +952,15 @@ void MessageWidget::checkLength()
 	text = tr("%1 (%2) ").arg(charlength).arg(misc::friendlyUnit(charlength));
 
 	ui.sizeLabel->setText(text);
+}
+
+void MessageWidget::expandTo()
+{
+	if (ui.expandButton->isChecked()) {
+		ui.trans_ToText->setMaximumHeight(ui.trans_ToText->fontMetrics().lineSpacing()*3.5);
+		ui.expandButton->setToolTip(tr("Show less"));
+	} else {
+		ui.trans_ToText->setMaximumHeight(ui.trans_ToText->fontMetrics().lineSpacing()*1.5);
+		ui.expandButton->setToolTip(tr("Show more"));
+	}
 }

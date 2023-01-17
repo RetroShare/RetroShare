@@ -286,7 +286,7 @@ void SearchDialog::initialiseFileTypeMappings()
 	/* edit these strings to change the range of extensions recognised by the search */
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_ANY, "");
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_AUDIO,
-		"aac aif flac iff m3u m4a mid midi mp3 mpa ogg ra ram wav wma");
+		"aac aif flac iff m3u m4a mid midi mp3 mpa ogg ra ram wav wma weba");
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_ARCHIVE,
 		"7z bz2 gz pkg rar sea sit sitx tar zip tgz");
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_CDIMAGE,
@@ -295,11 +295,11 @@ void SearchDialog::initialiseFileTypeMappings()
 		"doc odt ott rtf pdf ps txt log msg wpd wps ods xls epub" );
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_PICTURE,
 		"3dm 3dmf ai bmp drw dxf eps gif ico indd jpe jpeg jpg mng pcx pcc pct pgm "
-		"pix png psd psp qxd qxprgb sgi svg tga tif tiff xbm xcf");
+		"pix png psd psp qxd qxprgb sgi svg tga tif tiff xbm xcf webp");
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_PROGRAM,
 		"app bat cgi com bin exe js pif py pl sh vb ws bash");
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_VIDEO,
-		"3gp asf asx avi mov mp4 mkv flv mpeg mpg qt rm swf vob wmv");
+		"3gp asf asx avi mov mp4 mkv flv mpeg mpg qt rm swf vob wmv webm");
 	SearchDialog::initialised = true;
 }
 
