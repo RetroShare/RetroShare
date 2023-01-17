@@ -153,9 +153,9 @@ RsRegularExpression::Expression* ExpressionWidget::getRsExpression()
         switch(exprCondElem->getRelOperator())	// we need to convert expressions so that the delta is 1 day (i.e. 86400 secs)
         {
              // The conditions below account for 3 things:
-             // - the swap between variables in rsexpr.cc
-             // - the swap of variables when calling getRelOperator()
-             // - the fact that the "...or Equal" for days adds 86400 seconds.
+             // - the swap between variables in rsexpr.h:214
+             // - the swap of variables when calling getRelOperator() (See guiexprelement.cpp:166)
+             // - the fact that some comparisions in the unit of days may add 86400 seconds.
 
             default:
             case RsRegularExpression::Equals:
