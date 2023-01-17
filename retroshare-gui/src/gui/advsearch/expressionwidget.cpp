@@ -150,11 +150,24 @@ RsRegularExpression::Expression* ExpressionWidget::getRsExpression()
                                       wordList);
             break;
         case DateSearch:
-            if (inRangedConfig) {    
-                expr = new RsRegularExpression::DateExpression(exprCondElem->getRelOperator(), checkedConversion(lowVal), checkedConversion(highVal));
-            } else {
+        switch(exprCondElem->getRelOperator())	// we need to convert expressions so that the delta is 1 day (i.e. 86400 secs)
+        {
+            case RsRegularExpression::Equals:
+                expr = new RsRegularExpression::DateExpression(RsRegularExpression::InRange, checkedConversion(exprParamElem->getIntValue()), checkedConversion(86400+exprParamElem->getIntValue()));
+                break;
+            case RsRegularExpression::InRange:
+                expr = new RsRegularExpression::DateExpression(exprCondElem->getRelOperator(), checkedConversion(lowVal), 86400+checkedConversion(highVal));
+                break;
+            case RsRegularExpression::Greater:			// fallthrough
+            case RsRegularExpression::SmallerEquals:
+                expr = new RsRegularExpression::DateExpression(exprCondElem->getRelOperator(), checkedConversion(exprParamElem->getIntValue()+86400));
+                break;
+            default:
+            case RsRegularExpression::GreaterEquals:	// fallthrough
+            case RsRegularExpression::Smaller:
                 expr = new RsRegularExpression::DateExpression(exprCondElem->getRelOperator(), checkedConversion(exprParamElem->getIntValue()));
-            }
+                break;
+        }
             break;
         case PopSearch:
             if (inRangedConfig) {    
