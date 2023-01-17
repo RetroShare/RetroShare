@@ -158,14 +158,18 @@ RsRegularExpression::Expression* ExpressionWidget::getRsExpression()
             case RsRegularExpression::InRange:
                 expr = new RsRegularExpression::DateExpression(exprCondElem->getRelOperator(), checkedConversion(lowVal), 86400+checkedConversion(highVal));
                 break;
-            case RsRegularExpression::Greater:			// fallthrough
+            case RsRegularExpression::Greater:
+                expr = new RsRegularExpression::DateExpression(RsRegularExpression::DateExpression(RsRegularExpression::SmallerEquals,checkedConversion(86400+exprParamElem->getIntValue())));
+                break;
             case RsRegularExpression::SmallerEquals:
-                expr = new RsRegularExpression::DateExpression(exprCondElem->getRelOperator(), checkedConversion(exprParamElem->getIntValue()+86400));
+                expr = new RsRegularExpression::DateExpression(RsRegularExpression::DateExpression(RsRegularExpression::Greater,checkedConversion(86400+exprParamElem->getIntValue())));
                 break;
             default:
-            case RsRegularExpression::GreaterEquals:	// fallthrough
+            case RsRegularExpression::GreaterEquals:
+                expr = new RsRegularExpression::DateExpression(RsRegularExpression::SmallerEquals, checkedConversion(exprParamElem->getIntValue()));
+                break;
             case RsRegularExpression::Smaller:
-                expr = new RsRegularExpression::DateExpression(exprCondElem->getRelOperator(), checkedConversion(exprParamElem->getIntValue()));
+                expr = new RsRegularExpression::DateExpression(RsRegularExpression::Greater, checkedConversion(exprParamElem->getIntValue()-1));
                 break;
         }
             break;
