@@ -152,24 +152,29 @@ RsRegularExpression::Expression* ExpressionWidget::getRsExpression()
         case DateSearch:
         switch(exprCondElem->getRelOperator())	// we need to convert expressions so that the delta is 1 day (i.e. 86400 secs)
         {
+             // The conditions below account for 3 things:
+             // - the swap between variables in rsexpr.cc
+             // - the swap of variables when calling getRelOperator()
+             // - the fact that the "...or Equal" for days adds 86400 seconds.
+
+            default:
             case RsRegularExpression::Equals:
                 expr = new RsRegularExpression::DateExpression(RsRegularExpression::InRange, checkedConversion(exprParamElem->getIntValue()), checkedConversion(86400+exprParamElem->getIntValue()));
                 break;
             case RsRegularExpression::InRange:
-                expr = new RsRegularExpression::DateExpression(exprCondElem->getRelOperator(), checkedConversion(lowVal), 86400+checkedConversion(highVal));
+                expr = new RsRegularExpression::DateExpression(RsRegularExpression::InRange, checkedConversion(lowVal), 86400+checkedConversion(highVal));
                 break;
-            case RsRegularExpression::Greater:
-                expr = new RsRegularExpression::DateExpression(RsRegularExpression::DateExpression(RsRegularExpression::SmallerEquals,checkedConversion(86400+exprParamElem->getIntValue())));
+            case RsRegularExpression::Greater:			// means we expect file.date() <   some day D. So file.date() < D, meaning Exp=Greater
+                expr = new RsRegularExpression::DateExpression(RsRegularExpression::Greater,checkedConversion(exprParamElem->getIntValue()));
                 break;
-            case RsRegularExpression::SmallerEquals:
-                expr = new RsRegularExpression::DateExpression(RsRegularExpression::DateExpression(RsRegularExpression::Greater,checkedConversion(86400+exprParamElem->getIntValue())));
+            case RsRegularExpression::SmallerEquals:	// means we expect file.date() >=  some day D. So file.date() >= D, meaning Exp=SmallerEquals
+                expr = new RsRegularExpression::DateExpression(RsRegularExpression::SmallerEquals,checkedConversion(exprParamElem->getIntValue()));
                 break;
-            default:
-            case RsRegularExpression::GreaterEquals:
-                expr = new RsRegularExpression::DateExpression(RsRegularExpression::SmallerEquals, checkedConversion(exprParamElem->getIntValue()));
+            case RsRegularExpression::Smaller:			// means we expect file.date() >  some day D. So file.date() >= D+86400, meaning Exp=SmallerEquals
+                expr = new RsRegularExpression::DateExpression(RsRegularExpression::SmallerEquals, checkedConversion(86400+exprParamElem->getIntValue()-1));
                 break;
-            case RsRegularExpression::Smaller:
-                expr = new RsRegularExpression::DateExpression(RsRegularExpression::Greater, checkedConversion(exprParamElem->getIntValue()-1));
+            case RsRegularExpression::GreaterEquals:	// means we expect file.date() <= some day D. So file.date() < D+86400, meaning Exp=Greater
+                expr = new RsRegularExpression::DateExpression(RsRegularExpression::Greater, checkedConversion(86400+exprParamElem->getIntValue()));
                 break;
         }
             break;
