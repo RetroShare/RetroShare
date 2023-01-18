@@ -287,7 +287,7 @@ void CreateCircleDialog::selectedId(QTreeWidgetItem *current, QTreeWidgetItem *p
 {
 	Q_UNUSED(previous);
 	int membersCount = ui.treeWidget_membership->topLevelItemCount();
-	if (current != NULL && membersCount <=63) {
+	if (current != NULL && membersCount <= GXS_EXTERNAL_CIRCLE_MAX_MEMBERS) {
 		ui.addButton->setEnabled(true);
 	} else {
 		ui.addButton->setEnabled(false);
@@ -942,7 +942,7 @@ void CreateCircleDialog::IdListCustomPopupMenu( QPoint )
 	QTreeWidgetItem *item = ui.treeWidget_IdList->currentItem();
 	int membersCount = ui.treeWidget_membership->topLevelItemCount();
 
-	if (item && membersCount <= 63) {
+	if (item && membersCount <= GXS_EXTERNAL_CIRCLE_MAX_MEMBERS) {
 
 			contextMnu.addAction(QIcon(":/images/edit_add24.png"), tr("Add Member"), this, SLOT(addMember()));
 	

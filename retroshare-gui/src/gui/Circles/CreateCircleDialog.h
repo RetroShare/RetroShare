@@ -28,6 +28,8 @@
 #include <retroshare/rsgxscircles.h>
 #include <QDialog>
 
+static const uint32_t  GXS_EXTERNAL_CIRCLE_MAX_MEMBERS = 63;
+
 class CreateCircleDialog : public QDialog
 {
 	Q_OBJECT
