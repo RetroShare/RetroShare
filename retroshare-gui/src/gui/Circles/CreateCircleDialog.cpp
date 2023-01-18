@@ -286,7 +286,12 @@ void CreateCircleDialog::setupForExternalCircle()
 void CreateCircleDialog::selectedId(QTreeWidgetItem *current, QTreeWidgetItem *previous)
 {
 	Q_UNUSED(previous);
-	ui.addButton->setEnabled(current != NULL);
+	int membersCount = ui.treeWidget_membership->topLevelItemCount();
+	if (current != NULL && membersCount <=63) {
+		ui.addButton->setEnabled(true);
+	} else {
+		ui.addButton->setEnabled(false);
+	}
 }
 
 void CreateCircleDialog::selectedMember(QTreeWidgetItem *current, QTreeWidgetItem *previous)
@@ -357,8 +362,8 @@ void CreateCircleDialog::addMember(const QString& keyId, const QString& idtype, 
 	member->setText(RSCIRCLEID_COL_IDTYPE, idtype);
 
 	tree->addTopLevelItem(member);
-	
-	ui.members_groupBox->setTitle( tr("Invited Members") + " (" + QString::number(ui.treeWidget_membership->topLevelItemCount()) + ")" );
+
+	updateMembership();
 }
 
 /** Maybe we can use RsGxsCircleGroup instead of RsGxsCircleDetails ??? (TODO)**/
@@ -413,6 +418,9 @@ void  CreateCircleDialog::removeMember()
 
 	// does this just work? (TODO)
 	delete(item);
+
+	updateMembership();
+
 }
 
 void CreateCircleDialog::createCircle()
@@ -932,7 +940,9 @@ void CreateCircleDialog::IdListCustomPopupMenu( QPoint )
 	QMenu contextMnu( this );
 
 	QTreeWidgetItem *item = ui.treeWidget_IdList->currentItem();
-	if (item) {
+	int membersCount = ui.treeWidget_membership->topLevelItemCount();
+
+	if (item && membersCount <= 63) {
 
 			contextMnu.addAction(QIcon(":/images/edit_add24.png"), tr("Add Member"), this, SLOT(addMember()));
 	
@@ -952,3 +962,7 @@ void CreateCircleDialog::MembershipListCustomPopupMenu( QPoint )
 	contextMnu.exec(QCursor::pos());
 }
 
+void CreateCircleDialog::updateMembership()
+{
+	ui.members_groupBox->setTitle( tr("Invited Members") + " (" + QString::number(ui.treeWidget_membership->topLevelItemCount()) + ")" );
+}
