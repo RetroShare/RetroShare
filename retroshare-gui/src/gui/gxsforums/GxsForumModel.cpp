@@ -566,7 +566,7 @@ QVariant RsGxsForumModel::toolTipRole(const ForumModelPostEntry& fmpe,int column
 		QImage pix( (*icons.begin()).pixmap(QSize(5*S,5*S)).toImage());
 
 		QString embeddedImage;
-		if(RsHtml::makeEmbeddedImage(pix.scaled(QSize(5*S,5*S), Qt::KeepAspectRatio, Qt::SmoothTransformation), embeddedImage, -1))
+        if(RsHtml::makeEmbeddedImage(pix.scaled(QSize(5*S,5*S), Qt::KeepAspectRatio, Qt::SmoothTransformation), embeddedImage, -1))
 		{
 			embeddedImage.insert(embeddedImage.indexOf("src="), "style=\"float:left\" ");
 			comment = "<table><tr><td>" + embeddedImage + "</td><td>" + comment + "</td></table>";

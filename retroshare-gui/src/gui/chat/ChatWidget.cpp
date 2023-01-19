@@ -1094,7 +1094,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 			QImage image(icon.pixmap(height,height).toImage());
 			QByteArray byteArray;
 			QBuffer buffer(&byteArray);
-			image.save(&buffer, "PNG"); // writes the image in PNG format inside the buffer
+            image.save(&buffer, "PNG"); // writes the image in PNG format inside the buffer
 			QString iconBase64 = QString::fromLatin1(byteArray.toBase64().data());
 			strPreName = QString("<img src=\"data:image/png;base64,%1\" alt=\"[unsigned]\" />").arg(iconBase64);
 		}
@@ -1677,7 +1677,7 @@ void ChatWidget::addExtraPicture()
 	if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg *.gif *.webp )", file)) {
 		QString encodedImage;
 		uint32_t maxMessageSize = this->maxMessageSize();
-		if (RsHtml::makeEmbeddedImage(file, encodedImage, 640*480, maxMessageSize - 200)) {		//-200 for the html stuff
+        if (RsHtml::makeEmbeddedImage(file, encodedImage, 640*480, maxMessageSize - 200)) {		//-200 for the html stuff
 			QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
 			ui->chatTextEdit->textCursor().insertFragment(fragment);
 		}

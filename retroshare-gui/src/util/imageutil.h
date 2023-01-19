@@ -32,11 +32,12 @@ public:
 	ImageUtil();
 
 	static void extractImage(QWidget *window, QTextCursor cursor, QString file = "");
-	static bool optimizeSizeHtml(QString &html, const QImage& original, QImage &optimized, int maxPixels = -1, int maxBytes = -1);
-	static bool optimizeSizeBytes(QByteArray &bytearray, const QImage& original, QImage &optimized, int maxPixels = -1, int maxBytes = -1);
+    static bool optimizeSizeHtml(QString &html, const QImage& original, QImage &optimized, int maxPixels = -1, int maxBytes = -1);
+    static bool optimizeSizeBytes(QByteArray &bytearray, const QImage &original, QImage &optimized, const char *format, int maxPixels, int maxBytes);
+    static bool hasAlphaContent(const QImage& image);
 
 	private:
-		static int checkSize(QByteArray& embeddedImage, const QImage& img);
+        static int checkSize(QByteArray& embeddedImage, const QImage& img, const char *format);
 		static void quantization(const QImage& img, QVector<QRgb>& palette);
 		static void quantization(QList<QRgb>::iterator begin, QList<QRgb>::iterator end, int depth, QVector<QRgb>& palette);
 		static void avgbucket(QList<QRgb>::iterator begin, QList<QRgb>::iterator end, QVector<QRgb>& palette);

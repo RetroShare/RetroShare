@@ -611,7 +611,7 @@ bool CreateGxsChannelMsg::setThumbNail(const std::string& path, int frame){
 	QByteArray ba;
 	QBuffer buffer(&ba);
 	buffer.open(QIODevice::WriteOnly);
-	tNail.save(&buffer, "PNG");
+    tNail.save(&buffer, "JPG");
 	QPixmap img;
 	img.loadFromData(ba, "PNG");
 	img = img.scaled(thumbnail_label->width(), thumbnail_label->height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
@@ -814,7 +814,7 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
 			// send chan image
 
 			buffer.open(QIODevice::WriteOnly);
-            preview_W->getCroppedScaledPicture().save(&buffer, "PNG"); // writes image into ba in PNG format
+            preview_W->getCroppedScaledPicture().save(&buffer, "JPG"); // writes image into ba in PNG format
 			post.mThumbnail.copy((uint8_t *) ba.data(), ba.size());
 		}
 

@@ -291,7 +291,7 @@ bool misc::getOpenAvatarPicture(QWidget *parent, QByteArray &image_data)
 	// save image in QByteArray
 	QBuffer buffer(&image_data);
 	buffer.open(QIODevice::WriteOnly);
-	picture.save(&buffer, "PNG"); // writes image into ba in PNG format
+    picture.save(&buffer, "PNG"); // writes image into ba in PNG format
 
 	return true;
 }

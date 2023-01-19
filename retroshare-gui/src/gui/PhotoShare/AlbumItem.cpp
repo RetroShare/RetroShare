@@ -47,7 +47,7 @@ void AlbumItem::setUp()
     if(mAlbum.mThumbnail.mSize != 0)
     {
         QPixmap qtn;
-        qtn.loadFromData(mAlbum.mThumbnail.mData, mAlbum.mThumbnail.mSize, "PNG");
+        qtn.loadFromData(mAlbum.mThumbnail.mData, mAlbum.mThumbnail.mSize, "JPG");
         ui->label_Thumbnail->setPixmap(qtn);
     }
     else
