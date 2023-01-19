@@ -122,9 +122,9 @@ RsRegularExpression::Expression* ExpressionWidget::getRsExpression()
         highVal = exprParamElem->getIntHighValue();
         if (lowVal >highVal)
         {   
-            lowVal  = lowVal^highVal;	// csoler: wow, that is some style!
-            highVal = lowVal^highVal;
-            lowVal  = lowVal^highVal;
+            auto tmp=lowVal;
+            lowVal = highVal;
+            highVal = tmp;
         }
     }
 
@@ -150,11 +150,33 @@ RsRegularExpression::Expression* ExpressionWidget::getRsExpression()
                                       wordList);
             break;
         case DateSearch:
-            if (inRangedConfig) {    
-                expr = new RsRegularExpression::DateExpression(exprCondElem->getRelOperator(), checkedConversion(lowVal), checkedConversion(highVal));
-            } else {
-                expr = new RsRegularExpression::DateExpression(exprCondElem->getRelOperator(), checkedConversion(exprParamElem->getIntValue()));
-            }
+        switch(exprCondElem->getRelOperator())	// we need to convert expressions so that the delta is 1 day (i.e. 86400 secs)
+        {
+             // The conditions below account for 3 things:
+             // - the swap between variables in rsexpr.h:214
+             // - the swap of variables when calling getRelOperator() (See guiexprelement.cpp:166)
+             // - the fact that some comparisions in the unit of days may add 86400 seconds.
+
+            default:
+            case RsRegularExpression::Equals:
+                expr = new RsRegularExpression::DateExpression(RsRegularExpression::InRange, checkedConversion(exprParamElem->getIntValue()), checkedConversion(86400+exprParamElem->getIntValue()));
+                break;
+            case RsRegularExpression::InRange:
+                expr = new RsRegularExpression::DateExpression(RsRegularExpression::InRange, checkedConversion(lowVal), 86400+checkedConversion(highVal));
+                break;
+            case RsRegularExpression::Greater:			// means we expect file.date() <   some day D. So file.date() < D, meaning Exp=Greater
+                expr = new RsRegularExpression::DateExpression(RsRegularExpression::Greater,checkedConversion(exprParamElem->getIntValue()));
+                break;
+            case RsRegularExpression::SmallerEquals:	// means we expect file.date() >=  some day D. So file.date() >= D, meaning Exp=SmallerEquals
+                expr = new RsRegularExpression::DateExpression(RsRegularExpression::SmallerEquals,checkedConversion(exprParamElem->getIntValue()));
+                break;
+            case RsRegularExpression::Smaller:			// means we expect file.date() >  some day D. So file.date() >= D+86400, meaning Exp=SmallerEquals
+                expr = new RsRegularExpression::DateExpression(RsRegularExpression::SmallerEquals, checkedConversion(86400+exprParamElem->getIntValue()-1));
+                break;
+            case RsRegularExpression::GreaterEquals:	// means we expect file.date() <= some day D. So file.date() < D+86400, meaning Exp=Greater
+                expr = new RsRegularExpression::DateExpression(RsRegularExpression::Greater, checkedConversion(86400+exprParamElem->getIntValue()));
+                break;
+        }
             break;
         case PopSearch:
             if (inRangedConfig) {    
@@ -174,11 +196,33 @@ RsRegularExpression::Expression* ExpressionWidget::getRsExpression()
             else
             {
                 uint64_t s = exprParamElem->getIntValue() ;
+                auto cond = exprCondElem->getRelOperator();
+                bool MB = false;
 
                 if(s >= (uint64_t)(1024*1024*1024))
-                    expr = new RsRegularExpression::SizeExpressionMB(exprCondElem->getRelOperator(), (int)(s/(1024*1024))) ;
+                {
+                    MB=true;
+                    s >>= 20;
+                }
+
+                // Specific case for Equal operator, which we convert to a range, so as to avoid matching arbitrary digits
+
+                if(cond == RsRegularExpression::Equals)
+                {
+                    // Now compute a proper interval. There is no optimal solution, so we aim for the simplest: add/remove 20% of the initial value.
+
+                    if(MB)
+                        expr = new RsRegularExpression::SizeExpressionMB(RsRegularExpression::InRange, (int)(s*0.8) , (int)(s*1.2));
+                    else
+                        expr = new RsRegularExpression::SizeExpression(RsRegularExpression::InRange, (int)(s*0.8) , (int)(s*1.2));
+                }
                 else
-                    expr = new RsRegularExpression::SizeExpression(exprCondElem->getRelOperator(), (int)s) ;
+                {
+                    if(MB)
+                        expr = new RsRegularExpression::SizeExpressionMB(cond, (int)s);
+                    else
+                        expr = new RsRegularExpression::SizeExpression(cond, (int)s) ;
+                }
             }
             break;
     };

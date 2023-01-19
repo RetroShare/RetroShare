@@ -155,18 +155,19 @@ void GuiExprElement::initialiseOptionsLists()
     
 /*  W A R N I N G !!!!
     the cb elements correspond to their inverse rel op counterparts in rsexpr.h due to the nature of 
-    the implementation.there 
+    the implementation.
     For example consider "size greater than 100kb" selected in the GUI.
     The rsexpr.cc impl returns true if the CONDITION specified is greater than the file size passed as argument 
     as rsexpr iterates through the files. So, the user wants files that are greater than 100kb but the impl returns
-    files where the condition is greater than the file size i.e. files whose size is less than or equal to the condition 
+    files where the condition is greater than the file size i.e. files whose size is less than to the condition
     Therefore we invert the mapping of rel conditions here to match the behaviour of the impl.
+    Also the Equal nature of comparisons should be kept, since = is symmetric.
 */    
-    GuiExprElement::relConditionIndexMap[GuiExprElement::LT_INDEX] = RsRegularExpression::GreaterEquals;
-    GuiExprElement::relConditionIndexMap[GuiExprElement::LTE_INDEX] = RsRegularExpression::Greater;
+    GuiExprElement::relConditionIndexMap[GuiExprElement::LT_INDEX] = RsRegularExpression::Greater;
+    GuiExprElement::relConditionIndexMap[GuiExprElement::LTE_INDEX] = RsRegularExpression::GreaterEquals;
     GuiExprElement::relConditionIndexMap[GuiExprElement::EQUAL_INDEX] = RsRegularExpression::Equals;
-    GuiExprElement::relConditionIndexMap[GuiExprElement::GTE_INDEX] = RsRegularExpression::Smaller;
-    GuiExprElement::relConditionIndexMap[GuiExprElement::GT_INDEX] = RsRegularExpression::SmallerEquals;
+    GuiExprElement::relConditionIndexMap[GuiExprElement::GTE_INDEX] = RsRegularExpression::SmallerEquals;
+    GuiExprElement::relConditionIndexMap[GuiExprElement::GT_INDEX] = RsRegularExpression::Smaller;
     GuiExprElement::relConditionIndexMap[GuiExprElement::RANGE_INDEX] = RsRegularExpression::InRange;
 
     // the string to index map
