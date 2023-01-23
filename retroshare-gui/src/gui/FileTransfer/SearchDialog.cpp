@@ -805,28 +805,29 @@ void SearchDialog::advancedSearch(RsRegularExpression::Expression* expression)
 {
 	advSearchDialog->hide();
 
-	/* call to core */
-	std::list<DirDetails> results;
-
 	// send a turtle search request
     RsRegularExpression::LinearizedExpression e ;
 	expression->linearize(e) ;
 
-	TurtleRequestId req_id = rsFiles->turtleSearch(e) ;
+    TurtleRequestId req_id ;
 
-	// This will act before turtle results come to the interface, thanks to the signals scheduling policy.
-	initSearchResult(QString::fromStdString(e.GetStrings()),req_id, ui.FileTypeComboBox->currentIndex(), true) ;
+    if(ui._anonF2Fsearch_CB->isChecked())
+        req_id = rsFiles->turtleSearch(e) ;
+    else
+        req_id = RSRandom::random_u32() ; // generate a random 32 bits request id
 
-	rsFiles -> SearchBoolExp(expression, results, RS_FILE_HINTS_REMOTE);// | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE);
+    initSearchResult(QString::fromStdString(e.GetStrings()),req_id, ui.FileTypeComboBox->currentIndex(), true) ;
+
+    std::list<DirDetails> results;
+
+    FileSearchFlags flags(0);
+    if(ui._ownFiles_CB->isChecked())         flags |= RS_FILE_HINTS_LOCAL;
+    if(ui._friendListsearch_SB->isChecked()) flags |= RS_FILE_HINTS_REMOTE;
+
+    rsFiles -> SearchBoolExp(expression, results, flags);
 
 	/* abstraction to allow reusee of tree rendering code */
-	resultsToTree(advSearchDialog->getSearchAsString(),req_id, results);
-
-//	// debug stuff
-//	Expression *expression2 = LinearizedExpression::toExpr(e) ;
-//	results.clear() ;
-//	rsFiles -> SearchBoolExp(expression2, results, DIR_FLAGS_REMOTE | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE);
-//	resultsToTree((advSearchDialog->getSearchAsString()).toStdString(),req_id+1, results);
+    resultsToTree(advSearchDialog->getSearchAsString(),req_id, results);
 }
 
 void SearchDialog::searchKeywords()
@@ -1455,7 +1456,6 @@ void SearchDialog::copyResultLink()
 {
     /* should also be able to handle multi-selection */
     QList<QTreeWidgetItem*> itemsForCopy = ui.searchResultWidget->selectedItems();
-    QTreeWidgetItem * item;
 
     std::set<RsFileHash> already_seen_hashes;
     QList<RetroShareLink> urls ;
