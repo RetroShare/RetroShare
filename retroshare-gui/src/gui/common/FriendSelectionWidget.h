@@ -132,7 +132,8 @@ signals:
 
 public slots:
 	void sortByState(bool sort);
-	void filterConnected(bool filter);
+    void sortByChecked(bool sort);
+    void filterConnected(bool filter);
 
 private slots:
 	void groupsChanged(int type);

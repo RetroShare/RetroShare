@@ -32,6 +32,7 @@ public:
 	RSTreeWidgetItemCompareRole();
 	explicit RSTreeWidgetItemCompareRole(QMap<int, QList<int>> map);
 
+    void clear() { QMap<int, QList<int> >::clear() ; }
 	void setRole(const int column, const int role);
 	void addRole(const int column, const int role);
 	void findRoles(const int column, QList<int> &roles) const;
