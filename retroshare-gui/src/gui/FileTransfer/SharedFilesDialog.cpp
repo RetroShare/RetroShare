@@ -528,7 +528,7 @@ void LocalSharedFilesDialog::checkUpdate()
 
 void LocalSharedFilesDialog::forceCheck()
 {
-    rsFiles->ForceDirectoryCheck();
+    rsFiles->ForceDirectoryCheck(true);
     return;
 }
 
