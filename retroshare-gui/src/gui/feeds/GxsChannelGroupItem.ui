@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>618</width>
-    <height>161</height>
+    <height>176</height>
    </rect>
   </property>
   <property name="font">
@@ -220,6 +220,20 @@
              </size>
             </property>
            </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="infoLastPostLabel">
+            <property name="text">
+             <string>Last activity</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="infoLastPost">
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
