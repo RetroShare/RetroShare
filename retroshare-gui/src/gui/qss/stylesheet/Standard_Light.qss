@@ -2661,7 +2661,7 @@ WireGroupItem QFrame#wire_frame:hover {
 	background-color: #7ecbfb;
 }
 WireGroupItem QFrame#wire_frame > QLabel {
-	color: black;
+	background: transparent;
 }
 
 PulseTopLevel QFrame#plainFrame,
