@@ -27,6 +27,7 @@
 #include "gui/common/FilesDefs.h"
 #include "gui/NewsFeed.h"
 #include "gui/RetroShareLink.h"
+#include "util/DateTime.h"
 
 /****
  * #define DEBUG_ITEM 1
@@ -165,6 +166,11 @@ void GxsChannelGroupItem::fill()
 	case NEWSFEED_CHANNELNEWLIST:	 	ui->titleLabel->setText(tr("New Channel: "));
 										break ;
 	}
+
+	if(mGroup.mMeta.mLastPost==0)
+		ui->infoLastPost->setText(tr("Never"));
+	else
+		ui->infoLastPost->setText(DateTime::formatLongDateTime(mGroup.mMeta.mLastPost));
 
 	if (mIsHome)
 	{

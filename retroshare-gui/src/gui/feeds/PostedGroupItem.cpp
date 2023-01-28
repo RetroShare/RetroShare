@@ -26,6 +26,7 @@
 #include "gui/RetroShareLink.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
+#include "util/DateTime.h"
 
 /****
  * #define DEBUG_ITEM 1
@@ -160,6 +161,10 @@ void PostedGroupItem::fill()
         ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/posted.png"));
 	}
 
+    if(mGroup.mMeta.mLastPost==0)
+        ui->infoLastPost->setText(tr("Never"));
+    else
+        ui->infoLastPost->setText(DateTime::formatLongDateTime(mGroup.mMeta.mLastPost));
 
 	//TODO - nice icon for subscribed group
 //	if (IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags)) {
