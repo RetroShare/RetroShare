@@ -51,7 +51,8 @@
 #define ROLE_SORT_STANDARD_GROUP    Qt::UserRole + 2
 #define ROLE_SORT_NAME              Qt::UserRole + 3
 #define ROLE_SORT_STATE             Qt::UserRole + 4
-#define ROLE_FILTER_REASON          Qt::UserRole + 5
+#define ROLE_SORT_SELECTED          Qt::UserRole + 5
+#define ROLE_FILTER_REASON          Qt::UserRole + 6
 
 #define IMAGE_FRIENDINFO ":/images/peerdetails_16x16.png"
 
@@ -667,8 +668,13 @@ void FriendSelectionWidget::secured_fillList()
 				emit itemAdded(IDTYPE_GXS, QString::fromStdString(detail.mId.toStdString()), gxsItem);
 
 				if (std::find(gxsIdsSelected.begin(), gxsIdsSelected.end(), detail.mId) != gxsIdsSelected.end()) 
+                {
 					setSelected(mListModus, gxsItem, true);
-			}
+                    gxsItem->setData(COLUMN_NAME,ROLE_SORT_SELECTED,0);
+                }
+                else
+                    gxsItem->setData(COLUMN_NAME,ROLE_SORT_SELECTED,1);
+            }
 		}
 		if(mShowTypes & SHOW_CONTACTS)
 		{
@@ -1219,9 +1225,18 @@ std::string FriendSelectionWidget::idFromItem(QTreeWidgetItem *item)
 	return item->data(COLUMN_DATA, ROLE_ID).toString().toStdString();
 }
 
+void FriendSelectionWidget::sortByChecked(bool sort)
+{
+    mCompareRole->clear();
+    mCompareRole->setRole(COLUMN_NAME,ROLE_SORT_SELECTED);
+
+    ui->friendList->resort();
+}
+
 void FriendSelectionWidget::sortByState(bool sort)
 {
-	mCompareRole->setRole(COLUMN_NAME, ROLE_SORT_GROUP);
+    mCompareRole->clear();
+    mCompareRole->setRole(COLUMN_NAME, ROLE_SORT_GROUP);
 	mCompareRole->addRole(COLUMN_NAME, ROLE_SORT_STANDARD_GROUP);
 
 	if (sort) {

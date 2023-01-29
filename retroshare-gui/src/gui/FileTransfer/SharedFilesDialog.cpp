@@ -529,7 +529,6 @@ void LocalSharedFilesDialog::checkUpdate()
 void LocalSharedFilesDialog::forceCheck()
 {
     rsFiles->ForceDirectoryCheck();
-    return;
 }
 
 void RemoteSharedFilesDialog::spawnCustomPopupMenu( QPoint point )

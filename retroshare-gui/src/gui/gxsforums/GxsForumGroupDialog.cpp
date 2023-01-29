@@ -151,6 +151,7 @@ bool GxsForumGroupDialog::service_loadGroup(const RsGxsGenericGroupData *data, M
     // Local information. Description should be handled here.
 
     setSelectedModerators(pgroup->mAdminList.ids);
+    ui.adminsList->sortByChecked(true);
 
     mGroupData = *pgroup; // keeps the private information
 
