@@ -760,15 +760,15 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
         }
         break;
 
-        case RsChannelEventCode::NEW_COMMENT:     // [[fallthrough]];
-        case RsChannelEventCode::NEW_MESSAGE:     // [[fallthrough]];
+        case RsChannelEventCode::NEW_MESSAGE:
         {
             if(e->mChannelGroupId == groupId())
                 updateDisplay(true,true);
         }
         break;
 
-        case RsChannelEventCode::NEW_VOTE:        // [[fallthrough]];
+        case RsChannelEventCode::NEW_COMMENT:     // [[fallthrough]];
+        case RsChannelEventCode::NEW_VOTE:
 
             if(e->mChannelGroupId == groupId() && e->mChannelThreadId == ui->commentsDialog->messageId())
                 ui->commentsDialog->refresh();
