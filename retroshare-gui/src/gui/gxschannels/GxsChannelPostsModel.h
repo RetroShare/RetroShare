@@ -214,6 +214,7 @@ private:
 	static void computeReputationLevel(uint32_t forum_sign_flags, RsGxsChannelPost& entry);
 
 	void update_posts(const RsGxsGroupId& group_id);
+    void update_single_post(const RsGxsGroupId& group_id, const RsGxsMessageId& msgId, const RsGxsMessageId &thread_id);
 
 #ifdef TODO
 	void setForumMessageSummary(const std::vector<RsGxsForumMsg>& messages);
@@ -231,7 +232,8 @@ private:
 	//void computeMessagesHierarchy(const RsGxsChannelGroup& forum_group, const std::vector<RsMsgMetaData> &msgs_array, std::vector<ChannelPostsModelPostEntry> &posts, std::map<RsGxsMessageId, std::vector<std::pair<time_t, RsGxsMessageId> > > &mPostVersions);
 	void createPostsArray(std::vector<RsGxsChannelPost> &posts);
 	void setPosts(const RsGxsChannelGroup& group, std::vector<RsGxsChannelPost> &posts);
-	void initEmptyHierarchy();
+    void setSinglePost(const RsGxsChannelGroup& group, const RsGxsChannelPost& post);
+    void initEmptyHierarchy();
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
     std::vector<int> mFilteredPosts;		// stores the list of displayes indices due to filtering.

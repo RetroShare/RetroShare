@@ -104,11 +104,11 @@ public:
 
 	/* GxsMessageFrameWidget */
     virtual QIcon groupIcon() override;
-    virtual void groupIdChanged() override { updateDisplay(true); }
+    virtual void groupIdChanged() override { updateDisplay(true,true); }
     virtual QString groupName(bool) override;
     virtual bool navigate(const RsGxsMessageId&) override;
 
-	void updateDisplay(bool complete);
+    void updateDisplay(bool update_group_data, bool update_posts);
 
 #ifdef TODO
 	/* FeedHolder */
@@ -141,7 +141,7 @@ protected:
 
 private slots:
 	void showPostDetails();
-	void updateGroupData();
+    void updateData(bool update_group_data,bool update_posts);
 	void download();
 	void updateDAll_PB();
 	void createMsg();

@@ -118,85 +118,21 @@ void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEve
 	switch(e->mChannelEventCode)
 	{
 	case RsChannelEventCode::UPDATED_MESSAGE:
-	case RsChannelEventCode::READ_STATUS_CHANGED:
-	{
-		// Normally we should just emit dataChanged() on the index of the data that has changed:
-		// We need to update the data!
+    case RsChannelEventCode::READ_STATUS_CHANGED:
+    case RsChannelEventCode::NEW_COMMENT:
+    {
+        // Normally we should just emit dataChanged() on the index of the data that has changed:
+        // We need to update the data!
 
-        // make a copy of e, so as to avoid destruction of the shared pointer during async thread execution, since [e] doesn't actually tell
-        // the original shared_ptr that it is copied! So no counter is updated in event, which will be destroyed (as e will be) during or even before
-        // the execution of the lambda.
+        // In particular, mChannelMsgId may refer to a comment, but this will be handled correctly
+        // by update_single_post which will automatically retrive the correct parent msg.
 
-        RsGxsChannelEvent E(*e);
+        if(e->mChannelGroupId == mChannelGroup.mMeta.mGroupId)
+            update_single_post(e->mChannelGroupId,e->mChannelMsgId,e->mChannelThreadId);
+    };
+    break;
 
-        if(E.mChannelGroupId == mChannelGroup.mMeta.mGroupId)
-            RsThread::async([this, E]()
-			{
-                // 1 - get message data from p3GxsChannels. No need for pointers here, because we send only a single post to postToObject()
-                //     At this point we dont know what kind of msg id we have. It can be a vote, a comment or an actual message.
-
-				std::vector<RsGxsChannelPost> posts;
-				std::vector<RsGxsComment>     comments;
-				std::vector<RsGxsVote>        votes;
-                std::set<RsGxsMessageId>      msg_ids{ E.mChannelMsgId };
-
-                if(!rsGxsChannels->getChannelContent(E.mChannelGroupId,msg_ids, posts,comments,votes))
-				{
-                    std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel message data for channel/msg " << E.mChannelGroupId << "/" << E.mChannelMsgId << std::endl;
-					return;
-				}
-
-                // Check if what we have actually is a comment or a vote. If so we need to update the actual message they refer to
-
-                if(posts.empty())	// means we have a comment or a vote
-                {
-                    msg_ids.clear();
-
-                    for(auto c:comments) msg_ids.insert(c.mMeta.mThreadId);
-                    for(auto v:votes   ) msg_ids.insert(v.mMeta.mThreadId);
-
-                    comments.clear();
-                    votes.clear();
-
-                    if(!rsGxsChannels->getChannelContent(E.mChannelGroupId,msg_ids,posts,comments,votes))
-                    {
-                        std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel message data for channel/msg " << E.mChannelGroupId << "/" << E.mChannelMsgId << std::endl;
-                        return;
-                    }
-                }
-
-                // Need to call this in order to get the actuall comment count. The previous call only retrieves the message, since we supplied the message ID.
-                // another way to go would be to save the comment ids of the existing message and re-insert them before calling getChannelContent.
-
-                if(!rsGxsChannels->getChannelComments(E.mChannelGroupId,msg_ids,comments))
-                {
-                    std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve message comment data for channel/msg " << E.mChannelGroupId << "/" << E.mChannelMsgId << std::endl;
-                    return;
-                }
-
-                updateCommentCounts(posts,comments);
-
-                // 2 - update the model in the UI thread.
-
-                RsQThreadUtils::postToObject( [posts,this]()
-				{
-					for(uint32_t i=0;i<posts.size();++i)
-					{
-						// linear search. Not good at all, but normally this is for a single post.
-
-						for(uint32_t j=0;j<mPosts.size();++j)
-							if(mPosts[j].mMeta.mMsgId == posts[i].mMeta.mMsgId)
-                            {
-								mPosts[j] = posts[i];
-
-                                triggerViewUpdate();
-							}
-					}
-				},this);
-            });
-        }
-
-	default:
+    default:
 			break;
 	}
 }
@@ -564,6 +500,47 @@ bool operator<(const RsGxsChannelPost& p1,const RsGxsChannelPost& p2)
     return p1.mMeta.mPublishTs > p2.mMeta.mPublishTs;
 }
 
+void RsGxsChannelPostsModel::setSinglePost(const RsGxsChannelGroup& group, const RsGxsChannelPost& post)
+{
+    if(mChannelGroup.mMeta.mGroupId != group.mMeta.mGroupId)
+        return;
+
+    preMods();
+
+    // This is potentially quadratic, so it should not be called many times!
+
+    bool found=false;
+
+    for(auto& p:mPosts)
+        if(post.mMeta.mMsgId == p.mMeta.mMsgId || post.mMeta.mOrigMsgId == p.mMeta.mMsgId)
+        {
+            p = post;
+            found = true;
+        }
+    if(!found)
+        mPosts.push_back(post);
+
+    std::sort(mPosts.begin(),mPosts.end());
+
+    mFilteredPosts.clear();
+
+    for(uint32_t i=0;i<mPosts.size();++i)
+        mFilteredPosts.push_back(i);
+
+#ifdef DEBUG_CHANNEL_MODEL
+    // debug_dump();
+#endif
+
+    if (rowCount()>0)
+    {
+        beginInsertRows(QModelIndex(),0,rowCount()-1);
+        endInsertRows();
+    }
+
+    postMods();
+
+    emit channelPostsLoaded();
+}
 void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vector<RsGxsChannelPost>& posts)
 {
 	preMods();
@@ -591,6 +568,57 @@ void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vecto
 	postMods();
 
 	emit channelPostsLoaded();
+}
+
+void RsGxsChannelPostsModel::update_single_post(const RsGxsGroupId& group_id,const RsGxsMessageId& msg_id,const RsGxsMessageId& thread_id)
+{
+    RsThread::async([this, group_id, msg_id,thread_id]()
+    {
+        // 1 - get message data from p3GxsChannels. No need for pointers here, because we send only a single post to postToObject()
+        //     At this point we dont know what kind of msg id we have. It can be a vote, a comment or an actual message.
+
+        std::vector<RsGxsChannelPost> posts;
+        std::vector<RsGxsComment>     comments;
+        std::vector<RsGxsVote>        votes;
+        std::set<RsGxsMessageId>      msg_ids({ (thread_id.isNull())?msg_id:thread_id } );		// we have a post message
+
+        if(!rsGxsChannels->getChannelContent(group_id,msg_ids, posts,comments,votes))
+        {
+            std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel message data for channel/msg " << group_id << "/" << msg_id << std::endl;
+            return;
+        }
+
+        // Need to call this in order to get the actual comment count. The previous call only retrieves the message, since we supplied the message ID.
+        // another way to go would be to save the comment ids of the existing message and re-insert them before calling getChannelContent.
+
+        if(!rsGxsChannels->getChannelComments(group_id,msg_ids,comments))
+        {
+            std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve message comment data for channel/msg " << group_id << "/" << msg_id << std::endl;
+            return;
+        }
+
+        // Normally, there's a single post in the "post" array. The function below takes a full array of posts however.
+
+        updateCommentCounts(posts,comments);
+
+        // 2 - update the model in the UI thread.
+
+        RsQThreadUtils::postToObject( [posts,this]()
+        {
+            for(uint32_t i=0;i<posts.size();++i)
+            {
+                // linear search. Not good at all, but normally this is for a single post.
+
+                for(uint32_t j=0;j<mPosts.size();++j)
+                    if(mPosts[j].mMeta.mMsgId == posts[i].mMeta.mMsgId)
+                    {
+                        mPosts[j] = posts[i];
+
+                        triggerViewUpdate();
+                    }
+            }
+        },this);
+    });
 }
 
 void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
