@@ -45,7 +45,7 @@ public:
 private:
 	QString imagefilename;
 	QByteArray imagebytes;
-	const int MAXMESSAGESIZE = 199000;
+    const int MAXMESSAGESIZE = MAX_ALLOWED_GXS_MESSAGE_SIZE;
 
 private slots:
 	void createPost();

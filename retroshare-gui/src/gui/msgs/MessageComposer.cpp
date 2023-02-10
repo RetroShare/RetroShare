@@ -96,8 +96,6 @@
 #define STYLE_NORMAL "QLineEdit#%1 { border : none; }"
 #define STYLE_FAIL   "QLineEdit#%1 { border : none; color : red; }"
 
-static const uint32_t MAX_ALLOWED_GXS_MESSAGE_SIZE = 199000;
-
 class MessageItemDelegate : public QItemDelegate
 {
 public:
@@ -2912,7 +2910,7 @@ void MessageComposer::checkLength()
 	RsHtml::optimizeHtml(ui.msgText, text);
 	std::wstring msg = text.toStdWString();
 	int charlength = msg.length();
-	int charRemains = MAX_ALLOWED_GXS_MESSAGE_SIZE - msg.length();
+    int charRemains = MAX_ALLOWED_GXS_MESSAGE_SIZE * 0.9 - msg.length();
 
 	text = tr("Message Size: %1").arg(misc::friendlyUnit(charlength));
 	lengthLabel->setText(text);
