@@ -243,7 +243,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
             >> parameter('t',"opmode"        ,conf.userSuppliedTorExecutable,"tor"    ,"supply full tor eecutable path."       ,false);
 #ifdef RS_JSONAPI
 	as      >> parameter('J', "jsonApiPort", conf.jsonApiPort, "jsonApiPort", "Enable JSON API on the specified port", false )
-	        >> parameter('P', "jsonApiBindAddress", conf.jsonApiBindAddress, "jsonApiBindAddress", "JSON API Bind Address.", false);
+            >> parameter('P', "jsonApiBindAddress", conf.jsonApiBindAddress, "jsonApiBindAddress", "JSON API Bind Address.", false);
 #endif // ifdef RS_JSONAPI
 
 #ifdef LOCALNET_TESTING
@@ -253,6 +253,10 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 #ifdef RS_AUTOLOGIN
 	as      >> option('a',"auto-login"       ,conf.autoLogin      ,"AutoLogin (Windows Only) + StartMinimised");
 #endif // ifdef RS_AUTOLOGIN
+
+    as >> help('h',"--help","Retroshare starting commandline parameters:");
+
+    as.defaultErrorHandling();
 
     conf.main_executable_path = argv[0];
 
