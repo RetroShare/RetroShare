@@ -47,7 +47,7 @@ class ChannelPostFilesDelegate: public QStyledItemDelegate
 	Q_OBJECT
 
 	public:
-		ChannelPostFilesDelegate(QObject *parent=0) : QStyledItemDelegate(parent){}
+        ChannelPostFilesDelegate(QObject *parent=0) : QStyledItemDelegate(parent){}
         virtual ~ChannelPostFilesDelegate(){}
 
 		void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const override;

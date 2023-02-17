@@ -284,8 +284,10 @@ QWidget *ChannelPostFilesDelegate::createEditor(QWidget *parent, const QStyleOpt
 
 	if(index.column() == RsGxsChannelPostFilesModel::COLUMN_FILES_FILE)
 	{
-		GxsChannelFilesStatusWidget* w = new GxsChannelFilesStatusWidget(file,parent);
-		connect(w,SIGNAL(onButtonClick()),this->parent(),SLOT(updateDAll_PB()));
+        GxsChannelFilesStatusWidget* w = new GxsChannelFilesStatusWidget(file,parent,true);
+        w->setFocusPolicy(Qt::StrongFocus);
+        connect(w,SIGNAL(onButtonClick()),this->parent(),SLOT(updateDAll_PB()));
+
 		return w;
 	}
 	else

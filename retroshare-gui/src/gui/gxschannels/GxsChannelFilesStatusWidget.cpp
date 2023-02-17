@@ -33,8 +33,8 @@
 
 #include "retroshare/rsfiles.h"
 
-GxsChannelFilesStatusWidget::GxsChannelFilesStatusWidget(const RsGxsFile &file, QWidget *parent) :
-    QWidget(parent), mFile(file), ui(new Ui::GxsChannelFilesStatusWidget)
+GxsChannelFilesStatusWidget::GxsChannelFilesStatusWidget(const RsGxsFile &file, QWidget *parent,bool used_as_editor) :
+    QWidget(parent), mFile(file), mUsedAsEditor(used_as_editor),ui(new Ui::GxsChannelFilesStatusWidget)
 {
 	ui->setupUi(this);
 
@@ -46,7 +46,7 @@ GxsChannelFilesStatusWidget::GxsChannelFilesStatusWidget(const RsGxsFile &file, 
 	connect(ui->downloadPushButton, SIGNAL(clicked()), this, SLOT(download()));
 	connect(ui->resumeToolButton, SIGNAL(clicked()), this, SLOT(resume()));
 	connect(ui->pauseToolButton, SIGNAL(clicked()), this, SLOT(pause()));
-	connect(ui->cancelToolButton, SIGNAL(clicked()), this, SLOT(cancel()));
+    connect(ui->cancelToolButton, SIGNAL(clicked()), this, SLOT(cancel()));
 	connect(ui->openFilePushButton, SIGNAL(clicked()), this, SLOT(openFile()));
 
 	ui->downloadPushButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/download.png"));
@@ -306,14 +306,15 @@ void GxsChannelFilesStatusWidget::resume()
 
 void GxsChannelFilesStatusWidget::cancel()
 {
-	if ((QMessageBox::question(this, "", tr("Are you sure that you want to cancel and delete the file?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No)) == QMessageBox::No) {
-		return;
-	}
+    if(!mUsedAsEditor)
+        if ((QMessageBox::question(this, "", tr("Are you sure that you want to cancel and delete the file?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No)) == QMessageBox::No) {
+            return;
+        }
 
 	rsFiles->FileCancel(mFile.mHash);
 
 	emit onButtonClick();// Signals the parent widget to e.g. update the downloadable file count
-	check();
+    check();
 }
 
 void GxsChannelFilesStatusWidget::openFolder()
@@ -327,8 +328,12 @@ void GxsChannelFilesStatusWidget::openFolder()
 	QDir dir = QFileInfo(QString::fromUtf8(fileInfo.path.c_str())).absoluteDir();
 	if (dir.exists()) {
 		if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(dir.absolutePath()))) {
-			QMessageBox::warning(this, "", QString("%1 %2").arg(tr("Can't open folder"), dir.absolutePath()));
-		}
+            if(!mUsedAsEditor)
+                QMessageBox::warning(this, "", QString("%1 %2").arg(tr("Can't open folder"), dir.absolutePath()));
+            else
+                RsErr() << "Can't open folder " << dir.absolutePath().toStdString() ;
+
+        }
 	}
 }
 
@@ -347,8 +352,12 @@ void GxsChannelFilesStatusWidget::openFile()
 			std::cerr << "GxsChannelFilesStatusWidget(): can't open file " << fileInfo.path << std::endl;
 		}
 	}else{
-		QMessageBox::information(this, tr("Play File"),
-				tr("File %1 does not exist at location.").arg(fileInfo.path.c_str()));
-		return;
+        if(!mUsedAsEditor)
+            QMessageBox::information(this, tr("Play File"),
+                    tr("File %1 does not exist at location.").arg(fileInfo.path.c_str()));
+        else
+            RsErr() << "File " << fileInfo.path << " does not exist at location." ;
+
+        return;
 	}
 }
