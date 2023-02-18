@@ -306,6 +306,10 @@ void GxsChannelFilesStatusWidget::resume()
 
 void GxsChannelFilesStatusWidget::cancel()
 {
+    // When QMessgeBox asks for cancel confirmtion, this makes the widget lose focus => since it is an editor widget,
+    // it gets destroyed by the parent list widget => subsequent code after the QMessageBox runs over a deleted object => crash
+    // In summary: no QMessageBox here when the Status widget is used as an editor.
+
     if(!mUsedAsEditor)
         if ((QMessageBox::question(this, "", tr("Are you sure that you want to cancel and delete the file?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No)) == QMessageBox::No) {
             return;
