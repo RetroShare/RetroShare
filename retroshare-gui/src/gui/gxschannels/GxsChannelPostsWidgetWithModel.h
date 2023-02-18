@@ -160,6 +160,7 @@ private slots:
     void markMessageUnread();
 
 public slots:
+    void currentTabChanged(int t);
  	void sortColumnFiles(int col,Qt::SortOrder so);
  	void sortColumnPostFiles(int col,Qt::SortOrder so);
     void updateCommentsCount(int n);
