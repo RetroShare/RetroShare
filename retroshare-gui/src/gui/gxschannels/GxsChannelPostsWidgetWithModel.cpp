@@ -284,8 +284,10 @@ QWidget *ChannelPostFilesDelegate::createEditor(QWidget *parent, const QStyleOpt
 
 	if(index.column() == RsGxsChannelPostFilesModel::COLUMN_FILES_FILE)
 	{
-		GxsChannelFilesStatusWidget* w = new GxsChannelFilesStatusWidget(file,parent);
-		connect(w,SIGNAL(onButtonClick()),this->parent(),SLOT(updateDAll_PB()));
+        GxsChannelFilesStatusWidget* w = new GxsChannelFilesStatusWidget(file,parent,true);
+        w->setFocusPolicy(Qt::StrongFocus);
+        connect(w,SIGNAL(onButtonClick()),this->parent(),SLOT(updateDAll_PB()));
+
 		return w;
 	}
 	else
@@ -416,6 +418,8 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     connect(ui->postsTree->selectionModel(),SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),this,SLOT(showPostDetails()));
     connect(ui->postsTree,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(postContextMenu(const QPoint&)));
 
+    connect(ui->channel_TW,SIGNAL(currentChanged(int)),this,SLOT(currentTabChanged(int)));
+
     connect(mChannelPostsModel,SIGNAL(channelPostsLoaded()),this,SLOT(postChannelPostLoad()));
 
     ui->postName_LB->hide();
@@ -501,6 +505,22 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     }, mEventHandlerId, RsEventType::GXS_CHANNELS );
 }
 
+void GxsChannelPostsWidgetWithModel::currentTabChanged(int t)
+{
+    switch(t)
+    {
+    case CHANNEL_TABS_DETAILS:
+    case CHANNEL_TABS_FILES:
+        ui->showUnread_TB->setHidden(true);
+        ui->viewType_TB->setHidden(true);
+        break;
+
+    case CHANNEL_TABS_POSTS:
+        ui->showUnread_TB->setHidden(false);
+        ui->viewType_TB->setHidden(false);
+        break;
+    }
+}
 void GxsChannelPostsWidgetWithModel::updateZoomFactor(bool zoom_or_unzoom)
 {
     mChannelPostsDelegate->zoom(zoom_or_unzoom);

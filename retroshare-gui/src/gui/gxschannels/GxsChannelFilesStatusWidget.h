@@ -34,9 +34,10 @@ class GxsChannelFilesStatusWidget : public QWidget
 	Q_OBJECT
 
 public:
-	explicit GxsChannelFilesStatusWidget(const RsGxsFile &file, QWidget *parent = 0);
+    explicit GxsChannelFilesStatusWidget(const RsGxsFile &file, QWidget *parent = 0,bool used_as_editor=false);
 	~GxsChannelFilesStatusWidget();
 
+    bool usedAsEditor() const { return mUsedAsEditor; }
 signals:
 
 	void onButtonClick();
@@ -72,6 +73,8 @@ private:
 
 	uint64_t mSize;
 	uint64_t mDivisor;
+
+    bool mUsedAsEditor;
 
 	Ui::GxsChannelFilesStatusWidget *ui;
 };
