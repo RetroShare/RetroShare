@@ -571,7 +571,7 @@ void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vecto
 	initEmptyHierarchy();
 	mChannelGroup = group;
 
-	createPostsArray(posts);
+    createPostsArray(posts);
 
 	std::sort(mPosts.begin(),mPosts.end());
 
@@ -658,7 +658,7 @@ void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
     });
 }
 
-void RsGxsChannelPostsModel::createPostsArray(std::vector<RsGxsChannelPost>& posts)
+void RsGxsChannelPostsModel::old_createPostsArray(std::vector<RsGxsChannelPost>& posts)
 {
     // collect new versions of posts if any
 
@@ -776,6 +776,99 @@ void RsGxsChannelPostsModel::createPostsArray(std::vector<RsGxsChannelPost>& pos
     }
 }
 
+void RsGxsChannelPostsModel::createPostsArray(std::vector<RsGxsChannelPost>& posts)
+{
+    // The hierarchy of posts may contain edited posts. In the new model (03/2023), mOrigMsgId points to the original
+    // top-level post in the hierarchy of edited posts. However, in the old model, mOrigMsgId points to the edited post.
+    // Therefore the algorithm below is made to cope with both models at once.
+    //
+    // In the future, using the new model, it will be possible to delete old versions from the db, and detect new versions
+    // because they all share the same mOrigMsgId.
+    //
+    // We proceed as follows:
+    //
+    //	1 - create a search map to convert post IDs into their index in the posts tab
+    //  2 - recursively climb up the post mOrigMsgId until no parent is found. At top level, create the original post, and add all previous elements as newer versions.
+    //	3 - go through the list of original posts, select among them the most recent version, and set all others as older versions.
+    //
+    // The algorithm handles the case where some parent has been deleted.
+
+#ifdef DEBUG_CHANNEL_MODEL
+    std::cerr << "Inserting channel posts" << std::endl;
+#endif
+
+    //	1 - create a search map to convert post IDs into their index in the posts tab
+
+    std::map<RsGxsMessageId,uint32_t> search_map ;
+
+    for (uint32_t i=0;i<posts.size();++i)
+        search_map[posts[i].mMeta.mMsgId] = i ;
+
+    //  2 - recursively climb up the post mOrigMsgId until no parent is found. At top level, create the original post, and add all previous elements as newer versions.
+
+    std::map<RsGxsMessageId,uint32_t> original_versions ;
+
+    for (uint32_t i=0;i<posts.size();++i)
+    {
+        uint32_t current_index = i;
+        rstime_t newest_time = posts[i].mMeta.mPublishTs;
+        rstime_t newest_index = i;
+
+        while(true)
+        {
+            const auto& m(posts[current_index].mMeta);
+
+            if(m.mPublishTs > newest_time)
+            {
+                newest_index = current_index;
+                newest_time = m.mPublishTs;
+            }
+
+            RsGxsMessageId top_level_id;
+            std::map<RsGxsMessageId,uint32_t>::const_iterator it;
+
+            if(m.mOrigMsgId.isNull() || m.mOrigMsgId==m.mMsgId)	// we have a top-level post.
+                top_level_id = m.mMsgId;
+            else if( (it = search_map.find(m.mOrigMsgId)) == search_map.end())	// we don't have the post. Never mind, we store the
+                top_level_id = m.mOrigMsgId;
+            else
+            {
+                current_index = it->second;
+                continue;
+            }
+
+            auto vit = original_versions.find(top_level_id);
+
+            if(vit != original_versions.end())
+            {
+                if(posts[vit->second].mMeta.mPublishTs < newest_time)
+                    vit->second = newest_index;
+            }
+            else
+                original_versions[top_level_id] = newest_index;
+
+            break;
+        }
+    }
+
+#ifdef DEBUG_CHANNEL_MODEL
+    std::cerr << "Now adding " << posts.size() << " posts into array structure..." << std::endl;
+#endif
+
+    mPosts.clear();
+
+    // make sure the posts are delivered in the same order they appears in the posts[] tab.
+
+    std::vector<uint32_t> ids;
+
+    for(auto id:original_versions)
+        ids.push_back(id.second);
+
+    std::sort(ids.begin(),ids.end());
+
+    for(uint32_t i=0;i<ids.size();++i)
+        mPosts.push_back(posts[ids[i]]);
+}
 void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
 {
     // No need to call preMods()/postMods() here because we're not changing the model

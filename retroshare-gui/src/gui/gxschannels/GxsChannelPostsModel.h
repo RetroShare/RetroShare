@@ -229,8 +229,9 @@ private:
 	//static void convertMsgToPostEntry(const RsGxsChannelGroup &mChannelGroup, const RsMsgMetaData &msg, bool useChildTS, ChannelModelPostEntry& fentry);
 
 	//void computeMessagesHierarchy(const RsGxsChannelGroup& forum_group, const std::vector<RsMsgMetaData> &msgs_array, std::vector<ChannelPostsModelPostEntry> &posts, std::map<RsGxsMessageId, std::vector<std::pair<time_t, RsGxsMessageId> > > &mPostVersions);
-	void createPostsArray(std::vector<RsGxsChannelPost> &posts);
-	void setPosts(const RsGxsChannelGroup& group, std::vector<RsGxsChannelPost> &posts);
+	void old_createPostsArray(std::vector<RsGxsChannelPost> &posts);
+    void createPostsArray(std::vector<RsGxsChannelPost>& posts);
+    void setPosts(const RsGxsChannelGroup& group, std::vector<RsGxsChannelPost> &posts);
 	void initEmptyHierarchy();
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
