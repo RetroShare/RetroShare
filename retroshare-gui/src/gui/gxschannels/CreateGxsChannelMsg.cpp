@@ -794,20 +794,10 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
 	/* rsGxsChannels */
 	if (rsGxsChannels)
 	{
-		RsGxsChannelPost post;
-
-		post.mMeta.mGroupId = mChannelId;
-		post.mMeta.mParentId.clear() ;
-		post.mMeta.mThreadId.clear() ;
-		post.mMeta.mMsgId.clear() ;
-
-		post.mMeta.mOrigMsgId = mOrigPostId;
-		post.mMeta.mMsgName = subject;
-		post.mMsg = msg;
-		post.mFiles = files;
-
 		QByteArray ba;
 		QBuffer buffer(&ba);
+
+        RsGxsImage image;
 
 		if(!picture.isNull())
 		{
@@ -815,35 +805,14 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
 
 			buffer.open(QIODevice::WriteOnly);
             preview_W->getCroppedScaledPicture().save(&buffer, "JPG"); // writes image into ba in PNG format
-			post.mThumbnail.copy((uint8_t *) ba.data(), ba.size());
+            image.copy((uint8_t *) ba.data(), ba.size());
 		}
 
+        std::string error_string;
+        RsGxsMessageId post_id;
 
-#ifdef ENABLE_GENERATE
-		int generateCount = 0;
-		if (generateCheckBox->isChecked()) {
-			generateCount = generateSpinBox->value();
-			if (QMessageBox::question(this, tr("Generate mass data"), tr("Do you really want to generate %1 messages ?").arg(generateCount), QMessageBox::Yes|QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
-				return;
-			}
-		}
-#endif
-
-		uint32_t token;
-#ifdef ENABLE_GENERATE
-		if (generateCount) {
-			for (int count = 0; count < generateCount; ++count) {
-				RsGxsChannelPost generatePost = post;
-				generatePost.mMeta.mMsgName = QString("%1 %2").arg(QString::fromUtf8(post.mMeta.mMsgName.c_str())).arg(count + 1, 3, 10, QChar('0')).toUtf8().constData();
-
-				rsGxsChannels->createPost(token, generatePost);
-			}
-		} else {
-#endif
-			rsGxsChannels->createPost(token, post);
-#ifdef ENABLE_GENERATE
-		}
-#endif
+        if(!rsGxsChannels->createPostV2(mChannelId,subject,msg,files,image,mOrigPostId,post_id,error_string))
+            QMessageBox::critical(nullptr,tr("Cannot publish post"),QString::fromStdString(error_string));
 	}
 
 	accept();
