@@ -35,7 +35,7 @@
 #include "GxsChannelPostsModel.h"
 #include "GxsChannelPostFilesModel.h"
 
-//#define DEBUG_CHANNEL_MODEL
+#define DEBUG_CHANNEL_MODEL
 
 Q_DECLARE_METATYPE(RsMsgMetaData)
 
@@ -704,9 +704,6 @@ void RsGxsChannelPostsModel::old_createPostsArray(std::vector<RsGxsChannelPost>&
 
             uint32_t current_index = new_versions[i] ;
             uint32_t source_index  = new_versions[i] ;
-#ifdef DEBUG_CHANNEL_MODEL
-            RsGxsMessageId source_msg_id = posts[source_index].mMeta.mMsgId ;
-#endif
 
             // What we do is everytime we find a replacement post, we climb up the replacement graph until we find the original post
             // (or the most recent version of it). When we reach this post, we replace it with the data of the source post.
@@ -799,30 +796,51 @@ void RsGxsChannelPostsModel::createPostsArray(std::vector<RsGxsChannelPost>& pos
 
     //	1 - create a search map to convert post IDs into their index in the posts tab
 
+#ifdef DEBUG_CHANNEL_MODEL
+    std::cerr << "  Given list: " << std::endl;
+#endif
     std::map<RsGxsMessageId,uint32_t> search_map ;
 
     for (uint32_t i=0;i<posts.size();++i)
+    {
+#ifdef DEBUG_CHANNEL_MODEL
+        std::cerr << "    " << i << ": " << posts[i].mMeta.mMsgId << " orig=" << posts[i].mMeta.mOrigMsgId << " publish TS =" << posts[i].mMeta.mPublishTs << std::endl;
+#endif
         search_map[posts[i].mMeta.mMsgId] = i ;
+    }
 
     //  2 - recursively climb up the post mOrigMsgId until no parent is found. At top level, create the original post, and add all previous elements as newer versions.
 
-    std::map<RsGxsMessageId,uint32_t> original_versions ;
+#ifdef DEBUG_CHANNEL_MODEL
+    std::cerr << "  Searching for top-level posts..." << std::endl;
+#endif
+    std::map<RsGxsMessageId,std::pair<uint32_t,std::set<RsGxsMessageId> > > original_versions ;
 
     for (uint32_t i=0;i<posts.size();++i)
     {
-        uint32_t current_index = i;
-        rstime_t newest_time = posts[i].mMeta.mPublishTs;
-        rstime_t newest_index = i;
+#ifdef DEBUG_CHANNEL_MODEL
+        std::cerr << "    Post " << i;
+#endif
 
-        while(true)
+        // We use a recursive function here, so as to collect versions when climbing up to the top level post, and
+        // set the top level as the orig for all visited posts on the way back.
+
+        std::function<RsGxsMessageId (uint32_t,std::set<RsGxsMessageId>& versions,rstime_t newest_time,uint32_t newest_index,int depth)> recurs_find_top_level
+                = [&posts,&search_map,&recurs_find_top_level,&original_versions](uint32_t index,
+                                                                                std::set<RsGxsMessageId>& collected_versions,
+                                                                                rstime_t newest_time,
+                                                                                uint32_t newest_index,
+                                                                                int depth)
+                -> RsGxsMessageId
         {
-            const auto& m(posts[current_index].mMeta);
+            const auto& m(posts[index].mMeta);
 
             if(m.mPublishTs > newest_time)
             {
-                newest_index = current_index;
+                newest_index = index;
                 newest_time = m.mPublishTs;
             }
+            collected_versions.insert(m.mMsgId);
 
             RsGxsMessageId top_level_id;
             std::map<RsGxsMessageId,uint32_t>::const_iterator it;
@@ -830,44 +848,77 @@ void RsGxsChannelPostsModel::createPostsArray(std::vector<RsGxsChannelPost>& pos
             if(m.mOrigMsgId.isNull() || m.mOrigMsgId==m.mMsgId)	// we have a top-level post.
                 top_level_id = m.mMsgId;
             else if( (it = search_map.find(m.mOrigMsgId)) == search_map.end())	// we don't have the post. Never mind, we store the
+            {
                 top_level_id = m.mOrigMsgId;
+                collected_versions.insert(m.mOrigMsgId);	// this one will never be added to the set by the previous call
+            }
             else
             {
-                current_index = it->second;
-                continue;
+                top_level_id = recurs_find_top_level(it->second,collected_versions,newest_time,newest_index,depth+1);
+                posts[index].mMeta.mOrigMsgId = top_level_id;	// this fastens calculation because it will skip already seen posts.
+
+                return top_level_id;
             }
 
+#ifdef DEBUG_CHANNEL_MODEL
+            std::cerr << std::string(2*depth,' ') << "  top level = " << top_level_id ;
+#endif
             auto vit = original_versions.find(top_level_id);
 
             if(vit != original_versions.end())
             {
-                if(posts[vit->second].mMeta.mPublishTs < newest_time)
-                    vit->second = newest_index;
-            }
-            else
-                original_versions[top_level_id] = newest_index;
-
-            break;
-        }
-    }
+                if(posts[vit->second.first].mMeta.mPublishTs < newest_time)
+                    vit->second.first = newest_index;
 
 #ifdef DEBUG_CHANNEL_MODEL
-    std::cerr << "Now adding " << posts.size() << " posts into array structure..." << std::endl;
+                std::cerr << "  already existing. " << std::endl;
 #endif
+            }
+            else
+            {
+                original_versions[top_level_id].first = newest_index;
+#ifdef DEBUG_CHANNEL_MODEL
+                std::cerr << "  new. " << std::endl;
+#endif
+            }
+            original_versions[top_level_id].second.insert(collected_versions.begin(),collected_versions.end());
+
+            return top_level_id;
+        };
+
+        auto versions_set = std::set<RsGxsMessageId>();
+        recurs_find_top_level(i,versions_set,posts[i].mMeta.mPublishTs,i,0);
+    }
 
     mPosts.clear();
 
+#ifdef DEBUG_CHANNEL_MODEL
+    std::cerr << "  Total top_level posts: " << original_versions.size() << std::endl;
+
+    for(auto it:original_versions)
+    {
+        std::cerr << "    Post " << it.first << ". Total versions = " << it.second.second.size() << " latest: " << posts[it.second.first].mMeta.mMsgId << std::endl;
+
+        for(auto m:it.second.second)
+            if(m != it.first)
+                std::cerr << "      other (newer version): " << m << std::endl;
+    }
+#endif
     // make sure the posts are delivered in the same order they appears in the posts[] tab.
 
     std::vector<uint32_t> ids;
 
     for(auto id:original_versions)
-        ids.push_back(id.second);
+        ids.push_back(id.second.first);
 
     std::sort(ids.begin(),ids.end());
 
     for(uint32_t i=0;i<ids.size();++i)
+    {
         mPosts.push_back(posts[ids[i]]);
+        mPosts.back().mOlderVersions = original_versions[posts[ids[i]].mMeta.mMsgId].second;
+    }
+
 }
 void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
 {
