@@ -187,6 +187,7 @@ public:
     RSComboBox *statusComboBoxInstance();
     PeerStatus *peerstatusInstance();
     NATStatus *natstatusInstance();
+    void torstatusReset();
     DHTStatus *dhtstatusInstance();
     HashingStatus *hashingstatusInstance();
     DiscStatus *discstatusInstance();
