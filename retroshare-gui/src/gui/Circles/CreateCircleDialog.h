@@ -56,6 +56,7 @@ private slots:
 	void filterChanged(const QString &text);
 	void createNewGxsId();
 	void idTypeChanged();
+	void updateMembership();
 	
 	/** Create the context popup menu and it's submenus */
 	void IdListCustomPopupMenu( QPoint point );
