@@ -1630,7 +1630,8 @@ NATStatus *MainWindow::natstatusInstance()
 
 void MainWindow::torstatusReset()
 {
-	torstatus->reset();
+	if(torstatus != nullptr)
+		torstatus->reset();
 }
 DHTStatus *MainWindow::dhtstatusInstance()
 {
