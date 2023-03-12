@@ -68,6 +68,13 @@ retroshare_plugins {
     plugins.target = plugins
 }
 
+rs_webui {
+    SUBDIRS += retroshare-webui
+    retroshare-webui.file = retroshare-webui/webui.pro
+    retroshare-webui.target = rs_webui
+    retroshare-webui.depends = retroshare_gui
+}
+
 wikipoos {
     SUBDIRS += pegmarkdown
     pegmarkdown.file = supportlibs/pegmarkdown/pegmarkdown.pro
