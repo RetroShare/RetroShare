@@ -17,7 +17,7 @@ call "%~dp0build\build.bat" release autologin webui plugins nativedialogs servic
 if errorlevel 1 %cecho% error "Failed to build %SourceName%." & exit /B %ERRORLEVEL%
 
 %cecho% info "Pack %SourceName%"
-call "%~dp0build\pack.bat" release plugins service
+call "%~dp0build\pack.bat" release webui plugins service
 if errorlevel 1 %cecho% error "Failed to pack %SourceName%." & exit /B %ERRORLEVEL%
 
 %cecho% info "Build installer"

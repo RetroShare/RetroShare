@@ -16,7 +16,7 @@ if "%~1"=="clean" (
 	goto exit
 )
 
-set MSYS2Version=20220503
+set MSYS2Version=20230318
 
 set MSYS2Install=msys2-base-x86_64-%MSYS2Version%.sfx.exe
 set MSYS2Url=https://github.com/msys2/msys2-installer/releases/download/%MSYS2Version:~0,4%-%MSYS2Version:~4,2%-%MSYS2Version:~6,2%/%MSYS2Install%

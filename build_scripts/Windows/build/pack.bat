@@ -181,10 +181,11 @@ copy "%SourcePath%\libbitdht\src\bitdht\bdboot.txt" "%RsDeployPath%" %Quite%
 echo copy changelog.txt
 copy "%RsBuildPath%\changelog.txt" "%RsDeployPath%" %Quite%
 
-if exist "%RsWebuiBuildPath%" (
+if defined ParamWebui (
 	echo copy webui
 	mkdir "%RsDeployPath%\webui"
 	xcopy /S "%RsWebuiBuildPath%" "%RsDeployPath%\webui" %Quite%
+	if errorlevel 1 %cecho% error "WebUi not found"& goto error
 )
 
 if "%ParamTor%"=="1" (
