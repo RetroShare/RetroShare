@@ -143,6 +143,7 @@ private slots:
 
 	void copyMessageLink();
 	void showInPeopleTab();
+	void viewForumMessage();
 
 	/* handle splitter */
 	void togglethreadview();
@@ -159,6 +160,7 @@ private slots:
 
     void changedViewBox(int);
 	void flagperson();
+	void viewMessage(const RsGxsForumMsg& msg);
 
 	void filterColumnChanged(int column);
 	void filterItems(const QString &text);
