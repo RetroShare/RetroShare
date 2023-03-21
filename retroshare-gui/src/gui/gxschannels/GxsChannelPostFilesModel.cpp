@@ -295,7 +295,7 @@ void RsGxsChannelPostFilesModel::setFilter(const QStringList& strings, uint32_t&
 {
 	preMods();
 
-	initEmptyHierarchy();
+    mFilteredFiles.clear();
 
 	if(strings.empty())
 	{
@@ -316,8 +316,6 @@ void RsGxsChannelPostFilesModel::setFilter(const QStringList& strings, uint32_t&
 		}
 	}
 	count = mFilteredFiles.size();
-
-	std::cerr << "After filtering: " << count << " posts remain." << std::endl;
 
 	if (rowCount()>0)
 	{

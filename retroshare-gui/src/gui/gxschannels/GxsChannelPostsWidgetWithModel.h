@@ -47,7 +47,7 @@ class ChannelPostFilesDelegate: public QStyledItemDelegate
 	Q_OBJECT
 
 	public:
-		ChannelPostFilesDelegate(QObject *parent=0) : QStyledItemDelegate(parent){}
+        ChannelPostFilesDelegate(QObject *parent=0) : QStyledItemDelegate(parent){}
         virtual ~ChannelPostFilesDelegate(){}
 
 		void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const override;
@@ -160,6 +160,7 @@ private slots:
     void markMessageUnread();
 
 public slots:
+    void currentTabChanged(int t);
  	void sortColumnFiles(int col,Qt::SortOrder so);
  	void sortColumnPostFiles(int col,Qt::SortOrder so);
     void updateCommentsCount(int n);
