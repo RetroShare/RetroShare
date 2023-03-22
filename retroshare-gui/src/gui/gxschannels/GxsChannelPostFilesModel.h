@@ -83,6 +83,9 @@ public:
 	void setFiles(const std::list<ChannelPostFileInfo>& files);
     void setFilter(const QStringList &strings, uint32_t &count) ;
 
+    // This method adds/removes the given lists of files. Useful when a single post is updated
+    void update_files(const std::set<RsGxsFile>& added_files,const std::set<RsGxsFile>& removed_files);
+
 #ifdef TODO
 	QModelIndex getIndexOfFile(const RsFileHash& hash) const;
     void setSortMode(SortMode mode) ;

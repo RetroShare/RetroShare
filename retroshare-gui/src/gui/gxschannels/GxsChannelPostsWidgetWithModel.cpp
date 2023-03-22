@@ -783,7 +783,14 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
         case RsChannelEventCode::NEW_MESSAGE:
         {
             if(e->mChannelGroupId == groupId())
-                updateDisplay(true,true);
+            {
+                std::set<RsGxsFile> added_files,removed_files;
+
+                mChannelPostsModel->update_single_post(e->mChannelMsgId,added_files,removed_files);
+                mChannelFilesModel->update_files(added_files,removed_files);
+
+                updateDisplay(true,false);
+            }
         }
         break;
 
@@ -794,11 +801,13 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
                 ui->commentsDialog->refresh();
         break;
 
+        case RsChannelEventCode::READ_STATUS_CHANGED:
+            mChannelPostsModel->triggerViewUpdate();
+        break;
+
         default:
         break;
 
-        // case RsChannelEventCode::UPDATED_MESSAGE:     // handled in GxsChannelPostsModel
-        // case RsChannelEventCode::READ_STATUS_CHANGED: // handled in GxsChannelPostsModel
     }
 }
 

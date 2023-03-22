@@ -35,7 +35,7 @@
 #include "GxsChannelPostsModel.h"
 #include "GxsChannelPostFilesModel.h"
 
-//#define DEBUG_CHANNEL_MODEL
+#define DEBUG_CHANNEL_MODEL
 
 Q_DECLARE_METATYPE(RsMsgMetaData)
 
@@ -47,14 +47,6 @@ RsGxsChannelPostsModel::RsGxsChannelPostsModel(QObject *parent)
     : QAbstractItemModel(parent), mTreeMode(RsGxsChannelPostsModel::TREE_MODE_GRID), mColumns(6)
 {
 	initEmptyHierarchy();
-
-	mEventHandlerId = 0;
-	// Needs to be asynced because this function is called by another thread!
-
-	rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
-    {
-        RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this );
-    }, mEventHandlerId, RsEventType::GXS_CHANNELS );
 }
 
 RsGxsChannelPostsModel::~RsGxsChannelPostsModel()
@@ -107,35 +99,6 @@ void updateCommentCounts( std::vector<RsGxsChannelPost>& posts, std::vector<RsGx
     }
 }
 
-
-void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
-{
-	const RsGxsChannelEvent *e = dynamic_cast<const RsGxsChannelEvent*>(event.get());
-
-	if(!e)
-		return;
-
-	switch(e->mChannelEventCode)
-	{
-	case RsChannelEventCode::UPDATED_MESSAGE:
-    case RsChannelEventCode::READ_STATUS_CHANGED:
-    case RsChannelEventCode::NEW_COMMENT:
-    {
-        // Normally we should just emit dataChanged() on the index of the data that has changed:
-        // We need to update the data!
-
-        // In particular, mChannelMsgId may refer to a comment, but this will be handled correctly
-        // by update_single_post which will automatically retrive the correct parent msg.
-
-        if(e->mChannelGroupId == mChannelGroup.mMeta.mGroupId)
-            update_single_post(e->mChannelGroupId,e->mChannelMsgId,e->mChannelThreadId);
-    };
-    break;
-
-    default:
-			break;
-	}
-}
 
 void RsGxsChannelPostsModel::initEmptyHierarchy()
 {
@@ -570,9 +533,12 @@ void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vecto
 	emit channelPostsLoaded();
 }
 
-void RsGxsChannelPostsModel::update_single_post(const RsGxsGroupId& group_id,const RsGxsMessageId& msg_id,const RsGxsMessageId& thread_id)
+void RsGxsChannelPostsModel::update_single_post(const RsGxsMessageId& msg_id,std::set<RsGxsFile>& added_files,std::set<RsGxsFile>& removed_files)
 {
-    RsThread::async([this, group_id, msg_id,thread_id]()
+#ifdef DEBUG_CHANNEL_MODEL
+    RsDbg() << "updating single post for group id=" << currentGroupId() << " and msg id=" << msg_id ;
+#endif
+    RsThread::async([this,&added_files,&removed_files, msg_id]()
     {
         // 1 - get message data from p3GxsChannels. No need for pointers here, because we send only a single post to postToObject()
         //     At this point we dont know what kind of msg id we have. It can be a vote, a comment or an actual message.
@@ -580,20 +546,19 @@ void RsGxsChannelPostsModel::update_single_post(const RsGxsGroupId& group_id,con
         std::vector<RsGxsChannelPost> posts;
         std::vector<RsGxsComment>     comments;
         std::vector<RsGxsVote>        votes;
-        std::set<RsGxsMessageId>      msg_ids({ (thread_id.isNull())?msg_id:thread_id } );		// we have a post message
 
-        if(!rsGxsChannels->getChannelContent(group_id,msg_ids, posts,comments,votes))
+        if(!rsGxsChannels->getChannelContent(currentGroupId(), { msg_id }, posts,comments,votes) || posts.size() != 1)
         {
-            std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel message data for channel/msg " << group_id << "/" << msg_id << std::endl;
+            RsErr() << " failed to retrieve channel message data for channel/msg " << currentGroupId() << "/" << msg_id ;
             return;
         }
 
         // Need to call this in order to get the actual comment count. The previous call only retrieves the message, since we supplied the message ID.
         // another way to go would be to save the comment ids of the existing message and re-insert them before calling getChannelContent.
 
-        if(!rsGxsChannels->getChannelComments(group_id,msg_ids,comments))
+        if(!rsGxsChannels->getChannelComments(currentGroupId(),{ msg_id },comments))
         {
-            std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve message comment data for channel/msg " << group_id << "/" << msg_id << std::endl;
+            RsErr() << " failed to retrieve message comment data for channel/msg " << currentGroupId() << "/" << msg_id ;
             return;
         }
 
@@ -603,20 +568,58 @@ void RsGxsChannelPostsModel::update_single_post(const RsGxsGroupId& group_id,con
 
         // 2 - update the model in the UI thread.
 
-        RsQThreadUtils::postToObject( [posts,this]()
+        added_files.clear();
+        removed_files.clear();
+
+        RsQThreadUtils::postToObject( [&posts,&added_files,&removed_files,this]()
         {
             for(uint32_t i=0;i<posts.size();++i)
             {
+                bool found = false;
+
                 // linear search. Not good at all, but normally this is for a single post.
 
-                for(uint32_t j=0;j<mPosts.size();++j)
-                    if(mPosts[j].mMeta.mMsgId == posts[i].mMeta.mMsgId)
-                    {
-                        mPosts[j] = posts[i];
+                const auto& new_post_meta(posts[i].mMeta);
 
-                        triggerViewUpdate();
+                for(uint32_t j=0;j<mPosts.size();++j)
+                    if(new_post_meta.mMsgId == mPosts[j].mMeta.mMsgId)	// same post updated
+                    {
+                          added_files.insert(posts[i].mFiles.begin(),posts[i].mFiles.end());
+                        removed_files.insert(mPosts[j].mFiles.begin(),mPosts[j].mFiles.end());
+
+                        mPosts[j] = posts[i];
+#ifdef DEBUG_CHANNEL_MODEL
+                        RsDbg() << "  post is an updated existing post." ;
+#endif
+                        found=true;
+                        break;
                     }
+                    else if( (new_post_meta.mOrigMsgId == mPosts[j].mMeta.mOrigMsgId || new_post_meta.mOrigMsgId == mPosts[j].mMeta.mMsgId)
+                              && mPosts[j].mMeta.mPublishTs < new_post_meta.mPublishTs)	// new post version
+                    {
+                          added_files.insert(posts[i].mFiles.begin(),posts[i].mFiles.end());
+                        removed_files.insert(mPosts[j].mFiles.begin(),mPosts[j].mFiles.end());
+
+                        posts[i].mOlderVersions.insert(new_post_meta.mMsgId);
+                        mPosts[j] = posts[i];
+#ifdef DEBUG_CHANNEL_MODEL
+                        RsDbg() << "  post is an new version of an existing post." ;
+#endif
+                        found=true;
+                        break;
+                    }
+
+                if(!found)
+                {
+#ifdef DEBUG_CHANNEL_MODEL
+                    RsDbg() << "  post is an new post.";
+#endif
+                    added_files.insert(posts[i].mFiles.begin(),posts[i].mFiles.end());
+                    mPosts.push_back(posts[i]);
+                }
             }
+            triggerViewUpdate();
+
         },this);
     });
 }

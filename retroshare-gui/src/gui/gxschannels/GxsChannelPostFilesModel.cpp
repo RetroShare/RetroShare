@@ -426,7 +426,6 @@ QVariant RsGxsChannelPostFilesModel::userRole(const ChannelPostFileInfo& fmpe,in
 
 void RsGxsChannelPostFilesModel::clear()
 {
-
 	initEmptyHierarchy();
 
 	emit channelLoaded();
@@ -462,4 +461,9 @@ void RsGxsChannelPostFilesModel::setFiles(const std::list<ChannelPostFileInfo> &
 		mTimer->stop();
 
 	postMods();
+}
+
+void RsGxsChannelPostFilesModel::update_files(const std::set<RsGxsFile>& added_files,const std::set<RsGxsFile>& removed_files)
+{
+#error TODO
 }
