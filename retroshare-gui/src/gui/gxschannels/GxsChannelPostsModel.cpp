@@ -140,7 +140,31 @@ void RsGxsChannelPostsModel::getFilesList(std::list<ChannelPostFileInfo>& files)
         files.push_back(it.second);
 }
 
+bool RsGxsChannelPostsModel::postPassesFilter(const RsGxsChannelPost& post,const QStringList& strings,bool only_unread) const
+{
+    bool passes_strings = true;
+
+    for(auto& s:strings)
+        passes_strings = passes_strings && QString::fromStdString(post.mMeta.mMsgName).contains(s,Qt::CaseInsensitive);
+
+    if(strings.empty())
+        passes_strings = true;
+
+    if(passes_strings && (!only_unread || (IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))))
+        return true;
+
+    return false;
+}
+
 void RsGxsChannelPostsModel::setFilter(const QStringList& strings,bool only_unread, uint32_t& count)
+{
+    mFilteredStrings = strings;
+    mFilterUnread = only_unread;
+
+    updateFilter(count);
+}
+
+void RsGxsChannelPostsModel::updateFilter(uint32_t& count)
 {
 	preMods();
 
@@ -151,18 +175,8 @@ void RsGxsChannelPostsModel::setFilter(const QStringList& strings,bool only_unre
 	endResetModel();
 
     for(size_t i=0;i<mPosts.size();++i)
-    {
-        bool passes_strings = true;
-
-        for(auto& s:strings)
-            passes_strings = passes_strings && QString::fromStdString(mPosts[i].mMeta.mMsgName).contains(s,Qt::CaseInsensitive);
-
-        if(strings.empty())
-            passes_strings = true;
-
-        if(passes_strings && (!only_unread || (IS_MSG_UNREAD(mPosts[i].mMeta.mMsgStatus) || IS_MSG_NEW(mPosts[i].mMeta.mMsgStatus))))
-            mFilteredPosts.push_back(i);
-    }
+        if(postPassesFilter(mPosts[i],mFilteredStrings,mFilterUnread))
+                mFilteredPosts.push_back(i);
 
     count = mFilteredPosts.size();
 
@@ -514,20 +528,13 @@ void RsGxsChannelPostsModel::updateSinglePost(const RsGxsChannelPost& post,std::
 #endif
         added_files.insert(post.mFiles.begin(),post.mFiles.end());
         mPosts.push_back(post);
-
-        std::sort(mPosts.begin(),mPosts.end());
-
-        // We don't do that, because otherwise the filtered posts will be changed dynamically when browsing, which is bad.
-        //
-        //   mFilteredPosts.clear();
-        //   for(uint32_t i=0;i<mPosts.size();++i)
-        //     mFilteredPosts.push_back(i);
     }
+    std::sort(mPosts.begin(),mPosts.end());
+
+    uint32_t count;
+    updateFilter(count);
 
     triggerViewUpdate();
-
-    emit layoutChanged();
-    emit channelPostsLoaded();
 }
 
 void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vector<RsGxsChannelPost>& posts)

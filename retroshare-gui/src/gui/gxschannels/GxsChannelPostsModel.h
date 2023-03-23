@@ -141,6 +141,8 @@ public:
     void setAllMsgReadStatus(bool read_status);
 
     void setFilter(const QStringList &strings, bool only_unread,uint32_t &count) ;
+    bool postPassesFilter(const RsGxsChannelPost &post, const QStringList &strings, bool only_unread) const;
+    void updateFilter(uint32_t& count);
 
 #ifdef TODO
 	void setAuthorOpinion(const QModelIndex& indx,RsOpinion op);
@@ -238,6 +240,9 @@ public:
     void updateSinglePost(const RsGxsChannelPost& post, std::set<RsGxsFile>& added_files, std::set<RsGxsFile>& removed_files);
 private:
     void initEmptyHierarchy();
+
+    QStringList mFilteredStrings;
+    bool mFilterUnread;
 
     std::vector<int> mFilteredPosts;		// stores the list of displayes indices due to filtering.
     std::vector<RsGxsChannelPost> mPosts ;  // store the list of posts updated from rsForums.

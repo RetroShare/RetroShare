@@ -784,6 +784,7 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
         {
             if(e->mChannelGroupId == groupId())
             {
+                RsDbg() << "Received new message in current channel, msgId=" << e->mChannelMsgId ;
 
                 RsThread::async([this,e]()
                 {
@@ -803,6 +804,7 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
                         return;
                     }
 
+#ifdef TO_REMOVE
                     // Need to call this in order to get the actual comment count. The previous call only retrieves the message, since we supplied the message ID.
                     // another way to go would be to save the comment ids of the existing message and re-insert them before calling getChannelContent.
 
@@ -815,6 +817,7 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
                     // Normally, there's a single post in the "post" array. The function below takes a full array of posts however.
 
                     RsGxsChannelPostsModel::computeCommentCounts(posts,comments);
+#endif
 
                     // 2 - update the model in the UI thread.
 
@@ -830,8 +833,6 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
                         for(auto f:removed_files) removed_filesi.insert(ChannelPostFileInfo(f,post.mMeta.mPublishTs));
 
                         mChannelFilesModel->update_files(added_filesi,removed_filesi);
-
-                        updateDisplay(true,false);
 
                     },this);
                 });
@@ -994,6 +995,8 @@ void GxsChannelPostsWidgetWithModel::updateData(bool update_group_data, bool upd
 
             if(update_posts)
             {
+                blank();
+
                 ui->postsTree->setPlaceholderText(tr("Loading..."));
 
                 mChannelPostsModel->updateChannel(groupId());
@@ -1068,7 +1071,7 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
 void GxsChannelPostsWidgetWithModel::updateDisplay(bool update_group_data,bool update_posts)
 {
     // First, clear all widget
-    blank();
+
 #ifdef DEBUG_CHANNEL
     std::cerr << "udateDisplay: groupId()=" << groupId()<< std::endl;
 #endif
