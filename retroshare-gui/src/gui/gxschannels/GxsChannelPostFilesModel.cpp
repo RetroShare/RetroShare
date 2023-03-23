@@ -463,7 +463,49 @@ void RsGxsChannelPostFilesModel::setFiles(const std::list<ChannelPostFileInfo> &
 	postMods();
 }
 
-void RsGxsChannelPostFilesModel::update_files(const std::set<RsGxsFile>& added_files,const std::set<RsGxsFile>& removed_files)
+void RsGxsChannelPostFilesModel::update_files(std::set<ChannelPostFileInfo>& added_files,std::set<ChannelPostFileInfo>& removed_files)
 {
-#error TODO
+    // 1 - remove common files from both lists
+
+    std::cerr << "RsGxsChannelPostsFilesModel:: updating files." << std::endl;
+
+    for(auto afit=added_files.begin();afit!=added_files.end();)
+    {
+        auto rfit = removed_files.find(*afit);
+
+        if(rfit != removed_files.end())
+        {
+            std::cerr << "  Eliminating common file " << rfit->mName << std::endl;
+            removed_files.erase(rfit);
+            auto tmp = afit;
+            ++tmp;
+            added_files.erase(afit);
+            afit = tmp;
+        }
+        else
+            ++afit;
+    }
+
+    // 2 - add whatever file remains,
+
+    for(const auto& f:removed_files)
+    {
+        std::cerr << "  Removing deleted file " << f.mName << std::endl;
+
+        for(uint32_t i=0;i<mFiles.size();++i)
+            if(mFiles[i].mHash == f.mHash)
+            {
+                mFiles[i] = mFiles.back();
+                mFiles.pop_back();
+                break;
+            }
+    }
+    // 3 - add other files. We do not check that they are duplicates, because the list of files includes duplicates.
+
+    for(const auto& f:added_files )
+    {
+        mFilteredFiles.push_back(mFiles.size());
+        mFiles.push_back(f);
+    }
 }
+

@@ -784,12 +784,57 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
         {
             if(e->mChannelGroupId == groupId())
             {
-                std::set<RsGxsFile> added_files,removed_files;
 
-                mChannelPostsModel->update_single_post(e->mChannelMsgId,added_files,removed_files);
-                mChannelFilesModel->update_files(added_files,removed_files);
+                RsThread::async([this,e]()
+                {
+                    // 1 - get message data from p3GxsChannels. No need for pointers here, because we send only a single post to postToObject()
+                    //     At this point we dont know what kind of msg id we have. It can be a vote, a comment or an actual message.
 
-                updateDisplay(true,false);
+                    std::vector<RsGxsChannelPost> posts;
+                    std::vector<RsGxsComment>     comments;
+                    std::vector<RsGxsVote>        votes;
+
+                    const auto& msg_id(e->mChannelMsgId);
+                    const auto& grp_id(e->mChannelGroupId);
+
+                    if(!rsGxsChannels->getChannelContent(grp_id, { msg_id }, posts,comments,votes) || posts.size() != 1)
+                    {
+                        RsErr() << " failed to retrieve channel message data for channel/msg " << grp_id << "/" << msg_id;
+                        return;
+                    }
+
+                    // Need to call this in order to get the actual comment count. The previous call only retrieves the message, since we supplied the message ID.
+                    // another way to go would be to save the comment ids of the existing message and re-insert them before calling getChannelContent.
+
+                    if(!rsGxsChannels->getChannelComments(grp_id,{ msg_id },comments))
+                    {
+                        RsErr() << " failed to retrieve message comment data for channel/msg " << grp_id << "/" << msg_id ;
+                        return;
+                    }
+
+                    // Normally, there's a single post in the "post" array. The function below takes a full array of posts however.
+
+                    RsGxsChannelPostsModel::computeCommentCounts(posts,comments);
+
+                    // 2 - update the model in the UI thread.
+
+                    RsQThreadUtils::postToObject( [&post=posts[0],this]()
+                    {
+                        std::set<RsGxsFile> added_files,removed_files;
+
+                        mChannelPostsModel->updateSinglePost(post,added_files,removed_files);
+
+                        std::set<ChannelPostFileInfo> added_filesi,removed_filesi;
+
+                        for(auto f:added_files) added_filesi.insert(ChannelPostFileInfo(f,post.mMeta.mPublishTs));
+                        for(auto f:removed_files) removed_filesi.insert(ChannelPostFileInfo(f,post.mMeta.mPublishTs));
+
+                        mChannelFilesModel->update_files(added_filesi,removed_filesi);
+
+                        updateDisplay(true,false);
+
+                    },this);
+                });
             }
         }
         break;

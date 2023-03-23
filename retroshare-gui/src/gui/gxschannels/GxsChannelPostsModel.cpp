@@ -64,7 +64,7 @@ void RsGxsChannelPostsModel::setMode(TreeMode mode)
     triggerViewUpdate();
 }
 
-void updateCommentCounts( std::vector<RsGxsChannelPost>& posts, std::vector<RsGxsComment>& comments)
+void RsGxsChannelPostsModel::computeCommentCounts( std::vector<RsGxsChannelPost>& posts, std::vector<RsGxsComment>& comments)
 {
     // Store posts IDs in a std::map to avoid a quadratic cost
 
@@ -463,47 +463,73 @@ bool operator<(const RsGxsChannelPost& p1,const RsGxsChannelPost& p2)
     return p1.mMeta.mPublishTs > p2.mMeta.mPublishTs;
 }
 
-void RsGxsChannelPostsModel::setSinglePost(const RsGxsChannelGroup& group, const RsGxsChannelPost& post)
+void RsGxsChannelPostsModel::updateSinglePost(const RsGxsChannelPost& post,std::set<RsGxsFile>& added_files,std::set<RsGxsFile>& removed_files)
 {
-    if(mChannelGroup.mMeta.mGroupId != group.mMeta.mGroupId)
-        return;
+#ifdef DEBUG_CHANNEL_MODEL
+    RsDbg() << "updating single post for group id=" << currentGroupId() << " and msg id=" << post.mMeta.mMsgId ;
+#endif
+    added_files.clear();
+    removed_files.clear();
 
-    preMods();
+    emit layoutAboutToBeChanged();
 
-    // This is potentially quadratic, so it should not be called many times!
+    // linear search. Not good at all, but normally this is just for a single post.
 
-    bool found=false;
+    bool found = false;
+    const auto& new_post_meta(post.mMeta);
 
-    for(auto& p:mPosts)
-        if(post.mMeta.mMsgId == p.mMeta.mMsgId || post.mMeta.mOrigMsgId == p.mMeta.mMsgId)
+    for(uint32_t j=0;j<mPosts.size();++j)
+        if(new_post_meta.mMsgId == mPosts[j].mMeta.mMsgId)	// same post updated
         {
-            p = post;
-            found = true;
+            added_files.insert(post.mFiles.begin(),post.mFiles.end());
+            removed_files.insert(mPosts[j].mFiles.begin(),mPosts[j].mFiles.end());
+
+            mPosts[j] = post;
+#ifdef DEBUG_CHANNEL_MODEL
+            RsDbg() << "  post is an updated existing post." ;
+#endif
+            found=true;
+            break;
         }
+        else if( (new_post_meta.mOrigMsgId == mPosts[j].mMeta.mOrigMsgId || new_post_meta.mOrigMsgId == mPosts[j].mMeta.mMsgId)
+                 && mPosts[j].mMeta.mPublishTs < new_post_meta.mPublishTs)	// new post version
+        {
+            added_files.insert(post.mFiles.begin(),post.mFiles.end());
+            removed_files.insert(mPosts[j].mFiles.begin(),mPosts[j].mFiles.end());
+
+            auto old_post_id = mPosts[j].mMeta.mMsgId;
+            mPosts[j] = post;
+            mPosts[j].mOlderVersions.insert(old_post_id);
+#ifdef DEBUG_CHANNEL_MODEL
+            RsDbg() << "  post is an new version of an existing post." ;
+#endif
+            found=true;
+            break;
+        }
+
     if(!found)
+    {
+#ifdef DEBUG_CHANNEL_MODEL
+        RsDbg() << "  post is an new post.";
+#endif
+        added_files.insert(post.mFiles.begin(),post.mFiles.end());
         mPosts.push_back(post);
 
-    std::sort(mPosts.begin(),mPosts.end());
+        std::sort(mPosts.begin(),mPosts.end());
 
-    mFilteredPosts.clear();
-
-    for(uint32_t i=0;i<mPosts.size();++i)
-        mFilteredPosts.push_back(i);
-
-#ifdef DEBUG_CHANNEL_MODEL
-    // debug_dump();
-#endif
-
-    if (rowCount()>0)
-    {
-        beginInsertRows(QModelIndex(),0,rowCount()-1);
-        endInsertRows();
+        // We don't do that, because otherwise the filtered posts will be changed dynamically when browsing, which is bad.
+        //
+        //   mFilteredPosts.clear();
+        //   for(uint32_t i=0;i<mPosts.size();++i)
+        //     mFilteredPosts.push_back(i);
     }
 
-    postMods();
+    triggerViewUpdate();
 
+    emit layoutChanged();
     emit channelPostsLoaded();
 }
+
 void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vector<RsGxsChannelPost>& posts)
 {
 	preMods();
@@ -533,96 +559,7 @@ void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vecto
 	emit channelPostsLoaded();
 }
 
-void RsGxsChannelPostsModel::update_single_post(const RsGxsMessageId& msg_id,std::set<RsGxsFile>& added_files,std::set<RsGxsFile>& removed_files)
-{
-#ifdef DEBUG_CHANNEL_MODEL
-    RsDbg() << "updating single post for group id=" << currentGroupId() << " and msg id=" << msg_id ;
-#endif
-    RsThread::async([this,&added_files,&removed_files, msg_id]()
-    {
-        // 1 - get message data from p3GxsChannels. No need for pointers here, because we send only a single post to postToObject()
-        //     At this point we dont know what kind of msg id we have. It can be a vote, a comment or an actual message.
 
-        std::vector<RsGxsChannelPost> posts;
-        std::vector<RsGxsComment>     comments;
-        std::vector<RsGxsVote>        votes;
-
-        if(!rsGxsChannels->getChannelContent(currentGroupId(), { msg_id }, posts,comments,votes) || posts.size() != 1)
-        {
-            RsErr() << " failed to retrieve channel message data for channel/msg " << currentGroupId() << "/" << msg_id ;
-            return;
-        }
-
-        // Need to call this in order to get the actual comment count. The previous call only retrieves the message, since we supplied the message ID.
-        // another way to go would be to save the comment ids of the existing message and re-insert them before calling getChannelContent.
-
-        if(!rsGxsChannels->getChannelComments(currentGroupId(),{ msg_id },comments))
-        {
-            RsErr() << " failed to retrieve message comment data for channel/msg " << currentGroupId() << "/" << msg_id ;
-            return;
-        }
-
-        // Normally, there's a single post in the "post" array. The function below takes a full array of posts however.
-
-        updateCommentCounts(posts,comments);
-
-        // 2 - update the model in the UI thread.
-
-        added_files.clear();
-        removed_files.clear();
-
-        RsQThreadUtils::postToObject( [&posts,&added_files,&removed_files,this]()
-        {
-            for(uint32_t i=0;i<posts.size();++i)
-            {
-                bool found = false;
-
-                // linear search. Not good at all, but normally this is for a single post.
-
-                const auto& new_post_meta(posts[i].mMeta);
-
-                for(uint32_t j=0;j<mPosts.size();++j)
-                    if(new_post_meta.mMsgId == mPosts[j].mMeta.mMsgId)	// same post updated
-                    {
-                          added_files.insert(posts[i].mFiles.begin(),posts[i].mFiles.end());
-                        removed_files.insert(mPosts[j].mFiles.begin(),mPosts[j].mFiles.end());
-
-                        mPosts[j] = posts[i];
-#ifdef DEBUG_CHANNEL_MODEL
-                        RsDbg() << "  post is an updated existing post." ;
-#endif
-                        found=true;
-                        break;
-                    }
-                    else if( (new_post_meta.mOrigMsgId == mPosts[j].mMeta.mOrigMsgId || new_post_meta.mOrigMsgId == mPosts[j].mMeta.mMsgId)
-                              && mPosts[j].mMeta.mPublishTs < new_post_meta.mPublishTs)	// new post version
-                    {
-                          added_files.insert(posts[i].mFiles.begin(),posts[i].mFiles.end());
-                        removed_files.insert(mPosts[j].mFiles.begin(),mPosts[j].mFiles.end());
-
-                        posts[i].mOlderVersions.insert(new_post_meta.mMsgId);
-                        mPosts[j] = posts[i];
-#ifdef DEBUG_CHANNEL_MODEL
-                        RsDbg() << "  post is an new version of an existing post." ;
-#endif
-                        found=true;
-                        break;
-                    }
-
-                if(!found)
-                {
-#ifdef DEBUG_CHANNEL_MODEL
-                    RsDbg() << "  post is an new post.";
-#endif
-                    added_files.insert(posts[i].mFiles.begin(),posts[i].mFiles.end());
-                    mPosts.push_back(posts[i]);
-                }
-            }
-            triggerViewUpdate();
-
-        },this);
-    });
-}
 
 void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
 {
@@ -666,7 +603,7 @@ void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
         // This shouldn't be needed normally. We need it until a background process computes the number of comments per
         // post and stores it in the service string. Since we request all data, this process isn't costing much anyway.
 
-        updateCommentCounts(*posts,*comments);
+        computeCommentCounts(*posts,*comments);
 
         // 2 - update the model in the UI thread.
 

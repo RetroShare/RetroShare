@@ -101,6 +101,7 @@ public:
                    SORT_MODE_CHILDREN_PUBLISH_TS  = 0x01,
     };
 #endif
+    static void computeCommentCounts( std::vector<RsGxsChannelPost>& posts, std::vector<RsGxsComment>& comments);
 
 	QModelIndex root() const{ return createIndex(0,0,(void*)NULL) ;}
 	QModelIndex getIndexOfMessage(const RsGxsMessageId& mid) const;
@@ -214,8 +215,6 @@ private:
 	static void computeReputationLevel(uint32_t forum_sign_flags, RsGxsChannelPost& entry);
 
 	void update_posts(const RsGxsGroupId& group_id);
-public:
-    void update_single_post(const RsGxsMessageId& msgId, std::set<RsGxsFile> &added_files, std::set<RsGxsFile> &removed_files);
 
 private:
 
@@ -235,7 +234,9 @@ private:
 	//void computeMessagesHierarchy(const RsGxsChannelGroup& forum_group, const std::vector<RsMsgMetaData> &msgs_array, std::vector<ChannelPostsModelPostEntry> &posts, std::map<RsGxsMessageId, std::vector<std::pair<time_t, RsGxsMessageId> > > &mPostVersions);
 	void createPostsArray(std::vector<RsGxsChannelPost> &posts);
 	void setPosts(const RsGxsChannelGroup& group, std::vector<RsGxsChannelPost> &posts);
-    void setSinglePost(const RsGxsChannelGroup& group, const RsGxsChannelPost& post);
+public:
+    void updateSinglePost(const RsGxsChannelPost& post, std::set<RsGxsFile>& added_files, std::set<RsGxsFile>& removed_files);
+private:
     void initEmptyHierarchy();
 
     std::vector<int> mFilteredPosts;		// stores the list of displayes indices due to filtering.
