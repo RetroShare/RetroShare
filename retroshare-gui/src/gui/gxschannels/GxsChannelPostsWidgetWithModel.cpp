@@ -780,6 +780,7 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
         }
         break;
 
+        case RsChannelEventCode::READ_STATUS_CHANGED:
         case RsChannelEventCode::NEW_MESSAGE:
         {
             if(e->mChannelGroupId == groupId())
@@ -821,7 +822,7 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
 
                     // 2 - update the model in the UI thread.
 
-                    RsQThreadUtils::postToObject( [&post=posts[0],this]()
+                    RsQThreadUtils::postToObject( [post=posts[0],this]()
                     {
                         std::set<RsGxsFile> added_files,removed_files;
 
@@ -845,10 +846,6 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
 
             if(e->mChannelGroupId == groupId() && e->mChannelThreadId == ui->commentsDialog->messageId())
                 ui->commentsDialog->refresh();
-        break;
-
-        case RsChannelEventCode::READ_STATUS_CHANGED:
-            mChannelPostsModel->triggerViewUpdate();
         break;
 
         default:
@@ -995,8 +992,6 @@ void GxsChannelPostsWidgetWithModel::updateData(bool update_group_data, bool upd
 
             if(update_posts)
             {
-                blank();
-
                 ui->postsTree->setPlaceholderText(tr("Loading..."));
 
                 mChannelPostsModel->updateChannel(groupId());
