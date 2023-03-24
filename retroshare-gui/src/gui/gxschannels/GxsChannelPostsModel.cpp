@@ -498,7 +498,14 @@ void RsGxsChannelPostsModel::updateSinglePost(const RsGxsChannelPost& post,std::
             added_files.insert(post.mFiles.begin(),post.mFiles.end());
             removed_files.insert(mPosts[j].mFiles.begin(),mPosts[j].mFiles.end());
 
+            auto save_ucc = mPosts[j].mUnreadCommentCount;
+            auto save_cc  = mPosts[j].mCommentCount;
+
             mPosts[j] = post;
+
+            mPosts[j].mUnreadCommentCount = save_ucc;
+            mPosts[j].mCommentCount = save_cc;
+
 #ifdef DEBUG_CHANNEL_MODEL
             RsDbg() << "  post is an updated existing post." ;
 #endif
@@ -512,7 +519,13 @@ void RsGxsChannelPostsModel::updateSinglePost(const RsGxsChannelPost& post,std::
             removed_files.insert(mPosts[j].mFiles.begin(),mPosts[j].mFiles.end());
 
             auto old_post_id = mPosts[j].mMeta.mMsgId;
+            auto save_ucc = mPosts[j].mUnreadCommentCount;
+            auto save_cc  = mPosts[j].mCommentCount;
+
             mPosts[j] = post;
+
+            mPosts[j].mCommentCount += save_cc;
+            mPosts[j].mUnreadCommentCount += save_ucc;
             mPosts[j].mOlderVersions.insert(old_post_id);
 #ifdef DEBUG_CHANNEL_MODEL
             RsDbg() << "  post is an new version of an existing post." ;

@@ -805,7 +805,6 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
                         return;
                     }
 
-#ifdef TO_REMOVE
                     // Need to call this in order to get the actual comment count. The previous call only retrieves the message, since we supplied the message ID.
                     // another way to go would be to save the comment ids of the existing message and re-insert them before calling getChannelContent.
 
@@ -818,7 +817,6 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
                     // Normally, there's a single post in the "post" array. The function below takes a full array of posts however.
 
                     RsGxsChannelPostsModel::computeCommentCounts(posts,comments);
-#endif
 
                     // 2 - update the model in the UI thread.
 
