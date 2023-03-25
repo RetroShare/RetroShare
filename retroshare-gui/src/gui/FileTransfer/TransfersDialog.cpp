@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include "TransfersDialog.h"
+
 #include "gui/notifyqt.h"
 #include "gui/SoundManager.h"
 #include "gui/RetroShareLink.h"
