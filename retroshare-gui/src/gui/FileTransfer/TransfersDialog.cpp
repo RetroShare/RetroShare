@@ -19,8 +19,8 @@
  *******************************************************************************/
 
 #include "TransfersDialog.h"
-
 #include "gui/notifyqt.h"
+#include "gui/SoundManager.h"
 #include "gui/RetroShareLink.h"
 #include "gui/common/FilesDefs.h"
 #include "gui/common/RsCollection.h"
@@ -1113,6 +1113,7 @@ void TransfersDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> eve
  	switch (fe->mFileTransferEventCode)
     {
 	case RsFileTransferEventCode::DOWNLOAD_COMPLETE:
+		SoundManager::play(SOUND_DOWNLOAD_COMPLETE);
 	case RsFileTransferEventCode::COMPLETED_FILES_REMOVED:
 
         getUserNotify()->updateIcon();
