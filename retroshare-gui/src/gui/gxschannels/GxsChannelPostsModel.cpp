@@ -39,7 +39,6 @@
 #define DEBUG_CHANNEL_MODEL
 
 Q_DECLARE_METATYPE(RsMsgMetaData)
-
 Q_DECLARE_METATYPE(RsGxsChannelPost)
 
 std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsewhere
@@ -206,7 +205,7 @@ int RsGxsChannelPostsModel::rowCount(const QModelIndex& parent) const
             return mFilteredPosts.size();
     }
 
-    RsErr() << __PRETTY_FUNCTION__ << " rowCount cannot figure out the porper number of rows." << std::endl;
+    RsErr() << __PRETTY_FUNCTION__ << " rowCount cannot figure out the proper number of rows." ;
     return 0;
 }
 
@@ -790,6 +789,16 @@ void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
             if(!rsGxsChannels->setMessageReadStatus(p,read_status))
                 RsErr() << "setAllMsgReadStatus: failed to change status of msg " << p.first << " in group " << p.second << " to status " << read_status << std::endl;
         });
+
+    // 3 - update the local model data, since we don't catch the READ_STATUS_CHANGED event later, to avoid re-loading the msg.
+
+    for(uint32_t i=0;i<mPosts.size();++i)
+        if(read_status)
+            mPosts[i].mMeta.mMsgStatus &= ~GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+        else
+            mPosts[i].mMeta.mMsgStatus |= GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+
+    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1,mColumns-1,(void*)NULL));
 }
 
 void RsGxsChannelPostsModel::setMsgReadStatus(const QModelIndex& i,bool read_status)
@@ -806,6 +815,16 @@ void RsGxsChannelPostsModel::setMsgReadStatus(const QModelIndex& i,bool read_sta
 		return ;
 
     rsGxsChannels->setMessageReadStatus(RsGxsGrpMsgIdPair(mPosts[mFilteredPosts[entry]].mMeta.mGroupId,mPosts[mFilteredPosts[entry]].mMeta.mMsgId),read_status);
+
+    // Quick update to the msg itself. Normally setMsgReadStatus will launch an event,
+    // that we can catch to update the msg, but all the information is already here.
+
+    if(read_status)
+        mPosts[mFilteredPosts[entry]].mMeta.mMsgStatus &= ~GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+    else
+        mPosts[mFilteredPosts[entry]].mMeta.mMsgStatus |= GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+
+    emit dataChanged(i,i);
 }
 
 QModelIndex RsGxsChannelPostsModel::getIndexOfMessage(const RsGxsMessageId& mid) const

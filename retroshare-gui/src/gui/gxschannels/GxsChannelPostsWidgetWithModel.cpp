@@ -119,6 +119,7 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
     painter->save();
     painter->setClipRect(option.rect);
 
+    std::cerr << "option.rect=" << option.rect.width() << " x " << option.rect.height() << std::endl;
     RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
 
     // if(index.row() & 0x01)
@@ -262,6 +263,9 @@ QSize ChannelPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QM
 
     float cell_width  = mZoom*COLUMN_SIZE_FONT_FACTOR_W*fm.height();
     float cell_height = mZoom*COLUMN_SIZE_FONT_FACTOR_W*fm.height()*aspect_ratio;
+#ifdef DEBUG_CHANNEL_POSTS_WIDGET
+    RsDbg() << "SizeHint: mUseGrid=" << mUseGrid << " cell_width=" << cell_width << " cell_height=" << cell_height << " mZoom=" << mZoom ;
+#endif
 
     if(mUseGrid || index.column()==0)
         return QSize(cell_width,cell_height);
@@ -743,7 +747,7 @@ void GxsChannelPostsWidgetWithModel::handlePostsTreeSizeChange(QSize s,bool forc
         return;
 
     int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(0,font(),ui->postsTree->width()))));
-    std::cerr << "nb columns: " << n_columns << " current count=" << mChannelPostsModel->columnCount() << std::endl;
+    RsDbg() << "nb columns: " << n_columns << " current count=" << mChannelPostsModel->columnCount() ;
 
     // save current post. The setNumColumns() indeed loses selection
 
@@ -780,7 +784,9 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
         }
         break;
 
-        case RsChannelEventCode::READ_STATUS_CHANGED:
+        case RsChannelEventCode::READ_STATUS_CHANGED: // This is already handled by setMsgReadStatus() that has been called and issued this event.
+        break;
+
         case RsChannelEventCode::NEW_MESSAGE:
         {
             if(e->mChannelGroupId == groupId())
@@ -857,7 +863,7 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
     QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
     RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
 #ifdef DEBUG_CHANNEL_POSTS_WIDGET
-    std::cerr << "showPostDetails: current index is " << index.row() << "," << index.column() << std::endl;
+    RsDbg() << "showPostDetails: current index is " << index.row() << "," << index.column() ;
 #endif
 
     //QTextDocument doc;
@@ -882,7 +888,7 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
     ui->postTime_LB->show();
 
 #ifdef DEBUG_CHANNEL_POSTS_WIDGET
-    std::cerr << "showPostDetails: setting mLastSelectedPosts[groupId()] to current post Id " << post.mMeta.mMsgId << ". Previous value: " << mLastSelectedPosts[groupId()] << std::endl;
+    RsDbg() << "showPostDetails: setting mLastSelectedPosts[groupId()] to current post Id " << post.mMeta.mMsgId << ". Previous value: " << mLastSelectedPosts[groupId()] ;
 #endif
     mLastSelectedPosts[groupId()] = post.mMeta.mMsgId;
 
@@ -898,7 +904,7 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
     ui->commentsDialog->commentLoad(post.mMeta.mGroupId, all_msgs_versions, post.mMeta.mMsgId,true);
 
 #ifdef DEBUG_CHANNEL_POSTS_WIDGET
-    std::cerr << "Showing details about selected index : "<< index.row() << "," << index.column() << std::endl;
+    RsDbg() << "Showing details about selected index : "<< index.row() << "," << index.column() ;
 #endif
 
     ui->postDetails_TE->setText(RsHtml().formatText(NULL, QString::fromUtf8(post.mMsg.c_str()), /* RSHTML_FORMATTEXT_EMBED_SMILEYS |*/ RSHTML_FORMATTEXT_EMBED_LINKS));
@@ -930,11 +936,16 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 
     if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
     {
-        RsGxsGrpMsgIdPair postId;
-        postId.second = post.mMeta.mMsgId;
-        postId.first  = post.mMeta.mGroupId;
+        mChannelPostsModel->setMsgReadStatus(index,true);
 
-        RsThread::async([postId]() { rsGxsChannels->setMessageReadStatus(postId, true) ; } );
+        //RsGxsGrpMsgIdPair postId;
+        //postId.second = post.mMeta.mMsgId;
+        //postId.first  = post.mMeta.mGroupId;
+
+        //RsThread::async([postId]()
+        //{
+            //rsGxsChannels->setMessageReadStatus(postId, true) ;
+        //} );
     }
 
     updateDAll_PB();
