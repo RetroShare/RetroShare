@@ -787,7 +787,7 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
             {
                 RsDbg() << "Received new message in current channel, msgId=" << e->mChannelMsgId ;
 
-                RsThread::async([this,e]()
+                RsThread::async([this,E=*e]()	// dereferencing to make a copy that will survive while e is deleted by the parent thread.
                 {
                     // 1 - get message data from p3GxsChannels. No need for pointers here, because we send only a single post to postToObject()
                     //     At this point we dont know what kind of msg id we have. It can be a vote, a comment or an actual message.
@@ -796,8 +796,8 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
                     std::vector<RsGxsComment>     comments;
                     std::vector<RsGxsVote>        votes;
 
-                    const auto& msg_id(e->mChannelMsgId);
-                    const auto& grp_id(e->mChannelGroupId);
+                    const auto& msg_id(E.mChannelMsgId);
+                    const auto& grp_id(E.mChannelGroupId);
 
                     if(!rsGxsChannels->getChannelContent(grp_id, { msg_id }, posts,comments,votes) || posts.size() != 1)
                     {
