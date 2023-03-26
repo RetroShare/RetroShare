@@ -35,6 +35,7 @@
 #include "GxsChannelPostsModel.h"
 #include "GxsChannelPostFilesModel.h"
 
+//#define DEBUG_CHANNEL_MODEL_DATA
 #define DEBUG_CHANNEL_MODEL
 
 Q_DECLARE_METATYPE(RsMsgMetaData)
@@ -283,7 +284,7 @@ QModelIndex RsGxsChannelPostsModel::index(int row, int column, const QModelIndex
 
     quintptr ref = getChildRef(parent.internalId(),(mTreeMode == TREE_MODE_GRID)?(column + row*mColumns):row);
 
-#ifdef DEBUG_CHANNEL_MODEL
+#ifdef DEBUG_CHANNEL_MODEL_DATA
 	std::cerr << "index-3(" << row << "," << column << " parent=" << parent << ") : " << createIndex(row,column,ref) << std::endl;
 #endif
 	return createIndex(row,column,ref) ;
@@ -373,7 +374,7 @@ int RsGxsChannelPostsModel::getChildrenCount(quintptr ref) const
 
 QVariant RsGxsChannelPostsModel::data(const QModelIndex &index, int role) const
 {
-#ifdef DEBUG_CHANNEL_MODEL
+#ifdef DEBUG_CHANNEL_MODEL_DATA
     std::cerr << "calling data(" << index << ") role=" << role << std::endl;
 #endif
 
@@ -390,13 +391,13 @@ QVariant RsGxsChannelPostsModel::data(const QModelIndex &index, int role) const
 	quintptr ref = (index.isValid())?index.internalId():0 ;
 	uint32_t entry = 0;
 
-#ifdef DEBUG_CHANNEL_MODEL
+#ifdef DEBUG_CHANNEL_MODEL_DATA
 	std::cerr << "data(" << index << ")" ;
 #endif
 
 	if(!ref)
 	{
-#ifdef DEBUG_CHANNEL_MODEL
+#ifdef DEBUG_CHANNEL_MODEL_DATA
 		std::cerr << " [empty]" << std::endl;
 #endif
 		return QVariant() ;
@@ -404,7 +405,7 @@ QVariant RsGxsChannelPostsModel::data(const QModelIndex &index, int role) const
 
 	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mFilteredPosts.size())
 	{
-#ifdef DEBUG_CHANNEL_MODEL
+#ifdef DEBUG_CHANNEL_MODEL_DATA
 		std::cerr << "Bad pointer: " << (void*)ref << std::endl;
 #endif
 		return QVariant() ;
