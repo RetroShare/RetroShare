@@ -119,14 +119,9 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
     painter->save();
     painter->setClipRect(option.rect);
 
-    std::cerr << "option.rect=" << option.rect.width() << " x " << option.rect.height() << std::endl;
     RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
 
-    // if(index.row() & 0x01)
-    //     painter->fillRect( option.rect, option.palette.alternateBase().color());
-    // else
-        painter->fillRect( option.rect, option.palette.base().color());
-
+    painter->fillRect( option.rect, option.palette.base().color());
     painter->restore();
 
     if(mUseGrid || index.column()==0)
@@ -145,14 +140,7 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
         if((option.state & QStyle::State_Selected) && post.mMeta.mPublishTs > 0) // check if post is selected and is not empty (end of last row)
             pixmap.fill(SelectedColor);	// I dont know how to grab the backgroud color for selected objects automatically.
         else
-        {
-                // we need to do the alternate color manually
-
-            //if(index.row() & 0x01)
-            //    pixmap.fill(option.palette.alternateBase().color());
-            //else
-                pixmap.fill(option.palette.base().color());
-        }
+            pixmap.fill(option.palette.base().color());
 
         w.render(&pixmap,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
 
