@@ -794,9 +794,9 @@ void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
 
     for(uint32_t i=0;i<mPosts.size();++i)
         if(read_status)
-            mPosts[i].mMeta.mMsgStatus &= ~GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+            mPosts[i].mMeta.mMsgStatus &= ~(GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD | GXS_SERV::GXS_MSG_STATUS_GUI_NEW);
         else
-            mPosts[i].mMeta.mMsgStatus |= GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+            mPosts[i].mMeta.mMsgStatus |= GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD ;
 
     emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1,mColumns-1,(void*)NULL));
 }
@@ -820,7 +820,7 @@ void RsGxsChannelPostsModel::setMsgReadStatus(const QModelIndex& i,bool read_sta
     // that we can catch to update the msg, but all the information is already here.
 
     if(read_status)
-        mPosts[mFilteredPosts[entry]].mMeta.mMsgStatus &= ~GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+        mPosts[mFilteredPosts[entry]].mMeta.mMsgStatus &= ~(GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD | GXS_SERV::GXS_MSG_STATUS_GUI_NEW);
     else
         mPosts[mFilteredPosts[entry]].mMeta.mMsgStatus |= GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
 
