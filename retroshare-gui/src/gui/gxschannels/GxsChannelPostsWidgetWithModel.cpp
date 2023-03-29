@@ -73,12 +73,13 @@ QColor SelectedColor = QRgb(0xff308dc7);
 #define COLUMN_SIZE_FONT_FACTOR_W  6
 #define COLUMN_SIZE_FONT_FACTOR_H  10
 
-#define STAR_OVERLAY_IMAGE ":icons/star_overlay_128.png"
-#define COMMENT_OVERLAY_IMAGE ":images/white-bubble-64.png"
-#define IMAGE_COPYLINK     ":icons/png/copy.png"
-#define IMAGE_GRID_VIEW    ":icons/png/menu.png"
-#define IMAGE_DOWNLOAD     ":icons/png/download.png"
-#define IMAGE_UNREAD       ":icons/png/message.png"
+#define STAR_OVERLAY_IMAGE           ":icons/star_overlay_128.png"
+#define COMMENT_OVERLAY_IMAGE        ":images/white-bubble-64.png"
+#define UNREAD_COMMENT_OVERLAY_IMAGE ":images/orange-bubble-64.png"
+#define IMAGE_COPYLINK               ":icons/png/copy.png"
+#define IMAGE_GRID_VIEW              ":icons/png/menu.png"
+#define IMAGE_DOWNLOAD               ":icons/png/download.png"
+#define IMAGE_UNREAD                 ":icons/png/message.png"
 
 Q_DECLARE_METATYPE(ChannelPostFileInfo)
 
@@ -157,33 +158,39 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 //            file.close();
 //        }
 
-        if(mUseGrid || index.column()==0)
+        if(mZoom != 1.0)
+            pixmap = pixmap.scaled(mZoom*pixmap.size(),Qt::KeepAspectRatio,Qt::SmoothTransformation);
+
+        if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
         {
-            if(mZoom != 1.0)
-                pixmap = pixmap.scaled(mZoom*pixmap.size(),Qt::KeepAspectRatio,Qt::SmoothTransformation);
+            QPainter p(&pixmap);
+            QFontMetricsF fm(option.font);
 
-            if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
-            {
-                QPainter p(&pixmap);
-                QFontMetricsF fm(option.font);
+            p.drawPixmap(mZoom*QPoint(0.1*fm.height(),-3.4*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(mZoom*6*fm.height(),mZoom*6*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
+        }
 
-                p.drawPixmap(mZoom*QPoint(0.1*fm.height(),-3.4*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(mZoom*6*fm.height(),mZoom*6*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
-            }
+        if(post.mUnreadCommentCount > 0)
+        {
+            QPainter p(&pixmap);
+            QFontMetricsF fm(option.font);
 
-            if(post.mUnreadCommentCount)
-            {
-                QPainter p(&pixmap);
-                QFontMetricsF fm(option.font);
+            p.drawPixmap(QPoint(pixmap.width(),0.0)+mZoom*QPoint(-2.9*fm.height(),0.4*fm.height()),
+                         FilesDefs::getPixmapFromQtResourcePath(UNREAD_COMMENT_OVERLAY_IMAGE).scaled(mZoom*3*fm.height(),mZoom*3*fm.height(),
+                                                                                              Qt::KeepAspectRatio,Qt::SmoothTransformation));
+        }
+        else if(post.mCommentCount > 0)
+        {
+            QPainter p(&pixmap);
+            QFontMetricsF fm(option.font);
 
-                p.drawPixmap(QPoint(pixmap.width(),0.0)+mZoom*QPoint(-2.9*fm.height(),0.4*fm.height()),
-                             FilesDefs::getPixmapFromQtResourcePath(COMMENT_OVERLAY_IMAGE).scaled(mZoom*3*fm.height(),mZoom*3*fm.height(),
-                                                                                                  Qt::KeepAspectRatio,Qt::SmoothTransformation));
-            }
-
+            p.drawPixmap(QPoint(pixmap.width(),0.0)+mZoom*QPoint(-2.9*fm.height(),0.4*fm.height()),
+                         FilesDefs::getPixmapFromQtResourcePath(COMMENT_OVERLAY_IMAGE).scaled(mZoom*3*fm.height(),mZoom*3*fm.height(),
+                                                                                              Qt::KeepAspectRatio,Qt::SmoothTransformation));
         }
 
         painter->drawPixmap(option.rect.topLeft(),
-                            pixmap.scaled(option.rect.width(),option.rect.width()*pixmap.height()/(float)pixmap.width(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+                            pixmap.scaled(option.rect.width(),option.rect.width()*pixmap.height()/(float)pixmap.width(),
+                                          Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
     }
     else
     {
@@ -833,7 +840,11 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
         }
         break;
 
-        case RsChannelEventCode::NEW_COMMENT:     // [[fallthrough]];
+        case RsChannelEventCode::NEW_COMMENT:
+
+            if(e->mChannelGroupId == groupId() && e->mChannelThreadId != ui->commentsDialog->messageId())
+                mChannelPostsModel->updatePostWithNewComment(e->mChannelThreadId); [[fallthrough]];
+
         case RsChannelEventCode::NEW_VOTE:
 
             if(e->mChannelGroupId == groupId() && e->mChannelThreadId == ui->commentsDialog->messageId())
@@ -922,7 +933,7 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 
     // Now also set the post as read
 
-    if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
+    if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus) || post.mUnreadCommentCount > 0)
     {
         mChannelPostsModel->setMsgReadStatus(index,true);
 

@@ -801,6 +801,16 @@ void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
     emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1,mColumns-1,(void*)NULL));
 }
 
+void RsGxsChannelPostsModel::updatePostWithNewComment(const RsGxsMessageId& msg_id)
+{
+    for(uint32_t i=0;i<mPosts.size();++i)
+        if(mPosts[i].mMeta.mMsgId == msg_id)
+        {
+            ++mPosts[i].mUnreadCommentCount;
+            emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1,mColumns-1,(void*)NULL));	// update everything because we don't know the index.
+            break;
+        }
+}
 void RsGxsChannelPostsModel::setMsgReadStatus(const QModelIndex& i,bool read_status)
 {
 	if(!i.isValid())
@@ -823,6 +833,8 @@ void RsGxsChannelPostsModel::setMsgReadStatus(const QModelIndex& i,bool read_sta
         mPosts[mFilteredPosts[entry]].mMeta.mMsgStatus &= ~(GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD | GXS_SERV::GXS_MSG_STATUS_GUI_NEW);
     else
         mPosts[mFilteredPosts[entry]].mMeta.mMsgStatus |= GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+
+    mPosts[mFilteredPosts[entry]].mUnreadCommentCount = 0;
 
     emit dataChanged(i,i);
 }

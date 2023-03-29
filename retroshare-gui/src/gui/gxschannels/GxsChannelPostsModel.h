@@ -139,6 +139,7 @@ public:
 
     void setMsgReadStatus(const QModelIndex &i, bool read_status);
     void setAllMsgReadStatus(bool read_status);
+    void updatePostWithNewComment(const RsGxsMessageId& msg_id);
 
     void setFilter(const QStringList &strings, bool only_unread,uint32_t &count) ;
     bool postPassesFilter(const RsGxsChannelPost &post, const QStringList &strings, bool only_unread) const;
