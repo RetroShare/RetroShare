@@ -101,6 +101,7 @@ public:
                    SORT_MODE_CHILDREN_PUBLISH_TS  = 0x01,
     };
 #endif
+    static void computeCommentCounts( std::vector<RsGxsChannelPost>& posts, std::vector<RsGxsComment>& comments);
 
 	QModelIndex root() const{ return createIndex(0,0,(void*)NULL) ;}
 	QModelIndex getIndexOfMessage(const RsGxsMessageId& mid) const;
@@ -138,8 +139,11 @@ public:
 
     void setMsgReadStatus(const QModelIndex &i, bool read_status);
     void setAllMsgReadStatus(bool read_status);
+    void updatePostWithNewComment(const RsGxsMessageId& msg_id);
 
     void setFilter(const QStringList &strings, bool only_unread,uint32_t &count) ;
+    bool postPassesFilter(const RsGxsChannelPost &post, const QStringList &strings, bool only_unread) const;
+    void updateFilter(uint32_t& count);
 
 #ifdef TODO
 	void setAuthorOpinion(const QModelIndex& indx,RsOpinion op);
@@ -215,6 +219,8 @@ private:
 
 	void update_posts(const RsGxsGroupId& group_id);
 
+private:
+
 #ifdef TODO
 	void setForumMessageSummary(const std::vector<RsGxsForumMsg>& messages);
 #endif
@@ -231,8 +237,13 @@ private:
 	//void computeMessagesHierarchy(const RsGxsChannelGroup& forum_group, const std::vector<RsMsgMetaData> &msgs_array, std::vector<ChannelPostsModelPostEntry> &posts, std::map<RsGxsMessageId, std::vector<std::pair<time_t, RsGxsMessageId> > > &mPostVersions);
 	void createPostsArray(std::vector<RsGxsChannelPost> &posts);
 	void setPosts(const RsGxsChannelGroup& group, std::vector<RsGxsChannelPost> &posts);
-	void initEmptyHierarchy();
-	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+public:
+    void updateSinglePost(const RsGxsChannelPost& post, std::set<RsGxsFile>& added_files, std::set<RsGxsFile>& removed_files);
+private:
+    void initEmptyHierarchy();
+
+    QStringList mFilteredStrings;
+    bool mFilterUnread;
 
     std::vector<int> mFilteredPosts;		// stores the list of displayes indices due to filtering.
     std::vector<RsGxsChannelPost> mPosts ;  // store the list of posts updated from rsForums.
