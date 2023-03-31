@@ -32,3 +32,6 @@
 	path = libretroshare
 	url = ../libretroshare
 	branch = master
+[submodule "retroshare-webui"]
+	path = retroshare-webui
+	url = git@github.com:Retroshare/RSNewWebUI

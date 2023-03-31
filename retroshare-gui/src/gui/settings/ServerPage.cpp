@@ -21,6 +21,7 @@
 #include "ServerPage.h"
 
 #include <gui/notifyqt.h>
+#include "gui/MainWindow.h"
 #include "rshare.h"
 #include "rsharesettings.h"
 #include "util/i2pcommon.h"
@@ -1366,6 +1367,7 @@ void ServerPage::saveAddressesHiddenNode()
 
 void ServerPage::updateOutProxyIndicator()
 {
+    MainWindow::getInstance()->torstatusReset();
     QTcpSocket socket ;
 
     // Tor
@@ -1382,22 +1384,39 @@ void ServerPage::updateOutProxyIndicator()
         ui.iconlabel_tor_outgoing->setToolTip(tr("Tor proxy is not enabled")) ;
     }
 
-	// I2P - SAM
-	// Note: there is only "the SAM port", there is no additional proxy port!
-	samStatus ss;
-	rsAutoProxyMonitor::taskSync(autoProxyType::I2PSAM3, autoProxyTask::status, &ss);
-	if(ss.state == samStatus::samState::online)
+	if (mHiddenType == RS_HIDDEN_TYPE_I2P && mSamSettings.enable)
 	{
-		socket.disconnectFromHost();
-		ui.iconlabel_i2p_outgoing->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_OK)) ;
-		ui.iconlabel_i2p_outgoing->setToolTip(tr("Proxy seems to work.")) ;
+		// I2P - SAM
+		// Note: there is only "the SAM port", there is no additional proxy port!
+		samStatus ss;
+		rsAutoProxyMonitor::taskSync(autoProxyType::I2PSAM3, autoProxyTask::status, &ss);
+		if(ss.state == samStatus::samState::online)
+		{
+			socket.disconnectFromHost();
+			ui.iconlabel_i2p_outgoing->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_OK)) ;
+			ui.iconlabel_i2p_outgoing->setToolTip(tr("Proxy seems to work.")) ;
+		}
+		else
+		{
+			ui.iconlabel_i2p_outgoing->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_UNKNOWN)) ;
+			ui.iconlabel_i2p_outgoing->setToolTip(tr("I2P proxy is not enabled")) ;
+		}
 	}
 	else
 	{
-		ui.iconlabel_i2p_outgoing->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_UNKNOWN)) ;
-		ui.iconlabel_i2p_outgoing->setToolTip(tr("I2P proxy is not enabled")) ;
+		socket.connectToHost(ui.hiddenpage_proxyAddress_i2p->text(),ui.hiddenpage_proxyPort_i2p->text().toInt());
+		if(socket.waitForConnected(500))
+		{
+			socket.disconnectFromHost();
+			ui.iconlabel_i2p_outgoing->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_OK)) ;
+			ui.iconlabel_i2p_outgoing->setToolTip(tr("Proxy seems to work.")) ;
+		}
+		else
+		{
+			ui.iconlabel_i2p_outgoing->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_UNKNOWN)) ;
+			ui.iconlabel_i2p_outgoing->setToolTip(tr("I2P proxy is not enabled")) ;
+		}
 	}
-
 	socket.connectToHost(ui.hiddenpage_proxyAddress_i2p_2->text(), 7656);
 	if(true == (mSamAccessible = socket.waitForConnected(1000)))
     {

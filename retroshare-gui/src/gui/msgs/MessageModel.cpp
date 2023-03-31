@@ -387,12 +387,11 @@ void RsMessageModel::setFilter(FilterType filter_type, const QStringList& string
 	std::cerr << std::endl;
 #endif
 
-	preMods();
-
 	mFilterType = filter_type;
 	mFilterStrings = strings;
 
-	postMods();
+        if(rowCount() > 0)
+            emit dataChanged(createIndex(0,0),createIndex(rowCount()-1,RsMessageModel::columnCount()-1));
 }
 
 QVariant RsMessageModel::toolTipRole(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const

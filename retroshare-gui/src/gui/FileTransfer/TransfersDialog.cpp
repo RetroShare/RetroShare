@@ -21,6 +21,7 @@
 #include "TransfersDialog.h"
 
 #include "gui/notifyqt.h"
+#include "gui/SoundManager.h"
 #include "gui/RetroShareLink.h"
 #include "gui/common/FilesDefs.h"
 #include "gui/common/RsCollection.h"
@@ -1110,9 +1111,16 @@ void TransfersDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> eve
 	if(!fe)
         return;
 
+	FileInfo nfo ;
+	if(!rsFiles->FileDetails(fe->mHash, RS_FILE_HINTS_DOWNLOAD, nfo)) 
+		return ;
+
  	switch (fe->mFileTransferEventCode)
     {
 	case RsFileTransferEventCode::DOWNLOAD_COMPLETE:
+		SoundManager::play(SOUND_DOWNLOAD_COMPLETE);
+		if (Settings->getNotifyFlags() & RS_POPUP_DOWNLOAD)
+			NotifyQt::getInstance()->addToaster(RS_POPUP_DOWNLOAD, fe->mHash.toStdString(), nfo.fname.c_str(),"");
 	case RsFileTransferEventCode::COMPLETED_FILES_REMOVED:
 
         getUserNotify()->updateIcon();

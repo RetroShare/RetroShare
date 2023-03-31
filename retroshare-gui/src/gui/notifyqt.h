@@ -95,6 +95,7 @@ class NotifyQt: public QObject, public NotifyClient
 		void testToaster(ToasterNotify *toasterNotify, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin);
 		void testToaster(QString tag, ToasterNotify *toasterNotify, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin);
 
+		void addToaster(uint notifyFlags, const std::string& id, const std::string& title, const std::string& msg);
 		void notifySettingsChanged();
 
 	signals:
