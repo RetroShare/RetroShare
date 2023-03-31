@@ -168,7 +168,7 @@ void TorStatus::getTorStatus()
 					torstatusLabel->setToolTip( text + tr("Tor proxy is not available"));
 				}
 			}
-			if(hiddentype == RS_HIDDEN_TYPE_I2P)
+			else if(hiddentype == RS_HIDDEN_TYPE_I2P)
 			{
 				statusTor->setText("<strong>" + tr("I2P") + ":</strong>");
 				rsPeers->getProxyServer(RS_HIDDEN_TYPE_I2P, proxyaddr, proxyport, status);
@@ -184,6 +184,11 @@ void TorStatus::getTorStatus()
 					torstatusLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/tile_downloading_48.png").scaledToHeight(S,Qt::SmoothTransformation));
 					torstatusLabel->setToolTip( text + tr("i2p proxy is not available"));
 				}
+			}
+			else
+			{
+				torstatusLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/tile_inactive_48.png").scaledToHeight(S,Qt::SmoothTransformation));
+				torstatusLabel->setToolTip(tr("No tor configuration"));
 			}
 			_updated = true;
 		}

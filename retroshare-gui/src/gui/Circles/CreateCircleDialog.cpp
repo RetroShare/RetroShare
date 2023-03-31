@@ -357,8 +357,8 @@ void CreateCircleDialog::addMember(const QString& keyId, const QString& idtype, 
 	member->setText(RSCIRCLEID_COL_IDTYPE, idtype);
 
 	tree->addTopLevelItem(member);
-	
-	ui.members_groupBox->setTitle( tr("Invited Members") + " (" + QString::number(ui.treeWidget_membership->topLevelItemCount()) + ")" );
+
+	updateMembership();
 }
 
 /** Maybe we can use RsGxsCircleGroup instead of RsGxsCircleDetails ??? (TODO)**/
@@ -413,6 +413,8 @@ void  CreateCircleDialog::removeMember()
 
 	// does this just work? (TODO)
 	delete(item);
+
+	updateMembership();
 }
 
 void CreateCircleDialog::createCircle()
@@ -950,5 +952,10 @@ void CreateCircleDialog::MembershipListCustomPopupMenu( QPoint )
 			contextMnu.addAction(QIcon(":/images/delete.png"), tr("Remove Member"), this, SLOT(removeMember()));
 
 	contextMnu.exec(QCursor::pos());
+}
+
+void CreateCircleDialog::updateMembership()
+{
+	ui.members_groupBox->setTitle( tr("Invited Members") + " (" + QString::number(ui.treeWidget_membership->topLevelItemCount()) + ")" );
 }
 
