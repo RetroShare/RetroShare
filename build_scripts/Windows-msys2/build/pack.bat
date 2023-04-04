@@ -187,12 +187,12 @@ echo copy buildinfo.txt
 copy "%RsBuildPath%\buildinfo.txt" "%RsDeployPath%" %Quite%
 
 if "%ParamWebui%"=="1" (
-	if exist "%RsWebuiPath%\webui" (
+	if exist "%RsWebuiBuildPath%" (
 		echo copy webui
 		mkdir "%RsDeployPath%\webui"
-		xcopy /S "%RsWebuiPath%\webui" "%RsDeployPath%\webui" %Quite%
+		xcopy /S "%RsWebuiBuildPath%" "%RsDeployPath%\webui" %Quite%
 	) else (
-		%cecho% error "Webui is enabled, but no webui data found at %RsWebuiPath%\webui"
+		%cecho% error "Webui is enabled, but no webui data found at %RsWebuiBuildPath%"
 		goto error
 	)
 )

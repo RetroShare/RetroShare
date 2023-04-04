@@ -71,14 +71,6 @@ title Build - %SourceName%-%RsBuildConfig% [make]
 mingw32-make -j %CoreCount%
 if errorlevel 1 goto error
 
-:: Webui
-if "%ParamWebui%"=="1" (
-	call :build-webui
-	if errorlevel 1 goto error
-) else (
-	if exist "%RsWebuiBuildPath%" call "%ToolsPath%\remove-dir.bat" "%RsWebuiBuildPath%"
-)
-
 echo.
 echo === Changelog
 echo.
@@ -98,37 +90,3 @@ exit /B %ERRORLEVEL%
 echo Failed to initialize environment.
 endlocal
 exit /B 1
-
-:build-webui
-echo.
-echo === webui
-echo.
-title Build webui
-
-if not exist "%RsWebuiPath%" (
-	echo Checking out webui source into %RsWebuiPath%
-	git clone https://github.com/RetroShare/RSNewWebUI.git "%RsWebuiPath%"
-	if errorlevel 1 exit /B 1
-) else (
-	echo Webui source found at %RsWebuiPath%
-	pushd "%RsWebuiPath%"
-	git pull
-	popd
-	if errorlevel 1 exit /B 1
-)
-
-pushd "%RsWebuiPath%\webui-src\make-src"
-call build.bat
-popd
-if errorlevel 1 exit /B 1
-
-if not exist "%RsWebuiPath%\webui" (
-	%cecho% error "Webui is enabled, but no webui data found at %RsWebuiPath%\webui"
-	exit /B 1
-)
-
-if exist "%RsWebuiBuildPath%" call "%ToolsPath%\remove-dir.bat" "%RsWebuiBuildPath%"
-move "%RsWebuiPath%\webui" "%RsWebuiBuildPath%"
-if errorlevel 1 exit /B 1
-
-exit /B 0

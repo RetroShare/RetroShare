@@ -27,8 +27,6 @@ TransferUserNotify::TransferUserNotify(QObject *parent) :
 	UserNotify(parent)
 {
 	newTransferCount = 0;
-
-//	connect(NotifyQt::getInstance(), SIGNAL(downloadCompleteCountChanged(int)), this, SLOT(downloadCountChanged(int)));
 }
 
 bool TransferUserNotify::hasSetting(QString *name, QString *group)
