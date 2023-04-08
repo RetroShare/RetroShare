@@ -36,7 +36,7 @@
 #include "GxsChannelPostFilesModel.h"
 
 //#define DEBUG_CHANNEL_MODEL_DATA
-//#define DEBUG_CHANNEL_MODEL
+#define DEBUG_CHANNEL_MODEL
 
 Q_DECLARE_METATYPE(RsMsgMetaData)
 Q_DECLARE_METATYPE(RsGxsChannelPost)
