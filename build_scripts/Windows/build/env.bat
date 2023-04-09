@@ -105,8 +105,7 @@ set RsBuildPath=%BuildPath%\Qt-%QtVersion%-%GCCArchitecture%-%RsBuildConfig%
 set RsDeployPath=%DeployPath%\Qt-%QtVersion%-%GCCArchitecture%%RsType%-%RsBuildConfig%
 set RsPackPath=%DeployPath%
 set RsArchiveAdd=
-set RsWebuiPath=%RootPath%\%SourceName%-webui
-set RsWebuiBuildPath=%BuildPath%\Qt-%QtVersion%-%GCCArchitecture%-%RsBuildConfig%\webui
+set RsWebuiBuildPath=%RsBuildPath%\retroshare-webui\webui
 
 if not exist "%~dp0env-mod.bat" goto no_mod
 call "%~dp0env-mod.bat"
@@ -138,6 +137,7 @@ if "%Module%"=="build" (
 )
 if "%Module%"=="pack" (
 	echo Optional parameter
+	echo webui                 Pack webui
 	echo service               Pack service
 	echo friendserver          Pack Friend Server ^(needs Tor^)
 	echo tor                   Pack Tor version

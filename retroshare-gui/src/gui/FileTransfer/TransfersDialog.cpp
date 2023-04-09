@@ -1111,16 +1111,20 @@ void TransfersDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> eve
 	if(!fe)
         return;
 
-	FileInfo nfo ;
-	if(!rsFiles->FileDetails(fe->mHash, RS_FILE_HINTS_DOWNLOAD, nfo)) 
-		return ;
-
  	switch (fe->mFileTransferEventCode)
     {
 	case RsFileTransferEventCode::DOWNLOAD_COMPLETE:
+    {
+        FileInfo nfo ;
+        if(!rsFiles->FileDetails(fe->mHash, RS_FILE_HINTS_DOWNLOAD, nfo))
+            break;
+
 		SoundManager::play(SOUND_DOWNLOAD_COMPLETE);
 		if (Settings->getNotifyFlags() & RS_POPUP_DOWNLOAD)
-			NotifyQt::getInstance()->addToaster(RS_POPUP_DOWNLOAD, fe->mHash.toStdString(), nfo.fname.c_str(),"");
+            NotifyQt::getInstance()->addToaster(RS_POPUP_DOWNLOAD, fe->mHash.toStdString(), nfo.fname.c_str(),"");
+    }
+        [[fallthrough]];
+
 	case RsFileTransferEventCode::COMPLETED_FILES_REMOVED:
 
         getUserNotify()->updateIcon();

@@ -97,11 +97,6 @@ title Build - %SourceName%-%RsBuildConfig% [make]
 %EnvMSYS2Cmd% "make -j %CoreCount%"
 if errorlevel 1 goto error
 
-:: Webui
-if "%ParamWebui%"=="1" (
-	call "%~dp0..\tools\webui.bat"
-)
-
 :error
 popd
 

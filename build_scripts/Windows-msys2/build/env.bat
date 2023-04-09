@@ -18,7 +18,7 @@ set RsBuildPath=%BuildPath%\Qt-%QtVersion%-%RsToolchain%-%RsCompiler%-%RsBuildCo
 set RsDeployPath=%DeployPath%\Qt-%QtVersion%%RsType%-%RsToolchain%-%RsCompiler%-%RsBuildConfig%
 set RsPackPath=%DeployPath%
 set RsArchiveAdd=
-set RsWebuiPath=%RootPath%\%SourceName%-webui
+set RsWebuiBuildPath=%RsBuildPath%\retroshare-webui\webui
 
 if not exist "%~dp0env-mod.bat" goto no_mod
 call "%~dp0env-mod.bat"
