@@ -22,6 +22,7 @@
 #include "rsharesettings.h"
 #include "util/misc.h"
 #include "gui/notifyqt.h"
+#include "retroshare/rsgxschannels.h"
 
 ChannelPage::ChannelPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
@@ -34,6 +35,9 @@ ChannelPage::ChannelPage(QWidget * parent, Qt::WindowFlags flags)
     ui.groupFrameSettingsWidget->setType(GroupFrameSettings::Channel) ;
 
 	connect(ui.emoteicon_checkBox,SIGNAL(toggled(bool)),this,SLOT(updateEmotes())) ;
+
+    // Connecting the spin box with the maximum auto download size in channels
+    connect(ui.autoDownloadSpinBox, SIGNAL(valueChanged(int)), this, SLOT(updateMaxAutoDownloadSizeLimit(int)));
 
 }
 
@@ -49,6 +53,13 @@ void ChannelPage::load()
 	Settings->beginGroup(QString("ChannelPostsWidget"));
     whileBlocking(ui.emoteicon_checkBox)->setChecked(Settings->value("Emoteicons_ChannelDecription", true).toBool());
     Settings->endGroup();
+
+    // Getting  the maximum auto download size from the configuration
+    uint64_t maxAutoDownloadSize;
+    rsGxsChannels->getMaxAutoDownloadSizeLimit(maxAutoDownloadSize);
+    int temp=(maxAutoDownloadSize/(Size_Of_1_GB));
+    whileBlocking(ui.autoDownloadSpinBox)->setValue(temp);
+
 }
 
 void ChannelPage::updateEmotes()
@@ -56,4 +67,11 @@ void ChannelPage::updateEmotes()
     Settings->beginGroup(QString("ChannelPostsWidget"));
     Settings->setValue("Emoteicons_ChannelDecription", ui.emoteicon_checkBox->isChecked());
     Settings->endGroup();
+}
+
+// Function to update the maximum size allowed for auto download in channels
+void ChannelPage::updateMaxAutoDownloadSizeLimit(int value)
+{
+    uint64_t temp=(static_cast<uint64_t>(value)*Size_Of_1_GB);
+    rsGxsChannels->setMaxAutoDownloadSizeLimit(temp);
 }
