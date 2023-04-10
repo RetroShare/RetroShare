@@ -25,6 +25,8 @@
 #include "ui_ChannelPage.h"
 #include "gui/common/FilesDefs.h"
 
+#define Size_Of_1_GB	                            (1024 * 1024 * 1024)	// It is the size of 1 GB in bytes.
+
 class ChannelPage : public ConfigPage
 {
 	Q_OBJECT
@@ -43,6 +45,9 @@ public:
 private slots:
 	void updateEmotes();
   
+    // Function to update the maximum size allowed for auto download in channels
+    void updateMaxAutoDownloadSizeLimit(int value);
+
 private:
 	Ui::ChannelPage ui;
 };
