@@ -196,7 +196,7 @@ static std::string getBaseLink(std::string link)
 
 static std::string calculateLink(const std::string &baseLink, const std::string &link)
 {
-	if (link.substr(0, 7) == "http://") {
+	if (link.substr(0, 7) == "http://" || link.substr(0, 8) == "https://") {
 		/* absolute link */
 		return link;
 	}
@@ -204,8 +204,8 @@ static std::string calculateLink(const std::string &baseLink, const std::string 
 	/* calculate link of base link */
 	std::string resultLink = baseLink;
 
-	/* link should begin with "http://" */
-	if (resultLink.substr(0, 7) != "http://") {
+	/* link should begin with "http://" or "https://" */
+	if (resultLink.substr(0, 7) != "http://" || resultLink.substr(0, 8) != "https://") {
 		resultLink.insert(0, "http://");
 	}
 

@@ -94,6 +94,7 @@ CURLcode CURLWrapper::downloadBinary(const std::string &link, std::vector<unsign
 	curl_easy_setopt(mCurl, CURLOPT_URL, link.c_str());
 	curl_easy_setopt(mCurl, CURLOPT_WRITEFUNCTION, writeFunctionBinary);
 	curl_easy_setopt(mCurl, CURLOPT_WRITEDATA, &data);
+	curl_easy_setopt(mCurl, CURLOPT_SSL_VERIFYPEER, false);
 
 	return curl_easy_perform(mCurl);
 }
