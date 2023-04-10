@@ -109,9 +109,9 @@ QString FeedReaderStringDefs::errorString(RsFeedReaderErrorState errorState, con
 	case RS_FEED_ERRORSTATE_PROCESS_UNKNOWN_FORMAT:
 		errorText = QApplication::translate("FeedReaderStringDefs", "Unknown XML format");
 		break;
-	case RS_FEED_ERRORSTATE_PROCESS_FORUM_CREATE:
-		errorText = QApplication::translate("FeedReaderStringDefs", "Can't create forum");
-		break;
+//	case RS_FEED_ERRORSTATE_PROCESS_FORUM_CREATE:
+//		errorText = QApplication::translate("FeedReaderStringDefs", "Can't create forum");
+//		break;
 	case RS_FEED_ERRORSTATE_PROCESS_FORUM_NOT_FOUND:
 		errorText = QApplication::translate("FeedReaderStringDefs", "Forum not found");
 		break;
@@ -120,6 +120,18 @@ QString FeedReaderStringDefs::errorString(RsFeedReaderErrorState errorState, con
 		break;
 	case RS_FEED_ERRORSTATE_PROCESS_FORUM_NO_AUTHOR:
 		errorText = QApplication::translate("FeedReaderStringDefs", "Forum has no author");
+		break;
+//	case RS_FEED_ERRORSTATE_PROCESS_POSTED_CREATE:
+//		errorText = QApplication::translate("FeedReaderStringDefs", "Can't create board");
+//		break;
+	case RS_FEED_ERRORSTATE_PROCESS_POSTED_NOT_FOUND:
+		errorText = QApplication::translate("FeedReaderStringDefs", "Board not found");
+		break;
+	case RS_FEED_ERRORSTATE_PROCESS_POSTED_NO_ADMIN:
+		errorText = QApplication::translate("FeedReaderStringDefs", "You are not admin of the board");
+		break;
+	case RS_FEED_ERRORSTATE_PROCESS_POSTED_NO_AUTHOR:
+		errorText = QApplication::translate("FeedReaderStringDefs", "Board has no author");
 		break;
 
 	case RS_FEED_ERRORSTATE_PROCESS_HTML_ERROR:

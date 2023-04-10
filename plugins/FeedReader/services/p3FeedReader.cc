@@ -24,6 +24,7 @@
 #include "rsitems/rsconfigitems.h"
 #include "retroshare/rsiface.h"
 #include "retroshare/rsgxsforums.h"
+#include "retroshare/rsposted.h"
 #include "util/rsstring.h"
 #include "util/rstime.h"
 #include "gxs/rsgenexchange.h"
@@ -34,6 +35,7 @@ RsFeedReader *rsFeedReader = NULL;
 
 #define FEEDREADER_CLEAN_INTERVAL 1 * 60 * 60 // check every hour
 #define FEEDREADER_FORUM_PREFIX  "RSS: "
+#define FEEDREADER_POSTED_PREFIX "RSS: "
 
 #define MAX_REQUEST_AGE 30 // 30 seconds
 
@@ -41,7 +43,7 @@ RsFeedReader *rsFeedReader = NULL;
  * #define FEEDREADER_DEBUG
  *********/
 
-p3FeedReader::p3FeedReader(RsPluginHandler* pgHandler, RsGxsForums *forums)
+p3FeedReader::p3FeedReader(RsPluginHandler* pgHandler, RsGxsForums *forums, RsPosted *posted)
 	: RsPQIService(RS_SERVICE_TYPE_PLUGIN_FEEDREADER,  5, pgHandler),
 	  mFeedReaderMtx("p3FeedReader"), mDownloadMutex("p3FeedReaderDownload"), mProcessMutex("p3FeedReaderProcess"), mPreviewMutex("p3FeedReaderPreview")
 {
@@ -55,6 +57,7 @@ p3FeedReader::p3FeedReader(RsPluginHandler* pgHandler, RsGxsForums *forums)
 	mStandardProxyPort = 0;
 	mLastClean = 0;
 	mForums = forums;
+	mPosted = posted;
 	mNotify = NULL;
 	mSaveInBackground = false;
 	mStopped = false;
@@ -92,6 +95,7 @@ static void feedToInfo(const RsFeedReaderFeed *feed, FeedInfo &info)
 	info.updateInterval = feed->updateInterval;
 	info.lastUpdate = feed->lastUpdate;
 	info.forumId = feed->forumId;
+	info.postedId = feed->postedId;
 	info.storageTime = feed->storageTime;
 	info.errorState = feed->errorState;
 	info.errorString = feed->errorString;
@@ -110,6 +114,10 @@ static void feedToInfo(const RsFeedReaderFeed *feed, FeedInfo &info)
 	info.flag.deactivated = (feed->flag & RS_FEED_FLAG_DEACTIVATED);
 	info.flag.forum = (feed->flag & RS_FEED_FLAG_FORUM);
 	info.flag.updateForumInfo = (feed->flag & RS_FEED_FLAG_UPDATE_FORUM_INFO);
+	info.flag.posted = (feed->flag & RS_FEED_FLAG_POSTED);
+	info.flag.updatePostedInfo = (feed->flag & RS_FEED_FLAG_UPDATE_POSTED_INFO);
+	info.flag.postedFirstImage = (feed->flag & RS_FEED_FLAG_POSTED_FIRST_IMAGE);
+	info.flag.postedOnlyImage = (feed->flag & RS_FEED_FLAG_POSTED_ONLY_IMAGE);
 	info.flag.embedImages = (feed->flag & RS_FEED_FLAG_EMBED_IMAGES);
 	info.flag.saveCompletePage = (feed->flag & RS_FEED_FLAG_SAVE_COMPLETE_PAGE);
 
@@ -151,6 +159,7 @@ static void infoToFeed(const FeedInfo &info, RsFeedReaderFeed *feed)
 	feed->storageTime = info.storageTime;
 
 	feed->forumId = info.forumId;
+	feed->postedId = info.postedId;
 
 	feed->transformationType = info.transformationType;
 	feed->xpathsToUse.ids = info.xpathsToUse;
@@ -192,6 +201,21 @@ static void infoToFeed(const FeedInfo &info, RsFeedReaderFeed *feed)
 	}
 	if (info.flag.updateForumInfo) {
 		feed->flag |= RS_FEED_FLAG_UPDATE_FORUM_INFO;
+	}
+	if (info.flag.posted) {
+		feed->flag |= RS_FEED_FLAG_POSTED;
+	}
+	if (info.flag.updatePostedInfo) {
+		feed->flag |= RS_FEED_FLAG_UPDATE_POSTED_INFO;
+	}
+	if (info.flag.updatePostedInfo) {
+		feed->flag |= RS_FEED_FLAG_UPDATE_POSTED_INFO;
+	}
+	if (info.flag.postedFirstImage) {
+		feed->flag |= RS_FEED_FLAG_POSTED_FIRST_IMAGE;
+	}
+	if (info.flag.postedOnlyImage) {
+		feed->flag |= RS_FEED_FLAG_POSTED_ONLY_IMAGE;
 	}
 }
 
@@ -478,6 +502,9 @@ RsFeedAddResult p3FeedReader::setFeed(uint32_t feedId, const FeedInfo &feedInfo)
 	std::string forumId;
 	std::string forumName;
 	std::string forumDescription;
+	std::string postedId;
+	std::string postedName;
+	std::string postedDescription;
 
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
@@ -521,6 +548,7 @@ RsFeedAddResult p3FeedReader::setFeed(uint32_t feedId, const FeedInfo &feedInfo)
 
 		RsFeedReaderFeed *fi = feedIt->second;
 		std::string oldForumId = fi->forumId;
+		std::string oldPostedId = fi->postedId;
 		std::string oldName = fi->name;
 		std::string oldDescription = fi->description;
 
@@ -534,6 +562,15 @@ RsFeedAddResult p3FeedReader::setFeed(uint32_t feedId, const FeedInfo &feedInfo)
 			forumDescription = fi->description;
 			forumName.insert(0, FEEDREADER_FORUM_PREFIX);
 		}
+
+		if ((fi->flag & RS_FEED_FLAG_POSTED) && (fi->flag & RS_FEED_FLAG_UPDATE_POSTED_INFO) && !fi->postedId.empty() &&
+		    (fi->postedId != oldPostedId || fi->name != oldName || fi->description != oldDescription)) {
+			/* name or description changed, update posted */
+			postedId = fi->postedId;
+			postedName = fi->name;
+			postedDescription = fi->description;
+			postedName.insert(0, FEEDREADER_POSTED_PREFIX);
+		}
 	}
 
 	IndicateConfigChanged();
@@ -546,6 +583,14 @@ RsFeedAddResult p3FeedReader::setFeed(uint32_t feedId, const FeedInfo &feedInfo)
 		RsGxsForumGroup forumGroup;
 		if (getForumGroup(RsGxsGroupId(forumId), forumGroup)) {
 			updateForumGroup(forumGroup, forumName, forumDescription);
+		}
+		//TODO: error
+	}
+
+	if (!postedId.empty()) {
+		RsPostedGroup postedGroup;
+		if (getPostedGroup(RsGxsGroupId(postedId), postedGroup)) {
+			updatePostedGroup(postedGroup, postedName, postedDescription);
 		}
 		//TODO: error
 	}
@@ -682,6 +727,7 @@ bool p3FeedReader::addPreviewFeed(const FeedInfo &feedInfo, uint32_t &feedId)
 		fi->updateInterval = 0;
 		fi->lastUpdate = 0;
 		fi->forumId.clear();
+		fi->postedId.clear();
 		fi->storageTime = 0;
 
 		mFeeds[fi->feedId] = fi;
@@ -1885,8 +1931,12 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 
 	std::list<std::string> addedMsgs;
 	std::string forumId;
-	RsGxsId authorId;
+	RsGxsId forumAuthorId;
 	std::list<RsFeedReaderMsg> forumMsgs;
+	std::string postedId;
+	RsGxsId postedAuthorId;
+	std::list<RsFeedReaderMsg> postedMsgs;
+	uint32_t feedFlag = 0;
 
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
@@ -1903,7 +1953,9 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 
 		RsFeedReaderFeed *fi = it->second;
 		bool forum = (fi->flag & RS_FEED_FLAG_FORUM) && !fi->preview;
+		bool posted = (fi->flag & RS_FEED_FLAG_POSTED) && !fi->preview;
 		RsFeedReaderErrorState errorState = RS_FEED_ERRORSTATE_OK;
+		feedFlag = fi->flag;
 
 		if (forum && !msgs.empty()) {
 			if (mForums) {
@@ -1913,9 +1965,9 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 					if (getForumGroup(RsGxsGroupId(fi->forumId), forumGroup)) {
 						if (IS_GROUP_PUBLISHER(forumGroup.mMeta.mSubscribeFlags) && IS_GROUP_ADMIN(forumGroup.mMeta.mSubscribeFlags)) {
 							forumId = fi->forumId;
-							authorId = forumGroup.mMeta.mAuthorId;
+							forumAuthorId = forumGroup.mMeta.mAuthorId;
 
-							if (authorId.isNull()) {
+							if (forumAuthorId.isNull()) {
 								errorState = RS_FEED_ERRORSTATE_PROCESS_FORUM_NO_AUTHOR;
 							}
 						} else {
@@ -1930,6 +1982,34 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 				}
 			} else {
 				std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process forum, member mForums is not set" << std::endl;
+			}
+		}
+
+		if (posted && !msgs.empty()) {
+			if (mPosted) {
+				if (!fi->postedId.empty()) {
+					/* check posted */
+					RsPostedGroup postedGroup;
+					if (getPostedGroup(RsGxsGroupId(fi->postedId), postedGroup)) {
+						if (IS_GROUP_PUBLISHER(postedGroup.mMeta.mSubscribeFlags) && IS_GROUP_ADMIN(postedGroup.mMeta.mSubscribeFlags)) {
+							postedId = fi->postedId;
+							postedAuthorId = postedGroup.mMeta.mAuthorId;
+
+							if (postedAuthorId.isNull()) {
+								errorState = RS_FEED_ERRORSTATE_PROCESS_POSTED_NO_AUTHOR;
+							}
+						} else {
+							errorState = RS_FEED_ERRORSTATE_PROCESS_POSTED_NO_ADMIN;
+						}
+					} else {
+						errorState = RS_FEED_ERRORSTATE_PROCESS_POSTED_NOT_FOUND;
+					}
+				} else {
+					std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - posted id is empty (" << fi->name << ")" << std::endl;
+					errorState = RS_FEED_ERRORSTATE_PROCESS_POSTED_NOT_FOUND;
+				}
+			} else {
+				std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process posted, member mPosted is not set" << std::endl;
 			}
 		}
 
@@ -1949,9 +2029,14 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 				} else {
 					rs_sprintf(miNew->msgId, "%lu", mNextMsgId++);
 				}
-				if (forum) {
+				if (forum || posted) {
 					miNew->flag = RS_FEEDMSG_FLAG_DELETED;
-					forumMsgs.push_back(*miNew);
+					if (forum) {
+						forumMsgs.push_back(*miNew);
+					}
+					if (posted) {
+						postedMsgs.push_back(*miNew);
+					}
 					miNew->description.clear();
 					miNew->descriptionTransformed.clear();
 				} else {
@@ -1996,7 +2081,7 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 					RsGxsForumMsg forumMsg;
 					forumMsg.mMeta.mGroupId = RsGxsGroupId(forumId);
 					forumMsg.mMeta.mMsgName = mi.title;
-					forumMsg.mMeta.mAuthorId = authorId;
+					forumMsg.mMeta.mAuthorId = forumAuthorId;
 
 					std::string description = mi.descriptionTransformed.empty() ? mi.description : mi.descriptionTransformed;
 					/* add link */
@@ -2006,7 +2091,7 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 					forumMsg.mMsg = description;
 
 					uint32_t token;
-					if (mForums->createMsg(token, forumMsg) && waitForToken(token)) {
+					if (mForums->createMsg(token, forumMsg) && waitForToken(mForums, token)) {
 						RsGxsGrpMsgIdPair msgPair;
 						if (mForums->acknowledgeMsg(token, msgPair)) {
 							/* set to new */
@@ -2023,6 +2108,67 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 			}
 		} else {
 			std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process forum, member mForums is not set" << std::endl;
+		}
+	}
+
+	if (!postedId.empty() && !postedMsgs.empty()) {
+		if (mPosted) {
+			/* a bit tricky */
+			RsGenExchange *genExchange = dynamic_cast<RsGenExchange*>(mPosted);
+			if (genExchange) {
+				/* add messages as posted messages */
+				std::list<RsFeedReaderMsg>::iterator msgIt;
+				for (msgIt = postedMsgs.begin(); msgIt != postedMsgs.end(); ++msgIt) {
+					RsFeedReaderMsg &mi = *msgIt;
+
+					/* convert to posted messages */
+					RsPostedPost postedPost;
+					postedPost.mMeta.mGroupId = RsGxsGroupId(postedId);
+					postedPost.mMeta.mMsgName = mi.title;
+					postedPost.mMeta.mAuthorId = postedAuthorId;
+					postedPost.mLink = mi.link;
+
+					std::string description;
+					if (feedFlag & RS_FEED_FLAG_POSTED_FIRST_IMAGE) {
+						if (!mi.postedFirstImage.empty()) {
+							/* use first image as image for posted and description without image as notes */
+							postedPost.mImage.copy(mi.postedFirstImage.data(), mi.postedFirstImage.size());
+							if (feedFlag & RS_FEED_FLAG_POSTED_ONLY_IMAGE) {
+								/* ignore description */
+							} else {
+								description = mi.postedDescriptionWithoutFirstImage;
+							}
+						} else {
+							if (feedFlag & RS_FEED_FLAG_POSTED_ONLY_IMAGE) {
+								/* ignore messages without image */
+								continue;
+							}
+							description = mi.descriptionTransformed.empty() ? mi.description : mi.descriptionTransformed;
+						}
+					} else {
+						description = mi.descriptionTransformed.empty() ? mi.description : mi.descriptionTransformed;
+					}
+
+					postedPost.mNotes = description;
+
+					uint32_t token;
+					if (mPosted->createPost(token, postedPost) && waitForToken(mPosted, token)) {
+						RsGxsGrpMsgIdPair msgPair;
+						if (mPosted->acknowledgeMsg(token, msgPair)) {
+							/* set to new */
+							genExchange->setMsgStatusFlags(token, msgPair, GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD, GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD);
+						}
+					} else {
+#ifdef FEEDREADER_DEBUG
+						std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't add posted message " << mi.title << " for feed " << postedId << std::endl;
+#endif
+					}
+				}
+			} else {
+				std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process posted, member mPosted is not derived from RsGenExchange" << std::endl;
+			}
+		} else {
+			std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process posted, member mPosted is not set" << std::endl;
 		}
 	}
 
@@ -2080,6 +2226,9 @@ void p3FeedReader::setFeedInfo(uint32_t feedId, const std::string &name, const s
 	std::string forumId;
 	std::string forumName;
 	std::string forumDescription;
+	std::string postedId;
+	std::string postedName;
+	std::string postedDescription;
 
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
@@ -2118,6 +2267,14 @@ void p3FeedReader::setFeedInfo(uint32_t feedId, const std::string &name, const s
 			forumDescription = fi->description;
 			forumName.insert(0, FEEDREADER_FORUM_PREFIX);
 		}
+
+		if ((fi->flag & RS_FEED_FLAG_POSTED) && (fi->flag & RS_FEED_FLAG_UPDATE_POSTED_INFO) && !fi->postedId.empty() && !preview) {
+			/* change posted too */
+			postedId = fi->postedId;
+			postedName = fi->name;
+			postedDescription = fi->description;
+			postedName.insert(0, FEEDREADER_POSTED_PREFIX);
+		}
 	}
 
 	if (changed) {
@@ -2134,6 +2291,14 @@ void p3FeedReader::setFeedInfo(uint32_t feedId, const std::string &name, const s
 		RsGxsForumGroup forumGroup;
 		if (getForumGroup(RsGxsGroupId(forumId), forumGroup)) {
 			updateForumGroup(forumGroup, forumName, forumDescription);
+		}
+		//TODO: error
+	}
+
+	if (!postedId.empty()) {
+		RsPostedGroup postedGroup;
+		if (getPostedGroup(RsGxsGroupId(postedId), postedGroup)) {
+			updatePostedGroup(postedGroup, postedName, postedDescription);
 		}
 		//TODO: error
 	}
@@ -2159,7 +2324,7 @@ bool p3FeedReader::getForumGroup(const RsGxsGroupId &groupId, RsGxsForumGroup &f
 	uint32_t token;
 	mForums->getTokenService()->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, grpIds);
 
-	if (!waitForToken(token)) {
+	if (!waitForToken(mForums, token)) {
 		std::cerr << "p3FeedReader::getForumGroup - waitForToken for request failed" << std::endl;
 		return false;
 	}
@@ -2202,7 +2367,7 @@ bool p3FeedReader::updateForumGroup(const RsGxsForumGroup &forumGroup, const std
 		return false;
 	}
 
-	if (!waitForToken(token)) {
+	if (!waitForToken(mForums, token)) {
 		std::cerr << "p3FeedReader::updateForumGroup - waitForToken for update failed" << std::endl;
 		return false;
 	}
@@ -2211,13 +2376,85 @@ bool p3FeedReader::updateForumGroup(const RsGxsForumGroup &forumGroup, const std
 	return true;
 }
 
-bool p3FeedReader::waitForToken(uint32_t token)
+bool p3FeedReader::getPostedGroup(const RsGxsGroupId &groupId, RsPostedGroup &postedGroup)
 {
-	if (!mForums) {
+	if (!mPosted) {
+		std::cerr << "p3FeedReader::getPostedGroup - can't get posted group " << groupId.toStdString() << ", member mPosted is not set" << std::endl;
 		return false;
 	}
 
-	RsTokenService *service = mForums->getTokenService();
+	if (groupId.isNull()) {
+		std::cerr << "p3FeedReader::getPostedGroup - group id is not valid" << std::endl;
+		return false;
+	}
+
+	std::list<RsGxsGroupId> grpIds;
+	grpIds.push_back(groupId);
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	uint32_t token;
+	mPosted->getTokenService()->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, grpIds);
+
+	if (!waitForToken(mPosted, token)) {
+		std::cerr << "p3FeedReader::getPostedGroup - waitForToken for request failed" << std::endl;
+		return false;
+	}
+
+	std::vector<RsPostedGroup> groups;
+	if (!mPosted->getGroupData(token, groups)) {
+		std::cerr << "p3FeedReader::getPostedGroup - Error getting data" << std::endl;
+		return false;
+	}
+
+	if (groups.size() != 1) {
+		std::cerr << "p3FeedReader::getPostedGroup - Wrong number of items" << std::endl;
+		return false;
+	}
+
+	postedGroup = groups[0];
+
+	return true;
+}
+
+bool p3FeedReader::updatePostedGroup(const RsPostedGroup &postedGroup, const std::string &groupName, const std::string &groupDescription)
+{
+	if (!mPosted) {
+		std::cerr << "p3FeedReader::updatePostedGroup - can't change posted " << postedGroup.mMeta.mGroupId.toStdString() << ", member mPosted is not set" << std::endl;
+		return false;
+	}
+
+	if (postedGroup.mMeta.mGroupName == groupName && postedGroup.mDescription == groupDescription) {
+		/* No change */
+		return true;
+	}
+
+	RsPostedGroup newPostedGroup = postedGroup;
+	newPostedGroup.mMeta.mGroupName = groupName;
+	newPostedGroup.mDescription = groupDescription;
+
+	uint32_t token;
+	if (!mPosted->updateGroup(token, newPostedGroup)) {
+		std::cerr << "p3FeedReader::updatePostedGroup - can't change posted " << newPostedGroup.mMeta.mGroupId.toStdString() << std::endl;
+		return false;
+	}
+
+	if (!waitForToken(mPosted, token)) {
+		std::cerr << "p3FeedReader::updatePostedGroup - waitForToken for update failed" << std::endl;
+		return false;
+	}
+
+	/* Posted updated */
+	return true;
+}
+
+bool p3FeedReader::waitForToken(RsGxsIfaceHelper *interface, uint32_t token)
+{
+	if (!interface) {
+		return false;
+	}
+
+	RsTokenService *service = interface->getTokenService();
 	int count = MAX_REQUEST_AGE * 2;
 
 	while (!mStopped) {

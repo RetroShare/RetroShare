@@ -33,11 +33,14 @@ class p3FeedReaderThread;
 
 class RsGxsForums;
 struct RsGxsForumGroup;
+class RsPosted;
+struct RsPostedGroup;
+class RsGxsIfaceHelper;
 
 class p3FeedReader : public RsPQIService, public RsFeedReader
 {
 public:
-	p3FeedReader(RsPluginHandler *pgHandler, RsGxsForums *forums);
+	p3FeedReader(RsPluginHandler *pgHandler, RsGxsForums *forums, RsPosted *posted);
 
 	/****************** FeedReader Interface *************/
 	virtual void stop();
@@ -92,7 +95,9 @@ public:
 
 	bool getForumGroup(const RsGxsGroupId &groupId, RsGxsForumGroup &forumGroup);
 	bool updateForumGroup(const RsGxsForumGroup &forumGroup, const std::string &groupName, const std::string &groupDescription);
-	bool waitForToken(uint32_t token);
+	bool getPostedGroup(const RsGxsGroupId &groupId, RsPostedGroup &postedGroup);
+	bool updatePostedGroup(const RsPostedGroup &postedGroup, const std::string &groupName, const std::string &groupDescription);
+	bool waitForToken(RsGxsIfaceHelper *interface, uint32_t token);
 
 protected:
 	/****************** p3Config STUFF *******************/
@@ -109,6 +114,7 @@ private:
 private:
 	time_t   mLastClean;
 	RsGxsForums *mForums;
+	RsPosted *mPosted;
 	RsFeedReaderNotify *mNotify;
 	volatile bool mStopped;
 

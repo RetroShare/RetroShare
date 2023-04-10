@@ -50,7 +50,7 @@
         <property name="title">
          <string>Type</string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
+        <layout class="QGridLayout" name="gridLayout_2">
          <property name="leftMargin">
           <number>6</number>
          </property>
@@ -63,26 +63,74 @@
          <property name="bottomMargin">
           <number>6</number>
          </property>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item>
-            <widget class="QRadioButton" name="typeForumRadio">
-             <property name="text">
-              <string>Forum</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="RSComboBox" name="forumComboBox"/>
-           </item>
-          </layout>
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="typeForumCheckBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Forum</string>
+           </property>
+          </widget>
          </item>
-         <item>
-          <widget class="QRadioButton" name="typeLocalRadio">
+         <item row="0" column="1">
+          <widget class="RSComboBox" name="forumComboBox"/>
+         </item>
+         <item row="8" column="0">
+          <widget class="QCheckBox" name="typeLocalCheckBox">
            <property name="text">
             <string>Local Feed</string>
            </property>
           </widget>
+         </item>
+         <item row="1" column="1">
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QCheckBox" name="updateForumInfoCheckBox">
+             <property name="text">
+              <string>Update forum information</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="4" column="1">
+          <widget class="RSComboBox" name="postedComboBox"/>
+         </item>
+         <item row="4" column="0">
+          <widget class="QCheckBox" name="typePostedCheckBox">
+           <property name="text">
+            <string>Board</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="0" column="0">
+            <widget class="QCheckBox" name="updatePostedInfoCheckBox">
+             <property name="text">
+              <string>Update board information</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QCheckBox" name="postedOnlyImageCheckBox">
+             <property name="text">
+              <string>Only image</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QCheckBox" name="postedFirstImageCheckBox">
+             <property name="text">
+              <string>Use first image as board image</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
@@ -309,7 +357,6 @@
           <property name="font">
            <font>
             <pointsize>11</pointsize>
-            <weight>75</weight>
             <italic>true</italic>
             <bold>true</bold>
            </font>
@@ -378,13 +425,6 @@
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="updateForumInfoCheckBox">
-           <property name="text">
-            <string>Update forum information</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QCheckBox" name="embedImagesCheckBox">
            <property name="text">
             <string>Embed images</string>
@@ -397,6 +437,19 @@
             <string>Save complete web page (experimental for local feeds)</string>
            </property>
           </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </widget>
@@ -423,22 +476,31 @@
   <tabstop>urlLineEdit</tabstop>
   <tabstop>nameLineEdit</tabstop>
   <tabstop>descriptionPlainTextEdit</tabstop>
-  <tabstop>typeForumRadio</tabstop>
+  <tabstop>typeForumCheckBox</tabstop>
   <tabstop>forumComboBox</tabstop>
+  <tabstop>updateForumInfoCheckBox</tabstop>
+  <tabstop>typePostedCheckBox</tabstop>
+  <tabstop>postedComboBox</tabstop>
+  <tabstop>updatePostedInfoCheckBox</tabstop>
+  <tabstop>postedFirstImageCheckBox</tabstop>
+  <tabstop>checkBox</tabstop>
+  <tabstop>typeLocalCheckBox</tabstop>
   <tabstop>activatedCheckBox</tabstop>
   <tabstop>useInfoFromFeedCheckBox</tabstop>
-  <tabstop>updateForumInfoCheckBox</tabstop>
+  <tabstop>embedImagesCheckBox</tabstop>
+  <tabstop>saveCompletePageCheckBox</tabstop>
+  <tabstop>previewButton</tabstop>
   <tabstop>useAuthenticationCheckBox</tabstop>
   <tabstop>userLineEdit</tabstop>
   <tabstop>passwordLineEdit</tabstop>
   <tabstop>useStandardStorageTimeCheckBox</tabstop>
+  <tabstop>clearCachePushButton</tabstop>
   <tabstop>storageTimeSpinBox</tabstop>
   <tabstop>useStandardUpdateInterval</tabstop>
   <tabstop>updateIntervalSpinBox</tabstop>
   <tabstop>useStandardProxyCheckBox</tabstop>
   <tabstop>proxyAddressLineEdit</tabstop>
   <tabstop>proxyPortSpinBox</tabstop>
-  <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>
  <connections/>

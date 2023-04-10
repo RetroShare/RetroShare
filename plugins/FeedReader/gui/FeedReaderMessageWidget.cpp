@@ -245,9 +245,19 @@ void FeedReaderMessageWidget::setFeedId(uint32_t feedId)
 		ui->msgReadAllButton->setEnabled(false);
 		ui->msgTreeWidget->setPlaceholderText("");
 	} else {
-		if (mFeedInfo.flag.forum) {
+		if (mFeedInfo.flag.forum || mFeedInfo.flag.posted) {
 			ui->msgReadAllButton->setEnabled(false);
-			ui->msgTreeWidget->setPlaceholderText(tr("The messages will be added to the forum"));
+
+			if (mFeedInfo.flag.forum && mFeedInfo.flag.posted) {
+				ui->msgTreeWidget->setPlaceholderText(tr("The messages will be added to the forum and the board"));
+			} else {
+				if (mFeedInfo.flag.forum) {
+					ui->msgTreeWidget->setPlaceholderText(tr("The messages will be added to the forum"));
+				}
+				if (mFeedInfo.flag.posted) {
+					ui->msgTreeWidget->setPlaceholderText(tr("The messages will be added to the board"));
+				}
+			}
 		} else {
 			ui->msgReadAllButton->setEnabled(true);
 			ui->msgTreeWidget->setPlaceholderText("");

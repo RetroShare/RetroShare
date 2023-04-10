@@ -42,10 +42,14 @@ enum RsFeedReaderErrorState {
 	/* process */
 	RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR         = 50,
 	RS_FEED_ERRORSTATE_PROCESS_UNKNOWN_FORMAT         = 51,
-	RS_FEED_ERRORSTATE_PROCESS_FORUM_CREATE           = 100,
+//	RS_FEED_ERRORSTATE_PROCESS_FORUM_CREATE           = 100,
 	RS_FEED_ERRORSTATE_PROCESS_FORUM_NOT_FOUND        = 101,
 	RS_FEED_ERRORSTATE_PROCESS_FORUM_NO_ADMIN         = 102,
 	RS_FEED_ERRORSTATE_PROCESS_FORUM_NO_AUTHOR        = 103,
+//	RS_FEED_ERRORSTATE_PROCESS_POSTED_CREATE          = 104,
+	RS_FEED_ERRORSTATE_PROCESS_POSTED_NOT_FOUND       = 105,
+	RS_FEED_ERRORSTATE_PROCESS_POSTED_NO_ADMIN        = 106,
+	RS_FEED_ERRORSTATE_PROCESS_POSTED_NO_AUTHOR       = 107,
 
 	RS_FEED_ERRORSTATE_PROCESS_HTML_ERROR             = 150,
 	RS_FEED_ERRORSTATE_PROCESS_XPATH_INTERNAL_ERROR   = 151,
@@ -102,6 +106,8 @@ public:
 		flag.deactivated = false;
 		flag.forum = false;
 		flag.updateForumInfo = false;
+		flag.posted = false;
+		flag.updatePostedInfo = false;
 		flag.embedImages = false;
 		flag.saveCompletePage = false;
 		flag.preview = false;
@@ -122,6 +128,7 @@ public:
 	time_t                   lastUpdate;
 	uint32_t                 storageTime;
 	std::string              forumId;
+	std::string              postedId;
 	WorkState                workstate;
 	RsFeedReaderErrorState   errorState;
 	std::string              errorString;
@@ -141,6 +148,10 @@ public:
 		bool deactivated : 1;
 		bool forum : 1;
 		bool updateForumInfo : 1;
+		bool posted : 1;
+		bool updatePostedInfo : 1;
+		bool postedFirstImage : 1;
+		bool postedOnlyImage : 1;
 		bool embedImages : 1;
 		bool saveCompletePage : 1;
 		bool preview : 1;

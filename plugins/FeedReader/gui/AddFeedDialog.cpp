@@ -30,9 +30,11 @@
 #include "gui/common/UIStateHelper.h"
 
 #include <retroshare/rsgxsforums.h>
+#include <retroshare/rsposted.h>
 #include <iostream>
 
-#define TOKEN_TYPE_FORUM_GROUPS 1
+#define TOKEN_TYPE_FORUM_GROUPS  1
+#define TOKEN_TYPE_POSTED_GROUPS 2
 
 AddFeedDialog::AddFeedDialog(RsFeedReader *feedReader, FeedReaderNotify *notify, QWidget *parent)
 	: QDialog(parent, Qt::Window), mFeedReader(feedReader), mNotify(notify), ui(new Ui::AddFeedDialog)
@@ -47,9 +49,12 @@ AddFeedDialog::AddFeedDialog(RsFeedReader *feedReader, FeedReaderNotify *notify,
 
 	mStateHelper->addWidget(TOKEN_TYPE_FORUM_GROUPS, ui->forumComboBox, UISTATE_LOADING_DISABLED);
 	mStateHelper->addWidget(TOKEN_TYPE_FORUM_GROUPS, ui->buttonBox->button(QDialogButtonBox::Ok), UISTATE_LOADING_DISABLED);
+	mStateHelper->addWidget(TOKEN_TYPE_POSTED_GROUPS, ui->postedComboBox, UISTATE_LOADING_DISABLED);
+	mStateHelper->addWidget(TOKEN_TYPE_POSTED_GROUPS, ui->buttonBox->button(QDialogButtonBox::Ok), UISTATE_LOADING_DISABLED);
 
 	/* Setup TokenQueue */
-	mTokenQueue = new TokenQueue(rsGxsForums->getTokenService(), this);
+	mForumTokenQueue = new TokenQueue(rsGxsForums->getTokenService(), this);
+	mPostedTokenQueue = new TokenQueue(rsPosted->getTokenService(), this);
 
 	/* Connect signals */
 	connect(ui->buttonBox->button(QDialogButtonBox::Ok), SIGNAL(clicked()), this, SLOT(createFeed()));
@@ -59,18 +64,23 @@ AddFeedDialog::AddFeedDialog(RsFeedReader *feedReader, FeedReaderNotify *notify,
 	connect(ui->useStandardStorageTimeCheckBox, SIGNAL(toggled(bool)), this, SLOT(useStandardStorageTimeToggled()));
 	connect(ui->useStandardUpdateInterval, SIGNAL(toggled(bool)), this, SLOT(useStandardUpdateIntervalToggled()));
 	connect(ui->useStandardProxyCheckBox, SIGNAL(toggled(bool)), this, SLOT(useStandardProxyToggled()));
-	connect(ui->typeForumRadio, SIGNAL(toggled(bool)), this, SLOT(typeForumToggled()));
+	connect(ui->typeForumCheckBox, SIGNAL(toggled(bool)), this, SLOT(typeForumToggled()));
+	connect(ui->typePostedCheckBox, SIGNAL(toggled(bool)), this, SLOT(typePostedToggled()));
+	connect(ui->typeLocalCheckBox, SIGNAL(toggled(bool)), this, SLOT(typeLocalToggled()));
+	connect(ui->postedFirstImageCheckBox, SIGNAL(toggled(bool)), this, SLOT(postedFirstImageToggled()));
 	connect(ui->previewButton, SIGNAL(clicked()), this, SLOT(preview()));
 
 	/* currently only for local feeds */
-	connect(ui->saveCompletePageCheckBox, SIGNAL(toggled(bool)), this, SLOT(denyForumToggled()));
+	connect(ui->saveCompletePageCheckBox, SIGNAL(toggled(bool)), this, SLOT(denyForumAndPostedToggled()));
 
 	connect(ui->urlLineEdit, SIGNAL(textChanged(QString)), this, SLOT(validate()));
 	connect(ui->nameLineEdit, SIGNAL(textChanged(QString)), this, SLOT(validate()));
 	connect(ui->useInfoFromFeedCheckBox, SIGNAL(toggled(bool)), this, SLOT(validate()));
-	connect(ui->typeLocalRadio, SIGNAL(toggled(bool)), this, SLOT(validate()));
-	connect(ui->typeForumRadio, SIGNAL(toggled(bool)), this, SLOT(validate()));
+	connect(ui->typeLocalCheckBox, SIGNAL(toggled(bool)), this, SLOT(validate()));
+	connect(ui->typeForumCheckBox, SIGNAL(toggled(bool)), this, SLOT(validate()));
 	connect(ui->forumComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(validate()));
+	connect(ui->typePostedCheckBox, SIGNAL(toggled(bool)), this, SLOT(validate()));
+	connect(ui->postedComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(validate()));
 
 	connect(ui->clearCachePushButton, SIGNAL(clicked()), this, SLOT(clearMessageCache()));
 
@@ -79,13 +89,22 @@ AddFeedDialog::AddFeedDialog(RsFeedReader *feedReader, FeedReaderNotify *notify,
 
 	ui->activatedCheckBox->setChecked(true);
 	mStateHelper->setWidgetEnabled(ui->forumComboBox, false);
+	mStateHelper->setWidgetEnabled(ui->postedComboBox, false);
 	ui->useInfoFromFeedCheckBox->setChecked(true);
 	ui->updateForumInfoCheckBox->setEnabled(false);
 	ui->updateForumInfoCheckBox->setChecked(true);
+	ui->updatePostedInfoCheckBox->setEnabled(false);
+	ui->updatePostedInfoCheckBox->setChecked(true);
+	ui->postedFirstImageCheckBox->setEnabled(false);
+	ui->postedFirstImageCheckBox->setChecked(false);
+	ui->postedOnlyImageCheckBox->setEnabled(false);
+	ui->postedOnlyImageCheckBox->setChecked(false);
 	ui->useAuthenticationCheckBox->setChecked(false);
 	ui->useStandardStorageTimeCheckBox->setChecked(true);
 	ui->useStandardUpdateInterval->setChecked(true);
 	ui->useStandardProxyCheckBox->setChecked(true);
+	ui->embedImagesCheckBox->setChecked(true);
+	ui->saveCompletePageCheckBox->setEnabled(false);
 
 	/* not yet supported */
 	ui->authenticationGroupBox->setEnabled(false);
@@ -97,6 +116,9 @@ AddFeedDialog::AddFeedDialog(RsFeedReader *feedReader, FeedReaderNotify *notify,
 
 	/* fill own forums */
 	requestForumGroups();
+
+	/* fill own posted */
+	requestPostedGroups();
 
 	validate();
 
@@ -112,7 +134,8 @@ AddFeedDialog::~AddFeedDialog()
 	processSettings(false);
 
 	delete(ui);
-	delete(mTokenQueue);
+	delete(mForumTokenQueue);
+	delete(mPostedTokenQueue);
 }
 
 void AddFeedDialog::processSettings(bool load)
@@ -161,18 +184,65 @@ void AddFeedDialog::useStandardProxyToggled()
 
 void AddFeedDialog::typeForumToggled()
 {
-	bool checked = ui->typeForumRadio->isChecked();
+	bool checked = ui->typeForumCheckBox->isChecked();
 	mStateHelper->setWidgetEnabled(ui->forumComboBox, checked);
 	ui->updateForumInfoCheckBox->setEnabled(checked);
+
+	if (checked) {
+		ui->typeLocalCheckBox->setChecked(false);
+	}
 }
 
-void AddFeedDialog::denyForumToggled()
+void AddFeedDialog::postedFirstImageToggled()
+{
+	bool checked = ui->postedFirstImageCheckBox->isChecked();
+	ui->postedOnlyImageCheckBox->setEnabled(checked);
+
+	if (!checked) {
+		ui->postedOnlyImageCheckBox->setChecked(false);
+	}
+}
+
+void AddFeedDialog::typePostedToggled()
+{
+	bool checked = ui->typePostedCheckBox->isChecked();
+	mStateHelper->setWidgetEnabled(ui->postedComboBox, checked);
+	ui->updatePostedInfoCheckBox->setEnabled(checked);
+	ui->postedFirstImageCheckBox->setEnabled(checked);
+
+	if (checked) {
+		ui->typeLocalCheckBox->setChecked(false);
+	}else {
+		ui->postedFirstImageCheckBox->setChecked(false);
+	}
+}
+
+void AddFeedDialog::typeLocalToggled()
+{
+	bool checked = ui->typeLocalCheckBox->isChecked();
+	if (checked) {
+		mStateHelper->setWidgetEnabled(ui->forumComboBox, false);
+		mStateHelper->setWidgetEnabled(ui->postedComboBox, false);
+		ui->typeForumCheckBox->setChecked(false);
+		ui->typePostedCheckBox->setChecked(false);
+		ui->saveCompletePageCheckBox->setEnabled(true);
+	} else {
+		ui->saveCompletePageCheckBox->setEnabled(false);
+		ui->saveCompletePageCheckBox->setChecked(false);
+	}
+}
+
+void AddFeedDialog::denyForumAndPostedToggled()
 {
 	if (ui->saveCompletePageCheckBox->isChecked()) {
-		ui->typeForumRadio->setEnabled(false);
-		ui->typeLocalRadio->setChecked(true);
+		ui->typeForumCheckBox->setEnabled(false);
+		ui->typeForumCheckBox->setChecked(false);
+		ui->typePostedCheckBox->setEnabled(false);
+		ui->typePostedCheckBox->setChecked(false);
+		ui->typeLocalCheckBox->setChecked(true);
 	} else {
-		ui->typeForumRadio->setEnabled(true);
+		ui->typeForumCheckBox->setEnabled(true);
+		ui->typePostedCheckBox->setEnabled(true);
 	}
 }
 
@@ -189,11 +259,15 @@ void AddFeedDialog::validate()
 
 	ui->previewButton->setEnabled(ok);
 
-	if (!ui->typeLocalRadio->isChecked() && !ui->typeForumRadio->isChecked()) {
+	if (!ui->typeLocalCheckBox->isChecked() && !ui->typeForumCheckBox->isChecked() && !ui->typePostedCheckBox->isChecked()) {
 		ok = false;
 	}
 
-	if (ui->typeForumRadio->isChecked() && ui->forumComboBox->itemData(ui->forumComboBox->currentIndex()).toString().isEmpty()) {
+	if (ui->typeForumCheckBox->isChecked() && ui->forumComboBox->itemData(ui->forumComboBox->currentIndex()).toString().isEmpty()) {
+		ok = false;
+	}
+
+	if (ui->typePostedCheckBox->isChecked() && ui->postedComboBox->itemData(ui->postedComboBox->currentIndex()).toString().isEmpty()) {
 		ok = false;
 	}
 
@@ -224,20 +298,31 @@ bool AddFeedDialog::fillFeed(uint32_t feedId)
 		ui->urlLineEdit->setText(QString::fromUtf8(feedInfo.url.c_str()));
 		ui->useInfoFromFeedCheckBox->setChecked(feedInfo.flag.infoFromFeed);
 		ui->updateForumInfoCheckBox->setChecked(feedInfo.flag.updateForumInfo);
+		ui->updatePostedInfoCheckBox->setChecked(feedInfo.flag.updatePostedInfo);
+		ui->postedFirstImageCheckBox->setChecked(feedInfo.flag.postedFirstImage);
+		ui->postedOnlyImageCheckBox->setChecked(feedInfo.flag.postedOnlyImage);
 		ui->activatedCheckBox->setChecked(!feedInfo.flag.deactivated);
 		ui->embedImagesCheckBox->setChecked(feedInfo.flag.embedImages);
 		ui->saveCompletePageCheckBox->setChecked(feedInfo.flag.saveCompletePage);
 
 		ui->descriptionPlainTextEdit->setPlainText(QString::fromUtf8(feedInfo.description.c_str()));
 
-		if (feedInfo.flag.forum) {
-			mStateHelper->setWidgetEnabled(ui->forumComboBox, true);
-			ui->typeForumRadio->setChecked(true);
-			ui->saveCompletePageCheckBox->setEnabled(false);
+		if (feedInfo.flag.forum || feedInfo.flag.posted) {
+			if (feedInfo.flag.forum) {
+				mStateHelper->setWidgetEnabled(ui->forumComboBox, true);
+				ui->typeForumCheckBox->setChecked(true);
 
-			setActiveForumId(feedInfo.forumId);
+				setActiveForumId(feedInfo.forumId);
+			}
+			if (feedInfo.flag.posted) {
+				mStateHelper->setWidgetEnabled(ui->postedComboBox, true);
+				ui->typePostedCheckBox->setChecked(true);
+
+				setActivePostedId(feedInfo.postedId);
+			}
+			ui->saveCompletePageCheckBox->setEnabled(false);
 		} else {
-			ui->typeLocalRadio->setChecked(true);
+			ui->typeLocalCheckBox->setChecked(true);
 			mStateHelper->setWidgetEnabled(ui->forumComboBox, false);
 		}
 
@@ -286,6 +371,21 @@ void AddFeedDialog::setActiveForumId(const std::string &forumId)
 	}
 }
 
+void AddFeedDialog::setActivePostedId(const std::string &postedId)
+{
+	if (mStateHelper->isLoading(TOKEN_TYPE_POSTED_GROUPS)) {
+		mFillPostedId = postedId;
+		return;
+	}
+
+	int index = ui->postedComboBox->findData(QString::fromStdString(postedId));
+	if (index >= 0) {
+		ui->postedComboBox->setCurrentIndex(index);
+	} else {
+		ui->postedComboBox->setCurrentIndex(0);
+	}
+}
+
 void AddFeedDialog::getFeedInfo(FeedInfo &feedInfo)
 {
 	feedInfo.parentId = mParentId;
@@ -294,16 +394,25 @@ void AddFeedDialog::getFeedInfo(FeedInfo &feedInfo)
 	feedInfo.url = ui->urlLineEdit->text().toUtf8().constData();
 	feedInfo.flag.infoFromFeed = ui->useInfoFromFeedCheckBox->isChecked();
 	feedInfo.flag.updateForumInfo = ui->updateForumInfoCheckBox->isChecked() && ui->updateForumInfoCheckBox->isEnabled();
+	feedInfo.flag.updatePostedInfo = ui->updatePostedInfoCheckBox->isChecked() && ui->updatePostedInfoCheckBox->isEnabled();
+	feedInfo.flag.postedFirstImage = ui->postedFirstImageCheckBox->isChecked() && ui->postedFirstImageCheckBox->isEnabled();
+	feedInfo.flag.postedOnlyImage = ui->postedOnlyImageCheckBox->isChecked() && ui->postedOnlyImageCheckBox->isEnabled();
 	feedInfo.flag.deactivated = !ui->activatedCheckBox->isChecked();
 	feedInfo.flag.embedImages = ui->embedImagesCheckBox->isChecked();
 	feedInfo.flag.saveCompletePage = ui->saveCompletePageCheckBox->isChecked();
 
 	feedInfo.description = ui->descriptionPlainTextEdit->toPlainText().toUtf8().constData();
 
-	feedInfo.flag.forum = ui->typeForumRadio->isChecked();
+	feedInfo.flag.forum = ui->typeForumCheckBox->isChecked();
 
 	if (feedInfo.flag.forum) {
 		feedInfo.forumId = ui->forumComboBox->itemData(ui->forumComboBox->currentIndex()).toString().toStdString();
+	}
+
+	feedInfo.flag.posted = ui->typePostedCheckBox->isChecked();
+
+	if (feedInfo.flag.posted) {
+		feedInfo.postedId = ui->postedComboBox->itemData(ui->postedComboBox->currentIndex()).toString().toStdString();
 	}
 
 	feedInfo.flag.authentication = ui->useAuthenticationCheckBox->isChecked();
@@ -382,10 +491,10 @@ void AddFeedDialog::requestForumGroups()
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 
-	mTokenQueue->cancelActiveRequestTokens(TOKEN_TYPE_FORUM_GROUPS);
+	mForumTokenQueue->cancelActiveRequestTokens(TOKEN_TYPE_FORUM_GROUPS);
 
 	uint32_t token;
-	mTokenQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, TOKEN_TYPE_FORUM_GROUPS);
+	mForumTokenQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, TOKEN_TYPE_FORUM_GROUPS);
 }
 
 void AddFeedDialog::loadForumGroups(const uint32_t &token)
@@ -416,15 +525,72 @@ void AddFeedDialog::loadForumGroups(const uint32_t &token)
 	}
 }
 
+void AddFeedDialog::requestPostedGroups()
+{
+	mStateHelper->setLoading(TOKEN_TYPE_POSTED_GROUPS, true);
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+	mPostedTokenQueue->cancelActiveRequestTokens(TOKEN_TYPE_POSTED_GROUPS);
+
+	uint32_t token;
+	mPostedTokenQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, TOKEN_TYPE_POSTED_GROUPS);
+}
+
+void AddFeedDialog::loadPostedGroups(const uint32_t &token)
+{
+	std::vector<RsPostedGroup> groups;
+	rsPosted->getGroupData(token, groups);
+
+	ui->postedComboBox->clear();
+
+	for (std::vector<RsPostedGroup>::iterator it = groups.begin(); it != groups.end(); ++it) {
+		const RsPostedGroup &group = *it;
+
+		/* show only own posted */
+		if (IS_GROUP_PUBLISHER(group.mMeta.mSubscribeFlags) && IS_GROUP_ADMIN(group.mMeta.mSubscribeFlags) && !group.mMeta.mAuthorId.isNull()) {
+			ui->postedComboBox->addItem(QString::fromUtf8(group.mMeta.mGroupName.c_str()), QString::fromStdString(group.mMeta.mGroupId.toStdString()));
+		}
+	}
+
+	/* insert empty item */
+	ui->postedComboBox->insertItem(0, "", "");
+	ui->postedComboBox->setCurrentIndex(0);
+
+	mStateHelper->setLoading(TOKEN_TYPE_POSTED_GROUPS, false);
+
+	if (!mFillPostedId.empty()) {
+		setActivePostedId(mFillPostedId);
+		mFillPostedId.clear();
+	}
+}
+
 void AddFeedDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
-	if (queue == mTokenQueue)
+	if (queue == mForumTokenQueue)
 	{
 		/* now switch on req */
 		switch(req.mUserType)
 		{
 		case TOKEN_TYPE_FORUM_GROUPS:
 			loadForumGroups(req.mToken);
+			break;
+
+		default:
+			std::cerr << "AddFeedDialog::loadRequest() ERROR: INVALID TYPE";
+			std::cerr << std::endl;
+
+		}
+	}
+
+	if (queue == mPostedTokenQueue)
+	{
+		/* now switch on req */
+		switch(req.mUserType)
+		{
+		case TOKEN_TYPE_POSTED_GROUPS:
+			loadPostedGroups(req.mToken);
 			break;
 
 		default:

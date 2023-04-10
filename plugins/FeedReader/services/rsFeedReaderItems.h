@@ -34,17 +34,21 @@ const uint8_t RS_PKT_SUBTYPE_FEEDREADER_MSG   = 0x03;
 
 /**************************************************************************/
 
-#define RS_FEED_FLAG_FOLDER                        0x001
-#define RS_FEED_FLAG_INFO_FROM_FEED                0x002
-#define RS_FEED_FLAG_STANDARD_STORAGE_TIME         0x004
-#define RS_FEED_FLAG_STANDARD_UPDATE_INTERVAL      0x008
-#define RS_FEED_FLAG_STANDARD_PROXY                0x010
-#define RS_FEED_FLAG_AUTHENTICATION                0x020
-#define RS_FEED_FLAG_DEACTIVATED                   0x040
-#define RS_FEED_FLAG_FORUM                         0x080
-#define RS_FEED_FLAG_UPDATE_FORUM_INFO             0x100
-#define RS_FEED_FLAG_EMBED_IMAGES                  0x200
-#define RS_FEED_FLAG_SAVE_COMPLETE_PAGE            0x400
+#define RS_FEED_FLAG_FOLDER                        0x0001
+#define RS_FEED_FLAG_INFO_FROM_FEED                0x0002
+#define RS_FEED_FLAG_STANDARD_STORAGE_TIME         0x0004
+#define RS_FEED_FLAG_STANDARD_UPDATE_INTERVAL      0x0008
+#define RS_FEED_FLAG_STANDARD_PROXY                0x0010
+#define RS_FEED_FLAG_AUTHENTICATION                0x0020
+#define RS_FEED_FLAG_DEACTIVATED                   0x0040
+#define RS_FEED_FLAG_FORUM                         0x0080
+#define RS_FEED_FLAG_UPDATE_FORUM_INFO             0x0100
+#define RS_FEED_FLAG_EMBED_IMAGES                  0x0200
+#define RS_FEED_FLAG_SAVE_COMPLETE_PAGE            0x0400
+#define RS_FEED_FLAG_POSTED                        0x0800
+#define RS_FEED_FLAG_UPDATE_POSTED_INFO            0x1000
+#define RS_FEED_FLAG_POSTED_FIRST_IMAGE            0x2000
+#define RS_FEED_FLAG_POSTED_ONLY_IMAGE             0x4000
 
 class RsFeedReaderFeed : public RsItem
 {
@@ -76,6 +80,7 @@ public:
 	time_t                   lastUpdate;
 	uint32_t                 flag; // RS_FEED_FLAG_...
 	std::string              forumId;
+	std::string              postedId;
 	uint32_t                 storageTime;
 	std::string              description;
 	std::string              icon;
@@ -118,6 +123,10 @@ public:
 	std::string descriptionTransformed;
 	time_t      pubDate;
 	uint32_t    flag; // RS_FEEDMSG_FLAG_...
+
+	// Only in memory when receiving messages
+	std::vector<unsigned char> postedFirstImage;
+	std::string postedDescriptionWithoutFirstImage;
 };
 
 class RsFeedReaderSerialiser: public RsSerialType
