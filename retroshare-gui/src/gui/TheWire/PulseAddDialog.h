@@ -53,6 +53,7 @@ private slots:
 	void clearDialog();
 	void pulseTextChanged();
 	void toggle();
+    void onBrowseButtonClicked();
 
 private:
 	// OLD VERSIONs, private now.

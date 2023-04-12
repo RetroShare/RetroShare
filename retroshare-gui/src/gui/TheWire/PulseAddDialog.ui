@@ -7,20 +7,20 @@
     <x>0</x>
     <y>0</y>
     <width>720</width>
-    <height>449</height>
+    <height>513</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string/>
   </property>
-  <layout class="QGridLayout" name="PulseAddDialog_GL">
-   <property name="topMargin">
-    <number>0</number>
-   </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <property name="spacing">
     <number>6</number>
    </property>
-   <item row="0" column="0">
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <item>
     <widget class="QFrame" name="frame_from">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -52,7 +52,6 @@
         <property name="font">
          <font>
           <pointsize>12</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -118,7 +117,7 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item>
     <widget class="QFrame" name="frame_reply">
      <layout class="QVBoxLayout" name="frame_reply_VL">
       <property name="leftMargin">
@@ -232,18 +231,9 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item>
     <widget class="QFrame" name="frame_input">
-     <layout class="QVBoxLayout" name="frame_input_VL">
-      <property name="leftMargin">
-       <number>0</number>
-      </property>
-      <property name="topMargin">
-       <number>0</number>
-      </property>
-      <property name="rightMargin">
-       <number>0</number>
-      </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="QTextEdit" name="textEdit_Pulse">
         <property name="font">
@@ -262,7 +252,7 @@
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>100</height>
+          <height>80</height>
          </size>
         </property>
         <property name="frameShape">
@@ -271,29 +261,13 @@
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QGridLayout" name="frame_picture_GL">
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_image1">
-           <property name="minimumSize">
-            <size>
-             <width>80</width>
-             <height>80</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Drag and Drop Image</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
+        <layout class="QGridLayout" name="gridLayout">
          <item row="0" column="1">
           <widget class="QLabel" name="label_image2">
            <property name="minimumSize">
             <size>
-             <width>80</width>
-             <height>80</height>
+             <width>40</width>
+             <height>40</height>
             </size>
            </property>
            <property name="text">
@@ -308,8 +282,24 @@
           <widget class="QLabel" name="label_image3">
            <property name="minimumSize">
             <size>
-             <width>80</width>
-             <height>80</height>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Drag and Drop Image</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_image1">
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
             </size>
            </property>
            <property name="text">
@@ -324,8 +314,8 @@
           <widget class="QLabel" name="label_image4">
            <property name="minimumSize">
             <size>
-             <width>80</width>
-             <height>80</height>
+             <width>40</width>
+             <height>40</height>
             </size>
            </property>
            <property name="text">
@@ -340,15 +330,49 @@
        </widget>
       </item>
       <item>
-       <widget class="QFrame" name="frame_URL">
-        <layout class="QGridLayout" name="frame_URL_GL">
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_URL">
-           <property name="text">
-            <string>URL</string>
+       <widget class="QFrame" name="frame_PictureBrowse">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLineEdit" name="lineEdit_FilePath">
+           <property name="minimumSize">
+            <size>
+             <width>541</width>
+             <height>25</height>
+            </size>
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_Browse">
+           <property name="minimumSize">
+            <size>
+             <width>101</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Browse...</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QFrame" name="frame_URL">
+        <layout class="QGridLayout" name="frame_URL_GL">
          <item row="0" column="1">
           <widget class="QLineEdit" name="lineEdit_URL"/>
          </item>
@@ -356,13 +380,6 @@
           <widget class="QPushButton" name="pushButton_AddURL">
            <property name="text">
             <string>Add to Pulse</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_DisplayAs">
-           <property name="text">
-            <string>Display As</string>
            </property>
           </widget>
          </item>
@@ -376,13 +393,31 @@
            </property>
           </widget>
          </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_DisplayAs">
+           <property name="text">
+            <string>Display As</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_URL">
+           <property name="text">
+            <string>URL</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
      </layout>
+     <zorder>frame_URL</zorder>
+     <zorder>frame_picture</zorder>
+     <zorder>frame_PictureBrowse</zorder>
+     <zorder>textEdit_Pulse</zorder>
     </widget>
    </item>
-   <item row="3" column="0">
+   <item>
     <layout class="QHBoxLayout" name="butons_HL">
      <property name="leftMargin">
       <number>6</number>
@@ -421,7 +456,6 @@
        <property name="font">
         <font>
          <pointsize>12</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
