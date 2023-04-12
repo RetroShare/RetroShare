@@ -62,6 +62,7 @@ public:
 	virtual ~RsFeedReaderFeed() {}
 
 	virtual void clear();
+	virtual void serial_process(RsGenericSerializer::SerializeJob, RsGenericSerializer::SerializeContext&) {}
 
 	uint32_t                 feedId;
 	uint32_t                 parentId;
@@ -105,6 +106,7 @@ public:
 	virtual ~RsFeedReaderMsg() {}
 
 	virtual void clear();
+	virtual void serial_process(RsGenericSerializer::SerializeJob, RsGenericSerializer::SerializeContext&) {}
 	virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
 	std::string msgId;
