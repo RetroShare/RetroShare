@@ -84,8 +84,15 @@ FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, FeedReaderNotify *n
 	connect(ui->feedAddButton, SIGNAL(clicked()), this, SLOT(newFeed()));
 	connect(ui->feedProcessButton, SIGNAL(clicked()), this, SLOT(processFeed()));
 
+	connect(ui->feedTreeWidget, SIGNAL(feedReparent(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(feedTreeReparent(QTreeWidgetItem*,QTreeWidgetItem*)));
+
 	mFeedCompareRole = new RSTreeWidgetItemCompareRole;
 	mFeedCompareRole->setRole(COLUMN_FEED_NAME, ROLE_FEED_SORT);
+
+	/* enable drag and drop */
+	ui->feedTreeWidget->setAcceptDrops(true);
+	ui->feedTreeWidget->setDragEnabled(true);
+	ui->feedTreeWidget->setDragDropMode(QAbstractItemView::InternalMove);
 
 	/* initialize root item */
 	mRootItem = new QTreeWidgetItem(ui->feedTreeWidget);
@@ -395,6 +402,9 @@ void FeedReaderDialog::updateFeeds(uint32_t parentId, QTreeWidgetItem *parentIte
 					mOpenFeedIds->removeAt(index);
 				}
 			}
+		} else {
+			/* disable drop */
+			item->setFlags(item->flags() & ~Qt::ItemIsDropEnabled);
 		}
 	}
 
@@ -831,4 +841,31 @@ void FeedReaderDialog::processFeed()
 	/* empty feed id process all feeds */
 
 	mFeedReader->processFeed(feedId);
+}
+
+void FeedReaderDialog::feedTreeReparent(QTreeWidgetItem *item, QTreeWidgetItem *newParent)
+{
+	if (!item || ! newParent) {
+		return;
+	}
+
+	uint32_t feedId = item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toUInt();
+	uint32_t parentId = newParent->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toUInt();
+
+	if (feedId == 0) {
+		return;
+	}
+
+	RsFeedAddResult result = mFeedReader->setParent(feedId, parentId);
+	if (FeedReaderStringDefs::showError(this, result, tr("Move feed"), tr("Cannot move feed."))) {
+		return;
+	}
+
+	bool expanded = item->isExpanded();
+	item->parent()->removeChild(item);
+	newParent->addChild(item);
+	item->setExpanded(expanded);
+	newParent->setExpanded(true);
+
+	calculateFeedItems();
 }

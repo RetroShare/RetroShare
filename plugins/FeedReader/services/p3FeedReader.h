@@ -59,6 +59,7 @@ public:
 	virtual RsFeedAddResult setFolder(uint32_t feedId, const std::string &name);
 	virtual RsFeedAddResult addFeed(const FeedInfo &feedInfo, uint32_t &feedId);
 	virtual RsFeedAddResult setFeed(uint32_t feedId, const FeedInfo &feedInfo);
+	virtual RsFeedAddResult setParent(uint32_t feedId, uint32_t parentId);
 	virtual bool            removeFeed(uint32_t feedId);
 	virtual bool            addPreviewFeed(const FeedInfo &feedInfo, uint32_t &feedId);
 	virtual void            getFeedList(uint32_t parentId, std::list<FeedInfo> &feedInfos);

@@ -598,6 +598,62 @@ RsFeedAddResult p3FeedReader::setFeed(uint32_t feedId, const FeedInfo &feedInfo)
 	return RS_FEED_ADD_RESULT_SUCCESS;
 }
 
+RsFeedAddResult p3FeedReader::setParent(uint32_t feedId, uint32_t parentId)
+{
+	bool changed = false;
+
+	{
+		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
+
+#ifdef FEEDREADER_DEBUG
+		std::cerr << "p3FeedReader::setParent - set parent " << parentId << std::endl;
+#endif
+
+		std::map<uint32_t, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
+		if (feedIt == mFeeds.end()) {
+#ifdef FEEDREADER_DEBUG
+			std::cerr << "p3FeedReader::setParent - feed id " << feedId << " not found" << std::endl;
+#endif
+			return RS_FEED_ADD_RESULT_FEED_NOT_FOUND;
+		}
+
+		if (parentId) {
+			/* check parent id */
+			std::map<uint32_t, RsFeedReaderFeed*>::iterator parentIt = mFeeds.find(parentId);
+			if (parentIt == mFeeds.end()) {
+#ifdef FEEDREADER_DEBUG
+				std::cerr << "p3FeedReader::setParent - parent id " << parentId << " not found" << std::endl;
+#endif
+				return RS_FEED_ADD_RESULT_PARENT_NOT_FOUND;
+			}
+
+			if ((parentIt->second->flag & RS_FEED_FLAG_FOLDER) == 0) {
+#ifdef FEEDREADER_DEBUG
+				std::cerr << "p3FeedReader::setParent - parent " << parentIt->second->name << " is no folder" << std::endl;
+#endif
+				return RS_FEED_ADD_RESULT_PARENT_IS_NO_FOLDER;
+			}
+		}
+
+		RsFeedReaderFeed *fi = feedIt->second;
+
+		if (fi->parentId != parentId) {
+			fi->parentId = parentId;
+			changed = true;
+		}
+	}
+
+	if (changed) {
+		IndicateConfigChanged();
+
+		if (mNotify) {
+			mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
+		}
+	}
+
+	return RS_FEED_ADD_RESULT_SUCCESS;
+}
+
 void p3FeedReader::deleteAllMsgs_locked(RsFeedReaderFeed *fi)
 {
 	if (!fi) {

@@ -61,6 +61,7 @@ private slots:
 	void editFeed();
 	void activateFeed();
 	void processFeed();
+	void feedTreeReparent(QTreeWidgetItem *item, QTreeWidgetItem *newParent);
 
 	void messageTabCloseRequested(int index);
 	void messageTabChanged(int index);

@@ -194,7 +194,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+186"/>
+        <location line="+192"/>
         <location line="+148"/>
         <location line="+15"/>
         <source>Edit feed</source>
@@ -312,7 +312,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="+92"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="+99"/>
         <source>Message Folders</source>
         <translation type="unfinished"></translation>
     </message>
@@ -362,7 +362,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+195"/>
+        <location line="+198"/>
         <source>No name</source>
         <translation type="unfinished"></translation>
     </message>
@@ -416,6 +416,16 @@
     <message>
         <location line="+1"/>
         <source>Please enter a new name for the folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+61"/>
+        <source>Move feed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Cannot move feed.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -520,7 +530,7 @@
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="+113"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="+115"/>
         <source>Title</source>
         <translation type="unfinished"></translation>
     </message>
@@ -612,7 +622,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+374"/>
+        <location line="+385"/>
         <source>Hide</source>
         <translation type="unfinished"></translation>
     </message>
