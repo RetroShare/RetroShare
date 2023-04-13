@@ -748,7 +748,7 @@ void FeedReaderDialog::newFolder()
 
 	if (dialog.exec() == QDialog::Accepted && !dialog.textValue().isEmpty()) {
 		uint32_t feedId;
-		RsFeedAddResult result = mFeedReader->addFolder(currentFeedId(), dialog.textValue().toUtf8().constData(), feedId);
+		RsFeedResult result = mFeedReader->addFolder(currentFeedId(), dialog.textValue().toUtf8().constData(), feedId);
 		FeedReaderStringDefs::showError(this, result, tr("Create folder"), tr("Cannot create folder."));
 	}
 }
@@ -801,7 +801,7 @@ void FeedReaderDialog::editFeed()
 		dialog.setTextValue(item->data(COLUMN_FEED_DATA, ROLE_FEED_NAME).toString());
 
 		if (dialog.exec() == QDialog::Accepted && !dialog.textValue().isEmpty()) {
-			RsFeedAddResult result = mFeedReader->setFolder(feedId, dialog.textValue().toUtf8().constData());
+			RsFeedResult result = mFeedReader->setFolder(feedId, dialog.textValue().toUtf8().constData());
 			FeedReaderStringDefs::showError(this, result, tr("Create folder"), tr("Cannot create folder."));
 		}
 	} else {
@@ -856,7 +856,7 @@ void FeedReaderDialog::feedTreeReparent(QTreeWidgetItem *item, QTreeWidgetItem *
 		return;
 	}
 
-	RsFeedAddResult result = mFeedReader->setParent(feedId, parentId);
+	RsFeedResult result = mFeedReader->setParent(feedId, parentId);
 	if (FeedReaderStringDefs::showError(this, result, tr("Move feed"), tr("Cannot move feed."))) {
 		return;
 	}

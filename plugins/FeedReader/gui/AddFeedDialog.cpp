@@ -449,12 +449,12 @@ void AddFeedDialog::createFeed()
 
 	if (mFeedId == 0) {
 		/* add new feed */
-		RsFeedAddResult result = mFeedReader->addFeed(feedInfo, mFeedId);
+		RsFeedResult result = mFeedReader->addFeed(feedInfo, mFeedId);
 		if (FeedReaderStringDefs::showError(this, result, tr("Create feed"), tr("Cannot create feed."))) {
 			return;
 		}
 	} else {
-		RsFeedAddResult result = mFeedReader->setFeed(mFeedId, feedInfo);
+		RsFeedResult result = mFeedReader->setFeed(mFeedId, feedInfo);
 		if (FeedReaderStringDefs::showError(this, result, tr("Edit feed"), tr("Cannot change feed."))) {
 			return;
 		}

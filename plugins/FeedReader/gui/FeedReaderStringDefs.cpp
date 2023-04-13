@@ -23,27 +23,27 @@
 
 #include "FeedReaderStringDefs.h"
 
-bool FeedReaderStringDefs::showError(QWidget *parent, RsFeedAddResult result, const QString &title, const QString &text)
+bool FeedReaderStringDefs::showError(QWidget *parent, RsFeedResult result, const QString &title, const QString &text)
 {
 	QString error;
 
 	switch (result) {
-	case RS_FEED_ADD_RESULT_SUCCESS:
+	case RS_FEED_RESULT_SUCCESS:
 		/* no error */
 		return false;
-	case RS_FEED_ADD_RESULT_FEED_NOT_FOUND:
+	case RS_FEED_RESULT_FEED_NOT_FOUND:
 		error = QApplication::translate("FeedReaderStringDefs", "Feed not found.");
 		break;
-	case RS_FEED_ADD_RESULT_PARENT_NOT_FOUND:
+	case RS_FEED_RESULT_PARENT_NOT_FOUND:
 		error = QApplication::translate("FeedReaderStringDefs", "Parent not found.");
 		break;
-	case RS_FEED_ADD_RESULT_PARENT_IS_NO_FOLDER:
+	case RS_FEED_RESULT_PARENT_IS_NO_FOLDER:
 		error = QApplication::translate("FeedReaderStringDefs", "Parent is no folder.");
 		break;
-	case RS_FEED_ADD_RESULT_FEED_IS_FOLDER:
+	case RS_FEED_RESULT_FEED_IS_FOLDER:
 		error = QApplication::translate("FeedReaderStringDefs", "Feed is a folder.");
 		break;
-	case RS_FEED_ADD_RESULT_FEED_IS_NO_FOLDER:
+	case RS_FEED_RESULT_FEED_IS_NO_FOLDER:
 		error = QApplication::translate("FeedReaderStringDefs", "Feed is no folder.");
 		break;
 	default:
