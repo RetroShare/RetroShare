@@ -287,14 +287,13 @@ void BaseBoardsCommentsItem::readToggled(bool checked)
 		return;
 	}
 
+    setReadStatus(false, checked);	// Can't call this inside an async call since the widget may be destroyed afterwards!
+                                    // So we do it right away.
+
     RsThread::async( [this,checked]() {
 		RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
         
         rsPosted->setCommentReadStatus(msgPair, !checked);
-        
-        RsQThreadUtils::postToObject( [this,checked]() {
-			setReadStatus(false, checked);
-        } );
     });
 }
 
