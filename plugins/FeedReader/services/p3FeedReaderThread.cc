@@ -204,8 +204,14 @@ static std::string calculateLink(const std::string &baseLink, const std::string 
 	/* calculate link of base link */
 	std::string resultLink = baseLink;
 
+	int hostStart = 0;
 	/* link should begin with "http://" or "https://" */
-	if (resultLink.substr(0, 7) != "http://" || resultLink.substr(0, 8) != "https://") {
+	if (resultLink.substr(0, 7) == "http://") {
+		hostStart = 7;
+	} else if (resultLink.substr(0, 8) == "https://") {
+		hostStart = 8;
+	} else {
+		hostStart = 7;
 		resultLink.insert(0, "http://");
 	}
 
@@ -216,7 +222,7 @@ static std::string calculateLink(const std::string &baseLink, const std::string 
 
 	if (*link.begin() == '/') {
 		/* link begins with "/" */
-		size_t found = resultLink.find('/', 7);
+		size_t found = resultLink.find('/', hostStart);
 		if (found != std::string::npos) {
 			resultLink.erase(found);
 		}
@@ -245,7 +251,7 @@ static bool getFavicon(CURLWrapper &CURL, const std::string &url, std::string &i
 	if (code == CURLE_OK) {
 		if (CURL.responseCode() == 200) {
 			std::string contentType = CURL.contentType();
-			if (isContentType(contentType, "image/x-icon") ||
+			if (isContentType(contentType, "image/") ||
 				isContentType(contentType, "application/octet-stream") ||
 				isContentType(contentType, "text/plain")) {
 				if (!vicon.empty()) {
