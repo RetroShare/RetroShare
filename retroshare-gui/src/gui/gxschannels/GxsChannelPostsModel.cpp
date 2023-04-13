@@ -27,6 +27,8 @@
 #include "retroshare/rsgxschannels.h"
 #include "retroshare/rsexpr.h"
 
+#include "gui/MainWindow.h"
+#include "gui/mainpagestack.h"
 #include "gui/common/FilesDefs.h"
 #include "util/qtthreadsutils.h"
 #include "util/HandleRichText.h"
@@ -453,7 +455,6 @@ const RsGxsGroupId& RsGxsChannelPostsModel::currentGroupId() const
 {
 	return mChannelGroup.mMeta.mGroupId;
 }
-
 void RsGxsChannelPostsModel::updateChannel(const RsGxsGroupId& channel_group_id)
 {
     if(channel_group_id.isNull())
@@ -586,7 +587,9 @@ void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
 	if(group_id.isNull())
 		return;
 
-	RsThread::async([this, group_id]()
+    MainWindow::getPage(MainWindow::Channels)->setCursor(Qt::WaitCursor) ; // Maybe we should pass that widget when calling update_posts
+
+    RsThread::async([this, group_id]()
 	{
         // 1 - get message data from p3GxsChannels
 
@@ -641,7 +644,9 @@ void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
             delete comments;
             delete votes;
 
-		}, this );
+            MainWindow::getPage(MainWindow::Channels)->setCursor(Qt::ArrowCursor) ;
+
+        }, this );
 
     });
 }
