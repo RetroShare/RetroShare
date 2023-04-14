@@ -24,6 +24,7 @@
 #include "PulseReply.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
+#include "util/misc.h"
 
 #include "PulseAddDialog.h"
 
@@ -42,8 +43,14 @@ PulseAddDialog::PulseAddDialog(QWidget *parent)
 	connect(ui.textEdit_Pulse, SIGNAL( textChanged( void ) ), this, SLOT( pulseTextChanged( void ) ) );
 	connect(ui.pushButton_picture, SIGNAL(clicked()), this, SLOT( toggle()));
 
+    // this connection is from browse push button to the slot function onBrowseButtonClicked()
+    connect(ui.pushButton_Browse, SIGNAL(clicked()), this, SLOT( onBrowseButtonClicked()));
+
 	ui.pushButton_picture->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/photo.png")));
 	ui.frame_picture->hide();
+
+    // initially hiding the browse button as the attach image button is not pressed
+    ui.frame_PictureBrowse->hide();
 
 	setAcceptDrops(true);
 }
@@ -153,8 +160,12 @@ void PulseAddDialog::cleanup()
 	ui.label_image4->clear();
 	ui.label_image4->setText(tr("Drag and Drop Image"));
 
-	// Hide Drag & Drop Frame
-	ui.frame_picture->hide();
+    ui.lineEdit_FilePath->clear();
+
+    // Hide Drag & Drop Frame and the browse frame
+    ui.frame_picture->hide();
+    ui.frame_PictureBrowse->hide();
+
 	ui.pushButton_picture->setChecked(false);
 }
 
@@ -510,12 +521,30 @@ void PulseAddDialog::toggle()
 {
 	if (ui.pushButton_picture->isChecked())
 	{
+        // Show the input methods (drag and drop field and the browse button)
 		ui.frame_picture->show();
+        ui.frame_PictureBrowse->show();
+
 		ui.pushButton_picture->setToolTip(tr("Hide Pictures"));
 	}
 	else
 	{
+        // Hide the input methods (drag and drop field and the browse button)
 		ui.frame_picture->hide();
+        ui.frame_PictureBrowse->hide();
+
 		ui.pushButton_picture->setToolTip(tr("Add Pictures"));
 	}
 }
+
+// Function to get the file dialog for the browse button
+void PulseAddDialog::onBrowseButtonClicked()
+{
+    QString filePath;
+    misc::getOpenFileName(this, RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg *.gif *.webp )", filePath);
+    if (!filePath.isEmpty()) {
+        ui.lineEdit_FilePath->setText(filePath);
+        addImage(filePath);
+    }
+}
+
