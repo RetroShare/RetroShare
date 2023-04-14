@@ -20,11 +20,11 @@
 
 #include <iostream>
 #include <QtGui>
+#include <QFileDialog>
 
 #include "PulseReply.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
-#include "util/misc.h"
 
 #include "PulseAddDialog.h"
 
@@ -540,8 +540,7 @@ void PulseAddDialog::toggle()
 // Function to get the file dialog for the browse button
 void PulseAddDialog::onBrowseButtonClicked()
 {
-    QString filePath;
-    misc::getOpenFileName(this, RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg *.gif *.webp )", filePath);
+    QString filePath = QFileDialog::getOpenFileName(this, tr("Select image file"), QString(), tr("Image files (*.png *.jpg *.jpeg *.bmp *.gif)"));
     if (!filePath.isEmpty()) {
         ui.lineEdit_FilePath->setText(filePath);
         addImage(filePath);
