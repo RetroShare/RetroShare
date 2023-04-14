@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include <QBuffer>
+#include <QClipboard>
 #include <QMessageBox>
 #include <QByteArray>
 #include <QStringList>
@@ -59,6 +60,7 @@ PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGrou
 
 	connect(ui->postButton, SIGNAL(clicked()), this, SLOT(createPost()));
 	connect(ui->addPicButton, SIGNAL(clicked() ), this , SLOT(addPicture()));
+	connect(ui->pasteButton, SIGNAL(clicked() ), this , SLOT(pastePicture()));
 	connect(ui->RichTextEditWidget, SIGNAL(textSizeOk(bool)),ui->postButton, SLOT(setEnabled(bool)));
 
 	ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/postedlinks.png"));
@@ -254,6 +256,35 @@ void PostedCreatePostDialog::addPicture()
 	}
 	
 
+}
+
+void PostedCreatePostDialog::pastePicture()
+{
+	imagefilename = "";
+	imagebytes.clear();
+	QPixmap empty;
+	ui->imageLabel->setPixmap(empty);
+
+	// paste picture from clipboard
+	const QClipboard *clipboard = QApplication::clipboard();
+	const QMimeData *mimeData = clipboard->mimeData();
+
+	QImage image;
+	if (mimeData->hasImage()) {
+		image = (qvariant_cast<QImage>(mimeData->imageData()));
+
+		QImage opt;
+		if(ImageUtil::optimizeSizeBytes(imagebytes, image, opt,"JPG", 640*480, MAXMESSAGESIZE - 2000)) { //Leave space for other stuff
+			ui->imageLabel->setPixmap(QPixmap::fromImage(opt));
+			ui->stackedWidgetPicture->setCurrentIndex(IMG_PICTURE);
+			ui->removeButton->show();
+		} 
+	} else {
+		QMessageBox::information(nullptr,tr("No clipboard image found."),tr("There is no image data in the clipboard to paste"));
+		imagefilename = "";
+		imagebytes.clear();
+		return;
+	}
 }
 
 int PostedCreatePostDialog::viewMode()

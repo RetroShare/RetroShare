@@ -50,6 +50,7 @@ private:
 private slots:
 	void createPost();
 	void addPicture();
+	void pastePicture();
 	void on_removeButton_clicked();
 	void fileHashingFinished(QList<HashedFile> hashedFiles);
 	void reject() override; //QDialog
