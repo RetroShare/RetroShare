@@ -96,13 +96,12 @@ void MessageUserNotify::handleEvent_main_thread(std::shared_ptr<const RsEvent> e
 
 	switch (fe->mMailStatusEventCode) {
 	case RsMailStatusEventCode::NEW_MESSAGE:
-		if (Settings->getNotifyFlags() & RS_POPUP_MSG)
-			for (it = fe->mChangedMsgIds.begin(); it != fe->mChangedMsgIds.end(); ++it) {
-				MessageInfo msgInfo;
-				if (rsMail->getMessage(*it, msgInfo)) {
-						NotifyQt::getInstance()->addToaster(RS_POPUP_MSG, msgInfo.msgId.c_str(), msgInfo.title.c_str(), msgInfo.msg.c_str() );
-				}
+		for (it = fe->mChangedMsgIds.begin(); it != fe->mChangedMsgIds.end(); ++it) {
+			MessageInfo msgInfo;
+			if (rsMail->getMessage(*it, msgInfo)) {
+					NotifyQt::getInstance()->addToaster(RS_POPUP_MSG, msgInfo.msgId.c_str(), msgInfo.title.c_str(), msgInfo.msg.c_str() );
 			}
+		}
 		break;
 	case RsMailStatusEventCode::MESSAGE_CHANGED:
 	case RsMailStatusEventCode::MESSAGE_REMOVED:
