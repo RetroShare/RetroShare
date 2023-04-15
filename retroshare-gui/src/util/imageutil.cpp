@@ -25,6 +25,8 @@
 #include <QApplication>
 #include <QByteArray>
 #include <QImage>
+#include <QClipboard>
+#include <QMimeData>
 #include <QMessageBox>
 #include <QString>
 #include <QTextCursor>
@@ -65,6 +67,34 @@ void ImageUtil::extractImage(QWidget *window, QTextCursor cursor, QString file)
 	if(!success)
 	{
 		QMessageBox::warning(window, QApplication::translate("ImageUtil", "Save image"), QApplication::translate("ImageUtil", "Not an image"));
+	}
+}
+
+void ImageUtil::copyImage(QWidget *window, QTextCursor cursor)
+{
+	cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, 1);
+	cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 2);
+	QString imagestr = cursor.selection().toHtml();
+	bool success = false;
+	int start = imagestr.indexOf("base64,") + 7;
+	int stop = imagestr.indexOf("\"", start);
+	int length = stop - start;
+	if((start >= 0) && (length > 0))
+	{
+		QByteArray ba = QByteArray::fromBase64(imagestr.mid(start, length).toLatin1());
+		QImage image = QImage::fromData(ba);
+		if(!image.isNull())
+		{
+			success = true;
+			QClipboard *clipboard = QApplication::clipboard();
+			QMimeData *data = new QMimeData;
+			data->setImageData(image);
+			clipboard->setMimeData(data, QClipboard::Clipboard);
+		}
+	}
+	if(!success)
+	{
+		QMessageBox::warning(window, QApplication::translate("ImageUtil", "copy image"), QApplication::translate("ImageUtil", "Not an image"));
 	}
 }
 
