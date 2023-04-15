@@ -108,7 +108,6 @@ protected:
 private slots:
 	/** Create the context popup menu and it's submenus */
 	void threadListCustomPopupMenu(QPoint point);
-	void contextMenuTextBrowser(QPoint point);
 	void headerContextMenuRequested(const QPoint& pos);
     void showForumInfo();
 
@@ -133,8 +132,6 @@ private slots:
 
     // This method is used to perform an asynchroneous action on the message data. Any of the methods above can be used as parameter.
 	void async_msg_action(const MsgMethod& method);
-
-	void saveImage();
 
 	void markMsgAsRead();
 	void markMsgAsReadChildren();

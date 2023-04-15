@@ -49,6 +49,8 @@ public:
 	bool checkImage(QPoint pos) {QString imageStr; return checkImage(pos, imageStr); }
 	QString anchorForPosition(const QPoint &pos) const;
 
+	// Add QAction to context menu (action won't be deleted)
+	void addContextMenuAction(QAction *action);
 
 	void activateLinkClick(bool active);
 
@@ -58,8 +60,10 @@ public:
 	QVariant textColorQuotes() const { return highlighter->textColorQuotes();}
 	bool getShowImages() const { return mShowImages; }
 
-	QMenu *createStandardContextMenu();
-	QMenu *createStandardContextMenu(const QPoint &position);
+	QMenu *createStandardContextMenuFromPoint(const QPoint &widgetPos);
+
+Q_SIGNALS:
+	void calculateContextMenuActions();
 
 public slots:
 	void showImages();
@@ -70,9 +74,15 @@ private slots:
 	void linkClicked(const QUrl &url);
 	void destroyImageBlockWidget();
 	void viewSource();
+	void saveImage();
 
 protected:
 	void paintEvent(QPaintEvent *event);
+	virtual void contextMenuEvent(QContextMenuEvent *event);
+
+private:
+	// Hide method from QTextBrowser
+	using QTextBrowser::createStandardContextMenu;
 
 private:
 	QString mPlaceholderText;
@@ -80,6 +90,7 @@ private:
 	RSImageBlockWidget *mImageBlockWidget;
 	bool mLinkClickActive;
 	RsSyntaxHighlighter *highlighter;
+	QList<QAction*> mContextMenuActions;
 #ifdef RSTEXTBROWSER_CHECKIMAGE_DEBUG
 	QRect mCursorRectStart;
 	QRect mCursorRectLeft;
