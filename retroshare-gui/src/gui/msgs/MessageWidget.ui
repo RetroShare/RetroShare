@@ -655,6 +655,9 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="contextMenuPolicy">
+           <enum>Qt::CustomContextMenu</enum>
+          </property>
           <property name="openLinks">
            <bool>false</bool>
           </property>
@@ -843,6 +846,16 @@
   <action name="actionIconOnly">
    <property name="text">
     <string>Buttons Icon only</string>
+   </property>
+  </action>
+  <action name="actionSaveImage">
+   <property name="text">
+    <string>Save image</string>
+   </property>
+  </action>
+  <action name="actionCopyImage">
+   <property name="text">
+    <string>Copy image</string>
    </property>
   </action>
  </widget>

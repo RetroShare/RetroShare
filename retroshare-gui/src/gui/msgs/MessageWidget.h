@@ -88,6 +88,10 @@ private slots:
 	void viewSource();
 	void checkLength();
 
+	void contextMenuTextBrowser(QPoint point);
+	void saveImage();
+	void copyImage();
+
 private:
 	void clearTagLabels();
 	void showTagLabels();

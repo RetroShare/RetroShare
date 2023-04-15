@@ -30,6 +30,8 @@
 #include <QDesktopServices>
 #include <QPlainTextEdit>
 #include <QDialog>
+#include <QClipboard>
+#include <QScrollBar>
 
 #include "gui/notifyqt.h"
 #include "gui/RetroShareLink.h"
@@ -47,6 +49,7 @@
 #include "util/DateTime.h"
 #include "util/QtVersion.h"
 #include "util/qtthreadsutils.h"
+#include "util/imageutil.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsfiles.h>
@@ -141,6 +144,7 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	ui.actionIconOnly->setData(Qt::ToolButtonIconOnly);
 
 	connect(ui.msgList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(msgfilelistWidgetCostumPopupMenu(QPoint)));
+	connect(ui.msgText, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuTextBrowser(QPoint)));
 	connect(ui.expandFilesButton, SIGNAL(clicked()), this, SLOT(togglefileview()));
 	connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(getallrecommended()));
 	connect(ui.msgText, SIGNAL(anchorClicked(QUrl)), this, SLOT(anchorClicked(QUrl)));
@@ -157,7 +161,9 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	connect(ui.actionPrintPreview, SIGNAL(triggered()), this, SLOT(printPreview()));
 	connect(ui.actionIconOnly, SIGNAL(triggered()), this, SLOT(buttonStyle()));
 	connect(ui.actionTextBesideIcon, SIGNAL(triggered()), this, SLOT(buttonStyle()));
-	
+	connect(ui.actionSaveImage, SIGNAL(triggered()), this, SLOT(saveImage()));
+	connect(ui.actionCopyImage, SIGNAL(triggered()), this, SLOT(copyImage()));
+
 	QAction *viewsource = new QAction(tr("View source"), this);
 	viewsource->setShortcut(QKeySequence("CTRL+O"));
 	connect(viewsource, SIGNAL(triggered()), this, SLOT(viewSource()));
@@ -963,4 +969,43 @@ void MessageWidget::expandTo()
 		ui.trans_ToText->setMaximumHeight(ui.trans_ToText->fontMetrics().lineSpacing()*1.5);
 		ui.expandButton->setToolTip(tr("Show more"));
 	}
+}
+
+void MessageWidget::contextMenuTextBrowser(QPoint point)
+{
+	QMatrix matrix;
+	matrix.translate(ui.msgText->horizontalScrollBar()->value(), ui.msgText->verticalScrollBar()->value());
+
+	QMenu *contextMnu = ui.msgText->createStandardContextMenu(matrix.map(point));
+
+	contextMnu->addSeparator();
+
+	if(ui.msgText->checkImage(point))
+	{
+		ui.actionSaveImage->setData(point);
+		contextMnu->addAction(ui.actionSaveImage);
+	}
+
+	if(ui.msgText->checkImage(point))
+	{
+		ui.actionCopyImage->setData(point);
+		contextMnu->addAction(ui.actionCopyImage);
+	}
+
+	contextMnu->exec(ui.msgText->viewport()->mapToGlobal(point));
+	delete(contextMnu);
+}
+
+void MessageWidget::saveImage()
+{
+	QPoint point = ui.actionSaveImage->data().toPoint();
+	QTextCursor cursor = ui.msgText->cursorForPosition(point);
+	ImageUtil::extractImage(window(), cursor);
+}
+
+void MessageWidget::copyImage()
+{
+	QPoint point = ui.actionCopyImage->data().toPoint();
+	QTextCursor cursor = ui.msgText->cursorForPosition(point);
+	ImageUtil::copyImage(window(), cursor);
 }
