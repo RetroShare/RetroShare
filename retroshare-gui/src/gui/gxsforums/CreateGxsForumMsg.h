@@ -21,10 +21,15 @@
 #ifndef _CREATE_GXSFORUM_MSG_DIALOG_H
 #define _CREATE_GXSFORUM_MSG_DIALOG_H
 
-#include "ui_CreateGxsForumMsg.h"
+#include <QDialog>
 
 #include <retroshare/rsgxsforums.h>
 #include <retroshare/rsgxscircles.h>
+#include "gui/common/HashBox.h"
+
+namespace Ui {
+	class CreateGxsForumMsg;
+}
 
 class UIStateHelper;
 
@@ -80,7 +85,7 @@ private:
 	UIStateHelper *mStateHelper;
 
 	/** Qt Designer generated object */
-	Ui::CreateGxsForumMsg ui;
+	Ui::CreateGxsForumMsg *ui;
 };
 
 #endif
