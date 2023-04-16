@@ -330,3 +330,18 @@ void PostedCreatePostDialog::reject()
 
     QDialog::reject();
 }
+
+void PostedCreatePostDialog::setTitle(const QString& title)
+{
+	ui->titleEdit->setText(title);
+}
+
+void PostedCreatePostDialog::setNotes(const QString& notes)
+{
+	ui->RichTextEditWidget->setText(notes);
+}
+
+void PostedCreatePostDialog::setLink(const QString& link)
+{
+	ui->linkEdit->setText(link);
+}

@@ -41,6 +41,10 @@ public:
     explicit PostedCreatePostDialog(RsPosted* posted, const RsGxsGroupId& grpId, const RsGxsId& default_author=RsGxsId(),QWidget *parent = 0);
 	~PostedCreatePostDialog();
 
+	void setTitle(const QString& title);
+	void setNotes(const QString& notes);
+	void setLink(const QString& link);
+
 private:
 	QString imagefilename;
 	QByteArray imagebytes;
