@@ -2532,3 +2532,85 @@ bool p3FeedReader::waitForToken(RsGxsIfaceHelper *interface, uint32_t token)
 
 	return false;
 }
+
+bool p3FeedReader::getForumGroups(std::vector<RsGxsForumGroup> &groups, bool onlyOwn)
+{
+	if (!mForums) {
+		std::cerr << "p3FeedReader::getForumGroups - can't get groups, member mForums is not set" << std::endl;
+		return false;
+	}
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+	uint32_t token;
+	if (!mForums->requestGroupInfo(token, opts)) {
+		std::cerr << "p3FeedReader::getForumGroups - can't get group list" << std::endl;
+		return false;
+	}
+
+	if (!waitForToken(mForums, token)) {
+		std::cerr << "p3FeedReader::getForumGroups - waitForToken for list failed" << std::endl;
+		return false;
+	}
+
+	if (!mForums->getGroupData(token, groups)) {
+		std::cerr << "p3FeedReader::getForumGroups - getGroupData failed" << std::endl;
+		return false;
+	}
+
+	if (onlyOwn) {
+		// filter groups
+		for (std::vector<RsGxsForumGroup>::iterator it = groups.begin(); it != groups.end(); ) {
+			const RsGxsForumGroup &group = *it;
+			if (IS_GROUP_PUBLISHER(group.mMeta.mSubscribeFlags) && IS_GROUP_ADMIN(group.mMeta.mSubscribeFlags)) {
+				++it;
+			} else {
+				it = groups.erase(it);
+			}
+		}
+	}
+
+	return true;
+}
+
+bool p3FeedReader::getPostedGroups(std::vector<RsPostedGroup> &groups, bool onlyOwn)
+{
+	if (!mPosted) {
+		std::cerr << "p3FeedReader::getPostedGroups - can't get groups, member mPosted is not set" << std::endl;
+		return false;
+	}
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+	uint32_t token;
+	if (!mPosted->requestGroupInfo(token, opts)) {
+		std::cerr << "p3FeedReader::getPostedGroups - can't get group list" << std::endl;
+		return false;
+	}
+
+	if (!waitForToken(mPosted, token)) {
+		std::cerr << "p3FeedReader::getPostedGroups - waitForToken for list failed" << std::endl;
+		return false;
+	}
+
+	if (!mPosted->getGroupData(token, groups)) {
+		std::cerr << "p3FeedReader::getForumGroups - getGroupData failed" << std::endl;
+		return false;
+	}
+
+	if (onlyOwn) {
+		// filter groups
+		for (std::vector<RsPostedGroup>::iterator it = groups.begin(); it != groups.end(); ) {
+			const RsPostedGroup &group = *it;
+			if (IS_GROUP_PUBLISHER(group.mMeta.mSubscribeFlags) && IS_GROUP_ADMIN(group.mMeta.mSubscribeFlags)) {
+				++it;
+			} else {
+				it = groups.erase(it);
+			}
+		}
+	}
+
+	return true;
+}

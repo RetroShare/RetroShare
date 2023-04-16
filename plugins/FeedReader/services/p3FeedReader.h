@@ -75,6 +75,11 @@ public:
 	virtual bool         retransformMsg(uint32_t feedId, const std::string &msgId);
 	virtual bool         clearMessageCache(uint32_t feedId);
 
+	virtual RsGxsForums* forums() { return mForums; }
+	virtual RsPosted*    posted() { return mPosted; }
+	virtual bool         getForumGroups(std::vector<RsGxsForumGroup> &groups, bool onlyOwn);
+	virtual bool         getPostedGroups(std::vector<RsPostedGroup> &groups, bool onlyOwn);
+
 	virtual RsFeedReaderErrorState processXPath(const std::list<std::string> &xpathsToUse, const std::list<std::string> &xpathsToRemove, std::string &description, std::string &errorString);
 	virtual RsFeedReaderErrorState processXslt(const std::string &xslt, std::string &description, std::string &errorString);
 

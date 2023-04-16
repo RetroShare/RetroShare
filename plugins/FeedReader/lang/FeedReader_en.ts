@@ -194,8 +194,8 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+192"/>
-        <location line="+148"/>
+        <location line="+206"/>
+        <location line="+150"/>
         <location line="+15"/>
         <source>Edit feed</source>
         <translation type="unfinished"></translation>
@@ -530,7 +530,7 @@
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="+115"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="+117"/>
         <source>Title</source>
         <translation type="unfinished"></translation>
     </message>
@@ -617,12 +617,22 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location line="+7"/>
+        <source>Add to forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+5"/>
+        <source>Add to board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Retransform</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+385"/>
+        <location line="+374"/>
         <source>Hide</source>
         <translation type="unfinished"></translation>
     </message>

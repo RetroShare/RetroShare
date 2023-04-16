@@ -36,8 +36,12 @@
 #include "gui/settings/rsharesettings.h"
 #include "util/HandleRichText.h"
 #include "util/QtVersion.h"
+#include "gui/Posted/PostedCreatePostDialog.h"
+#include "gui/gxsforums/CreateGxsForumMsg.h"
 
 #include "retroshare/rsiface.h"
+#include "retroshare/rsgxsforums.h"
+#include "retroshare/rsposted.h"
 
 #define COLUMN_MSG_COUNT    4
 #define COLUMN_MSG_TITLE    0
@@ -349,6 +353,20 @@ void FeedReaderMessageWidget::msgTreeCustomPopupMenu(QPoint /*point*/)
 
 	action = contextMnu.addAction(QIcon(""), tr("Remove"), this, SLOT(removeMsg()));
 	action->setEnabled(!selectedItems.empty());
+
+	if (selectedItems.size() == 1 && (mFeedReader->forums() || mFeedReader->posted())) {
+		contextMnu.addSeparator();
+
+		if (mFeedReader->forums()) {
+			QMenu *menu = contextMnu.addMenu(tr("Add to forum"));
+			connect(menu, SIGNAL(aboutToShow()), this, SLOT(fillForumMenu()));
+		}
+
+		if (mFeedReader->posted()) {
+			QMenu *menu = contextMnu.addMenu(tr("Add to board"));
+			connect(menu, SIGNAL(aboutToShow()), this, SLOT(fillPostedMenu()));
+		}
+	}
 
 	contextMnu.addSeparator();
 
@@ -849,4 +867,105 @@ void FeedReaderMessageWidget::openLinkMsg()
 	}
 
 	QDesktopServices::openUrl(QUrl(link));
+}
+
+void FeedReaderMessageWidget::fillForumMenu()
+{
+	QMenu *menu = dynamic_cast<QMenu*>(sender()) ;
+	if (!menu) {
+		return;
+	}
+
+	disconnect(menu, SIGNAL(aboutToShow()), this, SLOT(fillForumMenu()));
+
+	std::vector<RsGxsForumGroup> groups;
+	if (mFeedReader->getForumGroups(groups, true)) {
+		for (std::vector<RsGxsForumGroup>::iterator it = groups.begin(); it != groups.end(); ++it) {
+			const RsGxsForumGroup &group = *it;
+			QAction *action = menu->addAction(QString::fromUtf8(group.mMeta.mGroupName.c_str()), this, SLOT(addToForum()));
+			action->setData(QString::fromUtf8(group.mMeta.mGroupId.toStdString().c_str()));
+		}
+	}
+}
+
+void FeedReaderMessageWidget::fillPostedMenu()
+{
+	QMenu *menu = dynamic_cast<QMenu*>(sender()) ;
+	if (!menu) {
+		return;
+	}
+
+	disconnect(menu, SIGNAL(aboutToShow()), this, SLOT(fillPostedMenu()));
+
+	std::vector<RsPostedGroup> groups;
+	if (mFeedReader->getPostedGroups(groups, true)) {
+		for (std::vector<RsPostedGroup>::iterator it = groups.begin(); it != groups.end(); ++it) {
+			const RsPostedGroup &group = *it;
+			QAction *action = menu->addAction(QString::fromUtf8(group.mMeta.mGroupName.c_str()), this, SLOT(addToPosted()));
+			action->setData(QString::fromUtf8(group.mMeta.mGroupId.toStdString().c_str()));
+		}
+	}
+}
+
+void FeedReaderMessageWidget::addToForum()
+{
+	QAction *action = dynamic_cast<QAction*>(sender()) ;
+	if (!action) {
+		return;
+	}
+
+	QString id = action->data().toString();
+	if (id.isEmpty()) {
+		return;
+	}
+
+	QList<QTreeWidgetItem*> selectedItems = ui->msgTreeWidget->selectedItems();
+	if (selectedItems.size() != 1) {
+		return;
+	}
+
+	std::string msgId = selectedItems[0]->data(COLUMN_MSG_DATA, ROLE_MSG_ID).toString().toStdString();
+	FeedMsgInfo msgInfo;
+	if (!mFeedReader->getMsgInfo(mFeedId, msgId, msgInfo)) {
+		return;
+	}
+
+	RsGxsGroupId forumId(id.toStdString());
+
+	CreateGxsForumMsg *msgDialog = new CreateGxsForumMsg(forumId, RsGxsMessageId(), RsGxsMessageId(), RsGxsId()) ;
+	msgDialog->setSubject(QString::fromUtf8(msgInfo.title.c_str()));
+	msgDialog->insertPastedText(QString::fromUtf8(msgInfo.description.c_str()));
+	msgDialog->show();
+}
+
+void FeedReaderMessageWidget::addToPosted()
+{
+	QAction *action = dynamic_cast<QAction*>(sender()) ;
+	if (!action) {
+		return;
+	}
+
+	QString id = action->data().toString();
+	if (id.isEmpty()) {
+		return;
+	}
+
+	QList<QTreeWidgetItem*> selectedItems = ui->msgTreeWidget->selectedItems();
+	if (selectedItems.size() != 1) {
+		return;
+	}
+
+	std::string msgId = selectedItems[0]->data(COLUMN_MSG_DATA, ROLE_MSG_ID).toString().toStdString();
+	FeedMsgInfo msgInfo;
+	if (!mFeedReader->getMsgInfo(mFeedId, msgId, msgInfo)) {
+		return;
+	}
+
+	RsGxsGroupId postedId(id.toStdString());
+
+	PostedCreatePostDialog *msgDialog = new PostedCreatePostDialog(mFeedReader->posted(), postedId);
+	msgDialog->setTitle(QString::fromUtf8(msgInfo.title.c_str()));
+	msgDialog->setNotes(QString::fromUtf8(msgInfo.description.c_str()));
+	msgDialog->setLink(QString::fromUtf8(msgInfo.link.c_str()));
+	msgDialog->show();
 }

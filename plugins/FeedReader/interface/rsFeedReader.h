@@ -25,8 +25,13 @@
 #include <inttypes.h>
 #include <string>
 #include <list>
+#include <vector>
 
 class RsFeedReader;
+class RsGxsForums;
+class RsPosted;
+class RsGxsForumGroup;
+class RsPostedGroup;
 extern RsFeedReader *rsFeedReader;
 
 enum RsFeedReaderErrorState {
@@ -231,6 +236,11 @@ public:
 	virtual bool         setMessageRead(uint32_t feedId, const std::string &msgId, bool read) = 0;
 	virtual bool         retransformMsg(uint32_t feedId, const std::string &msgId) = 0;
 	virtual bool         clearMessageCache(uint32_t feedId) = 0;
+
+	virtual RsGxsForums* forums() = 0;
+	virtual RsPosted*    posted() = 0;
+	virtual bool         getForumGroups(std::vector<RsGxsForumGroup> &groups, bool onlyOwn) = 0;
+	virtual bool         getPostedGroups(std::vector<RsPostedGroup> &groups, bool onlyOwn) = 0;
 
 	virtual RsFeedReaderErrorState processXPath(const std::list<std::string> &xpathsToUse, const std::list<std::string> &xpathsToRemove, std::string &description, std::string &errorString) = 0;
 	virtual RsFeedReaderErrorState processXslt(const std::string &xslt, std::string &description, std::string &errorString) = 0;
