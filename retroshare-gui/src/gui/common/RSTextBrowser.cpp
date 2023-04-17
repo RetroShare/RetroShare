@@ -356,6 +356,11 @@ QMenu *RSTextBrowser::createStandardContextMenuFromPoint(const QPoint &widgetPos
 		a->setData(widgetPos);
 	}
 
+	if (checkImage(widgetPos)) {
+		a = menu->addAction( tr("Copy image"), this, SLOT(copyImage()));
+		a->setData(widgetPos);
+	}
+
 	return menu;
 }
 
@@ -388,4 +393,16 @@ void RSTextBrowser::saveImage()
 	QPoint point = action->data().toPoint();
 	QTextCursor cursor = cursorForPosition(point);
 	ImageUtil::extractImage(window(), cursor);
+}
+
+void RSTextBrowser::copyImage()
+{
+	QAction *action = dynamic_cast<QAction*>(sender()) ;
+	if (!action) {
+		return;
+	}
+
+	QPoint point = action->data().toPoint();
+	QTextCursor cursor = cursorForPosition(point);
+	ImageUtil::copyImage(window(), cursor);
 }
