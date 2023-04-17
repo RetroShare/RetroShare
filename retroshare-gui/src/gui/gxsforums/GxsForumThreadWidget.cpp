@@ -276,7 +276,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
     connect(ui->versions_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(changedVersion()));
     connect(ui->threadTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(threadListCustomPopupMenu(QPoint)));
-    connect(ui->postText, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuTextBrowser(QPoint)));
     connect(ui->forumName, SIGNAL(clicked(QPoint)), this, SLOT(showForumInfo()));
 
     ui->subscribeToolButton->hide() ;
@@ -302,8 +301,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
     connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
     connect(ui->filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
-
-    connect(ui->actionSave_image, SIGNAL(triggered()), this, SLOT(saveImage()));
 
     connect(ui->threadedView_TB, SIGNAL(toggled(bool)), this, SLOT(toggleThreadedView(bool)));
     connect(ui->flatView_TB, SIGNAL(toggled(bool)), this, SLOT(toggleFlatView(bool)));
@@ -791,25 +788,6 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
     }
 
     contextMnu.exec(QCursor::pos());
-}
-
-void GxsForumThreadWidget::contextMenuTextBrowser(QPoint point)
-{
-    QMatrix matrix;
-    matrix.translate(ui->postText->horizontalScrollBar()->value(), ui->postText->verticalScrollBar()->value());
-
-    QMenu *contextMnu = ui->postText->createStandardContextMenu(matrix.map(point));
-
-    contextMnu->addSeparator();
-
-    if(ui->postText->checkImage(point))
-    {
-        ui->actionSave_image->setData(point);
-        contextMnu->addAction(ui->actionSave_image);
-    }
-
-    contextMnu->exec(ui->postText->viewport()->mapToGlobal(point));
-    delete(contextMnu);
 }
 
 void GxsForumThreadWidget::headerContextMenuRequested(const QPoint &pos)
@@ -1821,13 +1799,6 @@ void GxsForumThreadWidget::replyForumMessageData(const RsGxsForumMsg &msg)
     {
         QMessageBox::information(this, tr("RetroShare"),tr("You cant reply to an Anonymous Author"));
     }
-}
-
-void GxsForumThreadWidget::saveImage()
-{
-    QPoint point = ui->actionSave_image->data().toPoint();
-    QTextCursor cursor = ui->postText->cursorForPosition(point);
-    ImageUtil::extractImage(window(), cursor);
 }
 
 void GxsForumThreadWidget::toggleThreadedView(bool b)        { if(b) changedViewBox(VIEW_THREADED); }

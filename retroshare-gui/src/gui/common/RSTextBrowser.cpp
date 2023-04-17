@@ -22,6 +22,7 @@
 
 #include "RSImageBlockWidget.h"
 #include "gui/common/FilesDefs.h"
+#include "util/imageutil.h"
 
 #include <retroshare/rsinit.h> //To get RsAccounts
 
@@ -33,6 +34,7 @@
 #include <QPainter>
 #include <QPlainTextEdit>
 #include <QTextDocumentFragment>
+#include <QScrollBar>
 
 #include <iostream>
 
@@ -317,17 +319,42 @@ QString RSTextBrowser::anchorForPosition(const QPoint &pos) const
 	return anchor;
 }
 
-QMenu *RSTextBrowser::createStandardContextMenu()
+void RSTextBrowser::addContextMenuAction(QAction *action)
 {
-	return createStandardContextMenu(QPoint());
+	mContextMenuActions.push_back(action);
 }
-QMenu *RSTextBrowser::createStandardContextMenu(const QPoint &position)
+
+void RSTextBrowser::contextMenuEvent(QContextMenuEvent *event)
 {
-	QMenu *menu = QTextBrowser::createStandardContextMenu(position);
+	emit calculateContextMenuActions();
+
+	QMenu *contextMenu = createStandardContextMenuFromPoint(event->pos());
+
+	QList<QAction*>::iterator it;
+	for (it = mContextMenuActions.begin(); it != mContextMenuActions.end(); ++it) {
+		contextMenu->addAction(*it);
+	}
+
+	contextMenu->exec(QCursor::pos());
+
+	delete(contextMenu);
+}
+
+QMenu *RSTextBrowser::createStandardContextMenuFromPoint(const QPoint &widgetPos)
+{
+	QMatrix matrix;
+	matrix.translate(horizontalScrollBar()->value(), verticalScrollBar()->value());
+
+	QMenu *menu = QTextBrowser::createStandardContextMenu(matrix.map(widgetPos));
 
 	menu->addSeparator();
 	QAction *a = menu->addAction(FilesDefs::getIconFromQtResourcePath("://icons/textedit/code.png"), tr("View &Source"), this, SLOT(viewSource()));
 	a->setEnabled(!this->document()->isEmpty());
+
+	if (checkImage(widgetPos)) {
+		a = menu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/document_save.png"), tr("Save image"), this, SLOT(saveImage()));
+		a->setData(widgetPos);
+	}
 
 	return menu;
 }
@@ -349,4 +376,16 @@ void RSTextBrowser::viewSource()
 	dialog->exec();
 
 	delete dialog;
+}
+
+void RSTextBrowser::saveImage()
+{
+	QAction *action = dynamic_cast<QAction*>(sender()) ;
+	if (!action) {
+		return;
+	}
+
+	QPoint point = action->data().toPoint();
+	QTextCursor cursor = cursorForPosition(point);
+	ImageUtil::extractImage(window(), cursor);
 }

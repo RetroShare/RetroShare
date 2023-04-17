@@ -196,7 +196,6 @@ private slots:
 
 	void quote();
 	void dropPlacemark();
-	void saveImage();
 	void saveSticker();
 
 private:

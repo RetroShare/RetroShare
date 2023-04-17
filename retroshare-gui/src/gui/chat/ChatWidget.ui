@@ -1049,15 +1049,6 @@ border-image: url(:/images/closepressed.png)
     <string>Insert horizontal rule</string>
    </property>
   </action>
-  <action name="actionSave_image">
-   <property name="icon">
-    <iconset resource="../images.qrc">
-     <normaloff>:/images/document_save.png</normaloff>:/images/document_save.png</iconset>
-   </property>
-   <property name="text">
-    <string>Save image</string>
-   </property>
-  </action>
   <action name="actionImport_sticker">
    <property name="icon">
     <iconset resource="../icons.qrc">

@@ -165,7 +165,6 @@ ChatWidget::ChatWidget(QWidget *parent)
 	connect(ui->actionResetFont, SIGNAL(triggered()), this, SLOT(resetFont()));
 	connect(ui->actionQuote, SIGNAL(triggered()), this, SLOT(quote()));
 	connect(ui->actionDropPlacemark, SIGNAL(triggered()), this, SLOT(dropPlacemark()));
-	connect(ui->actionSave_image, SIGNAL(triggered()), this, SLOT(saveImage()));
 	connect(ui->actionImport_sticker, SIGNAL(triggered()), this, SLOT(saveSticker()));
 	connect(ui->actionShow_Hidden_Images, SIGNAL(triggered()), ui->textBrowser, SLOT(showImages()));
 	ui->actionShow_Hidden_Images->setIcon(ui->textBrowser->getBlockedImage());
@@ -1151,10 +1150,7 @@ void ChatWidget::pasteText(const QString& S)
 
 void ChatWidget::contextMenuTextBrowser(QPoint point)
 {
-	QMatrix matrix;
-	matrix.translate(ui->textBrowser->horizontalScrollBar()->value(), ui->textBrowser->verticalScrollBar()->value());
-
-	QMenu *contextMnu = ui->textBrowser->createStandardContextMenu(matrix.map(point));
+	QMenu *contextMnu = ui->textBrowser->createStandardContextMenuFromPoint(point);
 
 	contextMnu->addSeparator();
 	contextMnu->addAction(ui->actionClearChatHistory);
@@ -1167,9 +1163,7 @@ void ChatWidget::contextMenuTextBrowser(QPoint point)
 		if (! ui->textBrowser->getShowImages())
 			contextMnu->addAction(ui->actionShow_Hidden_Images);
 
-		ui->actionSave_image->setData(point);
 		ui->actionImport_sticker->setData(point);
-		contextMnu->addAction(ui->actionSave_image);
 		contextMnu->addAction(ui->actionImport_sticker);
 	}
 
@@ -1993,13 +1987,6 @@ void ChatWidget::dropPlacemark()
                                                          // which would be strange.  This OTOH inserts text with
                                                          // formatting in effect on the last line, which may be strange
                                                          // or not.
-}
-
-void ChatWidget::saveImage()
-{
-	QPoint point = ui->actionSave_image->data().toPoint();
-	QTextCursor cursor = ui->textBrowser->cursorForPosition(point);
-	ImageUtil::extractImage(window(), cursor);
 }
 
 void ChatWidget::saveSticker()
