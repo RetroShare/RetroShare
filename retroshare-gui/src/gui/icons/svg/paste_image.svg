@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   height="48px"
+   viewBox="0 0 24 24"
+   width="48px"
+   fill="#000000"
+   version="1.1"
+   id="svg6"
+   sodipodi:docname="paste_image.svg"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs10" />
+  <sodipodi:namedview
+     id="namedview8"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="10.833333"
+     inkscape:cx="23.953846"
+     inkscape:cy="24.046154"
+     inkscape:window-width="1366"
+     inkscape:window-height="705"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg6" />
+  <path
+     d="M0 0h24v24H0z"
+     fill="none"
+     id="path2" />
+  <path
+     d="M19 2h-4.18C14.4.84 13.3 0 12 0c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm7 18H5V4h2v3h10V4h2v16z"
+     id="path4"
+     style="fill:#039bd5;fill-opacity:1" />
+  <g
+     transform="matrix(0.02667227,0,0,0.02667227,5.6271015,7.5787337)"
+     id="g14">
+    <g
+       id="g6">
+      <g
+         id="g4">
+        <path
+           d="M 426.667,68.267 H 51.2 C 22.923,68.267 0,91.19 0,119.467 V 358.4 c 0,28.277 22.923,51.2 51.2,51.2 h 375.467 c 28.277,0 51.2,-22.923 51.2,-51.2 V 119.467 c 0,-28.277 -22.923,-51.2 -51.2,-51.2 z m 17.066,197.734 -107.4,-107.4 c -6.664,-6.663 -17.468,-6.663 -24.132,0 L 170.667,300.134 114.466,243.933 c -6.664,-6.663 -17.468,-6.663 -24.132,0 L 34.133,300.134 V 119.467 c 0,-9.426 7.641,-17.067 17.067,-17.067 h 375.467 c 9.426,0 17.067,7.641 17.067,17.067 v 146.534 z"
+           data-original="#000000"
+           class="active-path"
+           data-old_color="#000000"
+           fill="#039bd5"
+           id="path2-3" />
+      </g>
+    </g>
+    <g
+       id="g12">
+      <g
+         id="g10">
+        <circle
+           cx="153.60001"
+           cy="187.733"
+           r="51.200001"
+           data-original="#000000"
+           class="active-path"
+           data-old_color="#000000"
+           fill="#039bd5"
+           id="circle8" />
+      </g>
+    </g>
+  </g>
+</svg>
