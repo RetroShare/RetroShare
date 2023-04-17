@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>542</width>
-    <height>151</height>
+    <height>123</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -181,6 +181,12 @@
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
             </spacer>
            </item>
           </layout>
@@ -211,7 +217,7 @@
            <number>3</number>
           </property>
           <item>
-           <widget class="QLabel" name="titleLabel">
+           <widget class="ElidedLabel" name="titleLabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -227,13 +233,13 @@
              </font>
             </property>
             <property name="text">
-             <string notr="true">This is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title don't you think? Yes it is and should wrap around I hope</string>
+             <string notr="true"/>
             </property>
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
             </property>
             <property name="wordWrap">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
             <property name="openExternalLinks">
              <bool>true</bool>
@@ -441,6 +447,12 @@
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
            </spacer>
           </item>
          </layout>
@@ -507,6 +519,12 @@
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
        </spacer>
       </item>
      </layout>
@@ -524,6 +542,11 @@
    <class>ZoomableLabel</class>
    <extends>QLabel</extends>
    <header>gui/gxschannels/GxsChannelPostThumbnail.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ElidedLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/ElidedLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>
