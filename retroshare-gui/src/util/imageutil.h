@@ -32,6 +32,7 @@ public:
 	ImageUtil();
 
 	static void extractImage(QWidget *window, QTextCursor cursor, QString file = "");
+	static void copyImage(QWidget *window, QTextCursor cursor);
     static bool optimizeSizeHtml(QString &html, const QImage& original, QImage &optimized, int maxPixels = -1, int maxBytes = -1);
     static bool optimizeSizeBytes(QByteArray &bytearray, const QImage &original, QImage &optimized, const char *format, int maxPixels, int maxBytes);
     static bool hasAlphaContent(const QImage& image);

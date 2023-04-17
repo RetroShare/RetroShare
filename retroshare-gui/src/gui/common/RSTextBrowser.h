@@ -75,6 +75,7 @@ private slots:
 	void destroyImageBlockWidget();
 	void viewSource();
 	void saveImage();
+	void copyImage();
 
 protected:
 	void paintEvent(QPaintEvent *event);
