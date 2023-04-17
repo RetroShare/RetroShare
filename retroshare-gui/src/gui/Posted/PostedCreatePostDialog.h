@@ -24,7 +24,6 @@
 #include <QDialog>
 #include <gui/common/HashBox.h>
 #include "retroshare/rsposted.h"
-#include "util/RichTextEdit.h"
 
 namespace Ui {
 	class PostedCreatePostDialog;
