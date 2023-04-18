@@ -32,6 +32,7 @@
 #include "MimeTextEdit.h"
 #include "util/HandleRichText.h"
 #include "gui/RetroShareLink.h"
+#include "util/imageutil.h"
 
 #include <retroshare/rspeers.h>
 
@@ -246,6 +247,18 @@ void MimeTextEdit::contextMenuEvent(QContextMenuEvent *e)
 
 	QMenu *contextMenu = createStandardContextMenu(e->pos());
 
+	if (ImageUtil::checkImage(this, e->pos())) {
+		contextMenu->addSeparator();
+
+		QAction *a = contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/document_save.png"), tr("Save image"), this, SLOT(saveImage()));
+		a->setData(e->pos());
+
+		a = contextMenu->addAction( tr("Copy image"), this, SLOT(copyImage()));
+		a->setData(e->pos());
+
+		contextMenu->addSeparator();
+	}
+
 	/* Add actions for pasting links */
 	contextMenu->addAction( tr("Paste as plain text"), this, SLOT(pastePlainText()));
 	QAction *spoilerAction =  contextMenu->addAction(tr("Spoiler"), this, SLOT(spoiler()));
@@ -291,4 +304,28 @@ void MimeTextEdit::pastePlainText()
 void MimeTextEdit::spoiler()
 {
 	RsHtml::insertSpoilerText(this->textCursor());
+}
+
+void MimeTextEdit::saveImage()
+{
+	QAction *action = dynamic_cast<QAction*>(sender()) ;
+	if (!action) {
+		return;
+	}
+
+	QPoint point = action->data().toPoint();
+	QTextCursor cursor = cursorForPosition(point);
+	ImageUtil::extractImage(window(), cursor);
+}
+
+void MimeTextEdit::copyImage()
+{
+	QAction *action = dynamic_cast<QAction*>(sender()) ;
+	if (!action) {
+		return;
+	}
+
+	QPoint point = action->data().toPoint();
+	QTextCursor cursor = cursorForPosition(point);
+	ImageUtil::copyImage(window(), cursor);
 }

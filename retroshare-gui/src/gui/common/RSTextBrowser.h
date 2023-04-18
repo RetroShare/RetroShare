@@ -45,8 +45,6 @@ public:
 	void setImageBlockWidget(RSImageBlockWidget *widget);
 	void resetImagesStatus(bool load);
 	QPixmap getBlockedImage();
-	bool checkImage(QPoint pos, QString &imageStr);
-	bool checkImage(QPoint pos) {QString imageStr; return checkImage(pos, imageStr); }
 	QString anchorForPosition(const QPoint &pos) const;
 
 	// Add QAction to context menu (action won't be deleted)

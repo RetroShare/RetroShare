@@ -627,7 +627,7 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 			QString toolTipText = ui->textBrowser->anchorForPosition(helpEvent->pos());
 			if (toolTipText.isEmpty() && !ui->textBrowser->getShowImages()){
 				QString imageStr;
-				if (ui->textBrowser->checkImage(helpEvent->pos(), imageStr)) {
+				if (ImageUtil::checkImage(ui->textBrowser, helpEvent->pos(), imageStr)) {
 					toolTipText = imageStr;
 				}
 			} else if (toolTipText.startsWith(PERSONID)){
@@ -1158,7 +1158,7 @@ void ChatWidget::contextMenuTextBrowser(QPoint point)
 		contextMnu->addAction(ui->actionQuote);
 	contextMnu->addAction(ui->actionDropPlacemark);
 
-	if(ui->textBrowser->checkImage(point))
+	if(ImageUtil::checkImage(ui->textBrowser, point))
 	{
 		if (! ui->textBrowser->getShowImages())
 			contextMnu->addAction(ui->actionShow_Hidden_Images);
