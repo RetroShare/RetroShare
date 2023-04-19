@@ -37,6 +37,7 @@ class QToolButton;
 class QTextEdit;
 class ClickableLabel;
 class GxsIdLabel;
+class ElidedLabel;
 
 struct RsPostedPost;
 
@@ -72,7 +73,7 @@ protected:
     virtual QToolButton *commentButton() =0;
     virtual QToolButton *voteDownButton() =0;
     virtual QLabel      *newLabel() =0;
-    virtual QLabel      *titleLabel()=0;
+    virtual ElidedLabel *titleLabel()=0;
     virtual GxsIdLabel  *fromLabel()=0;
     virtual QLabel      *dateLabel()=0;
     virtual QLabel      *scoreLabel() =0;
@@ -123,7 +124,7 @@ public:
     QLabel      *newLabel()       override;
     GxsIdLabel  *fromLabel()      override;
     QLabel      *dateLabel()      override;
-    QLabel      *titleLabel()     override;
+    ElidedLabel *titleLabel()     override;
     QLabel      *scoreLabel()     override;
     QLabel      *notes()          override;
     QLabel      *pictureLabel()   override;
@@ -162,7 +163,7 @@ public:
     QLabel      *newLabel()       override;
     GxsIdLabel  *fromLabel()      override;
     QLabel      *dateLabel()      override;
-    QLabel      *titleLabel()     override;
+    ElidedLabel *titleLabel()     override;
     QLabel      *scoreLabel()     override;
     QLabel      *notes()          override;
     QToolButton *readButton()     override;

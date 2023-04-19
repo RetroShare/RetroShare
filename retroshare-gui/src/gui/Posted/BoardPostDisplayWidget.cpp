@@ -400,7 +400,7 @@ QLabel         *BoardPostDisplayWidget_compact::newLabel()       { return ui->ne
 QToolButton    *BoardPostDisplayWidget_compact::readButton()     { return ui->readButton; }
 GxsIdLabel     *BoardPostDisplayWidget_compact::fromLabel()      { return ui->fromLabel; }
 QLabel         *BoardPostDisplayWidget_compact::dateLabel()      { return ui->dateLabel; }
-QLabel         *BoardPostDisplayWidget_compact::titleLabel()     { return ui->titleLabel; }
+ElidedLabel    *BoardPostDisplayWidget_compact::titleLabel()     { return ui->titleLabel; }
 QLabel         *BoardPostDisplayWidget_compact::scoreLabel()     { return ui->scoreLabel; }
 QLabel         *BoardPostDisplayWidget_compact::notes()          { return ui->notes; }
 QToolButton    *BoardPostDisplayWidget_compact::shareButton()    { return ui->shareButton; }
@@ -469,7 +469,7 @@ QLabel         *BoardPostDisplayWidget_card::newLabel()       { return ui->newLa
 QToolButton    *BoardPostDisplayWidget_card::readButton()     { return ui->readButton; }
 GxsIdLabel     *BoardPostDisplayWidget_card::fromLabel()      { return ui->fromLabel; }
 QLabel         *BoardPostDisplayWidget_card::dateLabel()      { return ui->dateLabel; }
-QLabel         *BoardPostDisplayWidget_card::titleLabel()     { return ui->titleLabel; }
+ElidedLabel    *BoardPostDisplayWidget_card::titleLabel()     { return ui->titleLabel; }
 QLabel         *BoardPostDisplayWidget_card::scoreLabel()     { return ui->scoreLabel; }
 QLabel         *BoardPostDisplayWidget_card::notes()          { return ui->notes; }
 QToolButton    *BoardPostDisplayWidget_card::shareButton()    { return ui->shareButton; }
