@@ -79,7 +79,7 @@ protected:
     virtual QLabel      *notes() =0;
     virtual QLabel      *pictureLabel()=0;
     virtual QToolButton *readButton() =0;
-    virtual QToolButton *shareButton() =0;
+//    virtual QToolButton *shareButton() =0;
     virtual QFrame      *feedFrame() =0;
 
 protected slots:
@@ -89,9 +89,10 @@ protected slots:
     void makeUpVote() ;
     void makeDownVote() ;
 	void setCommentsSize(int comNb) ;
+#ifdef TO_REMOVE
     void handleShareButtonClicked() ;
     void handleCopyLinkClicked() ;
-
+#endif
 
 signals:
     void changeReadStatusRequested(const RsGxsMessageId&,bool);
@@ -99,8 +100,8 @@ signals:
     void expand(RsGxsMessageId,bool);
     void commentsRequested(const RsGxsMessageId&,bool);
     void thumbnailOpenned();
-    void shareButtonClicked();
-    void copylinkClicked();
+//    void shareButtonClicked();
+//    void copylinkClicked();
 
 protected:
 	RsPostedPost mPost;
@@ -128,7 +129,9 @@ public:
     QLabel      *notes()          override;
     QLabel      *pictureLabel()   override;
     QToolButton *readButton()     override;
+#ifdef TO_REMOVE
     QToolButton *shareButton()    override;
+#endif
     QFrame      *feedFrame()      override;
 
 public slots:
@@ -166,7 +169,7 @@ public:
     QLabel      *scoreLabel()     override;
     QLabel      *notes()          override;
     QToolButton *readButton()     override;
-    QToolButton *shareButton()    override;
+//    QToolButton *shareButton()    override;
     QLabel      *pictureLabel()   override;
     QFrame      *feedFrame()      override;
 
