@@ -301,8 +301,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>634</width>
-             <height>538</height>
+             <width>479</width>
+             <height>731</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="scrollAreaWidgetContentsVLayout">
@@ -339,20 +339,13 @@
                   </widget>
                  </item>
                  <item>
-                  <spacer name="verticalSpacer">
-                   <property name="orientation">
-                    <enum>Qt::Vertical</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>518</width>
-                     <height>17</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item>
                   <widget class="QFrame" name="info_Frame_Invite">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="palette">
                     <palette>
                      <active>
@@ -489,6 +482,9 @@
                      <widget class="QLabel" name="infoLabel_Invite">
                       <property name="text">
                        <string notr="true">Invite messages stay into your Outbox until an acknowledgement of receipt has been received.</string>
+                      </property>
+                      <property name="wordWrap">
+                       <bool>true</bool>
                       </property>
                      </widget>
                     </item>
@@ -895,8 +891,11 @@ border-image: url(:/images/closepressed.png)
                </item>
                <item row="11" column="1">
                 <widget class="QCheckBox" name="autoBanIdentities_CB">
-                 <property name="text">
+                 <property name="toolTip">
                   <string>Auto-Ban all identities signed by the same node</string>
+                 </property>
+                 <property name="text">
+                  <string>Auto-Ban</string>
                  </property>
                 </widget>
                </item>
