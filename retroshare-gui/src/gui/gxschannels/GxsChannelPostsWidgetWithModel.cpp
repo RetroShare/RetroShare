@@ -279,18 +279,18 @@ void ChannelPostDelegate::setWidgetGrid(bool use_grid)
 
 QWidget *ChannelPostFilesDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &/*option*/, const QModelIndex& index) const
 {
-	ChannelPostFileInfo file = index.data(Qt::UserRole).value<ChannelPostFileInfo>() ;
+    ChannelPostFileInfo file = index.data(Qt::UserRole).value<ChannelPostFileInfo>() ;
 
-	if(index.column() == RsGxsChannelPostFilesModel::COLUMN_FILES_FILE)
-	{
+    if(index.column() == RsGxsChannelPostFilesModel::COLUMN_FILES_FILE)
+    {
         GxsChannelFilesStatusWidget* w = new GxsChannelFilesStatusWidget(file,parent,true);
         w->setFocusPolicy(Qt::StrongFocus);
         connect(w,SIGNAL(onButtonClick()),this->parent(),SLOT(updateDAll_PB()));
 
-		return w;
-	}
-	else
-		return NULL;
+        return w;
+    }
+    else
+        return NULL;
 }
 void ChannelPostFilesDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
 {
@@ -392,7 +392,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 
     mChannelPostsDelegate->setAspectRatio(ChannelPostThumbnailView::ASPECT_RATIO_16_9);
 
-    connect(ui->postsTree,SIGNAL(zoomRequested(bool)),this,SLOT(updateZoomFactor(bool)));
+    connect(ui->postsTree,SIGNAL(zoomRequested(bool)),this,SLOT(onUpdateZoomFactor(bool)));
     connect(ui->commentsDialog,SIGNAL(commentsLoaded(int)),this,SLOT(updateCommentsCount(int)));
 
     ui->channelPostFiles_TV->setModel(mChannelPostFilesModel = new RsGxsChannelPostFilesModel(this));
@@ -520,9 +520,17 @@ void GxsChannelPostsWidgetWithModel::currentTabChanged(int t)
         break;
     }
 }
-void GxsChannelPostsWidgetWithModel::updateZoomFactor(bool zoom_or_unzoom)
+void GxsChannelPostsWidgetWithModel::onUpdateZoomFactor(bool zoom_or_unzoom)
 {
-    mChannelPostsDelegate->zoom(zoom_or_unzoom);
+    if(zoom_or_unzoom)
+        updateZoomFactor(1);
+    else
+        updateZoomFactor(-1);
+}
+void GxsChannelPostsWidgetWithModel::updateZoomFactor(int what_to_do)
+{
+    if(what_to_do != 0)
+        mChannelPostsDelegate->zoom(what_to_do > 0);
 
     for(int i=0;i<mChannelPostsModel->columnCount();++i)
         ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(i,font(),ui->postsTree->width()));
@@ -532,8 +540,7 @@ void GxsChannelPostsWidgetWithModel::updateZoomFactor(bool zoom_or_unzoom)
     int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(0,font(),s.width()))));
 
     mChannelPostsModel->setNumColumns(n_columns);	// forces the update
-
-    ui->postsTree->dataChanged(QModelIndex(),QModelIndex());
+    mChannelPostsModel->triggerViewUpdate();
 }
 
 void GxsChannelPostsWidgetWithModel::sortColumnPostFiles(int col,Qt::SortOrder so)
@@ -1067,8 +1074,9 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
             best = i;
 
     mChannelPostsDelegate->setAspectRatio(static_cast<ChannelPostThumbnailView::AspectRatio>(best));
-    mChannelPostsModel->triggerViewUpdate();
     handlePostsTreeSizeChange(ui->postsTree->size(),true); // force the update
+
+    updateZoomFactor(0);
 }
 
 void GxsChannelPostsWidgetWithModel::updateDisplay(bool update_group_data,bool update_posts)
