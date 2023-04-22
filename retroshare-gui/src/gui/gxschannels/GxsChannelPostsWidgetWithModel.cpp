@@ -92,9 +92,9 @@ Q_DECLARE_METATYPE(ChannelPostFileInfo)
 int ChannelPostDelegate::cellSize(int col,const QFont& font,uint32_t parent_width) const
 {
     if(mUseGrid || col==0)
-        return mZoom*COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font).height();
+        return (int)floor(mZoom*COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font).height());
     else
-        return 0.8*parent_width - mZoom*COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font).height();
+        return (int)floor(0.8*parent_width - mZoom*COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font).height());
 }
 
 void ChannelPostDelegate::zoom(bool zoom_or_unzoom)
@@ -517,6 +517,7 @@ void GxsChannelPostsWidgetWithModel::currentTabChanged(int t)
     case CHANNEL_TABS_POSTS:
         ui->showUnread_TB->setHidden(false);
         ui->viewType_TB->setHidden(false);
+        updateZoomFactor(0); // fixes a bug due to the widget now knowing its size when not displayed.
         break;
     }
 }
@@ -532,14 +533,12 @@ void GxsChannelPostsWidgetWithModel::updateZoomFactor(int what_to_do)
     if(what_to_do != 0)
         mChannelPostsDelegate->zoom(what_to_do > 0);
 
+    QSize s = ui->postsTree->size();
+    int n_columns = std::max(1,(int)floor(s.width() / (float)(mChannelPostsDelegate->cellSize(0,font(),s.width()))));
+    mChannelPostsModel->setNumColumns(n_columns);	// forces the update
+
     for(int i=0;i<mChannelPostsModel->columnCount();++i)
         ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(i,font(),ui->postsTree->width()));
-
-    QSize s = ui->postsTree->size();
-
-    int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(0,font(),s.width()))));
-
-    mChannelPostsModel->setNumColumns(n_columns);	// forces the update
 
     if(what_to_do)
         mChannelPostsModel->triggerViewUpdate(true,false);
