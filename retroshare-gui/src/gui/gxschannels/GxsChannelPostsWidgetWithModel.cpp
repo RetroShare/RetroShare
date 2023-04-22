@@ -540,7 +540,11 @@ void GxsChannelPostsWidgetWithModel::updateZoomFactor(int what_to_do)
     int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(0,font(),s.width()))));
 
     mChannelPostsModel->setNumColumns(n_columns);	// forces the update
-    mChannelPostsModel->triggerViewUpdate();
+
+    if(what_to_do)
+        mChannelPostsModel->triggerViewUpdate(true,false);
+    else
+        mChannelPostsModel->triggerViewUpdate(false,true);
 }
 
 void GxsChannelPostsWidgetWithModel::sortColumnPostFiles(int col,Qt::SortOrder so)
@@ -646,7 +650,7 @@ void GxsChannelPostsWidgetWithModel::switchView()
     selectItem(msg_id);
     ui->postsTree->setFocus();
 
-    mChannelPostsModel->triggerViewUpdate();	// This is already called by setMode(), but the model cannot know how many
+    mChannelPostsModel->triggerViewUpdate(false,true);	// This is already called by setMode(), but the model cannot know how many
                                                 // columns is actually has until we call handlePostsTreeSizeChange(), so
                                                 // we have to call it again here.
 }
