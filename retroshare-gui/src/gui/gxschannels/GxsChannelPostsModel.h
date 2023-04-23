@@ -115,7 +115,7 @@ public:
 	void updateChannel(const RsGxsGroupId& channel_group_id);
     const RsGxsGroupId& currentGroupId() const;
 
-    void triggerViewUpdate();
+    void triggerViewUpdate(bool data_changed,bool layout_changed);
 
     // sets the number of columns. Returns 0 if nothing changes.
     bool setNumColumns(int n);

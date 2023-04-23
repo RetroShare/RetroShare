@@ -63,7 +63,7 @@ void RsGxsChannelPostsModel::setMode(TreeMode mode)
     if(mode == TREE_MODE_LIST)
         setNumColumns(2);
 
-    triggerViewUpdate();
+    triggerViewUpdate(true,true);
 }
 
 void RsGxsChannelPostsModel::computeCommentCounts( std::vector<RsGxsChannelPost>& posts, std::vector<RsGxsComment>& comments)
@@ -118,12 +118,15 @@ void RsGxsChannelPostsModel::preMods()
 }
 void RsGxsChannelPostsModel::postMods()
 {
-	triggerViewUpdate();
 	emit layoutChanged();
 }
-void RsGxsChannelPostsModel::triggerViewUpdate()
+void RsGxsChannelPostsModel::triggerViewUpdate(bool data_changed, bool layout_changed)
 {
-    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1,mColumns-1,(void*)NULL));
+    if(data_changed)
+        emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1,mColumns-1,(void*)NULL));
+
+    if(layout_changed)
+        emit layoutChanged();
 }
 
 void RsGxsChannelPostsModel::getFilesList(std::list<ChannelPostFileInfo>& files)
@@ -316,16 +319,7 @@ bool RsGxsChannelPostsModel::setNumColumns(int n)
 
 	preMods();
 
-	beginResetModel();
-	endResetModel();
-
 	mColumns = n;
-
-	if (rowCount()>0)
-	{
-		beginInsertRows(QModelIndex(),0,rowCount()-1);
-		endInsertRows();
-	}
 
 	postMods();
 
@@ -548,7 +542,7 @@ void RsGxsChannelPostsModel::updateSinglePost(const RsGxsChannelPost& post,std::
     uint32_t count;
     updateFilter(count);
 
-    triggerViewUpdate();
+    triggerViewUpdate(true,false);
 }
 
 void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vector<RsGxsChannelPost>& posts)
