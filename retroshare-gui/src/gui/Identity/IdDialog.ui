@@ -301,7 +301,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>479</width>
+             <width>456</width>
              <height>731</height>
             </rect>
            </property>
@@ -895,7 +895,7 @@ border-image: url(:/images/closepressed.png)
                   <string>Auto-Ban all identities signed by the same node</string>
                  </property>
                  <property name="text">
-                  <string>Auto-Ban</string>
+                  <string>Auto-Ban profile</string>
                  </property>
                 </widget>
                </item>
