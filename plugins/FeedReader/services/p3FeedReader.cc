@@ -269,7 +269,7 @@ void p3FeedReader::setStandardStorageTime(uint32_t storageTime)
 
 	if (mStandardStorageTime != storageTime) {
 		mStandardStorageTime = storageTime;
-		IndicateConfigChanged();
+		IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 	}
 }
 
@@ -286,7 +286,7 @@ void p3FeedReader::setStandardUpdateInterval(uint32_t updateInterval)
 
 	if (mStandardUpdateInterval != updateInterval) {
 		mStandardUpdateInterval = updateInterval;
-		IndicateConfigChanged();
+		IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 	}
 }
 
@@ -308,7 +308,7 @@ void p3FeedReader::setStandardProxy(bool useProxy, const std::string &proxyAddre
 		mStandardProxyAddress = proxyAddress;
 		mStandardProxyPort = proxyPort;
 		mStandardUseProxy = useProxy;
-		IndicateConfigChanged();
+		IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 	}
 }
 
@@ -325,7 +325,7 @@ void p3FeedReader::setSaveInBackground(bool saveInBackground)
 
 	if (saveInBackground != mSaveInBackground) {
 		mSaveInBackground = saveInBackground;
-		IndicateConfigChanged();
+		IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 	}
 }
 
@@ -401,7 +401,7 @@ RsFeedResult p3FeedReader::addFolder(uint32_t parentId, const std::string &name,
 		feedId = fi->feedId;
 	}
 
-	IndicateConfigChanged();
+	IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 
 	if (mNotify) {
 		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_ADD);
@@ -441,7 +441,7 @@ RsFeedResult p3FeedReader::setFolder(uint32_t feedId, const std::string &name)
 		fi->name = name;
 	}
 
-	IndicateConfigChanged();
+	IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 
 	if (mNotify) {
 		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
@@ -488,7 +488,7 @@ RsFeedResult p3FeedReader::addFeed(const FeedInfo &feedInfo, uint32_t &feedId)
 		feedId = fi->feedId;
 	}
 
-	IndicateConfigChanged();
+	IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 
 	if (mNotify) {
 		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_ADD);
@@ -573,7 +573,7 @@ RsFeedResult p3FeedReader::setFeed(uint32_t feedId, const FeedInfo &feedInfo)
 		}
 	}
 
-	IndicateConfigChanged();
+	IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 
 	if (mNotify) {
 		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
@@ -644,7 +644,7 @@ RsFeedResult p3FeedReader::setParent(uint32_t feedId, uint32_t parentId)
 	}
 
 	if (changed) {
-		IndicateConfigChanged();
+		IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 
 		if (mNotify) {
 			mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
@@ -729,7 +729,7 @@ bool p3FeedReader::removeFeed(uint32_t feedId)
 	}
 
 	if (changed) {
-		IndicateConfigChanged();
+		IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 	}
 
 	if (preview) {
@@ -910,7 +910,7 @@ bool p3FeedReader::removeMsg(uint32_t feedId, const std::string &msgId)
 	}
 
 	if (changed) {
-		IndicateConfigChanged();
+		IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 	}
 
 	if (mNotify) {
@@ -962,7 +962,7 @@ bool p3FeedReader::removeMsgs(uint32_t feedId, const std::list<std::string> &msg
 	}
 
 	if (changed) {
-		IndicateConfigChanged();
+		IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 	}
 
 	if (mNotify && !removedMsgs.empty()) {
@@ -1260,7 +1260,7 @@ bool p3FeedReader::setMessageRead(uint32_t feedId, const std::string &msgId, boo
 	}
 
 	if (changed) {
-		IndicateConfigChanged();
+		IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 		if (mNotify) {
 			mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
 			mNotify->notifyMsgChanged(feedId, msgId, NOTIFY_TYPE_MOD);
@@ -1314,7 +1314,7 @@ bool p3FeedReader::retransformMsg(uint32_t feedId, const std::string &msgId)
 	}
 
 	if (feedChanged || msgChanged) {
-		IndicateConfigChanged();
+		IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 		if (mNotify) {
 			if (feedChanged) {
 				mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
@@ -1368,7 +1368,7 @@ bool p3FeedReader::clearMessageCache(uint32_t feedId)
 		}
 	}
 
-	IndicateConfigChanged();
+	IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 
 	return true;
 }
@@ -1499,7 +1499,7 @@ void p3FeedReader::cleanFeeds()
 		mLastClean = currentTime;
 
 		if (removedMsgIds.size()) {
-			IndicateConfigChanged();
+			IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 
 			if (mNotify) {
 				std::list<std::pair<uint32_t, std::string> >::iterator it;
@@ -1811,7 +1811,7 @@ void p3FeedReader::onDownloadSuccess(uint32_t feedId, const std::string &content
 			fi->icon = icon;
 
 			if (!preview) {
-				IndicateConfigChanged();
+				IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 			}
 		}
 
@@ -1862,7 +1862,7 @@ void p3FeedReader::onDownloadError(uint32_t feedId, RsFeedReaderErrorState resul
 #endif
 
 		if (!fi->preview) {
-			IndicateConfigChanged();
+			IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 		}
 	}
 
@@ -1974,7 +1974,7 @@ void p3FeedReader::onProcessSuccess_filterMsg(uint32_t feedId, std::list<RsFeedR
 		fi->errorString.clear();
 
 		if (!fi->preview) {
-			IndicateConfigChanged();
+			IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 		}
 	}
 }
@@ -2119,7 +2119,7 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 		}
 
 		if (!fi->preview) {
-			IndicateConfigChanged();
+			IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 		}
 	}
 
@@ -2266,7 +2266,7 @@ void p3FeedReader::onProcessError(uint32_t feedId, RsFeedReaderErrorState result
 #endif
 
 		if (!fi->preview) {
-			IndicateConfigChanged();
+			IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 		}
 	}
 
@@ -2335,7 +2335,7 @@ void p3FeedReader::setFeedInfo(uint32_t feedId, const std::string &name, const s
 
 	if (changed) {
 		if (!preview) {
-			IndicateConfigChanged();
+			IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 		}
 
 		if (mNotify) {
