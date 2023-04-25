@@ -235,7 +235,7 @@ void GxsForumMsgItem::loadMessage()
 			std::cerr << std::endl;
 			return;
 		}
-		const RsGxsForumMsg& msg(msgs[0]);
+        RsGxsForumMsg msg(msgs[0]);
 
 		RsQThreadUtils::postToObject( [msg,this]()
 		{
@@ -280,7 +280,7 @@ void GxsForumMsgItem::loadParentMessage(const RsGxsMessageId& parent_msg)
 			std::cerr << std::endl;
 			return;
 		}
-		const RsGxsForumMsg& msg(msgs[0]);
+        RsGxsForumMsg msg(msgs[0]);
 
 		RsQThreadUtils::postToObject( [msg,this]()
 		{

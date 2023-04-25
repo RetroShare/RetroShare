@@ -173,11 +173,7 @@ void RsGxsChannelPostsModel::updateFilter(uint32_t& count)
 {
 	preMods();
 
-	beginResetModel();
-
 	mFilteredPosts.clear();
-	//mFilteredPosts.push_back(0);
-	endResetModel();
 
     for(size_t i=0;i<mPosts.size();++i)
         if(postPassesFilter(mPosts[i],mFilteredStrings,mFilterUnread))
