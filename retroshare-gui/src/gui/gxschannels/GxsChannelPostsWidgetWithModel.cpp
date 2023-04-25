@@ -379,7 +379,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     connect(ui->viewType_TB,SIGNAL(clicked()),this,SLOT(switchView()));
 
     ui->showUnread_TB->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
-    ui->showUnread_TB->setChecked(false);
+    whileBlocking(ui->showUnread_TB)->setChecked(false);
     ui->showUnread_TB->setToolTip(tr("Show unread posts only"));
     connect(ui->showUnread_TB,SIGNAL(toggled(bool)),this,SLOT(switchOnlyUnread(bool)));
 
