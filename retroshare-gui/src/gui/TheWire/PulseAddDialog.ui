@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>720</width>
+    <width>735</width>
     <height>513</height>
    </rect>
   </property>
@@ -52,6 +52,7 @@
         <property name="font">
          <font>
           <pointsize>12</pointsize>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -249,6 +250,12 @@
       </item>
       <item>
        <widget class="QFrame" name="frame_picture">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -264,6 +271,22 @@
         <layout class="QGridLayout" name="gridLayout">
          <item row="0" column="1">
           <widget class="QLabel" name="label_image2">
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Drag and Drop Image</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="label_image4">
            <property name="minimumSize">
             <size>
              <width>40</width>
@@ -310,60 +333,19 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
-          <widget class="QLabel" name="label_image4">
-           <property name="minimumSize">
-            <size>
-             <width>40</width>
-             <height>40</height>
-            </size>
+         <item row="0" column="2" rowspan="2">
+          <widget class="QToolButton" name="pushButton_remove">
+           <property name="toolTip">
+            <string>Remove all images</string>
            </property>
            <property name="text">
-            <string>Drag and Drop Image</string>
+            <string/>
            </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QFrame" name="frame_PictureBrowse">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>50</height>
-         </size>
-        </property>
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QLineEdit" name="lineEdit_FilePath">
-           <property name="minimumSize">
+           <property name="iconSize">
             <size>
-             <width>541</width>
-             <height>25</height>
+             <width>24</width>
+             <height>24</height>
             </size>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButton_Browse">
-           <property name="minimumSize">
-            <size>
-             <width>101</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Browse...</string>
            </property>
           </widget>
          </item>
@@ -413,7 +395,6 @@
      </layout>
      <zorder>frame_URL</zorder>
      <zorder>frame_picture</zorder>
-     <zorder>frame_PictureBrowse</zorder>
      <zorder>textEdit_Pulse</zorder>
     </widget>
    </item>
@@ -423,7 +404,7 @@
       <number>6</number>
      </property>
      <item>
-      <widget class="QPushButton" name="pushButton_picture">
+      <widget class="QToolButton" name="pushButton_picture">
        <property name="text">
         <string/>
        </property>
@@ -435,6 +416,22 @@
        </property>
        <property name="checkable">
         <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="pushButton_Browse">
+       <property name="toolTip">
+        <string>Add Picture</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
        </property>
       </widget>
      </item>
@@ -456,6 +453,7 @@
        <property name="font">
         <font>
          <pointsize>12</pointsize>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
