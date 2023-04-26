@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1068</width>
-    <height>880</height>
+    <width>739</width>
+    <height>653</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -45,103 +45,6 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gradFrame_GL">
-      <item row="3" column="0">
-       <widget class="QGroupBox" name="typeGroupBox">
-        <property name="title">
-         <string>Type</string>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_2">
-         <property name="leftMargin">
-          <number>6</number>
-         </property>
-         <property name="topMargin">
-          <number>6</number>
-         </property>
-         <property name="rightMargin">
-          <number>6</number>
-         </property>
-         <property name="bottomMargin">
-          <number>6</number>
-         </property>
-         <item row="0" column="0">
-          <widget class="QCheckBox" name="typeForumCheckBox">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Forum</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="RSComboBox" name="forumComboBox"/>
-         </item>
-         <item row="8" column="0">
-          <widget class="QCheckBox" name="typeLocalCheckBox">
-           <property name="text">
-            <string>Local Feed</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item>
-            <widget class="QCheckBox" name="updateForumInfoCheckBox">
-             <property name="text">
-              <string>Update forum information</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="4" column="1">
-          <widget class="RSComboBox" name="postedComboBox"/>
-         </item>
-         <item row="4" column="0">
-          <widget class="QCheckBox" name="typePostedCheckBox">
-           <property name="text">
-            <string>Board</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="1">
-          <layout class="QGridLayout" name="gridLayout">
-           <item row="0" column="0">
-            <widget class="QCheckBox" name="updatePostedInfoCheckBox">
-             <property name="text">
-              <string>Update board information</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QCheckBox" name="postedOnlyImageCheckBox">
-             <property name="text">
-              <string>Only image</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QCheckBox" name="postedFirstImageCheckBox">
-             <property name="text">
-              <string>Use first image as board image</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QCheckBox" name="postedShinkImageCheckBox">
-             <property name="text">
-              <string>Shrink image</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </widget>
-      </item>
       <item row="7" column="0">
        <widget class="QGroupBox" name="authenticationGroupBox">
         <property name="title">
@@ -378,40 +281,7 @@
         </item>
        </layout>
       </item>
-      <item row="4" column="0">
-       <widget class="QGroupBox" name="groupBox">
-        <property name="title">
-         <string>Transformation</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_4">
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QLabel" name="transformationTypeLabel">
-             <property name="text">
-              <string>Transformation type</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="previewButton">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Preview &amp;&amp; Transformation</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item row="3" column="1" rowspan="2">
+      <item row="3" column="1">
        <widget class="QGroupBox" name="flagGroupBox">
         <property name="title">
          <string>Misc</string>
@@ -445,18 +315,135 @@
            </property>
           </widget>
          </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>Transformation</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QLabel" name="transformationTypeLabel">
+             <property name="text">
+              <string>Transformation type</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="previewButton">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Preview &amp;&amp; Transformation</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="3" column="0" rowspan="3">
+       <widget class="QGroupBox" name="typeGroupBox">
+        <property name="title">
+         <string>Type</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <property name="leftMargin">
+          <number>6</number>
+         </property>
+         <property name="topMargin">
+          <number>6</number>
+         </property>
+         <property name="rightMargin">
+          <number>6</number>
+         </property>
+         <property name="bottomMargin">
+          <number>6</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="typeForumCheckBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
+           <property name="text">
+            <string>Forum</string>
            </property>
-          </spacer>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="RSComboBox" name="forumComboBox"/>
+         </item>
+         <item row="8" column="0">
+          <widget class="QCheckBox" name="typeLocalCheckBox">
+           <property name="text">
+            <string>Local Feed</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QCheckBox" name="updateForumInfoCheckBox">
+             <property name="text">
+              <string>Update forum information</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="4" column="1">
+          <widget class="RSComboBox" name="postedComboBox"/>
+         </item>
+         <item row="4" column="0">
+          <widget class="QCheckBox" name="typePostedCheckBox">
+           <property name="text">
+            <string>Board</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="0" column="0">
+            <widget class="QCheckBox" name="updatePostedInfoCheckBox">
+             <property name="text">
+              <string>Update board information</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QCheckBox" name="postedOnlyImageCheckBox">
+             <property name="text">
+              <string>Only image</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QCheckBox" name="postedFirstImageCheckBox">
+             <property name="text">
+              <string>Use first image as board image</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="postedShinkImageCheckBox">
+             <property name="text">
+              <string>Shrink image</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
