@@ -29,6 +29,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location line="+7"/>
+        <source>Shrink image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+12"/>
         <source>Authentication (not yet supported)</source>
         <translation type="unfinished"></translation>
@@ -119,7 +124,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-196"/>
+        <location line="-203"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
@@ -134,7 +139,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+292"/>
+        <location line="+299"/>
         <source>Transformation</source>
         <translation type="unfinished"></translation>
     </message>
@@ -164,12 +169,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-329"/>
+        <location line="-336"/>
         <source>Update forum information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+343"/>
+        <location line="+350"/>
         <source>Save complete web page (experimental for local feeds)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -194,8 +199,8 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+206"/>
-        <location line="+150"/>
+        <location line="+211"/>
+        <location line="+152"/>
         <location line="+15"/>
         <source>Edit feed</source>
         <translation type="unfinished"></translation>
@@ -312,7 +317,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="+99"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="+101"/>
         <source>Message Folders</source>
         <translation type="unfinished"></translation>
     </message>
@@ -367,7 +372,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+210"/>
+        <location line="+241"/>
         <source>Add new folder</source>
         <translation type="unfinished"></translation>
     </message>

@@ -130,6 +130,13 @@
              </property>
             </widget>
            </item>
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="postedShinkImageCheckBox">
+             <property name="text">
+              <string>Shrink image</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
         </layout>
@@ -482,8 +489,9 @@
   <tabstop>typePostedCheckBox</tabstop>
   <tabstop>postedComboBox</tabstop>
   <tabstop>updatePostedInfoCheckBox</tabstop>
+  <tabstop>postedShinkImageCheckBox</tabstop>
   <tabstop>postedFirstImageCheckBox</tabstop>
-  <tabstop>checkBox</tabstop>
+  <tabstop>postedOnlyImageCheckBox</tabstop>
   <tabstop>typeLocalCheckBox</tabstop>
   <tabstop>activatedCheckBox</tabstop>
   <tabstop>useInfoFromFeedCheckBox</tabstop>

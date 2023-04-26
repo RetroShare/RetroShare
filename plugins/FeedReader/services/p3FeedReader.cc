@@ -45,7 +45,7 @@ RsFeedReader *rsFeedReader = NULL;
 
 p3FeedReader::p3FeedReader(RsPluginHandler* pgHandler, RsGxsForums *forums, RsPosted *posted)
 	: RsPQIService(RS_SERVICE_TYPE_PLUGIN_FEEDREADER,  5, pgHandler),
-	  mFeedReaderMtx("p3FeedReader"), mDownloadMutex("p3FeedReaderDownload"), mProcessMutex("p3FeedReaderProcess"), mPreviewMutex("p3FeedReaderPreview")
+	  mFeedReaderMtx("p3FeedReader"), mDownloadMutex("p3FeedReaderDownload"), mProcessMutex("p3FeedReaderProcess"), mImageMutex("p3FeedReaderImage"), mPreviewMutex("p3FeedReaderPreview")
 {
 	mNextFeedId = 1;
 	mNextMsgId = 1;
@@ -118,6 +118,7 @@ static void feedToInfo(const RsFeedReaderFeed *feed, FeedInfo &info)
 	info.flag.updatePostedInfo = (feed->flag & RS_FEED_FLAG_UPDATE_POSTED_INFO);
 	info.flag.postedFirstImage = (feed->flag & RS_FEED_FLAG_POSTED_FIRST_IMAGE);
 	info.flag.postedOnlyImage = (feed->flag & RS_FEED_FLAG_POSTED_ONLY_IMAGE);
+	info.flag.postedShrinkImage = (feed->flag & RS_FEED_FLAG_POSTED_SHRINK_IMAGE);
 	info.flag.embedImages = (feed->flag & RS_FEED_FLAG_EMBED_IMAGES);
 	info.flag.saveCompletePage = (feed->flag & RS_FEED_FLAG_SAVE_COMPLETE_PAGE);
 
@@ -216,6 +217,9 @@ static void infoToFeed(const FeedInfo &info, RsFeedReaderFeed *feed)
 	}
 	if (info.flag.postedOnlyImage) {
 		feed->flag |= RS_FEED_FLAG_POSTED_ONLY_IMAGE;
+	}
+	if (info.flag.postedShrinkImage) {
+		feed->flag |= RS_FEED_FLAG_POSTED_SHRINK_IMAGE;
 	}
 }
 
@@ -1445,9 +1449,20 @@ int p3FeedReader::tick()
 		}
 	}
 
+	// check images
+	bool imageToShrink = false;
+	{
+		RsStackMutex stack(mImageMutex); /******* LOCK STACK MUTEX *********/
+
+		imageToShrink = !mImages.empty();
+	}
+
 	if (mNotify) {
 		for (it = notifyIds.begin(); it != notifyIds.end(); ++it) {
 			mNotify->notifyFeedChanged(*it, NOTIFY_TYPE_MOD);
+		}
+		if (imageToShrink) {
+			mNotify->notifyShrinkImage();
 		}
 	}
 
@@ -2188,7 +2203,15 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 					if (feedFlag & RS_FEED_FLAG_POSTED_FIRST_IMAGE) {
 						if (!mi.postedFirstImage.empty()) {
 							/* use first image as image for posted and description without image as notes */
-							postedPost.mImage.copy(mi.postedFirstImage.data(), mi.postedFirstImage.size());
+							if (feedFlag & RS_FEED_FLAG_POSTED_SHRINK_IMAGE) {
+								// shrink image
+								std::vector<unsigned char> shrinkedImage;
+								if (shrinkImage(FeedReaderShrinkImageTask::POSTED, mi.postedFirstImage, shrinkedImage)) {
+									postedPost.mImage.copy(shrinkedImage.data(), shrinkedImage.size());	
+								}
+							} else {
+								postedPost.mImage.copy(mi.postedFirstImage.data(), mi.postedFirstImage.size());
+							}
 							if (feedFlag & RS_FEED_FLAG_POSTED_ONLY_IMAGE) {
 								/* ignore description */
 							} else {
@@ -2613,4 +2636,87 @@ bool p3FeedReader::getPostedGroups(std::vector<RsPostedGroup> &groups, bool only
 	}
 
 	return true;
+}
+
+bool p3FeedReader::shrinkImage(FeedReaderShrinkImageTask::Type type, const std::vector<unsigned char> &image, std::vector<unsigned char> &resultImage)
+{
+	if (!mNotify) {
+		return false;
+	}
+
+	FeedReaderShrinkImageTask *shrinkImageTask = new FeedReaderShrinkImageTask(type, image);
+	{
+		RsStackMutex stack(mImageMutex); /******* LOCK STACK MUTEX *********/
+
+		mImages.push_back(shrinkImageTask);
+	}
+
+	/* Wait until task is complete */
+	int nSeconds = 0;
+	while (true) {
+		if (mStopped) {
+			return false;
+		}
+
+		rstime::rs_usleep(1000 * 1000); // 1 second
+
+		if (++nSeconds >= 30) {
+			// timeout
+			std::list<FeedReaderShrinkImageTask*>::iterator it = std::find(mImages.begin(), mImages.end(), shrinkImageTask);
+			if (it != mImages.end()) {
+				mImages.erase(it);
+
+				delete(shrinkImageTask);
+
+				return false;
+			}
+
+			// not found in mImages?
+		}
+
+		{
+			RsStackMutex stack(mImageMutex); /******* LOCK STACK MUTEX *********/
+
+			std::list<FeedReaderShrinkImageTask*>::iterator it = std::find(mResultImages.begin(), mResultImages.end(), shrinkImageTask);
+			if (it != mResultImages.end()) {
+				mResultImages.erase(it);
+
+				bool result = shrinkImageTask->mResult;
+				if (result) {
+					resultImage = shrinkImageTask->mImageResult;
+				}
+
+				delete(shrinkImageTask);
+
+				return result;
+			}
+		}
+	}
+
+	return false;
+}
+
+FeedReaderShrinkImageTask *p3FeedReader::getShrinkImageTask()
+{
+	RsStackMutex stack(mImageMutex); /******* LOCK STACK MUTEX *********/
+
+	if (mImages.empty()) {
+		return NULL;
+	}
+
+	FeedReaderShrinkImageTask *imageResize = mImages.front();
+	mImages.pop_front();
+
+	return imageResize;
+}
+
+void p3FeedReader::setShrinkImageTaskResult(FeedReaderShrinkImageTask *shrinkImageTask)
+{
+	if (!shrinkImageTask) {
+		return;
+	}
+
+	RsStackMutex stack(mImageMutex); /******* LOCK STACK MUTEX *********/
+
+	mResultImages.push_back(shrinkImageTask);
 }

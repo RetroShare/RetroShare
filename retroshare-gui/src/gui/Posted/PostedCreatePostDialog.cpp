@@ -50,6 +50,8 @@
 #define IMG_ATTACH  0
 #define IMG_PICTURE 1
 
+const int MAXMESSAGESIZE = 199000;
+
 PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGroupId& grpId, const RsGxsId& default_author, QWidget *parent):
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint),
 	mPosted(posted), mGrpId(grpId),
@@ -226,7 +228,7 @@ void PostedCreatePostDialog::addPicture()
 		}
 
 		QImage opt;
-        if(ImageUtil::optimizeSizeBytes(imagebytes, image, opt,"JPG", 640*480, MAXMESSAGESIZE - 2000)) { //Leave space for other stuff
+        if (optimizeImage(image, imagebytes, opt)) {
 			ui->imageLabel->setPixmap(QPixmap::fromImage(opt));
 			ui->stackedWidgetPicture->setCurrentIndex(IMG_PICTURE);
 			ui->removeButton->show();
@@ -274,7 +276,7 @@ void PostedCreatePostDialog::pastePicture()
 		image = (qvariant_cast<QImage>(mimeData->imageData()));
 
 		QImage opt;
-		if(ImageUtil::optimizeSizeBytes(imagebytes, image, opt,"JPG", 640*480, MAXMESSAGESIZE - 2000)) { //Leave space for other stuff
+		if (optimizeImage(image, imagebytes, opt)) {
 			ui->imageLabel->setPixmap(QPixmap::fromImage(opt));
 			ui->stackedWidgetPicture->setCurrentIndex(IMG_PICTURE);
 			ui->removeButton->show();
@@ -285,6 +287,12 @@ void PostedCreatePostDialog::pastePicture()
 		imagebytes.clear();
 		return;
 	}
+}
+
+bool PostedCreatePostDialog::optimizeImage(const QImage &image, QByteArray &imagebytes, QImage &imageOpt)
+{
+	// Leave space for other stuff
+	return ImageUtil::optimizeSizeBytes(imagebytes, image, imageOpt, "JPG", 640*480, MAXMESSAGESIZE - 2000);
 }
 
 int PostedCreatePostDialog::viewMode()

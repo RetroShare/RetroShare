@@ -49,6 +49,7 @@ const uint8_t RS_PKT_SUBTYPE_FEEDREADER_MSG   = 0x03;
 #define RS_FEED_FLAG_UPDATE_POSTED_INFO            0x1000
 #define RS_FEED_FLAG_POSTED_FIRST_IMAGE            0x2000
 #define RS_FEED_FLAG_POSTED_ONLY_IMAGE             0x4000
+#define RS_FEED_FLAG_POSTED_SHRINK_IMAGE           0x8000
 
 class RsFeedReaderFeed : public RsItem
 {

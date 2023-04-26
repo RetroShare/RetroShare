@@ -35,6 +35,7 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/notifyqt.h"
 #include "FeedReaderUserNotify.h"
+#include "gui/Posted/PostedCreatePostDialog.h"
 
 #include "interface/rsFeedReader.h"
 #include "retroshare/rsiface.h"
@@ -66,6 +67,7 @@ FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, FeedReaderNotify *n
 	mMessageWidget = NULL;
 
 	connect(mNotify, &FeedReaderNotify::feedChanged, this, &FeedReaderDialog::feedChanged, Qt::QueuedConnection);
+	connect(mNotify, &FeedReaderNotify::shrinkImage, this, &FeedReaderDialog::shrinkImage, Qt::QueuedConnection);
 
 	connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
 
@@ -602,6 +604,37 @@ void FeedReaderDialog::feedChanged(uint32_t feedId, int type)
 		}
 	}
 	calculateFeedItems();
+}
+
+void FeedReaderDialog::shrinkImage()
+{
+	while (true) {
+		FeedReaderShrinkImageTask *shrinkImageTask = mFeedReader->getShrinkImageTask();
+
+		if (!shrinkImageTask) {
+			return;
+		}
+
+		switch (shrinkImageTask->mType) {
+		case FeedReaderShrinkImageTask::POSTED:
+		{
+			QImage image;
+			if (image.loadFromData(shrinkImageTask->mImage.data(), shrinkImageTask->mImage.size())) {
+				QByteArray imageBytes;
+				QImage imageOpt;
+				if (PostedCreatePostDialog::optimizeImage(image, imageBytes, imageOpt)) {
+					shrinkImageTask->mImageResult.assign(imageBytes.begin(), imageBytes.end());
+					shrinkImageTask->mResult = true;
+				}
+			}
+			break;
+		}
+		default:
+			shrinkImageTask->mResult = false;
+		}
+
+		mFeedReader->setShrinkImageTaskResult(shrinkImageTask);
+	}
 }
 
 FeedReaderMessageWidget *FeedReaderDialog::feedMessageWidget(uint32_t id)

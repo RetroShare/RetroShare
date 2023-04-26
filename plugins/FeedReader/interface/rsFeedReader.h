@@ -157,6 +157,7 @@ public:
 		bool updatePostedInfo : 1;
 		bool postedFirstImage : 1;
 		bool postedOnlyImage : 1;
+		bool postedShrinkImage : 1;
 		bool embedImages : 1;
 		bool saveCompletePage : 1;
 		bool preview : 1;
@@ -190,6 +191,28 @@ public:
 	} flag;
 };
 
+class FeedReaderShrinkImageTask
+{
+public:
+	enum Type {
+		POSTED
+	};
+
+public:
+	Type mType;
+	std::vector<unsigned char> mImage;
+	std::vector<unsigned char> mImageResult;
+	bool mResult;
+
+public:
+	FeedReaderShrinkImageTask(Type type, const std::vector<unsigned char> &image)
+	{
+		mType = type;
+		mImage = image;
+		mResult = false;
+	}
+};
+
 class RsFeedReaderNotify
 {
 public:
@@ -197,6 +220,7 @@ public:
 
 	virtual void notifyFeedChanged(uint32_t /*feedId*/, int /*type*/) {}
 	virtual void notifyMsgChanged(uint32_t /*feedId*/, const std::string &/*msgId*/, int /*type*/) {}
+	virtual void notifyShrinkImage() {}
 };
 
 class RsFeedReader
@@ -241,6 +265,9 @@ public:
 	virtual RsPosted*    posted() = 0;
 	virtual bool         getForumGroups(std::vector<RsGxsForumGroup> &groups, bool onlyOwn) = 0;
 	virtual bool         getPostedGroups(std::vector<RsPostedGroup> &groups, bool onlyOwn) = 0;
+
+	virtual FeedReaderShrinkImageTask *getShrinkImageTask() = 0;
+	virtual void         setShrinkImageTaskResult(FeedReaderShrinkImageTask *shrinkImageTask) = 0;
 
 	virtual RsFeedReaderErrorState processXPath(const std::list<std::string> &xpathsToUse, const std::list<std::string> &xpathsToRemove, std::string &description, std::string &errorString) = 0;
 	virtual RsFeedReaderErrorState processXslt(const std::string &xslt, std::string &description, std::string &errorString) = 0;

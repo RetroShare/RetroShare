@@ -99,6 +99,8 @@ AddFeedDialog::AddFeedDialog(RsFeedReader *feedReader, FeedReaderNotify *notify,
 	ui->postedFirstImageCheckBox->setChecked(false);
 	ui->postedOnlyImageCheckBox->setEnabled(false);
 	ui->postedOnlyImageCheckBox->setChecked(false);
+	ui->postedShinkImageCheckBox->setEnabled(false);
+	ui->postedShinkImageCheckBox->setChecked(false);
 	ui->useAuthenticationCheckBox->setChecked(false);
 	ui->useStandardStorageTimeCheckBox->setChecked(true);
 	ui->useStandardUpdateInterval->setChecked(true);
@@ -197,9 +199,11 @@ void AddFeedDialog::postedFirstImageToggled()
 {
 	bool checked = ui->postedFirstImageCheckBox->isChecked();
 	ui->postedOnlyImageCheckBox->setEnabled(checked);
+	ui->postedShinkImageCheckBox->setEnabled(checked);
 
 	if (!checked) {
 		ui->postedOnlyImageCheckBox->setChecked(false);
+		ui->postedShinkImageCheckBox->setChecked(false);
 	}
 }
 
@@ -209,6 +213,7 @@ void AddFeedDialog::typePostedToggled()
 	mStateHelper->setWidgetEnabled(ui->postedComboBox, checked);
 	ui->updatePostedInfoCheckBox->setEnabled(checked);
 	ui->postedFirstImageCheckBox->setEnabled(checked);
+	ui->postedShinkImageCheckBox->setEnabled(checked);
 
 	if (checked) {
 		ui->typeLocalCheckBox->setChecked(false);
@@ -301,6 +306,7 @@ bool AddFeedDialog::fillFeed(uint32_t feedId)
 		ui->updatePostedInfoCheckBox->setChecked(feedInfo.flag.updatePostedInfo);
 		ui->postedFirstImageCheckBox->setChecked(feedInfo.flag.postedFirstImage);
 		ui->postedOnlyImageCheckBox->setChecked(feedInfo.flag.postedOnlyImage);
+		ui->postedShinkImageCheckBox->setChecked(feedInfo.flag.postedShrinkImage);
 		ui->activatedCheckBox->setChecked(!feedInfo.flag.deactivated);
 		ui->embedImagesCheckBox->setChecked(feedInfo.flag.embedImages);
 		ui->saveCompletePageCheckBox->setChecked(feedInfo.flag.saveCompletePage);
@@ -397,6 +403,7 @@ void AddFeedDialog::getFeedInfo(FeedInfo &feedInfo)
 	feedInfo.flag.updatePostedInfo = ui->updatePostedInfoCheckBox->isChecked() && ui->updatePostedInfoCheckBox->isEnabled();
 	feedInfo.flag.postedFirstImage = ui->postedFirstImageCheckBox->isChecked() && ui->postedFirstImageCheckBox->isEnabled();
 	feedInfo.flag.postedOnlyImage = ui->postedOnlyImageCheckBox->isChecked() && ui->postedOnlyImageCheckBox->isEnabled();
+	feedInfo.flag.postedShrinkImage = ui->postedShinkImageCheckBox->isChecked() && ui->postedShinkImageCheckBox->isEnabled();
 	feedInfo.flag.deactivated = !ui->activatedCheckBox->isChecked();
 	feedInfo.flag.embedImages = ui->embedImagesCheckBox->isChecked();
 	feedInfo.flag.saveCompletePage = ui->saveCompletePageCheckBox->isChecked();
