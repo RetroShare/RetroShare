@@ -504,6 +504,11 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     }, mEventHandlerId, RsEventType::GXS_CHANNELS );
 }
 
+void GxsChannelPostsWidgetWithModel::resizeEvent(QResizeEvent *e)
+{
+    GxsMessageFrameWidget::resizeEvent(e);
+    updateZoomFactor(0);
+}
 void GxsChannelPostsWidgetWithModel::currentTabChanged(int t)
 {
     switch(t)
