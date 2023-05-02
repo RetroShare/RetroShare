@@ -164,6 +164,9 @@ private:
 	std::map<RsGxsGroupId, RsWireGroup> mAllGroups;
 	std::vector<RsWireGroup> mOwnGroups;
 
+    void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+    RsEventsHandlerId_t mEventHandlerId;
+
 	int32_t mHistoryIndex;
 	std::vector<WireViewHistory> mHistory;
 
