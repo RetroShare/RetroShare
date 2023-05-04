@@ -482,6 +482,8 @@ void NotifyQt::notifyTurtleSearchResult(uint32_t /*search_id*/,const std::list<T
     std::cerr << "(EE) missing code to handle GXS turtle search result." << std::endl;
 }
 
+#ifdef TO_REMOVE
+// Mai 2023: distant turtle search now uses RsEvents.
 void NotifyQt::notifyTurtleSearchResult(const RsPeerId& pid,uint32_t search_id,const std::list<TurtleFileInfo>& files)
 {
 	{
@@ -507,6 +509,7 @@ void NotifyQt::notifyTurtleSearchResult(const RsPeerId& pid,uint32_t search_id,c
 		emit gotTurtleSearchResult(search_id,det) ;
 	}
 }
+#endif
 
 void NotifyQt::notifyHistoryChanged(uint32_t msgId, int type)
 {
