@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include "CreateGxsForumMsg.h"
+#include "ui_CreateGxsForumMsg.h"
 
 #include <QMessageBox>
 #include <QFile>
@@ -54,63 +55,64 @@
 /** Constructor */
 CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessageId &pId, const RsGxsMessageId& mOId, const RsGxsId& posterId, bool isModerating)
     : QDialog(NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint),
-      mForumId(fId), mParentId(pId), mOrigMsgId(mOId),mPosterId(posterId),mIsModerating(isModerating)
+      mForumId(fId), mParentId(pId), mOrigMsgId(mOId),mPosterId(posterId),mIsModerating(isModerating),
+      ui(new Ui::CreateGxsForumMsg)
 {
 	/* Invoke the Qt Designer generated object setup routine */
-	ui.setupUi(this);
+	ui->setupUi(this);
 
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
 	/* Setup UI helper */
 	mStateHelper = new UIStateHelper(this);
-	mStateHelper->addWidget(CREATEGXSFORUMMSG_FORUMINFO, ui.postButton);
-	mStateHelper->addWidget(CREATEGXSFORUMMSG_FORUMINFO, ui.innerFrame);
-	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_FORUMINFO, ui.forumName);
-	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_FORUMINFO, ui.forumSubject);
-	mStateHelper->addClear(CREATEGXSFORUMMSG_FORUMINFO, ui.forumName);
+	mStateHelper->addWidget(CREATEGXSFORUMMSG_FORUMINFO, ui->postButton);
+	mStateHelper->addWidget(CREATEGXSFORUMMSG_FORUMINFO, ui->innerFrame);
+	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_FORUMINFO, ui->forumName);
+	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_FORUMINFO, ui->forumSubject);
+	mStateHelper->addClear(CREATEGXSFORUMMSG_FORUMINFO, ui->forumName);
 
-	mStateHelper->addWidget(CREATEGXSFORUMMSG_PARENTMSG, ui.postButton);
-	mStateHelper->addWidget(CREATEGXSFORUMMSG_PARENTMSG, ui.innerFrame);
-	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_PARENTMSG, ui.forumName);
-	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_PARENTMSG, ui.forumSubject);
-	mStateHelper->addClear(CREATEGXSFORUMMSG_PARENTMSG, ui.forumName);
+	mStateHelper->addWidget(CREATEGXSFORUMMSG_PARENTMSG, ui->postButton);
+	mStateHelper->addWidget(CREATEGXSFORUMMSG_PARENTMSG, ui->innerFrame);
+	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_PARENTMSG, ui->forumName);
+	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_PARENTMSG, ui->forumSubject);
+	mStateHelper->addClear(CREATEGXSFORUMMSG_PARENTMSG, ui->forumName);
 
-	mStateHelper->addWidget(CREATEGXSFORUMMSG_ORIGMSG, ui.postButton);
-	mStateHelper->addWidget(CREATEGXSFORUMMSG_ORIGMSG, ui.innerFrame);
-	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_ORIGMSG, ui.forumName);
-	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_ORIGMSG, ui.forumSubject);
-	mStateHelper->addClear(CREATEGXSFORUMMSG_ORIGMSG, ui.forumName);
+	mStateHelper->addWidget(CREATEGXSFORUMMSG_ORIGMSG, ui->postButton);
+	mStateHelper->addWidget(CREATEGXSFORUMMSG_ORIGMSG, ui->innerFrame);
+	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_ORIGMSG, ui->forumName);
+	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_ORIGMSG, ui->forumSubject);
+	mStateHelper->addClear(CREATEGXSFORUMMSG_ORIGMSG, ui->forumName);
 
 
 	QString text = mOId.isNull()?(pId.isNull() ? tr("Start New Thread") : tr("Post Forum Message")):tr("Edit Message");
 	setWindowTitle(text);
 	
 	if (!mOId.isNull())
-	ui.postButton->setText(tr ("Update"));
+	ui->postButton->setText(tr ("Update"));
 
-	ui.forumMessage->setPlaceholderText(tr ("Text"));
+	ui->forumMessage->setPlaceholderText(tr ("Text"));
 
-    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums.png"));
-	ui.headerFrame->setHeaderText(text);
+    ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums.png"));
+	ui->headerFrame->setHeaderText(text);
 
-	ui.generateSpinBox->setEnabled(false);
+	ui->generateSpinBox->setEnabled(false);
 
 	Settings->loadWidgetInformation(this);
 
-	connect(ui.hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
+	connect(ui->hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
 
 	// connect up the buttons.
-	connect(ui.postButton, SIGNAL(clicked()), this, SLOT(createMsg()));
-	connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
-	connect(ui.emoticonButton, SIGNAL(clicked()), this, SLOT(smileyWidgetForums()));
-	connect(ui.attachFileButton, SIGNAL(clicked()), this, SLOT(addFile()));
-	connect(ui.attachPictureButton, SIGNAL(clicked()), this, SLOT(addPicture()));
-	connect(ui.forumMessage, SIGNAL(textChanged()), this, SLOT(checkLength()));
-	connect(ui.generateCheckBox, SIGNAL(toggled(bool)), ui.generateSpinBox, SLOT(setEnabled(bool)));
+	connect(ui->postButton, SIGNAL(clicked()), this, SLOT(createMsg()));
+	connect(ui->cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
+	connect(ui->emoticonButton, SIGNAL(clicked()), this, SLOT(smileyWidgetForums()));
+	connect(ui->attachFileButton, SIGNAL(clicked()), this, SLOT(addFile()));
+	connect(ui->attachPictureButton, SIGNAL(clicked()), this, SLOT(addPicture()));
+	connect(ui->forumMessage, SIGNAL(textChanged()), this, SLOT(checkLength()));
+	connect(ui->generateCheckBox, SIGNAL(toggled(bool)), ui->generateSpinBox, SLOT(setEnabled(bool)));
 
 	setAcceptDrops(true);
-	ui.hashBox->setDropWidget(this);
-	ui.hashBox->setAutoHide(false);
+	ui->hashBox->setDropWidget(this);
+	ui->hashBox->setAutoHide(false);
 
 	mParentMsgLoaded = false;
 	mForumMetaLoaded = false;
@@ -118,11 +120,11 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 
 	newMsg();
 	
-	ui.hashGroupBox->hide();
+	ui->hashGroupBox->hide();
 
 #ifndef ENABLE_GENERATE
-	ui.generateCheckBox->hide();
-	ui.generateSpinBox->hide();
+	ui->generateCheckBox->hide();
+	ui->generateSpinBox->hide();
 #endif
     processSettings(true);
 }
@@ -130,6 +132,9 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 CreateGxsForumMsg::~CreateGxsForumMsg()
 {
     processSettings(false);
+
+    delete ui;
+
 }
 
 void CreateGxsForumMsg::processSettings(bool load)
@@ -142,14 +147,14 @@ void CreateGxsForumMsg::processSettings(bool load)
         RsGxsId gxs_id(Settings->value("IDChooser", QString::fromStdString(RsGxsId().toStdString())).toString().toStdString());
 
         if(!gxs_id.isNull() && rsIdentity->isOwnId(gxs_id))
-            ui.idChooser->setChosenId(gxs_id);
+            ui->idChooser->setChosenId(gxs_id);
     }
     else
     {
         // state of ID Chooser combobox
         RsGxsId id;
 
-        if(ui.idChooser->getChosenId(id))
+        if(ui->idChooser->getChosenId(id))
             Settings->setValue("IDChooser", QString::fromStdString(id.toStdString()));
     }
 
@@ -171,11 +176,11 @@ void  CreateGxsForumMsg::newMsg()
         std::set<RsGxsId> id_set ;
         id_set.insert(mPosterId) ;
 
-		ui.idChooser->loadIds(IDCHOOSER_ID_REQUIRED | IDCHOOSER_NO_CREATE, mPosterId);
-		ui.idChooser->setIdConstraintSet(id_set);
+		ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED | IDCHOOSER_NO_CREATE, mPosterId);
+		ui->idChooser->setIdConstraintSet(id_set);
     }
     else
-		ui.idChooser->loadIds(IDCHOOSER_ID_REQUIRED, mPosterId);
+		ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, mPosterId);
 
         if (mForumId.isNull()) {
 		mStateHelper->setActive(CREATEGXSFORUMMSG_FORUMINFO, false);
@@ -185,7 +190,7 @@ void  CreateGxsForumMsg::newMsg()
 		mStateHelper->clear(CREATEGXSFORUMMSG_FORUMINFO);
 		mStateHelper->clear(CREATEGXSFORUMMSG_PARENTMSG);
 		mStateHelper->clear(CREATEGXSFORUMMSG_ORIGMSG);
-		ui.forumName->setText(tr("No Forum"));
+		ui->forumName->setText(tr("No Forum"));
 		return;
 	}
 
@@ -306,7 +311,7 @@ void  CreateGxsForumMsg::loadFormInformation()
 	if(!mPosterId.isNull())
 		fl |= IDCHOOSER_NO_CREATE;
 
-	ui.idChooser->setFlags(fl) ;
+	ui->idChooser->setFlags(fl) ;
 
 	QString name = QString::fromUtf8(mForumMeta.mGroupName.c_str());
 	QString subj;
@@ -327,19 +332,19 @@ void  CreateGxsForumMsg::loadFormInformation()
 			subj = "Re: " + title;
 	}
 
-	ui.forumName->setText(misc::removeNewLine(name));
+	ui->forumName->setText(misc::removeNewLine(name));
 
     std::cerr << "Setting name to \"" << misc::removeNewLine(name).toStdString() << std::endl;
 	if(!subj.isNull())
-		ui.forumSubject->setText(misc::removeNewLine(subj));
+		ui->forumSubject->setText(misc::removeNewLine(subj));
 
-	if (ui.forumSubject->text().isEmpty())
+	if (ui->forumSubject->text().isEmpty())
 	{
-		ui.forumSubject->setFocus();
-		ui.forumSubject->setPlaceholderText(tr ("Title"));
+		ui->forumSubject->setFocus();
+		ui->forumSubject->setPlaceholderText(tr ("Title"));
 	}
 	else
-		ui.forumMessage->setFocus();
+		ui->forumMessage->setFocus();
 
 #ifdef TOGXS
 	if (mForumMeta.mGroupFlags & RS_DISTRIB_AUTHEN_REQ)
@@ -347,18 +352,18 @@ void  CreateGxsForumMsg::loadFormInformation()
 	if (1)
 #endif
 	{
-		ui.signBox->setChecked(true);
-		ui.signBox->setEnabled(false);
-		ui.signBox->hide();
+		ui->signBox->setChecked(true);
+		ui->signBox->setEnabled(false);
+		ui->signBox->hide();
 	}
 	else
 	{
 		/* Uncheck sign box by default for anonymous forums */
-		ui.signBox->setChecked(false);
-		ui.signBox->setEnabled(true);
+		ui->signBox->setChecked(false);
+		ui->signBox->setEnabled(true);
 	}
 
-	//ui.forumMessage->setText("");
+	//ui->forumMessage->setText("");
 }
 
 static const uint32_t MAX_ALLOWED_GXS_MESSAGE_SIZE = 199000;
@@ -366,27 +371,27 @@ static const uint32_t MAX_ALLOWED_GXS_MESSAGE_SIZE = 199000;
 void CreateGxsForumMsg::checkLength()
 {
 	QString text;
-	RsHtml::optimizeHtml(ui.forumMessage, text);
+	RsHtml::optimizeHtml(ui->forumMessage, text);
 	std::wstring msg = text.toStdWString();
 	int charRemains = MAX_ALLOWED_GXS_MESSAGE_SIZE - msg.length();
 	if(charRemains >= 0) {
 		text = tr("It remains %1 characters after HTML conversion.").arg(charRemains);
-		ui.info_Label->setStyleSheet("QLabel#info_Label { }");
+		ui->info_Label->setStyleSheet("QLabel#info_Label { }");
 	}else{
 		text = tr("Warning: This message is too big of %1 characters after HTML conversion.").arg((0-charRemains));
-	    ui.info_Label->setStyleSheet("QLabel#info_Label {color: red; font: bold; }");
+	    ui->info_Label->setStyleSheet("QLabel#info_Label {color: red; font: bold; }");
 	}
-	ui.postButton->setToolTip(text);
-	ui.postButton->setEnabled(charRemains>=0);
-	ui.info_Label->setText(text);
+	ui->postButton->setToolTip(text);
+	ui->postButton->setEnabled(charRemains>=0);
+	ui->info_Label->setText(text);
 }
 
 void  CreateGxsForumMsg::createMsg()
 {
-	QString name = misc::removeNewLine(ui.forumSubject->text());
+	QString name = misc::removeNewLine(ui->forumSubject->text());
 	QString desc;
 
-	RsHtml::optimizeHtml(ui.forumMessage, desc);
+	RsHtml::optimizeHtml(ui->forumMessage, desc);
 
 	if(name.isEmpty() | desc.isEmpty()) {
 		/* error message */
@@ -415,9 +420,9 @@ void  CreateGxsForumMsg::createMsg()
 	if ((msg.mMsg == "") && (msg.mMeta.mMsgName == ""))
 		return; /* do nothing */
 
-	if (ui.signBox->isChecked()) {
+	if (ui->signBox->isChecked()) {
 		RsGxsId authorId;
-		switch (ui.idChooser->getChosenId(authorId)) {
+		switch (ui->idChooser->getChosenId(authorId)) {
 		case GxsIdChooser::KnowId:
 		case GxsIdChooser::UnKnowId:
 			msg.mMeta.mAuthorId = authorId;
@@ -447,23 +452,23 @@ void  CreateGxsForumMsg::createMsg()
 			QMessageBox::warning(this, tr("RetroShare"),tr("Congrats, you found a bug!")+" "+QString(__FILE__)+":"+QString(__LINE__), QMessageBox::Ok, QMessageBox::Ok);
 
 			return;
-		}//switch (ui.idChooser->getChosenId(authorId))
+		}//switch (ui->idChooser->getChosenId(authorId))
 	} else {
 		//std::cerr << "CreateGxsForumMsg::createMsg() No Signature (for now :)";
 		//std::cerr << std::endl;
 		QMessageBox::warning(this, tr("RetroShare"),tr("Please choose Signing Id, it is required"), QMessageBox::Ok, QMessageBox::Ok);
 		return;
-	}//if (ui.signBox->isChecked())
+	}//if (ui->signBox->isChecked())
 
 	int generateCount = 0;
 
 #ifdef ENABLE_GENERATE
-	if (ui.generateCheckBox->isChecked()) {
-		generateCount = ui.generateSpinBox->value();
+	if (ui->generateCheckBox->isChecked()) {
+		generateCount = ui->generateSpinBox->value();
 		if (QMessageBox::question(this, tr("Generate mass data"), tr("Do you really want to generate %1 messages ?").arg(generateCount), QMessageBox::Yes|QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
 			return;
 		}//if (QMessageBox::question(this,
-	}//if (ui.generateCheckBox->isChecked())
+	}//if (ui->generateCheckBox->isChecked())
 #endif
 
 	uint32_t token;
@@ -490,7 +495,7 @@ void CreateGxsForumMsg::closeEvent (QCloseEvent * /*event*/)
 
 void CreateGxsForumMsg::reject()
 {
-    if (ui.forumMessage->document()->isModified()) {
+    if (ui->forumMessage->document()->isModified()) {
         QMessageBox::StandardButton ret;
         ret = QMessageBox::warning(this, tr("Cancel Forum Message"),
                                    tr("Forum Message has not been sent yet!\n"
@@ -511,7 +516,7 @@ void CreateGxsForumMsg::reject()
 
 void CreateGxsForumMsg::smileyWidgetForums()
 {
-	Emoticons::showSmileyWidget(this, ui.emoticonButton, SLOT(addSmileys()), false);
+	Emoticons::showSmileyWidget(this, ui->emoticonButton, SLOT(addSmileys()), false);
 }
 
 void CreateGxsForumMsg::addSmileys()
@@ -520,17 +525,17 @@ void CreateGxsForumMsg::addSmileys()
 	// add trailing space
 	smiley += QString(" ");
 	// add preceding space when needed (not at start of text or preceding space already exists)
-	if(!ui.forumMessage->textCursor().atStart() && ui.forumMessage->toPlainText()[ui.forumMessage->textCursor().position() - 1] != QChar(' '))
+	if(!ui->forumMessage->textCursor().atStart() && ui->forumMessage->toPlainText()[ui->forumMessage->textCursor().position() - 1] != QChar(' '))
 		smiley = QString(" ") + smiley;
-	ui.forumMessage->textCursor().insertText(smiley);
+	ui->forumMessage->textCursor().insertText(smiley);
 }
 
 void CreateGxsForumMsg::addFile()
 {
 	QStringList files;
 	if (misc::getOpenFileNames(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", files)) {
-		ui.hashBox->addAttachments(files,RS_FILE_REQ_ANONYMOUS_ROUTING);
-		ui.hashGroupBox->show();
+		ui->hashBox->addAttachments(files,RS_FILE_REQ_ANONYMOUS_ROUTING);
+		ui->hashGroupBox->show();
 	}
 }
 
@@ -541,7 +546,7 @@ void CreateGxsForumMsg::addPicture()
 		QString encodedImage;
 		if (RsHtml::makeEmbeddedImage(file, encodedImage, 640*480, MAX_ALLOWED_GXS_MESSAGE_SIZE - 200)) {
 			QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
-			ui.forumMessage->textCursor().insertFragment(fragment);
+			ui->forumMessage->textCursor().insertFragment(fragment);
 		}
 	}
 }
@@ -563,11 +568,11 @@ void CreateGxsForumMsg::fileHashingFinished(QList<HashedFile> hashedFiles)
 	}
 
 	if (!mesgString.isEmpty()) {
-		ui.forumMessage->textCursor().insertHtml(mesgString);
+		ui->forumMessage->textCursor().insertHtml(mesgString);
 	}
 
-	ui.forumMessage->setFocus( Qt::OtherFocusReason );
-	ui.hashGroupBox->hide();
+	ui->forumMessage->setFocus( Qt::OtherFocusReason );
+	ui->hashGroupBox->hide();
 }
 
 void CreateGxsForumMsg::loadCircleInfo(const RsGxsGroupId& circle_id)
@@ -603,11 +608,11 @@ void CreateGxsForumMsg::loadCircleInfo(const RsGxsGroupId& circle_id)
             //for(std::set<RsGxsId>::const_iterator it(cg.mInvitedMembers.begin());it!=cg.mInvitedMembers.end();++it)
             //    std::cerr << "  added constraint to circle element " << *it << std::endl;
 
-            ui.idChooser->setIdConstraintSet(cg.mInvitedMembers) ;
-            ui.idChooser->setFlags(IDCHOOSER_NO_CREATE | ui.idChooser->flags()) ;	// since there's a circle involved, no ID creation can be needed
+            ui->idChooser->setIdConstraintSet(cg.mInvitedMembers) ;
+            ui->idChooser->setFlags(IDCHOOSER_NO_CREATE | ui->idChooser->flags()) ;	// since there's a circle involved, no ID creation can be needed
 
             RsGxsId tmpid ;
-            if(ui.idChooser->countEnabledEntries() == 0)
+            if(ui->idChooser->countEnabledEntries() == 0)
             {
                 QMessageBox::information(NULL,tr("No compatible ID for this forum"),tr("None of your identities is allowed to post in this forum. This could be due to the forum being limited to a circle that contains none of your identities, or forum flags requiring a PGP-signed identity.")) ;
                 close() ;
@@ -618,10 +623,10 @@ void CreateGxsForumMsg::loadCircleInfo(const RsGxsGroupId& circle_id)
 
 void CreateGxsForumMsg::setSubject(const QString& msg)
 {
-	ui.forumSubject->setText(msg);
+	ui->forumSubject->setText(msg);
 }
 
 void CreateGxsForumMsg::insertPastedText(const QString& msg)
 {
-	ui.forumMessage->append(msg);
+	ui->forumMessage->append(msg);
 }

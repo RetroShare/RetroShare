@@ -125,9 +125,6 @@ void ChatPage::updateFontsAndEmotes()
 /** Saves the changes on this page */
 void ChatPage::updateChatParams()
 {
-	// state of distant Chat combobox
-	Settings->setValue("DistantChat", ui.distantChatComboBox->currentIndex());
-
 	Settings->setChatScreenFont(fontTempChat.toString());
 	NotifyQt::getInstance()->notifyChatFontChanged();
 
@@ -395,9 +392,23 @@ ChatPage::load()
     whileBlocking(ui.minimumContrast)->setValue(Settings->value("MinimumContrast", 4.5).toDouble());
     Settings->endGroup();
 
-	     // state of distant Chat combobox
-    int index = Settings->value("DistantChat", 0).toInt();
-    whileBlocking(ui.distantChatComboBox)->setCurrentIndex(index);
+    // state of distant Chat combobox
+
+    switch(rsMsgs->getDistantChatPermissionFlags())
+    {
+        default:
+        case RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NONE:
+            whileBlocking(ui.distantChatComboBox)->setCurrentIndex(0);
+            break ;
+
+        case RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NON_CONTACTS:
+            whileBlocking(ui.distantChatComboBox)->setCurrentIndex(1);
+            break ;
+
+        case RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_EVERYBODY:
+            whileBlocking(ui.distantChatComboBox)->setCurrentIndex(2);
+            break ;
+    }
 
     fontTempChat.fromString(Settings->getChatScreenFont());
 

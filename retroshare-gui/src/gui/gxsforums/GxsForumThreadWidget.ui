@@ -568,9 +568,6 @@
            <family>MS Sans Serif</family>
           </font>
          </property>
-         <property name="contextMenuPolicy">
-          <enum>Qt::CustomContextMenu</enum>
-         </property>
         </widget>
        </item>
       </layout>
@@ -578,15 +575,6 @@
     </widget>
    </item>
   </layout>
-  <action name="actionSave_image">
-   <property name="icon">
-    <iconset resource="../images.qrc">
-     <normaloff>:/images/document_save.png</normaloff>:/images/document_save.png</iconset>
-   </property>
-   <property name="text">
-    <string>Save image</string>
-   </property>
-  </action>
  </widget>
  <customwidgets>
   <customwidget>

@@ -43,6 +43,7 @@
 
 #define LINK_IMAGE ":/images/thumb-link.png"
 
+
 // #ifdef DEBUG_BOARDPOSTDISPLAYWIDGET 1
 
 /** Constructor */
@@ -57,6 +58,7 @@ BoardPostDisplayWidgetBase::BoardPostDisplayWidgetBase(const RsPostedPost& post,
     : QWidget(parent), mPost(post),mDisplayFlags(display_flags)
 {
 }
+
 
 void BoardPostDisplayWidgetBase::setCommentsSize(int comNb)
 {
@@ -168,6 +170,7 @@ void BoardPostDisplayWidgetBase::baseSetup()
 
     readButton()->setChecked(false);
 
+#ifdef TO_REMOVE
     QMenu *menu = new QMenu();
     menu->addAction(CopyLinkAction);
     menu->addSeparator();
@@ -175,6 +178,7 @@ void BoardPostDisplayWidgetBase::baseSetup()
     shareButton()->setPopupMode(QToolButton::InstantPopup);
 
     connect(menu,SIGNAL(aboutToShow()),this,SLOT(handleShareButtonClicked()));
+#endif
 
     RsReputationLevel overall_reputation = rsReputations->overallReputationLevel(mPost.mMeta.mAuthorId);
     bool redacted = (overall_reputation == RsReputationLevel::LOCALLY_NEGATIVE);
@@ -182,7 +186,9 @@ void BoardPostDisplayWidgetBase::baseSetup()
     if(redacted)
     {
         commentButton()->setDisabled(true);
+#ifdef TO_REMOVE
         shareButton()->setDisabled(true);
+#endif
         voteUpButton()->setDisabled(true);
         voteDownButton()->setDisabled(true);
         fromLabel()->setId(mPost.mMeta.mAuthorId);
@@ -275,6 +281,7 @@ void BoardPostDisplayWidgetBase::baseSetup()
     emit sizeChanged(this);
 #endif
 }
+#ifdef TO_REMOVE
 void BoardPostDisplayWidgetBase::handleShareButtonClicked()
 {
     emit shareButtonClicked();
@@ -284,6 +291,8 @@ void BoardPostDisplayWidgetBase::handleCopyLinkClicked()
 {
     emit copylinkClicked();
 }
+#endif
+
 //===================================================================================================================================
 //==                                                 class BoardPostDisplayWidget                                                  ==
 //===================================================================================================================================
@@ -292,6 +301,7 @@ BoardPostDisplayWidget_compact::BoardPostDisplayWidget_compact(const RsPostedPos
     : BoardPostDisplayWidgetBase(post,display_flags,parent), ui(new Ui::BoardPostDisplayWidget_compact())
 {
 	ui->setupUi(this);
+    ui->shareButton->hide();
 	BoardPostDisplayWidget_compact::setup();
 }
 
@@ -400,10 +410,10 @@ QLabel         *BoardPostDisplayWidget_compact::newLabel()       { return ui->ne
 QToolButton    *BoardPostDisplayWidget_compact::readButton()     { return ui->readButton; }
 GxsIdLabel     *BoardPostDisplayWidget_compact::fromLabel()      { return ui->fromLabel; }
 QLabel         *BoardPostDisplayWidget_compact::dateLabel()      { return ui->dateLabel; }
-QLabel         *BoardPostDisplayWidget_compact::titleLabel()     { return ui->titleLabel; }
+ElidedLabel    *BoardPostDisplayWidget_compact::titleLabel()     { return ui->titleLabel; }
 QLabel         *BoardPostDisplayWidget_compact::scoreLabel()     { return ui->scoreLabel; }
 QLabel         *BoardPostDisplayWidget_compact::notes()          { return ui->notes; }
-QToolButton    *BoardPostDisplayWidget_compact::shareButton()    { return ui->shareButton; }
+//QToolButton    *BoardPostDisplayWidget_compact::shareButton()    { return ui->shareButton; }
 QLabel         *BoardPostDisplayWidget_compact::pictureLabel()   { return ui->pictureLabel; }
 QFrame         *BoardPostDisplayWidget_compact::feedFrame()      { return ui->feedFrame; }
 
@@ -415,7 +425,8 @@ BoardPostDisplayWidget_card::BoardPostDisplayWidget_card(const RsPostedPost& pos
     : BoardPostDisplayWidgetBase(post,display_flags,parent), ui(new Ui::BoardPostDisplayWidget_card())
 {
 	ui->setupUi(this);
-	BoardPostDisplayWidget_card::setup();
+    ui->shareButton->hide();
+    BoardPostDisplayWidget_card::setup();
 }
 
 BoardPostDisplayWidget_card::~BoardPostDisplayWidget_card()
@@ -469,10 +480,10 @@ QLabel         *BoardPostDisplayWidget_card::newLabel()       { return ui->newLa
 QToolButton    *BoardPostDisplayWidget_card::readButton()     { return ui->readButton; }
 GxsIdLabel     *BoardPostDisplayWidget_card::fromLabel()      { return ui->fromLabel; }
 QLabel         *BoardPostDisplayWidget_card::dateLabel()      { return ui->dateLabel; }
-QLabel         *BoardPostDisplayWidget_card::titleLabel()     { return ui->titleLabel; }
+ElidedLabel    *BoardPostDisplayWidget_card::titleLabel()     { return ui->titleLabel; }
 QLabel         *BoardPostDisplayWidget_card::scoreLabel()     { return ui->scoreLabel; }
 QLabel         *BoardPostDisplayWidget_card::notes()          { return ui->notes; }
-QToolButton    *BoardPostDisplayWidget_card::shareButton()    { return ui->shareButton; }
+//QToolButton    *BoardPostDisplayWidget_card::shareButton()    { return ui->shareButton; }
 QLabel         *BoardPostDisplayWidget_card::pictureLabel()   { return ui->pictureLabel; }
 QFrame         *BoardPostDisplayWidget_card::feedFrame()      { return ui->feedFrame; }
 

@@ -186,13 +186,13 @@ void BaseBoardsCommentsItem::loadMessage()
 		if (posts.size() == 1)
 		{
 			std::cerr << (void*)this << ": Obtained post, with msgId = " << posts[0].mMeta.mMsgId << std::endl;
-			const RsPostedPost& post(posts[0]);
+            RsPostedPost post(posts[0]);	// no reference to temporary because it's passed to a thread!
 
 			RsQThreadUtils::postToObject( [post,this]() { setPost(post,true); mIsLoadingMessage = false;}, this );
 		}
 		else if(comments.size() == 1)
 		{
-			const RsGxsComment& cmt = comments[0];
+            RsGxsComment cmt(comments[0]);
 			std::cerr << (void*)this << ": Obtained comment, setting messageId to threadID = " << cmt.mMeta.mThreadId << std::endl;
 
 			RsQThreadUtils::postToObject( [cmt,this]()
@@ -287,14 +287,13 @@ void BaseBoardsCommentsItem::readToggled(bool checked)
 		return;
 	}
 
+    setReadStatus(false, checked);	// Can't call this inside an async call since the widget may be destroyed afterwards!
+                                    // So we do it right away.
+
     RsThread::async( [this,checked]() {
 		RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
         
         rsPosted->setCommentReadStatus(msgPair, !checked);
-        
-        RsQThreadUtils::postToObject( [this,checked]() {
-			setReadStatus(false, checked);
-        } );
     });
 }
 

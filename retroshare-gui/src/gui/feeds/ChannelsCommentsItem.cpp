@@ -292,13 +292,13 @@ void ChannelsCommentsItem::loadMessage()
 #ifdef DEBUG_ITEM
 			std::cerr << (void*)this << ": Obtained post, with msgId = " << posts[0].mMeta.mMsgId << std::endl;
 #endif
-            const RsGxsChannelPost& post(posts[0]);
+            RsGxsChannelPost post(posts[0]);	// no reference to temporary here, because we pass this to a thread
 
 			RsQThreadUtils::postToObject( [post,this]() { setPost(post);  }, this );
 		}
 		else if(comments.size() == 1)
 		{
-			const RsGxsComment& cmt = comments[0];
+            RsGxsComment cmt(comments[0]);
 #ifdef DEBUG_ITEM
 			std::cerr << (void*)this << ": Obtained comment, setting messageId to threadID = " << cmt.mMeta.mThreadId << std::endl;
 #endif

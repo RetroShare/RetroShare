@@ -24,7 +24,6 @@
 #include <QDialog>
 #include <gui/common/HashBox.h>
 #include "retroshare/rsposted.h"
-#include "util/RichTextEdit.h"
 
 namespace Ui {
 	class PostedCreatePostDialog;
@@ -50,6 +49,7 @@ private:
 private slots:
 	void createPost();
 	void addPicture();
+	void pastePicture();
 	void on_removeButton_clicked();
 	void fileHashingFinished(QList<HashedFile> hashedFiles);
 	void reject() override; //QDialog

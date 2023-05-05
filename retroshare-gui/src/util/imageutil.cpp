@@ -23,8 +23,12 @@
 #include "util/rstime.h"
 
 #include <QApplication>
+#include <QWidget>
+#include <QTextEdit>
 #include <QByteArray>
 #include <QImage>
+#include <QClipboard>
+#include <QMimeData>
 #include <QMessageBox>
 #include <QString>
 #include <QTextCursor>
@@ -36,6 +40,64 @@
 #include <iostream>
 
 ImageUtil::ImageUtil() {}
+
+bool ImageUtil::checkImage(const QTextEdit *edit, const QPoint &pos, QRect *cursorRectStartOut, QRect *cursorRectLeftOut, QRect *cursorRectRightOut, QRect *cursorRectEndOut)
+{
+	QString imageStr;
+	return checkImage(edit, pos, imageStr, cursorRectStartOut, cursorRectLeftOut, cursorRectRightOut, cursorRectEndOut);
+}
+
+bool ImageUtil::checkImage(const QTextEdit *edit, const QPoint &pos, QString &imageStr, QRect *cursorRectStartOut, QRect *cursorRectLeftOut, QRect *cursorRectRightOut, QRect *cursorRectEndOut)
+{
+	//Get text cursor under pos. But if pos is under text browser end line this return last cursor.
+	QTextCursor cursor = edit->cursorForPosition(pos);
+	//First get rect of cursor (could be at left or right of image)
+	QRect cursorRectStart = edit->cursorRect(cursor);
+	//Second get text
+	cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, 1);//To get character just before
+	QRect cursorRectLeft = edit->cursorRect(cursor);
+	cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 2);
+	QRect cursorRectRight = edit->cursorRect(cursor);
+	imageStr = cursor.selection().toHtml();
+
+	if (cursorRectStartOut) {
+		*cursorRectStartOut = cursorRectStart;
+	}
+	if (cursorRectLeftOut) {
+		*cursorRectLeftOut = cursorRectLeft;
+	}
+	if (cursorRectRightOut) {
+		*cursorRectRightOut = cursorRectRight;
+	}
+
+	QRect cursorRectEnd = cursorRectStart;
+	//Finally set left with right of precedent character.
+	if (cursorRectEnd.top() < cursorRectLeft.bottom())
+	{
+		cursorRectEnd.setLeft(cursorRectLeft.right());
+	} else {
+		//Image on new line
+		cursorRectEnd.setLeft(0);
+	}
+	//And set Right with left of next character.
+	if (cursorRectEnd.bottom() > cursorRectRight.top())
+	{
+		cursorRectEnd.setRight(cursorRectRight.left());
+	} else {
+		//New line after Image.
+	}
+
+	if (cursorRectEndOut) {
+		*cursorRectEndOut = cursorRectEnd;
+	}
+
+	//If pos is on text rect
+	if (cursorRectEnd.contains(pos))
+	{
+		return imageStr.indexOf("base64,") != -1;
+	}
+	return false;
+}
 
 void ImageUtil::extractImage(QWidget *window, QTextCursor cursor, QString file)
 {
@@ -65,6 +127,34 @@ void ImageUtil::extractImage(QWidget *window, QTextCursor cursor, QString file)
 	if(!success)
 	{
 		QMessageBox::warning(window, QApplication::translate("ImageUtil", "Save image"), QApplication::translate("ImageUtil", "Not an image"));
+	}
+}
+
+void ImageUtil::copyImage(QWidget *window, QTextCursor cursor)
+{
+	cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, 1);
+	cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 2);
+	QString imagestr = cursor.selection().toHtml();
+	bool success = false;
+	int start = imagestr.indexOf("base64,") + 7;
+	int stop = imagestr.indexOf("\"", start);
+	int length = stop - start;
+	if((start >= 0) && (length > 0))
+	{
+		QByteArray ba = QByteArray::fromBase64(imagestr.mid(start, length).toLatin1());
+		QImage image = QImage::fromData(ba);
+		if(!image.isNull())
+		{
+			success = true;
+			QClipboard *clipboard = QApplication::clipboard();
+			QMimeData *data = new QMimeData;
+			data->setImageData(image);
+			clipboard->setMimeData(data, QClipboard::Clipboard);
+		}
+	}
+	if(!success)
+	{
+		QMessageBox::warning(window, QApplication::translate("ImageUtil", "Copy image"), QApplication::translate("ImageUtil", "Not an image"));
 	}
 }
 

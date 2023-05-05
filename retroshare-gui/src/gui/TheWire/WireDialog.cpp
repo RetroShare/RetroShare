@@ -23,6 +23,8 @@
 #include "WireGroupDialog.h"
 #include "WireGroupItem.h"
 #include "gui/settings/rsharesettings.h"
+#include "gui/gxs/GxsIdDetails.h"
+#include "gui/common/FilesDefs.h"
 
 #include "PulseViewGroup.h"
 #include "PulseReplySeperator.h"
@@ -345,8 +347,20 @@ void WireDialog::updateGroups(std::vector<RsWireGroup>& groups)
 		{
 			// grab own groups.
 			// setup Chooser too.
-			mOwnGroups.push_back(it);
-			ui.groupChooser->addItem(QString::fromStdString(it.mMeta.mGroupName));
+			mOwnGroups.push_back(it); 
+			QPixmap pixmap;
+			if (it.mHeadshot.mData)
+			{
+				if (GxsIdDetails::loadPixmapFromData( it.mHeadshot.mData,it.mHeadshot.mSize,pixmap,GxsIdDetails::ORIGINAL))
+					pixmap = pixmap.scaled(32,32);
+			} 
+			else 
+			{
+				// default.
+				pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png").scaled(32,32);
+			}
+
+			ui.groupChooser->addItem(QPixmap(pixmap),QString::fromStdString(it.mMeta.mGroupName));
 		}
 	}
 }

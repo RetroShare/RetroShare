@@ -92,9 +92,9 @@ Q_DECLARE_METATYPE(ChannelPostFileInfo)
 int ChannelPostDelegate::cellSize(int col,const QFont& font,uint32_t parent_width) const
 {
     if(mUseGrid || col==0)
-        return mZoom*COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font).height();
+        return (int)floor(mZoom*COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font).height());
     else
-        return 0.8*parent_width - mZoom*COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font).height();
+        return (int)floor(0.8*parent_width - mZoom*COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font).height());
 }
 
 void ChannelPostDelegate::zoom(bool zoom_or_unzoom)
@@ -279,18 +279,18 @@ void ChannelPostDelegate::setWidgetGrid(bool use_grid)
 
 QWidget *ChannelPostFilesDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &/*option*/, const QModelIndex& index) const
 {
-	ChannelPostFileInfo file = index.data(Qt::UserRole).value<ChannelPostFileInfo>() ;
+    ChannelPostFileInfo file = index.data(Qt::UserRole).value<ChannelPostFileInfo>() ;
 
-	if(index.column() == RsGxsChannelPostFilesModel::COLUMN_FILES_FILE)
-	{
+    if(index.column() == RsGxsChannelPostFilesModel::COLUMN_FILES_FILE)
+    {
         GxsChannelFilesStatusWidget* w = new GxsChannelFilesStatusWidget(file,parent,true);
         w->setFocusPolicy(Qt::StrongFocus);
         connect(w,SIGNAL(onButtonClick()),this->parent(),SLOT(updateDAll_PB()));
 
-		return w;
-	}
-	else
-		return NULL;
+        return w;
+    }
+    else
+        return NULL;
 }
 void ChannelPostFilesDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
 {
@@ -379,7 +379,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     connect(ui->viewType_TB,SIGNAL(clicked()),this,SLOT(switchView()));
 
     ui->showUnread_TB->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
-    ui->showUnread_TB->setChecked(false);
+    whileBlocking(ui->showUnread_TB)->setChecked(false);
     ui->showUnread_TB->setToolTip(tr("Show unread posts only"));
     connect(ui->showUnread_TB,SIGNAL(toggled(bool)),this,SLOT(switchOnlyUnread(bool)));
 
@@ -392,7 +392,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 
     mChannelPostsDelegate->setAspectRatio(ChannelPostThumbnailView::ASPECT_RATIO_16_9);
 
-    connect(ui->postsTree,SIGNAL(zoomRequested(bool)),this,SLOT(updateZoomFactor(bool)));
+    connect(ui->postsTree,SIGNAL(zoomRequested(bool)),this,SLOT(onUpdateZoomFactor(bool)));
     connect(ui->commentsDialog,SIGNAL(commentsLoaded(int)),this,SLOT(updateCommentsCount(int)));
 
     ui->channelPostFiles_TV->setModel(mChannelPostFilesModel = new RsGxsChannelPostFilesModel(this));
@@ -517,23 +517,33 @@ void GxsChannelPostsWidgetWithModel::currentTabChanged(int t)
     case CHANNEL_TABS_POSTS:
         ui->showUnread_TB->setHidden(false);
         ui->viewType_TB->setHidden(false);
+        updateZoomFactor(0); // fixes a bug due to the widget now knowing its size when not displayed.
         break;
     }
 }
-void GxsChannelPostsWidgetWithModel::updateZoomFactor(bool zoom_or_unzoom)
+void GxsChannelPostsWidgetWithModel::onUpdateZoomFactor(bool zoom_or_unzoom)
 {
-    mChannelPostsDelegate->zoom(zoom_or_unzoom);
+    if(zoom_or_unzoom)
+        updateZoomFactor(1);
+    else
+        updateZoomFactor(-1);
+}
+void GxsChannelPostsWidgetWithModel::updateZoomFactor(int what_to_do)
+{
+    if(what_to_do != 0)
+        mChannelPostsDelegate->zoom(what_to_do > 0);
+
+    QSize s = ui->postsTree->size();
+    int n_columns = std::max(1,(int)floor(s.width() / (float)(mChannelPostsDelegate->cellSize(0,font(),s.width()))));
+    mChannelPostsModel->setNumColumns(n_columns);	// forces the update
 
     for(int i=0;i<mChannelPostsModel->columnCount();++i)
         ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(i,font(),ui->postsTree->width()));
 
-    QSize s = ui->postsTree->size();
-
-    int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(0,font(),s.width()))));
-
-    mChannelPostsModel->setNumColumns(n_columns);	// forces the update
-
-    ui->postsTree->dataChanged(QModelIndex(),QModelIndex());
+    if(what_to_do)
+        mChannelPostsModel->triggerViewUpdate(true,false);
+    else
+        mChannelPostsModel->triggerViewUpdate(false,true);
 }
 
 void GxsChannelPostsWidgetWithModel::sortColumnPostFiles(int col,Qt::SortOrder so)
@@ -639,7 +649,7 @@ void GxsChannelPostsWidgetWithModel::switchView()
     selectItem(msg_id);
     ui->postsTree->setFocus();
 
-    mChannelPostsModel->triggerViewUpdate();	// This is already called by setMode(), but the model cannot know how many
+    mChannelPostsModel->triggerViewUpdate(false,true);	// This is already called by setMode(), but the model cannot know how many
                                                 // columns is actually has until we call handlePostsTreeSizeChange(), so
                                                 // we have to call it again here.
 }
@@ -1067,8 +1077,9 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
             best = i;
 
     mChannelPostsDelegate->setAspectRatio(static_cast<ChannelPostThumbnailView::AspectRatio>(best));
-    mChannelPostsModel->triggerViewUpdate();
     handlePostsTreeSizeChange(ui->postsTree->size(),true); // force the update
+
+    updateZoomFactor(0);
 }
 
 void GxsChannelPostsWidgetWithModel::updateDisplay(bool update_group_data,bool update_posts)

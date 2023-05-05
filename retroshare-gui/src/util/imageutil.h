@@ -22,16 +22,21 @@
 #define IMAGEUTIL_H
 
 #include <QTextCursor>
-#include <QWidget>
-#include <QByteArray>
 #include <qiterator.h>
+
+class QWidget;
+class QTextEdit;
+class QByteArray;
 
 class ImageUtil
 {
 public:
 	ImageUtil();
 
+	static bool checkImage(const QTextEdit *edit, const QPoint &pos, QRect *cursorRectStartOut = NULL, QRect *cursorRectLeftOut = NULL, QRect *cursorRectRightOut = NULL, QRect *cursorRectEndOut = NULL);
+	static bool checkImage(const QTextEdit *edit, const QPoint &pos, QString &imageStr, QRect *cursorRectStartOut = NULL, QRect *cursorRectLeftOut = NULL, QRect *cursorRectRightOut = NULL, QRect *cursorRectEndOut = NULL);
 	static void extractImage(QWidget *window, QTextCursor cursor, QString file = "");
+	static void copyImage(QWidget *window, QTextCursor cursor);
     static bool optimizeSizeHtml(QString &html, const QImage& original, QImage &optimized, int maxPixels = -1, int maxBytes = -1);
     static bool optimizeSizeBytes(QByteArray &bytearray, const QImage &original, QImage &optimized, const char *format, int maxPixels, int maxBytes);
     static bool hasAlphaContent(const QImage& image);

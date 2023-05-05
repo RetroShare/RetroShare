@@ -1120,8 +1120,7 @@ void TransfersDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> eve
             break;
 
 		SoundManager::play(SOUND_DOWNLOAD_COMPLETE);
-		if (Settings->getNotifyFlags() & RS_POPUP_DOWNLOAD)
-            NotifyQt::getInstance()->addToaster(RS_POPUP_DOWNLOAD, fe->mHash.toStdString(), nfo.fname.c_str(),"");
+		NotifyQt::getInstance()->addToaster(RS_POPUP_DOWNLOAD, fe->mHash.toStdString(), nfo.fname.c_str(),"");
     }
         [[fallthrough]];
 

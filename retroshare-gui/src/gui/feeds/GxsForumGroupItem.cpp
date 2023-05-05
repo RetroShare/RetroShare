@@ -125,7 +125,7 @@ void GxsForumGroupItem::loadGroup()
 			std::cerr << std::endl;
 			return;
 		}
-		const RsGxsForumGroup& group(groups[0]);
+        RsGxsForumGroup group(groups[0]);// no reference to teporary accross threads!
 
 		RsQThreadUtils::postToObject( [group,this]()
 		{
