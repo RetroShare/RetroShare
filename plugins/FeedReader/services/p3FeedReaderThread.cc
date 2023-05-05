@@ -302,6 +302,9 @@ RsFeedReaderErrorState p3FeedReaderThread::download(const RsFeedReaderFeed &feed
 				}
 			}
 			break;
+		case 403:
+			result = RS_FEED_ERRORSTATE_DOWNLOAD_BLOCKED;
+			break;
 		case 404:
 			result = RS_FEED_ERRORSTATE_DOWNLOAD_NOT_FOUND;
 			break;

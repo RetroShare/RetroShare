@@ -101,6 +101,9 @@ QString FeedReaderStringDefs::errorString(RsFeedReaderErrorState errorState, con
 	case RS_FEED_ERRORSTATE_DOWNLOAD_UNKOWN_RESPONSE_CODE:
 		errorText = QApplication::translate("FeedReaderStringDefs", "Unknown response code");
 		break;
+	case RS_FEED_ERRORSTATE_DOWNLOAD_BLOCKED:
+		errorText = QApplication::translate("FeedReaderStringDefs", "Download blocked");
+		break;
 
 	/* process */
 	case RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR:

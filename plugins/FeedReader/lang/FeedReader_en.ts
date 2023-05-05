@@ -9,7 +9,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+92"/>
+        <location line="+398"/>
         <source>Board</source>
         <translation type="unfinished"></translation>
     </message>
@@ -34,7 +34,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="-391"/>
         <source>Authentication (not yet supported)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -84,12 +84,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+121"/>
+        <location line="+88"/>
         <source>Embed images</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-249"/>
+        <location line="-216"/>
         <source>Storage time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -124,7 +124,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-203"/>
+        <location line="+200"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
@@ -139,7 +139,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+299"/>
+        <location line="-67"/>
         <source>Transformation</source>
         <translation type="unfinished"></translation>
     </message>
@@ -154,7 +154,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="-58"/>
         <source>Misc</source>
         <translation type="unfinished"></translation>
     </message>
@@ -169,17 +169,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-336"/>
+        <location line="+100"/>
         <source>Update forum information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+350"/>
+        <location line="-86"/>
         <source>Save complete web page (experimental for local feeds)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-103"/>
+        <location line="-70"/>
         <source>Description:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -714,12 +714,12 @@
     </message>
     <message>
         <location line="+3"/>
-        <location line="+108"/>
+        <location line="+111"/>
         <source>Unknown</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-91"/>
+        <location line="-94"/>
         <source>Internal download error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -741,6 +741,11 @@
     <message>
         <location line="+3"/>
         <source>Unknown response code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Download blocked</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

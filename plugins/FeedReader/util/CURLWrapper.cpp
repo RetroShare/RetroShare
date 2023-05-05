@@ -21,6 +21,8 @@
 #include "CURLWrapper.h"
 #include <string.h>
 
+#define USERAGENT "Mozilla/5.0 (rv:109.0) Gecko/20100101 Firefox/112.0"
+
 CURLWrapper::CURLWrapper(const std::string &proxy)
 {
 	mCurl = curl_easy_init();
@@ -65,6 +67,7 @@ CURLcode CURLWrapper::downloadText(const std::string &link, std::string &data)
 	curl_easy_setopt(mCurl, CURLOPT_WRITEFUNCTION, writeFunctionString);
 	curl_easy_setopt(mCurl, CURLOPT_WRITEDATA, &data);
 	curl_easy_setopt(mCurl, CURLOPT_SSL_VERIFYPEER, false);
+	curl_easy_setopt(mCurl, CURLOPT_USERAGENT, USERAGENT);
 
 	return curl_easy_perform(mCurl);
 }
@@ -95,6 +98,7 @@ CURLcode CURLWrapper::downloadBinary(const std::string &link, std::vector<unsign
 	curl_easy_setopt(mCurl, CURLOPT_WRITEFUNCTION, writeFunctionBinary);
 	curl_easy_setopt(mCurl, CURLOPT_WRITEDATA, &data);
 	curl_easy_setopt(mCurl, CURLOPT_SSL_VERIFYPEER, false);
+	curl_easy_setopt(mCurl, CURLOPT_USERAGENT, USERAGENT);
 
 	return curl_easy_perform(mCurl);
 }
