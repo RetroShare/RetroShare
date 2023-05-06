@@ -37,6 +37,7 @@
 #include "gui/advsearch/advancedsearchdialog.h"
 #include "gui/common/RSTreeWidgetItem.h"
 #include "util/QtVersion.h"
+#include "util/qtthreadsutils.h"
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsturtle.h>
@@ -217,6 +218,15 @@ SearchDialog::SearchDialog(QWidget *parent)
 
     checkText(ui.lineEdit->text());
 
+    // add an event handler to get search results (previously available through notifyQt)
+
+    mEventHandlerId = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
+    {
+        RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this );
+    }, mEventHandlerId, RsEventType::FILE_TRANSFER );
+
 }
 
 SearchDialog::~SearchDialog()
@@ -235,6 +245,29 @@ SearchDialog::~SearchDialog()
 
     ui.searchResultWidget->setItemDelegateForColumn(SR_SIZE_COL, nullptr);
     ui.searchResultWidget->setItemDelegateForColumn(SR_AGE_COL, nullptr);
+
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
+}
+
+void SearchDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+    if(event->mType != RsEventType::FILE_TRANSFER)
+        return;
+
+    auto fe = dynamic_cast<const RsFileTransferEvent*>(event.get());
+
+    if(!fe || fe->mFileTransferEventCode!=RsFileTransferEventCode::NEW_DISTANT_SEARCH_RESULTS)
+        return;
+
+    for(uint32_t i=0;i<fe->mResults.size();++i)
+    {
+        FileDetail f;
+        f.hash = fe->mResults[i].fHash;
+        f.name = fe->mResults[i].fName;
+        f.size = fe->mResults[i].fSize;
+
+        updateFiles(fe->mRequestId,f);
+    }
 }
 
 void SearchDialog::processSettings(bool bLoad)
@@ -961,7 +994,7 @@ void SearchDialog::processResultQueue()
 	while(!searchResultsQueue.empty() && nb_treated_elements++ < 250)
 	{
 		qulonglong search_id = searchResultsQueue.back().first ;
-		FileDetail& file = searchResultsQueue.back().second ;
+        const FileDetail& file = searchResultsQueue.back().second ;
 
 #ifdef DEBUG
 		std::cout << "Updating file detail:" << std::endl ;
