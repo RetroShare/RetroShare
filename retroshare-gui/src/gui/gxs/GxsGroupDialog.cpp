@@ -370,7 +370,7 @@ void GxsGroupDialog::setupVisibility()
 
 	ui.groupLogo->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ICON);
 
-	ui.groupDesc->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DESCRIPTION);
+	ui.groupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DESCRIPTION);
 
 	ui.distribGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DISTRIBUTION);
 	ui.distributionLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DISTRIBUTION);
