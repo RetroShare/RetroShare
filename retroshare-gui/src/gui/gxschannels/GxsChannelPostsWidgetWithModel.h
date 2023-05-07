@@ -138,6 +138,7 @@ protected:
 
 	/* GxsMessageFrameWidget */
     virtual void setAllMessagesReadDo(bool read) override;
+    virtual void resizeEvent(QResizeEvent *e) override;
 
 private slots:
 	void showPostDetails();
