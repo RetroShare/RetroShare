@@ -24,6 +24,7 @@
 #include "rsitems/rsconfigitems.h"
 #include "retroshare/rsiface.h"
 #include "retroshare/rsgxsforums.h"
+#include "retroshare/rsposted.h"
 #include "util/rsstring.h"
 #include "util/rstime.h"
 #include "gxs/rsgenexchange.h"
@@ -34,6 +35,7 @@ RsFeedReader *rsFeedReader = NULL;
 
 #define FEEDREADER_CLEAN_INTERVAL 1 * 60 * 60 // check every hour
 #define FEEDREADER_FORUM_PREFIX  "RSS: "
+#define FEEDREADER_POSTED_PREFIX "RSS: "
 
 #define MAX_REQUEST_AGE 30 // 30 seconds
 
@@ -41,9 +43,9 @@ RsFeedReader *rsFeedReader = NULL;
  * #define FEEDREADER_DEBUG
  *********/
 
-p3FeedReader::p3FeedReader(RsPluginHandler* pgHandler, RsGxsForums *forums)
+p3FeedReader::p3FeedReader(RsPluginHandler* pgHandler, RsGxsForums *forums, RsPosted *posted)
 	: RsPQIService(RS_SERVICE_TYPE_PLUGIN_FEEDREADER,  5, pgHandler),
-	  mFeedReaderMtx("p3FeedReader"), mDownloadMutex("p3FeedReaderDownload"), mProcessMutex("p3FeedReaderProcess"), mPreviewMutex("p3FeedReaderPreview")
+	  mFeedReaderMtx("p3FeedReader"), mDownloadMutex("p3FeedReaderDownload"), mProcessMutex("p3FeedReaderProcess"), mImageMutex("p3FeedReaderImage"), mPreviewMutex("p3FeedReaderPreview")
 {
 	mNextFeedId = 1;
 	mNextMsgId = 1;
@@ -55,6 +57,7 @@ p3FeedReader::p3FeedReader(RsPluginHandler* pgHandler, RsGxsForums *forums)
 	mStandardProxyPort = 0;
 	mLastClean = 0;
 	mForums = forums;
+	mPosted = posted;
 	mNotify = NULL;
 	mSaveInBackground = false;
 	mStopped = false;
@@ -92,6 +95,7 @@ static void feedToInfo(const RsFeedReaderFeed *feed, FeedInfo &info)
 	info.updateInterval = feed->updateInterval;
 	info.lastUpdate = feed->lastUpdate;
 	info.forumId = feed->forumId;
+	info.postedId = feed->postedId;
 	info.storageTime = feed->storageTime;
 	info.errorState = feed->errorState;
 	info.errorString = feed->errorString;
@@ -110,6 +114,11 @@ static void feedToInfo(const RsFeedReaderFeed *feed, FeedInfo &info)
 	info.flag.deactivated = (feed->flag & RS_FEED_FLAG_DEACTIVATED);
 	info.flag.forum = (feed->flag & RS_FEED_FLAG_FORUM);
 	info.flag.updateForumInfo = (feed->flag & RS_FEED_FLAG_UPDATE_FORUM_INFO);
+	info.flag.posted = (feed->flag & RS_FEED_FLAG_POSTED);
+	info.flag.updatePostedInfo = (feed->flag & RS_FEED_FLAG_UPDATE_POSTED_INFO);
+	info.flag.postedFirstImage = (feed->flag & RS_FEED_FLAG_POSTED_FIRST_IMAGE);
+	info.flag.postedOnlyImage = (feed->flag & RS_FEED_FLAG_POSTED_ONLY_IMAGE);
+	info.flag.postedShrinkImage = (feed->flag & RS_FEED_FLAG_POSTED_SHRINK_IMAGE);
 	info.flag.embedImages = (feed->flag & RS_FEED_FLAG_EMBED_IMAGES);
 	info.flag.saveCompletePage = (feed->flag & RS_FEED_FLAG_SAVE_COMPLETE_PAGE);
 
@@ -151,6 +160,7 @@ static void infoToFeed(const FeedInfo &info, RsFeedReaderFeed *feed)
 	feed->storageTime = info.storageTime;
 
 	feed->forumId = info.forumId;
+	feed->postedId = info.postedId;
 
 	feed->transformationType = info.transformationType;
 	feed->xpathsToUse.ids = info.xpathsToUse;
@@ -192,6 +202,24 @@ static void infoToFeed(const FeedInfo &info, RsFeedReaderFeed *feed)
 	}
 	if (info.flag.updateForumInfo) {
 		feed->flag |= RS_FEED_FLAG_UPDATE_FORUM_INFO;
+	}
+	if (info.flag.posted) {
+		feed->flag |= RS_FEED_FLAG_POSTED;
+	}
+	if (info.flag.updatePostedInfo) {
+		feed->flag |= RS_FEED_FLAG_UPDATE_POSTED_INFO;
+	}
+	if (info.flag.updatePostedInfo) {
+		feed->flag |= RS_FEED_FLAG_UPDATE_POSTED_INFO;
+	}
+	if (info.flag.postedFirstImage) {
+		feed->flag |= RS_FEED_FLAG_POSTED_FIRST_IMAGE;
+	}
+	if (info.flag.postedOnlyImage) {
+		feed->flag |= RS_FEED_FLAG_POSTED_ONLY_IMAGE;
+	}
+	if (info.flag.postedShrinkImage) {
+		feed->flag |= RS_FEED_FLAG_POSTED_SHRINK_IMAGE;
 	}
 }
 
@@ -245,7 +273,7 @@ void p3FeedReader::setStandardStorageTime(uint32_t storageTime)
 
 	if (mStandardStorageTime != storageTime) {
 		mStandardStorageTime = storageTime;
-		IndicateConfigChanged();
+		IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 	}
 }
 
@@ -262,7 +290,7 @@ void p3FeedReader::setStandardUpdateInterval(uint32_t updateInterval)
 
 	if (mStandardUpdateInterval != updateInterval) {
 		mStandardUpdateInterval = updateInterval;
-		IndicateConfigChanged();
+		IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 	}
 }
 
@@ -284,7 +312,7 @@ void p3FeedReader::setStandardProxy(bool useProxy, const std::string &proxyAddre
 		mStandardProxyAddress = proxyAddress;
 		mStandardProxyPort = proxyPort;
 		mStandardUseProxy = useProxy;
-		IndicateConfigChanged();
+		IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 	}
 }
 
@@ -301,7 +329,7 @@ void p3FeedReader::setSaveInBackground(bool saveInBackground)
 
 	if (saveInBackground != mSaveInBackground) {
 		mSaveInBackground = saveInBackground;
-		IndicateConfigChanged();
+		IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 	}
 }
 
@@ -342,7 +370,7 @@ void p3FeedReader::stopPreviewThreads_locked()
 	}
 }
 
-RsFeedAddResult p3FeedReader::addFolder(uint32_t parentId, const std::string &name, uint32_t &feedId)
+RsFeedResult p3FeedReader::addFolder(uint32_t parentId, const std::string &name, uint32_t &feedId)
 {
 	feedId = 0;
 
@@ -356,14 +384,14 @@ RsFeedAddResult p3FeedReader::addFolder(uint32_t parentId, const std::string &na
 #ifdef FEEDREADER_DEBUG
 				std::cerr << "p3FeedReader::addFolder - parent id " << parentId << " not found" << std::endl;
 #endif
-				return RS_FEED_ADD_RESULT_PARENT_NOT_FOUND;
+				return RS_FEED_RESULT_PARENT_NOT_FOUND;
 			}
 
 			if ((parentIt->second->flag & RS_FEED_FLAG_FOLDER) == 0) {
 #ifdef FEEDREADER_DEBUG
 				std::cerr << "p3FeedReader::addFolder - parent " << parentIt->second->name << " is no folder" << std::endl;
 #endif
-				return RS_FEED_ADD_RESULT_PARENT_IS_NO_FOLDER;
+				return RS_FEED_RESULT_PARENT_IS_NO_FOLDER;
 			}
 		}
 
@@ -377,16 +405,16 @@ RsFeedAddResult p3FeedReader::addFolder(uint32_t parentId, const std::string &na
 		feedId = fi->feedId;
 	}
 
-	IndicateConfigChanged();
+	IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 
 	if (mNotify) {
 		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_ADD);
 	}
 
-	return RS_FEED_ADD_RESULT_SUCCESS;
+	return RS_FEED_RESULT_SUCCESS;
 }
 
-RsFeedAddResult p3FeedReader::setFolder(uint32_t feedId, const std::string &name)
+RsFeedResult p3FeedReader::setFolder(uint32_t feedId, const std::string &name)
 {
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
@@ -400,33 +428,33 @@ RsFeedAddResult p3FeedReader::setFolder(uint32_t feedId, const std::string &name
 #ifdef FEEDREADER_DEBUG
 			std::cerr << "p3FeedReader::setFolder - feed id " << feedId << " not found" << std::endl;
 #endif
-			return RS_FEED_ADD_RESULT_FEED_NOT_FOUND;
+			return RS_FEED_RESULT_FEED_NOT_FOUND;
 		}
 
 		if ((feedIt->second->flag & RS_FEED_FLAG_FOLDER) == 0) {
 #ifdef FEEDREADER_DEBUG
 			std::cerr << "p3FeedReader::setFolder - feed " << feedIt->second->name << " is no folder" << std::endl;
 #endif
-			return RS_FEED_ADD_RESULT_FEED_IS_NO_FOLDER;
+			return RS_FEED_RESULT_FEED_IS_NO_FOLDER;
 		}
 
 		RsFeedReaderFeed *fi = feedIt->second;
 		if (fi->name == name) {
-			return RS_FEED_ADD_RESULT_SUCCESS;
+			return RS_FEED_RESULT_SUCCESS;
 		}
 		fi->name = name;
 	}
 
-	IndicateConfigChanged();
+	IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 
 	if (mNotify) {
 		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
 	}
 
-	return RS_FEED_ADD_RESULT_SUCCESS;
+	return RS_FEED_RESULT_SUCCESS;
 }
 
-RsFeedAddResult p3FeedReader::addFeed(const FeedInfo &feedInfo, uint32_t &feedId)
+RsFeedResult p3FeedReader::addFeed(const FeedInfo &feedInfo, uint32_t &feedId)
 {
 	feedId = 0;
 
@@ -444,14 +472,14 @@ RsFeedAddResult p3FeedReader::addFeed(const FeedInfo &feedInfo, uint32_t &feedId
 #ifdef FEEDREADER_DEBUG
 				std::cerr << "p3FeedReader::addFeed - parent id " << feedInfo.parentId << " not found" << std::endl;
 #endif
-				return RS_FEED_ADD_RESULT_PARENT_NOT_FOUND;
+				return RS_FEED_RESULT_PARENT_NOT_FOUND;
 			}
 
 			if ((parentIt->second->flag & RS_FEED_FLAG_FOLDER) == 0) {
 #ifdef FEEDREADER_DEBUG
 				std::cerr << "p3FeedReader::addFeed - parent " << parentIt->second->name << " is no folder" << std::endl;
 #endif
-				return RS_FEED_ADD_RESULT_PARENT_IS_NO_FOLDER;
+				return RS_FEED_RESULT_PARENT_IS_NO_FOLDER;
 			}
 		}
 
@@ -464,20 +492,23 @@ RsFeedAddResult p3FeedReader::addFeed(const FeedInfo &feedInfo, uint32_t &feedId
 		feedId = fi->feedId;
 	}
 
-	IndicateConfigChanged();
+	IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 
 	if (mNotify) {
 		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_ADD);
 	}
 
-	return RS_FEED_ADD_RESULT_SUCCESS;
+	return RS_FEED_RESULT_SUCCESS;
 }
 
-RsFeedAddResult p3FeedReader::setFeed(uint32_t feedId, const FeedInfo &feedInfo)
+RsFeedResult p3FeedReader::setFeed(uint32_t feedId, const FeedInfo &feedInfo)
 {
 	std::string forumId;
 	std::string forumName;
 	std::string forumDescription;
+	std::string postedId;
+	std::string postedName;
+	std::string postedDescription;
 
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
@@ -491,14 +522,14 @@ RsFeedAddResult p3FeedReader::setFeed(uint32_t feedId, const FeedInfo &feedInfo)
 #ifdef FEEDREADER_DEBUG
 			std::cerr << "p3FeedReader::setFeed - feed id " << feedId << " not found" << std::endl;
 #endif
-			return RS_FEED_ADD_RESULT_FEED_NOT_FOUND;
+			return RS_FEED_RESULT_FEED_NOT_FOUND;
 		}
 
 		if (feedIt->second->flag & RS_FEED_FLAG_FOLDER) {
 #ifdef FEEDREADER_DEBUG
 			std::cerr << "p3FeedReader::setFeed - feed " << feedIt->second->name << " is a folder" << std::endl;
 #endif
-			return RS_FEED_ADD_RESULT_FEED_IS_FOLDER;
+			return RS_FEED_RESULT_FEED_IS_FOLDER;
 		}
 
 		if (feedInfo.parentId) {
@@ -508,19 +539,20 @@ RsFeedAddResult p3FeedReader::setFeed(uint32_t feedId, const FeedInfo &feedInfo)
 #ifdef FEEDREADER_DEBUG
 				std::cerr << "p3FeedReader::setFeed - parent id " << feedInfo.parentId << " not found" << std::endl;
 #endif
-				return RS_FEED_ADD_RESULT_PARENT_NOT_FOUND;
+				return RS_FEED_RESULT_PARENT_NOT_FOUND;
 			}
 
 			if ((parentIt->second->flag & RS_FEED_FLAG_FOLDER) == 0) {
 #ifdef FEEDREADER_DEBUG
 				std::cerr << "p3FeedReader::setFeed - parent " << parentIt->second->name << " is no folder" << std::endl;
 #endif
-				return RS_FEED_ADD_RESULT_PARENT_IS_NO_FOLDER;
+				return RS_FEED_RESULT_PARENT_IS_NO_FOLDER;
 			}
 		}
 
 		RsFeedReaderFeed *fi = feedIt->second;
 		std::string oldForumId = fi->forumId;
+		std::string oldPostedId = fi->postedId;
 		std::string oldName = fi->name;
 		std::string oldDescription = fi->description;
 
@@ -534,9 +566,18 @@ RsFeedAddResult p3FeedReader::setFeed(uint32_t feedId, const FeedInfo &feedInfo)
 			forumDescription = fi->description;
 			forumName.insert(0, FEEDREADER_FORUM_PREFIX);
 		}
+
+		if ((fi->flag & RS_FEED_FLAG_POSTED) && (fi->flag & RS_FEED_FLAG_UPDATE_POSTED_INFO) && !fi->postedId.empty() &&
+		    (fi->postedId != oldPostedId || fi->name != oldName || fi->description != oldDescription)) {
+			/* name or description changed, update posted */
+			postedId = fi->postedId;
+			postedName = fi->name;
+			postedDescription = fi->description;
+			postedName.insert(0, FEEDREADER_POSTED_PREFIX);
+		}
 	}
 
-	IndicateConfigChanged();
+	IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 
 	if (mNotify) {
 		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
@@ -550,7 +591,71 @@ RsFeedAddResult p3FeedReader::setFeed(uint32_t feedId, const FeedInfo &feedInfo)
 		//TODO: error
 	}
 
-	return RS_FEED_ADD_RESULT_SUCCESS;
+	if (!postedId.empty()) {
+		RsPostedGroup postedGroup;
+		if (getPostedGroup(RsGxsGroupId(postedId), postedGroup)) {
+			updatePostedGroup(postedGroup, postedName, postedDescription);
+		}
+		//TODO: error
+	}
+
+	return RS_FEED_RESULT_SUCCESS;
+}
+
+RsFeedResult p3FeedReader::setParent(uint32_t feedId, uint32_t parentId)
+{
+	bool changed = false;
+
+	{
+		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
+
+#ifdef FEEDREADER_DEBUG
+		std::cerr << "p3FeedReader::setParent - set parent " << parentId << std::endl;
+#endif
+
+		std::map<uint32_t, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
+		if (feedIt == mFeeds.end()) {
+#ifdef FEEDREADER_DEBUG
+			std::cerr << "p3FeedReader::setParent - feed id " << feedId << " not found" << std::endl;
+#endif
+			return RS_FEED_RESULT_FEED_NOT_FOUND;
+		}
+
+		if (parentId) {
+			/* check parent id */
+			std::map<uint32_t, RsFeedReaderFeed*>::iterator parentIt = mFeeds.find(parentId);
+			if (parentIt == mFeeds.end()) {
+#ifdef FEEDREADER_DEBUG
+				std::cerr << "p3FeedReader::setParent - parent id " << parentId << " not found" << std::endl;
+#endif
+				return RS_FEED_RESULT_PARENT_NOT_FOUND;
+			}
+
+			if ((parentIt->second->flag & RS_FEED_FLAG_FOLDER) == 0) {
+#ifdef FEEDREADER_DEBUG
+				std::cerr << "p3FeedReader::setParent - parent " << parentIt->second->name << " is no folder" << std::endl;
+#endif
+				return RS_FEED_RESULT_PARENT_IS_NO_FOLDER;
+			}
+		}
+
+		RsFeedReaderFeed *fi = feedIt->second;
+
+		if (fi->parentId != parentId) {
+			fi->parentId = parentId;
+			changed = true;
+		}
+	}
+
+	if (changed) {
+		IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
+
+		if (mNotify) {
+			mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
+		}
+	}
+
+	return RS_FEED_RESULT_SUCCESS;
 }
 
 void p3FeedReader::deleteAllMsgs_locked(RsFeedReaderFeed *fi)
@@ -628,7 +733,7 @@ bool p3FeedReader::removeFeed(uint32_t feedId)
 	}
 
 	if (changed) {
-		IndicateConfigChanged();
+		IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 	}
 
 	if (preview) {
@@ -682,6 +787,7 @@ bool p3FeedReader::addPreviewFeed(const FeedInfo &feedInfo, uint32_t &feedId)
 		fi->updateInterval = 0;
 		fi->lastUpdate = 0;
 		fi->forumId.clear();
+		fi->postedId.clear();
 		fi->storageTime = 0;
 
 		mFeeds[fi->feedId] = fi;
@@ -808,7 +914,7 @@ bool p3FeedReader::removeMsg(uint32_t feedId, const std::string &msgId)
 	}
 
 	if (changed) {
-		IndicateConfigChanged();
+		IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 	}
 
 	if (mNotify) {
@@ -860,7 +966,7 @@ bool p3FeedReader::removeMsgs(uint32_t feedId, const std::list<std::string> &msg
 	}
 
 	if (changed) {
-		IndicateConfigChanged();
+		IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 	}
 
 	if (mNotify && !removedMsgs.empty()) {
@@ -1158,7 +1264,7 @@ bool p3FeedReader::setMessageRead(uint32_t feedId, const std::string &msgId, boo
 	}
 
 	if (changed) {
-		IndicateConfigChanged();
+		IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 		if (mNotify) {
 			mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
 			mNotify->notifyMsgChanged(feedId, msgId, NOTIFY_TYPE_MOD);
@@ -1212,7 +1318,7 @@ bool p3FeedReader::retransformMsg(uint32_t feedId, const std::string &msgId)
 	}
 
 	if (feedChanged || msgChanged) {
-		IndicateConfigChanged();
+		IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 		if (mNotify) {
 			if (feedChanged) {
 				mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
@@ -1266,7 +1372,7 @@ bool p3FeedReader::clearMessageCache(uint32_t feedId)
 		}
 	}
 
-	IndicateConfigChanged();
+	IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 
 	return true;
 }
@@ -1343,9 +1449,20 @@ int p3FeedReader::tick()
 		}
 	}
 
+	// check images
+	bool imageToShrink = false;
+	{
+		RsStackMutex stack(mImageMutex); /******* LOCK STACK MUTEX *********/
+
+		imageToShrink = !mImages.empty();
+	}
+
 	if (mNotify) {
 		for (it = notifyIds.begin(); it != notifyIds.end(); ++it) {
 			mNotify->notifyFeedChanged(*it, NOTIFY_TYPE_MOD);
+		}
+		if (imageToShrink) {
+			mNotify->notifyShrinkImage();
 		}
 	}
 
@@ -1397,7 +1514,7 @@ void p3FeedReader::cleanFeeds()
 		mLastClean = currentTime;
 
 		if (removedMsgIds.size()) {
-			IndicateConfigChanged();
+			IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 
 			if (mNotify) {
 				std::list<std::pair<uint32_t, std::string> >::iterator it;
@@ -1709,7 +1826,7 @@ void p3FeedReader::onDownloadSuccess(uint32_t feedId, const std::string &content
 			fi->icon = icon;
 
 			if (!preview) {
-				IndicateConfigChanged();
+				IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 			}
 		}
 
@@ -1760,7 +1877,7 @@ void p3FeedReader::onDownloadError(uint32_t feedId, RsFeedReaderErrorState resul
 #endif
 
 		if (!fi->preview) {
-			IndicateConfigChanged();
+			IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 		}
 	}
 
@@ -1872,7 +1989,7 @@ void p3FeedReader::onProcessSuccess_filterMsg(uint32_t feedId, std::list<RsFeedR
 		fi->errorString.clear();
 
 		if (!fi->preview) {
-			IndicateConfigChanged();
+			IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 		}
 	}
 }
@@ -1885,8 +2002,12 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 
 	std::list<std::string> addedMsgs;
 	std::string forumId;
-	RsGxsId authorId;
+	RsGxsId forumAuthorId;
 	std::list<RsFeedReaderMsg> forumMsgs;
+	std::string postedId;
+	RsGxsId postedAuthorId;
+	std::list<RsFeedReaderMsg> postedMsgs;
+	uint32_t feedFlag = 0;
 
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
@@ -1903,7 +2024,9 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 
 		RsFeedReaderFeed *fi = it->second;
 		bool forum = (fi->flag & RS_FEED_FLAG_FORUM) && !fi->preview;
+		bool posted = (fi->flag & RS_FEED_FLAG_POSTED) && !fi->preview;
 		RsFeedReaderErrorState errorState = RS_FEED_ERRORSTATE_OK;
+		feedFlag = fi->flag;
 
 		if (forum && !msgs.empty()) {
 			if (mForums) {
@@ -1913,9 +2036,9 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 					if (getForumGroup(RsGxsGroupId(fi->forumId), forumGroup)) {
 						if (IS_GROUP_PUBLISHER(forumGroup.mMeta.mSubscribeFlags) && IS_GROUP_ADMIN(forumGroup.mMeta.mSubscribeFlags)) {
 							forumId = fi->forumId;
-							authorId = forumGroup.mMeta.mAuthorId;
+							forumAuthorId = forumGroup.mMeta.mAuthorId;
 
-							if (authorId.isNull()) {
+							if (forumAuthorId.isNull()) {
 								errorState = RS_FEED_ERRORSTATE_PROCESS_FORUM_NO_AUTHOR;
 							}
 						} else {
@@ -1930,6 +2053,34 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 				}
 			} else {
 				std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process forum, member mForums is not set" << std::endl;
+			}
+		}
+
+		if (posted && !msgs.empty()) {
+			if (mPosted) {
+				if (!fi->postedId.empty()) {
+					/* check posted */
+					RsPostedGroup postedGroup;
+					if (getPostedGroup(RsGxsGroupId(fi->postedId), postedGroup)) {
+						if (IS_GROUP_PUBLISHER(postedGroup.mMeta.mSubscribeFlags) && IS_GROUP_ADMIN(postedGroup.mMeta.mSubscribeFlags)) {
+							postedId = fi->postedId;
+							postedAuthorId = postedGroup.mMeta.mAuthorId;
+
+							if (postedAuthorId.isNull()) {
+								errorState = RS_FEED_ERRORSTATE_PROCESS_POSTED_NO_AUTHOR;
+							}
+						} else {
+							errorState = RS_FEED_ERRORSTATE_PROCESS_POSTED_NO_ADMIN;
+						}
+					} else {
+						errorState = RS_FEED_ERRORSTATE_PROCESS_POSTED_NOT_FOUND;
+					}
+				} else {
+					std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - posted id is empty (" << fi->name << ")" << std::endl;
+					errorState = RS_FEED_ERRORSTATE_PROCESS_POSTED_NOT_FOUND;
+				}
+			} else {
+				std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process posted, member mPosted is not set" << std::endl;
 			}
 		}
 
@@ -1949,9 +2100,14 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 				} else {
 					rs_sprintf(miNew->msgId, "%lu", mNextMsgId++);
 				}
-				if (forum) {
+				if (forum || posted) {
 					miNew->flag = RS_FEEDMSG_FLAG_DELETED;
-					forumMsgs.push_back(*miNew);
+					if (forum) {
+						forumMsgs.push_back(*miNew);
+					}
+					if (posted) {
+						postedMsgs.push_back(*miNew);
+					}
 					miNew->description.clear();
 					miNew->descriptionTransformed.clear();
 				} else {
@@ -1978,7 +2134,7 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 		}
 
 		if (!fi->preview) {
-			IndicateConfigChanged();
+			IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 		}
 	}
 
@@ -1996,7 +2152,7 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 					RsGxsForumMsg forumMsg;
 					forumMsg.mMeta.mGroupId = RsGxsGroupId(forumId);
 					forumMsg.mMeta.mMsgName = mi.title;
-					forumMsg.mMeta.mAuthorId = authorId;
+					forumMsg.mMeta.mAuthorId = forumAuthorId;
 
 					std::string description = mi.descriptionTransformed.empty() ? mi.description : mi.descriptionTransformed;
 					/* add link */
@@ -2006,7 +2162,7 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 					forumMsg.mMsg = description;
 
 					uint32_t token;
-					if (mForums->createMsg(token, forumMsg) && waitForToken(token)) {
+					if (mForums->createMsg(token, forumMsg) && waitForToken(mForums, token)) {
 						RsGxsGrpMsgIdPair msgPair;
 						if (mForums->acknowledgeMsg(token, msgPair)) {
 							/* set to new */
@@ -2023,6 +2179,75 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 			}
 		} else {
 			std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process forum, member mForums is not set" << std::endl;
+		}
+	}
+
+	if (!postedId.empty() && !postedMsgs.empty()) {
+		if (mPosted) {
+			/* a bit tricky */
+			RsGenExchange *genExchange = dynamic_cast<RsGenExchange*>(mPosted);
+			if (genExchange) {
+				/* add messages as posted messages */
+				std::list<RsFeedReaderMsg>::iterator msgIt;
+				for (msgIt = postedMsgs.begin(); msgIt != postedMsgs.end(); ++msgIt) {
+					RsFeedReaderMsg &mi = *msgIt;
+
+					/* convert to posted messages */
+					RsPostedPost postedPost;
+					postedPost.mMeta.mGroupId = RsGxsGroupId(postedId);
+					postedPost.mMeta.mMsgName = mi.title;
+					postedPost.mMeta.mAuthorId = postedAuthorId;
+					postedPost.mLink = mi.link;
+
+					std::string description;
+					if (feedFlag & RS_FEED_FLAG_POSTED_FIRST_IMAGE) {
+						if (!mi.postedFirstImage.empty()) {
+							/* use first image as image for posted and description without image as notes */
+							if (feedFlag & RS_FEED_FLAG_POSTED_SHRINK_IMAGE) {
+								// shrink image
+								std::vector<unsigned char> shrinkedImage;
+								if (shrinkImage(FeedReaderShrinkImageTask::POSTED, mi.postedFirstImage, shrinkedImage)) {
+									postedPost.mImage.copy(shrinkedImage.data(), shrinkedImage.size());	
+								}
+							} else {
+								postedPost.mImage.copy(mi.postedFirstImage.data(), mi.postedFirstImage.size());
+							}
+							if (feedFlag & RS_FEED_FLAG_POSTED_ONLY_IMAGE) {
+								/* ignore description */
+							} else {
+								description = mi.postedDescriptionWithoutFirstImage;
+							}
+						} else {
+							if (feedFlag & RS_FEED_FLAG_POSTED_ONLY_IMAGE) {
+								/* ignore messages without image */
+								continue;
+							}
+							description = mi.descriptionTransformed.empty() ? mi.description : mi.descriptionTransformed;
+						}
+					} else {
+						description = mi.descriptionTransformed.empty() ? mi.description : mi.descriptionTransformed;
+					}
+
+					postedPost.mNotes = description;
+
+					uint32_t token;
+					if (mPosted->createPost(token, postedPost) && waitForToken(mPosted, token)) {
+						RsGxsGrpMsgIdPair msgPair;
+						if (mPosted->acknowledgeMsg(token, msgPair)) {
+							/* set to new */
+							genExchange->setMsgStatusFlags(token, msgPair, GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD, GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD);
+						}
+					} else {
+#ifdef FEEDREADER_DEBUG
+						std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't add posted message " << mi.title << " for feed " << postedId << std::endl;
+#endif
+					}
+				}
+			} else {
+				std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process posted, member mPosted is not derived from RsGenExchange" << std::endl;
+			}
+		} else {
+			std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process posted, member mPosted is not set" << std::endl;
 		}
 	}
 
@@ -2064,7 +2289,7 @@ void p3FeedReader::onProcessError(uint32_t feedId, RsFeedReaderErrorState result
 #endif
 
 		if (!fi->preview) {
-			IndicateConfigChanged();
+			IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 		}
 	}
 
@@ -2080,6 +2305,9 @@ void p3FeedReader::setFeedInfo(uint32_t feedId, const std::string &name, const s
 	std::string forumId;
 	std::string forumName;
 	std::string forumDescription;
+	std::string postedId;
+	std::string postedName;
+	std::string postedDescription;
 
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
@@ -2118,11 +2346,19 @@ void p3FeedReader::setFeedInfo(uint32_t feedId, const std::string &name, const s
 			forumDescription = fi->description;
 			forumName.insert(0, FEEDREADER_FORUM_PREFIX);
 		}
+
+		if ((fi->flag & RS_FEED_FLAG_POSTED) && (fi->flag & RS_FEED_FLAG_UPDATE_POSTED_INFO) && !fi->postedId.empty() && !preview) {
+			/* change posted too */
+			postedId = fi->postedId;
+			postedName = fi->name;
+			postedDescription = fi->description;
+			postedName.insert(0, FEEDREADER_POSTED_PREFIX);
+		}
 	}
 
 	if (changed) {
 		if (!preview) {
-			IndicateConfigChanged();
+			IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 		}
 
 		if (mNotify) {
@@ -2134,6 +2370,14 @@ void p3FeedReader::setFeedInfo(uint32_t feedId, const std::string &name, const s
 		RsGxsForumGroup forumGroup;
 		if (getForumGroup(RsGxsGroupId(forumId), forumGroup)) {
 			updateForumGroup(forumGroup, forumName, forumDescription);
+		}
+		//TODO: error
+	}
+
+	if (!postedId.empty()) {
+		RsPostedGroup postedGroup;
+		if (getPostedGroup(RsGxsGroupId(postedId), postedGroup)) {
+			updatePostedGroup(postedGroup, postedName, postedDescription);
 		}
 		//TODO: error
 	}
@@ -2159,7 +2403,7 @@ bool p3FeedReader::getForumGroup(const RsGxsGroupId &groupId, RsGxsForumGroup &f
 	uint32_t token;
 	mForums->getTokenService()->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, grpIds);
 
-	if (!waitForToken(token)) {
+	if (!waitForToken(mForums, token)) {
 		std::cerr << "p3FeedReader::getForumGroup - waitForToken for request failed" << std::endl;
 		return false;
 	}
@@ -2202,7 +2446,7 @@ bool p3FeedReader::updateForumGroup(const RsGxsForumGroup &forumGroup, const std
 		return false;
 	}
 
-	if (!waitForToken(token)) {
+	if (!waitForToken(mForums, token)) {
 		std::cerr << "p3FeedReader::updateForumGroup - waitForToken for update failed" << std::endl;
 		return false;
 	}
@@ -2211,13 +2455,85 @@ bool p3FeedReader::updateForumGroup(const RsGxsForumGroup &forumGroup, const std
 	return true;
 }
 
-bool p3FeedReader::waitForToken(uint32_t token)
+bool p3FeedReader::getPostedGroup(const RsGxsGroupId &groupId, RsPostedGroup &postedGroup)
 {
-	if (!mForums) {
+	if (!mPosted) {
+		std::cerr << "p3FeedReader::getPostedGroup - can't get posted group " << groupId.toStdString() << ", member mPosted is not set" << std::endl;
 		return false;
 	}
 
-	RsTokenService *service = mForums->getTokenService();
+	if (groupId.isNull()) {
+		std::cerr << "p3FeedReader::getPostedGroup - group id is not valid" << std::endl;
+		return false;
+	}
+
+	std::list<RsGxsGroupId> grpIds;
+	grpIds.push_back(groupId);
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	uint32_t token;
+	mPosted->getTokenService()->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, grpIds);
+
+	if (!waitForToken(mPosted, token)) {
+		std::cerr << "p3FeedReader::getPostedGroup - waitForToken for request failed" << std::endl;
+		return false;
+	}
+
+	std::vector<RsPostedGroup> groups;
+	if (!mPosted->getGroupData(token, groups)) {
+		std::cerr << "p3FeedReader::getPostedGroup - Error getting data" << std::endl;
+		return false;
+	}
+
+	if (groups.size() != 1) {
+		std::cerr << "p3FeedReader::getPostedGroup - Wrong number of items" << std::endl;
+		return false;
+	}
+
+	postedGroup = groups[0];
+
+	return true;
+}
+
+bool p3FeedReader::updatePostedGroup(const RsPostedGroup &postedGroup, const std::string &groupName, const std::string &groupDescription)
+{
+	if (!mPosted) {
+		std::cerr << "p3FeedReader::updatePostedGroup - can't change posted " << postedGroup.mMeta.mGroupId.toStdString() << ", member mPosted is not set" << std::endl;
+		return false;
+	}
+
+	if (postedGroup.mMeta.mGroupName == groupName && postedGroup.mDescription == groupDescription) {
+		/* No change */
+		return true;
+	}
+
+	RsPostedGroup newPostedGroup = postedGroup;
+	newPostedGroup.mMeta.mGroupName = groupName;
+	newPostedGroup.mDescription = groupDescription;
+
+	uint32_t token;
+	if (!mPosted->updateGroup(token, newPostedGroup)) {
+		std::cerr << "p3FeedReader::updatePostedGroup - can't change posted " << newPostedGroup.mMeta.mGroupId.toStdString() << std::endl;
+		return false;
+	}
+
+	if (!waitForToken(mPosted, token)) {
+		std::cerr << "p3FeedReader::updatePostedGroup - waitForToken for update failed" << std::endl;
+		return false;
+	}
+
+	/* Posted updated */
+	return true;
+}
+
+bool p3FeedReader::waitForToken(RsGxsIfaceHelper *interface, uint32_t token)
+{
+	if (!interface) {
+		return false;
+	}
+
+	RsTokenService *service = interface->getTokenService();
 	int count = MAX_REQUEST_AGE * 2;
 
 	while (!mStopped) {
@@ -2238,4 +2554,169 @@ bool p3FeedReader::waitForToken(uint32_t token)
 	}
 
 	return false;
+}
+
+bool p3FeedReader::getForumGroups(std::vector<RsGxsForumGroup> &groups, bool onlyOwn)
+{
+	if (!mForums) {
+		std::cerr << "p3FeedReader::getForumGroups - can't get groups, member mForums is not set" << std::endl;
+		return false;
+	}
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+	uint32_t token;
+	if (!mForums->requestGroupInfo(token, opts)) {
+		std::cerr << "p3FeedReader::getForumGroups - can't get group list" << std::endl;
+		return false;
+	}
+
+	if (!waitForToken(mForums, token)) {
+		std::cerr << "p3FeedReader::getForumGroups - waitForToken for list failed" << std::endl;
+		return false;
+	}
+
+	if (!mForums->getGroupData(token, groups)) {
+		std::cerr << "p3FeedReader::getForumGroups - getGroupData failed" << std::endl;
+		return false;
+	}
+
+	if (onlyOwn) {
+		// filter groups
+		for (std::vector<RsGxsForumGroup>::iterator it = groups.begin(); it != groups.end(); ) {
+			const RsGxsForumGroup &group = *it;
+			if (IS_GROUP_PUBLISHER(group.mMeta.mSubscribeFlags) && IS_GROUP_ADMIN(group.mMeta.mSubscribeFlags)) {
+				++it;
+			} else {
+				it = groups.erase(it);
+			}
+		}
+	}
+
+	return true;
+}
+
+bool p3FeedReader::getPostedGroups(std::vector<RsPostedGroup> &groups, bool onlyOwn)
+{
+	if (!mPosted) {
+		std::cerr << "p3FeedReader::getPostedGroups - can't get groups, member mPosted is not set" << std::endl;
+		return false;
+	}
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+	uint32_t token;
+	if (!mPosted->requestGroupInfo(token, opts)) {
+		std::cerr << "p3FeedReader::getPostedGroups - can't get group list" << std::endl;
+		return false;
+	}
+
+	if (!waitForToken(mPosted, token)) {
+		std::cerr << "p3FeedReader::getPostedGroups - waitForToken for list failed" << std::endl;
+		return false;
+	}
+
+	if (!mPosted->getGroupData(token, groups)) {
+		std::cerr << "p3FeedReader::getForumGroups - getGroupData failed" << std::endl;
+		return false;
+	}
+
+	if (onlyOwn) {
+		// filter groups
+		for (std::vector<RsPostedGroup>::iterator it = groups.begin(); it != groups.end(); ) {
+			const RsPostedGroup &group = *it;
+			if (IS_GROUP_PUBLISHER(group.mMeta.mSubscribeFlags) && IS_GROUP_ADMIN(group.mMeta.mSubscribeFlags)) {
+				++it;
+			} else {
+				it = groups.erase(it);
+			}
+		}
+	}
+
+	return true;
+}
+
+bool p3FeedReader::shrinkImage(FeedReaderShrinkImageTask::Type type, const std::vector<unsigned char> &image, std::vector<unsigned char> &resultImage)
+{
+	if (!mNotify) {
+		return false;
+	}
+
+	FeedReaderShrinkImageTask *shrinkImageTask = new FeedReaderShrinkImageTask(type, image);
+	{
+		RsStackMutex stack(mImageMutex); /******* LOCK STACK MUTEX *********/
+
+		mImages.push_back(shrinkImageTask);
+	}
+
+	/* Wait until task is complete */
+	int nSeconds = 0;
+	while (true) {
+		if (mStopped) {
+			return false;
+		}
+
+		rstime::rs_usleep(1000 * 1000); // 1 second
+
+		if (++nSeconds >= 30) {
+			// timeout
+			std::list<FeedReaderShrinkImageTask*>::iterator it = std::find(mImages.begin(), mImages.end(), shrinkImageTask);
+			if (it != mImages.end()) {
+				mImages.erase(it);
+
+				delete(shrinkImageTask);
+
+				return false;
+			}
+
+			// not found in mImages?
+		}
+
+		{
+			RsStackMutex stack(mImageMutex); /******* LOCK STACK MUTEX *********/
+
+			std::list<FeedReaderShrinkImageTask*>::iterator it = std::find(mResultImages.begin(), mResultImages.end(), shrinkImageTask);
+			if (it != mResultImages.end()) {
+				mResultImages.erase(it);
+
+				bool result = shrinkImageTask->mResult;
+				if (result) {
+					resultImage = shrinkImageTask->mImageResult;
+				}
+
+				delete(shrinkImageTask);
+
+				return result;
+			}
+		}
+	}
+
+	return false;
+}
+
+FeedReaderShrinkImageTask *p3FeedReader::getShrinkImageTask()
+{
+	RsStackMutex stack(mImageMutex); /******* LOCK STACK MUTEX *********/
+
+	if (mImages.empty()) {
+		return NULL;
+	}
+
+	FeedReaderShrinkImageTask *imageResize = mImages.front();
+	mImages.pop_front();
+
+	return imageResize;
+}
+
+void p3FeedReader::setShrinkImageTaskResult(FeedReaderShrinkImageTask *shrinkImageTask)
+{
+	if (!shrinkImageTask) {
+		return;
+	}
+
+	RsStackMutex stack(mImageMutex); /******* LOCK STACK MUTEX *********/
+
+	mResultImages.push_back(shrinkImageTask);
 }

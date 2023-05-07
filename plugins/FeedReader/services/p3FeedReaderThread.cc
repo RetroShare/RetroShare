@@ -204,8 +204,14 @@ static std::string calculateLink(const std::string &baseLink, const std::string 
 	/* calculate link of base link */
 	std::string resultLink = baseLink;
 
+	int hostStart = 0;
 	/* link should begin with "http://" or "https://" */
-	if (resultLink.substr(0, 7) != "http://" || resultLink.substr(0, 8) != "https://") {
+	if (resultLink.substr(0, 7) == "http://") {
+		hostStart = 7;
+	} else if (resultLink.substr(0, 8) == "https://") {
+		hostStart = 8;
+	} else {
+		hostStart = 7;
 		resultLink.insert(0, "http://");
 	}
 
@@ -216,7 +222,7 @@ static std::string calculateLink(const std::string &baseLink, const std::string 
 
 	if (*link.begin() == '/') {
 		/* link begins with "/" */
-		size_t found = resultLink.find('/', 7);
+		size_t found = resultLink.find('/', hostStart);
 		if (found != std::string::npos) {
 			resultLink.erase(found);
 		}
@@ -245,7 +251,7 @@ static bool getFavicon(CURLWrapper &CURL, const std::string &url, std::string &i
 	if (code == CURLE_OK) {
 		if (CURL.responseCode() == 200) {
 			std::string contentType = CURL.contentType();
-			if (isContentType(contentType, "image/x-icon") ||
+			if (isContentType(contentType, "image/") ||
 				isContentType(contentType, "application/octet-stream") ||
 				isContentType(contentType, "text/plain")) {
 				if (!vicon.empty()) {
@@ -295,6 +301,9 @@ RsFeedReaderErrorState p3FeedReaderThread::download(const RsFeedReaderFeed &feed
 					errorString = contentType;
 				}
 			}
+			break;
+		case 403:
+			result = RS_FEED_ERRORSTATE_DOWNLOAD_BLOCKED;
 			break;
 		case 404:
 			result = RS_FEED_ERRORSTATE_DOWNLOAD_NOT_FOUND;
@@ -1070,12 +1079,15 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 
 	if (isRunning()) {
 		/* process description */
+		bool processPostedFirstImage = (feed.flag & RS_FEED_FLAG_POSTED_FIRST_IMAGE) ? TRUE : FALSE;
+
 		//long todo; // encoding
 		HTMLWrapper html;
 		if (html.readHTML(msg->description.c_str(), url.c_str())) {
 			xmlNodePtr root = html.getRootElement();
 			if (root) {
 				std::list<xmlNodePtr> nodesToDelete;
+				xmlNodePtr postedFirstImageNode = NULL;
 
 				/* process all children */
 				std::list<xmlNodePtr> nodes;
@@ -1206,6 +1218,12 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 														rs_sprintf(imageBase64, "data:%s;base64,%s", contentType.c_str(), base64.c_str());
 														if (html.setAttr(node, "src", imageBase64.c_str())) {
 															removeImage = false;
+
+															if (processPostedFirstImage && postedFirstImageNode == NULL) {
+																/* set first image */
+																msg->postedFirstImage = data;
+																postedFirstImageNode = node;
+															}
 														}
 													}
 												}
@@ -1241,7 +1259,22 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 
 				if (result == RS_FEED_ERRORSTATE_OK) {
 					if (isRunning()) {
-						if (!html.saveHTML(msg->description)) {
+						if (html.saveHTML(msg->description)) {
+							if (postedFirstImageNode) {
+								/* Remove first image and create description without the image */
+								xmlUnlinkNode(postedFirstImageNode);
+								xmlFreeNode(postedFirstImageNode);
+
+								if (!html.saveHTML(msg->postedDescriptionWithoutFirstImage)) {
+									errorString = html.lastError();
+#ifdef FEEDREADER_DEBUG
+									std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") cannot dump html" << std::endl;
+									std::cerr << "  Error: " << errorString << std::endl;
+#endif
+									result = RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR;
+								}
+							}
+						} else {
 							errorString = html.lastError();
 #ifdef FEEDREADER_DEBUG
 							std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") cannot dump html" << std::endl;

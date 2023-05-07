@@ -92,7 +92,7 @@ void FeedReaderPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
 {
 	mInterfaces = interfaces;
 
-	mFeedReader = new p3FeedReader(mPlugInHandler, mInterfaces.mGxsForums);
+	mFeedReader = new p3FeedReader(mPlugInHandler, mInterfaces.mGxsForums, mInterfaces.mPosted);
 	rsFeedReader = mFeedReader;
 
 	mNotify = new FeedReaderNotify();

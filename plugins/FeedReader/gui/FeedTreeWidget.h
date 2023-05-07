@@ -1,7 +1,7 @@
 /*******************************************************************************
- * plugins/FeedReader/gui/FeedReaderNotify.h                                   *
+ * plugins/FeedReader/gui/FeedTreeWidget.h                                     *
  *                                                                             *
- * Copyright (C) 2012 by Thunder <retroshare.project@gmail.com>                *
+ * Copyright (C) 2012 by Retroshare Team <retroshare.project@gmail.com>        *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,29 +18,33 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef _FEEDREADERNOTIFY_H
-#define _FEEDREADERNOTIFY_H
+#ifndef _FEEDTREEWIDGET_H
+#define _FEEDTREEWIDGET_H
 
-#include <QObject>
-#include "interface/rsFeedReader.h"
+#include "gui/common/RSTreeWidget.h"
 
-class FeedReaderNotify : public QObject, public RsFeedReaderNotify
+/* Subclassing RSTreeWidget */
+class FeedTreeWidget : public RSTreeWidget
 {
 	Q_OBJECT
 
 public:
-	FeedReaderNotify();
+	FeedTreeWidget(QWidget *parent = 0);
 
-	/* RsFeedReaderNotify */
-	virtual void notifyFeedChanged(uint32_t feedId, int type);
-	virtual void notifyMsgChanged(uint32_t feedId, const std::string &msgId, int type);
-	virtual void notifyShrinkImage();
+Q_SIGNALS:
+	void feedReparent(QTreeWidgetItem *item, QTreeWidgetItem *newParent);
 
-signals:
-	void feedChanged(uint32_t feedId, int type);
-	void msgChanged(uint32_t feedId, const QString &msgId, int type);
-	void shrinkImage();
+protected:
+	void dragEnterEvent(QDragEnterEvent *event);
+	void dragLeaveEvent(QDragLeaveEvent *event);
+	void dragMoveEvent(QDragMoveEvent *event);
+	void dropEvent(QDropEvent *event);
+
+private:
+	bool canDrop(QDropEvent *event, QTreeWidgetItem **dropItem = NULL);
+
+private:
+	QTreeWidgetItem *mDraggedItem;
 };
 
 #endif
-

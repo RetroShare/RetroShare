@@ -22,6 +22,7 @@
 #define _SEARCHDIALOG_H
 
 #include "retroshare/rstypes.h"
+#include "retroshare/rsevents.h"
 #include "ui_SearchDialog.h"
 #include "retroshare-gui/mainpage.h"
 
@@ -125,6 +126,7 @@ private:
     void setIconAndType(QTreeWidgetItem *item, const QString& filename);
     void downloadDirectory(const QTreeWidgetItem *item, const QString &base);
     void getSourceFriendsForHash(const RsFileHash &hash,std::list<RsPeerId> &srcIds);
+    void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
 /** the advanced search dialog instance */
     AdvancedSearchDialog * advSearchDialog;
@@ -176,6 +178,8 @@ private:
 
 	 bool _queueIsAlreadyTakenCareOf ;
 	 std::vector<std::pair<qulonglong,FileDetail> > searchResultsQueue ;
+
+     RsEventsHandlerId_t mEventHandlerId ;
 };
 
 #endif

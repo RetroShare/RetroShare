@@ -42,15 +42,26 @@ PulseAddDialog::PulseAddDialog(QWidget *parent)
 	connect(ui.pushButton_Cancel, SIGNAL( clicked( void ) ), this, SLOT( cancelPulse( void ) ) );
 	connect(ui.textEdit_Pulse, SIGNAL( textChanged( void ) ), this, SLOT( pulseTextChanged( void ) ) );
 	connect(ui.pushButton_picture, SIGNAL(clicked()), this, SLOT( toggle()));
+	connect(ui.pushButton_remove, SIGNAL(clicked()), this, SLOT( removePictures()));
+
 
     // this connection is from browse push button to the slot function onBrowseButtonClicked()
     connect(ui.pushButton_Browse, SIGNAL(clicked()), this, SLOT( onBrowseButtonClicked()));
 
 	ui.pushButton_picture->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/photo.png")));
+	ui.pushButton_Browse->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/add-image.png")));
+	ui.pushButton_remove->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/mail/delete.png")));
+
 	ui.frame_picture->hide();
+	ui.pushButton_picture->hide();
 
     // initially hiding the browse button as the attach image button is not pressed
-    ui.frame_PictureBrowse->hide();
+	//ui.frame_PictureBrowse->hide();
+
+	ui.label_image1->hide();
+	ui.label_image2->hide();
+	ui.label_image3->hide();
+	ui.label_image4->hide();
 
 	setAcceptDrops(true);
 }
@@ -160,11 +171,10 @@ void PulseAddDialog::cleanup()
 	ui.label_image4->clear();
 	ui.label_image4->setText(tr("Drag and Drop Image"));
 
-    ui.lineEdit_FilePath->clear();
-
     // Hide Drag & Drop Frame and the browse frame
     ui.frame_picture->hide();
-    ui.frame_PictureBrowse->hide();
+    //ui.frame_PictureBrowse->hide();
+	ui.pushButton_picture->hide();
 
 	ui.pushButton_picture->setChecked(false);
 }
@@ -489,24 +499,29 @@ void PulseAddDialog::addImage(const QString &path)
 		std::cerr << "PulseAddDialog::addImage() Installing in Image1";
 		std::cerr << std::endl;
 		ui.label_image1->setPixmap(icon);
+		ui.label_image1->show();
+		ui.frame_picture->show();
 		mImage1.copy((uint8_t *) ba.data(), ba.size());
 		std::cerr << "PulseAddDialog::addImage() Installing in Image1 Size: " << mImage1.mSize;
 		std::cerr << std::endl;
 	}
 	else if (mImage2.empty()) {
 		ui.label_image2->setPixmap(icon);
+		ui.label_image2->show();
 		mImage2.copy((uint8_t *) ba.data(), ba.size());
 		std::cerr << "PulseAddDialog::addImage() Installing in Image2 Size: " << mImage2.mSize;
 		std::cerr << std::endl;
 	}
 	else if (mImage3.empty()) {
 		ui.label_image3->setPixmap(icon);
+		ui.label_image3->show();
 		mImage3.copy((uint8_t *) ba.data(), ba.size());
 		std::cerr << "PulseAddDialog::addImage() Installing in Image3 Size: " << mImage3.mSize;
 		std::cerr << std::endl;
 	}
 	else if (mImage4.empty()) {
 		ui.label_image4->setPixmap(icon);
+		ui.label_image4->show();
 		mImage4.copy((uint8_t *) ba.data(), ba.size());
 		std::cerr << "PulseAddDialog::addImage() Installing in Image4 Size: " << mImage4.mSize;
 		std::cerr << std::endl;
@@ -523,7 +538,6 @@ void PulseAddDialog::toggle()
 	{
         // Show the input methods (drag and drop field and the browse button)
 		ui.frame_picture->show();
-        ui.frame_PictureBrowse->show();
 
 		ui.pushButton_picture->setToolTip(tr("Hide Pictures"));
 	}
@@ -531,7 +545,6 @@ void PulseAddDialog::toggle()
 	{
         // Hide the input methods (drag and drop field and the browse button)
 		ui.frame_picture->hide();
-        ui.frame_PictureBrowse->hide();
 
 		ui.pushButton_picture->setToolTip(tr("Add Pictures"));
 	}
@@ -543,8 +556,27 @@ void PulseAddDialog::onBrowseButtonClicked()
     QString filePath;
     misc::getOpenFileName(this, RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg *.gif *.webp )", filePath);
     if (!filePath.isEmpty()) {
-        ui.lineEdit_FilePath->setText(filePath);
+        //ui.lineEdit_FilePath->setText(filePath);
         addImage(filePath);
     }
 }
 
+void PulseAddDialog::removePictures()
+{
+
+	mImage1.clear();
+	ui.label_image1->clear();
+	mImage2.clear();
+	ui.label_image2->clear();
+	mImage3.clear();
+	ui.label_image3->clear();
+	mImage4.clear();
+	ui.label_image4->clear();
+
+	ui.label_image1->hide();
+	ui.label_image2->hide();
+	ui.label_image3->hide();
+	ui.label_image4->hide();
+
+	ui.frame_picture->hide();
+}

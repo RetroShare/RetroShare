@@ -33,11 +33,14 @@ class p3FeedReaderThread;
 
 class RsGxsForums;
 struct RsGxsForumGroup;
+class RsPosted;
+struct RsPostedGroup;
+class RsGxsIfaceHelper;
 
 class p3FeedReader : public RsPQIService, public RsFeedReader
 {
 public:
-	p3FeedReader(RsPluginHandler *pgHandler, RsGxsForums *forums);
+	p3FeedReader(RsPluginHandler *pgHandler, RsGxsForums *forums, RsPosted *posted);
 
 	/****************** FeedReader Interface *************/
 	virtual void stop();
@@ -52,24 +55,33 @@ public:
 	virtual bool     getSaveInBackground();
 	virtual void     setSaveInBackground(bool saveInBackground);
 
-	virtual RsFeedAddResult addFolder(uint32_t parentId, const std::string &name, uint32_t &feedId);
-	virtual RsFeedAddResult setFolder(uint32_t feedId, const std::string &name);
-	virtual RsFeedAddResult addFeed(const FeedInfo &feedInfo, uint32_t &feedId);
-	virtual RsFeedAddResult setFeed(uint32_t feedId, const FeedInfo &feedInfo);
-	virtual bool            removeFeed(uint32_t feedId);
-	virtual bool            addPreviewFeed(const FeedInfo &feedInfo, uint32_t &feedId);
-	virtual void            getFeedList(uint32_t parentId, std::list<FeedInfo> &feedInfos);
-	virtual bool            getFeedInfo(uint32_t feedId, FeedInfo &feedInfo);
-	virtual bool            getMsgInfo(uint32_t feedId, const std::string &msgId, FeedMsgInfo &msgInfo);
-	virtual bool            removeMsg(uint32_t feedId, const std::string &msgId);
-	virtual bool            removeMsgs(uint32_t feedId, const std::list<std::string> &msgIds);
-	virtual bool            getMessageCount(uint32_t feedId, uint32_t *msgCount, uint32_t *newCount, uint32_t *unreadCount);
-	virtual bool            getFeedMsgList(uint32_t feedId, std::list<FeedMsgInfo> &msgInfos);
-	virtual bool            getFeedMsgIdList(uint32_t feedId, std::list<std::string> &msgIds);
-	virtual bool            processFeed(uint32_t feedId);
-	virtual bool            setMessageRead(uint32_t feedId, const std::string &msgId, bool read);
-	virtual bool            retransformMsg(uint32_t feedId, const std::string &msgId);
-	virtual bool            clearMessageCache(uint32_t feedId);
+	virtual RsFeedResult addFolder(uint32_t parentId, const std::string &name, uint32_t &feedId);
+	virtual RsFeedResult setFolder(uint32_t feedId, const std::string &name);
+	virtual RsFeedResult addFeed(const FeedInfo &feedInfo, uint32_t &feedId);
+	virtual RsFeedResult setFeed(uint32_t feedId, const FeedInfo &feedInfo);
+	virtual RsFeedResult setParent(uint32_t feedId, uint32_t parentId);
+	virtual bool         removeFeed(uint32_t feedId);
+	virtual bool         addPreviewFeed(const FeedInfo &feedInfo, uint32_t &feedId);
+	virtual void         getFeedList(uint32_t parentId, std::list<FeedInfo> &feedInfos);
+	virtual bool         getFeedInfo(uint32_t feedId, FeedInfo &feedInfo);
+	virtual bool         getMsgInfo(uint32_t feedId, const std::string &msgId, FeedMsgInfo &msgInfo);
+	virtual bool         removeMsg(uint32_t feedId, const std::string &msgId);
+	virtual bool         removeMsgs(uint32_t feedId, const std::list<std::string> &msgIds);
+	virtual bool         getMessageCount(uint32_t feedId, uint32_t *msgCount, uint32_t *newCount, uint32_t *unreadCount);
+	virtual bool         getFeedMsgList(uint32_t feedId, std::list<FeedMsgInfo> &msgInfos);
+	virtual bool         getFeedMsgIdList(uint32_t feedId, std::list<std::string> &msgIds);
+	virtual bool         processFeed(uint32_t feedId);
+	virtual bool         setMessageRead(uint32_t feedId, const std::string &msgId, bool read);
+	virtual bool         retransformMsg(uint32_t feedId, const std::string &msgId);
+	virtual bool         clearMessageCache(uint32_t feedId);
+
+	virtual RsGxsForums* forums() { return mForums; }
+	virtual RsPosted*    posted() { return mPosted; }
+	virtual bool         getForumGroups(std::vector<RsGxsForumGroup> &groups, bool onlyOwn);
+	virtual bool         getPostedGroups(std::vector<RsPostedGroup> &groups, bool onlyOwn);
+
+	virtual FeedReaderShrinkImageTask *getShrinkImageTask();
+	virtual void         setShrinkImageTaskResult(FeedReaderShrinkImageTask *shrinkedImageTask);
 
 	virtual RsFeedReaderErrorState processXPath(const std::list<std::string> &xpathsToUse, const std::list<std::string> &xpathsToRemove, std::string &description, std::string &errorString);
 	virtual RsFeedReaderErrorState processXslt(const std::string &xslt, std::string &description, std::string &errorString);
@@ -92,7 +104,10 @@ public:
 
 	bool getForumGroup(const RsGxsGroupId &groupId, RsGxsForumGroup &forumGroup);
 	bool updateForumGroup(const RsGxsForumGroup &forumGroup, const std::string &groupName, const std::string &groupDescription);
-	bool waitForToken(uint32_t token);
+	bool getPostedGroup(const RsGxsGroupId &groupId, RsPostedGroup &postedGroup);
+	bool updatePostedGroup(const RsPostedGroup &postedGroup, const std::string &groupName, const std::string &groupDescription);
+	bool waitForToken(RsGxsIfaceHelper *interface, uint32_t token);
+	bool shrinkImage(FeedReaderShrinkImageTask::Type type, const std::vector<unsigned char> &image, std::vector<unsigned char> &resultImage);
 
 protected:
 	/****************** p3Config STUFF *******************/
@@ -109,6 +124,7 @@ private:
 private:
 	time_t   mLastClean;
 	RsGxsForums *mForums;
+	RsPosted *mPosted;
 	RsFeedReaderNotify *mNotify;
 	volatile bool mStopped;
 
@@ -132,6 +148,10 @@ private:
 
 	RsMutex mProcessMutex;
 	std::list<uint32_t> mProcessFeeds;
+
+	RsMutex mImageMutex;
+	std::list<FeedReaderShrinkImageTask*> mImages;
+	std::list<FeedReaderShrinkImageTask*> mResultImages;
 
 	RsMutex mPreviewMutex;
 	p3FeedReaderThread *mPreviewDownloadThread;

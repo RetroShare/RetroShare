@@ -88,6 +88,10 @@ echo %RsRef%>"%RsLastRefFile%"
 
 exit /B %ERRORLEVEL%
 
+:error
+%cecho% error "\n%~n0 failed\n"
+exit /B 1
+
 :error_env
 echo Failed to initialize environment.
 endlocal

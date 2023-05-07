@@ -46,6 +46,7 @@ void RsFeedReaderFeed::clear()
 	storageTime = 0;
 	flag = 0;
 	forumId.clear();
+	postedId.clear();
 	description.clear();
 	icon.clear();
 	errorState = RS_FEED_ERRORSTATE_OK;
@@ -85,6 +86,7 @@ uint32_t RsFeedReaderSerialiser::sizeFeed(RsFeedReaderFeed *item)
 	s += item->xpathsToUse.TlvSize();
 	s += item->xpathsToRemove.TlvSize();
 	s += GetTlvStringSize(item->xslt);
+	s += GetTlvStringSize(item->postedId);
 
 	return s;
 }
@@ -108,7 +110,7 @@ bool RsFeedReaderSerialiser::serialiseFeed(RsFeedReaderFeed *item, void *data, u
 	offset += 8;
 
 	/* add values */
-	ok &= setRawUInt16(data, tlvsize, &offset, 2); /* version */
+	ok &= setRawUInt16(data, tlvsize, &offset, 3); /* version */
 	ok &= setRawUInt32(data, tlvsize, &offset, item->feedId);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->parentId);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_LINK, item->url);
@@ -124,6 +126,7 @@ bool RsFeedReaderSerialiser::serialiseFeed(RsFeedReaderFeed *item, void *data, u
 	ok &= setRawUInt32(data, tlvsize, &offset, item->storageTime);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->flag);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, item->forumId);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, item->postedId);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->errorState);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, item->errorString);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->transformationType);
@@ -208,6 +211,9 @@ RsFeedReaderFeed *RsFeedReaderSerialiser::deserialiseFeed(void *data, uint32_t *
 	ok &= getRawUInt32(data, rssize, &offset, &(item->storageTime));
 	ok &= getRawUInt32(data, rssize, &offset, &(item->flag));
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VALUE, item->forumId);
+	if (version >= 3) {
+		ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VALUE, item->postedId);
+	}
 	uint32_t errorState = 0;
 	ok &= getRawUInt32(data, rssize, &offset, &errorState);
 	item->errorState = (RsFeedReaderErrorState) errorState;

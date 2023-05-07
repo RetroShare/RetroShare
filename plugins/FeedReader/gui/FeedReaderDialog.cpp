@@ -35,6 +35,7 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/notifyqt.h"
 #include "FeedReaderUserNotify.h"
+#include "gui/Posted/PostedCreatePostDialog.h"
 
 #include "interface/rsFeedReader.h"
 #include "retroshare/rsiface.h"
@@ -66,6 +67,7 @@ FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, FeedReaderNotify *n
 	mMessageWidget = NULL;
 
 	connect(mNotify, &FeedReaderNotify::feedChanged, this, &FeedReaderDialog::feedChanged, Qt::QueuedConnection);
+	connect(mNotify, &FeedReaderNotify::shrinkImage, this, &FeedReaderDialog::shrinkImage, Qt::QueuedConnection);
 
 	connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
 
@@ -84,8 +86,15 @@ FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, FeedReaderNotify *n
 	connect(ui->feedAddButton, SIGNAL(clicked()), this, SLOT(newFeed()));
 	connect(ui->feedProcessButton, SIGNAL(clicked()), this, SLOT(processFeed()));
 
+	connect(ui->feedTreeWidget, SIGNAL(feedReparent(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(feedTreeReparent(QTreeWidgetItem*,QTreeWidgetItem*)));
+
 	mFeedCompareRole = new RSTreeWidgetItemCompareRole;
 	mFeedCompareRole->setRole(COLUMN_FEED_NAME, ROLE_FEED_SORT);
+
+	/* enable drag and drop */
+	ui->feedTreeWidget->setAcceptDrops(true);
+	ui->feedTreeWidget->setDragEnabled(true);
+	ui->feedTreeWidget->setDragDropMode(QAbstractItemView::InternalMove);
 
 	/* initialize root item */
 	mRootItem = new QTreeWidgetItem(ui->feedTreeWidget);
@@ -395,6 +404,9 @@ void FeedReaderDialog::updateFeeds(uint32_t parentId, QTreeWidgetItem *parentIte
 					mOpenFeedIds->removeAt(index);
 				}
 			}
+		} else {
+			/* disable drop */
+			item->setFlags(item->flags() & ~Qt::ItemIsDropEnabled);
 		}
 	}
 
@@ -594,6 +606,37 @@ void FeedReaderDialog::feedChanged(uint32_t feedId, int type)
 	calculateFeedItems();
 }
 
+void FeedReaderDialog::shrinkImage()
+{
+	while (true) {
+		FeedReaderShrinkImageTask *shrinkImageTask = mFeedReader->getShrinkImageTask();
+
+		if (!shrinkImageTask) {
+			return;
+		}
+
+		switch (shrinkImageTask->mType) {
+		case FeedReaderShrinkImageTask::POSTED:
+		{
+			QImage image;
+			if (image.loadFromData(shrinkImageTask->mImage.data(), shrinkImageTask->mImage.size())) {
+				QByteArray imageBytes;
+				QImage imageOpt;
+				if (PostedCreatePostDialog::optimizeImage(image, imageBytes, imageOpt)) {
+					shrinkImageTask->mImageResult.assign(imageBytes.begin(), imageBytes.end());
+					shrinkImageTask->mResult = true;
+				}
+			}
+			break;
+		}
+		default:
+			shrinkImageTask->mResult = false;
+		}
+
+		mFeedReader->setShrinkImageTaskResult(shrinkImageTask);
+	}
+}
+
 FeedReaderMessageWidget *FeedReaderDialog::feedMessageWidget(uint32_t id)
 {
 	int tabCount = ui->messageTabWidget->count();
@@ -738,7 +781,7 @@ void FeedReaderDialog::newFolder()
 
 	if (dialog.exec() == QDialog::Accepted && !dialog.textValue().isEmpty()) {
 		uint32_t feedId;
-		RsFeedAddResult result = mFeedReader->addFolder(currentFeedId(), dialog.textValue().toUtf8().constData(), feedId);
+		RsFeedResult result = mFeedReader->addFolder(currentFeedId(), dialog.textValue().toUtf8().constData(), feedId);
 		FeedReaderStringDefs::showError(this, result, tr("Create folder"), tr("Cannot create folder."));
 	}
 }
@@ -791,7 +834,7 @@ void FeedReaderDialog::editFeed()
 		dialog.setTextValue(item->data(COLUMN_FEED_DATA, ROLE_FEED_NAME).toString());
 
 		if (dialog.exec() == QDialog::Accepted && !dialog.textValue().isEmpty()) {
-			RsFeedAddResult result = mFeedReader->setFolder(feedId, dialog.textValue().toUtf8().constData());
+			RsFeedResult result = mFeedReader->setFolder(feedId, dialog.textValue().toUtf8().constData());
 			FeedReaderStringDefs::showError(this, result, tr("Create folder"), tr("Cannot create folder."));
 		}
 	} else {
@@ -831,4 +874,31 @@ void FeedReaderDialog::processFeed()
 	/* empty feed id process all feeds */
 
 	mFeedReader->processFeed(feedId);
+}
+
+void FeedReaderDialog::feedTreeReparent(QTreeWidgetItem *item, QTreeWidgetItem *newParent)
+{
+	if (!item || ! newParent) {
+		return;
+	}
+
+	uint32_t feedId = item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toUInt();
+	uint32_t parentId = newParent->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toUInt();
+
+	if (feedId == 0) {
+		return;
+	}
+
+	RsFeedResult result = mFeedReader->setParent(feedId, parentId);
+	if (FeedReaderStringDefs::showError(this, result, tr("Move feed"), tr("Cannot move feed."))) {
+		return;
+	}
+
+	bool expanded = item->isExpanded();
+	item->parent()->removeChild(item);
+	newParent->addChild(item);
+	item->setExpanded(expanded);
+	newParent->setExpanded(true);
+
+	calculateFeedItems();
 }

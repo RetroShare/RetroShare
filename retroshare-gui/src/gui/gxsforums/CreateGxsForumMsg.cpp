@@ -68,19 +68,19 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 	mStateHelper->addWidget(CREATEGXSFORUMMSG_FORUMINFO, ui->postButton);
 	mStateHelper->addWidget(CREATEGXSFORUMMSG_FORUMINFO, ui->innerFrame);
 	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_FORUMINFO, ui->forumName);
-	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_FORUMINFO, ui->forumSubject);
+	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_FORUMINFO, ui->forumSubject, false);
 	mStateHelper->addClear(CREATEGXSFORUMMSG_FORUMINFO, ui->forumName);
 
 	mStateHelper->addWidget(CREATEGXSFORUMMSG_PARENTMSG, ui->postButton);
 	mStateHelper->addWidget(CREATEGXSFORUMMSG_PARENTMSG, ui->innerFrame);
 	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_PARENTMSG, ui->forumName);
-	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_PARENTMSG, ui->forumSubject);
+	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_PARENTMSG, ui->forumSubject, false);
 	mStateHelper->addClear(CREATEGXSFORUMMSG_PARENTMSG, ui->forumName);
 
 	mStateHelper->addWidget(CREATEGXSFORUMMSG_ORIGMSG, ui->postButton);
 	mStateHelper->addWidget(CREATEGXSFORUMMSG_ORIGMSG, ui->innerFrame);
 	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_ORIGMSG, ui->forumName);
-	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_ORIGMSG, ui->forumSubject);
+	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_ORIGMSG, ui->forumSubject, false);
 	mStateHelper->addClear(CREATEGXSFORUMMSG_ORIGMSG, ui->forumName);
 
 

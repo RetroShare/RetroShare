@@ -23,27 +23,27 @@
 
 #include "FeedReaderStringDefs.h"
 
-bool FeedReaderStringDefs::showError(QWidget *parent, RsFeedAddResult result, const QString &title, const QString &text)
+bool FeedReaderStringDefs::showError(QWidget *parent, RsFeedResult result, const QString &title, const QString &text)
 {
 	QString error;
 
 	switch (result) {
-	case RS_FEED_ADD_RESULT_SUCCESS:
+	case RS_FEED_RESULT_SUCCESS:
 		/* no error */
 		return false;
-	case RS_FEED_ADD_RESULT_FEED_NOT_FOUND:
+	case RS_FEED_RESULT_FEED_NOT_FOUND:
 		error = QApplication::translate("FeedReaderStringDefs", "Feed not found.");
 		break;
-	case RS_FEED_ADD_RESULT_PARENT_NOT_FOUND:
+	case RS_FEED_RESULT_PARENT_NOT_FOUND:
 		error = QApplication::translate("FeedReaderStringDefs", "Parent not found.");
 		break;
-	case RS_FEED_ADD_RESULT_PARENT_IS_NO_FOLDER:
+	case RS_FEED_RESULT_PARENT_IS_NO_FOLDER:
 		error = QApplication::translate("FeedReaderStringDefs", "Parent is no folder.");
 		break;
-	case RS_FEED_ADD_RESULT_FEED_IS_FOLDER:
+	case RS_FEED_RESULT_FEED_IS_FOLDER:
 		error = QApplication::translate("FeedReaderStringDefs", "Feed is a folder.");
 		break;
-	case RS_FEED_ADD_RESULT_FEED_IS_NO_FOLDER:
+	case RS_FEED_RESULT_FEED_IS_NO_FOLDER:
 		error = QApplication::translate("FeedReaderStringDefs", "Feed is no folder.");
 		break;
 	default:
@@ -101,6 +101,9 @@ QString FeedReaderStringDefs::errorString(RsFeedReaderErrorState errorState, con
 	case RS_FEED_ERRORSTATE_DOWNLOAD_UNKOWN_RESPONSE_CODE:
 		errorText = QApplication::translate("FeedReaderStringDefs", "Unknown response code");
 		break;
+	case RS_FEED_ERRORSTATE_DOWNLOAD_BLOCKED:
+		errorText = QApplication::translate("FeedReaderStringDefs", "Download blocked");
+		break;
 
 	/* process */
 	case RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR:
@@ -109,9 +112,9 @@ QString FeedReaderStringDefs::errorString(RsFeedReaderErrorState errorState, con
 	case RS_FEED_ERRORSTATE_PROCESS_UNKNOWN_FORMAT:
 		errorText = QApplication::translate("FeedReaderStringDefs", "Unknown XML format");
 		break;
-	case RS_FEED_ERRORSTATE_PROCESS_FORUM_CREATE:
-		errorText = QApplication::translate("FeedReaderStringDefs", "Can't create forum");
-		break;
+//	case RS_FEED_ERRORSTATE_PROCESS_FORUM_CREATE:
+//		errorText = QApplication::translate("FeedReaderStringDefs", "Can't create forum");
+//		break;
 	case RS_FEED_ERRORSTATE_PROCESS_FORUM_NOT_FOUND:
 		errorText = QApplication::translate("FeedReaderStringDefs", "Forum not found");
 		break;
@@ -120,6 +123,18 @@ QString FeedReaderStringDefs::errorString(RsFeedReaderErrorState errorState, con
 		break;
 	case RS_FEED_ERRORSTATE_PROCESS_FORUM_NO_AUTHOR:
 		errorText = QApplication::translate("FeedReaderStringDefs", "Forum has no author");
+		break;
+//	case RS_FEED_ERRORSTATE_PROCESS_POSTED_CREATE:
+//		errorText = QApplication::translate("FeedReaderStringDefs", "Can't create board");
+//		break;
+	case RS_FEED_ERRORSTATE_PROCESS_POSTED_NOT_FOUND:
+		errorText = QApplication::translate("FeedReaderStringDefs", "Board not found");
+		break;
+	case RS_FEED_ERRORSTATE_PROCESS_POSTED_NO_ADMIN:
+		errorText = QApplication::translate("FeedReaderStringDefs", "You are not admin of the board");
+		break;
+	case RS_FEED_ERRORSTATE_PROCESS_POSTED_NO_AUTHOR:
+		errorText = QApplication::translate("FeedReaderStringDefs", "Board has no author");
 		break;
 
 	case RS_FEED_ERRORSTATE_PROCESS_HTML_ERROR:

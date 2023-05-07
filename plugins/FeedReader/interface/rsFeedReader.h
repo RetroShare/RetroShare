@@ -25,8 +25,13 @@
 #include <inttypes.h>
 #include <string>
 #include <list>
+#include <vector>
 
 class RsFeedReader;
+class RsGxsForums;
+class RsPosted;
+class RsGxsForumGroup;
+class RsPostedGroup;
 extern RsFeedReader *rsFeedReader;
 
 enum RsFeedReaderErrorState {
@@ -38,14 +43,19 @@ enum RsFeedReaderErrorState {
 	RS_FEED_ERRORSTATE_DOWNLOAD_UNKNOWN_CONTENT_TYPE  = 3,
 	RS_FEED_ERRORSTATE_DOWNLOAD_NOT_FOUND             = 4,
 	RS_FEED_ERRORSTATE_DOWNLOAD_UNKOWN_RESPONSE_CODE  = 5,
+	RS_FEED_ERRORSTATE_DOWNLOAD_BLOCKED               = 6,
 
 	/* process */
 	RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR         = 50,
 	RS_FEED_ERRORSTATE_PROCESS_UNKNOWN_FORMAT         = 51,
-	RS_FEED_ERRORSTATE_PROCESS_FORUM_CREATE           = 100,
+//	RS_FEED_ERRORSTATE_PROCESS_FORUM_CREATE           = 100,
 	RS_FEED_ERRORSTATE_PROCESS_FORUM_NOT_FOUND        = 101,
 	RS_FEED_ERRORSTATE_PROCESS_FORUM_NO_ADMIN         = 102,
 	RS_FEED_ERRORSTATE_PROCESS_FORUM_NO_AUTHOR        = 103,
+//	RS_FEED_ERRORSTATE_PROCESS_POSTED_CREATE          = 104,
+	RS_FEED_ERRORSTATE_PROCESS_POSTED_NOT_FOUND       = 105,
+	RS_FEED_ERRORSTATE_PROCESS_POSTED_NO_ADMIN        = 106,
+	RS_FEED_ERRORSTATE_PROCESS_POSTED_NO_AUTHOR       = 107,
 
 	RS_FEED_ERRORSTATE_PROCESS_HTML_ERROR             = 150,
 	RS_FEED_ERRORSTATE_PROCESS_XPATH_INTERNAL_ERROR   = 151,
@@ -56,14 +66,14 @@ enum RsFeedReaderErrorState {
 	RS_FEED_ERRORSTATE_PROCESS_XSLT_NO_RESULT         = 156
 };
 
-enum RsFeedAddResult
+enum RsFeedResult
 {
-	RS_FEED_ADD_RESULT_SUCCESS,
-	RS_FEED_ADD_RESULT_FEED_NOT_FOUND,
-	RS_FEED_ADD_RESULT_PARENT_NOT_FOUND,
-	RS_FEED_ADD_RESULT_PARENT_IS_NO_FOLDER,
-	RS_FEED_ADD_RESULT_FEED_IS_FOLDER,
-	RS_FEED_ADD_RESULT_FEED_IS_NO_FOLDER
+	RS_FEED_RESULT_SUCCESS,
+	RS_FEED_RESULT_FEED_NOT_FOUND,
+	RS_FEED_RESULT_PARENT_NOT_FOUND,
+	RS_FEED_RESULT_PARENT_IS_NO_FOLDER,
+	RS_FEED_RESULT_FEED_IS_FOLDER,
+	RS_FEED_RESULT_FEED_IS_NO_FOLDER
 };
 
 enum RsFeedTransformationType
@@ -102,6 +112,8 @@ public:
 		flag.deactivated = false;
 		flag.forum = false;
 		flag.updateForumInfo = false;
+		flag.posted = false;
+		flag.updatePostedInfo = false;
 		flag.embedImages = false;
 		flag.saveCompletePage = false;
 		flag.preview = false;
@@ -122,6 +134,7 @@ public:
 	time_t                   lastUpdate;
 	uint32_t                 storageTime;
 	std::string              forumId;
+	std::string              postedId;
 	WorkState                workstate;
 	RsFeedReaderErrorState   errorState;
 	std::string              errorString;
@@ -141,6 +154,11 @@ public:
 		bool deactivated : 1;
 		bool forum : 1;
 		bool updateForumInfo : 1;
+		bool posted : 1;
+		bool updatePostedInfo : 1;
+		bool postedFirstImage : 1;
+		bool postedOnlyImage : 1;
+		bool postedShrinkImage : 1;
 		bool embedImages : 1;
 		bool saveCompletePage : 1;
 		bool preview : 1;
@@ -174,6 +192,28 @@ public:
 	} flag;
 };
 
+class FeedReaderShrinkImageTask
+{
+public:
+	enum Type {
+		POSTED
+	};
+
+public:
+	Type mType;
+	std::vector<unsigned char> mImage;
+	std::vector<unsigned char> mImageResult;
+	bool mResult;
+
+public:
+	FeedReaderShrinkImageTask(Type type, const std::vector<unsigned char> &image)
+	{
+		mType = type;
+		mImage = image;
+		mResult = false;
+	}
+};
+
 class RsFeedReaderNotify
 {
 public:
@@ -181,6 +221,7 @@ public:
 
 	virtual void notifyFeedChanged(uint32_t /*feedId*/, int /*type*/) {}
 	virtual void notifyMsgChanged(uint32_t /*feedId*/, const std::string &/*msgId*/, int /*type*/) {}
+	virtual void notifyShrinkImage() {}
 };
 
 class RsFeedReader
@@ -201,24 +242,33 @@ public:
 	virtual bool     getSaveInBackground() = 0;
 	virtual void     setSaveInBackground(bool saveInBackground) = 0;
 
-	virtual RsFeedAddResult addFolder(uint32_t parentId, const std::string &name, uint32_t &feedId) = 0;
-	virtual RsFeedAddResult setFolder(uint32_t feedId, const std::string &name) = 0;
-	virtual RsFeedAddResult addFeed(const FeedInfo &feedInfo, uint32_t &feedId) = 0;
-	virtual RsFeedAddResult setFeed(uint32_t feedId, const FeedInfo &feedInfo) = 0;
-	virtual bool            removeFeed(uint32_t feedId) = 0;
-	virtual bool            addPreviewFeed(const FeedInfo &feedInfo, uint32_t &feedId) = 0;
-	virtual void            getFeedList(uint32_t parentId, std::list<FeedInfo> &feedInfos) = 0;
-	virtual bool            getFeedInfo(uint32_t feedId, FeedInfo &feedInfo) = 0;
-	virtual bool            getMsgInfo(uint32_t feedId, const std::string &msgId, FeedMsgInfo &msgInfo) = 0;
-	virtual bool            removeMsg(uint32_t feedId, const std::string &msgId) = 0;
-	virtual bool            removeMsgs(uint32_t feedId, const std::list<std::string> &msgIds) = 0;
-	virtual bool            getMessageCount(uint32_t feedId, uint32_t *msgCount, uint32_t *newCount, uint32_t *unreadCount) = 0;
-	virtual bool            getFeedMsgList(uint32_t feedId, std::list<FeedMsgInfo> &msgInfos) = 0;
-	virtual bool            getFeedMsgIdList(uint32_t feedId, std::list<std::string> &msgIds) = 0;
-	virtual bool            processFeed(uint32_t feedId) = 0;
-	virtual bool            setMessageRead(uint32_t feedId, const std::string &msgId, bool read) = 0;
-	virtual bool            retransformMsg(uint32_t feedId, const std::string &msgId) = 0;
-	virtual bool            clearMessageCache(uint32_t feedId) = 0;
+	virtual RsFeedResult addFolder(uint32_t parentId, const std::string &name, uint32_t &feedId) = 0;
+	virtual RsFeedResult setFolder(uint32_t feedId, const std::string &name) = 0;
+	virtual RsFeedResult addFeed(const FeedInfo &feedInfo, uint32_t &feedId) = 0;
+	virtual RsFeedResult setFeed(uint32_t feedId, const FeedInfo &feedInfo) = 0;
+	virtual RsFeedResult setParent(uint32_t feedId, uint32_t parentId) = 0;
+	virtual bool         removeFeed(uint32_t feedId) = 0;
+	virtual bool         addPreviewFeed(const FeedInfo &feedInfo, uint32_t &feedId) = 0;
+	virtual void         getFeedList(uint32_t parentId, std::list<FeedInfo> &feedInfos) = 0;
+	virtual bool         getFeedInfo(uint32_t feedId, FeedInfo &feedInfo) = 0;
+	virtual bool         getMsgInfo(uint32_t feedId, const std::string &msgId, FeedMsgInfo &msgInfo) = 0;
+	virtual bool         removeMsg(uint32_t feedId, const std::string &msgId) = 0;
+	virtual bool         removeMsgs(uint32_t feedId, const std::list<std::string> &msgIds) = 0;
+	virtual bool         getMessageCount(uint32_t feedId, uint32_t *msgCount, uint32_t *newCount, uint32_t *unreadCount) = 0;
+	virtual bool         getFeedMsgList(uint32_t feedId, std::list<FeedMsgInfo> &msgInfos) = 0;
+	virtual bool         getFeedMsgIdList(uint32_t feedId, std::list<std::string> &msgIds) = 0;
+	virtual bool         processFeed(uint32_t feedId) = 0;
+	virtual bool         setMessageRead(uint32_t feedId, const std::string &msgId, bool read) = 0;
+	virtual bool         retransformMsg(uint32_t feedId, const std::string &msgId) = 0;
+	virtual bool         clearMessageCache(uint32_t feedId) = 0;
+
+	virtual RsGxsForums* forums() = 0;
+	virtual RsPosted*    posted() = 0;
+	virtual bool         getForumGroups(std::vector<RsGxsForumGroup> &groups, bool onlyOwn) = 0;
+	virtual bool         getPostedGroups(std::vector<RsPostedGroup> &groups, bool onlyOwn) = 0;
+
+	virtual FeedReaderShrinkImageTask *getShrinkImageTask() = 0;
+	virtual void         setShrinkImageTaskResult(FeedReaderShrinkImageTask *shrinkImageTask) = 0;
 
 	virtual RsFeedReaderErrorState processXPath(const std::list<std::string> &xpathsToUse, const std::list<std::string> &xpathsToRemove, std::string &description, std::string &errorString) = 0;
 	virtual RsFeedReaderErrorState processXslt(const std::string &xslt, std::string &description, std::string &errorString) = 0;

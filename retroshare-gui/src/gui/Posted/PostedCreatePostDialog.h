@@ -41,10 +41,15 @@ public:
     explicit PostedCreatePostDialog(RsPosted* posted, const RsGxsGroupId& grpId, const RsGxsId& default_author=RsGxsId(),QWidget *parent = 0);
 	~PostedCreatePostDialog();
 
+	void setTitle(const QString& title);
+	void setNotes(const QString& notes);
+	void setLink(const QString& link);
+
+	static bool optimizeImage(const QImage &image, QByteArray &imagebytes, QImage &imageOpt);
+
 private:
 	QString imagefilename;
 	QByteArray imagebytes;
-	const int MAXMESSAGESIZE = 199000;
 
 private slots:
 	void createPost();
