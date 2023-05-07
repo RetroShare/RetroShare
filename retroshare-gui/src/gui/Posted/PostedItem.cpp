@@ -282,16 +282,12 @@ void BasePostedItem::readToggled(bool checked)
     if (mInFill) {
         return;
     }
+    setReadStatus(false, checked);
 
     RsThread::async([this,checked]()
     {
         RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
         rsPosted->setPostReadStatus(msgPair, !checked);
-
-        RsQThreadUtils::postToObject( [checked,this]()
-        {
-            setReadStatus(false, checked);
-        }, this );
     });
 }
 
