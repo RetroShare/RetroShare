@@ -20,6 +20,7 @@
 
 #include <vector>
 #include <iostream>
+#include <stdint.h>
 
 class QPainter;
 
