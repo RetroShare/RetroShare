@@ -45,6 +45,7 @@ set MSYS2SH=%EnvMSYS2Path%\msys%MSYS2Base%\usr\bin\sh
 
 %cecho% info "Initialize MSYS2"
 "%MSYS2SH%" -lc "yes | pacman --noconfirm -Syuu msys2-keyring"
+"%MSYS2SH%" -lc "pacman --noconfirm -Sy"
 "%MSYS2SH%" -lc "pacman --noconfirm -Su"
 
 call "%EnvMSYS2Path%\msys%MSYS2Base%\autorebase.bat"
