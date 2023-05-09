@@ -67,7 +67,6 @@ WireDialog::WireDialog(QWidget *parent)
 
 	connect( ui.toolButton_createAccount, SIGNAL(clicked()), this, SLOT(createGroup()));
 	connect( ui.toolButton_createPulse, SIGNAL(clicked()), this, SLOT(createPulse()));
-	connect( ui.toolButton_refresh, SIGNAL(clicked()), this, SLOT(refreshGroups()));
 
 	connect(ui.comboBox_groupSet, SIGNAL(currentIndexChanged(int)), this, SLOT(selectGroupSet(int)));
 	connect(ui.comboBox_filterTime, SIGNAL(currentIndexChanged(int)), this, SLOT(selectFilterTime(int)));
@@ -104,29 +103,38 @@ void WireDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
     const RsWireEvent *e = dynamic_cast<const RsWireEvent*>(event.get());
 
     if(e)
+    {
+
+#ifdef GXSWIRE_DEBUG
+                RsDbg() << " Refreshing the feed if there is a matching event. "<< std::endl;
+#endif
+
+        // The following switch statements refresh the wire feed whenever there is a new event
         switch(e->mWireEventCode)
         {
-        case RsWireEventCode::NEW_POST:             // [[fallthrough]];
+        case RsWireEventCode::NEW_POST:
             refreshGroups();
             break;
-        case RsWireEventCode::NEW_REPLY:             // [[fallthrough]];
+        case RsWireEventCode::NEW_REPLY:
             refreshGroups();
             break;
-        case RsWireEventCode::NEW_LIKE:             // [[fallthrough]];
+        case RsWireEventCode::NEW_LIKE:
             refreshGroups();
             break;
-        case RsWireEventCode::NEW_REPUBLISH:             // [[fallthrough]];
+        case RsWireEventCode::NEW_REPUBLISH:
             refreshGroups();
             break;
-        case RsWireEventCode::NEW_WIRE:             // [[fallthrough]];
+        case RsWireEventCode::POST_UPDATED:
             refreshGroups();
             break;
-        case RsWireEventCode::FOLLOW_STATUS_CHANGED:             // [[fallthrough]];
+        case RsWireEventCode::FOLLOW_STATUS_CHANGED:
             refreshGroups();
             break;
         default:
             break;
+
         }
+    }
 }
 
 WireDialog::~WireDialog()
