@@ -136,6 +136,9 @@ QString FeedReaderStringDefs::errorString(RsFeedReaderErrorState errorState, con
 	case RS_FEED_ERRORSTATE_PROCESS_POSTED_NO_AUTHOR:
 		errorText = QApplication::translate("FeedReaderStringDefs", "Board has no author");
 		break;
+	case RS_FEED_ERRORSTATE_PROCESS_POST:
+		errorText = QApplication::translate("FeedReaderStringDefs", "Some posts could not be created");
+		break;
 
 	case RS_FEED_ERRORSTATE_PROCESS_HTML_ERROR:
 		errorText = QApplication::translate("FeedReaderStringDefs", "Can't read html");

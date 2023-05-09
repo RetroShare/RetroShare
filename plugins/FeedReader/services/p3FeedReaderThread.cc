@@ -107,7 +107,7 @@ void p3FeedReaderThread::threadTick()
 
 									std::list<RsFeedReaderMsg*> msgSingle;
 									msgSingle.push_back(mi);
-									mFeedReader->onProcessSuccess_addMsgs(feed.feedId, msgSingle, true);
+									mFeedReader->onProcessSuccess_addMsgs(feed.feedId, msgSingle);
 
 									/* delete not accepted message */
 									std::list<RsFeedReaderMsg*>::iterator it1;
@@ -122,12 +122,15 @@ void p3FeedReaderThread::threadTick()
 									++it;
 								}
 							}
-							if (isRunning()) {
-								if (result == RS_FEED_ERRORSTATE_OK) {
-									/* third, add messages */
-									mFeedReader->onProcessSuccess_addMsgs(feed.feedId, msgs, false);
-								} else {
-									mFeedReader->onProcessError(feed.feedId, result, errorString);
+
+							if (!feed.preview) {
+								if (isRunning()) {
+									if (result == RS_FEED_ERRORSTATE_OK) {
+										/* third, add messages */
+										mFeedReader->onProcessSuccess_addMsgs(feed.feedId, msgs);
+									} else {
+										mFeedReader->onProcessError(feed.feedId, result, errorString);
+									}
 								}
 							}
 						}

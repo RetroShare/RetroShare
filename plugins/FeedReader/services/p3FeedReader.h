@@ -95,7 +95,7 @@ public:
 	void onDownloadSuccess(uint32_t feedId, const std::string &content, std::string &icon);
 	void onDownloadError(uint32_t feedId, RsFeedReaderErrorState result, const std::string &errorString);
 	void onProcessSuccess_filterMsg(uint32_t feedId, std::list<RsFeedReaderMsg*> &msgs);
-	void onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedReaderMsg*> &msgs, bool single);
+	void onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedReaderMsg*> &msgs);
 	void onProcessError(uint32_t feedId, RsFeedReaderErrorState result, const std::string &errorString);
 
 	bool getFeedToProcess(RsFeedReaderFeed &feed, uint32_t neededFeedId);

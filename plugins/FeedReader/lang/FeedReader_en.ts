@@ -714,12 +714,12 @@
     </message>
     <message>
         <location line="+3"/>
-        <location line="+111"/>
+        <location line="+114"/>
         <source>Unknown</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-94"/>
+        <location line="-97"/>
         <source>Internal download error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -786,6 +786,11 @@
     <message>
         <location line="+3"/>
         <source>Board has no author</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Some posts could not be created</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

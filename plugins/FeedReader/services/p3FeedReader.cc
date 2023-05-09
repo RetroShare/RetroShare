@@ -1994,12 +1994,13 @@ void p3FeedReader::onProcessSuccess_filterMsg(uint32_t feedId, std::list<RsFeedR
 	}
 }
 
-void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedReaderMsg*> &msgs, bool single)
+void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedReaderMsg*> &msgs)
 {
 #ifdef FEEDREADER_DEBUG
 	std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - feed " << feedId << " got " << msgs.size() << " messages" << std::endl;
 #endif
 
+	RsFeedReaderErrorState errorState = RS_FEED_ERRORSTATE_OK;
 	std::list<std::string> addedMsgs;
 	std::string forumId;
 	RsGxsId forumAuthorId;
@@ -2025,7 +2026,6 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 		RsFeedReaderFeed *fi = it->second;
 		bool forum = (fi->flag & RS_FEED_FLAG_FORUM) && !fi->preview;
 		bool posted = (fi->flag & RS_FEED_FLAG_POSTED) && !fi->preview;
-		RsFeedReaderErrorState errorState = RS_FEED_ERRORSTATE_OK;
 		feedFlag = fi->flag;
 
 		if (forum && !msgs.empty()) {
@@ -2125,129 +2125,153 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 			std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - feed " << fi->feedId << " (" << fi->name << ") added " << newMsgs << "/" << msgs.size() << " messages" << std::endl;
 #endif
 		}
-
-		if (!single) {
-			fi->workstate = RsFeedReaderFeed::WAITING;
-			fi->content.clear();
-			fi->errorState = errorState;
-			fi->lastUpdate = time(NULL);
-		}
-
-		if (!fi->preview) {
-			IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
-		}
 	}
 
-	if (!forumId.empty() && !forumMsgs.empty()) {
-		if (mForums) {
-			/* a bit tricky */
-			RsGenExchange *genExchange = dynamic_cast<RsGenExchange*>(mForums);
-			if (genExchange) {
-				/* add messages as forum messages */
-				std::list<RsFeedReaderMsg>::iterator msgIt;
-				for (msgIt = forumMsgs.begin(); msgIt != forumMsgs.end(); ++msgIt) {
-					RsFeedReaderMsg &mi = *msgIt;
+	bool postError = false;
 
-					/* convert to forum messages */
-					RsGxsForumMsg forumMsg;
-					forumMsg.mMeta.mGroupId = RsGxsGroupId(forumId);
-					forumMsg.mMeta.mMsgName = mi.title;
-					forumMsg.mMeta.mAuthorId = forumAuthorId;
+	if (errorState == RS_FEED_ERRORSTATE_OK) {
+		if (!forumId.empty() && !forumMsgs.empty()) {
+			if (mForums) {
+				/* a bit tricky */
+				RsGenExchange *genExchange = dynamic_cast<RsGenExchange*>(mForums);
+				if (genExchange) {
+					/* add messages as forum messages */
+					std::list<RsFeedReaderMsg>::iterator msgIt;
+					for (msgIt = forumMsgs.begin(); msgIt != forumMsgs.end(); ++msgIt) {
+						RsFeedReaderMsg &mi = *msgIt;
 
-					std::string description = mi.descriptionTransformed.empty() ? mi.description : mi.descriptionTransformed;
-					/* add link */
-					if (!mi.link.empty()) {
-						description += "<br><a href=\"" + mi.link + "\">" + mi.link + "</a>";
-					}
-					forumMsg.mMsg = description;
+						/* convert to forum messages */
+						RsGxsForumMsg forumMsg;
+						forumMsg.mMeta.mGroupId = RsGxsGroupId(forumId);
+						forumMsg.mMeta.mMsgName = mi.title;
+						forumMsg.mMeta.mAuthorId = forumAuthorId;
 
-					uint32_t token;
-					if (mForums->createMsg(token, forumMsg) && waitForToken(mForums, token)) {
-						RsGxsGrpMsgIdPair msgPair;
-						if (mForums->acknowledgeMsg(token, msgPair)) {
-							/* set to new */
-							genExchange->setMsgStatusFlags(token, msgPair, GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD, GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD);
+						std::string description = mi.descriptionTransformed.empty() ? mi.description : mi.descriptionTransformed;
+						/* add link */
+						if (!mi.link.empty()) {
+							description += "<br><a href=\"" + mi.link + "\">" + mi.link + "</a>";
 						}
-					} else {
-#ifdef FEEDREADER_DEBUG
-						std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't add forum message " << mi.title << " for feed " << forumId << std::endl;
-#endif
-					}
-				}
-			} else {
-				std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process forum, member mForums is not derived from RsGenExchange" << std::endl;
-			}
-		} else {
-			std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process forum, member mForums is not set" << std::endl;
-		}
-	}
+						forumMsg.mMsg = description;
 
-	if (!postedId.empty() && !postedMsgs.empty()) {
-		if (mPosted) {
-			/* a bit tricky */
-			RsGenExchange *genExchange = dynamic_cast<RsGenExchange*>(mPosted);
-			if (genExchange) {
-				/* add messages as posted messages */
-				std::list<RsFeedReaderMsg>::iterator msgIt;
-				for (msgIt = postedMsgs.begin(); msgIt != postedMsgs.end(); ++msgIt) {
-					RsFeedReaderMsg &mi = *msgIt;
-
-					/* convert to posted messages */
-					RsPostedPost postedPost;
-					postedPost.mMeta.mGroupId = RsGxsGroupId(postedId);
-					postedPost.mMeta.mMsgName = mi.title;
-					postedPost.mMeta.mAuthorId = postedAuthorId;
-					postedPost.mLink = mi.link;
-
-					std::string description;
-					if (feedFlag & RS_FEED_FLAG_POSTED_FIRST_IMAGE) {
-						if (!mi.postedFirstImage.empty()) {
-							/* use first image as image for posted and description without image as notes */
-							if (feedFlag & RS_FEED_FLAG_POSTED_SHRINK_IMAGE) {
-								// shrink image
-								std::vector<unsigned char> shrinkedImage;
-								if (shrinkImage(FeedReaderShrinkImageTask::POSTED, mi.postedFirstImage, shrinkedImage)) {
-									postedPost.mImage.copy(shrinkedImage.data(), shrinkedImage.size());	
-								}
-							} else {
-								postedPost.mImage.copy(mi.postedFirstImage.data(), mi.postedFirstImage.size());
-							}
-							if (feedFlag & RS_FEED_FLAG_POSTED_ONLY_IMAGE) {
-								/* ignore description */
-							} else {
-								description = mi.postedDescriptionWithoutFirstImage;
+						uint32_t token;
+						if (mForums->createMsg(token, forumMsg) && waitForToken(mForums, token)) {
+							RsGxsGrpMsgIdPair msgPair;
+							if (mForums->acknowledgeMsg(token, msgPair)) {
+								/* set to new */
+								genExchange->setMsgStatusFlags(token, msgPair, GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD, GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD);
 							}
 						} else {
-							if (feedFlag & RS_FEED_FLAG_POSTED_ONLY_IMAGE) {
-								/* ignore messages without image */
-								continue;
-							}
-							description = mi.descriptionTransformed.empty() ? mi.description : mi.descriptionTransformed;
-						}
-					} else {
-						description = mi.descriptionTransformed.empty() ? mi.description : mi.descriptionTransformed;
-					}
-
-					postedPost.mNotes = description;
-
-					uint32_t token;
-					if (mPosted->createPost(token, postedPost) && waitForToken(mPosted, token)) {
-						RsGxsGrpMsgIdPair msgPair;
-						if (mPosted->acknowledgeMsg(token, msgPair)) {
-							/* set to new */
-							genExchange->setMsgStatusFlags(token, msgPair, GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD, GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD);
-						}
-					} else {
 #ifdef FEEDREADER_DEBUG
-						std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't add posted message " << mi.title << " for feed " << postedId << std::endl;
+							std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't add forum message " << mi.title << " for feed " << forumId << std::endl;
 #endif
+							postError = true;
+						}
 					}
+				} else {
+					std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process forum, member mForums is not derived from RsGenExchange" << std::endl;
 				}
 			} else {
-				std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process posted, member mPosted is not derived from RsGenExchange" << std::endl;
+				std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process forum, member mForums is not set" << std::endl;
 			}
-		} else {
-			std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process posted, member mPosted is not set" << std::endl;
+		}
+
+		if (!postedId.empty() && !postedMsgs.empty()) {
+			if (mPosted) {
+				/* a bit tricky */
+				RsGenExchange *genExchange = dynamic_cast<RsGenExchange*>(mPosted);
+				if (genExchange) {
+					/* add messages as posted messages */
+					std::list<RsFeedReaderMsg>::iterator msgIt;
+					for (msgIt = postedMsgs.begin(); msgIt != postedMsgs.end(); ++msgIt) {
+						RsFeedReaderMsg &mi = *msgIt;
+
+						/* convert to posted messages */
+						RsPostedPost postedPost;
+						postedPost.mMeta.mGroupId = RsGxsGroupId(postedId);
+						postedPost.mMeta.mMsgName = mi.title;
+						postedPost.mMeta.mAuthorId = postedAuthorId;
+						postedPost.mLink = mi.link;
+
+						std::string description;
+						if (feedFlag & RS_FEED_FLAG_POSTED_FIRST_IMAGE) {
+							if (!mi.postedFirstImage.empty()) {
+								/* use first image as image for posted and description without image as notes */
+								if (feedFlag & RS_FEED_FLAG_POSTED_SHRINK_IMAGE) {
+									// shrink image
+									std::vector<unsigned char> shrinkedImage;
+									if (shrinkImage(FeedReaderShrinkImageTask::POSTED, mi.postedFirstImage, shrinkedImage)) {
+										postedPost.mImage.copy(shrinkedImage.data(), shrinkedImage.size());
+									}
+								} else {
+									postedPost.mImage.copy(mi.postedFirstImage.data(), mi.postedFirstImage.size());
+								}
+								if (feedFlag & RS_FEED_FLAG_POSTED_ONLY_IMAGE) {
+									/* ignore description */
+								} else {
+									description = mi.postedDescriptionWithoutFirstImage;
+								}
+							} else {
+								if (feedFlag & RS_FEED_FLAG_POSTED_ONLY_IMAGE) {
+									/* ignore messages without image */
+									continue;
+								}
+								description = mi.descriptionTransformed.empty() ? mi.description : mi.descriptionTransformed;
+							}
+						} else {
+							description = mi.descriptionTransformed.empty() ? mi.description : mi.descriptionTransformed;
+						}
+
+						postedPost.mNotes = description;
+
+						uint32_t token;
+						if (mPosted->createPost(token, postedPost) && waitForToken(mPosted, token)) {
+							RsGxsGrpMsgIdPair msgPair;
+							if (mPosted->acknowledgeMsg(token, msgPair)) {
+								/* set to new */
+								genExchange->setMsgStatusFlags(token, msgPair, GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD, GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD);
+							}
+						} else {
+#ifdef FEEDREADER_DEBUG
+							std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't add posted message " << mi.title << " for feed " << postedId << std::endl;
+#endif
+							postError = true;
+						}
+					}
+				} else {
+					std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process posted, member mPosted is not derived from RsGenExchange" << std::endl;
+				}
+			} else {
+				std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process posted, member mPosted is not set" << std::endl;
+			}
+		}
+	}
+
+	{
+		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
+
+		/* find feed */
+		std::map<uint32_t, RsFeedReaderFeed*>::iterator it = mFeeds.find(feedId);
+		if (it == mFeeds.end()) {
+			/* feed not found */
+#ifdef FEEDREADER_DEBUG
+			std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - feed " << feedId << " not found" << std::endl;
+#endif
+			return;
+		}
+
+		RsFeedReaderFeed *fi = it->second;
+
+		if (!fi->preview) {
+			fi->workstate = RsFeedReaderFeed::WAITING;
+			fi->content.clear();
+			if (errorState == RS_FEED_ERRORSTATE_OK && postError) {
+				// post error occured
+				errorState = RS_FEED_ERRORSTATE_PROCESS_POST;
+			}
+			fi->errorState = errorState;
+			fi->lastUpdate = time(NULL);
+
+			IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 		}
 	}
 
