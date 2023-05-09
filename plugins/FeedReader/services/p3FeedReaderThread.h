@@ -54,6 +54,11 @@ public:
 	static RsFeedReaderErrorState processXslt(const std::string &xslt, HTMLWrapper &html, std::string &errorString);
 
 	static RsFeedReaderErrorState processTransformation(const RsFeedReaderFeed &feed, RsFeedReaderMsg *msg, std::string &errorString);
+
+	static bool isContentType(const std::string &contentType, const char *type);
+	static bool toBase64(const std::vector<unsigned char> &data, std::string &base64);
+	static bool fromBase64(const std::string &base64, std::vector<unsigned char> &data);
+
 private:
 	virtual void threadTick() override; /// @see RsTickingThread
 

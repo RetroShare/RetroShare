@@ -182,7 +182,7 @@
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../../../retroshare-gui/src/gui/images.qrc">
+           <iconset>
             <normaloff>:/images/message-state-header.png</normaloff>:/images/message-state-header.png</iconset>
           </property>
          </column>
@@ -245,7 +245,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../../../retroshare-gui/src/gui/images.qrc">
+            <iconset>
              <normaloff>:/images/edit_remove24.png</normaloff>:/images/edit_remove24.png</iconset>
            </property>
            <property name="checkable">
@@ -260,20 +260,63 @@
        </item>
       </layout>
      </widget>
-     <widget class="RSTextBrowser" name="msgText">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>10</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="textInteractionFlags">
-       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-      </property>
+     <widget class="QWidget" name="horizontalLayoutWidget">
+      <layout class="QHBoxLayout" name="pictureHorizontalLayout">
+       <item>
+        <widget class="RSTextBrowser" name="msgText">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>10</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSplitter" name="pictureSplitter">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <widget class="QWidget" name="verticalLayoutWidget">
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="AspectRatioPixmapLabel" name="attachmentLabel">
+             <property name="text">
+              <string notr="true">pictureLabel</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="RSTextBrowser" name="msgTextSplitter">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>10</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+          </property>
+         </widget>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
   </layout>
+  <action name="actionAttachmentCopyLinkLocation">
+   <property name="text">
+    <string>Copy Link Location</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -297,10 +340,14 @@
    <header location="global">gui/common/ElidedLabel.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>AspectRatioPixmapLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">util/AspectRatioPixmapLabel.h</header>
+  </customwidget>
  </customwidgets>
  <resources>
   <include location="FeedReader_images.qrc"/>
-  <include location="../../../retroshare-gui/src/gui/images.qrc"/>
  </resources>
  <connections/>
 </ui>

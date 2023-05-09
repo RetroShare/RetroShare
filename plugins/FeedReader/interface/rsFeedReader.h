@@ -185,6 +185,9 @@ public:
 	std::string description;
 	std::string descriptionTransformed;
 	time_t      pubDate;
+	std::string attachmentLink;
+	std::vector<unsigned char> attachment;
+	std::string attachmentMimeType;
 
 	struct {
 		bool isnew : 1;
@@ -193,24 +196,28 @@ public:
 	} flag;
 };
 
-class FeedReaderShrinkImageTask
+class FeedReaderOptimizeImageTask
 {
 public:
 	enum Type {
-		POSTED
+		POSTED,
+		SIZE
 	};
 
 public:
 	Type mType;
 	std::vector<unsigned char> mImage;
+	std::string mMimeType;
 	std::vector<unsigned char> mImageResult;
+	std::string mMimeTypeResult;
 	bool mResult;
 
 public:
-	FeedReaderShrinkImageTask(Type type, const std::vector<unsigned char> &image)
+	FeedReaderOptimizeImageTask(Type type, const std::vector<unsigned char> &image, const std::string &mimeType)
 	{
 		mType = type;
 		mImage = image;
+		mMimeType = mimeType;
 		mResult = false;
 	}
 };
@@ -222,7 +229,7 @@ public:
 
 	virtual void notifyFeedChanged(uint32_t /*feedId*/, int /*type*/) {}
 	virtual void notifyMsgChanged(uint32_t /*feedId*/, const std::string &/*msgId*/, int /*type*/) {}
-	virtual void notifyShrinkImage() {}
+	virtual void notifyOptimizeImage() {}
 };
 
 class RsFeedReader
@@ -268,8 +275,8 @@ public:
 	virtual bool         getForumGroups(std::vector<RsGxsForumGroup> &groups, bool onlyOwn) = 0;
 	virtual bool         getPostedGroups(std::vector<RsPostedGroup> &groups, bool onlyOwn) = 0;
 
-	virtual FeedReaderShrinkImageTask *getShrinkImageTask() = 0;
-	virtual void         setShrinkImageTaskResult(FeedReaderShrinkImageTask *shrinkImageTask) = 0;
+	virtual FeedReaderOptimizeImageTask *getOptimizeImageTask() = 0;
+	virtual void         setOptimizeImageTaskResult(FeedReaderOptimizeImageTask *optimizeImageTask) = 0;
 
 	virtual RsFeedReaderErrorState processXPath(const std::list<std::string> &xpathsToUse, const std::list<std::string> &xpathsToRemove, std::string &description, std::string &errorString) = 0;
 	virtual RsFeedReaderErrorState processXslt(const std::string &xslt, std::string &description, std::string &errorString) = 0;

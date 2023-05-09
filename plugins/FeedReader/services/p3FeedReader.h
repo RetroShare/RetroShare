@@ -80,8 +80,8 @@ public:
 	virtual bool         getForumGroups(std::vector<RsGxsForumGroup> &groups, bool onlyOwn);
 	virtual bool         getPostedGroups(std::vector<RsPostedGroup> &groups, bool onlyOwn);
 
-	virtual FeedReaderShrinkImageTask *getShrinkImageTask();
-	virtual void         setShrinkImageTaskResult(FeedReaderShrinkImageTask *shrinkedImageTask);
+	virtual FeedReaderOptimizeImageTask *getOptimizeImageTask();
+	virtual void         setOptimizeImageTaskResult(FeedReaderOptimizeImageTask *optimizeImageTask);
 
 	virtual RsFeedReaderErrorState processXPath(const std::list<std::string> &xpathsToUse, const std::list<std::string> &xpathsToRemove, std::string &description, std::string &errorString);
 	virtual RsFeedReaderErrorState processXslt(const std::string &xslt, std::string &description, std::string &errorString);
@@ -107,7 +107,7 @@ public:
 	bool getPostedGroup(const RsGxsGroupId &groupId, RsPostedGroup &postedGroup);
 	bool updatePostedGroup(const RsPostedGroup &postedGroup, const std::string &groupName, const std::string &groupDescription);
 	bool waitForToken(RsGxsIfaceHelper *interface, uint32_t token);
-	bool shrinkImage(FeedReaderShrinkImageTask::Type type, const std::vector<unsigned char> &image, std::vector<unsigned char> &resultImage);
+	bool optimizeImage(FeedReaderOptimizeImageTask::Type type, const std::vector<unsigned char> &image, const std::string &mimeType, std::vector<unsigned char> &resultImage, std::string &resultMimeType);
 
 protected:
 	/****************** p3Config STUFF *******************/
@@ -150,8 +150,8 @@ private:
 	std::list<uint32_t> mProcessFeeds;
 
 	RsMutex mImageMutex;
-	std::list<FeedReaderShrinkImageTask*> mImages;
-	std::list<FeedReaderShrinkImageTask*> mResultImages;
+	std::list<FeedReaderOptimizeImageTask*> mImages;
+	std::list<FeedReaderOptimizeImageTask*> mResultImages;
 
 	RsMutex mPreviewMutex;
 	p3FeedReaderThread *mPreviewDownloadThread;

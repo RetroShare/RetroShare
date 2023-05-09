@@ -233,6 +233,13 @@ static void feedMsgToInfo(const RsFeedReaderMsg *msg, FeedMsgInfo &info)
 	info.description = msg->description;
 	info.descriptionTransformed = msg->descriptionTransformed;
 	info.pubDate = msg->pubDate;
+	info.attachmentLink = msg->attachmentLink;
+	if (!msg->attachment.empty()) {
+		p3FeedReaderThread::fromBase64(msg->attachment, info.attachment);
+	} else {
+		info.attachment.clear();
+	}
+	info.attachmentMimeType = msg->attachmentMimeType;
 
 	info.flag.isnew = (msg->flag & RS_FEEDMSG_FLAG_NEW);
 	info.flag.read = (msg->flag & RS_FEEDMSG_FLAG_READ);
@@ -1264,7 +1271,7 @@ bool p3FeedReader::setMessageRead(uint32_t feedId, const std::string &msgId, boo
 	}
 
 	if (changed) {
-		IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
+		IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_OFTEN);
 		if (mNotify) {
 			mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
 			mNotify->notifyMsgChanged(feedId, msgId, NOTIFY_TYPE_MOD);
@@ -1450,19 +1457,19 @@ int p3FeedReader::tick()
 	}
 
 	// check images
-	bool imageToShrink = false;
+	bool imageToOptimze = false;
 	{
 		RsStackMutex stack(mImageMutex); /******* LOCK STACK MUTEX *********/
 
-		imageToShrink = !mImages.empty();
+		imageToOptimze = !mImages.empty();
 	}
 
 	if (mNotify) {
 		for (it = notifyIds.begin(); it != notifyIds.end(); ++it) {
 			mNotify->notifyFeedChanged(*it, NOTIFY_TYPE_MOD);
 		}
-		if (imageToShrink) {
-			mNotify->notifyShrinkImage();
+		if (imageToOptimze) {
+			mNotify->notifyOptimizeImage();
 		}
 	}
 
@@ -2110,6 +2117,9 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 					}
 					miNew->description.clear();
 					miNew->descriptionTransformed.clear();
+					miNew->attachmentLink.clear();
+					miNew->attachment.clear();
+					miNew->attachmentMimeType.clear();
 				} else {
 					miNew->flag = RS_FEEDMSG_FLAG_NEW;
 					addedMsgs.push_back(miNew->msgId);
@@ -2151,6 +2161,25 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 						if (!mi.link.empty()) {
 							description += "<br><a href=\"" + mi.link + "\">" + mi.link + "</a>";
 						}
+
+						if (!mi.attachmentBinary.empty()) {
+							if (p3FeedReaderThread::isContentType(mi.attachmentMimeType, "image/")) {
+								/* add attachement to description */
+
+								// optimize image
+								std::vector<unsigned char> optimizedImage;
+								std::string optimizedMimeType;
+								if (optimizeImage(FeedReaderOptimizeImageTask::SIZE, mi.attachmentBinary, mi.attachmentBinaryMimeType, optimizedImage, optimizedMimeType)) {
+									std::string base64;
+									if (p3FeedReaderThread::toBase64(optimizedImage, base64)) {
+										std::string imageBase64;
+										rs_sprintf(imageBase64, "data:%s;base64,%s", optimizedMimeType.c_str(), base64.c_str());
+										description += "<br><img src=\"" + imageBase64 + "\"/>";
+									}
+								}
+							}
+						}
+
 						forumMsg.mMsg = description;
 
 						uint32_t token;
@@ -2197,10 +2226,11 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 							if (!mi.postedFirstImage.empty()) {
 								/* use first image as image for posted and description without image as notes */
 								if (feedFlag & RS_FEED_FLAG_POSTED_SHRINK_IMAGE) {
-									// shrink image
-									std::vector<unsigned char> shrinkedImage;
-									if (shrinkImage(FeedReaderShrinkImageTask::POSTED, mi.postedFirstImage, shrinkedImage)) {
-										postedPost.mImage.copy(shrinkedImage.data(), shrinkedImage.size());
+									// optimize image
+									std::vector<unsigned char> optimizedImage;
+									std::string optimizedMimeType;
+									if (optimizeImage(FeedReaderOptimizeImageTask::POSTED, mi.postedFirstImage, mi.postedFirstImageMimeType, optimizedImage, optimizedMimeType)) {
+										postedPost.mImage.copy(optimizedImage.data(), optimizedImage.size());
 									}
 								} else {
 									postedPost.mImage.copy(mi.postedFirstImage.data(), mi.postedFirstImage.size());
@@ -2219,6 +2249,23 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 							}
 						} else {
 							description = mi.descriptionTransformed.empty() ? mi.description : mi.descriptionTransformed;
+
+							if (!mi.attachmentBinary.empty()) {
+								if (p3FeedReaderThread::isContentType(mi.attachmentMimeType, "image/")) {
+									/* use attachement as image */
+
+									if (feedFlag & RS_FEED_FLAG_POSTED_SHRINK_IMAGE) {
+										// optimize image
+										std::vector<unsigned char> optimizedImage;
+										std::string optimizedMimeType;
+										if (optimizeImage(FeedReaderOptimizeImageTask::POSTED, mi.attachmentBinary, mi.attachmentBinaryMimeType, optimizedImage, optimizedMimeType)) {
+											postedPost.mImage.copy(optimizedImage.data(), optimizedImage.size());
+										}
+									} else {
+										postedPost.mImage.copy(mi.attachmentBinary.data(), mi.attachmentBinary.size());
+									}
+								}
+							}
 						}
 
 						postedPost.mNotes = description;
@@ -2662,17 +2709,17 @@ bool p3FeedReader::getPostedGroups(std::vector<RsPostedGroup> &groups, bool only
 	return true;
 }
 
-bool p3FeedReader::shrinkImage(FeedReaderShrinkImageTask::Type type, const std::vector<unsigned char> &image, std::vector<unsigned char> &resultImage)
+bool p3FeedReader::optimizeImage(FeedReaderOptimizeImageTask::Type type, const std::vector<unsigned char> &image, const std::string &mimeType, std::vector<unsigned char> &resultImage, std::string &resultMimeType)
 {
 	if (!mNotify) {
 		return false;
 	}
 
-	FeedReaderShrinkImageTask *shrinkImageTask = new FeedReaderShrinkImageTask(type, image);
+	FeedReaderOptimizeImageTask *optimizeImageTask = new FeedReaderOptimizeImageTask(type, image, mimeType);
 	{
 		RsStackMutex stack(mImageMutex); /******* LOCK STACK MUTEX *********/
 
-		mImages.push_back(shrinkImageTask);
+		mImages.push_back(optimizeImageTask);
 	}
 
 	/* Wait until task is complete */
@@ -2686,11 +2733,11 @@ bool p3FeedReader::shrinkImage(FeedReaderShrinkImageTask::Type type, const std::
 
 		if (++nSeconds >= 30) {
 			// timeout
-			std::list<FeedReaderShrinkImageTask*>::iterator it = std::find(mImages.begin(), mImages.end(), shrinkImageTask);
+			std::list<FeedReaderOptimizeImageTask*>::iterator it = std::find(mImages.begin(), mImages.end(), optimizeImageTask);
 			if (it != mImages.end()) {
 				mImages.erase(it);
 
-				delete(shrinkImageTask);
+				delete(optimizeImageTask);
 
 				return false;
 			}
@@ -2701,16 +2748,17 @@ bool p3FeedReader::shrinkImage(FeedReaderShrinkImageTask::Type type, const std::
 		{
 			RsStackMutex stack(mImageMutex); /******* LOCK STACK MUTEX *********/
 
-			std::list<FeedReaderShrinkImageTask*>::iterator it = std::find(mResultImages.begin(), mResultImages.end(), shrinkImageTask);
+			std::list<FeedReaderOptimizeImageTask*>::iterator it = std::find(mResultImages.begin(), mResultImages.end(), optimizeImageTask);
 			if (it != mResultImages.end()) {
 				mResultImages.erase(it);
 
-				bool result = shrinkImageTask->mResult;
+				bool result = optimizeImageTask->mResult;
 				if (result) {
-					resultImage = shrinkImageTask->mImageResult;
+					resultImage = optimizeImageTask->mImageResult;
+					resultMimeType = optimizeImageTask->mMimeTypeResult;
 				}
 
-				delete(shrinkImageTask);
+				delete(optimizeImageTask);
 
 				return result;
 			}
@@ -2720,7 +2768,7 @@ bool p3FeedReader::shrinkImage(FeedReaderShrinkImageTask::Type type, const std::
 	return false;
 }
 
-FeedReaderShrinkImageTask *p3FeedReader::getShrinkImageTask()
+FeedReaderOptimizeImageTask *p3FeedReader::getOptimizeImageTask()
 {
 	RsStackMutex stack(mImageMutex); /******* LOCK STACK MUTEX *********/
 
@@ -2728,19 +2776,19 @@ FeedReaderShrinkImageTask *p3FeedReader::getShrinkImageTask()
 		return NULL;
 	}
 
-	FeedReaderShrinkImageTask *imageResize = mImages.front();
+	FeedReaderOptimizeImageTask *imageResize = mImages.front();
 	mImages.pop_front();
 
 	return imageResize;
 }
 
-void p3FeedReader::setShrinkImageTaskResult(FeedReaderShrinkImageTask *shrinkImageTask)
+void p3FeedReader::setOptimizeImageTaskResult(FeedReaderOptimizeImageTask *optimizeImageTask)
 {
-	if (!shrinkImageTask) {
+	if (!optimizeImageTask) {
 		return;
 	}
 
 	RsStackMutex stack(mImageMutex); /******* LOCK STACK MUTEX *********/
 
-	mResultImages.push_back(shrinkImageTask);
+	mResultImages.push_back(optimizeImageTask);
 }

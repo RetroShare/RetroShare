@@ -100,7 +100,7 @@ AddFeedDialog::AddFeedDialog(RsFeedReader *feedReader, FeedReaderNotify *notify,
 	ui->postedOnlyImageCheckBox->setEnabled(false);
 	ui->postedOnlyImageCheckBox->setChecked(false);
 	ui->postedShinkImageCheckBox->setEnabled(false);
-	ui->postedShinkImageCheckBox->setChecked(false);
+	ui->postedShinkImageCheckBox->setChecked(true);
 	ui->useAuthenticationCheckBox->setChecked(false);
 	ui->useStandardStorageTimeCheckBox->setChecked(true);
 	ui->useStandardUpdateInterval->setChecked(true);
@@ -199,11 +199,9 @@ void AddFeedDialog::postedFirstImageToggled()
 {
 	bool checked = ui->postedFirstImageCheckBox->isChecked();
 	ui->postedOnlyImageCheckBox->setEnabled(checked);
-	ui->postedShinkImageCheckBox->setEnabled(checked);
 
 	if (!checked) {
 		ui->postedOnlyImageCheckBox->setChecked(false);
-		ui->postedShinkImageCheckBox->setChecked(false);
 	}
 }
 

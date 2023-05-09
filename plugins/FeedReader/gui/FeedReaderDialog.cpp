@@ -23,6 +23,7 @@
 #include <QInputDialog>
 #include <QPainter>
 #include <QMessageBox>
+#include <QBuffer>
 
 #include "FeedReaderDialog.h"
 #include "FeedReaderMessageWidget.h"
@@ -36,6 +37,7 @@
 #include "gui/notifyqt.h"
 #include "FeedReaderUserNotify.h"
 #include "gui/Posted/PostedCreatePostDialog.h"
+#include "util/imageutil.h"
 
 #include "interface/rsFeedReader.h"
 #include "retroshare/rsiface.h"
@@ -56,6 +58,8 @@
 #define ROLE_FEED_ERROR       Qt::UserRole + 9
 #define ROLE_FEED_DEACTIVATED Qt::UserRole + 10
 
+const int MAXMESSAGESIZE = RsSerialiser::MAX_SERIAL_SIZE - 70000;
+
 FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, FeedReaderNotify *notify, QWidget *parent)
 	: MainPage(parent), mFeedReader(feedReader), mNotify(notify), ui(new Ui::FeedReaderDialog)
 {
@@ -67,7 +71,7 @@ FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, FeedReaderNotify *n
 	mMessageWidget = NULL;
 
 	connect(mNotify, &FeedReaderNotify::feedChanged, this, &FeedReaderDialog::feedChanged, Qt::QueuedConnection);
-	connect(mNotify, &FeedReaderNotify::shrinkImage, this, &FeedReaderDialog::shrinkImage, Qt::QueuedConnection);
+	connect(mNotify, &FeedReaderNotify::optimizeImage, this, &FeedReaderDialog::optimizeImage, Qt::QueuedConnection);
 
 	connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
 
@@ -606,34 +610,52 @@ void FeedReaderDialog::feedChanged(uint32_t feedId, int type)
 	calculateFeedItems();
 }
 
-void FeedReaderDialog::shrinkImage()
+void FeedReaderDialog::optimizeImage()
 {
 	while (true) {
-		FeedReaderShrinkImageTask *shrinkImageTask = mFeedReader->getShrinkImageTask();
+		FeedReaderOptimizeImageTask *optimizeImageTask = mFeedReader->getOptimizeImageTask();
 
-		if (!shrinkImageTask) {
+		if (!optimizeImageTask) {
 			return;
 		}
 
-		switch (shrinkImageTask->mType) {
-		case FeedReaderShrinkImageTask::POSTED:
-		{
-			QImage image;
-			if (image.loadFromData(shrinkImageTask->mImage.data(), shrinkImageTask->mImage.size())) {
-				QByteArray imageBytes;
-				QImage imageOpt;
-				if (PostedCreatePostDialog::optimizeImage(image, imageBytes, imageOpt)) {
-					shrinkImageTask->mImageResult.assign(imageBytes.begin(), imageBytes.end());
-					shrinkImageTask->mResult = true;
+		optimizeImageTask->mResult = false;
+
+		QImage image;
+		if (image.loadFromData(optimizeImageTask->mImage.data(), optimizeImageTask->mImage.size())) {
+			QByteArray optimizedImageData;
+			std::string optimizedImageMimeType;
+			QImage imageOptDummy;
+
+			switch (optimizeImageTask->mType) {
+			case FeedReaderOptimizeImageTask::POSTED:
+				if (PostedCreatePostDialog::optimizeImage(image, optimizedImageData, imageOptDummy)) {
+					optimizedImageMimeType = "image/jpeg";
+					optimizeImageTask->mResult = true;
+				}
+				break;
+			case FeedReaderOptimizeImageTask::SIZE:
+				if (ImageUtil::optimizeSizeBytes(optimizedImageData, image, imageOptDummy, "JPG", 0, MAXMESSAGESIZE)) {
+					optimizedImageMimeType = "image/jpg";
+					optimizeImageTask->mResult = true;
+				}
+				break;
+			}
+
+			if (optimizeImageTask->mResult) {
+				if (optimizedImageData.size() < (ssize_t) optimizeImageTask->mImage.size()) {
+					/* use optimized image */
+					optimizeImageTask->mImageResult.assign(optimizedImageData.begin(), optimizedImageData.end());
+					optimizeImageTask->mMimeTypeResult = optimizedImageMimeType;
+				} else {
+					/* use original image */
+					optimizeImageTask->mImageResult = optimizeImageTask->mImage;
+					optimizeImageTask->mMimeTypeResult = optimizeImageTask->mMimeType;
 				}
 			}
-			break;
-		}
-		default:
-			shrinkImageTask->mResult = false;
 		}
 
-		mFeedReader->setShrinkImageTaskResult(shrinkImageTask);
+		mFeedReader->setOptimizeImageTaskResult(optimizeImageTask);
 	}
 }
 

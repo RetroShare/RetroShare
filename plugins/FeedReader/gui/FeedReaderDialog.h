@@ -69,7 +69,7 @@ private slots:
 
 	/* FeedReaderNotify */
 	void feedChanged(uint32_t feedId, int type);
-	void shrinkImage();
+	void optimizeImage();
 
 private:
 	uint32_t currentFeedId();

@@ -77,6 +77,7 @@ private slots:
 	void fillPostedMenu();
 	void addToForum();
 	void addToPosted();
+	void attachmentCopyLinkLocation();
 
 	/* FeedReaderNotify */
 	void feedChanged(uint32_t feedId, int type);
@@ -92,6 +93,7 @@ private:
 	void filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn);
 	void filterItem(QTreeWidgetItem *item);
 	void toggleMsgText_internal();
+	void clearMessage();
 
 	bool mProcessSettings;
 	RSTreeWidgetItemCompareRole *mMsgCompareRole;

@@ -89,7 +89,7 @@ void p3FeedReaderThread::threadTick()
 						/* first, filter the messages */
 						mFeedReader->onProcessSuccess_filterMsg(feed.feedId, msgs);
 						if (isRunning()) {
-							/* second, process the descriptions */
+							/* second, process the descriptions and attachment */
 							for (it = msgs.begin(); it != msgs.end(); ) {
 								if (!isRunning()) {
 									break;
@@ -153,12 +153,12 @@ void p3FeedReaderThread::threadTick()
 /****************************** Download ***********************************/
 /***************************************************************************/
 
-static bool isContentType(const std::string &contentType, const char *type)
+bool p3FeedReaderThread::isContentType(const std::string &contentType, const char *type)
 {
 	return (strncasecmp(contentType.c_str(), type, strlen(type)) == 0);
 }
 
-static bool toBase64(const std::vector<unsigned char> &data, std::string &base64)
+bool p3FeedReaderThread::toBase64(const std::vector<unsigned char> &data, std::string &base64)
 {
 	bool result = false;
 
@@ -180,6 +180,28 @@ static bool toBase64(const std::vector<unsigned char> &data, std::string &base64
 				base64.assign(temp, count);
 				result = true;
 			}
+		}
+		BIO_free_all(b64);
+	}
+
+	return result;
+}
+
+bool p3FeedReaderThread::fromBase64(const std::string &base64, std::vector<unsigned char> &data)
+{
+	bool result = false;
+
+	BIO *b64 = BIO_new(BIO_f_base64());
+	if (b64) {
+		BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
+		BIO *source = BIO_new_mem_buf(base64.c_str(), -1); // read-only source
+		if (source) {
+			BIO_push(b64, source);
+			const int maxlen = base64.length() / 4 * 3 + 1;
+			data.resize(maxlen);
+			const int len = BIO_read(b64, data.data(), maxlen);
+			data.resize(len);
+			result = true;
 		}
 		BIO_free_all(b64);
 	}
@@ -254,12 +276,12 @@ static bool getFavicon(CURLWrapper &CURL, const std::string &url, std::string &i
 	if (code == CURLE_OK) {
 		if (CURL.responseCode() == 200) {
 			std::string contentType = CURL.contentType();
-			if (isContentType(contentType, "image/") ||
-				isContentType(contentType, "application/octet-stream") ||
-				isContentType(contentType, "text/plain")) {
+			if (p3FeedReaderThread::isContentType(contentType, "image/") ||
+				p3FeedReaderThread::isContentType(contentType, "application/octet-stream") ||
+				p3FeedReaderThread::isContentType(contentType, "text/plain")) {
 				if (!vicon.empty()) {
 #warning p3FeedReaderThread.cc TODO thunder2: check it
-					result = toBase64(vicon, icon);
+					result = p3FeedReaderThread::toBase64(vicon, icon);
 				}
 			}
 		}
@@ -971,6 +993,19 @@ RsFeedReaderErrorState p3FeedReaderThread::process(const RsFeedReaderFeed &feed,
 							item->pubDate = time(NULL);
 						}
 
+						if (feedFormat == FORMAT_RSS) {
+							/* <enclosure url="" type=""></enclosure> */
+							xmlNodePtr enclosure = xml.findNode(node->children, "enclosure", false);
+							if (enclosure) {
+								std::string enclosureMimeType = xml.getAttr(enclosure, "type");
+								std::string enclosureUrl = xml.getAttr(enclosure, "url");
+								if (!enclosureUrl.empty()) {
+									item->attachmentLink = enclosureUrl;
+									item->attachmentMimeType = enclosureMimeType;
+								}
+							}
+						}
+
 						entries.push_back(item);
 					}
 				} else {
@@ -1024,6 +1059,40 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 
 	RsFeedReaderErrorState result = RS_FEED_ERRORSTATE_OK;
 	std::string proxy = getProxyForFeed(feed);
+
+	/* attachment */
+	if (!msg->attachmentLink.empty()) {
+		if (isContentType(msg->attachmentMimeType, "image/")) {
+			CURLWrapper CURL(proxy);
+			CURLcode code = CURL.downloadBinary(msg->attachmentLink, msg->attachmentBinary);
+			if (code == CURLE_OK && CURL.responseCode() == 200) {
+				std::string contentType = CURL.contentType();
+				if (isContentType(contentType, "image/")) {
+					msg->attachmentBinaryMimeType = contentType;
+
+					bool forum = (feed.flag & RS_FEED_FLAG_FORUM) && !feed.preview;
+					bool posted = (feed.flag & RS_FEED_FLAG_POSTED) && !feed.preview;
+
+					if (!forum && ! posted) {
+						/* no need to optimize image */
+						std::vector<unsigned char> optimizedBinary;
+						std::string optimizedMimeType;
+						if (mFeedReader->optimizeImage(FeedReaderOptimizeImageTask::SIZE, msg->attachmentBinary, msg->attachmentBinaryMimeType, optimizedBinary, optimizedMimeType)) {
+							if (toBase64(optimizedBinary, msg->attachment)) {
+								msg->attachmentMimeType = optimizedMimeType;
+							} else {
+								msg->attachment.clear();
+							}
+						}
+					}
+				} else {
+					msg->attachmentBinary.clear();
+				}
+			} else {
+				msg->attachmentBinary.clear();
+			}
+		}
+	}
 
 	std::string url;
 	if (feed.flag & RS_FEED_FLAG_SAVE_COMPLETE_PAGE) {
@@ -1083,6 +1152,10 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 	if (isRunning()) {
 		/* process description */
 		bool processPostedFirstImage = (feed.flag & RS_FEED_FLAG_POSTED_FIRST_IMAGE) ? TRUE : FALSE;
+		if (!msg->attachmentBinary.empty()) {
+			/* use attachment as image */
+			processPostedFirstImage = FALSE;
+		}
 
 		//long todo; // encoding
 		HTMLWrapper html;
@@ -1215,19 +1288,23 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 											if (code == CURLE_OK && CURL.responseCode() == 200) {
 												std::string contentType = CURL.contentType();
 												if (isContentType(contentType, "image/")) {
-													std::string base64;
-													if (toBase64(data, base64)) {
-														std::string imageBase64;
-														rs_sprintf(imageBase64, "data:%s;base64,%s", contentType.c_str(), base64.c_str());
-														if (html.setAttr(node, "src", imageBase64.c_str())) {
-															removeImage = false;
-
-															if (processPostedFirstImage && postedFirstImageNode == NULL) {
-																/* set first image */
-																msg->postedFirstImage = data;
-																postedFirstImageNode = node;
+													std::vector<unsigned char> optimizedData;
+													std::string optimizedMimeType;
+													if (mFeedReader->optimizeImage(FeedReaderOptimizeImageTask::SIZE, data, contentType, optimizedData, optimizedMimeType)) {
+														std::string base64;
+														if (toBase64(optimizedData, base64)) {
+															std::string imageBase64;
+															rs_sprintf(imageBase64, "data:%s;base64,%s", optimizedMimeType.c_str(), base64.c_str());
+															if (html.setAttr(node, "src", imageBase64.c_str())) {
+																removeImage = false;
 															}
 														}
+													}
+													if (processPostedFirstImage && postedFirstImageNode == NULL) {
+														/* set first image */
+														msg->postedFirstImage = data;
+														msg->postedFirstImageMimeType = contentType;
+														postedFirstImageNode = node;
 													}
 												}
 											}

@@ -124,9 +124,15 @@ public:
 	std::string descriptionTransformed;
 	time_t      pubDate;
 	uint32_t    flag; // RS_FEEDMSG_FLAG_...
+	std::string attachmentLink;
+	std::string attachment; // binary as base64
+	std::string attachmentMimeType;
 
 	// Only in memory when receiving messages
+	std::vector<unsigned char> attachmentBinary;
+	std::string attachmentBinaryMimeType;
 	std::vector<unsigned char> postedFirstImage;
+	std::string postedFirstImageMimeType;
 	std::string postedDescriptionWithoutFirstImage;
 };
 
