@@ -115,19 +115,33 @@ void ImageUtil::extractImage(QWidget *window, QTextCursor cursor, QString file)
 		if(!image.isNull())
 		{
 			success = true;
-			if(!file.isEmpty() || misc::getSaveFileName(window, RshareSettings::LASTDIR_IMAGES, "Save Picture File", "Pictures (*.png *.xpm *.jpg)", file))
-			{
-				if(!image.save(file, nullptr, 100))
-					if(!image.save(file + ".png", nullptr, 100))
-						QMessageBox::warning(window, QApplication::translate("ImageUtil", "Save image"), QApplication::translate("ImageUtil", "Cannot save the image, invalid filename")
-											 + "\n" + file);
-			}
+			saveImage(window, image, file);
 		}
 	}
 	if(!success)
 	{
 		QMessageBox::warning(window, QApplication::translate("ImageUtil", "Save image"), QApplication::translate("ImageUtil", "Not an image"));
 	}
+}
+
+bool ImageUtil::saveImage(QWidget *window, const QImage &image, QString file)
+{
+	bool result = false;
+
+	if (!file.isEmpty() || misc::getSaveFileName(window, RshareSettings::LASTDIR_IMAGES, QApplication::translate("ImageUtil", "Save Picture File"), QApplication::translate("ImageUtil", "Pictures (*.png *.xpm *.jpg)"), file)) {
+		if (image.save(file, nullptr, 100)) {
+			result = true;
+		} else {
+			if (image.save(file + ".png", nullptr, 100)) {
+				result = true;
+			} else {
+				QMessageBox::warning(window, QApplication::translate("ImageUtil", "Save image"), QApplication::translate("ImageUtil", "Cannot save the image, invalid filename")
+									 + "\n" + file);
+			}
+		}
+	}
+
+	return result;
 }
 
 void ImageUtil::copyImage(QWidget *window, QTextCursor cursor)
