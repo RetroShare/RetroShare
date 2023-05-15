@@ -29,8 +29,7 @@ SOURCES += retroshare-friendserver.cc \
            network.cc 
 
 HEADERS += friendserver.h \
-           network.h      \
-           fsitem.h	   
+           network.h
 
 ################################# Linux ##########################################
 
