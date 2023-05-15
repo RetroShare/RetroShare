@@ -369,7 +369,25 @@ void GxsChannelDialog::toggleAutoDownload()
 
 bool GxsChannelDialog::getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat)
 {
-    return rsGxsChannels->getChannelStatistics(groupId,stat);
+    // What follows is a hack to replace the GXS group statistics by the actual count of unread messages in channels,
+    // which should take into account old post versions, discard comments and votes, etc.
+
+    RsGxsChannelStatistics s;
+    bool res = rsGxsChannels->getChannelStatistics(groupId,s);
+
+    if(!res)
+        return false;
+
+    stat.mGrpId = groupId;
+    stat.mNumMsgs = s.mNumberOfPosts;
+
+    stat.mTotalSizeOfMsgs = 0;	// hopefuly unused. Required the loading of the full channel data, so not very convenient.
+    stat.mNumThreadMsgsNew = s.mNumberOfNewPosts;
+    stat.mNumThreadMsgsUnread = s.mNumberOfUnreadPosts;
+    stat.mNumChildMsgsNew = 0;
+    stat.mNumChildMsgsUnread = 0;
+
+    return true;
 }
 
 bool GxsChannelDialog::getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo)
