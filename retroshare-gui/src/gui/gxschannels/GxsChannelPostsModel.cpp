@@ -66,40 +66,6 @@ void RsGxsChannelPostsModel::setMode(TreeMode mode)
     triggerViewUpdate(true,true);
 }
 
-void RsGxsChannelPostsModel::computeCommentCounts( std::vector<RsGxsChannelPost>& posts, std::vector<RsGxsComment>& comments)
-{
-    // Store posts IDs in a std::map to avoid a quadratic cost
-
-    std::map<RsGxsMessageId,uint32_t> post_indices;
-
-    for(uint32_t i=0;i<posts.size();++i)
-    {
-        post_indices[posts[i].mMeta.mMsgId] = i;
-        posts[i].mCommentCount = 0;	// should be 0 already, but we secure that value.
-        posts[i].mUnreadCommentCount = 0;
-    }
-
-    // now look into comments and increase the count
-
-    for(uint32_t i=0;i<comments.size();++i)
-    {
-        auto it = post_indices.find(comments[i].mMeta.mThreadId);
-
-        // This happens when because of sync periods, we receive
-        // the comments for a post, but not the post itself.
-        // In this case, the post the comment refers to is just not here.
-        // it->second>=posts.size() is impossible by construction, since post_indices
-        // is previously filled using posts ids.
-
-        if(it == post_indices.end())
-            continue;
-
-        ++posts[it->second].mCommentCount;
-
-        if(IS_MSG_NEW(comments[i].mMeta.mMsgStatus))
-            ++posts[it->second].mUnreadCommentCount;
-    }
-}
 
 
 void RsGxsChannelPostsModel::initEmptyHierarchy()
@@ -598,30 +564,23 @@ void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
 
         RsGxsChannelGroup group = groups[0];
 
-        // We use the heap because the arrays need to be stored accross async
+        std::vector<RsGxsChannelPost> *posts    = new std::vector<RsGxsChannelPost>(); // We use the heap because the arrays need to be stored accross async
+        std::vector<RsGxsComment>      comments ;
+        std::vector<RsGxsVote>         votes    ;
 
-		std::vector<RsGxsChannelPost> *posts    = new std::vector<RsGxsChannelPost>();
-		std::vector<RsGxsComment>     *comments = new std::vector<RsGxsComment>();
-		std::vector<RsGxsVote>        *votes    = new std::vector<RsGxsVote>();
-
-		if(!rsGxsChannels->getChannelAllContent(group_id, *posts,*comments,*votes))
+        if(!rsGxsChannels->getChannelAllContent(group_id, *posts,comments,votes))
 		{
 			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel messages for channel " << group_id << std::endl;
 			return;
 		}
         std::cerr << "Got channel all content for channel " << group_id << std::endl;
         std::cerr << "  posts   : " << posts->size() << std::endl;
-        std::cerr << "  comments: " << comments->size() << std::endl;
-        std::cerr << "  votes   : " << votes->size() << std::endl;
-
-        // This shouldn't be needed normally. We need it until a background process computes the number of comments per
-        // post and stores it in the service string. Since we request all data, this process isn't costing much anyway.
-
-        computeCommentCounts(*posts,*comments);
+        std::cerr << "  comments: " << comments.size() << std::endl;
+        std::cerr << "  votes   : " << votes.size() << std::endl;
 
         // 2 - update the model in the UI thread.
 
-        RsQThreadUtils::postToObject( [group,posts,comments,votes,this]()
+        RsQThreadUtils::postToObject( [group,posts,this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
@@ -632,8 +591,6 @@ void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
             setPosts(group,*posts) ;
 
             delete posts;
-            delete comments;
-            delete votes;
 
             MainWindow::getPage(MainWindow::Channels)->setCursor(Qt::ArrowCursor) ;
 
