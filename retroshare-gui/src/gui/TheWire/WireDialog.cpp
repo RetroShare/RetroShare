@@ -127,7 +127,7 @@ void WireDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
         case RsWireEventCode::POST_UPDATED:
             refreshGroups();
             break;
-        case RsWireEventCode::NEW_WIRE:
+        case RsWireEventCode::FOLLOW_STATUS_CHANGED:
             refreshGroups();
             break;
         default:
@@ -1058,16 +1058,12 @@ void WireDialog::postGroupsPulses(std::list<RsWirePulseSPtr> pulses)
 			std::cerr << std::endl;
 			continue;
 		}
-        std::cerr << "This is mMeta.mMsgId : " << reply->mMeta.mMsgId;
-        std::cerr << std::endl;
-        std::cerr << "This is mMeta.mMsgName : " << reply->mMeta.mMsgName;
-        std::cerr << std::endl;
 
 		PulseReply *firstReply = new PulseReply(this, reply);
-        addTwitterView(firstReply);
-        firstReply->showReplyLine(false);
+		addTwitterView(firstReply);
+		firstReply->showReplyLine(false);
 
-        addTwitterView(new PulseReplySeperator());
+		addTwitterView(new PulseReplySeperator());
 
 	}
 }
