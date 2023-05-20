@@ -800,7 +800,6 @@ void RsGxsForumModel::update_posts(const RsGxsGroupId& group_id)
 		// 1 - get message data from p3GxsForums
 
 		std::list<RsGxsGroupId> forumIds;
-		std::vector<RsMsgMetaData> msg_metas;
 		std::vector<RsGxsForumGroup> groups;
 
 		forumIds.push_back(group_id);
@@ -811,21 +810,19 @@ void RsGxsForumModel::update_posts(const RsGxsGroupId& group_id)
 			return;
 		}
 
-		if(!rsGxsForums->getForumMsgMetaData(group_id,msg_metas))
-		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum message info for forum " << group_id << std::endl;
-			return;
-		}
-
-		// 2 - sort the messages into a proper hierarchy
+        // 2 - sort messages into a proper hierarchy
 
 		auto post_versions = new std::map<RsGxsMessageId,std::vector<std::pair<time_t, RsGxsMessageId> > >() ;
-		std::vector<ForumModelPostEntry> *vect = new std::vector<ForumModelPostEntry>();
+        std::vector<ForumPostEntry> *vect = new std::vector<ForumPostEntry>();
 		RsGxsForumGroup group = groups[0];
 
-		computeMessagesHierarchy(group,msg_metas,*vect,*post_versions);
+        if(!rsGxsForums->getForumPostsHierarchy(group,*vect,*post_versions))
+        {
+            std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum hierarchy of message info for forum " << group_id << std::endl;
+            return;
+        }
 
-		// 3 - update the model in the UI thread.
+        // 3 - update the model in the UI thread.
 
 		RsQThreadUtils::postToObject( [group,vect,post_versions,this]()
 		{
@@ -835,10 +832,14 @@ void RsGxsForumModel::update_posts(const RsGxsGroupId& group_id)
 			 * Qt::QueuedConnection is important!
 			 */
 
-			setPosts(group,*vect,*post_versions) ;
+            std::vector<ForumModelPostEntry> psts;
+            for(const auto& p:*vect)
+                psts.push_back( ForumModelPostEntry(p));
 
-			delete vect;
-			delete post_versions;
+            setPosts(group,psts,*post_versions) ;
+
+            delete vect;
+            delete post_versions;
 
 
 		}, this );
@@ -846,379 +847,7 @@ void RsGxsForumModel::update_posts(const RsGxsGroupId& group_id)
 	});
 }
 
-ForumModelIndex RsGxsForumModel::addEntry(std::vector<ForumModelPostEntry>& posts,const ForumModelPostEntry& entry,ForumModelIndex parent)
-{
-    uint32_t N = posts.size();
-    posts.push_back(entry);
 
-    posts[N].mParent = parent;
-    posts[parent].mChildren.push_back(N);
-#ifdef DEBUG_FORUMMODEL
-    std::cerr << "Added new entry " << N << " children of " << parent << std::endl;
-#endif
-    if(N == parent)
-        std::cerr << "(EE) trying to add a post as its own parent!" << std::endl;
-    return ForumModelIndex(N);
-}
-
-void RsGxsForumModel::generateMissingItem(const RsGxsMessageId &msgId,ForumModelPostEntry& entry)
-{
-    entry.mPostFlags = ForumModelPostEntry::FLAG_POST_IS_MISSING ;
-    entry.mTitle = std::string(tr("[ ... Missing Message ... ]").toUtf8());
-    entry.mMsgId = msgId;
-    entry.mAuthorId.clear();
-    entry.mPublishTs=0;
-    entry.mReputationWarningLevel = 3;
-}
-
-void RsGxsForumModel::convertMsgToPostEntry(const RsGxsForumGroup& mForumGroup,const RsMsgMetaData& msg, bool /*useChildTS*/, ForumModelPostEntry& fentry)
-{
-    fentry.mTitle     = msg.mMsgName;
-    fentry.mAuthorId  = msg.mAuthorId;
-    fentry.mMsgId     = msg.mMsgId;
-    fentry.mPublishTs = msg.mPublishTs;
-    fentry.mPostFlags = 0;
-    fentry.mMsgStatus = msg.mMsgStatus;
-
-    if(mForumGroup.mPinnedPosts.ids.find(msg.mMsgId) != mForumGroup.mPinnedPosts.ids.end())
-		fentry.mPostFlags |= ForumModelPostEntry::FLAG_POST_IS_PINNED;
-
-	// Early check for a message that should be hidden because its author
-	// is flagged with a bad reputation
-
-    computeReputationLevel(mForumGroup.mMeta.mSignFlags,fentry);
-}
-
-void RsGxsForumModel::computeReputationLevel(uint32_t forum_sign_flags,ForumModelPostEntry& fentry)
-{
-	uint32_t idflags =0;
-	RsReputationLevel reputation_level =
-	        rsReputations->overallReputationLevel(fentry.mAuthorId, &idflags);
-
-	if(reputation_level == RsReputationLevel::LOCALLY_NEGATIVE)
-		fentry.mPostFlags |=  ForumModelPostEntry::FLAG_POST_IS_REDACTED;
-	else
-		fentry.mPostFlags &= ~ForumModelPostEntry::FLAG_POST_IS_REDACTED;
-
-	// We use a specific item model for forums in order to handle the post pinning.
-
-	if(reputation_level == RsReputationLevel::UNKNOWN)
-		fentry.mReputationWarningLevel = 3 ;
-	else if(reputation_level == RsReputationLevel::LOCALLY_NEGATIVE)
-		fentry.mReputationWarningLevel = 2 ;
-	else if(reputation_level < rsGxsForums->minReputationForForwardingMessages(forum_sign_flags,idflags))
-		fentry.mReputationWarningLevel = 1 ;
-	else
-		fentry.mReputationWarningLevel = 0 ;
-}
-
-static bool decreasing_time_comp(const std::pair<time_t,RsGxsMessageId>& e1,const std::pair<time_t,RsGxsMessageId>& e2) { return e2.first < e1.first ; }
-
-void RsGxsForumModel::computeMessagesHierarchy(const RsGxsForumGroup& forum_group,
-                                               const std::vector<RsMsgMetaData>& msgs_metas_array,
-                                               std::vector<ForumModelPostEntry>& posts,
-                                               std::map<RsGxsMessageId,std::vector<std::pair<time_t,RsGxsMessageId> > >& mPostVersions
-                                               )
-{
-    std::cerr << "updating messages data with " << msgs_metas_array.size() << " messages" << std::endl;
-
-#ifdef DEBUG_FORUMS
-    std::cerr << "Retrieved group data: " << std::endl;
-    std::cerr << "  Group ID: " << forum_group.mMeta.mGroupId << std::endl;
-    std::cerr << "  Admin lst: " << forum_group.mAdminList.ids.size() << " elements." << std::endl;
-    for(auto it(forum_group.mAdminList.ids.begin());it!=forum_group.mAdminList.ids.end();++it)
-        std::cerr << "    " << *it << std::endl;
-    std::cerr << "  Pinned Post: " << forum_group.mPinnedPosts.ids.size() << " messages." << std::endl;
-    for(auto it(forum_group.mPinnedPosts.ids.begin());it!=forum_group.mPinnedPosts.ids.end();++it)
-        std::cerr << "    " << *it << std::endl;
-#endif
-
-	/* get messages */
-	std::map<RsGxsMessageId,RsMsgMetaData> msgs;
-
-	for(uint32_t i=0;i<msgs_metas_array.size();++i)
-	{
-#ifdef DEBUG_FORUMS
-		std::cerr << "Adding message " << msgs_metas_array[i].mMeta.mMsgId << " with parent " << msgs_metas_array[i].mMeta.mParentId << " to message map" << std::endl;
-#endif
-		msgs[msgs_metas_array[i].mMsgId] = msgs_metas_array[i] ;
-	}
-
-#ifdef DEBUG_FORUMS
-	size_t count = msgs.size();
-#endif
-//	int pos = 0;
-//	int steps = count / PROGRESSBAR_MAX;
-//	int step = 0;
-
-    initEmptyHierarchy(posts);
-
-    // ThreadList contains the list of parent threads. The algorithm below iterates through all messages
-    // and tries to establish parenthood relationships between them, given that we only know the
-    // immediate parent of a message and now its children. Some messages have a missing parent and for them
-    // a fake top level parent is generated.
-
-    // In order to be efficient, we first create a structure that lists the children of every mesage ID in the list.
-    // Then the hierarchy of message is build by attaching the kids to every message until all of them have been processed.
-    // The messages with missing parents will be the last ones remaining in the list.
-
-	std::list<std::pair< RsGxsMessageId, ForumModelIndex > > threadStack;
-    std::map<RsGxsMessageId,std::list<RsGxsMessageId> > kids_array ;
-    std::set<RsGxsMessageId> missing_parents;
-
-    // First of all, remove all older versions of posts. This is done by first adding all posts into a hierarchy structure
-    // and then removing all posts which have a new versions available. The older versions are kept appart.
-
-#ifdef DEBUG_FORUMS
-	std::cerr << "GxsForumsFillThread::run() Collecting post versions" << std::endl;
-#endif
-	mPostVersions.clear();
-
-	for ( auto msgIt = msgs.begin(); msgIt != msgs.end();++msgIt)
-	{
-		if(!msgIt->second.mOrigMsgId.isNull() && msgIt->second.mOrigMsgId != msgIt->second.mMsgId)
-		{
-#ifdef DEBUG_FORUMS
-			std::cerr << "  Post " << msgIt->second.mMeta.mMsgId << " is a new version of " << msgIt->second.mMeta.mOrigMsgId << std::endl;
-#endif
-			auto msgIt2 = msgs.find(msgIt->second.mOrigMsgId);
-
-			// Ensuring that the post exists allows to only collect the existing data.
-
-			if(msgIt2 == msgs.end())
-				continue ;
-
-			// Make sure that the author is the same than the original message, or is a moderator. This should always happen when messages are constructed using
-            // the UI but nothing can prevent a nasty user to craft a new version of a message with his own signature.
-
-			if(msgIt2->second.mAuthorId != msgIt->second.mAuthorId)
-			{
-				if( !IS_FORUM_MSG_MODERATION(msgIt->second.mMsgFlags) )			// if authors are different the moderation flag needs to be set on the editing msg
-					continue ;
-
-				if( !forum_group.canEditPosts(msgIt->second.mAuthorId))			// if author is not a moderator, continue
-					continue ;
-			}
-
-			// always add the post a self version
-
-			if(mPostVersions[msgIt->second.mOrigMsgId].empty())
-				mPostVersions[msgIt->second.mOrigMsgId].push_back(std::make_pair(msgIt2->second.mPublishTs,msgIt2->second.mMsgId)) ;
-
-			mPostVersions[msgIt->second.mOrigMsgId].push_back(std::make_pair(msgIt->second.mPublishTs,msgIt->second.mMsgId)) ;
-		}
-    }
-
-    // The following code assembles all new versions of a given post into the same array, indexed by the oldest version of the post.
-
-    for(auto it(mPostVersions.begin());it!=mPostVersions.end();++it)
-    {
-		auto& v(it->second) ;
-
-		for(size_t i=0;i<v.size();++i)
-		{
-            if(v[i].second != it->first)
-			{
-				RsGxsMessageId sub_msg_id = v[i].second ;
-
-				auto it2 = mPostVersions.find(sub_msg_id);
-
-				if(it2 != mPostVersions.end())
-				{
-					for(size_t j=0;j<it2->second.size();++j)
-						if(it2->second[j].second != sub_msg_id)	// dont copy it, since it is already present at slot i
-							v.push_back(it2->second[j]) ;
-
-					mPostVersions.erase(it2) ;	// it2 is never equal to it
-				}
-			}
-		}
-    }
-
-
-    // Now remove from msg ids, all posts except the most recent one. And make the mPostVersion be indexed by the most recent version of the post,
-    // which corresponds to the item in the tree widget.
-
-#ifdef DEBUG_FORUMS
-	std::cerr << "Final post versions: " << std::endl;
-#endif
-	std::map<RsGxsMessageId,std::vector<std::pair<time_t,RsGxsMessageId> > > mTmp;
-    std::map<RsGxsMessageId,RsGxsMessageId> most_recent_versions ;
-
-    for(auto it(mPostVersions.begin());it!=mPostVersions.end();++it)
-    {
-#ifdef DEBUG_FORUMS
-        std::cerr << "Original post: " << it.key() << std::endl;
-#endif
-        // Finally, sort the posts from newer to older
-
-        std::sort(it->second.begin(),it->second.end(),decreasing_time_comp) ;
-
-#ifdef DEBUG_FORUMS
-		std::cerr << "   most recent version " << (*it)[0].first << "  " << (*it)[0].second << std::endl;
-#endif
-		for(size_t i=1;i<it->second.size();++i)
-		{
-			msgs.erase(it->second[i].second) ;
-
-#ifdef DEBUG_FORUMS
-			std::cerr << "   older version " << (*it)[i].first << "  " << (*it)[i].second << std::endl;
-#endif
-		}
-
-        mTmp[it->second[0].second] = it->second ;	// index the versions map by the ID of the most recent post.
-
-		// Now make sure that message parents are consistent. Indeed, an old post may have the old version of a post as parent. So we need to change that parent
-		// to the newest version. So we create a map of which is the most recent version of each message, so that parent messages can be searched in it.
-
-	for(size_t i=1;i<it->second.size();++i)
-		most_recent_versions[it->second[i].second] = it->second[0].second ;
-	}
-    mPostVersions = mTmp ;
-
-    // The next step is to find the top level thread messages. These are defined as the messages without
-    // any parent message ID.
-
-    // this trick is needed because while we remove messages, the parents a given msg may already have been removed
-    // and wrongly understand as a missing parent.
-
-	std::map<RsGxsMessageId,RsMsgMetaData> kept_msgs;
-
-	for ( auto msgIt = msgs.begin(); msgIt != msgs.end();++msgIt)
-    {
-
-        if(msgIt->second.mParentId.isNull())
-		{
-
-			/* add all threads */
-			const RsMsgMetaData& msg = msgIt->second;
-
-#ifdef DEBUG_FORUMS
-			std::cerr << "GxsForumsFillThread::run() Adding TopLevel Thread: mId: " << msg.mMsgId << std::endl;
-#endif
-
-            ForumModelPostEntry entry;
-			convertMsgToPostEntry(forum_group,msg, mUseChildTS, entry);
-
-            ForumModelIndex entry_index = addEntry(posts,entry,0);
-
-			//if (!mFlatView)
-				threadStack.push_back(std::make_pair(msg.mMsgId,entry_index)) ;
-
-			//calculateExpand(msg, item);
-			//mItems.append(entry_index);
-		}
-		else
-        {
-#ifdef DEBUG_FORUMS
-			std::cerr << "GxsForumsFillThread::run() Storing kid " << msgIt->first << " of message " << msgIt->second.mParentId << std::endl;
-#endif
-            // The same missing parent may appear multiple times, so we first store them into a unique container.
-
-            RsGxsMessageId parent_msg = msgIt->second.mParentId;
-
-            if(msgs.find(parent_msg) == msgs.end())
-            {
-                // also check that the message is not versionned
-
-                std::map<RsGxsMessageId,RsGxsMessageId>::const_iterator mrit = most_recent_versions.find(parent_msg) ;
-
-                if(mrit != most_recent_versions.end())
-                    parent_msg = mrit->second ;
-                else
-					missing_parents.insert(parent_msg);
-            }
-
-            kids_array[parent_msg].push_back(msgIt->first) ;
-            kept_msgs.insert(*msgIt) ;
-        }
-    }
-
-    msgs = kept_msgs;
-
-    // Also create a list of posts by time, when they are new versions of existing posts. Only the last one will have an item created.
-
-    // Add a fake toplevel item for the parent IDs that we dont actually have.
-
-    for(std::set<RsGxsMessageId>::const_iterator it(missing_parents.begin());it!=missing_parents.end();++it)
-	{
-		// add dummy parent item
-        ForumModelPostEntry e ;
-        generateMissingItem(*it,e);
-
-        ForumModelIndex e_index = addEntry(posts,e,0);	// no parent -> parent is level 0
-		//mItems.append( e_index );
-
-		threadStack.push_back(std::make_pair(*it,e_index)) ;
-	}
-#ifdef DEBUG_FORUMS
-	std::cerr << "GxsForumsFillThread::run() Processing stack:" << std::endl;
-#endif
-    // Now use a stack to go down the hierarchy
-
-	while (!threadStack.empty())
-    {
-        std::pair<RsGxsMessageId, uint32_t> threadPair = threadStack.front();
-		threadStack.pop_front();
-
-        std::map<RsGxsMessageId, std::list<RsGxsMessageId> >::iterator it = kids_array.find(threadPair.first) ;
-
-#ifdef DEBUG_FORUMS
-		std::cerr << "GxsForumsFillThread::run() Node: " << threadPair.first << std::endl;
-#endif
-        if(it == kids_array.end())
-            continue ;
-
-
-        for(std::list<RsGxsMessageId>::const_iterator it2(it->second.begin());it2!=it->second.end();++it2)
-        {
-            // We iterate through the top level thread items, and look for which message has the current item as parent.
-            // When found, the item is put in the thread list itself, as a potential new parent.
-
-            auto mit = msgs.find(*it2) ;
-
-            if(mit == msgs.end())
-			{
-				std::cerr << "GxsForumsFillThread::run()    Cannot find submessage " << *it2 << " !!!" << std::endl;
-				continue ;
-			}
-
-            const RsMsgMetaData& msg(mit->second) ;
-#ifdef DEBUG_FORUMS
-			std::cerr << "GxsForumsFillThread::run()    adding sub_item " << msg.mMsgId << std::endl;
-#endif
-
-
-            ForumModelPostEntry e ;
-			convertMsgToPostEntry(forum_group,msg,mUseChildTS,e) ;
-            ForumModelIndex e_index = addEntry(posts,e, threadPair.second);
-
-			//calculateExpand(msg, item);
-
-			/* add item to process list */
-			threadStack.push_back(std::make_pair(msg.mMsgId, e_index));
-
-			msgs.erase(mit);
-		}
-
-#ifdef DEBUG_FORUMS
-		std::cerr << "GxsForumsFillThread::run() Erasing entry " << it->first << " from kids tab." << std::endl;
-#endif
-        kids_array.erase(it) ; // This is not strictly needed, but it improves performance by reducing the search space.
-	}
-
-#ifdef DEBUG_FORUMS
-    std::cerr << "Kids array now has " << kids_array.size() << " elements" << std::endl;
-    for(std::map<RsGxsMessageId,std::list<RsGxsMessageId> >::const_iterator it(kids_array.begin());it!=kids_array.end();++it)
-    {
-        std::cerr << "Node " << it->first << std::endl;
-        for(std::list<RsGxsMessageId>::const_iterator it2(it->second.begin());it2!=it->second.end();++it2)
-            std::cerr << "  " << *it2 << std::endl;
-    }
-
-	std::cerr << "GxsForumsFillThread::run() stopped: " << (wasStopped() ? "yes" : "no") << std::endl;
-#endif
-}
 
 void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,bool with_children)
 {
@@ -1248,8 +877,8 @@ void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,boo
 
 void RsGxsForumModel::recursSetMsgReadStatus(ForumModelIndex i,bool read_status,bool with_children)
 {
-	int newStatus = (read_status ? mPosts[i].mMsgStatus & ~static_cast<int>(GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD)
-	                             : mPosts[i].mMsgStatus |  static_cast<int>(GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD));
+    uint32_t newStatus = (read_status ? mPosts[i].mMsgStatus & ~static_cast<int>(GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD)
+                                      : mPosts[i].mMsgStatus |  static_cast<int>(GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD));
 	bool bChanged = (mPosts[i].mMsgStatus != newStatus);
 	mPosts[i].mMsgStatus = newStatus;
 	//Remove Unprocessed and New flags
@@ -1420,7 +1049,7 @@ void RsGxsForumModel::setAuthorOpinion(const QModelIndex& indx, RsOpinion op)
     for(uint32_t i=0;i<mPosts.size();++i)
     	if(mPosts[i].mAuthorId == author_id)
         {
-			computeReputationLevel(mForumGroup.mMeta.mSignFlags,mPosts[i]);
+            rsGxsForums->updateReputationLevel(mForumGroup.mMeta.mSignFlags,mPosts[i]);
 
 			// notify the widgets that the data has changed.
 			emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));

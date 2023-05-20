@@ -104,10 +104,22 @@ bool GxsForumsDialog::getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo)
 
 bool GxsForumsDialog::getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat)
 {
-    return rsGxsForums->getForumStatistics(groupId,stat);
+    RsGxsForumStatistics s;
+
+    if(!rsGxsForums->getForumStatistics(groupId,s))
+        return false;
+
+    stat.mGrpId = groupId;
+    stat.mNumMsgs = s.mNumberOfMessages;
+
+    stat.mTotalSizeOfMsgs = 0;	// hopefuly unused. Required the loading of the full channel data, so not very convenient.
+    stat.mNumThreadMsgsNew = s.mNumberOfNewMessages;
+    stat.mNumThreadMsgsUnread = s.mNumberOfUnreadMessages;
+    stat.mNumChildMsgsNew = 0;
+    stat.mNumChildMsgsUnread = 0;
+
+    return true;
 }
-
-
 
 QString GxsForumsDialog::getHelpString() const
 {
