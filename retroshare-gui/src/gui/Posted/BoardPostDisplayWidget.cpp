@@ -23,6 +23,7 @@
 #include <QStyle>
 #include <QTextDocument>
 #include <QToolButton>
+#include <QDesktopServices>
 
 #include "rshare.h"
 #include "BoardPostDisplayWidget.h"
@@ -214,8 +215,6 @@ void BoardPostDisplayWidgetBase::baseSetup()
         // The only combination that seems to work: load as EncodedUrl, extract toEncoded().
         QByteArray urlarray(mPost.mLink.c_str());
         QUrl url = QUrl::fromEncoded(urlarray.trimmed());
-        QString urlstr = "Invalid Link";
-        QString sitestr = "Invalid Link";
 
         bool urlOkay = url.isValid();
         if (urlOkay)
@@ -227,25 +226,24 @@ void BoardPostDisplayWidgetBase::baseSetup()
                             && (scheme != "retroshare"))
             {
                 urlOkay = false;
-                sitestr = "Invalid Link Scheme";
             }
         }
 
+        ElidedLabel *label = titleLabel();
+        label->setText( QString::fromUtf8(mPost.mMeta.mMsgName.c_str()) );
+
         if (urlOkay)
         {
-            urlstr =  QString("<a href=\"");
-            urlstr += QString(url.toEncoded());
-            urlstr += QString("\" ><span style=\" text-decoration: underline; color:#2255AA;\"> ");
-            urlstr += QString::fromUtf8(mPost.mMeta.mMsgName.c_str());
-            urlstr += QString(" </span></a>");
-
             QString siteurl = url.toEncoded();
 
-            titleLabel()->setText(urlstr);
-            titleLabel()->setToolTip(siteurl);
+            label->setStyleSheet("text-decoration: underline; color:#2255AA;");
+            label->setCursor(QCursor(Qt::PointingHandCursor));
+            label->setToolTip(siteurl);
+
+            connect(label, &ElidedLabel::clicked, this, [url] () {
+                QDesktopServices::openUrl(url);
+            }, Qt::QueuedConnection);
         }
-        else
-            titleLabel()->setText( QString::fromUtf8(mPost.mMeta.mMsgName.c_str()) );
     }
 
     //QString score = "Hot" + QString::number(post.mHotScore);
