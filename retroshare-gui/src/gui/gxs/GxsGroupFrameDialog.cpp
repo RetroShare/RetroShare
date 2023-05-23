@@ -119,6 +119,9 @@ GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl,const QStri
 	sizes << 300 << width(); // Qt calculates the right sizes
 	ui->splitter->setSizes(sizes);
 
+	// load settings
+	processSettings(true);
+
 #ifndef UNFINISHED
 	ui->todoPushButton->hide();
 #endif
