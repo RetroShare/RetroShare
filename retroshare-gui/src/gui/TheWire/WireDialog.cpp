@@ -113,27 +113,21 @@ void WireDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
         switch(e->mWireEventCode)
         {
         case RsWireEventCode::NEW_POST:
-            refreshGroups();
-            break;
+
         case RsWireEventCode::NEW_REPLY:
-            refreshGroups();
-            break;
+
         case RsWireEventCode::NEW_LIKE:
-            refreshGroups();
-            break;
+
         case RsWireEventCode::NEW_REPUBLISH:
-            refreshGroups();
-            break;
+
         case RsWireEventCode::POST_UPDATED:
-            refreshGroups();
-            break;
+
         case RsWireEventCode::NEW_WIRE:
-            refreshGroups();
-            break;
+
         case RsWireEventCode::FOLLOW_STATUS_CHANGED:
-            refreshGroups();
-            break;
+
         default:
+            refreshGroups();
             break;
 
         }
