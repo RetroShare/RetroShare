@@ -77,7 +77,7 @@ public:
 
     static const QString FilterString ;
 
-	std::vector<std::pair<time_t,RsGxsMessageId> > getPostVersions(const RsGxsMessageId& mid) const;
+	std::vector<std::pair<rstime_t,RsGxsMessageId> > getPostVersions(const RsGxsMessageId& mid) const;
 
     // This method will asynchroneously update the data
 	void updateForum(const RsGxsGroupId& forumGroup);
@@ -170,11 +170,11 @@ private:
 	static void convertMsgToPostEntry(const RsGxsForumGroup &mForumGroup, const RsMsgMetaData &msg, bool useChildTS, ForumModelPostEntry& fentry);
 
 	void computeMessagesHierarchy(const RsGxsForumGroup& forum_group, const std::vector<RsMsgMetaData> &msgs_array, std::vector<ForumModelPostEntry>& posts, std::map<RsGxsMessageId, std::vector<std::pair<time_t, RsGxsMessageId> > > &mPostVersions);
-	void setPosts(const RsGxsForumGroup& group, const std::vector<ForumModelPostEntry>& posts,const std::map<RsGxsMessageId,std::vector<std::pair<time_t,RsGxsMessageId> > >& post_versions);
+	void setPosts(const RsGxsForumGroup& group, const std::vector<ForumModelPostEntry>& posts,const std::map<RsGxsMessageId,std::vector<std::pair<rstime_t,RsGxsMessageId> > >& post_versions);
 	void initEmptyHierarchy(std::vector<ForumModelPostEntry>& posts);
 
     std::vector<ForumModelPostEntry> mPosts ; // store the list of posts updated from rsForums.
-	std::map<RsGxsMessageId,std::vector<std::pair<time_t,RsGxsMessageId> > > mPostVersions;
+	std::map<RsGxsMessageId,std::vector<std::pair<rstime_t,RsGxsMessageId> > > mPostVersions;
 
     QColor mTextColorRead          ;
     QColor mTextColorUnread        ;

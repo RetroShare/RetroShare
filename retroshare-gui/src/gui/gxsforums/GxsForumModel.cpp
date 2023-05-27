@@ -117,14 +117,14 @@ int RsGxsForumModel::columnCount(const QModelIndex &/*parent*/) const
 	return COLUMN_THREAD_NB_COLUMNS ;
 }
 
-std::vector<std::pair<time_t,RsGxsMessageId> > RsGxsForumModel::getPostVersions(const RsGxsMessageId& mid) const
+std::vector<std::pair<rstime_t,RsGxsMessageId> > RsGxsForumModel::getPostVersions(const RsGxsMessageId& mid) const
 {
     auto it = mPostVersions.find(mid);
 
     if(it != mPostVersions.end())
         return it->second;
     else
-        return std::vector<std::pair<time_t,RsGxsMessageId> >();
+        return std::vector<std::pair<rstime_t,RsGxsMessageId> >();
 }
 
 bool RsGxsForumModel::getPostData(const QModelIndex& i,ForumModelPostEntry& fmpe) const
@@ -746,7 +746,7 @@ void RsGxsForumModel::clear()
 	emit forumLoaded();
 }
 
-void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<ForumModelPostEntry>& posts,const std::map<RsGxsMessageId,std::vector<std::pair<time_t,RsGxsMessageId> > >& post_versions)
+void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<ForumModelPostEntry>& posts,const std::map<RsGxsMessageId,std::vector<std::pair<rstime_t,RsGxsMessageId> > >& post_versions)
 {
 	preMods();
 
@@ -812,7 +812,7 @@ void RsGxsForumModel::update_posts(const RsGxsGroupId& group_id)
 
         // 2 - sort messages into a proper hierarchy
 
-		auto post_versions = new std::map<RsGxsMessageId,std::vector<std::pair<time_t, RsGxsMessageId> > >() ;
+		auto post_versions = new std::map<RsGxsMessageId,std::vector<std::pair<rstime_t, RsGxsMessageId> > >() ;
         std::vector<ForumPostEntry> *vect = new std::vector<ForumPostEntry>();
 		RsGxsForumGroup group = groups[0];
 
