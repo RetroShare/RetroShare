@@ -61,13 +61,12 @@
 WireDialog::WireDialog(QWidget *parent)
     : MainPage(parent), mGroupSet(GROUP_SET_ALL)
     , mAddDialog(nullptr), mGroupSelected(nullptr), mWireQueue(nullptr)
-    , mHistoryIndex(-1)
+    , mHistoryIndex(-1), mEventHandlerId(0)
 {
 	ui.setupUi(this);
 
 	connect( ui.toolButton_createAccount, SIGNAL(clicked()), this, SLOT(createGroup()));
 	connect( ui.toolButton_createPulse, SIGNAL(clicked()), this, SLOT(createPulse()));
-	connect( ui.toolButton_refresh, SIGNAL(clicked()), this, SLOT(refreshGroups()));
 
 	connect(ui.comboBox_groupSet, SIGNAL(currentIndexChanged(int)), this, SLOT(selectGroupSet(int)));
 	connect(ui.comboBox_filterTime, SIGNAL(currentIndexChanged(int)), this, SLOT(selectFilterTime(int)));
@@ -91,6 +90,48 @@ WireDialog::WireDialog(QWidget *parent)
 
 	// load settings
 	processSettings(true);
+
+    // Needs to be asynced because this function is called by another thread!
+    rsEvents->registerEventsHandler(
+                [this](std::shared_ptr<const RsEvent> event)
+    { RsQThreadUtils::postToObject([=]() { handleEvent_main_thread(event); }, this ); },
+                mEventHandlerId, RsEventType::WIRE );
+}
+
+void WireDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+    const RsWireEvent *e = dynamic_cast<const RsWireEvent*>(event.get());
+
+    if(e)
+    {
+
+#ifdef GXSWIRE_DEBUG
+                RsDbg() << " Refreshing the feed if there is a matching event. "<< std::endl;
+#endif
+
+        // The following switch statements refresh the wire feed whenever there is a new event
+        switch(e->mWireEventCode)
+        {
+        case RsWireEventCode::NEW_POST:
+
+        case RsWireEventCode::NEW_REPLY:
+
+        case RsWireEventCode::NEW_LIKE:
+
+        case RsWireEventCode::NEW_REPUBLISH:
+
+        case RsWireEventCode::POST_UPDATED:
+
+        case RsWireEventCode::NEW_WIRE:
+
+        case RsWireEventCode::FOLLOW_STATUS_CHANGED:
+
+        default:
+            refreshGroups();
+            break;
+
+        }
+    }
 }
 
 WireDialog::~WireDialog()
@@ -99,7 +140,9 @@ WireDialog::~WireDialog()
 	processSettings(false);
 	
 	clearTwitterView();
-	delete(mWireQueue);
+    delete(mWireQueue);
+
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
 
 void WireDialog::processSettings(bool load)
