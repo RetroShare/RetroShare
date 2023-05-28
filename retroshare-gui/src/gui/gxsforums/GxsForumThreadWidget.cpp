@@ -1193,7 +1193,7 @@ void GxsForumThreadWidget::insertMessage()
 
     // add/show combobox for versions, if applicable, and enable it. If no older versions of the post available, hide the combobox.
 
-    std::vector<std::pair<time_t,RsGxsMessageId> > post_versions = mThreadModel->getPostVersions(mOrigThreadId);
+    std::vector<std::pair<rstime_t,RsGxsMessageId> > post_versions = mThreadModel->getPostVersions(mOrigThreadId);
 
 #ifdef DEBUG_FORUMS
     std::cerr << "Looking into existing versions  for post " << mOrigThreadId << ", thread history: " << post_versions.size() << std::endl;
