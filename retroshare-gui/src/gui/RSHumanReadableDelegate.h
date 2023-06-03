@@ -91,7 +91,8 @@ class RSHumanReadableAgeDelegate: public RSHumanReadableDelegate
 			QStyleOptionViewItem opt(option) ;
 			setPainterOptions(painter,opt,index) ;
 
-			painter->drawText(opt.rect, Qt::AlignCenter, misc::timeRelativeToNow(index.data().toLongLong())) ;
+            if(index.data().toLongLong() > 0)	// no date is present.
+                painter->drawText(opt.rect, Qt::AlignCenter, misc::timeRelativeToNow(index.data().toLongLong())) ;
 		}
 };
 

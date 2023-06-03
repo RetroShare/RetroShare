@@ -265,6 +265,8 @@ void SearchDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
         f.hash = fe->mResults[i].fHash;
         f.name = fe->mResults[i].fName;
         f.size = fe->mResults[i].fSize;
+        f.mtime  = 0;	// zero what's not available, otherwise we'll get some random values displayed.
+        f.rank = 0;
 
         updateFiles(fe->mRequestId,f);
     }
@@ -1320,8 +1322,8 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 
 		item->setText(SR_SIZE_COL, QString::number(file.size));
 		item->setData(SR_SIZE_COL, ROLE_SORT, (qulonglong) file.size);
-		item->setText(SR_AGE_COL, QString::number(file.age));
-		item->setData(SR_AGE_COL, ROLE_SORT, file.age);
+        item->setText(SR_AGE_COL, QString::number(file.mtime));
+        item->setData(SR_AGE_COL, ROLE_SORT, file.mtime);
 		item->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 		int friendSource = 0;
 		int anonymousSource = 0;
@@ -1396,21 +1398,21 @@ void SearchDialog::resultsToTree(const QString& txt,qulonglong searchId, const s
 
 	std::list<DirDetails>::const_iterator it;
 	for(it = results.begin(); it != results.end(); ++it)
-		if (it->type == DIR_TYPE_FILE) {
+        if (it->type == DIR_TYPE_FILE)
+        {
 			FileDetail fd;
 			fd.id	= it->id;
 			fd.name = it->name;
 			fd.hash = it->hash;
 			fd.path = it->path;
             fd.size = it->size;
-			fd.age 	= it->mtime;
+            fd.mtime= it->mtime;
 			fd.rank = 0;
 
 			insertFile(searchId,fd, FRIEND_SEARCH);
-		} else if (it->type == DIR_TYPE_DIR) {
-//			insertDirectory(txt, searchId, *it, NULL);
+        }
+        else if (it->type == DIR_TYPE_DIR)
 			insertDirectory(txt, searchId, *it);
-		}
 
 	ui.searchResultWidget->setSortingEnabled(true);
 }
