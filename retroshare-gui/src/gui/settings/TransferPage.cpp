@@ -46,6 +46,8 @@ TransferPage::TransferPage(QWidget * parent, Qt::WindowFlags flags)
     ui._max_tr_up_per_sec_SB->setMinimum(max_tr_low);
     ui._max_tr_up_per_sec_SB->setMaximum(max_tr_high);
 
+    whileBlocking(ui._trustFriendNodesWithBannedFiles_CB)->setChecked(rsFiles->trustFriendNodesWithBannedFiles());
+
     QObject::connect(ui._queueSize_SB,SIGNAL(valueChanged(int)),this,SLOT(updateQueueSize(int))) ;
     QObject::connect(ui._max_up_SB,SIGNAL(valueChanged(int)),this,SLOT(updateMaxUploadSlots(int))) ;
     QObject::connect(ui._defaultStrategy_CB,SIGNAL(activated(int)),this,SLOT(updateDefaultStrategy(int))) ;
