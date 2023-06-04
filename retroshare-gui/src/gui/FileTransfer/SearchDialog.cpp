@@ -86,6 +86,18 @@ const int SearchDialog::FILETYPE_IDX_DIRECTORY = 8;
 QMap<int, QString> * SearchDialog::FileTypeExtensionMap = new QMap<int, QString>();
 bool SearchDialog::initialised = false;
 
+struct SearchDialog::FileDetail
+{
+public:
+    RsPeerId id;
+    std::string name;
+    RsFileHash hash;
+    std::string path;
+    uint64_t size;
+    uint32_t mtime;
+    uint32_t rank;
+};
+
 /** Constructor */
 SearchDialog::SearchDialog(QWidget *parent)
 : MainPage(parent),
@@ -968,7 +980,7 @@ void SearchDialog::searchKeywords(const QString& keywords)
 	}
 }
 
-void SearchDialog::updateFiles(qulonglong search_id,FileDetail file)
+void SearchDialog::updateFiles(qulonglong search_id,const FileDetail& file)
 {
 	searchResultsQueue.push_back(std::pair<qulonglong,FileDetail>(search_id,file)) ;
 
