@@ -66,7 +66,7 @@ WireGroupItem::WireGroupItem(WireGroupHolder *holder, const RsWireGroup &grp)
 	setup();
 
 	// disabled, still not yet functional Edit/Update
-	editButton->setEnabled(false);
+    editButton->setEnabled(true);
 }
 
 RsGxsGroupId &WireGroupItem::groupId()
@@ -221,6 +221,6 @@ void WireGroupItem::editGroupDetails()
 		return;
 	}
 
-	WireGroupDialog wireEdit(GxsGroupDialog::MODE_EDIT, groupId, this);
+    WireGroupDialog wireEdit(GxsGroupDialog::MODE_EDIT, groupId, this);
 	wireEdit.exec ();
 }
