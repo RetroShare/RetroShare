@@ -46,6 +46,8 @@ TransferPage::TransferPage(QWidget * parent, Qt::WindowFlags flags)
     ui._max_tr_up_per_sec_SB->setMinimum(max_tr_low);
     ui._max_tr_up_per_sec_SB->setMaximum(max_tr_high);
 
+    whileBlocking(ui._trustFriendNodesWithBannedFiles_CB)->setChecked(rsFiles->trustFriendNodesWithBannedFiles());
+
     QObject::connect(ui._queueSize_SB,SIGNAL(valueChanged(int)),this,SLOT(updateQueueSize(int))) ;
     QObject::connect(ui._max_up_SB,SIGNAL(valueChanged(int)),this,SLOT(updateMaxUploadSlots(int))) ;
     QObject::connect(ui._defaultStrategy_CB,SIGNAL(activated(int)),this,SLOT(updateDefaultStrategy(int))) ;
@@ -53,6 +55,7 @@ TransferPage::TransferPage(QWidget * parent, Qt::WindowFlags flags)
     QObject::connect(ui._diskSpaceLimit_SB,SIGNAL(valueChanged(int)),this,SLOT(updateDiskSizeLimit(int))) ;
     QObject::connect(ui._max_tr_up_per_sec_SB, SIGNAL( valueChanged( int ) ), this, SLOT( updateMaxTRUpRate(int) ) );
 	QObject::connect(ui._filePermDirectDL_CB,SIGNAL(activated(int)),this,SLOT(updateFilePermDirectDL(int)));
+    QObject::connect(ui._trustFriendNodesWithBannedFiles_CB,SIGNAL(toggled(bool)),this,SLOT(toggleTrustFriendNodesWithBannedFiles(bool))) ;
 
 	QObject::connect(ui.incomingButton, SIGNAL(clicked( bool ) ), this , SLOT( setIncomingDirectory() ) );
 	QObject::connect(ui.autoDLColl_CB, SIGNAL(toggled(bool)), this, SLOT(updateAutoDLColl()));
@@ -94,7 +97,10 @@ void TransferPage::updateIgnoreLists()
 	std::cerr << "  suffixes: " ; for(auto it(ls.begin());it!=ls.end();++it) std::cerr << "\"" << *it << "\" " ; std::cerr << std::endl;
 #endif
 }
-
+void TransferPage::toggleTrustFriendNodesWithBannedFiles(bool b)
+{
+    rsFiles->setTrustFriendNodesWithBannedFiles(b);
+}
 void TransferPage::updateMaxTRUpRate(int b)
 {
     rsTurtle->setMaxTRForwardRate(b) ;

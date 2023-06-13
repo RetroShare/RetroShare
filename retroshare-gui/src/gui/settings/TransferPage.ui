@@ -547,7 +547,7 @@ p, li { white-space: pre-wrap; }
            </layout>
           </item>
           <item row="1" column="0">
-           <widget class="QCheckBox" name="checkBox">
+           <widget class="QCheckBox" name="_trustFriendNodesWithBannedFiles_CB">
             <property name="text">
              <string>Trust friend nodes with banned files</string>
             </property>

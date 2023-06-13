@@ -43,6 +43,7 @@ class SearchDialog : public MainPage
     Q_PROPERTY(QColor textColorLowSources READ textColorLowSources WRITE setTextColorLowSources)
     Q_PROPERTY(QColor textColorHighSources READ textColorHighSources WRITE setTextColorHighSources)
 
+    struct FileDetail;	// useful structure to store search results.
 public:
 /** Default Constructor */
     SearchDialog(QWidget *parent = 0);
@@ -63,8 +64,7 @@ public:
     void setTextColorLowSources(QColor color) { mTextColorLowSources = color; }
     void setTextColorHighSources(QColor color) { mTextColorHighSources = color; }
 
-public slots:
-		void updateFiles(qulonglong request_id,FileDetail file) ;
+    void updateFiles(qulonglong request_id, const FileDetail& file) ;
 
 private slots:
 
