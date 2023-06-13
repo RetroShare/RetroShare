@@ -25,10 +25,6 @@
 
 #include "PulseViewItem.h"
 #include <retroshare/rswire.h>
-#include <QPainter>
-#include <QFrame>
-#include <QPixmap>
-#include <QStyledItemDelegate>
 
 class PulseViewGroup : public PulseViewItem, private Ui::PulseViewGroup
 {
@@ -36,7 +32,6 @@ class PulseViewGroup : public PulseViewItem, private Ui::PulseViewGroup
 
 public:
 	PulseViewGroup(PulseViewHolder *holder, RsWireGroupSPtr group);
-    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
 private slots:
 	void actionFollow();
@@ -46,9 +41,6 @@ protected:
 
 protected:
 	RsWireGroupSPtr mGroup;
-    QPixmap mPixmap;
-    int mMaxLevelToDisplay;
-
 };
 
 

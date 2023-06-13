@@ -65,7 +65,6 @@ WireGroupItem::WireGroupItem(WireGroupHolder *holder, const RsWireGroup &grp)
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 	setup();
 
-	// disabled, still not yet functional Edit/Update
     editButton->setEnabled(true);
 }
 

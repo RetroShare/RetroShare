@@ -25,8 +25,6 @@
 
 #include <retroshare/rswire.h>
 
-#include "util/TokenQueue.h"
-
 class WireGroupItem;
 
 class WireGroupHolder
