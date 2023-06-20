@@ -30,7 +30,7 @@
           <item>
            <widget class="QPushButton" name="editShareButton">
             <property name="text">
-             <string>Edit Share</string>
+             <string>Configure shared directories</string>
             </property>
            </widget>
           </item>

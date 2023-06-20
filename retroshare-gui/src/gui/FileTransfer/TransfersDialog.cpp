@@ -2244,6 +2244,10 @@ void TransfersDialog::chunkStreaming()
 }
 void TransfersDialog::chunkRandom()
 {
+#ifdef WINDOWS_SYS
+    if(QMessageBox::Yes != QMessageBox::warning(nullptr,tr("Warning"),tr("On Windows systems, writing in the middle of large empty files may hang the software for several seconds. Do you want to use this option anyway?"),QMessageBox::Yes,QMessageBox::No))
+        return;
+#endif
 	setChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_RANDOM) ;
 }
 void TransfersDialog::chunkProgressive()
