@@ -30,6 +30,7 @@
 #include "retroshare/rspeers.h"
 
 #include <QCheckBox>
+#include <QMessageBox>
 #include <QToolTip>
 
 #include <iostream>
@@ -214,11 +215,19 @@ void TransferPage::updateDefaultStrategy(int i)
 		case 0: rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_STREAMING) ;
 				  break ;
 
-		case 2: rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_RANDOM) ;
-				  break ;
+        case 2:
+#ifdef WINDOWS_SYS
+                if(QMessageBox::Yes != QMessageBox::warning(nullptr,tr("Warning"),tr("On Windows systems, randomly writing in the middle of large empty files may hang the software for several seconds. Do you want to use this option anyway?"),QMessageBox::Yes,QMessageBox::No))
+                {
+                    ui._defaultStrategy_CB->setCurrentIndex(0);
+                    return;
+                }
+#endif
+                rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_RANDOM) ;
+                break ;
 
 		case 1: rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE) ;
-				  break ;
+                break ;
 		default: ;
 	}
 }
