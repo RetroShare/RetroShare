@@ -217,9 +217,9 @@ void TransferPage::updateDefaultStrategy(int i)
 
         case 2:
 #ifdef WINDOWS_SYS
-                if(QMessageBox::Yes != QMessageBox::warning(nullptr,tr("Warning"),tr("On Windows systems, randomly writing in the middle of large empty files may hang the software for several seconds. Do you want to use this option anyway?"),QMessageBox::Yes,QMessageBox::No))
+                if(QMessageBox::Yes != QMessageBox::warning(nullptr,tr("Warning"),tr("On Windows systems, randomly writing in the middle of large empty files may hang the software for several seconds. Do you want to use this option anyway (otherwise use \"progressive\")?"),QMessageBox::Yes,QMessageBox::No))
                 {
-                    ui._defaultStrategy_CB->setCurrentIndex(0);
+                    ui._defaultStrategy_CB->setCurrentIndex(1);
                     return;
                 }
 #endif
