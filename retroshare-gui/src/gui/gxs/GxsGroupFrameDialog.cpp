@@ -1105,7 +1105,12 @@ void GxsGroupFrameDialog::updateGroupSummary()
 			 * Qt::QueuedConnection is important!
 			 */
 
-			insertGroupsData(*groupInfo);
+            // Here we save the focus, and restore it afterwards: there's no need to grab the focus here and
+            // if we do, it may harm the navitation in forums, channels, boards, etc.
+
+            auto w = QApplication::focusWidget();
+
+            insertGroupsData(*groupInfo);
 			updateSearchResults();
 
 			mStateHelper->setLoading(TOKEN_TYPE_GROUP_SUMMARY, false);
@@ -1132,7 +1137,12 @@ void GxsGroupFrameDialog::updateGroupSummary()
 
             delete groupInfo;
 
-		}, this );
+            // Restore the focus.
+
+            if(w)
+                w->setFocus();
+
+        }, this );
 	});
 }
 
@@ -1165,7 +1175,7 @@ void GxsGroupFrameDialog::updateGroupStatisticsReal(const RsGxsGroupId &groupId)
 			 * Qt::QueuedConnection is important!
 			 */
 
-			QTreeWidgetItem *item = ui->groupTreeWidget->getItemFromId(QString::fromStdString(stats.mGrpId.toStdString()));
+            QTreeWidgetItem *item = ui->groupTreeWidget->getItemFromId(QString::fromStdString(stats.mGrpId.toStdString()));
 			if (!item)
 				return;
 
@@ -1174,7 +1184,7 @@ void GxsGroupFrameDialog::updateGroupStatisticsReal(const RsGxsGroupId &groupId)
 
 			getUserNotify()->updateIcon();
 
-		}, this );
+        }, this );
 	});
 }
 
