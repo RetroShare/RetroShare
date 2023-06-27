@@ -24,10 +24,13 @@
 #include <QBuffer>
 
 #include "PulseViewGroup.h"
+#include "CustomFrame.h"
 
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
 #include "util/DateTime.h"
+
+Q_DECLARE_METATYPE(RsWireGroup)
 
 /** Constructor */
 
@@ -50,8 +53,32 @@ void PulseViewGroup::setup()
 		label_tagline->setText(QString::fromStdString(mGroup->mTagline));
 		label_location->setText(QString::fromStdString(mGroup->mLocation));
 
-		// need to draw mGroup->mMasthead, as background to headshot.
-		// TODO frame_headerBackground->setBackground()
+
+        if (mGroup->mMasthead.mData)
+        {
+            QPixmap pixmap;
+            if (GxsIdDetails::loadPixmapFromData(
+                    mGroup->mMasthead.mData,
+                    mGroup->mMasthead.mSize,
+                    pixmap, GxsIdDetails::ORIGINAL))
+            {
+                QSize frameSize = frame_masthead->size();
+
+                // Scale the pixmap based on the frame size
+                pixmap = pixmap.scaled(frameSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                frame_masthead->setPixmap(pixmap);
+            }
+        }
+        else
+        {
+            // Default pixmap
+            QPixmap pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/png/posted.png");
+            QSize frameSize = frame_masthead->size();
+
+            // Scale the pixmap based on the frame size
+            pixmap = pixmap.scaled(frameSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            frame_masthead->setPixmap(pixmap);
+        }
 
 		if (mGroup->mHeadshot.mData)
 		{
@@ -61,14 +88,14 @@ void PulseViewGroup::setup()
 					mGroup->mHeadshot.mSize,
 					pixmap,GxsIdDetails::ORIGINAL))
 			{
-				pixmap = pixmap.scaled(50,50);
+                pixmap = pixmap.scaled(100,100);
 				label_headshot->setPixmap(pixmap);
 			}
 		}
 		else
 		{
             // default.
-            QPixmap pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/png/posted.png").scaled(50,50);
+            QPixmap pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/png/posted.png").scaled(100,100);
 			label_headshot->setPixmap(pixmap);
 		}
 

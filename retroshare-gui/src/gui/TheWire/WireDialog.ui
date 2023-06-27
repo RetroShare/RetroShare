@@ -434,8 +434,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="TheWire_images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="TheWire_images.qrc"/>
  </resources>
  <connections/>
 </ui>
