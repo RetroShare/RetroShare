@@ -166,6 +166,7 @@ public slots:
  	void sortColumnPostFiles(int col,Qt::SortOrder so);
     void updateCommentsCount(int n);
     void showChannelFilesContextMenu(QPoint p);
+    void showChannelPostFilesContextMenu(QPoint p);
     void copyChannelFilesLink();
 
 private:
