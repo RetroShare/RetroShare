@@ -50,15 +50,12 @@ GxsChannelFilesStatusWidget::GxsChannelFilesStatusWidget(const RsGxsFile &file, 
 	connect(ui->openFilePushButton, SIGNAL(clicked()), this, SLOT(openFile()));
 
 	ui->downloadPushButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/download.png"));
-	ui->openFolderToolButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/arrow.png"));
 
-	QAction *openfolder = new QAction(tr("Open folder"), this);
-	connect(openfolder, SIGNAL(triggered()), this, SLOT(openFolder()));
+    ui->openFolderPushButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/folderopen.png"));
+    ui->openFolderPushButton->setToolTip(tr("Open folder"));
+
+    connect(ui->openFolderPushButton, SIGNAL(clicked()), this, SLOT(openFolder()));
 	
-	QMenu *menu = new QMenu();
-	menu->addAction(openfolder);
-	ui->openFolderToolButton->setMenu(menu);
-
 	check();
 }
 
@@ -91,13 +88,7 @@ void GxsChannelFilesStatusWidget::check()
 {
 	FileInfo fileInfo;
 
-    bool already_has_file = rsFiles->alreadyHaveFile(mFile.mHash, fileInfo);
-    bool detailsOk = false;
-
-    if(!already_has_file)
-        detailsOk = rsFiles->FileDetails(mFile.mHash, RS_FILE_HINTS_DOWNLOAD | RS_FILE_HINTS_SPEC_ONLY, fileInfo);
-
-    if (already_has_file || (detailsOk && fileInfo.downloadStatus == FT_STATE_COMPLETE))
+    if(haveFile(fileInfo))
     {
 		mState = STATE_LOCAL;
 		setSize(fileInfo.size);
@@ -112,7 +103,7 @@ void GxsChannelFilesStatusWidget::check()
 			ui->openFilePushButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/play.png"));
 		}
     }
-    else if (detailsOk)
+    else
     {
         switch (fileInfo.downloadStatus)
         {
@@ -140,13 +131,11 @@ void GxsChannelFilesStatusWidget::check()
 			case FT_STATE_CHECKING_HASH:
 				mState = STATE_CHECKING;
 				break;
-			case FT_STATE_FAILED:
-				mState = STATE_ERROR;
-				break;
-			}
+        default:
+                mState = STATE_REMOTE;
+                break;
+        }
     }
-    else
-        mState = STATE_REMOTE;
 
 	int repeat = 0;
 	QString statusText;
@@ -161,7 +150,7 @@ void GxsChannelFilesStatusWidget::check()
 		ui->cancelToolButton->hide();
 		ui->progressBar->hide();
 		ui->openFilePushButton->hide();
-		ui->openFolderToolButton->hide();
+        ui->openFolderPushButton->hide();
 
 		statusText = tr("Error");
 
@@ -176,7 +165,7 @@ void GxsChannelFilesStatusWidget::check()
 		ui->cancelToolButton->hide();
 		ui->progressBar->hide();
 		ui->openFilePushButton->hide();
-		ui->openFolderToolButton->hide();
+        ui->openFolderPushButton->hide();
 
 		break;
 
@@ -189,7 +178,7 @@ void GxsChannelFilesStatusWidget::check()
 		ui->cancelToolButton->show();
 		ui->progressBar->show();
 		ui->openFilePushButton->hide();
-		ui->openFolderToolButton->hide();
+        ui->openFolderPushButton->hide();
 
 		break;
 
@@ -202,7 +191,7 @@ void GxsChannelFilesStatusWidget::check()
 		ui->cancelToolButton->show();
 		ui->progressBar->hide();
 		ui->openFilePushButton->hide();
-		ui->openFolderToolButton->hide();
+        ui->openFolderPushButton->hide();
 
 		statusText = tr("Paused");
 
@@ -217,7 +206,7 @@ void GxsChannelFilesStatusWidget::check()
 		ui->cancelToolButton->show();
 		ui->progressBar->hide();
 		ui->openFilePushButton->hide();
-		ui->openFolderToolButton->hide();
+        ui->openFolderPushButton->hide();
 
 		statusText = tr("Waiting");
 
@@ -232,7 +221,7 @@ void GxsChannelFilesStatusWidget::check()
 		ui->cancelToolButton->show();
 		ui->progressBar->hide();
 		ui->openFilePushButton->hide();
-		ui->openFolderToolButton->hide();
+        ui->openFolderPushButton->hide();
 
 		statusText = tr("Checking");
 
@@ -247,7 +236,7 @@ void GxsChannelFilesStatusWidget::check()
 		ui->cancelToolButton->hide();
 		ui->progressBar->hide();
 		ui->openFilePushButton->show();
-		ui->openFolderToolButton->show();
+        ui->openFolderPushButton->show();
 
 		break;
 	}
@@ -329,35 +318,60 @@ void GxsChannelFilesStatusWidget::cancel()
 void GxsChannelFilesStatusWidget::openFolder()
 {
 	FileInfo fileInfo;
-	if (!rsFiles->alreadyHaveFile(mFile.mHash, fileInfo)) {
+    if (!haveFile(fileInfo))
 		return;
-	}
 
-	/* open folder with a suitable application */
-	QDir dir = QFileInfo(QString::fromUtf8(fileInfo.path.c_str())).absoluteDir();
-	if (dir.exists()) {
-		if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(dir.absolutePath()))) {
-            if(!mUsedAsEditor)
-                QMessageBox::warning(this, "", QString("%1 %2").arg(tr("Can't open folder"), dir.absolutePath()));
-            else
-                RsErr() << "Can't open folder " << dir.absolutePath().toStdString() ;
+    QFileInfo finfo;
+    finfo.setFile(QString::fromUtf8(fileInfo.path.c_str()));
 
-        }
-	}
+    /* open folder with a suitable application */
+    if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(finfo.absolutePath()))) {
+        if(!mUsedAsEditor)
+            QMessageBox::warning(this, "", QString("%1 %2").arg(tr("Can't open folder"), finfo.absolutePath()));
+        else
+            RsErr() << "Can't open folder " << finfo.absolutePath().toStdString() ;
+    }
+}
+
+bool GxsChannelFilesStatusWidget::haveFile(FileInfo& info)
+{
+    bool already_has_file = rsFiles->alreadyHaveFile(mFile.mHash, info);
+
+    if(!already_has_file)
+        if(!(rsFiles->FileDetails(mFile.mHash, RS_FILE_HINTS_DOWNLOAD | RS_FILE_HINTS_SPEC_ONLY, info) && info.downloadStatus==FT_STATE_COMPLETE))
+            return false;
+
+    // We need the code below because FileDetails() returns fileInfo.path as the directory when the file in COMPLETE and
+    // as a full path when the file is shared. The former is inconsistent with the documentation in rstypes.h, but I'm not
+    // sure what are the implications of changing the code in libretroshare so that the full path is always returned.
+
+    QFileInfo finfo;
+
+    if(QDir(QString::fromUtf8(info.path.c_str())).exists())
+        finfo.setFile(QString::fromUtf8(info.path.c_str()),QString::fromUtf8(info.fname.c_str()));
+    else if(QFile(QString::fromUtf8(info.path.c_str())).exists())
+        finfo.setFile(QString::fromUtf8(info.path.c_str()));
+    else
+    {
+        RsErr() << "Cannot find file!" << std::endl;
+        return false;
+    }
+
+    info.path = finfo.absoluteFilePath().toStdString();
+    return true;
 }
 
 void GxsChannelFilesStatusWidget::openFile()
 {
 	FileInfo fileInfo;
-	if (!rsFiles->alreadyHaveFile(mFile.mHash, fileInfo)) {
+    if(!haveFile(fileInfo))
 		return;
-	}
 
-	/* open file with a suitable application */
-	QFileInfo qinfo;
-	qinfo.setFile(QString::fromUtf8(fileInfo.path.c_str()));
-	if (qinfo.exists()) {
-		if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
+    QFileInfo finfo;
+    finfo.setFile(QString::fromUtf8(fileInfo.path.c_str()));
+
+    if (finfo.exists()) {
+        if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(finfo.absoluteFilePath()))) {
 			std::cerr << "GxsChannelFilesStatusWidget(): can't open file " << fileInfo.path << std::endl;
 		}
 	}else{
