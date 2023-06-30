@@ -90,7 +90,15 @@ void GxsChannelFilesStatusWidget::setSize(uint64_t size)
 void GxsChannelFilesStatusWidget::check()
 {
 	FileInfo fileInfo;
-	if (rsFiles->alreadyHaveFile(mFile.mHash, fileInfo)) {
+
+    bool already_has_file = rsFiles->alreadyHaveFile(mFile.mHash, fileInfo);
+    bool detailsOk = false;
+
+    if(!already_has_file)
+        detailsOk = rsFiles->FileDetails(mFile.mHash, RS_FILE_HINTS_DOWNLOAD | RS_FILE_HINTS_SPEC_ONLY, fileInfo);
+
+    if (already_has_file || (detailsOk && fileInfo.downloadStatus == FT_STATE_COMPLETE))
+    {
 		mState = STATE_LOCAL;
 		setSize(fileInfo.size);
 		
@@ -103,27 +111,25 @@ void GxsChannelFilesStatusWidget::check()
 			ui->openFilePushButton->setText(tr("Play"));
 			ui->openFilePushButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/play.png"));
 		}
-		
-	} else {
-		FileInfo fileInfo;
-		bool detailsOk = rsFiles->FileDetails(mFile.mHash, RS_FILE_HINTS_DOWNLOAD | RS_FILE_HINTS_SPEC_ONLY, fileInfo);
-
-		if (detailsOk) {
-			switch (fileInfo.downloadStatus) {
+    }
+    else if (detailsOk)
+    {
+        switch (fileInfo.downloadStatus)
+        {
 			case FT_STATE_WAITING:
 				mState = STATE_WAITING;
 				break;
 			case FT_STATE_DOWNLOADING:
-				if (fileInfo.avail == fileInfo.size) {
+                if (fileInfo.avail == fileInfo.size)
 					mState = STATE_LOCAL;
-				} else {
+                else
 					mState = STATE_DOWNLOAD;
-				}
+
 				setSize(fileInfo.size);
 				ui->progressBar->setValue(fileInfo.avail / mDivisor);
 				break;
-			case FT_STATE_COMPLETE:
-				mState = STATE_DOWNLOAD;
+            case FT_STATE_COMPLETE:		// this should not happen, since the case is handled earlier
+                mState = STATE_ERROR;
 				break;
 			case FT_STATE_QUEUED:
 				mState = STATE_WAITING;
@@ -138,10 +144,9 @@ void GxsChannelFilesStatusWidget::check()
 				mState = STATE_ERROR;
 				break;
 			}
-		} else {
-			mState = STATE_REMOTE;
-		}
-	}
+    }
+    else
+        mState = STATE_REMOTE;
 
 	int repeat = 0;
 	QString statusText;
