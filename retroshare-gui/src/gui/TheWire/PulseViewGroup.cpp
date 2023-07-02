@@ -65,7 +65,7 @@ void PulseViewGroup::setup()
                 QSize frameSize = frame_masthead->size();
 
                 // Scale the pixmap based on the frame size
-                pixmap = pixmap.scaled(frameSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                pixmap = pixmap.scaledToWidth(frameSize.width(), Qt::SmoothTransformation);
                 frame_masthead->setPixmap(pixmap);
             }
         }
