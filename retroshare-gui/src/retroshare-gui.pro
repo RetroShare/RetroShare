@@ -1220,6 +1220,7 @@ gxsthewire {
 		gui/TheWire/PulseReply.h \
 		gui/TheWire/PulseReplySeperator.h \
 		gui/TheWire/PulseMessage.h \
+                gui/TheWire/CustomFrame.h \
 
 	FORMS += gui/TheWire/WireDialog.ui \
 		gui/TheWire/WireGroupItem.ui \
@@ -1242,6 +1243,7 @@ gxsthewire {
 		gui/TheWire/PulseReply.cpp \
 		gui/TheWire/PulseReplySeperator.cpp \
 		gui/TheWire/PulseMessage.cpp \
+                gui/TheWire/CustomFrame.cpp \
 
 	RESOURCES += gui/TheWire/TheWire_images.qrc
 }
