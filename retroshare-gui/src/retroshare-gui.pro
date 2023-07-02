@@ -87,12 +87,8 @@ rs_gui_cmark {
 }
 
 FORMS   += TorControl/TorControlWindow.ui
-SOURCES += TorControl/TorControlWindow.cpp \
-    gui/TheWire/CustomFrame.cpp \
-    gui/TheWire/CustomFrame.cpp
-HEADERS += TorControl/TorControlWindow.h \
-    gui/TheWire/CustomFrame.h \
-    gui/TheWire/CustomFrame.h
+SOURCES += TorControl/TorControlWindow.cpp
+HEADERS += TorControl/TorControlWindow.h
 
 #QMAKE_CFLAGS += -fmudflap 
 #LIBS *= /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflap.a /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflapth.a
@@ -1224,7 +1220,6 @@ gxsthewire {
 		gui/TheWire/PulseReply.h \
 		gui/TheWire/PulseReplySeperator.h \
 		gui/TheWire/PulseMessage.h \
-                gui/TheWire/CustomFrame.h \
 
 	FORMS += gui/TheWire/WireDialog.ui \
 		gui/TheWire/WireGroupItem.ui \
@@ -1247,7 +1242,6 @@ gxsthewire {
 		gui/TheWire/PulseReply.cpp \
 		gui/TheWire/PulseReplySeperator.cpp \
 		gui/TheWire/PulseMessage.cpp \
-                gui/TheWire/CustomFrame.cpp \
 
 	RESOURCES += gui/TheWire/TheWire_images.qrc
 }
