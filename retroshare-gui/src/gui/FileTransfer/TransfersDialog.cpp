@@ -442,7 +442,7 @@ public:
 			{
 				QString strPath = QString::fromUtf8(fileInfo.path.c_str());
 				QString strPathAfterDL = strPath;
-				strPathAfterDL.replace(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()),"");
+                strPathAfterDL.replace(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()),"[Download Dir]");
 
 				return QVariant(strPathAfterDL);
 			}

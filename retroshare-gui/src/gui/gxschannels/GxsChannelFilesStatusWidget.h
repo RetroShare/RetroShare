@@ -53,6 +53,7 @@ private slots:
 
 private:
 	void setSize(uint64_t size);
+    bool haveFile(FileInfo& info);
 
 private:
 	enum State
