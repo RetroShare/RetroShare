@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>745</width>
+    <width>746</width>
     <height>483</height>
    </rect>
   </property>
@@ -48,19 +48,37 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="plainFrame_VL">
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QFrame" name="frame_headerBackground">
-        <layout class="QHBoxLayout" name="frame_headerBackground_HL">
+       <widget class="CustomFrame" name="frame_masthead">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>700</width>
+          <height>135</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <spacer name="frame_headerBackground_LHSpacer">
+          <spacer name="widget_actions_RHSpacer_2">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>283</width>
-             <height>20</height>
+             <width>277</width>
+             <height>17</height>
             </size>
            </property>
           </spacer>
@@ -79,19 +97,22 @@
              <height>100</height>
             </size>
            </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
            <property name="text">
             <string>headshot</string>
            </property>
           </widget>
          </item>
          <item>
-          <spacer name="frame_headerBackground_RHSpacer">
+          <spacer name="widget_actions_LHSpacer_2">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>23</width>
+             <width>281</width>
              <height>20</height>
             </size>
            </property>
@@ -509,7 +530,6 @@
            <property name="font">
             <font>
              <pointsize>12</pointsize>
-             <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
@@ -538,10 +558,25 @@
        </widget>
       </item>
      </layout>
+     <zorder>widget_header</zorder>
+     <zorder>widget_publish</zorder>
+     <zorder>line_1</zorder>
+     <zorder>widget_replies</zorder>
+     <zorder>line_2</zorder>
+     <zorder>widget_actions</zorder>
+     <zorder>frame_masthead</zorder>
     </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CustomFrame</class>
+   <extends>QFrame</extends>
+   <header>gui\TheWire\CustomFrame.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
