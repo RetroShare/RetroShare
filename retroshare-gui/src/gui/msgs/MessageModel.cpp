@@ -459,14 +459,6 @@ QVariant RsMessageModel::sortRole(const Rs::Msgs::MsgInfoSummary& fmpe,int colum
 
 	case COLUMN_THREAD_SPAM:  return QVariant((fmpe.msgflags & RS_MSG_SPAM)? 1:0);
 
-    case COLUMN_THREAD_TO: {
-            QString name;
-
-            if(GxsIdTreeItemDelegate::computeName(RsGxsId(fmpe.to.toStdString()),name))
-                return name;
-            return ""; //Not Found
-        }
-
     case COLUMN_THREAD_AUTHOR:{
 			QString name;
 
@@ -474,8 +466,10 @@ QVariant RsMessageModel::sortRole(const Rs::Msgs::MsgInfoSummary& fmpe,int colum
 				return name;
 			return ""; //Not Found
 		}
-	default:
-		return displayRole(fmpe,column);
+
+    case COLUMN_THREAD_TO:    // fallthrough. In this case, the "to" field is not filled because the msg potentially has multiple destinations.
+    default:
+        return displayRole(fmpe,column);
 	}
 }
 

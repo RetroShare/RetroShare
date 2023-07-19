@@ -77,7 +77,8 @@ protected:
 
 signals:
 	void elisionChanged(bool elided);
-	void clicked(QPoint pos);
+    void rightClicked(QPoint pos);
+    void clicked(QPoint pos);
 
 private:
 	bool mElided;
