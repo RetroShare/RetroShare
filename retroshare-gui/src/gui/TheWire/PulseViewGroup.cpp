@@ -26,6 +26,7 @@
 #include "PulseViewGroup.h"
 #include "CustomFrame.h"
 
+#include "WireGroupDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
 #include "util/DateTime.h"
@@ -40,6 +41,9 @@ PulseViewGroup::PulseViewGroup(PulseViewHolder *holder, RsWireGroupSPtr group)
     setupUi(this);
     setAttribute ( Qt::WA_DeleteOnClose, true );
     setup();
+
+	connect(editButton, SIGNAL(clicked()), this, SLOT(editProfile()));
+
 }
 
 void PulseViewGroup::setup()
@@ -121,6 +125,23 @@ void PulseViewGroup::setup()
             widget_replies->setVisible(false);
         }
     }
+
+	setGroupSet();
+}
+
+void PulseViewGroup::setGroupSet()
+{
+	if (mGroup->mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) {
+		editButton->show();
+	}
+	else if (mGroup->mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
+	{
+		editButton->hide();
+	}
+	else
+	{
+		editButton->hide();
+	}
 }
 
 void PulseViewGroup::actionFollow()
@@ -133,5 +154,19 @@ void PulseViewGroup::actionFollow()
     if (mHolder) {
         mHolder->PVHfollow(groupId);
     }
+}
+
+void PulseViewGroup::editProfile()
+{
+	RsGxsGroupId groupId = mGroup->mMeta.mGroupId;
+	if (groupId.isNull())
+	{
+		std::cerr << "PulseViewGroup::editProfile() No Group selected";
+		std::cerr << std::endl;
+		return;
+	}
+
+	WireGroupDialog wireEdit(GxsGroupDialog::MODE_EDIT, groupId, this);
+	wireEdit.exec ();
 }
 
