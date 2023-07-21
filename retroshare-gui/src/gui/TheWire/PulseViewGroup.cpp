@@ -93,14 +93,14 @@ void PulseViewGroup::setup()
                     mGroup->mHeadshot.mSize,
                     pixmap,GxsIdDetails::ORIGINAL))
             {
-                pixmap = pixmap.scaled(100,100);
+                pixmap = pixmap.scaled(100,100, Qt::KeepAspectRatio, Qt::SmoothTransformation);
                 label_headshot->setPixmap(pixmap);
             }
         }
         else
         {
             // default.
-            QPixmap pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/png/posted.png").scaled(100,100);
+            QPixmap pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png").scaled(100,100, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             label_headshot->setPixmap(pixmap);
         }
 
