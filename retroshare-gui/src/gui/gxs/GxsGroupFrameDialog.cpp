@@ -1176,10 +1176,10 @@ void GxsGroupFrameDialog::updateGroupStatisticsReal(const RsGxsGroupId &groupId)
 			 */
 
             QTreeWidgetItem *item = ui->groupTreeWidget->getItemFromId(QString::fromStdString(stats.mGrpId.toStdString()));
-			if (!item)
-				return;
 
-			ui->groupTreeWidget->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
+            if (item)
+                ui->groupTreeWidget->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
+
             mCachedGroupStats[groupId] = stats;
 
 			getUserNotify()->updateIcon();
