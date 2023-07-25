@@ -46,7 +46,6 @@ protected:
 	bool mCountChildMsgs; // Count new child messages?
 
 private:
-	RsGxsUpdateBroadcastBase *mBase;
     const GxsGroupFrameDialog      *mGroupFrameDialog;
 
 	unsigned int mNewThreadMessageCount;
