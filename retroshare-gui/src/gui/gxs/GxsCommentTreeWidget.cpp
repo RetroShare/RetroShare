@@ -464,11 +464,7 @@ void GxsCommentTreeWidget::replyToComment()
 void GxsCommentTreeWidget::copyComment()
 {
     QString txt = dynamic_cast<QAction*>(sender())->data().toString();
-
-	QMimeData *mimeData = new QMimeData();
-    mimeData->setHtml("<html>"+txt+"</html>");
-	QClipboard *clipboard = QApplication::clipboard();
-	clipboard->setMimeData(mimeData, QClipboard::Clipboard);
+    QApplication::clipboard()->setText(txt) ;
 }
 
 void GxsCommentTreeWidget::setup(RsGxsCommentService *comment_service)
