@@ -2074,22 +2074,23 @@ void TransfersDialog::dlOpenFolder()
 		break;
 	}
 
+    openFolder(info);
+}
+
+void TransfersDialog::openFolder(const FileInfo& info)
+{
 	/* make path for downloaded or downloading files */
-	QFileInfo qinfo;
-	std::string path;
-	if (info.downloadStatus == FT_STATE_COMPLETE) {
-		path = info.path;
-	} else {
-		path = rsFiles->getPartialsDirectory();
-	}
+    QDir directory;
+
+    if (info.downloadStatus == FT_STATE_COMPLETE)
+        directory = QFileInfo(QString::fromStdString(info.path)).absoluteDir().path();
+     else
+        directory = QDir(QString::fromStdString(rsFiles->getPartialsDirectory()));
 
 	/* open folder with a suitable application */
-	qinfo.setFile(QString::fromUtf8(path.c_str()));
-	if (qinfo.exists() && qinfo.isDir()) {
-		if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
-			std::cerr << "dlOpenFolder(): can't open folder " << path << std::endl;
-		}
-	}
+
+    if (directory.exists() && !RsUrlHandler::openUrl(QUrl::fromLocalFile(directory.path())))
+            std::cerr << "dlOpenFolder(): can't open folder " << directory.path().toStdString() << std::endl;
 }
 
 void TransfersDialog::ulOpenFolder()
@@ -2104,19 +2105,7 @@ void TransfersDialog::ulOpenFolder()
         break;
     }
 
-    /* make path for uploading files */
-    QFileInfo qinfo;
-    std::string path;
-    path = info.path.substr(0,info.path.length()-info.fname.length());
-
-    /* open folder with a suitable application */
-    qinfo.setFile(QString::fromUtf8(path.c_str()));
-    if (qinfo.exists() && qinfo.isDir()) {
-        if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
-            std::cerr << "ulOpenFolder(): can't open folder " << path << std::endl;
-        }
-    }
-
+    openFolder(info);
 }
 
 void TransfersDialog::dlPreviewFile()
@@ -2139,7 +2128,7 @@ void TransfersDialog::dlPreviewFile()
 	/* make path for downloaded or downloading files */
 	QFileInfo fileInfo;
 	if (info.downloadStatus == FT_STATE_COMPLETE) {
-		fileInfo = QFileInfo(QString::fromUtf8(info.path.c_str()), QString::fromUtf8(info.fname.c_str()));
+        fileInfo = QFileInfo(QString::fromUtf8(info.path.c_str()));
 	} else {
         fileInfo = QFileInfo(QString::fromUtf8(rsFiles->getPartialsDirectory().c_str()), QString::fromUtf8(info.hash.toStdString().c_str()));
 
@@ -2204,7 +2193,7 @@ void TransfersDialog::dlOpenFile()
 	/* make path for downloaded or downloading files */
 	std::string path;
 	if (info.downloadStatus == FT_STATE_COMPLETE) {
-		path = info.path + "/" + info.fname;
+        path = info.path ;
 
 		/* open file with a suitable application */
 		QFileInfo qinfo;
