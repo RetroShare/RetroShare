@@ -861,6 +861,7 @@ void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
 		ui->subscribeToolButton->setText(tr("Subscribe"));
 
 	ui->infoPosts->setText(QString::number(group.mMeta.mVisibleMsgCount));
+    ui->poplabel->setText(QString::number(group.mMeta.mPop));
 
     if(group.mMeta.mLastPost==0)
         ui->infoLastPost->setText(tr("Never"));
