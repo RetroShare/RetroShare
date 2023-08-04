@@ -84,6 +84,9 @@ p, li { white-space: pre-wrap; }
                 <bold>true</bold>
                </font>
               </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximum number of data items (including posts, comments, votes) across friend nodes.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
                <string>Items (at friends):</string>
               </property>
@@ -178,6 +181,9 @@ p, li { white-space: pre-wrap; }
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
+              </property>
+              <property name="toolTip">
+               <string>Number of subscribed friend nodes</string>
               </property>
               <property name="text">
                <string>Popularity:</string>
