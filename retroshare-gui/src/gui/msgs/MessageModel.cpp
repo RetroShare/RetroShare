@@ -579,7 +579,18 @@ QVariant RsMessageModel::userRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col) 
     {
         case COLUMN_THREAD_AUTHOR:   return QVariant(QString::fromStdString(fmpe.from.toStdString()));
         case COLUMN_THREAD_MSGID:    return QVariant(QString::fromStdString(fmpe.msgId));
-        case COLUMN_THREAD_TO:       return QVariant(QString::fromStdString(fmpe.to.toStdString()));
+        case COLUMN_THREAD_TO:
+        {
+            // First check if the .to field is filled.
+
+            if(!fmpe.to.toStdString().empty())
+                return QVariant(QString::fromStdString(fmpe.to.toStdString()));
+
+            // In the Send box, .to is never filled. In this case we look into destinations.
+
+            if(fmpe.destinations.size()==1)
+                return QVariant(QString::fromStdString((*fmpe.destinations.begin()).toStdString()));
+        }
     default:
         return QVariant();
     }

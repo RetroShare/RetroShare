@@ -193,17 +193,21 @@ void GxsIdTreeItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
 	QStyleOptionViewItem ownOption (option);
 	initStyleOption(&ownOption, index);
 
-	RsGxsId id(index.data(Qt::UserRole).toString().toStdString());
-	QString cmt;
+    QString dt = index.data(Qt::UserRole).toString();
+    RsGxsId id(index.data(Qt::UserRole).toString().toStdString());
 
-	if(id.isNull())
+    if(dt == "")
+        ownOption.icon = FilesDefs::getIconFromQtResourcePath(":/icons/svg/people2.svg");
+    else if(id.isNull())
+    {
+        if (ownOption.icon.isNull())
+            ownOption.icon = FilesDefs::getIconFromQtResourcePath(":/icons/notification.svg");
+    }
+    else
 	{
-		if (ownOption.icon.isNull())
-			ownOption.icon = FilesDefs::getIconFromQtResourcePath(":/icons/notification.svg");
-	}
-	else
-	{
-		if(! computeNameIconAndComment(id,ownOption.text,ownOption.icon,cmt))
+        QString cmt;
+
+        if(! computeNameIconAndComment(id,ownOption.text,ownOption.icon,cmt))
 		{
 			if(mReloadPeriod > 3)
 			{
